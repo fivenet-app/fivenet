@@ -492,8 +492,6 @@ export const useCentrumStore = defineStore('centrum', {
                         } else {
                             this.addOrUpdateDispatch(resp.change.dispatchStatus);
                         }
-                    } else if (resp.change.oneofKind === 'ping') {
-                        console.debug('Centrum: Ping received');
                     } else {
                         console.warn('Centrum: Unknown change received - Kind: ', resp.change.oneofKind, resp.change);
                     }

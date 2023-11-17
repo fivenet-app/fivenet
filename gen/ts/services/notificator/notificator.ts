@@ -90,12 +90,6 @@ export interface StreamResponse {
          */
         token: TokenUpdate;
     } | {
-        oneofKind: "ping";
-        /**
-         * @generated from protobuf field: string ping = 4;
-         */
-        ping: string;
-    } | {
         oneofKind: undefined;
     };
     /**
@@ -207,7 +201,6 @@ class StreamResponse$Type extends MessageType<StreamResponse> {
             { no: 1, name: "last_id", kind: "scalar", T: 4 /*ScalarType.UINT64*/, L: 0 /*LongType.BIGINT*/ },
             { no: 2, name: "notifications", kind: "message", oneof: "data", T: () => StreamNotifications },
             { no: 3, name: "token", kind: "message", oneof: "data", T: () => TokenUpdate },
-            { no: 4, name: "ping", kind: "scalar", oneof: "data", T: 9 /*ScalarType.STRING*/ },
             { no: 5, name: "restart", kind: "scalar", opt: true, T: 8 /*ScalarType.BOOL*/ }
         ]);
     }

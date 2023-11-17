@@ -41,8 +41,6 @@ var (
 	ErrFailedStream  = status.Error(codes.InvalidArgument, "errors.NotificatorService.ErrFailedStream")
 )
 
-const pingTickerTime = 35 * time.Second
-
 type Server struct {
 	NotificatorServiceServer
 
@@ -239,10 +237,6 @@ func (s *Server) Stream(req *StreamRequest, srv NotificatorService_StreamServer)
 	}
 	defer sub.Unsubscribe()
 
-	// Ping pingTicker to ensure better stream quality
-	pingTicker := time.NewTicker(pingTickerTime * 2)
-	defer pingTicker.Stop()
-
 	// Update Ticker
 	updateTicker := time.NewTicker(40 * time.Second)
 	defer updateTicker.Stop()
@@ -268,11 +262,6 @@ func (s *Server) Stream(req *StreamRequest, srv NotificatorService_StreamServer)
 		select {
 		case <-srv.Context().Done():
 			return nil
-
-		case t := <-pingTicker.C:
-			resp.Data = &StreamResponse_Ping{
-				Ping: t.String(),
-			}
 
 		case <-updateTicker.C:
 			// Check for new user notifications

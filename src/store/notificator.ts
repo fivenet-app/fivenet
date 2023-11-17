@@ -94,9 +94,7 @@ export const useNotificatorStore = defineStore('notifications', {
                     if (resp.lastId > this.getLastId) this.setLastId(resp.lastId);
 
                     if (resp.data.oneofKind !== undefined) {
-                        if (resp.data.oneofKind === 'ping') {
-                            // Ping
-                        } else if (resp.data.oneofKind === 'token') {
+                        if (resp.data.oneofKind === 'token') {
                             const tokenUpdate = resp.data.token;
 
                             const authStore = useAuthStore();

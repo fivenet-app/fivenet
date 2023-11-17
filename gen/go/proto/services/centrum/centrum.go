@@ -373,10 +373,6 @@ func (s *Server) stream(srv CentrumService_StreamServer, isDisponent bool, job s
 	stream := broker.Subscribe()
 	defer broker.Unsubscribe(stream)
 
-	// Ping ticker to ensure better stream quality
-	ticker := time.NewTicker(pingTickerTime * 2)
-	defer ticker.Stop()
-
 	// Watch for events from message queue
 	for {
 		resp := &StreamResponse{}
@@ -384,11 +380,6 @@ func (s *Server) stream(srv CentrumService_StreamServer, isDisponent bool, job s
 		select {
 		case <-srv.Context().Done():
 			return true, nil
-
-		case t := <-ticker.C:
-			resp.Change = &StreamResponse_Ping{
-				Ping: t.String(),
-			}
 
 		case msg := <-stream:
 			resp.Change = msg.GetChange()
@@ -427,9 +418,6 @@ func (s *Server) stream(srv CentrumService_StreamServer, isDisponent bool, job s
 			if resp.Restart != nil && *resp.Restart {
 				return false, nil
 			}
-
-			// Reset ping ticker after every (successful) response
-			ticker.Reset(pingTickerTime)
 		}
 	}
 }

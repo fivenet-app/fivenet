@@ -193,8 +193,6 @@ message StreamResponse {
     uint64 dispatch_deleted = 9 [jstype = JS_STRING];
     resources.dispatch.Dispatch dispatch_updated = 10;
     resources.dispatch.Dispatch dispatch_status = 11;
-
-    string ping = 12;
   }
   optional bool restart = 13;
 }

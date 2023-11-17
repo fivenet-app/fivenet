@@ -43,8 +43,6 @@ message StreamResponse {
   oneof data {
     StreamNotifications notifications = 2;
     TokenUpdate token = 3;
-
-    string ping = 4;
   }
   optional bool restart = 5;
 }
