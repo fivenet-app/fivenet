@@ -9,7 +9,6 @@ import (
 
 	dispatch "github.com/galexrt/fivenet/gen/go/proto/resources/dispatch"
 	"github.com/galexrt/fivenet/gen/go/proto/resources/rector"
-	errorscentrum "github.com/galexrt/fivenet/gen/go/proto/services/centrum/errors"
 	eventscentrum "github.com/galexrt/fivenet/gen/go/proto/services/centrum/events"
 	"github.com/galexrt/fivenet/gen/go/proto/services/centrum/manager"
 	"github.com/galexrt/fivenet/pkg/config"
@@ -366,8 +365,9 @@ func (s *Server) getJobBroker(job string) (*utils.Broker[*StreamResponse], bool)
 func (s *Server) stream(srv CentrumService_StreamServer, isDisponent bool, job string, userId int32, unitId uint64) (bool, error) {
 	broker, ok := s.getJobBroker(job)
 	if !ok {
-		s.logger.Error("failed to get job broker", zap.String("job", job), zap.Int32("user_id", userId))
-		return false, errorscentrum.ErrFailedQuery
+		s.logger.Warn("no job broker found", zap.String("job", job), zap.Int32("user_id", userId))
+		<-srv.Context().Done()
+		return true, nil
 	}
 
 	stream := broker.Subscribe()

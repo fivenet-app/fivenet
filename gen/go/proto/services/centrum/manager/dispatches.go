@@ -89,7 +89,7 @@ func (s *Manager) UpdateDispatchStatus(ctx context.Context, job string, dsp *dis
 	}
 
 	if _, err := s.events.JS.Publish(eventscentrum.BuildSubject(eventscentrum.TopicDispatch, eventscentrum.TypeDispatchStatus, job, 0), data); err != nil {
-		return fmt.Errorf("failed to publish dispatch status event (size: %d): %w", len(data), err)
+		return fmt.Errorf("failed to publish dispatch status event (size: %d, message: '%+v'): %w", len(data), dsp, err)
 	}
 
 	return nil

@@ -10,6 +10,7 @@ import (
 	"github.com/galexrt/fivenet/pkg/config"
 	"github.com/galexrt/fivenet/pkg/grpc/auth"
 	"github.com/galexrt/fivenet/pkg/grpc/auth/userinfo"
+	"github.com/galexrt/fivenet/pkg/grpc/errors"
 	grpc_auth "github.com/galexrt/fivenet/pkg/grpc/interceptors/auth"
 	grpc_permission "github.com/galexrt/fivenet/pkg/grpc/interceptors/permission"
 	grpc_sanitizer "github.com/galexrt/fivenet/pkg/grpc/interceptors/sanitizer"
@@ -124,9 +125,10 @@ func NewServer(p ServerParams) (ServerResult, error) {
 				logging.WithLogOnEvents(logging.StartCall, logging.FinishCall),
 			),
 			grpc_auth.UnaryServerInterceptor(grpcAuth.GRPCAuthFunc),
+			grpc_sanitizer.UnaryServerInterceptor(),
 			validator.UnaryServerInterceptor(),
 			grpc_permission.UnaryServerInterceptor(grpcPerm.GRPCPermissionUnaryFunc),
-			grpc_sanitizer.UnaryServerInterceptor(),
+			errors.UnaryServerInterceptor(),
 			recovery.UnaryServerInterceptor(
 				recovery.WithRecoveryHandler(grpcPanicRecoveryHandler),
 			),
@@ -141,6 +143,7 @@ func NewServer(p ServerParams) (ServerResult, error) {
 			grpc_auth.StreamServerInterceptor(grpcAuth.GRPCAuthFunc),
 			validator.StreamServerInterceptor(),
 			grpc_permission.StreamServerInterceptor(grpcPerm.GRPCPermissionStreamFunc),
+			errors.StreamServerInterceptor(),
 			recovery.StreamServerInterceptor(
 				recovery.WithRecoveryHandler(grpcPanicRecoveryHandler),
 			),

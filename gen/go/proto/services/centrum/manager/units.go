@@ -134,7 +134,7 @@ func (s *Manager) UpdateUnitStatus(ctx context.Context, job string, unit *dispat
 	}
 
 	if _, err := s.events.JS.Publish(eventscentrum.BuildSubject(eventscentrum.TopicUnit, eventscentrum.TypeUnitStatus, job, status.UnitId), data); err != nil {
-		return fmt.Errorf("failed to publish unit status event (size: %d): %w", len(data), err)
+		return fmt.Errorf("failed to publish unit status event (size: %d, message: '%+v'): %w", len(data), unit, err)
 	}
 
 	return nil
