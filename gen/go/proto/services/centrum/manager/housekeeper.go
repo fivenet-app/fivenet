@@ -567,7 +567,12 @@ func (s *Housekeeper) checkUnitUsers(ctx context.Context) error {
 			continue
 		}
 
-		for _, unit := range units {
+		for _, u := range units {
+			unit, ok := s.GetUnit(job, u.Id)
+			if !ok {
+				continue
+			}
+
 			if len(unit.Users) == 0 {
 				continue
 			}

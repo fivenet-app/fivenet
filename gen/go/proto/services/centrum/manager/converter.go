@@ -24,11 +24,16 @@ func (s *Housekeeper) ConvertPhoneJobMsgToDispatch() error {
 	}
 
 	for {
+		select {
+		case <-s.ctx.Done():
+			return nil
+
+		case <-time.After(2 * time.Second):
+		}
+
 		if err := s.convertPhoneJobMsgToDispatch(); err != nil {
 			s.logger.Error("failed to convert gksphone job messages to dispatches", zap.Error(err))
 		}
-
-		<-time.After(2 * time.Second)
 	}
 }
 
