@@ -39,6 +39,12 @@ var (
 	ErrInternalServer = status.Error(codes.Internal, "errors.general.internal_error.title;errors.general.internal_error.content")
 )
 
+// Setup metric for panic recoveries
+var panicsTotal = promauto.With(prometheus.DefaultRegisterer).NewCounter(prometheus.CounterOpts{
+	Name: "grpc_req_panics_recovered_total",
+	Help: "Total number of gRPC requests recovered from internal panic.",
+})
+
 func wrapLogger(log *zap.Logger) *zap.Logger {
 	return log.Named("grpc_server")
 }
@@ -97,24 +103,6 @@ func NewServer(p ServerParams) (ServerResult, error) {
 	otel.SetTracerProvider(p.TP)
 	otel.SetTextMapPropagator(propagation.NewCompositeTextMapPropagator(propagation.TraceContext{}, propagation.Baggage{}))
 
-	// Setup metric for panic recoveries
-	panicsTotal := promauto.With(prometheus.DefaultRegisterer).NewCounter(prometheus.CounterOpts{
-		Name: "grpc_req_panics_recovered_total",
-		Help: "Total number of gRPC requests recovered from internal panic.",
-	})
-	grpcPanicRecoveryHandler := func(pa any) (err error) {
-		panicsTotal.Inc()
-
-		if e, ok := pa.(error); ok {
-			p.Logger.Error("recovered from panic", zap.Error(e))
-			sentry.CaptureException(e)
-		} else {
-			p.Logger.Error("recovered from panic", zap.Any("err", pa), zap.Stack("stacktrace"))
-		}
-
-		return ErrInternalServer
-	}
-
 	grpcAuth := auth.NewGRPCAuth(p.UserInfo, p.TokenMgr)
 	grpcPerm := auth.NewGRPCPerms(p.Perms)
 
@@ -132,7 +120,7 @@ func NewServer(p ServerParams) (ServerResult, error) {
 			validator.UnaryServerInterceptor(),
 			grpc_sanitizer.UnaryServerInterceptor(),
 			recovery.UnaryServerInterceptor(
-				recovery.WithRecoveryHandler(grpcPanicRecoveryHandler),
+				recovery.WithRecoveryHandler(grpcPanicRecoveryHandler(p.Logger)),
 			),
 		),
 		grpc.ChainStreamInterceptor(
@@ -147,7 +135,7 @@ func NewServer(p ServerParams) (ServerResult, error) {
 			grpc_permission.StreamServerInterceptor(grpcPerm.GRPCPermissionStreamFunc),
 			validator.StreamServerInterceptor(),
 			recovery.StreamServerInterceptor(
-				recovery.WithRecoveryHandler(grpcPanicRecoveryHandler),
+				recovery.WithRecoveryHandler(grpcPanicRecoveryHandler(p.Logger)),
 			),
 		),
 		grpc.KeepaliveEnforcementPolicy(keepalive.EnforcementPolicy{
@@ -196,6 +184,21 @@ func NewServer(p ServerParams) (ServerResult, error) {
 	return ServerResult{
 		Server: srv,
 	}, nil
+}
+
+func grpcPanicRecoveryHandler(logger *zap.Logger) recovery.RecoveryHandlerFunc {
+	return func(pa any) (err error) {
+		panicsTotal.Inc()
+
+		if e, ok := pa.(error); ok {
+			logger.Error("recovered from panic", zap.Error(e))
+			sentry.CaptureException(e)
+		} else {
+			logger.Error("recovered from panic", zap.Any("err", pa), zap.Stack("stacktrace"))
+		}
+
+		return ErrInternalServer
+	}
 }
 
 // InterceptorLogger adapts zap logger to interceptor logger.

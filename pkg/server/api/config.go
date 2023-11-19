@@ -3,6 +3,7 @@ package api
 type ClientConfig struct {
 	Version   string      `json:"version"`
 	SentryDSN string      `json:"sentryDSN"`
+	SentryEnv string      `json:"sentryEnv"`
 	Login     LoginConfig `json:"login"`
 	Discord   *Discord    `json:"discord"`
 	Links     Links       `json:"links"`

@@ -15,6 +15,7 @@ import (
 	"github.com/galexrt/fivenet/pkg/mstlystcdata"
 	"github.com/galexrt/fivenet/pkg/notifi"
 	"github.com/galexrt/fivenet/pkg/perms"
+	"github.com/galexrt/fivenet/pkg/sentry"
 	"github.com/galexrt/fivenet/pkg/server"
 	"github.com/galexrt/fivenet/pkg/server/admin"
 	"github.com/galexrt/fivenet/pkg/server/audit"
@@ -88,6 +89,7 @@ func main() {
 		manager.Module,
 		manager.HousekeeperModule,
 		discord.BotModule,
+		sentry.Module,
 
 		fx.Provide(
 			mstlystcdata.NewCache,

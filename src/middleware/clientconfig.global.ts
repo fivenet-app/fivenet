@@ -7,14 +7,15 @@ export default defineNuxtRouteMiddleware(
         if (route.query?.nui !== undefined) {
             const nuiQuery = route.query.nui as string;
             const configStore = useConfigStore();
-            const { clientConfig } = storeToRefs(configStore);
+            const { nuiEnabled, nuiResourceName } = storeToRefs(configStore);
+
             if (nuiQuery.toLowerCase() !== 'false') {
-                clientConfig.value.nuiEnabled = true;
-                clientConfig.value.nuiResourceName = nuiQuery;
-                console.info('Enabled NUI integration! Resource Name:', clientConfig.value.nuiResourceName);
+                nuiEnabled.value = true;
+                nuiResourceName.value = nuiQuery;
+                console.info('Enabled NUI integration! Resource Name:', nuiResourceName.value);
             } else {
-                clientConfig.value.nuiEnabled = false;
-                clientConfig.value.nuiResourceName = undefined;
+                nuiEnabled.value = false;
+                nuiResourceName.value = undefined;
                 console.info('Disabled NUI integration!');
             }
         }

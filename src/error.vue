@@ -17,7 +17,9 @@ const props = defineProps<{
 const buttonDisabled = ref(true);
 
 function handleError(url?: string): void {
-    $loading.start();
+    if ($loading !== undefined) {
+        $loading.start();
+    }
     startButtonTimer();
 
     if (url === undefined) {
@@ -44,11 +46,17 @@ function startButtonTimer(): void {
     buttonDisabled.value = true;
 
     setTimeout(() => (buttonDisabled.value = false), 2000);
-    setTimeout(() => $loading.errored(), 400);
+    setTimeout(() => {
+        if ($loading !== undefined) {
+            $loading.errored();
+        }
+    }, 400);
 }
 
 onBeforeMount(() => {
-    $loading.start();
+    if ($loading !== undefined) {
+        $loading.start();
+    }
     startButtonTimer();
 });
 </script>

@@ -1,6 +1,9 @@
 package state
 
-import "github.com/galexrt/fivenet/gen/go/proto/resources/centrum"
+import (
+	"github.com/galexrt/fivenet/gen/go/proto/resources/centrum"
+	"github.com/galexrt/fivenet/gen/go/proto/resources/timestamp"
+)
 
 func (s *State) GetUserUnitID(userId int32) (uint64, bool) {
 	mapping, err := s.userIDToUnitID.Load(UserIdKey(userId))
@@ -13,8 +16,9 @@ func (s *State) GetUserUnitID(userId int32) (uint64, bool) {
 
 func (s *State) SetUnitForUser(userId int32, unitId uint64) error {
 	mapping := &centrum.UserUnitMapping{
-		UnitId: unitId,
-		UserId: userId,
+		UnitId:    unitId,
+		UserId:    userId,
+		CreatedAt: timestamp.Now(),
 	}
 
 	if err := s.userIDToUnitID.Put(UserIdKey(userId), mapping); err != nil {

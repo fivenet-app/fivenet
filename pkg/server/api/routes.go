@@ -28,6 +28,7 @@ func New(logger *zap.Logger, cfg *config.Config) *Routes {
 	clientCfg := &ClientConfig{
 		Version:   version.Version,
 		SentryDSN: cfg.Sentry.ClientDSN,
+		SentryEnv: cfg.Sentry.Environment,
 		Login: LoginConfig{
 			SignupEnabled: cfg.Game.SignupEnabled,
 			Providers:     providers,

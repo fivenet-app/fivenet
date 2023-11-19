@@ -12,12 +12,14 @@ defineEmits<{
     (e: 'toggle'): void;
 }>();
 
+const appConfig = useAppConfig();
+
 const authStore = useAuthStore();
 const { loginError } = storeToRefs(authStore);
 const { doLogin } = authStore;
 
 const configStore = useConfigStore();
-const { appConfig, clientConfig } = storeToRefs(configStore);
+const { isNUIAvailable } = storeToRefs(configStore);
 
 const { cookiesEnabledIds } = useCookieControl();
 
@@ -49,7 +51,7 @@ const onSubmitThrottle = useThrottleFn(async (e) => {
 }, 1000);
 
 const socialLoginEnabled = ref(false);
-if (clientConfig.value.nuiEnabled) {
+if (isNUIAvailable.value) {
     socialLoginEnabled.value = true;
 } else if (cookiesEnabledIds.value?.includes('social_login')) {
     socialLoginEnabled.value = true;
@@ -132,7 +134,7 @@ watch(
         </form>
 
         <div class="my-4 space-y-2">
-            <template v-if="!clientConfig.nuiEnabled">
+            <template v-if="!isNUIAvailable">
                 <p v-if="!socialLoginEnabled" class="mt-2 text-sm text-error-400">
                     {{ $t('pages.auth.login.social_login_disabled') }}
                 </p>

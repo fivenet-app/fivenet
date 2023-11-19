@@ -13,8 +13,7 @@ import { useSettingsStore } from '~/store/settings';
 const { t, locale, finalizePendingLocaleChange } = useI18n();
 
 const configStore = useConfigStore();
-const { loadConfig } = configStore;
-const { clientConfig, updateAvailable } = storeToRefs(configStore);
+const { isNUIAvailable, updateAvailable } = storeToRefs(configStore);
 
 const settings = useSettingsStore();
 
@@ -40,8 +39,6 @@ useHead({
 useSeoMeta({
     ogImage: '/images/open-graph-image.png',
 });
-
-await loadConfig();
 
 if (__APP_VERSION__ !== settings.version) {
     console.info('Resetting app data because new version has been detected', settings.version, __APP_VERSION__);
@@ -101,7 +98,7 @@ watch(updateAvailable, () => (open.value = true));
     </NuxtLayout>
 
     <CookieControl
-        v-if="!clientConfig.nuiEnabled && route.meta.showCookieOptions !== undefined && route.meta.showCookieOptions"
+        v-if="!isNUIAvailable && route.meta.showCookieOptions !== undefined && route.meta.showCookieOptions"
         :locale="cookieLocale"
     />
 

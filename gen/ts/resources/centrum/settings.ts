@@ -2,6 +2,7 @@
 // @generated from protobuf file "resources/centrum/settings.proto" (package "resources.centrum", syntax proto3)
 // tslint:disable
 import { MessageType } from "@protobuf-ts/runtime";
+import { Timestamp } from "../timestamp/timestamp.js";
 import { UserShort } from "../users/users.js";
 /**
  * @generated from protobuf message resources.centrum.Settings
@@ -49,6 +50,10 @@ export interface UserUnitMapping {
      * @generated from protobuf field: int32 user_id = 2;
      */
     userId: number;
+    /**
+     * @generated from protobuf field: resources.timestamp.Timestamp created_at = 3;
+     */
+    createdAt?: Timestamp;
 }
 /**
  * @generated from protobuf enum resources.centrum.CentrumMode
@@ -108,7 +113,8 @@ class UserUnitMapping$Type extends MessageType<UserUnitMapping> {
     constructor() {
         super("resources.centrum.UserUnitMapping", [
             { no: 1, name: "unit_id", kind: "scalar", T: 4 /*ScalarType.UINT64*/, L: 0 /*LongType.BIGINT*/ },
-            { no: 2, name: "user_id", kind: "scalar", T: 5 /*ScalarType.INT32*/ }
+            { no: 2, name: "user_id", kind: "scalar", T: 5 /*ScalarType.INT32*/ },
+            { no: 3, name: "created_at", kind: "message", T: () => Timestamp }
         ]);
     }
 }
