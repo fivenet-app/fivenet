@@ -57,7 +57,7 @@ func NewHousekeeper(p HousekeeperParams) *Housekeeper {
 
 	s := &Housekeeper{
 		ctx:         ctx,
-		logger:      p.Logger.Named("centrum_manager_housekeeper"),
+		logger:      p.Logger.Named("centrum.manager.housekeeper"),
 		wg:          sync.WaitGroup{},
 		tracer:      p.TP.Tracer("centrum-manager-housekeeper"),
 		db:          p.DB,

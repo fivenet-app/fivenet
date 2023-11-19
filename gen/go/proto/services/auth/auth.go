@@ -89,7 +89,7 @@ type Params struct {
 
 func NewServer(p Params) *Server {
 	return &Server{
-		logger:          p.Logger.Named("server_grpc_auth"),
+		logger:          p.Logger.Named("grpc.auth"),
 		db:              p.DB,
 		auth:            p.Auth,
 		tm:              p.TM,

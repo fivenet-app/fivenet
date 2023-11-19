@@ -137,7 +137,7 @@ func setupHTTPServer(p Params) *gin.Engine {
 	rs.Register(e)
 
 	if len(p.Config.OAuth2.Providers) > 0 {
-		oauth := oauth2.New(p.Logger.Named("oauth"), p.DB, p.TokenMgr, p.Config.OAuth2.Providers)
+		oauth := oauth2.New(p.Logger.Named("oauth2"), p.DB, p.TokenMgr, p.Config.OAuth2.Providers)
 		oauth.Register(e)
 	}
 

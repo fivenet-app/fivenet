@@ -60,7 +60,7 @@ func NewManager(p Params) *Manager {
 
 	b := &Manager{
 		ctx:    ctx,
-		logger: p.Logger.Named("centrum_bots"),
+		logger: p.Logger.Named("centrum.bot.manager"),
 		mutex:  sync.RWMutex{},
 		wg:     sync.WaitGroup{},
 

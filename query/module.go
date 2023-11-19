@@ -22,5 +22,5 @@ type Params struct {
 }
 
 func wrapLogger(log *zap.Logger) *zap.Logger {
-	return log.Named("database")
+	return log.Named("db")
 }

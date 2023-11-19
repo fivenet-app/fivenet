@@ -49,7 +49,7 @@ func NewGuild(b *Bot, guild *discordgo.Guild, job string) (*Guild, error) {
 		Job: job,
 		ID:  guild.ID,
 
-		logger:   b.logger.Named("discord_guild").With(zap.String("job", job), zap.String("discord_guild_id", guild.ID)),
+		logger:   b.logger.Named("guild").With(zap.String("job", job), zap.String("discord_guild_id", guild.ID)),
 		bot:      b,
 		guild:    guild,
 		modules:  ms,

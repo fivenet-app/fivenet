@@ -44,7 +44,7 @@ func NewRetention(p RetentionParams) *Retention {
 
 	r := &Retention{
 		ctx:    ctx,
-		logger: p.Logger.Named("audit-retention"),
+		logger: p.Logger.Named("audit_retention"),
 		tracer: p.TP.Tracer("audit-retention"),
 		db:     p.DB,
 

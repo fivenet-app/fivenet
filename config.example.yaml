@@ -5,7 +5,7 @@ sentry:
   environment: "dev"
   # Your Sentry or Glitchtip SDN
   clientDSN: ""
-  serverDSN: "https://d3372a68f9b440618195a6893c3e95a3@glitchtip.edenmal.moe/2"
+  serverDSN: ""
 tracing:
   enabled: false
   # Jaeger Tracing endpoint (should have the right API path in the URL `/api/traces`)
