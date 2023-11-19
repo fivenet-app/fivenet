@@ -5,6 +5,7 @@ import (
 	"database/sql"
 	"errors"
 	"fmt"
+	"sync"
 	"time"
 
 	cache "github.com/Code-Hex/go-generics-cache"
@@ -77,6 +78,7 @@ type Perms struct {
 	logger *zap.Logger
 	db     *sql.DB
 	cfg    *config.Config
+	wg     sync.WaitGroup
 
 	tracer trace.Tracer
 	ctx    context.Context
@@ -132,6 +134,7 @@ func New(p Params) (Permissions, error) {
 		logger: p.Logger,
 		db:     p.DB,
 		cfg:    p.Config,
+		wg:     sync.WaitGroup{},
 
 		tracer: p.TP.Tracer("perms"),
 		ctx:    ctx,
@@ -152,40 +155,55 @@ func New(p Params) (Permissions, error) {
 	}
 
 	p.LC.Append(fx.StartHook(func(ctx context.Context) error {
-		ctx, span := ps.tracer.Start(ctx, "perms-register")
-		defer span.End()
-
-		if err := ps.load(); err != nil {
+		if err := ps.init(ctx); err != nil {
 			return err
 		}
 
-		if err := ps.registerEvents(ctx); err != nil {
-			return err
-		}
-
-		if err := ps.ApplyJobPermissions(ctx, ""); err != nil {
-			return err
-		}
-
-		cfgDefaultPerms := p.Config.Game.Auth.DefaultPermissions
-		defaultPerms := make([]string, len(p.Config.Game.Auth.DefaultPermissions))
-		for i := 0; i < len(p.Config.Game.Auth.DefaultPermissions); i++ {
-			defaultPerms[i] = BuildGuard(Category(cfgDefaultPerms[i].Category), Name(cfgDefaultPerms[i].Name))
-		}
-
-		if err := ps.Register(defaultPerms); err != nil {
-			return fmt.Errorf("failed to register permissions. %w", err)
-		}
+		ps.wg.Add(1)
+		go func() {
+			defer ps.wg.Done()
+			if err := ps.ApplyJobPermissions(ctx, ""); err != nil {
+				ps.logger.Error("failed to apply job permissions", zap.Error(err))
+				return
+			}
+		}()
 
 		return nil
 	}))
 
 	p.LC.Append(fx.StopHook(func(_ context.Context) error {
+		ps.wg.Wait()
+
 		cancel()
 		return ps.stop()
 	}))
 
 	return ps, nil
+}
+
+func (p *Perms) init(ctx context.Context) error {
+	ctx, span := p.tracer.Start(ctx, "perms-init")
+	defer span.End()
+
+	if err := p.load(); err != nil {
+		return err
+	}
+
+	if err := p.registerEvents(ctx); err != nil {
+		return err
+	}
+
+	cfgDefaultPerms := p.cfg.Game.Auth.DefaultPermissions
+	defaultPerms := make([]string, len(p.cfg.Game.Auth.DefaultPermissions))
+	for i := 0; i < len(p.cfg.Game.Auth.DefaultPermissions); i++ {
+		defaultPerms[i] = BuildGuard(Category(cfgDefaultPerms[i].Category), Name(cfgDefaultPerms[i].Name))
+	}
+
+	if err := p.register(ctx, defaultPerms); err != nil {
+		return fmt.Errorf("failed to register permissions. %w", err)
+	}
+
+	return nil
 }
 
 type cachePerm struct {

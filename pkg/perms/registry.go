@@ -54,10 +54,7 @@ func BuildGuardWithKey(category Category, name Name, key Key) string {
 	return helpers.Guard(fmt.Sprintf("%s.%s.%s", category, name, key))
 }
 
-func (p *Perms) Register(defaultRolePerms []string) error {
-	ctx, span := p.tracer.Start(p.ctx, "perms-register")
-	defer span.End()
-
+func (p *Perms) register(ctx context.Context, defaultRolePerms []string) error {
 	if err := p.cleanupRoles(ctx); err != nil {
 		return err
 	}

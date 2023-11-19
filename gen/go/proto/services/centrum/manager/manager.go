@@ -104,26 +104,3 @@ func New(p Params) *Manager {
 
 	return s
 }
-
-func (s *Manager) loadData() error {
-	ctx, span := s.tracer.Start(s.ctx, "centrum-loaddata")
-	defer span.End()
-
-	s.logger.Debug("loading settings")
-	if err := s.LoadSettingsFromDB(ctx, ""); err != nil {
-		return fmt.Errorf("failed to load centrum settings: %w", err)
-	}
-
-	s.logger.Debug("loading disponents")
-	if err := s.LoadDisponentsFromDB(ctx, ""); err != nil {
-		return fmt.Errorf("failed to load centrum disponents: %w", err)
-	}
-
-	s.logger.Debug("loading units")
-	if err := s.LoadUnitsFromDB(ctx, 0); err != nil {
-		return fmt.Errorf("failed to load centrum units: %w", err)
-	}
-
-	s.logger.Debug("loaded all centrum data")
-	return nil
-}

@@ -75,12 +75,13 @@ func (g *BaseModule) GetSyncSettings(ctx context.Context, job string) (*users.Di
 		FROM(tJobProps).
 		WHERE(
 			tJobProps.Job.EQ(jet.String(job)),
-		)
+		).
+		LIMIT(1)
 
-	var jobProps users.DiscordSyncSettings
-	if err := stmt.QueryContext(ctx, g.db, &jobProps); err != nil {
+	var dest users.JobProps
+	if err := stmt.QueryContext(ctx, g.db, &dest); err != nil {
 		return nil, err
 	}
 
-	return &jobProps, nil
+	return dest.DiscordSyncSettings, nil
 }

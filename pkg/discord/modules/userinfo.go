@@ -31,6 +31,7 @@ type UserRoleMapping struct {
 	JobGrade   int32  `alias:"job_grade"`
 	Firstname  string `alias:"firstname"`
 	Lastname   string `alias:"lastname"`
+	Job        string `alias:"job"`
 }
 
 func init() {
@@ -57,8 +58,11 @@ func (g *UserInfo) Run() error {
 	if err != nil {
 		return err
 	}
+	if settings == nil {
+		return nil
+	}
 
-	if settings == nil || !settings.UserInfoSync {
+	if !settings.UserInfoSync {
 		return nil
 	}
 
@@ -77,6 +81,7 @@ func (g *UserInfo) syncUserInfo() error {
 			tUsers.JobGrade.AS("userrolemapping.job_grade"),
 			tUsers.Firstname.AS("userrolemapping.firstname"),
 			tUsers.Lastname.AS("userrolemapping.lastname"),
+			tUsers.Job.AS("userrolemapping.job"),
 		).
 		FROM(
 			tOauth2Accs.
@@ -115,7 +120,7 @@ func (g *UserInfo) syncUserInfo() error {
 			return err
 		}
 
-		if err := g.setUserJobRole(member, user.JobGrade); err != nil {
+		if err := g.setUserJobRole(member, user.Job, user.JobGrade); err != nil {
 			return err
 		}
 	}
@@ -225,10 +230,18 @@ func (g *UserInfo) createJobRoles() error {
 		g.employeeRole = role
 	}
 
+	g.logger.Debug("created job employee and rank roles")
+
 	return nil
 }
 
-func (g *UserInfo) setUserJobRole(member *discordgo.Member, grade int32) error {
+func (g *UserInfo) setUserJobRole(member *discordgo.Member, job string, grade int32) error {
+	// Ignore certain jobs when syncing (e.g., "temporary" jobs), example:
+	// "ambulance" job Discord, and an user is currently in the ignored "army" job.
+	if g.job != job && utils.InSlice(g.cfg.UserInfoSync.IgnoreJobs, job) {
+		return nil
+	}
+
 	r, ok := g.jobRoles[grade]
 	if !ok {
 		return fmt.Errorf("no role for user's job and grade %d found", grade)
@@ -305,11 +318,11 @@ func (g *UserInfo) cleanupUserJobRoles(users []*UserRoleMapping) error {
 			}
 
 			// Check if user is suposed to have that job grade role
-			var accountId uint64
+			var userMapping *UserRoleMapping
 			if utils.InSliceFunc(users, func(in *UserRoleMapping) bool {
 				r, ok := g.findGradeRoleByID(role.ID)
 				if in.ExternalID == member.User.ID && (ok && r.ID == role.ID) {
-					accountId = in.AccountID
+					userMapping = in
 					return true
 				}
 				return false
@@ -317,11 +330,16 @@ func (g *UserInfo) cleanupUserJobRoles(users []*UserRoleMapping) error {
 				continue
 			}
 
+			// Ignore certain jobs when syncing (e.g., "temporary" jobs)
+			if g.job != userMapping.Job && utils.InSlice(g.cfg.UserInfoSync.IgnoreJobs, userMapping.Job) {
+				continue
+			}
+
 			g.logger.Debug("removing job grade role from member", zap.String("discord_role_name", role.Name), zap.String("discord_role_id", role.ID),
-				zap.String("discord_user_id", member.User.ID), zap.String("discord_nickname", member.Nick), zap.Uint64("account_id", accountId))
-			//if err := g.discord.GuildMemberRoleRemove(g.guild.ID, member.User.ID, role.ID); err != nil {
-			//	return fmt.Errorf("failed to remove member from role %s (%s): %w", role.Name, role.ID, err)
-			//}
+				zap.String("discord_user_id", member.User.ID), zap.String("discord_nickname", member.Nick), zap.Uint64("account_id", userMapping.AccountID))
+			if err := g.discord.GuildMemberRoleRemove(g.guild.ID, member.User.ID, role.ID); err != nil {
+				return fmt.Errorf("failed to remove member from role %s (%s): %w", role.Name, role.ID, err)
+			}
 		}
 
 		role := g.employeeRole
@@ -339,9 +357,9 @@ func (g *UserInfo) cleanupUserJobRoles(users []*UserRoleMapping) error {
 
 		g.logger.Debug("removing employee role from member", zap.String("discord_role_name", g.employeeRole.Name), zap.String("discord_role_id", g.employeeRole.ID),
 			zap.String("discord_user_id", member.User.ID), zap.String("discord_nickname", member.Nick))
-		//if err := g.discord.GuildMemberRoleRemove(g.guild.ID, member.User.ID, role.ID); err != nil {
-		//	return fmt.Errorf("failed to remove member from employee job role %s (%s): %w", role.Name, role.ID, err)
-		//}
+		if err := g.discord.GuildMemberRoleRemove(g.guild.ID, member.User.ID, role.ID); err != nil {
+			return fmt.Errorf("failed to remove member from employee job role %s (%s): %w", role.Name, role.ID, err)
+		}
 	}
 
 	return nil

@@ -101,6 +101,8 @@ func (g *GroupSync) createGroupRoles() error {
 		g.roles[dcRole.RoleName] = role
 	}
 
+	g.logger.Debug("created group roles")
+
 	return nil
 }
 

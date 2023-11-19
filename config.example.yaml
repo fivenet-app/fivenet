@@ -111,6 +111,8 @@ discord:
       roleFormat: "[%02d] %s"
       employeeRoleFormat: "%s Personal"
       nicknameRegex: "^(?P<prefix>\\[\\S+][ ]*)?(?P<name>[^\\[]+)(?P<suffix>[ ]*\\[\\S+])?"
+      ignoreJobs: []
+      #  - army
     groupSync:
       enabled: false
       mapping:

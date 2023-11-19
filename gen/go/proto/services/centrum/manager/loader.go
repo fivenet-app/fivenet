@@ -13,6 +13,34 @@ import (
 	"github.com/paulmach/orb"
 )
 
+func (s *Manager) loadData() error {
+	ctx, span := s.tracer.Start(s.ctx, "centrum-loaddata")
+	defer span.End()
+
+	s.logger.Debug("loading settings")
+	if err := s.LoadSettingsFromDB(ctx, ""); err != nil {
+		return fmt.Errorf("failed to load centrum settings: %w", err)
+	}
+
+	s.logger.Debug("loading disponents")
+	if err := s.LoadDisponentsFromDB(ctx, ""); err != nil {
+		return fmt.Errorf("failed to load centrum disponents: %w", err)
+	}
+
+	s.logger.Debug("loading units")
+	if err := s.LoadUnitsFromDB(ctx, 0); err != nil {
+		return fmt.Errorf("failed to load centrum units: %w", err)
+	}
+
+	s.logger.Debug("loading dispatches")
+	if err := s.LoadDispatchesFromDB(ctx, 0); err != nil {
+		return fmt.Errorf("failed to load centrum dispatches: %w", err)
+	}
+
+	s.logger.Debug("loaded all centrum data")
+	return nil
+}
+
 func (s *Manager) LoadSettingsFromDB(ctx context.Context, job string) error {
 	tCentrumSettings := tCentrumSettings.AS("settings")
 	stmt := tCentrumSettings.
@@ -202,7 +230,7 @@ func (s *Manager) LoadUnitIDForUserID(ctx context.Context, userId int32) (uint64
 	return dest.UnitID, nil
 }
 
-func (s *Manager) LoadDispatches(ctx context.Context, id uint64) error {
+func (s *Manager) LoadDispatchesFromDB(ctx context.Context, id uint64) error {
 	condition := tDispatchStatus.ID.IS_NULL().OR(
 		tDispatchStatus.ID.EQ(
 			jet.RawInt("SELECT MAX(`dispatchstatus`.`id`) FROM `fivenet_centrum_dispatches_status` AS `dispatchstatus` WHERE `dispatchstatus`.`dispatch_id` = `dispatch`.`id`"),

@@ -235,10 +235,11 @@ type DiscordPresence struct {
 }
 
 type DiscordUserInfoSync struct {
-	Enabled            bool   `default:"false" yaml:"enabled"`
-	RoleFormat         string `default:"[%02d] %s" yaml:"roleFormat"`
-	EmployeeRoleFormat string `default:"%s Personal" yaml:"employeeRoleFormat"`
-	NicknameRegex      string `yaml:"nicknameRegex"`
+	Enabled            bool     `default:"false" yaml:"enabled"`
+	RoleFormat         string   `default:"[%02d] %s" yaml:"roleFormat"`
+	EmployeeRoleFormat string   `default:"%s Personal" yaml:"employeeRoleFormat"`
+	NicknameRegex      string   `yaml:"nicknameRegex"`
+	IgnoreJobs         []string `yaml:"ignoreJobs"`
 }
 
 type DiscordGroupSync struct {
