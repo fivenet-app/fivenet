@@ -7,8 +7,10 @@ import (
 
 	"github.com/galexrt/fivenet/gen/go/proto/resources/centrum"
 	users "github.com/galexrt/fivenet/gen/go/proto/resources/users"
+	"github.com/galexrt/fivenet/pkg/utils"
 	jet "github.com/go-jet/jet/v2/mysql"
 	"github.com/go-jet/jet/v2/qrm"
+	"github.com/paulmach/orb"
 )
 
 func (s *Manager) LoadSettingsFromDB(ctx context.Context, job string) error {
@@ -198,6 +200,144 @@ func (s *Manager) LoadUnitIDForUserID(ctx context.Context, userId int32) (uint64
 	}
 
 	return dest.UnitID, nil
+}
+
+func (s *Manager) LoadDispatches(ctx context.Context, id uint64) error {
+	condition := tDispatchStatus.ID.IS_NULL().OR(
+		tDispatchStatus.ID.EQ(
+			jet.RawInt("SELECT MAX(`dispatchstatus`.`id`) FROM `fivenet_centrum_dispatches_status` AS `dispatchstatus` WHERE `dispatchstatus`.`dispatch_id` = `dispatch`.`id`"),
+		).
+			// Don't load archived dispatches into cache
+			AND(tDispatchStatus.Status.NOT_IN(
+				jet.Int16(int16(centrum.StatusDispatch_STATUS_DISPATCH_ARCHIVED)),
+				jet.Int16(int16(centrum.StatusDispatch_STATUS_DISPATCH_CANCELLED)),
+				jet.Int16(int16(centrum.StatusDispatch_STATUS_DISPATCH_COMPLETED)),
+			)),
+	)
+
+	if id > 0 {
+		condition = condition.AND(
+			tDispatch.ID.EQ(jet.Uint64(id)),
+		)
+	}
+
+	tUsers := tUsers.AS("user_short")
+	stmt := tDispatch.
+		SELECT(
+			tDispatch.ID,
+			tDispatch.CreatedAt,
+			tDispatch.UpdatedAt,
+			tDispatch.Job,
+			tDispatch.Message,
+			tDispatch.Description,
+			tDispatch.Attributes,
+			tDispatch.X,
+			tDispatch.Y,
+			tDispatch.Postal,
+			tDispatch.Anon,
+			tDispatch.CreatorID,
+			tDispatchStatus.ID,
+			tDispatchStatus.CreatedAt,
+			tDispatchStatus.DispatchID,
+			tDispatchStatus.UnitID,
+			tDispatchStatus.Status,
+			tDispatchStatus.Reason,
+			tDispatchStatus.Code,
+			tDispatchStatus.UserID,
+			tDispatchStatus.X,
+			tDispatchStatus.Y,
+			tDispatchStatus.Postal,
+			tUsers.ID,
+			tUsers.Identifier,
+			tUsers.Firstname,
+			tUsers.Lastname,
+			tUsers.Sex,
+			tUsers.Dateofbirth,
+			tUsers.PhoneNumber,
+		).
+		FROM(
+			tDispatch.
+				LEFT_JOIN(tDispatchStatus,
+					tDispatchStatus.DispatchID.EQ(tDispatch.ID),
+				).
+				LEFT_JOIN(tUsers,
+					tUsers.ID.EQ(tDispatchStatus.UserID),
+				),
+		).
+		WHERE(condition).
+		ORDER_BY(
+			tDispatch.ID.DESC(),
+		).
+		LIMIT(200)
+
+	dispatches := []*centrum.Dispatch{}
+	if err := stmt.QueryContext(ctx, s.db, &dispatches); err != nil {
+		return err
+	}
+
+	for i := 0; i < len(dispatches); i++ {
+		var err error
+		dispatches[i].Units, err = s.LoadDispatchAssignments(ctx, dispatches[i].Job, dispatches[i].Id)
+		if err != nil {
+			return err
+		}
+
+		if dispatches[i].CreatorId != nil {
+			dispatches[i].Creator, err = s.ResolveUserById(ctx, *dispatches[i].CreatorId)
+			if err != nil {
+				return err
+			}
+
+			// Clear dispatch creator's job info if not a visible job
+			if !utils.InSlice(s.publicJobs, dispatches[i].Creator.Job) {
+				dispatches[i].Creator.Job = ""
+			}
+			dispatches[i].Creator.JobGrade = 0
+		}
+
+		if dispatches[i].Postal == nil {
+			postal := s.postals.Closest(dispatches[i].X, dispatches[i].Y)
+			dispatches[i].Postal = postal.Code
+
+			if _, err := s.UpdateDispatch(ctx, dispatches[i].Job, dispatches[i].CreatorId, dispatches[i], false); err != nil {
+				return err
+			}
+		}
+
+		if dsp, err := s.GetDispatch(dispatches[i].Job, dispatches[i].Id); err == nil {
+			if dsp.X != dispatches[i].X || dsp.Y != dispatches[i].Y {
+				s.State.GetDispatchLocations(dsp.Job).Remove(dsp, func(p orb.Pointer) bool {
+					return p.(*centrum.Dispatch).Id == dsp.Id
+				})
+			}
+
+			if err := s.State.UpdateDispatch(ctx, dispatches[i].Job, dispatches[i].Id, dispatches[i]); err != nil {
+				return err
+			}
+		} else {
+			if err := s.State.UpdateDispatch(ctx, dispatches[i].Job, dispatches[i].Id, dispatches[i]); err != nil {
+				return err
+			}
+		}
+
+		// Ensure dispatch has a status
+		if dispatches[i].Status == nil {
+			if _, err := s.UpdateDispatchStatus(ctx, dispatches[i].Job, dispatches[i].Id, &centrum.DispatchStatus{
+				DispatchId: dispatches[i].Id,
+				Status:     centrum.StatusDispatch_STATUS_DISPATCH_NEW,
+			}); err != nil {
+				return err
+			}
+		}
+
+		if !s.State.GetDispatchLocations(dispatches[i].Job).Has(dispatches[i], func(p orb.Pointer) bool {
+			return p.(*centrum.Dispatch).Id == dispatches[i].Id
+		}) {
+			s.State.GetDispatchLocations(dispatches[i].Job).Add(dispatches[i])
+		}
+	}
+
+	return nil
 }
 
 func (s *Manager) LoadDispatchAssignments(ctx context.Context, job string, dispatchId uint64) ([]*centrum.DispatchAssignment, error) {

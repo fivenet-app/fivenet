@@ -146,6 +146,7 @@ fivenet:
       connMaxIdleTime: 15m
       connMaxLifetime: 60m
     nats:
+      # If you change the NATS username or password, below `nats:` config section
       url: "nats://localhost:4222"
       workerCount: 5
     jwt:
