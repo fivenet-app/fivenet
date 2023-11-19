@@ -55,12 +55,25 @@ oauth2:
         tokenURL: "https://discord.com/api/oauth2/token"
 cache:
   refreshTime: 2m
+audit:
+  retentionDays: 90
 game:
-  signupEnabled: true
-  auditRetentionDays: 90
-  superuserGroups:
-    - projektleiter
-    - teamleitung
+  auth:
+    signupEnabled: true
+    superuserGroups:
+      - projektleiter
+      - teamleitung
+    defaultPermissions:
+      - category: AuthService
+        name: ChooseCharacter
+      - category: CompletorService
+        name: CompleteJobs
+      - category: DocStoreService
+        name: ListDocuments
+      - category: DocStoreService
+        name: GetDocument
+      - category: DocStoreService
+        name: PostComment
   unemployedJob:
     name: "unemployed"
     grade: 1
@@ -69,6 +82,7 @@ game:
     - doj
     - gov
     - police
+  hiddenJobs: []
   livemap:
     refreshTime: 3s350ms
     jobs:
@@ -80,17 +94,6 @@ game:
   dispatchCenter:
     convertJobs: []
       #- police
-  defaultPermissions:
-    - category: AuthService
-      name: ChooseCharacter
-    - category: CompletorService
-      name: CompleteJobs
-    - category: DocStoreService
-      name: ListDocuments
-    - category: DocStoreService
-      name: GetDocument
-    - category: DocStoreService
-      name: PostComment
 discord:
   bot:
     enabled: true

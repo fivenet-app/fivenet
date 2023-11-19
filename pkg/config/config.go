@@ -16,12 +16,6 @@ var Module = fx.Module("config",
 	),
 )
 
-type Result struct {
-	fx.Out
-
-	Config *Config
-}
-
 func Load() (*Config, error) {
 	// Viper Config reading setup
 	viper.SetEnvPrefix("FIVENET")
