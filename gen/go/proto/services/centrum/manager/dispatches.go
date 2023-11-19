@@ -125,27 +125,95 @@ func (s *Manager) UpdateDispatchAssignments(ctx context.Context, job string, use
 
 	tDispatchUnit := table.FivenetCentrumDispatchesAsgmts
 
+	if len(toRemove) > 0 {
+		removeIds := make([]jet.Expression, len(toRemove))
+		for i := 0; i < len(toRemove); i++ {
+			removeIds[i] = jet.Uint64(toRemove[i])
+		}
+
+		stmt := tDispatchUnit.
+			DELETE().
+			WHERE(jet.AND(
+				tDispatchUnit.DispatchID.EQ(jet.Uint64(dspId)),
+				tDispatchUnit.UnitID.IN(removeIds...),
+			))
+
+		if _, err := stmt.ExecContext(ctx, s.db); err != nil {
+			return err
+		}
+	}
+
+	var expiresAtTS *timestamp.Timestamp
+	// If expires at time is not zero
+	expiresAtVal := jet.NULL
+	if !expiresAt.IsZero() {
+		expiresAtTS = timestamp.New(expiresAt)
+		expiresAtVal = jet.TimeT(expiresAt)
+	}
+
+	if len(toAdd) > 0 {
+		units := []uint64{}
+		for i := 0; i < len(toAdd); i++ {
+			dsp := s.GetDispatch(job, toAdd[i])
+			if dsp == nil {
+				continue
+			}
+
+			// Skip already added units
+			if utils.InSliceFunc(dsp.Units, func(in *centrum.DispatchAssignment) bool {
+				return in.UnitId == toAdd[i]
+			}) {
+				continue
+			}
+
+			unit := s.GetUnit(job, toAdd[i])
+			if unit == nil {
+				continue
+			}
+
+			// Skip empty units
+			if len(unit.Users) == 0 {
+				continue
+			}
+
+			// Only add unit to dispatch if not already assigned/in list
+			units = append(units, toAdd[i])
+		}
+
+		if len(units) > 0 {
+			stmt := tDispatchUnit.
+				INSERT(
+					tDispatchUnit.DispatchID,
+					tDispatchUnit.UnitID,
+					tDispatchUnit.ExpiresAt,
+				)
+
+			for _, unitId := range units {
+				stmt = stmt.
+					VALUES(
+						dspId,
+						unitId,
+						expiresAtVal,
+					)
+			}
+
+			stmt = stmt.ON_DUPLICATE_KEY_UPDATE(
+				tDispatchUnit.ExpiresAt.SET(jet.RawTimestamp("VALUES(`expires_at`)")),
+			)
+
+			if _, err := stmt.ExecContext(ctx, s.db); err != nil {
+				if !dbutils.IsDuplicateError(err) {
+					return err
+				}
+			}
+		}
+	}
+
 	store := s.State.DispatchesStore()
 
 	key := state.JobIdKey(job, dspId)
 	if err := store.ComputeUpdate(key, true, func(key string, dsp *centrum.Dispatch) (*centrum.Dispatch, error) {
 		if len(toRemove) > 0 {
-			removeIds := make([]jet.Expression, len(toRemove))
-			for i := 0; i < len(toRemove); i++ {
-				removeIds[i] = jet.Uint64(toRemove[i])
-			}
-
-			stmt := tDispatchUnit.
-				DELETE().
-				WHERE(jet.AND(
-					tDispatchUnit.DispatchID.EQ(jet.Uint64(dsp.Id)),
-					tDispatchUnit.UnitID.IN(removeIds...),
-				))
-
-			if _, err := stmt.ExecContext(ctx, s.db); err != nil {
-				return nil, err
-			}
-
 			toAnnounce := []uint64{}
 			for i := len(dsp.Units) - 1; i >= 0; i-- {
 				if i > (len(dsp.Units) - 1) {
@@ -179,14 +247,6 @@ func (s *Manager) UpdateDispatchAssignments(ctx context.Context, job string, use
 		}
 
 		if len(toAdd) > 0 {
-			// If expires at time is not zero
-			var expiresAtTS *timestamp.Timestamp
-			expiresAtVal := jet.NULL
-			if !expiresAt.IsZero() {
-				expiresAtTS = timestamp.New(expiresAt)
-				expiresAtVal = jet.TimeT(expiresAt)
-			}
-
 			units := []uint64{}
 			for i := 0; i < len(toAdd); i++ {
 				// Skip already added units
@@ -208,34 +268,6 @@ func (s *Manager) UpdateDispatchAssignments(ctx context.Context, job string, use
 
 				// Only add unit to dispatch if not already assigned/in list
 				units = append(units, toAdd[i])
-			}
-
-			if len(units) > 0 {
-				stmt := tDispatchUnit.
-					INSERT(
-						tDispatchUnit.DispatchID,
-						tDispatchUnit.UnitID,
-						tDispatchUnit.ExpiresAt,
-					)
-
-				for _, unitId := range units {
-					stmt = stmt.
-						VALUES(
-							dsp.Id,
-							unitId,
-							expiresAtVal,
-						)
-				}
-
-				stmt = stmt.ON_DUPLICATE_KEY_UPDATE(
-					tDispatchUnit.ExpiresAt.SET(jet.RawTimestamp("VALUES(`expires_at`)")),
-				)
-
-				if _, err := stmt.ExecContext(ctx, s.db); err != nil {
-					if !dbutils.IsDuplicateError(err) {
-						return nil, err
-					}
-				}
 			}
 
 			for _, unitId := range units {

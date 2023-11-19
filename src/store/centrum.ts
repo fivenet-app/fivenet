@@ -500,7 +500,22 @@ export const useCentrumStore = defineStore('centrum', {
                             this.removeDispatch(status.id);
                             continue;
                         }
-                        if (status.status === StatusDispatch.UNIT_ACCEPTED) {
+
+                        if (status.status === StatusDispatch.UNIT_ASSIGNED) {
+                            const dispatch = this.dispatches.get(status.dispatchId);
+                            if (dispatch === undefined) {
+                                continue;
+                            }
+
+                            const ua = dispatch.units.find((ua) => ua.unitId === status.unitId);
+                            if (ua === undefined) {
+                                dispatch.units.push({
+                                    dispatchId: status.dispatchId,
+                                    unitId: status.unitId!,
+                                    unit: this.getOwnUnit,
+                                });
+                            }
+                        } else if (status.status === StatusDispatch.UNIT_ACCEPTED) {
                             this.removePendingDispatch(status.dispatchId);
                             this.addOrUpdateOwnDispatch(status.dispatchId);
 
@@ -509,11 +524,16 @@ export const useCentrumStore = defineStore('centrum', {
                                 continue;
                             }
 
-                            dispatch.units.forEach((ua) => {
-                                if (ua.unitId === status.unitId) {
-                                    ua.expiresAt = undefined;
-                                }
-                            });
+                            const ua = dispatch.units.find((ua) => ua.unitId === status.unitId);
+                            if (ua !== undefined) {
+                                ua.expiresAt = undefined;
+                            } else {
+                                dispatch.units.push({
+                                    dispatchId: status.dispatchId,
+                                    unitId: status.unitId!,
+                                    unit: this.getOwnUnit,
+                                });
+                            }
                         } else if (
                             status.status === StatusDispatch.UNIT_DECLINED ||
                             status.status === StatusDispatch.UNIT_UNASSIGNED

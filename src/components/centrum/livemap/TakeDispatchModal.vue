@@ -1,9 +1,9 @@
 <script lang="ts" setup>
 import { Dialog, DialogPanel, DialogTitle, TransitionChild, TransitionRoot } from '@headlessui/vue';
 import { RpcError } from '@protobuf-ts/runtime-rpc';
-import { computedAsync, useDebounceFn } from '@vueuse/core';
+import { computedAsync, useDebounceFn, useThrottleFn } from '@vueuse/core';
 import { useSound } from '@vueuse/sound';
-import { CarEmergencyIcon, CloseIcon } from 'mdi-vue3';
+import { CarEmergencyIcon, CloseIcon, LoadingIcon } from 'mdi-vue3';
 import DataNoDataBlock from '~/components/partials/data/DataNoDataBlock.vue';
 import { useCentrumStore } from '~/store/centrum';
 import { Dispatch, StatusDispatch, TakeDispatchResp } from '~~/gen/ts/resources/centrum/dispatches';
@@ -105,6 +105,12 @@ const filteredDispatches = computedAsync(async () => {
     });
     return filtered.sort((a, b) => (a.status?.status ?? 0) - (b.status?.status ?? 0)).map((d) => d.id);
 });
+
+const canSubmit = ref(true);
+const onSubmitThrottle = useThrottleFn(async (resp: TakeDispatchResp) => {
+    canSubmit.value = false;
+    await takeDispatches(resp).finally(() => setTimeout(() => (canSubmit.value = true), 400));
+}, 1000);
 </script>
 
 <template>
@@ -218,21 +224,27 @@ const filteredDispatches = computedAsync(async () => {
                                     <div class="flex flex-shrink-0 justify-end px-4 py-4">
                                         <span class="isolate inline-flex rounded-md shadow-sm pr-4 w-full">
                                             <button
-                                                :disabled="!canTakeDispatch"
                                                 type="button"
                                                 class="w-full relative inline-flex items-center rounded-l-md bg-success-500 px-3 py-2 text-sm font-semibold text-neutral hover:text-neutral ring-1 ring-inset ring-success-300 hover:bg-success-100"
+                                                :disabled="!canTakeDispatch || !canSubmit"
                                                 :class="!canTakeDispatch ? 'disabled' : ''"
-                                                @click="takeDispatches(TakeDispatchResp.ACCEPTED)"
+                                                @click="onSubmitThrottle(TakeDispatchResp.ACCEPTED)"
                                             >
+                                                <template v-if="!canSubmit">
+                                                    <LoadingIcon class="animate-spin h-5 w-5 mr-2" />
+                                                </template>
                                                 {{ $t('common.accept') }}
                                             </button>
                                             <button
-                                                :disabled="!canTakeDispatch"
                                                 type="button"
                                                 class="w-full relative -ml-px inline-flex items-center bg-error-500 px-3 py-2 text-sm font-semibold text-neutral ring-1 ring-inset ring-error-300 hover:bg-error-100"
+                                                :disabled="!canTakeDispatch || !canSubmit"
                                                 :class="!canTakeDispatch ? 'disabled' : ''"
-                                                @click="takeDispatches(TakeDispatchResp.DECLINED)"
+                                                @click="onSubmitThrottle(TakeDispatchResp.DECLINED)"
                                             >
+                                                <template v-if="!canSubmit">
+                                                    <LoadingIcon class="animate-spin h-5 w-5 mr-2" />
+                                                </template>
                                                 {{ $t('common.decline') }}
                                             </button>
                                             <button

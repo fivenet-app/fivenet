@@ -4,7 +4,6 @@ import (
 	"context"
 	"database/sql"
 	"fmt"
-	"sort"
 	"sync"
 	"time"
 
@@ -179,12 +178,7 @@ func (s *Housekeeper) handleDispatchAssignmentExpiration(ctx context.Context) er
 	for job, dsps := range assignments {
 		s.logger.Debug("handling dispatch assignment expiration", zap.String("job", job), zap.Int("expired_assignments", len(dsps)))
 		for dispatchId, units := range dsps {
-			dsp := s.GetDispatch(job, dispatchId)
-			if dsp == nil {
-				continue
-			}
-
-			if err := s.UpdateDispatchAssignments(ctx, job, nil, dsp.Id, nil, units, time.Time{}); err != nil {
+			if err := s.UpdateDispatchAssignments(ctx, job, nil, dispatchId, nil, units, time.Time{}); err != nil {
 				return err
 			}
 		}
@@ -295,7 +289,8 @@ func (s *Housekeeper) deleteOldDispatches(ctx context.Context) error {
 			tDispatch.CreatedAt.LT_EQ(
 				jet.CURRENT_TIMESTAMP().SUB(jet.INTERVAL(14, jet.DAY)),
 			),
-		))
+		)).
+		LIMIT(50)
 
 	var dest []*struct {
 		DispatchID uint64
@@ -306,12 +301,7 @@ func (s *Housekeeper) deleteOldDispatches(ctx context.Context) error {
 	}
 
 	for _, ds := range dest {
-		dsp := s.GetDispatch(ds.Job, ds.DispatchID)
-		if dsp == nil {
-			continue
-		}
-
-		if err := s.DeleteDispatch(ctx, dsp.Job, dsp.Id, true); err != nil {
+		if err := s.DeleteDispatch(ctx, ds.Job, ds.DispatchID, true); err != nil {
 			return err
 		}
 	}
@@ -349,9 +339,6 @@ func (s *Housekeeper) deduplicateDispatches(ctx context.Context) error {
 				centrum.StatusDispatch_STATUS_DISPATCH_ARCHIVED,
 				centrum.StatusDispatch_STATUS_DISPATCH_CANCELLED,
 				centrum.StatusDispatch_STATUS_DISPATCH_COMPLETED,
-			})
-			sort.Slice(dsps, func(i, j int) bool {
-				return dsps[i].Id < dsps[j].Id
 			})
 
 			if len(dsps) <= 1 {

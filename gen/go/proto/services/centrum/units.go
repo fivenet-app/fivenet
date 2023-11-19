@@ -246,6 +246,7 @@ func (s *Server) ListUnitActivity(ctx context.Context, req *ListUnitActivityRequ
 		FROM(tUnitStatus).
 		WHERE(
 			tUnitStatus.UnitID.EQ(jet.Uint64(req.Id)),
+			// TODO check unit job
 		)
 
 	var count database.DataCount
