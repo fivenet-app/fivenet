@@ -370,11 +370,16 @@ func (s *Server) ListDispatchActivity(ctx context.Context, req *ListDispatchActi
 		SELECT(
 			jet.COUNT(jet.DISTINCT(tDispatchStatus.ID)).AS("datacount.totalcount"),
 		).
-		FROM(tDispatchStatus).
-		WHERE(
+		FROM(
+			tDispatchStatus.
+				INNER_JOIN(tDispatch,
+					tDispatch.ID.EQ(tDispatchStatus.UnitID),
+				),
+		).
+		WHERE(jet.AND(
 			tDispatchStatus.DispatchID.EQ(jet.Uint64(req.Id)),
-			// TODO check dispatch job
-		)
+			tDispatch.Job.EQ(jet.String(userInfo.Job)),
+		))
 
 	var count database.DataCount
 	if err := countStmt.QueryContext(ctx, s.db, &count); err != nil {

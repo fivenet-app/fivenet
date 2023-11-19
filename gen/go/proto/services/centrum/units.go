@@ -20,6 +20,7 @@ import (
 var (
 	tUnitStatus = table.FivenetCentrumUnitsStatus.AS("unitstatus")
 	tUsers      = table.Users.AS("usershort")
+	tUnits      = table.FivenetCentrumUnits.AS("unit")
 )
 
 func (s *Server) ListUnits(ctx context.Context, req *ListUnitsRequest) (*ListUnitsResponse, error) {
@@ -246,11 +247,16 @@ func (s *Server) ListUnitActivity(ctx context.Context, req *ListUnitActivityRequ
 		SELECT(
 			jet.COUNT(jet.DISTINCT(tUnitStatus.ID)).AS("datacount.totalcount"),
 		).
-		FROM(tUnitStatus).
-		WHERE(
+		FROM(
+			tUnitStatus.
+				INNER_JOIN(tUnits,
+					tUnits.ID.EQ(tUnitStatus.UnitID),
+				),
+		).
+		WHERE(jet.AND(
 			tUnitStatus.UnitID.EQ(jet.Uint64(req.Id)),
-			// TODO check unit job
-		)
+			tUnits.Job.EQ(jet.String(userInfo.Job)),
+		))
 
 	var count database.DataCount
 	if err := countStmt.QueryContext(ctx, s.db, &count); err != nil {
