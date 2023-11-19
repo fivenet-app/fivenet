@@ -127,7 +127,7 @@ export const useCentrumStore = defineStore('centrum', {
 
             const u = this.units.get(status.unitId);
             if (u === undefined) {
-                console.error('Centrum: Processed Unit Status for unknown Unit', status.unitId);
+                console.warn('Centrum: Processed Unit Status for unknown Unit', status.unitId);
                 return;
             }
 
@@ -219,7 +219,7 @@ export const useCentrumStore = defineStore('centrum', {
 
             const d = this.dispatches.get(status.dispatchId);
             if (d === undefined) {
-                console.error('Centrum: Processed Dispatch Status for unknown Dispatch', status.dispatchId, status);
+                console.warn('Centrum: Processed Dispatch Status for unknown Dispatch', status.dispatchId, status);
                 return;
             }
 
@@ -501,21 +501,7 @@ export const useCentrumStore = defineStore('centrum', {
                             continue;
                         }
 
-                        if (status.status === StatusDispatch.UNIT_ASSIGNED) {
-                            const dispatch = this.dispatches.get(status.dispatchId);
-                            if (dispatch === undefined) {
-                                continue;
-                            }
-
-                            const ua = dispatch.units.find((ua) => ua.unitId === status.unitId);
-                            if (ua === undefined) {
-                                dispatch.units.push({
-                                    dispatchId: status.dispatchId,
-                                    unitId: status.unitId!,
-                                    unit: this.getOwnUnit,
-                                });
-                            }
-                        } else if (status.status === StatusDispatch.UNIT_ACCEPTED) {
+                        if (status.status === StatusDispatch.UNIT_ACCEPTED) {
                             this.removePendingDispatch(status.dispatchId);
                             this.addOrUpdateOwnDispatch(status.dispatchId);
 

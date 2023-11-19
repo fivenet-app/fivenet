@@ -32,8 +32,8 @@ func (s *Manager) CheckIfUserIsPartOfDispatch(userInfo *userinfo.UserInfo, dsp *
 
 	// Iterate over units of dispatch and check if the user is in one of the units
 	for i := 0; i < len(dsp.Units); i++ {
-		unit := s.GetUnit(dsp.Units[i].Unit.Job, dsp.Units[i].UnitId)
-		if unit == nil {
+		unit, err := s.GetUnit(dsp.Units[i].Unit.Job, dsp.Units[i].UnitId)
+		if unit == nil || err != nil {
 			continue
 		}
 

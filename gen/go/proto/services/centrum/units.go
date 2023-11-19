@@ -119,8 +119,8 @@ func (s *Server) UpdateUnitStatus(ctx context.Context, req *UpdateUnitStatusRequ
 	}
 	defer s.auditer.Log(auditEntry, req)
 
-	unit := s.state.GetUnit(userInfo.Job, req.UnitId)
-	if unit == nil {
+	unit, err := s.state.GetUnit(userInfo.Job, req.UnitId)
+	if err != nil {
 		return nil, errorscentrum.ErrFailedQuery
 	}
 
@@ -136,7 +136,7 @@ func (s *Server) UpdateUnitStatus(ctx context.Context, req *UpdateUnitStatusRequ
 		postal = marker.Info.Postal
 	}
 
-	if _, err := s.state.UpdateUnitStatus(ctx, userInfo.Job, unit, &centrum.UnitStatus{
+	if _, err := s.state.UpdateUnitStatus(ctx, userInfo.Job, unit.Id, &centrum.UnitStatus{
 		UnitId:    unit.Id,
 		Status:    req.Status,
 		Reason:    req.Reason,
@@ -167,8 +167,8 @@ func (s *Server) AssignUnit(ctx context.Context, req *AssignUnitRequest) (*Assig
 	}
 	defer s.auditer.Log(auditEntry, req)
 
-	unit := s.state.GetUnit(userInfo.Job, req.UnitId)
-	if unit == nil {
+	unit, err := s.state.GetUnit(userInfo.Job, req.UnitId)
+	if err != nil {
 		return nil, errorscentrum.ErrFailedQuery
 	}
 	if unit.Job != userInfo.Job {
@@ -201,7 +201,10 @@ func (s *Server) JoinUnit(ctx context.Context, req *JoinUnitRequest) (*JoinUnitR
 		return resp, nil
 	}
 
-	currentUnit := s.state.GetUnit(userInfo.Job, currentUnitId)
+	currentUnit, err := s.state.GetUnit(userInfo.Job, currentUnitId)
+	if err != nil {
+		return nil, errorscentrum.ErrNotOnDuty
+	}
 
 	// User joins unit
 	if req.UnitId != nil && *req.UnitId > 0 {
@@ -213,8 +216,8 @@ func (s *Server) JoinUnit(ctx context.Context, req *JoinUnitRequest) (*JoinUnitR
 			}
 		}
 
-		newUnit := s.state.GetUnit(userInfo.Job, *req.UnitId)
-		if newUnit == nil {
+		newUnit, err := s.state.GetUnit(userInfo.Job, *req.UnitId)
+		if err != nil {
 			return nil, errorscentrum.ErrFailedQuery
 		}
 
@@ -305,11 +308,13 @@ func (s *Server) ListUnitActivity(ctx context.Context, req *ListUnitActivityRequ
 
 	for i := 0; i < len(resp.Activity); i++ {
 		if resp.Activity[i].UnitId > 0 && resp.Activity[i].User != nil {
-			unit := s.state.GetUnit(userInfo.Job, resp.Activity[i].UnitId)
-			if unit != nil {
-				newUnit := proto.Clone(unit)
-				resp.Activity[i].Unit = newUnit.(*centrum.Unit)
+			unit, err := s.state.GetUnit(userInfo.Job, resp.Activity[i].UnitId)
+			if err != nil {
+				return nil, err
 			}
+
+			newUnit := proto.Clone(unit)
+			resp.Activity[i].Unit = newUnit.(*centrum.Unit)
 		}
 	}
 

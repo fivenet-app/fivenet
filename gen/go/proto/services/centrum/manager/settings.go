@@ -36,7 +36,7 @@ func (s *Manager) UpdateSettingsInDB(ctx context.Context, job string, settings *
 	}
 
 	// Load settings from database so they are updated in the "cache"
-	if err := s.LoadSettings(ctx, job); err != nil {
+	if err := s.LoadSettingsFromDB(ctx, job); err != nil {
 		return nil, errorscentrum.ErrFailedQuery
 	}
 

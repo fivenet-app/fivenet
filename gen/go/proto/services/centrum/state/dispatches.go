@@ -9,9 +9,8 @@ import (
 	"golang.org/x/exp/slices"
 )
 
-func (s *State) GetDispatch(job string, id uint64) *centrum.Dispatch {
-	d, _ := s.dispatches.Get(JobIdKey(job, id))
-	return d
+func (s *State) GetDispatch(job string, id uint64) (*centrum.Dispatch, error) {
+	return s.dispatches.GetOrLoad(JobIdKey(job, id))
 }
 
 func (s *State) ListDispatches(job string) ([]*centrum.Dispatch, bool) {
@@ -23,8 +22,8 @@ func (s *State) ListDispatches(job string) ([]*centrum.Dispatch, bool) {
 	}
 
 	for _, id := range ids {
-		dsp, ok := s.dispatches.Get(id)
-		if !ok || dsp == nil {
+		dsp, err := s.dispatches.GetOrLoad(id)
+		if err != nil {
 			continue
 		}
 
@@ -75,12 +74,14 @@ func (s *State) FilterDispatches(job string, statuses []centrum.StatusDispatch, 
 }
 
 func (s *State) DeleteDispatch(job string, id uint64) error {
-	dsp := s.GetDispatch(job, id)
-	if dsp != nil {
-		s.GetDispatchLocations(job).Remove(dsp, func(p orb.Pointer) bool {
-			return p.(*centrum.Dispatch).Id == dsp.Id
-		})
+	dsp, err := s.GetDispatch(job, id)
+	if err != nil {
+		return err
 	}
+
+	s.GetDispatchLocations(job).Remove(dsp, func(p orb.Pointer) bool {
+		return p.(*centrum.Dispatch).Id == dsp.Id
+	})
 
 	return s.dispatches.Delete(JobIdKey(job, id))
 }

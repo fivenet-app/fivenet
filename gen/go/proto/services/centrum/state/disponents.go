@@ -6,8 +6,12 @@ import (
 )
 
 func (s *State) GetDisponents(job string) ([]*users.UserShort, error) {
-	disponents, ok := s.disponents.Get(job)
-	if !ok || disponents == nil {
+	disponents, err := s.disponents.GetOrLoad(job)
+	if err != nil || disponents == nil {
+		return nil, err
+	}
+
+	if disponents == nil {
 		return nil, nil
 	}
 

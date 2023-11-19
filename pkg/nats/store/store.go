@@ -154,7 +154,7 @@ func (s *Store[T, U]) Load(key string) (U, error) {
 		return nil, err
 	}
 
-	return s.update(entry)
+	return s.onUpdate(entry)
 }
 
 func (s *Store[T, U]) update(entry nats.KeyValueEntry) (U, error) {
@@ -167,7 +167,8 @@ func (s *Store[T, U]) update(entry nats.KeyValueEntry) (U, error) {
 }
 
 func (s *Store[T, U]) updateFromType(key string, data U) U {
-	current, ok := s.data.LoadOrStore(strings.TrimPrefix(key, keyPrefix), data)
+	k := strings.TrimPrefix(key, keyPrefix)
+	current, ok := s.data.LoadOrStore(k, data)
 	if ok && current != nil {
 		// Compare using protobuf magic and merge if not equal
 		if !proto.Equal(current, data) {
@@ -189,7 +190,7 @@ func (s *Store[T, U]) GetOrLoad(key string) (U, error) {
 			return nil, err
 		}
 
-		s.data.Store(key, i)
+		s.updateFromType(key, i)
 	}
 
 	return i, nil
@@ -217,6 +218,7 @@ func (s *Store[T, U]) Keys(prefix string) ([]string, error) {
 		for i := 0; i < len(keys); i++ {
 			keys[i] = strings.TrimPrefix(keys[i], keyPrefix)
 		}
+
 		return keys, nil
 	}
 
@@ -236,6 +238,7 @@ func (s *Store[T, U]) unmarshal(data []byte) (U, error) {
 	if err := proto.Unmarshal(data, msg); err != nil {
 		return nil, err
 	}
+
 	return msg, nil
 }
 

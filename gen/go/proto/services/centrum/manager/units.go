@@ -18,7 +18,12 @@ import (
 	"google.golang.org/protobuf/proto"
 )
 
-func (s *Manager) UpdateUnitStatus(ctx context.Context, job string, unit *centrum.Unit, in *centrum.UnitStatus) (*centrum.UnitStatus, error) {
+func (s *Manager) UpdateUnitStatus(ctx context.Context, job string, unitId uint64, in *centrum.UnitStatus) (*centrum.UnitStatus, error) {
+	unit, err := s.GetUnit(job, unitId)
+	if err != nil {
+		return nil, errorscentrum.ErrFailedQuery
+	}
+
 	// If the unit status is the same and is a status that shouldn't be duplicated, don't update the status again
 	if unit.Status != nil &&
 		unit.Status.Status == in.Status &&
@@ -28,11 +33,11 @@ func (s *Manager) UpdateUnitStatus(ctx context.Context, job string, unit *centru
 			in.Status == centrum.StatusUnit_STATUS_UNIT_AVAILABLE) &&
 		// Additionally if the status is under 2 minutes disallow the same status update
 		(unit.Status.CreatedAt == nil || time.Since(unit.Status.CreatedAt.AsTime()) < 3*time.Minute) {
-		s.logger.Debug("skipping unit status update due to same status or time", zap.Uint64("unit_id", unit.Id), zap.String("status", in.Status.String()))
+		s.logger.Debug("skipping unit status update due to same status or time", zap.Uint64("unit_id", unitId), zap.String("status", in.Status.String()))
 		return nil, nil
 	}
 
-	s.logger.Debug("updating unit status", zap.Uint64("unit_id", unit.Id), zap.String("status", in.Status.String()))
+	s.logger.Debug("updating unit status", zap.Uint64("unit_id", unitId), zap.String("status", in.Status.String()))
 
 	if in.UserId != nil {
 		var err error
@@ -97,7 +102,7 @@ func (s *Manager) UpdateUnitStatus(ctx context.Context, job string, unit *centru
 	}
 
 	if _, err := s.js.Publish(eventscentrum.BuildSubject(eventscentrum.TopicUnit, eventscentrum.TypeUnitStatus, job), data); err != nil {
-		return nil, fmt.Errorf("failed to publish unit status event (size: %d, message: '%+v'): %w", len(data), unit, err)
+		return nil, fmt.Errorf("failed to publish unit status event (size: %d, message: '%+v'): %w", len(data), in, err)
 	}
 
 	return in, nil
@@ -105,6 +110,10 @@ func (s *Manager) UpdateUnitStatus(ctx context.Context, job string, unit *centru
 
 func (s *Manager) UpdateUnitAssignments(ctx context.Context, job string, userId *int32, unitId uint64, toAdd []int32, toRemove []int32) error {
 	s.logger.Debug("updating unit assignments", zap.String("job", job), zap.Uint64("unit_id", unitId), zap.Int32s("toAdd", toAdd), zap.Int32s("toRemove", toRemove))
+
+	if len(toAdd) == 0 && len(toRemove) == 0 {
+		return nil
+	}
 
 	var x, y *float64
 	var postal *string
@@ -118,27 +127,86 @@ func (s *Manager) UpdateUnitAssignments(ctx context.Context, job string, userId 
 
 	tUnitUser := table.FivenetCentrumUnitsUsers
 
+	// Begin transaction
+	tx, err := s.db.BeginTx(ctx, nil)
+	if err != nil {
+		return err
+	}
+	// Defer a rollback in case anything fails
+	defer tx.Rollback()
+
+	if len(toRemove) > 0 {
+		removeIds := make([]jet.Expression, len(toRemove))
+		for i := 0; i < len(toRemove); i++ {
+			removeIds[i] = jet.Int32(toRemove[i])
+		}
+
+		stmt := tUnitUser.
+			DELETE().
+			WHERE(jet.AND(
+				tUnitUser.UnitID.EQ(jet.Uint64(unitId)),
+				tUnitUser.UserID.IN(removeIds...),
+			))
+
+		if _, err := stmt.ExecContext(ctx, s.db); err != nil {
+			return err
+		}
+	}
+
+	if len(toAdd) > 0 {
+		addIds := []jet.IntegerExpression{}
+		for i := 0; i < len(toAdd); i++ {
+			if _, ok := s.tracker.GetUserById(toAdd[i]); !ok {
+				continue
+			}
+
+			unit, err := s.GetUnit(job, unitId)
+			if err != nil {
+				return err
+			}
+			// Skip already added units
+			if utils.InSliceFunc(unit.Users, func(in *centrum.UnitAssignment) bool {
+				return in.UserId == toAdd[i]
+			}) {
+				continue
+			}
+
+			addIds = append(addIds, jet.Int32(toAdd[i]))
+		}
+
+		if len(addIds) > 0 {
+			stmt := tUnitUser.
+				INSERT(
+					tUnitUser.UnitID,
+					tUnitUser.UserID,
+				)
+
+			for _, id := range addIds {
+				stmt = stmt.
+					VALUES(
+						unitId,
+						id,
+					)
+			}
+
+			if _, err := stmt.ExecContext(ctx, s.db); err != nil {
+				if !dbutils.IsDuplicateError(err) {
+					return err
+				}
+			}
+		}
+	}
+
+	// Commit the transaction
+	if err := tx.Commit(); err != nil {
+		return err
+	}
+
 	store := s.State.UnitsStore()
 
 	key := state.JobIdKey(job, unitId)
 	if err := store.ComputeUpdate(key, true, func(key string, unit *centrum.Unit) (*centrum.Unit, error) {
 		if len(toRemove) > 0 {
-			removeIds := make([]jet.Expression, len(toRemove))
-			for i := 0; i < len(toRemove); i++ {
-				removeIds[i] = jet.Int32(toRemove[i])
-			}
-
-			stmt := tUnitUser.
-				DELETE().
-				WHERE(jet.AND(
-					tUnitUser.UnitID.EQ(jet.Uint64(unit.Id)),
-					tUnitUser.UserID.IN(removeIds...),
-				))
-
-			if _, err := stmt.ExecContext(ctx, s.db); err != nil {
-				return nil, err
-			}
-
 			toAnnounce := []int32{}
 			for i := len(unit.Users) - 1; i >= 0; i-- {
 				if i > (len(unit.Users) - 1) {
@@ -177,7 +245,6 @@ func (s *Manager) UpdateUnitAssignments(ctx context.Context, job string, userId 
 
 		if len(toAdd) > 0 {
 			notFound := []int32{}
-			addIds := []jet.IntegerExpression{}
 			for i := 0; i < len(toAdd); i++ {
 				if _, ok := s.tracker.GetUserById(toAdd[i]); !ok {
 					continue
@@ -190,30 +257,7 @@ func (s *Manager) UpdateUnitAssignments(ctx context.Context, job string, userId 
 					continue
 				}
 
-				addIds = append(addIds, jet.Int32(toAdd[i]))
 				notFound = append(notFound, toAdd[i])
-			}
-
-			if len(addIds) > 0 {
-				stmt := tUnitUser.
-					INSERT(
-						tUnitUser.UnitID,
-						tUnitUser.UserID,
-					)
-
-				for _, id := range addIds {
-					stmt = stmt.
-						VALUES(
-							unit.Id,
-							id,
-						)
-				}
-
-				if _, err := stmt.ExecContext(ctx, s.db); err != nil {
-					if !dbutils.IsDuplicateError(err) {
-						return nil, err
-					}
-				}
 			}
 
 			users, err := s.resolveUserShortsByIds(ctx, notFound)
@@ -266,6 +310,20 @@ func (s *Manager) UpdateUnitAssignments(ctx context.Context, job string, userId 
 
 		return unit, nil
 	}); err != nil {
+		return err
+	}
+
+	unit, err := s.GetUnit(job, unitId)
+	if err != nil {
+		return err
+	}
+
+	data, err := proto.Marshal(unit)
+	if err != nil {
+		return err
+	}
+
+	if _, err := s.js.Publish(eventscentrum.BuildSubject(eventscentrum.TopicUnit, eventscentrum.TypeUnitUpdated, job), data); err != nil {
 		return err
 	}
 
@@ -322,12 +380,12 @@ func (s *Manager) CreateUnit(ctx context.Context, job string, unit *centrum.Unit
 	}
 
 	// Load new/updated unit from database
-	if err := s.LoadUnits(ctx, uint64(lastId)); err != nil {
+	if err := s.LoadUnitsFromDB(ctx, uint64(lastId)); err != nil {
 		return nil, errorscentrum.ErrFailedQuery
 	}
 
-	ut := s.GetUnit(job, uint64(lastId))
-	if ut == nil {
+	ut, err := s.GetUnit(job, uint64(lastId))
+	if err != nil {
 		return nil, errorscentrum.ErrFailedQuery
 	}
 
@@ -372,12 +430,12 @@ func (s *Manager) UpdateUnit(ctx context.Context, job string, unit *centrum.Unit
 	}
 
 	// Load new/updated unit from database
-	if err := s.LoadUnits(ctx, unit.Id); err != nil {
+	if err := s.LoadUnitsFromDB(ctx, unit.Id); err != nil {
 		return nil, errorscentrum.ErrFailedQuery
 	}
 
-	ut := s.GetUnit(job, unit.Id)
-	if ut == nil {
+	ut, err := s.GetUnit(job, unit.Id)
+	if err != nil {
 		return nil, errorscentrum.ErrFailedQuery
 	}
 
@@ -445,8 +503,8 @@ func (s *Manager) AddUnitStatus(ctx context.Context, tx qrm.DB, job string, stat
 }
 
 func (s *Manager) DeleteUnit(ctx context.Context, job string, id uint64) error {
-	unit := s.State.GetUnit(job, id)
-	if unit == nil {
+	unit, err := s.State.GetUnit(job, id)
+	if err != nil {
 		return nil
 	}
 

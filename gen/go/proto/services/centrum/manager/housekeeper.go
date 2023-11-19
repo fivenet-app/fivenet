@@ -216,6 +216,7 @@ func (s *Housekeeper) archiveDispatches(ctx context.Context) error {
 		SELECT(
 			tDispatchStatus.DispatchID.AS("dispatch_id"),
 			tDispatch.Job.AS("job"),
+			tDispatchStatus.Status.AS("status"),
 		).
 		FROM(
 			tDispatchStatus.
@@ -223,7 +224,7 @@ func (s *Housekeeper) archiveDispatches(ctx context.Context) error {
 					tDispatch.ID.EQ(tDispatchStatus.DispatchID),
 				),
 		).
-		// Dispatches that are at 5 minutes or older, have completed/cancelled or no status set
+		// Dispatches that are at 5 minutes or older and are in status completed/cancelled or have no status at all
 		WHERE(jet.AND(
 			tDispatchStatus.CreatedAt.LT_EQ(
 				jet.CURRENT_TIMESTAMP().SUB(jet.INTERVAL(5, jet.MINUTE)),
@@ -244,31 +245,26 @@ func (s *Housekeeper) archiveDispatches(ctx context.Context) error {
 	var dest []*struct {
 		DispatchID uint64
 		Job        string
+		Status     centrum.StatusDispatch
 	}
 	if err := stmt.QueryContext(ctx, s.db, &dest); err != nil {
 		return err
 	}
 
 	for _, ds := range dest {
-		dsp := s.GetDispatch(ds.Job, ds.DispatchID)
-		if dsp == nil {
-			continue
-		}
-
 		// Ignore already archived dispatches
-		if dsp.Status != nil && dsp.Status.Status == centrum.StatusDispatch_STATUS_DISPATCH_ARCHIVED {
+		if ds.Status == centrum.StatusDispatch_STATUS_DISPATCH_ARCHIVED {
 			continue
 		}
 
-		if _, err := s.UpdateDispatchStatus(ctx, ds.Job, dsp, &centrum.DispatchStatus{
-			DispatchId: dsp.Id,
+		if _, err := s.UpdateDispatchStatus(ctx, ds.Job, ds.DispatchID, &centrum.DispatchStatus{
+			DispatchId: ds.DispatchID,
 			Status:     centrum.StatusDispatch_STATUS_DISPATCH_ARCHIVED,
-			UserId:     dsp.Status.UserId,
 		}); err != nil {
 			return err
 		}
 
-		if err := s.DeleteDispatch(ctx, dsp.Job, dsp.Id, false); err != nil {
+		if err := s.DeleteDispatch(ctx, ds.Job, ds.DispatchID, false); err != nil {
 			return err
 		}
 	}
@@ -389,7 +385,7 @@ func (s *Housekeeper) deduplicateDispatches(ctx context.Context) error {
 						return p.(*centrum.Dispatch).Id == closeByDsp.Id
 					})
 
-					if _, err := s.UpdateDispatchStatus(ctx, closeByDsp.Job, closeByDsp, &centrum.DispatchStatus{
+					if _, err := s.UpdateDispatchStatus(ctx, closeByDsp.Job, closeByDsp.Id, &centrum.DispatchStatus{
 						DispatchId: closeByDsp.Id,
 						Status:     centrum.StatusDispatch_STATUS_DISPATCH_CANCELLED,
 					}); err != nil {
@@ -484,8 +480,8 @@ func (s *Housekeeper) removeDispatchesFromEmptyUnits(ctx context.Context) error 
 					continue
 				}
 
-				unit := s.GetUnit(job, unitId)
-				if unit == nil {
+				unit, err := s.GetUnit(job, unitId)
+				if err != nil {
 					continue
 				}
 
@@ -532,7 +528,7 @@ func (s *Housekeeper) cleanupUnitStatus(ctx context.Context) error {
 
 			s.logger.Debug("cleaning up unit status to unavailable because it is empty",
 				zap.String("job", job), zap.Uint64("unit_id", unit.Id))
-			if _, err := s.UpdateUnitStatus(ctx, job, unit, &centrum.UnitStatus{
+			if _, err := s.UpdateUnitStatus(ctx, job, unit.Id, &centrum.UnitStatus{
 				UnitId: unit.Id,
 				Status: centrum.StatusUnit_STATUS_UNIT_UNAVAILABLE,
 				UserId: userId,
@@ -555,8 +551,8 @@ func (s *Housekeeper) checkUnitUsers(ctx context.Context) error {
 		}
 
 		for _, u := range units {
-			unit := s.GetUnit(job, u.Id)
-			if unit == nil {
+			unit, err := s.GetUnit(job, u.Id)
+			if err != nil {
 				continue
 			}
 
@@ -662,8 +658,8 @@ func (s *Housekeeper) handleRemoveUserFromUnit(ctx context.Context, job string, 
 		return false
 	}
 
-	unit := s.GetUnit(job, unitId)
-	if unit == nil {
+	unit, err := s.GetUnit(job, unitId)
+	if err != nil {
 		s.UnsetUnitIDForUser(userId)
 		return false
 	}

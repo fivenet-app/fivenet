@@ -9,9 +9,8 @@ import (
 	"golang.org/x/exp/slices"
 )
 
-func (s *State) GetUnit(job string, id uint64) *centrum.Unit {
-	u, _ := s.units.Get(JobIdKey(job, id))
-	return u
+func (s *State) GetUnit(job string, id uint64) (*centrum.Unit, error) {
+	return s.units.GetOrLoad(JobIdKey(job, id))
 }
 
 func (s *State) ListUnits(job string) ([]*centrum.Unit, bool) {
@@ -23,8 +22,8 @@ func (s *State) ListUnits(job string) ([]*centrum.Unit, bool) {
 	}
 
 	for _, id := range ids {
-		unit, ok := s.units.Get(id)
-		if !ok || unit == nil {
+		unit, err := s.units.GetOrLoad(id)
+		if err != nil {
 			continue
 		}
 

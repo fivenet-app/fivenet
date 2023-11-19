@@ -57,7 +57,7 @@ func (s *Manager) DisponentSignOn(ctx context.Context, job string, userId int32,
 	}
 
 	// Load updated disponents into state
-	if err := s.LoadDisponents(ctx, job); err != nil {
+	if err := s.LoadDisponentsFromDB(ctx, job); err != nil {
 		return errorscentrum.ErrFailedQuery
 	}
 

@@ -305,7 +305,7 @@ func (s *Server) sendLatestState(srv CentrumService_StreamServer, job string, us
 	isDisponent := s.state.CheckIfUserIsDisponent(job, userId)
 	ownUnitId, _ := s.state.GetUserUnitID(userId)
 	units, _ := s.state.ListUnits(job)
-	ownUnit := s.state.GetUnit(job, ownUnitId)
+	ownUnit, _ := s.state.GetUnit(job, ownUnitId)
 
 	dispatches := s.state.FilterDispatches(job, nil, []centrum.StatusDispatch{
 		centrum.StatusDispatch_STATUS_DISPATCH_ARCHIVED,
