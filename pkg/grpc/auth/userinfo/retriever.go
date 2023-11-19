@@ -58,7 +58,7 @@ func NewUIRetriever(p Params) UserInfoRetriever {
 		userCache:    userCache,
 		userCacheTTL: 30 * time.Second,
 
-		superuserGroups: p.Config.Game.SuperuserGroups,
+		superuserGroups: p.Config.Game.Auth.SuperuserGroups,
 	}
 }
 

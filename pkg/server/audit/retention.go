@@ -48,7 +48,7 @@ func NewRetention(p RetentionParams) *Retention {
 		tracer: p.TP.Tracer("audit-retention"),
 		db:     p.DB,
 
-		auditRetentionDays: p.Cfg.Game.AuditRetentionDays,
+		auditRetentionDays: p.Cfg.Audit.RetentionDays,
 	}
 
 	p.LC.Append(fx.StartHook(func(_ context.Context) error {
@@ -71,7 +71,7 @@ func NewRetention(p RetentionParams) *Retention {
 		return nil
 	}))
 
-	p.LC.Append(fx.StopHook(func(ctx context.Context) error {
+	p.LC.Append(fx.StopHook(func(_ context.Context) error {
 		cancel()
 		return nil
 	}))

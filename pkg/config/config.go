@@ -76,9 +76,9 @@ type Config struct {
 	JWT      JWT      `yaml:"jwt"`
 	OAuth2   OAuth2   `yaml:"oauth2"`
 	Cache    Cache    `yaml:"cache"`
-
-	Game    Game    `yaml:"game"`
-	Discord Discord `yaml:"discord"`
+	Audit    Audit    `yaml:"audit"`
+	Game     Game     `yaml:"game"`
+	Discord  Discord  `yaml:"discord"`
 
 	Storage Storage `yaml:"storage"`
 }
@@ -178,17 +178,25 @@ type Cache struct {
 	RefreshTime time.Duration `default:"2m" yaml:"refreshTime"`
 }
 
-type Game struct {
-	SignupEnabled      bool           `default:"true" yaml:"signupEnabled"`
-	AuditRetentionDays *int           `default:"90" yaml:"auditRetentionDays"`
-	SuperuserGroups    []string       `yaml:"superuserGroups"`
-	UnemployedJob      UnemployedJob  `yaml:"unemployedJob"`
-	PublicJobs         []string       `yaml:"publicJobs"`
-	HiddenJobs         []string       `yaml:"hiddenJobs"`
-	Livemap            Livemap        `yaml:"livemap"`
-	DispatchCenter     DispatchCenter `yaml:"dispatchCenter"`
-	DefaultPermissions []Perm         `yaml:"defaultPermissions"`
+type Audit struct {
+	RetentionDays *int `default:"90" yaml:"auditRetentionDays"`
 }
+
+type Game struct {
+	Auth           Auth           `yaml:"auth"`
+	UnemployedJob  UnemployedJob  `yaml:"unemployedJob"`
+	PublicJobs     []string       `yaml:"publicJobs"`
+	HiddenJobs     []string       `yaml:"hiddenJobs"`
+	Livemap        Livemap        `yaml:"livemap"`
+	DispatchCenter DispatchCenter `yaml:"dispatchCenter"`
+}
+
+type Auth struct {
+	SignupEnabled      bool     `default:"true" yaml:"signupEnabled"`
+	SuperuserGroups    []string `yaml:"superuserGroups"`
+	DefaultPermissions []Perm   `yaml:"defaultPermissions"`
+}
+
 type UnemployedJob struct {
 	Name  string `default:"unemployed" yaml:"job"`
 	Grade int32  `default:"1" yaml:"grade"`

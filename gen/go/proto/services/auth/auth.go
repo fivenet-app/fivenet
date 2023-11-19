@@ -97,8 +97,8 @@ func NewServer(p Params) *Server {
 		enricher:        p.Enricher,
 		a:               p.Aud,
 		ui:              p.UI,
-		signupEnabled:   p.Cfg.Game.SignupEnabled,
-		superuserGroups: p.Cfg.Game.SuperuserGroups,
+		signupEnabled:   p.Cfg.Game.Auth.SignupEnabled,
+		superuserGroups: p.Cfg.Game.Auth.SuperuserGroups,
 		oauth2Providers: p.Cfg.OAuth2.Providers,
 	}
 }

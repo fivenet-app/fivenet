@@ -30,7 +30,7 @@ func New(logger *zap.Logger, cfg *config.Config) *Routes {
 		SentryDSN: cfg.Sentry.ClientDSN,
 		SentryEnv: cfg.Sentry.Environment,
 		Login: LoginConfig{
-			SignupEnabled: cfg.Game.SignupEnabled,
+			SignupEnabled: cfg.Game.Auth.SignupEnabled,
 			Providers:     providers,
 		},
 		Discord: &Discord{},

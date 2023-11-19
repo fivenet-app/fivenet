@@ -167,9 +167,9 @@ func New(p Params) (Permissions, error) {
 			return err
 		}
 
-		cfgDefaultPerms := p.Config.Game.DefaultPermissions
-		defaultPerms := make([]string, len(p.Config.Game.DefaultPermissions))
-		for i := 0; i < len(p.Config.Game.DefaultPermissions); i++ {
+		cfgDefaultPerms := p.Config.Game.Auth.DefaultPermissions
+		defaultPerms := make([]string, len(p.Config.Game.Auth.DefaultPermissions))
+		for i := 0; i < len(p.Config.Game.Auth.DefaultPermissions); i++ {
 			defaultPerms[i] = BuildGuard(Category(cfgDefaultPerms[i].Category), Name(cfgDefaultPerms[i].Name))
 		}
 
