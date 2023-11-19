@@ -1,13 +1,13 @@
-package dispatch
+package centrum
 
 import (
 	"github.com/paulmach/orb"
 	"google.golang.org/protobuf/proto"
 )
 
-func (x *Unit) Merge(in *Unit) {
+func (x *Unit) Merge(in *Unit) *Unit {
 	if x.Id != in.Id {
-		return
+		return x
 	}
 
 	if in.CreatedAt != nil {
@@ -58,6 +58,8 @@ func (x *Unit) Merge(in *Unit) {
 	} else {
 		x.Users = in.Users
 	}
+
+	return x
 }
 
 func (x *UnitStatus) Point() orb.Point {

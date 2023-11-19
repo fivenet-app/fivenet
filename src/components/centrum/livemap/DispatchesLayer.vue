@@ -4,7 +4,7 @@ import DispatchDetails from '~/components/centrum/dispatches/DispatchDetails.vue
 import DispatchMarker from '~/components/centrum/livemap/DispatchMarker.vue';
 import { useCentrumStore } from '~/store/centrum';
 import { useSettingsStore } from '~/store/settings';
-import { Dispatch } from '~~/gen/ts/resources/dispatch/dispatches';
+import { Dispatch } from '~~/gen/ts/resources/centrum/dispatches';
 
 defineProps<{
     showAllDispatches?: boolean;

@@ -1,24 +1,24 @@
 package state
 
 import (
-	"github.com/galexrt/fivenet/gen/go/proto/resources/dispatch"
+	"github.com/galexrt/fivenet/gen/go/proto/resources/centrum"
 	"google.golang.org/protobuf/proto"
 )
 
-func (s *State) GetSettings(job string) *dispatch.Settings {
-	settings, _ := s.settings.LoadOrCompute(job, func() *dispatch.Settings {
-		return &dispatch.Settings{
+func (s *State) GetSettings(job string) *centrum.Settings {
+	settings, _ := s.settings.LoadOrCompute(job, func() *centrum.Settings {
+		return &centrum.Settings{
 			Job:          job,
 			Enabled:      false,
-			Mode:         dispatch.CentrumMode_CENTRUM_MODE_MANUAL,
-			FallbackMode: dispatch.CentrumMode_CENTRUM_MODE_MANUAL,
+			Mode:         centrum.CentrumMode_CENTRUM_MODE_MANUAL,
+			FallbackMode: centrum.CentrumMode_CENTRUM_MODE_MANUAL,
 		}
 	})
 
 	return settings
 }
 
-func (s *State) UpdateSettings(job string, in *dispatch.Settings) error {
+func (s *State) UpdateSettings(job string, in *centrum.Settings) error {
 	current := s.GetSettings(job)
 	// Simply use protobuf merge to update existing settings with incoming settings
 	proto.Merge(current, in)
@@ -26,10 +26,10 @@ func (s *State) UpdateSettings(job string, in *dispatch.Settings) error {
 	return nil
 }
 
-func (s *State) ListSettings() []*dispatch.Settings {
-	list := []*dispatch.Settings{}
+func (s *State) ListSettings() []*centrum.Settings {
+	list := []*centrum.Settings{}
 
-	s.settings.Range(func(_ string, settings *dispatch.Settings) bool {
+	s.settings.Range(func(_ string, settings *centrum.Settings) bool {
 		list = append(list, settings)
 		return true
 	})

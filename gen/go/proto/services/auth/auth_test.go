@@ -10,7 +10,6 @@ import (
 	"github.com/galexrt/fivenet/internal/tests/proto"
 	"github.com/galexrt/fivenet/internal/tests/servers"
 	"github.com/galexrt/fivenet/pkg/config"
-	"github.com/galexrt/fivenet/pkg/events"
 	"github.com/galexrt/fivenet/pkg/grpc/auth"
 	"github.com/galexrt/fivenet/pkg/grpc/auth/userinfo"
 	"github.com/galexrt/fivenet/pkg/mstlystcdata"
@@ -55,21 +54,17 @@ func TestFullAuthFlow(t *testing.T) {
 	cfg.NATS.URL = servers.TestNATSServer.GetURL()
 	cfg.Cache.RefreshTime = 1 * time.Hour
 
-	fxLC := fxtest.NewLifecycle(t)
+	js, err := servers.TestNATSServer.GetJS()
+	require.NoError(t, err)
 
-	eventus, err := events.New(events.Params{
-		LC:     fxLC,
-		Logger: logger,
-		Config: cfg,
-	})
-	assert.NoError(t, err)
+	fxLC := fxtest.NewLifecycle(t)
 
 	p, err := perms.New(perms.Params{
 		LC:     fxLC,
 		Logger: logger,
 		DB:     db,
 		TP:     tp,
-		Events: eventus,
+		JS:     js,
 		Config: cfg,
 	})
 	assert.NoError(t, err)

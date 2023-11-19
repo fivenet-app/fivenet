@@ -5,7 +5,7 @@ import { required } from '@vee-validate/rules';
 import { useThrottleFn } from '@vueuse/core';
 import { CloseIcon, GroupIcon, LoadingIcon } from 'mdi-vue3';
 import { defineRule } from 'vee-validate';
-import { CentrumMode, Settings } from '~~/gen/ts/resources/dispatch/settings';
+import { CentrumMode, Settings } from '~~/gen/ts/resources/centrum/settings';
 
 defineProps<{
     open: boolean;

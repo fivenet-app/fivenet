@@ -12,10 +12,10 @@ import {
     TransitionRoot,
 } from '@headlessui/vue';
 import { RpcError } from '@protobuf-ts/runtime-rpc';
-import { watchDebounced } from '@vueuse/core';
-import { CheckIcon, CloseIcon } from 'mdi-vue3';
+import { useThrottleFn, watchDebounced } from '@vueuse/core';
+import { CheckIcon, CloseIcon, LoadingIcon } from 'mdi-vue3';
 import { useCompletorStore } from '~/store/completor';
-import { Unit } from '~~/gen/ts/resources/dispatch/units';
+import { Unit } from '~~/gen/ts/resources/centrum/units';
 import { UserShort } from '~~/gen/ts/resources/users/users';
 
 const props = defineProps<{
@@ -87,6 +87,13 @@ watchDebounced(queryCitizens, async () => await findCitizens(), {
 onMounted(async () => {
     findCitizens();
 });
+
+const canSubmit = ref(true);
+
+const onSubmitThrottle = useThrottleFn(async () => {
+    canSubmit.value = false;
+    await assignUnit().finally(() => setTimeout(() => (canSubmit.value = true), 400));
+}, 1000);
 </script>
 
 <template>
@@ -218,9 +225,18 @@ onMounted(async () => {
                                         <span class="isolate inline-flex rounded-md shadow-sm pr-4 w-full">
                                             <button
                                                 type="button"
-                                                class="w-full relative inline-flex items-center rounded-l-md bg-primary-500 py-2.5 px-3.5 text-sm font-semibold text-neutral hover:bg-primary-400"
-                                                @click="assignUnit"
+                                                class="w-full relative inline-flex items-center rounded-l-md py-2.5 px-3.5 text-sm font-semibold text-neutral"
+                                                :disabled="!canSubmit"
+                                                :class="[
+                                                    !canSubmit
+                                                        ? 'disabled bg-base-500 hover:bg-base-400 focus-visible:outline-base-500'
+                                                        : 'bg-primary-500 hover:bg-primary-400 focus-visible:outline-primary-500',
+                                                ]"
+                                                @click="onSubmitThrottle"
                                             >
+                                                <template v-if="!canSubmit">
+                                                    <LoadingIcon class="animate-spin h-5 w-5 mr-2" />
+                                                </template>
                                                 {{ $t('common.update') }}
                                             </button>
                                             <button

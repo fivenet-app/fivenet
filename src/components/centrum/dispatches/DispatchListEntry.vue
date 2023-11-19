@@ -9,7 +9,7 @@ import { dispatchStatusAnimate, dispatchStatusToBGColor } from '~/components/cen
 import UnitInfoPopover from '~/components/centrum/units/UnitInfoPopover.vue';
 import CitizenInfoPopover from '~/components/partials/citizens/CitizenInfoPopover.vue';
 import Time from '~/components/partials/elements/Time.vue';
-import { Dispatch, StatusDispatch } from '~~/gen/ts/resources/dispatch/dispatches';
+import { Dispatch, StatusDispatch } from '~~/gen/ts/resources/centrum/dispatches';
 
 const props = withDefaults(
     defineProps<{
@@ -25,8 +25,8 @@ defineEmits<{
     (e: 'goto', loc: Coordinate): void;
 }>();
 
-const dispatchBackground = computed(() => dispatchStatusToBGColor(props.dispatch.status?.status ?? 0));
-const dispatchAnimated = computed(() => (dispatchStatusAnimate(props.dispatch.status?.status ?? 0) ? 'animate-pulse' : ''));
+const dispatchBackground = computed(() => dispatchStatusToBGColor(props.dispatch.status?.status));
+const dispatchAnimated = computed(() => (dispatchStatusAnimate(props.dispatch.status?.status) ? 'animate-pulse' : ''));
 
 const dispatchAssistanceSound = useSound('/sounds/centrum/morse-sos.mp3', {
     volume: 0.15,

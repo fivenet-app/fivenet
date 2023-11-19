@@ -6,7 +6,7 @@ import UnitInfoPopover from '~/components/centrum/units/UnitInfoPopover.vue';
 import IDCopyBadge from '~/components/partials/IDCopyBadge.vue';
 import CitizenInfoPopover from '~/components/partials/citizens/CitizenInfoPopover.vue';
 import { useCentrumStore } from '~/store/centrum';
-import { Dispatch, StatusDispatch } from '~~/gen/ts/resources/dispatch/dispatches';
+import { Dispatch, StatusDispatch } from '~~/gen/ts/resources/centrum/dispatches';
 
 const props = withDefaults(
     defineProps<{
@@ -27,7 +27,7 @@ const centrumStore = useCentrumStore();
 const { ownUnitId } = storeToRefs(centrumStore);
 
 const expiresAt = props.dispatch.units.find((u) => u.unitId === ownUnitId.value)?.expiresAt;
-const dispatchBackground = computed(() => dispatchStatusToBGColor(props.dispatch.status?.status ?? 0));
+const dispatchBackground = computed(() => dispatchStatusToBGColor(props.dispatch.status?.status));
 
 const checked = ref(false);
 

@@ -6,7 +6,6 @@ import (
 	"github.com/galexrt/fivenet/pkg/config"
 	"github.com/nats-io/nats.go"
 	"go.uber.org/fx"
-	"go.uber.org/zap"
 )
 
 type Subject string
@@ -15,43 +14,36 @@ type Topic string
 
 type Type string
 
-type Eventus struct {
-	logger *zap.Logger
-
-	NC *nats.Conn
-	JS nats.JetStreamContext
-}
-
 type Params struct {
 	fx.In
 
 	LC     fx.Lifecycle
-	Logger *zap.Logger
 	Config *config.Config
 }
 
-func New(p Params) (*Eventus, error) {
+type Result struct {
+	fx.Out
+
+	JS nats.JetStreamContext
+}
+
+func New(p Params) (res Result, err error) {
 	// Connect to NATS
 	nc, err := nats.Connect(p.Config.NATS.URL, nats.Name("FiveNet"))
 	if err != nil {
-		return nil, err
+		return res, err
 	}
 
 	// Default `defaultAsyncPubAckInflight` is `4000` (`nats.go`)
 	js, err := nc.JetStream(nats.PublishAsyncMaxPending(256))
 	if err != nil {
-		return nil, err
+		return res, err
 	}
-
-	events := &Eventus{
-		logger: p.Logger.Named("eventus"),
-		NC:     nc,
-		JS:     js,
-	}
+	res.JS = js
 
 	p.LC.Append(fx.StopHook(func(_ context.Context) error {
-		return events.NC.Drain()
+		return nc.Drain()
 	}))
 
-	return events, nil
+	return res, nil
 }

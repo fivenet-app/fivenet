@@ -14,8 +14,8 @@ import CitizenInfoPopover from '~/components/partials/citizens/CitizenInfoPopove
 import Time from '~/components/partials/elements/Time.vue';
 import { useCentrumStore } from '~/store/centrum';
 import { useNotificatorStore } from '~/store/notificator';
-import { Dispatch, StatusDispatch, TakeDispatchResp } from '~~/gen/ts/resources/dispatch/dispatches';
-import { Settings } from '~~/gen/ts/resources/dispatch/settings';
+import { Dispatch, StatusDispatch, TakeDispatchResp } from '~~/gen/ts/resources/centrum/dispatches';
+import { Settings } from '~~/gen/ts/resources/centrum/settings';
 
 const props = defineProps<{
     open: boolean;
@@ -73,7 +73,7 @@ const { isRevealed, reveal, confirm, cancel, onConfirm } = useConfirmDialog();
 
 onConfirm(async (id) => await deleteDispatch(id));
 
-const dispatchStatusColors = computed(() => dispatchStatusToBGColor(props.dispatch.status?.status ?? 0));
+const dispatchStatusColors = computed(() => dispatchStatusToBGColor(props.dispatch.status?.status));
 
 const openAssign = ref(false);
 const openStatus = ref(false);

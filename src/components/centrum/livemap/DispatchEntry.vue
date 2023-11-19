@@ -3,7 +3,7 @@ import { CarEmergencyIcon } from 'mdi-vue3';
 import DispatchDetails from '~/components/centrum/dispatches/DispatchDetails.vue';
 import { dispatchStatusToBGColor } from '~/components/centrum/helpers';
 import Time from '~/components/partials/elements/Time.vue';
-import { Dispatch, StatusDispatch } from '~~/gen/ts/resources/dispatch/dispatches';
+import { Dispatch, StatusDispatch } from '~~/gen/ts/resources/centrum/dispatches';
 
 defineProps<{
     dispatch: Dispatch;

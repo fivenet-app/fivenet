@@ -1,11 +1,11 @@
 syntax = "proto3";
 
-package resources.dispatch;
+package resources.centrum;
 
 import "resources/users/users.proto";
 import "validate/validate.proto";
 
-option go_package = "github.com/galexrt/fivenet/gen/go/proto/resources/dispatch;dispatch";
+option go_package = "github.com/galexrt/fivenet/gen/go/proto/resources/centrum;centrum";
 
 enum CentrumMode {
   CENTRUM_MODE_UNSPECIFIED = 0;
@@ -22,7 +22,12 @@ message Settings {
   CentrumMode fallback_mode = 4 [(validate.rules).enum.defined_only = true];
 }
 
-message DisponentsChange {
+message Disponents {
   string job = 1 [(validate.rules).string.max_len = 20];
   repeated resources.users.UserShort disponents = 2;
+}
+
+message UserUnitMapping {
+  uint64 unit_id = 1;
+  int32 user_id = 2;
 }

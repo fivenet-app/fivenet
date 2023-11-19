@@ -90,6 +90,11 @@ export class GRPCClients {
         const { $loading } = useNuxtApp();
         $loading.errored();
 
+        let traceId = 'UNKNOWN';
+        if (err.meta['x-trace-id'] !== undefined) {
+            traceId = err.meta['x-trace-id'] as string;
+        }
+
         const notification = {
             id: '',
             type: 'error',
@@ -141,6 +146,10 @@ export class GRPCClients {
                     break;
             }
         }
+
+        console.error(
+            `GRPC Client: Failed request ${err.serviceName}/${err.methodName} (Trace ID: '${traceId}', Message: ${err.message}`,
+        );
 
         if (err.message.startsWith('errors.')) {
             const errSplits = err.message.split(';');

@@ -3,7 +3,7 @@ import { RpcError } from '@protobuf-ts/runtime-rpc';
 import DataErrorBlock from '~/components/partials/data/DataErrorBlock.vue';
 import DataNoDataBlock from '~/components/partials/data/DataNoDataBlock.vue';
 import DataPendingBlock from '~/components/partials/data/DataPendingBlock.vue';
-import { Unit } from '~~/gen/ts/resources/dispatch/units';
+import { Unit } from '~~/gen/ts/resources/centrum/units';
 import CreateOrUpdateUnitModal from '~/components/centrum/settings/CreateOrUpdateUnitModal.vue';
 import ListEntry from '~/components/centrum/settings/ListEntry.vue';
 import SettingsModal from '~/components/centrum/settings/SettingsModal.vue';

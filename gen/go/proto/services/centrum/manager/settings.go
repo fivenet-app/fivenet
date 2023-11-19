@@ -3,14 +3,14 @@ package manager
 import (
 	"context"
 
-	"github.com/galexrt/fivenet/gen/go/proto/resources/dispatch"
+	"github.com/galexrt/fivenet/gen/go/proto/resources/centrum"
 	errorscentrum "github.com/galexrt/fivenet/gen/go/proto/services/centrum/errors"
 	eventscentrum "github.com/galexrt/fivenet/gen/go/proto/services/centrum/events"
 	jet "github.com/go-jet/jet/v2/mysql"
 	"google.golang.org/protobuf/proto"
 )
 
-func (s *Manager) UpdateSettingsInDB(ctx context.Context, job string, settings *dispatch.Settings) (*dispatch.Settings, error) {
+func (s *Manager) UpdateSettingsInDB(ctx context.Context, job string, settings *centrum.Settings) (*centrum.Settings, error) {
 	stmt := tCentrumSettings.
 		INSERT(
 			tCentrumSettings.Job,
@@ -47,7 +47,7 @@ func (s *Manager) UpdateSettingsInDB(ctx context.Context, job string, settings *
 		return nil, errorscentrum.ErrFailedQuery
 	}
 
-	if _, err := s.events.JS.Publish(eventscentrum.BuildSubject(eventscentrum.TopicGeneral, eventscentrum.TypeGeneralSettings, job, 0), data); err != nil {
+	if _, err := s.js.Publish(eventscentrum.BuildSubject(eventscentrum.TopicGeneral, eventscentrum.TypeGeneralSettings, job), data); err != nil {
 		return nil, err
 	}
 

@@ -18,7 +18,7 @@ import (
 
 	"google.golang.org/protobuf/types/known/anypb"
 
-	dispatch "github.com/galexrt/fivenet/gen/go/proto/resources/dispatch"
+	centrum "github.com/galexrt/fivenet/gen/go/proto/resources/centrum"
 )
 
 // ensure the imports are used
@@ -36,7 +36,7 @@ var (
 	_ = anypb.Any{}
 	_ = sort.Sort
 
-	_ = dispatch.StatusUnit(0)
+	_ = centrum.StatusUnit(0)
 )
 
 // Validate checks the field values on ListDispatchActivityRequest with the
@@ -848,7 +848,7 @@ func (m *ListUnitsRequest) validate(all bool) error {
 	for idx, item := range m.GetStatus() {
 		_, _ = idx, item
 
-		if _, ok := dispatch.StatusUnit_name[int32(item)]; !ok {
+		if _, ok := centrum.StatusUnit_name[int32(item)]; !ok {
 			err := ListUnitsRequestValidationError{
 				field:  fmt.Sprintf("Status[%v]", idx),
 				reason: "value must be one of the defined enum values",
@@ -1578,7 +1578,7 @@ func (m *UpdateUnitStatusRequest) validate(all bool) error {
 
 	// no validation rules for UnitId
 
-	if _, ok := dispatch.StatusUnit_name[int32(m.GetStatus())]; !ok {
+	if _, ok := centrum.StatusUnit_name[int32(m.GetStatus())]; !ok {
 		err := UpdateUnitStatusRequestValidationError{
 			field:  "Status",
 			reason: "value must be one of the defined enum values",
@@ -2443,7 +2443,7 @@ func (m *ListDispatchesRequest) validate(all bool) error {
 	for idx, item := range m.GetStatus() {
 		_, _ = idx, item
 
-		if _, ok := dispatch.StatusDispatch_name[int32(item)]; !ok {
+		if _, ok := centrum.StatusDispatch_name[int32(item)]; !ok {
 			err := ListDispatchesRequestValidationError{
 				field:  fmt.Sprintf("Status[%v]", idx),
 				reason: "value must be one of the defined enum values",
@@ -2459,7 +2459,7 @@ func (m *ListDispatchesRequest) validate(all bool) error {
 	for idx, item := range m.GetNotStatus() {
 		_, _ = idx, item
 
-		if _, ok := dispatch.StatusDispatch_name[int32(item)]; !ok {
+		if _, ok := centrum.StatusDispatch_name[int32(item)]; !ok {
 			err := ListDispatchesRequestValidationError{
 				field:  fmt.Sprintf("NotStatus[%v]", idx),
 				reason: "value must be one of the defined enum values",
@@ -3473,7 +3473,7 @@ func (m *UpdateDispatchStatusRequest) validate(all bool) error {
 
 	// no validation rules for DispatchId
 
-	if _, ok := dispatch.StatusDispatch_name[int32(m.GetStatus())]; !ok {
+	if _, ok := centrum.StatusDispatch_name[int32(m.GetStatus())]; !ok {
 		err := UpdateDispatchStatusRequestValidationError{
 			field:  "Status",
 			reason: "value must be one of the defined enum values",
@@ -4318,7 +4318,7 @@ func (m *TakeDispatchRequest) validate(all bool) error {
 		errors = append(errors, err)
 	}
 
-	if _, ok := dispatch.TakeDispatchResp_name[int32(m.GetResp())]; !ok {
+	if _, ok := centrum.TakeDispatchResp_name[int32(m.GetResp())]; !ok {
 		err := TakeDispatchRequestValidationError{
 			field:  "Resp",
 			reason: "value must be one of the defined enum values",
@@ -5249,7 +5249,36 @@ func (m *StreamResponse) validate(all bool) error {
 			}
 			errors = append(errors, err)
 		}
-		// no validation rules for DispatchDeleted
+
+		if all {
+			switch v := interface{}(m.GetDispatchDeleted()).(type) {
+			case interface{ ValidateAll() error }:
+				if err := v.ValidateAll(); err != nil {
+					errors = append(errors, StreamResponseValidationError{
+						field:  "DispatchDeleted",
+						reason: "embedded message failed validation",
+						cause:  err,
+					})
+				}
+			case interface{ Validate() error }:
+				if err := v.Validate(); err != nil {
+					errors = append(errors, StreamResponseValidationError{
+						field:  "DispatchDeleted",
+						reason: "embedded message failed validation",
+						cause:  err,
+					})
+				}
+			}
+		} else if v, ok := interface{}(m.GetDispatchDeleted()).(interface{ Validate() error }); ok {
+			if err := v.Validate(); err != nil {
+				return StreamResponseValidationError{
+					field:  "DispatchDeleted",
+					reason: "embedded message failed validation",
+					cause:  err,
+				}
+			}
+		}
+
 	case *StreamResponse_DispatchUpdated:
 		if v == nil {
 			err := StreamResponseValidationError{

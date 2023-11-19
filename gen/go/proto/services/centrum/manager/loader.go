@@ -5,7 +5,7 @@ import (
 	"errors"
 	"fmt"
 
-	dispatch "github.com/galexrt/fivenet/gen/go/proto/resources/dispatch"
+	"github.com/galexrt/fivenet/gen/go/proto/resources/centrum"
 	users "github.com/galexrt/fivenet/gen/go/proto/resources/users"
 	"github.com/galexrt/fivenet/pkg/utils"
 	jet "github.com/go-jet/jet/v2/mysql"
@@ -30,7 +30,7 @@ func (s *Manager) LoadSettings(ctx context.Context, job string) error {
 		)
 	}
 
-	var dest []*dispatch.Settings
+	var dest []*centrum.Settings
 	if err := stmt.QueryContext(ctx, s.db, &dest); err != nil {
 		return err
 	}
@@ -92,11 +92,15 @@ func (s *Manager) LoadDisponents(ctx context.Context, job string) error {
 		perJob[user.Job] = append(perJob[user.Job], user)
 	}
 
-	if len(perJob) == 0 {
-		s.UpdateDisponents("", nil)
+	if job != "" {
+		if err := s.UpdateDisponents(job, perJob[job]); err != nil {
+			return err
+		}
 	} else {
 		for job, us := range perJob {
-			s.UpdateDisponents(job, us)
+			if err := s.UpdateDisponents(job, us); err != nil {
+				return err
+			}
 		}
 	}
 
@@ -151,7 +155,7 @@ func (s *Manager) LoadUnits(ctx context.Context, id uint64) error {
 			tUnitStatus.Status.ASC(),
 		)
 
-	units := []*dispatch.Unit{}
+	units := []*centrum.Unit{}
 	if err := stmt.QueryContext(ctx, s.db, &units); err != nil {
 		return err
 	}
@@ -161,7 +165,7 @@ func (s *Manager) LoadUnits(ctx context.Context, id uint64) error {
 			return err
 		}
 
-		if err := s.State.UpdateUnit(units[i].Job, units[i].Id, units[i]); err != nil {
+		if err := s.State.UpdateUnit(ctx, units[i].Job, units[i].Id, units[i]); err != nil {
 			return err
 		}
 
@@ -205,9 +209,9 @@ func (s *Manager) LoadDispatches(ctx context.Context, id uint64) error {
 		).
 			// Don't load archived dispatches into cache
 			AND(tDispatchStatus.Status.NOT_IN(
-				jet.Int16(int16(dispatch.StatusDispatch_STATUS_DISPATCH_ARCHIVED)),
-				jet.Int16(int16(dispatch.StatusDispatch_STATUS_DISPATCH_CANCELLED)),
-				jet.Int16(int16(dispatch.StatusDispatch_STATUS_DISPATCH_COMPLETED)),
+				jet.Int16(int16(centrum.StatusDispatch_STATUS_DISPATCH_ARCHIVED)),
+				jet.Int16(int16(centrum.StatusDispatch_STATUS_DISPATCH_CANCELLED)),
+				jet.Int16(int16(centrum.StatusDispatch_STATUS_DISPATCH_COMPLETED)),
 			)),
 	)
 
@@ -266,7 +270,7 @@ func (s *Manager) LoadDispatches(ctx context.Context, id uint64) error {
 		).
 		LIMIT(200)
 
-	dispatches := []*dispatch.Dispatch{}
+	dispatches := []*centrum.Dispatch{}
 	if err := stmt.QueryContext(ctx, s.db, &dispatches); err != nil {
 		return err
 	}
@@ -295,36 +299,39 @@ func (s *Manager) LoadDispatches(ctx context.Context, id uint64) error {
 			postal := s.postals.Closest(dispatches[i].X, dispatches[i].Y)
 			dispatches[i].Postal = postal.Code
 
-			if err := s.UpdateDispatch(ctx, dispatches[i].Job, dispatches[i].CreatorId, dispatches[i], false); err != nil {
+			if _, err := s.UpdateDispatch(ctx, dispatches[i].Job, dispatches[i].CreatorId, dispatches[i], false); err != nil {
 				return err
 			}
 		}
 
-		dm := s.GetDispatchesMap(dispatches[i].Job)
-		if dsp, loaded := dm.LoadOrStore(dispatches[i].Id, dispatches[i]); loaded {
+		if dsp := s.GetDispatch(dispatches[i].Job, dispatches[i].Id); dsp != nil {
 			if dsp.X != dispatches[i].X || dsp.Y != dispatches[i].Y {
 				s.State.GetDispatchLocations(dsp.Job).Remove(dsp, func(p orb.Pointer) bool {
-					return p.(*dispatch.Dispatch).Id == dsp.Id
+					return p.(*centrum.Dispatch).Id == dsp.Id
 				})
 			}
 
-			if err := s.State.UpdateDispatch(dispatches[i].Job, dispatches[i].Id, dispatches[i]); err != nil {
+			if err := s.State.UpdateDispatch(ctx, dispatches[i].Job, dispatches[i].Id, dispatches[i]); err != nil {
+				return err
+			}
+		} else {
+			if err := s.State.UpdateDispatch(ctx, dispatches[i].Job, dispatches[i].Id, dispatches[i]); err != nil {
 				return err
 			}
 		}
 
-		// Ensure dispatch has status new if it currently doesn't have one
+		// Ensure dispatch has a status
 		if dispatches[i].Status == nil {
-			if err := s.UpdateDispatchStatus(ctx, dispatches[i].Job, dispatches[i], &dispatch.DispatchStatus{
+			if _, err := s.UpdateDispatchStatus(ctx, dispatches[i].Job, dispatches[i], &centrum.DispatchStatus{
 				DispatchId: dispatches[i].Id,
-				Status:     dispatch.StatusDispatch_STATUS_DISPATCH_NEW,
+				Status:     centrum.StatusDispatch_STATUS_DISPATCH_NEW,
 			}); err != nil {
 				return err
 			}
 		}
 
 		if !s.State.GetDispatchLocations(dispatches[i].Job).Has(dispatches[i], func(p orb.Pointer) bool {
-			return p.(*dispatch.Dispatch).Id == dispatches[i].Id
+			return p.(*centrum.Dispatch).Id == dispatches[i].Id
 		}) {
 			s.State.GetDispatchLocations(dispatches[i].Job).Add(dispatches[i])
 		}
@@ -333,7 +340,7 @@ func (s *Manager) LoadDispatches(ctx context.Context, id uint64) error {
 	return nil
 }
 
-func (s *Manager) LoadDispatchAssignments(ctx context.Context, job string, dispatchId uint64) ([]*dispatch.DispatchAssignment, error) {
+func (s *Manager) LoadDispatchAssignments(ctx context.Context, job string, dispatchId uint64) ([]*centrum.DispatchAssignment, error) {
 	stmt := tDispatch.
 		SELECT(
 			tDispatchUnit.DispatchID,
@@ -349,15 +356,15 @@ func (s *Manager) LoadDispatchAssignments(ctx context.Context, job string, dispa
 			tDispatchUnit.DispatchID.EQ(jet.Uint64(dispatchId)),
 		)
 
-	dest := []*dispatch.DispatchAssignment{}
+	dest := []*centrum.DispatchAssignment{}
 	if err := stmt.QueryContext(ctx, s.db, &dest); err != nil {
 		return nil, err
 	}
 
 	// Resolve units based on the dispatch unit assignments
 	for i := 0; i < len(dest); i++ {
-		unit, ok := s.GetUnit(job, dest[i].UnitId)
-		if !ok {
+		unit := s.GetUnit(job, dest[i].UnitId)
+		if unit == nil {
 			return nil, fmt.Errorf("no unit found with id")
 		}
 

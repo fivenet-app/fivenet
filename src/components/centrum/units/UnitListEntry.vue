@@ -1,7 +1,7 @@
 <script lang="ts" setup>
 import { unitStatusToBGColor } from '~/components/centrum/helpers';
 import { type RGB } from '~/utils/colour';
-import { StatusUnit, Unit } from '~~/gen/ts/resources/dispatch/units';
+import { StatusUnit, Unit } from '~~/gen/ts/resources/centrum/units';
 import UnitDetails from '~/components/centrum/units/UnitDetails.vue';
 
 const props = defineProps<{
@@ -37,7 +37,7 @@ const open = ref(false);
         </div>
         <div
             class="flex w-[5rem] flex-shrink-0 items-center justify-center rounded-r-md text-sm font-medium text-neutral border-r border-t border-b text-center"
-            :class="unitStatusToBGColor(unit.status?.status ?? 0)"
+            :class="unitStatusToBGColor(unit.status?.status)"
         >
             {{ $t(`enums.centrum.StatusUnit.${StatusUnit[unit.status?.status ?? 0]}`) }}
         </div>

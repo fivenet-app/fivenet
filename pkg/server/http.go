@@ -130,6 +130,7 @@ func setupHTTPServer(p Params) *gin.Engine {
 
 	// Tracing
 	e.Use(otelgin.Middleware("fivenet", otelgin.WithTracerProvider(p.TP)))
+	e.Use(InjectToHeaders(p.TP))
 
 	// Register HTTP API routes
 	rs := api.New(p.Logger, p.Config)

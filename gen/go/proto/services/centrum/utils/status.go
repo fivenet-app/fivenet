@@ -1,20 +1,20 @@
 package centrumutils
 
-import "github.com/galexrt/fivenet/gen/go/proto/resources/dispatch"
+import "github.com/galexrt/fivenet/gen/go/proto/resources/centrum"
 
-func IsStatusDispatchComplete(in dispatch.StatusDispatch) bool {
-	return in == dispatch.StatusDispatch_STATUS_DISPATCH_ARCHIVED ||
-		in == dispatch.StatusDispatch_STATUS_DISPATCH_CANCELLED ||
-		in == dispatch.StatusDispatch_STATUS_DISPATCH_COMPLETED
+func IsStatusDispatchComplete(in centrum.StatusDispatch) bool {
+	return in == centrum.StatusDispatch_STATUS_DISPATCH_ARCHIVED ||
+		in == centrum.StatusDispatch_STATUS_DISPATCH_CANCELLED ||
+		in == centrum.StatusDispatch_STATUS_DISPATCH_COMPLETED
 }
 
-func IsStatusDispatchUnassigned(in dispatch.StatusDispatch) bool {
-	return in == dispatch.StatusDispatch_STATUS_DISPATCH_UNSPECIFIED ||
-		in == dispatch.StatusDispatch_STATUS_DISPATCH_NEW ||
-		in == dispatch.StatusDispatch_STATUS_DISPATCH_UNASSIGNED
+func IsStatusDispatchUnassigned(in centrum.StatusDispatch) bool {
+	return in == centrum.StatusDispatch_STATUS_DISPATCH_UNSPECIFIED ||
+		in == centrum.StatusDispatch_STATUS_DISPATCH_NEW ||
+		in == centrum.StatusDispatch_STATUS_DISPATCH_UNASSIGNED
 }
 
-func IsDispatchUnassigned(in *dispatch.Dispatch) bool {
+func IsDispatchUnassigned(in *centrum.Dispatch) bool {
 	if in == nil {
 		return false
 	}

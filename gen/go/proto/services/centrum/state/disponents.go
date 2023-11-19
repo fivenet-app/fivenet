@@ -1,25 +1,22 @@
 package state
 
-import "github.com/galexrt/fivenet/gen/go/proto/resources/users"
+import (
+	"github.com/galexrt/fivenet/gen/go/proto/resources/centrum"
+	"github.com/galexrt/fivenet/gen/go/proto/resources/users"
+)
 
-func (s *State) GetDisponents(job string) []*users.UserShort {
-	disponents, ok := s.disponents.Load(job)
-	if !ok {
-		return nil
+func (s *State) GetDisponents(job string) ([]*users.UserShort, error) {
+	disponents, ok := s.disponents.Get(job)
+	if !ok || disponents == nil {
+		return nil, nil
 	}
 
-	return disponents
+	return disponents.Disponents, nil
 }
 
-func (s *State) UpdateDisponents(job string, disponents []*users.UserShort) {
-	if job == "" {
-		s.disponents.Clear()
-		return
-	}
-
-	if len(disponents) == 0 {
-		s.disponents.Delete(job)
-	} else {
-		s.disponents.Store(job, disponents)
-	}
+func (s *State) UpdateDisponents(job string, disponents []*users.UserShort) error {
+	return s.disponents.Put(job, &centrum.Disponents{
+		Job:        job,
+		Disponents: disponents,
+	})
 }

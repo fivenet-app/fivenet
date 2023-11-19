@@ -7,7 +7,7 @@ import { CloseIcon, HoopHouseIcon, LoadingIcon } from 'mdi-vue3';
 import { defineRule } from 'vee-validate';
 import { dispatchStatusToBGColor, dispatchStatuses } from '~/components/centrum/helpers';
 import IDCopyBadge from '~/components/partials/IDCopyBadge.vue';
-import { StatusDispatch } from '~~/gen/ts/resources/dispatch/dispatches';
+import { StatusDispatch } from '~~/gen/ts/resources/centrum/dispatches';
 
 const props = defineProps<{
     open: boolean;

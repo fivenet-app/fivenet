@@ -6,7 +6,7 @@ import { useThrottleFn } from '@vueuse/core';
 import { CloseIcon, HoopHouseIcon, LoadingIcon } from 'mdi-vue3';
 import { defineRule } from 'vee-validate';
 import { unitStatusToBGColor, unitStatuses } from '~/components/centrum/helpers';
-import { StatusUnit, Unit } from '~~/gen/ts/resources/dispatch/units';
+import { StatusUnit, Unit } from '~~/gen/ts/resources/centrum/units';
 
 const props = defineProps<{
     open: boolean;
@@ -64,6 +64,12 @@ const { handleSubmit, meta, setFieldValue } = useForm<FormData>({
     validateOnMount: true,
 });
 
+watch(props, () => {
+    if (props.status) {
+        setFieldValue('status', props.status.valueOf());
+    }
+});
+
 const canSubmit = ref(true);
 const onSubmit = handleSubmit(
     async (values): Promise<void> =>
@@ -73,12 +79,6 @@ const onSubmitThrottle = useThrottleFn(async (e) => {
     canSubmit.value = false;
     await onSubmit(e);
 }, 1000);
-
-watch(props, () => {
-    if (props.status) {
-        setFieldValue('status', props.status.valueOf());
-    }
-});
 </script>
 
 <template>

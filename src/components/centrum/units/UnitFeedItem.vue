@@ -2,7 +2,7 @@
 import { AccountPlusIcon, AccountRemoveIcon, BriefcaseIcon, CoffeeIcon, HelpIcon, PlayIcon, StopIcon } from 'mdi-vue3';
 import CitizenInfoPopover from '~/components/partials/citizens/CitizenInfoPopover.vue';
 import Time from '~/components/partials/elements/Time.vue';
-import { StatusUnit, UnitStatus } from '~~/gen/ts/resources/dispatch/units';
+import { StatusUnit, UnitStatus } from '~~/gen/ts/resources/centrum/units';
 import UnitInfoPopover from '~/components/centrum/units/UnitInfoPopover.vue';
 
 defineProps<{

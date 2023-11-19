@@ -2,7 +2,7 @@
 // @generated from protobuf file "resources/livemap/livemap.proto" (package "resources.livemap", syntax proto3)
 // tslint:disable
 import { MessageType } from "@protobuf-ts/runtime";
-import { Unit } from "../dispatch/units.js";
+import { Unit } from "../centrum/units.js";
 import { UserShort } from "../users/users.js";
 import { Timestamp } from "../timestamp/timestamp.js";
 /**
@@ -81,7 +81,7 @@ export interface UserMarker {
      */
     unitId?: string;
     /**
-     * @generated from protobuf field: optional resources.dispatch.Unit unit = 5;
+     * @generated from protobuf field: optional resources.centrum.Unit unit = 5;
      */
     unit?: Unit;
 }

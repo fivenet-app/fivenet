@@ -1,12 +1,12 @@
 syntax = "proto3";
 
-package resources.dispatch;
+package resources.centrum;
 
 import "resources/timestamp/timestamp.proto";
 import "resources/users/users.proto";
 import "validate/validate.proto";
 
-option go_package = "github.com/galexrt/fivenet/gen/go/proto/resources/dispatch;dispatch";
+option go_package = "github.com/galexrt/fivenet/gen/go/proto/resources/centrum;centrum";
 
 message Unit {
   uint64 id = 1 [jstype = JS_STRING]; // @gotags: sql:"primary_key" alias:"id"
@@ -60,7 +60,7 @@ message UnitStatus {
   uint64 id = 1 [jstype = JS_STRING]; // @gotags: sql:"primary_key" alias:"id"
   optional resources.timestamp.Timestamp created_at = 2;
   uint64 unit_id = 3 [jstype = JS_STRING];
-  optional resources.dispatch.Unit unit = 4;
+  optional resources.centrum.Unit unit = 4;
   StatusUnit status = 5 [(validate.rules).enum.defined_only = true];
   // @sanitize
   optional string reason = 6 [(validate.rules).string.max_len = 255];

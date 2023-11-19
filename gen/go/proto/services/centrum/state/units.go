@@ -1,53 +1,50 @@
 package state
 
 import (
+	"context"
 	"strings"
 
-	dispatch "github.com/galexrt/fivenet/gen/go/proto/resources/dispatch"
+	"github.com/galexrt/fivenet/gen/go/proto/resources/centrum"
 	"github.com/galexrt/fivenet/pkg/utils"
-	"github.com/puzpuzpuz/xsync/v3"
 	"golang.org/x/exp/slices"
-	"google.golang.org/protobuf/proto"
 )
 
-func (s *State) GetUnit(job string, id uint64) (*dispatch.Unit, bool) {
-	units, ok := s.units.Load(job)
-	if !ok {
-		return nil, false
-	}
-
-	unit, ok := units.Load(id)
-	if !ok {
-		return nil, false
-	}
-
-	return proto.Clone(unit).(*dispatch.Unit), true
+func (s *State) GetUnit(job string, id uint64) *centrum.Unit {
+	u, _ := s.units.Get(JobIdKey(job, id))
+	return u
 }
 
-func (s *State) ListUnits(job string) ([]*dispatch.Unit, bool) {
-	us := []*dispatch.Unit{}
+func (s *State) ListUnits(job string) ([]*centrum.Unit, bool) {
+	us := []*centrum.Unit{}
 
-	units := s.GetUnitsMap(job)
+	ids, err := s.units.Keys(job)
+	if err != nil {
+		return us, false
+	}
 
-	units.Range(func(key uint64, unit *dispatch.Unit) bool {
+	for _, id := range ids {
+		unit, ok := s.units.Get(id)
+		if !ok || unit == nil {
+			continue
+		}
+
 		us = append(us, unit)
-		return true
-	})
+	}
 
-	slices.SortFunc(us, func(a, b *dispatch.Unit) int {
+	slices.SortFunc(us, func(a, b *centrum.Unit) int {
 		return strings.Compare(a.Name, b.Name)
 	})
 
 	return us, true
 }
 
-func (s *State) FilterUnits(job string, statuses []dispatch.StatusUnit, notStatuses []dispatch.StatusUnit) []*dispatch.Unit {
+func (s *State) FilterUnits(job string, statuses []centrum.StatusUnit, notStatuses []centrum.StatusUnit) []*centrum.Unit {
 	units, ok := s.ListUnits(job)
 	if !ok {
 		return nil
 	}
 
-	us := []*dispatch.Unit{}
+	us := []*centrum.Unit{}
 	for i := 0; i < len(units); i++ {
 		include := true
 
@@ -72,34 +69,34 @@ func (s *State) FilterUnits(job string, statuses []dispatch.StatusUnit, notStatu
 	return us
 }
 
-func (s *State) DeleteUnit(job string, id uint64) {
-	units, ok := s.units.Load(job)
-	if ok {
-		units.Delete(id)
-	}
-
-	s.ClearUnitLock(id)
+func (s *State) DeleteUnit(job string, id uint64) error {
+	return s.units.Delete(JobIdKey(job, id))
 }
 
-func (s *State) UpdateUnit(job string, unitId uint64, unit *dispatch.Unit) error {
-	if u, ok := s.GetUnitsMap(job).LoadOrStore(unitId, unit); ok {
-		lock := s.GetUnitLock(unitId)
-		lock.Lock()
-		defer lock.Unlock()
+func (s *State) UpdateUnit(ctx context.Context, job string, id uint64, unit *centrum.Unit) error {
+	s.units.ComputeUpdate(JobIdKey(job, id), true, func(key string, existing *centrum.Unit) (*centrum.Unit, error) {
+		if existing == nil {
+			return unit, nil
+		}
 
-		u.Merge(unit)
-	}
+		existing.Merge(unit)
+
+		return existing, nil
+	})
 
 	return nil
 }
 
-func (s *State) GetUnitsJobs() []string {
-	list := []string{}
+func (s *State) UpdateUnitStatus(ctx context.Context, job string, id uint64, status *centrum.UnitStatus) error {
+	s.units.ComputeUpdate(JobIdKey(job, id), true, func(key string, existing *centrum.Unit) (*centrum.Unit, error) {
+		if existing == nil {
+			return nil, nil
+		}
 
-	s.units.Range(func(job string, _ *xsync.MapOf[uint64, *dispatch.Unit]) bool {
-		list = append(list, job)
-		return true
+		existing.Status = status
+
+		return existing, nil
 	})
 
-	return list
+	return nil
 }

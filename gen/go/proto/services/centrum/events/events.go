@@ -40,13 +40,12 @@ func SplitSubject(subject string) (string, events.Topic, events.Type) {
 	return split[1], events.Topic(split[2]), events.Type(split[3])
 }
 
-// Structure: "centrum.JOB.TOPIC.TYPE.ID"
-func BuildSubject(topic events.Topic, tType events.Type, job string, id uint64) string {
-	format := "%s.%s." + string(topic) + "." + string(tType)
-	return fmt.Sprintf(format+".%d", BaseSubject, job, id)
+// Structure: "BASE_SUJBECT.JOB.TOPIC.TYPE.ID"
+func BuildSubject(topic events.Topic, tType events.Type, job string) string {
+	return fmt.Sprintf("%s.%s.%s.%s", BaseSubject, job, topic, tType)
 }
 
-func RegisterStreams(ctx context.Context, ev *events.Eventus) error {
+func RegisterStreams(ctx context.Context, js nats.JetStreamContext) error {
 	cfg := &nats.StreamConfig{
 		Name:        "CENTRUM",
 		Description: "FiveNet Centrum events.",
@@ -58,12 +57,12 @@ func RegisterStreams(ctx context.Context, ev *events.Eventus) error {
 		Duplicates:  20 * time.Second,
 	}
 
-	if _, err := ev.JS.UpdateStream(cfg); err != nil {
+	if _, err := js.UpdateStream(cfg); err != nil {
 		if !errors.Is(nats.ErrStreamNotFound, err) {
 			return err
 		}
 
-		if _, err := ev.JS.AddStream(cfg); err != nil {
+		if _, err := js.AddStream(cfg); err != nil {
 			return err
 		}
 	}

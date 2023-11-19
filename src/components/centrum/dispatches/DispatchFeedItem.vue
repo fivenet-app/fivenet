@@ -17,7 +17,7 @@ import DispatchStatusInfoPopover from '~/components/centrum/dispatches/DispatchS
 import UnitInfoPopover from '~/components/centrum/units/UnitInfoPopover.vue';
 import CitizenInfoPopover from '~/components/partials/citizens/CitizenInfoPopover.vue';
 import Time from '~/components/partials/elements/Time.vue';
-import { DispatchStatus, StatusDispatch } from '~~/gen/ts/resources/dispatch/dispatches';
+import { DispatchStatus, StatusDispatch } from '~~/gen/ts/resources/centrum/dispatches';
 
 withDefaults(
     defineProps<{

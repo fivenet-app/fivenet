@@ -37,21 +37,21 @@ func (p *Perms) registerEvents(ctx context.Context) error {
 		Storage:   nats.MemoryStorage,
 	}
 
-	if _, err := p.events.JS.UpdateStream(cfg); err != nil {
+	if _, err := p.js.UpdateStream(cfg); err != nil {
 		if !errors.Is(nats.ErrStreamNotFound, err) {
 			return err
 		}
 
-		if _, err := p.events.JS.AddStream(cfg); err != nil {
+		if _, err := p.js.AddStream(cfg); err != nil {
 			return err
 		}
 	}
 
-	sub, err := p.events.JS.Subscribe(fmt.Sprintf("%s.>", BaseSubject), p.handleMessage, nats.DeliverNew())
+	sub, err := p.js.Subscribe(fmt.Sprintf("%s.>", BaseSubject), p.handleMessage, nats.DeliverNew())
 	if err != nil {
 		return err
 	}
-	p.eventSub = sub
+	p.jsSub = sub
 
 	return nil
 }
@@ -95,7 +95,7 @@ func (p *Perms) publishMessage(subj events.Type, data any) error {
 		return err
 	}
 
-	if _, err := p.events.JS.Publish(fmt.Sprintf("%s.%s", BaseSubject, subj), out); err != nil {
+	if _, err := p.js.Publish(fmt.Sprintf("%s.%s", BaseSubject, subj), out); err != nil {
 		return err
 	}
 

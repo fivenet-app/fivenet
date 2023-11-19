@@ -1,22 +1,16 @@
 package servers
 
 import (
-	"fmt"
-	"log"
 	"time"
 
+	"github.com/nats-io/nats-server/v2/server"
 	"github.com/nats-io/nats.go"
-	"github.com/ory/dockertest/v3"
-	"github.com/ory/dockertest/v3/docker"
 )
 
 var TestNATSServer *natsServer
 
 type natsServer struct {
-	pool     *dockertest.Pool
-	resource *dockertest.Resource
-
-	stopped bool
+	server *server.Server
 }
 
 func init() {
@@ -24,73 +18,73 @@ func init() {
 }
 
 func (m *natsServer) Setup() {
-	// uses a sensible default on windows (tcp/http) and linux/osx (socket)
-	var err error
-	m.pool, err = dockertest.NewPool("")
-	if err != nil {
-		log.Fatalf("could not construct pool: %q", err)
-	}
-	m.pool.MaxWait = 3 * time.Minute
-
-	// uses pool to try to connect to Docker
-	err = m.pool.Client.Ping()
-	if err != nil {
-		log.Fatalf("could not connect to Docker: %q", err)
+	opts := &server.Options{
+		JetStream: true,
+		Username:  "fivenet",
+		Password:  "changeme",
+		Port:      -1,
 	}
 
-	// pulls an image, creates a container based on it and runs it
-	m.resource, err = m.pool.RunWithOptions(
-		&dockertest.RunOptions{
-			Repository: "docker.io/library/nats",
-			Tag:        "2.10.5-alpine3.18",
-			Cmd: []string{
-				"--user=fivenet",
-				"--pass=changeme",
-				"--jetstream",
-			},
-		},
-		func(config *docker.HostConfig) {
-			// set AutoRemove to true so that stopped container goes away by itself
-			config.AutoRemove = true
-			config.RestartPolicy = docker.RestartPolicy{
-				Name: "no",
-			}
-		},
-	)
+	// Initialize new server with options
+	ns, err := server.NewServer(opts)
 	if err != nil {
-		log.Fatalf("could not start resource: %q", err)
+		panic(err)
 	}
 
-	// exponential backoff-retry, because the application in the container might not be ready to accept connections yet
-	if err := m.pool.Retry(func() error {
-		client, err := nats.Connect(m.GetURL(), nats.Name("FiveNet natsmanager"))
+	// Start the server via goroutine
+	go ns.Start()
+	// Wait for server to be ready for connections
+	if !ns.ReadyForConnections(4 * time.Second) {
+		panic("not ready for connection")
+	}
+
+	nc, err := nats.Connect(ns.ClientURL())
+	if err != nil {
+		panic(err)
+	}
+
+	js, err := nc.JetStream()
+	if err != nil {
+		panic(err)
+	}
+
+	buckets := []string{"stat", "basic", "list", "listnr"}
+	for _, bucket := range buckets {
+		_, err = js.CreateKeyValue(&nats.KeyValueConfig{
+			Bucket:  bucket,
+			History: 5,
+			Storage: nats.MemoryStorage,
+		})
 		if err != nil {
-			return err
+			panic(err)
 		}
-		defer client.Close()
-
-		if !client.IsConnected() {
-			return fmt.Errorf("NATS client not connected")
-		}
-
-		return nil
-	}); err != nil {
-		log.Fatalf("could not connect to nats: %q", err)
 	}
+
+	m.server = ns
 }
 
 func (m *natsServer) GetURL() string {
-	return fmt.Sprintf("nats://fivenet:changeme@localhost:%s", m.resource.GetPort("4222/tcp"))
+	return m.server.ClientURL()
+}
+
+func (m *natsServer) GetClient() (*nats.Conn, error) {
+	return nats.Connect(m.GetURL())
+}
+
+func (m *natsServer) GetJS() (nats.JetStreamContext, error) {
+	cli, err := m.GetClient()
+	if err != nil {
+		return nil, err
+	}
+
+	return cli.JetStream()
 }
 
 func (m *natsServer) Stop() {
-	if m.stopped {
+	if m == nil {
 		return
 	}
-	m.stopped = true
 
-	// You can't defer this because os.Exit doesn't care for defer
-	if err := m.pool.Purge(m.resource); err != nil {
-		log.Fatalf("could not purge container resource: %q", err)
-	}
+	m.Stop()
+	m = nil
 }

@@ -1,12 +1,13 @@
 <script lang="ts" setup>
 import { Dialog, DialogPanel, DialogTitle, TransitionChild, TransitionRoot } from '@headlessui/vue';
 import { RpcError } from '@protobuf-ts/runtime-rpc';
-import { CancelIcon, CheckIcon, CheckboxBlankOutlineIcon, CloseIcon } from 'mdi-vue3';
+import { useThrottleFn } from '@vueuse/core';
+import { CancelIcon, CheckIcon, CheckboxBlankOutlineIcon, CloseIcon, LoadingIcon } from 'mdi-vue3';
 import { unitStatusToBGColor } from '~/components/centrum/helpers';
 import IDCopyBadge from '~/components/partials/IDCopyBadge.vue';
 import { useCentrumStore } from '~/store/centrum';
-import { Dispatch } from '~~/gen/ts/resources/dispatch/dispatches';
-import { StatusUnit, Unit } from '~~/gen/ts/resources/dispatch/units';
+import { Dispatch } from '~~/gen/ts/resources/centrum/dispatches';
+import { StatusUnit, Unit } from '~~/gen/ts/resources/centrum/units';
 
 const centrumStore = useCentrumStore();
 const { getSortedUnits } = storeToRefs(centrumStore);
@@ -61,6 +62,13 @@ function selectUnit(item: Unit): void {
         selectedUnits.value.push(item.id);
     }
 }
+
+const canSubmit = ref(true);
+
+const onSubmitThrottle = useThrottleFn(async () => {
+    canSubmit.value = false;
+    await assignDispatch().finally(() => setTimeout(() => (canSubmit.value = true), 400));
+}, 1000);
 </script>
 
 <template>
@@ -114,7 +122,7 @@ function selectUnit(item: Unit): void {
                                                                     :disabled="unit.users.length === 0"
                                                                     class="text-neutral hover:bg-primary-100/10 hover:text-neutral font-medium hover:transition-all group flex w-full flex-row items-center rounded-md p-2 text-xs my-0.5"
                                                                     :class="[
-                                                                        unitStatusToBGColor(unit.status?.status ?? 0),
+                                                                        unitStatusToBGColor(unit.status?.status),
                                                                         unit.users.length === 0 ? 'disabled !bg-error-600' : '',
                                                                     ]"
                                                                     @click="selectUnit(unit)"
@@ -158,9 +166,18 @@ function selectUnit(item: Unit): void {
                                         <span class="isolate inline-flex rounded-md shadow-sm pr-4 w-full">
                                             <button
                                                 type="button"
-                                                class="w-full relative inline-flex items-center rounded-l-md bg-primary-500 py-2.5 px-3.5 text-sm font-semibold text-neutral hover:bg-primary-400"
-                                                @click="assignDispatch"
+                                                class="w-full relative inline-flex items-center rounded-l-md py-2.5 px-3.5 text-sm font-semibold text-neutral"
+                                                :disabled="!canSubmit"
+                                                :class="[
+                                                    !canSubmit
+                                                        ? 'disabled bg-base-500 hover:bg-base-400 focus-visible:outline-base-500'
+                                                        : 'bg-primary-500 hover:bg-primary-400 focus-visible:outline-primary-500',
+                                                ]"
+                                                @click="onSubmitThrottle"
                                             >
+                                                <template v-if="!canSubmit">
+                                                    <LoadingIcon class="animate-spin h-5 w-5 mr-2" />
+                                                </template>
                                                 {{ $t('common.update') }}
                                             </button>
                                             <button

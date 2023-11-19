@@ -7,12 +7,11 @@ import (
 	"sync"
 	"time"
 
-	dispatch "github.com/galexrt/fivenet/gen/go/proto/resources/dispatch"
+	centrum "github.com/galexrt/fivenet/gen/go/proto/resources/centrum"
 	"github.com/galexrt/fivenet/gen/go/proto/resources/rector"
 	eventscentrum "github.com/galexrt/fivenet/gen/go/proto/services/centrum/events"
 	"github.com/galexrt/fivenet/gen/go/proto/services/centrum/manager"
 	"github.com/galexrt/fivenet/pkg/config"
-	"github.com/galexrt/fivenet/pkg/events"
 	"github.com/galexrt/fivenet/pkg/grpc/auth"
 	"github.com/galexrt/fivenet/pkg/mstlystcdata"
 	"github.com/galexrt/fivenet/pkg/perms"
@@ -40,7 +39,7 @@ type Server struct {
 	db       *sql.DB
 	ps       perms.Permissions
 	auditer  audit.IAuditer
-	events   *events.Eventus
+	js       nats.JetStreamContext
 	enricher *mstlystcdata.Enricher
 	tracker  *tracker.Tracker
 	postals  *postals.Postals
@@ -62,7 +61,7 @@ type Params struct {
 	DB       *sql.DB
 	Perms    perms.Permissions
 	Audit    audit.IAuditer
-	Events   *events.Eventus
+	JS       nats.JetStreamContext
 	Enricher *mstlystcdata.Enricher
 	Tracker  *tracker.Tracker
 	Postals  *postals.Postals
@@ -88,7 +87,7 @@ func NewServer(p Params) (*Server, error) {
 		db:       p.DB,
 		ps:       p.Perms,
 		auditer:  p.Audit,
-		events:   p.Events,
+		js:       p.JS,
 		enricher: p.Enricher,
 		tracker:  p.Tracker,
 		postals:  p.Postals,
@@ -105,7 +104,7 @@ func NewServer(p Params) (*Server, error) {
 			go broker.Start()
 		}
 
-		if err := eventscentrum.RegisterStreams(ctx, s.events); err != nil {
+		if err := eventscentrum.RegisterStreams(ctx, s.js); err != nil {
 			return fmt.Errorf("failed to register events: %w", err)
 		}
 
@@ -128,7 +127,7 @@ func NewServer(p Params) (*Server, error) {
 }
 
 func (s *Server) RegisterSubscriptions(ctx context.Context) error {
-	if _, err := s.events.JS.Subscribe(fmt.Sprintf("%s.>", eventscentrum.BaseSubject), s.watchForChanges, nats.DeliverLastPerSubject()); err != nil {
+	if _, err := s.js.Subscribe(fmt.Sprintf("%s.>", eventscentrum.BaseSubject), s.watchForChanges, nats.DeliverLastPerSubject()); err != nil {
 		return err
 	}
 
@@ -144,14 +143,12 @@ func (s *Server) watchForChanges(msg *nats.Msg) {
 		return
 	}
 
-	meta, _ := msg.Metadata()
-
 	resp := &StreamResponse{}
 	switch topic {
 	case eventscentrum.TopicGeneral:
 		switch tType {
 		case eventscentrum.TypeGeneralDisponents:
-			dest := &dispatch.DisponentsChange{}
+			dest := &centrum.Disponents{}
 			if err := proto.Unmarshal(msg.Data, dest); err != nil {
 				s.logger.Error("failed to unmarshal nats change response", zap.Error(err))
 				return
@@ -162,7 +159,7 @@ func (s *Server) watchForChanges(msg *nats.Msg) {
 			}
 
 		case eventscentrum.TypeGeneralSettings:
-			dest := &dispatch.Settings{}
+			dest := &centrum.Settings{}
 			if err := proto.Unmarshal(msg.Data, dest); err != nil {
 				s.logger.Error("failed to unmarshal nats change response", zap.Error(err))
 				return
@@ -173,57 +170,10 @@ func (s *Server) watchForChanges(msg *nats.Msg) {
 			}
 		}
 
-	case eventscentrum.TopicDispatch:
-		switch tType {
-		case eventscentrum.TypeDispatchCreated:
-			dest := &dispatch.Dispatch{}
-			if err := proto.Unmarshal(msg.Data, dest); err != nil {
-				s.logger.Error("failed to unmarshal nats change response", zap.Error(err))
-				return
-			}
-
-			resp.Change = &StreamResponse_DispatchCreated{
-				DispatchCreated: dest,
-			}
-
-		case eventscentrum.TypeDispatchDeleted:
-			dest := &dispatch.Dispatch{}
-			if err := proto.Unmarshal(msg.Data, dest); err != nil {
-				s.logger.Error("failed to unmarshal nats change response", zap.Error(err))
-				return
-			}
-
-			resp.Change = &StreamResponse_DispatchDeleted{
-				DispatchDeleted: dest.Id,
-			}
-
-		case eventscentrum.TypeDispatchUpdated:
-			dest := &dispatch.Dispatch{}
-			if err := proto.Unmarshal(msg.Data, dest); err != nil {
-				s.logger.Error("failed to unmarshal nats change response", zap.Error(err))
-				return
-			}
-
-			resp.Change = &StreamResponse_DispatchUpdated{
-				DispatchUpdated: dest,
-			}
-
-		case eventscentrum.TypeDispatchStatus:
-			dest := &dispatch.Dispatch{}
-			if err := proto.Unmarshal(msg.Data, dest); err != nil {
-				s.logger.Error("failed to unmarshal nats change response", zap.Error(err))
-				return
-			}
-
-			resp.Change = &StreamResponse_DispatchStatus{
-				DispatchStatus: dest,
-			}
-		}
-
 	case eventscentrum.TopicUnit:
 		switch tType {
 		case eventscentrum.TypeUnitCreated:
-			dest := &dispatch.Unit{}
+			dest := &centrum.Unit{}
 			if err := proto.Unmarshal(msg.Data, dest); err != nil {
 				s.logger.Error("failed to unmarshal nats change response", zap.Error(err))
 				return
@@ -234,7 +184,7 @@ func (s *Server) watchForChanges(msg *nats.Msg) {
 			}
 
 		case eventscentrum.TypeUnitDeleted:
-			dest := &dispatch.Unit{}
+			dest := &centrum.Unit{}
 			if err := proto.Unmarshal(msg.Data, dest); err != nil {
 				s.logger.Error("failed to unmarshal nats change response", zap.Error(err))
 				return
@@ -245,7 +195,7 @@ func (s *Server) watchForChanges(msg *nats.Msg) {
 			}
 
 		case eventscentrum.TypeUnitUpdated:
-			dest := &dispatch.Unit{}
+			dest := &centrum.Unit{}
 			if err := proto.Unmarshal(msg.Data, dest); err != nil {
 				s.logger.Error("failed to unmarshal nats change response", zap.Error(err))
 				return
@@ -256,7 +206,7 @@ func (s *Server) watchForChanges(msg *nats.Msg) {
 			}
 
 		case eventscentrum.TypeUnitStatus:
-			dest := &dispatch.Unit{}
+			dest := &centrum.UnitStatus{}
 			if err := proto.Unmarshal(msg.Data, dest); err != nil {
 				s.logger.Error("failed to unmarshal nats change response", zap.Error(err))
 				return
@@ -266,10 +216,58 @@ func (s *Server) watchForChanges(msg *nats.Msg) {
 				UnitStatus: dest,
 			}
 		}
+
+	case eventscentrum.TopicDispatch:
+		switch tType {
+		case eventscentrum.TypeDispatchCreated:
+			dest := &centrum.Dispatch{}
+			if err := proto.Unmarshal(msg.Data, dest); err != nil {
+				s.logger.Error("failed to unmarshal nats change response", zap.Error(err))
+				return
+			}
+
+			resp.Change = &StreamResponse_DispatchCreated{
+				DispatchCreated: dest,
+			}
+
+		case eventscentrum.TypeDispatchDeleted:
+			dest := &centrum.Dispatch{}
+			if err := proto.Unmarshal(msg.Data, dest); err != nil {
+				s.logger.Error("failed to unmarshal nats change response", zap.Error(err))
+				return
+			}
+
+			resp.Change = &StreamResponse_DispatchDeleted{
+				DispatchDeleted: dest,
+			}
+
+		case eventscentrum.TypeDispatchUpdated:
+			dest := &centrum.Dispatch{}
+			if err := proto.Unmarshal(msg.Data, dest); err != nil {
+				s.logger.Error("failed to unmarshal nats change response", zap.Error(err))
+				return
+			}
+
+			resp.Change = &StreamResponse_DispatchUpdated{
+				DispatchUpdated: dest,
+			}
+
+		case eventscentrum.TypeDispatchStatus:
+			dest := &centrum.DispatchStatus{}
+			if err := proto.Unmarshal(msg.Data, dest); err != nil {
+				s.logger.Error("failed to unmarshal nats change response", zap.Error(err))
+				return
+			}
+
+			resp.Change = &StreamResponse_DispatchStatus{
+				DispatchStatus: dest,
+			}
+		}
 	}
 
 	broker.Publish(resp)
 
+	meta, _ := msg.Metadata()
 	s.logger.Debug("sent centrum message broker", zap.Uint64("stream_sequence_id", meta.Sequence.Stream),
 		zap.String("job", job), zap.String("topic", string(topic)), zap.String("type", string(tType)))
 }
@@ -303,16 +301,16 @@ func (s *Server) TakeControl(ctx context.Context, req *TakeControlRequest) (*Tak
 
 func (s *Server) sendLatestState(srv CentrumService_StreamServer, job string, userId int32) (uint64, bool, error) {
 	settings := s.state.GetSettings(job)
-	disponents := s.state.GetDisponents(job)
+	disponents, _ := s.state.GetDisponents(job)
 	isDisponent := s.state.CheckIfUserIsDisponent(job, userId)
 	ownUnitId, _ := s.state.GetUserUnitID(userId)
 	units, _ := s.state.ListUnits(job)
-	ownUnit, _ := s.state.GetUnit(job, ownUnitId)
+	ownUnit := s.state.GetUnit(job, ownUnitId)
 
-	dispatches := s.state.FilterDispatches(job, nil, []dispatch.StatusDispatch{
-		dispatch.StatusDispatch_STATUS_DISPATCH_ARCHIVED,
-		dispatch.StatusDispatch_STATUS_DISPATCH_CANCELLED,
-		dispatch.StatusDispatch_STATUS_DISPATCH_COMPLETED,
+	dispatches := s.state.FilterDispatches(job, nil, []centrum.StatusDispatch{
+		centrum.StatusDispatch_STATUS_DISPATCH_ARCHIVED,
+		centrum.StatusDispatch_STATUS_DISPATCH_CANCELLED,
+		centrum.StatusDispatch_STATUS_DISPATCH_COMPLETED,
 	})
 
 	// Send initial state message to client
@@ -396,7 +394,7 @@ func (s *Server) stream(srv CentrumService_StreamServer, isDisponent bool, job s
 			} else if unitUpdate := resp.GetUnitUpdated(); unitUpdate != nil {
 				// Either user is in that unit this update is about or they are not (yet) in an unit
 				if unitUpdate.Id == unitId || unitId == 0 {
-					if utils.InSliceFunc(unitUpdate.Users, func(a *dispatch.UnitAssignment) bool {
+					if utils.InSliceFunc(unitUpdate.Users, func(a *centrum.UnitAssignment) bool {
 						return userId == a.UserId
 					}) {
 						// Seems that they got assigned to this unit, update the user's unitId here

@@ -13,6 +13,7 @@ import (
 	grpc_auth "github.com/galexrt/fivenet/pkg/grpc/interceptors/auth"
 	grpc_permission "github.com/galexrt/fivenet/pkg/grpc/interceptors/permission"
 	grpc_sanitizer "github.com/galexrt/fivenet/pkg/grpc/interceptors/sanitizer"
+	"github.com/galexrt/fivenet/pkg/grpc/interceptors/tracing"
 	"github.com/galexrt/fivenet/pkg/perms"
 	"github.com/getsentry/sentry-go"
 	grpcprom "github.com/grpc-ecosystem/go-grpc-middleware/providers/prometheus"
@@ -104,9 +105,11 @@ func NewServer(p ServerParams) (ServerResult, error) {
 	grpcPanicRecoveryHandler := func(pa any) (err error) {
 		panicsTotal.Inc()
 
-		p.Logger.Error("recovered from panic", zap.Any("err", pa), zap.Stack("stacktrace"))
 		if e, ok := pa.(error); ok {
+			p.Logger.Error("recovered from panic", zap.Error(e))
 			sentry.CaptureException(e)
+		} else {
+			p.Logger.Error("recovered from panic", zap.Any("err", pa), zap.Stack("stacktrace"))
 		}
 
 		return ErrInternalServer
@@ -123,6 +126,7 @@ func NewServer(p ServerParams) (ServerResult, error) {
 				logging.WithFieldsFromContext(extraLogFields),
 				logging.WithLogOnEvents(logging.StartCall, logging.FinishCall),
 			),
+			tracing.UnaryServerInterceptor(),
 			grpc_auth.UnaryServerInterceptor(grpcAuth.GRPCAuthFunc),
 			grpc_permission.UnaryServerInterceptor(grpcPerm.GRPCPermissionUnaryFunc),
 			validator.UnaryServerInterceptor(),
@@ -138,6 +142,7 @@ func NewServer(p ServerParams) (ServerResult, error) {
 				logging.WithFieldsFromContext(extraLogFields),
 				logging.WithLogOnEvents(logging.StartCall, logging.FinishCall),
 			),
+			tracing.StreamServerInterceptor(),
 			grpc_auth.StreamServerInterceptor(grpcAuth.GRPCAuthFunc),
 			grpc_permission.StreamServerInterceptor(grpcPerm.GRPCPermissionStreamFunc),
 			validator.StreamServerInterceptor(),
@@ -146,12 +151,12 @@ func NewServer(p ServerParams) (ServerResult, error) {
 			),
 		),
 		grpc.KeepaliveEnforcementPolicy(keepalive.EnforcementPolicy{
-			MinTime:             3 * time.Second, // If a client pings more than once every 5 seconds, terminate the connection
+			MinTime:             4 * time.Second, // If a client pings more than once every 4 seconds, terminate the connection
 			PermitWithoutStream: true,            // Allow pings even when there are no active streams
 		}),
 		grpc.KeepaliveParams(keepalive.ServerParameters{
-			MaxConnectionIdle:     20 * time.Minute, // If a client is idle for 15 seconds, send a GOAWAY
-			MaxConnectionAge:      25 * time.Minute, // If any connection is alive for more than 30 seconds, send a GOAWAY
+			MaxConnectionIdle:     15 * time.Minute, // If a client is idle for 15 minute, send a GOAWAY
+			MaxConnectionAge:      20 * time.Minute, // If any connection is alive for more than 20 minutes, send a GOAWAY
 			MaxConnectionAgeGrace: 15 * time.Second, // Allow 15 seconds for pending RPCs to complete before forcibly closing connections
 			Time:                  20 * time.Second, // Ping the client if it is idle for 20 seconds to ensure the connection is still active
 			Timeout:               7 * time.Second,  // Wait 7 second for the ping ack before assuming the connection is dead

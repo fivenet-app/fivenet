@@ -3,9 +3,9 @@ import { defineStore, type StoreDefinition } from 'pinia';
 import { statusOrder } from '~/components/centrum/helpers';
 import { useAuthStore } from '~/store/auth';
 import { useNotificatorStore } from '~/store/notificator';
-import { Dispatch, DispatchStatus, StatusDispatch } from '~~/gen/ts/resources/dispatch/dispatches';
-import { CentrumMode, Settings } from '~~/gen/ts/resources/dispatch/settings';
-import { StatusUnit, Unit, UnitStatus } from '~~/gen/ts/resources/dispatch/units';
+import { Dispatch, DispatchStatus, StatusDispatch } from '~~/gen/ts/resources/centrum/dispatches';
+import { CentrumMode, Settings } from '~~/gen/ts/resources/centrum/settings';
+import { StatusUnit, Unit, UnitStatus } from '~~/gen/ts/resources/centrum/units';
 import { UserShort } from '~~/gen/ts/resources/users/users';
 
 const cleanupInterval = 1 * 40 * 1000;
@@ -76,12 +76,19 @@ export const useCentrumStore = defineStore('centrum', {
         },
     },
     actions: {
-        addFeedItem(item: DispatchStatus | UnitStatus): void {
-            const idx = this.feed.findIndex((fi) => fi.id === item.id);
-            if (idx === -1) {
-                this.feed.unshift(item);
+        // General
+        updateSettings(settings: Settings): void {
+            if (this.settings !== undefined) {
+                this.settings.enabled = settings.enabled;
+                this.settings.job = settings.job;
+                this.settings.mode = settings.mode;
+                this.settings.fallbackMode = settings.fallbackMode;
+            } else {
+                this.settings = settings;
             }
         },
+
+        // Units
         addOrUpdateUnit(unit: Unit): void {
             const u = this.units.get(unit.id);
 
@@ -162,6 +169,7 @@ export const useCentrumStore = defineStore('centrum', {
             this.units.delete(unit.id);
         },
 
+        // Dispatches
         checkIfUnitAssignedToDispatch(dsp: Dispatch, unit: string | undefined): boolean {
             if (unit === undefined) return false;
 
@@ -309,7 +317,6 @@ export const useCentrumStore = defineStore('centrum', {
                 });
             }
         },
-
         removePendingDispatch(id: string): void {
             const idx = this.pendingDispatches.findIndex((d) => d === id);
             if (idx > -1) {
@@ -317,17 +324,7 @@ export const useCentrumStore = defineStore('centrum', {
             }
         },
 
-        updateSettings(settings: Settings): void {
-            if (this.settings !== undefined) {
-                this.settings.enabled = settings.enabled;
-                this.settings.job = settings.job;
-                this.settings.mode = settings.mode;
-                this.settings.fallbackMode = settings.fallbackMode;
-            } else {
-                this.settings = settings;
-            }
-        },
-
+        // Stream
         async startStream(isCenter?: boolean): Promise<void> {
             if (this.abort !== undefined) {
                 return;
@@ -435,19 +432,22 @@ export const useCentrumStore = defineStore('centrum', {
                             this.pendingDispatches.length = 0;
                         }
                     } else if (resp.change.oneofKind === 'unitStatus') {
-                        this.addOrUpdateUnit(resp.change.unitStatus);
+                        this.updateUnitStatus(resp.change.unitStatus);
+
+                        if (this.isDisponent) {
+                            this.addFeedItem(resp.change.unitStatus);
+                        }
 
                         if (isCenter) {
                             continue;
                         }
 
-                        if (this.isDisponent && resp.change.unitStatus.status) {
-                            this.addFeedItem(resp.change.unitStatus.status);
+                        // Check if the unit status is about us
+                        if (resp.change.unitStatus.userId !== authStore.activeChar?.userId) {
+                            continue;
                         }
 
-                        // User added/in this unit
-                        const idx = resp.change.unitStatus.users.findIndex((u) => u.userId === authStore.activeChar?.userId);
-                        if (idx > -1) {
+                        if (resp.change.unitStatus.status === StatusUnit.USER_ADDED) {
                             // User already in unit
                             if (this.ownUnitId === resp.change.unitStatus.id) {
                                 continue;
@@ -463,7 +463,7 @@ export const useCentrumStore = defineStore('centrum', {
                             });
 
                             this.dispatches.forEach((d) => this.handleDispatchAssignment(d));
-                        } else {
+                        } else if (resp.change.unitStatus.status === StatusUnit.USER_REMOVED) {
                             if (this.ownUnitId === undefined || this.ownUnitId !== resp.change.unitStatus.id) {
                                 continue;
                             }
@@ -486,20 +486,46 @@ export const useCentrumStore = defineStore('centrum', {
                             this.addFeedItem(resp.change.dispatchCreated.status);
                         }
                     } else if (resp.change.oneofKind === 'dispatchDeleted') {
-                        this.removeDispatch(resp.change.dispatchDeleted);
+                        this.removeDispatch(resp.change.dispatchDeleted.id);
                     } else if (resp.change.oneofKind === 'dispatchUpdated') {
                         this.addOrUpdateDispatch(resp.change.dispatchUpdated);
                     } else if (resp.change.oneofKind === 'dispatchStatus') {
-                        if (this.isDisponent && resp.change.dispatchStatus.status) {
-                            this.addFeedItem(resp.change.dispatchStatus.status);
+                        const status = resp.change.dispatchStatus;
+                        if (this.isDisponent) {
+                            this.addFeedItem(status);
                         }
 
-                        if (resp.change.dispatchStatus.status?.status === StatusDispatch.ARCHIVED) {
+                        if (status.status === StatusDispatch.ARCHIVED) {
                             // If dispatch has been archived, remove from the main list
-                            this.removeDispatch(resp.change.dispatchStatus.id);
-                        } else {
-                            this.addOrUpdateDispatch(resp.change.dispatchStatus);
+                            this.removeDispatch(status.id);
+                            continue;
                         }
+                        if (status.status === StatusDispatch.UNIT_ACCEPTED) {
+                            this.removePendingDispatch(status.dispatchId);
+                            this.addOrUpdateOwnDispatch(status.dispatchId);
+
+                            const dispatch = this.dispatches.get(status.dispatchId);
+                            if (dispatch === undefined) {
+                                continue;
+                            }
+
+                            dispatch.units.forEach((ua) => {
+                                if (ua.unitId === status.unitId) {
+                                    ua.expiresAt = undefined;
+                                }
+                            });
+                        } else if (
+                            status.status === StatusDispatch.UNIT_DECLINED ||
+                            status.status === StatusDispatch.UNIT_UNASSIGNED
+                        ) {
+                            const dispatch = this.dispatches.get(status.dispatchId);
+                            if (dispatch === undefined) {
+                                continue;
+                            }
+
+                            this.removeDispatchAssignments(dispatch, status.unitId);
+                        }
+                        this.updateDispatchStatus(status);
                     } else {
                         console.warn('Centrum: Unknown change received - Kind: ', resp.change.oneofKind, resp.change);
                     }
@@ -564,6 +590,14 @@ export const useCentrumStore = defineStore('centrum', {
                     this.startStream(isCenter);
                 }
             }, this.restartBackoffTime * 1000);
+        },
+
+        // Utilities
+        addFeedItem(item: DispatchStatus | UnitStatus): void {
+            const idx = this.feed.findIndex((fi) => fi.id === item.id);
+            if (idx === -1) {
+                this.feed.unshift(item);
+            }
         },
         // Central "can user do that" method as we will take the dispatch center mode into account further
         canDo(action: canDoAction, dispatch?: Dispatch): boolean {
@@ -631,16 +665,30 @@ export const useCentrumStore = defineStore('centrum', {
                     return;
                 }
 
-                // Remove stale expired unit assignements
-                d.units.forEach((ua, idx) => {
-                    if (ua.expiresAt === undefined) {
-                        return;
-                    }
+                this.removeDispatchAssignments(d);
+            });
+        },
 
-                    if (now - toDate(ua.expiresAt).getTime() >= cleanupInterval) {
-                        d.units.splice(idx, 1);
-                    }
-                });
+        removeDispatchAssignments(dispatch: Dispatch, unitId?: string): void {
+            this.removeOwnDispatch(dispatch.id);
+            this.removePendingDispatch(dispatch.id);
+
+            const now = new Date().getTime();
+
+            // Remove stale expired unit assignements
+            dispatch.units.forEach((ua, idx) => {
+                if (ua.unitId === unitId) {
+                    dispatch.units.splice(idx, 1);
+                    return;
+                }
+
+                if (ua.expiresAt === undefined) {
+                    return;
+                }
+
+                if (now - toDate(ua.expiresAt).getTime() >= cleanupInterval) {
+                    dispatch.units.splice(idx, 1);
+                }
             });
         },
     },

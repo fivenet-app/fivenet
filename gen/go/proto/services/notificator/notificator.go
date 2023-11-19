@@ -12,7 +12,6 @@ import (
 	"github.com/galexrt/fivenet/gen/go/proto/resources/notifications"
 	timestamp "github.com/galexrt/fivenet/gen/go/proto/resources/timestamp"
 	"github.com/galexrt/fivenet/gen/go/proto/resources/users"
-	"github.com/galexrt/fivenet/pkg/events"
 	"github.com/galexrt/fivenet/pkg/grpc/auth"
 	"github.com/galexrt/fivenet/pkg/grpc/auth/userinfo"
 	"github.com/galexrt/fivenet/pkg/notifi"
@@ -49,7 +48,7 @@ type Server struct {
 	p      perms.Permissions
 	tm     *auth.TokenMgr
 	ui     userinfo.UserInfoRetriever
-	events *events.Eventus
+	js     nats.JetStreamContext
 }
 
 type Params struct {
@@ -62,7 +61,7 @@ type Params struct {
 	Perms  perms.Permissions
 	TM     *auth.TokenMgr
 	UI     userinfo.UserInfoRetriever
-	Events *events.Eventus
+	JS     nats.JetStreamContext
 }
 
 func NewServer(p Params) *Server {
@@ -72,7 +71,7 @@ func NewServer(p Params) *Server {
 		p:      p.Perms,
 		tm:     p.TM,
 		ui:     p.UI,
-		events: p.Events,
+		js:     p.JS,
 	}
 
 	return s
@@ -231,7 +230,7 @@ func (s *Server) Stream(req *StreamRequest, srv NotificatorService_StreamServer)
 	}
 
 	msgCh := make(chan *nats.Msg, 16)
-	sub, err := s.events.JS.ChanSubscribe(fmt.Sprintf("%s.%s.%d", notifi.BaseSubject, notifi.UserNotification, currentUserInfo.UserId), msgCh, nats.DeliverNew())
+	sub, err := s.js.ChanSubscribe(fmt.Sprintf("%s.%s.%d", notifi.BaseSubject, notifi.UserNotification, currentUserInfo.UserId), msgCh, nats.DeliverNew())
 	if err != nil {
 		return err
 	}

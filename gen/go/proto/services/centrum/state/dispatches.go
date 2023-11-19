@@ -1,51 +1,50 @@
 package state
 
 import (
-	"github.com/galexrt/fivenet/gen/go/proto/resources/dispatch"
+	"context"
+
+	"github.com/galexrt/fivenet/gen/go/proto/resources/centrum"
 	"github.com/galexrt/fivenet/pkg/utils"
 	"github.com/paulmach/orb"
-	"github.com/puzpuzpuz/xsync/v3"
 	"golang.org/x/exp/slices"
-	"google.golang.org/protobuf/proto"
 )
 
-func (s *State) GetDispatch(job string, id uint64) (*dispatch.Dispatch, bool) {
-	dispatches, ok := s.dispatches.Load(job)
-	if !ok {
-		return nil, false
-	}
-
-	dsp, ok := dispatches.Load(id)
-	if !ok {
-		return nil, false
-	}
-
-	return proto.Clone(dsp).(*dispatch.Dispatch), true
+func (s *State) GetDispatch(job string, id uint64) *centrum.Dispatch {
+	d, _ := s.dispatches.Get(JobIdKey(job, id))
+	return d
 }
 
-func (s *State) ListDispatches(job string) []*dispatch.Dispatch {
-	ds := []*dispatch.Dispatch{}
+func (s *State) ListDispatches(job string) ([]*centrum.Dispatch, bool) {
+	ds := []*centrum.Dispatch{}
 
-	dispatches, ok := s.dispatches.Load(job)
+	ids, err := s.dispatches.Keys(job)
+	if err != nil {
+		return ds, false
+	}
+
+	for _, id := range ids {
+		dsp, ok := s.dispatches.Get(id)
+		if !ok || dsp == nil {
+			continue
+		}
+
+		ds = append(ds, dsp)
+	}
+
+	slices.SortFunc(ds, func(a, b *centrum.Dispatch) int {
+		return int(a.Id - b.Id)
+	})
+
+	return ds, true
+}
+
+func (s *State) FilterDispatches(job string, statuses []centrum.StatusDispatch, notStatuses []centrum.StatusDispatch) []*centrum.Dispatch {
+	dispatches, ok := s.ListDispatches(job)
 	if !ok {
 		return nil
 	}
 
-	dispatches.Range(func(id uint64, dispatch *dispatch.Dispatch) bool {
-		ds = append(ds, dispatch)
-		return true
-	})
-
-	slices.SortFunc(ds, func(a, b *dispatch.Dispatch) int {
-		return int(b.Id - a.Id)
-	})
-
-	return ds
-}
-
-func (s *State) FilterDispatches(job string, statuses []dispatch.StatusDispatch, notStatuses []dispatch.StatusDispatch) []*dispatch.Dispatch {
-	dsps := []*dispatch.Dispatch{}
-	dispatches := s.ListDispatches(job)
+	dsps := []*centrum.Dispatch{}
 	for i := 0; i < len(dispatches); i++ {
 		// Hide user info when dispatch is anonymous
 		if dispatches[i].Anon {
@@ -75,37 +74,41 @@ func (s *State) FilterDispatches(job string, statuses []dispatch.StatusDispatch,
 	return dsps
 }
 
-func (s *State) DeleteDispatch(job string, id uint64) {
-	dsp, ok := s.GetDispatch(job, id)
-	if !ok || dsp == nil {
-		return
+func (s *State) DeleteDispatch(job string, id uint64) error {
+	dsp := s.GetDispatch(job, id)
+	if dsp != nil {
+		s.GetDispatchLocations(job).Remove(dsp, func(p orb.Pointer) bool {
+			return p.(*centrum.Dispatch).Id == dsp.Id
+		})
 	}
 
-	s.GetDispatchLocations(job).Remove(dsp, func(p orb.Pointer) bool {
-		return p.(*dispatch.Dispatch).Id == dsp.Id
-	})
-
-	dispatches, ok := s.dispatches.Load(job)
-	if ok {
-		dispatches.Delete(id)
-	}
+	return s.dispatches.Delete(JobIdKey(job, id))
 }
 
-func (s *State) UpdateDispatch(job string, dispatchId uint64, dsp *dispatch.Dispatch) error {
-	if dispatch, ok := s.GetDispatchesMap(job).LoadOrStore(dispatchId, dsp); ok {
-		dispatch.Merge(dsp)
-	}
+func (s *State) UpdateDispatch(ctx context.Context, job string, id uint64, dsp *centrum.Dispatch) error {
+	s.dispatches.ComputeUpdate(JobIdKey(job, id), true, func(key string, existing *centrum.Dispatch) (*centrum.Dispatch, error) {
+		if existing == nil {
+			return dsp, nil
+		}
+
+		existing.Merge(dsp)
+
+		return existing, nil
+	})
 
 	return nil
 }
 
-func (s *State) GetDispatchesJobs() []string {
-	list := []string{}
+func (s *State) UpdateDispatchStatus(ctx context.Context, job string, id uint64, status *centrum.DispatchStatus) error {
+	s.dispatches.ComputeUpdate(JobIdKey(job, id), true, func(key string, existing *centrum.Dispatch) (*centrum.Dispatch, error) {
+		if existing == nil {
+			return nil, nil
+		}
 
-	s.dispatches.Range(func(job string, _ *xsync.MapOf[uint64, *dispatch.Dispatch]) bool {
-		list = append(list, job)
-		return true
+		existing.Status = status
+
+		return existing, nil
 	})
 
-	return list
+	return nil
 }

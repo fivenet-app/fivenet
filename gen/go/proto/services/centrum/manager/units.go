@@ -5,9 +5,10 @@ import (
 	"fmt"
 	"time"
 
-	"github.com/galexrt/fivenet/gen/go/proto/resources/dispatch"
+	"github.com/galexrt/fivenet/gen/go/proto/resources/centrum"
 	errorscentrum "github.com/galexrt/fivenet/gen/go/proto/services/centrum/errors"
 	eventscentrum "github.com/galexrt/fivenet/gen/go/proto/services/centrum/events"
+	"github.com/galexrt/fivenet/gen/go/proto/services/centrum/state"
 	"github.com/galexrt/fivenet/pkg/utils"
 	"github.com/galexrt/fivenet/pkg/utils/dbutils"
 	"github.com/galexrt/fivenet/query/fivenet/table"
@@ -17,73 +18,36 @@ import (
 	"google.golang.org/protobuf/proto"
 )
 
-func (s *Manager) GetUnitStatusFromDB(ctx context.Context, job string, id uint64) (*dispatch.UnitStatus, error) {
-	stmt := tUnitStatus.
-		SELECT(
-			tUnitStatus.ID,
-			tUnitStatus.CreatedAt,
-			tUnitStatus.UnitID,
-			tUnitStatus.Status,
-			tUnitStatus.Reason,
-			tUnitStatus.Code,
-			tUnitStatus.UserID,
-			tUnitStatus.X,
-			tUnitStatus.Y,
-			tUnitStatus.Postal,
-			tUnitStatus.CreatorID,
-		).
-		FROM(tUnitStatus).
-		WHERE(
-			tUnitStatus.ID.EQ(jet.Uint64(id)),
-		).
-		LIMIT(1)
-
-	var dest dispatch.UnitStatus
-	if err := stmt.QueryContext(ctx, s.db, &dest); err != nil {
-		return nil, err
-	}
-
-	if dest.UserId != nil {
-		var err error
-		dest.User, err = s.resolveUserShortById(ctx, *dest.UserId)
-		if err != nil {
-			return nil, err
-		}
-	}
-	if dest.CreatorId != nil {
-		var err error
-		dest.Creator, err = s.resolveUserShortById(ctx, *dest.CreatorId)
-		if err != nil {
-			return nil, err
-		}
-	}
-
-	if dest.UnitId > 0 {
-		unit, ok := s.GetUnit(job, dest.UnitId)
-		if ok && unit != nil {
-			newUnit := proto.Clone(unit)
-			dest.Unit = newUnit.(*dispatch.Unit)
-		}
-	}
-
-	return &dest, nil
-}
-
-func (s *Manager) UpdateUnitStatus(ctx context.Context, job string, unit *dispatch.Unit, in *dispatch.UnitStatus) error {
+func (s *Manager) UpdateUnitStatus(ctx context.Context, job string, unit *centrum.Unit, in *centrum.UnitStatus) (*centrum.UnitStatus, error) {
 	// If the unit status is the same and is a status that shouldn't be duplicated, don't update the status again
 	if unit.Status != nil &&
 		unit.Status.Status == in.Status &&
-		(in.Status == dispatch.StatusUnit_STATUS_UNIT_ON_BREAK ||
-			in.Status == dispatch.StatusUnit_STATUS_UNIT_BUSY ||
-			in.Status == dispatch.StatusUnit_STATUS_UNIT_UNAVAILABLE ||
-			in.Status == dispatch.StatusUnit_STATUS_UNIT_AVAILABLE) &&
-		// Additionally if the status is older than 2 minutes allow it to be updated again
+		(in.Status == centrum.StatusUnit_STATUS_UNIT_ON_BREAK ||
+			in.Status == centrum.StatusUnit_STATUS_UNIT_BUSY ||
+			in.Status == centrum.StatusUnit_STATUS_UNIT_UNAVAILABLE ||
+			in.Status == centrum.StatusUnit_STATUS_UNIT_AVAILABLE) &&
+		// Additionally if the status is under 2 minutes disallow the same status update
 		(unit.Status.CreatedAt == nil || time.Since(unit.Status.CreatedAt.AsTime()) < 3*time.Minute) {
 		s.logger.Debug("skipping unit status update due to same status or time", zap.Uint64("unit_id", unit.Id), zap.String("status", in.Status.String()))
-		return nil
+		return nil, nil
 	}
 
 	s.logger.Debug("updating unit status", zap.Uint64("unit_id", unit.Id), zap.String("status", in.Status.String()))
+
+	if in.UserId != nil {
+		var err error
+		in.User, err = s.resolveUserShortById(ctx, *in.UserId)
+		if err != nil {
+			return nil, errorscentrum.ErrFailedQuery
+		}
+	}
+	if in.CreatorId != nil {
+		var err error
+		in.Creator, err = s.resolveUserShortById(ctx, *in.CreatorId)
+		if err != nil {
+			return nil, errorscentrum.ErrFailedQuery
+		}
+	}
 
 	tUnitStatus := table.FivenetCentrumUnitsStatus
 	stmt := tUnitStatus.
@@ -114,34 +78,33 @@ func (s *Manager) UpdateUnitStatus(ctx context.Context, job string, unit *dispat
 
 	res, err := stmt.ExecContext(ctx, s.db)
 	if err != nil {
-		return err
+		return nil, err
 	}
 
 	lastId, err := res.LastInsertId()
 	if err != nil {
-		return err
+		return nil, err
+	}
+	in.Id = uint64(lastId)
+
+	if err := s.State.UpdateUnitStatus(ctx, job, in.UnitId, in); err != nil {
+		return nil, err
 	}
 
-	status, err := s.GetUnitStatusFromDB(ctx, job, uint64(lastId))
+	data, err := proto.Marshal(in)
 	if err != nil {
-		return err
+		return nil, err
 	}
 
-	unit.Status = status
-	data, err := proto.Marshal(unit)
-	if err != nil {
-		return err
+	if _, err := s.js.Publish(eventscentrum.BuildSubject(eventscentrum.TopicUnit, eventscentrum.TypeUnitStatus, job), data); err != nil {
+		return nil, fmt.Errorf("failed to publish unit status event (size: %d, message: '%+v'): %w", len(data), unit, err)
 	}
 
-	if _, err := s.events.JS.Publish(eventscentrum.BuildSubject(eventscentrum.TopicUnit, eventscentrum.TypeUnitStatus, job, status.UnitId), data); err != nil {
-		return fmt.Errorf("failed to publish unit status event (size: %d, message: '%+v'): %w", len(data), unit, err)
-	}
-
-	return nil
+	return in, nil
 }
 
-func (s *Manager) UpdateUnitAssignments(ctx context.Context, job string, userId *int32, unit *dispatch.Unit, toAdd []int32, toRemove []int32) error {
-	s.logger.Debug("updating unit assignments", zap.String("job", job), zap.Uint64("unit_id", unit.Id), zap.Int32s("toAdd", toAdd), zap.Int32s("toRemove", toRemove))
+func (s *Manager) UpdateUnitAssignments(ctx context.Context, job string, userId *int32, unitId uint64, toAdd []int32, toRemove []int32) error {
+	s.logger.Debug("updating unit assignments", zap.String("job", job), zap.Uint64("unit_id", unitId), zap.Int32s("toAdd", toAdd), zap.Int32s("toRemove", toRemove))
 
 	var x, y *float64
 	var postal *string
@@ -153,160 +116,163 @@ func (s *Manager) UpdateUnitAssignments(ctx context.Context, job string, userId 
 		}
 	}
 
-	var previousStatus proto.Message
-	if unit.Status != nil && (len(toAdd) > 0 || len(toRemove) > 0) {
-		previousStatus = proto.Clone(unit.Status)
-	}
-
-	lock := s.State.GetUnitLock(unit.Id)
-	lock.Lock()
-	defer lock.Unlock()
-
 	tUnitUser := table.FivenetCentrumUnitsUsers
-	if len(toRemove) > 0 {
-		removeIds := make([]jet.Expression, len(toRemove))
-		for i := 0; i < len(toRemove); i++ {
-			removeIds[i] = jet.Int32(toRemove[i])
-		}
 
-		stmt := tUnitUser.
-			DELETE().
-			WHERE(jet.AND(
-				tUnitUser.UnitID.EQ(jet.Uint64(unit.Id)),
-				tUnitUser.UserID.IN(removeIds...),
-			))
+	store := s.State.UnitsStore()
 
-		if _, err := stmt.ExecContext(ctx, s.db); err != nil {
-			return err
-		}
-
-		toAnnounce := []int32{}
-		for i := len(unit.Users) - 1; i >= 0; i-- {
-			if i > (len(unit.Users) - 1) {
-				break
+	key := state.JobIdKey(job, unitId)
+	if err := store.ComputeUpdate(key, true, func(key string, unit *centrum.Unit) (*centrum.Unit, error) {
+		if len(toRemove) > 0 {
+			removeIds := make([]jet.Expression, len(toRemove))
+			for i := 0; i < len(toRemove); i++ {
+				removeIds[i] = jet.Int32(toRemove[i])
 			}
 
-			for k := 0; k < len(toRemove); k++ {
-				if unit.Users[i].UserId != toRemove[k] {
+			stmt := tUnitUser.
+				DELETE().
+				WHERE(jet.AND(
+					tUnitUser.UnitID.EQ(jet.Uint64(unit.Id)),
+					tUnitUser.UserID.IN(removeIds...),
+				))
+
+			if _, err := stmt.ExecContext(ctx, s.db); err != nil {
+				return nil, err
+			}
+
+			toAnnounce := []int32{}
+			for i := len(unit.Users) - 1; i >= 0; i-- {
+				if i > (len(unit.Users) - 1) {
+					break
+				}
+
+				for k := 0; k < len(toRemove); k++ {
+					if unit.Users[i].UserId != toRemove[k] {
+						continue
+					}
+
+					toAnnounce = append(toAnnounce, toRemove[k])
+					unit.Users = utils.RemoveFromSlice(unit.Users, i)
+				}
+			}
+
+			// Send updates
+			for _, user := range toAnnounce {
+				if err := s.AddUnitStatus(ctx, s.db, job, &centrum.UnitStatus{
+					UnitId:    unit.Id,
+					Status:    centrum.StatusUnit_STATUS_UNIT_USER_REMOVED,
+					UserId:    &user,
+					CreatorId: userId,
+					X:         x,
+					Y:         y,
+					Postal:    postal,
+				}); err != nil {
+					return nil, err
+				}
+
+				if err := s.UnsetUnitIDForUser(user); err != nil {
+					return nil, err
+				}
+			}
+		}
+
+		if len(toAdd) > 0 {
+			notFound := []int32{}
+			addIds := []jet.IntegerExpression{}
+			for i := 0; i < len(toAdd); i++ {
+				if _, ok := s.tracker.GetUserById(toAdd[i]); !ok {
 					continue
 				}
 
-				toAnnounce = append(toAnnounce, toRemove[k])
-				unit.Users = utils.RemoveFromSlice(unit.Users, i)
-			}
-		}
+				// Skip already added units
+				if utils.InSliceFunc(unit.Users, func(in *centrum.UnitAssignment) bool {
+					return in.UserId == toAdd[i]
+				}) {
+					continue
+				}
 
-		// Send updates
-		for _, user := range toAnnounce {
-			if err := s.UpdateUnitStatus(ctx, job, unit, &dispatch.UnitStatus{
-				UnitId:    unit.Id,
-				Status:    dispatch.StatusUnit_STATUS_UNIT_USER_REMOVED,
-				UserId:    &user,
-				CreatorId: userId,
-				X:         x,
-				Y:         y,
-				Postal:    postal,
-			}); err != nil {
-				return err
-			}
-		}
-	}
-
-	if len(toAdd) > 0 {
-		notFound := []int32{}
-		addIds := []jet.IntegerExpression{}
-		for i := 0; i < len(toAdd); i++ {
-			if _, ok := s.tracker.GetUserById(toAdd[i]); !ok {
-				continue
+				addIds = append(addIds, jet.Int32(toAdd[i]))
+				notFound = append(notFound, toAdd[i])
 			}
 
-			// Skip already added units
-			if utils.InSliceFunc(unit.Users, func(in *dispatch.UnitAssignment) bool {
-				return in.UserId == toAdd[i]
-			}) {
-				continue
-			}
-
-			addIds = append(addIds, jet.Int32(toAdd[i]))
-			notFound = append(notFound, toAdd[i])
-		}
-
-		if len(addIds) > 0 {
-			stmt := tUnitUser.
-				INSERT(
-					tUnitUser.UnitID,
-					tUnitUser.UserID,
-				)
-
-			for _, id := range addIds {
-				stmt = stmt.
-					VALUES(
-						unit.Id,
-						id,
+			if len(addIds) > 0 {
+				stmt := tUnitUser.
+					INSERT(
+						tUnitUser.UnitID,
+						tUnitUser.UserID,
 					)
+
+				for _, id := range addIds {
+					stmt = stmt.
+						VALUES(
+							unit.Id,
+							id,
+						)
+				}
+
+				if _, err := stmt.ExecContext(ctx, s.db); err != nil {
+					if !dbutils.IsDuplicateError(err) {
+						return nil, err
+					}
+				}
 			}
 
-			if _, err := stmt.ExecContext(ctx, s.db); err != nil {
-				if !dbutils.IsDuplicateError(err) {
-					return err
+			users, err := s.resolveUserShortsByIds(ctx, notFound)
+			if err != nil {
+				return nil, err
+			}
+
+			for _, user := range users {
+				unit.Users = append(unit.Users, &centrum.UnitAssignment{
+					UnitId: unit.Id,
+					UserId: user.UserId,
+					User:   user,
+				})
+			}
+
+			for _, user := range users {
+				if err := s.AddUnitStatus(ctx, s.db, job, &centrum.UnitStatus{
+					UnitId:    unit.Id,
+					Status:    centrum.StatusUnit_STATUS_UNIT_USER_ADDED,
+					UserId:    &user.UserId,
+					CreatorId: userId,
+					X:         x,
+					Y:         y,
+					Postal:    postal,
+				}); err != nil {
+					return nil, err
+				}
+
+				if err := s.SetUnitForUser(user.UserId, unit.Id); err != nil {
+					return nil, err
 				}
 			}
 		}
 
-		users, err := s.resolveUserShortsByIds(ctx, notFound)
-		if err != nil {
-			return err
-		}
-
-		for _, user := range users {
-			unit.Users = append(unit.Users, &dispatch.UnitAssignment{
-				UnitId: unit.Id,
-				UserId: user.UserId,
-				User:   user,
-			})
-		}
-
-		for _, user := range users {
-			if err := s.UpdateUnitStatus(ctx, job, unit, &dispatch.UnitStatus{
+		// Unit is empty, set unit status to be unavailable automatically
+		if len(unit.Users) == 0 {
+			unit.Status = &centrum.UnitStatus{
 				UnitId:    unit.Id,
-				Status:    dispatch.StatusUnit_STATUS_UNIT_USER_ADDED,
-				UserId:    &user.UserId,
+				Status:    centrum.StatusUnit_STATUS_UNIT_UNAVAILABLE,
+				UserId:    userId,
 				CreatorId: userId,
 				X:         x,
 				Y:         y,
 				Postal:    postal,
-			}); err != nil {
-				return err
+			}
+			if err := s.AddUnitStatus(ctx, s.db, job, unit.Status); err != nil {
+				return nil, err
 			}
 		}
-	}
 
-	// Unit is empty, set unit status to be unavailable automatically
-	if len(unit.Users) == 0 {
-		if err := s.UpdateUnitStatus(ctx, job, unit, &dispatch.UnitStatus{
-			UnitId:    unit.Id,
-			Status:    dispatch.StatusUnit_STATUS_UNIT_UNAVAILABLE,
-			UserId:    userId,
-			CreatorId: userId,
-			X:         x,
-			Y:         y,
-			Postal:    postal,
-		}); err != nil {
-			return err
-		}
-	} else {
-		// F*ck it, just set the unit status to what it was before (again)
-		if previousStatus != nil {
-			if err := s.UpdateUnitStatus(ctx, job, unit, previousStatus.(*dispatch.UnitStatus)); err != nil {
-				return err
-			}
-		}
+		return unit, nil
+	}); err != nil {
+		return err
 	}
 
 	return nil
 }
 
-func (s *Manager) CreateUnit(ctx context.Context, job string, unit *dispatch.Unit) (*dispatch.Unit, error) {
+func (s *Manager) CreateUnit(ctx context.Context, job string, unit *centrum.Unit) (*centrum.Unit, error) {
 	// Begin transaction
 	tx, err := s.db.BeginTx(ctx, nil)
 	if err != nil {
@@ -343,9 +309,9 @@ func (s *Manager) CreateUnit(ctx context.Context, job string, unit *dispatch.Uni
 	}
 
 	// A new unit shouldn't have a status, so we make sure it has one
-	if err := s.AddUnitStatus(ctx, tx, &dispatch.UnitStatus{
+	if err := s.AddUnitStatus(ctx, tx, job, &centrum.UnitStatus{
 		UnitId: uint64(lastId),
-		Status: dispatch.StatusUnit_STATUS_UNIT_UNKNOWN,
+		Status: centrum.StatusUnit_STATUS_UNIT_UNKNOWN,
 	}); err != nil {
 		return nil, errorscentrum.ErrFailedQuery
 	}
@@ -360,24 +326,24 @@ func (s *Manager) CreateUnit(ctx context.Context, job string, unit *dispatch.Uni
 		return nil, errorscentrum.ErrFailedQuery
 	}
 
-	unit, ok := s.GetUnit(job, uint64(lastId))
-	if !ok {
+	ut := s.GetUnit(job, uint64(lastId))
+	if ut == nil {
 		return nil, errorscentrum.ErrFailedQuery
 	}
 
-	data, err := proto.Marshal(unit)
+	data, err := proto.Marshal(ut)
 	if err != nil {
 		return nil, errorscentrum.ErrFailedQuery
 	}
 
-	if _, err := s.events.JS.Publish(eventscentrum.BuildSubject(eventscentrum.TopicUnit, eventscentrum.TypeUnitCreated, job, unit.Id), data); err != nil {
+	if _, err := s.js.Publish(eventscentrum.BuildSubject(eventscentrum.TopicUnit, eventscentrum.TypeUnitCreated, job), data); err != nil {
 		return nil, err
 	}
 
-	return unit, nil
+	return ut, nil
 }
 
-func (s *Manager) UpdateUnit(ctx context.Context, job string, unit *dispatch.Unit) (*dispatch.Unit, error) {
+func (s *Manager) UpdateUnit(ctx context.Context, job string, unit *centrum.Unit) (*centrum.Unit, error) {
 	description := ""
 	if unit.Description != nil {
 		description = *unit.Description
@@ -410,24 +376,24 @@ func (s *Manager) UpdateUnit(ctx context.Context, job string, unit *dispatch.Uni
 		return nil, errorscentrum.ErrFailedQuery
 	}
 
-	unit, ok := s.GetUnit(job, unit.Id)
-	if !ok {
+	ut := s.GetUnit(job, unit.Id)
+	if ut == nil {
 		return nil, errorscentrum.ErrFailedQuery
 	}
 
-	data, err := proto.Marshal(unit)
+	data, err := proto.Marshal(ut)
 	if err != nil {
 		return nil, errorscentrum.ErrFailedQuery
 	}
 
-	if _, err := s.events.JS.Publish(eventscentrum.BuildSubject(eventscentrum.TopicUnit, eventscentrum.TypeUnitUpdated, job, unit.Id), data); err != nil {
+	if _, err := s.js.Publish(eventscentrum.BuildSubject(eventscentrum.TopicUnit, eventscentrum.TypeUnitUpdated, job), data); err != nil {
 		return nil, err
 	}
 
-	return unit, nil
+	return ut, nil
 }
 
-func (s *Manager) AddUnitStatus(ctx context.Context, tx qrm.DB, status *dispatch.UnitStatus) error {
+func (s *Manager) AddUnitStatus(ctx context.Context, tx qrm.DB, job string, status *centrum.UnitStatus) error {
 	tUnitStatus := table.FivenetCentrumUnitsStatus
 	stmt := tUnitStatus.
 		INSERT(
@@ -455,7 +421,23 @@ func (s *Manager) AddUnitStatus(ctx context.Context, tx qrm.DB, status *dispatch
 			status.CreatorId,
 		)
 
-	if _, err := stmt.ExecContext(ctx, tx); err != nil {
+	res, err := stmt.ExecContext(ctx, tx)
+	if err != nil {
+		return err
+	}
+
+	lastId, err := res.LastInsertId()
+	if err != nil {
+		return err
+	}
+	status.Id = uint64(lastId)
+
+	data, err := proto.Marshal(status)
+	if err != nil {
+		return err
+	}
+
+	if _, err := s.js.Publish(eventscentrum.BuildSubject(eventscentrum.TopicUnit, eventscentrum.TypeUnitStatus, job), data); err != nil {
 		return err
 	}
 
@@ -463,9 +445,13 @@ func (s *Manager) AddUnitStatus(ctx context.Context, tx qrm.DB, status *dispatch
 }
 
 func (s *Manager) DeleteUnit(ctx context.Context, job string, id uint64) error {
-	unit, ok := s.State.GetUnit(job, id)
-	if !ok {
+	unit := s.State.GetUnit(job, id)
+	if unit == nil {
 		return nil
+	}
+
+	if unit.Job != job {
+		return errorscentrum.ErrFailedQuery
 	}
 
 	stmt := tUnits.
@@ -485,9 +471,11 @@ func (s *Manager) DeleteUnit(ctx context.Context, job string, id uint64) error {
 		return err
 	}
 
-	s.State.DeleteUnit(job, id)
+	if err := s.State.DeleteUnit(job, id); err != nil {
+		return err
+	}
 
-	if _, err := s.events.JS.Publish(eventscentrum.BuildSubject(eventscentrum.TopicUnit, eventscentrum.TypeUnitDeleted, job, id), data); err != nil {
+	if _, err := s.js.Publish(eventscentrum.BuildSubject(eventscentrum.TopicUnit, eventscentrum.TypeUnitDeleted, job), data); err != nil {
 		return err
 	}
 

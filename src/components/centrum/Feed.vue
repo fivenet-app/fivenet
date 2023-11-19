@@ -1,6 +1,6 @@
 <script lang="ts" setup>
-import { DispatchStatus } from '~~/gen/ts/resources/dispatch/dispatches';
-import { UnitStatus } from '~~/gen/ts/resources/dispatch/units';
+import { DispatchStatus } from '~~/gen/ts/resources/centrum/dispatches';
+import { UnitStatus } from '~~/gen/ts/resources/centrum/units';
 import DispatchFeedItem from '~/components/centrum/dispatches/DispatchFeedItem.vue';
 import UnitFeedItem from '~/components/centrum/units/UnitFeedItem.vue';
 

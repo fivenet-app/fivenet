@@ -3,9 +3,9 @@ syntax = "proto3";
 package services.centrum;
 
 import "resources/common/database/database.proto";
-import "resources/dispatch/dispatches.proto";
-import "resources/dispatch/settings.proto";
-import "resources/dispatch/units.proto";
+import "resources/centrum/dispatches.proto";
+import "resources/centrum/settings.proto";
+import "resources/centrum/units.proto";
 import "resources/users/users.proto";
 import "validate/validate.proto";
 
@@ -26,33 +26,33 @@ message ListUnitActivityRequest {
 message GetSettingsRequest {}
 
 message GetSettingsResponse {
-  resources.dispatch.Settings settings = 1;
+  resources.centrum.Settings settings = 1;
 }
 
 message UpdateSettingsRequest {
-  resources.dispatch.Settings settings = 1;
+  resources.centrum.Settings settings = 1;
 }
 
 message UpdateSettingsResponse {
-  resources.dispatch.Settings settings = 1;
+  resources.centrum.Settings settings = 1;
 }
 
 // Unit Management
 
 message ListUnitsRequest {
-  repeated resources.dispatch.StatusUnit status = 1 [(validate.rules).repeated.items.enum.defined_only = true];
+  repeated resources.centrum.StatusUnit status = 1 [(validate.rules).repeated.items.enum.defined_only = true];
 }
 
 message ListUnitsResponse {
-  repeated resources.dispatch.Unit units = 1;
+  repeated resources.centrum.Unit units = 1;
 }
 
 message CreateOrUpdateUnitRequest {
-  resources.dispatch.Unit unit = 1 [(validate.rules).message.required = true];
+  resources.centrum.Unit unit = 1 [(validate.rules).message.required = true];
 }
 
 message CreateOrUpdateUnitResponse {
-  resources.dispatch.Unit unit = 1;
+  resources.centrum.Unit unit = 1;
 }
 
 message DeleteUnitRequest {
@@ -63,7 +63,7 @@ message DeleteUnitResponse {}
 
 message UpdateUnitStatusRequest {
   uint64 unit_id = 1 [jstype = JS_STRING];
-  resources.dispatch.StatusUnit status = 2 [(validate.rules).enum.defined_only = true];
+  resources.centrum.StatusUnit status = 2 [(validate.rules).enum.defined_only = true];
   // @sanitize
   optional string reason = 3 [(validate.rules).string.max_len = 255];
   // @sanitize
@@ -82,7 +82,7 @@ message AssignUnitResponse {}
 
 message ListUnitActivityResponse {
   resources.common.database.PaginationResponse pagination = 1;
-  repeated resources.dispatch.UnitStatus activity = 2;
+  repeated resources.centrum.UnitStatus activity = 2;
 }
 
 // Dispatch Management
@@ -95,25 +95,25 @@ message TakeControlResponse {}
 
 message ListDispatchesRequest {
   resources.common.database.PaginationRequest pagination = 1 [(validate.rules).message.required = true];
-  repeated resources.dispatch.StatusDispatch status = 2 [(validate.rules).repeated.items.enum.defined_only = true];
-  repeated resources.dispatch.StatusDispatch not_status = 3 [(validate.rules).repeated.items.enum.defined_only = true];
+  repeated resources.centrum.StatusDispatch status = 2 [(validate.rules).repeated.items.enum.defined_only = true];
+  repeated resources.centrum.StatusDispatch not_status = 3 [(validate.rules).repeated.items.enum.defined_only = true];
 }
 
 message ListDispatchesResponse {
   resources.common.database.PaginationResponse pagination = 1;
-  repeated resources.dispatch.Dispatch dispatches = 2;
+  repeated resources.centrum.Dispatch dispatches = 2;
 }
 
 message CreateDispatchRequest {
-  resources.dispatch.Dispatch dispatch = 1 [(validate.rules).message.required = true];
+  resources.centrum.Dispatch dispatch = 1 [(validate.rules).message.required = true];
 }
 
 message CreateDispatchResponse {
-  resources.dispatch.Dispatch dispatch = 1;
+  resources.centrum.Dispatch dispatch = 1;
 }
 
 message UpdateDispatchRequest {
-  resources.dispatch.Dispatch dispatch = 1 [(validate.rules).message.required = true];
+  resources.centrum.Dispatch dispatch = 1 [(validate.rules).message.required = true];
 }
 
 message UpdateDispatchResponse {}
@@ -126,7 +126,7 @@ message DeleteDispatchResponse {}
 
 message UpdateDispatchStatusRequest {
   uint64 dispatch_id = 1 [jstype = JS_STRING];
-  resources.dispatch.StatusDispatch status = 2 [(validate.rules).enum.defined_only = true];
+  resources.centrum.StatusDispatch status = 2 [(validate.rules).enum.defined_only = true];
   // @sanitize
   optional string reason = 3;
   // @sanitize
@@ -146,7 +146,7 @@ message AssignDispatchResponse {}
 
 message ListDispatchActivityResponse {
   resources.common.database.PaginationResponse pagination = 1;
-  repeated resources.dispatch.DispatchStatus activity = 2;
+  repeated resources.centrum.DispatchStatus activity = 2;
 }
 
 message JoinUnitRequest {
@@ -154,12 +154,12 @@ message JoinUnitRequest {
 }
 
 message JoinUnitResponse {
-  resources.dispatch.Unit unit = 1;
+  resources.centrum.Unit unit = 1;
 }
 
 message TakeDispatchRequest {
   repeated uint64 dispatch_ids = 1 [jstype = JS_STRING, (validate.rules).repeated.min_items = 1];
-  resources.dispatch.TakeDispatchResp resp = 2 [(validate.rules).enum.defined_only = true];
+  resources.centrum.TakeDispatchResp resp = 2 [(validate.rules).enum.defined_only = true];
   // @sanitize
   optional string reason = 3 [(validate.rules).string.max_len = 255];
 }
@@ -167,13 +167,13 @@ message TakeDispatchRequest {
 message TakeDispatchResponse {}
 
 message LatestState {
-  resources.dispatch.Settings settings = 1;
+  resources.centrum.Settings settings = 1;
   repeated resources.users.UserShort disponents = 2;
   bool is_disponent = 3;
-  resources.dispatch.Unit own_unit = 4;
+  resources.centrum.Unit own_unit = 4;
   // Send the current units and dispatches
-  repeated resources.dispatch.Unit units = 5;
-  repeated resources.dispatch.Dispatch dispatches = 6;
+  repeated resources.centrum.Unit units = 5;
+  repeated resources.centrum.Dispatch dispatches = 6;
 }
 
 message StreamRequest {}
@@ -181,20 +181,22 @@ message StreamRequest {}
 message StreamResponse {
   oneof change {
     LatestState latest_state = 1;
-    resources.dispatch.Settings settings = 2;
-    resources.dispatch.DisponentsChange disponents = 3;
 
-    resources.dispatch.Unit unit_created = 4;
-    resources.dispatch.Unit unit_deleted = 5;
-    resources.dispatch.Unit unit_updated = 6;
-    resources.dispatch.Unit unit_status = 7;
+    resources.centrum.Settings settings = 2;
+    resources.centrum.Disponents disponents = 3;
 
-    resources.dispatch.Dispatch dispatch_created = 8;
-    uint64 dispatch_deleted = 9 [jstype = JS_STRING];
-    resources.dispatch.Dispatch dispatch_updated = 10;
-    resources.dispatch.Dispatch dispatch_status = 11;
+    resources.centrum.Unit unit_created = 4;
+    resources.centrum.Unit unit_deleted = 5;
+    resources.centrum.Unit unit_updated = 6;
+    resources.centrum.UnitStatus unit_status = 7;
+
+    resources.centrum.Dispatch dispatch_created = 8;
+    resources.centrum.Dispatch dispatch_deleted = 9;
+    resources.centrum.Dispatch dispatch_updated = 10;
+    resources.centrum.DispatchStatus dispatch_status = 11;
   }
-  optional bool restart = 13;
+
+  optional bool restart = 12;
 }
 
 service CentrumService {

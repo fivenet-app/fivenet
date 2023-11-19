@@ -6,7 +6,7 @@ import (
 	"sort"
 	"time"
 
-	dispatch "github.com/galexrt/fivenet/gen/go/proto/resources/dispatch"
+	"github.com/galexrt/fivenet/gen/go/proto/resources/centrum"
 	"github.com/galexrt/fivenet/gen/go/proto/services/centrum/manager"
 	centrumutils "github.com/galexrt/fivenet/gen/go/proto/services/centrum/utils"
 	"go.uber.org/zap"
@@ -46,17 +46,17 @@ func (b *Bot) Run(ctx context.Context) error {
 		case <-time.After(4 * time.Second):
 		}
 
-		dispatches := b.state.FilterDispatches(b.job, nil, []dispatch.StatusDispatch{
+		dispatches := b.state.FilterDispatches(b.job, nil, []centrum.StatusDispatch{
 			// Dispatch status that mean it is being worked on
-			dispatch.StatusDispatch_STATUS_DISPATCH_UNIT_ASSIGNED,
-			dispatch.StatusDispatch_STATUS_DISPATCH_UNIT_ACCEPTED,
-			dispatch.StatusDispatch_STATUS_DISPATCH_EN_ROUTE,
-			dispatch.StatusDispatch_STATUS_DISPATCH_ON_SCENE,
-			dispatch.StatusDispatch_STATUS_DISPATCH_NEED_ASSISTANCE,
+			centrum.StatusDispatch_STATUS_DISPATCH_UNIT_ASSIGNED,
+			centrum.StatusDispatch_STATUS_DISPATCH_UNIT_ACCEPTED,
+			centrum.StatusDispatch_STATUS_DISPATCH_EN_ROUTE,
+			centrum.StatusDispatch_STATUS_DISPATCH_ON_SCENE,
+			centrum.StatusDispatch_STATUS_DISPATCH_NEED_ASSISTANCE,
 			// Completed states
-			dispatch.StatusDispatch_STATUS_DISPATCH_CANCELLED,
-			dispatch.StatusDispatch_STATUS_DISPATCH_COMPLETED,
-			dispatch.StatusDispatch_STATUS_DISPATCH_ARCHIVED,
+			centrum.StatusDispatch_STATUS_DISPATCH_CANCELLED,
+			centrum.StatusDispatch_STATUS_DISPATCH_COMPLETED,
+			centrum.StatusDispatch_STATUS_DISPATCH_ARCHIVED,
 		})
 		sort.Slice(dispatches, func(i, j int) bool {
 			return dispatches[i].Id < dispatches[j].Id
@@ -75,7 +75,7 @@ func (b *Bot) Run(ctx context.Context) error {
 			}
 
 			if err := b.state.UpdateDispatchAssignments(
-				ctx, b.job, nil, dsp,
+				ctx, b.job, nil, dsp.Id,
 				[]uint64{unit.Id}, nil,
 				b.state.DispatchAssignmentExpirationTime(),
 			); err != nil {
@@ -86,8 +86,8 @@ func (b *Bot) Run(ctx context.Context) error {
 	}
 }
 
-func (b *Bot) getAvailableUnit(ctx context.Context) (*dispatch.Unit, bool) {
-	units := b.state.FilterUnits(b.job, []dispatch.StatusUnit{dispatch.StatusUnit_STATUS_UNIT_AVAILABLE}, nil)
+func (b *Bot) getAvailableUnit(ctx context.Context) (*centrum.Unit, bool) {
+	units := b.state.FilterUnits(b.job, []centrum.StatusUnit{centrum.StatusUnit_STATUS_UNIT_AVAILABLE}, nil)
 	if len(units) == 0 {
 		return nil, false
 	}
@@ -98,12 +98,12 @@ func (b *Bot) getAvailableUnit(ctx context.Context) (*dispatch.Unit, bool) {
 		units[i], units[j] = units[j], units[i]
 	}
 
-	var unit *dispatch.Unit
+	var unit *centrum.Unit
 	for _, u := range units {
 		t, ok := b.lastAssignedUnits[u.Id]
 		if !ok || time.Now().After(t) {
 			// Double check if unit is still available
-			if u.Status != nil && u.Status.Status != dispatch.StatusUnit_STATUS_UNIT_AVAILABLE {
+			if u.Status != nil && u.Status.Status != centrum.StatusUnit_STATUS_UNIT_AVAILABLE {
 				continue
 			}
 

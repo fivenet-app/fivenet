@@ -11,7 +11,6 @@ import (
 	"github.com/Code-Hex/go-generics-cache/policy/lru"
 	"github.com/galexrt/fivenet/gen/go/proto/resources/permissions"
 	"github.com/galexrt/fivenet/pkg/config"
-	"github.com/galexrt/fivenet/pkg/events"
 	"github.com/galexrt/fivenet/pkg/grpc/auth/userinfo"
 	"github.com/galexrt/fivenet/pkg/perms/collections"
 	"github.com/galexrt/fivenet/query/fivenet/model"
@@ -82,8 +81,8 @@ type Perms struct {
 	tracer trace.Tracer
 	ctx    context.Context
 
-	events   *events.Eventus
-	eventSub *nats.Subscription
+	js    nats.JetStreamContext
+	jsSub *nats.Subscription
 
 	permsMap *xsync.MapOf[uint64, *cachePerm]
 	// Guard name to permission ID
@@ -116,7 +115,7 @@ type Params struct {
 	Logger *zap.Logger
 	DB     *sql.DB
 	TP     *tracesdk.TracerProvider
-	Events *events.Eventus
+	JS     nats.JetStreamContext
 	Config *config.Config
 }
 
@@ -137,7 +136,7 @@ func New(p Params) (Permissions, error) {
 		tracer: p.TP.Tracer("perms"),
 		ctx:    ctx,
 
-		events: p.Events,
+		js: p.JS,
 
 		permsMap:          xsync.NewMapOf[uint64, *cachePerm](),
 		permsGuardToIDMap: xsync.NewMapOf[string, uint64](),
@@ -481,5 +480,5 @@ func (p *Perms) removeRoleAttributeFromMap(roleId uint64, attrId uint64) {
 }
 
 func (p *Perms) stop() error {
-	return p.eventSub.Unsubscribe()
+	return p.jsSub.Unsubscribe()
 }

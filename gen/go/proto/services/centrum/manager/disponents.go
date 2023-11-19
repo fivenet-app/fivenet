@@ -3,7 +3,7 @@ package manager
 import (
 	"context"
 
-	"github.com/galexrt/fivenet/gen/go/proto/resources/dispatch"
+	"github.com/galexrt/fivenet/gen/go/proto/resources/centrum"
 	errorscentrum "github.com/galexrt/fivenet/gen/go/proto/services/centrum/errors"
 	eventscentrum "github.com/galexrt/fivenet/gen/go/proto/services/centrum/events"
 	"github.com/galexrt/fivenet/pkg/utils/dbutils"
@@ -61,8 +61,12 @@ func (s *Manager) DisponentSignOn(ctx context.Context, job string, userId int32,
 		return errorscentrum.ErrFailedQuery
 	}
 
-	disponents := s.GetDisponents(job)
-	change := &dispatch.DisponentsChange{
+	disponents, err := s.GetDisponents(job)
+	if err != nil {
+		return errorscentrum.ErrFailedQuery
+	}
+
+	change := &centrum.Disponents{
 		Job:        job,
 		Disponents: disponents,
 	}
@@ -71,7 +75,7 @@ func (s *Manager) DisponentSignOn(ctx context.Context, job string, userId int32,
 		return errorscentrum.ErrFailedQuery
 	}
 
-	if _, err := s.events.JS.Publish(eventscentrum.BuildSubject(eventscentrum.TopicGeneral, eventscentrum.TypeGeneralDisponents, job, 0), data); err != nil {
+	if _, err := s.js.Publish(eventscentrum.BuildSubject(eventscentrum.TopicGeneral, eventscentrum.TypeGeneralDisponents, job), data); err != nil {
 		return err
 	}
 

@@ -4,7 +4,7 @@ import { RpcError } from '@protobuf-ts/runtime-rpc';
 import { useThrottleFn } from '@vueuse/core';
 import { CloseIcon, LoadingIcon } from 'mdi-vue3';
 import { useCentrumStore } from '~/store/centrum';
-import { Unit } from '~~/gen/ts/resources/dispatch/units';
+import { Unit } from '~~/gen/ts/resources/centrum/units';
 
 defineProps<{
     open: boolean;

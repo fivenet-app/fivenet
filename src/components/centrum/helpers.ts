@@ -9,8 +9,8 @@ import {
     MarkerCheckIcon,
 } from 'mdi-vue3';
 import { type DefineComponent } from 'vue';
-import { StatusDispatch } from '~~/gen/ts/resources/dispatch/dispatches';
-import { StatusUnit } from '~~/gen/ts/resources/dispatch/units';
+import { StatusDispatch } from '~~/gen/ts/resources/centrum/dispatches';
+import { StatusUnit } from '~~/gen/ts/resources/centrum/units';
 
 export function dispatchStatusToFillColor(status: StatusDispatch | undefined): string {
     switch (status) {

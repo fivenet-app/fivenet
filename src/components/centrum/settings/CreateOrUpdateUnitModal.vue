@@ -6,7 +6,7 @@ import { useThrottleFn } from '@vueuse/core';
 import { CloseIcon, GroupIcon, LoadingIcon } from 'mdi-vue3';
 import { defineRule } from 'vee-validate';
 import ColorInput from 'vue-color-input/dist/color-input.esm';
-import { Unit } from '~~/gen/ts/resources/dispatch/units';
+import { Unit } from '~~/gen/ts/resources/centrum/units';
 
 const props = defineProps<{
     open: boolean;

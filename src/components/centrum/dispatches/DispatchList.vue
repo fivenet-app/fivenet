@@ -3,7 +3,7 @@ import { ViewListIcon } from 'mdi-vue3';
 import { computedAsync } from '@vueuse/core';
 import { useCentrumStore } from '~/store/centrum';
 import DispatchListEntry from '~/components/centrum/dispatches/DispatchListEntry.vue';
-import { Dispatch } from '~~/gen/ts/resources/dispatch/dispatches';
+import { Dispatch } from '~~/gen/ts/resources/centrum/dispatches';
 import Time from '~/components/partials/elements/Time.vue';
 
 const props = withDefaults(

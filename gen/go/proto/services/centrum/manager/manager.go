@@ -9,10 +9,10 @@ import (
 	eventscentrum "github.com/galexrt/fivenet/gen/go/proto/services/centrum/events"
 	"github.com/galexrt/fivenet/gen/go/proto/services/centrum/state"
 	"github.com/galexrt/fivenet/pkg/config"
-	"github.com/galexrt/fivenet/pkg/events"
 	"github.com/galexrt/fivenet/pkg/mstlystcdata"
 	"github.com/galexrt/fivenet/pkg/tracker"
 	"github.com/galexrt/fivenet/pkg/tracker/postals"
+	"github.com/nats-io/nats.go"
 	tracesdk "go.opentelemetry.io/otel/sdk/trace"
 	"go.opentelemetry.io/otel/trace"
 	"go.uber.org/fx"
@@ -29,7 +29,7 @@ type Manager struct {
 
 	tracer   trace.Tracer
 	db       *sql.DB
-	events   *events.Eventus
+	js       nats.JetStreamContext
 	enricher *mstlystcdata.Enricher
 	tracker  *tracker.Tracker
 	postals  *postals.Postals
@@ -48,7 +48,7 @@ type Params struct {
 	Logger   *zap.Logger
 	TP       *tracesdk.TracerProvider
 	DB       *sql.DB
-	Events   *events.Eventus
+	JS       nats.JetStreamContext
 	Enricher *mstlystcdata.Enricher
 	Postals  *postals.Postals
 	Tracker  *tracker.Tracker
@@ -69,7 +69,7 @@ func New(p Params) *Manager {
 
 		tracer:   p.TP.Tracer("centrum-manager"),
 		db:       p.DB,
-		events:   p.Events,
+		js:       p.JS,
 		enricher: p.Enricher,
 		postals:  p.Postals,
 		tracker:  p.Tracker,
@@ -81,7 +81,7 @@ func New(p Params) *Manager {
 	}
 
 	p.LC.Append(fx.StartHook(func(ctx context.Context) error {
-		if err := eventscentrum.RegisterStreams(ctx, s.events); err != nil {
+		if err := eventscentrum.RegisterStreams(ctx, s.js); err != nil {
 			return fmt.Errorf("failed to register events: %w", err)
 		}
 

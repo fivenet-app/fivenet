@@ -244,8 +244,7 @@ func (s *Tracker) refreshUserLocations(ctx context.Context, force bool) error {
 		unitId, ok := s.state.GetUserUnitID(userId)
 		if ok {
 			dest[i].UnitId = &unitId
-			units := s.state.GetUnitsMap(job)
-			if unit, ok := units.Load(unitId); ok {
+			if unit := s.state.GetUnit(job, unitId); unit != nil {
 				dest[i].Unit = unit
 			}
 		}

@@ -1,7 +1,7 @@
 <script lang="ts" setup>
 import { Float } from '@headlessui-float/vue';
 import { Popover, PopoverButton, PopoverPanel } from '@headlessui/vue';
-import { DispatchStatus, StatusDispatch } from '~~/gen/ts/resources/dispatch/dispatches';
+import { DispatchStatus, StatusDispatch } from '~~/gen/ts/resources/centrum/dispatches';
 
 defineProps<{
     status: DispatchStatus | undefined;

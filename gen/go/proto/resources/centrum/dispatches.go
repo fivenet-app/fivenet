@@ -1,4 +1,4 @@
-package dispatch
+package centrum
 
 import (
 	"database/sql/driver"
@@ -30,9 +30,9 @@ func (x *Attributes) Value() (driver.Value, error) {
 	return out, err
 }
 
-func (x *Dispatch) Merge(in *Dispatch) {
+func (x *Dispatch) Merge(in *Dispatch) *Dispatch {
 	if x.Id != in.Id {
-		return
+		return x
 	}
 
 	if in.CreatedAt != nil {
@@ -107,6 +107,8 @@ func (x *Dispatch) Merge(in *Dispatch) {
 	}
 
 	x.Units = in.Units
+
+	return x
 }
 
 func (x *Dispatch) Point() orb.Point {

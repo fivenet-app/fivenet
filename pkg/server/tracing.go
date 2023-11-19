@@ -6,12 +6,14 @@ import (
 	"time"
 
 	"github.com/galexrt/fivenet/pkg/config"
+	"github.com/gin-gonic/gin"
 	"go.opentelemetry.io/otel/attribute"
 	"go.opentelemetry.io/otel/exporters/jaeger"
 	"go.opentelemetry.io/otel/exporters/stdout/stdouttrace"
 	"go.opentelemetry.io/otel/sdk/resource"
 	tracesdk "go.opentelemetry.io/otel/sdk/trace"
 	semconv "go.opentelemetry.io/otel/semconv/v1.17.0"
+	"go.opentelemetry.io/otel/trace"
 	"go.uber.org/fx"
 )
 
@@ -76,4 +78,14 @@ func NewTracerProvider(p TracingParams) (*tracesdk.TracerProvider, error) {
 	}))
 
 	return tp, nil
+}
+
+func InjectToHeaders(tracer *tracesdk.TracerProvider) gin.HandlerFunc {
+	return func(c *gin.Context) {
+		if span := trace.SpanContextFromContext(c.Request.Context()); span.IsSampled() {
+			c.Header("X-Trace-Id", span.TraceID().String())
+		}
+
+		c.Next()
+	}
 }

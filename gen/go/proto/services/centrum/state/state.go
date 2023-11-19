@@ -1,14 +1,16 @@
 package state
 
 import (
-	"sync"
+	"context"
 
-	"github.com/galexrt/fivenet/gen/go/proto/resources/dispatch"
-	"github.com/galexrt/fivenet/gen/go/proto/resources/users"
+	"github.com/galexrt/fivenet/gen/go/proto/resources/centrum"
 	"github.com/galexrt/fivenet/pkg/config"
 	"github.com/galexrt/fivenet/pkg/coords"
+	"github.com/galexrt/fivenet/pkg/nats/store"
+	"github.com/nats-io/nats.go"
 	"github.com/puzpuzpuz/xsync/v3"
 	"go.uber.org/fx"
+	"go.uber.org/zap"
 )
 
 var StateModule = fx.Module("centrum_state", fx.Provide(
@@ -16,36 +18,72 @@ var StateModule = fx.Module("centrum_state", fx.Provide(
 ))
 
 type State struct {
-	settings   *xsync.MapOf[string, *dispatch.Settings]
-	disponents *xsync.MapOf[string, []*users.UserShort]
+	js nats.JetStreamContext
 
-	units      *xsync.MapOf[string, *xsync.MapOf[uint64, *dispatch.Unit]]
-	unitsLocks *xsync.MapOf[uint64, *sync.Mutex]
+	settings   *xsync.MapOf[string, *centrum.Settings]
+	disponents *store.Store[centrum.Disponents, *centrum.Disponents]
+	units      *store.Store[centrum.Unit, *centrum.Unit]
+	dispatches *store.Store[centrum.Dispatch, *centrum.Dispatch]
 
-	dispatches        *xsync.MapOf[string, *xsync.MapOf[uint64, *dispatch.Dispatch]]
-	dispatchLocations map[string]*coords.Coords[*dispatch.Dispatch]
+	dispatchLocations map[string]*coords.Coords[*centrum.Dispatch]
 
-	userIDToUnitID *xsync.MapOf[int32, uint64]
+	userIDToUnitID *store.Store[centrum.UserUnitMapping, *centrum.UserUnitMapping]
 }
 
-func New(cfg *config.Config) *State {
-	locs := map[string]*coords.Coords[*dispatch.Dispatch]{}
+func New(logger *zap.Logger, js nats.JetStreamContext, cfg *config.Config) (*State, error) {
+	locs := map[string]*coords.Coords[*centrum.Dispatch]{}
 	for _, job := range cfg.Game.Livemap.Jobs {
-		locs[job] = coords.New[*dispatch.Dispatch]()
+		locs[job] = coords.New[*centrum.Dispatch]()
 	}
+
+	disponents, err := store.New[centrum.Disponents, *centrum.Disponents](logger, js, "centrum_disponents")
+	if err != nil {
+		return nil, err
+	}
+
+	units, err := store.New[centrum.Unit, *centrum.Unit](logger, js, "centrum_units")
+	if err != nil {
+		return nil, err
+	}
+
+	dispatches, err := store.New[centrum.Dispatch, *centrum.Dispatch](logger, js, "centrum_dispatches")
+	if err != nil {
+		return nil, err
+	}
+
+	userIDToUnitID, err := store.New[centrum.UserUnitMapping, *centrum.UserUnitMapping](logger, js, "centrum_usersunits")
+	if err != nil {
+		return nil, err
+	}
+
+	go userIDToUnitID.Start(context.TODO())
+	go disponents.Start(context.TODO())
+	go units.Start(context.TODO())
+	go dispatches.Start(context.TODO())
 
 	s := &State{
-		settings:   xsync.NewMapOf[string, *dispatch.Settings](),
-		disponents: xsync.NewMapOf[string, []*users.UserShort](),
+		js: js,
 
-		units:      xsync.NewMapOf[string, *xsync.MapOf[uint64, *dispatch.Unit]](),
-		unitsLocks: xsync.NewMapOf[uint64, *sync.Mutex](),
+		settings:   xsync.NewMapOf[string, *centrum.Settings](),
+		disponents: disponents,
 
-		dispatches:        xsync.NewMapOf[string, *xsync.MapOf[uint64, *dispatch.Dispatch]](),
+		units: units,
+
+		dispatches:        dispatches,
 		dispatchLocations: locs,
 
-		userIDToUnitID: xsync.NewMapOf[int32, uint64](),
+		userIDToUnitID: userIDToUnitID,
 	}
 
-	return s
+	return s, nil
+}
+
+// Expose the stores for deeper interaction with updates
+
+func (s *State) UnitsStore() *store.Store[centrum.Unit, *centrum.Unit] {
+	return s.units
+}
+
+func (s *State) DispatchesStore() *store.Store[centrum.Dispatch, *centrum.Dispatch] {
+	return s.dispatches
 }

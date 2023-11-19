@@ -10,6 +10,16 @@ func InSlice[T comparable](in []T, search T) bool {
 	return false
 }
 
+func InSliceIndex[T comparable](in []T, search T) int {
+	for i := 0; i < len(in); i++ {
+		if in[i] == search {
+			return i
+		}
+	}
+
+	return -1
+}
+
 func InSliceFunc[T any](in []T, searchFunc func(in T) bool) bool {
 	for i := 0; i < len(in); i++ {
 		if searchFunc(in[i]) {
@@ -18,6 +28,16 @@ func InSliceFunc[T any](in []T, searchFunc func(in T) bool) bool {
 	}
 
 	return false
+}
+
+func InSliceIndexFunc[T any](in []T, searchFunc func(in T) bool) int {
+	for i := 0; i < len(in); i++ {
+		if searchFunc(in[i]) {
+			return i
+		}
+	}
+
+	return -1
 }
 
 func RemoveFromSlice[T any](s []T, i int) []T {

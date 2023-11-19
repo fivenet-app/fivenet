@@ -173,8 +173,8 @@ export const useNotificatorStore = defineStore('notifications', {
         async restartStream(): Promise<void> {
             this.restarting = true;
 
-            // Reset back off time when over 3 minutes
-            if (this.restartBackoffTime > 180) {
+            // Reset back off time when over 2 minutes
+            if (this.restartBackoffTime > 120) {
                 this.restartBackoffTime = initialBackoffTime;
             } else {
                 this.restartBackoffTime += initialBackoffTime;

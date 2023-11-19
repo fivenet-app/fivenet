@@ -4,8 +4,8 @@ import (
 	"context"
 	"errors"
 
+	centrum "github.com/galexrt/fivenet/gen/go/proto/resources/centrum"
 	database "github.com/galexrt/fivenet/gen/go/proto/resources/common/database"
-	"github.com/galexrt/fivenet/gen/go/proto/resources/dispatch"
 	"github.com/galexrt/fivenet/gen/go/proto/resources/rector"
 	errorscentrum "github.com/galexrt/fivenet/gen/go/proto/services/centrum/errors"
 	"github.com/galexrt/fivenet/pkg/grpc/auth"
@@ -35,7 +35,7 @@ func (s *Server) ListUnits(ctx context.Context, req *ListUnitsRequest) (*ListUni
 	defer s.auditer.Log(auditEntry, req)
 
 	resp := &ListUnitsResponse{
-		Units: []*dispatch.Unit{},
+		Units: []*centrum.Unit{},
 	}
 
 	resp.Units = s.state.FilterUnits(userInfo.Job, req.Status, nil)
@@ -60,7 +60,7 @@ func (s *Server) CreateOrUpdateUnit(ctx context.Context, req *CreateOrUpdateUnit
 	}
 	defer s.auditer.Log(auditEntry, req)
 
-	var unit *dispatch.Unit
+	var unit *centrum.Unit
 	var err error
 	// No unit id set
 	if req.Unit.Id <= 0 {
@@ -119,8 +119,8 @@ func (s *Server) UpdateUnitStatus(ctx context.Context, req *UpdateUnitStatusRequ
 	}
 	defer s.auditer.Log(auditEntry, req)
 
-	unit, ok := s.state.GetUnit(userInfo.Job, req.UnitId)
-	if !ok {
+	unit := s.state.GetUnit(userInfo.Job, req.UnitId)
+	if unit == nil {
 		return nil, errorscentrum.ErrFailedQuery
 	}
 
@@ -136,7 +136,7 @@ func (s *Server) UpdateUnitStatus(ctx context.Context, req *UpdateUnitStatusRequ
 		postal = marker.Info.Postal
 	}
 
-	if err := s.state.UpdateUnitStatus(ctx, userInfo.Job, unit, &dispatch.UnitStatus{
+	if _, err := s.state.UpdateUnitStatus(ctx, userInfo.Job, unit, &centrum.UnitStatus{
 		UnitId:    unit.Id,
 		Status:    req.Status,
 		Reason:    req.Reason,
@@ -167,15 +167,15 @@ func (s *Server) AssignUnit(ctx context.Context, req *AssignUnitRequest) (*Assig
 	}
 	defer s.auditer.Log(auditEntry, req)
 
-	unit, ok := s.state.GetUnit(userInfo.Job, req.UnitId)
-	if !ok {
+	unit := s.state.GetUnit(userInfo.Job, req.UnitId)
+	if unit == nil {
 		return nil, errorscentrum.ErrFailedQuery
 	}
 	if unit.Job != userInfo.Job {
 		return nil, errorscentrum.ErrFailedQuery
 	}
 
-	if err := s.state.UpdateUnitAssignments(ctx, userInfo.Job, &userInfo.UserId, unit, req.ToAdd, req.ToRemove); err != nil {
+	if err := s.state.UpdateUnitAssignments(ctx, userInfo.Job, &userInfo.UserId, unit.Id, req.ToAdd, req.ToRemove); err != nil {
 		return nil, errorscentrum.ErrFailedQuery
 	}
 
@@ -201,33 +201,33 @@ func (s *Server) JoinUnit(ctx context.Context, req *JoinUnitRequest) (*JoinUnitR
 		return resp, nil
 	}
 
-	currentUnit, ok := s.state.GetUnit(userInfo.Job, currentUnitId)
+	currentUnit := s.state.GetUnit(userInfo.Job, currentUnitId)
 
 	// User joins unit
 	if req.UnitId != nil && *req.UnitId > 0 {
-		s.logger.Debug("user joining unit", zap.Uint64("current_unit_id", currentUnitId), zap.Uint64p("unit_id", req.UnitId), zap.Bool("current_unit", ok))
+		s.logger.Debug("user joining unit", zap.Uint64("current_unit_id", currentUnitId), zap.Uint64p("unit_id", req.UnitId))
 		// Remove user from his current unit
 		if currentUnit != nil {
-			if err := s.state.UpdateUnitAssignments(ctx, userInfo.Job, &userInfo.UserId, currentUnit, nil, []int32{userInfo.UserId}); err != nil {
+			if err := s.state.UpdateUnitAssignments(ctx, userInfo.Job, &userInfo.UserId, currentUnit.Id, nil, []int32{userInfo.UserId}); err != nil {
 				return nil, errorscentrum.ErrFailedQuery
 			}
 		}
 
-		newUnit, ok := s.state.GetUnit(userInfo.Job, *req.UnitId)
-		if !ok {
+		newUnit := s.state.GetUnit(userInfo.Job, *req.UnitId)
+		if newUnit == nil {
 			return nil, errorscentrum.ErrFailedQuery
 		}
 
-		if err := s.state.UpdateUnitAssignments(ctx, userInfo.Job, &userInfo.UserId, newUnit, []int32{userInfo.UserId}, nil); err != nil {
+		if err := s.state.UpdateUnitAssignments(ctx, userInfo.Job, &userInfo.UserId, newUnit.Id, []int32{userInfo.UserId}, nil); err != nil {
 			return nil, errorscentrum.ErrFailedQuery
 		}
 
 		resp.Unit = newUnit
 	} else {
-		s.logger.Debug("user leaving unit", zap.Uint64("current_unit_id", currentUnitId), zap.Uint64p("unit_id", req.UnitId), zap.Bool("current_unit", ok))
+		s.logger.Debug("user leaving unit", zap.Uint64("current_unit_id", currentUnitId), zap.Uint64p("unit_id", req.UnitId))
 		// User leaves his current unit (if he is in an unit)
 		if currentUnit != nil {
-			if err := s.state.UpdateUnitAssignments(ctx, userInfo.Job, &userInfo.UserId, currentUnit, nil, []int32{userInfo.UserId}); err != nil {
+			if err := s.state.UpdateUnitAssignments(ctx, userInfo.Job, &userInfo.UserId, currentUnit.Id, nil, []int32{userInfo.UserId}); err != nil {
 				return nil, errorscentrum.ErrFailedQuery
 			}
 		}
@@ -237,6 +237,8 @@ func (s *Server) JoinUnit(ctx context.Context, req *JoinUnitRequest) (*JoinUnitR
 }
 
 func (s *Server) ListUnitActivity(ctx context.Context, req *ListUnitActivityRequest) (*ListUnitActivityResponse, error) {
+	userInfo := auth.MustGetUserInfoFromContext(ctx)
+
 	countStmt := tUnitStatus.
 		SELECT(
 			jet.COUNT(jet.DISTINCT(tUnitStatus.ID)).AS("datacount.totalcount"),
@@ -302,10 +304,10 @@ func (s *Server) ListUnitActivity(ctx context.Context, req *ListUnitActivityRequ
 
 	for i := 0; i < len(resp.Activity); i++ {
 		if resp.Activity[i].UnitId > 0 && resp.Activity[i].User != nil {
-			unit, ok := s.state.GetUnit(resp.Activity[i].User.Job, resp.Activity[i].UnitId)
-			if ok && unit != nil {
+			unit := s.state.GetUnit(userInfo.Job, resp.Activity[i].UnitId)
+			if unit != nil {
 				newUnit := proto.Clone(unit)
-				resp.Activity[i].Unit = newUnit.(*dispatch.Unit)
+				resp.Activity[i].Unit = newUnit.(*centrum.Unit)
 			}
 		}
 	}

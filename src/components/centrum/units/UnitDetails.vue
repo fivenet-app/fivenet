@@ -7,7 +7,7 @@ import UnitFeed from '~/components/centrum/units/UnitFeed.vue';
 import UnitStatusUpdateModal from '~/components/centrum/units/UnitStatusUpdateModal.vue';
 import CitizenInfoPopover from '~/components/partials/citizens/CitizenInfoPopover.vue';
 import Time from '~/components/partials/elements/Time.vue';
-import { StatusUnit, Unit } from '~~/gen/ts/resources/dispatch/units';
+import { StatusUnit, Unit } from '~~/gen/ts/resources/centrum/units';
 
 const props = defineProps<{
     open: boolean;
@@ -20,7 +20,7 @@ defineEmits<{
     (e: 'goto', loc: Coordinate): void;
 }>();
 
-const unitStatusColors = computed(() => unitStatusToBGColor(props.unit.status?.status ?? 0));
+const unitStatusColors = computed(() => unitStatusToBGColor(props.unit.status?.status));
 
 const openAssign = ref(false);
 const openStatus = ref(false);

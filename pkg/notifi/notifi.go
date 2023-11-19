@@ -6,8 +6,8 @@ import (
 	"fmt"
 
 	"github.com/galexrt/fivenet/gen/go/proto/resources/notifications"
-	"github.com/galexrt/fivenet/pkg/events"
 	"github.com/galexrt/fivenet/query/fivenet/table"
+	"github.com/nats-io/nats.go"
 	"go.uber.org/fx"
 	"go.uber.org/zap"
 	"google.golang.org/protobuf/proto"
@@ -33,7 +33,7 @@ type INotifi interface {
 type Notifi struct {
 	logger *zap.Logger
 	db     *sql.DB
-	events *events.Eventus
+	js     nats.JetStreamContext
 }
 
 type Params struct {
@@ -42,14 +42,14 @@ type Params struct {
 	LC     fx.Lifecycle
 	Logger *zap.Logger
 	DB     *sql.DB
-	Events *events.Eventus
+	JS     nats.JetStreamContext
 }
 
 func New(p Params) INotifi {
 	n := &Notifi{
 		logger: p.Logger,
 		db:     p.DB,
-		events: p.Events,
+		js:     p.JS,
 	}
 
 	p.LC.Append(fx.StartHook(func(ctx context.Context) error {
@@ -73,7 +73,7 @@ func (n *Notifi) NotifyUser(ctx context.Context, not *notifications.Notification
 		return
 	}
 
-	if _, err := n.events.JS.PublishAsync(fmt.Sprintf("%s.%s.%d", BaseSubject, UserNotification, not.UserId), data); err != nil {
+	if _, err := n.js.PublishAsync(fmt.Sprintf("%s.%s.%d", BaseSubject, UserNotification, not.UserId), data); err != nil {
 		n.logger.Error("failed to publish notification message", zap.Error(err))
 		return
 	}

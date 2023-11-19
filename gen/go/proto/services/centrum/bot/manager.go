@@ -6,8 +6,8 @@ import (
 	"time"
 
 	"github.com/galexrt/fivenet/gen/go/proto/services/centrum/manager"
-	"github.com/galexrt/fivenet/pkg/events"
 	"github.com/galexrt/fivenet/pkg/server/admin"
+	"github.com/nats-io/nats.go"
 	"github.com/prometheus/client_golang/prometheus"
 	"github.com/prometheus/client_golang/prometheus/promauto"
 	"github.com/puzpuzpuz/xsync/v3"
@@ -38,8 +38,8 @@ type Manager struct {
 
 	tracer trace.Tracer
 
-	bots   *xsync.MapOf[string, context.CancelFunc]
-	events *events.Eventus
+	bots *xsync.MapOf[string, context.CancelFunc]
+	js   nats.JetStreamContext
 
 	state *manager.Manager
 }
@@ -49,10 +49,10 @@ type Params struct {
 
 	LC fx.Lifecycle
 
-	Logger  *zap.Logger
-	TP      *tracesdk.TracerProvider
-	State   *manager.Manager
-	Eventus *events.Eventus
+	Logger *zap.Logger
+	TP     *tracesdk.TracerProvider
+	State  *manager.Manager
+	JS     nats.JetStreamContext
 }
 
 func NewManager(p Params) *Manager {
@@ -66,9 +66,9 @@ func NewManager(p Params) *Manager {
 
 		tracer: p.TP.Tracer("centrum-cache"),
 
-		bots:   xsync.NewMapOf[string, context.CancelFunc](),
-		events: p.Eventus,
-		state:  p.State,
+		bots:  xsync.NewMapOf[string, context.CancelFunc](),
+		js:    p.JS,
+		state: p.State,
 	}
 
 	p.LC.Append(fx.StartHook(func(ctx context.Context) error {

@@ -5,7 +5,7 @@ import { BellIcon } from 'mdi-vue3';
 import { dispatchStatusAnimate, dispatchStatusToBGColor, dispatchStatusToFillColor } from '~/components/centrum/helpers';
 import IDCopyBadge from '~/components/partials/IDCopyBadge.vue';
 import CitizenInfoPopover from '~/components/partials/citizens/CitizenInfoPopover.vue';
-import { Dispatch, StatusDispatch } from '~~/gen/ts/resources/dispatch/dispatches';
+import { Dispatch, StatusDispatch } from '~~/gen/ts/resources/centrum/dispatches';
 
 const props = withDefaults(
     defineProps<{
@@ -53,7 +53,7 @@ const dispatchClasses = computed(() => [
                 <li>
                     <span class="font-semibold">{{ $t('common.status') }}</span
                     >:
-                    <span :class="dispatchStatusToBGColor(dispatch.status?.status ?? 0)">
+                    <span :class="dispatchStatusToBGColor(dispatch.status?.status)">
                         {{ $t(`enums.centrum.StatusDispatch.${StatusDispatch[dispatch.status?.status ?? 0]}`) }}
                     </span>
                 </li>

@@ -3,17 +3,17 @@
 // tslint:disable
 import { ServiceType } from "@protobuf-ts/runtime-rpc";
 import { MessageType } from "@protobuf-ts/runtime";
-import { DisponentsChange } from "../../resources/dispatch/settings.js";
+import { Disponents } from "../../resources/centrum/settings.js";
 import { UserShort } from "../../resources/users/users.js";
-import { TakeDispatchResp } from "../../resources/dispatch/dispatches.js";
-import { DispatchStatus } from "../../resources/dispatch/dispatches.js";
-import { Dispatch } from "../../resources/dispatch/dispatches.js";
-import { StatusDispatch } from "../../resources/dispatch/dispatches.js";
-import { UnitStatus } from "../../resources/dispatch/units.js";
+import { TakeDispatchResp } from "../../resources/centrum/dispatches.js";
+import { DispatchStatus } from "../../resources/centrum/dispatches.js";
+import { Dispatch } from "../../resources/centrum/dispatches.js";
+import { StatusDispatch } from "../../resources/centrum/dispatches.js";
+import { UnitStatus } from "../../resources/centrum/units.js";
 import { PaginationResponse } from "../../resources/common/database/database.js";
-import { Unit } from "../../resources/dispatch/units.js";
-import { StatusUnit } from "../../resources/dispatch/units.js";
-import { Settings } from "../../resources/dispatch/settings.js";
+import { Unit } from "../../resources/centrum/units.js";
+import { StatusUnit } from "../../resources/centrum/units.js";
+import { Settings } from "../../resources/centrum/settings.js";
 import { PaginationRequest } from "../../resources/common/database/database.js";
 // Common
 
@@ -53,7 +53,7 @@ export interface GetSettingsRequest {
  */
 export interface GetSettingsResponse {
     /**
-     * @generated from protobuf field: resources.dispatch.Settings settings = 1;
+     * @generated from protobuf field: resources.centrum.Settings settings = 1;
      */
     settings?: Settings;
 }
@@ -62,7 +62,7 @@ export interface GetSettingsResponse {
  */
 export interface UpdateSettingsRequest {
     /**
-     * @generated from protobuf field: resources.dispatch.Settings settings = 1;
+     * @generated from protobuf field: resources.centrum.Settings settings = 1;
      */
     settings?: Settings;
 }
@@ -71,7 +71,7 @@ export interface UpdateSettingsRequest {
  */
 export interface UpdateSettingsResponse {
     /**
-     * @generated from protobuf field: resources.dispatch.Settings settings = 1;
+     * @generated from protobuf field: resources.centrum.Settings settings = 1;
      */
     settings?: Settings;
 }
@@ -82,7 +82,7 @@ export interface UpdateSettingsResponse {
  */
 export interface ListUnitsRequest {
     /**
-     * @generated from protobuf field: repeated resources.dispatch.StatusUnit status = 1;
+     * @generated from protobuf field: repeated resources.centrum.StatusUnit status = 1;
      */
     status: StatusUnit[];
 }
@@ -91,7 +91,7 @@ export interface ListUnitsRequest {
  */
 export interface ListUnitsResponse {
     /**
-     * @generated from protobuf field: repeated resources.dispatch.Unit units = 1;
+     * @generated from protobuf field: repeated resources.centrum.Unit units = 1;
      */
     units: Unit[];
 }
@@ -100,7 +100,7 @@ export interface ListUnitsResponse {
  */
 export interface CreateOrUpdateUnitRequest {
     /**
-     * @generated from protobuf field: resources.dispatch.Unit unit = 1;
+     * @generated from protobuf field: resources.centrum.Unit unit = 1;
      */
     unit?: Unit;
 }
@@ -109,7 +109,7 @@ export interface CreateOrUpdateUnitRequest {
  */
 export interface CreateOrUpdateUnitResponse {
     /**
-     * @generated from protobuf field: resources.dispatch.Unit unit = 1;
+     * @generated from protobuf field: resources.centrum.Unit unit = 1;
      */
     unit?: Unit;
 }
@@ -136,7 +136,7 @@ export interface UpdateUnitStatusRequest {
      */
     unitId: string;
     /**
-     * @generated from protobuf field: resources.dispatch.StatusUnit status = 2;
+     * @generated from protobuf field: resources.centrum.StatusUnit status = 2;
      */
     status: StatusUnit;
     /**
@@ -188,7 +188,7 @@ export interface ListUnitActivityResponse {
      */
     pagination?: PaginationResponse;
     /**
-     * @generated from protobuf field: repeated resources.dispatch.UnitStatus activity = 2;
+     * @generated from protobuf field: repeated resources.centrum.UnitStatus activity = 2;
      */
     activity: UnitStatus[];
 }
@@ -217,11 +217,11 @@ export interface ListDispatchesRequest {
      */
     pagination?: PaginationRequest;
     /**
-     * @generated from protobuf field: repeated resources.dispatch.StatusDispatch status = 2;
+     * @generated from protobuf field: repeated resources.centrum.StatusDispatch status = 2;
      */
     status: StatusDispatch[];
     /**
-     * @generated from protobuf field: repeated resources.dispatch.StatusDispatch not_status = 3;
+     * @generated from protobuf field: repeated resources.centrum.StatusDispatch not_status = 3;
      */
     notStatus: StatusDispatch[];
 }
@@ -234,7 +234,7 @@ export interface ListDispatchesResponse {
      */
     pagination?: PaginationResponse;
     /**
-     * @generated from protobuf field: repeated resources.dispatch.Dispatch dispatches = 2;
+     * @generated from protobuf field: repeated resources.centrum.Dispatch dispatches = 2;
      */
     dispatches: Dispatch[];
 }
@@ -243,7 +243,7 @@ export interface ListDispatchesResponse {
  */
 export interface CreateDispatchRequest {
     /**
-     * @generated from protobuf field: resources.dispatch.Dispatch dispatch = 1;
+     * @generated from protobuf field: resources.centrum.Dispatch dispatch = 1;
      */
     dispatch?: Dispatch;
 }
@@ -252,7 +252,7 @@ export interface CreateDispatchRequest {
  */
 export interface CreateDispatchResponse {
     /**
-     * @generated from protobuf field: resources.dispatch.Dispatch dispatch = 1;
+     * @generated from protobuf field: resources.centrum.Dispatch dispatch = 1;
      */
     dispatch?: Dispatch;
 }
@@ -261,7 +261,7 @@ export interface CreateDispatchResponse {
  */
 export interface UpdateDispatchRequest {
     /**
-     * @generated from protobuf field: resources.dispatch.Dispatch dispatch = 1;
+     * @generated from protobuf field: resources.centrum.Dispatch dispatch = 1;
      */
     dispatch?: Dispatch;
 }
@@ -293,7 +293,7 @@ export interface UpdateDispatchStatusRequest {
      */
     dispatchId: string;
     /**
-     * @generated from protobuf field: resources.dispatch.StatusDispatch status = 2;
+     * @generated from protobuf field: resources.centrum.StatusDispatch status = 2;
      */
     status: StatusDispatch;
     /**
@@ -349,7 +349,7 @@ export interface ListDispatchActivityResponse {
      */
     pagination?: PaginationResponse;
     /**
-     * @generated from protobuf field: repeated resources.dispatch.DispatchStatus activity = 2;
+     * @generated from protobuf field: repeated resources.centrum.DispatchStatus activity = 2;
      */
     activity: DispatchStatus[];
 }
@@ -367,7 +367,7 @@ export interface JoinUnitRequest {
  */
 export interface JoinUnitResponse {
     /**
-     * @generated from protobuf field: resources.dispatch.Unit unit = 1;
+     * @generated from protobuf field: resources.centrum.Unit unit = 1;
      */
     unit?: Unit;
 }
@@ -380,7 +380,7 @@ export interface TakeDispatchRequest {
      */
     dispatchIds: string[];
     /**
-     * @generated from protobuf field: resources.dispatch.TakeDispatchResp resp = 2;
+     * @generated from protobuf field: resources.centrum.TakeDispatchResp resp = 2;
      */
     resp: TakeDispatchResp;
     /**
@@ -400,7 +400,7 @@ export interface TakeDispatchResponse {
  */
 export interface LatestState {
     /**
-     * @generated from protobuf field: resources.dispatch.Settings settings = 1;
+     * @generated from protobuf field: resources.centrum.Settings settings = 1;
      */
     settings?: Settings;
     /**
@@ -412,17 +412,17 @@ export interface LatestState {
      */
     isDisponent: boolean;
     /**
-     * @generated from protobuf field: resources.dispatch.Unit own_unit = 4;
+     * @generated from protobuf field: resources.centrum.Unit own_unit = 4;
      */
     ownUnit?: Unit;
     /**
      * Send the current units and dispatches
      *
-     * @generated from protobuf field: repeated resources.dispatch.Unit units = 5;
+     * @generated from protobuf field: repeated resources.centrum.Unit units = 5;
      */
     units: Unit[];
     /**
-     * @generated from protobuf field: repeated resources.dispatch.Dispatch dispatches = 6;
+     * @generated from protobuf field: repeated resources.centrum.Dispatch dispatches = 6;
      */
     dispatches: Dispatch[];
 }
@@ -447,68 +447,68 @@ export interface StreamResponse {
     } | {
         oneofKind: "settings";
         /**
-         * @generated from protobuf field: resources.dispatch.Settings settings = 2;
+         * @generated from protobuf field: resources.centrum.Settings settings = 2;
          */
         settings: Settings;
     } | {
         oneofKind: "disponents";
         /**
-         * @generated from protobuf field: resources.dispatch.DisponentsChange disponents = 3;
+         * @generated from protobuf field: resources.centrum.Disponents disponents = 3;
          */
-        disponents: DisponentsChange;
+        disponents: Disponents;
     } | {
         oneofKind: "unitCreated";
         /**
-         * @generated from protobuf field: resources.dispatch.Unit unit_created = 4;
+         * @generated from protobuf field: resources.centrum.Unit unit_created = 4;
          */
         unitCreated: Unit;
     } | {
         oneofKind: "unitDeleted";
         /**
-         * @generated from protobuf field: resources.dispatch.Unit unit_deleted = 5;
+         * @generated from protobuf field: resources.centrum.Unit unit_deleted = 5;
          */
         unitDeleted: Unit;
     } | {
         oneofKind: "unitUpdated";
         /**
-         * @generated from protobuf field: resources.dispatch.Unit unit_updated = 6;
+         * @generated from protobuf field: resources.centrum.Unit unit_updated = 6;
          */
         unitUpdated: Unit;
     } | {
         oneofKind: "unitStatus";
         /**
-         * @generated from protobuf field: resources.dispatch.Unit unit_status = 7;
+         * @generated from protobuf field: resources.centrum.UnitStatus unit_status = 7;
          */
-        unitStatus: Unit;
+        unitStatus: UnitStatus;
     } | {
         oneofKind: "dispatchCreated";
         /**
-         * @generated from protobuf field: resources.dispatch.Dispatch dispatch_created = 8;
+         * @generated from protobuf field: resources.centrum.Dispatch dispatch_created = 8;
          */
         dispatchCreated: Dispatch;
     } | {
         oneofKind: "dispatchDeleted";
         /**
-         * @generated from protobuf field: uint64 dispatch_deleted = 9 [jstype = JS_STRING];
+         * @generated from protobuf field: resources.centrum.Dispatch dispatch_deleted = 9;
          */
-        dispatchDeleted: string;
+        dispatchDeleted: Dispatch;
     } | {
         oneofKind: "dispatchUpdated";
         /**
-         * @generated from protobuf field: resources.dispatch.Dispatch dispatch_updated = 10;
+         * @generated from protobuf field: resources.centrum.Dispatch dispatch_updated = 10;
          */
         dispatchUpdated: Dispatch;
     } | {
         oneofKind: "dispatchStatus";
         /**
-         * @generated from protobuf field: resources.dispatch.Dispatch dispatch_status = 11;
+         * @generated from protobuf field: resources.centrum.DispatchStatus dispatch_status = 11;
          */
-        dispatchStatus: Dispatch;
+        dispatchStatus: DispatchStatus;
     } | {
         oneofKind: undefined;
     };
     /**
-     * @generated from protobuf field: optional bool restart = 13;
+     * @generated from protobuf field: optional bool restart = 12;
      */
     restart?: boolean;
 }
@@ -588,7 +588,7 @@ export const UpdateSettingsResponse = new UpdateSettingsResponse$Type();
 class ListUnitsRequest$Type extends MessageType<ListUnitsRequest> {
     constructor() {
         super("services.centrum.ListUnitsRequest", [
-            { no: 1, name: "status", kind: "enum", repeat: 1 /*RepeatType.PACKED*/, T: () => ["resources.dispatch.StatusUnit", StatusUnit, "STATUS_UNIT_"], options: { "validate.rules": { repeated: { items: { enum: { definedOnly: true } } } } } }
+            { no: 1, name: "status", kind: "enum", repeat: 1 /*RepeatType.PACKED*/, T: () => ["resources.centrum.StatusUnit", StatusUnit, "STATUS_UNIT_"], options: { "validate.rules": { repeated: { items: { enum: { definedOnly: true } } } } } }
         ]);
     }
 }
@@ -659,7 +659,7 @@ class UpdateUnitStatusRequest$Type extends MessageType<UpdateUnitStatusRequest> 
     constructor() {
         super("services.centrum.UpdateUnitStatusRequest", [
             { no: 1, name: "unit_id", kind: "scalar", T: 4 /*ScalarType.UINT64*/ },
-            { no: 2, name: "status", kind: "enum", T: () => ["resources.dispatch.StatusUnit", StatusUnit, "STATUS_UNIT_"], options: { "validate.rules": { enum: { definedOnly: true } } } },
+            { no: 2, name: "status", kind: "enum", T: () => ["resources.centrum.StatusUnit", StatusUnit, "STATUS_UNIT_"], options: { "validate.rules": { enum: { definedOnly: true } } } },
             { no: 3, name: "reason", kind: "scalar", opt: true, T: 9 /*ScalarType.STRING*/, options: { "validate.rules": { string: { maxLen: "255" } } } },
             { no: 4, name: "code", kind: "scalar", opt: true, T: 9 /*ScalarType.STRING*/, options: { "validate.rules": { string: { maxLen: "20" } } } }
         ]);
@@ -743,8 +743,8 @@ class ListDispatchesRequest$Type extends MessageType<ListDispatchesRequest> {
     constructor() {
         super("services.centrum.ListDispatchesRequest", [
             { no: 1, name: "pagination", kind: "message", T: () => PaginationRequest, options: { "validate.rules": { message: { required: true } } } },
-            { no: 2, name: "status", kind: "enum", repeat: 1 /*RepeatType.PACKED*/, T: () => ["resources.dispatch.StatusDispatch", StatusDispatch, "STATUS_DISPATCH_"], options: { "validate.rules": { repeated: { items: { enum: { definedOnly: true } } } } } },
-            { no: 3, name: "not_status", kind: "enum", repeat: 1 /*RepeatType.PACKED*/, T: () => ["resources.dispatch.StatusDispatch", StatusDispatch, "STATUS_DISPATCH_"], options: { "validate.rules": { repeated: { items: { enum: { definedOnly: true } } } } } }
+            { no: 2, name: "status", kind: "enum", repeat: 1 /*RepeatType.PACKED*/, T: () => ["resources.centrum.StatusDispatch", StatusDispatch, "STATUS_DISPATCH_"], options: { "validate.rules": { repeated: { items: { enum: { definedOnly: true } } } } } },
+            { no: 3, name: "not_status", kind: "enum", repeat: 1 /*RepeatType.PACKED*/, T: () => ["resources.centrum.StatusDispatch", StatusDispatch, "STATUS_DISPATCH_"], options: { "validate.rules": { repeated: { items: { enum: { definedOnly: true } } } } } }
         ]);
     }
 }
@@ -838,7 +838,7 @@ class UpdateDispatchStatusRequest$Type extends MessageType<UpdateDispatchStatusR
     constructor() {
         super("services.centrum.UpdateDispatchStatusRequest", [
             { no: 1, name: "dispatch_id", kind: "scalar", T: 4 /*ScalarType.UINT64*/ },
-            { no: 2, name: "status", kind: "enum", T: () => ["resources.dispatch.StatusDispatch", StatusDispatch, "STATUS_DISPATCH_"], options: { "validate.rules": { enum: { definedOnly: true } } } },
+            { no: 2, name: "status", kind: "enum", T: () => ["resources.centrum.StatusDispatch", StatusDispatch, "STATUS_DISPATCH_"], options: { "validate.rules": { enum: { definedOnly: true } } } },
             { no: 3, name: "reason", kind: "scalar", opt: true, T: 9 /*ScalarType.STRING*/ },
             { no: 4, name: "code", kind: "scalar", opt: true, T: 9 /*ScalarType.STRING*/ }
         ]);
@@ -925,7 +925,7 @@ class TakeDispatchRequest$Type extends MessageType<TakeDispatchRequest> {
     constructor() {
         super("services.centrum.TakeDispatchRequest", [
             { no: 1, name: "dispatch_ids", kind: "scalar", repeat: 1 /*RepeatType.PACKED*/, T: 4 /*ScalarType.UINT64*/, options: { "validate.rules": { repeated: { minItems: "1" } } } },
-            { no: 2, name: "resp", kind: "enum", T: () => ["resources.dispatch.TakeDispatchResp", TakeDispatchResp, "TAKE_DISPATCH_RESP_"], options: { "validate.rules": { enum: { definedOnly: true } } } },
+            { no: 2, name: "resp", kind: "enum", T: () => ["resources.centrum.TakeDispatchResp", TakeDispatchResp, "TAKE_DISPATCH_RESP_"], options: { "validate.rules": { enum: { definedOnly: true } } } },
             { no: 3, name: "reason", kind: "scalar", opt: true, T: 9 /*ScalarType.STRING*/, options: { "validate.rules": { string: { maxLen: "255" } } } }
         ]);
     }
@@ -977,16 +977,16 @@ class StreamResponse$Type extends MessageType<StreamResponse> {
         super("services.centrum.StreamResponse", [
             { no: 1, name: "latest_state", kind: "message", oneof: "change", T: () => LatestState },
             { no: 2, name: "settings", kind: "message", oneof: "change", T: () => Settings },
-            { no: 3, name: "disponents", kind: "message", oneof: "change", T: () => DisponentsChange },
+            { no: 3, name: "disponents", kind: "message", oneof: "change", T: () => Disponents },
             { no: 4, name: "unit_created", kind: "message", oneof: "change", T: () => Unit },
             { no: 5, name: "unit_deleted", kind: "message", oneof: "change", T: () => Unit },
             { no: 6, name: "unit_updated", kind: "message", oneof: "change", T: () => Unit },
-            { no: 7, name: "unit_status", kind: "message", oneof: "change", T: () => Unit },
+            { no: 7, name: "unit_status", kind: "message", oneof: "change", T: () => UnitStatus },
             { no: 8, name: "dispatch_created", kind: "message", oneof: "change", T: () => Dispatch },
-            { no: 9, name: "dispatch_deleted", kind: "scalar", oneof: "change", T: 4 /*ScalarType.UINT64*/ },
+            { no: 9, name: "dispatch_deleted", kind: "message", oneof: "change", T: () => Dispatch },
             { no: 10, name: "dispatch_updated", kind: "message", oneof: "change", T: () => Dispatch },
-            { no: 11, name: "dispatch_status", kind: "message", oneof: "change", T: () => Dispatch },
-            { no: 13, name: "restart", kind: "scalar", opt: true, T: 8 /*ScalarType.BOOL*/ }
+            { no: 11, name: "dispatch_status", kind: "message", oneof: "change", T: () => DispatchStatus },
+            { no: 12, name: "restart", kind: "scalar", opt: true, T: 8 /*ScalarType.BOOL*/ }
         ]);
     }
 }

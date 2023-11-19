@@ -1,13 +1,13 @@
 syntax = "proto3";
 
-package resources.dispatch;
+package resources.centrum;
 
-import "resources/dispatch/units.proto";
+import "resources/centrum/units.proto";
 import "resources/timestamp/timestamp.proto";
 import "resources/users/users.proto";
 import "validate/validate.proto";
 
-option go_package = "github.com/galexrt/fivenet/gen/go/proto/resources/dispatch;dispatch";
+option go_package = "github.com/galexrt/fivenet/gen/go/proto/resources/centrum;centrum";
 
 message Dispatch {
   uint64 id = 1 [jstype = JS_STRING]; // @gotags: sql:"primary_key" alias:"id"
@@ -43,7 +43,7 @@ message DispatchAssignments {
 message DispatchAssignment {
   uint64 dispatch_id = 1 [jstype = JS_STRING]; // @gotags: sql:"primary_key" alias:"dispatch_id"
   uint64 unit_id = 2 [jstype = JS_STRING]; // @gotags: sql:"primary_key" alias:"unit_id"
-  optional resources.dispatch.Unit unit = 3;
+  optional resources.centrum.Unit unit = 3;
   optional resources.timestamp.Timestamp created_at = 4;
   optional resources.timestamp.Timestamp expires_at = 5;
 }
@@ -70,7 +70,7 @@ message DispatchStatus {
   optional resources.timestamp.Timestamp created_at = 2;
   uint64 dispatch_id = 3 [jstype = JS_STRING];
   optional uint64 unit_id = 4 [jstype = JS_STRING];
-  optional resources.dispatch.Unit unit = 5;
+  optional resources.centrum.Unit unit = 5;
   StatusDispatch status = 6 [(validate.rules).enum.defined_only = true];
   // @sanitize
   optional string reason = 7 [(validate.rules).string.max_len = 255];

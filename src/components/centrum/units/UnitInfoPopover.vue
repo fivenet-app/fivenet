@@ -3,8 +3,8 @@ import { Float } from '@headlessui-float/vue';
 import { Popover, PopoverButton, PopoverPanel } from '@headlessui/vue';
 import { TimerIcon } from 'mdi-vue3';
 import PhoneNumber from '~/components/partials/citizens/PhoneNumber.vue';
-import { DispatchAssignment } from '~~/gen/ts/resources/dispatch/dispatches';
-import { Unit } from '~~/gen/ts/resources/dispatch/units';
+import { DispatchAssignment } from '~~/gen/ts/resources/centrum/dispatches';
+import { Unit } from '~~/gen/ts/resources/centrum/units';
 
 withDefaults(
     defineProps<{
