@@ -2,6 +2,7 @@ package auth
 
 import (
 	"context"
+	"fmt"
 	"os"
 	"testing"
 	"time"
@@ -25,21 +26,28 @@ import (
 )
 
 func TestMain(m *testing.M) {
-	servers.TestDBServer.Setup()
-	servers.TestNATSServer.Setup()
+	if err := servers.TestDBServer.Setup(); err != nil {
+		fmt.Println("failed to setup mysql test server: %w", err)
+		return
+	}
+	if err := servers.TestNATSServer.Setup(); err != nil {
+		fmt.Println("failed to setup nats test server: %w", err)
+		return
+	}
 
 	code := m.Run()
 
-	servers.TestDBServer.Stop()
-	servers.TestNATSServer.Stop()
+	defer servers.TestDBServer.Stop()
+	defer servers.TestNATSServer.Stop()
 
-	os.Exit(code)
+	defer os.Exit(code)
 }
 
 func TestFullAuthFlow(t *testing.T) {
 	defer servers.TestDBServer.Reset()
 
-	db := servers.TestDBServer.DB()
+	db, err := servers.TestDBServer.DB()
+	require.NoError(t, err)
 
 	ctx := context.Background()
 	logger := zap.NewNop()

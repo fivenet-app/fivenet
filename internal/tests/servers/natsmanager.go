@@ -1,6 +1,7 @@
 package servers
 
 import (
+	"fmt"
 	"time"
 
 	"github.com/nats-io/nats-server/v2/server"
@@ -17,50 +18,28 @@ func init() {
 	TestNATSServer = &natsServer{}
 }
 
-func (m *natsServer) Setup() {
+func (m *natsServer) Setup() error {
 	opts := &server.Options{
 		JetStream: true,
-		Username:  "fivenet",
-		Password:  "changeme",
 		Port:      -1,
 	}
 
 	// Initialize new server with options
 	ns, err := server.NewServer(opts)
 	if err != nil {
-		panic(err)
+		return err
 	}
 
 	// Start the server via goroutine
 	go ns.Start()
 	// Wait for server to be ready for connections
 	if !ns.ReadyForConnections(4 * time.Second) {
-		panic("not ready for connection")
-	}
-
-	nc, err := nats.Connect(ns.ClientURL())
-	if err != nil {
-		panic(err)
-	}
-
-	js, err := nc.JetStream()
-	if err != nil {
-		panic(err)
-	}
-
-	buckets := []string{"stat", "basic", "list", "listnr"}
-	for _, bucket := range buckets {
-		_, err = js.CreateKeyValue(&nats.KeyValueConfig{
-			Bucket:  bucket,
-			History: 5,
-			Storage: nats.MemoryStorage,
-		})
-		if err != nil {
-			panic(err)
-		}
+		return fmt.Errorf("not ready for connection")
 	}
 
 	m.server = ns
+
+	return nil
 }
 
 func (m *natsServer) GetURL() string {
