@@ -129,23 +129,12 @@ func (s *Server) UpdateUnitStatus(ctx context.Context, req *UpdateUnitStatusRequ
 		return nil, errorscentrum.ErrNotPartOfUnit
 	}
 
-	var x, y *float64
-	var postal *string
-	if marker, ok := s.tracker.GetUserById(userInfo.UserId); ok {
-		x = &marker.Info.X
-		y = &marker.Info.Y
-		postal = marker.Info.Postal
-	}
-
 	if _, err := s.state.UpdateUnitStatus(ctx, userInfo.Job, unit.Id, &centrum.UnitStatus{
 		UnitId:    unit.Id,
 		Status:    req.Status,
 		Reason:    req.Reason,
 		Code:      req.Code,
 		UserId:    &userInfo.UserId,
-		X:         x,
-		Y:         y,
-		Postal:    postal,
 		CreatorId: &userInfo.UserId,
 	}); err != nil {
 		return nil, errorscentrum.ErrFailedQuery

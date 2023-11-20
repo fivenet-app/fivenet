@@ -42,7 +42,7 @@ type Server struct {
 	db       *sql.DB
 	ps       perms.Permissions
 	enricher *mstlystcdata.Enricher
-	tracker  *tracker.Tracker
+	tracker  tracker.ITracker
 	auditer  audit.IAuditer
 
 	markersCache *xsync.MapOf[string, []*livemap.Marker]
@@ -64,7 +64,7 @@ type Params struct {
 	Perms    perms.Permissions
 	Enricher *mstlystcdata.Enricher
 	Config   *config.Config
-	Tracker  *tracker.Tracker
+	Tracker  tracker.ITracker
 	Audit    audit.IAuditer
 }
 

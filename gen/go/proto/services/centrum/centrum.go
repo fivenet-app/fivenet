@@ -13,7 +13,6 @@ import (
 	"github.com/galexrt/fivenet/gen/go/proto/services/centrum/manager"
 	"github.com/galexrt/fivenet/pkg/config"
 	"github.com/galexrt/fivenet/pkg/grpc/auth"
-	"github.com/galexrt/fivenet/pkg/mstlystcdata"
 	"github.com/galexrt/fivenet/pkg/perms"
 	"github.com/galexrt/fivenet/pkg/server/audit"
 	"github.com/galexrt/fivenet/pkg/tracker"
@@ -35,14 +34,13 @@ type Server struct {
 	logger *zap.Logger
 	wg     sync.WaitGroup
 
-	tracer   trace.Tracer
-	db       *sql.DB
-	ps       perms.Permissions
-	auditer  audit.IAuditer
-	js       nats.JetStreamContext
-	enricher *mstlystcdata.Enricher
-	tracker  *tracker.Tracker
-	postals  *postals.Postals
+	tracer  trace.Tracer
+	db      *sql.DB
+	ps      perms.Permissions
+	auditer audit.IAuditer
+	js      nats.JetStreamContext
+	tracker tracker.ITracker
+	postals postals.Postals
 
 	brokers map[string]*utils.Broker[*StreamResponse]
 
@@ -56,17 +54,16 @@ type Params struct {
 
 	LC fx.Lifecycle
 
-	Logger   *zap.Logger
-	TP       *tracesdk.TracerProvider
-	DB       *sql.DB
-	Perms    perms.Permissions
-	Audit    audit.IAuditer
-	JS       nats.JetStreamContext
-	Enricher *mstlystcdata.Enricher
-	Tracker  *tracker.Tracker
-	Postals  *postals.Postals
-	Config   *config.Config
-	Manager  *manager.Manager
+	Logger  *zap.Logger
+	TP      *tracesdk.TracerProvider
+	DB      *sql.DB
+	Perms   perms.Permissions
+	Audit   audit.IAuditer
+	JS      nats.JetStreamContext
+	Tracker tracker.ITracker
+	Postals postals.Postals
+	Config  *config.Config
+	Manager *manager.Manager
 }
 
 func NewServer(p Params) (*Server, error) {
@@ -84,13 +81,12 @@ func NewServer(p Params) (*Server, error) {
 
 		tracer: p.TP.Tracer("centrum-cache"),
 
-		db:       p.DB,
-		ps:       p.Perms,
-		auditer:  p.Audit,
-		js:       p.JS,
-		enricher: p.Enricher,
-		tracker:  p.Tracker,
-		postals:  p.Postals,
+		db:      p.DB,
+		ps:      p.Perms,
+		auditer: p.Audit,
+		js:      p.JS,
+		tracker: p.Tracker,
+		postals: p.Postals,
 
 		brokers: brokers,
 

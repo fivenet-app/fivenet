@@ -84,7 +84,7 @@ type Params struct {
 	Enricher *mstlystcdata.Enricher
 	Aud      audit.IAuditer
 	UI       userinfo.UserInfoRetriever
-	Cfg      *config.Config
+	Config   *config.Config
 }
 
 func NewServer(p Params) *Server {
@@ -97,9 +97,9 @@ func NewServer(p Params) *Server {
 		enricher:        p.Enricher,
 		a:               p.Aud,
 		ui:              p.UI,
-		signupEnabled:   p.Cfg.Game.Auth.SignupEnabled,
-		superuserGroups: p.Cfg.Game.Auth.SuperuserGroups,
-		oauth2Providers: p.Cfg.OAuth2.Providers,
+		signupEnabled:   p.Config.Game.Auth.SignupEnabled,
+		superuserGroups: p.Config.Game.Auth.SuperuserGroups,
+		oauth2Providers: p.Config.OAuth2.Providers,
 	}
 }
 

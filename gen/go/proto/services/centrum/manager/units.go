@@ -45,6 +45,12 @@ func (s *Manager) UpdateUnitStatus(ctx context.Context, job string, unitId uint6
 		if err != nil {
 			return nil, errorscentrum.ErrFailedQuery
 		}
+
+		if marker, ok := s.tracker.GetUserById(*in.UserId); ok {
+			in.X = &marker.Info.X
+			in.Y = &marker.Info.Y
+			in.Postal = marker.Info.Postal
+		}
 	}
 	if in.CreatorId != nil {
 		var err error

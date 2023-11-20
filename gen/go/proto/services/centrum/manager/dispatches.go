@@ -56,6 +56,12 @@ func (s *Manager) UpdateDispatchStatus(ctx context.Context, job string, dspId ui
 		if err != nil {
 			return nil, errorscentrum.ErrFailedQuery
 		}
+
+		if marker, ok := s.tracker.GetUserById(*in.UserId); ok {
+			in.X = &marker.Info.X
+			in.Y = &marker.Info.Y
+			in.Postal = marker.Info.Postal
+		}
 	}
 
 	tDispatchStatus := table.FivenetCentrumDispatchesStatus

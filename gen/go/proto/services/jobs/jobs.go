@@ -38,7 +38,7 @@ type Server struct {
 	p        perms.Permissions
 	enricher *mstlystcdata.Enricher
 	auditer  audit.IAuditer
-	tracker  *tracker.Tracker
+	tracker  tracker.ITracker
 }
 
 type Params struct {
@@ -52,7 +52,7 @@ type Params struct {
 	Perms    perms.Permissions
 	Enricher *mstlystcdata.Enricher
 	Audit    audit.IAuditer
-	Tracker  *tracker.Tracker
+	Tracker  tracker.ITracker
 }
 
 func NewServer(p Params) *Server {

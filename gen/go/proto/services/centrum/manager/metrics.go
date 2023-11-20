@@ -14,5 +14,3 @@ var (
 		Help:      "Last dispatch ID.",
 	}, []string{"job"})
 )
-
-// TODO what metrics are feasible to collect?

@@ -370,9 +370,29 @@ export const useCentrumStore = defineStore('centrum', {
                         this.isDisponent = resp.change.latestState.isDisponent;
                         this.setOwnUnit(resp.change.latestState.ownUnit?.id);
 
-                        // TODO handle removed units and dispatches
-                        resp.change.latestState.units.forEach((u) => this.addOrUpdateUnit(u));
-                        resp.change.latestState.dispatches.forEach((d) => this.addOrUpdateDispatch(d));
+                        const foundUnits: string[] = [];
+                        resp.change.latestState.units.forEach((u) => {
+                            foundUnits.push(u.id);
+                            this.addOrUpdateUnit(u);
+                        });
+                        // Remove units not found in latest state
+                        for (const id in this.units.keys()) {
+                            if (!foundUnits.includes(id)) {
+                                this.units.delete(id);
+                            }
+                        }
+
+                        const foundDispatches: string[] = [];
+                        resp.change.latestState.dispatches.forEach((d) => {
+                            foundDispatches.push(d.id);
+                            this.addOrUpdateDispatch(d);
+                        });
+                        // Remove dispatches not found in latest state
+                        for (const id in this.dispatches.keys()) {
+                            if (!foundDispatches.includes(id)) {
+                                this.dispatches.delete(id);
+                            }
+                        }
                     } else if (resp.change.oneofKind === 'settings') {
                         this.updateSettings(resp.change.settings);
                     } else if (resp.change.oneofKind === 'disponents') {

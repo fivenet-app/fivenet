@@ -97,7 +97,7 @@ func TestFullAuthFlow(t *testing.T) {
 		Enricher: enricher,
 		Aud:      aud,
 		UI:       ui,
-		Cfg:      cfg,
+		Config:   cfg,
 	})
 
 	fxLC.RequireStart()

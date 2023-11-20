@@ -7,13 +7,27 @@ import (
 	"github.com/paulmach/orb/quadtree"
 )
 
+type ICoords[V orb.Pointer] interface {
+	Has(orb.Pointer, quadtree.FilterFunc) bool
+	Add(orb.Pointer) error
+	Remove(orb.Pointer, quadtree.FilterFunc) bool
+	Closest(float64, float64) V
+	KNearest(orb.Pointer, int, quadtree.FilterFunc, float64) []orb.Pointer
+}
+
 type Coords[V orb.Pointer] struct {
 	mutex sync.RWMutex
 	tree  *quadtree.Quadtree
+
+	ICoords[V]
 }
 
 func New[V orb.Pointer]() *Coords[V] {
-	tree := quadtree.New(orb.Bound{Min: orb.Point{-9_000, -9_000}, Max: orb.Point{11_000, 11_000}})
+	return NewWithBounds[V](orb.Bound{Min: orb.Point{-9_000, -9_000}, Max: orb.Point{11_000, 11_000}})
+}
+
+func NewWithBounds[V orb.Pointer](bounds orb.Bound) *Coords[V] {
+	tree := quadtree.New(bounds)
 	return &Coords[V]{
 		mutex: sync.RWMutex{},
 		tree:  tree,

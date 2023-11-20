@@ -31,8 +31,8 @@ type Manager struct {
 	db       *sql.DB
 	js       nats.JetStreamContext
 	enricher *mstlystcdata.Enricher
-	tracker  *tracker.Tracker
-	postals  *postals.Postals
+	tracker  tracker.ITracker
+	postals  postals.Postals
 
 	trackedJobs []string
 	publicJobs  []string
@@ -50,8 +50,8 @@ type Params struct {
 	DB       *sql.DB
 	JS       nats.JetStreamContext
 	Enricher *mstlystcdata.Enricher
-	Postals  *postals.Postals
-	Tracker  *tracker.Tracker
+	Postals  postals.Postals
+	Tracker  tracker.ITracker
 	Config   *config.Config
 
 	State *state.State

@@ -36,7 +36,7 @@ type Server struct {
 	db       *sql.DB
 	p        perms.Permissions
 	data     *mstlystcdata.Cache
-	tracker  *tracker.Tracker
+	tracker  tracker.ITracker
 	enricher *mstlystcdata.Enricher
 }
 
@@ -46,7 +46,7 @@ type Params struct {
 	DB       *sql.DB
 	Perms    perms.Permissions
 	Data     *mstlystcdata.Cache
-	Tracker  *tracker.Tracker
+	Tracker  tracker.ITracker
 	Enricher *mstlystcdata.Enricher
 }
 

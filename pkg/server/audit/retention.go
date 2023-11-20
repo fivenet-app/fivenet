@@ -36,7 +36,7 @@ type RetentionParams struct {
 	Logger *zap.Logger
 	TP     *tracesdk.TracerProvider
 	DB     *sql.DB
-	Cfg    *config.Config
+	Config *config.Config
 }
 
 func NewRetention(p RetentionParams) *Retention {
@@ -48,7 +48,7 @@ func NewRetention(p RetentionParams) *Retention {
 		tracer: p.TP.Tracer("audit-retention"),
 		db:     p.DB,
 
-		auditRetentionDays: p.Cfg.Audit.RetentionDays,
+		auditRetentionDays: p.Config.Audit.RetentionDays,
 	}
 
 	p.LC.Append(fx.StartHook(func(_ context.Context) error {

@@ -32,6 +32,16 @@ var (
 	tJobProps = table.FivenetJobProps
 )
 
+type ITracker interface {
+	GetUsers(job string) (*xsync.MapOf[int32, *livemap.UserMarker], bool)
+	GetUserByJobAndID(job string, userId int32) (*livemap.UserMarker, bool)
+	IsUserOnDuty(job string, userId int32) bool
+	GetUserById(id int32) (*livemap.UserMarker, bool)
+
+	Subscribe() chan *Event
+	Unsubscribe(c chan *Event)
+}
+
 type UserInfo struct {
 	Job    string
 	UserID int32
@@ -45,12 +55,14 @@ type Event struct {
 }
 
 type Tracker struct {
+	ITracker
+
 	ctx      context.Context
 	logger   *zap.Logger
 	tracer   trace.Tracer
 	db       *sql.DB
 	enricher *mstlystcdata.Enricher
-	postals  *postals.Postals
+	postals  postals.Postals
 	state    *state.State
 
 	usersCache *xsync.MapOf[string, *xsync.MapOf[int32, *livemap.UserMarker]]
@@ -70,12 +82,12 @@ type Params struct {
 	TP       *tracesdk.TracerProvider
 	DB       *sql.DB
 	Enricher *mstlystcdata.Enricher
-	Postals  *postals.Postals
+	Postals  postals.Postals
 	Config   *config.Config
 	State    *state.State
 }
 
-func New(p Params) *Tracker {
+func New(p Params) ITracker {
 	ctx, cancel := context.WithCancel(context.Background())
 
 	broker := utils.NewBroker[*Event](ctx)

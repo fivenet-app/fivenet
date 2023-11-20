@@ -280,14 +280,6 @@ func (s *Server) UpdateDispatchStatus(ctx context.Context, req *UpdateDispatchSt
 		statusUnitId = &unitId
 	}
 
-	var x, y *float64
-	var postal *string
-	if marker, ok := s.tracker.GetUserById(userInfo.UserId); ok {
-		x = &marker.Info.X
-		y = &marker.Info.Y
-		postal = marker.Info.Postal
-	}
-
 	if _, err := s.state.UpdateDispatchStatus(ctx, userInfo.Job, dsp.Id, &centrum.DispatchStatus{
 		DispatchId: dsp.Id,
 		UnitId:     statusUnitId,
@@ -295,9 +287,6 @@ func (s *Server) UpdateDispatchStatus(ctx context.Context, req *UpdateDispatchSt
 		Code:       req.Code,
 		Reason:     req.Reason,
 		UserId:     &userInfo.UserId,
-		X:          x,
-		Y:          y,
-		Postal:     postal,
 	}); err != nil {
 		return nil, errorscentrum.ErrFailedQuery
 	}
@@ -313,9 +302,6 @@ func (s *Server) UpdateDispatchStatus(ctx context.Context, req *UpdateDispatchSt
 					Status:    centrum.StatusUnit_STATUS_UNIT_BUSY,
 					UserId:    &userInfo.UserId,
 					CreatorId: &userInfo.UserId,
-					X:         x,
-					Y:         y,
-					Postal:    postal,
 				}); err != nil {
 					return nil, errorscentrum.ErrFailedQuery
 				}

@@ -12,11 +12,9 @@ import (
 
 var json = jsoniter.ConfigCompatibleWithStandardLibrary
 
-type Postals struct {
-	*coords.Coords[*Postal]
-}
+type Postals = *coords.Coords[*Postal]
 
-func New(cfg *config.Config) (*Postals, error) {
+func New(cfg *config.Config) (Postals, error) {
 	file, err := os.Open(cfg.Game.Livemap.PostalsFile)
 	if err != nil {
 		return nil, err
@@ -37,7 +35,5 @@ func New(cfg *config.Config) (*Postals, error) {
 		}
 	}
 
-	return &Postals{
-		Coords: cs,
-	}, nil
+	return cs, nil
 }
