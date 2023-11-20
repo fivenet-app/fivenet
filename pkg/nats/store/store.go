@@ -148,9 +148,6 @@ func (s *Store[T, U]) Get(key string) (U, bool) {
 func (s *Store[T, U]) Load(key string) (U, error) {
 	entry, err := s.kv.Get(keyPrefix + key)
 	if err != nil {
-		if errors.Is(nats.ErrKeyNotFound, err) {
-			return nil, nil
-		}
 		return nil, err
 	}
 
@@ -190,7 +187,7 @@ func (s *Store[T, U]) GetOrLoad(key string) (U, error) {
 			return nil, err
 		}
 
-		s.updateFromType(key, i)
+		return s.updateFromType(key, i), nil
 	}
 
 	return i, nil
