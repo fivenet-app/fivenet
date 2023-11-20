@@ -17,11 +17,13 @@ import (
 )
 
 func TestMain(m *testing.M) {
-	servers.TestNATSServer.Setup()
+	if err := servers.TestNATSServer.Setup(); err != nil {
+		fmt.Println("failed to setup nats test server: %w", err)
+		return
+	}
+	defer servers.TestNATSServer.Stop()
 
 	code := m.Run()
-
-	servers.TestNATSServer.Stop()
 
 	os.Exit(code)
 }
@@ -93,8 +95,8 @@ func TestNats_MultipleLocks(t *testing.T) {
 	for i := 0; i < 500; i++ {
 		wg.Add(1)
 		go func(i int) {
-			//<-time.After(time.Duration(200+mrand.Float64()*(2000-200+1)) * time.Millisecond)
 			defer wg.Done()
+			//<-time.After(time.Duration(200+mrand.Float64()*(2000-200+1)) * time.Millisecond)
 			n := getNatsClient(t, "basic")
 			connName := fmt.Sprintf("nats-%d", i)
 
@@ -118,5 +120,6 @@ func TestNats_MultipleLocks(t *testing.T) {
 			}
 		}(i)
 	}
+
 	wg.Wait()
 }
