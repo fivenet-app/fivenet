@@ -15,7 +15,7 @@ type FivenetOauth2Accounts struct {
 	AccountID  uint64     `json:"account_id"`
 	CreatedAt  *time.Time `json:"created_at"`
 	Provider   string     `json:"provider"`
-	ExternalID uint64     `json:"external_id"`
+	ExternalID string     `json:"external_id"`
 	Username   string     `json:"username"`
 	Avatar     string     `json:"avatar"`
 }

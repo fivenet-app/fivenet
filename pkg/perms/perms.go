@@ -162,10 +162,10 @@ func New(p Params) (Permissions, error) {
 		ps.wg.Add(1)
 		go func() {
 			defer ps.wg.Done()
-			if err := ps.ApplyJobPermissions(ctx, ""); err != nil {
-				ps.logger.Error("failed to apply job permissions", zap.Error(err))
-				return
-			}
+			//if err := ps.ApplyJobPermissions(ctx, ""); err != nil {
+			//	ps.logger.Error("failed to apply job permissions", zap.Error(err))
+			//	return
+			//}
 		}()
 
 		return nil
@@ -199,9 +199,9 @@ func (p *Perms) init(ctx context.Context) error {
 		defaultPerms[i] = BuildGuard(Category(cfgDefaultPerms[i].Category), Name(cfgDefaultPerms[i].Name))
 	}
 
-	if err := p.register(ctx, defaultPerms); err != nil {
+	/*if err := p.register(ctx, defaultPerms); err != nil {
 		return fmt.Errorf("failed to register permissions. %w", err)
-	}
+	}*/
 
 	return nil
 }

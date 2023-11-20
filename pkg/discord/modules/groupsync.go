@@ -10,6 +10,7 @@ import (
 	"github.com/galexrt/fivenet/pkg/config"
 	"github.com/galexrt/fivenet/pkg/utils"
 	jet "github.com/go-jet/jet/v2/mysql"
+	"go.uber.org/zap"
 )
 
 const GroupSyncDefaultRoleColor = "#9B59B6"
@@ -149,11 +150,14 @@ func (g *GroupSync) syncGroups() error {
 					continue
 				}
 			}
-			return fmt.Errorf("failed to get external guild member %s: %w", user.ExternalID, err)
+
+			g.logger.Error(fmt.Sprintf("failed to get external guild member %s", user.ExternalID), zap.Error(err))
+			continue
 		}
 
 		if err := g.setUserGroups(member, user.Group); err != nil {
-			return err
+			g.logger.Error("failed to set user groups", zap.Error(err))
+			continue
 		}
 	}
 

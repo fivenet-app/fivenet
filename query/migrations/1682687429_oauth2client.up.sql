@@ -5,7 +5,7 @@ CREATE TABLE IF NOT EXISTS `fivenet_oauth2_accounts` (
   `account_id` bigint(20) unsigned NOT NULL,
   `created_at` datetime(3) DEFAULT CURRENT_TIMESTAMP(3),
   `provider` varchar(255) NOT NULL,
-  `external_id` bigint(20) unsigned NOT NULL,
+  `external_id` varchar(128) NOT NULL,
   `username` varchar(255) NOT NULL,
   `avatar` varchar(255) NOT NULL,
   UNIQUE KEY `idx_fivenet_oauth2_accounts_unique` (`account_id`,`provider`),

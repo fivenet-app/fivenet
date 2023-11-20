@@ -3,7 +3,6 @@ package providers
 import (
 	"context"
 	"fmt"
-	"strconv"
 )
 
 type Discord struct {
@@ -35,14 +34,9 @@ func (p *Discord) GetUserInfo(code string) (*UserInfo, error) {
 		return nil, err
 	}
 
-	id, err := strconv.Atoi(dest.ID)
-	if err != nil {
-		return nil, err
-	}
-
 	return &UserInfo{
-		ID:       int64(id),
+		ID:       dest.ID,
 		Username: dest.Username + "#" + dest.Discriminator,
-		Avatar:   fmt.Sprintf("https://cdn.discordapp.com/avatars/%d/%s.png", id, dest.Avatar),
+		Avatar:   fmt.Sprintf("https://cdn.discordapp.com/avatars/%s/%s.png", dest.ID, dest.Avatar),
 	}, nil
 }

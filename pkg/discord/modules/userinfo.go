@@ -1,6 +1,7 @@
 package modules
 
 import (
+	"errors"
 	"fmt"
 	"net/http"
 	"regexp"
@@ -9,6 +10,7 @@ import (
 	"github.com/bwmarrin/discordgo"
 	"github.com/galexrt/fivenet/pkg/utils"
 	jet "github.com/go-jet/jet/v2/mysql"
+	"github.com/go-jet/jet/v2/qrm"
 	"go.uber.org/zap"
 )
 
@@ -100,7 +102,9 @@ func (g *UserInfo) syncUserInfo() error {
 
 	var dest []*UserRoleMapping
 	if err := stmt.QueryContext(g.ctx, g.db, &dest); err != nil {
-		return err
+		if !errors.Is(qrm.ErrNoRows, err) {
+			return err
+		}
 	}
 
 	for _, user := range dest {
@@ -117,11 +121,13 @@ func (g *UserInfo) syncUserInfo() error {
 		}
 
 		if err := g.setUserNickName(member, user.Firstname, user.Lastname); err != nil {
-			return err
+			g.logger.Error(fmt.Sprintf("failed to set user's nickname %s", user.ExternalID), zap.Error(err))
+			continue
 		}
 
 		if err := g.setUserJobRole(member, user.Job, user.JobGrade); err != nil {
-			return err
+			g.logger.Error(fmt.Sprintf("failed to set user's job roles %s", user.ExternalID), zap.Error(err))
+			continue
 		}
 	}
 
@@ -309,6 +315,7 @@ func (g *UserInfo) cleanupUserJobRoles(users []*UserRoleMapping) error {
 		return err
 	}
 
+outerLoop:
 	for i := 0; i < len(guild.Members); i++ {
 		member := guild.Members[i]
 		for _, role := range g.jobRoles {
@@ -318,11 +325,9 @@ func (g *UserInfo) cleanupUserJobRoles(users []*UserRoleMapping) error {
 			}
 
 			// Check if user is suposed to have that job grade role
-			var userMapping *UserRoleMapping
 			if utils.InSliceFunc(users, func(in *UserRoleMapping) bool {
 				r, ok := g.findGradeRoleByID(role.ID)
 				if in.ExternalID == member.User.ID && (ok && r.ID == role.ID) {
-					userMapping = in
 					return true
 				}
 				return false
@@ -330,13 +335,23 @@ func (g *UserInfo) cleanupUserJobRoles(users []*UserRoleMapping) error {
 				continue
 			}
 
-			// Ignore certain jobs when syncing (e.g., "temporary" jobs)
-			if g.job != userMapping.Job && utils.InSlice(g.cfg.UserInfoSync.IgnoreJobs, userMapping.Job) {
+			// Lookup user in database
+			userMappings, err := g.lookupUsersByDiscordI(member.User.ID)
+			if err != nil {
+				g.logger.Error("failed to lookup fivenet account via discord id", zap.String("discord_role_name", role.Name), zap.String("discord_role_id", role.ID),
+					zap.String("discord_user_id", member.User.ID), zap.String("discord_nickname", member.Nick))
 				continue
 			}
 
+			for _, userMapping := range userMappings {
+				// Ignore certain jobs when syncing (e.g., "temporary" jobs)
+				if g.job != userMapping.Job && utils.InSlice(g.cfg.UserInfoSync.IgnoreJobs, userMapping.Job) {
+					continue outerLoop
+				}
+			}
+
 			g.logger.Debug("removing job grade role from member", zap.String("discord_role_name", role.Name), zap.String("discord_role_id", role.ID),
-				zap.String("discord_user_id", member.User.ID), zap.String("discord_nickname", member.Nick), zap.Uint64("account_id", userMapping.AccountID))
+				zap.String("discord_user_id", member.User.ID), zap.String("discord_nickname", member.Nick))
 			if err := g.discord.GuildMemberRoleRemove(g.guild.ID, member.User.ID, role.ID); err != nil {
 				return fmt.Errorf("failed to remove member from role %s (%s): %w", role.Name, role.ID, err)
 			}
@@ -363,4 +378,39 @@ func (g *UserInfo) cleanupUserJobRoles(users []*UserRoleMapping) error {
 	}
 
 	return nil
+}
+
+func (g *UserInfo) lookupUsersByDiscordI(externalId string) ([]*UserRoleMapping, error) {
+	stmt := tOauth2Accs.
+		SELECT(
+			tOauth2Accs.AccountID.AS("userrolemapping.account_id"),
+			tOauth2Accs.ExternalID.AS("userrolemapping.external_id"),
+			tUsers.JobGrade.AS("userrolemapping.job_grade"),
+			tUsers.Firstname.AS("userrolemapping.firstname"),
+			tUsers.Lastname.AS("userrolemapping.lastname"),
+			tUsers.Job.AS("userrolemapping.job"),
+		).
+		FROM(
+			tOauth2Accs.
+				INNER_JOIN(tAccs,
+					tAccs.ID.EQ(tOauth2Accs.AccountID),
+				).
+				INNER_JOIN(tUsers,
+					tUsers.Identifier.LIKE(jet.CONCAT(jet.String("char%:"), tAccs.License)),
+				),
+		).
+		WHERE(jet.AND(
+			tOauth2Accs.Provider.EQ(jet.String("discord")),
+			tOauth2Accs.ExternalID.EQ(jet.String(externalId)),
+		)).
+		ORDER_BY(tUsers.ID.ASC())
+
+	var dest []*UserRoleMapping
+	if err := stmt.QueryContext(g.ctx, g.db, &dest); err != nil {
+		if !errors.Is(qrm.ErrNoRows, err) {
+			return nil, err
+		}
+	}
+
+	return dest, nil
 }

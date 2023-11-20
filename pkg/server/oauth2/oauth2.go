@@ -284,7 +284,7 @@ func (o *OAuth2) getUserInfo(ctx context.Context, provider string, userInfo *pro
 		).
 		WHERE(jet.AND(
 			tOAuthAccs.Provider.EQ(jet.String(provider)),
-			tOAuthAccs.ExternalID.EQ(jet.Uint64(uint64(userInfo.ID))),
+			tOAuthAccs.ExternalID.EQ(jet.String(userInfo.ID)),
 			tAccs.Enabled.IS_TRUE(),
 		)).
 		LIMIT(1)

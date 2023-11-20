@@ -28,7 +28,6 @@ import (
 	"go.uber.org/zap/zapcore"
 
 	grpcserver "google.golang.org/grpc"
-
 	// GRPC Services
 	pbauth "github.com/galexrt/fivenet/gen/go/proto/services/auth"
 	pbcentrum "github.com/galexrt/fivenet/gen/go/proto/services/centrum"
@@ -45,27 +44,55 @@ import (
 	pbrector "github.com/galexrt/fivenet/gen/go/proto/services/rector"
 )
 
-var CLI struct {
-	Config string `help:"Alternative config file (env var: FIVENET_CONFIG_FILE)"`
+type Context struct{}
 
-	Server struct {
-	} `cmd:"" help:"Run FiveNet server."`
+type ServerCmd struct{}
 
-	Worker struct {
-	} `cmd:"" help:"Run FiveNet worker."`
+func (c *ServerCmd) Run(ctx *Context) error {
+	fxOpts := getFxBaseOpts()
+	fxOpts = append(fxOpts,
+		fx.Invoke(func(*grpcserver.Server) {}),
+		fx.Invoke(func(server.HTTPServer) {}),
+	)
+
+	fx.New(fxOpts...).Run()
+
+	return nil
 }
 
-func main() {
-	ctx := kong.Parse(&CLI)
+type WorkerCmd struct {
+	DiscordBotOnly bool `help:"Only start Discord bot."`
+}
 
-	// Cli flag always overrides env var
-	if CLI.Config != "" {
-		if err := os.Setenv("FIVENET_CONFIG_FILE", CLI.Config); err != nil {
-			panic(err)
-		}
+func (c *WorkerCmd) Run(ctx *Context) error {
+	fxOpts := getFxBaseOpts()
+
+	if !c.DiscordBotOnly {
+		fxOpts = append(fxOpts,
+			fx.Invoke(func(*audit.Retention) {}),
+			fx.Invoke(func(*bot.Manager) {}),
+			fx.Invoke(func(*manager.Housekeeper) {}),
+		)
 	}
 
-	fxOpts := []fx.Option{
+	fxOpts = append(fxOpts,
+		fx.Invoke(func(*discord.Bot) {}),
+	)
+
+	fx.New(fxOpts...).Run()
+
+	return nil
+}
+
+var cli struct {
+	Config string `help:"Alternative config file (env var: FIVENET_CONFIG_FILE)"`
+
+	Server ServerCmd `cmd:"" help:"Run FiveNet server."`
+	Worker WorkerCmd `cmd:"" help:"Run FiveNet worker."`
+}
+
+func getFxBaseOpts() []fx.Option {
+	return []fx.Option{
 		fx.WithLogger(func(log *zap.Logger) fxevent.Logger {
 			return &fxevent.ZapLogger{Logger: log}
 		}),
@@ -117,27 +144,20 @@ func main() {
 
 		fx.Invoke(func(admin.AdminServer) {}),
 	}
+}
 
-	switch ctx.Command() {
-	case "server":
-		fxOpts = append(fxOpts,
-			fx.Invoke(func(*grpcserver.Server) {}),
-			fx.Invoke(func(server.HTTPServer) {}),
-		)
+func main() {
+	ctx := kong.Parse(&cli)
 
-	case "worker":
-		fxOpts = append(fxOpts,
-			fx.Invoke(func(*audit.Retention) {}),
-			fx.Invoke(func(*discord.Bot) {}),
-			fx.Invoke(func(*bot.Manager) {}),
-			fx.Invoke(func(*manager.Housekeeper) {}),
-		)
-
-	default:
-		panic(ctx.Error)
+	// Cli flag overrides env var
+	if cli.Config != "" {
+		if err := os.Setenv("FIVENET_CONFIG_FILE", cli.Config); err != nil {
+			panic(err)
+		}
 	}
 
-	fx.New(fxOpts...).Run()
+	err := ctx.Run(&Context{})
+	ctx.FatalIfErrorf(err)
 }
 
 var LoggerModule = fx.Module("logger",

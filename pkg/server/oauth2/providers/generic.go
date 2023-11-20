@@ -3,6 +3,7 @@ package providers
 import (
 	"context"
 	"fmt"
+	"strconv"
 )
 
 type Generic struct {
@@ -55,7 +56,7 @@ func (p *Generic) GetUserInfo(code string) (*UserInfo, error) {
 	avatar := avatarRaw.(string)
 
 	user := &UserInfo{
-		ID:       int64(subId),
+		ID:       strconv.Itoa(int(subId)),
 		Username: username,
 		Avatar:   avatar,
 	}

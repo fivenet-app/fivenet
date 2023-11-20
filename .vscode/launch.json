@@ -32,6 +32,20 @@
             }
         },
         {
+            "name": "Launch Discord Bot (Worker)",
+            "type": "go",
+            "request": "launch",
+            "mode": "auto",
+            "program": "${workspaceFolder}",
+            "cwd": "${workspaceFolder}",
+            "args": ["worker", "--discord-bot-only"],
+            "buildFlags": "-a -installsuffix cgo",
+            "env": {
+                "CGO_ENABLED": "0",
+                "FIVENET_CONFIG_FILE": "./config.worker.yaml"
+            }
+        },
+        {
             "name": "Launch Frontend",
             "type": "node",
             "request": "launch",
