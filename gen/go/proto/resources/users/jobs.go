@@ -22,12 +22,15 @@ func (x *JobProps) Default(job string) {
 	if x.Job == "" {
 		x.Job = job
 	}
+
 	if x.Theme == "" {
 		x.Theme = "default"
 	}
+
 	if x.LivemapMarkerColor == "" {
 		x.LivemapMarkerColor = DefaultLivemapMarkerColor
 	}
+
 	if x.DiscordSyncSettings == nil {
 		x.DiscordSyncSettings = &DiscordSyncSettings{
 			UserInfoSync: true,

@@ -3,6 +3,7 @@ package modules
 import (
 	"context"
 	"database/sql"
+	"errors"
 	"fmt"
 
 	"github.com/bwmarrin/discordgo"
@@ -11,6 +12,7 @@ import (
 	"github.com/galexrt/fivenet/pkg/mstlystcdata"
 	"github.com/galexrt/fivenet/query/fivenet/table"
 	jet "github.com/go-jet/jet/v2/mysql"
+	"github.com/go-jet/jet/v2/qrm"
 	"go.uber.org/zap"
 )
 
@@ -80,8 +82,13 @@ func (g *BaseModule) GetSyncSettings(ctx context.Context, job string) (*users.Di
 
 	var dest users.JobProps
 	if err := stmt.QueryContext(ctx, g.db, &dest); err != nil {
-		return nil, err
+		if !errors.Is(qrm.ErrNoRows, err) {
+			return nil, err
+		}
 	}
+
+	// Make sure the defaults are set
+	dest.Default(job)
 
 	return dest.DiscordSyncSettings, nil
 }
