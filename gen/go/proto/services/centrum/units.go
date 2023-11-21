@@ -13,6 +13,7 @@ import (
 	"github.com/galexrt/fivenet/query/fivenet/table"
 	jet "github.com/go-jet/jet/v2/mysql"
 	"github.com/go-jet/jet/v2/qrm"
+	"github.com/nats-io/nats.go"
 	"go.uber.org/zap"
 	"google.golang.org/protobuf/proto"
 )
@@ -192,7 +193,7 @@ func (s *Server) JoinUnit(ctx context.Context, req *JoinUnitRequest) (*JoinUnitR
 	}
 
 	currentUnit, err := s.state.GetUnit(userInfo.Job, currentUnitId)
-	if err != nil {
+	if err != nil && !errors.Is(err, nats.ErrKeyNotFound) {
 		return nil, errorscentrum.ErrNotOnDuty
 	}
 

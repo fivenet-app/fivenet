@@ -102,7 +102,7 @@ func (g *UserInfo) syncUserInfo() error {
 
 	var dest []*UserRoleMapping
 	if err := stmt.QueryContext(g.ctx, g.db, &dest); err != nil {
-		if !errors.Is(qrm.ErrNoRows, err) {
+		if !errors.Is(err, qrm.ErrNoRows) {
 			return err
 		}
 	}
@@ -407,7 +407,7 @@ func (g *UserInfo) lookupUsersByDiscordI(externalId string) ([]*UserRoleMapping,
 
 	var dest []*UserRoleMapping
 	if err := stmt.QueryContext(g.ctx, g.db, &dest); err != nil {
-		if !errors.Is(qrm.ErrNoRows, err) {
+		if !errors.Is(err, qrm.ErrNoRows) {
 			return nil, err
 		}
 	}

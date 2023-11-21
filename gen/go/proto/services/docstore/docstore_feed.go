@@ -72,7 +72,7 @@ func (s *Server) GetDocumentReferences(ctx context.Context, req *GetDocumentRefe
 		)
 
 	if err := idStmt.QueryContext(ctx, s.db, &docsIds); err != nil {
-		if !errors.Is(qrm.ErrNoRows, err) {
+		if !errors.Is(err, qrm.ErrNoRows) {
 			return nil, err
 		}
 	}
@@ -177,7 +177,7 @@ func (s *Server) GetDocumentReferences(ctx context.Context, req *GetDocumentRefe
 
 	var dest []*documents.DocumentReference
 	if err := stmt.QueryContext(ctx, s.db, &dest); err != nil {
-		if !errors.Is(qrm.ErrNoRows, err) {
+		if !errors.Is(err, qrm.ErrNoRows) {
 			return nil, err
 		}
 	}
@@ -531,7 +531,7 @@ func (s *Server) getDocumentRelation(ctx context.Context, id uint64) (*documents
 
 	var dest documents.DocumentRelation
 	if err := stmt.QueryContext(ctx, s.db, &dest); err != nil {
-		if !errors.Is(qrm.ErrNoRows, err) {
+		if !errors.Is(err, qrm.ErrNoRows) {
 			return nil, err
 		}
 	}
@@ -602,7 +602,7 @@ func (s *Server) getDocumentRelations(ctx context.Context, userInfo *userinfo.Us
 
 	var dest []*documents.DocumentRelation
 	if err := stmt.QueryContext(ctx, s.db, &dest); err != nil {
-		if !errors.Is(qrm.ErrNoRows, err) {
+		if !errors.Is(err, qrm.ErrNoRows) {
 			return nil, err
 		}
 	}

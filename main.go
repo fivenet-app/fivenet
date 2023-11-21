@@ -7,6 +7,7 @@ import (
 
 	"github.com/alecthomas/kong"
 	"github.com/galexrt/fivenet/pkg/config"
+	"github.com/galexrt/fivenet/pkg/coords/postals"
 	"github.com/galexrt/fivenet/pkg/discord"
 	"github.com/galexrt/fivenet/pkg/events"
 	"github.com/galexrt/fivenet/pkg/grpc"
@@ -20,7 +21,6 @@ import (
 	"github.com/galexrt/fivenet/pkg/server/admin"
 	"github.com/galexrt/fivenet/pkg/server/audit"
 	"github.com/galexrt/fivenet/pkg/tracker"
-	"github.com/galexrt/fivenet/pkg/tracker/postals"
 	"github.com/galexrt/fivenet/query"
 	"go.uber.org/fx"
 	"go.uber.org/fx/fxevent"

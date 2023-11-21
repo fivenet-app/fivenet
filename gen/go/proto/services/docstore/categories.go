@@ -40,7 +40,7 @@ func (s *Server) ListCategories(ctx context.Context, req *ListCategoriesRequest)
 
 	resp := &ListCategoriesResponse{}
 	if err := stmt.QueryContext(ctx, s.db, &resp.Category); err != nil {
-		if !errors.Is(qrm.ErrNoRows, err) {
+		if !errors.Is(err, qrm.ErrNoRows) {
 			return nil, err
 		}
 	}

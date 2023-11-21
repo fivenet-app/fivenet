@@ -90,7 +90,7 @@ func MigrateDB(logger *zap.Logger, dsn string) error {
 	}
 	// Run migrations
 	if err := m.Up(); err != nil {
-		if !errors.Is(migrate.ErrNoChange, err) {
+		if !errors.Is(err, migrate.ErrNoChange) {
 			return err
 		} else {
 			logger.Info("database migrations have caused no changes")

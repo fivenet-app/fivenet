@@ -133,7 +133,7 @@ func (s *Server) ConductListEntries(ctx context.Context, req *ConductListEntries
 		LIMIT(limit)
 
 	if err := stmt.QueryContext(ctx, s.db, &resp.Entries); err != nil {
-		if !errors.Is(qrm.ErrNoRows, err) {
+		if !errors.Is(err, qrm.ErrNoRows) {
 			return nil, ErrFailedQuery
 		}
 	}

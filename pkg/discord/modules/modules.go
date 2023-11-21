@@ -82,7 +82,7 @@ func (g *BaseModule) GetSyncSettings(ctx context.Context, job string) (*users.Di
 
 	var dest users.JobProps
 	if err := stmt.QueryContext(ctx, g.db, &dest); err != nil {
-		if !errors.Is(qrm.ErrNoRows, err) {
+		if !errors.Is(err, qrm.ErrNoRows) {
 			return nil, err
 		}
 	}

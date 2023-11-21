@@ -86,7 +86,7 @@ func (s *State) DeleteDispatch(job string, id uint64) error {
 }
 
 func (s *State) UpdateDispatch(ctx context.Context, job string, id uint64, dsp *centrum.Dispatch) error {
-	s.dispatches.ComputeUpdate(JobIdKey(job, id), true, func(key string, existing *centrum.Dispatch) (*centrum.Dispatch, error) {
+	if err := s.dispatches.ComputeUpdate(JobIdKey(job, id), true, func(key string, existing *centrum.Dispatch) (*centrum.Dispatch, error) {
 		if existing == nil {
 			return dsp, nil
 		}
@@ -94,13 +94,15 @@ func (s *State) UpdateDispatch(ctx context.Context, job string, id uint64, dsp *
 		existing.Merge(dsp)
 
 		return existing, nil
-	})
+	}); err != nil {
+		return err
+	}
 
 	return nil
 }
 
 func (s *State) UpdateDispatchStatus(ctx context.Context, job string, id uint64, status *centrum.DispatchStatus) error {
-	s.dispatches.ComputeUpdate(JobIdKey(job, id), true, func(key string, existing *centrum.Dispatch) (*centrum.Dispatch, error) {
+	if err := s.dispatches.ComputeUpdate(JobIdKey(job, id), true, func(key string, existing *centrum.Dispatch) (*centrum.Dispatch, error) {
 		if existing == nil {
 			return nil, nil
 		}
@@ -108,7 +110,9 @@ func (s *State) UpdateDispatchStatus(ctx context.Context, job string, id uint64,
 		existing.Status = status
 
 		return existing, nil
-	})
+	}); err != nil {
+		return err
+	}
 
 	return nil
 }

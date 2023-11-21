@@ -120,7 +120,7 @@ func (s *Server) TimeclockListEntries(ctx context.Context, req *TimeclockListEnt
 		LIMIT(limit)
 
 	if err := stmt.QueryContext(ctx, s.db, &resp.Entries); err != nil {
-		if !errors.Is(qrm.ErrNoRows, err) {
+		if !errors.Is(err, qrm.ErrNoRows) {
 			return nil, ErrFailedQuery
 		}
 	}

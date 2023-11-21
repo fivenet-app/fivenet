@@ -58,7 +58,7 @@ func RegisterStreams(ctx context.Context, js nats.JetStreamContext) error {
 	}
 
 	if _, err := js.UpdateStream(cfg); err != nil {
-		if !errors.Is(nats.ErrStreamNotFound, err) {
+		if !errors.Is(err, nats.ErrStreamNotFound) {
 			return err
 		}
 

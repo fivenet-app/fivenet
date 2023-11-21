@@ -390,12 +390,9 @@ func (s *Manager) CreateUnit(ctx context.Context, job string, unit *centrum.Unit
 		return nil, errorscentrum.ErrFailedQuery
 	}
 
-	ut, err := s.GetUnit(job, uint64(lastId))
-	if err != nil {
-		return nil, errorscentrum.ErrFailedQuery
-	}
+	unit.Id = uint64(lastId)
 
-	data, err := proto.Marshal(ut)
+	data, err := proto.Marshal(unit)
 	if err != nil {
 		return nil, errorscentrum.ErrFailedQuery
 	}
@@ -404,7 +401,7 @@ func (s *Manager) CreateUnit(ctx context.Context, job string, unit *centrum.Unit
 		return nil, err
 	}
 
-	return ut, nil
+	return unit, nil
 }
 
 func (s *Manager) UpdateUnit(ctx context.Context, job string, unit *centrum.Unit) (*centrum.Unit, error) {
@@ -440,12 +437,11 @@ func (s *Manager) UpdateUnit(ctx context.Context, job string, unit *centrum.Unit
 		return nil, errorscentrum.ErrFailedQuery
 	}
 
-	ut, err := s.GetUnit(job, unit.Id)
-	if err != nil {
-		return nil, errorscentrum.ErrFailedQuery
+	if err := s.State.UpdateUnit(ctx, unit.Job, unit.Id, unit); err != nil {
+		return nil, err
 	}
 
-	data, err := proto.Marshal(ut)
+	data, err := proto.Marshal(unit)
 	if err != nil {
 		return nil, errorscentrum.ErrFailedQuery
 	}
@@ -454,7 +450,7 @@ func (s *Manager) UpdateUnit(ctx context.Context, job string, unit *centrum.Unit
 		return nil, err
 	}
 
-	return ut, nil
+	return unit, nil
 }
 
 func (s *Manager) AddUnitStatus(ctx context.Context, tx qrm.DB, job string, status *centrum.UnitStatus) error {

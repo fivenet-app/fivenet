@@ -234,7 +234,7 @@ func (s *Server) getDocument(ctx context.Context, condition jet.BoolExpression, 
 		LIMIT(1)
 
 	if err := stmt.QueryContext(ctx, s.db, &doc); err != nil {
-		if !errors.Is(qrm.ErrNoRows, err) {
+		if !errors.Is(err, qrm.ErrNoRows) {
 			return nil, ErrFailedQuery
 		}
 	}

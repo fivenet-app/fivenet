@@ -41,7 +41,7 @@ type Store[T any, U protoMessage[T]] struct {
 func New[T any, U protoMessage[T]](logger *zap.Logger, js nats.JetStreamContext, bucket string) (*Store[T, U], error) {
 	kv, err := js.KeyValue(bucket)
 	if err != nil {
-		if !errors.Is(nats.ErrBucketNotFound, err) {
+		if !errors.Is(err, nats.ErrBucketNotFound) {
 			return nil, err
 		}
 
@@ -110,7 +110,7 @@ func (s *Store[T, U]) ComputeUpdate(key string, load bool, fn func(key string, e
 	if load {
 		var err error
 		existing, err = s.Load(key)
-		if err != nil {
+		if err != nil && !errors.Is(err, nats.ErrKeyNotFound) {
 			return err
 		}
 	} else {

@@ -66,7 +66,7 @@ func (s *Server) getRequest(ctx context.Context, job string, id uint64) (*jobs.R
 
 	var dest jobs.Request
 	if err := stmt.QueryContext(ctx, s.db, &dest); err != nil {
-		if !errors.Is(qrm.ErrNoRows, err) {
+		if !errors.Is(err, qrm.ErrNoRows) {
 			return nil, ErrFailedQuery
 		}
 	}
@@ -98,7 +98,7 @@ func (s *Server) getRequestType(ctx context.Context, job string, id uint64) (*jo
 
 	var dest jobs.RequestType
 	if err := stmt.QueryContext(ctx, s.db, &dest); err != nil {
-		if !errors.Is(qrm.ErrNoRows, err) {
+		if !errors.Is(err, qrm.ErrNoRows) {
 			return nil, ErrFailedQuery
 		}
 	}
@@ -140,7 +140,7 @@ func (s *Server) getRequestComment(ctx context.Context, job string, id uint64) (
 
 	var dest jobs.RequestType
 	if err := stmt.QueryContext(ctx, s.db, &dest); err != nil {
-		if !errors.Is(qrm.ErrNoRows, err) {
+		if !errors.Is(err, qrm.ErrNoRows) {
 			return nil, ErrFailedQuery
 		}
 	}

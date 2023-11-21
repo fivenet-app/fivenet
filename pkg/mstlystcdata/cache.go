@@ -243,7 +243,7 @@ func (c *Cache) RefreshLaws(ctx context.Context, lawBookId uint64) error {
 
 	var dest []*laws.LawBook
 	if err := stmt.QueryContext(ctx, c.db, &dest); err != nil {
-		if !errors.Is(qrm.ErrNoRows, err) {
+		if !errors.Is(err, qrm.ErrNoRows) {
 			return err
 		}
 	}

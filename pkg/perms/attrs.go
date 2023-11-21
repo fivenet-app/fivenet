@@ -562,7 +562,7 @@ func (p *Perms) GetAllAttributes(ctx context.Context, job string, grade int32) (
 
 	var dest []*permissions.RawRoleAttribute
 	if err := stmt.QueryContext(ctx, p.db, &dest); err != nil {
-		if !errors.Is(qrm.ErrNoRows, err) {
+		if !errors.Is(err, qrm.ErrNoRows) {
 			return nil, err
 		}
 	}

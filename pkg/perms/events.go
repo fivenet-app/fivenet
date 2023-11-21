@@ -38,7 +38,7 @@ func (p *Perms) registerEvents(ctx context.Context) error {
 	}
 
 	if _, err := p.js.UpdateStream(cfg); err != nil {
-		if !errors.Is(nats.ErrStreamNotFound, err) {
+		if !errors.Is(err, nats.ErrStreamNotFound) {
 			return err
 		}
 

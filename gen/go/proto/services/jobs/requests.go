@@ -142,7 +142,7 @@ func (s *Server) RequestsListEntries(ctx context.Context, req *RequestsListEntri
 		LIMIT(limit)
 
 	if err := stmt.QueryContext(ctx, s.db, &resp.Entries); err != nil {
-		if !errors.Is(qrm.ErrNoRows, err) {
+		if !errors.Is(err, qrm.ErrNoRows) {
 			return nil, ErrFailedQuery
 		}
 	}
@@ -284,7 +284,7 @@ func (s *Server) RequestsListTypes(ctx context.Context, req *RequestsListTypesRe
 
 	var dest []*jobs.RequestType
 	if err := stmt.QueryContext(ctx, s.db, &dest); err != nil {
-		if !errors.Is(qrm.ErrNoRows, err) {
+		if !errors.Is(err, qrm.ErrNoRows) {
 			return nil, ErrFailedQuery
 		}
 	}
@@ -475,7 +475,7 @@ func (s *Server) RequestsListComments(ctx context.Context, req *RequestsListComm
 		LIMIT(limit)
 
 	if err := stmt.QueryContext(ctx, s.db, &resp.Comments); err != nil {
-		if !errors.Is(qrm.ErrNoRows, err) {
+		if !errors.Is(err, qrm.ErrNoRows) {
 			return nil, ErrFailedQuery
 		}
 	}

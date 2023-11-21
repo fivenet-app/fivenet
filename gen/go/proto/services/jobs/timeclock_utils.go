@@ -72,7 +72,7 @@ func (s *Server) addTimeclockEntry(ctx context.Context, userId int32) error {
 
 	var dest jobs.TimeclockEntry
 	if err := stmt.QueryContext(ctx, s.db, &dest); err != nil {
-		if !errors.Is(qrm.ErrNoRows, err) {
+		if !errors.Is(err, qrm.ErrNoRows) {
 			return err
 		}
 	}

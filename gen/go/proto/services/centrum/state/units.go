@@ -72,7 +72,7 @@ func (s *State) DeleteUnit(job string, id uint64) error {
 }
 
 func (s *State) UpdateUnit(ctx context.Context, job string, id uint64, unit *centrum.Unit) error {
-	s.units.ComputeUpdate(JobIdKey(job, id), true, func(key string, existing *centrum.Unit) (*centrum.Unit, error) {
+	if err := s.units.ComputeUpdate(JobIdKey(job, id), true, func(key string, existing *centrum.Unit) (*centrum.Unit, error) {
 		if existing == nil {
 			return unit, nil
 		}
@@ -80,13 +80,15 @@ func (s *State) UpdateUnit(ctx context.Context, job string, id uint64, unit *cen
 		existing.Merge(unit)
 
 		return existing, nil
-	})
+	}); err != nil {
+		return err
+	}
 
 	return nil
 }
 
 func (s *State) UpdateUnitStatus(ctx context.Context, job string, id uint64, status *centrum.UnitStatus) error {
-	s.units.ComputeUpdate(JobIdKey(job, id), true, func(key string, existing *centrum.Unit) (*centrum.Unit, error) {
+	if err := s.units.ComputeUpdate(JobIdKey(job, id), true, func(key string, existing *centrum.Unit) (*centrum.Unit, error) {
 		if existing == nil {
 			return nil, nil
 		}
@@ -94,7 +96,9 @@ func (s *State) UpdateUnitStatus(ctx context.Context, job string, id uint64, sta
 		existing.Status = status
 
 		return existing, nil
-	})
+	}); err != nil {
+		return err
+	}
 
 	return nil
 }

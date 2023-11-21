@@ -269,7 +269,7 @@ func (s *Manager) UpdateDispatchAssignments(ctx context.Context, job string, use
 					X:          x,
 					Y:          y,
 					Postal:     postal,
-				}); err != nil {
+				}, true); err != nil {
 					return nil, err
 				}
 			}
@@ -323,7 +323,7 @@ func (s *Manager) UpdateDispatchAssignments(ctx context.Context, job string, use
 					Y:          y,
 					Postal:     postal,
 				}
-				if err := s.AddDispatchStatus(ctx, s.db, job, dsp.Status); err != nil {
+				if err := s.AddDispatchStatus(ctx, s.db, job, dsp.Status, true); err != nil {
 					return nil, err
 				}
 			}
@@ -341,7 +341,7 @@ func (s *Manager) UpdateDispatchAssignments(ctx context.Context, job string, use
 					Y:          y,
 					Postal:     postal,
 				}
-				if err := s.AddDispatchStatus(ctx, s.db, job, dsp.Status); err != nil {
+				if err := s.AddDispatchStatus(ctx, s.db, job, dsp.Status, true); err != nil {
 					return nil, err
 				}
 			}
@@ -482,7 +482,7 @@ func (s *Manager) CreateDispatch(ctx context.Context, dsp *centrum.Dispatch) (*c
 		Y:          &dsp.Y,
 		Postal:     dsp.Postal,
 	}
-	if err := s.AddDispatchStatus(ctx, tx, dsp.Job, dsp.Status); err != nil {
+	if err := s.AddDispatchStatus(ctx, tx, dsp.Job, dsp.Status, false); err != nil {
 		return nil, err
 	}
 
@@ -504,6 +504,10 @@ func (s *Manager) CreateDispatch(ctx context.Context, dsp *centrum.Dispatch) (*c
 
 	// Make sure dispatch is in the locations list
 	s.State.GetDispatchLocations(dsp.Job).Add(dsp)
+
+	if err := s.State.UpdateDispatch(ctx, dsp.Job, dsp.Id, dsp); err != nil {
+		return nil, err
+	}
 
 	data, err := proto.Marshal(dsp)
 	if err != nil {
@@ -578,7 +582,7 @@ func (s *Manager) UpdateDispatch(ctx context.Context, userJob string, userId *in
 	return dsp, nil
 }
 
-func (s *Manager) AddDispatchStatus(ctx context.Context, tx qrm.DB, job string, status *centrum.DispatchStatus) error {
+func (s *Manager) AddDispatchStatus(ctx context.Context, tx qrm.DB, job string, status *centrum.DispatchStatus, publish bool) error {
 	tDispatchStatus := table.FivenetCentrumDispatchesStatus
 	stmt := tDispatchStatus.
 		INSERT(
@@ -615,13 +619,15 @@ func (s *Manager) AddDispatchStatus(ctx context.Context, tx qrm.DB, job string, 
 	}
 	status.Id = uint64(lastId)
 
-	data, err := proto.Marshal(status)
-	if err != nil {
-		return err
-	}
+	if publish {
+		data, err := proto.Marshal(status)
+		if err != nil {
+			return err
+		}
 
-	if _, err := s.js.Publish(eventscentrum.BuildSubject(eventscentrum.TopicDispatch, eventscentrum.TypeDispatchStatus, job), data); err != nil {
-		return err
+		if _, err := s.js.Publish(eventscentrum.BuildSubject(eventscentrum.TopicDispatch, eventscentrum.TypeDispatchStatus, job), data); err != nil {
+			return err
+		}
 	}
 
 	return nil
@@ -767,7 +773,7 @@ func (s *Manager) TakeDispatch(ctx context.Context, job string, userId int32, un
 				Y:          y,
 				Postal:     postal,
 			}
-			if err := s.AddDispatchStatus(ctx, s.db, job, dsp.Status); err != nil {
+			if err := s.AddDispatchStatus(ctx, s.db, job, dsp.Status, true); err != nil {
 				return nil, errorscentrum.ErrFailedQuery
 			}
 

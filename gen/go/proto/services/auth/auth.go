@@ -358,7 +358,7 @@ func (s *Server) ChangeUsername(ctx context.Context, req *ChangeUsernameRequest)
 
 	// If there is an account with the new username, fail
 	newAcc, err := s.getAccountFromDB(ctx, tAccounts.Username.EQ(jet.String(username)))
-	if err != nil && !errors.Is(qrm.ErrNoRows, err) {
+	if err != nil && !errors.Is(err, qrm.ErrNoRows) {
 		// Other database error
 		return nil, errswrap.NewError(ErrBadUsername, err)
 	}
@@ -394,7 +394,7 @@ func (s *Server) ForgotPassword(ctx context.Context, req *ForgotPasswordRequest)
 		tAccounts.Password.IS_NULL(),
 	))
 	if err != nil {
-		if !errors.Is(qrm.ErrNoRows, err) {
+		if !errors.Is(err, qrm.ErrNoRows) {
 			return nil, errswrap.NewError(ErrForgotPassword, err)
 		}
 	}
@@ -489,7 +489,7 @@ func (s *Server) GetCharacters(ctx context.Context, req *GetCharactersRequest) (
 
 	resp := &GetCharactersResponse{}
 	if err := stmt.QueryContext(ctx, s.db, &resp.Chars); err != nil {
-		if errors.Is(qrm.ErrNoRows, err) {
+		if errors.Is(err, qrm.ErrNoRows) {
 			return nil, errswrap.NewError(ErrNoCharFound, err)
 		}
 
@@ -545,7 +545,7 @@ func (s *Server) getCharacter(ctx context.Context, charId int32) (*users.User, *
 		JobProps *users.JobProps
 	}
 	if err := stmt.QueryContext(ctx, s.db, &dest); err != nil {
-		if errors.Is(qrm.ErrNoRows, err) {
+		if errors.Is(err, qrm.ErrNoRows) {
 			return nil, nil, "", ErrNoCharFound
 		}
 		return nil, nil, "", err

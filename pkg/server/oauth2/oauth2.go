@@ -291,7 +291,7 @@ func (o *OAuth2) getUserInfo(ctx context.Context, provider string, userInfo *pro
 
 	var dest model.FivenetAccounts
 	if err := stmt.QueryContext(ctx, o.db, &dest); err != nil {
-		if !errors.Is(qrm.ErrNoRows, err) {
+		if !errors.Is(err, qrm.ErrNoRows) {
 			return nil, err
 		}
 		return nil, nil

@@ -43,7 +43,7 @@ func (s *Server) GetJobProps(ctx context.Context, req *GetJobPropsRequest) (*Get
 		JobProps: &users.JobProps{},
 	}
 	if err := stmt.QueryContext(ctx, s.db, resp.JobProps); err != nil {
-		if !errors.Is(qrm.ErrNoRows, err) {
+		if !errors.Is(err, qrm.ErrNoRows) {
 			return nil, ErrInvalidRequest
 		}
 	}

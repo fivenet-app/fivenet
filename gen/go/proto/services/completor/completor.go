@@ -112,7 +112,7 @@ func (s *Server) CompleteCitizens(ctx context.Context, req *CompleteCitizensRequ
 
 	var dest []*users.UserShort
 	if err := stmt.QueryContext(ctx, s.db, &dest); err != nil {
-		if !errors.Is(qrm.ErrNoRows, err) {
+		if !errors.Is(err, qrm.ErrNoRows) {
 			return nil, ErrFailedSearch
 		}
 	}
@@ -210,7 +210,7 @@ func (s *Server) CompleteDocumentCategories(ctx context.Context, req *CompleteDo
 
 	resp := &CompleteDocumentCategoriesResponse{}
 	if err := stmt.QueryContext(ctx, s.db, &resp.Categories); err != nil {
-		if !errors.Is(qrm.ErrNoRows, err) {
+		if !errors.Is(err, qrm.ErrNoRows) {
 			return nil, ErrFailedSearch
 		}
 	}

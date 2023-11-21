@@ -109,7 +109,7 @@ func (s *Server) ListUserDocuments(ctx context.Context, req *ListUserDocumentsRe
 
 	var dbRelIds []uint64
 	if err := idStmt.QueryContext(ctx, s.db, &dbRelIds); err != nil {
-		if !errors.Is(qrm.ErrNoRows, err) {
+		if !errors.Is(err, qrm.ErrNoRows) {
 			return nil, ErrFailedQuery
 		}
 	}
@@ -187,7 +187,7 @@ func (s *Server) ListUserDocuments(ctx context.Context, req *ListUserDocumentsRe
 		LIMIT(limit)
 
 	if err := stmt.QueryContext(ctx, s.db, &resp.Relations); err != nil {
-		if !errors.Is(qrm.ErrNoRows, err) {
+		if !errors.Is(err, qrm.ErrNoRows) {
 			return nil, err
 		}
 	}

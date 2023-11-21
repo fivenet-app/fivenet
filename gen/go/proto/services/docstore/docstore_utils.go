@@ -325,7 +325,7 @@ func (s *Server) checkIfUserHasAccessToDocIDs(ctx context.Context, userInfo *use
 		IDs []uint64 `alias:"document.id"`
 	}
 	if err := stmt.QueryContext(ctx, s.db, &dest.IDs); err != nil {
-		if !errors.Is(qrm.ErrNoRows, err) {
+		if !errors.Is(err, qrm.ErrNoRows) {
 			return nil, err
 		}
 	}

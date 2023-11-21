@@ -9,8 +9,8 @@ import (
 	"github.com/galexrt/fivenet/gen/go/proto/resources/users"
 	"github.com/galexrt/fivenet/gen/go/proto/services/centrum/state"
 	"github.com/galexrt/fivenet/pkg/config"
+	"github.com/galexrt/fivenet/pkg/coords/postals"
 	"github.com/galexrt/fivenet/pkg/mstlystcdata"
-	"github.com/galexrt/fivenet/pkg/tracker/postals"
 	"github.com/galexrt/fivenet/pkg/utils"
 	"github.com/galexrt/fivenet/query/fivenet/table"
 	"github.com/gin-gonic/gin"
@@ -160,9 +160,13 @@ func (s *Tracker) refreshCache(force bool) {
 
 	if err := s.refreshUserLocations(ctx, force); err != nil {
 		s.logger.Error("failed to refresh livemap users cache", zap.Error(err))
+		// Return here so we don't taint the user "on-duty" cache/list
+		return
 	}
 
-	s.cleanupUserIDs()
+	if err := s.cleanupUserIDs(); err != nil {
+		s.logger.Error("failed to clean up user locations", zap.Error(err))
+	}
 }
 
 func (s *Tracker) cleanupUserIDs() error {

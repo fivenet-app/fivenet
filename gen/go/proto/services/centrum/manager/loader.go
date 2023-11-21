@@ -220,7 +220,7 @@ func (s *Manager) LoadUnitIDForUserID(ctx context.Context, userId int32) (uint64
 		UnitID uint64
 	}
 	if err := stmt.QueryContext(ctx, s.db, &dest); err != nil {
-		if !errors.Is(qrm.ErrNoRows, err) {
+		if !errors.Is(err, qrm.ErrNoRows) {
 			return 0, err
 		}
 
@@ -298,70 +298,67 @@ func (s *Manager) LoadDispatchesFromDB(ctx context.Context, id uint64) error {
 		).
 		LIMIT(200)
 
-	dispatches := []*centrum.Dispatch{}
-	if err := stmt.QueryContext(ctx, s.db, &dispatches); err != nil {
+	dsps := []*centrum.Dispatch{}
+	if err := stmt.QueryContext(ctx, s.db, &dsps); err != nil {
 		return err
 	}
 
-	for i := 0; i < len(dispatches); i++ {
+	for i := 0; i < len(dsps); i++ {
 		var err error
-		dispatches[i].Units, err = s.LoadDispatchAssignments(ctx, dispatches[i].Job, dispatches[i].Id)
+		dsps[i].Units, err = s.LoadDispatchAssignments(ctx, dsps[i].Job, dsps[i].Id)
 		if err != nil {
 			return err
 		}
 
-		if dispatches[i].CreatorId != nil {
-			dispatches[i].Creator, err = s.ResolveUserById(ctx, *dispatches[i].CreatorId)
+		if dsps[i].CreatorId != nil {
+			dsps[i].Creator, err = s.ResolveUserById(ctx, *dsps[i].CreatorId)
 			if err != nil {
 				return err
 			}
 
 			// Clear dispatch creator's job info if not a visible job
-			if !slices.Contains(s.publicJobs, dispatches[i].Creator.Job) {
-				dispatches[i].Creator.Job = ""
+			if !slices.Contains(s.publicJobs, dsps[i].Creator.Job) {
+				dsps[i].Creator.Job = ""
 			}
-			dispatches[i].Creator.JobGrade = 0
+			dsps[i].Creator.JobGrade = 0
 		}
 
-		if dispatches[i].Postal == nil {
-			postal := s.postals.Closest(dispatches[i].X, dispatches[i].Y)
-			dispatches[i].Postal = postal.Code
+		if dsps[i].Postal == nil {
+			postal := s.postals.Closest(dsps[i].X, dsps[i].Y)
+			dsps[i].Postal = postal.Code
 
-			if _, err := s.UpdateDispatch(ctx, dispatches[i].Job, dispatches[i].CreatorId, dispatches[i], false); err != nil {
-				return err
-			}
-		}
-
-		if dsp, err := s.GetDispatch(dispatches[i].Job, dispatches[i].Id); err == nil {
-			if dsp.X != dispatches[i].X || dsp.Y != dispatches[i].Y {
-				s.State.GetDispatchLocations(dsp.Job).Remove(dsp, func(p orb.Pointer) bool {
-					return p.(*centrum.Dispatch).Id == dsp.Id
-				})
-			}
-
-			if err := s.State.UpdateDispatch(ctx, dispatches[i].Job, dispatches[i].Id, dispatches[i]); err != nil {
-				return err
-			}
-		} else {
-			if err := s.State.UpdateDispatch(ctx, dispatches[i].Job, dispatches[i].Id, dispatches[i]); err != nil {
+			if _, err := s.UpdateDispatch(ctx, dsps[i].Job, dsps[i].CreatorId, dsps[i], false); err != nil {
 				return err
 			}
 		}
 
 		// Ensure dispatch has a status
-		if dispatches[i].Status == nil {
-			if _, err := s.UpdateDispatchStatus(ctx, dispatches[i].Job, dispatches[i].Id, &centrum.DispatchStatus{
-				DispatchId: dispatches[i].Id,
+		if dsps[i].Status == nil {
+			if _, err := s.UpdateDispatchStatus(ctx, dsps[i].Job, dsps[i].Id, &centrum.DispatchStatus{
+				DispatchId: dsps[i].Id,
 				Status:     centrum.StatusDispatch_STATUS_DISPATCH_NEW,
 			}); err != nil {
 				return err
 			}
 		}
 
-		if !s.State.GetDispatchLocations(dispatches[i].Job).Has(dispatches[i], func(p orb.Pointer) bool {
-			return p.(*centrum.Dispatch).Id == dispatches[i].Id
+		// Check if the dispatch already exists and if the location needs to be updated
+		if dsp, err := s.GetDispatch(dsps[i].Job, dsps[i].Id); err == nil && dsp != nil {
+			if dsp.X != dsps[i].X || dsp.Y != dsps[i].Y {
+				s.State.GetDispatchLocations(dsp.Job).Remove(dsp, func(p orb.Pointer) bool {
+					return p.(*centrum.Dispatch).Id == dsp.Id
+				})
+			}
+		}
+
+		if err := s.State.UpdateDispatch(ctx, dsps[i].Job, dsps[i].Id, dsps[i]); err != nil {
+			return err
+		}
+
+		if !s.State.GetDispatchLocations(dsps[i].Job).Has(dsps[i], func(p orb.Pointer) bool {
+			return p.(*centrum.Dispatch).Id == dsps[i].Id
 		}) {
-			s.State.GetDispatchLocations(dispatches[i].Job).Add(dispatches[i])
+			s.State.GetDispatchLocations(dsps[i].Job).Add(dsps[i])
 		}
 	}
 

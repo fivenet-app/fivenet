@@ -123,7 +123,7 @@ func (p *Perms) setupDefaultRolePerms(ctx context.Context, role *model.FivenetRo
 func (p *Perms) createOrUpdatePermission(ctx context.Context, category Category, name Name) (uint64, error) {
 	perm, err := p.loadPermissionFromDatabaseByGuard(ctx, BuildGuard(category, name))
 	if err != nil {
-		if !errors.Is(qrm.ErrNoRows, err) {
+		if !errors.Is(err, qrm.ErrNoRows) {
 			return 0, err
 		}
 	}
@@ -142,7 +142,7 @@ func (p *Perms) createOrUpdatePermission(ctx context.Context, category Category,
 func (p *Perms) createOrUpdateAttribute(ctx context.Context, permId uint64, key Key, aType permissions.AttributeTypes, validValues any, defaultValues any) (uint64, error) {
 	attr, err := p.getAttributeFromDatabase(ctx, permId, key)
 	if err != nil {
-		if !errors.Is(qrm.ErrNoRows, err) {
+		if !errors.Is(err, qrm.ErrNoRows) {
 			return 0, err
 		}
 	}
@@ -198,7 +198,7 @@ func (p *Perms) cleanupRoles(ctx context.Context) error {
 
 	var dest []*users.Job
 	if err := stmt.QueryContext(ctx, p.db, &dest); err != nil {
-		if !errors.Is(qrm.ErrNoRows, err) {
+		if !errors.Is(err, qrm.ErrNoRows) {
 			return err
 		}
 	}
@@ -262,7 +262,7 @@ func (p *Perms) getActiveJobs(ctx context.Context) ([]string, error) {
 
 	var dest []string
 	if err := stmt.QueryContext(ctx, p.db, &dest); err != nil {
-		if !errors.Is(qrm.ErrNoRows, err) {
+		if !errors.Is(err, qrm.ErrNoRows) {
 			return nil, err
 		}
 	}

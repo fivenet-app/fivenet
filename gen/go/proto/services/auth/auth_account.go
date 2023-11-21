@@ -31,7 +31,7 @@ func (s *Server) GetAccountInfo(ctx context.Context, req *GetAccountInfoRequest)
 
 	// Load account
 	acc, err := s.getAccountFromDB(ctx, tAccounts.ID.EQ(jet.Uint64(claims.AccID)))
-	if err != nil && !errors.Is(qrm.ErrNoRows, err) {
+	if err != nil && !errors.Is(err, qrm.ErrNoRows) {
 		return nil, errswrap.NewError(ErrGenericAccount, err)
 	}
 	if acc == nil || acc.ID == 0 {
@@ -68,7 +68,7 @@ func (s *Server) GetAccountInfo(ctx context.Context, req *GetAccountInfoRequest)
 
 	oauth2Conns := []*accounts.OAuth2Account{}
 	if err := stmt.QueryContext(ctx, s.db, &oauth2Conns); err != nil {
-		if !errors.Is(qrm.ErrNoRows, err) {
+		if !errors.Is(err, qrm.ErrNoRows) {
 			return nil, errswrap.NewError(ErrGenericAccount, err)
 		}
 	}

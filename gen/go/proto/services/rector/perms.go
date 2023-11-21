@@ -285,7 +285,7 @@ func (s *Server) CreateRole(ctx context.Context, req *CreateRoleRequest) (*Creat
 
 	role, err := s.ps.GetRoleByJobAndGrade(ctx, req.Job, req.Grade)
 	if err != nil {
-		if !errors.Is(qrm.ErrNoRows, err) {
+		if !errors.Is(err, qrm.ErrNoRows) {
 			return nil, ErrFailedQuery
 		}
 	}

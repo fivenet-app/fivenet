@@ -422,7 +422,7 @@ func (p *Perms) loadRoleAttributes(ctx context.Context, roleId uint64) error {
 	}
 
 	if err := stmt.QueryContext(ctx, p.db, &dest); err != nil {
-		if !errors.Is(qrm.ErrNoRows, err) {
+		if !errors.Is(err, qrm.ErrNoRows) {
 			return err
 		}
 	}

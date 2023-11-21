@@ -350,7 +350,7 @@ func (s *Server) GetUser(ctx context.Context, req *GetUserRequest) (*GetUserResp
 			LIMIT(15)
 
 		if err := stmt.QueryContext(ctx, s.db, &resp.User.Licenses); err != nil {
-			if !errors.Is(qrm.ErrNoRows, err) {
+			if !errors.Is(err, qrm.ErrNoRows) {
 				return nil, ErrFailedQuery
 			}
 		}
@@ -448,7 +448,7 @@ func (s *Server) ListUserActivity(ctx context.Context, req *ListUserActivityRequ
 		LIMIT(limit)
 
 	if err := stmt.QueryContext(ctx, s.db, &resp.Activity); err != nil {
-		if !errors.Is(qrm.ErrNoRows, err) {
+		if !errors.Is(err, qrm.ErrNoRows) {
 			return nil, ErrFailedQuery
 		}
 	}
@@ -669,7 +669,7 @@ func (s *Server) getUserProps(ctx context.Context, userId int32) (*users.UserPro
 	var dest users.UserProps
 	dest.UserId = userId
 	if err := stmt.QueryContext(ctx, s.db, &dest); err != nil {
-		if !errors.Is(qrm.ErrNoRows, err) {
+		if !errors.Is(err, qrm.ErrNoRows) {
 			return nil, err
 		}
 	}
