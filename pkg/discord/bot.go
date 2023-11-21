@@ -230,6 +230,11 @@ func (b *Bot) getGuilds() error {
 		return err
 	}
 
+	if len(guildsDB) == 0 {
+		b.logger.Debug("no job discord guild connections found")
+		return nil
+	}
+
 	for job, guildID := range guildsDB {
 		var found *discordgo.Guild
 		if !slices.ContainsFunc(b.discord.State.Guilds, func(in *discordgo.Guild) bool {

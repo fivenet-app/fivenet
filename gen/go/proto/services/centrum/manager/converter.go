@@ -7,6 +7,7 @@ import (
 	"time"
 
 	"github.com/galexrt/fivenet/gen/go/proto/resources/centrum"
+	"github.com/galexrt/fivenet/pkg/utils"
 	"github.com/galexrt/fivenet/query/fivenet/model"
 	"github.com/galexrt/fivenet/query/fivenet/table"
 	jet "github.com/go-jet/jet/v2/mysql"
@@ -90,9 +91,14 @@ func (s *Housekeeper) convertPhoneJobMsgToDispatch() error {
 			anon = true
 		}
 
+		message := "N/A"
+		if msg.Message != nil {
+			message = utils.StringFirstN(*msg.Message, 250) + "..."
+		}
+
 		dsp := &centrum.Dispatch{
 			Job:       job,
-			Message:   *msg.Message,
+			Message:   message,
 			X:         x,
 			Y:         y,
 			Anon:      anon,
