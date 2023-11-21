@@ -3,6 +3,7 @@ package jobs
 import (
 	"context"
 	"errors"
+	"slices"
 
 	database "github.com/galexrt/fivenet/gen/go/proto/resources/common/database"
 	jobs "github.com/galexrt/fivenet/gen/go/proto/resources/jobs"
@@ -10,7 +11,6 @@ import (
 	permsjobs "github.com/galexrt/fivenet/gen/go/proto/services/jobs/perms"
 	"github.com/galexrt/fivenet/pkg/grpc/auth"
 	"github.com/galexrt/fivenet/pkg/perms"
-	"github.com/galexrt/fivenet/pkg/utils"
 	"github.com/galexrt/fivenet/query/fivenet/model"
 	"github.com/galexrt/fivenet/query/fivenet/table"
 	jet "github.com/go-jet/jet/v2/mysql"
@@ -42,8 +42,8 @@ func (s *Server) RequestsListEntries(ctx context.Context, req *RequestsListEntri
 
 	if len(fields) == 0 {
 		return nil, ErrFailedQuery
-	} else if utils.InSlice(fields, "All") {
-	} else if utils.InSlice(fields, "Own") {
+	} else if slices.Contains(fields, "All") {
+	} else if slices.Contains(fields, "Own") {
 		condition = condition.AND(tTimeClock.UserID.EQ(jet.Int32(userInfo.UserId)))
 	}
 

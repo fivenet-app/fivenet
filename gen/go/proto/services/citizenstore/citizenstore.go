@@ -5,6 +5,7 @@ import (
 	"database/sql"
 	"errors"
 	"fmt"
+	"slices"
 	"strconv"
 	"strings"
 
@@ -17,7 +18,6 @@ import (
 	"github.com/galexrt/fivenet/pkg/mstlystcdata"
 	"github.com/galexrt/fivenet/pkg/perms"
 	"github.com/galexrt/fivenet/pkg/server/audit"
-	"github.com/galexrt/fivenet/pkg/utils"
 	"github.com/galexrt/fivenet/query/fivenet/model"
 	"github.com/galexrt/fivenet/query/fivenet/table"
 	jet "github.com/go-jet/jet/v2/mysql"
@@ -293,7 +293,7 @@ func (s *Server) GetUser(ctx context.Context, req *GetUserRequest) (*GetUserResp
 		return nil, ErrJobGradeNoPermission
 	}
 
-	if utils.InSlice(s.publicJobs, resp.User.Job) || utils.InSlice(s.hiddenJobs, resp.User.Job) {
+	if slices.Contains(s.publicJobs, resp.User.Job) || slices.Contains(s.hiddenJobs, resp.User.Job) {
 		// Make sure user has permission to see that grade
 		jobGradesAttr, err := s.p.Attr(userInfo, permscitizenstore.CitizenStoreServicePerm, permscitizenstore.CitizenStoreServiceGetUserPerm, permscitizenstore.CitizenStoreServiceGetUserJobsPermField)
 		if err != nil {
@@ -332,7 +332,7 @@ func (s *Server) GetUser(ctx context.Context, req *GetUserRequest) (*GetUserResp
 	}
 
 	// Check if user can see licenses and fetch them
-	if utils.InSlice(fields, "Licenses") {
+	if slices.Contains(fields, "Licenses") {
 		stmt := tUser.
 			SELECT(
 				tUserLicenses.Type.AS("license.type"),
@@ -381,7 +381,7 @@ func (s *Server) ListUserActivity(ctx context.Context, req *ListUserActivityRequ
 
 	if userInfo.UserId == req.UserId {
 		// If isn't superuser or doesn't have 'Own' activity feed access
-		if !userInfo.SuperUser || !utils.InSlice(fields, "Own") {
+		if !userInfo.SuperUser || !slices.Contains(fields, "Own") {
 			return resp, nil
 		}
 	}
@@ -526,7 +526,7 @@ func (s *Server) SetUserProps(ctx context.Context, req *SetUserPropsRequest) (*S
 
 	updateSets := []jet.ColumnAssigment{}
 	if req.Props.Wanted != nil {
-		if !utils.InSlice(fields, "Wanted") {
+		if !slices.Contains(fields, "Wanted") {
 			return nil, ErrPropsWantedDenied
 		}
 
@@ -535,11 +535,11 @@ func (s *Server) SetUserProps(ctx context.Context, req *SetUserPropsRequest) (*S
 		req.Props.Wanted = props.Wanted
 	}
 	if req.Props.JobName != nil {
-		if !utils.InSlice(fields, "Job") {
+		if !slices.Contains(fields, "Job") {
 			return nil, ErrPropsJobDenied
 		}
 
-		if utils.InSlice(s.publicJobs, *req.Props.JobName) {
+		if slices.Contains(s.publicJobs, *req.Props.JobName) {
 			return nil, ErrPropsJobPublic
 		}
 
@@ -558,7 +558,7 @@ func (s *Server) SetUserProps(ctx context.Context, req *SetUserPropsRequest) (*S
 	}
 	if req.Props.TrafficInfractionPoints != nil {
 		// Only update when it has actually changed
-		if !utils.InSlice(fields, "TrafficInfractionPoints") {
+		if !slices.Contains(fields, "TrafficInfractionPoints") {
 			return nil, ErrPropsTrafficPointsDenied
 		}
 

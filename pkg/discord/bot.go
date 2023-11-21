@@ -4,13 +4,13 @@ import (
 	"context"
 	"database/sql"
 	"fmt"
+	"slices"
 	"time"
 
 	"github.com/bwmarrin/discordgo"
 	"github.com/galexrt/fivenet/pkg/config"
 	"github.com/galexrt/fivenet/pkg/mstlystcdata"
 	"github.com/galexrt/fivenet/pkg/server/admin"
-	"github.com/galexrt/fivenet/pkg/utils"
 	"github.com/galexrt/fivenet/query/fivenet/table"
 	jet "github.com/go-jet/jet/v2/mysql"
 	"github.com/prometheus/client_golang/prometheus"
@@ -232,7 +232,7 @@ func (b *Bot) getGuilds() error {
 
 	for job, guildID := range guildsDB {
 		var found *discordgo.Guild
-		if !utils.InSliceFunc(b.discord.State.Guilds, func(in *discordgo.Guild) bool {
+		if !slices.ContainsFunc(b.discord.State.Guilds, func(in *discordgo.Guild) bool {
 			if in.ID == guildID {
 				found = in
 				return true

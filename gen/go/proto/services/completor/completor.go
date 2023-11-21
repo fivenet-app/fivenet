@@ -4,6 +4,7 @@ import (
 	context "context"
 	"database/sql"
 	"errors"
+	"slices"
 	"strings"
 
 	users "github.com/galexrt/fivenet/gen/go/proto/resources/users"
@@ -12,7 +13,6 @@ import (
 	"github.com/galexrt/fivenet/pkg/mstlystcdata"
 	"github.com/galexrt/fivenet/pkg/perms"
 	"github.com/galexrt/fivenet/pkg/tracker"
-	"github.com/galexrt/fivenet/pkg/utils"
 	"github.com/galexrt/fivenet/query/fivenet/table"
 	jet "github.com/go-jet/jet/v2/mysql"
 	"github.com/go-jet/jet/v2/qrm"
@@ -120,7 +120,7 @@ func (s *Server) CompleteCitizens(ctx context.Context, req *CompleteCitizensRequ
 	if req.OnDuty != nil && *req.OnDuty {
 		for i := len(dest) - 1; i >= 0; i-- {
 			if !s.tracker.IsUserOnDuty(userInfo.Job, dest[i].UserId) {
-				dest = utils.RemoveFromSlice(dest, i)
+				dest = slices.Delete(dest, i, i+1)
 			}
 		}
 	}

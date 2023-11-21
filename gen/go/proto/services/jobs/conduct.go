@@ -3,13 +3,13 @@ package jobs
 import (
 	"context"
 	"errors"
+	"slices"
 
 	database "github.com/galexrt/fivenet/gen/go/proto/resources/common/database"
 	"github.com/galexrt/fivenet/gen/go/proto/resources/rector"
 	permsjobs "github.com/galexrt/fivenet/gen/go/proto/services/jobs/perms"
 	"github.com/galexrt/fivenet/pkg/grpc/auth"
 	"github.com/galexrt/fivenet/pkg/perms"
-	"github.com/galexrt/fivenet/pkg/utils"
 	"github.com/galexrt/fivenet/query/fivenet/model"
 	"github.com/galexrt/fivenet/query/fivenet/table"
 	jet "github.com/go-jet/jet/v2/mysql"
@@ -36,8 +36,8 @@ func (s *Server) ConductListEntries(ctx context.Context, req *ConductListEntries
 	}
 
 	// "All" is a pass, but if no fields or "Own" is given, return user's created conduct entries
-	if utils.InSlice(fields, "All") {
-	} else if len(fields) == 0 || utils.InSlice(fields, "Own") {
+	if slices.Contains(fields, "All") {
+	} else if len(fields) == 0 || slices.Contains(fields, "Own") {
 		condition = condition.AND(tConduct.CreatorID.EQ(jet.Int32(userInfo.UserId)))
 	} else {
 		return nil, ErrFailedQuery

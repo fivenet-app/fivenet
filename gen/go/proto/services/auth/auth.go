@@ -4,6 +4,7 @@ import (
 	"context"
 	"database/sql"
 	"errors"
+	"slices"
 	"strings"
 
 	"github.com/galexrt/fivenet/gen/go/proto/resources/common"
@@ -17,7 +18,6 @@ import (
 	"github.com/galexrt/fivenet/pkg/mstlystcdata"
 	"github.com/galexrt/fivenet/pkg/perms"
 	"github.com/galexrt/fivenet/pkg/server/audit"
-	"github.com/galexrt/fivenet/pkg/utils"
 	"github.com/galexrt/fivenet/pkg/utils/dbutils"
 	"github.com/galexrt/fivenet/query/fivenet/model"
 	"github.com/galexrt/fivenet/query/fivenet/table"
@@ -604,7 +604,7 @@ func (s *Server) ChooseCharacter(ctx context.Context, req *ChooseCharacterReques
 	}
 	ps := userPs.GuardNames()
 
-	if utils.InSlice(s.superuserGroups, userGroup) {
+	if slices.Contains(s.superuserGroups, userGroup) {
 		ps = append(ps, common.SuperuserPermission)
 	}
 
@@ -616,7 +616,7 @@ func (s *Server) ChooseCharacter(ctx context.Context, req *ChooseCharacterReques
 
 	if len(ps) == 0 {
 		return nil, ErrUnableToChooseChar
-	} else if !utils.InSlice(ps, "authservice-choosecharacter") {
+	} else if !slices.Contains(ps, "authservice-choosecharacter") {
 		return nil, ErrUnableToChooseChar
 	}
 

@@ -3,12 +3,12 @@ package userinfo
 import (
 	"context"
 	"database/sql"
+	"slices"
 	"time"
 
 	cache "github.com/Code-Hex/go-generics-cache"
 	"github.com/Code-Hex/go-generics-cache/policy/lru"
 	"github.com/galexrt/fivenet/pkg/config"
-	"github.com/galexrt/fivenet/pkg/utils"
 	jet "github.com/go-jet/jet/v2/mysql"
 	"go.uber.org/fx"
 )
@@ -98,7 +98,7 @@ func (ui *UIRetriever) GetUserInfo(ctx context.Context, userId int32, accountId 
 	}
 
 	// Check if user is superuser
-	if utils.InSlice(ui.superuserGroups, dest.Group) {
+	if slices.Contains(ui.superuserGroups, dest.Group) {
 		dest.SuperUser = true
 		if dest.OrigJob != "" {
 			dest.Job = dest.OrigJob
@@ -135,7 +135,7 @@ func (ui *UIRetriever) GetUserInfoWithoutAccountId(ctx context.Context, userId i
 	}
 
 	// Check if user is superuser
-	if utils.InSlice(ui.superuserGroups, dest.Group) {
+	if slices.Contains(ui.superuserGroups, dest.Group) {
 		dest.SuperUser = true
 	}
 

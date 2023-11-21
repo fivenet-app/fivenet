@@ -9,7 +9,6 @@ import (
 	"github.com/galexrt/fivenet/gen/go/proto/resources/permissions"
 	"github.com/galexrt/fivenet/gen/go/proto/resources/users"
 	"github.com/galexrt/fivenet/pkg/perms/helpers"
-	"github.com/galexrt/fivenet/pkg/utils"
 	"github.com/galexrt/fivenet/query/fivenet/model"
 	"github.com/galexrt/fivenet/query/fivenet/table"
 	jet "github.com/go-jet/jet/v2/mysql"
@@ -331,7 +330,7 @@ func (p *Perms) applyJobPermissions(ctx context.Context, job string) error {
 
 		toRemove := []uint64{}
 		for _, p := range ps {
-			if !utils.InSliceFunc(jps, func(in *permissions.Permission) bool {
+			if !slices.ContainsFunc(jps, func(in *permissions.Permission) bool {
 				return in.Id == p.Id && in.Val
 			}) {
 				toRemove = append(toRemove, p.Id)
@@ -384,7 +383,7 @@ func (p *Perms) applyJobPermissionsToAttrs(ctx context.Context, job string) erro
 		toUpdate := []*permissions.RoleAttribute{}
 		for _, attr := range attrs {
 			maxValues, _ := p.GetClosestRoleAttrMaxVals(role.Job, role.Grade, attr.PermissionId, Key(attr.Key))
-			if utils.InSliceFunc(jps, func(in *permissions.Permission) bool {
+			if slices.ContainsFunc(jps, func(in *permissions.Permission) bool {
 				return in.Id == attr.PermissionId
 			}) {
 				if _, changed := attr.Value.Check(permissions.AttributeTypes(attr.Type), attr.ValidValues, maxValues); changed {

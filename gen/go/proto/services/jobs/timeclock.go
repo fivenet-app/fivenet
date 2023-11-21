@@ -3,13 +3,14 @@ package jobs
 import (
 	"context"
 	"errors"
+	"slices"
 	"time"
 
 	database "github.com/galexrt/fivenet/gen/go/proto/resources/common/database"
 	permsjobs "github.com/galexrt/fivenet/gen/go/proto/services/jobs/perms"
 	"github.com/galexrt/fivenet/pkg/grpc/auth"
 	"github.com/galexrt/fivenet/pkg/perms"
-	"github.com/galexrt/fivenet/pkg/utils"
+	timeutils "github.com/galexrt/fivenet/pkg/utils/time"
 	"github.com/galexrt/fivenet/query/fivenet/table"
 	jet "github.com/go-jet/jet/v2/mysql"
 	"github.com/go-jet/jet/v2/qrm"
@@ -36,7 +37,7 @@ func (s *Server) TimeclockListEntries(ctx context.Context, req *TimeclockListEnt
 		fields = fieldsAttr.([]string)
 	}
 
-	if len(fields) == 0 || !utils.InSlice(fields, "All") {
+	if len(fields) == 0 || !slices.Contains(fields, "All") {
 		condition = condition.AND(tTimeClock.UserID.EQ(jet.Int32(userInfo.UserId)))
 		statsCondition = statsCondition.AND(tTimeClock.UserID.EQ(jet.Int32(userInfo.UserId)))
 	}
@@ -54,12 +55,12 @@ func (s *Server) TimeclockListEntries(ctx context.Context, req *TimeclockListEnt
 
 	if req.From != nil {
 		condition = condition.AND(tTimeClock.Date.LT_EQ(
-			jet.TimestampT(utils.TruncateToDay(req.From.AsTime())),
+			jet.TimestampT(timeutils.TruncateToDay(req.From.AsTime())),
 		))
 	}
 	if req.To != nil {
 		condition = condition.AND(tTimeClock.Date.GT_EQ(
-			jet.TimestampT(utils.TruncateToDay(req.To.AsTime())),
+			jet.TimestampT(timeutils.TruncateToDay(req.To.AsTime())),
 		))
 	}
 

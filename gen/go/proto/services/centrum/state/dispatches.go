@@ -4,7 +4,6 @@ import (
 	"context"
 
 	"github.com/galexrt/fivenet/gen/go/proto/resources/centrum"
-	"github.com/galexrt/fivenet/pkg/utils"
 	"github.com/paulmach/orb"
 	"golang.org/x/exp/slices"
 )
@@ -53,7 +52,7 @@ func (s *State) FilterDispatches(job string, statuses []centrum.StatusDispatch, 
 		include := true
 
 		// Include statuses that should be listed
-		if len(statuses) > 0 && !utils.InSlice(statuses, dispatches[i].Status.Status) {
+		if len(statuses) > 0 && !slices.Contains(statuses, dispatches[i].Status.Status) {
 			include = false
 		} else if len(notStatuses) > 0 {
 			// Which statuses to ignore

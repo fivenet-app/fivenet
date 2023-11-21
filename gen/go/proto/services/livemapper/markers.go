@@ -2,6 +2,7 @@ package livemapper
 
 import (
 	"context"
+	"slices"
 
 	"github.com/galexrt/fivenet/gen/go/proto/resources/livemap"
 	"github.com/galexrt/fivenet/gen/go/proto/resources/rector"
@@ -9,7 +10,6 @@ import (
 	"github.com/galexrt/fivenet/pkg/grpc/auth"
 	"github.com/galexrt/fivenet/pkg/grpc/auth/userinfo"
 	"github.com/galexrt/fivenet/pkg/perms"
-	"github.com/galexrt/fivenet/pkg/utils"
 	"github.com/galexrt/fivenet/query/fivenet/model"
 	"github.com/galexrt/fivenet/query/fivenet/table"
 	jet "github.com/go-jet/jet/v2/mysql"
@@ -46,20 +46,20 @@ func (s *Server) checkIfHasAccessToMarker(levels []string, marker *livemap.Marke
 		return creator.UserId == userInfo.UserId
 	}
 
-	if utils.InSlice(levels, "Any") {
+	if slices.Contains(levels, "Any") {
 		return true
 	}
-	if utils.InSlice(levels, "Lower_Rank") {
+	if slices.Contains(levels, "Lower_Rank") {
 		if creator.JobGrade < userInfo.JobGrade {
 			return true
 		}
 	}
-	if utils.InSlice(levels, "Same_Rank") {
+	if slices.Contains(levels, "Same_Rank") {
 		if creator.JobGrade <= userInfo.JobGrade {
 			return true
 		}
 	}
-	if utils.InSlice(levels, "Own") {
+	if slices.Contains(levels, "Own") {
 		if creator.UserId == userInfo.UserId {
 			return true
 		}

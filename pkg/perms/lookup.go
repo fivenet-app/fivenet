@@ -56,7 +56,9 @@ func (p *Perms) lookupRoleIDsForJobUpToGrade(job string, grade int32) ([]uint64,
 		grades = append(grades, g)
 		return true
 	})
+
 	utils.SortInt32Slice(grades)
+
 	gradeList := []uint64{}
 	for i := 0; i < len(grades); i++ {
 		grade, ok := gradesMap.Load(grades[i])

@@ -4,6 +4,7 @@ import (
 	"context"
 	"database/sql"
 	"errors"
+	"slices"
 	"sort"
 	"strings"
 	"time"
@@ -13,7 +14,6 @@ import (
 	"github.com/galexrt/fivenet/gen/go/proto/resources/laws"
 	"github.com/galexrt/fivenet/gen/go/proto/resources/users"
 	"github.com/galexrt/fivenet/pkg/config"
-	"github.com/galexrt/fivenet/pkg/utils"
 	"github.com/galexrt/fivenet/query/fivenet/table"
 	jet "github.com/go-jet/jet/v2/mysql"
 	"github.com/go-jet/jet/v2/qrm"
@@ -263,7 +263,7 @@ func (c *Cache) RefreshLaws(ctx context.Context, lawBookId uint64) error {
 
 		// Delete non-existing law books, based on which are in the database
 		c.lawBooks.Range(func(key uint64, value *laws.LawBook) bool {
-			if !utils.InSliceFunc(found, func(in uint64) bool {
+			if !slices.ContainsFunc(found, func(in uint64) bool {
 				return in == key
 			}) {
 				c.lawBooks.Delete(key)

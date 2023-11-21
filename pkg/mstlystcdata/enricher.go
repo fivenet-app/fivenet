@@ -1,6 +1,7 @@
 package mstlystcdata
 
 import (
+	"slices"
 	"strconv"
 
 	"github.com/galexrt/fivenet/gen/go/proto/resources/common"
@@ -10,7 +11,6 @@ import (
 	"github.com/galexrt/fivenet/pkg/config"
 	"github.com/galexrt/fivenet/pkg/grpc/auth/userinfo"
 	"github.com/galexrt/fivenet/pkg/perms"
-	"github.com/galexrt/fivenet/pkg/utils"
 )
 
 const (
@@ -132,7 +132,7 @@ func (e *Enricher) EnrichJobInfoSafeFunc(userInfo *userinfo.UserInfo) func(usr c
 		// Make sure user has permission to see that grade, otherwise "hide" the user's job grade
 		grade, ok := jobGrades[usr.GetJob()]
 		if !ok {
-			if !utils.InSlice(e.publicJobs, usr.GetJob()) {
+			if !slices.Contains(e.publicJobs, usr.GetJob()) {
 				usr.SetJob(e.unemployedJob)
 				usr.SetJobGrade(e.unemployedJobGrade)
 			} else {

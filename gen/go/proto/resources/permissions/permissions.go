@@ -1,8 +1,9 @@
 package permissions
 
 import (
+	"slices"
+
 	timestamp "github.com/galexrt/fivenet/gen/go/proto/resources/timestamp"
-	"github.com/galexrt/fivenet/pkg/utils"
 	"github.com/galexrt/fivenet/query/fivenet/model"
 )
 
@@ -136,14 +137,14 @@ func ValidateStringList(in *StringList, validVals []string, maxVals []string) (b
 
 	changed := false
 	for i := 0; i < len(in.Strings); i++ {
-		if !utils.InSlice(maxVals, in.Strings[i]) {
-			in.Strings = utils.RemoveFromSlice(in.Strings, i)
+		if !slices.Contains(maxVals, in.Strings[i]) {
+			in.Strings = slices.Delete(in.Strings, i, i+1)
 			changed = true
 			continue
 		}
 
-		if validVals != nil && !utils.InSlice(validVals, in.Strings[i]) {
-			in.Strings = utils.RemoveFromSlice(in.Strings, i)
+		if validVals != nil && !slices.Contains(validVals, in.Strings[i]) {
+			in.Strings = slices.Delete(in.Strings, i, i+1)
 			changed = true
 			continue
 		}
@@ -161,15 +162,15 @@ func ValidateJobList(in *StringList, validVals []string, maxVals []string) (bool
 
 	changed := false
 	for i := 0; i < len(in.Strings); i++ {
-		if !utils.InSlice(maxVals, in.Strings[i]) {
-			in.Strings = utils.RemoveFromSlice(in.Strings, i)
+		if !slices.Contains(maxVals, in.Strings[i]) {
+			in.Strings = slices.Delete(in.Strings, i, i+1)
 			changed = true
 			continue
 		}
 
-		if validVals != nil && !utils.InSlice(validVals, in.Strings[i]) {
+		if validVals != nil && !slices.Contains(validVals, in.Strings[i]) {
 			// Remove invalid jobs from list
-			in.Strings = utils.RemoveFromSlice(in.Strings, i)
+			in.Strings = slices.Delete(in.Strings, i, i+1)
 			changed = true
 			continue
 		}

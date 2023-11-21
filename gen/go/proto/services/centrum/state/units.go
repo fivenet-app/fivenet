@@ -5,7 +5,6 @@ import (
 	"strings"
 
 	"github.com/galexrt/fivenet/gen/go/proto/resources/centrum"
-	"github.com/galexrt/fivenet/pkg/utils"
 	"golang.org/x/exp/slices"
 )
 
@@ -48,7 +47,7 @@ func (s *State) FilterUnits(job string, statuses []centrum.StatusUnit, notStatus
 		include := true
 
 		// Include statuses that should be listed
-		if len(statuses) > 0 && !utils.InSlice(statuses, units[i].Status.Status) {
+		if len(statuses) > 0 && !slices.Contains(statuses, units[i].Status.Status) {
 			include = false
 		} else if len(notStatuses) > 0 {
 			// Which statuses to ignore

@@ -3,6 +3,7 @@ package dmv
 import (
 	"context"
 	"database/sql"
+	"slices"
 	"strings"
 
 	"github.com/galexrt/fivenet/gen/go/proto/resources/common/database"
@@ -12,7 +13,6 @@ import (
 	"github.com/galexrt/fivenet/pkg/mstlystcdata"
 	"github.com/galexrt/fivenet/pkg/perms"
 	"github.com/galexrt/fivenet/pkg/server/audit"
-	"github.com/galexrt/fivenet/pkg/utils"
 	"github.com/galexrt/fivenet/query/fivenet/model"
 	"github.com/galexrt/fivenet/query/fivenet/table"
 	jet "github.com/go-jet/jet/v2/mysql"
@@ -153,7 +153,7 @@ func (s *Server) ListVehicles(ctx context.Context, req *ListVehiclesRequest) (*L
 		fields = fieldsAttr.([]string)
 	}
 
-	if utils.InSlice(fields, "PhoneNumber") {
+	if slices.Contains(fields, "PhoneNumber") {
 		columns = append(columns, tUsers.PhoneNumber)
 	}
 

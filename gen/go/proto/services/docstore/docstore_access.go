@@ -158,7 +158,7 @@ func (s *Server) compareDocumentAccess(tx *sql.Tx, current, in *documents.Docume
 		for _, cj := range current.Jobs {
 			var found *documents.DocumentJobAccess
 			var foundIdx int
-			for k, uj := range in.Jobs {
+			for i, uj := range in.Jobs {
 				if cj.Job != uj.Job {
 					continue
 				}
@@ -166,7 +166,7 @@ func (s *Server) compareDocumentAccess(tx *sql.Tx, current, in *documents.Docume
 					continue
 				}
 				found = uj
-				foundIdx = k
+				foundIdx = i
 				break
 			}
 			// No match in incoming job access, needs to be deleted
@@ -192,8 +192,8 @@ func (s *Server) compareDocumentAccess(tx *sql.Tx, current, in *documents.Docume
 			}
 		}
 
-		for k, uj := range in.Jobs {
-			idx := slices.Index(foundTracker, k)
+		for i, uj := range in.Jobs {
+			idx := slices.Index(foundTracker, i)
 			if idx == -1 {
 				toCreate.Jobs = append(toCreate.Jobs, uj)
 			}
@@ -207,12 +207,12 @@ func (s *Server) compareDocumentAccess(tx *sql.Tx, current, in *documents.Docume
 		for _, cj := range current.Users {
 			var found *documents.DocumentUserAccess
 			var foundIdx int
-			for k, uj := range in.Users {
+			for i, uj := range in.Users {
 				if cj.UserId != uj.UserId {
 					continue
 				}
 				found = uj
-				foundIdx = k
+				foundIdx = i
 				break
 			}
 			// No match in incoming job access, needs to be deleted
@@ -234,8 +234,8 @@ func (s *Server) compareDocumentAccess(tx *sql.Tx, current, in *documents.Docume
 			}
 		}
 
-		for k, uj := range in.Users {
-			idx := slices.Index(foundTracker, k)
+		for i, uj := range in.Users {
+			idx := slices.Index(foundTracker, i)
 			if idx == -1 {
 				toCreate.Users = append(toCreate.Users, uj)
 			}

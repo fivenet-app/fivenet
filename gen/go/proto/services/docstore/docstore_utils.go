@@ -3,13 +3,13 @@ package docstore
 import (
 	context "context"
 	"errors"
+	"slices"
 
 	"github.com/galexrt/fivenet/gen/go/proto/resources/documents"
 	"github.com/galexrt/fivenet/gen/go/proto/resources/users"
 	permscitizenstore "github.com/galexrt/fivenet/gen/go/proto/services/citizenstore/perms"
 	"github.com/galexrt/fivenet/pkg/grpc/auth/userinfo"
 	"github.com/galexrt/fivenet/pkg/perms"
-	"github.com/galexrt/fivenet/pkg/utils"
 	jet "github.com/go-jet/jet/v2/mysql"
 	"github.com/go-jet/jet/v2/qrm"
 )
@@ -91,7 +91,7 @@ func (s *Server) listDocumentsQuery(where jet.BoolExpression, onlyColumns jet.Pr
 			fields = fieldsAttr.([]string)
 		}
 
-		if utils.InSlice(fields, "PhoneNumber") {
+		if slices.Contains(fields, "PhoneNumber") {
 			columns = append(columns, tCreator.PhoneNumber)
 		}
 
@@ -215,7 +215,7 @@ func (s *Server) getDocumentsQuery(where jet.BoolExpression, onlyColumns jet.Pro
 			fields = fieldsAttr.([]string)
 		}
 
-		if utils.InSlice(fields, "PhoneNumber") {
+		if slices.Contains(fields, "PhoneNumber") {
 			columns = append(columns, tCreator.PhoneNumber)
 		}
 
@@ -349,20 +349,20 @@ func (s *Server) checkIfHasAccess(levels []string, userInfo *userinfo.UserInfo, 
 		return creator.UserId == userInfo.UserId
 	}
 
-	if utils.InSlice(levels, "Any") {
+	if slices.Contains(levels, "Any") {
 		return true
 	}
-	if utils.InSlice(levels, "Lower_Rank") {
+	if slices.Contains(levels, "Lower_Rank") {
 		if creator.JobGrade < userInfo.JobGrade {
 			return true
 		}
 	}
-	if utils.InSlice(levels, "Same_Rank") {
+	if slices.Contains(levels, "Same_Rank") {
 		if creator.JobGrade <= userInfo.JobGrade {
 			return true
 		}
 	}
-	if utils.InSlice(levels, "Own") {
+	if slices.Contains(levels, "Own") {
 		if creator.UserId == userInfo.UserId {
 			return true
 		}

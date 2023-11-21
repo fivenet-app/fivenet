@@ -4,10 +4,10 @@ import (
 	"context"
 	"errors"
 	"fmt"
+	"slices"
 
 	"github.com/galexrt/fivenet/gen/go/proto/resources/centrum"
 	users "github.com/galexrt/fivenet/gen/go/proto/resources/users"
-	"github.com/galexrt/fivenet/pkg/utils"
 	jet "github.com/go-jet/jet/v2/mysql"
 	"github.com/go-jet/jet/v2/qrm"
 	"github.com/paulmach/orb"
@@ -317,7 +317,7 @@ func (s *Manager) LoadDispatchesFromDB(ctx context.Context, id uint64) error {
 			}
 
 			// Clear dispatch creator's job info if not a visible job
-			if !utils.InSlice(s.publicJobs, dispatches[i].Creator.Job) {
+			if !slices.Contains(s.publicJobs, dispatches[i].Creator.Job) {
 				dispatches[i].Creator.Job = ""
 			}
 			dispatches[i].Creator.JobGrade = 0

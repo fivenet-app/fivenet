@@ -4,11 +4,11 @@ import (
 	"fmt"
 	"math/big"
 	"net/http"
+	"slices"
 	"strings"
 
 	"github.com/bwmarrin/discordgo"
 	"github.com/galexrt/fivenet/pkg/config"
-	"github.com/galexrt/fivenet/pkg/utils"
 	jet "github.com/go-jet/jet/v2/mysql"
 	"go.uber.org/zap"
 )
@@ -52,7 +52,7 @@ func (g *GroupSync) createGroupRoles() error {
 	}
 
 	for _, dcRole := range dcRoles {
-		if utils.InSliceFunc(g.guild.Roles, func(in *discordgo.Role) bool {
+		if slices.ContainsFunc(g.guild.Roles, func(in *discordgo.Role) bool {
 			if strings.EqualFold(in.Name, dcRole.RoleName) {
 				g.roles[dcRole.RoleName] = in
 				return true
@@ -175,7 +175,7 @@ func (g *GroupSync) setUserGroups(member *discordgo.Member, group string) error 
 		return fmt.Errorf("no discord role found for server group %s", group)
 	}
 
-	if !utils.InSlice(member.Roles, role.ID) {
+	if !slices.Contains(member.Roles, role.ID) {
 		if err := g.discord.GuildMemberRoleAdd(g.guild.ID, member.User.ID, role.ID); err != nil {
 			return fmt.Errorf("failed to add member to %s (%s) role: %w", role.Name, role.ID, err)
 		}
@@ -193,13 +193,13 @@ func (g *GroupSync) cleanupUserGroupMembers(users []*GroupSyncUser) error {
 	for i := 0; i < len(guild.Members); i++ {
 		for _, role := range g.roles {
 			// If user isn't in one of the synced groups, continue
-			if !utils.InSlice(guild.Members[i].Roles, role.ID) {
+			if !slices.Contains(guild.Members[i].Roles, role.ID) {
 				continue
 			}
 
 			// If user is in the servergroup, all is okay, otherwise remove user from role
 			user := guild.Members[i].User
-			if utils.InSliceFunc(users, func(in *GroupSyncUser) bool {
+			if slices.ContainsFunc(users, func(in *GroupSyncUser) bool {
 				return in.ExternalID == user.ID && g.groupsToSync[in.Group].RoleName == role.Name
 			}) {
 				continue

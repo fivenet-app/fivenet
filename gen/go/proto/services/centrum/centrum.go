@@ -4,6 +4,7 @@ import (
 	"context"
 	"database/sql"
 	"fmt"
+	"slices"
 	"sync"
 	"time"
 
@@ -390,7 +391,7 @@ func (s *Server) stream(srv CentrumService_StreamServer, isDisponent bool, job s
 			} else if unitUpdate := resp.GetUnitUpdated(); unitUpdate != nil {
 				// Either user is in that unit this update is about or they are not (yet) in an unit
 				if unitUpdate.Id == unitId || unitId == 0 {
-					if utils.InSliceFunc(unitUpdate.Users, func(a *centrum.UnitAssignment) bool {
+					if slices.ContainsFunc(unitUpdate.Users, func(a *centrum.UnitAssignment) bool {
 						return userId == a.UserId
 					}) {
 						// Seems that they got assigned to this unit, update the user's unitId here

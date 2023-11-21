@@ -5,10 +5,10 @@ import (
 	"fmt"
 	"net/http"
 	"regexp"
+	"slices"
 	"strings"
 
 	"github.com/bwmarrin/discordgo"
-	"github.com/galexrt/fivenet/pkg/utils"
 	jet "github.com/go-jet/jet/v2/mysql"
 	"github.com/go-jet/jet/v2/qrm"
 	"go.uber.org/zap"
@@ -195,7 +195,7 @@ func (g *UserInfo) createJobRoles() error {
 		grade := job.Grades[i]
 		name := fmt.Sprintf(g.roleFormat, grade.Grade, grade.Label)
 
-		if utils.InSliceFunc(guild.Roles, func(in *discordgo.Role) bool {
+		if slices.ContainsFunc(guild.Roles, func(in *discordgo.Role) bool {
 			if in.Name == name {
 				g.jobRoles[grade.Grade] = in
 				return true
@@ -220,7 +220,7 @@ func (g *UserInfo) createJobRoles() error {
 	}
 
 	employeeRoleName := fmt.Sprintf(g.employeeRoleFormat, job.Label)
-	if !utils.InSliceFunc(guild.Roles, func(in *discordgo.Role) bool {
+	if !slices.ContainsFunc(guild.Roles, func(in *discordgo.Role) bool {
 		if in.Name == employeeRoleName {
 			g.employeeRole = in
 			return true
@@ -244,7 +244,7 @@ func (g *UserInfo) createJobRoles() error {
 func (g *UserInfo) setUserJobRole(member *discordgo.Member, job string, grade int32) error {
 	// Ignore certain jobs when syncing (e.g., "temporary" jobs), example:
 	// "ambulance" job Discord, and an user is currently in the ignored "army" job.
-	if g.job != job && utils.InSlice(g.cfg.UserInfoSync.IgnoreJobs, job) {
+	if g.job != job && slices.Contains(g.cfg.UserInfoSync.IgnoreJobs, job) {
 		return nil
 	}
 
@@ -320,12 +320,12 @@ outerLoop:
 		member := guild.Members[i]
 		for _, role := range g.jobRoles {
 			// If user isn't in one of the synced job roles, continue
-			if !utils.InSlice(guild.Members[i].Roles, role.ID) {
+			if !slices.Contains(guild.Members[i].Roles, role.ID) {
 				continue
 			}
 
 			// Check if user is suposed to have that job grade role
-			if utils.InSliceFunc(users, func(in *UserRoleMapping) bool {
+			if slices.ContainsFunc(users, func(in *UserRoleMapping) bool {
 				r, ok := g.findGradeRoleByID(role.ID)
 				if in.ExternalID == member.User.ID && (ok && r.ID == role.ID) {
 					return true
@@ -345,7 +345,7 @@ outerLoop:
 
 			for _, userMapping := range userMappings {
 				// Ignore certain jobs when syncing (e.g., "temporary" jobs)
-				if g.job != userMapping.Job && utils.InSlice(g.cfg.UserInfoSync.IgnoreJobs, userMapping.Job) {
+				if g.job != userMapping.Job && slices.Contains(g.cfg.UserInfoSync.IgnoreJobs, userMapping.Job) {
 					continue outerLoop
 				}
 			}
@@ -359,12 +359,12 @@ outerLoop:
 
 		role := g.employeeRole
 		// If user isn't in the employee role, continue
-		if !utils.InSlice(guild.Members[i].Roles, role.ID) {
+		if !slices.Contains(guild.Members[i].Roles, role.ID) {
 			continue
 		}
 
 		// Check if member is suposed to have the employee role
-		if utils.InSliceFunc(users, func(in *UserRoleMapping) bool {
+		if slices.ContainsFunc(users, func(in *UserRoleMapping) bool {
 			return in.ExternalID == member.User.ID
 		}) {
 			continue

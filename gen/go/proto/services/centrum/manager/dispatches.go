@@ -3,6 +3,7 @@ package manager
 import (
 	"context"
 	"fmt"
+	"slices"
 	"time"
 
 	"github.com/galexrt/fivenet/gen/go/proto/resources/centrum"
@@ -12,7 +13,6 @@ import (
 	eventscentrum "github.com/galexrt/fivenet/gen/go/proto/services/centrum/events"
 	"github.com/galexrt/fivenet/gen/go/proto/services/centrum/state"
 	centrumutils "github.com/galexrt/fivenet/gen/go/proto/services/centrum/utils"
-	"github.com/galexrt/fivenet/pkg/utils"
 	"github.com/galexrt/fivenet/pkg/utils/dbutils"
 	"github.com/galexrt/fivenet/query/fivenet/table"
 	jet "github.com/go-jet/jet/v2/mysql"
@@ -184,7 +184,7 @@ func (s *Manager) UpdateDispatchAssignments(ctx context.Context, job string, use
 			}
 
 			// Skip already added units
-			if utils.InSliceFunc(dsp.Units, func(in *centrum.DispatchAssignment) bool {
+			if slices.ContainsFunc(dsp.Units, func(in *centrum.DispatchAssignment) bool {
 				return in.UnitId == toAdd[i]
 			}) {
 				continue
@@ -254,7 +254,7 @@ func (s *Manager) UpdateDispatchAssignments(ctx context.Context, job string, use
 						continue
 					}
 
-					dsp.Units = utils.RemoveFromSlice(dsp.Units, i)
+					dsp.Units = slices.Delete(dsp.Units, i, i+1)
 					toAnnounce = append(toAnnounce, toRemove[k])
 				}
 			}
@@ -279,7 +279,7 @@ func (s *Manager) UpdateDispatchAssignments(ctx context.Context, job string, use
 			units := []uint64{}
 			for i := 0; i < len(toAdd); i++ {
 				// Skip already added units
-				if utils.InSliceFunc(dsp.Units, func(in *centrum.DispatchAssignment) bool {
+				if slices.ContainsFunc(dsp.Units, func(in *centrum.DispatchAssignment) bool {
 					return in.UnitId == toAdd[i]
 				}) {
 					continue
@@ -688,7 +688,7 @@ func (s *Manager) TakeDispatch(ctx context.Context, job string, userId int32, un
 		if err := store.ComputeUpdate(key, true, func(key string, dsp *centrum.Dispatch) (*centrum.Dispatch, error) {
 			// If the dispatch center is in central command mode, units can't self assign dispatches
 			if settings.Mode == centrum.CentrumMode_CENTRUM_MODE_CENTRAL_COMMAND {
-				if !utils.InSliceFunc(dsp.Units, func(in *centrum.DispatchAssignment) bool {
+				if !slices.ContainsFunc(dsp.Units, func(in *centrum.DispatchAssignment) bool {
 					return in.UnitId == unitId
 				}) {
 					return nil, errorscentrum.ErrModeForbidsAction
@@ -751,9 +751,9 @@ func (s *Manager) TakeDispatch(ctx context.Context, job string, userId int32, un
 				status = centrum.StatusDispatch_STATUS_DISPATCH_UNIT_DECLINED
 
 				// Remove the unit's assignment
-				for k, u := range dsp.Units {
+				for i, u := range dsp.Units {
 					if u.UnitId == unit.Id {
-						dsp.Units = utils.RemoveFromSlice(dsp.Units, k)
+						dsp.Units = slices.Delete(dsp.Units, i, i+1)
 					}
 				}
 			}

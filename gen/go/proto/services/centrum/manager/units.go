@@ -3,13 +3,13 @@ package manager
 import (
 	"context"
 	"fmt"
+	"slices"
 	"time"
 
 	"github.com/galexrt/fivenet/gen/go/proto/resources/centrum"
 	errorscentrum "github.com/galexrt/fivenet/gen/go/proto/services/centrum/errors"
 	eventscentrum "github.com/galexrt/fivenet/gen/go/proto/services/centrum/events"
 	"github.com/galexrt/fivenet/gen/go/proto/services/centrum/state"
-	"github.com/galexrt/fivenet/pkg/utils"
 	"github.com/galexrt/fivenet/pkg/utils/dbutils"
 	"github.com/galexrt/fivenet/query/fivenet/table"
 	jet "github.com/go-jet/jet/v2/mysql"
@@ -171,7 +171,7 @@ func (s *Manager) UpdateUnitAssignments(ctx context.Context, job string, userId 
 				return err
 			}
 			// Skip already added units
-			if utils.InSliceFunc(unit.Users, func(in *centrum.UnitAssignment) bool {
+			if slices.ContainsFunc(unit.Users, func(in *centrum.UnitAssignment) bool {
 				return in.UserId == toAdd[i]
 			}) {
 				continue
@@ -225,7 +225,7 @@ func (s *Manager) UpdateUnitAssignments(ctx context.Context, job string, userId 
 					}
 
 					toAnnounce = append(toAnnounce, toRemove[k])
-					unit.Users = utils.RemoveFromSlice(unit.Users, i)
+					unit.Users = slices.Delete(unit.Users, i, i+1)
 				}
 			}
 
@@ -257,7 +257,7 @@ func (s *Manager) UpdateUnitAssignments(ctx context.Context, job string, userId 
 				}
 
 				// Skip already added units
-				if utils.InSliceFunc(unit.Users, func(in *centrum.UnitAssignment) bool {
+				if slices.ContainsFunc(unit.Users, func(in *centrum.UnitAssignment) bool {
 					return in.UserId == toAdd[i]
 				}) {
 					continue

@@ -3,6 +3,7 @@ package centrum
 import (
 	"context"
 	"errors"
+	"slices"
 	"time"
 
 	centrum "github.com/galexrt/fivenet/gen/go/proto/resources/centrum"
@@ -10,7 +11,6 @@ import (
 	"github.com/galexrt/fivenet/gen/go/proto/resources/rector"
 	errorscentrum "github.com/galexrt/fivenet/gen/go/proto/services/centrum/errors"
 	"github.com/galexrt/fivenet/pkg/grpc/auth"
-	"github.com/galexrt/fivenet/pkg/utils"
 	"github.com/galexrt/fivenet/query/fivenet/model"
 	"github.com/galexrt/fivenet/query/fivenet/table"
 	jet "github.com/go-jet/jet/v2/mysql"
@@ -153,7 +153,7 @@ func (s *Server) ListDispatches(ctx context.Context, req *ListDispatchesRequest)
 			}
 
 			// Clear dispatch creator's job info if not a visible job
-			if !utils.InSlice(s.publicJobs, resp.Dispatches[i].Creator.Job) {
+			if !slices.Contains(s.publicJobs, resp.Dispatches[i].Creator.Job) {
 				resp.Dispatches[i].Creator.Job = ""
 			}
 			resp.Dispatches[i].Creator.JobGrade = 0

@@ -57,12 +57,12 @@ func (p *Perms) getRolePermissionsFromCache(roleIds []uint64) []*cachePerm {
 	}
 
 	ps := []*cachePerm{}
-	for k, v := range perms {
+	for i, v := range perms {
 		if !v {
 			continue
 		}
 
-		p, ok := p.lookupPermByID(k)
+		p, ok := p.lookupPermByID(i)
 		if !ok {
 			continue
 		}

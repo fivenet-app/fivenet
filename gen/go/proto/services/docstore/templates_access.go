@@ -91,7 +91,7 @@ func (s *Server) compareTemplateJobAccess(tx *sql.Tx, current, in []*documents.T
 		for _, cj := range current {
 			var found *documents.TemplateJobAccess
 			var foundIdx int
-			for k, uj := range in {
+			for i, uj := range in {
 				if cj.Job != uj.Job {
 					continue
 				}
@@ -99,7 +99,7 @@ func (s *Server) compareTemplateJobAccess(tx *sql.Tx, current, in []*documents.T
 					continue
 				}
 				found = uj
-				foundIdx = k
+				foundIdx = i
 				break
 			}
 			// No match in incoming job access, needs to be deleted
@@ -125,8 +125,8 @@ func (s *Server) compareTemplateJobAccess(tx *sql.Tx, current, in []*documents.T
 			}
 		}
 
-		for k, uj := range in {
-			idx := slices.Index(foundTracker, k)
+		for i, uj := range in {
+			idx := slices.Index(foundTracker, i)
 			if idx == -1 {
 				toCreate = append(toCreate, uj)
 			}

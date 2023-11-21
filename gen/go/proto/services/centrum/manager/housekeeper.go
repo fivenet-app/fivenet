@@ -4,13 +4,13 @@ import (
 	"context"
 	"database/sql"
 	"fmt"
+	"slices"
 	"sync"
 	"time"
 
 	"github.com/galexrt/fivenet/gen/go/proto/resources/centrum"
 	centrumutils "github.com/galexrt/fivenet/gen/go/proto/services/centrum/utils"
 	"github.com/galexrt/fivenet/pkg/config"
-	"github.com/galexrt/fivenet/pkg/utils"
 	jet "github.com/go-jet/jet/v2/mysql"
 	"github.com/paulmach/orb"
 	tracesdk "go.opentelemetry.io/otel/sdk/trace"
@@ -416,7 +416,7 @@ func (s *Housekeeper) addAttributeToDispatch(ctx context.Context, dsp *centrum.D
 		}
 		update = true
 	} else {
-		if !utils.InSlice(dsp.Attributes.List, attribute) {
+		if !slices.Contains(dsp.Attributes.List, attribute) {
 			dsp.Attributes.List = append(dsp.Attributes.List, attribute)
 			update = true
 		}
