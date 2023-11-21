@@ -30,7 +30,7 @@ require (
 	github.com/grpc-ecosystem/go-grpc-middleware/v2 v2.0.1
 	github.com/json-iterator/go v1.1.12
 	github.com/microcosm-cc/bluemonday v1.0.26
-	github.com/minio/minio-go/v7 v7.0.63
+	github.com/minio/minio-go/v7 v7.0.64
 	github.com/nats-io/nats-server/v2 v2.10.5
 	github.com/nats-io/nats.go v1.31.0
 	github.com/ory/dockertest/v3 v3.10.0
