@@ -102,3 +102,23 @@ func (s *State) UpdateUnitStatus(ctx context.Context, job string, id uint64, sta
 
 	return nil
 }
+
+func (s *State) UpdateUnitUsers(ctx context.Context, job string, id uint64, users []*centrum.UnitAssignment) error {
+	if err := s.units.ComputeUpdate(JobIdKey(job, id), true, func(key string, existing *centrum.Unit) (*centrum.Unit, error) {
+		if existing == nil {
+			return nil, nil
+		}
+
+		if users == nil {
+			existing.Users = []*centrum.UnitAssignment{}
+		} else {
+			existing.Users = users
+		}
+
+		return existing, nil
+	}); err != nil {
+		return err
+	}
+
+	return nil
+}

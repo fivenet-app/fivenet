@@ -116,3 +116,23 @@ func (s *State) UpdateDispatchStatus(ctx context.Context, job string, id uint64,
 
 	return nil
 }
+
+func (s *State) UpdateDispatchUnits(ctx context.Context, job string, id uint64, units []*centrum.DispatchAssignment) error {
+	if err := s.dispatches.ComputeUpdate(JobIdKey(job, id), true, func(key string, existing *centrum.Dispatch) (*centrum.Dispatch, error) {
+		if existing == nil {
+			return nil, nil
+		}
+
+		if units == nil {
+			existing.Units = []*centrum.DispatchAssignment{}
+		} else {
+			existing.Units = units
+		}
+
+		return existing, nil
+	}); err != nil {
+		return err
+	}
+
+	return nil
+}
