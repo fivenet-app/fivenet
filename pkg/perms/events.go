@@ -7,8 +7,8 @@ import (
 	"time"
 
 	"github.com/galexrt/fivenet/pkg/events"
+	natsutils "github.com/galexrt/fivenet/pkg/nats"
 	"github.com/nats-io/nats.go"
-	"github.com/pkg/errors"
 	"go.uber.org/zap"
 )
 
@@ -29,22 +29,17 @@ type RoleAttrUpdateEvent struct {
 
 func (p *Perms) registerEvents(ctx context.Context) error {
 	cfg := &nats.StreamConfig{
-		Name:      "PERMS",
-		Retention: nats.InterestPolicy,
-		Subjects:  []string{fmt.Sprintf("%s.>", BaseSubject)},
-		Discard:   nats.DiscardOld,
-		MaxAge:    15 * time.Second,
-		Storage:   nats.MemoryStorage,
+		Name:        "PERMS",
+		Description: natsutils.Description,
+		Retention:   nats.InterestPolicy,
+		Subjects:    []string{fmt.Sprintf("%s.>", BaseSubject)},
+		Discard:     nats.DiscardOld,
+		MaxAge:      15 * time.Second,
+		Storage:     nats.MemoryStorage,
 	}
 
-	if _, err := p.js.UpdateStream(cfg); err != nil {
-		if !errors.Is(err, nats.ErrStreamNotFound) {
-			return err
-		}
-
-		if _, err := p.js.AddStream(cfg); err != nil {
-			return err
-		}
+	if _, err := natsutils.CreateOrUpdateStream(p.js, cfg); err != nil {
+		return err
 	}
 
 	sub, err := p.js.Subscribe(fmt.Sprintf("%s.>", BaseSubject), p.handleMessage, nats.DeliverNew())

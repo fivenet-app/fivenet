@@ -2,12 +2,12 @@ package eventscentrum
 
 import (
 	"context"
-	"errors"
 	"fmt"
 	"strings"
 	"time"
 
 	"github.com/galexrt/fivenet/pkg/events"
+	natsutils "github.com/galexrt/fivenet/pkg/nats"
 	"github.com/nats-io/nats.go"
 )
 
@@ -48,7 +48,7 @@ func BuildSubject(topic events.Topic, tType events.Type, job string) string {
 func RegisterStreams(ctx context.Context, js nats.JetStreamContext) error {
 	cfg := &nats.StreamConfig{
 		Name:        "CENTRUM",
-		Description: "FiveNet Centrum events.",
+		Description: natsutils.Description,
 		Retention:   nats.InterestPolicy,
 		Subjects:    []string{fmt.Sprintf("%s.>", BaseSubject)},
 		Discard:     nats.DiscardOld,
@@ -56,15 +56,8 @@ func RegisterStreams(ctx context.Context, js nats.JetStreamContext) error {
 		Storage:     nats.MemoryStorage,
 		Duplicates:  20 * time.Second,
 	}
-
-	if _, err := js.UpdateStream(cfg); err != nil {
-		if !errors.Is(err, nats.ErrStreamNotFound) {
-			return err
-		}
-
-		if _, err := js.AddStream(cfg); err != nil {
-			return err
-		}
+	if _, err := natsutils.CreateOrUpdateStream(js, cfg); err != nil {
+		return err
 	}
 
 	return nil

@@ -7,6 +7,7 @@ import (
 	"strings"
 	"time"
 
+	natsutils "github.com/galexrt/fivenet/pkg/nats"
 	"github.com/galexrt/fivenet/pkg/nats/locks"
 	"github.com/nats-io/nats.go"
 	"github.com/puzpuzpuz/xsync/v3"
@@ -47,7 +48,7 @@ func New[T any, U protoMessage[T]](logger *zap.Logger, js nats.JetStreamContext,
 
 		kv, err = js.CreateKeyValue(&nats.KeyValueConfig{
 			Bucket:      bucket,
-			Description: "FiveNet",
+			Description: natsutils.Description,
 			History:     3,
 			Storage:     nats.MemoryStorage,
 		})

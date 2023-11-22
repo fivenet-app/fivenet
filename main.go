@@ -70,6 +70,7 @@ func (c *WorkerCmd) Run(ctx *Context) error {
 	if !c.DiscordBotOnly {
 		fxOpts = append(fxOpts,
 			fx.Invoke(func(*audit.Retention) {}),
+			// TODO fx.Invoke(func(*tracker.Worker) {}),
 			fx.Invoke(func(*bot.Manager) {}),
 			fx.Invoke(func(*manager.Housekeeper) {}),
 		)

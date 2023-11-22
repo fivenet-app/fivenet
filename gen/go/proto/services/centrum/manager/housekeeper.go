@@ -75,12 +75,6 @@ func NewHousekeeper(p HousekeeperParams) *Housekeeper {
 		s.wg.Add(1)
 		go func() {
 			defer s.wg.Done()
-			s.runArchiveDispatches()
-		}()
-
-		s.wg.Add(1)
-		go func() {
-			defer s.wg.Done()
 			s.runDispatchDeduplication()
 		}()
 
@@ -100,6 +94,18 @@ func NewHousekeeper(p HousekeeperParams) *Housekeeper {
 		go func() {
 			defer s.wg.Done()
 			s.ConvertPhoneJobMsgToDispatch()
+		}()
+
+		s.wg.Add(1)
+		go func() {
+			defer s.wg.Done()
+			s.runCancelDispatches()
+		}()
+
+		s.wg.Add(1)
+		go func() {
+			defer s.wg.Done()
+			s.runDeleteOldDispatches()
 		}()
 
 		return nil
@@ -187,31 +193,27 @@ func (s *Housekeeper) handleDispatchAssignmentExpiration(ctx context.Context) er
 	return nil
 }
 
-func (s *Housekeeper) runArchiveDispatches() {
+func (s *Housekeeper) runCancelDispatches() {
 	for {
 		select {
 		case <-s.ctx.Done():
 			return
 
-		case <-time.After(4 * time.Second):
+		case <-time.After(10 * time.Second):
 			func() {
-				ctx, span := s.tracer.Start(s.ctx, "centrum-dispatch-archival")
+				ctx, span := s.tracer.Start(s.ctx, "centrum-dispatch-cancel")
 				defer span.End()
 
-				if err := s.archiveDispatches(ctx); err != nil {
+				if err := s.cancelExpiredDispatches(ctx); err != nil {
 					s.logger.Error("failed to archive dispatches", zap.Error(err))
-				}
-
-				if err := s.deleteOldDispatches(ctx); err != nil {
-					s.logger.Error("failed to cleanup dispatches", zap.Error(err))
 				}
 			}()
 		}
 	}
 }
 
-// Set `COMPLETED`/`CANCELLED` dispatches to status `ARCHIVED` when the status is older than 5 minutes
-func (s *Housekeeper) archiveDispatches(ctx context.Context) error {
+// Cancel dispatches that haven't been worked on for some time
+func (s *Housekeeper) cancelExpiredDispatches(ctx context.Context) error {
 	stmt := tDispatchStatus.
 		SELECT(
 			tDispatchStatus.DispatchID.AS("dispatch_id"),
@@ -224,19 +226,20 @@ func (s *Housekeeper) archiveDispatches(ctx context.Context) error {
 					tDispatch.ID.EQ(tDispatchStatus.DispatchID),
 				),
 		).
-		// Dispatches that are at 5 minutes or older and are in status completed/cancelled or have no status at all
+		// Dispatches that are older than time X and are not in a completed/cancelled/archived state, or have no status at all
 		WHERE(jet.AND(
 			tDispatchStatus.CreatedAt.LT_EQ(
-				jet.CURRENT_TIMESTAMP().SUB(jet.INTERVAL(5, jet.MINUTE)),
+				jet.CURRENT_TIMESTAMP().SUB(jet.INTERVAL(90, jet.MINUTE)),
 			),
 			tDispatchStatus.ID.IS_NULL().OR(
 				jet.AND(
 					tDispatchStatus.ID.EQ(
 						jet.RawInt("SELECT MAX(`dispatchstatus`.`id`) FROM `fivenet_centrum_dispatches_status` AS `dispatchstatus` WHERE `dispatchstatus`.`dispatch_id` = `dispatch`.`id`"),
 					),
-					tDispatchStatus.Status.IN(
+					tDispatchStatus.Status.NOT_IN(
 						jet.Int16(int16(centrum.StatusDispatch_STATUS_DISPATCH_COMPLETED)),
 						jet.Int16(int16(centrum.StatusDispatch_STATUS_DISPATCH_CANCELLED)),
+						jet.Int16(int16(centrum.StatusDispatch_STATUS_DISPATCH_ARCHIVED)),
 					),
 				),
 			),
@@ -252,24 +255,44 @@ func (s *Housekeeper) archiveDispatches(ctx context.Context) error {
 	}
 
 	for _, ds := range dest {
-		// Ignore already archived dispatches
-		if ds.Status == centrum.StatusDispatch_STATUS_DISPATCH_ARCHIVED {
+		// Ignore already cancelled dispatches
+		if ds.Status == centrum.StatusDispatch_STATUS_DISPATCH_CANCELLED {
 			continue
 		}
 
 		if _, err := s.UpdateDispatchStatus(ctx, ds.Job, ds.DispatchID, &centrum.DispatchStatus{
 			DispatchId: ds.DispatchID,
-			Status:     centrum.StatusDispatch_STATUS_DISPATCH_ARCHIVED,
+			Status:     centrum.StatusDispatch_STATUS_DISPATCH_CANCELLED,
 		}); err != nil {
 			return err
 		}
 
-		if err := s.DeleteDispatch(ctx, ds.Job, ds.DispatchID, false); err != nil {
+		// Remove dispatch from state and publish event so clients remove it
+		if err := s.DeleteDispatch(ctx, ds.Job, ds.DispatchID, true); err != nil {
 			return err
 		}
 	}
 
 	return nil
+}
+
+func (s *Housekeeper) runDeleteOldDispatches() {
+	for {
+		select {
+		case <-s.ctx.Done():
+			return
+
+		case <-time.After(5 * time.Minute):
+			func() {
+				ctx, span := s.tracer.Start(s.ctx, "centrum-dispatch-old-delete")
+				defer span.End()
+
+				if err := s.deleteOldDispatches(ctx); err != nil {
+					s.logger.Error("failed to remove old dispatches", zap.Error(err))
+				}
+			}()
+		}
+	}
 }
 
 func (s *Housekeeper) deleteOldDispatches(ctx context.Context) error {
@@ -286,6 +309,7 @@ func (s *Housekeeper) deleteOldDispatches(ctx context.Context) error {
 				jet.CURRENT_TIMESTAMP().SUB(jet.INTERVAL(14, jet.DAY)),
 			),
 		)).
+		// Delete max 50 at a time
 		LIMIT(50)
 
 	var dest []*struct {

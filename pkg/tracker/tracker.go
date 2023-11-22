@@ -22,10 +22,6 @@ import (
 	"go.uber.org/zap"
 )
 
-const (
-	MaxDispatchMarkerLimit = 120
-)
-
 var (
 	tLocs     = table.FivenetUserLocations
 	tUsers    = table.Users.AS("user")
@@ -35,8 +31,8 @@ var (
 type ITracker interface {
 	GetUsers(job string) (*xsync.MapOf[int32, *livemap.UserMarker], bool)
 	GetUserByJobAndID(job string, userId int32) (*livemap.UserMarker, bool)
-	IsUserOnDuty(job string, userId int32) bool
 	GetUserById(id int32) (*livemap.UserMarker, bool)
+	IsUserOnDuty(job string, userId int32) bool
 
 	Subscribe() chan *Event
 	Unsubscribe(c chan *Event)
