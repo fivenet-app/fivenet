@@ -2,8 +2,8 @@
 // @generated from protobuf file "resources/centrum/settings.proto" (package "resources.centrum", syntax proto3)
 // tslint:disable
 import { MessageType } from "@protobuf-ts/runtime";
-import { Timestamp } from "../timestamp/timestamp.js";
-import { UserShort } from "../users/users.js";
+import { Timestamp } from "../timestamp/timestamp";
+import { UserShort } from "../users/users";
 /**
  * @generated from protobuf message resources.centrum.Settings
  */
@@ -47,11 +47,15 @@ export interface UserUnitMapping {
      */
     unitId: bigint;
     /**
-     * @generated from protobuf field: int32 user_id = 2;
+     * @generated from protobuf field: string job = 2;
+     */
+    job: string;
+    /**
+     * @generated from protobuf field: int32 user_id = 3;
      */
     userId: number;
     /**
-     * @generated from protobuf field: resources.timestamp.Timestamp created_at = 3;
+     * @generated from protobuf field: resources.timestamp.Timestamp created_at = 4;
      */
     createdAt?: Timestamp;
 }
@@ -113,8 +117,9 @@ class UserUnitMapping$Type extends MessageType<UserUnitMapping> {
     constructor() {
         super("resources.centrum.UserUnitMapping", [
             { no: 1, name: "unit_id", kind: "scalar", T: 4 /*ScalarType.UINT64*/, L: 0 /*LongType.BIGINT*/ },
-            { no: 2, name: "user_id", kind: "scalar", T: 5 /*ScalarType.INT32*/ },
-            { no: 3, name: "created_at", kind: "message", T: () => Timestamp }
+            { no: 2, name: "job", kind: "scalar", T: 9 /*ScalarType.STRING*/ },
+            { no: 3, name: "user_id", kind: "scalar", T: 5 /*ScalarType.INT32*/ },
+            { no: 4, name: "created_at", kind: "message", T: () => Timestamp }
         ]);
     }
 }

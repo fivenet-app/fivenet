@@ -3,16 +3,16 @@
 // tslint:disable
 import type { RpcTransport } from "@protobuf-ts/runtime-rpc";
 import type { ServiceInfo } from "@protobuf-ts/runtime-rpc";
-import { CitizenStoreService } from "./citizenstore.js";
-import type { SetUserPropsResponse } from "./citizenstore.js";
-import type { SetUserPropsRequest } from "./citizenstore.js";
-import type { ListUserActivityResponse } from "./citizenstore.js";
-import type { ListUserActivityRequest } from "./citizenstore.js";
-import type { GetUserResponse } from "./citizenstore.js";
-import type { GetUserRequest } from "./citizenstore.js";
+import { CitizenStoreService } from "./citizenstore";
+import type { SetUserPropsResponse } from "./citizenstore";
+import type { SetUserPropsRequest } from "./citizenstore";
+import type { ListUserActivityResponse } from "./citizenstore";
+import type { ListUserActivityRequest } from "./citizenstore";
+import type { GetUserResponse } from "./citizenstore";
+import type { GetUserRequest } from "./citizenstore";
 import { stackIntercept } from "@protobuf-ts/runtime-rpc";
-import type { ListCitizensResponse } from "./citizenstore.js";
-import type { ListCitizensRequest } from "./citizenstore.js";
+import type { ListCitizensResponse } from "./citizenstore";
+import type { ListCitizensRequest } from "./citizenstore";
 import type { UnaryCall } from "@protobuf-ts/runtime-rpc";
 import type { RpcOptions } from "@protobuf-ts/runtime-rpc";
 /**

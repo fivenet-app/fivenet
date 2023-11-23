@@ -3,18 +3,18 @@
 // tslint:disable
 import { ServiceType } from "@protobuf-ts/runtime-rpc";
 import { MessageType } from "@protobuf-ts/runtime";
-import { Disponents } from "../../resources/centrum/settings.js";
-import { UserShort } from "../../resources/users/users.js";
-import { TakeDispatchResp } from "../../resources/centrum/dispatches.js";
-import { DispatchStatus } from "../../resources/centrum/dispatches.js";
-import { Dispatch } from "../../resources/centrum/dispatches.js";
-import { StatusDispatch } from "../../resources/centrum/dispatches.js";
-import { UnitStatus } from "../../resources/centrum/units.js";
-import { PaginationResponse } from "../../resources/common/database/database.js";
-import { Unit } from "../../resources/centrum/units.js";
-import { StatusUnit } from "../../resources/centrum/units.js";
-import { Settings } from "../../resources/centrum/settings.js";
-import { PaginationRequest } from "../../resources/common/database/database.js";
+import { Disponents } from "../../resources/centrum/settings";
+import { UserShort } from "../../resources/users/users";
+import { TakeDispatchResp } from "../../resources/centrum/dispatches";
+import { DispatchStatus } from "../../resources/centrum/dispatches";
+import { Dispatch } from "../../resources/centrum/dispatches";
+import { StatusDispatch } from "../../resources/centrum/dispatches";
+import { UnitStatus } from "../../resources/centrum/units";
+import { PaginationResponse } from "../../resources/common/database/database";
+import { Unit } from "../../resources/centrum/units";
+import { StatusUnit } from "../../resources/centrum/units";
+import { Settings } from "../../resources/centrum/settings";
+import { PaginationRequest } from "../../resources/common/database/database";
 // Common
 
 /**

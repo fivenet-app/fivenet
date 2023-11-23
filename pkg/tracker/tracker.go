@@ -186,7 +186,7 @@ func (s *Tracker) cleanupUserIDs() error {
 	return nil
 }
 
-func (s *Tracker) refreshUserLocations(ctx context.Context, force bool) error {
+func (s *Tracker) refreshUserLocations(ctx context.Context, sendCurrentList bool) error {
 	tLocs := tLocs.AS("markerInfo")
 	stmt := tLocs.
 		SELECT(
@@ -277,7 +277,7 @@ func (s *Tracker) refreshUserLocations(ctx context.Context, force bool) error {
 			}
 		}
 
-		if force {
+		if sendCurrentList {
 			event.Current = append(event.Current, userInfo)
 		}
 	}

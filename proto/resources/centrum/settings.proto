@@ -30,6 +30,7 @@ message Disponents {
 
 message UserUnitMapping {
   uint64 unit_id = 1;
-  int32 user_id = 2;
-  resources.timestamp.Timestamp created_at = 3;
+  string job = 2;
+  int32 user_id = 3;
+  resources.timestamp.Timestamp created_at = 4;
 }

@@ -3,12 +3,12 @@
 // tslint:disable
 import { ServiceType } from "@protobuf-ts/runtime-rpc";
 import { MessageType } from "@protobuf-ts/runtime";
-import { JobProps } from "../../resources/users/jobs.js";
-import { User } from "../../resources/users/users.js";
-import { OAuth2Account } from "../../resources/accounts/oauth2.js";
-import { OAuth2Provider } from "../../resources/accounts/oauth2.js";
-import { Account } from "../../resources/accounts/accounts.js";
-import { Timestamp } from "../../resources/timestamp/timestamp.js";
+import { JobProps } from "../../resources/users/jobs";
+import { User } from "../../resources/users/users";
+import { OAuth2Account } from "../../resources/accounts/oauth2";
+import { OAuth2Provider } from "../../resources/accounts/oauth2";
+import { Account } from "../../resources/accounts/accounts";
+import { Timestamp } from "../../resources/timestamp/timestamp";
 /**
  * @generated from protobuf message services.auth.CreateAccountRequest
  */

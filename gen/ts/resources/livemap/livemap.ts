@@ -2,9 +2,9 @@
 // @generated from protobuf file "resources/livemap/livemap.proto" (package "resources.livemap", syntax proto3)
 // tslint:disable
 import { MessageType } from "@protobuf-ts/runtime";
-import { Unit } from "../centrum/units.js";
-import { UserShort } from "../users/users.js";
-import { Timestamp } from "../timestamp/timestamp.js";
+import { Unit } from "../centrum/units";
+import { UserShort } from "../users/users";
+import { Timestamp } from "../timestamp/timestamp";
 /**
  * @generated from protobuf message resources.livemap.MarkerInfo
  */

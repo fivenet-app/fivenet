@@ -3,15 +3,15 @@
 // tslint:disable
 import type { RpcTransport } from "@protobuf-ts/runtime-rpc";
 import type { ServiceInfo } from "@protobuf-ts/runtime-rpc";
-import { LivemapperService } from "./livemap.js";
-import type { DeleteMarkerResponse } from "./livemap.js";
-import type { DeleteMarkerRequest } from "./livemap.js";
-import type { CreateOrUpdateMarkerResponse } from "./livemap.js";
-import type { CreateOrUpdateMarkerRequest } from "./livemap.js";
+import { LivemapperService } from "./livemap";
+import type { DeleteMarkerResponse } from "./livemap";
+import type { DeleteMarkerRequest } from "./livemap";
+import type { CreateOrUpdateMarkerResponse } from "./livemap";
+import type { CreateOrUpdateMarkerRequest } from "./livemap";
 import type { UnaryCall } from "@protobuf-ts/runtime-rpc";
 import { stackIntercept } from "@protobuf-ts/runtime-rpc";
-import type { StreamResponse } from "./livemap.js";
-import type { StreamRequest } from "./livemap.js";
+import type { StreamResponse } from "./livemap";
+import type { StreamRequest } from "./livemap";
 import type { ServerStreamingCall } from "@protobuf-ts/runtime-rpc";
 import type { RpcOptions } from "@protobuf-ts/runtime-rpc";
 /**

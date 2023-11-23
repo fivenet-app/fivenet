@@ -2,10 +2,10 @@
 // @generated from protobuf file "resources/centrum/dispatches.proto" (package "resources.centrum", syntax proto3)
 // tslint:disable
 import { MessageType } from "@protobuf-ts/runtime";
-import { UserShort } from "../users/users.js";
-import { Unit } from "./units.js";
-import { User } from "../users/users.js";
-import { Timestamp } from "../timestamp/timestamp.js";
+import { UserShort } from "../users/users";
+import { Unit } from "./units";
+import { User } from "../users/users";
+import { Timestamp } from "../timestamp/timestamp";
 /**
  * @generated from protobuf message resources.centrum.Dispatch
  */

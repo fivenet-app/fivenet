@@ -2,9 +2,9 @@
 // @generated from protobuf file "resources/notifications/notifications.proto" (package "resources.notifications", syntax proto3)
 // tslint:disable
 import { MessageType } from "@protobuf-ts/runtime";
-import { UserShort } from "../users/users.js";
-import { TranslateItem } from "../common/i18n.js";
-import { Timestamp } from "../timestamp/timestamp.js";
+import { UserShort } from "../users/users";
+import { TranslateItem } from "../common/i18n";
+import { Timestamp } from "../timestamp/timestamp";
 /**
  * @generated from protobuf message resources.notifications.Notification
  */

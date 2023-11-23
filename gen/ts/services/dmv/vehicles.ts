@@ -3,10 +3,10 @@
 // tslint:disable
 import { ServiceType } from "@protobuf-ts/runtime-rpc";
 import { MessageType } from "@protobuf-ts/runtime";
-import { Vehicle } from "../../resources/vehicles/vehicles.js";
-import { PaginationResponse } from "../../resources/common/database/database.js";
-import { OrderBy } from "../../resources/common/database/database.js";
-import { PaginationRequest } from "../../resources/common/database/database.js";
+import { Vehicle } from "../../resources/vehicles/vehicles";
+import { PaginationResponse } from "../../resources/common/database/database";
+import { OrderBy } from "../../resources/common/database/database";
+import { PaginationRequest } from "../../resources/common/database/database";
 /**
  * @generated from protobuf message services.dmv.ListVehiclesRequest
  */

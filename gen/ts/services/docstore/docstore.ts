@@ -3,22 +3,22 @@
 // tslint:disable
 import { ServiceType } from "@protobuf-ts/runtime-rpc";
 import { MessageType } from "@protobuf-ts/runtime";
-import { Category } from "../../resources/documents/category.js";
-import { DocRelation } from "../../resources/documents/documents.js";
-import { DocContentType } from "../../resources/documents/documents.js";
-import { Comment } from "../../resources/documents/comment.js";
-import { DocumentRelation } from "../../resources/documents/documents.js";
-import { DocumentReference } from "../../resources/documents/documents.js";
-import { DocumentAccess } from "../../resources/documents/documents.js";
-import { Document } from "../../resources/documents/documents.js";
-import { DocumentShort } from "../../resources/documents/documents.js";
-import { PaginationResponse } from "../../resources/common/database/database.js";
-import { Timestamp } from "../../resources/timestamp/timestamp.js";
-import { OrderBy } from "../../resources/common/database/database.js";
-import { PaginationRequest } from "../../resources/common/database/database.js";
-import { Template } from "../../resources/documents/templates.js";
-import { TemplateData } from "../../resources/documents/templates.js";
-import { TemplateShort } from "../../resources/documents/templates.js";
+import { Category } from "../../resources/documents/category";
+import { DocRelation } from "../../resources/documents/documents";
+import { DocContentType } from "../../resources/documents/documents";
+import { Comment } from "../../resources/documents/comment";
+import { DocumentRelation } from "../../resources/documents/documents";
+import { DocumentReference } from "../../resources/documents/documents";
+import { DocumentAccess } from "../../resources/documents/documents";
+import { Document } from "../../resources/documents/documents";
+import { DocumentShort } from "../../resources/documents/documents";
+import { PaginationResponse } from "../../resources/common/database/database";
+import { Timestamp } from "../../resources/timestamp/timestamp";
+import { OrderBy } from "../../resources/common/database/database";
+import { PaginationRequest } from "../../resources/common/database/database";
+import { Template } from "../../resources/documents/templates";
+import { TemplateData } from "../../resources/documents/templates";
+import { TemplateShort } from "../../resources/documents/templates";
 /**
  * Templates ==================================================================
  *

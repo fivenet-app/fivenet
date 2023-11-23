@@ -2,14 +2,14 @@
 // @generated from protobuf file "resources/documents/templates.proto" (package "resources.documents", syntax proto3)
 // tslint:disable
 import { MessageType } from "@protobuf-ts/runtime";
-import { AccessLevel } from "./access.js";
-import { Vehicle } from "../vehicles/vehicles.js";
-import { DocumentShort } from "./documents.js";
-import { User } from "../users/users.js";
-import { DocumentAccess } from "./documents.js";
-import { UserShort } from "../users/users.js";
-import { Category } from "./category.js";
-import { Timestamp } from "../timestamp/timestamp.js";
+import { AccessLevel } from "./access";
+import { Vehicle } from "../vehicles/vehicles";
+import { DocumentShort } from "./documents";
+import { User } from "../users/users";
+import { DocumentAccess } from "./documents";
+import { UserShort } from "../users/users";
+import { Category } from "./category";
+import { Timestamp } from "../timestamp/timestamp";
 /**
  * @generated from protobuf message resources.documents.Template
  */

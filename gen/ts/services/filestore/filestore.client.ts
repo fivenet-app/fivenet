@@ -3,10 +3,10 @@
 // tslint:disable
 import type { RpcTransport } from "@protobuf-ts/runtime-rpc";
 import type { ServiceInfo } from "@protobuf-ts/runtime-rpc";
-import { FileStoreService } from "./filestore.js";
+import { FileStoreService } from "./filestore";
 import { stackIntercept } from "@protobuf-ts/runtime-rpc";
-import type { UploadResponse } from "./filestore.js";
-import type { UploadRequest } from "./filestore.js";
+import type { UploadResponse } from "./filestore";
+import type { UploadRequest } from "./filestore";
 import type { UnaryCall } from "@protobuf-ts/runtime-rpc";
 import type { RpcOptions } from "@protobuf-ts/runtime-rpc";
 /**

@@ -14,10 +14,11 @@ func (s *State) GetUserUnitID(userId int32) (uint64, bool) {
 	return mapping.UnitId, true
 }
 
-func (s *State) SetUnitForUser(userId int32, unitId uint64) error {
+func (s *State) SetUnitForUser(job string, userId int32, unitId uint64) error {
 	mapping := &centrum.UserUnitMapping{
 		UnitId:    unitId,
 		UserId:    userId,
+		Job:       job,
 		CreatedAt: timestamp.Now(),
 	}
 

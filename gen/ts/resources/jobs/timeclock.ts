@@ -2,8 +2,8 @@
 // @generated from protobuf file "resources/jobs/timeclock.proto" (package "resources.jobs", syntax proto3)
 // tslint:disable
 import { MessageType } from "@protobuf-ts/runtime";
-import { UserShort } from "../users/users.js";
-import { Timestamp } from "../timestamp/timestamp.js";
+import { UserShort } from "../users/users";
+import { Timestamp } from "../timestamp/timestamp";
 /**
  * @generated from protobuf message resources.jobs.TimeclockEntry
  */

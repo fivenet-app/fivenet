@@ -3,10 +3,10 @@
 // tslint:disable
 import { ServiceType } from "@protobuf-ts/runtime-rpc";
 import { MessageType } from "@protobuf-ts/runtime";
-import { LawBook } from "../../resources/laws/laws.js";
-import { Category } from "../../resources/documents/category.js";
-import { Job } from "../../resources/users/jobs.js";
-import { UserShort } from "../../resources/users/users.js";
+import { LawBook } from "../../resources/laws/laws";
+import { Category } from "../../resources/documents/category";
+import { Job } from "../../resources/users/jobs";
+import { UserShort } from "../../resources/users/users";
 /**
  * @generated from protobuf message services.completor.CompleteCitizensRequest
  */

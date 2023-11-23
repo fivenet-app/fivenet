@@ -3,15 +3,15 @@
 // tslint:disable
 import type { RpcTransport } from "@protobuf-ts/runtime-rpc";
 import type { ServiceInfo } from "@protobuf-ts/runtime-rpc";
-import { NotificatorService } from "./notificator.js";
-import type { StreamResponse } from "./notificator.js";
-import type { StreamRequest } from "./notificator.js";
+import { NotificatorService } from "./notificator";
+import type { StreamResponse } from "./notificator";
+import type { StreamRequest } from "./notificator";
 import type { ServerStreamingCall } from "@protobuf-ts/runtime-rpc";
-import type { MarkNotificationsResponse } from "./notificator.js";
-import type { MarkNotificationsRequest } from "./notificator.js";
+import type { MarkNotificationsResponse } from "./notificator";
+import type { MarkNotificationsRequest } from "./notificator";
 import { stackIntercept } from "@protobuf-ts/runtime-rpc";
-import type { GetNotificationsResponse } from "./notificator.js";
-import type { GetNotificationsRequest } from "./notificator.js";
+import type { GetNotificationsResponse } from "./notificator";
+import type { GetNotificationsRequest } from "./notificator";
 import type { UnaryCall } from "@protobuf-ts/runtime-rpc";
 import type { RpcOptions } from "@protobuf-ts/runtime-rpc";
 /**

@@ -2,8 +2,8 @@
 // @generated from protobuf file "resources/documents/comment.proto" (package "resources.documents", syntax proto3)
 // tslint:disable
 import { MessageType } from "@protobuf-ts/runtime";
-import { UserShort } from "../users/users.js";
-import { Timestamp } from "../timestamp/timestamp.js";
+import { UserShort } from "../users/users";
+import { Timestamp } from "../timestamp/timestamp";
 /**
  * @generated from protobuf message resources.documents.Comment
  */

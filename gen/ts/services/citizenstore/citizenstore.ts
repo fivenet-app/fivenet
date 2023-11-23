@@ -3,11 +3,11 @@
 // tslint:disable
 import { ServiceType } from "@protobuf-ts/runtime-rpc";
 import { MessageType } from "@protobuf-ts/runtime";
-import { UserProps } from "../../resources/users/users.js";
-import { UserActivity } from "../../resources/users/users.js";
-import { User } from "../../resources/users/users.js";
-import { PaginationResponse } from "../../resources/common/database/database.js";
-import { PaginationRequest } from "../../resources/common/database/database.js";
+import { UserProps } from "../../resources/users/users";
+import { UserActivity } from "../../resources/users/users";
+import { User } from "../../resources/users/users";
+import { PaginationResponse } from "../../resources/common/database/database";
+import { PaginationRequest } from "../../resources/common/database/database";
 /**
  * @generated from protobuf message services.citizenstore.ListCitizensRequest
  */

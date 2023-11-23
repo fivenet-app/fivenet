@@ -3,9 +3,9 @@
 // tslint:disable
 import { ServiceType } from "@protobuf-ts/runtime-rpc";
 import { MessageType } from "@protobuf-ts/runtime";
-import { Marker } from "../../resources/livemap/livemap.js";
-import { UserMarker } from "../../resources/livemap/livemap.js";
-import { Job } from "../../resources/users/jobs.js";
+import { Marker } from "../../resources/livemap/livemap";
+import { UserMarker } from "../../resources/livemap/livemap";
+import { Job } from "../../resources/users/jobs";
 /**
  * @generated from protobuf message services.livemapper.StreamRequest
  */

@@ -3,16 +3,16 @@
 // tslint:disable
 import { ServiceType } from "@protobuf-ts/runtime-rpc";
 import { MessageType } from "@protobuf-ts/runtime";
-import { Law } from "../../resources/laws/laws.js";
-import { LawBook } from "../../resources/laws/laws.js";
-import { AuditEntry } from "../../resources/rector/audit.js";
-import { PaginationResponse } from "../../resources/common/database/database.js";
-import { Timestamp } from "../../resources/timestamp/timestamp.js";
-import { PaginationRequest } from "../../resources/common/database/database.js";
-import { Permission } from "../../resources/permissions/permissions.js";
-import { RoleAttribute } from "../../resources/permissions/permissions.js";
-import { Role } from "../../resources/permissions/permissions.js";
-import { JobProps } from "../../resources/users/jobs.js";
+import { Law } from "../../resources/laws/laws";
+import { LawBook } from "../../resources/laws/laws";
+import { AuditEntry } from "../../resources/rector/audit";
+import { PaginationResponse } from "../../resources/common/database/database";
+import { Timestamp } from "../../resources/timestamp/timestamp";
+import { PaginationRequest } from "../../resources/common/database/database";
+import { Permission } from "../../resources/permissions/permissions";
+import { RoleAttribute } from "../../resources/permissions/permissions";
+import { Role } from "../../resources/permissions/permissions";
+import { JobProps } from "../../resources/users/jobs";
 /**
  * @generated from protobuf message services.rector.GetJobPropsRequest
  */

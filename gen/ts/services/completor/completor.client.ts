@@ -3,16 +3,16 @@
 // tslint:disable
 import type { RpcTransport } from "@protobuf-ts/runtime-rpc";
 import type { ServiceInfo } from "@protobuf-ts/runtime-rpc";
-import { CompletorService } from "./completor.js";
-import type { ListLawBooksResponse } from "./completor.js";
-import type { ListLawBooksRequest } from "./completor.js";
-import type { CompleteDocumentCategoriesResponse } from "./completor.js";
-import type { CompleteDocumentCategoriesRequest } from "./completor.js";
-import type { CompleteJobsResponse } from "./completor.js";
-import type { CompleteJobsRequest } from "./completor.js";
+import { CompletorService } from "./completor";
+import type { ListLawBooksResponse } from "./completor";
+import type { ListLawBooksRequest } from "./completor";
+import type { CompleteDocumentCategoriesResponse } from "./completor";
+import type { CompleteDocumentCategoriesRequest } from "./completor";
+import type { CompleteJobsResponse } from "./completor";
+import type { CompleteJobsRequest } from "./completor";
 import { stackIntercept } from "@protobuf-ts/runtime-rpc";
-import type { CompleteCitizensRespoonse } from "./completor.js";
-import type { CompleteCitizensRequest } from "./completor.js";
+import type { CompleteCitizensRespoonse } from "./completor";
+import type { CompleteCitizensRequest } from "./completor";
 import type { UnaryCall } from "@protobuf-ts/runtime-rpc";
 import type { RpcOptions } from "@protobuf-ts/runtime-rpc";
 /**

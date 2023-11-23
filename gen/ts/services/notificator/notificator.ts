@@ -3,12 +3,12 @@
 // tslint:disable
 import { ServiceType } from "@protobuf-ts/runtime-rpc";
 import { MessageType } from "@protobuf-ts/runtime";
-import { JobProps } from "../../resources/users/jobs.js";
-import { User } from "../../resources/users/users.js";
-import { Timestamp } from "../../resources/timestamp/timestamp.js";
-import { Notification } from "../../resources/notifications/notifications.js";
-import { PaginationResponse } from "../../resources/common/database/database.js";
-import { PaginationRequest } from "../../resources/common/database/database.js";
+import { JobProps } from "../../resources/users/jobs";
+import { User } from "../../resources/users/users";
+import { Timestamp } from "../../resources/timestamp/timestamp";
+import { Notification } from "../../resources/notifications/notifications";
+import { PaginationResponse } from "../../resources/common/database/database";
+import { PaginationRequest } from "../../resources/common/database/database";
 /**
  * @generated from protobuf message services.notificator.GetNotificationsRequest
  */

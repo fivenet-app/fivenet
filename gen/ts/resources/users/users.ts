@@ -2,9 +2,9 @@
 // @generated from protobuf file "resources/users/users.proto" (package "resources.users", syntax proto3)
 // tslint:disable
 import { MessageType } from "@protobuf-ts/runtime";
-import { Timestamp } from "../timestamp/timestamp.js";
-import { JobGrade } from "./jobs.js";
-import { Job } from "./jobs.js";
+import { Timestamp } from "../timestamp/timestamp";
+import { JobGrade } from "./jobs";
+import { Job } from "./jobs";
 /**
  * @generated from protobuf message resources.users.UserShort
  */

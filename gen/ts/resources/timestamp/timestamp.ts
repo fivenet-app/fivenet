@@ -6,7 +6,7 @@
 // SPDX-License-Identifier: MPL-2.0
 //
 import { MessageType } from "@protobuf-ts/runtime";
-import { Timestamp as Timestamp$ } from "../../google/protobuf/timestamp.js";
+import { Timestamp as Timestamp$ } from "../../google/protobuf/timestamp";
 /**
  * Timestamp for storage messages.  We've defined a new local type wrapper
  * of google.protobuf.Timestamp so we can implement sql.Scanner and sql.Valuer

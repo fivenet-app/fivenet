@@ -2,7 +2,7 @@
 // @generated from protobuf file "resources/accounts/accounts.proto" (package "resources.accounts", syntax proto3)
 // tslint:disable
 import { MessageType } from "@protobuf-ts/runtime";
-import { Timestamp } from "../timestamp/timestamp.js";
+import { Timestamp } from "../timestamp/timestamp";
 /**
  * @generated from protobuf message resources.accounts.Account
  */

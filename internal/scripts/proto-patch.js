@@ -1,7 +1,7 @@
 // https://github.com/timostamm/protobuf-ts/pull/233#issuecomment-1289053379
 // From @smnbbrv on GitHub
 import fs from 'fs';
-import glob from 'glob';
+import { glob } from 'glob';
 
 const protoRoot = './gen/ts';
 

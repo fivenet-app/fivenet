@@ -11,6 +11,7 @@ import (
 	jet "github.com/go-jet/jet/v2/mysql"
 	"github.com/go-jet/jet/v2/qrm"
 	"github.com/paulmach/orb"
+	"go.uber.org/zap"
 )
 
 func (s *Manager) loadData() error {
@@ -198,7 +199,9 @@ func (s *Manager) LoadUnitsFromDB(ctx context.Context, id uint64) error {
 		}
 
 		for _, user := range units[i].Users {
-			s.SetUnitForUser(user.UserId, units[i].Id)
+			if err := s.SetUnitForUser(user.User.Job, user.UserId, units[i].Id); err != nil {
+				s.logger.Error("failed to set user's unit id", zap.Error(err))
+			}
 		}
 	}
 

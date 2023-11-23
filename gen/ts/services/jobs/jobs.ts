@@ -3,17 +3,17 @@
 // tslint:disable
 import { ServiceType } from "@protobuf-ts/runtime-rpc";
 import { MessageType } from "@protobuf-ts/runtime";
-import { RequestComment } from "../../resources/jobs/requests.js";
-import { RequestType } from "../../resources/jobs/requests.js";
-import { Request } from "../../resources/jobs/requests.js";
-import { TimeclockStats } from "../../resources/jobs/timeclock.js";
-import { TimeclockEntry } from "../../resources/jobs/timeclock.js";
-import { Timestamp } from "../../resources/timestamp/timestamp.js";
-import { ConductEntry } from "../../resources/jobs/conduct.js";
-import { ConductType } from "../../resources/jobs/conduct.js";
-import { User } from "../../resources/users/users.js";
-import { PaginationResponse } from "../../resources/common/database/database.js";
-import { PaginationRequest } from "../../resources/common/database/database.js";
+import { RequestComment } from "../../resources/jobs/requests";
+import { RequestType } from "../../resources/jobs/requests";
+import { Request } from "../../resources/jobs/requests";
+import { TimeclockStats } from "../../resources/jobs/timeclock";
+import { TimeclockEntry } from "../../resources/jobs/timeclock";
+import { Timestamp } from "../../resources/timestamp/timestamp";
+import { ConductEntry } from "../../resources/jobs/conduct";
+import { ConductType } from "../../resources/jobs/conduct";
+import { User } from "../../resources/users/users";
+import { PaginationResponse } from "../../resources/common/database/database";
+import { PaginationRequest } from "../../resources/common/database/database";
 // Colleagues
 
 /**

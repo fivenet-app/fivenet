@@ -2,7 +2,7 @@
 // @generated from protobuf file "resources/vehicles/vehicles.proto" (package "resources.vehicles", syntax proto3)
 // tslint:disable
 import { MessageType } from "@protobuf-ts/runtime";
-import { UserShort } from "../users/users.js";
+import { UserShort } from "../users/users";
 /**
  * @generated from protobuf message resources.vehicles.Vehicle
  */

@@ -654,11 +654,13 @@ func (s *Housekeeper) watchUserChanges() {
 					}
 
 					if unitId == 0 {
-						s.UnsetUnitIDForUser(userInfo.UserID)
+						if err := s.UnsetUnitIDForUser(userInfo.UserID); err != nil {
+							s.logger.Error("failed to unset user's unit id", zap.Error(err))
+						}
 						continue
 					}
 
-					if err := s.SetUnitForUser(userInfo.UserID, unitId); err != nil {
+					if err := s.SetUnitForUser(userInfo.Job, userInfo.UserID, unitId); err != nil {
 						s.logger.Error("failed to update user unit id mapping in kv", zap.Error(err))
 						continue
 					}
@@ -691,7 +693,9 @@ func (s *Housekeeper) handleRemoveUserFromUnit(ctx context.Context, job string, 
 
 	unit, err := s.GetUnit(job, unitId)
 	if err != nil {
-		s.UnsetUnitIDForUser(userId)
+		if err := s.UnsetUnitIDForUser(userId); err != nil {
+			s.logger.Error("failed to unset user's unit id", zap.Error(err))
+		}
 		return false
 	}
 

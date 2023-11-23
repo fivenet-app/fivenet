@@ -292,7 +292,7 @@ func (s *Manager) UpdateUnitAssignments(ctx context.Context, job string, userId 
 					return nil, err
 				}
 
-				if err := s.SetUnitForUser(user.UserId, unit.Id); err != nil {
+				if err := s.SetUnitForUser(user.Job, user.UserId, unit.Id); err != nil {
 					return nil, err
 				}
 			}

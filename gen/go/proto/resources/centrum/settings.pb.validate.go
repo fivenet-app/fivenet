@@ -337,6 +337,8 @@ func (m *UserUnitMapping) validate(all bool) error {
 
 	// no validation rules for UnitId
 
+	// no validation rules for Job
+
 	// no validation rules for UserId
 
 	if all {

@@ -2,7 +2,7 @@
 // @generated from protobuf file "resources/permissions/permissions.proto" (package "resources.permissions", syntax proto3)
 // tslint:disable
 import { MessageType } from "@protobuf-ts/runtime";
-import { Timestamp } from "../timestamp/timestamp.js";
+import { Timestamp } from "../timestamp/timestamp";
 /**
  * @generated from protobuf message resources.permissions.Permission
  */
