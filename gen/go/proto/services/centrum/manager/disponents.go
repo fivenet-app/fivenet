@@ -13,7 +13,7 @@ import (
 
 func (s *Manager) DisponentSignOn(ctx context.Context, job string, userId int32, signon bool) error {
 	if signon {
-		if _, ok := s.tracker.GetUserByJobAndID(job, userId); !ok {
+		if _, ok := s.tracker.GetUserById(userId); !ok {
 			return errorscentrum.ErrNotOnDuty
 		}
 

@@ -29,10 +29,9 @@ var (
 )
 
 type ITracker interface {
-	GetUsers(job string) (*xsync.MapOf[int32, *livemap.UserMarker], bool)
-	GetUserByJobAndID(job string, userId int32) (*livemap.UserMarker, bool)
+	GetUsersByJob(job string) (*xsync.MapOf[int32, *livemap.UserMarker], bool)
 	GetUserById(id int32) (*livemap.UserMarker, bool)
-	IsUserOnDuty(job string, userId int32) bool
+	IsUserOnDuty(userId int32) bool
 
 	Subscribe() chan *Event
 	Unsubscribe(c chan *Event)
@@ -110,8 +109,7 @@ func New(p Params) ITracker {
 
 		// Only run the tracker random user marker generator in debug mode
 		if p.Config.Mode == gin.DebugMode {
-			go t.GenerateRandomUserMarker()
-			go t.GenerateRandomDispatchMarker()
+			go t.RandomizeUserMarkers()
 		}
 
 		go t.start()
@@ -274,7 +272,7 @@ func (s *Tracker) refreshUserLocations(ctx context.Context, force bool) error {
 			ui.Time = userInfo.Time
 		} else {
 			// User wasn't in the list, so they must be new so add the user to event for keeping track of users
-			if _, ok := s.GetUserByJobAndID(job, userId); !ok {
+			if _, ok := s.GetUserById(userId); !ok {
 				event.Added = append(event.Added, userInfo)
 			}
 		}
@@ -295,31 +293,12 @@ func (s *Tracker) refreshUserLocations(ctx context.Context, force bool) error {
 	return nil
 }
 
-func (s *Tracker) GetUsers(job string) (*xsync.MapOf[int32, *livemap.UserMarker], bool) {
+func (s *Tracker) GetUsersByJob(job string) (*xsync.MapOf[int32, *livemap.UserMarker], bool) {
 	return s.usersCache.Load(job)
 }
 
-func (s *Tracker) GetUserByJobAndID(job string, userId int32) (*livemap.UserMarker, bool) {
-	users, ok := s.usersCache.Load(job)
-	if !ok {
-		return nil, false
-	}
-
-	user, ok := users.Load(userId)
-	if !ok {
-		return nil, false
-	}
-
-	return user, true
-}
-
-func (s *Tracker) IsUserOnDuty(job string, userId int32) bool {
-	users, ok := s.usersCache.Load(job)
-	if !ok {
-		return false
-	}
-
-	if _, ok := users.Load(userId); !ok {
+func (s *Tracker) IsUserOnDuty(userId int32) bool {
+	if _, ok := s.usersIDs.Load(userId); !ok {
 		return false
 	}
 
@@ -332,7 +311,12 @@ func (s *Tracker) GetUserById(id int32) (*livemap.UserMarker, bool) {
 		return nil, false
 	}
 
-	return s.GetUserByJobAndID(info.Job, id)
+	users, ok := s.usersCache.Load(info.Job)
+	if !ok {
+		return nil, false
+	}
+
+	return users.Load(id)
 }
 
 func (s *Tracker) Subscribe() chan *Event {

@@ -484,7 +484,8 @@
             },
             "update_dispatch": {
                 "attributes": {
-                    "multiple": "Mehrere Einsätze"
+                    "multiple": "Mehrere Einsätze",
+                    "too_old": "Abgebrochen wegen Einsatz-Alter"
                 }
             }
         },

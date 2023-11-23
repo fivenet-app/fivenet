@@ -314,7 +314,7 @@ func (s *Manager) UpdateDispatchAssignments(ctx context.Context, job string, use
 			}
 
 			for _, unitId := range units {
-				dsp.Status = &centrum.DispatchStatus{
+				if err := s.AddDispatchStatus(ctx, s.db, job, &centrum.DispatchStatus{
 					DispatchId: dsp.Id,
 					UnitId:     &unitId,
 					UserId:     userId,
@@ -322,8 +322,7 @@ func (s *Manager) UpdateDispatchAssignments(ctx context.Context, job string, use
 					X:          x,
 					Y:          y,
 					Postal:     postal,
-				}
-				if err := s.AddDispatchStatus(ctx, s.db, job, dsp.Status, true); err != nil {
+				}, true); err != nil {
 					return nil, err
 				}
 			}

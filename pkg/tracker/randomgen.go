@@ -1,17 +1,15 @@
 package tracker
 
 import (
-	"fmt"
 	"math/rand"
 	"time"
 
 	"github.com/galexrt/fivenet/query/fivenet/model"
-	"github.com/galexrt/fivenet/query/fivenet/table"
 	jet "github.com/go-jet/jet/v2/mysql"
 	"go.uber.org/zap"
 )
 
-func (s *Tracker) GenerateRandomUserMarker() {
+func (s *Tracker) RandomizeUserMarkers() {
 	userIdentifiers := []string{
 		"char1:fcee377a1fda007a8d2cc764a0a272e04d8c5d57",
 		"char1:0ff2f772f2527a0626cac48670cbc20ddbdc09fb",
@@ -99,78 +97,5 @@ func (s *Tracker) GenerateRandomUserMarker() {
 			counter++
 			time.Sleep(3 * time.Second)
 		}()
-	}
-}
-
-func (s *Tracker) GenerateRandomDispatchMarker() {
-	userIdentifiers := []int32{
-		26061,
-		43612,
-		41857,
-		35061,
-	}
-
-	markers := make([]*model.FivenetCentrumDispatches, len(userIdentifiers))
-
-	jMessage := table.GksphoneJobMessage
-	resetMarkers := func() {
-		ctx, span := s.tracer.Start(s.ctx, "livemap-gen-dispatches")
-		defer span.End()
-
-		xMin := -3300
-		xMax := 4300
-		yMin := -3300
-		yMax := 5000
-		for i := 0; i < len(markers); i++ {
-			x := float64(rand.Intn(xMax-xMin+1) + xMin)
-			y := float64(rand.Intn(yMax-yMin+1) + yMin)
-
-			message := fmt.Sprintf("TEST %d", i)
-			description := fmt.Sprintf("Message of Dispatch %d", i)
-			job := "ambulance"
-
-			anon := false
-			markers[i] = &model.FivenetCentrumDispatches{
-				Job:         job,
-				Message:     message,
-				Description: &description,
-				X:           &x,
-				Y:           &y,
-				Anon:        anon,
-				CreatorID:   userIdentifiers[i],
-			}
-		}
-
-		stmt := jMessage.
-			INSERT(
-				jMessage.Name,
-				jMessage.Number,
-				jMessage.Message,
-				jMessage.Photo,
-				jMessage.Gps,
-				jMessage.Owner,
-				jMessage.Jobm,
-				jMessage.Time,
-				jMessage.Anon,
-			).
-			MODELS(markers)
-
-		_, err := stmt.ExecContext(ctx, s.db)
-		if err != nil {
-			s.logger.Error("failed to insert random dispatch", zap.Error(err))
-		}
-	}
-
-	resetMarkers()
-
-	counter := 0
-	for {
-		if counter >= 20 {
-			resetMarkers()
-			counter = 0
-		}
-
-		counter++
-		time.Sleep(3 * time.Second)
 	}
 }

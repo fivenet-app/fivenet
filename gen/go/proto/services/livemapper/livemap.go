@@ -223,7 +223,7 @@ func (s *Server) getUserLocations(jobs map[string]int32, userInfo *userinfo.User
 	}
 
 	for job, grade := range jobs {
-		markers, ok := s.tracker.GetUsers(job)
+		markers, ok := s.tracker.GetUsersByJob(job)
 		if !ok {
 			continue
 		}

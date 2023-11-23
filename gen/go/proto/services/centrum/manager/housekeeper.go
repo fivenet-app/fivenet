@@ -267,6 +267,13 @@ func (s *Housekeeper) cancelExpiredDispatches(ctx context.Context) error {
 			return err
 		}
 
+		// Add "too old" attribute when we are able to retrieve the dispatch
+		if dsp, err := s.GetDispatch(ds.Job, ds.DispatchID); err == nil && dsp != nil {
+			if err := s.addAttributeToDispatch(ctx, dsp, centrum.AttributeTooOld); err != nil {
+				return err
+			}
+		}
+
 		// Remove dispatch from state and publish event so clients remove it
 		if err := s.DeleteDispatch(ctx, ds.Job, ds.DispatchID, true); err != nil {
 			return err
@@ -380,7 +387,7 @@ func (s *Housekeeper) deduplicateDispatches(ctx context.Context) error {
 				}, 45.0)
 				// Add "multiple" attribute when multiple dispatches close by
 				if len(closestsDsp) > 0 {
-					if err := s.addAttributeToDispatch(ctx, dsp, "multiple"); err != nil {
+					if err := s.addAttributeToDispatch(ctx, dsp, centrum.AttributeMultiple); err != nil {
 						s.logger.Error("failed to update original dispatch attribute", zap.Error(err))
 					}
 				}
@@ -598,7 +605,7 @@ func (s *Housekeeper) checkUnitUsers(ctx context.Context) error {
 
 				unitId, _ := s.GetUserUnitID(userId)
 				// If user is in that unit and still on duty, nothing to do, otherwise remove the user from the unit
-				if unit.Id == unitId && s.tracker.IsUserOnDuty(job, userId) {
+				if unit.Id == unitId && s.tracker.IsUserOnDuty(userId) {
 					continue
 				}
 

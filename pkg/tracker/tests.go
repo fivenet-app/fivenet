@@ -26,7 +26,7 @@ func NewForTests(ctx context.Context) *TestTracker {
 	}
 }
 
-func (s *TestTracker) GetUsers(job string) (*xsync.MapOf[int32, *livemap.UserMarker], bool) {
+func (s *TestTracker) GetUsersByJob(job string) (*xsync.MapOf[int32, *livemap.UserMarker], bool) {
 	return s.usersCache.Load(job)
 }
 
@@ -44,13 +44,8 @@ func (s *TestTracker) GetUserByJobAndID(job string, userId int32) (*livemap.User
 	return user, true
 }
 
-func (s *TestTracker) IsUserOnDuty(job string, userId int32) bool {
-	users, ok := s.usersCache.Load(job)
-	if !ok {
-		return false
-	}
-
-	if _, ok := users.Load(userId); !ok {
+func (s *TestTracker) IsUserOnDuty(userId int32) bool {
+	if _, ok := s.usersIDs.Load(userId); !ok {
 		return false
 	}
 

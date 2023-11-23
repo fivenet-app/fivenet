@@ -484,7 +484,8 @@
             },
             "update_dispatch": {
                 "attributes": {
-                    "multiple": "Multiple Dispatches"
+                    "multiple": "Multiple Dispatches",
+                    "too_old": "Cancelled due to Age"
                 }
             }
         },

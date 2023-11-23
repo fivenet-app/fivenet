@@ -8,6 +8,11 @@ import (
 	"google.golang.org/protobuf/proto"
 )
 
+const (
+	AttributeMultiple = "multiple"
+	AttributeTooOld   = "too_old"
+)
+
 var json = jsoniter.ConfigCompatibleWithStandardLibrary
 
 func (x *Attributes) Scan(value any) error {

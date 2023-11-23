@@ -179,8 +179,11 @@ func (s *Server) JoinUnit(ctx context.Context, req *JoinUnitRequest) (*JoinUnitR
 	userInfo := auth.MustGetUserInfoFromContext(ctx)
 
 	// Check if user is on duty
-	if _, ok := s.tracker.GetUserByJobAndID(userInfo.Job, userInfo.UserId); !ok {
-		s.state.UnsetUnitIDForUser(userInfo.UserId)
+	if _, ok := s.tracker.GetUserById(userInfo.UserId); !ok {
+		if err := s.state.UnsetUnitIDForUser(userInfo.UserId); err != nil {
+			return nil, errorscentrum.ErrFailedQuery
+		}
+
 		return nil, errorscentrum.ErrNotOnDuty
 	}
 
