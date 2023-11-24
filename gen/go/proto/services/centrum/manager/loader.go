@@ -396,7 +396,9 @@ func (s *Manager) LoadDispatchAssignments(ctx context.Context, job string, dispa
 
 	dest := []*centrum.DispatchAssignment{}
 	if err := stmt.QueryContext(ctx, s.db, &dest); err != nil {
-		return nil, err
+		if !errors.Is(err, qrm.ErrNoRows) {
+			return nil, err
+		}
 	}
 
 	// Resolve units based on the dispatch unit assignments
