@@ -1000,6 +1000,10 @@
                 "dispatch_status_updated": {
                     "title": "Einsatz Status aktualisiert",
                     "content": "Status wurde aktualisiert."
+                },
+                "unit_status_updated": {
+                    "title": "Einheit Status aktualisiert",
+                    "content": "Status wurde aktualisiert."
                 }
             },
             "store": {
