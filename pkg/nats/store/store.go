@@ -15,8 +15,6 @@ import (
 	"google.golang.org/protobuf/proto"
 )
 
-const keyPrefix = "ITEM."
-
 const LockTimeout = 3 * time.Second
 
 type protoMessage[T any] interface {
@@ -40,24 +38,27 @@ type Store[T any, U protoMessage[T]] struct {
 }
 
 func New[T any, U protoMessage[T]](logger *zap.Logger, js nats.JetStreamContext, bucket string) (*Store[T, U], error) {
-	kv, err := js.KeyValue(bucket)
+	kv, err := natsutils.CreateKeyValue(js, bucket, &nats.KeyValueConfig{
+		Bucket:      bucket,
+		Description: natsutils.Description,
+		History:     3,
+		Storage:     nats.MemoryStorage,
+	})
 	if err != nil {
-		if !errors.Is(err, nats.ErrBucketNotFound) {
-			return nil, err
-		}
-
-		kv, err = js.CreateKeyValue(&nats.KeyValueConfig{
-			Bucket:      bucket,
-			Description: natsutils.Description,
-			History:     3,
-			Storage:     nats.MemoryStorage,
-		})
-		if err != nil {
-			return nil, err
-		}
+		return nil, err
 	}
 
-	l, err := locks.New(logger, kv, bucket)
+	lBucket := fmt.Sprintf("%s_locks", bucket)
+	lkv, err := natsutils.CreateKeyValue(js, lBucket, &nats.KeyValueConfig{
+		Bucket:      lBucket,
+		Description: natsutils.Description,
+		History:     3,
+		Storage:     nats.MemoryStorage,
+	})
+	if err != nil {
+		return nil, err
+	}
+	l, err := locks.New(logger, lkv, lBucket)
 	if err != nil {
 		return nil, err
 	}
@@ -100,12 +101,11 @@ func (s *Store[T, U]) put(key string, msg U) error {
 		return err
 	}
 
-	k := keyPrefix + key
-	if _, err := s.kv.Put(k, data); err != nil {
+	if _, err := s.kv.Put(key, data); err != nil {
 		return err
 	}
 
-	s.updateFromType(k, msg)
+	s.updateFromType(key, msg)
 
 	return nil
 }
@@ -155,7 +155,7 @@ func (s *Store[T, U]) Get(key string) (U, bool) {
 // Load data from kv store (this will add/update any existing local data entry)
 // No record will be returned as nil and not stored
 func (s *Store[T, U]) Load(key string) (U, error) {
-	entry, err := s.kv.Get(keyPrefix + key)
+	entry, err := s.kv.Get(key)
 	if err != nil {
 		return nil, err
 	}
@@ -173,8 +173,7 @@ func (s *Store[T, U]) update(entry nats.KeyValueEntry) (U, error) {
 }
 
 func (s *Store[T, U]) updateFromType(key string, data U) U {
-	k := strings.TrimPrefix(key, keyPrefix)
-	current, ok := s.data.LoadOrStore(k, data)
+	current, ok := s.data.LoadOrStore(key, data)
 	if ok && current != nil {
 		// Compare using protobuf magic and merge if not equal
 		if !proto.Equal(current, data) {
@@ -211,7 +210,7 @@ func (s *Store[T, U]) Delete(key string) error {
 	}
 	defer s.l.Unlock(ctx, key)
 
-	if err := s.kv.Delete(keyPrefix + key); err != nil {
+	if err := s.kv.Delete(key); err != nil {
 		return err
 	}
 
@@ -225,18 +224,13 @@ func (s *Store[T, U]) Keys(prefix string) ([]string, error) {
 	}
 
 	if prefix == "" {
-		for i := 0; i < len(keys); i++ {
-			keys[i] = strings.TrimPrefix(keys[i], keyPrefix)
-		}
-
 		return keys, nil
 	}
 
 	filtered := []string{}
 	for i := 0; i < len(keys); i++ {
-		k := strings.TrimPrefix(keys[i], keyPrefix)
-		if strings.HasPrefix(k, prefix+".") {
-			filtered = append(filtered, k)
+		if strings.HasPrefix(keys[i], prefix+".") {
+			filtered = append(filtered, keys[i])
 		}
 	}
 
@@ -272,13 +266,7 @@ func (s *Store[T, U]) Start(ctx context.Context) error {
 					continue
 				}
 
-				k := entry.Key()
-				if !strings.HasPrefix(k, keyPrefix) {
-					continue
-				}
-
-				key := strings.TrimPrefix(entry.Key(), keyPrefix)
-				s.logger.Debug("key update received via watcher", zap.String("key", key))
+				s.logger.Debug("key update received via watcher", zap.String("key", entry.Key()))
 
 				if _, err := s.onUpdate(entry); err != nil {
 					s.logger.Error("failed to run on update logic in store watcher", zap.Error(err))
@@ -293,4 +281,8 @@ func (s *Store[T, U]) Start(ctx context.Context) error {
 
 func (s *Store[T, U]) Locks() *locks.Locks {
 	return s.l
+}
+
+func (s *Store[T, U]) GetBucket() string {
+	return s.bucket
 }
