@@ -3,6 +3,7 @@ package main
 import (
 	"fmt"
 	"os"
+	"slices"
 	"strings"
 
 	"github.com/go-jet/jet/v2/generator/metadata"
@@ -10,7 +11,6 @@ import (
 	"github.com/go-jet/jet/v2/generator/template"
 	"github.com/go-jet/jet/v2/mysql"
 	"github.com/spf13/viper"
-	"golang.org/x/exp/slices"
 )
 
 func main() {

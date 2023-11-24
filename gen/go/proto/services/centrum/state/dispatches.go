@@ -2,10 +2,10 @@ package state
 
 import (
 	"context"
+	"slices"
 
 	"github.com/galexrt/fivenet/gen/go/proto/resources/centrum"
 	"github.com/paulmach/orb"
-	"golang.org/x/exp/slices"
 )
 
 func (s *State) GetDispatch(job string, id uint64) (*centrum.Dispatch, error) {

@@ -2,10 +2,10 @@ package state
 
 import (
 	"context"
+	"slices"
 	"strings"
 
 	"github.com/galexrt/fivenet/gen/go/proto/resources/centrum"
-	"golang.org/x/exp/slices"
 )
 
 func (s *State) GetUnit(job string, id uint64) (*centrum.Unit, error) {
