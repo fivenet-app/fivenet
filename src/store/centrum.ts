@@ -8,7 +8,7 @@ import { CentrumMode, Settings } from '~~/gen/ts/resources/centrum/settings';
 import { StatusUnit, Unit, UnitStatus } from '~~/gen/ts/resources/centrum/units';
 import { UserShort } from '~~/gen/ts/resources/users/users';
 
-const cleanupInterval = 1 * 40 * 1000;
+const cleanupInterval = 40 * 1000;
 const dispatchEndOfLifeTime = 2 * 60 * 60 * 1000;
 
 // In seconds
@@ -669,7 +669,7 @@ export const useCentrumStore = defineStore('centrum', {
             });
 
             this.dispatches.forEach((d) => {
-                // Remove dispatches older than 2 hours
+                // Remove dispatches older than cleanup time
                 const endTime = now - toDate(d.status?.createdAt ?? d.createdAt).getTime();
 
                 if (endTime >= dispatchEndOfLifeTime) {
