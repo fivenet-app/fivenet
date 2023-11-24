@@ -7,6 +7,7 @@ import (
 	centrum "github.com/galexrt/fivenet/gen/go/proto/resources/centrum"
 	database "github.com/galexrt/fivenet/gen/go/proto/resources/common/database"
 	"github.com/galexrt/fivenet/gen/go/proto/resources/rector"
+	"github.com/galexrt/fivenet/gen/go/proto/resources/timestamp"
 	errorscentrum "github.com/galexrt/fivenet/gen/go/proto/services/centrum/errors"
 	"github.com/galexrt/fivenet/pkg/grpc/auth"
 	"github.com/galexrt/fivenet/query/fivenet/model"
@@ -131,6 +132,7 @@ func (s *Server) UpdateUnitStatus(ctx context.Context, req *UpdateUnitStatusRequ
 	}
 
 	if _, err := s.state.UpdateUnitStatus(ctx, userInfo.Job, unit.Id, &centrum.UnitStatus{
+		CreatedAt: timestamp.Now(),
 		UnitId:    unit.Id,
 		Status:    req.Status,
 		Reason:    req.Reason,

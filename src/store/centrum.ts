@@ -526,22 +526,6 @@ export const useCentrumStore = defineStore('centrum', {
                         if (status.status === StatusDispatch.UNIT_ACCEPTED) {
                             this.removePendingDispatch(status.dispatchId);
                             this.addOrUpdateOwnDispatch(status.dispatchId);
-
-                            const dispatch = this.dispatches.get(status.dispatchId);
-                            if (dispatch === undefined) {
-                                continue;
-                            }
-
-                            const ua = dispatch.units.find((ua) => ua.unitId === status.unitId);
-                            if (ua !== undefined) {
-                                ua.expiresAt = undefined;
-                            } else {
-                                dispatch.units.push({
-                                    dispatchId: status.dispatchId,
-                                    unitId: status.unitId!,
-                                    unit: this.getOwnUnit,
-                                });
-                            }
                         } else if (
                             status.status === StatusDispatch.UNIT_DECLINED ||
                             status.status === StatusDispatch.UNIT_UNASSIGNED

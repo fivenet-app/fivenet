@@ -266,6 +266,7 @@ func (s *Manager) UpdateDispatchAssignments(ctx context.Context, job string, use
 			// Send updates
 			for _, unitId := range toAnnounce {
 				if err := s.AddDispatchStatus(ctx, s.db, job, &centrum.DispatchStatus{
+					CreatedAt:  timestamp.Now(),
 					DispatchId: dsp.Id,
 					UnitId:     &unitId,
 					Status:     centrum.StatusDispatch_STATUS_DISPATCH_UNIT_UNASSIGNED,
@@ -319,6 +320,7 @@ func (s *Manager) UpdateDispatchAssignments(ctx context.Context, job string, use
 
 			for _, unitId := range units {
 				if err := s.AddDispatchStatus(ctx, s.db, job, &centrum.DispatchStatus{
+					CreatedAt:  timestamp.Now(),
 					DispatchId: dsp.Id,
 					UnitId:     &unitId,
 					UserId:     userId,
@@ -337,6 +339,7 @@ func (s *Manager) UpdateDispatchAssignments(ctx context.Context, job string, use
 			// Check dispatch status to not be completed/archived, etc.
 			if dsp.Status != nil && !centrumutils.IsStatusDispatchComplete(dsp.Status.Status) {
 				dsp.Status = &centrum.DispatchStatus{
+					CreatedAt:  timestamp.Now(),
 					DispatchId: dsp.Id,
 					Status:     centrum.StatusDispatch_STATUS_DISPATCH_UNASSIGNED,
 					UserId:     userId,
@@ -479,6 +482,7 @@ func (s *Manager) CreateDispatch(ctx context.Context, dsp *centrum.Dispatch) (*c
 	}
 
 	dsp.Status = &centrum.DispatchStatus{
+		CreatedAt:  timestamp.Now(),
 		DispatchId: dsp.Id,
 		UserId:     userId,
 		User:       statusUser,
@@ -745,6 +749,7 @@ func (s *Manager) TakeDispatch(ctx context.Context, job string, userId int32, un
 					// Set unit to busy when unit accepts a dispatch
 					if unit.Status == nil || unit.Status.Status != centrum.StatusUnit_STATUS_UNIT_BUSY {
 						if _, err := s.UpdateUnitStatus(ctx, job, unit.Id, &centrum.UnitStatus{
+							CreatedAt: timestamp.Now(),
 							UnitId:    unit.Id,
 							Status:    centrum.StatusUnit_STATUS_UNIT_BUSY,
 							UserId:    &userId,
@@ -770,6 +775,7 @@ func (s *Manager) TakeDispatch(ctx context.Context, job string, userId int32, un
 			}
 
 			dsp.Status = &centrum.DispatchStatus{
+				CreatedAt:  timestamp.Now(),
 				DispatchId: dspId,
 				Status:     status,
 				UnitId:     &unitId,

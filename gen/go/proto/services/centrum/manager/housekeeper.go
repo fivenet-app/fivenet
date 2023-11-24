@@ -9,6 +9,7 @@ import (
 	"time"
 
 	"github.com/galexrt/fivenet/gen/go/proto/resources/centrum"
+	"github.com/galexrt/fivenet/gen/go/proto/resources/timestamp"
 	centrumutils "github.com/galexrt/fivenet/gen/go/proto/services/centrum/utils"
 	"github.com/galexrt/fivenet/pkg/config"
 	jet "github.com/go-jet/jet/v2/mysql"
@@ -261,6 +262,7 @@ func (s *Housekeeper) cancelExpiredDispatches(ctx context.Context) error {
 		}
 
 		if _, err := s.UpdateDispatchStatus(ctx, ds.Job, ds.DispatchID, &centrum.DispatchStatus{
+			CreatedAt:  timestamp.Now(),
 			DispatchId: ds.DispatchID,
 			Status:     centrum.StatusDispatch_STATUS_DISPATCH_CANCELLED,
 		}); err != nil {
@@ -417,6 +419,7 @@ func (s *Housekeeper) deduplicateDispatches(ctx context.Context) error {
 					})
 
 					if _, err := s.UpdateDispatchStatus(ctx, closeByDsp.Job, closeByDsp.Id, &centrum.DispatchStatus{
+						CreatedAt:  timestamp.Now(),
 						DispatchId: closeByDsp.Id,
 						Status:     centrum.StatusDispatch_STATUS_DISPATCH_CANCELLED,
 					}); err != nil {
@@ -560,9 +563,10 @@ func (s *Housekeeper) cleanupUnitStatus(ctx context.Context) error {
 			s.logger.Debug("cleaning up unit status to unavailable because it is empty",
 				zap.String("job", job), zap.Uint64("unit_id", unit.Id))
 			if _, err := s.UpdateUnitStatus(ctx, job, unit.Id, &centrum.UnitStatus{
-				UnitId: unit.Id,
-				Status: centrum.StatusUnit_STATUS_UNIT_UNAVAILABLE,
-				UserId: userId,
+				CreatedAt: timestamp.Now(),
+				UnitId:    unit.Id,
+				Status:    centrum.StatusUnit_STATUS_UNIT_UNAVAILABLE,
+				UserId:    userId,
 			}); err != nil {
 				s.logger.Error("failed to update empty unit status to unavailable",
 					zap.String("job", unit.Job), zap.Uint64("unit_id", unit.Id), zap.Error(err))

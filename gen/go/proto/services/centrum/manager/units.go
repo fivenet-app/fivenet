@@ -7,6 +7,7 @@ import (
 	"time"
 
 	"github.com/galexrt/fivenet/gen/go/proto/resources/centrum"
+	"github.com/galexrt/fivenet/gen/go/proto/resources/timestamp"
 	errorscentrum "github.com/galexrt/fivenet/gen/go/proto/services/centrum/errors"
 	eventscentrum "github.com/galexrt/fivenet/gen/go/proto/services/centrum/events"
 	"github.com/galexrt/fivenet/gen/go/proto/services/centrum/state"
@@ -232,6 +233,7 @@ func (s *Manager) UpdateUnitAssignments(ctx context.Context, job string, userId 
 			// Send updates
 			for _, user := range toAnnounce {
 				if err := s.AddUnitStatus(ctx, s.db, job, &centrum.UnitStatus{
+					CreatedAt: timestamp.Now(),
 					UnitId:    unit.Id,
 					Status:    centrum.StatusUnit_STATUS_UNIT_USER_REMOVED,
 					UserId:    &user,
@@ -281,6 +283,7 @@ func (s *Manager) UpdateUnitAssignments(ctx context.Context, job string, userId 
 
 			for _, user := range users {
 				if err := s.AddUnitStatus(ctx, s.db, job, &centrum.UnitStatus{
+					CreatedAt: timestamp.Now(),
 					UnitId:    unit.Id,
 					Status:    centrum.StatusUnit_STATUS_UNIT_USER_ADDED,
 					UserId:    &user.UserId,
@@ -301,6 +304,7 @@ func (s *Manager) UpdateUnitAssignments(ctx context.Context, job string, userId 
 		// Unit is empty, set unit status to be unavailable automatically
 		if len(unit.Users) == 0 {
 			unit.Status = &centrum.UnitStatus{
+				CreatedAt: timestamp.Now(),
 				UnitId:    unit.Id,
 				Status:    centrum.StatusUnit_STATUS_UNIT_UNAVAILABLE,
 				UserId:    userId,
@@ -374,8 +378,9 @@ func (s *Manager) CreateUnit(ctx context.Context, job string, unit *centrum.Unit
 
 	// A new unit shouldn't have a status, so we make sure it has one
 	if err := s.AddUnitStatus(ctx, tx, job, &centrum.UnitStatus{
-		UnitId: uint64(lastId),
-		Status: centrum.StatusUnit_STATUS_UNIT_UNKNOWN,
+		CreatedAt: timestamp.Now(),
+		UnitId:    uint64(lastId),
+		Status:    centrum.StatusUnit_STATUS_UNIT_UNKNOWN,
 	}); err != nil {
 		return nil, errorscentrum.ErrFailedQuery
 	}

@@ -9,6 +9,7 @@ import (
 	centrum "github.com/galexrt/fivenet/gen/go/proto/resources/centrum"
 	database "github.com/galexrt/fivenet/gen/go/proto/resources/common/database"
 	"github.com/galexrt/fivenet/gen/go/proto/resources/rector"
+	"github.com/galexrt/fivenet/gen/go/proto/resources/timestamp"
 	errorscentrum "github.com/galexrt/fivenet/gen/go/proto/services/centrum/errors"
 	"github.com/galexrt/fivenet/pkg/grpc/auth"
 	"github.com/galexrt/fivenet/query/fivenet/model"
@@ -281,6 +282,7 @@ func (s *Server) UpdateDispatchStatus(ctx context.Context, req *UpdateDispatchSt
 	}
 
 	if _, err := s.state.UpdateDispatchStatus(ctx, userInfo.Job, dsp.Id, &centrum.DispatchStatus{
+		CreatedAt:  timestamp.Now(),
 		DispatchId: dsp.Id,
 		UnitId:     statusUnitId,
 		Status:     req.Status,
@@ -298,6 +300,7 @@ func (s *Server) UpdateDispatchStatus(ctx context.Context, req *UpdateDispatchSt
 			// Set unit to busy when unit accepts a dispatch
 			if unit.Status == nil || unit.Status.Status != centrum.StatusUnit_STATUS_UNIT_BUSY {
 				if _, err := s.state.UpdateUnitStatus(ctx, userInfo.Job, unitId, &centrum.UnitStatus{
+					CreatedAt: timestamp.Now(),
 					UnitId:    unit.Id,
 					Status:    centrum.StatusUnit_STATUS_UNIT_BUSY,
 					UserId:    &userInfo.UserId,
