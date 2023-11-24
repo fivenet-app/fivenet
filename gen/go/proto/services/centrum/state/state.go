@@ -38,12 +38,12 @@ type Params struct {
 
 	Logger *zap.Logger
 	JS     nats.JetStreamContext
-	Cfg    *config.Config
+	Config *config.Config
 }
 
 func New(p Params) (*State, error) {
 	locs := map[string]*coords.Coords[*centrum.Dispatch]{}
-	for _, job := range p.Cfg.Game.Livemap.Jobs {
+	for _, job := range p.Config.Game.Livemap.Jobs {
 		locs[job] = coords.New[*centrum.Dispatch]()
 	}
 

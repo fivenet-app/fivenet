@@ -85,7 +85,10 @@ func TestBasicCentrumFlow(t *testing.T) {
 	enricher := mstlystcdata.NewEnricher(c, p, cfg)
 
 	state, err := state.New(state.Params{
-		Logger: logger, JS: js, Cfg: cfg,
+		LC:     fxLC,
+		Logger: logger,
+		JS:     js,
+		Config: cfg,
 	})
 	require.NoError(t, err)
 
