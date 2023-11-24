@@ -31,7 +31,6 @@ import (
 	"go.uber.org/zap"
 	"google.golang.org/grpc"
 	"google.golang.org/grpc/codes"
-	"google.golang.org/grpc/keepalive"
 	"google.golang.org/grpc/status"
 )
 
@@ -138,17 +137,6 @@ func NewServer(p ServerParams) (ServerResult, error) {
 				recovery.WithRecoveryHandler(grpcPanicRecoveryHandler(p.Logger)),
 			),
 		),
-		grpc.KeepaliveEnforcementPolicy(keepalive.EnforcementPolicy{
-			MinTime:             4 * time.Second, // If a client pings more than once every 4 seconds, terminate the connection
-			PermitWithoutStream: true,            // Allow pings even when there are no active streams
-		}),
-		grpc.KeepaliveParams(keepalive.ServerParameters{
-			MaxConnectionIdle:     15 * time.Minute, // If a client is idle for 15 minute, send a GOAWAY
-			MaxConnectionAge:      20 * time.Minute, // If any connection is alive for more than 20 minutes, send a GOAWAY
-			MaxConnectionAgeGrace: 15 * time.Second, // Allow 15 seconds for pending RPCs to complete before forcibly closing connections
-			Time:                  20 * time.Second, // Ping the client if it is idle for 20 seconds to ensure the connection is still active
-			Timeout:               7 * time.Second,  // Wait 7 second for the ping ack before assuming the connection is dead
-		}),
 	)
 
 	for _, service := range p.Services {
