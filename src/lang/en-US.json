@@ -710,7 +710,6 @@
         "setting": "Setting | Settings",
         "cancel": "Cancel",
         "enabled": "Enabled",
-        "disabled": "Disabled",
         "status": "Status",
         "mode": "Mode | Modes",
         "join": "Join | Joined",
@@ -772,7 +771,8 @@
         "forward": "Foward",
         "points": "Point | Points",
         "hints": "Hint | Hints",
-        "icon": "Icon"
+        "icon": "Icon",
+        "disabled": "Disabled"
     },
     "notifications": {
         "clipboard": {
