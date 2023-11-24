@@ -153,6 +153,7 @@ watchDebounced(
             const dispatch = dispatches.value.get(selectedDispatch.value);
             if (dispatch !== undefined) {
                 setWaypoint(dispatch.x, dispatch.y);
+                console.debug('Centrum: Sidebar - Set Dispatch waypoint, id:', dispatch.id);
             }
         }
     },

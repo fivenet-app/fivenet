@@ -18,6 +18,8 @@ export default defineNuxtRouteMiddleware(
                 nuiResourceName.value = undefined;
                 console.info('Disabled NUI integration!');
             }
+        } else {
+            console.info('No NUI query param detected.');
         }
 
         if (route.query?.refreshApp !== undefined) {

@@ -8,8 +8,8 @@ import { CentrumMode, Settings } from '~~/gen/ts/resources/centrum/settings';
 import { StatusUnit, Unit, UnitStatus } from '~~/gen/ts/resources/centrum/units';
 import { UserShort } from '~~/gen/ts/resources/users/users';
 
-const cleanupInterval = 40 * 1000;
-const dispatchEndOfLifeTime = 2 * 60 * 60 * 1000;
+const cleanupInterval = 40 * 1000; // 40 seconds
+const dispatchEndOfLifeTime = 2 * 60 * 60 * 1000; // 2 hours
 
 // In seconds
 const initialBackoffTime = 0.75;
@@ -452,8 +452,6 @@ export const useCentrumStore = defineStore('centrum', {
                             this.pendingDispatches.length = 0;
                         }
                     } else if (resp.change.oneofKind === 'unitStatus') {
-                        this.updateUnitStatus(resp.change.unitStatus);
-
                         if (this.isDisponent) {
                             this.addFeedItem(resp.change.unitStatus);
                         }
@@ -551,7 +549,6 @@ export const useCentrumStore = defineStore('centrum', {
 
                             this.removeDispatchAssignments(dispatch, status.unitId);
                         }
-                        this.updateDispatchStatus(status);
                     } else {
                         console.warn('Centrum: Unknown change received - Kind: ', resp.change.oneofKind, resp.change);
                     }
@@ -668,31 +665,39 @@ export const useCentrumStore = defineStore('centrum', {
                 }
             });
 
-            this.dispatches.forEach((d) => {
+            let count = 0;
+            let skipped = 0;
+            this.dispatches.forEach((dispatch) => {
                 // Remove dispatches older than cleanup time
-                const endTime = now - toDate(d.status?.createdAt ?? d.createdAt).getTime();
+                const endTime = now - toDate(dispatch.status?.createdAt ?? dispatch.createdAt).getTime();
 
                 if (endTime >= dispatchEndOfLifeTime) {
-                    this.removeDispatch(d.id);
+                    this.removeDispatch(dispatch.id);
+                    count++;
                     return;
                 }
 
                 if (
-                    d.status?.status !== StatusDispatch.COMPLETED &&
-                    d.status?.status !== StatusDispatch.CANCELLED &&
-                    d.status?.status !== StatusDispatch.ARCHIVED
+                    dispatch.status?.status !== StatusDispatch.COMPLETED &&
+                    dispatch.status?.status !== StatusDispatch.CANCELLED &&
+                    dispatch.status?.status !== StatusDispatch.ARCHIVED
                 ) {
+                    skipped++;
                     return;
                 }
 
                 // Remove completed/cancelled/archived dispatches after their status is consider "old"
                 if (endTime >= cleanupInterval) {
-                    this.removeDispatch(d.id);
+                    this.removeDispatch(dispatch.id);
+                    count++;
                     return;
                 }
 
-                this.removeDispatchAssignments(d);
+                this.removeDispatchAssignments(dispatch);
+                skipped++;
             });
+
+            console.info('Centrum: Cleaned up dispatches, count:', count, 'skipped:', skipped);
         },
 
         removeDispatchAssignments(dispatch: Dispatch, unitId?: string): void {

@@ -58,5 +58,9 @@ export async function phoneCallNumber(phoneNumber: string): Promise<void> {
 }
 
 export async function copyToClipboard(text: string): Promise<void> {
+    if (!isNUIAvailable()) {
+        return;
+    }
+
     return fetchNui('copyToClipboard', { text });
 }
