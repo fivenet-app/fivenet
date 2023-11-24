@@ -87,7 +87,11 @@ func (s *Store[T, U]) Put(key string, msg U) error {
 	}
 	defer s.l.Unlock(ctx, key)
 
-	return s.put(key, msg)
+	if err := s.put(key, msg); err != nil {
+		return err
+	}
+
+	return nil
 }
 
 func (s *Store[T, U]) put(key string, msg U) error {
@@ -131,7 +135,11 @@ func (s *Store[T, U]) ComputeUpdate(key string, load bool, fn func(key string, e
 		return err
 	}
 
-	return s.put(key, computed)
+	if err := s.put(key, computed); err != nil {
+		return err
+	}
+
+	return nil
 }
 
 // Get data from local data
@@ -203,7 +211,11 @@ func (s *Store[T, U]) Delete(key string) error {
 	}
 	defer s.l.Unlock(ctx, key)
 
-	return s.kv.Delete(keyPrefix + key)
+	if err := s.kv.Delete(keyPrefix + key); err != nil {
+		return err
+	}
+
+	return nil
 }
 
 func (s *Store[T, U]) Keys(prefix string) ([]string, error) {
@@ -241,31 +253,42 @@ func (s *Store[T, U]) unmarshal(data []byte) (U, error) {
 }
 
 func (s *Store[T, U]) Start(ctx context.Context) error {
-	watcher, err := s.kv.Watch(keyPrefix + "*")
+	watcher, err := s.kv.WatchAll(nats.Context(ctx))
 	if err != nil {
 		return err
 	}
 
-	updateCh := watcher.Updates()
-	for {
-		select {
-		case <-ctx.Done():
-			return nil
+	go func() {
+		updateCh := watcher.Updates()
+		for {
+			select {
+			case <-ctx.Done():
+				watcher.Stop()
+				return
 
-		case entry := <-updateCh:
-			if entry == nil {
-				continue
-			}
+			case entry := <-updateCh:
+				// After all initial keys have been received, a nil entry is returned
+				if entry == nil {
+					continue
+				}
 
-			key := strings.TrimPrefix(entry.Key(), keyPrefix)
-			s.logger.Debug("key update received via watcher", zap.String("key", key))
+				k := entry.Key()
+				if !strings.HasPrefix(k, keyPrefix) {
+					continue
+				}
 
-			if _, err := s.onUpdate(entry); err != nil {
-				s.logger.Error("failed to run on update logic in store watcher", zap.Error(err))
-				continue
+				key := strings.TrimPrefix(entry.Key(), keyPrefix)
+				s.logger.Debug("key update received via watcher", zap.String("key", key))
+
+				if _, err := s.onUpdate(entry); err != nil {
+					s.logger.Error("failed to run on update logic in store watcher", zap.Error(err))
+					continue
+				}
 			}
 		}
-	}
+	}()
+
+	return nil
 }
 
 func (s *Store[T, U]) Locks() *locks.Locks {

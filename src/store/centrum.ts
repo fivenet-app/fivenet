@@ -469,11 +469,11 @@ export const useCentrumStore = defineStore('centrum', {
 
                         if (resp.change.unitStatus.status === StatusUnit.USER_ADDED) {
                             // User already in unit
-                            if (this.ownUnitId === resp.change.unitStatus.id) {
+                            if (this.ownUnitId === resp.change.unitStatus.unitId) {
                                 continue;
                             }
 
-                            this.setOwnUnit(resp.change.unitStatus.id);
+                            this.setOwnUnit(resp.change.unitStatus.unitId);
 
                             // User has been newly added to unit
                             notifications.dispatchNotification({
@@ -484,7 +484,7 @@ export const useCentrumStore = defineStore('centrum', {
 
                             this.dispatches.forEach((d) => this.handleDispatchAssignment(d));
                         } else if (resp.change.unitStatus.status === StatusUnit.USER_REMOVED) {
-                            if (this.ownUnitId === undefined || this.ownUnitId !== resp.change.unitStatus.id) {
+                            if (this.ownUnitId === undefined || this.ownUnitId !== resp.change.unitStatus.unitId) {
                                 continue;
                             }
 

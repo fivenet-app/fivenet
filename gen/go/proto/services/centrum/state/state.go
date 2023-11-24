@@ -18,7 +18,8 @@ var StateModule = fx.Module("centrum_state", fx.Provide(
 ))
 
 type State struct {
-	js nats.JetStreamContext
+	ctx context.Context
+	js  nats.JetStreamContext
 
 	settings   *xsync.MapOf[string, *centrum.Settings]
 	disponents *store.Store[centrum.Disponents, *centrum.Disponents]
@@ -30,39 +31,73 @@ type State struct {
 	userIDToUnitID *store.Store[centrum.UserUnitMapping, *centrum.UserUnitMapping]
 }
 
-func New(logger *zap.Logger, js nats.JetStreamContext, cfg *config.Config) (*State, error) {
+type Params struct {
+	fx.In
+
+	LC fx.Lifecycle
+
+	Logger *zap.Logger
+	JS     nats.JetStreamContext
+	Cfg    *config.Config
+}
+
+func New(p Params) (*State, error) {
 	locs := map[string]*coords.Coords[*centrum.Dispatch]{}
-	for _, job := range cfg.Game.Livemap.Jobs {
+	for _, job := range p.Cfg.Game.Livemap.Jobs {
 		locs[job] = coords.New[*centrum.Dispatch]()
 	}
 
-	disponents, err := store.New[centrum.Disponents, *centrum.Disponents](logger, js, "centrum_disponents")
+	disponents, err := store.New[centrum.Disponents, *centrum.Disponents](p.Logger, p.JS, "centrum_disponents")
 	if err != nil {
 		return nil, err
 	}
 
-	units, err := store.New[centrum.Unit, *centrum.Unit](logger, js, "centrum_units")
+	units, err := store.New[centrum.Unit, *centrum.Unit](p.Logger, p.JS, "centrum_units")
 	if err != nil {
 		return nil, err
 	}
 
-	dispatches, err := store.New[centrum.Dispatch, *centrum.Dispatch](logger, js, "centrum_dispatches")
+	dispatches, err := store.New[centrum.Dispatch, *centrum.Dispatch](p.Logger, p.JS, "centrum_dispatches")
 	if err != nil {
 		return nil, err
 	}
 
-	userIDToUnitID, err := store.New[centrum.UserUnitMapping, *centrum.UserUnitMapping](logger, js, "centrum_usersunits")
+	userIDToUnitID, err := store.New[centrum.UserUnitMapping, *centrum.UserUnitMapping](p.Logger, p.JS, "centrum_usersunits")
 	if err != nil {
 		return nil, err
 	}
 
-	go userIDToUnitID.Start(context.TODO())
-	go disponents.Start(context.TODO())
-	go units.Start(context.TODO())
-	go dispatches.Start(context.TODO())
+	ctx, cancel := context.WithCancel(context.Background())
+
+	p.LC.Append(fx.StartHook(func(_ context.Context) error {
+		if err := userIDToUnitID.Start(ctx); err != nil {
+			return err
+		}
+
+		if err := disponents.Start(ctx); err != nil {
+			return err
+		}
+
+		if err := units.Start(ctx); err != nil {
+			return err
+		}
+
+		if err := dispatches.Start(ctx); err != nil {
+			return err
+		}
+
+		return nil
+	}))
+
+	p.LC.Append(fx.StopHook(func(_ context.Context) error {
+		cancel()
+
+		return nil
+	}))
 
 	s := &State{
-		js: js,
+		ctx: ctx,
+		js:  p.JS,
 
 		settings:   xsync.NewMapOf[string, *centrum.Settings](),
 		disponents: disponents,
