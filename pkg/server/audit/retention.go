@@ -54,20 +54,23 @@ func NewRetention(p RetentionParams) *Retention {
 	p.LC.Append(fx.StartHook(func(_ context.Context) error {
 		go func() {
 			for {
+				select {
+				case <-ctx.Done():
+					return
+				case <-time.After(30 * time.Minute):
+				}
+
 				func() {
 					ctx, span := r.tracer.Start(r.ctx, "audit-retention")
 					defer span.End()
 
-					r.run(ctx)
-
-					select {
-					case <-ctx.Done():
-						return
-					case <-time.After(30 * time.Minute):
+					if err := r.run(ctx); err != nil {
+						r.logger.Error("error during audit store cleanup", zap.Error(err))
 					}
 				}()
 			}
 		}()
+
 		return nil
 	}))
 
