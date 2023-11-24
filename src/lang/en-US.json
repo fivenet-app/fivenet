@@ -412,7 +412,8 @@
             "debug_functions": "Debug Functions",
             "reset_local_storage": "Reset Local Storage",
             "factory_reset": "Factory Reset FiveNet App",
-            "version": "Version"
+            "version": "Version",
+            "nui_info": "NUI Info"
         },
         "penaltycalculator": {
             "title": "Penalty Calculator"
@@ -709,6 +710,7 @@
         "setting": "Setting | Settings",
         "cancel": "Cancel",
         "enabled": "Enabled",
+        "disabled": "Disabled",
         "status": "Status",
         "mode": "Mode | Modes",
         "join": "Join | Joined",

@@ -412,7 +412,8 @@
             "debug_functions": "Debug-Funktionen",
             "reset_local_storage": "Lokalen Browser-Speicher zurücksetzen",
             "factory_reset": "FiveNet App auf Standard zurücksetzen",
-            "version": "Version"
+            "version": "Version",
+            "nui_info": "NUI-Info"
         },
         "penaltycalculator": {
             "title": "Strafenrechner"

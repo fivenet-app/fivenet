@@ -3,11 +3,14 @@ import { KeyIcon } from 'mdi-vue3';
 import Time from '~/components/partials/elements/Time.vue';
 import { useAuthStore } from '~/store/auth';
 import { useClipboardStore } from '~/store/clipboard';
+import { useConfigStore } from '~/store/config';
 import { useSettingsStore } from '~/store/settings';
 
 const clipboardStore = useClipboardStore();
 
 const settings = useSettingsStore();
+
+const config = useConfigStore();
 
 const authStore = useAuthStore();
 const { activeChar, permissions, getAccessTokenExpiration } = storeToRefs(authStore);
@@ -67,7 +70,16 @@ async function resetLocalStorage(): Promise<void> {
                         (<Time :value="getAccessTokenExpiration" type="long" />)
                     </dd>
                 </div>
-                <div v-if="clipboardStore" class="py-4 sm:grid sm:grid-cols-3 sm:gap-4 sm:px-6 sm:py-5">
+                <div class="py-4 sm:grid sm:grid-cols-3 sm:gap-4 sm:px-6 sm:py-5">
+                    <dt class="text-sm font-medium">
+                        {{ $t('components.debug_info.nui_info') }}
+                    </dt>
+                    <dd class="mt-1 text-sm sm:col-span-2 sm:mt-0">
+                        {{ config.nuiEnabled ? $t('common.enabled') : $t('common.disabled') }}:
+                        {{ config.nuiResourceName ?? $t('common.na') }}
+                    </dd>
+                </div>
+                <div class="py-4 sm:grid sm:grid-cols-3 sm:gap-4 sm:px-6 sm:py-5">
                     <dt class="text-sm font-medium">
                         {{ $t('components.debug_info.debug_functions') }}
                     </dt>
