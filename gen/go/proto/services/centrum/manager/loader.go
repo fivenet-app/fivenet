@@ -61,7 +61,9 @@ func (s *Manager) LoadSettingsFromDB(ctx context.Context, job string) error {
 
 	var dest []*centrum.Settings
 	if err := stmt.QueryContext(ctx, s.db, &dest); err != nil {
-		return err
+		if !errors.Is(err, qrm.ErrNoRows) {
+			return err
+		}
 	}
 
 	for _, settings := range dest {
@@ -101,7 +103,9 @@ func (s *Manager) LoadDisponentsFromDB(ctx context.Context, job string) error {
 
 	var dest []*users.UserShort
 	if err := stmt.QueryContext(ctx, s.db, &dest); err != nil {
-		return err
+		if !errors.Is(err, qrm.ErrNoRows) {
+			return err
+		}
 	}
 
 	perJob := map[string][]*users.UserShort{}
@@ -186,7 +190,9 @@ func (s *Manager) LoadUnitsFromDB(ctx context.Context, id uint64) error {
 
 	units := []*centrum.Unit{}
 	if err := stmt.QueryContext(ctx, s.db, &units); err != nil {
-		return err
+		if !errors.Is(err, qrm.ErrNoRows) {
+			return err
+		}
 	}
 
 	for i := 0; i < len(units); i++ {
@@ -303,7 +309,9 @@ func (s *Manager) LoadDispatchesFromDB(ctx context.Context, id uint64) error {
 
 	dsps := []*centrum.Dispatch{}
 	if err := stmt.QueryContext(ctx, s.db, &dsps); err != nil {
-		return err
+		if !errors.Is(err, qrm.ErrNoRows) {
+			return err
+		}
 	}
 
 	for i := 0; i < len(dsps); i++ {
