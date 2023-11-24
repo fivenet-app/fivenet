@@ -507,7 +507,7 @@ func (s *Housekeeper) removeDispatchesFromEmptyUnits(ctx context.Context) error 
 
 				unitId := dsp.Units[i].UnitId
 				// If unit isn't empty, continue with the loop
-				if unitId > 0 {
+				if unitId <= 0 {
 					continue
 				}
 
