@@ -397,7 +397,9 @@ func (s *Manager) DeleteDispatch(ctx context.Context, job string, id uint64, all
 		return err
 	}
 
-	s.State.DeleteDispatch(job, id)
+	if err := s.State.DeleteDispatch(job, id); err != nil {
+		return err
+	}
 
 	return nil
 }
