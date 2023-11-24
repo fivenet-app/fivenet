@@ -452,6 +452,8 @@ export const useCentrumStore = defineStore('centrum', {
                             this.pendingDispatches.length = 0;
                         }
                     } else if (resp.change.oneofKind === 'unitStatus') {
+                        this.updateUnitStatus(resp.change.unitStatus);
+
                         if (this.isDisponent) {
                             this.addFeedItem(resp.change.unitStatus);
                         }
@@ -509,6 +511,8 @@ export const useCentrumStore = defineStore('centrum', {
                         this.addOrUpdateDispatch(resp.change.dispatchUpdated);
                     } else if (resp.change.oneofKind === 'dispatchStatus') {
                         const status = resp.change.dispatchStatus;
+                        this.updateDispatchStatus(status);
+
                         if (this.isDisponent) {
                             this.addFeedItem(status);
                         }
