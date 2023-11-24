@@ -771,7 +771,8 @@
         "forward": "Vorwärts",
         "points": "Punkt | Punkte",
         "hints": "Hinweis | Hinweise",
-        "icon": "Icon"
+        "icon": "Icon",
+        "disabled": "Deaktiviert"
     },
     "notifications": {
         "clipboard": {
