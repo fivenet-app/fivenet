@@ -29,10 +29,6 @@ func IsDispatchUnassigned(in *centrum.Dispatch) bool {
 		return false
 	}
 
-	// Dispatch is "new" or unassgined
-	if IsStatusDispatchUnassigned(in.Status.Status) {
-		return true
-	}
-
-	return len(in.Units) == 0
+	// Dispatch is "new" or unassgined, and no units assigned to it
+	return IsStatusDispatchUnassigned(in.Status.Status) && len(in.Units) == 0
 }

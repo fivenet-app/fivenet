@@ -1000,6 +1000,10 @@
                 "dispatch_status_updated": {
                     "title": "Dispatch Status updated",
                     "content": "Status has been updated."
+                },
+                "unit_status_updated": {
+                    "title": "Unit Status updated",
+                    "content": "Status has been updated."
                 }
             },
             "store": {

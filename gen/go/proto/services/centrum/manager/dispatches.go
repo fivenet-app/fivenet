@@ -250,6 +250,10 @@ func (s *Manager) UpdateDispatchAssignments(ctx context.Context, job string, use
 				}
 
 				for k := 0; k < len(toRemove); k++ {
+					if i > (len(dsp.Units) - 1) {
+						continue
+					}
+
 					if dsp.Units[i].UnitId != toRemove[k] {
 						continue
 					}

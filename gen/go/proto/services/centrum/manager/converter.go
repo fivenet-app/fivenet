@@ -93,7 +93,11 @@ func (s *Housekeeper) convertPhoneJobMsgToDispatch() error {
 
 		message := "N/A"
 		if msg.Message != nil {
-			message = utils.StringFirstN(*msg.Message, 250) + "..."
+			if len(*msg.Message) > 250 {
+				message = utils.StringFirstN(*msg.Message, 250) + "..."
+			} else {
+				message = *msg.Message
+			}
 		}
 
 		dsp := &centrum.Dispatch{

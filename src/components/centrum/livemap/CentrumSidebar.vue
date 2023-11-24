@@ -97,8 +97,8 @@ async function updateUnitStatus(id: string, status: StatusUnit): Promise<void> {
         await call;
 
         notifications.dispatchNotification({
-            title: { key: 'notifications.centrum.sidebar.dispatch_status_updated.title', parameters: {} },
-            content: { key: 'notifications.centrum.sidebar.dispatch_status_updated.content', parameters: {} },
+            title: { key: 'notifications.centrum.sidebar.unit_status_updated.title', parameters: {} },
+            content: { key: 'notifications.centrum.sidebar.unit_status_updated.content', parameters: {} },
             type: 'success',
         });
     } catch (e) {
