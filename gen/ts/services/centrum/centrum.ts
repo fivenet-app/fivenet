@@ -3,7 +3,7 @@
 // tslint:disable
 import { ServiceType } from "@protobuf-ts/runtime-rpc";
 import { MessageType } from "@protobuf-ts/runtime";
-import { Disponents } from "../../resources/centrum/settings";
+import { Disponents } from "../../resources/centrum/general";
 import { UserShort } from "../../resources/users/users";
 import { TakeDispatchResp } from "../../resources/centrum/dispatches";
 import { DispatchStatus } from "../../resources/centrum/dispatches";

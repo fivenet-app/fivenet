@@ -5,6 +5,7 @@ import { MessageType } from "@protobuf-ts/runtime";
 import { UserShort } from "../users/users";
 import { Unit } from "./units";
 import { User } from "../users/users";
+import { Attributes } from "./general";
 import { Timestamp } from "../timestamp/timestamp";
 /**
  * @generated from protobuf message resources.centrum.Dispatch
@@ -76,15 +77,6 @@ export interface Dispatch {
      * @generated from protobuf field: repeated resources.centrum.DispatchAssignment units = 16;
      */
     units: DispatchAssignment[];
-}
-/**
- * @generated from protobuf message resources.centrum.Attributes
- */
-export interface Attributes {
-    /**
-     * @generated from protobuf field: repeated string list = 1;
-     */
-    list: string[];
 }
 /**
  * @generated from protobuf message resources.centrum.DispatchAssignments
@@ -299,18 +291,6 @@ class Dispatch$Type extends MessageType<Dispatch> {
  * @generated MessageType for protobuf message resources.centrum.Dispatch
  */
 export const Dispatch = new Dispatch$Type();
-// @generated message type with reflection information, may provide speed optimized methods
-class Attributes$Type extends MessageType<Attributes> {
-    constructor() {
-        super("resources.centrum.Attributes", [
-            { no: 1, name: "list", kind: "scalar", repeat: 2 /*RepeatType.UNPACKED*/, T: 9 /*ScalarType.STRING*/ }
-        ]);
-    }
-}
-/**
- * @generated MessageType for protobuf message resources.centrum.Attributes
- */
-export const Attributes = new Attributes$Type();
 // @generated message type with reflection information, may provide speed optimized methods
 class DispatchAssignments$Type extends MessageType<DispatchAssignments> {
     constructor() {

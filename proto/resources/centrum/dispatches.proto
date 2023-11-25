@@ -2,6 +2,7 @@ syntax = "proto3";
 
 package resources.centrum;
 
+import "resources/centrum/general.proto";
 import "resources/centrum/units.proto";
 import "resources/timestamp/timestamp.proto";
 import "resources/users/users.proto";
@@ -28,10 +29,6 @@ message Dispatch {
   optional int32 creator_id = 14 [(validate.rules).int32.gt = 0];
   optional resources.users.User creator = 15;
   repeated DispatchAssignment units = 16;
-}
-
-message Attributes {
-  repeated string list = 1;
 }
 
 message DispatchAssignments {

@@ -38,6 +38,15 @@ func (s *Manager) UpdateUnitStatus(ctx context.Context, job string, unitId uint6
 		return nil, nil
 	}
 
+	if unit.Attributes.Has(centrum.UnitAttributeStatic) {
+		// Only allow a static unit to be set busy, on break or unavailable
+		if in.Status != centrum.StatusUnit_STATUS_UNIT_BUSY &&
+			in.Status != centrum.StatusUnit_STATUS_UNIT_ON_BREAK &&
+			in.Status != centrum.StatusUnit_STATUS_UNIT_UNAVAILABLE {
+			return nil, nil
+		}
+	}
+
 	s.logger.Debug("updating unit status", zap.Uint64("unit_id", unitId), zap.String("status", in.Status.String()))
 
 	if in.UserId != nil {
@@ -357,6 +366,7 @@ func (s *Manager) CreateUnit(ctx context.Context, job string, unit *centrum.Unit
 			tUnits.Initials,
 			tUnits.Color,
 			tUnits.Description,
+			tUnits.Attributes,
 		).
 		VALUES(
 			job,
@@ -364,6 +374,7 @@ func (s *Manager) CreateUnit(ctx context.Context, job string, unit *centrum.Unit
 			unit.Initials,
 			unit.Color,
 			unit.Description,
+			unit.Attributes,
 		)
 
 	result, err := stmt.ExecContext(ctx, tx)
@@ -421,12 +432,14 @@ func (s *Manager) UpdateUnit(ctx context.Context, job string, unit *centrum.Unit
 			tUnits.Initials,
 			tUnits.Color,
 			tUnits.Description,
+			tUnits.Attributes,
 		).
 		SET(
-			tUnits.Name.SET(jet.String(unit.Name)),
-			tUnits.Initials.SET(jet.String(unit.Initials)),
-			tUnits.Color.SET(jet.String(unit.Color)),
-			tUnits.Description.SET(jet.String(description)),
+			unit.Name,
+			unit.Initials,
+			unit.Color,
+			description,
+			unit.Attributes,
 		).
 		WHERE(jet.AND(
 			tUnits.Job.EQ(jet.String(job)),

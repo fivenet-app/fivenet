@@ -2,8 +2,6 @@
 // @generated from protobuf file "resources/centrum/settings.proto" (package "resources.centrum", syntax proto3)
 // tslint:disable
 import { MessageType } from "@protobuf-ts/runtime";
-import { Timestamp } from "../timestamp/timestamp";
-import { UserShort } from "../users/users";
 /**
  * @generated from protobuf message resources.centrum.Settings
  */
@@ -24,40 +22,6 @@ export interface Settings {
      * @generated from protobuf field: resources.centrum.CentrumMode fallback_mode = 4;
      */
     fallbackMode: CentrumMode;
-}
-/**
- * @generated from protobuf message resources.centrum.Disponents
- */
-export interface Disponents {
-    /**
-     * @generated from protobuf field: string job = 1;
-     */
-    job: string;
-    /**
-     * @generated from protobuf field: repeated resources.users.UserShort disponents = 2;
-     */
-    disponents: UserShort[];
-}
-/**
- * @generated from protobuf message resources.centrum.UserUnitMapping
- */
-export interface UserUnitMapping {
-    /**
-     * @generated from protobuf field: uint64 unit_id = 1;
-     */
-    unitId: bigint;
-    /**
-     * @generated from protobuf field: string job = 2;
-     */
-    job: string;
-    /**
-     * @generated from protobuf field: int32 user_id = 3;
-     */
-    userId: number;
-    /**
-     * @generated from protobuf field: resources.timestamp.Timestamp created_at = 4;
-     */
-    createdAt?: Timestamp;
 }
 /**
  * @generated from protobuf enum resources.centrum.CentrumMode
@@ -99,31 +63,3 @@ class Settings$Type extends MessageType<Settings> {
  * @generated MessageType for protobuf message resources.centrum.Settings
  */
 export const Settings = new Settings$Type();
-// @generated message type with reflection information, may provide speed optimized methods
-class Disponents$Type extends MessageType<Disponents> {
-    constructor() {
-        super("resources.centrum.Disponents", [
-            { no: 1, name: "job", kind: "scalar", T: 9 /*ScalarType.STRING*/, options: { "validate.rules": { string: { maxLen: "20" } } } },
-            { no: 2, name: "disponents", kind: "message", repeat: 1 /*RepeatType.PACKED*/, T: () => UserShort }
-        ]);
-    }
-}
-/**
- * @generated MessageType for protobuf message resources.centrum.Disponents
- */
-export const Disponents = new Disponents$Type();
-// @generated message type with reflection information, may provide speed optimized methods
-class UserUnitMapping$Type extends MessageType<UserUnitMapping> {
-    constructor() {
-        super("resources.centrum.UserUnitMapping", [
-            { no: 1, name: "unit_id", kind: "scalar", T: 4 /*ScalarType.UINT64*/, L: 0 /*LongType.BIGINT*/ },
-            { no: 2, name: "job", kind: "scalar", T: 9 /*ScalarType.STRING*/ },
-            { no: 3, name: "user_id", kind: "scalar", T: 5 /*ScalarType.INT32*/ },
-            { no: 4, name: "created_at", kind: "message", T: () => Timestamp }
-        ]);
-    }
-}
-/**
- * @generated MessageType for protobuf message resources.centrum.UserUnitMapping
- */
-export const UserUnitMapping = new UserUnitMapping$Type();

@@ -213,7 +213,7 @@ const openStatus = ref(false);
                                                                     >
                                                                         {{
                                                                             $t(
-                                                                                `components.centrum.update_dispatch.attributes.${attribute}`,
+                                                                                `components.centrum.dispatches.attributes.${attribute}`,
                                                                             )
                                                                         }}
                                                                     </span>

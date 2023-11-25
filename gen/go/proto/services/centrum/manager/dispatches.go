@@ -810,3 +810,22 @@ func (s *Manager) TakeDispatch(ctx context.Context, job string, userId int32, un
 
 	return nil
 }
+
+func (s *Manager) AddAttributeToDispatch(ctx context.Context, dsp *centrum.Dispatch, attribute string) error {
+	update := false
+	if dsp.Attributes == nil {
+		dsp.Attributes = &centrum.Attributes{
+			List: []string{},
+		}
+	}
+
+	update = dsp.Attributes.Add(attribute)
+
+	if update {
+		if _, err := s.UpdateDispatch(ctx, dsp.Job, dsp.CreatorId, dsp, true); err != nil {
+			return err
+		}
+	}
+
+	return nil
+}

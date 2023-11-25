@@ -4,7 +4,6 @@ import (
 	"context"
 	"database/sql"
 	"fmt"
-	"slices"
 	"sync"
 	"time"
 
@@ -271,7 +270,7 @@ func (s *Housekeeper) cancelExpiredDispatches(ctx context.Context) error {
 
 		// Add "too old" attribute when we are able to retrieve the dispatch
 		if dsp, err := s.GetDispatch(ds.Job, ds.DispatchID); err == nil && dsp != nil {
-			if err := s.addAttributeToDispatch(ctx, dsp, centrum.AttributeTooOld); err != nil {
+			if err := s.AddAttributeToDispatch(ctx, dsp, centrum.DispatchAttributeTooOld); err != nil {
 				return err
 			}
 		}
@@ -389,7 +388,7 @@ func (s *Housekeeper) deduplicateDispatches(ctx context.Context) error {
 				}, 45.0)
 				// Add "multiple" attribute when multiple dispatches close by
 				if len(closestsDsp) > 0 {
-					if err := s.addAttributeToDispatch(ctx, dsp, centrum.AttributeMultiple); err != nil {
+					if err := s.AddAttributeToDispatch(ctx, dsp, centrum.DispatchAttributeMultiple); err != nil {
 						s.logger.Error("failed to update original dispatch attribute", zap.Error(err))
 					}
 				}
@@ -447,29 +446,6 @@ func (s *Housekeeper) deduplicateDispatches(ctx context.Context) error {
 	}
 
 	wg.Wait()
-
-	return nil
-}
-
-func (s *Housekeeper) addAttributeToDispatch(ctx context.Context, dsp *centrum.Dispatch, attribute string) error {
-	update := false
-	if dsp.Attributes == nil {
-		dsp.Attributes = &centrum.Attributes{
-			List: []string{attribute},
-		}
-		update = true
-	} else {
-		if !slices.Contains(dsp.Attributes.List, attribute) {
-			dsp.Attributes.List = append(dsp.Attributes.List, attribute)
-			update = true
-		}
-	}
-
-	if update {
-		if _, err := s.UpdateDispatch(ctx, dsp.Job, dsp.CreatorId, dsp, true); err != nil {
-			return err
-		}
-	}
 
 	return nil
 }
@@ -556,12 +532,24 @@ func (s *Housekeeper) cleanupUnitStatus(ctx context.Context) error {
 		}
 
 		for _, unit := range units {
+			// Either unit has users but is static and in a wrong status
 			if len(unit.Users) > 0 {
-				continue
-			}
+				if !unit.Attributes.Has(centrum.UnitAttributeStatic) {
+					continue
+				}
 
-			if unit.Status != nil && unit.Status.Status == centrum.StatusUnit_STATUS_UNIT_UNAVAILABLE {
-				continue
+				if unit.Status != nil &&
+					(unit.Status.Status == centrum.StatusUnit_STATUS_UNIT_BUSY ||
+						unit.Status.Status == centrum.StatusUnit_STATUS_UNIT_ON_BREAK ||
+						unit.Status.Status == centrum.StatusUnit_STATUS_UNIT_UNAVAILABLE) {
+					continue
+				}
+			} else {
+				// Or the unit is not already set to be unavailable (because it is empty)
+				if unit.Status != nil &&
+					unit.Status.Status == centrum.StatusUnit_STATUS_UNIT_UNAVAILABLE {
+					continue
+				}
 			}
 
 			var userId *int32
@@ -569,7 +557,7 @@ func (s *Housekeeper) cleanupUnitStatus(ctx context.Context) error {
 				userId = unit.Status.UserId
 			}
 
-			s.logger.Debug("cleaning up unit status to unavailable because it is empty",
+			s.logger.Debug("cleaning up unit status to unavailable because it is empty or static with wrong status",
 				zap.String("job", job), zap.Uint64("unit_id", unit.Id))
 			if _, err := s.UpdateUnitStatus(ctx, job, unit.Id, &centrum.UnitStatus{
 				CreatedAt: timestamp.Now(),

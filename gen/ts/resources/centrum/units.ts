@@ -3,6 +3,7 @@
 // tslint:disable
 import { MessageType } from "@protobuf-ts/runtime";
 import { UserShort } from "../users/users";
+import { Attributes } from "./general";
 import { Timestamp } from "../timestamp/timestamp";
 /**
  * @generated from protobuf message resources.centrum.Unit
@@ -54,6 +55,10 @@ export interface Unit {
      * @generated from protobuf field: repeated resources.centrum.UnitAssignment users = 11;
      */
     users: UnitAssignment[];
+    /**
+     * @generated from protobuf field: optional resources.centrum.Attributes attributes = 12;
+     */
+    attributes?: Attributes;
 }
 /**
  * @generated from protobuf message resources.centrum.UnitAssignments
@@ -206,7 +211,8 @@ class Unit$Type extends MessageType<Unit> {
             { no: 7, name: "color", kind: "scalar", T: 9 /*ScalarType.STRING*/, options: { "validate.rules": { string: { len: "6", pattern: "^[A-Fa-f0-9]{6}$" } } } },
             { no: 8, name: "description", kind: "scalar", opt: true, T: 9 /*ScalarType.STRING*/, options: { "validate.rules": { string: { maxLen: "255" } } } },
             { no: 9, name: "status", kind: "message", T: () => UnitStatus },
-            { no: 11, name: "users", kind: "message", repeat: 1 /*RepeatType.PACKED*/, T: () => UnitAssignment }
+            { no: 11, name: "users", kind: "message", repeat: 1 /*RepeatType.PACKED*/, T: () => UnitAssignment },
+            { no: 12, name: "attributes", kind: "message", T: () => Attributes }
         ]);
     }
 }

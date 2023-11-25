@@ -20,4 +20,5 @@ type FivenetCentrumUnits struct {
 	Initials    string     `json:"initials"`
 	Color       string     `json:"color"`
 	Description *string    `json:"description"`
+	Attributes  *string    `json:"attributes"`
 }

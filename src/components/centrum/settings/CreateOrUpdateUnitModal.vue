@@ -1,9 +1,19 @@
 <script lang="ts" setup>
-import { Dialog, DialogPanel, DialogTitle, TransitionChild, TransitionRoot } from '@headlessui/vue';
+import {
+    Dialog,
+    DialogPanel,
+    DialogTitle,
+    Listbox,
+    ListboxButton,
+    ListboxOption,
+    ListboxOptions,
+    TransitionChild,
+    TransitionRoot,
+} from '@headlessui/vue';
 import { RpcError } from '@protobuf-ts/runtime-rpc';
 import { max, min, required } from '@vee-validate/rules';
 import { useThrottleFn } from '@vueuse/core';
-import { CloseIcon, GroupIcon, LoadingIcon } from 'mdi-vue3';
+import { CheckIcon, ChevronDownIcon, CloseIcon, GroupIcon, LoadingIcon } from 'mdi-vue3';
 import { defineRule } from 'vee-validate';
 import ColorInput from 'vue-color-input/dist/color-input.esm';
 import { Unit } from '~~/gen/ts/resources/centrum/units';
@@ -26,7 +36,12 @@ interface FormData {
     initials: string;
     description: string;
     color: string;
+    attributes: string[];
 }
+
+const availableAttributes: string[] = ['static'];
+
+const selectedAttributes = ref<string[]>([]);
 
 const color = ref('#000000');
 
@@ -40,6 +55,9 @@ async function createOrUpdateUnit(values: FormData): Promise<void> {
                 initials: values.initials,
                 color: color.value.replaceAll('#', ''),
                 description: values.description,
+                attributes: {
+                    list: [],
+                },
                 users: [],
             },
         });
@@ -206,6 +224,118 @@ onBeforeMount(async () => updateUnitInForm());
                                                     />
                                                     <VeeErrorMessage
                                                         name="description"
+                                                        as="p"
+                                                        class="mt-2 text-sm text-error-400"
+                                                    />
+                                                </div>
+                                                <div class="flex-1 form-control">
+                                                    <label
+                                                        for="attributes"
+                                                        class="block text-sm font-medium leading-6 text-neutral"
+                                                    >
+                                                        {{ $t('common.attributes') }}
+                                                    </label>
+                                                    <VeeField
+                                                        name="attributes"
+                                                        type="text"
+                                                        class="block w-full rounded-md border-0 py-1.5 bg-base-700 text-neutral placeholder:text-base-200 focus:ring-2 focus:ring-inset focus:ring-base-300 sm:text-sm sm:leading-6"
+                                                        :placeholder="$t('common.attributes')"
+                                                        :label="$t('common.attributes')"
+                                                        @focusin="focusTablet(true)"
+                                                        @focusout="focusTablet(false)"
+                                                    >
+                                                        <Listbox v-model="selectedAttributes" as="div" nullable multiple>
+                                                            <div class="relative">
+                                                                <ListboxButton
+                                                                    class="block pl-3 text-left w-full rounded-md border-0 py-1.5 bg-base-700 text-neutral placeholder:text-base-200 focus:ring-2 focus:ring-inset focus:ring-base-300 sm:text-sm sm:leading-6"
+                                                                >
+                                                                    <span class="block truncate">
+                                                                        <template v-if="selectedAttributes.length > 0">
+                                                                            <span
+                                                                                v-for="attr in selectedAttributes"
+                                                                                :key="attr"
+                                                                                class="mr-1"
+                                                                            >
+                                                                                {{
+                                                                                    $t(
+                                                                                        `components.centrum.units.attributes.${attr}`,
+                                                                                    )
+                                                                                }}
+                                                                            </span>
+                                                                        </template>
+                                                                        <template v-else>
+                                                                            {{ $t('common.none_selected') }}
+                                                                        </template>
+                                                                    </span>
+                                                                    <span
+                                                                        class="absolute inset-y-0 right-0 flex items-center pr-2 pointer-events-none"
+                                                                    >
+                                                                        <ChevronDownIcon
+                                                                            class="w-5 h-5 text-gray-400"
+                                                                            aria-hidden="true"
+                                                                        />
+                                                                    </span>
+                                                                </ListboxButton>
+
+                                                                <transition
+                                                                    leave-active-class="transition duration-100 ease-in"
+                                                                    leave-from-class="opacity-100"
+                                                                    leave-to-class="opacity-0"
+                                                                >
+                                                                    <ListboxOptions
+                                                                        class="absolute z-10 w-full py-1 mt-1 overflow-auto text-base rounded-md bg-base-700 max-h-44 sm:text-sm"
+                                                                    >
+                                                                        <ListboxOption
+                                                                            v-for="attr in availableAttributes"
+                                                                            :key="attr"
+                                                                            v-slot="{ active, selected }"
+                                                                            as="template"
+                                                                            :value="attr"
+                                                                        >
+                                                                            <li
+                                                                                :class="[
+                                                                                    active ? 'bg-primary-500' : '',
+                                                                                    'text-neutral relative cursor-default select-none py-2 pl-8 pr-4',
+                                                                                ]"
+                                                                            >
+                                                                                <span
+                                                                                    :class="[
+                                                                                        selected
+                                                                                            ? 'font-semibold'
+                                                                                            : 'font-normal',
+                                                                                        'block truncate',
+                                                                                    ]"
+                                                                                >
+                                                                                    {{
+                                                                                        $t(
+                                                                                            `components.centrum.units.attributes.${attr}`,
+                                                                                        )
+                                                                                    }}
+                                                                                </span>
+
+                                                                                <span
+                                                                                    v-if="selected"
+                                                                                    :class="[
+                                                                                        active
+                                                                                            ? 'text-neutral'
+                                                                                            : 'text-primary-500',
+                                                                                        'absolute inset-y-0 left-0 flex items-center pl-1.5',
+                                                                                    ]"
+                                                                                >
+                                                                                    <CheckIcon
+                                                                                        class="w-5 h-5"
+                                                                                        aria-hidden="true"
+                                                                                    />
+                                                                                </span>
+                                                                            </li>
+                                                                        </ListboxOption>
+                                                                    </ListboxOptions>
+                                                                </transition>
+                                                            </div>
+                                                        </Listbox>
+                                                    </VeeField>
+                                                    <VeeErrorMessage
+                                                        name="attributes"
                                                         as="p"
                                                         class="mt-2 text-sm text-error-400"
                                                     />

@@ -462,6 +462,9 @@
                         "ON_BREAK": "Unit on break",
                         "BUSY": "Unit busy"
                     }
+                },
+                "attributes": {
+                    "static": "Static"
                 }
             },
             "dispatches": {
@@ -481,9 +484,7 @@
                         "UNIT_DECLINED": "Unit declined/didn't respond to Dispatch",
                         "UNSPECIFIED": "Unspecified"
                     }
-                }
-            },
-            "update_dispatch": {
+                },
                 "attributes": {
                     "multiple": "Multiple Dispatches",
                     "too_old": "Cancelled due to Age"
@@ -1535,7 +1536,8 @@
                 "title": "Dispatch already in completed state!",
                 "content": "You can't accept/decline completed dispatches."
             },
-            "ErrNotPartOfUnit": "You are not part of this unit!"
+            "ErrNotPartOfUnit": "You are not part of this unit!",
+            "ErrStaticUnit": "Can't update a static unit's status to be available!"
         },
         "general": {
             "internal_error": {

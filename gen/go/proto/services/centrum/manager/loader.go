@@ -155,6 +155,8 @@ func (s *Manager) LoadUnitsFromDB(ctx context.Context, id uint64) error {
 	stmt := tUnits.
 		SELECT(
 			tUnits.ID,
+			tUnits.CreatedAt,
+			tUnits.UpdatedAt,
 			tUnits.Job,
 			tUnits.Name,
 			tUnits.Initials,

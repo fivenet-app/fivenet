@@ -462,6 +462,9 @@
                         "ON_BREAK": "Einheit auf Pause",
                         "BUSY": "Einheit beschäftigt"
                     }
+                },
+                "attributes": {
+                    "static": "Statisch"
                 }
             },
             "dispatches": {
@@ -481,9 +484,7 @@
                         "UNIT_DECLINED": "Einsatz von Einheit abgelehnt",
                         "UNSPECIFIED": "Unbekannter Einsatz-Status"
                     }
-                }
-            },
-            "update_dispatch": {
+                },
                 "attributes": {
                     "multiple": "Mehrere Einsätze",
                     "too_old": "Abgebrochen, Einsatz zu alt"
