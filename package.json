@@ -16,7 +16,7 @@
     },
     "dependencies": {
         "@fontsource/inter": "^5.0.15",
-        "@headlessui-float/vue": "^0.12.0",
+        "@headlessui-float/vue": "^0.13.0",
         "@headlessui/vue": "^1.7.16",
         "@nuxtjs/robots": "^3.0.0",
         "@originjs/vite-plugin-commonjs": "^1.0.3",
