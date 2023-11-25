@@ -350,9 +350,9 @@
   integrity sha512-hBI9tfBtuPIi885ZsZ32IMEU/5nlZH/KOVYJCOh7gyMxaVLGmLedYqFN6Ui1LXkI8JlC8IsuC0rF0btcRZKd5g==
 
 "@dargmuesli/nuxt-cookie-control@^7.1.3":
-  version "7.1.3"
-  resolved "https://registry.yarnpkg.com/@dargmuesli/nuxt-cookie-control/-/nuxt-cookie-control-7.1.3.tgz#4a883bec111cce971789993d6b25d44f150a0d2f"
-  integrity sha512-aGblAEVJX5rtSdfyOTJ8BRlHvUcqi/8ijfRy6Ga2LLtMR8qrbJevJjrzTdkgLEDR2IsOSRHZWhtxDCOlN4bDDA==
+  version "7.1.4"
+  resolved "https://registry.yarnpkg.com/@dargmuesli/nuxt-cookie-control/-/nuxt-cookie-control-7.1.4.tgz#a817d23fdf66655dea82e750c82f4c3545df65a1"
+  integrity sha512-HdU4ZplS9CPd1lCCToxHw/PSQXT3n+TImZ388YZHegLAwoc4PVwVLUDijTFwaoFlowIoiwquHnUNAwYevAfn1g==
   dependencies:
     "@nuxt/kit" "^3.8.0"
     "@sindresorhus/slugify" "^2.2.1"
@@ -3612,9 +3612,9 @@ ee-first@1.1.1:
   integrity sha512-WMwm9LhRUo+WUaRN+vRuETqG89IgZphVSNkdFgeb6sS/E4OrDIN7t48CAewSHXc6C8lefD8KKfr5vY61brQlow==
 
 electron-to-chromium@^1.4.535:
-  version "1.4.592"
-  resolved "https://registry.yarnpkg.com/electron-to-chromium/-/electron-to-chromium-1.4.592.tgz#1ffd49ba3da3da3077ea20014b066c910d50c913"
-  integrity sha512-D3NOkROIlF+d5ixnz7pAf3Lu/AuWpd6AYgI9O67GQXMXTcCP1gJQRotOq35eQy5Sb4hez33XH1YdTtILA7Udww==
+  version "1.4.594"
+  resolved "https://registry.yarnpkg.com/electron-to-chromium/-/electron-to-chromium-1.4.594.tgz#f69f207fba80735a44a988df42f3f439115d0515"
+  integrity sha512-xT1HVAu5xFn7bDfkjGQi9dNpMqGchUkebwf1GL7cZN32NSwwlHRPMSDJ1KN6HkS0bWUtndbSQZqvpQftKG2uFQ==
 
 emoji-regex@^8.0.0:
   version "8.0.0"
