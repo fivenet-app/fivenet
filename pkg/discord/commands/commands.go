@@ -40,13 +40,3 @@ func (c *Cmds) Register(s *discordgo.Session) error {
 
 	return nil
 }
-
-func (c *Cmds) Unregister(s *discordgo.Session) error {
-	for _, v := range c.RegisteredCommands {
-		if err := s.ApplicationCommandDelete(s.State.User.ID, c.guildId, v.ID); err != nil {
-			return fmt.Errorf("cannot remove '%v' command for guild '%s': %v", v.Name, c.guildId, err)
-		}
-	}
-
-	return nil
-}

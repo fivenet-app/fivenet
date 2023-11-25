@@ -130,7 +130,11 @@ func (s *Store[T, U]) ComputeUpdate(key string, load bool, fn func(key string, e
 	}
 	defer s.l.Unlock(ctx, key)
 
-	computed, err := fn(key, existing)
+	var cloned U
+	if existing != nil {
+		cloned = proto.Clone(existing).(U)
+	}
+	computed, err := fn(key, cloned)
 	if err != nil {
 		return err
 	}
@@ -172,18 +176,18 @@ func (s *Store[T, U]) update(entry nats.KeyValueEntry) (U, error) {
 	return s.updateFromType(entry.Key(), data), nil
 }
 
-func (s *Store[T, U]) updateFromType(key string, data U) U {
-	current, ok := s.data.LoadOrStore(key, data)
+func (s *Store[T, U]) updateFromType(key string, updated U) U {
+	current, ok := s.data.LoadOrStore(key, updated)
 	if ok && current != nil {
 		// Compare using protobuf magic and merge if not equal
-		if !proto.Equal(current, data) {
-			current.Merge(data)
+		if !proto.Equal(current, updated) {
+			current.Merge(updated)
 		}
 
 		return current
 	}
 
-	return data
+	return updated
 }
 
 func (s *Store[T, U]) GetOrLoad(key string) (U, error) {

@@ -80,9 +80,5 @@ func (g *Guild) Run() error {
 }
 
 func (g *Guild) Stop() error {
-	if g.commands != nil {
-		return g.commands.Unregister(g.bot.discord)
-	}
-
 	return nil
 }
