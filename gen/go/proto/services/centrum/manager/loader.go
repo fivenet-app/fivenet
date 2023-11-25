@@ -330,11 +330,13 @@ func (s *Manager) LoadDispatchesFromDB(ctx context.Context, id uint64) error {
 				return err
 			}
 
-			// Clear dispatch creator's job info if not a visible job
-			if !slices.Contains(s.publicJobs, dsps[i].Creator.Job) {
-				dsps[i].Creator.Job = ""
+			if dsps[i].Creator != nil {
+				// Clear dispatch creator's job info if not a visible job
+				if !slices.Contains(s.publicJobs, dsps[i].Creator.Job) {
+					dsps[i].Creator.Job = ""
+				}
+				dsps[i].Creator.JobGrade = 0
 			}
-			dsps[i].Creator.JobGrade = 0
 		}
 
 		if dsps[i].Postal == nil {

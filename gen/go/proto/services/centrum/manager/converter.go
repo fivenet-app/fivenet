@@ -109,6 +109,10 @@ func (s *Housekeeper) convertPhoneJobMsgToDispatch() error {
 			CreatorId: &msg.UserId,
 		}
 
+		if postal := s.postals.Closest(x, y); postal != nil {
+			dsp.Postal = postal.Code
+		}
+
 		if _, err := s.CreateDispatch(s.ctx, dsp); err != nil {
 			return err
 		}

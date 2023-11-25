@@ -153,11 +153,13 @@ func (s *Server) ListDispatches(ctx context.Context, req *ListDispatchesRequest)
 				return nil, err
 			}
 
-			// Clear dispatch creator's job info if not a visible job
-			if !slices.Contains(s.publicJobs, resp.Dispatches[i].Creator.Job) {
-				resp.Dispatches[i].Creator.Job = ""
+			if resp.Dispatches[i].Creator != nil {
+				// Clear dispatch creator's job info if not a visible job
+				if !slices.Contains(s.publicJobs, resp.Dispatches[i].Creator.Job) {
+					resp.Dispatches[i].Creator.Job = ""
+				}
+				resp.Dispatches[i].Creator.JobGrade = 0
 			}
-			resp.Dispatches[i].Creator.JobGrade = 0
 		}
 	}
 

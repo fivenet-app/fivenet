@@ -2,10 +2,13 @@ package manager
 
 import (
 	"context"
+	"errors"
+	"fmt"
 
 	"github.com/galexrt/fivenet/gen/go/proto/resources/centrum"
 	users "github.com/galexrt/fivenet/gen/go/proto/resources/users"
 	jet "github.com/go-jet/jet/v2/mysql"
+	"github.com/go-jet/jet/v2/qrm"
 )
 
 func (s *Manager) ResolveUserById(ctx context.Context, u int32) (*users.User, error) {
@@ -30,7 +33,11 @@ func (s *Manager) ResolveUserById(ctx context.Context, u int32) (*users.User, er
 
 	dest := users.User{}
 	if err := stmt.QueryContext(ctx, s.db, &dest); err != nil {
-		return nil, err
+		if !errors.Is(err, qrm.ErrNoRows) {
+			return nil, fmt.Errorf("failed to resolve user by id %d: %w", u, err)
+		}
+
+		return nil, nil
 	}
 
 	return &dest, nil
@@ -75,7 +82,7 @@ func (s *Manager) resolveUserShortsByIds(ctx context.Context, u []int32) ([]*use
 
 	dest := []*users.UserShort{}
 	if err := stmt.QueryContext(ctx, s.db, &dest); err != nil {
-		return nil, err
+		return nil, fmt.Errorf("failed to resolve usershorts by ids %+v: %w", u, err)
 	}
 
 	return dest, nil
