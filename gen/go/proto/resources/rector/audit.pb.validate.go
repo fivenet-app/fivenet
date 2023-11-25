@@ -92,6 +92,8 @@ func (m *AuditEntry) validate(all bool) error {
 
 	// no validation rules for UserJob
 
+	// no validation rules for TargetUserJob
+
 	// no validation rules for Service
 
 	// no validation rules for Method

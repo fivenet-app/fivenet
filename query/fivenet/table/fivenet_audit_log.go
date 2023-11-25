@@ -17,15 +17,16 @@ type fivenetAuditLogTable struct {
 	mysql.Table
 
 	// Columns
-	ID           mysql.ColumnInteger
-	CreatedAt    mysql.ColumnTimestamp
-	UserID       mysql.ColumnInteger
-	UserJob      mysql.ColumnString
-	TargetUserID mysql.ColumnInteger
-	Service      mysql.ColumnString
-	Method       mysql.ColumnString
-	State        mysql.ColumnInteger
-	Data         mysql.ColumnString
+	ID            mysql.ColumnInteger
+	CreatedAt     mysql.ColumnTimestamp
+	UserID        mysql.ColumnInteger
+	UserJob       mysql.ColumnString
+	TargetUserID  mysql.ColumnInteger
+	TargetUserJob mysql.ColumnString
+	Service       mysql.ColumnString
+	Method        mysql.ColumnString
+	State         mysql.ColumnInteger
+	Data          mysql.ColumnString
 
 	AllColumns     mysql.ColumnList
 	MutableColumns mysql.ColumnList
@@ -66,32 +67,34 @@ func newFivenetAuditLogTable(schemaName, tableName, alias string) *FivenetAuditL
 
 func newFivenetAuditLogTableImpl(schemaName, tableName, alias string) fivenetAuditLogTable {
 	var (
-		IDColumn           = mysql.IntegerColumn("id")
-		CreatedAtColumn    = mysql.TimestampColumn("created_at")
-		UserIDColumn       = mysql.IntegerColumn("user_id")
-		UserJobColumn      = mysql.StringColumn("user_job")
-		TargetUserIDColumn = mysql.IntegerColumn("target_user_id")
-		ServiceColumn      = mysql.StringColumn("service")
-		MethodColumn       = mysql.StringColumn("method")
-		StateColumn        = mysql.IntegerColumn("state")
-		DataColumn         = mysql.StringColumn("data")
-		allColumns         = mysql.ColumnList{IDColumn, CreatedAtColumn, UserIDColumn, UserJobColumn, TargetUserIDColumn, ServiceColumn, MethodColumn, StateColumn, DataColumn}
-		mutableColumns     = mysql.ColumnList{CreatedAtColumn, UserIDColumn, UserJobColumn, TargetUserIDColumn, ServiceColumn, MethodColumn, StateColumn, DataColumn}
+		IDColumn            = mysql.IntegerColumn("id")
+		CreatedAtColumn     = mysql.TimestampColumn("created_at")
+		UserIDColumn        = mysql.IntegerColumn("user_id")
+		UserJobColumn       = mysql.StringColumn("user_job")
+		TargetUserIDColumn  = mysql.IntegerColumn("target_user_id")
+		TargetUserJobColumn = mysql.StringColumn("target_user_job")
+		ServiceColumn       = mysql.StringColumn("service")
+		MethodColumn        = mysql.StringColumn("method")
+		StateColumn         = mysql.IntegerColumn("state")
+		DataColumn          = mysql.StringColumn("data")
+		allColumns          = mysql.ColumnList{IDColumn, CreatedAtColumn, UserIDColumn, UserJobColumn, TargetUserIDColumn, TargetUserJobColumn, ServiceColumn, MethodColumn, StateColumn, DataColumn}
+		mutableColumns      = mysql.ColumnList{CreatedAtColumn, UserIDColumn, UserJobColumn, TargetUserIDColumn, TargetUserJobColumn, ServiceColumn, MethodColumn, StateColumn, DataColumn}
 	)
 
 	return fivenetAuditLogTable{
 		Table: mysql.NewTable(schemaName, tableName, alias, allColumns...),
 
 		//Columns
-		ID:           IDColumn,
-		CreatedAt:    CreatedAtColumn,
-		UserID:       UserIDColumn,
-		UserJob:      UserJobColumn,
-		TargetUserID: TargetUserIDColumn,
-		Service:      ServiceColumn,
-		Method:       MethodColumn,
-		State:        StateColumn,
-		Data:         DataColumn,
+		ID:            IDColumn,
+		CreatedAt:     CreatedAtColumn,
+		UserID:        UserIDColumn,
+		UserJob:       UserJobColumn,
+		TargetUserID:  TargetUserIDColumn,
+		TargetUserJob: TargetUserJobColumn,
+		Service:       ServiceColumn,
+		Method:        MethodColumn,
+		State:         StateColumn,
+		Data:          DataColumn,
 
 		AllColumns:     allColumns,
 		MutableColumns: mutableColumns,

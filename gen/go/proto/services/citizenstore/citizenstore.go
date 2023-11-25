@@ -293,6 +293,8 @@ func (s *Server) GetUser(ctx context.Context, req *GetUserRequest) (*GetUserResp
 		return nil, ErrJobGradeNoPermission
 	}
 
+	auditEntry.TargetUserJob = &resp.User.Job
+
 	if slices.Contains(s.publicJobs, resp.User.Job) || slices.Contains(s.hiddenJobs, resp.User.Job) {
 		// Make sure user has permission to see that grade
 		jobGradesAttr, err := s.p.Attr(userInfo, permscitizenstore.CitizenStoreServicePerm, permscitizenstore.CitizenStoreServiceGetUserPerm, permscitizenstore.CitizenStoreServiceGetUserJobsPermField)
