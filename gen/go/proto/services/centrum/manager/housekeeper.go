@@ -427,6 +427,15 @@ func (s *Housekeeper) deduplicateDispatches(ctx context.Context) error {
 						return
 					}
 
+					toRemove := []uint64{}
+					for _, ua := range closeByDsp.Units {
+						toRemove = append(toRemove, ua.UnitId)
+					}
+					if err := s.UpdateDispatchAssignments(ctx, closeByDsp.Job, nil, closeByDsp.Id, nil, toRemove, time.Time{}); err != nil {
+						s.logger.Error("failed to remove assigned units from duplicate dispatch", zap.Error(err))
+						return
+					}
+
 					removedCount++
 
 					if removedCount >= MaxCancelledDispatchesPerRun {
