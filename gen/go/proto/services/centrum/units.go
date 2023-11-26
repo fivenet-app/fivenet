@@ -63,6 +63,8 @@ func (s *Server) CreateOrUpdateUnit(ctx context.Context, req *CreateOrUpdateUnit
 	}
 	defer s.auditer.Log(auditEntry, req)
 
+	req.Unit.Job = userInfo.Job
+
 	var unit *centrum.Unit
 	var err error
 	// No unit id set

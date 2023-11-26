@@ -339,7 +339,7 @@ func (s *Manager) UpdateDispatchAssignments(ctx context.Context, job string, use
 		if len(dsp.Units) == 0 {
 			// Check dispatch status to not be completed/archived, etc.
 			if dsp.Status != nil && !centrumutils.IsStatusDispatchComplete(dsp.Status.Status) {
-				dsp.Status = &centrum.DispatchStatus{
+				if _, err := s.UpdateDispatchStatus(ctx, job, dspId, &centrum.DispatchStatus{
 					CreatedAt:  timestamp.Now(),
 					DispatchId: dsp.Id,
 					Status:     centrum.StatusDispatch_STATUS_DISPATCH_UNASSIGNED,
@@ -347,8 +347,7 @@ func (s *Manager) UpdateDispatchAssignments(ctx context.Context, job string, use
 					X:          x,
 					Y:          y,
 					Postal:     postal,
-				}
-				if err := s.AddDispatchStatus(ctx, s.db, job, dsp.Status, true); err != nil {
+				}); err != nil {
 					return nil, err
 				}
 			}

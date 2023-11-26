@@ -58,6 +58,7 @@ func (b *Bot) Run(ctx context.Context) error {
 			centrum.StatusDispatch_STATUS_DISPATCH_COMPLETED,
 			centrum.StatusDispatch_STATUS_DISPATCH_ARCHIVED,
 		})
+
 		sort.Slice(dispatches, func(i, j int) bool {
 			return dispatches[i].Id < dispatches[j].Id
 		})
