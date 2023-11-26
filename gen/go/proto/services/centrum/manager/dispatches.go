@@ -30,22 +30,23 @@ func (s *Manager) UpdateDispatchStatus(ctx context.Context, job string, dspId ui
 		return nil, errorscentrum.ErrFailedQuery
 	}
 
-	// If the dispatch status is the same and is a status that shouldn't be duplicated, don't update the status again
-	if dsp.Status != nil &&
-		dsp.Status.Status == in.Status &&
-		(in.Status == centrum.StatusDispatch_STATUS_DISPATCH_NEW ||
-			in.Status == centrum.StatusDispatch_STATUS_DISPATCH_UNASSIGNED) {
-		s.logger.Debug("skipping dispatch status update due to same status", zap.Uint64("dispatch_id", dsp.Id), zap.String("status", in.Status.String()))
-		return nil, nil
-	}
+	if dsp.Status != nil {
+		// If the dispatch status is the same and is a status that shouldn't be duplicated, don't update the status again
+		if dsp.Status.Status == in.Status &&
+			(in.Status == centrum.StatusDispatch_STATUS_DISPATCH_NEW ||
+				in.Status == centrum.StatusDispatch_STATUS_DISPATCH_UNASSIGNED) {
+			s.logger.Debug("skipping dispatch status update due to same status", zap.Uint64("dispatch_id", dsp.Id), zap.String("status", in.Status.String()))
+			return nil, nil
+		}
 
-	// If the dispatch is complete, we ignore any unit unassignments/accepts/declines
-	if dsp.Status != nil && centrumutils.IsStatusDispatchComplete(dsp.Status.Status) &&
-		(in.Status == centrum.StatusDispatch_STATUS_DISPATCH_UNASSIGNED ||
-			in.Status == centrum.StatusDispatch_STATUS_DISPATCH_UNIT_UNASSIGNED ||
-			in.Status == centrum.StatusDispatch_STATUS_DISPATCH_UNIT_ACCEPTED ||
-			in.Status == centrum.StatusDispatch_STATUS_DISPATCH_UNIT_DECLINED) {
-		return nil, nil
+		// If the dispatch is complete, we ignore any unit unassignments/accepts/declines
+		if centrumutils.IsStatusDispatchComplete(dsp.Status.Status) &&
+			(in.Status == centrum.StatusDispatch_STATUS_DISPATCH_UNASSIGNED ||
+				in.Status == centrum.StatusDispatch_STATUS_DISPATCH_UNIT_UNASSIGNED ||
+				in.Status == centrum.StatusDispatch_STATUS_DISPATCH_UNIT_ACCEPTED ||
+				in.Status == centrum.StatusDispatch_STATUS_DISPATCH_UNIT_DECLINED) {
+			return nil, nil
+		}
 	}
 
 	s.logger.Debug("updating dispatch status", zap.Uint64("dispatch_id", dspId), zap.String("status", in.Status.String()))

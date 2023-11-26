@@ -28,6 +28,8 @@ const currentDay = ref(new Date(today.getFullYear(), today.getMonth(), today.get
 const futureDay = ref(new Date(currentDay.value.getFullYear(), currentDay.value.getMonth(), currentDay.value.getDate() + 1));
 const previousDay = ref(new Date(currentDay.value.getFullYear(), currentDay.value.getMonth(), currentDay.value.getDate() - 1));
 
+const perDay = ref(canAccessAll);
+
 const query = ref<{
     user_ids?: User[];
     from?: string;
@@ -36,7 +38,7 @@ const query = ref<{
 }>({
     from: dateToDateString(currentDay.value),
     to: canAccessAll ? dateToDateString(previousDay.value) : undefined,
-    perDay: canAccessAll,
+    perDay: perDay.value,
 });
 const offset = ref(0n);
 
@@ -104,7 +106,23 @@ function focusSearch(): void {
 }
 
 watch(offset, async () => refresh());
-watchDebounced(query.value, async () => refresh(), { debounce: 600, maxWait: 1400 });
+watchDebounced(
+    query.value,
+    async () => {
+        if (canAccessAll) {
+            if (query.value.user_ids !== undefined && query.value.user_ids.length > 0) {
+                perDay.value = false;
+            } else {
+                perDay.value = true;
+            }
+        } else {
+            perDay.value = false;
+        }
+
+        return refresh();
+    },
+    { debounce: 600, maxWait: 1400 },
+);
 
 const jobsStore = useJobsStore();
 const { data: colleagues, refresh: refreshColleagues } = useLazyAsyncData(
@@ -243,7 +261,7 @@ function updateDates(): void {
                             </div>
                             <div class="flex-1 form-control">
                                 <label for="search" class="block text-sm font-medium leading-6 text-neutral">
-                                    <template v-if="canAccessAll"> {{ $t('common.date') }}: </template>
+                                    <template v-if="perDay"> {{ $t('common.date') }}: </template>
                                     <template v-else>
                                         {{ $t('common.time_range') }}:
                                         {{ $t('common.from') }}
@@ -259,7 +277,7 @@ function updateDates(): void {
                                     />
                                 </div>
                             </div>
-                            <div v-if="!canAccessAll" class="flex-1 form-control">
+                            <div v-if="!perDay" class="flex-1 form-control">
                                 <label for="search" class="block text-sm font-medium leading-6 text-neutral">
                                     {{ $t('common.time_range') }}:
                                     {{ $t('common.to') }}
@@ -275,7 +293,7 @@ function updateDates(): void {
                                 </div>
                             </div>
                         </div>
-                        <div v-if="canAccessAll" class="pt-2 flex flex-row gap-4 mx-auto">
+                        <div v-if="perDay" class="pt-2 flex flex-row gap-4 mx-auto">
                             <div class="flex-1 form-control">
                                 <button
                                     type="button"
@@ -335,17 +353,13 @@ function updateDates(): void {
                                 <thead>
                                     <tr>
                                         <th
-                                            v-if="!canAccessAll"
+                                            v-if="!perDay"
                                             scope="col"
                                             class="py-3.5 pl-4 pr-3 text-left text-sm font-semibold text-neutral sm:pl-0"
                                         >
                                             {{ $t('common.date') }}
                                         </th>
-                                        <th
-                                            v-if="canAccessAll"
-                                            scope="col"
-                                            class="py-3.5 px-2 text-left text-sm font-semibold text-neutral"
-                                        >
+                                        <th v-else scope="col" class="py-3.5 px-2 text-left text-sm font-semibold text-neutral">
                                             {{ $t('common.name') }}
                                         </th>
                                         <th scope="col" class="py-3.5 px-2 text-left text-sm font-semibold text-neutral">
@@ -368,17 +382,13 @@ function updateDates(): void {
                                 <thead>
                                     <tr>
                                         <th
-                                            v-if="!canAccessAll"
+                                            v-if="!perDay"
                                             scope="col"
                                             class="py-3.5 pl-4 pr-3 text-left text-sm font-semibold text-neutral sm:pl-0"
                                         >
                                             {{ $t('common.date') }}
                                         </th>
-                                        <th
-                                            v-if="canAccessAll"
-                                            scope="col"
-                                            class="py-3.5 px-2 text-left text-sm font-semibold text-neutral"
-                                        >
+                                        <th v-else scope="col" class="py-3.5 px-2 text-left text-sm font-semibold text-neutral">
                                             {{ $t('common.name') }}
                                         </th>
                                         <th scope="col" class="py-3.5 px-2 text-left text-sm font-semibold text-neutral">

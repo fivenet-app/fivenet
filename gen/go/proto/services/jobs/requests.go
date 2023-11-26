@@ -40,10 +40,8 @@ func (s *Server) RequestsListEntries(ctx context.Context, req *RequestsListEntri
 		fields = fieldsAttr.([]string)
 	}
 
-	if len(fields) == 0 {
-		return nil, ErrFailedQuery
-	} else if slices.Contains(fields, "All") {
-	} else if slices.Contains(fields, "Own") {
+	if slices.Contains(fields, "All") {
+	} else if len(fields) == 0 || slices.Contains(fields, "Own") {
 		condition = condition.AND(tTimeClock.UserID.EQ(jet.Int32(userInfo.UserId)))
 	}
 
