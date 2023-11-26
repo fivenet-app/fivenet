@@ -44,7 +44,7 @@ interface FormData {
     fallbackMode: CentrumMode;
 }
 
-async function createOrUpdateUnit(values: FormData): Promise<void> {
+async function updateSettings(values: FormData): Promise<void> {
     try {
         const call = $grpc.getCentrumClient().updateSettings({
             settings: {
@@ -97,7 +97,7 @@ setSettingsValues();
 const canSubmit = ref(true);
 const onSubmit = handleSubmit(
     async (values): Promise<void> =>
-        await createOrUpdateUnit(values).finally(() => setTimeout(() => (canSubmit.value = true), 400)),
+        await updateSettings(values).finally(() => setTimeout(() => (canSubmit.value = true), 400)),
 );
 const onSubmitThrottle = useThrottleFn(async (e) => {
     canSubmit.value = false;

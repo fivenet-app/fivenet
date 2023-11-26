@@ -106,6 +106,8 @@ async function updateUnitInForm(): Promise<void> {
             description: props.unit.description,
         });
         color.value = `#${props.unit.color}`;
+
+        selectedAttributes.value = props.unit.attributes?.list ?? [];
     }
 }
 
