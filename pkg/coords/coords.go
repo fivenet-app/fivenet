@@ -16,7 +16,7 @@ type ICoords[V orb.Pointer] interface {
 }
 
 type Coords[V orb.Pointer] struct {
-	mutex sync.RWMutex
+	mutex sync.Mutex
 	tree  *quadtree.Quadtree
 
 	ICoords[V]
@@ -29,14 +29,14 @@ func New[V orb.Pointer]() *Coords[V] {
 func NewWithBounds[V orb.Pointer](bounds orb.Bound) *Coords[V] {
 	tree := quadtree.New(bounds)
 	return &Coords[V]{
-		mutex: sync.RWMutex{},
+		mutex: sync.Mutex{},
 		tree:  tree,
 	}
 }
 
 func (p *Coords[V]) Has(point orb.Pointer, fn quadtree.FilterFunc) bool {
-	p.mutex.RLock()
-	defer p.mutex.RUnlock()
+	p.mutex.Lock()
+	defer p.mutex.Unlock()
 
 	found := p.tree.Matching(point.Point(), fn)
 	return found != nil
@@ -58,16 +58,16 @@ func (p *Coords[V]) Remove(point orb.Pointer, fn quadtree.FilterFunc) bool {
 }
 
 func (p *Coords[V]) Closest(x, y float64) V {
-	p.mutex.RLock()
-	defer p.mutex.RUnlock()
+	p.mutex.Lock()
+	defer p.mutex.Unlock()
 
 	point := p.tree.Find(orb.Point{x, y})
 	return point.(V)
 }
 
 func (p *Coords[V]) KNearest(point orb.Pointer, max int, fn quadtree.FilterFunc, maxDistance float64) []orb.Pointer {
-	p.mutex.RLock()
-	defer p.mutex.RUnlock()
+	p.mutex.Lock()
+	defer p.mutex.Unlock()
 
 	points := p.tree.KNearestMatching(nil, point.Point(), max, fn, maxDistance)
 	return points
