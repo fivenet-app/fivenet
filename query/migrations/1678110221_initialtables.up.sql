@@ -168,6 +168,23 @@ CREATE TABLE IF NOT EXISTS `fivenet_documents_user_access` (
   CONSTRAINT `fk_fivenet_documents_user_access_user_id` FOREIGN KEY (`user_id`) REFERENCES `users` (`id`) ON DELETE CASCADE ON UPDATE CASCADE
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
 
+-- Table: fivenet_documents_activity
+CREATE TABLE IF NOT EXISTS `fivenet_documents_activity` (
+  `id` bigint(20) unsigned NOT NULL AUTO_INCREMENT,
+  `created_at` datetime(3) DEFAULT CURRENT_TIMESTAMP(3),
+  `document_id` bigint(20) unsigned NOT NULL,
+  `activity_type` smallint(2) NOT NULL,
+  `creator_id` int(11) DEFAULT NULL,
+  `creator_job` varchar(20) NOT NULL,
+  `reason` varchar(255) DEFAULT NULL,
+  `data` longtext DEFAULT NULL,
+  PRIMARY KEY (`id`),
+  KEY `idx_fivenet_documents_activity_document_id` (`document_id`),
+  KEY `idx_fivenet_documents_activity_creator_id` (`creator_id`),
+  CONSTRAINT `fk_fivenet_documents_activity_document_id` FOREIGN KEY (`document_id`) REFERENCES `fivenet_documents` (`id`) ON DELETE CASCADE ON UPDATE CASCADE,
+  CONSTRAINT `fk_fivenet_documents_activity_creator_id` FOREIGN KEY (`creator_id`) REFERENCES `users` (`id`) ON DELETE SET NULL ON UPDATE SET NULL
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
+
 -- Table: fivenet_user_activity
 CREATE TABLE IF NOT EXISTS `fivenet_user_activity` (
   `id` bigint(20) unsigned NOT NULL AUTO_INCREMENT,

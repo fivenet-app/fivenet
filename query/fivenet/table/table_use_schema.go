@@ -23,6 +23,7 @@ func UseSchema(schema string) {
 	FivenetCentrumUnitsUsers = FivenetCentrumUnitsUsers.FromSchema(schema)
 	FivenetCentrumUsers = FivenetCentrumUsers.FromSchema(schema)
 	FivenetDocuments = FivenetDocuments.FromSchema(schema)
+	FivenetDocumentsActivity = FivenetDocumentsActivity.FromSchema(schema)
 	FivenetDocumentsCategories = FivenetDocumentsCategories.FromSchema(schema)
 	FivenetDocumentsComments = FivenetDocumentsComments.FromSchema(schema)
 	FivenetDocumentsJobAccess = FivenetDocumentsJobAccess.FromSchema(schema)

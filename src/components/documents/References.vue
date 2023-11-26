@@ -1,6 +1,6 @@
 <script lang="ts" setup>
 import { RpcError } from '@protobuf-ts/runtime-rpc';
-import { ArrowCollapseIcon, ChevronRightIcon, FileDocumentMultipleIcon } from 'mdi-vue3';
+import { ArrowCollapseIcon, FileDocumentMultipleIcon } from 'mdi-vue3';
 import CitizenInfoPopover from '~/components/partials/citizens/CitizenInfoPopover.vue';
 import DataNoDataBlock from '~/components/partials/data/DataNoDataBlock.vue';
 import Time from '~/components/partials/elements/Time.vue';
@@ -91,7 +91,6 @@ async function getDocumentReferences(): Promise<DocumentReference[]> {
                                         <Time :value="reference.createdAt" />
                                     </span>
                                 </span>
-                                <ChevronRightIcon class="flex-shrink-0 w-5 h-5 text-gray-400" aria-hidden="true" />
                             </span>
                         </NuxtLink>
                     </li>
@@ -103,7 +102,9 @@ async function getDocumentReferences(): Promise<DocumentReference[]> {
                 <div>
                     <div class="flex flex-col mt-2">
                         <div class="min-w-full overflow-hidden overflow-x-auto align-middle sm:rounded-lg">
-                            <table class="min-w-full bg-base-600 text-neutral divide-y divide-base-600">
+                            <table
+                                class="min-w-full bg-base-600 text-neutral divide-y divide-base-600 border-2 border-gray-600"
+                            >
                                 <thead>
                                     <tr>
                                         <th class="px-6 py-3 text-sm font-semibold text-left" scope="col">
@@ -127,7 +128,7 @@ async function getDocumentReferences(): Promise<DocumentReference[]> {
                                         </th>
                                     </tr>
                                 </thead>
-                                <tbody class="divide-y divide-y divide-gray-600 bg-base-700 text-neutral">
+                                <tbody class="divide-y divide-gray-600 bg-base-700 text-neutral">
                                     <tr v-for="reference in references" :key="reference.id">
                                         <td class="px-6 py-4 text-sm">
                                             <div class="flex">

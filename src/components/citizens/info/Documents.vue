@@ -67,93 +67,86 @@ watch(offset, async () => refresh());
                             <!-- Relations list (smallest breakpoint only) -->
                             <div v-if="data?.relations.length > 0" class="sm:hidden text-neutral">
                                 <ul role="list" class="mt-2 overflow-hidden divide-y divide-gray-600 rounded-lg sm:hidden">
-                                    <li v-for="relation in data?.relations" :key="relation.id">
-                                        <a href="#" class="block px-4 py-4 bg-base-800 hover:bg-base-700">
-                                            <span class="flex items-center space-x-4">
-                                                <span class="flex flex-1 space-x-2 truncate">
-                                                    <ArrowExpandIcon
-                                                        class="flex-shrink-0 w-5 h-5 text-gray-400"
-                                                        aria-hidden="true"
-                                                    />
-                                                    <span class="flex flex-col text-sm truncate">
-                                                        <span>
-                                                            <NuxtLink
-                                                                :to="{
-                                                                    name: 'documents-id',
-                                                                    params: {
-                                                                        id: relation.documentId,
-                                                                    },
-                                                                }"
-                                                            >
-                                                                {{ relation.document?.title
-                                                                }}<span v-if="relation.document?.category">
-                                                                    (Category:
-                                                                    {{ relation.document?.category?.name }})</span
-                                                                >
-                                                            </NuxtLink>
-                                                        </span>
-                                                        <span>
-                                                            <div
-                                                                v-if="relation.document?.closed"
-                                                                class="flex flex-row flex-initial gap-1 px-2 py-1 rounded-full bg-error-100"
-                                                            >
-                                                                <LockIcon class="w-5 h-5 text-error-400" aria-hidden="true" />
-                                                                <span class="text-sm font-medium text-error-700">
-                                                                    {{ $t('common.close', 2) }}
-                                                                </span>
-                                                            </div>
-                                                            <div
-                                                                v-else
-                                                                class="flex flex-row flex-initial gap-1 px-2 py-1 rounded-full bg-success-100"
-                                                            >
-                                                                <LockOpenVariantIcon
-                                                                    class="w-5 h-5 text-success-500"
-                                                                    aria-hidden="true"
-                                                                />
-                                                                <span class="text-sm font-medium text-success-700">
-                                                                    {{ $t('common.open', 2) }}
-                                                                </span>
-                                                            </div>
-                                                        </span>
-                                                        <span>
-                                                            <NuxtLink
-                                                                :to="{
-                                                                    name: 'citizens-id',
-                                                                    params: {
-                                                                        id: relation.targetUserId,
-                                                                    },
-                                                                }"
-                                                                class="inline-flex space-x-2 text-sm truncate group"
-                                                            >
-                                                                {{
-                                                                    relation.targetUser?.firstname +
-                                                                    ', ' +
-                                                                    relation.targetUser?.lastname
-                                                                }}
-                                                            </NuxtLink>
-                                                        </span>
-                                                        <span class="font-medium">
-                                                            {{
-                                                                $t(
-                                                                    `enums.docstore.DocRelation.${
-                                                                        DocRelation[relation.relation]
-                                                                    }`,
-                                                                )
-                                                            }}
-                                                        </span>
-                                                        <span class="truncate">
-                                                            {{ relation.sourceUser?.firstname }},
-                                                            {{ relation.sourceUser?.lastname }}
-                                                        </span>
-                                                        <Time :value="relation.createdAt" :ago="true" />
-                                                    </span>
-                                                </span>
-                                                <ChevronRightIcon
-                                                    class="flex-shrink-0 w-5 h-5 text-base-200"
+                                    <li
+                                        v-for="relation in data?.relations"
+                                        :key="relation.id"
+                                        class="block px-4 py-4 bg-base-800 hover:bg-base-700"
+                                    >
+                                        <span class="flex items-center space-x-4">
+                                            <span class="flex flex-1 space-x-2 truncate">
+                                                <ArrowExpandIcon
+                                                    class="flex-shrink-0 w-5 h-5 text-gray-400"
                                                     aria-hidden="true"
                                                 />
+                                                <span class="flex flex-col text-sm truncate">
+                                                    <span>
+                                                        <NuxtLink
+                                                            :to="{
+                                                                name: 'documents-id',
+                                                                params: {
+                                                                    id: relation.documentId,
+                                                                },
+                                                            }"
+                                                        >
+                                                            {{ relation.document?.title
+                                                            }}<span v-if="relation.document?.category">
+                                                                (Category:
+                                                                {{ relation.document?.category?.name }})</span
+                                                            >
+                                                        </NuxtLink>
+                                                    </span>
+                                                    <span>
+                                                        <div
+                                                            v-if="relation.document?.closed"
+                                                            class="flex flex-row flex-initial gap-1 px-2 py-1 rounded-full bg-error-100"
+                                                        >
+                                                            <LockIcon class="w-5 h-5 text-error-400" aria-hidden="true" />
+                                                            <span class="text-sm font-medium text-error-700">
+                                                                {{ $t('common.close', 2) }}
+                                                            </span>
+                                                        </div>
+                                                        <div
+                                                            v-else
+                                                            class="flex flex-row flex-initial gap-1 px-2 py-1 rounded-full bg-success-100"
+                                                        >
+                                                            <LockOpenVariantIcon
+                                                                class="w-5 h-5 text-success-500"
+                                                                aria-hidden="true"
+                                                            />
+                                                            <span class="text-sm font-medium text-success-700">
+                                                                {{ $t('common.open', 2) }}
+                                                            </span>
+                                                        </div>
+                                                    </span>
+                                                    <span>
+                                                        <NuxtLink
+                                                            :to="{
+                                                                name: 'citizens-id',
+                                                                params: {
+                                                                    id: relation.targetUserId,
+                                                                },
+                                                            }"
+                                                            class="inline-flex space-x-2 text-sm truncate group"
+                                                        >
+                                                            {{
+                                                                relation.targetUser?.firstname +
+                                                                ', ' +
+                                                                relation.targetUser?.lastname
+                                                            }}
+                                                        </NuxtLink>
+                                                    </span>
+                                                    <span class="font-medium">
+                                                        {{ $t(`enums.docstore.DocRelation.${DocRelation[relation.relation]}`) }}
+                                                    </span>
+                                                    <span class="truncate">
+                                                        {{ relation.sourceUser?.firstname }},
+                                                        {{ relation.sourceUser?.lastname }}
+                                                    </span>
+                                                    <Time :value="relation.createdAt" :ago="true" />
+                                                </span>
                                             </span>
-                                        </a>
+                                            <ChevronRightIcon class="flex-shrink-0 w-5 h-5 text-base-200" aria-hidden="true" />
+                                        </span>
                                     </li>
                                 </ul>
 

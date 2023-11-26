@@ -1,6 +1,6 @@
 <script lang="ts" setup>
 import { RpcError } from '@protobuf-ts/runtime-rpc';
-import { AccountMultipleIcon, ArrowCollapseIcon, ChevronRightIcon } from 'mdi-vue3';
+import { AccountMultipleIcon, ArrowCollapseIcon } from 'mdi-vue3';
 import CitizenInfoPopover from '~/components/partials/citizens/CitizenInfoPopover.vue';
 import DataNoDataBlock from '~/components/partials/data/DataNoDataBlock.vue';
 import Time from '~/components/partials/elements/Time.vue';
@@ -58,45 +58,42 @@ async function getDocumentRelations(): Promise<DocumentRelation[]> {
             <!-- Relations list (smallest breakpoint only) -->
             <div class="sm:hidden text-neutral">
                 <ul role="list" class="mt-2 overflow-hidden divide-y divide-gray-600 rounded-lg sm:hidden">
-                    <li v-for="relation in relations" :key="relation.id">
-                        <a href="#" class="block px-4 py-4 bg-base-800 hover:bg-base-700">
-                            <span class="flex items-center space-x-4">
-                                <span class="flex flex-1 space-x-2 truncate">
-                                    <ArrowCollapseIcon class="flex-shrink-0 w-5 h-5 text-gray-400" aria-hidden="true" />
-                                    <span class="flex flex-col text-sm truncate">
-                                        <span v-if="showDocument">
-                                            <NuxtLink
-                                                :to="{
-                                                    name: 'documents-id',
-                                                    params: {
-                                                        id: relation.documentId,
-                                                    },
-                                                }"
+                    <li v-for="relation in relations" :key="relation.id" class="block px-4 py-4 bg-base-800 hover:bg-base-700">
+                        <span class="flex items-center space-x-4">
+                            <span class="flex flex-1 space-x-2 truncate">
+                                <ArrowCollapseIcon class="flex-shrink-0 w-5 h-5 text-gray-400" aria-hidden="true" />
+                                <span class="flex flex-col text-sm truncate">
+                                    <span v-if="showDocument">
+                                        <NuxtLink
+                                            :to="{
+                                                name: 'documents-id',
+                                                params: {
+                                                    id: relation.documentId,
+                                                },
+                                            }"
+                                        >
+                                            <span
+                                                v-if="relation.document?.category"
+                                                class="inline-flex items-center rounded-md bg-primary-400/10 px-2 py-1 text-xs font-medium text-primary-400 ring-1 ring-inset ring-primary-400/30 mr-1"
                                             >
-                                                <span
-                                                    v-if="relation.document?.category"
-                                                    class="inline-flex items-center rounded-md bg-primary-400/10 px-2 py-1 text-xs font-medium text-primary-400 ring-1 ring-inset ring-primary-400/30 mr-1"
-                                                >
-                                                    {{ relation.document?.category?.name }}
-                                                </span>
-                                                {{ relation.document?.title }}
-                                            </NuxtLink>
-                                        </span>
-                                        <span>
-                                            <CitizenInfoPopover :user="relation.targetUser" />
-                                        </span>
-                                        <span class="font-medium">
-                                            {{ $t(`enums.docstore.DocRelation.${DocRelation[relation.relation]}`) }}
-                                        </span>
-                                        <span v-if="showSource" class="truncate">
-                                            <CitizenInfoPopover :user="relation.sourceUser" />
-                                        </span>
-                                        <Time :value="relation.createdAt" />
+                                                {{ relation.document?.category?.name }}
+                                            </span>
+                                            {{ relation.document?.title }}
+                                        </NuxtLink>
                                     </span>
+                                    <span>
+                                        <CitizenInfoPopover :user="relation.targetUser" />
+                                    </span>
+                                    <span class="font-medium">
+                                        {{ $t(`enums.docstore.DocRelation.${DocRelation[relation.relation]}`) }}
+                                    </span>
+                                    <span v-if="showSource" class="truncate">
+                                        <CitizenInfoPopover :user="relation.sourceUser" />
+                                    </span>
+                                    <Time :value="relation.createdAt" />
                                 </span>
-                                <ChevronRightIcon class="flex-shrink-0 w-5 h-5 text-base-200" aria-hidden="true" />
                             </span>
-                        </a>
+                        </span>
                     </li>
                 </ul>
             </div>
@@ -106,7 +103,9 @@ async function getDocumentRelations(): Promise<DocumentRelation[]> {
                 <div>
                     <div class="flex flex-col mt-2">
                         <div class="min-w-full overflow-hidden overflow-x-auto align-middle sm:rounded-lg">
-                            <table class="min-w-full bg-base-600 text-neutral divide-y divide-base-600">
+                            <table
+                                class="min-w-full bg-base-600 text-neutral divide-y divide-base-600 border-2 border-gray-600"
+                            >
                                 <thead>
                                     <tr>
                                         <th v-if="showDocument" class="px-6 py-3 text-sm font-semibold text-left" scope="col">
@@ -130,7 +129,7 @@ async function getDocumentRelations(): Promise<DocumentRelation[]> {
                                         </th>
                                     </tr>
                                 </thead>
-                                <tbody class="divide-y divide-y divide-gray-600 bg-base-700 text-neutral">
+                                <tbody class="divide-y divide-gray-600 bg-base-700 text-neutral">
                                     <tr v-for="relation in relations" :key="relation.id">
                                         <td v-if="showDocument" class="px-6 py-4 text-sm">
                                             <NuxtLink
