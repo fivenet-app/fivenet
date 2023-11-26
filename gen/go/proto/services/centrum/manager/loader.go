@@ -162,6 +162,7 @@ func (s *Manager) LoadUnitsFromDB(ctx context.Context, id uint64) error {
 			tUnits.Initials,
 			tUnits.Color,
 			tUnits.Description,
+			tUnits.Attributes,
 			tUnitStatus.ID,
 			tUnitStatus.CreatedAt,
 			tUnitStatus.UnitID,
