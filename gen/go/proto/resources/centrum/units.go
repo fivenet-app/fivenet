@@ -59,6 +59,14 @@ func (x *Unit) Merge(in *Unit) *Unit {
 		x.Users = in.Users
 	}
 
+	if in.Attributes != nil {
+		if x.Attributes == nil {
+			x.Attributes = in.Attributes
+		} else {
+			x.Attributes.List = in.Attributes.List
+		}
+	}
+
 	return x
 }
 

@@ -40,7 +40,6 @@ interface FormData {
 }
 
 const availableAttributes: string[] = ['static'];
-
 const selectedAttributes = ref<string[]>([]);
 
 const color = ref('#000000');
