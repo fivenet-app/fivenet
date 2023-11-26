@@ -67,6 +67,7 @@ async function createOrUpdateUnit(values: FormData): Promise<void> {
         } else {
             emit('updated', response.unit!);
         }
+
         emit('close');
     } catch (e) {
         $grpc.handleError(e as RpcError);

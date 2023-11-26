@@ -70,9 +70,9 @@ const open = ref(false);
                     {{ $t(`components.centrum.units.attributes.${attribute}`) }}
                 </span>
             </template>
-            <span v-else>
+            <template v-else>
                 {{ $t('common.none_selected', [$t('common.attributes', 2)]) }}
-            </span>
+            </template>
         </td>
         <td class="whitespace-nowrap py-2 pl-4 pr-3 text-sm font-medium text-neutral sm:pl-0">
             <ColorInput v-model="color" disabled format="hex" class="h-6" />
