@@ -46,7 +46,8 @@ func (p *Coords[V]) Add(point orb.Pointer) error {
 	p.mutex.Lock()
 	defer p.mutex.Unlock()
 
-	return p.tree.Add(point)
+	err := p.tree.Add(point)
+	return err
 }
 
 func (p *Coords[V]) Remove(point orb.Pointer, fn quadtree.FilterFunc) bool {

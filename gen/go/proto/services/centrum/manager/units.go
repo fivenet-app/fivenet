@@ -38,7 +38,7 @@ func (s *Manager) UpdateUnitStatus(ctx context.Context, job string, unitId uint6
 		return nil, nil
 	}
 
-	if unit.Attributes.Has(centrum.UnitAttributeStatic) {
+	if unit.Attributes != nil && unit.Attributes.Has(centrum.UnitAttributeStatic) {
 		// Only allow a static unit to be set busy, on break or unavailable
 		if in.Status != centrum.StatusUnit_STATUS_UNIT_BUSY &&
 			in.Status != centrum.StatusUnit_STATUS_UNIT_ON_BREAK &&

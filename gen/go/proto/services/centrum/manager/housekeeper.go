@@ -534,7 +534,7 @@ func (s *Housekeeper) cleanupUnitStatus(ctx context.Context) error {
 		for _, unit := range units {
 			// Either unit has users but is static and in a wrong status
 			if len(unit.Users) > 0 {
-				if !unit.Attributes.Has(centrum.UnitAttributeStatic) {
+				if unit.Attributes != nil && !unit.Attributes.Has(centrum.UnitAttributeStatic) {
 					continue
 				}
 

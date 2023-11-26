@@ -361,15 +361,6 @@ func (s *Manager) LoadDispatchesFromDB(ctx context.Context, id uint64) error {
 			}
 		}
 
-		// Check if the dispatch already exists and if the location needs to be updated
-		if dsp, err := s.GetDispatch(dsps[i].Job, dsps[i].Id); err == nil && dsp != nil {
-			if dsp.X != dsps[i].X || dsp.Y != dsps[i].Y {
-				s.State.GetDispatchLocations(dsp.Job).Remove(dsp, func(p orb.Pointer) bool {
-					return p.(*centrum.Dispatch).Id == dsp.Id
-				})
-			}
-		}
-
 		if err := s.State.UpdateDispatch(ctx, dsps[i].Job, dsps[i].Id, dsps[i]); err != nil {
 			return err
 		}
