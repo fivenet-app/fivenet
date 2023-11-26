@@ -56,7 +56,7 @@ async function createOrUpdateUnit(values: FormData): Promise<void> {
                 color: color.value.replaceAll('#', ''),
                 description: values.description,
                 attributes: {
-                    list: [],
+                    list: selectedAttributes.value,
                 },
                 users: [],
             },
