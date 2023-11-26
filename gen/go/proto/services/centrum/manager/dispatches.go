@@ -335,24 +335,6 @@ func (s *Manager) UpdateDispatchAssignments(ctx context.Context, job string, use
 			}
 		}
 
-		// Dispatch has not units assigned anymore
-		if len(dsp.Units) == 0 {
-			// Check dispatch status to not be completed/archived, etc.
-			if dsp.Status != nil && !centrumutils.IsStatusDispatchComplete(dsp.Status.Status) {
-				if _, err := s.UpdateDispatchStatus(ctx, job, dspId, &centrum.DispatchStatus{
-					CreatedAt:  timestamp.Now(),
-					DispatchId: dsp.Id,
-					Status:     centrum.StatusDispatch_STATUS_DISPATCH_UNASSIGNED,
-					UserId:     userId,
-					X:          x,
-					Y:          y,
-					Postal:     postal,
-				}); err != nil {
-					return nil, err
-				}
-			}
-		}
-
 		return dsp, nil
 	}); err != nil {
 		return err
@@ -361,6 +343,24 @@ func (s *Manager) UpdateDispatchAssignments(ctx context.Context, job string, use
 	dsp, err := s.GetDispatch(job, dspId)
 	if err != nil {
 		return err
+	}
+
+	// Dispatch has no units assigned anymore
+	if len(dsp.Units) == 0 {
+		// Check dispatch status to not be completed/archived, etc.
+		if dsp.Status != nil && !centrumutils.IsStatusDispatchComplete(dsp.Status.Status) {
+			if _, err := s.UpdateDispatchStatus(ctx, job, dspId, &centrum.DispatchStatus{
+				CreatedAt:  timestamp.Now(),
+				DispatchId: dsp.Id,
+				Status:     centrum.StatusDispatch_STATUS_DISPATCH_UNASSIGNED,
+				UserId:     userId,
+				X:          x,
+				Y:          y,
+				Postal:     postal,
+			}); err != nil {
+				return err
+			}
+		}
 	}
 
 	data, err := proto.Marshal(dsp)

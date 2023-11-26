@@ -488,6 +488,21 @@ func (s *Housekeeper) removeDispatchesFromEmptyUnits(ctx context.Context) error 
 		})
 
 		for _, dsp := range dsps {
+			// Make sure unassigned dispatch has the unassigned status
+			if len(dsp.Units) == 0 && dsp.Status != nil && !centrumutils.IsStatusDispatchUnassigned(dsp.Status.Status) {
+				s.logger.Debug("updating dispatch status to unassigned because it has no assignments",
+					zap.String("job", job), zap.Uint64("dispatch_id", dsp.Id))
+				if _, err := s.UpdateDispatchStatus(ctx, dsp.Job, dsp.Id, &centrum.DispatchStatus{
+					CreatedAt:  timestamp.Now(),
+					DispatchId: dsp.Id,
+					Status:     centrum.StatusDispatch_STATUS_DISPATCH_UNASSIGNED,
+				}); err != nil {
+					return err
+				}
+
+				continue
+			}
+
 			for i := len(dsp.Units) - 1; i >= 0; i-- {
 				if i > (len(dsp.Units) - 1) {
 					break
