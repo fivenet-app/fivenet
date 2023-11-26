@@ -183,6 +183,7 @@ func (s *Server) CreateDispatch(ctx context.Context, req *CreateDispatchRequest)
 	req.Dispatch.Job = userInfo.Job
 	req.Dispatch.CreatorId = &userInfo.UserId
 
+	req.Dispatch.CreatedAt = timestamp.Now()
 	dsp, err := s.state.CreateDispatch(ctx, req.Dispatch)
 	if err != nil {
 		return nil, errorscentrum.ErrFailedQuery

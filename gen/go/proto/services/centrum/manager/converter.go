@@ -7,6 +7,7 @@ import (
 	"time"
 
 	"github.com/galexrt/fivenet/gen/go/proto/resources/centrum"
+	"github.com/galexrt/fivenet/gen/go/proto/resources/timestamp"
 	"github.com/galexrt/fivenet/pkg/utils"
 	"github.com/galexrt/fivenet/query/fivenet/model"
 	"github.com/galexrt/fivenet/query/fivenet/table"
@@ -101,12 +102,14 @@ func (s *Housekeeper) convertPhoneJobMsgToDispatch() error {
 		}
 
 		dsp := &centrum.Dispatch{
-			Job:       job,
-			Message:   message,
-			X:         x,
-			Y:         y,
-			Anon:      anon,
-			CreatorId: &msg.UserId,
+			CreatedAt:  timestamp.Now(),
+			Attributes: &centrum.Attributes{},
+			Job:        job,
+			Message:    message,
+			X:          x,
+			Y:          y,
+			Anon:       anon,
+			CreatorId:  &msg.UserId,
 		}
 
 		if postal := s.postals.Closest(x, y); postal != nil {
