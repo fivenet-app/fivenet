@@ -27,11 +27,11 @@ func (s *Server) ListUserDocuments(ctx context.Context, req *ListUserDocumentsRe
 			tDocRel.SourceUserID.EQ(jet.Int32(req.UserId)),
 			tDocRel.TargetUserID.EQ(jet.Int32(req.UserId)),
 		),
-		tDocs.DeletedAt.IS_NULL(),
+		tDocument.DeletedAt.IS_NULL(),
 		jet.OR(
 			jet.OR(
-				tDocs.Public.IS_TRUE(),
-				tDocs.CreatorID.EQ(jet.Int32(userInfo.UserId)),
+				tDocument.Public.IS_TRUE(),
+				tDocument.CreatorID.EQ(jet.Int32(userInfo.UserId)),
 			),
 			jet.OR(
 				jet.AND(
@@ -53,14 +53,14 @@ func (s *Server) ListUserDocuments(ctx context.Context, req *ListUserDocumentsRe
 		).
 		FROM(
 			tDocRel.
-				INNER_JOIN(tDocs,
-					tDocs.ID.EQ(tDocRel.DocumentID),
+				INNER_JOIN(tDocument,
+					tDocument.ID.EQ(tDocRel.DocumentID),
 				).
 				LEFT_JOIN(tDUserAccess,
-					tDUserAccess.DocumentID.EQ(tDocs.ID).
+					tDUserAccess.DocumentID.EQ(tDocument.ID).
 						AND(tDUserAccess.UserID.EQ(jet.Int32(userInfo.UserId)))).
 				LEFT_JOIN(tDJobAccess,
-					tDJobAccess.DocumentID.EQ(tDocs.ID).
+					tDJobAccess.DocumentID.EQ(tDocument.ID).
 						AND(tDJobAccess.Job.EQ(jet.String(userInfo.Job))).
 						AND(tDJobAccess.MinimumGrade.LT_EQ(jet.Int32(userInfo.JobGrade))),
 				),
@@ -87,14 +87,14 @@ func (s *Server) ListUserDocuments(ctx context.Context, req *ListUserDocumentsRe
 		).
 		FROM(
 			tDocRel.
-				INNER_JOIN(tDocs,
-					tDocs.ID.EQ(tDocRel.DocumentID),
+				INNER_JOIN(tDocument,
+					tDocument.ID.EQ(tDocRel.DocumentID),
 				).
 				LEFT_JOIN(tDUserAccess,
-					tDUserAccess.DocumentID.EQ(tDocs.ID).
+					tDUserAccess.DocumentID.EQ(tDocument.ID).
 						AND(tDUserAccess.UserID.EQ(jet.Int32(userInfo.UserId)))).
 				LEFT_JOIN(tDJobAccess,
-					tDJobAccess.DocumentID.EQ(tDocs.ID).
+					tDJobAccess.DocumentID.EQ(tDocument.ID).
 						AND(tDJobAccess.Job.EQ(jet.String(userInfo.Job))).
 						AND(tDJobAccess.MinimumGrade.LT_EQ(jet.Int32(userInfo.JobGrade))),
 				),
@@ -132,14 +132,14 @@ func (s *Server) ListUserDocuments(ctx context.Context, req *ListUserDocumentsRe
 			tDocRel.DeletedAt,
 			tDocRel.DocumentID,
 			tDocRel.SourceUserID,
-			tDocs.ID,
-			tDocs.CreatedAt,
-			tDocs.UpdatedAt,
-			tDocs.CategoryID,
-			tDocs.CreatorID,
-			tDocs.State,
-			tDocs.Closed,
-			tDocs.Title,
+			tDocument.ID,
+			tDocument.CreatedAt,
+			tDocument.UpdatedAt,
+			tDocument.CategoryID,
+			tDocument.CreatorID,
+			tDocument.State,
+			tDocument.Closed,
+			tDocument.Title,
 			tDCategory.ID,
 			tDCategory.Name,
 			tDCategory.Description,
@@ -161,14 +161,14 @@ func (s *Server) ListUserDocuments(ctx context.Context, req *ListUserDocumentsRe
 		).
 		FROM(
 			tDocRel.
-				LEFT_JOIN(tDocs,
-					tDocRel.DocumentID.EQ(tDocs.ID),
+				LEFT_JOIN(tDocument,
+					tDocRel.DocumentID.EQ(tDocument.ID),
 				).
 				LEFT_JOIN(tDCategory,
-					tDocs.CategoryID.EQ(tDCategory.ID),
+					tDocument.CategoryID.EQ(tDCategory.ID),
 				).
 				LEFT_JOIN(tDCreator,
-					tDocs.CreatorID.EQ(tDCreator.ID),
+					tDocument.CreatorID.EQ(tDCreator.ID),
 				).
 				LEFT_JOIN(tASource,
 					tASource.ID.EQ(tDocRel.SourceUserID),
@@ -176,14 +176,14 @@ func (s *Server) ListUserDocuments(ctx context.Context, req *ListUserDocumentsRe
 		).
 		WHERE(
 			jet.AND(
-				tDocs.DeletedAt.IS_NULL(),
+				tDocument.DeletedAt.IS_NULL(),
 				tDocRel.ID.IN(rIds...),
 			),
 		).
 		ORDER_BY(
 			tDocRel.CreatedAt.DESC(),
 		).
-		GROUP_BY(tDocs.ID).
+		GROUP_BY(tDocument.ID).
 		LIMIT(limit)
 
 	if err := stmt.QueryContext(ctx, s.db, &resp.Relations); err != nil {

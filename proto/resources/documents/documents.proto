@@ -40,10 +40,11 @@ message Document {
   }]; // @gotags: alias:"data"
   optional int32 creator_id = 11; // @gotags: alias:"creator_id"
   optional resources.users.UserShort creator = 12; // @gotags: alias:"creator"
+  string creator_job = 13; // @gotags: alias:"creator_job"
   // @sanitize
-  string state = 13 [(validate.rules).string.max_len = 24]; // @gotags: alias:"state"
-  bool closed = 14;
-  bool public = 15;
+  string state = 14 [(validate.rules).string.max_len = 24]; // @gotags: alias:"state"
+  bool closed = 15;
+  bool public = 16;
 }
 
 message DocumentShort {
@@ -60,10 +61,11 @@ message DocumentShort {
   string content = 9 [(validate.rules).string = {max_bytes: 1024}]; // @gotags: alias:"content"
   optional int32 creator_id = 10; // @gotags: alias:"creator_id"
   optional resources.users.UserShort creator = 11; // @gotags: alias:"creator"
+  string creator_job = 12; // @gotags: alias:"creator_job"
   // @sanitize
-  string state = 12 [(validate.rules).string.max_len = 24]; // @gotags: alias:"state"
-  bool closed = 13;
-  bool public = 14;
+  string state = 13 [(validate.rules).string.max_len = 24]; // @gotags: alias:"state"
+  bool closed = 14;
+  bool public = 15;
 }
 
 message DocumentAccess {

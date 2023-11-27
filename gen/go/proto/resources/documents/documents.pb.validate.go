@@ -143,6 +143,8 @@ func (m *Document) validate(all bool) error {
 		errors = append(errors, err)
 	}
 
+	// no validation rules for CreatorJob
+
 	if utf8.RuneCountInString(m.GetState()) > 24 {
 		err := DocumentValidationError{
 			field:  "State",
@@ -475,6 +477,8 @@ func (m *DocumentShort) validate(all bool) error {
 		}
 		errors = append(errors, err)
 	}
+
+	// no validation rules for CreatorJob
 
 	if utf8.RuneCountInString(m.GetState()) > 24 {
 		err := DocumentShortValidationError{

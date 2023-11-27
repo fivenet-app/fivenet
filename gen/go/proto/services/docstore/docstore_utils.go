@@ -15,16 +15,16 @@ import (
 )
 
 func (s *Server) listDocumentsQuery(where jet.BoolExpression, onlyColumns jet.ProjectionList, contentLength int, userInfo *userinfo.UserInfo) jet.SelectStatement {
-	tDocs := tDocs.AS("documentshort")
+	tDocument := tDocument.AS("documentshort")
 	wheres := []jet.BoolExpression{}
 	if !userInfo.SuperUser {
 		wheres = []jet.BoolExpression{
 			jet.AND(
-				tDocs.DeletedAt.IS_NULL(),
+				tDocument.DeletedAt.IS_NULL(),
 				jet.OR(
 					jet.OR(
-						tDocs.Public.IS_TRUE(),
-						tDocs.CreatorID.EQ(jet.Int32(userInfo.UserId)),
+						tDocument.Public.IS_TRUE(),
+						tDocument.CreatorID.EQ(jet.Int32(userInfo.UserId)),
 					),
 					jet.OR(
 						jet.AND(
@@ -48,25 +48,25 @@ func (s *Server) listDocumentsQuery(where jet.BoolExpression, onlyColumns jet.Pr
 
 	var q jet.SelectStatement
 	if onlyColumns != nil {
-		q = tDocs.
+		q = tDocument.
 			SELECT(
 				onlyColumns,
 			)
 	} else {
 		columns := jet.ProjectionList{
-			tDocs.ID,
-			tDocs.CreatedAt,
-			tDocs.UpdatedAt,
-			tDocs.DeletedAt,
-			tDocs.CategoryID,
+			tDocument.ID,
+			tDocument.CreatedAt,
+			tDocument.UpdatedAt,
+			tDocument.DeletedAt,
+			tDocument.CategoryID,
 			tDCategory.ID,
 			tDCategory.Name,
 			tDCategory.Description,
 			tDCategory.Job,
-			tDocs.Title,
-			tDocs.ContentType,
-			tDocs.Summary.AS("documentshort.content"),
-			tDocs.CreatorID,
+			tDocument.Title,
+			tDocument.ContentType,
+			tDocument.Summary.AS("documentshort.content"),
+			tDocument.CreatorID,
 			tCreator.ID,
 			tCreator.Identifier,
 			tCreator.Job,
@@ -74,14 +74,14 @@ func (s *Server) listDocumentsQuery(where jet.BoolExpression, onlyColumns jet.Pr
 			tCreator.Firstname,
 			tCreator.Lastname,
 			tCreator.Dateofbirth,
-			tDocs.CreatorJob,
-			tDocs.State,
-			tDocs.Closed,
-			tDocs.Public,
+			tDocument.CreatorJob,
+			tDocument.State,
+			tDocument.Closed,
+			tDocument.Public,
 		}
 
 		if userInfo.SuperUser {
-			columns = append(columns, tDocs.DeletedAt)
+			columns = append(columns, tDocument.DeletedAt)
 		}
 
 		// Field Permission Check
@@ -95,33 +95,33 @@ func (s *Server) listDocumentsQuery(where jet.BoolExpression, onlyColumns jet.Pr
 			columns = append(columns, tCreator.PhoneNumber)
 		}
 
-		q = tDocs.SELECT(columns[0], columns[1:])
+		q = tDocument.SELECT(columns[0], columns[1:])
 	}
 
 	var tables jet.ReadableTable
 	if !userInfo.SuperUser {
-		tables = tDocs.
+		tables = tDocument.
 			LEFT_JOIN(tDUserAccess,
-				tDUserAccess.DocumentID.EQ(tDocs.ID).
+				tDUserAccess.DocumentID.EQ(tDocument.ID).
 					AND(tDUserAccess.UserID.EQ(jet.Int32(userInfo.UserId)))).
 			LEFT_JOIN(tDJobAccess,
-				tDJobAccess.DocumentID.EQ(tDocs.ID).
+				tDJobAccess.DocumentID.EQ(tDocument.ID).
 					AND(tDJobAccess.Job.EQ(jet.String(userInfo.Job))).
 					AND(tDJobAccess.MinimumGrade.LT_EQ(jet.Int32(userInfo.JobGrade))),
 			).
 			LEFT_JOIN(tDCategory,
-				tDocs.CategoryID.EQ(tDCategory.ID),
+				tDocument.CategoryID.EQ(tDCategory.ID),
 			).
 			LEFT_JOIN(tCreator,
-				tDocs.CreatorID.EQ(tCreator.ID),
+				tDocument.CreatorID.EQ(tCreator.ID),
 			)
 	} else {
-		tables = tDocs.
+		tables = tDocument.
 			LEFT_JOIN(tDCategory,
-				tDocs.CategoryID.EQ(tDCategory.ID),
+				tDocument.CategoryID.EQ(tDCategory.ID),
 			).
 			LEFT_JOIN(tCreator,
-				tDocs.CreatorID.EQ(tCreator.ID),
+				tDocument.CreatorID.EQ(tCreator.ID),
 			)
 	}
 
@@ -133,8 +133,8 @@ func (s *Server) listDocumentsQuery(where jet.BoolExpression, onlyColumns jet.Pr
 			),
 		).
 		ORDER_BY(
-			tDocs.CreatedAt.DESC(),
-			tDocs.UpdatedAt.DESC(),
+			tDocument.CreatedAt.DESC(),
+			tDocument.UpdatedAt.DESC(),
 		)
 }
 
@@ -143,11 +143,11 @@ func (s *Server) getDocumentsQuery(where jet.BoolExpression, onlyColumns jet.Pro
 	if !userInfo.SuperUser {
 		wheres = []jet.BoolExpression{
 			jet.AND(
-				tDocs.DeletedAt.IS_NULL(),
+				tDocument.DeletedAt.IS_NULL(),
 				jet.OR(
 					jet.OR(
-						tDocs.Public.IS_TRUE(),
-						tDocs.CreatorID.EQ(jet.Int32(userInfo.UserId)),
+						tDocument.Public.IS_TRUE(),
+						tDocument.CreatorID.EQ(jet.Int32(userInfo.UserId)),
 					),
 					jet.OR(
 						jet.AND(
@@ -171,26 +171,26 @@ func (s *Server) getDocumentsQuery(where jet.BoolExpression, onlyColumns jet.Pro
 
 	var q jet.SelectStatement
 	if onlyColumns != nil {
-		q = tDocs.
+		q = tDocument.
 			SELECT(
 				onlyColumns,
 			)
 	} else {
 		columns := jet.ProjectionList{
-			tDocs.ID,
-			tDocs.CreatedAt,
-			tDocs.UpdatedAt,
-			tDocs.DeletedAt,
-			tDocs.CategoryID,
+			tDocument.ID,
+			tDocument.CreatedAt,
+			tDocument.UpdatedAt,
+			tDocument.DeletedAt,
+			tDocument.CategoryID,
 			tDCategory.ID,
 			tDCategory.Name,
 			tDCategory.Description,
 			tDCategory.Job,
-			tDocs.Title,
-			tDocs.ContentType,
-			tDocs.Data,
-			tDocs.Content,
-			tDocs.CreatorID,
+			tDocument.Title,
+			tDocument.ContentType,
+			tDocument.Data,
+			tDocument.Content,
+			tDocument.CreatorID,
 			tCreator.ID,
 			tCreator.Identifier,
 			tCreator.Job,
@@ -198,14 +198,14 @@ func (s *Server) getDocumentsQuery(where jet.BoolExpression, onlyColumns jet.Pro
 			tCreator.Firstname,
 			tCreator.Lastname,
 			tCreator.Dateofbirth,
-			tDocs.CreatorJob,
-			tDocs.State,
-			tDocs.Closed,
-			tDocs.Public,
+			tDocument.CreatorJob,
+			tDocument.State,
+			tDocument.Closed,
+			tDocument.Public,
 		}
 
 		if userInfo.SuperUser {
-			columns = append(columns, tDocs.DeletedAt)
+			columns = append(columns, tDocument.DeletedAt)
 		}
 
 		// Field Permission Check
@@ -219,33 +219,33 @@ func (s *Server) getDocumentsQuery(where jet.BoolExpression, onlyColumns jet.Pro
 			columns = append(columns, tCreator.PhoneNumber)
 		}
 
-		q = tDocs.SELECT(columns[0], columns[1:])
+		q = tDocument.SELECT(columns[0], columns[1:])
 	}
 
 	var tables jet.ReadableTable
 	if !userInfo.SuperUser {
-		tables = tDocs.
+		tables = tDocument.
 			LEFT_JOIN(tDUserAccess,
-				tDUserAccess.DocumentID.EQ(tDocs.ID).
+				tDUserAccess.DocumentID.EQ(tDocument.ID).
 					AND(tDUserAccess.UserID.EQ(jet.Int32(userInfo.UserId)))).
 			LEFT_JOIN(tDJobAccess,
-				tDJobAccess.DocumentID.EQ(tDocs.ID).
+				tDJobAccess.DocumentID.EQ(tDocument.ID).
 					AND(tDJobAccess.Job.EQ(jet.String(userInfo.Job))).
 					AND(tDJobAccess.MinimumGrade.LT_EQ(jet.Int32(userInfo.JobGrade))),
 			).
 			LEFT_JOIN(tDCategory,
-				tDocs.CategoryID.EQ(tDCategory.ID),
+				tDocument.CategoryID.EQ(tDCategory.ID),
 			).
 			LEFT_JOIN(tCreator,
-				tDocs.CreatorID.EQ(tCreator.ID),
+				tDocument.CreatorID.EQ(tCreator.ID),
 			)
 	} else {
-		tables = tDocs.
+		tables = tDocument.
 			LEFT_JOIN(tDCategory,
-				tDocs.CategoryID.EQ(tDCategory.ID),
+				tDocument.CategoryID.EQ(tDCategory.ID),
 			).
 			LEFT_JOIN(tCreator,
-				tDocs.CreatorID.EQ(tCreator.ID),
+				tDocument.CreatorID.EQ(tCreator.ID),
 			)
 	}
 
@@ -255,8 +255,8 @@ func (s *Server) getDocumentsQuery(where jet.BoolExpression, onlyColumns jet.Pro
 			wheres...,
 		)).
 		ORDER_BY(
-			tDocs.CreatedAt.DESC(),
-			tDocs.UpdatedAt.DESC(),
+			tDocument.CreatedAt.DESC(),
+			tDocument.UpdatedAt.DESC(),
 		)
 }
 
@@ -286,10 +286,11 @@ func (s *Server) checkIfUserHasAccessToDocIDs(ctx context.Context, userInfo *use
 	}
 
 	condition := jet.AND(
-		tDocs.ID.IN(ids...),
-		tDocs.DeletedAt.IS_NULL(),
+		tDocument.ID.IN(ids...),
+		tDocument.DeletedAt.IS_NULL(),
 		jet.OR(
-			tDocs.CreatorID.EQ(jet.Int32(userInfo.UserId)),
+			tDocument.CreatorID.EQ(jet.Int32(userInfo.UserId)),
+			tDocument.CreatorJob.EQ(jet.String(userInfo.Job)),
 			jet.AND(
 				tDUserAccess.Access.IS_NOT_NULL(),
 				tDUserAccess.Access.GT_EQ(jet.Int32(int32(access))),
@@ -302,24 +303,24 @@ func (s *Server) checkIfUserHasAccessToDocIDs(ctx context.Context, userInfo *use
 		),
 	)
 
-	stmt := tDocs.
+	stmt := tDocument.
 		SELECT(
-			tDocs.ID,
+			tDocument.ID,
 		).
 		FROM(
-			tDocs.
+			tDocument.
 				LEFT_JOIN(tDUserAccess,
-					tDUserAccess.DocumentID.EQ(tDocs.ID).
+					tDUserAccess.DocumentID.EQ(tDocument.ID).
 						AND(tDUserAccess.UserID.EQ(jet.Int32(userInfo.UserId)))).
 				LEFT_JOIN(tDJobAccess,
-					tDJobAccess.DocumentID.EQ(tDocs.ID).
+					tDJobAccess.DocumentID.EQ(tDocument.ID).
 						AND(tDJobAccess.Job.EQ(jet.String(userInfo.Job))).
 						AND(tDJobAccess.MinimumGrade.LT_EQ(jet.Int32(userInfo.JobGrade))),
 				),
 		).
 		WHERE(condition).
-		GROUP_BY(tDocs.ID).
-		ORDER_BY(tDocs.ID.DESC(), tDJobAccess.MinimumGrade)
+		GROUP_BY(tDocument.ID).
+		ORDER_BY(tDocument.ID.DESC(), tDJobAccess.MinimumGrade)
 
 	var dest struct {
 		IDs []uint64 `alias:"document.id"`
@@ -333,12 +334,18 @@ func (s *Server) checkIfUserHasAccessToDocIDs(ctx context.Context, userInfo *use
 	return dest.IDs, nil
 }
 
-func (s *Server) checkIfHasAccess(levels []string, userInfo *userinfo.UserInfo, creator *users.UserShort) bool {
+func (s *Server) checkIfHasAccess(levels []string, userInfo *userinfo.UserInfo, creatorJob string, creator *users.UserShort) bool {
 	if userInfo.SuperUser {
 		return true
 	}
 
-	// If both have the same job, the rank checks are executed, otherwise it is "just another document"
+	// If the document creator job is not equal to the creator's current job, normal access checks need to be applied
+	// and not the rank attributes checks
+	if creatorJob != creator.Job {
+		return true
+	}
+
+	// If both have the same **current** job, the rank attributes checks are executed, otherwise it is "just another document"
 	// the user has access to
 	if creator.Job != userInfo.Job {
 		return true

@@ -292,7 +292,7 @@ type isDocActivityData_Data interface {
 }
 
 type DocActivityData_Updated struct {
-	Updated *DocUpdated `protobuf:"bytes,1,opt,name=updated,proto3,oneof"` // TODO
+	Updated *DocUpdated `protobuf:"bytes,1,opt,name=updated,proto3,oneof"`
 }
 
 func (*DocActivityData_Updated) isDocActivityData_Data() {}

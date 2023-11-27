@@ -18,8 +18,8 @@ import (
 )
 
 var (
-	ErrDocAccessEditDenied = status.Error(codes.PermissionDenied, "You don't have permission to edit this document's access!")
-	ErrDocAccessViewDenied = status.Error(codes.PermissionDenied, "You don't have permission to view this document's access!")
+	ErrDocAccessEditDenied = status.Error(codes.PermissionDenied, "errors.DocStoreService.ErrDocAccessEditDenied")
+	ErrDocAccessViewDenied = status.Error(codes.PermissionDenied, "errors.DocStoreService.ErrDocAccessViewDenied")
 )
 
 func (s *Server) GetDocumentAccess(ctx context.Context, req *GetDocumentAccessRequest) (*GetDocumentAccessResponse, error) {

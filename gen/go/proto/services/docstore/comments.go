@@ -296,7 +296,7 @@ func (s *Server) DeleteComment(ctx context.Context, req *DeleteCommentRequest) (
 	if fieldsAttr != nil {
 		fields = fieldsAttr.([]string)
 	}
-	if !s.checkIfHasAccess(fields, userInfo, comment.Creator) {
+	if !s.checkIfHasAccess(fields, userInfo, comment.Creator.Job, comment.Creator) {
 		return nil, ErrCommentDeleteDenied
 	}
 

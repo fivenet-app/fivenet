@@ -33,7 +33,7 @@ const (
 var (
 	tUsers       = table.Users
 	tCreator     = tUsers.AS("creator")
-	tDocs        = table.FivenetDocuments.AS("document")
+	tDocument    = table.FivenetDocuments.AS("document")
 	tDUserAccess = table.FivenetDocumentsUserAccess.AS("user_access")
 	tDJobAccess  = table.FivenetDocumentsJobAccess.AS("job_access")
 )
@@ -77,7 +77,7 @@ func NewServer(db *sql.DB, ps perms.Permissions, cache *mstlystcdata.Cache, enri
 func (s *Server) ListDocuments(ctx context.Context, req *ListDocumentsRequest) (*ListDocumentsResponse, error) {
 	userInfo := auth.MustGetUserInfoFromContext(ctx)
 
-	tDocs := tDocs.AS("documentshort")
+	tDocument := tDocument.AS("documentshort")
 	condition := jet.Bool(true)
 	if req.Search != nil && *req.Search != "" {
 		condition = jet.BoolExp(
@@ -92,7 +92,7 @@ func (s *Server) ListDocuments(ctx context.Context, req *ListDocumentsRequest) (
 		}
 
 		condition = condition.AND(
-			tDocs.CategoryID.IN(ids...),
+			tDocument.CategoryID.IN(ids...),
 		)
 	}
 	if len(req.CreatorIds) > 0 {
@@ -102,21 +102,21 @@ func (s *Server) ListDocuments(ctx context.Context, req *ListDocumentsRequest) (
 		}
 
 		condition = condition.AND(
-			tDocs.CreatorID.IN(ids...),
+			tDocument.CreatorID.IN(ids...),
 		)
 	}
 	if req.From != nil {
-		condition = condition.AND(tDocs.CreatedAt.GT_EQ(
+		condition = condition.AND(tDocument.CreatedAt.GT_EQ(
 			jet.TimestampT(req.From.AsTime()),
 		))
 	}
 	if req.To != nil {
-		condition = condition.AND(tDocs.CreatedAt.LT_EQ(
+		condition = condition.AND(tDocument.CreatedAt.LT_EQ(
 			jet.TimestampT(req.To.AsTime()),
 		))
 	}
 	if req.Closed != nil {
-		condition = condition.AND(tDocs.Closed.EQ(
+		condition = condition.AND(tDocument.Closed.EQ(
 			jet.Bool(*req.Closed),
 		))
 	}
@@ -127,12 +127,12 @@ func (s *Server) ListDocuments(ctx context.Context, req *ListDocumentsRequest) (
 		}
 
 		condition = condition.AND(
-			tDocs.ID.IN(ids...),
+			tDocument.ID.IN(ids...),
 		)
 	}
 
 	countStmt := s.listDocumentsQuery(
-		condition, jet.ProjectionList{jet.COUNT(jet.DISTINCT(tDocs.ID)).AS("datacount.totalcount")},
+		condition, jet.ProjectionList{jet.COUNT(jet.DISTINCT(tDocument.ID)).AS("datacount.totalcount")},
 		1, userInfo)
 
 	var count database.DataCount
@@ -151,7 +151,7 @@ func (s *Server) ListDocuments(ctx context.Context, req *ListDocumentsRequest) (
 	stmt := s.listDocumentsQuery(condition, nil,
 		DocShortContentLength, userInfo).
 		OFFSET(req.Pagination.Offset).
-		GROUP_BY(tDocs.ID).
+		GROUP_BY(tDocument.ID).
 		LIMIT(limit)
 
 	if err := stmt.QueryContext(ctx, s.db, &resp.Documents); err != nil {
@@ -192,7 +192,7 @@ func (s *Server) GetDocument(ctx context.Context, req *GetDocumentRequest) (*Get
 
 	resp := &GetDocumentResponse{}
 	resp.Document, err = s.getDocument(ctx,
-		tDocs.ID.EQ(jet.Uint64(req.DocumentId)), userInfo)
+		tDocument.ID.EQ(jet.Uint64(req.DocumentId)), userInfo)
 	if err != nil {
 		return nil, ErrFailedQuery
 	}
@@ -266,20 +266,20 @@ func (s *Server) CreateDocument(ctx context.Context, req *CreateDocumentRequest)
 	// Defer a rollback in case anything fails
 	defer tx.Rollback()
 
-	tDocs := table.FivenetDocuments
-	stmt := tDocs.
+	tDocument := table.FivenetDocuments
+	stmt := tDocument.
 		INSERT(
-			tDocs.CategoryID,
-			tDocs.Title,
-			tDocs.Summary,
-			tDocs.Content,
-			tDocs.ContentType,
-			tDocs.Data,
-			tDocs.CreatorID,
-			tDocs.CreatorJob,
-			tDocs.State,
-			tDocs.Closed,
-			tDocs.Public,
+			tDocument.CategoryID,
+			tDocument.Title,
+			tDocument.Summary,
+			tDocument.Content,
+			tDocument.ContentType,
+			tDocument.Data,
+			tDocument.CreatorID,
+			tDocument.CreatorJob,
+			tDocument.State,
+			tDocument.Closed,
+			tDocument.Public,
 		).
 		VALUES(
 			req.CategoryId,
@@ -349,7 +349,7 @@ func (s *Server) UpdateDocument(ctx context.Context, req *UpdateDocumentRequest)
 	}
 
 	doc, err := s.getDocument(ctx,
-		tDocs.ID.EQ(jet.Uint64(req.DocumentId)),
+		tDocument.ID.EQ(jet.Uint64(req.DocumentId)),
 		userInfo)
 	if err != nil {
 		return nil, ErrFailedQuery
@@ -369,7 +369,7 @@ func (s *Server) UpdateDocument(ctx context.Context, req *UpdateDocumentRequest)
 	if fieldsAttr != nil {
 		fields = fieldsAttr.([]string)
 	}
-	if !s.checkIfHasAccess(fields, userInfo, doc.Creator) {
+	if !s.checkIfHasAccess(fields, userInfo, doc.CreatorJob, doc.Creator) {
 		return nil, ErrDocUpdateDenied
 	}
 
@@ -380,30 +380,30 @@ func (s *Server) UpdateDocument(ctx context.Context, req *UpdateDocumentRequest)
 	}
 
 	if !onlyUpdateAccess {
-		tDocs := table.FivenetDocuments
-		stmt := tDocs.
+		tDocument := table.FivenetDocuments
+		stmt := tDocument.
 			UPDATE(
-				tDocs.CategoryID,
-				tDocs.Title,
-				tDocs.Summary,
-				tDocs.Content,
-				tDocs.Data,
-				tDocs.State,
-				tDocs.Closed,
-				tDocs.Public,
+				tDocument.CategoryID,
+				tDocument.Title,
+				tDocument.Summary,
+				tDocument.Content,
+				tDocument.Data,
+				tDocument.State,
+				tDocument.Closed,
+				tDocument.Public,
 			).
 			SET(
 				req.CategoryId,
 				req.Title,
 				utils.StringFirstN(htmlsanitizer.StripTags(req.Content), DocShortContentLength),
 				req.Content,
-				tDocs.Data,
+				tDocument.Data,
 				req.State,
 				req.Closed,
 				req.Public,
 			).
 			WHERE(
-				tDocs.ID.EQ(jet.Uint64(req.DocumentId)),
+				tDocument.ID.EQ(jet.Uint64(req.DocumentId)),
 			)
 
 		if _, err := stmt.ExecContext(ctx, tx); err != nil {
@@ -449,7 +449,7 @@ func (s *Server) DeleteDocument(ctx context.Context, req *DeleteDocumentRequest)
 		}
 	}
 
-	doc, err := s.getDocument(ctx, tDocs.ID.EQ(jet.Uint64(req.DocumentId)), userInfo)
+	doc, err := s.getDocument(ctx, tDocument.ID.EQ(jet.Uint64(req.DocumentId)), userInfo)
 	if err != nil {
 		return nil, ErrFailedQuery
 	}
@@ -463,19 +463,19 @@ func (s *Server) DeleteDocument(ctx context.Context, req *DeleteDocumentRequest)
 	if fieldsAttr != nil {
 		fields = fieldsAttr.([]string)
 	}
-	if !s.checkIfHasAccess(fields, userInfo, doc.Creator) {
+	if !s.checkIfHasAccess(fields, userInfo, doc.CreatorJob, doc.Creator) {
 		return nil, ErrDocDeleteDenied
 	}
 
-	stmt := tDocs.
+	stmt := tDocument.
 		UPDATE(
-			tDocs.DeletedAt,
+			tDocument.DeletedAt,
 		).
 		SET(
-			tDocs.DeletedAt.SET(jet.CURRENT_TIMESTAMP()),
+			tDocument.DeletedAt.SET(jet.CURRENT_TIMESTAMP()),
 		).
 		WHERE(
-			tDocs.ID.EQ(jet.Uint64(req.DocumentId)),
+			tDocument.ID.EQ(jet.Uint64(req.DocumentId)),
 		)
 
 	if _, err := stmt.ExecContext(ctx, s.db); err != nil {
@@ -509,7 +509,7 @@ func (s *Server) ToggleDocument(ctx context.Context, req *ToggleDocumentRequest)
 		}
 	}
 
-	doc, err := s.getDocument(ctx, tDocs.ID.EQ(jet.Uint64(req.DocumentId)), userInfo)
+	doc, err := s.getDocument(ctx, tDocument.ID.EQ(jet.Uint64(req.DocumentId)), userInfo)
 	if err != nil {
 		return nil, ErrFailedQuery
 	}
@@ -523,19 +523,19 @@ func (s *Server) ToggleDocument(ctx context.Context, req *ToggleDocumentRequest)
 	if fieldsAttr != nil {
 		fields = fieldsAttr.([]string)
 	}
-	if !s.checkIfHasAccess(fields, userInfo, doc.Creator) {
+	if !s.checkIfHasAccess(fields, userInfo, doc.CreatorJob, doc.Creator) {
 		return nil, ErrDocToggleDenied
 	}
 
-	stmt := tDocs.
+	stmt := tDocument.
 		UPDATE(
-			tDocs.Closed,
+			tDocument.Closed,
 		).
 		SET(
-			tDocs.Closed.SET(jet.Bool(req.Closed)),
+			tDocument.Closed.SET(jet.Bool(req.Closed)),
 		).
 		WHERE(
-			tDocs.ID.EQ(jet.Uint64(req.DocumentId)),
+			tDocument.ID.EQ(jet.Uint64(req.DocumentId)),
 		)
 
 	if _, err := stmt.ExecContext(ctx, s.db); err != nil {

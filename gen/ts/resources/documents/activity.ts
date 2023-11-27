@@ -61,7 +61,7 @@ export interface DocActivityData {
         /**
          * @generated from protobuf field: resources.documents.DocUpdated updated = 1;
          */
-        updated: DocUpdated; // TODO
+        updated: DocUpdated;
     } | {
         oneofKind: undefined;
     };

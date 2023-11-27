@@ -65,17 +65,21 @@ export interface Document {
      */
     creator?: UserShort; // @gotags: alias:"creator"
     /**
+     * @generated from protobuf field: string creator_job = 13;
+     */
+    creatorJob: string; // @gotags: alias:"creator_job"
+    /**
      * @sanitize
      *
-     * @generated from protobuf field: string state = 13;
+     * @generated from protobuf field: string state = 14;
      */
     state: string; // @gotags: alias:"state"
     /**
-     * @generated from protobuf field: bool closed = 14;
+     * @generated from protobuf field: bool closed = 15;
      */
     closed: boolean;
     /**
-     * @generated from protobuf field: bool public = 15;
+     * @generated from protobuf field: bool public = 16;
      */
     public: boolean;
 }
@@ -132,17 +136,21 @@ export interface DocumentShort {
      */
     creator?: UserShort; // @gotags: alias:"creator"
     /**
+     * @generated from protobuf field: string creator_job = 12;
+     */
+    creatorJob: string; // @gotags: alias:"creator_job"
+    /**
      * @sanitize
      *
-     * @generated from protobuf field: string state = 12;
+     * @generated from protobuf field: string state = 13;
      */
     state: string; // @gotags: alias:"state"
     /**
-     * @generated from protobuf field: bool closed = 13;
+     * @generated from protobuf field: bool closed = 14;
      */
     closed: boolean;
     /**
-     * @generated from protobuf field: bool public = 14;
+     * @generated from protobuf field: bool public = 15;
      */
     public: boolean;
 }
@@ -386,9 +394,10 @@ class Document$Type extends MessageType<Document> {
             { no: 10, name: "data", kind: "scalar", opt: true, T: 9 /*ScalarType.STRING*/, options: { "validate.rules": { string: { maxBytes: "1000000" } } } },
             { no: 11, name: "creator_id", kind: "scalar", opt: true, T: 5 /*ScalarType.INT32*/ },
             { no: 12, name: "creator", kind: "message", T: () => UserShort },
-            { no: 13, name: "state", kind: "scalar", T: 9 /*ScalarType.STRING*/, options: { "validate.rules": { string: { maxLen: "24" } } } },
-            { no: 14, name: "closed", kind: "scalar", T: 8 /*ScalarType.BOOL*/ },
-            { no: 15, name: "public", kind: "scalar", T: 8 /*ScalarType.BOOL*/ }
+            { no: 13, name: "creator_job", kind: "scalar", T: 9 /*ScalarType.STRING*/ },
+            { no: 14, name: "state", kind: "scalar", T: 9 /*ScalarType.STRING*/, options: { "validate.rules": { string: { maxLen: "24" } } } },
+            { no: 15, name: "closed", kind: "scalar", T: 8 /*ScalarType.BOOL*/ },
+            { no: 16, name: "public", kind: "scalar", T: 8 /*ScalarType.BOOL*/ }
         ]);
     }
 }
@@ -411,9 +420,10 @@ class DocumentShort$Type extends MessageType<DocumentShort> {
             { no: 9, name: "content", kind: "scalar", T: 9 /*ScalarType.STRING*/, options: { "validate.rules": { string: { maxBytes: "1024" } } } },
             { no: 10, name: "creator_id", kind: "scalar", opt: true, T: 5 /*ScalarType.INT32*/ },
             { no: 11, name: "creator", kind: "message", T: () => UserShort },
-            { no: 12, name: "state", kind: "scalar", T: 9 /*ScalarType.STRING*/, options: { "validate.rules": { string: { maxLen: "24" } } } },
-            { no: 13, name: "closed", kind: "scalar", T: 8 /*ScalarType.BOOL*/ },
-            { no: 14, name: "public", kind: "scalar", T: 8 /*ScalarType.BOOL*/ }
+            { no: 12, name: "creator_job", kind: "scalar", T: 9 /*ScalarType.STRING*/ },
+            { no: 13, name: "state", kind: "scalar", T: 9 /*ScalarType.STRING*/, options: { "validate.rules": { string: { maxLen: "24" } } } },
+            { no: 14, name: "closed", kind: "scalar", T: 8 /*ScalarType.BOOL*/ },
+            { no: 15, name: "public", kind: "scalar", T: 8 /*ScalarType.BOOL*/ }
         ]);
     }
 }

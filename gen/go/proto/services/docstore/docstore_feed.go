@@ -28,13 +28,13 @@ var (
 )
 
 var (
-	ErrFeedRefsViewDenied  = status.Error(codes.PermissionDenied, "You don't have permission to view this document's references!")
-	ErrFeedRelsViewDenied  = status.Error(codes.PermissionDenied, "You don't have permission to view this document's relations!")
-	ErrFeedRefSelf         = status.Error(codes.InvalidArgument, "You can't reference a document with itself!")
-	ErrFeedRefAddDenied    = status.Error(codes.PermissionDenied, "You don't have permission to add references from/to this document!")
-	ErrFeedRefRemoveDenied = status.Error(codes.PermissionDenied, "You don't have permission to remove references from this document!")
-	ErrFeedRelAddDenied    = status.Error(codes.PermissionDenied, "You don't have permission to add relation from/to this document!")
-	ErrFeedRelRemoveDenied = status.Error(codes.PermissionDenied, "You don't have permission to remove references from this document!")
+	ErrFeedRefsViewDenied  = status.Error(codes.PermissionDenied, "errors.DocStoreService.ErrFeedRefsViewDenied")
+	ErrFeedRelsViewDenied  = status.Error(codes.PermissionDenied, "errors.DocStoreService.ErrFeedRelsViewDenied")
+	ErrFeedRefSelf         = status.Error(codes.InvalidArgument, "errors.DocStoreService.ErrFeedRefSelf")
+	ErrFeedRefAddDenied    = status.Error(codes.PermissionDenied, "errors.DocStoreService.ErrFeedRefAddDenied")
+	ErrFeedRefRemoveDenied = status.Error(codes.PermissionDenied, "errors.DocStoreService.ErrFeedRefRemoveDenied")
+	ErrFeedRelAddDenied    = status.Error(codes.PermissionDenied, "errors.DocStoreService.ErrFeedRelAddDenied")
+	ErrFeedRelRemoveDenied = status.Error(codes.PermissionDenied, "errors.DocStoreService.ErrFeedRelRemoveDenied")
 )
 
 func (s *Server) GetDocumentReferences(ctx context.Context, req *GetDocumentReferencesRequest) (*GetDocumentReferencesResponse, error) {
@@ -105,8 +105,8 @@ func (s *Server) GetDocumentReferences(ctx context.Context, req *GetDocumentRefe
 		dIds[i] = jet.Uint64(ids[i])
 	}
 
-	tSourceDoc := tDocs.AS("source_document")
-	tTargetDoc := tDocs.AS("target_document")
+	tSourceDoc := tDocument.AS("source_document")
+	tTargetDoc := tDocument.AS("target_document")
 	tRefCreator := tUsers.AS("ref_creator")
 	tDCreator := tUsers.AS("creator")
 	stmt := tDocRef.
@@ -550,14 +550,14 @@ func (s *Server) getDocumentRelations(ctx context.Context, userInfo *userinfo.Us
 			tDocRel.SourceUserID,
 			tDocRel.Relation,
 			tDocRel.TargetUserID,
-			tDocs.ID,
-			tDocs.CreatedAt,
-			tDocs.UpdatedAt,
-			tDocs.CategoryID,
-			tDocs.Title,
-			tDocs.CreatorID,
-			tDocs.State,
-			tDocs.Closed,
+			tDocument.ID,
+			tDocument.CreatedAt,
+			tDocument.UpdatedAt,
+			tDocument.CategoryID,
+			tDocument.Title,
+			tDocument.CreatorID,
+			tDocument.State,
+			tDocument.Closed,
 			tDCategory.ID,
 			tDCategory.Name,
 			tDCategory.Description,
@@ -576,11 +576,11 @@ func (s *Server) getDocumentRelations(ctx context.Context, userInfo *userinfo.Us
 		).
 		FROM(
 			tDocRel.
-				LEFT_JOIN(tDocs,
-					tDocs.ID.EQ(tDocRel.DocumentID),
+				LEFT_JOIN(tDocument,
+					tDocument.ID.EQ(tDocRel.DocumentID),
 				).
 				LEFT_JOIN(tDCategory,
-					tDocs.CategoryID.EQ(tDCategory.ID),
+					tDocument.CategoryID.EQ(tDCategory.ID),
 				).
 				LEFT_JOIN(uSource,
 					uSource.ID.EQ(tDocRel.SourceUserID),
@@ -626,7 +626,7 @@ func (s *Server) notifyUser(ctx context.Context, documentId uint64, sourceUserId
 		return
 	}
 
-	doc, err := s.getDocument(ctx, tDocs.ID.EQ(jet.Uint64(documentId)), userInfo)
+	doc, err := s.getDocument(ctx, tDocument.ID.EQ(jet.Uint64(documentId)), userInfo)
 	if err != nil {
 		return
 	}
