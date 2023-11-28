@@ -3,6 +3,7 @@ syntax = "proto3";
 package services.docstore;
 
 import "resources/common/database/database.proto";
+import "resources/documents/activity.proto";
 import "resources/documents/category.proto";
 import "resources/documents/comment.proto";
 import "resources/documents/documents.proto";
@@ -225,6 +226,16 @@ message ToggleDocumentRequest {
 
 message ToggleDocumentResponse {}
 
+message ListDocumentActivityRequest {
+  resources.common.database.PaginationRequest pagination = 1 [(validate.rules).message.required = true];
+  uint64 document_id = 2 [jstype = JS_STRING];
+}
+
+message ListDocumentActivityResponse {
+  resources.common.database.PaginationResponse pagination = 1;
+  repeated resources.documents.DocActivity activity = 2;
+}
+
 // Access =================================================================
 message GetDocumentAccessRequest {
   uint64 document_id = 1 [jstype = JS_STRING];
@@ -339,6 +350,9 @@ service DocStoreService {
   rpc GetDocumentAccess(GetDocumentAccessRequest) returns (GetDocumentAccessResponse);
   // @perm: Name=CreateDocument
   rpc SetDocumentAccess(SetDocumentAccessRequest) returns (SetDocumentAccessResponse);
+
+  // @perm: Name=GetDocument
+  rpc ListDocumentActivity(ListDocumentActivityRequest) returns (ListDocumentActivityResponse);
 
   // @perm
   rpc ListUserDocuments(ListUserDocumentsRequest) returns (ListUserDocumentsResponse);

@@ -1597,6 +1597,25 @@
                 "MENTIONED": "mentioned",
                 "TARGETS": "targets",
                 "CAUSED": "caused"
+            },
+            "DocActivityType": {
+                "CREATED": "Document Created",
+                "STATUS_OPEN": "Document opened",
+                "STATUS_CLOSED": "Document closed",
+                "UPDATED": "Document updated",
+                "RELATIONS_UPDATED": "Document Relations updated",
+                "REFERENCES_UPDATED": "Document References updated",
+                "ACCESS_UPDATED": "Document Access updated",
+                "OWNER_CHANGED": "Document Owner changed",
+                "DELETED": "Document deleted",
+                "REQUESTED_ACCESS": "Document access requested",
+                "REQUESTED_CLOSURE": "Document closure requested",
+                "REQUESTED_UPDATE": "Document update requested",
+                "REQUESTED_DELETION": "Document deletion requested",
+                "COMMENT_ADDED": "Comment added",
+                "COMMENT_UPDATED": "Comment updated",
+                "COMMENT_DELETED": "Comment deleted",
+                "UNSPECIFIED": "Unspecified"
             }
         },
         "centrum": {

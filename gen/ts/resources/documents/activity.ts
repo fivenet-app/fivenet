@@ -41,9 +41,9 @@ export interface DocActivity {
      */
     creatorJobLabel?: string;
     /**
-     * @generated from protobuf field: string reason = 9;
+     * @generated from protobuf field: optional string reason = 9;
      */
-    reason: string;
+    reason?: string;
     /**
      * @generated from protobuf field: resources.documents.DocActivityData data = 10;
      */
@@ -63,6 +63,12 @@ export interface DocActivityData {
          */
         updated: DocUpdated;
     } | {
+        oneofKind: "ownerChanged";
+        /**
+         * @generated from protobuf field: resources.documents.DocOwnerChanged owner_changed = 2;
+         */
+        ownerChanged: DocOwnerChanged;
+    } | {
         oneofKind: undefined;
     };
 }
@@ -76,6 +82,15 @@ export interface DocUpdated {
     diff: string;
 }
 /**
+ * @generated from protobuf message resources.documents.DocOwnerChanged
+ */
+export interface DocOwnerChanged {
+    /**
+     * @generated from protobuf field: int32 owner_id = 1;
+     */
+    ownerId: number;
+}
+/**
  * @generated from protobuf enum resources.documents.DocActivityType
  */
 export enum DocActivityType {
@@ -84,67 +99,75 @@ export enum DocActivityType {
      */
     UNSPECIFIED = 0,
     /**
-     * Comments
-     *
-     * @generated from protobuf enum value: DOC_ACTIVITY_TYPE_COMMENT_ADDED = 1;
-     */
-    COMMENT_ADDED = 1,
-    /**
-     * @generated from protobuf enum value: DOC_ACTIVITY_TYPE_COMMENT_UPDATED = 2;
-     */
-    COMMENT_UPDATED = 2,
-    /**
-     * @generated from protobuf enum value: DOC_ACTIVITY_TYPE_COMMENT_DELETED = 3;
-     */
-    COMMENT_DELETED = 3,
-    /**
      * Base
      *
-     * @generated from protobuf enum value: DOC_ACTIVITY_TYPE_STATUS_OPEN = 4;
+     * @generated from protobuf enum value: DOC_ACTIVITY_TYPE_CREATED = 1;
      */
-    STATUS_OPEN = 4,
+    CREATED = 1,
     /**
-     * @generated from protobuf enum value: DOC_ACTIVITY_TYPE_STATUS_CLOSED = 5;
+     * @generated from protobuf enum value: DOC_ACTIVITY_TYPE_STATUS_OPEN = 2;
      */
-    STATUS_CLOSED = 5,
+    STATUS_OPEN = 2,
     /**
-     * @generated from protobuf enum value: DOC_ACTIVITY_TYPE_UPDATED = 6;
+     * @generated from protobuf enum value: DOC_ACTIVITY_TYPE_STATUS_CLOSED = 3;
      */
-    UPDATED = 6,
+    STATUS_CLOSED = 3,
     /**
-     * @generated from protobuf enum value: DOC_ACTIVITY_TYPE_RELATIONS_UPDATED = 7;
+     * @generated from protobuf enum value: DOC_ACTIVITY_TYPE_UPDATED = 4;
      */
-    RELATIONS_UPDATED = 7,
+    UPDATED = 4,
     /**
-     * @generated from protobuf enum value: DOC_ACTIVITY_TYPE_REFERENCES_UPDATED = 8;
+     * @generated from protobuf enum value: DOC_ACTIVITY_TYPE_RELATIONS_UPDATED = 5;
      */
-    REFERENCES_UPDATED = 8,
+    RELATIONS_UPDATED = 5,
     /**
-     * @generated from protobuf enum value: DOC_ACTIVITY_TYPE_ACCESS_UPDATED = 9;
+     * @generated from protobuf enum value: DOC_ACTIVITY_TYPE_REFERENCES_UPDATED = 6;
      */
-    ACCESS_UPDATED = 9,
+    REFERENCES_UPDATED = 6,
     /**
-     * @generated from protobuf enum value: DOC_ACTIVITY_TYPE_DELETED = 10;
+     * @generated from protobuf enum value: DOC_ACTIVITY_TYPE_ACCESS_UPDATED = 7;
      */
-    DELETED = 10,
+    ACCESS_UPDATED = 7,
+    /**
+     * @generated from protobuf enum value: DOC_ACTIVITY_TYPE_OWNER_CHANGED = 8;
+     */
+    OWNER_CHANGED = 8,
+    /**
+     * @generated from protobuf enum value: DOC_ACTIVITY_TYPE_DELETED = 9;
+     */
+    DELETED = 9,
     /**
      * Requests
      *
-     * @generated from protobuf enum value: DOC_ACTIVITY_TYPE_REQUESTED_ACCESS = 11;
+     * @generated from protobuf enum value: DOC_ACTIVITY_TYPE_REQUESTED_ACCESS = 10;
      */
-    REQUESTED_ACCESS = 11,
+    REQUESTED_ACCESS = 10,
     /**
-     * @generated from protobuf enum value: DOC_ACTIVITY_TYPE_REQUESTED_CLOSURE = 12;
+     * @generated from protobuf enum value: DOC_ACTIVITY_TYPE_REQUESTED_CLOSURE = 11;
      */
-    REQUESTED_CLOSURE = 12,
+    REQUESTED_CLOSURE = 11,
     /**
-     * @generated from protobuf enum value: DOC_ACTIVITY_TYPE_REQUESTED_UPDATE = 13;
+     * @generated from protobuf enum value: DOC_ACTIVITY_TYPE_REQUESTED_UPDATE = 12;
      */
-    REQUESTED_UPDATE = 13,
+    REQUESTED_UPDATE = 12,
     /**
-     * @generated from protobuf enum value: DOC_ACTIVITY_TYPE_REQUESTED_DELETION = 14;
+     * @generated from protobuf enum value: DOC_ACTIVITY_TYPE_REQUESTED_DELETION = 13;
      */
-    REQUESTED_DELETION = 14
+    REQUESTED_DELETION = 13,
+    /**
+     * Comments
+     *
+     * @generated from protobuf enum value: DOC_ACTIVITY_TYPE_COMMENT_ADDED = 14;
+     */
+    COMMENT_ADDED = 14,
+    /**
+     * @generated from protobuf enum value: DOC_ACTIVITY_TYPE_COMMENT_UPDATED = 15;
+     */
+    COMMENT_UPDATED = 15,
+    /**
+     * @generated from protobuf enum value: DOC_ACTIVITY_TYPE_COMMENT_DELETED = 16;
+     */
+    COMMENT_DELETED = 16
 }
 // @generated message type with reflection information, may provide speed optimized methods
 class DocActivity$Type extends MessageType<DocActivity> {
@@ -158,7 +181,7 @@ class DocActivity$Type extends MessageType<DocActivity> {
             { no: 6, name: "creator", kind: "message", T: () => UserShort },
             { no: 7, name: "creator_job", kind: "scalar", T: 9 /*ScalarType.STRING*/, options: { "validate.rules": { string: { maxLen: "20" } } } },
             { no: 8, name: "creator_job_label", kind: "scalar", opt: true, T: 9 /*ScalarType.STRING*/, options: { "validate.rules": { string: { maxLen: "50" } } } },
-            { no: 9, name: "reason", kind: "scalar", T: 9 /*ScalarType.STRING*/, options: { "validate.rules": { string: { maxLen: "255" } } } },
+            { no: 9, name: "reason", kind: "scalar", opt: true, T: 9 /*ScalarType.STRING*/, options: { "validate.rules": { string: { maxLen: "255" } } } },
             { no: 10, name: "data", kind: "message", T: () => DocActivityData }
         ]);
     }
@@ -171,7 +194,8 @@ export const DocActivity = new DocActivity$Type();
 class DocActivityData$Type extends MessageType<DocActivityData> {
     constructor() {
         super("resources.documents.DocActivityData", [
-            { no: 1, name: "updated", kind: "message", oneof: "data", T: () => DocUpdated }
+            { no: 1, name: "updated", kind: "message", oneof: "data", T: () => DocUpdated },
+            { no: 2, name: "owner_changed", kind: "message", oneof: "data", T: () => DocOwnerChanged }
         ]);
     }
 }
@@ -191,3 +215,15 @@ class DocUpdated$Type extends MessageType<DocUpdated> {
  * @generated MessageType for protobuf message resources.documents.DocUpdated
  */
 export const DocUpdated = new DocUpdated$Type();
+// @generated message type with reflection information, may provide speed optimized methods
+class DocOwnerChanged$Type extends MessageType<DocOwnerChanged> {
+    constructor() {
+        super("resources.documents.DocOwnerChanged", [
+            { no: 1, name: "owner_id", kind: "scalar", T: 5 /*ScalarType.INT32*/ }
+        ]);
+    }
+}
+/**
+ * @generated MessageType for protobuf message resources.documents.DocOwnerChanged
+ */
+export const DocOwnerChanged = new DocOwnerChanged$Type();

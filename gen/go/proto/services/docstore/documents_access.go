@@ -2,7 +2,6 @@ package docstore
 
 import (
 	context "context"
-	"database/sql"
 	"errors"
 	"slices"
 
@@ -97,7 +96,7 @@ func (s *Server) SetDocumentAccess(ctx context.Context, req *SetDocumentAccessRe
 	return &SetDocumentAccessResponse{}, nil
 }
 
-func (s *Server) handleDocumentAccessChanges(ctx context.Context, tx *sql.Tx, mode AccessLevelUpdateMode, documentId uint64, access *documents.DocumentAccess) error {
+func (s *Server) handleDocumentAccessChanges(ctx context.Context, tx qrm.DB, mode AccessLevelUpdateMode, documentId uint64, access *documents.DocumentAccess) error {
 	userInfo := auth.MustGetUserInfoFromContext(ctx)
 
 	// Get existing job and user accesses from database
@@ -138,7 +137,7 @@ func (s *Server) handleDocumentAccessChanges(ctx context.Context, tx *sql.Tx, mo
 	return nil
 }
 
-func (s *Server) compareDocumentAccess(tx *sql.Tx, current, in *documents.DocumentAccess) (toCreate *documents.DocumentAccess, toUpdate *documents.DocumentAccess, toDelete *documents.DocumentAccess) {
+func (s *Server) compareDocumentAccess(tx qrm.DB, current, in *documents.DocumentAccess) (toCreate *documents.DocumentAccess, toUpdate *documents.DocumentAccess, toDelete *documents.DocumentAccess) {
 	toCreate = &documents.DocumentAccess{}
 	toUpdate = &documents.DocumentAccess{}
 	toDelete = &documents.DocumentAccess{}
@@ -313,7 +312,7 @@ func (s *Server) getDocumentAccess(ctx context.Context, documentId uint64) (*doc
 	}, nil
 }
 
-func (s *Server) createDocumentAccess(ctx context.Context, tx *sql.Tx, documentId uint64, userId int32, access *documents.DocumentAccess) error {
+func (s *Server) createDocumentAccess(ctx context.Context, tx qrm.DB, documentId uint64, userId int32, access *documents.DocumentAccess) error {
 	if access == nil {
 		return nil
 	}
@@ -367,7 +366,7 @@ func (s *Server) createDocumentAccess(ctx context.Context, tx *sql.Tx, documentI
 	return nil
 }
 
-func (s *Server) updateDocumentAccess(ctx context.Context, tx *sql.Tx, documentId uint64, userId int32, access *documents.DocumentAccess) error {
+func (s *Server) updateDocumentAccess(ctx context.Context, tx qrm.DB, documentId uint64, userId int32, access *documents.DocumentAccess) error {
 	if access == nil {
 		return nil
 	}
@@ -427,7 +426,7 @@ func (s *Server) updateDocumentAccess(ctx context.Context, tx *sql.Tx, documentI
 	return nil
 }
 
-func (s *Server) deleteDocumentAccess(ctx context.Context, tx *sql.Tx, documentId uint64, access *documents.DocumentAccess) error {
+func (s *Server) deleteDocumentAccess(ctx context.Context, tx qrm.DB, documentId uint64, access *documents.DocumentAccess) error {
 	if access == nil {
 		return nil
 	}
@@ -485,7 +484,7 @@ func (s *Server) deleteDocumentAccess(ctx context.Context, tx *sql.Tx, documentI
 	return nil
 }
 
-func (s *Server) clearDocumentAccess(ctx context.Context, tx *sql.Tx, documentId uint64) error {
+func (s *Server) clearDocumentAccess(ctx context.Context, tx qrm.DB, documentId uint64) error {
 	jobStmt := tDJobAccess.
 		DELETE().
 		WHERE(tDJobAccess.DocumentID.EQ(jet.Uint64(documentId)))

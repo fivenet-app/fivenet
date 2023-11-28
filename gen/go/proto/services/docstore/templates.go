@@ -362,7 +362,7 @@ func (s *Server) UpdateTemplate(ctx context.Context, req *UpdateTemplateRequest)
 		return nil, ErrFailedQuery
 	}
 
-	if err := s.handleTemplateAccessChanges(ctx, tx, uint64(req.Template.Id), req.Template.JobAccess); err != nil {
+	if err := s.handleTemplateAccessChanges(ctx, tx, req.Template.Id, req.Template.JobAccess); err != nil {
 		return nil, ErrFailedQuery
 	}
 

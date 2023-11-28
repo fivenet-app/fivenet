@@ -2,7 +2,6 @@ package docstore
 
 import (
 	context "context"
-	"database/sql"
 	"errors"
 
 	"github.com/galexrt/fivenet/gen/go/proto/resources/common/database"
@@ -207,7 +206,7 @@ func (s *Server) ListUserDocuments(ctx context.Context, req *ListUserDocumentsRe
 	return resp, nil
 }
 
-func (s *Server) addUserActivity(ctx context.Context, tx *sql.Tx, userId int32, targetUserId int32, activityType users.UserActivityType, key string, oldValue string, newValue string, reason string) error {
+func (s *Server) addUserActivity(ctx context.Context, tx qrm.DB, userId int32, targetUserId int32, activityType users.UserActivityType, key string, oldValue string, newValue string, reason string) error {
 	reasonField := jet.NULL
 	if reason != "" {
 		reasonField = jet.String(reason)

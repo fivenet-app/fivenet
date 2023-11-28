@@ -4,7 +4,9 @@ import (
 	context "context"
 	"database/sql"
 	"errors"
+	"strings"
 
+	htmldiff "github.com/documize/html-diff"
 	database "github.com/galexrt/fivenet/gen/go/proto/resources/common/database"
 	"github.com/galexrt/fivenet/gen/go/proto/resources/documents"
 	"github.com/galexrt/fivenet/gen/go/proto/resources/rector"
@@ -60,6 +62,8 @@ type Server struct {
 	auditer  audit.IAuditer
 	ui       userinfo.UserInfoRetriever
 	notif    notifi.INotifi
+
+	htmlDiff *htmldiff.Config
 }
 
 func NewServer(db *sql.DB, ps perms.Permissions, cache *mstlystcdata.Cache, enricher *mstlystcdata.Enricher, auditer audit.IAuditer, ui userinfo.UserInfoRetriever, notif notifi.INotifi) *Server {
@@ -71,6 +75,13 @@ func NewServer(db *sql.DB, ps perms.Permissions, cache *mstlystcdata.Cache, enri
 		auditer:  auditer,
 		ui:       ui,
 		notif:    notif,
+		htmlDiff: &htmldiff.Config{
+			Granularity:  5,
+			InsertedSpan: []htmldiff.Attribute{{Key: "class", Val: "bg-success-600"}},
+			DeletedSpan:  []htmldiff.Attribute{{Key: "class", Val: "bg-error-600"}},
+			ReplacedSpan: []htmldiff.Attribute{{Key: "class", Val: "bg-info-600"}},
+			CleanTags:    []string{""},
+		},
 	}
 }
 
@@ -309,6 +320,15 @@ func (s *Server) CreateDocument(ctx context.Context, req *CreateDocumentRequest)
 		return nil, ErrFailedQuery
 	}
 
+	if err := s.AddDocumentActivity(ctx, tx, &documents.DocActivity{
+		DocumentId:   uint64(lastId),
+		ActivityType: documents.DocActivityType_DOC_ACTIVITY_TYPE_CREATED,
+		CreatorId:    &userInfo.UserId,
+		CreatorJob:   userInfo.Job,
+	}); err != nil {
+		return nil, ErrFailedQuery
+	}
+
 	// Commit the transaction
 	if err := tx.Commit(); err != nil {
 		return nil, ErrFailedQuery
@@ -415,6 +435,29 @@ func (s *Server) UpdateDocument(ctx context.Context, req *UpdateDocumentRequest)
 		return nil, ErrFailedQuery
 	}
 
+	currentContent := strings.TrimSuffix(doc.Content, "<br>")
+	newContent := strings.TrimSuffix(req.Content, "<br>")
+	res, err := s.htmlDiff.HTMLdiff([]string{currentContent, newContent})
+	if err != nil {
+		return nil, ErrFailedQuery
+	}
+
+	if err := s.AddDocumentActivity(ctx, tx, &documents.DocActivity{
+		DocumentId:   req.DocumentId,
+		ActivityType: documents.DocActivityType_DOC_ACTIVITY_TYPE_UPDATED,
+		CreatorId:    &userInfo.UserId,
+		CreatorJob:   userInfo.Job,
+		Data: &documents.DocActivityData{
+			Data: &documents.DocActivityData_Updated{
+				Updated: &documents.DocUpdated{
+					Diff: res[0],
+				},
+			},
+		},
+	}); err != nil {
+		return nil, ErrFailedQuery
+	}
+
 	// Commit the transaction
 	if err := tx.Commit(); err != nil {
 		return nil, ErrFailedQuery
@@ -482,6 +525,15 @@ func (s *Server) DeleteDocument(ctx context.Context, req *DeleteDocumentRequest)
 		return nil, ErrFailedQuery
 	}
 
+	if err := s.AddDocumentActivity(ctx, s.db, &documents.DocActivity{
+		DocumentId:   req.DocumentId,
+		ActivityType: documents.DocActivityType_DOC_ACTIVITY_TYPE_DELETED,
+		CreatorId:    &userInfo.UserId,
+		CreatorJob:   userInfo.Job,
+	}); err != nil {
+		return nil, ErrFailedQuery
+	}
+
 	auditEntry.State = int16(rector.EventType_EVENT_TYPE_DELETED)
 
 	return &DeleteDocumentResponse{}, nil
@@ -527,18 +579,32 @@ func (s *Server) ToggleDocument(ctx context.Context, req *ToggleDocumentRequest)
 		return nil, ErrDocToggleDenied
 	}
 
+	activityType := documents.DocActivityType_DOC_ACTIVITY_TYPE_STATUS_CLOSED
+	if !req.Closed {
+		activityType = documents.DocActivityType_DOC_ACTIVITY_TYPE_STATUS_OPEN
+	}
+
 	stmt := tDocument.
 		UPDATE(
 			tDocument.Closed,
 		).
 		SET(
-			tDocument.Closed.SET(jet.Bool(req.Closed)),
+			req.Closed,
 		).
 		WHERE(
 			tDocument.ID.EQ(jet.Uint64(req.DocumentId)),
 		)
 
 	if _, err := stmt.ExecContext(ctx, s.db); err != nil {
+		return nil, ErrFailedQuery
+	}
+
+	if err := s.AddDocumentActivity(ctx, s.db, &documents.DocActivity{
+		DocumentId:   req.DocumentId,
+		ActivityType: activityType,
+		CreatorId:    &userInfo.UserId,
+		CreatorJob:   userInfo.Job,
+	}); err != nil {
 		return nil, ErrFailedQuery
 	}
 

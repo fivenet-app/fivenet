@@ -13,6 +13,7 @@ require (
 	github.com/blevesearch/bleve/v2 v2.3.10
 	github.com/bwmarrin/discordgo v0.27.1
 	github.com/creasty/defaults v1.7.0
+	github.com/documize/html-diff v0.0.0-20160503140253-f61c192c7796
 	github.com/envoyproxy/protoc-gen-validate v1.0.2
 	github.com/getsentry/sentry-go v0.25.0
 	github.com/gin-contrib/pprof v1.4.0
@@ -130,6 +131,7 @@ require (
 	github.com/magiconair/properties v1.8.7 // indirect
 	github.com/mattn/go-isatty v0.0.20 // indirect
 	github.com/matttproud/golang_protobuf_extensions/v2 v2.0.0 // indirect
+	github.com/mb0/diff v0.0.0-20131118162322-d8d9a906c24d // indirect
 	github.com/minio/highwayhash v1.0.2 // indirect
 	github.com/minio/md5-simd v1.1.2 // indirect
 	github.com/minio/sha256-simd v1.0.1 // indirect
@@ -173,7 +175,7 @@ require (
 	go.uber.org/multierr v1.11.0 // indirect
 	golang.org/x/arch v0.6.0 // indirect
 	golang.org/x/mod v0.14.0 // indirect
-	golang.org/x/net v0.18.0 // indirect
+	golang.org/x/net v0.19.0 // indirect
 	golang.org/x/sys v0.15.0 // indirect
 	golang.org/x/text v0.14.0 // indirect
 	golang.org/x/time v0.4.0 // indirect

@@ -18,6 +18,7 @@ var PermsRemap = map[string]string{
 	"DocStoreService/GetDocumentReferences":   "DocStoreService/GetDocument",
 	"DocStoreService/GetDocumentRelations":    "DocStoreService/GetDocument",
 	"DocStoreService/GetTemplate":             "DocStoreService/ListTemplates",
+	"DocStoreService/ListDocumentActivity":    "DocStoreService/GetDocument",
 	"DocStoreService/RemoveDocumentReference": "DocStoreService/AddDocumentReference",
 	"DocStoreService/RemoveDocumentRelation":  "DocStoreService/AddDocumentRelation",
 	"DocStoreService/SetDocumentAccess":       "DocStoreService/CreateDocument",

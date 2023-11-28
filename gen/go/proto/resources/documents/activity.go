@@ -1,13 +1,17 @@
 package documents
 
-import "database/sql/driver"
+import (
+	"database/sql/driver"
+
+	"google.golang.org/protobuf/encoding/protojson"
+)
 
 func (x *DocActivityData) Scan(value any) error {
 	switch t := value.(type) {
 	case string:
-		return json.UnmarshalFromString(t, x)
+		return protojson.Unmarshal([]byte(t), x)
 	case []byte:
-		return json.Unmarshal(t, x)
+		return protojson.Unmarshal(t, x)
 	}
 	return nil
 }
@@ -18,6 +22,6 @@ func (x *DocActivityData) Value() (driver.Value, error) {
 		return nil, nil
 	}
 
-	out, err := json.MarshalToString(x)
-	return out, err
+	out, err := protojson.Marshal(x)
+	return string(out), err
 }

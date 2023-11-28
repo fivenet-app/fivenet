@@ -10,23 +10,25 @@ option go_package = "github.com/galexrt/fivenet/gen/go/proto/resources/documents
 
 enum DocActivityType {
   DOC_ACTIVITY_TYPE_UNSPECIFIED = 0;
-  // Comments
-  DOC_ACTIVITY_TYPE_COMMENT_ADDED = 1;
-  DOC_ACTIVITY_TYPE_COMMENT_UPDATED = 2;
-  DOC_ACTIVITY_TYPE_COMMENT_DELETED = 3;
   // Base
-  DOC_ACTIVITY_TYPE_STATUS_OPEN = 4;
-  DOC_ACTIVITY_TYPE_STATUS_CLOSED = 5;
-  DOC_ACTIVITY_TYPE_UPDATED = 6;
-  DOC_ACTIVITY_TYPE_RELATIONS_UPDATED = 7;
-  DOC_ACTIVITY_TYPE_REFERENCES_UPDATED = 8;
-  DOC_ACTIVITY_TYPE_ACCESS_UPDATED = 9;
-  DOC_ACTIVITY_TYPE_DELETED = 10;
+  DOC_ACTIVITY_TYPE_CREATED = 1;
+  DOC_ACTIVITY_TYPE_STATUS_OPEN = 2;
+  DOC_ACTIVITY_TYPE_STATUS_CLOSED = 3;
+  DOC_ACTIVITY_TYPE_UPDATED = 4;
+  DOC_ACTIVITY_TYPE_RELATIONS_UPDATED = 5;
+  DOC_ACTIVITY_TYPE_REFERENCES_UPDATED = 6;
+  DOC_ACTIVITY_TYPE_ACCESS_UPDATED = 7;
+  DOC_ACTIVITY_TYPE_OWNER_CHANGED = 8;
+  DOC_ACTIVITY_TYPE_DELETED = 9;
   // Requests
-  DOC_ACTIVITY_TYPE_REQUESTED_ACCESS = 11;
-  DOC_ACTIVITY_TYPE_REQUESTED_CLOSURE = 12;
-  DOC_ACTIVITY_TYPE_REQUESTED_UPDATE = 13;
-  DOC_ACTIVITY_TYPE_REQUESTED_DELETION = 14;
+  DOC_ACTIVITY_TYPE_REQUESTED_ACCESS = 10;
+  DOC_ACTIVITY_TYPE_REQUESTED_CLOSURE = 11;
+  DOC_ACTIVITY_TYPE_REQUESTED_UPDATE = 12;
+  DOC_ACTIVITY_TYPE_REQUESTED_DELETION = 13;
+  // Comments
+  DOC_ACTIVITY_TYPE_COMMENT_ADDED = 14;
+  DOC_ACTIVITY_TYPE_COMMENT_UPDATED = 15;
+  DOC_ACTIVITY_TYPE_COMMENT_DELETED = 16;
 }
 
 message DocActivity {
@@ -38,16 +40,21 @@ message DocActivity {
   optional resources.users.UserShort creator = 6; // @gotags: alias:"creator"
   string creator_job = 7 [(validate.rules).string.max_len = 20];
   optional string creator_job_label = 8 [(validate.rules).string.max_len = 50];
-  string reason = 9 [(validate.rules).string.max_len = 255];
+  optional string reason = 9 [(validate.rules).string.max_len = 255];
   DocActivityData data = 10;
 }
 
 message DocActivityData {
   oneof data {
     DocUpdated updated = 1;
+    DocOwnerChanged owner_changed = 2;
   }
 }
 
 message DocUpdated {
   string diff = 1;
+}
+
+message DocOwnerChanged {
+  int32 owner_id = 1;
 }

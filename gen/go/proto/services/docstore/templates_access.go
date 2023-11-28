@@ -2,7 +2,6 @@ package docstore
 
 import (
 	context "context"
-	"database/sql"
 	"errors"
 	"slices"
 
@@ -14,7 +13,7 @@ import (
 	"github.com/go-jet/jet/v2/qrm"
 )
 
-func (s *Server) handleTemplateAccessChanges(ctx context.Context, tx *sql.Tx, templateId uint64, access []*documents.TemplateJobAccess) error {
+func (s *Server) handleTemplateAccessChanges(ctx context.Context, tx qrm.DB, templateId uint64, access []*documents.TemplateJobAccess) error {
 	userInfo := auth.MustGetUserInfoFromContext(ctx)
 
 	// Get existing job and user accesses from database
@@ -71,7 +70,7 @@ func (s *Server) getTemplateJobAccess(ctx context.Context, templateId uint64) ([
 	return jobAccess, nil
 }
 
-func (s *Server) compareTemplateJobAccess(tx *sql.Tx, current, in []*documents.TemplateJobAccess) (toCreate []*documents.TemplateJobAccess, toUpdate []*documents.TemplateJobAccess, toDelete []*documents.TemplateJobAccess) {
+func (s *Server) compareTemplateJobAccess(tx qrm.DB, current, in []*documents.TemplateJobAccess) (toCreate []*documents.TemplateJobAccess, toUpdate []*documents.TemplateJobAccess, toDelete []*documents.TemplateJobAccess) {
 	toCreate = []*documents.TemplateJobAccess{}
 	toUpdate = []*documents.TemplateJobAccess{}
 	toDelete = []*documents.TemplateJobAccess{}
@@ -136,7 +135,7 @@ func (s *Server) compareTemplateJobAccess(tx *sql.Tx, current, in []*documents.T
 	return
 }
 
-func (s *Server) createTemplateJobAccess(ctx context.Context, tx *sql.Tx, templateId uint64, userId int32, access []*documents.TemplateJobAccess) error {
+func (s *Server) createTemplateJobAccess(ctx context.Context, tx qrm.DB, templateId uint64, userId int32, access []*documents.TemplateJobAccess) error {
 	if access == nil {
 		return nil
 	}
@@ -166,7 +165,7 @@ func (s *Server) createTemplateJobAccess(ctx context.Context, tx *sql.Tx, templa
 	return nil
 }
 
-func (s *Server) updateTemplateJobAccess(ctx context.Context, tx *sql.Tx, templateId uint64, userId int32, access []*documents.TemplateJobAccess) error {
+func (s *Server) updateTemplateJobAccess(ctx context.Context, tx qrm.DB, templateId uint64, userId int32, access []*documents.TemplateJobAccess) error {
 	if access == nil {
 		return nil
 	}
@@ -199,7 +198,7 @@ func (s *Server) updateTemplateJobAccess(ctx context.Context, tx *sql.Tx, templa
 	return nil
 }
 
-func (s *Server) deleteTemplateJobAccess(ctx context.Context, tx *sql.Tx, templateId uint64, access []*documents.TemplateJobAccess) error {
+func (s *Server) deleteTemplateJobAccess(ctx context.Context, tx qrm.DB, templateId uint64, access []*documents.TemplateJobAccess) error {
 	if access == nil {
 		return nil
 	}

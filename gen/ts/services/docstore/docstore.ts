@@ -5,6 +5,7 @@ import { ServiceType } from "@protobuf-ts/runtime-rpc";
 import { MessageType } from "@protobuf-ts/runtime";
 import { Category } from "../../resources/documents/category";
 import { DocRelation } from "../../resources/documents/documents";
+import { DocActivity } from "../../resources/documents/activity";
 import { DocContentType } from "../../resources/documents/documents";
 import { Comment } from "../../resources/documents/comment";
 import { DocumentRelation } from "../../resources/documents/documents";
@@ -520,6 +521,32 @@ export interface ToggleDocumentRequest {
  * @generated from protobuf message services.docstore.ToggleDocumentResponse
  */
 export interface ToggleDocumentResponse {
+}
+/**
+ * @generated from protobuf message services.docstore.ListDocumentActivityRequest
+ */
+export interface ListDocumentActivityRequest {
+    /**
+     * @generated from protobuf field: resources.common.database.PaginationRequest pagination = 1;
+     */
+    pagination?: PaginationRequest;
+    /**
+     * @generated from protobuf field: uint64 document_id = 2 [jstype = JS_STRING];
+     */
+    documentId: string;
+}
+/**
+ * @generated from protobuf message services.docstore.ListDocumentActivityResponse
+ */
+export interface ListDocumentActivityResponse {
+    /**
+     * @generated from protobuf field: resources.common.database.PaginationResponse pagination = 1;
+     */
+    pagination?: PaginationResponse;
+    /**
+     * @generated from protobuf field: repeated resources.documents.DocActivity activity = 2;
+     */
+    activity: DocActivity[];
 }
 /**
  * Access =================================================================
@@ -1200,6 +1227,32 @@ class ToggleDocumentResponse$Type extends MessageType<ToggleDocumentResponse> {
  */
 export const ToggleDocumentResponse = new ToggleDocumentResponse$Type();
 // @generated message type with reflection information, may provide speed optimized methods
+class ListDocumentActivityRequest$Type extends MessageType<ListDocumentActivityRequest> {
+    constructor() {
+        super("services.docstore.ListDocumentActivityRequest", [
+            { no: 1, name: "pagination", kind: "message", T: () => PaginationRequest, options: { "validate.rules": { message: { required: true } } } },
+            { no: 2, name: "document_id", kind: "scalar", T: 4 /*ScalarType.UINT64*/ }
+        ]);
+    }
+}
+/**
+ * @generated MessageType for protobuf message services.docstore.ListDocumentActivityRequest
+ */
+export const ListDocumentActivityRequest = new ListDocumentActivityRequest$Type();
+// @generated message type with reflection information, may provide speed optimized methods
+class ListDocumentActivityResponse$Type extends MessageType<ListDocumentActivityResponse> {
+    constructor() {
+        super("services.docstore.ListDocumentActivityResponse", [
+            { no: 1, name: "pagination", kind: "message", T: () => PaginationResponse },
+            { no: 2, name: "activity", kind: "message", repeat: 1 /*RepeatType.PACKED*/, T: () => DocActivity }
+        ]);
+    }
+}
+/**
+ * @generated MessageType for protobuf message services.docstore.ListDocumentActivityResponse
+ */
+export const ListDocumentActivityResponse = new ListDocumentActivityResponse$Type();
+// @generated message type with reflection information, may provide speed optimized methods
 class GetDocumentAccessRequest$Type extends MessageType<GetDocumentAccessRequest> {
     constructor() {
         super("services.docstore.GetDocumentAccessRequest", [
@@ -1391,6 +1444,7 @@ export const DocStoreService = new ServiceType("services.docstore.DocStoreServic
     { name: "DeleteComment", options: {}, I: DeleteCommentRequest, O: DeleteCommentResponse },
     { name: "GetDocumentAccess", options: {}, I: GetDocumentAccessRequest, O: GetDocumentAccessResponse },
     { name: "SetDocumentAccess", options: {}, I: SetDocumentAccessRequest, O: SetDocumentAccessResponse },
+    { name: "ListDocumentActivity", options: {}, I: ListDocumentActivityRequest, O: ListDocumentActivityResponse },
     { name: "ListUserDocuments", options: {}, I: ListUserDocumentsRequest, O: ListUserDocumentsResponse },
     { name: "ListCategories", options: {}, I: ListCategoriesRequest, O: ListCategoriesResponse },
     { name: "CreateCategory", options: {}, I: CreateCategoryRequest, O: CreateCategoryResponse },

@@ -679,7 +679,7 @@ func (s *Server) getUserProps(ctx context.Context, userId int32) (*users.UserPro
 	return &dest, nil
 }
 
-func (s *Server) addUserActivity(ctx context.Context, tx *sql.Tx, userId int32, targetUserId int32, activityType users.UserActivityType, key string, oldValue string, newValue string, reason string) error {
+func (s *Server) addUserActivity(ctx context.Context, tx qrm.DB, userId int32, targetUserId int32, activityType users.UserActivityType, key string, oldValue string, newValue string, reason string) error {
 	stmt := tUserActivity.
 		INSERT(
 			tUserActivity.SourceUserID,

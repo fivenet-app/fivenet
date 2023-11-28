@@ -5418,6 +5418,317 @@ var _ interface {
 	ErrorName() string
 } = ToggleDocumentResponseValidationError{}
 
+// Validate checks the field values on ListDocumentActivityRequest with the
+// rules defined in the proto definition for this message. If any rules are
+// violated, the first error encountered is returned, or nil if there are no violations.
+func (m *ListDocumentActivityRequest) Validate() error {
+	return m.validate(false)
+}
+
+// ValidateAll checks the field values on ListDocumentActivityRequest with the
+// rules defined in the proto definition for this message. If any rules are
+// violated, the result is a list of violation errors wrapped in
+// ListDocumentActivityRequestMultiError, or nil if none found.
+func (m *ListDocumentActivityRequest) ValidateAll() error {
+	return m.validate(true)
+}
+
+func (m *ListDocumentActivityRequest) validate(all bool) error {
+	if m == nil {
+		return nil
+	}
+
+	var errors []error
+
+	if m.GetPagination() == nil {
+		err := ListDocumentActivityRequestValidationError{
+			field:  "Pagination",
+			reason: "value is required",
+		}
+		if !all {
+			return err
+		}
+		errors = append(errors, err)
+	}
+
+	if all {
+		switch v := interface{}(m.GetPagination()).(type) {
+		case interface{ ValidateAll() error }:
+			if err := v.ValidateAll(); err != nil {
+				errors = append(errors, ListDocumentActivityRequestValidationError{
+					field:  "Pagination",
+					reason: "embedded message failed validation",
+					cause:  err,
+				})
+			}
+		case interface{ Validate() error }:
+			if err := v.Validate(); err != nil {
+				errors = append(errors, ListDocumentActivityRequestValidationError{
+					field:  "Pagination",
+					reason: "embedded message failed validation",
+					cause:  err,
+				})
+			}
+		}
+	} else if v, ok := interface{}(m.GetPagination()).(interface{ Validate() error }); ok {
+		if err := v.Validate(); err != nil {
+			return ListDocumentActivityRequestValidationError{
+				field:  "Pagination",
+				reason: "embedded message failed validation",
+				cause:  err,
+			}
+		}
+	}
+
+	// no validation rules for DocumentId
+
+	if len(errors) > 0 {
+		return ListDocumentActivityRequestMultiError(errors)
+	}
+
+	return nil
+}
+
+// ListDocumentActivityRequestMultiError is an error wrapping multiple
+// validation errors returned by ListDocumentActivityRequest.ValidateAll() if
+// the designated constraints aren't met.
+type ListDocumentActivityRequestMultiError []error
+
+// Error returns a concatenation of all the error messages it wraps.
+func (m ListDocumentActivityRequestMultiError) Error() string {
+	var msgs []string
+	for _, err := range m {
+		msgs = append(msgs, err.Error())
+	}
+	return strings.Join(msgs, "; ")
+}
+
+// AllErrors returns a list of validation violation errors.
+func (m ListDocumentActivityRequestMultiError) AllErrors() []error { return m }
+
+// ListDocumentActivityRequestValidationError is the validation error returned
+// by ListDocumentActivityRequest.Validate if the designated constraints
+// aren't met.
+type ListDocumentActivityRequestValidationError struct {
+	field  string
+	reason string
+	cause  error
+	key    bool
+}
+
+// Field function returns field value.
+func (e ListDocumentActivityRequestValidationError) Field() string { return e.field }
+
+// Reason function returns reason value.
+func (e ListDocumentActivityRequestValidationError) Reason() string { return e.reason }
+
+// Cause function returns cause value.
+func (e ListDocumentActivityRequestValidationError) Cause() error { return e.cause }
+
+// Key function returns key value.
+func (e ListDocumentActivityRequestValidationError) Key() bool { return e.key }
+
+// ErrorName returns error name.
+func (e ListDocumentActivityRequestValidationError) ErrorName() string {
+	return "ListDocumentActivityRequestValidationError"
+}
+
+// Error satisfies the builtin error interface
+func (e ListDocumentActivityRequestValidationError) Error() string {
+	cause := ""
+	if e.cause != nil {
+		cause = fmt.Sprintf(" | caused by: %v", e.cause)
+	}
+
+	key := ""
+	if e.key {
+		key = "key for "
+	}
+
+	return fmt.Sprintf(
+		"invalid %sListDocumentActivityRequest.%s: %s%s",
+		key,
+		e.field,
+		e.reason,
+		cause)
+}
+
+var _ error = ListDocumentActivityRequestValidationError{}
+
+var _ interface {
+	Field() string
+	Reason() string
+	Key() bool
+	Cause() error
+	ErrorName() string
+} = ListDocumentActivityRequestValidationError{}
+
+// Validate checks the field values on ListDocumentActivityResponse with the
+// rules defined in the proto definition for this message. If any rules are
+// violated, the first error encountered is returned, or nil if there are no violations.
+func (m *ListDocumentActivityResponse) Validate() error {
+	return m.validate(false)
+}
+
+// ValidateAll checks the field values on ListDocumentActivityResponse with the
+// rules defined in the proto definition for this message. If any rules are
+// violated, the result is a list of violation errors wrapped in
+// ListDocumentActivityResponseMultiError, or nil if none found.
+func (m *ListDocumentActivityResponse) ValidateAll() error {
+	return m.validate(true)
+}
+
+func (m *ListDocumentActivityResponse) validate(all bool) error {
+	if m == nil {
+		return nil
+	}
+
+	var errors []error
+
+	if all {
+		switch v := interface{}(m.GetPagination()).(type) {
+		case interface{ ValidateAll() error }:
+			if err := v.ValidateAll(); err != nil {
+				errors = append(errors, ListDocumentActivityResponseValidationError{
+					field:  "Pagination",
+					reason: "embedded message failed validation",
+					cause:  err,
+				})
+			}
+		case interface{ Validate() error }:
+			if err := v.Validate(); err != nil {
+				errors = append(errors, ListDocumentActivityResponseValidationError{
+					field:  "Pagination",
+					reason: "embedded message failed validation",
+					cause:  err,
+				})
+			}
+		}
+	} else if v, ok := interface{}(m.GetPagination()).(interface{ Validate() error }); ok {
+		if err := v.Validate(); err != nil {
+			return ListDocumentActivityResponseValidationError{
+				field:  "Pagination",
+				reason: "embedded message failed validation",
+				cause:  err,
+			}
+		}
+	}
+
+	for idx, item := range m.GetActivity() {
+		_, _ = idx, item
+
+		if all {
+			switch v := interface{}(item).(type) {
+			case interface{ ValidateAll() error }:
+				if err := v.ValidateAll(); err != nil {
+					errors = append(errors, ListDocumentActivityResponseValidationError{
+						field:  fmt.Sprintf("Activity[%v]", idx),
+						reason: "embedded message failed validation",
+						cause:  err,
+					})
+				}
+			case interface{ Validate() error }:
+				if err := v.Validate(); err != nil {
+					errors = append(errors, ListDocumentActivityResponseValidationError{
+						field:  fmt.Sprintf("Activity[%v]", idx),
+						reason: "embedded message failed validation",
+						cause:  err,
+					})
+				}
+			}
+		} else if v, ok := interface{}(item).(interface{ Validate() error }); ok {
+			if err := v.Validate(); err != nil {
+				return ListDocumentActivityResponseValidationError{
+					field:  fmt.Sprintf("Activity[%v]", idx),
+					reason: "embedded message failed validation",
+					cause:  err,
+				}
+			}
+		}
+
+	}
+
+	if len(errors) > 0 {
+		return ListDocumentActivityResponseMultiError(errors)
+	}
+
+	return nil
+}
+
+// ListDocumentActivityResponseMultiError is an error wrapping multiple
+// validation errors returned by ListDocumentActivityResponse.ValidateAll() if
+// the designated constraints aren't met.
+type ListDocumentActivityResponseMultiError []error
+
+// Error returns a concatenation of all the error messages it wraps.
+func (m ListDocumentActivityResponseMultiError) Error() string {
+	var msgs []string
+	for _, err := range m {
+		msgs = append(msgs, err.Error())
+	}
+	return strings.Join(msgs, "; ")
+}
+
+// AllErrors returns a list of validation violation errors.
+func (m ListDocumentActivityResponseMultiError) AllErrors() []error { return m }
+
+// ListDocumentActivityResponseValidationError is the validation error returned
+// by ListDocumentActivityResponse.Validate if the designated constraints
+// aren't met.
+type ListDocumentActivityResponseValidationError struct {
+	field  string
+	reason string
+	cause  error
+	key    bool
+}
+
+// Field function returns field value.
+func (e ListDocumentActivityResponseValidationError) Field() string { return e.field }
+
+// Reason function returns reason value.
+func (e ListDocumentActivityResponseValidationError) Reason() string { return e.reason }
+
+// Cause function returns cause value.
+func (e ListDocumentActivityResponseValidationError) Cause() error { return e.cause }
+
+// Key function returns key value.
+func (e ListDocumentActivityResponseValidationError) Key() bool { return e.key }
+
+// ErrorName returns error name.
+func (e ListDocumentActivityResponseValidationError) ErrorName() string {
+	return "ListDocumentActivityResponseValidationError"
+}
+
+// Error satisfies the builtin error interface
+func (e ListDocumentActivityResponseValidationError) Error() string {
+	cause := ""
+	if e.cause != nil {
+		cause = fmt.Sprintf(" | caused by: %v", e.cause)
+	}
+
+	key := ""
+	if e.key {
+		key = "key for "
+	}
+
+	return fmt.Sprintf(
+		"invalid %sListDocumentActivityResponse.%s: %s%s",
+		key,
+		e.field,
+		e.reason,
+		cause)
+}
+
+var _ error = ListDocumentActivityResponseValidationError{}
+
+var _ interface {
+	Field() string
+	Reason() string
+	Key() bool
+	Cause() error
+	ErrorName() string
+} = ListDocumentActivityResponseValidationError{}
+
 // Validate checks the field values on GetDocumentAccessRequest with the rules
 // defined in the proto definition for this message. If any rules are
 // violated, the first error encountered is returned, or nil if there are no violations.

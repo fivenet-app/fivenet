@@ -103,17 +103,6 @@ func (m *DocActivity) validate(all bool) error {
 		errors = append(errors, err)
 	}
 
-	if utf8.RuneCountInString(m.GetReason()) > 255 {
-		err := DocActivityValidationError{
-			field:  "Reason",
-			reason: "value length must be at most 255 runes",
-		}
-		if !all {
-			return err
-		}
-		errors = append(errors, err)
-	}
-
 	if all {
 		switch v := interface{}(m.GetData()).(type) {
 		case interface{ ValidateAll() error }:
@@ -186,6 +175,21 @@ func (m *DocActivity) validate(all bool) error {
 			err := DocActivityValidationError{
 				field:  "CreatorJobLabel",
 				reason: "value length must be at most 50 runes",
+			}
+			if !all {
+				return err
+			}
+			errors = append(errors, err)
+		}
+
+	}
+
+	if m.Reason != nil {
+
+		if utf8.RuneCountInString(m.GetReason()) > 255 {
+			err := DocActivityValidationError{
+				field:  "Reason",
+				reason: "value length must be at most 255 runes",
 			}
 			if !all {
 				return err
@@ -330,6 +334,47 @@ func (m *DocActivityData) validate(all bool) error {
 			if err := v.Validate(); err != nil {
 				return DocActivityDataValidationError{
 					field:  "Updated",
+					reason: "embedded message failed validation",
+					cause:  err,
+				}
+			}
+		}
+
+	case *DocActivityData_OwnerChanged:
+		if v == nil {
+			err := DocActivityDataValidationError{
+				field:  "Data",
+				reason: "oneof value cannot be a typed-nil",
+			}
+			if !all {
+				return err
+			}
+			errors = append(errors, err)
+		}
+
+		if all {
+			switch v := interface{}(m.GetOwnerChanged()).(type) {
+			case interface{ ValidateAll() error }:
+				if err := v.ValidateAll(); err != nil {
+					errors = append(errors, DocActivityDataValidationError{
+						field:  "OwnerChanged",
+						reason: "embedded message failed validation",
+						cause:  err,
+					})
+				}
+			case interface{ Validate() error }:
+				if err := v.Validate(); err != nil {
+					errors = append(errors, DocActivityDataValidationError{
+						field:  "OwnerChanged",
+						reason: "embedded message failed validation",
+						cause:  err,
+					})
+				}
+			}
+		} else if v, ok := interface{}(m.GetOwnerChanged()).(interface{ Validate() error }); ok {
+			if err := v.Validate(); err != nil {
+				return DocActivityDataValidationError{
+					field:  "OwnerChanged",
 					reason: "embedded message failed validation",
 					cause:  err,
 				}
@@ -518,3 +563,105 @@ var _ interface {
 	Cause() error
 	ErrorName() string
 } = DocUpdatedValidationError{}
+
+// Validate checks the field values on DocOwnerChanged with the rules defined
+// in the proto definition for this message. If any rules are violated, the
+// first error encountered is returned, or nil if there are no violations.
+func (m *DocOwnerChanged) Validate() error {
+	return m.validate(false)
+}
+
+// ValidateAll checks the field values on DocOwnerChanged with the rules
+// defined in the proto definition for this message. If any rules are
+// violated, the result is a list of violation errors wrapped in
+// DocOwnerChangedMultiError, or nil if none found.
+func (m *DocOwnerChanged) ValidateAll() error {
+	return m.validate(true)
+}
+
+func (m *DocOwnerChanged) validate(all bool) error {
+	if m == nil {
+		return nil
+	}
+
+	var errors []error
+
+	// no validation rules for OwnerId
+
+	if len(errors) > 0 {
+		return DocOwnerChangedMultiError(errors)
+	}
+
+	return nil
+}
+
+// DocOwnerChangedMultiError is an error wrapping multiple validation errors
+// returned by DocOwnerChanged.ValidateAll() if the designated constraints
+// aren't met.
+type DocOwnerChangedMultiError []error
+
+// Error returns a concatenation of all the error messages it wraps.
+func (m DocOwnerChangedMultiError) Error() string {
+	var msgs []string
+	for _, err := range m {
+		msgs = append(msgs, err.Error())
+	}
+	return strings.Join(msgs, "; ")
+}
+
+// AllErrors returns a list of validation violation errors.
+func (m DocOwnerChangedMultiError) AllErrors() []error { return m }
+
+// DocOwnerChangedValidationError is the validation error returned by
+// DocOwnerChanged.Validate if the designated constraints aren't met.
+type DocOwnerChangedValidationError struct {
+	field  string
+	reason string
+	cause  error
+	key    bool
+}
+
+// Field function returns field value.
+func (e DocOwnerChangedValidationError) Field() string { return e.field }
+
+// Reason function returns reason value.
+func (e DocOwnerChangedValidationError) Reason() string { return e.reason }
+
+// Cause function returns cause value.
+func (e DocOwnerChangedValidationError) Cause() error { return e.cause }
+
+// Key function returns key value.
+func (e DocOwnerChangedValidationError) Key() bool { return e.key }
+
+// ErrorName returns error name.
+func (e DocOwnerChangedValidationError) ErrorName() string { return "DocOwnerChangedValidationError" }
+
+// Error satisfies the builtin error interface
+func (e DocOwnerChangedValidationError) Error() string {
+	cause := ""
+	if e.cause != nil {
+		cause = fmt.Sprintf(" | caused by: %v", e.cause)
+	}
+
+	key := ""
+	if e.key {
+		key = "key for "
+	}
+
+	return fmt.Sprintf(
+		"invalid %sDocOwnerChanged.%s: %s%s",
+		key,
+		e.field,
+		e.reason,
+		cause)
+}
+
+var _ error = DocOwnerChangedValidationError{}
+
+var _ interface {
+	Field() string
+	Reason() string
+	Key() bool
+	Cause() error
+	ErrorName() string
+} = DocOwnerChangedValidationError{}

@@ -1,11 +1,12 @@
 <script lang="ts" setup>
-import { Tab, TabGroup, TabList, TabPanel, TabPanels } from '@headlessui/vue';
+import { Disclosure, DisclosureButton, DisclosurePanel, Tab, TabGroup, TabList, TabPanel, TabPanels } from '@headlessui/vue';
 import { RpcError } from '@protobuf-ts/runtime-rpc';
 import { useConfirmDialog, watchOnce } from '@vueuse/core';
 import {
     AccountMultipleIcon,
     CalendarEditIcon,
     CalendarIcon,
+    ChevronDownIcon,
     CommentTextMultipleIcon,
     FileDocumentIcon,
     FileSearchIcon,
@@ -31,6 +32,7 @@ import Comments from '~/components/documents/Comments.vue';
 import References from '~/components/documents/References.vue';
 import Relations from '~/components/documents/Relations.vue';
 import { checkDocAccess } from '~/components/documents/helpers';
+import ActivityList from '~/components/documents/ActivityList.vue';
 
 const { $grpc } = useNuxtApp();
 const clipboardStore = useClipboardStore();
@@ -398,6 +400,35 @@ onConfirm(async (id: string) => deleteDocument(id));
                                 @new-comment="commentCount && commentCount++"
                                 @deleted-comment="commentCount && commentCount > 0 && commentCount--"
                             />
+                        </div>
+                        <div v-if="checkDocAccess(access, doc.creator, AccessLevel.STATUS)" class="mt-4">
+                            <Disclosure
+                                v-slot="{ open }"
+                                as="div"
+                                class="text-neutral hover:border-neutral/70 border-neutral/20"
+                            >
+                                <DisclosureButton
+                                    :class="[
+                                        open ? 'rounded-t-lg border-b-0' : 'rounded-lg',
+                                        'flex w-full items-start justify-between text-left border-2 p-2 border-inherit transition-colors',
+                                    ]"
+                                >
+                                    <span class="text-base font-semibold leading-7">
+                                        {{ $t('common.activity') }}
+                                    </span>
+                                    <span class="ml-6 flex h-7 items-center">
+                                        <ChevronDownIcon
+                                            :class="[open ? 'upsidedown' : '', 'h-6 w-6 transition-transform']"
+                                            aria-hidden="true"
+                                        />
+                                    </span>
+                                </DisclosureButton>
+                                <DisclosurePanel
+                                    class="px-4 pb-2 border-2 border-t-0 rounded-b-lg transition-colors border-inherit -mt-2"
+                                >
+                                    <ActivityList :document-id="documentId" />
+                                </DisclosurePanel>
+                            </Disclosure>
                         </div>
                     </div>
                 </div>

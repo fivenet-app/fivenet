@@ -173,6 +173,15 @@ func (s *Server) PostComment(ctx context.Context, req *PostCommentRequest) (*Pos
 		return nil, err
 	}
 
+	if err := s.AddDocumentActivity(ctx, s.db, &documents.DocActivity{
+		DocumentId:   req.Comment.DocumentId,
+		ActivityType: documents.DocActivityType_DOC_ACTIVITY_TYPE_COMMENT_ADDED,
+		CreatorId:    &userInfo.UserId,
+		CreatorJob:   userInfo.Job,
+	}); err != nil {
+		return nil, ErrFailedQuery
+	}
+
 	auditEntry.State = int16(rector.EventType_EVENT_TYPE_CREATED)
 
 	return &PostCommentResponse{
@@ -227,6 +236,15 @@ func (s *Server) EditComment(ctx context.Context, req *EditCommentRequest) (*Edi
 	}
 
 	comment.Comment = req.Comment.Comment
+
+	if err := s.AddDocumentActivity(ctx, s.db, &documents.DocActivity{
+		DocumentId:   req.Comment.DocumentId,
+		ActivityType: documents.DocActivityType_DOC_ACTIVITY_TYPE_COMMENT_UPDATED,
+		CreatorId:    &userInfo.UserId,
+		CreatorJob:   userInfo.Job,
+	}); err != nil {
+		return nil, ErrFailedQuery
+	}
 
 	auditEntry.State = int16(rector.EventType_EVENT_TYPE_UPDATED)
 
@@ -316,6 +334,15 @@ func (s *Server) DeleteComment(ctx context.Context, req *DeleteCommentRequest) (
 
 	if _, err := stmt.ExecContext(ctx, s.db); err != nil {
 		return nil, err
+	}
+
+	if err := s.AddDocumentActivity(ctx, s.db, &documents.DocActivity{
+		DocumentId:   uint64(comment.DocumentId),
+		ActivityType: documents.DocActivityType_DOC_ACTIVITY_TYPE_COMMENT_DELETED,
+		CreatorId:    &userInfo.UserId,
+		CreatorJob:   userInfo.Job,
+	}); err != nil {
+		return nil, ErrFailedQuery
 	}
 
 	auditEntry.State = int16(rector.EventType_EVENT_TYPE_DELETED)
