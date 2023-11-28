@@ -77,9 +77,17 @@ export interface DocActivityData {
  */
 export interface DocUpdated {
     /**
-     * @generated from protobuf field: string diff = 1;
+     * @generated from protobuf field: optional string title_diff = 1;
      */
-    diff: string;
+    titleDiff?: string;
+    /**
+     * @generated from protobuf field: optional string content_diff = 2;
+     */
+    contentDiff?: string;
+    /**
+     * @generated from protobuf field: optional string state_diff = 3;
+     */
+    stateDiff?: string;
 }
 /**
  * @generated from protobuf message resources.documents.DocOwnerChanged
@@ -207,7 +215,9 @@ export const DocActivityData = new DocActivityData$Type();
 class DocUpdated$Type extends MessageType<DocUpdated> {
     constructor() {
         super("resources.documents.DocUpdated", [
-            { no: 1, name: "diff", kind: "scalar", T: 9 /*ScalarType.STRING*/ }
+            { no: 1, name: "title_diff", kind: "scalar", opt: true, T: 9 /*ScalarType.STRING*/ },
+            { no: 2, name: "content_diff", kind: "scalar", opt: true, T: 9 /*ScalarType.STRING*/ },
+            { no: 3, name: "state_diff", kind: "scalar", opt: true, T: 9 /*ScalarType.STRING*/ }
         ]);
     }
 }

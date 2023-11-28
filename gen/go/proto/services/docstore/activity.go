@@ -150,3 +150,33 @@ func (s *Server) generateDiff(oldContent string, newContent string) (string, err
 
 	return out, nil
 }
+
+func (s *Server) generateDocumentDiff(old *documents.Document, newDoc *documents.Document) (*documents.DocUpdated, error) {
+	diff := &documents.DocUpdated{}
+
+	titleDiff, err := s.generateDiff(old.Title, newDoc.Title)
+	if err != nil {
+		return nil, err
+	}
+	if titleDiff != "" {
+		diff.TitleDiff = &titleDiff
+	}
+
+	contentDiff, err := s.generateDiff(old.Content, newDoc.Content)
+	if err != nil {
+		return nil, err
+	}
+	if contentDiff != "" {
+		diff.ContentDiff = &contentDiff
+	}
+
+	stateDiff, err := s.generateDiff(old.State, newDoc.State)
+	if err != nil {
+		return nil, err
+	}
+	if stateDiff != "" {
+		diff.StateDiff = &stateDiff
+	}
+
+	return diff, nil
+}

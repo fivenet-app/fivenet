@@ -52,7 +52,9 @@ message DocActivityData {
 }
 
 message DocUpdated {
-  string diff = 1;
+  optional string title_diff = 1;
+  optional string content_diff = 2;
+  optional string state_diff = 3;
 }
 
 message DocOwnerChanged {

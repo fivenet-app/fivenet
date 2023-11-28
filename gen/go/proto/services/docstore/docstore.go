@@ -433,7 +433,11 @@ func (s *Server) UpdateDocument(ctx context.Context, req *UpdateDocumentRequest)
 			return nil, ErrFailedQuery
 		}
 
-		diff, err := s.generateDiff(doc.Content, req.Content)
+		diff, err := s.generateDocumentDiff(doc, &documents.Document{
+			Title:   req.Title,
+			Content: req.Content,
+			State:   req.State,
+		})
 		if err != nil {
 			return nil, ErrFailedQuery
 		}
@@ -445,9 +449,7 @@ func (s *Server) UpdateDocument(ctx context.Context, req *UpdateDocumentRequest)
 			CreatorJob:   userInfo.Job,
 			Data: &documents.DocActivityData{
 				Data: &documents.DocActivityData_Updated{
-					Updated: &documents.DocUpdated{
-						Diff: diff,
-					},
+					Updated: diff,
 				},
 			},
 		}); err != nil {

@@ -485,7 +485,17 @@ func (m *DocUpdated) validate(all bool) error {
 
 	var errors []error
 
-	// no validation rules for Diff
+	if m.TitleDiff != nil {
+		// no validation rules for TitleDiff
+	}
+
+	if m.ContentDiff != nil {
+		// no validation rules for ContentDiff
+	}
+
+	if m.StateDiff != nil {
+		// no validation rules for StateDiff
+	}
 
 	if len(errors) > 0 {
 		return DocUpdatedMultiError(errors)
