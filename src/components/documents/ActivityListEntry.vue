@@ -140,18 +140,23 @@ function getDocAtivityIcon(activityType: DocActivityType): DefineComponent {
             </DisclosureButton>
             <DisclosurePanel class="px-4 pt-2 pb-2">
                 <template v-if="entry.activityType === DocActivityType.UPDATED">
-                    <h3>Difference:</h3>
+                    <p class="text-base font-semibold">{{ $t('components.documents.activity_list.difference') }}:</p>
                     <!-- eslint-disable vue/no-v-html -->
                     <div
                         v-if="entry.data?.data.oneofKind === 'updated'"
-                        class="text-sm"
-                        v-html="entry.data.data.updated.diff"
-                    ></div>
-                    <span>
-                        Legend:
-                        <span class="bg-success-600">Added</span>
-                        <span class="bg-error-600">Removed</span>
-                        <span class="bg-info-600">Changed</span>
+                        class="mt-2 mb-2 rounded-lg text-neutral bg-base-800 break-words"
+                    >
+                        <span v-if="entry.data.data.updated.diff.length === 0">
+                            {{ $t('common.na') }}
+                        </span>
+                        <div v-else class="px-4 py-4" v-html="entry.data.data.updated.diff"></div>
+                    </div>
+
+                    <span class="inline-flex gap-2">
+                        <span class="text-base font-semibold">{{ $t('common.legend') }}:</span>
+                        <span class="bg-success-600">{{ $t('components.documents.activity_list.legend.added') }}</span>
+                        <span class="bg-error-600">{{ $t('components.documents.activity_list.legend.removed') }}</span>
+                        <span class="bg-info-600">{{ $t('components.documents.activity_list.legend.changed') }}</span>
                     </span>
                 </template>
             </DisclosurePanel>

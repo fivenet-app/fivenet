@@ -400,6 +400,9 @@ func (s *Server) UpdateDocument(ctx context.Context, req *UpdateDocumentRequest)
 	}
 
 	if !onlyUpdateAccess {
+		doc.Content = strings.TrimSuffix(doc.Content, "<br>")
+		req.Content = strings.TrimSuffix(req.Content, "<br>")
+
 		tDocument := table.FivenetDocuments
 		stmt := tDocument.
 			UPDATE(
@@ -429,32 +432,30 @@ func (s *Server) UpdateDocument(ctx context.Context, req *UpdateDocumentRequest)
 		if _, err := stmt.ExecContext(ctx, tx); err != nil {
 			return nil, ErrFailedQuery
 		}
+
+		res, err := s.htmlDiff.HTMLdiff([]string{doc.Content, req.Content})
+		if err != nil {
+			return nil, ErrFailedQuery
+		}
+
+		if err := s.AddDocumentActivity(ctx, tx, &documents.DocActivity{
+			DocumentId:   req.DocumentId,
+			ActivityType: documents.DocActivityType_DOC_ACTIVITY_TYPE_UPDATED,
+			CreatorId:    &userInfo.UserId,
+			CreatorJob:   userInfo.Job,
+			Data: &documents.DocActivityData{
+				Data: &documents.DocActivityData_Updated{
+					Updated: &documents.DocUpdated{
+						Diff: res[0],
+					},
+				},
+			},
+		}); err != nil {
+			return nil, ErrFailedQuery
+		}
 	}
 
 	if err := s.handleDocumentAccessChanges(ctx, tx, AccessLevelUpdateMode_ACCESS_LEVEL_UPDATE_MODE_UPDATE, req.DocumentId, req.Access); err != nil {
-		return nil, ErrFailedQuery
-	}
-
-	currentContent := strings.TrimSuffix(doc.Content, "<br>")
-	newContent := strings.TrimSuffix(req.Content, "<br>")
-	res, err := s.htmlDiff.HTMLdiff([]string{currentContent, newContent})
-	if err != nil {
-		return nil, ErrFailedQuery
-	}
-
-	if err := s.AddDocumentActivity(ctx, tx, &documents.DocActivity{
-		DocumentId:   req.DocumentId,
-		ActivityType: documents.DocActivityType_DOC_ACTIVITY_TYPE_UPDATED,
-		CreatorId:    &userInfo.UserId,
-		CreatorJob:   userInfo.Job,
-		Data: &documents.DocActivityData{
-			Data: &documents.DocActivityData_Updated{
-				Updated: &documents.DocUpdated{
-					Diff: res[0],
-				},
-			},
-		},
-	}); err != nil {
 		return nil, ErrFailedQuery
 	}
 

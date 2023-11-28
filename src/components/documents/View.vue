@@ -388,19 +388,6 @@ onConfirm(async (id: string) => deleteDocument(id));
                                 </TabPanels>
                             </TabGroup>
                         </div>
-                        <div class="mt-4">
-                            <h2 class="text-lg font-semibold text-neutral">
-                                {{ $t('common.comment', 2) }}
-                            </h2>
-                            <Comments
-                                :document-id="documentId"
-                                :closed="doc?.closed"
-                                :can-comment="checkDocAccess(access, doc.creator, AccessLevel.COMMENT)"
-                                @counted="commentCount = $event"
-                                @new-comment="commentCount && commentCount++"
-                                @deleted-comment="commentCount && commentCount > 0 && commentCount--"
-                            />
-                        </div>
                         <div v-if="checkDocAccess(access, doc.creator, AccessLevel.STATUS)" class="mt-4">
                             <Disclosure
                                 v-slot="{ open }"
@@ -429,6 +416,19 @@ onConfirm(async (id: string) => deleteDocument(id));
                                     <ActivityList :document-id="documentId" />
                                 </DisclosurePanel>
                             </Disclosure>
+                        </div>
+                        <div class="mt-4">
+                            <h2 class="text-lg font-semibold text-neutral">
+                                {{ $t('common.comment', 2) }}
+                            </h2>
+                            <Comments
+                                :document-id="documentId"
+                                :closed="doc?.closed"
+                                :can-comment="checkDocAccess(access, doc.creator, AccessLevel.COMMENT)"
+                                @counted="commentCount = $event"
+                                @new-comment="commentCount && commentCount++"
+                                @deleted-comment="commentCount && commentCount > 0 && commentCount--"
+                            />
                         </div>
                     </div>
                 </div>
