@@ -2,6 +2,7 @@ package docstore
 
 import (
 	"context"
+	"regexp"
 	"strings"
 
 	database "github.com/galexrt/fivenet/gen/go/proto/resources/common/database"
@@ -139,9 +140,11 @@ func (s *Server) ListDocumentActivity(ctx context.Context, req *ListDocumentActi
 	return resp, nil
 }
 
+var brFixer = regexp.MustCompile(`(?m)(<br>)+([ \n]*)(<br>)+`)
+
 func (s *Server) generateDiff(oldContent string, newContent string) (string, error) {
-	oldContent = strings.ReplaceAll(oldContent, "<br><br>", "")
-	newContent = strings.ReplaceAll(newContent, "<br><br>", "")
+	oldContent = brFixer.ReplaceAllString(oldContent, "")
+	newContent = brFixer.ReplaceAllString(newContent, "")
 	res, err := s.htmlDiff.HTMLdiff([]string{oldContent, newContent})
 	if err != nil {
 		return "", err
