@@ -23,6 +23,7 @@ import {
 import { type DocActivity, DocActivityType } from '~~/gen/ts/resources/documents/activity';
 import CitizenInfoPopover from '~/components/partials/citizens/CitizenInfoPopover.vue';
 import Time from '~/components/partials/elements/Time.vue';
+import DocUpdatedDiff from '~/components/documents/activity/DocUpdatedDiff.vue';
 
 defineProps<{
     entry: DocActivity;
@@ -140,17 +141,7 @@ function getDocAtivityIcon(activityType: DocActivityType): DefineComponent {
             </DisclosureButton>
             <DisclosurePanel class="px-4 pt-2 pb-2">
                 <template v-if="entry.activityType === DocActivityType.UPDATED">
-                    <p class="text-base font-semibold">{{ $t('components.documents.activity_list.difference') }}:</p>
-                    <!-- eslint-disable vue/no-v-html -->
-                    <div
-                        v-if="entry.data?.data.oneofKind === 'updated'"
-                        class="mt-2 mb-2 rounded-lg text-neutral bg-base-800 break-words"
-                    >
-                        <span v-if="entry.data.data.updated.diff.length === 0">
-                            {{ $t('common.na') }}
-                        </span>
-                        <div v-else class="px-4 py-4" v-html="entry.data.data.updated.diff"></div>
-                    </div>
+                    <DocUpdatedDiff v-if="entry.data?.data.oneofKind === 'updated'" :update="entry.data?.data.updated" />
 
                     <span class="inline-flex gap-2">
                         <span class="text-base font-semibold">{{ $t('common.legend') }}:</span>
