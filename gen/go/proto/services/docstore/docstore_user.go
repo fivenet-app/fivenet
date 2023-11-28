@@ -20,9 +20,9 @@ var (
 )
 
 func (s *Server) ListUserDocuments(ctx context.Context, req *ListUserDocumentsRequest) (*ListUserDocumentsResponse, error) {
-	userInfo := auth.MustGetUserInfoFromContext(ctx)
-
 	trace.SpanFromContext(ctx).SetAttributes(attribute.Int64("fivenet.user_id", int64(req.UserId)))
+
+	userInfo := auth.MustGetUserInfoFromContext(ctx)
 
 	condition := jet.AND(
 		tDocRel.DeletedAt.IS_NULL(),

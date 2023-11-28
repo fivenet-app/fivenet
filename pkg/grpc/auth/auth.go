@@ -12,9 +12,10 @@ import (
 )
 
 const (
-	AuthAccIDCtxTag        = "auth.accid"
-	AuthActiveCharIDCtxTag = "auth.chrid"
-	AuthSubCtxTag          = "auth.sub"
+	AuthAccIDCtxTag         = "auth.accid"
+	AuthActiveCharIDCtxTag  = "auth.chrid"
+	AuthSubCtxTag           = "auth.sub"
+	AuthActiveCharJobCtxTag = "auth.chrjob"
 )
 
 const (
@@ -72,11 +73,13 @@ func (g *GRPCAuth) GRPCAuthFunc(ctx context.Context, fullMethod string) (context
 		AuthSubCtxTag, tInfo.Subject,
 		AuthAccIDCtxTag, tInfo.CharID,
 		AuthActiveCharIDCtxTag, tInfo.CharID,
+		AuthActiveCharJobCtxTag, userInfo.Job,
 	})
 
 	trace.SpanFromContext(ctx).SetAttributes(
 		attribute.Int64("fivenet.auth.acc_id", int64(tInfo.AccID)),
 		attribute.Int("fivenet.auth.char_id", int(tInfo.CharID)),
+		attribute.String("fivenet.job", userInfo.Job),
 	)
 
 	return context.WithValue(ctx, userInfoCtxMarkerKey, userInfo), nil

@@ -184,6 +184,8 @@ func (s *Server) ListDocuments(ctx context.Context, req *ListDocumentsRequest) (
 }
 
 func (s *Server) GetDocument(ctx context.Context, req *GetDocumentRequest) (*GetDocumentResponse, error) {
+	trace.SpanFromContext(ctx).SetAttributes(attribute.Int64("fivenet.docstore.id", int64(req.DocumentId)))
+
 	userInfo := auth.MustGetUserInfoFromContext(ctx)
 
 	auditEntry := &model.FivenetAuditLog{
@@ -194,8 +196,6 @@ func (s *Server) GetDocument(ctx context.Context, req *GetDocumentRequest) (*Get
 		State:   int16(rector.EventType_EVENT_TYPE_ERRORED),
 	}
 	defer s.auditer.Log(auditEntry, req)
-
-	trace.SpanFromContext(ctx).SetAttributes(attribute.Int64("fivenet.document_id", int64(req.DocumentId)))
 
 	check, err := s.checkIfUserHasAccessToDoc(ctx, req.DocumentId, userInfo, documents.AccessLevel_ACCESS_LEVEL_VIEW)
 	if err != nil {
@@ -346,6 +346,8 @@ func (s *Server) CreateDocument(ctx context.Context, req *CreateDocumentRequest)
 }
 
 func (s *Server) UpdateDocument(ctx context.Context, req *UpdateDocumentRequest) (*UpdateDocumentResponse, error) {
+	trace.SpanFromContext(ctx).SetAttributes(attribute.Int64("fivenet.docstore.id", int64(req.DocumentId)))
+
 	userInfo := auth.MustGetUserInfoFromContext(ctx)
 
 	auditEntry := &model.FivenetAuditLog{
@@ -356,8 +358,6 @@ func (s *Server) UpdateDocument(ctx context.Context, req *UpdateDocumentRequest)
 		State:   int16(rector.EventType_EVENT_TYPE_ERRORED),
 	}
 	defer s.auditer.Log(auditEntry, req)
-
-	trace.SpanFromContext(ctx).SetAttributes(attribute.Int64("fivenet.document_id", int64(req.DocumentId)))
 
 	check, err := s.checkIfUserHasAccessToDoc(ctx, req.DocumentId, userInfo, documents.AccessLevel_ACCESS_LEVEL_EDIT)
 	if err != nil {
@@ -480,6 +480,8 @@ func (s *Server) UpdateDocument(ctx context.Context, req *UpdateDocumentRequest)
 }
 
 func (s *Server) DeleteDocument(ctx context.Context, req *DeleteDocumentRequest) (*DeleteDocumentResponse, error) {
+	trace.SpanFromContext(ctx).SetAttributes(attribute.Int64("fivenet.docstore.id", int64(req.DocumentId)))
+
 	userInfo := auth.MustGetUserInfoFromContext(ctx)
 
 	auditEntry := &model.FivenetAuditLog{
@@ -490,8 +492,6 @@ func (s *Server) DeleteDocument(ctx context.Context, req *DeleteDocumentRequest)
 		State:   int16(rector.EventType_EVENT_TYPE_ERRORED),
 	}
 	defer s.auditer.Log(auditEntry, req)
-
-	trace.SpanFromContext(ctx).SetAttributes(attribute.Int64("fivenet.document_id", int64(req.DocumentId)))
 
 	check, err := s.checkIfUserHasAccessToDoc(ctx, req.DocumentId, userInfo, documents.AccessLevel_ACCESS_LEVEL_EDIT)
 	if err != nil {
@@ -551,6 +551,8 @@ func (s *Server) DeleteDocument(ctx context.Context, req *DeleteDocumentRequest)
 }
 
 func (s *Server) ToggleDocument(ctx context.Context, req *ToggleDocumentRequest) (*ToggleDocumentResponse, error) {
+	trace.SpanFromContext(ctx).SetAttributes(attribute.Int64("fivenet.docstore.id", int64(req.DocumentId)))
+
 	userInfo := auth.MustGetUserInfoFromContext(ctx)
 
 	auditEntry := &model.FivenetAuditLog{
@@ -561,8 +563,6 @@ func (s *Server) ToggleDocument(ctx context.Context, req *ToggleDocumentRequest)
 		State:   int16(rector.EventType_EVENT_TYPE_ERRORED),
 	}
 	defer s.auditer.Log(auditEntry, req)
-
-	trace.SpanFromContext(ctx).SetAttributes(attribute.Int64("fivenet.document_id", int64(req.DocumentId)))
 
 	check, err := s.checkIfUserHasAccessToDoc(ctx, req.DocumentId, userInfo, documents.AccessLevel_ACCESS_LEVEL_STATUS)
 	if err != nil {

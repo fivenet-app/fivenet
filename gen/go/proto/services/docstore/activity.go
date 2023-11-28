@@ -52,9 +52,9 @@ func (s *Server) AddDocumentActivity(ctx context.Context, tx qrm.DB, activitiy *
 }
 
 func (s *Server) ListDocumentActivity(ctx context.Context, req *ListDocumentActivityRequest) (*ListDocumentActivityResponse, error) {
-	userInfo := auth.MustGetUserInfoFromContext(ctx)
+	trace.SpanFromContext(ctx).SetAttributes(attribute.Int64("fivenet.docstore.id", int64(req.DocumentId)))
 
-	trace.SpanFromContext(ctx).SetAttributes(attribute.Int64("fivenet.document_id", int64(req.DocumentId)))
+	userInfo := auth.MustGetUserInfoFromContext(ctx)
 
 	ok, err := s.checkIfUserHasAccessToDoc(ctx, req.DocumentId, userInfo, documents.AccessLevel_ACCESS_LEVEL_VIEW)
 	if err != nil {
