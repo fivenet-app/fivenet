@@ -426,7 +426,7 @@ func (s *Server) UpdateDocument(ctx context.Context, req *UpdateDocumentRequest)
 				req.Title,
 				utils.StringFirstN(htmlsanitizer.StripTags(req.Content), DocShortContentLength),
 				req.Content,
-				tDocument.Data,
+				jet.NULL,
 				req.State,
 				req.Closed,
 				req.Public,

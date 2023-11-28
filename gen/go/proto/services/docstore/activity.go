@@ -140,9 +140,11 @@ func (s *Server) ListDocumentActivity(ctx context.Context, req *ListDocumentActi
 }
 
 func (s *Server) generateDiff(oldContent string, newContent string) (string, error) {
+	oldContent = strings.ReplaceAll(oldContent, "<br><br>", "")
+	newContent = strings.ReplaceAll(newContent, "<br><br>", "")
 	res, err := s.htmlDiff.HTMLdiff([]string{oldContent, newContent})
 	if err != nil {
-		return "", ErrFailedQuery
+		return "", err
 	}
 
 	out := res[0]
