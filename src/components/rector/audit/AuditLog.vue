@@ -292,7 +292,7 @@ watchDebounced(queryCitizens, async () => await findChars(), {
                                             {{ $t('common.user', 1) }}
                                         </th>
                                         <th scope="col" class="py-3.5 px-2 text-left text-sm font-semibold text-neutral">
-                                            {{ $t('common.service') }}
+                                            {{ $t('common.service') }}/{{ $t('common.method') }}
                                         </th>
                                         <th scope="col" class="py-3.5 px-2 text-left text-sm font-semibold text-neutral">
                                             {{ $t('common.state') }}
@@ -331,7 +331,7 @@ watchDebounced(queryCitizens, async () => await findChars(), {
                                             {{ $t('common.user', 1) }}
                                         </th>
                                         <th scope="col" class="py-3.5 px-2 text-left text-sm font-semibold text-neutral">
-                                            {{ $t('common.service') }}
+                                            {{ $t('common.service') }}/{{ $t('common.method') }}
                                         </th>
                                         <th scope="col" class="py-3.5 px-2 text-left text-sm font-semibold text-neutral">
                                             {{ $t('common.state') }}
