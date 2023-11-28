@@ -433,7 +433,7 @@ func (s *Server) UpdateDocument(ctx context.Context, req *UpdateDocumentRequest)
 			return nil, ErrFailedQuery
 		}
 
-		res, err := s.htmlDiff.HTMLdiff([]string{doc.Content, req.Content})
+		diff, err := s.generateDiff(doc.Content, req.Content)
 		if err != nil {
 			return nil, ErrFailedQuery
 		}
@@ -446,7 +446,7 @@ func (s *Server) UpdateDocument(ctx context.Context, req *UpdateDocumentRequest)
 			Data: &documents.DocActivityData{
 				Data: &documents.DocActivityData_Updated{
 					Updated: &documents.DocUpdated{
-						Diff: res[0],
+						Diff: diff,
 					},
 				},
 			},

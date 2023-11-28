@@ -2,6 +2,7 @@ package docstore
 
 import (
 	"context"
+	"strings"
 
 	database "github.com/galexrt/fivenet/gen/go/proto/resources/common/database"
 	"github.com/galexrt/fivenet/gen/go/proto/resources/documents"
@@ -10,6 +11,10 @@ import (
 	"github.com/galexrt/fivenet/query/fivenet/table"
 	jet "github.com/go-jet/jet/v2/mysql"
 	"github.com/go-jet/jet/v2/qrm"
+)
+
+const (
+	ActivityDefaultPageLimit = 10
 )
 
 var (
@@ -74,7 +79,7 @@ func (s *Server) ListDocumentActivity(ctx context.Context, req *ListDocumentActi
 		return nil, err
 	}
 
-	pag, limit := req.Pagination.GetResponse()
+	pag, limit := req.Pagination.GetResponseWithPageSize(ActivityDefaultPageLimit)
 	resp := &ListDocumentActivityResponse{
 		Pagination: pag,
 		Activity:   []*documents.DocActivity{},
@@ -129,4 +134,19 @@ func (s *Server) ListDocumentActivity(ctx context.Context, req *ListDocumentActi
 	}
 
 	return resp, nil
+}
+
+func (s *Server) generateDiff(oldContent string, newContent string) (string, error) {
+	res, err := s.htmlDiff.HTMLdiff([]string{oldContent, newContent})
+	if err != nil {
+		return "", ErrFailedQuery
+	}
+
+	out := res[0]
+	// If no change markers found, return empty string
+	if !strings.Contains(out, "bg-") {
+		return "", nil
+	}
+
+	return out, nil
 }
