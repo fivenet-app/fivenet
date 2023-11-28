@@ -2,6 +2,7 @@ package manager
 
 import (
 	"context"
+	"errors"
 	"fmt"
 	"slices"
 	"time"
@@ -17,6 +18,7 @@ import (
 	"github.com/galexrt/fivenet/query/fivenet/table"
 	jet "github.com/go-jet/jet/v2/mysql"
 	"github.com/go-jet/jet/v2/qrm"
+	"github.com/nats-io/nats.go"
 	"github.com/paulmach/orb"
 	"go.uber.org/zap"
 	"google.golang.org/protobuf/proto"
@@ -27,10 +29,12 @@ const DispatchExpirationTime = 31 * time.Second
 func (s *Manager) UpdateDispatchStatus(ctx context.Context, job string, dspId uint64, in *centrum.DispatchStatus) (*centrum.DispatchStatus, error) {
 	dsp, err := s.GetDispatch(job, dspId)
 	if err != nil {
-		return nil, errorscentrum.ErrFailedQuery
+		if !errors.Is(err, nats.ErrKeyNotFound) {
+			return nil, errorscentrum.ErrFailedQuery
+		}
 	}
 
-	if dsp.Status != nil {
+	if dsp != nil && dsp.Status != nil {
 		// If the dispatch status is the same and is a status that shouldn't be duplicated, don't update the status again
 		if dsp.Status.Status == in.Status &&
 			(in.Status == centrum.StatusDispatch_STATUS_DISPATCH_NEW ||

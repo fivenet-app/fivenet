@@ -11,6 +11,8 @@ import (
 	"github.com/galexrt/fivenet/query/fivenet/table"
 	jet "github.com/go-jet/jet/v2/mysql"
 	"github.com/go-jet/jet/v2/qrm"
+	"go.opentelemetry.io/otel/attribute"
+	"go.opentelemetry.io/otel/trace"
 )
 
 var (
@@ -19,6 +21,8 @@ var (
 
 func (s *Server) ListUserDocuments(ctx context.Context, req *ListUserDocumentsRequest) (*ListUserDocumentsResponse, error) {
 	userInfo := auth.MustGetUserInfoFromContext(ctx)
+
+	trace.SpanFromContext(ctx).SetAttributes(attribute.Int64("fivenet.user_id", int64(req.UserId)))
 
 	condition := jet.AND(
 		tDocRel.DeletedAt.IS_NULL(),

@@ -11,6 +11,8 @@ import (
 	"github.com/galexrt/fivenet/query/fivenet/table"
 	jet "github.com/go-jet/jet/v2/mysql"
 	"github.com/go-jet/jet/v2/qrm"
+	"go.opentelemetry.io/otel/attribute"
+	"go.opentelemetry.io/otel/trace"
 )
 
 const (
@@ -51,6 +53,9 @@ func (s *Server) AddDocumentActivity(ctx context.Context, tx qrm.DB, activitiy *
 
 func (s *Server) ListDocumentActivity(ctx context.Context, req *ListDocumentActivityRequest) (*ListDocumentActivityResponse, error) {
 	userInfo := auth.MustGetUserInfoFromContext(ctx)
+
+	trace.SpanFromContext(ctx).SetAttributes(attribute.Int64("fivenet.document_id", int64(req.DocumentId)))
+
 	ok, err := s.checkIfUserHasAccessToDoc(ctx, req.DocumentId, userInfo, documents.AccessLevel_ACCESS_LEVEL_VIEW)
 	if err != nil {
 		return nil, ErrFailedQuery
@@ -58,8 +63,6 @@ func (s *Server) ListDocumentActivity(ctx context.Context, req *ListDocumentActi
 	if !ok {
 		return nil, ErrDocViewDenied
 	}
-
-	// TODO add audit log entry
 
 	tDocActivity := table.FivenetDocumentsActivity.AS("doc_activity")
 

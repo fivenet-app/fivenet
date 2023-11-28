@@ -5,16 +5,16 @@ import (
 
 	"github.com/galexrt/fivenet/pkg/grpc/auth/userinfo"
 	"github.com/grpc-ecosystem/go-grpc-middleware/v2/interceptors/logging"
+	"go.opentelemetry.io/otel/attribute"
+	"go.opentelemetry.io/otel/trace"
 	"google.golang.org/grpc/codes"
 	"google.golang.org/grpc/status"
 )
 
 const (
-	AuthAccIDCtxTag              = "auth.accid"
-	AuthActiveCharIDCtxTag       = "auth.chrid"
-	AuthActiveCharJobCtxTag      = "auth.chrjob"
-	AuthActiveCharJobGradeCtxTag = "auth.chrjobg"
-	AuthSubCtxTag                = "auth.sub"
+	AuthAccIDCtxTag        = "auth.accid"
+	AuthActiveCharIDCtxTag = "auth.chrid"
+	AuthSubCtxTag          = "auth.sub"
 )
 
 const (
@@ -73,6 +73,11 @@ func (g *GRPCAuth) GRPCAuthFunc(ctx context.Context, fullMethod string) (context
 		AuthAccIDCtxTag, tInfo.CharID,
 		AuthActiveCharIDCtxTag, tInfo.CharID,
 	})
+
+	trace.SpanFromContext(ctx).SetAttributes(
+		attribute.Int64("fivenet.auth.acc_id", int64(tInfo.AccID)),
+		attribute.Int("fivenet.auth.char_id", int(tInfo.CharID)),
+	)
 
 	return context.WithValue(ctx, userInfoCtxMarkerKey, userInfo), nil
 }

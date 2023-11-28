@@ -353,11 +353,12 @@ func (s *Manager) LoadDispatchesFromDB(ctx context.Context, id uint64) error {
 
 		// Ensure dispatch has a status
 		if dsps[i].Status == nil {
-			if _, err := s.UpdateDispatchStatus(ctx, dsps[i].Job, dsps[i].Id, &centrum.DispatchStatus{
+			dsps[i].Status, err = s.UpdateDispatchStatus(ctx, dsps[i].Job, dsps[i].Id, &centrum.DispatchStatus{
 				CreatedAt:  timestamp.Now(),
 				DispatchId: dsps[i].Id,
 				Status:     centrum.StatusDispatch_STATUS_DISPATCH_NEW,
-			}); err != nil {
+			})
+			if err != nil {
 				return err
 			}
 		}

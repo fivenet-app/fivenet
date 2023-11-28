@@ -12,6 +12,8 @@ import (
 	"github.com/galexrt/fivenet/query/fivenet/model"
 	"github.com/galexrt/fivenet/query/fivenet/table"
 	jet "github.com/go-jet/jet/v2/mysql"
+	"go.opentelemetry.io/otel/attribute"
+	"go.opentelemetry.io/otel/trace"
 	"google.golang.org/grpc/codes"
 	"google.golang.org/grpc/status"
 )
@@ -33,6 +35,9 @@ var (
 
 func (s *Server) GetComments(ctx context.Context, req *GetCommentsRequest) (*GetCommentsResponse, error) {
 	userInfo := auth.MustGetUserInfoFromContext(ctx)
+
+	trace.SpanFromContext(ctx).SetAttributes(attribute.Int64("fivenet.document_id", int64(req.DocumentId)))
+
 	ok, err := s.checkIfUserHasAccessToDoc(ctx, req.DocumentId, userInfo, documents.AccessLevel_ACCESS_LEVEL_VIEW)
 	if err != nil {
 		return nil, ErrFailedQuery
@@ -143,6 +148,8 @@ func (s *Server) PostComment(ctx context.Context, req *PostCommentRequest) (*Pos
 	}
 	defer s.auditer.Log(auditEntry, req)
 
+	trace.SpanFromContext(ctx).SetAttributes(attribute.Int64("fivenet.document_id", int64(req.Comment.DocumentId)))
+
 	check, err := s.checkIfUserHasAccessToDoc(ctx, req.Comment.DocumentId, userInfo, documents.AccessLevel_ACCESS_LEVEL_COMMENT)
 	if err != nil {
 		return nil, err
@@ -200,6 +207,8 @@ func (s *Server) EditComment(ctx context.Context, req *EditCommentRequest) (*Edi
 		State:   int16(rector.EventType_EVENT_TYPE_ERRORED),
 	}
 	defer s.auditer.Log(auditEntry, req)
+
+	trace.SpanFromContext(ctx).SetAttributes(attribute.Int64("fivenet.document_id", int64(req.Comment.DocumentId)), attribute.Int64("fivenet.document_comment_id", int64(req.Comment.Id)))
 
 	check, err := s.checkIfUserHasAccessToDoc(ctx, req.Comment.DocumentId, userInfo, documents.AccessLevel_ACCESS_LEVEL_COMMENT)
 	if err != nil {
@@ -291,6 +300,8 @@ func (s *Server) DeleteComment(ctx context.Context, req *DeleteCommentRequest) (
 		State:   int16(rector.EventType_EVENT_TYPE_ERRORED),
 	}
 	defer s.auditer.Log(auditEntry, req)
+
+	trace.SpanFromContext(ctx).SetAttributes(attribute.Int64("fivenet.document_comment_id", int64(req.CommentId)))
 
 	comment, err := s.getComment(ctx, req.CommentId)
 	if err != nil {

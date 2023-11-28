@@ -23,6 +23,8 @@ import (
 	"github.com/galexrt/fivenet/query/fivenet/table"
 	jet "github.com/go-jet/jet/v2/mysql"
 	"github.com/go-jet/jet/v2/qrm"
+	"go.opentelemetry.io/otel/attribute"
+	"go.opentelemetry.io/otel/trace"
 	"google.golang.org/grpc/codes"
 	"google.golang.org/grpc/status"
 )
@@ -193,6 +195,8 @@ func (s *Server) GetDocument(ctx context.Context, req *GetDocumentRequest) (*Get
 	}
 	defer s.auditer.Log(auditEntry, req)
 
+	trace.SpanFromContext(ctx).SetAttributes(attribute.Int64("fivenet.document_id", int64(req.DocumentId)))
+
 	check, err := s.checkIfUserHasAccessToDoc(ctx, req.DocumentId, userInfo, documents.AccessLevel_ACCESS_LEVEL_VIEW)
 	if err != nil {
 		return nil, ErrNotFoundOrNoPerms
@@ -353,6 +357,8 @@ func (s *Server) UpdateDocument(ctx context.Context, req *UpdateDocumentRequest)
 	}
 	defer s.auditer.Log(auditEntry, req)
 
+	trace.SpanFromContext(ctx).SetAttributes(attribute.Int64("fivenet.document_id", int64(req.DocumentId)))
+
 	check, err := s.checkIfUserHasAccessToDoc(ctx, req.DocumentId, userInfo, documents.AccessLevel_ACCESS_LEVEL_EDIT)
 	if err != nil {
 		return nil, ErrNotFoundOrNoPerms
@@ -485,6 +491,8 @@ func (s *Server) DeleteDocument(ctx context.Context, req *DeleteDocumentRequest)
 	}
 	defer s.auditer.Log(auditEntry, req)
 
+	trace.SpanFromContext(ctx).SetAttributes(attribute.Int64("fivenet.document_id", int64(req.DocumentId)))
+
 	check, err := s.checkIfUserHasAccessToDoc(ctx, req.DocumentId, userInfo, documents.AccessLevel_ACCESS_LEVEL_EDIT)
 	if err != nil {
 		return nil, ErrNotFoundOrNoPerms
@@ -553,6 +561,8 @@ func (s *Server) ToggleDocument(ctx context.Context, req *ToggleDocumentRequest)
 		State:   int16(rector.EventType_EVENT_TYPE_ERRORED),
 	}
 	defer s.auditer.Log(auditEntry, req)
+
+	trace.SpanFromContext(ctx).SetAttributes(attribute.Int64("fivenet.document_id", int64(req.DocumentId)))
 
 	check, err := s.checkIfUserHasAccessToDoc(ctx, req.DocumentId, userInfo, documents.AccessLevel_ACCESS_LEVEL_STATUS)
 	if err != nil {
