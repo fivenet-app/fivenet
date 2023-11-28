@@ -149,7 +149,7 @@ async function ensureOwnDispatchSelected(): Promise<void> {
 watchDebounced(
     selectedDispatch,
     () => {
-        if (selectedDispatch.value !== undefined) {
+        if (selectedDispatch.value !== undefined && getOwnUnit.value !== undefined) {
             const dispatch = dispatches.value.get(selectedDispatch.value);
             if (dispatch !== undefined) {
                 setWaypoint(dispatch.x, dispatch.y);
