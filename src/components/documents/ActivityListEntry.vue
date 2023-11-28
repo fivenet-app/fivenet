@@ -142,13 +142,6 @@ function getDocAtivityIcon(activityType: DocActivityType): DefineComponent {
             <DisclosurePanel class="px-4 pt-2 pb-2">
                 <template v-if="entry.activityType === DocActivityType.UPDATED">
                     <DocUpdatedDiff v-if="entry.data?.data.oneofKind === 'updated'" :update="entry.data?.data.updated" />
-
-                    <span class="inline-flex gap-2">
-                        <span class="text-base font-semibold">{{ $t('common.legend') }}:</span>
-                        <span class="bg-success-600">{{ $t('components.documents.activity_list.legend.added') }}</span>
-                        <span class="bg-error-600">{{ $t('components.documents.activity_list.legend.removed') }}</span>
-                        <span class="bg-info-600">{{ $t('components.documents.activity_list.legend.changed') }}</span>
-                    </span>
                 </template>
             </DisclosurePanel>
         </Disclosure>
