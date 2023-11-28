@@ -1,6 +1,6 @@
 <script lang="ts" setup>
 import { RpcError } from '@protobuf-ts/runtime-rpc';
-import { FileSearchIcon } from 'mdi-vue3';
+import { TicketIcon } from 'mdi-vue3';
 import type { ListDocumentActivityResponse } from '~~/gen/ts/services/docstore/docstore';
 import DataErrorBlock from '~/components/partials/data/DataErrorBlock.vue';
 import DataNoDataBlock from '~/components/partials/data/DataNoDataBlock.vue';
@@ -45,12 +45,14 @@ watch(offset, async () => refresh());
         <DataPendingBlock v-if="pending" :message="$t('common.loading', [$t('common.document', 2)])" />
         <DataErrorBlock v-else-if="error" :title="$t('common.unable_to_load', [$t('common.document', 2)])" :retry="refresh" />
         <DataNoDataBlock
-            v-else-if="!data"
-            :icon="FileSearchIcon"
-            :message="$t('common.not_found', [$t('common.document', 2)])"
+            v-else-if="data === null || data.activity.length === 0"
+            :icon="TicketIcon"
+            :message="$t('common.not_found', [$t('common.activity')])"
         />
-        <div v-else class="rounded-lg bg-base-700">
-            <ActivityListEntry v-for="item in data.activity" :key="item.id" :entry="item" />
+        <div v-else>
+            <div class="sm:divide-y sm:divide-base-400 mb-1">
+                <ActivityListEntry v-for="item in data.activity" :key="item.id" :entry="item" />
+            </div>
 
             <TablePagination :pagination="data?.pagination" :refresh="refresh" @offset-change="offset = $event" />
         </div>

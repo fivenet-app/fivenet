@@ -109,7 +109,7 @@ function getDocAtivityIcon(activityType: DocActivityType): DefineComponent {
         </div>
 
         <Disclosure v-else v-slot="{ open }" as="div">
-            <DisclosureButton class="flex w-full items-start justify-between text-left transition-colors">
+            <DisclosureButton class="flex w-full items-start justify-between text-left transition">
                 <div class="w-full flex space-x-3">
                     <div class="h-10 w-10 rounded-full flex items-center justify-center my-auto">
                         <component :is="getDocAtivityIcon(entry.activityType)" class="w-7 h-7" />

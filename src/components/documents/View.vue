@@ -411,7 +411,7 @@ onConfirm(async (id: string) => deleteDocument(id));
                                     </span>
                                 </DisclosureButton>
                                 <DisclosurePanel
-                                    class="px-4 pb-2 border-2 border-t-0 rounded-b-lg transition-colors border-inherit -mt-2"
+                                    class="px-4 pb-2 border-2 border-t-0 rounded-b-lg transition-colors border-inherit"
                                 >
                                     <ActivityList :document-id="documentId" />
                                 </DisclosurePanel>
