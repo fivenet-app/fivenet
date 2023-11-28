@@ -367,12 +367,12 @@
                 }
             },
             "activity_list": {
-                "difference": "Difference",
                 "legend": {
                     "added": "Added",
                     "removed": "Removed",
                     "changed": "Changed"
-                }
+                },
+                "difference": "Difference"
             }
         },
         "livemap": {
