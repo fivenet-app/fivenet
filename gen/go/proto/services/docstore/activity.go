@@ -143,11 +143,12 @@ func (s *Server) ListDocumentActivity(ctx context.Context, req *ListDocumentActi
 var brFixer = regexp.MustCompile(`(?m)(<br>)+([ \n]*)(<br>)+`)
 
 func (s *Server) generateDiff(oldContent string, newContent string) (string, error) {
-	oldContent = brFixer.ReplaceAllString(oldContent, "")
-	newContent = brFixer.ReplaceAllString(newContent, "")
+	oldContent = brFixer.ReplaceAllString(oldContent, "<br>")
+	newContent = brFixer.ReplaceAllString(newContent, "<br>")
 	res, err := s.htmlDiff.HTMLdiff([]string{oldContent, newContent})
 	if err != nil {
-		return "", err
+		// Fallback to the new content
+		return newContent, nil
 	}
 
 	out := res[0]

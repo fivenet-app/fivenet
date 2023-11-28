@@ -3,6 +3,7 @@ package audit
 import (
 	"context"
 	"database/sql"
+	"strings"
 	"sync"
 
 	"github.com/galexrt/fivenet/pkg/config"
@@ -113,6 +114,11 @@ func (a *AuditStorer) store(in *model.FivenetAuditLog) error {
 
 	ctx, span := a.tracer.Start(a.ctx, "audit-store")
 	defer span.End()
+
+	// Remove everything but the last part of the GRPC service name
+	// E.g., `service.centrum.CentrumService` becomes `CentrumService`
+	service := strings.Split(in.Service, ".")
+	in.Service = service[len(service)-1]
 
 	stmt := tAudit.
 		INSERT(
