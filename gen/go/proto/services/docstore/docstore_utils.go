@@ -341,13 +341,12 @@ func (s *Server) checkIfHasAccess(levels []string, userInfo *userinfo.UserInfo, 
 
 	// If the document creator job is not equal to the creator's current job, normal access checks need to be applied
 	// and not the rank attributes checks
-	if creatorJob != creator.Job {
+	if creatorJob != userInfo.Job {
 		return true
 	}
 
-	// If both have the same **current** job, the rank attributes checks are executed, otherwise it is "just another document"
-	// the user has access to
-	if creator.Job != userInfo.Job {
+	// If the creator is nil, treat it like a normal doc access check
+	if creator == nil {
 		return true
 	}
 
