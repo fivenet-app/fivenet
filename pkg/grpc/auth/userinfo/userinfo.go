@@ -10,8 +10,9 @@ var (
 )
 
 type UserInfo struct {
-	AccId  uint64
-	UserId int32
+	Enabled bool
+	AccId   uint64
+	UserId  int32
 
 	Job          string
 	JobGrade     int32

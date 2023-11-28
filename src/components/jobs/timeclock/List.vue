@@ -111,7 +111,10 @@ watchDebounced(
     async () => {
         if (canAccessAll) {
             if (query.value.user_ids !== undefined && query.value.user_ids.length > 0) {
-                perDay.value = false;
+                if (perDay.value) {
+                    perDay.value = false;
+                    query.value.to = undefined;
+                }
             } else {
                 perDay.value = true;
             }
@@ -375,7 +378,7 @@ function updateDates(): void {
                                             :entry="entry"
                                             class="transition-colors hover:bg-neutral/5"
                                             :first="idx === 0 ? group.date : undefined"
-                                            :show-date="!canAccessAll"
+                                            :show-date="!perDay"
                                         />
                                     </template>
                                 </tbody>

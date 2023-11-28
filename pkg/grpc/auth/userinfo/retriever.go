@@ -3,6 +3,7 @@ package userinfo
 import (
 	"context"
 	"database/sql"
+	"fmt"
 	"slices"
 	"time"
 
@@ -11,6 +12,10 @@ import (
 	"github.com/galexrt/fivenet/pkg/config"
 	jet "github.com/go-jet/jet/v2/mysql"
 	"go.uber.org/fx"
+)
+
+var (
+	ErrAccountError = fmt.Errorf("failed to retrieve account data")
 )
 
 type UserInfoRetriever interface {
@@ -80,6 +85,7 @@ func (ui *UIRetriever) GetUserInfo(ctx context.Context, userId int32, accountId 
 			tUsers.JobGrade,
 			tUsers.Group,
 			tFivenetAccounts.ID.AS("userinfo.acc_id"),
+			tFivenetAccounts.Enabled.AS("userinfo.enabled"),
 			tFivenetAccounts.OverrideJob.AS("userinfo.orig_job"),
 			tFivenetAccounts.OverrideJobGrade.AS("userinfo.orig_job_grade"),
 		).
@@ -95,6 +101,11 @@ func (ui *UIRetriever) GetUserInfo(ctx context.Context, userId int32, accountId 
 
 	if err := stmt.QueryContext(ctx, ui.db, dest); err != nil {
 		return nil, err
+	}
+
+	// If account is not enabled, fail here
+	if !dest.Enabled {
+		return nil, ErrAccountError
 	}
 
 	// Check if user is superuser
