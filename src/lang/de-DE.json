@@ -365,6 +365,14 @@
                 "partials": {
                     "template_hint": "Sie können Golang HTML Templating im oberen Feld benutzen. Klicken Sie hier, um mehr zu erfahren."
                 }
+            },
+            "activity_list": {
+                "legend": {
+                    "added": "Hinzugefügt",
+                    "removed": "Entfernt",
+                    "changed": "Geändert"
+                },
+                "difference": "Unterschied"
             }
         },
         "livemap": {
@@ -773,7 +781,8 @@
         "points": "Punkt | Punkte",
         "hints": "Hinweis | Hinweise",
         "icon": "Icon",
-        "disabled": "Deaktiviert"
+        "disabled": "Deaktiviert",
+        "legend": "Legende"
     },
     "notifications": {
         "clipboard": {
