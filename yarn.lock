@@ -1601,10 +1601,19 @@
     estree-walker "^2.0.1"
     picomatch "^2.2.2"
 
-"@rollup/pluginutils@^5.0.1", "@rollup/pluginutils@^5.0.2", "@rollup/pluginutils@^5.0.4", "@rollup/pluginutils@^5.0.5":
+"@rollup/pluginutils@^5.0.1", "@rollup/pluginutils@^5.0.2", "@rollup/pluginutils@^5.0.4":
   version "5.0.5"
   resolved "https://registry.yarnpkg.com/@rollup/pluginutils/-/pluginutils-5.0.5.tgz#bbb4c175e19ebfeeb8c132c2eea0ecb89941a66c"
   integrity sha512-6aEYR910NyP73oHiJglti74iRyOwgFU4x3meH/H8OJx6Ry0j6cOVZ5X/wTvub7G7Ao6qaHBEaNsV3GLJkSsF+Q==
+  dependencies:
+    "@types/estree" "^1.0.0"
+    estree-walker "^2.0.2"
+    picomatch "^2.3.1"
+
+"@rollup/pluginutils@^5.0.5":
+  version "5.1.0"
+  resolved "https://registry.yarnpkg.com/@rollup/pluginutils/-/pluginutils-5.1.0.tgz#7e53eddc8c7f483a4ad0b94afb1f7f5fd3c771e0"
+  integrity sha512-XTIWOPPcpvyKI6L1NHo0lFlCyznUEyPmPY1mc3KpPVDYulHSTvyeLNVW00QTLIAFNhR3kYnJTQHeGqU4M3n09g==
   dependencies:
     "@types/estree" "^1.0.0"
     estree-walker "^2.0.2"
@@ -2035,13 +2044,13 @@
   integrity sha512-rcb08uEwf14CAnMd65jcFn0PzKh3GYNtjoFgUbuXDihhyxGrnNhthytPVk7oEwbBc0mBBSM8Kmnhc5zt51EetQ==
 
 "@vee-validate/nuxt@^4.12.1":
-  version "4.12.1"
-  resolved "https://registry.yarnpkg.com/@vee-validate/nuxt/-/nuxt-4.12.1.tgz#4079223481feb24db9791846ffbd42d94ffef998"
-  integrity sha512-0rVPkxjUg+dktfwvgDCI9bZhCXQoSG87owO/sIerCFdGVvV6i+3CTREIzuMWjvyD5aPnP4vEu7Qu+XmbCsBQkA==
+  version "4.12.2"
+  resolved "https://registry.yarnpkg.com/@vee-validate/nuxt/-/nuxt-4.12.2.tgz#802ceace42bd5a51ebce5b14911e355d0835ff4f"
+  integrity sha512-ws+67dy8SETK/DMtxwEeifgLBsk5rX6DNo5xw6k06ibiiLcHnT2LATLKedJfTGzCOzycs49nVP8McTCQzvOorw==
   dependencies:
     "@nuxt/kit" "^3.8.2"
     local-pkg "^0.5.0"
-    vee-validate "4.12.1"
+    vee-validate "4.12.2"
 
 "@vee-validate/rules@^4.12.1":
   version "4.12.1"
@@ -3007,10 +3016,15 @@ caniuse-api@^3.0.0:
     lodash.memoize "^4.1.2"
     lodash.uniq "^4.5.0"
 
-caniuse-lite@^1.0.0, caniuse-lite@^1.0.30001538, caniuse-lite@^1.0.30001541:
+caniuse-lite@^1.0.0, caniuse-lite@^1.0.30001538:
   version "1.0.30001564"
   resolved "https://registry.yarnpkg.com/caniuse-lite/-/caniuse-lite-1.0.30001564.tgz#eaa8bbc58c0cbccdcb7b41186df39dd2ba591889"
   integrity sha512-DqAOf+rhof+6GVx1y+xzbFPeOumfQnhYzVnZD6LAXijR77yPtm9mfOcqOnT3mpnJiZVT+kwLAFnRlZcIz+c6bg==
+
+caniuse-lite@^1.0.30001541:
+  version "1.0.30001565"
+  resolved "https://registry.yarnpkg.com/caniuse-lite/-/caniuse-lite-1.0.30001565.tgz#a528b253c8a2d95d2b415e11d8b9942acc100c4f"
+  integrity sha512-xrE//a3O7TP0vaJ8ikzkD2c2NgcVUvsEe2IvFTntV4Yd1Z9FVzh+gW+enX96L0psrbaFMcVcH2l90xNuGDWc8w==
 
 chalk@5.3.0, chalk@^5.3.0:
   version "5.3.0"
@@ -3730,9 +3744,9 @@ ee-first@1.1.1:
   integrity sha512-WMwm9LhRUo+WUaRN+vRuETqG89IgZphVSNkdFgeb6sS/E4OrDIN7t48CAewSHXc6C8lefD8KKfr5vY61brQlow==
 
 electron-to-chromium@^1.4.535:
-  version "1.4.592"
-  resolved "https://registry.yarnpkg.com/electron-to-chromium/-/electron-to-chromium-1.4.592.tgz#1ffd49ba3da3da3077ea20014b066c910d50c913"
-  integrity sha512-D3NOkROIlF+d5ixnz7pAf3Lu/AuWpd6AYgI9O67GQXMXTcCP1gJQRotOq35eQy5Sb4hez33XH1YdTtILA7Udww==
+  version "1.4.596"
+  resolved "https://registry.yarnpkg.com/electron-to-chromium/-/electron-to-chromium-1.4.596.tgz#6752d1aa795d942d49dfc5d3764d6ea283fab1d7"
+  integrity sha512-zW3zbZ40Icb2BCWjm47nxwcFGYlIgdXkAx85XDO7cyky9J4QQfq8t0W19/TLZqq3JPQXtlv8BPIGmfa9Jb4scg==
 
 emoji-regex@^8.0.0:
   version "8.0.0"
@@ -9099,6 +9113,14 @@ vee-validate@4.12.1, vee-validate@^4.12.1:
   version "4.12.1"
   resolved "https://registry.yarnpkg.com/vee-validate/-/vee-validate-4.12.1.tgz#4cab69c4895243b9a8bdb23f7886bb2e6a72eee4"
   integrity sha512-CPqBfJwWGePCPzhtwLZ7mFLGn45V2i+C/S0+nBybD+o+btsH1W6Ri8p1sNtbTtESQ5HJTYfCrzX/Mf6uFWH8Fw==
+  dependencies:
+    "@vue/devtools-api" "^6.5.1"
+    type-fest "^4.8.2"
+
+vee-validate@4.12.2:
+  version "4.12.2"
+  resolved "https://registry.yarnpkg.com/vee-validate/-/vee-validate-4.12.2.tgz#7f3e2ef23f7ef254fbdb00e58ca34458023e4d68"
+  integrity sha512-SF5AOHbyW8vy09FgMRVHxCtK/3D5Jsk0VyvMf/HZhwPgpjGCCBW6ZWDW11/HC6pRbMOjTcg3YueBI6hb3oveYg==
   dependencies:
     "@vue/devtools-api" "^6.5.1"
     type-fest "^4.8.2"
