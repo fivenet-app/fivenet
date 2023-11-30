@@ -2,6 +2,10 @@ syntax = "proto3";
 
 package resources.documents;
 
+import "resources/timestamp/timestamp.proto";
+import "resources/users/users.proto";
+import "validate/validate.proto";
+
 option go_package = "github.com/galexrt/fivenet/gen/go/proto/resources/documents;documents";
 
 enum AccessLevel {
@@ -12,4 +16,31 @@ enum AccessLevel {
   ACCESS_LEVEL_STATUS = 4;
   ACCESS_LEVEL_ACCESS = 5;
   ACCESS_LEVEL_EDIT = 6;
+}
+
+message DocumentAccess {
+  repeated DocumentJobAccess jobs = 1; // @gotags: alias:"job_access"
+  repeated DocumentUserAccess users = 2; // @gotags: alias:"user_access"
+}
+
+message DocumentJobAccess {
+  uint64 id = 1 [jstype = JS_STRING];
+  optional resources.timestamp.Timestamp created_at = 2;
+  uint64 document_id = 3 [jstype = JS_STRING];
+  string job = 4 [(validate.rules).string.max_len = 20]; // @gotags: alias:"job"
+  optional string job_label = 5 [(validate.rules).string.max_len = 50]; // @gotags: alias:"job_label"
+  int32 minimum_grade = 6 [(validate.rules).int32.gt = 0]; // @gotags: alias:"minimum_grade"
+  optional string job_grade_label = 7 [(validate.rules).string.max_len = 50]; // @gotags: alias:"job_grade_label"
+  resources.documents.AccessLevel access = 8 [(validate.rules).enum.defined_only = true]; // @gotags: alias:"access"
+  optional bool required = 9; // @gotags: alias:"required"
+}
+
+message DocumentUserAccess {
+  uint64 id = 1 [jstype = JS_STRING];
+  optional resources.timestamp.Timestamp created_at = 2;
+  uint64 document_id = 3 [jstype = JS_STRING];
+  int32 user_id = 4 [(validate.rules).int32.gt = 0];
+  optional resources.users.UserShort user = 5;
+  resources.documents.AccessLevel access = 6 [(validate.rules).enum.defined_only = true]; // @gotags: alias:"access"
+  optional bool required = 7; // @gotags: alias:"required"
 }

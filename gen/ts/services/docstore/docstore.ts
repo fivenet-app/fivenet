@@ -11,7 +11,7 @@ import { DocContentType } from "../../resources/documents/documents";
 import { Comment } from "../../resources/documents/comment";
 import { DocumentRelation } from "../../resources/documents/documents";
 import { DocumentReference } from "../../resources/documents/documents";
-import { DocumentAccess } from "../../resources/documents/documents";
+import { DocumentAccess } from "../../resources/documents/access";
 import { Document } from "../../resources/documents/documents";
 import { DocumentShort } from "../../resources/documents/documents";
 import { PaginationResponse } from "../../resources/common/database/database";

@@ -3,6 +3,7 @@ syntax = "proto3";
 package services.docstore;
 
 import "resources/common/database/database.proto";
+import "resources/documents/access.proto";
 import "resources/documents/activity.proto";
 import "resources/documents/category.proto";
 import "resources/documents/comment.proto";

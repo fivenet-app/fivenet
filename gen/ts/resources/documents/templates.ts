@@ -6,7 +6,7 @@ import { AccessLevel } from "./access";
 import { Vehicle } from "../vehicles/vehicles";
 import { DocumentShort } from "./documents";
 import { User } from "../users/users";
-import { DocumentAccess } from "./documents";
+import { DocumentAccess } from "./access";
 import { UserShort } from "../users/users";
 import { Category } from "./category";
 import { Timestamp } from "../timestamp/timestamp";

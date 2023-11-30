@@ -35,13 +35,12 @@ import { useCompletorStore } from '~/store/completor';
 import { useDocumentEditorStore } from '~/store/documenteditor';
 import { useNotificatorStore } from '~/store/notificator';
 import { useSettingsStore } from '~/store/settings';
-import { AccessLevel } from '~~/gen/ts/resources/documents/access';
+import { AccessLevel, DocumentAccess } from '~~/gen/ts/resources/documents/access';
 import { Category } from '~~/gen/ts/resources/documents/category';
 import {
     DocContentType,
     DocReference,
     DocRelation,
-    DocumentAccess,
     DocumentReference,
     DocumentRelation,
 } from '~~/gen/ts/resources/documents/documents';

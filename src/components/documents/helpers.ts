@@ -1,6 +1,5 @@
 import { useAuthStore } from '~/store/auth';
-import { AccessLevel } from '~~/gen/ts/resources/documents/access';
-import { DocumentAccess } from '~~/gen/ts/resources/documents/documents';
+import { AccessLevel, DocumentAccess } from '~~/gen/ts/resources/documents/access';
 import { User, UserShort } from '~~/gen/ts/resources/users/users';
 
 export function checkDocAccess(
