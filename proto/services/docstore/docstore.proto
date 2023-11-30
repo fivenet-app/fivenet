@@ -363,7 +363,7 @@ service DocStoreService {
   // @perm
   rpc ListDocumentActivity(ListDocumentActivityRequest) returns (ListDocumentActivityResponse);
 
-  // @perm
+  // @perm: Attrs=Types/StringList:[]string{"Access", "Closure", "Update", "Deletion"}§[]string{"Access"}
   rpc RequestDocumentAction(RequestDocumentActionRequest) returns (RequestDocumentActionResponse);
 
   // @perm

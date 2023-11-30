@@ -103,7 +103,7 @@ type DocStoreServiceClient interface {
 	SetDocumentAccess(ctx context.Context, in *SetDocumentAccessRequest, opts ...grpc.CallOption) (*SetDocumentAccessResponse, error)
 	// @perm
 	ListDocumentActivity(ctx context.Context, in *ListDocumentActivityRequest, opts ...grpc.CallOption) (*ListDocumentActivityResponse, error)
-	// @perm
+	// @perm: Attrs=Types/StringList:[]string{"Access", "Closure", "Update", "Deletion"}§[]string{"Access"}
 	RequestDocumentAction(ctx context.Context, in *RequestDocumentActionRequest, opts ...grpc.CallOption) (*RequestDocumentActionResponse, error)
 	// @perm
 	ListUserDocuments(ctx context.Context, in *ListUserDocumentsRequest, opts ...grpc.CallOption) (*ListUserDocumentsResponse, error)
@@ -447,7 +447,7 @@ type DocStoreServiceServer interface {
 	SetDocumentAccess(context.Context, *SetDocumentAccessRequest) (*SetDocumentAccessResponse, error)
 	// @perm
 	ListDocumentActivity(context.Context, *ListDocumentActivityRequest) (*ListDocumentActivityResponse, error)
-	// @perm
+	// @perm: Attrs=Types/StringList:[]string{"Access", "Closure", "Update", "Deletion"}§[]string{"Access"}
 	RequestDocumentAction(context.Context, *RequestDocumentActionRequest) (*RequestDocumentActionResponse, error)
 	// @perm
 	ListUserDocuments(context.Context, *ListUserDocumentsRequest) (*ListUserDocumentsResponse, error)

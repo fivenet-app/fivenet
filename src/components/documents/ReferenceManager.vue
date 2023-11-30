@@ -240,7 +240,7 @@ function removeReference(id: string): void {
                                                             </thead>
                                                             <tbody class="divide-y divide-base-500">
                                                                 <tr
-                                                                    v-for="[key, reference] in $props.modelValue"
+                                                                    v-for="[key, reference] in modelValue"
                                                                     :key="key.toString()"
                                                                 >
                                                                     <td

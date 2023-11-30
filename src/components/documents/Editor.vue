@@ -856,13 +856,13 @@ function setupCheckboxes(): void {
             <RelationManager
                 v-model="relationManagerData"
                 :open="relationManagerShow"
-                :document="$props.id"
+                :document="id"
                 @close="relationManagerShow = false"
             />
             <ReferenceManager
                 v-model="referenceManagerData"
                 :open="referenceManagerShow"
-                :document-id="$props.id"
+                :document-id="id"
                 @close="referenceManagerShow = false"
             />
 

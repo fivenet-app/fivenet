@@ -1069,6 +1069,9 @@
             "ListCitizens": {
                 "key": "Bürger auflisten",
                 "description": "Bürger auflisten und suchen.",
+                "attrs_types": {
+                    "Fields": "Felder"
+                },
                 "attrs": {
                     "PhoneNumber": "Telefonnummer",
                     "Licenses": "Lizenzen",
@@ -1081,6 +1084,9 @@
             "ListUserActivity": {
                 "key": "Nutzeraktivität auflisten",
                 "description": "Aktivitäten-Feed für Bürgerinformationen",
+                "attrs_types": {
+                    "Fields": "Felder"
+                },
                 "attrs": {
                     "SourceUser": "Quellbenutzer",
                     "Own": "Eigene Aktivitäten"
@@ -1089,6 +1095,9 @@
             "SetUserProps": {
                 "key": "Nutzereigenschaften festlegen",
                 "description": "Bürger-Eigenschaften festlegen (z.B. Fahndungsstatus).",
+                "attrs_types": {
+                    "Fields": "Bürger Eigenschaften"
+                },
                 "attrs": {
                     "Wanted": "Gesuchter Status",
                     "Job": "Job",
@@ -1097,7 +1106,10 @@
             },
             "GetUser": {
                 "key": "Nutzer abrufen",
-                "description": "Einen Bürger ansehen."
+                "description": "Einen Bürger ansehen.",
+                "attrs_types": {
+                    "Jobs": "Fraktionen"
+                }
             }
         },
         "CompletorService": {
@@ -1112,7 +1124,10 @@
             },
             "CompleteDocumentCategories": {
                 "key": "Auflisten von Dokumentkategorien",
-                "description": "Auflisten der Dokumentkategorien von bestimmten Jobs."
+                "description": "Auflisten der Dokumentkategorien von bestimmten Jobs.",
+                "attrs_types": {
+                    "Jobs": "Fraktionen"
+                }
             }
         },
         "DMVService": {
@@ -1155,6 +1170,9 @@
             "UpdateDocument": {
                 "key": "Dokument aktualisieren",
                 "description": "Ein vorhandenes Dokument bearbeiten/ aktualisieren.",
+                "attrs_types": {
+                    "Access": "Zugriff auf fraktionseigene Dokumente"
+                },
                 "attrs": {
                     "Own": "Eigene",
                     "Lower_Rank": "Niedrigerer Rang",
@@ -1173,6 +1191,9 @@
             "DeleteDocument": {
                 "key": "Dokumenten Löschung",
                 "description": "Dokumente löschen.",
+                "attrs_types": {
+                    "Access": "Zugriff auf fraktionseigene Dokumente"
+                },
                 "attrs": {
                     "Own": "Eigene",
                     "Lower_Rank": "Niedrigerer Rang",
@@ -1183,6 +1204,9 @@
             "ToggleDocument": {
                 "key": "Dokument per Knopf öffnen/ schließen",
                 "description": "Dokument per Knopf öffnen/ schließen.",
+                "attrs_types": {
+                    "Access": "Zugriff auf fraktionseigene Dokumente"
+                },
                 "attrs": {
                     "Own": "Eigene",
                     "Lower_Rank": "Niedrigerer Rang",
@@ -1193,6 +1217,9 @@
             "DeleteComment": {
                 "key": "Dokumenten Kommentare löschen",
                 "description": "Eigenen Dokumentenkommentar löschen.",
+                "attrs_types": {
+                    "Access": "Zugriff auf fraktionseigene Dokumente"
+                },
                 "attrs": {
                     "Own": "Eigene",
                     "Lower_Rank": "Niedrigerer Rang",
@@ -1229,11 +1256,18 @@
             "category": "Livemap",
             "Stream": {
                 "key": "Aufrufen",
-                "description": "Livemap aufrufen können."
+                "description": "Livemap aufrufen können.",
+                "attrs_types": {
+                    "Players": "Spieler Positionen",
+                    "Markers": "Markierungen"
+                }
             },
             "CreateOrUpdateMarker": {
                 "key": "Erstellen und Aktualisieren von Markierungen",
                 "description": "Markierungen auf der Livemap erstellen und aktualisieren können.",
+                "attrs_types": {
+                    "Access": "Zugriff auf fraktionseigene Markierungen"
+                },
                 "attrs": {
                     "Own": "Eigene",
                     "Lower_Rank": "Niedrigerer Rang",
@@ -1244,6 +1278,9 @@
             "DeleteMarker": {
                 "key": "Markierung Löschen",
                 "description": "Markierungen auf der Livemap löschen können.",
+                "attrs_types": {
+                    "Access": "Zugriff auf fraktionseigene Markierungen"
+                },
                 "attrs": {
                     "Own": "Eigene",
                     "Lower_Rank": "Niedrigerer Rang",
@@ -1339,6 +1376,9 @@
             "ConductListEntries": {
                 "key": "Führungsregister: Einträge anzeigen",
                 "description": "Anzeigen von Führungsregister Einträgen.",
+                "attrs_types": {
+                    "Access": "Zugriff auf Führungsregister-Einträge"
+                },
                 "attrs": {
                     "Own": "Eigene",
                     "All": "Alle"
@@ -1351,6 +1391,9 @@
             "TimeclockListEntries": {
                 "key": "Stempeluhr Einträge: Anzeigen",
                 "description": "Stempeluhr Einträge anzeigen lassen.",
+                "attrs_types": {
+                    "Access": "Zugriff auf Stempeluhr-Einträge"
+                },
                 "attrs": {
                     "All": "Alle"
                 }
@@ -1382,66 +1425,6 @@
             "RequestsDeleteComment": {
                 "key": "Anfragen: Anfragen-Kommentare löschen",
                 "description": "Löschen von Anfragen-Kommentaren."
-            }
-        }
-    },
-    "attrs": {
-        "CitizenStoreService": {
-            "GetUser": {
-                "Jobs": "Fraktionen"
-            },
-            "ListCitizens": {
-                "Fields": "Felder"
-            },
-            "ListUserActivity": {
-                "Fields": "Felder"
-            },
-            "SetUserProps": {
-                "Fields": "Bürger Eigenschaften"
-            }
-        },
-        "LivemapperService": {
-            "Stream": {
-                "Players": "Spieler Positionen",
-                "Markers": "Markierungen"
-            },
-            "CreateOrUpdateMarker": {
-                "Access": "Zugriff auf fraktionseigene Markierungen"
-            },
-            "DeleteMarker": {
-                "Access": "Zugriff auf fraktionseigene Dokumente"
-            }
-        },
-        "RectorService": {
-            "GetPermissions": {
-                "Jobs": "Fraktionen"
-            }
-        },
-        "DocStoreService": {
-            "UpdateDocument": {
-                "Access": "Zugriff auf fraktionseigene Dokumente"
-            },
-            "DeleteDocument": {
-                "Access": "Zugriff auf fraktionseigene Dokumente"
-            },
-            "ToggleDocument": {
-                "Access": "Zugriff auf fraktionseigene Dokumente"
-            },
-            "DeleteComment": {
-                "Access": "Zugriff auf fraktionseigene Dokumente"
-            }
-        },
-        "CompletorService": {
-            "CompleteDocumentCategories": {
-                "Jobs": "Fraktionen"
-            }
-        },
-        "JobsService": {
-            "ConductListEntries": {
-                "Access": "Zugriff auf Führungsregister-Einträge"
-            },
-            "TimeclockListEntries": {
-                "Access": "Zugriff auf Stempeluhr-Einträge"
             }
         }
     },

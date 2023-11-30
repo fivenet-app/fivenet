@@ -216,7 +216,7 @@ export interface IDocStoreServiceClient {
      */
     listDocumentActivity(input: ListDocumentActivityRequest, options?: RpcOptions): UnaryCall<ListDocumentActivityRequest, ListDocumentActivityResponse>;
     /**
-     * @perm
+     * @perm: Attrs=Types/StringList:[]string{"Access", "Closure", "Update", "Deletion"}§[]string{"Access"}
      *
      * @generated from protobuf rpc: RequestDocumentAction(services.docstore.RequestDocumentActionRequest) returns (services.docstore.RequestDocumentActionResponse);
      */
@@ -478,7 +478,7 @@ export class DocStoreServiceClient implements IDocStoreServiceClient, ServiceInf
         return stackIntercept<ListDocumentActivityRequest, ListDocumentActivityResponse>("unary", this._transport, method, opt, input);
     }
     /**
-     * @perm
+     * @perm: Attrs=Types/StringList:[]string{"Access", "Closure", "Update", "Deletion"}§[]string{"Access"}
      *
      * @generated from protobuf rpc: RequestDocumentAction(services.docstore.RequestDocumentActionRequest) returns (services.docstore.RequestDocumentActionResponse);
      */

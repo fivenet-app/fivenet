@@ -244,7 +244,7 @@ onBeforeMount(async () => {
                 ]"
             >
                 <span class="text-base leading-7 transition-colors">
-                    {{ $t(`attrs.${attribute.category}.${attribute.name}.${attribute.key}`) }}
+                    {{ $t(`perms.${attribute.category}.${attribute.name}.attrs_types.${attribute.key}`) }}
                 </span>
                 <span class="ml-6 flex h-7 items-center">
                     <ChevronDownIcon :class="[open ? 'upsidedown' : '', 'h-6 w-6 transition-transform']" aria-hidden="true" />

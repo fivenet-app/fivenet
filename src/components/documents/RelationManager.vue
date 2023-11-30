@@ -224,10 +224,7 @@ function removeRelation(id: string): void {
                                                                 </tr>
                                                             </thead>
                                                             <tbody class="divide-y divide-base-500">
-                                                                <tr
-                                                                    v-for="[key, relation] in $props.modelValue"
-                                                                    :key="key.toString()"
-                                                                >
+                                                                <tr v-for="[key, relation] in modelValue" :key="key.toString()">
                                                                     <td
                                                                         class="py-4 pl-4 pr-3 text-sm font-medium truncate whitespace-nowrap sm:pl-6 lg:pl-8"
                                                                     >

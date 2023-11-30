@@ -129,7 +129,14 @@ func init() {
 		{
 			Category: permkeys.DocStoreServicePerm,
 			Name:     permkeys.DocStoreServiceRequestDocumentActionPerm,
-			Attrs:    []perms.Attr{},
+			Attrs: []perms.Attr{
+				{
+					Key:           permkeys.DocStoreServiceRequestDocumentActionTypesPermField,
+					Type:          permissions.StringListAttributeType,
+					ValidValues:   []string{"Access", "Closure", "Update", "Deletion"},
+					DefaultValues: []string{"Access"},
+				},
+			},
 		},
 		{
 			Category: permkeys.DocStoreServicePerm,

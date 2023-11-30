@@ -167,25 +167,23 @@ onBeforeMount(async () => {
 </script>
 
 <template>
-    <div v-if="$props.attribute">
+    <div v-if="attribute">
         <Disclosure
             v-slot="{ open }"
             as="div"
-            :class="[
-                $props.disabled ? 'border-neutral/10 text-base-300' : 'hover:border-neutral/70 border-neutral/20 text-neutral',
-            ]"
+            :class="[disabled ? 'border-neutral/10 text-base-300' : 'hover:border-neutral/70 border-neutral/20 text-neutral']"
         >
             <DisclosureButton
-                :disabled="$props.disabled"
+                :disabled="disabled"
                 :class="[
                     open ? 'rounded-t-lg border-b-0' : 'rounded-lg',
-                    $props.disabled ? 'cursor-not-allowed' : '',
+                    disabled ? 'cursor-not-allowed' : '',
                     'flex w-full items-start justify-between text-left border-2 p-2 border-inherit transition-colors',
                 ]"
                 :title="`${$t('common.id')}: ${attribute.attrId}`"
             >
                 <span class="text-base leading-7 transition-colors">
-                    {{ $t(`attrs.${attribute.category}.${attribute.name}.${attribute.key}`) }}
+                    {{ $t(`perms.${attribute.category}.${attribute.name}.attrs_types.${attribute.key}`) }}
                 </span>
                 <span class="ml-6 flex h-7 items-center">
                     <ChevronDownIcon :class="[open ? 'upsidedown' : '', 'h-6 w-6 transition-transform']" aria-hidden="true" />

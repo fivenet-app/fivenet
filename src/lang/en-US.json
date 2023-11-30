@@ -1069,6 +1069,9 @@
             "ListCitizens": {
                 "key": "ListCitizens",
                 "description": "List and search through citizens.",
+                "attrs_types": {
+                    "Fields": "Fields"
+                },
                 "attrs": {
                     "PhoneNumber": "Phone Number",
                     "Licenses": "Licenses",
@@ -1081,6 +1084,9 @@
             "ListUserActivity": {
                 "key": "ListUserActivity",
                 "description": "Citizen Info Activity Feed",
+                "attrs_types": {
+                    "Fields": "Fields"
+                },
                 "attrs": {
                     "SourceUser": "Source User",
                     "Own": "Own Activity Feed"
@@ -1089,6 +1095,9 @@
             "SetUserProps": {
                 "key": "SetUserProps",
                 "description": "Set Citizen Props (e.g., wanted status, suspected job).",
+                "attrs_types": {
+                    "Fields": "User Properties Fields"
+                },
                 "attrs": {
                     "Wanted": "Wanted Status",
                     "Job": "Job",
@@ -1097,7 +1106,10 @@
             },
             "GetUser": {
                 "key": "GetUser",
-                "description": "View a citizen's."
+                "description": "View a citizen's.",
+                "attrs_types": {
+                    "Jobs": "Factions"
+                }
             }
         },
         "CompletorService": {
@@ -1112,7 +1124,10 @@
             },
             "CompleteDocumentCategories": {
                 "key": "List document categories",
-                "description": "Complete a document categories."
+                "description": "Complete a document categories.",
+                "attrs_types": {
+                    "Jobs": "Factions"
+                }
             }
         },
         "DMVService": {
@@ -1155,6 +1170,9 @@
             "UpdateDocument": {
                 "key": "UpdateDocument",
                 "description": "Edit/ Update an existing document.",
+                "attrs_types": {
+                    "Access": "Access to factions-own documents"
+                },
                 "attrs": {
                     "Own": "Own",
                     "Lower_Rank": "Lower Rank",
@@ -1173,6 +1191,9 @@
             "DeleteDocument": {
                 "key": "DeleteDocument",
                 "description": "Delete documents.",
+                "attrs_types": {
+                    "Access": "Access to factions-own documents"
+                },
                 "attrs": {
                     "Own": "Own",
                     "Lower_Rank": "Lower Rank",
@@ -1183,6 +1204,9 @@
             "ToggleDocument": {
                 "key": "Toggle Document Open/ Closed Status",
                 "description": "Toggle a document open/ closed.",
+                "attrs_types": {
+                    "Access": "Access to factions-own documents"
+                },
                 "attrs": {
                     "Own": "Own",
                     "Lower_Rank": "Lower Rank",
@@ -1193,6 +1217,9 @@
             "DeleteComment": {
                 "key": "DeleteComment",
                 "description": "Delete document comments.",
+                "attrs_types": {
+                    "Access": "Access to factions-own documents"
+                },
                 "attrs": {
                     "Own": "Own",
                     "Lower_Rank": "Lower Rank",
@@ -1222,18 +1249,34 @@
             },
             "RequestDocumentAction": {
                 "key": "RequestDocumentAction",
-                "description": "Request actions for documents."
+                "description": "Request actions for documents.",
+                "attrs_types": {
+                    "Types": "Available Actions"
+                },
+                "attrs": {
+                    "Access": "Access",
+                    "Closure": "Closure",
+                    "Update": "Update",
+                    "Deletion": "Deletion"
+                }
             }
         },
         "LivemapperService": {
             "category": "Livemap",
             "Stream": {
                 "key": "View",
-                "description": "Being able to view the Livemap."
+                "description": "Being able to view the Livemap.",
+                "attrs_types": {
+                    "Players": "Player Location",
+                    "Markers": "Markers"
+                }
             },
             "CreateOrUpdateMarker": {
                 "key": "Create and Update Markers",
                 "description": "Being able to create and update markers on the Livemap.",
+                "attrs_types": {
+                    "Access": "Access to factions-own markers"
+                },
                 "attrs": {
                     "Own": "Own",
                     "Lower_Rank": "Lower Rank",
@@ -1244,6 +1287,9 @@
             "DeleteMarker": {
                 "key": "Delete Marker",
                 "description": "Being able to delete markers on the Livemap.",
+                "attrs_types": {
+                    "Access": "Access to factions-own markers"
+                },
                 "attrs": {
                     "Own": "Own",
                     "Lower_Rank": "Lower Rank",
@@ -1339,6 +1385,9 @@
             "ConductListEntries": {
                 "key": "Conduct Entries: List",
                 "description": "List Conduct Register entries.",
+                "attrs_types": {
+                    "Access": "Access to conduct register entries"
+                },
                 "attrs": {
                     "Own": "Own",
                     "All": "All"
@@ -1351,6 +1400,9 @@
             "TimeclockListEntries": {
                 "key": "Timeclock Entries: List",
                 "description": "List Timeclock entries.",
+                "attrs_types": {
+                    "Access": "Access to time clock entries"
+                },
                 "attrs": {
                     "All": "All"
                 }
@@ -1382,66 +1434,6 @@
             "RequestsDeleteComment": {
                 "key": "Requests: Delete Comment",
                 "description": "Delete Comments made on Requests."
-            }
-        }
-    },
-    "attrs": {
-        "CitizenStoreService": {
-            "GetUser": {
-                "Jobs": "Factions"
-            },
-            "ListCitizens": {
-                "Fields": "Fields"
-            },
-            "ListUserActivity": {
-                "Fields": "Fields"
-            },
-            "SetUserProps": {
-                "Fields": "User Properties Fields"
-            }
-        },
-        "LivemapperService": {
-            "Stream": {
-                "Players": "Player Location",
-                "Markers": "Markers"
-            },
-            "CreateOrUpdateMarker": {
-                "Access": "Access to factions-own markers"
-            },
-            "DeleteMarker": {
-                "Access": "Access to factions-own markers"
-            }
-        },
-        "RectorService": {
-            "GetPermissions": {
-                "Jobs": "Factions"
-            }
-        },
-        "DocStoreService": {
-            "UpdateDocument": {
-                "Access": "Access to factions-own documents"
-            },
-            "DeleteDocument": {
-                "Access": "Access to factions-own documents"
-            },
-            "ToggleDocument": {
-                "Access": "Access to factions-own documents"
-            },
-            "DeleteComment": {
-                "Access": "Access to factions-own documents"
-            }
-        },
-        "CompletorService": {
-            "CompleteDocumentCategories": {
-                "Jobs": "Factions"
-            }
-        },
-        "JobsService": {
-            "ConductListEntries": {
-                "Access": "Access to conduct register entries"
-            },
-            "TimeclockListEntries": {
-                "Access": "Access to time clock entries"
             }
         }
     },
