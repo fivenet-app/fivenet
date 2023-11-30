@@ -461,32 +461,34 @@ async function onSelect(item: any): Promise<any> {
                                     {{ $t('commandpalette.empty.content') }}
                                 </p>
                             </div>
-                            <div class="flex flex-wrap items-center bg-gray-50 px-4 py-2.5 text-xs text-gray-700">
-                                Type
-                                <kbd
-                                    :class="[
-                                        'mx-1 flex h-5 w-5 items-center justify-center rounded border bg-neutral font-semibold sm:mx-2',
-                                        rawQuery.startsWith('@')
-                                            ? 'border-primary-600 text-primary-600'
-                                            : 'border-gray-400 text-gray-900',
-                                    ]"
-                                    >@</kbd
-                                >
-                                <span class="sm:hidden">for citizens,</span>
-                                <span class="hidden sm:inline">to search citizens,</span>
-                                <kbd
-                                    :class="[
-                                        'mx-1 flex h-5 w-5 items-center justify-center rounded border bg-neutral font-semibold sm:mx-2',
-                                        rawQuery.startsWith('#')
-                                            ? 'border-primary-600 text-primary-600'
-                                            : 'border-gray-400 text-gray-900',
-                                    ]"
-                                    >#</kbd
-                                >
-                                for documents.
-                                <!-- <kbd :class="['mx-1 flex h-5 w-5 items-center justify-center rounded border bg-neutral font-semibold sm:mx-2', query === '?' ? 'border-primary-600 text-primary-600' : 'border-gray-400 text-gray-900']">?</kbd>
-                                for help.-->
-                            </div>
+                            <I18nT
+                                keypath="commandpalette.footer"
+                                tag="div"
+                                class="flex flex-wrap items-center bg-gray-50 px-4 py-2.5 text-xs text-gray-700"
+                            >
+                                <template #key1>
+                                    <kbd
+                                        :class="[
+                                            'mx-1 flex h-5 w-5 items-center justify-center rounded border bg-neutral font-semibold sm:mx-2',
+                                            rawQuery.startsWith('@')
+                                                ? 'border-primary-600 text-primary-600'
+                                                : 'border-gray-400 text-gray-900',
+                                        ]"
+                                        >@</kbd
+                                    >
+                                </template>
+                                <template #key2>
+                                    <kbd
+                                        :class="[
+                                            'mx-1 flex h-5 w-5 items-center justify-center rounded border bg-neutral font-semibold sm:mx-2',
+                                            rawQuery.startsWith('#')
+                                                ? 'border-primary-600 text-primary-600'
+                                                : 'border-gray-400 text-gray-900',
+                                        ]"
+                                        >#</kbd
+                                    >
+                                </template>
+                            </I18nT>
                         </Combobox>
                     </DialogPanel>
                 </TransitionChild>

@@ -5,6 +5,7 @@ import { ServiceType } from "@protobuf-ts/runtime-rpc";
 import { MessageType } from "@protobuf-ts/runtime";
 import { Category } from "../../resources/documents/category";
 import { DocRelation } from "../../resources/documents/documents";
+import { DocActivityType } from "../../resources/documents/activity";
 import { DocActivity } from "../../resources/documents/activity";
 import { DocContentType } from "../../resources/documents/documents";
 import { Comment } from "../../resources/documents/comment";
@@ -547,6 +548,24 @@ export interface ListDocumentActivityResponse {
      * @generated from protobuf field: repeated resources.documents.DocActivity activity = 2;
      */
     activity: DocActivity[];
+}
+/**
+ * @generated from protobuf message services.docstore.RequestDocumentActionRequest
+ */
+export interface RequestDocumentActionRequest {
+    /**
+     * @generated from protobuf field: resources.documents.DocActivityType request_type = 1;
+     */
+    requestType: DocActivityType;
+}
+/**
+ * @generated from protobuf message services.docstore.RequestDocumentActionResponse
+ */
+export interface RequestDocumentActionResponse {
+    /**
+     * @generated from protobuf field: bool success = 1;
+     */
+    success: boolean;
 }
 /**
  * Access =================================================================
@@ -1253,6 +1272,30 @@ class ListDocumentActivityResponse$Type extends MessageType<ListDocumentActivity
  */
 export const ListDocumentActivityResponse = new ListDocumentActivityResponse$Type();
 // @generated message type with reflection information, may provide speed optimized methods
+class RequestDocumentActionRequest$Type extends MessageType<RequestDocumentActionRequest> {
+    constructor() {
+        super("services.docstore.RequestDocumentActionRequest", [
+            { no: 1, name: "request_type", kind: "enum", T: () => ["resources.documents.DocActivityType", DocActivityType, "DOC_ACTIVITY_TYPE_"], options: { "validate.rules": { enum: { in: [10, 11, 12, 13] } } } }
+        ]);
+    }
+}
+/**
+ * @generated MessageType for protobuf message services.docstore.RequestDocumentActionRequest
+ */
+export const RequestDocumentActionRequest = new RequestDocumentActionRequest$Type();
+// @generated message type with reflection information, may provide speed optimized methods
+class RequestDocumentActionResponse$Type extends MessageType<RequestDocumentActionResponse> {
+    constructor() {
+        super("services.docstore.RequestDocumentActionResponse", [
+            { no: 1, name: "success", kind: "scalar", T: 8 /*ScalarType.BOOL*/ }
+        ]);
+    }
+}
+/**
+ * @generated MessageType for protobuf message services.docstore.RequestDocumentActionResponse
+ */
+export const RequestDocumentActionResponse = new RequestDocumentActionResponse$Type();
+// @generated message type with reflection information, may provide speed optimized methods
 class GetDocumentAccessRequest$Type extends MessageType<GetDocumentAccessRequest> {
     constructor() {
         super("services.docstore.GetDocumentAccessRequest", [
@@ -1445,6 +1488,7 @@ export const DocStoreService = new ServiceType("services.docstore.DocStoreServic
     { name: "GetDocumentAccess", options: {}, I: GetDocumentAccessRequest, O: GetDocumentAccessResponse },
     { name: "SetDocumentAccess", options: {}, I: SetDocumentAccessRequest, O: SetDocumentAccessResponse },
     { name: "ListDocumentActivity", options: {}, I: ListDocumentActivityRequest, O: ListDocumentActivityResponse },
+    { name: "RequestDocumentAction", options: {}, I: RequestDocumentActionRequest, O: RequestDocumentActionResponse },
     { name: "ListUserDocuments", options: {}, I: ListUserDocumentsRequest, O: ListUserDocumentsResponse },
     { name: "ListCategories", options: {}, I: ListCategoriesRequest, O: ListCategoriesResponse },
     { name: "CreateCategory", options: {}, I: CreateCategoryRequest, O: CreateCategoryResponse },

@@ -236,6 +236,14 @@ message ListDocumentActivityResponse {
   repeated resources.documents.DocActivity activity = 2;
 }
 
+message RequestDocumentActionRequest {
+  resources.documents.DocActivityType request_type = 1 [(validate.rules).enum = {in: [10,11,12,13]}];
+}
+
+message RequestDocumentActionResponse {
+  bool success = 1;
+}
+
 // Access =================================================================
 message GetDocumentAccessRequest {
   uint64 document_id = 1 [jstype = JS_STRING];
@@ -351,8 +359,11 @@ service DocStoreService {
   // @perm: Name=CreateDocument
   rpc SetDocumentAccess(SetDocumentAccessRequest) returns (SetDocumentAccessResponse);
 
-  // @perm: Name=GetDocument
+  // @perm
   rpc ListDocumentActivity(ListDocumentActivityRequest) returns (ListDocumentActivityResponse);
+
+  // @perm
+  rpc RequestDocumentAction(RequestDocumentActionRequest) returns (RequestDocumentActionResponse);
 
   // @perm
   rpc ListUserDocuments(ListUserDocumentsRequest) returns (ListUserDocumentsResponse);

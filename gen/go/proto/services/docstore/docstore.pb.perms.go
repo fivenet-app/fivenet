@@ -18,7 +18,6 @@ var PermsRemap = map[string]string{
 	"DocStoreService/GetDocumentReferences":   "DocStoreService/GetDocument",
 	"DocStoreService/GetDocumentRelations":    "DocStoreService/GetDocument",
 	"DocStoreService/GetTemplate":             "DocStoreService/ListTemplates",
-	"DocStoreService/ListDocumentActivity":    "DocStoreService/GetDocument",
 	"DocStoreService/RemoveDocumentReference": "DocStoreService/AddDocumentReference",
 	"DocStoreService/RemoveDocumentRelation":  "DocStoreService/AddDocumentRelation",
 	"DocStoreService/SetDocumentAccess":       "DocStoreService/CreateDocument",
@@ -104,6 +103,11 @@ func init() {
 		},
 		{
 			Category: permkeys.DocStoreServicePerm,
+			Name:     permkeys.DocStoreServiceListDocumentActivityPerm,
+			Attrs:    []perms.Attr{},
+		},
+		{
+			Category: permkeys.DocStoreServicePerm,
 			Name:     permkeys.DocStoreServiceListDocumentsPerm,
 			Attrs:    []perms.Attr{},
 		},
@@ -120,6 +124,11 @@ func init() {
 		{
 			Category: permkeys.DocStoreServicePerm,
 			Name:     permkeys.DocStoreServicePostCommentPerm,
+			Attrs:    []perms.Attr{},
+		},
+		{
+			Category: permkeys.DocStoreServicePerm,
+			Name:     permkeys.DocStoreServiceRequestDocumentActionPerm,
 			Attrs:    []perms.Attr{},
 		},
 		{

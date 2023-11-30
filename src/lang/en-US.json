@@ -1212,6 +1212,14 @@
                 "key": "PostComment",
                 "description": "Post document comments."
             },
+            "ListDocumentActivity": {
+                "key": "ListDocumentActivity",
+                "description": "Being able to view document activity."
+            },
+            "RequestDocumentAction": {
+                "key": "RequestDocumentAction",
+                "description": "Request actions for documents."
+            },
             "CreateCategory": {
                 "key": "CreateCategory",
                 "description": "Create/ Update document categories."
@@ -1575,7 +1583,8 @@
             "pages": {
                 "label": "Pages"
             }
-        }
+        },
+        "footer": "Type {key1} for citizens, {key2} for documents search."
     },
     "system": {
         "update_available": {

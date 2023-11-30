@@ -1451,6 +1451,14 @@
                 </li>
               
                 <li>
+                  <a href="#services.docstore.RequestDocumentActionRequest"><span class="badge">M</span>RequestDocumentActionRequest</a>
+                </li>
+              
+                <li>
+                  <a href="#services.docstore.RequestDocumentActionResponse"><span class="badge">M</span>RequestDocumentActionResponse</a>
+                </li>
+              
+                <li>
                   <a href="#services.docstore.SetDocumentAccessRequest"><span class="badge">M</span>SetDocumentAccessRequest</a>
                 </li>
               
@@ -15928,6 +15936,81 @@
 
         
       
+        <h3 id="services.docstore.RequestDocumentActionRequest">RequestDocumentActionRequest</h3>
+        <p></p>
+
+        
+          <table class="field-table">
+            <thead>
+              <tr><td>Field</td><td>Type</td><td>Label</td><td>Description</td></tr>
+            </thead>
+            <tbody>
+              
+                <tr>
+                  <td>request_type</td>
+                  <td><a href="#resources.documents.DocActivityType">resources.documents.DocActivityType</a></td>
+                  <td></td>
+                  <td><p> </p></td>
+                </tr>
+              
+            </tbody>
+          </table>
+
+          
+            
+            
+            <h4>Validated Fields</h4>
+            <table>
+              <thead>
+                <tr>
+                  <td>Field</td>
+                  <td>Validations</td>
+                </tr>
+              </thead>
+              <tbody>
+              
+                <tr>
+                  <td>request_type</td>
+                  <td>
+                    <ul>
+                    
+                      <li>enum.in: [10 11 12 13]</li>
+                    
+                    </ul>
+                  </td>
+                </tr>
+              
+              </tbody>
+            </table>
+            
+          
+
+        
+      
+        <h3 id="services.docstore.RequestDocumentActionResponse">RequestDocumentActionResponse</h3>
+        <p></p>
+
+        
+          <table class="field-table">
+            <thead>
+              <tr><td>Field</td><td>Type</td><td>Label</td><td>Description</td></tr>
+            </thead>
+            <tbody>
+              
+                <tr>
+                  <td>success</td>
+                  <td><a href="#bool">bool</a></td>
+                  <td></td>
+                  <td><p> </p></td>
+                </tr>
+              
+            </tbody>
+          </table>
+
+          
+
+        
+      
         <h3 id="services.docstore.SetDocumentAccessRequest">SetDocumentAccessRequest</h3>
         <p></p>
 
@@ -16588,7 +16671,14 @@
                 <td>ListDocumentActivity</td>
                 <td><a href="#services.docstore.ListDocumentActivityRequest">ListDocumentActivityRequest</a></td>
                 <td><a href="#services.docstore.ListDocumentActivityResponse">ListDocumentActivityResponse</a></td>
-                <td><p>@perm: Name=GetDocument</p></td>
+                <td><p>@perm</p></td>
+              </tr>
+            
+              <tr>
+                <td>RequestDocumentAction</td>
+                <td><a href="#services.docstore.RequestDocumentActionRequest">RequestDocumentActionRequest</a></td>
+                <td><a href="#services.docstore.RequestDocumentActionResponse">RequestDocumentActionResponse</a></td>
+                <td><p>@perm</p></td>
               </tr>
             
               <tr>

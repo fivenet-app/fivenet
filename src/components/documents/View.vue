@@ -388,7 +388,13 @@ onConfirm(async (id: string) => deleteDocument(id));
                                 </TabPanels>
                             </TabGroup>
                         </div>
-                        <div v-if="checkDocAccess(access, doc.creator, AccessLevel.STATUS)" class="mt-4">
+                        <div
+                            v-if="
+                                can('DocStoreService.ListDocumentActivity') &&
+                                checkDocAccess(access, doc.creator, AccessLevel.STATUS)
+                            "
+                            class="mt-4"
+                        >
                             <Disclosure
                                 v-slot="{ open }"
                                 as="div"
