@@ -63,7 +63,7 @@ watchDebounced(includeRead, async () => refresh(), { debounce: 500, maxWait: 150
                         <div class="flex flex-row items-center gap-2 sm:mx-auto">
                             <div class="flex-1 form-control">
                                 <label for="search" class="block text-sm font-medium leading-6 text-neutral"
-                                    >{{ $t('pages.notifications.include_read') }}
+                                    >{{ $t('components.notifications.include_read') }}
                                 </label>
                                 <div class="relative flex items-center mt-3">
                                     <Switch
@@ -73,7 +73,7 @@ watchDebounced(includeRead, async () => refresh(), { debounce: 500, maxWait: 150
                                             'relative inline-flex h-6 w-11 flex-shrink-0 cursor-pointer rounded-full border-2 border-transparent transition-colors duration-200 ease-in-out focus:outline-none focus:ring-2 focus:ring-neutral focus:ring-offset-2',
                                         ]"
                                     >
-                                        <span class="sr-only">{{ $t('pages.notifications.include_read') }}</span>
+                                        <span class="sr-only">{{ $t('components.notifications.include_read') }}</span>
                                         <span
                                             aria-hidden="true"
                                             :class="[
@@ -91,7 +91,7 @@ watchDebounced(includeRead, async () => refresh(), { debounce: 500, maxWait: 150
                                     class="inline-flex px-3 py-2 text-sm font-semibold rounded-md bg-primary-500 text-neutral hover:bg-primary-400 focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-primary-500"
                                     @click="markAllRead"
                                 >
-                                    {{ $t('pages.notifications.mark_all_read') }}
+                                    {{ $t('components.notifications.mark_all_read') }}
                                 </button>
                             </div>
                         </div>
@@ -148,7 +148,7 @@ watchDebounced(includeRead, async () => refresh(), { debounce: 500, maxWait: 150
                                                     <div class="h-1.5 w-1.5 rounded-full bg-success-500" />
                                                 </div>
                                                 <p class="text-xs leading-5 text-gray-500">
-                                                    {{ $t('pages.notifications.unread') }}
+                                                    {{ $t('components.notifications.unread') }}
                                                 </p>
                                             </div>
                                         </div>

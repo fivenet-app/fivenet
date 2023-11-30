@@ -40,10 +40,10 @@ onMounted(async () => {
         <HeroFull>
             <ContentCenterWrapper class="max-w-2xl mx-auto text-center">
                 <h2 class="text-4xl font-bold tracking-tight text-neutral sm:text-6xl">
-                    {{ $t('pages.auth.logout.header') }}
+                    {{ $t('components.auth.logout.header') }}
                 </h2>
                 <p class="mt-6 text-lg leading-8 text-gray-300">
-                    {{ $t('pages.auth.logout.subtitle') }}
+                    {{ $t('components.auth.logout.subtitle') }}
                 </p>
             </ContentCenterWrapper>
         </HeroFull>

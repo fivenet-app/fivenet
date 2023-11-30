@@ -1,72 +1,14 @@
 {
     "pages": {
+        "error": {
+            "title": "Fehler aufgetreten",
+            "subtitle": "Ein fataler Fehler ist aufgetreten, bitte versuche es erneut.",
+            "error_message": "Fehlermeldung:",
+            "copy_error": "Fehlerbericht kopieren"
+        },
         "index": {
             "welcome": "Willkommen bei FiveNet!",
             "subtext": "Von der Suche in der Bürger- und Fahrzeugdatenbank des Staates über das Ausfüllen von Dokumenten für Untersuchungen, Gerichtsverfahren und einer Livemap Ihrer Kollegen und Einsätze. All das und mehr ist (weitestgehend) in diesem Netzwerk, dem FiveNet, bereit."
-        },
-        "auth": {
-            "logout": {
-                "subtitle": "Sie werden in wenigen Sekunden zur Homepage weitergeleitet.",
-                "header": "Abgemeldet"
-            },
-            "account_info": {
-                "title": "Konto-Information"
-            },
-            "character_selector": {
-                "title": "Character Auswahl"
-            },
-            "login": {
-                "title": "Anmeldung",
-                "social_login_disabled": "Um den Social Login Login zu nutzen müssen Cookies akzeptiert werden."
-            }
-        },
-        "about": {
-            "sub_title": "Über FiveNet und seine Ersteller.",
-            "introduction": {
-                "pre_title": "Mehr Zeit für GTA V Roleplay.",
-                "title": "Ein besserer Arbeitsablauf",
-                "content": "Einfaches Suchen nach Bürgern und Fahrzeugen. Mit dem Dokumentzugriffssystem ist es einfach, Dokumente zu erstellen und sicher mit Ihren Kollegen zu teilen. Eine Livemap, die die letzten Einsätze und die Standorte Ihrer Kollegen anzeigt.",
-                "feature_one": {
-                    "title": "Suche nach Zustandsdaten.",
-                    "content": "Sie können nach Bürgern und Fahrzeugen suchen. Sie können auch einen Bürger als gesucht markieren."
-                },
-                "feature_two": {
-                    "title": "Sichere Dokumentenfreigabe.",
-                    "content": "Dokumente können einfach mit Ihren Kollegen und anderen Fraktionen auf dem Server geteilt werden."
-                },
-                "feature_three": {
-                    "title": "Livemap.",
-                    "content": "Sehen Sie den Standort Ihrer Kollegen und Einsätze live. Es stehen verschiedene Kartentypen zur Verfügung."
-                }
-            },
-            "faq": {
-                "title": "Häufig gestellte Fragen",
-                "one": {
-                    "question": "Wer hat FiveNet erstellt?",
-                    "answer": "Galexrt und Clover sind derzeit die Hauptverantwortlichen, die an FiveNet arbeiten."
-                },
-                "two": {
-                    "question": "Warum wurde FiveNet erstellt?",
-                    "answer": "Es begann als eine Möglichkeit für Galexrt, die Frontend-Entwicklung zu erlernen, und entwickelte sich dann zu einer Möglichkeit für ModernV Server, eine Alternative zu VPC CopNet/ MedicNet zu haben."
-                },
-                "three": {
-                    "question": "Wo kann ich die Entwicklungs-Roadmap von FiveNet finden?",
-                    "answer": "<a class=\"underline\" href=\"{repoLink}/#readme\">Klicken Sie hier (GitHub galexrt/fivenet README)</a>."
-                },
-                "four": {
-                    "question": "Ich habe einen Fehler oder ein anderes Problem mit FiveNet gefunden. Wo melde ich es?",
-                    "answer": "Bitte melden Sie Probleme entweder auf <a class=\"underline\" href=\"{discordLink}\">dem Galexrt Discord-Server</a> oder auf <a class=\"underline\" href=\"{repoLink}\">dem FiveNet GitHub-Projekt</a>."
-                }
-            },
-            "questions_or_issues": {
-                "title": "Haben Sie Fragen oder Probleme?",
-                "content": "Stelle sicher, dass Sie dem Discord-Server beitreten, falls Sie Probleme oder Fragen zu FiveNet haben."
-            },
-            "join_discord": "Tritt dem Discord-Server von Galexrt bei",
-            "licenses_list": "FiveNet Lizenz und Liste der genutzten Third-Party Lizenzen",
-            "licenses": {
-                "sub_title": "Liste und Informationen zu den Lizenzen des in FiveNet verwendeten Code, Bibliotheken und Medien."
-            }
         },
         "overview": {
             "features": {
@@ -162,19 +104,6 @@
         },
         "vehicles": {
             "title": "Fahrzeuge"
-        },
-        "error": {
-            "title": "Fehler aufgetreten",
-            "subtitle": "Ein fataler Fehler ist aufgetreten, bitte versuche es erneut.",
-            "error_message": "Fehlermeldung:",
-            "copy_error": "Fehlerbericht kopieren"
-        },
-        "notifications": {
-            "title": "Benachrichtigungen",
-            "mark_read": "Als gelesen markieren",
-            "mark_all_read": "Alle als gelesen markieren",
-            "include_read": "Gelesene Benachrichtigungen",
-            "unread": "Ungelesen"
         }
     },
     "copyright": "Copyright © 2023 Galexrt Alle Rechte vorbehalten.",
@@ -193,7 +122,11 @@
                 "register_account": "Konto mit Token erstellen",
                 "login_error": "Es gab einen Fehler beim Login, bitte versuche es erneut!",
                 "title": "Anmeldung",
-                "forgot_password": "Passwort vergessen"
+                "forgot_password": "Passwort vergessen",
+                "social_login_disabled": "Um den Social Login Login zu nutzen müssen Cookies akzeptiert werden."
+            },
+            "character_selector": {
+                "title": "Character Auswahl"
             },
             "change_password_modal": {
                 "change_password": "Passwort ändern",
@@ -236,6 +169,10 @@
                 "change_username": "Benutzername ändern",
                 "current_username": "Momentaner Benutzername",
                 "new_username": "Neuer Benutzername"
+            },
+            "logout": {
+                "subtitle": "Sie werden in wenigen Sekunden zur Homepage weitergeleitet.",
+                "header": "Abgemeldet"
             }
         },
         "citizens": {
@@ -278,6 +215,13 @@
                     "created": "Strafe erstellt"
                 }
             }
+        },
+        "notifications": {
+            "title": "Benachrichtigungen",
+            "mark_read": "Als gelesen markieren",
+            "mark_all_read": "Alle als gelesen markieren",
+            "include_read": "Gelesene Benachrichtigungen",
+            "unread": "Ungelesen"
         },
         "partials": {
             "sidebar": {
@@ -546,6 +490,54 @@
             },
             "documenteditor": {
                 "content": "Sie können in den Konto-Einstellungen einen Nacht-Modus für den Editor aktivieren."
+            }
+        },
+        "about": {
+            "sub_title": "Über FiveNet und seine Ersteller.",
+            "introduction": {
+                "pre_title": "Mehr Zeit für GTA V Roleplay.",
+                "title": "Ein besserer Arbeitsablauf",
+                "content": "Einfaches Suchen nach Bürgern und Fahrzeugen. Mit dem Dokumentzugriffssystem ist es einfach, Dokumente zu erstellen und sicher mit Ihren Kollegen zu teilen. Eine Livemap, die die letzten Einsätze und die Standorte Ihrer Kollegen anzeigt.",
+                "feature_one": {
+                    "title": "Suche nach Zustandsdaten.",
+                    "content": "Sie können nach Bürgern und Fahrzeugen suchen. Sie können auch einen Bürger als gesucht markieren."
+                },
+                "feature_two": {
+                    "title": "Sichere Dokumentenfreigabe.",
+                    "content": "Dokumente können einfach mit Ihren Kollegen und anderen Fraktionen auf dem Server geteilt werden."
+                },
+                "feature_three": {
+                    "title": "Livemap.",
+                    "content": "Sehen Sie den Standort Ihrer Kollegen und Einsätze live. Es stehen verschiedene Kartentypen zur Verfügung."
+                }
+            },
+            "faq": {
+                "title": "Häufig gestellte Fragen",
+                "one": {
+                    "question": "Wer hat FiveNet erstellt?",
+                    "answer": "Galexrt und Clover sind derzeit die Hauptverantwortlichen, die an FiveNet arbeiten."
+                },
+                "two": {
+                    "question": "Warum wurde FiveNet erstellt?",
+                    "answer": "Es begann als eine Möglichkeit für Galexrt, die Frontend-Entwicklung zu erlernen, und entwickelte sich dann zu einer Möglichkeit für ModernV Server, eine Alternative zu VPC CopNet/ MedicNet zu haben."
+                },
+                "three": {
+                    "question": "Wo kann ich die Entwicklungs-Roadmap von FiveNet finden?",
+                    "answer": "<a class=\"underline\" href=\"{repoLink}/#readme\">Klicken Sie hier (GitHub galexrt/fivenet README)</a>."
+                },
+                "four": {
+                    "question": "Ich habe einen Fehler oder ein anderes Problem mit FiveNet gefunden. Wo melde ich es?",
+                    "answer": "Bitte melden Sie Probleme entweder auf <a class=\"underline\" href=\"{discordLink}\">dem Galexrt Discord-Server</a> oder auf <a class=\"underline\" href=\"{repoLink}\">dem FiveNet GitHub-Projekt</a>."
+                }
+            },
+            "questions_or_issues": {
+                "title": "Haben Sie Fragen oder Probleme?",
+                "content": "Stelle sicher, dass Sie dem Discord-Server beitreten, falls Sie Probleme oder Fragen zu FiveNet haben."
+            },
+            "join_discord": "Tritt dem Discord-Server von Galexrt bei",
+            "licenses_list": "FiveNet Lizenz und Liste der genutzten Third-Party Lizenzen",
+            "licenses": {
+                "sub_title": "Liste und Informationen zu den Lizenzen des in FiveNet verwendeten Code, Bibliotheken und Medien."
             }
         }
     },

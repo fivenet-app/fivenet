@@ -21,20 +21,20 @@ const repoLink = 'https://github.com/galexrt/fivenet';
 
 const faqs = [
     {
-        question: t('pages.about.faq.one.question'),
-        answer: t('pages.about.faq.one.answer'),
+        question: t('components.about.faq.one.question'),
+        answer: t('components.about.faq.one.answer'),
     },
     {
-        question: t('pages.about.faq.two.question'),
-        answer: t('pages.about.faq.two.answer'),
+        question: t('components.about.faq.two.question'),
+        answer: t('components.about.faq.two.answer'),
     },
     {
-        question: t('pages.about.faq.three.question'),
-        answer: t('pages.about.faq.three.answer', { repoLink }),
+        question: t('components.about.faq.three.question'),
+        answer: t('components.about.faq.three.answer', { repoLink }),
     },
     {
-        question: t('pages.about.faq.four.question'),
-        answer: t('pages.about.faq.four.answer', { discordLink, repoLink }),
+        question: t('components.about.faq.four.question'),
+        answer: t('components.about.faq.four.answer', { discordLink, repoLink }),
     },
 ] as { question: string; answer: string }[];
 </script>
@@ -49,7 +49,7 @@ const faqs = [
                         {{ $t('common.about') }}
                     </h2>
                     <p class="mt-6 text-lg leading-8 text-gray-300">
-                        {{ $t('pages.about.sub_title') }}
+                        {{ $t('components.about.sub_title') }}
                     </p>
                 </div>
             </div>
@@ -65,13 +65,13 @@ const faqs = [
                         <div class="lg:pr-4">
                             <div class="lg:max-w-lg">
                                 <p class="text-base font-semibold leading-7 text-primary-400">
-                                    {{ $t('pages.about.introduction.pre_title') }}
+                                    {{ $t('components.about.introduction.pre_title') }}
                                 </p>
                                 <h1 class="mt-2 text-3xl font-bold tracking-tight text-gray-400 sm:text-4xl">
-                                    {{ $t('pages.about.introduction.title') }}
+                                    {{ $t('components.about.introduction.title') }}
                                 </h1>
                                 <p class="mt-6 text-xl leading-8 text-gray-100">
-                                    {{ $t('pages.about.introduction.content') }}
+                                    {{ $t('components.about.introduction.content') }}
                                 </p>
                             </div>
                         </div>
@@ -95,27 +95,27 @@ const faqs = [
                                         <MagnifyIcon class="mt-1 h-5 w-5 flex-none text-primary-300" aria-hidden="true" />
                                         <span>
                                             <strong class="font-semibold text-gray-200">{{
-                                                $t('pages.about.introduction.feature_one.title')
+                                                $t('components.about.introduction.feature_one.title')
                                             }}</strong>
-                                            {{ $t('pages.about.introduction.feature_one.content') }}
+                                            {{ $t('components.about.introduction.feature_one.content') }}
                                         </span>
                                     </li>
                                     <li class="flex gap-x-3">
                                         <LockIcon class="mt-1 h-5 w-5 flex-none text-primary-300" aria-hidden="true" />
                                         <span>
                                             <strong class="font-semibold text-gray-200">{{
-                                                $t('pages.about.introduction.feature_two.title')
+                                                $t('components.about.introduction.feature_two.title')
                                             }}</strong>
-                                            {{ $t('pages.about.introduction.feature_two.content') }}
+                                            {{ $t('components.about.introduction.feature_two.content') }}
                                         </span>
                                     </li>
                                     <li class="flex gap-x-3">
                                         <MapIcon class="mt-1 h-5 w-5 flex-none text-primary-300" aria-hidden="true" />
                                         <span>
                                             <strong class="font-semibold text-gray-200">{{
-                                                $t('pages.about.introduction.feature_three.title')
+                                                $t('components.about.introduction.feature_three.title')
                                             }}</strong>
-                                            {{ $t('pages.about.introduction.feature_three.content') }}
+                                            {{ $t('components.about.introduction.feature_three.content') }}
                                         </span>
                                     </li>
                                 </ul>
@@ -128,7 +128,7 @@ const faqs = [
                 <div class="mx-auto max-w-7xl px-6 py-12 sm:py-16 lg:px-8 lg:py-10">
                     <div class="mx-auto max-w-4xl divide-y divide-neutral/10">
                         <h2 class="text-2xl font-bold leading-10 tracking-tight text-neutral">
-                            {{ $t('pages.about.faq.title') }}
+                            {{ $t('components.about.faq.title') }}
                         </h2>
                         <dl class="mt-10 space-y-6 divide-y divide-neutral/10">
                             <Disclosure v-for="faq in faqs" :key="faq.question" v-slot="{ open }" as="div" class="pt-6">
@@ -156,10 +156,10 @@ const faqs = [
                 <div class="mx-auto max-w-7xl px-6 py-12 sm:py-16 lg:px-8 lg:py-10">
                     <div class="mx-auto max-w-4xl">
                         <p class="mt-2 text-3xl font-bold tracking-tight text-neutral sm:text-4xl">
-                            {{ $t('pages.about.questions_or_issues.title') }}
+                            {{ $t('components.about.questions_or_issues.title') }}
                         </p>
                         <p class="mt-6 text-base leading-7 text-gray-300">
-                            {{ $t('pages.about.questions_or_issues.content') }}
+                            {{ $t('components.about.questions_or_issues.content') }}
                         </p>
                         <div class="mt-8">
                             <NuxtLink
@@ -169,7 +169,7 @@ const faqs = [
                             >
                                 <DiscordLogo class="-ml-0.5 h-5 w-5" aria-hidden="true" />
                                 <span>
-                                    {{ $t('pages.about.join_discord') }}
+                                    {{ $t('components.about.join_discord') }}
                                 </span>
                             </NuxtLink>
                         </div>
@@ -189,7 +189,7 @@ const faqs = [
                             >
                                 <LicenseIcon class="-ml-0.5 h-5 w-5" aria-hidden="true" />
                                 <span>
-                                    {{ $t('pages.about.licenses_list') }}
+                                    {{ $t('components.about.licenses_list') }}
                                 </span>
                             </NuxtLink>
                         </div>

@@ -12,7 +12,8 @@
         "pretty": "yarn prettier --write ./src/",
         "analyze": "yarn nuxi analyze",
         "typecheck": "yarn nuxi typecheck",
-        "lint": "yarn eslint ."
+        "lint": "yarn eslint .",
+        "i18next-scanner": "npx i18next-scanner --config ./internal/scripts/i18next-scanner.config.cjs"
     },
     "dependencies": {
         "@fontsource/inter": "^5.0.15",
@@ -77,6 +78,7 @@
         "eslint-config-prettier": "^9.0.0",
         "eslint-plugin-prettier": "^5.0.1",
         "eslint-plugin-vue": "^9.19.2",
+        "i18next-scanner": "^4.4.0",
         "nuxi": "^3.10.0",
         "nuxt": "^3.8.2",
         "nuxt-typed-router": "^3.4.0",

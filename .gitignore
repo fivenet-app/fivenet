@@ -53,3 +53,6 @@ src/public/images/livemap/tiles/*/
 .cache
 .output
 .env
+
+# i18next-scanner
+/lang/

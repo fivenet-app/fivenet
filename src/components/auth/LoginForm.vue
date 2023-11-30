@@ -136,7 +136,7 @@ watch(
         <div class="my-4 space-y-2">
             <template v-if="!isNUIAvailable">
                 <p v-if="!socialLoginEnabled" class="mt-2 text-sm text-error-400">
-                    {{ $t('pages.auth.login.social_login_disabled') }}
+                    {{ $t('components.auth.login.social_login_disabled') }}
                 </p>
                 <div v-for="provider in appConfig.login.providers" :key="provider.name">
                     <button

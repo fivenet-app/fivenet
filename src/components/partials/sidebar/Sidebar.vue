@@ -121,7 +121,7 @@ const sidebarNavigation = ref<
     },
 ]);
 const userNavigation = ref<{ name: string; href: RoutesNamedLocations; permission?: string }[]>([
-    { name: 'pages.auth.login.title', href: { name: 'auth-login' } },
+    { name: 'components.auth.login.title', href: { name: 'auth-login' } },
     { name: 'components.auth.registration_form.title', href: { name: 'auth-registration' } },
 ]);
 const breadcrumbs = useBreadcrumbs();
@@ -151,7 +151,7 @@ function updateUserNav(): void {
     }
     if (userNavigation.value.length === 0) {
         userNavigation.value = [
-            { name: 'pages.auth.login.title', href: { name: 'auth-login' } },
+            { name: 'components.auth.login.title', href: { name: 'auth-login' } },
             { name: 'components.auth.registration_form.title', href: { name: 'auth-registration' } },
         ];
     }
@@ -212,7 +212,7 @@ watch(router.currentRoute, () => updateActiveItem());
                             aria-current-value="page"
                         >
                             <LoginIcon class="h-6 w-6" aria-hidden="true" />
-                            <span class="mt-2">{{ $t('pages.auth.login.title') }}</span>
+                            <span class="mt-2">{{ $t('components.auth.login.title') }}</span>
                         </NuxtLink>
                         <NuxtLink
                             :to="{ name: 'auth-registration' }"
@@ -244,7 +244,7 @@ watch(router.currentRoute, () => updateActiveItem());
                             aria-current-value="page"
                         >
                             <UnfoldMoreHorizontalIcon class="h-6 w-6" aria-hidden="true" />
-                            <span class="mt-2">{{ $t('pages.auth.character_selector.title') }}</span>
+                            <span class="mt-2">{{ $t('components.auth.character_selector.title') }}</span>
                         </NuxtLink>
                     </template>
                     <template v-else-if="accessToken && activeChar">
@@ -372,7 +372,7 @@ watch(router.currentRoute, () => updateActiveItem());
                                                     class="text-accent-100 group-hover:text-neutral mr-3 h-6 w-6"
                                                     aria-hidden="true"
                                                 />
-                                                <span>{{ $t('pages.auth.login.title') }}</span>
+                                                <span>{{ $t('components.auth.login.title') }}</span>
                                             </NuxtLink>
                                             <NuxtLink
                                                 :to="{ name: 'auth-registration' }"

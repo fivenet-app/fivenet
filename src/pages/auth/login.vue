@@ -7,10 +7,10 @@ import { useAuthStore } from '~/store/auth';
 import { useNotificatorStore } from '~/store/notificator';
 
 useHead({
-    title: 'pages.auth.login.title',
+    title: 'components.auth.login.title',
 });
 definePageMeta({
-    title: 'pages.auth.login.title',
+    title: 'components.auth.login.title',
     requiresAuth: false,
     showCookieOptions: true,
 });

@@ -4,10 +4,10 @@ import ContentWrapper from '~/components/partials/ContentWrapper.vue';
 import { useNotificatorStore } from '~/store/notificator';
 
 useHead({
-    title: 'pages.auth.account_info.title',
+    title: 'components.auth.account_info.title',
 });
 definePageMeta({
-    title: 'pages.auth.account_info.title',
+    title: 'components.auth.account_info.title',
     requiresAuth: true,
     authOnlyToken: true,
     showQuickButtons: false,

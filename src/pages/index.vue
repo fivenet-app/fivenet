@@ -43,7 +43,7 @@ onBeforeMount(async () => {
                             :to="{ name: 'auth-login' }"
                             class="w-48 max-w-96 rounded-md bg-primary-500 px-3.5 py-2.5 text-sm font-semibold text-neutral hover:bg-primary-400 focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-primary-500"
                         >
-                            {{ $t('pages.auth.login.title') }}
+                            {{ $t('components.auth.login.title') }}
                         </NuxtLink>
                         <NuxtLink
                             :to="{ name: 'auth-registration' }"
