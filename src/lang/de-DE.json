@@ -1,11 +1,5 @@
 {
     "pages": {
-        "error": {
-            "title": "Fehler aufgetreten",
-            "subtitle": "Ein fataler Fehler ist aufgetreten, bitte versuche es erneut.",
-            "error_message": "Fehlermeldung:",
-            "copy_error": "Fehlerbericht kopieren"
-        },
         "index": {
             "welcome": "Willkommen bei FiveNet!",
             "subtext": "Von der Suche in der Bürger- und Fahrzeugdatenbank des Staates über das Ausfüllen von Dokumenten für Untersuchungen, Gerichtsverfahren und einer Livemap Ihrer Kollegen und Einsätze. All das und mehr ist (weitestgehend) in diesem Netzwerk, dem FiveNet, bereit."
@@ -104,6 +98,12 @@
         },
         "vehicles": {
             "title": "Fahrzeuge"
+        },
+        "error": {
+            "title": "Fehler aufgetreten",
+            "subtitle": "Ein fataler Fehler ist aufgetreten, bitte versuche es erneut.",
+            "error_message": "Fehlermeldung:",
+            "copy_error": "Fehlerbericht kopieren"
         }
     },
     "copyright": "Copyright © 2023 Galexrt Alle Rechte vorbehalten.",
@@ -124,9 +124,6 @@
                 "title": "Anmeldung",
                 "forgot_password": "Passwort vergessen",
                 "social_login_disabled": "Um den Social Login Login zu nutzen müssen Cookies akzeptiert werden."
-            },
-            "character_selector": {
-                "title": "Character Auswahl"
             },
             "change_password_modal": {
                 "change_password": "Passwort ändern",
@@ -169,6 +166,9 @@
                 "change_username": "Benutzername ändern",
                 "current_username": "Momentaner Benutzername",
                 "new_username": "Neuer Benutzername"
+            },
+            "character_selector": {
+                "title": "Character Auswahl"
             },
             "logout": {
                 "subtitle": "Sie werden in wenigen Sekunden zur Homepage weitergeleitet.",
@@ -215,13 +215,6 @@
                     "created": "Strafe erstellt"
                 }
             }
-        },
-        "notifications": {
-            "title": "Benachrichtigungen",
-            "mark_read": "Als gelesen markieren",
-            "mark_all_read": "Alle als gelesen markieren",
-            "include_read": "Gelesene Benachrichtigungen",
-            "unread": "Ungelesen"
         },
         "partials": {
             "sidebar": {
@@ -491,6 +484,13 @@
             "documenteditor": {
                 "content": "Sie können in den Konto-Einstellungen einen Nacht-Modus für den Editor aktivieren."
             }
+        },
+        "notifications": {
+            "title": "Benachrichtigungen",
+            "mark_read": "Als gelesen markieren",
+            "mark_all_read": "Alle als gelesen markieren",
+            "include_read": "Gelesene Benachrichtigungen",
+            "unread": "Ungelesen"
         },
         "about": {
             "sub_title": "Über FiveNet und seine Ersteller.",
@@ -1215,6 +1215,14 @@
             "ListCategories": {
                 "key": "Auflisten der Dokumentenkategorien",
                 "description": "Liste der Dokumentkategorien."
+            },
+            "ListDocumentActivity": {
+                "key": "Dokumenten-Aktivität anzeigen",
+                "description": "Dokumenten-Aktivität von Dokumente mit Status oder höher Zugriff sehen können."
+            },
+            "RequestDocumentAction": {
+                "key": "Anfragen von Dokumenten-Aktion",
+                "description": "Dokumenten-Aktionen anfragen können."
             }
         },
         "LivemapperService": {
@@ -1567,7 +1575,8 @@
             "pages": {
                 "label": "Seiten"
             }
-        }
+        },
+        "footer": "Tippe {key1} für Bürger,- {key2} für Dokumenten-Suche."
     },
     "system": {
         "update_available": {
