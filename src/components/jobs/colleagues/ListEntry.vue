@@ -8,7 +8,7 @@ defineProps<{
 </script>
 
 <template>
-    <tr :key="user.userId">
+    <tr :key="user.userId" class="even:bg-base-800">
         <td class="whitespace-nowrap py-2 pl-4 pr-3 text-base font-medium text-neutral sm:pl-0">
             {{ user.firstname }}, {{ user.lastname }}
         </td>
