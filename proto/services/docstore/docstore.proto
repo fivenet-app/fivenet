@@ -179,6 +179,7 @@ message CreateDocumentRequest {
   bool closed = 7; // @gotags: alias:"closed"
   bool public = 8; // @gotags: alias:"public"
   optional resources.documents.DocumentAccess access = 9;
+  optional uint64 template_id = 10 [jstype = JS_STRING];
 }
 
 message CreateDocumentResponse {

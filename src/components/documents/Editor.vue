@@ -129,15 +129,19 @@ const entriesCategories = ref<Category[]>([]);
 const queryCategories = ref('');
 const selectedCategory = ref<Category | undefined>(undefined);
 
+const templateId = ref<undefined | string>();
+
 onMounted(async () => {
     if (route.query.templateId) {
         const data = clipboardStore.getTemplateData();
         data.activeChar = activeChar.value!;
         console.debug('Documents: Editor - Clipboard Template Data', data);
 
+        templateId.value = route.query.templateId as string;
+
         try {
             const call = $grpc.getDocStoreClient().getTemplate({
-                templateId: route.query.templateId as string,
+                templateId: templateId.value as string,
                 data,
                 render: true,
             });
@@ -452,6 +456,7 @@ async function createDocument(values: FormData, content: string, closed: boolean
         closed,
         state: values.state,
         public: doc.value.public,
+        templateId: templateId.value,
     };
     if (selectedCategory.value !== undefined) req.categoryId = selectedCategory.value.id;
 

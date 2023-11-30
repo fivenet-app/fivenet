@@ -421,6 +421,10 @@ export interface CreateDocumentRequest {
      * @generated from protobuf field: optional resources.documents.DocumentAccess access = 9;
      */
     access?: DocumentAccess;
+    /**
+     * @generated from protobuf field: optional uint64 template_id = 10 [jstype = JS_STRING];
+     */
+    templateId?: string;
 }
 /**
  * @generated from protobuf message services.docstore.CreateDocumentResponse
@@ -1147,7 +1151,8 @@ class CreateDocumentRequest$Type extends MessageType<CreateDocumentRequest> {
             { no: 6, name: "state", kind: "scalar", T: 9 /*ScalarType.STRING*/, options: { "validate.rules": { string: { maxLen: "24" } } } },
             { no: 7, name: "closed", kind: "scalar", T: 8 /*ScalarType.BOOL*/ },
             { no: 8, name: "public", kind: "scalar", T: 8 /*ScalarType.BOOL*/ },
-            { no: 9, name: "access", kind: "message", T: () => DocumentAccess }
+            { no: 9, name: "access", kind: "message", T: () => DocumentAccess },
+            { no: 10, name: "template_id", kind: "scalar", opt: true, T: 4 /*ScalarType.UINT64*/ }
         ]);
     }
 }

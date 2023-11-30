@@ -273,6 +273,8 @@ func (s *Server) CreateDocument(ctx context.Context, req *CreateDocumentRequest)
 	}
 	defer s.auditer.Log(auditEntry, req)
 
+	// TODO if request has a template id set, ensure that required access is set like in the template
+
 	// Begin transaction
 	tx, err := s.db.BeginTx(ctx, nil)
 	if err != nil {
