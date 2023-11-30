@@ -1,11 +1,5 @@
 {
     "pages": {
-        "error": {
-            "title": "Error occured",
-            "subtitle": "A fatal error occured, please try again in a few seconds.",
-            "error_message": "Error message:",
-            "copy_error": "Copy Error message"
-        },
         "index": {
             "welcome": "Welcome to FiveNet!",
             "subtext": "From searching the state's citizen and vehicles database, filling documents for investigations, court, and a livemap of your colleagues and dispatches. All that and more is (mostly) ready in this net, the FiveNet."
@@ -104,6 +98,12 @@
         },
         "vehicles": {
             "title": "Vehicles"
+        },
+        "error": {
+            "title": "Error occured",
+            "subtitle": "A fatal error occured, please try again in a few seconds.",
+            "error_message": "Error message:",
+            "copy_error": "Copy Error message"
         }
     },
     "copyright": "Copyright © 2023 Galexrt All rights reserved.",
@@ -124,9 +124,6 @@
                 "title": "Login",
                 "forgot_password": "Forgot Password",
                 "social_login_disabled": "Social login requires you to accept the social login cookies."
-            },
-            "character_selector": {
-                "title": "Character Selector"
             },
             "change_password_modal": {
                 "change_password": "Change Password",
@@ -169,6 +166,9 @@
                 "change_username": "Change Username",
                 "current_username": "Current Username",
                 "new_username": "New Username"
+            },
+            "character_selector": {
+                "title": "Character Selector"
             },
             "logout": {
                 "subtitle": "You will be redirected to the home page in a moment.",
@@ -215,13 +215,6 @@
                     "created": "Fine created"
                 }
             }
-        },
-        "notifications": {
-            "title": "Notifications",
-            "mark_read": "Mark as read",
-            "mark_all_read": "Mark all as read",
-            "include_read": "Read Notifications",
-            "unread": "Unread"
         },
         "partials": {
             "sidebar": {
@@ -491,6 +484,13 @@
             "documenteditor": {
                 "content": "You can enable a dark mode for the document editor."
             }
+        },
+        "notifications": {
+            "title": "Notifications",
+            "mark_read": "Mark as read",
+            "mark_all_read": "Mark all as read",
+            "include_read": "Read Notifications",
+            "unread": "Unread"
         },
         "about": {
             "sub_title": "About FiveNet and it's creators.",
@@ -1204,14 +1204,6 @@
                 "key": "PostComment",
                 "description": "Post document comments."
             },
-            "ListDocumentActivity": {
-                "key": "ListDocumentActivity",
-                "description": "Being able to view document activity."
-            },
-            "RequestDocumentAction": {
-                "key": "RequestDocumentAction",
-                "description": "Request actions for documents."
-            },
             "CreateCategory": {
                 "key": "CreateCategory",
                 "description": "Create/ Update document categories."
@@ -1223,6 +1215,14 @@
             "ListCategories": {
                 "key": "ListCategories",
                 "description": "View and List document categories."
+            },
+            "ListDocumentActivity": {
+                "key": "ListDocumentActivity",
+                "description": "Being able to view document activity."
+            },
+            "RequestDocumentAction": {
+                "key": "RequestDocumentAction",
+                "description": "Request actions for documents."
             }
         },
         "LivemapperService": {
