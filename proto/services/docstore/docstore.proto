@@ -239,7 +239,10 @@ message ListDocumentActivityResponse {
 }
 
 message RequestDocumentActionRequest {
-  resources.documents.DocActivityType request_type = 1 [(validate.rules).enum = {in: [10,11,12,13]}];
+  uint64 document_id = 1 [jstype = JS_STRING];
+  resources.documents.DocActivityType request_type = 2 [(validate.rules).enum = {in: [13,14,15,16,17]}];
+  // @sanitize
+  optional string reason = 3 [(validate.rules).string.max_len = 255];
 }
 
 message RequestDocumentActionResponse {

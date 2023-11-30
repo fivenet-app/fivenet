@@ -558,9 +558,19 @@ export interface ListDocumentActivityResponse {
  */
 export interface RequestDocumentActionRequest {
     /**
-     * @generated from protobuf field: resources.documents.DocActivityType request_type = 1;
+     * @generated from protobuf field: uint64 document_id = 1 [jstype = JS_STRING];
+     */
+    documentId: string;
+    /**
+     * @generated from protobuf field: resources.documents.DocActivityType request_type = 2;
      */
     requestType: DocActivityType;
+    /**
+     * @sanitize
+     *
+     * @generated from protobuf field: optional string reason = 3;
+     */
+    reason?: string;
 }
 /**
  * @generated from protobuf message services.docstore.RequestDocumentActionResponse
@@ -1280,7 +1290,9 @@ export const ListDocumentActivityResponse = new ListDocumentActivityResponse$Typ
 class RequestDocumentActionRequest$Type extends MessageType<RequestDocumentActionRequest> {
     constructor() {
         super("services.docstore.RequestDocumentActionRequest", [
-            { no: 1, name: "request_type", kind: "enum", T: () => ["resources.documents.DocActivityType", DocActivityType, "DOC_ACTIVITY_TYPE_"], options: { "validate.rules": { enum: { in: [10, 11, 12, 13] } } } }
+            { no: 1, name: "document_id", kind: "scalar", T: 4 /*ScalarType.UINT64*/ },
+            { no: 2, name: "request_type", kind: "enum", T: () => ["resources.documents.DocActivityType", DocActivityType, "DOC_ACTIVITY_TYPE_"], options: { "validate.rules": { enum: { in: [13, 14, 15, 16, 17] } } } },
+            { no: 3, name: "reason", kind: "scalar", opt: true, T: 9 /*ScalarType.STRING*/, options: { "validate.rules": { string: { maxLen: "255" } } } }
         ]);
     }
 }

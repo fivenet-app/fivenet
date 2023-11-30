@@ -27,7 +27,7 @@ const (
 )
 
 type INotifi interface {
-	NotifyUser(ctx context.Context, not *notifications.Notification)
+	NotifyUser(ctx context.Context, not *notifications.Notification) error
 }
 
 type Notifi struct {
@@ -59,24 +59,26 @@ func New(p Params) INotifi {
 	return n
 }
 
-func (n *Notifi) NotifyUser(ctx context.Context, not *notifications.Notification) {
+func (n *Notifi) NotifyUser(ctx context.Context, not *notifications.Notification) error {
 	nId, err := n.insertNotification(ctx, not)
 	if err != nil {
 		n.logger.Error("failed to insert notification into database", zap.Error(err))
-		return
+		return err
 	}
 
 	not.Id = uint64(nId)
 	data, err := proto.Marshal(not)
 	if err != nil {
 		n.logger.Error("failed to proto marshal notification", zap.Error(err))
-		return
+		return err
 	}
 
 	if _, err := n.js.PublishAsync(fmt.Sprintf("%s.%s.%d", BaseSubject, UserNotification, not.UserId), data); err != nil {
 		n.logger.Error("failed to publish notification message", zap.Error(err))
-		return
+		return err
 	}
+
+	return nil
 }
 
 func (n *Notifi) insertNotification(ctx context.Context, not *notifications.Notification) (int64, error) {

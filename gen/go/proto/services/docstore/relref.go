@@ -430,7 +430,9 @@ func (s *Server) AddDocumentRelation(ctx context.Context, req *AddDocumentRelati
 	auditEntry.State = int16(rector.EventType_EVENT_TYPE_CREATED)
 
 	if req.Relation.Relation == documents.DocRelation_DOC_RELATION_MENTIONED {
-		s.notifyUser(ctx, uint64(lastId), userInfo.UserId, req.Relation.TargetUserId)
+		if err := s.notifyUserMentioned(ctx, uint64(lastId), userInfo.UserId, req.Relation.TargetUserId); err != nil {
+			return nil, ErrFailedQuery
+		}
 	}
 
 	return &AddDocumentRelationResponse{
@@ -628,25 +630,25 @@ func (s *Server) getDocumentRelations(ctx context.Context, userInfo *userinfo.Us
 	return dest, nil
 }
 
-func (s *Server) notifyUser(ctx context.Context, documentId uint64, sourceUserId int32, targetUserId int32) {
+func (s *Server) notifyUserMentioned(ctx context.Context, documentId uint64, sourceUserId int32, targetUserId int32) error {
 	userInfo, err := s.ui.GetUserInfoWithoutAccountId(ctx, targetUserId)
 	if err != nil {
-		return
+		return err
 	}
 
 	doc, err := s.getDocument(ctx, tDocument.ID.EQ(jet.Uint64(documentId)), userInfo)
 	if err != nil {
-		return
+		return err
 	}
 	if doc == nil {
-		return
+		return err
 	}
 
 	if doc.Creator != nil {
 		s.enricher.EnrichJobInfoSafe(userInfo, doc.Creator)
 	}
 
-	// TODO add source user as `CausedBy` to `Notification.Data``
+	// TODO add source user as `CausedBy` to `Notification.Data`
 	nType := string(notifi.InfoType)
 	not := &notifications.Notification{
 		UserId: targetUserId,
@@ -668,5 +670,9 @@ func (s *Server) notifyUser(ctx context.Context, documentId uint64, sourceUserId
 			},
 		},
 	}
-	s.notif.NotifyUser(ctx, not)
+	if err := s.notif.NotifyUser(ctx, not); err != nil {
+		return err
+	}
+
+	return nil
 }

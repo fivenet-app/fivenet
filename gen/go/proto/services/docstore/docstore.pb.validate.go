@@ -5755,15 +5755,32 @@ func (m *RequestDocumentActionRequest) validate(all bool) error {
 
 	var errors []error
 
+	// no validation rules for DocumentId
+
 	if _, ok := _RequestDocumentActionRequest_RequestType_InLookup[m.GetRequestType()]; !ok {
 		err := RequestDocumentActionRequestValidationError{
 			field:  "RequestType",
-			reason: "value must be in list [DOC_ACTIVITY_TYPE_REQUESTED_ACCESS DOC_ACTIVITY_TYPE_REQUESTED_CLOSURE DOC_ACTIVITY_TYPE_REQUESTED_UPDATE DOC_ACTIVITY_TYPE_REQUESTED_DELETION]",
+			reason: "value must be in list [DOC_ACTIVITY_TYPE_REQUESTED_ACCESS DOC_ACTIVITY_TYPE_REQUESTED_CLOSURE DOC_ACTIVITY_TYPE_REQUESTED_UPDATE DOC_ACTIVITY_TYPE_REQUESTED_OWNER_CHANGE DOC_ACTIVITY_TYPE_REQUESTED_DELETION]",
 		}
 		if !all {
 			return err
 		}
 		errors = append(errors, err)
+	}
+
+	if m.Reason != nil {
+
+		if utf8.RuneCountInString(m.GetReason()) > 255 {
+			err := RequestDocumentActionRequestValidationError{
+				field:  "Reason",
+				reason: "value length must be at most 255 runes",
+			}
+			if !all {
+				return err
+			}
+			errors = append(errors, err)
+		}
+
 	}
 
 	if len(errors) > 0 {
@@ -5848,10 +5865,11 @@ var _ interface {
 } = RequestDocumentActionRequestValidationError{}
 
 var _RequestDocumentActionRequest_RequestType_InLookup = map[documents.DocActivityType]struct{}{
-	10: {},
-	11: {},
-	12: {},
 	13: {},
+	14: {},
+	15: {},
+	16: {},
+	17: {},
 }
 
 // Validate checks the field values on RequestDocumentActionResponse with the

@@ -18,6 +18,15 @@ func (m *CreateDocumentRequest) Sanitize() error {
 	return nil
 }
 
+func (m *RequestDocumentActionRequest) Sanitize() error {
+
+	if m.Reason != nil {
+		*m.Reason = htmlsanitizer.Sanitize(*m.Reason)
+	}
+
+	return nil
+}
+
 func (m *UpdateDocumentRequest) Sanitize() error {
 
 	m.Content = htmlsanitizer.Sanitize(m.Content)

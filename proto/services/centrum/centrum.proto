@@ -129,7 +129,7 @@ message UpdateDispatchStatusRequest {
   uint64 dispatch_id = 1 [jstype = JS_STRING];
   resources.centrum.StatusDispatch status = 2 [(validate.rules).enum.defined_only = true];
   // @sanitize
-  optional string reason = 3;
+  optional string reason = 3 [(validate.rules).string.max_len = 255];
   // @sanitize
   optional string code = 4;
 }

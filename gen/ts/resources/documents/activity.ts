@@ -145,37 +145,41 @@ export enum DocActivityType {
      */
     DELETED = 9,
     /**
-     * Requests
-     *
-     * @generated from protobuf enum value: DOC_ACTIVITY_TYPE_REQUESTED_ACCESS = 10;
-     */
-    REQUESTED_ACCESS = 10,
-    /**
-     * @generated from protobuf enum value: DOC_ACTIVITY_TYPE_REQUESTED_CLOSURE = 11;
-     */
-    REQUESTED_CLOSURE = 11,
-    /**
-     * @generated from protobuf enum value: DOC_ACTIVITY_TYPE_REQUESTED_UPDATE = 12;
-     */
-    REQUESTED_UPDATE = 12,
-    /**
-     * @generated from protobuf enum value: DOC_ACTIVITY_TYPE_REQUESTED_DELETION = 13;
-     */
-    REQUESTED_DELETION = 13,
-    /**
      * Comments
      *
-     * @generated from protobuf enum value: DOC_ACTIVITY_TYPE_COMMENT_ADDED = 14;
+     * @generated from protobuf enum value: DOC_ACTIVITY_TYPE_COMMENT_ADDED = 10;
      */
-    COMMENT_ADDED = 14,
+    COMMENT_ADDED = 10,
     /**
-     * @generated from protobuf enum value: DOC_ACTIVITY_TYPE_COMMENT_UPDATED = 15;
+     * @generated from protobuf enum value: DOC_ACTIVITY_TYPE_COMMENT_UPDATED = 11;
      */
-    COMMENT_UPDATED = 15,
+    COMMENT_UPDATED = 11,
     /**
-     * @generated from protobuf enum value: DOC_ACTIVITY_TYPE_COMMENT_DELETED = 16;
+     * @generated from protobuf enum value: DOC_ACTIVITY_TYPE_COMMENT_DELETED = 12;
      */
-    COMMENT_DELETED = 16
+    COMMENT_DELETED = 12,
+    /**
+     * Requests
+     *
+     * @generated from protobuf enum value: DOC_ACTIVITY_TYPE_REQUESTED_ACCESS = 13;
+     */
+    REQUESTED_ACCESS = 13,
+    /**
+     * @generated from protobuf enum value: DOC_ACTIVITY_TYPE_REQUESTED_CLOSURE = 14;
+     */
+    REQUESTED_CLOSURE = 14,
+    /**
+     * @generated from protobuf enum value: DOC_ACTIVITY_TYPE_REQUESTED_UPDATE = 15;
+     */
+    REQUESTED_UPDATE = 15,
+    /**
+     * @generated from protobuf enum value: DOC_ACTIVITY_TYPE_REQUESTED_OWNER_CHANGE = 16;
+     */
+    REQUESTED_OWNER_CHANGE = 16,
+    /**
+     * @generated from protobuf enum value: DOC_ACTIVITY_TYPE_REQUESTED_DELETION = 17;
+     */
+    REQUESTED_DELETION = 17
 }
 // @generated message type with reflection information, may provide speed optimized methods
 class DocActivity$Type extends MessageType<DocActivity> {

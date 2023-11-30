@@ -3485,7 +3485,18 @@ func (m *UpdateDispatchStatusRequest) validate(all bool) error {
 	}
 
 	if m.Reason != nil {
-		// no validation rules for Reason
+
+		if utf8.RuneCountInString(m.GetReason()) > 255 {
+			err := UpdateDispatchStatusRequestValidationError{
+				field:  "Reason",
+				reason: "value length must be at most 255 runes",
+			}
+			if !all {
+				return err
+			}
+			errors = append(errors, err)
+		}
+
 	}
 
 	if m.Code != nil {

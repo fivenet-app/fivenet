@@ -7,6 +7,7 @@ import { defineRule } from 'vee-validate';
 import PasswordStrengthMeter from '~/components/auth/PasswordStrengthMeter.vue';
 import GenericAlert from '~/components/partials/elements/GenericAlert.vue';
 import { useNotificatorStore } from '~/store/notificator';
+import { getErrorMessage } from '~/utils/errors';
 
 const { $grpc } = useNuxtApp();
 
@@ -150,6 +151,10 @@ const onSubmitThrottle = useThrottleFn(async (e) => {
             </button>
         </div>
 
-        <GenericAlert v-if="accountError" :title="$t('components.auth.forgot_password.create_error')" :message="accountError" />
+        <GenericAlert
+            v-if="accountError"
+            :title="$t('components.auth.forgot_password.create_error')"
+            :message="getErrorMessage(accountError)"
+        />
     </div>
 </template>
