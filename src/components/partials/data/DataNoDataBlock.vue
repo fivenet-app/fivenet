@@ -25,7 +25,7 @@ function click() {
 </script>
 
 <template>
-    <div class="pt-4">
+    <div class="pt-4 w-full">
         <button
             type="button"
             :disabled="!focus"
