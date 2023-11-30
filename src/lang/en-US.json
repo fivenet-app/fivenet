@@ -1069,9 +1069,6 @@
             "ListCitizens": {
                 "key": "ListCitizens",
                 "description": "List and search through citizens.",
-                "attrs_types": {
-                    "Fields": "Fields"
-                },
                 "attrs": {
                     "PhoneNumber": "Phone Number",
                     "Licenses": "Licenses",
@@ -1079,29 +1076,32 @@
                     "UserProps_Job": "Job",
                     "UserProps_TrafficInfractionPoints": "Traffic Points",
                     "UserProps_OpenFines": "Open Fines"
+                },
+                "attrs_types": {
+                    "Fields": "Fields"
                 }
             },
             "ListUserActivity": {
                 "key": "ListUserActivity",
                 "description": "Citizen Info Activity Feed",
-                "attrs_types": {
-                    "Fields": "Fields"
-                },
                 "attrs": {
                     "SourceUser": "Source User",
                     "Own": "Own Activity Feed"
+                },
+                "attrs_types": {
+                    "Fields": "Fields"
                 }
             },
             "SetUserProps": {
                 "key": "SetUserProps",
                 "description": "Set Citizen Props (e.g., wanted status, suspected job).",
-                "attrs_types": {
-                    "Fields": "User Properties Fields"
-                },
                 "attrs": {
                     "Wanted": "Wanted Status",
                     "Job": "Job",
                     "TrafficInfractionPoints": "Traffic Points"
+                },
+                "attrs_types": {
+                    "Fields": "User Properties Fields"
                 }
             },
             "GetUser": {
@@ -1170,14 +1170,14 @@
             "UpdateDocument": {
                 "key": "UpdateDocument",
                 "description": "Edit/ Update an existing document.",
-                "attrs_types": {
-                    "Access": "Access to factions-own documents"
-                },
                 "attrs": {
                     "Own": "Own",
                     "Lower_Rank": "Lower Rank",
                     "Same_Rank": "Same Rank",
                     "Any": "Any"
+                },
+                "attrs_types": {
+                    "Access": "Access to factions-own documents"
                 }
             },
             "CreateTemplate": {
@@ -1191,40 +1191,40 @@
             "DeleteDocument": {
                 "key": "DeleteDocument",
                 "description": "Delete documents.",
-                "attrs_types": {
-                    "Access": "Access to factions-own documents"
-                },
                 "attrs": {
                     "Own": "Own",
                     "Lower_Rank": "Lower Rank",
                     "Same_Rank": "Same Rank",
                     "Any": "Any"
+                },
+                "attrs_types": {
+                    "Access": "Access to factions-own documents"
                 }
             },
             "ToggleDocument": {
                 "key": "Toggle Document Open/ Closed Status",
                 "description": "Toggle a document open/ closed.",
-                "attrs_types": {
-                    "Access": "Access to factions-own documents"
-                },
                 "attrs": {
                     "Own": "Own",
                     "Lower_Rank": "Lower Rank",
                     "Same_Rank": "Same Rank",
                     "Any": "Any"
+                },
+                "attrs_types": {
+                    "Access": "Access to factions-own documents"
                 }
             },
             "DeleteComment": {
                 "key": "DeleteComment",
                 "description": "Delete document comments.",
-                "attrs_types": {
-                    "Access": "Access to factions-own documents"
-                },
                 "attrs": {
                     "Own": "Own",
                     "Lower_Rank": "Lower Rank",
                     "Same_Rank": "Same Rank",
                     "Any": "Any"
+                },
+                "attrs_types": {
+                    "Access": "Access to factions-own documents"
                 }
             },
             "PostComment": {
@@ -1274,27 +1274,27 @@
             "CreateOrUpdateMarker": {
                 "key": "Create and Update Markers",
                 "description": "Being able to create and update markers on the Livemap.",
-                "attrs_types": {
-                    "Access": "Access to factions-own markers"
-                },
                 "attrs": {
                     "Own": "Own",
                     "Lower_Rank": "Lower Rank",
                     "Same_Rank": "Same Rank",
                     "Any": "Any"
+                },
+                "attrs_types": {
+                    "Access": "Access to factions-own markers"
                 }
             },
             "DeleteMarker": {
                 "key": "Delete Marker",
                 "description": "Being able to delete markers on the Livemap.",
-                "attrs_types": {
-                    "Access": "Access to factions-own markers"
-                },
                 "attrs": {
                     "Own": "Own",
                     "Lower_Rank": "Lower Rank",
                     "Same_Rank": "Same Rank",
                     "Any": "Any"
+                },
+                "attrs_types": {
+                    "Access": "Access to factions-own markers"
                 }
             }
         },
@@ -1385,12 +1385,12 @@
             "ConductListEntries": {
                 "key": "Conduct Entries: List",
                 "description": "List Conduct Register entries.",
-                "attrs_types": {
-                    "Access": "Access to conduct register entries"
-                },
                 "attrs": {
                     "Own": "Own",
                     "All": "All"
+                },
+                "attrs_types": {
+                    "Access": "Access to conduct register entries"
                 }
             },
             "ConductUpdateEntry": {
@@ -1400,11 +1400,11 @@
             "TimeclockListEntries": {
                 "key": "Timeclock Entries: List",
                 "description": "List Timeclock entries.",
-                "attrs_types": {
-                    "Access": "Access to time clock entries"
-                },
                 "attrs": {
                     "All": "All"
+                },
+                "attrs_types": {
+                    "Access": "Access to time clock entries"
                 }
             },
             "RequestsCreateEntry": {
