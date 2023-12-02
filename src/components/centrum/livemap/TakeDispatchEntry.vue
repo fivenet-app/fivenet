@@ -38,6 +38,13 @@ onBeforeMount(() => {
     }
 });
 
+console.log(
+    'TakeDispatchEntry: Dispatch ID:',
+    props.dispatch.id,
+    'Units Expire time:',
+    props.dispatch.units.map((u) => u.unitId + ', ' + toDate(u.expiresAt)).join('; '),
+);
+
 const open = ref(false);
 </script>
 
