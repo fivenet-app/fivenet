@@ -31,7 +31,7 @@ defineEmits<{
 const { $grpc } = useNuxtApp();
 
 const centrumStore = useCentrumStore();
-const { ownUnitId } = storeToRefs(centrumStore);
+const { ownUnitId, timeCorrection } = storeToRefs(centrumStore);
 const { canDo } = centrumStore;
 
 const notificationsStore = useNotificatorStore();
@@ -264,10 +264,13 @@ const openStatus = ref(false);
                                                                             >
                                                                                 -
                                                                                 {{
-                                                                                    useLocaleTimeAgo(toDate(unit.expiresAt), {
-                                                                                        showSecond: true,
-                                                                                        updateInterval: 1000,
-                                                                                    }).value
+                                                                                    useLocaleTimeAgo(
+                                                                                        toDate(unit.expiresAt, timeCorrection),
+                                                                                        {
+                                                                                            showSecond: true,
+                                                                                            updateInterval: 1000,
+                                                                                        },
+                                                                                    ).value
                                                                                 }}
                                                                             </span>
                                                                         </div>

@@ -10,6 +10,7 @@ import (
 
 	centrum "github.com/galexrt/fivenet/gen/go/proto/resources/centrum"
 	"github.com/galexrt/fivenet/gen/go/proto/resources/rector"
+	"github.com/galexrt/fivenet/gen/go/proto/resources/timestamp"
 	eventscentrum "github.com/galexrt/fivenet/gen/go/proto/services/centrum/events"
 	"github.com/galexrt/fivenet/gen/go/proto/services/centrum/manager"
 	"github.com/galexrt/fivenet/pkg/config"
@@ -320,6 +321,7 @@ func (s *Server) sendLatestState(srv CentrumService_StreamServer, job string, us
 				OwnUnit:     ownUnit,
 				Units:       units,
 				Dispatches:  dispatches,
+				ServerTime:  timestamp.Now(),
 			},
 		},
 	}

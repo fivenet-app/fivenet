@@ -21,7 +21,7 @@ const emit = defineEmits<{
 const { $grpc } = useNuxtApp();
 
 async function deleteLaw(id: string): Promise<void> {
-    const i = parseInt(id);
+    const i = parseInt(id, 10);
     if (i < 0) {
         emit('deleted', id);
         return;
@@ -52,7 +52,7 @@ async function saveLaw(lawBookId: string, id: string, values: FormData): Promise
     try {
         const call = $grpc.getRectorClient().createOrUpdateLaw({
             law: {
-                id: parseInt(id) < 0 ? '0' : id,
+                id: parseInt(id, 10) < 0 ? '0' : id,
                 lawbookId: lawBookId,
                 name: values.name,
                 description: values.description,
@@ -156,7 +156,7 @@ const editing = ref(props.startInEdit);
                 :title="$t('common.cancel')"
                 @click="
                     editing = false;
-                    parseInt(law.id) < 0 && $emit('deleted', law.id);
+                    parseInt(law.id, 10) < 0 && $emit('deleted', law.id);
                 "
             >
                 <CancelIcon class="w-6 h-6" />

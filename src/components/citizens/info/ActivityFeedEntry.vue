@@ -106,7 +106,7 @@ switch (props.activity.key) {
         if (props.activity.oldValue === '' && props.activity.newValue !== '0') {
             icon = HandcuffsIcon;
             actionText.value = t('components.citizens.citizen_info_activity_feed_entry.plugin_jail.jailed');
-            actionValue.value = fromSecondsToFormattedDuration(parseInt(props.activity.newValue));
+            actionValue.value = fromSecondsToFormattedDuration(parseInt(props.activity.newValue, 10));
         } else if (props.activity.newValue === '0') {
             icon = DoorOpenIcon;
             actionText.value = t('components.citizens.citizen_info_activity_feed_entry.plugin_jail.unjailed');
@@ -121,17 +121,17 @@ switch (props.activity.key) {
         if (props.activity.newValue === '0') {
             icon = ReceiptTextCheckIcon;
             actionText.value = t('components.citizens.citizen_info_activity_feed_entry.plugin_billing_fines.paid');
-            actionValue.value = n(parseInt(props.activity.oldValue), 'currency');
+            actionValue.value = n(parseInt(props.activity.oldValue, 10), 'currency');
             iconColor.value = 'text-success-400';
         } else if (props.activity.newValue === props.activity.oldValue) {
             icon = ReceiptTextRemoveIcon;
             actionText.value = t('components.citizens.citizen_info_activity_feed_entry.plugin_billing_fines.removed');
-            actionValue.value = n(parseInt(props.activity.oldValue), 'currency');
+            actionValue.value = n(parseInt(props.activity.oldValue, 10), 'currency');
             iconColor.value = 'text-secondary-400';
         } else {
             icon = ReceiptTextPlusIcon;
             actionText.value = t('components.citizens.citizen_info_activity_feed_entry.plugin_billing_fines.created');
-            actionValue.value = n(parseInt(props.activity.newValue), 'currency');
+            actionValue.value = n(parseInt(props.activity.newValue, 10), 'currency');
             iconColor.value = 'text-info-400';
         }
         break;

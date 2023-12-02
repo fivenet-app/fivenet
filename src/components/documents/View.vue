@@ -297,7 +297,7 @@ onConfirm(async (id: string) => deleteDocument(id));
                                 <span class="text-sm font-medium text-primary-700">
                                     {{
                                         commentCount !== undefined
-                                            ? $t('common.comments', parseInt(commentCount.toString()))
+                                            ? $t('common.comments', parseInt(commentCount.toString(), 10))
                                             : '? ' + $t('common.comment', 2)
                                     }}
                                 </span>

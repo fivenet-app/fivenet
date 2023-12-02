@@ -77,7 +77,7 @@ watchDebounced(mass, () => bmiCalculate(), {
 });
 
 function bmiCalculate(): void {
-    bmi.value = parseInt(mass.value) / (parseInt(height.value) / 100) ** 2;
+    bmi.value = parseInt(mass.value, 10) / (parseInt(height.value, 10) / 100) ** 2;
 }
 
 onBeforeMount(() => bmiCalculate());

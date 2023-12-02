@@ -37,7 +37,8 @@ defineEmits<{
 const { $grpc } = useNuxtApp();
 
 const centrumStore = useCentrumStore();
-const { getCurrentMode, getOwnUnit, dispatches, ownDispatches, pendingDispatches, disponents } = storeToRefs(centrumStore);
+const { getCurrentMode, getOwnUnit, dispatches, ownDispatches, pendingDispatches, disponents, timeCorrection } =
+    storeToRefs(centrumStore);
 const { startStream, stopStream } = centrumStore;
 
 const notifications = useNotificatorStore();
@@ -200,7 +201,7 @@ onBeforeUnmount(async () => {
 });
 
 const unitCheckupStatusAge = 20 * 60 * 1000;
-const unitCheckupStatusReping = 13.5 * 60 * 1000;
+const unitCheckupStatusReping = 15 * 60 * 1000;
 
 const attentionSound = useSound('/sounds/centrum/attention.mp3', {
     volume: 0.15,
@@ -224,7 +225,7 @@ async function checkup(): Promise<void> {
 
     const now = new Date();
     // If unit status is younger than time X, ignore and continue
-    if (now.getTime() - toDate(ownUnit.status.createdAt).getTime() <= unitCheckupStatusAge) {
+    if (now.getTime() - toDate(ownUnit.status.createdAt, timeCorrection.value).getTime() <= unitCheckupStatusAge) {
         return;
     }
 

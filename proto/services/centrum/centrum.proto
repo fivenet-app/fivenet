@@ -7,6 +7,7 @@ import "resources/centrum/dispatches.proto";
 import "resources/centrum/general.proto";
 import "resources/centrum/settings.proto";
 import "resources/centrum/units.proto";
+import "resources/timestamp/timestamp.proto";
 import "resources/users/users.proto";
 import "validate/validate.proto";
 
@@ -175,6 +176,7 @@ message LatestState {
   // Send the current units and dispatches
   repeated resources.centrum.Unit units = 5;
   repeated resources.centrum.Dispatch dispatches = 6;
+  resources.timestamp.Timestamp server_time = 7;
 }
 
 message StreamRequest {}

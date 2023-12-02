@@ -7,6 +7,7 @@ import { Dispatch, DispatchStatus, StatusDispatch } from '~~/gen/ts/resources/ce
 import { CentrumMode, Settings } from '~~/gen/ts/resources/centrum/settings';
 import { StatusUnit, Unit, UnitStatus } from '~~/gen/ts/resources/centrum/units';
 import { UserShort } from '~~/gen/ts/resources/users/users';
+import { Timestamp } from '~~/gen/ts/resources/timestamp/timestamp';
 
 const cleanupInterval = 40 * 1000; // 40 seconds
 const dispatchEndOfLifeTime = 2 * 60 * 60 * 1000; // 2 hours
@@ -20,6 +21,8 @@ export interface CentrumState {
     cleanupIntervalId: NodeJS.Timeout | undefined;
     restarting: boolean;
     restartBackoffTime: number;
+
+    timeCorrection: number;
 
     settings: Settings | undefined;
     isDisponent: boolean;
@@ -41,6 +44,8 @@ export const useCentrumStore = defineStore('centrum', {
             abort: undefined,
             restarting: false,
             restartBackoffTime: initialBackoffTime,
+
+            timeCorrection: 0,
 
             settings: undefined,
             isDisponent: false,
@@ -393,6 +398,10 @@ export const useCentrumStore = defineStore('centrum', {
                                 this.dispatches.delete(id);
                             }
                         }
+
+                        if (resp.change.latestState.serverTime !== undefined) {
+                            this.calculateTimeCorrection(resp.change.latestState.serverTime);
+                        }
                     } else if (resp.change.oneofKind === 'settings') {
                         this.updateSettings(resp.change.settings);
                     } else if (resp.change.oneofKind === 'disponents') {
@@ -610,6 +619,22 @@ export const useCentrumStore = defineStore('centrum', {
                 this.feed.unshift(item);
             }
         },
+        calculateTimeCorrection(serverTime: Timestamp): void {
+            const now = new Date().getTime();
+            const st = toDate(serverTime).getTime();
+
+            const correction = now - st;
+            this.timeCorrection = Math.floor(correction);
+
+            console.debug(
+                'Centrum: Calculated time correction - Now: ',
+                now,
+                'Server Time:',
+                st,
+                'Time Correction (seconds): ',
+                this.timeCorrection / 1000,
+            );
+        },
         // Central "can user do that" method as we will take the dispatch center mode into account further
         canDo(action: canDoAction, dispatch?: Dispatch): boolean {
             // TODO check perms and dispatch center mode
@@ -640,7 +665,7 @@ export const useCentrumStore = defineStore('centrum', {
         },
         async cleanup(): Promise<void> {
             console.debug('Centrum: Running cleanup tasks');
-            const now = new Date().getTime();
+            const now = new Date().getTime() - this.timeCorrection;
 
             // Cleanup pending dispatches
             this.pendingDispatches.forEach((pd) => {
@@ -692,7 +717,7 @@ export const useCentrumStore = defineStore('centrum', {
             this.removeOwnDispatch(dispatch.id);
             this.removePendingDispatch(dispatch.id);
 
-            const now = new Date().getTime();
+            const now = new Date().getTime() - this.timeCorrection;
 
             // Remove stale expired unit assignements
             dispatch.units.forEach((ua, idx) => {

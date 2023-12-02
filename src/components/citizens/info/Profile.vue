@@ -177,7 +177,7 @@ const trafficPointsModal = ref(false);
                                                         <span v-else class="text-error-500">
                                                             {{
                                                                 $n(
-                                                                    parseInt((user?.props?.openFines ?? 0n).toString()),
+                                                                    parseInt((user?.props?.openFines ?? 0n).toString(), 10),
                                                                     'currency',
                                                                 )
                                                             }}

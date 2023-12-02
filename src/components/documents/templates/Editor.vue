@@ -117,7 +117,7 @@ function addAccessEntry(): void {
         return;
     }
 
-    const id = access.value.size > 0 ? parseInt([...access.value.keys()].pop() ?? '0') + 1 : 0;
+    const id = access.value.size > 0 ? parseInt([...access.value.keys()].pop() ?? '0', 10) + 1 : 0;
     access.value.set(id.toString(), {
         id: id.toString(),
         type: 1,
@@ -203,7 +203,7 @@ function addContentAccessEntry(): void {
         return;
     }
 
-    const id = contentAccess.value.size > 0 ? parseInt([...contentAccess.value.keys()].pop() ?? '0') + 1 : 0;
+    const id = contentAccess.value.size > 0 ? parseInt([...contentAccess.value.keys()].pop() ?? '0', 10) + 1 : 0;
     contentAccess.value.set(id.toString(), {
         id: id.toString(),
         type: 1,
@@ -330,7 +330,7 @@ async function createOrUpdateTemplate(values: FormData, templateId?: string): Pr
         }
     });
 
-    if (typeof values.weight === 'string') values.weight = parseInt(values.weight as string);
+    if (typeof values.weight === 'string') values.weight = parseInt(values.weight as string, 10);
 
     const req: CreateTemplateRequest | UpdateTemplateRequest = {
         template: {

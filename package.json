@@ -5,7 +5,7 @@
     "type": "module",
     "scripts": {
         "build": "COMMIT_REF=$(git describe --tags --exclude='fivenet-*') yarn nuxi build",
-        "dev": "COMMIT_REF=$(git describe --tags --exclude='fivenet-*') yarn nuxi dev",
+        "dev": "COMMIT_REF=$(git describe --tags --exclude='fivenet-*') yarn nuxi dev --host",
         "generate": "COMMIT_REF=$(git describe --tags --exclude='fivenet-*') yarn nuxi generate",
         "preview": "COMMIT_REF=$(git describe --tags --exclude='fivenet-*') yarn nuxi preview",
         "postinstall": "COMMIT_REF=$(git describe --tags --exclude='fivenet-*') yarn nuxi prepare",

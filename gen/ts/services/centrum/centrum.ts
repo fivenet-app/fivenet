@@ -4,6 +4,7 @@
 import { ServiceType } from "@protobuf-ts/runtime-rpc";
 import { MessageType } from "@protobuf-ts/runtime";
 import { Disponents } from "../../resources/centrum/general";
+import { Timestamp } from "../../resources/timestamp/timestamp";
 import { UserShort } from "../../resources/users/users";
 import { TakeDispatchResp } from "../../resources/centrum/dispatches";
 import { DispatchStatus } from "../../resources/centrum/dispatches";
@@ -425,6 +426,10 @@ export interface LatestState {
      * @generated from protobuf field: repeated resources.centrum.Dispatch dispatches = 6;
      */
     dispatches: Dispatch[];
+    /**
+     * @generated from protobuf field: resources.timestamp.Timestamp server_time = 7;
+     */
+    serverTime?: Timestamp;
 }
 /**
  * @generated from protobuf message services.centrum.StreamRequest
@@ -953,7 +958,8 @@ class LatestState$Type extends MessageType<LatestState> {
             { no: 3, name: "is_disponent", kind: "scalar", T: 8 /*ScalarType.BOOL*/ },
             { no: 4, name: "own_unit", kind: "message", T: () => Unit },
             { no: 5, name: "units", kind: "message", repeat: 1 /*RepeatType.PACKED*/, T: () => Unit },
-            { no: 6, name: "dispatches", kind: "message", repeat: 1 /*RepeatType.PACKED*/, T: () => Dispatch }
+            { no: 6, name: "dispatches", kind: "message", repeat: 1 /*RepeatType.PACKED*/, T: () => Dispatch },
+            { no: 7, name: "server_time", kind: "message", T: () => Timestamp }
         ]);
     }
 }

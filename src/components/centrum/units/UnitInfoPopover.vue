@@ -3,8 +3,12 @@ import { Float } from '@headlessui-float/vue';
 import { Popover, PopoverButton, PopoverPanel } from '@headlessui/vue';
 import { TimerIcon } from 'mdi-vue3';
 import PhoneNumber from '~/components/partials/citizens/PhoneNumber.vue';
+import { useCentrumStore } from '~/store/centrum';
 import { DispatchAssignment } from '~~/gen/ts/resources/centrum/dispatches';
 import { Unit } from '~~/gen/ts/resources/centrum/units';
+
+const centrumStore = useCentrumStore();
+const { timeCorrection } = storeToRefs(centrumStore);
 
 withDefaults(
     defineProps<{
@@ -70,7 +74,7 @@ withDefaults(
                     </p>
                     <p v-if="assignment?.expiresAt" class="text-sm font-normal inline-flex items-center justify-center">
                         {{
-                            useLocaleTimeAgo(toDate(assignment?.expiresAt), {
+                            useLocaleTimeAgo(toDate(assignment.expiresAt, timeCorrection), {
                                 showSecond: true,
                                 updateInterval: 1000,
                             }).value

@@ -45,12 +45,16 @@ export function fromSecondsToFormattedDuration(seconds: number, options?: { seco
     return text.length > 0 ? text : t(options?.emptyText ?? 'common.unknown');
 }
 
-export function toDate(ts: resourcesTimestampTimestamp.Timestamp | undefined): Date {
+export function toDate(ts: resourcesTimestampTimestamp.Timestamp | undefined, correction?: number): Date {
     if (ts === undefined || ts?.timestamp === undefined) {
         return new Date();
     }
 
-    return googleProtobufTimestamp.Timestamp.toDate(ts.timestamp!);
+    if (correction === undefined) {
+        return googleProtobufTimestamp.Timestamp.toDate(ts.timestamp!);
+    }
+
+    return new Date(googleProtobufTimestamp.Timestamp.toDate(ts.timestamp!).getTime() - -correction);
 }
 
 export function toDateLocaleString(ts: resourcesTimestampTimestamp.Timestamp | undefined, d?: Function): string {

@@ -49,7 +49,7 @@ const tabs = [
     },
 ];
 
-const { data: user, pending, refresh, error } = useLazyAsyncData(`citizen-${props.id}`, () => getUser(parseInt(props.id)));
+const { data: user, pending, refresh, error } = useLazyAsyncData(`citizen-${props.id}`, () => getUser(parseInt(props.id, 10)));
 
 async function getUser(userId: number): Promise<User> {
     try {

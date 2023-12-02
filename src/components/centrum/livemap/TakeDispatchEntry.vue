@@ -24,7 +24,7 @@ const emits = defineEmits<{
 }>();
 
 const centrumStore = useCentrumStore();
-const { ownUnitId } = storeToRefs(centrumStore);
+const { ownUnitId, timeCorrection } = storeToRefs(centrumStore);
 
 const expiresAt = props.dispatch.units.find((u) => u.unitId === ownUnitId.value)?.expiresAt;
 const dispatchBackground = computed(() => dispatchStatusToBGColor(props.dispatch.status?.status));
@@ -37,13 +37,6 @@ onBeforeMount(() => {
         emits('selected', true);
     }
 });
-
-console.log(
-    'TakeDispatchEntry: Dispatch ID:',
-    props.dispatch.id,
-    'Units Expire time:',
-    props.dispatch.units.map((u) => u.unitId + ', ' + toDate(u.expiresAt)).join('; '),
-);
 
 const open = ref(false);
 </script>
@@ -68,7 +61,7 @@ const open = ref(false);
             </div>
             <div v-if="expiresAt" class="mt-1 text-neutral text-sm">
                 {{ $t('common.expires_in') }}:
-                {{ useLocaleTimeAgo(toDate(expiresAt), { showSecond: true, updateInterval: 1000 }).value }}
+                {{ useLocaleTimeAgo(toDate(expiresAt, timeCorrection), { showSecond: true, updateInterval: 1000 }).value }}
             </div>
         </dt>
         <dd class="mt-1 text-sm leading-6 text-gray-400 sm:col-span-2 sm:mt-0">
