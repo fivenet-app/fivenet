@@ -263,6 +263,7 @@ export function getDocument(obj: ClipboardDocument): DocumentShort {
         content: '',
         creatorId: user.userId,
         creator: user,
+        creatorJob: user.job,
         state: obj.state,
         closed: obj.closed,
         public: obj.public,

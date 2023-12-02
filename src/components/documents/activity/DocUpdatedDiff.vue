@@ -1,4 +1,6 @@
 <script lang="ts" setup>
+import type { DocUpdated } from '~~/gen/ts/resources/documents/activity';
+
 defineProps<{
     update: DocUpdated;
 }>();
