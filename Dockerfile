@@ -8,7 +8,6 @@ RUN rm -rf ./.nuxt/ && \
     apk add --no-cache git && \
     yarn && yarn generate
 
-
 # Backend Build
 FROM docker.io/library/golang:1.21 AS gobuilder
 WORKDIR /go/src/github.com/galexrt/fivenet/
