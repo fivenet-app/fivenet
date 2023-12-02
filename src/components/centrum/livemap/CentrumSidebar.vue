@@ -2,13 +2,14 @@
 import { Disclosure, DisclosureButton, DisclosurePanel } from '@headlessui/vue';
 import { RpcError } from '@protobuf-ts/runtime-rpc';
 import { LControl } from '@vue-leaflet/vue-leaflet';
-import { useDebounceFn, useIntervalFn, useTimeoutFn, watchDebounced } from '@vueuse/core';
+import { useDebounceFn, useIntervalFn, useThrottleFn, useTimeoutFn, watchDebounced } from '@vueuse/core';
 import { useSound } from '@vueuse/sound';
 import {
     CarEmergencyIcon,
     ChevronDownIcon,
     HoopHouseIcon,
     InformationOutlineIcon,
+    LoadingIcon,
     MonitorIcon,
     RobotIcon,
     ToggleSwitchIcon,
@@ -134,6 +135,18 @@ watch(open, async () => {
         joinUnitOpen.value = true;
     }
 });
+
+const canSubmitUnitStatus = ref(true);
+const onSubmitUnitStatusThrottle = useThrottleFn(async (unitId: string, status?: StatusUnit) => {
+    canSubmitUnitStatus.value = false;
+    await updateUtStatus(unitId, status).finally(() => setTimeout(() => (canSubmitUnitStatus.value = true), 300));
+}, 1000);
+
+const canSubmitDispatchStatus = ref(true);
+const onSubmitDispatchStatusThrottle = useThrottleFn(async (dispatchId?: string, status?: StatusDispatch) => {
+    canSubmitDispatchStatus.value = false;
+    await updateDspStatus(dispatchId, status).finally(() => setTimeout(() => (canSubmitDispatchStatus.value = true), 300));
+}, 1000);
 
 const ownUnitStatus = computed(() => unitStatusToBGColor(getOwnUnit.value?.status?.status));
 
@@ -369,8 +382,14 @@ async function checkup(): Promise<void> {
                                                     class="flex w-full items-start justify-between text-left text-neutral"
                                                 >
                                                     <span class="text-base-100 leading-7">
-                                                        <div class="text-xs font-semibold leading-6 text-base-100">
+                                                        <div
+                                                            class="inline-flex items-center text-xs font-semibold leading-6 text-base-100"
+                                                        >
                                                             {{ $t('common.unit') }}
+                                                            <LoadingIcon
+                                                                v-if="!canSubmitUnitStatus"
+                                                                class="animate-spin h-4 w-4 ml-1"
+                                                            />
                                                         </div>
                                                     </span>
                                                     <span class="ml-6 flex h-7 items-center">
@@ -394,11 +413,13 @@ async function checkup(): Promise<void> {
                                                                 :key="item.name"
                                                                 type="button"
                                                                 class="text-neutral bg-primary hover:bg-primary-100/10 hover:text-neutral font-medium hover:transition-all group flex w-full flex-col items-center rounded-md p-1.5 text-xs my-0.5"
+                                                                :disabled="!canSubmitUnitStatus"
                                                                 :class="[
+                                                                    !canSubmitUnitStatus ? 'disabled' : '',
                                                                     item.status ? unitStatusToBGColor(item.status) : item.class,
                                                                     item.class,
                                                                 ]"
-                                                                @click="updateUtStatus(getOwnUnit.id!, item.status)"
+                                                                @click="onSubmitUnitStatusThrottle(getOwnUnit.id!, item.status)"
                                                             >
                                                                 <component
                                                                     :is="item.icon ?? HoopHouseIcon"
@@ -433,8 +454,9 @@ async function checkup(): Promise<void> {
                                 </li>
                                 <li>
                                     <ul role="list" class="-mx-2 space-y-1">
-                                        <div class="text-xs font-semibold leading-6 text-base-100">
+                                        <div class="inline-flex items-center text-xs font-semibold leading-6 text-base-100">
                                             {{ $t('common.dispatch') }} {{ $t('common.status') }}
+                                            <LoadingIcon v-if="!canSubmitDispatchStatus" class="animate-spin h-4 w-4 ml-1" />
                                         </div>
                                         <li>
                                             <div class="grid grid-cols-2 gap-0.5">
@@ -445,11 +467,13 @@ async function checkup(): Promise<void> {
                                                     :key="item.name"
                                                     type="button"
                                                     class="text-neutral bg-primary hover:bg-primary-100/10 hover:text-neutral font-medium hover:transition-all group flex w-full flex-col items-center rounded-md p-1.5 text-xs my-0.5"
+                                                    :disabled="!canSubmitDispatchStatus"
                                                     :class="[
+                                                        !canSubmitDispatchStatus ? 'disabled' : '',
                                                         item.status ? dispatchStatusToBGColor(item.status) : item.class,
                                                         item.class,
                                                     ]"
-                                                    @click="updateDspStatus(selectedDispatch, item.status)"
+                                                    @click="onSubmitDispatchStatusThrottle(selectedDispatch, item.status)"
                                                 >
                                                     <component
                                                         :is="item.icon ?? HoopHouseIcon"
