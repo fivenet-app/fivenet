@@ -150,7 +150,7 @@ const onSubmitDispatchStatusThrottle = useThrottleFn(async (dispatchId?: string,
 
 const ownUnitStatus = computed(() => unitStatusToBGColor(getOwnUnit.value?.status?.status));
 
-async function ensureOwnDispatchSelected(): Promise<void> {
+function ensureOwnDispatchSelected(): void {
     if (ownDispatches.value.length === 0) {
         selectedDispatch.value = undefined;
         return;
@@ -176,7 +176,7 @@ watchDebounced(
     },
 );
 
-watchDebounced(ownDispatches.value, async () => ensureOwnDispatchSelected(), {
+watchDebounced(ownDispatches.value, () => ensureOwnDispatchSelected(), {
     debounce: 125,
     maxWait: 350,
 });
