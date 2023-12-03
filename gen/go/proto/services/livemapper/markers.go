@@ -23,7 +23,7 @@ var (
 )
 
 var (
-	tUsers   = table.Users.AS("creator")
+	tUsers   = table.Users.AS("usershort")
 	tMarkers = table.FivenetCentrumMarkers.AS("marker")
 )
 

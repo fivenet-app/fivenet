@@ -103,7 +103,7 @@ export const unitStatuses: {
     class?: string;
     status?: StatusUnit;
 }[] = [
-    { icon: markRaw(CarBackIcon), name: 'Unavailable', status: StatusUnit.UNAVAILABLE },
+    { icon: markRaw(CancelIcon), name: 'Unavailable', status: StatusUnit.UNAVAILABLE },
     { icon: markRaw(CalendarCheckIcon), name: 'Available', status: StatusUnit.AVAILABLE },
     { icon: markRaw(CoffeeIcon), name: 'On Break', status: StatusUnit.ON_BREAK },
     { icon: markRaw(CalendarRemoveIcon), name: 'Busy', status: StatusUnit.BUSY },
