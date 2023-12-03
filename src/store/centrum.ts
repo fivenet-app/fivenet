@@ -165,13 +165,13 @@ export const useCentrumStore = defineStore('centrum', {
                 this.ownUnitId = id;
             }
         },
-        removeUnit(unit: Unit): void {
+        removeUnit(id: string): void {
             // User's unit has been deleted, reset it
-            if (this.ownUnitId !== undefined && this.ownUnitId === unit.id) {
+            if (this.ownUnitId !== undefined && this.ownUnitId === id) {
                 this.setOwnUnit(undefined);
             }
 
-            this.units.delete(unit.id);
+            this.units.delete(id);
         },
 
         // Dispatches
@@ -277,7 +277,7 @@ export const useCentrumStore = defineStore('centrum', {
                 return;
             }
 
-            const assignment = dispatch.units.find((u) => u.unitId === this.ownUnitId);
+            const assignment = dispatch.units.find((ua) => ua.unitId === this.ownUnitId);
             if (assignment === undefined) {
                 // If we don't have such a dispatch in our lists, probably not for us
                 if (
@@ -291,7 +291,7 @@ export const useCentrumStore = defineStore('centrum', {
                 this.removePendingDispatch(dispatch.id);
                 this.removeOwnDispatch(dispatch.id);
             } else {
-                // If dispatch is cancelled/completed, we can go ahead and remove it
+                // If dispatch is cancelled/completed, just remove it from our pending list
                 if (
                     dispatch.status?.status === StatusDispatch.CANCELLED ||
                     dispatch.status?.status === StatusDispatch.COMPLETED
@@ -367,6 +367,10 @@ export const useCentrumStore = defineStore('centrum', {
                     console.debug('Centrum: Received change - Kind:', resp.change.oneofKind, resp.change);
 
                     if (resp.change.oneofKind === 'latestState') {
+                        if (resp.change.latestState.serverTime !== undefined) {
+                            this.calculateTimeCorrection(resp.change.latestState.serverTime);
+                        }
+
                         if (resp.change.latestState.settings !== undefined) {
                             this.updateSettings(resp.change.latestState.settings);
                         }
@@ -381,11 +385,14 @@ export const useCentrumStore = defineStore('centrum', {
                             this.addOrUpdateUnit(u);
                         });
                         // Remove units not found in latest state
-                        for (const id in this.units.keys()) {
+                        let removedUnits = 0;
+                        this.units.forEach((_, id) => {
                             if (!foundUnits.includes(id)) {
-                                this.units.delete(id);
+                                this.removeUnit(id);
+                                removedUnits++;
                             }
-                        }
+                        });
+                        console.debug(`Centrum: Removed ${removedUnits} old units`);
 
                         const foundDispatches: string[] = [];
                         resp.change.latestState.dispatches.forEach((d) => {
@@ -393,15 +400,14 @@ export const useCentrumStore = defineStore('centrum', {
                             this.addOrUpdateDispatch(d);
                         });
                         // Remove dispatches not found in latest state
-                        for (const id in this.dispatches.keys()) {
+                        let removedDispatches = 0;
+                        this.dispatches.forEach((_, id) => {
                             if (!foundDispatches.includes(id)) {
-                                this.dispatches.delete(id);
+                                this.removeDispatch(id);
+                                removedDispatches++;
                             }
-                        }
-
-                        if (resp.change.latestState.serverTime !== undefined) {
-                            this.calculateTimeCorrection(resp.change.latestState.serverTime);
-                        }
+                        });
+                        console.debug(`Centrum: Removed ${removedDispatches} old dispatches`);
                     } else if (resp.change.oneofKind === 'settings') {
                         this.updateSettings(resp.change.settings);
                     } else if (resp.change.oneofKind === 'disponents') {
@@ -419,7 +425,7 @@ export const useCentrumStore = defineStore('centrum', {
                     } else if (resp.change.oneofKind === 'unitCreated') {
                         this.addOrUpdateUnit(resp.change.unitCreated);
                     } else if (resp.change.oneofKind === 'unitDeleted') {
-                        this.removeUnit(resp.change.unitDeleted);
+                        this.removeUnit(resp.change.unitDeleted.id);
                     } else if (resp.change.oneofKind === 'unitUpdated') {
                         this.addOrUpdateUnit(resp.change.unitUpdated);
                         if (isCenter) {
@@ -429,7 +435,7 @@ export const useCentrumStore = defineStore('centrum', {
                         // User added/in this unit
                         const idx = resp.change.unitUpdated.users.findIndex((u) => u.userId === authStore.activeChar?.userId);
                         if (idx > -1) {
-                            // User already in unit
+                            // User already in that unit
                             if (this.ownUnitId === resp.change.unitUpdated.id) {
                                 continue;
                             }

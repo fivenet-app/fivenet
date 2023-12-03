@@ -14,7 +14,7 @@ func NewServer() *Server {
 
 func (s *Server) Upload(ctx context.Context, req *UploadRequest) (*UploadResponse, error) {
 
-	// TODO
+	// TODO implement access checks and upload logic
 
 	return nil, nil
 }

@@ -57,14 +57,28 @@ func (s *Server) RequestDocumentAction(ctx context.Context, req *RequestDocument
 		return nil, errorsdocstore.ErrFailedQuery
 	}
 
+	auditEntry.State = int16(rector.EventType_EVENT_TYPE_CREATED)
+
 	return resp, nil
 }
 
 func (s *Server) RespondDocumentAction(ctx context.Context, req *RespondDocumentActionRequest) (*RespondDocumentActionResponse, error) {
+	userInfo := auth.MustGetUserInfoFromContext(ctx)
+
+	auditEntry := &model.FivenetAuditLog{
+		Service: DocStoreService_ServiceDesc.ServiceName,
+		Method:  "RespondDocumentAction",
+		UserID:  userInfo.UserId,
+		UserJob: userInfo.Job,
+		State:   int16(rector.EventType_EVENT_TYPE_ERRORED),
+	}
+	defer s.auditer.Log(auditEntry, req)
+
+	resp := &RespondDocumentActionResponse{}
 
 	// TODO add logic to accept/decline a document request action
 
-	resp := &RespondDocumentActionResponse{}
+	auditEntry.State = int16(rector.EventType_EVENT_TYPE_UPDATED)
 
 	return resp, nil
 }
