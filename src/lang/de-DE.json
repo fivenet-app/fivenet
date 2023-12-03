@@ -131,7 +131,7 @@
                 "new_password": "Neues Passwort"
             },
             "oauth2_connections": {
-                "title": "Social Login Login",
+                "title": "Social Login-Verbindungen",
                 "subtitle": "Ihr Social Login Login, für schnelleres Anmelden und coole zusätzliche Funktionen."
             },
             "forgot_password": {
@@ -519,7 +519,7 @@
                 },
                 "two": {
                     "question": "Warum wurde FiveNet erstellt?",
-                    "answer": "Es begann als eine Möglichkeit für Galexrt, die Frontend-Entwicklung zu erlernen, und entwickelte sich dann zu einer Möglichkeit für ModernV Server, eine Alternative zu VPC CopNet/ MedicNet zu haben."
+                    "answer": "Es begann als eine Möglichkeit für Galexrt, die Frontend-Entwicklung zu erlernen, und entwickelte sich dann zu einer Möglichkeit für den ModernV Server, eine Alternative zu VPC CopNet/ MedicNet zu haben."
                 },
                 "three": {
                     "question": "Wo kann ich die Entwicklungs-Roadmap von FiveNet finden?",
@@ -532,7 +532,7 @@
             },
             "questions_or_issues": {
                 "title": "Haben Sie Fragen oder Probleme?",
-                "content": "Stelle sicher, dass Sie dem Discord-Server beitreten, falls Sie Probleme oder Fragen zu FiveNet haben."
+                "content": "Stellen Sie sicher, dass Sie dem Discord-Server beitreten, falls Sie Probleme oder Fragen zu FiveNet haben."
             },
             "join_discord": "Tritt dem Discord-Server von Galexrt bei",
             "licenses_list": "FiveNet Lizenz und Liste der genutzten Third-Party Lizenzen",
