@@ -9,6 +9,7 @@ import (
 	"github.com/galexrt/fivenet/gen/go/proto/resources/notifications"
 	"github.com/galexrt/fivenet/gen/go/proto/resources/rector"
 	"github.com/galexrt/fivenet/gen/go/proto/resources/users"
+	errorsdocstore "github.com/galexrt/fivenet/gen/go/proto/services/docstore/errors"
 	"github.com/galexrt/fivenet/pkg/grpc/auth"
 	"github.com/galexrt/fivenet/pkg/notifi"
 	"github.com/galexrt/fivenet/query/fivenet/model"
@@ -29,7 +30,7 @@ func (s *Server) RequestDocumentAction(ctx context.Context, req *RequestDocument
 
 	doc, err := s.getDocument(ctx, tDocument.ID.EQ(jet.Uint64(req.DocumentId)), userInfo)
 	if err != nil {
-		return nil, ErrFailedQuery
+		return nil, errorsdocstore.ErrFailedQuery
 	}
 
 	resp := &RequestDocumentActionResponse{}
@@ -42,7 +43,7 @@ func (s *Server) RequestDocumentAction(ctx context.Context, req *RequestDocument
 		Reason:       req.Reason,
 		Data:         &documents.DocActivityData{},
 	}); err != nil {
-		return nil, ErrFailedQuery
+		return nil, errorsdocstore.ErrFailedQuery
 	}
 
 	// If the document has no creator anymore, nothing we can do here
@@ -53,13 +54,20 @@ func (s *Server) RequestDocumentAction(ctx context.Context, req *RequestDocument
 	// TODO check if such a request was already made in the last 6 hours
 
 	if err := s.notifyUser(ctx, doc, userInfo.UserId, int32(*doc.CreatorId)); err != nil {
-		return nil, ErrFailedQuery
+		return nil, errorsdocstore.ErrFailedQuery
 	}
 
 	return resp, nil
 }
 
-// TODO add logic to accept/decline a document request action
+func (s *Server) RespondDocumentAction(ctx context.Context, req *RespondDocumentActionRequest) (*RespondDocumentActionResponse, error) {
+
+	// TODO add logic to accept/decline a document request action
+
+	resp := &RespondDocumentActionResponse{}
+
+	return resp, nil
+}
 
 func (s *Server) notifyUser(ctx context.Context, doc *documents.Document, sourceUserId int32, targetUserId int32) error {
 	userInfo, err := s.ui.GetUserInfoWithoutAccountId(ctx, targetUserId)

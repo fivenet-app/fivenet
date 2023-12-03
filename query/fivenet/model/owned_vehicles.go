@@ -16,6 +16,7 @@ type OwnedVehicles struct {
 	Stored    bool    `json:"stored"`
 	Carseller *int32  `json:"carseller"`
 	Owners    *string `json:"owners"`
+	Storage   *string `json:"storage"`
 	Trunk     *string `json:"trunk"`
 	Glovebox  *string `json:"glovebox"`
 }

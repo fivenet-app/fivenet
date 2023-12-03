@@ -249,6 +249,18 @@ message RequestDocumentActionResponse {
   bool success = 1;
 }
 
+message RespondDocumentActionRequest {
+  uint64 document_id = 1 [jstype = JS_STRING];
+  resources.documents.DocActivityType request_type = 2 [(validate.rules).enum = {in: [13,14,15,16,17]}];
+  // @sanitize
+  optional string reason = 3 [(validate.rules).string.max_len = 255];
+  bool accepted = 4;
+}
+
+message RespondDocumentActionResponse {
+  bool success = 1;
+}
+
 // Access =================================================================
 message GetDocumentAccessRequest {
   uint64 document_id = 1 [jstype = JS_STRING];
@@ -369,6 +381,8 @@ service DocStoreService {
 
   // @perm: Attrs=Types/StringList:[]string{"Access", "Closure", "Update", "Deletion"}§[]string{"Access"}
   rpc RequestDocumentAction(RequestDocumentActionRequest) returns (RequestDocumentActionResponse);
+  // @perm: Name=RequestDocumentAction
+  rpc RespondDocumentAction(RespondDocumentActionRequest) returns (RespondDocumentActionResponse);
 
   // @perm
   rpc ListUserDocuments(ListUserDocumentsRequest) returns (ListUserDocumentsResponse);

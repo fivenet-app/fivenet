@@ -582,6 +582,38 @@ export interface RequestDocumentActionResponse {
     success: boolean;
 }
 /**
+ * @generated from protobuf message services.docstore.RespondDocumentActionRequest
+ */
+export interface RespondDocumentActionRequest {
+    /**
+     * @generated from protobuf field: uint64 document_id = 1 [jstype = JS_STRING];
+     */
+    documentId: string;
+    /**
+     * @generated from protobuf field: resources.documents.DocActivityType request_type = 2;
+     */
+    requestType: DocActivityType;
+    /**
+     * @sanitize
+     *
+     * @generated from protobuf field: optional string reason = 3;
+     */
+    reason?: string;
+    /**
+     * @generated from protobuf field: bool accepted = 4;
+     */
+    accepted: boolean;
+}
+/**
+ * @generated from protobuf message services.docstore.RespondDocumentActionResponse
+ */
+export interface RespondDocumentActionResponse {
+    /**
+     * @generated from protobuf field: bool success = 1;
+     */
+    success: boolean;
+}
+/**
  * Access =================================================================
  *
  * @generated from protobuf message services.docstore.GetDocumentAccessRequest
@@ -1313,6 +1345,33 @@ class RequestDocumentActionResponse$Type extends MessageType<RequestDocumentActi
  */
 export const RequestDocumentActionResponse = new RequestDocumentActionResponse$Type();
 // @generated message type with reflection information, may provide speed optimized methods
+class RespondDocumentActionRequest$Type extends MessageType<RespondDocumentActionRequest> {
+    constructor() {
+        super("services.docstore.RespondDocumentActionRequest", [
+            { no: 1, name: "document_id", kind: "scalar", T: 4 /*ScalarType.UINT64*/ },
+            { no: 2, name: "request_type", kind: "enum", T: () => ["resources.documents.DocActivityType", DocActivityType, "DOC_ACTIVITY_TYPE_"], options: { "validate.rules": { enum: { in: [13, 14, 15, 16, 17] } } } },
+            { no: 3, name: "reason", kind: "scalar", opt: true, T: 9 /*ScalarType.STRING*/, options: { "validate.rules": { string: { maxLen: "255" } } } },
+            { no: 4, name: "accepted", kind: "scalar", T: 8 /*ScalarType.BOOL*/ }
+        ]);
+    }
+}
+/**
+ * @generated MessageType for protobuf message services.docstore.RespondDocumentActionRequest
+ */
+export const RespondDocumentActionRequest = new RespondDocumentActionRequest$Type();
+// @generated message type with reflection information, may provide speed optimized methods
+class RespondDocumentActionResponse$Type extends MessageType<RespondDocumentActionResponse> {
+    constructor() {
+        super("services.docstore.RespondDocumentActionResponse", [
+            { no: 1, name: "success", kind: "scalar", T: 8 /*ScalarType.BOOL*/ }
+        ]);
+    }
+}
+/**
+ * @generated MessageType for protobuf message services.docstore.RespondDocumentActionResponse
+ */
+export const RespondDocumentActionResponse = new RespondDocumentActionResponse$Type();
+// @generated message type with reflection information, may provide speed optimized methods
 class GetDocumentAccessRequest$Type extends MessageType<GetDocumentAccessRequest> {
     constructor() {
         super("services.docstore.GetDocumentAccessRequest", [
@@ -1506,6 +1565,7 @@ export const DocStoreService = new ServiceType("services.docstore.DocStoreServic
     { name: "SetDocumentAccess", options: {}, I: SetDocumentAccessRequest, O: SetDocumentAccessResponse },
     { name: "ListDocumentActivity", options: {}, I: ListDocumentActivityRequest, O: ListDocumentActivityResponse },
     { name: "RequestDocumentAction", options: {}, I: RequestDocumentActionRequest, O: RequestDocumentActionResponse },
+    { name: "RespondDocumentAction", options: {}, I: RespondDocumentActionRequest, O: RespondDocumentActionResponse },
     { name: "ListUserDocuments", options: {}, I: ListUserDocumentsRequest, O: ListUserDocumentsResponse },
     { name: "ListCategories", options: {}, I: ListCategoriesRequest, O: ListCategoriesResponse },
     { name: "CreateCategory", options: {}, I: CreateCategoryRequest, O: CreateCategoryResponse },

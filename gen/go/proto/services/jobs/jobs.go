@@ -14,16 +14,10 @@ import (
 	"go.opentelemetry.io/otel/trace"
 	"go.uber.org/fx"
 	"go.uber.org/zap"
-	"google.golang.org/grpc/codes"
-	"google.golang.org/grpc/status"
 )
 
 var (
 	tUser = table.Users.AS("user")
-)
-
-var (
-	ErrFailedQuery = status.Error(codes.Internal, "errors.JobsService.ErrFailedQuery")
 )
 
 type Server struct {

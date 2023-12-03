@@ -7,6 +7,7 @@ import (
 
 	database "github.com/galexrt/fivenet/gen/go/proto/resources/common/database"
 	"github.com/galexrt/fivenet/gen/go/proto/resources/documents"
+	errorsdocstore "github.com/galexrt/fivenet/gen/go/proto/services/docstore/errors"
 	"github.com/galexrt/fivenet/pkg/grpc/auth"
 	"github.com/galexrt/fivenet/pkg/utils/dbutils"
 	"github.com/galexrt/fivenet/query/fivenet/table"
@@ -59,10 +60,10 @@ func (s *Server) ListDocumentActivity(ctx context.Context, req *ListDocumentActi
 
 	ok, err := s.checkIfUserHasAccessToDoc(ctx, req.DocumentId, userInfo, documents.AccessLevel_ACCESS_LEVEL_VIEW)
 	if err != nil {
-		return nil, ErrFailedQuery
+		return nil, errorsdocstore.ErrFailedQuery
 	}
 	if !ok {
-		return nil, ErrDocViewDenied
+		return nil, errorsdocstore.ErrDocViewDenied
 	}
 
 	tDocActivity := table.FivenetDocumentsActivity.AS("doc_activity")

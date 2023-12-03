@@ -55,7 +55,7 @@ func (x *Attributes) Add(attribute string) bool {
 		x.List = append(x.List, attribute)
 	}
 
-	return false
+	return true
 }
 
 func (x *Attributes) Remove(attribute string) bool {

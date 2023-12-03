@@ -5977,6 +5977,252 @@ var _ interface {
 	ErrorName() string
 } = RequestDocumentActionResponseValidationError{}
 
+// Validate checks the field values on RespondDocumentActionRequest with the
+// rules defined in the proto definition for this message. If any rules are
+// violated, the first error encountered is returned, or nil if there are no violations.
+func (m *RespondDocumentActionRequest) Validate() error {
+	return m.validate(false)
+}
+
+// ValidateAll checks the field values on RespondDocumentActionRequest with the
+// rules defined in the proto definition for this message. If any rules are
+// violated, the result is a list of violation errors wrapped in
+// RespondDocumentActionRequestMultiError, or nil if none found.
+func (m *RespondDocumentActionRequest) ValidateAll() error {
+	return m.validate(true)
+}
+
+func (m *RespondDocumentActionRequest) validate(all bool) error {
+	if m == nil {
+		return nil
+	}
+
+	var errors []error
+
+	// no validation rules for DocumentId
+
+	if _, ok := _RespondDocumentActionRequest_RequestType_InLookup[m.GetRequestType()]; !ok {
+		err := RespondDocumentActionRequestValidationError{
+			field:  "RequestType",
+			reason: "value must be in list [DOC_ACTIVITY_TYPE_REQUESTED_ACCESS DOC_ACTIVITY_TYPE_REQUESTED_CLOSURE DOC_ACTIVITY_TYPE_REQUESTED_UPDATE DOC_ACTIVITY_TYPE_REQUESTED_OWNER_CHANGE DOC_ACTIVITY_TYPE_REQUESTED_DELETION]",
+		}
+		if !all {
+			return err
+		}
+		errors = append(errors, err)
+	}
+
+	// no validation rules for Accepted
+
+	if m.Reason != nil {
+
+		if utf8.RuneCountInString(m.GetReason()) > 255 {
+			err := RespondDocumentActionRequestValidationError{
+				field:  "Reason",
+				reason: "value length must be at most 255 runes",
+			}
+			if !all {
+				return err
+			}
+			errors = append(errors, err)
+		}
+
+	}
+
+	if len(errors) > 0 {
+		return RespondDocumentActionRequestMultiError(errors)
+	}
+
+	return nil
+}
+
+// RespondDocumentActionRequestMultiError is an error wrapping multiple
+// validation errors returned by RespondDocumentActionRequest.ValidateAll() if
+// the designated constraints aren't met.
+type RespondDocumentActionRequestMultiError []error
+
+// Error returns a concatenation of all the error messages it wraps.
+func (m RespondDocumentActionRequestMultiError) Error() string {
+	var msgs []string
+	for _, err := range m {
+		msgs = append(msgs, err.Error())
+	}
+	return strings.Join(msgs, "; ")
+}
+
+// AllErrors returns a list of validation violation errors.
+func (m RespondDocumentActionRequestMultiError) AllErrors() []error { return m }
+
+// RespondDocumentActionRequestValidationError is the validation error returned
+// by RespondDocumentActionRequest.Validate if the designated constraints
+// aren't met.
+type RespondDocumentActionRequestValidationError struct {
+	field  string
+	reason string
+	cause  error
+	key    bool
+}
+
+// Field function returns field value.
+func (e RespondDocumentActionRequestValidationError) Field() string { return e.field }
+
+// Reason function returns reason value.
+func (e RespondDocumentActionRequestValidationError) Reason() string { return e.reason }
+
+// Cause function returns cause value.
+func (e RespondDocumentActionRequestValidationError) Cause() error { return e.cause }
+
+// Key function returns key value.
+func (e RespondDocumentActionRequestValidationError) Key() bool { return e.key }
+
+// ErrorName returns error name.
+func (e RespondDocumentActionRequestValidationError) ErrorName() string {
+	return "RespondDocumentActionRequestValidationError"
+}
+
+// Error satisfies the builtin error interface
+func (e RespondDocumentActionRequestValidationError) Error() string {
+	cause := ""
+	if e.cause != nil {
+		cause = fmt.Sprintf(" | caused by: %v", e.cause)
+	}
+
+	key := ""
+	if e.key {
+		key = "key for "
+	}
+
+	return fmt.Sprintf(
+		"invalid %sRespondDocumentActionRequest.%s: %s%s",
+		key,
+		e.field,
+		e.reason,
+		cause)
+}
+
+var _ error = RespondDocumentActionRequestValidationError{}
+
+var _ interface {
+	Field() string
+	Reason() string
+	Key() bool
+	Cause() error
+	ErrorName() string
+} = RespondDocumentActionRequestValidationError{}
+
+var _RespondDocumentActionRequest_RequestType_InLookup = map[documents.DocActivityType]struct{}{
+	13: {},
+	14: {},
+	15: {},
+	16: {},
+	17: {},
+}
+
+// Validate checks the field values on RespondDocumentActionResponse with the
+// rules defined in the proto definition for this message. If any rules are
+// violated, the first error encountered is returned, or nil if there are no violations.
+func (m *RespondDocumentActionResponse) Validate() error {
+	return m.validate(false)
+}
+
+// ValidateAll checks the field values on RespondDocumentActionResponse with
+// the rules defined in the proto definition for this message. If any rules
+// are violated, the result is a list of violation errors wrapped in
+// RespondDocumentActionResponseMultiError, or nil if none found.
+func (m *RespondDocumentActionResponse) ValidateAll() error {
+	return m.validate(true)
+}
+
+func (m *RespondDocumentActionResponse) validate(all bool) error {
+	if m == nil {
+		return nil
+	}
+
+	var errors []error
+
+	// no validation rules for Success
+
+	if len(errors) > 0 {
+		return RespondDocumentActionResponseMultiError(errors)
+	}
+
+	return nil
+}
+
+// RespondDocumentActionResponseMultiError is an error wrapping multiple
+// validation errors returned by RespondDocumentActionResponse.ValidateAll()
+// if the designated constraints aren't met.
+type RespondDocumentActionResponseMultiError []error
+
+// Error returns a concatenation of all the error messages it wraps.
+func (m RespondDocumentActionResponseMultiError) Error() string {
+	var msgs []string
+	for _, err := range m {
+		msgs = append(msgs, err.Error())
+	}
+	return strings.Join(msgs, "; ")
+}
+
+// AllErrors returns a list of validation violation errors.
+func (m RespondDocumentActionResponseMultiError) AllErrors() []error { return m }
+
+// RespondDocumentActionResponseValidationError is the validation error
+// returned by RespondDocumentActionResponse.Validate if the designated
+// constraints aren't met.
+type RespondDocumentActionResponseValidationError struct {
+	field  string
+	reason string
+	cause  error
+	key    bool
+}
+
+// Field function returns field value.
+func (e RespondDocumentActionResponseValidationError) Field() string { return e.field }
+
+// Reason function returns reason value.
+func (e RespondDocumentActionResponseValidationError) Reason() string { return e.reason }
+
+// Cause function returns cause value.
+func (e RespondDocumentActionResponseValidationError) Cause() error { return e.cause }
+
+// Key function returns key value.
+func (e RespondDocumentActionResponseValidationError) Key() bool { return e.key }
+
+// ErrorName returns error name.
+func (e RespondDocumentActionResponseValidationError) ErrorName() string {
+	return "RespondDocumentActionResponseValidationError"
+}
+
+// Error satisfies the builtin error interface
+func (e RespondDocumentActionResponseValidationError) Error() string {
+	cause := ""
+	if e.cause != nil {
+		cause = fmt.Sprintf(" | caused by: %v", e.cause)
+	}
+
+	key := ""
+	if e.key {
+		key = "key for "
+	}
+
+	return fmt.Sprintf(
+		"invalid %sRespondDocumentActionResponse.%s: %s%s",
+		key,
+		e.field,
+		e.reason,
+		cause)
+}
+
+var _ error = RespondDocumentActionResponseValidationError{}
+
+var _ interface {
+	Field() string
+	Reason() string
+	Key() bool
+	Cause() error
+	ErrorName() string
+} = RespondDocumentActionResponseValidationError{}
+
 // Validate checks the field values on GetDocumentAccessRequest with the rules
 // defined in the proto definition for this message. If any rules are
 // violated, the first error encountered is returned, or nil if there are no violations.

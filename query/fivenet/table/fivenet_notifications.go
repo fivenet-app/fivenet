@@ -21,6 +21,7 @@ type fivenetNotificationsTable struct {
 	CreatedAt mysql.ColumnTimestamp
 	ReadAt    mysql.ColumnTimestamp
 	UserID    mysql.ColumnInteger
+	Job       mysql.ColumnString
 	Title     mysql.ColumnString
 	Type      mysql.ColumnString
 	Content   mysql.ColumnString
@@ -71,14 +72,15 @@ func newFivenetNotificationsTableImpl(schemaName, tableName, alias string) fiven
 		CreatedAtColumn = mysql.TimestampColumn("created_at")
 		ReadAtColumn    = mysql.TimestampColumn("read_at")
 		UserIDColumn    = mysql.IntegerColumn("user_id")
+		JobColumn       = mysql.StringColumn("job")
 		TitleColumn     = mysql.StringColumn("title")
 		TypeColumn      = mysql.StringColumn("type")
 		ContentColumn   = mysql.StringColumn("content")
 		CategoryColumn  = mysql.IntegerColumn("category")
 		DataColumn      = mysql.StringColumn("data")
 		StarredColumn   = mysql.BoolColumn("starred")
-		allColumns      = mysql.ColumnList{IDColumn, CreatedAtColumn, ReadAtColumn, UserIDColumn, TitleColumn, TypeColumn, ContentColumn, CategoryColumn, DataColumn, StarredColumn}
-		mutableColumns  = mysql.ColumnList{CreatedAtColumn, ReadAtColumn, UserIDColumn, TitleColumn, TypeColumn, ContentColumn, CategoryColumn, DataColumn, StarredColumn}
+		allColumns      = mysql.ColumnList{IDColumn, CreatedAtColumn, ReadAtColumn, UserIDColumn, JobColumn, TitleColumn, TypeColumn, ContentColumn, CategoryColumn, DataColumn, StarredColumn}
+		mutableColumns  = mysql.ColumnList{CreatedAtColumn, ReadAtColumn, UserIDColumn, JobColumn, TitleColumn, TypeColumn, ContentColumn, CategoryColumn, DataColumn, StarredColumn}
 	)
 
 	return fivenetNotificationsTable{
@@ -89,6 +91,7 @@ func newFivenetNotificationsTableImpl(schemaName, tableName, alias string) fiven
 		CreatedAt: CreatedAtColumn,
 		ReadAt:    ReadAtColumn,
 		UserID:    UserIDColumn,
+		Job:       JobColumn,
 		Title:     TitleColumn,
 		Type:      TypeColumn,
 		Content:   ContentColumn,

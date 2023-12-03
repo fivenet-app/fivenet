@@ -6,6 +6,7 @@ import (
 
 	jobs "github.com/galexrt/fivenet/gen/go/proto/resources/jobs"
 	"github.com/galexrt/fivenet/gen/go/proto/resources/rector"
+	errorsjobs "github.com/galexrt/fivenet/gen/go/proto/services/jobs/errors"
 	"github.com/galexrt/fivenet/pkg/grpc/auth"
 	"github.com/galexrt/fivenet/query/fivenet/model"
 	"github.com/galexrt/fivenet/query/fivenet/table"
@@ -38,7 +39,7 @@ func (s *Server) RequestsListTypes(ctx context.Context, req *RequestsListTypesRe
 	var dest []*jobs.RequestType
 	if err := stmt.QueryContext(ctx, s.db, &dest); err != nil {
 		if !errors.Is(err, qrm.ErrNoRows) {
-			return nil, ErrFailedQuery
+			return nil, errorsjobs.ErrFailedQuery
 		}
 	}
 
@@ -62,7 +63,7 @@ func (s *Server) RequestsCreateOrUpdateType(ctx context.Context, req *RequestsCr
 	// Begin transaction
 	tx, err := s.db.BeginTx(ctx, nil)
 	if err != nil {
-		return nil, ErrFailedQuery
+		return nil, errorsjobs.ErrFailedQuery
 	}
 	// Defer a rollback in case anything fails
 	defer tx.Rollback()
@@ -124,12 +125,12 @@ func (s *Server) RequestsCreateOrUpdateType(ctx context.Context, req *RequestsCr
 	// Commit the transaction
 	if err := tx.Commit(); err != nil {
 		auditEntry.State = int16(rector.EventType_EVENT_TYPE_ERRORED)
-		return nil, ErrFailedQuery
+		return nil, errorsjobs.ErrFailedQuery
 	}
 
 	requestType, err := s.getRequestType(ctx, userInfo.Job, req.RequestType.Id)
 	if err != nil {
-		return nil, ErrFailedQuery
+		return nil, errorsjobs.ErrFailedQuery
 	}
 
 	return &RequestsCreateOrUpdateTypeResponse{
@@ -158,7 +159,7 @@ func (s *Server) RequestsDeleteType(ctx context.Context, req *RequestsDeleteType
 		LIMIT(1)
 
 	if _, err := stmt.ExecContext(ctx, s.db); err != nil {
-		return nil, ErrFailedQuery
+		return nil, errorsjobs.ErrFailedQuery
 	}
 
 	auditEntry.State = int16(rector.EventType_EVENT_TYPE_DELETED)

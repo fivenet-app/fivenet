@@ -7,6 +7,7 @@ import (
 
 	"github.com/galexrt/fivenet/gen/go/proto/resources/documents"
 	"github.com/galexrt/fivenet/gen/go/proto/resources/rector"
+	errorsdocstore "github.com/galexrt/fivenet/gen/go/proto/services/docstore/errors"
 	"github.com/galexrt/fivenet/pkg/grpc/auth"
 	"github.com/galexrt/fivenet/query/fivenet/model"
 	"github.com/galexrt/fivenet/query/fivenet/table"
@@ -14,13 +15,6 @@ import (
 	"github.com/go-jet/jet/v2/qrm"
 	"go.opentelemetry.io/otel/attribute"
 	"go.opentelemetry.io/otel/trace"
-	"google.golang.org/grpc/codes"
-	"google.golang.org/grpc/status"
-)
-
-var (
-	ErrDocAccessEditDenied = status.Error(codes.PermissionDenied, "errors.DocStoreService.ErrDocAccessEditDenied")
-	ErrDocAccessViewDenied = status.Error(codes.PermissionDenied, "errors.DocStoreService.ErrDocAccessViewDenied")
 )
 
 func (s *Server) GetDocumentAccess(ctx context.Context, req *GetDocumentAccessRequest) (*GetDocumentAccessResponse, error) {
@@ -32,7 +26,7 @@ func (s *Server) GetDocumentAccess(ctx context.Context, req *GetDocumentAccessRe
 		return nil, err
 	}
 	if !ok {
-		return nil, ErrDocAccessViewDenied
+		return nil, errorsdocstore.ErrDocAccessViewDenied
 	}
 
 	access, err := s.getDocumentAccess(ctx, req.DocumentId)
@@ -77,7 +71,7 @@ func (s *Server) SetDocumentAccess(ctx context.Context, req *SetDocumentAccessRe
 		return nil, err
 	}
 	if !ok {
-		return nil, ErrDocAccessEditDenied
+		return nil, errorsdocstore.ErrDocAccessEditDenied
 	}
 
 	// Begin transaction

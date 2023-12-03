@@ -7,6 +7,7 @@ import (
 
 	database "github.com/galexrt/fivenet/gen/go/proto/resources/common/database"
 	"github.com/galexrt/fivenet/gen/go/proto/resources/rector"
+	errorsjobs "github.com/galexrt/fivenet/gen/go/proto/services/jobs/errors"
 	permsjobs "github.com/galexrt/fivenet/gen/go/proto/services/jobs/perms"
 	"github.com/galexrt/fivenet/pkg/grpc/auth"
 	"github.com/galexrt/fivenet/pkg/perms"
@@ -32,7 +33,7 @@ func (s *Server) RequestsListEntries(ctx context.Context, req *RequestsListEntri
 	// Field Permission Check
 	fieldsAttr, err := s.p.Attr(userInfo, permsjobs.JobsServicePerm, permsjobs.JobsServiceRequestsListEntriesPerm, permsjobs.JobsServiceRequestsListEntriesAccessPermField)
 	if err != nil {
-		return nil, ErrFailedQuery
+		return nil, errorsjobs.ErrFailedQuery
 	}
 	var fields perms.StringList
 	if fieldsAttr != nil {
@@ -73,7 +74,7 @@ func (s *Server) RequestsListEntries(ctx context.Context, req *RequestsListEntri
 
 	var count database.DataCount
 	if err := countStmt.QueryContext(ctx, s.db, &count); err != nil {
-		return nil, ErrFailedQuery
+		return nil, errorsjobs.ErrFailedQuery
 	}
 
 	pag, limit := req.Pagination.GetResponseWithPageSize(7)
@@ -140,7 +141,7 @@ func (s *Server) RequestsListEntries(ctx context.Context, req *RequestsListEntri
 
 	if err := stmt.QueryContext(ctx, s.db, &resp.Entries); err != nil {
 		if !errors.Is(err, qrm.ErrNoRows) {
-			return nil, ErrFailedQuery
+			return nil, errorsjobs.ErrFailedQuery
 		}
 	}
 
@@ -180,17 +181,17 @@ func (s *Server) RequestsCreateEntry(ctx context.Context, req *RequestsCreateEnt
 
 	res, err := stmt.ExecContext(ctx, s.db)
 	if err != nil {
-		return nil, ErrFailedQuery
+		return nil, errorsjobs.ErrFailedQuery
 	}
 
 	lastId, err := res.LastInsertId()
 	if err != nil {
-		return nil, ErrFailedQuery
+		return nil, errorsjobs.ErrFailedQuery
 	}
 
 	request, err := s.getRequest(ctx, userInfo.Job, uint64(lastId))
 	if err != nil {
-		return nil, ErrFailedQuery
+		return nil, errorsjobs.ErrFailedQuery
 	}
 
 	auditEntry.State = int16(rector.EventType_EVENT_TYPE_CREATED)
@@ -214,7 +215,7 @@ func (s *Server) RequestsUpdateEntry(ctx context.Context, req *RequestsUpdateEnt
 
 	entry, err := s.getRequest(ctx, userInfo.Job, req.Entry.Id)
 	if err != nil {
-		return nil, ErrFailedQuery
+		return nil, errorsjobs.ErrFailedQuery
 	}
 
 	if entry.CreatorId != userInfo.UserId {
@@ -249,7 +250,7 @@ func (s *Server) RequestsDeleteEntry(ctx context.Context, req *RequestsDeleteEnt
 		LIMIT(1)
 
 	if _, err := stmt.ExecContext(ctx, s.db); err != nil {
-		return nil, ErrFailedQuery
+		return nil, errorsjobs.ErrFailedQuery
 	}
 
 	auditEntry.State = int16(rector.EventType_EVENT_TYPE_DELETED)
@@ -277,7 +278,7 @@ func (s *Server) RequestsListComments(ctx context.Context, req *RequestsListComm
 
 	var count database.DataCount
 	if err := countStmt.QueryContext(ctx, s.db, &count); err != nil {
-		return nil, ErrFailedQuery
+		return nil, errorsjobs.ErrFailedQuery
 	}
 
 	pag, limit := req.Pagination.GetResponseWithPageSize(7)
@@ -320,7 +321,7 @@ func (s *Server) RequestsListComments(ctx context.Context, req *RequestsListComm
 
 	if err := stmt.QueryContext(ctx, s.db, &resp.Comments); err != nil {
 		if !errors.Is(err, qrm.ErrNoRows) {
-			return nil, ErrFailedQuery
+			return nil, errorsjobs.ErrFailedQuery
 		}
 	}
 
@@ -372,7 +373,7 @@ func (s *Server) RequestsDeleteComment(ctx context.Context, req *RequestsDeleteC
 		LIMIT(1)
 
 	if _, err := stmt.ExecContext(ctx, s.db); err != nil {
-		return nil, ErrFailedQuery
+		return nil, errorsjobs.ErrFailedQuery
 	}
 
 	auditEntry.State = int16(rector.EventType_EVENT_TYPE_DELETED)

@@ -14,6 +14,8 @@ import type { ListCategoriesResponse } from "./docstore";
 import type { ListCategoriesRequest } from "./docstore";
 import type { ListUserDocumentsResponse } from "./docstore";
 import type { ListUserDocumentsRequest } from "./docstore";
+import type { RespondDocumentActionResponse } from "./docstore";
+import type { RespondDocumentActionRequest } from "./docstore";
 import type { RequestDocumentActionResponse } from "./docstore";
 import type { RequestDocumentActionRequest } from "./docstore";
 import type { ListDocumentActivityResponse } from "./docstore";
@@ -221,6 +223,12 @@ export interface IDocStoreServiceClient {
      * @generated from protobuf rpc: RequestDocumentAction(services.docstore.RequestDocumentActionRequest) returns (services.docstore.RequestDocumentActionResponse);
      */
     requestDocumentAction(input: RequestDocumentActionRequest, options?: RpcOptions): UnaryCall<RequestDocumentActionRequest, RequestDocumentActionResponse>;
+    /**
+     * @perm: Name=RequestDocumentAction
+     *
+     * @generated from protobuf rpc: RespondDocumentAction(services.docstore.RespondDocumentActionRequest) returns (services.docstore.RespondDocumentActionResponse);
+     */
+    respondDocumentAction(input: RespondDocumentActionRequest, options?: RpcOptions): UnaryCall<RespondDocumentActionRequest, RespondDocumentActionResponse>;
     /**
      * @perm
      *
@@ -487,12 +495,21 @@ export class DocStoreServiceClient implements IDocStoreServiceClient, ServiceInf
         return stackIntercept<RequestDocumentActionRequest, RequestDocumentActionResponse>("unary", this._transport, method, opt, input);
     }
     /**
+     * @perm: Name=RequestDocumentAction
+     *
+     * @generated from protobuf rpc: RespondDocumentAction(services.docstore.RespondDocumentActionRequest) returns (services.docstore.RespondDocumentActionResponse);
+     */
+    respondDocumentAction(input: RespondDocumentActionRequest, options?: RpcOptions): UnaryCall<RespondDocumentActionRequest, RespondDocumentActionResponse> {
+        const method = this.methods[25], opt = this._transport.mergeOptions(options);
+        return stackIntercept<RespondDocumentActionRequest, RespondDocumentActionResponse>("unary", this._transport, method, opt, input);
+    }
+    /**
      * @perm
      *
      * @generated from protobuf rpc: ListUserDocuments(services.docstore.ListUserDocumentsRequest) returns (services.docstore.ListUserDocumentsResponse);
      */
     listUserDocuments(input: ListUserDocumentsRequest, options?: RpcOptions): UnaryCall<ListUserDocumentsRequest, ListUserDocumentsResponse> {
-        const method = this.methods[25], opt = this._transport.mergeOptions(options);
+        const method = this.methods[26], opt = this._transport.mergeOptions(options);
         return stackIntercept<ListUserDocumentsRequest, ListUserDocumentsResponse>("unary", this._transport, method, opt, input);
     }
     /**
@@ -501,7 +518,7 @@ export class DocStoreServiceClient implements IDocStoreServiceClient, ServiceInf
      * @generated from protobuf rpc: ListCategories(services.docstore.ListCategoriesRequest) returns (services.docstore.ListCategoriesResponse);
      */
     listCategories(input: ListCategoriesRequest, options?: RpcOptions): UnaryCall<ListCategoriesRequest, ListCategoriesResponse> {
-        const method = this.methods[26], opt = this._transport.mergeOptions(options);
+        const method = this.methods[27], opt = this._transport.mergeOptions(options);
         return stackIntercept<ListCategoriesRequest, ListCategoriesResponse>("unary", this._transport, method, opt, input);
     }
     /**
@@ -510,7 +527,7 @@ export class DocStoreServiceClient implements IDocStoreServiceClient, ServiceInf
      * @generated from protobuf rpc: CreateCategory(services.docstore.CreateCategoryRequest) returns (services.docstore.CreateCategoryResponse);
      */
     createCategory(input: CreateCategoryRequest, options?: RpcOptions): UnaryCall<CreateCategoryRequest, CreateCategoryResponse> {
-        const method = this.methods[27], opt = this._transport.mergeOptions(options);
+        const method = this.methods[28], opt = this._transport.mergeOptions(options);
         return stackIntercept<CreateCategoryRequest, CreateCategoryResponse>("unary", this._transport, method, opt, input);
     }
     /**
@@ -519,7 +536,7 @@ export class DocStoreServiceClient implements IDocStoreServiceClient, ServiceInf
      * @generated from protobuf rpc: UpdateCategory(services.docstore.UpdateCategoryRequest) returns (services.docstore.UpdateCategoryResponse);
      */
     updateCategory(input: UpdateCategoryRequest, options?: RpcOptions): UnaryCall<UpdateCategoryRequest, UpdateCategoryResponse> {
-        const method = this.methods[28], opt = this._transport.mergeOptions(options);
+        const method = this.methods[29], opt = this._transport.mergeOptions(options);
         return stackIntercept<UpdateCategoryRequest, UpdateCategoryResponse>("unary", this._transport, method, opt, input);
     }
     /**
@@ -528,7 +545,7 @@ export class DocStoreServiceClient implements IDocStoreServiceClient, ServiceInf
      * @generated from protobuf rpc: DeleteCategory(services.docstore.DeleteCategoryRequest) returns (services.docstore.DeleteCategoryResponse);
      */
     deleteCategory(input: DeleteCategoryRequest, options?: RpcOptions): UnaryCall<DeleteCategoryRequest, DeleteCategoryResponse> {
-        const method = this.methods[29], opt = this._transport.mergeOptions(options);
+        const method = this.methods[30], opt = this._transport.mergeOptions(options);
         return stackIntercept<DeleteCategoryRequest, DeleteCategoryResponse>("unary", this._transport, method, opt, input);
     }
 }

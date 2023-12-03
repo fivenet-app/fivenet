@@ -9,6 +9,7 @@ import (
 	"github.com/galexrt/fivenet/gen/go/proto/resources/common/database"
 	"github.com/galexrt/fivenet/gen/go/proto/resources/rector"
 	permscitizenstore "github.com/galexrt/fivenet/gen/go/proto/services/citizenstore/perms"
+	errorsdmv "github.com/galexrt/fivenet/gen/go/proto/services/dmv/errors"
 	"github.com/galexrt/fivenet/pkg/grpc/auth"
 	"github.com/galexrt/fivenet/pkg/mstlystcdata"
 	"github.com/galexrt/fivenet/pkg/perms"
@@ -16,17 +17,11 @@ import (
 	"github.com/galexrt/fivenet/query/fivenet/model"
 	"github.com/galexrt/fivenet/query/fivenet/table"
 	jet "github.com/go-jet/jet/v2/mysql"
-	"google.golang.org/grpc/codes"
-	"google.golang.org/grpc/status"
 )
 
 var (
 	tVehicles = table.OwnedVehicles.AS("vehicle")
 	tUsers    = table.Users.AS("usershort")
-)
-
-var (
-	ErrFailedQuery = status.Error(codes.Internal, "errors.DMVService.ErrFailedQuery")
 )
 
 type Server struct {
@@ -94,7 +89,7 @@ func (s *Server) ListVehicles(ctx context.Context, req *ListVehiclesRequest) (*L
 
 	var count database.DataCount
 	if err := countStmt.QueryContext(ctx, s.db, &count); err != nil {
-		return nil, ErrFailedQuery
+		return nil, errorsdmv.ErrFailedQuery
 	}
 
 	pag, limit := req.Pagination.GetResponseWithPageSize(15)
@@ -146,7 +141,7 @@ func (s *Server) ListVehicles(ctx context.Context, req *ListVehiclesRequest) (*L
 	// Field Permission Check
 	fieldsAttr, err := s.ps.Attr(userInfo, permscitizenstore.CitizenStoreServicePerm, permscitizenstore.CitizenStoreServiceListCitizensPerm, permscitizenstore.CitizenStoreServiceListCitizensFieldsPermField)
 	if err != nil {
-		return nil, ErrFailedQuery
+		return nil, errorsdmv.ErrFailedQuery
 	}
 	var fields perms.StringList
 	if fieldsAttr != nil {
@@ -174,7 +169,7 @@ func (s *Server) ListVehicles(ctx context.Context, req *ListVehiclesRequest) (*L
 		LIMIT(limit)
 
 	if err := stmt.QueryContext(ctx, s.db, &resp.Vehicles); err != nil {
-		return nil, ErrFailedQuery
+		return nil, errorsdmv.ErrFailedQuery
 	}
 
 	resp.Pagination.Update(count.TotalCount, len(resp.Vehicles))

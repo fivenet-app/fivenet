@@ -7,6 +7,7 @@ import (
 	"time"
 
 	database "github.com/galexrt/fivenet/gen/go/proto/resources/common/database"
+	errorsjobs "github.com/galexrt/fivenet/gen/go/proto/services/jobs/errors"
 	permsjobs "github.com/galexrt/fivenet/gen/go/proto/services/jobs/perms"
 	"github.com/galexrt/fivenet/pkg/grpc/auth"
 	"github.com/galexrt/fivenet/pkg/perms"
@@ -29,7 +30,7 @@ func (s *Server) TimeclockListEntries(ctx context.Context, req *TimeclockListEnt
 	// Field Permission Check
 	fieldsAttr, err := s.p.Attr(userInfo, permsjobs.JobsServicePerm, permsjobs.JobsServiceTimeclockListEntriesPerm, permsjobs.JobsServiceTimeclockListEntriesAccessPermField)
 	if err != nil {
-		return nil, ErrFailedQuery
+		return nil, errorsjobs.ErrFailedQuery
 	}
 	var fields perms.StringList
 	if fieldsAttr != nil {
@@ -69,7 +70,7 @@ func (s *Server) TimeclockListEntries(ctx context.Context, req *TimeclockListEnt
 
 	var count database.DataCount
 	if err := countStmt.QueryContext(ctx, s.db, &count); err != nil {
-		return nil, ErrFailedQuery
+		return nil, errorsjobs.ErrFailedQuery
 	}
 
 	pag, limit := req.Pagination.GetResponseWithPageSize(25)
@@ -79,7 +80,7 @@ func (s *Server) TimeclockListEntries(ctx context.Context, req *TimeclockListEnt
 
 	resp.Stats, err = s.getTimeclockstats(ctx, condition)
 	if err != nil {
-		return nil, ErrFailedQuery
+		return nil, errorsjobs.ErrFailedQuery
 	}
 
 	if count.TotalCount <= 0 {
@@ -119,7 +120,7 @@ func (s *Server) TimeclockListEntries(ctx context.Context, req *TimeclockListEnt
 
 	if err := stmt.QueryContext(ctx, s.db, &resp.Entries); err != nil {
 		if !errors.Is(err, qrm.ErrNoRows) {
-			return nil, ErrFailedQuery
+			return nil, errorsjobs.ErrFailedQuery
 		}
 	}
 
@@ -144,7 +145,7 @@ func (s *Server) TimeclockStats(ctx context.Context, req *TimeclockStatsRequest)
 
 	stats, err := s.getTimeclockstats(ctx, condition)
 	if err != nil {
-		return nil, ErrFailedQuery
+		return nil, errorsjobs.ErrFailedQuery
 	}
 
 	return &TimeclockStatsResponse{

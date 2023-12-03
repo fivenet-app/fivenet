@@ -5,6 +5,7 @@ import (
 	"strings"
 
 	database "github.com/galexrt/fivenet/gen/go/proto/resources/common/database"
+	errorsjobs "github.com/galexrt/fivenet/gen/go/proto/services/jobs/errors"
 	"github.com/galexrt/fivenet/pkg/grpc/auth"
 	jet "github.com/go-jet/jet/v2/mysql"
 )
@@ -47,7 +48,7 @@ func (s *Server) ColleaguesList(ctx context.Context, req *ColleaguesListRequest)
 
 	var count database.DataCount
 	if err := countStmt.QueryContext(ctx, s.db, &count); err != nil {
-		return nil, ErrFailedQuery
+		return nil, errorsjobs.ErrFailedQuery
 	}
 
 	pag, limit := req.Pagination.GetResponseWithPageSize(15)
@@ -74,7 +75,7 @@ func (s *Server) ColleaguesList(ctx context.Context, req *ColleaguesListRequest)
 		LIMIT(limit)
 
 	if err := stmt.QueryContext(ctx, s.db, &resp.Users); err != nil {
-		return nil, ErrFailedQuery
+		return nil, errorsjobs.ErrFailedQuery
 	}
 
 	resp.Pagination.Update(count.TotalCount, len(resp.Users))

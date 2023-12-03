@@ -1459,6 +1459,14 @@
                 </li>
               
                 <li>
+                  <a href="#services.docstore.RespondDocumentActionRequest"><span class="badge">M</span>RespondDocumentActionRequest</a>
+                </li>
+              
+                <li>
+                  <a href="#services.docstore.RespondDocumentActionResponse"><span class="badge">M</span>RespondDocumentActionResponse</a>
+                </li>
+              
+                <li>
                   <a href="#services.docstore.SetDocumentAccessRequest"><span class="badge">M</span>SetDocumentAccessRequest</a>
                 </li>
               
@@ -16081,6 +16089,113 @@
 
         
       
+        <h3 id="services.docstore.RespondDocumentActionRequest">RespondDocumentActionRequest</h3>
+        <p></p>
+
+        
+          <table class="field-table">
+            <thead>
+              <tr><td>Field</td><td>Type</td><td>Label</td><td>Description</td></tr>
+            </thead>
+            <tbody>
+              
+                <tr>
+                  <td>document_id</td>
+                  <td><a href="#uint64">uint64</a></td>
+                  <td></td>
+                  <td><p> </p></td>
+                </tr>
+              
+                <tr>
+                  <td>request_type</td>
+                  <td><a href="#resources.documents.DocActivityType">resources.documents.DocActivityType</a></td>
+                  <td></td>
+                  <td><p> </p></td>
+                </tr>
+              
+                <tr>
+                  <td>reason</td>
+                  <td><a href="#string">string</a></td>
+                  <td>optional</td>
+                  <td><p>@sanitize </p></td>
+                </tr>
+              
+                <tr>
+                  <td>accepted</td>
+                  <td><a href="#bool">bool</a></td>
+                  <td></td>
+                  <td><p> </p></td>
+                </tr>
+              
+            </tbody>
+          </table>
+
+          
+            
+            
+            <h4>Validated Fields</h4>
+            <table>
+              <thead>
+                <tr>
+                  <td>Field</td>
+                  <td>Validations</td>
+                </tr>
+              </thead>
+              <tbody>
+              
+                <tr>
+                  <td>request_type</td>
+                  <td>
+                    <ul>
+                    
+                      <li>enum.in: [13 14 15 16 17]</li>
+                    
+                    </ul>
+                  </td>
+                </tr>
+              
+                <tr>
+                  <td>reason</td>
+                  <td>
+                    <ul>
+                    
+                      <li>string.max_len: 255</li>
+                    
+                    </ul>
+                  </td>
+                </tr>
+              
+              </tbody>
+            </table>
+            
+          
+
+        
+      
+        <h3 id="services.docstore.RespondDocumentActionResponse">RespondDocumentActionResponse</h3>
+        <p></p>
+
+        
+          <table class="field-table">
+            <thead>
+              <tr><td>Field</td><td>Type</td><td>Label</td><td>Description</td></tr>
+            </thead>
+            <tbody>
+              
+                <tr>
+                  <td>success</td>
+                  <td><a href="#bool">bool</a></td>
+                  <td></td>
+                  <td><p> </p></td>
+                </tr>
+              
+            </tbody>
+          </table>
+
+          
+
+        
+      
         <h3 id="services.docstore.SetDocumentAccessRequest">SetDocumentAccessRequest</h3>
         <p></p>
 
@@ -16749,6 +16864,13 @@
                 <td><a href="#services.docstore.RequestDocumentActionRequest">RequestDocumentActionRequest</a></td>
                 <td><a href="#services.docstore.RequestDocumentActionResponse">RequestDocumentActionResponse</a></td>
                 <td><p>@perm: Attrs=Types/StringList:[]string{&#34;Access&#34;, &#34;Closure&#34;, &#34;Update&#34;, &#34;Deletion&#34;}§[]string{&#34;Access&#34;}</p></td>
+              </tr>
+            
+              <tr>
+                <td>RespondDocumentAction</td>
+                <td><a href="#services.docstore.RespondDocumentActionRequest">RespondDocumentActionRequest</a></td>
+                <td><a href="#services.docstore.RespondDocumentActionResponse">RespondDocumentActionResponse</a></td>
+                <td><p>@perm: Name=RequestDocumentAction</p></td>
               </tr>
             
               <tr>

@@ -7,6 +7,7 @@ import (
 
 	database "github.com/galexrt/fivenet/gen/go/proto/resources/common/database"
 	"github.com/galexrt/fivenet/gen/go/proto/resources/rector"
+	errorsjobs "github.com/galexrt/fivenet/gen/go/proto/services/jobs/errors"
 	permsjobs "github.com/galexrt/fivenet/gen/go/proto/services/jobs/perms"
 	"github.com/galexrt/fivenet/pkg/grpc/auth"
 	"github.com/galexrt/fivenet/pkg/perms"
@@ -28,7 +29,7 @@ func (s *Server) ConductListEntries(ctx context.Context, req *ConductListEntries
 	// Field Permission Check
 	fieldsAttr, err := s.p.Attr(userInfo, permsjobs.JobsServicePerm, permsjobs.JobsServiceConductListEntriesPerm, permsjobs.JobsServiceConductListEntriesAccessPermField)
 	if err != nil {
-		return nil, ErrFailedQuery
+		return nil, errorsjobs.ErrFailedQuery
 	}
 	var fields perms.StringList
 	if fieldsAttr != nil {
@@ -40,7 +41,7 @@ func (s *Server) ConductListEntries(ctx context.Context, req *ConductListEntries
 	} else if len(fields) == 0 || slices.Contains(fields, "Own") {
 		condition = condition.AND(tConduct.CreatorID.EQ(jet.Int32(userInfo.UserId)))
 	} else {
-		return nil, ErrFailedQuery
+		return nil, errorsjobs.ErrFailedQuery
 	}
 
 	if len(req.Types) > 0 {
@@ -79,7 +80,7 @@ func (s *Server) ConductListEntries(ctx context.Context, req *ConductListEntries
 
 	var count database.DataCount
 	if err := countStmt.QueryContext(ctx, s.db, &count); err != nil {
-		return nil, ErrFailedQuery
+		return nil, errorsjobs.ErrFailedQuery
 	}
 
 	pag, limit := req.Pagination.GetResponse()
@@ -134,7 +135,7 @@ func (s *Server) ConductListEntries(ctx context.Context, req *ConductListEntries
 
 	if err := stmt.QueryContext(ctx, s.db, &resp.Entries); err != nil {
 		if !errors.Is(err, qrm.ErrNoRows) {
-			return nil, ErrFailedQuery
+			return nil, errorsjobs.ErrFailedQuery
 		}
 	}
 

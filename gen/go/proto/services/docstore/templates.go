@@ -9,6 +9,7 @@ import (
 	"github.com/Masterminds/sprig/v3"
 	"github.com/galexrt/fivenet/gen/go/proto/resources/documents"
 	"github.com/galexrt/fivenet/gen/go/proto/resources/rector"
+	errorsdocstore "github.com/galexrt/fivenet/gen/go/proto/services/docstore/errors"
 	permsdocstore "github.com/galexrt/fivenet/gen/go/proto/services/docstore/perms"
 	"github.com/galexrt/fivenet/pkg/grpc/auth"
 	"github.com/galexrt/fivenet/query/fivenet/model"
@@ -17,17 +18,11 @@ import (
 	"github.com/go-jet/jet/v2/qrm"
 	"go.opentelemetry.io/otel/attribute"
 	"go.opentelemetry.io/otel/trace"
-	"google.golang.org/grpc/codes"
-	"google.golang.org/grpc/status"
 )
 
 var (
 	tDTemplates          = table.FivenetDocumentsTemplates.AS("templateshort")
 	tDTemplatesJobAccess = table.FivenetDocumentsTemplatesJobAccess.AS("templatejobaccess")
-)
-
-var (
-	ErrTemplateFailed = status.Error(codes.InvalidArgument, "errors.DocStoreService.ErrTemplateFailed")
 )
 
 func (s *Server) ListTemplates(ctx context.Context, req *ListTemplatesRequest) (*ListTemplatesResponse, error) {
@@ -84,22 +79,22 @@ func (s *Server) GetTemplate(ctx context.Context, req *GetTemplateRequest) (*Get
 
 	check, err := s.checkIfUserHasAccessToTemplate(ctx, req.TemplateId, userInfo, false, documents.AccessLevel_ACCESS_LEVEL_VIEW)
 	if err != nil {
-		return nil, ErrFailedQuery
+		return nil, errorsdocstore.ErrFailedQuery
 	}
 	if !check && !userInfo.SuperUser {
-		return nil, ErrTemplateNoPerms
+		return nil, errorsdocstore.ErrTemplateNoPerms
 	}
 
 	resp := &GetTemplateResponse{}
 	resp.Template, err = s.getTemplate(ctx, req.TemplateId)
 	if err != nil {
-		return nil, ErrFailedQuery
+		return nil, errorsdocstore.ErrFailedQuery
 	}
 
 	if req.Render == nil || !*req.Render {
 		resp.Template.JobAccess, err = s.getTemplateJobAccess(ctx, req.TemplateId)
 		if err != nil {
-			return nil, ErrFailedQuery
+			return nil, errorsdocstore.ErrFailedQuery
 		}
 	} else if req.Render != nil && *req.Render && req.Data != nil {
 		resp.Template.ContentTitle, resp.Template.State, resp.Template.Content, err = s.renderTemplate(resp.Template, req.Data)
@@ -107,7 +102,7 @@ func (s *Server) GetTemplate(ctx context.Context, req *GetTemplateRequest) (*Get
 			if s.ps.Can(userInfo, permsdocstore.DocStoreServicePerm, permsdocstore.DocStoreServiceCreateTemplatePerm) {
 				return nil, err
 			} else {
-				return nil, ErrTemplateFailed
+				return nil, errorsdocstore.ErrTemplateFailed
 			}
 		}
 
@@ -224,7 +219,7 @@ func (s *Server) CreateTemplate(ctx context.Context, req *CreateTemplateRequest)
 	// Begin transaction
 	tx, err := s.db.BeginTx(ctx, nil)
 	if err != nil {
-		return nil, ErrFailedQuery
+		return nil, errorsdocstore.ErrFailedQuery
 	}
 	// Defer a rollback in case anything fails
 	defer tx.Rollback()
@@ -280,12 +275,12 @@ func (s *Server) CreateTemplate(ctx context.Context, req *CreateTemplateRequest)
 	}
 
 	if err := s.handleTemplateAccessChanges(ctx, tx, uint64(lastId), req.Template.JobAccess); err != nil {
-		return nil, ErrFailedQuery
+		return nil, errorsdocstore.ErrFailedQuery
 	}
 
 	// Commit the transaction
 	if err := tx.Commit(); err != nil {
-		return nil, ErrFailedQuery
+		return nil, errorsdocstore.ErrFailedQuery
 	}
 
 	auditEntry.State = int16(rector.EventType_EVENT_TYPE_CREATED)
@@ -311,10 +306,10 @@ func (s *Server) UpdateTemplate(ctx context.Context, req *UpdateTemplateRequest)
 
 	check, err := s.checkIfUserHasAccessToTemplate(ctx, req.Template.Id, userInfo, false, documents.AccessLevel_ACCESS_LEVEL_EDIT)
 	if err != nil {
-		return nil, ErrFailedQuery
+		return nil, errorsdocstore.ErrFailedQuery
 	}
 	if !check && !userInfo.SuperUser {
-		return nil, ErrTemplateNoPerms
+		return nil, errorsdocstore.ErrTemplateNoPerms
 	}
 
 	categoryId := jet.NULL
@@ -331,7 +326,7 @@ func (s *Server) UpdateTemplate(ctx context.Context, req *UpdateTemplateRequest)
 	// Begin transaction
 	tx, err := s.db.BeginTx(ctx, nil)
 	if err != nil {
-		return nil, ErrFailedQuery
+		return nil, errorsdocstore.ErrFailedQuery
 	}
 	// Defer a rollback in case anything fails
 	defer tx.Rollback()
@@ -365,16 +360,16 @@ func (s *Server) UpdateTemplate(ctx context.Context, req *UpdateTemplateRequest)
 		)
 
 	if _, err := stmt.ExecContext(ctx, tx); err != nil {
-		return nil, ErrFailedQuery
+		return nil, errorsdocstore.ErrFailedQuery
 	}
 
 	if err := s.handleTemplateAccessChanges(ctx, tx, req.Template.Id, req.Template.JobAccess); err != nil {
-		return nil, ErrFailedQuery
+		return nil, errorsdocstore.ErrFailedQuery
 	}
 
 	// Commit the transaction
 	if err := tx.Commit(); err != nil {
-		return nil, ErrFailedQuery
+		return nil, errorsdocstore.ErrFailedQuery
 	}
 
 	auditEntry.State = int16(rector.EventType_EVENT_TYPE_UPDATED)
@@ -400,23 +395,23 @@ func (s *Server) DeleteTemplate(ctx context.Context, req *DeleteTemplateRequest)
 
 	check, err := s.checkIfUserHasAccessToTemplate(ctx, req.Id, userInfo, false, documents.AccessLevel_ACCESS_LEVEL_EDIT)
 	if err != nil {
-		return nil, ErrFailedQuery
+		return nil, errorsdocstore.ErrFailedQuery
 	}
 
 	dTmpl, err := s.getTemplate(ctx, req.Id)
 	if err != nil {
-		return nil, ErrFailedQuery
+		return nil, errorsdocstore.ErrFailedQuery
 	}
 
 	if !check && !userInfo.SuperUser {
 		if dTmpl.CreatorJob == nil {
-			return nil, ErrTemplateNoPerms
+			return nil, errorsdocstore.ErrTemplateNoPerms
 		}
 
 		// Make sure the highest job grade can delete the template
 		grade := s.cache.GetHighestJobGrade(userInfo.Job)
 		if grade == nil || (userInfo.Job == *dTmpl.CreatorJob && grade.Grade != userInfo.JobGrade) {
-			return nil, ErrTemplateNoPerms
+			return nil, errorsdocstore.ErrTemplateNoPerms
 		}
 	}
 

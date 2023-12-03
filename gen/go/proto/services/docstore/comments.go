@@ -6,6 +6,7 @@ import (
 	database "github.com/galexrt/fivenet/gen/go/proto/resources/common/database"
 	"github.com/galexrt/fivenet/gen/go/proto/resources/documents"
 	"github.com/galexrt/fivenet/gen/go/proto/resources/rector"
+	errorsdocstore "github.com/galexrt/fivenet/gen/go/proto/services/docstore/errors"
 	permsdocstore "github.com/galexrt/fivenet/gen/go/proto/services/docstore/perms"
 	"github.com/galexrt/fivenet/pkg/grpc/auth"
 	"github.com/galexrt/fivenet/pkg/perms"
@@ -14,8 +15,6 @@ import (
 	jet "github.com/go-jet/jet/v2/mysql"
 	"go.opentelemetry.io/otel/attribute"
 	"go.opentelemetry.io/otel/trace"
-	"google.golang.org/grpc/codes"
-	"google.golang.org/grpc/status"
 )
 
 const (
@@ -26,13 +25,6 @@ var (
 	tDComments = table.FivenetDocumentsComments
 )
 
-var (
-	ErrCommentViewDenied   = status.Error(codes.PermissionDenied, "errors.DocStoreService.ErrCommentViewDenied")
-	ErrCommentPostDenied   = status.Error(codes.PermissionDenied, "errors.DocStoreService.ErrCommentPostDenied")
-	ErrCommentEditDenied   = status.Error(codes.PermissionDenied, "errors.DocStoreService.ErrCommentEditDenied")
-	ErrCommentDeleteDenied = status.Error(codes.PermissionDenied, "errors.DocStoreService.ErrCommentDeleteDenied")
-)
-
 func (s *Server) GetComments(ctx context.Context, req *GetCommentsRequest) (*GetCommentsResponse, error) {
 	userInfo := auth.MustGetUserInfoFromContext(ctx)
 
@@ -40,10 +32,10 @@ func (s *Server) GetComments(ctx context.Context, req *GetCommentsRequest) (*Get
 
 	ok, err := s.checkIfUserHasAccessToDoc(ctx, req.DocumentId, userInfo, documents.AccessLevel_ACCESS_LEVEL_VIEW)
 	if err != nil {
-		return nil, ErrFailedQuery
+		return nil, errorsdocstore.ErrFailedQuery
 	}
 	if !ok {
-		return nil, ErrCommentViewDenied
+		return nil, errorsdocstore.ErrCommentViewDenied
 	}
 
 	tDComments := tDComments.AS("comment")
@@ -155,7 +147,7 @@ func (s *Server) PostComment(ctx context.Context, req *PostCommentRequest) (*Pos
 		return nil, err
 	}
 	if !check && !userInfo.SuperUser {
-		return nil, ErrCommentPostDenied
+		return nil, errorsdocstore.ErrCommentPostDenied
 	}
 
 	stmt := tDComments.
@@ -186,7 +178,7 @@ func (s *Server) PostComment(ctx context.Context, req *PostCommentRequest) (*Pos
 		CreatorId:    &userInfo.UserId,
 		CreatorJob:   userInfo.Job,
 	}); err != nil {
-		return nil, ErrFailedQuery
+		return nil, errorsdocstore.ErrFailedQuery
 	}
 
 	auditEntry.State = int16(rector.EventType_EVENT_TYPE_CREATED)
@@ -215,7 +207,7 @@ func (s *Server) EditComment(ctx context.Context, req *EditCommentRequest) (*Edi
 		return nil, err
 	}
 	if !check && !userInfo.SuperUser {
-		return nil, ErrCommentEditDenied
+		return nil, errorsdocstore.ErrCommentEditDenied
 	}
 
 	comment, err := s.getComment(ctx, req.Comment.Id)
@@ -223,7 +215,7 @@ func (s *Server) EditComment(ctx context.Context, req *EditCommentRequest) (*Edi
 		return nil, err
 	}
 	if !userInfo.SuperUser && *comment.CreatorId != userInfo.UserId {
-		return nil, ErrCommentEditDenied
+		return nil, errorsdocstore.ErrCommentEditDenied
 	}
 
 	stmt := tDComments.
@@ -252,7 +244,7 @@ func (s *Server) EditComment(ctx context.Context, req *EditCommentRequest) (*Edi
 		CreatorId:    &userInfo.UserId,
 		CreatorJob:   userInfo.Job,
 	}); err != nil {
-		return nil, ErrFailedQuery
+		return nil, errorsdocstore.ErrFailedQuery
 	}
 
 	auditEntry.State = int16(rector.EventType_EVENT_TYPE_UPDATED)
@@ -313,20 +305,20 @@ func (s *Server) DeleteComment(ctx context.Context, req *DeleteCommentRequest) (
 		return nil, err
 	}
 	if !check && !userInfo.SuperUser {
-		return nil, ErrCommentDeleteDenied
+		return nil, errorsdocstore.ErrCommentDeleteDenied
 	}
 
 	// Field Permission Check
 	fieldsAttr, err := s.ps.Attr(userInfo, permsdocstore.DocStoreServicePerm, permsdocstore.DocStoreServiceDeleteCommentPerm, permsdocstore.DocStoreServiceDeleteCommentAccessPermField)
 	if err != nil {
-		return nil, ErrFailedQuery
+		return nil, errorsdocstore.ErrFailedQuery
 	}
 	var fields perms.StringList
 	if fieldsAttr != nil {
 		fields = fieldsAttr.([]string)
 	}
 	if !s.checkIfHasAccess(fields, userInfo, comment.Creator.Job, comment.Creator) {
-		return nil, ErrCommentDeleteDenied
+		return nil, errorsdocstore.ErrCommentDeleteDenied
 	}
 
 	stmt := tDComments.
@@ -353,7 +345,7 @@ func (s *Server) DeleteComment(ctx context.Context, req *DeleteCommentRequest) (
 		CreatorId:    &userInfo.UserId,
 		CreatorJob:   userInfo.Job,
 	}); err != nil {
-		return nil, ErrFailedQuery
+		return nil, errorsdocstore.ErrFailedQuery
 	}
 
 	auditEntry.State = int16(rector.EventType_EVENT_TYPE_DELETED)
