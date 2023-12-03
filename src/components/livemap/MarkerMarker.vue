@@ -7,7 +7,7 @@ import { HelpIcon, TrashCanIcon } from 'mdi-vue3';
 import ConfirmDialog from '~/components/partials/ConfirmDialog.vue';
 import { Marker } from '~~/gen/ts/resources/livemap/livemap';
 import { markerIcons } from '~/components/livemap/helpers';
-import PhoneNumber from '~/components/partials/citizens/PhoneNumber.vue';
+import CitizenInfoPopover from '~/components/partials/citizens/CitizenInfoPopover.vue';
 
 const props = withDefaults(
     defineProps<{
@@ -69,18 +69,14 @@ onConfirm(async (id) => deleteMarker(id));
                         </button>
                     </template>
                 </li>
-                <li v-if="marker.info?.description">
+                <li>
                     <span class="font-semibold">{{ $t('common.description') }}</span
-                    >: {{ marker.info?.description }}
+                    >: {{ marker.info?.description ?? $t('common.na') }}
                 </li>
                 <li class="italic">
                     <span class="font-semibold">{{ $t('common.sent_by') }}</span
                     >:
-                    <span v-if="marker.creator">
-                        {{ marker.creator?.firstname }}, {{ marker.creator?.lastname }} (<PhoneNumber
-                            :number="marker.creator.phoneNumber"
-                        />)
-                    </span>
+                    <CitizenInfoPopover v-if="marker.creator" :user="marker.creator" />
                     <span v-else>
                         {{ $t('common.unknown') }}
                     </span>
@@ -119,18 +115,14 @@ onConfirm(async (id) => deleteMarker(id));
                         </button>
                     </template>
                 </li>
-                <li v-if="marker.info?.description">
+                <li>
                     <span class="font-semibold">{{ $t('common.description') }}</span
-                    >: {{ marker.info?.description }}
+                    >: {{ marker.info?.description ?? $t('common.na') }}
                 </li>
                 <li class="italic">
                     <span class="font-semibold">{{ $t('common.sent_by') }}</span
                     >:
-                    <span v-if="marker.creator">
-                        {{ marker.creator?.firstname }}, {{ marker.creator?.lastname }} (<PhoneNumber
-                            :number="marker.creator.phoneNumber"
-                        />)
-                    </span>
+                    <CitizenInfoPopover v-if="marker.creator" :user="marker.creator" />
                     <span v-else>
                         {{ $t('common.unknown') }}
                     </span>
@@ -156,7 +148,9 @@ onConfirm(async (id) => deleteMarker(id));
         <LPopup :options="{ closeButton: true }">
             <ul>
                 <li class="inline-flex items-center">
-                    {{ marker.info?.name }}
+                    <span class="font-semibold">
+                        {{ marker.info?.name }}
+                    </span>
                     <template v-if="can('LivemapperService.DeleteMarker')">
                         <button type="button" :title="$t('common.delete')" class="flex flex-row items-center" @click="reveal()">
                             <TrashCanIcon class="w-6 h-6" />
@@ -164,15 +158,14 @@ onConfirm(async (id) => deleteMarker(id));
                         </button>
                     </template>
                 </li>
-                <li v-if="marker.info?.description">{{ $t('common.description') }}: {{ marker.info?.description }}</li>
+                <li>
+                    <span class="font-semibold">{{ $t('common.description') }}</span
+                    >: {{ marker.info?.description ?? $t('common.na') }}
+                </li>
                 <li class="italic">
                     <span class="font-semibold">{{ $t('common.sent_by') }}</span
                     >:
-                    <span v-if="marker.creator">
-                        {{ marker.creator?.firstname }}, {{ marker.creator?.lastname }} (<PhoneNumber
-                            :number="marker.creator.phoneNumber"
-                        />)
-                    </span>
+                    <CitizenInfoPopover v-if="marker.creator" :user="marker.creator" />
                     <span v-else>
                         {{ $t('common.unknown') }}
                     </span>
