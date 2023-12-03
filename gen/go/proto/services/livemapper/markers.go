@@ -275,7 +275,7 @@ func (s *Server) getMarker(ctx context.Context, id uint64) (*livemap.Marker, err
 	return &dest, nil
 }
 
-func (s *Server) getMarkers(jobs []string) ([]*livemap.Marker, error) {
+func (s *Server) getMarkerMarkers(jobs []string) ([]*livemap.Marker, error) {
 	ds := []*livemap.Marker{}
 
 	for _, job := range jobs {
@@ -291,8 +291,6 @@ func (s *Server) getMarkers(jobs []string) ([]*livemap.Marker, error) {
 }
 
 func (s *Server) refreshMarkers(ctx context.Context) error {
-	tUsers := tUsers.AS("creator")
-	tMarkers := tMarkers.AS("marker")
 	stmt := tMarkers.
 		SELECT(
 			tMarkers.ID.AS("markerinfo.id"),

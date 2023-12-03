@@ -196,7 +196,7 @@ func (s *Server) Stream(req *StreamRequest, srv LivemapperService_StreamServer) 
 		}
 		resp.Users = userMarkers
 
-		markers, err := s.getMarkers(dispatchesJobs)
+		markers, err := s.getMarkerMarkers(dispatchesJobs)
 		if err != nil {
 			return ErrStreamFailed
 		}

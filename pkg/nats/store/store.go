@@ -54,6 +54,7 @@ func New[T any, U protoMessage[T]](logger *zap.Logger, js nats.JetStreamContext,
 		Description: natsutils.Description,
 		History:     3,
 		Storage:     nats.MemoryStorage,
+		TTL:         3 * LockTimeout,
 	})
 	if err != nil {
 		return nil, err
@@ -281,10 +282,6 @@ func (s *Store[T, U]) Start(ctx context.Context) error {
 	}()
 
 	return nil
-}
-
-func (s *Store[T, U]) Locks() *locks.Locks {
-	return s.l
 }
 
 func (s *Store[T, U]) GetBucket() string {
