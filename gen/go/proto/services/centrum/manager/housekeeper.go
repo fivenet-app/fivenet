@@ -422,6 +422,12 @@ func (s *Housekeeper) deduplicateDispatches(ctx context.Context) error {
 						continue
 					}
 
+					if closeByDsp.Attributes != nil && !closeByDsp.Attributes.Has(centrum.DispatchAttributeDuplicate) {
+						if err := s.AddAttributeToDispatch(ctx, closeByDsp, centrum.DispatchAttributeDuplicate); err != nil {
+							s.logger.Error("failed to update duplicate dispatch attribute", zap.Error(err))
+						}
+					}
+
 					s.State.GetDispatchLocations(closeByDsp.Job).Remove(closeByDsp, func(p orb.Pointer) bool {
 						return p.(*centrum.Dispatch).Id == closeByDsp.Id
 					})
@@ -433,10 +439,6 @@ func (s *Housekeeper) deduplicateDispatches(ctx context.Context) error {
 					}); err != nil {
 						s.logger.Error("failed to update duplicate dispatch status", zap.Error(err))
 						return
-					}
-
-					if err := s.AddAttributeToDispatch(ctx, closeByDsp, centrum.DispatchAttributeDuplicate); err != nil {
-						s.logger.Error("failed to update duplicate dispatch attribute", zap.Error(err))
 					}
 
 					toRemove := []uint64{}
