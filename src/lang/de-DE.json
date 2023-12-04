@@ -9,7 +9,7 @@
                 "citizens": "Suche und finde Informationen über Bürger, einschließlich grundlegender Informationen, Lizenzen und zugehörigen Dokumenten.",
                 "vehicles": "Suche und finde Informationen zu Fahrzeugen.",
                 "documents": "Suche und erstelle Dokumente, entweder mit Vorlagen oder von Grund auf neu.",
-                "jobs": "Infos über deinen Job und Mitarbeitermanagement. Kommt bald",
+                "jobs": "Infos über deinen Job und Mitarbeitermanagement.",
                 "livemap": "Live-Positionen von Einsätzen und Kollegen.",
                 "centrum": "Leitstelle, für das Zuweisen von Einsätze."
             }
@@ -432,8 +432,8 @@
                 },
                 "attributes": {
                     "multiple": "Mehrere Einsätze",
-                    "duplicate": "Duplikat",
-                    "too_old": "Abgebrochen, Einsatz zu alt"
+                    "too_old": "Abgebrochen, Einsatz zu alt",
+                    "duplicate": "Duplikat"
                 }
             }
         },
