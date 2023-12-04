@@ -69,7 +69,7 @@ const selectedMarker = ref<string>();
 const mouseLat = ref<string>((0).toFixed(3));
 const mouseLong = ref<string>((0).toFixed(3));
 
-const currentHash = useRouteHash();
+const currentHash = useRouteHash('');
 
 watch(location, () => {
     if (location.value === undefined || map === undefined) {
@@ -105,7 +105,7 @@ watch(location, () => {
                 break;
         }
     }
-    console.log(xOffset);
+
     map?.panTo([location.value.y!, location.value.x! + xOffset], {
         animate: true,
         duration: 0.85,
