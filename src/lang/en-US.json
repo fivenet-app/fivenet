@@ -9,7 +9,7 @@
                 "citizens": "Search and find information about Citizens, including basic info, their licenses and related documents.",
                 "vehicles": "Search and find information about Vehicles.",
                 "documents": "Search and create Documents, using templates or from scratch.",
-                "jobs": "Infos about your job and employee management. Coming soon",
+                "jobs": "Infos about your job and employee management.",
                 "livemap": "Live position of dispatches and your colleagues.",
                 "centrum": "Dispatch Center, for dispatching Dispatches."
             }
@@ -432,8 +432,8 @@
                 },
                 "attributes": {
                     "multiple": "Multiple Dispatches",
-                    "duplicate": "Duplicat",
-                    "too_old": "Cancelled due to Age"
+                    "too_old": "Cancelled due to Age",
+                    "duplicate": "Duplicat"
                 }
             }
         },
