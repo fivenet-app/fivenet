@@ -2,6 +2,7 @@ package docstore
 
 import (
 	"context"
+	"errors"
 	"regexp"
 	"strings"
 
@@ -9,6 +10,7 @@ import (
 	"github.com/galexrt/fivenet/gen/go/proto/resources/documents"
 	errorsdocstore "github.com/galexrt/fivenet/gen/go/proto/services/docstore/errors"
 	"github.com/galexrt/fivenet/pkg/grpc/auth"
+	"github.com/galexrt/fivenet/pkg/grpc/errswrap"
 	"github.com/galexrt/fivenet/pkg/utils/dbutils"
 	"github.com/galexrt/fivenet/query/fivenet/table"
 	jet "github.com/go-jet/jet/v2/mysql"
@@ -60,10 +62,10 @@ func (s *Server) ListDocumentActivity(ctx context.Context, req *ListDocumentActi
 
 	ok, err := s.checkIfUserHasAccessToDoc(ctx, req.DocumentId, userInfo, documents.AccessLevel_ACCESS_LEVEL_VIEW)
 	if err != nil {
-		return nil, errorsdocstore.ErrFailedQuery
+		return nil, errswrap.NewError(errorsdocstore.ErrFailedQuery, err)
 	}
 	if !ok {
-		return nil, errorsdocstore.ErrDocViewDenied
+		return nil, errswrap.NewError(errorsdocstore.ErrDocViewDenied, err)
 	}
 
 	tDocActivity := table.FivenetDocumentsActivity.AS("doc_activity")
@@ -81,7 +83,9 @@ func (s *Server) ListDocumentActivity(ctx context.Context, req *ListDocumentActi
 
 	var count database.DataCount
 	if err := countStmt.QueryContext(ctx, s.db, &count); err != nil {
-		return nil, err
+		if !errors.Is(err, qrm.ErrNoRows) {
+			return nil, errswrap.NewError(errorsdocstore.ErrFailedQuery, err)
+		}
 	}
 
 	pag, limit := req.Pagination.GetResponseWithPageSize(ActivityDefaultPageLimit)
@@ -126,7 +130,7 @@ func (s *Server) ListDocumentActivity(ctx context.Context, req *ListDocumentActi
 		LIMIT(limit)
 
 	if err := stmt.QueryContext(ctx, s.db, &resp.Activity); err != nil {
-		return nil, err
+		return nil, errswrap.NewError(errorsdocstore.ErrFailedQuery, err)
 	}
 
 	resp.Pagination.Update(count.TotalCount, len(resp.Activity))

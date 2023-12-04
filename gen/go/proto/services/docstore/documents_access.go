@@ -9,6 +9,7 @@ import (
 	"github.com/galexrt/fivenet/gen/go/proto/resources/rector"
 	errorsdocstore "github.com/galexrt/fivenet/gen/go/proto/services/docstore/errors"
 	"github.com/galexrt/fivenet/pkg/grpc/auth"
+	"github.com/galexrt/fivenet/pkg/grpc/errswrap"
 	"github.com/galexrt/fivenet/query/fivenet/model"
 	"github.com/galexrt/fivenet/query/fivenet/table"
 	jet "github.com/go-jet/jet/v2/mysql"
@@ -23,15 +24,15 @@ func (s *Server) GetDocumentAccess(ctx context.Context, req *GetDocumentAccessRe
 	userInfo := auth.MustGetUserInfoFromContext(ctx)
 	ok, err := s.checkIfUserHasAccessToDoc(ctx, req.DocumentId, userInfo, documents.AccessLevel_ACCESS_LEVEL_VIEW)
 	if err != nil {
-		return nil, err
+		return nil, errswrap.NewError(errorsdocstore.ErrFailedQuery, err)
 	}
 	if !ok {
-		return nil, errorsdocstore.ErrDocAccessViewDenied
+		return nil, errswrap.NewError(errorsdocstore.ErrDocAccessViewDenied, err)
 	}
 
 	access, err := s.getDocumentAccess(ctx, req.DocumentId)
 	if err != nil {
-		return nil, err
+		return nil, errswrap.NewError(errorsdocstore.ErrFailedQuery, err)
 	}
 
 	for i := 0; i < len(access.Jobs); i++ {
@@ -68,27 +69,27 @@ func (s *Server) SetDocumentAccess(ctx context.Context, req *SetDocumentAccessRe
 
 	ok, err := s.checkIfUserHasAccessToDoc(ctx, req.DocumentId, userInfo, documents.AccessLevel_ACCESS_LEVEL_ACCESS)
 	if err != nil {
-		return nil, err
+		return nil, errswrap.NewError(errorsdocstore.ErrFailedQuery, err)
 	}
 	if !ok {
-		return nil, errorsdocstore.ErrDocAccessEditDenied
+		return nil, errswrap.NewError(errorsdocstore.ErrDocAccessEditDenied, err)
 	}
 
 	// Begin transaction
 	tx, err := s.db.BeginTx(ctx, nil)
 	if err != nil {
-		return nil, err
+		return nil, errswrap.NewError(errorsdocstore.ErrFailedQuery, err)
 	}
 	// Defer a rollback in case anything fails
 	defer tx.Rollback()
 
 	if err := s.handleDocumentAccessChanges(ctx, tx, req.Mode, req.DocumentId, req.Access); err != nil {
-		return nil, err
+		return nil, errswrap.NewError(errorsdocstore.ErrFailedQuery, err)
 	}
 
 	// Commit the transaction
 	if err := tx.Commit(); err != nil {
-		return nil, err
+		return nil, errswrap.NewError(errorsdocstore.ErrFailedQuery, err)
 	}
 
 	auditEntry.State = int16(rector.EventType_EVENT_TYPE_UPDATED)

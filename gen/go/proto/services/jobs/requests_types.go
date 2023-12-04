@@ -8,6 +8,7 @@ import (
 	"github.com/galexrt/fivenet/gen/go/proto/resources/rector"
 	errorsjobs "github.com/galexrt/fivenet/gen/go/proto/services/jobs/errors"
 	"github.com/galexrt/fivenet/pkg/grpc/auth"
+	"github.com/galexrt/fivenet/pkg/grpc/errswrap"
 	"github.com/galexrt/fivenet/query/fivenet/model"
 	"github.com/galexrt/fivenet/query/fivenet/table"
 	jet "github.com/go-jet/jet/v2/mysql"
@@ -39,7 +40,7 @@ func (s *Server) RequestsListTypes(ctx context.Context, req *RequestsListTypesRe
 	var dest []*jobs.RequestType
 	if err := stmt.QueryContext(ctx, s.db, &dest); err != nil {
 		if !errors.Is(err, qrm.ErrNoRows) {
-			return nil, errorsjobs.ErrFailedQuery
+			return nil, errswrap.NewError(errorsjobs.ErrFailedQuery, err)
 		}
 	}
 
@@ -63,7 +64,7 @@ func (s *Server) RequestsCreateOrUpdateType(ctx context.Context, req *RequestsCr
 	// Begin transaction
 	tx, err := s.db.BeginTx(ctx, nil)
 	if err != nil {
-		return nil, errorsjobs.ErrFailedQuery
+		return nil, errswrap.NewError(errorsjobs.ErrFailedQuery, err)
 	}
 	// Defer a rollback in case anything fails
 	defer tx.Rollback()
@@ -87,12 +88,12 @@ func (s *Server) RequestsCreateOrUpdateType(ctx context.Context, req *RequestsCr
 
 		result, err := stmt.ExecContext(ctx, tx)
 		if err != nil {
-			return nil, err
+			return nil, errswrap.NewError(errorsjobs.ErrFailedQuery, err)
 		}
 
 		lastId, err := result.LastInsertId()
 		if err != nil {
-			return nil, err
+			return nil, errswrap.NewError(errorsjobs.ErrFailedQuery, err)
 		}
 
 		req.RequestType.Id = uint64(lastId)
@@ -116,7 +117,7 @@ func (s *Server) RequestsCreateOrUpdateType(ctx context.Context, req *RequestsCr
 			))
 
 		if _, err := stmt.ExecContext(ctx, tx); err != nil {
-			return nil, err
+			return nil, errswrap.NewError(errorsjobs.ErrFailedQuery, err)
 		}
 
 		auditEntry.State = int16(rector.EventType_EVENT_TYPE_UPDATED)
@@ -125,12 +126,12 @@ func (s *Server) RequestsCreateOrUpdateType(ctx context.Context, req *RequestsCr
 	// Commit the transaction
 	if err := tx.Commit(); err != nil {
 		auditEntry.State = int16(rector.EventType_EVENT_TYPE_ERRORED)
-		return nil, errorsjobs.ErrFailedQuery
+		return nil, errswrap.NewError(errorsjobs.ErrFailedQuery, err)
 	}
 
 	requestType, err := s.getRequestType(ctx, userInfo.Job, req.RequestType.Id)
 	if err != nil {
-		return nil, errorsjobs.ErrFailedQuery
+		return nil, errswrap.NewError(errorsjobs.ErrFailedQuery, err)
 	}
 
 	return &RequestsCreateOrUpdateTypeResponse{
@@ -159,7 +160,7 @@ func (s *Server) RequestsDeleteType(ctx context.Context, req *RequestsDeleteType
 		LIMIT(1)
 
 	if _, err := stmt.ExecContext(ctx, s.db); err != nil {
-		return nil, errorsjobs.ErrFailedQuery
+		return nil, errswrap.NewError(errorsjobs.ErrFailedQuery, err)
 	}
 
 	auditEntry.State = int16(rector.EventType_EVENT_TYPE_DELETED)

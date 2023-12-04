@@ -6,7 +6,9 @@ import (
 
 	"github.com/galexrt/fivenet/gen/go/proto/resources/documents"
 	"github.com/galexrt/fivenet/gen/go/proto/resources/rector"
+	errorsdocstore "github.com/galexrt/fivenet/gen/go/proto/services/docstore/errors"
 	"github.com/galexrt/fivenet/pkg/grpc/auth"
+	"github.com/galexrt/fivenet/pkg/grpc/errswrap"
 	"github.com/galexrt/fivenet/query/fivenet/model"
 	"github.com/galexrt/fivenet/query/fivenet/table"
 	jet "github.com/go-jet/jet/v2/mysql"
@@ -43,7 +45,7 @@ func (s *Server) ListCategories(ctx context.Context, req *ListCategoriesRequest)
 	resp := &ListCategoriesResponse{}
 	if err := stmt.QueryContext(ctx, s.db, &resp.Category); err != nil {
 		if !errors.Is(err, qrm.ErrNoRows) {
-			return nil, err
+			return nil, errswrap.NewError(errorsdocstore.ErrFailedQuery, err)
 		}
 	}
 
@@ -106,12 +108,12 @@ func (s *Server) CreateCategory(ctx context.Context, req *CreateCategoryRequest)
 
 	res, err := stmt.ExecContext(ctx, s.db)
 	if err != nil {
-		return nil, err
+		return nil, errswrap.NewError(errorsdocstore.ErrFailedQuery, err)
 	}
 
 	lastId, err := res.LastInsertId()
 	if err != nil {
-		return nil, err
+		return nil, errswrap.NewError(errorsdocstore.ErrFailedQuery, err)
 	}
 
 	auditEntry.State = int16(rector.EventType_EVENT_TYPE_CREATED)
@@ -153,7 +155,7 @@ func (s *Server) UpdateCategory(ctx context.Context, req *UpdateCategoryRequest)
 		))
 
 	if _, err := stmt.ExecContext(ctx, s.db); err != nil {
-		return nil, err
+		return nil, errswrap.NewError(errorsdocstore.ErrFailedQuery, err)
 	}
 
 	auditEntry.State = int16(rector.EventType_EVENT_TYPE_UPDATED)
@@ -189,7 +191,7 @@ func (s *Server) DeleteCategory(ctx context.Context, req *DeleteCategoryRequest)
 		)
 
 	if _, err := stmt.ExecContext(ctx, s.db); err != nil {
-		return nil, err
+		return nil, errswrap.NewError(errorsdocstore.ErrFailedQuery, err)
 	}
 
 	auditEntry.State = int16(rector.EventType_EVENT_TYPE_DELETED)

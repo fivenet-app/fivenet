@@ -11,6 +11,7 @@ import (
 	permscitizenstore "github.com/galexrt/fivenet/gen/go/proto/services/citizenstore/perms"
 	errorsdmv "github.com/galexrt/fivenet/gen/go/proto/services/dmv/errors"
 	"github.com/galexrt/fivenet/pkg/grpc/auth"
+	"github.com/galexrt/fivenet/pkg/grpc/errswrap"
 	"github.com/galexrt/fivenet/pkg/mstlystcdata"
 	"github.com/galexrt/fivenet/pkg/perms"
 	"github.com/galexrt/fivenet/pkg/server/audit"
@@ -89,7 +90,7 @@ func (s *Server) ListVehicles(ctx context.Context, req *ListVehiclesRequest) (*L
 
 	var count database.DataCount
 	if err := countStmt.QueryContext(ctx, s.db, &count); err != nil {
-		return nil, errorsdmv.ErrFailedQuery
+		return nil, errswrap.NewError(errorsdmv.ErrFailedQuery, err)
 	}
 
 	pag, limit := req.Pagination.GetResponseWithPageSize(15)
@@ -141,7 +142,7 @@ func (s *Server) ListVehicles(ctx context.Context, req *ListVehiclesRequest) (*L
 	// Field Permission Check
 	fieldsAttr, err := s.ps.Attr(userInfo, permscitizenstore.CitizenStoreServicePerm, permscitizenstore.CitizenStoreServiceListCitizensPerm, permscitizenstore.CitizenStoreServiceListCitizensFieldsPermField)
 	if err != nil {
-		return nil, errorsdmv.ErrFailedQuery
+		return nil, errswrap.NewError(errorsdmv.ErrFailedQuery, err)
 	}
 	var fields perms.StringList
 	if fieldsAttr != nil {
@@ -169,7 +170,7 @@ func (s *Server) ListVehicles(ctx context.Context, req *ListVehiclesRequest) (*L
 		LIMIT(limit)
 
 	if err := stmt.QueryContext(ctx, s.db, &resp.Vehicles); err != nil {
-		return nil, errorsdmv.ErrFailedQuery
+		return nil, errswrap.NewError(errorsdmv.ErrFailedQuery, err)
 	}
 
 	resp.Pagination.Update(count.TotalCount, len(resp.Vehicles))

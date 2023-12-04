@@ -6,6 +6,7 @@ import (
 
 	jobs "github.com/galexrt/fivenet/gen/go/proto/resources/jobs"
 	errorsjobs "github.com/galexrt/fivenet/gen/go/proto/services/jobs/errors"
+	"github.com/galexrt/fivenet/pkg/grpc/errswrap"
 	jet "github.com/go-jet/jet/v2/mysql"
 	"github.com/go-jet/jet/v2/qrm"
 )
@@ -68,7 +69,7 @@ func (s *Server) getRequest(ctx context.Context, job string, id uint64) (*jobs.R
 	var dest jobs.Request
 	if err := stmt.QueryContext(ctx, s.db, &dest); err != nil {
 		if !errors.Is(err, qrm.ErrNoRows) {
-			return nil, errorsjobs.ErrFailedQuery
+			return nil, errswrap.NewError(errorsjobs.ErrFailedQuery, err)
 		}
 	}
 
@@ -100,7 +101,7 @@ func (s *Server) getRequestType(ctx context.Context, job string, id uint64) (*jo
 	var dest jobs.RequestType
 	if err := stmt.QueryContext(ctx, s.db, &dest); err != nil {
 		if !errors.Is(err, qrm.ErrNoRows) {
-			return nil, errorsjobs.ErrFailedQuery
+			return nil, errswrap.NewError(errorsjobs.ErrFailedQuery, err)
 		}
 	}
 
@@ -142,7 +143,7 @@ func (s *Server) getRequestComment(ctx context.Context, job string, id uint64) (
 	var dest jobs.RequestType
 	if err := stmt.QueryContext(ctx, s.db, &dest); err != nil {
 		if !errors.Is(err, qrm.ErrNoRows) {
-			return nil, errorsjobs.ErrFailedQuery
+			return nil, errswrap.NewError(errorsjobs.ErrFailedQuery, err)
 		}
 	}
 

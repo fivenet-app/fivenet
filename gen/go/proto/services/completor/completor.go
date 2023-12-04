@@ -10,6 +10,7 @@ import (
 	users "github.com/galexrt/fivenet/gen/go/proto/resources/users"
 	permscompletor "github.com/galexrt/fivenet/gen/go/proto/services/completor/perms"
 	"github.com/galexrt/fivenet/pkg/grpc/auth"
+	"github.com/galexrt/fivenet/pkg/grpc/errswrap"
 	"github.com/galexrt/fivenet/pkg/mstlystcdata"
 	"github.com/galexrt/fivenet/pkg/perms"
 	"github.com/galexrt/fivenet/pkg/tracker"
@@ -113,7 +114,7 @@ func (s *Server) CompleteCitizens(ctx context.Context, req *CompleteCitizensRequ
 	var dest []*users.UserShort
 	if err := stmt.QueryContext(ctx, s.db, &dest); err != nil {
 		if !errors.Is(err, qrm.ErrNoRows) {
-			return nil, ErrFailedSearch
+			return nil, errswrap.NewError(ErrFailedSearch, err)
 		}
 	}
 
@@ -155,7 +156,7 @@ func (s *Server) CompleteJobs(ctx context.Context, req *CompleteJobsRequest) (*C
 	var err error
 	resp.Jobs, err = s.data.GetSearcher().SearchJobs(ctx, search, exactMatch)
 	if err != nil {
-		return nil, ErrFailedSearch
+		return nil, errswrap.NewError(ErrFailedSearch, err)
 	}
 
 	return resp, nil
@@ -166,7 +167,7 @@ func (s *Server) CompleteDocumentCategories(ctx context.Context, req *CompleteDo
 
 	jobsAttr, err := s.p.Attr(userInfo, permscompletor.CompletorServicePerm, permscompletor.CompletorServiceCompleteDocumentCategoriesPerm, permscompletor.CompletorServiceCompleteDocumentCategoriesJobsPermField)
 	if err != nil {
-		return nil, ErrFailedSearch
+		return nil, errswrap.NewError(ErrFailedSearch, err)
 	}
 	var jobs perms.StringList
 	if jobsAttr != nil {
@@ -211,7 +212,7 @@ func (s *Server) CompleteDocumentCategories(ctx context.Context, req *CompleteDo
 	resp := &CompleteDocumentCategoriesResponse{}
 	if err := stmt.QueryContext(ctx, s.db, &resp.Categories); err != nil {
 		if !errors.Is(err, qrm.ErrNoRows) {
-			return nil, ErrFailedSearch
+			return nil, errswrap.NewError(ErrFailedSearch, err)
 		}
 	}
 

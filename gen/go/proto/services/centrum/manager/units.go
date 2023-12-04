@@ -11,6 +11,7 @@ import (
 	errorscentrum "github.com/galexrt/fivenet/gen/go/proto/services/centrum/errors"
 	eventscentrum "github.com/galexrt/fivenet/gen/go/proto/services/centrum/events"
 	"github.com/galexrt/fivenet/gen/go/proto/services/centrum/state"
+	"github.com/galexrt/fivenet/pkg/grpc/errswrap"
 	"github.com/galexrt/fivenet/pkg/utils/dbutils"
 	"github.com/galexrt/fivenet/query/fivenet/table"
 	jet "github.com/go-jet/jet/v2/mysql"
@@ -22,7 +23,7 @@ import (
 func (s *Manager) UpdateUnitStatus(ctx context.Context, job string, unitId uint64, in *centrum.UnitStatus) (*centrum.UnitStatus, error) {
 	unit, err := s.GetUnit(job, unitId)
 	if err != nil {
-		return nil, errorscentrum.ErrFailedQuery
+		return nil, errswrap.NewError(errorscentrum.ErrFailedQuery, err)
 	}
 
 	// If the unit status is the same and is a status that shouldn't be duplicated, don't update the status again
@@ -53,7 +54,7 @@ func (s *Manager) UpdateUnitStatus(ctx context.Context, job string, unitId uint6
 		var err error
 		in.User, err = s.resolveUserShortById(ctx, *in.UserId)
 		if err != nil {
-			return nil, errorscentrum.ErrFailedQuery
+			return nil, errswrap.NewError(errorscentrum.ErrFailedQuery, err)
 		}
 
 		if marker, ok := s.tracker.GetUserById(*in.UserId); ok {
@@ -66,7 +67,7 @@ func (s *Manager) UpdateUnitStatus(ctx context.Context, job string, unitId uint6
 		var err error
 		in.Creator, err = s.resolveUserShortById(ctx, *in.CreatorId)
 		if err != nil {
-			return nil, errorscentrum.ErrFailedQuery
+			return nil, errswrap.NewError(errorscentrum.ErrFailedQuery, err)
 		}
 	}
 
@@ -379,12 +380,12 @@ func (s *Manager) CreateUnit(ctx context.Context, job string, unit *centrum.Unit
 
 	result, err := stmt.ExecContext(ctx, tx)
 	if err != nil {
-		return nil, errorscentrum.ErrFailedQuery
+		return nil, errswrap.NewError(errorscentrum.ErrFailedQuery, err)
 	}
 
 	lastId, err := result.LastInsertId()
 	if err != nil {
-		return nil, errorscentrum.ErrFailedQuery
+		return nil, errswrap.NewError(errorscentrum.ErrFailedQuery, err)
 	}
 
 	// A new unit shouldn't have a status, so we make sure it has one
@@ -393,7 +394,7 @@ func (s *Manager) CreateUnit(ctx context.Context, job string, unit *centrum.Unit
 		UnitId:    uint64(lastId),
 		Status:    centrum.StatusUnit_STATUS_UNIT_UNKNOWN,
 	}); err != nil {
-		return nil, errorscentrum.ErrFailedQuery
+		return nil, errswrap.NewError(errorscentrum.ErrFailedQuery, err)
 	}
 
 	// Commit the transaction
@@ -403,14 +404,14 @@ func (s *Manager) CreateUnit(ctx context.Context, job string, unit *centrum.Unit
 
 	// Load new/updated unit from database
 	if err := s.LoadUnitsFromDB(ctx, uint64(lastId)); err != nil {
-		return nil, errorscentrum.ErrFailedQuery
+		return nil, errswrap.NewError(errorscentrum.ErrFailedQuery, err)
 	}
 
 	unit.Id = uint64(lastId)
 
 	data, err := proto.Marshal(unit)
 	if err != nil {
-		return nil, errorscentrum.ErrFailedQuery
+		return nil, errswrap.NewError(errorscentrum.ErrFailedQuery, err)
 	}
 
 	if _, err := s.js.Publish(eventscentrum.BuildSubject(eventscentrum.TopicUnit, eventscentrum.TypeUnitCreated, job), data); err != nil {
@@ -447,12 +448,12 @@ func (s *Manager) UpdateUnit(ctx context.Context, job string, unit *centrum.Unit
 		))
 
 	if _, err := stmt.ExecContext(ctx, s.db); err != nil {
-		return nil, errorscentrum.ErrFailedQuery
+		return nil, errswrap.NewError(errorscentrum.ErrFailedQuery, err)
 	}
 
 	// Load new/updated unit from database
 	if err := s.LoadUnitsFromDB(ctx, unit.Id); err != nil {
-		return nil, errorscentrum.ErrFailedQuery
+		return nil, errswrap.NewError(errorscentrum.ErrFailedQuery, err)
 	}
 
 	if err := s.State.UpdateUnit(ctx, unit.Job, unit.Id, unit); err != nil {
@@ -461,7 +462,7 @@ func (s *Manager) UpdateUnit(ctx context.Context, job string, unit *centrum.Unit
 
 	data, err := proto.Marshal(unit)
 	if err != nil {
-		return nil, errorscentrum.ErrFailedQuery
+		return nil, errswrap.NewError(errorscentrum.ErrFailedQuery, err)
 	}
 
 	if _, err := s.js.Publish(eventscentrum.BuildSubject(eventscentrum.TopicUnit, eventscentrum.TypeUnitUpdated, job), data); err != nil {

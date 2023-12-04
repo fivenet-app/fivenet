@@ -6,6 +6,7 @@ import (
 	"github.com/galexrt/fivenet/gen/go/proto/resources/centrum"
 	errorscentrum "github.com/galexrt/fivenet/gen/go/proto/services/centrum/errors"
 	eventscentrum "github.com/galexrt/fivenet/gen/go/proto/services/centrum/events"
+	"github.com/galexrt/fivenet/pkg/grpc/errswrap"
 	jet "github.com/go-jet/jet/v2/mysql"
 	"google.golang.org/protobuf/proto"
 )
@@ -32,19 +33,19 @@ func (s *Manager) UpdateSettingsInDB(ctx context.Context, job string, settings *
 		)
 
 	if _, err := stmt.ExecContext(ctx, s.db); err != nil {
-		return nil, errorscentrum.ErrFailedQuery
+		return nil, errswrap.NewError(errorscentrum.ErrFailedQuery, err)
 	}
 
 	// Load settings from database so they are updated in the "cache"
 	if err := s.LoadSettingsFromDB(ctx, job); err != nil {
-		return nil, errorscentrum.ErrFailedQuery
+		return nil, errswrap.NewError(errorscentrum.ErrFailedQuery, err)
 	}
 
 	set := s.GetSettings(job)
 
 	data, err := proto.Marshal(set)
 	if err != nil {
-		return nil, errorscentrum.ErrFailedQuery
+		return nil, errswrap.NewError(errorscentrum.ErrFailedQuery, err)
 	}
 
 	if _, err := s.js.Publish(eventscentrum.BuildSubject(eventscentrum.TopicGeneral, eventscentrum.TypeGeneralSettings, job), data); err != nil {

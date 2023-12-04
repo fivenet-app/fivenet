@@ -14,7 +14,14 @@ func UnaryServerInterceptor() grpc.UnaryServerInterceptor {
 			grpc.SetTrailer(ctx, metadata.Pairs("X-Trace-Id", span.TraceID().String()))
 		}
 
-		return handler(ctx, req)
+		resp, err := handler(ctx, req)
+		if err != nil {
+			if trace.SpanFromContext(ctx).SpanContext().IsValid() {
+				trace.SpanFromContext(ctx).RecordError(err)
+			}
+		}
+
+		return resp, err
 	}
 }
 
@@ -24,6 +31,13 @@ func StreamServerInterceptor() grpc.StreamServerInterceptor {
 			grpc.SetTrailer(stream.Context(), metadata.Pairs("X-Trace-Id", span.TraceID().String()))
 		}
 
-		return handler(srv, stream)
+		err := handler(srv, stream)
+		if err != nil {
+			if trace.SpanFromContext(stream.Context()).SpanContext().IsValid() {
+				trace.SpanFromContext(stream.Context()).RecordError(err)
+			}
+		}
+
+		return err
 	}
 }

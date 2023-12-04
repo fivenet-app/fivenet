@@ -9,6 +9,7 @@ import (
 	"github.com/galexrt/fivenet/gen/go/proto/resources/users"
 	errorsdocstore "github.com/galexrt/fivenet/gen/go/proto/services/docstore/errors"
 	"github.com/galexrt/fivenet/pkg/grpc/auth"
+	"github.com/galexrt/fivenet/pkg/grpc/errswrap"
 	"github.com/galexrt/fivenet/query/fivenet/table"
 	jet "github.com/go-jet/jet/v2/mysql"
 	"github.com/go-jet/jet/v2/qrm"
@@ -73,7 +74,7 @@ func (s *Server) ListUserDocuments(ctx context.Context, req *ListUserDocumentsRe
 
 	var count database.DataCount
 	if err := countStmt.QueryContext(ctx, s.db, &count); err != nil {
-		return nil, errorsdocstore.ErrFailedQuery
+		return nil, errswrap.NewError(errorsdocstore.ErrFailedQuery, err)
 	}
 
 	pag, limit := req.Pagination.GetResponseWithPageSize(15)
@@ -114,7 +115,7 @@ func (s *Server) ListUserDocuments(ctx context.Context, req *ListUserDocumentsRe
 	var dbRelIds []uint64
 	if err := idStmt.QueryContext(ctx, s.db, &dbRelIds); err != nil {
 		if !errors.Is(err, qrm.ErrNoRows) {
-			return nil, errorsdocstore.ErrFailedQuery
+			return nil, errswrap.NewError(errorsdocstore.ErrFailedQuery, err)
 		}
 	}
 
@@ -192,7 +193,7 @@ func (s *Server) ListUserDocuments(ctx context.Context, req *ListUserDocumentsRe
 
 	if err := stmt.QueryContext(ctx, s.db, &resp.Relations); err != nil {
 		if !errors.Is(err, qrm.ErrNoRows) {
-			return nil, err
+			return nil, errswrap.NewError(errorsdocstore.ErrFailedQuery, err)
 		}
 	}
 

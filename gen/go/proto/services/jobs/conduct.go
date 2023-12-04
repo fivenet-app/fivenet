@@ -10,6 +10,7 @@ import (
 	errorsjobs "github.com/galexrt/fivenet/gen/go/proto/services/jobs/errors"
 	permsjobs "github.com/galexrt/fivenet/gen/go/proto/services/jobs/perms"
 	"github.com/galexrt/fivenet/pkg/grpc/auth"
+	"github.com/galexrt/fivenet/pkg/grpc/errswrap"
 	"github.com/galexrt/fivenet/pkg/perms"
 	"github.com/galexrt/fivenet/query/fivenet/model"
 	"github.com/galexrt/fivenet/query/fivenet/table"
@@ -29,7 +30,7 @@ func (s *Server) ConductListEntries(ctx context.Context, req *ConductListEntries
 	// Field Permission Check
 	fieldsAttr, err := s.p.Attr(userInfo, permsjobs.JobsServicePerm, permsjobs.JobsServiceConductListEntriesPerm, permsjobs.JobsServiceConductListEntriesAccessPermField)
 	if err != nil {
-		return nil, errorsjobs.ErrFailedQuery
+		return nil, errswrap.NewError(errorsjobs.ErrFailedQuery, err)
 	}
 	var fields perms.StringList
 	if fieldsAttr != nil {
@@ -41,7 +42,7 @@ func (s *Server) ConductListEntries(ctx context.Context, req *ConductListEntries
 	} else if len(fields) == 0 || slices.Contains(fields, "Own") {
 		condition = condition.AND(tConduct.CreatorID.EQ(jet.Int32(userInfo.UserId)))
 	} else {
-		return nil, errorsjobs.ErrFailedQuery
+		return nil, errswrap.NewError(errorsjobs.ErrFailedQuery, err)
 	}
 
 	if len(req.Types) > 0 {
@@ -80,7 +81,7 @@ func (s *Server) ConductListEntries(ctx context.Context, req *ConductListEntries
 
 	var count database.DataCount
 	if err := countStmt.QueryContext(ctx, s.db, &count); err != nil {
-		return nil, errorsjobs.ErrFailedQuery
+		return nil, errswrap.NewError(errorsjobs.ErrFailedQuery, err)
 	}
 
 	pag, limit := req.Pagination.GetResponse()
@@ -135,7 +136,7 @@ func (s *Server) ConductListEntries(ctx context.Context, req *ConductListEntries
 
 	if err := stmt.QueryContext(ctx, s.db, &resp.Entries); err != nil {
 		if !errors.Is(err, qrm.ErrNoRows) {
-			return nil, errorsjobs.ErrFailedQuery
+			return nil, errswrap.NewError(errorsjobs.ErrFailedQuery, err)
 		}
 	}
 
@@ -192,17 +193,17 @@ func (s *Server) ConductCreateEntry(ctx context.Context, req *ConductCreateEntry
 
 	res, err := stmt.ExecContext(ctx, s.db)
 	if err != nil {
-		return nil, err
+		return nil, errswrap.NewError(errorsjobs.ErrFailedQuery, err)
 	}
 
 	lastId, err := res.LastInsertId()
 	if err != nil {
-		return nil, err
+		return nil, errswrap.NewError(errorsjobs.ErrFailedQuery, err)
 	}
 
 	entry, err := s.getConductEntry(ctx, uint64(lastId))
 	if err != nil {
-		return nil, err
+		return nil, errswrap.NewError(errorsjobs.ErrFailedQuery, err)
 	}
 
 	auditEntry.State = int16(rector.EventType_EVENT_TYPE_CREATED)
@@ -246,17 +247,17 @@ func (s *Server) ConductUpdateEntry(ctx context.Context, req *ConductUpdateEntry
 
 	res, err := stmt.ExecContext(ctx, s.db)
 	if err != nil {
-		return nil, err
+		return nil, errswrap.NewError(errorsjobs.ErrFailedQuery, err)
 	}
 
 	lastId, err := res.LastInsertId()
 	if err != nil {
-		return nil, err
+		return nil, errswrap.NewError(errorsjobs.ErrFailedQuery, err)
 	}
 
 	entry, err := s.getConductEntry(ctx, uint64(lastId))
 	if err != nil {
-		return nil, err
+		return nil, errswrap.NewError(errorsjobs.ErrFailedQuery, err)
 	}
 
 	auditEntry.State = int16(rector.EventType_EVENT_TYPE_UPDATED)
@@ -286,7 +287,7 @@ func (s *Server) ConductDeleteEntry(ctx context.Context, req *ConductDeleteEntry
 		))
 
 	if _, err := stmt.ExecContext(ctx, s.db); err != nil {
-		return nil, err
+		return nil, errswrap.NewError(errorsjobs.ErrFailedQuery, err)
 	}
 
 	auditEntry.State = int16(rector.EventType_EVENT_TYPE_DELETED)

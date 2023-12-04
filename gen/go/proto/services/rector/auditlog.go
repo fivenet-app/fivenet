@@ -7,6 +7,7 @@ import (
 	database "github.com/galexrt/fivenet/gen/go/proto/resources/common/database"
 	rector "github.com/galexrt/fivenet/gen/go/proto/resources/rector"
 	"github.com/galexrt/fivenet/pkg/grpc/auth"
+	"github.com/galexrt/fivenet/pkg/grpc/errswrap"
 	"github.com/galexrt/fivenet/query/fivenet/model"
 	"github.com/galexrt/fivenet/query/fivenet/table"
 	jet "github.com/go-jet/jet/v2/mysql"
@@ -78,7 +79,7 @@ func (s *Server) ViewAuditLog(ctx context.Context, req *ViewAuditLogRequest) (*V
 
 	var count database.DataCount
 	if err := countStmt.QueryContext(ctx, s.db, &count); err != nil {
-		return nil, err
+		return nil, errswrap.NewError(ErrFailedQuery, err)
 	}
 
 	pag, limit := req.Pagination.GetResponseWithPageSize(AuditLogPageSize)
@@ -125,7 +126,7 @@ func (s *Server) ViewAuditLog(ctx context.Context, req *ViewAuditLogRequest) (*V
 		LIMIT(limit)
 
 	if err := stmt.QueryContext(ctx, s.db, &resp.Logs); err != nil {
-		return nil, err
+		return nil, errswrap.NewError(ErrFailedQuery, err)
 	}
 
 	resp.Pagination.Update(count.TotalCount, len(resp.Logs))

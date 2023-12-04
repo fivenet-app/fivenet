@@ -10,6 +10,7 @@ import (
 	"github.com/galexrt/fivenet/gen/go/proto/resources/timestamp"
 	errorscentrum "github.com/galexrt/fivenet/gen/go/proto/services/centrum/errors"
 	"github.com/galexrt/fivenet/pkg/grpc/auth"
+	"github.com/galexrt/fivenet/pkg/grpc/errswrap"
 	"github.com/galexrt/fivenet/query/fivenet/model"
 	"github.com/galexrt/fivenet/query/fivenet/table"
 	jet "github.com/go-jet/jet/v2/mysql"
@@ -71,14 +72,14 @@ func (s *Server) CreateOrUpdateUnit(ctx context.Context, req *CreateOrUpdateUnit
 	if req.Unit.Id <= 0 {
 		unit, err = s.state.CreateUnit(ctx, userInfo.Job, req.Unit)
 		if err != nil {
-			return nil, err
+			return nil, errswrap.NewError(errorscentrum.ErrFailedQuery, err)
 		}
 
 		auditEntry.State = int16(rector.EventType_EVENT_TYPE_CREATED)
 	} else {
 		unit, err = s.state.UpdateUnit(ctx, userInfo.Job, req.Unit)
 		if err != nil {
-			return nil, err
+			return nil, errswrap.NewError(errorscentrum.ErrFailedQuery, err)
 		}
 
 		auditEntry.State = int16(rector.EventType_EVENT_TYPE_UPDATED)
@@ -104,7 +105,7 @@ func (s *Server) DeleteUnit(ctx context.Context, req *DeleteUnitRequest) (*Delet
 	resp := &DeleteUnitResponse{}
 
 	if err := s.state.DeleteUnit(ctx, userInfo.Job, req.UnitId); err != nil {
-		return nil, errorscentrum.ErrFailedQuery
+		return nil, errswrap.NewError(errorscentrum.ErrFailedQuery, err)
 	}
 
 	auditEntry.State = int16(rector.EventType_EVENT_TYPE_DELETED)
@@ -126,11 +127,11 @@ func (s *Server) UpdateUnitStatus(ctx context.Context, req *UpdateUnitStatusRequ
 
 	unit, err := s.state.GetUnit(userInfo.Job, req.UnitId)
 	if err != nil {
-		return nil, errorscentrum.ErrFailedQuery
+		return nil, errswrap.NewError(errorscentrum.ErrFailedQuery, err)
 	}
 
 	if !s.state.CheckIfUserPartOfUnit(userInfo.Job, userInfo.UserId, unit, true) {
-		return nil, errorscentrum.ErrNotPartOfUnit
+		return nil, errswrap.NewError(errorscentrum.ErrNotPartOfUnit, err)
 	}
 
 	if _, err := s.state.UpdateUnitStatus(ctx, userInfo.Job, unit.Id, &centrum.UnitStatus{
@@ -142,7 +143,7 @@ func (s *Server) UpdateUnitStatus(ctx context.Context, req *UpdateUnitStatusRequ
 		UserId:    &userInfo.UserId,
 		CreatorId: &userInfo.UserId,
 	}); err != nil {
-		return nil, errorscentrum.ErrFailedQuery
+		return nil, errswrap.NewError(errorscentrum.ErrFailedQuery, err)
 	}
 
 	auditEntry.State = int16(rector.EventType_EVENT_TYPE_CREATED)
@@ -164,14 +165,14 @@ func (s *Server) AssignUnit(ctx context.Context, req *AssignUnitRequest) (*Assig
 
 	unit, err := s.state.GetUnit(userInfo.Job, req.UnitId)
 	if err != nil {
-		return nil, errorscentrum.ErrFailedQuery
+		return nil, errswrap.NewError(errorscentrum.ErrFailedQuery, err)
 	}
 	if unit.Job != userInfo.Job {
-		return nil, errorscentrum.ErrFailedQuery
+		return nil, errswrap.NewError(errorscentrum.ErrFailedQuery, err)
 	}
 
 	if err := s.state.UpdateUnitAssignments(ctx, userInfo.Job, &userInfo.UserId, unit.Id, req.ToAdd, req.ToRemove); err != nil {
-		return nil, errorscentrum.ErrFailedQuery
+		return nil, errswrap.NewError(errorscentrum.ErrFailedQuery, err)
 	}
 
 	auditEntry.State = int16(rector.EventType_EVENT_TYPE_UPDATED)
@@ -185,7 +186,7 @@ func (s *Server) JoinUnit(ctx context.Context, req *JoinUnitRequest) (*JoinUnitR
 	// Check if user is on duty
 	if _, ok := s.tracker.GetUserById(userInfo.UserId); !ok {
 		if err := s.state.UnsetUnitIDForUser(userInfo.UserId); err != nil {
-			return nil, errorscentrum.ErrFailedQuery
+			return nil, errswrap.NewError(errorscentrum.ErrFailedQuery, err)
 		}
 
 		return nil, errorscentrum.ErrNotOnDuty
@@ -201,7 +202,7 @@ func (s *Server) JoinUnit(ctx context.Context, req *JoinUnitRequest) (*JoinUnitR
 
 	currentUnit, err := s.state.GetUnit(userInfo.Job, currentUnitId)
 	if err != nil && !errors.Is(err, nats.ErrKeyNotFound) {
-		return nil, errorscentrum.ErrNotOnDuty
+		return nil, errswrap.NewError(errorscentrum.ErrNotOnDuty, err)
 	}
 
 	// User joins unit
@@ -210,17 +211,17 @@ func (s *Server) JoinUnit(ctx context.Context, req *JoinUnitRequest) (*JoinUnitR
 		// Remove user from his current unit
 		if currentUnit != nil {
 			if err := s.state.UpdateUnitAssignments(ctx, userInfo.Job, &userInfo.UserId, currentUnit.Id, nil, []int32{userInfo.UserId}); err != nil {
-				return nil, errorscentrum.ErrFailedQuery
+				return nil, errswrap.NewError(errorscentrum.ErrFailedQuery, err)
 			}
 		}
 
 		newUnit, err := s.state.GetUnit(userInfo.Job, *req.UnitId)
 		if err != nil {
-			return nil, errorscentrum.ErrFailedQuery
+			return nil, errswrap.NewError(errorscentrum.ErrFailedQuery, err)
 		}
 
 		if err := s.state.UpdateUnitAssignments(ctx, userInfo.Job, &userInfo.UserId, newUnit.Id, []int32{userInfo.UserId}, nil); err != nil {
-			return nil, errorscentrum.ErrFailedQuery
+			return nil, errswrap.NewError(errorscentrum.ErrFailedQuery, err)
 		}
 
 		resp.Unit = newUnit
@@ -229,7 +230,7 @@ func (s *Server) JoinUnit(ctx context.Context, req *JoinUnitRequest) (*JoinUnitR
 		// User leaves his current unit (if he is in an unit)
 		if currentUnit != nil {
 			if err := s.state.UpdateUnitAssignments(ctx, userInfo.Job, &userInfo.UserId, currentUnit.Id, nil, []int32{userInfo.UserId}); err != nil {
-				return nil, errorscentrum.ErrFailedQuery
+				return nil, errswrap.NewError(errorscentrum.ErrFailedQuery, err)
 			}
 		}
 	}
@@ -257,7 +258,7 @@ func (s *Server) ListUnitActivity(ctx context.Context, req *ListUnitActivityRequ
 
 	var count database.DataCount
 	if err := countStmt.QueryContext(ctx, s.db, &count); err != nil {
-		return nil, errorscentrum.ErrFailedQuery
+		return nil, errswrap.NewError(errorscentrum.ErrFailedQuery, err)
 	}
 
 	pag, limit := req.Pagination.GetResponseWithPageSize(10)
@@ -305,7 +306,7 @@ func (s *Server) ListUnitActivity(ctx context.Context, req *ListUnitActivityRequ
 
 	if err := stmt.QueryContext(ctx, s.db, &resp.Activity); err != nil {
 		if !errors.Is(err, qrm.ErrNoRows) {
-			return nil, err
+			return nil, errswrap.NewError(errorscentrum.ErrFailedQuery, err)
 		}
 	}
 
@@ -313,7 +314,7 @@ func (s *Server) ListUnitActivity(ctx context.Context, req *ListUnitActivityRequ
 		if resp.Activity[i].UnitId > 0 && resp.Activity[i].User != nil {
 			unit, err := s.state.GetUnit(userInfo.Job, resp.Activity[i].UnitId)
 			if err != nil {
-				return nil, err
+				return nil, errswrap.NewError(errorscentrum.ErrFailedQuery, err)
 			}
 
 			newUnit := proto.Clone(unit)

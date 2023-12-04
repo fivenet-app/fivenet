@@ -14,6 +14,7 @@ import (
 	"github.com/galexrt/fivenet/gen/go/proto/resources/users"
 	"github.com/galexrt/fivenet/pkg/grpc/auth"
 	"github.com/galexrt/fivenet/pkg/grpc/auth/userinfo"
+	"github.com/galexrt/fivenet/pkg/grpc/errswrap"
 	"github.com/galexrt/fivenet/pkg/notifi"
 	"github.com/galexrt/fivenet/pkg/perms"
 	"github.com/galexrt/fivenet/query/fivenet/table"
@@ -98,7 +99,7 @@ func (s *Server) GetNotifications(ctx context.Context, req *GetNotificationsRequ
 
 	var count database.DataCount
 	if err := countStmt.QueryContext(ctx, s.db, &count); err != nil {
-		return nil, ErrFailedRequest
+		return nil, errswrap.NewError(ErrFailedRequest, err)
 	}
 
 	pag, limit := req.Pagination.GetResponse()
@@ -130,7 +131,7 @@ func (s *Server) GetNotifications(ctx context.Context, req *GetNotificationsRequ
 
 	if err := stmt.QueryContext(ctx, s.db, &resp.Notifications); err != nil {
 		if !errors.Is(err, qrm.ErrNoRows) {
-			return nil, ErrFailedRequest
+			return nil, errswrap.NewError(ErrFailedRequest, err)
 		}
 	}
 
@@ -168,12 +169,12 @@ func (s *Server) MarkNotifications(ctx context.Context, req *MarkNotificationsRe
 
 	res, err := stmt.ExecContext(ctx, s.db)
 	if err != nil {
-		return nil, ErrFailedRequest
+		return nil, errswrap.NewError(ErrFailedRequest, err)
 	}
 
 	rows, err := res.RowsAffected()
 	if err != nil {
-		return nil, ErrFailedRequest
+		return nil, errswrap.NewError(ErrFailedRequest, err)
 	}
 
 	return &MarkNotificationsResponse{
@@ -205,7 +206,7 @@ func (s *Server) getNotifications(ctx context.Context, userId int32, lastId uint
 
 	var dest []*notifications.Notification
 	if err := stmt.QueryContext(ctx, s.db, &dest); err != nil {
-		return nil, ErrFailedStream
+		return nil, errswrap.NewError(ErrFailedStream, err)
 	}
 
 	return dest, nil

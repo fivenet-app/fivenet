@@ -12,6 +12,7 @@ import (
 	errorsdocstore "github.com/galexrt/fivenet/gen/go/proto/services/docstore/errors"
 	permsdocstore "github.com/galexrt/fivenet/gen/go/proto/services/docstore/perms"
 	"github.com/galexrt/fivenet/pkg/grpc/auth"
+	"github.com/galexrt/fivenet/pkg/grpc/errswrap"
 	"github.com/galexrt/fivenet/query/fivenet/model"
 	"github.com/galexrt/fivenet/query/fivenet/table"
 	jet "github.com/go-jet/jet/v2/mysql"
@@ -65,7 +66,7 @@ func (s *Server) ListTemplates(ctx context.Context, req *ListTemplatesRequest) (
 	resp := &ListTemplatesResponse{}
 	if err := stmt.QueryContext(ctx, s.db, &resp.Templates); err != nil {
 		if !errors.Is(err, qrm.ErrNoRows) {
-			return nil, err
+			return nil, errswrap.NewError(errorsdocstore.ErrFailedQuery, err)
 		}
 	}
 
@@ -79,22 +80,22 @@ func (s *Server) GetTemplate(ctx context.Context, req *GetTemplateRequest) (*Get
 
 	check, err := s.checkIfUserHasAccessToTemplate(ctx, req.TemplateId, userInfo, false, documents.AccessLevel_ACCESS_LEVEL_VIEW)
 	if err != nil {
-		return nil, errorsdocstore.ErrFailedQuery
+		return nil, errswrap.NewError(errorsdocstore.ErrFailedQuery, err)
 	}
 	if !check && !userInfo.SuperUser {
-		return nil, errorsdocstore.ErrTemplateNoPerms
+		return nil, errswrap.NewError(errorsdocstore.ErrTemplateNoPerms, err)
 	}
 
 	resp := &GetTemplateResponse{}
 	resp.Template, err = s.getTemplate(ctx, req.TemplateId)
 	if err != nil {
-		return nil, errorsdocstore.ErrFailedQuery
+		return nil, errswrap.NewError(errorsdocstore.ErrFailedQuery, err)
 	}
 
 	if req.Render == nil || !*req.Render {
 		resp.Template.JobAccess, err = s.getTemplateJobAccess(ctx, req.TemplateId)
 		if err != nil {
-			return nil, errorsdocstore.ErrFailedQuery
+			return nil, errswrap.NewError(errorsdocstore.ErrFailedQuery, err)
 		}
 	} else if req.Render != nil && *req.Render && req.Data != nil {
 		resp.Template.ContentTitle, resp.Template.State, resp.Template.Content, err = s.renderTemplate(resp.Template, req.Data)
@@ -102,7 +103,7 @@ func (s *Server) GetTemplate(ctx context.Context, req *GetTemplateRequest) (*Get
 			if s.ps.Can(userInfo, permsdocstore.DocStoreServicePerm, permsdocstore.DocStoreServiceCreateTemplatePerm) {
 				return nil, err
 			} else {
-				return nil, errorsdocstore.ErrTemplateFailed
+				return nil, errswrap.NewError(errorsdocstore.ErrTemplateFailed, err)
 			}
 		}
 
@@ -219,7 +220,7 @@ func (s *Server) CreateTemplate(ctx context.Context, req *CreateTemplateRequest)
 	// Begin transaction
 	tx, err := s.db.BeginTx(ctx, nil)
 	if err != nil {
-		return nil, errorsdocstore.ErrFailedQuery
+		return nil, errswrap.NewError(errorsdocstore.ErrFailedQuery, err)
 	}
 	// Defer a rollback in case anything fails
 	defer tx.Rollback()
@@ -228,7 +229,7 @@ func (s *Server) CreateTemplate(ctx context.Context, req *CreateTemplateRequest)
 	if req.Template.Category != nil {
 		cat, err := s.getCategory(ctx, req.Template.Category.Id)
 		if err != nil {
-			return nil, err
+			return nil, errswrap.NewError(errorsdocstore.ErrFailedQuery, err)
 		}
 		if cat != nil {
 			categoryId = jet.Uint64(cat.Id)
@@ -266,21 +267,21 @@ func (s *Server) CreateTemplate(ctx context.Context, req *CreateTemplateRequest)
 
 	res, err := stmt.ExecContext(ctx, tx)
 	if err != nil {
-		return nil, err
+		return nil, errswrap.NewError(errorsdocstore.ErrFailedQuery, err)
 	}
 
 	lastId, err := res.LastInsertId()
 	if err != nil {
-		return nil, err
+		return nil, errswrap.NewError(errorsdocstore.ErrFailedQuery, err)
 	}
 
 	if err := s.handleTemplateAccessChanges(ctx, tx, uint64(lastId), req.Template.JobAccess); err != nil {
-		return nil, errorsdocstore.ErrFailedQuery
+		return nil, errswrap.NewError(errorsdocstore.ErrFailedQuery, err)
 	}
 
 	// Commit the transaction
 	if err := tx.Commit(); err != nil {
-		return nil, errorsdocstore.ErrFailedQuery
+		return nil, errswrap.NewError(errorsdocstore.ErrFailedQuery, err)
 	}
 
 	auditEntry.State = int16(rector.EventType_EVENT_TYPE_CREATED)
@@ -306,17 +307,17 @@ func (s *Server) UpdateTemplate(ctx context.Context, req *UpdateTemplateRequest)
 
 	check, err := s.checkIfUserHasAccessToTemplate(ctx, req.Template.Id, userInfo, false, documents.AccessLevel_ACCESS_LEVEL_EDIT)
 	if err != nil {
-		return nil, errorsdocstore.ErrFailedQuery
+		return nil, errswrap.NewError(errorsdocstore.ErrFailedQuery, err)
 	}
 	if !check && !userInfo.SuperUser {
-		return nil, errorsdocstore.ErrTemplateNoPerms
+		return nil, errswrap.NewError(errorsdocstore.ErrTemplateNoPerms, err)
 	}
 
 	categoryId := jet.NULL
 	if req.Template.Category != nil {
 		cat, err := s.getCategory(ctx, req.Template.Category.Id)
 		if err != nil {
-			return nil, err
+			return nil, errswrap.NewError(errorsdocstore.ErrFailedQuery, err)
 		}
 		if cat != nil {
 			categoryId = jet.Uint64(cat.Id)
@@ -326,7 +327,7 @@ func (s *Server) UpdateTemplate(ctx context.Context, req *UpdateTemplateRequest)
 	// Begin transaction
 	tx, err := s.db.BeginTx(ctx, nil)
 	if err != nil {
-		return nil, errorsdocstore.ErrFailedQuery
+		return nil, errswrap.NewError(errorsdocstore.ErrFailedQuery, err)
 	}
 	// Defer a rollback in case anything fails
 	defer tx.Rollback()
@@ -360,16 +361,16 @@ func (s *Server) UpdateTemplate(ctx context.Context, req *UpdateTemplateRequest)
 		)
 
 	if _, err := stmt.ExecContext(ctx, tx); err != nil {
-		return nil, errorsdocstore.ErrFailedQuery
+		return nil, errswrap.NewError(errorsdocstore.ErrFailedQuery, err)
 	}
 
 	if err := s.handleTemplateAccessChanges(ctx, tx, req.Template.Id, req.Template.JobAccess); err != nil {
-		return nil, errorsdocstore.ErrFailedQuery
+		return nil, errswrap.NewError(errorsdocstore.ErrFailedQuery, err)
 	}
 
 	// Commit the transaction
 	if err := tx.Commit(); err != nil {
-		return nil, errorsdocstore.ErrFailedQuery
+		return nil, errswrap.NewError(errorsdocstore.ErrFailedQuery, err)
 	}
 
 	auditEntry.State = int16(rector.EventType_EVENT_TYPE_UPDATED)
@@ -395,23 +396,23 @@ func (s *Server) DeleteTemplate(ctx context.Context, req *DeleteTemplateRequest)
 
 	check, err := s.checkIfUserHasAccessToTemplate(ctx, req.Id, userInfo, false, documents.AccessLevel_ACCESS_LEVEL_EDIT)
 	if err != nil {
-		return nil, errorsdocstore.ErrFailedQuery
+		return nil, errswrap.NewError(errorsdocstore.ErrFailedQuery, err)
 	}
 
 	dTmpl, err := s.getTemplate(ctx, req.Id)
 	if err != nil {
-		return nil, errorsdocstore.ErrFailedQuery
+		return nil, errswrap.NewError(errorsdocstore.ErrFailedQuery, err)
 	}
 
 	if !check && !userInfo.SuperUser {
 		if dTmpl.CreatorJob == nil {
-			return nil, errorsdocstore.ErrTemplateNoPerms
+			return nil, errswrap.NewError(errorsdocstore.ErrTemplateNoPerms, err)
 		}
 
 		// Make sure the highest job grade can delete the template
 		grade := s.cache.GetHighestJobGrade(userInfo.Job)
 		if grade == nil || (userInfo.Job == *dTmpl.CreatorJob && grade.Grade != userInfo.JobGrade) {
-			return nil, errorsdocstore.ErrTemplateNoPerms
+			return nil, errswrap.NewError(errorsdocstore.ErrTemplateNoPerms, err)
 		}
 	}
 
@@ -424,7 +425,7 @@ func (s *Server) DeleteTemplate(ctx context.Context, req *DeleteTemplateRequest)
 		)
 
 	if _, err := stmt.ExecContext(ctx, s.db); err != nil {
-		return nil, err
+		return nil, errswrap.NewError(errorsdocstore.ErrFailedQuery, err)
 	}
 
 	auditEntry.State = int16(rector.EventType_EVENT_TYPE_DELETED)

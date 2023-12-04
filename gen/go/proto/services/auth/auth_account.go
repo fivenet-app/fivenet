@@ -35,7 +35,7 @@ func (s *Server) GetAccountInfo(ctx context.Context, req *GetAccountInfoRequest)
 		return nil, errswrap.NewError(ErrGenericAccount, err)
 	}
 	if acc == nil || acc.ID == 0 {
-		return nil, ErrGenericAccount
+		return nil, errswrap.NewError(ErrGenericAccount, err)
 	}
 
 	oauth2Providers := make([]*accounts.OAuth2Provider, len(s.oauth2Providers))

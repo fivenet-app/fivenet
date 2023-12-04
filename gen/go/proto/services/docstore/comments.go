@@ -9,6 +9,7 @@ import (
 	errorsdocstore "github.com/galexrt/fivenet/gen/go/proto/services/docstore/errors"
 	permsdocstore "github.com/galexrt/fivenet/gen/go/proto/services/docstore/perms"
 	"github.com/galexrt/fivenet/pkg/grpc/auth"
+	"github.com/galexrt/fivenet/pkg/grpc/errswrap"
 	"github.com/galexrt/fivenet/pkg/perms"
 	"github.com/galexrt/fivenet/query/fivenet/model"
 	"github.com/galexrt/fivenet/query/fivenet/table"
@@ -32,10 +33,10 @@ func (s *Server) GetComments(ctx context.Context, req *GetCommentsRequest) (*Get
 
 	ok, err := s.checkIfUserHasAccessToDoc(ctx, req.DocumentId, userInfo, documents.AccessLevel_ACCESS_LEVEL_VIEW)
 	if err != nil {
-		return nil, errorsdocstore.ErrFailedQuery
+		return nil, errswrap.NewError(errorsdocstore.ErrFailedQuery, err)
 	}
 	if !ok {
-		return nil, errorsdocstore.ErrCommentViewDenied
+		return nil, errswrap.NewError(errorsdocstore.ErrCommentViewDenied, err)
 	}
 
 	tDComments := tDComments.AS("comment")
@@ -62,7 +63,7 @@ func (s *Server) GetComments(ctx context.Context, req *GetCommentsRequest) (*Get
 
 	var count database.DataCount
 	if err := countStmt.QueryContext(ctx, s.db, &count); err != nil {
-		return nil, err
+		return nil, errswrap.NewError(errorsdocstore.ErrFailedQuery, err)
 	}
 
 	pag, limit := req.Pagination.GetResponseWithPageSize(CommentsDefaultPageLimit)
@@ -113,7 +114,7 @@ func (s *Server) GetComments(ctx context.Context, req *GetCommentsRequest) (*Get
 		LIMIT(limit)
 
 	if err := stmt.QueryContext(ctx, s.db, &resp.Comments); err != nil {
-		return nil, err
+		return nil, errswrap.NewError(errorsdocstore.ErrFailedQuery, err)
 	}
 
 	resp.Pagination.Update(count.TotalCount, len(resp.Comments))
@@ -144,10 +145,10 @@ func (s *Server) PostComment(ctx context.Context, req *PostCommentRequest) (*Pos
 
 	check, err := s.checkIfUserHasAccessToDoc(ctx, req.Comment.DocumentId, userInfo, documents.AccessLevel_ACCESS_LEVEL_COMMENT)
 	if err != nil {
-		return nil, err
+		return nil, errswrap.NewError(errorsdocstore.ErrFailedQuery, err)
 	}
 	if !check && !userInfo.SuperUser {
-		return nil, errorsdocstore.ErrCommentPostDenied
+		return nil, errswrap.NewError(errorsdocstore.ErrCommentPostDenied, err)
 	}
 
 	stmt := tDComments.
@@ -164,12 +165,12 @@ func (s *Server) PostComment(ctx context.Context, req *PostCommentRequest) (*Pos
 
 	result, err := stmt.ExecContext(ctx, s.db)
 	if err != nil {
-		return nil, err
+		return nil, errswrap.NewError(errorsdocstore.ErrFailedQuery, err)
 	}
 
 	lastId, err := result.LastInsertId()
 	if err != nil {
-		return nil, err
+		return nil, errswrap.NewError(errorsdocstore.ErrFailedQuery, err)
 	}
 
 	if err := s.AddDocumentActivity(ctx, s.db, &documents.DocActivity{
@@ -178,7 +179,7 @@ func (s *Server) PostComment(ctx context.Context, req *PostCommentRequest) (*Pos
 		CreatorId:    &userInfo.UserId,
 		CreatorJob:   userInfo.Job,
 	}); err != nil {
-		return nil, errorsdocstore.ErrFailedQuery
+		return nil, errswrap.NewError(errorsdocstore.ErrFailedQuery, err)
 	}
 
 	auditEntry.State = int16(rector.EventType_EVENT_TYPE_CREATED)
@@ -204,18 +205,18 @@ func (s *Server) EditComment(ctx context.Context, req *EditCommentRequest) (*Edi
 
 	check, err := s.checkIfUserHasAccessToDoc(ctx, req.Comment.DocumentId, userInfo, documents.AccessLevel_ACCESS_LEVEL_COMMENT)
 	if err != nil {
-		return nil, err
+		return nil, errswrap.NewError(errorsdocstore.ErrFailedQuery, err)
 	}
 	if !check && !userInfo.SuperUser {
-		return nil, errorsdocstore.ErrCommentEditDenied
+		return nil, errswrap.NewError(errorsdocstore.ErrCommentEditDenied, err)
 	}
 
 	comment, err := s.getComment(ctx, req.Comment.Id)
 	if err != nil {
-		return nil, err
+		return nil, errswrap.NewError(errorsdocstore.ErrFailedQuery, err)
 	}
 	if !userInfo.SuperUser && *comment.CreatorId != userInfo.UserId {
-		return nil, errorsdocstore.ErrCommentEditDenied
+		return nil, errswrap.NewError(errorsdocstore.ErrCommentEditDenied, err)
 	}
 
 	stmt := tDComments.
@@ -233,7 +234,7 @@ func (s *Server) EditComment(ctx context.Context, req *EditCommentRequest) (*Edi
 		)
 
 	if _, err := stmt.ExecContext(ctx, s.db); err != nil {
-		return nil, err
+		return nil, errswrap.NewError(errorsdocstore.ErrFailedQuery, err)
 	}
 
 	comment.Comment = req.Comment.Comment
@@ -244,7 +245,7 @@ func (s *Server) EditComment(ctx context.Context, req *EditCommentRequest) (*Edi
 		CreatorId:    &userInfo.UserId,
 		CreatorJob:   userInfo.Job,
 	}); err != nil {
-		return nil, errorsdocstore.ErrFailedQuery
+		return nil, errswrap.NewError(errorsdocstore.ErrFailedQuery, err)
 	}
 
 	auditEntry.State = int16(rector.EventType_EVENT_TYPE_UPDATED)
@@ -297,28 +298,28 @@ func (s *Server) DeleteComment(ctx context.Context, req *DeleteCommentRequest) (
 
 	comment, err := s.getComment(ctx, req.CommentId)
 	if err != nil {
-		return nil, err
+		return nil, errswrap.NewError(errorsdocstore.ErrFailedQuery, err)
 	}
 
 	check, err := s.checkIfUserHasAccessToDoc(ctx, comment.DocumentId, userInfo, documents.AccessLevel_ACCESS_LEVEL_COMMENT)
 	if err != nil {
-		return nil, err
+		return nil, errswrap.NewError(errorsdocstore.ErrFailedQuery, err)
 	}
 	if !check && !userInfo.SuperUser {
-		return nil, errorsdocstore.ErrCommentDeleteDenied
+		return nil, errswrap.NewError(errorsdocstore.ErrCommentDeleteDenied, err)
 	}
 
 	// Field Permission Check
 	fieldsAttr, err := s.ps.Attr(userInfo, permsdocstore.DocStoreServicePerm, permsdocstore.DocStoreServiceDeleteCommentPerm, permsdocstore.DocStoreServiceDeleteCommentAccessPermField)
 	if err != nil {
-		return nil, errorsdocstore.ErrFailedQuery
+		return nil, errswrap.NewError(errorsdocstore.ErrFailedQuery, err)
 	}
 	var fields perms.StringList
 	if fieldsAttr != nil {
 		fields = fieldsAttr.([]string)
 	}
 	if !s.checkIfHasAccess(fields, userInfo, comment.Creator.Job, comment.Creator) {
-		return nil, errorsdocstore.ErrCommentDeleteDenied
+		return nil, errswrap.NewError(errorsdocstore.ErrCommentDeleteDenied, err)
 	}
 
 	stmt := tDComments.
@@ -336,7 +337,7 @@ func (s *Server) DeleteComment(ctx context.Context, req *DeleteCommentRequest) (
 		)
 
 	if _, err := stmt.ExecContext(ctx, s.db); err != nil {
-		return nil, err
+		return nil, errswrap.NewError(errorsdocstore.ErrFailedQuery, err)
 	}
 
 	if err := s.AddDocumentActivity(ctx, s.db, &documents.DocActivity{
@@ -345,7 +346,7 @@ func (s *Server) DeleteComment(ctx context.Context, req *DeleteCommentRequest) (
 		CreatorId:    &userInfo.UserId,
 		CreatorJob:   userInfo.Job,
 	}); err != nil {
-		return nil, errorsdocstore.ErrFailedQuery
+		return nil, errswrap.NewError(errorsdocstore.ErrFailedQuery, err)
 	}
 
 	auditEntry.State = int16(rector.EventType_EVENT_TYPE_DELETED)

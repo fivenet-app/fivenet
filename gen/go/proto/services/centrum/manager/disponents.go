@@ -6,6 +6,7 @@ import (
 	"github.com/galexrt/fivenet/gen/go/proto/resources/centrum"
 	errorscentrum "github.com/galexrt/fivenet/gen/go/proto/services/centrum/errors"
 	eventscentrum "github.com/galexrt/fivenet/gen/go/proto/services/centrum/events"
+	"github.com/galexrt/fivenet/pkg/grpc/errswrap"
 	"github.com/galexrt/fivenet/pkg/utils/dbutils"
 	jet "github.com/go-jet/jet/v2/mysql"
 	"google.golang.org/protobuf/proto"
@@ -39,7 +40,7 @@ func (s *Manager) DisponentSignOn(ctx context.Context, job string, userId int32,
 
 		if _, err := stmt.ExecContext(ctx, s.db); err != nil {
 			if !dbutils.IsDuplicateError(err) {
-				return errorscentrum.ErrFailedQuery
+				return errswrap.NewError(errorscentrum.ErrFailedQuery, err)
 			}
 		}
 	} else {
@@ -52,13 +53,13 @@ func (s *Manager) DisponentSignOn(ctx context.Context, job string, userId int32,
 			LIMIT(1)
 
 		if _, err := stmt.ExecContext(ctx, s.db); err != nil {
-			return errorscentrum.ErrFailedQuery
+			return errswrap.NewError(errorscentrum.ErrFailedQuery, err)
 		}
 	}
 
 	// Load updated disponents into state
 	if err := s.LoadDisponentsFromDB(ctx, job); err != nil {
-		return errorscentrum.ErrFailedQuery
+		return errswrap.NewError(errorscentrum.ErrFailedQuery, err)
 	}
 
 	disponents, err := s.GetDisponents(job)
@@ -72,7 +73,7 @@ func (s *Manager) DisponentSignOn(ctx context.Context, job string, userId int32,
 	}
 	data, err := proto.Marshal(change)
 	if err != nil {
-		return errorscentrum.ErrFailedQuery
+		return errswrap.NewError(errorscentrum.ErrFailedQuery, err)
 	}
 
 	if _, err := s.js.Publish(eventscentrum.BuildSubject(eventscentrum.TopicGeneral, eventscentrum.TypeGeneralDisponents, job), data); err != nil {

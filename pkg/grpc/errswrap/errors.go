@@ -8,24 +8,22 @@ const GRPCOrigErrorTag = "grpc.error_orig"
 
 type IWrappedError interface {
 	GRPCStatus() *status.Status
-	GetOrigErr() error
+	OrigErr() error
 }
 
 // Error wraps a pointer of a status proto and an original error. It implements error and Status,
 // and a nil *Error should never be returned by this package.
 type Error struct {
-	s  *status.Status
-	se error
-
+	s *status.Status
 	e error
 }
 
-func (e *Error) OrigError() error {
+func (e *Error) OrigErr() error {
 	return e.e
 }
 
 func (e *Error) Error() string {
-	return e.s.String()
+	return e.e.Error()
 }
 
 // GRPCStatus returns the Status represented by s.
@@ -35,8 +33,7 @@ func (e *Error) GRPCStatus() *status.Status {
 
 func NewError(s error, e error) error {
 	return &Error{
-		s:  status.Convert(s),
-		se: s,
-		e:  e,
+		s: status.Convert(s),
+		e: e,
 	}
 }

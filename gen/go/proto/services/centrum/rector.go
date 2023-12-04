@@ -4,7 +4,9 @@ import (
 	"context"
 
 	"github.com/galexrt/fivenet/gen/go/proto/resources/rector"
+	errorscentrum "github.com/galexrt/fivenet/gen/go/proto/services/centrum/errors"
 	"github.com/galexrt/fivenet/pkg/grpc/auth"
+	"github.com/galexrt/fivenet/pkg/grpc/errswrap"
 	"github.com/galexrt/fivenet/query/fivenet/model"
 )
 
@@ -32,7 +34,7 @@ func (s *Server) UpdateSettings(ctx context.Context, req *UpdateSettingsRequest)
 
 	settings, err := s.state.UpdateSettingsInDB(ctx, userInfo.Job, req.Settings)
 	if err != nil {
-		return nil, err
+		return nil, errswrap.NewError(errorscentrum.ErrFailedQuery, err)
 	}
 
 	auditEntry.State = int16(rector.EventType_EVENT_TYPE_UPDATED)

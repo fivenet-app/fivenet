@@ -14,6 +14,7 @@ import (
 	eventscentrum "github.com/galexrt/fivenet/gen/go/proto/services/centrum/events"
 	"github.com/galexrt/fivenet/gen/go/proto/services/centrum/state"
 	centrumutils "github.com/galexrt/fivenet/gen/go/proto/services/centrum/utils"
+	"github.com/galexrt/fivenet/pkg/grpc/errswrap"
 	"github.com/galexrt/fivenet/pkg/utils/dbutils"
 	"github.com/galexrt/fivenet/query/fivenet/table"
 	jet "github.com/go-jet/jet/v2/mysql"
@@ -30,7 +31,7 @@ func (s *Manager) UpdateDispatchStatus(ctx context.Context, job string, dspId ui
 	dsp, err := s.GetDispatch(job, dspId)
 	if err != nil {
 		if !errors.Is(err, nats.ErrKeyNotFound) {
-			return nil, errorscentrum.ErrFailedQuery
+			return nil, errswrap.NewError(errorscentrum.ErrFailedQuery, err)
 		}
 	}
 
@@ -59,7 +60,7 @@ func (s *Manager) UpdateDispatchStatus(ctx context.Context, job string, dspId ui
 		var err error
 		in.User, err = s.resolveUserShortById(ctx, *in.UserId)
 		if err != nil {
-			return nil, errorscentrum.ErrFailedQuery
+			return nil, errswrap.NewError(errorscentrum.ErrFailedQuery, err)
 		}
 
 		if marker, ok := s.tracker.GetUserById(*in.UserId); ok {
@@ -98,12 +99,12 @@ func (s *Manager) UpdateDispatchStatus(ctx context.Context, job string, dspId ui
 
 	res, err := stmt.ExecContext(ctx, s.db)
 	if err != nil {
-		return nil, errorscentrum.ErrFailedQuery
+		return nil, errswrap.NewError(errorscentrum.ErrFailedQuery, err)
 	}
 
 	lastId, err := res.LastInsertId()
 	if err != nil {
-		return nil, errorscentrum.ErrFailedQuery
+		return nil, errswrap.NewError(errorscentrum.ErrFailedQuery, err)
 	}
 	in.Id = uint64(lastId)
 
@@ -113,7 +114,7 @@ func (s *Manager) UpdateDispatchStatus(ctx context.Context, job string, dspId ui
 
 	data, err := proto.Marshal(in)
 	if err != nil {
-		return nil, errorscentrum.ErrFailedQuery
+		return nil, errswrap.NewError(errorscentrum.ErrFailedQuery, err)
 	}
 
 	if _, err := s.js.Publish(eventscentrum.BuildSubject(eventscentrum.TopicDispatch, eventscentrum.TypeDispatchStatus, job), data); err != nil {
@@ -425,7 +426,7 @@ func (s *Manager) CreateDispatch(ctx context.Context, dsp *centrum.Dispatch) (*c
 		var err error
 		dsp.Creator, err = s.ResolveUserById(ctx, *dsp.CreatorId)
 		if err != nil {
-			return nil, errorscentrum.ErrFailedQuery
+			return nil, errswrap.NewError(errorscentrum.ErrFailedQuery, err)
 		}
 	}
 
@@ -714,13 +715,13 @@ func (s *Manager) TakeDispatch(ctx context.Context, job string, userId int32, un
 				if !slices.ContainsFunc(dsp.Units, func(in *centrum.DispatchAssignment) bool {
 					return in.UnitId == unitId
 				}) {
-					return nil, errorscentrum.ErrModeForbidsAction
+					return nil, errswrap.NewError(errorscentrum.ErrModeForbidsAction, err)
 				}
 			}
 
 			// If dispatch is completed, disallow to accept the dispatch
 			if dsp.Status != nil && centrumutils.IsStatusDispatchComplete(dsp.Status.Status) {
-				return nil, errorscentrum.ErrDispatchAlreadyCompleted
+				return nil, errswrap.NewError(errorscentrum.ErrDispatchAlreadyCompleted, err)
 			}
 
 			status := centrum.StatusDispatch_STATUS_DISPATCH_UNSPECIFIED
@@ -766,7 +767,7 @@ func (s *Manager) TakeDispatch(ctx context.Context, job string, userId int32, un
 							Y:         y,
 							Postal:    postal,
 						}); err != nil {
-							return nil, errorscentrum.ErrFailedQuery
+							return nil, errswrap.NewError(errorscentrum.ErrFailedQuery, err)
 						}
 					}
 				}
@@ -793,7 +794,7 @@ func (s *Manager) TakeDispatch(ctx context.Context, job string, userId int32, un
 				Postal:     postal,
 			}
 			if err := s.AddDispatchStatus(ctx, s.db, job, dsp.Status, true); err != nil {
-				return nil, errorscentrum.ErrFailedQuery
+				return nil, errswrap.NewError(errorscentrum.ErrFailedQuery, err)
 			}
 
 			return dsp, nil

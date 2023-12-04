@@ -12,6 +12,7 @@ import (
 	"github.com/galexrt/fivenet/gen/go/proto/resources/timestamp"
 	errorscentrum "github.com/galexrt/fivenet/gen/go/proto/services/centrum/errors"
 	"github.com/galexrt/fivenet/pkg/grpc/auth"
+	"github.com/galexrt/fivenet/pkg/grpc/errswrap"
 	"github.com/galexrt/fivenet/query/fivenet/model"
 	"github.com/galexrt/fivenet/query/fivenet/table"
 	jet "github.com/go-jet/jet/v2/mysql"
@@ -75,7 +76,7 @@ func (s *Server) ListDispatches(ctx context.Context, req *ListDispatchesRequest)
 
 	var count database.DataCount
 	if err := countStmt.QueryContext(ctx, s.db, &count); err != nil {
-		return nil, errorscentrum.ErrFailedQuery
+		return nil, errswrap.NewError(errorscentrum.ErrFailedQuery, err)
 	}
 
 	pag, limit := req.Pagination.GetResponse()
@@ -135,7 +136,7 @@ func (s *Server) ListDispatches(ctx context.Context, req *ListDispatchesRequest)
 		LIMIT(limit)
 
 	if err := stmt.QueryContext(ctx, s.db, &resp.Dispatches); err != nil {
-		return nil, errorscentrum.ErrFailedQuery
+		return nil, errswrap.NewError(errorscentrum.ErrFailedQuery, err)
 	}
 
 	resp.Pagination.Update(count.TotalCount, len(resp.Dispatches))
@@ -144,13 +145,13 @@ func (s *Server) ListDispatches(ctx context.Context, req *ListDispatchesRequest)
 		var err error
 		resp.Dispatches[i].Units, err = s.state.LoadDispatchAssignments(ctx, resp.Dispatches[i].Job, resp.Dispatches[i].Id)
 		if err != nil {
-			return nil, errorscentrum.ErrFailedQuery
+			return nil, errswrap.NewError(errorscentrum.ErrFailedQuery, err)
 		}
 
 		if resp.Dispatches[i].CreatorId != nil {
 			resp.Dispatches[i].Creator, err = s.state.ResolveUserById(ctx, *resp.Dispatches[i].CreatorId)
 			if err != nil {
-				return nil, err
+				return nil, errswrap.NewError(errorscentrum.ErrFailedQuery, err)
 			}
 
 			if resp.Dispatches[i].Creator != nil {
@@ -186,7 +187,7 @@ func (s *Server) CreateDispatch(ctx context.Context, req *CreateDispatchRequest)
 	req.Dispatch.CreatedAt = timestamp.Now()
 	dsp, err := s.state.CreateDispatch(ctx, req.Dispatch)
 	if err != nil {
-		return nil, errorscentrum.ErrFailedQuery
+		return nil, errswrap.NewError(errorscentrum.ErrFailedQuery, err)
 	}
 
 	auditEntry.State = int16(rector.EventType_EVENT_TYPE_CREATED)
@@ -210,7 +211,7 @@ func (s *Server) UpdateDispatch(ctx context.Context, req *UpdateDispatchRequest)
 
 	oldDsp, err := s.state.GetDispatch(userInfo.Job, req.Dispatch.Id)
 	if oldDsp == nil || err != nil {
-		return nil, errorscentrum.ErrFailedQuery
+		return nil, errswrap.NewError(errorscentrum.ErrFailedQuery, err)
 	}
 	if oldDsp.X != req.Dispatch.X || oldDsp.Y != req.Dispatch.Y {
 		if locs := s.state.GetDispatchLocations(oldDsp.Job); locs != nil {
@@ -221,7 +222,7 @@ func (s *Server) UpdateDispatch(ctx context.Context, req *UpdateDispatchRequest)
 	}
 
 	if _, err := s.state.UpdateDispatch(ctx, userInfo.Job, &userInfo.UserId, req.Dispatch, true); err != nil {
-		return nil, errorscentrum.ErrFailedQuery
+		return nil, errswrap.NewError(errorscentrum.ErrFailedQuery, err)
 	}
 
 	auditEntry.State = int16(rector.EventType_EVENT_TYPE_UPDATED)
@@ -247,7 +248,7 @@ func (s *Server) TakeDispatch(ctx context.Context, req *TakeDispatchRequest) (*T
 	}
 
 	if err := s.state.TakeDispatch(ctx, userInfo.Job, userInfo.UserId, unitId, req.Resp, req.DispatchIds); err != nil {
-		return nil, err
+		return nil, errswrap.NewError(errorscentrum.ErrFailedQuery, err)
 	}
 
 	auditEntry.State = int16(rector.EventType_EVENT_TYPE_UPDATED)
@@ -269,18 +270,18 @@ func (s *Server) UpdateDispatchStatus(ctx context.Context, req *UpdateDispatchSt
 
 	dsp, err := s.state.GetDispatch(userInfo.Job, req.DispatchId)
 	if err != nil {
-		return nil, errorscentrum.ErrFailedQuery
+		return nil, errswrap.NewError(errorscentrum.ErrFailedQuery, err)
 	}
 
 	if !s.state.CheckIfUserIsPartOfDispatch(userInfo, dsp, true) && !userInfo.SuperUser {
-		return nil, errorscentrum.ErrNotPartOfDispatch
+		return nil, errswrap.NewError(errorscentrum.ErrNotPartOfDispatch, err)
 	}
 
 	var statusUnitId *uint64
 	unitId, ok := s.state.GetUserUnitID(userInfo.UserId)
 	if !ok {
 		if !s.state.CheckIfUserIsDisponent(userInfo.Job, userInfo.UserId) {
-			return nil, errorscentrum.ErrNotPartOfDispatch
+			return nil, errswrap.NewError(errorscentrum.ErrNotPartOfDispatch, err)
 		}
 	} else {
 		statusUnitId = &unitId
@@ -295,7 +296,7 @@ func (s *Server) UpdateDispatchStatus(ctx context.Context, req *UpdateDispatchSt
 		Reason:     req.Reason,
 		UserId:     &userInfo.UserId,
 	}); err != nil {
-		return nil, errorscentrum.ErrFailedQuery
+		return nil, errswrap.NewError(errorscentrum.ErrFailedQuery, err)
 	}
 
 	if req.Status == centrum.StatusDispatch_STATUS_DISPATCH_EN_ROUTE ||
@@ -311,7 +312,7 @@ func (s *Server) UpdateDispatchStatus(ctx context.Context, req *UpdateDispatchSt
 					UserId:    &userInfo.UserId,
 					CreatorId: &userInfo.UserId,
 				}); err != nil {
-					return nil, errorscentrum.ErrFailedQuery
+					return nil, errswrap.NewError(errorscentrum.ErrFailedQuery, err)
 				}
 			}
 		}
@@ -336,11 +337,11 @@ func (s *Server) AssignDispatch(ctx context.Context, req *AssignDispatchRequest)
 
 	dsp, err := s.state.GetDispatch(userInfo.Job, req.DispatchId)
 	if err != nil {
-		return nil, errorscentrum.ErrFailedQuery
+		return nil, errswrap.NewError(errorscentrum.ErrFailedQuery, err)
 	}
 
 	if dsp.Job != userInfo.Job {
-		return nil, errorscentrum.ErrFailedQuery
+		return nil, errswrap.NewError(errorscentrum.ErrFailedQuery, err)
 	}
 
 	expiresAt := time.Time{}
@@ -349,7 +350,7 @@ func (s *Server) AssignDispatch(ctx context.Context, req *AssignDispatchRequest)
 	}
 
 	if err := s.state.UpdateDispatchAssignments(ctx, userInfo.Job, &userInfo.UserId, dsp.Id, req.ToAdd, req.ToRemove, expiresAt); err != nil {
-		return nil, errorscentrum.ErrFailedQuery
+		return nil, errswrap.NewError(errorscentrum.ErrFailedQuery, err)
 	}
 
 	auditEntry.State = int16(rector.EventType_EVENT_TYPE_UPDATED)
@@ -377,7 +378,7 @@ func (s *Server) ListDispatchActivity(ctx context.Context, req *ListDispatchActi
 
 	var count database.DataCount
 	if err := countStmt.QueryContext(ctx, s.db, &count); err != nil {
-		return nil, errorscentrum.ErrFailedQuery
+		return nil, errswrap.NewError(errorscentrum.ErrFailedQuery, err)
 	}
 
 	pag, limit := req.Pagination.GetResponseWithPageSize(10)
@@ -422,7 +423,7 @@ func (s *Server) ListDispatchActivity(ctx context.Context, req *ListDispatchActi
 
 	if err := stmt.QueryContext(ctx, s.db, &resp.Activity); err != nil {
 		if !errors.Is(err, qrm.ErrNoRows) {
-			return nil, errorscentrum.ErrFailedQuery
+			return nil, errswrap.NewError(errorscentrum.ErrFailedQuery, err)
 		}
 	}
 	for i := 0; i < len(resp.Activity); i++ {
@@ -430,7 +431,7 @@ func (s *Server) ListDispatchActivity(ctx context.Context, req *ListDispatchActi
 			var err error
 			resp.Activity[i].Unit, err = s.state.GetUnit(userInfo.Job, *resp.Activity[i].UnitId)
 			if err != nil {
-				return nil, errorscentrum.ErrFailedQuery
+				return nil, errswrap.NewError(errorscentrum.ErrFailedQuery, err)
 			}
 		}
 	}
@@ -453,7 +454,7 @@ func (s *Server) DeleteDispatch(ctx context.Context, req *DeleteDispatchRequest)
 	defer s.auditer.Log(auditEntry, req)
 
 	if err := s.state.DeleteDispatch(ctx, userInfo.Job, req.Id, true); err != nil {
-		return nil, errorscentrum.ErrFailedQuery
+		return nil, errswrap.NewError(errorscentrum.ErrFailedQuery, err)
 	}
 
 	auditEntry.State = int16(rector.EventType_EVENT_TYPE_DELETED)

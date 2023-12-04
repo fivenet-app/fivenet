@@ -6,6 +6,7 @@ import (
 	"github.com/galexrt/fivenet/gen/go/proto/resources/laws"
 	rector "github.com/galexrt/fivenet/gen/go/proto/resources/rector"
 	"github.com/galexrt/fivenet/pkg/grpc/auth"
+	"github.com/galexrt/fivenet/pkg/grpc/errswrap"
 	"github.com/galexrt/fivenet/query/fivenet/model"
 	"github.com/galexrt/fivenet/query/fivenet/table"
 	jet "github.com/go-jet/jet/v2/mysql"
@@ -41,12 +42,12 @@ func (s *Server) CreateOrUpdateLawBook(ctx context.Context, req *CreateOrUpdateL
 
 		result, err := stmt.ExecContext(ctx, s.db)
 		if err != nil {
-			return nil, err
+			return nil, errswrap.NewError(ErrFailedQuery, err)
 		}
 
 		lastId, err := result.LastInsertId()
 		if err != nil {
-			return nil, err
+			return nil, errswrap.NewError(ErrFailedQuery, err)
 		}
 
 		req.LawBook.Id = uint64(lastId)
@@ -67,7 +68,7 @@ func (s *Server) CreateOrUpdateLawBook(ctx context.Context, req *CreateOrUpdateL
 			))
 
 		if _, err := stmt.ExecContext(ctx, s.db); err != nil {
-			return nil, err
+			return nil, errswrap.NewError(ErrFailedQuery, err)
 		}
 
 		auditEntry.State = int16(rector.EventType_EVENT_TYPE_UPDATED)
@@ -75,7 +76,7 @@ func (s *Server) CreateOrUpdateLawBook(ctx context.Context, req *CreateOrUpdateL
 
 	lawBook, err := s.getLawBook(ctx, req.LawBook.Id)
 	if err != nil {
-		return nil, err
+		return nil, errswrap.NewError(ErrFailedQuery, err)
 	}
 
 	s.cache.RefreshLaws(ctx, lawBook.Id)
@@ -99,7 +100,7 @@ func (s *Server) DeleteLawBook(ctx context.Context, req *DeleteLawBookRequest) (
 
 	lawBook, err := s.getLawBook(ctx, req.Id)
 	if err != nil {
-		return nil, err
+		return nil, errswrap.NewError(ErrFailedQuery, err)
 	}
 
 	stmt := tLawBooks.
@@ -110,11 +111,11 @@ func (s *Server) DeleteLawBook(ctx context.Context, req *DeleteLawBookRequest) (
 		LIMIT(1)
 
 	if _, err := stmt.ExecContext(ctx, s.db); err != nil {
-		return nil, err
+		return nil, errswrap.NewError(ErrFailedQuery, err)
 	}
 
 	if err := s.cache.RefreshLaws(ctx, lawBook.Id); err != nil {
-		return nil, ErrFailedQuery
+		return nil, errswrap.NewError(ErrFailedQuery, err)
 	}
 
 	return &DeleteLawBookResponse{}, nil
@@ -177,12 +178,12 @@ func (s *Server) CreateOrUpdateLaw(ctx context.Context, req *CreateOrUpdateLawRe
 
 		result, err := stmt.ExecContext(ctx, s.db)
 		if err != nil {
-			return nil, err
+			return nil, errswrap.NewError(ErrFailedQuery, err)
 		}
 
 		lastId, err := result.LastInsertId()
 		if err != nil {
-			return nil, err
+			return nil, errswrap.NewError(ErrFailedQuery, err)
 		}
 
 		req.Law.Id = uint64(lastId)
@@ -211,7 +212,7 @@ func (s *Server) CreateOrUpdateLaw(ctx context.Context, req *CreateOrUpdateLawRe
 			))
 
 		if _, err := stmt.ExecContext(ctx, s.db); err != nil {
-			return nil, err
+			return nil, errswrap.NewError(ErrFailedQuery, err)
 		}
 
 		auditEntry.State = int16(rector.EventType_EVENT_TYPE_UPDATED)
@@ -219,11 +220,11 @@ func (s *Server) CreateOrUpdateLaw(ctx context.Context, req *CreateOrUpdateLawRe
 
 	law, err := s.getLaw(ctx, req.Law.Id)
 	if err != nil {
-		return nil, err
+		return nil, errswrap.NewError(ErrFailedQuery, err)
 	}
 
 	if err := s.cache.RefreshLaws(ctx, req.Law.LawbookId); err != nil {
-		return nil, ErrFailedQuery
+		return nil, errswrap.NewError(ErrFailedQuery, err)
 	}
 
 	return &CreateOrUpdateLawResponse{
@@ -245,7 +246,7 @@ func (s *Server) DeleteLaw(ctx context.Context, req *DeleteLawRequest) (*DeleteL
 
 	law, err := s.getLaw(ctx, req.Id)
 	if err != nil {
-		return nil, err
+		return nil, errswrap.NewError(ErrFailedQuery, err)
 	}
 
 	stmt := tLaws.
@@ -256,7 +257,7 @@ func (s *Server) DeleteLaw(ctx context.Context, req *DeleteLawRequest) (*DeleteL
 		LIMIT(1)
 
 	if _, err := stmt.ExecContext(ctx, s.db); err != nil {
-		return nil, err
+		return nil, errswrap.NewError(ErrFailedQuery, err)
 	}
 
 	s.cache.RefreshLaws(ctx, law.LawbookId)

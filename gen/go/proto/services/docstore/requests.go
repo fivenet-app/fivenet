@@ -11,6 +11,7 @@ import (
 	"github.com/galexrt/fivenet/gen/go/proto/resources/users"
 	errorsdocstore "github.com/galexrt/fivenet/gen/go/proto/services/docstore/errors"
 	"github.com/galexrt/fivenet/pkg/grpc/auth"
+	"github.com/galexrt/fivenet/pkg/grpc/errswrap"
 	"github.com/galexrt/fivenet/pkg/notifi"
 	"github.com/galexrt/fivenet/query/fivenet/model"
 	jet "github.com/go-jet/jet/v2/mysql"
@@ -30,7 +31,7 @@ func (s *Server) RequestDocumentAction(ctx context.Context, req *RequestDocument
 
 	doc, err := s.getDocument(ctx, tDocument.ID.EQ(jet.Uint64(req.DocumentId)), userInfo)
 	if err != nil {
-		return nil, errorsdocstore.ErrFailedQuery
+		return nil, errswrap.NewError(errorsdocstore.ErrFailedQuery, err)
 	}
 
 	resp := &RequestDocumentActionResponse{}
@@ -43,7 +44,7 @@ func (s *Server) RequestDocumentAction(ctx context.Context, req *RequestDocument
 		Reason:       req.Reason,
 		Data:         &documents.DocActivityData{},
 	}); err != nil {
-		return nil, errorsdocstore.ErrFailedQuery
+		return nil, errswrap.NewError(errorsdocstore.ErrFailedQuery, err)
 	}
 
 	// If the document has no creator anymore, nothing we can do here
@@ -54,7 +55,7 @@ func (s *Server) RequestDocumentAction(ctx context.Context, req *RequestDocument
 	// TODO check if such a request was already made in the last 6 hours
 
 	if err := s.notifyUser(ctx, doc, userInfo.UserId, int32(*doc.CreatorId)); err != nil {
-		return nil, errorsdocstore.ErrFailedQuery
+		return nil, errswrap.NewError(errorsdocstore.ErrFailedQuery, err)
 	}
 
 	auditEntry.State = int16(rector.EventType_EVENT_TYPE_CREATED)
