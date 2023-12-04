@@ -1,5 +1,6 @@
 <script lang="ts" setup>
 import { LControl, LControlLayers, LMap, LTileLayer } from '@vue-leaflet/vue-leaflet';
+import { useRouteHash } from '@vueuse/router';
 import { useDebounceFn, useResizeObserver, watchDebounced } from '@vueuse/core';
 import L, { extend, latLngBounds, CRS, LatLng, Projection, Transformation, type PointExpression } from 'leaflet';
 import 'leaflet/dist/leaflet.css';
@@ -9,7 +10,6 @@ import { useLivemapStore } from '~/store/livemap';
 import { type ValueOf } from '~/utils/types';
 
 const { $loading } = useNuxtApp();
-const route = useRoute();
 
 defineProps<{
     mapOptions?: Record<string, any>;
@@ -20,7 +20,7 @@ const emit = defineEmits<{
 }>();
 
 const livemapStore = useLivemapStore();
-const { location, zoom } = storeToRefs(livemapStore);
+const { location, offsetLocationZoom, zoom } = storeToRefs(livemapStore);
 
 let map: L.Map | undefined;
 
@@ -69,16 +69,44 @@ const selectedMarker = ref<string>();
 const mouseLat = ref<string>((0).toFixed(3));
 const mouseLong = ref<string>((0).toFixed(3));
 
-const currentHash = ref<string>('');
-
-watch(currentHash, () => window.location.replace(currentHash.value));
+const currentHash = useRouteHash();
 
 watch(location, () => {
     if (location.value === undefined || map === undefined) {
         return;
     }
 
-    map?.panTo([location.value.y!, location.value.x!], {
+    let xOffset = 0;
+    if (offsetLocationZoom.value) {
+        switch (zoom.value) {
+            case 1:
+                xOffset = 2150;
+                break;
+            case 2:
+                xOffset = 1650;
+                break;
+            case 3:
+                xOffset = 1350;
+                break;
+            case 4:
+                xOffset = 750;
+                break;
+            case 5:
+                xOffset = 425;
+                break;
+            case 6:
+                xOffset = 225;
+                break;
+            case 7:
+                xOffset = 100;
+                break;
+            default:
+                xOffset = 400;
+                break;
+        }
+    }
+    console.log(xOffset);
+    map?.panTo([location.value.y!, location.value.x! + xOffset], {
         animate: true,
         duration: 0.85,
     });
@@ -94,7 +122,9 @@ watchDebounced(
         }
 
         const newHash = stringifyHash(map.getZoom(), map.getCenter().lat, map.getCenter().lng);
-        if (currentHash.value !== newHash) currentHash.value = newHash;
+        if ((currentHash.value as string) !== newHash) {
+            currentHash.value = newHash;
+        }
     },
     { debounce: 1000, maxWait: 3000 },
 );
@@ -147,8 +177,7 @@ async function onMapReady($event: any): Promise<void> {
 
     map.invalidateSize();
 
-    const startingHash = route.hash;
-    const startPos = parseHash(startingHash);
+    const startPos = parseHash(currentHash.value as string);
     if (startPos) {
         map.setView(startPos.latlng, startPos.zoom);
     }

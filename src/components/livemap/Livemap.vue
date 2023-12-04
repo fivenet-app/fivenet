@@ -1,6 +1,7 @@
 <script lang="ts" setup>
-import { LControl } from '@vue-leaflet/vue-leaflet';
-import { type LeafletMouseEvent } from 'leaflet';
+import { MapMarkerDownIcon } from 'mdi-vue3';
+import { LControl, LIcon, LMarker } from '@vue-leaflet/vue-leaflet';
+import { type LeafletMouseEvent, type PointExpression } from 'leaflet';
 import DataErrorBlock from '~/components/partials/data/DataErrorBlock.vue';
 import DataPendingBlock from '~/components/partials/data/DataPendingBlock.vue';
 import { isNUIAvailable, setWaypoint } from '~/composables/nui';
@@ -23,6 +24,7 @@ const { t } = useI18n();
 
 const settingsStore = useSettingsStore();
 const { livemap } = storeToRefs(settingsStore);
+
 const livemapStore = useLivemapStore();
 const { error, abort, restarting, location } = storeToRefs(livemapStore);
 const { startStream } = livemapStore;
@@ -77,6 +79,8 @@ async function applySelectedMarkerCentering(): Promise<void> {
 
     location.value = { x: selectedUserMarker.value.x, y: selectedUserMarker.value.y };
 }
+
+const iconAnchor: PointExpression = [livemap.value.markerSize / 2, livemap.value.markerSize];
 </script>
 
 <template>
@@ -116,6 +120,16 @@ async function applySelectedMarkerCentering(): Promise<void> {
                     :show-unit-status="showUnitStatus"
                     @user-selected="selectedUserMarker = $event.info"
                 />
+
+                <LMarker
+                    v-if="location && (openCreateMarker || openCreateDispatch)"
+                    :lat-lng="[location.y, location.x]"
+                    :z-index-offset="1000"
+                >
+                    <LIcon :icon-size="[livemap.markerSize, livemap.markerSize]" :icon-anchor="iconAnchor">
+                        <MapMarkerDownIcon class="w-6 h-6 fill-primary-500" />
+                    </LIcon>
+                </LMarker>
 
                 <slot />
 

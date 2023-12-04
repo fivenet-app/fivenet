@@ -3,7 +3,7 @@ import { RpcError } from '@protobuf-ts/runtime-rpc';
 import { LCircleMarker, LIcon, LMarker, LPopup } from '@vue-leaflet/vue-leaflet';
 import { useConfirmDialog } from '@vueuse/core';
 import { type PointExpression } from 'leaflet';
-import { HelpIcon, TrashCanIcon } from 'mdi-vue3';
+import { HelpIcon, MapMarkerQuestionIcon, TrashCanIcon } from 'mdi-vue3';
 import ConfirmDialog from '~/components/partials/ConfirmDialog.vue';
 import { Marker } from '~~/gen/ts/resources/livemap/livemap';
 import { markerIcons } from '~/components/livemap/helpers';
@@ -133,16 +133,7 @@ onConfirm(async (id) => deleteMarker(id));
 
     <LMarker v-else :lat-lng="[marker.info!.y, marker.info!.x]" :name="marker.info!.name" @click="$emit('selected')">
         <LIcon :icon-size="[size, size]" :icon-anchor="iconAnchor" :popup-anchor="popupAnchor">
-            <div>
-                <svg
-                    xmlns="http://www.w3.org/2000/svg"
-                    viewBox="0 -0.8 16 17.6"
-                    :fill="marker.info?.color ? '#' + marker.info?.color : 'currentColor'"
-                    class="w-full h-full"
-                >
-                    <path d="M8 16s6-5.686 6-10A6 6 0 0 0 2 6c0 4.314 6 10 6 10zm0-7a3 3 0 1 1 0-6 3 3 0 0 1 0 6z" />
-                </svg>
-            </div>
+            <MapMarkerQuestionIcon :fill="marker.info?.color ? '#' + marker.info?.color : 'currentColor'" class="w-6 h-6" />
         </LIcon>
 
         <LPopup :options="{ closeButton: true }">

@@ -4,7 +4,7 @@ import { setWaypoint } from '~/composables/nui';
 import { useLivemapStore } from '~/store/livemap';
 
 const livemapStore = useLivemapStore();
-const { location } = storeToRefs(livemapStore);
+const { location, offsetLocationZoom } = storeToRefs(livemapStore);
 
 function goto(e: Coordinate) {
     location.value = { x: e.x, y: e.y };
@@ -12,6 +12,14 @@ function goto(e: Coordinate) {
     // Set in-game waypoint via NUI
     setWaypoint(e.x, e.y);
 }
+
+onMounted(() => {
+    offsetLocationZoom.value = true;
+});
+
+onBeforeUnmount(() => {
+    offsetLocationZoom.value = false;
+});
 </script>
 
 <template>
