@@ -213,9 +213,11 @@ func (s *Server) UpdateDispatch(ctx context.Context, req *UpdateDispatchRequest)
 		return nil, errorscentrum.ErrFailedQuery
 	}
 	if oldDsp.X != req.Dispatch.X || oldDsp.Y != req.Dispatch.Y {
-		s.state.GetDispatchLocations(oldDsp.Job).Remove(oldDsp, func(p orb.Pointer) bool {
-			return p.(*centrum.Dispatch).Id == oldDsp.Id
-		})
+		if locs := s.state.GetDispatchLocations(oldDsp.Job); locs != nil {
+			locs.Remove(oldDsp, func(p orb.Pointer) bool {
+				return p.(*centrum.Dispatch).Id == oldDsp.Id
+			})
+		}
 	}
 
 	if _, err := s.state.UpdateDispatch(ctx, userInfo.Job, &userInfo.UserId, req.Dispatch, true); err != nil {

@@ -359,6 +359,10 @@ func (s *Housekeeper) deduplicateDispatches(ctx context.Context) error {
 	wg := sync.WaitGroup{}
 
 	for _, job := range s.trackedJobs {
+		if locs := s.State.GetDispatchLocations(job); locs == nil {
+			continue
+		}
+
 		wg.Add(1)
 		go func(job string) {
 			defer wg.Done()
@@ -429,6 +433,10 @@ func (s *Housekeeper) deduplicateDispatches(ctx context.Context) error {
 					}); err != nil {
 						s.logger.Error("failed to update duplicate dispatch status", zap.Error(err))
 						return
+					}
+
+					if err := s.AddAttributeToDispatch(ctx, closeByDsp, centrum.DispatchAttributeDuplicate); err != nil {
+						s.logger.Error("failed to update duplicate dispatch attribute", zap.Error(err))
 					}
 
 					toRemove := []uint64{}

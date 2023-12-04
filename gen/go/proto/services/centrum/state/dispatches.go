@@ -78,9 +78,11 @@ func (s *State) DeleteDispatch(job string, id uint64) error {
 		return err
 	}
 
-	s.GetDispatchLocations(job).Remove(dsp, func(p orb.Pointer) bool {
-		return p.(*centrum.Dispatch).Id == dsp.Id
-	})
+	if locs := s.GetDispatchLocations(job); locs != nil {
+		locs.Remove(dsp, func(p orb.Pointer) bool {
+			return p.(*centrum.Dispatch).Id == dsp.Id
+		})
+	}
 
 	return s.dispatches.Delete(JobIdKey(job, id))
 }

@@ -432,6 +432,7 @@
                 },
                 "attributes": {
                     "multiple": "Mehrere Einsätze",
+                    "duplicate": "Duplikat",
                     "too_old": "Abgebrochen, Einsatz zu alt"
                 }
             }

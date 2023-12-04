@@ -432,6 +432,7 @@
                 },
                 "attributes": {
                     "multiple": "Multiple Dispatches",
+                    "duplicate": "Duplicat",
                     "too_old": "Cancelled due to Age"
                 }
             }

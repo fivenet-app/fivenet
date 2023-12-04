@@ -516,7 +516,9 @@ func (s *Manager) CreateDispatch(ctx context.Context, dsp *centrum.Dispatch) (*c
 	}
 
 	// Make sure dispatch is in the locations list
-	s.State.GetDispatchLocations(dsp.Job).Add(dsp)
+	if locs := s.State.GetDispatchLocations(dsp.Job); locs != nil {
+		locs.Add(dsp)
+	}
 
 	if err := s.State.UpdateDispatch(ctx, dsp.Job, dsp.Id, dsp); err != nil {
 		return nil, err
@@ -571,10 +573,12 @@ func (s *Manager) UpdateDispatch(ctx context.Context, userJob string, userId *in
 	}
 
 	// Make sure dispatch is in the locations list
-	if !s.State.GetDispatchLocations(dsp.Job).Has(dsp, func(p orb.Pointer) bool {
-		return p.(*centrum.Dispatch).Id == dsp.Id
-	}) {
-		s.State.GetDispatchLocations(dsp.Job).Add(dsp)
+	if locs := s.State.GetDispatchLocations(dsp.Job); locs != nil {
+		if !locs.Has(dsp, func(p orb.Pointer) bool {
+			return p.(*centrum.Dispatch).Id == dsp.Id
+		}) {
+			locs.Add(dsp)
+		}
 	}
 
 	if err := s.State.UpdateDispatch(ctx, dsp.Job, dsp.Id, dsp); err != nil {
@@ -816,17 +820,21 @@ func (s *Manager) TakeDispatch(ctx context.Context, job string, userId int32, un
 }
 
 func (s *Manager) AddAttributeToDispatch(ctx context.Context, dsp *centrum.Dispatch, attribute string) error {
+	newDsp := proto.Clone(dsp).(*centrum.Dispatch)
+
 	update := false
-	if dsp.Attributes == nil {
-		dsp.Attributes = &centrum.Attributes{
-			List: []string{},
+	if newDsp.Attributes == nil {
+		newDsp.Attributes = &centrum.Attributes{
+			List: []string{attribute},
 		}
+
+		update = true
+	} else {
+		update = newDsp.Attributes.Add(attribute)
 	}
 
-	update = dsp.Attributes.Add(attribute)
-
 	if update {
-		if _, err := s.UpdateDispatch(ctx, dsp.Job, dsp.CreatorId, dsp, true); err != nil {
+		if _, err := s.UpdateDispatch(ctx, dsp.Job, nil, newDsp, true); err != nil {
 			return err
 		}
 	}

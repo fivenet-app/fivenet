@@ -22,6 +22,7 @@ import (
 	"github.com/galexrt/fivenet/pkg/utils"
 	"github.com/galexrt/fivenet/query/fivenet/model"
 	"github.com/nats-io/nats.go"
+	"github.com/paulmach/orb"
 	tracesdk "go.opentelemetry.io/otel/sdk/trace"
 	"go.opentelemetry.io/otel/trace"
 	"go.uber.org/fx"
@@ -228,6 +229,14 @@ func (s *Server) watchForChanges(msg *nats.Msg) {
 				DispatchCreated: dest,
 			}
 
+			if locs := s.state.GetDispatchLocations(job); locs != nil {
+				if !locs.Has(dest, func(p orb.Pointer) bool {
+					return p.(*centrum.Dispatch).Id == dest.Id
+				}) {
+					locs.Add(dest)
+				}
+			}
+
 		case eventscentrum.TypeDispatchDeleted:
 			dest := &centrum.Dispatch{}
 			if err := proto.Unmarshal(msg.Data, dest); err != nil {
@@ -237,6 +246,16 @@ func (s *Server) watchForChanges(msg *nats.Msg) {
 
 			resp.Change = &StreamResponse_DispatchDeleted{
 				DispatchDeleted: dest,
+			}
+
+			if locs := s.state.GetDispatchLocations(job); locs != nil {
+				if locs.Has(dest, func(p orb.Pointer) bool {
+					return p.(*centrum.Dispatch).Id == dest.Id
+				}) {
+					locs.Remove(dest, func(p orb.Pointer) bool {
+						return p.(*centrum.Dispatch).Id == dest.Id
+					})
+				}
 			}
 
 		case eventscentrum.TypeDispatchUpdated:

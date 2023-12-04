@@ -367,10 +367,12 @@ func (s *Manager) LoadDispatchesFromDB(ctx context.Context, id uint64) error {
 			return err
 		}
 
-		if !s.State.GetDispatchLocations(dsps[i].Job).Has(dsps[i], func(p orb.Pointer) bool {
-			return p.(*centrum.Dispatch).Id == dsps[i].Id
-		}) {
-			s.State.GetDispatchLocations(dsps[i].Job).Add(dsps[i])
+		if locs := s.State.GetDispatchLocations(dsps[i].Job); locs != nil {
+			if !locs.Has(dsps[i], func(p orb.Pointer) bool {
+				return p.(*centrum.Dispatch).Id == dsps[i].Id
+			}) {
+				locs.Add(dsps[i])
+			}
 		}
 	}
 

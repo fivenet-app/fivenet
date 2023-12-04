@@ -10,8 +10,9 @@ import (
 const (
 	UnitAttributeStatic = "static"
 
-	DispatchAttributeMultiple = "multiple"
-	DispatchAttributeTooOld   = "too_old"
+	DispatchAttributeMultiple  = "multiple"
+	DispatchAttributeDuplicate = "duplicate"
+	DispatchAttributeTooOld    = "too_old"
 )
 
 var json = jsoniter.ConfigCompatibleWithStandardLibrary
