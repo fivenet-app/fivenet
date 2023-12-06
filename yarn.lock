@@ -662,13 +662,13 @@
     vue-demi ">=0.13.0"
 
 "@fontsource/inter@^5.0.15":
-  version "5.0.15"
-  resolved "https://registry.npmjs.org/@fontsource/inter/-/inter-5.0.15.tgz"
-  integrity sha512-/IoWYEXl8lqJEx50JqNPT+bI4VNwxb/bg2oOfvG8PiEsDsmHRFvWBVHlohBNn1+QdBf+KbAjU/gb4vlGOSsVWw==
+  version "5.0.16"
+  resolved "https://registry.yarnpkg.com/@fontsource/inter/-/inter-5.0.16.tgz#b858508cdb56dcbbf3166903122851e2fbd16b50"
+  integrity sha512-qF0aH5UiZvCmneX5orJbVRoc2VTyLTV3X/7laMp03Qt28L+B9tFlZODOGUL64wDWc69YVdi1LeJB0cIgd51lvw==
 
 "@gulpjs/to-absolute-glob@^4.0.0":
   version "4.0.0"
-  resolved "https://registry.npmjs.org/@gulpjs/to-absolute-glob/-/to-absolute-glob-4.0.0.tgz"
+  resolved "https://registry.yarnpkg.com/@gulpjs/to-absolute-glob/-/to-absolute-glob-4.0.0.tgz#1fc2460d3953e1d9b9f2dfdb4bcc99da4710c021"
   integrity sha512-kjotm7XJrJ6v+7knhPaRgaT6q8F8K2jiafwYdNHLzmV0uGLuZY43FK6smNSHUPrhq5kX2slCUy+RGG/xGqmIKA==
   dependencies:
     is-negated-glob "^1.0.0"
