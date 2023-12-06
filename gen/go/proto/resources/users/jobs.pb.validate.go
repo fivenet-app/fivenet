@@ -450,6 +450,21 @@ func (m *JobProps) validate(all bool) error {
 		}
 	}
 
+	if m.RadioFrequency != nil {
+
+		if utf8.RuneCountInString(m.GetRadioFrequency()) > 6 {
+			err := JobPropsValidationError{
+				field:  "RadioFrequency",
+				reason: "value length must be at most 6 runes",
+			}
+			if !all {
+				return err
+			}
+			errors = append(errors, err)
+		}
+
+	}
+
 	if m.DiscordGuildId != nil {
 		// no validation rules for DiscordGuildId
 	}

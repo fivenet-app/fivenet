@@ -22,6 +22,7 @@ type fivenetJobPropsTable struct {
 	Theme               mysql.ColumnString
 	LivemapMarkerColor  mysql.ColumnString
 	QuickButtons        mysql.ColumnString
+	RadioFrequency      mysql.ColumnString
 	DiscordGuildID      mysql.ColumnInteger
 	DiscordLastSync     mysql.ColumnTimestamp
 	DiscordSyncSettings mysql.ColumnString
@@ -70,11 +71,12 @@ func newFivenetJobPropsTableImpl(schemaName, tableName, alias string) fivenetJob
 		ThemeColumn               = mysql.StringColumn("theme")
 		LivemapMarkerColorColumn  = mysql.StringColumn("livemap_marker_color")
 		QuickButtonsColumn        = mysql.StringColumn("quick_buttons")
+		RadioFrequencyColumn      = mysql.StringColumn("radio_frequency")
 		DiscordGuildIDColumn      = mysql.IntegerColumn("discord_guild_id")
 		DiscordLastSyncColumn     = mysql.TimestampColumn("discord_last_sync")
 		DiscordSyncSettingsColumn = mysql.StringColumn("discord_sync_settings")
-		allColumns                = mysql.ColumnList{JobColumn, UpdatedAtColumn, ThemeColumn, LivemapMarkerColorColumn, QuickButtonsColumn, DiscordGuildIDColumn, DiscordLastSyncColumn, DiscordSyncSettingsColumn}
-		mutableColumns            = mysql.ColumnList{JobColumn, UpdatedAtColumn, ThemeColumn, LivemapMarkerColorColumn, QuickButtonsColumn, DiscordGuildIDColumn, DiscordLastSyncColumn, DiscordSyncSettingsColumn}
+		allColumns                = mysql.ColumnList{JobColumn, UpdatedAtColumn, ThemeColumn, LivemapMarkerColorColumn, QuickButtonsColumn, RadioFrequencyColumn, DiscordGuildIDColumn, DiscordLastSyncColumn, DiscordSyncSettingsColumn}
+		mutableColumns            = mysql.ColumnList{JobColumn, UpdatedAtColumn, ThemeColumn, LivemapMarkerColorColumn, QuickButtonsColumn, RadioFrequencyColumn, DiscordGuildIDColumn, DiscordLastSyncColumn, DiscordSyncSettingsColumn}
 	)
 
 	return fivenetJobPropsTable{
@@ -86,6 +88,7 @@ func newFivenetJobPropsTableImpl(schemaName, tableName, alias string) fivenetJob
 		Theme:               ThemeColumn,
 		LivemapMarkerColor:  LivemapMarkerColorColumn,
 		QuickButtons:        QuickButtonsColumn,
+		RadioFrequency:      RadioFrequencyColumn,
 		DiscordGuildID:      DiscordGuildIDColumn,
 		DiscordLastSync:     DiscordLastSyncColumn,
 		DiscordSyncSettings: DiscordSyncSettingsColumn,

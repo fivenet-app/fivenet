@@ -22,21 +22,22 @@ var (
 func (s *Server) GetJobProps(ctx context.Context, req *GetJobPropsRequest) (*GetJobPropsResponse, error) {
 	userInfo := auth.MustGetUserInfoFromContext(ctx)
 
-	jobProps := table.FivenetJobProps.AS("jobprops")
-	stmt := jobProps.
+	tJobProps := table.FivenetJobProps.AS("jobprops")
+	stmt := tJobProps.
 		SELECT(
-			jobProps.Job,
-			jobProps.UpdatedAt,
-			jobProps.Theme,
-			jobProps.LivemapMarkerColor,
-			jobProps.QuickButtons,
-			jobProps.DiscordGuildID,
-			jobProps.DiscordLastSync,
-			jobProps.DiscordSyncSettings,
+			tJobProps.Job,
+			tJobProps.UpdatedAt,
+			tJobProps.Theme,
+			tJobProps.LivemapMarkerColor,
+			tJobProps.RadioFrequency,
+			tJobProps.QuickButtons,
+			tJobProps.DiscordGuildID,
+			tJobProps.DiscordLastSync,
+			tJobProps.DiscordSyncSettings,
 		).
-		FROM(jobProps).
+		FROM(tJobProps).
 		WHERE(
-			jobProps.Job.EQ(jet.String(userInfo.Job)),
+			tJobProps.Job.EQ(jet.String(userInfo.Job)),
 		).
 		LIMIT(1)
 
@@ -75,6 +76,7 @@ func (s *Server) SetJobProps(ctx context.Context, req *SetJobPropsRequest) (*Set
 			tJobProps.Job,
 			tJobProps.Theme,
 			tJobProps.LivemapMarkerColor,
+			tJobProps.RadioFrequency,
 			tJobProps.QuickButtons,
 			tJobProps.DiscordGuildID,
 			tJobProps.DiscordSyncSettings,
@@ -83,6 +85,7 @@ func (s *Server) SetJobProps(ctx context.Context, req *SetJobPropsRequest) (*Set
 			req.JobProps.Job,
 			req.JobProps.Theme,
 			req.JobProps.LivemapMarkerColor,
+			req.JobProps.RadioFrequency,
 			req.JobProps.QuickButtons,
 			req.JobProps.DiscordGuildId,
 			req.JobProps.DiscordSyncSettings,
@@ -90,6 +93,7 @@ func (s *Server) SetJobProps(ctx context.Context, req *SetJobPropsRequest) (*Set
 		ON_DUPLICATE_KEY_UPDATE(
 			tJobProps.Theme.SET(jet.String(req.JobProps.Theme)),
 			tJobProps.LivemapMarkerColor.SET(jet.String(req.JobProps.LivemapMarkerColor)),
+			tJobProps.RadioFrequency.SET(jet.String("VALUES(`radio_frequency`)")),
 			tJobProps.QuickButtons.SET(jet.StringExp(jet.Raw("VALUES(`quick_buttons`)"))),
 			tJobProps.DiscordGuildID.SET(jet.IntExp(jet.Raw("VALUES(`discord_guild_id`)"))),
 			tJobProps.DiscordSyncSettings.SET(jet.StringExp(jet.Raw("VALUES(`discord_sync_settings`)"))),

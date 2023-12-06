@@ -778,7 +778,8 @@
         "hints": "Hinweis | Hinweise",
         "icon": "Icon",
         "disabled": "Deaktiviert",
-        "legend": "Legende"
+        "legend": "Legende",
+        "radio_frequency": "Funk-Frequenz"
     },
     "notifications": {
         "clipboard": {

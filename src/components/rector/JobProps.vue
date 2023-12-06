@@ -118,6 +118,23 @@ const onSubmitThrottle = useThrottleFn(async (_) => {
                             </div>
                             <div class="py-4 sm:grid sm:grid-cols-3 sm:gap-4 sm:px-6 sm:py-5">
                                 <dt class="text-sm font-medium">
+                                    {{ $t('common.radio_frequency') }}
+                                </dt>
+                                <dd class="mt-1 text-sm sm:col-span-2 sm:mt-0">
+                                    <input
+                                        v-model="jobProps.radioFrequency"
+                                        type="text"
+                                        class="block w-full rounded-md border-0 py-1.5 bg-base-700 text-neutral placeholder:text-base-200 focus:ring-2 focus:ring-inset focus:ring-base-300 sm:text-sm sm:leading-6"
+                                        :placeholder="$t('common.radio_frequency')"
+                                        :label="$t('common.radio_frequency')"
+                                        maxlength="6"
+                                        @focusin="focusTablet(true)"
+                                        @focusout="focusTablet(false)"
+                                    />
+                                </dd>
+                            </div>
+                            <div class="py-4 sm:grid sm:grid-cols-3 sm:gap-4 sm:px-6 sm:py-5">
+                                <dt class="text-sm font-medium">
                                     {{ $t('components.rector.job_props.quick_buttons') }}
                                 </dt>
                                 <dd v-if="jobProps.quickButtons" class="mt-1 text-sm sm:col-span-2 sm:mt-0">

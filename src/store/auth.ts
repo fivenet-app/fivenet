@@ -8,6 +8,7 @@ import { JobProps, QuickButtons } from '~~/gen/ts/resources/users/jobs';
 import { User } from '~~/gen/ts/resources/users/users';
 
 export type JobPropsState = {
+    radioFrequency?: string;
     quickButtons?: QuickButtons;
 };
 
@@ -34,6 +35,7 @@ export const useAuthStore = defineStore('auth', {
         loginError: null as null | string,
         permissions: [] as string[],
         jobProps: {
+            radioFrequency: undefined,
             quickButtons: {} as QuickButtons,
         } as null | JobPropsState,
     }),
@@ -68,6 +70,7 @@ export const useAuthStore = defineStore('auth', {
                 this.jobProps = null;
             } else {
                 this.jobProps = {
+                    radioFrequency: jp.radioFrequency,
                     quickButtons: jp.quickButtons,
                 };
             }
@@ -148,7 +151,7 @@ export const useAuthStore = defineStore('auth', {
                         hash: url.hash,
                     });
                 } else {
-                    const target = useRouter().resolve(useSettingsStore().startpage);
+                    const target = useRouter().resolve(useSettingsStore().startpage ?? '/overview');
                     await navigateTo(target);
                 }
             } catch (e) {

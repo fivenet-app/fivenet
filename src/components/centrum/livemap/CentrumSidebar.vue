@@ -29,12 +29,16 @@ import DispatchEntry from '~/components/centrum/livemap/DispatchEntry.vue';
 import DispatchesLayer from '~/components/centrum/livemap/DispatchesLayer.vue';
 import JoinUnitModal from '~/components/centrum/livemap/JoinUnitModal.vue';
 import TakeDispatchModal from '~/components/centrum/livemap/TakeDispatchModal.vue';
+import { useAuthStore } from '~/store/auth';
 
 defineEmits<{
     (e: 'goto', loc: Coordinate): void;
 }>();
 
 const { $grpc } = useNuxtApp();
+
+const authStore = useAuthStore();
+const { jobProps } = storeToRefs(authStore);
 
 const centrumStore = useCentrumStore();
 const { getCurrentMode, getOwnUnit, dispatches, ownDispatches, pendingDispatches, disponents, timeCorrection } =
@@ -123,9 +127,19 @@ const open = ref(false);
 // Show unit sidebar when ownUnit is set/updated, otherwise it will be hidden (automagically)
 watch(getOwnUnit, async () => {
     if (getOwnUnit.value !== undefined) {
+        // User has joined an unit
         open.value = true;
         joinUnitOpen.value = false;
+
+        if (
+            jobProps.value !== undefined &&
+            jobProps.value?.radioFrequency !== undefined &&
+            jobProps.value.radioFrequency.length > 0
+        ) {
+            setRadioFrequency(jobProps.value.radioFrequency);
+        }
     } else {
+        // User not in an unit anymore
         open.value = false;
         joinUnitOpen.value = false;
     }

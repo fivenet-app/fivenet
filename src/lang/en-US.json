@@ -778,7 +778,8 @@
         "hints": "Hint | Hints",
         "icon": "Icon",
         "disabled": "Disabled",
-        "legend": "Legend"
+        "legend": "Legend",
+        "radio_frequency": "Radio Frequency"
     },
     "notifications": {
         "clipboard": {

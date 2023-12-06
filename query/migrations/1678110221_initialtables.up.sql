@@ -202,6 +202,7 @@ CREATE TABLE IF NOT EXISTS `fivenet_documents_requests` (
   KEY `idx_fivenet_documents_requests_creator_id` (`creator_id`),
   KEY `idx_fivenet_documents_requests_request_type` (`request_type`),
   KEY `idx_fivenet_documents_requests_completed` (`completed`),
+  KEY `idx_fivenet_documents_requests_unique` (`document_id`, `request_type`),
   CONSTRAINT `fk_fivenet_documents_requests_document_id` FOREIGN KEY (`document_id`) REFERENCES `fivenet_documents` (`id`) ON DELETE CASCADE ON UPDATE CASCADE,
   CONSTRAINT `fk_fivenet_documents_requests_creator_id` FOREIGN KEY (`creator_id`) REFERENCES `users` (`id`) ON DELETE SET NULL ON UPDATE SET NULL
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
