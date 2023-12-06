@@ -30,6 +30,7 @@ const (
 	DocStoreService_UpdateDocument_FullMethodName          = "/services.docstore.DocStoreService/UpdateDocument"
 	DocStoreService_DeleteDocument_FullMethodName          = "/services.docstore.DocStoreService/DeleteDocument"
 	DocStoreService_ToggleDocument_FullMethodName          = "/services.docstore.DocStoreService/ToggleDocument"
+	DocStoreService_ChangeDocumentOwner_FullMethodName     = "/services.docstore.DocStoreService/ChangeDocumentOwner"
 	DocStoreService_GetDocumentReferences_FullMethodName   = "/services.docstore.DocStoreService/GetDocumentReferences"
 	DocStoreService_GetDocumentRelations_FullMethodName    = "/services.docstore.DocStoreService/GetDocumentRelations"
 	DocStoreService_AddDocumentReference_FullMethodName    = "/services.docstore.DocStoreService/AddDocumentReference"
@@ -80,6 +81,8 @@ type DocStoreServiceClient interface {
 	DeleteDocument(ctx context.Context, in *DeleteDocumentRequest, opts ...grpc.CallOption) (*DeleteDocumentResponse, error)
 	// @perm: Attrs=Access/StringList:[]string{"Own", "Lower_Rank", "Same_Rank", "Any"}§[]string{"Own"}
 	ToggleDocument(ctx context.Context, in *ToggleDocumentRequest, opts ...grpc.CallOption) (*ToggleDocumentResponse, error)
+	// @perm: Attrs=Access/StringList:[]string{"Own", "Lower_Rank", "Same_Rank", "Any"}§[]string{"Own"}
+	ChangeDocumentOwner(ctx context.Context, in *ChangeDocumentOwnerRequest, opts ...grpc.CallOption) (*ChangeDocumentOwnerResponse, error)
 	// @perm: Name=GetDocument
 	GetDocumentReferences(ctx context.Context, in *GetDocumentReferencesRequest, opts ...grpc.CallOption) (*GetDocumentReferencesResponse, error)
 	// @perm: Name=GetDocument
@@ -227,6 +230,15 @@ func (c *docStoreServiceClient) DeleteDocument(ctx context.Context, in *DeleteDo
 func (c *docStoreServiceClient) ToggleDocument(ctx context.Context, in *ToggleDocumentRequest, opts ...grpc.CallOption) (*ToggleDocumentResponse, error) {
 	out := new(ToggleDocumentResponse)
 	err := c.cc.Invoke(ctx, DocStoreService_ToggleDocument_FullMethodName, in, out, opts...)
+	if err != nil {
+		return nil, err
+	}
+	return out, nil
+}
+
+func (c *docStoreServiceClient) ChangeDocumentOwner(ctx context.Context, in *ChangeDocumentOwnerRequest, opts ...grpc.CallOption) (*ChangeDocumentOwnerResponse, error) {
+	out := new(ChangeDocumentOwnerResponse)
+	err := c.cc.Invoke(ctx, DocStoreService_ChangeDocumentOwner_FullMethodName, in, out, opts...)
 	if err != nil {
 		return nil, err
 	}
@@ -457,6 +469,8 @@ type DocStoreServiceServer interface {
 	DeleteDocument(context.Context, *DeleteDocumentRequest) (*DeleteDocumentResponse, error)
 	// @perm: Attrs=Access/StringList:[]string{"Own", "Lower_Rank", "Same_Rank", "Any"}§[]string{"Own"}
 	ToggleDocument(context.Context, *ToggleDocumentRequest) (*ToggleDocumentResponse, error)
+	// @perm: Attrs=Access/StringList:[]string{"Own", "Lower_Rank", "Same_Rank", "Any"}§[]string{"Own"}
+	ChangeDocumentOwner(context.Context, *ChangeDocumentOwnerRequest) (*ChangeDocumentOwnerResponse, error)
 	// @perm: Name=GetDocument
 	GetDocumentReferences(context.Context, *GetDocumentReferencesRequest) (*GetDocumentReferencesResponse, error)
 	// @perm: Name=GetDocument
@@ -540,6 +554,9 @@ func (UnimplementedDocStoreServiceServer) DeleteDocument(context.Context, *Delet
 }
 func (UnimplementedDocStoreServiceServer) ToggleDocument(context.Context, *ToggleDocumentRequest) (*ToggleDocumentResponse, error) {
 	return nil, status.Errorf(codes.Unimplemented, "method ToggleDocument not implemented")
+}
+func (UnimplementedDocStoreServiceServer) ChangeDocumentOwner(context.Context, *ChangeDocumentOwnerRequest) (*ChangeDocumentOwnerResponse, error) {
+	return nil, status.Errorf(codes.Unimplemented, "method ChangeDocumentOwner not implemented")
 }
 func (UnimplementedDocStoreServiceServer) GetDocumentReferences(context.Context, *GetDocumentReferencesRequest) (*GetDocumentReferencesResponse, error) {
 	return nil, status.Errorf(codes.Unimplemented, "method GetDocumentReferences not implemented")
@@ -814,6 +831,24 @@ func _DocStoreService_ToggleDocument_Handler(srv interface{}, ctx context.Contex
 	}
 	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
 		return srv.(DocStoreServiceServer).ToggleDocument(ctx, req.(*ToggleDocumentRequest))
+	}
+	return interceptor(ctx, in, info, handler)
+}
+
+func _DocStoreService_ChangeDocumentOwner_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
+	in := new(ChangeDocumentOwnerRequest)
+	if err := dec(in); err != nil {
+		return nil, err
+	}
+	if interceptor == nil {
+		return srv.(DocStoreServiceServer).ChangeDocumentOwner(ctx, in)
+	}
+	info := &grpc.UnaryServerInfo{
+		Server:     srv,
+		FullMethod: DocStoreService_ChangeDocumentOwner_FullMethodName,
+	}
+	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
+		return srv.(DocStoreServiceServer).ChangeDocumentOwner(ctx, req.(*ChangeDocumentOwnerRequest))
 	}
 	return interceptor(ctx, in, info, handler)
 }
@@ -1264,6 +1299,10 @@ var DocStoreService_ServiceDesc = grpc.ServiceDesc{
 		{
 			MethodName: "ToggleDocument",
 			Handler:    _DocStoreService_ToggleDocument_Handler,
+		},
+		{
+			MethodName: "ChangeDocumentOwner",
+			Handler:    _DocStoreService_ChangeDocumentOwner_Handler,
 		},
 		{
 			MethodName: "GetDocumentReferences",

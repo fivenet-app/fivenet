@@ -17,6 +17,8 @@ var (
 	ErrDocToggleDenied     = status.Error(codes.PermissionDenied, "errors.DocStoreService.ErrDocToggleDenied")
 	ErrDocAccessEditDenied = status.Error(codes.PermissionDenied, "errors.DocStoreService.ErrDocAccessEditDenied")
 	ErrDocAccessViewDenied = status.Error(codes.PermissionDenied, "errors.DocStoreService.ErrDocAccessViewDenied")
+	ErrDocSameOwner        = status.Error(codes.InvalidArgument, "errors.DocStoreService.ErrDocSameOwner")
+	ErrDocOwnerWrongJob    = status.Error(codes.InvalidArgument, "errors.DocStoreService.ErrDocOwnerWrongJob")
 
 	ErrTemplateFailed = status.Error(codes.InvalidArgument, "errors.DocStoreService.ErrTemplateFailed")
 

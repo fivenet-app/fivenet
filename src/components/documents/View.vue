@@ -8,6 +8,7 @@ import {
     CalendarIcon,
     ChevronDownIcon,
     CommentTextMultipleIcon,
+    CreationIcon,
     FileDocumentIcon,
     FileSearchIcon,
     FrequentlyAskedQuestionsIcon,
@@ -123,6 +124,25 @@ async function toggleDocument(id: string, closed: boolean): Promise<void> {
     }
 }
 
+async function changeDocumentOwner(id: string): Promise<void> {
+    try {
+        await $grpc.getDocStoreClient().changeDocumentOwner({
+            documentId: id,
+        });
+
+        notifications.dispatchNotification({
+            title: { key: 'notifications.document_take_ownership.title', parameters: {} },
+            content: { key: 'notifications.document_take_ownership.content', parameters: {} },
+            type: 'success',
+        });
+
+        await refresh();
+    } catch (e) {
+        $grpc.handleError(e as RpcError);
+        throw e;
+    }
+}
+
 function addToClipboard(): void {
     if (doc.value) {
         clipboardStore.addDocument(doc.value);
@@ -151,7 +171,13 @@ watchOnce(doc, () =>
 );
 
 const { isRevealed, reveal, confirm, cancel, onConfirm } = useConfirmDialog();
-onConfirm(async (id: string) => deleteDocument(id));
+onConfirm(async (data: { action: 'delete' | 'take_ownership'; id: string }) => {
+    if (data.action === 'delete') {
+        deleteDocument(data.id);
+    } else {
+        changeDocumentOwner(data.id);
+    }
+});
 
 const openRequests = ref(false);
 </script>
@@ -159,15 +185,21 @@ const openRequests = ref(false);
 <template>
     <div class="m-2">
         <ConfirmDialog :open="isRevealed" :cancel="cancel" :confirm="() => confirm(documentId)" />
-        <RequestsModal :open="openRequests" :document-id="documentId" @close="openRequests = false" />
+        <RequestsModal
+            v-if="can('DocStoreService.CreateDocumentRequest')"
+            :open="openRequests"
+            :document-id="documentId"
+            @close="openRequests = false"
+        />
 
         <DataPendingBlock v-if="pending" :message="$t('common.loading', [$t('common.document', 2)])" />
         <DataErrorBlock v-else-if="error" :title="$t('common.unable_to_load', [$t('common.document', 2)])" :retry="refresh" />
         <DataNoDataBlock
-            v-else-if="!doc"
+            v-else-if="doc === null"
             :icon="FileSearchIcon"
             :message="$t('common.not_found', [$t('common.document', 2)])"
         />
+
         <div v-else class="rounded-lg bg-base-700">
             <div class="h-full px-4 py-6 sm:px-6 lg:px-8">
                 <div>
@@ -253,12 +285,29 @@ const openRequests = ref(false);
                                 </button>
                                 <button
                                     v-if="
+                                        can('DocStoreService.ChangeDocumentOwner') &&
+                                        checkDocAccess(
+                                            access,
+                                            doc.creator,
+                                            AccessLevel.EDIT,
+                                            'DocStoreService.ChangeDocumentOwner',
+                                        )
+                                    "
+                                    type="button"
+                                    class="inline-flex justify-center gap-x-1.5 rounded-md bg-primary-500 px-3 py-2 text-sm font-semibold text-neutral hover:bg-primary-400"
+                                    @click="reveal({ action: 'delete', id: documentId })"
+                                >
+                                    <CreationIcon class="-ml-0.5 w-5 h-auto" aria-hidden="true" />
+                                    {{ $t('components.documents.document_view.take_ownership') }}
+                                </button>
+                                <button
+                                    v-if="
                                         can('DocStoreService.DeleteDocument') &&
                                         checkDocAccess(access, doc.creator, AccessLevel.EDIT, 'DocStoreService.DeleteDocument')
                                     "
                                     type="button"
                                     class="inline-flex justify-center gap-x-1.5 rounded-md bg-primary-500 px-3 py-2 text-sm font-semibold text-neutral hover:bg-primary-400"
-                                    @click="reveal(documentId)"
+                                    @click="reveal({ action: 'take_ownership', id: documentId })"
                                 >
                                     <TrashCanIcon class="-ml-0.5 w-5 h-auto" aria-hidden="true" />
                                     {{ $t('common.delete') }}

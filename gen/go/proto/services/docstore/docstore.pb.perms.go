@@ -45,6 +45,18 @@ func init() {
 		},
 		{
 			Category: permkeys.DocStoreServicePerm,
+			Name:     permkeys.DocStoreServiceChangeDocumentOwnerPerm,
+			Attrs: []perms.Attr{
+				{
+					Key:           permkeys.DocStoreServiceChangeDocumentOwnerAccessPermField,
+					Type:          permissions.StringListAttributeType,
+					ValidValues:   []string{"Own", "Lower_Rank", "Same_Rank", "Any"},
+					DefaultValues: []string{"Own"},
+				},
+			},
+		},
+		{
+			Category: permkeys.DocStoreServicePerm,
 			Name:     permkeys.DocStoreServiceCreateCategoryPerm,
 			Attrs:    []perms.Attr{},
 		},

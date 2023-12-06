@@ -61,9 +61,11 @@ message DocUpdated {
 }
 
 message DocOwnerChanged {
-  int32 owner_id = 1;
+  int32 new_owner_id = 1;
+  resources.users.UserShort new_owner = 2;
 }
 
 message DocRequestActivity {
-  // TODO
+  bool accepted = 1;
+
 }

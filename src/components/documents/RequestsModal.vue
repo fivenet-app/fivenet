@@ -16,6 +16,7 @@ import { useThrottleFn } from '@vueuse/core';
 import { CheckIcon, ChevronDownIcon, CloseIcon, LoadingIcon, TrashCanIcon } from 'mdi-vue3';
 import { defineRule } from 'vee-validate';
 import { DocActivityType } from '~~/gen/ts/resources/documents/activity';
+import type { ListDocumentReqsResponse } from '~~/gen/ts/services/docstore/docstore';
 
 const props = defineProps<{
     open: boolean;
@@ -37,6 +38,29 @@ const requestTypes = [
 ];
 
 const selectedRequestType = ref(requestTypes[0]);
+
+const offset = ref(0n);
+
+const {
+    data: requests, // pending, refresh, error,
+} = useLazyAsyncData(`document-${props.documentId}-requests-${offset.value}`, () => listDocumnetReqs(props.documentId));
+
+async function listDocumnetReqs(documentId: string): Promise<ListDocumentReqsResponse> {
+    try {
+        const call = $grpc.getDocStoreClient().listDocumentReqs({
+            pagination: {
+                offset: offset.value,
+            },
+            documentId,
+        });
+        const { response } = await call;
+
+        return response;
+    } catch (e) {
+        $grpc.handleError(e as RpcError);
+        throw e;
+    }
+}
 
 interface FormData {
     reason?: string;
@@ -76,14 +100,6 @@ const onSubmitThrottle = useThrottleFn(async (e) => {
     canSubmit.value = false;
     await onSubmit(e);
 }, 1000);
-
-const call = $grpc.getDocStoreClient().listDocumentReqs({
-    pagination: {
-        offset: 0n,
-    },
-    documentId: props.documentId,
-});
-const { response } = await call;
 </script>
 
 <template>
@@ -260,7 +276,7 @@ const { response } = await call;
                             </form>
 
                             <ul class="list-disc">
-                                <li v-for="item in response.requests" :key="item.id">
+                                <li v-for="item in requests.requests" :key="item.id">
                                     {{ item.id }} - {{ DocActivityType[item.requestType] }} (Reason: {{ item.reason }})
                                     <button v-if="can('DocStoreService.DeleteDocumentReq')" type="button">
                                         <TrashCanIcon class="w-6 h-6" />

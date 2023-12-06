@@ -529,6 +529,26 @@ export interface ToggleDocumentRequest {
 export interface ToggleDocumentResponse {
 }
 /**
+ * @generated from protobuf message services.docstore.ChangeDocumentOwnerRequest
+ */
+export interface ChangeDocumentOwnerRequest {
+    /**
+     * @generated from protobuf field: uint64 document_id = 1 [jstype = JS_STRING];
+     */
+    documentId: string;
+    /**
+     * @generated from protobuf field: optional int32 new_user_id = 2;
+     */
+    newUserId?: number;
+}
+/**
+ * @generated from protobuf message services.docstore.ChangeDocumentOwnerResponse
+ */
+export interface ChangeDocumentOwnerResponse {
+}
+// Document Activity and Requests
+
+/**
  * @generated from protobuf message services.docstore.ListDocumentActivityRequest
  */
 export interface ListDocumentActivityRequest {
@@ -1336,6 +1356,29 @@ class ToggleDocumentResponse$Type extends MessageType<ToggleDocumentResponse> {
  */
 export const ToggleDocumentResponse = new ToggleDocumentResponse$Type();
 // @generated message type with reflection information, may provide speed optimized methods
+class ChangeDocumentOwnerRequest$Type extends MessageType<ChangeDocumentOwnerRequest> {
+    constructor() {
+        super("services.docstore.ChangeDocumentOwnerRequest", [
+            { no: 1, name: "document_id", kind: "scalar", T: 4 /*ScalarType.UINT64*/ },
+            { no: 2, name: "new_user_id", kind: "scalar", opt: true, T: 5 /*ScalarType.INT32*/ }
+        ]);
+    }
+}
+/**
+ * @generated MessageType for protobuf message services.docstore.ChangeDocumentOwnerRequest
+ */
+export const ChangeDocumentOwnerRequest = new ChangeDocumentOwnerRequest$Type();
+// @generated message type with reflection information, may provide speed optimized methods
+class ChangeDocumentOwnerResponse$Type extends MessageType<ChangeDocumentOwnerResponse> {
+    constructor() {
+        super("services.docstore.ChangeDocumentOwnerResponse", []);
+    }
+}
+/**
+ * @generated MessageType for protobuf message services.docstore.ChangeDocumentOwnerResponse
+ */
+export const ChangeDocumentOwnerResponse = new ChangeDocumentOwnerResponse$Type();
+// @generated message type with reflection information, may provide speed optimized methods
 class ListDocumentActivityRequest$Type extends MessageType<ListDocumentActivityRequest> {
     constructor() {
         super("services.docstore.ListDocumentActivityRequest", [
@@ -1641,6 +1684,7 @@ export const DocStoreService = new ServiceType("services.docstore.DocStoreServic
     { name: "UpdateDocument", options: {}, I: UpdateDocumentRequest, O: UpdateDocumentResponse },
     { name: "DeleteDocument", options: {}, I: DeleteDocumentRequest, O: DeleteDocumentResponse },
     { name: "ToggleDocument", options: {}, I: ToggleDocumentRequest, O: ToggleDocumentResponse },
+    { name: "ChangeDocumentOwner", options: {}, I: ChangeDocumentOwnerRequest, O: ChangeDocumentOwnerResponse },
     { name: "GetDocumentReferences", options: {}, I: GetDocumentReferencesRequest, O: GetDocumentReferencesResponse },
     { name: "GetDocumentRelations", options: {}, I: GetDocumentRelationsRequest, O: GetDocumentRelationsResponse },
     { name: "AddDocumentReference", options: {}, I: AddDocumentReferenceRequest, O: AddDocumentReferenceResponse },

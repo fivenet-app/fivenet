@@ -381,6 +381,47 @@ func (m *DocActivityData) validate(all bool) error {
 			}
 		}
 
+	case *DocActivityData_RequestInfo:
+		if v == nil {
+			err := DocActivityDataValidationError{
+				field:  "Data",
+				reason: "oneof value cannot be a typed-nil",
+			}
+			if !all {
+				return err
+			}
+			errors = append(errors, err)
+		}
+
+		if all {
+			switch v := interface{}(m.GetRequestInfo()).(type) {
+			case interface{ ValidateAll() error }:
+				if err := v.ValidateAll(); err != nil {
+					errors = append(errors, DocActivityDataValidationError{
+						field:  "RequestInfo",
+						reason: "embedded message failed validation",
+						cause:  err,
+					})
+				}
+			case interface{ Validate() error }:
+				if err := v.Validate(); err != nil {
+					errors = append(errors, DocActivityDataValidationError{
+						field:  "RequestInfo",
+						reason: "embedded message failed validation",
+						cause:  err,
+					})
+				}
+			}
+		} else if v, ok := interface{}(m.GetRequestInfo()).(interface{ Validate() error }); ok {
+			if err := v.Validate(); err != nil {
+				return DocActivityDataValidationError{
+					field:  "RequestInfo",
+					reason: "embedded message failed validation",
+					cause:  err,
+				}
+			}
+		}
+
 	default:
 		_ = v // ensures v is used
 	}
@@ -596,7 +637,36 @@ func (m *DocOwnerChanged) validate(all bool) error {
 
 	var errors []error
 
-	// no validation rules for OwnerId
+	// no validation rules for NewOwnerId
+
+	if all {
+		switch v := interface{}(m.GetNewOwner()).(type) {
+		case interface{ ValidateAll() error }:
+			if err := v.ValidateAll(); err != nil {
+				errors = append(errors, DocOwnerChangedValidationError{
+					field:  "NewOwner",
+					reason: "embedded message failed validation",
+					cause:  err,
+				})
+			}
+		case interface{ Validate() error }:
+			if err := v.Validate(); err != nil {
+				errors = append(errors, DocOwnerChangedValidationError{
+					field:  "NewOwner",
+					reason: "embedded message failed validation",
+					cause:  err,
+				})
+			}
+		}
+	} else if v, ok := interface{}(m.GetNewOwner()).(interface{ Validate() error }); ok {
+		if err := v.Validate(); err != nil {
+			return DocOwnerChangedValidationError{
+				field:  "NewOwner",
+				reason: "embedded message failed validation",
+				cause:  err,
+			}
+		}
+	}
 
 	if len(errors) > 0 {
 		return DocOwnerChangedMultiError(errors)
@@ -675,3 +745,107 @@ var _ interface {
 	Cause() error
 	ErrorName() string
 } = DocOwnerChangedValidationError{}
+
+// Validate checks the field values on DocRequestActivity with the rules
+// defined in the proto definition for this message. If any rules are
+// violated, the first error encountered is returned, or nil if there are no violations.
+func (m *DocRequestActivity) Validate() error {
+	return m.validate(false)
+}
+
+// ValidateAll checks the field values on DocRequestActivity with the rules
+// defined in the proto definition for this message. If any rules are
+// violated, the result is a list of violation errors wrapped in
+// DocRequestActivityMultiError, or nil if none found.
+func (m *DocRequestActivity) ValidateAll() error {
+	return m.validate(true)
+}
+
+func (m *DocRequestActivity) validate(all bool) error {
+	if m == nil {
+		return nil
+	}
+
+	var errors []error
+
+	// no validation rules for Accepted
+
+	if len(errors) > 0 {
+		return DocRequestActivityMultiError(errors)
+	}
+
+	return nil
+}
+
+// DocRequestActivityMultiError is an error wrapping multiple validation errors
+// returned by DocRequestActivity.ValidateAll() if the designated constraints
+// aren't met.
+type DocRequestActivityMultiError []error
+
+// Error returns a concatenation of all the error messages it wraps.
+func (m DocRequestActivityMultiError) Error() string {
+	var msgs []string
+	for _, err := range m {
+		msgs = append(msgs, err.Error())
+	}
+	return strings.Join(msgs, "; ")
+}
+
+// AllErrors returns a list of validation violation errors.
+func (m DocRequestActivityMultiError) AllErrors() []error { return m }
+
+// DocRequestActivityValidationError is the validation error returned by
+// DocRequestActivity.Validate if the designated constraints aren't met.
+type DocRequestActivityValidationError struct {
+	field  string
+	reason string
+	cause  error
+	key    bool
+}
+
+// Field function returns field value.
+func (e DocRequestActivityValidationError) Field() string { return e.field }
+
+// Reason function returns reason value.
+func (e DocRequestActivityValidationError) Reason() string { return e.reason }
+
+// Cause function returns cause value.
+func (e DocRequestActivityValidationError) Cause() error { return e.cause }
+
+// Key function returns key value.
+func (e DocRequestActivityValidationError) Key() bool { return e.key }
+
+// ErrorName returns error name.
+func (e DocRequestActivityValidationError) ErrorName() string {
+	return "DocRequestActivityValidationError"
+}
+
+// Error satisfies the builtin error interface
+func (e DocRequestActivityValidationError) Error() string {
+	cause := ""
+	if e.cause != nil {
+		cause = fmt.Sprintf(" | caused by: %v", e.cause)
+	}
+
+	key := ""
+	if e.key {
+		key = "key for "
+	}
+
+	return fmt.Sprintf(
+		"invalid %sDocRequestActivity.%s: %s%s",
+		key,
+		e.field,
+		e.reason,
+		cause)
+}
+
+var _ error = DocRequestActivityValidationError{}
+
+var _ interface {
+	Field() string
+	Reason() string
+	Key() bool
+	Cause() error
+	ErrorName() string
+} = DocRequestActivityValidationError{}

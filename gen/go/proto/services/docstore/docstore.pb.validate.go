@@ -5422,6 +5422,217 @@ var _ interface {
 	ErrorName() string
 } = ToggleDocumentResponseValidationError{}
 
+// Validate checks the field values on ChangeDocumentOwnerRequest with the
+// rules defined in the proto definition for this message. If any rules are
+// violated, the first error encountered is returned, or nil if there are no violations.
+func (m *ChangeDocumentOwnerRequest) Validate() error {
+	return m.validate(false)
+}
+
+// ValidateAll checks the field values on ChangeDocumentOwnerRequest with the
+// rules defined in the proto definition for this message. If any rules are
+// violated, the result is a list of violation errors wrapped in
+// ChangeDocumentOwnerRequestMultiError, or nil if none found.
+func (m *ChangeDocumentOwnerRequest) ValidateAll() error {
+	return m.validate(true)
+}
+
+func (m *ChangeDocumentOwnerRequest) validate(all bool) error {
+	if m == nil {
+		return nil
+	}
+
+	var errors []error
+
+	// no validation rules for DocumentId
+
+	if m.NewUserId != nil {
+		// no validation rules for NewUserId
+	}
+
+	if len(errors) > 0 {
+		return ChangeDocumentOwnerRequestMultiError(errors)
+	}
+
+	return nil
+}
+
+// ChangeDocumentOwnerRequestMultiError is an error wrapping multiple
+// validation errors returned by ChangeDocumentOwnerRequest.ValidateAll() if
+// the designated constraints aren't met.
+type ChangeDocumentOwnerRequestMultiError []error
+
+// Error returns a concatenation of all the error messages it wraps.
+func (m ChangeDocumentOwnerRequestMultiError) Error() string {
+	var msgs []string
+	for _, err := range m {
+		msgs = append(msgs, err.Error())
+	}
+	return strings.Join(msgs, "; ")
+}
+
+// AllErrors returns a list of validation violation errors.
+func (m ChangeDocumentOwnerRequestMultiError) AllErrors() []error { return m }
+
+// ChangeDocumentOwnerRequestValidationError is the validation error returned
+// by ChangeDocumentOwnerRequest.Validate if the designated constraints aren't met.
+type ChangeDocumentOwnerRequestValidationError struct {
+	field  string
+	reason string
+	cause  error
+	key    bool
+}
+
+// Field function returns field value.
+func (e ChangeDocumentOwnerRequestValidationError) Field() string { return e.field }
+
+// Reason function returns reason value.
+func (e ChangeDocumentOwnerRequestValidationError) Reason() string { return e.reason }
+
+// Cause function returns cause value.
+func (e ChangeDocumentOwnerRequestValidationError) Cause() error { return e.cause }
+
+// Key function returns key value.
+func (e ChangeDocumentOwnerRequestValidationError) Key() bool { return e.key }
+
+// ErrorName returns error name.
+func (e ChangeDocumentOwnerRequestValidationError) ErrorName() string {
+	return "ChangeDocumentOwnerRequestValidationError"
+}
+
+// Error satisfies the builtin error interface
+func (e ChangeDocumentOwnerRequestValidationError) Error() string {
+	cause := ""
+	if e.cause != nil {
+		cause = fmt.Sprintf(" | caused by: %v", e.cause)
+	}
+
+	key := ""
+	if e.key {
+		key = "key for "
+	}
+
+	return fmt.Sprintf(
+		"invalid %sChangeDocumentOwnerRequest.%s: %s%s",
+		key,
+		e.field,
+		e.reason,
+		cause)
+}
+
+var _ error = ChangeDocumentOwnerRequestValidationError{}
+
+var _ interface {
+	Field() string
+	Reason() string
+	Key() bool
+	Cause() error
+	ErrorName() string
+} = ChangeDocumentOwnerRequestValidationError{}
+
+// Validate checks the field values on ChangeDocumentOwnerResponse with the
+// rules defined in the proto definition for this message. If any rules are
+// violated, the first error encountered is returned, or nil if there are no violations.
+func (m *ChangeDocumentOwnerResponse) Validate() error {
+	return m.validate(false)
+}
+
+// ValidateAll checks the field values on ChangeDocumentOwnerResponse with the
+// rules defined in the proto definition for this message. If any rules are
+// violated, the result is a list of violation errors wrapped in
+// ChangeDocumentOwnerResponseMultiError, or nil if none found.
+func (m *ChangeDocumentOwnerResponse) ValidateAll() error {
+	return m.validate(true)
+}
+
+func (m *ChangeDocumentOwnerResponse) validate(all bool) error {
+	if m == nil {
+		return nil
+	}
+
+	var errors []error
+
+	if len(errors) > 0 {
+		return ChangeDocumentOwnerResponseMultiError(errors)
+	}
+
+	return nil
+}
+
+// ChangeDocumentOwnerResponseMultiError is an error wrapping multiple
+// validation errors returned by ChangeDocumentOwnerResponse.ValidateAll() if
+// the designated constraints aren't met.
+type ChangeDocumentOwnerResponseMultiError []error
+
+// Error returns a concatenation of all the error messages it wraps.
+func (m ChangeDocumentOwnerResponseMultiError) Error() string {
+	var msgs []string
+	for _, err := range m {
+		msgs = append(msgs, err.Error())
+	}
+	return strings.Join(msgs, "; ")
+}
+
+// AllErrors returns a list of validation violation errors.
+func (m ChangeDocumentOwnerResponseMultiError) AllErrors() []error { return m }
+
+// ChangeDocumentOwnerResponseValidationError is the validation error returned
+// by ChangeDocumentOwnerResponse.Validate if the designated constraints
+// aren't met.
+type ChangeDocumentOwnerResponseValidationError struct {
+	field  string
+	reason string
+	cause  error
+	key    bool
+}
+
+// Field function returns field value.
+func (e ChangeDocumentOwnerResponseValidationError) Field() string { return e.field }
+
+// Reason function returns reason value.
+func (e ChangeDocumentOwnerResponseValidationError) Reason() string { return e.reason }
+
+// Cause function returns cause value.
+func (e ChangeDocumentOwnerResponseValidationError) Cause() error { return e.cause }
+
+// Key function returns key value.
+func (e ChangeDocumentOwnerResponseValidationError) Key() bool { return e.key }
+
+// ErrorName returns error name.
+func (e ChangeDocumentOwnerResponseValidationError) ErrorName() string {
+	return "ChangeDocumentOwnerResponseValidationError"
+}
+
+// Error satisfies the builtin error interface
+func (e ChangeDocumentOwnerResponseValidationError) Error() string {
+	cause := ""
+	if e.cause != nil {
+		cause = fmt.Sprintf(" | caused by: %v", e.cause)
+	}
+
+	key := ""
+	if e.key {
+		key = "key for "
+	}
+
+	return fmt.Sprintf(
+		"invalid %sChangeDocumentOwnerResponse.%s: %s%s",
+		key,
+		e.field,
+		e.reason,
+		cause)
+}
+
+var _ error = ChangeDocumentOwnerResponseValidationError{}
+
+var _ interface {
+	Field() string
+	Reason() string
+	Key() bool
+	Cause() error
+	ErrorName() string
+} = ChangeDocumentOwnerResponseValidationError{}
+
 // Validate checks the field values on ListDocumentActivityRequest with the
 // rules defined in the proto definition for this message. If any rules are
 // violated, the first error encountered is returned, or nil if there are no violations.

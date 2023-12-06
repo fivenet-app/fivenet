@@ -45,9 +45,8 @@ func (s *Server) ListDocumentReqs(ctx context.Context, req *ListDocumentReqsRequ
 		return nil, errswrap.NewError(errorsdocstore.ErrDocViewDenied, err)
 	}
 
+	tDocRequest := table.FivenetDocumentsRequests.AS("doc_request")
 	condition := tDocRequest.DocumentID.EQ(jet.Uint64(req.DocumentId))
-
-	tDocRequest := table.FivenetDocumentsActivity.AS("doc_request")
 
 	countStmt := tDocRequest.
 		SELECT(
@@ -79,11 +78,12 @@ func (s *Server) ListDocumentReqs(ctx context.Context, req *ListDocumentReqsRequ
 			tDocRequest.ID,
 			tDocRequest.CreatedAt,
 			tDocRequest.DocumentID,
-			tDocRequest.ActivityType,
+			tDocRequest.RequestType,
 			tDocRequest.CreatorID,
 			tDocRequest.CreatorJob,
 			tDocRequest.Reason,
 			tDocRequest.Data,
+			tDocRequest.Completed,
 			tCreator.ID,
 			tCreator.Identifier,
 			tCreator.Job,
@@ -272,7 +272,35 @@ func (s *Server) UpdateDocumentReq(ctx context.Context, req *UpdateDocumentReqRe
 		return nil, errswrap.NewError(errorsdocstore.ErrFailedQuery, err)
 	}
 
-	// TODO execute action based on if it has been accepted or not (req.Accepted)
+	// Accepted the change
+	if req.Accepted {
+		activityType := documents.DocActivityType_DOC_ACTIVITY_TYPE_ACCESS_UPDATED
+		switch request.RequestType {
+		case documents.DocActivityType_DOC_ACTIVITY_TYPE_REQUESTED_CLOSURE:
+			activityType = documents.DocActivityType_DOC_ACTIVITY_TYPE_STATUS_CLOSED
+		case documents.DocActivityType_DOC_ACTIVITY_TYPE_REQUESTED_OPENING:
+			activityType = documents.DocActivityType_DOC_ACTIVITY_TYPE_STATUS_OPEN
+		case documents.DocActivityType_DOC_ACTIVITY_TYPE_REQUESTED_UPDATE:
+			activityType = documents.DocActivityType_DOC_ACTIVITY_TYPE_UPDATED
+		case documents.DocActivityType_DOC_ACTIVITY_TYPE_REQUESTED_OWNER_CHANGE:
+			activityType = documents.DocActivityType_DOC_ACTIVITY_TYPE_OWNER_CHANGED
+		case documents.DocActivityType_DOC_ACTIVITY_TYPE_REQUESTED_DELETION:
+			activityType = documents.DocActivityType_DOC_ACTIVITY_TYPE_DELETED
+		case documents.DocActivityType_DOC_ACTIVITY_TYPE_REQUESTED_ACCESS:
+			activityType = documents.DocActivityType_DOC_ACTIVITY_TYPE_ACCESS_UPDATED
+		}
+		// TODO execute action based on if it has been accepted or not (req.Accepted)
+
+		if _, err := s.addDocumentActivity(ctx, tx, &documents.DocActivity{
+			DocumentId:   request.DocumentId,
+			ActivityType: activityType,
+			CreatorId:    &userInfo.UserId,
+			CreatorJob:   userInfo.Job,
+			Reason:       req.Reason,
+		}); err != nil {
+			return nil, errswrap.NewError(errorsdocstore.ErrFailedQuery, err)
+		}
+	}
 
 	// Commit the transaction
 	if err := tx.Commit(); err != nil {

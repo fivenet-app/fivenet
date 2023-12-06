@@ -266,6 +266,9 @@
                     "okText": "Ok"
                 }
             },
+            "document_view": {
+                "take_ownership": "Take Ownership"
+            },
             "document_managers": {
                 "view_current": "View current",
                 "add_new": "Add new",
@@ -839,6 +842,10 @@
         "document_updated": {
             "title": "Document updated!",
             "content": "Document has been updated."
+        },
+        "document_take_ownership": {
+            "title": "",
+            "content": ""
         },
         "failed_loading_postals": {
             "title": "Failed to load Postal codes",
@@ -1488,6 +1495,8 @@
             "ErrClosedDoc": "Document is closed and can't be edited!",
             "ErrDocAccessEditDenied": "You don't have permission to edit the document's access!",
             "ErrDocAccessViewDenied": "You don't have permission to view this document's access!",
+            "ErrDocSameOwner": "You are already the creator of this document!",
+            "ErrDocOwnerWrongJob": "New document owner must be part of your job!",
             "ErrTemplateFailed": "Failed to render document template! Please talk with your faction leader.",
             "ErrDocViewDenied": "You don't have permission to view this document!",
             "ErrDocUpdateDenied": "You don't have permission to edit this document!",

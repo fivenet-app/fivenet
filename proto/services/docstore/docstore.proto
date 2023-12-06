@@ -229,6 +229,15 @@ message ToggleDocumentRequest {
 
 message ToggleDocumentResponse {}
 
+message ChangeDocumentOwnerRequest {
+  uint64 document_id = 1 [jstype = JS_STRING];
+  optional int32 new_user_id = 2;
+}
+
+message ChangeDocumentOwnerResponse {}
+
+// Document Activity and Requests
+
 message ListDocumentActivityRequest {
   resources.common.database.PaginationRequest pagination = 1 [(validate.rules).message.required = true];
   uint64 document_id = 2 [jstype = JS_STRING];
@@ -365,6 +374,9 @@ service DocStoreService {
 
   // @perm: Attrs=Access/StringList:[]string{"Own", "Lower_Rank", "Same_Rank", "Any"}§[]string{"Own"}
   rpc ToggleDocument(ToggleDocumentRequest) returns (ToggleDocumentResponse);
+
+  // @perm: Attrs=Access/StringList:[]string{"Own", "Lower_Rank", "Same_Rank", "Any"}§[]string{"Own"}
+  rpc ChangeDocumentOwner(ChangeDocumentOwnerRequest) returns (ChangeDocumentOwnerResponse);
 
   // @perm: Name=GetDocument
   rpc GetDocumentReferences(GetDocumentReferencesRequest) returns (GetDocumentReferencesResponse);

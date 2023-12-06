@@ -10,6 +10,7 @@ import (
 	database "github.com/galexrt/fivenet/gen/go/proto/resources/common/database"
 	"github.com/galexrt/fivenet/gen/go/proto/resources/documents"
 	"github.com/galexrt/fivenet/gen/go/proto/resources/rector"
+	"github.com/galexrt/fivenet/gen/go/proto/resources/users"
 	errorsdocstore "github.com/galexrt/fivenet/gen/go/proto/services/docstore/errors"
 	permsdocstore "github.com/galexrt/fivenet/gen/go/proto/services/docstore/perms"
 	"github.com/galexrt/fivenet/pkg/grpc/auth"
@@ -616,4 +617,135 @@ func (s *Server) ToggleDocument(ctx context.Context, req *ToggleDocumentRequest)
 	auditEntry.State = int16(rector.EventType_EVENT_TYPE_UPDATED)
 
 	return &ToggleDocumentResponse{}, nil
+}
+
+func (s *Server) ChangeDocumentOwner(ctx context.Context, req *ChangeDocumentOwnerRequest) (*ChangeDocumentOwnerResponse, error) {
+	trace.SpanFromContext(ctx).SetAttributes(attribute.Int64("fivenet.docstore.id", int64(req.DocumentId)))
+
+	userInfo := auth.MustGetUserInfoFromContext(ctx)
+
+	auditEntry := &model.FivenetAuditLog{
+		Service: DocStoreService_ServiceDesc.ServiceName,
+		Method:  "ChangeDocumentOwner",
+		UserID:  userInfo.UserId,
+		UserJob: userInfo.Job,
+		State:   int16(rector.EventType_EVENT_TYPE_ERRORED),
+	}
+	defer s.auditer.Log(auditEntry, req)
+
+	check, err := s.checkIfUserHasAccessToDoc(ctx, req.DocumentId, userInfo, documents.AccessLevel_ACCESS_LEVEL_EDIT)
+	if err != nil {
+		return nil, errswrap.NewError(errorsdocstore.ErrNotFoundOrNoPerms, err)
+	}
+	if !check && !userInfo.SuperUser {
+		if !userInfo.SuperUser {
+			return nil, errswrap.NewError(errorsdocstore.ErrDocToggleDenied, err)
+		}
+	}
+
+	doc, err := s.getDocument(ctx, tDocument.ID.EQ(jet.Uint64(req.DocumentId)), userInfo)
+	if err != nil {
+		return nil, errswrap.NewError(errorsdocstore.ErrFailedQuery, err)
+	}
+
+	// Document must be created by the same job
+	if doc.CreatorJob != userInfo.Job {
+		return nil, errorsdocstore.ErrDocOwnerWrongJob
+	}
+
+	// If user is not a super user make sure they can only change owner to themselves
+	if req.NewUserId == nil || !userInfo.SuperUser {
+		req.NewUserId = &userInfo.UserId
+	}
+
+	// Field Permission Check
+	fieldsAttr, err := s.ps.Attr(userInfo, permsdocstore.DocStoreServicePerm, permsdocstore.DocStoreServiceToggleDocumentPerm, permsdocstore.DocStoreServiceToggleDocumentAccessPermField)
+	if err != nil {
+		return nil, errswrap.NewError(errorsdocstore.ErrFailedQuery, err)
+	}
+	var fields perms.StringList
+	if fieldsAttr != nil {
+		fields = fieldsAttr.([]string)
+	}
+	if !s.checkIfHasAccess(fields, userInfo, doc.CreatorJob, doc.Creator) {
+		return nil, errswrap.NewError(errorsdocstore.ErrDocToggleDenied, err)
+	}
+
+	stmtGetUser := tUsers.
+		SELECT(
+			tUsers.ID,
+			tUsers.Firstname,
+			tUsers.Lastname,
+
+			tUsers.Job,
+		).
+		FROM(tUsers).
+		WHERE(tUsers.ID.EQ(jet.Int32(*req.NewUserId))).
+		LIMIT(1)
+
+	var newOwner users.UserShort
+	if err := stmtGetUser.QueryContext(ctx, s.db, &newOwner); err != nil {
+		return nil, errswrap.NewError(errorsdocstore.ErrFailedQuery, err)
+	}
+
+	// Allow super users to transfer documents cross jobs
+	if !userInfo.SuperUser {
+		if newOwner.Job != doc.CreatorJob {
+			return nil, errorsdocstore.ErrDocOwnerWrongJob
+		}
+
+		if doc.CreatorId != nil && *doc.CreatorId == userInfo.UserId {
+			return nil, errorsdocstore.ErrDocSameOwner
+
+		}
+	}
+
+	// Begin transaction
+	tx, err := s.db.BeginTx(ctx, nil)
+	if err != nil {
+		return nil, errswrap.NewError(errorsdocstore.ErrFailedQuery, err)
+	}
+	// Defer a rollback in case anything fails
+	defer tx.Rollback()
+
+	stmt := tDocument.
+		UPDATE(
+			tDocument.CreatorID,
+		).
+		SET(
+			req.NewUserId,
+		).
+		WHERE(
+			tDocument.ID.EQ(jet.Uint64(req.DocumentId)),
+		)
+
+	if _, err := stmt.ExecContext(ctx, s.db); err != nil {
+		return nil, errswrap.NewError(errorsdocstore.ErrFailedQuery, err)
+	}
+
+	if _, err := s.addDocumentActivity(ctx, tx, &documents.DocActivity{
+		DocumentId:   req.DocumentId,
+		ActivityType: documents.DocActivityType_DOC_ACTIVITY_TYPE_OWNER_CHANGED,
+		CreatorId:    &userInfo.UserId,
+		CreatorJob:   userInfo.Job,
+		Data: &documents.DocActivityData{
+			Data: &documents.DocActivityData_OwnerChanged{
+				OwnerChanged: &documents.DocOwnerChanged{
+					NewOwnerId: *req.NewUserId,
+					NewOwner:   &newOwner,
+				},
+			},
+		},
+	}); err != nil {
+		return nil, errswrap.NewError(errorsdocstore.ErrFailedQuery, err)
+	}
+
+	// Commit the transaction
+	if err := tx.Commit(); err != nil {
+		return nil, errswrap.NewError(errorsdocstore.ErrFailedQuery, err)
+	}
+
+	auditEntry.State = int16(rector.EventType_EVENT_TYPE_UPDATED)
+
+	return &ChangeDocumentOwnerResponse{}, nil
 }

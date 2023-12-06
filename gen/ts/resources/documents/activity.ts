@@ -69,6 +69,12 @@ export interface DocActivityData {
          */
         ownerChanged: DocOwnerChanged;
     } | {
+        oneofKind: "requestInfo";
+        /**
+         * @generated from protobuf field: resources.documents.DocRequestActivity request_info = 3;
+         */
+        requestInfo: DocRequestActivity;
+    } | {
         oneofKind: undefined;
     };
 }
@@ -94,9 +100,22 @@ export interface DocUpdated {
  */
 export interface DocOwnerChanged {
     /**
-     * @generated from protobuf field: int32 owner_id = 1;
+     * @generated from protobuf field: int32 new_owner_id = 1;
      */
-    ownerId: number;
+    newOwnerId: number;
+    /**
+     * @generated from protobuf field: resources.users.UserShort new_owner = 2;
+     */
+    newOwner?: UserShort;
+}
+/**
+ * @generated from protobuf message resources.documents.DocRequestActivity
+ */
+export interface DocRequestActivity {
+    /**
+     * @generated from protobuf field: bool accepted = 1;
+     */
+    accepted: boolean;
 }
 /**
  * @generated from protobuf enum resources.documents.DocActivityType
@@ -211,7 +230,8 @@ class DocActivityData$Type extends MessageType<DocActivityData> {
     constructor() {
         super("resources.documents.DocActivityData", [
             { no: 1, name: "updated", kind: "message", oneof: "data", T: () => DocUpdated },
-            { no: 2, name: "owner_changed", kind: "message", oneof: "data", T: () => DocOwnerChanged }
+            { no: 2, name: "owner_changed", kind: "message", oneof: "data", T: () => DocOwnerChanged },
+            { no: 3, name: "request_info", kind: "message", oneof: "data", T: () => DocRequestActivity }
         ]);
     }
 }
@@ -237,7 +257,8 @@ export const DocUpdated = new DocUpdated$Type();
 class DocOwnerChanged$Type extends MessageType<DocOwnerChanged> {
     constructor() {
         super("resources.documents.DocOwnerChanged", [
-            { no: 1, name: "owner_id", kind: "scalar", T: 5 /*ScalarType.INT32*/ }
+            { no: 1, name: "new_owner_id", kind: "scalar", T: 5 /*ScalarType.INT32*/ },
+            { no: 2, name: "new_owner", kind: "message", T: () => UserShort }
         ]);
     }
 }
@@ -245,3 +266,15 @@ class DocOwnerChanged$Type extends MessageType<DocOwnerChanged> {
  * @generated MessageType for protobuf message resources.documents.DocOwnerChanged
  */
 export const DocOwnerChanged = new DocOwnerChanged$Type();
+// @generated message type with reflection information, may provide speed optimized methods
+class DocRequestActivity$Type extends MessageType<DocRequestActivity> {
+    constructor() {
+        super("resources.documents.DocRequestActivity", [
+            { no: 1, name: "accepted", kind: "scalar", T: 8 /*ScalarType.BOOL*/ }
+        ]);
+    }
+}
+/**
+ * @generated MessageType for protobuf message resources.documents.DocRequestActivity
+ */
+export const DocRequestActivity = new DocRequestActivity$Type();

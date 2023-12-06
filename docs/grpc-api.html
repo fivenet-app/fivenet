@@ -398,6 +398,10 @@
                 </li>
               
                 <li>
+                  <a href="#resources.documents.DocRequestActivity"><span class="badge">M</span>DocRequestActivity</a>
+                </li>
+              
+                <li>
                   <a href="#resources.documents.DocUpdated"><span class="badge">M</span>DocUpdated</a>
                 </li>
               
@@ -1287,6 +1291,14 @@
               
                 <li>
                   <a href="#services.docstore.AddDocumentRelationResponse"><span class="badge">M</span>AddDocumentRelationResponse</a>
+                </li>
+              
+                <li>
+                  <a href="#services.docstore.ChangeDocumentOwnerRequest"><span class="badge">M</span>ChangeDocumentOwnerRequest</a>
+                </li>
+              
+                <li>
+                  <a href="#services.docstore.ChangeDocumentOwnerResponse"><span class="badge">M</span>ChangeDocumentOwnerResponse</a>
                 </li>
               
                 <li>
@@ -4674,6 +4686,13 @@
                   <td><p> </p></td>
                 </tr>
               
+                <tr>
+                  <td>request_info</td>
+                  <td><a href="#resources.documents.DocRequestActivity">DocRequestActivity</a></td>
+                  <td></td>
+                  <td><p> </p></td>
+                </tr>
+              
             </tbody>
           </table>
 
@@ -4692,8 +4711,39 @@
             <tbody>
               
                 <tr>
-                  <td>owner_id</td>
+                  <td>new_owner_id</td>
                   <td><a href="#int32">int32</a></td>
+                  <td></td>
+                  <td><p> </p></td>
+                </tr>
+              
+                <tr>
+                  <td>new_owner</td>
+                  <td><a href="#resources.users.UserShort">resources.users.UserShort</a></td>
+                  <td></td>
+                  <td><p> </p></td>
+                </tr>
+              
+            </tbody>
+          </table>
+
+          
+
+        
+      
+        <h3 id="resources.documents.DocRequestActivity">DocRequestActivity</h3>
+        <p></p>
+
+        
+          <table class="field-table">
+            <thead>
+              <tr><td>Field</td><td>Type</td><td>Label</td><td>Description</td></tr>
+            </thead>
+            <tbody>
+              
+                <tr>
+                  <td>accepted</td>
+                  <td><a href="#bool">bool</a></td>
                   <td></td>
                   <td><p> </p></td>
                 </tr>
@@ -14714,6 +14764,44 @@
 
         
       
+        <h3 id="services.docstore.ChangeDocumentOwnerRequest">ChangeDocumentOwnerRequest</h3>
+        <p></p>
+
+        
+          <table class="field-table">
+            <thead>
+              <tr><td>Field</td><td>Type</td><td>Label</td><td>Description</td></tr>
+            </thead>
+            <tbody>
+              
+                <tr>
+                  <td>document_id</td>
+                  <td><a href="#uint64">uint64</a></td>
+                  <td></td>
+                  <td><p> </p></td>
+                </tr>
+              
+                <tr>
+                  <td>new_user_id</td>
+                  <td><a href="#int32">int32</a></td>
+                  <td>optional</td>
+                  <td><p> </p></td>
+                </tr>
+              
+            </tbody>
+          </table>
+
+          
+
+        
+      
+        <h3 id="services.docstore.ChangeDocumentOwnerResponse">ChangeDocumentOwnerResponse</h3>
+        <p></p>
+
+        
+
+        
+      
         <h3 id="services.docstore.CreateCategoryRequest">CreateCategoryRequest</h3>
         <p></p>
 
@@ -17080,6 +17168,13 @@
                 <td>ToggleDocument</td>
                 <td><a href="#services.docstore.ToggleDocumentRequest">ToggleDocumentRequest</a></td>
                 <td><a href="#services.docstore.ToggleDocumentResponse">ToggleDocumentResponse</a></td>
+                <td><p>@perm: Attrs=Access/StringList:[]string{&#34;Own&#34;, &#34;Lower_Rank&#34;, &#34;Same_Rank&#34;, &#34;Any&#34;}§[]string{&#34;Own&#34;}</p></td>
+              </tr>
+            
+              <tr>
+                <td>ChangeDocumentOwner</td>
+                <td><a href="#services.docstore.ChangeDocumentOwnerRequest">ChangeDocumentOwnerRequest</a></td>
+                <td><a href="#services.docstore.ChangeDocumentOwnerResponse">ChangeDocumentOwnerResponse</a></td>
                 <td><p>@perm: Attrs=Access/StringList:[]string{&#34;Own&#34;, &#34;Lower_Rank&#34;, &#34;Same_Rank&#34;, &#34;Any&#34;}§[]string{&#34;Own&#34;}</p></td>
               </tr>
             
