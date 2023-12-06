@@ -1503,7 +1503,11 @@
             "ErrFeedRefAddDenied": "Sie haben keine Berechtigung Dokumenten-Referenzen zum Dokument hinzuzufügen!",
             "ErrFeedRefRemoveDenied": "Sie haben keine Berechtigung Dokumenten-Referenzen vom Dokument zu entfernen!",
             "ErrFeedRelAddDenied": "Sie haben keine Berechtigung Bürger-Dokumenten-Beziehungen zu erstellen!",
-            "ErrFeedRelRemoveDenied": "You don't have permission to remove references from this document!"
+            "ErrFeedRelRemoveDenied": "You don't have permission to remove references from this document!",
+            "ErrDocReqAlreadyCreated": {
+                "title": "Dokumenten Anfrage existiert bereits!",
+                "content": "Eine Dokumenten Anfrage für diese Art-Anfrage existiert bereits oder wurde in den letzten 24 Stunden schon gestellt."
+            }
         },
         "LivemapperService": {
             "ErrStreamFailed": "Livemap Datenstrom fehlgeschlagen!",
@@ -1614,12 +1618,12 @@
                 "REQUESTED_ACCESS": "Zugriff auf Dokument beanfragt",
                 "REQUESTED_CLOSURE": "Schließung des Dokument beanfragt",
                 "REQUESTED_UPDATE": "Aktualisierung des Dokument beanfragt",
-                "REQUESTED_OWNER_CHANGE": "Dokument-Besitzer Wechsel beanfragt",
                 "REQUESTED_DELETION": "Löschung des Dokument beanfragt",
                 "COMMENT_ADDED": "Kommentar hinzugefügt",
                 "COMMENT_UPDATED": "Kommentar aktualisiert",
                 "COMMENT_DELETED": "Kommentar gelöscht",
-                "UNSPECIFIED": "Unbekannte Aktivität"
+                "UNSPECIFIED": "Unbekannte Aktivität",
+                "REQUESTED_OWNER_CHANGE": "Dokument-Besitzer Wechsel beanfragt"
             }
         },
         "centrum": {
