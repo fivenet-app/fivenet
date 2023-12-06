@@ -29,7 +29,7 @@ import (
 const DocRequestMinimumWaitTime = 24 * time.Hour
 
 var (
-	tDocRequest = table.FivenetDocumentsRequests
+	tDocRequest = table.FivenetDocumentsRequests.AS("doc_request")
 )
 
 func (s *Server) ListDocumentReqs(ctx context.Context, req *ListDocumentReqsRequest) (*ListDocumentReqsResponse, error) {
@@ -45,7 +45,6 @@ func (s *Server) ListDocumentReqs(ctx context.Context, req *ListDocumentReqsRequ
 		return nil, errswrap.NewError(errorsdocstore.ErrDocViewDenied, err)
 	}
 
-	tDocRequest := table.FivenetDocumentsRequests.AS("doc_request")
 	condition := tDocRequest.DocumentID.EQ(jet.Uint64(req.DocumentId))
 
 	countStmt := tDocRequest.
@@ -195,7 +194,8 @@ func (s *Server) CreateDocumentReq(ctx context.Context, req *CreateDocumentReqRe
 		}
 	} else {
 		completed := false
-		if err := s.updateDocumentReq(ctx, s.db, &documents.DocRequest{
+		if err := s.updateDocumentReq(ctx, s.db, request.Id, &documents.DocRequest{
+			Id:          request.Id,
 			CreatedAt:   timestamp.Now(),
 			DocumentId:  doc.Id,
 			CreatorId:   &userInfo.UserId,
@@ -268,7 +268,7 @@ func (s *Server) UpdateDocumentReq(ctx context.Context, req *UpdateDocumentReqRe
 
 	completed := req.Accepted
 	request.Completed = &completed
-	if err := s.updateDocumentReq(ctx, tx, request); err != nil {
+	if err := s.updateDocumentReq(ctx, tx, request.Id, request); err != nil {
 		return nil, errswrap.NewError(errorsdocstore.ErrFailedQuery, err)
 	}
 
@@ -289,6 +289,7 @@ func (s *Server) UpdateDocumentReq(ctx context.Context, req *UpdateDocumentReqRe
 		case documents.DocActivityType_DOC_ACTIVITY_TYPE_REQUESTED_ACCESS:
 			activityType = documents.DocActivityType_DOC_ACTIVITY_TYPE_ACCESS_UPDATED
 		}
+
 		// TODO execute action based on if it has been accepted or not (req.Accepted)
 
 		if _, err := s.addDocumentActivity(ctx, tx, &documents.DocActivity{
@@ -387,7 +388,8 @@ func (s *Server) notifyUser(ctx context.Context, doc *documents.Document, source
 	return nil
 }
 
-func (s *Server) addDocumentReq(ctx context.Context, tx qrm.DB, activitiy *documents.DocRequest) (uint64, error) {
+func (s *Server) addDocumentReq(ctx context.Context, tx qrm.DB, request *documents.DocRequest) (uint64, error) {
+	tDocRequest := table.FivenetDocumentsRequests
 	stmt := tDocRequest.
 		INSERT(
 			tDocRequest.DocumentID,
@@ -398,12 +400,12 @@ func (s *Server) addDocumentReq(ctx context.Context, tx qrm.DB, activitiy *docum
 			tDocRequest.Data,
 		).
 		VALUES(
-			activitiy.DocumentId,
-			activitiy.RequestType,
-			activitiy.CreatorId,
-			activitiy.CreatorJob,
-			activitiy.Reason,
-			activitiy.Data,
+			request.DocumentId,
+			request.RequestType,
+			request.CreatorId,
+			request.CreatorJob,
+			request.Reason,
+			request.Data,
 		)
 
 	res, err := stmt.ExecContext(ctx, tx)
@@ -430,7 +432,8 @@ func (s *Server) addAndGetDocumentReq(ctx context.Context, tx qrm.DB, activitiy 
 	return s.getDocumentReqById(ctx, tx, id)
 }
 
-func (s *Server) updateDocumentReq(ctx context.Context, tx qrm.DB, request *documents.DocRequest) error {
+func (s *Server) updateDocumentReq(ctx context.Context, tx qrm.DB, id uint64, request *documents.DocRequest) error {
+	tDocRequest := table.FivenetDocumentsRequests
 	stmt := tDocRequest.
 		UPDATE(
 			tDocRequest.DocumentID,
@@ -449,7 +452,7 @@ func (s *Server) updateDocumentReq(ctx context.Context, tx qrm.DB, request *docu
 			request.Data,
 		).
 		WHERE(
-			tDocRequest.ID.EQ(jet.Uint64(request.Id)),
+			tDocRequest.ID.EQ(jet.Uint64(id)),
 		)
 
 	if _, err := stmt.ExecContext(ctx, tx); err != nil {
@@ -477,15 +480,17 @@ func (s *Server) getDocumentReq(ctx context.Context, tx qrm.DB, condition jet.Bo
 			tDocRequest.Reason,
 			tDocRequest.Data,
 		).
-		FROM().
+		FROM(tDocRequest).
 		WHERE(condition).
 		LIMIT(1)
 
 	var dest documents.DocRequest
 	if _, err := stmt.ExecContext(ctx, tx); err != nil {
-		if !dbutils.IsDuplicateError(err) {
-			return nil, err
+		if errors.Is(err, qrm.ErrNoRows) {
+			return nil, nil
 		}
+
+		return nil, err
 	}
 
 	return &dest, nil

@@ -36,10 +36,13 @@ import Relations from '~/components/documents/Relations.vue';
 import { checkDocAccess } from '~/components/documents/helpers';
 import ActivityList from '~/components/documents/ActivityList.vue';
 import RequestsModal from '~/components/documents/RequestsModal.vue';
+import { useAuthStore } from '~/store/auth';
 
 const { $grpc } = useNuxtApp();
 const clipboardStore = useClipboardStore();
 const notifications = useNotificatorStore();
+const authStore = useAuthStore();
+const { activeChar } = storeToRefs(authStore);
 
 const { t } = useI18n();
 
@@ -170,21 +173,35 @@ watchOnce(doc, () =>
     }, 25),
 );
 
-const { isRevealed, reveal, confirm, cancel, onConfirm } = useConfirmDialog();
-onConfirm(async (data: { action: 'delete' | 'take_ownership'; id: string }) => {
-    if (data.action === 'delete') {
-        deleteDocument(data.id);
-    } else {
-        changeDocumentOwner(data.id);
-    }
-});
+const {
+    isRevealed: isRevealedChangeOwner,
+    reveal: revealChangeOwner,
+    confirm: confirmChangeOwner,
+    cancel: cancelChangeOwner,
+    onConfirm: onConfirmChangeOwner,
+} = useConfirmDialog();
+onConfirmChangeOwner(async (id: string) => changeDocumentOwner(id));
+
+const {
+    isRevealed: isRevealedDelete,
+    reveal: revealDelete,
+    confirm: confirmDelete,
+    cancel: cancelDelete,
+    onConfirm: onConfirmDelete,
+} = useConfirmDialog();
+onConfirmDelete(async (id: string) => deleteDocument(id));
 
 const openRequests = ref(false);
 </script>
 
 <template>
     <div class="m-2">
-        <ConfirmDialog :open="isRevealed" :cancel="cancel" :confirm="() => confirm(documentId)" />
+        <ConfirmDialog
+            :open="isRevealedChangeOwner"
+            :cancel="cancelChangeOwner"
+            :confirm="() => confirmChangeOwner(documentId)"
+        />
+        <ConfirmDialog :open="isRevealedDelete" :cancel="cancelDelete" :confirm="() => confirmDelete(documentId)" />
         <RequestsModal
             v-if="can('DocStoreService.CreateDocumentRequest')"
             :open="openRequests"
@@ -228,7 +245,7 @@ const openRequests = ref(false);
                                 </p>
                             </div>
                             <div class="flex mt-1 space-x-3 md:mt-0">
-                                <div
+                                <button
                                     v-if="
                                         can('DocStoreService.ToggleDocument') &&
                                         checkDocAccess(
@@ -238,22 +255,19 @@ const openRequests = ref(false);
                                             'DocStoreService.ToggleDocument',
                                         )
                                     "
+                                    type="button"
+                                    class="inline-flex items-center gap-x-1.5 rounded-md bg-primary-500 px-3 py-2 text-sm font-semibold text-neutral hover:bg-primary-400"
+                                    @click="toggleDocument(documentId, !doc?.closed)"
                                 >
-                                    <button
-                                        type="button"
-                                        class="inline-flex items-center justify-center gap-x-1.5 rounded-md bg-primary-500 px-3 py-2 text-sm font-semibold text-neutral hover:bg-primary-400"
-                                        @click="toggleDocument(documentId, !doc?.closed)"
-                                    >
-                                        <template v-if="doc?.closed">
-                                            <LockOpenVariantIcon class="w-5 h-5 text-success-500" aria-hidden="true" />
-                                            {{ $t('common.open', 1) }}
-                                        </template>
-                                        <template v-else>
-                                            <LockIcon class="w-5 h-5 text-error-400" aria-hidden="true" />
-                                            {{ $t('common.close', 1) }}
-                                        </template>
-                                    </button>
-                                </div>
+                                    <template v-if="doc?.closed">
+                                        <LockOpenVariantIcon class="w-5 h-5 text-success-500" aria-hidden="true" />
+                                        {{ $t('common.open', 1) }}
+                                    </template>
+                                    <template v-else>
+                                        <LockIcon class="w-5 h-5 text-error-400" aria-hidden="true" />
+                                        {{ $t('common.close', 1) }}
+                                    </template>
+                                </button>
                                 <NuxtLink
                                     v-if="
                                         can('DocStoreService.UpdateDocument') &&
@@ -269,7 +283,7 @@ const openRequests = ref(false);
                                         params: { id: doc?.id ?? 0 },
                                     }"
                                     type="button"
-                                    class="inline-flex justify-center gap-x-1.5 rounded-md bg-primary-500 px-3 py-2 text-sm font-semibold text-neutral hover:bg-primary-400"
+                                    class="inline-flex items-center gap-x-1.5 rounded-md bg-primary-500 px-3 py-2 text-sm font-semibold text-neutral hover:bg-primary-400"
                                 >
                                     <PencilIcon class="-ml-0.5 w-5 h-auto" aria-hidden="true" />
                                     {{ $t('common.edit') }}
@@ -277,7 +291,7 @@ const openRequests = ref(false);
                                 <button
                                     v-if="can('DocStoreService.CreateDocumentRequest')"
                                     type="button"
-                                    class="inline-flex justify-center gap-x-1.5 rounded-md bg-primary-500 px-3 py-2 text-sm font-semibold text-neutral hover:bg-primary-400"
+                                    class="inline-flex items-center gap-x-1.5 rounded-md bg-primary-500 px-3 py-2 text-sm font-semibold text-neutral hover:bg-primary-400"
                                     @click="openRequests = true"
                                 >
                                     <FrequentlyAskedQuestionsIcon class="-ml-0.5 w-5 h-auto" aria-hidden="true" />
@@ -294,8 +308,10 @@ const openRequests = ref(false);
                                         )
                                     "
                                     type="button"
-                                    class="inline-flex justify-center gap-x-1.5 rounded-md bg-primary-500 px-3 py-2 text-sm font-semibold text-neutral hover:bg-primary-400"
-                                    @click="reveal({ action: 'delete', id: documentId })"
+                                    class="inline-flex items-center gap-x-1.5 rounded-md bg-primary-500 px-3 py-2 text-sm font-semibold text-neutral hover:bg-primary-400"
+                                    :class="doc.creatorId === activeChar?.userId ? 'disabled' : ''"
+                                    :disabled="doc.creatorId === activeChar?.userId"
+                                    @click="revealChangeOwner(documentId)"
                                 >
                                     <CreationIcon class="-ml-0.5 w-5 h-auto" aria-hidden="true" />
                                     {{ $t('components.documents.document_view.take_ownership') }}
@@ -306,8 +322,8 @@ const openRequests = ref(false);
                                         checkDocAccess(access, doc.creator, AccessLevel.EDIT, 'DocStoreService.DeleteDocument')
                                     "
                                     type="button"
-                                    class="inline-flex justify-center gap-x-1.5 rounded-md bg-primary-500 px-3 py-2 text-sm font-semibold text-neutral hover:bg-primary-400"
-                                    @click="reveal({ action: 'take_ownership', id: documentId })"
+                                    class="inline-flex items-center gap-x-1.5 rounded-md bg-primary-500 px-3 py-2 text-sm font-semibold text-neutral hover:bg-primary-400"
+                                    @click="revealDelete(documentId)"
                                 >
                                     <TrashCanIcon class="-ml-0.5 w-5 h-auto" aria-hidden="true" />
                                     {{ $t('common.delete') }}

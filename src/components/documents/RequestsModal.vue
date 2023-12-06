@@ -12,7 +12,7 @@ import {
     TransitionRoot,
 } from '@headlessui/vue';
 import { required } from '@vee-validate/rules';
-import { useThrottleFn } from '@vueuse/core';
+import { useThrottleFn, watchOnce } from '@vueuse/core';
 import { CheckIcon, ChevronDownIcon, CloseIcon, LoadingIcon, TrashCanIcon } from 'mdi-vue3';
 import { defineRule } from 'vee-validate';
 import { DocActivityType } from '~~/gen/ts/resources/documents/activity';
@@ -42,8 +42,11 @@ const selectedRequestType = ref(requestTypes[0]);
 const offset = ref(0n);
 
 const {
-    data: requests, // pending, refresh, error,
-} = useLazyAsyncData(`document-${props.documentId}-requests-${offset.value}`, () => listDocumnetReqs(props.documentId));
+    data: requests,
+    refresh, // pending, error,
+} = useLazyAsyncData(`document-${props.documentId}-requests-${offset.value}`, () => listDocumnetReqs(props.documentId), {
+    immediate: false,
+});
 
 async function listDocumnetReqs(documentId: string): Promise<ListDocumentReqsResponse> {
     try {
@@ -100,6 +103,8 @@ const onSubmitThrottle = useThrottleFn(async (e) => {
     canSubmit.value = false;
     await onSubmit(e);
 }, 1000);
+
+watchOnce(props, () => refresh());
 </script>
 
 <template>
@@ -275,7 +280,7 @@ const onSubmitThrottle = useThrottleFn(async (e) => {
                                 </div>
                             </form>
 
-                            <ul class="list-disc">
+                            <ul v-if="requests !== null" class="list-disc">
                                 <li v-for="item in requests.requests" :key="item.id">
                                     {{ item.id }} - {{ DocActivityType[item.requestType] }} (Reason: {{ item.reason }})
                                     <button v-if="can('DocStoreService.DeleteDocumentReq')" type="button">
