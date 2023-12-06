@@ -10,6 +10,7 @@ import {
     CommentTextMultipleIcon,
     FileDocumentIcon,
     FileSearchIcon,
+    FrequentlyAskedQuestionsIcon,
     LockIcon,
     LockOpenVariantIcon,
     PencilIcon,
@@ -33,6 +34,7 @@ import References from '~/components/documents/References.vue';
 import Relations from '~/components/documents/Relations.vue';
 import { checkDocAccess } from '~/components/documents/helpers';
 import ActivityList from '~/components/documents/ActivityList.vue';
+import RequestsModal from '~/components/documents/RequestsModal.vue';
 
 const { $grpc } = useNuxtApp();
 const clipboardStore = useClipboardStore();
@@ -150,11 +152,14 @@ watchOnce(doc, () =>
 
 const { isRevealed, reveal, confirm, cancel, onConfirm } = useConfirmDialog();
 onConfirm(async (id: string) => deleteDocument(id));
+
+const openRequests = ref(false);
 </script>
 
 <template>
     <div class="m-2">
         <ConfirmDialog :open="isRevealed" :cancel="cancel" :confirm="() => confirm(documentId)" />
+        <RequestsModal :open="openRequests" :document-id="documentId" @close="openRequests = false" />
 
         <DataPendingBlock v-if="pending" :message="$t('common.loading', [$t('common.document', 2)])" />
         <DataErrorBlock v-else-if="error" :title="$t('common.unable_to_load', [$t('common.document', 2)])" :retry="refresh" />
@@ -237,6 +242,15 @@ onConfirm(async (id: string) => deleteDocument(id));
                                     <PencilIcon class="-ml-0.5 w-5 h-auto" aria-hidden="true" />
                                     {{ $t('common.edit') }}
                                 </NuxtLink>
+                                <button
+                                    v-if="can('DocStoreService.CreateDocumentRequest')"
+                                    type="button"
+                                    class="inline-flex justify-center gap-x-1.5 rounded-md bg-primary-500 px-3 py-2 text-sm font-semibold text-neutral hover:bg-primary-400"
+                                    @click="openRequests = true"
+                                >
+                                    <FrequentlyAskedQuestionsIcon class="-ml-0.5 w-5 h-auto" aria-hidden="true" />
+                                    {{ $t('common.request', 2) }}
+                                </button>
                                 <button
                                     v-if="
                                         can('DocStoreService.DeleteDocument') &&

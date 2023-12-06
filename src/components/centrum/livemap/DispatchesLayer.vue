@@ -1,5 +1,6 @@
 <script lang="ts" setup>
-import { LLayerGroup } from '@vue-leaflet/vue-leaflet';
+import { LControl, LLayerGroup } from '@vue-leaflet/vue-leaflet';
+import { computedAsync } from '@vueuse/core';
 import DispatchDetails from '~/components/centrum/dispatches/DispatchDetails.vue';
 import DispatchMarker from '~/components/centrum/livemap/DispatchMarker.vue';
 import { useCentrumStore } from '~/store/centrum';
@@ -16,8 +17,22 @@ defineEmits<{
 
 const centrumStore = useCentrumStore();
 const { dispatches, ownDispatches } = storeToRefs(centrumStore);
+
 const settingsStore = useSettingsStore();
 const { livemap } = storeToRefs(settingsStore);
+
+const dispatchQueryRaw = ref<string>('');
+const dispatchQuery = computed(() => dispatchQueryRaw.value.toLowerCase());
+
+const dispatchesFiltered = computedAsync(async () =>
+    [...dispatches.value.values()].filter(
+        (m) =>
+            !ownDispatches.value.includes(m.id) &&
+            (m.id.startsWith(dispatchQuery.value) ||
+                m.message.toLowerCase().includes(dispatchQuery.value) ||
+                (m.creator?.firstname + ' ' + m.creator?.lastname).toLowerCase().includes(dispatchQuery.value)),
+    ),
+);
 
 const selectedDispatch = ref<Dispatch | undefined>();
 const open = ref(false);
@@ -41,10 +56,15 @@ const open = ref(false);
         />
     </LLayerGroup>
 
-    <LLayerGroup key="all_dispatches" :name="$t('common.dispatch', 2)" layer-type="overlay" :visible="showAllDispatches">
+    <LLayerGroup
+        key="all_dispatches"
+        :name="$t('common.dispatch', 2)"
+        layer-type="overlay"
+        :visible="showAllDispatches || dispatchQueryRaw.length > 0"
+    >
         <DispatchMarker
-            v-for="[id, dispatch] in dispatches"
-            :key="id"
+            v-for="dispatch in dispatchesFiltered"
+            :key="dispatch.id"
             :dispatch="dispatch"
             :size="livemap.markerSize"
             @selected="
@@ -53,4 +73,20 @@ const open = ref(false);
             "
         />
     </LLayerGroup>
+
+    <LControl position="bottomleft">
+        <div class="form-control flex flex-col gap-2">
+            <div>
+                <input
+                    v-model="dispatchQueryRaw"
+                    class="w-full max-w-[11rem] p-0.5 px-1 bg-clip-padding rounded-md border-2 border-black/20"
+                    type="text"
+                    name="searchPlayer"
+                    :placeholder="`${$t('common.dispatch', 2)} ${$t('common.filter')}`"
+                    @focusin="focusTablet(true)"
+                    @focusout="focusTablet(false)"
+                />
+            </div>
+        </div>
+    </LControl>
 </template>

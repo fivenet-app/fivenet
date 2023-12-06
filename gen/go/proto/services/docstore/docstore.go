@@ -316,7 +316,7 @@ func (s *Server) CreateDocument(ctx context.Context, req *CreateDocumentRequest)
 		return nil, errswrap.NewError(errorsdocstore.ErrFailedQuery, err)
 	}
 
-	if err := s.AddDocumentActivity(ctx, tx, &documents.DocActivity{
+	if _, err := s.addDocumentActivity(ctx, tx, &documents.DocActivity{
 		DocumentId:   uint64(lastId),
 		ActivityType: documents.DocActivityType_DOC_ACTIVITY_TYPE_CREATED,
 		CreatorId:    &userInfo.UserId,
@@ -440,7 +440,7 @@ func (s *Server) UpdateDocument(ctx context.Context, req *UpdateDocumentRequest)
 			return nil, errswrap.NewError(errorsdocstore.ErrFailedQuery, err)
 		}
 
-		if err := s.AddDocumentActivity(ctx, tx, &documents.DocActivity{
+		if _, err := s.addDocumentActivity(ctx, tx, &documents.DocActivity{
 			DocumentId:   req.DocumentId,
 			ActivityType: documents.DocActivityType_DOC_ACTIVITY_TYPE_UPDATED,
 			CreatorId:    &userInfo.UserId,
@@ -528,7 +528,7 @@ func (s *Server) DeleteDocument(ctx context.Context, req *DeleteDocumentRequest)
 		return nil, errswrap.NewError(errorsdocstore.ErrFailedQuery, err)
 	}
 
-	if err := s.AddDocumentActivity(ctx, s.db, &documents.DocActivity{
+	if _, err := s.addDocumentActivity(ctx, s.db, &documents.DocActivity{
 		DocumentId:   req.DocumentId,
 		ActivityType: documents.DocActivityType_DOC_ACTIVITY_TYPE_DELETED,
 		CreatorId:    &userInfo.UserId,
@@ -604,7 +604,7 @@ func (s *Server) ToggleDocument(ctx context.Context, req *ToggleDocumentRequest)
 		return nil, errswrap.NewError(errorsdocstore.ErrFailedQuery, err)
 	}
 
-	if err := s.AddDocumentActivity(ctx, s.db, &documents.DocActivity{
+	if _, err := s.addDocumentActivity(ctx, s.db, &documents.DocActivity{
 		DocumentId:   req.DocumentId,
 		ActivityType: activityType,
 		CreatorId:    &userInfo.UserId,

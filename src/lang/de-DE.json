@@ -1248,7 +1248,7 @@
                 "key": "Dokumenten-Aktivität anzeigen",
                 "description": "Dokumenten-Aktivität von Dokumente mit Status oder höher Zugriff sehen können."
             },
-            "RequestDocumentAction": {
+            "CreateDocumentRequest": {
                 "key": "Anfragen von Dokumenten-Aktion",
                 "description": "Dokumenten-Aktionen anfragen können.",
                 "attrs_types": {
@@ -1614,6 +1614,7 @@
                 "REQUESTED_ACCESS": "Zugriff auf Dokument beanfragt",
                 "REQUESTED_CLOSURE": "Schließung des Dokument beanfragt",
                 "REQUESTED_UPDATE": "Aktualisierung des Dokument beanfragt",
+                "REQUESTED_OWNER_CHANGE": "Dokument-Besitzer Wechsel beanfragt",
                 "REQUESTED_DELETION": "Löschung des Dokument beanfragt",
                 "COMMENT_ADDED": "Kommentar hinzugefügt",
                 "COMMENT_UPDATED": "Kommentar aktualisiert",

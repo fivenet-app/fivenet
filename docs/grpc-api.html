@@ -343,37 +343,6 @@
         
           
           <li>
-            <a href="#resources%2fdocuments%2factivity.proto">resources/documents/activity.proto</a>
-            <ul>
-              
-                <li>
-                  <a href="#resources.documents.DocActivity"><span class="badge">M</span>DocActivity</a>
-                </li>
-              
-                <li>
-                  <a href="#resources.documents.DocActivityData"><span class="badge">M</span>DocActivityData</a>
-                </li>
-              
-                <li>
-                  <a href="#resources.documents.DocOwnerChanged"><span class="badge">M</span>DocOwnerChanged</a>
-                </li>
-              
-                <li>
-                  <a href="#resources.documents.DocUpdated"><span class="badge">M</span>DocUpdated</a>
-                </li>
-              
-              
-                <li>
-                  <a href="#resources.documents.DocActivityType"><span class="badge">E</span>DocActivityType</a>
-                </li>
-              
-              
-              
-            </ul>
-          </li>
-        
-          
-          <li>
             <a href="#resources%2fdocuments%2fdocuments.proto">resources/documents/documents.proto</a>
             <ul>
               
@@ -405,6 +374,52 @@
                 <li>
                   <a href="#resources.documents.DocRelation"><span class="badge">E</span>DocRelation</a>
                 </li>
+              
+              
+              
+            </ul>
+          </li>
+        
+          
+          <li>
+            <a href="#resources%2fdocuments%2factivity.proto">resources/documents/activity.proto</a>
+            <ul>
+              
+                <li>
+                  <a href="#resources.documents.DocActivity"><span class="badge">M</span>DocActivity</a>
+                </li>
+              
+                <li>
+                  <a href="#resources.documents.DocActivityData"><span class="badge">M</span>DocActivityData</a>
+                </li>
+              
+                <li>
+                  <a href="#resources.documents.DocOwnerChanged"><span class="badge">M</span>DocOwnerChanged</a>
+                </li>
+              
+                <li>
+                  <a href="#resources.documents.DocUpdated"><span class="badge">M</span>DocUpdated</a>
+                </li>
+              
+              
+                <li>
+                  <a href="#resources.documents.DocActivityType"><span class="badge">E</span>DocActivityType</a>
+                </li>
+              
+              
+              
+            </ul>
+          </li>
+        
+          
+          <li>
+            <a href="#resources%2fdocuments%2frequests.proto">resources/documents/requests.proto</a>
+            <ul>
+              
+                <li>
+                  <a href="#resources.documents.DocRequest"><span class="badge">M</span>DocRequest</a>
+                </li>
+              
               
               
               
@@ -1283,6 +1298,14 @@
                 </li>
               
                 <li>
+                  <a href="#services.docstore.CreateDocumentReqRequest"><span class="badge">M</span>CreateDocumentReqRequest</a>
+                </li>
+              
+                <li>
+                  <a href="#services.docstore.CreateDocumentReqResponse"><span class="badge">M</span>CreateDocumentReqResponse</a>
+                </li>
+              
+                <li>
                   <a href="#services.docstore.CreateDocumentRequest"><span class="badge">M</span>CreateDocumentRequest</a>
                 </li>
               
@@ -1312,6 +1335,14 @@
               
                 <li>
                   <a href="#services.docstore.DeleteCommentResponse"><span class="badge">M</span>DeleteCommentResponse</a>
+                </li>
+              
+                <li>
+                  <a href="#services.docstore.DeleteDocumentReqRequest"><span class="badge">M</span>DeleteDocumentReqRequest</a>
+                </li>
+              
+                <li>
+                  <a href="#services.docstore.DeleteDocumentReqResponse"><span class="badge">M</span>DeleteDocumentReqResponse</a>
                 </li>
               
                 <li>
@@ -1403,6 +1434,14 @@
                 </li>
               
                 <li>
+                  <a href="#services.docstore.ListDocumentReqsRequest"><span class="badge">M</span>ListDocumentReqsRequest</a>
+                </li>
+              
+                <li>
+                  <a href="#services.docstore.ListDocumentReqsResponse"><span class="badge">M</span>ListDocumentReqsResponse</a>
+                </li>
+              
+                <li>
                   <a href="#services.docstore.ListDocumentsRequest"><span class="badge">M</span>ListDocumentsRequest</a>
                 </li>
               
@@ -1451,22 +1490,6 @@
                 </li>
               
                 <li>
-                  <a href="#services.docstore.RequestDocumentActionRequest"><span class="badge">M</span>RequestDocumentActionRequest</a>
-                </li>
-              
-                <li>
-                  <a href="#services.docstore.RequestDocumentActionResponse"><span class="badge">M</span>RequestDocumentActionResponse</a>
-                </li>
-              
-                <li>
-                  <a href="#services.docstore.RespondDocumentActionRequest"><span class="badge">M</span>RespondDocumentActionRequest</a>
-                </li>
-              
-                <li>
-                  <a href="#services.docstore.RespondDocumentActionResponse"><span class="badge">M</span>RespondDocumentActionResponse</a>
-                </li>
-              
-                <li>
                   <a href="#services.docstore.SetDocumentAccessRequest"><span class="badge">M</span>SetDocumentAccessRequest</a>
                 </li>
               
@@ -1488,6 +1511,14 @@
               
                 <li>
                   <a href="#services.docstore.UpdateCategoryResponse"><span class="badge">M</span>UpdateCategoryResponse</a>
+                </li>
+              
+                <li>
+                  <a href="#services.docstore.UpdateDocumentReqRequest"><span class="badge">M</span>UpdateDocumentReqRequest</a>
+                </li>
+              
+                <li>
+                  <a href="#services.docstore.UpdateDocumentReqResponse"><span class="badge">M</span>UpdateDocumentReqResponse</a>
                 </li>
               
                 <li>
@@ -3723,368 +3754,6 @@
     
       
       <div class="file-heading">
-        <h2 id="resources/documents/activity.proto">resources/documents/activity.proto</h2><a href="#title">Top</a>
-      </div>
-      <p></p>
-
-      
-        <h3 id="resources.documents.DocActivity">DocActivity</h3>
-        <p></p>
-
-        
-          <table class="field-table">
-            <thead>
-              <tr><td>Field</td><td>Type</td><td>Label</td><td>Description</td></tr>
-            </thead>
-            <tbody>
-              
-                <tr>
-                  <td>id</td>
-                  <td><a href="#uint64">uint64</a></td>
-                  <td></td>
-                  <td><p> </p></td>
-                </tr>
-              
-                <tr>
-                  <td>created_at</td>
-                  <td><a href="#resources.timestamp.Timestamp">resources.timestamp.Timestamp</a></td>
-                  <td></td>
-                  <td><p> </p></td>
-                </tr>
-              
-                <tr>
-                  <td>document_id</td>
-                  <td><a href="#uint64">uint64</a></td>
-                  <td></td>
-                  <td><p> </p></td>
-                </tr>
-              
-                <tr>
-                  <td>activity_type</td>
-                  <td><a href="#resources.documents.DocActivityType">DocActivityType</a></td>
-                  <td></td>
-                  <td><p> </p></td>
-                </tr>
-              
-                <tr>
-                  <td>creator_id</td>
-                  <td><a href="#int32">int32</a></td>
-                  <td>optional</td>
-                  <td><p> </p></td>
-                </tr>
-              
-                <tr>
-                  <td>creator</td>
-                  <td><a href="#resources.users.UserShort">resources.users.UserShort</a></td>
-                  <td>optional</td>
-                  <td><p>@gotags: alias:&#34;creator&#34; </p></td>
-                </tr>
-              
-                <tr>
-                  <td>creator_job</td>
-                  <td><a href="#string">string</a></td>
-                  <td></td>
-                  <td><p> </p></td>
-                </tr>
-              
-                <tr>
-                  <td>creator_job_label</td>
-                  <td><a href="#string">string</a></td>
-                  <td>optional</td>
-                  <td><p> </p></td>
-                </tr>
-              
-                <tr>
-                  <td>reason</td>
-                  <td><a href="#string">string</a></td>
-                  <td>optional</td>
-                  <td><p> </p></td>
-                </tr>
-              
-                <tr>
-                  <td>data</td>
-                  <td><a href="#resources.documents.DocActivityData">DocActivityData</a></td>
-                  <td></td>
-                  <td><p> </p></td>
-                </tr>
-              
-            </tbody>
-          </table>
-
-          
-            
-            
-            <h4>Validated Fields</h4>
-            <table>
-              <thead>
-                <tr>
-                  <td>Field</td>
-                  <td>Validations</td>
-                </tr>
-              </thead>
-              <tbody>
-              
-                <tr>
-                  <td>creator_job</td>
-                  <td>
-                    <ul>
-                    
-                      <li>string.max_len: 20</li>
-                    
-                    </ul>
-                  </td>
-                </tr>
-              
-                <tr>
-                  <td>creator_job_label</td>
-                  <td>
-                    <ul>
-                    
-                      <li>string.max_len: 50</li>
-                    
-                    </ul>
-                  </td>
-                </tr>
-              
-                <tr>
-                  <td>reason</td>
-                  <td>
-                    <ul>
-                    
-                      <li>string.max_len: 255</li>
-                    
-                    </ul>
-                  </td>
-                </tr>
-              
-              </tbody>
-            </table>
-            
-          
-
-        
-      
-        <h3 id="resources.documents.DocActivityData">DocActivityData</h3>
-        <p></p>
-
-        
-          <table class="field-table">
-            <thead>
-              <tr><td>Field</td><td>Type</td><td>Label</td><td>Description</td></tr>
-            </thead>
-            <tbody>
-              
-                <tr>
-                  <td>updated</td>
-                  <td><a href="#resources.documents.DocUpdated">DocUpdated</a></td>
-                  <td></td>
-                  <td><p> </p></td>
-                </tr>
-              
-                <tr>
-                  <td>owner_changed</td>
-                  <td><a href="#resources.documents.DocOwnerChanged">DocOwnerChanged</a></td>
-                  <td></td>
-                  <td><p> </p></td>
-                </tr>
-              
-            </tbody>
-          </table>
-
-          
-
-        
-      
-        <h3 id="resources.documents.DocOwnerChanged">DocOwnerChanged</h3>
-        <p></p>
-
-        
-          <table class="field-table">
-            <thead>
-              <tr><td>Field</td><td>Type</td><td>Label</td><td>Description</td></tr>
-            </thead>
-            <tbody>
-              
-                <tr>
-                  <td>owner_id</td>
-                  <td><a href="#int32">int32</a></td>
-                  <td></td>
-                  <td><p> </p></td>
-                </tr>
-              
-            </tbody>
-          </table>
-
-          
-
-        
-      
-        <h3 id="resources.documents.DocUpdated">DocUpdated</h3>
-        <p></p>
-
-        
-          <table class="field-table">
-            <thead>
-              <tr><td>Field</td><td>Type</td><td>Label</td><td>Description</td></tr>
-            </thead>
-            <tbody>
-              
-                <tr>
-                  <td>title_diff</td>
-                  <td><a href="#string">string</a></td>
-                  <td>optional</td>
-                  <td><p> </p></td>
-                </tr>
-              
-                <tr>
-                  <td>content_diff</td>
-                  <td><a href="#string">string</a></td>
-                  <td>optional</td>
-                  <td><p> </p></td>
-                </tr>
-              
-                <tr>
-                  <td>state_diff</td>
-                  <td><a href="#string">string</a></td>
-                  <td>optional</td>
-                  <td><p> </p></td>
-                </tr>
-              
-            </tbody>
-          </table>
-
-          
-
-        
-      
-
-      
-        <h3 id="resources.documents.DocActivityType">DocActivityType</h3>
-        <p></p>
-        <table class="enum-table">
-          <thead>
-            <tr><td>Name</td><td>Number</td><td>Description</td></tr>
-          </thead>
-          <tbody>
-            
-              <tr>
-                <td>DOC_ACTIVITY_TYPE_UNSPECIFIED</td>
-                <td>0</td>
-                <td><p></p></td>
-              </tr>
-            
-              <tr>
-                <td>DOC_ACTIVITY_TYPE_CREATED</td>
-                <td>1</td>
-                <td><p>Base</p></td>
-              </tr>
-            
-              <tr>
-                <td>DOC_ACTIVITY_TYPE_STATUS_OPEN</td>
-                <td>2</td>
-                <td><p></p></td>
-              </tr>
-            
-              <tr>
-                <td>DOC_ACTIVITY_TYPE_STATUS_CLOSED</td>
-                <td>3</td>
-                <td><p></p></td>
-              </tr>
-            
-              <tr>
-                <td>DOC_ACTIVITY_TYPE_UPDATED</td>
-                <td>4</td>
-                <td><p></p></td>
-              </tr>
-            
-              <tr>
-                <td>DOC_ACTIVITY_TYPE_RELATIONS_UPDATED</td>
-                <td>5</td>
-                <td><p></p></td>
-              </tr>
-            
-              <tr>
-                <td>DOC_ACTIVITY_TYPE_REFERENCES_UPDATED</td>
-                <td>6</td>
-                <td><p></p></td>
-              </tr>
-            
-              <tr>
-                <td>DOC_ACTIVITY_TYPE_ACCESS_UPDATED</td>
-                <td>7</td>
-                <td><p></p></td>
-              </tr>
-            
-              <tr>
-                <td>DOC_ACTIVITY_TYPE_OWNER_CHANGED</td>
-                <td>8</td>
-                <td><p></p></td>
-              </tr>
-            
-              <tr>
-                <td>DOC_ACTIVITY_TYPE_DELETED</td>
-                <td>9</td>
-                <td><p></p></td>
-              </tr>
-            
-              <tr>
-                <td>DOC_ACTIVITY_TYPE_COMMENT_ADDED</td>
-                <td>10</td>
-                <td><p>Comments</p></td>
-              </tr>
-            
-              <tr>
-                <td>DOC_ACTIVITY_TYPE_COMMENT_UPDATED</td>
-                <td>11</td>
-                <td><p></p></td>
-              </tr>
-            
-              <tr>
-                <td>DOC_ACTIVITY_TYPE_COMMENT_DELETED</td>
-                <td>12</td>
-                <td><p></p></td>
-              </tr>
-            
-              <tr>
-                <td>DOC_ACTIVITY_TYPE_REQUESTED_ACCESS</td>
-                <td>13</td>
-                <td><p>Requests</p></td>
-              </tr>
-            
-              <tr>
-                <td>DOC_ACTIVITY_TYPE_REQUESTED_CLOSURE</td>
-                <td>14</td>
-                <td><p></p></td>
-              </tr>
-            
-              <tr>
-                <td>DOC_ACTIVITY_TYPE_REQUESTED_UPDATE</td>
-                <td>15</td>
-                <td><p></p></td>
-              </tr>
-            
-              <tr>
-                <td>DOC_ACTIVITY_TYPE_REQUESTED_OWNER_CHANGE</td>
-                <td>16</td>
-                <td><p></p></td>
-              </tr>
-            
-              <tr>
-                <td>DOC_ACTIVITY_TYPE_REQUESTED_DELETION</td>
-                <td>17</td>
-                <td><p></p></td>
-              </tr>
-            
-          </tbody>
-        </table>
-      
-
-      
-
-      
-    
-      
-      <div class="file-heading">
         <h2 id="resources/documents/documents.proto">resources/documents/documents.proto</h2><a href="#title">Top</a>
       </div>
       <p></p>
@@ -4832,6 +4501,542 @@
             
           </tbody>
         </table>
+      
+
+      
+
+      
+    
+      
+      <div class="file-heading">
+        <h2 id="resources/documents/activity.proto">resources/documents/activity.proto</h2><a href="#title">Top</a>
+      </div>
+      <p></p>
+
+      
+        <h3 id="resources.documents.DocActivity">DocActivity</h3>
+        <p></p>
+
+        
+          <table class="field-table">
+            <thead>
+              <tr><td>Field</td><td>Type</td><td>Label</td><td>Description</td></tr>
+            </thead>
+            <tbody>
+              
+                <tr>
+                  <td>id</td>
+                  <td><a href="#uint64">uint64</a></td>
+                  <td></td>
+                  <td><p> </p></td>
+                </tr>
+              
+                <tr>
+                  <td>created_at</td>
+                  <td><a href="#resources.timestamp.Timestamp">resources.timestamp.Timestamp</a></td>
+                  <td></td>
+                  <td><p> </p></td>
+                </tr>
+              
+                <tr>
+                  <td>document_id</td>
+                  <td><a href="#uint64">uint64</a></td>
+                  <td></td>
+                  <td><p> </p></td>
+                </tr>
+              
+                <tr>
+                  <td>activity_type</td>
+                  <td><a href="#resources.documents.DocActivityType">DocActivityType</a></td>
+                  <td></td>
+                  <td><p> </p></td>
+                </tr>
+              
+                <tr>
+                  <td>creator_id</td>
+                  <td><a href="#int32">int32</a></td>
+                  <td>optional</td>
+                  <td><p> </p></td>
+                </tr>
+              
+                <tr>
+                  <td>creator</td>
+                  <td><a href="#resources.users.UserShort">resources.users.UserShort</a></td>
+                  <td>optional</td>
+                  <td><p>@gotags: alias:&#34;creator&#34; </p></td>
+                </tr>
+              
+                <tr>
+                  <td>creator_job</td>
+                  <td><a href="#string">string</a></td>
+                  <td></td>
+                  <td><p> </p></td>
+                </tr>
+              
+                <tr>
+                  <td>creator_job_label</td>
+                  <td><a href="#string">string</a></td>
+                  <td>optional</td>
+                  <td><p> </p></td>
+                </tr>
+              
+                <tr>
+                  <td>reason</td>
+                  <td><a href="#string">string</a></td>
+                  <td>optional</td>
+                  <td><p> </p></td>
+                </tr>
+              
+                <tr>
+                  <td>data</td>
+                  <td><a href="#resources.documents.DocActivityData">DocActivityData</a></td>
+                  <td></td>
+                  <td><p> </p></td>
+                </tr>
+              
+            </tbody>
+          </table>
+
+          
+            
+            
+            <h4>Validated Fields</h4>
+            <table>
+              <thead>
+                <tr>
+                  <td>Field</td>
+                  <td>Validations</td>
+                </tr>
+              </thead>
+              <tbody>
+              
+                <tr>
+                  <td>creator_job</td>
+                  <td>
+                    <ul>
+                    
+                      <li>string.max_len: 20</li>
+                    
+                    </ul>
+                  </td>
+                </tr>
+              
+                <tr>
+                  <td>creator_job_label</td>
+                  <td>
+                    <ul>
+                    
+                      <li>string.max_len: 50</li>
+                    
+                    </ul>
+                  </td>
+                </tr>
+              
+                <tr>
+                  <td>reason</td>
+                  <td>
+                    <ul>
+                    
+                      <li>string.max_len: 255</li>
+                    
+                    </ul>
+                  </td>
+                </tr>
+              
+              </tbody>
+            </table>
+            
+          
+
+        
+      
+        <h3 id="resources.documents.DocActivityData">DocActivityData</h3>
+        <p></p>
+
+        
+          <table class="field-table">
+            <thead>
+              <tr><td>Field</td><td>Type</td><td>Label</td><td>Description</td></tr>
+            </thead>
+            <tbody>
+              
+                <tr>
+                  <td>updated</td>
+                  <td><a href="#resources.documents.DocUpdated">DocUpdated</a></td>
+                  <td></td>
+                  <td><p> </p></td>
+                </tr>
+              
+                <tr>
+                  <td>owner_changed</td>
+                  <td><a href="#resources.documents.DocOwnerChanged">DocOwnerChanged</a></td>
+                  <td></td>
+                  <td><p> </p></td>
+                </tr>
+              
+            </tbody>
+          </table>
+
+          
+
+        
+      
+        <h3 id="resources.documents.DocOwnerChanged">DocOwnerChanged</h3>
+        <p></p>
+
+        
+          <table class="field-table">
+            <thead>
+              <tr><td>Field</td><td>Type</td><td>Label</td><td>Description</td></tr>
+            </thead>
+            <tbody>
+              
+                <tr>
+                  <td>owner_id</td>
+                  <td><a href="#int32">int32</a></td>
+                  <td></td>
+                  <td><p> </p></td>
+                </tr>
+              
+            </tbody>
+          </table>
+
+          
+
+        
+      
+        <h3 id="resources.documents.DocUpdated">DocUpdated</h3>
+        <p></p>
+
+        
+          <table class="field-table">
+            <thead>
+              <tr><td>Field</td><td>Type</td><td>Label</td><td>Description</td></tr>
+            </thead>
+            <tbody>
+              
+                <tr>
+                  <td>title_diff</td>
+                  <td><a href="#string">string</a></td>
+                  <td>optional</td>
+                  <td><p> </p></td>
+                </tr>
+              
+                <tr>
+                  <td>content_diff</td>
+                  <td><a href="#string">string</a></td>
+                  <td>optional</td>
+                  <td><p> </p></td>
+                </tr>
+              
+                <tr>
+                  <td>state_diff</td>
+                  <td><a href="#string">string</a></td>
+                  <td>optional</td>
+                  <td><p> </p></td>
+                </tr>
+              
+            </tbody>
+          </table>
+
+          
+
+        
+      
+
+      
+        <h3 id="resources.documents.DocActivityType">DocActivityType</h3>
+        <p></p>
+        <table class="enum-table">
+          <thead>
+            <tr><td>Name</td><td>Number</td><td>Description</td></tr>
+          </thead>
+          <tbody>
+            
+              <tr>
+                <td>DOC_ACTIVITY_TYPE_UNSPECIFIED</td>
+                <td>0</td>
+                <td><p></p></td>
+              </tr>
+            
+              <tr>
+                <td>DOC_ACTIVITY_TYPE_CREATED</td>
+                <td>1</td>
+                <td><p>Base</p></td>
+              </tr>
+            
+              <tr>
+                <td>DOC_ACTIVITY_TYPE_STATUS_OPEN</td>
+                <td>2</td>
+                <td><p></p></td>
+              </tr>
+            
+              <tr>
+                <td>DOC_ACTIVITY_TYPE_STATUS_CLOSED</td>
+                <td>3</td>
+                <td><p></p></td>
+              </tr>
+            
+              <tr>
+                <td>DOC_ACTIVITY_TYPE_UPDATED</td>
+                <td>4</td>
+                <td><p></p></td>
+              </tr>
+            
+              <tr>
+                <td>DOC_ACTIVITY_TYPE_RELATIONS_UPDATED</td>
+                <td>5</td>
+                <td><p></p></td>
+              </tr>
+            
+              <tr>
+                <td>DOC_ACTIVITY_TYPE_REFERENCES_UPDATED</td>
+                <td>6</td>
+                <td><p></p></td>
+              </tr>
+            
+              <tr>
+                <td>DOC_ACTIVITY_TYPE_ACCESS_UPDATED</td>
+                <td>7</td>
+                <td><p></p></td>
+              </tr>
+            
+              <tr>
+                <td>DOC_ACTIVITY_TYPE_OWNER_CHANGED</td>
+                <td>8</td>
+                <td><p></p></td>
+              </tr>
+            
+              <tr>
+                <td>DOC_ACTIVITY_TYPE_DELETED</td>
+                <td>9</td>
+                <td><p></p></td>
+              </tr>
+            
+              <tr>
+                <td>DOC_ACTIVITY_TYPE_COMMENT_ADDED</td>
+                <td>10</td>
+                <td><p>Comments</p></td>
+              </tr>
+            
+              <tr>
+                <td>DOC_ACTIVITY_TYPE_COMMENT_UPDATED</td>
+                <td>11</td>
+                <td><p></p></td>
+              </tr>
+            
+              <tr>
+                <td>DOC_ACTIVITY_TYPE_COMMENT_DELETED</td>
+                <td>12</td>
+                <td><p></p></td>
+              </tr>
+            
+              <tr>
+                <td>DOC_ACTIVITY_TYPE_REQUESTED_ACCESS</td>
+                <td>13</td>
+                <td><p>Requests</p></td>
+              </tr>
+            
+              <tr>
+                <td>DOC_ACTIVITY_TYPE_REQUESTED_CLOSURE</td>
+                <td>14</td>
+                <td><p></p></td>
+              </tr>
+            
+              <tr>
+                <td>DOC_ACTIVITY_TYPE_REQUESTED_OPENING</td>
+                <td>15</td>
+                <td><p></p></td>
+              </tr>
+            
+              <tr>
+                <td>DOC_ACTIVITY_TYPE_REQUESTED_UPDATE</td>
+                <td>16</td>
+                <td><p></p></td>
+              </tr>
+            
+              <tr>
+                <td>DOC_ACTIVITY_TYPE_REQUESTED_OWNER_CHANGE</td>
+                <td>17</td>
+                <td><p></p></td>
+              </tr>
+            
+              <tr>
+                <td>DOC_ACTIVITY_TYPE_REQUESTED_DELETION</td>
+                <td>18</td>
+                <td><p></p></td>
+              </tr>
+            
+          </tbody>
+        </table>
+      
+
+      
+
+      
+    
+      
+      <div class="file-heading">
+        <h2 id="resources/documents/requests.proto">resources/documents/requests.proto</h2><a href="#title">Top</a>
+      </div>
+      <p></p>
+
+      
+        <h3 id="resources.documents.DocRequest">DocRequest</h3>
+        <p></p>
+
+        
+          <table class="field-table">
+            <thead>
+              <tr><td>Field</td><td>Type</td><td>Label</td><td>Description</td></tr>
+            </thead>
+            <tbody>
+              
+                <tr>
+                  <td>id</td>
+                  <td><a href="#uint64">uint64</a></td>
+                  <td></td>
+                  <td><p> </p></td>
+                </tr>
+              
+                <tr>
+                  <td>created_at</td>
+                  <td><a href="#resources.timestamp.Timestamp">resources.timestamp.Timestamp</a></td>
+                  <td></td>
+                  <td><p> </p></td>
+                </tr>
+              
+                <tr>
+                  <td>document_id</td>
+                  <td><a href="#uint64">uint64</a></td>
+                  <td></td>
+                  <td><p> </p></td>
+                </tr>
+              
+                <tr>
+                  <td>request_type</td>
+                  <td><a href="#resources.documents.DocActivityType">DocActivityType</a></td>
+                  <td></td>
+                  <td><p> </p></td>
+                </tr>
+              
+                <tr>
+                  <td>creator_id</td>
+                  <td><a href="#int32">int32</a></td>
+                  <td>optional</td>
+                  <td><p> </p></td>
+                </tr>
+              
+                <tr>
+                  <td>creator</td>
+                  <td><a href="#resources.users.UserShort">resources.users.UserShort</a></td>
+                  <td>optional</td>
+                  <td><p>@gotags: alias:&#34;creator&#34; </p></td>
+                </tr>
+              
+                <tr>
+                  <td>creator_job</td>
+                  <td><a href="#string">string</a></td>
+                  <td></td>
+                  <td><p> </p></td>
+                </tr>
+              
+                <tr>
+                  <td>creator_job_label</td>
+                  <td><a href="#string">string</a></td>
+                  <td>optional</td>
+                  <td><p> </p></td>
+                </tr>
+              
+                <tr>
+                  <td>reason</td>
+                  <td><a href="#string">string</a></td>
+                  <td>optional</td>
+                  <td><p> </p></td>
+                </tr>
+              
+                <tr>
+                  <td>data</td>
+                  <td><a href="#resources.documents.DocActivityData">DocActivityData</a></td>
+                  <td></td>
+                  <td><p> </p></td>
+                </tr>
+              
+                <tr>
+                  <td>completed</td>
+                  <td><a href="#bool">bool</a></td>
+                  <td>optional</td>
+                  <td><p> </p></td>
+                </tr>
+              
+            </tbody>
+          </table>
+
+          
+            
+            
+            <h4>Validated Fields</h4>
+            <table>
+              <thead>
+                <tr>
+                  <td>Field</td>
+                  <td>Validations</td>
+                </tr>
+              </thead>
+              <tbody>
+              
+                <tr>
+                  <td>request_type</td>
+                  <td>
+                    <ul>
+                    
+                      <li>enum.in: [13 14 15 16 17 18]</li>
+                    
+                    </ul>
+                  </td>
+                </tr>
+              
+                <tr>
+                  <td>creator_job</td>
+                  <td>
+                    <ul>
+                    
+                      <li>string.max_len: 20</li>
+                    
+                    </ul>
+                  </td>
+                </tr>
+              
+                <tr>
+                  <td>creator_job_label</td>
+                  <td>
+                    <ul>
+                    
+                      <li>string.max_len: 50</li>
+                    
+                    </ul>
+                  </td>
+                </tr>
+              
+                <tr>
+                  <td>reason</td>
+                  <td>
+                    <ul>
+                    
+                      <li>string.max_len: 255</li>
+                    
+                    </ul>
+                  </td>
+                </tr>
+              
+              </tbody>
+            </table>
+            
+          
+
+        
+      
+
       
 
       
@@ -14584,6 +14789,106 @@
 
         
       
+        <h3 id="services.docstore.CreateDocumentReqRequest">CreateDocumentReqRequest</h3>
+        <p></p>
+
+        
+          <table class="field-table">
+            <thead>
+              <tr><td>Field</td><td>Type</td><td>Label</td><td>Description</td></tr>
+            </thead>
+            <tbody>
+              
+                <tr>
+                  <td>document_id</td>
+                  <td><a href="#uint64">uint64</a></td>
+                  <td></td>
+                  <td><p> </p></td>
+                </tr>
+              
+                <tr>
+                  <td>request_type</td>
+                  <td><a href="#resources.documents.DocActivityType">resources.documents.DocActivityType</a></td>
+                  <td></td>
+                  <td><p> </p></td>
+                </tr>
+              
+                <tr>
+                  <td>reason</td>
+                  <td><a href="#string">string</a></td>
+                  <td>optional</td>
+                  <td><p>@sanitize </p></td>
+                </tr>
+              
+            </tbody>
+          </table>
+
+          
+            
+            
+            <h4>Validated Fields</h4>
+            <table>
+              <thead>
+                <tr>
+                  <td>Field</td>
+                  <td>Validations</td>
+                </tr>
+              </thead>
+              <tbody>
+              
+                <tr>
+                  <td>request_type</td>
+                  <td>
+                    <ul>
+                    
+                      <li>enum.in: [13 14 15 16 17 18]</li>
+                    
+                    </ul>
+                  </td>
+                </tr>
+              
+                <tr>
+                  <td>reason</td>
+                  <td>
+                    <ul>
+                    
+                      <li>string.max_len: 255</li>
+                    
+                    </ul>
+                  </td>
+                </tr>
+              
+              </tbody>
+            </table>
+            
+          
+
+        
+      
+        <h3 id="services.docstore.CreateDocumentReqResponse">CreateDocumentReqResponse</h3>
+        <p></p>
+
+        
+          <table class="field-table">
+            <thead>
+              <tr><td>Field</td><td>Type</td><td>Label</td><td>Description</td></tr>
+            </thead>
+            <tbody>
+              
+                <tr>
+                  <td>request</td>
+                  <td><a href="#resources.documents.DocRequest">resources.documents.DocRequest</a></td>
+                  <td></td>
+                  <td><p> </p></td>
+                </tr>
+              
+            </tbody>
+          </table>
+
+          
+
+        
+      
         <h3 id="services.docstore.CreateDocumentRequest">CreateDocumentRequest</h3>
         <p></p>
 
@@ -14907,6 +15212,37 @@
         
       
         <h3 id="services.docstore.DeleteCommentResponse">DeleteCommentResponse</h3>
+        <p></p>
+
+        
+
+        
+      
+        <h3 id="services.docstore.DeleteDocumentReqRequest">DeleteDocumentReqRequest</h3>
+        <p></p>
+
+        
+          <table class="field-table">
+            <thead>
+              <tr><td>Field</td><td>Type</td><td>Label</td><td>Description</td></tr>
+            </thead>
+            <tbody>
+              
+                <tr>
+                  <td>request_id</td>
+                  <td><a href="#uint64">uint64</a></td>
+                  <td></td>
+                  <td><p> </p></td>
+                </tr>
+              
+            </tbody>
+          </table>
+
+          
+
+        
+      
+        <h3 id="services.docstore.DeleteDocumentReqResponse">DeleteDocumentReqResponse</h3>
         <p></p>
 
         
@@ -15489,6 +15825,113 @@
                   <td><p> </p></td>
                 </tr>
               
+                <tr>
+                  <td>activity_types</td>
+                  <td><a href="#resources.documents.DocActivityType">resources.documents.DocActivityType</a></td>
+                  <td>repeated</td>
+                  <td><p>Search </p></td>
+                </tr>
+              
+            </tbody>
+          </table>
+
+          
+            
+            
+            <h4>Validated Fields</h4>
+            <table>
+              <thead>
+                <tr>
+                  <td>Field</td>
+                  <td>Validations</td>
+                </tr>
+              </thead>
+              <tbody>
+              
+                <tr>
+                  <td>pagination</td>
+                  <td>
+                    <ul>
+                    
+                      <li>message.required: true</li>
+                    
+                    </ul>
+                  </td>
+                </tr>
+              
+                <tr>
+                  <td>activity_types</td>
+                  <td>
+                    <ul>
+                    
+                      <li>repeated.items.enum.in: [13 14 15 16 17 18]</li>
+                    
+                    </ul>
+                  </td>
+                </tr>
+              
+              </tbody>
+            </table>
+            
+          
+
+        
+      
+        <h3 id="services.docstore.ListDocumentActivityResponse">ListDocumentActivityResponse</h3>
+        <p></p>
+
+        
+          <table class="field-table">
+            <thead>
+              <tr><td>Field</td><td>Type</td><td>Label</td><td>Description</td></tr>
+            </thead>
+            <tbody>
+              
+                <tr>
+                  <td>pagination</td>
+                  <td><a href="#resources.common.database.PaginationResponse">resources.common.database.PaginationResponse</a></td>
+                  <td></td>
+                  <td><p> </p></td>
+                </tr>
+              
+                <tr>
+                  <td>activity</td>
+                  <td><a href="#resources.documents.DocActivity">resources.documents.DocActivity</a></td>
+                  <td>repeated</td>
+                  <td><p> </p></td>
+                </tr>
+              
+            </tbody>
+          </table>
+
+          
+
+        
+      
+        <h3 id="services.docstore.ListDocumentReqsRequest">ListDocumentReqsRequest</h3>
+        <p></p>
+
+        
+          <table class="field-table">
+            <thead>
+              <tr><td>Field</td><td>Type</td><td>Label</td><td>Description</td></tr>
+            </thead>
+            <tbody>
+              
+                <tr>
+                  <td>pagination</td>
+                  <td><a href="#resources.common.database.PaginationRequest">resources.common.database.PaginationRequest</a></td>
+                  <td></td>
+                  <td><p> </p></td>
+                </tr>
+              
+                <tr>
+                  <td>document_id</td>
+                  <td><a href="#uint64">uint64</a></td>
+                  <td></td>
+                  <td><p> </p></td>
+                </tr>
+              
             </tbody>
           </table>
 
@@ -15523,7 +15966,7 @@
 
         
       
-        <h3 id="services.docstore.ListDocumentActivityResponse">ListDocumentActivityResponse</h3>
+        <h3 id="services.docstore.ListDocumentReqsResponse">ListDocumentReqsResponse</h3>
         <p></p>
 
         
@@ -15541,8 +15984,8 @@
                 </tr>
               
                 <tr>
-                  <td>activity</td>
-                  <td><a href="#resources.documents.DocActivity">resources.documents.DocActivity</a></td>
+                  <td>requests</td>
+                  <td><a href="#resources.documents.DocRequest">resources.documents.DocRequest</a></td>
                   <td>repeated</td>
                   <td><p> </p></td>
                 </tr>
@@ -15989,213 +16432,6 @@
 
         
       
-        <h3 id="services.docstore.RequestDocumentActionRequest">RequestDocumentActionRequest</h3>
-        <p></p>
-
-        
-          <table class="field-table">
-            <thead>
-              <tr><td>Field</td><td>Type</td><td>Label</td><td>Description</td></tr>
-            </thead>
-            <tbody>
-              
-                <tr>
-                  <td>document_id</td>
-                  <td><a href="#uint64">uint64</a></td>
-                  <td></td>
-                  <td><p> </p></td>
-                </tr>
-              
-                <tr>
-                  <td>request_type</td>
-                  <td><a href="#resources.documents.DocActivityType">resources.documents.DocActivityType</a></td>
-                  <td></td>
-                  <td><p> </p></td>
-                </tr>
-              
-                <tr>
-                  <td>reason</td>
-                  <td><a href="#string">string</a></td>
-                  <td>optional</td>
-                  <td><p>@sanitize </p></td>
-                </tr>
-              
-            </tbody>
-          </table>
-
-          
-            
-            
-            <h4>Validated Fields</h4>
-            <table>
-              <thead>
-                <tr>
-                  <td>Field</td>
-                  <td>Validations</td>
-                </tr>
-              </thead>
-              <tbody>
-              
-                <tr>
-                  <td>request_type</td>
-                  <td>
-                    <ul>
-                    
-                      <li>enum.in: [13 14 15 16 17]</li>
-                    
-                    </ul>
-                  </td>
-                </tr>
-              
-                <tr>
-                  <td>reason</td>
-                  <td>
-                    <ul>
-                    
-                      <li>string.max_len: 255</li>
-                    
-                    </ul>
-                  </td>
-                </tr>
-              
-              </tbody>
-            </table>
-            
-          
-
-        
-      
-        <h3 id="services.docstore.RequestDocumentActionResponse">RequestDocumentActionResponse</h3>
-        <p></p>
-
-        
-          <table class="field-table">
-            <thead>
-              <tr><td>Field</td><td>Type</td><td>Label</td><td>Description</td></tr>
-            </thead>
-            <tbody>
-              
-                <tr>
-                  <td>success</td>
-                  <td><a href="#bool">bool</a></td>
-                  <td></td>
-                  <td><p> </p></td>
-                </tr>
-              
-            </tbody>
-          </table>
-
-          
-
-        
-      
-        <h3 id="services.docstore.RespondDocumentActionRequest">RespondDocumentActionRequest</h3>
-        <p></p>
-
-        
-          <table class="field-table">
-            <thead>
-              <tr><td>Field</td><td>Type</td><td>Label</td><td>Description</td></tr>
-            </thead>
-            <tbody>
-              
-                <tr>
-                  <td>document_id</td>
-                  <td><a href="#uint64">uint64</a></td>
-                  <td></td>
-                  <td><p> </p></td>
-                </tr>
-              
-                <tr>
-                  <td>request_type</td>
-                  <td><a href="#resources.documents.DocActivityType">resources.documents.DocActivityType</a></td>
-                  <td></td>
-                  <td><p> </p></td>
-                </tr>
-              
-                <tr>
-                  <td>reason</td>
-                  <td><a href="#string">string</a></td>
-                  <td>optional</td>
-                  <td><p>@sanitize </p></td>
-                </tr>
-              
-                <tr>
-                  <td>accepted</td>
-                  <td><a href="#bool">bool</a></td>
-                  <td></td>
-                  <td><p> </p></td>
-                </tr>
-              
-            </tbody>
-          </table>
-
-          
-            
-            
-            <h4>Validated Fields</h4>
-            <table>
-              <thead>
-                <tr>
-                  <td>Field</td>
-                  <td>Validations</td>
-                </tr>
-              </thead>
-              <tbody>
-              
-                <tr>
-                  <td>request_type</td>
-                  <td>
-                    <ul>
-                    
-                      <li>enum.in: [13 14 15 16 17]</li>
-                    
-                    </ul>
-                  </td>
-                </tr>
-              
-                <tr>
-                  <td>reason</td>
-                  <td>
-                    <ul>
-                    
-                      <li>string.max_len: 255</li>
-                    
-                    </ul>
-                  </td>
-                </tr>
-              
-              </tbody>
-            </table>
-            
-          
-
-        
-      
-        <h3 id="services.docstore.RespondDocumentActionResponse">RespondDocumentActionResponse</h3>
-        <p></p>
-
-        
-          <table class="field-table">
-            <thead>
-              <tr><td>Field</td><td>Type</td><td>Label</td><td>Description</td></tr>
-            </thead>
-            <tbody>
-              
-                <tr>
-                  <td>success</td>
-                  <td><a href="#bool">bool</a></td>
-                  <td></td>
-                  <td><p> </p></td>
-                </tr>
-              
-            </tbody>
-          </table>
-
-          
-
-        
-      
         <h3 id="services.docstore.SetDocumentAccessRequest">SetDocumentAccessRequest</h3>
         <p></p>
 
@@ -16369,6 +16605,85 @@
         
       
         <h3 id="services.docstore.UpdateCategoryResponse">UpdateCategoryResponse</h3>
+        <p></p>
+
+        
+
+        
+      
+        <h3 id="services.docstore.UpdateDocumentReqRequest">UpdateDocumentReqRequest</h3>
+        <p></p>
+
+        
+          <table class="field-table">
+            <thead>
+              <tr><td>Field</td><td>Type</td><td>Label</td><td>Description</td></tr>
+            </thead>
+            <tbody>
+              
+                <tr>
+                  <td>document_id</td>
+                  <td><a href="#uint64">uint64</a></td>
+                  <td></td>
+                  <td><p> </p></td>
+                </tr>
+              
+                <tr>
+                  <td>request_id</td>
+                  <td><a href="#uint64">uint64</a></td>
+                  <td></td>
+                  <td><p> </p></td>
+                </tr>
+              
+                <tr>
+                  <td>reason</td>
+                  <td><a href="#string">string</a></td>
+                  <td>optional</td>
+                  <td><p>@sanitize </p></td>
+                </tr>
+              
+                <tr>
+                  <td>accepted</td>
+                  <td><a href="#bool">bool</a></td>
+                  <td></td>
+                  <td><p> </p></td>
+                </tr>
+              
+            </tbody>
+          </table>
+
+          
+            
+            
+            <h4>Validated Fields</h4>
+            <table>
+              <thead>
+                <tr>
+                  <td>Field</td>
+                  <td>Validations</td>
+                </tr>
+              </thead>
+              <tbody>
+              
+                <tr>
+                  <td>reason</td>
+                  <td>
+                    <ul>
+                    
+                      <li>string.max_len: 255</li>
+                    
+                    </ul>
+                  </td>
+                </tr>
+              
+              </tbody>
+            </table>
+            
+          
+
+        
+      
+        <h3 id="services.docstore.UpdateDocumentReqResponse">UpdateDocumentReqResponse</h3>
         <p></p>
 
         
@@ -16860,17 +17175,31 @@
               </tr>
             
               <tr>
-                <td>RequestDocumentAction</td>
-                <td><a href="#services.docstore.RequestDocumentActionRequest">RequestDocumentActionRequest</a></td>
-                <td><a href="#services.docstore.RequestDocumentActionResponse">RequestDocumentActionResponse</a></td>
+                <td>ListDocumentReqs</td>
+                <td><a href="#services.docstore.ListDocumentReqsRequest">ListDocumentReqsRequest</a></td>
+                <td><a href="#services.docstore.ListDocumentReqsResponse">ListDocumentReqsResponse</a></td>
+                <td><p>@perm</p></td>
+              </tr>
+            
+              <tr>
+                <td>CreateDocumentReq</td>
+                <td><a href="#services.docstore.CreateDocumentReqRequest">CreateDocumentReqRequest</a></td>
+                <td><a href="#services.docstore.CreateDocumentReqResponse">CreateDocumentReqResponse</a></td>
                 <td><p>@perm: Attrs=Types/StringList:[]string{&#34;Access&#34;, &#34;Closure&#34;, &#34;Update&#34;, &#34;Deletion&#34;}§[]string{&#34;Access&#34;}</p></td>
               </tr>
             
               <tr>
-                <td>RespondDocumentAction</td>
-                <td><a href="#services.docstore.RespondDocumentActionRequest">RespondDocumentActionRequest</a></td>
-                <td><a href="#services.docstore.RespondDocumentActionResponse">RespondDocumentActionResponse</a></td>
-                <td><p>@perm: Name=RequestDocumentAction</p></td>
+                <td>UpdateDocumentReq</td>
+                <td><a href="#services.docstore.UpdateDocumentReqRequest">UpdateDocumentReqRequest</a></td>
+                <td><a href="#services.docstore.UpdateDocumentReqResponse">UpdateDocumentReqResponse</a></td>
+                <td><p>@perm: Name=CreateDocumentReq</p></td>
+              </tr>
+            
+              <tr>
+                <td>DeleteDocumentReq</td>
+                <td><a href="#services.docstore.DeleteDocumentReqRequest">DeleteDocumentReqRequest</a></td>
+                <td><a href="#services.docstore.DeleteDocumentReqResponse">DeleteDocumentReqResponse</a></td>
+                <td><p>@perm</p></td>
               </tr>
             
               <tr>

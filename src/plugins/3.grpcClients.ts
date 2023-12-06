@@ -91,7 +91,7 @@ export class GRPCClients {
         $loading.errored();
 
         let traceId = 'UNKNOWN';
-        if (err.meta['x-trace-id'] !== undefined) {
+        if (err.meta !== undefined && err.meta['x-trace-id'] !== undefined) {
             traceId = err.meta['x-trace-id'] as string;
         }
 

@@ -27,7 +27,7 @@ var (
 	tDocActivity = table.FivenetDocumentsActivity
 )
 
-func (s *Server) AddDocumentActivity(ctx context.Context, tx qrm.DB, activitiy *documents.DocActivity) error {
+func (s *Server) addDocumentActivity(ctx context.Context, tx qrm.DB, activitiy *documents.DocActivity) (uint64, error) {
 	stmt := tDocActivity.
 		INSERT(
 			tDocActivity.DocumentID,
@@ -46,13 +46,19 @@ func (s *Server) AddDocumentActivity(ctx context.Context, tx qrm.DB, activitiy *
 			activitiy.Data,
 		)
 
-	if _, err := stmt.ExecContext(ctx, tx); err != nil {
+	res, err := stmt.ExecContext(ctx, tx)
+	if err != nil {
 		if !dbutils.IsDuplicateError(err) {
-			return err
+			return 0, err
 		}
 	}
 
-	return nil
+	lastId, err := res.LastInsertId()
+	if err != nil {
+		return 0, err
+	}
+
+	return uint64(lastId), nil
 }
 
 func (s *Server) ListDocumentActivity(ctx context.Context, req *ListDocumentActivityRequest) (*ListDocumentActivityResponse, error) {
@@ -71,6 +77,13 @@ func (s *Server) ListDocumentActivity(ctx context.Context, req *ListDocumentActi
 	tDocActivity := table.FivenetDocumentsActivity.AS("doc_activity")
 
 	condition := tDocActivity.DocumentID.EQ(jet.Uint64(req.DocumentId))
+	if len(req.ActivityTypes) > 0 {
+		ids := make([]jet.Expression, len(req.ActivityTypes))
+		for i := 0; i < len(req.ActivityTypes); i++ {
+			ids[i] = jet.Int16(int16(*req.ActivityTypes[i].Enum()))
+		}
+		condition = condition.AND(tDocActivity.ActivityType.IN(ids...))
+	}
 
 	countStmt := tDocActivity.
 		SELECT(

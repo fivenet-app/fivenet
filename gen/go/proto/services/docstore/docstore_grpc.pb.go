@@ -43,8 +43,10 @@ const (
 	DocStoreService_GetDocumentAccess_FullMethodName       = "/services.docstore.DocStoreService/GetDocumentAccess"
 	DocStoreService_SetDocumentAccess_FullMethodName       = "/services.docstore.DocStoreService/SetDocumentAccess"
 	DocStoreService_ListDocumentActivity_FullMethodName    = "/services.docstore.DocStoreService/ListDocumentActivity"
-	DocStoreService_RequestDocumentAction_FullMethodName   = "/services.docstore.DocStoreService/RequestDocumentAction"
-	DocStoreService_RespondDocumentAction_FullMethodName   = "/services.docstore.DocStoreService/RespondDocumentAction"
+	DocStoreService_ListDocumentReqs_FullMethodName        = "/services.docstore.DocStoreService/ListDocumentReqs"
+	DocStoreService_CreateDocumentReq_FullMethodName       = "/services.docstore.DocStoreService/CreateDocumentReq"
+	DocStoreService_UpdateDocumentReq_FullMethodName       = "/services.docstore.DocStoreService/UpdateDocumentReq"
+	DocStoreService_DeleteDocumentReq_FullMethodName       = "/services.docstore.DocStoreService/DeleteDocumentReq"
 	DocStoreService_ListUserDocuments_FullMethodName       = "/services.docstore.DocStoreService/ListUserDocuments"
 	DocStoreService_ListCategories_FullMethodName          = "/services.docstore.DocStoreService/ListCategories"
 	DocStoreService_CreateCategory_FullMethodName          = "/services.docstore.DocStoreService/CreateCategory"
@@ -104,10 +106,14 @@ type DocStoreServiceClient interface {
 	SetDocumentAccess(ctx context.Context, in *SetDocumentAccessRequest, opts ...grpc.CallOption) (*SetDocumentAccessResponse, error)
 	// @perm
 	ListDocumentActivity(ctx context.Context, in *ListDocumentActivityRequest, opts ...grpc.CallOption) (*ListDocumentActivityResponse, error)
+	// @perm
+	ListDocumentReqs(ctx context.Context, in *ListDocumentReqsRequest, opts ...grpc.CallOption) (*ListDocumentReqsResponse, error)
 	// @perm: Attrs=Types/StringList:[]string{"Access", "Closure", "Update", "Deletion"}§[]string{"Access"}
-	RequestDocumentAction(ctx context.Context, in *RequestDocumentActionRequest, opts ...grpc.CallOption) (*RequestDocumentActionResponse, error)
-	// @perm: Name=RequestDocumentAction
-	RespondDocumentAction(ctx context.Context, in *RespondDocumentActionRequest, opts ...grpc.CallOption) (*RespondDocumentActionResponse, error)
+	CreateDocumentReq(ctx context.Context, in *CreateDocumentReqRequest, opts ...grpc.CallOption) (*CreateDocumentReqResponse, error)
+	// @perm: Name=CreateDocumentReq
+	UpdateDocumentReq(ctx context.Context, in *UpdateDocumentReqRequest, opts ...grpc.CallOption) (*UpdateDocumentReqResponse, error)
+	// @perm
+	DeleteDocumentReq(ctx context.Context, in *DeleteDocumentReqRequest, opts ...grpc.CallOption) (*DeleteDocumentReqResponse, error)
 	// @perm
 	ListUserDocuments(ctx context.Context, in *ListUserDocumentsRequest, opts ...grpc.CallOption) (*ListUserDocumentsResponse, error)
 	// @perm
@@ -344,18 +350,36 @@ func (c *docStoreServiceClient) ListDocumentActivity(ctx context.Context, in *Li
 	return out, nil
 }
 
-func (c *docStoreServiceClient) RequestDocumentAction(ctx context.Context, in *RequestDocumentActionRequest, opts ...grpc.CallOption) (*RequestDocumentActionResponse, error) {
-	out := new(RequestDocumentActionResponse)
-	err := c.cc.Invoke(ctx, DocStoreService_RequestDocumentAction_FullMethodName, in, out, opts...)
+func (c *docStoreServiceClient) ListDocumentReqs(ctx context.Context, in *ListDocumentReqsRequest, opts ...grpc.CallOption) (*ListDocumentReqsResponse, error) {
+	out := new(ListDocumentReqsResponse)
+	err := c.cc.Invoke(ctx, DocStoreService_ListDocumentReqs_FullMethodName, in, out, opts...)
 	if err != nil {
 		return nil, err
 	}
 	return out, nil
 }
 
-func (c *docStoreServiceClient) RespondDocumentAction(ctx context.Context, in *RespondDocumentActionRequest, opts ...grpc.CallOption) (*RespondDocumentActionResponse, error) {
-	out := new(RespondDocumentActionResponse)
-	err := c.cc.Invoke(ctx, DocStoreService_RespondDocumentAction_FullMethodName, in, out, opts...)
+func (c *docStoreServiceClient) CreateDocumentReq(ctx context.Context, in *CreateDocumentReqRequest, opts ...grpc.CallOption) (*CreateDocumentReqResponse, error) {
+	out := new(CreateDocumentReqResponse)
+	err := c.cc.Invoke(ctx, DocStoreService_CreateDocumentReq_FullMethodName, in, out, opts...)
+	if err != nil {
+		return nil, err
+	}
+	return out, nil
+}
+
+func (c *docStoreServiceClient) UpdateDocumentReq(ctx context.Context, in *UpdateDocumentReqRequest, opts ...grpc.CallOption) (*UpdateDocumentReqResponse, error) {
+	out := new(UpdateDocumentReqResponse)
+	err := c.cc.Invoke(ctx, DocStoreService_UpdateDocumentReq_FullMethodName, in, out, opts...)
+	if err != nil {
+		return nil, err
+	}
+	return out, nil
+}
+
+func (c *docStoreServiceClient) DeleteDocumentReq(ctx context.Context, in *DeleteDocumentReqRequest, opts ...grpc.CallOption) (*DeleteDocumentReqResponse, error) {
+	out := new(DeleteDocumentReqResponse)
+	err := c.cc.Invoke(ctx, DocStoreService_DeleteDocumentReq_FullMethodName, in, out, opts...)
 	if err != nil {
 		return nil, err
 	}
@@ -459,10 +483,14 @@ type DocStoreServiceServer interface {
 	SetDocumentAccess(context.Context, *SetDocumentAccessRequest) (*SetDocumentAccessResponse, error)
 	// @perm
 	ListDocumentActivity(context.Context, *ListDocumentActivityRequest) (*ListDocumentActivityResponse, error)
+	// @perm
+	ListDocumentReqs(context.Context, *ListDocumentReqsRequest) (*ListDocumentReqsResponse, error)
 	// @perm: Attrs=Types/StringList:[]string{"Access", "Closure", "Update", "Deletion"}§[]string{"Access"}
-	RequestDocumentAction(context.Context, *RequestDocumentActionRequest) (*RequestDocumentActionResponse, error)
-	// @perm: Name=RequestDocumentAction
-	RespondDocumentAction(context.Context, *RespondDocumentActionRequest) (*RespondDocumentActionResponse, error)
+	CreateDocumentReq(context.Context, *CreateDocumentReqRequest) (*CreateDocumentReqResponse, error)
+	// @perm: Name=CreateDocumentReq
+	UpdateDocumentReq(context.Context, *UpdateDocumentReqRequest) (*UpdateDocumentReqResponse, error)
+	// @perm
+	DeleteDocumentReq(context.Context, *DeleteDocumentReqRequest) (*DeleteDocumentReqResponse, error)
 	// @perm
 	ListUserDocuments(context.Context, *ListUserDocumentsRequest) (*ListUserDocumentsResponse, error)
 	// @perm
@@ -552,11 +580,17 @@ func (UnimplementedDocStoreServiceServer) SetDocumentAccess(context.Context, *Se
 func (UnimplementedDocStoreServiceServer) ListDocumentActivity(context.Context, *ListDocumentActivityRequest) (*ListDocumentActivityResponse, error) {
 	return nil, status.Errorf(codes.Unimplemented, "method ListDocumentActivity not implemented")
 }
-func (UnimplementedDocStoreServiceServer) RequestDocumentAction(context.Context, *RequestDocumentActionRequest) (*RequestDocumentActionResponse, error) {
-	return nil, status.Errorf(codes.Unimplemented, "method RequestDocumentAction not implemented")
+func (UnimplementedDocStoreServiceServer) ListDocumentReqs(context.Context, *ListDocumentReqsRequest) (*ListDocumentReqsResponse, error) {
+	return nil, status.Errorf(codes.Unimplemented, "method ListDocumentReqs not implemented")
 }
-func (UnimplementedDocStoreServiceServer) RespondDocumentAction(context.Context, *RespondDocumentActionRequest) (*RespondDocumentActionResponse, error) {
-	return nil, status.Errorf(codes.Unimplemented, "method RespondDocumentAction not implemented")
+func (UnimplementedDocStoreServiceServer) CreateDocumentReq(context.Context, *CreateDocumentReqRequest) (*CreateDocumentReqResponse, error) {
+	return nil, status.Errorf(codes.Unimplemented, "method CreateDocumentReq not implemented")
+}
+func (UnimplementedDocStoreServiceServer) UpdateDocumentReq(context.Context, *UpdateDocumentReqRequest) (*UpdateDocumentReqResponse, error) {
+	return nil, status.Errorf(codes.Unimplemented, "method UpdateDocumentReq not implemented")
+}
+func (UnimplementedDocStoreServiceServer) DeleteDocumentReq(context.Context, *DeleteDocumentReqRequest) (*DeleteDocumentReqResponse, error) {
+	return nil, status.Errorf(codes.Unimplemented, "method DeleteDocumentReq not implemented")
 }
 func (UnimplementedDocStoreServiceServer) ListUserDocuments(context.Context, *ListUserDocumentsRequest) (*ListUserDocumentsResponse, error) {
 	return nil, status.Errorf(codes.Unimplemented, "method ListUserDocuments not implemented")
@@ -1018,38 +1052,74 @@ func _DocStoreService_ListDocumentActivity_Handler(srv interface{}, ctx context.
 	return interceptor(ctx, in, info, handler)
 }
 
-func _DocStoreService_RequestDocumentAction_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
-	in := new(RequestDocumentActionRequest)
+func _DocStoreService_ListDocumentReqs_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
+	in := new(ListDocumentReqsRequest)
 	if err := dec(in); err != nil {
 		return nil, err
 	}
 	if interceptor == nil {
-		return srv.(DocStoreServiceServer).RequestDocumentAction(ctx, in)
+		return srv.(DocStoreServiceServer).ListDocumentReqs(ctx, in)
 	}
 	info := &grpc.UnaryServerInfo{
 		Server:     srv,
-		FullMethod: DocStoreService_RequestDocumentAction_FullMethodName,
+		FullMethod: DocStoreService_ListDocumentReqs_FullMethodName,
 	}
 	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
-		return srv.(DocStoreServiceServer).RequestDocumentAction(ctx, req.(*RequestDocumentActionRequest))
+		return srv.(DocStoreServiceServer).ListDocumentReqs(ctx, req.(*ListDocumentReqsRequest))
 	}
 	return interceptor(ctx, in, info, handler)
 }
 
-func _DocStoreService_RespondDocumentAction_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
-	in := new(RespondDocumentActionRequest)
+func _DocStoreService_CreateDocumentReq_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
+	in := new(CreateDocumentReqRequest)
 	if err := dec(in); err != nil {
 		return nil, err
 	}
 	if interceptor == nil {
-		return srv.(DocStoreServiceServer).RespondDocumentAction(ctx, in)
+		return srv.(DocStoreServiceServer).CreateDocumentReq(ctx, in)
 	}
 	info := &grpc.UnaryServerInfo{
 		Server:     srv,
-		FullMethod: DocStoreService_RespondDocumentAction_FullMethodName,
+		FullMethod: DocStoreService_CreateDocumentReq_FullMethodName,
 	}
 	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
-		return srv.(DocStoreServiceServer).RespondDocumentAction(ctx, req.(*RespondDocumentActionRequest))
+		return srv.(DocStoreServiceServer).CreateDocumentReq(ctx, req.(*CreateDocumentReqRequest))
+	}
+	return interceptor(ctx, in, info, handler)
+}
+
+func _DocStoreService_UpdateDocumentReq_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
+	in := new(UpdateDocumentReqRequest)
+	if err := dec(in); err != nil {
+		return nil, err
+	}
+	if interceptor == nil {
+		return srv.(DocStoreServiceServer).UpdateDocumentReq(ctx, in)
+	}
+	info := &grpc.UnaryServerInfo{
+		Server:     srv,
+		FullMethod: DocStoreService_UpdateDocumentReq_FullMethodName,
+	}
+	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
+		return srv.(DocStoreServiceServer).UpdateDocumentReq(ctx, req.(*UpdateDocumentReqRequest))
+	}
+	return interceptor(ctx, in, info, handler)
+}
+
+func _DocStoreService_DeleteDocumentReq_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
+	in := new(DeleteDocumentReqRequest)
+	if err := dec(in); err != nil {
+		return nil, err
+	}
+	if interceptor == nil {
+		return srv.(DocStoreServiceServer).DeleteDocumentReq(ctx, in)
+	}
+	info := &grpc.UnaryServerInfo{
+		Server:     srv,
+		FullMethod: DocStoreService_DeleteDocumentReq_FullMethodName,
+	}
+	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
+		return srv.(DocStoreServiceServer).DeleteDocumentReq(ctx, req.(*DeleteDocumentReqRequest))
 	}
 	return interceptor(ctx, in, info, handler)
 }
@@ -1248,12 +1318,20 @@ var DocStoreService_ServiceDesc = grpc.ServiceDesc{
 			Handler:    _DocStoreService_ListDocumentActivity_Handler,
 		},
 		{
-			MethodName: "RequestDocumentAction",
-			Handler:    _DocStoreService_RequestDocumentAction_Handler,
+			MethodName: "ListDocumentReqs",
+			Handler:    _DocStoreService_ListDocumentReqs_Handler,
 		},
 		{
-			MethodName: "RespondDocumentAction",
-			Handler:    _DocStoreService_RespondDocumentAction_Handler,
+			MethodName: "CreateDocumentReq",
+			Handler:    _DocStoreService_CreateDocumentReq_Handler,
+		},
+		{
+			MethodName: "UpdateDocumentReq",
+			Handler:    _DocStoreService_UpdateDocumentReq_Handler,
+		},
+		{
+			MethodName: "DeleteDocumentReq",
+			Handler:    _DocStoreService_DeleteDocumentReq_Handler,
 		},
 		{
 			MethodName: "ListUserDocuments",

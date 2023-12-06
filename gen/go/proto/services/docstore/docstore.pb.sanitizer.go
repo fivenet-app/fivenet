@@ -7,6 +7,15 @@ import (
 	"github.com/galexrt/fivenet/pkg/htmlsanitizer"
 )
 
+func (m *CreateDocumentReqRequest) Sanitize() error {
+
+	if m.Reason != nil {
+		*m.Reason = htmlsanitizer.Sanitize(*m.Reason)
+	}
+
+	return nil
+}
+
 func (m *CreateDocumentRequest) Sanitize() error {
 
 	m.Content = htmlsanitizer.Sanitize(m.Content)
@@ -18,16 +27,7 @@ func (m *CreateDocumentRequest) Sanitize() error {
 	return nil
 }
 
-func (m *RequestDocumentActionRequest) Sanitize() error {
-
-	if m.Reason != nil {
-		*m.Reason = htmlsanitizer.Sanitize(*m.Reason)
-	}
-
-	return nil
-}
-
-func (m *RespondDocumentActionRequest) Sanitize() error {
+func (m *UpdateDocumentReqRequest) Sanitize() error {
 
 	if m.Reason != nil {
 		*m.Reason = htmlsanitizer.Sanitize(*m.Reason)

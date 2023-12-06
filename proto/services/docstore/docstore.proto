@@ -8,6 +8,7 @@ import "resources/documents/activity.proto";
 import "resources/documents/category.proto";
 import "resources/documents/comment.proto";
 import "resources/documents/documents.proto";
+import "resources/documents/requests.proto";
 import "resources/documents/templates.proto";
 import "resources/timestamp/timestamp.proto";
 import "validate/validate.proto";
@@ -231,6 +232,8 @@ message ToggleDocumentResponse {}
 message ListDocumentActivityRequest {
   resources.common.database.PaginationRequest pagination = 1 [(validate.rules).message.required = true];
   uint64 document_id = 2 [jstype = JS_STRING];
+  // Search
+  repeated resources.documents.DocActivityType activity_types = 3 [(validate.rules).repeated.items.enum = {in: [13,14,15,16,17,18]}];
 }
 
 message ListDocumentActivityResponse {
@@ -238,28 +241,42 @@ message ListDocumentActivityResponse {
   repeated resources.documents.DocActivity activity = 2;
 }
 
-message RequestDocumentActionRequest {
+message ListDocumentReqsRequest {
+  resources.common.database.PaginationRequest pagination = 1 [(validate.rules).message.required = true];
+  uint64 document_id = 2 [jstype = JS_STRING];
+}
+
+message ListDocumentReqsResponse {
+  resources.common.database.PaginationResponse pagination = 1;
+  repeated resources.documents.DocRequest requests = 2;
+}
+
+message CreateDocumentReqRequest {
   uint64 document_id = 1 [jstype = JS_STRING];
-  resources.documents.DocActivityType request_type = 2 [(validate.rules).enum = {in: [13,14,15,16,17]}];
+  resources.documents.DocActivityType request_type = 2 [(validate.rules).enum = {in: [13,14,15,16,17,18]}];
   // @sanitize
   optional string reason = 3 [(validate.rules).string.max_len = 255];
 }
 
-message RequestDocumentActionResponse {
-  bool success = 1;
+message CreateDocumentReqResponse {
+  resources.documents.DocRequest request = 1;
 }
 
-message RespondDocumentActionRequest {
+message UpdateDocumentReqRequest {
   uint64 document_id = 1 [jstype = JS_STRING];
-  resources.documents.DocActivityType request_type = 2 [(validate.rules).enum = {in: [13,14,15,16,17]}];
+  uint64 request_id = 2 [jstype = JS_STRING];
   // @sanitize
   optional string reason = 3 [(validate.rules).string.max_len = 255];
   bool accepted = 4;
 }
 
-message RespondDocumentActionResponse {
-  bool success = 1;
+message UpdateDocumentReqResponse {}
+
+message DeleteDocumentReqRequest {
+  uint64 request_id = 1 [jstype = JS_STRING];
 }
+
+message DeleteDocumentReqResponse {}
 
 // Access =================================================================
 message GetDocumentAccessRequest {
@@ -379,10 +396,14 @@ service DocStoreService {
   // @perm
   rpc ListDocumentActivity(ListDocumentActivityRequest) returns (ListDocumentActivityResponse);
 
+  // @perm
+  rpc ListDocumentReqs(ListDocumentReqsRequest) returns (ListDocumentReqsResponse);
   // @perm: Attrs=Types/StringList:[]string{"Access", "Closure", "Update", "Deletion"}§[]string{"Access"}
-  rpc RequestDocumentAction(RequestDocumentActionRequest) returns (RequestDocumentActionResponse);
-  // @perm: Name=RequestDocumentAction
-  rpc RespondDocumentAction(RespondDocumentActionRequest) returns (RespondDocumentActionResponse);
+  rpc CreateDocumentReq(CreateDocumentReqRequest) returns (CreateDocumentReqResponse);
+  // @perm: Name=CreateDocumentReq
+  rpc UpdateDocumentReq(UpdateDocumentReqRequest) returns (UpdateDocumentReqResponse);
+  // @perm
+  rpc DeleteDocumentReq(DeleteDocumentReqRequest) returns (DeleteDocumentReqResponse);
 
   // @perm
   rpc ListUserDocuments(ListUserDocumentsRequest) returns (ListUserDocumentsResponse);

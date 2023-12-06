@@ -394,13 +394,11 @@ func (s *Server) ForgotPassword(ctx context.Context, req *ForgotPasswordRequest)
 		tAccounts.Password.IS_NULL(),
 	))
 	if err != nil {
-		if !errors.Is(err, qrm.ErrNoRows) {
-			return nil, errswrap.NewError(ErrForgotPassword, err)
-		}
+		return nil, errswrap.NewError(ErrForgotPassword, err)
 	}
 
 	// We expect the account to not have a password for a "forgot password" request via token
-	if acc.Password != nil {
+	if acc == nil || acc.Password != nil {
 		return nil, errswrap.NewError(ErrNoAccount, err)
 	}
 

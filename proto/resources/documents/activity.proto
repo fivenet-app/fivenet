@@ -27,9 +27,10 @@ enum DocActivityType {
   // Requests
   DOC_ACTIVITY_TYPE_REQUESTED_ACCESS = 13;
   DOC_ACTIVITY_TYPE_REQUESTED_CLOSURE = 14;
-  DOC_ACTIVITY_TYPE_REQUESTED_UPDATE = 15;
-  DOC_ACTIVITY_TYPE_REQUESTED_OWNER_CHANGE = 16;
-  DOC_ACTIVITY_TYPE_REQUESTED_DELETION = 17;
+  DOC_ACTIVITY_TYPE_REQUESTED_OPENING = 15;
+  DOC_ACTIVITY_TYPE_REQUESTED_UPDATE = 16;
+  DOC_ACTIVITY_TYPE_REQUESTED_OWNER_CHANGE = 17;
+  DOC_ACTIVITY_TYPE_REQUESTED_DELETION = 18;
 }
 
 message DocActivity {
@@ -49,6 +50,7 @@ message DocActivityData {
   oneof data {
     DocUpdated updated = 1;
     DocOwnerChanged owner_changed = 2;
+    DocRequestActivity request_info = 3;
   }
 }
 
@@ -60,4 +62,8 @@ message DocUpdated {
 
 message DocOwnerChanged {
   int32 owner_id = 1;
+}
+
+message DocRequestActivity {
+  // TODO
 }

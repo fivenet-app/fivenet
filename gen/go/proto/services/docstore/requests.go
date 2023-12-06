@@ -2,86 +2,323 @@ package docstore
 
 import (
 	"context"
+	"errors"
 	"fmt"
+	"time"
 
 	"github.com/galexrt/fivenet/gen/go/proto/resources/common"
+	database "github.com/galexrt/fivenet/gen/go/proto/resources/common/database"
 	"github.com/galexrt/fivenet/gen/go/proto/resources/documents"
 	"github.com/galexrt/fivenet/gen/go/proto/resources/notifications"
 	"github.com/galexrt/fivenet/gen/go/proto/resources/rector"
+	"github.com/galexrt/fivenet/gen/go/proto/resources/timestamp"
 	"github.com/galexrt/fivenet/gen/go/proto/resources/users"
 	errorsdocstore "github.com/galexrt/fivenet/gen/go/proto/services/docstore/errors"
 	"github.com/galexrt/fivenet/pkg/grpc/auth"
 	"github.com/galexrt/fivenet/pkg/grpc/errswrap"
 	"github.com/galexrt/fivenet/pkg/notifi"
+	"github.com/galexrt/fivenet/pkg/utils/dbutils"
 	"github.com/galexrt/fivenet/query/fivenet/model"
+	"github.com/galexrt/fivenet/query/fivenet/table"
 	jet "github.com/go-jet/jet/v2/mysql"
+	"github.com/go-jet/jet/v2/qrm"
+	"go.opentelemetry.io/otel/attribute"
+	"go.opentelemetry.io/otel/trace"
 )
 
-func (s *Server) RequestDocumentAction(ctx context.Context, req *RequestDocumentActionRequest) (*RequestDocumentActionResponse, error) {
+const DocRequestMinimumWaitTime = 24 * time.Hour
+
+var (
+	tDocRequest = table.FivenetDocumentsRequests
+)
+
+func (s *Server) ListDocumentReqs(ctx context.Context, req *ListDocumentReqsRequest) (*ListDocumentReqsResponse, error) {
+	trace.SpanFromContext(ctx).SetAttributes(attribute.Int64("fivenet.docstore.id", int64(req.DocumentId)))
+
+	userInfo := auth.MustGetUserInfoFromContext(ctx)
+
+	ok, err := s.checkIfUserHasAccessToDoc(ctx, req.DocumentId, userInfo, documents.AccessLevel_ACCESS_LEVEL_VIEW)
+	if err != nil {
+		return nil, errswrap.NewError(errorsdocstore.ErrFailedQuery, err)
+	}
+	if !ok {
+		return nil, errswrap.NewError(errorsdocstore.ErrDocViewDenied, err)
+	}
+
+	condition := tDocRequest.DocumentID.EQ(jet.Uint64(req.DocumentId))
+
+	tDocRequest := table.FivenetDocumentsActivity.AS("doc_request")
+
+	countStmt := tDocRequest.
+		SELECT(
+			jet.COUNT(tDocRequest.ID).AS("datacount.totalcount"),
+		).
+		FROM(
+			tDocRequest,
+		).
+		WHERE(condition)
+
+	var count database.DataCount
+	if err := countStmt.QueryContext(ctx, s.db, &count); err != nil {
+		if !errors.Is(err, qrm.ErrNoRows) {
+			return nil, errswrap.NewError(errorsdocstore.ErrFailedQuery, err)
+		}
+	}
+
+	pag, limit := req.Pagination.GetResponseWithPageSize(ActivityDefaultPageLimit)
+	resp := &ListDocumentReqsResponse{
+		Pagination: pag,
+		Requests:   []*documents.DocRequest{},
+	}
+	if count.TotalCount <= 0 {
+		return resp, nil
+	}
+
+	stmt := tDocRequest.
+		SELECT(
+			tDocRequest.ID,
+			tDocRequest.CreatedAt,
+			tDocRequest.DocumentID,
+			tDocRequest.ActivityType,
+			tDocRequest.CreatorID,
+			tDocRequest.CreatorJob,
+			tDocRequest.Reason,
+			tDocRequest.Data,
+			tCreator.ID,
+			tCreator.Identifier,
+			tCreator.Job,
+			tCreator.JobGrade,
+			tCreator.Firstname,
+			tCreator.Lastname,
+		).
+		FROM(
+			tDocRequest.
+				LEFT_JOIN(tCreator,
+					tCreator.ID.EQ(tDocRequest.CreatorID),
+				),
+		).
+		WHERE(condition).
+		OFFSET(
+			req.Pagination.Offset,
+		).
+		ORDER_BY(
+			tDocRequest.ID.DESC(),
+		).
+		LIMIT(limit)
+
+	if err := stmt.QueryContext(ctx, s.db, &resp.Requests); err != nil {
+		return nil, errswrap.NewError(errorsdocstore.ErrFailedQuery, err)
+	}
+
+	resp.Pagination.Update(count.TotalCount, len(resp.Requests))
+
+	jobInfoFn := s.enricher.EnrichJobInfoSafeFunc(userInfo)
+	for i := 0; i < len(resp.Requests); i++ {
+		if resp.Requests[i].Creator != nil {
+			jobInfoFn(resp.Requests[i].Creator)
+		}
+	}
+
+	return resp, nil
+}
+
+func (s *Server) CreateDocumentReq(ctx context.Context, req *CreateDocumentReqRequest) (*CreateDocumentReqResponse, error) {
 	userInfo := auth.MustGetUserInfoFromContext(ctx)
 
 	auditEntry := &model.FivenetAuditLog{
 		Service: DocStoreService_ServiceDesc.ServiceName,
-		Method:  "RequestDocumentAction",
+		Method:  "CreateDocumentReq",
 		UserID:  userInfo.UserId,
 		UserJob: userInfo.Job,
 		State:   int16(rector.EventType_EVENT_TYPE_ERRORED),
 	}
 	defer s.auditer.Log(auditEntry, req)
+
+	ok, err := s.checkIfUserHasAccessToDoc(ctx, req.DocumentId, userInfo, documents.AccessLevel_ACCESS_LEVEL_VIEW)
+	if err != nil {
+		return nil, errswrap.NewError(errorsdocstore.ErrFailedQuery, err)
+	}
+	if !ok {
+		return nil, errswrap.NewError(errorsdocstore.ErrDocViewDenied, err)
+	}
 
 	doc, err := s.getDocument(ctx, tDocument.ID.EQ(jet.Uint64(req.DocumentId)), userInfo)
 	if err != nil {
 		return nil, errswrap.NewError(errorsdocstore.ErrFailedQuery, err)
 	}
 
-	resp := &RequestDocumentActionResponse{}
+	request, err := s.getDocumentReq(ctx, s.db,
+		tDocRequest.DocumentID.EQ(jet.Uint64(doc.Id)).AND(
+			tDocRequest.RequestType.EQ(jet.Int16(int16(req.RequestType))),
+		),
+	)
+	if err != nil {
+		return nil, errswrap.NewError(errorsdocstore.ErrFailedQuery, err)
+	}
+	// If a request of that type already exists, make sure that we let the user know
+	if request != nil && request.CreatedAt != nil && time.Since(request.CreatedAt.AsTime()) > DocRequestMinimumWaitTime {
+		return nil, errswrap.NewError(errorsdocstore.ErrDocReqAlreadyCreated, err)
+	}
 
-	if err := s.AddDocumentActivity(ctx, s.db, &documents.DocActivity{
+	// Begin transaction
+	tx, err := s.db.BeginTx(ctx, nil)
+	if err != nil {
+		return nil, errswrap.NewError(errorsdocstore.ErrFailedQuery, err)
+	}
+	// Defer a rollback in case anything fails
+	defer tx.Rollback()
+
+	if _, err := s.addDocumentActivity(ctx, tx, &documents.DocActivity{
 		DocumentId:   doc.Id,
-		CreatorId:    &userInfo.UserId,
 		ActivityType: req.RequestType,
+		CreatorId:    &userInfo.UserId,
 		CreatorJob:   userInfo.Job,
 		Reason:       req.Reason,
-		Data:         &documents.DocActivityData{},
 	}); err != nil {
 		return nil, errswrap.NewError(errorsdocstore.ErrFailedQuery, err)
 	}
 
-	// If the document has no creator anymore, nothing we can do here
-	if doc.CreatorId == nil {
-		return resp, nil
+	// If no request of that type exists yet, create one, otherwise udpate the existing with the new requestors info
+	if request == nil {
+		completed := false
+		request, err = s.addAndGetDocumentReq(ctx, s.db, &documents.DocRequest{
+			DocumentId:  doc.Id,
+			CreatorId:   &userInfo.UserId,
+			CreatorJob:  userInfo.Job,
+			RequestType: req.RequestType,
+			Reason:      req.Reason,
+			Data:        &documents.DocActivityData{},
+			Completed:   &completed,
+		})
+		if err != nil {
+			return nil, errswrap.NewError(errorsdocstore.ErrFailedQuery, err)
+		}
+	} else {
+		completed := false
+		if err := s.updateDocumentReq(ctx, s.db, &documents.DocRequest{
+			CreatedAt:   timestamp.Now(),
+			DocumentId:  doc.Id,
+			CreatorId:   &userInfo.UserId,
+			CreatorJob:  userInfo.Job,
+			RequestType: req.RequestType,
+			Reason:      req.Reason,
+			Data:        &documents.DocActivityData{},
+			Completed:   &completed,
+		}); err != nil {
+			return nil, errswrap.NewError(errorsdocstore.ErrFailedQuery, err)
+		}
 	}
 
-	// TODO check if such a request was already made in the last 6 hours
-
-	if err := s.notifyUser(ctx, doc, userInfo.UserId, int32(*doc.CreatorId)); err != nil {
+	// Commit the transaction
+	if err := tx.Commit(); err != nil {
 		return nil, errswrap.NewError(errorsdocstore.ErrFailedQuery, err)
 	}
 
 	auditEntry.State = int16(rector.EventType_EVENT_TYPE_CREATED)
 
+	resp := &CreateDocumentReqResponse{
+		Request: request,
+	}
+
+	// If the document has no creator anymore, nothing we can do here
+	if doc.CreatorId != nil {
+		if err := s.notifyUser(ctx, doc, userInfo.UserId, int32(*doc.CreatorId)); err != nil {
+			return nil, errswrap.NewError(errorsdocstore.ErrFailedQuery, err)
+		}
+	}
+
 	return resp, nil
 }
 
-func (s *Server) RespondDocumentAction(ctx context.Context, req *RespondDocumentActionRequest) (*RespondDocumentActionResponse, error) {
+func (s *Server) UpdateDocumentReq(ctx context.Context, req *UpdateDocumentReqRequest) (*UpdateDocumentReqResponse, error) {
 	userInfo := auth.MustGetUserInfoFromContext(ctx)
 
 	auditEntry := &model.FivenetAuditLog{
 		Service: DocStoreService_ServiceDesc.ServiceName,
-		Method:  "RespondDocumentAction",
+		Method:  "UpdateDocumentReq",
 		UserID:  userInfo.UserId,
 		UserJob: userInfo.Job,
 		State:   int16(rector.EventType_EVENT_TYPE_ERRORED),
 	}
 	defer s.auditer.Log(auditEntry, req)
 
-	resp := &RespondDocumentActionResponse{}
+	request, err := s.getDocumentReq(ctx, s.db,
+		tDocRequest.ID.EQ(jet.Uint64(req.RequestId)).
+			AND(tDocRequest.DocumentID.EQ(jet.Uint64(req.DocumentId))),
+	)
+	if err != nil {
+		return nil, errswrap.NewError(errorsdocstore.ErrFailedQuery, err)
+	}
 
-	// TODO add logic to accept/decline a document request action
+	ok, err := s.checkIfUserHasAccessToDoc(ctx, request.DocumentId, userInfo, documents.AccessLevel_ACCESS_LEVEL_VIEW)
+	if err != nil {
+		return nil, errswrap.NewError(errorsdocstore.ErrFailedQuery, err)
+	}
+	if !ok {
+		return nil, errswrap.NewError(errorsdocstore.ErrDocViewDenied, err)
+	}
+
+	// Begin transaction
+	tx, err := s.db.BeginTx(ctx, nil)
+	if err != nil {
+		return nil, errswrap.NewError(errorsdocstore.ErrFailedQuery, err)
+	}
+	// Defer a rollback in case anything fails
+	defer tx.Rollback()
+
+	completed := req.Accepted
+	request.Completed = &completed
+	if err := s.updateDocumentReq(ctx, tx, request); err != nil {
+		return nil, errswrap.NewError(errorsdocstore.ErrFailedQuery, err)
+	}
+
+	// TODO execute action based on if it has been accepted or not (req.Accepted)
+
+	// Commit the transaction
+	if err := tx.Commit(); err != nil {
+		return nil, errswrap.NewError(errorsdocstore.ErrFailedQuery, err)
+	}
 
 	auditEntry.State = int16(rector.EventType_EVENT_TYPE_UPDATED)
 
-	return resp, nil
+	return &UpdateDocumentReqResponse{}, nil
+}
+
+func (s *Server) DeleteDocumentReq(ctx context.Context, req *DeleteDocumentReqRequest) (*DeleteDocumentReqResponse, error) {
+	userInfo := auth.MustGetUserInfoFromContext(ctx)
+
+	auditEntry := &model.FivenetAuditLog{
+		Service: DocStoreService_ServiceDesc.ServiceName,
+		Method:  "DeleteDocumentReq",
+		UserID:  userInfo.UserId,
+		UserJob: userInfo.Job,
+		State:   int16(rector.EventType_EVENT_TYPE_ERRORED),
+	}
+	defer s.auditer.Log(auditEntry, req)
+
+	request, err := s.getDocumentReq(ctx, s.db,
+		tDocRequest.ID.EQ(jet.Uint64(req.RequestId)).
+			AND(tDocRequest.DocumentID.EQ(jet.Uint64(req.RequestId))),
+	)
+	if err != nil {
+		return nil, errswrap.NewError(errorsdocstore.ErrFailedQuery, err)
+	}
+
+	ok, err := s.checkIfUserHasAccessToDoc(ctx, request.DocumentId, userInfo, documents.AccessLevel_ACCESS_LEVEL_EDIT)
+	if err != nil {
+		return nil, errswrap.NewError(errorsdocstore.ErrFailedQuery, err)
+	}
+	if !ok {
+		return nil, errswrap.NewError(errorsdocstore.ErrDocViewDenied, err)
+	}
+
+	if err := s.deleteDocumentReq(ctx, s.db, req.RequestId); err != nil {
+		return nil, errswrap.NewError(errorsdocstore.ErrFailedQuery, err)
+	}
+
+	auditEntry.State = int16(rector.EventType_EVENT_TYPE_DELETED)
+
+	return &DeleteDocumentReqResponse{}, nil
 }
 
 func (s *Server) notifyUser(ctx context.Context, doc *documents.Document, sourceUserId int32, targetUserId int32) error {
@@ -116,6 +353,123 @@ func (s *Server) notifyUser(ctx context.Context, doc *documents.Document, source
 		},
 	}
 	if err := s.notif.NotifyUser(ctx, not); err != nil {
+		return err
+	}
+
+	return nil
+}
+
+func (s *Server) addDocumentReq(ctx context.Context, tx qrm.DB, activitiy *documents.DocRequest) (uint64, error) {
+	stmt := tDocRequest.
+		INSERT(
+			tDocRequest.DocumentID,
+			tDocRequest.RequestType,
+			tDocRequest.CreatorID,
+			tDocRequest.CreatorJob,
+			tDocRequest.Reason,
+			tDocRequest.Data,
+		).
+		VALUES(
+			activitiy.DocumentId,
+			activitiy.RequestType,
+			activitiy.CreatorId,
+			activitiy.CreatorJob,
+			activitiy.Reason,
+			activitiy.Data,
+		)
+
+	res, err := stmt.ExecContext(ctx, tx)
+	if err != nil {
+		if !dbutils.IsDuplicateError(err) {
+			return 0, err
+		}
+	}
+
+	lastId, err := res.LastInsertId()
+	if err != nil {
+		return 0, err
+	}
+
+	return uint64(lastId), nil
+}
+
+func (s *Server) addAndGetDocumentReq(ctx context.Context, tx qrm.DB, activitiy *documents.DocRequest) (*documents.DocRequest, error) {
+	id, err := s.addDocumentReq(ctx, tx, activitiy)
+	if err != nil {
+		return nil, err
+	}
+
+	return s.getDocumentReqById(ctx, tx, id)
+}
+
+func (s *Server) updateDocumentReq(ctx context.Context, tx qrm.DB, request *documents.DocRequest) error {
+	stmt := tDocRequest.
+		UPDATE(
+			tDocRequest.DocumentID,
+			tDocRequest.RequestType,
+			tDocRequest.CreatorID,
+			tDocRequest.CreatorJob,
+			tDocRequest.Reason,
+			tDocRequest.Data,
+		).
+		SET(
+			request.DocumentId,
+			request.RequestType,
+			request.CreatorId,
+			request.CreatorJob,
+			request.Reason,
+			request.Data,
+		).
+		WHERE(
+			tDocRequest.ID.EQ(jet.Uint64(request.Id)),
+		)
+
+	if _, err := stmt.ExecContext(ctx, tx); err != nil {
+		if !dbutils.IsDuplicateError(err) {
+			return err
+		}
+	}
+
+	return nil
+}
+
+func (s *Server) getDocumentReqById(ctx context.Context, tx qrm.DB, id uint64) (*documents.DocRequest, error) {
+	return s.getDocumentReq(ctx, tx, tDocRequest.ID.EQ(jet.Uint64(id)))
+}
+
+func (s *Server) getDocumentReq(ctx context.Context, tx qrm.DB, condition jet.BoolExpression) (*documents.DocRequest, error) {
+	stmt := tDocRequest.
+		SELECT(
+			tDocRequest.ID,
+			tDocRequest.CreatedAt,
+			tDocRequest.DocumentID,
+			tDocRequest.RequestType,
+			tDocRequest.CreatorID,
+			tDocRequest.CreatorJob,
+			tDocRequest.Reason,
+			tDocRequest.Data,
+		).
+		FROM().
+		WHERE(condition).
+		LIMIT(1)
+
+	var dest documents.DocRequest
+	if _, err := stmt.ExecContext(ctx, tx); err != nil {
+		if !dbutils.IsDuplicateError(err) {
+			return nil, err
+		}
+	}
+
+	return &dest, nil
+}
+
+func (s *Server) deleteDocumentReq(ctx context.Context, tx qrm.DB, id uint64) error {
+	stmt := tDocRequest.
+		DELETE().
+		WHERE(tDocRequest.ID.EQ(jet.Uint64(id))).
+		LIMIT(1)
+
+	if _, err := stmt.ExecContext(ctx, tx); err != nil {
 		return err
 	}
 

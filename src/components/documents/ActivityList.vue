@@ -27,6 +27,7 @@ async function listDocumentActivity(): Promise<ListDocumentActivityResponse> {
                 offset: offset.value,
             },
             documentId: props.documentId,
+            requestTypes: [],
         });
         const { response } = await call;
 

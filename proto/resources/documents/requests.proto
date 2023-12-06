@@ -1,0 +1,24 @@
+syntax = "proto3";
+
+package resources.documents;
+
+import "resources/documents/activity.proto";
+import "resources/timestamp/timestamp.proto";
+import "resources/users/users.proto";
+import "validate/validate.proto";
+
+option go_package = "github.com/galexrt/fivenet/gen/go/proto/resources/documents;documents";
+
+message DocRequest {
+  uint64 id = 1 [jstype = JS_STRING];
+  resources.timestamp.Timestamp created_at = 2;
+  uint64 document_id = 3 [jstype = JS_STRING];
+  DocActivityType request_type = 4 [(validate.rules).enum = {in: [13,14,15,16,17,18]}];
+  optional int32 creator_id = 5;
+  optional resources.users.UserShort creator = 6; // @gotags: alias:"creator"
+  string creator_job = 7 [(validate.rules).string.max_len = 20];
+  optional string creator_job_label = 8 [(validate.rules).string.max_len = 50];
+  optional string reason = 9 [(validate.rules).string.max_len = 255];
+  DocActivityData data = 10;
+  optional bool completed = 11;
+}

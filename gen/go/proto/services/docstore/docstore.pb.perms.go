@@ -20,9 +20,9 @@ var PermsRemap = map[string]string{
 	"DocStoreService/GetTemplate":             "DocStoreService/ListTemplates",
 	"DocStoreService/RemoveDocumentReference": "DocStoreService/AddDocumentReference",
 	"DocStoreService/RemoveDocumentRelation":  "DocStoreService/AddDocumentRelation",
-	"DocStoreService/RespondDocumentAction":   "DocStoreService/RequestDocumentAction",
 	"DocStoreService/SetDocumentAccess":       "DocStoreService/CreateDocument",
 	"DocStoreService/UpdateCategory":          "DocStoreService/CreateCategory",
+	"DocStoreService/UpdateDocumentReq":       "DocStoreService/CreateDocumentReq",
 	"DocStoreService/UpdateTemplate":          "DocStoreService/CreateTemplate",
 }
 
@@ -52,6 +52,18 @@ func init() {
 			Category: permkeys.DocStoreServicePerm,
 			Name:     permkeys.DocStoreServiceCreateDocumentPerm,
 			Attrs:    []perms.Attr{},
+		},
+		{
+			Category: permkeys.DocStoreServicePerm,
+			Name:     permkeys.DocStoreServiceCreateDocumentReqPerm,
+			Attrs: []perms.Attr{
+				{
+					Key:           permkeys.DocStoreServiceCreateDocumentReqTypesPermField,
+					Type:          permissions.StringListAttributeType,
+					ValidValues:   []string{"Access", "Closure", "Update", "Deletion"},
+					DefaultValues: []string{"Access"},
+				},
+			},
 		},
 		{
 			Category: permkeys.DocStoreServicePerm,
@@ -89,6 +101,11 @@ func init() {
 		},
 		{
 			Category: permkeys.DocStoreServicePerm,
+			Name:     permkeys.DocStoreServiceDeleteDocumentReqPerm,
+			Attrs:    []perms.Attr{},
+		},
+		{
+			Category: permkeys.DocStoreServicePerm,
 			Name:     permkeys.DocStoreServiceDeleteTemplatePerm,
 			Attrs:    []perms.Attr{},
 		},
@@ -105,6 +122,11 @@ func init() {
 		{
 			Category: permkeys.DocStoreServicePerm,
 			Name:     permkeys.DocStoreServiceListDocumentActivityPerm,
+			Attrs:    []perms.Attr{},
+		},
+		{
+			Category: permkeys.DocStoreServicePerm,
+			Name:     permkeys.DocStoreServiceListDocumentReqsPerm,
 			Attrs:    []perms.Attr{},
 		},
 		{
@@ -126,18 +148,6 @@ func init() {
 			Category: permkeys.DocStoreServicePerm,
 			Name:     permkeys.DocStoreServicePostCommentPerm,
 			Attrs:    []perms.Attr{},
-		},
-		{
-			Category: permkeys.DocStoreServicePerm,
-			Name:     permkeys.DocStoreServiceRequestDocumentActionPerm,
-			Attrs: []perms.Attr{
-				{
-					Key:           permkeys.DocStoreServiceRequestDocumentActionTypesPermField,
-					Type:          permissions.StringListAttributeType,
-					ValidValues:   []string{"Access", "Closure", "Update", "Deletion"},
-					DefaultValues: []string{"Access"},
-				},
-			},
 		},
 		{
 			Category: permkeys.DocStoreServicePerm,

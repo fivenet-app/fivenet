@@ -1,9 +1,8 @@
 <script lang="ts" setup>
 import { TrashCanIcon, VectorPointSelectIcon } from 'mdi-vue3';
-import { vMaska } from 'maska';
-import { watchDebounced } from '@vueuse/core';
 import { useNotificatorStore } from '~/store/notificator';
 import DataNoDataBlock from '~/components/partials/data/DataNoDataBlock.vue';
+import BMICalculator from '~/components/bodycheckup/BMICalculator.vue';
 
 const notifications = useNotificatorStore();
 
@@ -64,23 +63,6 @@ async function copyToClipboard(): Promise<void> {
 
     return copyToClipboardWrapper(text);
 }
-
-const height = ref<string>('165');
-const mass = ref<string>('83');
-const bmi = ref(0);
-
-watchDebounced(height, () => bmiCalculate(), {
-    debounce: 200,
-});
-watchDebounced(mass, () => bmiCalculate(), {
-    debounce: 200,
-});
-
-function bmiCalculate(): void {
-    bmi.value = parseInt(mass.value, 10) / (parseInt(height.value, 10) / 100) ** 2;
-}
-
-onBeforeMount(() => bmiCalculate());
 </script>
 
 <template>
@@ -159,6 +141,7 @@ onBeforeMount(() => bmiCalculate());
 		c1.781-0.631,5.916,9.975,7.957,13.139c2.039,3.168,4.254,11.822,9.34,10.611c5.078-1.205-0.363-8.984-1.717-12.424
 		c-1.352-3.432-4.809-11.201-6.031-14.295c-1.215-3.094-2.164-5.498-3.52-8.936c-1.35-3.434-2.494-7.354,1.014-9.525
 		c3.51-2.174,7.818-0.303,12.412,0.27s10.975-0.35,12.566-3.357C385.108,440.35,380.246,439.092,375.86,438.039z"
+                                        @click="addPin"
                                     />
 
                                     <image
@@ -207,7 +190,7 @@ onBeforeMount(() => bmiCalculate());
                                 />
                                 <ol v-else>
                                     <li v-for="(pin, idx) in pins" :key="idx" class="my-2 inline-flex items-center w-full">
-                                        <span class="text-base"> {{ idx + 1 }}. </span>
+                                        <span class="text-base" :class="pin.selected ? 'underline' : ''"> {{ idx + 1 }}. </span>
                                         <input
                                             v-model="pin.description"
                                             type="text"
@@ -233,69 +216,7 @@ onBeforeMount(() => bmiCalculate());
                                     {{ $t('common.copy') }}
                                 </button>
                             </div>
-                            <div>
-                                <h3 class="text-xl font-semibold leading-6">
-                                    {{ $t('components.bodycheckup.bmi_calculator') }}
-                                </h3>
-                                <div>
-                                    <div>
-                                        <label for="height" class="block text-sm font-medium leading-6 text-neutral">
-                                            {{ $t('components.bodycheckup.height') }}
-                                        </label>
-                                        <div>
-                                            <div class="relative rounded-md shadow-sm">
-                                                <input
-                                                    v-model="height"
-                                                    v-maska
-                                                    data-maska="###"
-                                                    name="height"
-                                                    type="text"
-                                                    :placeholder="$t('components.bodycheckup.height')"
-                                                    :label="$t('components.bodycheckup.height')"
-                                                    class="block w-full rounded-md border-0 py-1.5 bg-base-700 text-neutral placeholder:text-base-200 focus:ring-2 focus:ring-inset focus:ring-base-300 sm:text-sm sm:leading-6"
-                                                    @focusin="focusTablet(true)"
-                                                    @focusout="focusTablet(false)"
-                                                />
-                                                <div
-                                                    class="pointer-events-none absolute inset-y-0 right-0 flex items-center pr-3"
-                                                >
-                                                    <span class="text-gray-300 sm:text-sm">cm</span>
-                                                </div>
-                                            </div>
-                                        </div>
-                                    </div>
-
-                                    <div>
-                                        <label for="mass" class="block text-sm font-medium leading-6 text-neutral">
-                                            {{ $t('components.bodycheckup.mass') }}
-                                        </label>
-                                        <div>
-                                            <div class="relative rounded-md shadow-sm">
-                                                <input
-                                                    v-model="mass"
-                                                    v-maska
-                                                    data-maska="###,##"
-                                                    name="mass"
-                                                    type="text"
-                                                    :placeholder="$t('components.bodycheckup.mass')"
-                                                    :label="$t('components.bodycheckup.mass')"
-                                                    class="block w-full rounded-md border-0 py-1.5 bg-base-700 text-neutral placeholder:text-base-200 focus:ring-2 focus:ring-inset focus:ring-base-300 sm:text-sm sm:leading-6"
-                                                    @focusin="focusTablet(true)"
-                                                    @focusout="focusTablet(false)"
-                                                />
-                                                <div
-                                                    class="pointer-events-none absolute inset-y-0 right-0 flex items-center pr-3"
-                                                >
-                                                    <span class="text-gray-300 sm:text-sm">kg</span>
-                                                </div>
-                                            </div>
-                                        </div>
-                                    </div>
-                                    <p class="ablock text-sm font-medium leading-6 text-neutral">
-                                        BMI: <span class="font-semibold">{{ bmi.toFixed(1) }}</span>
-                                    </p>
-                                </div>
-                            </div>
+                            <BMICalculator />
                         </div>
                     </div>
                 </div>
