@@ -1505,7 +1505,7 @@
             "ErrFeedRelAddDenied": "You don't have permission to add relation from/to this document!",
             "ErrFeedRelRemoveDenied": "You don't have permission to remove references from this document!",
             "ErrDocReqAlreadyCreated": {
-                "title": "Document Request already exists",
+                "title": "Document Request already exists!",
                 "content": "A document request of the same type already exists or one has been created in the last 24 hours."
             }
         },
@@ -1618,12 +1618,12 @@
                 "REQUESTED_ACCESS": "Document access requested",
                 "REQUESTED_CLOSURE": "Document closure requested",
                 "REQUESTED_UPDATE": "Document update requested",
-                "REQUESTED_OWNER_CHANGE": "Document owner change requested",
                 "REQUESTED_DELETION": "Document deletion requested",
                 "COMMENT_ADDED": "Comment added",
                 "COMMENT_UPDATED": "Comment updated",
                 "COMMENT_DELETED": "Comment deleted",
-                "UNSPECIFIED": "Unspecified"
+                "UNSPECIFIED": "Unspecified",
+                "REQUESTED_OWNER_CHANGE": "Document owner change requested"
             }
         },
         "centrum": {
