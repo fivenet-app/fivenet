@@ -715,13 +715,13 @@ func (s *Manager) TakeDispatch(ctx context.Context, job string, userId int32, un
 				if !slices.ContainsFunc(dsp.Units, func(in *centrum.DispatchAssignment) bool {
 					return in.UnitId == unitId
 				}) {
-					return nil, errswrap.NewError(errorscentrum.ErrModeForbidsAction, err)
+					return nil, errorscentrum.ErrModeForbidsAction
 				}
 			}
 
 			// If dispatch is completed, disallow to accept the dispatch
 			if dsp.Status != nil && centrumutils.IsStatusDispatchComplete(dsp.Status.Status) {
-				return nil, errswrap.NewError(errorscentrum.ErrDispatchAlreadyCompleted, err)
+				return nil, errorscentrum.ErrDispatchAlreadyCompleted
 			}
 
 			status := centrum.StatusDispatch_STATUS_DISPATCH_UNSPECIFIED

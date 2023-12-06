@@ -295,7 +295,7 @@ func (s *Server) GetUser(ctx context.Context, req *GetUserRequest) (*GetUserResp
 	}
 
 	if resp.User == nil || resp.User.UserId <= 0 {
-		return nil, errswrap.NewError(ErrJobGradeNoPermission, err)
+		return nil, ErrJobGradeNoPermission
 	}
 
 	auditEntry.TargetUserJob = &resp.User.Job
@@ -312,7 +312,7 @@ func (s *Server) GetUser(ctx context.Context, req *GetUserRequest) (*GetUserResp
 		}
 
 		if len(jobGrades) == 0 && !userInfo.SuperUser {
-			return nil, errswrap.NewError(ErrJobGradeNoPermission, err)
+			return nil, ErrJobGradeNoPermission
 		}
 
 		// Make sure user has permission to see that grade, otherwise "hide" the user's job
@@ -320,7 +320,7 @@ func (s *Server) GetUser(ctx context.Context, req *GetUserRequest) (*GetUserResp
 		if !ok || resp.User.JobGrade > grade {
 			// Skip for superuser
 			if !userInfo.SuperUser {
-				return nil, errswrap.NewError(ErrJobGradeNoPermission, err)
+				return nil, ErrJobGradeNoPermission
 			}
 		}
 	}
@@ -538,7 +538,7 @@ func (s *Server) SetUserProps(ctx context.Context, req *SetUserPropsRequest) (*S
 	updateSets := []jet.ColumnAssigment{}
 	if req.Props.Wanted != nil {
 		if !slices.Contains(fields, "Wanted") {
-			return nil, errswrap.NewError(ErrPropsWantedDenied, err)
+			return nil, ErrPropsWantedDenied
 		}
 
 		updateSets = append(updateSets, tUserProps.Wanted.SET(jet.Bool(*req.Props.Wanted)))
@@ -547,16 +547,16 @@ func (s *Server) SetUserProps(ctx context.Context, req *SetUserPropsRequest) (*S
 	}
 	if req.Props.JobName != nil {
 		if !slices.Contains(fields, "Job") {
-			return nil, errswrap.NewError(ErrPropsJobDenied, err)
+			return nil, ErrPropsJobDenied
 		}
 
 		if slices.Contains(s.publicJobs, *req.Props.JobName) {
-			return nil, errswrap.NewError(ErrPropsJobPublic, err)
+			return nil, ErrPropsJobPublic
 		}
 
 		req.Props.Job, req.Props.JobGrade = s.enricher.GetJobGrade(*req.Props.JobName, *req.Props.JobGradeNumber)
 		if req.Props.Job == nil || req.Props.JobGrade == nil {
-			return nil, errswrap.NewError(ErrPropsJobInvalid, err)
+			return nil, ErrPropsJobInvalid
 		}
 
 		updateSets = append(updateSets, tUserProps.Job.SET(jet.String(*req.Props.JobName)))
@@ -570,7 +570,7 @@ func (s *Server) SetUserProps(ctx context.Context, req *SetUserPropsRequest) (*S
 	if req.Props.TrafficInfractionPoints != nil {
 		// Only update when it has actually changed
 		if !slices.Contains(fields, "TrafficInfractionPoints") {
-			return nil, errswrap.NewError(ErrPropsTrafficPointsDenied, err)
+			return nil, ErrPropsTrafficPointsDenied
 		}
 
 		updateSets = append(updateSets, tUserProps.TrafficInfractionPoints.SET(jet.Uint32(*req.Props.TrafficInfractionPoints)))

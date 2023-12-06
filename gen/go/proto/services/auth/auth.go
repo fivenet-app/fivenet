@@ -173,7 +173,7 @@ func (s *Server) Login(ctx context.Context, req *LoginRequest) (*LoginResponse, 
 
 	// No password set
 	if account.Password == nil {
-		return nil, errswrap.NewError(ErrNoAccount, err)
+		return nil, ErrNoAccount
 	}
 
 	// Password check logic
@@ -353,7 +353,7 @@ func (s *Server) ChangeUsername(ctx context.Context, req *ChangeUsernameRequest)
 	// New username is same as current username.. just return here.
 	resp := &ChangeUsernameResponse{}
 	if *acc.Username == username {
-		return nil, errswrap.NewError(ErrBadUsername, err)
+		return nil, ErrBadUsername
 	}
 
 	// If there is an account with the new username, fail
@@ -364,7 +364,7 @@ func (s *Server) ChangeUsername(ctx context.Context, req *ChangeUsernameRequest)
 	}
 	// An account with the requested username was found, fail
 	if newAcc != nil {
-		return nil, errswrap.NewError(ErrBadUsername, err)
+		return nil, ErrBadUsername
 	}
 
 	acc.Username = &username
@@ -399,7 +399,7 @@ func (s *Server) ForgotPassword(ctx context.Context, req *ForgotPasswordRequest)
 
 	// We expect the account to not have a password for a "forgot password" request via token
 	if acc == nil || acc.Password != nil {
-		return nil, errswrap.NewError(ErrNoAccount, err)
+		return nil, ErrNoAccount
 	}
 
 	hashedPassword, err := bcrypt.GenerateFromPassword([]byte(req.New), 14)
@@ -447,7 +447,7 @@ func (s *Server) GetCharacters(ctx context.Context, req *GetCharactersRequest) (
 		return nil, errswrap.NewError(ErrGenericLogin, err)
 	}
 	if acc.ID == 0 {
-		return nil, errswrap.NewError(ErrGenericLogin, err)
+		return nil, ErrGenericLogin
 	}
 
 	// Load chars from database
@@ -571,7 +571,7 @@ func (s *Server) ChooseCharacter(ctx context.Context, req *ChooseCharacterReques
 
 	// Make sure the user isn't sending us a different char ID than their own
 	if !strings.HasSuffix(char.Identifier, ":"+claims.Subject) {
-		return nil, errswrap.NewError(ErrUnableToChooseChar, err)
+		return nil, ErrUnableToChooseChar
 	}
 
 	// Load account data for token creation
@@ -614,9 +614,9 @@ func (s *Server) ChooseCharacter(ctx context.Context, req *ChooseCharacterReques
 	ps = append(ps, attrs...)
 
 	if len(ps) == 0 {
-		return nil, errswrap.NewError(ErrUnableToChooseChar, err)
+		return nil, ErrUnableToChooseChar
 	} else if !slices.Contains(ps, "authservice-choosecharacter") {
-		return nil, errswrap.NewError(ErrUnableToChooseChar, err)
+		return nil, ErrUnableToChooseChar
 	}
 
 	s.a.Log(&model.FivenetAuditLog{

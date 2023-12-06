@@ -274,14 +274,14 @@ func (s *Server) UpdateDispatchStatus(ctx context.Context, req *UpdateDispatchSt
 	}
 
 	if !s.state.CheckIfUserIsPartOfDispatch(userInfo, dsp, true) && !userInfo.SuperUser {
-		return nil, errswrap.NewError(errorscentrum.ErrNotPartOfDispatch, err)
+		return nil, errorscentrum.ErrNotPartOfDispatch
 	}
 
 	var statusUnitId *uint64
 	unitId, ok := s.state.GetUserUnitID(userInfo.UserId)
 	if !ok {
 		if !s.state.CheckIfUserIsDisponent(userInfo.Job, userInfo.UserId) {
-			return nil, errswrap.NewError(errorscentrum.ErrNotPartOfDispatch, err)
+			return nil, errorscentrum.ErrNotPartOfDispatch
 		}
 	} else {
 		statusUnitId = &unitId

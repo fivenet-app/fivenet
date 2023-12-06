@@ -218,7 +218,7 @@ func (s *Server) GetRole(ctx context.Context, req *GetRoleRequest) (*GetRoleResp
 		return nil, errswrap.NewError(ErrInvalidRequest, err)
 	}
 	if !check && !userInfo.SuperUser {
-		return nil, errswrap.NewError(ErrNoPermission, err)
+		return nil, ErrNoPermission
 	}
 
 	fullFilter := !(userInfo.SuperUser && req.Filtered != nil && !*req.Filtered)
@@ -291,7 +291,7 @@ func (s *Server) CreateRole(ctx context.Context, req *CreateRoleRequest) (*Creat
 		}
 	}
 	if role != nil {
-		return nil, errswrap.NewError(ErrRoleAlreadyExists, err)
+		return nil, ErrRoleAlreadyExists
 	}
 
 	cr, err := s.ps.CreateRole(ctx, req.Job, req.Grade)
@@ -329,7 +329,7 @@ func (s *Server) DeleteRole(ctx context.Context, req *DeleteRoleRequest) (*Delet
 		return nil, errswrap.NewError(ErrInvalidRequest, err)
 	}
 	if !check && !userInfo.SuperUser {
-		return nil, errswrap.NewError(ErrNoPermission, err)
+		return nil, ErrNoPermission
 	}
 
 	roleCount, err := s.ps.CountRolesForJob(ctx, userInfo.Job)
@@ -339,12 +339,12 @@ func (s *Server) DeleteRole(ctx context.Context, req *DeleteRoleRequest) (*Delet
 
 	// Don't allow deleting the "last" role, one role should always remain
 	if roleCount <= 1 {
-		return nil, errswrap.NewError(ErrInvalidRequest, err)
+		return nil, ErrInvalidRequest
 	}
 
 	// Don't allow deleting the own or higher role
 	if role.Grade >= userInfo.JobGrade {
-		return nil, errswrap.NewError(ErrOwnRoleDeletion, err)
+		return nil, ErrOwnRoleDeletion
 	}
 
 	if err := s.ps.DeleteRole(ctx, role.ID); err != nil {
@@ -480,7 +480,7 @@ func (s *Server) GetPermissions(ctx context.Context, req *GetPermissionsRequest)
 	}
 
 	if role.Job != userInfo.Job && !userInfo.SuperUser {
-		return nil, errswrap.NewError(ErrInvalidRequest, err)
+		return nil, ErrInvalidRequest
 	}
 
 	attrs, err := s.ps.GetAllAttributes(ctx, role.Job, role.Grade)

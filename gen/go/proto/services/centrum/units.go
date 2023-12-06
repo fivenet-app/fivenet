@@ -131,7 +131,7 @@ func (s *Server) UpdateUnitStatus(ctx context.Context, req *UpdateUnitStatusRequ
 	}
 
 	if !s.state.CheckIfUserPartOfUnit(userInfo.Job, userInfo.UserId, unit, true) {
-		return nil, errswrap.NewError(errorscentrum.ErrNotPartOfUnit, err)
+		return nil, errorscentrum.ErrNotPartOfUnit
 	}
 
 	if _, err := s.state.UpdateUnitStatus(ctx, userInfo.Job, unit.Id, &centrum.UnitStatus{
@@ -202,7 +202,7 @@ func (s *Server) JoinUnit(ctx context.Context, req *JoinUnitRequest) (*JoinUnitR
 
 	currentUnit, err := s.state.GetUnit(userInfo.Job, currentUnitId)
 	if err != nil && !errors.Is(err, nats.ErrKeyNotFound) {
-		return nil, errswrap.NewError(errorscentrum.ErrNotOnDuty, err)
+		return nil, errorscentrum.ErrNotOnDuty
 	}
 
 	// User joins unit
