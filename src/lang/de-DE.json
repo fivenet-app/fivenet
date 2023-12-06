@@ -310,6 +310,9 @@
                     "changed": "Geändert"
                 },
                 "difference": "Unterschied"
+            },
+            "document_view": {
+                "take_ownership": "Besitz übernehmen"
             }
         },
         "livemap": {
@@ -1055,6 +1058,10 @@
         "bodycheckup": {
             "title": "Körper Untersuchung: Zusammenfassung kopiert",
             "content": "Zusammenfassung wurde zur Zwischenablage hinzugefügt."
+        },
+        "document_take_ownership": {
+            "title": "Dokument-Besitzer geändert",
+            "content": "Das Dokument wurde ihnen übertragen."
         }
     },
     "perms": {
@@ -1507,7 +1514,9 @@
             "ErrDocReqAlreadyCreated": {
                 "title": "Dokumenten Anfrage existiert bereits!",
                 "content": "Eine Dokumenten Anfrage für diese Art-Anfrage existiert bereits oder wurde in den letzten 24 Stunden schon gestellt."
-            }
+            },
+            "ErrDocSameOwner": "Sie sind bereits Ersteller des Dokumentes!",
+            "ErrDocOwnerWrongJob": "Der neue Ersteller muss Teil ihres Jobs sein!"
         },
         "LivemapperService": {
             "ErrStreamFailed": "Livemap Datenstrom fehlgeschlagen!",
