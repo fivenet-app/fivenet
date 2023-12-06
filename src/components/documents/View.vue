@@ -40,9 +40,11 @@ import { useAuthStore } from '~/store/auth';
 
 const { $grpc } = useNuxtApp();
 const clipboardStore = useClipboardStore();
+
 const notifications = useNotificatorStore();
+
 const authStore = useAuthStore();
-const { activeChar } = storeToRefs(authStore);
+const { activeChar, isSuperuser } = storeToRefs(authStore);
 
 const { t } = useI18n();
 
@@ -300,6 +302,7 @@ const openRequests = ref(false);
                                 <button
                                     v-if="
                                         can('DocStoreService.ChangeDocumentOwner') &&
+                                        (doc.creatorJob === activeChar?.job || isSuperuser) &&
                                         checkDocAccess(
                                             access,
                                             doc.creator,

@@ -398,6 +398,7 @@ func (s *Server) addDocumentReq(ctx context.Context, tx qrm.DB, request *documen
 			tDocRequest.CreatorJob,
 			tDocRequest.Reason,
 			tDocRequest.Data,
+			tDocRequest.Completed,
 		).
 		VALUES(
 			request.DocumentId,
@@ -406,6 +407,7 @@ func (s *Server) addDocumentReq(ctx context.Context, tx qrm.DB, request *documen
 			request.CreatorJob,
 			request.Reason,
 			request.Data,
+			request.Completed,
 		)
 
 	res, err := stmt.ExecContext(ctx, tx)
@@ -442,6 +444,7 @@ func (s *Server) updateDocumentReq(ctx context.Context, tx qrm.DB, id uint64, re
 			tDocRequest.CreatorJob,
 			tDocRequest.Reason,
 			tDocRequest.Data,
+			tDocRequest.Completed,
 		).
 		SET(
 			request.DocumentId,
@@ -450,6 +453,7 @@ func (s *Server) updateDocumentReq(ctx context.Context, tx qrm.DB, id uint64, re
 			request.CreatorJob,
 			request.Reason,
 			request.Data,
+			request.Completed,
 		).
 		WHERE(
 			tDocRequest.ID.EQ(jet.Uint64(id)),
@@ -485,7 +489,7 @@ func (s *Server) getDocumentReq(ctx context.Context, tx qrm.DB, condition jet.Bo
 		LIMIT(1)
 
 	var dest documents.DocRequest
-	if _, err := stmt.ExecContext(ctx, tx); err != nil {
+	if err := stmt.QueryContext(ctx, tx, &dest); err != nil {
 		if errors.Is(err, qrm.ErrNoRows) {
 			return nil, nil
 		}
