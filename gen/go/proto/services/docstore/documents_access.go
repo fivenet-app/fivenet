@@ -124,6 +124,22 @@ func (s *Server) handleDocumentAccessChanges(ctx context.Context, tx qrm.DB, mod
 			return err
 		}
 
+		if !toCreate.IsEmpty() || !toUpdate.IsEmpty() || !toDelete.IsEmpty() {
+			if _, err := s.addDocumentActivity(ctx, tx, &documents.DocActivity{
+				DocumentId:   documentId,
+				ActivityType: documents.DocActivityType_DOC_ACTIVITY_TYPE_ACCESS_UPDATED,
+				CreatorId:    &userInfo.UserId,
+				CreatorJob:   userInfo.Job,
+				Data: &documents.DocActivityData{
+					Data: &documents.DocActivityData_AccessUpdated{
+						AccessUpdated: access,
+					},
+				},
+			}); err != nil {
+				return err
+			}
+		}
+
 	case documents.AccessLevelUpdateMode_ACCESS_LEVEL_UPDATE_MODE_DELETE:
 		if err := s.deleteDocumentAccess(ctx, tx, documentId, access); err != nil {
 			return err

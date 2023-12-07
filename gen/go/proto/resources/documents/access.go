@@ -41,3 +41,7 @@ func (x *DocumentAccess) Value() (driver.Value, error) {
 	out, err := json.MarshalToString(x)
 	return out, err
 }
+
+func (x *DocumentAccess) IsEmpty() bool {
+	return len(x.Jobs) == 0 && len(x.Users) == 0
+}
