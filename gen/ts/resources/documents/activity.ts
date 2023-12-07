@@ -2,6 +2,8 @@
 // @generated from protobuf file "resources/documents/activity.proto" (package "resources.documents", syntax proto3)
 // tslint:disable
 import { MessageType } from "@protobuf-ts/runtime";
+import { AccessLevelUpdateMode } from "./access";
+import { DocumentAccess } from "./access";
 import { UserShort } from "../users/users";
 import { Timestamp } from "../timestamp/timestamp";
 /**
@@ -69,11 +71,11 @@ export interface DocActivityData {
          */
         ownerChanged: DocOwnerChanged;
     } | {
-        oneofKind: "requestInfo";
+        oneofKind: "accessUpdated";
         /**
-         * @generated from protobuf field: resources.documents.DocRequestActivity request_info = 3;
+         * @generated from protobuf field: resources.documents.DocumentAccess access_updated = 4;
          */
-        requestInfo: DocRequestActivity;
+        accessUpdated: DocumentAccess;
     } | {
         oneofKind: undefined;
     };
@@ -109,13 +111,17 @@ export interface DocOwnerChanged {
     newOwner?: UserShort;
 }
 /**
- * @generated from protobuf message resources.documents.DocRequestActivity
+ * @generated from protobuf message resources.documents.DocAccessChanged
  */
-export interface DocRequestActivity {
+export interface DocAccessChanged {
     /**
-     * @generated from protobuf field: bool accepted = 1;
+     * @generated from protobuf field: resources.documents.AccessLevelUpdateMode mode = 1;
      */
-    accepted: boolean;
+    mode: AccessLevelUpdateMode;
+    /**
+     * @generated from protobuf field: resources.documents.DocumentAccess access = 2;
+     */
+    access?: DocumentAccess;
 }
 /**
  * @generated from protobuf enum resources.documents.DocActivityType
@@ -231,7 +237,7 @@ class DocActivityData$Type extends MessageType<DocActivityData> {
         super("resources.documents.DocActivityData", [
             { no: 1, name: "updated", kind: "message", oneof: "data", T: () => DocUpdated },
             { no: 2, name: "owner_changed", kind: "message", oneof: "data", T: () => DocOwnerChanged },
-            { no: 3, name: "request_info", kind: "message", oneof: "data", T: () => DocRequestActivity }
+            { no: 4, name: "access_updated", kind: "message", oneof: "data", T: () => DocumentAccess }
         ]);
     }
 }
@@ -267,14 +273,15 @@ class DocOwnerChanged$Type extends MessageType<DocOwnerChanged> {
  */
 export const DocOwnerChanged = new DocOwnerChanged$Type();
 // @generated message type with reflection information, may provide speed optimized methods
-class DocRequestActivity$Type extends MessageType<DocRequestActivity> {
+class DocAccessChanged$Type extends MessageType<DocAccessChanged> {
     constructor() {
-        super("resources.documents.DocRequestActivity", [
-            { no: 1, name: "accepted", kind: "scalar", T: 8 /*ScalarType.BOOL*/ }
+        super("resources.documents.DocAccessChanged", [
+            { no: 1, name: "mode", kind: "enum", T: () => ["resources.documents.AccessLevelUpdateMode", AccessLevelUpdateMode, "ACCESS_LEVEL_UPDATE_MODE_"] },
+            { no: 2, name: "access", kind: "message", T: () => DocumentAccess }
         ]);
     }
 }
 /**
- * @generated MessageType for protobuf message resources.documents.DocRequestActivity
+ * @generated MessageType for protobuf message resources.documents.DocAccessChanged
  */
-export const DocRequestActivity = new DocRequestActivity$Type();
+export const DocAccessChanged = new DocAccessChanged$Type();

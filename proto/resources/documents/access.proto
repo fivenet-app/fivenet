@@ -8,6 +8,13 @@ import "validate/validate.proto";
 
 option go_package = "github.com/galexrt/fivenet/gen/go/proto/resources/documents;documents";
 
+enum AccessLevelUpdateMode {
+  ACCESS_LEVEL_UPDATE_MODE_UNSPECIFIED = 0;
+  ACCESS_LEVEL_UPDATE_MODE_UPDATE = 1;
+  ACCESS_LEVEL_UPDATE_MODE_DELETE = 2;
+  ACCESS_LEVEL_UPDATE_MODE_CLEAR = 3;
+}
+
 enum AccessLevel {
   ACCESS_LEVEL_UNSPECIFIED = 0;
   ACCESS_LEVEL_BLOCKED = 1;

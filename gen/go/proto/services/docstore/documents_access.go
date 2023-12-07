@@ -97,7 +97,7 @@ func (s *Server) SetDocumentAccess(ctx context.Context, req *SetDocumentAccessRe
 	return &SetDocumentAccessResponse{}, nil
 }
 
-func (s *Server) handleDocumentAccessChanges(ctx context.Context, tx qrm.DB, mode AccessLevelUpdateMode, documentId uint64, access *documents.DocumentAccess) error {
+func (s *Server) handleDocumentAccessChanges(ctx context.Context, tx qrm.DB, mode documents.AccessLevelUpdateMode, documentId uint64, access *documents.DocumentAccess) error {
 	userInfo := auth.MustGetUserInfoFromContext(ctx)
 
 	// Get existing job and user accesses from database
@@ -107,9 +107,9 @@ func (s *Server) handleDocumentAccessChanges(ctx context.Context, tx qrm.DB, mod
 	}
 
 	switch mode {
-	case AccessLevelUpdateMode_ACCESS_LEVEL_UPDATE_MODE_UNSPECIFIED:
+	case documents.AccessLevelUpdateMode_ACCESS_LEVEL_UPDATE_MODE_UNSPECIFIED:
 		fallthrough
-	case AccessLevelUpdateMode_ACCESS_LEVEL_UPDATE_MODE_UPDATE:
+	case documents.AccessLevelUpdateMode_ACCESS_LEVEL_UPDATE_MODE_UPDATE:
 		toCreate, toUpdate, toDelete := s.compareDocumentAccess(tx, current, access)
 
 		if err := s.createDocumentAccess(ctx, tx, documentId, userInfo.UserId, toCreate); err != nil {
@@ -124,12 +124,12 @@ func (s *Server) handleDocumentAccessChanges(ctx context.Context, tx qrm.DB, mod
 			return err
 		}
 
-	case AccessLevelUpdateMode_ACCESS_LEVEL_UPDATE_MODE_DELETE:
+	case documents.AccessLevelUpdateMode_ACCESS_LEVEL_UPDATE_MODE_DELETE:
 		if err := s.deleteDocumentAccess(ctx, tx, documentId, access); err != nil {
 			return err
 		}
 
-	case AccessLevelUpdateMode_ACCESS_LEVEL_UPDATE_MODE_CLEAR:
+	case documents.AccessLevelUpdateMode_ACCESS_LEVEL_UPDATE_MODE_CLEAR:
 		if err := s.clearDocumentAccess(ctx, tx, documentId); err != nil {
 			return err
 		}

@@ -221,11 +221,13 @@ func (s *Server) CreateDocumentReq(ctx context.Context, req *CreateDocumentReqRe
 	}
 
 	// If the document has no creator anymore, nothing we can do here
-	if doc.CreatorId != nil {
-		if err := s.notifyUser(ctx, doc, userInfo.UserId, int32(*doc.CreatorId)); err != nil {
-			return nil, errswrap.NewError(errorsdocstore.ErrFailedQuery, err)
+	/*
+		if doc.CreatorId != nil {
+			if err := s.notifyUser(ctx, doc, userInfo.UserId, int32(*doc.CreatorId)); err != nil {
+				return nil, errswrap.NewError(errorsdocstore.ErrFailedQuery, err)
+			}
 		}
-	}
+	*/
 
 	return resp, nil
 }

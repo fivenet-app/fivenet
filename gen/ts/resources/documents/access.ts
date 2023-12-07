@@ -92,6 +92,27 @@ export interface DocumentUserAccess {
     required?: boolean; // @gotags: alias:"required"
 }
 /**
+ * @generated from protobuf enum resources.documents.AccessLevelUpdateMode
+ */
+export enum AccessLevelUpdateMode {
+    /**
+     * @generated from protobuf enum value: ACCESS_LEVEL_UPDATE_MODE_UNSPECIFIED = 0;
+     */
+    UNSPECIFIED = 0,
+    /**
+     * @generated from protobuf enum value: ACCESS_LEVEL_UPDATE_MODE_UPDATE = 1;
+     */
+    UPDATE = 1,
+    /**
+     * @generated from protobuf enum value: ACCESS_LEVEL_UPDATE_MODE_DELETE = 2;
+     */
+    DELETE = 2,
+    /**
+     * @generated from protobuf enum value: ACCESS_LEVEL_UPDATE_MODE_CLEAR = 3;
+     */
+    CLEAR = 3
+}
+/**
  * @generated from protobuf enum resources.documents.AccessLevel
  */
 export enum AccessLevel {

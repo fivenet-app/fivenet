@@ -205,7 +205,10 @@ const openRequests = ref(false);
         />
         <ConfirmDialog :open="isRevealedDelete" :cancel="cancelDelete" :confirm="() => confirmDelete(documentId)" />
         <RequestsModal
-            v-if="can('DocStoreService.CreateDocumentRequest')"
+            v-if="
+                false && // TODO
+                can('DocStoreService.CreateDocumentRequest')
+            "
             :open="openRequests"
             :document-id="documentId"
             @close="openRequests = false"
@@ -291,7 +294,10 @@ const openRequests = ref(false);
                                     {{ $t('common.edit') }}
                                 </NuxtLink>
                                 <button
-                                    v-if="can('DocStoreService.CreateDocumentRequest')"
+                                    v-if="
+                                        false && // TODO
+                                        can('DocStoreService.CreateDocumentRequest')
+                                    "
                                     type="button"
                                     class="inline-flex items-center gap-x-1.5 rounded-md bg-primary-500 px-3 py-2 text-sm font-semibold text-neutral hover:bg-primary-400"
                                     @click="openRequests = true"
@@ -301,6 +307,7 @@ const openRequests = ref(false);
                                 </button>
                                 <button
                                     v-if="
+                                        false && // TODO
                                         can('DocStoreService.ChangeDocumentOwner') &&
                                         (doc.creatorJob === activeChar?.job || isSuperuser) &&
                                         checkDocAccess(

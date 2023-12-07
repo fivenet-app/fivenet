@@ -336,6 +336,10 @@
                   <a href="#resources.documents.AccessLevel"><span class="badge">E</span>AccessLevel</a>
                 </li>
               
+                <li>
+                  <a href="#resources.documents.AccessLevelUpdateMode"><span class="badge">E</span>AccessLevelUpdateMode</a>
+                </li>
+              
               
               
             </ul>
@@ -386,6 +390,10 @@
             <ul>
               
                 <li>
+                  <a href="#resources.documents.DocAccessChanged"><span class="badge">M</span>DocAccessChanged</a>
+                </li>
+              
+                <li>
                   <a href="#resources.documents.DocActivity"><span class="badge">M</span>DocActivity</a>
                 </li>
               
@@ -395,10 +403,6 @@
               
                 <li>
                   <a href="#resources.documents.DocOwnerChanged"><span class="badge">M</span>DocOwnerChanged</a>
-                </li>
-              
-                <li>
-                  <a href="#resources.documents.DocRequestActivity"><span class="badge">M</span>DocRequestActivity</a>
                 </li>
               
                 <li>
@@ -1549,10 +1553,6 @@
                   <a href="#services.docstore.UpdateTemplateResponse"><span class="badge">M</span>UpdateTemplateResponse</a>
                 </li>
               
-              
-                <li>
-                  <a href="#services.docstore.AccessLevelUpdateMode"><span class="badge">E</span>AccessLevelUpdateMode</a>
-                </li>
               
               
               
@@ -3759,6 +3759,41 @@
           </tbody>
         </table>
       
+        <h3 id="resources.documents.AccessLevelUpdateMode">AccessLevelUpdateMode</h3>
+        <p></p>
+        <table class="enum-table">
+          <thead>
+            <tr><td>Name</td><td>Number</td><td>Description</td></tr>
+          </thead>
+          <tbody>
+            
+              <tr>
+                <td>ACCESS_LEVEL_UPDATE_MODE_UNSPECIFIED</td>
+                <td>0</td>
+                <td><p></p></td>
+              </tr>
+            
+              <tr>
+                <td>ACCESS_LEVEL_UPDATE_MODE_UPDATE</td>
+                <td>1</td>
+                <td><p></p></td>
+              </tr>
+            
+              <tr>
+                <td>ACCESS_LEVEL_UPDATE_MODE_DELETE</td>
+                <td>2</td>
+                <td><p></p></td>
+              </tr>
+            
+              <tr>
+                <td>ACCESS_LEVEL_UPDATE_MODE_CLEAR</td>
+                <td>3</td>
+                <td><p></p></td>
+              </tr>
+            
+          </tbody>
+        </table>
+      
 
       
 
@@ -4526,6 +4561,37 @@
       <p></p>
 
       
+        <h3 id="resources.documents.DocAccessChanged">DocAccessChanged</h3>
+        <p></p>
+
+        
+          <table class="field-table">
+            <thead>
+              <tr><td>Field</td><td>Type</td><td>Label</td><td>Description</td></tr>
+            </thead>
+            <tbody>
+              
+                <tr>
+                  <td>mode</td>
+                  <td><a href="#resources.documents.AccessLevelUpdateMode">AccessLevelUpdateMode</a></td>
+                  <td></td>
+                  <td><p> </p></td>
+                </tr>
+              
+                <tr>
+                  <td>access</td>
+                  <td><a href="#resources.documents.DocumentAccess">DocumentAccess</a></td>
+                  <td></td>
+                  <td><p> </p></td>
+                </tr>
+              
+            </tbody>
+          </table>
+
+          
+
+        
+      
         <h3 id="resources.documents.DocActivity">DocActivity</h3>
         <p></p>
 
@@ -4687,8 +4753,8 @@
                 </tr>
               
                 <tr>
-                  <td>request_info</td>
-                  <td><a href="#resources.documents.DocRequestActivity">DocRequestActivity</a></td>
+                  <td>access_updated</td>
+                  <td><a href="#resources.documents.DocumentAccess">DocumentAccess</a></td>
                   <td></td>
                   <td><p> </p></td>
                 </tr>
@@ -4720,30 +4786,6 @@
                 <tr>
                   <td>new_owner</td>
                   <td><a href="#resources.users.UserShort">resources.users.UserShort</a></td>
-                  <td></td>
-                  <td><p> </p></td>
-                </tr>
-              
-            </tbody>
-          </table>
-
-          
-
-        
-      
-        <h3 id="resources.documents.DocRequestActivity">DocRequestActivity</h3>
-        <p></p>
-
-        
-          <table class="field-table">
-            <thead>
-              <tr><td>Field</td><td>Type</td><td>Label</td><td>Description</td></tr>
-            </thead>
-            <tbody>
-              
-                <tr>
-                  <td>accepted</td>
-                  <td><a href="#bool">bool</a></td>
                   <td></td>
                   <td><p> </p></td>
                 </tr>
@@ -16557,7 +16599,7 @@
               
                 <tr>
                   <td>mode</td>
-                  <td><a href="#services.docstore.AccessLevelUpdateMode">AccessLevelUpdateMode</a></td>
+                  <td><a href="#resources.documents.AccessLevelUpdateMode">resources.documents.AccessLevelUpdateMode</a></td>
                   <td></td>
                   <td><p> </p></td>
                 </tr>
@@ -17064,41 +17106,6 @@
         
       
 
-      
-        <h3 id="services.docstore.AccessLevelUpdateMode">AccessLevelUpdateMode</h3>
-        <p></p>
-        <table class="enum-table">
-          <thead>
-            <tr><td>Name</td><td>Number</td><td>Description</td></tr>
-          </thead>
-          <tbody>
-            
-              <tr>
-                <td>ACCESS_LEVEL_UPDATE_MODE_UNSPECIFIED</td>
-                <td>0</td>
-                <td><p></p></td>
-              </tr>
-            
-              <tr>
-                <td>ACCESS_LEVEL_UPDATE_MODE_UPDATE</td>
-                <td>1</td>
-                <td><p></p></td>
-              </tr>
-            
-              <tr>
-                <td>ACCESS_LEVEL_UPDATE_MODE_DELETE</td>
-                <td>2</td>
-                <td><p></p></td>
-              </tr>
-            
-              <tr>
-                <td>ACCESS_LEVEL_UPDATE_MODE_CLEAR</td>
-                <td>3</td>
-                <td><p></p></td>
-              </tr>
-            
-          </tbody>
-        </table>
       
 
       

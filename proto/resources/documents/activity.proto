@@ -2,6 +2,7 @@ syntax = "proto3";
 
 package resources.documents;
 
+import "resources/documents/access.proto";
 import "resources/timestamp/timestamp.proto";
 import "resources/users/users.proto";
 import "validate/validate.proto";
@@ -50,7 +51,7 @@ message DocActivityData {
   oneof data {
     DocUpdated updated = 1;
     DocOwnerChanged owner_changed = 2;
-    DocRequestActivity request_info = 3;
+    DocumentAccess access_updated = 4;
   }
 }
 
@@ -65,7 +66,7 @@ message DocOwnerChanged {
   resources.users.UserShort new_owner = 2;
 }
 
-message DocRequestActivity {
-  bool accepted = 1;
-
+message DocAccessChanged {
+  resources.documents.AccessLevelUpdateMode mode = 1;
+  resources.documents.DocumentAccess access = 2;
 }

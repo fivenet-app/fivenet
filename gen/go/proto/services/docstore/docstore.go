@@ -313,7 +313,7 @@ func (s *Server) CreateDocument(ctx context.Context, req *CreateDocumentRequest)
 		return nil, errswrap.NewError(errorsdocstore.ErrFailedQuery, err)
 	}
 
-	if err := s.handleDocumentAccessChanges(ctx, tx, AccessLevelUpdateMode_ACCESS_LEVEL_UPDATE_MODE_UPDATE, uint64(lastId), req.Access); err != nil {
+	if err := s.handleDocumentAccessChanges(ctx, tx, documents.AccessLevelUpdateMode_ACCESS_LEVEL_UPDATE_MODE_UPDATE, uint64(lastId), req.Access); err != nil {
 		return nil, errswrap.NewError(errorsdocstore.ErrFailedQuery, err)
 	}
 
@@ -456,7 +456,7 @@ func (s *Server) UpdateDocument(ctx context.Context, req *UpdateDocumentRequest)
 		}
 	}
 
-	if err := s.handleDocumentAccessChanges(ctx, tx, AccessLevelUpdateMode_ACCESS_LEVEL_UPDATE_MODE_UPDATE, req.DocumentId, req.Access); err != nil {
+	if err := s.handleDocumentAccessChanges(ctx, tx, documents.AccessLevelUpdateMode_ACCESS_LEVEL_UPDATE_MODE_UPDATE, req.DocumentId, req.Access); err != nil {
 		return nil, errswrap.NewError(errorsdocstore.ErrFailedQuery, err)
 	}
 

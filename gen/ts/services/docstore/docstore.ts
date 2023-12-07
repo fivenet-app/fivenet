@@ -5,6 +5,7 @@ import { ServiceType } from "@protobuf-ts/runtime-rpc";
 import { MessageType } from "@protobuf-ts/runtime";
 import { Category } from "../../resources/documents/category";
 import { DocRelation } from "../../resources/documents/documents";
+import { AccessLevelUpdateMode } from "../../resources/documents/access";
 import { DocRequest } from "../../resources/documents/requests";
 import { DocActivity } from "../../resources/documents/activity";
 import { DocActivityType } from "../../resources/documents/activity";
@@ -705,7 +706,7 @@ export interface SetDocumentAccessRequest {
      */
     documentId: string;
     /**
-     * @generated from protobuf field: services.docstore.AccessLevelUpdateMode mode = 2;
+     * @generated from protobuf field: resources.documents.AccessLevelUpdateMode mode = 2;
      */
     mode: AccessLevelUpdateMode;
     /**
@@ -809,27 +810,6 @@ export interface DeleteCategoryRequest {
  * @generated from protobuf message services.docstore.DeleteCategoryResponse
  */
 export interface DeleteCategoryResponse {
-}
-/**
- * @generated from protobuf enum services.docstore.AccessLevelUpdateMode
- */
-export enum AccessLevelUpdateMode {
-    /**
-     * @generated from protobuf enum value: ACCESS_LEVEL_UPDATE_MODE_UNSPECIFIED = 0;
-     */
-    UNSPECIFIED = 0,
-    /**
-     * @generated from protobuf enum value: ACCESS_LEVEL_UPDATE_MODE_UPDATE = 1;
-     */
-    UPDATE = 1,
-    /**
-     * @generated from protobuf enum value: ACCESS_LEVEL_UPDATE_MODE_DELETE = 2;
-     */
-    DELETE = 2,
-    /**
-     * @generated from protobuf enum value: ACCESS_LEVEL_UPDATE_MODE_CLEAR = 3;
-     */
-    CLEAR = 3
 }
 // @generated message type with reflection information, may provide speed optimized methods
 class ListTemplatesRequest$Type extends MessageType<ListTemplatesRequest> {
@@ -1533,7 +1513,7 @@ class SetDocumentAccessRequest$Type extends MessageType<SetDocumentAccessRequest
     constructor() {
         super("services.docstore.SetDocumentAccessRequest", [
             { no: 1, name: "document_id", kind: "scalar", T: 4 /*ScalarType.UINT64*/ },
-            { no: 2, name: "mode", kind: "enum", T: () => ["services.docstore.AccessLevelUpdateMode", AccessLevelUpdateMode, "ACCESS_LEVEL_UPDATE_MODE_"], options: { "validate.rules": { enum: { definedOnly: true } } } },
+            { no: 2, name: "mode", kind: "enum", T: () => ["resources.documents.AccessLevelUpdateMode", AccessLevelUpdateMode, "ACCESS_LEVEL_UPDATE_MODE_"], options: { "validate.rules": { enum: { definedOnly: true } } } },
             { no: 3, name: "access", kind: "message", T: () => DocumentAccess, options: { "validate.rules": { message: { required: true } } } }
         ]);
     }

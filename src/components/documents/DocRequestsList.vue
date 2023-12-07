@@ -1,11 +1,11 @@
 <script lang="ts" setup>
 import { RpcError } from '@protobuf-ts/runtime-rpc';
+import { Menu, MenuButton, MenuItem, MenuItems } from '@headlessui/vue';
 import { MenuIcon, TrashCanIcon } from 'mdi-vue3';
 import { DocActivityType } from '~~/gen/ts/resources/documents/activity';
 import type { ListDocumentReqsResponse } from '~~/gen/ts/services/docstore/docstore';
 import Time from '~/components/partials/elements/Time.vue';
 import CitizenInfoPopover from '~/components/partials/citizens/CitizenInfoPopover.vue';
-import { Menu, MenuButton, MenuItem, MenuItems } from '@headlessui/vue';
 
 const props = defineProps<{
     documentId: string;
@@ -56,8 +56,12 @@ async function deleteDocumentReq(id: string): Promise<void> {
 
 <template>
     <div v-if="requests !== null">
-        <ul role="list" class="divide-y divide-gray-100 transition-colors hover:bg-neutral/5 rounded-md">
-            <li v-for="request in requests.requests" :key="request.id" class="flex justify-between gap-x-6 py-5">
+        <ul role="list" class="divide-y divide-gray-100 rounded-md">
+            <li
+                v-for="request in requests.requests"
+                :key="request.id"
+                class="flex justify-between gap-x-6 py-5 transition-colors hover:bg-neutral/5"
+            >
                 <div class="flex min-w-0 gap-x-4 px-1">
                     <div class="min-w-0 flex-auto">
                         <p class="text-base font-semibold leading-6 text-gray-100">
@@ -85,7 +89,7 @@ async function deleteDocumentReq(id: string): Promise<void> {
                             leave-to-class="transform opacity-0 scale-95"
                         >
                             <MenuItems
-                                class="absolute z-30 right-0 w-48 py-1 mt-2 origin-top-right rounded-md shadow-float bg-base-800 ring-1 ring-base-100 ring-opacity-5 focus:outline-none"
+                                class="absolute z-30 right-0 w-28 py-1 mt-2 origin-top-right rounded-md shadow-float bg-base-800 ring-1 ring-base-100 ring-opacity-5 focus:outline-none"
                             >
                                 <MenuItem v-slot="{ close }">
                                     <button

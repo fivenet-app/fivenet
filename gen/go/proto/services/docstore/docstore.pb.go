@@ -24,58 +24,6 @@ const (
 	_ = protoimpl.EnforceVersion(protoimpl.MaxVersion - 20)
 )
 
-type AccessLevelUpdateMode int32
-
-const (
-	AccessLevelUpdateMode_ACCESS_LEVEL_UPDATE_MODE_UNSPECIFIED AccessLevelUpdateMode = 0
-	AccessLevelUpdateMode_ACCESS_LEVEL_UPDATE_MODE_UPDATE      AccessLevelUpdateMode = 1
-	AccessLevelUpdateMode_ACCESS_LEVEL_UPDATE_MODE_DELETE      AccessLevelUpdateMode = 2
-	AccessLevelUpdateMode_ACCESS_LEVEL_UPDATE_MODE_CLEAR       AccessLevelUpdateMode = 3
-)
-
-// Enum value maps for AccessLevelUpdateMode.
-var (
-	AccessLevelUpdateMode_name = map[int32]string{
-		0: "ACCESS_LEVEL_UPDATE_MODE_UNSPECIFIED",
-		1: "ACCESS_LEVEL_UPDATE_MODE_UPDATE",
-		2: "ACCESS_LEVEL_UPDATE_MODE_DELETE",
-		3: "ACCESS_LEVEL_UPDATE_MODE_CLEAR",
-	}
-	AccessLevelUpdateMode_value = map[string]int32{
-		"ACCESS_LEVEL_UPDATE_MODE_UNSPECIFIED": 0,
-		"ACCESS_LEVEL_UPDATE_MODE_UPDATE":      1,
-		"ACCESS_LEVEL_UPDATE_MODE_DELETE":      2,
-		"ACCESS_LEVEL_UPDATE_MODE_CLEAR":       3,
-	}
-)
-
-func (x AccessLevelUpdateMode) Enum() *AccessLevelUpdateMode {
-	p := new(AccessLevelUpdateMode)
-	*p = x
-	return p
-}
-
-func (x AccessLevelUpdateMode) String() string {
-	return protoimpl.X.EnumStringOf(x.Descriptor(), protoreflect.EnumNumber(x))
-}
-
-func (AccessLevelUpdateMode) Descriptor() protoreflect.EnumDescriptor {
-	return file_services_docstore_docstore_proto_enumTypes[0].Descriptor()
-}
-
-func (AccessLevelUpdateMode) Type() protoreflect.EnumType {
-	return &file_services_docstore_docstore_proto_enumTypes[0]
-}
-
-func (x AccessLevelUpdateMode) Number() protoreflect.EnumNumber {
-	return protoreflect.EnumNumber(x)
-}
-
-// Deprecated: Use AccessLevelUpdateMode.Descriptor instead.
-func (AccessLevelUpdateMode) EnumDescriptor() ([]byte, []int) {
-	return file_services_docstore_docstore_proto_rawDescGZIP(), []int{0}
-}
-
 // Templates ==================================================================
 type ListTemplatesRequest struct {
 	state         protoimpl.MessageState
@@ -2997,9 +2945,9 @@ type SetDocumentAccessRequest struct {
 	sizeCache     protoimpl.SizeCache
 	unknownFields protoimpl.UnknownFields
 
-	DocumentId uint64                    `protobuf:"varint,1,opt,name=document_id,json=documentId,proto3" json:"document_id,omitempty"`
-	Mode       AccessLevelUpdateMode     `protobuf:"varint,2,opt,name=mode,proto3,enum=services.docstore.AccessLevelUpdateMode" json:"mode,omitempty"`
-	Access     *documents.DocumentAccess `protobuf:"bytes,3,opt,name=access,proto3" json:"access,omitempty"`
+	DocumentId uint64                          `protobuf:"varint,1,opt,name=document_id,json=documentId,proto3" json:"document_id,omitempty"`
+	Mode       documents.AccessLevelUpdateMode `protobuf:"varint,2,opt,name=mode,proto3,enum=resources.documents.AccessLevelUpdateMode" json:"mode,omitempty"`
+	Access     *documents.DocumentAccess       `protobuf:"bytes,3,opt,name=access,proto3" json:"access,omitempty"`
 }
 
 func (x *SetDocumentAccessRequest) Reset() {
@@ -3041,11 +2989,11 @@ func (x *SetDocumentAccessRequest) GetDocumentId() uint64 {
 	return 0
 }
 
-func (x *SetDocumentAccessRequest) GetMode() AccessLevelUpdateMode {
+func (x *SetDocumentAccessRequest) GetMode() documents.AccessLevelUpdateMode {
 	if x != nil {
 		return x.Mode
 	}
-	return AccessLevelUpdateMode_ACCESS_LEVEL_UPDATE_MODE_UNSPECIFIED
+	return documents.AccessLevelUpdateMode(0)
 }
 
 func (x *SetDocumentAccessRequest) GetAccess() *documents.DocumentAccess {
@@ -3972,85 +3920,74 @@ var file_services_docstore_docstore_proto_rawDesc = []byte{
 	0x6f, 0x75, 0x72, 0x63, 0x65, 0x73, 0x2e, 0x64, 0x6f, 0x63, 0x75, 0x6d, 0x65, 0x6e, 0x74, 0x73,
 	0x2e, 0x44, 0x6f, 0x63, 0x75, 0x6d, 0x65, 0x6e, 0x74, 0x41, 0x63, 0x63, 0x65, 0x73, 0x73, 0x42,
 	0x08, 0xfa, 0x42, 0x05, 0x8a, 0x01, 0x02, 0x10, 0x01, 0x52, 0x06, 0x61, 0x63, 0x63, 0x65, 0x73,
-	0x73, 0x22, 0xce, 0x01, 0x0a, 0x18, 0x53, 0x65, 0x74, 0x44, 0x6f, 0x63, 0x75, 0x6d, 0x65, 0x6e,
+	0x73, 0x22, 0xd0, 0x01, 0x0a, 0x18, 0x53, 0x65, 0x74, 0x44, 0x6f, 0x63, 0x75, 0x6d, 0x65, 0x6e,
 	0x74, 0x41, 0x63, 0x63, 0x65, 0x73, 0x73, 0x52, 0x65, 0x71, 0x75, 0x65, 0x73, 0x74, 0x12, 0x23,
 	0x0a, 0x0b, 0x64, 0x6f, 0x63, 0x75, 0x6d, 0x65, 0x6e, 0x74, 0x5f, 0x69, 0x64, 0x18, 0x01, 0x20,
 	0x01, 0x28, 0x04, 0x42, 0x02, 0x30, 0x01, 0x52, 0x0a, 0x64, 0x6f, 0x63, 0x75, 0x6d, 0x65, 0x6e,
-	0x74, 0x49, 0x64, 0x12, 0x46, 0x0a, 0x04, 0x6d, 0x6f, 0x64, 0x65, 0x18, 0x02, 0x20, 0x01, 0x28,
-	0x0e, 0x32, 0x28, 0x2e, 0x73, 0x65, 0x72, 0x76, 0x69, 0x63, 0x65, 0x73, 0x2e, 0x64, 0x6f, 0x63,
-	0x73, 0x74, 0x6f, 0x72, 0x65, 0x2e, 0x41, 0x63, 0x63, 0x65, 0x73, 0x73, 0x4c, 0x65, 0x76, 0x65,
-	0x6c, 0x55, 0x70, 0x64, 0x61, 0x74, 0x65, 0x4d, 0x6f, 0x64, 0x65, 0x42, 0x08, 0xfa, 0x42, 0x05,
-	0x82, 0x01, 0x02, 0x10, 0x01, 0x52, 0x04, 0x6d, 0x6f, 0x64, 0x65, 0x12, 0x45, 0x0a, 0x06, 0x61,
-	0x63, 0x63, 0x65, 0x73, 0x73, 0x18, 0x03, 0x20, 0x01, 0x28, 0x0b, 0x32, 0x23, 0x2e, 0x72, 0x65,
-	0x73, 0x6f, 0x75, 0x72, 0x63, 0x65, 0x73, 0x2e, 0x64, 0x6f, 0x63, 0x75, 0x6d, 0x65, 0x6e, 0x74,
-	0x73, 0x2e, 0x44, 0x6f, 0x63, 0x75, 0x6d, 0x65, 0x6e, 0x74, 0x41, 0x63, 0x63, 0x65, 0x73, 0x73,
-	0x42, 0x08, 0xfa, 0x42, 0x05, 0x8a, 0x01, 0x02, 0x10, 0x01, 0x52, 0x06, 0x61, 0x63, 0x63, 0x65,
-	0x73, 0x73, 0x22, 0x1b, 0x0a, 0x19, 0x53, 0x65, 0x74, 0x44, 0x6f, 0x63, 0x75, 0x6d, 0x65, 0x6e,
-	0x74, 0x41, 0x63, 0x63, 0x65, 0x73, 0x73, 0x52, 0x65, 0x73, 0x70, 0x6f, 0x6e, 0x73, 0x65, 0x22,
-	0xde, 0x01, 0x0a, 0x18, 0x4c, 0x69, 0x73, 0x74, 0x55, 0x73, 0x65, 0x72, 0x44, 0x6f, 0x63, 0x75,
-	0x6d, 0x65, 0x6e, 0x74, 0x73, 0x52, 0x65, 0x71, 0x75, 0x65, 0x73, 0x74, 0x12, 0x56, 0x0a, 0x0a,
-	0x70, 0x61, 0x67, 0x69, 0x6e, 0x61, 0x74, 0x69, 0x6f, 0x6e, 0x18, 0x01, 0x20, 0x01, 0x28, 0x0b,
-	0x32, 0x2c, 0x2e, 0x72, 0x65, 0x73, 0x6f, 0x75, 0x72, 0x63, 0x65, 0x73, 0x2e, 0x63, 0x6f, 0x6d,
-	0x6d, 0x6f, 0x6e, 0x2e, 0x64, 0x61, 0x74, 0x61, 0x62, 0x61, 0x73, 0x65, 0x2e, 0x50, 0x61, 0x67,
-	0x69, 0x6e, 0x61, 0x74, 0x69, 0x6f, 0x6e, 0x52, 0x65, 0x71, 0x75, 0x65, 0x73, 0x74, 0x42, 0x08,
-	0xfa, 0x42, 0x05, 0x8a, 0x01, 0x02, 0x10, 0x01, 0x52, 0x0a, 0x70, 0x61, 0x67, 0x69, 0x6e, 0x61,
-	0x74, 0x69, 0x6f, 0x6e, 0x12, 0x20, 0x0a, 0x07, 0x75, 0x73, 0x65, 0x72, 0x5f, 0x69, 0x64, 0x18,
-	0x02, 0x20, 0x01, 0x28, 0x05, 0x42, 0x07, 0xfa, 0x42, 0x04, 0x1a, 0x02, 0x20, 0x00, 0x52, 0x06,
-	0x75, 0x73, 0x65, 0x72, 0x49, 0x64, 0x12, 0x48, 0x0a, 0x09, 0x72, 0x65, 0x6c, 0x61, 0x74, 0x69,
-	0x6f, 0x6e, 0x73, 0x18, 0x03, 0x20, 0x03, 0x28, 0x0e, 0x32, 0x20, 0x2e, 0x72, 0x65, 0x73, 0x6f,
-	0x75, 0x72, 0x63, 0x65, 0x73, 0x2e, 0x64, 0x6f, 0x63, 0x75, 0x6d, 0x65, 0x6e, 0x74, 0x73, 0x2e,
-	0x44, 0x6f, 0x63, 0x52, 0x65, 0x6c, 0x61, 0x74, 0x69, 0x6f, 0x6e, 0x42, 0x08, 0xfa, 0x42, 0x05,
-	0x92, 0x01, 0x02, 0x10, 0x03, 0x52, 0x09, 0x72, 0x65, 0x6c, 0x61, 0x74, 0x69, 0x6f, 0x6e, 0x73,
-	0x22, 0xaf, 0x01, 0x0a, 0x19, 0x4c, 0x69, 0x73, 0x74, 0x55, 0x73, 0x65, 0x72, 0x44, 0x6f, 0x63,
-	0x75, 0x6d, 0x65, 0x6e, 0x74, 0x73, 0x52, 0x65, 0x73, 0x70, 0x6f, 0x6e, 0x73, 0x65, 0x12, 0x4d,
+	0x74, 0x49, 0x64, 0x12, 0x48, 0x0a, 0x04, 0x6d, 0x6f, 0x64, 0x65, 0x18, 0x02, 0x20, 0x01, 0x28,
+	0x0e, 0x32, 0x2a, 0x2e, 0x72, 0x65, 0x73, 0x6f, 0x75, 0x72, 0x63, 0x65, 0x73, 0x2e, 0x64, 0x6f,
+	0x63, 0x75, 0x6d, 0x65, 0x6e, 0x74, 0x73, 0x2e, 0x41, 0x63, 0x63, 0x65, 0x73, 0x73, 0x4c, 0x65,
+	0x76, 0x65, 0x6c, 0x55, 0x70, 0x64, 0x61, 0x74, 0x65, 0x4d, 0x6f, 0x64, 0x65, 0x42, 0x08, 0xfa,
+	0x42, 0x05, 0x82, 0x01, 0x02, 0x10, 0x01, 0x52, 0x04, 0x6d, 0x6f, 0x64, 0x65, 0x12, 0x45, 0x0a,
+	0x06, 0x61, 0x63, 0x63, 0x65, 0x73, 0x73, 0x18, 0x03, 0x20, 0x01, 0x28, 0x0b, 0x32, 0x23, 0x2e,
+	0x72, 0x65, 0x73, 0x6f, 0x75, 0x72, 0x63, 0x65, 0x73, 0x2e, 0x64, 0x6f, 0x63, 0x75, 0x6d, 0x65,
+	0x6e, 0x74, 0x73, 0x2e, 0x44, 0x6f, 0x63, 0x75, 0x6d, 0x65, 0x6e, 0x74, 0x41, 0x63, 0x63, 0x65,
+	0x73, 0x73, 0x42, 0x08, 0xfa, 0x42, 0x05, 0x8a, 0x01, 0x02, 0x10, 0x01, 0x52, 0x06, 0x61, 0x63,
+	0x63, 0x65, 0x73, 0x73, 0x22, 0x1b, 0x0a, 0x19, 0x53, 0x65, 0x74, 0x44, 0x6f, 0x63, 0x75, 0x6d,
+	0x65, 0x6e, 0x74, 0x41, 0x63, 0x63, 0x65, 0x73, 0x73, 0x52, 0x65, 0x73, 0x70, 0x6f, 0x6e, 0x73,
+	0x65, 0x22, 0xde, 0x01, 0x0a, 0x18, 0x4c, 0x69, 0x73, 0x74, 0x55, 0x73, 0x65, 0x72, 0x44, 0x6f,
+	0x63, 0x75, 0x6d, 0x65, 0x6e, 0x74, 0x73, 0x52, 0x65, 0x71, 0x75, 0x65, 0x73, 0x74, 0x12, 0x56,
 	0x0a, 0x0a, 0x70, 0x61, 0x67, 0x69, 0x6e, 0x61, 0x74, 0x69, 0x6f, 0x6e, 0x18, 0x01, 0x20, 0x01,
-	0x28, 0x0b, 0x32, 0x2d, 0x2e, 0x72, 0x65, 0x73, 0x6f, 0x75, 0x72, 0x63, 0x65, 0x73, 0x2e, 0x63,
+	0x28, 0x0b, 0x32, 0x2c, 0x2e, 0x72, 0x65, 0x73, 0x6f, 0x75, 0x72, 0x63, 0x65, 0x73, 0x2e, 0x63,
 	0x6f, 0x6d, 0x6d, 0x6f, 0x6e, 0x2e, 0x64, 0x61, 0x74, 0x61, 0x62, 0x61, 0x73, 0x65, 0x2e, 0x50,
-	0x61, 0x67, 0x69, 0x6e, 0x61, 0x74, 0x69, 0x6f, 0x6e, 0x52, 0x65, 0x73, 0x70, 0x6f, 0x6e, 0x73,
-	0x65, 0x52, 0x0a, 0x70, 0x61, 0x67, 0x69, 0x6e, 0x61, 0x74, 0x69, 0x6f, 0x6e, 0x12, 0x43, 0x0a,
-	0x09, 0x72, 0x65, 0x6c, 0x61, 0x74, 0x69, 0x6f, 0x6e, 0x73, 0x18, 0x02, 0x20, 0x03, 0x28, 0x0b,
-	0x32, 0x25, 0x2e, 0x72, 0x65, 0x73, 0x6f, 0x75, 0x72, 0x63, 0x65, 0x73, 0x2e, 0x64, 0x6f, 0x63,
-	0x75, 0x6d, 0x65, 0x6e, 0x74, 0x73, 0x2e, 0x44, 0x6f, 0x63, 0x75, 0x6d, 0x65, 0x6e, 0x74, 0x52,
-	0x65, 0x6c, 0x61, 0x74, 0x69, 0x6f, 0x6e, 0x52, 0x09, 0x72, 0x65, 0x6c, 0x61, 0x74, 0x69, 0x6f,
-	0x6e, 0x73, 0x22, 0x17, 0x0a, 0x15, 0x4c, 0x69, 0x73, 0x74, 0x43, 0x61, 0x74, 0x65, 0x67, 0x6f,
-	0x72, 0x69, 0x65, 0x73, 0x52, 0x65, 0x71, 0x75, 0x65, 0x73, 0x74, 0x22, 0x53, 0x0a, 0x16, 0x4c,
-	0x69, 0x73, 0x74, 0x43, 0x61, 0x74, 0x65, 0x67, 0x6f, 0x72, 0x69, 0x65, 0x73, 0x52, 0x65, 0x73,
-	0x70, 0x6f, 0x6e, 0x73, 0x65, 0x12, 0x39, 0x0a, 0x08, 0x63, 0x61, 0x74, 0x65, 0x67, 0x6f, 0x72,
-	0x79, 0x18, 0x01, 0x20, 0x03, 0x28, 0x0b, 0x32, 0x1d, 0x2e, 0x72, 0x65, 0x73, 0x6f, 0x75, 0x72,
-	0x63, 0x65, 0x73, 0x2e, 0x64, 0x6f, 0x63, 0x75, 0x6d, 0x65, 0x6e, 0x74, 0x73, 0x2e, 0x43, 0x61,
-	0x74, 0x65, 0x67, 0x6f, 0x72, 0x79, 0x52, 0x08, 0x63, 0x61, 0x74, 0x65, 0x67, 0x6f, 0x72, 0x79,
-	0x22, 0x5c, 0x0a, 0x15, 0x43, 0x72, 0x65, 0x61, 0x74, 0x65, 0x43, 0x61, 0x74, 0x65, 0x67, 0x6f,
-	0x72, 0x79, 0x52, 0x65, 0x71, 0x75, 0x65, 0x73, 0x74, 0x12, 0x43, 0x0a, 0x08, 0x63, 0x61, 0x74,
-	0x65, 0x67, 0x6f, 0x72, 0x79, 0x18, 0x01, 0x20, 0x01, 0x28, 0x0b, 0x32, 0x1d, 0x2e, 0x72, 0x65,
+	0x61, 0x67, 0x69, 0x6e, 0x61, 0x74, 0x69, 0x6f, 0x6e, 0x52, 0x65, 0x71, 0x75, 0x65, 0x73, 0x74,
+	0x42, 0x08, 0xfa, 0x42, 0x05, 0x8a, 0x01, 0x02, 0x10, 0x01, 0x52, 0x0a, 0x70, 0x61, 0x67, 0x69,
+	0x6e, 0x61, 0x74, 0x69, 0x6f, 0x6e, 0x12, 0x20, 0x0a, 0x07, 0x75, 0x73, 0x65, 0x72, 0x5f, 0x69,
+	0x64, 0x18, 0x02, 0x20, 0x01, 0x28, 0x05, 0x42, 0x07, 0xfa, 0x42, 0x04, 0x1a, 0x02, 0x20, 0x00,
+	0x52, 0x06, 0x75, 0x73, 0x65, 0x72, 0x49, 0x64, 0x12, 0x48, 0x0a, 0x09, 0x72, 0x65, 0x6c, 0x61,
+	0x74, 0x69, 0x6f, 0x6e, 0x73, 0x18, 0x03, 0x20, 0x03, 0x28, 0x0e, 0x32, 0x20, 0x2e, 0x72, 0x65,
 	0x73, 0x6f, 0x75, 0x72, 0x63, 0x65, 0x73, 0x2e, 0x64, 0x6f, 0x63, 0x75, 0x6d, 0x65, 0x6e, 0x74,
-	0x73, 0x2e, 0x43, 0x61, 0x74, 0x65, 0x67, 0x6f, 0x72, 0x79, 0x42, 0x08, 0xfa, 0x42, 0x05, 0x8a,
-	0x01, 0x02, 0x10, 0x01, 0x52, 0x08, 0x63, 0x61, 0x74, 0x65, 0x67, 0x6f, 0x72, 0x79, 0x22, 0x2c,
-	0x0a, 0x16, 0x43, 0x72, 0x65, 0x61, 0x74, 0x65, 0x43, 0x61, 0x74, 0x65, 0x67, 0x6f, 0x72, 0x79,
-	0x52, 0x65, 0x73, 0x70, 0x6f, 0x6e, 0x73, 0x65, 0x12, 0x12, 0x0a, 0x02, 0x69, 0x64, 0x18, 0x01,
-	0x20, 0x01, 0x28, 0x04, 0x42, 0x02, 0x30, 0x01, 0x52, 0x02, 0x69, 0x64, 0x22, 0x5c, 0x0a, 0x15,
+	0x73, 0x2e, 0x44, 0x6f, 0x63, 0x52, 0x65, 0x6c, 0x61, 0x74, 0x69, 0x6f, 0x6e, 0x42, 0x08, 0xfa,
+	0x42, 0x05, 0x92, 0x01, 0x02, 0x10, 0x03, 0x52, 0x09, 0x72, 0x65, 0x6c, 0x61, 0x74, 0x69, 0x6f,
+	0x6e, 0x73, 0x22, 0xaf, 0x01, 0x0a, 0x19, 0x4c, 0x69, 0x73, 0x74, 0x55, 0x73, 0x65, 0x72, 0x44,
+	0x6f, 0x63, 0x75, 0x6d, 0x65, 0x6e, 0x74, 0x73, 0x52, 0x65, 0x73, 0x70, 0x6f, 0x6e, 0x73, 0x65,
+	0x12, 0x4d, 0x0a, 0x0a, 0x70, 0x61, 0x67, 0x69, 0x6e, 0x61, 0x74, 0x69, 0x6f, 0x6e, 0x18, 0x01,
+	0x20, 0x01, 0x28, 0x0b, 0x32, 0x2d, 0x2e, 0x72, 0x65, 0x73, 0x6f, 0x75, 0x72, 0x63, 0x65, 0x73,
+	0x2e, 0x63, 0x6f, 0x6d, 0x6d, 0x6f, 0x6e, 0x2e, 0x64, 0x61, 0x74, 0x61, 0x62, 0x61, 0x73, 0x65,
+	0x2e, 0x50, 0x61, 0x67, 0x69, 0x6e, 0x61, 0x74, 0x69, 0x6f, 0x6e, 0x52, 0x65, 0x73, 0x70, 0x6f,
+	0x6e, 0x73, 0x65, 0x52, 0x0a, 0x70, 0x61, 0x67, 0x69, 0x6e, 0x61, 0x74, 0x69, 0x6f, 0x6e, 0x12,
+	0x43, 0x0a, 0x09, 0x72, 0x65, 0x6c, 0x61, 0x74, 0x69, 0x6f, 0x6e, 0x73, 0x18, 0x02, 0x20, 0x03,
+	0x28, 0x0b, 0x32, 0x25, 0x2e, 0x72, 0x65, 0x73, 0x6f, 0x75, 0x72, 0x63, 0x65, 0x73, 0x2e, 0x64,
+	0x6f, 0x63, 0x75, 0x6d, 0x65, 0x6e, 0x74, 0x73, 0x2e, 0x44, 0x6f, 0x63, 0x75, 0x6d, 0x65, 0x6e,
+	0x74, 0x52, 0x65, 0x6c, 0x61, 0x74, 0x69, 0x6f, 0x6e, 0x52, 0x09, 0x72, 0x65, 0x6c, 0x61, 0x74,
+	0x69, 0x6f, 0x6e, 0x73, 0x22, 0x17, 0x0a, 0x15, 0x4c, 0x69, 0x73, 0x74, 0x43, 0x61, 0x74, 0x65,
+	0x67, 0x6f, 0x72, 0x69, 0x65, 0x73, 0x52, 0x65, 0x71, 0x75, 0x65, 0x73, 0x74, 0x22, 0x53, 0x0a,
+	0x16, 0x4c, 0x69, 0x73, 0x74, 0x43, 0x61, 0x74, 0x65, 0x67, 0x6f, 0x72, 0x69, 0x65, 0x73, 0x52,
+	0x65, 0x73, 0x70, 0x6f, 0x6e, 0x73, 0x65, 0x12, 0x39, 0x0a, 0x08, 0x63, 0x61, 0x74, 0x65, 0x67,
+	0x6f, 0x72, 0x79, 0x18, 0x01, 0x20, 0x03, 0x28, 0x0b, 0x32, 0x1d, 0x2e, 0x72, 0x65, 0x73, 0x6f,
+	0x75, 0x72, 0x63, 0x65, 0x73, 0x2e, 0x64, 0x6f, 0x63, 0x75, 0x6d, 0x65, 0x6e, 0x74, 0x73, 0x2e,
+	0x43, 0x61, 0x74, 0x65, 0x67, 0x6f, 0x72, 0x79, 0x52, 0x08, 0x63, 0x61, 0x74, 0x65, 0x67, 0x6f,
+	0x72, 0x79, 0x22, 0x5c, 0x0a, 0x15, 0x43, 0x72, 0x65, 0x61, 0x74, 0x65, 0x43, 0x61, 0x74, 0x65,
+	0x67, 0x6f, 0x72, 0x79, 0x52, 0x65, 0x71, 0x75, 0x65, 0x73, 0x74, 0x12, 0x43, 0x0a, 0x08, 0x63,
+	0x61, 0x74, 0x65, 0x67, 0x6f, 0x72, 0x79, 0x18, 0x01, 0x20, 0x01, 0x28, 0x0b, 0x32, 0x1d, 0x2e,
+	0x72, 0x65, 0x73, 0x6f, 0x75, 0x72, 0x63, 0x65, 0x73, 0x2e, 0x64, 0x6f, 0x63, 0x75, 0x6d, 0x65,
+	0x6e, 0x74, 0x73, 0x2e, 0x43, 0x61, 0x74, 0x65, 0x67, 0x6f, 0x72, 0x79, 0x42, 0x08, 0xfa, 0x42,
+	0x05, 0x8a, 0x01, 0x02, 0x10, 0x01, 0x52, 0x08, 0x63, 0x61, 0x74, 0x65, 0x67, 0x6f, 0x72, 0x79,
+	0x22, 0x2c, 0x0a, 0x16, 0x43, 0x72, 0x65, 0x61, 0x74, 0x65, 0x43, 0x61, 0x74, 0x65, 0x67, 0x6f,
+	0x72, 0x79, 0x52, 0x65, 0x73, 0x70, 0x6f, 0x6e, 0x73, 0x65, 0x12, 0x12, 0x0a, 0x02, 0x69, 0x64,
+	0x18, 0x01, 0x20, 0x01, 0x28, 0x04, 0x42, 0x02, 0x30, 0x01, 0x52, 0x02, 0x69, 0x64, 0x22, 0x5c,
+	0x0a, 0x15, 0x55, 0x70, 0x64, 0x61, 0x74, 0x65, 0x43, 0x61, 0x74, 0x65, 0x67, 0x6f, 0x72, 0x79,
+	0x52, 0x65, 0x71, 0x75, 0x65, 0x73, 0x74, 0x12, 0x43, 0x0a, 0x08, 0x63, 0x61, 0x74, 0x65, 0x67,
+	0x6f, 0x72, 0x79, 0x18, 0x01, 0x20, 0x01, 0x28, 0x0b, 0x32, 0x1d, 0x2e, 0x72, 0x65, 0x73, 0x6f,
+	0x75, 0x72, 0x63, 0x65, 0x73, 0x2e, 0x64, 0x6f, 0x63, 0x75, 0x6d, 0x65, 0x6e, 0x74, 0x73, 0x2e,
+	0x43, 0x61, 0x74, 0x65, 0x67, 0x6f, 0x72, 0x79, 0x42, 0x08, 0xfa, 0x42, 0x05, 0x8a, 0x01, 0x02,
+	0x10, 0x01, 0x52, 0x08, 0x63, 0x61, 0x74, 0x65, 0x67, 0x6f, 0x72, 0x79, 0x22, 0x18, 0x0a, 0x16,
 	0x55, 0x70, 0x64, 0x61, 0x74, 0x65, 0x43, 0x61, 0x74, 0x65, 0x67, 0x6f, 0x72, 0x79, 0x52, 0x65,
-	0x71, 0x75, 0x65, 0x73, 0x74, 0x12, 0x43, 0x0a, 0x08, 0x63, 0x61, 0x74, 0x65, 0x67, 0x6f, 0x72,
-	0x79, 0x18, 0x01, 0x20, 0x01, 0x28, 0x0b, 0x32, 0x1d, 0x2e, 0x72, 0x65, 0x73, 0x6f, 0x75, 0x72,
-	0x63, 0x65, 0x73, 0x2e, 0x64, 0x6f, 0x63, 0x75, 0x6d, 0x65, 0x6e, 0x74, 0x73, 0x2e, 0x43, 0x61,
-	0x74, 0x65, 0x67, 0x6f, 0x72, 0x79, 0x42, 0x08, 0xfa, 0x42, 0x05, 0x8a, 0x01, 0x02, 0x10, 0x01,
-	0x52, 0x08, 0x63, 0x61, 0x74, 0x65, 0x67, 0x6f, 0x72, 0x79, 0x22, 0x18, 0x0a, 0x16, 0x55, 0x70,
-	0x64, 0x61, 0x74, 0x65, 0x43, 0x61, 0x74, 0x65, 0x67, 0x6f, 0x72, 0x79, 0x52, 0x65, 0x73, 0x70,
-	0x6f, 0x6e, 0x73, 0x65, 0x22, 0x2d, 0x0a, 0x15, 0x44, 0x65, 0x6c, 0x65, 0x74, 0x65, 0x43, 0x61,
-	0x74, 0x65, 0x67, 0x6f, 0x72, 0x79, 0x52, 0x65, 0x71, 0x75, 0x65, 0x73, 0x74, 0x12, 0x14, 0x0a,
-	0x03, 0x69, 0x64, 0x73, 0x18, 0x01, 0x20, 0x03, 0x28, 0x04, 0x42, 0x02, 0x30, 0x01, 0x52, 0x03,
-	0x69, 0x64, 0x73, 0x22, 0x18, 0x0a, 0x16, 0x44, 0x65, 0x6c, 0x65, 0x74, 0x65, 0x43, 0x61, 0x74,
-	0x65, 0x67, 0x6f, 0x72, 0x79, 0x52, 0x65, 0x73, 0x70, 0x6f, 0x6e, 0x73, 0x65, 0x2a, 0xaf, 0x01,
-	0x0a, 0x15, 0x41, 0x63, 0x63, 0x65, 0x73, 0x73, 0x4c, 0x65, 0x76, 0x65, 0x6c, 0x55, 0x70, 0x64,
-	0x61, 0x74, 0x65, 0x4d, 0x6f, 0x64, 0x65, 0x12, 0x28, 0x0a, 0x24, 0x41, 0x43, 0x43, 0x45, 0x53,
-	0x53, 0x5f, 0x4c, 0x45, 0x56, 0x45, 0x4c, 0x5f, 0x55, 0x50, 0x44, 0x41, 0x54, 0x45, 0x5f, 0x4d,
-	0x4f, 0x44, 0x45, 0x5f, 0x55, 0x4e, 0x53, 0x50, 0x45, 0x43, 0x49, 0x46, 0x49, 0x45, 0x44, 0x10,
-	0x00, 0x12, 0x23, 0x0a, 0x1f, 0x41, 0x43, 0x43, 0x45, 0x53, 0x53, 0x5f, 0x4c, 0x45, 0x56, 0x45,
-	0x4c, 0x5f, 0x55, 0x50, 0x44, 0x41, 0x54, 0x45, 0x5f, 0x4d, 0x4f, 0x44, 0x45, 0x5f, 0x55, 0x50,
-	0x44, 0x41, 0x54, 0x45, 0x10, 0x01, 0x12, 0x23, 0x0a, 0x1f, 0x41, 0x43, 0x43, 0x45, 0x53, 0x53,
-	0x5f, 0x4c, 0x45, 0x56, 0x45, 0x4c, 0x5f, 0x55, 0x50, 0x44, 0x41, 0x54, 0x45, 0x5f, 0x4d, 0x4f,
-	0x44, 0x45, 0x5f, 0x44, 0x45, 0x4c, 0x45, 0x54, 0x45, 0x10, 0x02, 0x12, 0x22, 0x0a, 0x1e, 0x41,
-	0x43, 0x43, 0x45, 0x53, 0x53, 0x5f, 0x4c, 0x45, 0x56, 0x45, 0x4c, 0x5f, 0x55, 0x50, 0x44, 0x41,
-	0x54, 0x45, 0x5f, 0x4d, 0x4f, 0x44, 0x45, 0x5f, 0x43, 0x4c, 0x45, 0x41, 0x52, 0x10, 0x03, 0x32,
+	0x73, 0x70, 0x6f, 0x6e, 0x73, 0x65, 0x22, 0x2d, 0x0a, 0x15, 0x44, 0x65, 0x6c, 0x65, 0x74, 0x65,
+	0x43, 0x61, 0x74, 0x65, 0x67, 0x6f, 0x72, 0x79, 0x52, 0x65, 0x71, 0x75, 0x65, 0x73, 0x74, 0x12,
+	0x14, 0x0a, 0x03, 0x69, 0x64, 0x73, 0x18, 0x01, 0x20, 0x03, 0x28, 0x04, 0x42, 0x02, 0x30, 0x01,
+	0x52, 0x03, 0x69, 0x64, 0x73, 0x22, 0x18, 0x0a, 0x16, 0x44, 0x65, 0x6c, 0x65, 0x74, 0x65, 0x43,
+	0x61, 0x74, 0x65, 0x67, 0x6f, 0x72, 0x79, 0x52, 0x65, 0x73, 0x70, 0x6f, 0x6e, 0x73, 0x65, 0x32,
 	0xe2, 0x1c, 0x0a, 0x0f, 0x44, 0x6f, 0x63, 0x53, 0x74, 0x6f, 0x72, 0x65, 0x53, 0x65, 0x72, 0x76,
 	0x69, 0x63, 0x65, 0x12, 0x62, 0x0a, 0x0d, 0x4c, 0x69, 0x73, 0x74, 0x54, 0x65, 0x6d, 0x70, 0x6c,
 	0x61, 0x74, 0x65, 0x73, 0x12, 0x27, 0x2e, 0x73, 0x65, 0x72, 0x76, 0x69, 0x63, 0x65, 0x73, 0x2e,
@@ -4301,213 +4238,212 @@ func file_services_docstore_docstore_proto_rawDescGZIP() []byte {
 	return file_services_docstore_docstore_proto_rawDescData
 }
 
-var file_services_docstore_docstore_proto_enumTypes = make([]protoimpl.EnumInfo, 1)
 var file_services_docstore_docstore_proto_msgTypes = make([]protoimpl.MessageInfo, 68)
 var file_services_docstore_docstore_proto_goTypes = []interface{}{
-	(AccessLevelUpdateMode)(0),              // 0: services.docstore.AccessLevelUpdateMode
-	(*ListTemplatesRequest)(nil),            // 1: services.docstore.ListTemplatesRequest
-	(*ListTemplatesResponse)(nil),           // 2: services.docstore.ListTemplatesResponse
-	(*GetTemplateRequest)(nil),              // 3: services.docstore.GetTemplateRequest
-	(*GetTemplateResponse)(nil),             // 4: services.docstore.GetTemplateResponse
-	(*CreateTemplateRequest)(nil),           // 5: services.docstore.CreateTemplateRequest
-	(*CreateTemplateResponse)(nil),          // 6: services.docstore.CreateTemplateResponse
-	(*UpdateTemplateRequest)(nil),           // 7: services.docstore.UpdateTemplateRequest
-	(*UpdateTemplateResponse)(nil),          // 8: services.docstore.UpdateTemplateResponse
-	(*DeleteTemplateRequest)(nil),           // 9: services.docstore.DeleteTemplateRequest
-	(*DeleteTemplateResponse)(nil),          // 10: services.docstore.DeleteTemplateResponse
-	(*ListDocumentsRequest)(nil),            // 11: services.docstore.ListDocumentsRequest
-	(*ListDocumentsResponse)(nil),           // 12: services.docstore.ListDocumentsResponse
-	(*GetDocumentRequest)(nil),              // 13: services.docstore.GetDocumentRequest
-	(*GetDocumentResponse)(nil),             // 14: services.docstore.GetDocumentResponse
-	(*GetDocumentReferencesRequest)(nil),    // 15: services.docstore.GetDocumentReferencesRequest
-	(*GetDocumentReferencesResponse)(nil),   // 16: services.docstore.GetDocumentReferencesResponse
-	(*GetDocumentRelationsRequest)(nil),     // 17: services.docstore.GetDocumentRelationsRequest
-	(*GetDocumentRelationsResponse)(nil),    // 18: services.docstore.GetDocumentRelationsResponse
-	(*AddDocumentReferenceRequest)(nil),     // 19: services.docstore.AddDocumentReferenceRequest
-	(*AddDocumentReferenceResponse)(nil),    // 20: services.docstore.AddDocumentReferenceResponse
-	(*RemoveDocumentReferenceRequest)(nil),  // 21: services.docstore.RemoveDocumentReferenceRequest
-	(*RemoveDocumentReferenceResponse)(nil), // 22: services.docstore.RemoveDocumentReferenceResponse
-	(*AddDocumentRelationRequest)(nil),      // 23: services.docstore.AddDocumentRelationRequest
-	(*AddDocumentRelationResponse)(nil),     // 24: services.docstore.AddDocumentRelationResponse
-	(*RemoveDocumentRelationRequest)(nil),   // 25: services.docstore.RemoveDocumentRelationRequest
-	(*RemoveDocumentRelationResponse)(nil),  // 26: services.docstore.RemoveDocumentRelationResponse
-	(*GetCommentsRequest)(nil),              // 27: services.docstore.GetCommentsRequest
-	(*GetCommentsResponse)(nil),             // 28: services.docstore.GetCommentsResponse
-	(*PostCommentRequest)(nil),              // 29: services.docstore.PostCommentRequest
-	(*PostCommentResponse)(nil),             // 30: services.docstore.PostCommentResponse
-	(*EditCommentRequest)(nil),              // 31: services.docstore.EditCommentRequest
-	(*EditCommentResponse)(nil),             // 32: services.docstore.EditCommentResponse
-	(*DeleteCommentRequest)(nil),            // 33: services.docstore.DeleteCommentRequest
-	(*DeleteCommentResponse)(nil),           // 34: services.docstore.DeleteCommentResponse
-	(*CreateDocumentRequest)(nil),           // 35: services.docstore.CreateDocumentRequest
-	(*CreateDocumentResponse)(nil),          // 36: services.docstore.CreateDocumentResponse
-	(*UpdateDocumentRequest)(nil),           // 37: services.docstore.UpdateDocumentRequest
-	(*UpdateDocumentResponse)(nil),          // 38: services.docstore.UpdateDocumentResponse
-	(*DeleteDocumentRequest)(nil),           // 39: services.docstore.DeleteDocumentRequest
-	(*DeleteDocumentResponse)(nil),          // 40: services.docstore.DeleteDocumentResponse
-	(*ToggleDocumentRequest)(nil),           // 41: services.docstore.ToggleDocumentRequest
-	(*ToggleDocumentResponse)(nil),          // 42: services.docstore.ToggleDocumentResponse
-	(*ChangeDocumentOwnerRequest)(nil),      // 43: services.docstore.ChangeDocumentOwnerRequest
-	(*ChangeDocumentOwnerResponse)(nil),     // 44: services.docstore.ChangeDocumentOwnerResponse
-	(*ListDocumentActivityRequest)(nil),     // 45: services.docstore.ListDocumentActivityRequest
-	(*ListDocumentActivityResponse)(nil),    // 46: services.docstore.ListDocumentActivityResponse
-	(*ListDocumentReqsRequest)(nil),         // 47: services.docstore.ListDocumentReqsRequest
-	(*ListDocumentReqsResponse)(nil),        // 48: services.docstore.ListDocumentReqsResponse
-	(*CreateDocumentReqRequest)(nil),        // 49: services.docstore.CreateDocumentReqRequest
-	(*CreateDocumentReqResponse)(nil),       // 50: services.docstore.CreateDocumentReqResponse
-	(*UpdateDocumentReqRequest)(nil),        // 51: services.docstore.UpdateDocumentReqRequest
-	(*UpdateDocumentReqResponse)(nil),       // 52: services.docstore.UpdateDocumentReqResponse
-	(*DeleteDocumentReqRequest)(nil),        // 53: services.docstore.DeleteDocumentReqRequest
-	(*DeleteDocumentReqResponse)(nil),       // 54: services.docstore.DeleteDocumentReqResponse
-	(*GetDocumentAccessRequest)(nil),        // 55: services.docstore.GetDocumentAccessRequest
-	(*GetDocumentAccessResponse)(nil),       // 56: services.docstore.GetDocumentAccessResponse
-	(*SetDocumentAccessRequest)(nil),        // 57: services.docstore.SetDocumentAccessRequest
-	(*SetDocumentAccessResponse)(nil),       // 58: services.docstore.SetDocumentAccessResponse
-	(*ListUserDocumentsRequest)(nil),        // 59: services.docstore.ListUserDocumentsRequest
-	(*ListUserDocumentsResponse)(nil),       // 60: services.docstore.ListUserDocumentsResponse
-	(*ListCategoriesRequest)(nil),           // 61: services.docstore.ListCategoriesRequest
-	(*ListCategoriesResponse)(nil),          // 62: services.docstore.ListCategoriesResponse
-	(*CreateCategoryRequest)(nil),           // 63: services.docstore.CreateCategoryRequest
-	(*CreateCategoryResponse)(nil),          // 64: services.docstore.CreateCategoryResponse
-	(*UpdateCategoryRequest)(nil),           // 65: services.docstore.UpdateCategoryRequest
-	(*UpdateCategoryResponse)(nil),          // 66: services.docstore.UpdateCategoryResponse
-	(*DeleteCategoryRequest)(nil),           // 67: services.docstore.DeleteCategoryRequest
-	(*DeleteCategoryResponse)(nil),          // 68: services.docstore.DeleteCategoryResponse
-	(*documents.TemplateShort)(nil),         // 69: resources.documents.TemplateShort
-	(*documents.TemplateData)(nil),          // 70: resources.documents.TemplateData
-	(*documents.Template)(nil),              // 71: resources.documents.Template
-	(*database.PaginationRequest)(nil),      // 72: resources.common.database.PaginationRequest
-	(*database.OrderBy)(nil),                // 73: resources.common.database.OrderBy
-	(*timestamp.Timestamp)(nil),             // 74: resources.timestamp.Timestamp
-	(*database.PaginationResponse)(nil),     // 75: resources.common.database.PaginationResponse
-	(*documents.DocumentShort)(nil),         // 76: resources.documents.DocumentShort
-	(*documents.Document)(nil),              // 77: resources.documents.Document
-	(*documents.DocumentAccess)(nil),        // 78: resources.documents.DocumentAccess
-	(*documents.DocumentReference)(nil),     // 79: resources.documents.DocumentReference
-	(*documents.DocumentRelation)(nil),      // 80: resources.documents.DocumentRelation
-	(*documents.Comment)(nil),               // 81: resources.documents.Comment
-	(documents.DocContentType)(0),           // 82: resources.documents.DocContentType
-	(documents.DocActivityType)(0),          // 83: resources.documents.DocActivityType
-	(*documents.DocActivity)(nil),           // 84: resources.documents.DocActivity
-	(*documents.DocRequest)(nil),            // 85: resources.documents.DocRequest
+	(*ListTemplatesRequest)(nil),            // 0: services.docstore.ListTemplatesRequest
+	(*ListTemplatesResponse)(nil),           // 1: services.docstore.ListTemplatesResponse
+	(*GetTemplateRequest)(nil),              // 2: services.docstore.GetTemplateRequest
+	(*GetTemplateResponse)(nil),             // 3: services.docstore.GetTemplateResponse
+	(*CreateTemplateRequest)(nil),           // 4: services.docstore.CreateTemplateRequest
+	(*CreateTemplateResponse)(nil),          // 5: services.docstore.CreateTemplateResponse
+	(*UpdateTemplateRequest)(nil),           // 6: services.docstore.UpdateTemplateRequest
+	(*UpdateTemplateResponse)(nil),          // 7: services.docstore.UpdateTemplateResponse
+	(*DeleteTemplateRequest)(nil),           // 8: services.docstore.DeleteTemplateRequest
+	(*DeleteTemplateResponse)(nil),          // 9: services.docstore.DeleteTemplateResponse
+	(*ListDocumentsRequest)(nil),            // 10: services.docstore.ListDocumentsRequest
+	(*ListDocumentsResponse)(nil),           // 11: services.docstore.ListDocumentsResponse
+	(*GetDocumentRequest)(nil),              // 12: services.docstore.GetDocumentRequest
+	(*GetDocumentResponse)(nil),             // 13: services.docstore.GetDocumentResponse
+	(*GetDocumentReferencesRequest)(nil),    // 14: services.docstore.GetDocumentReferencesRequest
+	(*GetDocumentReferencesResponse)(nil),   // 15: services.docstore.GetDocumentReferencesResponse
+	(*GetDocumentRelationsRequest)(nil),     // 16: services.docstore.GetDocumentRelationsRequest
+	(*GetDocumentRelationsResponse)(nil),    // 17: services.docstore.GetDocumentRelationsResponse
+	(*AddDocumentReferenceRequest)(nil),     // 18: services.docstore.AddDocumentReferenceRequest
+	(*AddDocumentReferenceResponse)(nil),    // 19: services.docstore.AddDocumentReferenceResponse
+	(*RemoveDocumentReferenceRequest)(nil),  // 20: services.docstore.RemoveDocumentReferenceRequest
+	(*RemoveDocumentReferenceResponse)(nil), // 21: services.docstore.RemoveDocumentReferenceResponse
+	(*AddDocumentRelationRequest)(nil),      // 22: services.docstore.AddDocumentRelationRequest
+	(*AddDocumentRelationResponse)(nil),     // 23: services.docstore.AddDocumentRelationResponse
+	(*RemoveDocumentRelationRequest)(nil),   // 24: services.docstore.RemoveDocumentRelationRequest
+	(*RemoveDocumentRelationResponse)(nil),  // 25: services.docstore.RemoveDocumentRelationResponse
+	(*GetCommentsRequest)(nil),              // 26: services.docstore.GetCommentsRequest
+	(*GetCommentsResponse)(nil),             // 27: services.docstore.GetCommentsResponse
+	(*PostCommentRequest)(nil),              // 28: services.docstore.PostCommentRequest
+	(*PostCommentResponse)(nil),             // 29: services.docstore.PostCommentResponse
+	(*EditCommentRequest)(nil),              // 30: services.docstore.EditCommentRequest
+	(*EditCommentResponse)(nil),             // 31: services.docstore.EditCommentResponse
+	(*DeleteCommentRequest)(nil),            // 32: services.docstore.DeleteCommentRequest
+	(*DeleteCommentResponse)(nil),           // 33: services.docstore.DeleteCommentResponse
+	(*CreateDocumentRequest)(nil),           // 34: services.docstore.CreateDocumentRequest
+	(*CreateDocumentResponse)(nil),          // 35: services.docstore.CreateDocumentResponse
+	(*UpdateDocumentRequest)(nil),           // 36: services.docstore.UpdateDocumentRequest
+	(*UpdateDocumentResponse)(nil),          // 37: services.docstore.UpdateDocumentResponse
+	(*DeleteDocumentRequest)(nil),           // 38: services.docstore.DeleteDocumentRequest
+	(*DeleteDocumentResponse)(nil),          // 39: services.docstore.DeleteDocumentResponse
+	(*ToggleDocumentRequest)(nil),           // 40: services.docstore.ToggleDocumentRequest
+	(*ToggleDocumentResponse)(nil),          // 41: services.docstore.ToggleDocumentResponse
+	(*ChangeDocumentOwnerRequest)(nil),      // 42: services.docstore.ChangeDocumentOwnerRequest
+	(*ChangeDocumentOwnerResponse)(nil),     // 43: services.docstore.ChangeDocumentOwnerResponse
+	(*ListDocumentActivityRequest)(nil),     // 44: services.docstore.ListDocumentActivityRequest
+	(*ListDocumentActivityResponse)(nil),    // 45: services.docstore.ListDocumentActivityResponse
+	(*ListDocumentReqsRequest)(nil),         // 46: services.docstore.ListDocumentReqsRequest
+	(*ListDocumentReqsResponse)(nil),        // 47: services.docstore.ListDocumentReqsResponse
+	(*CreateDocumentReqRequest)(nil),        // 48: services.docstore.CreateDocumentReqRequest
+	(*CreateDocumentReqResponse)(nil),       // 49: services.docstore.CreateDocumentReqResponse
+	(*UpdateDocumentReqRequest)(nil),        // 50: services.docstore.UpdateDocumentReqRequest
+	(*UpdateDocumentReqResponse)(nil),       // 51: services.docstore.UpdateDocumentReqResponse
+	(*DeleteDocumentReqRequest)(nil),        // 52: services.docstore.DeleteDocumentReqRequest
+	(*DeleteDocumentReqResponse)(nil),       // 53: services.docstore.DeleteDocumentReqResponse
+	(*GetDocumentAccessRequest)(nil),        // 54: services.docstore.GetDocumentAccessRequest
+	(*GetDocumentAccessResponse)(nil),       // 55: services.docstore.GetDocumentAccessResponse
+	(*SetDocumentAccessRequest)(nil),        // 56: services.docstore.SetDocumentAccessRequest
+	(*SetDocumentAccessResponse)(nil),       // 57: services.docstore.SetDocumentAccessResponse
+	(*ListUserDocumentsRequest)(nil),        // 58: services.docstore.ListUserDocumentsRequest
+	(*ListUserDocumentsResponse)(nil),       // 59: services.docstore.ListUserDocumentsResponse
+	(*ListCategoriesRequest)(nil),           // 60: services.docstore.ListCategoriesRequest
+	(*ListCategoriesResponse)(nil),          // 61: services.docstore.ListCategoriesResponse
+	(*CreateCategoryRequest)(nil),           // 62: services.docstore.CreateCategoryRequest
+	(*CreateCategoryResponse)(nil),          // 63: services.docstore.CreateCategoryResponse
+	(*UpdateCategoryRequest)(nil),           // 64: services.docstore.UpdateCategoryRequest
+	(*UpdateCategoryResponse)(nil),          // 65: services.docstore.UpdateCategoryResponse
+	(*DeleteCategoryRequest)(nil),           // 66: services.docstore.DeleteCategoryRequest
+	(*DeleteCategoryResponse)(nil),          // 67: services.docstore.DeleteCategoryResponse
+	(*documents.TemplateShort)(nil),         // 68: resources.documents.TemplateShort
+	(*documents.TemplateData)(nil),          // 69: resources.documents.TemplateData
+	(*documents.Template)(nil),              // 70: resources.documents.Template
+	(*database.PaginationRequest)(nil),      // 71: resources.common.database.PaginationRequest
+	(*database.OrderBy)(nil),                // 72: resources.common.database.OrderBy
+	(*timestamp.Timestamp)(nil),             // 73: resources.timestamp.Timestamp
+	(*database.PaginationResponse)(nil),     // 74: resources.common.database.PaginationResponse
+	(*documents.DocumentShort)(nil),         // 75: resources.documents.DocumentShort
+	(*documents.Document)(nil),              // 76: resources.documents.Document
+	(*documents.DocumentAccess)(nil),        // 77: resources.documents.DocumentAccess
+	(*documents.DocumentReference)(nil),     // 78: resources.documents.DocumentReference
+	(*documents.DocumentRelation)(nil),      // 79: resources.documents.DocumentRelation
+	(*documents.Comment)(nil),               // 80: resources.documents.Comment
+	(documents.DocContentType)(0),           // 81: resources.documents.DocContentType
+	(documents.DocActivityType)(0),          // 82: resources.documents.DocActivityType
+	(*documents.DocActivity)(nil),           // 83: resources.documents.DocActivity
+	(*documents.DocRequest)(nil),            // 84: resources.documents.DocRequest
+	(documents.AccessLevelUpdateMode)(0),    // 85: resources.documents.AccessLevelUpdateMode
 	(documents.DocRelation)(0),              // 86: resources.documents.DocRelation
 	(*documents.Category)(nil),              // 87: resources.documents.Category
 }
 var file_services_docstore_docstore_proto_depIdxs = []int32{
-	69, // 0: services.docstore.ListTemplatesResponse.templates:type_name -> resources.documents.TemplateShort
-	70, // 1: services.docstore.GetTemplateRequest.data:type_name -> resources.documents.TemplateData
-	71, // 2: services.docstore.GetTemplateResponse.template:type_name -> resources.documents.Template
-	71, // 3: services.docstore.CreateTemplateRequest.template:type_name -> resources.documents.Template
-	71, // 4: services.docstore.UpdateTemplateRequest.template:type_name -> resources.documents.Template
-	72, // 5: services.docstore.ListDocumentsRequest.pagination:type_name -> resources.common.database.PaginationRequest
-	73, // 6: services.docstore.ListDocumentsRequest.orderBy:type_name -> resources.common.database.OrderBy
-	74, // 7: services.docstore.ListDocumentsRequest.from:type_name -> resources.timestamp.Timestamp
-	74, // 8: services.docstore.ListDocumentsRequest.to:type_name -> resources.timestamp.Timestamp
-	75, // 9: services.docstore.ListDocumentsResponse.pagination:type_name -> resources.common.database.PaginationResponse
-	76, // 10: services.docstore.ListDocumentsResponse.documents:type_name -> resources.documents.DocumentShort
-	77, // 11: services.docstore.GetDocumentResponse.document:type_name -> resources.documents.Document
-	78, // 12: services.docstore.GetDocumentResponse.access:type_name -> resources.documents.DocumentAccess
-	79, // 13: services.docstore.GetDocumentReferencesResponse.references:type_name -> resources.documents.DocumentReference
-	80, // 14: services.docstore.GetDocumentRelationsResponse.relations:type_name -> resources.documents.DocumentRelation
-	79, // 15: services.docstore.AddDocumentReferenceRequest.reference:type_name -> resources.documents.DocumentReference
-	80, // 16: services.docstore.AddDocumentRelationRequest.relation:type_name -> resources.documents.DocumentRelation
-	72, // 17: services.docstore.GetCommentsRequest.pagination:type_name -> resources.common.database.PaginationRequest
-	75, // 18: services.docstore.GetCommentsResponse.pagination:type_name -> resources.common.database.PaginationResponse
-	81, // 19: services.docstore.GetCommentsResponse.comments:type_name -> resources.documents.Comment
-	81, // 20: services.docstore.PostCommentRequest.comment:type_name -> resources.documents.Comment
-	81, // 21: services.docstore.EditCommentRequest.comment:type_name -> resources.documents.Comment
-	81, // 22: services.docstore.EditCommentResponse.comment:type_name -> resources.documents.Comment
-	82, // 23: services.docstore.CreateDocumentRequest.content_type:type_name -> resources.documents.DocContentType
-	78, // 24: services.docstore.CreateDocumentRequest.access:type_name -> resources.documents.DocumentAccess
-	82, // 25: services.docstore.UpdateDocumentRequest.content_type:type_name -> resources.documents.DocContentType
-	78, // 26: services.docstore.UpdateDocumentRequest.access:type_name -> resources.documents.DocumentAccess
-	72, // 27: services.docstore.ListDocumentActivityRequest.pagination:type_name -> resources.common.database.PaginationRequest
-	83, // 28: services.docstore.ListDocumentActivityRequest.activity_types:type_name -> resources.documents.DocActivityType
-	75, // 29: services.docstore.ListDocumentActivityResponse.pagination:type_name -> resources.common.database.PaginationResponse
-	84, // 30: services.docstore.ListDocumentActivityResponse.activity:type_name -> resources.documents.DocActivity
-	72, // 31: services.docstore.ListDocumentReqsRequest.pagination:type_name -> resources.common.database.PaginationRequest
-	75, // 32: services.docstore.ListDocumentReqsResponse.pagination:type_name -> resources.common.database.PaginationResponse
-	85, // 33: services.docstore.ListDocumentReqsResponse.requests:type_name -> resources.documents.DocRequest
-	83, // 34: services.docstore.CreateDocumentReqRequest.request_type:type_name -> resources.documents.DocActivityType
-	85, // 35: services.docstore.CreateDocumentReqResponse.request:type_name -> resources.documents.DocRequest
-	78, // 36: services.docstore.GetDocumentAccessResponse.access:type_name -> resources.documents.DocumentAccess
-	0,  // 37: services.docstore.SetDocumentAccessRequest.mode:type_name -> services.docstore.AccessLevelUpdateMode
-	78, // 38: services.docstore.SetDocumentAccessRequest.access:type_name -> resources.documents.DocumentAccess
-	72, // 39: services.docstore.ListUserDocumentsRequest.pagination:type_name -> resources.common.database.PaginationRequest
+	68, // 0: services.docstore.ListTemplatesResponse.templates:type_name -> resources.documents.TemplateShort
+	69, // 1: services.docstore.GetTemplateRequest.data:type_name -> resources.documents.TemplateData
+	70, // 2: services.docstore.GetTemplateResponse.template:type_name -> resources.documents.Template
+	70, // 3: services.docstore.CreateTemplateRequest.template:type_name -> resources.documents.Template
+	70, // 4: services.docstore.UpdateTemplateRequest.template:type_name -> resources.documents.Template
+	71, // 5: services.docstore.ListDocumentsRequest.pagination:type_name -> resources.common.database.PaginationRequest
+	72, // 6: services.docstore.ListDocumentsRequest.orderBy:type_name -> resources.common.database.OrderBy
+	73, // 7: services.docstore.ListDocumentsRequest.from:type_name -> resources.timestamp.Timestamp
+	73, // 8: services.docstore.ListDocumentsRequest.to:type_name -> resources.timestamp.Timestamp
+	74, // 9: services.docstore.ListDocumentsResponse.pagination:type_name -> resources.common.database.PaginationResponse
+	75, // 10: services.docstore.ListDocumentsResponse.documents:type_name -> resources.documents.DocumentShort
+	76, // 11: services.docstore.GetDocumentResponse.document:type_name -> resources.documents.Document
+	77, // 12: services.docstore.GetDocumentResponse.access:type_name -> resources.documents.DocumentAccess
+	78, // 13: services.docstore.GetDocumentReferencesResponse.references:type_name -> resources.documents.DocumentReference
+	79, // 14: services.docstore.GetDocumentRelationsResponse.relations:type_name -> resources.documents.DocumentRelation
+	78, // 15: services.docstore.AddDocumentReferenceRequest.reference:type_name -> resources.documents.DocumentReference
+	79, // 16: services.docstore.AddDocumentRelationRequest.relation:type_name -> resources.documents.DocumentRelation
+	71, // 17: services.docstore.GetCommentsRequest.pagination:type_name -> resources.common.database.PaginationRequest
+	74, // 18: services.docstore.GetCommentsResponse.pagination:type_name -> resources.common.database.PaginationResponse
+	80, // 19: services.docstore.GetCommentsResponse.comments:type_name -> resources.documents.Comment
+	80, // 20: services.docstore.PostCommentRequest.comment:type_name -> resources.documents.Comment
+	80, // 21: services.docstore.EditCommentRequest.comment:type_name -> resources.documents.Comment
+	80, // 22: services.docstore.EditCommentResponse.comment:type_name -> resources.documents.Comment
+	81, // 23: services.docstore.CreateDocumentRequest.content_type:type_name -> resources.documents.DocContentType
+	77, // 24: services.docstore.CreateDocumentRequest.access:type_name -> resources.documents.DocumentAccess
+	81, // 25: services.docstore.UpdateDocumentRequest.content_type:type_name -> resources.documents.DocContentType
+	77, // 26: services.docstore.UpdateDocumentRequest.access:type_name -> resources.documents.DocumentAccess
+	71, // 27: services.docstore.ListDocumentActivityRequest.pagination:type_name -> resources.common.database.PaginationRequest
+	82, // 28: services.docstore.ListDocumentActivityRequest.activity_types:type_name -> resources.documents.DocActivityType
+	74, // 29: services.docstore.ListDocumentActivityResponse.pagination:type_name -> resources.common.database.PaginationResponse
+	83, // 30: services.docstore.ListDocumentActivityResponse.activity:type_name -> resources.documents.DocActivity
+	71, // 31: services.docstore.ListDocumentReqsRequest.pagination:type_name -> resources.common.database.PaginationRequest
+	74, // 32: services.docstore.ListDocumentReqsResponse.pagination:type_name -> resources.common.database.PaginationResponse
+	84, // 33: services.docstore.ListDocumentReqsResponse.requests:type_name -> resources.documents.DocRequest
+	82, // 34: services.docstore.CreateDocumentReqRequest.request_type:type_name -> resources.documents.DocActivityType
+	84, // 35: services.docstore.CreateDocumentReqResponse.request:type_name -> resources.documents.DocRequest
+	77, // 36: services.docstore.GetDocumentAccessResponse.access:type_name -> resources.documents.DocumentAccess
+	85, // 37: services.docstore.SetDocumentAccessRequest.mode:type_name -> resources.documents.AccessLevelUpdateMode
+	77, // 38: services.docstore.SetDocumentAccessRequest.access:type_name -> resources.documents.DocumentAccess
+	71, // 39: services.docstore.ListUserDocumentsRequest.pagination:type_name -> resources.common.database.PaginationRequest
 	86, // 40: services.docstore.ListUserDocumentsRequest.relations:type_name -> resources.documents.DocRelation
-	75, // 41: services.docstore.ListUserDocumentsResponse.pagination:type_name -> resources.common.database.PaginationResponse
-	80, // 42: services.docstore.ListUserDocumentsResponse.relations:type_name -> resources.documents.DocumentRelation
+	74, // 41: services.docstore.ListUserDocumentsResponse.pagination:type_name -> resources.common.database.PaginationResponse
+	79, // 42: services.docstore.ListUserDocumentsResponse.relations:type_name -> resources.documents.DocumentRelation
 	87, // 43: services.docstore.ListCategoriesResponse.category:type_name -> resources.documents.Category
 	87, // 44: services.docstore.CreateCategoryRequest.category:type_name -> resources.documents.Category
 	87, // 45: services.docstore.UpdateCategoryRequest.category:type_name -> resources.documents.Category
-	1,  // 46: services.docstore.DocStoreService.ListTemplates:input_type -> services.docstore.ListTemplatesRequest
-	3,  // 47: services.docstore.DocStoreService.GetTemplate:input_type -> services.docstore.GetTemplateRequest
-	5,  // 48: services.docstore.DocStoreService.CreateTemplate:input_type -> services.docstore.CreateTemplateRequest
-	7,  // 49: services.docstore.DocStoreService.UpdateTemplate:input_type -> services.docstore.UpdateTemplateRequest
-	9,  // 50: services.docstore.DocStoreService.DeleteTemplate:input_type -> services.docstore.DeleteTemplateRequest
-	11, // 51: services.docstore.DocStoreService.ListDocuments:input_type -> services.docstore.ListDocumentsRequest
-	13, // 52: services.docstore.DocStoreService.GetDocument:input_type -> services.docstore.GetDocumentRequest
-	35, // 53: services.docstore.DocStoreService.CreateDocument:input_type -> services.docstore.CreateDocumentRequest
-	37, // 54: services.docstore.DocStoreService.UpdateDocument:input_type -> services.docstore.UpdateDocumentRequest
-	39, // 55: services.docstore.DocStoreService.DeleteDocument:input_type -> services.docstore.DeleteDocumentRequest
-	41, // 56: services.docstore.DocStoreService.ToggleDocument:input_type -> services.docstore.ToggleDocumentRequest
-	43, // 57: services.docstore.DocStoreService.ChangeDocumentOwner:input_type -> services.docstore.ChangeDocumentOwnerRequest
-	15, // 58: services.docstore.DocStoreService.GetDocumentReferences:input_type -> services.docstore.GetDocumentReferencesRequest
-	17, // 59: services.docstore.DocStoreService.GetDocumentRelations:input_type -> services.docstore.GetDocumentRelationsRequest
-	19, // 60: services.docstore.DocStoreService.AddDocumentReference:input_type -> services.docstore.AddDocumentReferenceRequest
-	21, // 61: services.docstore.DocStoreService.RemoveDocumentReference:input_type -> services.docstore.RemoveDocumentReferenceRequest
-	23, // 62: services.docstore.DocStoreService.AddDocumentRelation:input_type -> services.docstore.AddDocumentRelationRequest
-	25, // 63: services.docstore.DocStoreService.RemoveDocumentRelation:input_type -> services.docstore.RemoveDocumentRelationRequest
-	27, // 64: services.docstore.DocStoreService.GetComments:input_type -> services.docstore.GetCommentsRequest
-	29, // 65: services.docstore.DocStoreService.PostComment:input_type -> services.docstore.PostCommentRequest
-	31, // 66: services.docstore.DocStoreService.EditComment:input_type -> services.docstore.EditCommentRequest
-	33, // 67: services.docstore.DocStoreService.DeleteComment:input_type -> services.docstore.DeleteCommentRequest
-	55, // 68: services.docstore.DocStoreService.GetDocumentAccess:input_type -> services.docstore.GetDocumentAccessRequest
-	57, // 69: services.docstore.DocStoreService.SetDocumentAccess:input_type -> services.docstore.SetDocumentAccessRequest
-	45, // 70: services.docstore.DocStoreService.ListDocumentActivity:input_type -> services.docstore.ListDocumentActivityRequest
-	47, // 71: services.docstore.DocStoreService.ListDocumentReqs:input_type -> services.docstore.ListDocumentReqsRequest
-	49, // 72: services.docstore.DocStoreService.CreateDocumentReq:input_type -> services.docstore.CreateDocumentReqRequest
-	51, // 73: services.docstore.DocStoreService.UpdateDocumentReq:input_type -> services.docstore.UpdateDocumentReqRequest
-	53, // 74: services.docstore.DocStoreService.DeleteDocumentReq:input_type -> services.docstore.DeleteDocumentReqRequest
-	59, // 75: services.docstore.DocStoreService.ListUserDocuments:input_type -> services.docstore.ListUserDocumentsRequest
-	61, // 76: services.docstore.DocStoreService.ListCategories:input_type -> services.docstore.ListCategoriesRequest
-	63, // 77: services.docstore.DocStoreService.CreateCategory:input_type -> services.docstore.CreateCategoryRequest
-	65, // 78: services.docstore.DocStoreService.UpdateCategory:input_type -> services.docstore.UpdateCategoryRequest
-	67, // 79: services.docstore.DocStoreService.DeleteCategory:input_type -> services.docstore.DeleteCategoryRequest
-	2,  // 80: services.docstore.DocStoreService.ListTemplates:output_type -> services.docstore.ListTemplatesResponse
-	4,  // 81: services.docstore.DocStoreService.GetTemplate:output_type -> services.docstore.GetTemplateResponse
-	6,  // 82: services.docstore.DocStoreService.CreateTemplate:output_type -> services.docstore.CreateTemplateResponse
-	8,  // 83: services.docstore.DocStoreService.UpdateTemplate:output_type -> services.docstore.UpdateTemplateResponse
-	10, // 84: services.docstore.DocStoreService.DeleteTemplate:output_type -> services.docstore.DeleteTemplateResponse
-	12, // 85: services.docstore.DocStoreService.ListDocuments:output_type -> services.docstore.ListDocumentsResponse
-	14, // 86: services.docstore.DocStoreService.GetDocument:output_type -> services.docstore.GetDocumentResponse
-	36, // 87: services.docstore.DocStoreService.CreateDocument:output_type -> services.docstore.CreateDocumentResponse
-	38, // 88: services.docstore.DocStoreService.UpdateDocument:output_type -> services.docstore.UpdateDocumentResponse
-	40, // 89: services.docstore.DocStoreService.DeleteDocument:output_type -> services.docstore.DeleteDocumentResponse
-	42, // 90: services.docstore.DocStoreService.ToggleDocument:output_type -> services.docstore.ToggleDocumentResponse
-	44, // 91: services.docstore.DocStoreService.ChangeDocumentOwner:output_type -> services.docstore.ChangeDocumentOwnerResponse
-	16, // 92: services.docstore.DocStoreService.GetDocumentReferences:output_type -> services.docstore.GetDocumentReferencesResponse
-	18, // 93: services.docstore.DocStoreService.GetDocumentRelations:output_type -> services.docstore.GetDocumentRelationsResponse
-	20, // 94: services.docstore.DocStoreService.AddDocumentReference:output_type -> services.docstore.AddDocumentReferenceResponse
-	22, // 95: services.docstore.DocStoreService.RemoveDocumentReference:output_type -> services.docstore.RemoveDocumentReferenceResponse
-	24, // 96: services.docstore.DocStoreService.AddDocumentRelation:output_type -> services.docstore.AddDocumentRelationResponse
-	26, // 97: services.docstore.DocStoreService.RemoveDocumentRelation:output_type -> services.docstore.RemoveDocumentRelationResponse
-	28, // 98: services.docstore.DocStoreService.GetComments:output_type -> services.docstore.GetCommentsResponse
-	30, // 99: services.docstore.DocStoreService.PostComment:output_type -> services.docstore.PostCommentResponse
-	32, // 100: services.docstore.DocStoreService.EditComment:output_type -> services.docstore.EditCommentResponse
-	34, // 101: services.docstore.DocStoreService.DeleteComment:output_type -> services.docstore.DeleteCommentResponse
-	56, // 102: services.docstore.DocStoreService.GetDocumentAccess:output_type -> services.docstore.GetDocumentAccessResponse
-	58, // 103: services.docstore.DocStoreService.SetDocumentAccess:output_type -> services.docstore.SetDocumentAccessResponse
-	46, // 104: services.docstore.DocStoreService.ListDocumentActivity:output_type -> services.docstore.ListDocumentActivityResponse
-	48, // 105: services.docstore.DocStoreService.ListDocumentReqs:output_type -> services.docstore.ListDocumentReqsResponse
-	50, // 106: services.docstore.DocStoreService.CreateDocumentReq:output_type -> services.docstore.CreateDocumentReqResponse
-	52, // 107: services.docstore.DocStoreService.UpdateDocumentReq:output_type -> services.docstore.UpdateDocumentReqResponse
-	54, // 108: services.docstore.DocStoreService.DeleteDocumentReq:output_type -> services.docstore.DeleteDocumentReqResponse
-	60, // 109: services.docstore.DocStoreService.ListUserDocuments:output_type -> services.docstore.ListUserDocumentsResponse
-	62, // 110: services.docstore.DocStoreService.ListCategories:output_type -> services.docstore.ListCategoriesResponse
-	64, // 111: services.docstore.DocStoreService.CreateCategory:output_type -> services.docstore.CreateCategoryResponse
-	66, // 112: services.docstore.DocStoreService.UpdateCategory:output_type -> services.docstore.UpdateCategoryResponse
-	68, // 113: services.docstore.DocStoreService.DeleteCategory:output_type -> services.docstore.DeleteCategoryResponse
+	0,  // 46: services.docstore.DocStoreService.ListTemplates:input_type -> services.docstore.ListTemplatesRequest
+	2,  // 47: services.docstore.DocStoreService.GetTemplate:input_type -> services.docstore.GetTemplateRequest
+	4,  // 48: services.docstore.DocStoreService.CreateTemplate:input_type -> services.docstore.CreateTemplateRequest
+	6,  // 49: services.docstore.DocStoreService.UpdateTemplate:input_type -> services.docstore.UpdateTemplateRequest
+	8,  // 50: services.docstore.DocStoreService.DeleteTemplate:input_type -> services.docstore.DeleteTemplateRequest
+	10, // 51: services.docstore.DocStoreService.ListDocuments:input_type -> services.docstore.ListDocumentsRequest
+	12, // 52: services.docstore.DocStoreService.GetDocument:input_type -> services.docstore.GetDocumentRequest
+	34, // 53: services.docstore.DocStoreService.CreateDocument:input_type -> services.docstore.CreateDocumentRequest
+	36, // 54: services.docstore.DocStoreService.UpdateDocument:input_type -> services.docstore.UpdateDocumentRequest
+	38, // 55: services.docstore.DocStoreService.DeleteDocument:input_type -> services.docstore.DeleteDocumentRequest
+	40, // 56: services.docstore.DocStoreService.ToggleDocument:input_type -> services.docstore.ToggleDocumentRequest
+	42, // 57: services.docstore.DocStoreService.ChangeDocumentOwner:input_type -> services.docstore.ChangeDocumentOwnerRequest
+	14, // 58: services.docstore.DocStoreService.GetDocumentReferences:input_type -> services.docstore.GetDocumentReferencesRequest
+	16, // 59: services.docstore.DocStoreService.GetDocumentRelations:input_type -> services.docstore.GetDocumentRelationsRequest
+	18, // 60: services.docstore.DocStoreService.AddDocumentReference:input_type -> services.docstore.AddDocumentReferenceRequest
+	20, // 61: services.docstore.DocStoreService.RemoveDocumentReference:input_type -> services.docstore.RemoveDocumentReferenceRequest
+	22, // 62: services.docstore.DocStoreService.AddDocumentRelation:input_type -> services.docstore.AddDocumentRelationRequest
+	24, // 63: services.docstore.DocStoreService.RemoveDocumentRelation:input_type -> services.docstore.RemoveDocumentRelationRequest
+	26, // 64: services.docstore.DocStoreService.GetComments:input_type -> services.docstore.GetCommentsRequest
+	28, // 65: services.docstore.DocStoreService.PostComment:input_type -> services.docstore.PostCommentRequest
+	30, // 66: services.docstore.DocStoreService.EditComment:input_type -> services.docstore.EditCommentRequest
+	32, // 67: services.docstore.DocStoreService.DeleteComment:input_type -> services.docstore.DeleteCommentRequest
+	54, // 68: services.docstore.DocStoreService.GetDocumentAccess:input_type -> services.docstore.GetDocumentAccessRequest
+	56, // 69: services.docstore.DocStoreService.SetDocumentAccess:input_type -> services.docstore.SetDocumentAccessRequest
+	44, // 70: services.docstore.DocStoreService.ListDocumentActivity:input_type -> services.docstore.ListDocumentActivityRequest
+	46, // 71: services.docstore.DocStoreService.ListDocumentReqs:input_type -> services.docstore.ListDocumentReqsRequest
+	48, // 72: services.docstore.DocStoreService.CreateDocumentReq:input_type -> services.docstore.CreateDocumentReqRequest
+	50, // 73: services.docstore.DocStoreService.UpdateDocumentReq:input_type -> services.docstore.UpdateDocumentReqRequest
+	52, // 74: services.docstore.DocStoreService.DeleteDocumentReq:input_type -> services.docstore.DeleteDocumentReqRequest
+	58, // 75: services.docstore.DocStoreService.ListUserDocuments:input_type -> services.docstore.ListUserDocumentsRequest
+	60, // 76: services.docstore.DocStoreService.ListCategories:input_type -> services.docstore.ListCategoriesRequest
+	62, // 77: services.docstore.DocStoreService.CreateCategory:input_type -> services.docstore.CreateCategoryRequest
+	64, // 78: services.docstore.DocStoreService.UpdateCategory:input_type -> services.docstore.UpdateCategoryRequest
+	66, // 79: services.docstore.DocStoreService.DeleteCategory:input_type -> services.docstore.DeleteCategoryRequest
+	1,  // 80: services.docstore.DocStoreService.ListTemplates:output_type -> services.docstore.ListTemplatesResponse
+	3,  // 81: services.docstore.DocStoreService.GetTemplate:output_type -> services.docstore.GetTemplateResponse
+	5,  // 82: services.docstore.DocStoreService.CreateTemplate:output_type -> services.docstore.CreateTemplateResponse
+	7,  // 83: services.docstore.DocStoreService.UpdateTemplate:output_type -> services.docstore.UpdateTemplateResponse
+	9,  // 84: services.docstore.DocStoreService.DeleteTemplate:output_type -> services.docstore.DeleteTemplateResponse
+	11, // 85: services.docstore.DocStoreService.ListDocuments:output_type -> services.docstore.ListDocumentsResponse
+	13, // 86: services.docstore.DocStoreService.GetDocument:output_type -> services.docstore.GetDocumentResponse
+	35, // 87: services.docstore.DocStoreService.CreateDocument:output_type -> services.docstore.CreateDocumentResponse
+	37, // 88: services.docstore.DocStoreService.UpdateDocument:output_type -> services.docstore.UpdateDocumentResponse
+	39, // 89: services.docstore.DocStoreService.DeleteDocument:output_type -> services.docstore.DeleteDocumentResponse
+	41, // 90: services.docstore.DocStoreService.ToggleDocument:output_type -> services.docstore.ToggleDocumentResponse
+	43, // 91: services.docstore.DocStoreService.ChangeDocumentOwner:output_type -> services.docstore.ChangeDocumentOwnerResponse
+	15, // 92: services.docstore.DocStoreService.GetDocumentReferences:output_type -> services.docstore.GetDocumentReferencesResponse
+	17, // 93: services.docstore.DocStoreService.GetDocumentRelations:output_type -> services.docstore.GetDocumentRelationsResponse
+	19, // 94: services.docstore.DocStoreService.AddDocumentReference:output_type -> services.docstore.AddDocumentReferenceResponse
+	21, // 95: services.docstore.DocStoreService.RemoveDocumentReference:output_type -> services.docstore.RemoveDocumentReferenceResponse
+	23, // 96: services.docstore.DocStoreService.AddDocumentRelation:output_type -> services.docstore.AddDocumentRelationResponse
+	25, // 97: services.docstore.DocStoreService.RemoveDocumentRelation:output_type -> services.docstore.RemoveDocumentRelationResponse
+	27, // 98: services.docstore.DocStoreService.GetComments:output_type -> services.docstore.GetCommentsResponse
+	29, // 99: services.docstore.DocStoreService.PostComment:output_type -> services.docstore.PostCommentResponse
+	31, // 100: services.docstore.DocStoreService.EditComment:output_type -> services.docstore.EditCommentResponse
+	33, // 101: services.docstore.DocStoreService.DeleteComment:output_type -> services.docstore.DeleteCommentResponse
+	55, // 102: services.docstore.DocStoreService.GetDocumentAccess:output_type -> services.docstore.GetDocumentAccessResponse
+	57, // 103: services.docstore.DocStoreService.SetDocumentAccess:output_type -> services.docstore.SetDocumentAccessResponse
+	45, // 104: services.docstore.DocStoreService.ListDocumentActivity:output_type -> services.docstore.ListDocumentActivityResponse
+	47, // 105: services.docstore.DocStoreService.ListDocumentReqs:output_type -> services.docstore.ListDocumentReqsResponse
+	49, // 106: services.docstore.DocStoreService.CreateDocumentReq:output_type -> services.docstore.CreateDocumentReqResponse
+	51, // 107: services.docstore.DocStoreService.UpdateDocumentReq:output_type -> services.docstore.UpdateDocumentReqResponse
+	53, // 108: services.docstore.DocStoreService.DeleteDocumentReq:output_type -> services.docstore.DeleteDocumentReqResponse
+	59, // 109: services.docstore.DocStoreService.ListUserDocuments:output_type -> services.docstore.ListUserDocumentsResponse
+	61, // 110: services.docstore.DocStoreService.ListCategories:output_type -> services.docstore.ListCategoriesResponse
+	63, // 111: services.docstore.DocStoreService.CreateCategory:output_type -> services.docstore.CreateCategoryResponse
+	65, // 112: services.docstore.DocStoreService.UpdateCategory:output_type -> services.docstore.UpdateCategoryResponse
+	67, // 113: services.docstore.DocStoreService.DeleteCategory:output_type -> services.docstore.DeleteCategoryResponse
 	80, // [80:114] is the sub-list for method output_type
 	46, // [46:80] is the sub-list for method input_type
 	46, // [46:46] is the sub-list for extension type_name
@@ -5350,14 +5286,13 @@ func file_services_docstore_docstore_proto_init() {
 		File: protoimpl.DescBuilder{
 			GoPackagePath: reflect.TypeOf(x{}).PkgPath(),
 			RawDescriptor: file_services_docstore_docstore_proto_rawDesc,
-			NumEnums:      1,
+			NumEnums:      0,
 			NumMessages:   68,
 			NumExtensions: 0,
 			NumServices:   1,
 		},
 		GoTypes:           file_services_docstore_docstore_proto_goTypes,
 		DependencyIndexes: file_services_docstore_docstore_proto_depIdxs,
-		EnumInfos:         file_services_docstore_docstore_proto_enumTypes,
 		MessageInfos:      file_services_docstore_docstore_proto_msgTypes,
 	}.Build()
 	File_services_docstore_docstore_proto = out.File
