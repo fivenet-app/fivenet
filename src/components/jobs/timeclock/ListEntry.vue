@@ -14,7 +14,7 @@ const spentTime = parseFloat(((Math.round(props.entry.spentTime * 100) / 100) * 
 </script>
 
 <template>
-    <tr>
+    <tr class="transition-colors hover:bg-neutral/5 even:bg-base-800">
         <td
             v-if="showDate"
             class="whitespace-nowrap py-1 pl-4 pr-3 text-base font-medium text-neutral sm:pl-0 inline-flex items-center"

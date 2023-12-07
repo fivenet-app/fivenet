@@ -298,12 +298,7 @@ watchDebounced(query.value, () => refresh(), { debounce: 600, maxWait: 1400 });
                                     </tr>
                                 </thead>
                                 <tbody class="divide-y divide-base-800">
-                                    <ListEntry
-                                        v-for="user in data?.users"
-                                        :key="user.userId"
-                                        :user="user"
-                                        class="transition-colors hover:bg-neutral/5"
-                                    />
+                                    <ListEntry v-for="user in data?.users" :key="user.userId" :user="user" />
                                 </tbody>
                                 <thead>
                                     <tr>

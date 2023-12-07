@@ -47,7 +47,7 @@ const openMessage = ref(false);
 </script>
 
 <template>
-    <tr class="even:bg-base-800">
+    <tr class="transition-colors hover:bg-neutral/5 even:bg-base-800">
         <DispatchDetails :dispatch="dispatch" :open="openDetails" @close="openDetails = false" @goto="$emit('goto', $event)" />
         <AssignDispatchModal v-if="openAssign" :open="openAssign" :dispatch="dispatch" @close="openAssign = false" />
         <DispatchStatusUpdateModal

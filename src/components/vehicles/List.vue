@@ -267,7 +267,6 @@ watch(selectedChar, () => {
                                         :hide-owner="hideOwner"
                                         :hide-citizen-link="hideCitizenLink"
                                         :hide-copy="hideCopy"
-                                        class="transition-colors hover:bg-neutral/5"
                                     />
                                 </tbody>
                                 <thead>

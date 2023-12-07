@@ -376,7 +376,6 @@ function updateDates(): void {
                                             v-for="(entry, idx) in group.entries"
                                             :key="entry.userId + toDate(entry.date).toString()"
                                             :entry="entry"
-                                            class="transition-colors hover:bg-neutral/5"
                                             :first="idx === 0 ? group.date : undefined"
                                             :show-date="!perDay"
                                         />

@@ -368,7 +368,6 @@ onConfirm(async (id) => deleteConductEntry(id));
                                         v-for="conduct in data?.entries"
                                         :key="conduct.id"
                                         :conduct="conduct"
-                                        class="transition-colors hover:bg-neutral/5"
                                         @selected="
                                             selectedEntry = conduct;
                                             open = true;
