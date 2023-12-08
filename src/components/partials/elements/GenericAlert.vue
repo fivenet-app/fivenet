@@ -18,16 +18,16 @@ withDefaults(
 </script>
 
 <template>
-    <div :class="`p-4 mt-6 rounded-md bg-${type}-100`">
+    <div class="p-4 mt-6 rounded-md" :class="`bg-${type}-100`">
         <div class="flex">
             <div class="flex-shrink-0">
-                <component :is="icon" :class="`w-5 h-5 text-${type}-400`" aria-hidden="true" />
+                <component :is="icon" class="w-5 h-5" :class="`text-${type}-400`" aria-hidden="true" />
             </div>
             <div class="ml-3">
-                <h3 :class="`text-sm font-medium text-${type}-600`">
+                <h3 class="text-sm font-medium" :class="`text-${type}-600`">
                     {{ title }}
                 </h3>
-                <div v-if="message" :class="`mt-2 text-sm text-${type}-600`">
+                <div v-if="message" class="mt-2 text-sm" :class="`text-${type}-600`">
                     {{ message }}
                 </div>
             </div>

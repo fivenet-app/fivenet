@@ -31,11 +31,6 @@ if (props.notification.callback !== undefined) {
         <div
             v-if="notification"
             class="z-50 w-full max-w-sm overflow-hidden bg-base-800 rounded-lg pointer-events-auto shadow-float text-neutral"
-            @click="
-                if (notification.onClick !== undefined) {
-                    notification.onClick(notification.data);
-                }
-            "
         >
             <div class="p-4">
                 <div class="flex items-start">
@@ -49,9 +44,17 @@ if (props.notification.callback !== undefined) {
                         <p class="text-sm font-semibold">
                             {{ $t(notification.title.key, notification.title.parameters ?? {}) }}
                         </p>
-                        <p class="mt-1 text-sm leading-5`">
+                        <p class="mt-1 text-sm leading-5">
                             {{ $t(notification.content.key, notification.content.parameters ?? {}) }}
                         </p>
+                        <button
+                            v-if="notification.onClick !== undefined"
+                            type="button"
+                            class="mt-1 text-sm leading-5"
+                            @click="notification.onClick(notification.data)"
+                        >
+                            {{ $t('common.click_here') }}
+                        </button>
                     </div>
                     <div class="flex flex-shrink-0 ml-4">
                         <button

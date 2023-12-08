@@ -779,7 +779,8 @@
         "icon": "Icon",
         "disabled": "Disabled",
         "legend": "Legend",
-        "radio_frequency": "Radio Frequency"
+        "radio_frequency": "Radio Frequency",
+        "click_here": "Click here"
     },
     "notifications": {
         "clipboard": {
