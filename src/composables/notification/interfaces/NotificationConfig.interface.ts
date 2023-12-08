@@ -12,4 +12,5 @@ export interface NotificationConfig {
     data?: Data;
     position?: NotificationPosition;
     callback?: () => Promise<any>;
+    onClick?: () => Promise<any>;
 }

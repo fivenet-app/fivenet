@@ -31,6 +31,11 @@ if (props.notification.callback !== undefined) {
         <div
             v-if="notification"
             class="z-50 w-full max-w-sm overflow-hidden bg-base-800 rounded-lg pointer-events-auto shadow-float text-neutral"
+            @click="
+                if (notification.onClick !== undefined) {
+                    notification.onClick(notification.data);
+                }
+            "
         >
             <div class="p-4">
                 <div class="flex items-start">

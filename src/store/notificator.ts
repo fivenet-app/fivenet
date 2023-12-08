@@ -47,6 +47,7 @@ export const useNotificatorStore = defineStore('notifications', {
             data = undefined,
             position = 'top-right',
             callback = undefined,
+            onClick = undefined,
         }: NotificationConfig) {
             const id = uuidv4();
             this.notifications.unshift({
@@ -58,6 +59,7 @@ export const useNotificatorStore = defineStore('notifications', {
                 data,
                 position,
                 callback,
+                onClick,
             });
 
             if (autoClose) {
@@ -128,15 +130,30 @@ export const useNotificatorStore = defineStore('notifications', {
                                 }
 
                                 switch (n.category) {
-                                    default:
-                                        this.dispatchNotification({
+                                    default: {
+                                        const not: NotificationConfig = {
                                             title: { key: n.title.key },
                                             content: { key: n.content.key },
                                             type: nType,
                                             category: n.category,
                                             data: n.data,
-                                        });
+                                        };
+
+                                        if (n.data?.link !== undefined) {
+                                            if (n.data.link.external) {
+                                                not.onClick = async () => {
+                                                    navigateTo({ external: true, path: n.data.link.to });
+                                                };
+                                            } else {
+                                                not.onClick = async () => {
+                                                    navigateTo({ path: n.data.link.to });
+                                                };
+                                            }
+                                        }
+
+                                        this.dispatchNotification(not);
                                         break;
+                                    }
                                 }
                             });
                         } else {
