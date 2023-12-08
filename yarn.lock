@@ -2202,7 +2202,15 @@
   resolved "https://registry.npmjs.org/@ungap/structured-clone/-/structured-clone-1.2.0.tgz"
   integrity sha512-zuVdFrMJiuCDQUMCzQaD6KL28MjnqqN8XnAqiEq9PNm/hCPTSGfrXCOfwj1ow4LFb/tNymJPwsNbVePc1xFqrQ==
 
-"@unhead/dom@1.8.8", "@unhead/dom@^1.8.4":
+"@unhead/dom@1.8.9":
+  version "1.8.9"
+  resolved "https://registry.yarnpkg.com/@unhead/dom/-/dom-1.8.9.tgz#cc1598f5c4e5879f671760c4b2c1e78102c33fa2"
+  integrity sha512-qY4CUVNKEM7lEAcTz5t71QYca+NXgUY5RwhSzB6sBBzZxQTiFOeTVKC6uWXU0N+3jBUdP/zdD3iN1JIjziDlng==
+  dependencies:
+    "@unhead/schema" "1.8.9"
+    "@unhead/shared" "1.8.9"
+
+"@unhead/dom@^1.8.4":
   version "1.8.8"
   resolved "https://registry.npmjs.org/@unhead/dom/-/dom-1.8.8.tgz"
   integrity sha512-KRtn+tvA83lEtKrtZD85XmqW04fcytVuNKLUpPBzhJvsxB3v7gozw0nu46e3EpbO3TGJjLlLd6brNHQY6WLWfA==
@@ -2218,12 +2226,27 @@
     hookable "^5.5.3"
     zhead "^2.2.4"
 
+"@unhead/schema@1.8.9":
+  version "1.8.9"
+  resolved "https://registry.yarnpkg.com/@unhead/schema/-/schema-1.8.9.tgz#f311fe119fe33b48381a2c3b0866b2b0ff883e10"
+  integrity sha512-Cumjt2uLfBMEXflvq7Nk8KNqa/JS4MlRGWkjXx/uUXJ1vUeQqeMV8o3hrnRvDDoTXr9LwPapTMUbtClN3TSBgw==
+  dependencies:
+    hookable "^5.5.3"
+    zhead "^2.2.4"
+
 "@unhead/shared@1.8.8":
   version "1.8.8"
   resolved "https://registry.npmjs.org/@unhead/shared/-/shared-1.8.8.tgz"
   integrity sha512-LoIJUDgmOzxoRHSIf29w/wc+IzKN2XvGiQC2dZZrYoTjOOzodf75609PEW5bhx2aHio38k9F+6BnD3KDiJ7IIg==
   dependencies:
     "@unhead/schema" "1.8.8"
+
+"@unhead/shared@1.8.9":
+  version "1.8.9"
+  resolved "https://registry.yarnpkg.com/@unhead/shared/-/shared-1.8.9.tgz#5d2b1279a0ceed49cb35efca44ef01224d9b7791"
+  integrity sha512-0o4+CBCi9EnTKPF6cEuLacnUHUkF0u/FfiKrWnKWUiB8wTD1v3UCf5ZCrNCjuJmKHTqj6ZtZ2hIfXsqWfc+3tA==
+  dependencies:
+    "@unhead/schema" "1.8.9"
 
 "@unhead/ssr@^1.8.4":
   version "1.8.8"
@@ -2234,14 +2257,14 @@
     "@unhead/shared" "1.8.8"
 
 "@unhead/vue@^1.8.4", "@unhead/vue@^1.8.8":
-  version "1.8.8"
-  resolved "https://registry.npmjs.org/@unhead/vue/-/vue-1.8.8.tgz"
-  integrity sha512-isHpVnSSE5SP+ObsZG/i+Jq9tAQ2u1AbGrktXKmL7P5FRxwPjhATYnJFdGpxXeXfuaFgRFKzGKs29xo4MMVODw==
+  version "1.8.9"
+  resolved "https://registry.yarnpkg.com/@unhead/vue/-/vue-1.8.9.tgz#55a8b068f94d5683ce5c0149946b462e8b9a9a28"
+  integrity sha512-sL1d2IRBZd5rjzhgTYni2DiociSpt+Cfz3iVWKb0EZwQHgg0GzV8Hkoj5TjZYZow6EjDSPRfVPXDwOwxkVOgug==
   dependencies:
-    "@unhead/schema" "1.8.8"
-    "@unhead/shared" "1.8.8"
+    "@unhead/schema" "1.8.9"
+    "@unhead/shared" "1.8.9"
     hookable "^5.5.3"
-    unhead "1.8.8"
+    unhead "1.8.9"
 
 "@vee-validate/i18n@^4.12.2":
   version "4.12.2"
@@ -5510,7 +5533,7 @@ he@^1.2.0:
 
 hookable@^5.5.3:
   version "5.5.3"
-  resolved "https://registry.npmjs.org/hookable/-/hookable-5.5.3.tgz"
+  resolved "https://registry.yarnpkg.com/hookable/-/hookable-5.5.3.tgz#6cfc358984a1ef991e2518cb9ed4a778bbd3215d"
   integrity sha512-Yc+BQe8SvoXH1643Qez1zqLRmbA5rCL+sSmk6TVos0LWVfNIB7PGncdlId77WzLGSIB5KaWgTaNTs2lNVEI6VQ==
 
 hosted-git-info@^2.1.4:
@@ -9629,14 +9652,14 @@ unenv@^1.7.4, unenv@^1.8.0:
     node-fetch-native "^1.4.1"
     pathe "^1.1.1"
 
-unhead@1.8.8:
-  version "1.8.8"
-  resolved "https://registry.npmjs.org/unhead/-/unhead-1.8.8.tgz"
-  integrity sha512-SfUJ2kjz1NcfvdM+uEAlN11h31wHqMg0HZ5jriuRPjMCj5O7lPs4uSMdBUYh3KEo0uLKrW76FM85ONXkyZfm3g==
+unhead@1.8.9:
+  version "1.8.9"
+  resolved "https://registry.yarnpkg.com/unhead/-/unhead-1.8.9.tgz#f13ecee175381d634d085e52a7945c6e7937b56d"
+  integrity sha512-qqCNmA4KOEDjcl+OtRZTllGehXewcQ31zbHjvhl/jqCs2MfRcZoxFW1y7A4Y4BgR/O7PI89K+GoWGcxK3gn64Q==
   dependencies:
-    "@unhead/dom" "1.8.8"
-    "@unhead/schema" "1.8.8"
-    "@unhead/shared" "1.8.8"
+    "@unhead/dom" "1.8.9"
+    "@unhead/schema" "1.8.9"
+    "@unhead/shared" "1.8.9"
     hookable "^5.5.3"
 
 unicorn-magic@^0.1.0:
@@ -10385,7 +10408,7 @@ yocto-queue@^0.1.0:
 
 zhead@^2.2.4:
   version "2.2.4"
-  resolved "https://registry.npmjs.org/zhead/-/zhead-2.2.4.tgz"
+  resolved "https://registry.yarnpkg.com/zhead/-/zhead-2.2.4.tgz#87cd1e2c3d2f465fa9f43b8db23f9716dfe6bed7"
   integrity sha512-8F0OI5dpWIA5IGG5NHUg9staDwz/ZPxZtvGVf01j7vHqSyZ0raHY+78atOVxRqb73AotX22uV1pXt3gYSstGag==
 
 zip-stream@^5.0.1:
