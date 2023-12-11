@@ -40,4 +40,10 @@ message QuickButtons {
 
 message DiscordSyncSettings {
   bool user_info_sync = 1;
+  optional UserInfoSyncSettings user_info_sync_settings = 2;
+}
+
+message UserInfoSyncSettings {
+  bool employee_role_enabled = 1;
+  optional string employee_role_format = 2;
 }

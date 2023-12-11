@@ -205,10 +205,7 @@ const openRequests = ref(false);
         />
         <ConfirmDialog :open="isRevealedDelete" :cancel="cancelDelete" :confirm="() => confirmDelete(documentId)" />
         <RequestsModal
-            v-if="
-                false && // TODO
-                can('DocStoreService.CreateDocumentRequest')
-            "
+            v-if="can('DocStoreService.CreateDocumentRequest')"
             :open="openRequests"
             :document-id="documentId"
             @close="openRequests = false"

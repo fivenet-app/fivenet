@@ -3,9 +3,9 @@
 
 import type { ParsedURL } from 'ufo';
 import { hasTrailingSlash, parseURL, stringifyParsedURL, withBase, withTrailingSlash, withoutTrailingSlash } from 'ufo';
-import type { RouteRecord, RouteRecordNormalized } from 'vue-router';
+import type { RouteRecord } from 'vue-router';
 
-export function createInternalLinkResolver(absolute?: boolean): (path: string) => string {
+export function createInternalLinkResolver(absolute?: boolean) {
     return (path: string) => {
         const fixedSlash = withTrailingSlash(path);
         if (absolute) return withBase(fixedSlash, '/');
@@ -36,14 +36,13 @@ function getBreadcrumbs(input: string) {
     return stepNode(startNode);
 }
 
-export function useBreadcrumbs(): ComputedRef<
-    { schema: { name: string; item: string }; to: RouteRecordNormalized | undefined; title: string }[]
-> {
+export function useBreadcrumbs() {
     const router = useRouter();
     const resolveUrlAbs = createInternalLinkResolver(true);
-    const routes = router.getRoutes();
+    const resolveUrl = createInternalLinkResolver();
 
     return computed(() => {
+        const routes = router.getRoutes();
         const route = router.currentRoute.value;
         const bs = getBreadcrumbs(route.path);
         return bs
@@ -57,16 +56,16 @@ export function useBreadcrumbs(): ComputedRef<
                 } else {
                     return {
                         path,
-                        route: routes.find(
+                        meta: routes.find(
                             (route: RouteRecord) => withoutTrailingSlash(route.path) === withoutTrailingSlash(path),
-                        ),
+                        )?.meta,
                     };
                 }
             })
-            .filter(({ route }) => route?.meta !== undefined)
-            .map(({ path, route }) => {
+            .filter(({ meta }) => meta !== undefined)
+            .map(({ path, meta }) => {
                 // title case string regex
-                let title = route?.meta?.breadcrumbTitle ?? route?.meta?.title;
+                let title = meta?.breadcrumbTitle ?? meta?.title;
                 if (!title) {
                     if (path === '/') {
                         title = 'Home';
@@ -80,7 +79,7 @@ export function useBreadcrumbs(): ComputedRef<
                         name: title,
                         item: resolveUrlAbs(path),
                     },
-                    to: route,
+                    to: resolveUrl(path),
                     title,
                 };
             });

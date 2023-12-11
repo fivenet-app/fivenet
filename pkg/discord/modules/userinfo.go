@@ -19,9 +19,11 @@ const DefaultNicknameRegex = `^(?P<prefix>\[\S+][ ]*)?(?P<name>[^\[]+)(?P<suffix
 type UserInfo struct {
 	*BaseModule
 
-	nicknameRegex      *regexp.Regexp
-	roleFormat         string
-	employeeRoleFormat string
+	nicknameRegex *regexp.Regexp
+	roleFormat    string
+
+	employeeRoleEnabled bool
+	employeeRoleFormat  string
 
 	jobRoles     map[int32]*discordgo.Role
 	employeeRole *discordgo.Role
@@ -47,11 +49,12 @@ func NewUserInfo(base *BaseModule) (Module, error) {
 	}
 
 	return &UserInfo{
-		BaseModule:         base,
-		nicknameRegex:      nicknameRegex,
-		roleFormat:         base.cfg.UserInfoSync.RoleFormat,
-		employeeRoleFormat: base.cfg.UserInfoSync.EmployeeRoleFormat,
-		jobRoles:           map[int32]*discordgo.Role{},
+		BaseModule:          base,
+		nicknameRegex:       nicknameRegex,
+		roleFormat:          base.cfg.UserInfoSync.RoleFormat,
+		employeeRoleEnabled: true,
+		employeeRoleFormat:  base.cfg.UserInfoSync.EmployeeRoleFormat,
+		jobRoles:            map[int32]*discordgo.Role{},
 	}, nil
 }
 
@@ -66,6 +69,16 @@ func (g *UserInfo) Run() error {
 
 	if !settings.UserInfoSync {
 		return nil
+	}
+
+	if settings.UserInfoSyncSettings != nil {
+		g.employeeRoleEnabled = settings.UserInfoSyncSettings.EmployeeRoleEnabled
+
+		if settings.UserInfoSyncSettings.EmployeeRoleFormat != nil {
+			g.employeeRoleFormat = *settings.UserInfoSyncSettings.EmployeeRoleFormat
+		} else {
+			g.employeeRoleFormat = g.cfg.UserInfoSync.EmployeeRoleFormat
+		}
 	}
 
 	if err := g.createJobRoles(); err != nil {
@@ -219,21 +232,25 @@ func (g *UserInfo) createJobRoles() error {
 		g.jobRoles[grade.Grade] = role
 	}
 
-	employeeRoleName := fmt.Sprintf(g.employeeRoleFormat, job.Label)
-	if !slices.ContainsFunc(guild.Roles, func(in *discordgo.Role) bool {
-		if in.Name == employeeRoleName {
-			g.employeeRole = in
-			return true
+	if g.employeeRoleEnabled {
+		employeeRoleName := fmt.Sprintf(g.employeeRoleFormat, job.Label)
+		if !slices.ContainsFunc(guild.Roles, func(in *discordgo.Role) bool {
+			if in.Name == employeeRoleName {
+				g.employeeRole = in
+				return true
+			}
+			return false
+		}) {
+			role, err := g.discord.GuildRoleCreate(guild.ID, &discordgo.RoleParams{
+				Name: employeeRoleName,
+			})
+			if err != nil {
+				return fmt.Errorf("failed to create employee role %s: %w", job.Label, err)
+			}
+			g.employeeRole = role
 		}
-		return false
-	}) {
-		role, err := g.discord.GuildRoleCreate(guild.ID, &discordgo.RoleParams{
-			Name: employeeRoleName,
-		})
-		if err != nil {
-			return fmt.Errorf("failed to create employee role %s: %w", job.Label, err)
-		}
-		g.employeeRole = role
+	} else {
+		g.employeeRole = nil
 	}
 
 	g.logger.Debug("created job employee and rank roles")
@@ -259,7 +276,7 @@ func (g *UserInfo) setUserJobRole(member *discordgo.Member, job string, grade in
 	found := false
 	removeRoles := []*discordgo.Role{}
 	for _, mr := range member.Roles {
-		if mr == g.employeeRole.ID {
+		if g.employeeRole == nil || mr == g.employeeRole.ID {
 			hasEmployeeRole = true
 			continue
 		}
@@ -357,9 +374,8 @@ outerLoop:
 			}
 		}
 
-		role := g.employeeRole
 		// If user isn't in the employee role, continue
-		if !slices.Contains(guild.Members[i].Roles, role.ID) {
+		if g.employeeRole == nil || !slices.Contains(guild.Members[i].Roles, g.employeeRole.ID) {
 			continue
 		}
 
@@ -372,8 +388,8 @@ outerLoop:
 
 		g.logger.Debug("removing employee role from member", zap.String("discord_role_name", g.employeeRole.Name), zap.String("discord_role_id", g.employeeRole.ID),
 			zap.String("discord_user_id", member.User.ID), zap.String("discord_nickname", member.Nick))
-		if err := g.discord.GuildMemberRoleRemove(g.guild.ID, member.User.ID, role.ID); err != nil {
-			return fmt.Errorf("failed to remove member from employee job role %s (%s): %w", role.Name, role.ID, err)
+		if err := g.discord.GuildMemberRoleRemove(g.guild.ID, member.User.ID, g.employeeRole.ID); err != nil {
+			return fmt.Errorf("failed to remove member from employee job role %s (%s): %w", g.employeeRole.Name, g.employeeRole.ID, err)
 		}
 	}
 

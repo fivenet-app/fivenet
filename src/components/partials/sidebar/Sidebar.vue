@@ -494,7 +494,7 @@ watch(router.currentRoute, () => updateActiveItem());
                                                     aria-hidden="true"
                                                 />
                                                 <NuxtLink
-                                                    :to="item.to.path"
+                                                    :to="item.to"
                                                     :class="[
                                                         key === breadcrumbs.length - 1
                                                             ? 'font-bold text-base-200'

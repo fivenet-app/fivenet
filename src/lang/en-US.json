@@ -344,7 +344,11 @@
                 "invite_bot": "Invite Bot",
                 "last_sync": "Last Sync",
                 "discord_sync_settings": "Discord Sync Settings",
-                "user_info_sync": "User Info Sync (Names and Job Grade Roles)"
+                "user_info_sync": "User Info Sync (Names and Job Grade Roles)",
+                "user_info_sync_settings": {
+                    "employee_role_enabled": "Create and manage Employee Role",
+                    "employee_role_format": "Employee Role format (%s will be replaced by your job's name)"
+                }
             },
             "role_view": {
                 "add_permission": "Add Permission"
