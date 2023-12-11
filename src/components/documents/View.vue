@@ -307,9 +307,8 @@ const openRequests = ref(false);
                                 </button>
                                 <button
                                     v-if="
-                                        false && // TODO
-                                        can('DocStoreService.ChangeDocumentOwner') &&
                                         (doc?.creatorJob === activeChar?.job || isSuperuser) &&
+                                        can('DocStoreService.ChangeDocumentOwner') &&
                                         checkDocAccess(
                                             access,
                                             doc?.creator,
