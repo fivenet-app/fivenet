@@ -142,11 +142,13 @@ export const useNotificatorStore = defineStore('notifications', {
                                         if (n.data?.link !== undefined) {
                                             if (n.data.link.external === true) {
                                                 not.onClick = async () => {
-                                                    navigateTo({ external: true, path: n.data!.link!.to });
+                                                    navigateTo(n.data!.link!.to, { external: true });
                                                 };
                                             } else {
+                                                const route = useRouter().resolve(n.data!.link!.to);
+
                                                 not.onClick = async () => {
-                                                    navigateTo({ path: n.data!.link!.to });
+                                                    navigateTo(route);
                                                 };
                                             }
                                         }

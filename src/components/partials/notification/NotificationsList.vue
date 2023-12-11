@@ -128,7 +128,7 @@ watchDebounced(includeRead, async () => refresh(), { debounce: 500, maxWait: 150
                                         <div class="min-w-0 flex-auto">
                                             <p class="py-2 pl-4 pr-3 text-sm font-medium text-neutral sm:pl-0">
                                                 <span v-if="not.data && not.data.link">
-                                                    <NuxtLink :to="not.data?.link?.to">
+                                                    <NuxtLink :to="not.data.link.to">
                                                         <span class="absolute inset-x-0 -top-px bottom-0" />
                                                         {{ $t(not.title!.key, not.title?.parameters ?? []) }}
                                                     </NuxtLink>

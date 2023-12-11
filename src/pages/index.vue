@@ -20,7 +20,7 @@ const { accessToken } = storeToRefs(authStore);
 
 onBeforeMount(async () => {
     if (accessToken.value) {
-        const target = useRouter().resolve(useSettingsStore().startpage);
+        const target = useRouter().resolve(useSettingsStore().startpage ?? '/overview');
         return navigateTo(target);
     }
 });

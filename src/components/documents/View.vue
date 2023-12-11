@@ -309,18 +309,18 @@ const openRequests = ref(false);
                                     v-if="
                                         false && // TODO
                                         can('DocStoreService.ChangeDocumentOwner') &&
-                                        (doc.creatorJob === activeChar?.job || isSuperuser) &&
+                                        (doc?.creatorJob === activeChar?.job || isSuperuser) &&
                                         checkDocAccess(
                                             access,
-                                            doc.creator,
+                                            doc?.creator,
                                             AccessLevel.EDIT,
                                             'DocStoreService.ChangeDocumentOwner',
                                         )
                                     "
                                     type="button"
                                     class="inline-flex items-center gap-x-1.5 rounded-md bg-primary-500 px-3 py-2 text-sm font-semibold text-neutral hover:bg-primary-400"
-                                    :class="doc.creatorId === activeChar?.userId ? 'disabled' : ''"
-                                    :disabled="doc.creatorId === activeChar?.userId"
+                                    :class="doc?.creatorId === activeChar?.userId ? 'disabled' : ''"
+                                    :disabled="doc?.creatorId === activeChar?.userId"
                                     @click="revealChangeOwner(documentId)"
                                 >
                                     <CreationIcon class="-ml-0.5 w-5 h-auto" aria-hidden="true" />

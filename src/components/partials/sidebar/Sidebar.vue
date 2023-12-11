@@ -29,6 +29,7 @@ import { type RoutesNamedLocations } from '@typed-router';
 
 const authStore = useAuthStore();
 const { accessToken, activeChar } = storeToRefs(authStore);
+
 const router = useRouter();
 const route = useRoute();
 
@@ -486,14 +487,14 @@ watch(router.currentRoute, () => updateActiveItem());
                                         </div>
                                     </li>
                                     <template v-for="(item, key) in breadcrumbs" :key="key">
-                                        <li v-if="key !== 0">
+                                        <li v-if="key !== 0 && item.to !== undefined">
                                             <div class="flex items-center">
                                                 <ChevronRightIcon
                                                     class="flex-shrink-0 w-5 h-5 text-base-400"
                                                     aria-hidden="true"
                                                 />
                                                 <NuxtLink
-                                                    :to="item.to"
+                                                    :to="item.to.path"
                                                     :class="[
                                                         key === breadcrumbs.length - 1
                                                             ? 'font-bold text-base-200'
