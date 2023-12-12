@@ -1,8 +1,8 @@
 <script lang="ts" setup>
-import { Switch, SwitchGroup, SwitchLabel } from '@headlessui/vue';
+import { Disclosure, DisclosureButton, DisclosurePanel, Switch, SwitchGroup, SwitchLabel } from '@headlessui/vue';
 import { RpcError } from '@protobuf-ts/runtime-rpc';
 import { useThrottleFn } from '@vueuse/core';
-import { LoadingIcon, TuneIcon } from 'mdi-vue3';
+import { ChevronDownIcon, LoadingIcon, TuneIcon } from 'mdi-vue3';
 import ColorInput from 'vue-color-input/dist/color-input.esm';
 import DataErrorBlock from '~/components/partials/data/DataErrorBlock.vue';
 import DataNoDataBlock from '~/components/partials/data/DataNoDataBlock.vue';
@@ -267,72 +267,106 @@ const onSubmitThrottle = useThrottleFn(async (_) => {
                                     <template v-if="jobProps.discordSyncSettings.userInfoSync">
                                         <!-- UserInfo Sync Settings -->
                                         <div class="mt-2">
-                                            <SwitchGroup
-                                                v-if="jobProps.discordSyncSettings.userInfoSyncSettings !== undefined"
+                                            <Disclosure
+                                                v-slot="{ open }"
                                                 as="div"
-                                                class="flex items-center"
+                                                class="text-neutral hover:border-neutral/70 border-neutral/20"
                                             >
-                                                <Switch
-                                                    v-model="
-                                                        jobProps.discordSyncSettings.userInfoSyncSettings.employeeRoleEnabled
-                                                    "
+                                                <DisclosureButton
                                                     :class="[
-                                                        jobProps.discordSyncSettings.userInfoSyncSettings.employeeRoleEnabled
-                                                            ? 'bg-indigo-600'
-                                                            : 'bg-gray-200',
-                                                        'relative inline-flex h-6 w-11 flex-shrink-0 cursor-pointer rounded-full border-2 border-transparent transition-colors duration-200 ease-in-out focus:outline-none focus:ring-2 focus:ring-indigo-600 focus:ring-offset-2',
+                                                        open ? 'rounded-t-lg border-b-0' : 'rounded-lg',
+                                                        'flex w-full items-start justify-between text-left border-2 p-2 border-inherit transition-colors',
                                                     ]"
                                                 >
-                                                    <span
-                                                        aria-hidden="true"
-                                                        :class="[
-                                                            jobProps.discordSyncSettings.userInfoSyncSettings
-                                                                .employeeRoleEnabled
-                                                                ? 'translate-x-5'
-                                                                : 'translate-x-0',
-                                                            'pointer-events-none inline-block h-5 w-5 transform rounded-full bg-white shadow ring-0 transition duration-200 ease-in-out',
-                                                        ]"
-                                                    />
-                                                </Switch>
-                                                <SwitchLabel as="span" class="ml-3 text-sm">
-                                                    <span class="font-medium text-gray-300">{{
-                                                        $t(
-                                                            'components.rector.job_props.user_info_sync_settings.employee_role_enabled',
-                                                        )
-                                                    }}</span>
-                                                </SwitchLabel>
-                                            </SwitchGroup>
+                                                    <span class="text-base font-semibold leading-7">
+                                                        {{ $t('components.rector.job_props.user_info_sync') }}
+                                                    </span>
+                                                    <span class="ml-6 flex h-7 items-center">
+                                                        <ChevronDownIcon
+                                                            :class="[open ? 'upsidedown' : '', 'h-6 w-6 transition-transform']"
+                                                            aria-hidden="true"
+                                                        />
+                                                    </span>
+                                                </DisclosureButton>
+                                                <DisclosurePanel
+                                                    class="px-4 pb-2 border-2 border-t-0 rounded-b-lg transition-colors border-inherit"
+                                                >
+                                                    <SwitchGroup
+                                                        v-if="jobProps.discordSyncSettings.userInfoSyncSettings !== undefined"
+                                                        as="div"
+                                                        class="flex items-center"
+                                                    >
+                                                        <Switch
+                                                            v-model="
+                                                                jobProps.discordSyncSettings.userInfoSyncSettings
+                                                                    .employeeRoleEnabled
+                                                            "
+                                                            :class="[
+                                                                jobProps.discordSyncSettings.userInfoSyncSettings
+                                                                    .employeeRoleEnabled
+                                                                    ? 'bg-indigo-600'
+                                                                    : 'bg-gray-200',
+                                                                'relative inline-flex h-6 w-11 flex-shrink-0 cursor-pointer rounded-full border-2 border-transparent transition-colors duration-200 ease-in-out focus:outline-none focus:ring-2 focus:ring-indigo-600 focus:ring-offset-2',
+                                                            ]"
+                                                        >
+                                                            <span
+                                                                aria-hidden="true"
+                                                                :class="[
+                                                                    jobProps.discordSyncSettings.userInfoSyncSettings
+                                                                        .employeeRoleEnabled
+                                                                        ? 'translate-x-5'
+                                                                        : 'translate-x-0',
+                                                                    'pointer-events-none inline-block h-5 w-5 transform rounded-full bg-white shadow ring-0 transition duration-200 ease-in-out',
+                                                                ]"
+                                                            />
+                                                        </Switch>
+                                                        <SwitchLabel as="span" class="ml-3 text-sm">
+                                                            <span class="font-medium text-gray-300">{{
+                                                                $t(
+                                                                    'components.rector.job_props.user_info_sync_settings.employee_role_enabled',
+                                                                )
+                                                            }}</span>
+                                                        </SwitchLabel>
+                                                    </SwitchGroup>
 
-                                            <div v-if="jobProps.discordSyncSettings.userInfoSyncSettings?.employeeRoleEnabled">
-                                                <label for="employeeRoleFormat">
-                                                    {{
-                                                        $t(
-                                                            'components.rector.job_props.user_info_sync_settings.employee_role_format',
-                                                        )
-                                                    }}:
-                                                </label>
-                                                <input
-                                                    v-model="
-                                                        jobProps.discordSyncSettings.userInfoSyncSettings!.employeeRoleFormat
-                                                    "
-                                                    type="text"
-                                                    name="employeeRoleFormat"
-                                                    class="block w-full rounded-md border-0 py-1.5 bg-base-700 text-neutral placeholder:text-base-200 focus:ring-2 focus:ring-inset focus:ring-base-300 sm:text-sm sm:leading-6"
-                                                    :placeholder="
-                                                        $t(
-                                                            'components.rector.job_props.user_info_sync_settings.employee_role_format',
-                                                        )
-                                                    "
-                                                    :label="
-                                                        $t(
-                                                            'components.rector.job_props.user_info_sync_settings.employee_role_format',
-                                                        )
-                                                    "
-                                                    maxlength="64"
-                                                    @focusin="focusTablet(true)"
-                                                    @focusout="focusTablet(false)"
-                                                />
-                                            </div>
+                                                    <div
+                                                        v-if="
+                                                            jobProps.discordSyncSettings.userInfoSyncSettings
+                                                                ?.employeeRoleEnabled
+                                                        "
+                                                    >
+                                                        <label for="employeeRoleFormat">
+                                                            {{
+                                                                $t(
+                                                                    'components.rector.job_props.user_info_sync_settings.employee_role_format',
+                                                                )
+                                                            }}:
+                                                        </label>
+                                                        <input
+                                                            v-model="
+                                                                jobProps.discordSyncSettings.userInfoSyncSettings!
+                                                                    .employeeRoleFormat
+                                                            "
+                                                            type="text"
+                                                            name="employeeRoleFormat"
+                                                            class="block w-full rounded-md border-0 py-1.5 bg-base-700 text-neutral placeholder:text-base-200 focus:ring-2 focus:ring-inset focus:ring-base-300 sm:text-sm sm:leading-6"
+                                                            :placeholder="
+                                                                $t(
+                                                                    'components.rector.job_props.user_info_sync_settings.employee_role_format',
+                                                                )
+                                                            "
+                                                            :label="
+                                                                $t(
+                                                                    'components.rector.job_props.user_info_sync_settings.employee_role_format',
+                                                                )
+                                                            "
+                                                            maxlength="64"
+                                                            @focusin="focusTablet(true)"
+                                                            @focusout="focusTablet(false)"
+                                                        />
+                                                    </div>
+                                                </DisclosurePanel>
+                                            </Disclosure>
                                         </div>
                                     </template>
                                 </dd>
