@@ -344,7 +344,11 @@
                 "invite_bot": "Bot einladen",
                 "last_sync": "Letzte Synchronisation",
                 "discord_sync_settings": "Discord-Synchronisation-Einstellungen",
-                "user_info_sync": "Mitarbeiter Sync (Namen und Ränge-Rollen)"
+                "user_info_sync": "Mitarbeiter Sync (Namen und Ränge-Rollen)",
+                "user_info_sync_settings": {
+                    "employee_role_enabled": "Erstelle und Verwalte Mitarbeiter Rolle",
+                    "employee_role_format": "Mitarbeiter-Rollen-Format (%s wird durch den Job Namen erstetzt)"
+                }
             },
             "role_view": {
                 "add_permission": "Berechtigung hinzufügen"
@@ -845,10 +849,6 @@
             "title": "Dokument aktualisiert!",
             "content": "Dokument wurde aktualisiert."
         },
-        "failed_loading_postals": {
-            "title": "Laden der Postleitzahlen fehlgeschlagen",
-            "content": "Postleitzahlen konnten nicht geladen werden"
-        },
         "grpc_errors": {
             "unauthenticated": {
                 "title": "Bitte erneut anmelden",
@@ -969,6 +969,10 @@
             "document_relation_mentioned": {
                 "title": "Dokument: Sie wurden erwähnt",
                 "content": "Sie wurden in Dokument \"{0}\" erwähnt. Klicke hier um zum Dokument zu gelangen."
+            },
+            "document_request_added": {
+                "title": "Dokument: Anfrage wurde erstellt",
+                "content": "Eine Anfrage an ihr Dokument \"{0}\" wurde erstellt."
             }
         },
         "templates": {
@@ -1064,6 +1068,12 @@
         "document_take_ownership": {
             "title": "Dokument-Besitzer geändert",
             "content": "Das Dokument wurde ihnen übertragen."
+        },
+        "livemap": {
+            "failed_loading_postals": {
+                "title": "Laden der Postleitzahlen fehlgeschlagen",
+                "content": "Postleitzahlen konnten nicht geladen werden"
+            }
         }
     },
     "perms": {
@@ -1626,10 +1636,10 @@
                 "ACCESS_UPDATED": "Dokument Zugriff aktualisiert",
                 "OWNER_CHANGED": "Dokument Besitzer geändert",
                 "DELETED": "Dokument gelöscht",
-                "REQUESTED_ACCESS": "Zugriff auf Dokument beanfragt | Zugriff auf Dokument",
-                "REQUESTED_CLOSURE": "Schließung des Dokument beanfragt | Schließung des Dokument",
-                "REQUESTED_UPDATE": "Aktualisierung des Dokument beanfragt | Aktualisierung des Dokument",
-                "REQUESTED_DELETION": "Löschung des Dokument beanfragt | Löschung des Dokument",
+                "REQUESTED_ACCESS": "Zugriff auf Dokument beanfragt",
+                "REQUESTED_CLOSURE": "Schließung des Dokument beanfragt",
+                "REQUESTED_UPDATE": "Aktualisierung des Dokument beanfragt",
+                "REQUESTED_DELETION": "Löschung des Dokument beanfragt",
                 "COMMENT_ADDED": "Kommentar hinzugefügt",
                 "COMMENT_UPDATED": "Kommentar aktualisiert",
                 "COMMENT_DELETED": "Kommentar gelöscht",
