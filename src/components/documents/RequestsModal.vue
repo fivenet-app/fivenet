@@ -11,7 +11,7 @@ import {
     TransitionChild,
     TransitionRoot,
 } from '@headlessui/vue';
-import { required } from '@vee-validate/rules';
+import { max, min, required } from '@vee-validate/rules';
 import { useThrottleFn } from '@vueuse/core';
 import { CheckIcon, ChevronDownIcon, CloseIcon, LoadingIcon } from 'mdi-vue3';
 import { defineRule } from 'vee-validate';
@@ -60,6 +60,8 @@ async function createDocumentAction(values: FormData): Promise<void> {
 }
 
 defineRule('required', required);
+defineRule('max', max);
+defineRule('min', min);
 
 const { handleSubmit, meta } = useForm<FormData>({
     validationSchema: {

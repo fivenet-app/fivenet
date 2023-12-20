@@ -62,7 +62,7 @@ async function deleteDocumentReq(id: string): Promise<void> {
         <DataPendingBlock v-if="pending" :message="$t('common.loading', [$t('common.request', 2)])" />
         <DataErrorBlock v-else-if="error" :title="$t('common.unable_to_load', [$t('common.request', 2)])" :retry="refresh" />
         <DataNoDataBlock
-            v-else-if="requests === null"
+            v-else-if="requests === null || requests.requests.length === 0"
             :icon="FrequentlyAskedQuestionsIcon"
             :message="$t('common.not_found', [$t('common.request', 2)])"
         />

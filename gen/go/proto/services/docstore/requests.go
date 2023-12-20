@@ -328,10 +328,12 @@ func (s *Server) DeleteDocumentReq(ctx context.Context, req *DeleteDocumentReqRe
 	defer s.auditer.Log(auditEntry, req)
 
 	request, err := s.getDocumentReq(ctx, s.db,
-		tDocRequest.ID.EQ(jet.Uint64(req.RequestId)).
-			AND(tDocRequest.DocumentID.EQ(jet.Uint64(req.RequestId))),
+		tDocRequest.ID.EQ(jet.Uint64(req.RequestId)),
 	)
 	if err != nil {
+		return nil, errswrap.NewError(errorsdocstore.ErrFailedQuery, err)
+	}
+	if request == nil {
 		return nil, errswrap.NewError(errorsdocstore.ErrFailedQuery, err)
 	}
 
@@ -376,7 +378,7 @@ func (s *Server) notifyUser(ctx context.Context, doc *documents.Document, source
 		Category: notifications.NotificationCategory_NOTIFICATION_CATEGORY_DOCUMENT,
 		Data: &notifications.Data{
 			Link: &notifications.Link{
-				To: fmt.Sprintf("/documents/%d", doc.Id),
+				To: fmt.Sprintf("/documents/%d#requests", doc.Id),
 			},
 			CausedBy: &users.UserShort{
 				UserId: sourceUserId,
