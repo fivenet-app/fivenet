@@ -849,12 +849,6 @@
             "title": "Document updated!",
             "content": "Document has been updated."
         },
-        "livemap": {
-            "failed_loading_postals": {
-                "title": "Failed to load Postal codes",
-                "content": "Postal codes couldn't be loaded"
-            }
-        },
         "grpc_errors": {
             "unauthenticated": {
                 "title": "Please login again",
@@ -1074,6 +1068,12 @@
         "document_take_ownership": {
             "title": "Document Owner changed",
             "content": "Document has been transferred to you."
+        },
+        "livemap": {
+            "failed_loading_postals": {
+                "title": "Failed to load Postal codes",
+                "content": "Postal codes couldn't be loaded"
+            }
         }
     },
     "perms": {
