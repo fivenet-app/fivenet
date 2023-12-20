@@ -160,6 +160,30 @@ message DeleteCommentRequest {
 
 message DeleteCommentResponse {}
 
+message UpdateDocumentResponse {
+  uint64 document_id = 1 [jstype = JS_STRING]; // @gotags: alias:"id"
+}
+
+message DeleteDocumentRequest {
+  uint64 document_id = 1 [jstype = JS_STRING]; // @gotags: alias:"id"
+}
+
+message DeleteDocumentResponse {}
+
+message ToggleDocumentRequest {
+  uint64 document_id = 1 [jstype = JS_STRING];
+  bool closed = 2;
+}
+
+message ToggleDocumentResponse {}
+
+message ChangeDocumentOwnerRequest {
+  uint64 document_id = 1 [jstype = JS_STRING];
+  optional int32 new_user_id = 2;
+}
+
+message ChangeDocumentOwnerResponse {}
+
 message CreateDocumentRequest {
   optional uint64 category_id = 1 [jstype = JS_STRING]; // @gotags: alias:"category_id"
   // @sanitize: method=StripTags
@@ -212,32 +236,7 @@ message UpdateDocumentRequest {
   optional resources.documents.DocumentAccess access = 10;
 }
 
-message UpdateDocumentResponse {
-  uint64 document_id = 1 [jstype = JS_STRING]; // @gotags: alias:"id"
-}
-
-message DeleteDocumentRequest {
-  uint64 document_id = 1 [jstype = JS_STRING]; // @gotags: alias:"id"
-}
-
-message DeleteDocumentResponse {}
-
-message ToggleDocumentRequest {
-  uint64 document_id = 1 [jstype = JS_STRING];
-  bool closed = 2;
-}
-
-message ToggleDocumentResponse {}
-
-message ChangeDocumentOwnerRequest {
-  uint64 document_id = 1 [jstype = JS_STRING];
-  optional int32 new_user_id = 2;
-}
-
-message ChangeDocumentOwnerResponse {}
-
-// Document Activity and Requests
-
+// Document Activity and Requests =============================================
 message ListDocumentActivityRequest {
   resources.common.database.PaginationRequest pagination = 1 [(validate.rules).message.required = true];
   uint64 document_id = 2 [jstype = JS_STRING];
@@ -287,7 +286,7 @@ message DeleteDocumentReqRequest {
 
 message DeleteDocumentReqResponse {}
 
-// Access =================================================================
+// Access =====================================================================
 message GetDocumentAccessRequest {
   uint64 document_id = 1 [jstype = JS_STRING];
 }

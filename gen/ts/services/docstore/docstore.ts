@@ -378,6 +378,65 @@ export interface DeleteCommentRequest {
 export interface DeleteCommentResponse {
 }
 /**
+ * @generated from protobuf message services.docstore.UpdateDocumentResponse
+ */
+export interface UpdateDocumentResponse {
+    /**
+     * @generated from protobuf field: uint64 document_id = 1 [jstype = JS_STRING];
+     */
+    documentId: string; // @gotags: alias:"id"
+}
+/**
+ * @generated from protobuf message services.docstore.DeleteDocumentRequest
+ */
+export interface DeleteDocumentRequest {
+    /**
+     * @generated from protobuf field: uint64 document_id = 1 [jstype = JS_STRING];
+     */
+    documentId: string; // @gotags: alias:"id"
+}
+/**
+ * @generated from protobuf message services.docstore.DeleteDocumentResponse
+ */
+export interface DeleteDocumentResponse {
+}
+/**
+ * @generated from protobuf message services.docstore.ToggleDocumentRequest
+ */
+export interface ToggleDocumentRequest {
+    /**
+     * @generated from protobuf field: uint64 document_id = 1 [jstype = JS_STRING];
+     */
+    documentId: string;
+    /**
+     * @generated from protobuf field: bool closed = 2;
+     */
+    closed: boolean;
+}
+/**
+ * @generated from protobuf message services.docstore.ToggleDocumentResponse
+ */
+export interface ToggleDocumentResponse {
+}
+/**
+ * @generated from protobuf message services.docstore.ChangeDocumentOwnerRequest
+ */
+export interface ChangeDocumentOwnerRequest {
+    /**
+     * @generated from protobuf field: uint64 document_id = 1 [jstype = JS_STRING];
+     */
+    documentId: string;
+    /**
+     * @generated from protobuf field: optional int32 new_user_id = 2;
+     */
+    newUserId?: number;
+}
+/**
+ * @generated from protobuf message services.docstore.ChangeDocumentOwnerResponse
+ */
+export interface ChangeDocumentOwnerResponse {
+}
+/**
  * @generated from protobuf message services.docstore.CreateDocumentRequest
  */
 export interface CreateDocumentRequest {
@@ -489,67 +548,8 @@ export interface UpdateDocumentRequest {
     access?: DocumentAccess;
 }
 /**
- * @generated from protobuf message services.docstore.UpdateDocumentResponse
- */
-export interface UpdateDocumentResponse {
-    /**
-     * @generated from protobuf field: uint64 document_id = 1 [jstype = JS_STRING];
-     */
-    documentId: string; // @gotags: alias:"id"
-}
-/**
- * @generated from protobuf message services.docstore.DeleteDocumentRequest
- */
-export interface DeleteDocumentRequest {
-    /**
-     * @generated from protobuf field: uint64 document_id = 1 [jstype = JS_STRING];
-     */
-    documentId: string; // @gotags: alias:"id"
-}
-/**
- * @generated from protobuf message services.docstore.DeleteDocumentResponse
- */
-export interface DeleteDocumentResponse {
-}
-/**
- * @generated from protobuf message services.docstore.ToggleDocumentRequest
- */
-export interface ToggleDocumentRequest {
-    /**
-     * @generated from protobuf field: uint64 document_id = 1 [jstype = JS_STRING];
-     */
-    documentId: string;
-    /**
-     * @generated from protobuf field: bool closed = 2;
-     */
-    closed: boolean;
-}
-/**
- * @generated from protobuf message services.docstore.ToggleDocumentResponse
- */
-export interface ToggleDocumentResponse {
-}
-/**
- * @generated from protobuf message services.docstore.ChangeDocumentOwnerRequest
- */
-export interface ChangeDocumentOwnerRequest {
-    /**
-     * @generated from protobuf field: uint64 document_id = 1 [jstype = JS_STRING];
-     */
-    documentId: string;
-    /**
-     * @generated from protobuf field: optional int32 new_user_id = 2;
-     */
-    newUserId?: number;
-}
-/**
- * @generated from protobuf message services.docstore.ChangeDocumentOwnerResponse
- */
-export interface ChangeDocumentOwnerResponse {
-}
-// Document Activity and Requests
-
-/**
+ * Document Activity and Requests =============================================
+ *
  * @generated from protobuf message services.docstore.ListDocumentActivityRequest
  */
 export interface ListDocumentActivityRequest {
@@ -678,7 +678,7 @@ export interface DeleteDocumentReqRequest {
 export interface DeleteDocumentReqResponse {
 }
 /**
- * Access =================================================================
+ * Access =====================================================================
  *
  * @generated from protobuf message services.docstore.GetDocumentAccessRequest
  */
@@ -1225,60 +1225,6 @@ class DeleteCommentResponse$Type extends MessageType<DeleteCommentResponse> {
  */
 export const DeleteCommentResponse = new DeleteCommentResponse$Type();
 // @generated message type with reflection information, may provide speed optimized methods
-class CreateDocumentRequest$Type extends MessageType<CreateDocumentRequest> {
-    constructor() {
-        super("services.docstore.CreateDocumentRequest", [
-            { no: 1, name: "category_id", kind: "scalar", opt: true, T: 4 /*ScalarType.UINT64*/ },
-            { no: 2, name: "title", kind: "scalar", T: 9 /*ScalarType.STRING*/, options: { "validate.rules": { string: { minLen: "3", maxLen: "255" } } } },
-            { no: 3, name: "content", kind: "scalar", T: 9 /*ScalarType.STRING*/, options: { "validate.rules": { string: { minLen: "20", maxBytes: "1750000" } } } },
-            { no: 4, name: "content_type", kind: "enum", T: () => ["resources.documents.DocContentType", DocContentType, "DOC_CONTENT_TYPE_"], options: { "validate.rules": { enum: { definedOnly: true } } } },
-            { no: 5, name: "data", kind: "scalar", opt: true, T: 9 /*ScalarType.STRING*/, options: { "validate.rules": { string: { maxBytes: "1000000" } } } },
-            { no: 6, name: "state", kind: "scalar", T: 9 /*ScalarType.STRING*/, options: { "validate.rules": { string: { maxLen: "24" } } } },
-            { no: 7, name: "closed", kind: "scalar", T: 8 /*ScalarType.BOOL*/ },
-            { no: 8, name: "public", kind: "scalar", T: 8 /*ScalarType.BOOL*/ },
-            { no: 9, name: "access", kind: "message", T: () => DocumentAccess },
-            { no: 10, name: "template_id", kind: "scalar", opt: true, T: 4 /*ScalarType.UINT64*/ }
-        ]);
-    }
-}
-/**
- * @generated MessageType for protobuf message services.docstore.CreateDocumentRequest
- */
-export const CreateDocumentRequest = new CreateDocumentRequest$Type();
-// @generated message type with reflection information, may provide speed optimized methods
-class CreateDocumentResponse$Type extends MessageType<CreateDocumentResponse> {
-    constructor() {
-        super("services.docstore.CreateDocumentResponse", [
-            { no: 1, name: "document_id", kind: "scalar", T: 4 /*ScalarType.UINT64*/ }
-        ]);
-    }
-}
-/**
- * @generated MessageType for protobuf message services.docstore.CreateDocumentResponse
- */
-export const CreateDocumentResponse = new CreateDocumentResponse$Type();
-// @generated message type with reflection information, may provide speed optimized methods
-class UpdateDocumentRequest$Type extends MessageType<UpdateDocumentRequest> {
-    constructor() {
-        super("services.docstore.UpdateDocumentRequest", [
-            { no: 1, name: "document_id", kind: "scalar", T: 4 /*ScalarType.UINT64*/ },
-            { no: 2, name: "category_id", kind: "scalar", opt: true, T: 4 /*ScalarType.UINT64*/ },
-            { no: 3, name: "title", kind: "scalar", T: 9 /*ScalarType.STRING*/, options: { "validate.rules": { string: { minLen: "3", maxLen: "255" } } } },
-            { no: 4, name: "content", kind: "scalar", T: 9 /*ScalarType.STRING*/, options: { "validate.rules": { string: { minLen: "20", maxBytes: "1750000" } } } },
-            { no: 5, name: "content_type", kind: "enum", T: () => ["resources.documents.DocContentType", DocContentType, "DOC_CONTENT_TYPE_"], options: { "validate.rules": { enum: { definedOnly: true } } } },
-            { no: 6, name: "data", kind: "scalar", opt: true, T: 9 /*ScalarType.STRING*/, options: { "validate.rules": { string: { maxBytes: "1000000" } } } },
-            { no: 7, name: "state", kind: "scalar", T: 9 /*ScalarType.STRING*/, options: { "validate.rules": { string: { maxLen: "24" } } } },
-            { no: 8, name: "closed", kind: "scalar", T: 8 /*ScalarType.BOOL*/ },
-            { no: 9, name: "public", kind: "scalar", T: 8 /*ScalarType.BOOL*/ },
-            { no: 10, name: "access", kind: "message", T: () => DocumentAccess }
-        ]);
-    }
-}
-/**
- * @generated MessageType for protobuf message services.docstore.UpdateDocumentRequest
- */
-export const UpdateDocumentRequest = new UpdateDocumentRequest$Type();
-// @generated message type with reflection information, may provide speed optimized methods
 class UpdateDocumentResponse$Type extends MessageType<UpdateDocumentResponse> {
     constructor() {
         super("services.docstore.UpdateDocumentResponse", [
@@ -1358,6 +1304,60 @@ class ChangeDocumentOwnerResponse$Type extends MessageType<ChangeDocumentOwnerRe
  * @generated MessageType for protobuf message services.docstore.ChangeDocumentOwnerResponse
  */
 export const ChangeDocumentOwnerResponse = new ChangeDocumentOwnerResponse$Type();
+// @generated message type with reflection information, may provide speed optimized methods
+class CreateDocumentRequest$Type extends MessageType<CreateDocumentRequest> {
+    constructor() {
+        super("services.docstore.CreateDocumentRequest", [
+            { no: 1, name: "category_id", kind: "scalar", opt: true, T: 4 /*ScalarType.UINT64*/ },
+            { no: 2, name: "title", kind: "scalar", T: 9 /*ScalarType.STRING*/, options: { "validate.rules": { string: { minLen: "3", maxLen: "255" } } } },
+            { no: 3, name: "content", kind: "scalar", T: 9 /*ScalarType.STRING*/, options: { "validate.rules": { string: { minLen: "20", maxBytes: "1750000" } } } },
+            { no: 4, name: "content_type", kind: "enum", T: () => ["resources.documents.DocContentType", DocContentType, "DOC_CONTENT_TYPE_"], options: { "validate.rules": { enum: { definedOnly: true } } } },
+            { no: 5, name: "data", kind: "scalar", opt: true, T: 9 /*ScalarType.STRING*/, options: { "validate.rules": { string: { maxBytes: "1000000" } } } },
+            { no: 6, name: "state", kind: "scalar", T: 9 /*ScalarType.STRING*/, options: { "validate.rules": { string: { maxLen: "24" } } } },
+            { no: 7, name: "closed", kind: "scalar", T: 8 /*ScalarType.BOOL*/ },
+            { no: 8, name: "public", kind: "scalar", T: 8 /*ScalarType.BOOL*/ },
+            { no: 9, name: "access", kind: "message", T: () => DocumentAccess },
+            { no: 10, name: "template_id", kind: "scalar", opt: true, T: 4 /*ScalarType.UINT64*/ }
+        ]);
+    }
+}
+/**
+ * @generated MessageType for protobuf message services.docstore.CreateDocumentRequest
+ */
+export const CreateDocumentRequest = new CreateDocumentRequest$Type();
+// @generated message type with reflection information, may provide speed optimized methods
+class CreateDocumentResponse$Type extends MessageType<CreateDocumentResponse> {
+    constructor() {
+        super("services.docstore.CreateDocumentResponse", [
+            { no: 1, name: "document_id", kind: "scalar", T: 4 /*ScalarType.UINT64*/ }
+        ]);
+    }
+}
+/**
+ * @generated MessageType for protobuf message services.docstore.CreateDocumentResponse
+ */
+export const CreateDocumentResponse = new CreateDocumentResponse$Type();
+// @generated message type with reflection information, may provide speed optimized methods
+class UpdateDocumentRequest$Type extends MessageType<UpdateDocumentRequest> {
+    constructor() {
+        super("services.docstore.UpdateDocumentRequest", [
+            { no: 1, name: "document_id", kind: "scalar", T: 4 /*ScalarType.UINT64*/ },
+            { no: 2, name: "category_id", kind: "scalar", opt: true, T: 4 /*ScalarType.UINT64*/ },
+            { no: 3, name: "title", kind: "scalar", T: 9 /*ScalarType.STRING*/, options: { "validate.rules": { string: { minLen: "3", maxLen: "255" } } } },
+            { no: 4, name: "content", kind: "scalar", T: 9 /*ScalarType.STRING*/, options: { "validate.rules": { string: { minLen: "20", maxBytes: "1750000" } } } },
+            { no: 5, name: "content_type", kind: "enum", T: () => ["resources.documents.DocContentType", DocContentType, "DOC_CONTENT_TYPE_"], options: { "validate.rules": { enum: { definedOnly: true } } } },
+            { no: 6, name: "data", kind: "scalar", opt: true, T: 9 /*ScalarType.STRING*/, options: { "validate.rules": { string: { maxBytes: "1000000" } } } },
+            { no: 7, name: "state", kind: "scalar", T: 9 /*ScalarType.STRING*/, options: { "validate.rules": { string: { maxLen: "24" } } } },
+            { no: 8, name: "closed", kind: "scalar", T: 8 /*ScalarType.BOOL*/ },
+            { no: 9, name: "public", kind: "scalar", T: 8 /*ScalarType.BOOL*/ },
+            { no: 10, name: "access", kind: "message", T: () => DocumentAccess }
+        ]);
+    }
+}
+/**
+ * @generated MessageType for protobuf message services.docstore.UpdateDocumentRequest
+ */
+export const UpdateDocumentRequest = new UpdateDocumentRequest$Type();
 // @generated message type with reflection information, may provide speed optimized methods
 class ListDocumentActivityRequest$Type extends MessageType<ListDocumentActivityRequest> {
     constructor() {

@@ -178,8 +178,8 @@ func (s *Server) CreateDocumentReq(ctx context.Context, req *CreateDocumentReqRe
 	}
 
 	// If no request of that type exists yet, create one, otherwise udpate the existing with the new requestors info
+	completed := false
 	if request == nil {
-		completed := false
 		request, err = s.addAndGetDocumentReq(ctx, s.db, &documents.DocRequest{
 			DocumentId:  doc.Id,
 			CreatorId:   &userInfo.UserId,
@@ -193,7 +193,6 @@ func (s *Server) CreateDocumentReq(ctx context.Context, req *CreateDocumentReqRe
 			return nil, errswrap.NewError(errorsdocstore.ErrFailedQuery, err)
 		}
 	} else {
-		completed := false
 		if err := s.updateDocumentReq(ctx, s.db, request.Id, &documents.DocRequest{
 			Id:          request.Id,
 			CreatedAt:   timestamp.Now(),
@@ -221,13 +220,11 @@ func (s *Server) CreateDocumentReq(ctx context.Context, req *CreateDocumentReqRe
 	}
 
 	// If the document has no creator anymore, nothing we can do here
-	/*
-		if doc.CreatorId != nil {
-			if err := s.notifyUser(ctx, doc, userInfo.UserId, int32(*doc.CreatorId)); err != nil {
-				return nil, errswrap.NewError(errorsdocstore.ErrFailedQuery, err)
-			}
+	if doc.CreatorId != nil {
+		if err := s.notifyUser(ctx, doc, userInfo.UserId, int32(*doc.CreatorId)); err != nil {
+			return nil, errswrap.NewError(errorsdocstore.ErrFailedQuery, err)
 		}
-	*/
+	}
 
 	return resp, nil
 }
@@ -368,10 +365,10 @@ func (s *Server) notifyUser(ctx context.Context, doc *documents.Document, source
 	not := &notifications.Notification{
 		UserId: targetUserId,
 		Title: &common.TranslateItem{
-			Key: "notifications.notifi.document_relation_mentioned.title",
+			Key: "notifications.notifi.document_request_added.title",
 		},
 		Content: &common.TranslateItem{
-			Key:        "notifications.notifi.document_relation_mentioned.content",
+			Key:        "notifications.notifi.document_request_added.content",
 			Parameters: []string{doc.Title},
 		},
 		Type:     &nType,

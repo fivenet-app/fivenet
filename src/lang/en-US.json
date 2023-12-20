@@ -849,9 +849,11 @@
             "title": "Document updated!",
             "content": "Document has been updated."
         },
-        "failed_loading_postals": {
-            "title": "Failed to load Postal codes",
-            "content": "Postal codes couldn't be loaded"
+        "livemap": {
+            "failed_loading_postals": {
+                "title": "Failed to load Postal codes",
+                "content": "Postal codes couldn't be loaded"
+            }
         },
         "grpc_errors": {
             "unauthenticated": {
@@ -973,6 +975,10 @@
             "document_relation_mentioned": {
                 "title": "Document: You have been mentioned",
                 "content": "You have been mentioned in \"{0}\" document. Click here to go to the document."
+            },
+            "document_request_added": {
+                "title": "Document: Request has been created",
+                "content": "A request against your \"{0}\" document has been added."
             }
         },
         "templates": {
