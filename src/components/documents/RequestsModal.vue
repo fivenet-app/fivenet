@@ -164,6 +164,7 @@ const onSubmitThrottle = useThrottleFn(async (e) => {
                                                             {{
                                                                 $t(
                                                                     `enums.docstore.DocActivityType.${DocActivityType[selectedRequestType]}`,
+                                                                    2,
                                                                 )
                                                             }}
                                                         </span>
@@ -204,6 +205,7 @@ const onSubmitThrottle = useThrottleFn(async (e) => {
                                                                         {{
                                                                             $t(
                                                                                 `enums.docstore.DocActivityType.${DocActivityType[requestType]}`,
+                                                                                2,
                                                                             )
                                                                         }}
                                                                     </span>
