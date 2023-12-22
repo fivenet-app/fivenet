@@ -73,7 +73,7 @@
         "cssnano": "^6.0.2",
         "eslint": "^8.56.0",
         "eslint-config-prettier": "^9.1.0",
-        "eslint-plugin-prettier": "^5.1.0",
+        "eslint-plugin-prettier": "^5.1.1",
         "eslint-plugin-vue": "^9.19.2",
         "i18next-scanner": "^4.4.0",
         "nuxi": "^3.10.0",
@@ -93,6 +93,6 @@
         "vite-svg-loader": "^5.1.0",
         "vue": "^3.3.13",
         "vue-router": "^4.2.5",
-        "vue-tsc": "^1.8.25"
+        "vue-tsc": "^1.8.26"
     }
 }
