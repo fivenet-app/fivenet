@@ -211,7 +211,7 @@ func (s *Server) CreateAccount(ctx context.Context, req *CreateAccountRequest) (
 	}
 
 	if acc.Username != nil || acc.Password != nil {
-		return nil, errswrap.NewError(ErrAccountExistsFailed, err)
+		return nil, ErrAccountExistsFailed
 	}
 
 	req.Username = strings.TrimSpace(req.Username)
@@ -344,7 +344,7 @@ func (s *Server) ChangeUsername(ctx context.Context, req *ChangeUsernameRequest)
 
 	// Make sure current username matches the sent current username
 	if !strings.EqualFold(*acc.Username, req.Current) {
-		return nil, errswrap.NewError(ErrBadUsername, err)
+		return nil, ErrBadUsername
 	}
 
 	req.New = strings.TrimSpace(req.New)
