@@ -54,7 +54,7 @@ require (
 	golang.org/x/exp v0.0.0-20231219180239-dc181d75b848
 	golang.org/x/oauth2 v0.15.0
 	google.golang.org/grpc v1.60.1
-	google.golang.org/protobuf v1.31.0
+	google.golang.org/protobuf v1.32.0
 	gotest.tools v2.2.0+incompatible
 	gotest.tools/v3 v3.5.1
 )
