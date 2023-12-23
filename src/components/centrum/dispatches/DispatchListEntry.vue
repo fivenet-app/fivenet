@@ -8,7 +8,7 @@ import DispatchStatusUpdateModal from '~/components/centrum/dispatches/DispatchS
 import { dispatchStatusAnimate, dispatchStatusToBGColor } from '~/components/centrum/helpers';
 import UnitInfoPopover from '~/components/centrum/units/UnitInfoPopover.vue';
 import CitizenInfoPopover from '~/components/partials/citizens/CitizenInfoPopover.vue';
-import Time from '~/components/partials/elements/Time.vue';
+import GenericTime from '~/components/partials/elements/GenericTime.vue';
 import { Dispatch, StatusDispatch } from '~~/gen/ts/resources/centrum/dispatches';
 
 const props = withDefaults(
@@ -99,7 +99,7 @@ const openMessage = ref(false);
             {{ dispatch.id }}
         </td>
         <td class="whitespace-nowrap px-1 py-1 text-sm text-gray-300">
-            <Time :value="dispatch.createdAt" type="compact" />
+            <GenericTime :value="dispatch.createdAt" type="compact" />
         </td>
         <td class="whitespace-nowrap px-1 py-1 text-sm text-gray-100" :class="dispatchBackground">
             <span :class="dispatchAnimated">

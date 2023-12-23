@@ -16,7 +16,7 @@ import {
 import DispatchStatusInfoPopover from '~/components/centrum/dispatches/DispatchStatusInfoPopover.vue';
 import UnitInfoPopover from '~/components/centrum/units/UnitInfoPopover.vue';
 import CitizenInfoPopover from '~/components/partials/citizens/CitizenInfoPopover.vue';
-import Time from '~/components/partials/elements/Time.vue';
+import GenericTime from '~/components/partials/elements/GenericTime.vue';
 import { DispatchStatus, StatusDispatch } from '~~/gen/ts/resources/centrum/dispatches';
 
 withDefaults(
@@ -56,7 +56,7 @@ withDefaults(
                 <CitizenInfoPopover v-if="item.user" text-class="font-medium text-gray-400 pl-1" :user="item.user" />
             </p>
             <span class="flex-none py-0.5 text-xs leading-5 text-gray-200">
-                <Time :value="item.createdAt" :type="'compact'" />
+                <GenericTime :value="item.createdAt" :type="'compact'" />
             </span>
         </template>
         <template v-else-if="item.status === StatusDispatch.UNASSIGNED">
@@ -80,7 +80,7 @@ withDefaults(
                 <CitizenInfoPopover v-if="item.user" text-class="font-medium text-gray-400 pl-1" :user="item.user" />
             </p>
             <span class="flex-none py-0.5 text-xs leading-5 text-gray-200">
-                <Time :value="item.createdAt" :type="'compact'" />
+                <GenericTime :value="item.createdAt" :type="'compact'" />
             </span>
         </template>
         <template v-else-if="item.status === StatusDispatch.UNIT_ASSIGNED">
@@ -104,7 +104,7 @@ withDefaults(
                 <CitizenInfoPopover v-if="item.user" text-class="font-medium text-gray-400 pl-1" :user="item.user" />
             </p>
             <span class="flex-none py-0.5 text-xs leading-5 text-gray-200">
-                <Time :value="item.createdAt" :type="'compact'" />
+                <GenericTime :value="item.createdAt" :type="'compact'" />
             </span>
         </template>
         <template v-else-if="item.status === StatusDispatch.UNIT_UNASSIGNED">
@@ -128,7 +128,7 @@ withDefaults(
                 <CitizenInfoPopover v-if="item.user" text-class="font-medium text-gray-400 pl-1" :user="item.user" />
             </p>
             <span class="flex-none py-0.5 text-xs leading-5 text-gray-200">
-                <Time :value="item.createdAt" :type="'compact'" />
+                <GenericTime :value="item.createdAt" :type="'compact'" />
             </span>
         </template>
         <template v-else-if="item.status === StatusDispatch.UNIT_ACCEPTED">
@@ -152,7 +152,7 @@ withDefaults(
                 <CitizenInfoPopover v-if="item.user" text-class="font-medium text-gray-400 pl-1" :user="item.user" />
             </p>
             <span class="flex-none py-0.5 text-xs leading-5 text-gray-200">
-                <Time :value="item.createdAt" :type="'compact'" />
+                <GenericTime :value="item.createdAt" :type="'compact'" />
             </span>
         </template>
         <template v-else-if="item.status === StatusDispatch.UNIT_DECLINED">
@@ -176,7 +176,7 @@ withDefaults(
                 <CitizenInfoPopover v-if="item.user" text-class="font-medium text-gray-400 pl-1" :user="item.user" />
             </p>
             <span class="flex-none py-0.5 text-xs leading-5 text-gray-200">
-                <Time :value="item.createdAt" :type="'compact'" />
+                <GenericTime :value="item.createdAt" :type="'compact'" />
             </span>
         </template>
         <template v-else-if="item.status === StatusDispatch.EN_ROUTE">
@@ -200,7 +200,7 @@ withDefaults(
                 <CitizenInfoPopover v-if="item.user" text-class="font-medium text-gray-400 pl-1" :user="item.user" />
             </p>
             <span class="flex-none py-0.5 text-xs leading-5 text-gray-200">
-                <Time :value="item.createdAt" :type="'compact'" />
+                <GenericTime :value="item.createdAt" :type="'compact'" />
             </span>
         </template>
         <template v-else-if="item.status === StatusDispatch.ON_SCENE">
@@ -223,7 +223,7 @@ withDefaults(
                 <CitizenInfoPopover v-if="item.user" text-class="font-medium text-gray-400 pl-1" :user="item.user" />
             </p>
             <span class="flex-none py-0.5 text-xs leading-5 text-gray-200">
-                <Time :value="item.createdAt" :type="'compact'" />
+                <GenericTime :value="item.createdAt" :type="'compact'" />
             </span>
         </template>
         <template v-else-if="item.status === StatusDispatch.NEED_ASSISTANCE">
@@ -247,7 +247,7 @@ withDefaults(
                 <CitizenInfoPopover v-if="item.user" text-class="font-medium text-gray-400 pl-1" :user="item.user" />
             </p>
             <span class="flex-none py-0.5 text-xs leading-5 text-gray-200">
-                <Time :value="item.createdAt" :type="'compact'" />
+                <GenericTime :value="item.createdAt" :type="'compact'" />
             </span>
         </template>
         <template v-else-if="item.status === StatusDispatch.COMPLETED">
@@ -270,7 +270,7 @@ withDefaults(
                 <CitizenInfoPopover v-if="item.user" text-class="font-medium text-gray-400 pl-1" :user="item.user" />
             </p>
             <span class="flex-none py-0.5 text-xs leading-5 text-gray-200">
-                <Time :value="item.createdAt" :type="'compact'" />
+                <GenericTime :value="item.createdAt" :type="'compact'" />
             </span>
         </template>
         <template v-else-if="item.status === StatusDispatch.CANCELLED">
@@ -294,7 +294,7 @@ withDefaults(
                 <CitizenInfoPopover v-if="item.user" text-class="font-medium text-gray-400 pl-1" :user="item.user" />
             </p>
             <span class="flex-none py-0.5 text-xs leading-5 text-gray-200">
-                <Time :value="item.createdAt" :type="'compact'" />
+                <GenericTime :value="item.createdAt" :type="'compact'" />
             </span>
         </template>
         <template v-else-if="item.status === StatusDispatch.ARCHIVED">
@@ -318,7 +318,7 @@ withDefaults(
                 <CitizenInfoPopover v-if="item.user" text-class="font-medium text-gray-400 pl-1" :user="item.user" />
             </p>
             <span class="flex-none py-0.5 text-xs leading-5 text-gray-200">
-                <Time :value="item.createdAt" :type="'compact'" />
+                <GenericTime :value="item.createdAt" :type="'compact'" />
             </span>
         </template>
         <template v-else>
@@ -342,7 +342,7 @@ withDefaults(
                 <CitizenInfoPopover v-if="item.user" text-class="font-medium text-gray-400 pl-1" :user="item.user" />
             </p>
             <span class="flex-none py-0.5 text-xs leading-5 text-gray-200">
-                <Time :value="item.createdAt" :type="'compact'" />
+                <GenericTime :value="item.createdAt" :type="'compact'" />
             </span>
         </template>
     </li>

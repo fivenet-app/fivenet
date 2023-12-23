@@ -4,7 +4,7 @@ import { computedAsync } from '@vueuse/core';
 import { useCentrumStore } from '~/store/centrum';
 import DispatchListEntry from '~/components/centrum/dispatches/DispatchListEntry.vue';
 import { Dispatch } from '~~/gen/ts/resources/centrum/dispatches';
-import Time from '~/components/partials/elements/Time.vue';
+import GenericTime from '~/components/partials/elements/GenericTime.vue';
 
 const props = withDefaults(
     defineProps<{
@@ -131,7 +131,7 @@ const grouped = computedAsync(async () => {
                             <template v-for="(group, idx) in grouped" :key="group.key">
                                 <tr v-if="alwaysShowDay || idx !== 0">
                                     <td class="whitespace-nowrap px-1 py-1 text-sm text-gray-300" colspan="5">
-                                        <Time :value="group.date" type="date" />
+                                        <GenericTime :value="group.date" type="date" />
                                     </td>
                                 </tr>
                                 <DispatchListEntry

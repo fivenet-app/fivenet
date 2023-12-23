@@ -1,6 +1,6 @@
 <script lang="ts" setup>
 import { RpcError } from '@protobuf-ts/runtime-rpc';
-import Cards from '~/components/partials/Cards.vue';
+import Cards from '~/components/partials/CardsList.vue';
 import DataErrorBlock from '~/components/partials/data/DataErrorBlock.vue';
 import DataNoDataBlock from '~/components/partials/data/DataNoDataBlock.vue';
 import DataPendingBlock from '~/components/partials/data/DataPendingBlock.vue';
@@ -48,7 +48,7 @@ function selected(idx: number): TemplateShort {
         <DataNoDataBlock v-else-if="templates && templates.length === 0" :type="$t('common.template', 2)" />
 
         <div v-else class="flex justify-center">
-            <Cards :items="items" :show-icon="false" @selected="$emit('selected', selected($event))" />
+            <CardsList :items="items" :show-icon="false" @selected="$emit('selected', selected($event))" />
         </div>
     </div>
 </template>

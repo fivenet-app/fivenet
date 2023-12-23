@@ -1,7 +1,7 @@
 <script lang="ts" setup>
 import { PencilIcon, TrashCanIcon } from 'mdi-vue3';
 import CitizenInfoPopover from '~/components/partials/citizens/CitizenInfoPopover.vue';
-import Time from '~/components/partials/elements/Time.vue';
+import GenericTime from '~/components/partials/elements/GenericTime.vue';
 import { ConductEntry, ConductType } from '~~/gen/ts/resources/jobs/conduct';
 import { conductTypesToBGColor, conductTypesToRingColor, conductTypesToTextColor } from '~/components/jobs/conduct/helpers';
 
@@ -20,10 +20,10 @@ const openMessage = ref(false);
 <template>
     <tr class="transition-colors hover:bg-neutral/5">
         <td class="whitespace-nowrap py-2 pl-4 pr-3 text-base font-medium text-neutral sm:pl-0">
-            <Time :value="conduct.createdAt" />
+            <GenericTime :value="conduct.createdAt" />
         </td>
         <td class="whitespace-nowrap px-1 py-1 text-left text-base font-medium text-base-200">
-            <Time v-if="conduct.expiresAt" class="font-semibold" :value="conduct.expiresAt" />
+            <GenericTime v-if="conduct.expiresAt" class="font-semibold" :value="conduct.expiresAt" />
             <span v-else>
                 {{ $t('components.jobs.conduct.List.no_expiration') }}
             </span>

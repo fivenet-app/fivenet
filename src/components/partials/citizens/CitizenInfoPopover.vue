@@ -3,7 +3,7 @@ import { Float } from '@headlessui-float/vue';
 import { Popover, PopoverButton, PopoverPanel } from '@headlessui/vue';
 import { AccountIcon } from 'mdi-vue3';
 import { User, UserShort } from '~~/gen/ts/resources/users/users';
-import PhoneNumber from '~/components/partials/citizens/PhoneNumber.vue';
+import PhoneNumberBlock from '~/components/partials/citizens/PhoneNumberBlock.vue';
 
 defineProps<{
     user: User | UserShort | undefined;
@@ -28,7 +28,7 @@ defineProps<{
                 {{ user.firstname }} {{ user.lastname }}
             </NuxtLink>
             <span v-if="user.phoneNumber">
-                <PhoneNumber v-if="user.phoneNumber" :number="user.phoneNumber" :hide-number="true" :show-label="false" />
+                <PhoneNumberBlock v-if="user.phoneNumber" :number="user.phoneNumber" :hide-number="true" :show-label="false" />
             </span>
             <slot name="after" />
         </span>
@@ -53,7 +53,7 @@ defineProps<{
                             <AccountIcon class="w-6 h-6" />
                             <span class="ml-1">{{ $t('common.profile') }}</span>
                         </NuxtLink>
-                        <PhoneNumber
+                        <PhoneNumberBlock
                             v-if="user.phoneNumber"
                             :number="user.phoneNumber"
                             :hide-number="true"

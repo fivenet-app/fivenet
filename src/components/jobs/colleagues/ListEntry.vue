@@ -1,5 +1,5 @@
 <script lang="ts" setup>
-import PhoneNumber from '~/components/partials/citizens/PhoneNumber.vue';
+import PhoneNumberBlock from '~/components/partials/citizens/PhoneNumberBlock.vue';
 import { User } from '~~/gen/ts/resources/users/users';
 
 defineProps<{
@@ -14,7 +14,7 @@ defineProps<{
         </td>
         <td class="whitespace-nowrap px-1 py-1 text-left text-base-200">{{ user.jobGradeLabel }} ({{ user.jobGrade }})</td>
         <td class="whitespace-nowrap px-1 py-1 text-left text-base-200">
-            <PhoneNumber :number="user.phoneNumber" />
+            <PhoneNumberBlock :number="user.phoneNumber" />
         </td>
         <td class="whitespace-nowrap px-1 py-1 text-left text-base-200">
             {{ user.dateofbirth }}

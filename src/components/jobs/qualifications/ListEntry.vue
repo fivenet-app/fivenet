@@ -1,6 +1,6 @@
 <script lang="ts" setup>
 import { ChevronRightIcon } from 'mdi-vue3';
-import Time from '~/components/partials/elements/Time.vue';
+import GenericTime from '~/components/partials/elements/GenericTime.vue';
 import { Qualification } from '~~/gen/ts/resources/jobs/qualifications';
 
 defineProps<{
@@ -27,7 +27,7 @@ defineProps<{
             <div class="hidden sm:flex sm:flex-col sm:items-end">
                 <p class="text-sm leading-6 text-gray-900">{{ $t('common.rank') }}: {{ qualification.jobAccess }}</p>
                 <p v-if="qualification.createdAt" class="mt-1 text-xs leading-5 text-gray-500">
-                    {{ $t('common.created_at') }} <Time :value="qualification.createdAt" />
+                    {{ $t('common.created_at') }} <GenericTime :value="qualification.createdAt" />
                 </p>
             </div>
             <ChevronRightIcon class="h-5 w-5 flex-none text-gray-400" aria-hidden="true" />

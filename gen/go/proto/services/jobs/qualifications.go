@@ -1,3 +1,3 @@
 package jobs
 
-// TODO figure out tables, functions, etc.
+// TODO figure out database tables, functions, etc., needed

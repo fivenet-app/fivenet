@@ -11,7 +11,7 @@ import UnitInfoPopover from '~/components/centrum/units/UnitInfoPopover.vue';
 import ConfirmDialog from '~/components/partials/ConfirmDialog.vue';
 import IDCopyBadge from '~/components/partials/IDCopyBadge.vue';
 import CitizenInfoPopover from '~/components/partials/citizens/CitizenInfoPopover.vue';
-import Time from '~/components/partials/elements/Time.vue';
+import GenericTime from '~/components/partials/elements/GenericTime.vue';
 import { useCentrumStore } from '~/store/centrum';
 import { useNotificatorStore } from '~/store/notificator';
 import { Dispatch, StatusDispatch, TakeDispatchResp } from '~~/gen/ts/resources/centrum/dispatches';
@@ -150,7 +150,7 @@ const openStatus = ref(false);
                                                             <dd
                                                                 class="mt-1 text-sm leading-6 text-gray-400 sm:col-span-2 sm:mt-0"
                                                             >
-                                                                <Time :value="dispatch.createdAt" />
+                                                                <GenericTime :value="dispatch.createdAt" />
                                                             </dd>
                                                         </div>
                                                         <div class="px-4 py-3 sm:grid sm:grid-cols-3 sm:gap-4 sm:px-0">
@@ -321,7 +321,7 @@ const openStatus = ref(false);
                                                             <dd
                                                                 class="mt-1 text-sm leading-6 text-gray-400 sm:col-span-2 sm:mt-0"
                                                             >
-                                                                <Time :value="dispatch.status?.createdAt" />
+                                                                <GenericTime :value="dispatch.status?.createdAt" />
                                                             </dd>
                                                         </div>
                                                         <div class="px-4 py-3 sm:grid sm:grid-cols-3 sm:gap-4 sm:px-0">

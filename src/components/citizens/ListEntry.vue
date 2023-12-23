@@ -1,6 +1,6 @@
 <script lang="ts" setup>
 import { ClipboardPlusIcon, EyeIcon } from 'mdi-vue3';
-import PhoneNumber from '~/components/partials/citizens/PhoneNumber.vue';
+import PhoneNumberBlock from '~/components/partials/citizens/PhoneNumberBlock.vue';
 import { attr } from '~/composables/can';
 import { useClipboardStore } from '~/store/clipboard';
 import { useNotificatorStore } from '~/store/notificator';
@@ -46,7 +46,7 @@ function addToClipboard(): void {
             v-if="attr('CitizenStoreService.ListCitizens', 'Fields', 'PhoneNumber')"
             class="whitespace-nowrap px-1 py-1 text-left text-base-200 text-sm"
         >
-            <PhoneNumber :number="user.phoneNumber" />
+            <PhoneNumberBlock :number="user.phoneNumber" />
         </td>
         <td class="whitespace-nowrap px-1 py-1 text-left text-base-200 text-sm">
             {{ user.dateofbirth }}

@@ -22,7 +22,7 @@ import {
 } from 'mdi-vue3';
 import { type DocActivity, DocActivityType } from '~~/gen/ts/resources/documents/activity';
 import CitizenInfoPopover from '~/components/partials/citizens/CitizenInfoPopover.vue';
-import Time from '~/components/partials/elements/Time.vue';
+import GenericTime from '~/components/partials/elements/GenericTime.vue';
 import DocUpdatedDiff from '~/components/documents/activity/DocUpdatedDiff.vue';
 
 defineProps<{
@@ -99,7 +99,7 @@ function getDocAtivityIcon(activityType: DocActivityType): DefineComponent {
                         </span>
                     </h3>
                     <p class="text-sm text-gray-400">
-                        <Time :value="entry.createdAt" type="long" />
+                        <GenericTime :value="entry.createdAt" type="long" />
                     </p>
                 </div>
                 <p class="text-sm text-gray-300 inline-flex">
@@ -129,7 +129,7 @@ function getDocAtivityIcon(activityType: DocActivityType): DefineComponent {
                                 </span>
                             </h3>
                             <p class="text-sm text-gray-400">
-                                <Time :value="entry.createdAt" type="long" />
+                                <GenericTime :value="entry.createdAt" type="long" />
                             </p>
                         </div>
                         <p class="text-sm text-gray-300 inline-flex">

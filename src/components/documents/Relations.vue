@@ -3,7 +3,7 @@ import { RpcError } from '@protobuf-ts/runtime-rpc';
 import { AccountMultipleIcon, ArrowCollapseIcon } from 'mdi-vue3';
 import CitizenInfoPopover from '~/components/partials/citizens/CitizenInfoPopover.vue';
 import DataNoDataBlock from '~/components/partials/data/DataNoDataBlock.vue';
-import Time from '~/components/partials/elements/Time.vue';
+import GenericTime from '~/components/partials/elements/GenericTime.vue';
 import { DocRelation, DocumentRelation } from '~~/gen/ts/resources/documents/documents';
 import DataErrorBlock from '~/components/partials/data/DataErrorBlock.vue';
 import DataPendingBlock from '~/components/partials/data/DataPendingBlock.vue';
@@ -90,7 +90,7 @@ async function getDocumentRelations(): Promise<DocumentRelation[]> {
                                     <span v-if="showSource" class="truncate">
                                         <CitizenInfoPopover :user="relation.sourceUser" />
                                     </span>
-                                    <Time :value="relation.createdAt" />
+                                    <GenericTime :value="relation.createdAt" />
                                 </span>
                             </span>
                         </span>
@@ -165,7 +165,7 @@ async function getDocumentRelations(): Promise<DocumentRelation[]> {
                                             </div>
                                         </td>
                                         <td class="px-6 py-4 text-sm text-right whitespace-nowrap">
-                                            <Time :value="relation.createdAt" />
+                                            <GenericTime :value="relation.createdAt" />
                                         </td>
                                     </tr>
                                 </tbody>

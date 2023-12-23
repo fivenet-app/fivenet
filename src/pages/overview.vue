@@ -1,7 +1,7 @@
 <script lang="ts" setup>
 import { AccountMultipleIcon, BriefcaseIcon, CarEmergencyIcon, CarIcon, FileDocumentMultipleIcon, MapIcon } from 'mdi-vue3';
 import FiveNetHint from '~/components/FiveNetHint.vue';
-import Cards from '~/components/partials/Cards.vue';
+import Cards from '~/components/partials/CardsList.vue';
 import ContentCenterWrapper from '~/components/partials/ContentCenterWrapper.vue';
 import { type CardElements } from '~/utils/types';
 
@@ -75,7 +75,7 @@ const features = [
 
 <template>
     <ContentCenterWrapper>
-        <Cards :items="features" />
+        <CardsList :items="features" />
         <FiveNetHint />
     </ContentCenterWrapper>
 </template>

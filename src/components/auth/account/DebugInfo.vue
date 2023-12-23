@@ -1,6 +1,6 @@
 <script lang="ts" setup>
 import { KeyIcon } from 'mdi-vue3';
-import Time from '~/components/partials/elements/Time.vue';
+import GenericTime from '~/components/partials/elements/GenericTime.vue';
 import { useAuthStore } from '~/store/auth';
 import { useClipboardStore } from '~/store/clipboard';
 import { useConfigStore } from '~/store/config';
@@ -66,8 +66,8 @@ async function resetLocalStorage(): Promise<void> {
                         {{ $t('components.debug_info.access_token_expiration') }}
                     </dt>
                     <dd class="mt-1 text-sm sm:col-span-2 sm:mt-0">
-                        <Time :value="getAccessTokenExpiration" :ago="true" />
-                        (<Time :value="getAccessTokenExpiration" type="long" />)
+                        <GenericTime :value="getAccessTokenExpiration" :ago="true" />
+                        (<GenericTime :value="getAccessTokenExpiration" type="long" />)
                     </dd>
                 </div>
                 <div class="py-4 sm:grid sm:grid-cols-3 sm:gap-4 sm:px-6 sm:py-5">

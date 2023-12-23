@@ -104,7 +104,7 @@ const onSubmitThrottle = useThrottleFn(async (e) => {
                         />
                     </div>
                     <div class="flex items-center flex-1 text-base-200">
-                        <Time class="ml-2 text-sm" :value="comment.createdAt" />
+                        <GenericTime class="ml-2 text-sm" :value="comment.createdAt" />
                     </div>
                     <div v-if="comment.deletedAt" class="flex flex-row items-center justify-center flex-1 text-base-100">
                         <TrashCanIcon type="button" class="mr-1.5 h-5 w-5 flex-shrink-0 text-base-400" aria-hidden="true" />

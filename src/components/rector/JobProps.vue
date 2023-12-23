@@ -7,7 +7,7 @@ import ColorInput from 'vue-color-input/dist/color-input.esm';
 import DataErrorBlock from '~/components/partials/data/DataErrorBlock.vue';
 import DataNoDataBlock from '~/components/partials/data/DataNoDataBlock.vue';
 import DataPendingBlock from '~/components/partials/data/DataPendingBlock.vue';
-import Time from '~/components/partials/elements/Time.vue';
+import GenericTime from '~/components/partials/elements/GenericTime.vue';
 import { useNotificatorStore } from '~/store/notificator';
 import { JobProps } from '~~/gen/ts/resources/users/jobs';
 
@@ -235,7 +235,7 @@ const onSubmitThrottle = useThrottleFn(async (_) => {
                                     </NuxtLink>
                                     <p v-if="jobProps.discordLastSync" class="mt-2 text-base text-xs">
                                         {{ $t('components.rector.job_props.last_sync') }}:
-                                        <Time :value="jobProps.discordLastSync" />
+                                        <GenericTime :value="jobProps.discordLastSync" />
                                     </p>
                                 </dd>
                             </div>

@@ -1,6 +1,6 @@
 <script lang="ts" setup>
 import { AccountGroupIcon, CarSpeedLimiterIcon, MathLogIcon, ScaleBalanceIcon, TuneIcon } from 'mdi-vue3';
-import Cards from '~/components/partials/Cards.vue';
+import Cards from '~/components/partials/CardsList.vue';
 import ContentCenterWrapper from '~/components/partials/ContentCenterWrapper.vue';
 import { type CardElements } from '~/utils/types';
 
@@ -67,6 +67,6 @@ const features = [
 
 <template>
     <ContentCenterWrapper>
-        <Cards :items="features" />
+        <CardsList :items="features" />
     </ContentCenterWrapper>
 </template>

@@ -44,7 +44,7 @@ const offset = ref(0n);
 
 const { data, pending, refresh, error } = useLazyAsyncData(`jobs-timeclock-${offset.value}`, () => listTimeclockEntries());
 
-async function listTimeclockEntries(): Promise<TimeclockListEntriesResponse> {
+async function listTimeclockEntries(): Promise<GenericTimeclockListEntriesResponse> {
     try {
         const req: TimeclockListEntriesRequest = {
             pagination: {
@@ -413,7 +413,7 @@ function updateDates(): void {
                 <div class="sm:flex sm:items-center">
                     <div class="sm:flex-auto">
                         <GenericDivider :label="$t('components.jobs.timeclock.Stats.title')" />
-                        <TimeclockStatsBlock :stats="data.stats" />
+                        <GenericTimeclockStatsBlock :stats="data.stats" />
                     </div>
                 </div>
             </div>

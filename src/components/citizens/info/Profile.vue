@@ -5,7 +5,7 @@ import CharSexBadge from '~/components/citizens/CharSexBadge.vue';
 import JobModal from '~/components/citizens/info/JobModal.vue';
 import TemplatesModal from '~/components/documents/templates/TemplatesModal.vue';
 import IDCopyBadge from '~/components/partials/IDCopyBadge.vue';
-import PhoneNumber from '~/components/partials/citizens/PhoneNumber.vue';
+import PhoneNumberBlock from '~/components/partials/citizens/PhoneNumberBlock.vue';
 import { attr } from '~/composables/can';
 import { useClipboardStore } from '~/store/clipboard';
 import { User } from '~~/gen/ts/resources/users/users';
@@ -114,7 +114,7 @@ const trafficPointsModal = ref(false);
                                                         {{ $t('common.phone_number') }}
                                                     </dt>
                                                     <dd class="mt-1 text-sm text-base-300 sm:col-span-2 sm:mt-0 sm:ml-6">
-                                                        <PhoneNumber :number="user.phoneNumber" />
+                                                        <PhoneNumberBlock :number="user.phoneNumber" />
                                                     </dd>
                                                 </div>
                                                 <div class="sm:flex sm:px-6 sm:py-5">

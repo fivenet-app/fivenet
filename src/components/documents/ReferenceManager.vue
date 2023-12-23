@@ -29,7 +29,7 @@ import {
 import { type DefineComponent } from 'vue';
 import CitizenInfoPopover from '~/components/partials/citizens/CitizenInfoPopover.vue';
 import DataNoDataBlock from '~/components/partials/data/DataNoDataBlock.vue';
-import Time from '~/components/partials/elements/Time.vue';
+import GenericTime from '~/components/partials/elements/GenericTime.vue';
 import { ClipboardDocument, getDocument, getUser, useClipboardStore } from '~/store/clipboard';
 import { DocReference, DocumentReference, DocumentShort } from '~~/gen/ts/resources/documents/documents';
 import DataPendingBlock from '~/components/partials/data/DataPendingBlock.vue';
@@ -379,7 +379,7 @@ function removeReference(id: string): void {
                                                                     </td>
                                                                     <td class="px-3 py-4 text-sm whitespace-nowrap">
                                                                         {{ $t('common.created') }}
-                                                                        <Time
+                                                                        <GenericTime
                                                                             :value="
                                                                                 new Date(Date.parse(document.createdAt ?? ''))
                                                                             "
@@ -559,7 +559,7 @@ function removeReference(id: string): void {
                                                                     </td>
                                                                     <td class="px-3 py-4 text-sm whitespace-nowrap">
                                                                         {{ $t('common.created') }}
-                                                                        <Time :value="document.createdAt" :ago="true" />
+                                                                        <GenericTime :value="document.createdAt" :ago="true" />
                                                                     </td>
                                                                     <td class="px-3 py-4 text-sm whitespace-nowrap">
                                                                         <div class="flex flex-row gap-2">

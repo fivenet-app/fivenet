@@ -1,4 +1,5 @@
 <script lang="ts" setup>
+import { type RoutesNamedLocations } from '@typed-router';
 import { Dialog, DialogPanel, Menu, MenuButton, MenuItem, MenuItems, TransitionChild, TransitionRoot } from '@headlessui/vue';
 import {
     AccountPlusIcon,
@@ -22,10 +23,9 @@ import { type DefineComponent } from 'vue';
 import QuickButtons from '~/components/partials/QuickButtons.vue';
 import FiveNetLogo from '~/components/partials/logos/FiveNetLogo.vue';
 import JobSwitcher from '~/components/partials/sidebar/JobSwitcher.vue';
-import LanguageSwitcher from '~/components/partials/sidebar/LanguageSwitcher.vue';
-import Notifications from '~/components/partials/sidebar/Notifications.vue';
+import LanguageSwitcherMenu from '~/components/partials/sidebar/LanguageSwitcherMenu.vue';
+import NotificationsButton from '~/components/partials/sidebar/NotificationsButton.vue';
 import { useAuthStore } from '~/store/auth';
-import { type RoutesNamedLocations } from '@typed-router';
 
 const authStore = useAuthStore();
 const { accessToken, activeChar } = storeToRefs(authStore);
@@ -516,8 +516,8 @@ watch(router.currentRoute, () => updateActiveItem());
                             <div v-if="activeChar" class="hidden sm:block text-sm font-medium text-base-200">
                                 {{ activeChar.firstname }}, {{ activeChar.lastname }} ({{ activeChar.jobLabel }})
                             </div>
-                            <Notifications v-if="activeChar" />
-                            <LanguageSwitcher />
+                            <NotificationsButton v-if="activeChar" />
+                            <LanguageSwitcherMenu />
 
                             <!-- Account dropdown -->
                             <Menu as="div" class="relative flex-shrink-0">

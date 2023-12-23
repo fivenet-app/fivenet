@@ -3,7 +3,7 @@ import { RpcError } from '@protobuf-ts/runtime-rpc';
 import { ArrowCollapseIcon, FileDocumentMultipleIcon } from 'mdi-vue3';
 import CitizenInfoPopover from '~/components/partials/citizens/CitizenInfoPopover.vue';
 import DataNoDataBlock from '~/components/partials/data/DataNoDataBlock.vue';
-import Time from '~/components/partials/elements/Time.vue';
+import GenericTime from '~/components/partials/elements/GenericTime.vue';
 import { DocReference, DocumentReference } from '~~/gen/ts/resources/documents/documents';
 import DataPendingBlock from '~/components/partials/data/DataPendingBlock.vue';
 import DataErrorBlock from '~/components/partials/data/DataErrorBlock.vue';
@@ -88,7 +88,7 @@ async function getDocumentReferences(): Promise<DocumentReference[]> {
                                         <span>
                                             <CitizenInfoPopover :user="reference.sourceDocument?.creator" />
                                         </span>
-                                        <Time :value="reference.createdAt" />
+                                        <GenericTime :value="reference.createdAt" />
                                     </span>
                                 </span>
                             </span>
@@ -185,7 +185,7 @@ async function getDocumentReferences(): Promise<DocumentReference[]> {
                                             </div>
                                         </td>
                                         <td class="px-6 py-4 text-sm text-right whitespace-nowrap">
-                                            <Time :value="reference.createdAt" />
+                                            <GenericTime :value="reference.createdAt" />
                                         </td>
                                     </tr>
                                 </tbody>

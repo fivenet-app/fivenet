@@ -14,7 +14,7 @@ import {
     UpdateIcon,
 } from 'mdi-vue3';
 import CitizenInfoPopover from '~/components/partials/citizens/CitizenInfoPopover.vue';
-import Time from '~/components/partials/elements/Time.vue';
+import GenericTime from '~/components/partials/elements/GenericTime.vue';
 import { Request } from '~~/gen/ts/resources/jobs/requests';
 import Comments from '~/components/jobs/requests/Comments.vue';
 
@@ -93,14 +93,14 @@ const open = ref(false);
                     <ClockStartIcon class="mr-1.5 h-5 w-5 flex-shrink-0 text-base-400" aria-hidden="true" />
                     <p>
                         {{ $t('common.begins_at') }}
-                        <Time :value="request.beginsAt" />
+                        <GenericTime :value="request.beginsAt" />
                     </p>
                 </div>
                 <div v-if="request.endsAt" class="flex flex-row items-center justify-end flex-1">
                     <ClockEndIcon class="mr-1.5 h-5 w-5 flex-shrink-0 text-base-400" aria-hidden="true" />
                     <p>
                         {{ $t('common.ends_at') }}
-                        <Time :value="request.endsAt" />
+                        <GenericTime :value="request.endsAt" />
                     </p>
                 </div>
             </div>
@@ -117,7 +117,7 @@ const open = ref(false);
                     <UpdateIcon class="mr-1.5 h-5 w-5 flex-shrink-0 text-base-400" aria-hidden="true" />
                     <p>
                         {{ $t('common.updated') }}
-                        <Time :value="request.updatedAt" :ago="true" />
+                        <GenericTime :value="request.updatedAt" :ago="true" />
                     </p>
                 </div>
             </div>
@@ -139,7 +139,7 @@ const open = ref(false);
                     <CalendarIcon class="mr-1.5 h-5 w-5 flex-shrink-0 text-base-400" aria-hidden="true" />
                     <p>
                         {{ $t('common.created_at') }}
-                        <Time :value="request.createdAt" />
+                        <GenericTime :value="request.createdAt" />
                     </p>
                 </div>
             </div>

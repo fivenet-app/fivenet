@@ -1,7 +1,7 @@
 <script lang="ts" setup>
 import { AccountPlusIcon, AccountRemoveIcon, BriefcaseIcon, CoffeeIcon, HelpIcon, PlayIcon, StopIcon } from 'mdi-vue3';
 import CitizenInfoPopover from '~/components/partials/citizens/CitizenInfoPopover.vue';
-import Time from '~/components/partials/elements/Time.vue';
+import GenericTime from '~/components/partials/elements/GenericTime.vue';
 import { StatusUnit, UnitStatus } from '~~/gen/ts/resources/centrum/units';
 import UnitInfoPopover from '~/components/centrum/units/UnitInfoPopover.vue';
 
@@ -41,7 +41,7 @@ defineProps<{
                 <CitizenInfoPopover v-if="item.user" text-class="font-medium text-gray-400 pl-1" :user="item.user" />
             </p>
             <span class="flex-none py-0.5 text-xs leading-5 text-gray-200">
-                <Time :value="item.createdAt" :type="'compact'" />
+                <GenericTime :value="item.createdAt" :type="'compact'" />
             </span>
         </template>
         <template v-else-if="item.status === StatusUnit.USER_REMOVED">
@@ -63,7 +63,7 @@ defineProps<{
                 <CitizenInfoPopover v-if="item.user" text-class="font-medium text-gray-400 pl-1" :user="item.user" />
             </p>
             <span class="flex-none py-0.5 text-xs leading-5 text-gray-200">
-                <Time :value="item.createdAt" :type="'compact'" />
+                <GenericTime :value="item.createdAt" :type="'compact'" />
             </span>
         </template>
         <template v-else-if="item.status === StatusUnit.UNAVAILABLE">
@@ -85,7 +85,7 @@ defineProps<{
                 <CitizenInfoPopover v-if="item.user" text-class="font-medium text-gray-400 pl-1" :user="item.user" />
             </p>
             <span class="flex-none py-0.5 text-xs leading-5 text-gray-200">
-                <Time :value="item.createdAt" :type="'compact'" />
+                <GenericTime :value="item.createdAt" :type="'compact'" />
             </span>
         </template>
         <template v-else-if="item.status === StatusUnit.AVAILABLE">
@@ -107,7 +107,7 @@ defineProps<{
                 <CitizenInfoPopover v-if="item.user" text-class="font-medium text-gray-400 pl-1" :user="item.user" />
             </p>
             <span class="flex-none py-0.5 text-xs leading-5 text-gray-200">
-                <Time :value="item.createdAt" :type="'compact'" />
+                <GenericTime :value="item.createdAt" :type="'compact'" />
             </span>
         </template>
         <template v-else-if="item.status === StatusUnit.ON_BREAK">
@@ -129,7 +129,7 @@ defineProps<{
                 <CitizenInfoPopover v-if="item.user" text-class="font-medium text-gray-400 pl-1" :user="item.user" />
             </p>
             <span class="flex-none py-0.5 text-xs leading-5 text-gray-200">
-                <Time :value="item.createdAt" :type="'compact'" />
+                <GenericTime :value="item.createdAt" :type="'compact'" />
             </span>
         </template>
         <template v-else-if="item.status === StatusUnit.BUSY">
@@ -151,7 +151,7 @@ defineProps<{
                 <CitizenInfoPopover v-if="item.user" text-class="font-medium text-gray-400 pl-1" :user="item.user" />
             </p>
             <span class="flex-none py-0.5 text-xs leading-5 text-gray-200">
-                <Time :value="item.createdAt" :type="'compact'" />
+                <GenericTime :value="item.createdAt" :type="'compact'" />
             </span>
         </template>
         <template v-else>
@@ -173,7 +173,7 @@ defineProps<{
                 <CitizenInfoPopover v-if="item.user" text-class="font-medium text-gray-400 pl-1" :user="item.user" />
             </p>
             <span class="flex-none py-0.5 text-xs leading-5 text-gray-200">
-                <Time :value="item.createdAt" :type="'compact'" />
+                <GenericTime :value="item.createdAt" :type="'compact'" />
             </span>
         </template>
     </li>

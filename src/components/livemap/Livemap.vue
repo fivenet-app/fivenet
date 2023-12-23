@@ -12,7 +12,7 @@ import BaseMap from '~/components/livemap/BaseMap.vue';
 import CreateOrUpdateMarkerModal from '~/components/livemap/CreateOrUpdateMarkerModal.vue';
 import PlayerAndMarkersLayer from '~/components/livemap/PlayerAndMarkersLayer.vue';
 import PostalSearch from '~/components/livemap/controls/PostalSearch.vue';
-import Settings from '~/components/livemap/controls/Settings.vue';
+import SettingsButton from '~/components/livemap/controls/SettingsButton.vue';
 import CreateOrUpdateDispatchModal from '~/components/centrum/dispatches/CreateOrUpdateDispatchModal.vue';
 
 defineProps<{
@@ -110,7 +110,7 @@ const iconAnchor: PointExpression = [livemap.value.markerSize / 2, livemap.value
             <template #default>
                 <LControl position="bottomright">
                     <div class="form-control flex flex-col gap-2">
-                        <Settings />
+                        <SettingsButton />
                     </div>
                 </LControl>
 

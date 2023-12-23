@@ -11,7 +11,7 @@ import TablePagination from '~/components/partials/elements/TablePagination.vue'
 import { useCompletorStore } from '~/store/completor';
 import { UserShort } from '~~/gen/ts/resources/users/users';
 import { ListVehiclesResponse } from '~~/gen/ts/services/dmv/vehicles';
-import ListEntry from '~/components/vehicles/ListEntry.vue';
+import VehiclesListEntry from '~/components/vehicles/VehiclesListEntry.vue';
 
 const { $grpc } = useNuxtApp();
 
@@ -264,7 +264,7 @@ watch(selectedChar, () => {
                                     </tr>
                                 </thead>
                                 <tbody class="divide-y divide-base-800">
-                                    <ListEntry
+                                    <VehiclesListEntry
                                         v-for="vehicle in data?.vehicles"
                                         :key="vehicle.plate"
                                         :vehicle="vehicle"

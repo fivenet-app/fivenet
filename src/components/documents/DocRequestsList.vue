@@ -4,7 +4,7 @@ import { Menu, MenuButton, MenuItem, MenuItems } from '@headlessui/vue';
 import { CheckBoldIcon, CloseThickIcon, FrequentlyAskedQuestionsIcon, MenuIcon, TrashCanIcon } from 'mdi-vue3';
 import { DocActivityType } from '~~/gen/ts/resources/documents/activity';
 import type { ListDocumentReqsResponse } from '~~/gen/ts/services/docstore/docstore';
-import Time from '~/components/partials/elements/Time.vue';
+import GenericTime from '~/components/partials/elements/GenericTime.vue';
 import CitizenInfoPopover from '~/components/partials/citizens/CitizenInfoPopover.vue';
 import DataErrorBlock from '~/components/partials/data/DataErrorBlock.vue';
 import DataNoDataBlock from '~/components/partials/data/DataNoDataBlock.vue';
@@ -147,11 +147,11 @@ async function deleteDocumentReq(id: string): Promise<void> {
                             </div>
                             <div>
                                 {{ $t('common.created') }}
-                                <Time :value="request.createdAt" :ago="true" />
+                                <GenericTime :value="request.createdAt" :ago="true" />
                             </div>
                             <div v-if="request.updatedAt">
                                 {{ $t('common.updated') }}
-                                <Time :value="request.updatedAt" :ago="true" />
+                                <GenericTime :value="request.updatedAt" :ago="true" />
                             </div>
                         </div>
                         <div class="flex items-center gap-2">

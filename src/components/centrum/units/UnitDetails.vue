@@ -6,7 +6,7 @@ import UnitAssignUsersModal from '~/components/centrum/units/UnitAssignUsersModa
 import UnitFeed from '~/components/centrum/units/UnitFeed.vue';
 import UnitStatusUpdateModal from '~/components/centrum/units/UnitStatusUpdateModal.vue';
 import CitizenInfoPopover from '~/components/partials/citizens/CitizenInfoPopover.vue';
-import Time from '~/components/partials/elements/Time.vue';
+import GenericTime from '~/components/partials/elements/GenericTime.vue';
 import { StatusUnit, Unit } from '~~/gen/ts/resources/centrum/units';
 
 const props = defineProps<{
@@ -80,7 +80,7 @@ const openStatus = ref(false);
                                                             <dd
                                                                 class="mt-1 text-sm leading-6 text-gray-400 sm:col-span-2 sm:mt-0"
                                                             >
-                                                                <Time :value="unit.status?.createdAt" />
+                                                                <GenericTime :value="unit.status?.createdAt" />
                                                             </dd>
                                                         </div>
                                                         <div class="px-4 py-3 sm:grid sm:grid-cols-3 sm:gap-4 sm:px-0">

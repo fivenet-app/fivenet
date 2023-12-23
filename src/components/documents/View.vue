@@ -26,7 +26,7 @@ import CitizenInfoPopover from '~/components/partials/citizens/CitizenInfoPopove
 import DataErrorBlock from '~/components/partials/data/DataErrorBlock.vue';
 import DataNoDataBlock from '~/components/partials/data/DataNoDataBlock.vue';
 import DataPendingBlock from '~/components/partials/data/DataPendingBlock.vue';
-import Time from '~/components/partials/elements/Time.vue';
+import GenericTime from '~/components/partials/elements/GenericTime.vue';
 import { useClipboardStore } from '~/store/clipboard';
 import { useNotificatorStore } from '~/store/notificator';
 import { AccessLevel, DocumentAccess } from '~~/gen/ts/resources/documents/access';
@@ -357,7 +357,7 @@ if (hash.value !== undefined && hash.value !== null) {
                                 <CalendarIcon class="w-5 h-auto" aria-hidden="true" />
                                 <span class="text-sm font-medium text-base-700">
                                     {{ $t('common.created_at') }}
-                                    <Time :value="doc.createdAt" type="long" />
+                                    <GenericTime :value="doc.createdAt" type="long" />
                                 </span>
                             </div>
                             <div
@@ -367,7 +367,7 @@ if (hash.value !== undefined && hash.value !== null) {
                                 <CalendarEditIcon class="w-5 h-auto" aria-hidden="true" />
                                 <span class="text-sm font-medium text-base-700">
                                     {{ $t('common.updated_at') }}
-                                    <Time :value="doc.updatedAt" type="long" />
+                                    <GenericTime :value="doc.updatedAt" type="long" />
                                 </span>
                             </div>
                             <div

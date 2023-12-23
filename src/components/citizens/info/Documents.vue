@@ -6,7 +6,7 @@ import DataErrorBlock from '~/components/partials/data/DataErrorBlock.vue';
 import DataNoDataBlock from '~/components/partials/data/DataNoDataBlock.vue';
 import DataPendingBlock from '~/components/partials/data/DataPendingBlock.vue';
 import TablePagination from '~/components/partials/elements/TablePagination.vue';
-import Time from '~/components/partials/elements/Time.vue';
+import GenericTime from '~/components/partials/elements/GenericTime.vue';
 import { DocRelation } from '~~/gen/ts/resources/documents/documents';
 import { ListUserDocumentsResponse } from '~~/gen/ts/services/docstore/docstore';
 
@@ -142,7 +142,7 @@ watch(offset, async () => refresh());
                                                         {{ relation.sourceUser?.firstname }},
                                                         {{ relation.sourceUser?.lastname }}
                                                     </span>
-                                                    <Time :value="relation.createdAt" :ago="true" />
+                                                    <GenericTime :value="relation.createdAt" :ago="true" />
                                                 </span>
                                             </span>
                                             <ChevronRightIcon class="flex-shrink-0 w-5 h-5 text-base-200" aria-hidden="true" />
@@ -240,7 +240,7 @@ watch(offset, async () => refresh());
                                                             </span>
                                                         </td>
                                                         <td class="px-6 py-4 text-sm text-right whitespace-nowrap">
-                                                            <Time :value="relation.createdAt" />
+                                                            <GenericTime :value="relation.createdAt" />
                                                         </td>
                                                         <td class="hidden px-6 py-4 text-sm whitespace-nowrap md:block">
                                                             <div class="flex">

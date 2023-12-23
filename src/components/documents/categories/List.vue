@@ -1,7 +1,7 @@
 <script lang="ts" setup>
 import { RpcError } from '@protobuf-ts/runtime-rpc';
 import { TagIcon } from 'mdi-vue3';
-import Cards from '~/components/partials/Cards.vue';
+import Cards from '~/components/partials/CardsList.vue';
 import DataErrorBlock from '~/components/partials/data/DataErrorBlock.vue';
 import DataNoDataBlock from '~/components/partials/data/DataNoDataBlock.vue';
 import DataPendingBlock from '~/components/partials/data/DataPendingBlock.vue';
@@ -84,7 +84,7 @@ async function openCategory(idx: number): Promise<void> {
                             :type="$t('common.category', 2)"
                         />
                         <div v-else class="flex justify-center">
-                            <Cards :items="items" :show-icon="true" @selected="openCategory($event)" />
+                            <CardsList :items="items" :show-icon="true" @selected="openCategory($event)" />
                         </div>
                     </div>
                 </div>

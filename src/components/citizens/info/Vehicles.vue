@@ -1,5 +1,5 @@
 <script lang="ts" setup>
-import List from '~/components/vehicles/List.vue';
+import List from '~/components/vehicles/VehiclesList.vue';
 
 defineProps<{
     userId: number;

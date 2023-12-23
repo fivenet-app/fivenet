@@ -8,7 +8,7 @@ import ConfirmDialog from '~/components/partials/ConfirmDialog.vue';
 import CitizenInfoPopover from '~/components/partials/citizens/CitizenInfoPopover.vue';
 import { useAuthStore } from '~/store/auth';
 import { Comment } from '~~/gen/ts/resources/documents/comment';
-import Time from '~/components/partials/elements/Time.vue';
+import GenericTime from '~/components/partials/elements/GenericTime.vue';
 
 const { $grpc } = useNuxtApp();
 const authStore = useAuthStore();
@@ -115,7 +115,7 @@ const onSubmitThrottle = useThrottleFn(async (e) => {
                         />
                     </div>
                     <div class="flex items-center flex-1 text-base-200">
-                        <Time class="ml-2 text-sm" :value="comment.createdAt" />
+                        <GenericTime class="ml-2 text-sm" :value="comment.createdAt" />
                     </div>
                     <div v-if="comment.deletedAt" class="flex flex-row items-center justify-center flex-1 text-base-100">
                         <TrashCanIcon type="button" class="mr-1.5 h-5 w-5 flex-shrink-0 text-base-400" aria-hidden="true" />

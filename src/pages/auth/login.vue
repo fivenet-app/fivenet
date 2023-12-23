@@ -1,10 +1,14 @@
 <script lang="ts" setup>
-import Login from '~/components/auth/Login.vue';
+import { type NavigationFailure } from 'vue-router';
+import type { TypedRouteFromName } from '@typed-router';
 import ContentCenterWrapper from '~/components/partials/ContentCenterWrapper.vue';
 import PageFooter from '~/components/partials/PageFooter.vue';
 import HeroFull from '~/components/partials/HeroFull.vue';
 import { useAuthStore } from '~/store/auth';
 import { useNotificatorStore } from '~/store/notificator';
+import ForgotPasswordForm from '~/components/auth/ForgotPasswordForm.vue';
+import LoginForm from '~/components/auth/LoginForm.vue';
+import FormWrapper from '~/components/auth/FormWrapper.vue';
 
 useHead({
     title: 'components.auth.login.title',
@@ -17,8 +21,13 @@ definePageMeta({
 
 const authStore = useAuthStore();
 const { setAccessToken } = authStore;
+const { accessToken } = storeToRefs(authStore);
+
 const notifications = useNotificatorStore();
+
 const route = useRoute();
+
+const showLogin = ref(true);
 
 onMounted(async () => {
     const query = route.query;
@@ -45,15 +54,31 @@ onMounted(async () => {
         });
     }
 });
+
+watch(accessToken, async (): Promise<NavigationFailure | TypedRouteFromName<'auth-character-selector'> | void | undefined> => {
+    if (accessToken.value === null) {
+        return;
+    }
+
+    return await navigateTo({
+        name: 'auth-character-selector',
+        query: route.query,
+    });
+});
 </script>
 
 <template>
     <div class="h-full justify-between flex flex-col">
         <HeroFull>
             <ContentCenterWrapper>
-                <Login />
+                <FormWrapper>
+                    <template #default>
+                        <component :is="showLogin ? LoginForm : ForgotPasswordForm" @toggle="showLogin = !showLogin" />
+                    </template>
+                </FormWrapper>
             </ContentCenterWrapper>
         </HeroFull>
+
         <PageFooter />
     </div>
 </template>

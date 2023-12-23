@@ -2,7 +2,7 @@
 import { AccountIcon, BriefcaseIcon, CalendarIcon, LockIcon, LockOpenVariantIcon, TrashCanIcon, UpdateIcon } from 'mdi-vue3';
 import IDCopyBadge from '~/components/partials/IDCopyBadge.vue';
 import CitizenInfoPopover from '~/components/partials/citizens/CitizenInfoPopover.vue';
-import Time from '~/components/partials/elements/Time.vue';
+import GenericTime from '~/components/partials/elements/GenericTime.vue';
 import { DocumentShort } from '~~/gen/ts/resources/documents/documents';
 
 defineProps<{
@@ -72,7 +72,7 @@ defineProps<{
                         <UpdateIcon class="mr-1.5 h-5 w-5 flex-shrink-0 text-base-400" aria-hidden="true" />
                         <p>
                             {{ $t('common.updated') }}
-                            <Time :value="doc.updatedAt" :ago="true" />
+                            <GenericTime :value="doc.updatedAt" :ago="true" />
                         </p>
                     </div>
                 </div>
@@ -92,7 +92,7 @@ defineProps<{
                         <CalendarIcon class="mr-1.5 h-5 w-5 flex-shrink-0 text-base-400" aria-hidden="true" />
                         <p>
                             {{ $t('common.created_at') }}
-                            <Time :value="doc.createdAt" />
+                            <GenericTime :value="doc.createdAt" />
                         </p>
                     </div>
                 </div>

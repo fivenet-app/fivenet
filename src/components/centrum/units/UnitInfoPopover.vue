@@ -2,7 +2,7 @@
 import { Float } from '@headlessui-float/vue';
 import { Popover, PopoverButton, PopoverPanel } from '@headlessui/vue';
 import { TimerIcon } from 'mdi-vue3';
-import PhoneNumber from '~/components/partials/citizens/PhoneNumber.vue';
+import PhoneNumberBlock from '~/components/partials/citizens/PhoneNumberBlock.vue';
 import { useCentrumStore } from '~/store/centrum';
 import { DispatchAssignment } from '~~/gen/ts/resources/centrum/dispatches';
 import { Unit } from '~~/gen/ts/resources/centrum/units';
@@ -51,7 +51,7 @@ withDefaults(
                                 {{ unit.initials }}
                             </template>
                             <template v-if="assignment?.expiresAt">
-                                <TimerIcon class="ml-0.5 h-5 w-5 fill-warn-600" />
+                                <GenericTimerIcon class="ml-0.5 h-5 w-5 fill-warn-600" />
                             </template>
                         </span>
                     </template>
@@ -87,7 +87,7 @@ withDefaults(
                         <li v-for="user in unit.users" :key="user.userId" class="inline-flex items-center">
                             {{ user.user?.firstname }}
                             {{ user.user?.lastname }}
-                            <PhoneNumber class="ml-0.5" :number="user.user?.phoneNumber" :hide-number="true" />
+                            <PhoneNumberBlock class="ml-0.5" :number="user.user?.phoneNumber" :hide-number="true" />
                         </li>
                     </ul>
                 </div>

@@ -3,7 +3,7 @@ import { LIcon, LMarker, LPopup } from '@vue-leaflet/vue-leaflet';
 import { type PointExpression } from 'leaflet';
 import { AccountIcon, GroupIcon, MapMarkerIcon } from 'mdi-vue3';
 import UnitDetails from '~/components//centrum/units/UnitDetails.vue';
-import PhoneNumber from '~/components/partials/citizens/PhoneNumber.vue';
+import PhoneNumberBlock from '~/components/partials/citizens/PhoneNumberBlock.vue';
 import { UserMarker } from '~~/gen/ts/resources/livemap/livemap';
 import { User } from '~~/gen/ts/resources/users/users';
 import { unitStatusToBGColor } from '~/components/centrum/helpers';
@@ -94,7 +94,7 @@ const openUnit = ref(false);
                     <AccountIcon class="w-6 h-6" />
                     <span class="ml-1">{{ $t('common.profile') }}</span>
                 </NuxtLink>
-                <PhoneNumber
+                <PhoneNumberBlock
                     v-if="marker.user?.phoneNumber"
                     :number="marker.user?.phoneNumber"
                     :hide-number="true"

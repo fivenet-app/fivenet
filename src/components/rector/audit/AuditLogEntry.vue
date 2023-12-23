@@ -3,7 +3,7 @@ import { ClipboardPlusIcon } from 'mdi-vue3';
 import VueJsonPretty from 'vue-json-pretty';
 import 'vue-json-pretty/lib/styles.css';
 import CitizenInfoPopover from '~/components/partials/citizens/CitizenInfoPopover.vue';
-import Time from '~/components/partials/elements/Time.vue';
+import GenericTime from '~/components/partials/elements/GenericTime.vue';
 import { useNotificatorStore } from '~/store/notificator';
 import { AuditEntry, EventType } from '~~/gen/ts/resources/rector/audit';
 
@@ -54,7 +54,7 @@ ${jsonStringify(jsonParse(props.log.data!), 2)}
             {{ log.id }}
         </td>
         <td class="whitespace-nowrap py-2 pl-4 pr-3 text-sm font-medium text-neutral sm:pl-0">
-            <Time :value="log.createdAt" type="long" />
+            <GenericTime :value="log.createdAt" type="long" />
         </td>
         <td class="whitespace-nowrap py-2 pl-4 pr-3 text-sm font-medium text-neutral sm:pl-0">
             <CitizenInfoPopover :user="log.user" />

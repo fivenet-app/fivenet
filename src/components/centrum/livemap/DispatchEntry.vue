@@ -2,7 +2,7 @@
 import { CarEmergencyIcon } from 'mdi-vue3';
 import DispatchDetails from '~/components/centrum/dispatches/DispatchDetails.vue';
 import { dispatchStatusToBGColor } from '~/components/centrum/helpers';
-import Time from '~/components/partials/elements/Time.vue';
+import GenericTime from '~/components/partials/elements/GenericTime.vue';
 import { Dispatch, StatusDispatch } from '~~/gen/ts/resources/centrum/dispatches';
 
 defineProps<{
@@ -69,7 +69,7 @@ const openDetails = ref(false);
             <span class="">
                 <span class="font-semibold">{{ $t('common.sent_at') }}</span
                 >:
-                <Time :value="dispatch.createdAt" type="compact" />
+                <GenericTime :value="dispatch.createdAt" type="compact" />
             </span>
         </button>
     </li>
