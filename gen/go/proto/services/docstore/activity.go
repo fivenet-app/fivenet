@@ -71,7 +71,7 @@ func (s *Server) ListDocumentActivity(ctx context.Context, req *ListDocumentActi
 		return nil, errswrap.NewError(errorsdocstore.ErrFailedQuery, err)
 	}
 	if !ok {
-		return nil, errswrap.NewError(errorsdocstore.ErrDocViewDenied, err)
+		return nil, errorsdocstore.ErrDocViewDenied
 	}
 
 	tDocActivity := table.FivenetDocumentsActivity.AS("doc_activity")

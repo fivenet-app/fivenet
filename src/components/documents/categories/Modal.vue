@@ -216,9 +216,9 @@ const onSubmitThrottle = useThrottleFn(async (e) => {
                                         </div>
                                     </div>
                                 </div>
-                                <div class="mt-5 sm:mt-6 sm:grid sm:grid-flow-row-dense sm:grid-cols-3 sm:gap-3">
+                                <div class="mt-5 sm:mt-6 sm:flex sm:gap-3">
                                     <button
-                                        v-if="can('DocStoreService.DeleteCategory')"
+                                        v-if="category !== undefined && can('DocStoreService.DeleteCategory')"
                                         type="button"
                                         class="flex justify-center w-full rounded-md px-3 py-2 text-sm font-semibold text-neutral shadow-sm focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2"
                                         :disabled="!meta.valid || !canSubmit"
@@ -247,7 +247,7 @@ const onSubmitThrottle = useThrottleFn(async (e) => {
                                         <template v-if="!canSubmit">
                                             <LoadingIcon class="animate-spin h-5 w-5 mr-2" />
                                         </template>
-                                        {{ $t('common.update') }}
+                                        {{ category === undefined ? $t('common.create') : $t('common.update') }}
                                     </button>
                                     <button
                                         type="button"

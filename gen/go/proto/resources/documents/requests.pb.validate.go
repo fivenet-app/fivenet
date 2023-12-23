@@ -88,6 +88,35 @@ func (m *DocRequest) validate(all bool) error {
 		}
 	}
 
+	if all {
+		switch v := interface{}(m.GetUpdatedAt()).(type) {
+		case interface{ ValidateAll() error }:
+			if err := v.ValidateAll(); err != nil {
+				errors = append(errors, DocRequestValidationError{
+					field:  "UpdatedAt",
+					reason: "embedded message failed validation",
+					cause:  err,
+				})
+			}
+		case interface{ Validate() error }:
+			if err := v.Validate(); err != nil {
+				errors = append(errors, DocRequestValidationError{
+					field:  "UpdatedAt",
+					reason: "embedded message failed validation",
+					cause:  err,
+				})
+			}
+		}
+	} else if v, ok := interface{}(m.GetUpdatedAt()).(interface{ Validate() error }); ok {
+		if err := v.Validate(); err != nil {
+			return DocRequestValidationError{
+				field:  "UpdatedAt",
+				reason: "embedded message failed validation",
+				cause:  err,
+			}
+		}
+	}
+
 	// no validation rules for DocumentId
 
 	if _, ok := _DocRequest_RequestType_InLookup[m.GetRequestType()]; !ok {
@@ -208,8 +237,8 @@ func (m *DocRequest) validate(all bool) error {
 
 	}
 
-	if m.Completed != nil {
-		// no validation rules for Completed
+	if m.Accepted != nil {
+		// no validation rules for Accepted
 	}
 
 	if len(errors) > 0 {

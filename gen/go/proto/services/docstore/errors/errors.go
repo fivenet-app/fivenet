@@ -36,4 +36,5 @@ var (
 	ErrCommentDeleteDenied = status.Error(codes.PermissionDenied, "errors.DocStoreService.ErrCommentDeleteDenied")
 
 	ErrDocReqAlreadyCreated = status.Error(codes.InvalidArgument, "errors.DocStoreService.ErrDocReqAlreadyCreated.title;errors.DocStoreService.ErrDocReqAlreadyCreated.content")
+	ErrDocReqOwnDoc         = status.Error(codes.InvalidArgument, "errors.DocStoreService.ErrDocReqOwnDoc")
 )

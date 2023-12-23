@@ -683,7 +683,7 @@ defineRule('min', min);
 const { handleSubmit, values, setFieldValue, meta } = useForm<FormData>({
     validationSchema: {
         title: { required: true, min: 3, max: 255 },
-        state: { required: false, min: 2, max: 24 },
+        state: { required: false, min: 2, max: 32 },
     },
     initialValues: {
         public: false,

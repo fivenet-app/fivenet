@@ -93,7 +93,9 @@ export const useNotificatorStore = defineStore('notifications', {
                 );
 
                 for await (const resp of call.responses) {
-                    if (resp.lastId > this.getLastId) this.setLastId(resp.lastId);
+                    if (resp.lastId > this.getLastId) {
+                        this.setLastId(resp.lastId);
+                    }
 
                     if (resp.data.oneofKind !== undefined) {
                         if (resp.data.oneofKind === 'token') {
@@ -132,8 +134,11 @@ export const useNotificatorStore = defineStore('notifications', {
                                 switch (n.category) {
                                     default: {
                                         const not: NotificationConfig = {
-                                            title: { key: n.title.key },
-                                            content: { key: n.content.key },
+                                            title: { key: n.title.key, parameters: n.title.parameters },
+                                            content: {
+                                                key: n.content.key,
+                                                parameters: n.content.parameters,
+                                            },
                                             type: nType,
                                             category: n.category,
                                             data: n.data,
@@ -145,6 +150,7 @@ export const useNotificatorStore = defineStore('notifications', {
                                                     navigateTo(n.data!.link!.to, { external: true });
                                                 };
                                             } else {
+                                                // @ts-expect-error route from a notification is a string
                                                 const route = useRouter().resolve(n.data!.link!.to);
 
                                                 not.onClick = async () => {

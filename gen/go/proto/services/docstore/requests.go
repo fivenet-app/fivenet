@@ -42,7 +42,7 @@ func (s *Server) ListDocumentReqs(ctx context.Context, req *ListDocumentReqsRequ
 		return nil, errswrap.NewError(errorsdocstore.ErrFailedQuery, err)
 	}
 	if !ok {
-		return nil, errswrap.NewError(errorsdocstore.ErrDocViewDenied, err)
+		return nil, errorsdocstore.ErrDocViewDenied
 	}
 
 	condition := tDocRequest.DocumentID.EQ(jet.Uint64(req.DocumentId))
@@ -76,13 +76,14 @@ func (s *Server) ListDocumentReqs(ctx context.Context, req *ListDocumentReqsRequ
 		SELECT(
 			tDocRequest.ID,
 			tDocRequest.CreatedAt,
+			tDocRequest.UpdatedAt,
 			tDocRequest.DocumentID,
 			tDocRequest.RequestType,
 			tDocRequest.CreatorID,
 			tDocRequest.CreatorJob,
 			tDocRequest.Reason,
 			tDocRequest.Data,
-			tDocRequest.Completed,
+			tDocRequest.Accepted,
 			tCreator.ID,
 			tCreator.Identifier,
 			tCreator.Job,
@@ -138,7 +139,7 @@ func (s *Server) CreateDocumentReq(ctx context.Context, req *CreateDocumentReqRe
 		return nil, errswrap.NewError(errorsdocstore.ErrFailedQuery, err)
 	}
 	if !ok {
-		return nil, errswrap.NewError(errorsdocstore.ErrDocViewDenied, err)
+		return nil, errorsdocstore.ErrDocViewDenied
 	}
 
 	doc, err := s.getDocument(ctx, tDocument.ID.EQ(jet.Uint64(req.DocumentId)), userInfo)
@@ -154,6 +155,11 @@ func (s *Server) CreateDocumentReq(ctx context.Context, req *CreateDocumentReqRe
 	if err != nil {
 		return nil, errswrap.NewError(errorsdocstore.ErrFailedQuery, err)
 	}
+
+	if request.CreatorId != nil && *request.CreatorId == userInfo.UserId {
+		return nil, errorsdocstore.ErrFailedQuery
+	}
+
 	// If a request of that type already exists, make sure that we let the user know
 	if request != nil && request.CreatedAt != nil && time.Since(request.CreatedAt.AsTime()) > DocRequestMinimumWaitTime {
 		return nil, errswrap.NewError(errorsdocstore.ErrDocReqAlreadyCreated, err)
@@ -178,7 +184,6 @@ func (s *Server) CreateDocumentReq(ctx context.Context, req *CreateDocumentReqRe
 	}
 
 	// If no request of that type exists yet, create one, otherwise udpate the existing with the new requestors info
-	completed := false
 	if request == nil {
 		request, err = s.addAndGetDocumentReq(ctx, s.db, &documents.DocRequest{
 			DocumentId:  doc.Id,
@@ -187,22 +192,23 @@ func (s *Server) CreateDocumentReq(ctx context.Context, req *CreateDocumentReqRe
 			RequestType: req.RequestType,
 			Reason:      req.Reason,
 			Data:        &documents.DocActivityData{},
-			Completed:   &completed,
 		})
 		if err != nil {
 			return nil, errswrap.NewError(errorsdocstore.ErrFailedQuery, err)
 		}
 	} else {
+		accepted := false
 		if err := s.updateDocumentReq(ctx, s.db, request.Id, &documents.DocRequest{
 			Id:          request.Id,
 			CreatedAt:   timestamp.Now(),
+			UpdatedAt:   nil,
 			DocumentId:  doc.Id,
 			CreatorId:   &userInfo.UserId,
 			CreatorJob:  userInfo.Job,
 			RequestType: req.RequestType,
 			Reason:      req.Reason,
 			Data:        &documents.DocActivityData{},
-			Completed:   &completed,
+			Accepted:    &accepted,
 		}); err != nil {
 			return nil, errswrap.NewError(errorsdocstore.ErrFailedQuery, err)
 		}
@@ -248,13 +254,25 @@ func (s *Server) UpdateDocumentReq(ctx context.Context, req *UpdateDocumentReqRe
 	if err != nil {
 		return nil, errswrap.NewError(errorsdocstore.ErrFailedQuery, err)
 	}
+	if request == nil {
+		return nil, errorsdocstore.ErrFailedQuery
+	}
 
-	ok, err := s.checkIfUserHasAccessToDoc(ctx, request.DocumentId, userInfo, documents.AccessLevel_ACCESS_LEVEL_VIEW)
+	ok, err := s.checkIfUserHasAccessToDoc(ctx, request.DocumentId, userInfo, documents.AccessLevel_ACCESS_LEVEL_EDIT)
 	if err != nil {
 		return nil, errswrap.NewError(errorsdocstore.ErrFailedQuery, err)
 	}
 	if !ok {
-		return nil, errswrap.NewError(errorsdocstore.ErrDocViewDenied, err)
+		return nil, errorsdocstore.ErrDocViewDenied
+	}
+
+	doc, err := s.getDocument(ctx, tDocument.ID.EQ(jet.Uint64(req.DocumentId)), userInfo)
+	if err != nil {
+		return nil, errswrap.NewError(errorsdocstore.ErrFailedQuery, err)
+	}
+
+	if (doc.CreatorId != nil && *doc.CreatorId != userInfo.UserId) && !userInfo.SuperUser {
+		return nil, errorsdocstore.ErrDocUpdateDenied
 	}
 
 	// Begin transaction
@@ -265,8 +283,9 @@ func (s *Server) UpdateDocumentReq(ctx context.Context, req *UpdateDocumentReqRe
 	// Defer a rollback in case anything fails
 	defer tx.Rollback()
 
-	completed := req.Accepted
-	request.Completed = &completed
+	accepted := req.Accepted
+	request.Accepted = &accepted
+	request.UpdatedAt = timestamp.Now()
 	if err := s.updateDocumentReq(ctx, tx, request.Id, request); err != nil {
 		return nil, errswrap.NewError(errorsdocstore.ErrFailedQuery, err)
 	}
@@ -277,19 +296,55 @@ func (s *Server) UpdateDocumentReq(ctx context.Context, req *UpdateDocumentReqRe
 		switch request.RequestType {
 		case documents.DocActivityType_DOC_ACTIVITY_TYPE_REQUESTED_CLOSURE:
 			activityType = documents.DocActivityType_DOC_ACTIVITY_TYPE_STATUS_CLOSED
+
+			if _, err := s.ToggleDocument(ctx, &ToggleDocumentRequest{
+				DocumentId: request.DocumentId,
+				Closed:     true,
+			}); err != nil {
+				return nil, err
+			}
+
 		case documents.DocActivityType_DOC_ACTIVITY_TYPE_REQUESTED_OPENING:
 			activityType = documents.DocActivityType_DOC_ACTIVITY_TYPE_STATUS_OPEN
+
+			if _, err := s.ToggleDocument(ctx, &ToggleDocumentRequest{
+				DocumentId: request.DocumentId,
+				Closed:     false,
+			}); err != nil {
+				return nil, err
+			}
+
 		case documents.DocActivityType_DOC_ACTIVITY_TYPE_REQUESTED_UPDATE:
 			activityType = documents.DocActivityType_DOC_ACTIVITY_TYPE_UPDATED
+			// Nothing to do here, because the user is simply redirected to the editor on the frontend
+
 		case documents.DocActivityType_DOC_ACTIVITY_TYPE_REQUESTED_OWNER_CHANGE:
 			activityType = documents.DocActivityType_DOC_ACTIVITY_TYPE_OWNER_CHANGED
+
+			if err := s.updateDocumentOwner(ctx, tx, request.DocumentId, userInfo, request.Creator); err != nil {
+				return nil, errswrap.NewError(errorsdocstore.ErrFailedQuery, err)
+			}
+
 		case documents.DocActivityType_DOC_ACTIVITY_TYPE_REQUESTED_DELETION:
 			activityType = documents.DocActivityType_DOC_ACTIVITY_TYPE_DELETED
+
+			if _, err := s.DeleteDocument(ctx, &DeleteDocumentRequest{
+				DocumentId: request.DocumentId,
+			}); err != nil {
+				return nil, err
+			}
+
 		case documents.DocActivityType_DOC_ACTIVITY_TYPE_REQUESTED_ACCESS:
 			activityType = documents.DocActivityType_DOC_ACTIVITY_TYPE_ACCESS_UPDATED
-		}
 
-		// TODO execute action based on if it has been accepted or not (req.Accepted)
+			if request.Data == nil || request.Data.GetAccessUpdated() == nil {
+				return nil, errswrap.NewError(errorsdocstore.ErrFailedQuery, err)
+			}
+
+			if err := s.createDocumentAccess(ctx, tx, request.DocumentId, userInfo.UserId, request.Data.GetAccessUpdated()); err != nil {
+				return nil, errswrap.NewError(errorsdocstore.ErrFailedQuery, err)
+			}
+		}
 
 		if _, err := s.addDocumentActivity(ctx, tx, &documents.DocActivity{
 			DocumentId:   request.DocumentId,
@@ -309,7 +364,9 @@ func (s *Server) UpdateDocumentReq(ctx context.Context, req *UpdateDocumentReqRe
 
 	auditEntry.State = int16(rector.EventType_EVENT_TYPE_UPDATED)
 
-	return &UpdateDocumentReqResponse{}, nil
+	return &UpdateDocumentReqResponse{
+		Request: request,
+	}, nil
 }
 
 func (s *Server) DeleteDocumentReq(ctx context.Context, req *DeleteDocumentReqRequest) (*DeleteDocumentReqResponse, error) {
@@ -339,7 +396,7 @@ func (s *Server) DeleteDocumentReq(ctx context.Context, req *DeleteDocumentReqRe
 		return nil, errswrap.NewError(errorsdocstore.ErrFailedQuery, err)
 	}
 	if !ok {
-		return nil, errswrap.NewError(errorsdocstore.ErrDocViewDenied, err)
+		return nil, errorsdocstore.ErrDocViewDenied
 	}
 
 	if err := s.deleteDocumentReq(ctx, s.db, req.RequestId); err != nil {
@@ -369,7 +426,7 @@ func (s *Server) notifyUser(ctx context.Context, doc *documents.Document, source
 		},
 		Content: &common.TranslateItem{
 			Key:        "notifications.notifi.document_request_added.content",
-			Parameters: []string{doc.Title},
+			Parameters: map[string]string{"title": doc.Title},
 		},
 		Type:     &nType,
 		Category: notifications.NotificationCategory_NOTIFICATION_CATEGORY_DOCUMENT,
@@ -399,7 +456,7 @@ func (s *Server) addDocumentReq(ctx context.Context, tx qrm.DB, request *documen
 			tDocRequest.CreatorJob,
 			tDocRequest.Reason,
 			tDocRequest.Data,
-			tDocRequest.Completed,
+			tDocRequest.Accepted,
 		).
 		VALUES(
 			request.DocumentId,
@@ -408,7 +465,7 @@ func (s *Server) addDocumentReq(ctx context.Context, tx qrm.DB, request *documen
 			request.CreatorJob,
 			request.Reason,
 			request.Data,
-			request.Completed,
+			request.Accepted,
 		)
 
 	res, err := stmt.ExecContext(ctx, tx)
@@ -445,7 +502,7 @@ func (s *Server) updateDocumentReq(ctx context.Context, tx qrm.DB, id uint64, re
 			tDocRequest.CreatorJob,
 			tDocRequest.Reason,
 			tDocRequest.Data,
-			tDocRequest.Completed,
+			tDocRequest.Accepted,
 		).
 		SET(
 			request.DocumentId,
@@ -454,7 +511,7 @@ func (s *Server) updateDocumentReq(ctx context.Context, tx qrm.DB, id uint64, re
 			request.CreatorJob,
 			request.Reason,
 			request.Data,
-			request.Completed,
+			request.Accepted,
 		).
 		WHERE(
 			tDocRequest.ID.EQ(jet.Uint64(id)),
@@ -478,14 +535,27 @@ func (s *Server) getDocumentReq(ctx context.Context, tx qrm.DB, condition jet.Bo
 		SELECT(
 			tDocRequest.ID,
 			tDocRequest.CreatedAt,
+			tDocRequest.UpdatedAt,
 			tDocRequest.DocumentID,
 			tDocRequest.RequestType,
 			tDocRequest.CreatorID,
 			tDocRequest.CreatorJob,
 			tDocRequest.Reason,
 			tDocRequest.Data,
+			tCreator.ID,
+			tCreator.Identifier,
+			tCreator.Firstname,
+			tCreator.Lastname,
+			tCreator.Job,
+			tCreator.Dateofbirth,
+			tCreator.PhoneNumber,
 		).
-		FROM(tDocRequest).
+		FROM(
+			tDocRequest.
+				INNER_JOIN(tCreator,
+					tCreator.ID.EQ(tDocRequest.CreatorID),
+				),
+		).
 		WHERE(condition).
 		LIMIT(1)
 

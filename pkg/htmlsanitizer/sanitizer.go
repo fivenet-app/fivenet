@@ -62,7 +62,7 @@ func init() {
 	p.AllowAttrs("cite").OnElements("blockquote", "q")
 	p.AllowAttrs("href").OnElements("a", "area")
 	p.AllowAttrs("src").OnElements("img")
-	p.AllowElements("hr", "sup", "sub", "h1", "h2", "h3", "h4", "h5", "code")
+	p.AllowElements("hr", "sup", "sub", "h1", "h2", "h3", "h4", "h5", "code", "em")
 	p.AllowTables()
 	p.AllowLists()
 

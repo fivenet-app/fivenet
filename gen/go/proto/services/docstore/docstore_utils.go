@@ -8,7 +8,9 @@ import (
 	"github.com/galexrt/fivenet/gen/go/proto/resources/documents"
 	"github.com/galexrt/fivenet/gen/go/proto/resources/users"
 	permscitizenstore "github.com/galexrt/fivenet/gen/go/proto/services/citizenstore/perms"
+	errorsdocstore "github.com/galexrt/fivenet/gen/go/proto/services/docstore/errors"
 	"github.com/galexrt/fivenet/pkg/grpc/auth/userinfo"
+	"github.com/galexrt/fivenet/pkg/grpc/errswrap"
 	"github.com/galexrt/fivenet/pkg/perms"
 	jet "github.com/go-jet/jet/v2/mysql"
 	"github.com/go-jet/jet/v2/qrm"
@@ -375,4 +377,40 @@ func (s *Server) checkIfHasAccess(levels []string, userInfo *userinfo.UserInfo, 
 	}
 
 	return false
+}
+
+func (s *Server) updateDocumentOwner(ctx context.Context, tx qrm.DB, documentId uint64, userInfo *userinfo.UserInfo, newOwner *users.UserShort) error {
+	stmt := tDocument.
+		UPDATE(
+			tDocument.CreatorID,
+		).
+		SET(
+			newOwner.UserId,
+		).
+		WHERE(
+			tDocument.ID.EQ(jet.Uint64(documentId)),
+		)
+
+	if _, err := stmt.ExecContext(ctx, s.db); err != nil {
+		return errswrap.NewError(errorsdocstore.ErrFailedQuery, err)
+	}
+
+	if _, err := s.addDocumentActivity(ctx, tx, &documents.DocActivity{
+		DocumentId:   documentId,
+		ActivityType: documents.DocActivityType_DOC_ACTIVITY_TYPE_OWNER_CHANGED,
+		CreatorId:    &userInfo.UserId,
+		CreatorJob:   userInfo.Job,
+		Data: &documents.DocActivityData{
+			Data: &documents.DocActivityData_OwnerChanged{
+				OwnerChanged: &documents.DocOwnerChanged{
+					NewOwnerId: newOwner.UserId,
+					NewOwner:   newOwner,
+				},
+			},
+		},
+	}); err != nil {
+		return errswrap.NewError(errorsdocstore.ErrFailedQuery, err)
+	}
+
+	return nil
 }

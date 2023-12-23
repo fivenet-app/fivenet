@@ -202,7 +202,7 @@ func (s *Server) getNotifications(ctx context.Context, userId int32, lastId uint
 			),
 		).
 		ORDER_BY(nots.ID.DESC()).
-		LIMIT(10)
+		LIMIT(7)
 
 	var dest []*notifications.Notification
 	if err := stmt.QueryContext(ctx, s.db, &dest); err != nil {
@@ -331,6 +331,14 @@ func (s *Server) checkNotifications(srv NotificatorService_StreamServer, req *St
 		}
 
 		if err := srv.Send(resp); err != nil {
+			return err
+		}
+
+		// Mark notifications as read
+		all := true
+		if _, err := s.MarkNotifications(srv.Context(), &MarkNotificationsRequest{
+			All: &all,
+		}); err != nil {
 			return err
 		}
 	}

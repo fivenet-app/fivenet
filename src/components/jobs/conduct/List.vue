@@ -87,7 +87,7 @@ const { data: colleagues, refresh: refreshColleagues } = useLazyAsyncData(
 
 function charsGetDisplayValue(chars: User[]): string {
     const cs: string[] = [];
-    chars.forEach((c) => cs.push(`${c?.firstname} ${c?.lastname}`));
+    chars.forEach((c) => cs.push(`${c?.firstname} ${c?.lastname} (${c?.dateofbirth})`));
 
     return cs.join(', ');
 }
@@ -190,7 +190,7 @@ onConfirm(async (id) => deleteConductEntry(id));
                                                         ]"
                                                     >
                                                         <span :class="['block truncate', selected && 'font-semibold']">
-                                                            {{ char.firstname }} {{ char.lastname }}
+                                                            {{ char.firstname }} {{ char.lastname }} ({{ char?.dateofbirth }})
                                                         </span>
 
                                                         <span

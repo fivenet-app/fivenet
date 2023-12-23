@@ -34,11 +34,11 @@ const centrumStore = useCentrumStore();
 const { ownUnitId, timeCorrection } = storeToRefs(centrumStore);
 const { canDo } = centrumStore;
 
-const notificationsStore = useNotificatorStore();
+const notifications = useNotificatorStore();
 
 async function selfAssign(id: string): Promise<void> {
     if (ownUnitId.value === undefined) {
-        notificationsStore.dispatchNotification({
+        notifications.dispatchNotification({
             title: { key: 'notifications.centrum.unitUpdated.not_in_unit.title' },
             content: { key: 'notifications.centrum.unitUpdated.not_in_unit.content' },
             type: 'error',

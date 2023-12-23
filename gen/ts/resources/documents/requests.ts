@@ -19,41 +19,45 @@ export interface DocRequest {
      */
     createdAt?: Timestamp;
     /**
-     * @generated from protobuf field: uint64 document_id = 3 [jstype = JS_STRING];
+     * @generated from protobuf field: resources.timestamp.Timestamp updated_at = 3;
+     */
+    updatedAt?: Timestamp;
+    /**
+     * @generated from protobuf field: uint64 document_id = 4 [jstype = JS_STRING];
      */
     documentId: string;
     /**
-     * @generated from protobuf field: resources.documents.DocActivityType request_type = 4;
+     * @generated from protobuf field: resources.documents.DocActivityType request_type = 5;
      */
     requestType: DocActivityType;
     /**
-     * @generated from protobuf field: optional int32 creator_id = 5;
+     * @generated from protobuf field: optional int32 creator_id = 6;
      */
     creatorId?: number;
     /**
-     * @generated from protobuf field: optional resources.users.UserShort creator = 6;
+     * @generated from protobuf field: optional resources.users.UserShort creator = 7;
      */
     creator?: UserShort; // @gotags: alias:"creator"
     /**
-     * @generated from protobuf field: string creator_job = 7;
+     * @generated from protobuf field: string creator_job = 8;
      */
     creatorJob: string;
     /**
-     * @generated from protobuf field: optional string creator_job_label = 8;
+     * @generated from protobuf field: optional string creator_job_label = 9;
      */
     creatorJobLabel?: string;
     /**
-     * @generated from protobuf field: optional string reason = 9;
+     * @generated from protobuf field: optional string reason = 10;
      */
     reason?: string;
     /**
-     * @generated from protobuf field: resources.documents.DocActivityData data = 10;
+     * @generated from protobuf field: resources.documents.DocActivityData data = 11;
      */
     data?: DocActivityData;
     /**
-     * @generated from protobuf field: optional bool completed = 11;
+     * @generated from protobuf field: optional bool accepted = 12;
      */
-    completed?: boolean;
+    accepted?: boolean;
 }
 // @generated message type with reflection information, may provide speed optimized methods
 class DocRequest$Type extends MessageType<DocRequest> {
@@ -61,15 +65,16 @@ class DocRequest$Type extends MessageType<DocRequest> {
         super("resources.documents.DocRequest", [
             { no: 1, name: "id", kind: "scalar", T: 4 /*ScalarType.UINT64*/ },
             { no: 2, name: "created_at", kind: "message", T: () => Timestamp },
-            { no: 3, name: "document_id", kind: "scalar", T: 4 /*ScalarType.UINT64*/ },
-            { no: 4, name: "request_type", kind: "enum", T: () => ["resources.documents.DocActivityType", DocActivityType, "DOC_ACTIVITY_TYPE_"], options: { "validate.rules": { enum: { in: [13, 14, 15, 16, 17, 18] } } } },
-            { no: 5, name: "creator_id", kind: "scalar", opt: true, T: 5 /*ScalarType.INT32*/ },
-            { no: 6, name: "creator", kind: "message", T: () => UserShort },
-            { no: 7, name: "creator_job", kind: "scalar", T: 9 /*ScalarType.STRING*/, options: { "validate.rules": { string: { maxLen: "20" } } } },
-            { no: 8, name: "creator_job_label", kind: "scalar", opt: true, T: 9 /*ScalarType.STRING*/, options: { "validate.rules": { string: { maxLen: "50" } } } },
-            { no: 9, name: "reason", kind: "scalar", opt: true, T: 9 /*ScalarType.STRING*/, options: { "validate.rules": { string: { maxLen: "255" } } } },
-            { no: 10, name: "data", kind: "message", T: () => DocActivityData },
-            { no: 11, name: "completed", kind: "scalar", opt: true, T: 8 /*ScalarType.BOOL*/ }
+            { no: 3, name: "updated_at", kind: "message", T: () => Timestamp },
+            { no: 4, name: "document_id", kind: "scalar", T: 4 /*ScalarType.UINT64*/ },
+            { no: 5, name: "request_type", kind: "enum", T: () => ["resources.documents.DocActivityType", DocActivityType, "DOC_ACTIVITY_TYPE_"], options: { "validate.rules": { enum: { in: [13, 14, 15, 16, 17, 18] } } } },
+            { no: 6, name: "creator_id", kind: "scalar", opt: true, T: 5 /*ScalarType.INT32*/ },
+            { no: 7, name: "creator", kind: "message", T: () => UserShort },
+            { no: 8, name: "creator_job", kind: "scalar", T: 9 /*ScalarType.STRING*/, options: { "validate.rules": { string: { maxLen: "20" } } } },
+            { no: 9, name: "creator_job_label", kind: "scalar", opt: true, T: 9 /*ScalarType.STRING*/, options: { "validate.rules": { string: { maxLen: "50" } } } },
+            { no: 10, name: "reason", kind: "scalar", opt: true, T: 9 /*ScalarType.STRING*/, options: { "validate.rules": { string: { maxLen: "255" } } } },
+            { no: 11, name: "data", kind: "message", T: () => DocActivityData },
+            { no: 12, name: "accepted", kind: "scalar", opt: true, T: 8 /*ScalarType.BOOL*/ }
         ]);
     }
 }

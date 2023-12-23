@@ -11,16 +11,18 @@ export interface TranslateItem {
      */
     key: string;
     /**
-     * @generated from protobuf field: repeated string parameters = 2;
+     * @generated from protobuf field: map<string, string> parameters = 2;
      */
-    parameters: string[];
+    parameters: {
+        [key: string]: string;
+    };
 }
 // @generated message type with reflection information, may provide speed optimized methods
 class TranslateItem$Type extends MessageType<TranslateItem> {
     constructor() {
         super("resources.common.TranslateItem", [
             { no: 1, name: "key", kind: "scalar", T: 9 /*ScalarType.STRING*/ },
-            { no: 2, name: "parameters", kind: "scalar", repeat: 2 /*RepeatType.UNPACKED*/, T: 9 /*ScalarType.STRING*/ }
+            { no: 2, name: "parameters", kind: "map", K: 9 /*ScalarType.STRING*/, V: { kind: "scalar", T: 9 /*ScalarType.STRING*/ } }
         ]);
     }
 }

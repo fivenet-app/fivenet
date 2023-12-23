@@ -17,27 +17,36 @@ import { CheckIcon, ChevronDownIcon, CloseIcon, LoadingIcon } from 'mdi-vue3';
 import { defineRule } from 'vee-validate';
 import { DocActivityType } from '~~/gen/ts/resources/documents/activity';
 import DocRequestsList from '~/components/documents/DocRequestsList.vue';
+import type { DocumentShort } from '~~/gen/ts/resources/documents/documents';
+import { useAuthStore } from '~/store/auth';
+import { useNotificatorStore } from '~/store/notificator';
 
 const props = defineProps<{
     open: boolean;
-    documentId: string;
+    doc: DocumentShort;
 }>();
 
 const emits = defineEmits<{
     (e: 'close'): void;
+    (e: 'refresh'): void;
 }>();
 
 const { $grpc } = useNuxtApp();
 
-const requestTypes = [
-    DocActivityType.REQUESTED_ACCESS,
-    DocActivityType.REQUESTED_CLOSURE,
+const authStore = useAuthStore();
+const { activeChar } = storeToRefs(authStore);
+
+const notifications = useNotificatorStore();
+
+const requestTypes = computed(() => [
+    // DocActivityType.REQUESTED_ACCESS,
+    props.doc.closed ? DocActivityType.REQUESTED_OPENING : DocActivityType.REQUESTED_CLOSURE,
     DocActivityType.REQUESTED_UPDATE,
     DocActivityType.REQUESTED_OWNER_CHANGE,
     DocActivityType.REQUESTED_DELETION,
-];
+]);
 
-const selectedRequestType = ref(requestTypes[0]);
+const selectedRequestType = ref(requestTypes.value[0]);
 
 interface FormData {
     reason?: string;
@@ -46,11 +55,17 @@ interface FormData {
 async function createDocumentAction(values: FormData): Promise<void> {
     try {
         const call = $grpc.getDocStoreClient().createDocumentReq({
-            documentId: props.documentId,
+            documentId: props.doc.id,
             requestType: selectedRequestType.value,
             reason: values.reason,
         });
         await call;
+
+        notifications.dispatchNotification({
+            title: { key: 'notifications.docstore.requests.created.title' },
+            content: { key: 'notifications.docstore.requests.created.content' },
+            type: 'success',
+        });
 
         emits('close');
     } catch (e) {
@@ -120,10 +135,12 @@ const onSubmitThrottle = useThrottleFn(async (e) => {
                                     <CloseIcon class="h-6 w-6" aria-hidden="true" />
                                 </button>
                             </div>
+
                             <DialogTitle as="h3" class="text-base font-semibold leading-6">
                                 {{ $t('common.request', 2) }}
                             </DialogTitle>
-                            <form @submit.prevent="">
+
+                            <form v-if="doc.creatorId !== activeChar?.userId" @submit.prevent="">
                                 <div class="my-2 space-y-24">
                                     <div class="flex-1 form-control">
                                         <label for="reason" class="block text-sm font-medium leading-6 text-neutral">
@@ -256,7 +273,7 @@ const onSubmitThrottle = useThrottleFn(async (e) => {
                                 </div>
                             </form>
 
-                            <DocRequestsList :document-id="documentId" />
+                            <DocRequestsList :document-id="doc.id" @refresh="$emit('refresh')" />
                         </DialogPanel>
                     </TransitionChild>
                 </div>

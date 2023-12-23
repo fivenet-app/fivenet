@@ -201,7 +201,7 @@ message CreateDocumentRequest {
     max_bytes: 1000000 // 1 Megabyte
   }]; // @gotags: alias:"data"
   // @sanitize
-  string state = 6 [(validate.rules).string.max_len = 24]; // @gotags: alias:"state"
+  string state = 6 [(validate.rules).string.max_len = 32]; // @gotags: alias:"state"
   bool closed = 7; // @gotags: alias:"closed"
   bool public = 8; // @gotags: alias:"public"
   optional resources.documents.DocumentAccess access = 9;
@@ -230,7 +230,7 @@ message UpdateDocumentRequest {
     max_bytes: 1000000 // 1 Megabyte
   }]; // @gotags: alias:"data"
   // @sanitize
-  string state = 7 [(validate.rules).string.max_len = 24]; // @gotags: alias:"state"
+  string state = 7 [(validate.rules).string.max_len = 32]; // @gotags: alias:"state"
   bool closed = 8; // @gotags: alias:"closed"
   bool public = 9; // @gotags: alias:"public"
   optional resources.documents.DocumentAccess access = 10;
@@ -278,7 +278,9 @@ message UpdateDocumentReqRequest {
   bool accepted = 4;
 }
 
-message UpdateDocumentReqResponse {}
+message UpdateDocumentReqResponse {
+  resources.documents.DocRequest request = 1;
+}
 
 message DeleteDocumentReqRequest {
   uint64 request_id = 1 [jstype = JS_STRING];

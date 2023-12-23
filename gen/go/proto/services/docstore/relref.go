@@ -647,7 +647,7 @@ func (s *Server) notifyUserMentioned(ctx context.Context, documentId uint64, sou
 		},
 		Content: &common.TranslateItem{
 			Key:        "notifications.notifi.document_relation_mentioned.content",
-			Parameters: []string{doc.Title},
+			Parameters: map[string]string{"title": doc.Title},
 		},
 		Type:     &nType,
 		Category: notifications.NotificationCategory_NOTIFICATION_CATEGORY_DOCUMENT,

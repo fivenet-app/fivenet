@@ -5163,10 +5163,10 @@ func (m *CreateDocumentRequest) validate(all bool) error {
 		errors = append(errors, err)
 	}
 
-	if utf8.RuneCountInString(m.GetState()) > 24 {
+	if utf8.RuneCountInString(m.GetState()) > 32 {
 		err := CreateDocumentRequestValidationError{
 			field:  "State",
-			reason: "value length must be at most 24 runes",
+			reason: "value length must be at most 32 runes",
 		}
 		if !all {
 			return err
@@ -5486,10 +5486,10 @@ func (m *UpdateDocumentRequest) validate(all bool) error {
 		errors = append(errors, err)
 	}
 
-	if utf8.RuneCountInString(m.GetState()) > 24 {
+	if utf8.RuneCountInString(m.GetState()) > 32 {
 		err := UpdateDocumentRequestValidationError{
 			field:  "State",
-			reason: "value length must be at most 24 runes",
+			reason: "value length must be at most 32 runes",
 		}
 		if !all {
 			return err
@@ -6692,6 +6692,35 @@ func (m *UpdateDocumentReqResponse) validate(all bool) error {
 	}
 
 	var errors []error
+
+	if all {
+		switch v := interface{}(m.GetRequest()).(type) {
+		case interface{ ValidateAll() error }:
+			if err := v.ValidateAll(); err != nil {
+				errors = append(errors, UpdateDocumentReqResponseValidationError{
+					field:  "Request",
+					reason: "embedded message failed validation",
+					cause:  err,
+				})
+			}
+		case interface{ Validate() error }:
+			if err := v.Validate(); err != nil {
+				errors = append(errors, UpdateDocumentReqResponseValidationError{
+					field:  "Request",
+					reason: "embedded message failed validation",
+					cause:  err,
+				})
+			}
+		}
+	} else if v, ok := interface{}(m.GetRequest()).(interface{ Validate() error }); ok {
+		if err := v.Validate(); err != nil {
+			return UpdateDocumentReqResponseValidationError{
+				field:  "Request",
+				reason: "embedded message failed validation",
+				cause:  err,
+			}
+		}
+	}
 
 	if len(errors) > 0 {
 		return UpdateDocumentReqResponseMultiError(errors)

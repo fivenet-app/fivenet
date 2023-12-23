@@ -69,7 +69,8 @@ const selectedAccessType = ref<AccessType>({
 });
 
 const entriesChars = ref<UserShort[]>();
-const queryChar = ref('');
+const queryCharRaw = ref('');
+const queryChar = computed(() => queryCharRaw.value.toLowerCase());
 const selectedChar = ref<undefined | UserShort>(undefined);
 
 const queryJobRaw = ref('');
@@ -79,8 +80,16 @@ const filteredJobs = computed(() =>
 );
 const selectedJob = ref<Job>();
 
-let entriesMinimumRank = [] as JobGrade[];
-const queryMinimumRank = ref('');
+const queryMinimumRankRaw = ref('');
+const queryMinimumRank = computed(() => queryMinimumRankRaw.value.toLowerCase());
+const entriesMinimumRank = ref<JobGrade[]>([]);
+const filteredJobRanks = computed(() =>
+    entriesMinimumRank.value.filter(
+        (j) =>
+            j.grade.toString().toLowerCase().includes(queryMinimumRank.value) ||
+            j.label.toLowerCase().includes(queryMinimumRank.value),
+    ),
+);
 const selectedMinimumRank = ref<JobGrade | undefined>(undefined);
 
 const entriesAccessRoles: {
@@ -136,8 +145,10 @@ onMounted(async () => {
         props.init.values.accessRole !== undefined
     ) {
         selectedJob.value = await completorStore.getJobByName(props.init.values.job);
-        if (selectedJob.value) entriesMinimumRank = selectedJob.value.grades;
-        selectedMinimumRank.value = entriesMinimumRank.find((rank) => rank.grade === props.init.values.minimumGrade);
+        if (selectedJob.value) {
+            entriesMinimumRank.value = selectedJob.value.grades;
+        }
+        selectedMinimumRank.value = entriesMinimumRank.value.find((rank) => rank.grade === props.init.values.minimumGrade);
     }
     selectedAccessRole.value = entriesAccessRoles.find((type) => type.id === props.init.values.accessRole);
 });
@@ -158,10 +169,10 @@ watch(selectedAccessType, async () => {
     selectedMinimumRank.value = undefined;
 
     if (selectedAccessType.value.id === 0) {
-        queryChar.value = '';
+        queryCharRaw.value = '';
     } else {
         queryJobRaw.value = '';
-        queryMinimumRank.value = '';
+        queryMinimumRankRaw.value = '';
     }
 });
 
@@ -176,7 +187,7 @@ watch(selectedJob, () => {
         char: undefined,
     });
 
-    entriesMinimumRank = selectedJob.value.grades;
+    entriesMinimumRank.value = selectedJob.value.grades;
 });
 
 watch(selectedChar, () => {
@@ -383,18 +394,18 @@ watch(selectedAccessRole, () => {
                                 autocomplete="off"
                                 class="block w-full rounded-md border-0 py-1.5 bg-base-700 text-neutral placeholder:text-base-200 focus:ring-2 focus:ring-inset focus:ring-base-300 sm:text-sm sm:leading-6"
                                 :display-value="(rank: any) => rank?.label"
-                                @change="queryMinimumRank = $event.target.value"
+                                @change="queryMinimumRankRaw = $event.target.value"
                                 @focusin="focusTablet(true)"
                                 @focusout="focusTablet(false)"
                             />
                         </ComboboxButton>
 
                         <ComboboxOptions
-                            v-if="entriesMinimumRank.length > 0"
+                            v-if="filteredJobRanks.length > 0"
                             class="absolute z-10 w-full py-1 mt-1 overflow-auto text-base rounded-md bg-base-700 max-h-44 sm:text-sm"
                         >
                             <ComboboxOption
-                                v-for="rank in entriesMinimumRank"
+                                v-for="rank in filteredJobRanks"
                                 :key="rank.grade"
                                 v-slot="{ active, selected }"
                                 :value="rank"

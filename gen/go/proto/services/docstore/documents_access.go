@@ -27,7 +27,7 @@ func (s *Server) GetDocumentAccess(ctx context.Context, req *GetDocumentAccessRe
 		return nil, errswrap.NewError(errorsdocstore.ErrFailedQuery, err)
 	}
 	if !ok {
-		return nil, errswrap.NewError(errorsdocstore.ErrDocAccessViewDenied, err)
+		return nil, errorsdocstore.ErrDocAccessViewDenied
 	}
 
 	access, err := s.getDocumentAccess(ctx, req.DocumentId)
@@ -72,7 +72,7 @@ func (s *Server) SetDocumentAccess(ctx context.Context, req *SetDocumentAccessRe
 		return nil, errswrap.NewError(errorsdocstore.ErrFailedQuery, err)
 	}
 	if !ok {
-		return nil, errswrap.NewError(errorsdocstore.ErrDocAccessEditDenied, err)
+		return nil, errorsdocstore.ErrDocAccessEditDenied
 	}
 
 	// Begin transaction

@@ -671,13 +671,14 @@ func (s *Server) ChangeDocumentOwner(ctx context.Context, req *ChangeDocumentOwn
 		return nil, errswrap.NewError(errorsdocstore.ErrDocToggleDenied, err)
 	}
 
+	tUsers := tUsers.AS("user_short")
 	stmtGetUser := tUsers.
 		SELECT(
 			tUsers.ID,
 			tUsers.Firstname,
 			tUsers.Lastname,
-
 			tUsers.Job,
+			tUsers.Dateofbirth,
 		).
 		FROM(tUsers).
 		WHERE(tUsers.ID.EQ(jet.Int32(*req.NewUserId))).
@@ -686,6 +687,10 @@ func (s *Server) ChangeDocumentOwner(ctx context.Context, req *ChangeDocumentOwn
 	var newOwner users.UserShort
 	if err := stmtGetUser.QueryContext(ctx, s.db, &newOwner); err != nil {
 		return nil, errswrap.NewError(errorsdocstore.ErrFailedQuery, err)
+	}
+
+	if newOwner.UserId <= 0 {
+		return nil, errorsdocstore.ErrFailedQuery
 	}
 
 	// Allow super users to transfer documents cross jobs
@@ -708,36 +713,8 @@ func (s *Server) ChangeDocumentOwner(ctx context.Context, req *ChangeDocumentOwn
 	// Defer a rollback in case anything fails
 	defer tx.Rollback()
 
-	stmt := tDocument.
-		UPDATE(
-			tDocument.CreatorID,
-		).
-		SET(
-			req.NewUserId,
-		).
-		WHERE(
-			tDocument.ID.EQ(jet.Uint64(req.DocumentId)),
-		)
-
-	if _, err := stmt.ExecContext(ctx, s.db); err != nil {
-		return nil, errswrap.NewError(errorsdocstore.ErrFailedQuery, err)
-	}
-
-	if _, err := s.addDocumentActivity(ctx, tx, &documents.DocActivity{
-		DocumentId:   req.DocumentId,
-		ActivityType: documents.DocActivityType_DOC_ACTIVITY_TYPE_OWNER_CHANGED,
-		CreatorId:    &userInfo.UserId,
-		CreatorJob:   userInfo.Job,
-		Data: &documents.DocActivityData{
-			Data: &documents.DocActivityData_OwnerChanged{
-				OwnerChanged: &documents.DocOwnerChanged{
-					NewOwnerId: *req.NewUserId,
-					NewOwner:   &newOwner,
-				},
-			},
-		},
-	}); err != nil {
-		return nil, errswrap.NewError(errorsdocstore.ErrFailedQuery, err)
+	if err := s.updateDocumentOwner(ctx, tx, req.DocumentId, userInfo, &newOwner); err != nil {
+		return nil, err
 	}
 
 	// Commit the transaction

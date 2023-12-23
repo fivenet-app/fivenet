@@ -2,6 +2,7 @@
 import { Disclosure, DisclosureButton, DisclosurePanel, Tab, TabGroup, TabList, TabPanel, TabPanels } from '@headlessui/vue';
 import { RpcError } from '@protobuf-ts/runtime-rpc';
 import { useConfirmDialog, watchOnce } from '@vueuse/core';
+import { useRouteHash } from '@vueuse/router';
 import {
     AccountMultipleIcon,
     CalendarEditIcon,
@@ -194,6 +195,13 @@ const {
 onConfirmDelete(async (id: string) => deleteDocument(id));
 
 const openRequests = ref(false);
+
+const hash = useRouteHash();
+if (hash.value !== undefined && hash.value !== null) {
+    if (hash.value.replace(/^#/, '') === 'requests') {
+        openRequests.value = true;
+    }
+}
 </script>
 
 <template>
@@ -204,12 +212,6 @@ const openRequests = ref(false);
             :confirm="() => confirmChangeOwner(documentId)"
         />
         <ConfirmDialog :open="isRevealedDelete" :cancel="cancelDelete" :confirm="() => confirmDelete(documentId)" />
-        <RequestsModal
-            v-if="can('DocStoreService.CreateDocumentRequest')"
-            :open="openRequests"
-            :document-id="documentId"
-            @close="openRequests = false"
-        />
 
         <DataPendingBlock v-if="pending" :message="$t('common.loading', [$t('common.document', 2)])" />
         <DataErrorBlock v-else-if="error" :title="$t('common.unable_to_load', [$t('common.document', 2)])" :retry="refresh" />
@@ -220,6 +222,17 @@ const openRequests = ref(false);
         />
 
         <div v-else class="rounded-lg bg-base-700">
+            <RequestsModal
+                v-if="can('DocStoreService.CreateDocumentReq')"
+                :open="openRequests"
+                :doc="doc"
+                @close="openRequests = false"
+                @refresh="
+                    openRequests = false;
+                    refresh();
+                "
+            />
+
             <div class="h-full px-4 py-6 sm:px-6 lg:px-8">
                 <div>
                     <div>
@@ -291,7 +304,7 @@ const openRequests = ref(false);
                                     {{ $t('common.edit') }}
                                 </NuxtLink>
                                 <button
-                                    v-if="can('DocStoreService.CreateDocumentRequest')"
+                                    v-if="can('DocStoreService.CreateDocumentReq')"
                                     type="button"
                                     class="inline-flex items-center gap-x-1.5 rounded-md bg-primary-500 px-3 py-2 text-sm font-semibold text-neutral hover:bg-primary-400"
                                     @click="openRequests = true"

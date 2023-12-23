@@ -19,13 +19,14 @@ type fivenetDocumentsRequestsTable struct {
 	// Columns
 	ID          mysql.ColumnInteger
 	CreatedAt   mysql.ColumnTimestamp
+	UpdatedAt   mysql.ColumnTimestamp
 	DocumentID  mysql.ColumnInteger
 	RequestType mysql.ColumnInteger
 	CreatorID   mysql.ColumnInteger
 	CreatorJob  mysql.ColumnString
 	Reason      mysql.ColumnString
 	Data        mysql.ColumnString
-	Completed   mysql.ColumnBool
+	Accepted    mysql.ColumnBool
 
 	AllColumns     mysql.ColumnList
 	MutableColumns mysql.ColumnList
@@ -68,15 +69,16 @@ func newFivenetDocumentsRequestsTableImpl(schemaName, tableName, alias string) f
 	var (
 		IDColumn          = mysql.IntegerColumn("id")
 		CreatedAtColumn   = mysql.TimestampColumn("created_at")
+		UpdatedAtColumn   = mysql.TimestampColumn("updated_at")
 		DocumentIDColumn  = mysql.IntegerColumn("document_id")
 		RequestTypeColumn = mysql.IntegerColumn("request_type")
 		CreatorIDColumn   = mysql.IntegerColumn("creator_id")
 		CreatorJobColumn  = mysql.StringColumn("creator_job")
 		ReasonColumn      = mysql.StringColumn("reason")
 		DataColumn        = mysql.StringColumn("data")
-		CompletedColumn   = mysql.BoolColumn("completed")
-		allColumns        = mysql.ColumnList{IDColumn, CreatedAtColumn, DocumentIDColumn, RequestTypeColumn, CreatorIDColumn, CreatorJobColumn, ReasonColumn, DataColumn, CompletedColumn}
-		mutableColumns    = mysql.ColumnList{CreatedAtColumn, DocumentIDColumn, RequestTypeColumn, CreatorIDColumn, CreatorJobColumn, ReasonColumn, DataColumn, CompletedColumn}
+		AcceptedColumn    = mysql.BoolColumn("accepted")
+		allColumns        = mysql.ColumnList{IDColumn, CreatedAtColumn, UpdatedAtColumn, DocumentIDColumn, RequestTypeColumn, CreatorIDColumn, CreatorJobColumn, ReasonColumn, DataColumn, AcceptedColumn}
+		mutableColumns    = mysql.ColumnList{CreatedAtColumn, UpdatedAtColumn, DocumentIDColumn, RequestTypeColumn, CreatorIDColumn, CreatorJobColumn, ReasonColumn, DataColumn, AcceptedColumn}
 	)
 
 	return fivenetDocumentsRequestsTable{
@@ -85,13 +87,14 @@ func newFivenetDocumentsRequestsTableImpl(schemaName, tableName, alias string) f
 		//Columns
 		ID:          IDColumn,
 		CreatedAt:   CreatedAtColumn,
+		UpdatedAt:   UpdatedAtColumn,
 		DocumentID:  DocumentIDColumn,
 		RequestType: RequestTypeColumn,
 		CreatorID:   CreatorIDColumn,
 		CreatorJob:  CreatorJobColumn,
 		Reason:      ReasonColumn,
 		Data:        DataColumn,
-		Completed:   CompletedColumn,
+		Accepted:    AcceptedColumn,
 
 		AllColumns:     allColumns,
 		MutableColumns: mutableColumns,

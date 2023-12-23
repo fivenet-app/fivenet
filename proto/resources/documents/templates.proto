@@ -30,7 +30,7 @@ message Template {
     min_len: 0,
     max_bytes: 1500000
   }]; // @gotags: alias:"content"
-  string state = 10 [(validate.rules).string.max_len = 24]; // @gotags: alias:"state"
+  string state = 10 [(validate.rules).string.max_len = 32]; // @gotags: alias:"state"
   resources.documents.TemplateSchema schema = 11; // @gotags: alias:"schema"
   optional int32 creator_id = 12; // @gotags: alias:"creator_id"
   optional resources.users.UserShort creator = 13;

@@ -50,7 +50,7 @@ if (props.notification.callback !== undefined) {
                         <button
                             v-if="notification.onClick !== undefined"
                             type="button"
-                            class="mt-1 text-sm leading-5"
+                            class="mt-1 text-sm leading-5 underline"
                             @click="notification.onClick(notification.data)"
                         >
                             {{ $t('common.click_here') }}

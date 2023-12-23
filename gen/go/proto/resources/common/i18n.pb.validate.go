@@ -59,6 +59,8 @@ func (m *TranslateItem) validate(all bool) error {
 
 	// no validation rules for Key
 
+	// no validation rules for Parameters
+
 	if len(errors) > 0 {
 		return TranslateItemMultiError(errors)
 	}

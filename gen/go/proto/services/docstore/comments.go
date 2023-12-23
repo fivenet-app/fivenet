@@ -36,7 +36,7 @@ func (s *Server) GetComments(ctx context.Context, req *GetCommentsRequest) (*Get
 		return nil, errswrap.NewError(errorsdocstore.ErrFailedQuery, err)
 	}
 	if !ok {
-		return nil, errswrap.NewError(errorsdocstore.ErrCommentViewDenied, err)
+		return nil, errorsdocstore.ErrCommentViewDenied
 	}
 
 	tDComments := tDComments.AS("comment")

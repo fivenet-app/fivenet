@@ -97,7 +97,7 @@ function focusSearch(): void {
 
 function charsGetDisplayValue(chars: UserShort[]): string {
     const cs: string[] = [];
-    chars.forEach((c) => cs.push(`${c?.firstname} ${c?.lastname}`));
+    chars.forEach((c) => cs.push(`${c?.firstname} ${c?.lastname} (${c?.dateofbirth})`));
 
     return cs.join(', ');
 }
@@ -189,6 +189,7 @@ watchDebounced(queryCitizens, async () => await findChars(), {
                                                         <span :class="['block truncate', selected && 'font-semibold']">
                                                             {{ char?.firstname }}
                                                             {{ char?.lastname }}
+                                                            ({{ char?.dateofbirth }})
                                                         </span>
 
                                                         <span

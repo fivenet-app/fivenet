@@ -165,10 +165,10 @@ func (m *Template) validate(all bool) error {
 		errors = append(errors, err)
 	}
 
-	if utf8.RuneCountInString(m.GetState()) > 24 {
+	if utf8.RuneCountInString(m.GetState()) > 32 {
 		err := TemplateValidationError{
 			field:  "State",
-			reason: "value length must be at most 24 runes",
+			reason: "value length must be at most 32 runes",
 		}
 		if !all {
 			return err

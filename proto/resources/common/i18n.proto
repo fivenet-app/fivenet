@@ -6,5 +6,5 @@ option go_package = "github.com/galexrt/fivenet/gen/go/proto/resources/common;co
 
 message TranslateItem {
   string key = 1;
-  repeated string parameters = 2;
+  map<string, string> parameters = 2;
 }

@@ -784,7 +784,9 @@
         "disabled": "Disabled",
         "legend": "Legend",
         "radio_frequency": "Radio Frequency",
-        "click_here": "Click here"
+        "click_here": "Click here",
+        "yes": "Yes",
+        "no": "No"
     },
     "notifications": {
         "clipboard": {
@@ -968,11 +970,11 @@
         "notifi": {
             "document_relation_mentioned": {
                 "title": "Document: You have been mentioned",
-                "content": "You have been mentioned in \"{0}\" document. Click here to go to the document."
+                "content": "You have been mentioned in \"{title}\" document. Click here to go to the document."
             },
             "document_request_added": {
                 "title": "Document: Request has been created",
-                "content": "A request against your \"{0}\" document has been added."
+                "content": "A request against your \"{title}\" document has been added."
             }
         },
         "templates": {
@@ -1003,6 +1005,22 @@
             "closed": {
                 "title": "Document closed!",
                 "content": "Document has been closed."
+            }
+        },
+        "docstore": {
+            "requests": {
+                "created": {
+                    "title": "Document Request created!",
+                    "content": "The document request has been successfully created."
+                },
+                "deleted": {
+                    "title": "Document Request deleted!",
+                    "content": "The document request has been successfully deleted."
+                },
+                "updated": {
+                    "title": "Document Request updated!",
+                    "content": "The document request has been successfully updated."
+                }
             }
         },
         "centrum": {
@@ -1267,8 +1285,25 @@
                 "key": "ListDocumentActivity",
                 "description": "Being able to view document activity."
             },
-            "CreateDocumentRequest": {
-                "key": "CreateDocumentRequest",
+            "ListDocumentReqs": {
+                "key": "List Document Requests",
+                "description": "List requests for documents."
+            },
+            "ChangeDocumentOwner": {
+                "key": "Change Document Owner",
+                "description": "Take over the document owner.",
+                "attrs": {
+                    "Own": "Own",
+                    "Lower_Rank": "Lower Rank",
+                    "Same_Rank": "Same Rank",
+                    "Any": "Any"
+                },
+                "attrs_types": {
+                    "Access": "Access to factions-own documents"
+                }
+            },
+            "CreateDocumentReq": {
+                "key": "Create Document Requests",
                 "description": "Request actions for documents.",
                 "attrs_types": {
                     "Types": "Available Actions"
@@ -1279,6 +1314,10 @@
                     "Update": "Update",
                     "Deletion": "Deletion"
                 }
+            },
+            "DeleteDocumentReq": {
+                "key": "Delete Document Requests",
+                "description": ""
             }
         },
         "LivemapperService": {
@@ -1528,7 +1567,8 @@
                 "content": "A document request of the same type already exists or one has been created in the last 24 hours."
             },
             "ErrDocSameOwner": "You are already the creator of this document!",
-            "ErrDocOwnerWrongJob": "New document owner must be part of your job!"
+            "ErrDocOwnerWrongJob": "New document owner must be part of your job!",
+            "ErrDocReqOwnDoc": "You can't create requests against your own document!"
         },
         "LivemapperService": {
             "ErrStreamFailed": "Failed to stream livemap data!",
@@ -1638,6 +1678,7 @@
                 "DELETED": "Document deleted",
                 "REQUESTED_ACCESS": "Document access requested",
                 "REQUESTED_CLOSURE": "Document closure requested",
+                "REQUESTED_OPENING": "Document open requested",
                 "REQUESTED_UPDATE": "Document update requested",
                 "REQUESTED_DELETION": "Document deletion requested",
                 "COMMENT_ADDED": "Comment added",

@@ -662,6 +662,10 @@ export interface UpdateDocumentReqRequest {
  * @generated from protobuf message services.docstore.UpdateDocumentReqResponse
  */
 export interface UpdateDocumentReqResponse {
+    /**
+     * @generated from protobuf field: resources.documents.DocRequest request = 1;
+     */
+    request?: DocRequest;
 }
 /**
  * @generated from protobuf message services.docstore.DeleteDocumentReqRequest
@@ -1313,7 +1317,7 @@ class CreateDocumentRequest$Type extends MessageType<CreateDocumentRequest> {
             { no: 3, name: "content", kind: "scalar", T: 9 /*ScalarType.STRING*/, options: { "validate.rules": { string: { minLen: "20", maxBytes: "1750000" } } } },
             { no: 4, name: "content_type", kind: "enum", T: () => ["resources.documents.DocContentType", DocContentType, "DOC_CONTENT_TYPE_"], options: { "validate.rules": { enum: { definedOnly: true } } } },
             { no: 5, name: "data", kind: "scalar", opt: true, T: 9 /*ScalarType.STRING*/, options: { "validate.rules": { string: { maxBytes: "1000000" } } } },
-            { no: 6, name: "state", kind: "scalar", T: 9 /*ScalarType.STRING*/, options: { "validate.rules": { string: { maxLen: "24" } } } },
+            { no: 6, name: "state", kind: "scalar", T: 9 /*ScalarType.STRING*/, options: { "validate.rules": { string: { maxLen: "32" } } } },
             { no: 7, name: "closed", kind: "scalar", T: 8 /*ScalarType.BOOL*/ },
             { no: 8, name: "public", kind: "scalar", T: 8 /*ScalarType.BOOL*/ },
             { no: 9, name: "access", kind: "message", T: () => DocumentAccess },
@@ -1347,7 +1351,7 @@ class UpdateDocumentRequest$Type extends MessageType<UpdateDocumentRequest> {
             { no: 4, name: "content", kind: "scalar", T: 9 /*ScalarType.STRING*/, options: { "validate.rules": { string: { minLen: "20", maxBytes: "1750000" } } } },
             { no: 5, name: "content_type", kind: "enum", T: () => ["resources.documents.DocContentType", DocContentType, "DOC_CONTENT_TYPE_"], options: { "validate.rules": { enum: { definedOnly: true } } } },
             { no: 6, name: "data", kind: "scalar", opt: true, T: 9 /*ScalarType.STRING*/, options: { "validate.rules": { string: { maxBytes: "1000000" } } } },
-            { no: 7, name: "state", kind: "scalar", T: 9 /*ScalarType.STRING*/, options: { "validate.rules": { string: { maxLen: "24" } } } },
+            { no: 7, name: "state", kind: "scalar", T: 9 /*ScalarType.STRING*/, options: { "validate.rules": { string: { maxLen: "32" } } } },
             { no: 8, name: "closed", kind: "scalar", T: 8 /*ScalarType.BOOL*/ },
             { no: 9, name: "public", kind: "scalar", T: 8 /*ScalarType.BOOL*/ },
             { no: 10, name: "access", kind: "message", T: () => DocumentAccess }
@@ -1455,7 +1459,9 @@ export const UpdateDocumentReqRequest = new UpdateDocumentReqRequest$Type();
 // @generated message type with reflection information, may provide speed optimized methods
 class UpdateDocumentReqResponse$Type extends MessageType<UpdateDocumentReqResponse> {
     constructor() {
-        super("services.docstore.UpdateDocumentReqResponse", []);
+        super("services.docstore.UpdateDocumentReqResponse", [
+            { no: 1, name: "request", kind: "message", T: () => DocRequest }
+        ]);
     }
 }
 /**

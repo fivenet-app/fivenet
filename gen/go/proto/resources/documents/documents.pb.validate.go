@@ -145,10 +145,10 @@ func (m *Document) validate(all bool) error {
 
 	// no validation rules for CreatorJob
 
-	if utf8.RuneCountInString(m.GetState()) > 24 {
+	if utf8.RuneCountInString(m.GetState()) > 32 {
 		err := DocumentValidationError{
 			field:  "State",
-			reason: "value length must be at most 24 runes",
+			reason: "value length must be at most 32 runes",
 		}
 		if !all {
 			return err
@@ -480,10 +480,10 @@ func (m *DocumentShort) validate(all bool) error {
 
 	// no validation rules for CreatorJob
 
-	if utf8.RuneCountInString(m.GetState()) > 24 {
+	if utf8.RuneCountInString(m.GetState()) > 32 {
 		err := DocumentShortValidationError{
 			field:  "State",
-			reason: "value length must be at most 24 runes",
+			reason: "value length must be at most 32 runes",
 		}
 		if !all {
 			return err
