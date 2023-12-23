@@ -1,6 +1,6 @@
 <script lang="ts" setup>
-import RoleView from '~/components/rector/roles/RoleView.vue';
 import { type TypedRouteFromName } from '@typed-router';
+import RoleView from '~/components/rector/roles/RoleView.vue';
 
 useHead({
     title: 'pages.rector.roles.id.title',

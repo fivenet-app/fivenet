@@ -249,8 +249,8 @@ onConfirm(async (id) => deleteRole(id));
         <div class="px-1 sm:px-2 lg:px-4">
             <DataPendingBlock v-if="pending" :message="$t('common.loading', [$t('common.role', 2)])" />
             <DataErrorBlock v-else-if="error" :title="$t('common.unable_to_load', [$t('common.role', 2)])" :retry="refresh" />
-            <DataNoDataBlock v-else-if="!role" :type="$t('common.role', 2)" />
-            <div v-else>
+            <DataNoDataBlock v-else-if="role === null" :type="$t('common.role', 2)" />
+            <template v-else>
                 <h2 class="text-3xl text-neutral" :title="`ID: ${role.id}`">
                     {{ role?.jobLabel! }}
                     <button v-if="can('RectorService.DeleteRole')" type="button" class="ml-1" @click="reveal()">
@@ -348,7 +348,7 @@ onConfirm(async (id) => deleteRole(id));
                         </DisclosurePanel>
                     </Disclosure>
                 </div>
-            </div>
+            </template>
         </div>
     </div>
 </template>

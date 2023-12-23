@@ -104,7 +104,11 @@ async function getTemplate(): Promise<Template> {
                                                     :title="$t('common.unable_to_load', [$t('common.template', 2)])"
                                                     :retry="refresh"
                                                 />
-                                                <DataNoDataBlock v-else-if="!template" :type="$t('common.template', 2)" />
+                                                <DataNoDataBlock
+                                                    v-else-if="template === null"
+                                                    :type="$t('common.template', 2)"
+                                                />
+
                                                 <template v-else>
                                                     <div>
                                                         <label class="block mb-2 text-sm font-medium leading-6 text-neutral">

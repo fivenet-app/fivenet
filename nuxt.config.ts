@@ -21,6 +21,15 @@ export default defineNuxtConfig({
         '@dargmuesli/nuxt-cookie-control',
         'nuxt-update',
     ],
+    typescript: {
+        typeCheck: true,
+        strict: true,
+        tsConfig: {
+            compilerOptions: {
+                removeComments: true,
+            },
+        },
+    },
     sourcemap: {
         client: true,
     },
@@ -137,14 +146,6 @@ export default defineNuxtConfig({
             tailwindcss: {},
             autoprefixer: {},
             ...(process.env.NODE_ENV === 'production' ? { cssnano: {} } : {}),
-        },
-    },
-    typescript: {
-        strict: true,
-        tsConfig: {
-            compilerOptions: {
-                removeComments: true,
-            },
         },
     },
     app: {

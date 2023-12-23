@@ -1,6 +1,6 @@
 <script lang="ts" setup>
-import AttrView from '~/components/rector/attrs/AttrView.vue';
 import { type TypedRouteFromName } from '@typed-router';
+import AttrView from '~/components/rector/attrs/AttrView.vue';
 
 useHead({
     title: 'pages.rector.limiter.title',

@@ -89,8 +89,13 @@ const onSubmitThrottle = useThrottleFn(async (_) => {
                 :title="$t('common.unable_to_load', [`${$t('common.job', 1)} ${$t('common.prop')}`])"
                 :retry="refresh"
             />
-            <DataNoDataBlock v-else-if="!jobProps" :icon="TuneIcon" :type="`${$t('common.job', 1)} ${$t('common.prop')}`" />
-            <div v-else>
+            <DataNoDataBlock
+                v-else-if="jobProps === null"
+                :icon="TuneIcon"
+                :type="`${$t('common.job', 1)} ${$t('common.prop')}`"
+            />
+
+            <template v-else>
                 <div class="overflow-hidden bg-base-800 shadow sm:rounded-lg text-neutral">
                     <div class="px-4 py-5 sm:px-6">
                         <h3 class="text-base font-semibold leading-6">
@@ -398,7 +403,7 @@ const onSubmitThrottle = useThrottleFn(async (_) => {
                         </dl>
                     </div>
                 </div>
-            </div>
+            </template>
         </div>
     </div>
 </template>

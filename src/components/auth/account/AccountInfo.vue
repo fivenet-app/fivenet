@@ -50,7 +50,11 @@ async function removeOAuth2Connection(provider: string): Promise<void> {
             :title="$t('common.unable_to_load', [`${$t('common.account')} ${$t('common.info')}`])"
             :retry="refresh"
         />
-        <DataNoDataBlock v-else-if="!account" :type="`${$t('common.account')} ${$t('common.data')}`" :icon="AccountIcon" />
+        <DataNoDataBlock
+            v-else-if="account === null"
+            :type="`${$t('common.account')} ${$t('common.data')}`"
+            :icon="AccountIcon"
+        />
         <div v-else>
             <div class="overflow-hidden bg-base-800 shadow sm:rounded-lg text-neutral">
                 <div class="px-4 py-5 sm:px-6">

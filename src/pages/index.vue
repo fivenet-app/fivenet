@@ -20,6 +20,7 @@ const { accessToken } = storeToRefs(authStore);
 
 onBeforeMount(async () => {
     if (accessToken.value) {
+        // @ts-expect-error the route should be valid, as we test it against a valid URL list
         const target = useRouter().resolve(useSettingsStore().startpage ?? '/overview');
         return navigateTo(target);
     }

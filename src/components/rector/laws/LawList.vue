@@ -72,7 +72,7 @@ function updateLaw(law: Law): void {
                             :retry="refresh"
                         />
                         <DataNoDataBlock
-                            v-else-if="!lawBooks || lawBooks.length === 0"
+                            v-else-if="lawBooks === null || lawBooks.length === 0"
                             :icon="GavelIcon"
                             :type="$t('common.law', 2)"
                         />

@@ -47,7 +47,7 @@ async function getDocumentReferences(): Promise<DocumentReference[]> {
         <DataPendingBlock v-if="pending" :message="$t('common.loading', [$t('common.reference', 2)])" />
         <DataErrorBlock v-else-if="error" :title="$t('common.unable_to_load', [$t('common.reference', 2)])" :retry="refresh" />
         <DataNoDataBlock
-            v-else-if="!references || references.length === 0"
+            v-else-if="references === null || references.length === 0"
             :type="`${$t('common.document', 1)} ${$t('common.reference', 2)}`"
             :mdi="FileDocumentMultipleIcon"
         />

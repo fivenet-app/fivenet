@@ -94,7 +94,7 @@ function addToClipboard(): void {
             :message="$t(error.message)"
             :retry="refresh"
         />
-        <DataNoDataBlock v-else-if="!user" />
+        <DataNoDataBlock v-else-if="user === null" />
 
         <div v-else>
             <ClipboardButton />

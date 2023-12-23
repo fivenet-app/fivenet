@@ -1,9 +1,9 @@
 <script lang="ts" setup>
 import { type NavigationFailure } from 'vue-router';
+import type { TypedRouteFromName } from '@typed-router';
 import { useAuthStore } from '~/store/auth';
 import ForgotPasswordForm from '~/components/auth/ForgotPasswordForm.vue';
 import LoginForm from '~/components/auth/LoginForm.vue';
-import type { TypedRouteFromName } from '@typed-router';
 import FormWrapper from '~/components/auth/FormWrapper.vue';
 
 const authStore = useAuthStore();
