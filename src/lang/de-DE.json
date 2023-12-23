@@ -784,7 +784,9 @@
         "disabled": "Deaktiviert",
         "legend": "Legende",
         "radio_frequency": "Funk-Frequenz",
-        "click_here": "Klicke hier"
+        "click_here": "Klicke hier",
+        "yes": "Ja",
+        "no": "Nein"
     },
     "notifications": {
         "clipboard": {
@@ -1074,6 +1076,22 @@
                 "title": "Laden der Postleitzahlen fehlgeschlagen",
                 "content": "Postleitzahlen konnten nicht geladen werden"
             }
+        },
+        "docstore": {
+            "requests": {
+                "created": {
+                    "title": "Document Request created!",
+                    "content": "The document request has been successfully created."
+                },
+                "deleted": {
+                    "title": "Document Request deleted!",
+                    "content": "The document request has been successfully deleted."
+                },
+                "updated": {
+                    "title": "Document Request updated!",
+                    "content": "The document request has been successfully updated."
+                }
+            }
         }
     },
     "perms": {
@@ -1267,18 +1285,39 @@
                 "key": "Dokumenten-Aktivität anzeigen",
                 "description": "Dokumenten-Aktivität von Dokumente mit Status oder höher Zugriff sehen können."
             },
-            "CreateDocumentRequest": {
-                "key": "Anfragen von Dokumenten-Aktion",
-                "description": "Dokumenten-Aktionen anfragen können.",
+            "ListDocumentReqs": {
+                "key": "List Document Requests",
+                "description": "List requests for documents."
+            },
+            "ChangeDocumentOwner": {
+                "key": "Change Document Owner",
+                "description": "Take over the document owner.",
+                "attrs": {
+                    "Own": "Eigene",
+                    "Lower_Rank": "Niedrigerer Rang",
+                    "Same_Rank": "Gleicher Rang",
+                    "Any": "Egal"
+                },
+                "attrs_types": {
+                    "Access": "Zugriff auf fraktionseigene Dokumente"
+                }
+            },
+            "CreateDocumentReq": {
+                "key": "Erstelle eine Dokumenten-Anfrage",
+                "description": "Aktionen für Dokumente anfordern",
                 "attrs_types": {
                     "Types": "Verfügbare Aktionen"
                 },
                 "attrs": {
-                    "Access": "Zugriff",
+                    "Access": "Verfügbare Anfragen",
                     "Closure": "Schließung",
                     "Update": "Aktualisierung",
                     "Deletion": "Löschung"
                 }
+            },
+            "DeleteDocumentReq": {
+                "key": "Dokument-Anforderungen löschen",
+                "description": "Dokument-Anforderungen löschen"
             }
         },
         "LivemapperService": {
@@ -1525,10 +1564,11 @@
             "ErrFeedRelRemoveDenied": "You don't have permission to remove references from this document!",
             "ErrDocReqAlreadyCreated": {
                 "title": "Dokumenten Anfrage existiert bereits!",
-                "content": "Eine Dokumenten Anfrage für diese Art-Anfrage existiert bereits oder wurde in den letzten 24 Stunden schon gestellt."
+                "content": "Eine Dokumenten Anfrage für diese Art von Anfrage existiert bereits oder wurde in den letzten 24 Stunden schon gestellt."
             },
             "ErrDocSameOwner": "Sie sind bereits Ersteller des Dokumentes!",
-            "ErrDocOwnerWrongJob": "Der neue Ersteller muss Teil ihres Jobs sein!"
+            "ErrDocOwnerWrongJob": "Der neue Ersteller muss Teil ihres Jobs sein!",
+            "ErrDocReqOwnDoc": "Sie können keine Anfragen für Ihr eigenes Dokument erstellen!"
         },
         "LivemapperService": {
             "ErrStreamFailed": "Livemap Datenstrom fehlgeschlagen!",
@@ -1644,7 +1684,8 @@
                 "COMMENT_UPDATED": "Kommentar aktualisiert",
                 "COMMENT_DELETED": "Kommentar gelöscht",
                 "UNSPECIFIED": "Unbekannte Aktivität",
-                "REQUESTED_OWNER_CHANGE": "Dokument-Besitzer Wechsel beanfragt"
+                "REQUESTED_OWNER_CHANGE": "Dokument-Besitzer Wechsel beanfragt",
+                "REQUESTED_OPENING": "Öffnung des Dokumentes angefordert"
             }
         },
         "centrum": {
