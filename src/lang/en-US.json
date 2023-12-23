@@ -1007,22 +1007,6 @@
                 "content": "Document has been closed."
             }
         },
-        "docstore": {
-            "requests": {
-                "created": {
-                    "title": "Document Request created!",
-                    "content": "The document request has been successfully created."
-                },
-                "deleted": {
-                    "title": "Document Request deleted!",
-                    "content": "The document request has been successfully deleted."
-                },
-                "updated": {
-                    "title": "Document Request updated!",
-                    "content": "The document request has been successfully updated."
-                }
-            }
-        },
         "centrum": {
             "sidebar": {
                 "no_dispatch_selected": {
@@ -1091,6 +1075,22 @@
             "failed_loading_postals": {
                 "title": "Failed to load Postal codes",
                 "content": "Postal codes couldn't be loaded"
+            }
+        },
+        "docstore": {
+            "requests": {
+                "created": {
+                    "title": "Document Request created!",
+                    "content": "The document request has been successfully created."
+                },
+                "deleted": {
+                    "title": "Document Request deleted!",
+                    "content": "The document request has been successfully deleted."
+                },
+                "updated": {
+                    "title": "Document Request updated!",
+                    "content": "The document request has been successfully updated."
+                }
             }
         }
     },
@@ -1317,7 +1317,7 @@
             },
             "DeleteDocumentReq": {
                 "key": "Delete Document Requests",
-                "description": ""
+                "description": "Delete document requests."
             }
         },
         "LivemapperService": {
@@ -1678,14 +1678,14 @@
                 "DELETED": "Document deleted",
                 "REQUESTED_ACCESS": "Document access requested",
                 "REQUESTED_CLOSURE": "Document closure requested",
-                "REQUESTED_OPENING": "Document open requested",
                 "REQUESTED_UPDATE": "Document update requested",
                 "REQUESTED_DELETION": "Document deletion requested",
                 "COMMENT_ADDED": "Comment added",
                 "COMMENT_UPDATED": "Comment updated",
                 "COMMENT_DELETED": "Comment deleted",
                 "UNSPECIFIED": "Unspecified",
-                "REQUESTED_OWNER_CHANGE": "Document owner change requested"
+                "REQUESTED_OWNER_CHANGE": "Document owner change requested",
+                "REQUESTED_OPENING": "Document open requested"
             }
         },
         "centrum": {
