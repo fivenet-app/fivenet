@@ -42,3 +42,7 @@ body {
 .disabled {
     cursor: not-allowed;
 }
+
+em {
+    font-style: italic;
+}
