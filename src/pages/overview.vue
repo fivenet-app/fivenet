@@ -1,7 +1,7 @@
 <script lang="ts" setup>
 import { AccountMultipleIcon, BriefcaseIcon, CarEmergencyIcon, CarIcon, FileDocumentMultipleIcon, MapIcon } from 'mdi-vue3';
 import FiveNetHint from '~/components/FiveNetHint.vue';
-import Cards from '~/components/partials/CardsList.vue';
+import CardsList from '~/components/partials/CardsList.vue';
 import ContentCenterWrapper from '~/components/partials/ContentCenterWrapper.vue';
 import { type CardElements } from '~/utils/types';
 
