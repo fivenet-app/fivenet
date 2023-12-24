@@ -1,5 +1,4 @@
 <script lang="ts" setup>
-import { type RoutesNamedLocations } from '@typed-router';
 import { Dialog, DialogPanel, Menu, MenuButton, MenuItem, MenuItems, TransitionChild, TransitionRoot } from '@headlessui/vue';
 import {
     AccountPlusIcon,
@@ -20,6 +19,7 @@ import {
     UnfoldMoreHorizontalIcon,
 } from 'mdi-vue3';
 import { type DefineComponent } from 'vue';
+import { type RoutesNamedLocations } from '@typed-router';
 import QuickButtons from '~/components/partials/QuickButtons.vue';
 import FiveNetLogo from '~/components/partials/logos/FiveNetLogo.vue';
 import JobSwitcher from '~/components/partials/sidebar/JobSwitcher.vue';
