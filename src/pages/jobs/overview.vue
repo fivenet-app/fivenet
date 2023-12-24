@@ -17,7 +17,7 @@ const { $grpc } = useNuxtApp();
 
 const { data: timeclockStats } = useLazyAsyncData(`jobs-timeclock-stats`, () => getTimeclockStats());
 
-async function getTimeclockStats(): Promise<GenericTimeclockStats> {
+async function getTimeclockStats(): Promise<TimeclockStats> {
     try {
         const call = $grpc.getJobsClient().timeclockStats({});
         const { response } = await call;
@@ -35,7 +35,7 @@ async function getTimeclockStats(): Promise<GenericTimeclockStats> {
         <div class="grid grid-col-2 gap-2">
             <div class="sm:flex-auto">
                 <GenericDivider :label="$t('components.jobs.timeclock.Stats.title')" />
-                <GenericTimeclockStatsBlock :stats="timeclockStats" />
+                <TimeclockStatsBlock :stats="timeclockStats" />
             </div>
         </div>
     </div>

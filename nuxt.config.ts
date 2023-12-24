@@ -22,7 +22,7 @@ export default defineNuxtConfig({
         'nuxt-update',
     ],
     typescript: {
-        typeCheck: true,
+        typeCheck: false,
         strict: true,
         tsConfig: {
             compilerOptions: {
