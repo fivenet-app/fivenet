@@ -193,7 +193,7 @@ func (s *Server) GetDocument(ctx context.Context, req *GetDocumentRequest) (*Get
 		return nil, errswrap.NewError(errorsdocstore.ErrNotFoundOrNoPerms, err)
 	}
 	if !check && !userInfo.SuperUser {
-		return nil, errswrap.NewError(errorsdocstore.ErrDocViewDenied, err)
+		return nil, errorsdocstore.ErrDocViewDenied
 	}
 
 	resp := &GetDocumentResponse{}
@@ -204,7 +204,7 @@ func (s *Server) GetDocument(ctx context.Context, req *GetDocumentRequest) (*Get
 	}
 
 	if resp.Document == nil || resp.Document.Id <= 0 {
-		return nil, errswrap.NewError(errorsdocstore.ErrNotFoundOrNoPerms, err)
+		return nil, errorsdocstore.ErrNotFoundOrNoPerms
 	}
 
 	if resp.Document.Creator != nil {
@@ -360,10 +360,10 @@ func (s *Server) UpdateDocument(ctx context.Context, req *UpdateDocumentRequest)
 	if !check && !userInfo.SuperUser {
 		onlyUpdateAccess, err = s.checkIfUserHasAccessToDoc(ctx, req.DocumentId, userInfo, documents.AccessLevel_ACCESS_LEVEL_ACCESS)
 		if err != nil {
-			return nil, errswrap.NewError(errorsdocstore.ErrPermissionDenied, err)
+			return nil, errorsdocstore.ErrPermissionDenied
 		}
 		if !onlyUpdateAccess {
-			return nil, errswrap.NewError(errorsdocstore.ErrPermissionDenied, err)
+			return nil, errorsdocstore.ErrPermissionDenied
 		}
 	}
 
@@ -376,7 +376,7 @@ func (s *Server) UpdateDocument(ctx context.Context, req *UpdateDocumentRequest)
 
 	// Either the document is closed and the update request isn't re-opening the document
 	if doc.Closed && req.Closed && !userInfo.SuperUser {
-		return nil, errswrap.NewError(errorsdocstore.ErrClosedDoc, err)
+		return nil, errorsdocstore.ErrClosedDoc
 	}
 
 	// Field Permission Check
@@ -389,7 +389,7 @@ func (s *Server) UpdateDocument(ctx context.Context, req *UpdateDocumentRequest)
 		fields = fieldsAttr.([]string)
 	}
 	if !s.checkIfHasAccess(fields, userInfo, doc.CreatorJob, doc.Creator) {
-		return nil, errswrap.NewError(errorsdocstore.ErrDocUpdateDenied, err)
+		return nil, errorsdocstore.ErrDocUpdateDenied
 	}
 
 	// Begin transaction
@@ -492,7 +492,7 @@ func (s *Server) DeleteDocument(ctx context.Context, req *DeleteDocumentRequest)
 	}
 	if !check && !userInfo.SuperUser {
 		if !userInfo.SuperUser {
-			return nil, errswrap.NewError(errorsdocstore.ErrDocDeleteDenied, err)
+			return nil, errorsdocstore.ErrDocDeleteDenied
 		}
 	}
 
@@ -511,7 +511,7 @@ func (s *Server) DeleteDocument(ctx context.Context, req *DeleteDocumentRequest)
 		fields = fieldsAttr.([]string)
 	}
 	if !s.checkIfHasAccess(fields, userInfo, doc.CreatorJob, doc.Creator) {
-		return nil, errswrap.NewError(errorsdocstore.ErrDocDeleteDenied, err)
+		return nil, errorsdocstore.ErrDocDeleteDenied
 	}
 
 	stmt := tDocument.
@@ -563,7 +563,7 @@ func (s *Server) ToggleDocument(ctx context.Context, req *ToggleDocumentRequest)
 	}
 	if !check && !userInfo.SuperUser {
 		if !userInfo.SuperUser {
-			return nil, errswrap.NewError(errorsdocstore.ErrDocToggleDenied, err)
+			return nil, errorsdocstore.ErrDocToggleDenied
 		}
 	}
 
@@ -582,7 +582,7 @@ func (s *Server) ToggleDocument(ctx context.Context, req *ToggleDocumentRequest)
 		fields = fieldsAttr.([]string)
 	}
 	if !s.checkIfHasAccess(fields, userInfo, doc.CreatorJob, doc.Creator) {
-		return nil, errswrap.NewError(errorsdocstore.ErrDocToggleDenied, err)
+		return nil, errorsdocstore.ErrDocToggleDenied
 	}
 
 	activityType := documents.DocActivityType_DOC_ACTIVITY_TYPE_STATUS_CLOSED
@@ -639,7 +639,7 @@ func (s *Server) ChangeDocumentOwner(ctx context.Context, req *ChangeDocumentOwn
 	}
 	if !check && !userInfo.SuperUser {
 		if !userInfo.SuperUser {
-			return nil, errswrap.NewError(errorsdocstore.ErrDocToggleDenied, err)
+			return nil, errorsdocstore.ErrDocToggleDenied
 		}
 	}
 
@@ -668,7 +668,7 @@ func (s *Server) ChangeDocumentOwner(ctx context.Context, req *ChangeDocumentOwn
 		fields = fieldsAttr.([]string)
 	}
 	if !s.checkIfHasAccess(fields, userInfo, doc.CreatorJob, doc.Creator) {
-		return nil, errswrap.NewError(errorsdocstore.ErrDocToggleDenied, err)
+		return nil, errorsdocstore.ErrDocToggleDenied
 	}
 
 	tUsers := tUsers.AS("user_short")

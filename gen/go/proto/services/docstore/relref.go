@@ -39,7 +39,7 @@ func (s *Server) GetDocumentReferences(ctx context.Context, req *GetDocumentRefe
 		return nil, errswrap.NewError(errorsdocstore.ErrFailedQuery, err)
 	}
 	if !check && !userInfo.SuperUser {
-		return nil, errswrap.NewError(errorsdocstore.ErrFeedRefsViewDenied, err)
+		return nil, errorsdocstore.ErrFeedRefsViewDenied
 	}
 
 	resp := &GetDocumentReferencesResponse{}
@@ -206,7 +206,7 @@ func (s *Server) GetDocumentRelations(ctx context.Context, req *GetDocumentRelat
 		return nil, errswrap.NewError(errorsdocstore.ErrFailedQuery, err)
 	}
 	if !check && !userInfo.SuperUser {
-		return nil, errswrap.NewError(errorsdocstore.ErrFeedRelsViewDenied, err)
+		return nil, errorsdocstore.ErrFeedRelsViewDenied
 	}
 
 	relations, err := s.getDocumentRelations(ctx, userInfo, req.DocumentId)
@@ -242,7 +242,7 @@ func (s *Server) AddDocumentReference(ctx context.Context, req *AddDocumentRefer
 		return nil, errswrap.NewError(errorsdocstore.ErrFailedQuery, err)
 	}
 	if !check && !userInfo.SuperUser {
-		return nil, errswrap.NewError(errorsdocstore.ErrFeedRefAddDenied, err)
+		return nil, errorsdocstore.ErrFeedRefAddDenied
 	}
 
 	req.Reference.CreatorId = &userInfo.UserId
@@ -328,7 +328,7 @@ func (s *Server) RemoveDocumentReference(ctx context.Context, req *RemoveDocumen
 		return nil, errswrap.NewError(errorsdocstore.ErrFailedQuery, err)
 	}
 	if !check && !userInfo.SuperUser {
-		return nil, errswrap.NewError(errorsdocstore.ErrFeedRefRemoveDenied, err)
+		return nil, errorsdocstore.ErrFeedRefRemoveDenied
 	}
 
 	stmt := tDocRef.
@@ -368,7 +368,7 @@ func (s *Server) AddDocumentRelation(ctx context.Context, req *AddDocumentRelati
 		return nil, errswrap.NewError(errorsdocstore.ErrFailedQuery, err)
 	}
 	if !check && !userInfo.SuperUser {
-		return nil, errswrap.NewError(errorsdocstore.ErrFeedRelAddDenied, err)
+		return nil, errorsdocstore.ErrFeedRelAddDenied
 	}
 
 	req.Relation.SourceUserId = userInfo.UserId
@@ -464,7 +464,7 @@ func (s *Server) RemoveDocumentRelation(ctx context.Context, req *RemoveDocument
 		return nil, errswrap.NewError(errorsdocstore.ErrFailedQuery, err)
 	}
 	if !check && !userInfo.SuperUser {
-		return nil, errswrap.NewError(errorsdocstore.ErrFeedRelRemoveDenied, err)
+		return nil, errorsdocstore.ErrFeedRelRemoveDenied
 	}
 
 	// Begin transaction

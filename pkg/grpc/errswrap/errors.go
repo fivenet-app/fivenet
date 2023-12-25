@@ -32,6 +32,10 @@ func (e *Error) GRPCStatus() *status.Status {
 }
 
 func NewError(s error, e error) error {
+	if e == nil {
+		return s
+	}
+
 	return &Error{
 		s: status.Convert(s),
 		e: e,

@@ -162,7 +162,7 @@ func (s *Server) CreateDocumentReq(ctx context.Context, req *CreateDocumentReqRe
 
 	// If a request of that type already exists, make sure that we let the user know
 	if request != nil && request.CreatedAt != nil && time.Since(request.CreatedAt.AsTime()) > DocRequestMinimumWaitTime {
-		return nil, errswrap.NewError(errorsdocstore.ErrDocReqAlreadyCreated, err)
+		return nil, errorsdocstore.ErrDocReqAlreadyCreated
 	}
 
 	// Begin transaction

@@ -148,7 +148,7 @@ func (s *Server) PostComment(ctx context.Context, req *PostCommentRequest) (*Pos
 		return nil, errswrap.NewError(errorsdocstore.ErrFailedQuery, err)
 	}
 	if !check && !userInfo.SuperUser {
-		return nil, errswrap.NewError(errorsdocstore.ErrCommentPostDenied, err)
+		return nil, errorsdocstore.ErrCommentPostDenied
 	}
 
 	stmt := tDComments.
@@ -208,7 +208,7 @@ func (s *Server) EditComment(ctx context.Context, req *EditCommentRequest) (*Edi
 		return nil, errswrap.NewError(errorsdocstore.ErrFailedQuery, err)
 	}
 	if !check && !userInfo.SuperUser {
-		return nil, errswrap.NewError(errorsdocstore.ErrCommentEditDenied, err)
+		return nil, errorsdocstore.ErrCommentEditDenied
 	}
 
 	comment, err := s.getComment(ctx, req.Comment.Id)
@@ -216,7 +216,7 @@ func (s *Server) EditComment(ctx context.Context, req *EditCommentRequest) (*Edi
 		return nil, errswrap.NewError(errorsdocstore.ErrFailedQuery, err)
 	}
 	if !userInfo.SuperUser && *comment.CreatorId != userInfo.UserId {
-		return nil, errswrap.NewError(errorsdocstore.ErrCommentEditDenied, err)
+		return nil, errorsdocstore.ErrCommentEditDenied
 	}
 
 	stmt := tDComments.
@@ -306,7 +306,7 @@ func (s *Server) DeleteComment(ctx context.Context, req *DeleteCommentRequest) (
 		return nil, errswrap.NewError(errorsdocstore.ErrFailedQuery, err)
 	}
 	if !check && !userInfo.SuperUser {
-		return nil, errswrap.NewError(errorsdocstore.ErrCommentDeleteDenied, err)
+		return nil, errorsdocstore.ErrCommentDeleteDenied
 	}
 
 	// Field Permission Check
@@ -319,7 +319,7 @@ func (s *Server) DeleteComment(ctx context.Context, req *DeleteCommentRequest) (
 		fields = fieldsAttr.([]string)
 	}
 	if !s.checkIfHasAccess(fields, userInfo, comment.Creator.Job, comment.Creator) {
-		return nil, errswrap.NewError(errorsdocstore.ErrCommentDeleteDenied, err)
+		return nil, errorsdocstore.ErrCommentDeleteDenied
 	}
 
 	stmt := tDComments.

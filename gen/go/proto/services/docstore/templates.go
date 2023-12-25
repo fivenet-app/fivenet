@@ -83,7 +83,7 @@ func (s *Server) GetTemplate(ctx context.Context, req *GetTemplateRequest) (*Get
 		return nil, errswrap.NewError(errorsdocstore.ErrFailedQuery, err)
 	}
 	if !check && !userInfo.SuperUser {
-		return nil, errswrap.NewError(errorsdocstore.ErrTemplateNoPerms, err)
+		return nil, errorsdocstore.ErrTemplateNoPerms
 	}
 
 	resp := &GetTemplateResponse{}
@@ -310,7 +310,7 @@ func (s *Server) UpdateTemplate(ctx context.Context, req *UpdateTemplateRequest)
 		return nil, errswrap.NewError(errorsdocstore.ErrFailedQuery, err)
 	}
 	if !check && !userInfo.SuperUser {
-		return nil, errswrap.NewError(errorsdocstore.ErrTemplateNoPerms, err)
+		return nil, errorsdocstore.ErrTemplateNoPerms
 	}
 
 	categoryId := jet.NULL
@@ -406,13 +406,13 @@ func (s *Server) DeleteTemplate(ctx context.Context, req *DeleteTemplateRequest)
 
 	if !check && !userInfo.SuperUser {
 		if dTmpl.CreatorJob == nil {
-			return nil, errswrap.NewError(errorsdocstore.ErrTemplateNoPerms, err)
+			return nil, errorsdocstore.ErrTemplateNoPerms
 		}
 
 		// Make sure the highest job grade can delete the template
 		grade := s.cache.GetHighestJobGrade(userInfo.Job)
 		if grade == nil || (userInfo.Job == *dTmpl.CreatorJob && grade.Grade != userInfo.JobGrade) {
-			return nil, errswrap.NewError(errorsdocstore.ErrTemplateNoPerms, err)
+			return nil, errorsdocstore.ErrTemplateNoPerms
 		}
 	}
 
