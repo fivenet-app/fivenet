@@ -98,6 +98,6 @@
         "vite-svg-loader": "5.1.0",
         "vue": "3.3.13",
         "vue-router": "4.2.5",
-        "vue-tsc": "1.8.26"
+        "vue-tsc": "1.8.27"
     }
 }
