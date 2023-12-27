@@ -51,7 +51,7 @@ withDefaults(
                                 {{ unit.initials }}
                             </template>
                             <template v-if="assignment?.expiresAt">
-                                <GenericTimerIcon class="ml-0.5 h-5 w-5 fill-warn-600" />
+                                <TimerIcon class="ml-0.5 h-5 w-5 fill-warn-600" />
                             </template>
                         </span>
                     </template>
