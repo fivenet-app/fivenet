@@ -48,7 +48,7 @@
         "slugify": "1.6.6",
         "splitpanes": "3.1.5",
         "uuid": "9.0.1",
-        "vee-validate": "4.12.3",
+        "vee-validate": "4.12.4",
         "vue-color-input": "1.0.8",
         "vue-json-pretty": "2.3.0",
         "vue-leaflet-markercluster": "0.5.1"
