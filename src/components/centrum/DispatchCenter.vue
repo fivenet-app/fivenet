@@ -10,7 +10,7 @@ import DataPendingBlock from '~/components/partials/data/DataPendingBlock.vue';
 import { setWaypoint } from '~/composables/nui';
 import { useCentrumStore } from '~/store/centrum';
 import { useLivemapStore } from '~/store/livemap';
-import Feed from '~/components/centrum/Feed.vue';
+import CentrumFeed from '~/components/centrum/CentrumFeed.vue';
 import DispatchesLayer from '~/components/centrum/livemap/DispatchesLayer.vue';
 
 const centrumStore = useCentrumStore();
@@ -79,7 +79,7 @@ function goto(e: Coordinate) {
                         <UnitList @goto="goto($event)" />
                     </Pane>
                     <Pane size="12" min-size="2">
-                        <Feed :items="feed" />
+                        <CentrumFeed :items="feed" />
                     </Pane>
                 </Splitpanes>
             </Pane>

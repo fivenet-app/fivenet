@@ -59,7 +59,7 @@ func New[T any, U protoMessage[T]](logger *zap.Logger, js nats.JetStreamContext,
 	if err != nil {
 		return nil, err
 	}
-	l, err := locks.New(logger, lkv, lBucket)
+	l, err := locks.New(logger, lkv, lBucket, 9*time.Second)
 	if err != nil {
 		return nil, err
 	}

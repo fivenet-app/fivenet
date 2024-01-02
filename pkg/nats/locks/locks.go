@@ -23,16 +23,20 @@ type Locks struct {
 
 	bucket string
 
+	maxLockAge time.Duration
+
 	revMap  map[string]uint64
 	maplock sync.Mutex
 }
 
-func New(logger *zap.Logger, kv nats.KeyValue, bucket string) (*Locks, error) {
+func New(logger *zap.Logger, kv nats.KeyValue, bucket string, maxLockAge time.Duration) (*Locks, error) {
 	l := &Locks{
 		logger: logger.Named("locks").With(zap.String("bucket", bucket)),
 		kv:     kv,
 
 		bucket: bucket,
+
+		maxLockAge: maxLockAge,
 
 		revMap:  map[string]uint64{},
 		maplock: sync.Mutex{},
@@ -72,6 +76,15 @@ loop:
 
 		if revision == nil {
 			break
+		}
+
+		if time.Since(revision.Created()) > l.maxLockAge {
+			l.logger.Warn("cleanin up old lock", zap.String("key", key))
+			if err := l.kv.Delete(lockKey, nats.LastRevision(revision.Revision())); err != nil && !errors.Is(err, nats.ErrKeyNotFound) {
+				return err
+			}
+
+			continue
 		}
 
 		expires := time.Unix(0, int64(binary.LittleEndian.Uint64(revision.Value())))

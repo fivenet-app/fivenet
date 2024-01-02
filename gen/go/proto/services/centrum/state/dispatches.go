@@ -3,6 +3,7 @@ package state
 import (
 	"context"
 	"slices"
+	"strconv"
 
 	"github.com/galexrt/fivenet/gen/go/proto/resources/centrum"
 	"github.com/paulmach/orb"
@@ -23,6 +24,20 @@ func (s *State) ListDispatches(job string) ([]*centrum.Dispatch, bool) {
 	for _, id := range ids {
 		dsp, err := s.dispatches.GetOrLoad(id)
 		if err != nil {
+			continue
+		}
+
+		// Remove broken dispatches
+		if dsp.Id == 0 || dsp.Job == "" {
+			dId, err := strconv.Atoi(id)
+			if err != nil {
+				return ds, false
+			}
+
+			if err := s.DeleteDispatch(job, uint64(dId)); err != nil {
+				return ds, false
+			}
+
 			continue
 		}
 

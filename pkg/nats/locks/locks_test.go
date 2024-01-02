@@ -37,7 +37,7 @@ func getNatsClient(t *testing.T, bucket string) *Locks {
 	})
 	require.NoError(t, err)
 
-	n, err := New(zap.NewNop(), kv, bucket)
+	n, err := New(zap.NewNop(), kv, bucket, 6*time.Second)
 	require.NoError(t, err)
 	return n
 }

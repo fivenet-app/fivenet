@@ -392,6 +392,7 @@ func (s *Housekeeper) deduplicateDispatches(ctx context.Context) error {
 					continue
 				}
 
+				s.logger.Debug("deduplicating dispatches", zap.String("job", dsp.Job), zap.Uint64("dispatch_id", dsp.Id))
 				closestsDsp := s.State.GetDispatchLocations(dsp.Job).KNearest(dsp.Point(), 8, func(p orb.Pointer) bool {
 					return p.(*centrum.Dispatch).Id != dsp.Id
 				}, 45.0)
