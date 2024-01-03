@@ -106,7 +106,7 @@
             "copy_error": "Fehlerbericht kopieren"
         }
     },
-    "copyright": "Copyright © 2023 Galexrt Alle Rechte vorbehalten.",
+    "copyright": "Copyright © {year} Galexrt Alle Rechte vorbehalten.",
     "components": {
         "auth": {
             "account_info": {

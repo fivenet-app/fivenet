@@ -2,6 +2,8 @@
 import FiveNetLogo from '~/components/partials/logos/FiveNetLogo.vue';
 
 const appConfig = useAppConfig();
+
+const year = new Date().getFullYear();
 </script>
 
 <template>
@@ -10,7 +12,11 @@ const appConfig = useAppConfig();
             <div class="flex flex-row items-center gap-4">
                 <FiveNetLogo class="w-16 h-auto" />
                 <p class="text-center text-sm leading-5">
-                    {{ $t('copyright') }}
+                    <I18nT keypath="copyright">
+                        <template #year>
+                            {{ year }}
+                        </template>
+                    </I18nT>
                 </p>
             </div>
             <p class="inline-flex flex-row underline gap-2">
