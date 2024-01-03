@@ -295,7 +295,7 @@ watch(selectedAccessRole, () => {
                                 autocomplete="off"
                                 class="block w-full rounded-md border-0 py-1.5 bg-base-700 text-neutral placeholder:text-base-200 focus:ring-2 focus:ring-inset focus:ring-base-300 sm:text-sm sm:leading-6"
                                 :display-value="(char: any) => `${char?.firstname} ${char?.lastname} (${char?.dateofbirth})`"
-                                @change="queryChar = $event.target.value"
+                                @change="queryCharRaw = $event.target.value"
                                 @focusin="focusTablet(true)"
                                 @focusout="focusTablet(false)"
                             />
@@ -319,7 +319,7 @@ watch(selectedAccessRole, () => {
                                     ]"
                                 >
                                     <span :class="['block truncate', selected && 'font-semibold']">
-                                        {{ char.firstname }} {{ char.lastname }}
+                                        {{ char.firstname }} {{ char.lastname }} ({{ char?.dateofbirth }})
                                     </span>
 
                                     <span
