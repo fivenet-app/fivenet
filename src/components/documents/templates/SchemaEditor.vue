@@ -53,6 +53,8 @@ defineEmits<{
                         oninput="validity.valid||(value='');"
                         name="users"
                         class="block w-full rounded-r-md border-0 py-1.5 bg-base-700 text-neutral placeholder:text-base-200 focus:ring-2 focus:ring-inset focus:ring-base-300 sm:text-sm sm:leading-6 disabled:text-base-400 transition-colors"
+                        @focusin="focusTablet(true)"
+                        @focusout="focusTablet(false)"
                     />
                 </div>
                 <div class="flex flex-row">
@@ -68,6 +70,8 @@ defineEmits<{
                         oninput="validity.valid||(value='');"
                         name="users"
                         class="block w-full rounded-r-md border-0 py-1.5 bg-base-700 text-neutral placeholder:text-base-200 focus:ring-2 focus:ring-inset focus:ring-base-300 sm:text-sm sm:leading-6 disabled:text-base-400 transition-colors"
+                        @focusin="focusTablet(true)"
+                        @focusout="focusTablet(false)"
                     />
                 </div>
             </div>
@@ -101,6 +105,8 @@ defineEmits<{
                         oninput="validity.valid||(value='');"
                         name="documents"
                         class="block w-full rounded-r-md border-0 py-1.5 bg-base-700 text-neutral placeholder:text-base-200 focus:ring-2 focus:ring-inset focus:ring-base-300 sm:text-sm sm:leading-6 disabled:text-base-400 transition-colors"
+                        @focusin="focusTablet(true)"
+                        @focusout="focusTablet(false)"
                     />
                 </div>
                 <div class="flex flex-row">
@@ -116,6 +122,8 @@ defineEmits<{
                         oninput="validity.valid||(value='');"
                         name="documents"
                         class="block w-full rounded-r-md border-0 py-1.5 bg-base-700 text-neutral placeholder:text-base-200 focus:ring-2 focus:ring-inset focus:ring-base-300 sm:text-sm sm:leading-6 disabled:text-base-400 transition-colors"
+                        @focusin="focusTablet(true)"
+                        @focusout="focusTablet(false)"
                     />
                 </div>
             </div>
@@ -149,6 +157,8 @@ defineEmits<{
                         oninput="validity.valid||(value='');"
                         name="vehicles"
                         class="block w-full rounded-r-md border-0 py-1.5 bg-base-700 text-neutral placeholder:text-base-200 focus:ring-2 focus:ring-inset focus:ring-base-300 sm:text-sm sm:leading-6 disabled:text-base-400 transition-colors"
+                        @focusin="focusTablet(true)"
+                        @focusout="focusTablet(false)"
                     />
                 </div>
                 <div class="flex flex-row">
@@ -164,6 +174,8 @@ defineEmits<{
                         oninput="validity.valid||(value='');"
                         name="vehicles"
                         class="block w-full rounded-r-md border-0 py-1.5 bg-base-700 text-neutral placeholder:text-base-200 focus:ring-2 focus:ring-inset focus:ring-base-300 sm:text-sm sm:leading-6 disabled:text-base-400 transition-colors"
+                        @focusin="focusTablet(true)"
+                        @focusout="focusTablet(false)"
                     />
                 </div>
             </div>

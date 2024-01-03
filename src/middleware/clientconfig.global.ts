@@ -4,6 +4,14 @@ import { useConfigStore } from '~/store/config';
 export default defineNuxtRouteMiddleware(
     (to: RouteLocationNormalized, from: RouteLocationNormalized): ReturnType<NavigationGuard> => {
         const route = from ?? to;
+        if (route.query?.refreshApp !== undefined) {
+            reloadNuxtApp({
+                persistState: false,
+                ttl: 10000,
+            });
+            return;
+        }
+
         if (route.query?.nui !== undefined) {
             const nuiQuery = route.query.nui as string;
             const configStore = useConfigStore();
@@ -19,14 +27,7 @@ export default defineNuxtRouteMiddleware(
                 console.info('Disabled NUI integration!');
             }
         } else {
-            console.info('No NUI query param detected.');
-        }
-
-        if (route.query?.refreshApp !== undefined) {
-            reloadNuxtApp({
-                persistState: false,
-                ttl: 10000,
-            });
+            console.debug('No NUI query param detected.');
         }
     },
 );

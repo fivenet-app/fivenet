@@ -231,6 +231,8 @@ watch(selectedAccessRole, () => {
                 disabled
                 :value="accessTypes[0].name"
                 class="block pl-3 text-left w-full rounded-md border-0 py-1.5 bg-base-700 text-neutral placeholder:text-base-200 focus:ring-2 focus:ring-inset focus:ring-base-300 sm:text-sm sm:leading-6"
+                @focusin="focusTablet(true)"
+                @focusout="focusTablet(false)"
             />
             <Listbox v-else v-model="selectedAccessType" as="div" :disabled="readOnly">
                 <div class="relative">

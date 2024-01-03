@@ -182,6 +182,8 @@ onMounted(async () => {
                                         name="search"
                                         :placeholder="`${$t('common.time_range')} ${$t('common.from')}`"
                                         class="block w-full rounded-md border-0 py-1.5 pr-14 bg-base-700 text-neutral placeholder:text-base-200 focus:ring-2 focus:ring-inset focus:ring-base-300 sm:text-sm sm:leading-6"
+                                        @focusin="focusTablet(true)"
+                                        @focusout="focusTablet(false)"
                                     />
                                 </div>
                             </div>
@@ -197,6 +199,8 @@ onMounted(async () => {
                                         name="search"
                                         :placeholder="`${$t('common.time_range')} ${$t('common.to')}`"
                                         class="block w-full rounded-md border-0 py-1.5 pr-14 bg-base-700 text-neutral placeholder:text-base-200 focus:ring-2 focus:ring-inset focus:ring-base-300 sm:text-sm sm:leading-6"
+                                        @focusin="focusTablet(true)"
+                                        @focusout="focusTablet(false)"
                                     />
                                 </div>
                             </div>
