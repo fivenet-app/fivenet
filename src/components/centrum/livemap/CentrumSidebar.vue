@@ -136,7 +136,7 @@ watch(getOwnUnit, async () => {
             jobProps.value?.radioFrequency !== undefined &&
             jobProps.value.radioFrequency.length > 0
         ) {
-            setRadioFrequency(jobProps.value.radioFrequency);
+            setRadioFrequency(parseInt(jobProps.value.radioFrequency));
         }
     } else {
         // User not in an unit anymore

@@ -65,7 +65,7 @@ export async function copyToClipboard(text: string): Promise<void> {
     return fetchNui('copyToClipboard', { text });
 }
 
-export async function setRadioFrequency(frequency: string): Promise<void> {
+export async function setRadioFrequency(frequency: number): Promise<void> {
     if (!isNUIAvailable()) {
         return;
     }
