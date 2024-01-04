@@ -493,6 +493,7 @@ watch(router.currentRoute, () => updateActiveItem());
                                                     class="flex-shrink-0 w-5 h-5 text-base-400"
                                                     aria-hidden="true"
                                                 />
+                                                <!-- @vue-expect-error the route should be valid, as we test it against a valid URL list -->
                                                 <NuxtLink
                                                     :to="item.to"
                                                     :class="[

@@ -15,11 +15,11 @@ const { $grpc } = useNuxtApp();
 
 const { data: account, pending, refresh, error } = useLazyAsyncData(`accountinfo`, () => getAccountInfo());
 
-async function getAccountInfo(): Promise<GetAccountInfoResponse | undefined> {
+async function getAccountInfo(): Promise<GetAccountInfoResponse> {
     try {
         const call = $grpc.getAuthClient().getAccountInfo({});
 
-        return call.response;
+        return call.response!;
     } catch (e) {
         $grpc.handleError(e as RpcError);
         throw e;
@@ -55,7 +55,8 @@ async function removeOAuth2Connection(provider: string): Promise<void> {
             :type="`${$t('common.account')} ${$t('common.data')}`"
             :icon="AccountIcon"
         />
-        <div v-else>
+
+        <template v-else>
             <div class="overflow-hidden bg-base-800 shadow sm:rounded-lg text-neutral">
                 <div class="px-4 py-5 sm:px-6">
                     <h3 class="text-base font-semibold leading-6">
@@ -125,6 +126,6 @@ async function removeOAuth2Connection(provider: string): Promise<void> {
             />
 
             <DebugInfo />
-        </div>
+        </template>
     </div>
 </template>

@@ -1,7 +1,7 @@
 <script lang="ts" setup>
 import { type TypedRouteFromName } from '@typed-router';
 import ClipboardButton from '~/components/clipboard/ClipboardButton.vue';
-import View from '~/components/documents/View.vue';
+import DocumentView from '~/components/documents/DocumentView.vue';
 import ContentWrapper from '~/components/partials/ContentWrapper.vue';
 
 useHead({
@@ -23,7 +23,7 @@ const route = useRoute('documents-id');
 
 <template>
     <ContentWrapper>
-        <View :document-id="route.params.id as string" />
+        <DocumentView :document-id="route.params.id as string" />
         <ClipboardButton />
     </ContentWrapper>
 </template>

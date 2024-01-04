@@ -1,6 +1,6 @@
 <script lang="ts" setup>
 import { type TypedRouteFromName } from '@typed-router';
-import Editor from '~/components/documents/Editor.vue';
+import DocumentEditor from '~/components/documents/DocumentEditor.vue';
 import ContentWrapper from '~/components/partials/ContentWrapper.vue';
 
 useHead({
@@ -22,6 +22,6 @@ const route = useRoute('documents-id-edit');
 
 <template>
     <ContentWrapper>
-        <Editor :id="route.params.id as string" />
+        <DocumentEditor :id="route.params.id as string" />
     </ContentWrapper>
 </template>

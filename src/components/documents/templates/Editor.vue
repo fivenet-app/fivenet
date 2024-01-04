@@ -14,7 +14,8 @@ import { Category } from '~~/gen/ts/resources/documents/category';
 import { ObjectSpecs, TemplateJobAccess, TemplateRequirements } from '~~/gen/ts/resources/documents/templates';
 import { Job, JobGrade } from '~~/gen/ts/resources/users/jobs';
 import { CreateTemplateRequest, UpdateTemplateRequest } from '~~/gen/ts/services/docstore/docstore';
-import SchemaEditor, { type ObjectSpecsValue, type SchemaEditorValue } from '~/components/documents/templates/SchemaEditor.vue';
+import SchemaEditor, { type SchemaEditorValue } from '~/components/documents/templates/SchemaEditor.vue';
+import type { ObjectSpecsValue } from '~/components/documents/templates/types';
 import TemplateHint from '~/components/documents/templates/partials/TemplateHint.vue';
 
 const props = defineProps<{

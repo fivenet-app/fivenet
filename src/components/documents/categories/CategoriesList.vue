@@ -7,7 +7,7 @@ import DataNoDataBlock from '~/components/partials/data/DataNoDataBlock.vue';
 import DataPendingBlock from '~/components/partials/data/DataPendingBlock.vue';
 import { type CardElements } from '~/utils/types';
 import { Category } from '~~/gen/ts/resources/documents/category';
-import Modal from '~/components/documents/categories/Modal.vue';
+import CategoriesModal from '~/components/documents/categories/CategoriesModal.vue';
 
 const { $grpc } = useNuxtApp();
 
@@ -46,7 +46,7 @@ async function openCategory(idx: number): Promise<void> {
 
 <template>
     <div class="py-2 pb-14">
-        <Modal :category="selectedCategory" :open="open" @close="open = false" @updated="refresh()" />
+        <CategoriesModal :category="selectedCategory" :open="open" @close="open = false" @updated="refresh()" />
 
         <div class="px-1 sm:px-2 lg:px-4">
             <div v-if="can('DocStoreService.CreateCategory')" class="sm:flex sm:items-center">

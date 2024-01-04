@@ -3,7 +3,7 @@ import { RpcError } from '@protobuf-ts/runtime-rpc';
 import { useConfirmDialog } from '@vueuse/core';
 import AccessEntry from '~/components/documents/AccessEntry.vue';
 import PreviewModal from '~/components/documents/templates/PreviewModal.vue';
-import RequirementsList from '~/components/documents/templates/RequirementsList.vue';
+import TemplateRequirementsList from '~/components/documents/templates/TemplateRequirementsList.vue';
 import ConfirmDialog from '~/components/partials/ConfirmDialog.vue';
 import DataErrorBlock from '~/components/partials/data/DataErrorBlock.vue';
 import DataNoDataBlock from '~/components/partials/data/DataNoDataBlock.vue';
@@ -312,13 +312,13 @@ onConfirm(async (id) => deleteTemplate(id));
                                 class="mb-2 text-sm font-medium max-w-md space-y-1 text-gray-100 list-disc list-inside dark:text-gray-300"
                             >
                                 <li v-if="reqs.users">
-                                    <RequirementsList name="User" :specs="reqs.users!" />
+                                    <TemplateRequirementsList name="User" :specs="reqs.users!" />
                                 </li>
                                 <li v-if="reqs.vehicles">
-                                    <RequirementsList name="Vehicle" :specs="reqs.vehicles!" />
+                                    <TemplateRequirementsList name="Vehicle" :specs="reqs.vehicles!" />
                                 </li>
                                 <li v-if="reqs.documents">
-                                    <RequirementsList name="User" :specs="reqs.documents!" />
+                                    <TemplateRequirementsList name="User" :specs="reqs.documents!" />
                                 </li>
                             </ul>
                         </div>

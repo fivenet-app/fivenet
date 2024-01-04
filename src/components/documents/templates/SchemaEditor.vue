@@ -1,9 +1,5 @@
 <script lang="ts" setup>
-export interface ObjectSpecsValue {
-    req: boolean;
-    min: number;
-    max: number;
-}
+import type { ObjectSpecsValue } from './types';
 
 export interface SchemaEditorValue {
     users: ObjectSpecsValue;

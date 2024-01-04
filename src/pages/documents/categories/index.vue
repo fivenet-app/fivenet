@@ -1,5 +1,5 @@
 <script lang="ts" setup>
-import List from '~/components/documents/categories/List.vue';
+import CategoriesList from '~/components/documents/categories/CategoriesList.vue';
 import ContentWrapper from '~/components/partials/ContentWrapper.vue';
 
 useHead({
@@ -14,6 +14,6 @@ definePageMeta({
 
 <template>
     <ContentWrapper>
-        <List />
+        <CategoriesList />
     </ContentWrapper>
 </template>

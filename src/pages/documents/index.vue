@@ -1,6 +1,6 @@
 <script lang="ts" setup>
 import ClipboardButton from '~/components/clipboard/ClipboardButton.vue';
-import List from '~/components/documents/List.vue';
+import DocumentList from '~/components/documents/DocumentList.vue';
 import ContentWrapper from '~/components/partials/ContentWrapper.vue';
 
 useHead({
@@ -15,7 +15,7 @@ definePageMeta({
 
 <template>
     <ContentWrapper>
-        <List />
+        <DocumentList />
         <ClipboardButton />
     </ContentWrapper>
 </template>

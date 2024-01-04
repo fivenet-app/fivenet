@@ -1,6 +1,6 @@
 <script lang="ts" setup>
 import { type TypedRouteFromName } from '@typed-router';
-import View from '~/components/documents/templates/View.vue';
+import TemplateView from '~/components/documents/templates/TemplateView.vue';
 import ContentWrapper from '~/components/partials/ContentWrapper.vue';
 
 useHead({
@@ -22,6 +22,6 @@ const route = useRoute('documents-templates-id');
 
 <template>
     <ContentWrapper>
-        <View :template-id="route.params.id as string" />
+        <TemplateView :template-id="route.params.id as string" />
     </ContentWrapper>
 </template>

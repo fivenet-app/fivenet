@@ -7,7 +7,7 @@ import Vehicles from '~/components/clipboard/modal/Vehicles.vue';
 import { useClipboardStore } from '~/store/clipboard';
 import { TemplateRequirements, TemplateShort } from '~~/gen/ts/resources/documents/templates';
 import List from '~/components/documents/templates/List.vue';
-import RequirementsList from '~/components/documents/templates/RequirementsList.vue';
+import TemplateRequirementsList from '~/components/documents/templates/TemplateRequirementsList.vue';
 
 const clipboardStore = useClipboardStore();
 
@@ -226,7 +226,10 @@ async function clipboardDialog(): Promise<void> {
                                         <div class="mt-2 text-neutral">
                                             <div v-if="reqs.users">
                                                 <p>
-                                                    <RequirementsList :name="$t('common.citizen', 2)" :specs="reqs.users!" />
+                                                    <TemplateRequirementsList
+                                                        :name="$t('common.citizen', 2)"
+                                                        :specs="reqs.users!"
+                                                    />
                                                 </p>
 
                                                 <Citizens
@@ -237,7 +240,10 @@ async function clipboardDialog(): Promise<void> {
                                             </div>
                                             <div v-if="reqs.vehicles">
                                                 <p>
-                                                    <RequirementsList :name="$t('common.vehicle', 2)" :specs="reqs.vehicles!" />
+                                                    <TemplateRequirementsList
+                                                        :name="$t('common.vehicle', 2)"
+                                                        :specs="reqs.vehicles!"
+                                                    />
                                                 </p>
 
                                                 <Vehicles
@@ -248,7 +254,7 @@ async function clipboardDialog(): Promise<void> {
                                             </div>
                                             <div v-if="reqs.documents">
                                                 <p>
-                                                    <RequirementsList
+                                                    <TemplateRequirementsList
                                                         :name="$t('common.document', 2)"
                                                         :specs="reqs.documents!"
                                                     />

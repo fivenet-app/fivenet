@@ -26,7 +26,7 @@ import * as googleProtobufTimestamp from '~~/gen/ts/google/protobuf/timestamp';
 import { Category } from '~~/gen/ts/resources/documents/category';
 import { UserShort } from '~~/gen/ts/resources/users/users';
 import { ListDocumentsRequest, ListDocumentsResponse } from '~~/gen/ts/services/docstore/docstore';
-import ListEntry from '~/components/documents/ListEntry.vue';
+import DocumentListEntry from '~/components/documents/DocumentListEntry.vue';
 import TemplatesModal from '~/components/documents/templates/TemplatesModal.vue';
 
 const { $grpc } = useNuxtApp();
@@ -465,7 +465,7 @@ const templatesOpen = ref(false);
                         />
                         <div v-else>
                             <ul role="list" class="flex flex-col">
-                                <ListEntry v-for="doc in data?.documents" :key="doc.id" :doc="doc" />
+                                <DocumentListEntry v-for="doc in data?.documents" :key="doc.id" :doc="doc" />
                             </ul>
 
                             <TablePagination

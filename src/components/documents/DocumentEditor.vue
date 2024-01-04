@@ -15,7 +15,7 @@ import { max, min, required } from '@vee-validate/rules';
 import { useThrottleFn, watchDebounced, watchOnce } from '@vueuse/core';
 import 'jodit/build/jodit.min.css';
 import { Jodit } from 'jodit';
-// @ts-expect-error
+// @ts-expect-error no types are available for this package
 import { JoditEditor } from 'jodit-vue';
 import type { IJodit } from 'jodit/types/types';
 import {
