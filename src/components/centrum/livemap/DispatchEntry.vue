@@ -1,5 +1,5 @@
 <script lang="ts" setup>
-import { CarEmergencyIcon } from 'mdi-vue3';
+import { CarEmergencyIcon, MapMarkerIcon } from 'mdi-vue3';
 import DispatchDetails from '~/components/centrum/dispatches/DispatchDetails.vue';
 import { dispatchStatusToBGColor } from '~/components/centrum/helpers';
 import GenericTime from '~/components/partials/elements/GenericTime.vue';
@@ -22,7 +22,7 @@ const openDetails = ref(false);
     <li class="flex flex-row items-center">
         <DispatchDetails :dispatch="dispatch" :open="openDetails" @close="openDetails = false" @goto="$emit('goto', $event)" />
 
-        <div class="mr-1.5">
+        <div class="mr-1.5 flex flex-col gap-2 items-center">
             <input
                 :value="dispatch.id"
                 name="active"
@@ -31,6 +31,14 @@ const openDetails = ref(false);
                 :checked="selectedDispatch === dispatch.id"
                 @change="$emit('update:selectedDispatch', dispatch.id)"
             />
+
+            <button
+                type="button"
+                class="inline-flex items-center text-primary-400 hover:text-primary-600"
+                @click="$emit('goto', { x: dispatch.x, y: dispatch.y })"
+            >
+                <MapMarkerIcon class="w-5 h-5" aria-hidden="true" />
+            </button>
         </div>
         <button
             type="button"

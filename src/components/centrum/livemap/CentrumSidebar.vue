@@ -17,7 +17,13 @@ import {
 } from 'mdi-vue3';
 import DispatchStatusUpdateModal from '~/components/centrum/dispatches/DispatchStatusUpdateModal.vue';
 import DisponentsModal from '~/components/centrum/disponents/DisponentsModal.vue';
-import { dispatchStatusToBGColor, dispatchStatuses, unitStatusToBGColor, unitStatuses } from '~/components/centrum/helpers';
+import {
+    dispatchStatusToBGColor,
+    dispatchStatuses,
+    unitStatusToBGColor,
+    unitStatuses,
+    isStatusDispatchCompleted,
+} from '~/components/centrum/helpers';
 import UnitDetails from '~/components/centrum/units/UnitDetails.vue';
 import UnitStatusUpdateModal from '~/components/centrum/units/UnitStatusUpdateModal.vue';
 import { useCentrumStore } from '~/store/centrum';
@@ -171,7 +177,36 @@ function ensureOwnDispatchSelected(): void {
         return;
     }
 
-    selectedDispatch.value = ownDispatches.value[ownDispatches.value.length - 1];
+    // If the selected dispatch is still our own dispatch, don't do anything
+    if (
+        selectedDispatch.value !== undefined &&
+        ownDispatches.value.find((dispatchId) => dispatchId === selectedDispatch.value) !== undefined
+    ) {
+        const dispatch = dispatches.value.get(selectedDispatch.value);
+        if (!isStatusDispatchCompleted(dispatch?.status?.status ?? StatusDispatch.UNSPECIFIED)) {
+            return;
+        }
+    }
+
+    // otherwise select that current first one
+    if (ownDispatches.value.length > 1) {
+        for (let index = 0; index < ownDispatches.value.length; ++index) {
+            const od = ownDispatches.value[index];
+            if (od === selectedDispatch.value) {
+                continue;
+            }
+
+            const dispatch = dispatches.value.get(od);
+            if (isStatusDispatchCompleted(dispatch?.status?.status ?? StatusDispatch.UNSPECIFIED)) {
+                continue;
+            }
+
+            selectedDispatch.value = od;
+            break;
+        }
+    } else {
+        selectedDispatch.value = ownDispatches.value[0];
+    }
 }
 
 watchDebounced(
@@ -192,8 +227,8 @@ watchDebounced(
 );
 
 watchDebounced(ownDispatches.value, () => ensureOwnDispatchSelected(), {
-    debounce: 125,
-    maxWait: 350,
+    debounce: 100,
+    maxWait: 250,
 });
 
 const { resume, pause } = useIntervalFn(() => checkup(), 1 * 60 * 1000);
