@@ -6684,10 +6684,10 @@ nuxi@3.10.0, nuxi@^3.10.0:
   optionalDependencies:
     fsevents "~2.3.3"
 
-nuxt-typed-router@3.5.0:
-  version "3.5.0"
-  resolved "https://registry.yarnpkg.com/nuxt-typed-router/-/nuxt-typed-router-3.5.0.tgz#3b4248904097e0ce4a72330c08c2b1f995d68640"
-  integrity sha512-/0RePxU9bKATfzgIwhH7z/wuy042R4U+oG4Q1DIc1hAfgjQ66n4jE21WgZuJoKEp1Tfnve6DaJWGnABRELXkFg==
+nuxt-typed-router@3.5.1:
+  version "3.5.1"
+  resolved "https://registry.yarnpkg.com/nuxt-typed-router/-/nuxt-typed-router-3.5.1.tgz#aeeb737644c96006f89fa2d422cf59efa75a89eb"
+  integrity sha512-o3SYbArryJynn8uT2NDqpV3b43rsTdM6suG2G0SwONZhBtX2flFsfsrAJw1tiSXvNigqwd/nX4GgI4O591aNWQ==
   dependencies:
     "@nuxt/kit" "3.8.2"
     chalk "5.3.0"
@@ -6697,6 +6697,7 @@ nuxt-typed-router@3.5.0:
     mkdirp "3.0.1"
     nanoid "5.0.3"
     pathe "1.1.1"
+    prettier "3.1.0"
 
 nuxt-update@1.0.0:
   version "1.0.0"
@@ -7627,6 +7628,11 @@ prettier-plugin-organize-imports@3.2.4:
   version "3.2.4"
   resolved "https://registry.yarnpkg.com/prettier-plugin-organize-imports/-/prettier-plugin-organize-imports-3.2.4.tgz#77967f69d335e9c8e6e5d224074609309c62845e"
   integrity sha512-6m8WBhIp0dfwu0SkgfOxJqh+HpdyfqSSLfKKRZSFbDuEQXDDndb8fTpRWkUrX/uBenkex3MgnVk0J3b3Y5byog==
+
+prettier@3.1.0:
+  version "3.1.0"
+  resolved "https://registry.yarnpkg.com/prettier/-/prettier-3.1.0.tgz#c6d16474a5f764ea1a4a373c593b779697744d5e"
+  integrity sha512-TQLvXjq5IAibjh8EpBIkNKxO749UEWABoiIZehEPiY4GNpVdhaFKqSTu+QrlU6D2dPAfubRmtJTi4K4YkQ5eXw==
 
 prettier@3.1.1:
   version "3.1.1"
