@@ -20,6 +20,10 @@ export const useConfigStore = defineStore('config', {
         setUpdateAvailable(version: string): void {
             this.updateAvailable = version;
         },
+        setNuiDetails(enabled: boolean, resourceName: string | undefined): void {
+            this.nuiEnabled = enabled;
+            this.nuiResourceName = resourceName;
+        },
     },
     getters: {
         isNUIAvailable(state): boolean {
