@@ -302,6 +302,7 @@ func (s *Server) CreateDocument(ctx context.Context, req *CreateDocumentRequest)
 			req.State,
 			req.Closed,
 			req.Public,
+			req.TemplateId,
 		)
 
 	result, err := stmt.ExecContext(ctx, tx)
