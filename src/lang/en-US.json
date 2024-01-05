@@ -951,6 +951,10 @@
             "change_username": {
                 "title": "Username has been changed",
                 "content": "Your new username has been set. Please login again."
+            },
+            "forgot_password": {
+                "title": "Password has been reset",
+                "conten": "Your password has been reset."
             }
         },
         "language_switched": {

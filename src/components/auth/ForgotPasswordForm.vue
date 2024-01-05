@@ -32,8 +32,8 @@ async function forgotPassword(values: FormData): Promise<void> {
         });
 
         notifications.dispatchNotification({
-            title: { key: 'notifications.auth.account_created.title', parameters: {} },
-            content: { key: 'notifications.auth.account_created.content', parameters: {} },
+            title: { key: 'notifications.auth.forgot_password.title', parameters: {} },
+            content: { key: 'notifications.auth.forgot_password.content', parameters: {} },
             type: 'success',
         });
     } catch (e) {
