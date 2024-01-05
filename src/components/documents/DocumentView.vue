@@ -511,10 +511,10 @@ if (hash.value !== undefined && hash.value !== null) {
                                         />
                                     </span>
                                 </DisclosureButton>
-                                <DisclosurePanel
-                                    class="px-4 pb-2 border-2 border-t-0 rounded-b-lg transition-colors border-inherit"
-                                >
-                                    <ActivityList :document-id="documentId" />
+                                <DisclosurePanel class="border-2 border-t-0 rounded-b-lg transition-colors border-inherit">
+                                    <div class="mx-4 pb-2">
+                                        <ActivityList :document-id="documentId" />
+                                    </div>
                                 </DisclosurePanel>
                             </Disclosure>
                         </div>

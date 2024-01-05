@@ -50,12 +50,13 @@ watch(offset, async () => refresh());
             :icon="TicketIcon"
             :message="$t('common.not_found', [$t('common.activity')])"
         />
-        <div v-else>
+
+        <template v-else>
             <div class="sm:divide-y sm:divide-base-400 mb-1">
                 <ActivityListEntry v-for="item in data.activity" :key="item.id" :entry="item" />
             </div>
 
             <TablePagination :pagination="data?.pagination" :refresh="refresh" @offset-change="offset = $event" />
-        </div>
+        </template>
     </div>
 </template>
