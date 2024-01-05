@@ -12,7 +12,7 @@ import { ConductEntry, ConductType } from '~~/gen/ts/resources/jobs/conduct';
 import { User } from '~~/gen/ts/resources/users/users';
 import { ConductListEntriesResponse } from '~~/gen/ts/services/jobs/jobs';
 import CreateOrUpdateModal from '~/components/jobs/conduct/CreateOrUpdateModal.vue';
-import ListEntry from '~/components/jobs/conduct/ListEntry.vue';
+import ConductListEntry from '~/components/jobs/conduct/ConductListEntry.vue';
 import { useJobsStore } from '~/store/jobs';
 
 const { $grpc } = useNuxtApp();
@@ -364,7 +364,7 @@ onConfirm(async (id) => deleteConductEntry(id));
                                     </tr>
                                 </thead>
                                 <tbody class="divide-y divide-base-800">
-                                    <ListEntry
+                                    <ConductListEntry
                                         v-for="conduct in data?.entries"
                                         :key="conduct.id"
                                         :conduct="conduct"

@@ -1,5 +1,5 @@
 <script lang="ts" setup>
-import List from '~/components/jobs/requests/List.vue';
+import RequestsList from '~/components/jobs/requests/RequestsList.vue';
 
 useHead({
     title: 'pages.jobs.requests.title',
@@ -13,6 +13,6 @@ definePageMeta({
 
 <template>
     <div>
-        <List />
+        <RequestsList />
     </div>
 </template>

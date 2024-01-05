@@ -6,7 +6,7 @@ import DataErrorBlock from '~/components/partials/data/DataErrorBlock.vue';
 import DataNoDataBlock from '~/components/partials/data/DataNoDataBlock.vue';
 import DataPendingBlock from '~/components/partials/data/DataPendingBlock.vue';
 import TablePagination from '~/components/partials/elements/TablePagination.vue';
-import ActivityListEntry from '~/components/documents/ActivityListEntry.vue';
+import DocumentActivityListEntry from '~/components/documents/DocumentActivityListEntry.vue';
 
 const props = defineProps<{
     documentId: string;
@@ -53,7 +53,7 @@ watch(offset, async () => refresh());
 
         <template v-else>
             <div class="sm:divide-y sm:divide-base-400 mb-1">
-                <ActivityListEntry v-for="item in data.activity" :key="item.id" :entry="item" />
+                <DocumentActivityListEntry v-for="item in data.activity" :key="item.id" :entry="item" />
             </div>
 
             <TablePagination :pagination="data?.pagination" :refresh="refresh" @offset-change="offset = $event" />

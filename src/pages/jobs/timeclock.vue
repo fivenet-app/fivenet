@@ -1,5 +1,5 @@
 <script lang="ts" setup>
-import List from '~/components/jobs/timeclock/List.vue';
+import TimeclockList from '~/components/jobs/timeclock/TimeclockList.vue';
 
 useHead({
     title: 'pages.jobs.timeclock.title',
@@ -13,6 +13,6 @@ definePageMeta({
 
 <template>
     <div>
-        <List />
+        <TimeclockList />
     </div>
 </template>

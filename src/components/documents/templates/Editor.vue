@@ -5,7 +5,7 @@ import { max, min, numeric, required } from '@vee-validate/rules';
 import { useThrottleFn, watchDebounced } from '@vueuse/core';
 import { CheckIcon, LoadingIcon, PlusIcon } from 'mdi-vue3';
 import { defineRule } from 'vee-validate';
-import AccessEntry from '~/components/documents/AccessEntry.vue';
+import DocumentAccessEntry from '~/components/documents/DocumentAccessEntry.vue';
 import { useAuthStore } from '~/store/auth';
 import { useCompletorStore } from '~/store/completor';
 import { useNotificatorStore } from '~/store/notificator';
@@ -108,7 +108,7 @@ const access = ref<
 
 const accessTypes = [{ id: 1, name: t('common.job', 2) }];
 
-function addAccessEntry(): void {
+function addDocumentAccessEntry(): void {
     if (access.value.size > maxAccessEntries - 1) {
         notifications.dispatchNotification({
             title: { key: 'notifications.max_access_entry.title', parameters: {} },
@@ -126,11 +126,11 @@ function addAccessEntry(): void {
     });
 }
 
-function removeAccessEntry(event: { id: string }): void {
+function removeDocumentAccessEntry(event: { id: string }): void {
     access.value.delete(event.id);
 }
 
-function updateAccessEntryType(event: { id: string; type: number }): void {
+function updateDocumentAccessEntryType(event: { id: string; type: number }): void {
     const accessEntry = access.value.get(event.id);
     if (!accessEntry) {
         return;
@@ -140,7 +140,7 @@ function updateAccessEntryType(event: { id: string; type: number }): void {
     access.value.set(event.id, accessEntry);
 }
 
-function updateAccessEntryName(event: { id: string; job?: Job }): void {
+function updateDocumentAccessEntryName(event: { id: string; job?: Job }): void {
     const accessEntry = access.value.get(event.id);
     if (!accessEntry) {
         return;
@@ -153,7 +153,7 @@ function updateAccessEntryName(event: { id: string; job?: Job }): void {
     }
 }
 
-function updateAccessEntryRank(event: { id: string; rank: JobGrade }): void {
+function updateDocumentAccessEntryRank(event: { id: string; rank: JobGrade }): void {
     const accessEntry = access.value.get(event.id);
     if (!accessEntry) {
         return;
@@ -163,7 +163,7 @@ function updateAccessEntryRank(event: { id: string; rank: JobGrade }): void {
     access.value.set(event.id, accessEntry);
 }
 
-function updateAccessEntryAccess(event: { id: string; access: AccessLevel }): void {
+function updateDocumentAccessEntryAccess(event: { id: string; access: AccessLevel }): void {
     const accessEntry = access.value.get(event.id);
     if (!accessEntry) {
         return;
@@ -194,7 +194,7 @@ const contentAccessTypes = [
     { id: 1, name: t('common.job', 2) },
 ];
 
-function addContentAccessEntry(): void {
+function addContentDocumentAccessEntry(): void {
     if (contentAccess.value.size > maxAccessEntries - 1) {
         notifications.dispatchNotification({
             title: { key: 'notifications.max_access_entry.title', parameters: {} },
@@ -212,11 +212,11 @@ function addContentAccessEntry(): void {
     });
 }
 
-function removeContentAccessEntry(event: { id: string }): void {
+function removeContentDocumentAccessEntry(event: { id: string }): void {
     contentAccess.value.delete(event.id);
 }
 
-function updateContentAccessEntryType(event: { id: string; type: number }): void {
+function updateContentDocumentAccessEntryType(event: { id: string; type: number }): void {
     const accessEntry = contentAccess.value.get(event.id);
     if (!accessEntry) {
         return;
@@ -226,7 +226,7 @@ function updateContentAccessEntryType(event: { id: string; type: number }): void
     contentAccess.value.set(event.id, accessEntry);
 }
 
-function updateContentAccessEntryName(event: { id: string; job?: Job }): void {
+function updateContentDocumentAccessEntryName(event: { id: string; job?: Job }): void {
     const accessEntry = contentAccess.value.get(event.id);
     if (!accessEntry) {
         return;
@@ -239,7 +239,7 @@ function updateContentAccessEntryName(event: { id: string; job?: Job }): void {
     }
 }
 
-function updateContentAccessEntryRank(event: { id: string; rank: JobGrade }): void {
+function updateContentDocumentAccessEntryRank(event: { id: string; rank: JobGrade }): void {
     const accessEntry = contentAccess.value.get(event.id);
     if (!accessEntry) {
         return;
@@ -249,7 +249,7 @@ function updateContentAccessEntryRank(event: { id: string; rank: JobGrade }): vo
     contentAccess.value.set(event.id, accessEntry);
 }
 
-function updateContentAccessEntryAccess(event: { id: string; access: AccessLevel }): void {
+function updateContentDocumentAccessEntryAccess(event: { id: string; access: AccessLevel }): void {
     const accessEntry = contentAccess.value.get(event.id);
     if (!accessEntry) {
         return;
@@ -560,24 +560,24 @@ onMounted(async () => {
             <div>
                 <div class="my-3">
                     <h2 class="text-neutral">{{ $t('common.template') }} {{ $t('common.access') }}</h2>
-                    <AccessEntry
+                    <DocumentAccessEntry
                         v-for="entry in access.values()"
                         :key="entry.id"
                         :init="entry"
                         :access-types="accessTypes"
                         :access-roles="[AccessLevel.VIEW, AccessLevel.EDIT]"
-                        @type-change="updateAccessEntryType($event)"
-                        @name-change="updateAccessEntryName($event)"
-                        @rank-change="updateAccessEntryRank($event)"
-                        @access-change="updateAccessEntryAccess($event)"
-                        @delete-request="removeAccessEntry($event)"
+                        @type-change="updateDocumentAccessEntryType($event)"
+                        @name-change="updateDocumentAccessEntryName($event)"
+                        @rank-change="updateDocumentAccessEntryRank($event)"
+                        @access-change="updateDocumentAccessEntryAccess($event)"
+                        @delete-request="removeDocumentAccessEntry($event)"
                     />
                     <button
                         type="button"
                         class="p-2 rounded-full bg-primary-500 text-neutral hover:bg-primary-400 focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-primary-500"
                         data-te-toggle="tooltip"
                         :title="$t('components.documents.document_editor.add_permission')"
-                        @click="addAccessEntry()"
+                        @click="addDocumentAccessEntry()"
                     >
                         <PlusIcon class="w-5 h-5" aria-hidden="true" />
                     </button>
@@ -691,23 +691,23 @@ onMounted(async () => {
             <SchemaEditor v-model="schema" class="mt-2" />
             <div class="my-3">
                 <h2 class="text-neutral">{{ $t('common.content') }} {{ $t('common.access') }}</h2>
-                <AccessEntry
+                <DocumentAccessEntry
                     v-for="entry in contentAccess.values()"
                     :key="entry.id"
                     :init="entry"
                     :access-types="contentAccessTypes"
-                    @type-change="updateContentAccessEntryType($event)"
-                    @name-change="updateContentAccessEntryName($event)"
-                    @rank-change="updateContentAccessEntryRank($event)"
-                    @access-change="updateContentAccessEntryAccess($event)"
-                    @delete-request="removeContentAccessEntry($event)"
+                    @type-change="updateContentDocumentAccessEntryType($event)"
+                    @name-change="updateContentDocumentAccessEntryName($event)"
+                    @rank-change="updateContentDocumentAccessEntryRank($event)"
+                    @access-change="updateContentDocumentAccessEntryAccess($event)"
+                    @delete-request="removeContentDocumentAccessEntry($event)"
                 />
                 <button
                     type="button"
                     class="p-2 rounded-full bg-primary-500 text-neutral hover:bg-primary-400 focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-primary-500"
                     data-te-toggle="tooltip"
                     :title="$t('components.documents.document_editor.add_permission')"
-                    @click="addContentAccessEntry()"
+                    @click="addContentDocumentAccessEntry()"
                 >
                     <PlusIcon class="w-5 h-5" aria-hidden="true" />
                 </button>

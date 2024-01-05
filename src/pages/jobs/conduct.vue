@@ -1,5 +1,5 @@
 <script lang="ts" setup>
-import List from '~/components/jobs/conduct/List.vue';
+import ConductList from '~/components/jobs/conduct/ConductList.vue';
 
 useHead({
     title: 'pages.jobs.conduct.title',
@@ -13,6 +13,6 @@ definePageMeta({
 
 <template>
     <div>
-        <List />
+        <ConductList />
     </div>
 </template>

@@ -9,7 +9,7 @@ import TablePagination from '~/components/partials/elements/TablePagination.vue'
 import { useAuthStore } from '~/store/auth';
 import { RequestComment } from '~~/gen/ts/resources/jobs/requests';
 import { RequestsListCommentsResponse } from '~~/gen/ts/services/jobs/jobs';
-import CommentEntry from '~/components/jobs/requests/CommentEntry.vue';
+import RequestsCommentEntry from '~/components/jobs/requests/RequestsCommentEntry.vue';
 
 const { $grpc } = useNuxtApp();
 const authStore = useAuthStore();
@@ -211,7 +211,7 @@ const onSubmitThrottle = useThrottleFn(async (e) => {
                 class="flow-root rounded-lg bg-base-800 text-neutral rounded-lg ring-1 ring-inset ring-gray-500 shadow-sm shadow-sm focus-within:ring-2 focus-within:ring-primary-600"
             >
                 <ul role="list" class="divide-y divide-gray-200 px-4">
-                    <CommentEntry
+                    <RequestsCommentEntry
                         v-for="(comment, idx) in comments.comments"
                         :key="comment.id"
                         v-model:comment="comments.comments[idx]"

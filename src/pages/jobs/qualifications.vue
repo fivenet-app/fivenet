@@ -1,5 +1,5 @@
 <script lang="ts" setup>
-import List from '~/components/jobs/qualifications/List.vue';
+import QualificationsList from '~/components/jobs/qualifications/QualificationsList.vue';
 
 useHead({
     title: 'pages.jobs.qualifications.title',
@@ -32,7 +32,7 @@ definePageMeta({
                     </div>
                 </div>
             </div>
-            <List />
+            <QualificationsList />
         </div>
     </div>
 </template>

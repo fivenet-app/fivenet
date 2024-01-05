@@ -47,7 +47,7 @@ import {
 import { Job, JobGrade } from '~~/gen/ts/resources/users/jobs';
 import { UserShort } from '~~/gen/ts/resources/users/users';
 import { CreateDocumentRequest, UpdateDocumentRequest } from '~~/gen/ts/services/docstore/docstore';
-import AccessEntry from '~/components/documents/AccessEntry.vue';
+import DocumentAccessEntry from '~/components/documents/DocumentAccessEntry.vue';
 import ReferenceManager from '~/components/documents/ReferenceManager.vue';
 import RelationManager from '~/components/documents/RelationManager.vue';
 import { checkDocAccess } from '~/components/documents/helpers';
@@ -374,7 +374,7 @@ const accessTypes = [
     { id: 1, name: t('common.job', 2) },
 ];
 
-function addAccessEntry(): void {
+function addDocumentAccessEntry(): void {
     if (access.value.size > maxAccessEntries - 1) {
         notifications.dispatchNotification({
             title: { key: 'notifications.max_access_entry.title', parameters: {} },
@@ -395,11 +395,11 @@ function addAccessEntry(): void {
     });
 }
 
-function removeAccessEntry(event: { id: string }): void {
+function removeDocumentAccessEntry(event: { id: string }): void {
     access.value.delete(event.id);
 }
 
-function updateAccessEntryType(event: { id: string; type: number }): void {
+function updateDocumentAccessEntryType(event: { id: string; type: number }): void {
     const accessEntry = access.value.get(event.id);
     if (!accessEntry) {
         return;
@@ -409,7 +409,7 @@ function updateAccessEntryType(event: { id: string; type: number }): void {
     access.value.set(event.id, accessEntry);
 }
 
-function updateAccessEntryName(event: { id: string; job?: Job; char?: UserShort }): void {
+function updateDocumentAccessEntryName(event: { id: string; job?: Job; char?: UserShort }): void {
     const accessEntry = access.value.get(event.id);
     if (!accessEntry) {
         return;
@@ -426,7 +426,7 @@ function updateAccessEntryName(event: { id: string; job?: Job; char?: UserShort 
     access.value.set(event.id, accessEntry);
 }
 
-function updateAccessEntryRank(event: { id: string; rank: JobGrade }): void {
+function updateDocumentAccessEntryRank(event: { id: string; rank: JobGrade }): void {
     const accessEntry = access.value.get(event.id);
     if (!accessEntry) {
         return;
@@ -436,7 +436,7 @@ function updateAccessEntryRank(event: { id: string; rank: JobGrade }): void {
     access.value.set(event.id, accessEntry);
 }
 
-function updateAccessEntryAccess(event: { id: string; access: AccessLevel }): void {
+function updateDocumentAccessEntryAccess(event: { id: string; access: AccessLevel }): void {
     const accessEntry = access.value.get(event.id);
     if (!accessEntry) {
         return;
@@ -1062,17 +1062,17 @@ function setupCheckboxes(): void {
                 <h2 class="text-neutral">
                     {{ $t('common.access') }}
                 </h2>
-                <AccessEntry
+                <DocumentAccessEntry
                     v-for="entry in access.values()"
                     :key="entry.id"
                     :init="entry"
                     :access-types="accessTypes"
                     :read-only="!canDo.access"
-                    @type-change="updateAccessEntryType($event)"
-                    @name-change="updateAccessEntryName($event)"
-                    @rank-change="updateAccessEntryRank($event)"
-                    @access-change="updateAccessEntryAccess($event)"
-                    @delete-request="removeAccessEntry($event)"
+                    @type-change="updateDocumentAccessEntryType($event)"
+                    @name-change="updateDocumentAccessEntryName($event)"
+                    @rank-change="updateDocumentAccessEntryRank($event)"
+                    @access-change="updateDocumentAccessEntryAccess($event)"
+                    @delete-request="removeDocumentAccessEntry($event)"
                 />
                 <button
                     type="button"
@@ -1080,7 +1080,7 @@ function setupCheckboxes(): void {
                     class="p-2 rounded-full bg-primary-500 text-neutral hover:bg-primary-400 focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-primary-500"
                     data-te-toggle="tooltip"
                     :title="$t('components.documents.document_editor.add_permission')"
-                    @click="addAccessEntry()"
+                    @click="addDocumentAccessEntry()"
                 >
                     <PlusIcon class="w-5 h-5" aria-hidden="true" />
                 </button>

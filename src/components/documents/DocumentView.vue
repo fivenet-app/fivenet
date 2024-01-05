@@ -35,8 +35,8 @@ import Comments from '~/components/documents/Comments.vue';
 import References from '~/components/documents/References.vue';
 import Relations from '~/components/documents/Relations.vue';
 import { checkDocAccess } from '~/components/documents/helpers';
-import ActivityList from '~/components/documents/ActivityList.vue';
-import RequestsModal from '~/components/documents/RequestsModal.vue';
+import DocumentActivityList from '~/components/documents/DocumentActivityList.vue';
+import DocumentRequestsModal from '~/components/documents/DocumentRequestsModal.vue';
 import { useAuthStore } from '~/store/auth';
 
 const { $grpc } = useNuxtApp();
@@ -222,7 +222,7 @@ if (hash.value !== undefined && hash.value !== null) {
         />
 
         <div v-else class="rounded-lg bg-base-700">
-            <RequestsModal
+            <DocumentRequestsModal
                 v-if="can('DocStoreService.CreateDocumentReq')"
                 :open="openRequests"
                 :doc="doc"
@@ -513,7 +513,7 @@ if (hash.value !== undefined && hash.value !== null) {
                                 </DisclosureButton>
                                 <DisclosurePanel class="border-2 border-t-0 rounded-b-lg transition-colors border-inherit">
                                     <div class="mx-4 pb-2">
-                                        <ActivityList :document-id="documentId" />
+                                        <DocumentActivityList :document-id="documentId" />
                                     </div>
                                 </DisclosurePanel>
                             </Disclosure>

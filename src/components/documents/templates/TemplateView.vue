@@ -1,7 +1,7 @@
 <script lang="ts" setup>
 import { RpcError } from '@protobuf-ts/runtime-rpc';
 import { useConfirmDialog } from '@vueuse/core';
-import AccessEntry from '~/components/documents/AccessEntry.vue';
+import DocumentAccessEntry from '~/components/documents/DocumentAccessEntry.vue';
 import PreviewModal from '~/components/documents/templates/PreviewModal.vue';
 import TemplateRequirementsList from '~/components/documents/templates/TemplateRequirementsList.vue';
 import ConfirmDialog from '~/components/partials/ConfirmDialog.vue';
@@ -235,7 +235,7 @@ onConfirm(async (id) => deleteTemplate(id));
                             {{ $t('common.template', 2) }} {{ $t('common.access') }}
                         </h3>
                         <div class="my-2">
-                            <AccessEntry
+                            <DocumentAccessEntry
                                 v-for="entry in templateAccess.values()"
                                 :key="entry.id"
                                 :init="entry"
@@ -328,7 +328,7 @@ onConfirm(async (id) => deleteTemplate(id));
                             {{ $t('common.access') }}
                         </h3>
                         <div class="my-2">
-                            <AccessEntry
+                            <DocumentAccessEntry
                                 v-for="entry in contentAccess.values()"
                                 :key="entry.id"
                                 :init="entry"

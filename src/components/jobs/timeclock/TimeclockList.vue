@@ -12,7 +12,7 @@ import * as googleProtobufTimestamp from '~~/gen/ts/google/protobuf/timestamp';
 import { TimeclockEntry } from '~~/gen/ts/resources/jobs/timeclock';
 import { User } from '~~/gen/ts/resources/users/users';
 import { TimeclockListEntriesRequest, TimeclockListEntriesResponse } from '~~/gen/ts/services/jobs/jobs';
-import ListEntry from '~/components/jobs/timeclock/ListEntry.vue';
+import TimeclockListEntry from '~/components/jobs/timeclock/TimeclockListEntry.vue';
 import TimeclockStatsBlock from '~/components/jobs/timeclock/TimeclockStatsBlock.vue';
 import { useJobsStore } from '~/store/jobs';
 import { dateToDateString } from '~/utils/time';
@@ -376,7 +376,7 @@ function updateDates(): void {
                                 </thead>
                                 <tbody class="divide-y divide-base-800">
                                     <template v-for="group in grouped" :key="group.key">
-                                        <ListEntry
+                                        <TimeclockListEntry
                                             v-for="(entry, idx) in group.entries"
                                             :key="entry.userId + toDate(entry.date).toString()"
                                             :entry="entry"

@@ -16,7 +16,7 @@ import {
 import CitizenInfoPopover from '~/components/partials/citizens/CitizenInfoPopover.vue';
 import GenericTime from '~/components/partials/elements/GenericTime.vue';
 import { Request } from '~~/gen/ts/resources/jobs/requests';
-import Comments from '~/components/jobs/requests/Comments.vue';
+import RequestsComments from '~/components/jobs/requests/RequestsComments.vue';
 
 defineProps<{
     request: Request;
@@ -214,7 +214,7 @@ const open = ref(false);
             </div>
 
             <div>
-                <Comments :request-id="request.id" />
+                <RequestsComments :request-id="request.id" />
             </div>
         </div>
     </li>

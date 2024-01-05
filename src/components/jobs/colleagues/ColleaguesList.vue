@@ -4,7 +4,7 @@ import DataErrorBlock from '~/components/partials/data/DataErrorBlock.vue';
 import DataNoDataBlock from '~/components/partials/data/DataNoDataBlock.vue';
 import DataPendingBlock from '~/components/partials/data/DataPendingBlock.vue';
 import TablePagination from '~/components/partials/elements/TablePagination.vue';
-import ListEntry from '~/components/jobs/colleagues/ListEntry.vue';
+import ColleaguesListEntry from '~/components/jobs/colleagues/ColleaguesListEntry.vue';
 import { useJobsStore } from '~/store/jobs';
 
 const query = ref<{ name: string }>({
@@ -98,7 +98,7 @@ watchDebounced(query.value, () => refresh(), { debounce: 600, maxWait: 1400 });
                                     </tr>
                                 </thead>
                                 <tbody class="divide-y divide-base-800">
-                                    <ListEntry v-for="user in data?.users" :key="user.userId" :user="user" />
+                                    <ColleaguesListEntry v-for="user in data?.users" :key="user.userId" :user="user" />
                                 </tbody>
                                 <thead>
                                     <tr>

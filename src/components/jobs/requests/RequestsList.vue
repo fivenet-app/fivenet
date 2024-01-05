@@ -10,7 +10,7 @@ import TablePagination from '~/components/partials/elements/TablePagination.vue'
 import * as googleProtobufTimestamp from '~~/gen/ts/google/protobuf/timestamp';
 import { User } from '~~/gen/ts/resources/users/users';
 import { RequestsListEntriesRequest, RequestsListEntriesResponse } from '~~/gen/ts/services/jobs/jobs';
-import ListEntry from '~/components/jobs/requests/ListEntry.vue';
+import RequestsListEntry from '~/components/jobs/requests/RequestsListEntry.vue';
 import { useJobsStore } from '~/store/jobs';
 
 const { $grpc } = useNuxtApp();
@@ -222,9 +222,9 @@ onMounted(async () => {
                             :focus="focusSearch"
                             :message="$t('components.citizens.citizens_list.no_citizens')"
                         />
-                        <div v-else>
+                        <template v-else>
                             <ul role="list" class="flex flex-col">
-                                <ListEntry v-for="request in data?.entries" :key="request.id" :request="request" />
+                                <RequestsListEntry v-for="request in data?.entries" :key="request.id" :request="request" />
                             </ul>
 
                             <TablePagination
@@ -232,7 +232,7 @@ onMounted(async () => {
                                 :refresh="refresh"
                                 @offset-change="offset = $event"
                             />
-                        </div>
+                        </template>
                     </div>
                 </div>
             </div>

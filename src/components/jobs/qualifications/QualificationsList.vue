@@ -1,6 +1,6 @@
 <script lang="ts" setup>
 import { Qualification } from '~~/gen/ts/resources/jobs/qualifications';
-import ListEntry from '~/components/jobs/qualifications/ListEntry.vue';
+import QualificationsListEntry from '~/components/jobs/qualifications/QualificationsListEntry.vue';
 
 const trainings = ref<Qualification[]>([
     {
@@ -18,6 +18,6 @@ const trainings = ref<Qualification[]>([
 
 <template>
     <ul role="list" class="divide-y divide-gray-100">
-        <ListEntry v-for="training in trainings" :key="training.id" :qualification="training" />
+        <QualificationsListEntry v-for="training in trainings" :key="training.id" :qualification="training" />
     </ul>
 </template>
