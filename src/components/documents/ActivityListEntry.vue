@@ -7,16 +7,19 @@ import {
     CommentEditIcon,
     CommentPlusIcon,
     DeleteCircleIcon,
-    FileDocumentIcon,
-    FileSwapIcon,
+    DeleteCircleOutlineIcon,
+    FileAccountIcon,
+    FileMultipleIcon,
+    FileSwapOutlineIcon,
     HelpIcon,
     LockCheckIcon,
     LockIcon,
     LockOpenIcon,
-    LockPlusIcon,
+    LockOpenOutlineIcon,
+    LockPlusOutlineIcon,
     LockQuestionIcon,
     NewBoxIcon,
-    RefreshIcon,
+    RefreshCircleIcon,
     TrashCanIcon,
     UpdateIcon,
 } from 'mdi-vue3';
@@ -53,23 +56,27 @@ function getDocAtivityIcon(activityType: DocActivityType): DefineComponent {
         case DocActivityType.RELATIONS_UPDATED:
             return AccountMultipleIcon;
         case DocActivityType.REFERENCES_UPDATED:
-            return FileDocumentIcon;
+            return FileMultipleIcon;
         case DocActivityType.ACCESS_UPDATED:
             return LockCheckIcon;
         case DocActivityType.OWNER_CHANGED:
-            return FileSwapIcon;
+            return FileAccountIcon;
         case DocActivityType.DELETED:
-            return TrashCanIcon;
+            return DeleteCircleIcon;
 
         // Requests
         case DocActivityType.REQUESTED_ACCESS:
-            return LockPlusIcon;
+            return LockPlusOutlineIcon;
         case DocActivityType.REQUESTED_CLOSURE:
             return LockQuestionIcon;
+        case DocActivityType.REQUESTED_OPENING:
+            return LockOpenOutlineIcon;
         case DocActivityType.REQUESTED_UPDATE:
-            return RefreshIcon;
+            return RefreshCircleIcon;
+        case DocActivityType.REQUESTED_OWNER_CHANGE:
+            return FileSwapOutlineIcon;
         case DocActivityType.REQUESTED_DELETION:
-            return DeleteCircleIcon;
+            return DeleteCircleOutlineIcon;
 
         // Comments
         case DocActivityType.COMMENT_ADDED:
