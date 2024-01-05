@@ -80,6 +80,7 @@ func (s *Server) listDocumentsQuery(where jet.BoolExpression, onlyColumns jet.Pr
 			tDocument.State,
 			tDocument.Closed,
 			tDocument.Public,
+			tDocument.TemplateID,
 		}
 
 		if userInfo.SuperUser {
@@ -204,6 +205,7 @@ func (s *Server) getDocumentsQuery(where jet.BoolExpression, onlyColumns jet.Pro
 			tDocument.State,
 			tDocument.Closed,
 			tDocument.Public,
+			tDocument.TemplateID,
 		}
 
 		if userInfo.SuperUser {

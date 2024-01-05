@@ -288,6 +288,7 @@ func (s *Server) CreateDocument(ctx context.Context, req *CreateDocumentRequest)
 			tDocument.State,
 			tDocument.Closed,
 			tDocument.Public,
+			tDocument.TemplateID,
 		).
 		VALUES(
 			req.CategoryId,

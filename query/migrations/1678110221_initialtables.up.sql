@@ -72,6 +72,7 @@ CREATE TABLE IF NOT EXISTS `fivenet_documents` (
   `state` varchar(32) NOT NULL,
   `closed` tinyint(1) DEFAULT 0,
   `public` tinyint(1) NOT NULL DEFAULT 0,
+  `template_id` bigint(20) unsigned DEFAULT NULL,
   PRIMARY KEY (`id`),
   KEY `idx_fivenet_documents_created_at` (`created_at`),
   KEY `idx_fivenet_documents_deleted_at` (`deleted_at`),
