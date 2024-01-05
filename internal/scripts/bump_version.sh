@@ -10,7 +10,7 @@ if [ -z ${1+x} ]; then
     exit 2
 fi
 
-export VERSION="$1"
+export VERSION="${1//v}"
 
 # Go to root of repo
 cd ../../ || { echo "Failed to cd to root of repo."; exit 1; }
