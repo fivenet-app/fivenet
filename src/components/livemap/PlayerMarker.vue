@@ -37,7 +37,7 @@ watch(props, () => updateMarkerColor());
 
 updateMarkerColor();
 
-const inverseColor = computed(() => hexToRgb(props.marker.unit?.color ?? '#000000') ?? ({ r: 0, g: 0, b: 0 } as RGB));
+const inverseColor = computed(() => hexToRgb(props.marker.unit?.color ?? '#8d81f2') ?? ({ r: 0, g: 0, b: 0 } as RGB));
 
 const hasUnit = computed(() => props.showUnitNames && props.marker.unit !== undefined);
 const iconAnchor = computed<PointExpression | undefined>(() => [props.size / 2, props.size * (hasUnit.value ? 1.8 : 0.95)]);
@@ -49,12 +49,7 @@ const openUnit = ref(false);
 </script>
 
 <template>
-    <UnitDetails
-        v-if="hasUnit && props.marker.unit !== undefined"
-        :unit="props.marker.unit"
-        :open="openUnit"
-        @close="openUnit = false"
-    />
+    <UnitDetails v-if="hasUnit && marker.unit !== undefined" :unit="marker.unit" :open="openUnit" @close="openUnit = false" />
 
     <LMarker
         :key="marker.info!.id"
@@ -69,11 +64,11 @@ const openUnit = ref(false);
                     v-if="showUnitNames && marker.unit"
                     class="rounded-md border-2 border-black/20 bg-clip-padding focus:outline-none inset-0 whitespace-nowrap"
                     :class="isColourBright(inverseColor) ? 'text-black' : 'text-neutral'"
-                    :style="{ backgroundColor: '#' + props.marker.unit?.color ?? '000000' }"
+                    :style="{ backgroundColor: '#' + (marker.unit?.color ?? '8d81f2') }"
                 >
                     {{ marker.unit?.initials }}
                 </span>
-                <MapMarkerIcon class="w-full h-full" :style="{ color: '#' + props.marker.info?.color ?? '000000' }" />
+                <MapMarkerIcon class="w-full h-full" :style="{ color: '#' + (marker.info?.color ?? '8d81f2') }" />
             </div>
             <div v-if="showUnitStatus && marker.unit" class="uppercase pointer-events-none">
                 <span class="flex absolute h-3 w-3 top-0 right-0 -mt-1.5 -mr-2">
