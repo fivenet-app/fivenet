@@ -1,7 +1,7 @@
 {
     "name": "fivenet",
     "private": true,
-    "version": "v0.8.15",
+    "version": "0.8.15",
     "license": "Apache-2.0",
     "type": "module",
     "repository": {
