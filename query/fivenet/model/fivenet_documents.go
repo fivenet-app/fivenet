@@ -27,5 +27,5 @@ type FivenetDocuments struct {
 	State       string     `json:"state"`
 	Closed      *bool      `json:"closed"`
 	Public      bool       `json:"public"`
-	TemplateID  uint64     `json:"template_id"`
+	TemplateID  *uint64    `json:"template_id"`
 }

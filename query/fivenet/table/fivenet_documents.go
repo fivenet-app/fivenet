@@ -32,7 +32,7 @@ type fivenetDocumentsTable struct {
 	State       mysql.ColumnString
 	Closed      mysql.ColumnBool
 	Public      mysql.ColumnBool
-	TemplateID mysql.ColumnInteger
+	TemplateID  mysql.ColumnInteger
 
 	AllColumns     mysql.ColumnList
 	MutableColumns mysql.ColumnList
@@ -88,7 +88,7 @@ func newFivenetDocumentsTableImpl(schemaName, tableName, alias string) fivenetDo
 		StateColumn       = mysql.StringColumn("state")
 		ClosedColumn      = mysql.BoolColumn("closed")
 		PublicColumn      = mysql.BoolColumn("public")
-		TemplateIDColumn  = mysql.IntegerColumn("id")
+		TemplateIDColumn  = mysql.IntegerColumn("template_id")
 		allColumns        = mysql.ColumnList{IDColumn, CreatedAtColumn, UpdatedAtColumn, DeletedAtColumn, CategoryIDColumn, TitleColumn, SummaryColumn, ContentTypeColumn, ContentColumn, DataColumn, CreatorIDColumn, CreatorJobColumn, StateColumn, ClosedColumn, PublicColumn, TemplateIDColumn}
 		mutableColumns    = mysql.ColumnList{CreatedAtColumn, UpdatedAtColumn, DeletedAtColumn, CategoryIDColumn, TitleColumn, SummaryColumn, ContentTypeColumn, ContentColumn, DataColumn, CreatorIDColumn, CreatorJobColumn, StateColumn, ClosedColumn, PublicColumn, TemplateIDColumn}
 	)
