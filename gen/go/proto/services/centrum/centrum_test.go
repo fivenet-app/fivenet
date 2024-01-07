@@ -128,5 +128,5 @@ func TestBasicCentrumFlow(t *testing.T) {
 	_ = ctx
 	_ = client
 
-	// TODO test non-stream functions
+	// TODO add tests
 }

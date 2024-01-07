@@ -38,6 +38,7 @@ import (
 	pbcompletor "github.com/galexrt/fivenet/gen/go/proto/services/completor"
 	pbdmv "github.com/galexrt/fivenet/gen/go/proto/services/dmv"
 	pbdocstore "github.com/galexrt/fivenet/gen/go/proto/services/docstore"
+	pbfilestore "github.com/galexrt/fivenet/gen/go/proto/services/filestore"
 	pbjobs "github.com/galexrt/fivenet/gen/go/proto/services/jobs"
 	pblivemapper "github.com/galexrt/fivenet/gen/go/proto/services/livemapper"
 	pbnotificator "github.com/galexrt/fivenet/gen/go/proto/services/notificator"
@@ -140,6 +141,7 @@ func getFxBaseOpts() []fx.Option {
 			grpc.AsService(pblivemapper.NewServer),
 			grpc.AsService(pbnotificator.NewServer),
 			grpc.AsService(pbrector.NewServer),
+			grpc.AsService(pbfilestore.NewServer),
 		),
 
 		fx.Invoke(func(admin.AdminServer) {}),

@@ -643,8 +643,6 @@ export const useCentrumStore = defineStore('centrum', {
         },
         // Central "can user do that" method as we will take the dispatch center mode into account further
         canDo(action: canDoAction, dispatch?: Dispatch): boolean {
-            // TODO check perms and dispatch center mode
-
             switch (action) {
                 case 'TakeControl':
                     return can('CentrumService.TakeControl');

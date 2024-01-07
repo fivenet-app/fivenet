@@ -420,6 +420,7 @@ func (s *Server) notifyUser(ctx context.Context, doc *documents.Document, source
 		s.enricher.EnrichJobInfoSafe(userInfo, doc.Creator)
 	}
 
+	// TODO retrieve usershort and set in `CausedBy` of `Notification.Data`
 	nType := string(notifi.InfoType)
 	not := &notifications.Notification{
 		UserId: targetUserId,

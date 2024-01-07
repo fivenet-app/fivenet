@@ -638,7 +638,7 @@ func (s *Server) notifyUserMentioned(ctx context.Context, documentId uint64, sou
 		s.enricher.EnrichJobInfoSafe(userInfo, doc.Creator)
 	}
 
-	// TODO add source user as `CausedBy` to `Notification.Data`
+	// TODO retrieve usershort and set in `CausedBy` of `Notification.Data`
 	nType := string(notifi.InfoType)
 	not := &notifications.Notification{
 		UserId: targetUserId,

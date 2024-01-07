@@ -10,20 +10,27 @@
 ### Documents
 
 * Creating and Editing documents.
-* TODO
+* Creating and Editing templates for documents.
+* Commenting on documents.
+* Access management by job ranks and citizens with multiple access levels.
 
 ### Job
 
-* TODO
+* List of your colleagues with date of births and phone numbers.
+* Time clock with stats for yourself and colleagues.
 
 ### Livemap
 
-* TODO
+* Map to see your colleagues and other factions live.
+* It allows you to see dispatches from your own faction from the dispatch center.
 
-### Dispatch Center
+### Dispatch Center (Centrum)
 
-* TODO
+* Functionality to convert GKSPhone dispatches to FiveNet dispatches.
+* Live streamed to each users client.
+* Employees can accept/decline dispatches.
+* Automatic dispatch assignment mode. Disponents can manually handle dispatch assignment as well.
 
 ### Control Panel
 
-* TODO
+* Each faction, if allowed to, can create and manage their own roles. Administrators can set "limits" in regards to permissions and attributes (e.g., what fields they can grant their members, etc.)
