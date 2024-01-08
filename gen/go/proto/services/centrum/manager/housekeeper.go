@@ -20,7 +20,7 @@ import (
 )
 
 const (
-	MaxCancelledDispatchesPerRun = 4
+	MaxCancelledDispatchesPerRun = 6
 )
 
 var HousekeeperModule = fx.Module("centrum_manager_housekeeper", fx.Provide(
@@ -401,6 +401,27 @@ func (s *Housekeeper) deduplicateDispatches(ctx context.Context) error {
 					if err := s.AddAttributeToDispatch(ctx, dsp, centrum.DispatchAttributeMultiple); err != nil {
 						s.logger.Error("failed to update original dispatch attribute", zap.Error(err))
 					}
+
+					description := ""
+					for _, dest := range closestsDsp {
+						if dest == nil {
+							continue
+						}
+
+						closeByDsp := dest.(*centrum.Dispatch)
+						if closeByDsp.Anon {
+							description += fmt.Sprintf("DSP-%d\n", closeByDsp.Id)
+						} else {
+							description += fmt.Sprintf("DSP-%d (%s, %s)\n", closeByDsp.Id, closeByDsp.Creator.Firstname, closeByDsp.Creator.Lastname)
+						}
+					}
+
+					if description != "" {
+						dsp.Description = &description
+						if _, err := s.UpdateDispatch(ctx, dsp.Job, nil, dsp, true); err != nil {
+							s.logger.Error("failed to update original dispatch description", zap.Error(err))
+						}
+					}
 				}
 
 				for _, dest := range closestsDsp {
@@ -408,8 +429,8 @@ func (s *Housekeeper) deduplicateDispatches(ctx context.Context) error {
 						continue
 					}
 
-					// Already took care of the dispatch
 					closeByDsp := dest.(*centrum.Dispatch)
+					// Already took care of the dispatch
 					if _, ok := dispatchIds[closeByDsp.Id]; ok {
 						continue
 					}

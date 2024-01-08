@@ -3,7 +3,7 @@ import { Dialog, DialogPanel, DialogTitle, TransitionChild, TransitionRoot } fro
 import { RpcError } from '@protobuf-ts/runtime-rpc';
 import { computedAsync, useThrottleFn } from '@vueuse/core';
 import { CancelIcon, CheckIcon, CheckboxBlankOutlineIcon, CloseIcon, LoadingIcon } from 'mdi-vue3';
-import { unitStatusToBGColor } from '~/components/centrum/helpers';
+import { statusOrder, unitStatusToBGColor } from '~/components/centrum/helpers';
 import IDCopyBadge from '~/components/partials/IDCopyBadge.vue';
 import { useCentrumStore } from '~/store/centrum';
 import { Dispatch } from '~~/gen/ts/resources/centrum/dispatches';
@@ -79,19 +79,21 @@ const grouped = computedAsync(async () => {
         }
     });
 
-    groups.forEach((group) =>
-        group.units.sort((a, b) => {
-            if (a.users.length === b.users.length) {
-                return 0;
-            } else if (a.users.length === 0) {
-                return 1;
-            } else if (b.users.length === 0) {
-                return -1;
-            } else {
-                return a.name.localeCompare(b.name);
-            }
-        }),
-    );
+    groups
+        .sort((a, b) => statusOrder.indexOf(a.status) - statusOrder.indexOf(b.status))
+        .forEach((group) =>
+            group.units.sort((a, b) => {
+                if (a.users.length === b.users.length) {
+                    return 0;
+                } else if (a.users.length === 0) {
+                    return 1;
+                } else if (b.users.length === 0) {
+                    return -1;
+                } else {
+                    return a.name.localeCompare(b.name);
+                }
+            }),
+        );
 
     return groups;
 });
@@ -157,13 +159,13 @@ const onSubmitThrottle = useThrottleFn(async () => {
                                                                         )
                                                                     }}
                                                                 </p>
-                                                                <div class="grid grid-cols-3 gap-4">
+                                                                <div class="grid grid-cols-2 lg:grid-cols-3 gap-2">
                                                                     <button
                                                                         v-for="unit in group.units"
                                                                         :key="unit.name"
                                                                         type="button"
                                                                         :disabled="unit.users.length === 0"
-                                                                        class="text-neutral hover:bg-primary-100/10 hover:text-neutral font-medium hover:transition-all group flex w-full flex-row items-center rounded-md p-2 text-xs my-0.5"
+                                                                        class="inline-flex flex-row gap-x-1 items-center text-neutral hover:bg-primary-100/10 font-medium hover:transition-all rounded-md p-1.5 text-sm"
                                                                         :class="[
                                                                             unitStatusToBGColor(unit.status?.status),
                                                                             unit.users.length === 0
@@ -178,25 +180,27 @@ const onSubmitThrottle = useThrottleFn(async () => {
                                                                                     (u) => u && u === unit.id,
                                                                                 ) > -1
                                                                             "
-                                                                            class="w-6 h-6 mr-2"
+                                                                            class="w-6 h-6"
                                                                         />
                                                                         <CheckboxBlankOutlineIcon
                                                                             v-else-if="unit.users.length > 0"
-                                                                            class="w-6 h-6 mr-2"
+                                                                            class="w-6 h-6"
                                                                         />
-                                                                        <CancelIcon v-else class="w-6 h-6 mr-2" />
-                                                                        <div class="flex flex-col">
-                                                                            <span class="mt-1"
-                                                                                >{{ unit.initials }}: {{ unit.name }}</span
-                                                                            >
-                                                                            <span class="mt-1">
-                                                                                {{
-                                                                                    $t(
-                                                                                        `enums.centrum.StatusUnit.${
-                                                                                            StatusUnit[unit.status?.status ?? 0]
-                                                                                        }`,
-                                                                                    )
-                                                                                }}
+                                                                        <CancelIcon v-else class="w-6 h-6" />
+
+                                                                        <div
+                                                                            class="ml-0.5 flex flex-col w-full place-items-start"
+                                                                        >
+                                                                            <span class="font-bold">
+                                                                                {{ unit.initials }}
+                                                                            </span>
+                                                                            <span class="text-xs">
+                                                                                {{ unit.name }}
+                                                                            </span>
+                                                                            <span class="text-xs mt-1">
+                                                                                <span class="block">
+                                                                                    {{ $t('common.member', unit.users.length) }}
+                                                                                </span>
                                                                             </span>
                                                                         </div>
                                                                     </button>
