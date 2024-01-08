@@ -3,7 +3,8 @@ import { CogIcon } from 'mdi-vue3';
 import { computedAsync } from '@vueuse/core';
 import { useCentrumStore } from '~/store/centrum';
 import UnitListEntry from '~/components/centrum/units/UnitListEntry.vue';
-import { StatusUnit, type Unit } from '~~/gen/ts/resources/centrum/units';
+import { StatusUnit } from '~~/gen/ts/resources/centrum/units';
+import type { GroupedUnits } from '~/components/centrum/helpers';
 
 const centrumStore = useCentrumStore();
 const { getSortedUnits } = storeToRefs(centrumStore);
@@ -11,8 +12,6 @@ const { getSortedUnits } = storeToRefs(centrumStore);
 defineEmits<{
     (e: 'goto', loc: Coordinate): void;
 }>();
-
-type GroupedUnits = { status: StatusUnit; key: string; units: Unit[] }[];
 
 const grouped = computedAsync(async () => {
     const groups: GroupedUnits = [];

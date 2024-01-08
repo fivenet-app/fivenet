@@ -10,7 +10,9 @@ import {
 } from 'mdi-vue3';
 import { type DefineComponent } from 'vue';
 import { StatusDispatch } from '~~/gen/ts/resources/centrum/dispatches';
-import { StatusUnit } from '~~/gen/ts/resources/centrum/units';
+import { StatusUnit, Unit } from '~~/gen/ts/resources/centrum/units';
+
+export type GroupedUnits = { status: StatusUnit; key: string; units: Unit[] }[];
 
 export function dispatchStatusToFillColor(status: StatusDispatch | undefined): string {
     switch (status) {

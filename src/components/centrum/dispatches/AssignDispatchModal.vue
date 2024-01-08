@@ -3,11 +3,12 @@ import { Dialog, DialogPanel, DialogTitle, TransitionChild, TransitionRoot } fro
 import { RpcError } from '@protobuf-ts/runtime-rpc';
 import { computedAsync, useThrottleFn } from '@vueuse/core';
 import { CancelIcon, CheckIcon, CheckboxBlankOutlineIcon, CloseIcon, LoadingIcon } from 'mdi-vue3';
-import { statusOrder, unitStatusToBGColor } from '~/components/centrum/helpers';
+import { unitStatusToBGColor } from '~/components/centrum/helpers';
 import IDCopyBadge from '~/components/partials/IDCopyBadge.vue';
 import { useCentrumStore } from '~/store/centrum';
 import { Dispatch } from '~~/gen/ts/resources/centrum/dispatches';
 import { StatusUnit, Unit } from '~~/gen/ts/resources/centrum/units';
+import type { GroupedUnits } from '~/components/centrum/helpers';
 
 const centrumStore = useCentrumStore();
 const { getSortedUnits } = storeToRefs(centrumStore);
@@ -63,8 +64,6 @@ function selectUnit(item: Unit): void {
     }
 }
 
-type GroupedUnits = { status: StatusUnit; key: string; units: Unit[] }[];
-
 const grouped = computedAsync(async () => {
     const groups: GroupedUnits = [];
     getSortedUnits.value.forEach((e) => {
@@ -80,7 +79,21 @@ const grouped = computedAsync(async () => {
         }
     });
 
-    return groups.sort((a, b) => statusOrder.indexOf(a.status) - statusOrder.indexOf(b.status));
+    groups.forEach((group) =>
+        group.units.sort((a, b) => {
+            if (a.users.length === b.users.length) {
+                return 0;
+            } else if (a.users.length === 0) {
+                return 1;
+            } else if (b.users.length === 0) {
+                return -1;
+            } else {
+                return a.name.localeCompare(b.name);
+            }
+        }),
+    );
+
+    return groups;
 });
 
 const canSubmit = ref(true);
