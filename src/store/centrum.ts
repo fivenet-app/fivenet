@@ -67,14 +67,12 @@ export const useCentrumStore = defineStore('centrum', {
         getSortedUnits: (state: CentrumState) => {
             const filtered: Unit[] = [];
             state.units.forEach((u) => filtered.push(u));
-            return filtered
-                .sort(
-                    (a, b) =>
-                        b.name.localeCompare(a.name) -
-                        statusOrder.indexOf(b.status?.status ?? 0) -
-                        statusOrder.indexOf(a.status?.status ?? 0),
-                )
-                .reverse();
+            return filtered.sort(
+                (a, b) =>
+                    a.name.localeCompare(b.name) -
+                    statusOrder.indexOf(a.status?.status ?? 0) -
+                    statusOrder.indexOf(b.status?.status ?? 0),
+            );
         },
         getSortedDispatches: (state: CentrumState) => {
             return Array.from(state.dispatches, ([_, dsp]) => dsp).sort((a, b) => a.id.localeCompare(b.id));
