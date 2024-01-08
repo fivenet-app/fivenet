@@ -75,7 +75,9 @@ const openStatus = ref(false);
                                                             <dd
                                                                 class="mt-2 text-sm text-gray-300 sm:col-span-2 sm:mt-0 max-h-22"
                                                             >
-                                                                {{ unit.description ?? $t('common.na') }}
+                                                                <p class="break-words whitespace-pre">
+                                                                    {{ unit.description ?? $t('common.na') }}
+                                                                </p>
                                                             </dd>
                                                         </div>
                                                         <div class="px-4 py-3 sm:grid sm:grid-cols-3 sm:gap-4 sm:px-0">

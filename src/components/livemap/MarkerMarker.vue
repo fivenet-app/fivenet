@@ -73,7 +73,7 @@ onConfirm(async (id) => deleteMarker(id));
                     <span class="font-semibold">{{ $t('common.description') }}</span
                     >: {{ marker.info?.description ?? $t('common.na') }}
                 </li>
-                <li class="italic">
+                <li>
                     <span class="font-semibold">{{ $t('common.sent_by') }}</span
                     >:
                     <CitizenInfoPopover v-if="marker.creator" :user="marker.creator" />
@@ -119,7 +119,7 @@ onConfirm(async (id) => deleteMarker(id));
                     <span class="font-semibold">{{ $t('common.description') }}</span
                     >: {{ marker.info?.description ?? $t('common.na') }}
                 </li>
-                <li class="italic">
+                <li>
                     <span class="font-semibold">{{ $t('common.sent_by') }}</span
                     >:
                     <CitizenInfoPopover v-if="marker.creator" :user="marker.creator" />
@@ -153,7 +153,7 @@ onConfirm(async (id) => deleteMarker(id));
                     <span class="font-semibold">{{ $t('common.description') }}</span
                     >: {{ marker.info?.description ?? $t('common.na') }}
                 </li>
-                <li class="italic">
+                <li>
                     <span class="font-semibold">{{ $t('common.sent_by') }}</span
                     >:
                     <CitizenInfoPopover v-if="marker.creator" :user="marker.creator" />

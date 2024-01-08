@@ -4,6 +4,7 @@ import (
 	"context"
 	"database/sql"
 	"fmt"
+	"strings"
 	"sync"
 	"time"
 
@@ -392,35 +393,42 @@ func (s *Housekeeper) deduplicateDispatches(ctx context.Context) error {
 					continue
 				}
 
-				s.logger.Debug("deduplicating dispatches", zap.String("job", dsp.Job), zap.Uint64("dispatch_id", dsp.Id))
 				closestsDsp := s.State.GetDispatchLocations(dsp.Job).KNearest(dsp.Point(), 8, func(p orb.Pointer) bool {
 					return p.(*centrum.Dispatch).Id != dsp.Id
 				}, 45.0)
+				s.logger.Debug("deduplicating dispatches", zap.String("job", dsp.Job), zap.Uint64("dispatch_id", dsp.Id), zap.Int("closeby_dsps", len(closestsDsp)))
+				if len(closestsDsp) == 0 {
+					continue
+				}
+
 				// Add "multiple" attribute when multiple dispatches close by
-				if len(closestsDsp) > 0 {
-					if err := s.AddAttributeToDispatch(ctx, dsp, centrum.DispatchAttributeMultiple); err != nil {
-						s.logger.Error("failed to update original dispatch attribute", zap.Error(err))
+				if err := s.AddAttributeToDispatch(ctx, dsp, centrum.DispatchAttributeMultiple); err != nil {
+					s.logger.Error("failed to update original dispatch attribute", zap.Error(err))
+				}
+
+				description := ""
+				if dsp.Description != nil {
+					description = *dsp.Description + "\n"
+				}
+
+				for _, dest := range closestsDsp {
+					if dest == nil {
+						continue
 					}
 
-					description := ""
-					for _, dest := range closestsDsp {
-						if dest == nil {
-							continue
-						}
-
-						closeByDsp := dest.(*centrum.Dispatch)
-						if closeByDsp.Anon {
-							description += fmt.Sprintf("DSP-%d\n", closeByDsp.Id)
-						} else {
-							description += fmt.Sprintf("DSP-%d (%s, %s)\n", closeByDsp.Id, closeByDsp.Creator.Firstname, closeByDsp.Creator.Lastname)
-						}
+					closeByDsp := dest.(*centrum.Dispatch)
+					if closeByDsp.Anon {
+						description += fmt.Sprintf("DSP-%d\n", closeByDsp.Id)
+					} else {
+						description += fmt.Sprintf("DSP-%d (%s, %s)\n", closeByDsp.Id, closeByDsp.Creator.Firstname, closeByDsp.Creator.Lastname)
 					}
+				}
 
-					if description != "" {
-						dsp.Description = &description
-						if _, err := s.UpdateDispatch(ctx, dsp.Job, nil, dsp, true); err != nil {
-							s.logger.Error("failed to update original dispatch description", zap.Error(err))
-						}
+				if description != "" {
+					description = strings.Trim(description, "\n")
+					dsp.Description = &description
+					if _, err := s.UpdateDispatch(ctx, dsp.Job, nil, dsp, true); err != nil {
+						s.logger.Error("failed to update original dispatch description", zap.Error(err))
 					}
 				}
 

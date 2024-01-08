@@ -16,10 +16,10 @@ type ICoords[V orb.Pointer] interface {
 }
 
 type Coords[V orb.Pointer] struct {
+	ICoords[V]
+
 	mutex sync.Mutex
 	tree  *quadtree.Quadtree
-
-	ICoords[V]
 }
 
 func New[V orb.Pointer]() *Coords[V] {

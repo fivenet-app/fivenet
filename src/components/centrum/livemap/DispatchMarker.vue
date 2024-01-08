@@ -6,6 +6,7 @@ import { dispatchStatusAnimate, dispatchStatusToBGColor, dispatchStatusToFillCol
 import IDCopyBadge from '~/components/partials/IDCopyBadge.vue';
 import CitizenInfoPopover from '~/components/partials/citizens/CitizenInfoPopover.vue';
 import { Dispatch, StatusDispatch } from '~~/gen/ts/resources/centrum/dispatches';
+import DispatchAttributes from '~/components/centrum/partials/DispatchAttributes.vue';
 
 const props = withDefaults(
     defineProps<{
@@ -51,25 +52,10 @@ const dispatchClasses = computed(() => [
             <IDCopyBadge :id="dispatch.id" class="mb-1" prefix="DSP" :action="selected" />
             <ul role="list" class="flex flex-col">
                 <li>
-                    <span class="font-semibold">{{ $t('common.status') }}</span
-                    >:
-                    <span :class="dispatchStatusToBGColor(dispatch.status?.status)">
-                        {{ $t(`enums.centrum.StatusDispatch.${StatusDispatch[dispatch.status?.status ?? 0]}`) }}
-                    </span>
-                </li>
-                <li>
-                    <span class="font-semibold">{{ $t('common.message') }}</span
-                    >: {{ dispatch.message }}
-                </li>
-                <li>
-                    <span class="font-semibold">{{ $t('common.description') }}</span
-                    >: {{ dispatch.description ?? $t('common.na') }}
-                </li>
-                <li>
                     <span class="font-semibold">{{ $t('common.sent_at') }}</span
                     >: {{ $d(toDate(dispatch.createdAt), 'short') }}
                 </li>
-                <li class="italic inline-flex gap-1">
+                <li class="inline-flex gap-1">
                     <span class="flex-initial">
                         <span class="font-semibold">{{ $t('common.sent_by') }}</span
                         >:
@@ -83,6 +69,26 @@ const dispatchClasses = computed(() => [
                             {{ $t('common.unknown') }}
                         </template>
                     </span>
+                </li>
+                <li>
+                    <span class="font-semibold">{{ $t('common.message') }}</span
+                    >: {{ dispatch.message }}
+                </li>
+                <li class="truncate">
+                    <span class="font-semibold">{{ $t('common.description') }}</span
+                    >: {{ dispatch.description ?? $t('common.na') }}
+                </li>
+                <li>
+                    <span class="font-semibold">{{ $t('common.status') }}</span
+                    >:
+                    <span :class="dispatchStatusToBGColor(dispatch.status?.status)">
+                        {{ $t(`enums.centrum.StatusDispatch.${StatusDispatch[dispatch.status?.status ?? 0]}`) }}
+                    </span>
+                </li>
+                <li>
+                    <span class="font-semibold">{{ $t('common.attributes', 2) }}</span
+                    >:
+                    <DispatchAttributes :attributes="dispatch.attributes" />
                 </li>
             </ul>
         </LPopup>
