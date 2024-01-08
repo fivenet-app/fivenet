@@ -233,7 +233,9 @@ func (s *Server) watchForChanges(msg *nats.Msg) {
 				if !locs.Has(dest, func(p orb.Pointer) bool {
 					return p.(*centrum.Dispatch).Id == dest.Id
 				}) {
-					locs.Add(dest)
+					if err := locs.Add(dest); err != nil {
+						s.logger.Error("failed to add dispatch to locations in event stream", zap.Uint64("dispatch_id", dest.Id))
+					}
 				}
 			}
 

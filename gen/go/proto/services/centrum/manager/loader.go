@@ -371,7 +371,9 @@ func (s *Manager) LoadDispatchesFromDB(ctx context.Context, id uint64) error {
 			if !locs.Has(dsps[i], func(p orb.Pointer) bool {
 				return p.(*centrum.Dispatch).Id == dsps[i].Id
 			}) {
-				locs.Add(dsps[i])
+				if err := locs.Add(dsps[i]); err != nil {
+					s.logger.Error("failed to add loaded dispatch to locations", zap.Uint64("dispatch_id", dsps[i].Id))
+				}
 			}
 		}
 	}

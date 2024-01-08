@@ -518,7 +518,9 @@ func (s *Manager) CreateDispatch(ctx context.Context, dsp *centrum.Dispatch) (*c
 
 	// Make sure dispatch is in the locations list
 	if locs := s.State.GetDispatchLocations(dsp.Job); locs != nil {
-		locs.Add(dsp)
+		if err := locs.Add(dsp); err != nil {
+			s.logger.Error("failed to add new dispatch to locations", zap.Uint64("dispatch_id", dsp.Id))
+		}
 	}
 
 	if err := s.State.UpdateDispatch(ctx, dsp.Job, dsp.Id, dsp); err != nil {
@@ -578,7 +580,9 @@ func (s *Manager) UpdateDispatch(ctx context.Context, userJob string, userId *in
 		if !locs.Has(dsp, func(p orb.Pointer) bool {
 			return p.(*centrum.Dispatch).Id == dsp.Id
 		}) {
-			locs.Add(dsp)
+			if err := locs.Add(dsp); err != nil {
+				s.logger.Error("failed to update dispatch in locations", zap.Uint64("dispatch_id", dsp.Id))
+			}
 		}
 	}
 
