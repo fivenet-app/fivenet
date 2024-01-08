@@ -41,6 +41,8 @@ export function dispatchStatusToBGColor(status: StatusDispatch | undefined): str
         case StatusDispatch.UNASSIGNED:
         case StatusDispatch.UNIT_DECLINED:
             return 'bg-error-600';
+        case StatusDispatch.EN_ROUTE:
+            return 'bg-info-500';
         case StatusDispatch.ON_SCENE:
             return 'bg-primary-600';
         case StatusDispatch.NEED_ASSISTANCE:
@@ -51,7 +53,6 @@ export function dispatchStatusToBGColor(status: StatusDispatch | undefined): str
             return 'bg-success-800';
         case StatusDispatch.ARCHIVED:
             return 'bg-base-600';
-        case StatusDispatch.EN_ROUTE:
         default:
             return 'bg-info-500';
     }
@@ -87,10 +88,10 @@ export function unitStatusToBGColor(status: StatusUnit | undefined): string {
 
 export const statusOrder = [
     StatusUnit.AVAILABLE,
-    StatusUnit.USER_ADDED,
-    StatusUnit.USER_REMOVED,
     StatusUnit.ON_BREAK,
     StatusUnit.BUSY,
+    StatusUnit.USER_ADDED,
+    StatusUnit.USER_REMOVED,
     StatusUnit.UNAVAILABLE,
     StatusUnit.UNKNOWN,
     StatusUnit.UNSPECIFIED,

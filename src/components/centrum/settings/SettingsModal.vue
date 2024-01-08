@@ -260,7 +260,7 @@ const onSubmitThrottle = useThrottleFn(async (e) => {
                                     <button
                                         v-if="can('CentrumService.UpdateSettings')"
                                         type="submit"
-                                        class="flex justify-center w-full rounded-md px-3 py-2 text-sm font-semibold text-neutral shadow-sm focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 sm:col-start-2"
+                                        class="flex items-center w-full rounded-md px-3 py-2 text-sm font-semibold text-neutral shadow-sm focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 sm:col-start-2"
                                         :disabled="!meta.valid || !canSubmit"
                                         :class="[
                                             !meta.valid || !canSubmit
@@ -275,7 +275,7 @@ const onSubmitThrottle = useThrottleFn(async (e) => {
                                     </button>
                                     <button
                                         type="button"
-                                        class="mt-3 inline-flex w-full justify-center rounded-md bg-neutral px-3 py-2 text-sm font-semibold text-gray-900 shadow-sm ring-1 ring-inset ring-gray-300 hover:bg-gray-50 sm:col-start-1 sm:mt-0"
+                                        class="mt-3 inline-flex w-full items-center rounded-md bg-neutral px-3 py-2 text-sm font-semibold text-gray-900 shadow-sm ring-1 ring-inset ring-gray-300 hover:bg-gray-50 sm:col-start-1 sm:mt-0"
                                         @click="$emit('close')"
                                     >
                                         {{ $t('common.close') }}

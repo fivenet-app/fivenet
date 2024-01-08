@@ -256,7 +256,7 @@ const onSubmitThrottle = useThrottleFn(async (e) => {
                                         <span class="isolate inline-flex rounded-md shadow-sm pr-4 w-full">
                                             <button
                                                 type="submit"
-                                                class="inline-flex w-full justify-center rounded-l-md px-3 py-2 text-sm font-semibold text-neutral shadow-sm focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 sm:col-start-2"
+                                                class="inline-flex w-full items-center rounded-l-md px-3 py-2 text-sm font-semibold text-neutral shadow-sm focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 sm:col-start-2"
                                                 :disabled="!meta.valid || !canSubmit"
                                                 :class="[
                                                     !meta.valid || !canSubmit
@@ -271,7 +271,7 @@ const onSubmitThrottle = useThrottleFn(async (e) => {
                                             </button>
                                             <button
                                                 type="button"
-                                                class="mt-3 inline-flex w-full justify-center rounded-r-md bg-neutral px-3 py-2 text-sm font-semibold text-gray-900 shadow-sm ring-1 ring-inset ring-gray-300 hover:bg-gray-50 sm:col-start-1 sm:mt-0"
+                                                class="mt-3 inline-flex w-full items-center rounded-r-md bg-neutral px-3 py-2 text-sm font-semibold text-gray-900 shadow-sm ring-1 ring-inset ring-gray-300 hover:bg-gray-50 sm:col-start-1 sm:mt-0"
                                                 @click="$emit('close')"
                                             >
                                                 {{ $t('common.close', 1) }}

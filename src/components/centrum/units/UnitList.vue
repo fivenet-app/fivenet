@@ -1,7 +1,10 @@
 <script lang="ts" setup>
 import { CogIcon } from 'mdi-vue3';
+import { computedAsync } from '@vueuse/core';
 import { useCentrumStore } from '~/store/centrum';
 import UnitListEntry from '~/components/centrum/units/UnitListEntry.vue';
+import { StatusUnit, type Unit } from '~~/gen/ts/resources/centrum/units';
+import { statusOrder } from '~/components/centrum/helpers';
 
 const centrumStore = useCentrumStore();
 const { getSortedUnits } = storeToRefs(centrumStore);
@@ -9,6 +12,26 @@ const { getSortedUnits } = storeToRefs(centrumStore);
 defineEmits<{
     (e: 'goto', loc: Coordinate): void;
 }>();
+
+type GroupedUnits = { status: StatusUnit; key: string; units: Unit[] }[];
+
+const grouped = computedAsync(async () => {
+    const groups: GroupedUnits = [];
+    getSortedUnits.value.forEach((e) => {
+        const idx = groups.findIndex((g) => g.key === e.status?.status.toString());
+        if (idx === -1) {
+            groups.push({
+                status: e.status?.status ?? 0,
+                units: [e],
+                key: e.status?.status.toString() ?? '',
+            });
+        } else {
+            groups[idx].units.push(e);
+        }
+    });
+
+    return groups.sort((a, b) => statusOrder.indexOf(a.status) - statusOrder.indexOf(b.status));
+});
 </script>
 
 <template>
@@ -31,14 +54,19 @@ defineEmits<{
         <div class="mt-0.5 flow-root">
             <div class="-mx-2 -my-2 sm:-mx-6 lg:-mx-8">
                 <div class="inline-block min-w-full py-2 align-middle sm:px-2 lg:px-2">
-                    <ul role="list" class="mt-3 grid grid-cols-1 gap-5 sm:grid-cols-2 sm:gap-2 lg:grid-cols-3">
-                        <UnitListEntry
-                            v-for="unit in getSortedUnits"
-                            :key="unit.id"
-                            :unit="unit"
-                            @goto="$emit('goto', $event)"
-                        />
-                    </ul>
+                    <template v-for="group in grouped" :key="group.key">
+                        <p class="-mb-1.5 text-sm text-neutral">
+                            {{ $t(`enums.centrum.StatusUnit.${StatusUnit[group.status]}`) }}
+                        </p>
+                        <ul role="list" class="mt-3 grid grid-cols-1 gap-4 sm:grid-cols-2 sm:gap-1.5 lg:grid-cols-3">
+                            <UnitListEntry
+                                v-for="unit in group.units"
+                                :key="unit.id"
+                                :unit="unit"
+                                @goto="$emit('goto', $event)"
+                            />
+                        </ul>
+                    </template>
                 </div>
             </div>
         </div>

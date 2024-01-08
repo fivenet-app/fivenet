@@ -1,9 +1,9 @@
 <script lang="ts" setup>
 import { Dialog, DialogPanel, DialogTitle, TransitionChild, TransitionRoot } from '@headlessui/vue';
 import { RpcError } from '@protobuf-ts/runtime-rpc';
-import { useThrottleFn } from '@vueuse/core';
+import { computedAsync, useThrottleFn } from '@vueuse/core';
 import { CancelIcon, CheckIcon, CheckboxBlankOutlineIcon, CloseIcon, LoadingIcon } from 'mdi-vue3';
-import { unitStatusToBGColor } from '~/components/centrum/helpers';
+import { statusOrder, unitStatusToBGColor } from '~/components/centrum/helpers';
 import IDCopyBadge from '~/components/partials/IDCopyBadge.vue';
 import { useCentrumStore } from '~/store/centrum';
 import { Dispatch } from '~~/gen/ts/resources/centrum/dispatches';
@@ -63,6 +63,26 @@ function selectUnit(item: Unit): void {
     }
 }
 
+type GroupedUnits = { status: StatusUnit; key: string; units: Unit[] }[];
+
+const grouped = computedAsync(async () => {
+    const groups: GroupedUnits = [];
+    getSortedUnits.value.forEach((e) => {
+        const idx = groups.findIndex((g) => g.key === e.status?.status.toString());
+        if (idx === -1) {
+            groups.push({
+                status: e.status?.status ?? 0,
+                units: [e],
+                key: e.status?.status.toString() ?? '',
+            });
+        } else {
+            groups[idx].units.push(e);
+        }
+    });
+
+    return groups.sort((a, b) => statusOrder.indexOf(a.status) - statusOrder.indexOf(b.status));
+});
+
 const canSubmit = ref(true);
 
 const onSubmitThrottle = useThrottleFn(async () => {
@@ -110,52 +130,65 @@ const onSubmitThrottle = useThrottleFn(async () => {
                                             </div>
                                         </div>
                                         <div class="flex flex-1 flex-col justify-between">
-                                            <div class="divide-y divide-gray-200 px-4 sm:px-6">
+                                            <div class="divide-y divide-gray-200 px-4">
                                                 <div class="mt-1">
                                                     <div class="my-2 space-y-24">
                                                         <div class="flex-1 form-control">
-                                                            <div class="grid grid-cols-3 gap-4">
-                                                                <button
-                                                                    v-for="unit in getSortedUnits"
-                                                                    :key="unit.name"
-                                                                    type="button"
-                                                                    :disabled="unit.users.length === 0"
-                                                                    class="text-neutral hover:bg-primary-100/10 hover:text-neutral font-medium hover:transition-all group flex w-full flex-row items-center rounded-md p-2 text-xs my-0.5"
-                                                                    :class="[
-                                                                        unitStatusToBGColor(unit.status?.status),
-                                                                        unit.users.length === 0 ? 'disabled !bg-error-600' : '',
-                                                                    ]"
-                                                                    @click="selectUnit(unit)"
-                                                                >
-                                                                    <CheckIcon
-                                                                        v-if="
-                                                                            selectedUnits?.findIndex(
-                                                                                (u) => u && u === unit.id,
-                                                                            ) > -1
-                                                                        "
-                                                                        class="w-6 h-6 mr-2"
-                                                                    />
-                                                                    <CheckboxBlankOutlineIcon
-                                                                        v-else-if="unit.users.length > 0"
-                                                                        class="w-6 h-6 mr-2"
-                                                                    />
-                                                                    <CancelIcon v-else class="w-6 h-6 mr-2" />
-                                                                    <div class="flex flex-col">
-                                                                        <span class="mt-1"
-                                                                            >{{ unit.initials }}: {{ unit.name }}</span
-                                                                        >
-                                                                        <span class="mt-1">
-                                                                            {{
-                                                                                $t(
-                                                                                    `enums.centrum.StatusUnit.${
-                                                                                        StatusUnit[unit.status?.status ?? 0]
-                                                                                    }`,
-                                                                                )
-                                                                            }}
-                                                                        </span>
-                                                                    </div>
-                                                                </button>
-                                                            </div>
+                                                            <template v-for="group in grouped" :key="group.key">
+                                                                <p class="text-sm text-neutral">
+                                                                    {{
+                                                                        $t(
+                                                                            `enums.centrum.StatusUnit.${
+                                                                                StatusUnit[group.status]
+                                                                            }`,
+                                                                        )
+                                                                    }}
+                                                                </p>
+                                                                <div class="grid grid-cols-3 gap-4">
+                                                                    <button
+                                                                        v-for="unit in group.units"
+                                                                        :key="unit.name"
+                                                                        type="button"
+                                                                        :disabled="unit.users.length === 0"
+                                                                        class="text-neutral hover:bg-primary-100/10 hover:text-neutral font-medium hover:transition-all group flex w-full flex-row items-center rounded-md p-2 text-xs my-0.5"
+                                                                        :class="[
+                                                                            unitStatusToBGColor(unit.status?.status),
+                                                                            unit.users.length === 0
+                                                                                ? 'disabled !bg-error-600'
+                                                                                : '',
+                                                                        ]"
+                                                                        @click="selectUnit(unit)"
+                                                                    >
+                                                                        <CheckIcon
+                                                                            v-if="
+                                                                                selectedUnits?.findIndex(
+                                                                                    (u) => u && u === unit.id,
+                                                                                ) > -1
+                                                                            "
+                                                                            class="w-6 h-6 mr-2"
+                                                                        />
+                                                                        <CheckboxBlankOutlineIcon
+                                                                            v-else-if="unit.users.length > 0"
+                                                                            class="w-6 h-6 mr-2"
+                                                                        />
+                                                                        <CancelIcon v-else class="w-6 h-6 mr-2" />
+                                                                        <div class="flex flex-col">
+                                                                            <span class="mt-1"
+                                                                                >{{ unit.initials }}: {{ unit.name }}</span
+                                                                            >
+                                                                            <span class="mt-1">
+                                                                                {{
+                                                                                    $t(
+                                                                                        `enums.centrum.StatusUnit.${
+                                                                                            StatusUnit[unit.status?.status ?? 0]
+                                                                                        }`,
+                                                                                    )
+                                                                                }}
+                                                                            </span>
+                                                                        </div>
+                                                                    </button>
+                                                                </div>
+                                                            </template>
                                                         </div>
                                                     </div>
                                                 </div>

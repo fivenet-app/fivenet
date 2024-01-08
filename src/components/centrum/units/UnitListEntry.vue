@@ -31,8 +31,10 @@ const open = ref(false);
         </div>
         <div class="flex flex-1 items-center justify-between truncate border border-gray-200 bg-gray">
             <div class="flex-1 px-1 py-2 text-sm">
-                <span class="font-medium text-gray-100">{{ unit.name }}</span>
-                <p class="text-gray-400">{{ $t('common.member', unit.users.length) }}</p>
+                <span class="font-medium text-neutral">{{ unit.name }}</span>
+                <p :class="unit.users.length === 0 ? 'text-gray-400' : 'text-gray-300'">
+                    {{ $t('common.member', unit.users.length) }}
+                </p>
             </div>
         </div>
         <div

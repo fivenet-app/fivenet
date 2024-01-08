@@ -11,7 +11,9 @@ import (
 	"go.uber.org/fx"
 )
 
-var Module = fx.Module("storage")
+var Module = fx.Module("storage",
+	fx.Provide(New),
+)
 
 type Storage struct {
 	s3         *minio.Client
@@ -19,6 +21,10 @@ type Storage struct {
 }
 
 func New(cfg *config.Config) (*Storage, error) {
+	if !cfg.Storage.Enabled {
+		return nil, nil
+	}
+
 	// Initialize minio client object.
 	mc, err := minio.New(cfg.Storage.Endpoint, &minio.Options{
 		Creds:  credentials.NewStaticV4(cfg.Storage.AccessKeyID, cfg.Storage.SecretAccessKey, ""),

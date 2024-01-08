@@ -368,7 +368,7 @@ func (s *Server) ListDispatchActivity(ctx context.Context, req *ListDispatchActi
 		FROM(
 			tDispatchStatus.
 				INNER_JOIN(tDispatch,
-					tDispatch.ID.EQ(tDispatchStatus.UnitID),
+					tDispatch.ID.EQ(tDispatchStatus.DispatchID),
 				),
 		).
 		WHERE(jet.AND(

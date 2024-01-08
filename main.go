@@ -20,6 +20,7 @@ import (
 	"github.com/galexrt/fivenet/pkg/server"
 	"github.com/galexrt/fivenet/pkg/server/admin"
 	"github.com/galexrt/fivenet/pkg/server/audit"
+	"github.com/galexrt/fivenet/pkg/storage"
 	"github.com/galexrt/fivenet/pkg/tracker"
 	"github.com/galexrt/fivenet/query"
 	"go.uber.org/fx"
@@ -118,6 +119,7 @@ func getFxBaseOpts() []fx.Option {
 		manager.HousekeeperModule,
 		discord.BotModule,
 		sentry.Module,
+		storage.Module,
 
 		fx.Provide(
 			mstlystcdata.NewCache,

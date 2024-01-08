@@ -70,9 +70,9 @@ export const useCentrumStore = defineStore('centrum', {
             return filtered
                 .sort(
                     (a, b) =>
+                        b.name.localeCompare(a.name) -
                         statusOrder.indexOf(b.status?.status ?? 0) -
-                        statusOrder.indexOf(a.status?.status ?? 0) +
-                        b.name.localeCompare(a.name),
+                        statusOrder.indexOf(a.status?.status ?? 0),
                 )
                 .reverse();
         },
