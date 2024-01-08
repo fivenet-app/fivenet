@@ -4,7 +4,6 @@ import { computedAsync } from '@vueuse/core';
 import { useCentrumStore } from '~/store/centrum';
 import UnitListEntry from '~/components/centrum/units/UnitListEntry.vue';
 import { StatusUnit, type Unit } from '~~/gen/ts/resources/centrum/units';
-import { statusOrder } from '~/components/centrum/helpers';
 
 const centrumStore = useCentrumStore();
 const { getSortedUnits } = storeToRefs(centrumStore);
@@ -30,7 +29,21 @@ const grouped = computedAsync(async () => {
         }
     });
 
-    return groups.sort((a, b) => statusOrder.indexOf(a.status) - statusOrder.indexOf(b.status));
+    groups.forEach((group) =>
+        group.units.sort((a, b) => {
+            if (a.users.length === b.users.length) {
+                return 0;
+            } else if (a.users.length === 0) {
+                return 1;
+            } else if (b.users.length === 0) {
+                return -1;
+            } else {
+                return a.name.localeCompare(b.name);
+            }
+        }),
+    );
+
+    return groups;
 });
 </script>
 
