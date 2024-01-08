@@ -98,9 +98,9 @@ const filteredUnits = computed(() =>
                                             </div>
                                         </div>
                                         <div class="flex flex-1 flex-col justify-between">
-                                            <div class="divide-y divide-gray-200 px-4 sm:px-6">
+                                            <div class="divide-y divide-gray-200 px-4">
                                                 <div class="mt-1">
-                                                    <dl class="">
+                                                    <dl>
                                                         <div class="px-4 py-3 sm:grid sm:grid-cols-3 sm:gap-4 sm:px-0">
                                                             <dt class="text-sm font-medium leading-6 text-neutral">
                                                                 <div class="flex h-6 items-center">
@@ -126,13 +126,13 @@ const filteredUnits = computed(() =>
                                                     </dl>
                                                     <div class="my-2 space-y-24">
                                                         <div class="flex-1 form-control">
-                                                            <div class="grid grid-cols-2 gap-4">
+                                                            <div class="grid grid-cols-2 gap-2">
                                                                 <button
                                                                     v-for="unit in filteredUnits"
                                                                     :key="unit.name"
                                                                     type="button"
                                                                     :disabled="!canSubmit"
-                                                                    class="text-neutral hover:text-neutral font-medium hover:transition-all group flex w-full flex-col items-center rounded-md p-1 text-xs my-0.5"
+                                                                    class="text-neutral hover:text-neutral font-medium hover:transition-all group flex w-full flex-col items-center rounded-md p-1.5 text-xs"
                                                                     :class="[
                                                                         !canSubmit
                                                                             ? 'disabled bg-base-500 hover:bg-base-400 focus-visible:outline-base-500'
