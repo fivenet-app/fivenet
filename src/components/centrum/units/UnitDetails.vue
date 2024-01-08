@@ -55,7 +55,7 @@ const openStatus = ref(false);
                                                 <div class="ml-3 flex h-7 items-center">
                                                     <button
                                                         type="button"
-                                                        class="rounded-md bg-gray-100 text-gray-500 hover:text-gray-400 focus:outline-none focus:ring-2 focus:ring-neutral"
+                                                        class="rounded-md bg-gray-100 text-gray-500 hover:text-gray-300 focus:outline-none focus:ring-2 focus:ring-neutral"
                                                         @click="$emit('close')"
                                                     >
                                                         <span class="sr-only">{{ $t('common.close') }}</span>
@@ -73,7 +73,7 @@ const openStatus = ref(false);
                                                                 {{ $t('common.description') }}
                                                             </dt>
                                                             <dd
-                                                                class="mt-2 text-sm text-gray-400 sm:col-span-2 sm:mt-0 max-h-22"
+                                                                class="mt-2 text-sm text-gray-300 sm:col-span-2 sm:mt-0 max-h-22"
                                                             >
                                                                 {{ unit.description ?? $t('common.na') }}
                                                             </dd>
@@ -83,7 +83,7 @@ const openStatus = ref(false);
                                                                 {{ $t('common.last_update') }}
                                                             </dt>
                                                             <dd
-                                                                class="mt-1 text-sm leading-6 text-gray-400 sm:col-span-2 sm:mt-0"
+                                                                class="mt-1 text-sm leading-6 text-gray-300 sm:col-span-2 sm:mt-0"
                                                             >
                                                                 <GenericTime :value="unit.status?.createdAt" />
                                                             </dd>
@@ -93,7 +93,7 @@ const openStatus = ref(false);
                                                                 {{ $t('common.status') }}
                                                             </dt>
                                                             <dd
-                                                                class="mt-1 text-sm leading-6 text-gray-400 sm:col-span-2 sm:mt-0"
+                                                                class="mt-1 text-sm leading-6 text-gray-300 sm:col-span-2 sm:mt-0"
                                                             >
                                                                 <UnitStatusUpdateModal
                                                                     :open="openStatus"
@@ -123,7 +123,7 @@ const openStatus = ref(false);
                                                                 {{ $t('common.code') }}
                                                             </dt>
                                                             <dd
-                                                                class="mt-1 text-sm leading-6 text-gray-400 sm:col-span-2 sm:mt-0"
+                                                                class="mt-1 text-sm leading-6 text-gray-300 sm:col-span-2 sm:mt-0"
                                                             >
                                                                 {{ unit.status?.code ?? $t('common.na') }}
                                                             </dd>
@@ -133,7 +133,7 @@ const openStatus = ref(false);
                                                                 {{ $t('common.reason') }}
                                                             </dt>
                                                             <dd
-                                                                class="mt-1 text-sm leading-6 text-gray-400 sm:col-span-2 sm:mt-0"
+                                                                class="mt-1 text-sm leading-6 text-gray-300 sm:col-span-2 sm:mt-0"
                                                             >
                                                                 {{ unit.status?.reason ?? $t('common.na') }}
                                                             </dd>
@@ -143,7 +143,7 @@ const openStatus = ref(false);
                                                                 {{ $t('common.location') }}
                                                             </dt>
                                                             <dd
-                                                                class="mt-1 text-sm leading-6 text-gray-400 sm:col-span-2 sm:mt-0"
+                                                                class="mt-1 text-sm leading-6 text-gray-300 sm:col-span-2 sm:mt-0"
                                                             >
                                                                 <span class="block">
                                                                     {{ $t('common.postal') }}:
@@ -167,7 +167,7 @@ const openStatus = ref(false);
                                                             <dt class="text-sm font-medium leading-6 text-neutral">
                                                                 {{ $t('common.attributes', 2) }}
                                                             </dt>
-                                                            <dd class="mt-2 text-sm text-gray-400 sm:col-span-2 sm:mt-0">
+                                                            <dd class="mt-2 text-sm text-gray-300 sm:col-span-2 sm:mt-0">
                                                                 <template
                                                                     v-if="
                                                                         unit.attributes !== undefined &&
@@ -198,35 +198,38 @@ const openStatus = ref(false);
                                                                 {{ $t('common.members') }}
                                                             </dt>
                                                             <dd
-                                                                class="mt-1 text-sm leading-6 text-gray-400 sm:col-span-2 sm:mt-0"
+                                                                class="mt-1 text-sm leading-6 text-gray-300 sm:col-span-2 sm:mt-0"
                                                             >
-                                                                <span class="block">
+                                                                <span v-if="unit.users.length === 0" class="block">
                                                                     {{ $t('common.member', unit.users.length) }}
                                                                 </span>
-                                                                <ul
-                                                                    role="list"
-                                                                    class="border divide-y rounded-md divide-base-200 border-base-200"
-                                                                >
-                                                                    <li
-                                                                        v-for="user in unit.users"
-                                                                        :key="user.userId"
-                                                                        class="flex items-center justify-between py-3 pl-3 pr-4 text-sm"
+                                                                <div v-else class="rounded-md bg-base-800">
+                                                                    <ul
+                                                                        role="list"
+                                                                        class="divide-y divide-gray-200 text-sm font-medium"
                                                                     >
-                                                                        <div class="flex items-center flex-1">
-                                                                            <CitizenInfoPopover
-                                                                                :user="user.user"
-                                                                                class="flex items-center justify-center"
-                                                                            >
-                                                                                <template #before>
-                                                                                    <AccountIcon
-                                                                                        class="flex-shrink-0 w-5 h-5 text-base-400 mr-1"
-                                                                                        aria-hidden="true"
-                                                                                    />
-                                                                                </template>
-                                                                            </CitizenInfoPopover>
-                                                                        </div>
-                                                                    </li>
-                                                                </ul>
+                                                                        <li
+                                                                            v-for="user in unit.users"
+                                                                            :key="user.userId"
+                                                                            class="flex items-center justify-between py-3 pl-3 pr-4"
+                                                                        >
+                                                                            <div class="flex items-center flex-1">
+                                                                                <CitizenInfoPopover
+                                                                                    :user="user.user"
+                                                                                    class="flex items-center justify-center"
+                                                                                    text-class="text-gray-300"
+                                                                                >
+                                                                                    <template #before>
+                                                                                        <AccountIcon
+                                                                                            class="flex-shrink-0 w-5 h-5 text-base-400 mr-1"
+                                                                                            aria-hidden="true"
+                                                                                        />
+                                                                                    </template>
+                                                                                </CitizenInfoPopover>
+                                                                            </div>
+                                                                        </li>
+                                                                    </ul>
+                                                                </div>
 
                                                                 <UnitAssignUsersModal
                                                                     :open="openAssign"

@@ -14,6 +14,7 @@ import {
 import { RpcError } from '@protobuf-ts/runtime-rpc';
 import { useThrottleFn, watchDebounced } from '@vueuse/core';
 import { CheckIcon, CloseIcon, LoadingIcon } from 'mdi-vue3';
+import CitizenInfoPopover from '~/components/partials/citizens/CitizenInfoPopover.vue';
 import { useCompletorStore } from '~/store/completor';
 import { Unit } from '~~/gen/ts/resources/centrum/units';
 import { UserShort } from '~~/gen/ts/resources/users/users';
@@ -205,13 +206,18 @@ const onSubmitThrottle = useThrottleFn(async () => {
                                                                     </ComboboxOptions>
                                                                 </div>
                                                             </Combobox>
-                                                            <div class="mt-4">
+
+                                                            <div class="mt-4 overflow-hidden rounded-md bg-base-800">
                                                                 <ul
-                                                                    class="text-sm font-medium max-w-md space-y-1 text-gray-100 list-disc list-inside dark:text-gray-300"
+                                                                    role="list"
+                                                                    class="divide-y divide-gray-200 text-sm font-medium text-gray-100"
                                                                 >
-                                                                    <li v-for="user in selectedCitizens" :key="user.userId">
-                                                                        {{ user?.firstname }}
-                                                                        {{ user?.lastname }}
+                                                                    <li
+                                                                        v-for="user in selectedCitizens"
+                                                                        :key="user.userId"
+                                                                        class="px-6 py-4 inline-flex items-center"
+                                                                    >
+                                                                        <CitizenInfoPopover :user="user" />
                                                                     </li>
                                                                 </ul>
                                                             </div>
