@@ -2336,7 +2336,7 @@ THE SOFTWARE.
 
 -----
 
-The following software may be included in this product: @sindresorhus/merge-streams, @sindresorhus/slugify, @sindresorhus/transliterate, ansi-escapes, ansi-regex, ansi-styles, builtin-modules, bundle-name, camelcase, chalk, clear-module, clipboardy, default-browser, default-browser-id, define-lazy-prop, dot-prop, escape-string-regexp, eslint-plugin-unicorn, execa, find-up, get-stream, global-directory, globals, globby, gzip-size, html-tags, import-fresh, is-docker, is-inside-container, is-installed-globally, is-path-inside, is-stream, is-unicode-supported, locate-path, log-symbols, mimic-fn, npm-run-path, onetime, open, p-limit, p-locate, p-map, parse-json, path-key, path-type, pretty-bytes, run-applescript, slash, string-width, strip-ansi, strip-final-newline, strip-json-comments, supports-color, titleize, unicorn-magic, wrap-ansi, wrap-ansi-cjs, yocto-queue. A copy of the source code may be downloaded from https://github.com/sindresorhus/merge-streams.git (@sindresorhus/merge-streams), https://github.com/sindresorhus/slugify.git (@sindresorhus/slugify), https://github.com/sindresorhus/transliterate.git (@sindresorhus/transliterate), https://github.com/sindresorhus/ansi-escapes.git (ansi-escapes), https://github.com/chalk/ansi-regex.git (ansi-regex), https://github.com/chalk/ansi-styles.git (ansi-styles), https://github.com/sindresorhus/builtin-modules.git (builtin-modules), https://github.com/sindresorhus/bundle-name.git (bundle-name), https://github.com/sindresorhus/camelcase.git (camelcase), https://github.com/chalk/chalk.git (chalk), https://github.com/sindresorhus/clear-module.git (clear-module), https://github.com/sindresorhus/clipboardy.git (clipboardy), https://github.com/sindresorhus/default-browser.git (default-browser), https://github.com/sindresorhus/default-browser-id.git (default-browser-id), https://github.com/sindresorhus/define-lazy-prop.git (define-lazy-prop), https://github.com/sindresorhus/dot-prop.git (dot-prop), https://github.com/sindresorhus/escape-string-regexp.git (escape-string-regexp), https://github.com/sindresorhus/eslint-plugin-unicorn.git (eslint-plugin-unicorn), https://github.com/sindresorhus/execa.git (execa), https://github.com/sindresorhus/find-up.git (find-up), https://github.com/sindresorhus/get-stream.git (get-stream), https://github.com/sindresorhus/global-directory.git (global-directory), https://github.com/sindresorhus/globals.git (globals), https://github.com/sindresorhus/globby.git (globby), https://github.com/sindresorhus/gzip-size.git (gzip-size), https://github.com/sindresorhus/html-tags.git (html-tags), https://github.com/sindresorhus/import-fresh.git (import-fresh), https://github.com/sindresorhus/is-docker.git (is-docker), https://github.com/sindresorhus/is-inside-container.git (is-inside-container), https://github.com/sindresorhus/is-installed-globally.git (is-installed-globally), https://github.com/sindresorhus/is-path-inside.git (is-path-inside), https://github.com/sindresorhus/is-stream.git (is-stream), https://github.com/sindresorhus/is-unicode-supported.git (is-unicode-supported), https://github.com/sindresorhus/locate-path.git (locate-path), https://github.com/sindresorhus/log-symbols.git (log-symbols), https://github.com/sindresorhus/mimic-fn.git (mimic-fn), https://github.com/sindresorhus/npm-run-path.git (npm-run-path), https://github.com/sindresorhus/onetime.git (onetime), https://github.com/sindresorhus/open.git (open), https://github.com/sindresorhus/p-limit.git (p-limit), https://github.com/sindresorhus/p-locate.git (p-locate), https://github.com/sindresorhus/p-map.git (p-map), https://github.com/sindresorhus/parse-json.git (parse-json), https://github.com/sindresorhus/path-key.git (path-key), https://github.com/sindresorhus/path-type.git (path-type), https://github.com/sindresorhus/pretty-bytes.git (pretty-bytes), https://github.com/sindresorhus/run-applescript.git (run-applescript), https://github.com/sindresorhus/slash.git (slash), https://github.com/sindresorhus/string-width.git (string-width), https://github.com/chalk/strip-ansi.git (strip-ansi), https://github.com/sindresorhus/strip-final-newline.git (strip-final-newline), https://github.com/sindresorhus/strip-json-comments.git (strip-json-comments), https://github.com/chalk/supports-color.git (supports-color), https://github.com/sindresorhus/titleize.git (titleize), https://github.com/sindresorhus/unicorn-magic.git (unicorn-magic), https://github.com/chalk/wrap-ansi.git (wrap-ansi), https://github.com/chalk/wrap-ansi.git (wrap-ansi-cjs), https://github.com/sindresorhus/yocto-queue.git (yocto-queue). This software contains the following license and notice below:
+The following software may be included in this product: @sindresorhus/merge-streams, @sindresorhus/slugify, @sindresorhus/transliterate, ansi-escapes, ansi-regex, ansi-styles, builtin-modules, bundle-name, camelcase, chalk, clear-module, clipboardy, default-browser, default-browser-id, define-lazy-prop, dot-prop, escape-string-regexp, eslint-plugin-unicorn, execa, find-up, get-stream, global-directory, globals, globby, gzip-size, html-tags, import-fresh, is-docker, is-inside-container, is-installed-globally, is-path-inside, is-stream, is-unicode-supported, is-wsl, is64bit, locate-path, log-symbols, mimic-fn, npm-run-path, onetime, open, p-limit, p-locate, p-map, parse-json, path-key, path-type, pretty-bytes, run-applescript, slash, string-width, strip-ansi, strip-final-newline, strip-json-comments, supports-color, system-architecture, titleize, unicorn-magic, wrap-ansi, wrap-ansi-cjs, yocto-queue. A copy of the source code may be downloaded from https://github.com/sindresorhus/merge-streams.git (@sindresorhus/merge-streams), https://github.com/sindresorhus/slugify.git (@sindresorhus/slugify), https://github.com/sindresorhus/transliterate.git (@sindresorhus/transliterate), https://github.com/sindresorhus/ansi-escapes.git (ansi-escapes), https://github.com/chalk/ansi-regex.git (ansi-regex), https://github.com/chalk/ansi-styles.git (ansi-styles), https://github.com/sindresorhus/builtin-modules.git (builtin-modules), https://github.com/sindresorhus/bundle-name.git (bundle-name), https://github.com/sindresorhus/camelcase.git (camelcase), https://github.com/chalk/chalk.git (chalk), https://github.com/sindresorhus/clear-module.git (clear-module), https://github.com/sindresorhus/clipboardy.git (clipboardy), https://github.com/sindresorhus/default-browser.git (default-browser), https://github.com/sindresorhus/default-browser-id.git (default-browser-id), https://github.com/sindresorhus/define-lazy-prop.git (define-lazy-prop), https://github.com/sindresorhus/dot-prop.git (dot-prop), https://github.com/sindresorhus/escape-string-regexp.git (escape-string-regexp), https://github.com/sindresorhus/eslint-plugin-unicorn.git (eslint-plugin-unicorn), https://github.com/sindresorhus/execa.git (execa), https://github.com/sindresorhus/find-up.git (find-up), https://github.com/sindresorhus/get-stream.git (get-stream), https://github.com/sindresorhus/global-directory.git (global-directory), https://github.com/sindresorhus/globals.git (globals), https://github.com/sindresorhus/globby.git (globby), https://github.com/sindresorhus/gzip-size.git (gzip-size), https://github.com/sindresorhus/html-tags.git (html-tags), https://github.com/sindresorhus/import-fresh.git (import-fresh), https://github.com/sindresorhus/is-docker.git (is-docker), https://github.com/sindresorhus/is-inside-container.git (is-inside-container), https://github.com/sindresorhus/is-installed-globally.git (is-installed-globally), https://github.com/sindresorhus/is-path-inside.git (is-path-inside), https://github.com/sindresorhus/is-stream.git (is-stream), https://github.com/sindresorhus/is-unicode-supported.git (is-unicode-supported), https://github.com/sindresorhus/is-wsl.git (is-wsl), https://github.com/sindresorhus/is64bit.git (is64bit), https://github.com/sindresorhus/locate-path.git (locate-path), https://github.com/sindresorhus/log-symbols.git (log-symbols), https://github.com/sindresorhus/mimic-fn.git (mimic-fn), https://github.com/sindresorhus/npm-run-path.git (npm-run-path), https://github.com/sindresorhus/onetime.git (onetime), https://github.com/sindresorhus/open.git (open), https://github.com/sindresorhus/p-limit.git (p-limit), https://github.com/sindresorhus/p-locate.git (p-locate), https://github.com/sindresorhus/p-map.git (p-map), https://github.com/sindresorhus/parse-json.git (parse-json), https://github.com/sindresorhus/path-key.git (path-key), https://github.com/sindresorhus/path-type.git (path-type), https://github.com/sindresorhus/pretty-bytes.git (pretty-bytes), https://github.com/sindresorhus/run-applescript.git (run-applescript), https://github.com/sindresorhus/slash.git (slash), https://github.com/sindresorhus/string-width.git (string-width), https://github.com/chalk/strip-ansi.git (strip-ansi), https://github.com/sindresorhus/strip-final-newline.git (strip-final-newline), https://github.com/sindresorhus/strip-json-comments.git (strip-json-comments), https://github.com/chalk/supports-color.git (supports-color), https://github.com/sindresorhus/system-architecture.git (system-architecture), https://github.com/sindresorhus/titleize.git (titleize), https://github.com/sindresorhus/unicorn-magic.git (unicorn-magic), https://github.com/chalk/wrap-ansi.git (wrap-ansi), https://github.com/chalk/wrap-ansi.git (wrap-ansi-cjs), https://github.com/sindresorhus/yocto-queue.git (yocto-queue). This software contains the following license and notice below:
 
 MIT License
 
@@ -2355,6 +2355,32 @@ The following software may be included in this product: @tailwindcss/forms, @tai
 MIT License
 
 Copyright (c) Tailwind Labs, Inc.
+
+Permission is hereby granted, free of charge, to any person obtaining a copy
+of this software and associated documentation files (the "Software"), to deal
+in the Software without restriction, including without limitation the rights
+to use, copy, modify, merge, publish, distribute, sublicense, and/or sell
+copies of the Software, and to permit persons to whom the Software is
+furnished to do so, subject to the following conditions:
+
+The above copyright notice and this permission notice shall be included in all
+copies or substantial portions of the Software.
+
+THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR
+IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY,
+FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE
+AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER
+LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
+OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
+SOFTWARE.
+
+-----
+
+The following software may be included in this product: @tanstack/virtual-core, @tanstack/vue-virtual. A copy of the source code may be downloaded from git+https://github.com/tanstack/virtual.git (@tanstack/virtual-core), git+https://github.com/tanstack/virtual.git (@tanstack/vue-virtual). This software contains the following license and notice below:
+
+MIT License
+
+Copyright (c) 2021-present Tanner Linsley
 
 Permission is hereby granted, free of charge, to any person obtaining a copy
 of this software and associated documentation files (the "Software"), to deal
@@ -3305,31 +3331,6 @@ ANY SPECIAL, DIRECT, INDIRECT, OR CONSEQUENTIAL DAMAGES OR ANY DAMAGES
 WHATSOEVER RESULTING FROM LOSS OF USE, DATA OR PROFITS, WHETHER IN AN
 ACTION OF CONTRACT, NEGLIGENCE OR OTHER TORTIOUS ACTION, ARISING OUT OF
 OR IN CONNECTION WITH THE USE OR PERFORMANCE OF THIS SOFTWARE.
-
------
-
-The following software may be included in this product: arch, eslint-config-standard, queue-microtask, run-parallel. A copy of the source code may be downloaded from git://github.com/feross/arch.git (arch), git://github.com/standard/eslint-config-standard.git (eslint-config-standard), git://github.com/feross/queue-microtask.git (queue-microtask), git://github.com/feross/run-parallel.git (run-parallel). This software contains the following license and notice below:
-
-The MIT License (MIT)
-
-Copyright (c) Feross Aboukhadijeh
-
-Permission is hereby granted, free of charge, to any person obtaining a copy of
-this software and associated documentation files (the "Software"), to deal in
-the Software without restriction, including without limitation the rights to
-use, copy, modify, merge, publish, distribute, sublicense, and/or sell copies of
-the Software, and to permit persons to whom the Software is furnished to do so,
-subject to the following conditions:
-
-The above copyright notice and this permission notice shall be included in all
-copies or substantial portions of the Software.
-
-THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR
-IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY, FITNESS
-FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE AUTHORS OR
-COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER LIABILITY, WHETHER
-IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM, OUT OF OR IN
-CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 
 -----
 
@@ -7517,6 +7518,31 @@ THE SOFTWARE.
 
 -----
 
+The following software may be included in this product: eslint-config-standard, queue-microtask, run-parallel. A copy of the source code may be downloaded from git://github.com/standard/eslint-config-standard.git (eslint-config-standard), git://github.com/feross/queue-microtask.git (queue-microtask), git://github.com/feross/run-parallel.git (run-parallel). This software contains the following license and notice below:
+
+The MIT License (MIT)
+
+Copyright (c) Feross Aboukhadijeh
+
+Permission is hereby granted, free of charge, to any person obtaining a copy of
+this software and associated documentation files (the "Software"), to deal in
+the Software without restriction, including without limitation the rights to
+use, copy, modify, merge, publish, distribute, sublicense, and/or sell copies of
+the Software, and to permit persons to whom the Software is furnished to do so,
+subject to the following conditions:
+
+The above copyright notice and this permission notice shall be included in all
+copies or substantial portions of the Software.
+
+THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR
+IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY, FITNESS
+FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE AUTHORS OR
+COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER LIABILITY, WHETHER
+IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM, OUT OF OR IN
+CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
+
+-----
+
 The following software may be included in this product: eslint-import-resolver-node, eslint-module-utils, eslint-plugin-import. A copy of the source code may be downloaded from https://github.com/import-js/eslint-plugin-import (eslint-import-resolver-node), git+https://github.com/import-js/eslint-plugin-import.git (eslint-module-utils), https://github.com/import-js/eslint-plugin-import (eslint-plugin-import). This software contains the following license and notice below:
 
 The MIT License (MIT)
@@ -11026,6 +11052,30 @@ No contributor can revoke this license.
 without any warranty or condition, and no contributor
 will be liable to anyone for any damages related to this
 software or this license, under any kind of legal claim.***
+
+-----
+
+The following software may be included in this product: jodit. A copy of the source code may be downloaded from git+https://github.com/xdan/jodit.git. This software contains the following license and notice below:
+
+Copyright (c) 2013-2024 https://xdsoft.net
+
+Permission is hereby granted, free of charge, to any person obtaining a copy
+of this software and associated documentation files (the "Software"), to deal
+in the Software without restriction, including without limitation the rights
+to use, copy, modify, merge, publish, distribute, sublicense, and/or sell
+copies of the Software, and to permit persons to whom the Software is
+furnished to do so, subject to the following conditions:
+
+The above copyright notice and this permission notice shall be included in
+all copies or substantial portions of the Software.
+
+THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR
+IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY,
+FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE
+AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER
+LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
+OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN
+THE SOFTWARE.
 
 -----
 

@@ -13,7 +13,7 @@ import {
 import { RpcError } from '@protobuf-ts/runtime-rpc';
 import { max, min, required } from '@vee-validate/rules';
 import { useThrottleFn, watchDebounced, watchOnce } from '@vueuse/core';
-import 'jodit/build/jodit.min.css';
+import 'jodit/es5/jodit.min.css';
 import { Jodit } from 'jodit';
 // @ts-expect-error no types are available for this package
 import { JoditEditor } from 'jodit-vue';
