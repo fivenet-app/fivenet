@@ -15,9 +15,9 @@ import {
     TrafficConeIcon,
 } from 'mdi-vue3';
 import { type DefineComponent } from 'vue';
+import { type RoutesNamedLocations } from '@typed-router';
 import CitizenInfoPopover from '~/components/partials/citizens/CitizenInfoPopover.vue';
 import GenericTime from '~/components/partials/elements/GenericTime.vue';
-import { type RoutesNamedLocations } from '@typed-router';
 import { UserActivity } from '~~/gen/ts/resources/users/users';
 
 const props = defineProps<{
