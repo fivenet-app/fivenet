@@ -6096,10 +6096,10 @@ make-fetch-happen@^13.0.0:
     promise-retry "^2.0.1"
     ssri "^10.0.0"
 
-maska@2.1.10:
-  version "2.1.10"
-  resolved "https://registry.yarnpkg.com/maska/-/maska-2.1.10.tgz#dff9d96bf472280fe623ea2ecd1860c15886d355"
-  integrity sha512-oQLLUCJ4qG1YFHSGQB9P6G0LKSmAwHFFBFhmkJ9pcSUXXDZew5NNTBbPACiixqFBaU7M7LydPlrL0DmI1p+ufQ==
+maska@2.1.11:
+  version "2.1.11"
+  resolved "https://registry.yarnpkg.com/maska/-/maska-2.1.11.tgz#71ef39a0c7121beda374f9a309bded5c129dd3f1"
+  integrity sha512-IGqWjBnKxMYcVa06pb4mPfag9sJjnR2T15CdGfQ2llR3gajiSd4AxXCvNqHMEq9W3UBhjjTazgWumsP3sWrUSg==
 
 mdi-vue3@7.4.47:
   version "7.4.47"
