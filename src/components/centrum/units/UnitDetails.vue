@@ -257,7 +257,7 @@ const openStatus = ref(false);
                                                     </dl>
                                                 </div>
 
-                                                <UnitFeed :unit-id="unit.id" />
+                                                <UnitFeed :unit-id="unit.id" @goto="$emit('goto', $event)" />
                                             </div>
                                         </div>
                                     </div>

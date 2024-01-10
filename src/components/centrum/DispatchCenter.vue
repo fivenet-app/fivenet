@@ -79,7 +79,7 @@ function goto(e: Coordinate) {
                         <UnitList @goto="goto($event)" />
                     </Pane>
                     <Pane size="12" min-size="2">
-                        <CentrumFeed :items="feed" />
+                        <CentrumFeed :items="feed" @goto="goto($event)" />
                     </Pane>
                 </Splitpanes>
             </Pane>

@@ -1,5 +1,14 @@
 <script lang="ts" setup>
-import { AccountPlusIcon, AccountRemoveIcon, BriefcaseIcon, CoffeeIcon, HelpIcon, PlayIcon, StopIcon } from 'mdi-vue3';
+import {
+    AccountPlusIcon,
+    AccountRemoveIcon,
+    BriefcaseIcon,
+    CoffeeIcon,
+    HelpIcon,
+    MapMarkerIcon,
+    PlayIcon,
+    StopIcon,
+} from 'mdi-vue3';
 import CitizenInfoPopover from '~/components/partials/citizens/CitizenInfoPopover.vue';
 import GenericTime from '~/components/partials/elements/GenericTime.vue';
 import { StatusUnit, UnitStatus } from '~~/gen/ts/resources/centrum/units';
@@ -9,6 +18,10 @@ defineProps<{
     activityLength: number;
     item: UnitStatus;
     activityItemIdx: number;
+}>();
+
+defineEmits<{
+    (e: 'goto', loc: Coordinate): void;
 }>();
 </script>
 
@@ -29,6 +42,7 @@ defineProps<{
             <p class="flex-auto py-0.5 text-xs leading-5 text-gray-200 inline-flex flex-row justify-between">
                 <span class="inline-flex items-center gap-1">
                     {{ $t('components.centrum.units.feed.item.USER_ADDED') }}
+
                     <UnitInfoPopover
                         v-if="item.unit"
                         text-class="font-medium text-gray-400 pl-1"
@@ -38,7 +52,12 @@ defineProps<{
                     />
                 </span>
 
-                <CitizenInfoPopover v-if="item.user" text-class="font-medium text-gray-400 pl-1" :user="item.user" />
+                <span class="inline-flex items-center">
+                    <button v-if="item.x && item.y" type="button" @click="$emit('goto', { x: item.x, y: item.y })">
+                        <MapMarkerIcon class="text-primary-400 hover:text-primary-600 h-5 w-5" />
+                    </button>
+                    <CitizenInfoPopover v-if="item.user" text-class="font-medium text-gray-400 pl-1" :user="item.user" />
+                </span>
             </p>
             <span class="flex-none py-0.5 text-xs leading-5 text-gray-200">
                 <GenericTime :value="item.createdAt" :type="'compact'" />
@@ -51,6 +70,7 @@ defineProps<{
             <p class="flex-auto py-0.5 text-xs leading-5 text-gray-200 inline-flex flex-row justify-between">
                 <span class="inline-flex items-center gap-1">
                     {{ $t('components.centrum.units.feed.item.USER_REMOVED') }}
+
                     <UnitInfoPopover
                         v-if="item.unit"
                         text-class="font-medium text-gray-400 pl-1"
@@ -60,7 +80,12 @@ defineProps<{
                     />
                 </span>
 
-                <CitizenInfoPopover v-if="item.user" text-class="font-medium text-gray-400 pl-1" :user="item.user" />
+                <span class="inline-flex items-center">
+                    <button v-if="item.x && item.y" type="button" @click="$emit('goto', { x: item.x, y: item.y })">
+                        <MapMarkerIcon class="text-primary-400 hover:text-primary-600 h-5 w-5" />
+                    </button>
+                    <CitizenInfoPopover v-if="item.user" text-class="font-medium text-gray-400 pl-1" :user="item.user" />
+                </span>
             </p>
             <span class="flex-none py-0.5 text-xs leading-5 text-gray-200">
                 <GenericTime :value="item.createdAt" :type="'compact'" />
@@ -73,6 +98,7 @@ defineProps<{
             <p class="flex-auto py-0.5 text-xs leading-5 text-gray-200 inline-flex flex-row justify-between">
                 <span class="inline-flex items-center gap-1">
                     {{ $t('components.centrum.units.feed.item.UNAVAILABLE') }}
+
                     <UnitInfoPopover
                         v-if="item.unit"
                         text-class="font-medium text-gray-400 pl-1"
@@ -82,7 +108,12 @@ defineProps<{
                     />
                 </span>
 
-                <CitizenInfoPopover v-if="item.user" text-class="font-medium text-gray-400 pl-1" :user="item.user" />
+                <span class="inline-flex items-center">
+                    <button v-if="item.x && item.y" type="button" @click="$emit('goto', { x: item.x, y: item.y })">
+                        <MapMarkerIcon class="text-primary-400 hover:text-primary-600 h-5 w-5" />
+                    </button>
+                    <CitizenInfoPopover v-if="item.user" text-class="font-medium text-gray-400 pl-1" :user="item.user" />
+                </span>
             </p>
             <span class="flex-none py-0.5 text-xs leading-5 text-gray-200">
                 <GenericTime :value="item.createdAt" :type="'compact'" />
@@ -95,6 +126,7 @@ defineProps<{
             <p class="flex-auto py-0.5 text-xs leading-5 text-gray-200 inline-flex flex-row justify-between">
                 <span class="inline-flex items-center gap-1">
                     {{ $t('components.centrum.units.feed.item.AVAILABLE') }}
+
                     <UnitInfoPopover
                         v-if="item.unit"
                         text-class="font-medium text-gray-400 pl-1"
@@ -104,7 +136,12 @@ defineProps<{
                     />
                 </span>
 
-                <CitizenInfoPopover v-if="item.user" text-class="font-medium text-gray-400 pl-1" :user="item.user" />
+                <span class="inline-flex items-center">
+                    <button v-if="item.x && item.y" type="button" @click="$emit('goto', { x: item.x, y: item.y })">
+                        <MapMarkerIcon class="text-primary-400 hover:text-primary-600 h-5 w-5" />
+                    </button>
+                    <CitizenInfoPopover v-if="item.user" text-class="font-medium text-gray-400 pl-1" :user="item.user" />
+                </span>
             </p>
             <span class="flex-none py-0.5 text-xs leading-5 text-gray-200">
                 <GenericTime :value="item.createdAt" :type="'compact'" />
@@ -117,6 +154,7 @@ defineProps<{
             <p class="flex-auto py-0.5 text-xs leading-5 text-gray-200 inline-flex flex-row justify-between">
                 <span class="inline-flex items-center gap-1">
                     {{ $t('components.centrum.units.feed.item.ON_BREAK') }}
+
                     <UnitInfoPopover
                         v-if="item.unit"
                         text-class="font-medium text-gray-400 pl-1"
@@ -126,7 +164,12 @@ defineProps<{
                     />
                 </span>
 
-                <CitizenInfoPopover v-if="item.user" text-class="font-medium text-gray-400 pl-1" :user="item.user" />
+                <span class="inline-flex items-center">
+                    <button v-if="item.x && item.y" type="button" @click="$emit('goto', { x: item.x, y: item.y })">
+                        <MapMarkerIcon class="text-primary-400 hover:text-primary-600 h-5 w-5" />
+                    </button>
+                    <CitizenInfoPopover v-if="item.user" text-class="font-medium text-gray-400 pl-1" :user="item.user" />
+                </span>
             </p>
             <span class="flex-none py-0.5 text-xs leading-5 text-gray-200">
                 <GenericTime :value="item.createdAt" :type="'compact'" />
@@ -139,6 +182,7 @@ defineProps<{
             <p class="flex-auto py-0.5 text-xs leading-5 text-gray-200 inline-flex flex-row justify-between">
                 <span class="inline-flex items-center gap-1">
                     {{ $t('components.centrum.units.feed.item.BUSY') }}
+
                     <UnitInfoPopover
                         v-if="item.unit"
                         text-class="font-medium text-gray-400 pl-1"
@@ -148,7 +192,12 @@ defineProps<{
                     />
                 </span>
 
-                <CitizenInfoPopover v-if="item.user" text-class="font-medium text-gray-400 pl-1" :user="item.user" />
+                <span class="inline-flex items-center">
+                    <button v-if="item.x && item.y" type="button" @click="$emit('goto', { x: item.x, y: item.y })">
+                        <MapMarkerIcon class="text-primary-400 hover:text-primary-600 h-5 w-5" />
+                    </button>
+                    <CitizenInfoPopover v-if="item.user" text-class="font-medium text-gray-400 pl-1" :user="item.user" />
+                </span>
             </p>
             <span class="flex-none py-0.5 text-xs leading-5 text-gray-200">
                 <GenericTime :value="item.createdAt" :type="'compact'" />
@@ -161,6 +210,7 @@ defineProps<{
             <p class="flex-auto py-0.5 text-xs leading-5 text-gray-200 inline-flex flex-row justify-between">
                 <span class="inline-flex items-center gap-1">
                     {{ $t('components.centrum.units.feed.item.UNKNOWN') }}
+
                     <UnitInfoPopover
                         v-if="item.unit"
                         text-class="font-medium text-gray-400 pl-1"
@@ -170,7 +220,12 @@ defineProps<{
                     />
                 </span>
 
-                <CitizenInfoPopover v-if="item.user" text-class="font-medium text-gray-400 pl-1" :user="item.user" />
+                <span class="inline-flex items-center">
+                    <button v-if="item.x && item.y" type="button" @click="$emit('goto', { x: item.x, y: item.y })">
+                        <MapMarkerIcon class="text-primary-400 hover:text-primary-600 h-5 w-5" />
+                    </button>
+                    <CitizenInfoPopover v-if="item.user" text-class="font-medium text-gray-400 pl-1" :user="item.user" />
+                </span>
             </p>
             <span class="flex-none py-0.5 text-xs leading-5 text-gray-200">
                 <GenericTime :value="item.createdAt" :type="'compact'" />

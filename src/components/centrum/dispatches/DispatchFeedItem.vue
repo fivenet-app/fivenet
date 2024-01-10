@@ -30,6 +30,10 @@ withDefaults(
         showId: false,
     },
 );
+
+defineEmits<{
+    (e: 'goto', loc: Coordinate): void;
+}>();
 </script>
 
 <template>
@@ -53,7 +57,12 @@ withDefaults(
                     <DispatchStatusInfoPopover v-if="showId" text-class="font-medium text-gray-400 pl-1" :status="item" />
                 </span>
 
-                <CitizenInfoPopover v-if="item.user" text-class="font-medium text-gray-400 pl-1" :user="item.user" />
+                <span class="inline-flex items-center">
+                    <button v-if="item.x && item.y" type="button" @click="$emit('goto', { x: item.x, y: item.y })">
+                        <MapMarkerIcon class="text-primary-400 hover:text-primary-600 h-5 w-5" />
+                    </button>
+                    <CitizenInfoPopover v-if="item.user" text-class="font-medium text-gray-400 pl-1" :user="item.user" />
+                </span>
             </p>
             <span class="flex-none py-0.5 text-xs leading-5 text-gray-200">
                 <GenericTime :value="item.createdAt" :type="'compact'" />
@@ -77,7 +86,12 @@ withDefaults(
                     />
                 </span>
 
-                <CitizenInfoPopover v-if="item.user" text-class="font-medium text-gray-400 pl-1" :user="item.user" />
+                <span class="inline-flex items-center">
+                    <button v-if="item.x && item.y" type="button" @click="$emit('goto', { x: item.x, y: item.y })">
+                        <MapMarkerIcon class="text-primary-400 hover:text-primary-600 h-5 w-5" />
+                    </button>
+                    <CitizenInfoPopover v-if="item.user" text-class="font-medium text-gray-400 pl-1" :user="item.user" />
+                </span>
             </p>
             <span class="flex-none py-0.5 text-xs leading-5 text-gray-200">
                 <GenericTime :value="item.createdAt" :type="'compact'" />
@@ -101,7 +115,12 @@ withDefaults(
                     />
                 </span>
 
-                <CitizenInfoPopover v-if="item.user" text-class="font-medium text-gray-400 pl-1" :user="item.user" />
+                <span class="inline-flex items-center">
+                    <button v-if="item.x && item.y" type="button" @click="$emit('goto', { x: item.x, y: item.y })">
+                        <MapMarkerIcon class="text-primary-400 hover:text-primary-600 h-5 w-5" />
+                    </button>
+                    <CitizenInfoPopover v-if="item.user" text-class="font-medium text-gray-400 pl-1" :user="item.user" />
+                </span>
             </p>
             <span class="flex-none py-0.5 text-xs leading-5 text-gray-200">
                 <GenericTime :value="item.createdAt" :type="'compact'" />
@@ -125,7 +144,12 @@ withDefaults(
                     />
                 </span>
 
-                <CitizenInfoPopover v-if="item.user" text-class="font-medium text-gray-400 pl-1" :user="item.user" />
+                <span class="inline-flex items-center">
+                    <button v-if="item.x && item.y" type="button" @click="$emit('goto', { x: item.x, y: item.y })">
+                        <MapMarkerIcon class="text-primary-400 hover:text-primary-600 h-5 w-5" />
+                    </button>
+                    <CitizenInfoPopover v-if="item.user" text-class="font-medium text-gray-400 pl-1" :user="item.user" />
+                </span>
             </p>
             <span class="flex-none py-0.5 text-xs leading-5 text-gray-200">
                 <GenericTime :value="item.createdAt" :type="'compact'" />
@@ -149,7 +173,12 @@ withDefaults(
                     />
                 </span>
 
-                <CitizenInfoPopover v-if="item.user" text-class="font-medium text-gray-400 pl-1" :user="item.user" />
+                <span class="inline-flex items-center">
+                    <button v-if="item.x && item.y" type="button" @click="$emit('goto', { x: item.x, y: item.y })">
+                        <MapMarkerIcon class="text-primary-400 hover:text-primary-600 h-5 w-5" />
+                    </button>
+                    <CitizenInfoPopover v-if="item.user" text-class="font-medium text-gray-400 pl-1" :user="item.user" />
+                </span>
             </p>
             <span class="flex-none py-0.5 text-xs leading-5 text-gray-200">
                 <GenericTime :value="item.createdAt" :type="'compact'" />
@@ -173,7 +202,12 @@ withDefaults(
                     />
                 </span>
 
-                <CitizenInfoPopover v-if="item.user" text-class="font-medium text-gray-400 pl-1" :user="item.user" />
+                <span class="inline-flex items-center">
+                    <button v-if="item.x && item.y" type="button" @click="$emit('goto', { x: item.x, y: item.y })">
+                        <MapMarkerIcon class="text-primary-400 hover:text-primary-600 h-5 w-5" />
+                    </button>
+                    <CitizenInfoPopover v-if="item.user" text-class="font-medium text-gray-400 pl-1" :user="item.user" />
+                </span>
             </p>
             <span class="flex-none py-0.5 text-xs leading-5 text-gray-200">
                 <GenericTime :value="item.createdAt" :type="'compact'" />
@@ -197,7 +231,12 @@ withDefaults(
                     />
                 </span>
 
-                <CitizenInfoPopover v-if="item.user" text-class="font-medium text-gray-400 pl-1" :user="item.user" />
+                <span class="inline-flex items-center">
+                    <button v-if="item.x && item.y" type="button" @click="$emit('goto', { x: item.x, y: item.y })">
+                        <MapMarkerIcon class="text-primary-400 hover:text-primary-600 h-5 w-5" />
+                    </button>
+                    <CitizenInfoPopover v-if="item.user" text-class="font-medium text-gray-400 pl-1" :user="item.user" />
+                </span>
             </p>
             <span class="flex-none py-0.5 text-xs leading-5 text-gray-200">
                 <GenericTime :value="item.createdAt" :type="'compact'" />
@@ -220,7 +259,12 @@ withDefaults(
                     />
                 </span>
 
-                <CitizenInfoPopover v-if="item.user" text-class="font-medium text-gray-400 pl-1" :user="item.user" />
+                <span class="inline-flex items-center">
+                    <button v-if="item.x && item.y" type="button" @click="$emit('goto', { x: item.x, y: item.y })">
+                        <MapMarkerIcon class="text-primary-400 hover:text-primary-600 h-5 w-5" />
+                    </button>
+                    <CitizenInfoPopover v-if="item.user" text-class="font-medium text-gray-400 pl-1" :user="item.user" />
+                </span>
             </p>
             <span class="flex-none py-0.5 text-xs leading-5 text-gray-200">
                 <GenericTime :value="item.createdAt" :type="'compact'" />
@@ -244,7 +288,12 @@ withDefaults(
                     />
                 </span>
 
-                <CitizenInfoPopover v-if="item.user" text-class="font-medium text-gray-400 pl-1" :user="item.user" />
+                <span class="inline-flex items-center">
+                    <button v-if="item.x && item.y" type="button" @click="$emit('goto', { x: item.x, y: item.y })">
+                        <MapMarkerIcon class="text-primary-400 hover:text-primary-600 h-5 w-5" />
+                    </button>
+                    <CitizenInfoPopover v-if="item.user" text-class="font-medium text-gray-400 pl-1" :user="item.user" />
+                </span>
             </p>
             <span class="flex-none py-0.5 text-xs leading-5 text-gray-200">
                 <GenericTime :value="item.createdAt" :type="'compact'" />
@@ -267,7 +316,13 @@ withDefaults(
                         :badge="true"
                     />
                 </span>
-                <CitizenInfoPopover v-if="item.user" text-class="font-medium text-gray-400 pl-1" :user="item.user" />
+
+                <span class="inline-flex items-center">
+                    <button v-if="item.x && item.y" type="button" @click="$emit('goto', { x: item.x, y: item.y })">
+                        <MapMarkerIcon class="text-primary-400 hover:text-primary-600 h-5 w-5" />
+                    </button>
+                    <CitizenInfoPopover v-if="item.user" text-class="font-medium text-gray-400 pl-1" :user="item.user" />
+                </span>
             </p>
             <span class="flex-none py-0.5 text-xs leading-5 text-gray-200">
                 <GenericTime :value="item.createdAt" :type="'compact'" />
@@ -291,7 +346,12 @@ withDefaults(
                     />
                 </span>
 
-                <CitizenInfoPopover v-if="item.user" text-class="font-medium text-gray-400 pl-1" :user="item.user" />
+                <span class="inline-flex items-center">
+                    <button v-if="item.x && item.y" type="button" @click="$emit('goto', { x: item.x, y: item.y })">
+                        <MapMarkerIcon class="text-primary-400 hover:text-primary-600 h-5 w-5" />
+                    </button>
+                    <CitizenInfoPopover v-if="item.user" text-class="font-medium text-gray-400 pl-1" :user="item.user" />
+                </span>
             </p>
             <span class="flex-none py-0.5 text-xs leading-5 text-gray-200">
                 <GenericTime :value="item.createdAt" :type="'compact'" />
@@ -315,7 +375,12 @@ withDefaults(
                     />
                 </span>
 
-                <CitizenInfoPopover v-if="item.user" text-class="font-medium text-gray-400 pl-1" :user="item.user" />
+                <span class="inline-flex items-center">
+                    <button v-if="item.x && item.y" type="button" @click="$emit('goto', { x: item.x, y: item.y })">
+                        <MapMarkerIcon class="text-primary-400 hover:text-primary-600 h-5 w-5" />
+                    </button>
+                    <CitizenInfoPopover v-if="item.user" text-class="font-medium text-gray-400 pl-1" :user="item.user" />
+                </span>
             </p>
             <span class="flex-none py-0.5 text-xs leading-5 text-gray-200">
                 <GenericTime :value="item.createdAt" :type="'compact'" />
@@ -339,7 +404,12 @@ withDefaults(
                     />
                 </span>
 
-                <CitizenInfoPopover v-if="item.user" text-class="font-medium text-gray-400 pl-1" :user="item.user" />
+                <span class="inline-flex items-center">
+                    <button v-if="item.x && item.y" type="button" @click="$emit('goto', { x: item.x, y: item.y })">
+                        <MapMarkerIcon class="text-primary-400 hover:text-primary-600 h-5 w-5" />
+                    </button>
+                    <CitizenInfoPopover v-if="item.user" text-class="font-medium text-gray-400 pl-1" :user="item.user" />
+                </span>
             </p>
             <span class="flex-none py-0.5 text-xs leading-5 text-gray-200">
                 <GenericTime :value="item.createdAt" :type="'compact'" />

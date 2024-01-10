@@ -398,7 +398,7 @@ const openStatus = ref(false);
                                                     </dl>
                                                 </div>
 
-                                                <DispatchFeed :dispatch-id="dispatch.id" />
+                                                <DispatchFeed :dispatch-id="dispatch.id" @goto="$emit('goto', $event)" />
                                             </div>
                                         </div>
                                     </div>
