@@ -25,6 +25,7 @@ const props = withDefaults(
 
 defineEmits<{
     (e: 'selected'): void;
+    (e: 'goto', loc: Coordinate): void;
 }>();
 
 function updateMarkerColor(): void {
@@ -49,7 +50,13 @@ const openUnit = ref(false);
 </script>
 
 <template>
-    <UnitDetails v-if="hasUnit && marker.unit !== undefined" :unit="marker.unit" :open="openUnit" @close="openUnit = false" />
+    <UnitDetails
+        v-if="hasUnit && marker.unit !== undefined"
+        :unit="marker.unit"
+        :open="openUnit"
+        @close="openUnit = false"
+        @goto="$emit('goto', $event)"
+    />
 
     <LMarker
         :key="marker.info!.id"

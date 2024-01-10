@@ -20,6 +20,10 @@ defineProps<{
     showUnitStatus?: boolean;
 }>();
 
+defineEmits<{
+    (e: 'goto', loc: Coordinate): void;
+}>();
+
 const { t } = useI18n();
 
 const settingsStore = useSettingsStore();

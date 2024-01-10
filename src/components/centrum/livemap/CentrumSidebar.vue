@@ -299,7 +299,7 @@ async function checkup(): Promise<void> {
 </script>
 
 <template>
-    <Livemap>
+    <Livemap @goto="$emit('goto', $event)">
         <template v-if="canStream" #default>
             <DispatchesLayer :show-all-dispatches="getCurrentMode === CentrumMode.SIMPLIFIED" @goto="$emit('goto', $event)" />
 
@@ -403,6 +403,7 @@ async function checkup(): Promise<void> {
                                                 :unit="getOwnUnit"
                                                 :open="openUnitDetails"
                                                 @close="openUnitDetails = false"
+                                                @goto="$emit('goto', $event)"
                                             />
                                         </template>
                                         <button

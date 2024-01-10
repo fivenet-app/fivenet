@@ -55,7 +55,7 @@ function goto(e: Coordinate) {
             <Pane min-size="25">
                 <Splitpanes horizontal>
                     <Pane min-size="80" size="90">
-                        <Livemap :show-unit-names="true" :show-unit-status="true">
+                        <Livemap :show-unit-names="true" :show-unit-status="true" @goto="goto($event)">
                             <template #default>
                                 <DispatchesLayer
                                     v-if="can('CentrumService.Stream')"

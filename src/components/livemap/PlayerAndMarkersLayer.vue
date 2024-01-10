@@ -26,6 +26,7 @@ withDefaults(
 defineEmits<{
     (e: 'userSelected', marker: UserMarker): void;
     (e: 'markerSelected', marker: Marker): void;
+    (e: 'goto', loc: Coordinate): void;
 }>();
 
 const livemapStore = useLivemapStore();
@@ -80,6 +81,7 @@ onBeforeUnmount(async () => {
             :show-unit-names="showUnitNames || livemap.showUnitNames"
             :show-unit-status="showUnitStatus || livemap.showUnitStatus"
             @selected="$emit('userSelected', marker)"
+            @goto="$emit('goto', $event)"
         />
     </LMarkerClusterGroup>
 
