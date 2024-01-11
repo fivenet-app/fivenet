@@ -1,7 +1,6 @@
 <script lang="ts" setup>
-import { MapMarkerDownIcon } from 'mdi-vue3';
-import { LControl, LIcon, LMarker } from '@vue-leaflet/vue-leaflet';
-import { type LeafletMouseEvent, type PointExpression } from 'leaflet';
+import { LControl } from '@vue-leaflet/vue-leaflet';
+import { type LeafletMouseEvent } from 'leaflet';
 import DataErrorBlock from '~/components/partials/data/DataErrorBlock.vue';
 import DataPendingBlock from '~/components/partials/data/DataPendingBlock.vue';
 import { isNUIAvailable, setWaypoint } from '~/composables/nui';
@@ -14,6 +13,7 @@ import PlayerAndMarkersLayer from '~/components/livemap/PlayerAndMarkersLayer.vu
 import PostalSearch from '~/components/livemap/controls/PostalSearch.vue';
 import SettingsButton from '~/components/livemap/controls/SettingsButton.vue';
 import CreateOrUpdateDispatchModal from '~/components/centrum/dispatches/CreateOrUpdateDispatchModal.vue';
+import MapTempMarker from '~/components/livemap/MapTempMarker.vue';
 
 defineProps<{
     showUnitNames?: boolean;
@@ -30,7 +30,7 @@ const settingsStore = useSettingsStore();
 const { livemap } = storeToRefs(settingsStore);
 
 const livemapStore = useLivemapStore();
-const { error, abort, restarting, location } = storeToRefs(livemapStore);
+const { error, abort, restarting, location, showLocationMarker } = storeToRefs(livemapStore);
 const { startStream } = livemapStore;
 
 interface ContextmenuItem {
@@ -50,6 +50,7 @@ if (can('CentrumService.CreateDispatch')) {
         text: t('components.centrum.create_dispatch.title'),
         callback: (e: LeafletMouseEvent) => {
             location.value = { x: e.latlng.lng, y: e.latlng.lat };
+            showLocationMarker.value = true;
             openCreateDispatch.value = true;
         },
     });
@@ -59,6 +60,7 @@ if (can('LivemapperService.CreateOrUpdateMarker')) {
         text: t('components.livemap.create_marker.title'),
         callback: (e: LeafletMouseEvent) => {
             location.value = { x: e.latlng.lng, y: e.latlng.lat };
+            showLocationMarker.value = true;
             openCreateMarker.value = true;
         },
     });
@@ -84,8 +86,6 @@ async function applySelectedMarkerCentering(): Promise<void> {
 
     location.value = { x: selectedUserMarker.value.x, y: selectedUserMarker.value.y };
 }
-
-const iconAnchor: PointExpression = [livemap.value.markerSize / 2, livemap.value.markerSize];
 </script>
 
 <template>
@@ -126,15 +126,7 @@ const iconAnchor: PointExpression = [livemap.value.markerSize / 2, livemap.value
                     @user-selected="selectedUserMarker = $event.info"
                 />
 
-                <LMarker
-                    v-if="location && (openCreateMarker || openCreateDispatch)"
-                    :lat-lng="[location.y, location.x]"
-                    :z-index-offset="1000"
-                >
-                    <LIcon :icon-size="[livemap.markerSize, livemap.markerSize]" :icon-anchor="iconAnchor">
-                        <MapMarkerDownIcon class="w-6 h-6 fill-primary-500" />
-                    </LIcon>
-                </LMarker>
+                <MapTempMarker />
 
                 <slot />
 

@@ -1,10 +1,14 @@
 <script lang="ts" setup>
 import { RpcError } from '@protobuf-ts/runtime-rpc';
+import { Pane, Splitpanes } from 'splitpanes';
 import DispatchList from '~/components/centrum/dispatches/DispatchList.vue';
+import BaseMap from '~/components/livemap/BaseMap.vue';
+import MapTempMarker from '~/components/livemap/MapTempMarker.vue';
 import DataErrorBlock from '~/components/partials/data/DataErrorBlock.vue';
 import DataNoDataBlock from '~/components/partials/data/DataNoDataBlock.vue';
 import DataPendingBlock from '~/components/partials/data/DataPendingBlock.vue';
 import TablePagination from '~/components/partials/elements/TablePagination.vue';
+import { useLivemapStore } from '~/store/livemap';
 import type { ListDispatchesRequest, ListDispatchesResponse } from '~~/gen/ts/services/centrum/centrum';
 
 useHead({
@@ -18,6 +22,9 @@ definePageMeta({
 });
 
 const { $grpc } = useNuxtApp();
+
+const livemapStore = useLivemapStore();
+const { location, showLocationMarker } = storeToRefs(livemapStore);
 
 const offset = ref(0n);
 
@@ -44,18 +51,45 @@ async function listDispatches(): Promise<ListDispatchesResponse> {
 }
 
 watch(offset, async () => refresh());
+
+onMounted(() => {
+    showLocationMarker.value = true;
+});
+
+onBeforeUnmount(() => {
+    showLocationMarker.value = false;
+});
 </script>
 
 <template>
-    <div class="w-full">
+    <div class="relative h-full w-full">
         <DataPendingBlock v-if="pending" :message="$t('common.loading', [$t('common.dispatches')])" />
         <DataErrorBlock v-else-if="error" :title="$t('common.unable_to_load', [$t('common.dispatches')])" :retry="refresh" />
         <DataNoDataBlock v-else-if="data?.dispatches.length === 0" :type="$t('common.dispatches')" />
 
-        <div v-else>
-            <DispatchList :show-button="false" :hide-actions="true" :always-show-day="true" :dispatches="data?.dispatches" />
+        <template v-else>
+            <Splitpanes class="h-full w-full">
+                <Pane min-size="25">
+                    <BaseMap :map-options="{ zoomControl: false }">
+                        <template #default>
+                            <MapTempMarker />
+                        </template>
+                    </BaseMap>
+                </Pane>
+                <Pane size="65">
+                    <div>
+                        <DispatchList
+                            :show-button="false"
+                            :hide-actions="true"
+                            :always-show-day="true"
+                            :dispatches="data?.dispatches"
+                            @goto="location = $event"
+                        />
 
-            <TablePagination :pagination="data?.pagination" :refresh="refresh" @offset-change="offset = $event" />
-        </div>
+                        <TablePagination :pagination="data?.pagination" :refresh="refresh" @offset-change="offset = $event" />
+                    </div>
+                </Pane>
+            </Splitpanes>
+        </template>
     </div>
 </template>

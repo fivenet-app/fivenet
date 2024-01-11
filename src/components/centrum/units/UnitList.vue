@@ -66,7 +66,7 @@ const grouped = computedAsync(async () => {
             </div>
         </div>
         <div class="mt-0.5 flow-root">
-            <div class="-mx-2 -my-2 sm:-mx-6 lg:-mx-8">
+            <div class="-mx-2 sm:-mx-6 lg:-mx-8">
                 <div class="inline-block min-w-full py-2 align-middle sm:px-2 lg:px-2">
                     <template v-for="group in grouped" :key="group.key">
                         <p class="-mb-1.5 text-sm text-neutral">

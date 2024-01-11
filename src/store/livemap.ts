@@ -15,6 +15,7 @@ export interface LivemapState {
     restartBackoffTime: number;
 
     location: Coordinate | undefined;
+    showLocationMarker: boolean;
     offsetLocationZoom: boolean;
     zoom: number;
 
@@ -36,6 +37,7 @@ export const useLivemapStore = defineStore('livemap', {
             restartBackoffTime: 0,
 
             location: { x: 0, y: 0 },
+            showLocationMarker: false,
             offsetLocationZoom: false,
             zoom: 2,
 

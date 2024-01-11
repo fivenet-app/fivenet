@@ -60,32 +60,32 @@ const openMessage = ref(false);
         <td
             class="relative items-center whitespace-nowrap pl-0 py-1 pr-0 text-left text-sm font-medium sm:pr-0.5 justify-start"
         >
-            <template v-if="!hideActions">
-                <button
-                    type="button"
-                    class="text-primary-400 hover:text-primary-600"
-                    :title="$t('common.assign')"
-                    @click="openAssign = true"
-                >
-                    <AccountMultiplePlusIcon class="w-6 h-auto ml-auto mr-1.5" aria-hidden="true" />
-                </button>
-                <button
-                    type="button"
-                    class="text-primary-400 hover:text-primary-600"
-                    :title="$t('common.go_to_location')"
-                    @click="$emit('goto', { x: dispatch.x, y: dispatch.y })"
-                >
-                    <MapMarkerIcon class="w-6 h-auto ml-auto mr-1.5" aria-hidden="true" />
-                </button>
-                <button
-                    type="button"
-                    class="text-primary-400 hover:text-primary-600"
-                    :title="$t('common.status')"
-                    @click="openStatus = true"
-                >
-                    <CloseOctagonIcon class="w-6 h-auto ml-auto mr-1.5" aria-hidden="true" />
-                </button>
-            </template>
+            <button
+                v-if="!hideActions"
+                type="button"
+                class="text-primary-400 hover:text-primary-600"
+                :title="$t('common.assign')"
+                @click="openAssign = true"
+            >
+                <AccountMultiplePlusIcon class="w-6 h-auto ml-auto mr-1.5" aria-hidden="true" />
+            </button>
+            <button
+                type="button"
+                class="text-primary-400 hover:text-primary-600"
+                :title="$t('common.go_to_location')"
+                @click="$emit('goto', { x: dispatch.x, y: dispatch.y })"
+            >
+                <MapMarkerIcon class="w-6 h-auto ml-auto mr-1.5" aria-hidden="true" />
+            </button>
+            <button
+                v-if="!hideActions"
+                type="button"
+                class="text-primary-400 hover:text-primary-600"
+                :title="$t('common.status')"
+                @click="openStatus = true"
+            >
+                <CloseOctagonIcon class="w-6 h-auto ml-auto mr-1.5" aria-hidden="true" />
+            </button>
             <button
                 type="button"
                 class="text-primary-400 hover:text-primary-600"

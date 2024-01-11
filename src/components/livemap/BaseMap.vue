@@ -111,6 +111,10 @@ watch(location, () => {
         animate: true,
         duration: 0.85,
     });
+
+    if (zoom.value < 4) {
+        zoom.value = 4;
+    }
 });
 
 const isMoving = ref<boolean>(false);

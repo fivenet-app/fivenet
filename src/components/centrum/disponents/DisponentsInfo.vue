@@ -42,7 +42,7 @@ const open = ref(false);
             </div>
         </div>
         <div class="mt-0.5 flow-root">
-            <div class="-mx-2 -my-2 sm:-mx-6 lg:-mx-8">
+            <div class="-mx-2 sm:-mx-6 lg:-mx-8">
                 <div class="inline-block min-w-full py-2 align-middle sm:px-2 lg:px-2">
                     <div class="grid grid-cols-1 sm:grid-cols-3 items-center justify-items-center">
                         <div class="flex-1 inline-flex">
