@@ -39,6 +39,7 @@ interface ContextmenuItem {
 }
 
 const mapOptions = {
+    zoomControl: false,
     contextmenu: true,
     contextmenuWidth: 150,
     contextmenuItems: [] as ContextmenuItem[],

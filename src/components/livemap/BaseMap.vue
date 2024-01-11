@@ -8,6 +8,7 @@ import 'leaflet-contextmenu';
 import 'leaflet-contextmenu/dist/leaflet.contextmenu.min.css';
 import { useLivemapStore } from '~/store/livemap';
 import { type ValueOf } from '~/utils/types';
+import ZoomControls from '~/components/livemap/controls/ZoomControls.vue';
 
 const { $loading } = useNuxtApp();
 
@@ -237,6 +238,8 @@ onBeforeUnmount(() => {
             @click="selectedMarker = undefined"
             @ready="onMapReady($event)"
         >
+            <ZoomControls />
+
             <LTileLayer
                 url="/images/livemap/tiles/postal/{z}/{x}/{y}.png"
                 layer-type="base"
