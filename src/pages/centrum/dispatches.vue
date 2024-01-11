@@ -72,7 +72,7 @@ onBeforeUnmount(() => {
                 </BaseMap>
             </Pane>
             <Pane size="65">
-                <div class="max-h-full overflow-y-auto flex flex-row">
+                <div class="max-h-full overflow-y-auto flex flex-col">
                     <DataPendingBlock v-if="pending" :message="$t('common.loading', [$t('common.dispatches')])" />
                     <DataErrorBlock
                         v-else-if="error"
