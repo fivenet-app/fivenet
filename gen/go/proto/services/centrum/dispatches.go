@@ -79,7 +79,7 @@ func (s *Server) ListDispatches(ctx context.Context, req *ListDispatchesRequest)
 		return nil, errswrap.NewError(errorscentrum.ErrFailedQuery, err)
 	}
 
-	pag, limit := req.Pagination.GetResponse()
+	pag, limit := req.Pagination.GetResponseWithPageSize(15)
 	resp := &ListDispatchesResponse{
 		Pagination: pag,
 	}
