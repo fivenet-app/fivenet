@@ -63,21 +63,25 @@ onBeforeUnmount(() => {
 
 <template>
     <div class="relative h-full w-full">
-        <DataPendingBlock v-if="pending" :message="$t('common.loading', [$t('common.dispatches')])" />
-        <DataErrorBlock v-else-if="error" :title="$t('common.unable_to_load', [$t('common.dispatches')])" :retry="refresh" />
-        <DataNoDataBlock v-else-if="data?.dispatches.length === 0" :type="$t('common.dispatches')" />
+        <Splitpanes class="h-full w-full">
+            <Pane min-size="25">
+                <BaseMap :map-options="{ zoomControl: false }">
+                    <template #default>
+                        <MapTempMarker />
+                    </template>
+                </BaseMap>
+            </Pane>
+            <Pane size="65">
+                <div>
+                    <DataPendingBlock v-if="pending" :message="$t('common.loading', [$t('common.dispatches')])" />
+                    <DataErrorBlock
+                        v-else-if="error"
+                        :title="$t('common.unable_to_load', [$t('common.dispatches')])"
+                        :retry="refresh"
+                    />
+                    <DataNoDataBlock v-else-if="data?.dispatches.length === 0" :type="$t('common.dispatches')" />
 
-        <template v-else>
-            <Splitpanes class="h-full w-full">
-                <Pane min-size="25">
-                    <BaseMap :map-options="{ zoomControl: false }">
-                        <template #default>
-                            <MapTempMarker />
-                        </template>
-                    </BaseMap>
-                </Pane>
-                <Pane size="65">
-                    <div>
+                    <template v-else>
                         <DispatchList
                             :show-button="false"
                             :hide-actions="true"
@@ -87,9 +91,9 @@ onBeforeUnmount(() => {
                         />
 
                         <TablePagination :pagination="data?.pagination" :refresh="refresh" @offset-change="offset = $event" />
-                    </div>
-                </Pane>
-            </Splitpanes>
-        </template>
+                    </template>
+                </div>
+            </Pane>
+        </Splitpanes>
     </div>
 </template>
