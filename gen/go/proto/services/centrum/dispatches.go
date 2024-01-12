@@ -401,10 +401,13 @@ func (s *Server) ListDispatchActivity(ctx context.Context, req *ListDispatchActi
 			tDispatchStatus.X,
 			tDispatchStatus.Y,
 			tDispatchStatus.Postal,
+			tUsers.ID,
+			tUsers.Identifier,
 			tUsers.Firstname,
 			tUsers.Lastname,
 			tUsers.Job,
 			tUsers.JobGrade,
+			tUsers.Sex,
 			tUsers.Dateofbirth,
 			tUsers.PhoneNumber,
 		).

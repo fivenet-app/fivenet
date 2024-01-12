@@ -282,6 +282,7 @@ func (s *Server) ListUnitActivity(ctx context.Context, req *ListUnitActivityRequ
 			tUnitStatus.X,
 			tUnitStatus.Y,
 			tUnitStatus.Postal,
+			tUsers.ID,
 			tUsers.Identifier,
 			tUsers.Firstname,
 			tUsers.Lastname,
