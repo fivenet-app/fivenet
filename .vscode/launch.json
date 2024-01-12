@@ -24,7 +24,7 @@
             "mode": "auto",
             "program": "${workspaceFolder}",
             "cwd": "${workspaceFolder}",
-            "args": ["worker"],
+            "args": ["worker", "--module-discord-bot=false"],
             "buildFlags": "-a -installsuffix cgo",
             "env": {
                 "CGO_ENABLED": "0",
@@ -38,7 +38,7 @@
             "mode": "auto",
             "program": "${workspaceFolder}",
             "cwd": "${workspaceFolder}",
-            "args": ["worker", "--discord-bot-only"],
+            "args": ["worker", "--module-audit-retention=false", "--module-centrum-bot=false", "--module-centrum-housekeeper=false"],
             "buildFlags": "-a -installsuffix cgo",
             "env": {
                 "CGO_ENABLED": "0",

@@ -217,22 +217,23 @@ func (s *Housekeeper) runCancelDispatches() {
 func (s *Housekeeper) cancelExpiredDispatches(ctx context.Context) error {
 	stmt := tDispatchStatus.
 		SELECT(
-			tDispatchStatus.DispatchID.AS("dispatch_id"),
+			tDispatch.ID.AS("dispatch_id"),
 			tDispatch.Job.AS("job"),
 			tDispatchStatus.Status.AS("status"),
 		).
 		FROM(
-			tDispatchStatus.
-				INNER_JOIN(tDispatch,
-					tDispatch.ID.EQ(tDispatchStatus.DispatchID),
+			tDispatch.
+				INNER_JOIN(tDispatchStatus,
+					tDispatchStatus.DispatchID.EQ(tDispatch.ID),
 				),
 		).
 		// Dispatches that are older than time X and are not in a completed/cancelled/archived state, or have no status at all
 		WHERE(jet.AND(
-			tDispatchStatus.CreatedAt.LT_EQ(
+			tDispatch.CreatedAt.LT_EQ(
 				jet.CURRENT_TIMESTAMP().SUB(jet.INTERVAL(90, jet.MINUTE)),
 			),
-			tDispatchStatus.ID.IS_NULL().OR(
+			jet.OR(
+				tDispatchStatus.ID.IS_NULL(),
 				jet.AND(
 					tDispatchStatus.ID.EQ(
 						jet.RawInt("SELECT MAX(`dispatchstatus`.`id`) FROM `fivenet_centrum_dispatches_status` AS `dispatchstatus` WHERE `dispatchstatus`.`dispatch_id` = `dispatch`.`id`"),
