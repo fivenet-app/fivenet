@@ -85,9 +85,6 @@ func (c *WorkerCmd) Run(ctx *Context) error {
 		fxOpts = append(fxOpts, fx.Invoke(func(*discord.Bot) {}))
 	}
 
-	fmt.Printf("Test: %+v\n", c)
-	os.Exit(1)
-
 	fx.New(fxOpts...).Run()
 
 	return nil
