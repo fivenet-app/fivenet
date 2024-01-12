@@ -257,7 +257,7 @@ const openStatus = ref(false);
                                                                                             ),
                                                                                             {
                                                                                                 showSecond: true,
-                                                                                                updateInterval: 1000,
+                                                                                                updateInterval: 1_000,
                                                                                             },
                                                                                         ).value
                                                                                     }}

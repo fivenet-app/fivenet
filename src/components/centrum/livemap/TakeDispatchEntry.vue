@@ -61,7 +61,7 @@ const open = ref(false);
             </div>
             <div v-if="expiresAt" class="mt-1 text-neutral text-sm">
                 {{ $t('common.expires_in') }}:
-                {{ useLocaleTimeAgo(toDate(expiresAt, timeCorrection), { showSecond: true, updateInterval: 1000 }).value }}
+                {{ useLocaleTimeAgo(toDate(expiresAt, timeCorrection), { showSecond: true, updateInterval: 1_000 }).value }}
             </div>
         </dt>
         <dd class="mt-1 text-sm leading-6 text-gray-400 sm:col-span-2 sm:mt-0">

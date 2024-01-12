@@ -44,7 +44,7 @@ export function useLocaleTimeAgo(date: Date, options?: UseTimeAgoOptions<false, 
 
     if (options === undefined) {
         options = {
-            updateInterval: 15_000,
+            updateInterval: 30_000,
             messages: I18N_MESSAGES,
             fullDateFormatter: (date: Date) => date.toLocaleDateString(),
         };

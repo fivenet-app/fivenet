@@ -76,7 +76,7 @@ withDefaults(
                         {{
                             useLocaleTimeAgo(toDate(assignment.expiresAt, timeCorrection), {
                                 showSecond: true,
-                                updateInterval: 1000,
+                                updateInterval: 1_000,
                             }).value
                         }}
                     </p>
