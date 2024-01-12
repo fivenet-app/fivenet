@@ -124,8 +124,8 @@ github.com/documize/html-diff v0.0.0-20160503140253-f61c192c7796 h1:CuipXymSP8Di
 github.com/documize/html-diff v0.0.0-20160503140253-f61c192c7796/go.mod h1:GTEVMy1JkyV+k/j8hLGRGHVs/IHJS4s7AtJJ9LSYjRQ=
 github.com/dustin/go-humanize v1.0.1 h1:GzkhY7T5VNhEkwH0PVJgjz+fX1rhBrR7pRT3mDkpeCY=
 github.com/dustin/go-humanize v1.0.1/go.mod h1:Mu1zIs6XwVuF/gI1OepvI0qD18qycQx+mFykh5fBlto=
-github.com/envoyproxy/protoc-gen-validate v1.0.2 h1:QkIBuU5k+x7/QXPvPPnWXWlCdaBFApVqftFV6k087DA=
-github.com/envoyproxy/protoc-gen-validate v1.0.2/go.mod h1:GpiZQP3dDbg4JouG/NNS7QWXpgx6x8QiMKdmN72jogE=
+github.com/envoyproxy/protoc-gen-validate v1.0.3 h1:OX87DHS8tIhwqAhG98nhCpbrwRgwCnPrioTplpLM+tI=
+github.com/envoyproxy/protoc-gen-validate v1.0.3/go.mod h1:xy7qMYf3g7acibqTmaLZJOxRlysYxrJ2QMkT/mbZooU=
 github.com/felixge/fgprof v0.9.3/go.mod h1:RdbpDgzqYVh/T9fPELJyV7EYJuHB55UTEULNun8eiPw=
 github.com/frankban/quicktest v1.14.6 h1:7Xjx+VpznH+oBnejlPUj8oUpdxnVs4f8XU8WnHkI4W8=
 github.com/frankban/quicktest v1.14.6/go.mod h1:4ptaffx2x8+WTWXmUCuVU6aPUX1/Mz7zb5vbUoiM6w0=
