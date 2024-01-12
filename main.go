@@ -63,23 +63,30 @@ func (c *ServerCmd) Run(ctx *Context) error {
 }
 
 type WorkerCmd struct {
-	DiscordBotOnly bool `help:"Only start Discord bot."`
+	ModuleAuditRetention     bool `help:"Start Audit log retention module" default:"true"`
+	ModuleDiscordBot         bool `help:"Start Discord bot module" default:"true"`
+	ModuleCentrumBot         bool `help:"Start Centrum Bot module" default:"true"`
+	ModuleCentrumHousekeeper bool `help:"Start Centrum Housekeeper module" default:"true"`
 }
 
 func (c *WorkerCmd) Run(ctx *Context) error {
 	fxOpts := getFxBaseOpts()
 
-	if !c.DiscordBotOnly {
-		fxOpts = append(fxOpts,
-			fx.Invoke(func(*audit.Retention) {}),
-			fx.Invoke(func(*bot.Manager) {}),
-			fx.Invoke(func(*manager.Housekeeper) {}),
-		)
+	if c.ModuleAuditRetention {
+		fxOpts = append(fxOpts, fx.Invoke(func(*audit.Retention) {}))
+	}
+	if c.ModuleCentrumBot {
+		fxOpts = append(fxOpts, fx.Invoke(func(*bot.Manager) {}))
+	}
+	if c.ModuleCentrumHousekeeper {
+		fxOpts = append(fxOpts, fx.Invoke(func(*manager.Housekeeper) {}))
+	}
+	if c.ModuleDiscordBot {
+		fxOpts = append(fxOpts, fx.Invoke(func(*discord.Bot) {}))
 	}
 
-	fxOpts = append(fxOpts,
-		fx.Invoke(func(*discord.Bot) {}),
-	)
+	fmt.Printf("Test: %+v\n", c)
+	os.Exit(1)
 
 	fx.New(fxOpts...).Run()
 

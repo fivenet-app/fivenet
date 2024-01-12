@@ -1,14 +1,14 @@
 apiVersion: apps/v1
 kind: Deployment
 metadata:
-  name: {{ include "fivenet.fullname" . }}-worker
+  name: {{ include "fivenet.fullname" . }}-discord
   labels:
     {{- include "fivenet.labels" . | nindent 4 }}
 spec:
-  replicas: {{ .Values.worker.replicaCount }}
+  replicas: {{ .Values.discord.replicaCount }}
   selector:
     matchLabels:
-      app.kubernetes.io/component: worker
+      app.kubernetes.io/component: discord
       {{- include "fivenet.selectorLabels" . | nindent 6 }}
   template:
     metadata:
@@ -18,7 +18,7 @@ spec:
         {{- toYaml . | nindent 8 }}
       {{- end }}
       labels:
-        app.kubernetes.io/component: worker
+        app.kubernetes.io/component: discord
         {{- include "fivenet.selectorLabels" . | nindent 8 }}
     spec:
       {{- with .Values.imagePullSecrets }}
@@ -35,27 +35,29 @@ spec:
       containers:
         - name: fivenet
           args:
-            - worker
-            - --module-discord-bot=false
+            - discord
+            - --module-audit-retention=false
+            - --module-centrum-bot=false
+            - --module-centrum-housekeeper=false
           securityContext:
             {{- toYaml .Values.securityContext | nindent 12 }}
-          image: "{{ .Values.worker.image.repository }}:{{ .Values.worker.image.tag | default .Chart.AppVersion }}"
-          imagePullPolicy: {{ .Values.worker.image.pullPolicy }}
+          image: "{{ .Values.discord.image.repository }}:{{ .Values.discord.image.tag | default .Chart.AppVersion }}"
+          imagePullPolicy: {{ .Values.discord.image.pullPolicy }}
           env:
-            {{- toYaml .Values.worker.additionalEnv | nindent 12 }}
+            {{- toYaml .Values.discord.additionalEnv | nindent 12 }}
           ports:
             - name: metrics
               containerPort: 7070
               protocol: TCP
-          {{- with .Values.worker.livenessProbe }}
+          {{- with .Values.discord.livenessProbe }}
           livenessProbe:
             {{- toYaml . | nindent 12 }}
           {{- end }}
-          {{- with .Values.worker.readinessProbe }}
+          {{- with .Values.discord.readinessProbe }}
           readinessProbe:
             {{- toYaml . | nindent 12 }}
           {{- end }}
-          {{- with .Values.worker.startupProbe }}
+          {{- with .Values.discord.startupProbe }}
           startupProbe:
             {{- toYaml . | nindent 12 }}
           {{- end }}
@@ -64,7 +66,7 @@ spec:
               mountPath: /config
               readOnly: true
           resources:
-            {{- toYaml .Values.worker.resources | nindent 12 }}
+            {{- toYaml .Values.discord.resources | nindent 12 }}
       {{- with .Values.nodeSelector }}
       nodeSelector:
         {{- toYaml . | nindent 8 }}

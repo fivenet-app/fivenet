@@ -133,7 +133,7 @@ func (g *UserInfo) syncUserInfo() error {
 			return err
 		}
 
-		if err := g.setUserNickName(member, user.Firstname, user.Lastname); err != nil {
+		if err := g.setUserNickname(member, user.Firstname, user.Lastname); err != nil {
 			g.logger.Error(fmt.Sprintf("failed to set user's nickname %s", user.ExternalID), zap.Error(err))
 			continue
 		}
@@ -147,12 +147,12 @@ func (g *UserInfo) syncUserInfo() error {
 	return g.cleanupUserJobRoles(dest)
 }
 
-func (g *UserInfo) setUserNickName(member *discordgo.Member, firstname string, lastname string) error {
+func (g *UserInfo) setUserNickname(member *discordgo.Member, firstname string, lastname string) error {
 	if g.guild.OwnerID == member.User.ID {
 		return nil
 	}
 
-	fullName := firstname + " " + lastname
+	fullName := strings.TrimSpace(firstname + " " + lastname)
 
 	var nickname string
 	if member.Nick != "" {
@@ -176,8 +176,7 @@ func (g *UserInfo) setUserNickName(member *discordgo.Member, firstname string, l
 		nickname = member.User.Username
 	}
 
-	extractedName := strings.TrimSpace(nickname)
-	if extractedName == fullName {
+	if strings.TrimSpace(nickname) == fullName {
 		return nil
 	}
 
