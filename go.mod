@@ -1,8 +1,6 @@
 module github.com/galexrt/fivenet
 
-go 1.21.1
-
-toolchain go1.21.6
+go 1.21.6
 
 require (
 	github.com/Code-Hex/go-generics-cache v1.3.1
