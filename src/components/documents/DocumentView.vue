@@ -1,5 +1,5 @@
 <script lang="ts" setup>
-import { Disclosure, DisclosureButton, DisclosurePanel, Tab, TabGroup, TabList, TabPanel, TabPanels } from '@headlessui/vue';
+import { Disclosure, DisclosureButton, DisclosurePanel } from '@headlessui/vue';
 import { RpcError } from '@protobuf-ts/runtime-rpc';
 import { useConfirmDialog, watchOnce } from '@vueuse/core';
 import { useRouteHash } from '@vueuse/router';

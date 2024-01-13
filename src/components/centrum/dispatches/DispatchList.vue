@@ -1,5 +1,5 @@
 <script lang="ts" setup>
-import { ArchiveIcon, ViewListIcon } from 'mdi-vue3';
+import { ArchiveIcon } from 'mdi-vue3';
 import { computedAsync } from '@vueuse/core';
 import { useCentrumStore } from '~/store/centrum';
 import DispatchListEntry from '~/components/centrum/dispatches/DispatchListEntry.vue';
