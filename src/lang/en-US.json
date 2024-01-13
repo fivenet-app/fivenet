@@ -226,7 +226,7 @@
                 "open_navigation": "Open navigation"
             },
             "table_pagination": {
-                "showing_results": "Showing {start} to {end} of {total} results"
+                "page_count": "Page {current} of {total}"
             },
             "data_error_block": {
                 "default_title": "Unable to load your data!",
@@ -786,7 +786,8 @@
         "radio_frequency": "Radio Frequency",
         "click_here": "Click here",
         "yes": "Yes",
-        "no": "No"
+        "no": "No",
+        "page": "Page"
     },
     "notifications": {
         "clipboard": {

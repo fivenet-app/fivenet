@@ -226,7 +226,7 @@
                 "open_navigation": "Navigation öffnen"
             },
             "table_pagination": {
-                "showing_results": "Zeige {start} bis {end} von insgesamt {total} Ergebnissen"
+                "page_count": "Seite {current} von {total}"
             },
             "data_error_block": {
                 "default_title": "Ihre Daten konnten nicht geladen werden!",
@@ -786,7 +786,8 @@
         "radio_frequency": "Funk-Frequenz",
         "click_here": "Klicke hier",
         "yes": "Ja",
-        "no": "Nein"
+        "no": "Nein",
+        "page": "Seite"
     },
     "notifications": {
         "clipboard": {
