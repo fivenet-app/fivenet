@@ -2,6 +2,21 @@ apiVersion: v1
 entries:
   fivenet:
   - apiVersion: v2
+    appVersion: v0.8.18
+    created: "2024-01-13T18:36:39.194185859Z"
+    dependencies:
+    - condition: nats.enabled
+      name: nats
+      repository: https://nats-io.github.io/k8s/helm/charts/
+      version: 1.1.6
+    description: A Helm chart for FiveNet
+    digest: 8ab303e1b5b1cba03b17d9aa5607daaa1931d14c7d4393a3ba1599fc34a1a1f3
+    name: fivenet
+    type: application
+    urls:
+    - https://github.com/galexrt/fivenet/releases/download/fivenet-0.4.1/fivenet-0.4.1.tgz
+    version: 0.4.1
+  - apiVersion: v2
     appVersion: v0.8.17
     created: "2024-01-13T18:36:13.546425826Z"
     dependencies:
@@ -1231,4 +1246,4 @@ entries:
     urls:
     - https://github.com/galexrt/fivenet/releases/download/fivenet-0.1.4/fivenet-0.1.4.tgz
     version: 0.1.4
-generated: "2024-01-13T18:36:13.546665885Z"
+generated: "2024-01-13T18:36:39.194435505Z"
