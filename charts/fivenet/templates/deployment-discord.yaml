@@ -35,7 +35,7 @@ spec:
       containers:
         - name: fivenet
           args:
-            - discord
+            - worker
             - --module-audit-retention=false
             - --module-centrum-bot=false
             - --module-centrum-housekeeper=false
