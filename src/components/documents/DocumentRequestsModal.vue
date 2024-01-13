@@ -132,7 +132,7 @@ const onSubmitThrottle = useThrottleFn(async (e) => {
                                     @click="$emit('close')"
                                 >
                                     <span class="sr-only">{{ $t('common.close') }}</span>
-                                    <CloseIcon class="h-6 w-6" aria-hidden="true" />
+                                    <CloseIcon class="h-5 w-5" aria-hidden="true" />
                                 </button>
                             </div>
 

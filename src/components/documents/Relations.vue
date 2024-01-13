@@ -82,7 +82,10 @@ async function getDocumentRelations(): Promise<DocumentRelation[]> {
                                         </NuxtLink>
                                     </span>
                                     <span>
-                                        <CitizenInfoPopover :user="relation.targetUser" />
+                                        <span class="inline-flex items-center gap-1">
+                                            <CitizenInfoPopover :user="relation.targetUser" />
+                                            ({{ relation.targetUser?.dateofbirth }})
+                                        </span>
                                     </span>
                                     <span class="font-medium">
                                         {{ $t(`enums.docstore.DocRelation.${DocRelation[relation.relation]}`) }}
@@ -149,7 +152,10 @@ async function getDocumentRelations(): Promise<DocumentRelation[]> {
                                         </td>
                                         <td class="px-6 py-4 text-sm">
                                             <div class="flex">
-                                                <CitizenInfoPopover :user="relation.targetUser" />
+                                                <span class="inline-flex items-center gap-1">
+                                                    <CitizenInfoPopover :user="relation.targetUser" />
+                                                    ({{ relation.targetUser?.dateofbirth }})
+                                                </span>
                                             </div>
                                         </td>
                                         <td class="px-6 py-4 text-sm text-right whitespace-nowrap">

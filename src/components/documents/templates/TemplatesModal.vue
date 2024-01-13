@@ -173,7 +173,7 @@ async function clipboardDialog(): Promise<void> {
                                         @click="$emit('close')"
                                     >
                                         <span class="sr-only">{{ $t('common.close') }}</span>
-                                        <CloseIcon class="h-6 w-6" aria-hidden="true" />
+                                        <CloseIcon class="h-5 w-5" aria-hidden="true" />
                                     </button>
                                 </div>
                                 <div v-if="steps.selectTemplate">
@@ -181,7 +181,7 @@ async function clipboardDialog(): Promise<void> {
                                         <div
                                             class="mx-auto flex h-12 w-12 items-center justify-center rounded-full bg-base-700"
                                         >
-                                            <PencilIcon class="h-6 w-6 text-primary-500" aria-hidden="true" />
+                                            <PencilIcon class="h-5 w-5 text-primary-500" aria-hidden="true" />
                                         </div>
                                         <div class="mt-3 text-center sm:mt-5">
                                             <DialogTitle as="h3" class="text-base font-semibold leading-6">
@@ -216,7 +216,7 @@ async function clipboardDialog(): Promise<void> {
                                 </div>
                                 <div v-else-if="template !== undefined && reqs !== undefined && steps.selectClipboard">
                                     <div class="mx-auto flex h-12 w-12 items-center justify-center rounded-full bg-gray-100">
-                                        <PencilIcon class="h-6 w-6 text-primary-600" aria-hidden="true" />
+                                        <PencilIcon class="h-5 w-5 text-primary-600" aria-hidden="true" />
                                     </div>
                                     <div class="mt-3 text-center sm:mt-5">
                                         <DialogTitle as="h3" class="text-base font-semibold leading-6 text-neutral">

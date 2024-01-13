@@ -160,7 +160,7 @@ watchDebounced(query.value, () => refresh(), { debounce: 600, maxWait: 1400 });
                                 <span class="text-base-200 leading-7">{{ $t('common.advanced_search') }}</span>
                                 <span class="ml-6 flex h-7 items-center">
                                     <ChevronDownIcon
-                                        :class="[open ? 'upsidedown' : '', 'h-6 w-6 transition-transform']"
+                                        :class="[open ? 'upsidedown' : '', 'h-5 w-5 transition-transform']"
                                         aria-hidden="true"
                                     />
                                 </span>

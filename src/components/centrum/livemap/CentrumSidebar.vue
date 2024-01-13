@@ -309,10 +309,10 @@ async function checkup(): Promise<void> {
                     class="rounded-md bg-neutral text-black border-2 border-black/20 bg-clip-padding hover:bg-[#f4f4f4] focus:outline-none inset-0 inline-flex items-center justify-center"
                     @click="open = !open"
                 >
-                    <ToggleSwitchIcon v-if="open" class="h-6 w-6" aria-hidden="true" />
+                    <ToggleSwitchIcon v-if="open" class="h-5 w-5" aria-hidden="true" />
                     <span v-else class="inline-flex items-center justify-center">
                         <ToggleSwitchOffIcon
-                            class="h-6 w-6"
+                            class="h-5 w-5"
                             :class="getOwnUnit === undefined ? 'animate-pulse' : ''"
                             aria-hidden="true"
                         />
@@ -445,7 +445,7 @@ async function checkup(): Promise<void> {
                                                     </span>
                                                     <span class="ml-6 flex h-7 items-center">
                                                         <ChevronDownIcon
-                                                            :class="[open ? 'upsidedown' : '', 'h-6 w-6 transition-transform']"
+                                                            :class="[open ? 'upsidedown' : '', 'h-5 w-5 transition-transform']"
                                                             aria-hidden="true"
                                                         />
                                                     </span>

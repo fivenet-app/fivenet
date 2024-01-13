@@ -494,7 +494,7 @@ watch(selectedAccessRole, () => {
                 type="button"
                 class="rounded-full bg-primary-500 p-1.5 text-neutral hover:bg-primary-400 focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-primary-500"
             >
-                <CloseIcon class="w-6 h-6" aria-hidden="true" @click="$emit('deleteRequest', { id: props.init.id })" />
+                <CloseIcon class="h-5 w-5" aria-hidden="true" @click="$emit('deleteRequest', { id: props.init.id })" />
             </button>
         </div>
     </div>

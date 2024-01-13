@@ -20,7 +20,7 @@ const spentTime = parseFloat(((Math.round(props.entry.spentTime * 100) / 100) * 
             class="whitespace-nowrap py-1 pl-4 pr-3 text-base font-medium text-neutral sm:pl-1 inline-flex items-center"
         >
             <template v-if="first">
-                <CalendarIcon class="w-6 h-6 pr-2" />
+                <CalendarIcon class="h-5 w-5 pr-2" />
                 {{ $d(first, 'date') }}
             </template>
         </td>

@@ -135,10 +135,10 @@ const editing = ref(props.startInEdit);
     <div class="my-2">
         <div v-if="!editing" class="flex text-neutral items-center gap-x-2">
             <button type="button" :title="$t('common.edit')" @click="editing = true">
-                <PencilIcon class="w-6 h-6" />
+                <PencilIcon class="h-5 w-5" />
             </button>
             <button type="button" :title="$t('common.delete')" @click="reveal()">
-                <TrashCanIcon class="w-6 h-6" />
+                <TrashCanIcon class="h-5 w-5" />
             </button>
             <h2 class="text-xl">{{ modelValue.name }}</h2>
             <p v-if="modelValue.description" class="pl-2">- {{ $t('common.description') }}: {{ modelValue.description }}</p>
@@ -156,7 +156,7 @@ const editing = ref(props.startInEdit);
         </div>
         <form v-else class="w-full flex flex-row gap-x-4 text-neutral items-start" @submit.prevent="onSubmitThrottle">
             <button type="submit" :title="$t('common.save')">
-                <ContentSaveIcon class="w-6 h-6" />
+                <ContentSaveIcon class="h-5 w-5" />
             </button>
             <button
                 type="button"
@@ -166,7 +166,7 @@ const editing = ref(props.startInEdit);
                     parseInt(modelValue.id, 10) < 0 && $emit('deleted', modelValue.id);
                 "
             >
-                <CancelIcon class="w-6 h-6" />
+                <CancelIcon class="h-5 w-5" />
             </button>
 
             <div class="flex-initial">

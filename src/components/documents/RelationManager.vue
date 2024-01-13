@@ -157,7 +157,7 @@ function removeRelation(id: string): void {
                                     @click="emit('close')"
                                 >
                                     <span class="sr-only">{{ $t('common.close') }}</span>
-                                    <CloseIcon class="w-6 h-6" aria-hidden="true" />
+                                    <CloseIcon class="h-5 w-5" aria-hidden="true" />
                                 </button>
                             </div>
                             <DialogTitle as="h3" class="text-base font-semibold leading-6">
@@ -228,7 +228,10 @@ function removeRelation(id: string): void {
                                                                     <td
                                                                         class="py-4 pl-4 pr-3 text-sm font-medium truncate whitespace-nowrap sm:pl-6 lg:pl-8"
                                                                     >
-                                                                        <CitizenInfoPopover :user="relation.targetUser" />
+                                                                        <span class="inline-flex items-center gap-1">
+                                                                            <CitizenInfoPopover :user="relation.targetUser" />
+                                                                            ({{ relation.targetUser?.dateofbirth }})
+                                                                        </span>
                                                                     </td>
                                                                     <td class="px-3 py-4 text-sm whitespace-nowrap">
                                                                         <CitizenInfoPopover :user="relation.sourceUser" />
@@ -261,7 +264,7 @@ function removeRelation(id: string): void {
                                                                                     "
                                                                                 >
                                                                                     <OpenInNewIcon
-                                                                                        class="w-6 h-auto text-primary-500 hover:text-primary-300"
+                                                                                        class="h-auto w-5 text-primary-500 hover:text-primary-300"
                                                                                     />
                                                                                 </NuxtLink>
                                                                             </div>
@@ -277,7 +280,7 @@ function removeRelation(id: string): void {
                                                                                     @click="removeRelation(relation.id!)"
                                                                                 >
                                                                                     <AccountMinusIcon
-                                                                                        class="w-6 h-auto text-error-400 hover:text-error-200"
+                                                                                        class="h-auto w-5 text-error-400 hover:text-error-200"
                                                                                     />
                                                                                 </button>
                                                                             </div>
@@ -334,7 +337,10 @@ function removeRelation(id: string): void {
                                                                     <td
                                                                         class="py-4 pl-4 pr-3 text-sm font-medium truncate whitespace-nowrap sm:pl-6 lg:pl-8"
                                                                     >
-                                                                        <CitizenInfoPopover :user="getUser(user)" />
+                                                                        <span class="inline-flex items-center gap-1">
+                                                                            <CitizenInfoPopover :user="user" />
+                                                                            ({{ user.dateofbirth }})
+                                                                        </span>
                                                                     </td>
                                                                     <td class="px-3 py-4 text-sm whitespace-nowrap">
                                                                         {{ user.jobLabel }}
@@ -358,7 +364,7 @@ function removeRelation(id: string): void {
                                                                                     "
                                                                                 >
                                                                                     <AtIcon
-                                                                                        class="w-6 h-auto text-success-500 hover:text-success-300"
+                                                                                        class="h-auto w-5 text-success-500 hover:text-success-300"
                                                                                     />
                                                                                 </button>
                                                                             </div>
@@ -379,7 +385,7 @@ function removeRelation(id: string): void {
                                                                                     "
                                                                                 >
                                                                                     <TargetIcon
-                                                                                        class="w-6 h-auto text-warn-400 hover:text-warn-200"
+                                                                                        class="h-auto w-5 text-warn-400 hover:text-warn-200"
                                                                                     />
                                                                                 </button>
                                                                             </div>
@@ -400,7 +406,7 @@ function removeRelation(id: string): void {
                                                                                     "
                                                                                 >
                                                                                     <SourceCommitStartIcon
-                                                                                        class="w-6 h-auto text-error-400 hover:text-error-200"
+                                                                                        class="h-auto w-5 text-error-400 hover:text-error-200"
                                                                                     />
                                                                                 </button>
                                                                             </div>
@@ -442,6 +448,7 @@ function removeRelation(id: string): void {
                                                             v-else-if="citizens === null || citizens.length === 0"
                                                             :message="$t('components.citizens.citizens_list.no_citizens')"
                                                         />
+
                                                         <table v-else class="min-w-full divide-y divide-base-200">
                                                             <thead>
                                                                 <tr>
@@ -474,7 +481,10 @@ function removeRelation(id: string): void {
                                                                     <td
                                                                         class="py-4 pl-4 pr-3 text-sm font-medium truncate whitespace-nowrap sm:pl-6 lg:pl-8"
                                                                     >
-                                                                        <CitizenInfoPopover :user="user" />
+                                                                        <span class="inline-flex items-center gap-1">
+                                                                            <CitizenInfoPopover :user="user" />
+                                                                            ({{ user.dateofbirth }})
+                                                                        </span>
                                                                     </td>
                                                                     <td class="px-3 py-4 text-sm whitespace-nowrap">
                                                                         {{ user.jobLabel }}
@@ -495,7 +505,7 @@ function removeRelation(id: string): void {
                                                                                     "
                                                                                 >
                                                                                     <AtIcon
-                                                                                        class="w-6 h-auto text-success-500 hover:text-success-300"
+                                                                                        class="h-auto w-5 text-success-500 hover:text-success-300"
                                                                                     />
                                                                                 </button>
                                                                             </div>
@@ -513,7 +523,7 @@ function removeRelation(id: string): void {
                                                                                     "
                                                                                 >
                                                                                     <TargetIcon
-                                                                                        class="w-6 h-auto text-warn-400 hover:text-warn-200"
+                                                                                        class="h-auto w-5 text-warn-400 hover:text-warn-200"
                                                                                     />
                                                                                 </button>
                                                                             </div>
@@ -531,7 +541,7 @@ function removeRelation(id: string): void {
                                                                                     "
                                                                                 >
                                                                                     <SourceCommitStartIcon
-                                                                                        class="w-6 h-auto text-error-400 hover:text-error-200"
+                                                                                        class="h-auto w-5 text-error-400 hover:text-error-200"
                                                                                     />
                                                                                 </button>
                                                                             </div>

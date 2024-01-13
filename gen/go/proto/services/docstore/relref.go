@@ -126,6 +126,7 @@ func (s *Server) GetDocumentReferences(ctx context.Context, req *GetDocumentRefe
 			tDCreator.JobGrade,
 			tDCreator.Firstname,
 			tDCreator.Lastname,
+			tDCreator.Dateofbirth,
 			tTargetDoc.ID,
 			tTargetDoc.CreatedAt,
 			tTargetDoc.UpdatedAt,
@@ -140,6 +141,7 @@ func (s *Server) GetDocumentReferences(ctx context.Context, req *GetDocumentRefe
 			tRefCreator.JobGrade,
 			tRefCreator.Firstname,
 			tRefCreator.Lastname,
+			tRefCreator.Dateofbirth,
 		).
 		FROM(
 			tDocRef.
@@ -540,8 +542,8 @@ func (s *Server) getDocumentRelation(ctx context.Context, id uint64) (*documents
 }
 
 func (s *Server) getDocumentRelations(ctx context.Context, userInfo *userinfo.UserInfo, documentId uint64) ([]*documents.DocumentRelation, error) {
-	uSource := tUsers.AS("source_user")
-	uTarget := tUsers.AS("target_user")
+	tSourceUser := tUsers.AS("source_user")
+	tTargetUser := tUsers.AS("target_user")
 	stmt := tDocRel.
 		SELECT(
 			tDocRel.ID,
@@ -561,18 +563,20 @@ func (s *Server) getDocumentRelations(ctx context.Context, userInfo *userinfo.Us
 			tDCategory.ID,
 			tDCategory.Name,
 			tDCategory.Description,
-			uSource.ID,
-			uSource.Identifier,
-			uSource.Job,
-			uSource.JobGrade,
-			uSource.Firstname,
-			uSource.Lastname,
-			uTarget.ID,
-			uTarget.Identifier,
-			uTarget.Job,
-			uTarget.JobGrade,
-			uTarget.Firstname,
-			uTarget.Lastname,
+			tSourceUser.ID,
+			tSourceUser.Identifier,
+			tSourceUser.Job,
+			tSourceUser.JobGrade,
+			tSourceUser.Firstname,
+			tSourceUser.Lastname,
+			tSourceUser.Dateofbirth,
+			tTargetUser.ID,
+			tTargetUser.Identifier,
+			tTargetUser.Job,
+			tTargetUser.JobGrade,
+			tTargetUser.Firstname,
+			tTargetUser.Lastname,
+			tTargetUser.Dateofbirth,
 		).
 		FROM(
 			tDocRel.
@@ -582,11 +586,11 @@ func (s *Server) getDocumentRelations(ctx context.Context, userInfo *userinfo.Us
 				LEFT_JOIN(tDCategory,
 					tDocument.CategoryID.EQ(tDCategory.ID),
 				).
-				LEFT_JOIN(uSource,
-					uSource.ID.EQ(tDocRel.SourceUserID),
+				LEFT_JOIN(tSourceUser,
+					tSourceUser.ID.EQ(tDocRel.SourceUserID),
 				).
-				LEFT_JOIN(uTarget,
-					uTarget.ID.EQ(tDocRel.TargetUserID),
+				LEFT_JOIN(tTargetUser,
+					tTargetUser.ID.EQ(tDocRel.TargetUserID),
 				),
 		).
 		WHERE(

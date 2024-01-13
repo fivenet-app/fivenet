@@ -14,7 +14,7 @@ const open = ref(false);
         :title="$t('common.setting', 2)"
         @click="open = true"
     >
-        <CogIcon class="h-6 w-6" aria-hidden="true" />
+        <CogIcon class="h-5 w-5" aria-hidden="true" />
         <span class="pr-0.5">{{ $t('common.setting', 2) }}</span>
     </button>
 </template>

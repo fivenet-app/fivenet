@@ -247,7 +247,7 @@ onBeforeMount(async () => {
                     {{ $t(`perms.${attribute.category}.${attribute.name}.attrs_types.${attribute.key}`) }}
                 </span>
                 <span class="ml-6 flex h-7 items-center">
-                    <ChevronDownIcon :class="[open ? 'upsidedown' : '', 'h-6 w-6 transition-transform']" aria-hidden="true" />
+                    <ChevronDownIcon :class="[open ? 'upsidedown' : '', 'h-5 w-5 transition-transform']" aria-hidden="true" />
                 </span>
             </DisclosureButton>
             <DisclosurePanel class="px-4 pb-2 border-2 border-t-0 rounded-b-lg transition-colors border-inherit -mt-2">

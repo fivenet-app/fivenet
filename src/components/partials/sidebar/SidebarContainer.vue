@@ -202,7 +202,7 @@ watch(router.currentRoute, () => updateActiveItem());
                             exact-active-class="text-neutral"
                             aria-current-value="page"
                         >
-                            <HomeIcon class="h-6 w-6" aria-hidden="true" />
+                            <HomeIcon class="h-auto w-6" aria-hidden="true" />
                             <span class="mt-2">{{ $t('common.home') }}</span>
                         </NuxtLink>
                         <NuxtLink
@@ -212,7 +212,7 @@ watch(router.currentRoute, () => updateActiveItem());
                             exact-active-class="text-neutral"
                             aria-current-value="page"
                         >
-                            <LoginIcon class="h-6 w-6" aria-hidden="true" />
+                            <LoginIcon class="h-auto w-6" aria-hidden="true" />
                             <span class="mt-2">{{ $t('components.auth.login.title') }}</span>
                         </NuxtLink>
                         <NuxtLink
@@ -222,7 +222,7 @@ watch(router.currentRoute, () => updateActiveItem());
                             exact-active-class="text-neutral"
                             aria-current-value="page"
                         >
-                            <AccountPlusIcon class="h-6 w-6" aria-hidden="true" />
+                            <AccountPlusIcon class="h-auto w-6" aria-hidden="true" />
                             <span class="mt-2">{{ $t('components.auth.registration_form.title') }}</span>
                         </NuxtLink>
                     </template>
@@ -234,7 +234,7 @@ watch(router.currentRoute, () => updateActiveItem());
                             exact-active-class="text-neutral"
                             aria-current-value="page"
                         >
-                            <HomeIcon class="h-6 w-6" aria-hidden="true" />
+                            <HomeIcon class="h-auto w-6" aria-hidden="true" />
                             <span class="mt-2">{{ $t('common.home') }}</span>
                         </NuxtLink>
                         <NuxtLink
@@ -244,7 +244,7 @@ watch(router.currentRoute, () => updateActiveItem());
                             exact-active-class="text-neutral"
                             aria-current-value="page"
                         >
-                            <UnfoldMoreHorizontalIcon class="h-6 w-6" aria-hidden="true" />
+                            <UnfoldMoreHorizontalIcon class="h-auto w-6" aria-hidden="true" />
                             <span class="mt-2">{{ $t('components.auth.character_selector.title') }}</span>
                         </NuxtLink>
                     </template>
@@ -263,7 +263,10 @@ watch(router.currentRoute, () => updateActiveItem());
                         >
                             <component
                                 :is="item.icon"
-                                :class="[item.current ? 'text-neutral' : 'text-accent-100 group-hover:text-neutral', 'h-6 w-6']"
+                                :class="[
+                                    item.current ? 'text-neutral' : 'text-accent-100 group-hover:text-neutral',
+                                    'h-auto w-6',
+                                ]"
                                 aria-hidden="true"
                             />
                             <span class="mt-2">{{ $t(item.name) }}</span>
@@ -285,7 +288,7 @@ watch(router.currentRoute, () => updateActiveItem());
                     >
                         <component
                             :is="item.icon"
-                            :class="[item.current ? 'text-neutral' : 'text-accent-100 group-hover:text-neutral', 'h-6 w-6']"
+                            :class="[item.current ? 'text-neutral' : 'text-accent-100 group-hover:text-neutral', 'h-auto w-6']"
                             aria-hidden="true"
                         />
                         <span class="mt-2">{{ $t(item.name) }}</span>
@@ -335,7 +338,7 @@ watch(router.currentRoute, () => updateActiveItem());
                                         class="flex items-center justify-center w-12 h-12 rounded-full focus:outline-none ring-2 ring-neutral"
                                         @click="mobileMenuOpen = false"
                                     >
-                                        <CloseIcon class="w-6 h-6 text-neutral" aria-hidden="true" />
+                                        <CloseIcon class="h-auto w-6 text-neutral" aria-hidden="true" />
                                         <span class="sr-only">{{ $t('components.partials.sidebar.close_sidebar') }}</span>
                                     </button>
                                 </div>
@@ -356,7 +359,7 @@ watch(router.currentRoute, () => updateActiveItem());
                                                 @click="mobileMenuOpen = false"
                                             >
                                                 <HomeIcon
-                                                    class="text-accent-100 group-hover:text-neutral mr-3 h-6 w-6"
+                                                    class="text-accent-100 group-hover:text-neutral mr-3 h-auto w-6"
                                                     aria-hidden="true"
                                                 />
                                                 <span>{{ $t('common.home') }}</span>
@@ -370,7 +373,7 @@ watch(router.currentRoute, () => updateActiveItem());
                                                 @click="mobileMenuOpen = false"
                                             >
                                                 <LoginIcon
-                                                    class="text-accent-100 group-hover:text-neutral mr-3 h-6 w-6"
+                                                    class="text-accent-100 group-hover:text-neutral mr-3 h-auto w-6"
                                                     aria-hidden="true"
                                                 />
                                                 <span>{{ $t('components.auth.login.title') }}</span>
@@ -384,7 +387,7 @@ watch(router.currentRoute, () => updateActiveItem());
                                                 @click="mobileMenuOpen = false"
                                             >
                                                 <AccountPlusIcon
-                                                    class="text-accent-100 group-hover:text-neutral mr-3 h-6 w-6"
+                                                    class="text-accent-100 group-hover:text-neutral mr-3 h-auto w-6"
                                                     aria-hidden="true"
                                                 />
                                                 <span>{{ $t('components.auth.registration_form.title') }}</span>
@@ -410,7 +413,7 @@ watch(router.currentRoute, () => updateActiveItem());
                                                 :is="item.icon"
                                                 :class="[
                                                     item.current ? 'text-neutral' : 'text-accent-100 group-hover:text-neutral',
-                                                    'mr-3 h-6 w-6',
+                                                    'mr-3 h-auto w-6',
                                                 ]"
                                                 aria-hidden="true"
                                             />
@@ -441,7 +444,7 @@ watch(router.currentRoute, () => updateActiveItem());
                                                 :is="item.icon"
                                                 :class="[
                                                     item.current ? 'text-neutral' : 'text-accent-100 group-hover:text-neutral',
-                                                    'mr-3 h-6 w-6',
+                                                    'mr-3 h-auto w-6',
                                                 ]"
                                                 aria-hidden="true"
                                             />
@@ -467,7 +470,7 @@ watch(router.currentRoute, () => updateActiveItem());
                         @click="mobileMenuOpen = true"
                     >
                         <span class="sr-only">{{ $t('components.partials.sidebar.open_sidebar') }}</span>
-                        <MenuIcon class="w-6 h-6" aria-hidden="true" />
+                        <MenuIcon class="h-auto w-6" aria-hidden="true" />
                     </button>
                     <div class="flex justify-between flex-1 px-2 sm:px-6">
                         <div class="flex flex-1">

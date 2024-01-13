@@ -51,12 +51,12 @@ const { livemap } = storeToRefs(settingsStore);
                                     @click="$emit('close')"
                                 >
                                     <span class="sr-only">{{ $t('common.close') }}</span>
-                                    <CloseIcon class="h-6 w-6" aria-hidden="true" />
+                                    <CloseIcon class="h-5 w-5" aria-hidden="true" />
                                 </button>
                             </div>
                             <div>
                                 <div class="mx-auto flex h-12 w-12 items-center justify-center rounded-full bg-success-100">
-                                    <CogIcon class="h-6 w-6 text-success-600" aria-hidden="true" />
+                                    <CogIcon class="h-5 w-5 text-success-600" aria-hidden="true" />
                                 </div>
                                 <div class="mt-3 text-center sm:mt-5">
                                     <DialogTitle as="h3" class="text-base font-semibold leading-6 text-neutral">

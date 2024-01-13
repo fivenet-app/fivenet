@@ -36,11 +36,11 @@ defineProps<{
                     </div>
                     <p
                         v-if="doc.state"
-                        class="inline-flex px-2 text-xs font-semibold leading-5 rounded-full bg-info-100 text-info-800 my-auto"
+                        class="inline-flex px-2 py-1 text-xs font-semibold leading-5 rounded-full bg-info-100 text-info-800 my-auto"
                     >
                         {{ doc.state }}
                     </p>
-                    <div class="flex flex-row items-center justify-end flex-1 text-base-200">
+                    <div class="flex flex-row items-center justify-end flex-1">
                         <div v-if="doc?.closed" class="flex flex-row flex-initial gap-1 px-2 py-1 rounded-full bg-error-100">
                             <LockIcon class="w-5 h-5 text-error-400" aria-hidden="true" />
                             <span class="text-sm font-medium text-error-700">
@@ -56,13 +56,11 @@ defineProps<{
                     </div>
                 </div>
 
-                <div class="flex flex-row gap-2 text-base-300 truncate">
-                    <h2
-                        class="inline-flex items-center gap-1 py-2 pl-2 pr-3 text-xl font-medium text-neutral sm:pl-1 max-w- truncate"
-                    >
+                <div class="flex flex-row gap-2 text-base-200 truncate">
+                    <h2 class="inline-flex items-center gap-1 text-xl font-medium text-neutral truncate">
                         <span
                             v-if="doc.category"
-                            class="flex flex-row flex-initial gap-1 px-2 py-1 rounded-full bg-primary-100 text-primary-500"
+                            class="flex flex-row flex-initial gap-1 px-2 py-1 rounded-full bg-primary-100 text-primary-500 break-words"
                         >
                             <span
                                 class="text-xs font-medium text-primary-800 inline-flex items-center"
@@ -71,13 +69,11 @@ defineProps<{
                                 {{ doc.category.name }}
                             </span>
                         </span>
-                        {{ doc.title }}
+                        <span class="py-2 pr-3">
+                            {{ doc.title }}
+                        </span>
                     </h2>
-                    <div
-                        v-if="doc.deletedAt"
-                        type="button"
-                        class="flex flex-row items-center justify-center flex-1 text-base-100 font-bold"
-                    >
+                    <div v-if="doc.deletedAt" type="button" class="flex flex-row items-center justify-center flex-1 font-bold">
                         <TrashCanIcon class="mr-1.5 h-5 w-5 flex-shrink-0 text-base-400" aria-hidden="true" />
                         {{ $t('common.deleted') }}
                     </div>

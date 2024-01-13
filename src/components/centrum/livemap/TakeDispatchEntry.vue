@@ -51,7 +51,7 @@ const open = ref(false);
                     type="checkbox"
                     name="selected"
                     :checked="checked"
-                    class="h-4 w-4 rounded border-gray-300 text-primary-600 focus:ring-primary-600 h-6 w-6"
+                    class="h-4 w-4 rounded border-gray-300 text-primary-600 focus:ring-primary-600 h-5 w-5"
                     @change="
                         checked = !checked;
                         $emit('selected', checked);

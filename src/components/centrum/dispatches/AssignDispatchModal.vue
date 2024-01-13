@@ -139,7 +139,7 @@ const onSubmitThrottle = useThrottleFn(async () => {
                                                         @click="$emit('close')"
                                                     >
                                                         <span class="sr-only">{{ $t('common.close') }}</span>
-                                                        <CloseIcon class="h-6 w-6" aria-hidden="true" />
+                                                        <CloseIcon class="h-5 w-5" aria-hidden="true" />
                                                     </button>
                                                 </div>
                                             </div>
@@ -180,13 +180,13 @@ const onSubmitThrottle = useThrottleFn(async () => {
                                                                                     (u) => u && u === unit.id,
                                                                                 ) > -1
                                                                             "
-                                                                            class="w-6 h-6"
+                                                                            class="h-5 w-5"
                                                                         />
                                                                         <CheckboxBlankOutlineIcon
                                                                             v-else-if="unit.users.length > 0"
-                                                                            class="w-6 h-6"
+                                                                            class="h-5 w-5"
                                                                         />
-                                                                        <CancelIcon v-else class="w-6 h-6" />
+                                                                        <CancelIcon v-else class="h-5 w-5" />
 
                                                                         <div
                                                                             class="ml-0.5 flex flex-col w-full place-items-start"

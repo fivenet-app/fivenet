@@ -70,7 +70,7 @@ async function disconnect(provider: OAuth2Provider): Promise<void> {
                             </span>
 
                             <button @click="disconnect(provider)">
-                                <CloseCircleIcon class="w-6 h-6 mx-auto text-neutral" />
+                                <CloseCircleIcon class="h-5 w-5 mx-auto text-neutral" />
                                 {{ $t('common.disconnect') }}
                             </button>
                         </div>

@@ -157,17 +157,17 @@ async function deleteDocumentReq(id: string): Promise<void> {
                         <div class="flex items-center gap-2">
                             <template v-if="request.accepted === undefined">
                                 <button type="button" @click="updateDocumentReq(documentId, request.id, true)">
-                                    <CheckBoldIcon class="h-6 w-6 text-success-400" />
+                                    <CheckBoldIcon class="h-5 w-5 text-success-400" />
                                 </button>
                                 <button type="button" @click="updateDocumentReq(documentId, request.id, false)">
-                                    <CloseThickIcon class="h-6 w-6 text-error-400" />
+                                    <CloseThickIcon class="h-5 w-5 text-error-400" />
                                 </button>
                             </template>
 
                             <Menu as="div" class="relative flex-none">
                                 <MenuButton class="block text-gray-300 hover:text-gray-100">
                                     <span class="sr-only">{{ $t('common.open') }}</span>
-                                    <MenuIcon class="h-6 w-6" aria-hidden="true" />
+                                    <MenuIcon class="h-5 w-5" aria-hidden="true" />
                                 </MenuButton>
                                 <transition
                                     enter-active-class="transition ease-out duration-100"
@@ -190,7 +190,7 @@ async function deleteDocumentReq(id: string): Promise<void> {
                                                     deleteDocumentReq(request.id);
                                                 "
                                             >
-                                                <TrashCanIcon class="w-6 h-6" />
+                                                <TrashCanIcon class="h-5 w-5" />
                                                 {{ $t('common.delete') }}
                                             </button>
                                         </MenuItem>

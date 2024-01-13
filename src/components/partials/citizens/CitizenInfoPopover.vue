@@ -50,7 +50,7 @@ defineProps<{
                             :to="{ name: 'citizens-id', params: { id: user.userId } }"
                             class="inline-flex items-center text-primary-500 hover:text-primary-400"
                         >
-                            <AccountIcon class="w-6 h-6" />
+                            <AccountIcon class="h-5 w-5" />
                             <span class="ml-1">{{ $t('common.profile') }}</span>
                         </NuxtLink>
                         <PhoneNumberBlock

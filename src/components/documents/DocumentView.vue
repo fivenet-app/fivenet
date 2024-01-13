@@ -395,7 +395,7 @@ if (hash.value !== undefined && hash.value !== null) {
                                     {{ $t('common.created_by') }}
                                     <CitizenInfoPopover
                                         :user="doc.creator"
-                                        class="ml-1 font-medium text-primary-400 hover:text-primary-300"
+                                        class="ml-1 font-medium text-primary-600 hover:text-primary-400"
                                     />
                                 </span>
                             </div>

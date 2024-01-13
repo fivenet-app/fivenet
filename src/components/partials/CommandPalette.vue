@@ -340,7 +340,7 @@ async function onSelect(item: any): Promise<any> {
                                 v-if="rawQuery === ''"
                                 class="border-t border-gray-100 px-6 py-14 text-center text-sm sm:px-14"
                             >
-                                <GlobeModelIcon class="mx-auto h-6 w-6 text-gray-400" aria-hidden="true" />
+                                <GlobeModelIcon class="mx-auto h-5 w-5 text-gray-400" aria-hidden="true" />
                                 <p class="mt-4 font-semibold text-gray-200">
                                     {{ $t('commandpalette.input.title') }}
                                 </p>
@@ -421,7 +421,7 @@ async function onSelect(item: any): Promise<any> {
                                                         :is="item.icon"
                                                         v-if="item.icon"
                                                         :class="[
-                                                            'h-6 w-6 flex-none',
+                                                            'h-5 w-5 flex-none',
                                                             active ? 'text-neutral' : 'text-gray-500',
                                                         ]"
                                                         aria-hidden="true"
@@ -439,7 +439,7 @@ async function onSelect(item: any): Promise<any> {
                                 v-if="(rawQuery.startsWith('@') || rawQuery.startsWith('#')) && loading"
                                 class="border-t border-gray-100 px-6 py-14 text-center text-sm sm:px-14"
                             >
-                                <RefreshIcon class="mx-auto h-6 w-6 text-gray-400 animate-spin" aria-hidden="true" />
+                                <RefreshIcon class="mx-auto h-5 w-5 text-gray-400 animate-spin" aria-hidden="true" />
                                 <p class="mt-4 font-semibold text-gray-200">
                                     {{ $t('common.loading', [$t('common.result', 2)]) }}
                                 </p>
@@ -453,7 +453,7 @@ async function onSelect(item: any): Promise<any> {
                                 "
                                 class="border-t border-gray-100 px-6 py-14 text-center text-sm sm:px-14"
                             >
-                                <GlobeModelIcon class="mx-auto h-6 w-6 text-gray-400" aria-hidden="true" />
+                                <GlobeModelIcon class="mx-auto h-5 w-5 text-gray-400" aria-hidden="true" />
                                 <p class="mt-4 font-semibold text-gray-200">
                                     {{ $t('commandpalette.empty.title') }}
                                 </p>

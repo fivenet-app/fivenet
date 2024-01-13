@@ -141,13 +141,13 @@ const onSubmitThrottle = useThrottleFn(async (e) => {
                                     @click="$emit('close')"
                                 >
                                     <span class="sr-only">{{ $t('common.close') }}</span>
-                                    <CloseIcon class="h-6 w-6" aria-hidden="true" />
+                                    <CloseIcon class="h-5 w-5" aria-hidden="true" />
                                 </button>
                             </div>
                             <form @submit.prevent="onSubmitThrottle">
                                 <div>
                                     <div class="mx-auto flex h-12 w-12 items-center justify-center rounded-full bg-success-100">
-                                        <GroupIcon class="h-6 w-6 text-success-600" aria-hidden="true" />
+                                        <GroupIcon class="h-5 w-5 text-success-600" aria-hidden="true" />
                                     </div>
                                     <div class="mt-3 text-center sm:mt-5">
                                         <DialogTitle as="h3" class="text-base font-semibold leading-6 text-neutral">
@@ -165,7 +165,7 @@ const onSubmitThrottle = useThrottleFn(async (e) => {
                                                     <VeeField
                                                         name="enabled"
                                                         type="checkbox"
-                                                        class="h-4 w-4 rounded border-gray-300 text-primary-600 focus:ring-primary-600 h-6 w-6"
+                                                        class="h-4 w-4 rounded border-gray-300 text-primary-600 focus:ring-primary-600 h-5 w-5"
                                                         :placeholder="$t('common.enabled')"
                                                         :label="$t('common.enabled')"
                                                         :value="true"

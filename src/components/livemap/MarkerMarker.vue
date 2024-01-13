@@ -64,7 +64,7 @@ onConfirm(async (id) => deleteMarker(id));
                     </span>
                     <template v-if="can('LivemapperService.DeleteMarker')">
                         <button type="button" :title="$t('common.delete')" class="flex flex-row items-center" @click="reveal()">
-                            <TrashCanIcon class="w-6 h-6" />
+                            <TrashCanIcon class="h-5 w-5" />
                             <span class="sr-only">{{ $t('common.delete') }}</span>
                         </button>
                     </template>
@@ -97,7 +97,7 @@ onConfirm(async (id) => deleteMarker(id));
                     markerIcons.find((i) => marker.data?.data.oneofKind === 'icon' && i.name === marker.data?.data.icon.icon) ??
                     HelpIcon
                 "
-                class="w-6 h-6"
+                class="h-5 w-5"
                 :style="{ color: marker.info?.color ? '#' + marker.info?.color : 'currentColor' }"
             />
         </LIcon>
@@ -110,7 +110,7 @@ onConfirm(async (id) => deleteMarker(id));
                     </span>
                     <template v-if="can('LivemapperService.DeleteMarker')">
                         <button type="button" :title="$t('common.delete')" class="flex flex-row items-center" @click="reveal()">
-                            <TrashCanIcon class="w-6 h-6" />
+                            <TrashCanIcon class="h-5 w-5" />
                             <span class="sr-only">{{ $t('common.delete') }}</span>
                         </button>
                     </template>
@@ -133,7 +133,7 @@ onConfirm(async (id) => deleteMarker(id));
 
     <LMarker v-else :lat-lng="[marker.info!.y, marker.info!.x]" :name="marker.info!.name" @click="$emit('selected')">
         <LIcon :icon-size="[size, size]" :icon-anchor="iconAnchor" :popup-anchor="popupAnchor">
-            <MapMarkerQuestionIcon :fill="marker.info?.color ? '#' + marker.info?.color : 'currentColor'" class="w-6 h-6" />
+            <MapMarkerQuestionIcon :fill="marker.info?.color ? '#' + marker.info?.color : 'currentColor'" class="h-5 w-5" />
         </LIcon>
 
         <LPopup :options="{ closeButton: true }">
@@ -144,7 +144,7 @@ onConfirm(async (id) => deleteMarker(id));
                     </span>
                     <template v-if="can('LivemapperService.DeleteMarker')">
                         <button type="button" :title="$t('common.delete')" class="flex flex-row items-center" @click="reveal()">
-                            <TrashCanIcon class="w-6 h-6" />
+                            <TrashCanIcon class="h-5 w-5" />
                             <span class="sr-only">{{ $t('common.delete') }}</span>
                         </button>
                     </template>

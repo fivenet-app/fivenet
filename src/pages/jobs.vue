@@ -43,8 +43,8 @@ const open = ref(false);
                             >
                                 <span class="absolute -inset-0.5" />
                                 <span class="sr-only">{{ $t('components.partials.sidebar.open_navigation') }}</span>
-                                <MenuIcon v-if="!open" class="block h-6 w-6" aria-hidden="true" />
-                                <CloseIcon v-else class="block h-6 w-6" aria-hidden="true" />
+                                <MenuIcon v-if="!open" class="block h-5 w-5" aria-hidden="true" />
+                                <CloseIcon v-else class="block h-5 w-5" aria-hidden="true" />
                             </button>
                         </div>
                         <div class="hidden md:block">

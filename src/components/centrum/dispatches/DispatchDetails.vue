@@ -119,7 +119,7 @@ const openStatus = ref(false);
                                                         :title="$t('common.delete')"
                                                         @click="reveal()"
                                                     >
-                                                        <TrashCanIcon class="h-6 w-6" aria-hidden="true" />
+                                                        <TrashCanIcon class="h-5 w-5" aria-hidden="true" />
                                                     </button>
                                                 </DialogTitle>
                                                 <div class="ml-3 flex h-7 items-center">
@@ -129,7 +129,7 @@ const openStatus = ref(false);
                                                         @click="$emit('close')"
                                                     >
                                                         <span class="sr-only">{{ $t('common.close') }}</span>
-                                                        <CloseIcon class="h-6 w-6" aria-hidden="true" />
+                                                        <CloseIcon class="h-5 w-5" aria-hidden="true" />
                                                     </button>
                                                 </div>
                                             </div>
@@ -281,7 +281,7 @@ const openStatus = ref(false);
                                                                         class="flex flex-row items-center rounded bg-neutral/10 px-2 py-1 text-xs font-semibold text-neutral shadow-sm hover:bg-neutral/20"
                                                                         @click="openAssign = true"
                                                                     >
-                                                                        <PencilIcon class="h-6 w-6" />
+                                                                        <PencilIcon class="h-5 w-5" />
                                                                         <span class="truncate ml-0.5">
                                                                             {{ $t('common.assign') }}
                                                                         </span>
@@ -292,7 +292,7 @@ const openStatus = ref(false);
                                                                         class="flex flex-row items-center ml-2 rounded bg-neutral/10 px-2 py-1 text-xs font-semibold text-neutral shadow-sm hover:bg-neutral/20"
                                                                         @click="selfAssign(dispatch.id)"
                                                                     >
-                                                                        <PlusIcon class="h-6 w-6" />
+                                                                        <PlusIcon class="h-5 w-5" />
                                                                         <span class="truncate ml-0.5">{{
                                                                             $t('common.self_assign')
                                                                         }}</span>

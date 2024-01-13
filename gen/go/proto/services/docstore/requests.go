@@ -90,6 +90,7 @@ func (s *Server) ListDocumentReqs(ctx context.Context, req *ListDocumentReqsRequ
 			tCreator.JobGrade,
 			tCreator.Firstname,
 			tCreator.Lastname,
+			tCreator.Dateofbirth,
 		).
 		FROM(
 			tDocRequest.
@@ -162,7 +163,7 @@ func (s *Server) CreateDocumentReq(ctx context.Context, req *CreateDocumentReqRe
 		}
 
 		// If a request of that type already exists, make sure that we let the user know
-		if request.CreatedAt != nil && time.Since(request.CreatedAt.AsTime()) > DocRequestMinimumWaitTime {
+		if request.CreatedAt != nil && time.Since(request.CreatedAt.AsTime()) <= DocRequestMinimumWaitTime {
 			return nil, errorsdocstore.ErrDocReqAlreadyCreated
 		}
 	}

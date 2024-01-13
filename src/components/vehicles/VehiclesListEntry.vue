@@ -49,7 +49,7 @@ function addToClipboard(): void {
         >
             <div class="flex flex-row justify-end">
                 <button v-if="!hideCopy" class="flex-initial text-primary-500 hover:text-primary-400" @click="addToClipboard()">
-                    <ClipboardPlusIcon class="w-6 h-auto ml-auto mr-2.5" />
+                    <ClipboardPlusIcon class="h-auto w-5 ml-auto mr-2.5" />
                 </button>
                 <NuxtLink
                     v-if="!hideCitizenLink && can('CitizenStoreService.ListCitizens')"
@@ -59,7 +59,7 @@ function addToClipboard(): void {
                     }"
                     class="flex-initial text-primary-500 hover:text-primary-400"
                 >
-                    <AccountEyeIcon class="w-6 h-auto ml-auto mr-2.5" />
+                    <AccountEyeIcon class="h-auto w-5 ml-auto mr-2.5" />
                 </NuxtLink>
             </div>
         </td>

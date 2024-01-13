@@ -65,7 +65,7 @@ defineEmits<{
                         class="absolute pointer-events-none top-6 right-6 text-base-300 group-hover:text-base-200"
                         aria-hidden="true"
                     >
-                        <ChevronRightIcon class="w-6 h-6" />
+                        <ChevronRightIcon class="h-5 w-5" />
                     </span>
                 </div>
             </template>

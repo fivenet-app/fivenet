@@ -115,7 +115,7 @@ const onSubmitThrottle = useThrottleFn(async (e) => {
                                                         @click="$emit('close')"
                                                     >
                                                         <span class="sr-only">{{ $t('common.close') }}</span>
-                                                        <CloseIcon class="h-6 w-6" aria-hidden="true" />
+                                                        <CloseIcon class="h-5 w-5" aria-hidden="true" />
                                                     </button>
                                                 </div>
                                             </div>
@@ -201,7 +201,7 @@ const onSubmitThrottle = useThrottleFn(async (e) => {
                                                                     <VeeField
                                                                         type="checkbox"
                                                                         name="anon"
-                                                                        class="h-4 w-4 rounded border-gray-300 text-primary-600 focus:ring-primary-600 h-6 w-6"
+                                                                        class="h-4 w-4 rounded border-gray-300 text-primary-600 focus:ring-primary-600 h-5 w-5"
                                                                         :placeholder="$t('common.anon')"
                                                                         :label="$t('common.anon')"
                                                                         :value="true"
