@@ -19,7 +19,7 @@ const openMessage = ref(false);
 
 <template>
     <tr class="transition-colors hover:bg-neutral/5">
-        <td class="whitespace-nowrap py-2 pl-4 pr-3 text-base font-medium text-neutral sm:pl-0">
+        <td class="whitespace-nowrap py-2 pl-4 pr-3 text-base font-medium text-neutral sm:pl-1">
             <GenericTime :value="conduct.createdAt" />
         </td>
         <td class="whitespace-nowrap px-1 py-1 text-left text-base font-medium text-base-200">

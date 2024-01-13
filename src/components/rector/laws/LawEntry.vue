@@ -124,7 +124,7 @@ const editing = ref(props.startInEdit);
     />
 
     <tr v-if="!editing">
-        <td class="py-2 pl-4 pr-3 text-sm font-medium text-neutral sm:pl-0 flex flex-row">
+        <td class="py-2 pl-4 pr-3 text-sm font-medium text-neutral sm:pl-1 flex flex-row">
             <button type="button" class="pl-2" :title="$t('common.edit')" @click="editing = true">
                 <PencilIcon class="w-6 h-6" />
             </button>
@@ -132,7 +132,7 @@ const editing = ref(props.startInEdit);
                 <TrashCanIcon class="w-6 h-6" />
             </button>
         </td>
-        <td class="py-2 pl-4 pr-3 text-sm font-medium text-neutral sm:pl-0">
+        <td class="py-2 pl-4 pr-3 text-sm font-medium text-neutral sm:pl-1">
             {{ law.name }}
         </td>
         <td class="whitespace-nowrap px-1 py-1 text-left text-base-200">${{ law.fine }}</td>
@@ -147,7 +147,7 @@ const editing = ref(props.startInEdit);
         </td>
     </tr>
     <tr v-else>
-        <td class="py-2 pl-4 pr-3 text-sm font-medium text-neutral sm:pl-0">
+        <td class="py-2 pl-4 pr-3 text-sm font-medium text-neutral sm:pl-1">
             <button type="button" :title="$t('common.save')" @click="onSubmitThrottle">
                 <ContentSaveIcon class="w-6 h-6" />
             </button>
@@ -162,7 +162,7 @@ const editing = ref(props.startInEdit);
                 <CancelIcon class="w-6 h-6" />
             </button>
         </td>
-        <td class="py-2 pl-4 pr-3 text-sm font-medium text-neutral sm:pl-0">
+        <td class="py-2 pl-4 pr-3 text-sm font-medium text-neutral sm:pl-1">
             <VeeField
                 name="name"
                 type="text"

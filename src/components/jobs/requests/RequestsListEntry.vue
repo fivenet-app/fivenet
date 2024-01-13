@@ -35,7 +35,7 @@ const open = ref(false);
     >
         <div class="mx-2 mt-1 mb-4" @click="open = !open">
             <div class="flex flex-row">
-                <p class="py-2 pl-4 pr-3 text-lg font-medium text-neutral sm:pl-0">
+                <p class="py-2 pl-4 pr-3 text-lg font-medium text-neutral sm:pl-1">
                     <span
                         v-if="request.type"
                         class="inline-flex items-center rounded-md bg-primary-400/10 px-2 py-1 text-xs font-medium text-primary-400 ring-1 ring-inset ring-primary-400/30"

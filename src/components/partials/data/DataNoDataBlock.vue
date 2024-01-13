@@ -25,11 +25,11 @@ function click() {
 </script>
 
 <template>
-    <div class="pt-4 w-full">
+    <div class="w-full">
         <button
             type="button"
             :disabled="!focus"
-            class="relative block w-full p-12 text-center border-2 border-dashed rounded-lg border-base-300 hover:border-base-400 focus:outline-none focus:ring-2 focus:ring-neutral focus:ring-offset-2"
+            class="relative block w-full p-8 text-center border-2 border-dashed rounded-lg border-base-300 hover:border-base-400 focus:outline-none focus:ring-2 focus:ring-neutral focus:ring-offset-2"
             @click="click()"
         >
             <component :is="icon" class="w-12 h-12 mx-auto text-neutral" />

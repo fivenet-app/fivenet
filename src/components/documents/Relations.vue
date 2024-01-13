@@ -57,7 +57,7 @@ async function getDocumentRelations(): Promise<DocumentRelation[]> {
         <template v-else>
             <!-- Relations list (smallest breakpoint only) -->
             <div class="sm:hidden text-neutral">
-                <ul role="list" class="mt-2 overflow-hidden divide-y divide-gray-600 rounded-lg sm:hidden">
+                <ul role="list" class="overflow-hidden divide-y divide-gray-600 rounded-lg sm:hidden">
                     <li v-for="relation in relations" :key="relation.id" class="block px-4 py-4 bg-base-800 hover:bg-base-700">
                         <span class="flex items-center space-x-4">
                             <span class="flex flex-1 space-x-2 truncate">
@@ -101,11 +101,9 @@ async function getDocumentRelations(): Promise<DocumentRelation[]> {
             <!-- Relations table (small breakpoint and up) -->
             <div class="hidden sm:block">
                 <div>
-                    <div class="flex flex-col mt-2">
-                        <div class="min-w-full overflow-hidden overflow-x-auto align-middle sm:rounded-lg">
-                            <table
-                                class="min-w-full bg-base-600 text-neutral divide-y divide-base-600 border-2 border-gray-600"
-                            >
+                    <div class="flex flex-col">
+                        <div class="w-full overflow-hidden overflow-x-auto align-middle">
+                            <table class="w-full text-neutral bg-base-600 divide-y divide-base-400">
                                 <thead>
                                     <tr>
                                         <th v-if="showDocument" class="px-6 py-3 text-sm font-semibold text-left" scope="col">

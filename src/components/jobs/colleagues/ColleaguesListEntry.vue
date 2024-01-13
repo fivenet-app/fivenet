@@ -9,7 +9,7 @@ defineProps<{
 
 <template>
     <tr :key="user.userId" class="transition-colors hover:bg-neutral/5 even:bg-base-800">
-        <td class="whitespace-nowrap py-2 pl-4 pr-3 text-base font-medium text-neutral sm:pl-0">
+        <td class="whitespace-nowrap py-2 pl-4 pr-3 text-base font-medium text-neutral sm:pl-1">
             {{ user.firstname }}, {{ user.lastname }}
         </td>
         <td class="whitespace-nowrap px-1 py-1 text-left text-base-200">{{ user.jobGradeLabel }} ({{ user.jobGrade }})</td>

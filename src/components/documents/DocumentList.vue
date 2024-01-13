@@ -207,6 +207,7 @@ const templatesOpen = ref(false);
                                 </NuxtLink>
                             </div>
                         </div>
+
                         <Disclosure v-slot="{ open }" as="div" class="pt-2">
                             <DisclosureButton class="flex w-full items-start justify-between text-left text-neutral">
                                 <span class="text-base-200 leading-7">{{ $t('common.advanced_search') }}</span>
@@ -218,7 +219,7 @@ const templatesOpen = ref(false);
                                 </span>
                             </DisclosureButton>
                             <DisclosurePanel class="mt-2 pr-4">
-                                <div class="flex flex-row gap-2">
+                                <div class="flex flex-row flex-wrap gap-2">
                                     <div class="flex-1 form-control">
                                         <label for="search" class="block text-sm font-medium leading-6 text-neutral">
                                             {{ $t('common.document') }} {{ $t('common.id') }}
@@ -349,7 +350,7 @@ const templatesOpen = ref(false);
                                         </Combobox>
                                     </div>
                                 </div>
-                                <div class="flex flex-row gap-2">
+                                <div class="flex flex-row flex-wrap gap-2">
                                     <div class="flex-1 form-control">
                                         <label for="search" class="block text-sm font-medium leading-6 text-neutral">
                                             {{ $t('common.close', 2) }}?
@@ -451,7 +452,7 @@ const templatesOpen = ref(false);
             </div>
             <div class="flow-root mt-2">
                 <div class="mx-0 -my-2 overflow-x-auto">
-                    <div class="inline-block min-w-full py-2 align-middle px-1">
+                    <div class="inline-block w-full max-w-full py-2 align-middle px-1">
                         <DataPendingBlock v-if="pending" :message="$t('common.loading', [$t('common.document', 2)])" />
                         <DataErrorBlock
                             v-else-if="error"
@@ -463,7 +464,7 @@ const templatesOpen = ref(false);
                             :type="$t('common.document', 2)"
                             :focus="focusSearch"
                         />
-                        <div v-else>
+                        <template v-else>
                             <ul role="list" class="flex flex-col">
                                 <DocumentListEntry v-for="doc in data?.documents" :key="doc.id" :doc="doc" />
                             </ul>
@@ -474,7 +475,7 @@ const templatesOpen = ref(false);
                                 :refresh="refresh"
                                 @offset-change="offset = $event"
                             />
-                        </div>
+                        </template>
                     </div>
                 </div>
             </div>

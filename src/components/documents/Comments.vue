@@ -159,7 +159,7 @@ const onSubmitThrottle = useThrottleFn(async (e) => {
 <template>
     <div>
         <div ref="commentsEl" class="pb-2">
-            <div v-if="can('DocStoreService.PostComment')">
+            <template v-if="can('DocStoreService.PostComment')">
                 <div v-if="!closed && canComment" class="flex items-start space-x-4">
                     <div class="min-w-0 flex-1">
                         <form class="relative" @submit.prevent="onSubmitThrottle">
@@ -214,8 +214,9 @@ const onSubmitThrottle = useThrottleFn(async (e) => {
                         </form>
                     </div>
                 </div>
-            </div>
+            </template>
         </div>
+
         <div>
             <DataPendingBlock v-if="pending" :message="$t('common.loading', [$t('common.comment', 2)])" />
             <DataErrorBlock
@@ -241,14 +242,15 @@ const onSubmitThrottle = useThrottleFn(async (e) => {
                         @deleted="removeComment($event)"
                     />
                 </ul>
+
+                <TablePagination
+                    v-if="data !== null && data?.comments.length > 0"
+                    class="mt-2"
+                    :pagination="data?.pagination"
+                    :refresh="refresh"
+                    @offset-change="offset = $event"
+                />
             </div>
         </div>
-        <TablePagination
-            v-if="data !== null && data?.comments.length > 0"
-            class="mt-2"
-            :pagination="data?.pagination"
-            :refresh="refresh"
-            @offset-change="offset = $event"
-        />
     </div>
 </template>

@@ -203,10 +203,10 @@ const editing = ref(props.startInEdit);
         <table class="min-w-full divide-y divide-base-600">
             <thead>
                 <tr>
-                    <th scope="col" class="py-3.5 pl-4 pr-3 text-left text-sm font-semibold text-neutral sm:pl-0">
+                    <th scope="col" class="py-3.5 pl-4 pr-3 text-left text-sm font-semibold text-neutral sm:pl-1">
                         {{ $t('common.action', 2) }}
                     </th>
-                    <th scope="col" class="py-3.5 pl-4 pr-3 text-left text-sm font-semibold text-neutral sm:pl-0">
+                    <th scope="col" class="py-3.5 pl-4 pr-3 text-left text-sm font-semibold text-neutral sm:pl-1">
                         {{ $t('common.crime') }}
                     </th>
                     <th scope="col" class="py-3.5 px-2 text-left text-sm font-semibold text-neutral">

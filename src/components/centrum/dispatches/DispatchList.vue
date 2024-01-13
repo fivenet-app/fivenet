@@ -1,5 +1,5 @@
 <script lang="ts" setup>
-import { ViewListIcon } from 'mdi-vue3';
+import { ArchiveIcon, ViewListIcon } from 'mdi-vue3';
 import { computedAsync } from '@vueuse/core';
 import { useCentrumStore } from '~/store/centrum';
 import DispatchListEntry from '~/components/centrum/dispatches/DispatchListEntry.vue';
@@ -56,13 +56,14 @@ const grouped = computedAsync(async () => {
             <div class="sm:flex-auto inline-flex items-center">
                 <h2 class="flex-1 text-base font-semibold leading-6 text-gray-100 inline-flex items-center">
                     {{ $t('common.dispatches') }}
+
                     <NuxtLink
                         v-if="showButton"
                         :to="{ name: 'centrum-dispatches' }"
                         :title="$t('common.dispatches')"
                         class="ml-2"
                     >
-                        <ViewListIcon class="h-6 w-6" />
+                        <ArchiveIcon class="h-5 w-5" />
                     </NuxtLink>
                 </h2>
                 <h2 v-if="dispatches === undefined" class="text-base font-semibold text-gray-100">

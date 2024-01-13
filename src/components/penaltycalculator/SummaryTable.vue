@@ -28,7 +28,7 @@ function getNameForLawBookId(id: string): string | undefined {
     <table v-else class="min-w-full divide-y divide-base-600">
         <thead>
             <tr>
-                <th scope="col" class="py-3.5 pl-4 pr-3 text-left text-sm font-semibold text-neutral sm:pl-0">
+                <th scope="col" class="py-3.5 pl-4 pr-3 text-left text-sm font-semibold text-neutral sm:pl-1">
                     {{ $t('common.crime') }}
                 </th>
                 <th scope="col" class="py-3.5 px-2 text-left text-sm font-semibold text-neutral">
@@ -50,7 +50,7 @@ function getNameForLawBookId(id: string): string | undefined {
         </thead>
         <tbody>
             <tr v-for="p in selectedLaws" :key="`${p.law.lawbookId}-${p.law.id}`">
-                <td class="py-2 pl-4 pr-3 text-sm font-medium text-neutral sm:pl-0">
+                <td class="py-2 pl-4 pr-3 text-sm font-medium text-neutral sm:pl-1">
                     {{ getNameForLawBookId(p.law.lawbookId) }} - {{ p.law.name }}
                 </td>
                 <td class="whitespace-nowrap px-1 py-1 text-left text-base-200">

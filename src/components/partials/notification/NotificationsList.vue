@@ -126,7 +126,7 @@ watchDebounced(includeRead, async () => refresh(), { debounce: 500, maxWait: 150
                                 >
                                     <div class="flex gap-x-4">
                                         <div class="min-w-0 flex-auto">
-                                            <p class="py-2 pl-4 pr-3 text-sm font-medium text-neutral sm:pl-0">
+                                            <p class="py-2 pl-4 pr-3 text-sm font-medium text-neutral sm:pl-1">
                                                 <span v-if="not.data && not.data.link">
                                                     <!-- @vue-expect-error the route should be valid... at least in most cases -->
                                                     <NuxtLink :to="not.data.link.to">

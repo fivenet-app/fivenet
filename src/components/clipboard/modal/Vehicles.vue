@@ -107,10 +107,10 @@ watch(props, (newVal) => {
     <table v-else class="min-w-full divide-y divide-gray-700">
         <thead>
             <tr>
-                <th v-if="showSelect" scope="col" class="py-3.5 pl-4 pr-3 text-left text-sm font-semibold text-neutral sm:pl-0">
+                <th v-if="showSelect" scope="col" class="py-3.5 pl-4 pr-3 text-left text-sm font-semibold text-neutral sm:pl-1">
                     {{ $t('common.select') }}
                 </th>
-                <th scope="col" class="py-3.5 pl-4 pr-3 text-left text-sm font-semibold text-neutral sm:pl-0">
+                <th scope="col" class="py-3.5 pl-4 pr-3 text-left text-sm font-semibold text-neutral sm:pl-1">
                     {{ $t('common.plate') }}
                 </th>
                 <th scope="col" class="py-3.5 px-3 text-left text-sm font-semibold text-neutral">
@@ -129,7 +129,7 @@ watch(props, (newVal) => {
         </thead>
         <tbody class="divide-y divide-gray-800">
             <tr v-for="item in vehicles" :key="item.plate">
-                <td v-if="showSelect" class="whitespace-nowrap py-4 pl-4 pr-3 text-sm font-medium text-neutral sm:pl-0">
+                <td v-if="showSelect" class="whitespace-nowrap py-4 pl-4 pr-3 text-sm font-medium text-neutral sm:pl-1">
                     <template v-if="specs && specs.max && specs.max === 1">
                         <button
                             class="inline-flex w-full justify-center rounded-md px-3 py-2 text-sm font-semibold text-neutral shadow-sm focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 sm:col-start-2"
@@ -159,7 +159,7 @@ watch(props, (newVal) => {
                         />
                     </template>
                 </td>
-                <td class="whitespace-nowrap py-4 pl-4 pr-3 text-sm font-medium text-neutral sm:pl-0">
+                <td class="whitespace-nowrap py-4 pl-4 pr-3 text-sm font-medium text-neutral sm:pl-1">
                     {{ item.plate }}
                 </td>
                 <td class="whitespace-nowrap py-4 px-3 text-sm text-gray-300">

@@ -24,20 +24,19 @@ defineProps<{
                 params: { id: doc.id },
             }"
         >
-            <div class="mx-2 mt-1 mb-4">
-                <div class="flex flex-row">
-                    <p class="py-2 pl-4 pr-3 text-lg font-medium text-neutral sm:pl-0">
-                        <span
-                            v-if="doc.category"
-                            class="inline-flex items-center rounded-md bg-primary-400/10 px-2 py-1 text-xs font-medium text-primary-400 ring-1 ring-inset ring-primary-400/30"
-                        >
-                            {{ doc.category.name }}
-                        </span>
-                        {{ doc.title }}
-                    </p>
+            <div class="m-2">
+                <div class="flex flex-row gap-2 text-base-300 truncate">
+                    <div class="flex flex-row items-center justify-start flex-1">
+                        <IDCopyBadge
+                            :id="doc.id"
+                            prefix="DOC"
+                            :title="{ key: 'notifications.document_view.copy_document_id.title', parameters: {} }"
+                            :content="{ key: 'notifications.document_view.copy_document_id.content', parameters: {} }"
+                        />
+                    </div>
                     <p
                         v-if="doc.state"
-                        class="inline-flex px-2 text-xs font-semibold leading-5 rounded-full bg-primary-100 text-primary-700 my-auto"
+                        class="inline-flex px-2 text-xs font-semibold leading-5 rounded-full bg-info-100 text-info-800 my-auto"
                     >
                         {{ doc.state }}
                     </p>
@@ -56,10 +55,24 @@ defineProps<{
                         </div>
                     </div>
                 </div>
+
                 <div class="flex flex-row gap-2 text-base-300 truncate">
-                    <div class="flex flex-row items-center justify-start flex-1">
-                        <IDCopyBadge :id="doc.id" prefix="DOC" />
-                    </div>
+                    <h2
+                        class="inline-flex items-center gap-1 py-2 pl-2 pr-3 text-xl font-medium text-neutral sm:pl-1 max-w- truncate"
+                    >
+                        <span
+                            v-if="doc.category"
+                            class="flex flex-row flex-initial gap-1 px-2 py-1 rounded-full bg-primary-100 text-primary-500"
+                        >
+                            <span
+                                class="text-xs font-medium text-primary-800 inline-flex items-center"
+                                :title="doc.category.description ?? $t('common.na')"
+                            >
+                                {{ doc.category.name }}
+                            </span>
+                        </span>
+                        {{ doc.title }}
+                    </h2>
                     <div
                         v-if="doc.deletedAt"
                         type="button"
@@ -76,7 +89,8 @@ defineProps<{
                         </p>
                     </div>
                 </div>
-                <div class="mt-2 flex flex-row gap-2 text-base-200">
+
+                <div class="flex flex-row gap-2 text-base-200">
                     <div class="flex flex-row items-center justify-start flex-1">
                         <CitizenInfoPopover :user="doc.creator">
                             <template #before>

@@ -42,27 +42,24 @@ const summary = ref<PenaltiesSummary>({
     count: 0,
 });
 
-const filteredLawBooks = computed(
-    () =>
-        lawBooks.value
-            ?.map((book) => {
-                const laws = book.laws
-                    .filter(
-                        (p) => p.name.toLowerCase().includes(query.value) || p.description?.toLowerCase().includes(query.value),
-                    )
-                    .map((p) => {
-                        const show = true;
-                        return {
-                            ...p,
-                            show,
-                        };
-                    });
-                return {
-                    ...book,
-                    laws,
-                };
-            })
-            .filter((books) => books.laws.length > 0),
+const filteredLawBooks = computed(() =>
+    lawBooks.value
+        ?.map((book) => {
+            const laws = book.laws
+                .filter((p) => p.name.toLowerCase().includes(query.value) || p.description?.toLowerCase().includes(query.value))
+                .map((p) => {
+                    const show = true;
+                    return {
+                        ...p,
+                        show,
+                    };
+                });
+            return {
+                ...book,
+                laws,
+            };
+        })
+        .filter((books) => books.laws.length > 0),
 );
 
 function getNameForLawBookId(id: string): string | undefined {
@@ -206,7 +203,7 @@ ${t('common.crime', selectedPenalties.value.length)}:
                                                         <tr>
                                                             <th
                                                                 scope="col"
-                                                                class="py-3.5 pl-4 pr-3 text-left text-sm font-semibold text-neutral sm:pl-0"
+                                                                class="py-3.5 pl-4 pr-3 text-left text-sm font-semibold text-neutral sm:pl-1"
                                                             >
                                                                 {{ $t('common.crime') }}
                                                             </th>

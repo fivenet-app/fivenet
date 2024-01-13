@@ -55,7 +55,7 @@ async function getDocumentReferences(): Promise<DocumentReference[]> {
         <template v-else>
             <!-- Relations list (smallest breakpoint only) -->
             <div class="sm:hidden text-neutral">
-                <ul role="list" class="mt-2 divide-y divide-gray-600 rounded-lg sm:hidden">
+                <ul role="list" class="divide-y divide-gray-600 rounded-lg sm:hidden">
                     <li v-for="reference in references" :key="reference.id">
                         <NuxtLink
                             :to="{
@@ -100,7 +100,7 @@ async function getDocumentReferences(): Promise<DocumentReference[]> {
             <!-- Relations table (small breakpoint and up) -->
             <div class="hidden sm:block">
                 <div>
-                    <div class="flex flex-col mt-2">
+                    <div class="flex flex-col">
                         <div class="min-w-full overflow-hidden overflow-x-auto align-middle sm:rounded-lg">
                             <table
                                 class="min-w-full bg-base-600 text-neutral divide-y divide-base-600 border-2 border-gray-600"

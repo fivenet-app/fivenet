@@ -50,20 +50,20 @@ ${jsonStringify(jsonParse(props.log.data!), 2)}
 
 <template>
     <tr class="transition-colors hover:bg-neutral/5 even:bg-base-800">
-        <td class="whitespace-nowrap py-2 pl-4 pr-3 text-sm font-medium text-neutral sm:pl-0">
+        <td class="whitespace-nowrap py-2 pl-4 pr-3 text-sm font-medium text-neutral sm:pl-1">
             {{ log.id }}
         </td>
-        <td class="whitespace-nowrap py-2 pl-4 pr-3 text-sm font-medium text-neutral sm:pl-0">
+        <td class="whitespace-nowrap py-2 pl-4 pr-3 text-sm font-medium text-neutral sm:pl-1">
             <GenericTime :value="log.createdAt" type="long" />
         </td>
-        <td class="whitespace-nowrap py-2 pl-4 pr-3 text-sm font-medium text-neutral sm:pl-0">
+        <td class="whitespace-nowrap py-2 pl-4 pr-3 text-sm font-medium text-neutral sm:pl-1">
             <CitizenInfoPopover :user="log.user" />
         </td>
-        <td class="break-all py-2 pl-4 pr-3 text-sm font-medium text-neutral sm:pl-0">{{ log.service }}/{{ log.method }}</td>
-        <td class="py-2 pl-4 pr-3 text-sm font-medium text-neutral sm:pl-0">
+        <td class="break-all py-2 pl-4 pr-3 text-sm font-medium text-neutral sm:pl-1">{{ log.service }}/{{ log.method }}</td>
+        <td class="py-2 pl-4 pr-3 text-sm font-medium text-neutral sm:pl-1">
             {{ EventType[log.state] }}
         </td>
-        <td class="py-2 pl-4 pr-3 text-sm font-medium text-neutral sm:pl-0 max-w-3xl">
+        <td class="py-2 pl-4 pr-3 text-sm font-medium text-neutral sm:pl-1 max-w-3xl">
             <span v-if="!log.data">N/A</span>
             <span v-else>
                 <VueJsonPretty
