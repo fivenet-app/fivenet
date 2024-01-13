@@ -617,7 +617,7 @@
         "state": "Zustand",
         "reference": "Referenz | Referenzen",
         "relation": "Beziehung | Beziehungen",
-        "access": "Zugriff | Zugriffe",
+        "access": "Zugriff",
         "submit": "Absenden",
         "save": "Speichern",
         "remove": "Entfernen",
@@ -1084,16 +1084,16 @@
         "docstore": {
             "requests": {
                 "created": {
-                    "title": "Document Request created!",
-                    "content": "The document request has been successfully created."
+                    "title": "Dokumentenanfrage erstellt",
+                    "content": "Die Dokumentenanfrage wurde erfolgreich erstellt."
                 },
                 "deleted": {
-                    "title": "Document Request deleted!",
-                    "content": "The document request has been successfully deleted."
+                    "title": "Dokumentenanfrage gelöscht!",
+                    "content": "Die Dokumentenanfrage wurde erfolgreich gelöscht."
                 },
                 "updated": {
-                    "title": "Document Request updated!",
-                    "content": "The document request has been successfully updated."
+                    "title": "Dokumentenanfrage aktualisiert!",
+                    "content": "Die Dokumentenanfrage wurde erfolgreich aktualisiert."
                 }
             }
         }
@@ -1290,12 +1290,12 @@
                 "description": "Dokumenten-Aktivität von Dokumente mit Status oder höher Zugriff sehen können."
             },
             "ListDocumentReqs": {
-                "key": "List Document Requests",
-                "description": "List requests for documents."
+                "key": "Auflistung der Dokumentenanforderungen",
+                "description": "Liste die Dokumentenanforderungen auf"
             },
             "ChangeDocumentOwner": {
-                "key": "Change Document Owner",
-                "description": "Take over the document owner.",
+                "key": "Änderung des Dokumentenbesitzers",
+                "description": "Übernimm den Besitz des Dokumentes",
                 "attrs": {
                     "Own": "Eigene",
                     "Lower_Rank": "Niedrigerer Rang",
@@ -1688,8 +1688,8 @@
                 "COMMENT_UPDATED": "Kommentar aktualisiert",
                 "COMMENT_DELETED": "Kommentar gelöscht",
                 "UNSPECIFIED": "Unbekannte Aktivität",
-                "REQUESTED_OWNER_CHANGE": "Dokument-Besitzer Wechsel beanfragt",
-                "REQUESTED_OPENING": "Öffnung des Dokumentes angefordert"
+                "REQUESTED_OWNER_CHANGE": "Dokument-Besitzer Wechsel beanfragt | Dokument-Besitzer Wechsel",
+                "REQUESTED_OPENING": "Öffnung des Dokumentes angefordert | Öffnung des Dokument"
             }
         },
         "centrum": {
