@@ -464,6 +464,10 @@ export const useCentrumStore = defineStore('centrum', {
                             this.ownDispatches.length = 0;
                             this.pendingDispatches.length = 0;
                         }
+
+                        if (this.isDisponent && resp.change.unitUpdated.status !== undefined) {
+                            this.addFeedItem(resp.change.unitUpdated.status);
+                        }
                     } else if (resp.change.oneofKind === 'unitStatus') {
                         this.updateUnitStatus(resp.change.unitStatus);
 
@@ -522,6 +526,10 @@ export const useCentrumStore = defineStore('centrum', {
                         this.removeDispatch(resp.change.dispatchDeleted.id);
                     } else if (resp.change.oneofKind === 'dispatchUpdated') {
                         this.addOrUpdateDispatch(resp.change.dispatchUpdated);
+
+                        if (this.isDisponent && resp.change.dispatchUpdated.status !== undefined) {
+                            this.addFeedItem(resp.change.dispatchUpdated.status);
+                        }
                     } else if (resp.change.oneofKind === 'dispatchStatus') {
                         const status = resp.change.dispatchStatus;
                         this.updateDispatchStatus(status);
