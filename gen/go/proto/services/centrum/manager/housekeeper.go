@@ -217,12 +217,12 @@ func (s *Housekeeper) runCancelDispatches() {
 func (s *Housekeeper) cancelExpiredDispatches(ctx context.Context) error {
 	stmt := tDispatchStatus.
 		SELECT(
-			tDispatch.ID.AS("dispatch_id"),
+			tDispatchStatus.DispatchID.AS("dispatch_id"),
 			tDispatch.Job.AS("job"),
 			tDispatchStatus.Status.AS("status"),
 		).
 		FROM(
-			tDispatch.
+			tDispatchStatus.
 				INNER_JOIN(tDispatchStatus,
 					tDispatchStatus.DispatchID.EQ(tDispatch.ID),
 				),
@@ -234,18 +234,12 @@ func (s *Housekeeper) cancelExpiredDispatches(ctx context.Context) error {
 			),
 			jet.OR(
 				tDispatchStatus.ID.IS_NULL(),
-				jet.AND(
-					tDispatchStatus.ID.EQ(
-						jet.RawInt("SELECT MAX(`dispatchstatus`.`id`) FROM `fivenet_centrum_dispatches_status` AS `dispatchstatus` WHERE `dispatchstatus`.`dispatch_id` = `dispatch`.`id`"),
-					),
-					tDispatchStatus.Status.NOT_IN(
-						jet.Int16(int16(centrum.StatusDispatch_STATUS_DISPATCH_COMPLETED)),
-						jet.Int16(int16(centrum.StatusDispatch_STATUS_DISPATCH_CANCELLED)),
-						jet.Int16(int16(centrum.StatusDispatch_STATUS_DISPATCH_ARCHIVED)),
-					),
+				tDispatchStatus.ID.EQ(
+					jet.RawInt("SELECT MAX(`dispatchstatus`.`id`) FROM `fivenet_centrum_dispatches_status` AS `dispatchstatus` WHERE `dispatchstatus`.`dispatch_id` = `dispatch`.`id` AND `dispatchstatus`.`status` NOT IN (11, 12, 13)"),
 				),
 			),
-		))
+		)).
+		LIMIT(25)
 
 	var dest []*struct {
 		DispatchID uint64

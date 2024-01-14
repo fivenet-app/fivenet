@@ -8,6 +8,7 @@ import {
     AccountMultipleIcon,
     CalendarEditIcon,
     CalendarIcon,
+    CalendarRemoveIcon,
     ChevronDownIcon,
     CommentIcon,
     CommentQuoteIcon,
@@ -415,6 +416,16 @@ if (hash.value !== undefined && hash.value !== null) {
                                 <span class="text-sm font-medium text-base-700">
                                     {{ $t('common.updated_at') }}
                                     <GenericTime :value="doc.updatedAt" type="long" />
+                                </span>
+                            </div>
+                            <div
+                                v-if="doc.deletedAt"
+                                class="flex flex-row flex-initial gap-1 px-2 py-1 rounded-full bg-base-100 text-base-500"
+                            >
+                                <CalendarRemoveIcon class="w-5 h-auto" aria-hidden="true" />
+                                <span class="text-sm font-medium text-base-700">
+                                    {{ $t('common.deleted') }}
+                                    <GenericTime :value="doc.deletedAt" type="long" />
                                 </span>
                             </div>
                         </div>
