@@ -332,7 +332,7 @@ if (hash.value !== undefined && hash.value !== null) {
                         </div>
 
                         <div class="my-4">
-                            <h1 class="py-1 pl-0.5 pr-0.5 text-5xl font-bold text-neutral sm:pl-1 break-words">
+                            <h1 class="py-1 pl-0.5 pr-0.5 text-4xl font-bold text-neutral sm:pl-1 break-words">
                                 {{ doc?.title }}
                             </h1>
                         </div>
@@ -499,6 +499,7 @@ if (hash.value !== undefined && hash.value !== null) {
                                 v-slot="{ open }"
                                 as="div"
                                 class="w-full text-neutral hover:border-neutral/70 border-neutral/20"
+                                :default-open="true"
                             >
                                 <DisclosureButton
                                     :class="[

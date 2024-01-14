@@ -49,6 +49,7 @@ const query = ref<{
     from?: string;
     to?: string;
     closed?: boolean;
+    category?: Category;
 }>({
     title: '',
 });
@@ -59,10 +60,11 @@ if (hash.value !== undefined && hash.value !== null) {
     query.value = unmarshalHashToObject(hash.value as string);
 }
 
-const queryCategory = ref<Category | undefined>();
 const queryClosed = ref<OpenClose>(openclose[0]);
+
 const entriesCategories = ref<Category[]>([]);
 const queryCategories = ref<string>('');
+
 const entriesCitizens = ref<UserShort[]>([]);
 const queryCitizens = ref<string>('');
 
@@ -82,8 +84,8 @@ async function listDocuments(): Promise<ListDocumentsResponse> {
         creatorIds: [],
         documentIds: [],
     };
-    if (queryCategory.value) {
-        req.categoryIds.push(queryCategory.value.id);
+    if (query.value.category) {
+        req.categoryIds.push(query.value.category.id);
     }
     if (query.value.character) {
         req.creatorIds.push(query.value.character.userId);
@@ -240,7 +242,7 @@ const templatesOpen = ref(false);
                                         <label for="search" class="block text-sm font-medium leading-6 text-neutral">
                                             {{ $t('common.category', 1) }}
                                         </label>
-                                        <Combobox v-model="queryCategory" as="div" class="mt-2" nullable>
+                                        <Combobox v-model="query.category" as="div" class="mt-2" nullable>
                                             <div class="relative">
                                                 <ComboboxButton as="div">
                                                     <ComboboxInput
