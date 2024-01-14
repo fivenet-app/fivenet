@@ -71,7 +71,7 @@
         "@types/zxcvbn": "4.4.4",
         "@unhead/vue": "1.8.9",
         "@vueuse/core": "10.7.1",
-        "@vueuse/router": "10.7.1",
+        "@vueuse/router": "10.7.2",
         "@vueuse/sound": "2.0.1",
         "autoprefixer": "10.4.16",
         "cssnano": "6.0.3",
