@@ -71,6 +71,10 @@ const dispatchClasses = computed(() => [
                     </span>
                 </li>
                 <li>
+                    <span class="font-semibold">{{ $t('common.postal') }}</span
+                    >: {{ dispatch.postal ?? $t('common.na') }}
+                </li>
+                <li>
                     <span class="font-semibold">{{ $t('common.message') }}</span
                     >: {{ dispatch.message }}
                 </li>
