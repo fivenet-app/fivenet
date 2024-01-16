@@ -69,7 +69,7 @@
         "@types/splitpanes": "2.2.6",
         "@types/uuid": "9.0.7",
         "@types/zxcvbn": "4.4.4",
-        "@unhead/vue": "1.8.9",
+        "@unhead/vue": "1.8.10",
         "@vueuse/core": "10.7.2",
         "@vueuse/router": "10.7.2",
         "@vueuse/sound": "2.0.1",
