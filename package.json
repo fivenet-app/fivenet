@@ -73,7 +73,7 @@
         "@vueuse/core": "10.7.2",
         "@vueuse/router": "10.7.2",
         "@vueuse/sound": "2.0.1",
-        "autoprefixer": "10.4.16",
+        "autoprefixer": "10.4.17",
         "cssnano": "6.0.3",
         "eslint": "8.56.0",
         "eslint-config-prettier": "9.1.0",
