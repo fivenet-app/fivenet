@@ -52,7 +52,7 @@
         "vue-leaflet-markercluster": "0.5.1"
     },
     "devDependencies": {
-        "@dargmuesli/nuxt-cookie-control": "7.2.3",
+        "@dargmuesli/nuxt-cookie-control": "7.2.4",
         "@nuxt/devtools": "1.0.8",
         "@nuxtjs/eslint-config-typescript": "12.1.0",
         "@nuxtjs/eslint-module": "4.1.0",
