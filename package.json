@@ -35,7 +35,7 @@
         "@zxcvbn-ts/core": "3.0.4",
         "google-protobuf": "3.21.2",
         "grpc-web": "1.5.0",
-        "jodit": "4.0.5",
+        "jodit": "4.0.6",
         "jodit-vue": "3.1.0",
         "leaflet": "1.9.4",
         "leaflet-contextmenu": "1.4.0",
