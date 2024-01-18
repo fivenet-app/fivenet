@@ -35,7 +35,7 @@ func (s *Manager) loadData() error {
 	}
 
 	s.logger.Debug("loading dispatches")
-	if err := s.LoadDispatchesFromDB(ctx, 0); err != nil {
+	if err := s.LoadDispatchesFromDB(ctx, nil); err != nil {
 		return fmt.Errorf("failed to load centrum dispatches: %w", err)
 	}
 
@@ -243,7 +243,7 @@ func (s *Manager) LoadUnitIDForUserID(ctx context.Context, userId int32) (uint64
 	return dest.UnitID, nil
 }
 
-func (s *Manager) LoadDispatchesFromDB(ctx context.Context, id uint64) error {
+func (s *Manager) LoadDispatchesFromDB(ctx context.Context, cond jet.BoolExpression) error {
 	condition := tDispatchStatus.ID.IS_NULL().OR(
 		jet.AND(
 			tDispatchStatus.ID.EQ(
@@ -258,10 +258,8 @@ func (s *Manager) LoadDispatchesFromDB(ctx context.Context, id uint64) error {
 		),
 	)
 
-	if id > 0 {
-		condition = condition.AND(
-			tDispatch.ID.EQ(jet.Uint64(id)),
-		)
+	if cond != nil {
+		condition = condition.AND(cond)
 	}
 
 	tUsers := tUsers.AS("user_short")
@@ -357,6 +355,9 @@ func (s *Manager) LoadDispatchesFromDB(ctx context.Context, id uint64) error {
 				CreatedAt:  timestamp.Now(),
 				DispatchId: dsps[i].Id,
 				Status:     centrum.StatusDispatch_STATUS_DISPATCH_NEW,
+				Postal:     dsps[i].Postal,
+				X:          &dsps[i].X,
+				Y:          &dsps[i].Y,
 			})
 			if err != nil {
 				return err

@@ -109,6 +109,27 @@ func NewHousekeeper(p HousekeeperParams) *Housekeeper {
 			s.runDeleteOldDispatches()
 		}()
 
+		s.wg.Add(1)
+		go func() {
+			defer s.wg.Done()
+
+			for {
+				// Load dispatches with null postal field
+				if err := s.LoadDispatchesFromDB(ctx, jet.AND(
+					tDispatch.Postal.IS_NULL(),
+				)); err != nil {
+					s.logger.Error("failed loading new dispatches from DB", zap.Error(err))
+					continue
+				}
+
+				select {
+				case <-ctx.Done():
+					return
+				case <-time.After(1 * time.Second):
+				}
+			}
+		}()
+
 		return nil
 	}))
 
@@ -223,8 +244,8 @@ func (s *Housekeeper) cancelExpiredDispatches(ctx context.Context) error {
 		).
 		FROM(
 			tDispatchStatus.
-				INNER_JOIN(tDispatchStatus,
-					tDispatchStatus.DispatchID.EQ(tDispatch.ID),
+				INNER_JOIN(tDispatch,
+					tDispatch.ID.EQ(tDispatchStatus.DispatchID),
 				),
 		).
 		// Dispatches that are older than time X and are not in a completed/cancelled/archived state, or have no status at all
@@ -232,14 +253,19 @@ func (s *Housekeeper) cancelExpiredDispatches(ctx context.Context) error {
 			tDispatch.CreatedAt.LT_EQ(
 				jet.CURRENT_TIMESTAMP().SUB(jet.INTERVAL(90, jet.MINUTE)),
 			),
-			jet.OR(
-				tDispatchStatus.ID.IS_NULL(),
-				tDispatchStatus.ID.EQ(
-					jet.RawInt("SELECT MAX(`dispatchstatus`.`id`) FROM `fivenet_centrum_dispatches_status` AS `dispatchstatus` WHERE `dispatchstatus`.`dispatch_id` = `dispatch`.`id` AND `dispatchstatus`.`status` NOT IN (11, 12, 13)"),
-				),
+			tDispatchStatus.ID.EQ(
+				jet.RawInt("SELECT MAX(`dispatchstatus`.`id`) FROM `fivenet_centrum_dispatches_status` AS `dispatchstatus` WHERE `dispatchstatus`.`dispatch_id` = `dispatch`.`id`"),
+			),
+			tDispatchStatus.Status.NOT_IN(
+				jet.Int16(int16(centrum.StatusDispatch_STATUS_DISPATCH_COMPLETED)),
+				jet.Int16(int16(centrum.StatusDispatch_STATUS_DISPATCH_CANCELLED)),
+				jet.Int16(int16(centrum.StatusDispatch_STATUS_DISPATCH_ARCHIVED)),
 			),
 		)).
-		LIMIT(25)
+		ORDER_BY(
+			tDispatchStatus.DispatchID.DESC(),
+		).
+		LIMIT(1000)
 
 	var dest []*struct {
 		DispatchID uint64
@@ -415,7 +441,7 @@ func (s *Housekeeper) deduplicateDispatches(ctx context.Context) error {
 					}
 
 					closeByDsp := dest.(*centrum.Dispatch)
-					if closeByDsp.Anon {
+					if closeByDsp.Creator == nil || closeByDsp.Anon {
 						description += fmt.Sprintf("DSP-%d\n", closeByDsp.Id)
 					} else {
 						description += fmt.Sprintf("DSP-%d (%s, %s)\n", closeByDsp.Id, closeByDsp.Creator.Firstname, closeByDsp.Creator.Lastname)

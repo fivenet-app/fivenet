@@ -15,7 +15,7 @@ import (
 	"google.golang.org/protobuf/proto"
 )
 
-const LockTimeout = 3 * time.Second
+const LockTimeout = 1 * time.Second
 
 type protoMessage[T any] interface {
 	*T
