@@ -41,7 +41,7 @@ onBeforeMount(() => bmiCalculate());
                             type="text"
                             :placeholder="$t('components.bodycheckup.height')"
                             :label="$t('components.bodycheckup.height')"
-                            class="block w-full rounded-md border-0 py-1.5 bg-base-700 text-neutral placeholder:text-base-200 focus:ring-2 focus:ring-inset focus:ring-base-300 sm:text-sm sm:leading-6"
+                            class="block w-full rounded-md border-0 bg-base-700 py-1.5 text-neutral placeholder:text-base-200 focus:ring-2 focus:ring-inset focus:ring-base-300 sm:text-sm sm:leading-6"
                             @focusin="focusTablet(true)"
                             @focusout="focusTablet(false)"
                         />
@@ -66,7 +66,7 @@ onBeforeMount(() => bmiCalculate());
                             type="text"
                             :placeholder="$t('components.bodycheckup.mass')"
                             :label="$t('components.bodycheckup.mass')"
-                            class="block w-full rounded-md border-0 py-1.5 bg-base-700 text-neutral placeholder:text-base-200 focus:ring-2 focus:ring-inset focus:ring-base-300 sm:text-sm sm:leading-6"
+                            class="block w-full rounded-md border-0 bg-base-700 py-1.5 text-neutral placeholder:text-base-200 focus:ring-2 focus:ring-inset focus:ring-base-300 sm:text-sm sm:leading-6"
                             @focusin="focusTablet(true)"
                             @focusout="focusTablet(false)"
                         />

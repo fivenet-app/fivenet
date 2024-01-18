@@ -18,7 +18,7 @@ const { accessToken } = storeToRefs(authStore);
 
 <template>
     <HeroFull>
-        <ContentCenterWrapper class="max-w-2xl mx-auto text-center">
+        <ContentCenterWrapper class="mx-auto max-w-2xl text-center">
             <h1 class="text-5xl font-bold text-neutral">
                 {{ $t('pages.notfound.page_not_found') }}
             </h1>
@@ -32,7 +32,7 @@ const { accessToken } = storeToRefs(authStore);
             <NuxtLink
                 v-if="accessToken"
                 :to="{ name: 'overview' }"
-                class="rounded-md w-60 bg-primary-500 px-3.5 py-2.5 text-sm font-semibold text-neutral hover:bg-primary-400 focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-primary-500"
+                class="w-60 rounded-md bg-primary-500 px-3.5 py-2.5 text-sm font-semibold text-neutral hover:bg-primary-400 focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-primary-500"
             >
                 {{ $t('common.overview') }}
             </NuxtLink>

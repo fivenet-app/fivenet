@@ -39,20 +39,20 @@ watchDebounced(query.value, () => refresh(), { debounce: 600, maxWait: 1400 });
             <div class="sm:flex sm:items-center">
                 <div class="sm:flex-auto">
                     <form @submit.prevent="refresh()">
-                        <div class="flex flex-row gap-4 mx-auto">
-                            <div class="flex-1 form-control">
+                        <div class="mx-auto flex flex-row gap-4">
+                            <div class="form-control flex-1">
                                 <label for="searchName" class="block text-sm font-medium leading-6 text-neutral">
                                     {{ $t('common.search') }}
                                     {{ $t('common.colleague', 1) }}
                                 </label>
-                                <div class="relative flex items-center mt-2">
+                                <div class="relative mt-2 flex items-center">
                                     <input
                                         ref="searchNameInput"
                                         v-model="query.name"
                                         type="text"
                                         name="searchName"
                                         :placeholder="$t('common.name')"
-                                        class="block w-full rounded-md border-0 py-1.5 pr-14 bg-base-700 text-neutral placeholder:text-base-200 focus:ring-2 focus:ring-inset focus:ring-base-300 sm:text-sm sm:leading-6"
+                                        class="block w-full rounded-md border-0 bg-base-700 py-1.5 pr-14 text-neutral placeholder:text-base-200 focus:ring-2 focus:ring-inset focus:ring-base-300 sm:text-sm sm:leading-6"
                                         @focusin="focusTablet(true)"
                                         @focusout="focusTablet(false)"
                                     />
@@ -62,9 +62,9 @@ watchDebounced(query.value, () => refresh(), { debounce: 600, maxWait: 1400 });
                     </form>
                 </div>
             </div>
-            <div class="flow-root mt-2">
-                <div class="mx-0 -my-2 overflow-x-auto">
-                    <div class="inline-block min-w-full py-2 align-middle px-1">
+            <div class="mt-2 flow-root">
+                <div class="-my-2 mx-0 overflow-x-auto">
+                    <div class="inline-block min-w-full px-1 py-2 align-middle">
                         <DataPendingBlock v-if="pending" :message="$t('common.loading', [$t('common.colleague', 2)])" />
                         <DataErrorBlock
                             v-else-if="error"
@@ -86,13 +86,13 @@ watchDebounced(query.value, () => refresh(), { debounce: 600, maxWait: 1400 });
                                         >
                                             {{ $t('common.name') }}
                                         </th>
-                                        <th scope="col" class="py-3.5 px-2 text-left text-sm font-semibold text-neutral">
+                                        <th scope="col" class="px-2 py-3.5 text-left text-sm font-semibold text-neutral">
                                             {{ $t('common.rank', 1) }}
                                         </th>
-                                        <th scope="col" class="py-3.5 px-2 text-left text-sm font-semibold text-neutral">
+                                        <th scope="col" class="px-2 py-3.5 text-left text-sm font-semibold text-neutral">
                                             {{ $t('common.phone_number') }}
                                         </th>
-                                        <th scope="col" class="py-3.5 px-2 text-left text-sm font-semibold text-neutral">
+                                        <th scope="col" class="px-2 py-3.5 text-left text-sm font-semibold text-neutral">
                                             {{ $t('common.date_of_birth') }}
                                         </th>
                                     </tr>
@@ -108,13 +108,13 @@ watchDebounced(query.value, () => refresh(), { debounce: 600, maxWait: 1400 });
                                         >
                                             {{ $t('common.name') }}
                                         </th>
-                                        <th scope="col" class="py-3.5 px-2 text-left text-sm font-semibold text-neutral">
+                                        <th scope="col" class="px-2 py-3.5 text-left text-sm font-semibold text-neutral">
                                             {{ $t('common.rank', 1) }}
                                         </th>
-                                        <th scope="col" class="py-3.5 px-2 text-left text-sm font-semibold text-neutral">
+                                        <th scope="col" class="px-2 py-3.5 text-left text-sm font-semibold text-neutral">
                                             {{ $t('common.phone_number') }}
                                         </th>
-                                        <th scope="col" class="py-3.5 px-2 text-left text-sm font-semibold text-neutral">
+                                        <th scope="col" class="px-2 py-3.5 text-left text-sm font-semibold text-neutral">
                                             {{ $t('common.date_of_birth') }}
                                         </th>
                                     </tr>

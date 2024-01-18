@@ -100,7 +100,7 @@ function addToClipboard(): void {
             <ClipboardButton />
             <div class="py-2 pb-14">
                 <div class="flex flex-row items-center gap-3">
-                    <h3 class="text-xl font-bold text-neutral sm:text-4xl inline-flex lg:px-4">
+                    <h3 class="inline-flex text-xl font-bold text-neutral sm:text-4xl lg:px-4">
                         {{ user?.firstname }}, {{ user?.lastname }}
                     </h3>
                     <span
@@ -118,7 +118,7 @@ function addToClipboard(): void {
                 </div>
 
                 <TabGroup>
-                    <TabList class="border-b border-base-200 flex flex-row">
+                    <TabList class="flex flex-row border-b border-base-200">
                         <Tab
                             v-for="tab in tabs.filter((tab) => can(tab.permission))"
                             :key="tab.name"
@@ -130,7 +130,7 @@ function addToClipboard(): void {
                                     selected
                                         ? 'border-primary-400 text-primary-500'
                                         : 'border-transparent text-base-500 hover:border-base-300 hover:text-base-300',
-                                    'w-full justify-center group inline-flex items-center border-b-2 py-4 px-1 text-sm font-medium transition-colors',
+                                    'group inline-flex w-full items-center justify-center border-b-2 px-1 py-4 text-sm font-medium transition-colors',
                                 ]"
                                 :aria-current="selected ? 'page' : undefined"
                             >

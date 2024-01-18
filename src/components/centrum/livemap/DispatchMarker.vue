@@ -38,13 +38,13 @@ const dispatchClasses = computed(() => [
 <template>
     <LMarker :key="dispatch.id" :lat-lng="[dispatch.y, dispatch.x]" :name="dispatch.message" :z-index-offset="10">
         <LIcon :icon-anchor="iconAnchor" :popup-anchor="popupAnchor" :icon-size="[size, size]">
-            <div class="uppercase flex flex-col items-center">
+            <div class="flex flex-col items-center uppercase">
                 <span
-                    class="rounded-md bg-neutral text-black border-2 border-black/20 bg-clip-padding hover:bg-[#f4f4f4] focus:outline-none inset-0 whitespace-nowrap"
+                    class="inset-0 whitespace-nowrap rounded-md border-2 border-black/20 bg-neutral bg-clip-padding text-black hover:bg-[#f4f4f4] focus:outline-none"
                 >
                     DSP-{{ dispatch.id }}
                 </span>
-                <BellIcon class="w-full h-full" :class="dispatchClasses" />
+                <BellIcon class="h-full w-full" :class="dispatchClasses" />
             </div>
         </LIcon>
 

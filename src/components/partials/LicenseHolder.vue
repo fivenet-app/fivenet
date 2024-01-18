@@ -7,12 +7,12 @@ const { data: license, pending, error } = await useFetch(props.path);
 </script>
 
 <template>
-    <p v-if="pending || !license" class="text-black text-lg">Loading...</p>
-    <p v-else-if="error" class="text-black text-lg">Error loading: {{ error?.message }}</p>
+    <p v-if="pending || !license" class="text-lg text-black">Loading...</p>
+    <p v-else-if="error" class="text-lg text-black">Error loading: {{ error?.message }}</p>
     <code
         v-else-if="license"
         v-text="license"
-        class="max-w-full mt-2 p-4 block bg-neutral text-black whitespace-pre-line"
+        class="mt-2 block max-w-full whitespace-pre-line bg-neutral p-4 text-black"
     ></code>
-    <p v-else class="text-black text-lg">Unknown Error while loading license.</p>
+    <p v-else class="text-lg text-black">Unknown Error while loading license.</p>
 </template>

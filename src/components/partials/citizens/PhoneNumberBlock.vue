@@ -51,7 +51,7 @@ async function doCall(): Promise<void> {
             <button
                 v-if="showIcon === undefined || showIcon"
                 type="button"
-                class="mr-1 flex-initial inline-flex items-center text-primary-500 hover:text-primary-400"
+                class="mr-1 inline-flex flex-initial items-center text-primary-500 hover:text-primary-400"
                 @click="doCall"
             >
                 <PhoneIcon class="h-auto" :class="width" aria-hidden="true" />

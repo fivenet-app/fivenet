@@ -42,10 +42,10 @@ defineProps<{
             </PopoverButton>
 
             <PopoverPanel
-                class="absolute z-5 w-64 max-w-[18rem] min-w-fit text-sm text-gray-400 transition-opacity bg-gray-800 border border-gray-600 rounded-lg shadow-sm"
+                class="absolute z-5 w-64 min-w-fit max-w-[18rem] rounded-lg border border-gray-600 bg-gray-800 text-sm text-gray-400 shadow-sm transition-opacity"
             >
                 <div class="p-3">
-                    <div class="flex items-center gap-2 mb-2">
+                    <div class="mb-2 flex items-center gap-2">
                         <NuxtLink
                             :to="{ name: 'citizens-id', params: { id: user.userId } }"
                             class="inline-flex items-center text-primary-500 hover:text-primary-400"

@@ -9,11 +9,13 @@ import (
 
 	"github.com/galexrt/fivenet/gen/go/proto/resources/permissions"
 	"github.com/galexrt/fivenet/gen/go/proto/resources/users"
+	"github.com/galexrt/fivenet/pkg/perms/collections"
 	"github.com/galexrt/fivenet/pkg/perms/helpers"
 	"github.com/galexrt/fivenet/query/fivenet/model"
 	"github.com/galexrt/fivenet/query/fivenet/table"
 	jet "github.com/go-jet/jet/v2/mysql"
 	"github.com/go-jet/jet/v2/qrm"
+	"go.uber.org/zap"
 )
 
 var (
@@ -317,6 +319,7 @@ func (p *Perms) applyJobPermissions(ctx context.Context, job string) error {
 		}
 
 		if len(jps) == 0 {
+			p.logger.Debug("removing all job permissions from role due to job perms change", zap.String("job", job))
 			pIds := []uint64{}
 			for _, p := range ps {
 				pIds = append(pIds, p.Id)
@@ -338,28 +341,19 @@ func (p *Perms) applyJobPermissions(ctx context.Context, job string) error {
 		}
 
 		if len(toRemove) > 0 {
+			p.logger.Debug("removing permissions from role due to job perms change", zap.String("job", job), zap.Int("perms_length", len(toRemove)))
 			if p.RemovePermissionsFromRole(ctx, role.ID, toRemove...); err != nil {
 				return err
 			}
 		}
 	}
 
-	return p.applyJobPermissionsToAttrs(ctx, job)
+	return p.applyJobPermissionsToAttrs(ctx, roles, jps)
 }
 
-func (p *Perms) applyJobPermissionsToAttrs(ctx context.Context, job string) error {
-	roles, err := p.GetJobRoles(ctx, job)
-	if err != nil {
-		return err
-	}
-
+func (p *Perms) applyJobPermissionsToAttrs(ctx context.Context, roles collections.Roles, jps []*permissions.Permission) error {
 	if len(roles) == 0 {
 		return nil
-	}
-
-	jps, err := p.GetJobPermissions(ctx, job)
-	if err != nil {
-		return err
 	}
 
 	for _, role := range roles {
@@ -373,6 +367,7 @@ func (p *Perms) applyJobPermissionsToAttrs(ctx context.Context, job string) erro
 		}
 
 		if len(jps) == 0 {
+			p.logger.Debug("removing all attributes from role due to job perms change", zap.String("job", role.Job))
 			if err := p.RemoveAttributesFromRole(ctx, role.ID, attrs...); err != nil {
 				return err
 			}
@@ -387,7 +382,10 @@ func (p *Perms) applyJobPermissionsToAttrs(ctx context.Context, job string) erro
 				return in.Id == attr.PermissionId
 			}) {
 				if _, changed := attr.Value.Check(permissions.AttributeTypes(attr.Type), attr.ValidValues, maxValues); changed {
+					p.logger.Debug("attribute changed on role due to job perms change", zap.String("job", role.Job), zap.Uint64("attr_id", attr.AttrId))
 					toUpdate = append(toUpdate, attr)
+				} else {
+					p.logger.Debug("attribute not changed on role due to job perms change", zap.String("job", role.Job), zap.Uint64("attr_id", attr.AttrId))
 				}
 			} else {
 				toRemove = append(toRemove, attr)
@@ -395,12 +393,14 @@ func (p *Perms) applyJobPermissionsToAttrs(ctx context.Context, job string) erro
 		}
 
 		if len(toRemove) > 0 {
+			p.logger.Debug("removing attribute from role due to job perms change", zap.String("job", role.Job), zap.Int("perms_length", len(toRemove)))
 			if p.RemoveAttributesFromRole(ctx, role.ID, toRemove...); err != nil {
 				return err
 			}
 		}
 
 		if len(toUpdate) > 0 {
+			p.logger.Debug("updating attribute on role due to job perms change", zap.String("job", role.Job), zap.Int("perms_length", len(toUpdate)))
 			if p.AddOrUpdateAttributesToRole(ctx, role.Job, role.Grade, role.ID, toUpdate...); err != nil {
 				return err
 			}

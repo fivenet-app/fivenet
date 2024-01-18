@@ -128,7 +128,7 @@ const onSubmitThrottle = useThrottleFn(async (e) => {
                                         <div class="flex flex-1 flex-col justify-between">
                                             <div class="divide-y divide-gray-200 px-4 sm:px-6">
                                                 <div class="mt-1">
-                                                    <dl class="border-b border-neutral/10 divide-y divide-neutral/10">
+                                                    <dl class="divide-y divide-neutral/10 border-b border-neutral/10">
                                                         <div class="px-4 py-3 sm:grid sm:grid-cols-3 sm:gap-4 sm:px-0">
                                                             <dt class="text-sm font-medium leading-6 text-neutral">
                                                                 <label
@@ -144,7 +144,7 @@ const onSubmitThrottle = useThrottleFn(async (e) => {
                                                                 <VeeField
                                                                     type="text"
                                                                     name="message"
-                                                                    class="block w-full rounded-md border-0 py-1.5 bg-base-700 text-neutral placeholder:text-base-200 focus:ring-2 focus:ring-inset focus:ring-base-300 sm:text-sm sm:leading-6"
+                                                                    class="block w-full rounded-md border-0 bg-base-700 py-1.5 text-neutral placeholder:text-base-200 focus:ring-2 focus:ring-inset focus:ring-base-300 sm:text-sm sm:leading-6"
                                                                     :placeholder="$t('common.message')"
                                                                     :label="$t('common.message')"
                                                                     @focusin="focusTablet(true)"
@@ -172,7 +172,7 @@ const onSubmitThrottle = useThrottleFn(async (e) => {
                                                                 <VeeField
                                                                     type="text"
                                                                     name="description"
-                                                                    class="block w-full rounded-md border-0 py-1.5 bg-base-700 text-neutral placeholder:text-base-200 focus:ring-2 focus:ring-inset focus:ring-base-300 sm:text-sm sm:leading-6"
+                                                                    class="block w-full rounded-md border-0 bg-base-700 py-1.5 text-neutral placeholder:text-base-200 focus:ring-2 focus:ring-inset focus:ring-base-300 sm:text-sm sm:leading-6"
                                                                     :placeholder="$t('common.description')"
                                                                     :label="$t('common.description')"
                                                                     @focusin="focusTablet(true)"
@@ -201,7 +201,7 @@ const onSubmitThrottle = useThrottleFn(async (e) => {
                                                                     <VeeField
                                                                         type="checkbox"
                                                                         name="anon"
-                                                                        class="h-4 w-4 rounded border-gray-300 text-primary-600 focus:ring-primary-600 h-5 w-5"
+                                                                        class="h-4 h-5 w-4 w-5 rounded border-gray-300 text-primary-600 focus:ring-primary-600"
                                                                         :placeholder="$t('common.anon')"
                                                                         :label="$t('common.anon')"
                                                                         :value="true"
@@ -220,10 +220,10 @@ const onSubmitThrottle = useThrottleFn(async (e) => {
                                         </div>
                                     </div>
                                     <div class="flex flex-shrink-0 justify-end px-4 py-4">
-                                        <span class="isolate inline-flex rounded-md shadow-sm pr-4 w-full">
+                                        <span class="isolate inline-flex w-full rounded-md pr-4 shadow-sm">
                                             <button
                                                 type="submit"
-                                                class="flex items-center w-full relative inline-flex rounded-l-md py-2.5 px-3.5 text-sm font-semibold text-neutral"
+                                                class="relative flex inline-flex w-full items-center rounded-l-md px-3.5 py-2.5 text-sm font-semibold text-neutral"
                                                 :disabled="!meta.valid || !canSubmit"
                                                 :class="[
                                                     !meta.valid || !canSubmit
@@ -232,13 +232,13 @@ const onSubmitThrottle = useThrottleFn(async (e) => {
                                                 ]"
                                             >
                                                 <template v-if="!canSubmit">
-                                                    <LoadingIcon class="animate-spin h-5 w-5 mr-2" />
+                                                    <LoadingIcon class="mr-2 h-5 w-5 animate-spin" />
                                                 </template>
                                                 {{ $t('common.create') }}
                                             </button>
                                             <button
                                                 type="button"
-                                                class="w-full relative -ml-px inline-flex items-center rounded-r-md bg-neutral px-3 py-2 text-sm font-semibold text-gray-900 hover:text-gray-900 ring-1 ring-inset ring-gray-300 hover:bg-gray-50"
+                                                class="relative -ml-px inline-flex w-full items-center rounded-r-md bg-neutral px-3 py-2 text-sm font-semibold text-gray-900 ring-1 ring-inset ring-gray-300 hover:bg-gray-50 hover:text-gray-900"
                                                 @click="$emit('close')"
                                             >
                                                 {{ $t('common.close', 1) }}

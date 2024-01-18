@@ -77,7 +77,7 @@ const pageNumber = ref(currentPage.value.toString());
 </script>
 
 <template>
-    <nav class="flex items-center justify-between px-4 py-3 border-t sm:px-6" aria-label="Pagination">
+    <nav class="flex items-center justify-between border-t px-4 py-3 sm:px-6" aria-label="Pagination">
         <div class="hidden sm:block">
             <I18nT keypath="components.partials.table_pagination.page_count" tag="p" class="text-sm text-gray-300">
                 <template #current>
@@ -92,11 +92,11 @@ const pageNumber = ref(currentPage.value.toString());
                 </template>
             </I18nT>
         </div>
-        <div class="flex justify-between flex-1 sm:justify-end">
+        <div class="flex flex-1 justify-between sm:justify-end">
             <button
                 v-if="refresh !== undefined"
                 type="button"
-                class="bg-primary-500 hover:bg-primary-400 focus-visible:outline-primary-500 relative inline-flex items-center px-3 py-2 ml-3 text-sm font-semibold rounded-md cursor-pointer text-neutral focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2"
+                class="relative ml-3 inline-flex cursor-pointer items-center rounded-md bg-primary-500 px-3 py-2 text-sm font-semibold text-neutral hover:bg-primary-400 focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-primary-500"
                 :disabled="!canSubmit"
                 :class="
                     !canSubmit
@@ -116,7 +116,7 @@ const pageNumber = ref(currentPage.value.toString());
                         offset <= 0n
                             ? 'disabled bg-base-500 hover:bg-base-400 focus-visible:outline-base-500'
                             : 'bg-primary-500 hover:bg-primary-400 focus-visible:outline-primary-500',
-                        'relative inline-flex items-center px-3 py-2 ml-3 text-sm font-semibold rounded-l-md cursor-pointer text-neutral focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2',
+                        'relative ml-3 inline-flex cursor-pointer items-center rounded-l-md px-3 py-2 text-sm font-semibold text-neutral focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2',
                     ]"
                     @click="$emit('offsetChange', calculateOffset(parseInt((currentPage - 1n).toString())))"
                 >
@@ -127,7 +127,7 @@ const pageNumber = ref(currentPage.value.toString());
                     v-for="page in beforePages"
                     :key="page"
                     type="button"
-                    class="relative inline-flex items-center px-4 py-2 text-sm font-semibold text-neutral bg-accent-500 hover:bg-base-400 focus:z-20 focus:outline-offset-0"
+                    class="relative inline-flex items-center bg-accent-500 px-4 py-2 text-sm font-semibold text-neutral hover:bg-base-400 focus:z-20 focus:outline-offset-0"
                     @click="$emit('offsetChange', calculateOffset(page))"
                 >
                     {{ page }}
@@ -135,7 +135,7 @@ const pageNumber = ref(currentPage.value.toString());
 
                 <button
                     type="button"
-                    class="relative inline-flex items-center px-4 py-2 text-sm font-semibold text-neutral bg-primary-500 hover:bg-primary-400 focus-visible:outline-primary-500 underline"
+                    class="relative inline-flex items-center bg-primary-500 px-4 py-2 text-sm font-semibold text-neutral underline hover:bg-primary-400 focus-visible:outline-primary-500"
                     disabled
                 >
                     {{ currentPage }}
@@ -145,7 +145,7 @@ const pageNumber = ref(currentPage.value.toString());
                     v-for="page in afterPages"
                     :key="page"
                     type="button"
-                    class="relative inline-flex items-center px-4 py-2 text-sm font-semibold text-neutral bg-accent-500 hover:bg-base-400 focus:z-20 focus:outline-offset-0"
+                    class="relative inline-flex items-center bg-accent-500 px-4 py-2 text-sm font-semibold text-neutral hover:bg-base-400 focus:z-20 focus:outline-offset-0"
                     @click="$emit('offsetChange', calculateOffset(page))"
                 >
                     {{ page }}
@@ -154,7 +154,7 @@ const pageNumber = ref(currentPage.value.toString());
                 <Popover v-if="totalPages > 4n" class="relative">
                     <Float portal placement="top-start" :offset="12">
                         <PopoverButton
-                            class="relative inline-flex items-center px-4 py-2 text-sm font-semibold text-neutral bg-accent-500 hover:bg-base-400 focus:z-20 focus:outline-offset-0"
+                            class="relative inline-flex items-center bg-accent-500 px-4 py-2 text-sm font-semibold text-neutral hover:bg-base-400 focus:z-20 focus:outline-offset-0"
                             @click="pageNumber = ''"
                         >
                             ...
@@ -162,7 +162,7 @@ const pageNumber = ref(currentPage.value.toString());
 
                         <PopoverPanel
                             focus
-                            class="absolute z-5 w-24 max-w-24 min-w-fit text-sm text-gray-400 transition-opacity bg-gray-800 border border-gray-600 rounded-lg shadow-sm"
+                            class="absolute z-5 w-24 min-w-fit max-w-24 rounded-lg border border-gray-600 bg-gray-800 text-sm text-gray-400 shadow-sm transition-opacity"
                         >
                             <div class="p-3">
                                 <form @submit.prevent="$emit('offsetChange', calculateOffset(parseInt(pageNumber)))">
@@ -171,7 +171,7 @@ const pageNumber = ref(currentPage.value.toString());
                                         type="number"
                                         min="1"
                                         :max="parseInt(totalPages.toString())"
-                                        class="remove-arrow block w-full rounded-md border-0 py-1.5 bg-base-700 text-neutral placeholder:text-base-200 focus:ring-2 focus:ring-inset focus:ring-base-300 sm:text-sm sm:leading-6"
+                                        class="remove-arrow block w-full rounded-md border-0 bg-base-700 py-1.5 text-neutral placeholder:text-base-200 focus:ring-2 focus:ring-inset focus:ring-base-300 sm:text-sm sm:leading-6"
                                         name="page_number"
                                         :placeholder="$t('common.page')"
                                     />
@@ -184,7 +184,7 @@ const pageNumber = ref(currentPage.value.toString());
                 <button
                     v-if="currentPage <= totalPages - 2n"
                     type="button"
-                    class="relative inline-flex items-center px-4 py-2 text-sm font-semibold text-neutral bg-accent-500 hover:bg-base-400 focus:z-20 focus:outline-offset-0"
+                    class="relative inline-flex items-center bg-accent-500 px-4 py-2 text-sm font-semibold text-neutral hover:bg-base-400 focus:z-20 focus:outline-offset-0"
                     @click="$emit('offsetChange', calculateOffset(parseInt(totalPages.toString())))"
                 >
                     {{ totalPages }}
@@ -197,7 +197,7 @@ const pageNumber = ref(currentPage.value.toString());
                         total - end <= 0n
                             ? 'disabled bg-base-500 hover:bg-base-400 focus-visible:outline-base-500'
                             : 'bg-primary-500 hover:bg-primary-400 focus-visible:outline-primary-500',
-                        'relative inline-flex items-center px-3 py-2 ml-3 text-sm font-semibold rounded-r-md cursor-pointer text-neutral focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2',
+                        'relative ml-3 inline-flex cursor-pointer items-center rounded-r-md px-3 py-2 text-sm font-semibold text-neutral focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2',
                     ]"
                     @click="$emit('offsetChange', end)"
                 >

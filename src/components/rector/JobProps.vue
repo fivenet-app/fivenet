@@ -82,7 +82,7 @@ const onSubmitThrottle = useThrottleFn(async (_) => {
 
 <template>
     <div class="p-2">
-        <div class="max-w-5xl mx-auto">
+        <div class="mx-auto max-w-5xl">
             <DataPendingBlock v-if="pending" :message="$t('common.loading', [`${$t('common.job', 1)} ${$t('common.prop')}`])" />
             <DataErrorBlock
                 v-else-if="error"
@@ -96,7 +96,7 @@ const onSubmitThrottle = useThrottleFn(async (_) => {
             />
 
             <template v-else>
-                <div class="overflow-hidden bg-base-800 shadow sm:rounded-lg text-neutral">
+                <div class="overflow-hidden bg-base-800 text-neutral shadow sm:rounded-lg">
                     <div class="px-4 py-5 sm:px-6">
                         <h3 class="text-base font-semibold leading-6">
                             {{ $t('components.rector.job_props.job_properties') }}
@@ -136,7 +136,7 @@ const onSubmitThrottle = useThrottleFn(async (_) => {
                                     <input
                                         v-model="jobProps.radioFrequency"
                                         type="text"
-                                        class="block w-full rounded-md border-0 py-1.5 bg-base-700 text-neutral placeholder:text-base-200 focus:ring-2 focus:ring-inset focus:ring-base-300 sm:text-sm sm:leading-6"
+                                        class="block w-full rounded-md border-0 bg-base-700 py-1.5 text-neutral placeholder:text-base-200 focus:ring-2 focus:ring-inset focus:ring-base-300 sm:text-sm sm:leading-6"
                                         :placeholder="$t('common.radio_frequency')"
                                         :label="$t('common.radio_frequency')"
                                         maxlength="6"
@@ -216,7 +216,7 @@ const onSubmitThrottle = useThrottleFn(async (_) => {
                                     <input
                                         v-model="jobProps.discordGuildId"
                                         type="text"
-                                        class="block w-full rounded-md border-0 py-1.5 bg-base-700 text-neutral placeholder:text-base-200 focus:ring-2 focus:ring-inset focus:ring-base-300 sm:text-sm sm:leading-6"
+                                        class="block w-full rounded-md border-0 bg-base-700 py-1.5 text-neutral placeholder:text-base-200 focus:ring-2 focus:ring-inset focus:ring-base-300 sm:text-sm sm:leading-6"
                                         :class="appConfig.discord.botInviteURL === undefined ? 'disabled' : ''"
                                         :disabled="appConfig.discord.botInviteURL === undefined"
                                         :placeholder="$t('components.rector.job_props.discord_guild_id')"
@@ -229,7 +229,7 @@ const onSubmitThrottle = useThrottleFn(async (_) => {
                                         v-if="appConfig.discord.botInviteURL !== undefined"
                                         :to="appConfig.discord.botInviteURL"
                                         :external="true"
-                                        class="mt-2 flex justify-center w-full px-3 py-2 text-sm font-semibold transition-colors rounded-md text-neutral focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-base-300 bg-primary-500 hover:bg-primary-400 focus-visible:outline-primary-500"
+                                        class="mt-2 flex w-full justify-center rounded-md bg-primary-500 px-3 py-2 text-sm font-semibold text-neutral transition-colors hover:bg-primary-400 focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-base-300 focus-visible:outline-primary-500"
                                     >
                                         {{ $t('components.rector.job_props.invite_bot') }}
                                     </NuxtLink>
@@ -275,12 +275,12 @@ const onSubmitThrottle = useThrottleFn(async (_) => {
                                             <Disclosure
                                                 v-slot="{ open }"
                                                 as="div"
-                                                class="text-neutral hover:border-neutral/70 border-neutral/20"
+                                                class="border-neutral/20 text-neutral hover:border-neutral/70"
                                             >
                                                 <DisclosureButton
                                                     :class="[
                                                         open ? 'rounded-t-lg border-b-0' : 'rounded-lg',
-                                                        'flex w-full items-start justify-between text-left border-2 p-2 border-inherit transition-colors',
+                                                        'flex w-full items-start justify-between border-2 border-inherit p-2 text-left transition-colors',
                                                     ]"
                                                 >
                                                     <span class="text-base font-semibold leading-7">
@@ -294,7 +294,7 @@ const onSubmitThrottle = useThrottleFn(async (_) => {
                                                     </span>
                                                 </DisclosureButton>
                                                 <DisclosurePanel
-                                                    class="px-4 pb-2 border-2 border-t-0 rounded-b-lg transition-colors border-inherit"
+                                                    class="rounded-b-lg border-2 border-t-0 border-inherit px-4 pb-2 transition-colors"
                                                 >
                                                     <SwitchGroup
                                                         v-if="jobProps.discordSyncSettings.userInfoSyncSettings !== undefined"
@@ -354,7 +354,7 @@ const onSubmitThrottle = useThrottleFn(async (_) => {
                                                             "
                                                             type="text"
                                                             name="employeeRoleFormat"
-                                                            class="block w-full rounded-md border-0 py-1.5 bg-base-700 text-neutral placeholder:text-base-200 focus:ring-2 focus:ring-inset focus:ring-base-300 sm:text-sm sm:leading-6"
+                                                            class="block w-full rounded-md border-0 bg-base-700 py-1.5 text-neutral placeholder:text-base-200 focus:ring-2 focus:ring-inset focus:ring-base-300 sm:text-sm sm:leading-6"
                                                             :placeholder="
                                                                 $t(
                                                                     'components.rector.job_props.user_info_sync_settings.employee_role_format',
@@ -384,7 +384,7 @@ const onSubmitThrottle = useThrottleFn(async (_) => {
                                 <dd class="mt-1 text-sm sm:col-span-2 sm:mt-0">
                                     <button
                                         type="button"
-                                        class="flex justify-center w-full px-3 py-2 text-sm font-semibold transition-colors rounded-md text-neutral focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2"
+                                        class="flex w-full justify-center rounded-md px-3 py-2 text-sm font-semibold text-neutral transition-colors focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2"
                                         :class="[
                                             !canSubmit
                                                 ? 'disabled bg-base-500 hover:bg-base-400 focus-visible:outline-base-500'
@@ -394,7 +394,7 @@ const onSubmitThrottle = useThrottleFn(async (_) => {
                                         @click="onSubmitThrottle"
                                     >
                                         <template v-if="!canSubmit">
-                                            <LoadingIcon class="animate-spin h-5 w-5 mr-2" />
+                                            <LoadingIcon class="mr-2 h-5 w-5 animate-spin" />
                                         </template>
                                         {{ $t('common.save', 1) }}
                                     </button>

@@ -89,7 +89,7 @@ async function applySelectedMarkerCentering(): Promise<void> {
 </script>
 
 <template>
-    <div class="relative w-full h-full z-0">
+    <div class="relative z-0 h-full w-full">
         <CreateOrUpdateDispatchModal
             v-if="can('CentrumService.CreateDispatch')"
             :open="openCreateDispatch"
@@ -103,7 +103,7 @@ async function applySelectedMarkerCentering(): Promise<void> {
 
         <div
             v-if="error !== undefined || (abort === undefined && !restarting)"
-            class="absolute inset-0 flex justify-center items-center z-20 bg-gray-600/70"
+            class="absolute inset-0 z-20 flex items-center justify-center bg-gray-600/70"
         >
             <DataErrorBlock v-if="error" :title="$t('components.livemap.failed_datastream')" :retry="startStream" />
             <DataPendingBlock

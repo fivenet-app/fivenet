@@ -36,9 +36,9 @@ onMounted(async () => {
 </script>
 
 <template>
-    <div class="h-full justify-between flex flex-col">
+    <div class="flex h-full flex-col justify-between">
         <HeroFull>
-            <ContentCenterWrapper class="max-w-2xl mx-auto text-center">
+            <ContentCenterWrapper class="mx-auto max-w-2xl text-center">
                 <h2 class="text-4xl font-bold tracking-tight text-neutral sm:text-6xl">
                     {{ $t('components.auth.logout.header') }}
                 </h2>

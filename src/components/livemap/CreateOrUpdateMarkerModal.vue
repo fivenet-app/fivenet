@@ -189,7 +189,7 @@ const onSubmitThrottle = useThrottleFn(async (e) => {
                                         <div class="flex flex-1 flex-col justify-between">
                                             <div class="divide-y divide-gray-200 px-4 sm:px-6">
                                                 <div class="mt-1">
-                                                    <dl class="border-b border-neutral/10 divide-y divide-neutral/10">
+                                                    <dl class="divide-y divide-neutral/10 border-b border-neutral/10">
                                                         <div class="px-4 py-3 sm:grid sm:grid-cols-3 sm:gap-4 sm:px-0">
                                                             <dt class="text-sm font-medium leading-6 text-neutral">
                                                                 <label
@@ -205,7 +205,7 @@ const onSubmitThrottle = useThrottleFn(async (e) => {
                                                                 <VeeField
                                                                     type="text"
                                                                     name="name"
-                                                                    class="block w-full rounded-md border-0 py-1.5 bg-base-700 text-neutral placeholder:text-base-200 focus:ring-2 focus:ring-inset focus:ring-base-300 sm:text-sm sm:leading-6"
+                                                                    class="block w-full rounded-md border-0 bg-base-700 py-1.5 text-neutral placeholder:text-base-200 focus:ring-2 focus:ring-inset focus:ring-base-300 sm:text-sm sm:leading-6"
                                                                     :placeholder="$t('common.name')"
                                                                     :label="$t('common.name')"
                                                                     @focusin="focusTablet(true)"
@@ -233,7 +233,7 @@ const onSubmitThrottle = useThrottleFn(async (e) => {
                                                                 <VeeField
                                                                     type="text"
                                                                     name="description"
-                                                                    class="block w-full rounded-md border-0 py-1.5 bg-base-700 text-neutral placeholder:text-base-200 focus:ring-2 focus:ring-inset focus:ring-base-300 sm:text-sm sm:leading-6"
+                                                                    class="block w-full rounded-md border-0 bg-base-700 py-1.5 text-neutral placeholder:text-base-200 focus:ring-2 focus:ring-inset focus:ring-base-300 sm:text-sm sm:leading-6"
                                                                     :placeholder="$t('common.description')"
                                                                     :label="$t('common.description')"
                                                                     @focusin="focusTablet(true)"
@@ -287,7 +287,7 @@ const onSubmitThrottle = useThrottleFn(async (e) => {
                                                                 >
                                                                     <select
                                                                         v-bind="field"
-                                                                        class="block w-full rounded-md border-0 py-1.5 bg-base-700 text-neutral placeholder:text-base-200 focus:ring-2 focus:ring-inset focus:ring-base-300 sm:text-sm sm:leading-6"
+                                                                        class="block w-full rounded-md border-0 bg-base-700 py-1.5 text-neutral placeholder:text-base-200 focus:ring-2 focus:ring-inset focus:ring-base-300 sm:text-sm sm:leading-6"
                                                                     >
                                                                         <option
                                                                             v-for="mtype in markerTypes"
@@ -334,7 +334,7 @@ const onSubmitThrottle = useThrottleFn(async (e) => {
                                                                     name="circleRadius"
                                                                     min="5"
                                                                     max="250"
-                                                                    class="block w-full rounded-md border-0 py-1.5 bg-base-700 text-neutral placeholder:text-base-200 focus:ring-2 focus:ring-inset focus:ring-base-300 sm:text-sm sm:leading-6"
+                                                                    class="block w-full rounded-md border-0 bg-base-700 py-1.5 text-neutral placeholder:text-base-200 focus:ring-2 focus:ring-inset focus:ring-base-300 sm:text-sm sm:leading-6"
                                                                     :placeholder="$t('common.radius')"
                                                                     :label="$t('common.radius')"
                                                                 />
@@ -369,15 +369,15 @@ const onSubmitThrottle = useThrottleFn(async (e) => {
                                                                     <Listbox v-model="selectedIcon" as="div" class="mt-2">
                                                                         <div class="relative">
                                                                             <ListboxButton
-                                                                                class="block pl-3 text-left w-full rounded-md border-0 py-1.5 bg-base-700 text-neutral placeholder:text-base-200 focus:ring-2 focus:ring-inset focus:ring-base-300 sm:text-sm sm:leading-6"
+                                                                                class="block w-full rounded-md border-0 bg-base-700 py-1.5 pl-3 text-left text-neutral placeholder:text-base-200 focus:ring-2 focus:ring-inset focus:ring-base-300 sm:text-sm sm:leading-6"
                                                                             >
                                                                                 <span
-                                                                                    class="block truncate inline-flex items-center"
+                                                                                    class="block inline-flex items-center truncate"
                                                                                 >
                                                                                     <component
                                                                                         :is="selectedIcon"
                                                                                         v-if="selectedIcon"
-                                                                                        class="w-5 h-5 mr-1"
+                                                                                        class="mr-1 h-5 w-5"
                                                                                         :style="{ color: color }"
                                                                                     />
                                                                                     {{
@@ -388,10 +388,10 @@ const onSubmitThrottle = useThrottleFn(async (e) => {
                                                                                     }}
                                                                                 </span>
                                                                                 <span
-                                                                                    class="absolute inset-y-0 right-0 flex items-center pr-2 pointer-events-none"
+                                                                                    class="pointer-events-none absolute inset-y-0 right-0 flex items-center pr-2"
                                                                                 >
                                                                                     <ChevronDownIcon
-                                                                                        class="w-5 h-5 text-gray-400"
+                                                                                        class="h-5 w-5 text-gray-400"
                                                                                         aria-hidden="true"
                                                                                     />
                                                                                 </span>
@@ -403,7 +403,7 @@ const onSubmitThrottle = useThrottleFn(async (e) => {
                                                                                 leave-to-class="opacity-0"
                                                                             >
                                                                                 <ListboxOptions
-                                                                                    class="absolute z-10 w-full py-1 mt-1 overflow-auto text-base rounded-md bg-base-700 max-h-44 sm:text-sm"
+                                                                                    class="absolute z-10 mt-1 max-h-44 w-full overflow-auto rounded-md bg-base-700 py-1 text-base sm:text-sm"
                                                                                 >
                                                                                     <ListboxOption
                                                                                         v-for="icon in markerIcons"
@@ -415,7 +415,7 @@ const onSubmitThrottle = useThrottleFn(async (e) => {
                                                                                         <li
                                                                                             :class="[
                                                                                                 active ? 'bg-primary-500' : '',
-                                                                                                'text-neutral relative cursor-default select-none py-2 pl-8 pr-4',
+                                                                                                'relative cursor-default select-none py-2 pl-8 pr-4 text-neutral',
                                                                                             ]"
                                                                                         >
                                                                                             <span
@@ -423,12 +423,12 @@ const onSubmitThrottle = useThrottleFn(async (e) => {
                                                                                                     selected
                                                                                                         ? 'font-semibold'
                                                                                                         : 'font-normal',
-                                                                                                    'block truncate inline-flex items-center',
+                                                                                                    'block inline-flex items-center truncate',
                                                                                                 ]"
                                                                                             >
                                                                                                 <component
                                                                                                     :is="icon"
-                                                                                                    class="w-5 h-5 mr-1"
+                                                                                                    class="mr-1 h-5 w-5"
                                                                                                 />
                                                                                                 {{
                                                                                                     icon.name.replace(
@@ -448,7 +448,7 @@ const onSubmitThrottle = useThrottleFn(async (e) => {
                                                                                                 ]"
                                                                                             >
                                                                                                 <CheckIcon
-                                                                                                    class="w-5 h-5"
+                                                                                                    class="h-5 w-5"
                                                                                                     aria-hidden="true"
                                                                                                 />
                                                                                             </span>
@@ -472,10 +472,10 @@ const onSubmitThrottle = useThrottleFn(async (e) => {
                                         </div>
                                     </div>
                                     <div class="flex flex-shrink-0 justify-end px-4 py-4">
-                                        <span class="isolate inline-flex rounded-md shadow-sm pr-4 w-full">
+                                        <span class="isolate inline-flex w-full rounded-md pr-4 shadow-sm">
                                             <button
                                                 type="submit"
-                                                class="flex justify-center w-full relative rounded-l-md py-2.5 px-3.5 text-sm font-semibold text-neutral"
+                                                class="relative flex w-full justify-center rounded-l-md px-3.5 py-2.5 text-sm font-semibold text-neutral"
                                                 :disabled="!meta.valid || !canSubmit"
                                                 :class="[
                                                     !meta.valid || !canSubmit
@@ -484,13 +484,13 @@ const onSubmitThrottle = useThrottleFn(async (e) => {
                                                 ]"
                                             >
                                                 <template v-if="!canSubmit">
-                                                    <LoadingIcon class="animate-spin h-5 w-5 mr-2" />
+                                                    <LoadingIcon class="mr-2 h-5 w-5 animate-spin" />
                                                 </template>
                                                 {{ $t('common.create') }}
                                             </button>
                                             <button
                                                 type="button"
-                                                class="w-full relative -ml-px inline-flex items-center rounded-r-md bg-neutral px-3 py-2 text-sm font-semibold text-gray-900 hover:text-gray-900 ring-1 ring-inset ring-gray-300 hover:bg-gray-50"
+                                                class="relative -ml-px inline-flex w-full items-center rounded-r-md bg-neutral px-3 py-2 text-sm font-semibold text-gray-900 ring-1 ring-inset ring-gray-300 hover:bg-gray-50 hover:text-gray-900"
                                                 @click="$emit('close')"
                                             >
                                                 {{ $t('common.close', 1) }}

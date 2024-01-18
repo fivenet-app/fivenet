@@ -27,7 +27,7 @@ onBeforeUnmount(() => {
 </script>
 
 <template>
-    <div class="p-4 rounded-md bg-error-100 max-w-md mx-auto">
+    <div class="mx-auto max-w-md rounded-md bg-error-100 p-4">
         <div class="flex">
             <div class="flex-shrink-0">
                 <CloseCircleIcon class="h-5 w-5 text-error-400" aria-hidden="true" />
@@ -45,18 +45,18 @@ onBeforeUnmount(() => {
                     <div class="-mx-2 -my-1.5 flex">
                         <button
                             type="button"
-                            class="flex justify-center focus-visible:outline-error-500 rounded-md px-2 py-1.5 text-sm font-medium focus:outline-none focus:ring-2 focus:ring-error-600 focus:ring-offset-2"
+                            class="flex justify-center rounded-md px-2 py-1.5 text-sm font-medium focus:outline-none focus:ring-2 focus:ring-error-600 focus:ring-offset-2 focus-visible:outline-error-500"
                             :disabled="disabled"
                             :class="[
                                 disabled
-                                    ? 'disabled text-gray-200 bg-base-500 hover:bg-base-400 focus-visible:outline-base-500'
-                                    : 'text-error-800 bg-error-200 hover:bg-primary-400 hover:bg-error-300',
+                                    ? 'disabled bg-base-500 text-gray-200 hover:bg-base-400 focus-visible:outline-base-500'
+                                    : 'bg-error-200 text-error-800 hover:bg-error-300 hover:bg-primary-400',
                             ]"
                             @click="retry()"
                         >
                             {{ retryMessage ?? $t('common.retry') }}
-                            <RefreshIcon v-if="timeout === undefined" class="h-5 w-5 ml-2" />
-                            <CancelIcon v-else class="h-5 w-5 ml-2" />
+                            <RefreshIcon v-if="timeout === undefined" class="ml-2 h-5 w-5" />
+                            <CancelIcon v-else class="ml-2 h-5 w-5" />
                         </button>
                     </div>
                 </div>

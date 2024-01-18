@@ -53,7 +53,7 @@ const open = ref(false);
                                     <NuxtLink
                                         v-if="item.permission === undefined || can(item.permission)"
                                         :to="item.to"
-                                        class="text-accent-100 hover:bg-accent-100/10 hover:text-neutral font-medium hover:transition-all group flex w-full flex-col items-center rounded-md p-3 text-sm"
+                                        class="group flex w-full flex-col items-center rounded-md p-3 text-sm font-medium text-accent-100 hover:bg-accent-100/10 hover:text-neutral hover:transition-all"
                                         active-class="bg-accent-100/20 text-neutral font-bold"
                                         exact-active-class="text-neutral"
                                         aria-current-value="page"
@@ -73,7 +73,7 @@ const open = ref(false);
                         <NuxtLink
                             v-if="item.permission === undefined || can(item.permission)"
                             :to="item.to"
-                            class="text-accent-100 hover:bg-accent-100/10 hover:text-neutral font-medium hover:transition-all group flex w-full flex-col items-center rounded-md text-sm p-2"
+                            class="group flex w-full flex-col items-center rounded-md p-2 text-sm font-medium text-accent-100 hover:bg-accent-100/10 hover:text-neutral hover:transition-all"
                             active-class="bg-accent-100/20 text-neutral font-bold"
                             exact-active-class="text-neutral"
                             aria-current-value="page"

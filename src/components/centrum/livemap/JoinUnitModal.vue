@@ -116,7 +116,7 @@ const filteredUnits = computed(() =>
                                                                         type="text"
                                                                         name="search"
                                                                         :placeholder="$t('common.search')"
-                                                                        class="block w-full rounded-md border-0 py-1.5 pr-14 bg-base-700 text-neutral placeholder:text-base-200 focus:ring-2 focus:ring-inset focus:ring-base-300 sm:text-sm sm:leading-6"
+                                                                        class="block w-full rounded-md border-0 bg-base-700 py-1.5 pr-14 text-neutral placeholder:text-base-200 focus:ring-2 focus:ring-inset focus:ring-base-300 sm:text-sm sm:leading-6"
                                                                         @focusin="focusTablet(true)"
                                                                         @focusout="focusTablet(false)"
                                                                     />
@@ -125,14 +125,14 @@ const filteredUnits = computed(() =>
                                                         </div>
                                                     </dl>
                                                     <div class="my-2 space-y-24">
-                                                        <div class="flex-1 form-control">
+                                                        <div class="form-control flex-1">
                                                             <div class="grid grid-cols-2 gap-2">
                                                                 <button
                                                                     v-for="unit in filteredUnits"
                                                                     :key="unit.name"
                                                                     type="button"
                                                                     :disabled="!canSubmit"
-                                                                    class="text-neutral hover:text-neutral font-medium hover:transition-all group flex w-full flex-col items-center rounded-md p-1.5 text-xs"
+                                                                    class="group flex w-full flex-col items-center rounded-md p-1.5 text-xs font-medium text-neutral hover:text-neutral hover:transition-all"
                                                                     :class="[
                                                                         !canSubmit
                                                                             ? 'disabled bg-base-500 hover:bg-base-400 focus-visible:outline-base-500'
@@ -167,12 +167,12 @@ const filteredUnits = computed(() =>
                                         </div>
                                     </div>
                                     <div class="flex flex-shrink-0 justify-end px-4 py-4">
-                                        <span class="isolate inline-flex rounded-md shadow-sm pr-4 w-full">
+                                        <span class="isolate inline-flex w-full rounded-md pr-4 shadow-sm">
                                             <button
                                                 v-if="ownUnitId !== undefined"
                                                 type="button"
                                                 :disabled="!canSubmit"
-                                                class="w-full relative inline-flex items-center rounded-l-md py-2.5 px-3.5 text-sm font-semibold text-neutral"
+                                                class="relative inline-flex w-full items-center rounded-l-md px-3.5 py-2.5 text-sm font-semibold text-neutral"
                                                 :class="[
                                                     !canSubmit
                                                         ? 'disabled bg-base-500 hover:bg-base-400 focus-visible:outline-base-500'
@@ -181,13 +181,13 @@ const filteredUnits = computed(() =>
                                                 @click="onSubmitThrottle()"
                                             >
                                                 <template v-if="!canSubmit">
-                                                    <LoadingIcon class="animate-spin h-5 w-5 mr-2" />
+                                                    <LoadingIcon class="mr-2 h-5 w-5 animate-spin" />
                                                 </template>
                                                 {{ $t('common.leave') }}
                                             </button>
                                             <button
                                                 type="button"
-                                                class="w-full relative inline-flex items-center bg-neutral px-3 py-2 text-sm font-semibold text-gray-900 hover:text-gray-900 ring-1 ring-inset ring-gray-300 hover:bg-gray-50"
+                                                class="relative inline-flex w-full items-center bg-neutral px-3 py-2 text-sm font-semibold text-gray-900 ring-1 ring-inset ring-gray-300 hover:bg-gray-50 hover:text-gray-900"
                                                 :class="ownUnitId !== undefined ? '-ml-px rounded-r-md' : 'rounded-md'"
                                                 @click="$emit('close')"
                                             >

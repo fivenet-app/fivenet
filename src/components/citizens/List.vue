@@ -95,29 +95,29 @@ watchDebounced(query.value, () => refresh(), { debounce: 600, maxWait: 1400 });
                             refresh();
                         "
                     >
-                        <div class="flex flex-row gap-4 mx-auto">
-                            <div class="flex-1 form-control">
+                        <div class="mx-auto flex flex-row gap-4">
+                            <div class="form-control flex-1">
                                 <label for="searchName" class="block text-sm font-medium leading-6 text-neutral">
                                     {{ $t('common.search') }}
                                     {{ $t('common.citizen', 1) }}
                                 </label>
-                                <div class="relative flex items-center mt-2">
+                                <div class="relative mt-2 flex items-center">
                                     <GenericInput
                                         ref="searchNameInput"
                                         v-model="query.name"
                                         type="text"
                                         name="searchName"
                                         :placeholder="`${$t('common.citizen', 1)} ${$t('common.name')}`"
-                                        class="block w-full rounded-md border-0 py-1.5 pr-14 bg-base-700 text-neutral placeholder:text-base-200 focus:ring-2 focus:ring-inset focus:ring-base-300 sm:text-sm sm:leading-6"
+                                        class="block w-full rounded-md border-0 bg-base-700 py-1.5 pr-14 text-neutral placeholder:text-base-200 focus:ring-2 focus:ring-inset focus:ring-base-300 sm:text-sm sm:leading-6"
                                     />
                                 </div>
                             </div>
-                            <div class="flex-1 form-control">
+                            <div class="form-control flex-1">
                                 <label for="dateofbirth" class="block text-sm font-medium leading-6 text-neutral">
                                     {{ $t('common.search') }}
                                     {{ $t('common.date_of_birth') }}
                                 </label>
-                                <div class="relative flex items-center mt-2">
+                                <div class="relative mt-2 flex items-center">
                                     <input
                                         v-model="query.dateofbirth"
                                         v-maska
@@ -125,7 +125,7 @@ watchDebounced(query.value, () => refresh(), { debounce: 600, maxWait: 1400 });
                                         name="dateofbirth"
                                         data-maska="##.##.####"
                                         :placeholder="`${$t('common.date_of_birth')} (DD.MM.YYYY)`"
-                                        class="block w-full rounded-md border-0 py-1.5 pr-14 bg-base-700 text-neutral placeholder:text-base-200 focus:ring-2 focus:ring-inset focus:ring-base-300 sm:text-sm sm:leading-6"
+                                        class="block w-full rounded-md border-0 bg-base-700 py-1.5 pr-14 text-neutral placeholder:text-base-200 focus:ring-2 focus:ring-inset focus:ring-base-300 sm:text-sm sm:leading-6"
                                         @focusin="focusTablet(true)"
                                         @focusout="focusTablet(false)"
                                     />
@@ -133,12 +133,12 @@ watchDebounced(query.value, () => refresh(), { debounce: 600, maxWait: 1400 });
                             </div>
                             <div
                                 v-if="attr('CitizenStoreService.ListCitizens', 'Fields', 'UserProps.Wanted')"
-                                class="flex-initial form-control"
+                                class="form-control flex-initial"
                             >
                                 <label for="search" class="block text-sm font-medium leading-6 text-neutral">
                                     {{ $t('components.citizens.citizens_list.only_wanted') }}
                                 </label>
-                                <div class="relative flex items-center mt-3">
+                                <div class="relative mt-3 flex items-center">
                                     <Switch
                                         v-model="query.wanted"
                                         :class="[
@@ -162,7 +162,7 @@ watchDebounced(query.value, () => refresh(), { debounce: 600, maxWait: 1400 });
                         </div>
                         <Disclosure v-slot="{ open }" as="div" class="pt-2">
                             <DisclosureButton class="flex w-full items-start justify-between text-left text-neutral">
-                                <span class="text-base-200 leading-7">{{ $t('common.advanced_search') }}</span>
+                                <span class="leading-7 text-base-200">{{ $t('common.advanced_search') }}</span>
                                 <span class="ml-6 flex h-7 items-center">
                                     <ChevronDownIcon
                                         :class="[open ? 'upsidedown' : '', 'h-5 w-5 transition-transform']"
@@ -174,25 +174,25 @@ watchDebounced(query.value, () => refresh(), { debounce: 600, maxWait: 1400 });
                                 <div class="flex flex-row gap-2">
                                     <div
                                         v-if="attr('CitizenStoreService.ListCitizens', 'Fields', 'PhoneNumber')"
-                                        class="flex-1 form-control"
+                                        class="form-control flex-1"
                                     >
                                         <label for="searchPhone" class="block text-sm font-medium leading-6 text-neutral">
                                             {{ $t('common.search') }}
                                             {{ $t('common.phone_number') }}
                                         </label>
-                                        <div class="relative flex items-center mt-2">
+                                        <div class="relative mt-2 flex items-center">
                                             <input
                                                 v-model="query.phoneNumber"
                                                 type="tel"
                                                 name="searchPhone"
                                                 :placeholder="$t('common.phone_number')"
-                                                class="block w-full rounded-md border-0 py-1.5 pr-14 bg-base-700 text-neutral placeholder:text-base-200 focus:ring-2 focus:ring-inset focus:ring-base-300 sm:text-sm sm:leading-6"
+                                                class="block w-full rounded-md border-0 bg-base-700 py-1.5 pr-14 text-neutral placeholder:text-base-200 focus:ring-2 focus:ring-inset focus:ring-base-300 sm:text-sm sm:leading-6"
                                                 @focusin="focusTablet(true)"
                                                 @focusout="focusTablet(false)"
                                             />
                                         </div>
                                     </div>
-                                    <div class="flex-1 form-control">
+                                    <div class="form-control flex-1">
                                         <label
                                             for="trafficInfractionPoints"
                                             class="block text-sm font-medium leading-6 text-neutral"
@@ -200,13 +200,13 @@ watchDebounced(query.value, () => refresh(), { debounce: 600, maxWait: 1400 });
                                             {{ $t('common.search') }}
                                             {{ $t('common.traffic_infraction_points', 2) }}
                                         </label>
-                                        <div class="relative flex items-center mt-2">
+                                        <div class="relative mt-2 flex items-center">
                                             <input
                                                 v-model="query.trafficInfractionPoints"
                                                 type="number"
                                                 name="trafficInfractionPoints"
                                                 :placeholder="`${$t('common.traffic_infraction_points')}`"
-                                                class="block w-full rounded-md border-0 py-1.5 bg-base-700 text-neutral placeholder:text-base-200 focus:ring-2 focus:ring-inset focus:ring-base-300 sm:text-sm sm:leading-6"
+                                                class="block w-full rounded-md border-0 bg-base-700 py-1.5 text-neutral placeholder:text-base-200 focus:ring-2 focus:ring-inset focus:ring-base-300 sm:text-sm sm:leading-6"
                                                 @focusin="focusTablet(true)"
                                                 @focusout="focusTablet(false)"
                                             />
@@ -214,18 +214,18 @@ watchDebounced(query.value, () => refresh(), { debounce: 600, maxWait: 1400 });
                                     </div>
                                     <div
                                         v-if="attr('CitizenStoreService.ListCitizens', 'Fields', 'UserProps.OpenFines')"
-                                        class="flex-initial form-control"
+                                        class="form-control flex-initial"
                                     >
                                         <label for="search" class="block text-sm font-medium leading-6 text-neutral">
                                             {{ $t('components.citizens.citizens_list.open_fine') }}
                                         </label>
-                                        <div class="relative flex items-center mt-2">
+                                        <div class="relative mt-2 flex items-center">
                                             <input
                                                 v-model="query.fines"
                                                 type="number"
                                                 name="fine"
                                                 :placeholder="`${$t('common.fine')}`"
-                                                class="block w-full rounded-md border-0 py-1.5 bg-base-700 text-neutral placeholder:text-base-200 focus:ring-2 focus:ring-inset focus:ring-base-300 sm:text-sm sm:leading-6"
+                                                class="block w-full rounded-md border-0 bg-base-700 py-1.5 text-neutral placeholder:text-base-200 focus:ring-2 focus:ring-inset focus:ring-base-300 sm:text-sm sm:leading-6"
                                                 @focusin="focusTablet(true)"
                                                 @focusout="focusTablet(false)"
                                             />
@@ -237,9 +237,9 @@ watchDebounced(query.value, () => refresh(), { debounce: 600, maxWait: 1400 });
                     </form>
                 </div>
             </div>
-            <div class="flow-root mt-2">
-                <div class="mx-0 -my-2 overflow-x-auto">
-                    <div class="inline-block min-w-full py-2 align-middle px-1">
+            <div class="mt-2 flow-root">
+                <div class="-my-2 mx-0 overflow-x-auto">
+                    <div class="inline-block min-w-full px-1 py-2 align-middle">
                         <DataPendingBlock v-if="pending" :message="$t('common.loading', [$t('common.citizen', 2)])" />
                         <DataErrorBlock
                             v-else-if="error"
@@ -261,20 +261,20 @@ watchDebounced(query.value, () => refresh(), { debounce: 600, maxWait: 1400 });
                                         >
                                             {{ $t('common.name') }}
                                         </th>
-                                        <th scope="col" class="py-3.5 px-2 text-left text-sm font-semibold text-neutral">
+                                        <th scope="col" class="px-2 py-3.5 text-left text-sm font-semibold text-neutral">
                                             {{ $t('common.job', 1) }}
                                         </th>
-                                        <th scope="col" class="py-3.5 px-2 text-left text-sm font-semibold text-neutral">
+                                        <th scope="col" class="px-2 py-3.5 text-left text-sm font-semibold text-neutral">
                                             {{ $t('common.sex') }}
                                         </th>
                                         <th
                                             v-if="attr('CitizenStoreService.ListCitizens', 'Fields', 'PhoneNumber')"
                                             scope="col"
-                                            class="py-3.5 px-2 text-left text-sm font-semibold text-neutral"
+                                            class="px-2 py-3.5 text-left text-sm font-semibold text-neutral"
                                         >
                                             {{ $t('common.phone_number') }}
                                         </th>
-                                        <th scope="col" class="py-3.5 px-2 text-left text-sm font-semibold text-neutral">
+                                        <th scope="col" class="px-2 py-3.5 text-left text-sm font-semibold text-neutral">
                                             {{ $t('common.date_of_birth') }}
                                         </th>
                                         <th
@@ -286,23 +286,23 @@ watchDebounced(query.value, () => refresh(), { debounce: 600, maxWait: 1400 });
                                                 )
                                             "
                                             scope="col"
-                                            class="py-3.5 px-2 text-left text-sm font-semibold text-neutral"
+                                            class="px-2 py-3.5 text-left text-sm font-semibold text-neutral"
                                         >
                                             {{ $t('common.traffic_infraction_points') }}
                                         </th>
                                         <th
                                             v-if="attr('CitizenStoreService.ListCitizens', 'Fields', 'UserProps.OpenFines')"
                                             scope="col"
-                                            class="py-3.5 px-2 text-left text-sm font-semibold text-neutral"
+                                            class="px-2 py-3.5 text-left text-sm font-semibold text-neutral"
                                         >
                                             {{ $t('common.fine') }}
                                         </th>
-                                        <th scope="col" class="py-3.5 px-2 text-left text-sm font-semibold text-neutral">
+                                        <th scope="col" class="px-2 py-3.5 text-left text-sm font-semibold text-neutral">
                                             {{ $t('common.height') }}
                                         </th>
                                         <th
                                             scope="col"
-                                            class="relative py-3.5 pl-3 pr-4 sm:pr-0 text-right text-sm font-semibold text-neutral"
+                                            class="relative py-3.5 pl-3 pr-4 text-right text-sm font-semibold text-neutral sm:pr-0"
                                         >
                                             {{ $t('common.action', 2) }}
                                         </th>
@@ -319,20 +319,20 @@ watchDebounced(query.value, () => refresh(), { debounce: 600, maxWait: 1400 });
                                         >
                                             {{ $t('common.name') }}
                                         </th>
-                                        <th scope="col" class="py-3.5 px-2 text-left text-sm font-semibold text-neutral">
+                                        <th scope="col" class="px-2 py-3.5 text-left text-sm font-semibold text-neutral">
                                             {{ $t('common.job', 1) }}
                                         </th>
-                                        <th scope="col" class="py-3.5 px-2 text-left text-sm font-semibold text-neutral">
+                                        <th scope="col" class="px-2 py-3.5 text-left text-sm font-semibold text-neutral">
                                             {{ $t('common.sex') }}
                                         </th>
                                         <th
                                             v-if="attr('CitizenStoreService.ListCitizens', 'Fields', 'PhoneNumber')"
                                             scope="col"
-                                            class="py-3.5 px-2 text-left text-sm font-semibold text-neutral"
+                                            class="px-2 py-3.5 text-left text-sm font-semibold text-neutral"
                                         >
                                             {{ $t('common.phone_number') }}
                                         </th>
-                                        <th scope="col" class="py-3.5 px-2 text-left text-sm font-semibold text-neutral">
+                                        <th scope="col" class="px-2 py-3.5 text-left text-sm font-semibold text-neutral">
                                             {{ $t('common.date_of_birth') }}
                                         </th>
                                         <th
@@ -344,16 +344,16 @@ watchDebounced(query.value, () => refresh(), { debounce: 600, maxWait: 1400 });
                                                 )
                                             "
                                             scope="col"
-                                            class="py-3.5 px-2 text-left text-sm font-semibold text-neutral"
+                                            class="px-2 py-3.5 text-left text-sm font-semibold text-neutral"
                                         >
                                             {{ $t('common.traffic_infraction_points') }}
                                         </th>
-                                        <th scope="col" class="py-3.5 px-2 text-left text-sm font-semibold text-neutral">
+                                        <th scope="col" class="px-2 py-3.5 text-left text-sm font-semibold text-neutral">
                                             {{ $t('common.height') }}
                                         </th>
                                         <th
                                             scope="col"
-                                            class="relative py-3.5 pl-3 pr-4 sm:pr-0 text-right text-sm font-semibold text-neutral"
+                                            class="relative py-3.5 pl-3 pr-4 text-right text-sm font-semibold text-neutral sm:pr-0"
                                         >
                                             {{ $t('common.action', 2) }}
                                         </th>

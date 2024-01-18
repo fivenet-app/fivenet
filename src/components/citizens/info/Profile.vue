@@ -44,8 +44,8 @@ const trafficPointsModal = ref(false);
     <div class="py-2 pb-14">
         <div class="px-1 sm:px-2 lg:px-4">
             <div class="flow-root">
-                <div class="mx-0 -my-2 overflow-x-auto">
-                    <div class="inline-block min-w-full align-middle px-1">
+                <div class="-my-2 mx-0 overflow-x-auto">
+                    <div class="inline-block min-w-full px-1 align-middle">
                         <TemplatesModal :open="templatesOpen" :auto-fill="true" @close="templatesOpen = false" />
                         <WantedModal
                             :open="setWantedModal"
@@ -78,7 +78,7 @@ const trafficPointsModal = ref(false);
                                                     >
                                                         {{ $t('common.date_of_birth') }}
                                                     </dt>
-                                                    <dd class="mt-1 text-sm text-base-300 sm:col-span-2 sm:mt-0 sm:ml-6">
+                                                    <dd class="mt-1 text-sm text-base-300 sm:col-span-2 sm:ml-6 sm:mt-0">
                                                         {{ user?.dateofbirth }}
                                                     </dd>
                                                 </div>
@@ -88,7 +88,7 @@ const trafficPointsModal = ref(false);
                                                     >
                                                         {{ $t('common.sex') }}
                                                     </dt>
-                                                    <dd class="mt-1 text-sm text-base-300 sm:col-span-2 sm:mt-0 sm:ml-6">
+                                                    <dd class="mt-1 text-sm text-base-300 sm:col-span-2 sm:ml-6 sm:mt-0">
                                                         {{ user?.sex!.toUpperCase() }}
                                                         {{ ' ' }}
                                                         <CharSexBadge :sex="user?.sex ? user?.sex : ''" />
@@ -100,7 +100,7 @@ const trafficPointsModal = ref(false);
                                                     >
                                                         {{ $t('common.height') }}
                                                     </dt>
-                                                    <dd class="mt-1 text-sm text-base-300 sm:col-span-2 sm:mt-0 sm:ml-6">
+                                                    <dd class="mt-1 text-sm text-base-300 sm:col-span-2 sm:ml-6 sm:mt-0">
                                                         {{ user?.height }}cm
                                                     </dd>
                                                 </div>
@@ -113,7 +113,7 @@ const trafficPointsModal = ref(false);
                                                     >
                                                         {{ $t('common.phone_number') }}
                                                     </dt>
-                                                    <dd class="mt-1 text-sm text-base-300 sm:col-span-2 sm:mt-0 sm:ml-6">
+                                                    <dd class="mt-1 text-sm text-base-300 sm:col-span-2 sm:ml-6 sm:mt-0">
                                                         <PhoneNumberBlock :number="user.phoneNumber" />
                                                     </dd>
                                                 </div>
@@ -124,7 +124,7 @@ const trafficPointsModal = ref(false);
                                                         {{ $t('common.visum') }}
                                                     </dt>
                                                     <dd
-                                                        class="mt-1 text-sm text-base-300 sm:col-span-2 sm:mt-0 sm:ml-6 text-blue-400"
+                                                        class="mt-1 text-sm text-base-300 text-blue-400 sm:col-span-2 sm:ml-6 sm:mt-0"
                                                     >
                                                         {{ user?.visum }}
                                                     </dd>
@@ -145,7 +145,7 @@ const trafficPointsModal = ref(false);
                                                         {{ $t('common.traffic_infraction_points') }}
                                                     </dt>
                                                     <dd
-                                                        class="mt-1 text-sm text-base-300 sm:col-span-2 sm:mt-0 sm:ml-6"
+                                                        class="mt-1 text-sm text-base-300 sm:col-span-2 sm:ml-6 sm:mt-0"
                                                         :class="
                                                             (user?.props?.trafficInfractionPoints ?? 0) >= 10
                                                                 ? 'text-error-500'
@@ -170,7 +170,7 @@ const trafficPointsModal = ref(false);
                                                     >
                                                         {{ $t('common.fine') }}
                                                     </dt>
-                                                    <dd class="mt-1 text-sm text-base-300 sm:col-span-2 sm:mt-0 sm:ml-6">
+                                                    <dd class="mt-1 text-sm text-base-300 sm:col-span-2 sm:ml-6 sm:mt-0">
                                                         <span v-if="(user.props?.openFines ?? 0n) <= 0n">
                                                             {{ $t('common.no_open_fine') }}
                                                         </span>
@@ -193,26 +193,26 @@ const trafficPointsModal = ref(false);
                                                     >
                                                         {{ $t('common.license', 2) }}
                                                     </dt>
-                                                    <dd class="mt-1 text-sm text-base-300 sm:col-span-2 sm:mt-0 sm:ml-6">
+                                                    <dd class="mt-1 text-sm text-base-300 sm:col-span-2 sm:ml-6 sm:mt-0">
                                                         <span v-if="user?.licenses.length === 0">
                                                             {{ $t('common.no_licenses') }}
                                                         </span>
                                                         <ul
                                                             v-else
                                                             role="list"
-                                                            class="border divide-y rounded-md divide-base-200 border-base-200"
+                                                            class="divide-y divide-base-200 rounded-md border border-base-200"
                                                         >
                                                             <li
                                                                 v-for="license in user?.licenses"
                                                                 :key="license.type"
                                                                 class="flex items-center justify-between py-3 pl-3 pr-4 text-sm"
                                                             >
-                                                                <div class="flex items-center flex-1">
+                                                                <div class="flex flex-1 items-center">
                                                                     <LicenseIcon
-                                                                        class="flex-shrink-0 w-5 h-5 text-base-400"
+                                                                        class="h-5 w-5 flex-shrink-0 text-base-400"
                                                                         aria-hidden="true"
                                                                     />
-                                                                    <span class="flex-1 ml-2 truncate"
+                                                                    <span class="ml-2 flex-1 truncate"
                                                                         >{{ license.label }} ({{
                                                                             license.type.toUpperCase()
                                                                         }})</span
@@ -228,11 +228,11 @@ const trafficPointsModal = ref(false);
                                 </div>
                             </div>
 
-                            <div class="flex flex-col gap-2 px-2 py-4 pr-2 shrink-0 lg:w-96">
+                            <div class="flex shrink-0 flex-col gap-2 px-2 py-4 pr-2 lg:w-96">
                                 <div v-if="attr('CitizenStoreService.SetUserProps', 'Fields', 'Wanted')" class="flex-initial">
                                     <button
                                         type="button"
-                                        class="inline-flex items-center justify-center flex-shrink-0 w-full px-3 py-2 text-sm font-semibold transition-colors rounded-md bg-error-500 text-neutral hover:bg-error-400 focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-primary-500 sm:flex-1"
+                                        class="inline-flex w-full flex-shrink-0 items-center justify-center rounded-md bg-error-500 px-3 py-2 text-sm font-semibold text-neutral transition-colors hover:bg-error-400 focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-primary-500 sm:flex-1"
                                         @click="setWantedModal = true"
                                     >
                                         {{
@@ -245,7 +245,7 @@ const trafficPointsModal = ref(false);
                                 <div v-if="attr('CitizenStoreService.SetUserProps', 'Fields', 'Job')" class="flex-initial">
                                     <button
                                         type="button"
-                                        class="inline-flex items-center justify-center flex-shrink-0 w-full px-3 py-2 text-sm font-semibold transition-colors rounded-md bg-primary-500 text-neutral hover:bg-primary-400 focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-primary-500 sm:flex-1"
+                                        class="inline-flex w-full flex-shrink-0 items-center justify-center rounded-md bg-primary-500 px-3 py-2 text-sm font-semibold text-neutral transition-colors hover:bg-primary-400 focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-primary-500 sm:flex-1"
                                         @click="setJobModal = true"
                                     >
                                         {{ $t('components.citizens.citizen_info_profile.set_job') }}
@@ -257,7 +257,7 @@ const trafficPointsModal = ref(false);
                                 >
                                     <button
                                         type="button"
-                                        class="inline-flex items-center justify-center flex-shrink-0 w-full px-3 py-2 text-sm font-semibold transition-colors rounded-md bg-secondary-500 text-neutral hover:bg-secondary-400 focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-primary-500 sm:flex-1"
+                                        class="inline-flex w-full flex-shrink-0 items-center justify-center rounded-md bg-secondary-500 px-3 py-2 text-sm font-semibold text-neutral transition-colors hover:bg-secondary-400 focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-primary-500 sm:flex-1"
                                         @click="trafficPointsModal = true"
                                     >
                                         {{ $t('components.citizens.citizen_info_profile.set_traffic_points') }}
@@ -266,7 +266,7 @@ const trafficPointsModal = ref(false);
                                 <div v-if="can('DocStoreService.CreateDocument')" class="flex-initial">
                                     <button
                                         type="button"
-                                        class="inline-flex items-center justify-center flex-shrink-0 w-full px-3 py-2 text-sm font-semibold transition-colors rounded-md bg-base-700 text-neutral hover:bg-base-600 focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-primary-500 sm:flex-1"
+                                        class="inline-flex w-full flex-shrink-0 items-center justify-center rounded-md bg-base-700 px-3 py-2 text-sm font-semibold text-neutral transition-colors hover:bg-base-600 focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-primary-500 sm:flex-1"
                                         @click="openTemplates()"
                                     >
                                         {{ $t('components.citizens.citizen_info_profile.create_new_document') }}
@@ -275,7 +275,7 @@ const trafficPointsModal = ref(false);
                                 <div class="flex-initial">
                                     <button
                                         type="button"
-                                        class="inline-flex items-center justify-center flex-shrink-0 w-full px-3 py-2 text-sm font-semibold transition-colors rounded-md bg-base-700 text-neutral hover:bg-base-600 focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-primary-500 sm:flex-1"
+                                        class="inline-flex w-full flex-shrink-0 items-center justify-center rounded-md bg-base-700 px-3 py-2 text-sm font-semibold text-neutral transition-colors hover:bg-base-600 focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-primary-500 sm:flex-1"
                                         @click="copyToClipboardWrapper(w.location.href)"
                                     >
                                         {{ $t('components.citizens.citizen_info_profile.copy_profile_link') }}

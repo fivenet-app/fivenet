@@ -22,7 +22,7 @@ const openDetails = ref(false);
     <li class="flex flex-row items-center">
         <DispatchDetails :dispatch="dispatch" :open="openDetails" @close="openDetails = false" @goto="$emit('goto', $event)" />
 
-        <div class="mr-1.5 flex flex-col gap-2 items-center">
+        <div class="mr-1.5 flex flex-col items-center gap-2">
             <input
                 :value="dispatch.id"
                 name="active"
@@ -37,17 +37,17 @@ const openDetails = ref(false);
                 class="inline-flex items-center text-primary-400 hover:text-primary-600"
                 @click="$emit('goto', { x: dispatch.x, y: dispatch.y })"
             >
-                <MapMarkerIcon class="w-5 h-5" aria-hidden="true" />
+                <MapMarkerIcon class="h-5 w-5" aria-hidden="true" />
             </button>
         </div>
         <button
             type="button"
-            class="text-neutral bg-error-700 hover:bg-primary-100/10 hover:text-neutral font-medium hover:transition-all group flex w-full flex-col items-center rounded-md p-2 text-xs my-0.5"
+            class="group my-0.5 flex w-full flex-col items-center rounded-md bg-error-700 p-2 text-xs font-medium text-neutral hover:bg-primary-100/10 hover:text-neutral hover:transition-all"
             @click="openDetails = true"
         >
-            <span class="inline-flex items-center w-full place-content-between mb-0.5">
-                <span class="font-bold truncate inline-flex items-center">
-                    <CarEmergencyIcon class="h-4 w-4 mr-0.5" /> DSP-{{ dispatch.id }}
+            <span class="mb-0.5 inline-flex w-full place-content-between items-center">
+                <span class="inline-flex items-center truncate font-bold">
+                    <CarEmergencyIcon class="mr-0.5 h-4 w-4" /> DSP-{{ dispatch.id }}
                 </span>
                 <span>
                     <span class="font-semibold">{{ $t('common.postal') }}</span

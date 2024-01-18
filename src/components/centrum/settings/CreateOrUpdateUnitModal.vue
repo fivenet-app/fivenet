@@ -143,9 +143,9 @@ onBeforeMount(async () => updateUnitInForm());
                         leave-to="opacity-0 translate-y-4 sm:translate-y-0 sm:scale-95"
                     >
                         <DialogPanel
-                            class="relative transform overflow-hidden rounded-lg bg-base-800 px-4 pb-4 pt-5 text-left shadow-xl transition-all sm:my-8 w-full sm:max-w-lg sm:p-6"
+                            class="relative w-full transform overflow-hidden rounded-lg bg-base-800 px-4 pb-4 pt-5 text-left shadow-xl transition-all sm:my-8 sm:max-w-lg sm:p-6"
                         >
-                            <div class="absolute right-0 top-0 pr-4 pt-4 block">
+                            <div class="absolute right-0 top-0 block pr-4 pt-4">
                                 <button
                                     type="button"
                                     class="rounded-md bg-neutral text-gray-400 hover:text-gray-500 focus:outline-none focus:ring-2 focus:ring-primary-500 focus:ring-offset-2"
@@ -171,14 +171,14 @@ onBeforeMount(async () => updateUnitInForm());
                                         </DialogTitle>
                                         <div class="mt-2">
                                             <div class="text-sm text-gray-100">
-                                                <div class="flex-1 form-control">
+                                                <div class="form-control flex-1">
                                                     <label for="name" class="block text-sm font-medium leading-6 text-neutral">
                                                         {{ $t('common.name') }}
                                                     </label>
                                                     <VeeField
                                                         name="name"
                                                         type="text"
-                                                        class="block w-full rounded-md border-0 py-1.5 bg-base-700 text-neutral placeholder:text-base-200 focus:ring-2 focus:ring-inset focus:ring-base-300 sm:text-sm sm:leading-6"
+                                                        class="block w-full rounded-md border-0 bg-base-700 py-1.5 text-neutral placeholder:text-base-200 focus:ring-2 focus:ring-inset focus:ring-base-300 sm:text-sm sm:leading-6"
                                                         :placeholder="$t('common.name')"
                                                         :label="$t('common.name')"
                                                         @focusin="focusTablet(true)"
@@ -186,7 +186,7 @@ onBeforeMount(async () => updateUnitInForm());
                                                     />
                                                     <VeeErrorMessage name="name" as="p" class="mt-2 text-sm text-error-400" />
                                                 </div>
-                                                <div class="flex-1 form-control">
+                                                <div class="form-control flex-1">
                                                     <label
                                                         for="initials"
                                                         class="block text-sm font-medium leading-6 text-neutral"
@@ -196,7 +196,7 @@ onBeforeMount(async () => updateUnitInForm());
                                                     <VeeField
                                                         name="initials"
                                                         type="text"
-                                                        class="block w-full rounded-md border-0 py-1.5 bg-base-700 text-neutral placeholder:text-base-200 focus:ring-2 focus:ring-inset focus:ring-base-300 sm:text-sm sm:leading-6"
+                                                        class="block w-full rounded-md border-0 bg-base-700 py-1.5 text-neutral placeholder:text-base-200 focus:ring-2 focus:ring-inset focus:ring-base-300 sm:text-sm sm:leading-6"
                                                         :placeholder="$t('common.initials')"
                                                         :label="$t('common.initials')"
                                                         @focusin="focusTablet(true)"
@@ -208,7 +208,7 @@ onBeforeMount(async () => updateUnitInForm());
                                                         class="mt-2 text-sm text-error-400"
                                                     />
                                                 </div>
-                                                <div class="flex-1 form-control">
+                                                <div class="form-control flex-1">
                                                     <label
                                                         for="description"
                                                         class="block text-sm font-medium leading-6 text-neutral"
@@ -218,7 +218,7 @@ onBeforeMount(async () => updateUnitInForm());
                                                     <VeeField
                                                         name="description"
                                                         type="text"
-                                                        class="block w-full rounded-md border-0 py-1.5 bg-base-700 text-neutral placeholder:text-base-200 focus:ring-2 focus:ring-inset focus:ring-base-300 sm:text-sm sm:leading-6"
+                                                        class="block w-full rounded-md border-0 bg-base-700 py-1.5 text-neutral placeholder:text-base-200 focus:ring-2 focus:ring-inset focus:ring-base-300 sm:text-sm sm:leading-6"
                                                         :placeholder="$t('common.description')"
                                                         :label="$t('common.description')"
                                                         @focusin="focusTablet(true)"
@@ -230,7 +230,7 @@ onBeforeMount(async () => updateUnitInForm());
                                                         class="mt-2 text-sm text-error-400"
                                                     />
                                                 </div>
-                                                <div class="flex-1 form-control">
+                                                <div class="form-control flex-1">
                                                     <label
                                                         for="attributes"
                                                         class="block text-sm font-medium leading-6 text-neutral"
@@ -240,7 +240,7 @@ onBeforeMount(async () => updateUnitInForm());
                                                     <VeeField
                                                         name="attributes"
                                                         type="text"
-                                                        class="block w-full rounded-md border-0 py-1.5 bg-base-700 text-neutral placeholder:text-base-200 focus:ring-2 focus:ring-inset focus:ring-base-300 sm:text-sm sm:leading-6"
+                                                        class="block w-full rounded-md border-0 bg-base-700 py-1.5 text-neutral placeholder:text-base-200 focus:ring-2 focus:ring-inset focus:ring-base-300 sm:text-sm sm:leading-6"
                                                         :placeholder="$t('common.attributes')"
                                                         :label="$t('common.attributes')"
                                                         @focusin="focusTablet(true)"
@@ -249,7 +249,7 @@ onBeforeMount(async () => updateUnitInForm());
                                                         <Listbox v-model="selectedAttributes" as="div" nullable multiple>
                                                             <div class="relative">
                                                                 <ListboxButton
-                                                                    class="block pl-3 text-left w-full rounded-md border-0 py-1.5 bg-base-700 text-neutral placeholder:text-base-200 focus:ring-2 focus:ring-inset focus:ring-base-300 sm:text-sm sm:leading-6"
+                                                                    class="block w-full rounded-md border-0 bg-base-700 py-1.5 pl-3 text-left text-neutral placeholder:text-base-200 focus:ring-2 focus:ring-inset focus:ring-base-300 sm:text-sm sm:leading-6"
                                                                 >
                                                                     <span class="block truncate">
                                                                         <template v-if="selectedAttributes.length > 0">
@@ -270,10 +270,10 @@ onBeforeMount(async () => updateUnitInForm());
                                                                         </template>
                                                                     </span>
                                                                     <span
-                                                                        class="absolute inset-y-0 right-0 flex items-center pr-2 pointer-events-none"
+                                                                        class="pointer-events-none absolute inset-y-0 right-0 flex items-center pr-2"
                                                                     >
                                                                         <ChevronDownIcon
-                                                                            class="w-5 h-5 text-gray-400"
+                                                                            class="h-5 w-5 text-gray-400"
                                                                             aria-hidden="true"
                                                                         />
                                                                     </span>
@@ -285,7 +285,7 @@ onBeforeMount(async () => updateUnitInForm());
                                                                     leave-to-class="opacity-0"
                                                                 >
                                                                     <ListboxOptions
-                                                                        class="absolute z-10 w-full py-1 mt-1 overflow-auto text-base rounded-md bg-base-700 max-h-44 sm:text-sm"
+                                                                        class="absolute z-10 mt-1 max-h-44 w-full overflow-auto rounded-md bg-base-700 py-1 text-base sm:text-sm"
                                                                     >
                                                                         <ListboxOption
                                                                             v-for="attr in availableAttributes"
@@ -297,7 +297,7 @@ onBeforeMount(async () => updateUnitInForm());
                                                                             <li
                                                                                 :class="[
                                                                                     active ? 'bg-primary-500' : '',
-                                                                                    'text-neutral relative cursor-default select-none py-2 pl-8 pr-4',
+                                                                                    'relative cursor-default select-none py-2 pl-8 pr-4 text-neutral',
                                                                                 ]"
                                                                             >
                                                                                 <span
@@ -325,7 +325,7 @@ onBeforeMount(async () => updateUnitInForm());
                                                                                     ]"
                                                                                 >
                                                                                     <CheckIcon
-                                                                                        class="w-5 h-5"
+                                                                                        class="h-5 w-5"
                                                                                         aria-hidden="true"
                                                                                     />
                                                                                 </span>
@@ -342,7 +342,7 @@ onBeforeMount(async () => updateUnitInForm());
                                                         class="mt-2 text-sm text-error-400"
                                                     />
                                                 </div>
-                                                <div class="flex-1 form-control">
+                                                <div class="form-control flex-1">
                                                     <label for="color" class="block text-sm font-medium leading-6 text-neutral">
                                                         {{ $t('common.color') }}
                                                     </label>
@@ -370,7 +370,7 @@ onBeforeMount(async () => updateUnitInForm());
                                         ]"
                                     >
                                         <template v-if="!canSubmit">
-                                            <LoadingIcon class="animate-spin h-5 w-5 mr-2" />
+                                            <LoadingIcon class="mr-2 h-5 w-5 animate-spin" />
                                         </template>
                                         <span v-if="unit && unit?.id">
                                             {{ $t('components.centrum.units.update_unit') }}

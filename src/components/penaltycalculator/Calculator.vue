@@ -141,7 +141,7 @@ ${t('common.crime', selectedPenalties.value.length)}:
                     {{ $t('components.penaltycalculator.title') }}
                 </h3>
             </div>
-            <div class="sm:flex sm:items-center pb-4">
+            <div class="pb-4 sm:flex sm:items-center">
                 <div class="sm:flex-auto">
                     <DataPendingBlock v-if="pending" :message="$t('common.loading', [$t('common.law', 2)])" class="mt-5" />
                     <DataErrorBlock
@@ -164,7 +164,7 @@ ${t('common.crime', selectedPenalties.value.length)}:
                                 type="text"
                                 name="search"
                                 :placeholder="$t('common.filter')"
-                                class="block w-full rounded-md border-0 py-1.5 pr-14 bg-base-700 text-neutral placeholder:text-base-200 focus:ring-2 focus:ring-inset focus:ring-base-300 sm:text-sm sm:leading-6"
+                                class="block w-full rounded-md border-0 bg-base-700 py-1.5 pr-14 text-neutral placeholder:text-base-200 focus:ring-2 focus:ring-inset focus:ring-base-300 sm:text-sm sm:leading-6"
                                 @focusin="focusTablet(true)"
                                 @focusout="focusTablet(false)"
                             />
@@ -195,7 +195,7 @@ ${t('common.crime', selectedPenalties.value.length)}:
                                     </DisclosureButton>
                                 </dt>
                                 <DisclosurePanel as="dd" class="mt-2 px-4">
-                                    <div class="flow-root mt-2">
+                                    <div class="mt-2 flow-root">
                                         <div class="-mx-4 -my-2 overflow-x-auto sm:-mx-6 lg:-mx-8">
                                             <div class="inline-block min-w-full align-middle sm:px-6 lg:px-8">
                                                 <table class="min-w-full divide-y divide-base-600">
@@ -209,31 +209,31 @@ ${t('common.crime', selectedPenalties.value.length)}:
                                                             </th>
                                                             <th
                                                                 scope="col"
-                                                                class="py-3.5 px-2 text-left text-sm font-semibold text-neutral"
+                                                                class="px-2 py-3.5 text-left text-sm font-semibold text-neutral"
                                                             >
                                                                 {{ $t('common.fine') }}
                                                             </th>
                                                             <th
                                                                 scope="col"
-                                                                class="py-3.5 px-2 text-left text-sm font-semibold text-neutral"
+                                                                class="px-2 py-3.5 text-left text-sm font-semibold text-neutral"
                                                             >
                                                                 {{ $t('common.detention_time') }}
                                                             </th>
                                                             <th
                                                                 scope="col"
-                                                                class="py-3.5 px-2 text-left text-sm font-semibold text-neutral"
+                                                                class="px-2 py-3.5 text-left text-sm font-semibold text-neutral"
                                                             >
                                                                 {{ $t('common.traffic_infraction_points', 2) }}
                                                             </th>
                                                             <th
                                                                 scope="col"
-                                                                class="py-3.5 px-2 text-left text-sm font-semibold text-neutral"
+                                                                class="px-2 py-3.5 text-left text-sm font-semibold text-neutral"
                                                             >
                                                                 {{ $t('common.description') }}
                                                             </th>
                                                             <th
                                                                 scope="col"
-                                                                class="relative py-3.5 pl-3 pr-4 sm:pr-0 text-right text-sm font-semibold text-neutral"
+                                                                class="relative py-3.5 pl-3 pr-4 text-right text-sm font-semibold text-neutral sm:pr-0"
                                                             >
                                                                 {{ $t('common.count') }}
                                                             </th>
@@ -261,10 +261,10 @@ ${t('common.crime', selectedPenalties.value.length)}:
                 </div>
             </div>
             <GenericDivider :label="$t('common.result')" />
-            <div class="flow-root mt-2">
+            <div class="mt-2 flow-root">
                 <div class="overflow-x-auto sm:-mx-6 lg:-mx-8">
                     <div class="inline-block min-w-full py-2 align-middle sm:px-6 lg:px-8">
-                        <div class="text-neutral text-xl">
+                        <div class="text-xl text-neutral">
                             <Stats :summary="summary" />
 
                             <div class="mt-4">
@@ -278,11 +278,11 @@ ${t('common.crime', selectedPenalties.value.length)}:
                     </div>
                 </div>
             </div>
-            <div class="flow-root mt-2">
+            <div class="mt-2 flow-root">
                 <div class="flex items-center">
                     <button
                         type="button"
-                        class="flex-1 rounded-md bg-info-700 py-2.5 px-3.5 text-sm font-semibold text-neutral hover:bg-info-600"
+                        class="flex-1 rounded-md bg-info-700 px-3.5 py-2.5 text-sm font-semibold text-neutral hover:bg-info-600"
                         @click="copyToClipboard()"
                     >
                         {{ $t('common.copy') }}

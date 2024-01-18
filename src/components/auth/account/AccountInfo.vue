@@ -40,7 +40,7 @@ async function removeOAuth2Connection(provider: string): Promise<void> {
 </script>
 
 <template>
-    <div class="py-2 max-w-5xl mx-auto">
+    <div class="mx-auto max-w-5xl py-2">
         <ChangeUsernameModal :open="changeUsernameModal" @close="changeUsernameModal = false" />
         <ChangePasswordModal :open="changePasswordModal" @close="changePasswordModal = false" />
 
@@ -57,7 +57,7 @@ async function removeOAuth2Connection(provider: string): Promise<void> {
         />
 
         <template v-else>
-            <div class="overflow-hidden bg-base-800 shadow sm:rounded-lg text-neutral">
+            <div class="overflow-hidden bg-base-800 text-neutral shadow sm:rounded-lg">
                 <div class="px-4 py-5 sm:px-6">
                     <h3 class="text-base font-semibold leading-6">
                         {{ $t('components.auth.account_info.title') }}
@@ -91,7 +91,7 @@ async function removeOAuth2Connection(provider: string): Promise<void> {
                             <dd class="mt-1 text-sm sm:col-span-2 sm:mt-0">
                                 <button
                                     type="button"
-                                    class="rounded-md bg-base-500 py-2.5 px-3.5 text-sm font-semibold text-neutral hover:bg-base-400"
+                                    class="rounded-md bg-base-500 px-3.5 py-2.5 text-sm font-semibold text-neutral hover:bg-base-400"
                                     @click="changeUsernameModal = true"
                                 >
                                     {{ $t('components.auth.account_info.change_username_button') }}
@@ -105,7 +105,7 @@ async function removeOAuth2Connection(provider: string): Promise<void> {
                             <dd class="mt-1 text-sm sm:col-span-2 sm:mt-0">
                                 <button
                                     type="button"
-                                    class="rounded-md bg-base-500 py-2.5 px-3.5 text-sm font-semibold text-neutral hover:bg-base-400"
+                                    class="rounded-md bg-base-500 px-3.5 py-2.5 text-sm font-semibold text-neutral hover:bg-base-400"
                                     @click="changePasswordModal = true"
                                 >
                                     {{ $t('components.auth.account_info.change_password_button') }}

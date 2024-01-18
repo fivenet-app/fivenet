@@ -26,51 +26,51 @@ function addToClipboard(): void {
 </script>
 
 <template>
-    <tr :key="user.userId" class="transition-colors hover:bg-neutral/5 even:bg-base-800">
+    <tr :key="user.userId" class="transition-colors even:bg-base-800 hover:bg-neutral/5">
         <td class="whitespace-nowrap py-2 pl-4 pr-3 text-sm font-medium text-neutral sm:pl-1">
             {{ user.firstname }}, {{ user.lastname }}
             <span
                 v-if="user.props?.wanted"
-                class="inline-flex items-center rounded-full bg-error-100 px-2.5 py-0.5 text-sm font-medium text-error-700 ml-1"
+                class="ml-1 inline-flex items-center rounded-full bg-error-100 px-2.5 py-0.5 text-sm font-medium text-error-700"
             >
                 {{ $t('common.wanted').toUpperCase() }}
             </span>
         </td>
-        <td class="whitespace-nowrap px-1 py-1 text-left text-base-200 text-sm">
+        <td class="whitespace-nowrap px-1 py-1 text-left text-sm text-base-200">
             {{ user.jobLabel }}
         </td>
-        <td class="whitespace-nowrap px-1 py-1 text-left text-base-200 text-sm">
+        <td class="whitespace-nowrap px-1 py-1 text-left text-sm text-base-200">
             {{ user.sex!.toUpperCase() }}
         </td>
         <td
             v-if="attr('CitizenStoreService.ListCitizens', 'Fields', 'PhoneNumber')"
-            class="whitespace-nowrap px-1 py-1 text-left text-base-200 text-sm"
+            class="whitespace-nowrap px-1 py-1 text-left text-sm text-base-200"
         >
             <PhoneNumberBlock :number="user.phoneNumber" />
         </td>
-        <td class="whitespace-nowrap px-1 py-1 text-left text-base-200 text-sm">
+        <td class="whitespace-nowrap px-1 py-1 text-left text-sm text-base-200">
             {{ user.dateofbirth }}
         </td>
         <td
             v-if="attr('CitizenStoreService.ListCitizens', 'Fields', 'UserProps.TrafficInfractionPoints')"
-            class="whitespace-nowrap px-1 py-1 text-left text-base-200 text-sm"
+            class="whitespace-nowrap px-1 py-1 text-left text-sm text-base-200"
             :class="(user?.props?.trafficInfractionPoints ?? 0) >= 10 ? 'text-error-500' : ''"
         >
             {{ user.props?.trafficInfractionPoints ?? 0 }}
         </td>
         <td
             v-if="attr('CitizenStoreService.ListCitizens', 'Fields', 'UserProps.OpenFines')"
-            class="whitespace-nowrap px-1 py-1 text-left text-error-500 text-sm"
+            class="whitespace-nowrap px-1 py-1 text-left text-sm text-error-500"
         >
             <template v-if="(user.props?.openFines ?? 0n) > 0n">
                 {{ $n(parseInt((user?.props?.openFines ?? 0n).toString(), 10), 'currency') }}
             </template>
         </td>
-        <td class="whitespace-nowrap px-1 py-1 text-left text-base-200 text-sm">{{ user.height }}cm</td>
+        <td class="whitespace-nowrap px-1 py-1 text-left text-sm text-base-200">{{ user.height }}cm</td>
         <td class="whitespace-nowrap py-2 pl-3 pr-4 text-sm font-medium sm:pr-0">
             <div v-if="can('CitizenStoreService.GetUser')" class="flex flex-row justify-end">
                 <button class="flex-initial text-primary-500 hover:text-primary-400" @click="addToClipboard">
-                    <ClipboardPlusIcon class="h-auto w-5 ml-auto mr-2.5" />
+                    <ClipboardPlusIcon class="ml-auto mr-2.5 h-auto w-5" />
                 </button>
                 <NuxtLink
                     :to="{
@@ -79,7 +79,7 @@ function addToClipboard(): void {
                     }"
                     class="flex-initial text-primary-500 hover:text-primary-400"
                 >
-                    <EyeIcon class="h-auto w-5 ml-auto mr-2.5" />
+                    <EyeIcon class="ml-auto mr-2.5 h-auto w-5" />
                 </NuxtLink>
             </div>
         </td>

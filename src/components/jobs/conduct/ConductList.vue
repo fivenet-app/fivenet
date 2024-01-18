@@ -149,19 +149,19 @@ onConfirm(async (id) => deleteConductEntry(id));
             <div class="sm:flex sm:items-center">
                 <div class="sm:flex-auto">
                     <form @submit.prevent="">
-                        <div class="flex flex-row gap-4 mx-auto">
-                            <div class="flex-1 form-control">
+                        <div class="mx-auto flex flex-row gap-4">
+                            <div class="form-control flex-1">
                                 <label for="searchName" class="block text-sm font-medium leading-6 text-neutral">
                                     {{ $t('common.search') }}
                                     {{ $t('common.target') }}
                                 </label>
-                                <div class="relative flex items-center mt-2">
-                                    <Combobox v-model="query.user_ids" as="div" class="w-full mt-2" multiple nullable>
+                                <div class="relative mt-2 flex items-center">
+                                    <Combobox v-model="query.user_ids" as="div" class="mt-2 w-full" multiple nullable>
                                         <div class="relative">
                                             <ComboboxButton as="div">
                                                 <ComboboxInput
                                                     autocomplete="off"
-                                                    class="block w-full rounded-md border-0 py-1.5 bg-base-700 text-neutral placeholder:text-base-200 focus:ring-2 focus:ring-inset focus:ring-base-300 sm:text-sm sm:leading-6"
+                                                    class="block w-full rounded-md border-0 bg-base-700 py-1.5 text-neutral placeholder:text-base-200 focus:ring-2 focus:ring-inset focus:ring-base-300 sm:text-sm sm:leading-6"
                                                     :display-value="
                                                         (chars: any) => (chars ? charsGetDisplayValue(chars) : $t('common.na'))
                                                     "
@@ -174,7 +174,7 @@ onConfirm(async (id) => deleteConductEntry(id));
 
                                             <ComboboxOptions
                                                 v-if="entriesChars.length > 0"
-                                                class="absolute z-10 w-full py-1 mt-1 overflow-auto text-base rounded-md bg-base-700 max-h-44 sm:text-sm"
+                                                class="absolute z-10 mt-1 max-h-44 w-full overflow-auto rounded-md bg-base-700 py-1 text-base sm:text-sm"
                                             >
                                                 <ComboboxOption
                                                     v-for="char in entriesChars"
@@ -200,7 +200,7 @@ onConfirm(async (id) => deleteConductEntry(id));
                                                                 'absolute inset-y-0 left-0 flex items-center pl-1.5',
                                                             ]"
                                                         >
-                                                            <CheckIcon class="w-5 h-5" aria-hidden="true" />
+                                                            <CheckIcon class="h-5 w-5" aria-hidden="true" />
                                                         </span>
                                                     </li>
                                                 </ComboboxOption>
@@ -209,18 +209,18 @@ onConfirm(async (id) => deleteConductEntry(id));
                                     </Combobox>
                                 </div>
                             </div>
-                            <div class="flex-1 form-control">
+                            <div class="form-control flex-1">
                                 <label for="types" class="block text-sm font-medium leading-6 text-neutral">
                                     {{ $t('common.search') }}
                                     {{ $t('common.type') }}
                                 </label>
-                                <div class="relative flex items-center mt-2">
-                                    <Combobox v-model="query.types" as="div" class="w-full mt-2" multiple nullable>
+                                <div class="relative mt-2 flex items-center">
+                                    <Combobox v-model="query.types" as="div" class="mt-2 w-full" multiple nullable>
                                         <div class="relative">
                                             <ComboboxButton as="div">
                                                 <ComboboxInput
                                                     autocomplete="off"
-                                                    class="block w-full rounded-md border-0 py-1.5 bg-base-700 text-neutral placeholder:text-base-200 focus:ring-2 focus:ring-inset focus:ring-base-300 sm:text-sm sm:leading-6"
+                                                    class="block w-full rounded-md border-0 bg-base-700 py-1.5 text-neutral placeholder:text-base-200 focus:ring-2 focus:ring-inset focus:ring-base-300 sm:text-sm sm:leading-6"
                                                     :display-value="
                                                         (cTypes: any) =>
                                                             cTypes ? (cTypes as ConductType[]).join(', ') : $t('common.na')
@@ -233,7 +233,7 @@ onConfirm(async (id) => deleteConductEntry(id));
                                             </ComboboxButton>
 
                                             <ComboboxOptions
-                                                class="absolute z-10 w-full py-1 mt-1 overflow-auto text-base rounded-md bg-base-700 max-h-44 sm:text-sm"
+                                                class="absolute z-10 mt-1 max-h-44 w-full overflow-auto rounded-md bg-base-700 py-1 text-base sm:text-sm"
                                             >
                                                 <ComboboxOption
                                                     v-for="cType in ConductType"
@@ -259,7 +259,7 @@ onConfirm(async (id) => deleteConductEntry(id));
                                                                 'absolute inset-y-0 left-0 flex items-center pl-1.5',
                                                             ]"
                                                         >
-                                                            <CheckIcon class="w-5 h-5" aria-hidden="true" />
+                                                            <CheckIcon class="h-5 w-5" aria-hidden="true" />
                                                         </span>
                                                     </li>
                                                 </ComboboxOption>
@@ -268,11 +268,11 @@ onConfirm(async (id) => deleteConductEntry(id));
                                     </Combobox>
                                 </div>
                             </div>
-                            <div class="flex-initial form-control">
+                            <div class="form-control flex-initial">
                                 <label for="show_expired" class="block text-sm font-medium leading-6 text-neutral">
                                     {{ $t('components.jobs.conduct.List.show_expired') }}
                                 </label>
-                                <div class="relative flex items-center mt-3">
+                                <div class="relative mt-3 flex items-center">
                                     <Switch
                                         v-model="query.showExpired"
                                         :class="[
@@ -293,15 +293,15 @@ onConfirm(async (id) => deleteConductEntry(id));
                                     </Switch>
                                 </div>
                             </div>
-                            <div class="flex-initial form-control">
+                            <div class="form-control flex-initial">
                                 <label for="create" class="block text-sm font-medium leading-6 text-neutral">
                                     {{ $t('common.create') }}
                                 </label>
-                                <div class="relative flex items-center mt-3">
-                                    <div v-if="can('JobsService.ConductCreateEntry')" class="flex-initial form-control">
+                                <div class="relative mt-3 flex items-center">
+                                    <div v-if="can('JobsService.ConductCreateEntry')" class="form-control flex-initial">
                                         <button
                                             type="button"
-                                            class="inline-flex px-3 py-2 text-sm font-semibold rounded-md bg-primary-500 text-neutral hover:bg-primary-400 focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-primary-500"
+                                            class="inline-flex rounded-md bg-primary-500 px-3 py-2 text-sm font-semibold text-neutral hover:bg-primary-400 focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-primary-500"
                                             @click="
                                                 selectedEntry = undefined;
                                                 open = true;
@@ -316,9 +316,9 @@ onConfirm(async (id) => deleteConductEntry(id));
                     </form>
                 </div>
             </div>
-            <div class="flow-root mt-2">
-                <div class="mx-0 -my-2 overflow-x-auto">
-                    <div class="inline-block min-w-full py-2 align-middle px-1">
+            <div class="mt-2 flow-root">
+                <div class="-my-2 mx-0 overflow-x-auto">
+                    <div class="inline-block min-w-full px-1 py-2 align-middle">
                         <DataPendingBlock v-if="pending" :message="$t('common.loading', [$t('common.conduct_register')])" />
                         <DataErrorBlock
                             v-else-if="error"
@@ -340,24 +340,24 @@ onConfirm(async (id) => deleteConductEntry(id));
                                         >
                                             {{ $t('common.created_at') }}
                                         </th>
-                                        <th scope="col" class="py-3.5 px-2 text-left text-sm font-semibold text-neutral">
+                                        <th scope="col" class="px-2 py-3.5 text-left text-sm font-semibold text-neutral">
                                             {{ $t('common.expires_at') }}
                                         </th>
-                                        <th scope="col" class="py-3.5 px-2 text-left text-sm font-semibold text-neutral">
+                                        <th scope="col" class="px-2 py-3.5 text-left text-sm font-semibold text-neutral">
                                             {{ $t('common.type') }}
                                         </th>
-                                        <th scope="col" class="py-3.5 px-2 text-left text-sm font-semibold text-neutral">
+                                        <th scope="col" class="px-2 py-3.5 text-left text-sm font-semibold text-neutral">
                                             {{ $t('common.description') }}
                                         </th>
-                                        <th scope="col" class="py-3.5 px-2 text-left text-sm font-semibold text-neutral">
+                                        <th scope="col" class="px-2 py-3.5 text-left text-sm font-semibold text-neutral">
                                             {{ $t('common.target') }}
                                         </th>
-                                        <th scope="col" class="py-3.5 px-2 text-left text-sm font-semibold text-neutral">
+                                        <th scope="col" class="px-2 py-3.5 text-left text-sm font-semibold text-neutral">
                                             {{ $t('common.creator') }}
                                         </th>
                                         <th
                                             scope="col"
-                                            class="relative py-3.5 pl-3 pr-4 sm:pr-0 text-right text-sm font-semibold text-neutral"
+                                            class="relative py-3.5 pl-3 pr-4 text-right text-sm font-semibold text-neutral sm:pr-0"
                                         >
                                             {{ $t('common.action', 2) }}
                                         </th>
@@ -386,24 +386,24 @@ onConfirm(async (id) => deleteConductEntry(id));
                                         >
                                             {{ $t('common.created_at') }}
                                         </th>
-                                        <th scope="col" class="py-3.5 px-2 text-left text-sm font-semibold text-neutral">
+                                        <th scope="col" class="px-2 py-3.5 text-left text-sm font-semibold text-neutral">
                                             {{ $t('common.expires_at') }}
                                         </th>
-                                        <th scope="col" class="py-3.5 px-2 text-left text-sm font-semibold text-neutral">
+                                        <th scope="col" class="px-2 py-3.5 text-left text-sm font-semibold text-neutral">
                                             {{ $t('common.type') }}
                                         </th>
-                                        <th scope="col" class="py-3.5 px-2 text-left text-sm font-semibold text-neutral">
+                                        <th scope="col" class="px-2 py-3.5 text-left text-sm font-semibold text-neutral">
                                             {{ $t('common.description') }}
                                         </th>
-                                        <th scope="col" class="py-3.5 px-2 text-left text-sm font-semibold text-neutral">
+                                        <th scope="col" class="px-2 py-3.5 text-left text-sm font-semibold text-neutral">
                                             {{ $t('common.target') }}
                                         </th>
-                                        <th scope="col" class="py-3.5 px-2 text-left text-sm font-semibold text-neutral">
+                                        <th scope="col" class="px-2 py-3.5 text-left text-sm font-semibold text-neutral">
                                             {{ $t('common.creator') }}
                                         </th>
                                         <th
                                             scope="col"
-                                            class="relative py-3.5 pl-3 pr-4 sm:pr-0 text-right text-sm font-semibold text-neutral"
+                                            class="relative py-3.5 pl-3 pr-4 text-right text-sm font-semibold text-neutral sm:pr-0"
                                         >
                                             {{ $t('common.action', 2) }}
                                         </th>

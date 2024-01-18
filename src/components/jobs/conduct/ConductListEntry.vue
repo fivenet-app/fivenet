@@ -30,7 +30,7 @@ const openMessage = ref(false);
         </td>
         <td class="whitespace-nowrap px-1 py-1 text-left text-base-200">
             <div
-                class="rounded-md py-1 px-2 text-base font-medium ring-1 ring-inset"
+                class="rounded-md px-2 py-1 text-base font-medium ring-1 ring-inset"
                 :class="[
                     conductTypesToBGColor(conduct.type),
                     conductTypesToRingColor(conduct.type),
@@ -47,7 +47,7 @@ const openMessage = ref(false);
             <button
                 v-if="conduct.message.length > 50"
                 type="button"
-                class="flex justify-center px-1 py-1 text-sm font-semibold transition-colors rounded-md text-neutral focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 bg-accent-500 hover:bg-accent-400 focus-visible:outline-accent-500"
+                class="flex justify-center rounded-md bg-accent-500 px-1 py-1 text-sm font-semibold text-neutral transition-colors hover:bg-accent-400 focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-accent-500"
                 @click="openMessage = !openMessage"
             >
                 {{ openMessage ? $t('common.read_less') : $t('common.read_more') }}
@@ -67,7 +67,7 @@ const openMessage = ref(false);
                     class="flex-initial text-primary-500 hover:text-primary-400"
                     @click="$emit('selected')"
                 >
-                    <PencilIcon class="h-auto w-5 ml-auto mr-2.5" />
+                    <PencilIcon class="ml-auto mr-2.5 h-auto w-5" />
                 </button>
 
                 <button
@@ -76,7 +76,7 @@ const openMessage = ref(false);
                     class="flex-initial text-primary-500 hover:text-primary-400"
                     @click="$emit('delete')"
                 >
-                    <TrashCanIcon class="h-auto w-5 ml-auto mr-2.5" />
+                    <TrashCanIcon class="ml-auto mr-2.5 h-auto w-5" />
                 </button>
             </div>
         </td>

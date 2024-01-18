@@ -127,7 +127,7 @@ async function deleteDocumentReq(id: string): Promise<void> {
                                 <span class="font-semibold">{{ $t('common.reason') }}</span
                                 >: {{ request.reason }}
                             </p>
-                            <p v-if="request.accepted !== undefined" class="mt-1 flex text-sm leading-5 text-gray-300 gap-1">
+                            <p v-if="request.accepted !== undefined" class="mt-1 flex gap-1 text-sm leading-5 text-gray-300">
                                 <span class="font-semibold">{{ $t('common.accept', 2) }}</span
                                 >:
                                 <span v-if="request.accepted" class="text-success-400">
@@ -140,7 +140,7 @@ async function deleteDocumentReq(id: string): Promise<void> {
                         </div>
                     </div>
                     <div class="flex shrink-0 items-center gap-x-6 px-2">
-                        <div class="hidden sm:flex sm:flex-col sm:items-end text-sm">
+                        <div class="hidden text-sm sm:flex sm:flex-col sm:items-end">
                             <div class="inline-flex gap-1">
                                 {{ $t('common.creator') }}
                                 <CitizenInfoPopover :user="request.creator" text-class="underline" />
@@ -178,7 +178,7 @@ async function deleteDocumentReq(id: string): Promise<void> {
                                     leave-to-class="transform opacity-0 scale-95"
                                 >
                                     <MenuItems
-                                        class="absolute z-30 right-0 w-28 py-1 mt-2 origin-top-right rounded-md shadow-float bg-base-800 ring-1 ring-base-100 ring-opacity-5 focus:outline-none"
+                                        class="absolute right-0 z-30 mt-2 w-28 origin-top-right rounded-md bg-base-800 py-1 shadow-float ring-1 ring-base-100 ring-opacity-5 focus:outline-none"
                                     >
                                         <MenuItem v-slot="{ close }">
                                             <button

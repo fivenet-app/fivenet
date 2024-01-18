@@ -233,14 +233,14 @@ onBeforeMount(async () => {
         <Disclosure
             v-slot="{ open }"
             as="div"
-            :class="[disabled ? 'border-neutral/10 text-base-300' : 'hover:border-neutral/70 border-neutral/20 text-neutral']"
+            :class="[disabled ? 'border-neutral/10 text-base-300' : 'border-neutral/20 text-neutral hover:border-neutral/70']"
         >
             <DisclosureButton
                 :disabled="disabled"
                 :class="[
                     open ? 'rounded-t-lg border-b-0' : 'rounded-lg',
                     disabled ? 'cursor-not-allowed' : '',
-                    'flex w-full items-start justify-between text-left border-2 p-2 border-inherit transition-colors',
+                    'flex w-full items-start justify-between border-2 border-inherit p-2 text-left transition-colors',
                 ]"
             >
                 <span class="text-base leading-7 transition-colors">
@@ -250,15 +250,15 @@ onBeforeMount(async () => {
                     <ChevronDownIcon :class="[open ? 'upsidedown' : '', 'h-5 w-5 transition-transform']" aria-hidden="true" />
                 </span>
             </DisclosureButton>
-            <DisclosurePanel class="px-4 pb-2 border-2 border-t-0 rounded-b-lg transition-colors border-inherit -mt-2">
-                <div class="flex flex-col gap-2 max-w-4xl mx-auto my-2">
+            <DisclosurePanel class="-mt-2 rounded-b-lg border-2 border-t-0 border-inherit px-4 pb-2 transition-colors">
+                <div class="mx-auto my-2 flex max-w-4xl flex-col gap-2">
                     <div
                         v-if="
                             currentValue.validValues.oneofKind === 'stringList' &&
                             maxValues?.validValues &&
                             maxValues?.validValues.oneofKind === 'stringList'
                         "
-                        class="flex flex-row gap-4 flex-wrap"
+                        class="flex flex-row flex-wrap gap-4"
                     >
                         <span v-if="maxValues.validValues.stringList.strings.length === 0">
                             {{ $t('common.not_found', [$t('common.attributes', 2)]) }}
@@ -267,14 +267,14 @@ onBeforeMount(async () => {
                             <div
                                 v-for="value in maxValues.validValues.stringList.strings"
                                 :key="value"
-                                class="flex flex-row flex-initial flex-nowrap"
+                                class="flex flex-initial flex-row flex-nowrap"
                             >
                                 <input
                                     :id="value"
                                     :name="value"
                                     type="checkbox"
                                     :checked="!!currentValue.validValues.stringList.strings.find((v) => v === value)"
-                                    class="h-4 w-4 my-auto rounded border-base-300 text-primary-500 focus:ring-primary-500"
+                                    class="my-auto h-4 w-4 rounded border-base-300 text-primary-500 focus:ring-primary-500"
                                     @click="toggleStringListValue(value)"
                                 />
                                 <span class="ml-1">{{
@@ -289,7 +289,7 @@ onBeforeMount(async () => {
                             maxValues?.validValues &&
                             maxValues?.validValues.oneofKind === 'jobList'
                         "
-                        class="flex flex-row gap-4 flex-wrap"
+                        class="flex flex-row flex-wrap gap-4"
                     >
                         <span v-if="maxValues.validValues.jobList.strings.length === 0">
                             {{ $t('common.not_found', [$t('common.attributes', 2)]) }}
@@ -303,14 +303,14 @@ onBeforeMount(async () => {
                                             maxValues.validValues?.jobList?.strings.includes(j.name)),
                                 )"
                                 :key="job.name"
-                                class="flex flex-row flex-initial flex-nowrap"
+                                class="flex flex-initial flex-row flex-nowrap"
                             >
                                 <input
                                     :id="job.name"
                                     :name="job.name"
                                     type="checkbox"
                                     :checked="!!currentValue.validValues.jobList?.strings.find((v) => v === job.name)"
-                                    class="h-4 w-4 my-auto rounded border-base-300 text-primary-500 focus:ring-primary-500"
+                                    class="my-auto h-4 w-4 rounded border-base-300 text-primary-500 focus:ring-primary-500"
                                     @click="toggleJobListValue(job.name)"
                                 />
                                 <span class="ml-1">{{ job.label }}</span>
@@ -337,17 +337,17 @@ onBeforeMount(async () => {
                                         maxValues.validValues.jobGradeList.jobs[j.name],
                                 )"
                                 :key="job.name"
-                                class="flex flex-row flex-initial flex-nowrap gap-2"
+                                class="flex flex-initial flex-row flex-nowrap gap-2"
                             >
                                 <input
                                     :id="job.name"
                                     :name="job.name"
                                     type="checkbox"
                                     :checked="!!currentValue.validValues?.jobGradeList.jobs[job.name]"
-                                    class="h-4 w-4 my-auto rounded border-base-300 text-primary-500 focus:ring-primary-500"
+                                    class="my-auto h-4 w-4 rounded border-base-300 text-primary-500 focus:ring-primary-500"
                                     @change="toggleJobGradeValue(job, ($event.target as any).checked)"
                                 />
-                                <span class="flex-1 my-auto">{{ job.label }}</span>
+                                <span class="my-auto flex-1">{{ job.label }}</span>
                                 <Listbox
                                     as="div"
                                     class="flex-1"
@@ -357,11 +357,11 @@ onBeforeMount(async () => {
                                 >
                                     <div class="relative">
                                         <ListboxButton
-                                            class="block pl-3 text-left w-full rounded-md border-0 py-1.5 bg-base-700 text-neutral placeholder:text-base-200 disabled:bg-base-800 disabled:text-neutral/50 disabled:cursor-not-allowed focus:ring-2 focus:ring-inset focus:ring-base-300 sm:text-sm sm:leading-6"
+                                            class="block w-full rounded-md border-0 bg-base-700 py-1.5 pl-3 text-left text-neutral placeholder:text-base-200 focus:ring-2 focus:ring-inset focus:ring-base-300 disabled:cursor-not-allowed disabled:bg-base-800 disabled:text-neutral/50 sm:text-sm sm:leading-6"
                                         >
                                             <span class="block truncate">{{ jobGrades.get(job.name)?.label }}</span>
-                                            <span class="absolute inset-y-0 right-0 flex items-center pr-2 pointer-events-none">
-                                                <ChevronDownIcon class="w-5 h-5 text-gray-400" aria-hidden="true" />
+                                            <span class="pointer-events-none absolute inset-y-0 right-0 flex items-center pr-2">
+                                                <ChevronDownIcon class="h-5 w-5 text-gray-400" aria-hidden="true" />
                                             </span>
                                         </ListboxButton>
 
@@ -371,7 +371,7 @@ onBeforeMount(async () => {
                                             leave-to-class="opacity-0"
                                         >
                                             <ListboxOptions
-                                                class="absolute z-10 w-full py-1 mt-1 overflow-auto text-base rounded-md bg-base-700 max-h-44 sm:text-sm"
+                                                class="absolute z-10 mt-1 max-h-44 w-full overflow-auto rounded-md bg-base-700 py-1 text-base sm:text-sm"
                                             >
                                                 <ListboxOption
                                                     v-for="grade in job.grades.filter(
@@ -388,7 +388,7 @@ onBeforeMount(async () => {
                                                     <li
                                                         :class="[
                                                             active ? 'bg-primary-500' : '',
-                                                            'text-neutral relative cursor-default select-none py-2 pl-8 pr-4',
+                                                            'relative cursor-default select-none py-2 pl-8 pr-4 text-neutral',
                                                         ]"
                                                     >
                                                         <span
@@ -407,7 +407,7 @@ onBeforeMount(async () => {
                                                                 'absolute inset-y-0 left-0 flex items-center pl-1.5',
                                                             ]"
                                                         >
-                                                            <CheckIcon class="w-5 h-5" aria-hidden="true" />
+                                                            <CheckIcon class="h-5 w-5" aria-hidden="true" />
                                                         </span>
                                                     </li>
                                                 </ListboxOption>

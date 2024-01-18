@@ -38,7 +38,7 @@ watch(darkModeActive, async () => {
 </script>
 
 <template>
-    <div class="overflow-hidden bg-base-800 shadow sm:rounded-lg text-neutral mt-3">
+    <div class="mt-3 overflow-hidden bg-base-800 text-neutral shadow sm:rounded-lg">
         <div id="settings" class="px-4 py-5 sm:px-6">
             <h3 class="text-base font-semibold leading-6">
                 {{ $t('components.auth.settings_panel.title') }}
@@ -57,7 +57,7 @@ watch(darkModeActive, async () => {
                         <select
                             v-if="activeChar"
                             v-model="selectedHomepage"
-                            class="block w-full rounded-md border-0 py-1.5 bg-base-700 text-neutral placeholder:text-base-200 focus:ring-2 focus:ring-inset focus:ring-base-300 sm:text-sm sm:leading-6"
+                            class="block w-full rounded-md border-0 bg-base-700 py-1.5 text-neutral placeholder:text-base-200 focus:ring-2 focus:ring-inset focus:ring-base-300 sm:text-sm sm:leading-6"
                         >
                             <option
                                 v-for="page in homepages"

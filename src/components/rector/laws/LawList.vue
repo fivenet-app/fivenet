@@ -52,19 +52,19 @@ function updateLaw(law: Law): void {
     <div class="py-2 pb-14">
         <div class="px-1 sm:px-2 lg:px-4">
             <div class="sm:flex sm:items-center">
-                <div class="sm:flex-auto w-full">
+                <div class="w-full sm:flex-auto">
                     <button
                         type="button"
-                        class="w-full px-3 py-2 text-sm font-semibold rounded-md bg-primary-500 text-neutral hover:bg-primary-400 focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-primary-500"
+                        class="w-full rounded-md bg-primary-500 px-3 py-2 text-sm font-semibold text-neutral hover:bg-primary-400 focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-primary-500"
                         @click="addLawBook"
                     >
                         {{ $t('pages.rector.laws.add_new_law_book') }}
                     </button>
                 </div>
             </div>
-            <div class="flow-root mt-2">
-                <div class="mx-0 -my-2 overflow-x-auto">
-                    <div class="inline-block min-w-full py-2 align-middle px-1">
+            <div class="mt-2 flow-root">
+                <div class="-my-2 mx-0 overflow-x-auto">
+                    <div class="inline-block min-w-full px-1 py-2 align-middle">
                         <DataPendingBlock v-if="pending" :message="$t('common.loading', [$t('common.vehicle', 2)])" />
                         <DataErrorBlock
                             v-else-if="error"
@@ -77,7 +77,7 @@ function updateLaw(law: Law): void {
                             :type="$t('common.law', 2)"
                         />
                         <div v-else>
-                            <ul role="list" class="space-y-3 divide-base-600 divide-y">
+                            <ul role="list" class="space-y-3 divide-y divide-base-600">
                                 <li v-for="(book, idx) in lawBooks" :key="book.id">
                                     <LawBookEntry
                                         v-model="lawBooks[idx]"

@@ -68,7 +68,7 @@ watch(accessToken, async (): Promise<NavigationFailure | TypedRouteFromName<'aut
 </script>
 
 <template>
-    <div class="h-full justify-between flex flex-col">
+    <div class="flex h-full flex-col justify-between">
         <HeroFull>
             <ContentCenterWrapper>
                 <FormWrapper>

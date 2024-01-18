@@ -49,10 +49,10 @@ const grouped = computedAsync(async () => {
 </script>
 
 <template>
-    <div class="px-4 sm:px-6 lg:px-8 h-full overflow-y-auto">
+    <div class="h-full overflow-y-auto px-4 sm:px-6 lg:px-8">
         <div class="sm:flex sm:items-center">
-            <div class="sm:flex-auto inline-flex items-center">
-                <h2 class="text-base font-semibold leading-6 text-gray-100 inline-flex items-center">
+            <div class="inline-flex items-center sm:flex-auto">
+                <h2 class="inline-flex items-center text-base font-semibold leading-6 text-gray-100">
                     {{ $t('common.units') }}
                     <NuxtLink
                         v-if="can('CentrumService.CreateOrUpdateUnit')"

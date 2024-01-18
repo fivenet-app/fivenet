@@ -54,7 +54,7 @@ async function getDocumentReferences(): Promise<DocumentReference[]> {
 
         <template v-else>
             <!-- Relations list (smallest breakpoint only) -->
-            <div class="sm:hidden text-neutral">
+            <div class="text-neutral sm:hidden">
                 <ul role="list" class="divide-y divide-gray-600 rounded-lg sm:hidden">
                     <li v-for="reference in references" :key="reference.id">
                         <NuxtLink
@@ -62,12 +62,12 @@ async function getDocumentReferences(): Promise<DocumentReference[]> {
                                 name: 'documents-id',
                                 params: { id: reference.targetDocumentId },
                             }"
-                            class="block px-4 py-4 bg-base-800 hover:bg-base-700"
+                            class="block bg-base-800 px-4 py-4 hover:bg-base-700"
                         >
                             <span class="flex items-center space-x-4">
                                 <span class="flex flex-1 space-x-2 truncate">
-                                    <ArrowCollapseIcon class="flex-shrink-0 w-5 h-5 text-base-200" aria-hidden="true" />
-                                    <span class="flex flex-col text-sm truncate">
+                                    <ArrowCollapseIcon class="h-5 w-5 flex-shrink-0 text-base-200" aria-hidden="true" />
+                                    <span class="flex flex-col truncate text-sm">
                                         <span>
                                             {{ reference.targetDocument?.title
                                             }}<span v-if="reference.targetDocument?.category"
@@ -103,27 +103,27 @@ async function getDocumentReferences(): Promise<DocumentReference[]> {
                     <div class="flex flex-col">
                         <div class="min-w-full overflow-hidden overflow-x-auto align-middle sm:rounded-lg">
                             <table
-                                class="min-w-full bg-base-600 text-neutral divide-y divide-base-600 border-2 border-gray-600"
+                                class="min-w-full divide-y divide-base-600 border-2 border-gray-600 bg-base-600 text-neutral"
                             >
                                 <thead>
                                     <tr>
-                                        <th class="px-6 py-3 text-sm font-semibold text-left" scope="col">
+                                        <th class="px-6 py-3 text-left text-sm font-semibold" scope="col">
                                             {{ $t('common.target') }}
                                         </th>
-                                        <th class="px-6 py-3 text-sm font-semibold text-right" scope="col">
+                                        <th class="px-6 py-3 text-right text-sm font-semibold" scope="col">
                                             {{ $t('common.relation', 1) }}
                                         </th>
                                         <th
                                             v-if="showSource"
-                                            class="hidden px-6 py-3 text-sm font-semibold text-left md:block"
+                                            class="hidden px-6 py-3 text-left text-sm font-semibold md:block"
                                             scope="col"
                                         >
                                             {{ $t('common.source') }}
                                         </th>
-                                        <th class="hidden px-6 py-3 text-sm font-semibold text-left md:block" scope="col">
+                                        <th class="hidden px-6 py-3 text-left text-sm font-semibold md:block" scope="col">
                                             {{ $t('common.creator') }}
                                         </th>
-                                        <th class="px-6 py-3 text-sm font-semibold text-right" scope="col">
+                                        <th class="px-6 py-3 text-right text-sm font-semibold" scope="col">
                                             {{ $t('common.date') }}
                                         </th>
                                     </tr>
@@ -139,11 +139,11 @@ async function getDocumentReferences(): Promise<DocumentReference[]> {
                                                             id: reference.targetDocumentId,
                                                         },
                                                     }"
-                                                    class="inline-flex space-x-2 text-sm truncate group max-w-xl"
+                                                    class="group inline-flex max-w-xl space-x-2 truncate text-sm"
                                                 >
                                                     <span
                                                         v-if="reference.targetDocument?.category"
-                                                        class="inline-flex items-center rounded-md bg-primary-400/10 px-2 py-1 text-xs font-medium text-primary-400 ring-1 ring-inset ring-primary-400/30 mr-1"
+                                                        class="mr-1 inline-flex items-center rounded-md bg-primary-400/10 px-2 py-1 text-xs font-medium text-primary-400 ring-1 ring-inset ring-primary-400/30"
                                                     >
                                                         {{ reference.targetDocument?.category?.name }}
                                                     </span>
@@ -151,12 +151,12 @@ async function getDocumentReferences(): Promise<DocumentReference[]> {
                                                 </NuxtLink>
                                             </div>
                                         </td>
-                                        <td class="px-6 py-4 text-sm text-right whitespace-nowrap">
+                                        <td class="whitespace-nowrap px-6 py-4 text-right text-sm">
                                             <span class="font-medium">
                                                 {{ $t(`enums.docstore.DocReference.${DocReference[reference.reference]}`) }}
                                             </span>
                                         </td>
-                                        <td v-if="showSource" class="hidden px-6 py-4 text-sm whitespace-nowrap md:block">
+                                        <td v-if="showSource" class="hidden whitespace-nowrap px-6 py-4 text-sm md:block">
                                             <div class="flex">
                                                 <NuxtLink
                                                     :to="{
@@ -165,11 +165,11 @@ async function getDocumentReferences(): Promise<DocumentReference[]> {
                                                             id: reference.sourceDocumentId,
                                                         },
                                                     }"
-                                                    class="inline-flex space-x-1 text-sm truncate group max-w-xl"
+                                                    class="group inline-flex max-w-xl space-x-1 truncate text-sm"
                                                 >
                                                     <span
                                                         v-if="reference.sourceDocument?.category"
-                                                        class="inline-flex items-center rounded-md bg-primary-400/10 px-2 py-1 text-xs font-medium text-primary-400 ring-1 ring-inset ring-primary-400/30 mr-1"
+                                                        class="mr-1 inline-flex items-center rounded-md bg-primary-400/10 px-2 py-1 text-xs font-medium text-primary-400 ring-1 ring-inset ring-primary-400/30"
                                                     >
                                                         {{ reference.sourceDocument?.category?.name }}
                                                     </span>
@@ -177,14 +177,14 @@ async function getDocumentReferences(): Promise<DocumentReference[]> {
                                                 </NuxtLink>
                                             </div>
                                         </td>
-                                        <td class="px-6 py-4 text-sm text-right whitespace-nowrap">
+                                        <td class="whitespace-nowrap px-6 py-4 text-right text-sm">
                                             <div class="flex">
                                                 <NuxtLink :to="{ name: 'citizens-id', params: { id: reference.creatorId! } }">
                                                     <CitizenInfoPopover :user="reference.creator" />
                                                 </NuxtLink>
                                             </div>
                                         </td>
-                                        <td class="px-6 py-4 text-sm text-right whitespace-nowrap">
+                                        <td class="whitespace-nowrap px-6 py-4 text-right text-sm">
                                             <GenericTime :value="reference.createdAt" />
                                         </td>
                                     </tr>

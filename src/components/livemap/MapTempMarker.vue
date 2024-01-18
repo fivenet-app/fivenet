@@ -38,7 +38,7 @@ onBeforeUnmount(() => {
 <template>
     <LMarker v-if="location && showMarker" :lat-lng="[location.y, location.x]" :z-index-offset="1000">
         <LIcon :icon-size="[livemap.markerSize, livemap.markerSize]" :icon-anchor="iconAnchor">
-            <MapMarkerDownIcon class="h-5 w-5 fill-primary-500 animate-pulse" />
+            <MapMarkerDownIcon class="h-5 w-5 animate-pulse fill-primary-500" />
         </LIcon>
     </LMarker>
 </template>

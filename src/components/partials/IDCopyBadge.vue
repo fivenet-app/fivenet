@@ -38,10 +38,10 @@ function click(): void {
 <template>
     <button
         type="button"
-        class="inline-flex flex-row flex-initial items-center gap-1 px-2 py-1 rounded-full text-base-100 bg-base-500"
+        class="inline-flex flex-initial flex-row items-center gap-1 rounded-full bg-base-500 px-2 py-1 text-base-100"
         @click.prevent="click"
     >
-        <FingerprintIcon class="w-5 h-auto" aria-hidden="true" />
-        <span class="text-sm font-medium text-base-100 break-keep">{{ prefix }}-{{ id }}</span>
+        <FingerprintIcon class="h-auto w-5" aria-hidden="true" />
+        <span class="break-keep text-sm font-medium text-base-100">{{ prefix }}-{{ id }}</span>
     </button>
 </template>

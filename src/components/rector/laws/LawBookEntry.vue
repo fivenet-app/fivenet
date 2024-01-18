@@ -133,7 +133,7 @@ const editing = ref(props.startInEdit);
     <ConfirmDialog :open="isRevealed" :cancel="cancel" :confirm="() => confirm(modelValue.id)" />
 
     <div class="my-2">
-        <div v-if="!editing" class="flex text-neutral items-center gap-x-2">
+        <div v-if="!editing" class="flex items-center gap-x-2 text-neutral">
             <button type="button" :title="$t('common.edit')" @click="editing = true">
                 <PencilIcon class="h-5 w-5" />
             </button>
@@ -143,10 +143,10 @@ const editing = ref(props.startInEdit);
             <h2 class="text-xl">{{ modelValue.name }}</h2>
             <p v-if="modelValue.description" class="pl-2">- {{ $t('common.description') }}: {{ modelValue.description }}</p>
             <div class="pl-2">
-                <div class="sm:flex-auto w-full">
+                <div class="w-full sm:flex-auto">
                     <button
                         type="button"
-                        class="px-3 py-2 text-sm font-semibold rounded-md bg-primary-500 text-neutral hover:bg-primary-400 focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-primary-500"
+                        class="rounded-md bg-primary-500 px-3 py-2 text-sm font-semibold text-neutral hover:bg-primary-400 focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-primary-500"
                         @click="addLaw"
                     >
                         {{ $t('pages.rector.laws.add_new_law') }}
@@ -154,7 +154,7 @@ const editing = ref(props.startInEdit);
                 </div>
             </div>
         </div>
-        <form v-else class="w-full flex flex-row gap-x-4 text-neutral items-start" @submit.prevent="onSubmitThrottle">
+        <form v-else class="flex w-full flex-row items-start gap-x-4 text-neutral" @submit.prevent="onSubmitThrottle">
             <button type="submit" :title="$t('common.save')">
                 <ContentSaveIcon class="h-5 w-5" />
             </button>
@@ -178,7 +178,7 @@ const editing = ref(props.startInEdit);
                     type="text"
                     :placeholder="$t('common.law_book')"
                     :label="$t('common.law_book')"
-                    class="block w-full rounded-md border-0 py-1.5 bg-base-700 text-neutral placeholder:text-base-200 focus:ring-2 focus:ring-inset focus:ring-base-300 sm:text-sm sm:leading-6"
+                    class="block w-full rounded-md border-0 bg-base-700 py-1.5 text-neutral placeholder:text-base-200 focus:ring-2 focus:ring-inset focus:ring-base-300 sm:text-sm sm:leading-6"
                     @focusin="focusTablet(true)"
                     @focusout="focusTablet(false)"
                 />
@@ -193,7 +193,7 @@ const editing = ref(props.startInEdit);
                     type="text"
                     :placeholder="$t('common.description')"
                     :label="$t('common.description')"
-                    class="block w-full rounded-md border-0 py-1.5 bg-base-700 text-neutral placeholder:text-base-200 focus:ring-2 focus:ring-inset focus:ring-base-300 sm:text-sm sm:leading-6"
+                    class="block w-full rounded-md border-0 bg-base-700 py-1.5 text-neutral placeholder:text-base-200 focus:ring-2 focus:ring-inset focus:ring-base-300 sm:text-sm sm:leading-6"
                     @focusin="focusTablet(true)"
                     @focusout="focusTablet(false)"
                 />
@@ -209,16 +209,16 @@ const editing = ref(props.startInEdit);
                     <th scope="col" class="py-3.5 pl-4 pr-3 text-left text-sm font-semibold text-neutral sm:pl-1">
                         {{ $t('common.crime') }}
                     </th>
-                    <th scope="col" class="py-3.5 px-2 text-left text-sm font-semibold text-neutral">
+                    <th scope="col" class="px-2 py-3.5 text-left text-sm font-semibold text-neutral">
                         {{ $t('common.fine') }}
                     </th>
-                    <th scope="col" class="py-3.5 px-2 text-left text-sm font-semibold text-neutral">
+                    <th scope="col" class="px-2 py-3.5 text-left text-sm font-semibold text-neutral">
                         {{ $t('common.detention_time') }}
                     </th>
-                    <th scope="col" class="py-3.5 px-2 text-left text-sm font-semibold text-neutral">
+                    <th scope="col" class="px-2 py-3.5 text-left text-sm font-semibold text-neutral">
                         {{ $t('common.traffic_infraction_points', 2) }}
                     </th>
-                    <th scope="col" class="py-3.5 px-2 text-left text-sm font-semibold text-neutral">
+                    <th scope="col" class="px-2 py-3.5 text-left text-sm font-semibold text-neutral">
                         {{ $t('common.description') }}
                     </th>
                 </tr>

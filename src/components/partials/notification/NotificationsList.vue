@@ -61,11 +61,11 @@ watchDebounced(includeRead, async () => refresh(), { debounce: 500, maxWait: 150
                 <div class="sm:flex-auto">
                     <form @submit.prevent="refresh()">
                         <div class="flex flex-row items-center gap-2 sm:mx-auto">
-                            <div class="flex-1 form-control">
+                            <div class="form-control flex-1">
                                 <label for="search" class="block text-sm font-medium leading-6 text-neutral"
                                     >{{ $t('components.notifications.include_read') }}
                                 </label>
-                                <div class="relative flex items-center mt-3">
+                                <div class="relative mt-3 flex items-center">
                                     <Switch
                                         v-model="includeRead"
                                         :class="[
@@ -88,7 +88,7 @@ watchDebounced(includeRead, async () => refresh(), { debounce: 500, maxWait: 150
                                 <button
                                     type="button"
                                     :disabled="data?.notifications === undefined || data?.notifications.length === 0"
-                                    class="inline-flex px-3 py-2 text-sm font-semibold rounded-md text-neutral focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-primary-500"
+                                    class="inline-flex rounded-md px-3 py-2 text-sm font-semibold text-neutral focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-primary-500"
                                     :class="
                                         data?.notifications === undefined || data?.notifications.length === 0
                                             ? 'bg-primary-500 hover:bg-primary-400'
@@ -103,9 +103,9 @@ watchDebounced(includeRead, async () => refresh(), { debounce: 500, maxWait: 150
                     </form>
                 </div>
             </div>
-            <div class="flow-root mt-2">
-                <div class="mx-0 -my-2 overflow-x-auto">
-                    <div class="inline-block min-w-full py-2 align-middle px-1">
+            <div class="mt-2 flow-root">
+                <div class="-my-2 mx-0 overflow-x-auto">
+                    <div class="inline-block min-w-full px-1 py-2 align-middle">
                         <DataPendingBlock v-if="pending" :message="$t('common.loading', [$t('common.notification', 2)])" />
                         <DataErrorBlock
                             v-else-if="error"
@@ -122,7 +122,7 @@ watchDebounced(includeRead, async () => refresh(), { debounce: 500, maxWait: 150
                                 <li
                                     v-for="not in data?.notifications"
                                     :key="not.id"
-                                    class="relative flex justify-between my-1 gap-x-6 px-4 py-5 hover:bg-base-700 bg-base-800 sm:px-6 rounded-lg"
+                                    class="relative my-1 flex justify-between gap-x-6 rounded-lg bg-base-800 px-4 py-5 hover:bg-base-700 sm:px-6"
                                 >
                                     <div class="flex gap-x-4">
                                         <div class="min-w-0 flex-auto">

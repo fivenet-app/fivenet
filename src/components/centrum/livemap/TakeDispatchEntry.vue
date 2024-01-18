@@ -51,7 +51,7 @@ const open = ref(false);
                     type="checkbox"
                     name="selected"
                     :checked="checked"
-                    class="h-4 w-4 rounded border-gray-300 text-primary-600 focus:ring-primary-600 h-5 w-5"
+                    class="h-4 h-5 w-4 w-5 rounded border-gray-300 text-primary-600 focus:ring-primary-600"
                     @change="
                         checked = !checked;
                         $emit('selected', checked);
@@ -59,13 +59,13 @@ const open = ref(false);
                 />
                 <IDCopyBadge :id="dispatch.id" class="ml-2" prefix="DSP" :action="() => (open = true)" />
             </div>
-            <div v-if="expiresAt" class="mt-1 text-neutral text-sm">
+            <div v-if="expiresAt" class="mt-1 text-sm text-neutral">
                 {{ $t('common.expires_in') }}:
                 {{ useLocaleTimeAgo(toDate(expiresAt, timeCorrection), { showSecond: true, updateInterval: 1_000 }).value }}
             </div>
         </dt>
         <dd class="mt-1 text-sm leading-6 text-gray-400 sm:col-span-2 sm:mt-0">
-            <ul role="list" class="border divide-y rounded-md divide-base-200 border-base-200">
+            <ul role="list" class="divide-y divide-base-200 rounded-md border border-base-200">
                 <li class="flex items-center py-3 pl-3 pr-4 text-sm">
                     <span class="font-medium">{{ $t('common.sent_by') }}</span
                     >:
@@ -93,7 +93,7 @@ const open = ref(false);
                         class="inline-flex items-center text-primary-400 hover:text-primary-600"
                         @click="$emit('goto', { x: dispatch.x, y: dispatch.y })"
                     >
-                        <MapMarkerIcon class="w-5 h-5" aria-hidden="true" />
+                        <MapMarkerIcon class="h-5 w-5" aria-hidden="true" />
                         <span class="ml-1">
                             {{ $t('common.go_to_location') }}
                         </span>
@@ -107,11 +107,11 @@ const open = ref(false);
                     }}</span>
                 </li>
                 <li class="flex items-center justify-between py-3 pl-3 pr-4 text-sm">
-                    <div class="flex items-center flex-1">
-                        <AccountIcon class="flex-shrink-0 w-5 h-5 text-base-400 mr-1" aria-hidden="true" />
-                        <span class="font-medium mr-1">{{ $t('common.units', 2) }}:</span>
+                    <div class="flex flex-1 items-center">
+                        <AccountIcon class="mr-1 h-5 w-5 flex-shrink-0 text-base-400" aria-hidden="true" />
+                        <span class="mr-1 font-medium">{{ $t('common.units', 2) }}:</span>
                         <span v-if="dispatch.units.length === 0">{{ $t('common.member', 0) }}</span>
-                        <span v-else class="flex-1 ml-2 truncate grid grid-cols-2 gap-1">
+                        <span v-else class="ml-2 grid flex-1 grid-cols-2 gap-1 truncate">
                             <UnitInfoPopover
                                 v-for="unit in dispatch.units"
                                 :key="unit.unitId"

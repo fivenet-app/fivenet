@@ -236,7 +236,7 @@ if (hash.value !== undefined && hash.value !== null) {
             <div class="h-full px-4 py-6 sm:px-6 lg:px-8">
                 <div>
                     <div>
-                        <div class="flex flex-row flex-wrap gap-2 overflow-x-auto snap-x justify-between">
+                        <div class="flex snap-x flex-row flex-wrap justify-between gap-2 overflow-x-auto">
                             <IDCopyBadge
                                 :id="doc.id"
                                 prefix="DOC"
@@ -260,11 +260,11 @@ if (hash.value !== undefined && hash.value !== null) {
                                     @click="toggleDocument(documentId, !doc?.closed)"
                                 >
                                     <template v-if="doc?.closed">
-                                        <LockOpenVariantIcon class="w-5 h-5 text-success-500" aria-hidden="true" />
+                                        <LockOpenVariantIcon class="h-5 w-5 text-success-500" aria-hidden="true" />
                                         {{ $t('common.open', 1) }}
                                     </template>
                                     <template v-else>
-                                        <LockIcon class="w-5 h-5 text-error-400" aria-hidden="true" />
+                                        <LockIcon class="h-5 w-5 text-error-400" aria-hidden="true" />
                                         {{ $t('common.close', 1) }}
                                     </template>
                                 </button>
@@ -285,7 +285,7 @@ if (hash.value !== undefined && hash.value !== null) {
                                     type="button"
                                     class="inline-flex items-center gap-x-1.5 rounded-md bg-primary-500 px-3 py-2 text-sm font-semibold text-neutral hover:bg-primary-400"
                                 >
-                                    <PencilIcon class="-ml-0.5 w-5 h-auto" aria-hidden="true" />
+                                    <PencilIcon class="-ml-0.5 h-auto w-5" aria-hidden="true" />
                                     {{ $t('common.edit') }}
                                 </NuxtLink>
                                 <button
@@ -294,7 +294,7 @@ if (hash.value !== undefined && hash.value !== null) {
                                     class="inline-flex items-center gap-x-1.5 rounded-md bg-primary-500 px-3 py-2 text-sm font-semibold text-neutral hover:bg-primary-400"
                                     @click="openRequests = true"
                                 >
-                                    <FrequentlyAskedQuestionsIcon class="-ml-0.5 w-5 h-auto" aria-hidden="true" />
+                                    <FrequentlyAskedQuestionsIcon class="-ml-0.5 h-auto w-5" aria-hidden="true" />
                                     {{ $t('common.request', 2) }}
                                 </button>
                                 <button
@@ -314,7 +314,7 @@ if (hash.value !== undefined && hash.value !== null) {
                                     :disabled="doc?.creatorId === activeChar?.userId"
                                     @click="revealChangeOwner(documentId)"
                                 >
-                                    <CreationIcon class="-ml-0.5 w-5 h-auto" aria-hidden="true" />
+                                    <CreationIcon class="-ml-0.5 h-auto w-5" aria-hidden="true" />
                                     {{ $t('components.documents.document_view.take_ownership') }}
                                 </button>
                                 <button
@@ -326,14 +326,14 @@ if (hash.value !== undefined && hash.value !== null) {
                                     class="inline-flex items-center gap-x-1.5 rounded-md bg-primary-500 px-3 py-2 text-sm font-semibold text-neutral hover:bg-primary-400"
                                     @click="revealDelete(documentId)"
                                 >
-                                    <TrashCanIcon class="-ml-0.5 w-5 h-auto" aria-hidden="true" />
+                                    <TrashCanIcon class="-ml-0.5 h-auto w-5" aria-hidden="true" />
                                     {{ $t('common.delete') }}
                                 </button>
                             </div>
                         </div>
 
                         <div class="my-4">
-                            <h1 class="py-1 pl-0.5 pr-0.5 text-4xl font-bold text-neutral sm:pl-1 break-words">
+                            <h1 class="break-words py-1 pl-0.5 pr-0.5 text-4xl font-bold text-neutral sm:pl-1">
                                 {{ doc?.title }}
                             </h1>
                         </div>
@@ -341,11 +341,11 @@ if (hash.value !== undefined && hash.value !== null) {
                         <div class="mb-2 flex gap-2">
                             <div
                                 v-if="doc.category"
-                                class="flex flex-row flex-initial gap-1 px-2 py-1 rounded-full bg-primary-100 text-primary-500"
+                                class="flex flex-initial flex-row gap-1 rounded-full bg-primary-100 px-2 py-1 text-primary-500"
                             >
-                                <ShapeIcon class="w-5 h-auto" aria-hidden="true" />
+                                <ShapeIcon class="h-auto w-5" aria-hidden="true" />
                                 <span
-                                    class="text-sm font-medium text-primary-800 inline-flex items-center"
+                                    class="inline-flex items-center text-sm font-medium text-primary-800"
                                     :title="doc.category.description ?? $t('common.na')"
                                 >
                                     {{ doc.category.name }}
@@ -354,15 +354,15 @@ if (hash.value !== undefined && hash.value !== null) {
 
                             <div
                                 v-if="doc?.closed"
-                                class="flex flex-row flex-initial gap-1 px-2 py-1 rounded-full bg-error-100"
+                                class="flex flex-initial flex-row gap-1 rounded-full bg-error-100 px-2 py-1"
                             >
-                                <LockIcon class="w-5 h-5 text-error-400" aria-hidden="true" />
+                                <LockIcon class="h-5 w-5 text-error-400" aria-hidden="true" />
                                 <span class="text-sm font-medium text-error-700">
                                     {{ $t('common.close', 2) }}
                                 </span>
                             </div>
-                            <div v-else class="flex flex-row flex-initial gap-1 px-2 py-1 rounded-full bg-success-100">
-                                <LockOpenVariantIcon class="w-5 h-5 text-success-500" aria-hidden="true" />
+                            <div v-else class="flex flex-initial flex-row gap-1 rounded-full bg-success-100 px-2 py-1">
+                                <LockOpenVariantIcon class="h-5 w-5 text-success-500" aria-hidden="true" />
                                 <span class="text-sm font-medium text-success-700">
                                     {{ $t('common.open', 2) }}
                                 </span>
@@ -370,15 +370,15 @@ if (hash.value !== undefined && hash.value !== null) {
 
                             <div
                                 v-if="doc?.state"
-                                class="flex flex-row flex-initial gap-1 px-2 py-1 rounded-full bg-info-100 text-info-500"
+                                class="flex flex-initial flex-row gap-1 rounded-full bg-info-100 px-2 py-1 text-info-500"
                             >
-                                <NoteCheckIcon class="w-5 h-auto" aria-hidden="true" />
+                                <NoteCheckIcon class="h-auto w-5" aria-hidden="true" />
                                 <span class="text-sm font-medium text-info-800">
                                     {{ doc?.state }}
                                 </span>
                             </div>
-                            <div class="flex flex-row flex-initial gap-1 px-2 py-1 rounded-full bg-base-100 text-base-500">
-                                <CommentTextMultipleIcon class="w-5 h-auto" aria-hidden="true" />
+                            <div class="flex flex-initial flex-row gap-1 rounded-full bg-base-100 px-2 py-1 text-base-500">
+                                <CommentTextMultipleIcon class="h-auto w-5" aria-hidden="true" />
                                 <span class="text-sm font-medium text-base-700">
                                     {{
                                         commentCount !== undefined
@@ -389,10 +389,10 @@ if (hash.value !== undefined && hash.value !== null) {
                             </div>
                         </div>
 
-                        <div class="flex flex-row flex-wrap gap-2 pb-3 overflow-x-auto snap-x sm:pb-0">
-                            <div class="flex flex-row flex-initial gap-1 px-2 py-1 rounded-full bg-base-100 text-base-500">
-                                <AccountIcon class="w-5 h-auto" aria-hidden="true" />
-                                <span class="text-sm font-medium text-base-700 inline-flex items-center">
+                        <div class="flex snap-x flex-row flex-wrap gap-2 overflow-x-auto pb-3 sm:pb-0">
+                            <div class="flex flex-initial flex-row gap-1 rounded-full bg-base-100 px-2 py-1 text-base-500">
+                                <AccountIcon class="h-auto w-5" aria-hidden="true" />
+                                <span class="inline-flex items-center text-sm font-medium text-base-700">
                                     {{ $t('common.created_by') }}
                                     <CitizenInfoPopover
                                         :user="doc.creator"
@@ -401,8 +401,8 @@ if (hash.value !== undefined && hash.value !== null) {
                                 </span>
                             </div>
 
-                            <div class="flex flex-row flex-initial gap-1 px-2 py-1 rounded-full bg-base-100 text-base-500">
-                                <CalendarIcon class="w-5 h-auto" aria-hidden="true" />
+                            <div class="flex flex-initial flex-row gap-1 rounded-full bg-base-100 px-2 py-1 text-base-500">
+                                <CalendarIcon class="h-auto w-5" aria-hidden="true" />
                                 <span class="text-sm font-medium text-base-700">
                                     {{ $t('common.created_at') }}
                                     <GenericTime :value="doc.createdAt" type="long" />
@@ -410,9 +410,9 @@ if (hash.value !== undefined && hash.value !== null) {
                             </div>
                             <div
                                 v-if="doc.updatedAt"
-                                class="flex flex-row flex-initial gap-1 px-2 py-1 rounded-full bg-base-100 text-base-500"
+                                class="flex flex-initial flex-row gap-1 rounded-full bg-base-100 px-2 py-1 text-base-500"
                             >
-                                <CalendarEditIcon class="w-5 h-auto" aria-hidden="true" />
+                                <CalendarEditIcon class="h-auto w-5" aria-hidden="true" />
                                 <span class="text-sm font-medium text-base-700">
                                     {{ $t('common.updated_at') }}
                                     <GenericTime :value="doc.updatedAt" type="long" />
@@ -420,9 +420,9 @@ if (hash.value !== undefined && hash.value !== null) {
                             </div>
                             <div
                                 v-if="doc.deletedAt"
-                                class="flex flex-row flex-initial gap-1 px-2 py-1 rounded-full bg-base-100 text-base-500"
+                                class="flex flex-initial flex-row gap-1 rounded-full bg-base-100 px-2 py-1 text-base-500"
                             >
-                                <CalendarRemoveIcon class="w-5 h-auto" aria-hidden="true" />
+                                <CalendarRemoveIcon class="h-auto w-5" aria-hidden="true" />
                                 <span class="text-sm font-medium text-base-700">
                                     {{ $t('common.deleted') }}
                                     <GenericTime :value="doc.deletedAt" type="long" />
@@ -434,10 +434,10 @@ if (hash.value !== undefined && hash.value !== null) {
                             <h2 class="sr-only">
                                 {{ $t('common.content') }}
                             </h2>
-                            <div class="rounded-lg text-neutral bg-base-800 break-words">
+                            <div class="break-words rounded-lg bg-base-800 text-neutral">
                                 <!-- eslint-disable vue/no-v-html -->
                                 <div
-                                    class="min-w-full bg-base-900 rounded-md px-4 py-4 prose prose-invert"
+                                    class="prose prose-invert min-w-full rounded-md bg-base-900 px-4 py-4"
                                     v-html="doc.content"
                                 ></div>
                             </div>
@@ -447,26 +447,26 @@ if (hash.value !== undefined && hash.value !== null) {
                             <Disclosure
                                 v-slot="{ open }"
                                 as="div"
-                                class="text-neutral hover:border-neutral/70 border-neutral/20"
+                                class="border-neutral/20 text-neutral hover:border-neutral/70"
                             >
                                 <DisclosureButton
                                     :class="[
                                         open ? 'rounded-t-lg border-b-0' : 'rounded-lg',
-                                        'flex w-full items-start justify-between text-left border-2 p-2 border-inherit transition-colors',
+                                        'flex w-full items-start justify-between border-2 border-inherit p-2 text-left transition-colors',
                                     ]"
                                 >
-                                    <span class="text-base font-semibold leading-7 inline-flex items-center">
-                                        <AccountMultipleIcon class="w-5 h-auto mr-2" />
+                                    <span class="inline-flex items-center text-base font-semibold leading-7">
+                                        <AccountMultipleIcon class="mr-2 h-auto w-5" />
                                         {{ $t('common.relation', 2) }}
                                     </span>
                                     <span class="ml-6 flex h-7 items-center">
                                         <ChevronDownIcon
-                                            :class="[open ? 'upsidedown' : '', 'w-5 h-autotransition-transform']"
+                                            :class="[open ? 'upsidedown' : '', 'h-autotransition-transform w-5']"
                                             aria-hidden="true"
                                         />
                                     </span>
                                 </DisclosureButton>
-                                <DisclosurePanel class="border-2 border-t-0 rounded-b-lg transition-colors border-inherit">
+                                <DisclosurePanel class="rounded-b-lg border-2 border-t-0 border-inherit transition-colors">
                                     <div class="mx-4 pb-2">
                                         <Relations :document-id="documentId" :show-document="false" />
                                     </div>
@@ -478,26 +478,26 @@ if (hash.value !== undefined && hash.value !== null) {
                             <Disclosure
                                 v-slot="{ open }"
                                 as="div"
-                                class="text-neutral hover:border-neutral/70 border-neutral/20"
+                                class="border-neutral/20 text-neutral hover:border-neutral/70"
                             >
                                 <DisclosureButton
                                     :class="[
                                         open ? 'rounded-t-lg border-b-0' : 'rounded-lg',
-                                        'flex w-full items-start justify-between text-left border-2 p-2 border-inherit transition-colors',
+                                        'flex w-full items-start justify-between border-2 border-inherit p-2 text-left transition-colors',
                                     ]"
                                 >
-                                    <span class="text-base font-semibold leading-7 inline-flex items-center">
-                                        <FileDocumentIcon class="w-5 h-auto mr-2" />
+                                    <span class="inline-flex items-center text-base font-semibold leading-7">
+                                        <FileDocumentIcon class="mr-2 h-auto w-5" />
                                         {{ $t('common.reference', 2) }}
                                     </span>
                                     <span class="ml-6 flex h-7 items-center">
                                         <ChevronDownIcon
-                                            :class="[open ? 'upsidedown' : '', 'w-5 h-autotransition-transform']"
+                                            :class="[open ? 'upsidedown' : '', 'h-autotransition-transform w-5']"
                                             aria-hidden="true"
                                         />
                                     </span>
                                 </DisclosureButton>
-                                <DisclosurePanel class="border-2 border-t-0 rounded-b-lg transition-colors border-inherit">
+                                <DisclosurePanel class="rounded-b-lg border-2 border-t-0 border-inherit transition-colors">
                                     <div class="mx-4 pb-2">
                                         <References :document-id="documentId" :show-source="false" />
                                     </div>
@@ -509,28 +509,28 @@ if (hash.value !== undefined && hash.value !== null) {
                             <Disclosure
                                 v-slot="{ open }"
                                 as="div"
-                                class="w-full text-neutral hover:border-neutral/70 border-neutral/20"
+                                class="w-full border-neutral/20 text-neutral hover:border-neutral/70"
                                 :default-open="true"
                             >
                                 <DisclosureButton
                                     :class="[
                                         open ? 'rounded-t-lg border-b-0' : 'rounded-lg',
-                                        'flex w-full items-start justify-between text-left border-2 p-2 border-inherit transition-colors',
+                                        'flex w-full items-start justify-between border-2 border-inherit p-2 text-left transition-colors',
                                     ]"
                                 >
-                                    <span class="text-base font-semibold leading-7 inline-flex items-center">
-                                        <LockIcon class="w-5 h-auto mr-2" />
+                                    <span class="inline-flex items-center text-base font-semibold leading-7">
+                                        <LockIcon class="mr-2 h-auto w-5" />
                                         {{ $t('common.access') }}
                                     </span>
                                     <span class="ml-6 flex h-7 items-center">
                                         <ChevronDownIcon
-                                            :class="[open ? 'upsidedown' : '', 'w-5 h-autotransition-transform']"
+                                            :class="[open ? 'upsidedown' : '', 'h-autotransition-transform w-5']"
                                             aria-hidden="true"
                                         />
                                     </span>
                                 </DisclosureButton>
-                                <DisclosurePanel class="border-2 border-t-0 rounded-b-lg transition-colors border-inherit">
-                                    <div class="mx-4 pb-2 flex flex-row flex-wrap gap-1">
+                                <DisclosurePanel class="rounded-b-lg border-2 border-t-0 border-inherit transition-colors">
+                                    <div class="mx-4 flex flex-row flex-wrap gap-1 pb-2">
                                         <template v-if="!access || (access?.jobs.length === 0 && access?.users.length === 0)">
                                             <DataNoDataBlock
                                                 :icon="FileSearchIcon"
@@ -541,9 +541,9 @@ if (hash.value !== undefined && hash.value !== null) {
                                             <div
                                                 v-for="entry in access?.jobs"
                                                 :key="entry.id"
-                                                class="flex gap-1 overflow-x-auto snap-x items-center flex-initial px-2 py-1 rounded-full bg-info-100 whitespace-nowrap snap-start"
+                                                class="flex flex-initial snap-x snap-start items-center gap-1 overflow-x-auto whitespace-nowrap rounded-full bg-info-100 px-2 py-1"
                                             >
-                                                <span class="w-2 h-2 rounded-full bg-info-500" aria-hidden="true" />
+                                                <span class="h-2 w-2 rounded-full bg-info-500" aria-hidden="true" />
                                                 <span class="text-sm font-medium text-info-800"
                                                     >{{ entry.jobLabel
                                                     }}<span
@@ -560,9 +560,9 @@ if (hash.value !== undefined && hash.value !== null) {
                                             <div
                                                 v-for="entry in access?.users"
                                                 :key="entry.id"
-                                                class="flex flex-row items-center flex-initial gap-1 px-2 py-1 rounded-full bg-secondary-100 whitespace-nowrap snap-start"
+                                                class="flex flex-initial snap-start flex-row items-center gap-1 whitespace-nowrap rounded-full bg-secondary-100 px-2 py-1"
                                             >
-                                                <span class="w-2 h-2 rounded-full bg-secondary-400" aria-hidden="true" />
+                                                <span class="h-2 w-2 rounded-full bg-secondary-400" aria-hidden="true" />
                                                 <span
                                                     class="text-sm font-medium text-secondary-700"
                                                     :title="`${$t('common.id')} ${entry.userId}`"
@@ -579,12 +579,12 @@ if (hash.value !== undefined && hash.value !== null) {
 
                             <div class="my-2">
                                 <div
-                                    class="w-full text-neutral hover:border-neutral/70 border-neutral/20 border-2 rounded-lg transition-colors border-inherit"
+                                    class="w-full rounded-lg border-2 border-inherit border-neutral/20 text-neutral transition-colors hover:border-neutral/70"
                                 >
                                     <h2
-                                        class="text-lg font-semibold text-neutral inline-flex items-center text-left p-2 transition-colors"
+                                        class="inline-flex items-center p-2 text-left text-lg font-semibold text-neutral transition-colors"
                                     >
-                                        <CommentIcon class="w-5 h-auto mr-2" />
+                                        <CommentIcon class="mr-2 h-auto w-5" />
                                         {{ $t('common.comment', 2) }}
                                     </h2>
 
@@ -612,16 +612,16 @@ if (hash.value !== undefined && hash.value !== null) {
                             <Disclosure
                                 v-slot="{ open }"
                                 as="div"
-                                class="text-neutral hover:border-neutral/70 border-neutral/20"
+                                class="border-neutral/20 text-neutral hover:border-neutral/70"
                             >
                                 <DisclosureButton
                                     :class="[
                                         open ? 'rounded-t-lg border-b-0' : 'rounded-lg',
-                                        'flex w-full items-start justify-between text-left border-2 p-2 border-inherit transition-colors',
+                                        'flex w-full items-start justify-between border-2 border-inherit p-2 text-left transition-colors',
                                     ]"
                                 >
-                                    <span class="text-base font-semibold leading-7 inline-flex items-center">
-                                        <CommentQuoteIcon class="w-5 h-auto mr-2" />
+                                    <span class="inline-flex items-center text-base font-semibold leading-7">
+                                        <CommentQuoteIcon class="mr-2 h-auto w-5" />
                                         {{ $t('common.activity') }}
                                     </span>
                                     <span class="ml-6 flex h-7 items-center">
@@ -631,7 +631,7 @@ if (hash.value !== undefined && hash.value !== null) {
                                         />
                                     </span>
                                 </DisclosureButton>
-                                <DisclosurePanel class="border-2 border-t-0 rounded-b-lg transition-colors border-inherit">
+                                <DisclosurePanel class="rounded-b-lg border-2 border-t-0 border-inherit transition-colors">
                                     <div class="mx-4 pb-2">
                                         <DocumentActivityList :document-id="documentId" />
                                     </div>

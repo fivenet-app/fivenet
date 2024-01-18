@@ -116,50 +116,50 @@ watch(selectedChar, () => {
             <div class="sm:flex sm:items-center">
                 <div class="sm:flex-auto">
                     <form @submit.prevent="refresh()">
-                        <div class="flex flex-row gap-4 mx-auto">
-                            <div class="flex-1 form-control">
+                        <div class="mx-auto flex flex-row gap-4">
+                            <div class="form-control flex-1">
                                 <label for="search" class="block text-sm font-medium leading-6 text-neutral">
                                     {{ $t('common.license_plate') }}
                                 </label>
-                                <div class="relative flex items-center mt-2">
+                                <div class="relative mt-2 flex items-center">
                                     <input
                                         ref="searchInput"
                                         v-model="query.plate"
                                         type="text"
                                         :placeholder="$t('common.license_plate')"
-                                        class="block w-full rounded-md border-0 py-1.5 pr-14 bg-base-700 text-neutral placeholder:text-base-200 focus:ring-2 focus:ring-inset focus:ring-base-300 sm:text-sm sm:leading-6"
+                                        class="block w-full rounded-md border-0 bg-base-700 py-1.5 pr-14 text-neutral placeholder:text-base-200 focus:ring-2 focus:ring-inset focus:ring-base-300 sm:text-sm sm:leading-6"
                                         @focusin="focusTablet(true)"
                                         @focusout="focusTablet(false)"
                                     />
                                 </div>
                             </div>
-                            <div class="flex-1 form-control">
+                            <div class="form-control flex-1">
                                 <label for="model" class="block text-sm font-medium leading-6 text-neutral">
                                     {{ $t('common.model') }}
                                 </label>
-                                <div class="relative flex items-center mt-2">
+                                <div class="relative mt-2 flex items-center">
                                     <input
                                         v-model="query.model"
                                         type="text"
                                         name="model"
                                         :placeholder="$t('common.model')"
-                                        class="block w-full rounded-md border-0 py-1.5 pr-14 bg-base-700 text-neutral placeholder:text-base-200 focus:ring-2 focus:ring-inset focus:ring-base-300 sm:text-sm sm:leading-6"
+                                        class="block w-full rounded-md border-0 bg-base-700 py-1.5 pr-14 text-neutral placeholder:text-base-200 focus:ring-2 focus:ring-inset focus:ring-base-300 sm:text-sm sm:leading-6"
                                         @focusin="focusTablet(true)"
                                         @focusout="focusTablet(false)"
                                     />
                                 </div>
                             </div>
-                            <div v-if="!userId" class="flex-1 form-control">
+                            <div v-if="!userId" class="form-control flex-1">
                                 <label for="owner" class="block text-sm font-medium leading-6 text-neutral">
                                     {{ $t('common.owner') }}
                                 </label>
-                                <div class="relative items-center mt-2">
+                                <div class="relative mt-2 items-center">
                                     <Combobox v-model="selectedChar" as="div" nullable>
                                         <div class="relative">
                                             <ComboboxButton as="div">
                                                 <ComboboxInput
                                                     autocomplete="off"
-                                                    class="block w-full rounded-md border-0 py-1.5 bg-base-700 text-neutral placeholder:text-base-200 focus:ring-2 focus:ring-inset focus:ring-base-300 sm:text-sm sm:leading-6"
+                                                    class="block w-full rounded-md border-0 bg-base-700 py-1.5 text-neutral placeholder:text-base-200 focus:ring-2 focus:ring-inset focus:ring-base-300 sm:text-sm sm:leading-6"
                                                     :display-value="
                                                         (char: any) =>
                                                             char
@@ -175,7 +175,7 @@ watch(selectedChar, () => {
 
                                             <ComboboxOptions
                                                 v-if="chars !== null && chars.length > 0"
-                                                class="absolute z-10 w-full py-1 mt-1 overflow-auto text-base rounded-md bg-base-700 max-h-44 sm:text-sm"
+                                                class="absolute z-10 mt-1 max-h-44 w-full overflow-auto rounded-md bg-base-700 py-1 text-base sm:text-sm"
                                             >
                                                 <ComboboxOption
                                                     v-for="char in chars"
@@ -203,7 +203,7 @@ watch(selectedChar, () => {
                                                                 'absolute inset-y-0 left-0 flex items-center pl-1.5',
                                                             ]"
                                                         >
-                                                            <CheckIcon class="w-5 h-5" aria-hidden="true" />
+                                                            <CheckIcon class="h-5 w-5" aria-hidden="true" />
                                                         </span>
                                                     </li>
                                                 </ComboboxOption>
@@ -216,9 +216,9 @@ watch(selectedChar, () => {
                     </form>
                 </div>
             </div>
-            <div class="flow-root mt-2">
-                <div class="mx-0 -my-2 overflow-x-auto">
-                    <div class="inline-block min-w-full py-2 align-middle px-1">
+            <div class="mt-2 flow-root">
+                <div class="-my-2 mx-0 overflow-x-auto">
+                    <div class="inline-block min-w-full px-1 py-2 align-middle">
                         <DataPendingBlock v-if="pending" :message="$t('common.loading', [$t('common.vehicle', 2)])" />
                         <DataErrorBlock
                             v-else-if="error"
@@ -241,23 +241,23 @@ watch(selectedChar, () => {
                                         >
                                             {{ $t('common.plate') }}
                                         </th>
-                                        <th scope="col" class="py-3.5 px-2 text-left text-sm font-semibold text-neutral">
+                                        <th scope="col" class="px-2 py-3.5 text-left text-sm font-semibold text-neutral">
                                             {{ $t('common.model') }}
                                         </th>
-                                        <th scope="col" class="py-3.5 px-2 text-left text-sm font-semibold text-neutral">
+                                        <th scope="col" class="px-2 py-3.5 text-left text-sm font-semibold text-neutral">
                                             {{ $t('common.type') }}
                                         </th>
                                         <th
                                             v-if="!hideOwner"
                                             scope="col"
-                                            class="py-3.5 px-2 text-left text-sm font-semibold text-neutral"
+                                            class="px-2 py-3.5 text-left text-sm font-semibold text-neutral"
                                         >
                                             {{ $t('common.owner') }}
                                         </th>
                                         <th
                                             v-if="!hideCitizenLink && !hideCopy"
                                             scope="col"
-                                            class="relative py-3.5 pl-3 pr-4 sm:pr-0 text-right text-sm font-semibold text-neutral"
+                                            class="relative py-3.5 pl-3 pr-4 text-right text-sm font-semibold text-neutral sm:pr-0"
                                         >
                                             {{ $t('common.action', 2) }}
                                         </th>
@@ -281,23 +281,23 @@ watch(selectedChar, () => {
                                         >
                                             {{ $t('common.plate') }}
                                         </th>
-                                        <th scope="col" class="py-3.5 px-2 text-left text-sm font-semibold text-neutral">
+                                        <th scope="col" class="px-2 py-3.5 text-left text-sm font-semibold text-neutral">
                                             {{ $t('common.model') }}
                                         </th>
-                                        <th scope="col" class="py-3.5 px-2 text-left text-sm font-semibold text-neutral">
+                                        <th scope="col" class="px-2 py-3.5 text-left text-sm font-semibold text-neutral">
                                             {{ $t('common.type') }}
                                         </th>
                                         <th
                                             v-if="!hideOwner"
                                             scope="col"
-                                            class="py-3.5 px-2 text-left text-sm font-semibold text-neutral"
+                                            class="px-2 py-3.5 text-left text-sm font-semibold text-neutral"
                                         >
                                             {{ $t('common.owner') }}
                                         </th>
                                         <th
                                             v-if="!hideCitizenLink && !hideCopy"
                                             scope="col"
-                                            class="relative py-3.5 pl-3 pr-4 sm:pr-0 text-right text-sm font-semibold text-neutral"
+                                            class="relative py-3.5 pl-3 pr-4 text-right text-sm font-semibold text-neutral sm:pr-0"
                                         >
                                             {{ $t('common.action', 2) }}
                                         </th>

@@ -10,7 +10,7 @@ const open = ref(false);
 
     <button
         type="button"
-        class="rounded-md bg-neutral text-black border-2 border-black/20 bg-clip-padding hover:bg-[#f4f4f4] focus:outline-none inset-0 inline-flex items-center justify-center"
+        class="inset-0 inline-flex items-center justify-center rounded-md border-2 border-black/20 bg-neutral bg-clip-padding text-black hover:bg-[#f4f4f4] focus:outline-none"
         :title="$t('common.setting', 2)"
         @click="open = true"
     >

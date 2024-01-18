@@ -24,12 +24,12 @@ async function fetchCharacters(): Promise<User[]> {
 <template>
     <DataPendingBlock v-if="pending" :message="$t('common.loading', [`${$t('common.your')} ${$t('common.character', 2)}`])" />
     <DataErrorBlock v-else-if="error" :title="$t('common.not_found', [$t('common.character', 2)])" :retry="refresh" />
-    <div v-else class="grid grid-flow-row lg:grid-flow-col gap-8 mx-4">
+    <div v-else class="mx-4 grid grid-flow-row gap-8 lg:grid-flow-col">
         <CharacterSelectorCard
             v-for="char in chars"
             :key="char.userId"
             :char="char"
-            class="flex-auto min-w-[30rem] w-[30rem] max-w-[30rem] mx-auto"
+            class="mx-auto w-[30rem] min-w-[30rem] max-w-[30rem] flex-auto"
         />
     </div>
 </template>

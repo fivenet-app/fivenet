@@ -124,7 +124,7 @@ const editing = ref(props.startInEdit);
     />
 
     <tr v-if="!editing">
-        <td class="py-2 pl-4 pr-3 text-sm font-medium text-neutral sm:pl-1 flex flex-row">
+        <td class="flex flex-row py-2 pl-4 pr-3 text-sm font-medium text-neutral sm:pl-1">
             <button type="button" class="pl-2" :title="$t('common.edit')" @click="editing = true">
                 <PencilIcon class="h-5 w-5" />
             </button>
@@ -142,7 +142,7 @@ const editing = ref(props.startInEdit);
         <td class="whitespace-nowrap px-1 py-1 text-left text-base-200">
             {{ law.stvoPoints }}
         </td>
-        <td class="px-1 py-1 text-sm font-medium text-left text-base-200">
+        <td class="px-1 py-1 text-left text-sm font-medium text-base-200">
             {{ law.description }}
         </td>
     </tr>
@@ -168,7 +168,7 @@ const editing = ref(props.startInEdit);
                 type="text"
                 :placeholder="$t('common.crime')"
                 :label="$t('common.crime')"
-                class="block w-full rounded-md border-0 py-1.5 bg-base-700 text-neutral placeholder:text-base-200 focus:ring-2 focus:ring-inset focus:ring-base-300 sm:text-sm sm:leading-6"
+                class="block w-full rounded-md border-0 bg-base-700 py-1.5 text-neutral placeholder:text-base-200 focus:ring-2 focus:ring-inset focus:ring-base-300 sm:text-sm sm:leading-6"
                 @focusin="focusTablet(true)"
                 @focusout="focusTablet(false)"
             />
@@ -180,7 +180,7 @@ const editing = ref(props.startInEdit);
                 type="number"
                 :placeholder="$t('common.fine')"
                 :label="$t('common.fine')"
-                class="block w-full rounded-md border-0 py-1.5 bg-base-700 text-neutral placeholder:text-base-200 focus:ring-2 focus:ring-inset focus:ring-base-300 sm:text-sm sm:leading-6"
+                class="block w-full rounded-md border-0 bg-base-700 py-1.5 text-neutral placeholder:text-base-200 focus:ring-2 focus:ring-inset focus:ring-base-300 sm:text-sm sm:leading-6"
             />
             <VeeErrorMessage name="fine" as="p" class="mt-2 text-sm text-error-400" />
         </td>
@@ -190,7 +190,7 @@ const editing = ref(props.startInEdit);
                 type="number"
                 :placeholder="$t('common.detention_time')"
                 :label="$t('common.detention_time')"
-                class="block w-full rounded-md border-0 py-1.5 bg-base-700 text-neutral placeholder:text-base-200 focus:ring-2 focus:ring-inset focus:ring-base-300 sm:text-sm sm:leading-6"
+                class="block w-full rounded-md border-0 bg-base-700 py-1.5 text-neutral placeholder:text-base-200 focus:ring-2 focus:ring-inset focus:ring-base-300 sm:text-sm sm:leading-6"
                 @focusin="focusTablet(true)"
                 @focusout="focusTablet(false)"
             />
@@ -202,7 +202,7 @@ const editing = ref(props.startInEdit);
                 type="text"
                 :placeholder="$t('common.traffic_infraction_points')"
                 :label="$t('common.traffic_infraction_points')"
-                class="block w-full rounded-md border-0 py-1.5 bg-base-700 text-neutral placeholder:text-base-200 focus:ring-2 focus:ring-inset focus:ring-base-300 sm:text-sm sm:leading-6"
+                class="block w-full rounded-md border-0 bg-base-700 py-1.5 text-neutral placeholder:text-base-200 focus:ring-2 focus:ring-inset focus:ring-base-300 sm:text-sm sm:leading-6"
                 @focusin="focusTablet(true)"
                 @focusout="focusTablet(false)"
             />
@@ -214,7 +214,7 @@ const editing = ref(props.startInEdit);
                 type="text"
                 :placeholder="$t('common.description')"
                 :label="$t('common.description')"
-                class="block w-full rounded-md border-0 py-1.5 bg-base-700 text-neutral placeholder:text-base-200 focus:ring-2 focus:ring-inset focus:ring-base-300 sm:text-sm sm:leading-6"
+                class="block w-full rounded-md border-0 bg-base-700 py-1.5 text-neutral placeholder:text-base-200 focus:ring-2 focus:ring-inset focus:ring-base-300 sm:text-sm sm:leading-6"
                 @focusin="focusTablet(true)"
                 @focusout="focusTablet(false)"
             />

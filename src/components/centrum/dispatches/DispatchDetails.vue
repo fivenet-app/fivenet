@@ -109,13 +109,13 @@ const openStatus = ref(false);
                                                 >
                                                     {{ $t('common.dispatch') }}:
                                                     <IDCopyBadge :id="dispatch.id" class="ml-2 mr-2" prefix="DSP" />
-                                                    <p class="truncate max-w-[20rem]" :title="dispatch.message">
+                                                    <p class="max-w-[20rem] truncate" :title="dispatch.message">
                                                         {{ dispatch.message }}
                                                     </p>
                                                     <button
                                                         v-if="can('CentrumService.DeleteDispatch')"
                                                         type="button"
-                                                        class="flex-initial text-neutral hover:text-gray-300 ml-1"
+                                                        class="ml-1 flex-initial text-neutral hover:text-gray-300"
                                                         :title="$t('common.delete')"
                                                         @click="reveal()"
                                                     >
@@ -184,7 +184,7 @@ const openStatus = ref(false);
                                                                     class="inline-flex items-center text-primary-400 hover:text-primary-600"
                                                                     @click="$emit('goto', { x: dispatch.x, y: dispatch.y })"
                                                                 >
-                                                                    <MapMarkerIcon class="w-5 h-5 mr-1" aria-hidden="true" />
+                                                                    <MapMarkerIcon class="mr-1 h-5 w-5" aria-hidden="true" />
                                                                     {{ $t('common.go_to_location') }}
                                                                 </button>
                                                                 <span v-else>{{ $t('common.no_location') }}</span>
@@ -195,9 +195,9 @@ const openStatus = ref(false);
                                                                 {{ $t('common.description') }}
                                                             </dt>
                                                             <dd
-                                                                class="mt-2 text-sm text-gray-300 sm:col-span-2 sm:mt-0 max-h-22"
+                                                                class="max-h-22 mt-2 text-sm text-gray-300 sm:col-span-2 sm:mt-0"
                                                             >
-                                                                <p class="break-words whitespace-pre">
+                                                                <p class="whitespace-pre break-words">
                                                                     {{ dispatch.description ?? $t('common.na') }}
                                                                 </p>
                                                             </dd>
@@ -230,7 +230,7 @@ const openStatus = ref(false);
                                                                             :key="unit.unitId"
                                                                             class="flex items-center justify-between py-3 pl-3 pr-4"
                                                                         >
-                                                                            <div class="flex items-center flex-1">
+                                                                            <div class="flex flex-1 items-center">
                                                                                 <UnitInfoPopover
                                                                                     :unit="unit.unit"
                                                                                     :assignment="unit"
@@ -239,14 +239,14 @@ const openStatus = ref(false);
                                                                                 >
                                                                                     <template #before>
                                                                                         <AccountGroupIcon
-                                                                                            class="flex-shrink-0 w-5 h-5 text-base-400 mr-1"
+                                                                                            class="mr-1 h-5 w-5 flex-shrink-0 text-base-400"
                                                                                             aria-hidden="true"
                                                                                         />
                                                                                     </template>
                                                                                 </UnitInfoPopover>
                                                                                 <span
                                                                                     v-if="unit.expiresAt"
-                                                                                    class="ml-2 flex-1 truncate inline-flex items-center"
+                                                                                    class="ml-2 inline-flex flex-1 items-center truncate"
                                                                                 >
                                                                                     -
                                                                                     {{
@@ -274,7 +274,7 @@ const openStatus = ref(false);
                                                                     @close="openAssign = false"
                                                                 />
 
-                                                                <span class="mt-2 isolate inline-flex rounded-md shadow-sm">
+                                                                <span class="isolate mt-2 inline-flex rounded-md shadow-sm">
                                                                     <button
                                                                         v-if="canDo('TakeControl')"
                                                                         type="button"
@@ -282,18 +282,18 @@ const openStatus = ref(false);
                                                                         @click="openAssign = true"
                                                                     >
                                                                         <PencilIcon class="h-5 w-5" />
-                                                                        <span class="truncate ml-0.5">
+                                                                        <span class="ml-0.5 truncate">
                                                                             {{ $t('common.assign') }}
                                                                         </span>
                                                                     </button>
                                                                     <button
                                                                         v-if="canDo('TakeDispatch')"
                                                                         type="button"
-                                                                        class="flex flex-row items-center ml-2 rounded bg-neutral/10 px-2 py-1 text-xs font-semibold text-neutral shadow-sm hover:bg-neutral/20"
+                                                                        class="ml-2 flex flex-row items-center rounded bg-neutral/10 px-2 py-1 text-xs font-semibold text-neutral shadow-sm hover:bg-neutral/20"
                                                                         @click="selfAssign(dispatch.id)"
                                                                     >
                                                                         <PlusIcon class="h-5 w-5" />
-                                                                        <span class="truncate ml-0.5">{{
+                                                                        <span class="ml-0.5 truncate">{{
                                                                             $t('common.self_assign')
                                                                         }}</span>
                                                                     </button>
@@ -336,7 +336,7 @@ const openStatus = ref(false);
                                                                         })
                                                                     "
                                                                 >
-                                                                    <MapMarkerIcon class="w-5 h-5 mr-1" aria-hidden="true" />
+                                                                    <MapMarkerIcon class="mr-1 h-5 w-5" aria-hidden="true" />
                                                                     {{ $t('common.go_to_location') }}
                                                                 </button>
                                                                 <span v-else>{{ $t('common.no_location') }}</span>

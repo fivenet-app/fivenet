@@ -95,8 +95,8 @@ function getDocAtivityIcon(activityType: DocActivityType): DefineComponent {
 <template>
     <div class="p-1">
         <div v-if="!disclosureNeeded(entry.activityType)" class="flex space-x-3">
-            <div class="h-10 w-10 rounded-full flex items-center justify-center my-auto">
-                <component :is="getDocAtivityIcon(entry.activityType)" class="w-7 h-7" />
+            <div class="my-auto flex h-10 w-10 items-center justify-center rounded-full">
+                <component :is="getDocAtivityIcon(entry.activityType)" class="h-7 w-7" />
             </div>
             <div class="flex-1 space-y-1">
                 <div class="flex items-center justify-between">
@@ -109,7 +109,7 @@ function getDocAtivityIcon(activityType: DocActivityType): DefineComponent {
                         <GenericTime :value="entry.createdAt" type="long" />
                     </p>
                 </div>
-                <p class="text-sm text-gray-300 inline-flex">
+                <p class="inline-flex text-sm text-gray-300">
                     {{ $t('common.created_by') }}
                     <CitizenInfoPopover class="ml-1" text-class="underline" :user="entry.creator" />
                 </p>
@@ -118,9 +118,9 @@ function getDocAtivityIcon(activityType: DocActivityType): DefineComponent {
 
         <Disclosure v-else v-slot="{ open }" as="div">
             <DisclosureButton class="flex w-full items-start justify-between text-left transition">
-                <div class="w-full flex space-x-3">
-                    <div class="h-10 w-10 rounded-full flex items-center justify-center my-auto">
-                        <component :is="getDocAtivityIcon(entry.activityType)" class="w-7 h-7" />
+                <div class="flex w-full space-x-3">
+                    <div class="my-auto flex h-10 w-10 items-center justify-center rounded-full">
+                        <component :is="getDocAtivityIcon(entry.activityType)" class="h-7 w-7" />
                     </div>
                     <div class="flex-1 space-y-1">
                         <div class="flex items-center justify-between">
@@ -139,14 +139,14 @@ function getDocAtivityIcon(activityType: DocActivityType): DefineComponent {
                                 <GenericTime :value="entry.createdAt" type="long" />
                             </p>
                         </div>
-                        <p class="text-sm text-gray-300 inline-flex">
+                        <p class="inline-flex text-sm text-gray-300">
                             {{ $t('common.created_by') }}
                             <CitizenInfoPopover class="ml-1" text-class="underline" :user="entry.creator" />
                         </p>
                     </div>
                 </div>
             </DisclosureButton>
-            <DisclosurePanel class="px-4 pt-2 pb-2">
+            <DisclosurePanel class="px-4 pb-2 pt-2">
                 <template v-if="entry.activityType === DocActivityType.UPDATED">
                     <DocUpdatedDiff v-if="entry.data?.data.oneofKind === 'updated'" :update="entry.data?.data.updated" />
                 </template>

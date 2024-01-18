@@ -15,7 +15,7 @@ const count = ref(props.count);
 </script>
 
 <template>
-    <tr class="transition-colors hover:bg-neutral/5 even:bg-base-800">
+    <tr class="transition-colors even:bg-base-800 hover:bg-neutral/5">
         <td class="py-2 pl-4 pr-3 text-sm font-medium text-neutral sm:pl-1">
             {{ law.name }}
         </td>
@@ -26,7 +26,7 @@ const count = ref(props.count);
         <td class="whitespace-nowrap px-1 py-1 text-left text-base-200">
             {{ law.stvoPoints }}
         </td>
-        <td class="break-all text-sm px-1 py-1 text-left text-base-200">
+        <td class="break-all px-1 py-1 text-left text-sm text-base-200">
             {{ law.description }}
         </td>
         <td class="w-20 min-w-20 px-1 py-1 text-left text-base-200">

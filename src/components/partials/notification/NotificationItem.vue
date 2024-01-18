@@ -30,11 +30,11 @@ if (props.notification.callback !== undefined) {
     >
         <div
             v-if="notification"
-            class="z-50 w-full max-w-sm overflow-hidden bg-base-800 rounded-lg pointer-events-auto shadow-float text-neutral"
+            class="pointer-events-auto z-50 w-full max-w-sm overflow-hidden rounded-lg bg-base-800 text-neutral shadow-float"
         >
             <div class="p-4">
                 <div class="flex items-start">
-                    <div v-if="notification.type" class="flex-shrink-0 w-8 my-auto">
+                    <div v-if="notification.type" class="my-auto w-8 flex-shrink-0">
                         <CheckCircleIcon v-if="notification.type === 'success'" class="text-success-400" aria-hidden="true" />
                         <InformationIcon v-else-if="notification.type === 'info'" class="text-info-400" aria-hidden="true" />
                         <AlertCircleIcon v-else-if="notification.type === 'warning'" class="text-warn-400" aria-hidden="true" />
@@ -56,14 +56,14 @@ if (props.notification.callback !== undefined) {
                             {{ $t('common.click_here') }}
                         </button>
                     </div>
-                    <div class="flex flex-shrink-0 ml-4">
+                    <div class="ml-4 flex flex-shrink-0">
                         <button
                             type="button"
                             class="inline-flex text-neutral hover:text-base-300 focus:outline-none focus:ring-2 focus:ring-primary-500 focus:ring-offset-2"
                             @click="() => closeNotification(notification.id)"
                         >
                             <span class="sr-only">{{ $t('common.close') }}</span>
-                            <CloseIcon class="w-5 h-5" aria-hidden="true" />
+                            <CloseIcon class="h-5 w-5" aria-hidden="true" />
                         </button>
                     </div>
                 </div>

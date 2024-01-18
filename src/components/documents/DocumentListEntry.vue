@@ -14,8 +14,8 @@ defineProps<{
     <li
         :key="doc.id"
         :class="[
-            doc.deletedAt ? 'hover:bg-warn-700 bg-warn-800' : 'hover:bg-base-700 bg-base-800',
-            'flex-initial my-1 rounded-lg',
+            doc.deletedAt ? 'bg-warn-800 hover:bg-warn-700' : 'bg-base-800 hover:bg-base-700',
+            'my-1 flex-initial rounded-lg',
         ]"
     >
         <NuxtLink
@@ -25,8 +25,8 @@ defineProps<{
             }"
         >
             <div class="m-2">
-                <div class="flex flex-row gap-2 text-base-300 truncate">
-                    <div class="flex flex-row items-center justify-start flex-1">
+                <div class="flex flex-row gap-2 truncate text-base-300">
+                    <div class="flex flex-1 flex-row items-center justify-start">
                         <IDCopyBadge
                             :id="doc.id"
                             prefix="DOC"
@@ -36,19 +36,19 @@ defineProps<{
                     </div>
                     <p
                         v-if="doc.state"
-                        class="inline-flex px-2 py-1 text-xs font-semibold leading-5 rounded-full bg-info-100 text-info-800 my-auto"
+                        class="my-auto inline-flex rounded-full bg-info-100 px-2 py-1 text-xs font-semibold leading-5 text-info-800"
                     >
                         {{ doc.state }}
                     </p>
-                    <div class="flex flex-row items-center justify-end flex-1">
-                        <div v-if="doc?.closed" class="flex flex-row flex-initial gap-1 px-2 py-1 rounded-full bg-error-100">
-                            <LockIcon class="w-5 h-5 text-error-400" aria-hidden="true" />
+                    <div class="flex flex-1 flex-row items-center justify-end">
+                        <div v-if="doc?.closed" class="flex flex-initial flex-row gap-1 rounded-full bg-error-100 px-2 py-1">
+                            <LockIcon class="h-5 w-5 text-error-400" aria-hidden="true" />
                             <span class="text-sm font-medium text-error-700">
                                 {{ $t('common.close', 2) }}
                             </span>
                         </div>
-                        <div v-else class="flex flex-row flex-initial gap-1 px-2 py-1 rounded-full bg-success-100">
-                            <LockOpenVariantIcon class="w-5 h-5 text-success-500" aria-hidden="true" />
+                        <div v-else class="flex flex-initial flex-row gap-1 rounded-full bg-success-100 px-2 py-1">
+                            <LockOpenVariantIcon class="h-5 w-5 text-success-500" aria-hidden="true" />
                             <span class="text-sm font-medium text-success-700">
                                 {{ $t('common.open', 2) }}
                             </span>
@@ -56,14 +56,14 @@ defineProps<{
                     </div>
                 </div>
 
-                <div class="flex flex-row gap-2 text-base-200 truncate">
-                    <h2 class="inline-flex items-center gap-1 text-xl font-medium text-neutral truncate">
+                <div class="flex flex-row gap-2 truncate text-base-200">
+                    <h2 class="inline-flex items-center gap-1 truncate text-xl font-medium text-neutral">
                         <span
                             v-if="doc.category"
-                            class="flex flex-row flex-initial gap-1 px-2 py-1 rounded-full bg-primary-100 text-primary-500 break-words"
+                            class="flex flex-initial flex-row gap-1 break-words rounded-full bg-primary-100 px-2 py-1 text-primary-500"
                         >
                             <span
-                                class="text-xs font-medium text-primary-800 inline-flex items-center"
+                                class="inline-flex items-center text-xs font-medium text-primary-800"
                                 :title="doc.category.description ?? $t('common.na')"
                             >
                                 {{ doc.category.name }}
@@ -73,11 +73,11 @@ defineProps<{
                             {{ doc.title }}
                         </span>
                     </h2>
-                    <div v-if="doc.deletedAt" type="button" class="flex flex-row items-center justify-center flex-1 font-bold">
+                    <div v-if="doc.deletedAt" type="button" class="flex flex-1 flex-row items-center justify-center font-bold">
                         <TrashCanIcon class="mr-1.5 h-5 w-5 flex-shrink-0 text-base-400" aria-hidden="true" />
                         {{ $t('common.deleted') }}
                     </div>
-                    <div v-if="doc.updatedAt" class="flex flex-row items-center justify-end flex-1">
+                    <div v-if="doc.updatedAt" class="flex flex-1 flex-row items-center justify-end">
                         <UpdateIcon class="mr-1.5 h-5 w-5 flex-shrink-0 text-base-400" aria-hidden="true" />
                         <p>
                             {{ $t('common.updated') }}
@@ -87,18 +87,18 @@ defineProps<{
                 </div>
 
                 <div class="flex flex-row gap-2 text-base-200">
-                    <div class="flex flex-row items-center justify-start flex-1">
+                    <div class="flex flex-1 flex-row items-center justify-start">
                         <CitizenInfoPopover :user="doc.creator">
                             <template #before>
                                 <AccountIcon class="mr-1.5 h-5 w-5 flex-shrink-0 text-base-400" aria-hidden="true" />
                             </template>
                         </CitizenInfoPopover>
                     </div>
-                    <div class="flex flex-row items-center justify-center flex-1">
+                    <div class="flex flex-1 flex-row items-center justify-center">
                         <BriefcaseIcon class="mr-1.5 h-5 w-5 flex-shrink-0 text-base-400" aria-hidden="true" />
                         {{ doc.creator?.jobLabel }}
                     </div>
-                    <div class="flex flex-row items-center justify-end flex-1">
+                    <div class="flex flex-1 flex-row items-center justify-end">
                         <CalendarIcon class="mr-1.5 h-5 w-5 flex-shrink-0 text-base-400" aria-hidden="true" />
                         <p>
                             {{ $t('common.created_at') }}

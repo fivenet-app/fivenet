@@ -140,13 +140,13 @@ const onSubmitThrottle = useThrottleFn(async () => {
                                             <div class="divide-y divide-gray-200 px-4 sm:px-6">
                                                 <div class="mt-1">
                                                     <div class="my-2 space-y-24">
-                                                        <div class="flex-1 form-control">
+                                                        <div class="form-control flex-1">
                                                             <Combobox v-model="selectedCitizens" as="div" multiple nullable>
                                                                 <div class="relative">
                                                                     <ComboboxButton as="div">
                                                                         <ComboboxInput
                                                                             autocomplete="off"
-                                                                            class="block w-full rounded-md border-0 py-1.5 bg-base-700 text-neutral placeholder:text-base-200 focus:ring-2 focus:ring-inset focus:ring-base-300 sm:text-sm sm:leading-6"
+                                                                            class="block w-full rounded-md border-0 bg-base-700 py-1.5 text-neutral placeholder:text-base-200 focus:ring-2 focus:ring-inset focus:ring-base-300 sm:text-sm sm:leading-6"
                                                                             :display-value="
                                                                                 (chars: any) =>
                                                                                     chars
@@ -162,7 +162,7 @@ const onSubmitThrottle = useThrottleFn(async () => {
 
                                                                     <ComboboxOptions
                                                                         v-if="entriesCitizens.length > 0"
-                                                                        class="absolute z-30 w-full py-1 mt-1 overflow-auto text-base rounded-md bg-base-700 max-h-44 sm:text-sm"
+                                                                        class="absolute z-30 mt-1 max-h-44 w-full overflow-auto rounded-md bg-base-700 py-1 text-base sm:text-sm"
                                                                     >
                                                                         <ComboboxOption
                                                                             v-for="user in entriesCitizens"
@@ -197,7 +197,7 @@ const onSubmitThrottle = useThrottleFn(async () => {
                                                                                     ]"
                                                                                 >
                                                                                     <CheckIcon
-                                                                                        class="w-5 h-5"
+                                                                                        class="h-5 w-5"
                                                                                         aria-hidden="true"
                                                                                     />
                                                                                 </span>
@@ -215,7 +215,7 @@ const onSubmitThrottle = useThrottleFn(async () => {
                                                                     <li
                                                                         v-for="user in selectedCitizens"
                                                                         :key="user.userId"
-                                                                        class="px-6 py-4 inline-flex items-center"
+                                                                        class="inline-flex items-center px-6 py-4"
                                                                     >
                                                                         <CitizenInfoPopover :user="user" />
                                                                     </li>
@@ -228,10 +228,10 @@ const onSubmitThrottle = useThrottleFn(async () => {
                                         </div>
                                     </div>
                                     <div class="flex flex-shrink-0 justify-end px-4 py-4">
-                                        <span class="isolate inline-flex rounded-md shadow-sm pr-4 w-full">
+                                        <span class="isolate inline-flex w-full rounded-md pr-4 shadow-sm">
                                             <button
                                                 type="button"
-                                                class="w-full relative inline-flex items-center rounded-l-md py-2.5 px-3.5 text-sm font-semibold text-neutral"
+                                                class="relative inline-flex w-full items-center rounded-l-md px-3.5 py-2.5 text-sm font-semibold text-neutral"
                                                 :disabled="!canSubmit"
                                                 :class="[
                                                     !canSubmit
@@ -241,13 +241,13 @@ const onSubmitThrottle = useThrottleFn(async () => {
                                                 @click="onSubmitThrottle"
                                             >
                                                 <template v-if="!canSubmit">
-                                                    <LoadingIcon class="animate-spin h-5 w-5 mr-2" />
+                                                    <LoadingIcon class="mr-2 h-5 w-5 animate-spin" />
                                                 </template>
                                                 {{ $t('common.update') }}
                                             </button>
                                             <button
                                                 type="button"
-                                                class="w-full relative -ml-px inline-flex items-center rounded-r-md bg-neutral px-3 py-2 text-sm font-semibold text-gray-900 hover:text-gray-900 ring-1 ring-inset ring-gray-300 hover:bg-gray-50"
+                                                class="relative -ml-px inline-flex w-full items-center rounded-r-md bg-neutral px-3 py-2 text-sm font-semibold text-gray-900 ring-1 ring-inset ring-gray-300 hover:bg-gray-50 hover:text-gray-900"
                                                 @click="$emit('close')"
                                             >
                                                 {{ $t('common.close', 1) }}

@@ -141,8 +141,8 @@ switch (props.activity.key) {
 
 <template>
     <div class="flex space-x-3">
-        <div class="h-10 w-10 rounded-full flex items-center justify-center my-auto">
-            <component :is="icon" :class="[iconColor, 'w-full h-full']" />
+        <div class="my-auto flex h-10 w-10 items-center justify-center rounded-full">
+            <component :is="icon" :class="[iconColor, 'h-full w-full']" />
         </div>
         <div class="flex-1 space-y-1">
             <div class="flex items-center justify-between">
@@ -168,7 +168,7 @@ switch (props.activity.key) {
                     <GenericTime :value="activity.createdAt" type="long" />
                 </p>
             </div>
-            <p class="text-sm text-gray-300 inline-flex">
+            <p class="inline-flex text-sm text-gray-300">
                 {{ $t('common.created_by') }}
                 <CitizenInfoPopover class="ml-1" text-class="underline" :user="activity.sourceUser" />
             </p>

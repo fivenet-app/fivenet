@@ -51,12 +51,12 @@ async function openCategory(idx: number): Promise<void> {
         <div class="px-1 sm:px-2 lg:px-4">
             <div v-if="can('DocStoreService.CreateCategory')" class="sm:flex sm:items-center">
                 <div class="sm:flex-auto">
-                    <div class="flex flex-row gap-4 mx-auto">
-                        <div class="flex-1 form-control">
-                            <div class="relative flex items-center mt-2">
+                    <div class="mx-auto flex flex-row gap-4">
+                        <div class="form-control flex-1">
+                            <div class="relative mt-2 flex items-center">
                                 <button
                                     type="button"
-                                    class="inline-flex justify-center w-full px-3 py-2 text-sm font-semibold rounded-md bg-primary-500 text-neutral hover:bg-primary-400 focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-primary-500"
+                                    class="inline-flex w-full justify-center rounded-md bg-primary-500 px-3 py-2 text-sm font-semibold text-neutral hover:bg-primary-400 focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-primary-500"
                                     @click="
                                         selectedCategory = undefined;
                                         open = true;
@@ -69,9 +69,9 @@ async function openCategory(idx: number): Promise<void> {
                     </div>
                 </div>
             </div>
-            <div class="flow-root mt-2">
-                <div class="mx-0 -my-2 overflow-x-auto">
-                    <div class="inline-block min-w-full py-2 align-middle px-1">
+            <div class="mt-2 flow-root">
+                <div class="-my-2 mx-0 overflow-x-auto">
+                    <div class="inline-block min-w-full px-1 py-2 align-middle">
                         <DataPendingBlock v-if="pending" :message="$t('common.loading', [$t('common.category', 2)])" />
                         <DataErrorBlock
                             v-else-if="error"

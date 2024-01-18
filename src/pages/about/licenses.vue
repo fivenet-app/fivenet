@@ -34,10 +34,10 @@ const licenses = [
 </script>
 
 <template>
-    <div class="h-full justify-between flex flex-col">
+    <div class="flex h-full flex-col justify-between">
         <div>
-            <div class="relative isolate bg-gray-900 px-6 py-24 sm:py-32 lg:px-8 hero">
-                <div class="hero-overlay absolute z-[-1] h-full w-full top-0 left-0"></div>
+            <div class="hero relative isolate bg-gray-900 px-6 py-24 sm:py-32 lg:px-8">
+                <div class="hero-overlay absolute left-0 top-0 z-[-1] h-full w-full"></div>
                 <div class="mx-auto max-w-2xl text-center">
                     <h2 class="text-4xl font-bold tracking-tight text-neutral sm:text-6xl">
                         {{ $t('common.licenses') }}

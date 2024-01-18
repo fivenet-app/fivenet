@@ -205,7 +205,7 @@ const onSubmitThrottle = useThrottleFn(async (e) => {
                                         ]"
                                     >
                                         <template v-if="!canSubmit">
-                                            <LoadingIcon class="animate-spin h-5 w-5 mr-2" />
+                                            <LoadingIcon class="mr-2 h-5 w-5 animate-spin" />
                                         </template>
                                         {{ $t('common.post') }}
                                     </button>
@@ -232,7 +232,7 @@ const onSubmitThrottle = useThrottleFn(async (e) => {
             />
             <div
                 v-else
-                class="flow-root rounded-lg bg-base-800 text-neutral rounded-lg ring-1 ring-inset ring-gray-500 shadow-sm shadow-sm focus-within:ring-2 focus-within:ring-primary-600"
+                class="flow-root rounded-lg rounded-lg bg-base-800 text-neutral shadow-sm shadow-sm ring-1 ring-inset ring-gray-500 focus-within:ring-2 focus-within:ring-primary-600"
             >
                 <ul role="list" class="divide-y divide-gray-200 px-4">
                     <CommentEntry

@@ -49,7 +49,7 @@ ${jsonStringify(jsonParse(props.log.data!), 2)}
 </script>
 
 <template>
-    <tr class="transition-colors hover:bg-neutral/5 even:bg-base-800">
+    <tr class="transition-colors even:bg-base-800 hover:bg-neutral/5">
         <td class="whitespace-nowrap py-2 pl-4 pr-3 text-sm font-medium text-neutral sm:pl-1">
             {{ log.id }}
         </td>
@@ -63,7 +63,7 @@ ${jsonStringify(jsonParse(props.log.data!), 2)}
         <td class="py-2 pl-4 pr-3 text-sm font-medium text-neutral sm:pl-1">
             {{ EventType[log.state] }}
         </td>
-        <td class="py-2 pl-4 pr-3 text-sm font-medium text-neutral sm:pl-1 max-w-3xl">
+        <td class="max-w-3xl py-2 pl-4 pr-3 text-sm font-medium text-neutral sm:pl-1">
             <span v-if="!log.data">N/A</span>
             <span v-else>
                 <VueJsonPretty
@@ -80,7 +80,7 @@ ${jsonStringify(jsonParse(props.log.data!), 2)}
                 class="flex-initial text-primary-500 hover:text-primary-400"
                 :title="$t('components.clipboard.clipboard_button.add')"
             >
-                <ClipboardPlusIcon class="h-auto w-5 ml-auto mr-2.5" @click="addToClipboard" />
+                <ClipboardPlusIcon class="ml-auto mr-2.5 h-auto w-5" @click="addToClipboard" />
             </button>
         </td>
     </tr>

@@ -175,18 +175,18 @@ onConfirm(async (id) => deleteTemplate(id));
         <DataErrorBlock v-else-if="error" :title="$t('common.unable_to_load', [$t('common.template', 2)])" :retry="refresh" />
         <div v-else-if="template" class="px-1 sm:px-2 lg:px-4">
             <div class="sm:flex sm:items-center">
-                <div class="sm:flex-auto inline-flex">
+                <div class="inline-flex sm:flex-auto">
                     <NuxtLink
                         v-if="can('DocStoreService.CreateTemplate')"
                         :to="{ name: 'documents-templates-edit-id', params: { id: templateId.toString() } }"
-                        class="flex justify-center w-full px-3 py-2 text-sm font-semibold transition-colors rounded-md bg-primary-500 text-neutral hover:bg-primary-400 focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-base-300"
+                        class="flex w-full justify-center rounded-md bg-primary-500 px-3 py-2 text-sm font-semibold text-neutral transition-colors hover:bg-primary-400 focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-base-300"
                     >
                         {{ $t('common.edit') }}
                     </NuxtLink>
                     <button
                         v-if="can('DocStoreService.CreateTemplate')"
                         type="button"
-                        class="flex justify-center w-full px-3 py-2 ml-4 text-sm font-semibold transition-colors rounded-md bg-accent-600 text-neutral hover:bg-accent-500 focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-base-300"
+                        class="ml-4 flex w-full justify-center rounded-md bg-accent-600 px-3 py-2 text-sm font-semibold text-neutral transition-colors hover:bg-accent-500 focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-base-300"
                         @click="openPreview = true"
                     >
                         {{ $t('common.preview') }}
@@ -194,7 +194,7 @@ onConfirm(async (id) => deleteTemplate(id));
                     <button
                         v-if="can('DocStoreService.DeleteTemplate')"
                         type="submit"
-                        class="flex justify-center w-full px-3 py-2 ml-4 text-sm font-semibold transition-colors rounded-md bg-error-600 text-neutral hover:bg-error-500 focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-base-300"
+                        class="ml-4 flex w-full justify-center rounded-md bg-error-600 px-3 py-2 text-sm font-semibold text-neutral transition-colors hover:bg-error-500 focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-base-300"
                         @click="reveal()"
                     >
                         {{ $t('common.delete') }}
@@ -203,17 +203,17 @@ onConfirm(async (id) => deleteTemplate(id));
             </div>
             <div class="sm:flex sm:items-center">
                 <div>
-                    <h2 class="text-neutral text-2xl">
+                    <h2 class="text-2xl text-neutral">
                         {{ template.title }}
                     </h2>
-                    <p class="text-neutral text-base">
+                    <p class="text-base text-neutral">
                         <span class="font-semibold">{{ $t('common.description') }}</span
                         >: {{ template.description }}
                     </p>
                 </div>
             </div>
-            <div class="flow-root mt-4 mb-6">
-                <div class="mx-0 -my-2 overflow-x-auto">
+            <div class="mb-6 mt-4 flow-root">
+                <div class="-my-2 mx-0 overflow-x-auto">
                     <div class="my-2">
                         <h3 class="block text-base font-medium leading-6 text-gray-100">
                             {{ $t('common.template', 2) }} {{ $t('common.weight') }}
@@ -222,7 +222,7 @@ onConfirm(async (id) => deleteTemplate(id));
                             <input
                                 type="text"
                                 name="weight"
-                                class="block w-full rounded-md border-0 py-1.5 bg-base-700 text-neutral placeholder:text-base-200 focus:ring-2 focus:ring-inset focus:ring-base-300 sm:text-sm sm:leading-6"
+                                class="block w-full rounded-md border-0 bg-base-700 py-1.5 text-neutral placeholder:text-base-200 focus:ring-2 focus:ring-inset focus:ring-base-300 sm:text-sm sm:leading-6"
                                 disabled
                                 :value="template.weight"
                                 @focusin="focusTablet(true)"
@@ -252,7 +252,7 @@ onConfirm(async (id) => deleteTemplate(id));
                             <textarea
                                 rows="4"
                                 name="contentTitle"
-                                class="whitespace-pre-wrap block w-full rounded-md border-0 py-1.5 bg-base-700 text-neutral placeholder:text-base-200 focus:ring-2 focus:ring-inset focus:ring-base-300 sm:text-sm sm:leading-6"
+                                class="block w-full whitespace-pre-wrap rounded-md border-0 bg-base-700 py-1.5 text-neutral placeholder:text-base-200 focus:ring-2 focus:ring-inset focus:ring-base-300 sm:text-sm sm:leading-6"
                                 disabled
                                 :value="template.contentTitle"
                                 @focusin="focusTablet(true)"
@@ -268,7 +268,7 @@ onConfirm(async (id) => deleteTemplate(id));
                             <input
                                 type="text"
                                 name="state"
-                                class="whitespace-pre-wrap block w-full rounded-md border-0 py-1.5 bg-base-700 text-neutral placeholder:text-base-200 focus:ring-2 focus:ring-inset focus:ring-base-300 sm:text-sm sm:leading-6"
+                                class="block w-full whitespace-pre-wrap rounded-md border-0 bg-base-700 py-1.5 text-neutral placeholder:text-base-200 focus:ring-2 focus:ring-inset focus:ring-base-300 sm:text-sm sm:leading-6"
                                 disabled
                                 :value="template.state"
                                 @focusin="focusTablet(true)"
@@ -295,7 +295,7 @@ onConfirm(async (id) => deleteTemplate(id));
                             <textarea
                                 rows="4"
                                 name="content"
-                                class="block w-full rounded-md border-0 py-1.5 bg-base-700 text-neutral placeholder:text-base-200 focus:ring-2 focus:ring-inset focus:ring-base-300 sm:text-sm sm:leading-6"
+                                class="block w-full rounded-md border-0 bg-base-700 py-1.5 text-neutral placeholder:text-base-200 focus:ring-2 focus:ring-inset focus:ring-base-300 sm:text-sm sm:leading-6"
                                 disabled
                                 :value="template.content"
                                 @focusin="focusTablet(true)"
@@ -309,7 +309,7 @@ onConfirm(async (id) => deleteTemplate(id));
                         </h3>
                         <div class="my-2">
                             <ul
-                                class="mb-2 text-sm font-medium max-w-md space-y-1 text-gray-100 list-disc list-inside dark:text-gray-300"
+                                class="mb-2 max-w-md list-inside list-disc space-y-1 text-sm font-medium text-gray-100 dark:text-gray-300"
                             >
                                 <li v-if="reqs.users">
                                     <TemplateRequirementsList name="User" :specs="reqs.users!" />

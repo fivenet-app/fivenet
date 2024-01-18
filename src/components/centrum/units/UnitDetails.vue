@@ -67,15 +67,15 @@ const openStatus = ref(false);
                                         <div class="flex flex-1 flex-col justify-between">
                                             <div class="divide-y divide-gray-200 px-4 sm:px-6">
                                                 <div class="mt-1">
-                                                    <dl class="border-b border-neutral/10 divide-y divide-neutral/10">
+                                                    <dl class="divide-y divide-neutral/10 border-b border-neutral/10">
                                                         <div class="px-4 py-3 sm:grid sm:grid-cols-3 sm:gap-4 sm:px-0">
                                                             <dt class="text-sm font-medium leading-6 text-neutral">
                                                                 {{ $t('common.description') }}
                                                             </dt>
                                                             <dd
-                                                                class="mt-2 text-sm text-gray-300 sm:col-span-2 sm:mt-0 max-h-22"
+                                                                class="max-h-22 mt-2 text-sm text-gray-300 sm:col-span-2 sm:mt-0"
                                                             >
-                                                                <p class="break-words whitespace-pre">
+                                                                <p class="whitespace-pre break-words">
                                                                     {{ unit.description ?? $t('common.na') }}
                                                                 </p>
                                                             </dd>
@@ -159,7 +159,7 @@ const openStatus = ref(false);
                                                                         $emit('goto', { x: unit.status?.x, y: unit.status?.y })
                                                                     "
                                                                 >
-                                                                    <MapMarkerIcon class="w-5 h-5 mr-1" aria-hidden="true" />
+                                                                    <MapMarkerIcon class="mr-1 h-5 w-5" aria-hidden="true" />
                                                                     {{ $t('common.go_to_location') }}
                                                                 </button>
                                                                 <span v-else>{{ $t('common.no_location') }}</span>
@@ -215,7 +215,7 @@ const openStatus = ref(false);
                                                                             :key="user.userId"
                                                                             class="flex items-center justify-between py-3 pl-3 pr-4"
                                                                         >
-                                                                            <div class="flex items-center flex-1">
+                                                                            <div class="flex flex-1 items-center">
                                                                                 <CitizenInfoPopover
                                                                                     :user="user.user"
                                                                                     class="flex items-center justify-center"
@@ -223,7 +223,7 @@ const openStatus = ref(false);
                                                                                 >
                                                                                     <template #before>
                                                                                         <AccountIcon
-                                                                                            class="flex-shrink-0 w-5 h-5 text-base-400 mr-1"
+                                                                                            class="mr-1 h-5 w-5 flex-shrink-0 text-base-400"
                                                                                             aria-hidden="true"
                                                                                         />
                                                                                     </template>
@@ -239,7 +239,7 @@ const openStatus = ref(false);
                                                                     @close="openAssign = false"
                                                                 />
 
-                                                                <span class="mt-2 isolate inline-flex rounded-md shadow-sm">
+                                                                <span class="isolate mt-2 inline-flex rounded-md shadow-sm">
                                                                     <button
                                                                         v-if="can('CentrumService.TakeControl')"
                                                                         type="button"
@@ -247,7 +247,7 @@ const openStatus = ref(false);
                                                                         @click="openAssign = true"
                                                                     >
                                                                         <PencilIcon class="h-5 w-5" />
-                                                                        <span class="truncate ml-0.5">
+                                                                        <span class="ml-0.5 truncate">
                                                                             {{ $t('common.assign') }}
                                                                         </span>
                                                                     </button>

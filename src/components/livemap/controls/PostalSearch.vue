@@ -75,7 +75,7 @@ watchDebounced(postalQuery, () => findPostal(), {
     <Combobox v-model="selectedPostal" as="div" class="w-full max-w-[11rem]" nullable>
         <ComboboxInput
             autocomplete="off"
-            class="w-full p-0.5 px-1 bg-clip-padding rounded-md border-2 border-black/20"
+            class="w-full rounded-md border-2 border-black/20 bg-clip-padding p-0.5 px-1"
             :display-value="(postal: any) => (postal ? postal?.code : '')"
             :placeholder="`${$t('common.postal')} ${$t('common.search')}`"
             @change="postalQuery = $event.target.value"
@@ -83,7 +83,7 @@ watchDebounced(postalQuery, () => findPostal(), {
             @focusin="focusTablet(true)"
             @focusout="focusTablet(false)"
         />
-        <ComboboxOptions class="z-10 w-full py-1 mt-1 overflow-auto bg-neutral">
+        <ComboboxOptions class="z-10 mt-1 w-full overflow-auto bg-neutral py-1">
             <ComboboxOption v-for="postal in filteredPostals" :key="postal.code" v-slot="{ active }" :value="postal">
                 <li
                     :class="[

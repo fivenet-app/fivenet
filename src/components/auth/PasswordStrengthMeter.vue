@@ -46,7 +46,7 @@ watch(result, () => {
 <template>
     <div>
         <div :class="['h-2 w-full rounded-full transition-colors', color]"></div>
-        <p v-if="showFeedback && feedback !== null" class="text-sm text-base-300 my-1">
+        <p v-if="showFeedback && feedback !== null" class="my-1 text-sm text-base-300">
             {{ feedback }}
         </p>
     </div>

@@ -7,10 +7,10 @@ const year = new Date().getFullYear();
 </script>
 
 <template>
-    <footer class="bg-base-800 w-full">
-        <div class="py-6 sm:py-8 flex flex-col items-center mx-auto w-fit gap-5 text-neutral">
+    <footer class="w-full bg-base-800">
+        <div class="mx-auto flex w-fit flex-col items-center gap-5 py-6 text-neutral sm:py-8">
             <div class="flex flex-row items-center gap-4">
-                <FiveNetLogo class="w-16 h-auto" />
+                <FiveNetLogo class="h-auto w-16" />
                 <p class="text-center text-sm leading-5">
                     <I18nT keypath="copyright">
                         <template #year>
@@ -19,7 +19,7 @@ const year = new Date().getFullYear();
                     </I18nT>
                 </p>
             </div>
-            <p class="inline-flex flex-row underline gap-2">
+            <p class="inline-flex flex-row gap-2 underline">
                 <NuxtLink v-if="appConfig.links?.privacyPolicy" :external="true" :to="appConfig.links.privacyPolicy">
                     {{ $t('common.privacy_policy') }}
                 </NuxtLink>

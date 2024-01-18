@@ -70,7 +70,7 @@ const onSubmitThrottle = useThrottleFn(async (e) => {
 </script>
 
 <template>
-    <h2 class="pb-4 text-3xl text-center text-neutral">
+    <h2 class="pb-4 text-center text-3xl text-neutral">
         {{ $t('components.auth.registration_form.title') }}
     </h2>
 
@@ -93,7 +93,7 @@ const onSubmitThrottle = useThrottleFn(async (e) => {
                     autocomplete="registrationToken"
                     :placeholder="$t('components.auth.registration_form.registration_token')"
                     :label="$t('components.auth.registration_form.registration_token')"
-                    class="block w-full rounded-md border-0 py-1.5 bg-base-700 text-neutral placeholder:text-base-200 focus:ring-2 focus:ring-inset focus:ring-base-300 sm:text-lg sm:leading-6"
+                    class="block w-full rounded-md border-0 bg-base-700 py-1.5 text-neutral placeholder:text-base-200 focus:ring-2 focus:ring-inset focus:ring-base-300 sm:text-lg sm:leading-6"
                     @focusin="focusTablet(true)"
                     @focusout="focusTablet(false)"
                 />
@@ -111,7 +111,7 @@ const onSubmitThrottle = useThrottleFn(async (e) => {
                     autocomplete="username"
                     :placeholder="$t('common.username')"
                     :label="$t('common.username')"
-                    class="block w-full rounded-md border-0 py-1.5 bg-base-700 text-neutral placeholder:text-base-200 focus:ring-2 focus:ring-inset focus:ring-base-300 sm:text-sm sm:leading-6"
+                    class="block w-full rounded-md border-0 bg-base-700 py-1.5 text-neutral placeholder:text-base-200 focus:ring-2 focus:ring-inset focus:ring-base-300 sm:text-sm sm:leading-6"
                     @focusin="focusTablet(true)"
                     @focusout="focusTablet(false)"
                 />
@@ -130,7 +130,7 @@ const onSubmitThrottle = useThrottleFn(async (e) => {
                     autocomplete="current-password"
                     :placeholder="$t('common.password')"
                     :label="$t('common.password')"
-                    class="block w-full rounded-md border-0 py-1.5 bg-base-700 text-neutral placeholder:text-base-200 focus:ring-2 focus:ring-inset focus:ring-base-300 sm:text-sm sm:leading-6"
+                    class="block w-full rounded-md border-0 bg-base-700 py-1.5 text-neutral placeholder:text-base-200 focus:ring-2 focus:ring-inset focus:ring-base-300 sm:text-sm sm:leading-6"
                     @focusin="focusTablet(true)"
                     @focusout="focusTablet(false)"
                 />
@@ -142,7 +142,7 @@ const onSubmitThrottle = useThrottleFn(async (e) => {
         <div>
             <button
                 type="submit"
-                class="flex justify-center w-full px-3 py-2 text-sm font-semibold transition-colors rounded-md text-neutral focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2"
+                class="flex w-full justify-center rounded-md px-3 py-2 text-sm font-semibold text-neutral transition-colors focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2"
                 :disabled="!meta.valid || !canSubmit"
                 :class="[
                     !meta.valid || !canSubmit
@@ -151,7 +151,7 @@ const onSubmitThrottle = useThrottleFn(async (e) => {
                 ]"
             >
                 <template v-if="!canSubmit">
-                    <LoadingIcon class="animate-spin h-5 w-5 mr-2" />
+                    <LoadingIcon class="mr-2 h-5 w-5 animate-spin" />
                 </template>
                 {{ $t('components.auth.registration_form.submit_button') }}
             </button>
@@ -161,7 +161,7 @@ const onSubmitThrottle = useThrottleFn(async (e) => {
     <div class="mt-6">
         <NuxtLink
             :to="{ name: 'auth-login' }"
-            class="flex justify-center w-full px-3 py-2 text-sm font-semibold transition-colors rounded-md bg-secondary-600 text-neutral hover:bg-secondary-500 focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-base-300"
+            class="flex w-full justify-center rounded-md bg-secondary-600 px-3 py-2 text-sm font-semibold text-neutral transition-colors hover:bg-secondary-500 focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-base-300"
         >
             {{ $t('components.auth.registration_form.back_to_login_button') }}
         </NuxtLink>

@@ -35,7 +35,7 @@ const open = ref(false);
 </script>
 
 <template>
-    <div class="px-4 sm:px-6 lg:px-8 h-full overflow-y-auto">
+    <div class="h-full overflow-y-auto px-4 sm:px-6 lg:px-8">
         <div class="sm:flex sm:items-center">
             <div class="sm:flex-auto">
                 <h2 class="text-base font-semibold leading-6 text-gray-100">{{ $t('common.disponents', 2) }}</h2>
@@ -44,17 +44,17 @@ const open = ref(false);
         <div class="mt-0.5 flow-root">
             <div class="-mx-2 sm:-mx-6 lg:-mx-8">
                 <div class="inline-block min-w-full py-2 align-middle sm:px-2 lg:px-2">
-                    <div class="grid grid-cols-1 sm:grid-cols-3 items-center justify-items-center">
-                        <div class="flex-1 inline-flex">
+                    <div class="grid grid-cols-1 items-center justify-items-center sm:grid-cols-3">
+                        <div class="inline-flex flex-1">
                             <button
                                 v-if="!isDisponent"
                                 type="button"
                                 class="flex items-center justify-center rounded-full bg-success-500 text-neutral hover:bg-success-400"
                                 @click="onSubmitThrottle(true)"
                             >
-                                <LocationEnterIcon v-if="canSubmit" class="w-7 h-7" />
+                                <LocationEnterIcon v-if="canSubmit" class="h-7 w-7" />
                                 <template v-else>
-                                    <LoadingIcon class="animate-spin h-7 w-7 mr-2" />
+                                    <LoadingIcon class="mr-2 h-7 w-7 animate-spin" />
                                 </template>
                                 <span class="px-1">{{ $t('common.join') }}</span>
                             </button>
@@ -64,9 +64,9 @@ const open = ref(false);
                                 class="flex items-center justify-center rounded-full bg-primary-500 text-neutral hover:bg-primary-400"
                                 @click="onSubmitThrottle(false)"
                             >
-                                <LocationExitIcon v-if="canSubmit" class="w-7 h-7" />
+                                <LocationExitIcon v-if="canSubmit" class="h-7 w-7" />
                                 <template v-else>
-                                    <LoadingIcon class="animate-spin h-7 w-7 mr-2" />
+                                    <LoadingIcon class="mr-2 h-7 w-7 animate-spin" />
                                 </template>
                                 <span class="px-1">{{ $t('common.leave') }}</span>
                             </button>
@@ -74,7 +74,7 @@ const open = ref(false);
                         <div class="flex-1">
                             <DisponentsModal :open="open" @close="open = false" />
 
-                            <p class="text-neutral text-sm">
+                            <p class="text-sm text-neutral">
                                 <button
                                     class="inline-flex items-center rounded-md px-2 py-1 text-xs font-medium ring-1 ring-inset"
                                     :class="
@@ -90,7 +90,7 @@ const open = ref(false);
                             </p>
                         </div>
                         <div class="flex-1">
-                            <p class="text-neutral text-sm">
+                            <p class="text-sm text-neutral">
                                 <span
                                     class="inline-flex items-center rounded-md bg-gray-400/10 px-2 py-1 text-xs font-medium text-gray-400 ring-1 ring-inset ring-gray-400/20"
                                 >

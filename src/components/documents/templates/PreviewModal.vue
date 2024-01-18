@@ -59,7 +59,7 @@ async function getTemplate(): Promise<Template> {
                 leave-from="opacity-100"
                 leave-to="opacity-0"
             >
-                <div class="fixed inset-0 transition-opacity bg-opacity-75 bg-base-900" />
+                <div class="fixed inset-0 bg-base-900 bg-opacity-75 transition-opacity" />
             </TransitionChild>
 
             <div class="fixed inset-0 z-30 overflow-y-auto">
@@ -75,9 +75,9 @@ async function getTemplate(): Promise<Template> {
                     >
                         <div>
                             <DialogPanel
-                                class="relative px-4 pt-5 pb-4 overflow-hidden text-left transition-all transform rounded-lg bg-base-800 text-neutral sm:my-8 w-full sm:w-screen sm:min-w-min sm:p-6"
+                                class="relative w-full transform overflow-hidden rounded-lg bg-base-800 px-4 pb-4 pt-5 text-left text-neutral transition-all sm:my-8 sm:w-screen sm:min-w-min sm:p-6"
                             >
-                                <div class="absolute right-0 top-0 pr-4 pt-4 block">
+                                <div class="absolute right-0 top-0 block pr-4 pt-4">
                                     <button
                                         type="button"
                                         class="rounded-md bg-neutral text-gray-400 hover:text-gray-500 focus:outline-none focus:ring-2 focus:ring-primary-500 focus:ring-offset-2"
@@ -111,30 +111,30 @@ async function getTemplate(): Promise<Template> {
 
                                                 <template v-else>
                                                     <div>
-                                                        <label class="block mb-2 text-sm font-medium leading-6 text-neutral">
+                                                        <label class="mb-2 block text-sm font-medium leading-6 text-neutral">
                                                             {{ $t('common.title') }}
                                                         </label>
                                                         <h1
-                                                            class="p-2 mt-4 rounded-lg text-2xl font-bold text-neutral bg-base-800 break-words"
+                                                            class="mt-4 break-words rounded-lg bg-base-800 p-2 text-2xl font-bold text-neutral"
                                                         >
                                                             {{ template?.title }}
                                                         </h1>
                                                     </div>
                                                     <div>
-                                                        <label class="block mb-2 text-sm font-medium leading-6 text-neutral">
+                                                        <label class="mb-2 block text-sm font-medium leading-6 text-neutral">
                                                             {{ $t('common.state') }}
                                                         </label>
                                                         <p
-                                                            class="p-2 mt-4 rounded-lg text-base font-bold text-neutral bg-base-800 break-words"
+                                                            class="mt-4 break-words rounded-lg bg-base-800 p-2 text-base font-bold text-neutral"
                                                         >
                                                             {{ template?.state }}
                                                         </p>
                                                     </div>
 
-                                                    <label class="block mb-2 text-sm font-medium leading-6 text-neutral">
+                                                    <label class="mb-2 block text-sm font-medium leading-6 text-neutral">
                                                         {{ $t('common.content') }}
                                                     </label>
-                                                    <div class="p-2 mt-4 rounded-lg text-neutral bg-base-800 break-words">
+                                                    <div class="mt-4 break-words rounded-lg bg-base-800 p-2 text-neutral">
                                                         <!-- eslint-disable-next-line vue/no-v-html -->
                                                         <p v-html="template?.content"></p>
                                                     </div>
@@ -143,10 +143,10 @@ async function getTemplate(): Promise<Template> {
                                         </div>
                                     </div>
                                 </div>
-                                <div class="gap-2 mt-5 sm:mt-4 sm:flex">
+                                <div class="mt-5 gap-2 sm:mt-4 sm:flex">
                                     <button
                                         type="button"
-                                        class="flex-1 rounded-md bg-base-500 py-2.5 px-3.5 text-sm font-semibold text-neutral hover:bg-base-400"
+                                        class="flex-1 rounded-md bg-base-500 px-3.5 py-2.5 text-sm font-semibold text-neutral hover:bg-base-400"
                                         @click="$emit('close')"
                                     >
                                         {{ $t('common.close', 1) }}

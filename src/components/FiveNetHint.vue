@@ -56,7 +56,7 @@ function nextHint(): void {
                 <button type="button" class="text-white" @click="previousHint()">
                     <ArrowLeftBoldCircleIcon class="h-7 w-7" />
                 </button>
-                <p class="inline-flex items-center text-sm leading-6 text-white max-w-5xl">
+                <p class="inline-flex max-w-5xl items-center text-sm leading-6 text-white">
                     <InformationSlabCircleIcon class="h-7 w-7" />
                     <strong class="mx-1 font-semibold">{{ $t('components.hints.start_text') }}</strong>
                     {{ $t(`components.hints.${hint.key}.content`) }}

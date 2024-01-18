@@ -103,23 +103,23 @@ const onSubmitThrottle = useThrottleFn(async (e) => {
                             class="text-sm font-medium text-primary-400 hover:text-primary-300"
                         />
                     </div>
-                    <div class="flex items-center flex-1 text-base-200">
+                    <div class="flex flex-1 items-center text-base-200">
                         <GenericTime class="ml-2 text-sm" :value="comment.createdAt" />
                     </div>
-                    <div v-if="comment.deletedAt" class="flex flex-row items-center justify-center flex-1 text-base-100">
+                    <div v-if="comment.deletedAt" class="flex flex-1 flex-row items-center justify-center text-base-100">
                         <TrashCanIcon type="button" class="mr-1.5 h-5 w-5 flex-shrink-0 text-base-400" aria-hidden="true" />
                         {{ $t('common.deleted') }}
                     </div>
                     <div v-if="comment.creatorId === activeChar?.userId || permissions.includes('superuser')">
                         <button v-if="can('JobsService.RequestsCreateEntry')" @click="editing = true">
-                            <PencilIcon class="w-5 h-auto ml-auto mr-2.5" />
+                            <PencilIcon class="ml-auto mr-2.5 h-auto w-5" />
                         </button>
                         <button v-if="can('JobsService.RequestsDeleteComment')" type="button" @click="reveal()">
-                            <TrashCanIcon class="w-5 h-auto ml-auto mr-2.5" />
+                            <TrashCanIcon class="ml-auto mr-2.5 h-auto w-5" />
                         </button>
                     </div>
                 </div>
-                <p class="text-sm break-words">
+                <p class="break-words text-sm">
                     {{ comment.comment }}
                 </p>
             </div>
@@ -170,7 +170,7 @@ const onSubmitThrottle = useThrottleFn(async (e) => {
                                     ]"
                                 >
                                     <template v-if="!canSubmit">
-                                        <LoadingIcon class="animate-spin h-5 w-5 mr-2" />
+                                        <LoadingIcon class="mr-2 h-5 w-5 animate-spin" />
                                     </template>
                                     {{ $t('common.edit') }}
                                 </button>

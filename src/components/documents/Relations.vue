@@ -56,13 +56,13 @@ async function getDocumentRelations(): Promise<DocumentRelation[]> {
 
         <template v-else>
             <!-- Relations list (smallest breakpoint only) -->
-            <div class="sm:hidden text-neutral">
-                <ul role="list" class="overflow-hidden divide-y divide-gray-600 rounded-lg sm:hidden">
-                    <li v-for="relation in relations" :key="relation.id" class="block px-4 py-4 bg-base-800 hover:bg-base-700">
+            <div class="text-neutral sm:hidden">
+                <ul role="list" class="divide-y divide-gray-600 overflow-hidden rounded-lg sm:hidden">
+                    <li v-for="relation in relations" :key="relation.id" class="block bg-base-800 px-4 py-4 hover:bg-base-700">
                         <span class="flex items-center space-x-4">
                             <span class="flex flex-1 space-x-2 truncate">
-                                <ArrowCollapseIcon class="flex-shrink-0 w-5 h-5 text-gray-400" aria-hidden="true" />
-                                <span class="flex flex-col text-sm truncate">
+                                <ArrowCollapseIcon class="h-5 w-5 flex-shrink-0 text-gray-400" aria-hidden="true" />
+                                <span class="flex flex-col truncate text-sm">
                                     <span v-if="showDocument">
                                         <NuxtLink
                                             :to="{
@@ -74,7 +74,7 @@ async function getDocumentRelations(): Promise<DocumentRelation[]> {
                                         >
                                             <span
                                                 v-if="relation.document?.category"
-                                                class="inline-flex items-center rounded-md bg-primary-400/10 px-2 py-1 text-xs font-medium text-primary-400 ring-1 ring-inset ring-primary-400/30 mr-1"
+                                                class="mr-1 inline-flex items-center rounded-md bg-primary-400/10 px-2 py-1 text-xs font-medium text-primary-400 ring-1 ring-inset ring-primary-400/30"
                                             >
                                                 {{ relation.document?.category?.name }}
                                             </span>
@@ -106,26 +106,26 @@ async function getDocumentRelations(): Promise<DocumentRelation[]> {
                 <div>
                     <div class="flex flex-col">
                         <div class="w-full overflow-hidden overflow-x-auto align-middle">
-                            <table class="w-full text-neutral bg-base-600 divide-y divide-base-400">
+                            <table class="w-full divide-y divide-base-400 bg-base-600 text-neutral">
                                 <thead>
                                     <tr>
-                                        <th v-if="showDocument" class="px-6 py-3 text-sm font-semibold text-left" scope="col">
+                                        <th v-if="showDocument" class="px-6 py-3 text-left text-sm font-semibold" scope="col">
                                             {{ $t('common.document', 1) }}
                                         </th>
-                                        <th class="px-6 py-3 text-sm font-semibold text-left" scope="col">
+                                        <th class="px-6 py-3 text-left text-sm font-semibold" scope="col">
                                             {{ $t('common.target') }}
                                         </th>
-                                        <th class="px-6 py-3 text-sm font-semibold text-right" scope="col">
+                                        <th class="px-6 py-3 text-right text-sm font-semibold" scope="col">
                                             {{ $t('common.relation', 1) }}
                                         </th>
                                         <th
                                             v-if="showSource"
-                                            class="hidden px-6 py-3 text-sm font-semibold text-left md:block"
+                                            class="hidden px-6 py-3 text-left text-sm font-semibold md:block"
                                             scope="col"
                                         >
                                             {{ $t('common.creator') }}
                                         </th>
-                                        <th class="px-6 py-3 text-sm font-semibold text-right" scope="col">
+                                        <th class="px-6 py-3 text-right text-sm font-semibold" scope="col">
                                             {{ $t('common.date') }}
                                         </th>
                                     </tr>
@@ -143,7 +143,7 @@ async function getDocumentRelations(): Promise<DocumentRelation[]> {
                                             >
                                                 <span
                                                     v-if="relation.document?.category"
-                                                    class="inline-flex items-center rounded-md bg-primary-400/10 px-2 py-1 text-xs font-medium text-primary-400 ring-1 ring-inset ring-primary-400/30 mr-1"
+                                                    class="mr-1 inline-flex items-center rounded-md bg-primary-400/10 px-2 py-1 text-xs font-medium text-primary-400 ring-1 ring-inset ring-primary-400/30"
                                                 >
                                                     {{ relation.document?.category?.name }}
                                                 </span>
@@ -158,17 +158,17 @@ async function getDocumentRelations(): Promise<DocumentRelation[]> {
                                                 </span>
                                             </div>
                                         </td>
-                                        <td class="px-6 py-4 text-sm text-right whitespace-nowrap">
+                                        <td class="whitespace-nowrap px-6 py-4 text-right text-sm">
                                             <span class="font-medium">
                                                 {{ $t(`enums.docstore.DocRelation.${DocRelation[relation.relation]}`) }}
                                             </span>
                                         </td>
-                                        <td v-if="showSource" class="hidden px-6 py-4 text-sm whitespace-nowrap md:block">
+                                        <td v-if="showSource" class="hidden whitespace-nowrap px-6 py-4 text-sm md:block">
                                             <div class="flex">
                                                 <CitizenInfoPopover :user="relation.sourceUser" />
                                             </div>
                                         </td>
-                                        <td class="px-6 py-4 text-sm text-right whitespace-nowrap">
+                                        <td class="whitespace-nowrap px-6 py-4 text-right text-sm">
                                             <GenericTime :value="relation.createdAt" />
                                         </td>
                                     </tr>

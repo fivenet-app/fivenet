@@ -133,11 +133,11 @@ function removeRelation(id: string): void {
                 leave-from="opacity-100"
                 leave-to="opacity-0"
             >
-                <div class="fixed inset-0 transition-opacity bg-opacity-75 bg-base-900" />
+                <div class="fixed inset-0 bg-base-900 bg-opacity-75 transition-opacity" />
             </TransitionChild>
 
             <div class="fixed inset-0 z-30 overflow-y-auto">
-                <div class="flex items-end justify-center min-h-full p-4 text-center sm:items-center sm:p-0">
+                <div class="flex min-h-full items-end justify-center p-4 text-center sm:items-center sm:p-0">
                     <TransitionChild
                         as="template"
                         enter="ease-out duration-300"
@@ -148,12 +148,12 @@ function removeRelation(id: string): void {
                         leave-to="opacity-0 translate-y-4 sm:translate-y-0 sm:scale-95"
                     >
                         <DialogPanel
-                            class="relative px-4 pt-5 pb-4 overflow-hidden text-left transition-all transform rounded-lg bg-base-800 text-neutral sm:my-8 w-full sm:max-w-6xl sm:p-6 my-auto"
+                            class="relative my-auto w-full transform overflow-hidden rounded-lg bg-base-800 px-4 pb-4 pt-5 text-left text-neutral transition-all sm:my-8 sm:max-w-6xl sm:p-6"
                         >
-                            <div class="absolute top-0 right-0 hidden pt-4 pr-4 sm:block">
+                            <div class="absolute right-0 top-0 hidden pr-4 pt-4 sm:block">
                                 <button
                                     type="button"
-                                    class="transition-colors rounded-md hover:text-base-300 focus:outline-none focus:ring-2 focus:ring-primary-500 focus:ring-offset-2"
+                                    class="rounded-md transition-colors hover:text-base-300 focus:outline-none focus:ring-2 focus:ring-primary-500 focus:ring-offset-2"
                                     @click="emit('close')"
                                 >
                                     <span class="sr-only">{{ $t('common.close') }}</span>
@@ -165,14 +165,14 @@ function removeRelation(id: string): void {
                                 {{ $t('common.relation', 2) }}
                             </DialogTitle>
                             <TabGroup>
-                                <TabList class="flex flex-row mb-4">
-                                    <Tab v-for="tab in tabs" :key="tab.name" v-slot="{ selected }" class="flex-initial w-full">
+                                <TabList class="mb-4 flex flex-row">
+                                    <Tab v-for="tab in tabs" :key="tab.name" v-slot="{ selected }" class="w-full flex-initial">
                                         <button
                                             :class="[
                                                 selected
                                                     ? 'border-primary-500 text-primary-500'
                                                     : 'border-transparent text-base-300 hover:border-base-300 hover:text-base-200',
-                                                'group inline-flex items-center border-b-2 py-4 px-1 text-m font-medium w-full justify-center transition-colors',
+                                                'text-m group inline-flex w-full items-center justify-center border-b-2 px-1 py-4 font-medium transition-colors',
                                             ]"
                                             :aria-current="selected ? 'page' : undefined"
                                         >
@@ -192,7 +192,7 @@ function removeRelation(id: string): void {
                                     <div class="px-4 sm:flex sm:items-start sm:px-6 lg:px-8">
                                         <TabPanel class="w-full">
                                             <div class="flow-root">
-                                                <div class="mx-0 -my-2 overflow-x-auto">
+                                                <div class="-my-2 mx-0 overflow-x-auto">
                                                     <div class="inline-block min-w-full py-2 align-middle">
                                                         <table class="min-w-full divide-y divide-base-200 text-neutral">
                                                             <thead>
@@ -226,17 +226,17 @@ function removeRelation(id: string): void {
                                                             <tbody class="divide-y divide-base-500">
                                                                 <tr v-for="[key, relation] in modelValue" :key="key.toString()">
                                                                     <td
-                                                                        class="py-4 pl-4 pr-3 text-sm font-medium truncate whitespace-nowrap sm:pl-6 lg:pl-8"
+                                                                        class="truncate whitespace-nowrap py-4 pl-4 pr-3 text-sm font-medium sm:pl-6 lg:pl-8"
                                                                     >
                                                                         <span class="inline-flex items-center gap-1">
                                                                             <CitizenInfoPopover :user="relation.targetUser" />
                                                                             ({{ relation.targetUser?.dateofbirth }})
                                                                         </span>
                                                                     </td>
-                                                                    <td class="px-3 py-4 text-sm whitespace-nowrap">
+                                                                    <td class="whitespace-nowrap px-3 py-4 text-sm">
                                                                         <CitizenInfoPopover :user="relation.sourceUser" />
                                                                     </td>
-                                                                    <td class="px-3 py-4 text-sm whitespace-nowrap">
+                                                                    <td class="whitespace-nowrap px-3 py-4 text-sm">
                                                                         {{
                                                                             $t(
                                                                                 `enums.docstore.DocRelation.${
@@ -245,7 +245,7 @@ function removeRelation(id: string): void {
                                                                             )
                                                                         }}
                                                                     </td>
-                                                                    <td class="px-3 py-4 text-sm whitespace-nowrap">
+                                                                    <td class="whitespace-nowrap px-3 py-4 text-sm">
                                                                         <div class="flex flex-row gap-2">
                                                                             <div class="flex">
                                                                                 <NuxtLink
@@ -294,8 +294,8 @@ function removeRelation(id: string): void {
                                             </div>
                                         </TabPanel>
                                         <TabPanel class="w-full">
-                                            <div class="flow-root mt-2">
-                                                <div class="mx-0 -my-2 overflow-x-auto">
+                                            <div class="mt-2 flow-root">
+                                                <div class="-my-2 mx-0 overflow-x-auto">
                                                     <div class="inline-block min-w-full py-2 align-middle">
                                                         <DataNoDataBlock
                                                             v-if="clipboardStore.$state.users.length === 0"
@@ -335,17 +335,17 @@ function removeRelation(id: string): void {
                                                                     :key="user.userId"
                                                                 >
                                                                     <td
-                                                                        class="py-4 pl-4 pr-3 text-sm font-medium truncate whitespace-nowrap sm:pl-6 lg:pl-8"
+                                                                        class="truncate whitespace-nowrap py-4 pl-4 pr-3 text-sm font-medium sm:pl-6 lg:pl-8"
                                                                     >
                                                                         <span class="inline-flex items-center gap-1">
                                                                             <CitizenInfoPopover :user="user" />
                                                                             ({{ user.dateofbirth }})
                                                                         </span>
                                                                     </td>
-                                                                    <td class="px-3 py-4 text-sm whitespace-nowrap">
+                                                                    <td class="whitespace-nowrap px-3 py-4 text-sm">
                                                                         {{ user.jobLabel }}
                                                                     </td>
-                                                                    <td class="px-3 py-4 text-sm whitespace-nowrap">
+                                                                    <td class="whitespace-nowrap px-3 py-4 text-sm">
                                                                         <div class="flex flex-row gap-2">
                                                                             <div class="flex">
                                                                                 <button
@@ -426,14 +426,14 @@ function removeRelation(id: string): void {
                                                     v-model="queryCitizens"
                                                     type="text"
                                                     name="name"
-                                                    class="block w-full rounded-md border-0 py-1.5 bg-base-700 text-neutral placeholder:text-base-200 focus:ring-2 focus:ring-inset focus:ring-base-300 sm:text-sm sm:leading-6"
+                                                    class="block w-full rounded-md border-0 bg-base-700 py-1.5 text-neutral placeholder:text-base-200 focus:ring-2 focus:ring-inset focus:ring-base-300 sm:text-sm sm:leading-6"
                                                     :placeholder="`${$t('common.citizen', 1)} ${$t('common.name')}`"
                                                     @focusin="focusTablet(true)"
                                                     @focusout="focusTablet(false)"
                                                 />
                                             </div>
-                                            <div class="flow-root mt-2">
-                                                <div class="mx-0 -my-2 overflow-x-auto">
+                                            <div class="mt-2 flow-root">
+                                                <div class="-my-2 mx-0 overflow-x-auto">
                                                     <div class="inline-block min-w-full py-2 align-middle">
                                                         <DataPendingBlock
                                                             v-if="pending"
@@ -479,17 +479,17 @@ function removeRelation(id: string): void {
                                                             <tbody class="divide-y divide-base-500">
                                                                 <tr v-for="user in citizens.slice(0, 8)" :key="user.userId">
                                                                     <td
-                                                                        class="py-4 pl-4 pr-3 text-sm font-medium truncate whitespace-nowrap sm:pl-6 lg:pl-8"
+                                                                        class="truncate whitespace-nowrap py-4 pl-4 pr-3 text-sm font-medium sm:pl-6 lg:pl-8"
                                                                     >
                                                                         <span class="inline-flex items-center gap-1">
                                                                             <CitizenInfoPopover :user="user" />
                                                                             ({{ user.dateofbirth }})
                                                                         </span>
                                                                     </td>
-                                                                    <td class="px-3 py-4 text-sm whitespace-nowrap">
+                                                                    <td class="whitespace-nowrap px-3 py-4 text-sm">
                                                                         {{ user.jobLabel }}
                                                                     </td>
-                                                                    <td class="px-3 py-4 text-sm whitespace-nowrap">
+                                                                    <td class="whitespace-nowrap px-3 py-4 text-sm">
                                                                         <div class="flex flex-row gap-2">
                                                                             <div class="flex">
                                                                                 <button
@@ -557,10 +557,10 @@ function removeRelation(id: string): void {
                                     </div>
                                 </TabPanels>
                             </TabGroup>
-                            <div class="gap-2 mt-5 sm:mt-4 sm:flex sm:flex-row-reverse">
+                            <div class="mt-5 gap-2 sm:mt-4 sm:flex sm:flex-row-reverse">
                                 <button
                                     type="button"
-                                    class="rounded-md bg-base-500 py-2.5 px-3.5 text-sm font-semibold text-neutral hover:bg-base-400"
+                                    class="rounded-md bg-base-500 px-3.5 py-2.5 text-sm font-semibold text-neutral hover:bg-base-400"
                                     @click="emit('close')"
                                 >
                                     {{ $t('common.close') }}

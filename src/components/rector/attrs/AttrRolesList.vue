@@ -85,26 +85,26 @@ onBeforeMount(async () => await listJobs());
     <div class="py-2">
         <div class="px-1 sm:px-2 lg:px-4">
             <div class="flex flex-col lg:flex-row">
-                <div class="flow-root mt-2 basis-1/3">
+                <div class="mt-2 flow-root basis-1/3">
                     <div v-if="can('RectorService.CreateRole')" class="sm:flex sm:items-center">
                         <div class="sm:flex-auto">
                             <form @submit.prevent="createRole()">
-                                <div class="flex flex-row gap-4 mx-auto">
-                                    <div class="flex-1 form-control">
+                                <div class="mx-auto flex flex-row gap-4">
+                                    <div class="form-control flex-1">
                                         <label for="job" class="block text-sm font-medium leading-6 text-neutral">
                                             {{ $t('common.job') }}
                                         </label>
                                         <Combobox
                                             v-model="selectedJob"
                                             as="div"
-                                            class="relative flex items-center mt-2 w-full"
+                                            class="relative mt-2 flex w-full items-center"
                                             nullable
                                         >
                                             <div class="relative w-full">
                                                 <ComboboxButton as="div" class="w-full">
                                                     <ComboboxInput
                                                         autocomplete="off"
-                                                        class="block w-full rounded-md border-0 py-1.5 bg-base-700 text-neutral placeholder:text-base-200 focus:ring-2 focus:ring-inset focus:ring-base-300 sm:text-sm sm:leading-6"
+                                                        class="block w-full rounded-md border-0 bg-base-700 py-1.5 text-neutral placeholder:text-base-200 focus:ring-2 focus:ring-inset focus:ring-base-300 sm:text-sm sm:leading-6"
                                                         :display-value="
                                                             (job: any) => (job ? `${job?.label} (${job?.name})` : '')
                                                         "
@@ -115,7 +115,7 @@ onBeforeMount(async () => await listJobs());
                                                 </ComboboxButton>
 
                                                 <ComboboxOptions
-                                                    class="absolute z-10 w-full py-1 mt-1 overflow-auto text-base rounded-md bg-base-700 max-h-44 sm:text-sm"
+                                                    class="absolute z-10 mt-1 max-h-44 w-full overflow-auto rounded-md bg-base-700 py-1 text-base sm:text-sm"
                                                 >
                                                     <ComboboxOption
                                                         v-for="job in availableJobs.filter((g) =>
@@ -142,7 +142,7 @@ onBeforeMount(async () => await listJobs());
                                                                     'absolute inset-y-0 left-0 flex items-center pl-1.5',
                                                                 ]"
                                                             >
-                                                                <CheckIcon class="w-5 h-5" aria-hidden="true" />
+                                                                <CheckIcon class="h-5 w-5" aria-hidden="true" />
                                                             </span>
                                                         </li>
                                                     </ComboboxOption>
@@ -150,10 +150,10 @@ onBeforeMount(async () => await listJobs());
                                             </div>
                                         </Combobox>
                                     </div>
-                                    <div class="flex-initial form-control flex flex-col justify-end">
+                                    <div class="form-control flex flex-initial flex-col justify-end">
                                         <button
                                             type="submit"
-                                            class="inline-flex px-3 py-2 text-sm font-semibold rounded-md text-neutral focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2"
+                                            class="inline-flex rounded-md px-3 py-2 text-sm font-semibold text-neutral focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2"
                                             :disabled="selectedJob === null"
                                             :class="[
                                                 selectedJob === null
@@ -168,8 +168,8 @@ onBeforeMount(async () => await listJobs());
                             </form>
                         </div>
                     </div>
-                    <div class="mx-0 -my-2 overflow-x-auto">
-                        <div class="inline-block min-w-full py-2 align-middle px-1">
+                    <div class="-my-2 mx-0 overflow-x-auto">
+                        <div class="inline-block min-w-full px-1 py-2 align-middle">
                             <DataPendingBlock v-if="pending" :message="$t('common.loading', [$t('common.role', 2)])" />
                             <DataErrorBlock
                                 v-else-if="error"
@@ -181,12 +181,12 @@ onBeforeMount(async () => await listJobs());
                                 <table class="min-w-full divide-y divide-base-600">
                                     <thead>
                                         <tr>
-                                            <th scope="col" class="py-3.5 px-2 text-left text-sm font-semibold text-neutral">
+                                            <th scope="col" class="px-2 py-3.5 text-left text-sm font-semibold text-neutral">
                                                 {{ $t('common.name') }}
                                             </th>
                                             <th
                                                 scope="col"
-                                                class="relative py-3.5 pl-3 pr-4 sm:pr-0 text-right text-sm font-semibold text-neutral"
+                                                class="relative py-3.5 pl-3 pr-4 text-right text-sm font-semibold text-neutral sm:pr-0"
                                             >
                                                 {{ $t('common.action', 2) }}
                                             </th>
@@ -203,12 +203,12 @@ onBeforeMount(async () => await listJobs());
                                     </tbody>
                                     <thead>
                                         <tr>
-                                            <th scope="col" class="py-3.5 px-2 text-left text-sm font-semibold text-neutral">
+                                            <th scope="col" class="px-2 py-3.5 text-left text-sm font-semibold text-neutral">
                                                 {{ $t('common.name') }}
                                             </th>
                                             <th
                                                 scope="col"
-                                                class="relative py-3.5 pl-3 pr-4 sm:pr-0 text-right text-sm font-semibold text-neutral"
+                                                class="relative py-3.5 pl-3 pr-4 text-right text-sm font-semibold text-neutral sm:pr-0"
                                             >
                                                 {{ $t('common.action', 2) }}
                                             </th>
@@ -219,7 +219,7 @@ onBeforeMount(async () => await listJobs());
                         </div>
                     </div>
                 </div>
-                <div class="flex basis-2/3 w-full ml-2">
+                <div class="ml-2 flex w-full basis-2/3">
                     <template v-if="selectedRole">
                         <AttrView :role-id="selectedRole.id" @deleted="refresh()" />
                     </template>

@@ -52,7 +52,7 @@ watch(offset, async () => refresh());
         />
 
         <template v-else>
-            <div class="sm:divide-y sm:divide-base-400 mb-1">
+            <div class="mb-1 sm:divide-y sm:divide-base-400">
                 <DocumentActivityListEntry v-for="item in data.activity" :key="item.id" :entry="item" />
             </div>
 

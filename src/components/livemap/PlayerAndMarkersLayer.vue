@@ -67,7 +67,7 @@ onBeforeUnmount(async () => {
         layer-type="overlay"
         :visible="true"
         :max-cluster-radius="15"
-        :disable-clustering-at-zoom="3"
+        :disable-clustering-at-zoom="2"
         :single-marker-mode="true"
         :chunked-loading="true"
         :animate="true"
@@ -110,7 +110,7 @@ onBeforeUnmount(async () => {
         <div class="form-control flex flex-col gap-2">
             <input
                 v-model="playerQuery"
-                class="w-full max-w-[11rem] p-0.5 px-1 bg-clip-padding rounded-md border-2 border-black/20"
+                class="w-full max-w-[11rem] rounded-md border-2 border-black/20 bg-clip-padding p-0.5 px-1"
                 type="text"
                 name="searchPlayer"
                 :placeholder="`${$t('common.employee', 1)} ${$t('common.filter')}`"

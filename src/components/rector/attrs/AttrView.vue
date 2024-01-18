@@ -245,7 +245,7 @@ onConfirm(async (id) => deleteRole(id));
 <template>
     <ConfirmDialog :open="isRevealed" :cancel="cancel" :confirm="() => confirm(role!.id)" />
 
-    <div class="py-4 w-full">
+    <div class="w-full py-4">
         <div class="px-1 sm:px-2 lg:px-4">
             <DataPendingBlock v-if="pending" :message="$t('common.loading', [$t('common.role', 2)])" />
             <DataErrorBlock v-else-if="error" :title="$t('common.unable_to_load', [$t('common.role', 2)])" :retry="refresh" />
@@ -254,15 +254,15 @@ onConfirm(async (id) => deleteRole(id));
                 <h2 class="text-3xl text-neutral" :title="`ID: ${role.id}`">
                     {{ role?.jobLabel! }}
                     <button v-if="can('RectorService.DeleteRole')" type="button" class="ml-1" @click="reveal()">
-                        <TrashCanIcon class="h-5 w-5 mx-auto text-neutral" />
+                        <TrashCanIcon class="mx-auto h-5 w-5 text-neutral" />
                     </button>
                 </h2>
                 <GenericDivider :label="$t('common.permission', 2)" />
-                <div class="py-2 flex flex-col gap-4">
+                <div class="flex flex-col gap-4 py-2">
                     <button
                         type="button"
                         :disabled="!changed"
-                        class="inline-flex px-3 py-2 text-center justify-center transition-colors font-semibold rounded-md text-neutral focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2"
+                        class="inline-flex justify-center rounded-md px-3 py-2 text-center font-semibold text-neutral transition-colors focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2"
                         :class="
                             !changed
                                 ? 'disabled bg-base-500 hover:bg-base-400 focus-visible:outline-base-500'
@@ -278,12 +278,12 @@ onConfirm(async (id) => deleteRole(id));
                         :key="category"
                         v-slot="{ open }"
                         as="div"
-                        class="text-neutral hover:border-neutral/70 border-neutral/20"
+                        class="border-neutral/20 text-neutral hover:border-neutral/70"
                     >
                         <DisclosureButton
                             :class="[
                                 open ? 'rounded-t-lg border-b-0' : 'rounded-lg',
-                                'flex w-full items-start justify-between text-left border-2 p-2 border-inherit transition-colors',
+                                'flex w-full items-start justify-between border-2 border-inherit p-2 text-left transition-colors',
                             ]"
                         >
                             <span class="text-base font-semibold leading-7">
@@ -297,34 +297,34 @@ onConfirm(async (id) => deleteRole(id));
                             </span>
                         </DisclosureButton>
                         <DisclosurePanel
-                            class="px-4 pb-2 border-2 border-t-0 rounded-b-lg transition-colors border-inherit -mt-2"
+                            class="-mt-2 rounded-b-lg border-2 border-t-0 border-inherit px-4 pb-2 transition-colors"
                         >
-                            <div class="flex flex-col gap-2 mx-auto my-2">
+                            <div class="mx-auto my-2 flex flex-col gap-2">
                                 <div
                                     v-for="(perm, idx) in permList.filter((p) => p.category === category)"
                                     :key="perm.id"
                                     class="flex flex-col gap-2"
                                 >
                                     <div class="flex flex-row gap-4">
-                                        <div class="flex flex-1 flex-col my-auto">
+                                        <div class="my-auto flex flex-1 flex-col">
                                             <span class="truncate" :title="`${$t('common.id')}: ${perm.id}`">
                                                 {{ $t(`perms.${perm.category}.${perm.name}.key`) }}
                                             </span>
-                                            <span class="text-base-500 truncate">
+                                            <span class="truncate text-base-500">
                                                 {{ $t(`perms.${perm.category}.${perm.name}.description`) }}
                                             </span>
                                         </div>
-                                        <div class="flex flex-initial flex-row max-h-8 my-auto">
+                                        <div class="my-auto flex max-h-8 flex-initial flex-row">
                                             <button
                                                 :data-active="permStates.has(perm.id) ? permStates.get(perm.id) : false"
-                                                class="transition-colors rounded-l-lg p-1 bg-success-600/50 data-[active=true]:bg-success-600 text-base-300 data-[active=true]:text-neutral hover:bg-success-600/70"
+                                                class="rounded-l-lg bg-success-600/50 p-1 text-base-300 transition-colors hover:bg-success-600/70 data-[active=true]:bg-success-600 data-[active=true]:text-neutral"
                                                 @click="updatePermissionState(perm.id, true)"
                                             >
                                                 <CheckIcon class="h-5 w-5" />
                                             </button>
                                             <button
                                                 :data-active="permStates.get(perm.id) === undefined || !permStates.get(perm.id)"
-                                                class="transition-colors rounded-r-lg p-1 bg-error-600/50 data-[active=true]:bg-error-600 text-base-300 data-[active=true]:text-neutral hover:bg-error-600/70"
+                                                class="rounded-r-lg bg-error-600/50 p-1 text-base-300 transition-colors hover:bg-error-600/70 data-[active=true]:bg-error-600 data-[active=true]:text-neutral"
                                                 @click="updatePermissionState(perm.id, false)"
                                             >
                                                 <CloseIcon class="h-5 w-5" />

@@ -89,7 +89,7 @@ const onSubmitThrottle = useThrottleFn(async (e) => {
                 leave-from="opacity-100"
                 leave-to="opacity-0"
             >
-                <div class="fixed inset-0 transition-opacity bg-opacity-75 bg-base-900" />
+                <div class="fixed inset-0 bg-base-900 bg-opacity-75 transition-opacity" />
             </TransitionChild>
 
             <div class="fixed inset-0 z-30 overflow-y-auto">
@@ -104,9 +104,9 @@ const onSubmitThrottle = useThrottleFn(async (e) => {
                         leave-to="opacity-0 translate-y-4 sm:translate-y-0 sm:scale-95"
                     >
                         <DialogPanel
-                            class="relative px-4 pt-5 pb-4 overflow-hidden text-left transition-all transform rounded-lg bg-base-800 text-neutral sm:my-8 w-full sm:max-w-lg sm:p-6"
+                            class="relative w-full transform overflow-hidden rounded-lg bg-base-800 px-4 pb-4 pt-5 text-left text-neutral transition-all sm:my-8 sm:max-w-lg sm:p-6"
                         >
-                            <div class="absolute right-0 top-0 pr-4 pt-4 block">
+                            <div class="absolute right-0 top-0 block pr-4 pt-4">
                                 <button
                                     type="button"
                                     class="rounded-md bg-neutral text-gray-400 hover:text-gray-500 focus:outline-none focus:ring-2 focus:ring-primary-500 focus:ring-offset-2"
@@ -139,7 +139,7 @@ const onSubmitThrottle = useThrottleFn(async (e) => {
                                                             $t('components.auth.change_username_modal.current_username')
                                                         "
                                                         :label="$t('components.auth.change_username_modal.current_username')"
-                                                        class="block w-full rounded-md border-0 py-1.5 bg-base-700 text-neutral placeholder:text-base-200 focus:ring-2 focus:ring-inset focus:ring-base-300 sm:text-sm sm:leading-6"
+                                                        class="block w-full rounded-md border-0 bg-base-700 py-1.5 text-neutral placeholder:text-base-200 focus:ring-2 focus:ring-inset focus:ring-base-300 sm:text-sm sm:leading-6"
                                                     />
                                                     <VeeErrorMessage
                                                         name="currentUsername"
@@ -159,7 +159,7 @@ const onSubmitThrottle = useThrottleFn(async (e) => {
                                                         autocomplete="new-username"
                                                         :placeholder="$t('components.auth.change_username_modal.new_username')"
                                                         :label="$t('components.auth.change_username_modal.new_username')"
-                                                        class="block w-full rounded-md border-0 py-1.5 bg-base-700 text-neutral placeholder:text-base-200 focus:ring-2 focus:ring-inset focus:ring-base-300 sm:text-sm sm:leading-6"
+                                                        class="block w-full rounded-md border-0 bg-base-700 py-1.5 text-neutral placeholder:text-base-200 focus:ring-2 focus:ring-inset focus:ring-base-300 sm:text-sm sm:leading-6"
                                                     />
                                                     <VeeErrorMessage
                                                         name="newUsername"
@@ -172,7 +172,7 @@ const onSubmitThrottle = useThrottleFn(async (e) => {
                                             <div>
                                                 <button
                                                     type="submit"
-                                                    class="flex justify-center w-full px-3 py-2 text-sm font-semibold transition-colors rounded-md text-neutral focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2"
+                                                    class="flex w-full justify-center rounded-md px-3 py-2 text-sm font-semibold text-neutral transition-colors focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2"
                                                     :disabled="!meta.valid || !canSubmit"
                                                     :class="[
                                                         !meta.valid || !canSubmit
@@ -181,7 +181,7 @@ const onSubmitThrottle = useThrottleFn(async (e) => {
                                                     ]"
                                                 >
                                                     <template v-if="!canSubmit">
-                                                        <LoadingIcon class="animate-spin h-5 w-5 mr-2" />
+                                                        <LoadingIcon class="mr-2 h-5 w-5 animate-spin" />
                                                     </template>
                                                     {{ $t('components.auth.change_username_modal.change_username') }}
                                                 </button>
@@ -190,10 +190,10 @@ const onSubmitThrottle = useThrottleFn(async (e) => {
                                     </div>
                                 </div>
                             </div>
-                            <div class="gap-2 mt-5 sm:mt-4 sm:flex">
+                            <div class="mt-5 gap-2 sm:mt-4 sm:flex">
                                 <button
                                     type="button"
-                                    class="flex-1 rounded-md bg-base-500 py-2.5 px-3.5 text-sm font-semibold text-neutral hover:bg-base-400"
+                                    class="flex-1 rounded-md bg-base-500 px-3.5 py-2.5 text-sm font-semibold text-neutral hover:bg-base-400"
                                     @click="$emit('close')"
                                 >
                                     {{ $t('common.close', 1) }}

@@ -73,9 +73,9 @@ async function copyToClipboard(): Promise<void> {
                     {{ $t('components.bodycheckup.title') }}
                 </h3>
             </div>
-            <div class="sm:flex sm:items-center pb-4">
+            <div class="pb-4 sm:flex sm:items-center">
                 <div class="sm:flex-auto">
-                    <div class="w-full grid grid-cols-1 sm:grid-cols-2 gap-4">
+                    <div class="grid w-full grid-cols-1 gap-4 sm:grid-cols-2">
                         <div>
                             <svg
                                 ref="svgRef"
@@ -189,12 +189,12 @@ async function copyToClipboard(): Promise<void> {
                                     :icon="VectorPointSelectIcon"
                                 />
                                 <ol v-else>
-                                    <li v-for="(pin, idx) in pins" :key="idx" class="my-2 inline-flex items-center w-full">
+                                    <li v-for="(pin, idx) in pins" :key="idx" class="my-2 inline-flex w-full items-center">
                                         <span class="text-base" :class="pin.selected ? 'underline' : ''"> {{ idx + 1 }}. </span>
                                         <input
                                             v-model="pin.description"
                                             type="text"
-                                            class="ml-1.5 grow block w-full rounded-md border-0 py-1.5 bg-base-700 text-neutral placeholder:text-base-200 focus:ring-2 focus:ring-inset focus:ring-base-300 sm:text-sm sm:leading-6"
+                                            class="ml-1.5 block w-full grow rounded-md border-0 bg-base-700 py-1.5 text-neutral placeholder:text-base-200 focus:ring-2 focus:ring-inset focus:ring-base-300 sm:text-sm sm:leading-6"
                                             @focusin="
                                                 focusTablet(true);
                                                 selectPin(pin);
@@ -207,10 +207,10 @@ async function copyToClipboard(): Promise<void> {
                                     </li>
                                 </ol>
                             </div>
-                            <div class="flex-initial mb-4">
+                            <div class="mb-4 flex-initial">
                                 <button
                                     type="button"
-                                    class="w-full rounded-md bg-info-700 py-2.5 px-3.5 text-sm font-semibold text-neutral hover:bg-info-600"
+                                    class="w-full rounded-md bg-info-700 px-3.5 py-2.5 text-sm font-semibold text-neutral hover:bg-info-600"
                                     @click="copyToClipboard()"
                                 >
                                     {{ $t('common.copy') }}

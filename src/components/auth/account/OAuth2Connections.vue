@@ -34,7 +34,7 @@ async function disconnect(provider: OAuth2Provider): Promise<void> {
 </script>
 
 <template>
-    <div class="overflow-hidden bg-base-800 shadow sm:rounded-lg text-neutral mt-3">
+    <div class="mt-3 overflow-hidden bg-base-800 text-neutral shadow sm:rounded-lg">
         <div class="px-4 py-5 sm:px-6">
             <h3 class="text-base font-semibold leading-6">
                 {{ $t('components.auth.oauth2_connections.title') }}
@@ -63,14 +63,14 @@ async function disconnect(provider: OAuth2Provider): Promise<void> {
                             <img
                                 :src="getProviderConnection(provider.name)!.avatar"
                                 alt="Avatar"
-                                class="w-auto h-10 rounded-full ring-2 ring-neutral hover:transition-colors text-base-300 bg-base-800 fill-base-300 hover:text-base-100 hover:fill-base-100"
+                                class="h-10 w-auto rounded-full bg-base-800 fill-base-300 text-base-300 ring-2 ring-neutral hover:fill-base-100 hover:text-base-100 hover:transition-colors"
                             />
                             <span class="text-left" :title="`ID: ${getProviderConnection(provider.name)?.externalId}`">
                                 {{ getProviderConnection(provider.name)?.username }}
                             </span>
 
                             <button @click="disconnect(provider)">
-                                <CloseCircleIcon class="h-5 w-5 mx-auto text-neutral" />
+                                <CloseCircleIcon class="mx-auto h-5 w-5 text-neutral" />
                                 {{ $t('common.disconnect') }}
                             </button>
                         </div>

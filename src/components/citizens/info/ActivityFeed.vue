@@ -44,8 +44,8 @@ watch(offset, async () => refresh());
     <div class="py-2 pb-14">
         <div class="px-1 sm:px-2 lg:px-4">
             <div class="flow-root">
-                <div class="mx-0 -my-2 overflow-x-auto">
-                    <div class="inline-block min-w-full align-middle px-1">
+                <div class="-my-2 mx-0 overflow-x-auto">
+                    <div class="inline-block min-w-full px-1 align-middle">
                         <DataPendingBlock
                             v-if="pending"
                             :message="$t('common.loading', [`${$t('common.user', 1)} ${$t('common.activity')}`])"

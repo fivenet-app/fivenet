@@ -9,10 +9,10 @@ const open = ref(false);
 <template>
     <button
         type="button"
-        class="flex items-center justify-center w-12 h-12 rounded-full bg-primary-500 shadow-float text-neutral hover:bg-primary-400"
+        class="flex h-12 w-12 items-center justify-center rounded-full bg-primary-500 text-neutral shadow-float hover:bg-primary-400"
         @click="open = true"
     >
-        <CalculatorIcon class="w-10 h-auto" />
+        <CalculatorIcon class="h-auto w-10" />
     </button>
 
     <ComponentModal :open="open" @close="open = false">

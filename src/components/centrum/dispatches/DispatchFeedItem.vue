@@ -47,10 +47,10 @@ defineEmits<{
             <div class="w-px bg-gray-200" />
         </div>
         <template v-if="item.status === StatusDispatch.NEW">
-            <div class="relative flex h-5 w-5 flex-none items-center justify-center bg-gray-300 rounded-lg">
+            <div class="relative flex h-5 w-5 flex-none items-center justify-center rounded-lg bg-gray-300">
                 <NewBoxIcon class="h-5 w-5 text-primary-600" aria-hidden="true" />
             </div>
-            <p class="flex-auto py-0.5 text-xs leading-5 text-gray-200 inline-flex flex-row justify-between">
+            <p class="inline-flex flex-auto flex-row justify-between py-0.5 text-xs leading-5 text-gray-200">
                 <span class="inline-flex items-center gap-1">
                     {{ $t('components.centrum.dispatches.feed.item.NEW') }}
 
@@ -59,7 +59,7 @@ defineEmits<{
 
                 <span class="inline-flex items-center">
                     <button v-if="item.x && item.y" type="button" @click="$emit('goto', { x: item.x, y: item.y })">
-                        <MapMarkerIcon class="text-primary-400 hover:text-primary-600 h-5 w-5" />
+                        <MapMarkerIcon class="h-5 w-5 text-primary-400 hover:text-primary-600" />
                     </button>
                     <CitizenInfoPopover v-if="item.user" text-class="font-medium text-gray-400 pl-1" :user="item.user" />
                 </span>
@@ -69,10 +69,10 @@ defineEmits<{
             </span>
         </template>
         <template v-else-if="item.status === StatusDispatch.UNASSIGNED">
-            <div class="relative flex h-5 w-5 flex-none items-center justify-center bg-gray-300 rounded-lg">
+            <div class="relative flex h-5 w-5 flex-none items-center justify-center rounded-lg bg-gray-300">
                 <AccountAlertIcon class="h-5 w-5 text-primary-600" aria-hidden="true" />
             </div>
-            <p class="flex-auto py-0.5 text-xs leading-5 text-gray-200 inline-flex flex-row justify-between">
+            <p class="inline-flex flex-auto flex-row justify-between py-0.5 text-xs leading-5 text-gray-200">
                 <span class="inline-flex items-center gap-1">
                     {{ $t('components.centrum.dispatches.feed.item.UNASSIGNED') }}
 
@@ -88,7 +88,7 @@ defineEmits<{
 
                 <span class="inline-flex items-center">
                     <button v-if="item.x && item.y" type="button" @click="$emit('goto', { x: item.x, y: item.y })">
-                        <MapMarkerIcon class="text-primary-400 hover:text-primary-600 h-5 w-5" />
+                        <MapMarkerIcon class="h-5 w-5 text-primary-400 hover:text-primary-600" />
                     </button>
                     <CitizenInfoPopover v-if="item.user" text-class="font-medium text-gray-400 pl-1" :user="item.user" />
                 </span>
@@ -98,10 +98,10 @@ defineEmits<{
             </span>
         </template>
         <template v-else-if="item.status === StatusDispatch.UNIT_ASSIGNED">
-            <div class="relative flex h-5 w-5 flex-none items-center justify-center bg-gray-300 rounded-lg">
+            <div class="relative flex h-5 w-5 flex-none items-center justify-center rounded-lg bg-gray-300">
                 <AccountPlusIcon class="h-5 w-5 text-primary-600" aria-hidden="true" />
             </div>
-            <p class="flex-auto py-0.5 text-xs leading-5 text-gray-200 inline-flex flex-row justify-between">
+            <p class="inline-flex flex-auto flex-row justify-between py-0.5 text-xs leading-5 text-gray-200">
                 <span class="inline-flex items-center gap-1">
                     {{ $t('components.centrum.dispatches.feed.item.UNIT_ASSIGNED') }}
 
@@ -117,7 +117,7 @@ defineEmits<{
 
                 <span class="inline-flex items-center">
                     <button v-if="item.x && item.y" type="button" @click="$emit('goto', { x: item.x, y: item.y })">
-                        <MapMarkerIcon class="text-primary-400 hover:text-primary-600 h-5 w-5" />
+                        <MapMarkerIcon class="h-5 w-5 text-primary-400 hover:text-primary-600" />
                     </button>
                     <CitizenInfoPopover v-if="item.user" text-class="font-medium text-gray-400 pl-1" :user="item.user" />
                 </span>
@@ -127,10 +127,10 @@ defineEmits<{
             </span>
         </template>
         <template v-else-if="item.status === StatusDispatch.UNIT_UNASSIGNED">
-            <div class="relative flex h-5 w-5 flex-none items-center justify-center bg-gray-300 rounded-lg">
+            <div class="relative flex h-5 w-5 flex-none items-center justify-center rounded-lg bg-gray-300">
                 <AccountRemoveIcon class="h-5 w-5 text-primary-600" aria-hidden="true" />
             </div>
-            <p class="flex-auto py-0.5 text-xs leading-5 text-gray-200 inline-flex flex-row justify-between">
+            <p class="inline-flex flex-auto flex-row justify-between py-0.5 text-xs leading-5 text-gray-200">
                 <span class="inline-flex items-center gap-1">
                     {{ $t('components.centrum.dispatches.feed.item.UNIT_UNASSIGNED') }}
 
@@ -146,7 +146,7 @@ defineEmits<{
 
                 <span class="inline-flex items-center">
                     <button v-if="item.x && item.y" type="button" @click="$emit('goto', { x: item.x, y: item.y })">
-                        <MapMarkerIcon class="text-primary-400 hover:text-primary-600 h-5 w-5" />
+                        <MapMarkerIcon class="h-5 w-5 text-primary-400 hover:text-primary-600" />
                     </button>
                     <CitizenInfoPopover v-if="item.user" text-class="font-medium text-gray-400 pl-1" :user="item.user" />
                 </span>
@@ -156,10 +156,10 @@ defineEmits<{
             </span>
         </template>
         <template v-else-if="item.status === StatusDispatch.UNIT_ACCEPTED">
-            <div class="relative flex h-5 w-5 flex-none items-center justify-center bg-gray-300 rounded-lg">
+            <div class="relative flex h-5 w-5 flex-none items-center justify-center rounded-lg bg-gray-300">
                 <AccountCheckIcon class="h-5 w-5 text-primary-600" aria-hidden="true" />
             </div>
-            <p class="flex-auto py-0.5 text-xs leading-5 text-gray-200 inline-flex flex-row justify-between">
+            <p class="inline-flex flex-auto flex-row justify-between py-0.5 text-xs leading-5 text-gray-200">
                 <span class="inline-flex items-center gap-1">
                     {{ $t('components.centrum.dispatches.feed.item.UNIT_ACCEPTED') }}
 
@@ -175,7 +175,7 @@ defineEmits<{
 
                 <span class="inline-flex items-center">
                     <button v-if="item.x && item.y" type="button" @click="$emit('goto', { x: item.x, y: item.y })">
-                        <MapMarkerIcon class="text-primary-400 hover:text-primary-600 h-5 w-5" />
+                        <MapMarkerIcon class="h-5 w-5 text-primary-400 hover:text-primary-600" />
                     </button>
                     <CitizenInfoPopover v-if="item.user" text-class="font-medium text-gray-400 pl-1" :user="item.user" />
                 </span>
@@ -185,10 +185,10 @@ defineEmits<{
             </span>
         </template>
         <template v-else-if="item.status === StatusDispatch.UNIT_DECLINED">
-            <div class="relative flex h-5 w-5 flex-none items-center justify-center bg-gray-300 rounded-lg">
+            <div class="relative flex h-5 w-5 flex-none items-center justify-center rounded-lg bg-gray-300">
                 <AccountCancelIcon class="h-5 w-5 text-primary-600" aria-hidden="true" />
             </div>
-            <p class="flex-auto py-0.5 text-xs leading-5 text-gray-200 inline-flex flex-row justify-between">
+            <p class="inline-flex flex-auto flex-row justify-between py-0.5 text-xs leading-5 text-gray-200">
                 <span class="inline-flex items-center gap-1">
                     {{ $t('components.centrum.dispatches.feed.item.UNIT_DECLINED') }}
 
@@ -204,7 +204,7 @@ defineEmits<{
 
                 <span class="inline-flex items-center">
                     <button v-if="item.x && item.y" type="button" @click="$emit('goto', { x: item.x, y: item.y })">
-                        <MapMarkerIcon class="text-primary-400 hover:text-primary-600 h-5 w-5" />
+                        <MapMarkerIcon class="h-5 w-5 text-primary-400 hover:text-primary-600" />
                     </button>
                     <CitizenInfoPopover v-if="item.user" text-class="font-medium text-gray-400 pl-1" :user="item.user" />
                 </span>
@@ -214,10 +214,10 @@ defineEmits<{
             </span>
         </template>
         <template v-else-if="item.status === StatusDispatch.EN_ROUTE">
-            <div class="relative flex h-5 w-5 flex-none items-center justify-center bg-gray-300 rounded-lg">
+            <div class="relative flex h-5 w-5 flex-none items-center justify-center rounded-lg bg-gray-300">
                 <CarIcon class="h-5 w-5 text-primary-600" aria-hidden="true" />
             </div>
-            <p class="flex-auto py-0.5 text-xs leading-5 text-gray-200 inline-flex flex-row justify-between">
+            <p class="inline-flex flex-auto flex-row justify-between py-0.5 text-xs leading-5 text-gray-200">
                 <span class="inline-flex items-center gap-1">
                     {{ $t('components.centrum.dispatches.feed.item.EN_ROUTE') }}
 
@@ -233,7 +233,7 @@ defineEmits<{
 
                 <span class="inline-flex items-center">
                     <button v-if="item.x && item.y" type="button" @click="$emit('goto', { x: item.x, y: item.y })">
-                        <MapMarkerIcon class="text-primary-400 hover:text-primary-600 h-5 w-5" />
+                        <MapMarkerIcon class="h-5 w-5 text-primary-400 hover:text-primary-600" />
                     </button>
                     <CitizenInfoPopover v-if="item.user" text-class="font-medium text-gray-400 pl-1" :user="item.user" />
                 </span>
@@ -243,10 +243,10 @@ defineEmits<{
             </span>
         </template>
         <template v-else-if="item.status === StatusDispatch.ON_SCENE">
-            <div class="relative flex h-5 w-5 flex-none items-center justify-center bg-gray-300 rounded-lg">
+            <div class="relative flex h-5 w-5 flex-none items-center justify-center rounded-lg bg-gray-300">
                 <MapMarkerIcon class="h-5 w-5 text-primary-600" aria-hidden="true" />
             </div>
-            <p class="flex-auto py-0.5 text-xs leading-5 text-gray-200 inline-flex flex-row justify-between">
+            <p class="inline-flex flex-auto flex-row justify-between py-0.5 text-xs leading-5 text-gray-200">
                 <span class="inline-flex items-center gap-1">
                     {{ $t('components.centrum.dispatches.feed.item.ON_SCENE') }}
                     <DispatchStatusInfoPopover v-if="showId" text-class="font-medium text-gray-400 pl-1" :status="item" />
@@ -261,7 +261,7 @@ defineEmits<{
 
                 <span class="inline-flex items-center">
                     <button v-if="item.x && item.y" type="button" @click="$emit('goto', { x: item.x, y: item.y })">
-                        <MapMarkerIcon class="text-primary-400 hover:text-primary-600 h-5 w-5" />
+                        <MapMarkerIcon class="h-5 w-5 text-primary-400 hover:text-primary-600" />
                     </button>
                     <CitizenInfoPopover v-if="item.user" text-class="font-medium text-gray-400 pl-1" :user="item.user" />
                 </span>
@@ -271,10 +271,10 @@ defineEmits<{
             </span>
         </template>
         <template v-else-if="item.status === StatusDispatch.NEED_ASSISTANCE">
-            <div class="relative flex h-5 w-5 flex-none items-center justify-center bg-gray-300 rounded-lg">
+            <div class="relative flex h-5 w-5 flex-none items-center justify-center rounded-lg bg-gray-300">
                 <HelpIcon class="h-5 w-5 text-primary-600" aria-hidden="true" />
             </div>
-            <p class="flex-auto py-0.5 text-xs leading-5 text-gray-200 inline-flex flex-row justify-between">
+            <p class="inline-flex flex-auto flex-row justify-between py-0.5 text-xs leading-5 text-gray-200">
                 <span class="inline-flex items-center gap-1">
                     {{ $t('components.centrum.dispatches.feed.item.NEED_ASSISTANCE') }}
 
@@ -290,7 +290,7 @@ defineEmits<{
 
                 <span class="inline-flex items-center">
                     <button v-if="item.x && item.y" type="button" @click="$emit('goto', { x: item.x, y: item.y })">
-                        <MapMarkerIcon class="text-primary-400 hover:text-primary-600 h-5 w-5" />
+                        <MapMarkerIcon class="h-5 w-5 text-primary-400 hover:text-primary-600" />
                     </button>
                     <CitizenInfoPopover v-if="item.user" text-class="font-medium text-gray-400 pl-1" :user="item.user" />
                 </span>
@@ -300,10 +300,10 @@ defineEmits<{
             </span>
         </template>
         <template v-else-if="item.status === StatusDispatch.COMPLETED">
-            <div class="relative flex h-5 w-5 flex-none items-center justify-center bg-gray-300 rounded-lg">
+            <div class="relative flex h-5 w-5 flex-none items-center justify-center rounded-lg bg-gray-300">
                 <CheckIcon class="h-5 w-5 text-primary-600" aria-hidden="true" />
             </div>
-            <p class="flex-auto py-0.5 text-xs leading-5 text-gray-200 inline-flex flex-row justify-between">
+            <p class="inline-flex flex-auto flex-row justify-between py-0.5 text-xs leading-5 text-gray-200">
                 <span class="inline-flex items-center gap-1">
                     {{ $t('components.centrum.dispatches.feed.item.COMPLETED') }}
 
@@ -319,7 +319,7 @@ defineEmits<{
 
                 <span class="inline-flex items-center">
                     <button v-if="item.x && item.y" type="button" @click="$emit('goto', { x: item.x, y: item.y })">
-                        <MapMarkerIcon class="text-primary-400 hover:text-primary-600 h-5 w-5" />
+                        <MapMarkerIcon class="h-5 w-5 text-primary-400 hover:text-primary-600" />
                     </button>
                     <CitizenInfoPopover v-if="item.user" text-class="font-medium text-gray-400 pl-1" :user="item.user" />
                 </span>
@@ -329,10 +329,10 @@ defineEmits<{
             </span>
         </template>
         <template v-else-if="item.status === StatusDispatch.CANCELLED">
-            <div class="relative flex h-5 w-5 flex-none items-center justify-center bg-gray-300 rounded-lg">
+            <div class="relative flex h-5 w-5 flex-none items-center justify-center rounded-lg bg-gray-300">
                 <CancelIcon class="h-5 w-5 text-primary-600" aria-hidden="true" />
             </div>
-            <p class="flex-auto py-0.5 text-xs leading-5 text-gray-200 inline-flex flex-row justify-between">
+            <p class="inline-flex flex-auto flex-row justify-between py-0.5 text-xs leading-5 text-gray-200">
                 <span class="inline-flex items-center gap-1">
                     {{ $t('components.centrum.dispatches.feed.item.CANCELLED') }}
 
@@ -348,7 +348,7 @@ defineEmits<{
 
                 <span class="inline-flex items-center">
                     <button v-if="item.x && item.y" type="button" @click="$emit('goto', { x: item.x, y: item.y })">
-                        <MapMarkerIcon class="text-primary-400 hover:text-primary-600 h-5 w-5" />
+                        <MapMarkerIcon class="h-5 w-5 text-primary-400 hover:text-primary-600" />
                     </button>
                     <CitizenInfoPopover v-if="item.user" text-class="font-medium text-gray-400 pl-1" :user="item.user" />
                 </span>
@@ -358,10 +358,10 @@ defineEmits<{
             </span>
         </template>
         <template v-else-if="item.status === StatusDispatch.ARCHIVED">
-            <div class="relative flex h-5 w-5 flex-none items-center justify-center bg-gray-300 rounded-lg">
+            <div class="relative flex h-5 w-5 flex-none items-center justify-center rounded-lg bg-gray-300">
                 <ArchiveIcon class="h-5 w-5 text-primary-600" aria-hidden="true" />
             </div>
-            <p class="flex-auto py-0.5 text-xs leading-5 text-gray-200 inline-flex flex-row justify-between">
+            <p class="inline-flex flex-auto flex-row justify-between py-0.5 text-xs leading-5 text-gray-200">
                 <span class="inline-flex items-center gap-1">
                     {{ $t('components.centrum.dispatches.feed.item.ARCHIVED') }}
 
@@ -377,7 +377,7 @@ defineEmits<{
 
                 <span class="inline-flex items-center">
                     <button v-if="item.x && item.y" type="button" @click="$emit('goto', { x: item.x, y: item.y })">
-                        <MapMarkerIcon class="text-primary-400 hover:text-primary-600 h-5 w-5" />
+                        <MapMarkerIcon class="h-5 w-5 text-primary-400 hover:text-primary-600" />
                     </button>
                     <CitizenInfoPopover v-if="item.user" text-class="font-medium text-gray-400 pl-1" :user="item.user" />
                 </span>
@@ -387,10 +387,10 @@ defineEmits<{
             </span>
         </template>
         <template v-else>
-            <div class="relative flex h-5 w-5 flex-none items-center justify-center bg-gray-300 rounded-lg">
+            <div class="relative flex h-5 w-5 flex-none items-center justify-center rounded-lg bg-gray-300">
                 <NewBoxIcon class="h-5 w-5 text-primary-600" aria-hidden="true" />
             </div>
-            <p class="flex-auto py-0.5 text-xs leading-5 text-gray-200 inline-flex flex-row justify-between">
+            <p class="inline-flex flex-auto flex-row justify-between py-0.5 text-xs leading-5 text-gray-200">
                 <span class="inline-flex items-center gap-1">
                     {{ $t('components.centrum.dispatches.feed.item.UNSPECIFIED') }}
 
@@ -406,7 +406,7 @@ defineEmits<{
 
                 <span class="inline-flex items-center">
                     <button v-if="item.x && item.y" type="button" @click="$emit('goto', { x: item.x, y: item.y })">
-                        <MapMarkerIcon class="text-primary-400 hover:text-primary-600 h-5 w-5" />
+                        <MapMarkerIcon class="h-5 w-5 text-primary-400 hover:text-primary-600" />
                     </button>
                     <CitizenInfoPopover v-if="item.user" text-class="font-medium text-gray-400 pl-1" :user="item.user" />
                 </span>

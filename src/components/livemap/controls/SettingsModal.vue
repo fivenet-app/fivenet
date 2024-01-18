@@ -42,9 +42,9 @@ const { livemap } = storeToRefs(settingsStore);
                         leave-to="opacity-0 translate-y-4 sm:translate-y-0 sm:scale-95"
                     >
                         <DialogPanel
-                            class="relative transform overflow-hidden rounded-lg bg-base-800 px-4 pb-4 pt-5 text-left shadow-xl transition-all sm:my-8 w-full sm:max-w-lg sm:p-6"
+                            class="relative w-full transform overflow-hidden rounded-lg bg-base-800 px-4 pb-4 pt-5 text-left shadow-xl transition-all sm:my-8 sm:max-w-lg sm:p-6"
                         >
-                            <div class="absolute right-0 top-0 pr-4 pt-4 block">
+                            <div class="absolute right-0 top-0 block pr-4 pt-4">
                                 <button
                                     type="button"
                                     class="rounded-md bg-neutral text-gray-400 hover:text-gray-500 focus:outline-none focus:ring-2 focus:ring-primary-500 focus:ring-offset-2"
@@ -64,7 +64,7 @@ const { livemap } = storeToRefs(settingsStore);
                                     </DialogTitle>
                                     <div class="mt-2">
                                         <div class="text-sm text-gray-100">
-                                            <div class="flex-1 form-control">
+                                            <div class="form-control flex-1">
                                                 <label
                                                     for="centerSelectedMarker"
                                                     class="block text-sm font-medium leading-6 text-neutral"
@@ -75,7 +75,7 @@ const { livemap } = storeToRefs(settingsStore);
                                                     v-model="livemap.centerSelectedMarker"
                                                     :class="[
                                                         livemap.centerSelectedMarker ? 'bg-indigo-600' : 'bg-gray-200',
-                                                        'my-2 relative inline-flex h-6 w-11 flex-shrink-0 cursor-pointer rounded-full border-2 border-transparent transition-colors duration-200 ease-in-out focus:outline-none focus:ring-2 focus:ring-indigo-600 focus:ring-offset-2',
+                                                        'relative my-2 inline-flex h-6 w-11 flex-shrink-0 cursor-pointer rounded-full border-2 border-transparent transition-colors duration-200 ease-in-out focus:outline-none focus:ring-2 focus:ring-indigo-600 focus:ring-offset-2',
                                                     ]"
                                                 >
                                                     <span
@@ -87,7 +87,7 @@ const { livemap } = storeToRefs(settingsStore);
                                                     />
                                                 </Switch>
                                             </div>
-                                            <div class="flex-1 form-control">
+                                            <div class="form-control flex-1">
                                                 <label
                                                     for="livemapMarkerSize"
                                                     class="block text-sm font-medium leading-6 text-neutral"
@@ -97,7 +97,7 @@ const { livemap } = storeToRefs(settingsStore);
                                                 <input
                                                     name="livemapMarkerSize"
                                                     type="range"
-                                                    class="my-2 h-1.5 w-full cursor-grab rounded-full my-auto"
+                                                    class="my-2 my-auto h-1.5 w-full cursor-grab rounded-full"
                                                     min="14"
                                                     max="30"
                                                     step="2"
@@ -106,7 +106,7 @@ const { livemap } = storeToRefs(settingsStore);
                                                 />
                                                 <span class="text-sm text-gray-300">{{ livemap.markerSize }}</span>
                                             </div>
-                                            <div class="flex-1 form-control items-center">
+                                            <div class="form-control flex-1 items-center">
                                                 <label
                                                     for="showUnitNames"
                                                     class="block text-sm font-medium leading-6 text-neutral"
@@ -117,7 +117,7 @@ const { livemap } = storeToRefs(settingsStore);
                                                     v-model="livemap.showUnitNames"
                                                     :class="[
                                                         livemap.showUnitNames ? 'bg-indigo-600' : 'bg-gray-200',
-                                                        'my-2 relative inline-flex h-6 w-11 flex-shrink-0 cursor-pointer rounded-full border-2 border-transparent transition-colors duration-200 ease-in-out focus:outline-none focus:ring-2 focus:ring-indigo-600 focus:ring-offset-2',
+                                                        'relative my-2 inline-flex h-6 w-11 flex-shrink-0 cursor-pointer rounded-full border-2 border-transparent transition-colors duration-200 ease-in-out focus:outline-none focus:ring-2 focus:ring-indigo-600 focus:ring-offset-2',
                                                     ]"
                                                 >
                                                     <span
@@ -129,7 +129,7 @@ const { livemap } = storeToRefs(settingsStore);
                                                     />
                                                 </Switch>
                                             </div>
-                                            <div class="flex-1 form-control items-center">
+                                            <div class="form-control flex-1 items-center">
                                                 <label
                                                     for="showUnitStatus"
                                                     class="block text-sm font-medium leading-6 text-neutral"
@@ -140,7 +140,7 @@ const { livemap } = storeToRefs(settingsStore);
                                                     v-model="livemap.showUnitStatus"
                                                     :class="[
                                                         livemap.showUnitStatus ? 'bg-indigo-600' : 'bg-gray-200',
-                                                        'my-2 relative inline-flex h-6 w-11 flex-shrink-0 cursor-pointer rounded-full border-2 border-transparent transition-colors duration-200 ease-in-out focus:outline-none focus:ring-2 focus:ring-indigo-600 focus:ring-offset-2',
+                                                        'relative my-2 inline-flex h-6 w-11 flex-shrink-0 cursor-pointer rounded-full border-2 border-transparent transition-colors duration-200 ease-in-out focus:outline-none focus:ring-2 focus:ring-indigo-600 focus:ring-offset-2',
                                                     ]"
                                                 >
                                                     <span

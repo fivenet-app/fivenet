@@ -39,7 +39,7 @@ function goto(e: Coordinate) {
     <div class="relative h-full w-full">
         <div
             v-if="error !== undefined || (abort === undefined && !restarting)"
-            class="absolute inset-0 flex justify-center items-center z-30 bg-gray-600/70"
+            class="absolute inset-0 z-30 flex items-center justify-center bg-gray-600/70"
         >
             <DataErrorBlock
                 v-if="error"

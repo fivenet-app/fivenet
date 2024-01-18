@@ -1,5 +1,5 @@
 <template>
-    <p class="mt-1 text-sm text-neutral font-normal">
+    <p class="mt-1 text-sm font-normal text-neutral">
         <NuxtLink
             :external="true"
             target="_blank"

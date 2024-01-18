@@ -30,8 +30,8 @@ function addToClipboard(): void {
 </script>
 
 <template>
-    <tr :key="vehicle.plate" class="transition-colors hover:bg-neutral/5 even:bg-base-800">
-        <td class="whitespace-nowrap py-2 pl-4 pr-3 text-sm font-medium text-neutral sm:pl-1 max-w-[4rem]">
+    <tr :key="vehicle.plate" class="transition-colors even:bg-base-800 hover:bg-neutral/5">
+        <td class="max-w-[4rem] whitespace-nowrap py-2 pl-4 pr-3 text-sm font-medium text-neutral sm:pl-1">
             <LicensePlate :plate="vehicle.plate" class="mr-2" />
         </td>
         <td class="whitespace-nowrap px-1 py-1 text-left text-base-200">
@@ -49,7 +49,7 @@ function addToClipboard(): void {
         >
             <div class="flex flex-row justify-end">
                 <button v-if="!hideCopy" class="flex-initial text-primary-500 hover:text-primary-400" @click="addToClipboard()">
-                    <ClipboardPlusIcon class="h-auto w-5 ml-auto mr-2.5" />
+                    <ClipboardPlusIcon class="ml-auto mr-2.5 h-auto w-5" />
                 </button>
                 <NuxtLink
                     v-if="!hideCitizenLink && can('CitizenStoreService.ListCitizens')"
@@ -59,7 +59,7 @@ function addToClipboard(): void {
                     }"
                     class="flex-initial text-primary-500 hover:text-primary-400"
                 >
-                    <AccountEyeIcon class="h-auto w-5 ml-auto mr-2.5" />
+                    <AccountEyeIcon class="ml-auto mr-2.5 h-auto w-5" />
                 </NuxtLink>
             </div>
         </td>

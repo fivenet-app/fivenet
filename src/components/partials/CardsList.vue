@@ -20,8 +20,8 @@ defineEmits<{
 <template>
     <div class="sm:px-2">
         <div
-            class="w-full overflow-hidden divide-y-4 rounded-lg bg-base-900 sm:grid sm:gap-1 divide-accent-900 sm:divide-y-0"
-            :class="[items.length === 1 ? '' : 'sm:grid-cols-2 sm:max-w-6xl']"
+            class="w-full divide-y-4 divide-accent-900 overflow-hidden rounded-lg bg-base-900 sm:grid sm:gap-1 sm:divide-y-0"
+            :class="[items.length === 1 ? '' : 'sm:max-w-6xl sm:grid-cols-2']"
         >
             <template v-for="(item, itemIdx) in items">
                 <div
@@ -62,7 +62,7 @@ defineEmits<{
                     </div>
                     <span
                         v-if="showIcon"
-                        class="absolute pointer-events-none top-6 right-6 text-base-300 group-hover:text-base-200"
+                        class="pointer-events-none absolute right-6 top-6 text-base-300 group-hover:text-base-200"
                         aria-hidden="true"
                     >
                         <ChevronRightIcon class="h-5 w-5" />

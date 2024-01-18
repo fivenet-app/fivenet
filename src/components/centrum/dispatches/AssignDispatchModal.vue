@@ -148,7 +148,7 @@ const onSubmitThrottle = useThrottleFn(async () => {
                                             <div class="divide-y divide-gray-200 px-4">
                                                 <div class="mt-1">
                                                     <div class="my-2 space-y-24">
-                                                        <div class="flex-1 form-control">
+                                                        <div class="form-control flex-1">
                                                             <template v-for="group in grouped" :key="group.key">
                                                                 <p class="text-sm text-neutral">
                                                                     {{
@@ -159,13 +159,13 @@ const onSubmitThrottle = useThrottleFn(async () => {
                                                                         )
                                                                     }}
                                                                 </p>
-                                                                <div class="grid grid-cols-2 lg:grid-cols-3 gap-2">
+                                                                <div class="grid grid-cols-2 gap-2 lg:grid-cols-3">
                                                                     <button
                                                                         v-for="unit in group.units"
                                                                         :key="unit.name"
                                                                         type="button"
                                                                         :disabled="unit.users.length === 0"
-                                                                        class="inline-flex flex-row gap-x-1 items-center text-neutral hover:bg-primary-100/10 font-medium hover:transition-all rounded-md p-1.5 text-sm"
+                                                                        class="inline-flex flex-row items-center gap-x-1 rounded-md p-1.5 text-sm font-medium text-neutral hover:bg-primary-100/10 hover:transition-all"
                                                                         :class="[
                                                                             unitStatusToBGColor(unit.status?.status),
                                                                             unit.users.length === 0
@@ -189,7 +189,7 @@ const onSubmitThrottle = useThrottleFn(async () => {
                                                                         <CancelIcon v-else class="h-5 w-5" />
 
                                                                         <div
-                                                                            class="ml-0.5 flex flex-col w-full place-items-start"
+                                                                            class="ml-0.5 flex w-full flex-col place-items-start"
                                                                         >
                                                                             <span class="font-bold">
                                                                                 {{ unit.initials }}
@@ -197,7 +197,7 @@ const onSubmitThrottle = useThrottleFn(async () => {
                                                                             <span class="text-xs">
                                                                                 {{ unit.name }}
                                                                             </span>
-                                                                            <span class="text-xs mt-1">
+                                                                            <span class="mt-1 text-xs">
                                                                                 <span class="block">
                                                                                     {{ $t('common.member', unit.users.length) }}
                                                                                 </span>
@@ -213,10 +213,10 @@ const onSubmitThrottle = useThrottleFn(async () => {
                                         </div>
                                     </div>
                                     <div class="flex flex-shrink-0 justify-end px-4 py-4">
-                                        <span class="isolate inline-flex rounded-md shadow-sm pr-4 w-full">
+                                        <span class="isolate inline-flex w-full rounded-md pr-4 shadow-sm">
                                             <button
                                                 type="button"
-                                                class="w-full relative inline-flex items-center rounded-l-md py-2.5 px-3.5 text-sm font-semibold text-neutral"
+                                                class="relative inline-flex w-full items-center rounded-l-md px-3.5 py-2.5 text-sm font-semibold text-neutral"
                                                 :disabled="!canSubmit"
                                                 :class="[
                                                     !canSubmit
@@ -226,13 +226,13 @@ const onSubmitThrottle = useThrottleFn(async () => {
                                                 @click="onSubmitThrottle"
                                             >
                                                 <template v-if="!canSubmit">
-                                                    <LoadingIcon class="animate-spin h-5 w-5 mr-2" />
+                                                    <LoadingIcon class="mr-2 h-5 w-5 animate-spin" />
                                                 </template>
                                                 {{ $t('common.update') }}
                                             </button>
                                             <button
                                                 type="button"
-                                                class="w-full relative -ml-px inline-flex items-center rounded-r-md bg-neutral px-3 py-2 text-sm font-semibold text-gray-900 hover:text-gray-900 ring-1 ring-inset ring-gray-300 hover:bg-gray-50"
+                                                class="relative -ml-px inline-flex w-full items-center rounded-r-md bg-neutral px-3 py-2 text-sm font-semibold text-gray-900 ring-1 ring-inset ring-gray-300 hover:bg-gray-50 hover:text-gray-900"
                                                 @click="$emit('close')"
                                             >
                                                 {{ $t('common.close', 1) }}

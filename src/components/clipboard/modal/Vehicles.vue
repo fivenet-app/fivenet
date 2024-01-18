@@ -98,7 +98,7 @@ watch(props, (newVal) => {
 </script>
 
 <template>
-    <h3 class="font-medium pt-2 pb-1">{{ $t('common.vehicle', 2) }}</h3>
+    <h3 class="pb-1 pt-2 font-medium">{{ $t('common.vehicle', 2) }}</h3>
     <DataNoDataBlock
         v-if="vehicles?.length === 0"
         :icon="CarIcon"
@@ -113,16 +113,16 @@ watch(props, (newVal) => {
                 <th scope="col" class="py-3.5 pl-4 pr-3 text-left text-sm font-semibold text-neutral sm:pl-1">
                     {{ $t('common.plate') }}
                 </th>
-                <th scope="col" class="py-3.5 px-3 text-left text-sm font-semibold text-neutral">
+                <th scope="col" class="px-3 py-3.5 text-left text-sm font-semibold text-neutral">
                     {{ $t('common.model') }}
                 </th>
-                <th scope="col" class="py-3.5 px-3 text-left text-sm font-semibold text-neutral">
+                <th scope="col" class="px-3 py-3.5 text-left text-sm font-semibold text-neutral">
                     {{ $t('common.owner') }}
                 </th>
                 <th scope="col" class="relative py-3.5 pl-3 pr-4 sm:pr-0">
                     <span class="sr-only">{{ $t('common.action', 2) }}</span>
                     <button v-if="selected.length > 0" type="button" @click="removeAll()">
-                        <TrashCanIcon class="w-5 h-5 mx-auto text-neutral" />
+                        <TrashCanIcon class="mx-auto h-5 w-5 text-neutral" />
                     </button>
                 </th>
             </tr>
@@ -162,15 +162,15 @@ watch(props, (newVal) => {
                 <td class="whitespace-nowrap py-4 pl-4 pr-3 text-sm font-medium text-neutral sm:pl-1">
                     {{ item.plate }}
                 </td>
-                <td class="whitespace-nowrap py-4 px-3 text-sm text-gray-300">
+                <td class="whitespace-nowrap px-3 py-4 text-sm text-gray-300">
                     {{ item.model }}
                 </td>
-                <td class="whitespace-nowrap py-4 px-3 text-sm text-gray-300">
+                <td class="whitespace-nowrap px-3 py-4 text-sm text-gray-300">
                     {{ item.owner.firstname }}, {{ item.owner.lastname }}
                 </td>
                 <td class="relative whitespace-nowrap py-4 pl-3 pr-4 text-right text-sm font-medium sm:pr-0">
                     <button type="button" @click="remove(item, true)">
-                        <TrashCanIcon class="w-5 h-5 mx-auto text-neutral" />
+                        <TrashCanIcon class="mx-auto h-5 w-5 text-neutral" />
                     </button>
                 </td>
             </tr>

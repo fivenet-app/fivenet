@@ -29,7 +29,7 @@ defineEmits<{
                 leave-from="opacity-100"
                 leave-to="opacity-0"
             >
-                <div class="fixed inset-0 transition-opacity bg-opacity-75 bg-base-900" />
+                <div class="fixed inset-0 bg-base-900 bg-opacity-75 transition-opacity" />
             </TransitionChild>
 
             <div class="fixed inset-0 z-30 overflow-y-auto">
@@ -44,7 +44,7 @@ defineEmits<{
                         leave-to="opacity-0 translate-y-4 sm:translate-y-0 sm:scale-95"
                     >
                         <DialogPanel
-                            class="relative px-4 pt-5 pb-4 overflow-hidden text-left transition-all transform rounded-lg bg-base-800 text-neutral sm:my-8 w-full sm:max-w-6xl sm:p-6"
+                            class="relative w-full transform overflow-hidden rounded-lg bg-base-800 px-4 pb-4 pt-5 text-left text-neutral transition-all sm:my-8 sm:max-w-6xl sm:p-6"
                         >
                             <div>
                                 <div class="mx-auto flex h-12 w-12 items-center justify-center rounded-full bg-base-700">
@@ -61,18 +61,18 @@ defineEmits<{
                                     </div>
                                 </div>
                             </div>
-                            <div class="gap-2 mt-5 sm:mt-4 sm:flex">
-                                <span class="isolate inline-flex rounded-md shadow-sm pr-4 w-full">
+                            <div class="mt-5 gap-2 sm:mt-4 sm:flex">
+                                <span class="isolate inline-flex w-full rounded-md pr-4 shadow-sm">
                                     <button
                                         type="button"
-                                        class="relative inline-flex items-center w-full rounded-l-md bg-base-500 py-2.5 px-3.5 text-sm font-semibold text-neutral hover:bg-base-400"
+                                        class="relative inline-flex w-full items-center rounded-l-md bg-base-500 px-3.5 py-2.5 text-sm font-semibold text-neutral hover:bg-base-400"
                                         @click="$emit('close')"
                                     >
                                         {{ $t('common.close', 1) }}
                                     </button>
                                     <button
                                         type="button"
-                                        class="relative -ml-px inline-flex items-center w-full rounded-r-md bg-error-500 py-2.5 px-3.5 text-sm font-semibold text-neutral hover:bg-error-400"
+                                        class="relative -ml-px inline-flex w-full items-center rounded-r-md bg-error-500 px-3.5 py-2.5 text-sm font-semibold text-neutral hover:bg-error-400"
                                         @click="clipboardStore.clear()"
                                     >
                                         {{ $t('components.clipboard.clipboard_modal.clear') }}

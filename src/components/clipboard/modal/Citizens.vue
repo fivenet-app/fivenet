@@ -100,7 +100,7 @@ watch(props, async (newVal) => {
 </script>
 
 <template>
-    <h3 class="font-medium pt-1 pb-1">{{ $t('common.citizen', 2) }}</h3>
+    <h3 class="pb-1 pt-1 font-medium">{{ $t('common.citizen', 2) }}</h3>
     <DataNoDataBlock
         v-if="users?.length === 0"
         :icon="AccountMultipleIcon"
@@ -115,13 +115,13 @@ watch(props, async (newVal) => {
                 <th scope="col" class="py-3.5 pl-4 pr-3 text-left text-sm font-semibold text-neutral sm:pl-1">
                     {{ $t('common.name') }}
                 </th>
-                <th scope="col" class="py-3.5 px-3 text-left text-sm font-semibold text-neutral">
+                <th scope="col" class="px-3 py-3.5 text-left text-sm font-semibold text-neutral">
                     {{ $t('common.job', 1) }}
                 </th>
                 <th scope="col" class="relative py-3.5 pl-3 pr-4 sm:pr-0">
                     {{ $t('common.action', 2) }}
                     <button v-if="selected.length > 0" type="button" @click="removeAll()">
-                        <TrashCanIcon class="w-5 h-5 mx-auto text-neutral" />
+                        <TrashCanIcon class="mx-auto h-5 w-5 text-neutral" />
                     </button>
                 </th>
             </tr>
@@ -162,12 +162,12 @@ watch(props, async (newVal) => {
                 <td class="whitespace-nowrap py-4 pl-4 pr-3 text-sm font-medium text-neutral sm:pl-1">
                     {{ item.firstname }}, {{ item.lastname }}
                 </td>
-                <td class="whitespace-nowrap py-4 px-3 text-sm text-gray-300">
+                <td class="whitespace-nowrap px-3 py-4 text-sm text-gray-300">
                     {{ item.jobLabel }}
                 </td>
                 <td class="relative whitespace-nowrap py-4 pl-3 pr-4 text-right text-sm font-medium sm:pr-0">
                     <button type="button" @click="remove(item, true)">
-                        <TrashCanIcon class="w-5 h-5 mx-auto text-neutral" />
+                        <TrashCanIcon class="mx-auto h-5 w-5 text-neutral" />
                     </button>
                 </td>
             </tr>

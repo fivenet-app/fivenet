@@ -45,7 +45,7 @@ const { pause, resume } = useIntervalFn(async () => {
 </script>
 
 <template>
-    <div class="px-4 sm:px-6 lg:px-8 h-full">
+    <div class="h-full px-4 sm:px-6 lg:px-8">
         <div class="sm:flex sm:items-center">
             <div class="sm:flex-auto">
                 <h2 class="text-base font-semibold leading-6 text-gray-100">Feed</h2>

@@ -119,50 +119,50 @@ watchDebounced(queryCitizens, async () => await findChars(), {
             <div class="sm:flex sm:items-center">
                 <div class="sm:flex-auto">
                     <form @submit.prevent="refresh()">
-                        <div class="flex flex-row gap-4 mx-auto">
-                            <div class="flex-1 form-control">
+                        <div class="mx-auto flex flex-row gap-4">
+                            <div class="form-control flex-1">
                                 <label for="from" class="block text-sm font-medium leading-6 text-neutral">
                                     {{ $t('common.time_range') }}: {{ $t('common.from') }}
                                 </label>
-                                <div class="relative flex items-center mt-2">
+                                <div class="relative mt-2 flex items-center">
                                     <input
                                         v-model="query.from"
                                         type="datetime-local"
                                         name="from"
                                         :placeholder="`${$t('common.time_range')} ${$t('common.from')}`"
-                                        class="block w-full rounded-md border-0 py-1.5 pr-14 bg-base-700 text-neutral placeholder:text-base-200 focus:ring-2 focus:ring-inset focus:ring-base-300 sm:text-sm sm:leading-6"
+                                        class="block w-full rounded-md border-0 bg-base-700 py-1.5 pr-14 text-neutral placeholder:text-base-200 focus:ring-2 focus:ring-inset focus:ring-base-300 sm:text-sm sm:leading-6"
                                         @focusin="focusTablet(true)"
                                         @focusout="focusTablet(false)"
                                     />
                                 </div>
                             </div>
-                            <div class="flex-1 form-control">
+                            <div class="form-control flex-1">
                                 <label for="to" class="block text-sm font-medium leading-6 text-neutral">
                                     {{ $t('common.time_range') }}: {{ $t('common.to') }}
                                 </label>
-                                <div class="relative flex items-center mt-2">
+                                <div class="relative mt-2 flex items-center">
                                     <input
                                         v-model="query.to"
                                         type="datetime-local"
                                         name="to"
                                         :placeholder="`${$t('common.time_range')} ${$t('common.to')}`"
-                                        class="block w-full rounded-md border-0 py-1.5 pr-14 bg-base-700 text-neutral placeholder:text-base-200 focus:ring-2 focus:ring-inset focus:ring-base-300 sm:text-sm sm:leading-6"
+                                        class="block w-full rounded-md border-0 bg-base-700 py-1.5 pr-14 text-neutral placeholder:text-base-200 focus:ring-2 focus:ring-inset focus:ring-base-300 sm:text-sm sm:leading-6"
                                         @focusin="focusTablet(true)"
                                         @focusout="focusTablet(false)"
                                     />
                                 </div>
                             </div>
-                            <div class="flex-1 form-control">
+                            <div class="form-control flex-1">
                                 <label for="users" class="block text-sm font-medium leading-6 text-neutral">
                                     {{ $t('common.user', 2) }}
                                 </label>
-                                <div class="relative items-center mt-2">
+                                <div class="relative mt-2 items-center">
                                     <Combobox v-model="selectedCitizens" as="div" multiple nullable>
                                         <div class="relative">
                                             <ComboboxButton as="div">
                                                 <ComboboxInput
                                                     autocomplete="off"
-                                                    class="block w-full rounded-md border-0 py-1.5 bg-base-700 text-neutral placeholder:text-base-200 focus:ring-2 focus:ring-inset focus:ring-base-300 sm:text-sm sm:leading-6"
+                                                    class="block w-full rounded-md border-0 bg-base-700 py-1.5 text-neutral placeholder:text-base-200 focus:ring-2 focus:ring-inset focus:ring-base-300 sm:text-sm sm:leading-6"
                                                     :display-value="
                                                         (chars: any) => (chars ? charsGetDisplayValue(chars) : $t('common.na'))
                                                     "
@@ -175,7 +175,7 @@ watchDebounced(queryCitizens, async () => await findChars(), {
 
                                             <ComboboxOptions
                                                 v-if="entriesCitizens.length > 0"
-                                                class="absolute z-10 w-full py-1 mt-1 overflow-auto text-base rounded-md bg-base-700 max-h-44 sm:text-sm"
+                                                class="absolute z-10 mt-1 max-h-44 w-full overflow-auto rounded-md bg-base-700 py-1 text-base sm:text-sm"
                                             >
                                                 <ComboboxOption
                                                     v-for="char in entriesCitizens"
@@ -203,7 +203,7 @@ watchDebounced(queryCitizens, async () => await findChars(), {
                                                                 'absolute inset-y-0 left-0 flex items-center pl-1.5',
                                                             ]"
                                                         >
-                                                            <CheckIcon class="w-5 h-5" aria-hidden="true" />
+                                                            <CheckIcon class="h-5 w-5" aria-hidden="true" />
                                                         </span>
                                                     </li>
                                                 </ComboboxOption>
@@ -212,50 +212,50 @@ watchDebounced(queryCitizens, async () => await findChars(), {
                                     </Combobox>
                                 </div>
                             </div>
-                            <div class="flex-1 form-control">
+                            <div class="form-control flex-1">
                                 <label for="service" class="block text-sm font-medium leading-6 text-neutral">
                                     {{ $t('common.service') }}
                                 </label>
-                                <div class="relative flex items-center mt-2">
+                                <div class="relative mt-2 flex items-center">
                                     <input
                                         v-model="query.service"
                                         type="text"
                                         name="service"
                                         :placeholder="$t('common.service')"
-                                        class="block w-full rounded-md border-0 py-1.5 pr-14 bg-base-700 text-neutral placeholder:text-base-200 focus:ring-2 focus:ring-inset focus:ring-base-300 sm:text-sm sm:leading-6"
+                                        class="block w-full rounded-md border-0 bg-base-700 py-1.5 pr-14 text-neutral placeholder:text-base-200 focus:ring-2 focus:ring-inset focus:ring-base-300 sm:text-sm sm:leading-6"
                                         @focusin="focusTablet(true)"
                                         @focusout="focusTablet(false)"
                                     />
                                 </div>
                             </div>
-                            <div class="flex-1 form-control">
+                            <div class="form-control flex-1">
                                 <label for="method" class="block text-sm font-medium leading-6 text-neutral">
                                     {{ $t('common.method') }}
                                 </label>
-                                <div class="relative flex items-center mt-2">
+                                <div class="relative mt-2 flex items-center">
                                     <input
                                         v-model="query.method"
                                         type="text"
                                         name="method"
                                         :placeholder="$t('common.method')"
-                                        class="block w-full rounded-md border-0 py-1.5 pr-14 bg-base-700 text-neutral placeholder:text-base-200 focus:ring-2 focus:ring-inset focus:ring-base-300 sm:text-sm sm:leading-6"
+                                        class="block w-full rounded-md border-0 bg-base-700 py-1.5 pr-14 text-neutral placeholder:text-base-200 focus:ring-2 focus:ring-inset focus:ring-base-300 sm:text-sm sm:leading-6"
                                         @focusin="focusTablet(true)"
                                         @focusout="focusTablet(false)"
                                     />
                                 </div>
                             </div>
-                            <div class="flex-1 form-control">
+                            <div class="form-control flex-1">
                                 <label for="data" class="block text-sm font-medium leading-6 text-neutral">
                                     {{ $t('common.data') }}
                                 </label>
-                                <div class="relative flex items-center mt-2">
+                                <div class="relative mt-2 flex items-center">
                                     <input
                                         ref="searchInput"
                                         v-model="query.search"
                                         type="text"
                                         name="data"
                                         :placeholder="$t('common.search')"
-                                        class="block w-full rounded-md border-0 py-1.5 pr-14 bg-base-700 text-neutral placeholder:text-base-200 focus:ring-2 focus:ring-inset focus:ring-base-300 sm:text-sm sm:leading-6"
+                                        class="block w-full rounded-md border-0 bg-base-700 py-1.5 pr-14 text-neutral placeholder:text-base-200 focus:ring-2 focus:ring-inset focus:ring-base-300 sm:text-sm sm:leading-6"
                                         @focusin="focusTablet(true)"
                                         @focusout="focusTablet(false)"
                                     />
@@ -265,9 +265,9 @@ watchDebounced(queryCitizens, async () => await findChars(), {
                     </form>
                 </div>
             </div>
-            <div class="flow-root mt-2">
-                <div class="mx-0 -my-2 overflow-x-auto">
-                    <div class="inline-block min-w-full py-2 align-middle px-1">
+            <div class="mt-2 flow-root">
+                <div class="-my-2 mx-0 overflow-x-auto">
+                    <div class="inline-block min-w-full px-1 py-2 align-middle">
                         <DataPendingBlock v-if="pending" :message="$t('common.loading', [$t('common.audit_log', 2)])" />
                         <DataErrorBlock
                             v-else-if="error"
@@ -290,24 +290,24 @@ watchDebounced(queryCitizens, async () => await findChars(), {
                                         >
                                             {{ $t('common.id') }}
                                         </th>
-                                        <th scope="col" class="py-3.5 px-2 text-left text-sm font-semibold text-neutral">
+                                        <th scope="col" class="px-2 py-3.5 text-left text-sm font-semibold text-neutral">
                                             {{ $t('common.time') }}
                                         </th>
-                                        <th scope="col" class="py-3.5 px-2 text-left text-sm font-semibold text-neutral">
+                                        <th scope="col" class="px-2 py-3.5 text-left text-sm font-semibold text-neutral">
                                             {{ $t('common.user', 1) }}
                                         </th>
-                                        <th scope="col" class="py-3.5 px-2 text-left text-sm font-semibold text-neutral">
+                                        <th scope="col" class="px-2 py-3.5 text-left text-sm font-semibold text-neutral">
                                             {{ $t('common.service') }}/{{ $t('common.method') }}
                                         </th>
-                                        <th scope="col" class="py-3.5 px-2 text-left text-sm font-semibold text-neutral">
+                                        <th scope="col" class="px-2 py-3.5 text-left text-sm font-semibold text-neutral">
                                             {{ $t('common.state') }}
                                         </th>
-                                        <th scope="col" class="py-3.5 px-2 text-left text-sm font-semibold text-neutral">
+                                        <th scope="col" class="px-2 py-3.5 text-left text-sm font-semibold text-neutral">
                                             {{ $t('common.data') }}
                                         </th>
                                         <th
                                             scope="col"
-                                            class="relative py-3.5 pl-3 pr-4 sm:pr-0 text-right text-sm font-semibold text-neutral"
+                                            class="relative py-3.5 pl-3 pr-4 text-right text-sm font-semibold text-neutral sm:pr-0"
                                         >
                                             {{ $t('common.action', 2) }}
                                         </th>
@@ -324,24 +324,24 @@ watchDebounced(queryCitizens, async () => await findChars(), {
                                         >
                                             {{ $t('common.id') }}
                                         </th>
-                                        <th scope="col" class="py-3.5 px-2 text-left text-sm font-semibold text-neutral">
+                                        <th scope="col" class="px-2 py-3.5 text-left text-sm font-semibold text-neutral">
                                             {{ $t('common.time') }}
                                         </th>
-                                        <th scope="col" class="py-3.5 px-2 text-left text-sm font-semibold text-neutral">
+                                        <th scope="col" class="px-2 py-3.5 text-left text-sm font-semibold text-neutral">
                                             {{ $t('common.user', 1) }}
                                         </th>
-                                        <th scope="col" class="py-3.5 px-2 text-left text-sm font-semibold text-neutral">
+                                        <th scope="col" class="px-2 py-3.5 text-left text-sm font-semibold text-neutral">
                                             {{ $t('common.service') }}/{{ $t('common.method') }}
                                         </th>
-                                        <th scope="col" class="py-3.5 px-2 text-left text-sm font-semibold text-neutral">
+                                        <th scope="col" class="px-2 py-3.5 text-left text-sm font-semibold text-neutral">
                                             {{ $t('common.state') }}
                                         </th>
-                                        <th scope="col" class="py-3.5 px-2 text-left text-sm font-semibold text-neutral">
+                                        <th scope="col" class="px-2 py-3.5 text-left text-sm font-semibold text-neutral">
                                             {{ $t('common.data') }}
                                         </th>
                                         <th
                                             scope="col"
-                                            class="relative py-3.5 pl-3 pr-4 sm:pr-0 text-right text-sm font-semibold text-neutral"
+                                            class="relative py-3.5 pl-3 pr-4 text-right text-sm font-semibold text-neutral sm:pr-0"
                                         >
                                             {{ $t('common.action', 2) }}
                                         </th>

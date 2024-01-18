@@ -65,8 +65,8 @@ onBeforeMount(() => {
     <div class="h-dscreen">
         <LoadingBar />
         <HeroFull>
-            <ContentCenterWrapper class="max-w-3xl mx-auto text-center">
-                <FiveNetLogo class="h-auto mx-auto mb-2 w-36" />
+            <ContentCenterWrapper class="mx-auto max-w-3xl text-center">
+                <FiveNetLogo class="mx-auto mb-2 h-auto w-36" />
 
                 <h1 class="text-5xl font-bold text-neutral">
                     {{ $t('pages.error.title') }}
@@ -74,7 +74,7 @@ onBeforeMount(() => {
                 <h2 class="text-xl text-neutral">
                     {{ $t('pages.error.subtitle') }}
                 </h2>
-                <div class="py-2 text-neutral mb-4">
+                <div class="mb-4 py-2 text-neutral">
                     <p class="py-2 font-semibold">
                         {{ $t('pages.error.error_message') }}
                     </p>
@@ -108,7 +108,7 @@ onBeforeMount(() => {
                 <div class="flex justify-center">
                     <button
                         :disabled="buttonDisabled"
-                        class="rounded-md w-60 px-3.5 py-2.5 text-sm font-semibold text-neutral focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2"
+                        class="w-60 rounded-md px-3.5 py-2.5 text-sm font-semibold text-neutral focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2"
                         :class="[
                             buttonDisabled
                                 ? 'disabled bg-base-500 hover:bg-base-400 focus-visible:outline-base-500'
@@ -121,7 +121,7 @@ onBeforeMount(() => {
 
                     <button
                         :disabled="buttonDisabled"
-                        class="rounded-md w-60 px-3.5 py-2.5 sm:ml-4 text-sm font-semibold text-neutral focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2"
+                        class="w-60 rounded-md px-3.5 py-2.5 text-sm font-semibold text-neutral focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 sm:ml-4"
                         :class="[
                             buttonDisabled
                                 ? 'disabled bg-base-500 hover:bg-base-400 focus-visible:outline-base-500'
@@ -135,7 +135,7 @@ onBeforeMount(() => {
                     <!-- @vue-expect-error -->
                     <button
                         v-if="error && (error.statusMessage || error.message)"
-                        class="rounded-md w-60 bg-base-600 sm:ml-4 px-3.5 py-2.5 text-sm font-semibold text-neutral hover:bg-base-400 focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-base-500"
+                        class="w-60 rounded-md bg-base-600 px-3.5 py-2.5 text-sm font-semibold text-neutral hover:bg-base-400 focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-base-500 sm:ml-4"
                         @click="copyError"
                     >
                         {{ $t('pages.error.copy_error') }}

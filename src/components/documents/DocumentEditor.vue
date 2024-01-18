@@ -866,11 +866,11 @@ function setupCheckboxes(): void {
             />
 
             <div
-                class="flex flex-col gap-2 px-3 py-4 rounded-t-lg bg-base-800 text-neutral"
+                class="flex flex-col gap-2 rounded-t-lg bg-base-800 px-3 py-4 text-neutral"
                 :class="!(canDo.edit && canDo.relations && canDo.references) ? 'rounded-b-md' : ''"
             >
                 <div>
-                    <label for="title" class="block font-medium text-base">
+                    <label for="title" class="block text-base font-medium">
                         {{ $t('common.title') }}
                     </label>
                     <VeeField
@@ -878,7 +878,7 @@ function setupCheckboxes(): void {
                         type="text"
                         :placeholder="$t('common.title')"
                         :label="$t('common.title')"
-                        class="block w-full rounded-md border-0 py-1.5 bg-base-700 text-neutral placeholder:text-base-200 focus:ring-2 focus:ring-inset focus:ring-base-300 sm:text-3xl sm:leading-6"
+                        class="block w-full rounded-md border-0 bg-base-700 py-1.5 text-neutral placeholder:text-base-200 focus:ring-2 focus:ring-inset focus:ring-base-300 sm:text-3xl sm:leading-6"
                         :disabled="!canEdit || !canDo.edit"
                         @focusin="focusTablet(true)"
                         @focusout="focusTablet(false)"
@@ -887,7 +887,7 @@ function setupCheckboxes(): void {
                 </div>
                 <div class="flex flex-row gap-2">
                     <div class="flex-1">
-                        <label for="category" class="block font-medium text-sm">
+                        <label for="category" class="block text-sm font-medium">
                             {{ $t('common.category') }}
                         </label>
                         <Combobox v-model="selectedCategory" as="div" :disabled="!canEdit || !canDo.edit" nullable>
@@ -895,7 +895,7 @@ function setupCheckboxes(): void {
                                 <ComboboxButton as="div">
                                     <ComboboxInput
                                         autocomplete="off"
-                                        class="block w-full rounded-md border-0 py-1.5 bg-base-700 text-neutral placeholder:text-base-200 focus:ring-2 focus:ring-inset focus:ring-base-300 sm:text-sm sm:leading-6"
+                                        class="block w-full rounded-md border-0 bg-base-700 py-1.5 text-neutral placeholder:text-base-200 focus:ring-2 focus:ring-inset focus:ring-base-300 sm:text-sm sm:leading-6"
                                         :display-value="(category: any) => category?.name"
                                         @change="queryCategories = $event.target.value"
                                         @focusin="focusTablet(true)"
@@ -905,7 +905,7 @@ function setupCheckboxes(): void {
 
                                 <ComboboxOptions
                                     v-if="entriesCategories.length > 0"
-                                    class="absolute z-10 w-full py-1 mt-1 overflow-auto text-base rounded-md bg-base-700 max-h-44 sm:text-sm"
+                                    class="absolute z-10 mt-1 max-h-44 w-full overflow-auto rounded-md bg-base-700 py-1 text-base sm:text-sm"
                                 >
                                     <ComboboxOption
                                         v-for="category in entriesCategories"
@@ -931,7 +931,7 @@ function setupCheckboxes(): void {
                                                     'absolute inset-y-0 left-0 flex items-center pl-1.5',
                                                 ]"
                                             >
-                                                <CheckIcon class="w-5 h-5" aria-hidden="true" />
+                                                <CheckIcon class="h-5 w-5" aria-hidden="true" />
                                             </span>
                                         </li>
                                     </ComboboxOption>
@@ -940,13 +940,13 @@ function setupCheckboxes(): void {
                         </Combobox>
                     </div>
                     <div class="flex-1">
-                        <label for="state" class="block font-medium text-sm">
+                        <label for="state" class="block text-sm font-medium">
                             {{ $t('common.state') }}
                         </label>
                         <VeeField
                             name="state"
                             type="text"
-                            class="block w-full rounded-md border-0 py-1.5 bg-base-700 text-neutral placeholder:text-base-200 focus:ring-2 focus:ring-inset focus:ring-base-300 sm:text-sm sm:leading-6"
+                            class="block w-full rounded-md border-0 bg-base-700 py-1.5 text-neutral placeholder:text-base-200 focus:ring-2 focus:ring-inset focus:ring-base-300 sm:text-sm sm:leading-6"
                             :placeholder="`${$t('common.document', 1)} ${$t('common.state')}`"
                             :label="`${$t('common.document', 1)} ${$t('common.state')}`"
                             :disabled="!canEdit || !canDo.edit"
@@ -956,17 +956,17 @@ function setupCheckboxes(): void {
                         <VeeErrorMessage name="state" as="p" class="mt-2 text-sm text-error-400" />
                     </div>
                     <div class="flex-1">
-                        <label for="closed" class="block font-medium text-sm"> {{ $t('common.close', 2) }}? </label>
+                        <label for="closed" class="block text-sm font-medium"> {{ $t('common.close', 2) }}? </label>
                         <Listbox v-model="doc.closed" as="div" :disabled="!canEdit || !canDo.edit">
                             <div class="relative">
                                 <ListboxButton
-                                    class="block pl-3 text-left w-full rounded-md border-0 py-1.5 bg-base-700 text-neutral placeholder:text-base-200 focus:ring-2 focus:ring-inset focus:ring-base-300 sm:text-sm sm:leading-6"
+                                    class="block w-full rounded-md border-0 bg-base-700 py-1.5 pl-3 text-left text-neutral placeholder:text-base-200 focus:ring-2 focus:ring-inset focus:ring-base-300 sm:text-sm sm:leading-6"
                                 >
                                     <span class="block truncate">
                                         {{ openclose.find((e) => e.closed === doc.closed.closed)?.label }}</span
                                     >
-                                    <span class="absolute inset-y-0 right-0 flex items-center pr-2 pointer-events-none">
-                                        <ChevronDownIcon class="w-5 h-5 text-gray-400" aria-hidden="true" />
+                                    <span class="pointer-events-none absolute inset-y-0 right-0 flex items-center pr-2">
+                                        <ChevronDownIcon class="h-5 w-5 text-gray-400" aria-hidden="true" />
                                     </span>
                                 </ListboxButton>
 
@@ -976,7 +976,7 @@ function setupCheckboxes(): void {
                                     leave-to-class="opacity-0"
                                 >
                                     <ListboxOptions
-                                        class="absolute z-10 w-full py-1 mt-1 overflow-auto text-base rounded-md bg-base-700 max-h-44 sm:text-sm"
+                                        class="absolute z-10 mt-1 max-h-44 w-full overflow-auto rounded-md bg-base-700 py-1 text-base sm:text-sm"
                                     >
                                         <ListboxOption
                                             v-for="st in openclose"
@@ -988,7 +988,7 @@ function setupCheckboxes(): void {
                                             <li
                                                 :class="[
                                                     active ? 'bg-primary-500' : '',
-                                                    'text-neutral relative cursor-default select-none py-2 pl-8 pr-4',
+                                                    'relative cursor-default select-none py-2 pl-8 pr-4 text-neutral',
                                                 ]"
                                             >
                                                 <span :class="[selected ? 'font-semibold' : 'font-normal', 'block truncate']">{{
@@ -1002,7 +1002,7 @@ function setupCheckboxes(): void {
                                                         'absolute inset-y-0 left-0 flex items-center pl-1.5',
                                                     ]"
                                                 >
-                                                    <CheckIcon class="w-5 h-5" aria-hidden="true" />
+                                                    <CheckIcon class="h-5 w-5" aria-hidden="true" />
                                                 </span>
                                             </li>
                                         </ListboxOption>
@@ -1016,25 +1016,25 @@ function setupCheckboxes(): void {
             <div v-if="canDo.edit" class="bg-neutral">
                 <JoditEditor v-model="content" :config="config" :plugins="plugins" :extra-buttons="extraButtons" />
                 <template v-if="saving">
-                    <div class="flex justify-center animate-pulse">
-                        <ContentSaveIcon class="w-4 h-auto mr-2 animate-spin" />
+                    <div class="flex animate-pulse justify-center">
+                        <ContentSaveIcon class="mr-2 h-auto w-4 animate-spin" />
                         {{ $t('common.save', 2) }}...
                     </div>
                 </template>
             </div>
             <div v-if="canDo.edit" class="flex flex-row">
-                <div class="flex-1 inline-flex rounded-md shadow-sm" role="group">
+                <div class="inline-flex flex-1 rounded-md shadow-sm" role="group">
                     <button
                         v-if="canDo.relations"
                         type="button"
                         :disabled="!canEdit || !canDo.edit"
-                        class="inline-flex justify-center rounded-bl-md bg-primary-500 py-2.5 px-3.5 w-full text-sm font-semibold text-neutral hover:bg-primary-400 focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-primary-500"
+                        class="inline-flex w-full justify-center rounded-bl-md bg-primary-500 px-3.5 py-2.5 text-sm font-semibold text-neutral hover:bg-primary-400 focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-primary-500"
                         :class="canDo.references ? '' : 'rounded-br-md'"
                         @click="relationManagerShow = true"
                     >
                         <div class="flex justify-center">
                             <AccountMultipleIcon
-                                class="text-base-300 group-hover:text-base-200 -ml-0.5 mr-2 h-5 w-5 transition-colors"
+                                class="-ml-0.5 mr-2 h-5 w-5 text-base-300 transition-colors group-hover:text-base-200"
                                 aria-hidden="true"
                             />
                             {{ $t('common.citizen', 1) }} {{ $t('common.relation', 2) }}
@@ -1044,13 +1044,13 @@ function setupCheckboxes(): void {
                         v-if="canDo.references"
                         type="button"
                         :disabled="!canEdit || !canDo.edit"
-                        class="inline-flex justify-center rounded-br-md bg-primary-500 py-2.5 px-3.5 w-full text-sm font-semibold text-neutral hover:bg-primary-400 focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-primary-500"
+                        class="inline-flex w-full justify-center rounded-br-md bg-primary-500 px-3.5 py-2.5 text-sm font-semibold text-neutral hover:bg-primary-400 focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-primary-500"
                         :class="canDo.relations ? '' : 'rounded-bl-md'"
                         @click="referenceManagerShow = true"
                     >
                         <div class="flex justify-center">
                             <FileDocumentIcon
-                                class="text-base-300 group-hover:text-base-200 -ml-0.5 mr-2 h-5 w-5 transition-colors"
+                                class="-ml-0.5 mr-2 h-5 w-5 text-base-300 transition-colors group-hover:text-base-200"
                                 aria-hidden="true"
                             />
                             {{ $t('common.document', 1) }} {{ $t('common.reference', 2) }}
@@ -1077,19 +1077,19 @@ function setupCheckboxes(): void {
                 <button
                     type="button"
                     :disabled="!canEdit || !canDo.access"
-                    class="p-2 rounded-full bg-primary-500 text-neutral hover:bg-primary-400 focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-primary-500"
+                    class="rounded-full bg-primary-500 p-2 text-neutral hover:bg-primary-400 focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-primary-500"
                     data-te-toggle="tooltip"
                     :title="$t('components.documents.document_editor.add_permission')"
                     @click="addDocumentAccessEntry()"
                 >
-                    <PlusIcon class="w-5 h-5" aria-hidden="true" />
+                    <PlusIcon class="h-5 w-5" aria-hidden="true" />
                 </button>
             </div>
             <div class="flex pb-14">
                 <button
                     type="submit"
                     :disabled="!meta.valid || !canEdit || !canSubmit"
-                    class="flex justify-center rounded-md py-2.5 px-3.5 text-sm font-semibold text-neutral w-full"
+                    class="flex w-full justify-center rounded-md px-3.5 py-2.5 text-sm font-semibold text-neutral"
                     :class="[
                         !canEdit || !meta.valid || !canSubmit
                             ? 'disabled bg-base-500 hover:bg-base-400 focus-visible:outline-base-500'
@@ -1097,7 +1097,7 @@ function setupCheckboxes(): void {
                     ]"
                 >
                     <template v-if="!canSubmit">
-                        <LoadingIcon class="animate-spin h-5 w-5 mr-2" />
+                        <LoadingIcon class="mr-2 h-5 w-5 animate-spin" />
                     </template>
                     <template v-if="!props.id">
                         {{ t('common.create') }}

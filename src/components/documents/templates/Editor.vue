@@ -517,14 +517,14 @@ onMounted(async () => {
                         min="0"
                         max="4294967295"
                         :label="$t('common.weight')"
-                        class="block w-full rounded-md border-0 py-1.5 bg-base-700 text-neutral placeholder:text-base-200 focus:ring-2 focus:ring-inset focus:ring-base-300 sm:text-sm sm:leading-6"
+                        class="block w-full rounded-md border-0 bg-base-700 py-1.5 text-neutral placeholder:text-base-200 focus:ring-2 focus:ring-inset focus:ring-base-300 sm:text-sm sm:leading-6"
                         @focusin="focusTablet(true)"
                         @focusout="focusTablet(false)"
                     />
                 </div>
             </div>
             <div>
-                <label for="title" class="block font-medium text-sm mt-2">
+                <label for="title" class="mt-2 block text-sm font-medium">
                     {{ $t('common.template') }} {{ $t('common.title') }}
                 </label>
                 <div>
@@ -533,7 +533,7 @@ onMounted(async () => {
                         rows="1"
                         name="title"
                         :label="$t('common.title')"
-                        class="block w-full rounded-md border-0 py-1.5 bg-base-700 text-neutral placeholder:text-base-200 focus:ring-2 focus:ring-inset focus:ring-base-300 sm:text-sm sm:leading-6"
+                        class="block w-full rounded-md border-0 bg-base-700 py-1.5 text-neutral placeholder:text-base-200 focus:ring-2 focus:ring-inset focus:ring-base-300 sm:text-sm sm:leading-6"
                         @focusin="focusTablet(true)"
                         @focusout="focusTablet(false)"
                     />
@@ -541,7 +541,7 @@ onMounted(async () => {
                 </div>
             </div>
             <div>
-                <label for="description" class="block font-medium text-sm mt-2">
+                <label for="description" class="mt-2 block text-sm font-medium">
                     {{ $t('common.template') }} {{ $t('common.description') }}
                 </label>
                 <div>
@@ -550,7 +550,7 @@ onMounted(async () => {
                         rows="4"
                         name="description"
                         :label="$t('common.description')"
-                        class="block w-full rounded-md border-0 py-1.5 bg-base-700 text-neutral placeholder:text-base-200 focus:ring-2 focus:ring-inset focus:ring-base-300 sm:text-sm sm:leading-6"
+                        class="block w-full rounded-md border-0 bg-base-700 py-1.5 text-neutral placeholder:text-base-200 focus:ring-2 focus:ring-inset focus:ring-base-300 sm:text-sm sm:leading-6"
                         @focusin="focusTablet(true)"
                         @focusout="focusTablet(false)"
                     />
@@ -574,17 +574,17 @@ onMounted(async () => {
                     />
                     <button
                         type="button"
-                        class="p-2 rounded-full bg-primary-500 text-neutral hover:bg-primary-400 focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-primary-500"
+                        class="rounded-full bg-primary-500 p-2 text-neutral hover:bg-primary-400 focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-primary-500"
                         data-te-toggle="tooltip"
                         :title="$t('components.documents.document_editor.add_permission')"
                         @click="addDocumentAccessEntry()"
                     >
-                        <PlusIcon class="w-5 h-5" aria-hidden="true" />
+                        <PlusIcon class="h-5 w-5" aria-hidden="true" />
                     </button>
                 </div>
             </div>
             <div>
-                <label for="contentTitle" class="block font-medium text-sm mt-2">
+                <label for="contentTitle" class="mt-2 block text-sm font-medium">
                     {{ $t('common.content') }} {{ $t('common.title') }}
                 </label>
                 <div>
@@ -593,7 +593,7 @@ onMounted(async () => {
                         rows="2"
                         name="contentTitle"
                         :label="$t('common.title')"
-                        class="block w-full rounded-md border-0 py-1.5 bg-base-700 text-neutral placeholder:text-base-200 focus:ring-2 focus:ring-inset focus:ring-base-300 sm:text-sm sm:leading-6"
+                        class="block w-full rounded-md border-0 bg-base-700 py-1.5 text-neutral placeholder:text-base-200 focus:ring-2 focus:ring-inset focus:ring-base-300 sm:text-sm sm:leading-6"
                         @focusin="focusTablet(true)"
                         @focusout="focusTablet(false)"
                     />
@@ -602,7 +602,7 @@ onMounted(async () => {
                 </div>
             </div>
             <div>
-                <label for="contentCategory" class="block font-medium text-sm mt-2">
+                <label for="contentCategory" class="mt-2 block text-sm font-medium">
                     {{ $t('common.category') }}
                 </label>
                 <div>
@@ -611,7 +611,7 @@ onMounted(async () => {
                             <ComboboxButton as="div">
                                 <ComboboxInput
                                     autocomplete="off"
-                                    class="block w-full rounded-md border-0 py-1.5 bg-base-700 text-neutral placeholder:text-base-200 focus:ring-2 focus:ring-inset focus:ring-base-300 sm:text-sm sm:leading-6"
+                                    class="block w-full rounded-md border-0 bg-base-700 py-1.5 text-neutral placeholder:text-base-200 focus:ring-2 focus:ring-inset focus:ring-base-300 sm:text-sm sm:leading-6"
                                     :display-value="(category: any) => category?.name"
                                     @change="queryCategories = $event.target.value"
                                     @focusin="focusTablet(true)"
@@ -621,7 +621,7 @@ onMounted(async () => {
 
                             <ComboboxOptions
                                 v-if="entriesCategories.length > 0"
-                                class="absolute z-10 w-full py-1 mt-1 overflow-auto text-base rounded-md bg-base-700 max-h-44 sm:text-sm"
+                                class="absolute z-10 mt-1 max-h-44 w-full overflow-auto rounded-md bg-base-700 py-1 text-base sm:text-sm"
                             >
                                 <ComboboxOption
                                     v-for="category in entriesCategories"
@@ -647,7 +647,7 @@ onMounted(async () => {
                                                 'absolute inset-y-0 left-0 flex items-center pl-1.5',
                                             ]"
                                         >
-                                            <CheckIcon class="w-5 h-5" aria-hidden="true" />
+                                            <CheckIcon class="h-5 w-5" aria-hidden="true" />
                                         </span>
                                     </li>
                                 </ComboboxOption>
@@ -657,7 +657,7 @@ onMounted(async () => {
                 </div>
             </div>
             <div>
-                <label for="contentState" class="block font-medium text-sm mt-2">
+                <label for="contentState" class="mt-2 block text-sm font-medium">
                     {{ $t('common.content') }} {{ $t('common.state') }}
                 </label>
                 <div>
@@ -666,14 +666,14 @@ onMounted(async () => {
                         rows="2"
                         name="contentState"
                         :label="$t('common.state')"
-                        class="block w-full rounded-md border-0 py-1.5 bg-base-700 text-neutral placeholder:text-base-200 focus:ring-2 focus:ring-inset focus:ring-base-300 sm:text-sm sm:leading-6"
+                        class="block w-full rounded-md border-0 bg-base-700 py-1.5 text-neutral placeholder:text-base-200 focus:ring-2 focus:ring-inset focus:ring-base-300 sm:text-sm sm:leading-6"
                     />
                     <VeeErrorMessage name="contentState" as="p" class="mt-2 text-sm text-error-400" />
                     <TemplateHint />
                 </div>
             </div>
             <div>
-                <label for="content" class="block font-medium text-sm mt-2">
+                <label for="content" class="mt-2 block text-sm font-medium">
                     {{ $t('common.content') }} {{ $t('common.template') }}
                 </label>
                 <div>
@@ -682,7 +682,7 @@ onMounted(async () => {
                         rows="6"
                         name="content"
                         :label="$t('common.template')"
-                        class="block w-full rounded-md border-0 py-1.5 bg-base-700 text-neutral placeholder:text-base-200 focus:ring-2 focus:ring-inset focus:ring-base-300 sm:text-sm sm:leading-6"
+                        class="block w-full rounded-md border-0 bg-base-700 py-1.5 text-neutral placeholder:text-base-200 focus:ring-2 focus:ring-inset focus:ring-base-300 sm:text-sm sm:leading-6"
                     />
                     <VeeErrorMessage name="content" as="p" class="mt-2 text-sm text-error-400" />
                     <TemplateHint />
@@ -704,18 +704,18 @@ onMounted(async () => {
                 />
                 <button
                     type="button"
-                    class="p-2 rounded-full bg-primary-500 text-neutral hover:bg-primary-400 focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-primary-500"
+                    class="rounded-full bg-primary-500 p-2 text-neutral hover:bg-primary-400 focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-primary-500"
                     data-te-toggle="tooltip"
                     :title="$t('components.documents.document_editor.add_permission')"
                     @click="addContentDocumentAccessEntry()"
                 >
-                    <PlusIcon class="w-5 h-5" aria-hidden="true" />
+                    <PlusIcon class="h-5 w-5" aria-hidden="true" />
                 </button>
             </div>
             <div>
                 <button
                     type="submit"
-                    class="flex justify-center w-full mt-4 px-3 py-2 text-sm font-semibold transition-colors rounded-md text-neutral focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2"
+                    class="mt-4 flex w-full justify-center rounded-md px-3 py-2 text-sm font-semibold text-neutral transition-colors focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2"
                     :disabled="!meta.valid || !canSubmit"
                     :class="[
                         !meta.valid || !canSubmit
@@ -724,7 +724,7 @@ onMounted(async () => {
                     ]"
                 >
                     <template v-if="!canSubmit">
-                        <LoadingIcon class="animate-spin h-5 w-5 mr-2" />
+                        <LoadingIcon class="mr-2 h-5 w-5 animate-spin" />
                     </template>
                     {{ templateId ? $t('common.save') : $t('common.create') }}
                 </button>

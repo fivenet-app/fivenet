@@ -306,7 +306,7 @@ async function checkup(): Promise<void> {
             <LControl position="bottomright">
                 <button
                     type="button"
-                    class="rounded-md bg-neutral text-black border-2 border-black/20 bg-clip-padding hover:bg-[#f4f4f4] focus:outline-none inset-0 inline-flex items-center justify-center"
+                    class="inset-0 inline-flex items-center justify-center rounded-md border-2 border-black/20 bg-neutral bg-clip-padding text-black hover:bg-[#f4f4f4] focus:outline-none"
                     @click="open = !open"
                 >
                     <ToggleSwitchIcon v-if="open" class="h-5 w-5" aria-hidden="true" />
@@ -324,7 +324,7 @@ async function checkup(): Promise<void> {
             </LControl>
         </template>
         <template v-if="canStream" #afterMap>
-            <div class="lg:inset-y-0 lg:flex lg:w-50 lg:flex-col">
+            <div class="lg:w-50 lg:inset-y-0 lg:flex lg:flex-col">
                 <!-- Dispatch -->
                 <TakeDispatchModal
                     v-if="getOwnUnit !== undefined"
@@ -340,7 +340,7 @@ async function checkup(): Promise<void> {
                     @close="openDispatchStatus = false"
                 />
 
-                <div class="h-full flex grow gap-y-5 overflow-y-auto overflow-x-hidden bg-base-600 px-4 py-0.5">
+                <div class="flex h-full grow gap-y-5 overflow-y-auto overflow-x-hidden bg-base-600 px-4 py-0.5">
                     <nav v-if="open" class="flex flex-1 flex-col">
                         <ul role="list" class="flex flex-1 flex-col gap-y-2 divide-y divide-base-400">
                             <li class="-mx-2 -mb-1">
@@ -348,7 +348,7 @@ async function checkup(): Promise<void> {
 
                                 <button
                                     type="button"
-                                    class="text-neutral hover:bg-primary-100/10 hover:text-neutral font-medium hover:transition-all group flex w-full flex-row items-center justify-center rounded-md p-1 text-xs mt-0.5"
+                                    class="group mt-0.5 flex w-full flex-row items-center justify-center rounded-md p-1 text-xs font-medium text-neutral hover:bg-primary-100/10 hover:text-neutral hover:transition-all"
                                     :class="
                                         getCurrentMode === CentrumMode.AUTO_ROUND_ROBIN
                                             ? 'bg-info-400/10 text-info-500 ring-info-400/20'
@@ -359,13 +359,13 @@ async function checkup(): Promise<void> {
                                     @click="openDisponents = true"
                                 >
                                     <template v-if="getCurrentMode !== CentrumMode.AUTO_ROUND_ROBIN">
-                                        <MonitorIcon class="h-5 w-5 mr-1" aria-hidden="true" />
+                                        <MonitorIcon class="mr-1 h-5 w-5" aria-hidden="true" />
                                         <span class="truncate">
                                             {{ $t('common.disponent', disponents.length) }}
                                         </span>
                                     </template>
                                     <template v-else>
-                                        <RobotIcon class="h-5 w-5 mr-1" aria-hidden="true" />
+                                        <RobotIcon class="mr-1 h-5 w-5" aria-hidden="true" />
                                         <span class="truncate">
                                             {{ $t('enums.centrum.CentrumMode.AUTO_ROUND_ROBIN') }}
                                         </span>
@@ -378,7 +378,7 @@ async function checkup(): Promise<void> {
                                         <template v-if="getOwnUnit !== undefined">
                                             <button
                                                 type="button"
-                                                class="text-neutral hover:bg-primary-100/10 hover:text-neutral font-medium hover:transition-all group flex w-full flex-col items-center rounded-md p-1.5 text-xs"
+                                                class="group flex w-full flex-col items-center rounded-md p-1.5 text-xs font-medium text-neutral hover:bg-primary-100/10 hover:text-neutral hover:transition-all"
                                                 :class="ownUnitStatus"
                                                 @click="openUnitDetails = true"
                                             >
@@ -408,7 +408,7 @@ async function checkup(): Promise<void> {
                                         </template>
                                         <button
                                             type="button"
-                                            class="text-neutral bg-info-700 hover:bg-primary-100/10 hover:text-neutral font-medium hover:transition-all group flex w-full flex-col items-center rounded-md p-1.5 text-xs my-0.5 flex w-full flex-col items-center"
+                                            class="group my-0.5 flex flex w-full w-full flex-col flex-col items-center items-center rounded-md bg-info-700 p-1.5 text-xs font-medium text-neutral hover:bg-primary-100/10 hover:text-neutral hover:transition-all"
                                             @click="joinUnitOpen = true"
                                         >
                                             <template v-if="getOwnUnit === undefined">
@@ -432,14 +432,14 @@ async function checkup(): Promise<void> {
                                                 <DisclosureButton
                                                     class="flex w-full items-start justify-between text-left text-neutral"
                                                 >
-                                                    <span class="text-base-100 leading-7">
+                                                    <span class="leading-7 text-base-100">
                                                         <div
                                                             class="inline-flex items-center text-xs font-semibold leading-6 text-base-100"
                                                         >
                                                             {{ $t('common.unit') }}
                                                             <LoadingIcon
                                                                 v-if="!canSubmitUnitStatus"
-                                                                class="animate-spin h-4 w-4 ml-1"
+                                                                class="ml-1 h-4 w-4 animate-spin"
                                                             />
                                                         </div>
                                                     </span>
@@ -452,7 +452,7 @@ async function checkup(): Promise<void> {
                                                 </DisclosureButton>
                                                 <DisclosurePanel>
                                                     <div class="flex flex-row gap-2">
-                                                        <div class="w-full grid grid-cols-2 gap-0.5">
+                                                        <div class="grid w-full grid-cols-2 gap-0.5">
                                                             <UnitStatusUpdateModal
                                                                 :unit="getOwnUnit"
                                                                 :open="openUnitStatus"
@@ -463,7 +463,7 @@ async function checkup(): Promise<void> {
                                                                 v-for="item in unitStatuses"
                                                                 :key="item.name"
                                                                 type="button"
-                                                                class="text-neutral bg-primary hover:bg-primary-100/10 hover:text-neutral font-medium hover:transition-all group flex w-full flex-col items-center rounded-md p-1.5 text-xs my-0.5"
+                                                                class="bg-primary group my-0.5 flex w-full flex-col items-center rounded-md p-1.5 text-xs font-medium text-neutral hover:bg-primary-100/10 hover:text-neutral hover:transition-all"
                                                                 :disabled="!canSubmitUnitStatus"
                                                                 :class="[
                                                                     !canSubmitUnitStatus ? 'disabled' : '',
@@ -474,7 +474,7 @@ async function checkup(): Promise<void> {
                                                             >
                                                                 <component
                                                                     :is="item.icon ?? HoopHouseIcon"
-                                                                    class="text-base-100 group-hover:text-neutral h-5 w-5 shrink-0"
+                                                                    class="h-5 w-5 shrink-0 text-base-100 group-hover:text-neutral"
                                                                     aria-hidden="true"
                                                                 />
                                                                 <span class="mt-1">
@@ -491,7 +491,7 @@ async function checkup(): Promise<void> {
                                                             </button>
                                                             <button
                                                                 type="button"
-                                                                class="col-span-2 bg-base-800 text-neutral hover:bg-primary-100/10 hover:text-neutral font-medium hover:transition-all group flex w-full flex-col items-center rounded-md p-1.5 text-xs my-0.5"
+                                                                class="group col-span-2 my-0.5 flex w-full flex-col items-center rounded-md bg-base-800 p-1.5 text-xs font-medium text-neutral hover:bg-primary-100/10 hover:text-neutral hover:transition-all"
                                                                 @click="updateUtStatus(getOwnUnit.id)"
                                                             >
                                                                 {{ $t('components.centrum.update_unit_status.title') }}
@@ -507,7 +507,7 @@ async function checkup(): Promise<void> {
                                     <ul role="list" class="-mx-2 space-y-1">
                                         <div class="inline-flex items-center text-xs font-semibold leading-6 text-base-100">
                                             {{ $t('common.dispatch') }} {{ $t('common.status') }}
-                                            <LoadingIcon v-if="!canSubmitDispatchStatus" class="animate-spin h-4 w-4 ml-1" />
+                                            <LoadingIcon v-if="!canSubmitDispatchStatus" class="ml-1 h-4 w-4 animate-spin" />
                                         </div>
                                         <li>
                                             <div class="grid grid-cols-2 gap-0.5">
@@ -517,7 +517,7 @@ async function checkup(): Promise<void> {
                                                     )"
                                                     :key="item.name"
                                                     type="button"
-                                                    class="text-neutral bg-primary hover:bg-primary-100/10 hover:text-neutral font-medium hover:transition-all group flex w-full flex-col items-center rounded-md p-1.5 text-xs my-0.5"
+                                                    class="bg-primary group my-0.5 flex w-full flex-col items-center rounded-md p-1.5 text-xs font-medium text-neutral hover:bg-primary-100/10 hover:text-neutral hover:transition-all"
                                                     :disabled="!canSubmitDispatchStatus"
                                                     :class="[
                                                         !canSubmitDispatchStatus ? 'disabled' : '',
@@ -528,7 +528,7 @@ async function checkup(): Promise<void> {
                                                 >
                                                     <component
                                                         :is="item.icon ?? HoopHouseIcon"
-                                                        class="text-base-100 group-hover:text-neutral h-5 w-5 shrink-0"
+                                                        class="h-5 w-5 shrink-0 text-base-100 group-hover:text-neutral"
                                                         aria-hidden="true"
                                                     />
                                                     <span class="mt-1">
@@ -545,7 +545,7 @@ async function checkup(): Promise<void> {
                                                 </button>
                                                 <button
                                                     type="button"
-                                                    class="col-span-2 bg-base-800 text-neutral hover:bg-primary-100/10 hover:text-neutral font-medium hover:transition-all group flex w-full flex-col items-center rounded-md p-1.5 text-xs my-0.5"
+                                                    class="group col-span-2 my-0.5 flex w-full flex-col items-center rounded-md bg-base-800 p-1.5 text-xs font-medium text-neutral hover:bg-primary-100/10 hover:text-neutral hover:transition-all"
                                                     @click="updateDspStatus(selectedDispatch)"
                                                 >
                                                     {{ $t('components.centrum.update_dispatch_status.title') }}
@@ -562,7 +562,7 @@ async function checkup(): Promise<void> {
                                         <li v-if="ownDispatches.length === 0">
                                             <button
                                                 type="button"
-                                                class="text-neutral bg-primary-100/10 hover:text-neutral font-medium hover:transition-all group flex w-full flex-col items-center rounded-md p-1.5 text-xs my-0.5"
+                                                class="group my-0.5 flex w-full flex-col items-center rounded-md bg-primary-100/10 p-1.5 text-xs font-medium text-neutral hover:text-neutral hover:transition-all"
                                             >
                                                 <CarEmergencyIcon class="h-5 w-5" aria-hidden="true" />
                                                 <span class="mt-1 truncate">{{ $t('common.no_assigned_dispatches') }}</span>
@@ -579,7 +579,7 @@ async function checkup(): Promise<void> {
                                         </template>
                                     </ul>
                                     <div
-                                        class="mt-1 mb-0.5 leading-4 text-center text-xs text-neutral divide-y border-t border-base-400"
+                                        class="mb-0.5 mt-1 divide-y border-t border-base-400 text-center text-xs leading-4 text-neutral"
                                     >
                                         {{ $t('components.centrum.livemap.total_dispatches') }}: {{ dispatches.size }}
                                     </div>
@@ -590,19 +590,19 @@ async function checkup(): Promise<void> {
                 </div>
 
                 <!-- "Take Dispatches" Button -->
-                <span v-if="getOwnUnit !== undefined" class="fixed inline-flex z-30 bottom-2 right-1/2">
-                    <span v-if="pendingDispatches.length > 0" class="flex absolute h-3 w-3 top-0 right-0 -mt-1 -mr-1">
+                <span v-if="getOwnUnit !== undefined" class="fixed bottom-2 right-1/2 z-30 inline-flex">
+                    <span v-if="pendingDispatches.length > 0" class="absolute right-0 top-0 -mr-1 -mt-1 flex h-3 w-3">
                         <span
-                            class="animate-ping absolute inline-flex h-full w-full rounded-full bg-error-400 opacity-75"
+                            class="absolute inline-flex h-full w-full animate-ping rounded-full bg-error-400 opacity-75"
                         ></span>
-                        <span class="relative inline-flex rounded-full h-3 w-3 bg-error-500"></span>
+                        <span class="relative inline-flex h-3 w-3 rounded-full bg-error-500"></span>
                     </span>
                     <button
                         type="button"
-                        class="flex items-center justify-center w-12 h-12 rounded-full bg-primary-500 shadow-float text-neutral hover:bg-primary-400"
+                        class="flex h-12 w-12 items-center justify-center rounded-full bg-primary-500 text-neutral shadow-float hover:bg-primary-400"
                         @click="openTakeDispatch = true"
                     >
-                        <CarEmergencyIcon class="w-10 h-auto" />
+                        <CarEmergencyIcon class="h-auto w-10" />
                     </button>
                 </span>
             </div>

@@ -132,9 +132,9 @@ const onSubmitThrottle = useThrottleFn(async (e) => {
                         leave-to="opacity-0 translate-y-4 sm:translate-y-0 sm:scale-95"
                     >
                         <DialogPanel
-                            class="relative transform overflow-hidden rounded-lg bg-base-800 px-4 pb-4 pt-5 text-left shadow-xl transition-all sm:my-8 w-full sm:max-w-lg sm:p-6"
+                            class="relative w-full transform overflow-hidden rounded-lg bg-base-800 px-4 pb-4 pt-5 text-left shadow-xl transition-all sm:my-8 sm:max-w-lg sm:p-6"
                         >
-                            <div class="absolute right-0 top-0 pr-4 pt-4 block">
+                            <div class="absolute right-0 top-0 block pr-4 pt-4">
                                 <button
                                     type="button"
                                     class="rounded-md bg-neutral text-gray-400 hover:text-gray-500 focus:outline-none focus:ring-2 focus:ring-primary-500 focus:ring-offset-2"
@@ -155,7 +155,7 @@ const onSubmitThrottle = useThrottleFn(async (e) => {
                                         </DialogTitle>
                                         <div class="mt-2">
                                             <div class="text-sm text-gray-100">
-                                                <div class="flex-1 form-control">
+                                                <div class="form-control flex-1">
                                                     <label
                                                         for="enabled"
                                                         class="block text-sm font-medium leading-6 text-neutral"
@@ -165,7 +165,7 @@ const onSubmitThrottle = useThrottleFn(async (e) => {
                                                     <VeeField
                                                         name="enabled"
                                                         type="checkbox"
-                                                        class="h-4 w-4 rounded border-gray-300 text-primary-600 focus:ring-primary-600 h-5 w-5"
+                                                        class="h-4 h-5 w-4 w-5 rounded border-gray-300 text-primary-600 focus:ring-primary-600"
                                                         :placeholder="$t('common.enabled')"
                                                         :label="$t('common.enabled')"
                                                         :value="true"
@@ -177,7 +177,7 @@ const onSubmitThrottle = useThrottleFn(async (e) => {
                                                         class="mt-2 text-sm text-error-400"
                                                     />
                                                 </div>
-                                                <div class="flex-1 form-control">
+                                                <div class="form-control flex-1">
                                                     <label for="mode" class="block text-sm font-medium leading-6 text-neutral">
                                                         {{ $t('common.mode') }}
                                                     </label>
@@ -190,7 +190,7 @@ const onSubmitThrottle = useThrottleFn(async (e) => {
                                                     >
                                                         <select
                                                             v-bind="field"
-                                                            class="block w-full rounded-md border-0 py-1.5 bg-base-700 text-neutral placeholder:text-base-200 focus:ring-2 focus:ring-inset focus:ring-base-300 sm:text-sm sm:leading-6"
+                                                            class="block w-full rounded-md border-0 bg-base-700 py-1.5 text-neutral placeholder:text-base-200 focus:ring-2 focus:ring-inset focus:ring-base-300 sm:text-sm sm:leading-6"
                                                         >
                                                             <option
                                                                 v-for="mode in modes"
@@ -210,7 +210,7 @@ const onSubmitThrottle = useThrottleFn(async (e) => {
                                                     </VeeField>
                                                     <VeeErrorMessage name="mode" as="p" class="mt-2 text-sm text-error-400" />
                                                 </div>
-                                                <div class="flex-1 form-control">
+                                                <div class="form-control flex-1">
                                                     <label
                                                         for="fallbackMode"
                                                         class="block text-sm font-medium leading-6 text-neutral"
@@ -226,7 +226,7 @@ const onSubmitThrottle = useThrottleFn(async (e) => {
                                                     >
                                                         <select
                                                             v-bind="field"
-                                                            class="block w-full rounded-md border-0 py-1.5 bg-base-700 text-neutral placeholder:text-base-200 focus:ring-2 focus:ring-inset focus:ring-base-300 sm:text-sm sm:leading-6"
+                                                            class="block w-full rounded-md border-0 bg-base-700 py-1.5 text-neutral placeholder:text-base-200 focus:ring-2 focus:ring-inset focus:ring-base-300 sm:text-sm sm:leading-6"
                                                         >
                                                             <option
                                                                 v-for="mode in modes"
@@ -260,7 +260,7 @@ const onSubmitThrottle = useThrottleFn(async (e) => {
                                     <button
                                         v-if="can('CentrumService.UpdateSettings')"
                                         type="submit"
-                                        class="flex items-center w-full rounded-md px-3 py-2 text-sm font-semibold text-neutral shadow-sm focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 sm:col-start-2"
+                                        class="flex w-full items-center rounded-md px-3 py-2 text-sm font-semibold text-neutral shadow-sm focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 sm:col-start-2"
                                         :disabled="!meta.valid || !canSubmit"
                                         :class="[
                                             !meta.valid || !canSubmit
@@ -269,7 +269,7 @@ const onSubmitThrottle = useThrottleFn(async (e) => {
                                         ]"
                                     >
                                         <template v-if="!canSubmit">
-                                            <LoadingIcon class="animate-spin h-5 w-5 mr-2" />
+                                            <LoadingIcon class="mr-2 h-5 w-5 animate-spin" />
                                         </template>
                                         {{ $t('common.update') }}
                                     </button>

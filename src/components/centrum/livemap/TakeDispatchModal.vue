@@ -158,7 +158,7 @@ const onSubmitThrottle = useThrottleFn(async (resp: TakeDispatchResp) => {
                                         <div class="flex flex-1 flex-col justify-between">
                                             <div class="divide-y divide-gray-200 px-4 sm:px-6">
                                                 <div class="mt-1">
-                                                    <dl class="border-b border-neutral/10 divide-y divide-neutral/10">
+                                                    <dl class="divide-y divide-neutral/10 border-b border-neutral/10">
                                                         <template v-if="getCurrentMode === CentrumMode.SIMPLIFIED">
                                                             <DataNoDataBlock
                                                                 v-if="dispatches.size === 0"
@@ -181,7 +181,7 @@ const onSubmitThrottle = useThrottleFn(async (resp: TakeDispatchResp) => {
                                                                                 type="text"
                                                                                 name="search"
                                                                                 :placeholder="$t('common.search')"
-                                                                                class="block w-full rounded-md border-0 py-1.5 pr-14 bg-base-700 text-neutral placeholder:text-base-200 focus:ring-2 focus:ring-inset focus:ring-base-300 sm:text-sm sm:leading-6"
+                                                                                class="block w-full rounded-md border-0 bg-base-700 py-1.5 pr-14 text-neutral placeholder:text-base-200 focus:ring-2 focus:ring-inset focus:ring-base-300 sm:text-sm sm:leading-6"
                                                                                 @focusin="focusTablet(true)"
                                                                                 @focusout="focusTablet(false)"
                                                                             />
@@ -222,34 +222,34 @@ const onSubmitThrottle = useThrottleFn(async (resp: TakeDispatchResp) => {
                                         </div>
                                     </div>
                                     <div class="flex flex-shrink-0 justify-end px-4 py-4">
-                                        <span class="isolate inline-flex rounded-md shadow-sm pr-4 w-full">
+                                        <span class="isolate inline-flex w-full rounded-md pr-4 shadow-sm">
                                             <button
                                                 type="button"
-                                                class="w-full relative inline-flex items-center rounded-l-md bg-success-500 px-3 py-2 text-sm font-semibold text-neutral hover:text-neutral ring-1 ring-inset ring-success-300 hover:bg-success-100"
+                                                class="relative inline-flex w-full items-center rounded-l-md bg-success-500 px-3 py-2 text-sm font-semibold text-neutral ring-1 ring-inset ring-success-300 hover:bg-success-100 hover:text-neutral"
                                                 :disabled="!canTakeDispatch || !canSubmit"
                                                 :class="!canTakeDispatch ? 'disabled' : ''"
                                                 @click="onSubmitThrottle(TakeDispatchResp.ACCEPTED)"
                                             >
                                                 <template v-if="!canSubmit">
-                                                    <LoadingIcon class="animate-spin h-5 w-5 mr-2" />
+                                                    <LoadingIcon class="mr-2 h-5 w-5 animate-spin" />
                                                 </template>
                                                 {{ $t('common.accept') }}
                                             </button>
                                             <button
                                                 type="button"
-                                                class="w-full relative -ml-px inline-flex items-center bg-error-500 px-3 py-2 text-sm font-semibold text-neutral ring-1 ring-inset ring-error-300 hover:bg-error-100"
+                                                class="relative -ml-px inline-flex w-full items-center bg-error-500 px-3 py-2 text-sm font-semibold text-neutral ring-1 ring-inset ring-error-300 hover:bg-error-100"
                                                 :disabled="!canTakeDispatch || !canSubmit"
                                                 :class="!canTakeDispatch ? 'disabled' : ''"
                                                 @click="onSubmitThrottle(TakeDispatchResp.DECLINED)"
                                             >
                                                 <template v-if="!canSubmit">
-                                                    <LoadingIcon class="animate-spin h-5 w-5 mr-2" />
+                                                    <LoadingIcon class="mr-2 h-5 w-5 animate-spin" />
                                                 </template>
                                                 {{ $t('common.decline') }}
                                             </button>
                                             <button
                                                 type="button"
-                                                class="w-full relative -ml-px inline-flex items-center rounded-r-md bg-neutral px-3 py-2 text-sm font-semibold text-gray-900 hover:text-gray-900 ring-1 ring-inset ring-gray-300 hover:bg-gray-50"
+                                                class="relative -ml-px inline-flex w-full items-center rounded-r-md bg-neutral px-3 py-2 text-sm font-semibold text-gray-900 ring-1 ring-inset ring-gray-300 hover:bg-gray-50 hover:text-gray-900"
                                                 @click="$emit('close')"
                                             >
                                                 {{ $t('common.close') }}

@@ -41,11 +41,11 @@ async function switchLanguage(lang: Language): Promise<void> {
     <Menu as="div" class="relative flex-shrink-0">
         <div>
             <MenuButton
-                class="flex text-sm rounded-full bg-base-800 ring-2 ring-base-600 focus:outline-none focus:ring-2 focus:ring-primary-500 focus:ring-offset-2"
+                class="flex rounded-full bg-base-800 text-sm ring-2 ring-base-600 focus:outline-none focus:ring-2 focus:ring-primary-500 focus:ring-offset-2"
             >
                 <span class="sr-only">{{ $t('components.partials.sidebar_language_switcher.open_switcher') }}</span>
                 <TranslateIcon
-                    class="w-auto h-10 p-1 rounded-full hover:transition-colors text-base-300 bg-base-800 hover:text-base-100"
+                    class="h-10 w-auto rounded-full bg-base-800 p-1 text-base-300 hover:text-base-100 hover:transition-colors"
                 />
             </MenuButton>
         </div>
@@ -58,13 +58,13 @@ async function switchLanguage(lang: Language): Promise<void> {
             leave-to-class="transform scale-95 opacity-0"
         >
             <MenuItems
-                class="absolute right-0 w-48 py-1 mt-2 origin-top-right rounded-md shadow-float bg-base-800 ring-1 ring-base-100 ring-opacity-5 focus:outline-none z-40"
+                class="absolute right-0 z-40 mt-2 w-48 origin-top-right rounded-md bg-base-800 py-1 shadow-float ring-1 ring-base-100 ring-opacity-5 focus:outline-none"
             >
                 <MenuItem v-for="item in languages" :key="item.iso" v-slot="{ active }">
                     <button
                         :class="[
                             active ? 'bg-primary-500' : '',
-                            'px-4 py-2 text-sm text-neutral hover:transition-colors flex flex-row w-full',
+                            'flex w-full flex-row px-4 py-2 text-sm text-neutral hover:transition-colors',
                         ]"
                         @click="switchLanguage(item)"
                     >

@@ -47,8 +47,8 @@ watch(offset, async () => refresh());
     <div class="py-2 pb-14">
         <div class="px-1 sm:px-2 lg:px-4">
             <div class="flow-root">
-                <div class="mx-0 -my-2 overflow-x-auto">
-                    <div class="inline-block min-w-full align-middle px-1">
+                <div class="-my-2 mx-0 overflow-x-auto">
+                    <div class="inline-block min-w-full px-1 align-middle">
                         <DataPendingBlock
                             v-if="pending"
                             :message="$t('common.loading', [`${$t('common.user', 1)} ${$t('common.document', 2)}`])"
@@ -65,20 +65,20 @@ watch(offset, async () => refresh());
                         />
                         <div v-else-if="data?.relations">
                             <!-- Relations list (smallest breakpoint only) -->
-                            <div v-if="data?.relations.length > 0" class="sm:hidden text-neutral">
-                                <ul role="list" class="mt-2 overflow-hidden divide-y divide-gray-600 rounded-lg sm:hidden">
+                            <div v-if="data?.relations.length > 0" class="text-neutral sm:hidden">
+                                <ul role="list" class="mt-2 divide-y divide-gray-600 overflow-hidden rounded-lg sm:hidden">
                                     <li
                                         v-for="relation in data?.relations"
                                         :key="relation.id"
-                                        class="block px-4 py-4 bg-base-800 hover:bg-base-700"
+                                        class="block bg-base-800 px-4 py-4 hover:bg-base-700"
                                     >
                                         <span class="flex items-center space-x-4">
                                             <span class="flex flex-1 space-x-2 truncate">
                                                 <ArrowExpandIcon
-                                                    class="flex-shrink-0 w-5 h-5 text-gray-400"
+                                                    class="h-5 w-5 flex-shrink-0 text-gray-400"
                                                     aria-hidden="true"
                                                 />
-                                                <span class="flex flex-col text-sm truncate">
+                                                <span class="flex flex-col truncate text-sm">
                                                     <span>
                                                         <NuxtLink
                                                             :to="{
@@ -98,19 +98,19 @@ watch(offset, async () => refresh());
                                                     <span>
                                                         <div
                                                             v-if="relation.document?.closed"
-                                                            class="flex flex-row flex-initial gap-1 px-2 py-1 rounded-full bg-error-100"
+                                                            class="flex flex-initial flex-row gap-1 rounded-full bg-error-100 px-2 py-1"
                                                         >
-                                                            <LockIcon class="w-5 h-5 text-error-400" aria-hidden="true" />
+                                                            <LockIcon class="h-5 w-5 text-error-400" aria-hidden="true" />
                                                             <span class="text-sm font-medium text-error-700">
                                                                 {{ $t('common.close', 2) }}
                                                             </span>
                                                         </div>
                                                         <div
                                                             v-else
-                                                            class="flex flex-row flex-initial gap-1 px-2 py-1 rounded-full bg-success-100"
+                                                            class="flex flex-initial flex-row gap-1 rounded-full bg-success-100 px-2 py-1"
                                                         >
                                                             <LockOpenVariantIcon
-                                                                class="w-5 h-5 text-success-500"
+                                                                class="h-5 w-5 text-success-500"
                                                                 aria-hidden="true"
                                                             />
                                                             <span class="text-sm font-medium text-success-700">
@@ -126,7 +126,7 @@ watch(offset, async () => refresh());
                                                                     id: relation.targetUserId,
                                                                 },
                                                             }"
-                                                            class="inline-flex space-x-2 text-sm truncate group"
+                                                            class="group inline-flex space-x-2 truncate text-sm"
                                                         >
                                                             {{
                                                                 relation.targetUser?.firstname +
@@ -145,7 +145,7 @@ watch(offset, async () => refresh());
                                                     <GenericTime :value="relation.createdAt" :ago="true" />
                                                 </span>
                                             </span>
-                                            <ChevronRightIcon class="flex-shrink-0 w-5 h-5 text-base-200" aria-hidden="true" />
+                                            <ChevronRightIcon class="h-5 w-5 flex-shrink-0 text-base-200" aria-hidden="true" />
                                         </span>
                                     </li>
                                 </ul>
@@ -160,25 +160,25 @@ watch(offset, async () => refresh());
                             <!-- Relations table (small breakpoint and up) -->
                             <div v-if="data?.relations.length > 0" class="hidden sm:block">
                                 <div>
-                                    <div class="flex flex-col mt-2">
+                                    <div class="mt-2 flex flex-col">
                                         <div class="min-w-full overflow-hidden overflow-x-auto align-middle sm:rounded-lg">
-                                            <table class="min-w-full bg-base-700 text-neutral mb-2">
+                                            <table class="mb-2 min-w-full bg-base-700 text-neutral">
                                                 <thead>
                                                     <tr>
-                                                        <th class="px-6 py-3 text-sm font-semibold text-left" scope="col">
+                                                        <th class="px-6 py-3 text-left text-sm font-semibold" scope="col">
                                                             {{ $t('common.document', 1) }}
                                                         </th>
-                                                        <th class="px-6 py-3 text-sm font-semibold text-left" scope="col">
+                                                        <th class="px-6 py-3 text-left text-sm font-semibold" scope="col">
                                                             {{ $t('common.close', 2) }}
                                                         </th>
-                                                        <th class="px-6 py-3 text-sm font-semibold text-right" scope="col">
+                                                        <th class="px-6 py-3 text-right text-sm font-semibold" scope="col">
                                                             {{ $t('common.relation', 1) }}
                                                         </th>
-                                                        <th class="px-6 py-3 text-sm font-semibold text-right" scope="col">
+                                                        <th class="px-6 py-3 text-right text-sm font-semibold" scope="col">
                                                             {{ $t('common.date') }}
                                                         </th>
                                                         <th
-                                                            class="hidden px-6 py-3 text-sm font-semibold text-left md:block"
+                                                            class="hidden px-6 py-3 text-left text-sm font-semibold md:block"
                                                             scope="col"
                                                         >
                                                             {{ $t('common.creator') }}
@@ -208,19 +208,19 @@ watch(offset, async () => refresh());
                                                         <td class="px-6 py-4 text-sm">
                                                             <div
                                                                 v-if="relation.document?.closed"
-                                                                class="flex flex-row flex-initial gap-1 px-2 py-1 rounded-full bg-error-100"
+                                                                class="flex flex-initial flex-row gap-1 rounded-full bg-error-100 px-2 py-1"
                                                             >
-                                                                <LockIcon class="w-5 h-5 text-error-400" aria-hidden="true" />
+                                                                <LockIcon class="h-5 w-5 text-error-400" aria-hidden="true" />
                                                                 <span class="text-sm font-medium text-error-700">
                                                                     {{ $t('common.close', 2) }}
                                                                 </span>
                                                             </div>
                                                             <div
                                                                 v-else
-                                                                class="flex flex-row flex-initial gap-1 px-2 py-1 rounded-full bg-success-100"
+                                                                class="flex flex-initial flex-row gap-1 rounded-full bg-success-100 px-2 py-1"
                                                             >
                                                                 <LockOpenVariantIcon
-                                                                    class="w-5 h-5 text-success-500"
+                                                                    class="h-5 w-5 text-success-500"
                                                                     aria-hidden="true"
                                                                 />
                                                                 <span class="text-sm font-medium text-success-700">
@@ -228,7 +228,7 @@ watch(offset, async () => refresh());
                                                                 </span>
                                                             </div>
                                                         </td>
-                                                        <td class="px-6 py-4 text-sm text-right whitespace-nowrap">
+                                                        <td class="whitespace-nowrap px-6 py-4 text-right text-sm">
                                                             <span class="font-medium">
                                                                 {{
                                                                     $t(
@@ -239,10 +239,10 @@ watch(offset, async () => refresh());
                                                                 }}
                                                             </span>
                                                         </td>
-                                                        <td class="px-6 py-4 text-sm text-right whitespace-nowrap">
+                                                        <td class="whitespace-nowrap px-6 py-4 text-right text-sm">
                                                             <GenericTime :value="relation.createdAt" />
                                                         </td>
-                                                        <td class="hidden px-6 py-4 text-sm whitespace-nowrap md:block">
+                                                        <td class="hidden whitespace-nowrap px-6 py-4 text-sm md:block">
                                                             <div class="flex">
                                                                 <NuxtLink
                                                                     :to="{
@@ -251,7 +251,7 @@ watch(offset, async () => refresh());
                                                                             id: relation.sourceUserId,
                                                                         },
                                                                     }"
-                                                                    class="inline-flex space-x-2 text-sm truncate group"
+                                                                    class="group inline-flex space-x-2 truncate text-sm"
                                                                 >
                                                                     {{
                                                                         relation.sourceUser?.firstname +

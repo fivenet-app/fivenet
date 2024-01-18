@@ -223,25 +223,25 @@ watch(selectedAccessRole, () => {
 </script>
 
 <template>
-    <div class="flex flex-row items-center my-2">
-        <div class="flex-initial mr-2 w-60">
+    <div class="my-2 flex flex-row items-center">
+        <div class="mr-2 w-60 flex-initial">
             <input
                 v-if="accessTypes.length === 1"
                 type="text"
                 disabled
                 :value="accessTypes[0].name"
-                class="block pl-3 text-left w-full rounded-md border-0 py-1.5 bg-base-700 text-neutral placeholder:text-base-200 focus:ring-2 focus:ring-inset focus:ring-base-300 sm:text-sm sm:leading-6"
+                class="block w-full rounded-md border-0 bg-base-700 py-1.5 pl-3 text-left text-neutral placeholder:text-base-200 focus:ring-2 focus:ring-inset focus:ring-base-300 sm:text-sm sm:leading-6"
                 @focusin="focusTablet(true)"
                 @focusout="focusTablet(false)"
             />
             <Listbox v-else v-model="selectedAccessType" as="div" :disabled="readOnly">
                 <div class="relative">
                     <ListboxButton
-                        class="block pl-3 text-left w-full rounded-md border-0 py-1.5 bg-base-700 text-neutral placeholder:text-base-200 focus:ring-2 focus:ring-inset focus:ring-base-300 sm:text-sm sm:leading-6"
+                        class="block w-full rounded-md border-0 bg-base-700 py-1.5 pl-3 text-left text-neutral placeholder:text-base-200 focus:ring-2 focus:ring-inset focus:ring-base-300 sm:text-sm sm:leading-6"
                     >
                         <span class="block truncate">{{ selectedAccessType?.name }}</span>
-                        <span class="absolute inset-y-0 right-0 flex items-center pr-2 pointer-events-none">
-                            <ChevronDownIcon class="w-5 h-5 text-gray-400" aria-hidden="true" />
+                        <span class="pointer-events-none absolute inset-y-0 right-0 flex items-center pr-2">
+                            <ChevronDownIcon class="h-5 w-5 text-gray-400" aria-hidden="true" />
                         </span>
                     </ListboxButton>
 
@@ -251,7 +251,7 @@ watch(selectedAccessRole, () => {
                         leave-to-class="opacity-0"
                     >
                         <ListboxOptions
-                            class="absolute z-10 w-full py-1 mt-1 overflow-auto text-base rounded-md bg-base-700 max-h-44 sm:text-sm"
+                            class="absolute z-10 mt-1 max-h-44 w-full overflow-auto rounded-md bg-base-700 py-1 text-base sm:text-sm"
                         >
                             <ListboxOption
                                 v-for="accessType in accessTypes"
@@ -263,7 +263,7 @@ watch(selectedAccessRole, () => {
                                 <li
                                     :class="[
                                         active ? 'bg-primary-500' : '',
-                                        'text-neutral relative cursor-default select-none py-2 pl-8 pr-4',
+                                        'relative cursor-default select-none py-2 pl-8 pr-4 text-neutral',
                                     ]"
                                 >
                                     <span :class="[selected ? 'font-semibold' : 'font-normal', 'block truncate']">{{
@@ -277,7 +277,7 @@ watch(selectedAccessRole, () => {
                                             'absolute inset-y-0 left-0 flex items-center pl-1.5',
                                         ]"
                                     >
-                                        <CheckIcon class="w-5 h-5" aria-hidden="true" />
+                                        <CheckIcon class="h-5 w-5" aria-hidden="true" />
                                     </span>
                                 </li>
                             </ListboxOption>
@@ -287,13 +287,13 @@ watch(selectedAccessRole, () => {
             </Listbox>
         </div>
         <div v-if="selectedAccessType?.id === 0" class="flex flex-grow">
-            <div class="flex-1 mr-2">
+            <div class="mr-2 flex-1">
                 <Combobox v-model="selectedChar" as="div" :disabled="readOnly">
                     <div class="relative">
                         <ComboboxButton as="div">
                             <ComboboxInput
                                 autocomplete="off"
-                                class="block w-full rounded-md border-0 py-1.5 bg-base-700 text-neutral placeholder:text-base-200 focus:ring-2 focus:ring-inset focus:ring-base-300 sm:text-sm sm:leading-6"
+                                class="block w-full rounded-md border-0 bg-base-700 py-1.5 text-neutral placeholder:text-base-200 focus:ring-2 focus:ring-inset focus:ring-base-300 sm:text-sm sm:leading-6"
                                 :display-value="(char: any) => `${char?.firstname} ${char?.lastname} (${char?.dateofbirth})`"
                                 @change="queryCharRaw = $event.target.value"
                                 @focusin="focusTablet(true)"
@@ -303,7 +303,7 @@ watch(selectedAccessRole, () => {
 
                         <ComboboxOptions
                             v-if="entriesChars && entriesChars.length > 0"
-                            class="absolute z-10 w-full py-1 mt-1 overflow-auto text-base rounded-md bg-base-700 max-h-44 sm:text-sm"
+                            class="absolute z-10 mt-1 max-h-44 w-full overflow-auto rounded-md bg-base-700 py-1 text-base sm:text-sm"
                         >
                             <ComboboxOption
                                 v-for="char in entriesChars"
@@ -329,7 +329,7 @@ watch(selectedAccessRole, () => {
                                             'absolute inset-y-0 left-0 flex items-center pl-1.5',
                                         ]"
                                     >
-                                        <CheckIcon class="w-5 h-5" aria-hidden="true" />
+                                        <CheckIcon class="h-5 w-5" aria-hidden="true" />
                                     </span>
                                 </li>
                             </ComboboxOption>
@@ -339,13 +339,13 @@ watch(selectedAccessRole, () => {
             </div>
         </div>
         <div v-else class="flex flex-grow">
-            <div class="flex-1 mr-2">
+            <div class="mr-2 flex-1">
                 <Combobox v-model="selectedJob" as="div" :disabled="readOnly">
                     <div class="relative">
                         <ComboboxButton as="div">
                             <ComboboxInput
                                 autocomplete="off"
-                                class="block w-full rounded-md border-0 py-1.5 bg-base-700 text-neutral placeholder:text-base-200 focus:ring-2 focus:ring-inset focus:ring-base-300 sm:text-sm sm:leading-6"
+                                class="block w-full rounded-md border-0 bg-base-700 py-1.5 text-neutral placeholder:text-base-200 focus:ring-2 focus:ring-inset focus:ring-base-300 sm:text-sm sm:leading-6"
                                 :display-value="(job: any) => job?.label"
                                 @change="queryJobRaw = $event.target.value"
                                 @focusin="focusTablet(true)"
@@ -355,7 +355,7 @@ watch(selectedAccessRole, () => {
 
                         <ComboboxOptions
                             v-if="filteredJobs.length > 0"
-                            class="absolute z-10 w-full py-1 mt-1 overflow-auto text-base rounded-md bg-base-700 max-h-44 sm:text-sm"
+                            class="absolute z-10 mt-1 max-h-44 w-full overflow-auto rounded-md bg-base-700 py-1 text-base sm:text-sm"
                         >
                             <ComboboxOption
                                 v-for="job in filteredJobs"
@@ -380,7 +380,7 @@ watch(selectedAccessRole, () => {
                                             'absolute inset-y-0 left-0 flex items-center pl-1.5',
                                         ]"
                                     >
-                                        <CheckIcon class="w-5 h-5" aria-hidden="true" />
+                                        <CheckIcon class="h-5 w-5" aria-hidden="true" />
                                     </span>
                                 </li>
                             </ComboboxOption>
@@ -388,13 +388,13 @@ watch(selectedAccessRole, () => {
                     </div>
                 </Combobox>
             </div>
-            <div class="flex-1 mr-2">
+            <div class="mr-2 flex-1">
                 <Combobox v-model="selectedMinimumRank" as="div" :disabled="readOnly || selectedJob === undefined">
                     <div class="relative">
                         <ComboboxButton as="div">
                             <ComboboxInput
                                 autocomplete="off"
-                                class="block w-full rounded-md border-0 py-1.5 bg-base-700 text-neutral placeholder:text-base-200 focus:ring-2 focus:ring-inset focus:ring-base-300 sm:text-sm sm:leading-6"
+                                class="block w-full rounded-md border-0 bg-base-700 py-1.5 text-neutral placeholder:text-base-200 focus:ring-2 focus:ring-inset focus:ring-base-300 sm:text-sm sm:leading-6"
                                 :display-value="(rank: any) => rank?.label"
                                 @change="queryMinimumRankRaw = $event.target.value"
                                 @focusin="focusTablet(true)"
@@ -404,7 +404,7 @@ watch(selectedAccessRole, () => {
 
                         <ComboboxOptions
                             v-if="filteredJobRanks.length > 0"
-                            class="absolute z-10 w-full py-1 mt-1 overflow-auto text-base rounded-md bg-base-700 max-h-44 sm:text-sm"
+                            class="absolute z-10 mt-1 max-h-44 w-full overflow-auto rounded-md bg-base-700 py-1 text-base sm:text-sm"
                         >
                             <ComboboxOption
                                 v-for="rank in filteredJobRanks"
@@ -430,7 +430,7 @@ watch(selectedAccessRole, () => {
                                             'absolute inset-y-0 left-0 flex items-center pl-1.5',
                                         ]"
                                     >
-                                        <CheckIcon class="w-5 h-5" aria-hidden="true" />
+                                        <CheckIcon class="h-5 w-5" aria-hidden="true" />
                                     </span>
                                 </li>
                             </ComboboxOption>
@@ -439,13 +439,13 @@ watch(selectedAccessRole, () => {
                 </Combobox>
             </div>
         </div>
-        <div class="mr-2 flex-inital w-60">
+        <div class="flex-inital mr-2 w-60">
             <Combobox v-model="selectedAccessRole" as="div" :disabled="readOnly">
                 <div class="relative">
                     <ComboboxButton as="div">
                         <ComboboxInput
                             autocomplete="off"
-                            class="block w-full rounded-md border-0 py-1.5 bg-base-700 text-neutral placeholder:text-base-200 focus:ring-2 focus:ring-inset focus:ring-base-300 sm:text-sm sm:leading-6"
+                            class="block w-full rounded-md border-0 bg-base-700 py-1.5 text-neutral placeholder:text-base-200 focus:ring-2 focus:ring-inset focus:ring-base-300 sm:text-sm sm:leading-6"
                             :display-value="(role: any) => role.label"
                             @change="queryAccessRole = $event.target.value"
                             @focusin="focusTablet(true)"
@@ -455,7 +455,7 @@ watch(selectedAccessRole, () => {
 
                     <ComboboxOptions
                         v-if="entriesAccessRoles.length > 0"
-                        class="absolute z-10 w-full py-1 mt-1 overflow-auto text-base rounded-md bg-base-700 max-h-44 sm:text-sm"
+                        class="absolute z-10 mt-1 max-h-44 w-full overflow-auto rounded-md bg-base-700 py-1 text-base sm:text-sm"
                     >
                         <ComboboxOption
                             v-for="role in entriesAccessRoles"
@@ -481,7 +481,7 @@ watch(selectedAccessRole, () => {
                                         'absolute inset-y-0 left-0 flex items-center pl-1.5',
                                     ]"
                                 >
-                                    <CheckIcon class="w-5 h-5" aria-hidden="true" />
+                                    <CheckIcon class="h-5 w-5" aria-hidden="true" />
                                 </span>
                             </li>
                         </ComboboxOption>

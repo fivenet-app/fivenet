@@ -66,21 +66,21 @@ const openUnit = ref(false);
         @click="$emit('selected')"
     >
         <LIcon :icon-anchor="iconAnchor" :popup-anchor="popupAnchor" :icon-size="[size, size]">
-            <div class="uppercase flex flex-col items-center">
+            <div class="flex flex-col items-center uppercase">
                 <span
                     v-if="showUnitNames && marker.unit"
-                    class="rounded-md border-2 border-black/20 bg-clip-padding focus:outline-none inset-0 whitespace-nowrap"
+                    class="inset-0 whitespace-nowrap rounded-md border-2 border-black/20 bg-clip-padding focus:outline-none"
                     :class="isColourBright(inverseColor) ? 'text-black' : 'text-neutral'"
                     :style="{ backgroundColor: '#' + (marker.unit?.color ?? '8d81f2') }"
                 >
                     {{ marker.unit?.initials }}
                 </span>
-                <MapMarkerIcon class="w-full h-full" :style="{ color: '#' + (marker.info?.color ?? '8d81f2') }" />
+                <MapMarkerIcon class="h-full w-full" :style="{ color: '#' + (marker.info?.color ?? '8d81f2') }" />
             </div>
-            <div v-if="showUnitStatus && marker.unit" class="uppercase pointer-events-none">
-                <span class="flex absolute h-3 w-3 top-0 right-0 -mt-1.5 -mr-2">
+            <div v-if="showUnitStatus && marker.unit" class="pointer-events-none uppercase">
+                <span class="absolute right-0 top-0 -mr-2 -mt-1.5 flex h-3 w-3">
                     <span
-                        class="relative inline-flex rounded-full h-3 w-3 border-2 border-black/20 inset-0"
+                        class="relative inset-0 inline-flex h-3 w-3 rounded-full border-2 border-black/20"
                         :class="unitStatusColor"
                     ></span>
                 </span>
@@ -88,7 +88,7 @@ const openUnit = ref(false);
         </LIcon>
 
         <LPopup :options="{ closeButton: true }">
-            <div class="flex items-center gap-2 mb-1">
+            <div class="mb-1 flex items-center gap-2">
                 <NuxtLink
                     :to="{ name: 'citizens-id', params: { id: marker.user?.userId ?? 0 } }"
                     class="inline-flex items-center text-primary-500 hover:text-primary-400"
@@ -109,7 +109,7 @@ const openUnit = ref(false);
                     class="inline-flex items-center text-primary-500 hover:text-primary-400"
                     @click="openUnit = true"
                 >
-                    <GroupIcon class="w-4 h-4" />
+                    <GroupIcon class="h-4 w-4" />
                     <span class="ml-1">
                         {{ $t('common.unit') }}
                     </span>

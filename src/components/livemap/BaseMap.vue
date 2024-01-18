@@ -221,7 +221,7 @@ onBeforeUnmount(() => {
 </script>
 
 <template>
-    <div ref="mapContainer" class="h-full flex flex-row" :style="{ backgroundColor }">
+    <div ref="mapContainer" class="flex h-full flex-row" :style="{ backgroundColor }">
         <LMap
             v-model:zoom="zoom"
             v-model:center="center"

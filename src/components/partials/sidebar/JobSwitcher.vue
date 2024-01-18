@@ -67,7 +67,7 @@ watch(selectedJob, () => setJob());
             <ComboboxButton as="div">
                 <ComboboxInput
                     autocomplete="off"
-                    class="hidden md:block w-full rounded-md border-0 py-1.5 bg-base-700 text-neutral placeholder:text-base-200 focus:ring-2 focus:ring-inset focus:ring-base-300 sm:text-sm sm:leading-6"
+                    class="hidden w-full rounded-md border-0 bg-base-700 py-1.5 text-neutral placeholder:text-base-200 focus:ring-2 focus:ring-inset focus:ring-base-300 sm:text-sm sm:leading-6 md:block"
                     :display-value="(job: any) => (job ? job?.label : '')"
                     :placeholder="`${$t('common.select')} ${$t('common.job')}`"
                     @click="listJobs"
@@ -79,7 +79,7 @@ watch(selectedJob, () => setJob());
 
             <ComboboxOptions
                 v-if="filteredJobs.length > 0"
-                class="absolute z-40 w-full py-1 mt-1 overflow-auto text-base rounded-md bg-base-700 max-h-44 sm:text-sm"
+                class="absolute z-40 mt-1 max-h-44 w-full overflow-auto rounded-md bg-base-700 py-1 text-base sm:text-sm"
             >
                 <ComboboxOption v-for="job in filteredJobs" :key="job.name" v-slot="{ active, selected }" :value="job">
                     <li
@@ -99,7 +99,7 @@ watch(selectedJob, () => setJob());
                                 'absolute inset-y-0 left-0 flex items-center pl-1.5',
                             ]"
                         >
-                            <CheckIcon class="w-5 h-5" aria-hidden="true" />
+                            <CheckIcon class="h-5 w-5" aria-hidden="true" />
                         </span>
                     </li>
                 </ComboboxOption>

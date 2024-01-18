@@ -202,19 +202,19 @@ function updateDates(): void {
             <div class="sm:flex sm:items-center">
                 <div class="sm:flex-auto">
                     <form @submit.prevent="refresh()">
-                        <div class="flex flex-row gap-4 mx-auto">
-                            <div v-if="canAccessAll" class="flex-1 form-control">
+                        <div class="mx-auto flex flex-row gap-4">
+                            <div v-if="canAccessAll" class="form-control flex-1">
                                 <label for="searchName" class="block text-sm font-medium leading-6 text-neutral">
                                     {{ $t('common.search') }}
                                     {{ $t('common.colleague', 1) }}
                                 </label>
-                                <div class="relative flex items-center mt-2">
+                                <div class="relative mt-2 flex items-center">
                                     <Combobox v-model="query.user_ids" as="div" class="w-full" multiple nullable>
                                         <div class="relative">
                                             <ComboboxButton as="div">
                                                 <ComboboxInput
                                                     autocomplete="off"
-                                                    class="block w-full rounded-md border-0 py-1.5 bg-base-700 text-neutral placeholder:text-base-200 focus:ring-2 focus:ring-inset focus:ring-base-300 sm:text-sm sm:leading-6"
+                                                    class="block w-full rounded-md border-0 bg-base-700 py-1.5 text-neutral placeholder:text-base-200 focus:ring-2 focus:ring-inset focus:ring-base-300 sm:text-sm sm:leading-6"
                                                     :display-value="
                                                         (chars: any) => (chars ? charsGetDisplayValue(chars) : $t('common.na'))
                                                     "
@@ -227,7 +227,7 @@ function updateDates(): void {
 
                                             <ComboboxOptions
                                                 v-if="colleagues?.users && colleagues?.users?.length > 0"
-                                                class="absolute z-10 w-full py-1 mt-1 overflow-auto text-base rounded-md bg-base-700 max-h-44 sm:text-sm"
+                                                class="absolute z-10 mt-1 max-h-44 w-full overflow-auto rounded-md bg-base-700 py-1 text-base sm:text-sm"
                                             >
                                                 <ComboboxOption
                                                     v-for="char in colleagues?.users"
@@ -253,7 +253,7 @@ function updateDates(): void {
                                                                 'absolute inset-y-0 left-0 flex items-center pl-1.5',
                                                             ]"
                                                         >
-                                                            <CheckIcon class="w-5 h-5" aria-hidden="true" />
+                                                            <CheckIcon class="h-5 w-5" aria-hidden="true" />
                                                         </span>
                                                     </li>
                                                 </ComboboxOption>
@@ -262,7 +262,7 @@ function updateDates(): void {
                                     </Combobox>
                                 </div>
                             </div>
-                            <div class="flex-1 form-control">
+                            <div class="form-control flex-1">
                                 <label for="search" class="block text-sm font-medium leading-6 text-neutral">
                                     <template v-if="perDay"> {{ $t('common.date') }}: </template>
                                     <template v-else>
@@ -270,38 +270,38 @@ function updateDates(): void {
                                         {{ $t('common.from') }}
                                     </template>
                                 </label>
-                                <div class="relative flex items-center mt-2">
+                                <div class="relative mt-2 flex items-center">
                                     <input
                                         v-model="query.from"
                                         type="date"
                                         name="search"
                                         :placeholder="`${$t('common.time_range')} ${$t('common.from')}`"
-                                        class="block w-full rounded-md border-0 py-1.5 pr-14 bg-base-700 text-neutral placeholder:text-base-200 focus:ring-2 focus:ring-inset focus:ring-base-300 sm:text-sm sm:leading-6"
+                                        class="block w-full rounded-md border-0 bg-base-700 py-1.5 pr-14 text-neutral placeholder:text-base-200 focus:ring-2 focus:ring-inset focus:ring-base-300 sm:text-sm sm:leading-6"
                                         @focusin="focusTablet(true)"
                                         @focusout="focusTablet(false)"
                                     />
                                 </div>
                             </div>
-                            <div v-if="!perDay" class="flex-1 form-control">
+                            <div v-if="!perDay" class="form-control flex-1">
                                 <label for="search" class="block text-sm font-medium leading-6 text-neutral">
                                     {{ $t('common.time_range') }}:
                                     {{ $t('common.to') }}
                                 </label>
-                                <div class="relative flex items-center mt-2">
+                                <div class="relative mt-2 flex items-center">
                                     <input
                                         v-model="query.to"
                                         type="date"
                                         name="search"
                                         :placeholder="`${$t('common.time_range')} ${$t('common.to')}`"
-                                        class="block w-full rounded-md border-0 py-1.5 pr-14 bg-base-700 text-neutral placeholder:text-base-200 focus:ring-2 focus:ring-inset focus:ring-base-300 sm:text-sm sm:leading-6"
+                                        class="block w-full rounded-md border-0 bg-base-700 py-1.5 pr-14 text-neutral placeholder:text-base-200 focus:ring-2 focus:ring-inset focus:ring-base-300 sm:text-sm sm:leading-6"
                                         @focusin="focusTablet(true)"
                                         @focusout="focusTablet(false)"
                                     />
                                 </div>
                             </div>
                         </div>
-                        <div v-if="perDay" class="pt-2 flex flex-row gap-4 mx-auto">
-                            <div class="flex-1 form-control">
+                        <div v-if="perDay" class="mx-auto flex flex-row gap-4 pt-2">
+                            <div class="form-control flex-1">
                                 <button
                                     type="button"
                                     :disabled="futureDay > today"
@@ -309,7 +309,7 @@ function updateDates(): void {
                                         futureDay > today
                                             ? 'disabled bg-base-500 hover:bg-base-400 focus-visible:outline-base-500'
                                             : 'bg-primary-500 hover:bg-primary-400 focus-visible:outline-primary-500',
-                                        'relative w-full inline-flex items-center place-content-start px-3 py-2 text-sm font-semibold rounded-md cursor-pointer text-neutral focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2',
+                                        'relative inline-flex w-full cursor-pointer place-content-start items-center rounded-md px-3 py-2 text-sm font-semibold text-neutral focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2',
                                     ]"
                                     @click="dayForward()"
                                 >
@@ -317,20 +317,20 @@ function updateDates(): void {
                                     {{ $t('common.forward') }} - {{ $d(futureDay, 'date') }}
                                 </button>
                             </div>
-                            <div class="flex-initial form-control">
+                            <div class="form-control flex-initial">
                                 <button
                                     type="button"
                                     disabled
-                                    class="disabled inline-flex items-center bg-base-500 hover:bg-base-400 focus-visible:outline-base-500 relative w-full inline-flex items-center place-content-end px-3 py-2 text-sm font-semibold rounded-md cursor-pointer text-neutral focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2"
+                                    class="disabled relative inline-flex inline-flex w-full cursor-pointer place-content-end items-center items-center rounded-md bg-base-500 px-3 py-2 text-sm font-semibold text-neutral hover:bg-base-400 focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-base-500"
                                 >
-                                    <CalendarIcon class="h-5 w-5 mr-1" />
+                                    <CalendarIcon class="mr-1 h-5 w-5" />
                                     {{ $d(currentDay, 'date') }}
                                 </button>
                             </div>
-                            <div class="flex-1 form-control">
+                            <div class="form-control flex-1">
                                 <button
                                     type="button"
-                                    class="bg-primary-500 hover:bg-primary-400 focus-visible:outline-primary-500 relative w-full inline-flex items-center place-content-end px-3 py-2 text-sm font-semibold rounded-md cursor-pointer text-neutral focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2"
+                                    class="relative inline-flex w-full cursor-pointer place-content-end items-center rounded-md bg-primary-500 px-3 py-2 text-sm font-semibold text-neutral hover:bg-primary-400 focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-primary-500"
                                     @click="dayBackwards()"
                                 >
                                     {{ $d(previousDay, 'date') }} - {{ $t('common.previous') }}
@@ -341,9 +341,9 @@ function updateDates(): void {
                     </form>
                 </div>
             </div>
-            <div class="flow-root mt-2">
-                <div class="mx-0 -my-2 overflow-x-auto">
-                    <div class="inline-block min-w-full py-2 align-middle px-1">
+            <div class="mt-2 flow-root">
+                <div class="-my-2 mx-0 overflow-x-auto">
+                    <div class="inline-block min-w-full px-1 py-2 align-middle">
                         <DataPendingBlock v-if="pending" :message="$t('common.loading', [$t('common.timeclock', 2)])" />
                         <DataErrorBlock
                             v-else-if="error"
@@ -366,10 +366,10 @@ function updateDates(): void {
                                         >
                                             {{ $t('common.date') }}
                                         </th>
-                                        <th v-else scope="col" class="py-3.5 px-2 text-left text-sm font-semibold text-neutral">
+                                        <th v-else scope="col" class="px-2 py-3.5 text-left text-sm font-semibold text-neutral">
                                             {{ $t('common.name') }}
                                         </th>
-                                        <th scope="col" class="py-3.5 px-2 text-left text-sm font-semibold text-neutral">
+                                        <th scope="col" class="px-2 py-3.5 text-left text-sm font-semibold text-neutral">
                                             {{ $t('common.time') }}
                                         </th>
                                     </tr>
@@ -394,10 +394,10 @@ function updateDates(): void {
                                         >
                                             {{ $t('common.date') }}
                                         </th>
-                                        <th v-else scope="col" class="py-3.5 px-2 text-left text-sm font-semibold text-neutral">
+                                        <th v-else scope="col" class="px-2 py-3.5 text-left text-sm font-semibold text-neutral">
                                             {{ $t('common.name') }}
                                         </th>
-                                        <th scope="col" class="py-3.5 px-2 text-left text-sm font-semibold text-neutral">
+                                        <th scope="col" class="px-2 py-3.5 text-left text-sm font-semibold text-neutral">
                                             {{ $t('common.time') }}
                                         </th>
                                     </tr>
@@ -413,7 +413,7 @@ function updateDates(): void {
                     </div>
                 </div>
             </div>
-            <div v-if="data && data.stats" class="flow-root mb-4">
+            <div v-if="data && data.stats" class="mb-4 flow-root">
                 <div class="sm:flex sm:items-center">
                     <div class="sm:flex-auto">
                         <GenericDivider :label="$t('components.jobs.timeclock.Stats.title')" />

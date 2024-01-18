@@ -27,13 +27,13 @@ defineProps<{
             </PopoverButton>
 
             <PopoverPanel
-                class="absolute z-5 w-64 max-w-[18rem] min-w-fit text-sm text-gray-400 transition-opacity bg-gray-800 border border-gray-600 rounded-lg shadow-sm"
+                class="absolute z-5 w-64 min-w-fit max-w-[18rem] rounded-lg border border-gray-600 bg-gray-800 text-sm text-gray-400 shadow-sm transition-opacity"
             >
                 <div class="p-3">
                     <p class="text-base font-semibold leading-none text-gray-900 dark:text-neutral">
                         DSP-{{ status.dispatchId }}
                     </p>
-                    <p class="text-sm font-normal inline-flex items-center justify-center">
+                    <p class="inline-flex items-center justify-center text-sm font-normal">
                         <span class="font-semibold"> {{ $t('common.status') }} </span>:
                         {{ $t(`enums.centrum.StatusDispatch.${StatusDispatch[status.status ?? 0]}`) }}
                     </p>

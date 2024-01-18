@@ -439,7 +439,7 @@ async function onSelect(item: any): Promise<any> {
                                 v-if="(rawQuery.startsWith('@') || rawQuery.startsWith('#')) && loading"
                                 class="border-t border-gray-100 px-6 py-14 text-center text-sm sm:px-14"
                             >
-                                <RefreshIcon class="mx-auto h-5 w-5 text-gray-400 animate-spin" aria-hidden="true" />
+                                <RefreshIcon class="mx-auto h-5 w-5 animate-spin text-gray-400" aria-hidden="true" />
                                 <p class="mt-4 font-semibold text-gray-200">
                                     {{ $t('common.loading', [$t('common.result', 2)]) }}
                                 </p>
