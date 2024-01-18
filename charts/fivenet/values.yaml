@@ -235,6 +235,7 @@ fivenet:
             #  roleName: "Fraktionsverwaltung"
             #  permissions: 414690258631
             #  color: "#9B59B6"
+            #  notSameJob: true
             #teamleitung:
             #  roleName: "Teamleitung"
             #  permissions: 416032435935

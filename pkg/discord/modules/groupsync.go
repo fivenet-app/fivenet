@@ -1,6 +1,7 @@
 package modules
 
 import (
+	"errors"
 	"fmt"
 	"math/big"
 	"net/http"
@@ -10,6 +11,7 @@ import (
 	"github.com/bwmarrin/discordgo"
 	"github.com/galexrt/fivenet/pkg/config"
 	jet "github.com/go-jet/jet/v2/mysql"
+	"github.com/go-jet/jet/v2/qrm"
 	"go.uber.org/zap"
 )
 
@@ -110,6 +112,8 @@ func (g *GroupSync) createGroupRoles() error {
 type GroupSyncUser struct {
 	ExternalID string `alias:"external_id"`
 	Group      string `alias:"group"`
+	License    string `alias:"license"`
+	SameJob    bool
 }
 
 func (g *GroupSync) syncGroups() error {
@@ -122,6 +126,7 @@ func (g *GroupSync) syncGroups() error {
 		SELECT(
 			tOauth2Accs.ExternalID.AS("groupsyncuser.external_id"),
 			tUsers.Group.AS("groupsyncuser.group"),
+			tAccs.License.AS("groupsyncuser.license"),
 		).
 		FROM(
 			tOauth2Accs.
@@ -143,6 +148,25 @@ func (g *GroupSync) syncGroups() error {
 	}
 
 	for _, user := range dest {
+		// Get group config based on users group
+		groupCfg, ok := g.groupsToSync[user.Group]
+		if !ok {
+			continue
+		}
+
+		if groupCfg.NotSameJob {
+			has, err := g.checkIfUserHasCharInJob(user.License, g.job)
+			if err != nil {
+				g.logger.Error(fmt.Sprintf("failed to check if user has char in job %s", user.ExternalID), zap.Error(err))
+				continue
+			}
+			if has {
+				g.logger.Debug(fmt.Sprintf("member is part of same job, not setting group %s", user.ExternalID))
+				user.SameJob = true
+				continue
+			}
+		}
+
 		member, err := g.discord.GuildMember(g.guild.ID, user.ExternalID)
 		if err != nil {
 			if restErr, ok := err.(*discordgo.RESTError); ok {
@@ -162,6 +186,27 @@ func (g *GroupSync) syncGroups() error {
 	}
 
 	return g.cleanupUserGroupMembers(dest)
+}
+
+func (g *GroupSync) checkIfUserHasCharInJob(identifier string, job string) (bool, error) {
+	stmt := tUsers.
+		SELECT(
+			tUsers.ID.AS("id"),
+		).
+		FROM(tUsers).
+		WHERE(jet.AND(
+			tUsers.Identifier.LIKE(jet.String("char%:"+identifier)),
+			tUsers.Job.EQ(jet.String(job)),
+		))
+
+	var dest []int32
+	if err := stmt.QueryContext(g.ctx, g.db, &dest); err != nil {
+		if !errors.Is(err, qrm.ErrNoRows) {
+			return false, err
+		}
+	}
+
+	return len(dest) > 0, nil
 }
 
 func (g *GroupSync) setUserGroups(member *discordgo.Member, group string) error {
@@ -200,7 +245,7 @@ func (g *GroupSync) cleanupUserGroupMembers(users []*GroupSyncUser) error {
 			// If user is in the servergroup, all is okay, otherwise remove user from role
 			user := guild.Members[i].User
 			if slices.ContainsFunc(users, func(in *GroupSyncUser) bool {
-				return in.ExternalID == user.ID && g.groupsToSync[in.Group].RoleName == role.Name
+				return in.ExternalID == user.ID && g.groupsToSync[in.Group].RoleName == role.Name && !in.SameJob
 			}) {
 				continue
 			}
