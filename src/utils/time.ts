@@ -21,7 +21,7 @@ export function fromSecondsToFormattedDuration(seconds: number, options?: { seco
     const minutes = Math.floor(seconds / secondsPerMinute);
     seconds -= minutes * secondsPerMinute;
 
-    const parts: String[] = [];
+    const parts: string[] = [];
     if (years > 0) {
         parts.push(`${years} ${t(`common.time_ago.year`, years)}`);
     }
