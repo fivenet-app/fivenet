@@ -1,6 +1,6 @@
 <script lang="ts" setup>
 import ContentCenterWrapper from '~/components/partials/ContentCenterWrapper.vue';
-import HeroFull from '~/components/partials/HeroFull.vue';
+import ContentHeroFull from '~/components/partials/ContentHeroFull.vue';
 import { useAuthStore } from '~/store/auth';
 
 useHead({
@@ -17,7 +17,7 @@ const { accessToken } = storeToRefs(authStore);
 </script>
 
 <template>
-    <HeroFull>
+    <ContentHeroFull>
         <ContentCenterWrapper class="mx-auto max-w-2xl text-center">
             <h1 class="text-5xl font-bold text-neutral">
                 {{ $t('pages.notfound.page_not_found') }}
@@ -44,5 +44,5 @@ const { accessToken } = storeToRefs(authStore);
                 {{ $t('common.home') }}
             </NuxtLink>
         </ContentCenterWrapper>
-    </HeroFull>
+    </ContentHeroFull>
 </template>

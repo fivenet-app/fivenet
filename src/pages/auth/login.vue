@@ -3,7 +3,7 @@ import { type NavigationFailure } from 'vue-router';
 import type { TypedRouteFromName } from '@typed-router';
 import ContentCenterWrapper from '~/components/partials/ContentCenterWrapper.vue';
 import PageFooter from '~/components/partials/PageFooter.vue';
-import HeroFull from '~/components/partials/HeroFull.vue';
+import ContentHeroFull from '~/components/partials/ContentHeroFull.vue';
 import { useAuthStore } from '~/store/auth';
 import { useNotificatorStore } from '~/store/notificator';
 import ForgotPasswordForm from '~/components/auth/ForgotPasswordForm.vue';
@@ -69,7 +69,7 @@ watch(accessToken, async (): Promise<NavigationFailure | TypedRouteFromName<'aut
 
 <template>
     <div class="flex h-full flex-col justify-between">
-        <HeroFull>
+        <ContentHeroFull>
             <ContentCenterWrapper>
                 <FormWrapper>
                     <template #default>
@@ -77,7 +77,7 @@ watch(accessToken, async (): Promise<NavigationFailure | TypedRouteFromName<'aut
                     </template>
                 </FormWrapper>
             </ContentCenterWrapper>
-        </HeroFull>
+        </ContentHeroFull>
 
         <PageFooter />
     </div>

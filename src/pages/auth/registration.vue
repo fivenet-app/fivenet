@@ -1,7 +1,7 @@
 <script lang="ts" setup>
 import ContentCenterWrapper from '~/components/partials/ContentCenterWrapper.vue';
 import PageFooter from '~/components/partials/PageFooter.vue';
-import HeroFull from '~/components/partials/HeroFull.vue';
+import ContentHeroFull from '~/components/partials/ContentHeroFull.vue';
 import RegistrationForm from '~/components/auth/RegistrationForm.vue';
 import FormWrapper from '~/components/auth/FormWrapper.vue';
 
@@ -17,7 +17,7 @@ definePageMeta({
 
 <template>
     <div class="flex h-full flex-col justify-between">
-        <HeroFull>
+        <ContentHeroFull>
             <ContentCenterWrapper>
                 <FormWrapper>
                     <template #default>
@@ -25,7 +25,7 @@ definePageMeta({
                     </template>
                 </FormWrapper>
             </ContentCenterWrapper>
-        </HeroFull>
+        </ContentHeroFull>
         <PageFooter />
     </div>
 </template>

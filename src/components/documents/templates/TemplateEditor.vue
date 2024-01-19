@@ -14,9 +14,9 @@ import { Category } from '~~/gen/ts/resources/documents/category';
 import { ObjectSpecs, TemplateJobAccess, TemplateRequirements } from '~~/gen/ts/resources/documents/templates';
 import { Job, JobGrade } from '~~/gen/ts/resources/users/jobs';
 import { CreateTemplateRequest, UpdateTemplateRequest } from '~~/gen/ts/services/docstore/docstore';
-import SchemaEditor, { type SchemaEditorValue } from '~/components/documents/templates/SchemaEditor.vue';
+import TemplateSchemaEditor, { type SchemaEditorValue } from '~/components/documents/templates/TemplateSchemaEditor.vue';
 import type { ObjectSpecsValue } from '~/components/documents/templates/types';
-import TemplateHint from '~/components/documents/templates/partials/TemplateHint.vue';
+import TemplateSyntaxHint from '~/components/documents/templates/partials/TemplateSyntaxHint.vue';
 
 const props = defineProps<{
     templateId?: string;
@@ -598,7 +598,7 @@ onMounted(async () => {
                         @focusout="focusTablet(false)"
                     />
                     <VeeErrorMessage name="contentTitle" as="p" class="mt-2 text-sm text-error-400" />
-                    <TemplateHint />
+                    <TemplateSyntaxHint />
                 </div>
             </div>
             <div>
@@ -669,7 +669,7 @@ onMounted(async () => {
                         class="block w-full rounded-md border-0 bg-base-700 py-1.5 text-neutral placeholder:text-base-200 focus:ring-2 focus:ring-inset focus:ring-base-300 sm:text-sm sm:leading-6"
                     />
                     <VeeErrorMessage name="contentState" as="p" class="mt-2 text-sm text-error-400" />
-                    <TemplateHint />
+                    <TemplateSyntaxHint />
                 </div>
             </div>
             <div>
@@ -685,10 +685,10 @@ onMounted(async () => {
                         class="block w-full rounded-md border-0 bg-base-700 py-1.5 text-neutral placeholder:text-base-200 focus:ring-2 focus:ring-inset focus:ring-base-300 sm:text-sm sm:leading-6"
                     />
                     <VeeErrorMessage name="content" as="p" class="mt-2 text-sm text-error-400" />
-                    <TemplateHint />
+                    <TemplateSyntaxHint />
                 </div>
             </div>
-            <SchemaEditor v-model="schema" class="mt-2" />
+            <TemplateSchemaEditor v-model="schema" class="mt-2" />
             <div class="my-3">
                 <h2 class="text-neutral">{{ $t('common.content') }} {{ $t('common.access') }}</h2>
                 <DocumentAccessEntry

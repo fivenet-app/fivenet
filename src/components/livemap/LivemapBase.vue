@@ -12,7 +12,7 @@ import CreateOrUpdateMarkerModal from '~/components/livemap/CreateOrUpdateMarker
 import PlayerAndMarkersLayer from '~/components/livemap/PlayerAndMarkersLayer.vue';
 import PostalSearch from '~/components/livemap/controls/PostalSearch.vue';
 import SettingsButton from '~/components/livemap/controls/SettingsButton.vue';
-import CreateOrUpdateDispatchModal from '~/components/centrum/dispatches/CreateOrUpdateDispatchModal.vue';
+import DispatchCreateOrUpdateModal from '~/components/centrum/dispatches/DispatchCreateOrUpdateModal.vue';
 import MapTempMarker from '~/components/livemap/MapTempMarker.vue';
 
 defineProps<{
@@ -90,7 +90,7 @@ async function applySelectedMarkerCentering(): Promise<void> {
 
 <template>
     <div class="relative z-0 h-full w-full">
-        <CreateOrUpdateDispatchModal
+        <DispatchCreateOrUpdateModal
             v-if="can('CentrumService.CreateDispatch')"
             :open="openCreateDispatch"
             @close="openCreateDispatch = false"

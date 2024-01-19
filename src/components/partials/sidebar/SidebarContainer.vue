@@ -20,9 +20,9 @@ import {
 } from 'mdi-vue3';
 import { type DefineComponent } from 'vue';
 import { type RoutesNamedLocations } from '@typed-router';
-import QuickButtons from '~/components/partials/QuickButtons.vue';
+import QuickButtons from '~/components/partials/quickbuttons/QuickButtons.vue';
 import FiveNetLogo from '~/components/partials/logos/FiveNetLogo.vue';
-import JobSwitcher from '~/components/partials/sidebar/JobSwitcher.vue';
+import JobSwitcherMenu from '~/components/partials/sidebar/JobSwitcherMenu.vue';
 import LanguageSwitcherMenu from '~/components/partials/sidebar/LanguageSwitcherMenu.vue';
 import NotificationsButton from '~/components/partials/sidebar/NotificationsButton.vue';
 import { useAuthStore } from '~/store/auth';
@@ -516,7 +516,7 @@ watch(router.currentRoute, () => updateActiveItem());
                             </nav>
                         </div>
                         <div class="ml-2 flex items-center space-x-3 sm:ml-2 sm:space-x-4">
-                            <JobSwitcher v-if="can('SuperUser') && activeChar" />
+                            <JobSwitcherMenu v-if="can('SuperUser') && activeChar" />
                             <div v-if="activeChar" class="hidden text-center text-sm font-medium text-base-200 sm:block">
                                 <span> {{ activeChar.firstname }}, {{ activeChar.lastname }} </span>
                                 <br />

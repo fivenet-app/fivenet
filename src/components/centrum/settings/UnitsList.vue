@@ -5,7 +5,7 @@ import DataNoDataBlock from '~/components/partials/data/DataNoDataBlock.vue';
 import DataPendingBlock from '~/components/partials/data/DataPendingBlock.vue';
 import { Unit } from '~~/gen/ts/resources/centrum/units';
 import CreateOrUpdateUnitModal from '~/components/centrum/settings/CreateOrUpdateUnitModal.vue';
-import ListEntry from '~/components/centrum/settings/ListEntry.vue';
+import UnitsListEntry from '~/components/centrum/settings/UnitsListEntry.vue';
 import SettingsModal from '~/components/centrum/settings/SettingsModal.vue';
 
 const { $grpc } = useNuxtApp();
@@ -94,7 +94,7 @@ const openSettings = ref(false);
                                     </tr>
                                 </thead>
                                 <tbody class="divide-y divide-base-800">
-                                    <ListEntry v-for="unit in units" :key="unit.id" :unit="unit" @updated="refresh()" />
+                                    <UnitsListEntry v-for="unit in units" :key="unit.id" :unit="unit" @updated="refresh()" />
                                 </tbody>
                                 <thead>
                                     <tr>

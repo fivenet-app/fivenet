@@ -1,5 +1,5 @@
 <script lang="ts" setup>
-import List from '~/components/centrum/settings/List.vue';
+import UnitsList from '~/components/centrum/settings/UnitsList.vue';
 
 useHead({
     title: 'common.units',
@@ -14,6 +14,6 @@ definePageMeta({
 
 <template>
     <div class="w-full">
-        <List />
+        <UnitsList />
     </div>
 </template>

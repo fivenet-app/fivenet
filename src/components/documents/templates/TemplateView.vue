@@ -2,7 +2,7 @@
 import { RpcError } from '@protobuf-ts/runtime-rpc';
 import { useConfirmDialog } from '@vueuse/core';
 import DocumentAccessEntry from '~/components/documents/DocumentAccessEntry.vue';
-import PreviewModal from '~/components/documents/templates/PreviewModal.vue';
+import TemplatePreviewModal from '~/components/documents/templates/TemplatePreviewModal.vue';
 import TemplateRequirementsList from '~/components/documents/templates/TemplateRequirementsList.vue';
 import ConfirmDialog from '~/components/partials/ConfirmDialog.vue';
 import DataErrorBlock from '~/components/partials/data/DataErrorBlock.vue';
@@ -168,7 +168,7 @@ onConfirm(async (id) => deleteTemplate(id));
 <template>
     <ConfirmDialog :open="isRevealed" :cancel="cancel" :confirm="() => confirm(templateId)" />
 
-    <PreviewModal v-if="openPreview" :id="templateId" :open="openPreview" @close="openPreview = false" />
+    <TemplatePreviewModal v-if="openPreview" :id="templateId" :open="openPreview" @close="openPreview = false" />
 
     <div class="py-2">
         <DataPendingBlock v-if="pending" :message="$t('common.loading', [$t('common.template', 2)])" />

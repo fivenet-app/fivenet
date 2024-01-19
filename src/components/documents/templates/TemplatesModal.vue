@@ -6,7 +6,7 @@ import ClipboardDocuments from '~/components/clipboard/modal/ClipboardDocuments.
 import ClipboardVehicles from '~/components/clipboard/modal/ClipboardVehicles.vue';
 import { useClipboardStore } from '~/store/clipboard';
 import { TemplateRequirements, TemplateShort } from '~~/gen/ts/resources/documents/templates';
-import List from '~/components/documents/templates/List.vue';
+import TemplatesList from '~/components/documents/templates/TemplatesList.vue';
 import TemplateRequirementsList from '~/components/documents/templates/TemplateRequirementsList.vue';
 
 const clipboardStore = useClipboardStore();
@@ -199,7 +199,7 @@ async function clipboardDialog(): Promise<void> {
                                                     {{ $t('components.documents.templates.templates_modal.no_template') }}
                                                 </NuxtLink>
                                                 <div class="pt-4">
-                                                    <List @selected="(t: TemplateShort) => templateSelected(t)" />
+                                                    <TemplatesList @selected="(t: TemplateShort) => templateSelected(t)" />
                                                 </div>
                                             </div>
                                         </div>

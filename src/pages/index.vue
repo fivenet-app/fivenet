@@ -1,7 +1,7 @@
 <script lang="ts" setup>
 import ContentCenterWrapper from '~/components/partials/ContentCenterWrapper.vue';
 import PageFooter from '~/components/partials/PageFooter.vue';
-import HeroFull from '~/components/partials/HeroFull.vue';
+import ContentHeroFull from '~/components/partials/ContentHeroFull.vue';
 import FiveNetLogo from '~/components/partials/logos/FiveNetLogo.vue';
 import { useAuthStore } from '~/store/auth';
 import { useSettingsStore } from '~/store/settings';
@@ -29,7 +29,7 @@ onBeforeMount(async () => {
 
 <template>
     <div class="flex h-full flex-col justify-between">
-        <HeroFull>
+        <ContentHeroFull>
             <ContentCenterWrapper class="mx-auto max-w-2xl text-center">
                 <div class="px-5 sm:px-0">
                     <FiveNetLogo class="mx-auto mb-2 h-auto w-36" />
@@ -55,7 +55,7 @@ onBeforeMount(async () => {
                     </div>
                 </div>
             </ContentCenterWrapper>
-        </HeroFull>
+        </ContentHeroFull>
         <PageFooter />
     </div>
 </template>

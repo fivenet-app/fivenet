@@ -1,5 +1,5 @@
 <script lang="ts" setup>
-import ComponentModal from '~/components/partials/elements/ComponentModal.vue';
+import GenericModal from '~/components/partials/elements/GenericModal.vue';
 import DisponentsList from '~/components/centrum/disponents/DisponentsList.vue';
 
 defineProps<{
@@ -12,7 +12,7 @@ defineEmits<{
 </script>
 
 <template>
-    <ComponentModal :open="open" dialog-class="!max-w-2xl" @close="$emit('close')">
+    <GenericModal :open="open" dialog-class="!max-w-2xl" @close="$emit('close')">
         <DisponentsList />
-    </ComponentModal>
+    </GenericModal>
 </template>

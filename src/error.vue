@@ -1,6 +1,6 @@
 <script setup lang="ts">
 import ContentCenterWrapper from '~/components/partials/ContentCenterWrapper.vue';
-import HeroFull from '~/components/partials/HeroFull.vue';
+import ContentHeroFull from '~/components/partials/ContentHeroFull.vue';
 import LoadingBar from '~/components/partials/LoadingBar.vue';
 import FiveNetLogo from '~/components/partials/logos/FiveNetLogo.vue';
 
@@ -64,7 +64,7 @@ onBeforeMount(() => {
 <template>
     <div class="h-dscreen">
         <LoadingBar />
-        <HeroFull>
+        <ContentHeroFull>
             <ContentCenterWrapper class="mx-auto max-w-3xl text-center">
                 <FiveNetLogo class="mx-auto mb-2 h-auto w-36" />
 
@@ -142,6 +142,6 @@ onBeforeMount(() => {
                     </button>
                 </div>
             </ContentCenterWrapper>
-        </HeroFull>
+        </ContentHeroFull>
     </div>
 </template>

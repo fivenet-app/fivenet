@@ -3,7 +3,7 @@ import { Dialog, DialogPanel, DialogTitle, TransitionChild, TransitionRoot } fro
 import { RpcError } from '@protobuf-ts/runtime-rpc';
 import { useConfirmDialog } from '@vueuse/core';
 import { AccountGroupIcon, CloseIcon, MapMarkerIcon, PencilIcon, PlusIcon, TrashCanIcon } from 'mdi-vue3';
-import AssignDispatchModal from '~/components/centrum/dispatches//AssignDispatchModal.vue';
+import DispatchAssignModal from '~/components/centrum/dispatches//DispatchAssignModal.vue';
 import DispatchFeed from '~/components/centrum/dispatches/DispatchFeed.vue';
 import DispatchStatusUpdateModal from '~/components/centrum/dispatches/DispatchStatusUpdateModal.vue';
 import { dispatchStatusToBGColor } from '~/components/centrum/helpers';
@@ -267,7 +267,7 @@ const openStatus = ref(false);
                                                                     </ul>
                                                                 </div>
 
-                                                                <AssignDispatchModal
+                                                                <DispatchAssignModal
                                                                     v-if="openAssign"
                                                                     :open="openAssign"
                                                                     :dispatch="dispatch"

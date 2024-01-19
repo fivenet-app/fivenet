@@ -1,7 +1,7 @@
 <script lang="ts" setup>
 import ContentCenterWrapper from '~/components/partials/ContentCenterWrapper.vue';
 import PageFooter from '~/components/partials/PageFooter.vue';
-import HeroFull from '~/components/partials/HeroFull.vue';
+import ContentHeroFull from '~/components/partials/ContentHeroFull.vue';
 import { useAuthStore } from '~/store/auth';
 
 useHead({
@@ -37,7 +37,7 @@ onMounted(async () => {
 
 <template>
     <div class="flex h-full flex-col justify-between">
-        <HeroFull>
+        <ContentHeroFull>
             <ContentCenterWrapper class="mx-auto max-w-2xl text-center">
                 <h2 class="text-4xl font-bold tracking-tight text-neutral sm:text-6xl">
                     {{ $t('components.auth.logout.header') }}
@@ -46,7 +46,7 @@ onMounted(async () => {
                     {{ $t('components.auth.logout.subtitle') }}
                 </p>
             </ContentCenterWrapper>
-        </HeroFull>
+        </ContentHeroFull>
         <PageFooter />
     </div>
 </template>

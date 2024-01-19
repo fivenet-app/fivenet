@@ -1,5 +1,5 @@
 <script lang="ts" setup>
-import Editor from '~/components/documents/templates/Editor.vue';
+import TemplateEditor from '~/components/documents/templates/TemplateEditor.vue';
 import ContentWrapper from '~/components/partials/ContentWrapper.vue';
 
 useHead({
@@ -14,6 +14,6 @@ definePageMeta({
 
 <template>
     <ContentWrapper>
-        <Editor />
+        <TemplateEditor />
     </ContentWrapper>
 </template>

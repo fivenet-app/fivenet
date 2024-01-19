@@ -26,7 +26,7 @@ import {
 import { type DocActivity, DocActivityType } from '~~/gen/ts/resources/documents/activity';
 import CitizenInfoPopover from '~/components/partials/citizens/CitizenInfoPopover.vue';
 import GenericTime from '~/components/partials/elements/GenericTime.vue';
-import DocUpdatedDiff from '~/components/documents/activity/DocUpdatedDiff.vue';
+import ActivityDocUpdatedDiff from '~/components/documents/activity/ActivityDocUpdatedDiff.vue';
 
 defineProps<{
     entry: DocActivity;
@@ -148,7 +148,10 @@ function getDocAtivityIcon(activityType: DocActivityType): DefineComponent {
             </DisclosureButton>
             <DisclosurePanel class="px-4 pb-2 pt-2">
                 <template v-if="entry.activityType === DocActivityType.UPDATED">
-                    <DocUpdatedDiff v-if="entry.data?.data.oneofKind === 'updated'" :update="entry.data?.data.updated" />
+                    <ActivityDocUpdatedDiff
+                        v-if="entry.data?.data.oneofKind === 'updated'"
+                        :update="entry.data?.data.updated"
+                    />
                 </template>
             </DisclosurePanel>
         </Disclosure>

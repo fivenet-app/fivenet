@@ -1,6 +1,6 @@
 <script lang="ts" setup>
 import { HumanIcon } from 'mdi-vue3';
-import ComponentModal from '~/components/partials/elements/ComponentModal.vue';
+import GenericModal from '~/components/partials/elements/GenericModal.vue';
 import BodyCheckup from '~/components/bodycheckup/BodyCheckup.vue';
 
 const open = ref(false);
@@ -15,7 +15,7 @@ const open = ref(false);
         <HumanIcon class="h-auto w-10" />
     </button>
 
-    <ComponentModal :open="open" @close="open = false">
+    <GenericModal :open="open" @close="open = false">
         <BodyCheckup />
-    </ComponentModal>
+    </GenericModal>
 </template>

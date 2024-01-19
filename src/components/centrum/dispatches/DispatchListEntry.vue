@@ -2,7 +2,7 @@
 import { useDebounceFn } from '@vueuse/core';
 import { useSound } from '@vueuse/sound';
 import { AccountMultiplePlusIcon, CloseOctagonIcon, DotsVerticalIcon, MapMarkerIcon } from 'mdi-vue3';
-import AssignDispatchModal from '~/components/centrum/dispatches/AssignDispatchModal.vue';
+import DispatchAssignModal from '~/components/centrum/dispatches/DispatchAssignModal.vue';
 import DispatchDetails from '~/components/centrum/dispatches/DispatchDetails.vue';
 import DispatchStatusUpdateModal from '~/components/centrum/dispatches/DispatchStatusUpdateModal.vue';
 import { dispatchStatusAnimate, dispatchStatusToBGColor } from '~/components/centrum/helpers';
@@ -47,7 +47,7 @@ const openStatus = ref(false);
 <template>
     <tr class="transition-colors even:bg-base-800 hover:bg-neutral/5">
         <DispatchDetails :dispatch="dispatch" :open="openDetails" @close="openDetails = false" @goto="$emit('goto', $event)" />
-        <AssignDispatchModal v-if="openAssign" :open="openAssign" :dispatch="dispatch" @close="openAssign = false" />
+        <DispatchAssignModal v-if="openAssign" :open="openAssign" :dispatch="dispatch" @close="openAssign = false" />
         <DispatchStatusUpdateModal
             v-if="openStatus"
             :open="openStatus"
