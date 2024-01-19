@@ -7,9 +7,9 @@ import { defineRule } from 'vee-validate';
 import DataNoDataBlock from '~/components/partials/data/DataNoDataBlock.vue';
 import TablePagination from '~/components/partials/elements/TablePagination.vue';
 import { useAuthStore } from '~/store/auth';
-import { Comment } from '~~/gen/ts/resources/documents/comment';
+import { type Comment } from '~~/gen/ts/resources/documents/comment';
 import { GetCommentsResponse } from '~~/gen/ts/services/docstore/docstore';
-import CommentEntry from '~/components/documents/CommentEntry.vue';
+import DocumentCommentEntry from '~/components/documents/CommentEntry.vue';
 import DataPendingBlock from '~/components/partials/data/DataPendingBlock.vue';
 import DataErrorBlock from '~/components/partials/data/DataErrorBlock.vue';
 
@@ -235,7 +235,7 @@ const onSubmitThrottle = useThrottleFn(async (e) => {
                 class="flow-root rounded-lg rounded-lg bg-base-800 text-neutral shadow-sm shadow-sm ring-1 ring-inset ring-gray-500 focus-within:ring-2 focus-within:ring-primary-600"
             >
                 <ul role="list" class="divide-y divide-gray-200 px-4">
-                    <CommentEntry
+                    <DocumentCommentEntry
                         v-for="(comment, idx) in data?.comments"
                         :key="comment.id"
                         v-model:comment="data.comments[idx]"

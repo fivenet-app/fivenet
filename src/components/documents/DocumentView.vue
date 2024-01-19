@@ -35,8 +35,8 @@ import GenericTime from '~/components/partials/elements/GenericTime.vue';
 import { useClipboardStore } from '~/store/clipboard';
 import { useNotificatorStore } from '~/store/notificator';
 import { AccessLevel, DocumentAccess } from '~~/gen/ts/resources/documents/access';
-import { Document } from '~~/gen/ts/resources/documents/documents';
-import Comments from '~/components/documents/Comments.vue';
+import { type Document } from '~~/gen/ts/resources/documents/documents';
+import DocumentComments from '~/components/documents/DocumentComments.vue';
 import References from '~/components/documents/References.vue';
 import Relations from '~/components/documents/Relations.vue';
 import { checkDocAccess } from '~/components/documents/helpers';
@@ -589,7 +589,7 @@ if (hash.value !== undefined && hash.value !== null) {
                                     </h2>
 
                                     <div class="px-2 pb-2">
-                                        <Comments
+                                        <DocumentComments
                                             :document-id="documentId"
                                             :closed="doc?.closed"
                                             :can-comment="checkDocAccess(access, doc.creator, AccessLevel.COMMENT)"

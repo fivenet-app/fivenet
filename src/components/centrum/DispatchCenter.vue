@@ -4,7 +4,7 @@ import 'splitpanes/dist/splitpanes.css';
 import DispatchList from '~/components/centrum/dispatches/DispatchList.vue';
 import DisponentsInfo from '~/components/centrum/disponents/DisponentsInfo.vue';
 import UnitList from '~/components/centrum/units/UnitList.vue';
-import Livemap from '~/components/livemap/Livemap.vue';
+import LivemapBase from '~/components/livemap/LivemapBase.vue';
 import DataErrorBlock from '~/components/partials/data/DataErrorBlock.vue';
 import DataPendingBlock from '~/components/partials/data/DataPendingBlock.vue';
 import { setWaypoint } from '~/composables/nui';
@@ -55,7 +55,7 @@ function goto(e: Coordinate) {
             <Pane min-size="25">
                 <Splitpanes horizontal>
                     <Pane min-size="80" size="90">
-                        <Livemap :show-unit-names="true" :show-unit-status="true" @goto="goto($event)">
+                        <LivemapBase :show-unit-names="true" :show-unit-status="true" @goto="goto($event)">
                             <template #default>
                                 <DispatchesLayer
                                     v-if="can('CentrumService.Stream')"
@@ -63,7 +63,7 @@ function goto(e: Coordinate) {
                                     @goto="goto($event)"
                                 />
                             </template>
-                        </Livemap>
+                        </LivemapBase>
                     </Pane>
                     <Pane min-size="8" size="10">
                         <DisponentsInfo />

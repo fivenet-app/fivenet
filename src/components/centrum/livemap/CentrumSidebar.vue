@@ -36,6 +36,7 @@ import DispatchesLayer from '~/components/centrum/livemap/DispatchesLayer.vue';
 import JoinUnitModal from '~/components/centrum/livemap/JoinUnitModal.vue';
 import TakeDispatchModal from '~/components/centrum/livemap/TakeDispatchModal.vue';
 import { useAuthStore } from '~/store/auth';
+import LivemapBase from '~/components/livemap/LivemapBase.vue';
 
 defineEmits<{
     (e: 'goto', loc: Coordinate): void;
@@ -299,7 +300,7 @@ async function checkup(): Promise<void> {
 </script>
 
 <template>
-    <Livemap @goto="$emit('goto', $event)">
+    <LivemapBase @goto="$emit('goto', $event)">
         <template v-if="canStream" #default>
             <DispatchesLayer :show-all-dispatches="getCurrentMode === CentrumMode.SIMPLIFIED" @goto="$emit('goto', $event)" />
 
@@ -607,5 +608,5 @@ async function checkup(): Promise<void> {
                 </span>
             </div>
         </template>
-    </Livemap>
+    </LivemapBase>
 </template>
