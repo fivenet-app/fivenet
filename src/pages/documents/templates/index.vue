@@ -1,5 +1,5 @@
 <script lang="ts" setup>
-import List from '~/components/documents/templates/List.vue';
+import TemplatesList from '~/components/documents/templates/TemplatesList.vue';
 import ContentWrapper from '~/components/partials/ContentWrapper.vue';
 import { TemplateShort } from '~~/gen/ts/resources/documents/templates';
 
@@ -38,7 +38,7 @@ async function selected(t: TemplateShort): Promise<void> {
                 <div class="mt-2 flow-root">
                     <div class="-my-2 mx-0 overflow-x-auto">
                         <div class="inline-block min-w-full px-1 py-2 align-middle">
-                            <List @selected="selected($event)" />
+                            <TemplatesList @selected="selected($event)" />
                         </div>
                     </div>
                 </div>
