@@ -9,7 +9,7 @@ import TablePagination from '~/components/partials/elements/TablePagination.vue'
 import { useAuthStore } from '~/store/auth';
 import { type Comment } from '~~/gen/ts/resources/documents/comment';
 import { GetCommentsResponse } from '~~/gen/ts/services/docstore/docstore';
-import DocumentCommentEntry from '~/components/documents/CommentEntry.vue';
+import DocumentCommentEntry from '~/components/documents/DocumentCommentEntry.vue';
 import DataPendingBlock from '~/components/partials/data/DataPendingBlock.vue';
 import DataErrorBlock from '~/components/partials/data/DataErrorBlock.vue';
 

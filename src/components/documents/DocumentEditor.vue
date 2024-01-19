@@ -48,8 +48,8 @@ import { Job, JobGrade } from '~~/gen/ts/resources/users/jobs';
 import { UserShort } from '~~/gen/ts/resources/users/users';
 import { CreateDocumentRequest, UpdateDocumentRequest } from '~~/gen/ts/services/docstore/docstore';
 import DocumentAccessEntry from '~/components/documents/DocumentAccessEntry.vue';
-import ReferenceManager from '~/components/documents/ReferenceManager.vue';
-import RelationManager from '~/components/documents/RelationManager.vue';
+import DocumentReferenceManager from '~/components/documents/DocumentReferenceManager.vue';
+import DocumentRelationManager from '~/components/documents/DocumentRelationManager.vue';
 import { checkDocAccess } from '~/components/documents/helpers';
 
 const props = defineProps<{
@@ -852,13 +852,13 @@ function setupCheckboxes(): void {
 <template>
     <div class="m-2">
         <form @submit.prevent="onSubmitThrottle">
-            <RelationManager
+            <DocumentRelationManager
                 v-model="relationManagerData"
                 :open="relationManagerShow"
                 :document="id"
                 @close="relationManagerShow = false"
             />
-            <ReferenceManager
+            <DocumentReferenceManager
                 v-model="referenceManagerData"
                 :open="referenceManagerShow"
                 :document-id="id"

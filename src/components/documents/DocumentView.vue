@@ -37,8 +37,8 @@ import { useNotificatorStore } from '~/store/notificator';
 import { AccessLevel, DocumentAccess } from '~~/gen/ts/resources/documents/access';
 import { type Document } from '~~/gen/ts/resources/documents/documents';
 import DocumentComments from '~/components/documents/DocumentComments.vue';
-import References from '~/components/documents/References.vue';
-import Relations from '~/components/documents/Relations.vue';
+import DocumentReferences from '~/components/documents/DocumentReferences.vue';
+import DocumentRelations from '~/components/documents/DocumentRelations.vue';
 import { checkDocAccess } from '~/components/documents/helpers';
 import DocumentActivityList from '~/components/documents/DocumentActivityList.vue';
 import DocumentRequestsModal from '~/components/documents/DocumentRequestsModal.vue';
@@ -468,7 +468,7 @@ if (hash.value !== undefined && hash.value !== null) {
                                 </DisclosureButton>
                                 <DisclosurePanel class="rounded-b-lg border-2 border-t-0 border-inherit transition-colors">
                                     <div class="mx-4 pb-2">
-                                        <Relations :document-id="documentId" :show-document="false" />
+                                        <DocumentRelations :document-id="documentId" :show-document="false" />
                                     </div>
                                 </DisclosurePanel>
                             </Disclosure>
@@ -499,7 +499,7 @@ if (hash.value !== undefined && hash.value !== null) {
                                 </DisclosureButton>
                                 <DisclosurePanel class="rounded-b-lg border-2 border-t-0 border-inherit transition-colors">
                                     <div class="mx-4 pb-2">
-                                        <References :document-id="documentId" :show-source="false" />
+                                        <DocumentReferences :document-id="documentId" :show-source="false" />
                                     </div>
                                 </DisclosurePanel>
                             </Disclosure>
