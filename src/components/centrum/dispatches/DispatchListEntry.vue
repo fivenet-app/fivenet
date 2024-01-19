@@ -42,8 +42,6 @@ watch(props, () => {
 const openDetails = ref(false);
 const openAssign = ref(false);
 const openStatus = ref(false);
-
-const openMessage = ref(false);
 </script>
 
 <template>
@@ -133,18 +131,10 @@ const openMessage = ref(false);
                 {{ $t('common.unknown') }}
             </span>
         </td>
-        <td class="px-1 py-1 text-sm text-gray-300">
-            <p class="max-h-22 break-all" :class="openMessage ? '' : 'line-clamp-1 max-w-sm'">
+        <td class="inline-flex min-w-36 items-center px-1 py-1 text-sm text-gray-300">
+            <p class="line-clamp-2 hover:line-clamp-6">
                 {{ dispatch.message }}
             </p>
-            <button
-                v-if="dispatch.message.length > 40"
-                type="button"
-                class="flex justify-center rounded-md bg-accent-500 px-1 py-1 text-sm font-semibold text-neutral transition-colors hover:bg-accent-400 focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-accent-500"
-                @click="openMessage = !openMessage"
-            >
-                {{ openMessage ? $t('common.read_less') : $t('common.read_more') }}
-            </button>
         </td>
     </tr>
 </template>

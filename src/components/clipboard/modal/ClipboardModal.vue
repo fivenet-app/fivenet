@@ -2,9 +2,9 @@
 import { Dialog, DialogPanel, DialogTitle, TransitionChild, TransitionRoot } from '@headlessui/vue';
 import { ClipboardListIcon } from 'mdi-vue3';
 import { useClipboardStore } from '~/store/clipboard';
-import Citizens from '~/components/clipboard/modal/Citizens.vue';
-import Documents from '~/components/clipboard/modal/Documents.vue';
-import Vehicles from '~/components/clipboard/modal/Vehicles.vue';
+import ClipboardCitizens from '~/components/clipboard/modal/ClipboardCitizens.vue';
+import ClipboardDocuments from '~/components/clipboard/modal/ClipboardDocuments.vue';
+import ClipboardVehicles from '~/components/clipboard/modal/ClipboardVehicles.vue';
 
 const clipboardStore = useClipboardStore();
 
@@ -55,9 +55,9 @@ defineEmits<{
                                         {{ $t('components.clipboard.clipboard_modal.title') }}
                                     </DialogTitle>
                                     <div class="mt-2">
-                                        <Citizens />
-                                        <Vehicles />
-                                        <Documents />
+                                        <ClipboardCitizens />
+                                        <ClipboardVehicles />
+                                        <ClipboardDocuments />
                                     </div>
                                 </div>
                             </div>

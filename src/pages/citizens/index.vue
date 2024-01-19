@@ -1,5 +1,5 @@
 <script lang="ts" setup>
-import List from '~/components/citizens/List.vue';
+import CitizensList from '~/components/citizens/CitizensList.vue';
 import ClipboardButton from '~/components/clipboard/ClipboardButton.vue';
 
 useHead({
@@ -14,7 +14,7 @@ definePageMeta({
 
 <template>
     <div class="w-full">
-        <List />
+        <CitizensList />
         <ClipboardButton />
     </div>
 </template>

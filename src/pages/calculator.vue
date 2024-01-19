@@ -1,5 +1,5 @@
 <script lang="ts" setup>
-import Calculator from '~/components/penaltycalculator/Calculator.vue';
+import Calculator from '~/components/penaltycalculator/PenaltyCalculator.vue';
 
 useHead({
     title: 'components.penaltycalculator.title',

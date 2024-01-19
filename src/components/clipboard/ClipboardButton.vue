@@ -1,13 +1,13 @@
 <script lang="ts" setup>
 import { ClipboardListIcon } from 'mdi-vue3';
 import { ref } from 'vue';
-import Modal from '~/components/clipboard/modal/Modal.vue';
+import ClipboardModal from '~/components/clipboard/modal/ClipboardModal.vue';
 
 const open = ref(false);
 </script>
 
 <template>
-    <Modal :open="open" @close="open = false" />
+    <ClipboardModal :open="open" @close="open = false" />
 
     <button
         type="button"

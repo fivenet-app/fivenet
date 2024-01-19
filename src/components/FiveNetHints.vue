@@ -2,7 +2,7 @@
 import { ArrowLeftBoldCircleIcon, ArrowRightBoldCircleIcon, InformationSlabCircleIcon } from 'mdi-vue3';
 import { useCounter } from '@vueuse/core';
 import { type RoutesNamedLocations } from '@typed-router';
-import GenericBadge from '~/components/partials/GenericBadge.vue';
+import GenericBadge from '~/components/partials/elements/GenericBadge.vue';
 
 type Hint = { key: string; keyboard?: boolean; link?: RoutesNamedLocations };
 

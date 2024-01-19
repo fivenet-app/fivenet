@@ -4,12 +4,12 @@ import { ChevronDownIcon, GavelIcon } from 'mdi-vue3';
 import DataErrorBlock from '~/components/partials/data/DataErrorBlock.vue';
 import DataNoDataBlock from '~/components/partials/data/DataNoDataBlock.vue';
 import DataPendingBlock from '~/components/partials/data/DataPendingBlock.vue';
-import ListEntry from '~/components/penaltycalculator/ListEntry.vue';
-import Stats from '~/components/penaltycalculator/Stats.vue';
+import LawListEntry from '~/components/penaltycalculator/LawListEntry.vue';
+import PenaltyStats from '~/components/penaltycalculator/PenaltyStats.vue';
 import { useCompletorStore } from '~/store/completor';
 import { useNotificatorStore } from '~/store/notificator';
 import { Law } from '~~/gen/ts/resources/laws/laws';
-import SummaryTable from '~/components/penaltycalculator/SummaryTable.vue';
+import PenaltySummaryTable from '~/components/penaltycalculator/PenaltySummaryTable.vue';
 import GenericDivider from '~/components/partials/elements/GenericDivider.vue';
 
 const completorStore = useCompletorStore();
@@ -240,7 +240,7 @@ ${t('common.crime', selectedPenalties.value.length)}:
                                                         </tr>
                                                     </thead>
                                                     <tbody class="divide-y divide-base-800">
-                                                        <ListEntry
+                                                        <LawListEntry
                                                             v-for="law in lawBook.laws"
                                                             :key="law.id"
                                                             :law="law"
@@ -265,10 +265,10 @@ ${t('common.crime', selectedPenalties.value.length)}:
                 <div class="overflow-x-auto sm:-mx-6 lg:-mx-8">
                     <div class="inline-block min-w-full py-2 align-middle sm:px-6 lg:px-8">
                         <div class="text-xl text-neutral">
-                            <Stats :summary="summary" />
+                            <PenaltyStats :summary="summary" />
 
                             <div class="mt-4">
-                                <SummaryTable
+                                <PenaltySummaryTable
                                     v-if="lawBooks && lawBooks.length > 0"
                                     :law-books="lawBooks"
                                     :selected-laws="selectedPenalties"

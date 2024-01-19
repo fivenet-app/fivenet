@@ -6,7 +6,7 @@ import DataNoDataBlock from '~/components/partials/data/DataNoDataBlock.vue';
 import DataPendingBlock from '~/components/partials/data/DataPendingBlock.vue';
 import TablePagination from '~/components/partials/elements/TablePagination.vue';
 import { ListUserActivityResponse } from '~~/gen/ts/services/citizenstore/citizenstore';
-import ActivityFeedEntry from '~/components/citizens/info/ActivityFeedEntry.vue';
+import CitizenActivityFeedEntry from '~/components/citizens/info/CitizenActivityFeedEntry.vue';
 
 const { $grpc } = useNuxtApp();
 
@@ -63,7 +63,7 @@ watch(offset, async () => refresh());
                         <div v-else>
                             <ul role="list" class="divide-y divide-gray-200">
                                 <li v-for="activity in data?.activity" :key="activity.id" class="py-4">
-                                    <ActivityFeedEntry :activity="activity" />
+                                    <CitizenActivityFeedEntry :activity="activity" />
                                 </li>
                             </ul>
 

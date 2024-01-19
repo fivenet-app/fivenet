@@ -73,7 +73,7 @@ const openStatus = ref(false);
                                                                 {{ $t('common.description') }}
                                                             </dt>
                                                             <dd
-                                                                class="max-h-22 mt-2 text-sm text-gray-300 sm:col-span-2 sm:mt-0"
+                                                                class="mt-2 max-h-24 text-sm text-gray-300 sm:col-span-2 sm:mt-0"
                                                             >
                                                                 <p class="whitespace-pre break-words">
                                                                     {{ unit.description ?? $t('common.na') }}

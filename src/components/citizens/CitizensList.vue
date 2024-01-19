@@ -12,7 +12,7 @@ import TablePagination from '~/components/partials/elements/TablePagination.vue'
 import { attr } from '~/composables/can';
 import GenericInput from '~/composables/partials/forms/GenericInput.vue';
 import { ListCitizensRequest, ListCitizensResponse } from '~~/gen/ts/services/citizenstore/citizenstore';
-import ListEntry from '~/components/citizens/ListEntry.vue';
+import CitizensListEntry from '~/components/citizens/CitizensListEntry.vue';
 
 const { $grpc } = useNuxtApp();
 
@@ -309,7 +309,7 @@ watchDebounced(query.value, () => refresh(), { debounce: 600, maxWait: 1400 });
                                     </tr>
                                 </thead>
                                 <tbody class="divide-y divide-base-800">
-                                    <ListEntry v-for="user in data?.users" :key="user.userId" :user="user" />
+                                    <CitizensListEntry v-for="user in data?.users" :key="user.userId" :user="user" />
                                 </tbody>
                                 <thead>
                                     <tr>

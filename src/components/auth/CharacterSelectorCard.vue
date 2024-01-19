@@ -1,7 +1,7 @@
 <script lang="ts" setup>
 import { useThrottleFn } from '@vueuse/core';
 import { LoadingIcon } from 'mdi-vue3';
-import CharSexBadge from '~/components/citizens/CharSexBadge.vue';
+import CharSexBadge from '~/components/partials/citizens/CharSexBadge.vue';
 import { useAuthStore } from '~/store/auth';
 import { fromSecondsToFormattedDuration } from '~/utils/time';
 import { User } from '~~/gen/ts/resources/users/users';
@@ -27,20 +27,20 @@ const onSubmitThrottle = useThrottleFn(async (_) => {
         <div class="flex flex-1 flex-col p-8">
             <div class="mx-auto flex flex-row items-center gap-3">
                 <h2 class="text-center text-2xl font-medium text-neutral">{{ char.firstname }}, {{ char.lastname }}</h2>
-                <CharSexBadge :sex="char.sex!" />
-                <span
-                    v-if="lastCharID === char.userId"
-                    class="inline-flex items-center rounded-full bg-success-100 px-3 py-0.5 text-center text-sm font-medium text-success-800"
-                >
-                    {{ $t('common.last_used') }}
-                </span>
             </div>
             <dl class="mt-2 flex flex-grow flex-col justify-between text-center">
-                <dd class="mb-2 mt-2">
+                <dd class="mb-2 inline-flex items-center justify-center gap-1">
+                    <CharSexBadge :sex="char.sex!" />
                     <span
                         class="inline-flex items-center rounded-full bg-gray-100 px-2.5 py-0.5 text-sm font-medium text-gray-800"
                         >{{ char.jobLabel }} ({{ $t('common.rank') }}: {{ char.jobGradeLabel }})</span
                     >
+                    <span
+                        v-if="lastCharID === char.userId"
+                        class="rounded-full bg-success-100 px-3 py-0.5 text-center text-sm font-medium text-success-800"
+                    >
+                        {{ $t('common.last_used') }}
+                    </span>
                 </dd>
                 <dt class="text-sm font-medium text-neutral">
                     {{ $t('common.date_of_birth') }}

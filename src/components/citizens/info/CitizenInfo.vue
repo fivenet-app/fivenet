@@ -6,10 +6,10 @@ import AddToButton from '~/components/clipboard/AddToButton.vue';
 import { useClipboardStore } from '~/store/clipboard';
 import { useNotificatorStore } from '~/store/notificator';
 import { User } from '~~/gen/ts/resources/users/users';
-import ActivityFeed from '~/components/citizens/info/ActivityFeed.vue';
-import Documents from '~/components/citizens/info/Documents.vue';
-import Profile from '~/components/citizens/info/Profile.vue';
-import Vehicles from '~/components/citizens/info/Vehicles.vue';
+import CitizenActivityFeed from '~/components/citizens/info/CitizenActivityFeed.vue';
+import CitizenDocuments from '~/components/citizens/info/CitizenDocuments.vue';
+import CitizenProfile from '~/components/citizens/info/CitizenProfile.vue';
+import CitizenVehicles from '~/components/citizens/info/CitizenVehicles.vue';
 import ClipboardButton from '~/components/clipboard/ClipboardButton.vue';
 import DataErrorBlock from '~/components/partials/data/DataErrorBlock.vue';
 import DataNoDataBlock from '~/components/partials/data/DataNoDataBlock.vue';
@@ -150,7 +150,7 @@ function addToClipboard(): void {
                     </TabList>
                     <TabPanels>
                         <TabPanel>
-                            <Profile
+                            <CitizenProfile
                                 :user="user"
                                 @update:wanted-status="user.props!.wanted = $event"
                                 @update:job="
@@ -163,13 +163,13 @@ function addToClipboard(): void {
                             />
                         </TabPanel>
                         <TabPanel v-if="can('DMVService.ListVehicles')">
-                            <Vehicles :user-id="user.userId" />
+                            <CitizenVehicles :user-id="user.userId" />
                         </TabPanel>
                         <TabPanel v-if="can('DocStoreService.ListUserDocuments')">
-                            <Documents :user-id="user.userId" />
+                            <CitizenDocuments :user-id="user.userId" />
                         </TabPanel>
                         <TabPanel v-if="can('CitizenStoreService.ListUserActivity')">
-                            <ActivityFeed :user-id="user.userId" />
+                            <CitizenActivityFeed :user-id="user.userId" />
                         </TabPanel>
                     </TabPanels>
                 </TabGroup>

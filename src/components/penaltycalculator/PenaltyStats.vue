@@ -1,5 +1,5 @@
 <script lang="ts" setup>
-import { type PenaltiesSummary } from '~/components/penaltycalculator/Calculator.vue';
+import { type PenaltiesSummary } from '~/components/penaltycalculator/PenaltyCalculator.vue';
 
 defineProps<{
     summary: PenaltiesSummary;

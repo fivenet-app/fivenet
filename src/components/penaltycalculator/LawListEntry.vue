@@ -1,6 +1,6 @@
 <script lang="ts" setup>
-import { type SelectedPenalty } from '~/components/penaltycalculator/Calculator.vue';
-import { Law } from '~~/gen/ts/resources/laws/laws';
+import { type SelectedPenalty } from '~/components/penaltycalculator/PenaltyCalculator.vue';
+import { type Law } from '~~/gen/ts/resources/laws/laws';
 
 const props = defineProps<{
     law: Law;

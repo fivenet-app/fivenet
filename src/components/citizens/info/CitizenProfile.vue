@@ -1,16 +1,16 @@
 <script lang="ts" setup>
 import { LicenseIcon } from 'mdi-vue3';
 import { ref } from 'vue';
-import CharSexBadge from '~/components/citizens/CharSexBadge.vue';
-import JobModal from '~/components/citizens/info/JobModal.vue';
+import CharSexBadge from '~/components/partials/citizens/CharSexBadge.vue';
+import CitizenSetJobModal from '~/components/citizens/info/CitizenSetJobModal.vue';
 import TemplatesModal from '~/components/documents/templates/TemplatesModal.vue';
 import IDCopyBadge from '~/components/partials/IDCopyBadge.vue';
 import PhoneNumberBlock from '~/components/partials/citizens/PhoneNumberBlock.vue';
 import { attr } from '~/composables/can';
 import { useClipboardStore } from '~/store/clipboard';
 import { User } from '~~/gen/ts/resources/users/users';
-import TrafficPointsModal from '~/components/citizens/info/TrafficPointsModal.vue';
-import WantedModal from '~/components/citizens/info/WantedModal.vue';
+import CitizenSetTrafficPointsModal from '~/components/citizens/info/CitizenSetTrafficPointsModal.vue';
+import CitizenSetWantedModal from '~/components/citizens/info/CitizenSetWantedModal.vue';
 import type { Job, JobGrade } from '~~/gen/ts/resources/users/jobs';
 
 const clipboardStore = useClipboardStore();
@@ -47,19 +47,19 @@ const trafficPointsModal = ref(false);
                 <div class="-my-2 mx-0 overflow-x-auto">
                     <div class="inline-block min-w-full px-1 align-middle">
                         <TemplatesModal :open="templatesOpen" :auto-fill="true" @close="templatesOpen = false" />
-                        <WantedModal
+                        <CitizenSetWantedModal
                             :open="setWantedModal"
                             :user="user"
                             @close="setWantedModal = false"
                             @update:wanted-status="$emit('update:wantedStatus', $event)"
                         />
-                        <JobModal
+                        <CitizenSetJobModal
                             :user="user"
                             :open="setJobModal"
                             @close="setJobModal = false"
                             @update:job="$emit('update:job', $event)"
                         />
-                        <TrafficPointsModal
+                        <CitizenSetTrafficPointsModal
                             :open="trafficPointsModal"
                             :user="user"
                             @close="trafficPointsModal = false"

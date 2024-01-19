@@ -1,9 +1,9 @@
 <script lang="ts" setup>
 import { Dialog, DialogPanel, DialogTitle, TransitionChild, TransitionRoot } from '@headlessui/vue';
 import { CloseIcon, PencilIcon } from 'mdi-vue3';
-import Citizens from '~/components/clipboard/modal/Citizens.vue';
-import Documents from '~/components/clipboard/modal/Documents.vue';
-import Vehicles from '~/components/clipboard/modal/Vehicles.vue';
+import ClipboardCitizens from '~/components/clipboard/modal/ClipboardCitizens.vue';
+import ClipboardDocuments from '~/components/clipboard/modal/ClipboardDocuments.vue';
+import ClipboardVehicles from '~/components/clipboard/modal/ClipboardVehicles.vue';
 import { useClipboardStore } from '~/store/clipboard';
 import { TemplateRequirements, TemplateShort } from '~~/gen/ts/resources/documents/templates';
 import List from '~/components/documents/templates/List.vue';
@@ -232,7 +232,7 @@ async function clipboardDialog(): Promise<void> {
                                                     />
                                                 </p>
 
-                                                <Citizens
+                                                <ClipboardCitizens
                                                     :submit.sync="submit"
                                                     :specs="reqs.users!"
                                                     @statisfied="(v: boolean) => (reqStatus.users = v)"
@@ -246,7 +246,7 @@ async function clipboardDialog(): Promise<void> {
                                                     />
                                                 </p>
 
-                                                <Vehicles
+                                                <ClipboardVehicles
                                                     :submit.sync="submit"
                                                     :specs="reqs.vehicles!"
                                                     @statisfied="(v: boolean) => (reqStatus.vehicles = v)"
@@ -260,7 +260,7 @@ async function clipboardDialog(): Promise<void> {
                                                     />
                                                 </p>
 
-                                                <Documents
+                                                <ClipboardDocuments
                                                     :submit.sync="submit"
                                                     :specs="reqs.documents!"
                                                     @statisfied="(v: boolean) => (reqStatus.documents = v)"

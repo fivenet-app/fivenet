@@ -1,7 +1,7 @@
 <script lang="ts" setup>
 import { CalculatorIcon } from 'mdi-vue3';
 import ComponentModal from '~/components/partials/elements/ComponentModal.vue';
-import Calculator from '~/components/penaltycalculator/Calculator.vue';
+import Calculator from '~/components/penaltycalculator/PenaltyCalculator.vue';
 
 const open = ref(false);
 </script>

@@ -1,6 +1,6 @@
 <script lang="ts" setup>
 import { type TypedRouteFromName } from '@typed-router';
-import Info from '~/components/citizens/info/Info.vue';
+import CitizenInfo from '~/components/citizens/info/CitizenInfo.vue';
 import ContentWrapper from '~/components/partials/ContentWrapper.vue';
 
 useHead({
@@ -22,6 +22,6 @@ const route = useRoute('citizens-id');
 
 <template>
     <ContentWrapper>
-        <Info :id="route.params.id" />
+        <CitizenInfo :id="route.params.id" />
     </ContentWrapper>
 </template>

@@ -7,7 +7,7 @@ const { data: license, pending, error } = await useFetch(props.path);
 </script>
 
 <template>
-    <p v-if="pending || !license" class="text-lg text-black">Loading...</p>
+    <p v-if="pending || !license" class="text-lg text-black">{{ $t('common.loading', $t('common.licenses')) }}</p>
     <p v-else-if="error" class="text-lg text-black">Error loading: {{ error?.message }}</p>
     <code
         v-else-if="license"
