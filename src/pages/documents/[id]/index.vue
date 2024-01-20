@@ -24,6 +24,7 @@ const route = useRoute('documents-id');
 <template>
     <ContentWrapper>
         <DocumentView :document-id="route.params.id as string" />
+
         <ClipboardButton />
     </ContentWrapper>
 </template>

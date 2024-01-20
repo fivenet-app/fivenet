@@ -50,7 +50,7 @@ onBeforeUnmount(() => {
                             :class="[
                                 disabled
                                     ? 'disabled bg-base-500 text-gray-200 hover:bg-base-400 focus-visible:outline-base-500'
-                                    : 'bg-error-200 text-error-800 hover:bg-error-300 hover:bg-primary-400',
+                                    : 'bg-error-200 text-error-800 hover:bg-error-400',
                             ]"
                             @click="retry()"
                         >

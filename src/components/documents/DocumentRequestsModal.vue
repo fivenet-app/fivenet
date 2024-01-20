@@ -52,7 +52,7 @@ interface FormData {
     reason?: string;
 }
 
-async function createDocumentAction(values: FormData): Promise<void> {
+async function createDocumentRequest(values: FormData): Promise<void> {
     try {
         const call = $grpc.getDocStoreClient().createDocumentReq({
             documentId: props.doc.id,
@@ -88,7 +88,7 @@ const { handleSubmit, meta } = useForm<FormData>({
 const canSubmit = ref(true);
 const onSubmit = handleSubmit(
     async (values): Promise<void> =>
-        await createDocumentAction(values).finally(() => setTimeout(() => (canSubmit.value = true), 400)),
+        await createDocumentRequest(values).finally(() => setTimeout(() => (canSubmit.value = true), 400)),
 );
 const onSubmitThrottle = useThrottleFn(async (e) => {
     canSubmit.value = false;

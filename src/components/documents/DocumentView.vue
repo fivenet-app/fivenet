@@ -43,6 +43,7 @@ import { checkDocAccess } from '~/components/documents/helpers';
 import DocumentActivityList from '~/components/documents/DocumentActivityList.vue';
 import DocumentRequestsModal from '~/components/documents/DocumentRequestsModal.vue';
 import { useAuthStore } from '~/store/auth';
+import DocumentRequestAccess from '~/components/documents/DocumentRequestAccess.vue';
 
 const { $grpc } = useNuxtApp();
 
@@ -214,7 +215,10 @@ if (hash.value !== undefined && hash.value !== null) {
         <ConfirmDialog :open="isRevealedDelete" :cancel="cancelDelete" :confirm="() => confirmDelete(documentId)" />
 
         <DataPendingBlock v-if="pending" :message="$t('common.loading', [$t('common.document', 2)])" />
-        <DataErrorBlock v-else-if="error" :title="$t('common.unable_to_load', [$t('common.document', 2)])" :retry="refresh" />
+        <template v-else-if="error">
+            <DataErrorBlock :title="$t('common.unable_to_load', [$t('common.document', 2)])" :retry="refresh" />
+            <DocumentRequestAccess v-if="error.message.endsWith('ErrDocViewDenied')" :document-id="documentId" />
+        </template>
         <DataNoDataBlock
             v-else-if="doc === null"
             :icon="FileSearchIcon"

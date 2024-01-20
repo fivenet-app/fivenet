@@ -139,13 +139,16 @@ func (s *Server) CreateDocumentReq(ctx context.Context, req *CreateDocumentReqRe
 	if err != nil {
 		return nil, errswrap.NewError(errorsdocstore.ErrFailedQuery, err)
 	}
-	if !ok {
+	if !ok && req.RequestType != documents.DocActivityType_DOC_ACTIVITY_TYPE_REQUESTED_ACCESS {
 		return nil, errorsdocstore.ErrDocViewDenied
 	}
 
 	doc, err := s.getDocument(ctx, tDocument.ID.EQ(jet.Uint64(req.DocumentId)), userInfo)
 	if err != nil {
 		return nil, errswrap.NewError(errorsdocstore.ErrFailedQuery, err)
+	}
+	if doc.Id <= 0 {
+		doc.Id = req.DocumentId
 	}
 
 	request, err := s.getDocumentReq(ctx, s.db,
@@ -158,13 +161,12 @@ func (s *Server) CreateDocumentReq(ctx context.Context, req *CreateDocumentReqRe
 	}
 
 	if request != nil {
-		if request.CreatorId != nil && *request.CreatorId == userInfo.UserId {
-			return nil, errorsdocstore.ErrFailedQuery
-		}
-
-		// If a request of that type already exists, make sure that we let the user know
+		// If a request of that type exists and is less than wait time old and by the same person,
+		// make sure that we let the user know
 		if request.CreatedAt != nil && time.Since(request.CreatedAt.AsTime()) <= DocRequestMinimumWaitTime {
-			return nil, errorsdocstore.ErrDocReqAlreadyCreated
+			if request.CreatorId != nil && *request.CreatorId == userInfo.UserId {
+				return nil, errorsdocstore.ErrDocReqAlreadyCreated
+			}
 		}
 	}
 
