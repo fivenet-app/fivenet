@@ -49,17 +49,17 @@ function nextHint(): void {
 
 <template>
     <div class="pt-2">
-        <div class="pointer-events-none inset-x-0 sm:flex sm:justify-center sm:px-6 sm:pb-5 lg:px-8">
+        <div class="pointer-events-none inset-x-0 min-w-full max-w-full sm:flex sm:justify-center sm:px-6 sm:pb-5 lg:px-8">
             <div
-                class="pointer-events-auto flex items-center justify-between gap-x-6 bg-gray-900 px-6 py-2.5 sm:rounded-xl sm:py-3 sm:pl-4 sm:pr-3.5"
+                class="pointer-events-auto flex items-center justify-between gap-x-6 bg-gray-900 px-6 py-2.5 sm:rounded-xl sm:border-2 sm:border-neutral/20 sm:py-3 sm:pl-4 sm:pr-3.5"
             >
                 <button type="button" class="text-white" @click="previousHint()">
                     <ArrowLeftBoldCircleIcon class="h-7 w-7" />
                 </button>
-                <p class="inline-flex max-w-5xl items-center text-sm leading-6 text-white">
+                <p class="inline-flex items-center gap-2 text-sm leading-6 text-white">
                     <InformationSlabCircleIcon class="h-7 w-7" />
-                    <strong class="mx-1 font-semibold">{{ $t('components.hints.start_text') }}</strong>
-                    {{ $t(`components.hints.${hint.key}.content`) }}
+                    <strong class="mx-1 shrink-0 font-semibold">{{ $t('components.hints.start_text') }}</strong>
+                    <span class="grow">{{ $t(`components.hints.${hint.key}.content`) }} </span>
                     <GenericBadge v-if="hint.keyboard" class="ml-1 text-black" color="gray">
                         <kbd class="font-sans">{{ $t(`components.hints.${hint.key}.keyboard`) }}</kbd>
                     </GenericBadge>

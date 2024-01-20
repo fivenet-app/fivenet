@@ -113,7 +113,7 @@ watch(selectedChar, () => {
 <template>
     <div class="py-2 pb-14">
         <div class="px-1 sm:px-2 lg:px-4">
-            <div class="sm:flex sm:items-center">
+            <div class="border-b-2 border-neutral/20 pb-2 sm:flex sm:items-center">
                 <div class="sm:flex-auto">
                     <form @submit.prevent="refresh()">
                         <div class="mx-auto flex flex-row gap-4">

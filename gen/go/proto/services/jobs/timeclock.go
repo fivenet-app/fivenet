@@ -22,7 +22,7 @@ var (
 	tTimeClock = table.FivenetJobsTimeclock.AS("timeclock_entry")
 )
 
-func (s *Server) TimeclockListEntries(ctx context.Context, req *ListTimeclockRequest) (*ListTimeclockResponse, error) {
+func (s *Server) ListTimeclock(ctx context.Context, req *ListTimeclockRequest) (*ListTimeclockResponse, error) {
 	userInfo := auth.MustGetUserInfoFromContext(ctx)
 
 	condition := jet.Bool(true)

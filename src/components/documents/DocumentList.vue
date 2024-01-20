@@ -164,7 +164,7 @@ const templatesOpen = ref(false);
 
     <div class="py-2 pb-14">
         <div class="px-1 sm:px-2 lg:px-4">
-            <div class="sm:flex sm:items-center">
+            <div class="border-b-2 border-neutral/20 pb-2 sm:flex sm:items-center">
                 <div class="sm:flex-auto">
                     <form @submit.prevent="refresh()">
                         <label for="search" class="mb-2 block text-sm font-medium leading-6 text-neutral">
@@ -211,7 +211,7 @@ const templatesOpen = ref(false);
                         </div>
 
                         <Disclosure v-slot="{ open }" as="div" class="pt-2">
-                            <DisclosureButton class="flex w-full items-start justify-between text-left text-neutral">
+                            <DisclosureButton class="flex w-full items-start justify-between text-left text-sm text-neutral">
                                 <span class="leading-7 text-base-200">{{ $t('common.advanced_search') }}</span>
                                 <span class="ml-6 flex h-7 items-center">
                                     <ChevronDownIcon

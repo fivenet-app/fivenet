@@ -90,6 +90,11 @@ const pageNumber = ref(currentPage.value.toString());
                         {{ totalPages.toString() }}
                     </span>
                 </template>
+                <template #size>
+                    <span class="font-medium text-neutral">
+                        {{ pageSize.toString() }}
+                    </span>
+                </template>
             </I18nT>
         </div>
         <div class="flex flex-1 justify-between sm:justify-end">

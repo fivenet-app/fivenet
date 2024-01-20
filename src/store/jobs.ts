@@ -1,6 +1,6 @@
 import { RpcError } from '@protobuf-ts/runtime-rpc';
 import { defineStore, type StoreDefinition } from 'pinia';
-import { ColleaguesListRequest, ColleaguesListResponse } from '~~/gen/ts/services/jobs/jobs';
+import { ListColleaguesRequest, ListColleaguesResponse } from '~~/gen/ts/services/jobs/jobs';
 
 export interface CompletorState {}
 
@@ -9,11 +9,11 @@ export const useJobsStore = defineStore('jobs', {
     persist: false,
     actions: {
         // Colleagues
-        async listColleagues(req: ColleaguesListRequest): Promise<ColleaguesListResponse> {
+        async listColleagues(req: ListColleaguesRequest): Promise<ListColleaguesResponse> {
             const { $grpc } = useNuxtApp();
 
             try {
-                const call = $grpc.getJobsClient().colleaguesList(req);
+                const call = $grpc.getJobsClient().listColleagues(req);
                 const { response } = await call;
 
                 return response;

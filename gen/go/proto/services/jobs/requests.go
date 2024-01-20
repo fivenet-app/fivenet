@@ -32,7 +32,7 @@ func (s *Server) ListRequests(ctx context.Context, req *ListRequestsRequest) (*L
 	condition := tRequests.Job.EQ(jet.String(userInfo.Job))
 
 	// Field Permission Check
-	fieldsAttr, err := s.p.Attr(userInfo, permsjobs.JobsServicePerm, perms.Name(permsjobs.RequestsServicePerm), permsjobs.RequestsServiceListRequestsAccessPermField)
+	fieldsAttr, err := s.p.Attr(userInfo, permsjobs.RequestsServicePerm, perms.Name(permsjobs.RequestsServicePerm), permsjobs.RequestsServiceListRequestsAccessPermField)
 	if err != nil {
 		return nil, errswrap.NewError(errorsjobs.ErrFailedQuery, err)
 	}
@@ -43,7 +43,7 @@ func (s *Server) ListRequests(ctx context.Context, req *ListRequestsRequest) (*L
 
 	if slices.Contains(fields, "All") {
 	} else if len(fields) == 0 || slices.Contains(fields, "Own") {
-		condition = condition.AND(tTimeClock.UserID.EQ(jet.Int32(userInfo.UserId)))
+		condition = condition.AND(tRequests.CreatorID.EQ(jet.Int32(userInfo.UserId)))
 	}
 
 	if len(req.UserIds) > 0 {
@@ -53,17 +53,17 @@ func (s *Server) ListRequests(ctx context.Context, req *ListRequestsRequest) (*L
 		}
 
 		condition = condition.AND(
-			tTimeClock.UserID.IN(ids...),
+			tRequests.CreatorID.IN(ids...),
 		)
 	}
 
 	if req.From != nil {
-		condition = condition.AND(tTimeClock.Date.GT_EQ(
+		condition = condition.AND(tRequests.CreatedAt.GT_EQ(
 			jet.TimestampT(req.From.AsTime()),
 		))
 	}
 	if req.To != nil {
-		condition = condition.AND(tTimeClock.Date.LT_EQ(
+		condition = condition.AND(tRequests.CreatedAt.LT_EQ(
 			jet.TimestampT(req.To.AsTime()),
 		))
 	}

@@ -226,7 +226,7 @@
                 "open_navigation": "Open navigation"
             },
             "table_pagination": {
-                "page_count": "Page {current} of {total}"
+                "page_count": "Page {current} of {total} à {size} records"
             },
             "data_error_block": {
                 "default_title": "Unable to load your data!",

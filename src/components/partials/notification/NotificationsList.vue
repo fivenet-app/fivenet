@@ -11,6 +11,15 @@ import GenericTime from '~/components/partials/elements/GenericTime.vue';
 import { useNotificatorStore } from '~/store/notificator';
 import { GetNotificationsResponse } from '~~/gen/ts/services/notificator/notificator';
 
+withDefaults(
+    defineProps<{
+        compact?: boolean;
+    }>(),
+    {
+        compact: false,
+    },
+);
+
 const { $grpc } = useNuxtApp();
 
 const notificator = useNotificatorStore();
@@ -169,6 +178,7 @@ watchDebounced(includeRead, async () => refresh(), { debounce: 500, maxWait: 150
                             </ul>
 
                             <TablePagination
+                                v-if="!compact"
                                 class="mt-2"
                                 :pagination="data?.pagination"
                                 :refresh="refresh"
