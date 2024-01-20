@@ -77,6 +77,9 @@ export const useCentrumStore = defineStore('centrum', {
         getSortedDispatches: (state: CentrumState) => {
             return Array.from(state.dispatches, ([_, dsp]) => dsp).sort((a, b) => a.id.localeCompare(b.id));
         },
+        getSortedOwnDispatches: (state: CentrumState) => {
+            return state.ownDispatches.sort((a, b) => b.localeCompare(a));
+        },
     },
     actions: {
         // General
@@ -544,19 +547,23 @@ export const useCentrumStore = defineStore('centrum', {
                             continue;
                         }
 
-                        if (status.status === StatusDispatch.UNIT_ACCEPTED) {
-                            this.removePendingDispatch(status.dispatchId);
-                            this.addOrUpdateOwnDispatch(status.dispatchId);
-                        } else if (
-                            status.status === StatusDispatch.UNIT_DECLINED ||
-                            status.status === StatusDispatch.UNIT_UNASSIGNED
-                        ) {
-                            const dispatch = this.dispatches.get(status.dispatchId);
-                            if (dispatch === undefined) {
-                                continue;
-                            }
+                        // Only handle dispatch status affecting pending or own dispatches, when
+                        // they are from our unit
+                        if (this.ownUnitId === status.unitId) {
+                            if (status.status === StatusDispatch.UNIT_ACCEPTED) {
+                                this.removePendingDispatch(status.dispatchId);
+                                this.addOrUpdateOwnDispatch(status.dispatchId);
+                            } else if (
+                                status.status === StatusDispatch.UNIT_DECLINED ||
+                                status.status === StatusDispatch.UNIT_UNASSIGNED
+                            ) {
+                                const dispatch = this.dispatches.get(status.dispatchId);
+                                if (dispatch === undefined) {
+                                    continue;
+                                }
 
-                            this.removeDispatchAssignments(dispatch, status.unitId);
+                                this.removeDispatchAssignments(dispatch, status.unitId);
+                            }
                         }
                     } else {
                         console.warn('Centrum: Unknown change received - Kind: ', resp.change.oneofKind, resp.change);

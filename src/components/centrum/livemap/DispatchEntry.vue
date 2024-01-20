@@ -46,8 +46,9 @@ const openDetails = ref(false);
             @click="openDetails = true"
         >
             <span class="mb-0.5 inline-flex w-full place-content-between items-center">
-                <span class="inline-flex items-center truncate font-bold">
-                    <CarEmergencyIcon class="mr-0.5 h-4 w-4" /> DSP-{{ dispatch.id }}
+                <span class="truncate font-bold"> DSP-{{ dispatch.id }} </span>
+                <span>
+                    <CarEmergencyIcon class="h-4 w-4" />
                 </span>
                 <span>
                     <span class="font-semibold">{{ $t('common.postal') }}</span

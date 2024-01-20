@@ -48,7 +48,7 @@ const authStore = useAuthStore();
 const { jobProps } = storeToRefs(authStore);
 
 const centrumStore = useCentrumStore();
-const { getCurrentMode, getOwnUnit, dispatches, ownDispatches, pendingDispatches, disponents, timeCorrection } =
+const { getCurrentMode, getOwnUnit, dispatches, getSortedOwnDispatches, pendingDispatches, disponents, timeCorrection } =
     storeToRefs(centrumStore);
 const { startStream, stopStream } = centrumStore;
 
@@ -173,7 +173,7 @@ const onSubmitDispatchStatusThrottle = useThrottleFn(async (dispatchId?: string,
 const ownUnitStatus = computed(() => unitStatusToBGColor(getOwnUnit.value?.status?.status));
 
 function ensureOwnDispatchSelected(): void {
-    if (ownDispatches.value.length === 0) {
+    if (getSortedOwnDispatches.value.length === 0) {
         selectedDispatch.value = undefined;
         return;
     }
@@ -181,7 +181,7 @@ function ensureOwnDispatchSelected(): void {
     // If the selected dispatch is still our own dispatch, don't do anything
     if (
         selectedDispatch.value !== undefined &&
-        ownDispatches.value.find((dispatchId) => dispatchId === selectedDispatch.value) !== undefined
+        getSortedOwnDispatches.value.find((dispatchId) => dispatchId === selectedDispatch.value) !== undefined
     ) {
         const dispatch = dispatches.value.get(selectedDispatch.value);
         if (!isStatusDispatchCompleted(dispatch?.status?.status ?? StatusDispatch.UNSPECIFIED)) {
@@ -190,9 +190,9 @@ function ensureOwnDispatchSelected(): void {
     }
 
     // otherwise select that current first one
-    if (ownDispatches.value.length > 1) {
-        for (let index = 0; index < ownDispatches.value.length; ++index) {
-            const od = ownDispatches.value[index];
+    if (getSortedOwnDispatches.value.length > 1) {
+        for (let index = 0; index < getSortedOwnDispatches.value.length; ++index) {
+            const od = getSortedOwnDispatches.value[index];
             if (od === selectedDispatch.value) {
                 continue;
             }
@@ -206,7 +206,7 @@ function ensureOwnDispatchSelected(): void {
             break;
         }
     } else {
-        selectedDispatch.value = ownDispatches.value[0];
+        selectedDispatch.value = getSortedOwnDispatches.value[0];
     }
 }
 
@@ -222,14 +222,14 @@ watchDebounced(
         }
     },
     {
-        debounce: 100,
-        maxWait: 450,
+        debounce: 75,
+        maxWait: 400,
     },
 );
 
-watchDebounced(ownDispatches.value, () => ensureOwnDispatchSelected(), {
-    debounce: 100,
-    maxWait: 250,
+watchDebounced(getSortedOwnDispatches.value, () => ensureOwnDispatchSelected(), {
+    debounce: 75,
+    maxWait: 200,
 });
 
 const { resume, pause } = useIntervalFn(() => checkup(), 1 * 60 * 1000);
@@ -324,6 +324,7 @@ async function checkup(): Promise<void> {
                 </button>
             </LControl>
         </template>
+
         <template v-if="canStream" #afterMap>
             <div class="lg:w-50 lg:inset-y-0 lg:flex lg:flex-col">
                 <!-- Dispatch -->
@@ -560,7 +561,7 @@ async function checkup(): Promise<void> {
                                         {{ $t('common.your_dispatches') }}
                                     </div>
                                     <ul role="list" class="-mx-2 mt-1 space-y-1">
-                                        <li v-if="ownDispatches.length === 0">
+                                        <li v-if="getSortedOwnDispatches.length === 0">
                                             <button
                                                 type="button"
                                                 class="group my-0.5 flex w-full flex-col items-center rounded-md bg-primary-100/10 p-1.5 text-xs font-medium text-neutral hover:text-neutral hover:transition-all"
@@ -571,7 +572,7 @@ async function checkup(): Promise<void> {
                                         </li>
                                         <template v-else>
                                             <DispatchEntry
-                                                v-for="id in ownDispatches.slice().reverse()"
+                                                v-for="id in getSortedOwnDispatches.slice().reverse()"
                                                 :key="id"
                                                 v-model:selected-dispatch="selectedDispatch"
                                                 :dispatch="dispatches.get(id)!"
