@@ -225,9 +225,6 @@
                 "open_usermenu": "Konto-Menü öffnen",
                 "open_navigation": "Navigation öffnen"
             },
-            "table_pagination": {
-                "page_count": "Seite {current} von {total} à {size} Einträge"
-            },
             "data_error_block": {
                 "default_title": "Ihre Daten konnten nicht geladen werden!",
                 "default_message": "Bitte versuche es gleich noch einmal."
@@ -239,6 +236,9 @@
             "confirm_dialog": {
                 "title": "Gefährliche Aktion",
                 "description": "Sind Sie sicher, dass Sie diese potenziell gefährlichen Aktionen durchführen wollen? Alle damit verbundenen Daten werden für immer von unseren Servern gelöscht. Diese Aktion kann nicht rückgängig gemacht werden."
+            },
+            "table_pagination": {
+                "page_count": "Seite {current} von {total} à {size} Einträge"
             }
         },
         "clipboard": {
@@ -1462,7 +1462,8 @@
             "UpdateConductEntry": {
                 "key": "Führungsregister: Einträge bearbeiten",
                 "description": "Aktualisieren von Führungsregister Einträgen."
-            }
+            },
+            "category": "Beruf Führungsregister"
         },
         "JobsTimeclockService": {
             "ListTimeclock": {
@@ -1474,7 +1475,8 @@
                 "attrs_types": {
                     "Access": "Zugriff auf Stempeluhr-Einträge"
                 }
-            }
+            },
+            "category": "Beruf Stempeluhr"
         },
         "JobsRequestsService": {
             "CreateRequest": {
@@ -1504,7 +1506,8 @@
             "DeleteRequestComment": {
                 "key": "Anfragen: Anfragen-Kommentare löschen",
                 "description": "Löschen von Anfragen-Kommentaren."
-            }
+            },
+            "category": "Beruf Anfragen"
         }
     },
     "errors": {
