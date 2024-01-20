@@ -21,8 +21,7 @@ func Load() (*Config, error) {
 	viper.SetEnvPrefix("FIVENET")
 	viper.SetConfigType("yaml")
 
-	configFile := os.Getenv("FIVENET_CONFIG_FILE")
-	if configFile != "" {
+	if configFile := os.Getenv("FIVENET_CONFIG_FILE"); configFile != "" {
 		viper.SetConfigFile(configFile)
 	} else {
 		viper.SetConfigName("config")
