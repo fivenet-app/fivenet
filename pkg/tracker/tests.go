@@ -4,6 +4,7 @@ import (
 	"context"
 
 	"github.com/galexrt/fivenet/gen/go/proto/resources/livemap"
+	"github.com/galexrt/fivenet/pkg/coords"
 	"github.com/galexrt/fivenet/pkg/utils"
 	"github.com/puzpuzpuz/xsync/v3"
 )
@@ -67,4 +68,8 @@ func (s *TestTracker) Subscribe() chan *Event {
 
 func (s *TestTracker) Unsubscribe(c chan *Event) {
 	s.broker.Unsubscribe(c)
+}
+
+func (s *TestTracker) GetUserJobLocations(job string) *coords.Coords[*livemap.UserMarker] {
+	return nil
 }

@@ -3,6 +3,7 @@ package livemap
 import (
 	"database/sql/driver"
 
+	"github.com/paulmach/orb"
 	"google.golang.org/protobuf/proto"
 )
 
@@ -24,4 +25,12 @@ func (x *MarkerData) Value() (driver.Value, error) {
 
 	out, err := proto.Marshal(x)
 	return out, err
+}
+
+func (x *UserMarker) Point() orb.Point {
+	if x.Info == nil {
+		return orb.Point{}
+	}
+
+	return orb.Point{x.Info.X, x.Info.Y}
 }

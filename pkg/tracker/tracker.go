@@ -9,12 +9,14 @@ import (
 	"github.com/galexrt/fivenet/gen/go/proto/resources/users"
 	"github.com/galexrt/fivenet/gen/go/proto/services/centrum/state"
 	"github.com/galexrt/fivenet/pkg/config"
+	"github.com/galexrt/fivenet/pkg/coords"
 	"github.com/galexrt/fivenet/pkg/coords/postals"
 	"github.com/galexrt/fivenet/pkg/mstlystcdata"
 	"github.com/galexrt/fivenet/pkg/utils"
 	"github.com/galexrt/fivenet/query/fivenet/table"
 	"github.com/gin-gonic/gin"
 	jet "github.com/go-jet/jet/v2/mysql"
+	"github.com/paulmach/orb"
 	"github.com/puzpuzpuz/xsync/v3"
 	tracesdk "go.opentelemetry.io/otel/sdk/trace"
 	"go.opentelemetry.io/otel/trace"
@@ -35,6 +37,8 @@ type ITracker interface {
 
 	Subscribe() chan *Event
 	Unsubscribe(c chan *Event)
+
+	GetUserJobLocations(job string) *coords.Coords[*livemap.UserMarker]
 }
 
 type UserInfo struct {
@@ -66,6 +70,8 @@ type Tracker struct {
 	broker *utils.Broker[*Event]
 
 	refreshTime time.Duration
+
+	locations map[string]*coords.Coords[*livemap.UserMarker]
 }
 
 type Params struct {
@@ -87,6 +93,11 @@ func New(p Params) ITracker {
 
 	broker := utils.NewBroker[*Event](ctx)
 
+	locs := map[string]*coords.Coords[*livemap.UserMarker]{}
+	for _, job := range p.Config.Game.Livemap.Jobs {
+		locs[job] = coords.New[*livemap.UserMarker]()
+	}
+
 	t := &Tracker{
 		ctx:      ctx,
 		logger:   p.Logger,
@@ -102,6 +113,8 @@ func New(p Params) ITracker {
 		broker: broker,
 
 		refreshTime: p.Config.Game.Livemap.RefreshTime,
+
+		locations: locs,
 	}
 
 	p.LC.Append(fx.StartHook(func(_ context.Context) error {
@@ -174,6 +187,12 @@ func (s *Tracker) cleanupUserIDs() error {
 
 			jobUsers, ok := s.usersCache.Load(info.Job)
 			if ok {
+				point, ok := jobUsers.Load(key)
+				if ok {
+					s.GetUserJobLocations(info.Job).Remove(point, func(p orb.Pointer) bool {
+						return p.(*livemap.UserMarker).UserId == point.UserId
+					})
+				}
 				jobUsers.Delete(key)
 			}
 		}
@@ -230,13 +249,13 @@ func (s *Tracker) refreshUserLocations(ctx context.Context, sendCurrentList bool
 
 	event := &Event{}
 	expiration := time.Now().Add(7 * s.refreshTime)
-	markers := map[string]*xsync.MapOf[int32, *livemap.UserMarker]{}
+	jobMarkers := map[string]*xsync.MapOf[int32, *livemap.UserMarker]{}
 	for i := 0; i < len(dest); i++ {
 		s.enricher.EnrichJobInfo(dest[i].User)
 
 		job := dest[i].User.Job
-		if _, ok := markers[job]; !ok {
-			markers[job] = xsync.NewMapOf[int32, *livemap.UserMarker]()
+		if _, ok := jobMarkers[job]; !ok {
+			jobMarkers[job] = xsync.NewMapOf[int32, *livemap.UserMarker]()
 		}
 
 		if dest[i].Info.Color == nil {
@@ -259,7 +278,16 @@ func (s *Tracker) refreshUserLocations(ctx context.Context, sendCurrentList bool
 			}
 		}
 
-		markers[job].Store(userId, dest[i])
+		jobMarkers[job].Store(userId, dest[i])
+
+		if s.GetUserJobLocations(job).Has(dest[i], func(p orb.Pointer) bool {
+			return p.(*livemap.UserMarker).UserId == dest[i].UserId
+		}) {
+			s.GetUserJobLocations(job).Remove(dest[i], func(p orb.Pointer) bool {
+				return p.(*livemap.UserMarker).UserId == dest[i].UserId
+			})
+		}
+		s.GetUserJobLocations(job).Add(dest[i])
 
 		userInfo := &UserInfo{
 			Job:    dest[i].User.Job,
@@ -282,8 +310,8 @@ func (s *Tracker) refreshUserLocations(ctx context.Context, sendCurrentList bool
 		}
 	}
 
-	for job, marker := range markers {
-		s.usersCache.Store(job, marker)
+	for job, markers := range jobMarkers {
+		s.usersCache.Store(job, markers)
 	}
 
 	if len(event.Added) > 0 || len(event.Removed) > 0 || len(event.Current) > 0 {
@@ -325,4 +353,8 @@ func (s *Tracker) Subscribe() chan *Event {
 
 func (s *Tracker) Unsubscribe(c chan *Event) {
 	s.broker.Unsubscribe(c)
+}
+
+func (s *Tracker) GetUserJobLocations(job string) *coords.Coords[*livemap.UserMarker] {
+	return s.locations[job]
 }

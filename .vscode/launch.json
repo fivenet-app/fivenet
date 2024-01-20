@@ -24,7 +24,7 @@
             "mode": "auto",
             "program": "${workspaceFolder}",
             "cwd": "${workspaceFolder}",
-            "args": ["worker", "--module-discord-bot=false"],
+            "args": ["worker", "--module-discord-bot=false","--module-audit-retention=false", "--module-centrum-bot=true", "--module-centrum-housekeeper=false"],
             "buildFlags": "-a -installsuffix cgo",
             "env": {
                 "CGO_ENABLED": "0",

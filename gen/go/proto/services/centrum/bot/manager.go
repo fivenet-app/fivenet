@@ -7,6 +7,7 @@ import (
 
 	"github.com/galexrt/fivenet/gen/go/proto/services/centrum/manager"
 	"github.com/galexrt/fivenet/pkg/server/admin"
+	"github.com/galexrt/fivenet/pkg/tracker"
 	"github.com/nats-io/nats.go"
 	"github.com/prometheus/client_golang/prometheus"
 	"github.com/prometheus/client_golang/prometheus/promauto"
@@ -41,7 +42,8 @@ type Manager struct {
 	bots *xsync.MapOf[string, context.CancelFunc]
 	js   nats.JetStreamContext
 
-	state *manager.Manager
+	state   *manager.Manager
+	tracker tracker.ITracker
 }
 
 type Params struct {
@@ -49,10 +51,11 @@ type Params struct {
 
 	LC fx.Lifecycle
 
-	Logger *zap.Logger
-	TP     *tracesdk.TracerProvider
-	State  *manager.Manager
-	JS     nats.JetStreamContext
+	Logger  *zap.Logger
+	TP      *tracesdk.TracerProvider
+	State   *manager.Manager
+	JS      nats.JetStreamContext
+	Tracker tracker.ITracker
 }
 
 func NewManager(p Params) *Manager {
@@ -66,9 +69,10 @@ func NewManager(p Params) *Manager {
 
 		tracer: p.TP.Tracer("centrum-cache"),
 
-		bots:  xsync.NewMapOf[string, context.CancelFunc](),
-		js:    p.JS,
-		state: p.State,
+		bots:    xsync.NewMapOf[string, context.CancelFunc](),
+		js:      p.JS,
+		state:   p.State,
+		tracker: p.Tracker,
 	}
 
 	p.LC.Append(fx.StartHook(func(ctx context.Context) error {
@@ -121,7 +125,7 @@ func (b *Manager) Start(job string) error {
 	}
 
 	b.logger.Info("starting centrum dispatch bot", zap.String("job", job))
-	bot := NewBot(b.logger.With(zap.String("job", job)), job, b.state)
+	bot := NewBot(b.logger.With(zap.String("job", job)), job, b.state, b.tracker)
 	ctx, cancel := context.WithCancel(b.ctx)
 	b.bots.Store(job, cancel)
 	b.wg.Add(1)

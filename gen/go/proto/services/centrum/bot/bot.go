@@ -7,8 +7,11 @@ import (
 	"time"
 
 	"github.com/galexrt/fivenet/gen/go/proto/resources/centrum"
+	"github.com/galexrt/fivenet/gen/go/proto/resources/livemap"
 	"github.com/galexrt/fivenet/gen/go/proto/services/centrum/manager"
 	centrumutils "github.com/galexrt/fivenet/gen/go/proto/services/centrum/utils"
+	"github.com/galexrt/fivenet/pkg/tracker"
+	"github.com/paulmach/orb"
 	"go.uber.org/zap"
 )
 
@@ -22,17 +25,19 @@ const (
 type Bot struct {
 	logger *zap.Logger
 
-	job   string
-	state *manager.Manager
+	job     string
+	state   *manager.Manager
+	tracker tracker.ITracker
 
 	lastAssignedUnits map[uint64]time.Time
 }
 
-func NewBot(logger *zap.Logger, job string, state *manager.Manager) *Bot {
+func NewBot(logger *zap.Logger, job string, state *manager.Manager, tracker tracker.ITracker) *Bot {
 	return &Bot{
 		logger:            logger.Named("bot"),
 		job:               job,
 		state:             state,
+		tracker:           tracker,
 		lastAssignedUnits: map[uint64]time.Time{},
 	}
 }
@@ -68,7 +73,7 @@ func (b *Bot) Run(ctx context.Context) error {
 				continue
 			}
 
-			unit, ok := b.getAvailableUnit(ctx)
+			unit, ok := b.getAvailableUnit(ctx, dsp.Point())
 			if !ok {
 				// No unit available
 				b.logger.Warn("no available units for dispatch", zap.Uint64("dispatch_id", dsp.Id))
@@ -87,16 +92,35 @@ func (b *Bot) Run(ctx context.Context) error {
 	}
 }
 
-func (b *Bot) getAvailableUnit(ctx context.Context) (*centrum.Unit, bool) {
-	units := b.state.FilterUnits(b.job, []centrum.StatusUnit{centrum.StatusUnit_STATUS_UNIT_AVAILABLE}, nil)
-	if len(units) == 0 {
-		return nil, false
-	}
+func (b *Bot) getAvailableUnit(ctx context.Context, point orb.Point) (*centrum.Unit, bool) {
+	var units []*centrum.Unit
 
-	// Randomize unit ids
-	for i := range units {
-		j := rand.Intn(i + 1)
-		units[i], units[j] = units[j], units[i]
+	if locs := b.tracker.GetUserJobLocations(b.job); locs != nil {
+		points := locs.KNearest(point, 7, nil, 5000.0)
+		for _, point := range points {
+			user := point.(*livemap.UserMarker)
+			if user.UnitId == nil {
+				continue
+			}
+
+			unit, err := b.state.GetUnit(user.Info.Job, *user.UnitId)
+			if err != nil {
+				b.logger.Error("failed to get user unit", zap.String("job", user.Info.Job), zap.Error(err))
+				continue
+			}
+			units = append(units, unit)
+		}
+	} else {
+		units := b.state.FilterUnits(b.job, []centrum.StatusUnit{centrum.StatusUnit_STATUS_UNIT_AVAILABLE}, nil)
+		if len(units) == 0 {
+			return nil, false
+		}
+
+		// Randomize unit ids
+		for i := range units {
+			j := rand.Intn(i + 1)
+			units[i], units[j] = units[j], units[i]
+		}
 	}
 
 	var unit *centrum.Unit
