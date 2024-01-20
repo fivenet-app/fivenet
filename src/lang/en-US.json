@@ -225,9 +225,6 @@
                 "open_usermenu": "Open user menu",
                 "open_navigation": "Open navigation"
             },
-            "table_pagination": {
-                "page_count": "Page {current} of {total} à {size} records"
-            },
             "data_error_block": {
                 "default_title": "Unable to load your data!",
                 "default_message": "Please try again in a moment."
@@ -239,6 +236,9 @@
             "confirm_dialog": {
                 "title": "Dangerous Action",
                 "description": "Are you sure want to do this potentially dangerous actions? All data associated will be permanently deleted from our servers forever. This action cannot be undone."
+            },
+            "table_pagination": {
+                "page_count": "Page {current} of {total} à {size} records"
             }
         },
         "clipboard": {
@@ -1440,7 +1440,6 @@
             }
         },
         "JobsConductService": {
-            "category": "Job Conduct Register",
             "CreateConductEntry": {
                 "key": "Conduct Entries: Create",
                 "description": "Create Conduct Register entries."
@@ -1463,10 +1462,10 @@
             "UpdateConductEntry": {
                 "key": "Conduct Entries: Update",
                 "description": "Update Conduct Register entries."
-            }
+            },
+            "category": "Job Conduct Register"
         },
         "JobsTimeclockService": {
-            "category": "Job Timeclock",
             "ListTimeclock": {
                 "key": "Timeclock Entries: List",
                 "description": "List Timeclock entries.",
@@ -1476,10 +1475,10 @@
                 "attrs_types": {
                     "Access": "Access to time clock entries"
                 }
-            }
+            },
+            "category": "Job Timeclock"
         },
         "JobsRequestsService": {
-            "category": "Job Requests",
             "CreateRequest": {
                 "key": "Requests: Create Request",
                 "description": "Create Requests."
@@ -1507,7 +1506,8 @@
             "DeleteRequestComment": {
                 "key": "Requests: Delete Comment",
                 "description": "Delete Comments made on Requests."
-            }
+            },
+            "category": "Job Requests"
         }
     },
     "errors": {
