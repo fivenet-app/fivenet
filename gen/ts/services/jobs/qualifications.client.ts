@@ -3,19 +3,19 @@
 // tslint:disable
 import type { RpcTransport } from "@protobuf-ts/runtime-rpc";
 import type { ServiceInfo } from "@protobuf-ts/runtime-rpc";
-import { QualificationsService } from "./qualifications";
+import { JobsQualificationsService } from "./qualifications";
 /**
- * @generated from protobuf service services.jobs.QualificationsService
+ * @generated from protobuf service services.jobs.JobsQualificationsService
  */
-export interface IQualificationsServiceClient {
+export interface IJobsQualificationsServiceClient {
 }
 /**
- * @generated from protobuf service services.jobs.QualificationsService
+ * @generated from protobuf service services.jobs.JobsQualificationsService
  */
-export class QualificationsServiceClient implements IQualificationsServiceClient, ServiceInfo {
-    typeName = QualificationsService.typeName;
-    methods = QualificationsService.methods;
-    options = QualificationsService.options;
+export class JobsQualificationsServiceClient implements IJobsQualificationsServiceClient, ServiceInfo {
+    typeName = JobsQualificationsService.typeName;
+    methods = JobsQualificationsService.methods;
+    options = JobsQualificationsService.options;
     constructor(private readonly _transport: RpcTransport) {
     }
 }

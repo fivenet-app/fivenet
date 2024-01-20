@@ -3,16 +3,20 @@ import { CloseIcon, MenuIcon } from 'mdi-vue3';
 import { type RoutesNamedLocations } from '@typed-router';
 
 const navigation: { name: string; to: RoutesNamedLocations; permission?: string }[] = [
-    { name: 'common.overview', to: { name: 'jobs-overview' }, permission: 'JobsService.ColleaguesList' },
-    { name: 'pages.jobs.colleagues.title', to: { name: 'jobs-colleagues' }, permission: 'JobsService.ColleaguesList' },
-    { name: 'pages.jobs.requests.title', to: { name: 'jobs-requests' }, permission: 'JobsService.RequestsListEntries' },
+    { name: 'common.overview', to: { name: 'jobs-overview' }, permission: 'JobsService.ListColleagues' },
+    { name: 'pages.jobs.colleagues.title', to: { name: 'jobs-colleagues' }, permission: 'JobsService.ListColleagues' },
+    {
+        name: 'pages.jobs.requests.title',
+        to: { name: 'jobs-requests' },
+        permission: 'JobsRequestsService.ListRequestsRequestEntries',
+    },
     {
         name: 'pages.jobs.qualifications.title',
         to: { name: 'jobs-qualifications' },
         permission: 'JobsService.QualificationsListEntries',
     },
-    { name: 'pages.jobs.timeclock.title', to: { name: 'jobs-timeclock' }, permission: 'JobsService.TimeclockListEntries' },
-    { name: 'pages.jobs.conduct.title', to: { name: 'jobs-conduct' }, permission: 'JobsService.ConductListEntries' },
+    { name: 'pages.jobs.timeclock.title', to: { name: 'jobs-timeclock' }, permission: 'JobsTimeclockService.ListTimeclock' },
+    { name: 'pages.jobs.conduct.title', to: { name: 'jobs-conduct' }, permission: 'JobsConductService.ListConductEntries' },
 ];
 
 useHead({
@@ -21,7 +25,7 @@ useHead({
 definePageMeta({
     title: 'pages.jobs.title',
     requiresAuth: true,
-    permission: 'JobsService.ColleaguesList',
+    permission: 'JobsService.ListColleagues',
     redirect: { name: 'jobs-overview' },
 });
 
@@ -53,7 +57,7 @@ const open = ref(false);
                                     <NuxtLink
                                         v-if="item.permission === undefined || can(item.permission)"
                                         :to="item.to"
-                                        class="group flex w-full flex-col items-center rounded-md p-3 text-sm font-medium text-accent-100 hover:bg-accent-100/10 hover:text-neutral hover:transition-all"
+                                        class="group flex shrink-0 flex-col items-center rounded-md p-3 text-sm font-medium text-accent-100 hover:bg-accent-100/10 hover:text-neutral hover:transition-all"
                                         active-class="bg-accent-100/20 text-neutral font-bold"
                                         exact-active-class="text-neutral"
                                         aria-current-value="page"

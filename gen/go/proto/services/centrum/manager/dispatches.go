@@ -271,7 +271,7 @@ func (s *Manager) UpdateDispatchAssignments(ctx context.Context, job string, use
 
 			// Send updates
 			for _, unitId := range toAnnounce {
-				if err := s.AddDispatchStatus(ctx, s.db, job, &centrum.DispatchStatus{
+				if _, err := s.AddDispatchStatus(ctx, s.db, job, &centrum.DispatchStatus{
 					CreatedAt:  timestamp.Now(),
 					DispatchId: dsp.Id,
 					UnitId:     &unitId,
@@ -325,7 +325,7 @@ func (s *Manager) UpdateDispatchAssignments(ctx context.Context, job string, use
 			}
 
 			for _, unitId := range units {
-				if err := s.AddDispatchStatus(ctx, s.db, job, &centrum.DispatchStatus{
+				if _, err := s.AddDispatchStatus(ctx, s.db, job, &centrum.DispatchStatus{
 					CreatedAt:  timestamp.Now(),
 					DispatchId: dsp.Id,
 					UnitId:     &unitId,
@@ -486,7 +486,7 @@ func (s *Manager) CreateDispatch(ctx context.Context, dsp *centrum.Dispatch) (*c
 		statusUser = dsp.Creator.UserShort()
 	}
 
-	dsp.Status = &centrum.DispatchStatus{
+	if dsp.Status, err = s.AddDispatchStatus(ctx, tx, dsp.Job, &centrum.DispatchStatus{
 		CreatedAt:  timestamp.Now(),
 		DispatchId: dsp.Id,
 		UserId:     userId,
@@ -495,8 +495,7 @@ func (s *Manager) CreateDispatch(ctx context.Context, dsp *centrum.Dispatch) (*c
 		X:          &dsp.X,
 		Y:          &dsp.Y,
 		Postal:     dsp.Postal,
-	}
-	if err := s.AddDispatchStatus(ctx, tx, dsp.Job, dsp.Status, false); err != nil {
+	}, false); err != nil {
 		return nil, err
 	}
 
@@ -604,7 +603,7 @@ func (s *Manager) UpdateDispatch(ctx context.Context, userJob string, userId *in
 	return dsp, nil
 }
 
-func (s *Manager) AddDispatchStatus(ctx context.Context, tx qrm.DB, job string, status *centrum.DispatchStatus, publish bool) error {
+func (s *Manager) AddDispatchStatus(ctx context.Context, tx qrm.DB, job string, status *centrum.DispatchStatus, publish bool) (*centrum.DispatchStatus, error) {
 	tDispatchStatus := table.FivenetCentrumDispatchesStatus
 	stmt := tDispatchStatus.
 		INSERT(
@@ -632,27 +631,88 @@ func (s *Manager) AddDispatchStatus(ctx context.Context, tx qrm.DB, job string, 
 
 	res, err := stmt.ExecContext(ctx, tx)
 	if err != nil {
-		return errorscentrum.ErrFailedQuery
+		return nil, errorscentrum.ErrFailedQuery
 	}
 
 	lastId, err := res.LastInsertId()
 	if err != nil {
-		return errorscentrum.ErrFailedQuery
+		return nil, errorscentrum.ErrFailedQuery
 	}
-	status.Id = uint64(lastId)
+
+	newStatus, err := s.GetDispatchStatus(ctx, tx, job, uint64(lastId))
+	if err != nil {
+		return nil, errorscentrum.ErrFailedQuery
+	}
 
 	if publish {
-		data, err := proto.Marshal(status)
+		data, err := proto.Marshal(newStatus)
 		if err != nil {
-			return err
+			return nil, err
 		}
 
 		if _, err := s.js.Publish(eventscentrum.BuildSubject(eventscentrum.TopicDispatch, eventscentrum.TypeDispatchStatus, job), data); err != nil {
-			return err
+			return nil, err
 		}
 	}
 
-	return nil
+	return newStatus, nil
+}
+
+func (s *Manager) GetDispatchStatus(ctx context.Context, tx qrm.DB, job string, id uint64) (*centrum.DispatchStatus, error) {
+	stmt := tDispatchStatus.
+		SELECT(
+			tDispatchStatus.ID,
+			tDispatchStatus.CreatedAt,
+			tDispatchStatus.UnitID,
+			tDispatchStatus.Status,
+			tDispatchStatus.Reason,
+			tDispatchStatus.Code,
+			tDispatchStatus.UserID,
+			tDispatchStatus.X,
+			tDispatchStatus.Y,
+			tDispatchStatus.Postal,
+			tUsers.ID,
+			tUsers.Identifier,
+			tUsers.Firstname,
+			tUsers.Lastname,
+			tUsers.Job,
+			tUsers.JobGrade,
+			tUsers.Sex,
+			tUsers.Dateofbirth,
+			tUsers.PhoneNumber,
+		).
+		FROM(
+			tDispatchStatus.
+				LEFT_JOIN(tUsers,
+					tUsers.ID.EQ(tDispatchStatus.UserID),
+				),
+		).
+		WHERE(
+			tDispatchStatus.DispatchID.EQ(jet.Uint64(id)),
+		).
+		ORDER_BY(tDispatchStatus.ID.DESC()).
+		LIMIT(1)
+
+	var dest centrum.DispatchStatus
+	if err := stmt.QueryContext(ctx, s.db, &dest); err != nil {
+		if !errors.Is(err, qrm.ErrNoRows) {
+			return nil, errswrap.NewError(errorscentrum.ErrFailedQuery, err)
+		} else {
+			return nil, nil
+		}
+	}
+
+	if dest.UnitId != nil && *dest.UnitId > 0 && dest.User != nil {
+		unit, err := s.GetUnit(job, *dest.UnitId)
+		if err != nil {
+			return nil, errswrap.NewError(errorscentrum.ErrFailedQuery, err)
+		}
+
+		newUnit := proto.Clone(unit)
+		dest.Unit = newUnit.(*centrum.Unit)
+	}
+
+	return &dest, nil
 }
 
 func (s *Manager) TakeDispatch(ctx context.Context, job string, userId int32, unitId uint64, resp centrum.TakeDispatchResp, dispatchIds []uint64) error {
@@ -787,7 +847,7 @@ func (s *Manager) TakeDispatch(ctx context.Context, job string, userId int32, un
 				}
 			}
 
-			dsp.Status = &centrum.DispatchStatus{
+			if dsp.Status, err = s.AddDispatchStatus(ctx, s.db, job, &centrum.DispatchStatus{
 				CreatedAt:  timestamp.Now(),
 				DispatchId: dspId,
 				Status:     status,
@@ -796,8 +856,7 @@ func (s *Manager) TakeDispatch(ctx context.Context, job string, userId int32, un
 				X:          x,
 				Y:          y,
 				Postal:     postal,
-			}
-			if err := s.AddDispatchStatus(ctx, s.db, job, dsp.Status, true); err != nil {
+			}, true); err != nil {
 				return nil, errswrap.NewError(errorscentrum.ErrFailedQuery, err)
 			}
 

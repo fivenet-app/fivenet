@@ -41,9 +41,9 @@ import DocumentReferences from '~/components/documents/DocumentReferences.vue';
 import DocumentRelations from '~/components/documents/DocumentRelations.vue';
 import { checkDocAccess } from '~/components/documents/helpers';
 import DocumentActivityList from '~/components/documents/DocumentActivityList.vue';
-import DocumentRequestsModal from '~/components/documents/DocumentRequestsModal.vue';
+import DocumentRequestsModal from '~/components/documents/requests/DocumentRequestsModal.vue';
 import { useAuthStore } from '~/store/auth';
-import DocumentRequestAccess from '~/components/documents/DocumentRequestAccess.vue';
+import DocumentRequestAccess from '~/components/documents/requests/DocumentRequestAccess.vue';
 
 const { $grpc } = useNuxtApp();
 
@@ -541,42 +541,41 @@ if (hash.value !== undefined && hash.value !== null) {
                                                 :message="$t('common.not_found', [$t('common.access', 2)])"
                                             />
                                         </template>
-                                        <template v-else>
-                                            <div
-                                                v-for="entry in access?.jobs"
-                                                :key="entry.id"
-                                                class="flex flex-initial snap-x snap-start items-center gap-1 overflow-x-auto whitespace-nowrap rounded-full bg-info-100 px-2 py-1"
-                                            >
-                                                <span class="h-2 w-2 rounded-full bg-info-500" aria-hidden="true" />
-                                                <span class="text-sm font-medium text-info-800"
-                                                    >{{ entry.jobLabel
-                                                    }}<span
-                                                        v-if="entry.minimumGrade > 0"
-                                                        :title="`${entry.jobLabel} - ${$t('common.rank')} ${entry.minimumGrade}`"
-                                                    >
-                                                        ({{ entry.jobGradeLabel }})</span
-                                                    >
-                                                    -
-                                                    {{ $t(`enums.docstore.AccessLevel.${AccessLevel[entry.access]}`) }}
-                                                </span>
-                                            </div>
-
-                                            <div
-                                                v-for="entry in access?.users"
-                                                :key="entry.id"
-                                                class="flex flex-initial snap-start flex-row items-center gap-1 whitespace-nowrap rounded-full bg-secondary-100 px-2 py-1"
-                                            >
-                                                <span class="h-2 w-2 rounded-full bg-secondary-400" aria-hidden="true" />
-                                                <span
-                                                    class="text-sm font-medium text-secondary-700"
-                                                    :title="`${$t('common.id')} ${entry.userId}`"
+                                        <div
+                                            v-for="entry in access?.jobs"
+                                            :key="entry.id"
+                                            class="flex flex-initial snap-x snap-start items-center gap-1 overflow-x-auto whitespace-nowrap rounded-full bg-info-100 px-2 py-1"
+                                        >
+                                            <span class="h-2 w-2 rounded-full bg-info-500" aria-hidden="true" />
+                                            <span class="text-sm font-medium text-info-800"
+                                                >{{ entry.jobLabel
+                                                }}<span
+                                                    v-if="entry.minimumGrade > 0"
+                                                    :title="`${entry.jobLabel} - ${$t('common.rank')} ${entry.minimumGrade}`"
                                                 >
-                                                    {{ entry.user?.firstname }}
-                                                    {{ entry.user?.lastname }} -
-                                                    {{ $t(`enums.docstore.AccessLevel.${AccessLevel[entry.access]}`) }}
-                                                </span>
-                                            </div>
-                                        </template>
+                                                    ({{ entry.jobGradeLabel }})</span
+                                                >
+                                                -
+                                                {{ $t(`enums.docstore.AccessLevel.${AccessLevel[entry.access]}`) }}
+                                            </span>
+                                        </div>
+                                    </div>
+                                    <div class="mx-4 flex flex-row flex-wrap gap-1 pb-2">
+                                        <div
+                                            v-for="entry in access?.users"
+                                            :key="entry.id"
+                                            class="flex flex-initial snap-start flex-row items-center gap-1 whitespace-nowrap rounded-full bg-secondary-100 px-2 py-1"
+                                        >
+                                            <span class="h-2 w-2 rounded-full bg-secondary-400" aria-hidden="true" />
+                                            <span
+                                                class="text-sm font-medium text-secondary-700"
+                                                :title="`${$t('common.id')} ${entry.userId}`"
+                                            >
+                                                {{ entry.user?.firstname }}
+                                                {{ entry.user?.lastname }} -
+                                                {{ $t(`enums.docstore.AccessLevel.${AccessLevel[entry.access]}`) }}
+                                            </span>
+                                        </div>
                                     </div>
                                 </DisclosurePanel>
                             </Disclosure>

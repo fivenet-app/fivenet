@@ -29,7 +29,7 @@ func (s *Server) ListTimeclock(ctx context.Context, req *ListTimeclockRequest) (
 	condition = condition.AND(tTimeClock.Job.EQ(jet.String(userInfo.Job)))
 
 	// Field Permission Check
-	fieldsAttr, err := s.p.Attr(userInfo, permsjobs.JobsServicePerm, perms.Name(permsjobs.TimeclockServicePerm), permsjobs.TimeclockServiceListTimeclockAccessPermField)
+	fieldsAttr, err := s.p.Attr(userInfo, permsjobs.JobsServicePerm, perms.Name(permsjobs.JobsTimeclockServicePerm), permsjobs.JobsTimeclockServiceListTimeclockAccessPermField)
 	if err != nil {
 		return nil, errswrap.NewError(errorsjobs.ErrFailedQuery, err)
 	}

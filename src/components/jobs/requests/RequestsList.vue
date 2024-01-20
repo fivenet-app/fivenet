@@ -88,7 +88,7 @@ function charsGetDisplayValue(chars: User[]): string {
 watchDebounced(
     queryTargets,
     async () => {
-        if (can('JobsService.RequestsListEntries.Access.All')) {
+        if (can('JobsRequestsService.ListRequestsRequestEntries.Access.All')) {
             await refreshColleagues();
         }
     },
@@ -99,7 +99,7 @@ watchDebounced(
 );
 
 onMounted(async () => {
-    if (can('JobsService.RequestsListEntries.Access.All')) {
+    if (can('JobsRequestsService.ListRequestsRequestEntries.Access.All')) {
         await refreshColleagues();
     }
 });
@@ -112,7 +112,10 @@ onMounted(async () => {
                 <div class="sm:flex-auto">
                     <form @submit.prevent="refresh()">
                         <div class="mx-auto flex flex-row gap-4">
-                            <div v-if="can('JobsService.RequestsListEntries.Access.All')" class="form-control flex-1">
+                            <div
+                                v-if="can('JobsRequestsService.ListRequestsRequestEntries.Access.All')"
+                                class="form-control flex-1"
+                            >
                                 <label for="searchName" class="block text-sm font-medium leading-6 text-neutral">
                                     {{ $t('common.search') }}
                                     {{ $t('common.colleague', 1) }}

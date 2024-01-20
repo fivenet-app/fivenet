@@ -47,12 +47,12 @@ message DeleteRequestRequest {
 
 message DeleteRequestResponse {}
 
-message RequestsApproveRequest {
+message ApproveRequestRequest {
   uint64 id = 1 [jstype = JS_STRING];
   bool approve = 2;
 }
 
-message RequestsApproveResponse {}
+message ApproveRequestResponse {}
 
 message RequestsCloseRequest {
   uint64 id = 1 [jstype = JS_STRING];
@@ -105,7 +105,7 @@ message DeleteRequestCommentRequest {
 
 message DeleteRequestCommentResponse {}
 
-service RequestsService {
+service JobsRequestsService {
   // @perm: Attrs=Access/StringList:[]string{"Own", "All"}§[]string{"Own"}
   rpc ListRequests(ListRequestsRequest) returns (ListRequestsResponse);
   // @perm
@@ -120,7 +120,7 @@ service RequestsService {
   // @perm
   rpc CreateOrUpdateRequestType(CreateOrUpdateRequestTypeRequest) returns (CreateOrUpdateRequestTypeResponse);
   // @perm
-  rpc RequestsDeleteType(DeleteRequestTypeRequest) returns (DeleteRequestTypeResponse);
+  rpc DeleteRequestType(DeleteRequestTypeRequest) returns (DeleteRequestTypeResponse);
   // @perm: Name=ListRequests
   rpc ListRequestComments(ListRequestCommentsRequest) returns (ListRequestCommentsResponse);
   // @perm: Name=CreateRequest

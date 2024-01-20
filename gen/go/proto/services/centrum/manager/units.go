@@ -2,6 +2,7 @@ package manager
 
 import (
 	"context"
+	"errors"
 	"fmt"
 	"slices"
 	"time"
@@ -242,7 +243,7 @@ func (s *Manager) UpdateUnitAssignments(ctx context.Context, job string, userId 
 
 			// Send updates
 			for _, user := range toAnnounce {
-				if err := s.AddUnitStatus(ctx, s.db, job, &centrum.UnitStatus{
+				if _, err := s.AddUnitStatus(ctx, s.db, job, &centrum.UnitStatus{
 					CreatedAt: timestamp.Now(),
 					UnitId:    unit.Id,
 					Status:    centrum.StatusUnit_STATUS_UNIT_USER_REMOVED,
@@ -292,7 +293,7 @@ func (s *Manager) UpdateUnitAssignments(ctx context.Context, job string, userId 
 			}
 
 			for _, user := range users {
-				if err := s.AddUnitStatus(ctx, s.db, job, &centrum.UnitStatus{
+				if _, err := s.AddUnitStatus(ctx, s.db, job, &centrum.UnitStatus{
 					CreatedAt: timestamp.Now(),
 					UnitId:    unit.Id,
 					Status:    centrum.StatusUnit_STATUS_UNIT_USER_ADDED,
@@ -313,7 +314,7 @@ func (s *Manager) UpdateUnitAssignments(ctx context.Context, job string, userId 
 
 		// Unit is empty, set unit status to be unavailable automatically
 		if len(unit.Users) == 0 {
-			unit.Status = &centrum.UnitStatus{
+			if unit.Status, err = s.AddUnitStatus(ctx, s.db, job, &centrum.UnitStatus{
 				CreatedAt: timestamp.Now(),
 				UnitId:    unit.Id,
 				Status:    centrum.StatusUnit_STATUS_UNIT_UNAVAILABLE,
@@ -322,8 +323,7 @@ func (s *Manager) UpdateUnitAssignments(ctx context.Context, job string, userId 
 				X:         x,
 				Y:         y,
 				Postal:    postal,
-			}
-			if err := s.AddUnitStatus(ctx, s.db, job, unit.Status); err != nil {
+			}); err != nil {
 				return nil, err
 			}
 		}
@@ -389,7 +389,7 @@ func (s *Manager) CreateUnit(ctx context.Context, job string, unit *centrum.Unit
 	}
 
 	// A new unit shouldn't have a status, so we make sure it has one
-	if err := s.AddUnitStatus(ctx, tx, job, &centrum.UnitStatus{
+	if unit.Status, err = s.AddUnitStatus(ctx, tx, job, &centrum.UnitStatus{
 		CreatedAt: timestamp.Now(),
 		UnitId:    uint64(lastId),
 		Status:    centrum.StatusUnit_STATUS_UNIT_UNKNOWN,
@@ -472,7 +472,7 @@ func (s *Manager) UpdateUnit(ctx context.Context, job string, unit *centrum.Unit
 	return unit, nil
 }
 
-func (s *Manager) AddUnitStatus(ctx context.Context, tx qrm.DB, job string, status *centrum.UnitStatus) error {
+func (s *Manager) AddUnitStatus(ctx context.Context, tx qrm.DB, job string, status *centrum.UnitStatus) (*centrum.UnitStatus, error) {
 	tUnitStatus := table.FivenetCentrumUnitsStatus
 	stmt := tUnitStatus.
 		INSERT(
@@ -502,25 +502,87 @@ func (s *Manager) AddUnitStatus(ctx context.Context, tx qrm.DB, job string, stat
 
 	res, err := stmt.ExecContext(ctx, tx)
 	if err != nil {
-		return err
+		return nil, err
 	}
 
 	lastId, err := res.LastInsertId()
 	if err != nil {
-		return err
+		return nil, err
 	}
-	status.Id = uint64(lastId)
+
+	newStatus, err := s.GetUnitStatus(ctx, tx, job, uint64(lastId))
+	if err != nil {
+		return nil, err
+	}
 
 	data, err := proto.Marshal(status)
 	if err != nil {
-		return err
+		return nil, err
 	}
 
 	if _, err := s.js.Publish(eventscentrum.BuildSubject(eventscentrum.TopicUnit, eventscentrum.TypeUnitStatus, job), data); err != nil {
-		return err
+		return nil, err
 	}
 
-	return nil
+	return newStatus, nil
+}
+
+func (s *Manager) GetUnitStatus(ctx context.Context, tx qrm.DB, job string, id uint64) (*centrum.UnitStatus, error) {
+	stmt := tUnitStatus.
+		SELECT(
+			tUnitStatus.ID,
+			tUnitStatus.CreatedAt,
+			tUnitStatus.UnitID,
+			tUnitStatus.Status,
+			tUnitStatus.Reason,
+			tUnitStatus.Code,
+			tUnitStatus.UserID,
+			tUnitStatus.CreatorID,
+			tUnitStatus.X,
+			tUnitStatus.Y,
+			tUnitStatus.Postal,
+			tUsers.ID,
+			tUsers.Identifier,
+			tUsers.Firstname,
+			tUsers.Lastname,
+			tUsers.Job,
+			tUsers.JobGrade,
+			tUsers.Sex,
+			tUsers.Dateofbirth,
+			tUsers.PhoneNumber,
+		).
+		FROM(
+			tUnitStatus.
+				LEFT_JOIN(tUsers,
+					tUsers.ID.EQ(tUnitStatus.UserID),
+				),
+		).
+		WHERE(
+			tUnitStatus.UnitID.EQ(jet.Uint64(id)),
+		).
+		ORDER_BY(tUnitStatus.ID.DESC()).
+		LIMIT(1)
+
+	var dest centrum.UnitStatus
+	if err := stmt.QueryContext(ctx, s.db, &dest); err != nil {
+		if !errors.Is(err, qrm.ErrNoRows) {
+			return nil, errswrap.NewError(errorscentrum.ErrFailedQuery, err)
+		} else {
+			return nil, nil
+		}
+	}
+
+	if dest.UnitId > 0 && dest.User != nil {
+		unit, err := s.GetUnit(job, dest.UnitId)
+		if err != nil {
+			return nil, errswrap.NewError(errorscentrum.ErrFailedQuery, err)
+		}
+
+		newUnit := proto.Clone(unit)
+		dest.Unit = newUnit.(*centrum.Unit)
+	}
+
+	return &dest, nil
 }
 
 func (s *Manager) DeleteUnit(ctx context.Context, job string, id uint64) error {

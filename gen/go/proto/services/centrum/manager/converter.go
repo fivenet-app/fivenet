@@ -10,14 +10,8 @@ import (
 	"github.com/galexrt/fivenet/gen/go/proto/resources/timestamp"
 	"github.com/galexrt/fivenet/pkg/utils"
 	"github.com/galexrt/fivenet/query/fivenet/model"
-	"github.com/galexrt/fivenet/query/fivenet/table"
 	jet "github.com/go-jet/jet/v2/mysql"
 	"go.uber.org/zap"
-)
-
-var (
-	tGksPhoneJMsg     = table.GksphoneJobMessage
-	tGksPhoneSettings = table.GksphoneSettings
 )
 
 func (s *Housekeeper) ConvertPhoneJobMsgToDispatch() error {

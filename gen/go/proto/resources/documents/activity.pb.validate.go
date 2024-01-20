@@ -422,6 +422,47 @@ func (m *DocActivityData) validate(all bool) error {
 			}
 		}
 
+	case *DocActivityData_AccessRequested:
+		if v == nil {
+			err := DocActivityDataValidationError{
+				field:  "Data",
+				reason: "oneof value cannot be a typed-nil",
+			}
+			if !all {
+				return err
+			}
+			errors = append(errors, err)
+		}
+
+		if all {
+			switch v := interface{}(m.GetAccessRequested()).(type) {
+			case interface{ ValidateAll() error }:
+				if err := v.ValidateAll(); err != nil {
+					errors = append(errors, DocActivityDataValidationError{
+						field:  "AccessRequested",
+						reason: "embedded message failed validation",
+						cause:  err,
+					})
+				}
+			case interface{ Validate() error }:
+				if err := v.Validate(); err != nil {
+					errors = append(errors, DocActivityDataValidationError{
+						field:  "AccessRequested",
+						reason: "embedded message failed validation",
+						cause:  err,
+					})
+				}
+			}
+		} else if v, ok := interface{}(m.GetAccessRequested()).(interface{ Validate() error }); ok {
+			if err := v.Validate(); err != nil {
+				return DocActivityDataValidationError{
+					field:  "AccessRequested",
+					reason: "embedded message failed validation",
+					cause:  err,
+				}
+			}
+		}
+
 	default:
 		_ = v // ensures v is used
 	}
@@ -746,73 +787,53 @@ var _ interface {
 	ErrorName() string
 } = DocOwnerChangedValidationError{}
 
-// Validate checks the field values on DocAccessChanged with the rules defined
-// in the proto definition for this message. If any rules are violated, the
-// first error encountered is returned, or nil if there are no violations.
-func (m *DocAccessChanged) Validate() error {
+// Validate checks the field values on DocAccessRequested with the rules
+// defined in the proto definition for this message. If any rules are
+// violated, the first error encountered is returned, or nil if there are no violations.
+func (m *DocAccessRequested) Validate() error {
 	return m.validate(false)
 }
 
-// ValidateAll checks the field values on DocAccessChanged with the rules
+// ValidateAll checks the field values on DocAccessRequested with the rules
 // defined in the proto definition for this message. If any rules are
 // violated, the result is a list of violation errors wrapped in
-// DocAccessChangedMultiError, or nil if none found.
-func (m *DocAccessChanged) ValidateAll() error {
+// DocAccessRequestedMultiError, or nil if none found.
+func (m *DocAccessRequested) ValidateAll() error {
 	return m.validate(true)
 }
 
-func (m *DocAccessChanged) validate(all bool) error {
+func (m *DocAccessRequested) validate(all bool) error {
 	if m == nil {
 		return nil
 	}
 
 	var errors []error
 
-	// no validation rules for Mode
-
-	if all {
-		switch v := interface{}(m.GetAccess()).(type) {
-		case interface{ ValidateAll() error }:
-			if err := v.ValidateAll(); err != nil {
-				errors = append(errors, DocAccessChangedValidationError{
-					field:  "Access",
-					reason: "embedded message failed validation",
-					cause:  err,
-				})
-			}
-		case interface{ Validate() error }:
-			if err := v.Validate(); err != nil {
-				errors = append(errors, DocAccessChangedValidationError{
-					field:  "Access",
-					reason: "embedded message failed validation",
-					cause:  err,
-				})
-			}
+	if _, ok := AccessLevel_name[int32(m.GetLevel())]; !ok {
+		err := DocAccessRequestedValidationError{
+			field:  "Level",
+			reason: "value must be one of the defined enum values",
 		}
-	} else if v, ok := interface{}(m.GetAccess()).(interface{ Validate() error }); ok {
-		if err := v.Validate(); err != nil {
-			return DocAccessChangedValidationError{
-				field:  "Access",
-				reason: "embedded message failed validation",
-				cause:  err,
-			}
+		if !all {
+			return err
 		}
+		errors = append(errors, err)
 	}
 
 	if len(errors) > 0 {
-		return DocAccessChangedMultiError(errors)
+		return DocAccessRequestedMultiError(errors)
 	}
 
 	return nil
 }
 
-// DocAccessChangedMultiError is an error wrapping multiple validation errors
-// returned by DocAccessChanged.ValidateAll() if the designated constraints
+// DocAccessRequestedMultiError is an error wrapping multiple validation errors
+// returned by DocAccessRequested.ValidateAll() if the designated constraints
 // aren't met.
-type DocAccessChangedMultiError []error
+type DocAccessRequestedMultiError []error
 
 // Error returns a concatenation of all the error messages it wraps.
-func (m DocAccessChangedMultiError) Error() string {
+func (m DocAccessRequestedMultiError) Error() string {
 	var msgs []string
 	for _, err := range m {
 		msgs = append(msgs, err.Error())
@@ -821,11 +842,11 @@ func (m DocAccessChangedMultiError) Error() string {
 }
 
 // AllErrors returns a list of validation violation errors.
-func (m DocAccessChangedMultiError) AllErrors() []error { return m }
+func (m DocAccessRequestedMultiError) AllErrors() []error { return m }
 
-// DocAccessChangedValidationError is the validation error returned by
-// DocAccessChanged.Validate if the designated constraints aren't met.
-type DocAccessChangedValidationError struct {
+// DocAccessRequestedValidationError is the validation error returned by
+// DocAccessRequested.Validate if the designated constraints aren't met.
+type DocAccessRequestedValidationError struct {
 	field  string
 	reason string
 	cause  error
@@ -833,22 +854,24 @@ type DocAccessChangedValidationError struct {
 }
 
 // Field function returns field value.
-func (e DocAccessChangedValidationError) Field() string { return e.field }
+func (e DocAccessRequestedValidationError) Field() string { return e.field }
 
 // Reason function returns reason value.
-func (e DocAccessChangedValidationError) Reason() string { return e.reason }
+func (e DocAccessRequestedValidationError) Reason() string { return e.reason }
 
 // Cause function returns cause value.
-func (e DocAccessChangedValidationError) Cause() error { return e.cause }
+func (e DocAccessRequestedValidationError) Cause() error { return e.cause }
 
 // Key function returns key value.
-func (e DocAccessChangedValidationError) Key() bool { return e.key }
+func (e DocAccessRequestedValidationError) Key() bool { return e.key }
 
 // ErrorName returns error name.
-func (e DocAccessChangedValidationError) ErrorName() string { return "DocAccessChangedValidationError" }
+func (e DocAccessRequestedValidationError) ErrorName() string {
+	return "DocAccessRequestedValidationError"
+}
 
 // Error satisfies the builtin error interface
-func (e DocAccessChangedValidationError) Error() string {
+func (e DocAccessRequestedValidationError) Error() string {
 	cause := ""
 	if e.cause != nil {
 		cause = fmt.Sprintf(" | caused by: %v", e.cause)
@@ -860,14 +883,14 @@ func (e DocAccessChangedValidationError) Error() string {
 	}
 
 	return fmt.Sprintf(
-		"invalid %sDocAccessChanged.%s: %s%s",
+		"invalid %sDocAccessRequested.%s: %s%s",
 		key,
 		e.field,
 		e.reason,
 		cause)
 }
 
-var _ error = DocAccessChangedValidationError{}
+var _ error = DocAccessRequestedValidationError{}
 
 var _ interface {
 	Field() string
@@ -875,4 +898,4 @@ var _ interface {
 	Key() bool
 	Cause() error
 	ErrorName() string
-} = DocAccessChangedValidationError{}
+} = DocAccessRequestedValidationError{}

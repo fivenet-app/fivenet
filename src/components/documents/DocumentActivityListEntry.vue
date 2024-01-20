@@ -27,6 +27,7 @@ import { type DocActivity, DocActivityType } from '~~/gen/ts/resources/documents
 import CitizenInfoPopover from '~/components/partials/citizens/CitizenInfoPopover.vue';
 import GenericTime from '~/components/partials/elements/GenericTime.vue';
 import ActivityDocUpdatedDiff from '~/components/documents/activity/ActivityDocUpdatedDiff.vue';
+import { AccessLevel } from '~~/gen/ts/resources/documents/access';
 
 defineProps<{
     entry: DocActivity;
@@ -100,9 +101,19 @@ function getDocAtivityIcon(activityType: DocActivityType): DefineComponent {
             </div>
             <div class="flex-1 space-y-1">
                 <div class="flex items-center justify-between">
-                    <h3 class="text-sm font-medium text-neutral">
+                    <h3 class="inline-flex items-center gap-2 text-sm font-medium text-neutral">
                         <span class="font-bold">
                             {{ $t(`enums.docstore.DocActivityType.${DocActivityType[entry.activityType]}`) }}
+                        </span>
+                        <span v-if="entry.data">
+                            <span v-if="entry.data?.data.oneofKind === 'accessRequested'">
+                                ({{ $t('common.access') }}:
+                                {{
+                                    $t(
+                                        `enums.docstore.AccessLevel.${AccessLevel[entry.data?.data.accessRequested.level ?? 0]}`,
+                                    )
+                                }})
+                            </span>
                         </span>
                     </h3>
                     <p class="text-sm text-gray-400">

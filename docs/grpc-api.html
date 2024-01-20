@@ -312,41 +312,6 @@
         
           
           <li>
-            <a href="#resources%2fdocuments%2factivity.proto">resources/documents/activity.proto</a>
-            <ul>
-              
-                <li>
-                  <a href="#resources.documents.DocAccessChanged"><span class="badge">M</span>DocAccessChanged</a>
-                </li>
-              
-                <li>
-                  <a href="#resources.documents.DocActivity"><span class="badge">M</span>DocActivity</a>
-                </li>
-              
-                <li>
-                  <a href="#resources.documents.DocActivityData"><span class="badge">M</span>DocActivityData</a>
-                </li>
-              
-                <li>
-                  <a href="#resources.documents.DocOwnerChanged"><span class="badge">M</span>DocOwnerChanged</a>
-                </li>
-              
-                <li>
-                  <a href="#resources.documents.DocUpdated"><span class="badge">M</span>DocUpdated</a>
-                </li>
-              
-              
-                <li>
-                  <a href="#resources.documents.DocActivityType"><span class="badge">E</span>DocActivityType</a>
-                </li>
-              
-              
-              
-            </ul>
-          </li>
-        
-          
-          <li>
             <a href="#resources%2fdocuments%2fdocuments.proto">resources/documents/documents.proto</a>
             <ul>
               
@@ -432,6 +397,41 @@
                   <a href="#resources.documents.TemplateShort"><span class="badge">M</span>TemplateShort</a>
                 </li>
               
+              
+              
+              
+            </ul>
+          </li>
+        
+          
+          <li>
+            <a href="#resources%2fdocuments%2factivity.proto">resources/documents/activity.proto</a>
+            <ul>
+              
+                <li>
+                  <a href="#resources.documents.DocAccessRequested"><span class="badge">M</span>DocAccessRequested</a>
+                </li>
+              
+                <li>
+                  <a href="#resources.documents.DocActivity"><span class="badge">M</span>DocActivity</a>
+                </li>
+              
+                <li>
+                  <a href="#resources.documents.DocActivityData"><span class="badge">M</span>DocActivityData</a>
+                </li>
+              
+                <li>
+                  <a href="#resources.documents.DocOwnerChanged"><span class="badge">M</span>DocOwnerChanged</a>
+                </li>
+              
+                <li>
+                  <a href="#resources.documents.DocUpdated"><span class="badge">M</span>DocUpdated</a>
+                </li>
+              
+              
+                <li>
+                  <a href="#resources.documents.DocActivityType"><span class="badge">E</span>DocActivityType</a>
+                </li>
               
               
               
@@ -1619,7 +1619,7 @@
               
               
                 <li>
-                  <a href="#services.jobs.TimeclockService"><span class="badge">S</span>TimeclockService</a>
+                  <a href="#services.jobs.JobsTimeclockService"><span class="badge">S</span>JobsTimeclockService</a>
                 </li>
               
             </ul>
@@ -1629,6 +1629,14 @@
           <li>
             <a href="#services%2fjobs%2frequests.proto">services/jobs/requests.proto</a>
             <ul>
+              
+                <li>
+                  <a href="#services.jobs.ApproveRequestRequest"><span class="badge">M</span>ApproveRequestRequest</a>
+                </li>
+              
+                <li>
+                  <a href="#services.jobs.ApproveRequestResponse"><span class="badge">M</span>ApproveRequestResponse</a>
+                </li>
               
                 <li>
                   <a href="#services.jobs.CreateOrUpdateRequestTypeRequest"><span class="badge">M</span>CreateOrUpdateRequestTypeRequest</a>
@@ -1703,14 +1711,6 @@
                 </li>
               
                 <li>
-                  <a href="#services.jobs.RequestsApproveRequest"><span class="badge">M</span>RequestsApproveRequest</a>
-                </li>
-              
-                <li>
-                  <a href="#services.jobs.RequestsApproveResponse"><span class="badge">M</span>RequestsApproveResponse</a>
-                </li>
-              
-                <li>
                   <a href="#services.jobs.RequestsCloseRequest"><span class="badge">M</span>RequestsCloseRequest</a>
                 </li>
               
@@ -1730,7 +1730,7 @@
               
               
                 <li>
-                  <a href="#services.jobs.RequestsService"><span class="badge">S</span>RequestsService</a>
+                  <a href="#services.jobs.JobsRequestsService"><span class="badge">S</span>JobsRequestsService</a>
                 </li>
               
             </ul>
@@ -1777,7 +1777,7 @@
               
               
                 <li>
-                  <a href="#services.jobs.ConductService"><span class="badge">S</span>ConductService</a>
+                  <a href="#services.jobs.JobsConductService"><span class="badge">S</span>JobsConductService</a>
                 </li>
               
             </ul>
@@ -1792,7 +1792,7 @@
               
               
                 <li>
-                  <a href="#services.jobs.QualificationsService"><span class="badge">S</span>QualificationsService</a>
+                  <a href="#services.jobs.JobsQualificationsService"><span class="badge">S</span>JobsQualificationsService</a>
                 </li>
               
             </ul>
@@ -3144,419 +3144,6 @@
               <tr>
                 <td>ACCESS_LEVEL_UPDATE_MODE_CLEAR</td>
                 <td>3</td>
-                <td><p></p></td>
-              </tr>
-            
-          </tbody>
-        </table>
-      
-
-      
-
-      
-    
-      
-      <div class="file-heading">
-        <h2 id="resources/documents/activity.proto">resources/documents/activity.proto</h2><a href="#title">Top</a>
-      </div>
-      <p></p>
-
-      
-        <h3 id="resources.documents.DocAccessChanged">DocAccessChanged</h3>
-        <p></p>
-
-        
-          <table class="field-table">
-            <thead>
-              <tr><td>Field</td><td>Type</td><td>Label</td><td>Description</td></tr>
-            </thead>
-            <tbody>
-              
-                <tr>
-                  <td>mode</td>
-                  <td><a href="#resources.documents.AccessLevelUpdateMode">AccessLevelUpdateMode</a></td>
-                  <td></td>
-                  <td><p> </p></td>
-                </tr>
-              
-                <tr>
-                  <td>access</td>
-                  <td><a href="#resources.documents.DocumentAccess">DocumentAccess</a></td>
-                  <td></td>
-                  <td><p> </p></td>
-                </tr>
-              
-            </tbody>
-          </table>
-
-          
-
-        
-      
-        <h3 id="resources.documents.DocActivity">DocActivity</h3>
-        <p></p>
-
-        
-          <table class="field-table">
-            <thead>
-              <tr><td>Field</td><td>Type</td><td>Label</td><td>Description</td></tr>
-            </thead>
-            <tbody>
-              
-                <tr>
-                  <td>id</td>
-                  <td><a href="#uint64">uint64</a></td>
-                  <td></td>
-                  <td><p> </p></td>
-                </tr>
-              
-                <tr>
-                  <td>created_at</td>
-                  <td><a href="#resources.timestamp.Timestamp">resources.timestamp.Timestamp</a></td>
-                  <td></td>
-                  <td><p> </p></td>
-                </tr>
-              
-                <tr>
-                  <td>document_id</td>
-                  <td><a href="#uint64">uint64</a></td>
-                  <td></td>
-                  <td><p> </p></td>
-                </tr>
-              
-                <tr>
-                  <td>activity_type</td>
-                  <td><a href="#resources.documents.DocActivityType">DocActivityType</a></td>
-                  <td></td>
-                  <td><p> </p></td>
-                </tr>
-              
-                <tr>
-                  <td>creator_id</td>
-                  <td><a href="#int32">int32</a></td>
-                  <td>optional</td>
-                  <td><p> </p></td>
-                </tr>
-              
-                <tr>
-                  <td>creator</td>
-                  <td><a href="#resources.users.UserShort">resources.users.UserShort</a></td>
-                  <td>optional</td>
-                  <td><p>@gotags: alias:&#34;creator&#34; </p></td>
-                </tr>
-              
-                <tr>
-                  <td>creator_job</td>
-                  <td><a href="#string">string</a></td>
-                  <td></td>
-                  <td><p> </p></td>
-                </tr>
-              
-                <tr>
-                  <td>creator_job_label</td>
-                  <td><a href="#string">string</a></td>
-                  <td>optional</td>
-                  <td><p> </p></td>
-                </tr>
-              
-                <tr>
-                  <td>reason</td>
-                  <td><a href="#string">string</a></td>
-                  <td>optional</td>
-                  <td><p> </p></td>
-                </tr>
-              
-                <tr>
-                  <td>data</td>
-                  <td><a href="#resources.documents.DocActivityData">DocActivityData</a></td>
-                  <td></td>
-                  <td><p> </p></td>
-                </tr>
-              
-            </tbody>
-          </table>
-
-          
-            
-            
-            <h4>Validated Fields</h4>
-            <table>
-              <thead>
-                <tr>
-                  <td>Field</td>
-                  <td>Validations</td>
-                </tr>
-              </thead>
-              <tbody>
-              
-                <tr>
-                  <td>creator_job</td>
-                  <td>
-                    <ul>
-                    
-                      <li>string.max_len: 20</li>
-                    
-                    </ul>
-                  </td>
-                </tr>
-              
-                <tr>
-                  <td>creator_job_label</td>
-                  <td>
-                    <ul>
-                    
-                      <li>string.max_len: 50</li>
-                    
-                    </ul>
-                  </td>
-                </tr>
-              
-                <tr>
-                  <td>reason</td>
-                  <td>
-                    <ul>
-                    
-                      <li>string.max_len: 255</li>
-                    
-                    </ul>
-                  </td>
-                </tr>
-              
-              </tbody>
-            </table>
-            
-          
-
-        
-      
-        <h3 id="resources.documents.DocActivityData">DocActivityData</h3>
-        <p></p>
-
-        
-          <table class="field-table">
-            <thead>
-              <tr><td>Field</td><td>Type</td><td>Label</td><td>Description</td></tr>
-            </thead>
-            <tbody>
-              
-                <tr>
-                  <td>updated</td>
-                  <td><a href="#resources.documents.DocUpdated">DocUpdated</a></td>
-                  <td></td>
-                  <td><p> </p></td>
-                </tr>
-              
-                <tr>
-                  <td>owner_changed</td>
-                  <td><a href="#resources.documents.DocOwnerChanged">DocOwnerChanged</a></td>
-                  <td></td>
-                  <td><p> </p></td>
-                </tr>
-              
-                <tr>
-                  <td>access_updated</td>
-                  <td><a href="#resources.documents.DocumentAccess">DocumentAccess</a></td>
-                  <td></td>
-                  <td><p> </p></td>
-                </tr>
-              
-            </tbody>
-          </table>
-
-          
-
-        
-      
-        <h3 id="resources.documents.DocOwnerChanged">DocOwnerChanged</h3>
-        <p></p>
-
-        
-          <table class="field-table">
-            <thead>
-              <tr><td>Field</td><td>Type</td><td>Label</td><td>Description</td></tr>
-            </thead>
-            <tbody>
-              
-                <tr>
-                  <td>new_owner_id</td>
-                  <td><a href="#int32">int32</a></td>
-                  <td></td>
-                  <td><p> </p></td>
-                </tr>
-              
-                <tr>
-                  <td>new_owner</td>
-                  <td><a href="#resources.users.UserShort">resources.users.UserShort</a></td>
-                  <td></td>
-                  <td><p> </p></td>
-                </tr>
-              
-            </tbody>
-          </table>
-
-          
-
-        
-      
-        <h3 id="resources.documents.DocUpdated">DocUpdated</h3>
-        <p></p>
-
-        
-          <table class="field-table">
-            <thead>
-              <tr><td>Field</td><td>Type</td><td>Label</td><td>Description</td></tr>
-            </thead>
-            <tbody>
-              
-                <tr>
-                  <td>title_diff</td>
-                  <td><a href="#string">string</a></td>
-                  <td>optional</td>
-                  <td><p> </p></td>
-                </tr>
-              
-                <tr>
-                  <td>content_diff</td>
-                  <td><a href="#string">string</a></td>
-                  <td>optional</td>
-                  <td><p> </p></td>
-                </tr>
-              
-                <tr>
-                  <td>state_diff</td>
-                  <td><a href="#string">string</a></td>
-                  <td>optional</td>
-                  <td><p> </p></td>
-                </tr>
-              
-            </tbody>
-          </table>
-
-          
-
-        
-      
-
-      
-        <h3 id="resources.documents.DocActivityType">DocActivityType</h3>
-        <p></p>
-        <table class="enum-table">
-          <thead>
-            <tr><td>Name</td><td>Number</td><td>Description</td></tr>
-          </thead>
-          <tbody>
-            
-              <tr>
-                <td>DOC_ACTIVITY_TYPE_UNSPECIFIED</td>
-                <td>0</td>
-                <td><p></p></td>
-              </tr>
-            
-              <tr>
-                <td>DOC_ACTIVITY_TYPE_CREATED</td>
-                <td>1</td>
-                <td><p>Base</p></td>
-              </tr>
-            
-              <tr>
-                <td>DOC_ACTIVITY_TYPE_STATUS_OPEN</td>
-                <td>2</td>
-                <td><p></p></td>
-              </tr>
-            
-              <tr>
-                <td>DOC_ACTIVITY_TYPE_STATUS_CLOSED</td>
-                <td>3</td>
-                <td><p></p></td>
-              </tr>
-            
-              <tr>
-                <td>DOC_ACTIVITY_TYPE_UPDATED</td>
-                <td>4</td>
-                <td><p></p></td>
-              </tr>
-            
-              <tr>
-                <td>DOC_ACTIVITY_TYPE_RELATIONS_UPDATED</td>
-                <td>5</td>
-                <td><p></p></td>
-              </tr>
-            
-              <tr>
-                <td>DOC_ACTIVITY_TYPE_REFERENCES_UPDATED</td>
-                <td>6</td>
-                <td><p></p></td>
-              </tr>
-            
-              <tr>
-                <td>DOC_ACTIVITY_TYPE_ACCESS_UPDATED</td>
-                <td>7</td>
-                <td><p></p></td>
-              </tr>
-            
-              <tr>
-                <td>DOC_ACTIVITY_TYPE_OWNER_CHANGED</td>
-                <td>8</td>
-                <td><p></p></td>
-              </tr>
-            
-              <tr>
-                <td>DOC_ACTIVITY_TYPE_DELETED</td>
-                <td>9</td>
-                <td><p></p></td>
-              </tr>
-            
-              <tr>
-                <td>DOC_ACTIVITY_TYPE_COMMENT_ADDED</td>
-                <td>10</td>
-                <td><p>Comments</p></td>
-              </tr>
-            
-              <tr>
-                <td>DOC_ACTIVITY_TYPE_COMMENT_UPDATED</td>
-                <td>11</td>
-                <td><p></p></td>
-              </tr>
-            
-              <tr>
-                <td>DOC_ACTIVITY_TYPE_COMMENT_DELETED</td>
-                <td>12</td>
-                <td><p></p></td>
-              </tr>
-            
-              <tr>
-                <td>DOC_ACTIVITY_TYPE_REQUESTED_ACCESS</td>
-                <td>13</td>
-                <td><p>Requests</p></td>
-              </tr>
-            
-              <tr>
-                <td>DOC_ACTIVITY_TYPE_REQUESTED_CLOSURE</td>
-                <td>14</td>
-                <td><p></p></td>
-              </tr>
-            
-              <tr>
-                <td>DOC_ACTIVITY_TYPE_REQUESTED_OPENING</td>
-                <td>15</td>
-                <td><p></p></td>
-              </tr>
-            
-              <tr>
-                <td>DOC_ACTIVITY_TYPE_REQUESTED_UPDATE</td>
-                <td>16</td>
-                <td><p></p></td>
-              </tr>
-            
-              <tr>
-                <td>DOC_ACTIVITY_TYPE_REQUESTED_OWNER_CHANGE</td>
-                <td>17</td>
-                <td><p></p></td>
-              </tr>
-            
-              <tr>
-                <td>DOC_ACTIVITY_TYPE_REQUESTED_DELETION</td>
-                <td>18</td>
                 <td><p></p></td>
               </tr>
             
@@ -5235,6 +4822,446 @@
         
       
 
+      
+
+      
+
+      
+    
+      
+      <div class="file-heading">
+        <h2 id="resources/documents/activity.proto">resources/documents/activity.proto</h2><a href="#title">Top</a>
+      </div>
+      <p></p>
+
+      
+        <h3 id="resources.documents.DocAccessRequested">DocAccessRequested</h3>
+        <p></p>
+
+        
+          <table class="field-table">
+            <thead>
+              <tr><td>Field</td><td>Type</td><td>Label</td><td>Description</td></tr>
+            </thead>
+            <tbody>
+              
+                <tr>
+                  <td>level</td>
+                  <td><a href="#resources.documents.AccessLevel">AccessLevel</a></td>
+                  <td></td>
+                  <td><p> </p></td>
+                </tr>
+              
+            </tbody>
+          </table>
+
+          
+            
+            
+            <h4>Validated Fields</h4>
+            <table>
+              <thead>
+                <tr>
+                  <td>Field</td>
+                  <td>Validations</td>
+                </tr>
+              </thead>
+              <tbody>
+              
+                <tr>
+                  <td>level</td>
+                  <td>
+                    <ul>
+                    
+                      <li>enum.defined_only: true</li>
+                    
+                    </ul>
+                  </td>
+                </tr>
+              
+              </tbody>
+            </table>
+            
+          
+
+        
+      
+        <h3 id="resources.documents.DocActivity">DocActivity</h3>
+        <p></p>
+
+        
+          <table class="field-table">
+            <thead>
+              <tr><td>Field</td><td>Type</td><td>Label</td><td>Description</td></tr>
+            </thead>
+            <tbody>
+              
+                <tr>
+                  <td>id</td>
+                  <td><a href="#uint64">uint64</a></td>
+                  <td></td>
+                  <td><p> </p></td>
+                </tr>
+              
+                <tr>
+                  <td>created_at</td>
+                  <td><a href="#resources.timestamp.Timestamp">resources.timestamp.Timestamp</a></td>
+                  <td></td>
+                  <td><p> </p></td>
+                </tr>
+              
+                <tr>
+                  <td>document_id</td>
+                  <td><a href="#uint64">uint64</a></td>
+                  <td></td>
+                  <td><p> </p></td>
+                </tr>
+              
+                <tr>
+                  <td>activity_type</td>
+                  <td><a href="#resources.documents.DocActivityType">DocActivityType</a></td>
+                  <td></td>
+                  <td><p> </p></td>
+                </tr>
+              
+                <tr>
+                  <td>creator_id</td>
+                  <td><a href="#int32">int32</a></td>
+                  <td>optional</td>
+                  <td><p> </p></td>
+                </tr>
+              
+                <tr>
+                  <td>creator</td>
+                  <td><a href="#resources.users.UserShort">resources.users.UserShort</a></td>
+                  <td>optional</td>
+                  <td><p>@gotags: alias:&#34;creator&#34; </p></td>
+                </tr>
+              
+                <tr>
+                  <td>creator_job</td>
+                  <td><a href="#string">string</a></td>
+                  <td></td>
+                  <td><p> </p></td>
+                </tr>
+              
+                <tr>
+                  <td>creator_job_label</td>
+                  <td><a href="#string">string</a></td>
+                  <td>optional</td>
+                  <td><p> </p></td>
+                </tr>
+              
+                <tr>
+                  <td>reason</td>
+                  <td><a href="#string">string</a></td>
+                  <td>optional</td>
+                  <td><p> </p></td>
+                </tr>
+              
+                <tr>
+                  <td>data</td>
+                  <td><a href="#resources.documents.DocActivityData">DocActivityData</a></td>
+                  <td></td>
+                  <td><p> </p></td>
+                </tr>
+              
+            </tbody>
+          </table>
+
+          
+            
+            
+            <h4>Validated Fields</h4>
+            <table>
+              <thead>
+                <tr>
+                  <td>Field</td>
+                  <td>Validations</td>
+                </tr>
+              </thead>
+              <tbody>
+              
+                <tr>
+                  <td>creator_job</td>
+                  <td>
+                    <ul>
+                    
+                      <li>string.max_len: 20</li>
+                    
+                    </ul>
+                  </td>
+                </tr>
+              
+                <tr>
+                  <td>creator_job_label</td>
+                  <td>
+                    <ul>
+                    
+                      <li>string.max_len: 50</li>
+                    
+                    </ul>
+                  </td>
+                </tr>
+              
+                <tr>
+                  <td>reason</td>
+                  <td>
+                    <ul>
+                    
+                      <li>string.max_len: 255</li>
+                    
+                    </ul>
+                  </td>
+                </tr>
+              
+              </tbody>
+            </table>
+            
+          
+
+        
+      
+        <h3 id="resources.documents.DocActivityData">DocActivityData</h3>
+        <p></p>
+
+        
+          <table class="field-table">
+            <thead>
+              <tr><td>Field</td><td>Type</td><td>Label</td><td>Description</td></tr>
+            </thead>
+            <tbody>
+              
+                <tr>
+                  <td>updated</td>
+                  <td><a href="#resources.documents.DocUpdated">DocUpdated</a></td>
+                  <td></td>
+                  <td><p> </p></td>
+                </tr>
+              
+                <tr>
+                  <td>owner_changed</td>
+                  <td><a href="#resources.documents.DocOwnerChanged">DocOwnerChanged</a></td>
+                  <td></td>
+                  <td><p> </p></td>
+                </tr>
+              
+                <tr>
+                  <td>access_updated</td>
+                  <td><a href="#resources.documents.DocumentAccess">DocumentAccess</a></td>
+                  <td></td>
+                  <td><p> </p></td>
+                </tr>
+              
+                <tr>
+                  <td>access_requested</td>
+                  <td><a href="#resources.documents.DocAccessRequested">DocAccessRequested</a></td>
+                  <td></td>
+                  <td><p> </p></td>
+                </tr>
+              
+            </tbody>
+          </table>
+
+          
+
+        
+      
+        <h3 id="resources.documents.DocOwnerChanged">DocOwnerChanged</h3>
+        <p></p>
+
+        
+          <table class="field-table">
+            <thead>
+              <tr><td>Field</td><td>Type</td><td>Label</td><td>Description</td></tr>
+            </thead>
+            <tbody>
+              
+                <tr>
+                  <td>new_owner_id</td>
+                  <td><a href="#int32">int32</a></td>
+                  <td></td>
+                  <td><p> </p></td>
+                </tr>
+              
+                <tr>
+                  <td>new_owner</td>
+                  <td><a href="#resources.users.UserShort">resources.users.UserShort</a></td>
+                  <td></td>
+                  <td><p> </p></td>
+                </tr>
+              
+            </tbody>
+          </table>
+
+          
+
+        
+      
+        <h3 id="resources.documents.DocUpdated">DocUpdated</h3>
+        <p></p>
+
+        
+          <table class="field-table">
+            <thead>
+              <tr><td>Field</td><td>Type</td><td>Label</td><td>Description</td></tr>
+            </thead>
+            <tbody>
+              
+                <tr>
+                  <td>title_diff</td>
+                  <td><a href="#string">string</a></td>
+                  <td>optional</td>
+                  <td><p> </p></td>
+                </tr>
+              
+                <tr>
+                  <td>content_diff</td>
+                  <td><a href="#string">string</a></td>
+                  <td>optional</td>
+                  <td><p> </p></td>
+                </tr>
+              
+                <tr>
+                  <td>state_diff</td>
+                  <td><a href="#string">string</a></td>
+                  <td>optional</td>
+                  <td><p> </p></td>
+                </tr>
+              
+            </tbody>
+          </table>
+
+          
+
+        
+      
+
+      
+        <h3 id="resources.documents.DocActivityType">DocActivityType</h3>
+        <p></p>
+        <table class="enum-table">
+          <thead>
+            <tr><td>Name</td><td>Number</td><td>Description</td></tr>
+          </thead>
+          <tbody>
+            
+              <tr>
+                <td>DOC_ACTIVITY_TYPE_UNSPECIFIED</td>
+                <td>0</td>
+                <td><p></p></td>
+              </tr>
+            
+              <tr>
+                <td>DOC_ACTIVITY_TYPE_CREATED</td>
+                <td>1</td>
+                <td><p>Base</p></td>
+              </tr>
+            
+              <tr>
+                <td>DOC_ACTIVITY_TYPE_STATUS_OPEN</td>
+                <td>2</td>
+                <td><p></p></td>
+              </tr>
+            
+              <tr>
+                <td>DOC_ACTIVITY_TYPE_STATUS_CLOSED</td>
+                <td>3</td>
+                <td><p></p></td>
+              </tr>
+            
+              <tr>
+                <td>DOC_ACTIVITY_TYPE_UPDATED</td>
+                <td>4</td>
+                <td><p></p></td>
+              </tr>
+            
+              <tr>
+                <td>DOC_ACTIVITY_TYPE_RELATIONS_UPDATED</td>
+                <td>5</td>
+                <td><p></p></td>
+              </tr>
+            
+              <tr>
+                <td>DOC_ACTIVITY_TYPE_REFERENCES_UPDATED</td>
+                <td>6</td>
+                <td><p></p></td>
+              </tr>
+            
+              <tr>
+                <td>DOC_ACTIVITY_TYPE_ACCESS_UPDATED</td>
+                <td>7</td>
+                <td><p></p></td>
+              </tr>
+            
+              <tr>
+                <td>DOC_ACTIVITY_TYPE_OWNER_CHANGED</td>
+                <td>8</td>
+                <td><p></p></td>
+              </tr>
+            
+              <tr>
+                <td>DOC_ACTIVITY_TYPE_DELETED</td>
+                <td>9</td>
+                <td><p></p></td>
+              </tr>
+            
+              <tr>
+                <td>DOC_ACTIVITY_TYPE_COMMENT_ADDED</td>
+                <td>10</td>
+                <td><p>Comments</p></td>
+              </tr>
+            
+              <tr>
+                <td>DOC_ACTIVITY_TYPE_COMMENT_UPDATED</td>
+                <td>11</td>
+                <td><p></p></td>
+              </tr>
+            
+              <tr>
+                <td>DOC_ACTIVITY_TYPE_COMMENT_DELETED</td>
+                <td>12</td>
+                <td><p></p></td>
+              </tr>
+            
+              <tr>
+                <td>DOC_ACTIVITY_TYPE_REQUESTED_ACCESS</td>
+                <td>13</td>
+                <td><p>Requests</p></td>
+              </tr>
+            
+              <tr>
+                <td>DOC_ACTIVITY_TYPE_REQUESTED_CLOSURE</td>
+                <td>14</td>
+                <td><p></p></td>
+              </tr>
+            
+              <tr>
+                <td>DOC_ACTIVITY_TYPE_REQUESTED_OPENING</td>
+                <td>15</td>
+                <td><p></p></td>
+              </tr>
+            
+              <tr>
+                <td>DOC_ACTIVITY_TYPE_REQUESTED_UPDATE</td>
+                <td>16</td>
+                <td><p></p></td>
+              </tr>
+            
+              <tr>
+                <td>DOC_ACTIVITY_TYPE_REQUESTED_OWNER_CHANGE</td>
+                <td>17</td>
+                <td><p></p></td>
+              </tr>
+            
+              <tr>
+                <td>DOC_ACTIVITY_TYPE_REQUESTED_DELETION</td>
+                <td>18</td>
+                <td><p></p></td>
+              </tr>
+            
+          </tbody>
+        </table>
       
 
       
@@ -15112,6 +15139,13 @@
                   <td><p>@sanitize </p></td>
                 </tr>
               
+                <tr>
+                  <td>data</td>
+                  <td><a href="#resources.documents.DocActivityData">resources.documents.DocActivityData</a></td>
+                  <td>optional</td>
+                  <td><p> </p></td>
+                </tr>
+              
             </tbody>
           </table>
 
@@ -16935,6 +16969,13 @@
                 </tr>
               
                 <tr>
+                  <td>data</td>
+                  <td><a href="#resources.documents.DocActivityData">resources.documents.DocActivityData</a></td>
+                  <td>optional</td>
+                  <td><p> </p></td>
+                </tr>
+              
+                <tr>
                   <td>accepted</td>
                   <td><a href="#bool">bool</a></td>
                   <td></td>
@@ -17817,7 +17858,7 @@
       
 
       
-        <h3 id="services.jobs.TimeclockService">TimeclockService</h3>
+        <h3 id="services.jobs.JobsTimeclockService">JobsTimeclockService</h3>
         <p></p>
         <table class="enum-table">
           <thead>
@@ -17850,6 +17891,44 @@
       </div>
       <p></p>
 
+      
+        <h3 id="services.jobs.ApproveRequestRequest">ApproveRequestRequest</h3>
+        <p></p>
+
+        
+          <table class="field-table">
+            <thead>
+              <tr><td>Field</td><td>Type</td><td>Label</td><td>Description</td></tr>
+            </thead>
+            <tbody>
+              
+                <tr>
+                  <td>id</td>
+                  <td><a href="#uint64">uint64</a></td>
+                  <td></td>
+                  <td><p> </p></td>
+                </tr>
+              
+                <tr>
+                  <td>approve</td>
+                  <td><a href="#bool">bool</a></td>
+                  <td></td>
+                  <td><p> </p></td>
+                </tr>
+              
+            </tbody>
+          </table>
+
+          
+
+        
+      
+        <h3 id="services.jobs.ApproveRequestResponse">ApproveRequestResponse</h3>
+        <p></p>
+
+        
+
+        
       
         <h3 id="services.jobs.CreateOrUpdateRequestTypeRequest">CreateOrUpdateRequestTypeRequest</h3>
         <p></p>
@@ -18410,44 +18489,6 @@
 
         
       
-        <h3 id="services.jobs.RequestsApproveRequest">RequestsApproveRequest</h3>
-        <p></p>
-
-        
-          <table class="field-table">
-            <thead>
-              <tr><td>Field</td><td>Type</td><td>Label</td><td>Description</td></tr>
-            </thead>
-            <tbody>
-              
-                <tr>
-                  <td>id</td>
-                  <td><a href="#uint64">uint64</a></td>
-                  <td></td>
-                  <td><p> </p></td>
-                </tr>
-              
-                <tr>
-                  <td>approve</td>
-                  <td><a href="#bool">bool</a></td>
-                  <td></td>
-                  <td><p> </p></td>
-                </tr>
-              
-            </tbody>
-          </table>
-
-          
-
-        
-      
-        <h3 id="services.jobs.RequestsApproveResponse">RequestsApproveResponse</h3>
-        <p></p>
-
-        
-
-        
-      
         <h3 id="services.jobs.RequestsCloseRequest">RequestsCloseRequest</h3>
         <p></p>
 
@@ -18567,7 +18608,7 @@
       
 
       
-        <h3 id="services.jobs.RequestsService">RequestsService</h3>
+        <h3 id="services.jobs.JobsRequestsService">JobsRequestsService</h3>
         <p></p>
         <table class="enum-table">
           <thead>
@@ -18618,7 +18659,7 @@
               </tr>
             
               <tr>
-                <td>RequestsDeleteType</td>
+                <td>DeleteRequestType</td>
                 <td><a href="#services.jobs.DeleteRequestTypeRequest">DeleteRequestTypeRequest</a></td>
                 <td><a href="#services.jobs.DeleteRequestTypeResponse">DeleteRequestTypeResponse</a></td>
                 <td><p>@perm</p></td>
@@ -18974,7 +19015,7 @@
       
 
       
-        <h3 id="services.jobs.ConductService">ConductService</h3>
+        <h3 id="services.jobs.JobsConductService">JobsConductService</h3>
         <p></p>
         <table class="enum-table">
           <thead>
@@ -19028,7 +19069,7 @@
       
 
       
-        <h3 id="services.jobs.QualificationsService">QualificationsService</h3>
+        <h3 id="services.jobs.JobsQualificationsService">JobsQualificationsService</h3>
         <p></p>
         <table class="enum-table">
           <thead>

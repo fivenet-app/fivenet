@@ -121,9 +121,9 @@ class GetTimeclockStatsResponse$Type extends MessageType<GetTimeclockStatsRespon
  */
 export const GetTimeclockStatsResponse = new GetTimeclockStatsResponse$Type();
 /**
- * @generated ServiceType for protobuf service services.jobs.TimeclockService
+ * @generated ServiceType for protobuf service services.jobs.JobsTimeclockService
  */
-export const TimeclockService = new ServiceType("services.jobs.TimeclockService", [
+export const JobsTimeclockService = new ServiceType("services.jobs.JobsTimeclockService", [
     { name: "ListTimeclock", options: {}, I: ListTimeclockRequest, O: ListTimeclockResponse },
     { name: "GetTimeclockStats", options: {}, I: GetTimeclockStatsRequest, O: GetTimeclockStatsResponse }
 ]);

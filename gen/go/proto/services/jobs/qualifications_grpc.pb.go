@@ -17,50 +17,51 @@ const _ = grpc.SupportPackageIsVersion7
 
 const ()
 
-// QualificationsServiceClient is the client API for QualificationsService service.
+// JobsQualificationsServiceClient is the client API for JobsQualificationsService service.
 //
 // For semantics around ctx use and closing/ending streaming RPCs, please refer to https://pkg.go.dev/google.golang.org/grpc/?tab=doc#ClientConn.NewStream.
-type QualificationsServiceClient interface {
+type JobsQualificationsServiceClient interface {
 }
 
-type qualificationsServiceClient struct {
+type jobsQualificationsServiceClient struct {
 	cc grpc.ClientConnInterface
 }
 
-func NewQualificationsServiceClient(cc grpc.ClientConnInterface) QualificationsServiceClient {
-	return &qualificationsServiceClient{cc}
+func NewJobsQualificationsServiceClient(cc grpc.ClientConnInterface) JobsQualificationsServiceClient {
+	return &jobsQualificationsServiceClient{cc}
 }
 
-// QualificationsServiceServer is the server API for QualificationsService service.
-// All implementations must embed UnimplementedQualificationsServiceServer
+// JobsQualificationsServiceServer is the server API for JobsQualificationsService service.
+// All implementations must embed UnimplementedJobsQualificationsServiceServer
 // for forward compatibility
-type QualificationsServiceServer interface {
-	mustEmbedUnimplementedQualificationsServiceServer()
+type JobsQualificationsServiceServer interface {
+	mustEmbedUnimplementedJobsQualificationsServiceServer()
 }
 
-// UnimplementedQualificationsServiceServer must be embedded to have forward compatible implementations.
-type UnimplementedQualificationsServiceServer struct {
+// UnimplementedJobsQualificationsServiceServer must be embedded to have forward compatible implementations.
+type UnimplementedJobsQualificationsServiceServer struct {
 }
 
-func (UnimplementedQualificationsServiceServer) mustEmbedUnimplementedQualificationsServiceServer() {}
+func (UnimplementedJobsQualificationsServiceServer) mustEmbedUnimplementedJobsQualificationsServiceServer() {
+}
 
-// UnsafeQualificationsServiceServer may be embedded to opt out of forward compatibility for this service.
-// Use of this interface is not recommended, as added methods to QualificationsServiceServer will
+// UnsafeJobsQualificationsServiceServer may be embedded to opt out of forward compatibility for this service.
+// Use of this interface is not recommended, as added methods to JobsQualificationsServiceServer will
 // result in compilation errors.
-type UnsafeQualificationsServiceServer interface {
-	mustEmbedUnimplementedQualificationsServiceServer()
+type UnsafeJobsQualificationsServiceServer interface {
+	mustEmbedUnimplementedJobsQualificationsServiceServer()
 }
 
-func RegisterQualificationsServiceServer(s grpc.ServiceRegistrar, srv QualificationsServiceServer) {
-	s.RegisterService(&QualificationsService_ServiceDesc, srv)
+func RegisterJobsQualificationsServiceServer(s grpc.ServiceRegistrar, srv JobsQualificationsServiceServer) {
+	s.RegisterService(&JobsQualificationsService_ServiceDesc, srv)
 }
 
-// QualificationsService_ServiceDesc is the grpc.ServiceDesc for QualificationsService service.
+// JobsQualificationsService_ServiceDesc is the grpc.ServiceDesc for JobsQualificationsService service.
 // It's only intended for direct use with grpc.RegisterService,
 // and not to be introspected or modified (even as a copy)
-var QualificationsService_ServiceDesc = grpc.ServiceDesc{
-	ServiceName: "services.jobs.QualificationsService",
-	HandlerType: (*QualificationsServiceServer)(nil),
+var JobsQualificationsService_ServiceDesc = grpc.ServiceDesc{
+	ServiceName: "services.jobs.JobsQualificationsService",
+	HandlerType: (*JobsQualificationsServiceServer)(nil),
 	Methods:     []grpc.MethodDesc{},
 	Streams:     []grpc.StreamDesc{},
 	Metadata:    "services/jobs/qualifications.proto",

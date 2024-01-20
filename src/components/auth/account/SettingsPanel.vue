@@ -14,7 +14,7 @@ const homepages: { name: string; path: string; permission?: string }[] = [
     { name: 'pages.citizens.title', path: '/citizens', permission: 'CitizenStoreService.ListCitizens' },
     { name: 'pages.vehicles.title', path: '/vehicles', permission: 'DMVService.ListVehicles' },
     { name: 'pages.documents.title', path: '/documents', permission: 'DocStoreService.ListDocuments' },
-    { name: 'pages.jobs.overview.title', path: '/jobs/overview', permission: 'JobsService.ColleaguesList' },
+    { name: 'pages.jobs.overview.title', path: '/jobs/overview', permission: 'JobsService.ListColleagues' },
     { name: 'common.livemap', path: '/livemap', permission: 'LivemapperService.Stream' },
     { name: 'common.dispatch_center', path: '/centrum', permission: 'CentrumService.TakeControl' },
 ];

@@ -82,7 +82,7 @@ const sidebarNavigation = ref<
         name: 'common.job',
         href: { name: 'jobs-overview' },
         activePath: '/jobs',
-        permission: 'JobsService.ColleaguesList',
+        permission: 'JobsService.ListColleagues',
         icon: markRaw(BriefcaseIcon),
         position: 'top',
         current: false,

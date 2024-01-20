@@ -16,7 +16,7 @@ import { useThrottleFn } from '@vueuse/core';
 import { CheckIcon, ChevronDownIcon, CloseIcon, LoadingIcon } from 'mdi-vue3';
 import { defineRule } from 'vee-validate';
 import { DocActivityType } from '~~/gen/ts/resources/documents/activity';
-import DocRequestsList from '~/components/documents/DocRequestsList.vue';
+import DocumentRequestsList from '~/components/documents/requests/DocumentRequestsList.vue';
 import type { DocumentShort } from '~~/gen/ts/resources/documents/documents';
 import { useAuthStore } from '~/store/auth';
 import { useNotificatorStore } from '~/store/notificator';
@@ -273,7 +273,7 @@ const onSubmitThrottle = useThrottleFn(async (e) => {
                                 </div>
                             </form>
 
-                            <DocRequestsList :document-id="doc.id" @refresh="$emit('refresh')" />
+                            <DocumentRequestsList :document-id="doc.id" @refresh="$emit('refresh')" />
                         </DialogPanel>
                     </TransitionChild>
                 </div>

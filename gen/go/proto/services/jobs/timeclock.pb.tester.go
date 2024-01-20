@@ -13,14 +13,14 @@ import (
 	"google.golang.org/grpc/test/bufconn"
 )
 
-func NewTestTimeclockServiceClient(srv TimeclockServiceServer) (TimeclockServiceClient, context.Context, context.CancelFunc) {
+func NewTestJobsTimeclockServiceClient(srv JobsTimeclockServiceServer) (JobsTimeclockServiceClient, context.Context, context.CancelFunc) {
 	ctx, cancel := context.WithCancel(context.Background())
 
 	buffer := 101024 * 1024
 	lis := bufconn.Listen(buffer)
 
 	server := grpc.NewServer()
-	RegisterTimeclockServiceServer(server, srv)
+	RegisterJobsTimeclockServiceServer(server, srv)
 	go func() {
 		if err := server.Serve(lis); err != nil {
 			log.Printf("error serving test grpc server: %v", err)
@@ -44,6 +44,6 @@ func NewTestTimeclockServiceClient(srv TimeclockServiceServer) (TimeclockService
 		server.Stop()
 	}()
 
-	client := NewTimeclockServiceClient(conn)
+	client := NewJobsTimeclockServiceClient(conn)
 	return client, ctx, cancel
 }

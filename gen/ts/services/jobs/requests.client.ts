@@ -3,7 +3,7 @@
 // tslint:disable
 import type { RpcTransport } from "@protobuf-ts/runtime-rpc";
 import type { ServiceInfo } from "@protobuf-ts/runtime-rpc";
-import { RequestsService } from "./requests";
+import { JobsRequestsService } from "./requests";
 import type { DeleteRequestCommentResponse } from "./requests";
 import type { DeleteRequestCommentRequest } from "./requests";
 import type { PostRequestCommentResponse } from "./requests";
@@ -28,9 +28,9 @@ import type { ListRequestsRequest } from "./requests";
 import type { UnaryCall } from "@protobuf-ts/runtime-rpc";
 import type { RpcOptions } from "@protobuf-ts/runtime-rpc";
 /**
- * @generated from protobuf service services.jobs.RequestsService
+ * @generated from protobuf service services.jobs.JobsRequestsService
  */
-export interface IRequestsServiceClient {
+export interface IJobsRequestsServiceClient {
     /**
      * @perm: Attrs=Access/StringList:[]string{"Own", "All"}§[]string{"Own"}
      *
@@ -70,9 +70,9 @@ export interface IRequestsServiceClient {
     /**
      * @perm
      *
-     * @generated from protobuf rpc: RequestsDeleteType(services.jobs.DeleteRequestTypeRequest) returns (services.jobs.DeleteRequestTypeResponse);
+     * @generated from protobuf rpc: DeleteRequestType(services.jobs.DeleteRequestTypeRequest) returns (services.jobs.DeleteRequestTypeResponse);
      */
-    requestsDeleteType(input: DeleteRequestTypeRequest, options?: RpcOptions): UnaryCall<DeleteRequestTypeRequest, DeleteRequestTypeResponse>;
+    deleteRequestType(input: DeleteRequestTypeRequest, options?: RpcOptions): UnaryCall<DeleteRequestTypeRequest, DeleteRequestTypeResponse>;
     /**
      * @perm: Name=ListRequests
      *
@@ -93,12 +93,12 @@ export interface IRequestsServiceClient {
     deleteRequestComment(input: DeleteRequestCommentRequest, options?: RpcOptions): UnaryCall<DeleteRequestCommentRequest, DeleteRequestCommentResponse>;
 }
 /**
- * @generated from protobuf service services.jobs.RequestsService
+ * @generated from protobuf service services.jobs.JobsRequestsService
  */
-export class RequestsServiceClient implements IRequestsServiceClient, ServiceInfo {
-    typeName = RequestsService.typeName;
-    methods = RequestsService.methods;
-    options = RequestsService.options;
+export class JobsRequestsServiceClient implements IJobsRequestsServiceClient, ServiceInfo {
+    typeName = JobsRequestsService.typeName;
+    methods = JobsRequestsService.methods;
+    options = JobsRequestsService.options;
     constructor(private readonly _transport: RpcTransport) {
     }
     /**
@@ -158,9 +158,9 @@ export class RequestsServiceClient implements IRequestsServiceClient, ServiceInf
     /**
      * @perm
      *
-     * @generated from protobuf rpc: RequestsDeleteType(services.jobs.DeleteRequestTypeRequest) returns (services.jobs.DeleteRequestTypeResponse);
+     * @generated from protobuf rpc: DeleteRequestType(services.jobs.DeleteRequestTypeRequest) returns (services.jobs.DeleteRequestTypeResponse);
      */
-    requestsDeleteType(input: DeleteRequestTypeRequest, options?: RpcOptions): UnaryCall<DeleteRequestTypeRequest, DeleteRequestTypeResponse> {
+    deleteRequestType(input: DeleteRequestTypeRequest, options?: RpcOptions): UnaryCall<DeleteRequestTypeRequest, DeleteRequestTypeResponse> {
         const method = this.methods[6], opt = this._transport.mergeOptions(options);
         return stackIntercept<DeleteRequestTypeRequest, DeleteRequestTypeResponse>("unary", this._transport, method, opt, input);
     }

@@ -32,7 +32,7 @@ func (s *Server) ListRequests(ctx context.Context, req *ListRequestsRequest) (*L
 	condition := tRequests.Job.EQ(jet.String(userInfo.Job))
 
 	// Field Permission Check
-	fieldsAttr, err := s.p.Attr(userInfo, permsjobs.RequestsServicePerm, perms.Name(permsjobs.RequestsServicePerm), permsjobs.RequestsServiceListRequestsAccessPermField)
+	fieldsAttr, err := s.p.Attr(userInfo, permsjobs.JobsRequestsServicePerm, perms.Name(permsjobs.JobsRequestsServicePerm), permsjobs.JobsRequestsServiceListRequestsAccessPermField)
 	if err != nil {
 		return nil, errswrap.NewError(errorsjobs.ErrFailedQuery, err)
 	}
@@ -158,7 +158,7 @@ func (s *Server) CreateRequest(ctx context.Context, req *CreateRequestRequest) (
 
 	auditEntry := &model.FivenetAuditLog{
 		Service: JobsService_ServiceDesc.ServiceName,
-		Method:  "RequestsCreateEntry",
+		Method:  "CreateRequest",
 		UserID:  userInfo.UserId,
 		UserJob: userInfo.Job,
 		State:   int16(rector.EventType_EVENT_TYPE_ERRORED),
@@ -209,7 +209,7 @@ func (s *Server) UpdateRequest(ctx context.Context, req *UpdateRequestRequest) (
 
 	auditEntry := &model.FivenetAuditLog{
 		Service: JobsService_ServiceDesc.ServiceName,
-		Method:  "RequestsUpdateEntry",
+		Method:  "UpdateRequest",
 		UserID:  userInfo.UserId,
 		UserJob: userInfo.Job,
 		State:   int16(rector.EventType_EVENT_TYPE_ERRORED),
@@ -237,7 +237,7 @@ func (s *Server) DeleteRequest(ctx context.Context, req *DeleteRequestRequest) (
 
 	auditEntry := &model.FivenetAuditLog{
 		Service: JobsService_ServiceDesc.ServiceName,
-		Method:  "RequestsDeleteEntry",
+		Method:  "DeleteRequest",
 		UserID:  userInfo.UserId,
 		UserJob: userInfo.Job,
 		State:   int16(rector.EventType_EVENT_TYPE_ERRORED),
@@ -333,12 +333,12 @@ func (s *Server) ListRequestComments(ctx context.Context, req *ListRequestCommen
 	return resp, nil
 }
 
-func (s *Server) RequestsPostComment(ctx context.Context, req *PostRequestCommentRequest) (*PostRequestCommentResponse, error) {
+func (s *Server) PostRequestComment(ctx context.Context, req *PostRequestCommentRequest) (*PostRequestCommentResponse, error) {
 	userInfo := auth.MustGetUserInfoFromContext(ctx)
 
 	auditEntry := &model.FivenetAuditLog{
 		Service: JobsService_ServiceDesc.ServiceName,
-		Method:  "RequestsPostComment",
+		Method:  "PostRequestComment",
 		UserID:  userInfo.UserId,
 		UserJob: userInfo.Job,
 		State:   int16(rector.EventType_EVENT_TYPE_ERRORED),
@@ -353,12 +353,12 @@ func (s *Server) RequestsPostComment(ctx context.Context, req *PostRequestCommen
 	return &PostRequestCommentResponse{}, nil
 }
 
-func (s *Server) RequestsDeleteComment(ctx context.Context, req *DeleteRequestCommentRequest) (*DeleteRequestCommentResponse, error) {
+func (s *Server) DeleteRequestComment(ctx context.Context, req *DeleteRequestCommentRequest) (*DeleteRequestCommentResponse, error) {
 	userInfo := auth.MustGetUserInfoFromContext(ctx)
 
 	auditEntry := &model.FivenetAuditLog{
 		Service: JobsService_ServiceDesc.ServiceName,
-		Method:  "RequestsDeleteComment",
+		Method:  "DeleteRequestComment",
 		UserID:  userInfo.UserId,
 		UserJob: userInfo.Job,
 		State:   int16(rector.EventType_EVENT_TYPE_ERRORED),

@@ -102,9 +102,9 @@ export interface DeleteRequestRequest {
 export interface DeleteRequestResponse {
 }
 /**
- * @generated from protobuf message services.jobs.RequestsApproveRequest
+ * @generated from protobuf message services.jobs.ApproveRequestRequest
  */
-export interface RequestsApproveRequest {
+export interface ApproveRequestRequest {
     /**
      * @generated from protobuf field: uint64 id = 1 [jstype = JS_STRING];
      */
@@ -115,9 +115,9 @@ export interface RequestsApproveRequest {
     approve: boolean;
 }
 /**
- * @generated from protobuf message services.jobs.RequestsApproveResponse
+ * @generated from protobuf message services.jobs.ApproveRequestResponse
  */
-export interface RequestsApproveResponse {
+export interface ApproveRequestResponse {
 }
 /**
  * @generated from protobuf message services.jobs.RequestsCloseRequest
@@ -341,28 +341,28 @@ class DeleteRequestResponse$Type extends MessageType<DeleteRequestResponse> {
  */
 export const DeleteRequestResponse = new DeleteRequestResponse$Type();
 // @generated message type with reflection information, may provide speed optimized methods
-class RequestsApproveRequest$Type extends MessageType<RequestsApproveRequest> {
+class ApproveRequestRequest$Type extends MessageType<ApproveRequestRequest> {
     constructor() {
-        super("services.jobs.RequestsApproveRequest", [
+        super("services.jobs.ApproveRequestRequest", [
             { no: 1, name: "id", kind: "scalar", T: 4 /*ScalarType.UINT64*/ },
             { no: 2, name: "approve", kind: "scalar", T: 8 /*ScalarType.BOOL*/ }
         ]);
     }
 }
 /**
- * @generated MessageType for protobuf message services.jobs.RequestsApproveRequest
+ * @generated MessageType for protobuf message services.jobs.ApproveRequestRequest
  */
-export const RequestsApproveRequest = new RequestsApproveRequest$Type();
+export const ApproveRequestRequest = new ApproveRequestRequest$Type();
 // @generated message type with reflection information, may provide speed optimized methods
-class RequestsApproveResponse$Type extends MessageType<RequestsApproveResponse> {
+class ApproveRequestResponse$Type extends MessageType<ApproveRequestResponse> {
     constructor() {
-        super("services.jobs.RequestsApproveResponse", []);
+        super("services.jobs.ApproveRequestResponse", []);
     }
 }
 /**
- * @generated MessageType for protobuf message services.jobs.RequestsApproveResponse
+ * @generated MessageType for protobuf message services.jobs.ApproveRequestResponse
  */
-export const RequestsApproveResponse = new RequestsApproveResponse$Type();
+export const ApproveRequestResponse = new ApproveRequestResponse$Type();
 // @generated message type with reflection information, may provide speed optimized methods
 class RequestsCloseRequest$Type extends MessageType<RequestsCloseRequest> {
     constructor() {
@@ -527,16 +527,16 @@ class DeleteRequestCommentResponse$Type extends MessageType<DeleteRequestComment
  */
 export const DeleteRequestCommentResponse = new DeleteRequestCommentResponse$Type();
 /**
- * @generated ServiceType for protobuf service services.jobs.RequestsService
+ * @generated ServiceType for protobuf service services.jobs.JobsRequestsService
  */
-export const RequestsService = new ServiceType("services.jobs.RequestsService", [
+export const JobsRequestsService = new ServiceType("services.jobs.JobsRequestsService", [
     { name: "ListRequests", options: {}, I: ListRequestsRequest, O: ListRequestsResponse },
     { name: "CreateRequest", options: {}, I: CreateRequestRequest, O: CreateRequestResponse },
     { name: "UpdateRequest", options: {}, I: UpdateRequestRequest, O: UpdateRequestResponse },
     { name: "DeleteRequest", options: {}, I: DeleteRequestRequest, O: DeleteRequestResponse },
     { name: "ListRequestTypes", options: {}, I: ListRequestTypesRequest, O: ListRequestTypesResponse },
     { name: "CreateOrUpdateRequestType", options: {}, I: CreateOrUpdateRequestTypeRequest, O: CreateOrUpdateRequestTypeResponse },
-    { name: "RequestsDeleteType", options: {}, I: DeleteRequestTypeRequest, O: DeleteRequestTypeResponse },
+    { name: "DeleteRequestType", options: {}, I: DeleteRequestTypeRequest, O: DeleteRequestTypeResponse },
     { name: "ListRequestComments", options: {}, I: ListRequestCommentsRequest, O: ListRequestCommentsResponse },
     { name: "PostRequestComment", options: {}, I: PostRequestCommentRequest, O: PostRequestCommentResponse },
     { name: "DeleteRequestComment", options: {}, I: DeleteRequestCommentRequest, O: DeleteRequestCommentResponse }

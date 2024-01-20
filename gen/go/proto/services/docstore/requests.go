@@ -184,6 +184,7 @@ func (s *Server) CreateDocumentReq(ctx context.Context, req *CreateDocumentReqRe
 		CreatorId:    &userInfo.UserId,
 		CreatorJob:   userInfo.Job,
 		Reason:       req.Reason,
+		Data:         req.Data,
 	}); err != nil {
 		return nil, errswrap.NewError(errorsdocstore.ErrFailedQuery, err)
 	}
@@ -196,7 +197,7 @@ func (s *Server) CreateDocumentReq(ctx context.Context, req *CreateDocumentReqRe
 			CreatorJob:  userInfo.Job,
 			RequestType: req.RequestType,
 			Reason:      req.Reason,
-			Data:        &documents.DocActivityData{},
+			Data:        req.Data,
 		})
 		if err != nil {
 			return nil, errswrap.NewError(errorsdocstore.ErrFailedQuery, err)
@@ -212,7 +213,7 @@ func (s *Server) CreateDocumentReq(ctx context.Context, req *CreateDocumentReqRe
 			CreatorJob:  userInfo.Job,
 			RequestType: req.RequestType,
 			Reason:      req.Reason,
-			Data:        &documents.DocActivityData{},
+			Data:        req.Data,
 			Accepted:    &accepted,
 		}); err != nil {
 			return nil, errswrap.NewError(errorsdocstore.ErrFailedQuery, err)
@@ -342,11 +343,19 @@ func (s *Server) UpdateDocumentReq(ctx context.Context, req *UpdateDocumentReqRe
 		case documents.DocActivityType_DOC_ACTIVITY_TYPE_REQUESTED_ACCESS:
 			activityType = documents.DocActivityType_DOC_ACTIVITY_TYPE_ACCESS_UPDATED
 
-			if request.Data == nil || request.Data.GetAccessUpdated() == nil {
+			if request.CreatorId == nil || request.Data == nil || request.Data.GetAccessRequested() == nil {
 				return nil, errswrap.NewError(errorsdocstore.ErrFailedQuery, err)
 			}
 
-			if err := s.createDocumentAccess(ctx, tx, request.DocumentId, userInfo.UserId, request.Data.GetAccessUpdated()); err != nil {
+			if err := s.createDocumentAccess(ctx, tx, request.DocumentId, userInfo.UserId, &documents.DocumentAccess{
+				Users: []*documents.DocumentUserAccess{
+					{
+						UserId:     *request.CreatorId,
+						DocumentId: request.DocumentId,
+						Access:     request.Data.GetAccessRequested().Level,
+					},
+				},
+			}); err != nil {
 				return nil, errswrap.NewError(errorsdocstore.ErrFailedQuery, err)
 			}
 		}

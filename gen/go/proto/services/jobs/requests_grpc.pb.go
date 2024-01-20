@@ -19,22 +19,22 @@ import (
 const _ = grpc.SupportPackageIsVersion7
 
 const (
-	RequestsService_ListRequests_FullMethodName              = "/services.jobs.RequestsService/ListRequests"
-	RequestsService_CreateRequest_FullMethodName             = "/services.jobs.RequestsService/CreateRequest"
-	RequestsService_UpdateRequest_FullMethodName             = "/services.jobs.RequestsService/UpdateRequest"
-	RequestsService_DeleteRequest_FullMethodName             = "/services.jobs.RequestsService/DeleteRequest"
-	RequestsService_ListRequestTypes_FullMethodName          = "/services.jobs.RequestsService/ListRequestTypes"
-	RequestsService_CreateOrUpdateRequestType_FullMethodName = "/services.jobs.RequestsService/CreateOrUpdateRequestType"
-	RequestsService_RequestsDeleteType_FullMethodName        = "/services.jobs.RequestsService/RequestsDeleteType"
-	RequestsService_ListRequestComments_FullMethodName       = "/services.jobs.RequestsService/ListRequestComments"
-	RequestsService_PostRequestComment_FullMethodName        = "/services.jobs.RequestsService/PostRequestComment"
-	RequestsService_DeleteRequestComment_FullMethodName      = "/services.jobs.RequestsService/DeleteRequestComment"
+	JobsRequestsService_ListRequests_FullMethodName              = "/services.jobs.JobsRequestsService/ListRequests"
+	JobsRequestsService_CreateRequest_FullMethodName             = "/services.jobs.JobsRequestsService/CreateRequest"
+	JobsRequestsService_UpdateRequest_FullMethodName             = "/services.jobs.JobsRequestsService/UpdateRequest"
+	JobsRequestsService_DeleteRequest_FullMethodName             = "/services.jobs.JobsRequestsService/DeleteRequest"
+	JobsRequestsService_ListRequestTypes_FullMethodName          = "/services.jobs.JobsRequestsService/ListRequestTypes"
+	JobsRequestsService_CreateOrUpdateRequestType_FullMethodName = "/services.jobs.JobsRequestsService/CreateOrUpdateRequestType"
+	JobsRequestsService_DeleteRequestType_FullMethodName         = "/services.jobs.JobsRequestsService/DeleteRequestType"
+	JobsRequestsService_ListRequestComments_FullMethodName       = "/services.jobs.JobsRequestsService/ListRequestComments"
+	JobsRequestsService_PostRequestComment_FullMethodName        = "/services.jobs.JobsRequestsService/PostRequestComment"
+	JobsRequestsService_DeleteRequestComment_FullMethodName      = "/services.jobs.JobsRequestsService/DeleteRequestComment"
 )
 
-// RequestsServiceClient is the client API for RequestsService service.
+// JobsRequestsServiceClient is the client API for JobsRequestsService service.
 //
 // For semantics around ctx use and closing/ending streaming RPCs, please refer to https://pkg.go.dev/google.golang.org/grpc/?tab=doc#ClientConn.NewStream.
-type RequestsServiceClient interface {
+type JobsRequestsServiceClient interface {
 	// @perm: Attrs=Access/StringList:[]string{"Own", "All"}§[]string{"Own"}
 	ListRequests(ctx context.Context, in *ListRequestsRequest, opts ...grpc.CallOption) (*ListRequestsResponse, error)
 	// @perm
@@ -48,7 +48,7 @@ type RequestsServiceClient interface {
 	// @perm
 	CreateOrUpdateRequestType(ctx context.Context, in *CreateOrUpdateRequestTypeRequest, opts ...grpc.CallOption) (*CreateOrUpdateRequestTypeResponse, error)
 	// @perm
-	RequestsDeleteType(ctx context.Context, in *DeleteRequestTypeRequest, opts ...grpc.CallOption) (*DeleteRequestTypeResponse, error)
+	DeleteRequestType(ctx context.Context, in *DeleteRequestTypeRequest, opts ...grpc.CallOption) (*DeleteRequestTypeResponse, error)
 	// @perm: Name=ListRequests
 	ListRequestComments(ctx context.Context, in *ListRequestCommentsRequest, opts ...grpc.CallOption) (*ListRequestCommentsResponse, error)
 	// @perm: Name=CreateRequest
@@ -57,108 +57,108 @@ type RequestsServiceClient interface {
 	DeleteRequestComment(ctx context.Context, in *DeleteRequestCommentRequest, opts ...grpc.CallOption) (*DeleteRequestCommentResponse, error)
 }
 
-type requestsServiceClient struct {
+type jobsRequestsServiceClient struct {
 	cc grpc.ClientConnInterface
 }
 
-func NewRequestsServiceClient(cc grpc.ClientConnInterface) RequestsServiceClient {
-	return &requestsServiceClient{cc}
+func NewJobsRequestsServiceClient(cc grpc.ClientConnInterface) JobsRequestsServiceClient {
+	return &jobsRequestsServiceClient{cc}
 }
 
-func (c *requestsServiceClient) ListRequests(ctx context.Context, in *ListRequestsRequest, opts ...grpc.CallOption) (*ListRequestsResponse, error) {
+func (c *jobsRequestsServiceClient) ListRequests(ctx context.Context, in *ListRequestsRequest, opts ...grpc.CallOption) (*ListRequestsResponse, error) {
 	out := new(ListRequestsResponse)
-	err := c.cc.Invoke(ctx, RequestsService_ListRequests_FullMethodName, in, out, opts...)
+	err := c.cc.Invoke(ctx, JobsRequestsService_ListRequests_FullMethodName, in, out, opts...)
 	if err != nil {
 		return nil, err
 	}
 	return out, nil
 }
 
-func (c *requestsServiceClient) CreateRequest(ctx context.Context, in *CreateRequestRequest, opts ...grpc.CallOption) (*CreateRequestResponse, error) {
+func (c *jobsRequestsServiceClient) CreateRequest(ctx context.Context, in *CreateRequestRequest, opts ...grpc.CallOption) (*CreateRequestResponse, error) {
 	out := new(CreateRequestResponse)
-	err := c.cc.Invoke(ctx, RequestsService_CreateRequest_FullMethodName, in, out, opts...)
+	err := c.cc.Invoke(ctx, JobsRequestsService_CreateRequest_FullMethodName, in, out, opts...)
 	if err != nil {
 		return nil, err
 	}
 	return out, nil
 }
 
-func (c *requestsServiceClient) UpdateRequest(ctx context.Context, in *UpdateRequestRequest, opts ...grpc.CallOption) (*UpdateRequestResponse, error) {
+func (c *jobsRequestsServiceClient) UpdateRequest(ctx context.Context, in *UpdateRequestRequest, opts ...grpc.CallOption) (*UpdateRequestResponse, error) {
 	out := new(UpdateRequestResponse)
-	err := c.cc.Invoke(ctx, RequestsService_UpdateRequest_FullMethodName, in, out, opts...)
+	err := c.cc.Invoke(ctx, JobsRequestsService_UpdateRequest_FullMethodName, in, out, opts...)
 	if err != nil {
 		return nil, err
 	}
 	return out, nil
 }
 
-func (c *requestsServiceClient) DeleteRequest(ctx context.Context, in *DeleteRequestRequest, opts ...grpc.CallOption) (*DeleteRequestResponse, error) {
+func (c *jobsRequestsServiceClient) DeleteRequest(ctx context.Context, in *DeleteRequestRequest, opts ...grpc.CallOption) (*DeleteRequestResponse, error) {
 	out := new(DeleteRequestResponse)
-	err := c.cc.Invoke(ctx, RequestsService_DeleteRequest_FullMethodName, in, out, opts...)
+	err := c.cc.Invoke(ctx, JobsRequestsService_DeleteRequest_FullMethodName, in, out, opts...)
 	if err != nil {
 		return nil, err
 	}
 	return out, nil
 }
 
-func (c *requestsServiceClient) ListRequestTypes(ctx context.Context, in *ListRequestTypesRequest, opts ...grpc.CallOption) (*ListRequestTypesResponse, error) {
+func (c *jobsRequestsServiceClient) ListRequestTypes(ctx context.Context, in *ListRequestTypesRequest, opts ...grpc.CallOption) (*ListRequestTypesResponse, error) {
 	out := new(ListRequestTypesResponse)
-	err := c.cc.Invoke(ctx, RequestsService_ListRequestTypes_FullMethodName, in, out, opts...)
+	err := c.cc.Invoke(ctx, JobsRequestsService_ListRequestTypes_FullMethodName, in, out, opts...)
 	if err != nil {
 		return nil, err
 	}
 	return out, nil
 }
 
-func (c *requestsServiceClient) CreateOrUpdateRequestType(ctx context.Context, in *CreateOrUpdateRequestTypeRequest, opts ...grpc.CallOption) (*CreateOrUpdateRequestTypeResponse, error) {
+func (c *jobsRequestsServiceClient) CreateOrUpdateRequestType(ctx context.Context, in *CreateOrUpdateRequestTypeRequest, opts ...grpc.CallOption) (*CreateOrUpdateRequestTypeResponse, error) {
 	out := new(CreateOrUpdateRequestTypeResponse)
-	err := c.cc.Invoke(ctx, RequestsService_CreateOrUpdateRequestType_FullMethodName, in, out, opts...)
+	err := c.cc.Invoke(ctx, JobsRequestsService_CreateOrUpdateRequestType_FullMethodName, in, out, opts...)
 	if err != nil {
 		return nil, err
 	}
 	return out, nil
 }
 
-func (c *requestsServiceClient) RequestsDeleteType(ctx context.Context, in *DeleteRequestTypeRequest, opts ...grpc.CallOption) (*DeleteRequestTypeResponse, error) {
+func (c *jobsRequestsServiceClient) DeleteRequestType(ctx context.Context, in *DeleteRequestTypeRequest, opts ...grpc.CallOption) (*DeleteRequestTypeResponse, error) {
 	out := new(DeleteRequestTypeResponse)
-	err := c.cc.Invoke(ctx, RequestsService_RequestsDeleteType_FullMethodName, in, out, opts...)
+	err := c.cc.Invoke(ctx, JobsRequestsService_DeleteRequestType_FullMethodName, in, out, opts...)
 	if err != nil {
 		return nil, err
 	}
 	return out, nil
 }
 
-func (c *requestsServiceClient) ListRequestComments(ctx context.Context, in *ListRequestCommentsRequest, opts ...grpc.CallOption) (*ListRequestCommentsResponse, error) {
+func (c *jobsRequestsServiceClient) ListRequestComments(ctx context.Context, in *ListRequestCommentsRequest, opts ...grpc.CallOption) (*ListRequestCommentsResponse, error) {
 	out := new(ListRequestCommentsResponse)
-	err := c.cc.Invoke(ctx, RequestsService_ListRequestComments_FullMethodName, in, out, opts...)
+	err := c.cc.Invoke(ctx, JobsRequestsService_ListRequestComments_FullMethodName, in, out, opts...)
 	if err != nil {
 		return nil, err
 	}
 	return out, nil
 }
 
-func (c *requestsServiceClient) PostRequestComment(ctx context.Context, in *PostRequestCommentRequest, opts ...grpc.CallOption) (*PostRequestCommentResponse, error) {
+func (c *jobsRequestsServiceClient) PostRequestComment(ctx context.Context, in *PostRequestCommentRequest, opts ...grpc.CallOption) (*PostRequestCommentResponse, error) {
 	out := new(PostRequestCommentResponse)
-	err := c.cc.Invoke(ctx, RequestsService_PostRequestComment_FullMethodName, in, out, opts...)
+	err := c.cc.Invoke(ctx, JobsRequestsService_PostRequestComment_FullMethodName, in, out, opts...)
 	if err != nil {
 		return nil, err
 	}
 	return out, nil
 }
 
-func (c *requestsServiceClient) DeleteRequestComment(ctx context.Context, in *DeleteRequestCommentRequest, opts ...grpc.CallOption) (*DeleteRequestCommentResponse, error) {
+func (c *jobsRequestsServiceClient) DeleteRequestComment(ctx context.Context, in *DeleteRequestCommentRequest, opts ...grpc.CallOption) (*DeleteRequestCommentResponse, error) {
 	out := new(DeleteRequestCommentResponse)
-	err := c.cc.Invoke(ctx, RequestsService_DeleteRequestComment_FullMethodName, in, out, opts...)
+	err := c.cc.Invoke(ctx, JobsRequestsService_DeleteRequestComment_FullMethodName, in, out, opts...)
 	if err != nil {
 		return nil, err
 	}
 	return out, nil
 }
 
-// RequestsServiceServer is the server API for RequestsService service.
-// All implementations must embed UnimplementedRequestsServiceServer
+// JobsRequestsServiceServer is the server API for JobsRequestsService service.
+// All implementations must embed UnimplementedJobsRequestsServiceServer
 // for forward compatibility
-type RequestsServiceServer interface {
+type JobsRequestsServiceServer interface {
 	// @perm: Attrs=Access/StringList:[]string{"Own", "All"}§[]string{"Own"}
 	ListRequests(context.Context, *ListRequestsRequest) (*ListRequestsResponse, error)
 	// @perm
@@ -172,289 +172,289 @@ type RequestsServiceServer interface {
 	// @perm
 	CreateOrUpdateRequestType(context.Context, *CreateOrUpdateRequestTypeRequest) (*CreateOrUpdateRequestTypeResponse, error)
 	// @perm
-	RequestsDeleteType(context.Context, *DeleteRequestTypeRequest) (*DeleteRequestTypeResponse, error)
+	DeleteRequestType(context.Context, *DeleteRequestTypeRequest) (*DeleteRequestTypeResponse, error)
 	// @perm: Name=ListRequests
 	ListRequestComments(context.Context, *ListRequestCommentsRequest) (*ListRequestCommentsResponse, error)
 	// @perm: Name=CreateRequest
 	PostRequestComment(context.Context, *PostRequestCommentRequest) (*PostRequestCommentResponse, error)
 	// @perm
 	DeleteRequestComment(context.Context, *DeleteRequestCommentRequest) (*DeleteRequestCommentResponse, error)
-	mustEmbedUnimplementedRequestsServiceServer()
+	mustEmbedUnimplementedJobsRequestsServiceServer()
 }
 
-// UnimplementedRequestsServiceServer must be embedded to have forward compatible implementations.
-type UnimplementedRequestsServiceServer struct {
+// UnimplementedJobsRequestsServiceServer must be embedded to have forward compatible implementations.
+type UnimplementedJobsRequestsServiceServer struct {
 }
 
-func (UnimplementedRequestsServiceServer) ListRequests(context.Context, *ListRequestsRequest) (*ListRequestsResponse, error) {
+func (UnimplementedJobsRequestsServiceServer) ListRequests(context.Context, *ListRequestsRequest) (*ListRequestsResponse, error) {
 	return nil, status.Errorf(codes.Unimplemented, "method ListRequests not implemented")
 }
-func (UnimplementedRequestsServiceServer) CreateRequest(context.Context, *CreateRequestRequest) (*CreateRequestResponse, error) {
+func (UnimplementedJobsRequestsServiceServer) CreateRequest(context.Context, *CreateRequestRequest) (*CreateRequestResponse, error) {
 	return nil, status.Errorf(codes.Unimplemented, "method CreateRequest not implemented")
 }
-func (UnimplementedRequestsServiceServer) UpdateRequest(context.Context, *UpdateRequestRequest) (*UpdateRequestResponse, error) {
+func (UnimplementedJobsRequestsServiceServer) UpdateRequest(context.Context, *UpdateRequestRequest) (*UpdateRequestResponse, error) {
 	return nil, status.Errorf(codes.Unimplemented, "method UpdateRequest not implemented")
 }
-func (UnimplementedRequestsServiceServer) DeleteRequest(context.Context, *DeleteRequestRequest) (*DeleteRequestResponse, error) {
+func (UnimplementedJobsRequestsServiceServer) DeleteRequest(context.Context, *DeleteRequestRequest) (*DeleteRequestResponse, error) {
 	return nil, status.Errorf(codes.Unimplemented, "method DeleteRequest not implemented")
 }
-func (UnimplementedRequestsServiceServer) ListRequestTypes(context.Context, *ListRequestTypesRequest) (*ListRequestTypesResponse, error) {
+func (UnimplementedJobsRequestsServiceServer) ListRequestTypes(context.Context, *ListRequestTypesRequest) (*ListRequestTypesResponse, error) {
 	return nil, status.Errorf(codes.Unimplemented, "method ListRequestTypes not implemented")
 }
-func (UnimplementedRequestsServiceServer) CreateOrUpdateRequestType(context.Context, *CreateOrUpdateRequestTypeRequest) (*CreateOrUpdateRequestTypeResponse, error) {
+func (UnimplementedJobsRequestsServiceServer) CreateOrUpdateRequestType(context.Context, *CreateOrUpdateRequestTypeRequest) (*CreateOrUpdateRequestTypeResponse, error) {
 	return nil, status.Errorf(codes.Unimplemented, "method CreateOrUpdateRequestType not implemented")
 }
-func (UnimplementedRequestsServiceServer) RequestsDeleteType(context.Context, *DeleteRequestTypeRequest) (*DeleteRequestTypeResponse, error) {
-	return nil, status.Errorf(codes.Unimplemented, "method RequestsDeleteType not implemented")
+func (UnimplementedJobsRequestsServiceServer) DeleteRequestType(context.Context, *DeleteRequestTypeRequest) (*DeleteRequestTypeResponse, error) {
+	return nil, status.Errorf(codes.Unimplemented, "method DeleteRequestType not implemented")
 }
-func (UnimplementedRequestsServiceServer) ListRequestComments(context.Context, *ListRequestCommentsRequest) (*ListRequestCommentsResponse, error) {
+func (UnimplementedJobsRequestsServiceServer) ListRequestComments(context.Context, *ListRequestCommentsRequest) (*ListRequestCommentsResponse, error) {
 	return nil, status.Errorf(codes.Unimplemented, "method ListRequestComments not implemented")
 }
-func (UnimplementedRequestsServiceServer) PostRequestComment(context.Context, *PostRequestCommentRequest) (*PostRequestCommentResponse, error) {
+func (UnimplementedJobsRequestsServiceServer) PostRequestComment(context.Context, *PostRequestCommentRequest) (*PostRequestCommentResponse, error) {
 	return nil, status.Errorf(codes.Unimplemented, "method PostRequestComment not implemented")
 }
-func (UnimplementedRequestsServiceServer) DeleteRequestComment(context.Context, *DeleteRequestCommentRequest) (*DeleteRequestCommentResponse, error) {
+func (UnimplementedJobsRequestsServiceServer) DeleteRequestComment(context.Context, *DeleteRequestCommentRequest) (*DeleteRequestCommentResponse, error) {
 	return nil, status.Errorf(codes.Unimplemented, "method DeleteRequestComment not implemented")
 }
-func (UnimplementedRequestsServiceServer) mustEmbedUnimplementedRequestsServiceServer() {}
+func (UnimplementedJobsRequestsServiceServer) mustEmbedUnimplementedJobsRequestsServiceServer() {}
 
-// UnsafeRequestsServiceServer may be embedded to opt out of forward compatibility for this service.
-// Use of this interface is not recommended, as added methods to RequestsServiceServer will
+// UnsafeJobsRequestsServiceServer may be embedded to opt out of forward compatibility for this service.
+// Use of this interface is not recommended, as added methods to JobsRequestsServiceServer will
 // result in compilation errors.
-type UnsafeRequestsServiceServer interface {
-	mustEmbedUnimplementedRequestsServiceServer()
+type UnsafeJobsRequestsServiceServer interface {
+	mustEmbedUnimplementedJobsRequestsServiceServer()
 }
 
-func RegisterRequestsServiceServer(s grpc.ServiceRegistrar, srv RequestsServiceServer) {
-	s.RegisterService(&RequestsService_ServiceDesc, srv)
+func RegisterJobsRequestsServiceServer(s grpc.ServiceRegistrar, srv JobsRequestsServiceServer) {
+	s.RegisterService(&JobsRequestsService_ServiceDesc, srv)
 }
 
-func _RequestsService_ListRequests_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
+func _JobsRequestsService_ListRequests_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
 	in := new(ListRequestsRequest)
 	if err := dec(in); err != nil {
 		return nil, err
 	}
 	if interceptor == nil {
-		return srv.(RequestsServiceServer).ListRequests(ctx, in)
+		return srv.(JobsRequestsServiceServer).ListRequests(ctx, in)
 	}
 	info := &grpc.UnaryServerInfo{
 		Server:     srv,
-		FullMethod: RequestsService_ListRequests_FullMethodName,
+		FullMethod: JobsRequestsService_ListRequests_FullMethodName,
 	}
 	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
-		return srv.(RequestsServiceServer).ListRequests(ctx, req.(*ListRequestsRequest))
+		return srv.(JobsRequestsServiceServer).ListRequests(ctx, req.(*ListRequestsRequest))
 	}
 	return interceptor(ctx, in, info, handler)
 }
 
-func _RequestsService_CreateRequest_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
+func _JobsRequestsService_CreateRequest_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
 	in := new(CreateRequestRequest)
 	if err := dec(in); err != nil {
 		return nil, err
 	}
 	if interceptor == nil {
-		return srv.(RequestsServiceServer).CreateRequest(ctx, in)
+		return srv.(JobsRequestsServiceServer).CreateRequest(ctx, in)
 	}
 	info := &grpc.UnaryServerInfo{
 		Server:     srv,
-		FullMethod: RequestsService_CreateRequest_FullMethodName,
+		FullMethod: JobsRequestsService_CreateRequest_FullMethodName,
 	}
 	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
-		return srv.(RequestsServiceServer).CreateRequest(ctx, req.(*CreateRequestRequest))
+		return srv.(JobsRequestsServiceServer).CreateRequest(ctx, req.(*CreateRequestRequest))
 	}
 	return interceptor(ctx, in, info, handler)
 }
 
-func _RequestsService_UpdateRequest_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
+func _JobsRequestsService_UpdateRequest_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
 	in := new(UpdateRequestRequest)
 	if err := dec(in); err != nil {
 		return nil, err
 	}
 	if interceptor == nil {
-		return srv.(RequestsServiceServer).UpdateRequest(ctx, in)
+		return srv.(JobsRequestsServiceServer).UpdateRequest(ctx, in)
 	}
 	info := &grpc.UnaryServerInfo{
 		Server:     srv,
-		FullMethod: RequestsService_UpdateRequest_FullMethodName,
+		FullMethod: JobsRequestsService_UpdateRequest_FullMethodName,
 	}
 	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
-		return srv.(RequestsServiceServer).UpdateRequest(ctx, req.(*UpdateRequestRequest))
+		return srv.(JobsRequestsServiceServer).UpdateRequest(ctx, req.(*UpdateRequestRequest))
 	}
 	return interceptor(ctx, in, info, handler)
 }
 
-func _RequestsService_DeleteRequest_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
+func _JobsRequestsService_DeleteRequest_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
 	in := new(DeleteRequestRequest)
 	if err := dec(in); err != nil {
 		return nil, err
 	}
 	if interceptor == nil {
-		return srv.(RequestsServiceServer).DeleteRequest(ctx, in)
+		return srv.(JobsRequestsServiceServer).DeleteRequest(ctx, in)
 	}
 	info := &grpc.UnaryServerInfo{
 		Server:     srv,
-		FullMethod: RequestsService_DeleteRequest_FullMethodName,
+		FullMethod: JobsRequestsService_DeleteRequest_FullMethodName,
 	}
 	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
-		return srv.(RequestsServiceServer).DeleteRequest(ctx, req.(*DeleteRequestRequest))
+		return srv.(JobsRequestsServiceServer).DeleteRequest(ctx, req.(*DeleteRequestRequest))
 	}
 	return interceptor(ctx, in, info, handler)
 }
 
-func _RequestsService_ListRequestTypes_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
+func _JobsRequestsService_ListRequestTypes_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
 	in := new(ListRequestTypesRequest)
 	if err := dec(in); err != nil {
 		return nil, err
 	}
 	if interceptor == nil {
-		return srv.(RequestsServiceServer).ListRequestTypes(ctx, in)
+		return srv.(JobsRequestsServiceServer).ListRequestTypes(ctx, in)
 	}
 	info := &grpc.UnaryServerInfo{
 		Server:     srv,
-		FullMethod: RequestsService_ListRequestTypes_FullMethodName,
+		FullMethod: JobsRequestsService_ListRequestTypes_FullMethodName,
 	}
 	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
-		return srv.(RequestsServiceServer).ListRequestTypes(ctx, req.(*ListRequestTypesRequest))
+		return srv.(JobsRequestsServiceServer).ListRequestTypes(ctx, req.(*ListRequestTypesRequest))
 	}
 	return interceptor(ctx, in, info, handler)
 }
 
-func _RequestsService_CreateOrUpdateRequestType_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
+func _JobsRequestsService_CreateOrUpdateRequestType_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
 	in := new(CreateOrUpdateRequestTypeRequest)
 	if err := dec(in); err != nil {
 		return nil, err
 	}
 	if interceptor == nil {
-		return srv.(RequestsServiceServer).CreateOrUpdateRequestType(ctx, in)
+		return srv.(JobsRequestsServiceServer).CreateOrUpdateRequestType(ctx, in)
 	}
 	info := &grpc.UnaryServerInfo{
 		Server:     srv,
-		FullMethod: RequestsService_CreateOrUpdateRequestType_FullMethodName,
+		FullMethod: JobsRequestsService_CreateOrUpdateRequestType_FullMethodName,
 	}
 	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
-		return srv.(RequestsServiceServer).CreateOrUpdateRequestType(ctx, req.(*CreateOrUpdateRequestTypeRequest))
+		return srv.(JobsRequestsServiceServer).CreateOrUpdateRequestType(ctx, req.(*CreateOrUpdateRequestTypeRequest))
 	}
 	return interceptor(ctx, in, info, handler)
 }
 
-func _RequestsService_RequestsDeleteType_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
+func _JobsRequestsService_DeleteRequestType_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
 	in := new(DeleteRequestTypeRequest)
 	if err := dec(in); err != nil {
 		return nil, err
 	}
 	if interceptor == nil {
-		return srv.(RequestsServiceServer).RequestsDeleteType(ctx, in)
+		return srv.(JobsRequestsServiceServer).DeleteRequestType(ctx, in)
 	}
 	info := &grpc.UnaryServerInfo{
 		Server:     srv,
-		FullMethod: RequestsService_RequestsDeleteType_FullMethodName,
+		FullMethod: JobsRequestsService_DeleteRequestType_FullMethodName,
 	}
 	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
-		return srv.(RequestsServiceServer).RequestsDeleteType(ctx, req.(*DeleteRequestTypeRequest))
+		return srv.(JobsRequestsServiceServer).DeleteRequestType(ctx, req.(*DeleteRequestTypeRequest))
 	}
 	return interceptor(ctx, in, info, handler)
 }
 
-func _RequestsService_ListRequestComments_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
+func _JobsRequestsService_ListRequestComments_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
 	in := new(ListRequestCommentsRequest)
 	if err := dec(in); err != nil {
 		return nil, err
 	}
 	if interceptor == nil {
-		return srv.(RequestsServiceServer).ListRequestComments(ctx, in)
+		return srv.(JobsRequestsServiceServer).ListRequestComments(ctx, in)
 	}
 	info := &grpc.UnaryServerInfo{
 		Server:     srv,
-		FullMethod: RequestsService_ListRequestComments_FullMethodName,
+		FullMethod: JobsRequestsService_ListRequestComments_FullMethodName,
 	}
 	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
-		return srv.(RequestsServiceServer).ListRequestComments(ctx, req.(*ListRequestCommentsRequest))
+		return srv.(JobsRequestsServiceServer).ListRequestComments(ctx, req.(*ListRequestCommentsRequest))
 	}
 	return interceptor(ctx, in, info, handler)
 }
 
-func _RequestsService_PostRequestComment_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
+func _JobsRequestsService_PostRequestComment_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
 	in := new(PostRequestCommentRequest)
 	if err := dec(in); err != nil {
 		return nil, err
 	}
 	if interceptor == nil {
-		return srv.(RequestsServiceServer).PostRequestComment(ctx, in)
+		return srv.(JobsRequestsServiceServer).PostRequestComment(ctx, in)
 	}
 	info := &grpc.UnaryServerInfo{
 		Server:     srv,
-		FullMethod: RequestsService_PostRequestComment_FullMethodName,
+		FullMethod: JobsRequestsService_PostRequestComment_FullMethodName,
 	}
 	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
-		return srv.(RequestsServiceServer).PostRequestComment(ctx, req.(*PostRequestCommentRequest))
+		return srv.(JobsRequestsServiceServer).PostRequestComment(ctx, req.(*PostRequestCommentRequest))
 	}
 	return interceptor(ctx, in, info, handler)
 }
 
-func _RequestsService_DeleteRequestComment_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
+func _JobsRequestsService_DeleteRequestComment_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
 	in := new(DeleteRequestCommentRequest)
 	if err := dec(in); err != nil {
 		return nil, err
 	}
 	if interceptor == nil {
-		return srv.(RequestsServiceServer).DeleteRequestComment(ctx, in)
+		return srv.(JobsRequestsServiceServer).DeleteRequestComment(ctx, in)
 	}
 	info := &grpc.UnaryServerInfo{
 		Server:     srv,
-		FullMethod: RequestsService_DeleteRequestComment_FullMethodName,
+		FullMethod: JobsRequestsService_DeleteRequestComment_FullMethodName,
 	}
 	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
-		return srv.(RequestsServiceServer).DeleteRequestComment(ctx, req.(*DeleteRequestCommentRequest))
+		return srv.(JobsRequestsServiceServer).DeleteRequestComment(ctx, req.(*DeleteRequestCommentRequest))
 	}
 	return interceptor(ctx, in, info, handler)
 }
 
-// RequestsService_ServiceDesc is the grpc.ServiceDesc for RequestsService service.
+// JobsRequestsService_ServiceDesc is the grpc.ServiceDesc for JobsRequestsService service.
 // It's only intended for direct use with grpc.RegisterService,
 // and not to be introspected or modified (even as a copy)
-var RequestsService_ServiceDesc = grpc.ServiceDesc{
-	ServiceName: "services.jobs.RequestsService",
-	HandlerType: (*RequestsServiceServer)(nil),
+var JobsRequestsService_ServiceDesc = grpc.ServiceDesc{
+	ServiceName: "services.jobs.JobsRequestsService",
+	HandlerType: (*JobsRequestsServiceServer)(nil),
 	Methods: []grpc.MethodDesc{
 		{
 			MethodName: "ListRequests",
-			Handler:    _RequestsService_ListRequests_Handler,
+			Handler:    _JobsRequestsService_ListRequests_Handler,
 		},
 		{
 			MethodName: "CreateRequest",
-			Handler:    _RequestsService_CreateRequest_Handler,
+			Handler:    _JobsRequestsService_CreateRequest_Handler,
 		},
 		{
 			MethodName: "UpdateRequest",
-			Handler:    _RequestsService_UpdateRequest_Handler,
+			Handler:    _JobsRequestsService_UpdateRequest_Handler,
 		},
 		{
 			MethodName: "DeleteRequest",
-			Handler:    _RequestsService_DeleteRequest_Handler,
+			Handler:    _JobsRequestsService_DeleteRequest_Handler,
 		},
 		{
 			MethodName: "ListRequestTypes",
-			Handler:    _RequestsService_ListRequestTypes_Handler,
+			Handler:    _JobsRequestsService_ListRequestTypes_Handler,
 		},
 		{
 			MethodName: "CreateOrUpdateRequestType",
-			Handler:    _RequestsService_CreateOrUpdateRequestType_Handler,
+			Handler:    _JobsRequestsService_CreateOrUpdateRequestType_Handler,
 		},
 		{
-			MethodName: "RequestsDeleteType",
-			Handler:    _RequestsService_RequestsDeleteType_Handler,
+			MethodName: "DeleteRequestType",
+			Handler:    _JobsRequestsService_DeleteRequestType_Handler,
 		},
 		{
 			MethodName: "ListRequestComments",
-			Handler:    _RequestsService_ListRequestComments_Handler,
+			Handler:    _JobsRequestsService_ListRequestComments_Handler,
 		},
 		{
 			MethodName: "PostRequestComment",
-			Handler:    _RequestsService_PostRequestComment_Handler,
+			Handler:    _JobsRequestsService_PostRequestComment_Handler,
 		},
 		{
 			MethodName: "DeleteRequestComment",
-			Handler:    _RequestsService_DeleteRequestComment_Handler,
+			Handler:    _JobsRequestsService_DeleteRequestComment_Handler,
 		},
 	},
 	Streams:  []grpc.StreamDesc{},

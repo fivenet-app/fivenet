@@ -3,6 +3,6 @@
 // tslint:disable
 import { ServiceType } from "@protobuf-ts/runtime-rpc";
 /**
- * @generated ServiceType for protobuf service services.jobs.QualificationsService
+ * @generated ServiceType for protobuf service services.jobs.JobsQualificationsService
  */
-export const QualificationsService = new ServiceType("services.jobs.QualificationsService", []);
+export const JobsQualificationsService = new ServiceType("services.jobs.JobsQualificationsService", []);

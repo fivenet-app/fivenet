@@ -6,6 +6,7 @@ import { MessageType } from "@protobuf-ts/runtime";
 import { Category } from "../../resources/documents/category";
 import { DocRelation } from "../../resources/documents/documents";
 import { AccessLevelUpdateMode } from "../../resources/documents/access";
+import { DocActivityData } from "../../resources/documents/activity";
 import { DocRequest } from "../../resources/documents/requests";
 import { DocActivity } from "../../resources/documents/activity";
 import { DocActivityType } from "../../resources/documents/activity";
@@ -625,6 +626,10 @@ export interface CreateDocumentReqRequest {
      * @generated from protobuf field: optional string reason = 3;
      */
     reason?: string;
+    /**
+     * @generated from protobuf field: optional resources.documents.DocActivityData data = 4;
+     */
+    data?: DocActivityData;
 }
 /**
  * @generated from protobuf message services.docstore.CreateDocumentReqResponse
@@ -654,7 +659,11 @@ export interface UpdateDocumentReqRequest {
      */
     reason?: string;
     /**
-     * @generated from protobuf field: bool accepted = 4;
+     * @generated from protobuf field: optional resources.documents.DocActivityData data = 4;
+     */
+    data?: DocActivityData;
+    /**
+     * @generated from protobuf field: bool accepted = 5;
      */
     accepted: boolean;
 }
@@ -1421,7 +1430,8 @@ class CreateDocumentReqRequest$Type extends MessageType<CreateDocumentReqRequest
         super("services.docstore.CreateDocumentReqRequest", [
             { no: 1, name: "document_id", kind: "scalar", T: 4 /*ScalarType.UINT64*/ },
             { no: 2, name: "request_type", kind: "enum", T: () => ["resources.documents.DocActivityType", DocActivityType, "DOC_ACTIVITY_TYPE_"], options: { "validate.rules": { enum: { in: [13, 14, 15, 16, 17, 18] } } } },
-            { no: 3, name: "reason", kind: "scalar", opt: true, T: 9 /*ScalarType.STRING*/, options: { "validate.rules": { string: { maxLen: "255" } } } }
+            { no: 3, name: "reason", kind: "scalar", opt: true, T: 9 /*ScalarType.STRING*/, options: { "validate.rules": { string: { maxLen: "255" } } } },
+            { no: 4, name: "data", kind: "message", T: () => DocActivityData }
         ]);
     }
 }
@@ -1448,7 +1458,8 @@ class UpdateDocumentReqRequest$Type extends MessageType<UpdateDocumentReqRequest
             { no: 1, name: "document_id", kind: "scalar", T: 4 /*ScalarType.UINT64*/ },
             { no: 2, name: "request_id", kind: "scalar", T: 4 /*ScalarType.UINT64*/ },
             { no: 3, name: "reason", kind: "scalar", opt: true, T: 9 /*ScalarType.STRING*/, options: { "validate.rules": { string: { maxLen: "255" } } } },
-            { no: 4, name: "accepted", kind: "scalar", T: 8 /*ScalarType.BOOL*/ }
+            { no: 4, name: "data", kind: "message", T: () => DocActivityData },
+            { no: 5, name: "accepted", kind: "scalar", T: 8 /*ScalarType.BOOL*/ }
         ]);
     }
 }

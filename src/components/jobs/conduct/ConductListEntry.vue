@@ -62,7 +62,7 @@ const openMessage = ref(false);
         <td class="whitespace-nowrap py-2 pl-3 pr-4 text-base font-medium sm:pr-0">
             <div class="flex flex-row justify-end">
                 <button
-                    v-if="can('JobsService.ConductUpdateEntry')"
+                    v-if="can('JobsService.UpdateConductEntry')"
                     type="button"
                     class="flex-initial text-primary-500 hover:text-primary-400"
                     @click="$emit('selected')"
@@ -71,7 +71,7 @@ const openMessage = ref(false);
                 </button>
 
                 <button
-                    v-if="can('JobsService.ConductDeleteEntry')"
+                    v-if="can('JobsService.DeleteConductEntry')"
                     type="button"
                     class="flex-initial text-primary-500 hover:text-primary-400"
                     @click="$emit('delete')"

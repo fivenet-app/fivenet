@@ -1434,19 +1434,21 @@
         },
         "JobsService": {
             "category": "Beruf",
-            "ColleaguesList": {
+            "ListColleagues": {
                 "key": "Kollegen anzeigen",
                 "description": "Liste der Kollegen (vom eigenen Beruf) sehen können."
-            },
-            "ConductCreateEntry": {
+            }
+        },
+        "JobsConductService": {
+            "CreateConductEntry": {
                 "key": "Führungsregister: Einträge erstellen",
                 "description": "Erstellen von Führungsregister Einträgen."
             },
-            "ConductDeleteEntry": {
+            "DeleteConductEntry": {
                 "key": "Führungsregister: Einträge löschen",
                 "description": "Löschen von Führungsregister Einträgen."
             },
-            "ConductListEntries": {
+            "ListConductEntries": {
                 "key": "Führungsregister: Einträge anzeigen",
                 "description": "Anzeigen von Führungsregister Einträgen.",
                 "attrs": {
@@ -1457,11 +1459,13 @@
                     "Access": "Zugriff auf Führungsregister-Einträge"
                 }
             },
-            "ConductUpdateEntry": {
+            "UpdateConductEntry": {
                 "key": "Führungsregister: Einträge bearbeiten",
                 "description": "Aktualisieren von Führungsregister Einträgen."
-            },
-            "TimeclockListEntries": {
+            }
+        },
+        "JobsTimeclockService": {
+            "ListTimeclock": {
                 "key": "Stempeluhr Einträge: Anzeigen",
                 "description": "Stempeluhr Einträge anzeigen lassen.",
                 "attrs": {
@@ -1470,32 +1474,34 @@
                 "attrs_types": {
                     "Access": "Zugriff auf Stempeluhr-Einträge"
                 }
-            },
-            "RequestsCreateEntry": {
+            }
+        },
+        "JobsRequestsService": {
+            "CreateRequest": {
                 "key": "Anfragen: Anfrage erstellen",
                 "description": "Anfragen erstellen."
             },
-            "RequestsCreateOrUpdateType": {
+            "CreateOrUpdateRequestType": {
                 "key": "Anfragen: Erstellen und Aktualisieren von Anfrage-Typen",
                 "description": "Erstellen und Aktualisieren von Anfrage-Typen."
             },
-            "RequestsDeleteEntry": {
+            "DeleteRequest": {
                 "key": "Anfragen: Anfrage löschen",
                 "description": "Löschen von Anfragen."
             },
-            "RequestsDeleteType": {
+            "DeleteRequestType": {
                 "key": "Anfragen: Löschen von Anfrage-Typen",
                 "description": "Löschen von Anfragen-Typen."
             },
-            "RequestsListEntries": {
+            "ListRequests": {
                 "key": "Anfragen: Auflisten und Anzeigen",
                 "description": "Anfragen auflisten und anzeigen."
             },
-            "RequestsUpdateEntry": {
+            "UpdateRequest": {
                 "key": "Anfragen: Aktualisieren von Anfragen",
                 "description": "Aktualisieren von Anfragen."
             },
-            "RequestsDeleteComment": {
+            "DeleteRequestComment": {
                 "key": "Anfragen: Anfragen-Kommentare löschen",
                 "description": "Löschen von Anfragen-Kommentaren."
             }

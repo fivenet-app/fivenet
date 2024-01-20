@@ -3,7 +3,7 @@
 // tslint:disable
 import type { RpcTransport } from "@protobuf-ts/runtime-rpc";
 import type { ServiceInfo } from "@protobuf-ts/runtime-rpc";
-import { TimeclockService } from "./timeclock";
+import { JobsTimeclockService } from "./timeclock";
 import type { GetTimeclockStatsResponse } from "./timeclock";
 import type { GetTimeclockStatsRequest } from "./timeclock";
 import { stackIntercept } from "@protobuf-ts/runtime-rpc";
@@ -12,9 +12,9 @@ import type { ListTimeclockRequest } from "./timeclock";
 import type { UnaryCall } from "@protobuf-ts/runtime-rpc";
 import type { RpcOptions } from "@protobuf-ts/runtime-rpc";
 /**
- * @generated from protobuf service services.jobs.TimeclockService
+ * @generated from protobuf service services.jobs.JobsTimeclockService
  */
-export interface ITimeclockServiceClient {
+export interface IJobsTimeclockServiceClient {
     /**
      * @perm: Attrs=Access/StringList:[]string{"All"}§[]string{}
      *
@@ -29,12 +29,12 @@ export interface ITimeclockServiceClient {
     getTimeclockStats(input: GetTimeclockStatsRequest, options?: RpcOptions): UnaryCall<GetTimeclockStatsRequest, GetTimeclockStatsResponse>;
 }
 /**
- * @generated from protobuf service services.jobs.TimeclockService
+ * @generated from protobuf service services.jobs.JobsTimeclockService
  */
-export class TimeclockServiceClient implements ITimeclockServiceClient, ServiceInfo {
-    typeName = TimeclockService.typeName;
-    methods = TimeclockService.methods;
-    options = TimeclockService.options;
+export class JobsTimeclockServiceClient implements IJobsTimeclockServiceClient, ServiceInfo {
+    typeName = JobsTimeclockService.typeName;
+    methods = JobsTimeclockService.methods;
+    options = JobsTimeclockService.options;
     constructor(private readonly _transport: RpcTransport) {
     }
     /**

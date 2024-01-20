@@ -264,6 +264,7 @@ message CreateDocumentReqRequest {
   resources.documents.DocActivityType request_type = 2 [(validate.rules).enum = {in: [13,14,15,16,17,18]}];
   // @sanitize
   optional string reason = 3 [(validate.rules).string.max_len = 255];
+  optional resources.documents.DocActivityData data = 4;
 }
 
 message CreateDocumentReqResponse {
@@ -275,7 +276,8 @@ message UpdateDocumentReqRequest {
   uint64 request_id = 2 [jstype = JS_STRING];
   // @sanitize
   optional string reason = 3 [(validate.rules).string.max_len = 255];
-  bool accepted = 4;
+  optional resources.documents.DocActivityData data = 4;
+  bool accepted = 5;
 }
 
 message UpdateDocumentReqResponse {

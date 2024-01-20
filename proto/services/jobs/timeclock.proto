@@ -32,7 +32,7 @@ message GetTimeclockStatsResponse {
   resources.jobs.TimeclockStats stats = 1;
 }
 
-service TimeclockService {
+service JobsTimeclockService {
   // @perm: Attrs=Access/StringList:[]string{"All"}§[]string{}
   rpc ListTimeclock(ListTimeclockRequest) returns (ListTimeclockResponse);
   // @perm: Name=TimeclockList

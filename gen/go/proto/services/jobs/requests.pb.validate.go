@@ -1175,22 +1175,22 @@ var _ interface {
 	ErrorName() string
 } = DeleteRequestResponseValidationError{}
 
-// Validate checks the field values on RequestsApproveRequest with the rules
+// Validate checks the field values on ApproveRequestRequest with the rules
 // defined in the proto definition for this message. If any rules are
 // violated, the first error encountered is returned, or nil if there are no violations.
-func (m *RequestsApproveRequest) Validate() error {
+func (m *ApproveRequestRequest) Validate() error {
 	return m.validate(false)
 }
 
-// ValidateAll checks the field values on RequestsApproveRequest with the rules
+// ValidateAll checks the field values on ApproveRequestRequest with the rules
 // defined in the proto definition for this message. If any rules are
 // violated, the result is a list of violation errors wrapped in
-// RequestsApproveRequestMultiError, or nil if none found.
-func (m *RequestsApproveRequest) ValidateAll() error {
+// ApproveRequestRequestMultiError, or nil if none found.
+func (m *ApproveRequestRequest) ValidateAll() error {
 	return m.validate(true)
 }
 
-func (m *RequestsApproveRequest) validate(all bool) error {
+func (m *ApproveRequestRequest) validate(all bool) error {
 	if m == nil {
 		return nil
 	}
@@ -1202,19 +1202,19 @@ func (m *RequestsApproveRequest) validate(all bool) error {
 	// no validation rules for Approve
 
 	if len(errors) > 0 {
-		return RequestsApproveRequestMultiError(errors)
+		return ApproveRequestRequestMultiError(errors)
 	}
 
 	return nil
 }
 
-// RequestsApproveRequestMultiError is an error wrapping multiple validation
-// errors returned by RequestsApproveRequest.ValidateAll() if the designated
+// ApproveRequestRequestMultiError is an error wrapping multiple validation
+// errors returned by ApproveRequestRequest.ValidateAll() if the designated
 // constraints aren't met.
-type RequestsApproveRequestMultiError []error
+type ApproveRequestRequestMultiError []error
 
 // Error returns a concatenation of all the error messages it wraps.
-func (m RequestsApproveRequestMultiError) Error() string {
+func (m ApproveRequestRequestMultiError) Error() string {
 	var msgs []string
 	for _, err := range m {
 		msgs = append(msgs, err.Error())
@@ -1223,11 +1223,11 @@ func (m RequestsApproveRequestMultiError) Error() string {
 }
 
 // AllErrors returns a list of validation violation errors.
-func (m RequestsApproveRequestMultiError) AllErrors() []error { return m }
+func (m ApproveRequestRequestMultiError) AllErrors() []error { return m }
 
-// RequestsApproveRequestValidationError is the validation error returned by
-// RequestsApproveRequest.Validate if the designated constraints aren't met.
-type RequestsApproveRequestValidationError struct {
+// ApproveRequestRequestValidationError is the validation error returned by
+// ApproveRequestRequest.Validate if the designated constraints aren't met.
+type ApproveRequestRequestValidationError struct {
 	field  string
 	reason string
 	cause  error
@@ -1235,24 +1235,24 @@ type RequestsApproveRequestValidationError struct {
 }
 
 // Field function returns field value.
-func (e RequestsApproveRequestValidationError) Field() string { return e.field }
+func (e ApproveRequestRequestValidationError) Field() string { return e.field }
 
 // Reason function returns reason value.
-func (e RequestsApproveRequestValidationError) Reason() string { return e.reason }
+func (e ApproveRequestRequestValidationError) Reason() string { return e.reason }
 
 // Cause function returns cause value.
-func (e RequestsApproveRequestValidationError) Cause() error { return e.cause }
+func (e ApproveRequestRequestValidationError) Cause() error { return e.cause }
 
 // Key function returns key value.
-func (e RequestsApproveRequestValidationError) Key() bool { return e.key }
+func (e ApproveRequestRequestValidationError) Key() bool { return e.key }
 
 // ErrorName returns error name.
-func (e RequestsApproveRequestValidationError) ErrorName() string {
-	return "RequestsApproveRequestValidationError"
+func (e ApproveRequestRequestValidationError) ErrorName() string {
+	return "ApproveRequestRequestValidationError"
 }
 
 // Error satisfies the builtin error interface
-func (e RequestsApproveRequestValidationError) Error() string {
+func (e ApproveRequestRequestValidationError) Error() string {
 	cause := ""
 	if e.cause != nil {
 		cause = fmt.Sprintf(" | caused by: %v", e.cause)
@@ -1264,14 +1264,14 @@ func (e RequestsApproveRequestValidationError) Error() string {
 	}
 
 	return fmt.Sprintf(
-		"invalid %sRequestsApproveRequest.%s: %s%s",
+		"invalid %sApproveRequestRequest.%s: %s%s",
 		key,
 		e.field,
 		e.reason,
 		cause)
 }
 
-var _ error = RequestsApproveRequestValidationError{}
+var _ error = ApproveRequestRequestValidationError{}
 
 var _ interface {
 	Field() string
@@ -1279,24 +1279,24 @@ var _ interface {
 	Key() bool
 	Cause() error
 	ErrorName() string
-} = RequestsApproveRequestValidationError{}
+} = ApproveRequestRequestValidationError{}
 
-// Validate checks the field values on RequestsApproveResponse with the rules
+// Validate checks the field values on ApproveRequestResponse with the rules
 // defined in the proto definition for this message. If any rules are
 // violated, the first error encountered is returned, or nil if there are no violations.
-func (m *RequestsApproveResponse) Validate() error {
+func (m *ApproveRequestResponse) Validate() error {
 	return m.validate(false)
 }
 
-// ValidateAll checks the field values on RequestsApproveResponse with the
-// rules defined in the proto definition for this message. If any rules are
+// ValidateAll checks the field values on ApproveRequestResponse with the rules
+// defined in the proto definition for this message. If any rules are
 // violated, the result is a list of violation errors wrapped in
-// RequestsApproveResponseMultiError, or nil if none found.
-func (m *RequestsApproveResponse) ValidateAll() error {
+// ApproveRequestResponseMultiError, or nil if none found.
+func (m *ApproveRequestResponse) ValidateAll() error {
 	return m.validate(true)
 }
 
-func (m *RequestsApproveResponse) validate(all bool) error {
+func (m *ApproveRequestResponse) validate(all bool) error {
 	if m == nil {
 		return nil
 	}
@@ -1304,19 +1304,19 @@ func (m *RequestsApproveResponse) validate(all bool) error {
 	var errors []error
 
 	if len(errors) > 0 {
-		return RequestsApproveResponseMultiError(errors)
+		return ApproveRequestResponseMultiError(errors)
 	}
 
 	return nil
 }
 
-// RequestsApproveResponseMultiError is an error wrapping multiple validation
-// errors returned by RequestsApproveResponse.ValidateAll() if the designated
+// ApproveRequestResponseMultiError is an error wrapping multiple validation
+// errors returned by ApproveRequestResponse.ValidateAll() if the designated
 // constraints aren't met.
-type RequestsApproveResponseMultiError []error
+type ApproveRequestResponseMultiError []error
 
 // Error returns a concatenation of all the error messages it wraps.
-func (m RequestsApproveResponseMultiError) Error() string {
+func (m ApproveRequestResponseMultiError) Error() string {
 	var msgs []string
 	for _, err := range m {
 		msgs = append(msgs, err.Error())
@@ -1325,11 +1325,11 @@ func (m RequestsApproveResponseMultiError) Error() string {
 }
 
 // AllErrors returns a list of validation violation errors.
-func (m RequestsApproveResponseMultiError) AllErrors() []error { return m }
+func (m ApproveRequestResponseMultiError) AllErrors() []error { return m }
 
-// RequestsApproveResponseValidationError is the validation error returned by
-// RequestsApproveResponse.Validate if the designated constraints aren't met.
-type RequestsApproveResponseValidationError struct {
+// ApproveRequestResponseValidationError is the validation error returned by
+// ApproveRequestResponse.Validate if the designated constraints aren't met.
+type ApproveRequestResponseValidationError struct {
 	field  string
 	reason string
 	cause  error
@@ -1337,24 +1337,24 @@ type RequestsApproveResponseValidationError struct {
 }
 
 // Field function returns field value.
-func (e RequestsApproveResponseValidationError) Field() string { return e.field }
+func (e ApproveRequestResponseValidationError) Field() string { return e.field }
 
 // Reason function returns reason value.
-func (e RequestsApproveResponseValidationError) Reason() string { return e.reason }
+func (e ApproveRequestResponseValidationError) Reason() string { return e.reason }
 
 // Cause function returns cause value.
-func (e RequestsApproveResponseValidationError) Cause() error { return e.cause }
+func (e ApproveRequestResponseValidationError) Cause() error { return e.cause }
 
 // Key function returns key value.
-func (e RequestsApproveResponseValidationError) Key() bool { return e.key }
+func (e ApproveRequestResponseValidationError) Key() bool { return e.key }
 
 // ErrorName returns error name.
-func (e RequestsApproveResponseValidationError) ErrorName() string {
-	return "RequestsApproveResponseValidationError"
+func (e ApproveRequestResponseValidationError) ErrorName() string {
+	return "ApproveRequestResponseValidationError"
 }
 
 // Error satisfies the builtin error interface
-func (e RequestsApproveResponseValidationError) Error() string {
+func (e ApproveRequestResponseValidationError) Error() string {
 	cause := ""
 	if e.cause != nil {
 		cause = fmt.Sprintf(" | caused by: %v", e.cause)
@@ -1366,14 +1366,14 @@ func (e RequestsApproveResponseValidationError) Error() string {
 	}
 
 	return fmt.Sprintf(
-		"invalid %sRequestsApproveResponse.%s: %s%s",
+		"invalid %sApproveRequestResponse.%s: %s%s",
 		key,
 		e.field,
 		e.reason,
 		cause)
 }
 
-var _ error = RequestsApproveResponseValidationError{}
+var _ error = ApproveRequestResponseValidationError{}
 
 var _ interface {
 	Field() string
@@ -1381,7 +1381,7 @@ var _ interface {
 	Key() bool
 	Cause() error
 	ErrorName() string
-} = RequestsApproveResponseValidationError{}
+} = ApproveRequestResponseValidationError{}
 
 // Validate checks the field values on RequestsCloseRequest with the rules
 // defined in the proto definition for this message. If any rules are

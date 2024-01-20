@@ -429,6 +429,7 @@ func (s *Server) ListDispatchActivity(ctx context.Context, req *ListDispatchActi
 			return nil, errswrap.NewError(errorscentrum.ErrFailedQuery, err)
 		}
 	}
+
 	for i := 0; i < len(resp.Activity); i++ {
 		if resp.Activity[i].UnitId != nil && *resp.Activity[i].UnitId > 0 {
 			var err error

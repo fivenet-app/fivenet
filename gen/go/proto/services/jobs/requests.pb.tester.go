@@ -13,14 +13,14 @@ import (
 	"google.golang.org/grpc/test/bufconn"
 )
 
-func NewTestRequestsServiceClient(srv RequestsServiceServer) (RequestsServiceClient, context.Context, context.CancelFunc) {
+func NewTestJobsRequestsServiceClient(srv JobsRequestsServiceServer) (JobsRequestsServiceClient, context.Context, context.CancelFunc) {
 	ctx, cancel := context.WithCancel(context.Background())
 
 	buffer := 101024 * 1024
 	lis := bufconn.Listen(buffer)
 
 	server := grpc.NewServer()
-	RegisterRequestsServiceServer(server, srv)
+	RegisterJobsRequestsServiceServer(server, srv)
 	go func() {
 		if err := server.Serve(lis); err != nil {
 			log.Printf("error serving test grpc server: %v", err)
@@ -44,6 +44,6 @@ func NewTestRequestsServiceClient(srv RequestsServiceServer) (RequestsServiceCli
 		server.Stop()
 	}()
 
-	client := NewRequestsServiceClient(conn)
+	client := NewJobsRequestsServiceClient(conn)
 	return client, ctx, cancel
 }

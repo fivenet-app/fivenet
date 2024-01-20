@@ -1434,19 +1434,22 @@
         },
         "JobsService": {
             "category": "Job",
-            "ColleaguesList": {
+            "ListColleagues": {
                 "key": "List colleagues",
                 "description": "List your colleagues (of your own job)."
-            },
-            "ConductCreateEntry": {
+            }
+        },
+        "JobsConductService": {
+            "category": "Job Conduct Register",
+            "CreateConductEntry": {
                 "key": "Conduct Entries: Create",
                 "description": "Create Conduct Register entries."
             },
-            "ConductDeleteEntry": {
+            "DeleteConductEntry": {
                 "key": "Conduct Entries: Delete",
                 "description": "Delete Conduct Register entries."
             },
-            "ConductListEntries": {
+            "ListConductEntries": {
                 "key": "Conduct Entries: List",
                 "description": "List Conduct Register entries.",
                 "attrs": {
@@ -1457,11 +1460,14 @@
                     "Access": "Access to conduct register entries"
                 }
             },
-            "ConductUpdateEntry": {
+            "UpdateConductEntry": {
                 "key": "Conduct Entries: Update",
                 "description": "Update Conduct Register entries."
-            },
-            "TimeclockListEntries": {
+            }
+        },
+        "JobsTimeclockService": {
+            "category": "Job Timeclock",
+            "ListTimeclock": {
                 "key": "Timeclock Entries: List",
                 "description": "List Timeclock entries.",
                 "attrs": {
@@ -1470,32 +1476,35 @@
                 "attrs_types": {
                     "Access": "Access to time clock entries"
                 }
-            },
-            "RequestsCreateEntry": {
+            }
+        },
+        "JobsRequestsService": {
+            "category": "Job Requests",
+            "CreateRequest": {
                 "key": "Requests: Create Request",
                 "description": "Create Requests."
             },
-            "RequestsCreateOrUpdateType": {
+            "CreateOrUpdateRequestType": {
                 "key": "Requests: Create and update Request Types",
                 "description": "Create and update Request Types."
             },
-            "RequestsDeleteEntry": {
+            "DeleteRequest": {
                 "key": "Requests: Delete Entry",
                 "description": "Delete Requests."
             },
-            "RequestsDeleteType": {
+            "DeleteRequestType": {
                 "key": "Requests: Delete Request Types",
                 "description": "Delete Request Types."
             },
-            "RequestsListEntries": {
+            "ListRequests": {
                 "key": "Requests: List Requests",
                 "description": "List and View Requests."
             },
-            "RequestsUpdateEntry": {
+            "UpdateRequest": {
                 "key": "Requests: Update Request",
                 "description": "Update Requests."
             },
-            "RequestsDeleteComment": {
+            "DeleteRequestComment": {
                 "key": "Requests: Delete Comment",
                 "description": "Delete Comments made on Requests."
             }

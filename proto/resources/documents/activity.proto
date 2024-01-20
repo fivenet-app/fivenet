@@ -51,7 +51,8 @@ message DocActivityData {
   oneof data {
     DocUpdated updated = 1;
     DocOwnerChanged owner_changed = 2;
-    DocumentAccess access_updated = 4;
+    resources.documents.DocumentAccess access_updated = 4;
+    DocAccessRequested access_requested = 5;
   }
 }
 
@@ -66,7 +67,6 @@ message DocOwnerChanged {
   resources.users.UserShort new_owner = 2;
 }
 
-message DocAccessChanged {
-  resources.documents.AccessLevelUpdateMode mode = 1;
-  resources.documents.DocumentAccess access = 2;
+message DocAccessRequested {
+  resources.documents.AccessLevel level = 1 [(validate.rules).enum.defined_only = true];
 }

@@ -158,7 +158,7 @@ const items = [
             navigateTo({ name: 'jobs-overview' });
             open.value = false;
         },
-        permission: 'JobsService.ColleaguesList',
+        permission: 'JobsService.ListColleagues',
         icon: markRaw(BriefcaseIcon),
         category: 'pages',
     },

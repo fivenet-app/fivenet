@@ -32,6 +32,7 @@ const emit = defineEmits<{
 }>();
 
 const { $grpc } = useNuxtApp();
+
 const notifications = useNotificatorStore();
 
 const completorStore = useCompletorStore();

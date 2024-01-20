@@ -8,9 +8,6 @@ import { defineRule } from 'vee-validate';
 import { useNotificatorStore } from '~/store/notificator';
 import { User, UserProps } from '~~/gen/ts/resources/users/users';
 
-const { $grpc } = useNuxtApp();
-const notifications = useNotificatorStore();
-
 const props = defineProps<{
     open: boolean;
     user: User;
@@ -20,6 +17,10 @@ const emit = defineEmits<{
     (e: 'close'): void;
     (e: 'update:trafficInfractionPoints', value: number): void;
 }>();
+
+const { $grpc } = useNuxtApp();
+
+const notifications = useNotificatorStore();
 
 interface FormData {
     reason: string;

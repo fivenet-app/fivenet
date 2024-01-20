@@ -19,7 +19,7 @@ import type { ListTimeclockRequest, ListTimeclockResponse } from '~~/gen/ts/serv
 
 const { $grpc } = useNuxtApp();
 
-const canAccessAll = can('JobsService.TimeclockListEntries.Access.All');
+const canAccessAll = can('JobsTimeclockService.ListTimeclock.Access.All');
 
 const now = new Date();
 const today = new Date(now.getFullYear(), now.getMonth(), now.getDate());

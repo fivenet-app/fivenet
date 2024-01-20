@@ -22,10 +22,10 @@ var (
 )
 
 type Server struct {
-	ConductServiceServer
+	JobsConductServiceServer
 	JobsServiceServer
-	RequestsServiceServer
-	TimeclockServiceServer
+	JobsRequestsServiceServer
+	JobsTimeclockServiceServer
 
 	ctx    context.Context
 	logger *zap.Logger
@@ -92,8 +92,8 @@ func NewServer(p Params) *Server {
 }
 
 func (s *Server) RegisterServer(srv *grpc.Server) {
-	RegisterConductServiceServer(srv, s)
+	RegisterJobsConductServiceServer(srv, s)
 	RegisterJobsServiceServer(srv, s)
-	RegisterRequestsServiceServer(srv, s)
-	RegisterTimeclockServiceServer(srv, s)
+	RegisterJobsRequestsServiceServer(srv, s)
+	RegisterJobsTimeclockServiceServer(srv, s)
 }

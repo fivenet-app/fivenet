@@ -54,7 +54,7 @@ func (s *Server) CreateOrUpdateRequestType(ctx context.Context, req *CreateOrUpd
 
 	auditEntry := &model.FivenetAuditLog{
 		Service: JobsService_ServiceDesc.ServiceName,
-		Method:  "RequestsCreateOrUpdateType",
+		Method:  "CreateOrUpdateRequestType",
 		UserID:  userInfo.UserId,
 		UserJob: userInfo.Job,
 		State:   int16(rector.EventType_EVENT_TYPE_ERRORED),
@@ -139,12 +139,12 @@ func (s *Server) CreateOrUpdateRequestType(ctx context.Context, req *CreateOrUpd
 	}, nil
 }
 
-func (s *Server) RequestsDeleteType(ctx context.Context, req *DeleteRequestTypeRequest) (*DeleteRequestTypeResponse, error) {
+func (s *Server) DeleteRequestType(ctx context.Context, req *DeleteRequestTypeRequest) (*DeleteRequestTypeResponse, error) {
 	userInfo := auth.MustGetUserInfoFromContext(ctx)
 
 	auditEntry := &model.FivenetAuditLog{
 		Service: JobsService_ServiceDesc.ServiceName,
-		Method:  "RequestsDeleteType",
+		Method:  "DeleteRequestType",
 		UserID:  userInfo.UserId,
 		UserJob: userInfo.Job,
 		State:   int16(rector.EventType_EVENT_TYPE_ERRORED),

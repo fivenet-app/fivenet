@@ -28,7 +28,7 @@ func (s *Server) ListConductEntries(ctx context.Context, req *ListConductEntries
 	condition := tConduct.Job.EQ(jet.String(userInfo.Job))
 
 	// Field Permission Check
-	fieldsAttr, err := s.p.Attr(userInfo, permsjobs.ConductServicePerm, permsjobs.ConductServiceListConductEntriesPerm, permsjobs.ConductServiceListConductEntriesAccessPermField)
+	fieldsAttr, err := s.p.Attr(userInfo, permsjobs.JobsConductServicePerm, permsjobs.JobsConductServiceListConductEntriesPerm, permsjobs.JobsConductServiceListConductEntriesAccessPermField)
 	if err != nil {
 		return nil, errswrap.NewError(errorsjobs.ErrFailedQuery, err)
 	}
@@ -160,7 +160,7 @@ func (s *Server) CreateConductEntry(ctx context.Context, req *CreateConductEntry
 
 	auditEntry := &model.FivenetAuditLog{
 		Service: JobsService_ServiceDesc.ServiceName,
-		Method:  "ConductCreateEntry",
+		Method:  "CreateConductEntry",
 		UserID:  userInfo.UserId,
 		UserJob: userInfo.Job,
 		State:   int16(rector.EventType_EVENT_TYPE_ERRORED),
@@ -218,7 +218,7 @@ func (s *Server) UpdateConductEntry(ctx context.Context, req *UpdateConductEntry
 
 	auditEntry := &model.FivenetAuditLog{
 		Service: JobsService_ServiceDesc.ServiceName,
-		Method:  "ConductUpdateEntry",
+		Method:  "UpdateConductEntry",
 		UserID:  userInfo.UserId,
 		UserJob: userInfo.Job,
 		State:   int16(rector.EventType_EVENT_TYPE_ERRORED),
@@ -272,7 +272,7 @@ func (s *Server) DeleteConductEntry(ctx context.Context, req *DeleteConductEntry
 
 	auditEntry := &model.FivenetAuditLog{
 		Service: JobsService_ServiceDesc.ServiceName,
-		Method:  "ConductDeleteEntry",
+		Method:  "DeleteConductEntry",
 		UserID:  userInfo.UserId,
 		UserJob: userInfo.Job,
 		State:   int16(rector.EventType_EVENT_TYPE_ERRORED),

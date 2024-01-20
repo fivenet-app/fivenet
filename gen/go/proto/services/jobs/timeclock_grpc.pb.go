@@ -19,130 +19,130 @@ import (
 const _ = grpc.SupportPackageIsVersion7
 
 const (
-	TimeclockService_ListTimeclock_FullMethodName     = "/services.jobs.TimeclockService/ListTimeclock"
-	TimeclockService_GetTimeclockStats_FullMethodName = "/services.jobs.TimeclockService/GetTimeclockStats"
+	JobsTimeclockService_ListTimeclock_FullMethodName     = "/services.jobs.JobsTimeclockService/ListTimeclock"
+	JobsTimeclockService_GetTimeclockStats_FullMethodName = "/services.jobs.JobsTimeclockService/GetTimeclockStats"
 )
 
-// TimeclockServiceClient is the client API for TimeclockService service.
+// JobsTimeclockServiceClient is the client API for JobsTimeclockService service.
 //
 // For semantics around ctx use and closing/ending streaming RPCs, please refer to https://pkg.go.dev/google.golang.org/grpc/?tab=doc#ClientConn.NewStream.
-type TimeclockServiceClient interface {
+type JobsTimeclockServiceClient interface {
 	// @perm: Attrs=Access/StringList:[]string{"All"}§[]string{}
 	ListTimeclock(ctx context.Context, in *ListTimeclockRequest, opts ...grpc.CallOption) (*ListTimeclockResponse, error)
 	// @perm: Name=TimeclockList
 	GetTimeclockStats(ctx context.Context, in *GetTimeclockStatsRequest, opts ...grpc.CallOption) (*GetTimeclockStatsResponse, error)
 }
 
-type timeclockServiceClient struct {
+type jobsTimeclockServiceClient struct {
 	cc grpc.ClientConnInterface
 }
 
-func NewTimeclockServiceClient(cc grpc.ClientConnInterface) TimeclockServiceClient {
-	return &timeclockServiceClient{cc}
+func NewJobsTimeclockServiceClient(cc grpc.ClientConnInterface) JobsTimeclockServiceClient {
+	return &jobsTimeclockServiceClient{cc}
 }
 
-func (c *timeclockServiceClient) ListTimeclock(ctx context.Context, in *ListTimeclockRequest, opts ...grpc.CallOption) (*ListTimeclockResponse, error) {
+func (c *jobsTimeclockServiceClient) ListTimeclock(ctx context.Context, in *ListTimeclockRequest, opts ...grpc.CallOption) (*ListTimeclockResponse, error) {
 	out := new(ListTimeclockResponse)
-	err := c.cc.Invoke(ctx, TimeclockService_ListTimeclock_FullMethodName, in, out, opts...)
+	err := c.cc.Invoke(ctx, JobsTimeclockService_ListTimeclock_FullMethodName, in, out, opts...)
 	if err != nil {
 		return nil, err
 	}
 	return out, nil
 }
 
-func (c *timeclockServiceClient) GetTimeclockStats(ctx context.Context, in *GetTimeclockStatsRequest, opts ...grpc.CallOption) (*GetTimeclockStatsResponse, error) {
+func (c *jobsTimeclockServiceClient) GetTimeclockStats(ctx context.Context, in *GetTimeclockStatsRequest, opts ...grpc.CallOption) (*GetTimeclockStatsResponse, error) {
 	out := new(GetTimeclockStatsResponse)
-	err := c.cc.Invoke(ctx, TimeclockService_GetTimeclockStats_FullMethodName, in, out, opts...)
+	err := c.cc.Invoke(ctx, JobsTimeclockService_GetTimeclockStats_FullMethodName, in, out, opts...)
 	if err != nil {
 		return nil, err
 	}
 	return out, nil
 }
 
-// TimeclockServiceServer is the server API for TimeclockService service.
-// All implementations must embed UnimplementedTimeclockServiceServer
+// JobsTimeclockServiceServer is the server API for JobsTimeclockService service.
+// All implementations must embed UnimplementedJobsTimeclockServiceServer
 // for forward compatibility
-type TimeclockServiceServer interface {
+type JobsTimeclockServiceServer interface {
 	// @perm: Attrs=Access/StringList:[]string{"All"}§[]string{}
 	ListTimeclock(context.Context, *ListTimeclockRequest) (*ListTimeclockResponse, error)
 	// @perm: Name=TimeclockList
 	GetTimeclockStats(context.Context, *GetTimeclockStatsRequest) (*GetTimeclockStatsResponse, error)
-	mustEmbedUnimplementedTimeclockServiceServer()
+	mustEmbedUnimplementedJobsTimeclockServiceServer()
 }
 
-// UnimplementedTimeclockServiceServer must be embedded to have forward compatible implementations.
-type UnimplementedTimeclockServiceServer struct {
+// UnimplementedJobsTimeclockServiceServer must be embedded to have forward compatible implementations.
+type UnimplementedJobsTimeclockServiceServer struct {
 }
 
-func (UnimplementedTimeclockServiceServer) ListTimeclock(context.Context, *ListTimeclockRequest) (*ListTimeclockResponse, error) {
+func (UnimplementedJobsTimeclockServiceServer) ListTimeclock(context.Context, *ListTimeclockRequest) (*ListTimeclockResponse, error) {
 	return nil, status.Errorf(codes.Unimplemented, "method ListTimeclock not implemented")
 }
-func (UnimplementedTimeclockServiceServer) GetTimeclockStats(context.Context, *GetTimeclockStatsRequest) (*GetTimeclockStatsResponse, error) {
+func (UnimplementedJobsTimeclockServiceServer) GetTimeclockStats(context.Context, *GetTimeclockStatsRequest) (*GetTimeclockStatsResponse, error) {
 	return nil, status.Errorf(codes.Unimplemented, "method GetTimeclockStats not implemented")
 }
-func (UnimplementedTimeclockServiceServer) mustEmbedUnimplementedTimeclockServiceServer() {}
+func (UnimplementedJobsTimeclockServiceServer) mustEmbedUnimplementedJobsTimeclockServiceServer() {}
 
-// UnsafeTimeclockServiceServer may be embedded to opt out of forward compatibility for this service.
-// Use of this interface is not recommended, as added methods to TimeclockServiceServer will
+// UnsafeJobsTimeclockServiceServer may be embedded to opt out of forward compatibility for this service.
+// Use of this interface is not recommended, as added methods to JobsTimeclockServiceServer will
 // result in compilation errors.
-type UnsafeTimeclockServiceServer interface {
-	mustEmbedUnimplementedTimeclockServiceServer()
+type UnsafeJobsTimeclockServiceServer interface {
+	mustEmbedUnimplementedJobsTimeclockServiceServer()
 }
 
-func RegisterTimeclockServiceServer(s grpc.ServiceRegistrar, srv TimeclockServiceServer) {
-	s.RegisterService(&TimeclockService_ServiceDesc, srv)
+func RegisterJobsTimeclockServiceServer(s grpc.ServiceRegistrar, srv JobsTimeclockServiceServer) {
+	s.RegisterService(&JobsTimeclockService_ServiceDesc, srv)
 }
 
-func _TimeclockService_ListTimeclock_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
+func _JobsTimeclockService_ListTimeclock_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
 	in := new(ListTimeclockRequest)
 	if err := dec(in); err != nil {
 		return nil, err
 	}
 	if interceptor == nil {
-		return srv.(TimeclockServiceServer).ListTimeclock(ctx, in)
+		return srv.(JobsTimeclockServiceServer).ListTimeclock(ctx, in)
 	}
 	info := &grpc.UnaryServerInfo{
 		Server:     srv,
-		FullMethod: TimeclockService_ListTimeclock_FullMethodName,
+		FullMethod: JobsTimeclockService_ListTimeclock_FullMethodName,
 	}
 	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
-		return srv.(TimeclockServiceServer).ListTimeclock(ctx, req.(*ListTimeclockRequest))
+		return srv.(JobsTimeclockServiceServer).ListTimeclock(ctx, req.(*ListTimeclockRequest))
 	}
 	return interceptor(ctx, in, info, handler)
 }
 
-func _TimeclockService_GetTimeclockStats_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
+func _JobsTimeclockService_GetTimeclockStats_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
 	in := new(GetTimeclockStatsRequest)
 	if err := dec(in); err != nil {
 		return nil, err
 	}
 	if interceptor == nil {
-		return srv.(TimeclockServiceServer).GetTimeclockStats(ctx, in)
+		return srv.(JobsTimeclockServiceServer).GetTimeclockStats(ctx, in)
 	}
 	info := &grpc.UnaryServerInfo{
 		Server:     srv,
-		FullMethod: TimeclockService_GetTimeclockStats_FullMethodName,
+		FullMethod: JobsTimeclockService_GetTimeclockStats_FullMethodName,
 	}
 	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
-		return srv.(TimeclockServiceServer).GetTimeclockStats(ctx, req.(*GetTimeclockStatsRequest))
+		return srv.(JobsTimeclockServiceServer).GetTimeclockStats(ctx, req.(*GetTimeclockStatsRequest))
 	}
 	return interceptor(ctx, in, info, handler)
 }
 
-// TimeclockService_ServiceDesc is the grpc.ServiceDesc for TimeclockService service.
+// JobsTimeclockService_ServiceDesc is the grpc.ServiceDesc for JobsTimeclockService service.
 // It's only intended for direct use with grpc.RegisterService,
 // and not to be introspected or modified (even as a copy)
-var TimeclockService_ServiceDesc = grpc.ServiceDesc{
-	ServiceName: "services.jobs.TimeclockService",
-	HandlerType: (*TimeclockServiceServer)(nil),
+var JobsTimeclockService_ServiceDesc = grpc.ServiceDesc{
+	ServiceName: "services.jobs.JobsTimeclockService",
+	HandlerType: (*JobsTimeclockServiceServer)(nil),
 	Methods: []grpc.MethodDesc{
 		{
 			MethodName: "ListTimeclock",
-			Handler:    _TimeclockService_ListTimeclock_Handler,
+			Handler:    _JobsTimeclockService_ListTimeclock_Handler,
 		},
 		{
 			MethodName: "GetTimeclockStats",
-			Handler:    _TimeclockService_GetTimeclockStats_Handler,
+			Handler:    _JobsTimeclockService_GetTimeclockStats_Handler,
 		},
 	},
 	Streams:  []grpc.StreamDesc{},

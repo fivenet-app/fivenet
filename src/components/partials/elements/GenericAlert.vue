@@ -30,11 +30,11 @@ withDefaults(
                 <component :is="icon" class="h-5 w-5" :class="`text-${type}-400`" aria-hidden="true" />
             </div>
             <div class="ml-3">
-                <h3 class="text-sm font-medium" :class="`text-${type}-600`">
+                <h3 class="text-sm font-medium" :class="`text-${type}-800`">
                     {{ title }}
                 </h3>
-                <div v-if="message" class="mt-2 text-sm" :class="`text-${type}-600`">
-                    {{ message }}
+                <div v-if="message" class="mt-2 text-sm" :class="`text-${type}-700`">
+                    <p>{{ message }}</p>
                 </div>
                 <div v-if="callbackMessage" class="mt-4">
                     <div class="-mx-2 -my-1.5 flex">
