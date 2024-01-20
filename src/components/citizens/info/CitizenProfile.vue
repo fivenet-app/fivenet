@@ -287,6 +287,7 @@ const trafficPointsModal = ref(false);
                                         prefix="CIT"
                                         :title="{ key: 'notifications.citizen_info.copy_citizen_id.title', parameters: {} }"
                                         :content="{ key: 'notifications.citizen_info.copy_citizen_id.content', parameters: {} }"
+                                        class="w-full"
                                     />
                                 </div>
                             </div>
