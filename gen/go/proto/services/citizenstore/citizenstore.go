@@ -25,6 +25,7 @@ import (
 	"github.com/go-jet/jet/v2/qrm"
 	"go.opentelemetry.io/otel/attribute"
 	"go.opentelemetry.io/otel/trace"
+	grpc "google.golang.org/grpc"
 	"google.golang.org/grpc/codes"
 	"google.golang.org/grpc/status"
 )
@@ -77,6 +78,10 @@ func NewServer(db *sql.DB, p perms.Permissions, enricher *mstlystcdata.Enricher,
 		unemployedJob:      cfg.Game.UnemployedJob.Name,
 		unemployedJobGrade: cfg.Game.UnemployedJob.Grade,
 	}
+}
+
+func (s *Server) RegisterServer(srv *grpc.Server) {
+	RegisterCitizenStoreServiceServer(srv, s)
 }
 
 func (s *Server) ListCitizens(ctx context.Context, req *ListCitizensRequest) (*ListCitizensResponse, error) {

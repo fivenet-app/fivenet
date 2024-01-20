@@ -8,8 +8,8 @@ import DataNoDataBlock from '~/components/partials/data/DataNoDataBlock.vue';
 import TablePagination from '~/components/partials/elements/TablePagination.vue';
 import { useAuthStore } from '~/store/auth';
 import { RequestComment } from '~~/gen/ts/resources/jobs/requests';
-import { RequestsListCommentsResponse } from '~~/gen/ts/services/jobs/jobs';
 import RequestsCommentEntry from '~/components/jobs/requests/RequestsCommentEntry.vue';
+import type { ListRequestCommentsResponse } from '~~/gen/ts/services/jobs/requests';
 
 const { $grpc } = useNuxtApp();
 const authStore = useAuthStore();
@@ -34,9 +34,9 @@ const { data: comments, refresh } = useLazyAsyncData(
     },
 );
 
-async function getComments(): Promise<RequestsListCommentsResponse> {
+async function getComments(): Promise<ListRequestCommentsResponse> {
     try {
-        const call = $grpc.getJobsClient().requestsListComments({
+        const call = $grpc.getJobsRequestsClient().listRequestComments({
             pagination: {
                 offset: offset.value,
                 pageSize: 5n,
@@ -68,7 +68,7 @@ async function addComment(documentId: string, values: FormData): Promise<void> {
     };
 
     try {
-        const call = $grpc.getJobsClient().requestsPostComment({ comment });
+        const call = $grpc.getJobsRequestsClient().postRequestComment({ comment });
         const { response } = await call;
         if (!response.comment) {
             return;

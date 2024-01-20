@@ -7,6 +7,7 @@ import (
 
 	"github.com/galexrt/fivenet/gen/go/proto/resources/rector"
 	"github.com/galexrt/fivenet/gen/go/proto/resources/users"
+	errorsrector "github.com/galexrt/fivenet/gen/go/proto/services/rector/errors"
 	"github.com/galexrt/fivenet/pkg/grpc/auth"
 	"github.com/galexrt/fivenet/pkg/grpc/errswrap"
 	"github.com/galexrt/fivenet/query/fivenet/model"
@@ -46,7 +47,7 @@ func (s *Server) GetJobProps(ctx context.Context, req *GetJobPropsRequest) (*Get
 	}
 	if err := stmt.QueryContext(ctx, s.db, resp.JobProps); err != nil {
 		if !errors.Is(err, qrm.ErrNoRows) {
-			return nil, errswrap.NewError(ErrInvalidRequest, err)
+			return nil, errswrap.NewError(errorsrector.ErrInvalidRequest, err)
 		}
 	}
 
@@ -100,7 +101,7 @@ func (s *Server) SetJobProps(ctx context.Context, req *SetJobPropsRequest) (*Set
 		)
 
 	if _, err := stmt.ExecContext(ctx, s.db); err != nil {
-		return nil, errswrap.NewError(ErrFailedQuery, err)
+		return nil, errswrap.NewError(errorsrector.ErrFailedQuery, err)
 	}
 
 	auditEntry.State = int16(rector.EventType_EVENT_TYPE_UPDATED)

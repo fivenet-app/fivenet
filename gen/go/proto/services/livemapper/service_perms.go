@@ -11,6 +11,7 @@ import (
 
 func init() {
 	perms.AddPermsToList([]*perms.Perm{
+
 		// Service: LivemapperService
 		{
 			Category: permkeys.LivemapperServicePerm,

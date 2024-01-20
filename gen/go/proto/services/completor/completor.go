@@ -18,6 +18,7 @@ import (
 	jet "github.com/go-jet/jet/v2/mysql"
 	"github.com/go-jet/jet/v2/qrm"
 	"go.uber.org/fx"
+	grpc "google.golang.org/grpc"
 	"google.golang.org/grpc/codes"
 	"google.golang.org/grpc/status"
 )
@@ -61,6 +62,10 @@ func NewServer(p Params) *Server {
 	}
 
 	return s
+}
+
+func (s *Server) RegisterServer(srv *grpc.Server) {
+	RegisterCompletorServiceServer(srv, s)
 }
 
 func (s *Server) CompleteCitizens(ctx context.Context, req *CompleteCitizensRequest) (*CompleteCitizensRespoonse, error) {

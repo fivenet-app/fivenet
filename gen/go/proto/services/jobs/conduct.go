@@ -22,13 +22,13 @@ var (
 	tConduct = table.FivenetJobsConduct.AS("conduct_entry")
 )
 
-func (s *Server) ConductListEntries(ctx context.Context, req *ConductListEntriesRequest) (*ConductListEntriesResponse, error) {
+func (s *Server) ListConductRequest(ctx context.Context, req *ListConductEntriesRequest) (*ListConductEntriesResponse, error) {
 	userInfo := auth.MustGetUserInfoFromContext(ctx)
 
 	condition := tConduct.Job.EQ(jet.String(userInfo.Job))
 
 	// Field Permission Check
-	fieldsAttr, err := s.p.Attr(userInfo, permsjobs.JobsServicePerm, permsjobs.JobsServiceConductListEntriesPerm, permsjobs.JobsServiceConductListEntriesAccessPermField)
+	fieldsAttr, err := s.p.Attr(userInfo, permsjobs.ConductServicePerm, permsjobs.ConductServiceListConductEntriesPerm, permsjobs.ConductServiceListConductEntriesAccessPermField)
 	if err != nil {
 		return nil, errswrap.NewError(errorsjobs.ErrFailedQuery, err)
 	}
@@ -85,7 +85,7 @@ func (s *Server) ConductListEntries(ctx context.Context, req *ConductListEntries
 	}
 
 	pag, limit := req.Pagination.GetResponse()
-	resp := &ConductListEntriesResponse{
+	resp := &ListConductEntriesResponse{
 		Pagination: pag,
 	}
 	if count.TotalCount <= 0 {
@@ -155,7 +155,7 @@ func (s *Server) ConductListEntries(ctx context.Context, req *ConductListEntries
 	return resp, nil
 }
 
-func (s *Server) ConductCreateEntry(ctx context.Context, req *ConductCreateEntryRequest) (*ConductCreateEntryResponse, error) {
+func (s *Server) CreateConductEntry(ctx context.Context, req *CreateConductEntryRequest) (*CreateConductEntryResponse, error) {
 	userInfo := auth.MustGetUserInfoFromContext(ctx)
 
 	auditEntry := &model.FivenetAuditLog{
@@ -208,12 +208,12 @@ func (s *Server) ConductCreateEntry(ctx context.Context, req *ConductCreateEntry
 
 	auditEntry.State = int16(rector.EventType_EVENT_TYPE_CREATED)
 
-	return &ConductCreateEntryResponse{
+	return &CreateConductEntryResponse{
 		Entry: entry,
 	}, nil
 }
 
-func (s *Server) ConductUpdateEntry(ctx context.Context, req *ConductUpdateEntryRequest) (*ConductUpdateEntryResponse, error) {
+func (s *Server) UpdateConductEntry(ctx context.Context, req *UpdateConductEntryRequest) (*UpdateConductEntryResponse, error) {
 	userInfo := auth.MustGetUserInfoFromContext(ctx)
 
 	auditEntry := &model.FivenetAuditLog{
@@ -262,12 +262,12 @@ func (s *Server) ConductUpdateEntry(ctx context.Context, req *ConductUpdateEntry
 
 	auditEntry.State = int16(rector.EventType_EVENT_TYPE_UPDATED)
 
-	return &ConductUpdateEntryResponse{
+	return &UpdateConductEntryResponse{
 		Entry: entry,
 	}, nil
 }
 
-func (s *Server) ConductDeleteEntry(ctx context.Context, req *ConductDeleteEntryRequest) (*ConductDeleteEntryResponse, error) {
+func (s *Server) DeleteConductEntry(ctx context.Context, req *DeleteConductEntryRequest) (*DeleteConductEntryResponse, error) {
 	userInfo := auth.MustGetUserInfoFromContext(ctx)
 
 	auditEntry := &model.FivenetAuditLog{
@@ -292,5 +292,5 @@ func (s *Server) ConductDeleteEntry(ctx context.Context, req *ConductDeleteEntry
 
 	auditEntry.State = int16(rector.EventType_EVENT_TYPE_DELETED)
 
-	return &ConductDeleteEntryResponse{}, nil
+	return &DeleteConductEntryResponse{}, nil
 }

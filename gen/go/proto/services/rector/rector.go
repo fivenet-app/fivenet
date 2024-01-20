@@ -7,6 +7,7 @@ import (
 	"github.com/galexrt/fivenet/pkg/perms"
 	"github.com/galexrt/fivenet/pkg/server/audit"
 	"go.uber.org/zap"
+	grpc "google.golang.org/grpc"
 )
 
 type Server struct {
@@ -29,4 +30,8 @@ func NewServer(logger *zap.Logger, db *sql.DB, ps perms.Permissions, aud audit.I
 		enricher: enricher,
 		cache:    cache,
 	}
+}
+
+func (s *Server) RegisterServer(srv *grpc.Server) {
+	RegisterRectorServiceServer(srv, s)
 }

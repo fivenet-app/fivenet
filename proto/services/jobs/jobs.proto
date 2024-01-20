@@ -4,219 +4,24 @@ package services.jobs;
 
 import "resources/common/database/database.proto";
 import "resources/users/users.proto";
-import "resources/jobs/conduct.proto";
-import "resources/jobs/requests.proto";
-import "resources/jobs/timeclock.proto";
-import "resources/timestamp/timestamp.proto";
 import "validate/validate.proto";
 
 option go_package = "github.com/galexrt/fivenet/gen/go/proto/services/jobs;jobs";
 
 // Colleagues
 
-message ColleaguesListRequest {
+message ListColleaguesRequest {
   resources.common.database.PaginationRequest pagination = 1 [(validate.rules).message.required = true];
   // Search params
   string search_name = 2 [(validate.rules).string.max_len = 50];
 }
 
-message ColleaguesListResponse {
+message ListColleaguesResponse {
   resources.common.database.PaginationResponse pagination = 1;
   repeated resources.users.User users = 2;
 }
 
-// Conduct Register
-
-message ConductListEntriesRequest {
-  resources.common.database.PaginationRequest pagination = 1 [(validate.rules).message.required = true];
-  // Search params
-  repeated resources.jobs.ConductType types = 2;
-  optional bool show_expired = 3;
-  repeated int32 user_ids = 4;
-}
-
-message ConductListEntriesResponse {
-  resources.common.database.PaginationResponse pagination = 1;
-  repeated resources.jobs.ConductEntry entries = 2;
-}
-
-message ConductCreateEntryRequest {
-  resources.jobs.ConductEntry entry = 1 [(validate.rules).message.required = true];
-}
-
-message ConductCreateEntryResponse {
-  resources.jobs.ConductEntry entry = 1;
-}
-
-message ConductUpdateEntryRequest {
-  resources.jobs.ConductEntry entry = 1 [(validate.rules).message.required = true];
-}
-
-message ConductUpdateEntryResponse {
-  resources.jobs.ConductEntry entry = 1 [(validate.rules).message.required = true];
-}
-
-message ConductDeleteEntryRequest {
-  uint64 id = 1 [jstype = JS_STRING];
-}
-
-message ConductDeleteEntryResponse {}
-
-// Time Clock
-
-message TimeclockListEntriesRequest {
-  resources.common.database.PaginationRequest pagination = 1 [(validate.rules).message.required = true];
-  // Search
-  repeated int32 user_ids = 2;
-  optional resources.timestamp.Timestamp from = 3;
-  optional resources.timestamp.Timestamp to = 4;
-  optional bool per_day = 5;
-}
-
-message TimeclockListEntriesResponse {
-  resources.common.database.PaginationResponse pagination = 1;
-  repeated resources.jobs.TimeclockEntry entries = 2;
-  resources.jobs.TimeclockStats stats = 3;
-}
-
-message TimeclockStatsRequest {}
-
-message TimeclockStatsResponse {
-  resources.jobs.TimeclockStats stats = 1;
-}
-
-// Requests
-
-message RequestsListEntriesRequest {
-  resources.common.database.PaginationRequest pagination = 1 [(validate.rules).message.required = true];
-  // Search
-  repeated int32 user_ids = 2;
-  optional resources.timestamp.Timestamp from = 3;
-  optional resources.timestamp.Timestamp to = 4;
-  optional string search = 5 [(validate.rules).string.max_len = 50];
-}
-
-message RequestsListEntriesResponse {
-  resources.common.database.PaginationResponse pagination = 1;
-  repeated resources.jobs.Request entries = 2;
-}
-
-message RequestsCreateEntryRequest {
-  resources.jobs.Request entry = 1 [(validate.rules).message.required = true];
-}
-
-message RequestsCreateEntryResponse {
-  resources.jobs.Request entry = 1;
-}
-
-message RequestsUpdateEntryRequest {
-  resources.jobs.Request entry = 1 [(validate.rules).message.required = true];
-}
-
-message RequestsUpdateEntryResponse {
-  resources.jobs.Request entry = 1;
-}
-
-message RequestsDeleteEntryRequest {
-  uint64 id = 1 [jstype = JS_STRING];
-}
-
-message RequestsDeleteEntryResponse {}
-
-message RequestsApproveEntryRequest {
-  uint64 id = 1 [jstype = JS_STRING];
-  bool approve = 2;
-}
-
-message RequestsApproveEntryResponse {}
-
-message RequestsCloseEntryRequest {
-  uint64 id = 1 [jstype = JS_STRING];
-  bool close = 2;
-}
-
-message RequestsCloseEntryResponse {}
-
-message RequestsListTypesRequest {}
-
-message RequestsListTypesResponse {
-  repeated resources.jobs.RequestType types = 1;
-}
-
-message RequestsCreateOrUpdateTypeRequest {
-  resources.jobs.RequestType request_type = 1;
-}
-
-message RequestsCreateOrUpdateTypeResponse {
-  resources.jobs.RequestType request_type = 1;
-}
-
-message RequestsDeleteTypeRequest {
-  uint64 id = 1 [jstype = JS_STRING];
-}
-
-message RequestsDeleteTypeResponse {}
-
-message RequestsListCommentsRequest {
-  resources.common.database.PaginationRequest pagination = 1 [(validate.rules).message.required = true];
-  uint64 request_id = 2 [jstype = JS_STRING];
-}
-
-message RequestsListCommentsResponse {
-  resources.common.database.PaginationResponse pagination = 1;
-  repeated resources.jobs.RequestComment comments = 2;
-}
-
-message RequestsPostCommentRequest {
-  resources.jobs.RequestComment comment = 1 [(validate.rules).message.required = true];
-}
-
-message RequestsPostCommentResponse {
-  resources.jobs.RequestComment comment = 1 [(validate.rules).message.required = true];
-}
-
-message RequestsDeleteCommentRequest {
-  uint64 id = 1 [jstype = JS_STRING];
-}
-
-message RequestsDeleteCommentResponse {}
-
 service JobsService {
   // @perm
-  rpc ColleaguesList(ColleaguesListRequest) returns (ColleaguesListResponse);
-
-  // @perm: Attrs=Access/StringList:[]string{"Own", "All"}§[]string{"Own"}
-  rpc ConductListEntries(ConductListEntriesRequest) returns (ConductListEntriesResponse);
-  // @perm
-  rpc ConductCreateEntry(ConductCreateEntryRequest) returns (ConductCreateEntryResponse);
-  // @perm
-  rpc ConductUpdateEntry(ConductUpdateEntryRequest) returns (ConductUpdateEntryResponse);
-  // @perm
-  rpc ConductDeleteEntry(ConductDeleteEntryRequest) returns (ConductDeleteEntryResponse);
-
-  // @perm: Attrs=Access/StringList:[]string{"All"}§[]string{}
-  rpc TimeclockListEntries(TimeclockListEntriesRequest) returns (TimeclockListEntriesResponse);
-  // @perm: Name=TimeclockListEntries
-  rpc TimeclockStats(TimeclockStatsRequest) returns (TimeclockStatsResponse);
-
-  // @perm: Attrs=Access/StringList:[]string{"Own", "All"}§[]string{"Own"}
-  rpc RequestsListEntries(RequestsListEntriesRequest) returns (RequestsListEntriesResponse);
-  // @perm
-  rpc RequestsCreateEntry(RequestsCreateEntryRequest) returns (RequestsCreateEntryResponse);
-  // @perm
-  rpc RequestsUpdateEntry(RequestsUpdateEntryRequest) returns (RequestsUpdateEntryResponse);
-  // @perm
-  rpc RequestsDeleteEntry(RequestsDeleteEntryRequest) returns (RequestsDeleteEntryResponse);
-  // @perm: Name=RequestsListEntries
-  rpc RequestsListTypes(RequestsListTypesRequest) returns (RequestsListTypesResponse);
-  // @perm
-  rpc RequestsCreateOrUpdateType(RequestsCreateOrUpdateTypeRequest) returns (RequestsCreateOrUpdateTypeResponse);
-  // @perm
-  rpc RequestsDeleteType(RequestsDeleteTypeRequest) returns (RequestsDeleteTypeResponse);
-  // @perm: Name=RequestsListEntries
-  rpc RequestsListComments(RequestsListCommentsRequest) returns (RequestsListCommentsResponse);
-  // @perm: Name=RequestsCreateEntry
-  rpc RequestsPostComment(RequestsPostCommentRequest) returns (RequestsPostCommentResponse);
-  // @perm
-  rpc RequestsDeleteComment(RequestsDeleteCommentRequest) returns (RequestsDeleteCommentResponse);
+  rpc ListColleagues(ListColleaguesRequest) returns (ListColleaguesResponse);
 }

@@ -1,0 +1,40 @@
+syntax = "proto3";
+
+package services.jobs;
+
+import "resources/common/database/database.proto";
+import "resources/jobs/timeclock.proto";
+import "resources/timestamp/timestamp.proto";
+import "validate/validate.proto";
+
+option go_package = "github.com/galexrt/fivenet/gen/go/proto/services/jobs;jobs";
+
+// Time Clock
+
+message ListTimeclockRequest {
+  resources.common.database.PaginationRequest pagination = 1 [(validate.rules).message.required = true];
+  // Search
+  repeated int32 user_ids = 2;
+  optional resources.timestamp.Timestamp from = 3;
+  optional resources.timestamp.Timestamp to = 4;
+  optional bool per_day = 5;
+}
+
+message ListTimeclockResponse {
+  resources.common.database.PaginationResponse pagination = 1;
+  repeated resources.jobs.TimeclockEntry entries = 2;
+  resources.jobs.TimeclockStats stats = 3;
+}
+
+message GetTimeclockStatsRequest {}
+
+message GetTimeclockStatsResponse {
+  resources.jobs.TimeclockStats stats = 1;
+}
+
+service TimeclockService {
+  // @perm: Attrs=Access/StringList:[]string{"All"}§[]string{}
+  rpc ListTimeclock(ListTimeclockRequest) returns (ListTimeclockResponse);
+  // @perm: Name=TimeclockList
+  rpc GetTimeclockStats(GetTimeclockStatsRequest) returns (GetTimeclockStatsResponse);
+}

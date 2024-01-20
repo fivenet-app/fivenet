@@ -9,9 +9,9 @@ import DataPendingBlock from '~/components/partials/data/DataPendingBlock.vue';
 import TablePagination from '~/components/partials/elements/TablePagination.vue';
 import * as googleProtobufTimestamp from '~~/gen/ts/google/protobuf/timestamp';
 import { User } from '~~/gen/ts/resources/users/users';
-import { RequestsListEntriesRequest, RequestsListEntriesResponse } from '~~/gen/ts/services/jobs/jobs';
 import RequestsListEntry from '~/components/jobs/requests/RequestsListEntry.vue';
 import { useJobsStore } from '~/store/jobs';
+import type { ListRequestsRequest, ListRequestsResponse } from '~~/gen/ts/services/jobs/requests';
 
 const { $grpc } = useNuxtApp();
 
@@ -24,9 +24,9 @@ const offset = ref(0n);
 
 const { data, pending, refresh, error } = useLazyAsyncData(`jobs-requests-${offset.value}`, () => listRequests());
 
-async function listRequests(): Promise<RequestsListEntriesResponse> {
+async function listRequests(): Promise<ListRequestsResponse> {
     try {
-        const req: RequestsListEntriesRequest = {
+        const req: ListRequestsRequest = {
             pagination: {
                 offset: offset.value,
             },
@@ -43,7 +43,7 @@ async function listRequests(): Promise<RequestsListEntriesResponse> {
             };
         }
 
-        const call = $grpc.getJobsClient().requestsListEntries(req);
+        const call = $grpc.getJobsRequestsClient().listRequests(req);
         const { response } = await call;
 
         return response;

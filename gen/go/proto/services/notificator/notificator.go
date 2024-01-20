@@ -23,6 +23,7 @@ import (
 	"github.com/nats-io/nats.go"
 	"go.uber.org/fx"
 	"go.uber.org/zap"
+	grpc "google.golang.org/grpc"
 	"google.golang.org/grpc/codes"
 	"google.golang.org/grpc/status"
 	"google.golang.org/protobuf/proto"
@@ -76,6 +77,10 @@ func NewServer(p Params) *Server {
 	}
 
 	return s
+}
+
+func (s *Server) RegisterServer(srv *grpc.Server) {
+	RegisterNotificatorServiceServer(srv, s)
 }
 
 func (s *Server) GetNotifications(ctx context.Context, req *GetNotificationsRequest) (*GetNotificationsResponse, error) {

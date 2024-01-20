@@ -1,0 +1,57 @@
+syntax = "proto3";
+
+package services.jobs;
+
+import "resources/common/database/database.proto";
+import "resources/jobs/conduct.proto";
+import "validate/validate.proto";
+
+option go_package = "github.com/galexrt/fivenet/gen/go/proto/services/jobs;jobs";
+
+// Conduct Register
+
+message ListConductEntriesRequest {
+  resources.common.database.PaginationRequest pagination = 1 [(validate.rules).message.required = true];
+  // Search params
+  repeated resources.jobs.ConductType types = 2;
+  optional bool show_expired = 3;
+  repeated int32 user_ids = 4;
+}
+
+message ListConductEntriesResponse {
+  resources.common.database.PaginationResponse pagination = 1;
+  repeated resources.jobs.ConductEntry entries = 2;
+}
+
+message CreateConductEntryRequest {
+  resources.jobs.ConductEntry entry = 1 [(validate.rules).message.required = true];
+}
+
+message CreateConductEntryResponse {
+  resources.jobs.ConductEntry entry = 1;
+}
+
+message UpdateConductEntryRequest {
+  resources.jobs.ConductEntry entry = 1 [(validate.rules).message.required = true];
+}
+
+message UpdateConductEntryResponse {
+  resources.jobs.ConductEntry entry = 1 [(validate.rules).message.required = true];
+}
+
+message DeleteConductEntryRequest {
+  uint64 id = 1 [jstype = JS_STRING];
+}
+
+message DeleteConductEntryResponse {}
+
+service ConductService {
+  // @perm: Attrs=Access/StringList:[]string{"Own", "All"}§[]string{"Own"}
+  rpc ListConductEntries(ListConductEntriesRequest) returns (ListConductEntriesResponse);
+  // @perm
+  rpc CreateConductEntry(CreateConductEntryRequest) returns (CreateConductEntryResponse);
+  // @perm
+  rpc UpdateConductEntry(UpdateConductEntryRequest) returns (UpdateConductEntryResponse);
+  // @perm
+  rpc DeleteConductEntry(DeleteConductEntryRequest) returns (DeleteConductEntryResponse);
+}

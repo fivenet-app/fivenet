@@ -35,7 +35,7 @@ func (p *PermifyModule) InitContext(c pgs.BuildContext) {
 
 	p.tpl = template.Must(tpl.Parse(permifyTpl))
 
-	constTpl := template.New("permify").Funcs(map[string]interface{}{
+	constTpl := template.New("permify_const").Funcs(map[string]interface{}{
 		"package": p.ctx.PackageName,
 		"name":    p.ctx.Name,
 	})
@@ -47,20 +47,30 @@ func (p *PermifyModule) InitContext(c pgs.BuildContext) {
 func (p *PermifyModule) Name() string { return "permify" }
 
 func (p *PermifyModule) Execute(targets map[string]pgs.File, pkgs map[string]pgs.Package) []pgs.Artifact {
+	visited := map[string][]pgs.File{}
 	for _, t := range targets {
-		p.generate(t)
+		key := t.File().InputPath().Dir().String()
+		if _, ok := visited[key]; ok {
+			visited[key] = append(visited[key], t)
+			continue
+		}
+
+		visited[key] = []pgs.File{t}
+	}
+
+	for _, fs := range visited {
+		p.generate(fs)
 	}
 
 	return p.Artifacts()
 }
 
-func (p *PermifyModule) generate(f pgs.File) {
-	if len(f.Services()) == 0 {
-		return
-	}
+func (p *PermifyModule) generate(fs []pgs.File) {
+	f := fs[0]
 
 	fqn := strings.Split(f.FullyQualifiedName(), ".")
 	data := struct {
+		FS                    []pgs.File
 		F                     pgs.File
 		GoPath                string
 		PermissionServiceKeys []string
@@ -68,6 +78,7 @@ func (p *PermifyModule) generate(f pgs.File) {
 		PermissionRemap       map[string]map[string]string
 		Attributes            map[string]map[string]*Attr
 	}{
+		FS:                    fs,
 		F:                     f,
 		GoPath:                fmt.Sprintf("github.com/galexrt/fivenet/gen/go/proto/services/%s/perms", fqn[len(fqn)-1]),
 		PermissionServiceKeys: []string{},
@@ -75,58 +86,60 @@ func (p *PermifyModule) generate(f pgs.File) {
 		PermissionRemap:       map[string]map[string]string{},
 	}
 
-	for _, s := range f.Services() {
-		sName := string(s.Name())
+	for _, f := range fs {
+		for _, s := range f.Services() {
+			sName := string(s.Name())
 
-		data.PermissionServiceKeys = append(data.PermissionServiceKeys, sName)
-		p.Debugf("Service: %s (%s)", sName, data.PermissionServiceKeys)
+			data.PermissionServiceKeys = append(data.PermissionServiceKeys, sName)
+			p.Debugf("Service: %s (%s)", sName, data.PermissionServiceKeys)
 
-		for _, m := range s.Methods() {
-			mName := string(m.Name())
-			mName = strings.TrimPrefix(mName, "services.")
+			for _, m := range s.Methods() {
+				mName := string(m.Name())
+				mName = strings.TrimPrefix(mName, "services.")
 
-			comment := m.SourceCodeInfo().LeadingComments()
-			comment = strings.TrimLeft(comment, " ")
-			if !strings.HasPrefix(comment, "@perm") {
-				continue
-			}
-			comment = strings.TrimRight(comment, "\n")
-
-			perm, err := p.parseComment(sName, mName, comment)
-			if err != nil {
-				p.Failf("failed to parse comment in %s method %s (comment: '%s'), error: %w", f.InputPath(), mName, comment, err)
-				return
-			}
-			if perm == nil {
-				p.Failf("failed to parse comment in %s method %s (comment: '%s')", f.InputPath(), mName, comment)
-				return
-			}
-
-			if perm.Name != mName {
-				remapServiceName := string(s.Name())
-				if _, ok := data.PermissionRemap[remapServiceName]; !ok {
-					data.PermissionRemap[remapServiceName] = map[string]string{}
+				comment := m.SourceCodeInfo().LeadingComments()
+				comment = strings.TrimLeft(comment, " ")
+				if !strings.HasPrefix(comment, "@perm") {
+					continue
 				}
-				if _, ok := data.PermissionRemap[remapServiceName][mName]; !ok {
-					data.PermissionRemap[remapServiceName][mName] = perm.Name
-					p.Debugf("Permission Remap added: %q -> %q\n", mName, perm.Name)
+				comment = strings.TrimRight(comment, "\n")
+
+				perm, err := p.parseComment(sName, mName, comment)
+				if err != nil {
+					p.Failf("failed to parse comment in %s method %s (comment: '%s'), error: %w", f.InputPath(), mName, comment, err)
+					return
+				}
+				if perm == nil {
+					p.Failf("failed to parse comment in %s method %s (comment: '%s')", f.InputPath(), mName, comment)
+					return
+				}
+
+				if perm.Name != mName {
+					remapServiceName := string(s.Name())
+					if _, ok := data.PermissionRemap[remapServiceName]; !ok {
+						data.PermissionRemap[remapServiceName] = map[string]string{}
+					}
+					if _, ok := data.PermissionRemap[remapServiceName][mName]; !ok {
+						data.PermissionRemap[remapServiceName][mName] = perm.Name
+						p.Debugf("Permission Remap added: %q -> %q\n", mName, perm.Name)
+					} else {
+						p.Debugf("Permission Remap already exists: %q -> %q\n", mName, perm.Name)
+					}
+				}
+
+				if perm.Name == "SuperUser" || perm.Name == "Any" {
+					continue
+				}
+
+				if _, ok := data.Permissions[sName]; !ok {
+					data.Permissions[sName] = map[string]*Perm{}
+				}
+				if _, ok := data.Permissions[sName][perm.Name]; !ok {
+					data.Permissions[sName][perm.Name] = perm
+					p.Debugf("Permission added: %q - %+v\n", mName, perm)
 				} else {
-					p.Debugf("Permission Remap already exists: %q -> %q\n", mName, perm.Name)
+					p.Debugf("Permission already in list: %q - %+v\n", mName, perm)
 				}
-			}
-
-			if perm.Name == "SuperUser" || perm.Name == "Any" {
-				continue
-			}
-
-			if _, ok := data.Permissions[sName]; !ok {
-				data.Permissions[sName] = map[string]*Perm{}
-			}
-			if _, ok := data.Permissions[sName][perm.Name]; !ok {
-				data.Permissions[sName][perm.Name] = perm
-				p.Debugf("Permission added: %q - %+v\n", mName, perm)
-			} else {
-				p.Debugf("Permission already in list: %q - %+v\n", mName, perm)
 			}
 		}
 	}
@@ -137,9 +150,10 @@ func (p *PermifyModule) generate(f pgs.File) {
 
 	sort.Strings(data.PermissionServiceKeys)
 
-	name := p.ctx.OutputPath(f).SetExt(".perms.go")
-	p.AddGeneratorTemplateFile(name.String(), p.tpl, data)
-	constPath := path.Join(filepath.Dir(name.String()), "perms", filepath.Base(name.String()))
+	name := p.ctx.OutputPath(f)
+	p.AddGeneratorTemplateFile(path.Join(filepath.Dir(name.String()), "service_perms.go"), p.tpl, data)
+
+	constPath := path.Join(filepath.Dir(name.String()), "perms", "perms.go")
 	p.AddGeneratorTemplateFile(constPath, p.constTpl, data)
 }
 
@@ -204,7 +218,9 @@ func (p *PermifyModule) parseComment(service string, method string, comment stri
 }
 
 const permifyTpl = `// Code generated by protoc-gen-customizer. DO NOT EDIT.
-// source: {{ .F.File.InputPath }}
+{{- range $f := .FS }}
+// source: {{ $f.File.InputPath }}
+{{- end }}
 
 package {{ package .F }}
 
@@ -233,9 +249,10 @@ func (s *Server) GetPermsRemap() map[string]string {
 
 func init() {
 	perms.AddPermsToList([]*perms.Perm{
-	{{ range $sName, $service := .Permissions -}}
+	{{- range $sName, $service := .Permissions }}
+
 		// Service: {{ $sName }}
-		{{- range $perm := $service }}
+		{{ range $perm := $service -}}
 		{
 			Category: permkeys.{{ $sName }}Perm,
 			Name: permkeys.{{ $sName }}{{ $perm.Name }}Perm,
@@ -250,14 +267,16 @@ func init() {
             {{- end }}
             },
 		},
-		{{- end }}
+		{{ end }}
 	{{- end }}
 	})
 }
 `
 
 const permifyConstTpl = `// Code generated by protoc-gen-customizer. DO NOT EDIT.
-// source: {{ .F.File.InputPath }}
+{{- range $f := .FS }}
+// source: {{ $f.File.InputPath }}
+{{- end }}
 
 package perms{{ package .F }}
 

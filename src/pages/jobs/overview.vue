@@ -19,7 +19,7 @@ const { data: timeclockStats } = useLazyAsyncData(`jobs-timeclock-stats`, () => 
 
 async function getTimeclockStats(): Promise<TimeclockStats> {
     try {
-        const call = $grpc.getJobsClient().timeclockStats({});
+        const call = $grpc.getJobsTimeclockClient().getTimeclockStats({});
         const { response } = await call;
 
         return response.stats!;

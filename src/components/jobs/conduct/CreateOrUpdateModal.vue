@@ -57,12 +57,12 @@ async function conductCreateOrUpdateEntry(values: FormData, id?: string): Promis
         };
 
         if (id === undefined) {
-            const call = $grpc.getJobsClient().conductCreateEntry(req);
+            const call = $grpc.getJobsConductClient().createConductEntry(req);
             const { response } = await call;
 
             emit('created', response.entry!);
         } else {
-            const call = $grpc.getJobsClient().conductUpdateEntry(req);
+            const call = $grpc.getJobsConductClient().updateConductEntry(req);
             const { response } = await call;
 
             emit('update', response.entry!);

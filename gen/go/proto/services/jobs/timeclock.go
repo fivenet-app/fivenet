@@ -22,14 +22,14 @@ var (
 	tTimeClock = table.FivenetJobsTimeclock.AS("timeclock_entry")
 )
 
-func (s *Server) TimeclockListEntries(ctx context.Context, req *TimeclockListEntriesRequest) (*TimeclockListEntriesResponse, error) {
+func (s *Server) TimeclockListEntries(ctx context.Context, req *ListTimeclockRequest) (*ListTimeclockResponse, error) {
 	userInfo := auth.MustGetUserInfoFromContext(ctx)
 
 	condition := jet.Bool(true)
 	condition = condition.AND(tTimeClock.Job.EQ(jet.String(userInfo.Job)))
 
 	// Field Permission Check
-	fieldsAttr, err := s.p.Attr(userInfo, permsjobs.JobsServicePerm, permsjobs.JobsServiceTimeclockListEntriesPerm, permsjobs.JobsServiceTimeclockListEntriesAccessPermField)
+	fieldsAttr, err := s.p.Attr(userInfo, permsjobs.JobsServicePerm, perms.Name(permsjobs.TimeclockServicePerm), permsjobs.TimeclockServiceListTimeclockAccessPermField)
 	if err != nil {
 		return nil, errswrap.NewError(errorsjobs.ErrFailedQuery, err)
 	}
@@ -75,7 +75,7 @@ func (s *Server) TimeclockListEntries(ctx context.Context, req *TimeclockListEnt
 	}
 
 	pag, limit := req.Pagination.GetResponseWithPageSize(25)
-	resp := &TimeclockListEntriesResponse{
+	resp := &ListTimeclockResponse{
 		Pagination: pag,
 	}
 
@@ -138,7 +138,7 @@ func (s *Server) TimeclockListEntries(ctx context.Context, req *TimeclockListEnt
 
 const TimeclockStatsSpan = 7 * 24 * time.Hour
 
-func (s *Server) TimeclockStats(ctx context.Context, req *TimeclockStatsRequest) (*TimeclockStatsResponse, error) {
+func (s *Server) GetTimeclockStats(ctx context.Context, req *GetTimeclockStatsRequest) (*GetTimeclockStatsResponse, error) {
 	userInfo := auth.MustGetUserInfoFromContext(ctx)
 
 	condition := tTimeClock.Job.EQ(jet.String(userInfo.Job)).
@@ -149,7 +149,7 @@ func (s *Server) TimeclockStats(ctx context.Context, req *TimeclockStatsRequest)
 		return nil, errswrap.NewError(errorsjobs.ErrFailedQuery, err)
 	}
 
-	return &TimeclockStatsResponse{
+	return &GetTimeclockStatsResponse{
 		Stats: stats,
 	}, nil
 }

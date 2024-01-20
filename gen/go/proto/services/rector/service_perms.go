@@ -26,6 +26,7 @@ func (s *Server) GetPermsRemap() map[string]string {
 
 func init() {
 	perms.AddPermsToList([]*perms.Perm{
+
 		// Service: RectorService
 		{
 			Category: permkeys.RectorServicePerm,

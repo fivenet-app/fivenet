@@ -14,7 +14,6 @@ func main() {
 	).RegisterModule(
 		Permify(),
 		Tester(),
-		Register(),
 		Sanitizer(),
 	).RegisterPostProcessor(
 		pgsgo.GoImports(),

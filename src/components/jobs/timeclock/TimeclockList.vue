@@ -11,11 +11,11 @@ import TablePagination from '~/components/partials/elements/TablePagination.vue'
 import * as googleProtobufTimestamp from '~~/gen/ts/google/protobuf/timestamp';
 import { TimeclockEntry } from '~~/gen/ts/resources/jobs/timeclock';
 import { User } from '~~/gen/ts/resources/users/users';
-import { TimeclockListEntriesRequest, TimeclockListEntriesResponse } from '~~/gen/ts/services/jobs/jobs';
 import TimeclockListEntry from '~/components/jobs/timeclock/TimeclockListEntry.vue';
 import TimeclockStatsBlock from '~/components/jobs/timeclock/TimeclockStatsBlock.vue';
 import { useJobsStore } from '~/store/jobs';
 import { dateToDateString } from '~/utils/time';
+import type { ListTimeclockRequest, ListTimeclockResponse } from '~~/gen/ts/services/jobs/timeclock';
 
 const { $grpc } = useNuxtApp();
 
@@ -44,9 +44,9 @@ const offset = ref(0n);
 
 const { data, pending, refresh, error } = useLazyAsyncData(`jobs-timeclock-${offset.value}`, () => listTimeclockEntries());
 
-async function listTimeclockEntries(): Promise<TimeclockListEntriesResponse> {
+async function listTimeclockEntries(): Promise<ListTimeclockResponse> {
     try {
-        const req: TimeclockListEntriesRequest = {
+        const req: ListTimeclockRequest = {
             pagination: {
                 offset: offset.value,
             },
@@ -66,7 +66,7 @@ async function listTimeclockEntries(): Promise<TimeclockListEntriesResponse> {
             };
         }
 
-        const call = $grpc.getJobsClient().timeclockListEntries(req);
+        const call = $grpc.getJobsTimeclockClient().listTimeclock(req);
         const { response } = await call;
 
         return response;

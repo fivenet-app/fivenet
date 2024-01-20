@@ -26,13 +26,13 @@ var (
 	tReqComments = table.FivenetJobsRequestsComments.AS("request_comment")
 )
 
-func (s *Server) RequestsListEntries(ctx context.Context, req *RequestsListEntriesRequest) (*RequestsListEntriesResponse, error) {
+func (s *Server) ListRequests(ctx context.Context, req *ListRequestsRequest) (*ListRequestsResponse, error) {
 	userInfo := auth.MustGetUserInfoFromContext(ctx)
 
 	condition := tRequests.Job.EQ(jet.String(userInfo.Job))
 
 	// Field Permission Check
-	fieldsAttr, err := s.p.Attr(userInfo, permsjobs.JobsServicePerm, permsjobs.JobsServiceRequestsListEntriesPerm, permsjobs.JobsServiceRequestsListEntriesAccessPermField)
+	fieldsAttr, err := s.p.Attr(userInfo, permsjobs.JobsServicePerm, perms.Name(permsjobs.RequestsServicePerm), permsjobs.RequestsServiceListRequestsAccessPermField)
 	if err != nil {
 		return nil, errswrap.NewError(errorsjobs.ErrFailedQuery, err)
 	}
@@ -81,7 +81,7 @@ func (s *Server) RequestsListEntries(ctx context.Context, req *RequestsListEntri
 	}
 
 	pag, limit := req.Pagination.GetResponseWithPageSize(7)
-	resp := &RequestsListEntriesResponse{
+	resp := &ListRequestsResponse{
 		Pagination: pag,
 	}
 	if count.TotalCount <= 0 {
@@ -153,7 +153,7 @@ func (s *Server) RequestsListEntries(ctx context.Context, req *RequestsListEntri
 	return resp, nil
 }
 
-func (s *Server) RequestsCreateEntry(ctx context.Context, req *RequestsCreateEntryRequest) (*RequestsCreateEntryResponse, error) {
+func (s *Server) CreateRequest(ctx context.Context, req *CreateRequestRequest) (*CreateRequestResponse, error) {
 	userInfo := auth.MustGetUserInfoFromContext(ctx)
 
 	auditEntry := &model.FivenetAuditLog{
@@ -199,12 +199,12 @@ func (s *Server) RequestsCreateEntry(ctx context.Context, req *RequestsCreateEnt
 
 	auditEntry.State = int16(rector.EventType_EVENT_TYPE_CREATED)
 
-	return &RequestsCreateEntryResponse{
+	return &CreateRequestResponse{
 		Entry: request,
 	}, nil
 }
 
-func (s *Server) RequestsUpdateEntry(ctx context.Context, req *RequestsUpdateEntryRequest) (*RequestsUpdateEntryResponse, error) {
+func (s *Server) UpdateRequest(ctx context.Context, req *UpdateRequestRequest) (*UpdateRequestResponse, error) {
 	userInfo := auth.MustGetUserInfoFromContext(ctx)
 
 	auditEntry := &model.FivenetAuditLog{
@@ -229,10 +229,10 @@ func (s *Server) RequestsUpdateEntry(ctx context.Context, req *RequestsUpdateEnt
 
 	auditEntry.State = int16(rector.EventType_EVENT_TYPE_UPDATED)
 
-	return &RequestsUpdateEntryResponse{}, nil
+	return &UpdateRequestResponse{}, nil
 }
 
-func (s *Server) RequestsDeleteEntry(ctx context.Context, req *RequestsDeleteEntryRequest) (*RequestsDeleteEntryResponse, error) {
+func (s *Server) DeleteRequest(ctx context.Context, req *DeleteRequestRequest) (*DeleteRequestResponse, error) {
 	userInfo := auth.MustGetUserInfoFromContext(ctx)
 
 	auditEntry := &model.FivenetAuditLog{
@@ -258,10 +258,10 @@ func (s *Server) RequestsDeleteEntry(ctx context.Context, req *RequestsDeleteEnt
 
 	auditEntry.State = int16(rector.EventType_EVENT_TYPE_DELETED)
 
-	return &RequestsDeleteEntryResponse{}, nil
+	return &DeleteRequestResponse{}, nil
 }
 
-func (s *Server) RequestsListComments(ctx context.Context, req *RequestsListCommentsRequest) (*RequestsListCommentsResponse, error) {
+func (s *Server) ListRequestComments(ctx context.Context, req *ListRequestCommentsRequest) (*ListRequestCommentsResponse, error) {
 	userInfo := auth.MustGetUserInfoFromContext(ctx)
 
 	condition := tRequests.ID.EQ(jet.Uint64(req.RequestId)).
@@ -285,7 +285,7 @@ func (s *Server) RequestsListComments(ctx context.Context, req *RequestsListComm
 	}
 
 	pag, limit := req.Pagination.GetResponseWithPageSize(7)
-	resp := &RequestsListCommentsResponse{
+	resp := &ListRequestCommentsResponse{
 		Pagination: pag,
 	}
 	if count.TotalCount <= 0 {
@@ -333,7 +333,7 @@ func (s *Server) RequestsListComments(ctx context.Context, req *RequestsListComm
 	return resp, nil
 }
 
-func (s *Server) RequestsPostComment(ctx context.Context, req *RequestsPostCommentRequest) (*RequestsPostCommentResponse, error) {
+func (s *Server) RequestsPostComment(ctx context.Context, req *PostRequestCommentRequest) (*PostRequestCommentResponse, error) {
 	userInfo := auth.MustGetUserInfoFromContext(ctx)
 
 	auditEntry := &model.FivenetAuditLog{
@@ -350,10 +350,10 @@ func (s *Server) RequestsPostComment(ctx context.Context, req *RequestsPostComme
 
 	// TODO
 
-	return &RequestsPostCommentResponse{}, nil
+	return &PostRequestCommentResponse{}, nil
 }
 
-func (s *Server) RequestsDeleteComment(ctx context.Context, req *RequestsDeleteCommentRequest) (*RequestsDeleteCommentResponse, error) {
+func (s *Server) RequestsDeleteComment(ctx context.Context, req *DeleteRequestCommentRequest) (*DeleteRequestCommentResponse, error) {
 	userInfo := auth.MustGetUserInfoFromContext(ctx)
 
 	auditEntry := &model.FivenetAuditLog{
@@ -381,5 +381,5 @@ func (s *Server) RequestsDeleteComment(ctx context.Context, req *RequestsDeleteC
 
 	auditEntry.State = int16(rector.EventType_EVENT_TYPE_DELETED)
 
-	return &RequestsDeleteCommentResponse{}, nil
+	return &DeleteRequestCommentResponse{}, nil
 }

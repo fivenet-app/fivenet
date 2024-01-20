@@ -18,6 +18,7 @@ import (
 	"github.com/galexrt/fivenet/query/fivenet/model"
 	"github.com/galexrt/fivenet/query/fivenet/table"
 	jet "github.com/go-jet/jet/v2/mysql"
+	grpc "google.golang.org/grpc"
 )
 
 var (
@@ -41,6 +42,10 @@ func NewServer(db *sql.DB, p perms.Permissions, c *mstlystcdata.Enricher, aud au
 		c:  c,
 		a:  aud,
 	}
+}
+
+func (s *Server) RegisterServer(srv *grpc.Server) {
+	RegisterDMVServiceServer(srv, s)
 }
 
 func (s *Server) ListVehicles(ctx context.Context, req *ListVehiclesRequest) (*ListVehiclesResponse, error) {

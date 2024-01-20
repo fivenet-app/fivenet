@@ -10,10 +10,10 @@ import DataPendingBlock from '~/components/partials/data/DataPendingBlock.vue';
 import TablePagination from '~/components/partials/elements/TablePagination.vue';
 import { ConductEntry, ConductType } from '~~/gen/ts/resources/jobs/conduct';
 import { User } from '~~/gen/ts/resources/users/users';
-import { ConductListEntriesResponse } from '~~/gen/ts/services/jobs/jobs';
 import CreateOrUpdateModal from '~/components/jobs/conduct/CreateOrUpdateModal.vue';
 import ConductListEntry from '~/components/jobs/conduct/ConductListEntry.vue';
 import { useJobsStore } from '~/store/jobs';
+import type { ListConductEntriesResponse } from '~~/gen/ts/services/jobs/conduct';
 
 const { $grpc } = useNuxtApp();
 
@@ -26,9 +26,9 @@ const offset = ref(0n);
 
 const { data, pending, refresh, error } = useLazyAsyncData(`jobs-conduct-${offset}`, () => listConductEntries());
 
-async function listConductEntries(): Promise<ConductListEntriesResponse> {
+async function listConductEntries(): Promise<ListConductEntriesResponse> {
     try {
-        const call = $grpc.getJobsClient().conductListEntries({
+        const call = $grpc.getJobsConductClient().listConductEntries({
             pagination: {
                 offset: offset.value,
             },
@@ -47,7 +47,7 @@ async function listConductEntries(): Promise<ConductListEntriesResponse> {
 
 async function deleteConductEntry(id: string): Promise<void> {
     try {
-        const call = $grpc.getJobsClient().conductDeleteEntry({ id });
+        const call = $grpc.getJobsConductClient().deleteConductEntry({ id });
         await call;
 
         refresh();

@@ -4,41 +4,9 @@
 import type { RpcTransport } from "@protobuf-ts/runtime-rpc";
 import type { ServiceInfo } from "@protobuf-ts/runtime-rpc";
 import { JobsService } from "./jobs";
-import type { RequestsDeleteCommentResponse } from "./jobs";
-import type { RequestsDeleteCommentRequest } from "./jobs";
-import type { RequestsPostCommentResponse } from "./jobs";
-import type { RequestsPostCommentRequest } from "./jobs";
-import type { RequestsListCommentsResponse } from "./jobs";
-import type { RequestsListCommentsRequest } from "./jobs";
-import type { RequestsDeleteTypeResponse } from "./jobs";
-import type { RequestsDeleteTypeRequest } from "./jobs";
-import type { RequestsCreateOrUpdateTypeResponse } from "./jobs";
-import type { RequestsCreateOrUpdateTypeRequest } from "./jobs";
-import type { RequestsListTypesResponse } from "./jobs";
-import type { RequestsListTypesRequest } from "./jobs";
-import type { RequestsDeleteEntryResponse } from "./jobs";
-import type { RequestsDeleteEntryRequest } from "./jobs";
-import type { RequestsUpdateEntryResponse } from "./jobs";
-import type { RequestsUpdateEntryRequest } from "./jobs";
-import type { RequestsCreateEntryResponse } from "./jobs";
-import type { RequestsCreateEntryRequest } from "./jobs";
-import type { RequestsListEntriesResponse } from "./jobs";
-import type { RequestsListEntriesRequest } from "./jobs";
-import type { TimeclockStatsResponse } from "./jobs";
-import type { TimeclockStatsRequest } from "./jobs";
-import type { TimeclockListEntriesResponse } from "./jobs";
-import type { TimeclockListEntriesRequest } from "./jobs";
-import type { ConductDeleteEntryResponse } from "./jobs";
-import type { ConductDeleteEntryRequest } from "./jobs";
-import type { ConductUpdateEntryResponse } from "./jobs";
-import type { ConductUpdateEntryRequest } from "./jobs";
-import type { ConductCreateEntryResponse } from "./jobs";
-import type { ConductCreateEntryRequest } from "./jobs";
-import type { ConductListEntriesResponse } from "./jobs";
-import type { ConductListEntriesRequest } from "./jobs";
 import { stackIntercept } from "@protobuf-ts/runtime-rpc";
-import type { ColleaguesListResponse } from "./jobs";
-import type { ColleaguesListRequest } from "./jobs";
+import type { ListColleaguesResponse } from "./jobs";
+import type { ListColleaguesRequest } from "./jobs";
 import type { UnaryCall } from "@protobuf-ts/runtime-rpc";
 import type { RpcOptions } from "@protobuf-ts/runtime-rpc";
 /**
@@ -48,105 +16,9 @@ export interface IJobsServiceClient {
     /**
      * @perm
      *
-     * @generated from protobuf rpc: ColleaguesList(services.jobs.ColleaguesListRequest) returns (services.jobs.ColleaguesListResponse);
+     * @generated from protobuf rpc: ListColleagues(services.jobs.ListColleaguesRequest) returns (services.jobs.ListColleaguesResponse);
      */
-    colleaguesList(input: ColleaguesListRequest, options?: RpcOptions): UnaryCall<ColleaguesListRequest, ColleaguesListResponse>;
-    /**
-     * @perm: Attrs=Access/StringList:[]string{"Own", "All"}§[]string{"Own"}
-     *
-     * @generated from protobuf rpc: ConductListEntries(services.jobs.ConductListEntriesRequest) returns (services.jobs.ConductListEntriesResponse);
-     */
-    conductListEntries(input: ConductListEntriesRequest, options?: RpcOptions): UnaryCall<ConductListEntriesRequest, ConductListEntriesResponse>;
-    /**
-     * @perm
-     *
-     * @generated from protobuf rpc: ConductCreateEntry(services.jobs.ConductCreateEntryRequest) returns (services.jobs.ConductCreateEntryResponse);
-     */
-    conductCreateEntry(input: ConductCreateEntryRequest, options?: RpcOptions): UnaryCall<ConductCreateEntryRequest, ConductCreateEntryResponse>;
-    /**
-     * @perm
-     *
-     * @generated from protobuf rpc: ConductUpdateEntry(services.jobs.ConductUpdateEntryRequest) returns (services.jobs.ConductUpdateEntryResponse);
-     */
-    conductUpdateEntry(input: ConductUpdateEntryRequest, options?: RpcOptions): UnaryCall<ConductUpdateEntryRequest, ConductUpdateEntryResponse>;
-    /**
-     * @perm
-     *
-     * @generated from protobuf rpc: ConductDeleteEntry(services.jobs.ConductDeleteEntryRequest) returns (services.jobs.ConductDeleteEntryResponse);
-     */
-    conductDeleteEntry(input: ConductDeleteEntryRequest, options?: RpcOptions): UnaryCall<ConductDeleteEntryRequest, ConductDeleteEntryResponse>;
-    /**
-     * @perm: Attrs=Access/StringList:[]string{"All"}§[]string{}
-     *
-     * @generated from protobuf rpc: TimeclockListEntries(services.jobs.TimeclockListEntriesRequest) returns (services.jobs.TimeclockListEntriesResponse);
-     */
-    timeclockListEntries(input: TimeclockListEntriesRequest, options?: RpcOptions): UnaryCall<TimeclockListEntriesRequest, TimeclockListEntriesResponse>;
-    /**
-     * @perm: Name=TimeclockListEntries
-     *
-     * @generated from protobuf rpc: TimeclockStats(services.jobs.TimeclockStatsRequest) returns (services.jobs.TimeclockStatsResponse);
-     */
-    timeclockStats(input: TimeclockStatsRequest, options?: RpcOptions): UnaryCall<TimeclockStatsRequest, TimeclockStatsResponse>;
-    /**
-     * @perm: Attrs=Access/StringList:[]string{"Own", "All"}§[]string{"Own"}
-     *
-     * @generated from protobuf rpc: RequestsListEntries(services.jobs.RequestsListEntriesRequest) returns (services.jobs.RequestsListEntriesResponse);
-     */
-    requestsListEntries(input: RequestsListEntriesRequest, options?: RpcOptions): UnaryCall<RequestsListEntriesRequest, RequestsListEntriesResponse>;
-    /**
-     * @perm
-     *
-     * @generated from protobuf rpc: RequestsCreateEntry(services.jobs.RequestsCreateEntryRequest) returns (services.jobs.RequestsCreateEntryResponse);
-     */
-    requestsCreateEntry(input: RequestsCreateEntryRequest, options?: RpcOptions): UnaryCall<RequestsCreateEntryRequest, RequestsCreateEntryResponse>;
-    /**
-     * @perm
-     *
-     * @generated from protobuf rpc: RequestsUpdateEntry(services.jobs.RequestsUpdateEntryRequest) returns (services.jobs.RequestsUpdateEntryResponse);
-     */
-    requestsUpdateEntry(input: RequestsUpdateEntryRequest, options?: RpcOptions): UnaryCall<RequestsUpdateEntryRequest, RequestsUpdateEntryResponse>;
-    /**
-     * @perm
-     *
-     * @generated from protobuf rpc: RequestsDeleteEntry(services.jobs.RequestsDeleteEntryRequest) returns (services.jobs.RequestsDeleteEntryResponse);
-     */
-    requestsDeleteEntry(input: RequestsDeleteEntryRequest, options?: RpcOptions): UnaryCall<RequestsDeleteEntryRequest, RequestsDeleteEntryResponse>;
-    /**
-     * @perm: Name=RequestsListEntries
-     *
-     * @generated from protobuf rpc: RequestsListTypes(services.jobs.RequestsListTypesRequest) returns (services.jobs.RequestsListTypesResponse);
-     */
-    requestsListTypes(input: RequestsListTypesRequest, options?: RpcOptions): UnaryCall<RequestsListTypesRequest, RequestsListTypesResponse>;
-    /**
-     * @perm
-     *
-     * @generated from protobuf rpc: RequestsCreateOrUpdateType(services.jobs.RequestsCreateOrUpdateTypeRequest) returns (services.jobs.RequestsCreateOrUpdateTypeResponse);
-     */
-    requestsCreateOrUpdateType(input: RequestsCreateOrUpdateTypeRequest, options?: RpcOptions): UnaryCall<RequestsCreateOrUpdateTypeRequest, RequestsCreateOrUpdateTypeResponse>;
-    /**
-     * @perm
-     *
-     * @generated from protobuf rpc: RequestsDeleteType(services.jobs.RequestsDeleteTypeRequest) returns (services.jobs.RequestsDeleteTypeResponse);
-     */
-    requestsDeleteType(input: RequestsDeleteTypeRequest, options?: RpcOptions): UnaryCall<RequestsDeleteTypeRequest, RequestsDeleteTypeResponse>;
-    /**
-     * @perm: Name=RequestsListEntries
-     *
-     * @generated from protobuf rpc: RequestsListComments(services.jobs.RequestsListCommentsRequest) returns (services.jobs.RequestsListCommentsResponse);
-     */
-    requestsListComments(input: RequestsListCommentsRequest, options?: RpcOptions): UnaryCall<RequestsListCommentsRequest, RequestsListCommentsResponse>;
-    /**
-     * @perm: Name=RequestsCreateEntry
-     *
-     * @generated from protobuf rpc: RequestsPostComment(services.jobs.RequestsPostCommentRequest) returns (services.jobs.RequestsPostCommentResponse);
-     */
-    requestsPostComment(input: RequestsPostCommentRequest, options?: RpcOptions): UnaryCall<RequestsPostCommentRequest, RequestsPostCommentResponse>;
-    /**
-     * @perm
-     *
-     * @generated from protobuf rpc: RequestsDeleteComment(services.jobs.RequestsDeleteCommentRequest) returns (services.jobs.RequestsDeleteCommentResponse);
-     */
-    requestsDeleteComment(input: RequestsDeleteCommentRequest, options?: RpcOptions): UnaryCall<RequestsDeleteCommentRequest, RequestsDeleteCommentResponse>;
+    listColleagues(input: ListColleaguesRequest, options?: RpcOptions): UnaryCall<ListColleaguesRequest, ListColleaguesResponse>;
 }
 /**
  * @generated from protobuf service services.jobs.JobsService
@@ -160,154 +32,10 @@ export class JobsServiceClient implements IJobsServiceClient, ServiceInfo {
     /**
      * @perm
      *
-     * @generated from protobuf rpc: ColleaguesList(services.jobs.ColleaguesListRequest) returns (services.jobs.ColleaguesListResponse);
+     * @generated from protobuf rpc: ListColleagues(services.jobs.ListColleaguesRequest) returns (services.jobs.ListColleaguesResponse);
      */
-    colleaguesList(input: ColleaguesListRequest, options?: RpcOptions): UnaryCall<ColleaguesListRequest, ColleaguesListResponse> {
+    listColleagues(input: ListColleaguesRequest, options?: RpcOptions): UnaryCall<ListColleaguesRequest, ListColleaguesResponse> {
         const method = this.methods[0], opt = this._transport.mergeOptions(options);
-        return stackIntercept<ColleaguesListRequest, ColleaguesListResponse>("unary", this._transport, method, opt, input);
-    }
-    /**
-     * @perm: Attrs=Access/StringList:[]string{"Own", "All"}§[]string{"Own"}
-     *
-     * @generated from protobuf rpc: ConductListEntries(services.jobs.ConductListEntriesRequest) returns (services.jobs.ConductListEntriesResponse);
-     */
-    conductListEntries(input: ConductListEntriesRequest, options?: RpcOptions): UnaryCall<ConductListEntriesRequest, ConductListEntriesResponse> {
-        const method = this.methods[1], opt = this._transport.mergeOptions(options);
-        return stackIntercept<ConductListEntriesRequest, ConductListEntriesResponse>("unary", this._transport, method, opt, input);
-    }
-    /**
-     * @perm
-     *
-     * @generated from protobuf rpc: ConductCreateEntry(services.jobs.ConductCreateEntryRequest) returns (services.jobs.ConductCreateEntryResponse);
-     */
-    conductCreateEntry(input: ConductCreateEntryRequest, options?: RpcOptions): UnaryCall<ConductCreateEntryRequest, ConductCreateEntryResponse> {
-        const method = this.methods[2], opt = this._transport.mergeOptions(options);
-        return stackIntercept<ConductCreateEntryRequest, ConductCreateEntryResponse>("unary", this._transport, method, opt, input);
-    }
-    /**
-     * @perm
-     *
-     * @generated from protobuf rpc: ConductUpdateEntry(services.jobs.ConductUpdateEntryRequest) returns (services.jobs.ConductUpdateEntryResponse);
-     */
-    conductUpdateEntry(input: ConductUpdateEntryRequest, options?: RpcOptions): UnaryCall<ConductUpdateEntryRequest, ConductUpdateEntryResponse> {
-        const method = this.methods[3], opt = this._transport.mergeOptions(options);
-        return stackIntercept<ConductUpdateEntryRequest, ConductUpdateEntryResponse>("unary", this._transport, method, opt, input);
-    }
-    /**
-     * @perm
-     *
-     * @generated from protobuf rpc: ConductDeleteEntry(services.jobs.ConductDeleteEntryRequest) returns (services.jobs.ConductDeleteEntryResponse);
-     */
-    conductDeleteEntry(input: ConductDeleteEntryRequest, options?: RpcOptions): UnaryCall<ConductDeleteEntryRequest, ConductDeleteEntryResponse> {
-        const method = this.methods[4], opt = this._transport.mergeOptions(options);
-        return stackIntercept<ConductDeleteEntryRequest, ConductDeleteEntryResponse>("unary", this._transport, method, opt, input);
-    }
-    /**
-     * @perm: Attrs=Access/StringList:[]string{"All"}§[]string{}
-     *
-     * @generated from protobuf rpc: TimeclockListEntries(services.jobs.TimeclockListEntriesRequest) returns (services.jobs.TimeclockListEntriesResponse);
-     */
-    timeclockListEntries(input: TimeclockListEntriesRequest, options?: RpcOptions): UnaryCall<TimeclockListEntriesRequest, TimeclockListEntriesResponse> {
-        const method = this.methods[5], opt = this._transport.mergeOptions(options);
-        return stackIntercept<TimeclockListEntriesRequest, TimeclockListEntriesResponse>("unary", this._transport, method, opt, input);
-    }
-    /**
-     * @perm: Name=TimeclockListEntries
-     *
-     * @generated from protobuf rpc: TimeclockStats(services.jobs.TimeclockStatsRequest) returns (services.jobs.TimeclockStatsResponse);
-     */
-    timeclockStats(input: TimeclockStatsRequest, options?: RpcOptions): UnaryCall<TimeclockStatsRequest, TimeclockStatsResponse> {
-        const method = this.methods[6], opt = this._transport.mergeOptions(options);
-        return stackIntercept<TimeclockStatsRequest, TimeclockStatsResponse>("unary", this._transport, method, opt, input);
-    }
-    /**
-     * @perm: Attrs=Access/StringList:[]string{"Own", "All"}§[]string{"Own"}
-     *
-     * @generated from protobuf rpc: RequestsListEntries(services.jobs.RequestsListEntriesRequest) returns (services.jobs.RequestsListEntriesResponse);
-     */
-    requestsListEntries(input: RequestsListEntriesRequest, options?: RpcOptions): UnaryCall<RequestsListEntriesRequest, RequestsListEntriesResponse> {
-        const method = this.methods[7], opt = this._transport.mergeOptions(options);
-        return stackIntercept<RequestsListEntriesRequest, RequestsListEntriesResponse>("unary", this._transport, method, opt, input);
-    }
-    /**
-     * @perm
-     *
-     * @generated from protobuf rpc: RequestsCreateEntry(services.jobs.RequestsCreateEntryRequest) returns (services.jobs.RequestsCreateEntryResponse);
-     */
-    requestsCreateEntry(input: RequestsCreateEntryRequest, options?: RpcOptions): UnaryCall<RequestsCreateEntryRequest, RequestsCreateEntryResponse> {
-        const method = this.methods[8], opt = this._transport.mergeOptions(options);
-        return stackIntercept<RequestsCreateEntryRequest, RequestsCreateEntryResponse>("unary", this._transport, method, opt, input);
-    }
-    /**
-     * @perm
-     *
-     * @generated from protobuf rpc: RequestsUpdateEntry(services.jobs.RequestsUpdateEntryRequest) returns (services.jobs.RequestsUpdateEntryResponse);
-     */
-    requestsUpdateEntry(input: RequestsUpdateEntryRequest, options?: RpcOptions): UnaryCall<RequestsUpdateEntryRequest, RequestsUpdateEntryResponse> {
-        const method = this.methods[9], opt = this._transport.mergeOptions(options);
-        return stackIntercept<RequestsUpdateEntryRequest, RequestsUpdateEntryResponse>("unary", this._transport, method, opt, input);
-    }
-    /**
-     * @perm
-     *
-     * @generated from protobuf rpc: RequestsDeleteEntry(services.jobs.RequestsDeleteEntryRequest) returns (services.jobs.RequestsDeleteEntryResponse);
-     */
-    requestsDeleteEntry(input: RequestsDeleteEntryRequest, options?: RpcOptions): UnaryCall<RequestsDeleteEntryRequest, RequestsDeleteEntryResponse> {
-        const method = this.methods[10], opt = this._transport.mergeOptions(options);
-        return stackIntercept<RequestsDeleteEntryRequest, RequestsDeleteEntryResponse>("unary", this._transport, method, opt, input);
-    }
-    /**
-     * @perm: Name=RequestsListEntries
-     *
-     * @generated from protobuf rpc: RequestsListTypes(services.jobs.RequestsListTypesRequest) returns (services.jobs.RequestsListTypesResponse);
-     */
-    requestsListTypes(input: RequestsListTypesRequest, options?: RpcOptions): UnaryCall<RequestsListTypesRequest, RequestsListTypesResponse> {
-        const method = this.methods[11], opt = this._transport.mergeOptions(options);
-        return stackIntercept<RequestsListTypesRequest, RequestsListTypesResponse>("unary", this._transport, method, opt, input);
-    }
-    /**
-     * @perm
-     *
-     * @generated from protobuf rpc: RequestsCreateOrUpdateType(services.jobs.RequestsCreateOrUpdateTypeRequest) returns (services.jobs.RequestsCreateOrUpdateTypeResponse);
-     */
-    requestsCreateOrUpdateType(input: RequestsCreateOrUpdateTypeRequest, options?: RpcOptions): UnaryCall<RequestsCreateOrUpdateTypeRequest, RequestsCreateOrUpdateTypeResponse> {
-        const method = this.methods[12], opt = this._transport.mergeOptions(options);
-        return stackIntercept<RequestsCreateOrUpdateTypeRequest, RequestsCreateOrUpdateTypeResponse>("unary", this._transport, method, opt, input);
-    }
-    /**
-     * @perm
-     *
-     * @generated from protobuf rpc: RequestsDeleteType(services.jobs.RequestsDeleteTypeRequest) returns (services.jobs.RequestsDeleteTypeResponse);
-     */
-    requestsDeleteType(input: RequestsDeleteTypeRequest, options?: RpcOptions): UnaryCall<RequestsDeleteTypeRequest, RequestsDeleteTypeResponse> {
-        const method = this.methods[13], opt = this._transport.mergeOptions(options);
-        return stackIntercept<RequestsDeleteTypeRequest, RequestsDeleteTypeResponse>("unary", this._transport, method, opt, input);
-    }
-    /**
-     * @perm: Name=RequestsListEntries
-     *
-     * @generated from protobuf rpc: RequestsListComments(services.jobs.RequestsListCommentsRequest) returns (services.jobs.RequestsListCommentsResponse);
-     */
-    requestsListComments(input: RequestsListCommentsRequest, options?: RpcOptions): UnaryCall<RequestsListCommentsRequest, RequestsListCommentsResponse> {
-        const method = this.methods[14], opt = this._transport.mergeOptions(options);
-        return stackIntercept<RequestsListCommentsRequest, RequestsListCommentsResponse>("unary", this._transport, method, opt, input);
-    }
-    /**
-     * @perm: Name=RequestsCreateEntry
-     *
-     * @generated from protobuf rpc: RequestsPostComment(services.jobs.RequestsPostCommentRequest) returns (services.jobs.RequestsPostCommentResponse);
-     */
-    requestsPostComment(input: RequestsPostCommentRequest, options?: RpcOptions): UnaryCall<RequestsPostCommentRequest, RequestsPostCommentResponse> {
-        const method = this.methods[15], opt = this._transport.mergeOptions(options);
-        return stackIntercept<RequestsPostCommentRequest, RequestsPostCommentResponse>("unary", this._transport, method, opt, input);
-    }
-    /**
-     * @perm
-     *
-     * @generated from protobuf rpc: RequestsDeleteComment(services.jobs.RequestsDeleteCommentRequest) returns (services.jobs.RequestsDeleteCommentResponse);
-     */
-    requestsDeleteComment(input: RequestsDeleteCommentRequest, options?: RpcOptions): UnaryCall<RequestsDeleteCommentRequest, RequestsDeleteCommentResponse> {
-        const method = this.methods[16], opt = this._transport.mergeOptions(options);
-        return stackIntercept<RequestsDeleteCommentRequest, RequestsDeleteCommentResponse>("unary", this._transport, method, opt, input);
+        return stackIntercept<ListColleaguesRequest, ListColleaguesResponse>("unary", this._transport, method, opt, input);
     }
 }

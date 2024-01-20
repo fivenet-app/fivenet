@@ -28,6 +28,7 @@ import (
 	"github.com/go-jet/jet/v2/qrm"
 	"go.opentelemetry.io/otel/attribute"
 	"go.opentelemetry.io/otel/trace"
+	grpc "google.golang.org/grpc"
 	"google.golang.org/grpc/codes"
 	"google.golang.org/grpc/status"
 )
@@ -76,6 +77,10 @@ func NewServer(db *sql.DB, ps perms.Permissions, cache *mstlystcdata.Cache, enri
 			CleanTags:    []string{""},
 		},
 	}
+}
+
+func (s *Server) RegisterServer(srv *grpc.Server) {
+	RegisterDocStoreServiceServer(srv, s)
 }
 
 func (s *Server) ListDocuments(ctx context.Context, req *ListDocumentsRequest) (*ListDocumentsResponse, error) {

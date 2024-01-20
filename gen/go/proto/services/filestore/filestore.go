@@ -5,6 +5,7 @@ import (
 
 	"github.com/galexrt/fivenet/pkg/storage"
 	"go.uber.org/fx"
+	grpc "google.golang.org/grpc"
 )
 
 type Server struct {
@@ -23,6 +24,10 @@ func NewServer(p Params) *Server {
 	return &Server{
 		st: p.Storage,
 	}
+}
+
+func (s *Server) RegisterServer(srv *grpc.Server) {
+	RegisterFileStoreServiceServer(srv, s)
 }
 
 func (s *Server) Upload(ctx context.Context, req *UploadRequest) (*UploadResponse, error) {

@@ -8,6 +8,7 @@ import (
 	"github.com/galexrt/fivenet/gen/go/proto/resources/permissions"
 	rector "github.com/galexrt/fivenet/gen/go/proto/resources/rector"
 	"github.com/galexrt/fivenet/gen/go/proto/resources/timestamp"
+	errorsrector "github.com/galexrt/fivenet/gen/go/proto/services/rector/errors"
 	"github.com/galexrt/fivenet/pkg/grpc/auth"
 	"github.com/galexrt/fivenet/pkg/grpc/auth/userinfo"
 	"github.com/galexrt/fivenet/pkg/grpc/errswrap"
@@ -15,18 +16,6 @@ import (
 	"github.com/galexrt/fivenet/pkg/perms/collections"
 	"github.com/galexrt/fivenet/query/fivenet/model"
 	"github.com/go-jet/jet/v2/qrm"
-	"google.golang.org/grpc/codes"
-	"google.golang.org/grpc/status"
-)
-
-var (
-	ErrFailedQuery       = status.Error(codes.Internal, "errors.RectorService.ErrFailedQuery")
-	ErrInvalidRequest    = status.Error(codes.InvalidArgument, "errors.RectorService.ErrInvalidRequest")
-	ErrNoPermission      = status.Error(codes.PermissionDenied, "errors.RectorService.ErrNoPermission")
-	ErrRoleAlreadyExists = status.Error(codes.InvalidArgument, "errors.RectorService.ErrRoleAlreadyExists")
-	ErrOwnRoleDeletion   = status.Error(codes.InvalidArgument, "errors.RectorService.ErrOwnRoleDeletion")
-	ErrInvalidAttrs      = status.Error(codes.InvalidArgument, "errors.RectorService.ErrInvalidAttrs")
-	ErrInvalidPerms      = status.Error(codes.InvalidArgument, "errors.RectorService.ErrInvalidPerms")
 )
 
 var (
@@ -47,11 +36,11 @@ func (s *Server) ensureUserCanAccessRole(ctx context.Context, roleId uint64) (*m
 
 	// Make sure the user is from the job
 	if role.Job != userInfo.Job {
-		return nil, false, ErrInvalidRequest
+		return nil, false, errorsrector.ErrInvalidRequest
 	}
 
 	if role.Grade > userInfo.JobGrade {
-		return nil, false, ErrInvalidRequest
+		return nil, false, errorsrector.ErrInvalidRequest
 	}
 
 	return role, true, nil
@@ -170,7 +159,7 @@ func (s *Server) GetRoles(ctx context.Context, req *GetRolesRequest) (*GetRolesR
 	if userInfo.SuperUser && req.LowestRank != nil && *req.LowestRank {
 		roles, err = s.ps.GetRoles(ctx, true)
 		if err != nil {
-			return nil, errswrap.NewError(ErrFailedQuery, err)
+			return nil, errswrap.NewError(errorsrector.ErrFailedQuery, err)
 		}
 
 		collectedRoles := map[string]*model.FivenetRoles{}
@@ -188,7 +177,7 @@ func (s *Server) GetRoles(ctx context.Context, req *GetRolesRequest) (*GetRolesR
 	} else {
 		roles, err = s.ps.GetJobRolesUpTo(ctx, userInfo.Job, userInfo.JobGrade)
 		if err != nil {
-			return nil, errswrap.NewError(ErrFailedQuery, err)
+			return nil, errswrap.NewError(errorsrector.ErrFailedQuery, err)
 		}
 	}
 
@@ -215,10 +204,10 @@ func (s *Server) GetRole(ctx context.Context, req *GetRoleRequest) (*GetRoleResp
 
 	role, check, err := s.ensureUserCanAccessRole(ctx, req.Id)
 	if err != nil {
-		return nil, errswrap.NewError(ErrInvalidRequest, err)
+		return nil, errswrap.NewError(errorsrector.ErrInvalidRequest, err)
 	}
 	if !check && !userInfo.SuperUser {
-		return nil, ErrNoPermission
+		return nil, errorsrector.ErrNoPermission
 	}
 
 	fullFilter := !(userInfo.SuperUser && req.Filtered != nil && !*req.Filtered)
@@ -227,12 +216,12 @@ func (s *Server) GetRole(ctx context.Context, req *GetRoleRequest) (*GetRoleResp
 	if fullFilter {
 		perms, err = s.ps.GetRolePermissions(ctx, role.ID)
 		if err != nil {
-			return nil, errswrap.NewError(ErrInvalidRequest, err)
+			return nil, errswrap.NewError(errorsrector.ErrInvalidRequest, err)
 		}
 	} else {
 		perms, err = s.ps.GetJobPermissions(ctx, role.Job)
 		if err != nil {
-			return nil, errswrap.NewError(ErrInvalidRequest, err)
+			return nil, errswrap.NewError(errorsrector.ErrInvalidRequest, err)
 		}
 	}
 
@@ -248,7 +237,7 @@ func (s *Server) GetRole(ctx context.Context, req *GetRoleRequest) (*GetRoleResp
 
 	fPerms, err := s.filterPermissions(ctx, role.Job, fullFilter, perms)
 	if err != nil {
-		return nil, errswrap.NewError(ErrInvalidRequest, err)
+		return nil, errswrap.NewError(errorsrector.ErrInvalidRequest, err)
 	}
 
 	resp.Role.Permissions = make([]*permissions.Permission, len(fPerms))
@@ -256,7 +245,7 @@ func (s *Server) GetRole(ctx context.Context, req *GetRoleRequest) (*GetRoleResp
 
 	resp.Role.Attributes, err = s.ps.GetRoleAttributes(role.Job, role.Grade)
 	if err != nil {
-		return nil, errswrap.NewError(ErrFailedQuery, err)
+		return nil, errswrap.NewError(errorsrector.ErrFailedQuery, err)
 	}
 
 	return resp, nil
@@ -277,30 +266,30 @@ func (s *Server) CreateRole(ctx context.Context, req *CreateRoleRequest) (*Creat
 	// Make sure the user is from the job or is a super user
 	if !userInfo.SuperUser {
 		if req.Job != userInfo.Job {
-			return nil, ErrInvalidRequest
+			return nil, errorsrector.ErrInvalidRequest
 		}
 		if req.Grade > userInfo.JobGrade {
-			return nil, ErrInvalidRequest
+			return nil, errorsrector.ErrInvalidRequest
 		}
 	}
 
 	role, err := s.ps.GetRoleByJobAndGrade(ctx, req.Job, req.Grade)
 	if err != nil {
 		if !errors.Is(err, qrm.ErrNoRows) {
-			return nil, errswrap.NewError(ErrFailedQuery, err)
+			return nil, errswrap.NewError(errorsrector.ErrFailedQuery, err)
 		}
 	}
 	if role != nil {
-		return nil, ErrRoleAlreadyExists
+		return nil, errorsrector.ErrRoleAlreadyExists
 	}
 
 	cr, err := s.ps.CreateRole(ctx, req.Job, req.Grade)
 	if err != nil {
-		return nil, errswrap.NewError(ErrFailedQuery, err)
+		return nil, errswrap.NewError(errorsrector.ErrFailedQuery, err)
 	}
 
 	if cr == nil {
-		return nil, errswrap.NewError(ErrInvalidRequest, err)
+		return nil, errswrap.NewError(errorsrector.ErrInvalidRequest, err)
 	}
 
 	r := permissions.ConvertFromRole(cr)
@@ -326,29 +315,29 @@ func (s *Server) DeleteRole(ctx context.Context, req *DeleteRoleRequest) (*Delet
 
 	role, check, err := s.ensureUserCanAccessRole(ctx, req.Id)
 	if err != nil {
-		return nil, errswrap.NewError(ErrInvalidRequest, err)
+		return nil, errswrap.NewError(errorsrector.ErrInvalidRequest, err)
 	}
 	if !check && !userInfo.SuperUser {
-		return nil, ErrNoPermission
+		return nil, errorsrector.ErrNoPermission
 	}
 
 	roleCount, err := s.ps.CountRolesForJob(ctx, userInfo.Job)
 	if err != nil {
-		return nil, errswrap.NewError(ErrInvalidRequest, err)
+		return nil, errswrap.NewError(errorsrector.ErrInvalidRequest, err)
 	}
 
 	// Don't allow deleting the "last" role, one role should always remain
 	if roleCount <= 1 {
-		return nil, ErrInvalidRequest
+		return nil, errorsrector.ErrInvalidRequest
 	}
 
 	// Don't allow deleting the own or higher role
 	if role.Grade >= userInfo.JobGrade {
-		return nil, ErrOwnRoleDeletion
+		return nil, errorsrector.ErrOwnRoleDeletion
 	}
 
 	if err := s.ps.DeleteRole(ctx, role.ID); err != nil {
-		return nil, errswrap.NewError(ErrInvalidRequest, err)
+		return nil, errswrap.NewError(errorsrector.ErrInvalidRequest, err)
 	}
 
 	auditEntry.State = int16(rector.EventType_EVENT_TYPE_DELETED)
@@ -370,20 +359,20 @@ func (s *Server) UpdateRolePerms(ctx context.Context, req *UpdateRolePermsReques
 
 	role, check, err := s.ensureUserCanAccessRole(ctx, req.Id)
 	if err != nil {
-		return nil, errswrap.NewError(ErrInvalidRequest, err)
+		return nil, errswrap.NewError(errorsrector.ErrInvalidRequest, err)
 	}
 	if !check && !userInfo.SuperUser {
-		return nil, errswrap.NewError(ErrNoPermission, err)
+		return nil, errswrap.NewError(errorsrector.ErrNoPermission, err)
 	}
 
 	if req.Perms != nil {
 		if err := s.handlPermissionsUpdate(ctx, role, req.Perms); err != nil {
-			return nil, errswrap.NewError(ErrInvalidPerms, err)
+			return nil, errswrap.NewError(errorsrector.ErrInvalidPerms, err)
 		}
 	}
 	if req.Attrs != nil {
 		if err := s.handleAttributeUpdate(ctx, userInfo, role, req.Attrs); err != nil {
-			return nil, errswrap.NewError(ErrInvalidAttrs, err)
+			return nil, errswrap.NewError(errorsrector.ErrInvalidAttrs, err)
 		}
 	}
 
@@ -461,14 +450,14 @@ func (s *Server) GetPermissions(ctx context.Context, req *GetPermissionsRequest)
 
 	perms, err := s.ps.GetAllPermissions(ctx)
 	if err != nil {
-		return nil, errswrap.NewError(ErrFailedQuery, err)
+		return nil, errswrap.NewError(errorsrector.ErrFailedQuery, err)
 	}
 
 	fullFilter := !(userInfo.SuperUser && req.Filtered != nil && !*req.Filtered)
 
 	filtered, err := s.filterPermissions(ctx, userInfo.Job, fullFilter, perms)
 	if err != nil {
-		return nil, errswrap.NewError(ErrInvalidRequest, err)
+		return nil, errswrap.NewError(errorsrector.ErrInvalidRequest, err)
 	}
 
 	resp := &GetPermissionsResponse{}
@@ -476,16 +465,16 @@ func (s *Server) GetPermissions(ctx context.Context, req *GetPermissionsRequest)
 
 	role, err := s.ps.GetRole(ctx, req.RoleId)
 	if err != nil {
-		return nil, errswrap.NewError(ErrInvalidRequest, err)
+		return nil, errswrap.NewError(errorsrector.ErrInvalidRequest, err)
 	}
 
 	if role.Job != userInfo.Job && !userInfo.SuperUser {
-		return nil, ErrInvalidRequest
+		return nil, errorsrector.ErrInvalidRequest
 	}
 
 	attrs, err := s.ps.GetAllAttributes(ctx, role.Job, role.Grade)
 	if err != nil {
-		return nil, errswrap.NewError(ErrInvalidRequest, err)
+		return nil, errswrap.NewError(errorsrector.ErrInvalidRequest, err)
 	}
 	resp.Attributes = attrs
 
@@ -495,29 +484,29 @@ func (s *Server) GetPermissions(ctx context.Context, req *GetPermissionsRequest)
 func (s *Server) UpdateRoleLimits(ctx context.Context, req *UpdateRoleLimitsRequest) (*UpdateRoleLimitsResponse, error) {
 	role, err := s.ps.GetRole(ctx, req.RoleId)
 	if err != nil {
-		return nil, errswrap.NewError(ErrInvalidRequest, err)
+		return nil, errswrap.NewError(errorsrector.ErrInvalidRequest, err)
 	}
 
 	for _, attr := range req.Attrs.ToUpdate {
 		if err := s.ps.UpdateRoleAttributeMaxValues(ctx, role.ID, attr.AttrId, attr.MaxValues); err != nil {
-			return nil, errswrap.NewError(ErrFailedQuery, err)
+			return nil, errswrap.NewError(errorsrector.ErrFailedQuery, err)
 		}
 	}
 
 	for _, ps := range req.Perms.ToUpdate {
 		if err := s.ps.UpdateJobPermissions(ctx, role.Job, ps.Id, ps.Val); err != nil {
-			return nil, errswrap.NewError(ErrFailedQuery, err)
+			return nil, errswrap.NewError(errorsrector.ErrFailedQuery, err)
 		}
 	}
 
 	for _, ps := range req.Perms.ToRemove {
 		if err := s.ps.UpdateJobPermissions(ctx, role.Job, ps, false); err != nil {
-			return nil, errswrap.NewError(ErrFailedQuery, err)
+			return nil, errswrap.NewError(errorsrector.ErrFailedQuery, err)
 		}
 	}
 
 	if err := s.ps.ApplyJobPermissions(ctx, role.Job); err != nil {
-		return nil, errswrap.NewError(ErrFailedQuery, err)
+		return nil, errswrap.NewError(errorsrector.ErrFailedQuery, err)
 	}
 
 	return &UpdateRoleLimitsResponse{}, nil

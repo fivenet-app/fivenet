@@ -21,6 +21,7 @@ import (
 	"go.opentelemetry.io/otel/trace"
 	"go.uber.org/fx"
 	"go.uber.org/zap"
+	grpc "google.golang.org/grpc"
 	codes "google.golang.org/grpc/codes"
 	"google.golang.org/grpc/status"
 )
@@ -102,6 +103,10 @@ func NewServer(p Params) *Server {
 	}))
 
 	return s
+}
+
+func (s *Server) RegisterServer(srv *grpc.Server) {
+	RegisterLivemapperServiceServer(srv, s)
 }
 
 func (s *Server) start() {

@@ -14,6 +14,7 @@ import (
 	"go.opentelemetry.io/otel/trace"
 	"go.uber.org/fx"
 	"go.uber.org/zap"
+	"google.golang.org/grpc"
 )
 
 var (
@@ -21,7 +22,10 @@ var (
 )
 
 type Server struct {
+	ConductServiceServer
 	JobsServiceServer
+	RequestsServiceServer
+	TimeclockServiceServer
 
 	ctx    context.Context
 	logger *zap.Logger
@@ -85,4 +89,11 @@ func NewServer(p Params) *Server {
 	}))
 
 	return s
+}
+
+func (s *Server) RegisterServer(srv *grpc.Server) {
+	RegisterConductServiceServer(srv, s)
+	RegisterJobsServiceServer(srv, s)
+	RegisterRequestsServiceServer(srv, s)
+	RegisterTimeclockServiceServer(srv, s)
 }

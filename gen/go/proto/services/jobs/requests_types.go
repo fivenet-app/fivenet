@@ -15,7 +15,7 @@ import (
 	"github.com/go-jet/jet/v2/qrm"
 )
 
-func (s *Server) RequestsListTypes(ctx context.Context, req *RequestsListTypesRequest) (*RequestsListTypesResponse, error) {
+func (s *Server) ListRequestTypes(ctx context.Context, req *ListRequestTypesRequest) (*ListRequestTypesResponse, error) {
 	userInfo := auth.MustGetUserInfoFromContext(ctx)
 
 	stmt := tReqTypes.
@@ -44,12 +44,12 @@ func (s *Server) RequestsListTypes(ctx context.Context, req *RequestsListTypesRe
 		}
 	}
 
-	return &RequestsListTypesResponse{
+	return &ListRequestTypesResponse{
 		Types: dest,
 	}, nil
 }
 
-func (s *Server) RequestsCreateOrUpdateType(ctx context.Context, req *RequestsCreateOrUpdateTypeRequest) (*RequestsCreateOrUpdateTypeResponse, error) {
+func (s *Server) CreateOrUpdateRequestType(ctx context.Context, req *CreateOrUpdateRequestTypeRequest) (*CreateOrUpdateRequestTypeResponse, error) {
 	userInfo := auth.MustGetUserInfoFromContext(ctx)
 
 	auditEntry := &model.FivenetAuditLog{
@@ -134,12 +134,12 @@ func (s *Server) RequestsCreateOrUpdateType(ctx context.Context, req *RequestsCr
 		return nil, errswrap.NewError(errorsjobs.ErrFailedQuery, err)
 	}
 
-	return &RequestsCreateOrUpdateTypeResponse{
+	return &CreateOrUpdateRequestTypeResponse{
 		RequestType: requestType,
 	}, nil
 }
 
-func (s *Server) RequestsDeleteType(ctx context.Context, req *RequestsDeleteTypeRequest) (*RequestsDeleteTypeResponse, error) {
+func (s *Server) RequestsDeleteType(ctx context.Context, req *DeleteRequestTypeRequest) (*DeleteRequestTypeResponse, error) {
 	userInfo := auth.MustGetUserInfoFromContext(ctx)
 
 	auditEntry := &model.FivenetAuditLog{
@@ -165,5 +165,5 @@ func (s *Server) RequestsDeleteType(ctx context.Context, req *RequestsDeleteType
 
 	auditEntry.State = int16(rector.EventType_EVENT_TYPE_DELETED)
 
-	return &RequestsDeleteTypeResponse{}, nil
+	return &DeleteRequestTypeResponse{}, nil
 }

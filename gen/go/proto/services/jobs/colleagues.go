@@ -13,7 +13,7 @@ import (
 	"github.com/go-jet/jet/v2/qrm"
 )
 
-func (s *Server) ColleaguesList(ctx context.Context, req *ColleaguesListRequest) (*ColleaguesListResponse, error) {
+func (s *Server) ListColleagues(ctx context.Context, req *ListColleaguesRequest) (*ListColleaguesResponse, error) {
 	userInfo := auth.MustGetUserInfoFromContext(ctx)
 
 	selectors := jet.ProjectionList{
@@ -57,7 +57,7 @@ func (s *Server) ColleaguesList(ctx context.Context, req *ColleaguesListRequest)
 	}
 
 	pag, limit := req.Pagination.GetResponseWithPageSize(15)
-	resp := &ColleaguesListResponse{
+	resp := &ListColleaguesResponse{
 		Pagination: pag,
 	}
 	if count.TotalCount <= 0 {

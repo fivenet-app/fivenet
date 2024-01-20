@@ -27,6 +27,7 @@ import (
 	"go.opentelemetry.io/otel/trace"
 	"go.uber.org/fx"
 	"go.uber.org/zap"
+	"google.golang.org/grpc"
 	"google.golang.org/protobuf/proto"
 )
 
@@ -123,6 +124,10 @@ func NewServer(p Params) (*Server, error) {
 	}))
 
 	return s, nil
+}
+
+func (s *Server) RegisterServer(srv *grpc.Server) {
+	RegisterCentrumServiceServer(srv, s)
 }
 
 func (s *Server) RegisterSubscriptions(ctx context.Context) error {

@@ -21,6 +21,7 @@ func (s *Server) GetPermsRemap() map[string]string {
 
 func init() {
 	perms.AddPermsToList([]*perms.Perm{
+
 		// Service: CompletorService
 		{
 			Category: permkeys.CompletorServicePerm,

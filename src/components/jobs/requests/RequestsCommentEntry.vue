@@ -37,7 +37,7 @@ async function editComment(requestId: string, commentId: string, values: FormDat
     };
 
     try {
-        const { response } = await $grpc.getJobsClient().requestsPostComment({ comment });
+        const { response } = await $grpc.getJobsRequestsClient().postRequestComment({ comment });
 
         editing.value = false;
         resetForm();
@@ -51,7 +51,7 @@ async function editComment(requestId: string, commentId: string, values: FormDat
 
 async function deleteComment(id: string): Promise<void> {
     try {
-        await $grpc.getJobsClient().requestsDeleteComment({
+        await $grpc.getJobsRequestsClient().deleteRequestComment({
             id,
         });
 
