@@ -33,6 +33,7 @@ message Unit {
   optional UnitStatus status = 9;
   repeated UnitAssignment users = 11;
   optional Attributes attributes = 12;
+  optional string home_postal = 13 [(validate.rules).string.max_len = 48];
 }
 
 message UnitAssignments {

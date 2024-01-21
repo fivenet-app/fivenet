@@ -787,7 +787,9 @@
         "click_here": "Click here",
         "yes": "Yes",
         "no": "No",
-        "page": "Page"
+        "page": "Page",
+        "department": "Department",
+        "none": "No {0}"
     },
     "notifications": {
         "clipboard": {

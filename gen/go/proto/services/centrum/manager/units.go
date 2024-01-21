@@ -368,6 +368,7 @@ func (s *Manager) CreateUnit(ctx context.Context, job string, unit *centrum.Unit
 			tUnits.Color,
 			tUnits.Description,
 			tUnits.Attributes,
+			tUnits.HomePostal,
 		).
 		VALUES(
 			job,
@@ -376,6 +377,7 @@ func (s *Manager) CreateUnit(ctx context.Context, job string, unit *centrum.Unit
 			unit.Color,
 			unit.Description,
 			unit.Attributes,
+			unit.HomePostal,
 		)
 
 	result, err := stmt.ExecContext(ctx, tx)
@@ -434,6 +436,7 @@ func (s *Manager) UpdateUnit(ctx context.Context, job string, unit *centrum.Unit
 			tUnits.Color,
 			tUnits.Description,
 			tUnits.Attributes,
+			tUnits.HomePostal,
 		).
 		SET(
 			unit.Name,
@@ -441,6 +444,7 @@ func (s *Manager) UpdateUnit(ctx context.Context, job string, unit *centrum.Unit
 			unit.Color,
 			description,
 			unit.Attributes,
+			unit.HomePostal,
 		).
 		WHERE(jet.AND(
 			tUnits.Job.EQ(jet.String(job)),

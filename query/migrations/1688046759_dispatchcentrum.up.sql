@@ -37,6 +37,7 @@ CREATE TABLE
         `color` char(6) NOT NULL,
         `description` varchar(255) NULL DEFAULT NULL,
         `attributes` varchar(2048) NULL DEFAULT NULL,
+        `home_postal` varchar(48) DEFAULT NULL,
         PRIMARY KEY (`id`),
         UNIQUE KEY (`job`, `name`)
     ) ENGINE = InnoDB DEFAULT CHARSET = utf8mb4 COLLATE = utf8mb4_unicode_ci;

@@ -37,6 +37,7 @@ interface FormData {
     description: string;
     color: string;
     attributes: string[];
+    homePostal?: string;
 }
 
 const availableAttributes: string[] = ['static'];
@@ -58,6 +59,7 @@ async function createOrUpdateUnit(values: FormData): Promise<void> {
                     list: selectedAttributes.value,
                 },
                 users: [],
+                homePostal: values.homePostal,
             },
         });
         const { response } = await call;
@@ -84,6 +86,7 @@ const { handleSubmit, meta, setFieldValue, setValues } = useForm<FormData>({
         name: { required: true, min: 3, max: 24 },
         initials: { required: true, min: 2, max: 4 },
         description: { required: false, max: 255 },
+        homePostal: { required: false, max: 48 },
     },
     validateOnMount: true,
 });
@@ -104,6 +107,7 @@ async function updateUnitInForm(): Promise<void> {
             name: props.unit.name,
             initials: props.unit.initials,
             description: props.unit.description,
+            homePostal: props.unit.homePostal,
         });
         color.value = `#${props.unit.color}`;
 
@@ -352,6 +356,28 @@ onBeforeMount(async () => updateUnitInForm());
                                                         format="hex"
                                                         position="top"
                                                         @change="setFieldValue('color', $event)"
+                                                    />
+                                                </div>
+                                                <div class="form-control flex-1">
+                                                    <label
+                                                        for="homePostal"
+                                                        class="block text-sm font-medium leading-6 text-neutral"
+                                                    >
+                                                        {{ `${$t('common.department')} ${$t('common.postal')}` }}
+                                                    </label>
+                                                    <VeeField
+                                                        name="homePostal"
+                                                        type="text"
+                                                        class="block w-full rounded-md border-0 bg-base-700 py-1.5 text-neutral placeholder:text-base-200 focus:ring-2 focus:ring-inset focus:ring-base-300 sm:text-sm sm:leading-6"
+                                                        :placeholder="`${$t('common.department')} ${$t('common.postal')}`"
+                                                        :label="`${$t('common.department')} ${$t('common.postal')}`"
+                                                        @focusin="focusTablet(true)"
+                                                        @focusout="focusTablet(false)"
+                                                    />
+                                                    <VeeErrorMessage
+                                                        name="homePostal"
+                                                        as="p"
+                                                        class="mt-2 text-sm text-error-400"
                                                     />
                                                 </div>
                                             </div>

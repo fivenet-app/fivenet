@@ -124,6 +124,12 @@ const grouped = computedAsync(async () => {
                                     scope="col"
                                     class="whitespace-nowrap px-1 py-1 text-left text-sm font-semibold text-gray-100"
                                 >
+                                    {{ $t('common.attributes', 2) }}
+                                </th>
+                                <th
+                                    scope="col"
+                                    class="whitespace-nowrap px-1 py-1 text-left text-sm font-semibold text-gray-100"
+                                >
                                     {{ $t('common.message') }}
                                 </th>
                             </tr>

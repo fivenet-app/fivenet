@@ -99,6 +99,8 @@ message ListDispatchesRequest {
   resources.common.database.PaginationRequest pagination = 1 [(validate.rules).message.required = true];
   repeated resources.centrum.StatusDispatch status = 2 [(validate.rules).repeated.items.enum.defined_only = true];
   repeated resources.centrum.StatusDispatch not_status = 3 [(validate.rules).repeated.items.enum.defined_only = true];
+  repeated uint64 ids = 4 [jstype = JS_STRING];
+  optional string postal = 5;
 }
 
 message ListDispatchesResponse {

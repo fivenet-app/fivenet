@@ -59,6 +59,10 @@ export interface Unit {
      * @generated from protobuf field: optional resources.centrum.Attributes attributes = 12;
      */
     attributes?: Attributes;
+    /**
+     * @generated from protobuf field: optional string home_postal = 13;
+     */
+    homePostal?: string;
 }
 /**
  * @generated from protobuf message resources.centrum.UnitAssignments
@@ -212,7 +216,8 @@ class Unit$Type extends MessageType<Unit> {
             { no: 8, name: "description", kind: "scalar", opt: true, T: 9 /*ScalarType.STRING*/, options: { "validate.rules": { string: { maxLen: "255" } } } },
             { no: 9, name: "status", kind: "message", T: () => UnitStatus },
             { no: 11, name: "users", kind: "message", repeat: 1 /*RepeatType.PACKED*/, T: () => UnitAssignment },
-            { no: 12, name: "attributes", kind: "message", T: () => Attributes }
+            { no: 12, name: "attributes", kind: "message", T: () => Attributes },
+            { no: 13, name: "home_postal", kind: "scalar", opt: true, T: 9 /*ScalarType.STRING*/, options: { "validate.rules": { string: { maxLen: "48" } } } }
         ]);
     }
 }

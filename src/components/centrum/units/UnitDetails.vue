@@ -82,6 +82,16 @@ const openStatus = ref(false);
                                                         </div>
                                                         <div class="px-4 py-3 sm:grid sm:grid-cols-3 sm:gap-4 sm:px-0">
                                                             <dt class="text-sm font-medium leading-6 text-neutral">
+                                                                {{ `${$t('common.department')} ${$t('common.postal')}` }}
+                                                            </dt>
+                                                            <dd
+                                                                class="mt-1 text-sm leading-6 text-gray-300 sm:col-span-2 sm:mt-0"
+                                                            >
+                                                                {{ unit.homePostal ?? $t('common.na') }}
+                                                            </dd>
+                                                        </div>
+                                                        <div class="px-4 py-3 sm:grid sm:grid-cols-3 sm:gap-4 sm:px-0">
+                                                            <dt class="text-sm font-medium leading-6 text-neutral">
                                                                 {{ $t('common.last_update') }}
                                                             </dt>
                                                             <dd
@@ -189,9 +199,7 @@ const openStatus = ref(false);
                                                                     </span>
                                                                 </template>
                                                                 <span v-else>
-                                                                    {{
-                                                                        $t('common.none_selected', [$t('common.attributes', 2)])
-                                                                    }}
+                                                                    {{ $t('common.none', [$t('common.attributes', 2)]) }}
                                                                 </span>
                                                             </dd>
                                                         </div>

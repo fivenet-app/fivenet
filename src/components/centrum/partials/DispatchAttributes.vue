@@ -17,6 +17,6 @@ defineProps<{
         </span>
     </template>
     <span v-else>
-        {{ $t('common.none_selected', [$t('common.attributes', 2)]) }}
+        {{ $t('common.none', [$t('common.attributes', 2)]) }}
     </span>
 </template>

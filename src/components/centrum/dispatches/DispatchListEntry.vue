@@ -10,6 +10,7 @@ import UnitInfoPopover from '~/components/centrum/units/UnitInfoPopover.vue';
 import CitizenInfoPopover from '~/components/partials/citizens/CitizenInfoPopover.vue';
 import GenericTime from '~/components/partials/elements/GenericTime.vue';
 import { Dispatch, StatusDispatch } from '~~/gen/ts/resources/centrum/dispatches';
+import DispatchAttributes from '~/components/centrum/partials/DispatchAttributes.vue';
 
 const props = withDefaults(
     defineProps<{
@@ -130,6 +131,9 @@ const openStatus = ref(false);
             <span v-else>
                 {{ $t('common.unknown') }}
             </span>
+        </td>
+        <td class="whitespace-nowrap px-1 py-1 text-sm text-gray-300">
+            <DispatchAttributes :attributes="dispatch.attributes" />
         </td>
         <td class="inline-flex min-w-36 items-center px-1 py-1 text-sm text-gray-300">
             <p class="line-clamp-2 hover:line-clamp-6">

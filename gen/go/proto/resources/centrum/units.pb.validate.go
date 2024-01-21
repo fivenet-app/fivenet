@@ -295,6 +295,21 @@ func (m *Unit) validate(all bool) error {
 
 	}
 
+	if m.HomePostal != nil {
+
+		if utf8.RuneCountInString(m.GetHomePostal()) > 48 {
+			err := UnitValidationError{
+				field:  "HomePostal",
+				reason: "value length must be at most 48 runes",
+			}
+			if !all {
+				return err
+			}
+			errors = append(errors, err)
+		}
+
+	}
+
 	if len(errors) > 0 {
 		return UnitMultiError(errors)
 	}

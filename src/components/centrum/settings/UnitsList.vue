@@ -85,6 +85,9 @@ const openSettings = ref(false);
                                         <th scope="col" class="px-2 py-3.5 text-left text-sm font-semibold text-neutral">
                                             {{ $t('common.color') }}
                                         </th>
+                                        <th scope="col" class="px-2 py-3.5 text-left text-sm font-semibold text-neutral">
+                                            {{ `${$t('common.department')} ${$t('common.postal')}` }}
+                                        </th>
                                         <th
                                             scope="col"
                                             class="relative py-3.5 pl-3 pr-4 text-right text-sm font-semibold text-neutral sm:pr-0"
@@ -112,6 +115,9 @@ const openSettings = ref(false);
                                         </th>
                                         <th scope="col" class="px-2 py-3.5 text-left text-sm font-semibold text-neutral">
                                             {{ $t('common.color') }}
+                                        </th>
+                                        <th scope="col" class="px-2 py-3.5 text-left text-sm font-semibold text-neutral">
+                                            {{ `${$t('common.department')} ${$t('common.postal')}` }}
                                         </th>
                                         <th
                                             scope="col"

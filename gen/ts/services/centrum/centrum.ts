@@ -225,6 +225,14 @@ export interface ListDispatchesRequest {
      * @generated from protobuf field: repeated resources.centrum.StatusDispatch not_status = 3;
      */
     notStatus: StatusDispatch[];
+    /**
+     * @generated from protobuf field: repeated uint64 ids = 4 [jstype = JS_STRING];
+     */
+    ids: string[];
+    /**
+     * @generated from protobuf field: optional string postal = 5;
+     */
+    postal?: string;
 }
 /**
  * @generated from protobuf message services.centrum.ListDispatchesResponse
@@ -749,7 +757,9 @@ class ListDispatchesRequest$Type extends MessageType<ListDispatchesRequest> {
         super("services.centrum.ListDispatchesRequest", [
             { no: 1, name: "pagination", kind: "message", T: () => PaginationRequest, options: { "validate.rules": { message: { required: true } } } },
             { no: 2, name: "status", kind: "enum", repeat: 1 /*RepeatType.PACKED*/, T: () => ["resources.centrum.StatusDispatch", StatusDispatch, "STATUS_DISPATCH_"], options: { "validate.rules": { repeated: { items: { enum: { definedOnly: true } } } } } },
-            { no: 3, name: "not_status", kind: "enum", repeat: 1 /*RepeatType.PACKED*/, T: () => ["resources.centrum.StatusDispatch", StatusDispatch, "STATUS_DISPATCH_"], options: { "validate.rules": { repeated: { items: { enum: { definedOnly: true } } } } } }
+            { no: 3, name: "not_status", kind: "enum", repeat: 1 /*RepeatType.PACKED*/, T: () => ["resources.centrum.StatusDispatch", StatusDispatch, "STATUS_DISPATCH_"], options: { "validate.rules": { repeated: { items: { enum: { definedOnly: true } } } } } },
+            { no: 4, name: "ids", kind: "scalar", repeat: 1 /*RepeatType.PACKED*/, T: 4 /*ScalarType.UINT64*/ },
+            { no: 5, name: "postal", kind: "scalar", opt: true, T: 9 /*ScalarType.STRING*/ }
         ]);
     }
 }

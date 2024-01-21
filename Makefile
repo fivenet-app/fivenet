@@ -156,12 +156,6 @@ gen-tiles: gdal2tiles-leaflet
 		-l -p raster -z 1-7 -w none \
 		./maps/GTAV_POSTAL_16384x16384.jpg ./src/public/images/livemap/tiles/postal
 
-	#GDAL_ALLOW_LARGE_LIBJPEG_MEM_ALLOC=true \
-	#JPEGMEM=2048M \
-	#	$(BUILD_DIR)gdal2tiles-leaflet/gdal2tiles.py \
-	#	-l -p raster -z 1-7 -w none \
-	#	./maps/GTAV_SATELITE_16384x16384.jpg ./src/public/images/livemap/tiles/satelite
-
 .PHONY: optimize-tiles
 optimize-tiles:
 	find ./src/public/images/livemap/tiles/ -iname '*.png' -print0 | xargs -n1 -P16 -0 optipng -strip all -clobber -fix -o9

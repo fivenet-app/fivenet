@@ -37,13 +37,13 @@ func (s *Server) ListDispatches(ctx context.Context, req *ListDispatchesRequest)
 	}
 	defer s.auditer.Log(auditEntry, req)
 
-	condition := tDispatch.Job.EQ(jet.String(userInfo.Job)).
+	condition := jet.AND(tDispatch.Job.EQ(jet.String(userInfo.Job)).
 		AND(
 			tDispatchStatus.ID.IS_NULL().OR(
 				tDispatchStatus.ID.EQ(
 					jet.RawInt("SELECT MAX(`dispatchstatus`.`id`) FROM `fivenet_centrum_dispatches_status` AS `dispatchstatus` WHERE `dispatchstatus`.`dispatch_id` = `dispatch`.`id`"),
 				),
-			))
+			)))
 
 	if len(req.Status) > 0 {
 		statuses := make([]jet.Expression, len(req.Status))
@@ -60,6 +60,19 @@ func (s *Server) ListDispatches(ctx context.Context, req *ListDispatchesRequest)
 		}
 
 		condition = condition.AND(tDispatchStatus.Status.NOT_IN(statuses...))
+	}
+
+	if len(req.Ids) > 0 {
+		ids := make([]jet.Expression, len(req.Ids))
+		for i := 0; i < len(req.Ids); i++ {
+			ids[i] = jet.Uint64(req.Ids[i])
+		}
+
+		condition = condition.AND(tDispatch.ID.IN(ids...))
+	}
+
+	if req.Postal != nil && *req.Postal != "" {
+		condition = condition.AND(tDispatch.Postal.EQ(jet.String(*req.Postal)))
 	}
 
 	countStmt := tDispatch.

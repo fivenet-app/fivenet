@@ -2472,6 +2472,10 @@ func (m *ListDispatchesRequest) validate(all bool) error {
 
 	}
 
+	if m.Postal != nil {
+		// no validation rules for Postal
+	}
+
 	if len(errors) > 0 {
 		return ListDispatchesRequestMultiError(errors)
 	}

@@ -71,11 +71,14 @@ const open = ref(false);
                 </span>
             </template>
             <template v-else>
-                {{ $t('common.none_selected', [$t('common.attributes', 2)]) }}
+                {{ $t('common.none', [$t('common.attributes', 2)]) }}
             </template>
         </td>
         <td class="whitespace-nowrap py-2 pl-4 pr-3 text-sm font-medium text-neutral sm:pl-1">
             <ColorInput v-model="color" disabled format="hex" class="h-6" />
+        </td>
+        <td class="whitespace-nowrap py-2 pl-4 pr-3 text-sm font-medium text-neutral sm:pl-1">
+            {{ unit.homePostal ?? $t('common.na') }}
         </td>
         <td class="whitespace-nowrap py-2 pl-3 pr-4 text-right text-sm font-medium sm:pr-0">
             <div class="flex flex-row justify-end">
