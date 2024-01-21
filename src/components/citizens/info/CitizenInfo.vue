@@ -96,29 +96,29 @@ function addToClipboard(): void {
         />
         <DataNoDataBlock v-else-if="user === null" />
 
-        <div v-else>
+        <template v-else>
             <ClipboardButton />
-            <div class="py-2 pb-14">
-                <div class="flex flex-row items-center gap-3">
-                    <h3 class="inline-flex text-xl font-bold text-neutral sm:text-4xl lg:px-4">
-                        {{ user?.firstname }}, {{ user?.lastname }}
-                    </h3>
-                    <span
-                        class="inline-flex items-center rounded-full bg-base-100 px-2.5 py-0.5 text-sm font-medium text-base-800"
-                    >
-                        {{ user.jobLabel }}
-                        <span v-if="user.jobGrade > 0">&nbsp;({{ $t('common.rank') }}: {{ user.jobGradeLabel }})</span>
-                    </span>
-                    <span
-                        v-if="user.props?.wanted"
-                        class="inline-flex items-center rounded-full bg-error-100 px-2.5 py-0.5 text-sm font-medium text-error-700"
-                    >
-                        {{ $t('common.wanted').toUpperCase() }}
-                    </span>
+            <div class="mb-14">
+                <div class="px-4">
+                    <h1 class="flex text-4xl font-bold text-neutral">{{ user?.firstname }}, {{ user?.lastname }}</h1>
+                    <div class="my-2 flex flex-row items-center gap-2">
+                        <span
+                            class="inline-flex items-center rounded-full bg-base-100 px-2.5 py-0.5 text-sm font-medium text-base-800"
+                        >
+                            {{ user.jobLabel }}
+                            <span v-if="user.jobGrade > 0">&nbsp;({{ $t('common.rank') }}: {{ user.jobGradeLabel }})</span>
+                        </span>
+                        <span
+                            v-if="user.props?.wanted"
+                            class="inline-flex items-center rounded-full bg-error-100 px-2.5 py-0.5 text-sm font-medium text-error-700"
+                        >
+                            {{ $t('common.wanted').toUpperCase() }}
+                        </span>
+                    </div>
                 </div>
 
                 <TabGroup>
-                    <TabList class="flex flex-row border-b border-base-200">
+                    <TabList class="flex flex-row border-b-2 border-neutral/20">
                         <Tab
                             v-for="tab in tabs.filter((tab) => can(tab.permission))"
                             :key="tab.name"
@@ -129,7 +129,7 @@ function addToClipboard(): void {
                                 :class="[
                                     selected
                                         ? 'border-primary-400 text-primary-500'
-                                        : 'border-transparent text-base-500 hover:border-base-300 hover:text-base-300',
+                                        : 'border-transparent text-base-200 hover:border-base-300 hover:text-base-300',
                                     'group inline-flex w-full items-center justify-center border-b-2 px-1 py-4 text-sm font-medium transition-colors',
                                 ]"
                                 :aria-current="selected ? 'page' : undefined"
@@ -137,7 +137,7 @@ function addToClipboard(): void {
                                 <component
                                     :is="tab.icon"
                                     :class="[
-                                        selected ? 'text-primary-400' : 'text-base-500 group-hover:text-base-300',
+                                        selected ? 'text-primary-400' : 'text-base-200 group-hover:text-base-300',
                                         '-ml-0.5 mr-2 h-5 w-5',
                                     ]"
                                     aria-hidden="true"
@@ -148,7 +148,7 @@ function addToClipboard(): void {
                             </button>
                         </Tab>
                     </TabList>
-                    <TabPanels>
+                    <TabPanels class="bg-transparent">
                         <TabPanel>
                             <CitizenProfile
                                 :user="user"
@@ -174,7 +174,7 @@ function addToClipboard(): void {
                     </TabPanels>
                 </TabGroup>
             </div>
-        </div>
+        </template>
     </div>
 
     <AddToButton :callback="addToClipboard" :title="$t('components.clipboard.clipboard_button.add')" />

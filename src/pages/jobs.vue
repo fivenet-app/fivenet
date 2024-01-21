@@ -88,6 +88,7 @@ const open = ref(false);
                 </div>
             </div>
         </nav>
+
         <main>
             <div class="mx-auto max-w-8xl py-6 sm:px-6 lg:px-8">
                 <NuxtLayout name="blank">
