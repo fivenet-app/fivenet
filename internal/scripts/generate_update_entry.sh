@@ -5,7 +5,7 @@ cd "$SCRIPT_DIR" || { echo "Failed to enter script directory."; exit 1; }
 
 cd ../../ || { echo "Failed to enter root directory."; exit 1; }
 
-OLD_VERSION="$(git describe --abbrev=0 --tags --exclude='fivenet-*' "$(git rev-list --tags --skip=1 --max-count=1 --exclude='fivenet-*')")"
+OLD_VERSION="${OLD_VERSION:-$(git describe --abbrev=0 --tags --exclude='fivenet-*' "$(git rev-list --tags --skip=1 --max-count=1 --exclude='fivenet-*')")}"
 VERSION="${VERSION:-$(cat VERSION)}"
 
 COMMITS="$(git --no-pager log "${OLD_VERSION}".."${VERSION}" --pretty=format:'* %s' | sort | uniq)"
