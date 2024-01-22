@@ -28,6 +28,7 @@ func (s *Server) ListTimeclock(ctx context.Context, req *ListTimeclockRequest) (
 	userInfo := auth.MustGetUserInfoFromContext(ctx)
 
 	condition := jet.AND(tTimeClock.Job.EQ(jet.String(userInfo.Job)))
+	statsCondition := jet.AND(tTimeClock.Job.EQ(jet.String(userInfo.Job)))
 
 	// Field Permission Check
 	fieldsAttr, err := s.p.Attr(userInfo, permsjobs.JobsServicePerm, perms.Name(permsjobs.JobsTimeclockServicePerm), permsjobs.JobsTimeclockServiceListTimeclockAccessPermField)
@@ -50,6 +51,9 @@ func (s *Server) ListTimeclock(ctx context.Context, req *ListTimeclockRequest) (
 		}
 
 		condition = condition.AND(
+			tTimeClock.UserID.IN(ids...),
+		)
+		statsCondition = statsCondition.AND(
 			tTimeClock.UserID.IN(ids...),
 		)
 	}
@@ -80,7 +84,7 @@ func (s *Server) ListTimeclock(ctx context.Context, req *ListTimeclockRequest) (
 		Pagination: pag,
 	}
 
-	resp.Stats, err = s.getTimeclockStats(ctx, condition)
+	resp.Stats, err = s.getTimeclockStats(ctx, statsCondition)
 	if err != nil {
 		return nil, errswrap.NewError(errorsjobs.ErrFailedQuery, err)
 	}
