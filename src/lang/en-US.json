@@ -460,6 +460,9 @@
                 }
             },
             "timeclock": {
+                "List": {
+                    "per_day": "Per Day"
+                },
                 "StatsBlock": {
                     "7_days": "Last 7 days",
                     "weekly": "Weekly Summary",
@@ -467,8 +470,12 @@
                     "avg": "Average on duty time",
                     "max": "Longest on duty time"
                 },
-                "List": {
-                    "per_day": "Per Day"
+                "Stats": {
+                    "7_days": "Last 7 days",
+                    "weekly": "Weekly Summary",
+                    "sum": "Total on duty time",
+                    "avg": "Average on duty time",
+                    "max": "Longest on duty time"
                 }
             }
         },
