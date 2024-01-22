@@ -1,6 +1,7 @@
 <script lang="ts" setup>
 import { RpcError } from '@protobuf-ts/runtime-rpc';
 import TimeclockStatsBlock from '~/components/jobs/timeclock/TimeclockStatsBlock.vue';
+import GenericContainer from '~/components/partials/elements/GenericContainer.vue';
 import GenericDivider from '~/components/partials/elements/GenericDivider.vue';
 import { useAuthStore } from '~/store/auth';
 import { TimeclockStats } from '~~/gen/ts/resources/jobs/timeclock';
@@ -42,28 +43,19 @@ async function getTimeclockStats(): Promise<TimeclockStats> {
                 <div class="grid-col-2 grid gap-2">
                     <div class="sm:flex-auto">
                         <div class="flex flex-row gap-2">
-                            <div class="flex-1 overflow-hidden rounded-lg bg-base-700 shadow">
-                                <div class="px-4 py-5 sm:p-6">
-                                    <h1 class="text-2xl font-semibold leading-6 text-neutral">
-                                        {{ activeChar?.jobLabel }}
-                                    </h1>
-                                    <h2 class="text-xl font-semibold leading-6 text-neutral">
-                                        {{ $t('common.rank') }}: {{ activeChar?.jobGradeLabel }}
-                                    </h2>
-                                </div>
-                            </div>
+                            <GenericContainer class="flex-1">
+                                <h1 class="text-3xl font-semibold leading-6 text-neutral">
+                                    {{ activeChar?.jobLabel }}
+                                </h1>
+                                <h2 class="mt-2 text-xl font-semibold leading-6 text-neutral">
+                                    {{ $t('common.rank') }}: {{ activeChar?.jobGradeLabel }}
+                                </h2>
+                            </GenericContainer>
 
-                            <div
-                                v-if="jobProps?.radioFrequency"
-                                class="overflow-hidden rounded-lg bg-base-700 text-neutral shadow"
-                            >
-                                <div class="px-4 py-5 sm:p-6">
-                                    <h3 class="text-xl">{{ $t('common.radio_frequency') }}</h3>
-                                    <p class="text-base font-semibold">
-                                        {{ jobProps?.radioFrequency }}
-                                    </p>
-                                </div>
-                            </div>
+                            <GenericContainer v-if="jobProps?.radioFrequency" class="text-neutral">
+                                <h3 class="text-lg font-semibold">{{ $t('common.radio_frequency') }}</h3>
+                                <p class="text-center text-lg font-bold">{{ jobProps?.radioFrequency }}.00</p>
+                            </GenericContainer>
                         </div>
 
                         <GenericDivider :label="$t('components.jobs.timeclock.Stats.title')" />
