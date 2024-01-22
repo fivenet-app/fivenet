@@ -595,28 +595,31 @@ async function checkup(): Promise<void> {
                 <!-- "Take Dispatches" Button -->
                 <template v-if="getOwnUnit !== undefined">
                     <span class="fixed bottom-2 right-1/2 z-30 inline-flex">
-                        <span v-if="pendingDispatches.length > 0" class="absolute right-0 top-0 -mr-1 -mt-1 flex h-3 w-3">
-                            <span
-                                class="absolute inline-flex h-full w-full animate-ping rounded-full bg-error-400 opacity-75"
-                            ></span>
-                            <span class="relative inline-flex h-3 w-3 rounded-full bg-error-500"></span>
+                        <span>
+                            <span v-if="pendingDispatches.length > 0" class="absolute left-0 top-0 -mr-1 -mt-1 flex h-3 w-3">
+                                <span
+                                    class="absolute inline-flex h-full w-full animate-ping rounded-full bg-error-400 opacity-75"
+                                ></span>
+                                <span class="relative inline-flex h-3 w-3 rounded-full bg-error-500"></span>
+                            </span>
+                            <button
+                                type="button"
+                                class="flex h-12 w-12 items-center justify-center bg-primary-500 text-neutral hover:bg-primary-400"
+                                :class="getOwnUnit.homePostal !== undefined ? 'rounded-l-full' : 'rounded-full'"
+                                @click="openTakeDispatch = true"
+                            >
+                                <CarEmergencyIcon class="h-auto w-10" />
+                            </button>
                         </span>
                         <button
+                            v-if="getOwnUnit.homePostal !== undefined"
                             type="button"
-                            class="flex h-12 w-12 items-center justify-center rounded-full bg-primary-500 text-neutral shadow-float hover:bg-primary-400"
-                            @click="openTakeDispatch = true"
+                            class="flex h-12 w-12 items-center justify-center rounded-r-full bg-primary-500 text-neutral hover:bg-primary-400"
+                            @click="$emit('goto', { x: getOwnUnit.homePostalX ?? 0, y: getOwnUnit.homePostalY ?? 0 })"
                         >
-                            <CarEmergencyIcon class="h-auto w-10" />
+                            <HomeFloorBIcon class="h-auto w-10" />
                         </button>
                     </span>
-                    <button
-                        v-if="getOwnUnit.homePostal"
-                        type="button"
-                        class="flex h-12 w-12 items-center justify-center rounded-full bg-primary-500 text-neutral shadow-float hover:bg-primary-400"
-                        @click="$emit('goto', { x: 0, y: 0 })"
-                    >
-                        <HomeFloorBIcon class="h-auto w-10" />
-                    </button>
                 </template>
             </div>
         </template>

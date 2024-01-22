@@ -34,6 +34,8 @@ message Unit {
   repeated UnitAssignment users = 11;
   optional Attributes attributes = 12;
   optional string home_postal = 13 [(validate.rules).string.max_len = 48];
+  optional double home_postal_x = 14;
+  optional double home_postal_y = 15;
 }
 
 message UnitAssignments {

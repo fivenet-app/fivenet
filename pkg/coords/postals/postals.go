@@ -14,6 +14,8 @@ var json = jsoniter.ConfigCompatibleWithStandardLibrary
 
 type Postals = *coords.Coords[*Postal]
 
+var postalCodesMap = map[string]*Postal{}
+
 func New(cfg *config.Config) (Postals, error) {
 	file, err := os.Open(cfg.Game.Livemap.PostalsFile)
 	if err != nil {
@@ -33,7 +35,16 @@ func New(cfg *config.Config) (Postals, error) {
 		if err := cs.Add(codes[k]); err != nil {
 			return nil, fmt.Errorf("failed to add postal to postals map: %w", err)
 		}
+
+		if codes[k].Code != nil {
+			postalCodesMap[*codes[k].Code] = codes[k]
+		}
 	}
 
 	return cs, nil
+}
+
+func ByCode(code string) (*Postal, bool) {
+	postalCode, ok := postalCodesMap[code]
+	return postalCode, ok
 }
