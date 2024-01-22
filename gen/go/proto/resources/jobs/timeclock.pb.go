@@ -123,10 +123,10 @@ type TimeclockStats struct {
 	sizeCache     protoimpl.SizeCache
 	unknownFields protoimpl.UnknownFields
 
-	Job          string  `protobuf:"bytes,1,opt,name=job,proto3" json:"job,omitempty" alias:"spent_time_sum"`                                           // @gotags: alias:"spent_time_sum"
-	SpentTimeSum float32 `protobuf:"fixed32,2,opt,name=spent_time_sum,json=spentTimeSum,proto3" json:"spent_time_sum,omitempty" alias:"spent_time_sum"` // @gotags: alias:"spent_time_sum"
-	SpentTimeAvg float32 `protobuf:"fixed32,3,opt,name=spent_time_avg,json=spentTimeAvg,proto3" json:"spent_time_avg,omitempty" alias:"spent_time_avg"` // @gotags: alias:"spent_time_avg"
-	SpentTimeMax float32 `protobuf:"fixed32,4,opt,name=spent_time_max,json=spentTimeMax,proto3" json:"spent_time_max,omitempty" alias:"spent_time_max"` // @gotags: alias:"spent_time_max"
+	Job          string  `protobuf:"bytes,1,opt,name=job,proto3" json:"job,omitempty"`
+	SpentTimeSum float32 `protobuf:"fixed32,2,opt,name=spent_time_sum,json=spentTimeSum,proto3" json:"spent_time_sum,omitempty"`
+	SpentTimeAvg float32 `protobuf:"fixed32,3,opt,name=spent_time_avg,json=spentTimeAvg,proto3" json:"spent_time_avg,omitempty"`
+	SpentTimeMax float32 `protobuf:"fixed32,4,opt,name=spent_time_max,json=spentTimeMax,proto3" json:"spent_time_max,omitempty"`
 }
 
 func (x *TimeclockStats) Reset() {
@@ -189,6 +189,77 @@ func (x *TimeclockStats) GetSpentTimeMax() float32 {
 	return 0
 }
 
+type TimeclockWeeklyStats struct {
+	state         protoimpl.MessageState
+	sizeCache     protoimpl.SizeCache
+	unknownFields protoimpl.UnknownFields
+
+	Date string  `protobuf:"bytes,1,opt,name=date,proto3" json:"date,omitempty"`
+	Sum  float32 `protobuf:"fixed32,2,opt,name=sum,proto3" json:"sum,omitempty"`
+	Avg  float32 `protobuf:"fixed32,3,opt,name=avg,proto3" json:"avg,omitempty"`
+	Max  float32 `protobuf:"fixed32,4,opt,name=max,proto3" json:"max,omitempty"`
+}
+
+func (x *TimeclockWeeklyStats) Reset() {
+	*x = TimeclockWeeklyStats{}
+	if protoimpl.UnsafeEnabled {
+		mi := &file_resources_jobs_timeclock_proto_msgTypes[2]
+		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
+		ms.StoreMessageInfo(mi)
+	}
+}
+
+func (x *TimeclockWeeklyStats) String() string {
+	return protoimpl.X.MessageStringOf(x)
+}
+
+func (*TimeclockWeeklyStats) ProtoMessage() {}
+
+func (x *TimeclockWeeklyStats) ProtoReflect() protoreflect.Message {
+	mi := &file_resources_jobs_timeclock_proto_msgTypes[2]
+	if protoimpl.UnsafeEnabled && x != nil {
+		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
+		if ms.LoadMessageInfo() == nil {
+			ms.StoreMessageInfo(mi)
+		}
+		return ms
+	}
+	return mi.MessageOf(x)
+}
+
+// Deprecated: Use TimeclockWeeklyStats.ProtoReflect.Descriptor instead.
+func (*TimeclockWeeklyStats) Descriptor() ([]byte, []int) {
+	return file_resources_jobs_timeclock_proto_rawDescGZIP(), []int{2}
+}
+
+func (x *TimeclockWeeklyStats) GetDate() string {
+	if x != nil {
+		return x.Date
+	}
+	return ""
+}
+
+func (x *TimeclockWeeklyStats) GetSum() float32 {
+	if x != nil {
+		return x.Sum
+	}
+	return 0
+}
+
+func (x *TimeclockWeeklyStats) GetAvg() float32 {
+	if x != nil {
+		return x.Avg
+	}
+	return 0
+}
+
+func (x *TimeclockWeeklyStats) GetMax() float32 {
+	if x != nil {
+		return x.Max
+	}
+	return 0
+}
+
 var File_resources_jobs_timeclock_proto protoreflect.FileDescriptor
 
 var file_resources_jobs_timeclock_proto_rawDesc = []byte{
@@ -234,11 +305,17 @@ var file_resources_jobs_timeclock_proto_rawDesc = []byte{
 	0x0c, 0x73, 0x70, 0x65, 0x6e, 0x74, 0x54, 0x69, 0x6d, 0x65, 0x41, 0x76, 0x67, 0x12, 0x24, 0x0a,
 	0x0e, 0x73, 0x70, 0x65, 0x6e, 0x74, 0x5f, 0x74, 0x69, 0x6d, 0x65, 0x5f, 0x6d, 0x61, 0x78, 0x18,
 	0x04, 0x20, 0x01, 0x28, 0x02, 0x52, 0x0c, 0x73, 0x70, 0x65, 0x6e, 0x74, 0x54, 0x69, 0x6d, 0x65,
-	0x4d, 0x61, 0x78, 0x42, 0x3d, 0x5a, 0x3b, 0x67, 0x69, 0x74, 0x68, 0x75, 0x62, 0x2e, 0x63, 0x6f,
-	0x6d, 0x2f, 0x67, 0x61, 0x6c, 0x65, 0x78, 0x72, 0x74, 0x2f, 0x66, 0x69, 0x76, 0x65, 0x6e, 0x65,
-	0x74, 0x2f, 0x67, 0x65, 0x6e, 0x2f, 0x67, 0x6f, 0x2f, 0x70, 0x72, 0x6f, 0x74, 0x6f, 0x2f, 0x72,
-	0x65, 0x73, 0x6f, 0x75, 0x72, 0x63, 0x65, 0x73, 0x2f, 0x6a, 0x6f, 0x62, 0x73, 0x3b, 0x6a, 0x6f,
-	0x62, 0x73, 0x62, 0x06, 0x70, 0x72, 0x6f, 0x74, 0x6f, 0x33,
+	0x4d, 0x61, 0x78, 0x22, 0x60, 0x0a, 0x14, 0x54, 0x69, 0x6d, 0x65, 0x63, 0x6c, 0x6f, 0x63, 0x6b,
+	0x57, 0x65, 0x65, 0x6b, 0x6c, 0x79, 0x53, 0x74, 0x61, 0x74, 0x73, 0x12, 0x12, 0x0a, 0x04, 0x64,
+	0x61, 0x74, 0x65, 0x18, 0x01, 0x20, 0x01, 0x28, 0x09, 0x52, 0x04, 0x64, 0x61, 0x74, 0x65, 0x12,
+	0x10, 0x0a, 0x03, 0x73, 0x75, 0x6d, 0x18, 0x02, 0x20, 0x01, 0x28, 0x02, 0x52, 0x03, 0x73, 0x75,
+	0x6d, 0x12, 0x10, 0x0a, 0x03, 0x61, 0x76, 0x67, 0x18, 0x03, 0x20, 0x01, 0x28, 0x02, 0x52, 0x03,
+	0x61, 0x76, 0x67, 0x12, 0x10, 0x0a, 0x03, 0x6d, 0x61, 0x78, 0x18, 0x04, 0x20, 0x01, 0x28, 0x02,
+	0x52, 0x03, 0x6d, 0x61, 0x78, 0x42, 0x3d, 0x5a, 0x3b, 0x67, 0x69, 0x74, 0x68, 0x75, 0x62, 0x2e,
+	0x63, 0x6f, 0x6d, 0x2f, 0x67, 0x61, 0x6c, 0x65, 0x78, 0x72, 0x74, 0x2f, 0x66, 0x69, 0x76, 0x65,
+	0x6e, 0x65, 0x74, 0x2f, 0x67, 0x65, 0x6e, 0x2f, 0x67, 0x6f, 0x2f, 0x70, 0x72, 0x6f, 0x74, 0x6f,
+	0x2f, 0x72, 0x65, 0x73, 0x6f, 0x75, 0x72, 0x63, 0x65, 0x73, 0x2f, 0x6a, 0x6f, 0x62, 0x73, 0x3b,
+	0x6a, 0x6f, 0x62, 0x73, 0x62, 0x06, 0x70, 0x72, 0x6f, 0x74, 0x6f, 0x33,
 }
 
 var (
@@ -253,18 +330,19 @@ func file_resources_jobs_timeclock_proto_rawDescGZIP() []byte {
 	return file_resources_jobs_timeclock_proto_rawDescData
 }
 
-var file_resources_jobs_timeclock_proto_msgTypes = make([]protoimpl.MessageInfo, 2)
+var file_resources_jobs_timeclock_proto_msgTypes = make([]protoimpl.MessageInfo, 3)
 var file_resources_jobs_timeclock_proto_goTypes = []interface{}{
-	(*TimeclockEntry)(nil),      // 0: resources.jobs.TimeclockEntry
-	(*TimeclockStats)(nil),      // 1: resources.jobs.TimeclockStats
-	(*timestamp.Timestamp)(nil), // 2: resources.timestamp.Timestamp
-	(*users.UserShort)(nil),     // 3: resources.users.UserShort
+	(*TimeclockEntry)(nil),       // 0: resources.jobs.TimeclockEntry
+	(*TimeclockStats)(nil),       // 1: resources.jobs.TimeclockStats
+	(*TimeclockWeeklyStats)(nil), // 2: resources.jobs.TimeclockWeeklyStats
+	(*timestamp.Timestamp)(nil),  // 3: resources.timestamp.Timestamp
+	(*users.UserShort)(nil),      // 4: resources.users.UserShort
 }
 var file_resources_jobs_timeclock_proto_depIdxs = []int32{
-	2, // 0: resources.jobs.TimeclockEntry.date:type_name -> resources.timestamp.Timestamp
-	3, // 1: resources.jobs.TimeclockEntry.user:type_name -> resources.users.UserShort
-	2, // 2: resources.jobs.TimeclockEntry.start_time:type_name -> resources.timestamp.Timestamp
-	2, // 3: resources.jobs.TimeclockEntry.end_time:type_name -> resources.timestamp.Timestamp
+	3, // 0: resources.jobs.TimeclockEntry.date:type_name -> resources.timestamp.Timestamp
+	4, // 1: resources.jobs.TimeclockEntry.user:type_name -> resources.users.UserShort
+	3, // 2: resources.jobs.TimeclockEntry.start_time:type_name -> resources.timestamp.Timestamp
+	3, // 3: resources.jobs.TimeclockEntry.end_time:type_name -> resources.timestamp.Timestamp
 	4, // [4:4] is the sub-list for method output_type
 	4, // [4:4] is the sub-list for method input_type
 	4, // [4:4] is the sub-list for extension type_name
@@ -302,6 +380,18 @@ func file_resources_jobs_timeclock_proto_init() {
 				return nil
 			}
 		}
+		file_resources_jobs_timeclock_proto_msgTypes[2].Exporter = func(v interface{}, i int) interface{} {
+			switch v := v.(*TimeclockWeeklyStats); i {
+			case 0:
+				return &v.state
+			case 1:
+				return &v.sizeCache
+			case 2:
+				return &v.unknownFields
+			default:
+				return nil
+			}
+		}
 	}
 	file_resources_jobs_timeclock_proto_msgTypes[0].OneofWrappers = []interface{}{}
 	type x struct{}
@@ -310,7 +400,7 @@ func file_resources_jobs_timeclock_proto_init() {
 			GoPackagePath: reflect.TypeOf(x{}).PkgPath(),
 			RawDescriptor: file_resources_jobs_timeclock_proto_rawDesc,
 			NumEnums:      0,
-			NumMessages:   2,
+			NumMessages:   3,
 			NumExtensions: 0,
 			NumServices:   0,
 		},

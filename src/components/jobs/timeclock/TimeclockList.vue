@@ -414,10 +414,9 @@ function updateDates(): void {
                 </div>
             </div>
             <div v-if="data && data.stats" class="mb-4 flow-root">
-                <div class="sm:flex sm:items-center">
+                <div class="mt-2 sm:flex sm:items-center">
                     <div class="sm:flex-auto">
-                        <GenericDivider :label="$t('components.jobs.timeclock.Stats.title')" />
-                        <TimeclockStatsBlock :stats="data.stats" />
+                        <TimeclockStatsBlock :stats="data.stats" :weekly="data.weekly" :hide-header="true" />
                     </div>
                 </div>
             </div>

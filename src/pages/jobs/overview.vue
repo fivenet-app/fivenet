@@ -5,7 +5,7 @@ import TimeclockStatsBlock from '~/components/jobs/timeclock/TimeclockStatsBlock
 import GenericContainer from '~/components/partials/elements/GenericContainer.vue';
 import GenericDivider from '~/components/partials/elements/GenericDivider.vue';
 import { useAuthStore } from '~/store/auth';
-import { TimeclockStats } from '~~/gen/ts/resources/jobs/timeclock';
+import type { GetTimeclockStatsResponse } from '~~/gen/ts/services/jobs/timeclock';
 
 useHead({
     title: 'pages.jobs.overview.title',
@@ -24,12 +24,12 @@ const { activeChar, jobProps } = storeToRefs(authStore);
 
 const { data: timeclockStats } = useLazyAsyncData(`jobs-timeclock-stats`, () => getTimeclockStats());
 
-async function getTimeclockStats(): Promise<TimeclockStats> {
+async function getTimeclockStats(): Promise<GetTimeclockStatsResponse> {
     try {
         const call = $grpc.getJobsTimeclockClient().getTimeclockStats({});
         const { response } = await call;
 
-        return response.stats!;
+        return response;
     } catch (e) {
         $grpc.handleError(e as RpcError);
         throw e;
@@ -72,8 +72,7 @@ async function getTimeclockStats(): Promise<TimeclockStats> {
                             </GenericContainer>
                         </div>
 
-                        <GenericDivider :label="$t('components.jobs.timeclock.Stats.title')" />
-                        <TimeclockStatsBlock :stats="timeclockStats" />
+                        <TimeclockStatsBlock class="mt-4" :stats="timeclockStats?.stats" :weekly="timeclockStats?.weekly" />
                     </div>
                 </div>
             </div>

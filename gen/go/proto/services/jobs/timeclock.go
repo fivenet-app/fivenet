@@ -22,11 +22,12 @@ var (
 	tTimeClock = table.FivenetJobsTimeclock.AS("timeclock_entry")
 )
 
+const TimeclockStatsSpan = 7 * 24 * time.Hour
+
 func (s *Server) ListTimeclock(ctx context.Context, req *ListTimeclockRequest) (*ListTimeclockResponse, error) {
 	userInfo := auth.MustGetUserInfoFromContext(ctx)
 
-	condition := jet.Bool(true)
-	condition = condition.AND(tTimeClock.Job.EQ(jet.String(userInfo.Job)))
+	condition := jet.AND(tTimeClock.Job.EQ(jet.String(userInfo.Job)))
 
 	// Field Permission Check
 	fieldsAttr, err := s.p.Attr(userInfo, permsjobs.JobsServicePerm, perms.Name(permsjobs.JobsTimeclockServicePerm), permsjobs.JobsTimeclockServiceListTimeclockAccessPermField)
@@ -79,7 +80,12 @@ func (s *Server) ListTimeclock(ctx context.Context, req *ListTimeclockRequest) (
 		Pagination: pag,
 	}
 
-	resp.Stats, err = s.getTimeclockstats(ctx, condition)
+	resp.Stats, err = s.getTimeclockStats(ctx, condition)
+	if err != nil {
+		return nil, errswrap.NewError(errorsjobs.ErrFailedQuery, err)
+	}
+
+	resp.Weekly, err = s.getTimeclockWeeklyStats(ctx, jet.AND(tTimeClock.Job.EQ(jet.String(userInfo.Job))))
 	if err != nil {
 		return nil, errswrap.NewError(errorsjobs.ErrFailedQuery, err)
 	}
@@ -136,20 +142,24 @@ func (s *Server) ListTimeclock(ctx context.Context, req *ListTimeclockRequest) (
 	return resp, nil
 }
 
-const TimeclockStatsSpan = 7 * 24 * time.Hour
-
 func (s *Server) GetTimeclockStats(ctx context.Context, req *GetTimeclockStatsRequest) (*GetTimeclockStatsResponse, error) {
 	userInfo := auth.MustGetUserInfoFromContext(ctx)
 
 	condition := tTimeClock.Job.EQ(jet.String(userInfo.Job)).
 		AND(tTimeClock.UserID.EQ(jet.Int32(userInfo.UserId)))
 
-	stats, err := s.getTimeclockstats(ctx, condition)
+	stats, err := s.getTimeclockStats(ctx, condition)
+	if err != nil {
+		return nil, errswrap.NewError(errorsjobs.ErrFailedQuery, err)
+	}
+
+	weekly, err := s.getTimeclockWeeklyStats(ctx, condition)
 	if err != nil {
 		return nil, errswrap.NewError(errorsjobs.ErrFailedQuery, err)
 	}
 
 	return &GetTimeclockStatsResponse{
-		Stats: stats,
+		Stats:  stats,
+		Weekly: weekly,
 	}, nil
 }

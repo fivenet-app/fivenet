@@ -24,12 +24,14 @@ message ListTimeclockResponse {
   resources.common.database.PaginationResponse pagination = 1;
   repeated resources.jobs.TimeclockEntry entries = 2;
   resources.jobs.TimeclockStats stats = 3;
+  repeated resources.jobs.TimeclockWeeklyStats weekly = 4;
 }
 
 message GetTimeclockStatsRequest {}
 
 message GetTimeclockStatsResponse {
   resources.jobs.TimeclockStats stats = 1;
+  repeated resources.jobs.TimeclockWeeklyStats weekly = 2;
 }
 
 service JobsTimeclockService {

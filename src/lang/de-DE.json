@@ -461,7 +461,8 @@
             },
             "timeclock": {
                 "Stats": {
-                    "title": "Statistik: Letzten 7 Tage",
+                    "7_days": "Letzten 7 Tage",
+                    "weekly": "Wöchentliche Zusammenfassung",
                     "sum": "Gesamte Dienstzeit",
                     "avg": "Durchschnittliche Dienstzeit",
                     "max": "Längste Dienstzeit"

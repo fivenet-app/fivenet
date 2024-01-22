@@ -19,8 +19,15 @@ message TimeclockEntry {
 }
 
 message TimeclockStats {
-  string job = 1 [(validate.rules).string.max_len = 20]; // @gotags: alias:"spent_time_sum"
-  float spent_time_sum = 2; // @gotags: alias:"spent_time_sum"
-  float spent_time_avg = 3; // @gotags: alias:"spent_time_avg"
-  float spent_time_max = 4; // @gotags: alias:"spent_time_max"
+  string job = 1 [(validate.rules).string.max_len = 20];
+  float spent_time_sum = 2;
+  float spent_time_avg = 3;
+  float spent_time_max = 4;
+}
+
+message TimeclockWeeklyStats {
+  string date = 1;
+  float sum = 2;
+  float avg = 3;
+  float max = 4;
 }

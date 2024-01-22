@@ -3,6 +3,7 @@
 // tslint:disable
 import { ServiceType } from "@protobuf-ts/runtime-rpc";
 import { MessageType } from "@protobuf-ts/runtime";
+import { TimeclockWeeklyStats } from "../../resources/jobs/timeclock";
 import { TimeclockStats } from "../../resources/jobs/timeclock";
 import { TimeclockEntry } from "../../resources/jobs/timeclock";
 import { PaginationResponse } from "../../resources/common/database/database";
@@ -53,6 +54,10 @@ export interface ListTimeclockResponse {
      * @generated from protobuf field: resources.jobs.TimeclockStats stats = 3;
      */
     stats?: TimeclockStats;
+    /**
+     * @generated from protobuf field: repeated resources.jobs.TimeclockWeeklyStats weekly = 4;
+     */
+    weekly: TimeclockWeeklyStats[];
 }
 /**
  * @generated from protobuf message services.jobs.GetTimeclockStatsRequest
@@ -67,6 +72,10 @@ export interface GetTimeclockStatsResponse {
      * @generated from protobuf field: resources.jobs.TimeclockStats stats = 1;
      */
     stats?: TimeclockStats;
+    /**
+     * @generated from protobuf field: repeated resources.jobs.TimeclockWeeklyStats weekly = 2;
+     */
+    weekly: TimeclockWeeklyStats[];
 }
 // @generated message type with reflection information, may provide speed optimized methods
 class ListTimeclockRequest$Type extends MessageType<ListTimeclockRequest> {
@@ -90,7 +99,8 @@ class ListTimeclockResponse$Type extends MessageType<ListTimeclockResponse> {
         super("services.jobs.ListTimeclockResponse", [
             { no: 1, name: "pagination", kind: "message", T: () => PaginationResponse },
             { no: 2, name: "entries", kind: "message", repeat: 1 /*RepeatType.PACKED*/, T: () => TimeclockEntry },
-            { no: 3, name: "stats", kind: "message", T: () => TimeclockStats }
+            { no: 3, name: "stats", kind: "message", T: () => TimeclockStats },
+            { no: 4, name: "weekly", kind: "message", repeat: 1 /*RepeatType.PACKED*/, T: () => TimeclockWeeklyStats }
         ]);
     }
 }
@@ -112,7 +122,8 @@ export const GetTimeclockStatsRequest = new GetTimeclockStatsRequest$Type();
 class GetTimeclockStatsResponse$Type extends MessageType<GetTimeclockStatsResponse> {
     constructor() {
         super("services.jobs.GetTimeclockStatsResponse", [
-            { no: 1, name: "stats", kind: "message", T: () => TimeclockStats }
+            { no: 1, name: "stats", kind: "message", T: () => TimeclockStats },
+            { no: 2, name: "weekly", kind: "message", repeat: 1 /*RepeatType.PACKED*/, T: () => TimeclockWeeklyStats }
         ]);
     }
 }

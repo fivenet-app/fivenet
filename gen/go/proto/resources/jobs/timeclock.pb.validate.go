@@ -394,3 +394,113 @@ var _ interface {
 	Cause() error
 	ErrorName() string
 } = TimeclockStatsValidationError{}
+
+// Validate checks the field values on TimeclockWeeklyStats with the rules
+// defined in the proto definition for this message. If any rules are
+// violated, the first error encountered is returned, or nil if there are no violations.
+func (m *TimeclockWeeklyStats) Validate() error {
+	return m.validate(false)
+}
+
+// ValidateAll checks the field values on TimeclockWeeklyStats with the rules
+// defined in the proto definition for this message. If any rules are
+// violated, the result is a list of violation errors wrapped in
+// TimeclockWeeklyStatsMultiError, or nil if none found.
+func (m *TimeclockWeeklyStats) ValidateAll() error {
+	return m.validate(true)
+}
+
+func (m *TimeclockWeeklyStats) validate(all bool) error {
+	if m == nil {
+		return nil
+	}
+
+	var errors []error
+
+	// no validation rules for Date
+
+	// no validation rules for Sum
+
+	// no validation rules for Avg
+
+	// no validation rules for Max
+
+	if len(errors) > 0 {
+		return TimeclockWeeklyStatsMultiError(errors)
+	}
+
+	return nil
+}
+
+// TimeclockWeeklyStatsMultiError is an error wrapping multiple validation
+// errors returned by TimeclockWeeklyStats.ValidateAll() if the designated
+// constraints aren't met.
+type TimeclockWeeklyStatsMultiError []error
+
+// Error returns a concatenation of all the error messages it wraps.
+func (m TimeclockWeeklyStatsMultiError) Error() string {
+	var msgs []string
+	for _, err := range m {
+		msgs = append(msgs, err.Error())
+	}
+	return strings.Join(msgs, "; ")
+}
+
+// AllErrors returns a list of validation violation errors.
+func (m TimeclockWeeklyStatsMultiError) AllErrors() []error { return m }
+
+// TimeclockWeeklyStatsValidationError is the validation error returned by
+// TimeclockWeeklyStats.Validate if the designated constraints aren't met.
+type TimeclockWeeklyStatsValidationError struct {
+	field  string
+	reason string
+	cause  error
+	key    bool
+}
+
+// Field function returns field value.
+func (e TimeclockWeeklyStatsValidationError) Field() string { return e.field }
+
+// Reason function returns reason value.
+func (e TimeclockWeeklyStatsValidationError) Reason() string { return e.reason }
+
+// Cause function returns cause value.
+func (e TimeclockWeeklyStatsValidationError) Cause() error { return e.cause }
+
+// Key function returns key value.
+func (e TimeclockWeeklyStatsValidationError) Key() bool { return e.key }
+
+// ErrorName returns error name.
+func (e TimeclockWeeklyStatsValidationError) ErrorName() string {
+	return "TimeclockWeeklyStatsValidationError"
+}
+
+// Error satisfies the builtin error interface
+func (e TimeclockWeeklyStatsValidationError) Error() string {
+	cause := ""
+	if e.cause != nil {
+		cause = fmt.Sprintf(" | caused by: %v", e.cause)
+	}
+
+	key := ""
+	if e.key {
+		key = "key for "
+	}
+
+	return fmt.Sprintf(
+		"invalid %sTimeclockWeeklyStats.%s: %s%s",
+		key,
+		e.field,
+		e.reason,
+		cause)
+}
+
+var _ error = TimeclockWeeklyStatsValidationError{}
+
+var _ interface {
+	Field() string
+	Reason() string
+	Key() bool
+	Cause() error
+	ErrorName() string
+} = TimeclockWeeklyStatsValidationError{}

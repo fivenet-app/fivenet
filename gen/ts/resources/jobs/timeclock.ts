@@ -44,19 +44,40 @@ export interface TimeclockStats {
     /**
      * @generated from protobuf field: string job = 1;
      */
-    job: string; // @gotags: alias:"spent_time_sum"
+    job: string;
     /**
      * @generated from protobuf field: float spent_time_sum = 2;
      */
-    spentTimeSum: number; // @gotags: alias:"spent_time_sum"
+    spentTimeSum: number;
     /**
      * @generated from protobuf field: float spent_time_avg = 3;
      */
-    spentTimeAvg: number; // @gotags: alias:"spent_time_avg"
+    spentTimeAvg: number;
     /**
      * @generated from protobuf field: float spent_time_max = 4;
      */
-    spentTimeMax: number; // @gotags: alias:"spent_time_max"
+    spentTimeMax: number;
+}
+/**
+ * @generated from protobuf message resources.jobs.TimeclockWeeklyStats
+ */
+export interface TimeclockWeeklyStats {
+    /**
+     * @generated from protobuf field: string date = 1;
+     */
+    date: string;
+    /**
+     * @generated from protobuf field: float sum = 2;
+     */
+    sum: number;
+    /**
+     * @generated from protobuf field: float avg = 3;
+     */
+    avg: number;
+    /**
+     * @generated from protobuf field: float max = 4;
+     */
+    max: number;
 }
 // @generated message type with reflection information, may provide speed optimized methods
 class TimeclockEntry$Type extends MessageType<TimeclockEntry> {
@@ -91,3 +112,18 @@ class TimeclockStats$Type extends MessageType<TimeclockStats> {
  * @generated MessageType for protobuf message resources.jobs.TimeclockStats
  */
 export const TimeclockStats = new TimeclockStats$Type();
+// @generated message type with reflection information, may provide speed optimized methods
+class TimeclockWeeklyStats$Type extends MessageType<TimeclockWeeklyStats> {
+    constructor() {
+        super("resources.jobs.TimeclockWeeklyStats", [
+            { no: 1, name: "date", kind: "scalar", T: 9 /*ScalarType.STRING*/ },
+            { no: 2, name: "sum", kind: "scalar", T: 2 /*ScalarType.FLOAT*/ },
+            { no: 3, name: "avg", kind: "scalar", T: 2 /*ScalarType.FLOAT*/ },
+            { no: 4, name: "max", kind: "scalar", T: 2 /*ScalarType.FLOAT*/ }
+        ]);
+    }
+}
+/**
+ * @generated MessageType for protobuf message resources.jobs.TimeclockWeeklyStats
+ */
+export const TimeclockWeeklyStats = new TimeclockWeeklyStats$Type();

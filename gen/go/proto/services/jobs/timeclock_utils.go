@@ -126,7 +126,7 @@ func (s *Server) endTimeclockEntry(ctx context.Context, userId int32) error {
 	return nil
 }
 
-func (s *Server) getTimeclockstats(ctx context.Context, condition jet.BoolExpression) (*jobs.TimeclockStats, error) {
+func (s *Server) getTimeclockStats(ctx context.Context, condition jet.BoolExpression) (*jobs.TimeclockStats, error) {
 	stmt := tTimeClock.
 		SELECT(
 			tTimeClock.Job.AS("timeclock_stats.job"),
@@ -146,4 +146,32 @@ func (s *Server) getTimeclockstats(ctx context.Context, condition jet.BoolExpres
 	}
 
 	return &dest, nil
+}
+
+func (s *Server) getTimeclockWeeklyStats(ctx context.Context, condition jet.BoolExpression) ([]*jobs.TimeclockWeeklyStats, error) {
+	stmt := tTimeClock.
+		SELECT(
+			jet.RawString("CONCAT(YEAR(timeclock_entry.`date`), ' - ', WEEK(timeclock_entry.`date`)) AS `timeclock_weekly_stats.date`"),
+			jet.SUM(tTimeClock.SpentTime).AS("timeclock_weekly_stats.sum"),
+			jet.AVG(tTimeClock.SpentTime).AS("timeclock_weekly_stats.avg"),
+			jet.MAX(tTimeClock.SpentTime).AS("timeclock_weekly_stats.max"),
+		).
+		FROM(tTimeClock).
+		WHERE(jet.AND(
+			condition,
+			tTimeClock.Date.BETWEEN(jet.CURRENT_DATE().SUB(jet.INTERVAL(90, jet.DAY)), jet.CURRENT_TIMESTAMP()),
+		)).
+		GROUP_BY(
+			jet.RawString("WEEK(timeclock_entry.`date`)"),
+		).
+		LIMIT(25)
+
+	var dest []*jobs.TimeclockWeeklyStats
+	if err := stmt.QueryContext(ctx, s.db, &dest); err != nil {
+		if !errors.Is(err, qrm.ErrNoRows) {
+			return nil, err
+		}
+	}
+
+	return dest, nil
 }

@@ -636,6 +636,10 @@
                   <a href="#resources.jobs.TimeclockStats"><span class="badge">M</span>TimeclockStats</a>
                 </li>
               
+                <li>
+                  <a href="#resources.jobs.TimeclockWeeklyStats"><span class="badge">M</span>TimeclockWeeklyStats</a>
+                </li>
+              
               
               
               
@@ -8101,28 +8105,28 @@
                   <td>job</td>
                   <td><a href="#string">string</a></td>
                   <td></td>
-                  <td><p>@gotags: alias:&#34;spent_time_sum&#34; </p></td>
+                  <td><p> </p></td>
                 </tr>
               
                 <tr>
                   <td>spent_time_sum</td>
                   <td><a href="#float">float</a></td>
                   <td></td>
-                  <td><p>@gotags: alias:&#34;spent_time_sum&#34; </p></td>
+                  <td><p> </p></td>
                 </tr>
               
                 <tr>
                   <td>spent_time_avg</td>
                   <td><a href="#float">float</a></td>
                   <td></td>
-                  <td><p>@gotags: alias:&#34;spent_time_avg&#34; </p></td>
+                  <td><p> </p></td>
                 </tr>
               
                 <tr>
                   <td>spent_time_max</td>
                   <td><a href="#float">float</a></td>
                   <td></td>
-                  <td><p>@gotags: alias:&#34;spent_time_max&#34; </p></td>
+                  <td><p> </p></td>
                 </tr>
               
             </tbody>
@@ -8155,6 +8159,51 @@
               </tbody>
             </table>
             
+          
+
+        
+      
+        <h3 id="resources.jobs.TimeclockWeeklyStats">TimeclockWeeklyStats</h3>
+        <p></p>
+
+        
+          <table class="field-table">
+            <thead>
+              <tr><td>Field</td><td>Type</td><td>Label</td><td>Description</td></tr>
+            </thead>
+            <tbody>
+              
+                <tr>
+                  <td>date</td>
+                  <td><a href="#string">string</a></td>
+                  <td></td>
+                  <td><p> </p></td>
+                </tr>
+              
+                <tr>
+                  <td>sum</td>
+                  <td><a href="#float">float</a></td>
+                  <td></td>
+                  <td><p> </p></td>
+                </tr>
+              
+                <tr>
+                  <td>avg</td>
+                  <td><a href="#float">float</a></td>
+                  <td></td>
+                  <td><p> </p></td>
+                </tr>
+              
+                <tr>
+                  <td>max</td>
+                  <td><a href="#float">float</a></td>
+                  <td></td>
+                  <td><p> </p></td>
+                </tr>
+              
+            </tbody>
+          </table>
+
           
 
         
@@ -19151,6 +19200,13 @@
                   <td><p> </p></td>
                 </tr>
               
+                <tr>
+                  <td>weekly</td>
+                  <td><a href="#resources.jobs.TimeclockWeeklyStats">resources.jobs.TimeclockWeeklyStats</a></td>
+                  <td>repeated</td>
+                  <td><p> </p></td>
+                </tr>
+              
             </tbody>
           </table>
 
@@ -19265,6 +19321,13 @@
                   <td>stats</td>
                   <td><a href="#resources.jobs.TimeclockStats">resources.jobs.TimeclockStats</a></td>
                   <td></td>
+                  <td><p> </p></td>
+                </tr>
+              
+                <tr>
+                  <td>weekly</td>
+                  <td><a href="#resources.jobs.TimeclockWeeklyStats">resources.jobs.TimeclockWeeklyStats</a></td>
+                  <td>repeated</td>
                   <td><p> </p></td>
                 </tr>
               
