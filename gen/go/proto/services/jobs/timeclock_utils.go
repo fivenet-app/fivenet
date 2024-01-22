@@ -159,12 +159,14 @@ func (s *Server) getTimeclockWeeklyStats(ctx context.Context, condition jet.Bool
 		FROM(tTimeClock).
 		WHERE(jet.AND(
 			condition,
-			tTimeClock.Date.BETWEEN(jet.CURRENT_DATE().SUB(jet.INTERVAL(90, jet.DAY)), jet.CURRENT_TIMESTAMP()),
 		)).
 		GROUP_BY(
 			jet.RawString("WEEK(timeclock_entry.`date`)"),
 		).
-		LIMIT(25)
+		ORDER_BY(
+			jet.RawString("`timeclock_weekly_stats.date` DESC"),
+		).
+		LIMIT(12)
 
 	var dest []*jobs.TimeclockWeeklyStats
 	if err := stmt.QueryContext(ctx, s.db, &dest); err != nil {

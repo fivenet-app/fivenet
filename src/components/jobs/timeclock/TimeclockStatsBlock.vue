@@ -37,8 +37,6 @@ watch(props, async () => updateStats());
 
 onBeforeMount(async () => updateStats());
 
-console.log('weekly', props.weekly);
-
 const margin = ref({
     left: 5,
     top: 5,
@@ -63,15 +61,15 @@ const axis = ref<ChartAxis>({
 <template>
     <div class="mx-auto max-w-7xl">
         <GenericContainer>
-            <h2 v-if="!hideHeader" class="text-center text-2xl font-semibold text-neutral">
+            <h2 v-if="!hideHeader" class="text-2xl font-semibold text-neutral">
                 {{ $t('common.timeclock') }}
             </h2>
-            <div class="flex flex-col gap-4 sm:flex-row">
+            <div class="flex flex-col gap-4 lg:flex-row">
                 <div class="flex-0">
-                    <h3 class="mb-2 text-lg font-semibold text-neutral">
+                    <h3 class="mb-2 ml-0.5 text-lg font-bold text-neutral">
                         {{ $t('components.jobs.timeclock.StatsBlock.7_days') }}
                     </h3>
-                    <div class="grid grid-cols-1 gap-2 sm:grid-rows-2 lg:grid-rows-3">
+                    <div class="grid grid-cols-1 gap-2">
                         <GenericContainer v-for="stat in data" :key="stat.name" class="bg-gray-900">
                             <p class="text-sm font-medium leading-6 text-gray-400">{{ $t(stat.name) }}</p>
                             <p class="mt-2 flex w-full items-center gap-x-2 text-2xl font-semibold tracking-tight text-neutral">
@@ -87,14 +85,14 @@ const axis = ref<ChartAxis>({
                 </div>
 
                 <div class="w-full flex-1">
-                    <h3 class="mb-2 text-lg font-semibold text-neutral">
+                    <h3 class="mb-2 text-lg font-bold text-neutral">
                         {{ $t('components.jobs.timeclock.StatsBlock.weekly') }}
                     </h3>
 
-                    <Responsive class="w-full">
+                    <Responsive class="w-ful">
                         <template #main="{ width }">
                             <Chart
-                                :size="{ width, height: 350 }"
+                                :size="{ width: width as number, height: 375 }"
                                 :data="weekly"
                                 :margin="margin"
                                 direction="horizontal"
@@ -103,9 +101,9 @@ const axis = ref<ChartAxis>({
                             >
                                 <template #layers>
                                     <Grid stroke-dasharray="2,2" />
-                                    <Bar :data-keys="['date', 'sum']" :bar-style="{ fill: '#443a8f' }" :gap="8" />
-                                    <Bar :data-keys="['date', 'avg']" :bar-style="{ fill: '#1f236e' }" :gap="8" />
-                                    <Bar :data-keys="['date', 'max']" :bar-style="{ fill: '#8d81f2' }" :gap="8" />
+                                    <Bar :data-keys="['date', 'sum']" :bar-style="{ fill: '#443a8f' }" :gap="12" />
+                                    <Bar :data-keys="['date', 'avg']" :bar-style="{ fill: '#1f236e' }" :gap="12" />
+                                    <Bar :data-keys="['date', 'max']" :bar-style="{ fill: '#8d81f2' }" :gap="12" />
                                 </template>
                                 <template #widgets>
                                     <Tooltip
