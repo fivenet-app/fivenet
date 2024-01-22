@@ -188,6 +188,8 @@ func (g *UserInfo) setUserNickname(member *discordgo.Member, firstname string, l
 		return fmt.Errorf("failed to update user %s (%s) nickname: %w", fullName, member.User.ID, err)
 	}
 
+	g.logger.Debug("update discord nickname", zap.String("dc_nick", member.Nick), zap.String("dc_user_id", member.User.ID))
+
 	return nil
 }
 
