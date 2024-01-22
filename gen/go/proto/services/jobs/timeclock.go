@@ -42,6 +42,7 @@ func (s *Server) ListTimeclock(ctx context.Context, req *ListTimeclockRequest) (
 
 	if len(fields) == 0 || !slices.Contains(fields, "All") {
 		condition = condition.AND(tTimeClock.UserID.EQ(jet.Int32(userInfo.UserId)))
+		statsCondition = statsCondition.AND(tTimeClock.UserID.EQ(jet.Int32(userInfo.UserId)))
 	}
 
 	if len(req.UserIds) > 0 {
