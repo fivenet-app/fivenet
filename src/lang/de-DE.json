@@ -460,15 +460,22 @@
                 }
             },
             "timeclock": {
-                "Stats": {
+                "List": {
+                    "per_day": "Pro Tag"
+                },
+                "StatsBlock": {
                     "7_days": "Letzten 7 Tage",
                     "weekly": "Wöchentliche Zusammenfassung",
                     "sum": "Gesamte Dienstzeit",
                     "avg": "Durchschnittliche Dienstzeit",
                     "max": "Längste Dienstzeit"
                 },
-                "List": {
-                    "per_day": "Pro Tag"
+                "Stats": {
+                    "7_days": "Letzten 7 Tage",
+                    "weekly": "Wöchentliche Zusammenfassung",
+                    "sum": "Gesamte Dienstzeit",
+                    "avg": "Durchschnittliche Dienstzeit",
+                    "max": "Längste Dienstzeit"
                 }
             }
         },
