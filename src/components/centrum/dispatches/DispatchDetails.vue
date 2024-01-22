@@ -358,7 +358,7 @@ const openStatus = ref(false);
 
                                                                 <button
                                                                     type="button"
-                                                                    class="rounded px-2 py-1 text-xs font-semibold text-neutral shadow-sm hover:bg-neutral/20"
+                                                                    class="rounded px-2 py-1 text-sm font-semibold text-neutral shadow-sm hover:bg-neutral/20"
                                                                     :class="dispatchStatusColors"
                                                                     @click="openStatus = true"
                                                                 >
