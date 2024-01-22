@@ -17,7 +17,11 @@ const trainings = ref<Qualification[]>([
 </script>
 
 <template>
-    <ul role="list" class="divide-y divide-gray-100">
-        <QualificationsListEntry v-for="training in trainings" :key="training.id" :qualification="training" />
-    </ul>
+    <div class="py-2 pb-14">
+        <div class="px-1 sm:px-2 lg:px-4">
+            <ul role="list" class="divide-y divide-gray-100">
+                <QualificationsListEntry v-for="training in trainings" :key="training.id" :qualification="training" />
+            </ul>
+        </div>
+    </div>
 </template>

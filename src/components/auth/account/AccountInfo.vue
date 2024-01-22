@@ -68,7 +68,7 @@ async function removeOAuth2Connection(provider: string): Promise<void> {
                 </div>
                 <div class="border-t border-base-400 px-4 py-5 sm:p-0">
                     <dl class="sm:divide-y sm:divide-base-400">
-                        <div class="py-4 sm:grid sm:grid-cols-3 sm:gap-4 sm:px-6 sm:py-5">
+                        <div class="py-4 sm:grid sm:grid-cols-3 sm:gap-4 sm:px-5 sm:py-4">
                             <dt class="text-sm font-medium">
                                 {{ $t('common.username') }}
                             </dt>
@@ -76,7 +76,7 @@ async function removeOAuth2Connection(provider: string): Promise<void> {
                                 {{ account.account?.username }}
                             </dd>
                         </div>
-                        <div class="py-4 sm:grid sm:grid-cols-3 sm:gap-4 sm:px-6 sm:py-5">
+                        <div class="py-4 sm:grid sm:grid-cols-3 sm:gap-4 sm:px-5 sm:py-4">
                             <dt class="text-sm font-medium">
                                 {{ $t('components.auth.account_info.license') }}
                             </dt>
@@ -84,7 +84,7 @@ async function removeOAuth2Connection(provider: string): Promise<void> {
                                 {{ account.account?.license }}
                             </dd>
                         </div>
-                        <div class="py-4 sm:grid sm:grid-cols-3 sm:gap-4 sm:px-6 sm:py-5">
+                        <div class="py-4 sm:grid sm:grid-cols-3 sm:gap-4 sm:px-5 sm:py-4">
                             <dt class="text-sm font-medium">
                                 {{ $t('components.auth.account_info.change_username') }}
                             </dt>
@@ -98,7 +98,7 @@ async function removeOAuth2Connection(provider: string): Promise<void> {
                                 </button>
                             </dd>
                         </div>
-                        <div class="py-4 sm:grid sm:grid-cols-3 sm:gap-4 sm:px-6 sm:py-5">
+                        <div class="py-4 sm:grid sm:grid-cols-3 sm:gap-4 sm:px-5 sm:py-4">
                             <dt class="text-sm font-medium">
                                 {{ $t('components.auth.account_info.change_password') }}
                             </dt>

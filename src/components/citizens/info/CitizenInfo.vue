@@ -1,7 +1,7 @@
 <script lang="ts" setup>
 import { RpcError } from '@protobuf-ts/runtime-rpc';
 import { Tab, TabGroup, TabList, TabPanel, TabPanels } from '@headlessui/vue';
-import { AccountIcon, BulletinBoardIcon, CarIcon, FileDocumentMultipleIcon } from 'mdi-vue3';
+import { AccountIcon, BulletinBoardIcon, CarIcon, CloseIcon, FileDocumentMultipleIcon, MenuIcon } from 'mdi-vue3';
 import AddToButton from '~/components/clipboard/AddToButton.vue';
 import { useClipboardStore } from '~/store/clipboard';
 import { useNotificatorStore } from '~/store/notificator';
@@ -14,6 +14,7 @@ import ClipboardButton from '~/components/clipboard/ClipboardButton.vue';
 import DataErrorBlock from '~/components/partials/data/DataErrorBlock.vue';
 import DataNoDataBlock from '~/components/partials/data/DataNoDataBlock.vue';
 import DataPendingBlock from '~/components/partials/data/DataPendingBlock.vue';
+import IDCopyBadge from '~/components/partials/IDCopyBadge.vue';
 
 const props = defineProps<{
     id: string;
@@ -28,26 +29,30 @@ const { t } = useI18n();
 
 const tabs = [
     {
+        id: 'profile',
         name: t('common.profile'),
         icon: markRaw(AccountIcon),
         permission: 'CitizenStoreService.ListCitizens',
     },
     {
+        id: 'vehicles',
         name: t('common.vehicle', 2),
         icon: markRaw(CarIcon),
         permission: 'DMVService.ListVehicles',
     },
     {
+        id: 'documents',
         name: t('common.document', 2),
         icon: markRaw(FileDocumentMultipleIcon),
         permission: 'DocStoreService.ListUserDocuments',
     },
     {
+        id: 'activity',
         name: t('common.activity'),
         icon: markRaw(BulletinBoardIcon),
         permission: 'CitizenStoreService.ListUserActivity',
     },
-];
+].filter((tab) => can(tab.permission));
 
 const { data: user, pending, refresh, error } = useLazyAsyncData(`citizen-${props.id}`, () => getUser(parseInt(props.id, 10)));
 
@@ -83,6 +88,14 @@ function addToClipboard(): void {
         type: 'info',
     });
 }
+
+const selectedTab = ref(0);
+
+function changeTab(index: number) {
+    selectedTab.value = index;
+}
+
+const open = ref(false);
 </script>
 
 <template>
@@ -99,8 +112,19 @@ function addToClipboard(): void {
         <template v-else>
             <ClipboardButton />
             <div class="mb-14">
-                <div class="px-4">
-                    <h1 class="flex text-4xl font-bold text-neutral">{{ user?.firstname }}, {{ user?.lastname }}</h1>
+                <div class="my-4 px-4">
+                    <div class="flex snap-x flex-row flex-wrap justify-between gap-2 overflow-x-auto">
+                        <h1 class="flex-1 break-words py-1 pl-0.5 pr-0.5 text-4xl font-bold text-neutral sm:pl-1">
+                            {{ user?.firstname }}, {{ user?.lastname }}
+                        </h1>
+                        <IDCopyBadge
+                            :id="user.userId"
+                            prefix="CIT"
+                            :title="{ key: 'notifications.citizen_info.copy_citizen_id.title', parameters: {} }"
+                            :content="{ key: 'notifications.citizen_info.copy_citizen_id.content', parameters: {} }"
+                            class="min-h-9 self-end"
+                        />
+                    </div>
                     <div class="my-2 flex flex-row items-center gap-2">
                         <span
                             class="inline-flex items-center rounded-full bg-base-100 px-2.5 py-0.5 text-sm font-medium text-base-800"
@@ -117,38 +141,84 @@ function addToClipboard(): void {
                     </div>
                 </div>
 
-                <TabGroup>
-                    <TabList class="flex flex-row border-b-2 border-neutral/20">
-                        <Tab
-                            v-for="tab in tabs.filter((tab) => can(tab.permission))"
-                            :key="tab.name"
-                            v-slot="{ selected }"
-                            class="flex-1"
-                        >
-                            <button
-                                :class="[
-                                    selected
-                                        ? 'border-primary-400 text-primary-500'
-                                        : 'border-transparent text-base-200 hover:border-base-300 hover:text-base-300',
-                                    'group inline-flex w-full items-center justify-center border-b-2 px-1 py-4 text-sm font-medium transition-colors',
-                                ]"
-                                :aria-current="selected ? 'page' : undefined"
-                            >
-                                <component
-                                    :is="tab.icon"
-                                    :class="[
-                                        selected ? 'text-primary-400' : 'text-base-200 group-hover:text-base-300',
-                                        '-ml-0.5 mr-2 h-5 w-5',
-                                    ]"
-                                    aria-hidden="true"
-                                />
-                                <span>
-                                    {{ tab.name }}
-                                </span>
-                            </button>
-                        </Tab>
+                <nav class="-ml-2 bg-base-700 lg:rounded-lg">
+                    <div class="mx-auto ml-2 max-w-7xl px-4 sm:px-6 lg:px-8">
+                        <div class="flex h-16 items-center justify-between">
+                            <div class="flex items-center">
+                                <div class="-ml-2 flex md:hidden">
+                                    <!-- Mobile menu button -->
+                                    <button
+                                        type="button"
+                                        class="relative inline-flex items-center justify-center rounded-md bg-base-500 p-2 text-base-200 hover:bg-base-400 hover:bg-opacity-75 hover:text-neutral focus:outline-none focus:ring-2 focus:ring-neutral focus:ring-offset-2 focus:ring-offset-base-600"
+                                        @click="open = !open"
+                                    >
+                                        <span class="absolute -inset-0.5" />
+                                        <span class="sr-only">{{ $t('components.partials.sidebar.open_navigation') }}</span>
+                                        <MenuIcon v-if="!open" class="block h-5 w-5" aria-hidden="true" />
+                                        <CloseIcon v-else class="block h-5 w-5" aria-hidden="true" />
+                                    </button>
+                                </div>
+                                <div class="hidden md:block">
+                                    <div class="flex items-baseline space-x-2">
+                                        <template v-for="(tab, index) in tabs" :key="tab.id">
+                                            <span class="flex-1">
+                                                <button
+                                                    type="button"
+                                                    class="group flex shrink-0 items-center gap-2 rounded-md p-3 text-sm font-medium text-accent-100 hover:bg-accent-100/10 hover:text-neutral hover:transition-all"
+                                                    :class="
+                                                        selectedTab === index
+                                                            ? 'bg-accent-100/20 font-bold text-primary-300'
+                                                            : ''
+                                                    "
+                                                    @click="selectedTab = index"
+                                                >
+                                                    <component
+                                                        :is="tab.icon"
+                                                        :class="[
+                                                            selectedTab === index ? '' : 'group-hover:text-base-300',
+                                                            'h-5 w-5',
+                                                        ]"
+                                                        aria-hidden="true"
+                                                    />
+                                                    <span>
+                                                        {{ tab.name }}
+                                                    </span>
+                                                </button>
+                                            </span>
+                                        </template>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="md:hidden" :class="open ? 'block' : 'hidden'">
+                            <div class="space-y-1 px-2 pb-3 pt-2 sm:px-3">
+                                <template v-for="(tab, index) in tabs" :key="tab.id">
+                                    <button
+                                        type="button"
+                                        class="group flex w-full shrink-0 items-center items-center gap-2 rounded-md p-2 text-sm font-medium text-accent-100 hover:bg-accent-100/10 hover:text-neutral hover:transition-all"
+                                        :class="selectedTab === index ? 'bg-accent-100/20 font-bold text-primary-300' : ''"
+                                        @click="selectedTab = index"
+                                    >
+                                        <component
+                                            :is="tab.icon"
+                                            :class="[selectedTab === index ? '' : 'group-hover:text-base-300', 'h-5 w-5']"
+                                            aria-hidden="true"
+                                        />
+                                        <span>
+                                            {{ tab.name }}
+                                        </span>
+                                    </button>
+                                </template>
+                            </div>
+                        </div>
+                    </div>
+                </nav>
+
+                <TabGroup :selected-index="selectedTab" @change="changeTab">
+                    <TabList class="hidden">
+                        <Tab v-for="tab in tabs" :key="tab.id"></Tab>
                     </TabList>
-                    <TabPanels class="bg-transparent">
+                    <TabPanels class="mt-2 bg-transparent">
                         <TabPanel>
                             <CitizenProfile
                                 :user="user"

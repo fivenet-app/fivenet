@@ -48,7 +48,7 @@ async function disconnect(provider: OAuth2Provider): Promise<void> {
                 <div
                     v-for="provider in providers"
                     :key="provider.name"
-                    class="py-4 sm:grid sm:grid-cols-3 sm:gap-4 sm:px-6 sm:py-5"
+                    class="py-4 sm:grid sm:grid-cols-3 sm:gap-4 sm:px-5 sm:py-4"
                 >
                     <dt class="text-sm font-medium">
                         <NuxtLink :external="true" :to="provider.homepage" target="_blank">

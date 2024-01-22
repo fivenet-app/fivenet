@@ -107,7 +107,7 @@ const onSubmitThrottle = useThrottleFn(async (_) => {
                     </div>
                     <div class="border-t border-base-400 px-4 py-5 sm:p-0">
                         <dl class="sm:divide-y sm:divide-base-400">
-                            <div class="py-4 sm:grid sm:grid-cols-3 sm:gap-4 sm:px-6 sm:py-5">
+                            <div class="py-4 sm:grid sm:grid-cols-3 sm:gap-4 sm:px-5 sm:py-4">
                                 <dt class="text-sm font-medium">
                                     {{ $t('common.theme') }}
                                 </dt>
@@ -115,7 +115,7 @@ const onSubmitThrottle = useThrottleFn(async (_) => {
                                     {{ jobProps.theme }}
                                 </dd>
                             </div>
-                            <div class="py-4 sm:grid sm:grid-cols-3 sm:gap-4 sm:px-6 sm:py-5">
+                            <div class="py-4 sm:grid sm:grid-cols-3 sm:gap-4 sm:px-5 sm:py-4">
                                 <dt class="text-sm font-medium">
                                     {{ $t('components.rector.job_props.livemap_marker_color') }}
                                 </dt>
@@ -128,7 +128,7 @@ const onSubmitThrottle = useThrottleFn(async (_) => {
                                     />
                                 </dd>
                             </div>
-                            <div class="py-4 sm:grid sm:grid-cols-3 sm:gap-4 sm:px-6 sm:py-5">
+                            <div class="py-4 sm:grid sm:grid-cols-3 sm:gap-4 sm:px-5 sm:py-4">
                                 <dt class="text-sm font-medium">
                                     {{ $t('common.radio_frequency') }}
                                 </dt>
@@ -145,7 +145,7 @@ const onSubmitThrottle = useThrottleFn(async (_) => {
                                     />
                                 </dd>
                             </div>
-                            <div class="py-4 sm:grid sm:grid-cols-3 sm:gap-4 sm:px-6 sm:py-5">
+                            <div class="py-4 sm:grid sm:grid-cols-3 sm:gap-4 sm:px-5 sm:py-4">
                                 <dt class="text-sm font-medium">
                                     {{ $t('components.rector.job_props.quick_buttons') }}
                                 </dt>
@@ -208,7 +208,7 @@ const onSubmitThrottle = useThrottleFn(async (_) => {
                                     </fieldset>
                                 </dd>
                             </div>
-                            <div class="py-4 sm:grid sm:grid-cols-3 sm:gap-4 sm:px-6 sm:py-5">
+                            <div class="py-4 sm:grid sm:grid-cols-3 sm:gap-4 sm:px-5 sm:py-4">
                                 <dt class="text-sm font-medium">
                                     {{ $t('components.rector.job_props.discord_guild_id') }}
                                 </dt>
@@ -239,7 +239,7 @@ const onSubmitThrottle = useThrottleFn(async (_) => {
                                     </p>
                                 </dd>
                             </div>
-                            <div class="py-4 sm:grid sm:grid-cols-3 sm:gap-4 sm:px-6 sm:py-5">
+                            <div class="py-4 sm:grid sm:grid-cols-3 sm:gap-4 sm:px-5 sm:py-4">
                                 <dt class="text-sm font-medium">
                                     {{ $t('components.rector.job_props.discord_sync_settings') }}
                                 </dt>
@@ -378,7 +378,7 @@ const onSubmitThrottle = useThrottleFn(async (_) => {
                             </div>
                             <div
                                 v-if="can('RectorService.SetJobProps')"
-                                class="py-4 sm:grid sm:grid-cols-3 sm:gap-4 sm:px-6 sm:py-5"
+                                class="py-4 sm:grid sm:grid-cols-3 sm:gap-4 sm:px-5 sm:py-4"
                             >
                                 <dt class="text-sm font-medium"></dt>
                                 <dd class="mt-1 text-sm sm:col-span-2 sm:mt-0">

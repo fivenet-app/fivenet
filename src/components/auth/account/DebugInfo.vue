@@ -37,7 +37,7 @@ async function resetLocalStorage(): Promise<void> {
         </div>
         <div class="border-t border-base-400 px-4 py-5 sm:p-0">
             <dl class="sm:divide-y sm:divide-base-400">
-                <div class="py-4 sm:grid sm:grid-cols-3 sm:gap-4 sm:px-6 sm:py-5">
+                <div class="py-4 sm:grid sm:grid-cols-3 sm:gap-4 sm:px-5 sm:py-4">
                     <dt class="text-sm font-medium">
                         {{ $t('components.debug_info.version') }}
                     </dt>
@@ -45,7 +45,7 @@ async function resetLocalStorage(): Promise<void> {
                         {{ settings.version }}
                     </dd>
                 </div>
-                <div v-if="activeChar" class="py-4 sm:grid sm:grid-cols-3 sm:gap-4 sm:px-6 sm:py-5">
+                <div v-if="activeChar" class="py-4 sm:grid sm:grid-cols-3 sm:gap-4 sm:px-5 sm:py-4">
                     <dt class="text-sm font-medium">
                         {{ $t('components.debug_info.active_char_id') }}
                     </dt>
@@ -53,7 +53,7 @@ async function resetLocalStorage(): Promise<void> {
                         {{ activeChar.userId }}
                     </dd>
                 </div>
-                <div v-if="activeChar" class="py-4 sm:grid sm:grid-cols-3 sm:gap-4 sm:px-6 sm:py-5">
+                <div v-if="activeChar" class="py-4 sm:grid sm:grid-cols-3 sm:gap-4 sm:px-5 sm:py-4">
                     <dt class="text-sm font-medium">
                         {{ $t('common.job') }}
                     </dt>
@@ -61,7 +61,7 @@ async function resetLocalStorage(): Promise<void> {
                         {{ activeChar.job }} ({{ $t('common.rank') }}: {{ activeChar.jobGrade }})
                     </dd>
                 </div>
-                <div v-if="getAccessTokenExpiration" class="py-4 sm:grid sm:grid-cols-3 sm:gap-4 sm:px-6 sm:py-5">
+                <div v-if="getAccessTokenExpiration" class="py-4 sm:grid sm:grid-cols-3 sm:gap-4 sm:px-5 sm:py-4">
                     <dt class="text-sm font-medium">
                         {{ $t('components.debug_info.access_token_expiration') }}
                     </dt>
@@ -70,7 +70,7 @@ async function resetLocalStorage(): Promise<void> {
                         (<GenericTime :value="getAccessTokenExpiration" type="long" />)
                     </dd>
                 </div>
-                <div class="py-4 sm:grid sm:grid-cols-3 sm:gap-4 sm:px-6 sm:py-5">
+                <div class="py-4 sm:grid sm:grid-cols-3 sm:gap-4 sm:px-5 sm:py-4">
                     <dt class="text-sm font-medium">
                         {{ $t('components.debug_info.nui_info') }}
                     </dt>
@@ -79,7 +79,7 @@ async function resetLocalStorage(): Promise<void> {
                         {{ config.nuiResourceName ?? $t('common.na') }}
                     </dd>
                 </div>
-                <div class="py-4 sm:grid sm:grid-cols-3 sm:gap-4 sm:px-6 sm:py-5">
+                <div class="py-4 sm:grid sm:grid-cols-3 sm:gap-4 sm:px-5 sm:py-4">
                     <dt class="text-sm font-medium">
                         {{ $t('components.debug_info.debug_functions') }}
                     </dt>
@@ -109,7 +109,7 @@ async function resetLocalStorage(): Promise<void> {
                         </span>
                     </dd>
                 </div>
-                <div v-if="permissions.length > 0" class="py-4 sm:grid sm:grid-cols-3 sm:gap-4 sm:px-6 sm:py-5">
+                <div v-if="permissions.length > 0" class="py-4 sm:grid sm:grid-cols-3 sm:gap-4 sm:px-5 sm:py-4">
                     <dt class="text-sm font-medium">
                         {{ $t('components.debug_info.perms') }}
                     </dt>

@@ -49,7 +49,7 @@ watch(darkModeActive, async () => {
         </div>
         <div class="border-t border-base-400 px-4 py-5 sm:p-0">
             <dl class="sm:divide-y sm:divide-base-400">
-                <div class="py-4 sm:grid sm:grid-cols-3 sm:gap-4 sm:px-6 sm:py-5">
+                <div class="py-4 sm:grid sm:grid-cols-3 sm:gap-4 sm:px-5 sm:py-4">
                     <dt class="text-sm font-medium">
                         {{ $t('components.auth.settings_panel.set_startpage.title') }}
                     </dt>
@@ -73,7 +73,7 @@ watch(darkModeActive, async () => {
                         </p>
                     </dd>
                 </div>
-                <div class="py-4 sm:grid sm:grid-cols-3 sm:gap-4 sm:px-6 sm:py-5">
+                <div class="py-4 sm:grid sm:grid-cols-3 sm:gap-4 sm:px-5 sm:py-4">
                     <dt class="text-sm font-medium">
                         {{ $t('components.auth.settings_panel.editor_theme.title') }}
                     </dt>

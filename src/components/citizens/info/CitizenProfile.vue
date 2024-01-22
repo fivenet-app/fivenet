@@ -71,8 +71,8 @@ const trafficPointsModal = ref(false);
                                 <div class="px-2 py-3 xl:flex-1">
                                     <div class="divide-y divide-base-200">
                                         <div class="px-4 py-5 sm:px-0 sm:py-0">
-                                            <dl class="space-y-8 sm:space-y-0 sm:divide-y sm:divide-base-200">
-                                                <div class="sm:flex sm:px-6 sm:py-5">
+                                            <dl class="space-y-4 sm:space-y-0 sm:divide-y sm:divide-base-200">
+                                                <div class="sm:flex sm:px-5 sm:py-4">
                                                     <dt
                                                         class="text-sm font-medium text-neutral sm:w-40 sm:flex-shrink-0 lg:w-48"
                                                     >
@@ -82,19 +82,20 @@ const trafficPointsModal = ref(false);
                                                         {{ user?.dateofbirth }}
                                                     </dd>
                                                 </div>
-                                                <div class="sm:flex sm:px-6 sm:py-5">
+                                                <div class="sm:flex sm:px-5 sm:py-4">
                                                     <dt
                                                         class="text-sm font-medium text-neutral sm:w-40 sm:flex-shrink-0 lg:w-48"
                                                     >
                                                         {{ $t('common.sex') }}
                                                     </dt>
-                                                    <dd class="mt-1 text-sm text-base-300 sm:col-span-2 sm:ml-6 sm:mt-0">
-                                                        {{ user?.sex!.toUpperCase() }}
-                                                        {{ ' ' }}
+                                                    <dd
+                                                        class="mt-1 inline-flex items-center gap-2 text-sm text-base-300 sm:col-span-2 sm:ml-6 sm:mt-0"
+                                                    >
+                                                        <span>{{ user?.sex!.toUpperCase() }} </span>
                                                         <CharSexBadge :sex="user?.sex ? user?.sex : ''" />
                                                     </dd>
                                                 </div>
-                                                <div class="sm:flex sm:px-6 sm:py-5">
+                                                <div class="sm:flex sm:px-5 sm:py-4">
                                                     <dt
                                                         class="text-sm font-medium text-neutral sm:w-40 sm:flex-shrink-0 lg:w-48"
                                                     >
@@ -106,7 +107,7 @@ const trafficPointsModal = ref(false);
                                                 </div>
                                                 <div
                                                     v-if="attr('CitizenStoreService.ListCitizens', 'Fields', 'PhoneNumber')"
-                                                    class="sm:flex sm:px-6 sm:py-5"
+                                                    class="sm:flex sm:px-5 sm:py-4"
                                                 >
                                                     <dt
                                                         class="text-sm font-medium text-neutral sm:w-40 sm:flex-shrink-0 lg:w-48"
@@ -117,7 +118,7 @@ const trafficPointsModal = ref(false);
                                                         <PhoneNumberBlock :number="user.phoneNumber" />
                                                     </dd>
                                                 </div>
-                                                <div class="sm:flex sm:px-6 sm:py-5">
+                                                <div class="sm:flex sm:px-5 sm:py-4">
                                                     <dt
                                                         class="text-sm font-medium text-neutral sm:w-40 sm:flex-shrink-0 lg:w-48"
                                                     >
@@ -137,12 +138,12 @@ const trafficPointsModal = ref(false);
                                                             'UserProps.TrafficInfractionPoints',
                                                         )
                                                     "
-                                                    class="sm:flex sm:px-6 sm:py-5"
+                                                    class="sm:flex sm:px-5 sm:py-4"
                                                 >
                                                     <dt
                                                         class="text-sm font-medium text-neutral sm:w-40 sm:flex-shrink-0 lg:w-48"
                                                     >
-                                                        {{ $t('common.traffic_infraction_points') }}
+                                                        {{ $t('common.traffic_infraction_points', 2) }}
                                                     </dt>
                                                     <dd
                                                         class="mt-1 text-sm text-base-300 sm:col-span-2 sm:ml-6 sm:mt-0"
@@ -163,7 +164,7 @@ const trafficPointsModal = ref(false);
                                                             'UserProps.OpenFines',
                                                         )
                                                     "
-                                                    class="sm:flex sm:px-6 sm:py-5"
+                                                    class="sm:flex sm:px-5 sm:py-4"
                                                 >
                                                     <dt
                                                         class="text-sm font-medium text-neutral sm:w-40 sm:flex-shrink-0 lg:w-48"
@@ -186,7 +187,7 @@ const trafficPointsModal = ref(false);
                                                 </div>
                                                 <div
                                                     v-if="attr('CitizenStoreService.ListCitizens', 'Fields', 'Licenses')"
-                                                    class="sm:flex sm:px-6 sm:py-5"
+                                                    class="sm:flex sm:px-5 sm:py-4"
                                                 >
                                                     <dt
                                                         class="text-sm font-medium text-neutral sm:w-40 sm:flex-shrink-0 lg:w-48"

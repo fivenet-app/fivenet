@@ -25,7 +25,7 @@ import (
 	"google.golang.org/protobuf/proto"
 )
 
-const DispatchExpirationTime = 31 * time.Second
+const DispatchExpirationTime = 30 * time.Second
 
 func (s *Manager) UpdateDispatchStatus(ctx context.Context, job string, dspId uint64, in *centrum.DispatchStatus) (*centrum.DispatchStatus, error) {
 	dsp, err := s.GetDispatch(job, dspId)
