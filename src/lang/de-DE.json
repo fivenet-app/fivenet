@@ -1499,7 +1499,14 @@
             },
             "ListRequests": {
                 "key": "Anfragen: Auflisten und Anzeigen",
-                "description": "Anfragen auflisten und anzeigen."
+                "description": "Anfragen auflisten und anzeigen.",
+                "attrs": {
+                    "Own": "Eigene",
+                    "All": "Alle"
+                },
+                "attrs_types": {
+                    "Access": "Zugriff auf fraktionseigene Anfragen"
+                }
             },
             "UpdateRequest": {
                 "key": "Anfragen: Aktualisieren von Anfragen",
