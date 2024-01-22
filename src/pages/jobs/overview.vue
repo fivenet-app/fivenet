@@ -1,5 +1,6 @@
 <script lang="ts" setup>
 import { RpcError } from '@protobuf-ts/runtime-rpc';
+import { RadioHandheldIcon } from 'mdi-vue3';
 import TimeclockStatsBlock from '~/components/jobs/timeclock/TimeclockStatsBlock.vue';
 import GenericContainer from '~/components/partials/elements/GenericContainer.vue';
 import GenericDivider from '~/components/partials/elements/GenericDivider.vue';
@@ -53,8 +54,21 @@ async function getTimeclockStats(): Promise<TimeclockStats> {
                             </GenericContainer>
 
                             <GenericContainer v-if="jobProps?.radioFrequency" class="text-neutral">
-                                <h3 class="text-lg font-semibold">{{ $t('common.radio_frequency') }}</h3>
-                                <p class="text-center text-lg font-bold">{{ jobProps?.radioFrequency }}.00</p>
+                                <h3 class="text-lg font-semibold">
+                                    {{ $t('common.radio_frequency') }}
+                                </h3>
+                                <p class="flex items-center text-center text-lg font-bold">
+                                    <RadioHandheldIcon class="h-auto w-6" />
+                                    <span>{{ jobProps?.radioFrequency }}.00</span>
+                                </p>
+                                <button
+                                    v-if="isNUIAvailable()"
+                                    type="button"
+                                    class="mt-1 w-full rounded-md bg-primary-500 px-2 py-1 text-xs font-semibold text-neutral hover:bg-primary-400 focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-primary-500"
+                                    @click="setRadioFrequency(parseInt(jobProps.radioFrequency))"
+                                >
+                                    {{ $t('common.connect') }}
+                                </button>
                             </GenericContainer>
                         </div>
 
