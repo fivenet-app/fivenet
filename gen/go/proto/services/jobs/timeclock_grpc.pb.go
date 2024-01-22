@@ -29,7 +29,7 @@ const (
 type JobsTimeclockServiceClient interface {
 	// @perm: Attrs=Access/StringList:[]string{"All"}§[]string{}
 	ListTimeclock(ctx context.Context, in *ListTimeclockRequest, opts ...grpc.CallOption) (*ListTimeclockResponse, error)
-	// @perm: Name=TimeclockList
+	// @perm: Name=ListTimeclock
 	GetTimeclockStats(ctx context.Context, in *GetTimeclockStatsRequest, opts ...grpc.CallOption) (*GetTimeclockStatsResponse, error)
 }
 
@@ -65,7 +65,7 @@ func (c *jobsTimeclockServiceClient) GetTimeclockStats(ctx context.Context, in *
 type JobsTimeclockServiceServer interface {
 	// @perm: Attrs=Access/StringList:[]string{"All"}§[]string{}
 	ListTimeclock(context.Context, *ListTimeclockRequest) (*ListTimeclockResponse, error)
-	// @perm: Name=TimeclockList
+	// @perm: Name=ListTimeclock
 	GetTimeclockStats(context.Context, *GetTimeclockStatsRequest) (*GetTimeclockStatsResponse, error)
 	mustEmbedUnimplementedJobsTimeclockServiceServer()
 }

@@ -22,7 +22,7 @@ export interface IJobsTimeclockServiceClient {
      */
     listTimeclock(input: ListTimeclockRequest, options?: RpcOptions): UnaryCall<ListTimeclockRequest, ListTimeclockResponse>;
     /**
-     * @perm: Name=TimeclockList
+     * @perm: Name=ListTimeclock
      *
      * @generated from protobuf rpc: GetTimeclockStats(services.jobs.GetTimeclockStatsRequest) returns (services.jobs.GetTimeclockStatsResponse);
      */
@@ -47,7 +47,7 @@ export class JobsTimeclockServiceClient implements IJobsTimeclockServiceClient, 
         return stackIntercept<ListTimeclockRequest, ListTimeclockResponse>("unary", this._transport, method, opt, input);
     }
     /**
-     * @perm: Name=TimeclockList
+     * @perm: Name=ListTimeclock
      *
      * @generated from protobuf rpc: GetTimeclockStats(services.jobs.GetTimeclockStatsRequest) returns (services.jobs.GetTimeclockStatsResponse);
      */

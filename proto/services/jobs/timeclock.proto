@@ -35,6 +35,6 @@ message GetTimeclockStatsResponse {
 service JobsTimeclockService {
   // @perm: Attrs=Access/StringList:[]string{"All"}§[]string{}
   rpc ListTimeclock(ListTimeclockRequest) returns (ListTimeclockResponse);
-  // @perm: Name=TimeclockList
+  // @perm: Name=ListTimeclock
   rpc GetTimeclockStats(GetTimeclockStatsRequest) returns (GetTimeclockStatsResponse);
 }

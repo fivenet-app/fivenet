@@ -1499,7 +1499,14 @@
             },
             "ListRequests": {
                 "key": "Requests: List Requests",
-                "description": "List and View Requests."
+                "description": "List and View Requests.",
+                "attrs": {
+                    "Own": "Own",
+                    "All": "All"
+                },
+                "attrs_types": {
+                    "Access": "Access to requests"
+                }
             },
             "UpdateRequest": {
                 "key": "Requests: Update Request",
