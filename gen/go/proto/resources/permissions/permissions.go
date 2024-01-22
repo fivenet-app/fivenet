@@ -184,7 +184,7 @@ func ValidateJobGradeList(in *JobGradeList, validVals map[string]int32, maxVals 
 	for job, grade := range in.Jobs {
 		if vg, ok := maxVals[job]; ok {
 			if grade > vg {
-				delete(in.Jobs, job)
+				in.Jobs[job] = vg
 				changed = true
 			}
 		} else {
@@ -196,7 +196,7 @@ func ValidateJobGradeList(in *JobGradeList, validVals map[string]int32, maxVals 
 		if len(validVals) > 0 {
 			if vg, ok := validVals[job]; ok {
 				if grade > vg {
-					delete(in.Jobs, job)
+					in.Jobs[job] = vg
 					changed = true
 				}
 			} else {
