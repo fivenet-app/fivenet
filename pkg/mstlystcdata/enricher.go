@@ -131,7 +131,7 @@ func (e *Enricher) EnrichJobInfoSafeFunc(userInfo *userinfo.UserInfo) func(usr c
 	return func(usr common.IJobInfo) {
 		// Make sure user has permission to see that grade, otherwise "hide" the user's job grade
 		grade, ok := jobGrades[usr.GetJob()]
-		if !ok {
+		if !ok && !userInfo.SuperUser {
 			if !slices.Contains(e.publicJobs, usr.GetJob()) {
 				usr.SetJob(e.unemployedJob)
 				usr.SetJobGrade(e.unemployedJobGrade)
