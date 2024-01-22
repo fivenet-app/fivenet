@@ -3,6 +3,7 @@ package jobs
 import (
 	"context"
 	"errors"
+	"slices"
 
 	"github.com/galexrt/fivenet/gen/go/proto/resources/jobs"
 	"github.com/galexrt/fivenet/pkg/tracker"
@@ -174,6 +175,7 @@ func (s *Server) getTimeclockWeeklyStats(ctx context.Context, condition jet.Bool
 			return nil, err
 		}
 	}
+	slices.Reverse(dest)
 
 	return dest, nil
 }
