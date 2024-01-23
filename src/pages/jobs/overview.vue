@@ -3,7 +3,6 @@ import { RpcError } from '@protobuf-ts/runtime-rpc';
 import { RadioHandheldIcon } from 'mdi-vue3';
 import TimeclockStatsBlock from '~/components/jobs/timeclock/TimeclockStatsBlock.vue';
 import GenericContainer from '~/components/partials/elements/GenericContainer.vue';
-import GenericDivider from '~/components/partials/elements/GenericDivider.vue';
 import { useAuthStore } from '~/store/auth';
 import type { GetTimeclockStatsResponse } from '~~/gen/ts/services/jobs/timeclock';
 

@@ -6,7 +6,6 @@ import { CalendarIcon, CheckIcon, ChevronLeftIcon, ChevronRightIcon } from 'mdi-
 import DataErrorBlock from '~/components/partials/data/DataErrorBlock.vue';
 import DataNoDataBlock from '~/components/partials/data/DataNoDataBlock.vue';
 import DataPendingBlock from '~/components/partials/data/DataPendingBlock.vue';
-import GenericDivider from '~/components/partials/elements/GenericDivider.vue';
 import TablePagination from '~/components/partials/elements/TablePagination.vue';
 import * as googleProtobufTimestamp from '~~/gen/ts/google/protobuf/timestamp';
 import { TimeclockEntry } from '~~/gen/ts/resources/jobs/timeclock';
