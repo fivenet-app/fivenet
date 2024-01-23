@@ -12,6 +12,7 @@ import { useCentrumStore } from '~/store/centrum';
 import { useLivemapStore } from '~/store/livemap';
 import CentrumFeed from '~/components/centrum/CentrumFeed.vue';
 import DispatchesLayer from '~/components/centrum/livemap/DispatchesLayer.vue';
+import MarkersList from '~/components/centrum/MarkersList.vue';
 
 const centrumStore = useCentrumStore();
 const { error, abort, reconnecting, feed } = storeToRefs(centrumStore);
@@ -75,10 +76,13 @@ function goto(e: Coordinate) {
                     <Pane size="58" min-size="2">
                         <DispatchList :show-button="true" @goto="goto($event)" />
                     </Pane>
-                    <Pane size="30" min-size="2">
+                    <Pane size="26" min-size="2">
                         <UnitList @goto="goto($event)" />
                     </Pane>
-                    <Pane size="12" min-size="2">
+                    <Pane size="6" min-size="2">
+                        <MarkersList @goto="goto($event)" />
+                    </Pane>
+                    <Pane size="10" min-size="2">
                         <CentrumFeed :items="feed" @goto="goto($event)" />
                     </Pane>
                 </Splitpanes>
