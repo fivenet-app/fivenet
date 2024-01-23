@@ -796,8 +796,9 @@
         "yes": "Ja",
         "no": "Nein",
         "page": "Seite",
-        "department": "Department",
-        "none": "Keine {0}"
+        "department": "Dienststelle",
+        "none": "Keine {0}",
+        "department_postal": "Postleitzahl der Dienststelle"
     },
     "notifications": {
         "clipboard": {
