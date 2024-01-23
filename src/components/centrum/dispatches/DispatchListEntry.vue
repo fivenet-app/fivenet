@@ -34,8 +34,14 @@ const dispatchAssistanceSound = useSound('/sounds/centrum/morse-sos.mp3', {
 });
 const debouncedPlay = useDebounceFn(() => dispatchAssistanceSound.play(), 950);
 
+const previousStatus = ref<undefined | StatusDispatch>();
 watch(props, () => {
-    if (props.dispatch.status?.status === StatusDispatch.NEED_ASSISTANCE) {
+    if (
+        previousStatus.value !== props.dispatch.status?.status &&
+        props.dispatch.status?.status === StatusDispatch.NEED_ASSISTANCE
+    ) {
+        previousStatus.value = props.dispatch.status?.status;
+
         debouncedPlay();
     }
 });
