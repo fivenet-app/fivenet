@@ -31,7 +31,7 @@ func (s *Server) ListTimeclock(ctx context.Context, req *ListTimeclockRequest) (
 	statsCondition := jet.AND(tTimeClock.Job.EQ(jet.String(userInfo.Job)))
 
 	// Field Permission Check
-	fieldsAttr, err := s.p.Attr(userInfo, permsjobs.JobsServicePerm, perms.Name(permsjobs.JobsTimeclockServicePerm), permsjobs.JobsTimeclockServiceListTimeclockAccessPermField)
+	fieldsAttr, err := s.p.Attr(userInfo, permsjobs.JobsTimeclockServicePerm, perms.Name(permsjobs.JobsTimeclockServicePerm), permsjobs.JobsTimeclockServiceListTimeclockAccessPermField)
 	if err != nil {
 		return nil, errswrap.NewError(errorsjobs.ErrFailedQuery, err)
 	}
@@ -90,7 +90,7 @@ func (s *Server) ListTimeclock(ctx context.Context, req *ListTimeclockRequest) (
 		return nil, errswrap.NewError(errorsjobs.ErrFailedQuery, err)
 	}
 
-	resp.Weekly, err = s.getTimeclockWeeklyStats(ctx, jet.AND(tTimeClock.Job.EQ(jet.String(userInfo.Job))))
+	resp.Weekly, err = s.getTimeclockWeeklyStats(ctx, statsCondition)
 	if err != nil {
 		return nil, errswrap.NewError(errorsjobs.ErrFailedQuery, err)
 	}
