@@ -18,6 +18,7 @@ const { markersMarkers } = storeToRefs(livemapStore);
                     {{ $t('common.marker', 2) }}
                 </h2>
                 <h2 class="text-base font-semibold text-gray-100">
+                    {{ $t('common.count') }}:
                     {{ markersMarkers.length }}
                 </h2>
             </div>
