@@ -6,6 +6,7 @@ metadata:
     {{- include "fivenet.labels" . | nindent 4 }}
 spec:
   replicas: {{ .Values.worker.replicaCount }}
+  revisionHistoryLimit: {{ .Values.worker.revisionHistoryLimit }}
   selector:
     matchLabels:
       app.kubernetes.io/component: worker

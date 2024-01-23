@@ -41,7 +41,7 @@ func (s *Manager) UpdateDispatchStatus(ctx context.Context, job string, dspId ui
 			(in.Status == centrum.StatusDispatch_STATUS_DISPATCH_NEW ||
 				in.Status == centrum.StatusDispatch_STATUS_DISPATCH_UNASSIGNED) {
 			s.logger.Debug("skipping dispatch status update due to same status", zap.Uint64("dispatch_id", dsp.Id), zap.String("status", in.Status.String()))
-			return nil, nil
+			return in, nil
 		}
 
 		// If the dispatch is complete, we ignore any unit unassignments/accepts/declines
@@ -50,7 +50,7 @@ func (s *Manager) UpdateDispatchStatus(ctx context.Context, job string, dspId ui
 				in.Status == centrum.StatusDispatch_STATUS_DISPATCH_UNIT_UNASSIGNED ||
 				in.Status == centrum.StatusDispatch_STATUS_DISPATCH_UNIT_ACCEPTED ||
 				in.Status == centrum.StatusDispatch_STATUS_DISPATCH_UNIT_DECLINED) {
-			return nil, nil
+			return in, nil
 		}
 	}
 
@@ -663,6 +663,7 @@ func (s *Manager) GetDispatchStatus(ctx context.Context, tx qrm.DB, job string, 
 		SELECT(
 			tDispatchStatus.ID,
 			tDispatchStatus.CreatedAt,
+			tDispatchStatus.DispatchID,
 			tDispatchStatus.UnitID,
 			tDispatchStatus.Status,
 			tDispatchStatus.Reason,
@@ -688,13 +689,13 @@ func (s *Manager) GetDispatchStatus(ctx context.Context, tx qrm.DB, job string, 
 				),
 		).
 		WHERE(
-			tDispatchStatus.DispatchID.EQ(jet.Uint64(id)),
+			tDispatchStatus.ID.EQ(jet.Uint64(id)),
 		).
 		ORDER_BY(tDispatchStatus.ID.DESC()).
 		LIMIT(1)
 
 	var dest centrum.DispatchStatus
-	if err := stmt.QueryContext(ctx, s.db, &dest); err != nil {
+	if err := stmt.QueryContext(ctx, tx, &dest); err != nil {
 		if !errors.Is(err, qrm.ErrNoRows) {
 			return nil, errswrap.NewError(errorscentrum.ErrFailedQuery, err)
 		} else {

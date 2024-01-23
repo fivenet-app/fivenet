@@ -568,7 +568,7 @@ func (s *Manager) GetUnitStatus(ctx context.Context, tx qrm.DB, job string, id u
 		LIMIT(1)
 
 	var dest centrum.UnitStatus
-	if err := stmt.QueryContext(ctx, s.db, &dest); err != nil {
+	if err := stmt.QueryContext(ctx, tx, &dest); err != nil {
 		if !errors.Is(err, qrm.ErrNoRows) {
 			return nil, errswrap.NewError(errorscentrum.ErrFailedQuery, err)
 		} else {

@@ -62,6 +62,7 @@ ingress:
 
 fivenet:
   replicaCount: 1
+  revisionHistoryLimit: 1
   image:
     repository: docker.io/galexrt/fivenet
     pullPolicy: IfNotPresent
@@ -255,6 +256,7 @@ fivenet:
 worker:
   enabled: true
   replicaCount: 1
+  revisionHistoryLimit: 1
   image:
     repository: docker.io/galexrt/fivenet
     pullPolicy: IfNotPresent
@@ -306,6 +308,7 @@ worker:
 discord:
   enabled: true
   replicaCount: 1
+  revisionHistoryLimit: 1
   image:
     repository: docker.io/galexrt/fivenet
     pullPolicy: IfNotPresent
@@ -355,6 +358,7 @@ discord:
 
 envoy:
   replicaCount: 2
+  revisionHistoryLimit: 1
   image:
     repository: docker.io/envoyproxy/envoy
     pullPolicy: IfNotPresent

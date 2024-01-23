@@ -271,7 +271,7 @@ func (s *Manager) LoadDispatchesFromDB(ctx context.Context, cond jet.BoolExpress
 		condition = condition.AND(cond)
 	}
 
-	tUsers := tUsers.AS("user_short")
+	tUsers := tUsers.AS("user")
 	stmt := tDispatch.
 		SELECT(
 			tDispatch.ID,

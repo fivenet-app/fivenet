@@ -6,6 +6,7 @@ metadata:
     {{- include "fivenet.labels" . | nindent 4 }}
 spec:
   replicas: {{ .Values.discord.replicaCount }}
+  revisionHistoryLimit: {{ .Values.discord.revisionHistoryLimit }}
   selector:
     matchLabels:
       app.kubernetes.io/component: discord

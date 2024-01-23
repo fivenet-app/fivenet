@@ -18,7 +18,7 @@ import (
 const (
 	DelayBetweenDispatchAssignment = 35 * time.Second
 	MinUnitCountForDelay           = 3
-	PerUnitDelaySeconds            = 6
+	PerUnitDelaySeconds            = 5
 	MaxDelayCap                    = 80 * time.Second
 )
 
@@ -68,10 +68,13 @@ func (b *Bot) Run(ctx context.Context) error {
 			return dispatches[i].Id < dispatches[j].Id
 		})
 
+		b.logger.Debug("trying to auto assign dispatches", zap.Int("dispatch_count", len(dispatches)))
 		for _, dsp := range dispatches {
 			if !centrumutils.IsDispatchUnassigned(dsp) {
 				continue
 			}
+
+			b.logger.Debug("trying to auto assign dispatch", zap.Uint64("dispatch_id", dsp.Id))
 
 			unit, ok := b.getAvailableUnit(ctx, dsp.Point())
 			if !ok {
@@ -85,7 +88,7 @@ func (b *Bot) Run(ctx context.Context) error {
 				[]uint64{unit.Id}, nil,
 				b.state.DispatchAssignmentExpirationTime(),
 			); err != nil {
-				b.logger.Warn("failed to assgin unit to dispatch", zap.Uint64("dispatch_id", dsp.Id), zap.Uint64("unit_id", unit.Id))
+				b.logger.Error("failed to assgin unit to dispatch", zap.Uint64("dispatch_id", dsp.Id), zap.Uint64("unit_id", unit.Id), zap.Error(err))
 				break
 			}
 		}
@@ -95,7 +98,8 @@ func (b *Bot) Run(ctx context.Context) error {
 func (b *Bot) getAvailableUnit(ctx context.Context, point orb.Point) (*centrum.Unit, bool) {
 	var units []*centrum.Unit
 
-	if locs := b.tracker.GetUserJobLocations(b.job); locs != nil {
+	locs := b.tracker.GetUserJobLocations(b.job)
+	if locs != nil {
 		points := locs.KNearest(point, 7, nil, 5000.0)
 		for _, point := range points {
 			user := point.(*livemap.UserMarker)
@@ -105,12 +109,18 @@ func (b *Bot) getAvailableUnit(ctx context.Context, point orb.Point) (*centrum.U
 
 			unit, err := b.state.GetUnit(user.Info.Job, *user.UnitId)
 			if err != nil {
-				b.logger.Error("failed to get user unit", zap.String("job", user.Info.Job), zap.Error(err))
+				b.logger.Error("failed to get user's unit", zap.String("job", user.Info.Job), zap.Error(err))
 				continue
 			}
 			units = append(units, unit)
 		}
-	} else {
+	}
+
+	if len(units) == 0 {
+		if locs != nil {
+			b.logger.Warn("falling back to normal unit selection, no close by user units found", zap.String("job", b.job))
+		}
+
 		units := b.state.FilterUnits(b.job, []centrum.StatusUnit{centrum.StatusUnit_STATUS_UNIT_AVAILABLE}, nil)
 		if len(units) == 0 {
 			return nil, false

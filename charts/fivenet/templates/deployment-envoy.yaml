@@ -6,6 +6,7 @@ metadata:
     {{- include "fivenet.labels" . | nindent 4 }}
 spec:
   replicas: {{ .Values.envoy.replicaCount }}
+  revisionHistoryLimit: {{ .Values.envoy.revisionHistoryLimit }}
   selector:
     matchLabels:
       app.kubernetes.io/component: envoy
