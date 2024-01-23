@@ -6,13 +6,13 @@ import { LivemapperServiceClient } from '~~/gen/ts/services/livemapper/livemap.c
 import { type Coordinate } from '~/composables/livemap';
 
 // In seconds
-const initialBackoffTime = 1.75;
+const initialReconnectBackoffTime = 1.75;
 
 export interface LivemapState {
     error: RpcError | undefined;
     abort: AbortController | undefined;
-    restarting: boolean;
-    restartBackoffTime: number;
+    reconnecting: boolean;
+    reconnectBackoffTime: number;
 
     location: Coordinate | undefined;
     showLocationMarker: boolean;
@@ -33,8 +33,8 @@ export const useLivemapStore = defineStore('livemap', {
         ({
             error: undefined,
             abort: undefined,
-            restarting: false,
-            restartBackoffTime: 0,
+            reconnecting: false,
+            reconnectBackoffTime: 0,
 
             location: { x: 0, y: 0 },
             showLocationMarker: false,
@@ -60,7 +60,7 @@ export const useLivemapStore = defineStore('livemap', {
 
             this.abort = new AbortController();
             this.error = undefined;
-            this.restarting = false;
+            this.reconnecting = false;
             const { $grpc } = useNuxtApp();
 
             try {
@@ -116,23 +116,23 @@ export const useLivemapStore = defineStore('livemap', {
             console.debug('Livemap: Stopping Data Stream');
         },
         async restartStream(): Promise<void> {
-            this.restarting = true;
+            this.reconnecting = true;
 
             // Reset back off time when over 10 seconds
-            if (this.restartBackoffTime > 10) {
-                this.restartBackoffTime = initialBackoffTime;
+            if (this.reconnectBackoffTime > 10) {
+                this.reconnectBackoffTime = initialReconnectBackoffTime;
             } else {
-                this.restartBackoffTime += initialBackoffTime;
+                this.reconnectBackoffTime += initialReconnectBackoffTime;
             }
 
-            console.debug('Livemap: Restart back off time in', this.restartBackoffTime, 'seconds');
+            console.debug('Livemap: Restart back off time in', this.reconnectBackoffTime, 'seconds');
             await this.stopStream();
 
             setTimeout(async () => {
-                if (this.restarting) {
+                if (this.reconnecting) {
                     this.startStream();
                 }
-            }, this.restartBackoffTime * 1000);
+            }, this.reconnectBackoffTime * 1000);
         },
     },
 });

@@ -14,6 +14,7 @@ import PostalSearch from '~/components/livemap/controls/PostalSearch.vue';
 import SettingsButton from '~/components/livemap/controls/SettingsButton.vue';
 import DispatchCreateOrUpdateModal from '~/components/centrum/dispatches/DispatchCreateOrUpdateModal.vue';
 import MapTempMarker from '~/components/livemap/MapTempMarker.vue';
+import ReconnectingPopup from '~/components/livemap/ReconnectingPopup.vue';
 
 defineProps<{
     showUnitNames?: boolean;
@@ -30,7 +31,7 @@ const settingsStore = useSettingsStore();
 const { livemap } = storeToRefs(settingsStore);
 
 const livemapStore = useLivemapStore();
-const { error, abort, restarting, location, showLocationMarker } = storeToRefs(livemapStore);
+const { error, abort, reconnecting, location, showLocationMarker } = storeToRefs(livemapStore);
 const { startStream } = livemapStore;
 
 interface ContextmenuItem {
@@ -102,17 +103,19 @@ async function applySelectedMarkerCentering(): Promise<void> {
         />
 
         <div
-            v-if="error !== undefined || (abort === undefined && !restarting)"
+            v-if="error !== undefined || (abort === undefined && !reconnecting)"
             class="absolute inset-0 z-20 flex items-center justify-center bg-gray-600/70"
         >
             <DataErrorBlock v-if="error" :title="$t('components.livemap.failed_datastream')" :retry="startStream" />
             <DataPendingBlock
-                v-else-if="abort === undefined && !restarting"
+                v-else-if="abort === undefined && !reconnecting"
                 :message="$t('components.livemap.starting_datastream')"
             />
         </div>
         <BaseMap :map-options="mapOptions">
             <template #default>
+                <ReconnectingPopup v-if="false" />
+
                 <LControl position="bottomright">
                     <div class="form-control flex flex-col gap-2">
                         <SettingsButton />

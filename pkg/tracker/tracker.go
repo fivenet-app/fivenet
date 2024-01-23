@@ -189,9 +189,11 @@ func (s *Tracker) cleanupUserIDs() error {
 			if ok {
 				point, ok := jobUsers.Load(key)
 				if ok {
-					s.GetUserJobLocations(info.Job).Remove(point, func(p orb.Pointer) bool {
-						return p.(*livemap.UserMarker).UserId == point.UserId
-					})
+					if locs := s.GetUserJobLocations(info.Job); locs != nil {
+						locs.Remove(point, func(p orb.Pointer) bool {
+							return p.(*livemap.UserMarker).UserId == point.UserId
+						})
+					}
 				}
 				jobUsers.Delete(key)
 			}
@@ -280,14 +282,16 @@ func (s *Tracker) refreshUserLocations(ctx context.Context, sendCurrentList bool
 
 		jobMarkers[job].Store(userId, dest[i])
 
-		if s.GetUserJobLocations(job).Has(dest[i], func(p orb.Pointer) bool {
-			return p.(*livemap.UserMarker).UserId == dest[i].UserId
-		}) {
-			s.GetUserJobLocations(job).Remove(dest[i], func(p orb.Pointer) bool {
+		if locs := s.GetUserJobLocations(job); locs != nil {
+			if locs.Has(dest[i], func(p orb.Pointer) bool {
 				return p.(*livemap.UserMarker).UserId == dest[i].UserId
-			})
+			}) {
+				locs.Remove(dest[i], func(p orb.Pointer) bool {
+					return p.(*livemap.UserMarker).UserId == dest[i].UserId
+				})
+			}
+			locs.Add(dest[i])
 		}
-		s.GetUserJobLocations(job).Add(dest[i])
 
 		userInfo := &UserInfo{
 			Job:    dest[i].User.Job,

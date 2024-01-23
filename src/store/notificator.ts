@@ -8,14 +8,14 @@ import { NotificationCategory } from '~~/gen/ts/resources/notifications/notifica
 import { MarkNotificationsRequest } from '~~/gen/ts/services/notificator/notificator';
 
 // In seconds
-const initialBackoffTime = 2;
+const initialReconnectBackoffTime = 2;
 
 export interface NotificationsState {
     lastId: string;
     notifications: Notification[];
     abort: AbortController | undefined;
-    restarting: boolean;
-    restartBackoffTime: number;
+    reconnecting: boolean;
+    reconnectBackoffTime: number;
 }
 
 export const useNotificatorStore = defineStore('notifications', {
@@ -24,8 +24,8 @@ export const useNotificatorStore = defineStore('notifications', {
             lastId: '0',
             notifications: [],
             abort: undefined,
-            restarting: false,
-            restartBackoffTime: 0,
+            reconnecting: false,
+            reconnectBackoffTime: 0,
         }) as NotificationsState,
     persist: {
         paths: ['lastId'],
@@ -77,7 +77,7 @@ export const useNotificatorStore = defineStore('notifications', {
             console.debug('Notificator: Stream starting, starting at ID:', this.getLastId);
 
             this.abort = new AbortController();
-            this.restarting = false;
+            this.reconnecting = false;
             const { $grpc } = useNuxtApp();
 
             try {
@@ -172,7 +172,7 @@ export const useNotificatorStore = defineStore('notifications', {
 
                     if (resp.restart) {
                         console.debug('Notificator: Server requested stream to be restarted');
-                        this.restartBackoffTime = 0;
+                        this.reconnectBackoffTime = 0;
                         this.restartStream();
                         break;
                     }
@@ -196,23 +196,23 @@ export const useNotificatorStore = defineStore('notifications', {
         },
 
         async restartStream(): Promise<void> {
-            this.restarting = true;
+            this.reconnecting = true;
 
             // Reset back off time when over 2 minutes
-            if (this.restartBackoffTime > 120) {
-                this.restartBackoffTime = initialBackoffTime;
+            if (this.reconnectBackoffTime > 120) {
+                this.reconnectBackoffTime = initialReconnectBackoffTime;
             } else {
-                this.restartBackoffTime += initialBackoffTime;
+                this.reconnectBackoffTime += initialReconnectBackoffTime;
             }
 
-            console.debug('Notificator: Restart back off time in', this.restartBackoffTime, 'seconds');
+            console.debug('Notificator: Restart back off time in', this.reconnectBackoffTime, 'seconds');
             await this.stopStream();
 
             setTimeout(async () => {
-                if (this.restarting) {
+                if (this.reconnecting) {
                     this.startStream();
                 }
-            }, this.restartBackoffTime * 1000);
+            }, this.reconnectBackoffTime * 1000);
         },
 
         // Notification Actions

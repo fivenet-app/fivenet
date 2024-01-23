@@ -14,7 +14,7 @@ import CentrumFeed from '~/components/centrum/CentrumFeed.vue';
 import DispatchesLayer from '~/components/centrum/livemap/DispatchesLayer.vue';
 
 const centrumStore = useCentrumStore();
-const { error, abort, restarting, feed } = storeToRefs(centrumStore);
+const { error, abort, reconnecting, feed } = storeToRefs(centrumStore);
 const { startStream, stopStream } = centrumStore;
 
 const livemapStore = useLivemapStore();
@@ -38,7 +38,7 @@ function goto(e: Coordinate) {
 <template>
     <div class="relative h-full w-full">
         <div
-            v-if="error !== undefined || (abort === undefined && !restarting)"
+            v-if="error !== undefined || (abort === undefined && !reconnecting)"
             class="absolute inset-0 z-30 flex items-center justify-center bg-gray-600/70"
         >
             <DataErrorBlock
@@ -47,7 +47,7 @@ function goto(e: Coordinate) {
                 :retry="startStream"
             />
             <DataPendingBlock
-                v-else-if="abort === undefined && !restarting"
+                v-else-if="abort === undefined && !reconnecting"
                 :message="$t('components.centrum.dispatch_center.starting_datastream')"
             />
         </div>

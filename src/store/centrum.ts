@@ -13,14 +13,14 @@ const cleanupInterval = 40 * 1000; // 40 seconds
 const dispatchEndOfLifeTime = 2 * 60 * 60 * 1000; // 2 hours
 
 // In seconds
-const initialBackoffTime = 0.75;
+const initialReconnectBackoffTime = 0.75;
 
 export interface CentrumState {
     error: RpcError | undefined;
     abort: AbortController | undefined;
     cleanupIntervalId: NodeJS.Timeout | undefined;
-    restarting: boolean;
-    restartBackoffTime: number;
+    reconnecting: boolean;
+    reconnectBackoffTime: number;
 
     timeCorrection: number;
 
@@ -42,8 +42,8 @@ export const useCentrumStore = defineStore('centrum', {
         ({
             error: undefined,
             abort: undefined,
-            restarting: false,
-            restartBackoffTime: initialBackoffTime,
+            reconnecting: false,
+            reconnectBackoffTime: initialReconnectBackoffTime,
 
             timeCorrection: 0,
 
@@ -348,7 +348,7 @@ export const useCentrumStore = defineStore('centrum', {
 
             this.abort = new AbortController();
             this.error = undefined;
-            this.restarting = false;
+            this.reconnecting = false;
 
             try {
                 const call = $grpc.getCentrumClient().stream(
@@ -570,7 +570,7 @@ export const useCentrumStore = defineStore('centrum', {
                     }
 
                     if (resp.restart !== undefined && resp.restart) {
-                        this.restartBackoffTime = initialBackoffTime;
+                        this.reconnectBackoffTime = initialReconnectBackoffTime;
                         this.restartStream(isCenter);
                         break;
                     }
@@ -602,7 +602,7 @@ export const useCentrumStore = defineStore('centrum', {
                 this.abort = undefined;
             }
 
-            if (!this.restarting) {
+            if (!this.reconnecting) {
                 if (this.cleanupIntervalId !== undefined) {
                     clearInterval(this.cleanupIntervalId);
                     this.cleanupIntervalId = undefined;
@@ -612,23 +612,23 @@ export const useCentrumStore = defineStore('centrum', {
             console.debug('Centrum: Stopping Data Stream');
         },
         async restartStream(isCenter?: boolean): Promise<void> {
-            this.restarting = true;
+            this.reconnecting = true;
 
             // Reset back off time when over 10 seconds
-            if (this.restartBackoffTime > 10) {
-                this.restartBackoffTime = initialBackoffTime;
+            if (this.reconnectBackoffTime > 10) {
+                this.reconnectBackoffTime = initialReconnectBackoffTime;
             } else {
-                this.restartBackoffTime += initialBackoffTime;
+                this.reconnectBackoffTime += initialReconnectBackoffTime;
             }
 
-            console.debug('Centrum: Restart back off time in', this.restartBackoffTime, 'seconds');
+            console.debug('Centrum: Restart back off time in', this.reconnectBackoffTime, 'seconds');
             await this.stopStream();
 
             setTimeout(async () => {
-                if (this.restarting) {
+                if (this.reconnecting) {
                     this.startStream(isCenter);
                 }
-            }, this.restartBackoffTime * 1000);
+            }, this.reconnectBackoffTime * 1000);
         },
 
         // Utilities
