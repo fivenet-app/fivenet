@@ -19,7 +19,7 @@ const (
 	DelayBetweenDispatchAssignment = 35 * time.Second
 	MinUnitCountForDelay           = 3
 	PerUnitDelaySeconds            = 5
-	MaxDelayCap                    = 80 * time.Second
+	MaxDelayCap                    = 60 * time.Second
 )
 
 type Bot struct {
@@ -83,11 +83,8 @@ func (b *Bot) Run(ctx context.Context) error {
 				break
 			}
 
-			if err := b.state.UpdateDispatchAssignments(
-				ctx, b.job, nil, dsp.Id,
-				[]uint64{unit.Id}, nil,
-				b.state.DispatchAssignmentExpirationTime(),
-			); err != nil {
+			if err := b.state.UpdateDispatchAssignments(ctx, b.job, nil, dsp.Id, []uint64{unit.Id}, nil,
+				b.state.DispatchAssignmentExpirationTime()); err != nil {
 				b.logger.Error("failed to assgin unit to dispatch", zap.Uint64("dispatch_id", dsp.Id), zap.Uint64("unit_id", unit.Id), zap.Error(err))
 				break
 			}
@@ -100,7 +97,7 @@ func (b *Bot) getAvailableUnit(ctx context.Context, point orb.Point) (*centrum.U
 
 	locs := b.tracker.GetUserJobLocations(b.job)
 	if locs != nil {
-		points := locs.KNearest(point, 7, nil, 5000.0)
+		points := locs.KNearest(point, 5, nil, 5000.0)
 		for _, point := range points {
 			user := point.(*livemap.UserMarker)
 			if user.UnitId == nil {
@@ -112,42 +109,48 @@ func (b *Bot) getAvailableUnit(ctx context.Context, point orb.Point) (*centrum.U
 				b.logger.Error("failed to get user's unit", zap.String("job", user.Info.Job), zap.Error(err))
 				continue
 			}
+
+			if unit.Status == nil || unit.Status.Status != centrum.StatusUnit_STATUS_UNIT_AVAILABLE {
+				b.logger.Debug("skipping close by unit because of status", zap.String("job", user.Info.Job), zap.Any("unit_status", unit.Status))
+				continue
+			}
+
 			units = append(units, unit)
 		}
 	}
 
 	if len(units) == 0 {
-		if locs != nil {
-			b.logger.Warn("falling back to normal unit selection, no close by user units found", zap.String("job", b.job))
-		}
+		b.logger.Warn("falling back to normal unit selection, no close by units found", zap.String("job", b.job))
 
-		units := b.state.FilterUnits(b.job, []centrum.StatusUnit{centrum.StatusUnit_STATUS_UNIT_AVAILABLE}, nil)
+		units = b.state.FilterUnits(b.job, []centrum.StatusUnit{centrum.StatusUnit_STATUS_UNIT_AVAILABLE}, nil)
 		if len(units) == 0 {
 			return nil, false
 		}
-
-		// Randomize unit ids
-		for i := range units {
-			j := rand.Intn(i + 1)
-			units[i], units[j] = units[j], units[i]
-		}
 	}
 
-	var unit *centrum.Unit
-	for _, u := range units {
-		t, ok := b.lastAssignedUnits[u.Id]
+	b.logger.Debug("found available units", zap.Int("available_units_count", len(units)))
+
+	// Randomize unit ids
+	for i := range units {
+		j := rand.Intn(i + 1)
+		units[i], units[j] = units[j], units[i]
+	}
+
+	var selectedUnit *centrum.Unit
+	for _, unit := range units {
+		t, ok := b.lastAssignedUnits[unit.Id]
 		if !ok || time.Now().After(t) {
 			// Double check if unit is still available
-			if u.Status != nil && u.Status.Status != centrum.StatusUnit_STATUS_UNIT_AVAILABLE {
+			if unit.Status != nil && unit.Status.Status != centrum.StatusUnit_STATUS_UNIT_AVAILABLE {
 				continue
 			}
 
-			unit = u
+			selectedUnit = unit
 			break
 		}
 	}
 
-	if unit == nil {
+	if selectedUnit == nil {
 		return nil, false
 	}
 
@@ -160,7 +163,7 @@ func (b *Bot) getAvailableUnit(ctx context.Context, point orb.Point) (*centrum.U
 		}
 	}
 
-	b.lastAssignedUnits[unit.Id] = time.Now().Add(DelayBetweenDispatchAssignment).Add(delay)
+	b.lastAssignedUnits[selectedUnit.Id] = time.Now().Add(DelayBetweenDispatchAssignment).Add(delay)
 
-	return unit, true
+	return selectedUnit, true
 }
