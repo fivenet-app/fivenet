@@ -50,7 +50,7 @@ const open = ref(false);
         @updated="$emit('updated')"
     />
 
-    <tr>
+    <tr class="transition-colors even:bg-base-800 hover:bg-neutral/5">
         <td class="whitespace-nowrap py-2 pl-4 pr-3 text-sm font-medium text-neutral sm:pl-1">
             {{ unit.name }}
         </td>

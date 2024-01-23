@@ -310,14 +310,6 @@ func (m *Unit) validate(all bool) error {
 
 	}
 
-	if m.HomePostalX != nil {
-		// no validation rules for HomePostalX
-	}
-
-	if m.HomePostalY != nil {
-		// no validation rules for HomePostalY
-	}
-
 	if len(errors) > 0 {
 		return UnitMultiError(errors)
 	}

@@ -797,7 +797,8 @@
         "no": "No",
         "page": "Page",
         "department": "Department",
-        "none": "No {0}"
+        "none": "No {0}",
+        "department_postal": "Department Postal"
     },
     "notifications": {
         "clipboard": {

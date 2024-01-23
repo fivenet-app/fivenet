@@ -38,6 +38,7 @@ import JoinUnitModal from '~/components/centrum/livemap/JoinUnitModal.vue';
 import TakeDispatchModal from '~/components/centrum/livemap/TakeDispatchModal.vue';
 import { useAuthStore } from '~/store/auth';
 import LivemapBase from '~/components/livemap/LivemapBase.vue';
+import { setWaypointPLZ } from '~/composables/nui';
 
 defineEmits<{
     (e: 'goto', loc: Coordinate): void;
@@ -615,7 +616,7 @@ async function checkup(): Promise<void> {
                             v-if="getOwnUnit.homePostal !== undefined"
                             type="button"
                             class="flex h-12 w-12 items-center justify-center rounded-r-full bg-primary-500 text-neutral hover:bg-primary-400"
-                            @click="$emit('goto', { x: getOwnUnit.homePostalX ?? 0, y: getOwnUnit.homePostalY ?? 0 })"
+                            @click="setWaypointPLZ(getOwnUnit.homePostal)"
                         >
                             <HomeFloorBIcon class="h-auto w-10" />
                         </button>

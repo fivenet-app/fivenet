@@ -72,3 +72,11 @@ export async function setRadioFrequency(frequency: number): Promise<void> {
 
     return fetchNui('setRadioFrequency', { frequency });
 }
+
+export async function setWaypointPLZ(plz: string): Promise<void> {
+    if (!isNUIAvailable()) {
+        return;
+    }
+
+    return fetchNui('setWaypointPLZ', { plz });
+}

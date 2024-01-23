@@ -9,7 +9,6 @@ import (
 	"github.com/galexrt/fivenet/gen/go/proto/resources/centrum"
 	"github.com/galexrt/fivenet/gen/go/proto/resources/timestamp"
 	users "github.com/galexrt/fivenet/gen/go/proto/resources/users"
-	"github.com/galexrt/fivenet/pkg/coords/postals"
 	jet "github.com/go-jet/jet/v2/mysql"
 	"github.com/go-jet/jet/v2/qrm"
 	"github.com/paulmach/orb"
@@ -204,13 +203,6 @@ func (s *Manager) LoadUnitsFromDB(ctx context.Context, id uint64) error {
 	for i := 0; i < len(units); i++ {
 		if err := s.resolveUsersForUnit(ctx, &units[i].Users); err != nil {
 			return err
-		}
-
-		if units[i].HomePostal != nil {
-			if postal, ok := postals.ByCode(*units[i].HomePostal); ok {
-				units[i].HomePostalX = &postal.X
-				units[i].HomePostalY = &postal.Y
-			}
 		}
 
 		if err := s.State.UpdateUnit(ctx, units[i].Job, units[i].Id, units[i]); err != nil {
