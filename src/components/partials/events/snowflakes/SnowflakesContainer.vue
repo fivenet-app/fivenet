@@ -40,9 +40,9 @@
 </template>
 
 <style>
-/* customizable snowflake styling */
+/* Customizable snowflake styling */
 .snowflake {
-    color: #fff;
+    color: #ffffff;
 
     font-size: 1em;
 

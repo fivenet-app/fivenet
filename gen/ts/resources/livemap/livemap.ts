@@ -26,6 +26,10 @@ export interface MarkerInfo {
      */
     job: string;
     /**
+     * @generated from protobuf field: string job_label = 12;
+     */
+    jobLabel: string;
+    /**
      * @sanitize
      *
      * @generated from protobuf field: string name = 5;
@@ -197,6 +201,7 @@ class MarkerInfo$Type extends MessageType<MarkerInfo> {
             { no: 2, name: "created_at", kind: "message", T: () => Timestamp },
             { no: 3, name: "updated_at", kind: "message", T: () => Timestamp },
             { no: 4, name: "job", kind: "scalar", T: 9 /*ScalarType.STRING*/ },
+            { no: 12, name: "job_label", kind: "scalar", T: 9 /*ScalarType.STRING*/ },
             { no: 5, name: "name", kind: "scalar", T: 9 /*ScalarType.STRING*/ },
             { no: 6, name: "description", kind: "scalar", opt: true, T: 9 /*ScalarType.STRING*/ },
             { no: 7, name: "x", kind: "scalar", T: 1 /*ScalarType.DOUBLE*/ },

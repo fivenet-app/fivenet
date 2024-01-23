@@ -61,6 +61,8 @@ func (m *MarkerInfo) validate(all bool) error {
 
 	// no validation rules for Job
 
+	// no validation rules for JobLabel
+
 	// no validation rules for Name
 
 	// no validation rules for X

@@ -80,5 +80,8 @@ onConfirm(async (id) => deleteMarker(id));
                 {{ $t('common.unknown') }}
             </span>
         </td>
+        <td class="whitespace-nowrap px-1 py-1 text-sm text-gray-300">
+            {{ marker.creator?.jobLabel ?? $t('common.na') }}
+        </td>
     </tr>
 </template>

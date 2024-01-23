@@ -273,6 +273,10 @@ func (s *Server) getMarker(ctx context.Context, id uint64) (*livemap.Marker, err
 		return nil, err
 	}
 
+	if dest.Info != nil {
+		s.enricher.EnrichJobName(dest.Info)
+	}
+
 	return &dest, nil
 }
 
@@ -336,7 +340,12 @@ func (s *Server) refreshMarkers(ctx context.Context) error {
 	for _, job := range s.trackedJobs {
 		markers[job] = []*livemap.Marker{}
 	}
+
 	for _, m := range dest {
+		if m.Info != nil {
+			s.enricher.EnrichJobName(m.Info)
+		}
+
 		if _, ok := markers[m.Info.Job]; !ok {
 			markers[m.Info.Job] = []*livemap.Marker{}
 		}

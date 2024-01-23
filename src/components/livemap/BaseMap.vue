@@ -285,7 +285,7 @@ onBeforeUnmount(() => {
 }
 
 .leaflet-div-icon svg path {
-    stroke: #000;
+    stroke: #000000;
     stroke-width: 0.75px;
     stroke-linejoin: round;
 }
@@ -296,7 +296,7 @@ onBeforeUnmount(() => {
 
 .leaflet-popup-content-wrapper {
     background-color: #16171a;
-    color: #fff;
+    color: #ffffff;
 }
 .leaflet-popup-content p {
     margin: 0.25em 0;

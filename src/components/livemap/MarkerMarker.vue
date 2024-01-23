@@ -53,7 +53,7 @@ onConfirm(async (id) => deleteMarker(id));
         :key="marker.info!.id"
         :lat-lng="[marker.info!.y, marker.info!.x]"
         :radius="marker.data?.data.circle.radius"
-        :color="marker.info?.color ? '#' + marker.info?.color : '#fff'"
+        :color="marker.info?.color ? '#' + marker.info?.color : '#ffffff'"
         :fill-opacity="(marker.data.data.circle.oapcity ?? 5) / 100"
     >
         <LPopup :options="{ closeButton: true }">
@@ -80,6 +80,11 @@ onConfirm(async (id) => deleteMarker(id));
                     <span v-else>
                         {{ $t('common.unknown') }}
                     </span>
+                </li>
+                <li>
+                    <span class="">{{ $t('common.job') }}</span
+                    >:
+                    {{ marker.info?.jobLabel ?? $t('common.na') }}
                 </li>
             </ul>
         </LPopup>

@@ -64,6 +64,12 @@ const { markersMarkers } = storeToRefs(livemapStore);
                                 >
                                     {{ $t('common.citizen') }}
                                 </th>
+                                <th
+                                    scope="col"
+                                    class="whitespace-nowrap px-1 py-1 text-left text-sm font-semibold text-gray-100"
+                                >
+                                    {{ $t('common.job') }}
+                                </th>
                             </tr>
                         </thead>
                         <tbody class="divide-y divide-base-800">

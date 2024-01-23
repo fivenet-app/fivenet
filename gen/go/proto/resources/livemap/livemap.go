@@ -34,3 +34,7 @@ func (x *UserMarker) Point() orb.Point {
 
 	return orb.Point{x.Info.X, x.Info.Y}
 }
+
+func (x *MarkerInfo) SetJobLabel(label string) {
+	x.JobLabel = label
+}
