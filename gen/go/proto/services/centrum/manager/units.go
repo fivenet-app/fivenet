@@ -35,7 +35,7 @@ func (s *Manager) UpdateUnitStatus(ctx context.Context, job string, unitId uint6
 			in.Status == centrum.StatusUnit_STATUS_UNIT_UNAVAILABLE ||
 			in.Status == centrum.StatusUnit_STATUS_UNIT_AVAILABLE) &&
 		// Additionally if the status is under 2 minutes disallow the same status update
-		(unit.Status.CreatedAt == nil || time.Since(unit.Status.CreatedAt.AsTime()) < 3*time.Minute) {
+		(unit.Status.CreatedAt == nil || time.Since(unit.Status.CreatedAt.AsTime()) < 2*time.Minute) {
 		s.logger.Debug("skipping unit status update due to same status or time", zap.Uint64("unit_id", unitId), zap.String("status", in.Status.String()))
 		return nil, nil
 	}

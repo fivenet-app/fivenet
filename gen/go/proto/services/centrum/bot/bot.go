@@ -70,7 +70,9 @@ func (b *Bot) Run(ctx context.Context) error {
 
 		b.logger.Debug("trying to auto assign dispatches", zap.Int("dispatch_count", len(dispatches)))
 		for _, dsp := range dispatches {
-			if !centrumutils.IsDispatchUnassigned(dsp) {
+			// Dispatch should be at least 5 seconds old to ensure deduplication has happened
+			if (dsp.CreatedAt != nil && time.Since(dsp.CreatedAt.AsTime()) <= 5*time.Second) ||
+				!centrumutils.IsDispatchUnassigned(dsp) {
 				continue
 			}
 
