@@ -574,26 +574,18 @@ func (s *Manager) UpdateDispatch(ctx context.Context, userJob string, userId *in
 		return nil, err
 	}
 
+	// Make sure the dispatch location is correct by removing and adding the dispatch
 	if locs := s.GetDispatchLocations(userJob); locs != nil {
-		oldDsp, err := s.GetDispatch(userJob, dsp.Id)
-		if err != nil {
-			return nil, errswrap.NewError(errorscentrum.ErrFailedQuery, err)
-		}
-
-		// Check if coords changed from existing to new dispatch, remove it from the locations
-		if oldDsp == nil || (oldDsp.X != dsp.X || oldDsp.Y != dsp.Y) {
-			locs.Remove(oldDsp, func(p orb.Pointer) bool {
-				return p.(*centrum.Dispatch).Id == oldDsp.Id
+		if locs.Has(dsp, func(p orb.Pointer) bool {
+			return p.(*centrum.Dispatch).Id == dsp.Id
+		}) {
+			locs.Remove(dsp, func(p orb.Pointer) bool {
+				return p.(*centrum.Dispatch).Id == dsp.Id
 			})
 		}
 
-		// Make sure dispatch is in the locations list
-		if !locs.Has(dsp, func(p orb.Pointer) bool {
-			return p.(*centrum.Dispatch).Id == dsp.Id
-		}) {
-			if err := locs.Add(dsp); err != nil {
-				s.logger.Error("failed to re-add updated dispatch's new coords to locations", zap.Error(err))
-			}
+		if err := locs.Add(dsp); err != nil {
+			s.logger.Error("failed to re-add updated dispatch's new coords to locations", zap.Error(err))
 		}
 	}
 
