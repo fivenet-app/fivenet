@@ -27,6 +27,10 @@ import (
 
 const DispatchExpirationTime = 30 * time.Second
 
+func (s *Manager) DispatchAssignmentExpirationTime() time.Time {
+	return time.Now().Add(DispatchExpirationTime)
+}
+
 func (s *Manager) UpdateDispatchStatus(ctx context.Context, job string, dspId uint64, in *centrum.DispatchStatus) (*centrum.DispatchStatus, error) {
 	dsp, err := s.GetDispatch(job, dspId)
 	if err != nil {
@@ -122,10 +126,6 @@ func (s *Manager) UpdateDispatchStatus(ctx context.Context, job string, dspId ui
 	}
 
 	return in, nil
-}
-
-func (s *Manager) DispatchAssignmentExpirationTime() time.Time {
-	return time.Now().Add(DispatchExpirationTime)
 }
 
 func (s *Manager) UpdateDispatchAssignments(ctx context.Context, job string, userId *int32, dspId uint64, toAdd []uint64, toRemove []uint64, expiresAt time.Time) error {
@@ -574,13 +574,25 @@ func (s *Manager) UpdateDispatch(ctx context.Context, userJob string, userId *in
 		return nil, err
 	}
 
-	// Make sure dispatch is in the locations list
-	if locs := s.State.GetDispatchLocations(dsp.Job); locs != nil {
+	if locs := s.GetDispatchLocations(userJob); locs != nil {
+		oldDsp, err := s.GetDispatch(userJob, dsp.Id)
+		if err != nil {
+			return nil, errswrap.NewError(errorscentrum.ErrFailedQuery, err)
+		}
+
+		// Check if coords changed from existing to new dispatch, remove it from the locations
+		if oldDsp == nil || (oldDsp.X != dsp.X || oldDsp.Y != dsp.Y) {
+			locs.Remove(oldDsp, func(p orb.Pointer) bool {
+				return p.(*centrum.Dispatch).Id == oldDsp.Id
+			})
+		}
+
+		// Make sure dispatch is in the locations list
 		if !locs.Has(dsp, func(p orb.Pointer) bool {
 			return p.(*centrum.Dispatch).Id == dsp.Id
 		}) {
 			if err := locs.Add(dsp); err != nil {
-				s.logger.Error("failed to update dispatch in locations", zap.Uint64("dispatch_id", dsp.Id))
+				s.logger.Error("failed to re-add updated dispatch's new coords to locations", zap.Error(err))
 			}
 		}
 	}

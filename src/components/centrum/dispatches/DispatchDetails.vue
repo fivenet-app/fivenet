@@ -194,10 +194,8 @@ const openStatus = ref(false);
                                                             <dt class="text-sm font-medium leading-6 text-neutral">
                                                                 {{ $t('common.description') }}
                                                             </dt>
-                                                            <dd
-                                                                class="mt-2 max-h-24 text-sm text-gray-300 sm:col-span-2 sm:mt-0"
-                                                            >
-                                                                <p class="whitespace-pre break-words">
+                                                            <dd class="mt-2 text-sm text-gray-300 sm:col-span-2 sm:mt-0">
+                                                                <p class="max-h-14 overflow-y-scroll break-words">
                                                                     {{ dispatch.description ?? $t('common.na') }}
                                                                 </p>
                                                             </dd>

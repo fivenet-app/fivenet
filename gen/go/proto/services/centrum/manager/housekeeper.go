@@ -342,8 +342,8 @@ func (s *Housekeeper) deleteOldDispatches(ctx context.Context) error {
 				jet.CURRENT_TIMESTAMP().SUB(jet.INTERVAL(14, jet.DAY)),
 			),
 		)).
-		// Delete max 50 at a time
-		LIMIT(50)
+		// Get 75 at a time
+		LIMIT(75)
 
 	var dest []*struct {
 		DispatchID uint64
@@ -481,10 +481,6 @@ func (s *Housekeeper) deduplicateDispatches(ctx context.Context) error {
 							s.logger.Error("failed to update duplicate dispatch attribute", zap.Error(err))
 						}
 					}
-
-					s.State.GetDispatchLocations(closeByDsp.Job).Remove(closeByDsp, func(p orb.Pointer) bool {
-						return p.(*centrum.Dispatch).Id == closeByDsp.Id
-					})
 
 					if _, err := s.UpdateDispatchStatus(ctx, closeByDsp.Job, closeByDsp.Id, &centrum.DispatchStatus{
 						CreatedAt:  timestamp.Now(),
