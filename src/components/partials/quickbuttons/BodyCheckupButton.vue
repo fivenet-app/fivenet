@@ -15,7 +15,7 @@ const open = ref(false);
         <HumanIcon class="w-10 h-auto" />
     </button>
 
-    <GenericModal :open="open" @close="open = false">
+    <GenericModal :open="open" :unmount="false" @close="open = false">
         <BodyCheckup />
     </GenericModal>
 </template>

@@ -837,6 +837,10 @@
             "vehicles_removed": {
                 "title": "Clipboard: Vehicles removed",
                 "content": "All vehicles have been removed from your clipboard"
+            },
+            "link_copied": {
+                "title": "Link copied to clipboard",
+                "content": "Link has been copied to your computer's clipboard."
             }
         },
         "action_successfull": {

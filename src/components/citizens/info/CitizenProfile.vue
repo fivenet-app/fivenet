@@ -12,10 +12,7 @@ import { User } from '~~/gen/ts/resources/users/users';
 import CitizenSetTrafficPointsModal from '~/components/citizens/info/CitizenSetTrafficPointsModal.vue';
 import CitizenSetWantedModal from '~/components/citizens/info/CitizenSetWantedModal.vue';
 import type { Job, JobGrade } from '~~/gen/ts/resources/users/jobs';
-
-const clipboardStore = useClipboardStore();
-
-const w = window;
+import { useNotificatorStore } from '~/store/notificator';
 
 const props = defineProps<{
     user: User;
@@ -27,12 +24,29 @@ defineEmits<{
     (e: 'update:trafficInfractionPoints', value: number): void;
 }>();
 
+const w = window;
+
+const clipboardStore = useClipboardStore();
+
+const notifications = useNotificatorStore();
+
 const templatesOpen = ref(false);
 
 function openTemplates(): void {
     clipboardStore.addUser(props.user);
 
     templatesOpen.value = true;
+}
+
+function copyLinkToClipboard(): void {
+    copyToClipboardWrapper(w.location.href);
+
+    notifications.dispatchNotification({
+        title: { key: 'notifications.clipboard.link_copied.title', parameters: {} },
+        content: { key: 'notifications.clipboard.link_copied.content', parameters: {} },
+        duration: 3250,
+        type: 'info',
+    });
 }
 
 const setJobModal = ref(false);
@@ -277,7 +291,7 @@ const trafficPointsModal = ref(false);
                                     <button
                                         type="button"
                                         class="inline-flex w-full flex-shrink-0 items-center justify-center rounded-md bg-base-700 px-3 py-2 text-sm font-semibold text-neutral transition-colors hover:bg-base-600 focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-primary-500 sm:flex-1"
-                                        @click="copyToClipboardWrapper(w.location.href)"
+                                        @click="copyLinkToClipboard()"
                                     >
                                         {{ $t('components.citizens.citizen_info_profile.copy_profile_link') }}
                                     </button>

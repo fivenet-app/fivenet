@@ -345,7 +345,7 @@ async function checkup(): Promise<void> {
                 />
 
                 <div class="flex h-full grow gap-y-5 overflow-y-auto overflow-x-hidden bg-base-600 px-4 py-0.5">
-                    <nav v-if="open" class="flex flex-1 flex-col">
+                    <nav v-if="open" class="flex flex-1 flex-col min-w-48 max-w-48 md:min-w-64 md:max-w-64">
                         <ul role="list" class="flex flex-1 flex-col gap-y-2 divide-y divide-base-400">
                             <li class="-mx-2 -mb-1">
                                 <DisponentsModal :open="openDisponents" @close="openDisponents = false" />
@@ -377,7 +377,7 @@ async function checkup(): Promise<void> {
                                 </button>
                             </li>
                             <li>
-                                <ul role="list" class="-mx-2 mt-1 space-y-1">
+                                <ul role="list" class="-mx-2 mt-1 space-y-0.5">
                                     <li>
                                         <template v-if="getOwnUnit !== undefined">
                                             <button
@@ -430,85 +430,57 @@ async function checkup(): Promise<void> {
                             </li>
                             <template v-if="getOwnUnit !== undefined">
                                 <li>
-                                    <ul role="list" class="-mx-2 space-y-1">
+                                    <ul role="list" class="-mx-2 space-y-0.5">
+                                        <div class="inline-flex items-center text-xs font-semibold leading-6 text-base-100">
+                                            {{ $t('common.unit') }}
+                                            <LoadingIcon v-if="!canSubmitUnitStatus" class="ml-1 h-4 w-4 animate-spin" />
+                                        </div>
+                                        <UnitStatusUpdateModal
+                                            :unit="getOwnUnit"
+                                            :open="openUnitStatus"
+                                            @close="openUnitStatus = false"
+                                        />
                                         <li>
-                                            <Disclosure as="div">
-                                                <DisclosureButton
-                                                    class="flex w-full items-start justify-between text-left text-neutral"
+                                            <div class="grid grid-cols-2 gap-0.5">
+                                                <button
+                                                    v-for="item in unitStatuses"
+                                                    :key="item.name"
+                                                    type="button"
+                                                    class="bg-primary group my-0.5 flex w-full flex-col items-center rounded-md p-1.5 text-xs font-medium text-neutral hover:bg-primary-100/10 hover:text-neutral hover:transition-all"
+                                                    :disabled="!canSubmitUnitStatus"
+                                                    :class="[
+                                                        !canSubmitUnitStatus ? 'disabled' : '',
+                                                        item.status ? unitStatusToBGColor(item.status) : item.class,
+                                                        item.class,
+                                                    ]"
+                                                    @click="onSubmitUnitStatusThrottle(getOwnUnit.id!, item.status)"
                                                 >
-                                                    <span class="leading-7 text-base-100">
-                                                        <div
-                                                            class="inline-flex items-center text-xs font-semibold leading-6 text-base-100"
-                                                        >
-                                                            {{ $t('common.unit') }}
-                                                            <LoadingIcon
-                                                                v-if="!canSubmitUnitStatus"
-                                                                class="ml-1 h-4 w-4 animate-spin"
-                                                            />
-                                                        </div>
+                                                    <component
+                                                        :is="item.icon ?? HoopHouseIcon"
+                                                        class="h-5 w-5 shrink-0 text-base-100 group-hover:text-neutral"
+                                                        aria-hidden="true"
+                                                    />
+                                                    <span class="mt-1">
+                                                        {{
+                                                            item.status
+                                                                ? $t(`enums.centrum.StatusUnit.${StatusUnit[item.status ?? 0]}`)
+                                                                : $t(item.name)
+                                                        }}
                                                     </span>
-                                                    <span class="ml-6 flex h-7 items-center">
-                                                        <ChevronDownIcon
-                                                            :class="[open ? 'upsidedown' : '', 'h-5 w-5 transition-transform']"
-                                                            aria-hidden="true"
-                                                        />
-                                                    </span>
-                                                </DisclosureButton>
-                                                <DisclosurePanel>
-                                                    <div class="flex flex-row gap-2">
-                                                        <div class="grid w-full grid-cols-2 gap-0.5">
-                                                            <UnitStatusUpdateModal
-                                                                :unit="getOwnUnit"
-                                                                :open="openUnitStatus"
-                                                                @close="openUnitStatus = false"
-                                                            />
-
-                                                            <button
-                                                                v-for="item in unitStatuses"
-                                                                :key="item.name"
-                                                                type="button"
-                                                                class="bg-primary group my-0.5 flex w-full flex-col items-center rounded-md p-1.5 text-xs font-medium text-neutral hover:bg-primary-100/10 hover:text-neutral hover:transition-all"
-                                                                :disabled="!canSubmitUnitStatus"
-                                                                :class="[
-                                                                    !canSubmitUnitStatus ? 'disabled' : '',
-                                                                    item.status ? unitStatusToBGColor(item.status) : item.class,
-                                                                    item.class,
-                                                                ]"
-                                                                @click="onSubmitUnitStatusThrottle(getOwnUnit.id!, item.status)"
-                                                            >
-                                                                <component
-                                                                    :is="item.icon ?? HoopHouseIcon"
-                                                                    class="h-5 w-5 shrink-0 text-base-100 group-hover:text-neutral"
-                                                                    aria-hidden="true"
-                                                                />
-                                                                <span class="mt-1">
-                                                                    {{
-                                                                        item.status
-                                                                            ? $t(
-                                                                                  `enums.centrum.StatusUnit.${
-                                                                                      StatusUnit[item.status ?? 0]
-                                                                                  }`,
-                                                                              )
-                                                                            : $t(item.name)
-                                                                    }}
-                                                                </span>
-                                                            </button>
-                                                            <button
-                                                                type="button"
-                                                                class="group col-span-2 my-0.5 flex w-full flex-col items-center rounded-md bg-base-800 p-1.5 text-xs font-medium text-neutral hover:bg-primary-100/10 hover:text-neutral hover:transition-all"
-                                                                @click="updateUtStatus(getOwnUnit.id)"
-                                                            >
-                                                                {{ $t('components.centrum.update_unit_status.title') }}
-                                                            </button>
-                                                        </div>
-                                                    </div>
-                                                </DisclosurePanel>
-                                            </Disclosure>
+                                                </button>
+                                                <button
+                                                    type="button"
+                                                    class="group col-span-2 my-0.5 flex w-full flex-col items-center rounded-md bg-base-800 p-1.5 text-xs font-medium text-neutral hover:bg-primary-100/10 hover:text-neutral hover:transition-all"
+                                                    @click="updateUtStatus(getOwnUnit.id)"
+                                                >
+                                                    {{ $t('components.centrum.update_unit_status.title') }}
+                                                </button>
+                                            </div>
                                         </li>
                                     </ul>
                                 </li>
                                 <li>
-                                    <ul role="list" class="-mx-2 space-y-1">
+                                    <ul role="list" class="-mx-2 space-y-0.5">
                                         <div class="inline-flex items-center text-xs font-semibold leading-6 text-base-100">
                                             {{ $t('common.dispatch') }} {{ $t('common.status') }}
                                             <LoadingIcon v-if="!canSubmitDispatchStatus" class="ml-1 h-4 w-4 animate-spin" />
@@ -562,7 +534,7 @@ async function checkup(): Promise<void> {
                                     <div class="text-xs font-semibold leading-6 text-base-100">
                                         {{ $t('common.your_dispatches') }}
                                     </div>
-                                    <ul role="list" class="-mx-2 mt-1 space-y-1">
+                                    <ul role="list" class="-mx-2 mt-1 space-y-0.5">
                                         <li v-if="getSortedOwnDispatches.length === 0">
                                             <button
                                                 type="button"

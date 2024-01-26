@@ -7,6 +7,7 @@ import IDCopyBadge from '~/components/partials/IDCopyBadge.vue';
 import CitizenInfoPopover from '~/components/partials/citizens/CitizenInfoPopover.vue';
 import { useCentrumStore } from '~/store/centrum';
 import { Dispatch, StatusDispatch } from '~~/gen/ts/resources/centrum/dispatches';
+import DispatchAttributes from '../partials/DispatchAttributes.vue';
 
 const props = withDefaults(
     defineProps<{
@@ -85,7 +86,8 @@ const open = ref(false);
                 </li>
                 <li class="py-3 pl-3 pr-4 text-sm">
                     <span class="block">
-                        {{ $t('common.postal') }}:
+                        <span class="font-medium">{{ $t('common.postal') }}</span
+                        >:
                         {{ dispatch.postal ?? $t('common.na') }}
                     </span>
                     <button
@@ -105,6 +107,13 @@ const open = ref(false);
                     <span class="ml-1 text-neutral" :class="dispatchBackground">{{
                         $t(`enums.centrum.StatusDispatch.${StatusDispatch[dispatch.status?.status ?? 0]}`)
                     }}</span>
+                </li>
+                <li v-if="dispatch.attributes" class="flex items-center py-3 pl-3 pr-4 text-sm">
+                    <span class="font-medium">{{ $t('common.attributes') }}</span
+                    >:
+                    <span class="ml-1">
+                        <DispatchAttributes :attributes="dispatch.attributes" />
+                    </span>
                 </li>
                 <li class="flex items-center justify-between py-3 pl-3 pr-4 text-sm">
                     <div class="flex flex-1 items-center">

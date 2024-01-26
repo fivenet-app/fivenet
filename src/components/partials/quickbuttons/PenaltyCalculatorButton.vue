@@ -1,7 +1,7 @@
 <script lang="ts" setup>
 import { CalculatorIcon } from 'mdi-vue3';
 import GenericModal from '~/components/partials/elements/GenericModal.vue';
-import Calculator from '~/components/penaltycalculator/PenaltyCalculator.vue';
+import PenaltyCalculator from '~/components/penaltycalculator/PenaltyCalculator.vue';
 
 const open = ref(false);
 </script>
@@ -15,7 +15,7 @@ const open = ref(false);
         <CalculatorIcon class="w-10 h-auto" />
     </button>
 
-    <GenericModal :open="open" @close="open = false">
-        <Calculator />
+    <GenericModal :open="open" :unmount="false" @close="open = false">
+        <PenaltyCalculator />
     </GenericModal>
 </template>

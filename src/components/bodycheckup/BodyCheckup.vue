@@ -63,6 +63,10 @@ async function copyToClipboard(): Promise<void> {
 
     return copyToClipboardWrapper(text);
 }
+
+function reset(): void {
+    pins.value = [];
+}
 </script>
 
 <template>
@@ -207,13 +211,20 @@ async function copyToClipboard(): Promise<void> {
                                     </li>
                                 </ol>
                             </div>
-                            <div class="mb-4 flex-initial">
+                            <div class="mb-4 flex items-center flex-initial gap-1">
                                 <button
                                     type="button"
                                     class="w-full rounded-md bg-info-700 px-3.5 py-2.5 text-sm font-semibold text-neutral hover:bg-info-600"
                                     @click="copyToClipboard()"
                                 >
                                     {{ $t('common.copy') }}
+                                </button>
+                                <button
+                                    type="button"
+                                    class="rounded-md bg-error-700 px-3.5 py-2.5 text-sm font-semibold text-neutral hover:bg-error-600"
+                                    @click="reset()"
+                                >
+                                    {{ $t('common.reset') }}
                                 </button>
                             </div>
                             <BMICalculator />

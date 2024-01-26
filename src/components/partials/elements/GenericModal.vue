@@ -2,10 +2,17 @@
 import { Dialog, DialogPanel, TransitionChild, TransitionRoot } from '@headlessui/vue';
 import { CloseIcon } from 'mdi-vue3';
 
-defineProps<{
-    open: boolean;
-    dialogClass?: unknown;
-}>();
+withDefaults(
+    defineProps<{
+        open: boolean;
+        dialogClass?: unknown;
+        unmount?: boolean;
+    }>(),
+    {
+        dialogClass: '' as any,
+        unmount: true,
+    },
+);
 
 defineEmits<{
     (e: 'close'): void;
@@ -13,8 +20,8 @@ defineEmits<{
 </script>
 
 <template>
-    <TransitionRoot as="template" :show="open">
-        <Dialog as="div" class="relative z-30" @close="$emit('close')">
+    <TransitionRoot as="template" :show="open" :unmount="unmount">
+        <Dialog as="div" class="relative z-30" :unmount="unmount" @close="$emit('close')">
             <TransitionChild
                 as="template"
                 enter="ease-out duration-300"
@@ -23,21 +30,23 @@ defineEmits<{
                 leave="ease-in duration-200"
                 leave-from="opacity-100"
                 leave-to="opacity-0"
+                :unmount="unmount"
             >
                 <div class="fixed inset-0 bg-base-900 bg-opacity-75 transition-opacity" />
             </TransitionChild>
 
-            <div class="fixed inset-0 z-30 overflow-y-auto">
-                <div class="flex min-h-full items-end justify-center p-4 text-center sm:items-center sm:p-0">
-                    <TransitionChild
-                        as="template"
-                        enter="ease-out duration-300"
-                        enter-from="opacity-0 translate-y-4 sm:translate-y-0 sm:scale-95"
-                        enter-to="opacity-100 translate-y-0 sm:scale-100"
-                        leave="ease-in duration-200"
-                        leave-from="opacity-100 translate-y-0 sm:scale-100"
-                        leave-to="opacity-0 translate-y-4 sm:translate-y-0 sm:scale-95"
-                    >
+            <TransitionChild
+                as="template"
+                enter="ease-out duration-300"
+                enter-from="opacity-0 translate-y-4 sm:translate-y-0 sm:scale-95"
+                enter-to="opacity-100 translate-y-0 sm:scale-100"
+                leave="ease-in duration-200"
+                leave-from="opacity-100 translate-y-0 sm:scale-100"
+                leave-to="opacity-0 translate-y-4 sm:translate-y-0 sm:scale-95"
+                :unmount="unmount"
+            >
+                <div class="fixed inset-0 z-30 overflow-y-auto">
+                    <div class="flex min-h-full items-end justify-center p-4 text-center sm:items-center sm:p-0">
                         <DialogPanel
                             class="relative w-full transform overflow-hidden rounded-lg bg-base-800 px-4 pb-4 pt-5 text-left text-neutral transition-all sm:my-8 sm:max-w-6xl sm:p-6"
                             :class="dialogClass"
@@ -67,9 +76,9 @@ defineEmits<{
                                 </button>
                             </div>
                         </DialogPanel>
-                    </TransitionChild>
+                    </div>
                 </div>
-            </div>
+            </TransitionChild>
         </Dialog>
     </TransitionRoot>
 </template>
