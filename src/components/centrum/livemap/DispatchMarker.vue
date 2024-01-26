@@ -7,6 +7,7 @@ import IDCopyBadge from '~/components/partials/IDCopyBadge.vue';
 import CitizenInfoPopover from '~/components/partials/citizens/CitizenInfoPopover.vue';
 import { Dispatch, StatusDispatch } from '~~/gen/ts/resources/centrum/dispatches';
 import DispatchAttributes from '~/components/centrum/partials/DispatchAttributes.vue';
+import { useCentrumStore } from '~/store/centrum';
 
 const props = withDefaults(
     defineProps<{
@@ -21,6 +22,9 @@ const props = withDefaults(
 const emit = defineEmits<{
     (e: 'selected', dsp: Dispatch): void;
 }>();
+
+const centrumStore = useCentrumStore();
+const { timeCorrection } = storeToRefs(centrumStore);
 
 const iconAnchor: PointExpression = [props.size / 2, props.size * 1.65];
 const popupAnchor: PointExpression = [0, -(props.size * 1.7)];
