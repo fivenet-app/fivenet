@@ -1,7 +1,7 @@
 <script lang="ts" setup>
 import { LIcon, LMarker, LPopup } from '@vue-leaflet/vue-leaflet';
 import { type PointExpression } from 'leaflet';
-import { BellIcon } from 'mdi-vue3';
+import { BellIcon, CarEmergencyIcon } from 'mdi-vue3';
 import { dispatchStatusAnimate, dispatchStatusToBGColor, dispatchStatusToFillColor } from '~/components/centrum/helpers';
 import IDCopyBadge from '~/components/partials/IDCopyBadge.vue';
 import CitizenInfoPopover from '~/components/partials/citizens/CitizenInfoPopover.vue';
@@ -49,7 +49,19 @@ const dispatchClasses = computed(() => [
         </LIcon>
 
         <LPopup :options="{ closeButton: true }">
-            <IDCopyBadge :id="dispatch.id" class="mb-1" prefix="DSP" :action="selected" />
+            <div class="mb-1 flex items-center gap-2">
+                <IDCopyBadge :id="dispatch.id" prefix="DSP" :action="selected" />
+                <button
+                    type="button"
+                    :title="$t('common.delete')"
+                    class="inline-flex items-center text-primary-500 hover:text-primary-400"
+                    @click="selected(dispatch.id)"
+                >
+                    <CarEmergencyIcon class="h-5 w-5" />
+                    <span class="ml-1">{{ $t('common.detail', 2) }}</span>
+                </button>
+            </div>
+
             <ul role="list" class="flex flex-col">
                 <li>
                     <span class="font-semibold">{{ $t('common.sent_at') }}:</span> {{ $d(toDate(dispatch.createdAt), 'short') }}
