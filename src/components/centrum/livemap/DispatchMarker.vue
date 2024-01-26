@@ -1,13 +1,14 @@
 <script lang="ts" setup>
 import { LIcon, LMarker, LPopup } from '@vue-leaflet/vue-leaflet';
 import { type PointExpression } from 'leaflet';
-import { BellIcon, CarEmergencyIcon } from 'mdi-vue3';
+import { AccountGroupIcon, BellIcon, CarEmergencyIcon } from 'mdi-vue3';
 import { dispatchStatusAnimate, dispatchStatusToBGColor, dispatchStatusToFillColor } from '~/components/centrum/helpers';
 import IDCopyBadge from '~/components/partials/IDCopyBadge.vue';
 import CitizenInfoPopover from '~/components/partials/citizens/CitizenInfoPopover.vue';
 import { Dispatch, StatusDispatch } from '~~/gen/ts/resources/centrum/dispatches';
 import DispatchAttributes from '~/components/centrum/partials/DispatchAttributes.vue';
 import { useCentrumStore } from '~/store/centrum';
+import UnitInfoPopover from '../units/UnitInfoPopover.vue';
 
 const props = withDefaults(
     defineProps<{

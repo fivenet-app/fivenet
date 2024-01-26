@@ -128,12 +128,12 @@ func (b *Bot) getAvailableUnit(ctx context.Context, point orb.Point) (*centrum.U
 		units = b.state.FilterUnits(b.job, []centrum.StatusUnit{centrum.StatusUnit_STATUS_UNIT_AVAILABLE}, nil, func(unit *centrum.Unit) bool {
 			return unit.Attributes == nil || !unit.Attributes.Has(centrum.UnitAttributeNoDispatchAutoAssign)
 		})
-		if len(units) == 0 {
-			return nil, false
-		}
 	}
 
 	b.logger.Debug("found available units", zap.Int("available_units_count", len(units)))
+	if len(units) == 0 {
+		return nil, false
+	}
 
 	// Randomize unit ids
 	for i := range units {

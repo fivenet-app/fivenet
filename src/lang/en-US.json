@@ -317,6 +317,7 @@
         },
         "livemap": {
             "starting_datastream": "Starting Livemap data stream...",
+            "restarting_datastream": "Reconnecting data stream...",
             "failed_datastream": "Failed to stream Livemap data!",
             "center_selected_marker": "Center selected Marker",
             "paused_datastream": "Livemap data stream paused (window not in focus).",

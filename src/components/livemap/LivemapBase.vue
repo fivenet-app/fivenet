@@ -76,6 +76,17 @@ if (isNUIAvailable()) {
 const openCreateDispatch = ref(false);
 const openCreateMarker = ref(false);
 
+watch(openCreateDispatch, () => {
+    if (openCreateDispatch.value) {
+        showLocationMarker.value = false;
+    }
+});
+watch(openCreateMarker, () => {
+    if (openCreateMarker.value) {
+        showLocationMarker.value = false;
+    }
+});
+
 const selectedUserMarker = ref<MarkerInfo | undefined>();
 
 watch(selectedUserMarker, () => applySelectedMarkerCentering());
@@ -115,7 +126,7 @@ async function applySelectedMarkerCentering(): Promise<void> {
 
         <BaseMap :map-options="mapOptions">
             <template #default>
-                <ReconnectingPopup v-if="false" />
+                <ReconnectingPopup v-if="reconnecting" />
 
                 <LControl position="bottomright">
                     <div class="form-control flex flex-col gap-2">
