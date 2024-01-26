@@ -100,6 +100,46 @@ const dispatchClasses = computed(() => [
                     <span class="font-semibold">{{ $t('common.attributes', 2) }}:</span>
                     <DispatchAttributes class="ml-1" :attributes="dispatch.attributes" />
                 </li>
+                <li class="inline-flex gap-1">
+                    <span class="font-semibold">{{ $t('common.units') }}:</span>
+                    <span v-if="dispatch.units.length === 0" class="block">
+                        {{ $t('common.unit', dispatch.units.length) }}
+                    </span>
+                    <div v-else class="rounded-md bg-base-800">
+                        <ul role="list" class="divide-y divide-gray-200 text-sm font-medium">
+                            <li
+                                v-for="unit in dispatch.units"
+                                :key="unit.unitId"
+                                class="flex items-center justify-between py-3 pl-3 pr-4"
+                            >
+                                <div class="flex flex-1 items-center">
+                                    <UnitInfoPopover
+                                        :unit="unit.unit"
+                                        :assignment="unit"
+                                        class="flex items-center justify-center"
+                                        text-class="text-gray-300"
+                                    >
+                                        <template #before>
+                                            <AccountGroupIcon
+                                                class="mr-1 h-5 w-5 flex-shrink-0 text-base-400"
+                                                aria-hidden="true"
+                                            />
+                                        </template>
+                                    </UnitInfoPopover>
+                                    <span v-if="unit.expiresAt" class="ml-2 inline-flex flex-1 items-center truncate">
+                                        -
+                                        {{
+                                            useLocaleTimeAgo(toDate(unit.expiresAt, timeCorrection), {
+                                                showSecond: true,
+                                                updateInterval: 1_000,
+                                            }).value
+                                        }}
+                                    </span>
+                                </div>
+                            </li>
+                        </ul>
+                    </div>
+                </li>
             </ul>
         </LPopup>
     </LMarker>
