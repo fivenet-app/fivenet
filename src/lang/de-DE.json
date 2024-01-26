@@ -837,6 +837,10 @@
             "vehicles_removed": {
                 "title": "Zwischenablage: Fahrzeuge entfernt",
                 "content": "Alle Fahrzeuge wurden aus der Zwischenablage entfernt"
+            },
+            "link_copied": {
+                "title": "Link in die Zwischenablage kopiert",
+                "content": "Link wurde in die Zwischenablage ihres Computers kopiert."
             }
         },
         "action_successfull": {
