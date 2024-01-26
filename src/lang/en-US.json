@@ -973,7 +973,7 @@
             },
             "forgot_password": {
                 "title": "Password has been reset",
-                "conten": "Your password has been reset."
+                "content": "Your password has been reset."
             }
         },
         "language_switched": {

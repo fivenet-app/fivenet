@@ -13,7 +13,7 @@ const { $grpc } = useNuxtApp();
 
 const notifications = useNotificatorStore();
 
-defineEmits<{
+const emits = defineEmits<{
     (e: 'toggle'): void;
 }>();
 
@@ -36,6 +36,8 @@ async function forgotPassword(values: FormData): Promise<void> {
             content: { key: 'notifications.auth.forgot_password.content', parameters: {} },
             type: 'success',
         });
+
+        emits('toggle');
     } catch (e) {
         accountError.value = (e as RpcError).message;
         $grpc.handleError(e as RpcError);

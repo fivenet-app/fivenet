@@ -973,7 +973,7 @@
             },
             "forgot_password": {
                 "title": "Passwort zurückgesetzt",
-                "conten": "Ihr Passwort wurde zurückgesetzt."
+                "content": "Ihr Passwort wurde zurückgesetzt."
             }
         },
         "language_switched": {
