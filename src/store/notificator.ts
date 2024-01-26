@@ -150,7 +150,7 @@ export const useNotificatorStore = defineStore('notifications', {
                                                     navigateTo(n.data!.link!.to, { external: true });
                                                 };
                                             } else {
-                                                // @ts-expect-error route from a notification is a string
+                                                // @ts-ignore route from a notification is a string
                                                 const route = useRouter().resolve(n.data!.link!.to);
 
                                                 not.onClick = async () => {

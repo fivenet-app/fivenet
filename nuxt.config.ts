@@ -1,5 +1,5 @@
-import { STRATEGIES } from 'vue-i18n-routing';
 import svgLoader from 'vite-svg-loader';
+import { STRATEGIES } from 'vue-i18n-routing';
 
 const commit: string = process.env.COMMIT_REF || 'COMMIT_REF';
 

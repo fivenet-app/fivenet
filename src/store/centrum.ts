@@ -6,8 +6,8 @@ import { useNotificatorStore } from '~/store/notificator';
 import { Dispatch, DispatchStatus, StatusDispatch } from '~~/gen/ts/resources/centrum/dispatches';
 import { CentrumMode, Settings } from '~~/gen/ts/resources/centrum/settings';
 import { StatusUnit, Unit, UnitStatus } from '~~/gen/ts/resources/centrum/units';
-import { UserShort } from '~~/gen/ts/resources/users/users';
 import { Timestamp } from '~~/gen/ts/resources/timestamp/timestamp';
+import { UserShort } from '~~/gen/ts/resources/users/users';
 
 const cleanupInterval = 40 * 1000; // 40 seconds
 const dispatchEndOfLifeTime = 2 * 60 * 60 * 1000; // 2 hours

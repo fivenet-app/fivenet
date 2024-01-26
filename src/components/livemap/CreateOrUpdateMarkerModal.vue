@@ -52,6 +52,7 @@ async function createMarker(values: FormData): Promise<void> {
             info: {
                 id: '0',
                 job: '',
+                jobLabel: '',
                 name: values.name,
                 description: values.description,
                 x: location.value?.x ?? 0,

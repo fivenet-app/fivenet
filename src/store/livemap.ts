@@ -1,9 +1,9 @@
 import { RpcError } from '@protobuf-ts/runtime-rpc';
 import { defineStore, type StoreDefinition } from 'pinia';
+import { type Coordinate } from '~/composables/livemap';
 import { Marker, UserMarker } from '~~/gen/ts/resources/livemap/livemap';
 import { Job } from '~~/gen/ts/resources/users/jobs';
 import { LivemapperServiceClient } from '~~/gen/ts/services/livemapper/livemap.client';
-import { type Coordinate } from '~/composables/livemap';
 
 // In seconds
 const initialReconnectBackoffTime = 1.75;

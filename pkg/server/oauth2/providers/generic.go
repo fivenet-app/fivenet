@@ -10,13 +10,13 @@ type Generic struct {
 	BaseProvider
 }
 
-func (p *Generic) GetUserInfo(code string) (*UserInfo, error) {
-	token, err := p.oauthConfig.Exchange(context.Background(), code)
+func (p *Generic) GetUserInfo(ctx context.Context, code string) (*UserInfo, error) {
+	token, err := p.oauthConfig.Exchange(ctx, code)
 	if err != nil {
 		return nil, fmt.Errorf("code exchange failed: %s", err.Error())
 	}
 
-	res, err := p.oauthConfig.Client(context.Background(), token).Get(p.UserInfoURL)
+	res, err := p.oauthConfig.Client(ctx, token).Get(p.UserInfoURL)
 	if err != nil {
 		return nil, fmt.Errorf("failed to get user info: %+q", err)
 	}

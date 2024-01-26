@@ -1,6 +1,8 @@
 package providers
 
 import (
+	"context"
+
 	"github.com/galexrt/fivenet/pkg/config"
 	jsoniter "github.com/json-iterator/go"
 	"golang.org/x/oauth2"
@@ -15,7 +17,7 @@ type IProvider interface {
 	GetName() string
 
 	GetRedirect(state string) string
-	GetUserInfo(string) (*UserInfo, error)
+	GetUserInfo(ctx context.Context, code string) (*UserInfo, error)
 }
 
 type BaseProvider struct {

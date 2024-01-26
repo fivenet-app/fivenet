@@ -145,14 +145,14 @@ export const useAuthStore = defineStore('auth', {
                 if (useRoute().query.redirect !== undefined) {
                     const path = useRoute().query.redirect?.toString() || '/overview';
                     const url = new URL('https://example.com' + path);
-                    // @ts-expect-error the route should be valid, as we test it against a valid URL list
+                    // @ts-ignore the route should be valid, as we test it against a valid URL list
                     await navigateTo({
                         path: url.pathname,
                         query: parseQuery(url.search),
                         hash: url.hash,
                     });
                 } else {
-                    // @ts-expect-error the route should be valid, as we test it against a valid URL list
+                    // @ts-ignore the route should be valid, as we test it against a valid URL list
                     const target = useRouter().resolve(useSettingsStore().startpage ?? '/overview');
                     await navigateTo(target);
                 }

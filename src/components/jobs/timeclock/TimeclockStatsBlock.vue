@@ -2,16 +2,24 @@
 import { LoadingIcon } from 'mdi-vue3';
 import { Bar, Chart, Grid, Responsive, Tooltip } from 'vue3-charts';
 import type { ChartAxis } from 'vue3-charts/dist/types';
+import DataNoDataBlock from '~/components/partials/data/DataNoDataBlock.vue';
 import GenericContainer from '~/components/partials/elements/GenericContainer.vue';
 import { TimeclockStats, TimeclockWeeklyStats } from '~~/gen/ts/resources/jobs/timeclock';
 
-const props = defineProps<{
-    stats?: TimeclockStats | null;
-    weekly?: TimeclockWeeklyStats[];
-    hideHeader?: boolean;
-}>();
+const props = withDefaults(
+    defineProps<{
+        stats?: TimeclockStats | null;
+        weekly?: TimeclockWeeklyStats[];
+        hideHeader?: boolean;
+    }>(),
+    {
+        stats: null,
+        weekly: undefined,
+        hideHeader: false,
+    },
+);
 
-const data = ref<Record<string, { name: string; value?: number }>>({
+const statsData = ref<Record<string, { name: string; value?: number }>>({
     sum: {
         name: 'components.jobs.timeclock.Stats.sum',
     },
@@ -28,9 +36,9 @@ async function updateStats(): Promise<void> {
         return;
     }
 
-    data.value.sum.value = parseFloat(((Math.round(props.stats.spentTimeSum * 100) / 100) * 60 * 60).toPrecision(2));
-    data.value.avg.value = parseFloat(((Math.round(props.stats.spentTimeAvg * 100) / 100) * 60 * 60).toPrecision(2));
-    data.value.max.value = parseFloat(((Math.round(props.stats.spentTimeMax * 100) / 100) * 60 * 60).toPrecision(2));
+    statsData.value.sum.value = parseFloat(((Math.round(props.stats.spentTimeSum * 100) / 100) * 60 * 60).toPrecision(2));
+    statsData.value.avg.value = parseFloat(((Math.round(props.stats.spentTimeAvg * 100) / 100) * 60 * 60).toPrecision(2));
+    statsData.value.max.value = parseFloat(((Math.round(props.stats.spentTimeMax * 100) / 100) * 60 * 60).toPrecision(2));
 }
 
 watch(props, async () => updateStats());
@@ -70,7 +78,7 @@ const axis = ref<ChartAxis>({
                         {{ $t('components.jobs.timeclock.StatsBlock.7_days') }}
                     </h3>
                     <div class="grid grid-cols-1 gap-2">
-                        <GenericContainer v-for="stat in data" :key="stat.name" class="bg-gray-900">
+                        <GenericContainer v-for="stat in statsData" :key="stat.name" class="bg-gray-900">
                             <p class="text-sm font-medium leading-6 text-gray-400">{{ $t(stat.name) }}</p>
                             <p class="mt-2 flex w-full items-center gap-x-2 text-2xl font-semibold tracking-tight text-neutral">
                                 <template v-if="stat.value === undefined">
@@ -89,8 +97,10 @@ const axis = ref<ChartAxis>({
                         {{ $t('components.jobs.timeclock.StatsBlock.weekly') }}
                     </h3>
 
-                    <Responsive class="w-ful">
+                    <DataNoDataBlock v-if="weekly === undefined" />
+                    <Responsive v-else class="w-ful">
                         <template #main="{ width }">
+                            <!-- @vue-ignore our own data format works fine.. but the package type is "off" -->
                             <Chart
                                 :size="{ width: width as number, height: 375 }"
                                 :data="weekly"

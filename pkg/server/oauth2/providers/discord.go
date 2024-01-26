@@ -16,14 +16,14 @@ type discordUser struct {
 	Avatar        string `json:"avatar"`
 }
 
-func (p *Discord) GetUserInfo(code string) (*UserInfo, error) {
-	token, err := p.oauthConfig.Exchange(context.Background(), code)
+func (p *Discord) GetUserInfo(ctx context.Context, code string) (*UserInfo, error) {
+	token, err := p.oauthConfig.Exchange(ctx, code)
 	if err != nil {
 		return nil, err
 	}
 
 	// Use the access token, here we use it to get the logged in user's info.
-	res, err := p.oauthConfig.Client(context.Background(), token).Get("https://discord.com/api/users/@me")
+	res, err := p.oauthConfig.Client(ctx, token).Get("https://discord.com/api/users/@me")
 	if err != nil || res.StatusCode != 200 {
 		return nil, fmt.Errorf("failed to get user info: %+q", err)
 	}

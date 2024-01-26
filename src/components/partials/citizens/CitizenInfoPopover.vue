@@ -2,11 +2,12 @@
 import { Float } from '@headlessui-float/vue';
 import { Popover, PopoverButton, PopoverPanel } from '@headlessui/vue';
 import { AccountIcon } from 'mdi-vue3';
-import { User, UserShort } from '~~/gen/ts/resources/users/users';
+import { type User, type UserShort } from '~~/gen/ts/resources/users/users';
 import PhoneNumberBlock from '~/components/partials/citizens/PhoneNumberBlock.vue';
+import { ClipboardUser } from '~/store/clipboard';
 
 defineProps<{
-    user: User | UserShort | undefined;
+    user: ClipboardUser | User | UserShort | undefined;
     noPopover?: boolean;
     textClass?: unknown;
     buttonClass?: unknown;
@@ -24,7 +25,7 @@ defineProps<{
     <template v-else-if="noPopover">
         <span class="inline-flex items-center">
             <slot name="before" />
-            <NuxtLink :to="{ name: 'citizens-id', params: { id: user.userId } }">
+            <NuxtLink :to="{ name: 'citizens-id', params: { id: user.userId ?? 0 } }">
                 {{ user.firstname }} {{ user.lastname }}
             </NuxtLink>
             <span v-if="user.phoneNumber">
@@ -47,7 +48,7 @@ defineProps<{
                 <div class="p-3">
                     <div class="mb-2 flex items-center gap-2">
                         <NuxtLink
-                            :to="{ name: 'citizens-id', params: { id: user.userId } }"
+                            :to="{ name: 'citizens-id', params: { id: user.userId ?? 0 } }"
                             class="inline-flex items-center text-primary-500 hover:text-primary-400"
                         >
                             <AccountIcon class="h-5 w-5" />
@@ -61,7 +62,7 @@ defineProps<{
                         />
                     </div>
                     <p class="text-base font-semibold leading-none text-gray-900 dark:text-neutral">
-                        <NuxtLink :to="{ name: 'citizens-id', params: { id: user.userId } }">
+                        <NuxtLink :to="{ name: 'citizens-id', params: { id: user.userId ?? 0 } }">
                             {{ user.firstname }} {{ user.lastname }}
                         </NuxtLink>
                     </p>
@@ -69,7 +70,7 @@ defineProps<{
                         <span class="font-semibold">{{ $t('common.job') }}</span
                         >:
                         {{ user.jobLabel }}
-                        <span v-if="user.jobGrade > 0 && user.jobGradeLabel"> ({{ user.jobGradeLabel }})</span>
+                        <span v-if="(user.jobGrade ?? 0) > 0 && user.jobGradeLabel"> ({{ user.jobGradeLabel }})</span>
                     </p>
                     <p v-if="user.dateofbirth" class="text-sm font-normal">
                         <span class="font-semibold">{{ $t('common.date_of_birth') }}</span

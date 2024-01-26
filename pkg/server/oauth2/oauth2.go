@@ -218,7 +218,7 @@ func (o *OAuth2) Callback(c *gin.Context) {
 		return
 	}
 
-	userInfo, err := provider.GetUserInfo(c.Request.FormValue("code"))
+	userInfo, err := provider.GetUserInfo(c, c.Request.FormValue("code"))
 	if err != nil {
 		o.logger.Error("failed to get userinfo from provider", zap.Error(err))
 		o.handleRedirect(c, err, connectOnly, false, "provider_failed")
