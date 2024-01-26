@@ -42,7 +42,7 @@ func (s *Server) ListUnits(ctx context.Context, req *ListUnitsRequest) (*ListUni
 		Units: []*centrum.Unit{},
 	}
 
-	resp.Units = s.state.FilterUnits(userInfo.Job, req.Status, nil)
+	resp.Units = s.state.FilterUnits(userInfo.Job, req.Status, nil, nil)
 	if resp.Units == nil {
 		return nil, errorscentrum.ErrModeForbidsAction
 	}

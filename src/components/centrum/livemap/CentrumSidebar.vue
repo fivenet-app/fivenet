@@ -1,12 +1,10 @@
 <script lang="ts" setup>
-import { Disclosure, DisclosureButton, DisclosurePanel } from '@headlessui/vue';
 import { RpcError } from '@protobuf-ts/runtime-rpc';
 import { LControl } from '@vue-leaflet/vue-leaflet';
 import { useDebounceFn, useIntervalFn, useThrottleFn, useTimeoutFn, watchDebounced } from '@vueuse/core';
 import { useSound } from '@vueuse/sound';
 import {
     CarEmergencyIcon,
-    ChevronDownIcon,
     HomeFloorBIcon,
     HoopHouseIcon,
     InformationOutlineIcon,
@@ -39,6 +37,7 @@ import TakeDispatchModal from '~/components/centrum/livemap/TakeDispatchModal.vu
 import { useAuthStore } from '~/store/auth';
 import LivemapBase from '~/components/livemap/LivemapBase.vue';
 import { setWaypointPLZ } from '~/composables/nui';
+import { useSettingsStore } from '~/store/settings';
 
 defineEmits<{
     (e: 'goto', loc: Coordinate): void;
@@ -55,6 +54,9 @@ const { getCurrentMode, getOwnUnit, dispatches, getSortedOwnDispatches, pendingD
 const { startStream, stopStream } = centrumStore;
 
 const notifications = useNotificatorStore();
+
+const settingsStore = useSettingsStore();
+const { livemap } = storeToRefs(settingsStore);
 
 const canStream = can('CentrumService.Stream');
 
@@ -304,7 +306,10 @@ async function checkup(): Promise<void> {
 <template>
     <LivemapBase @goto="$emit('goto', $event)">
         <template v-if="canStream" #default>
-            <DispatchesLayer :show-all-dispatches="getCurrentMode === CentrumMode.SIMPLIFIED" @goto="$emit('goto', $event)" />
+            <DispatchesLayer
+                :show-all-dispatches="livemap.showAllDisatches || getCurrentMode === CentrumMode.SIMPLIFIED"
+                @goto="$emit('goto', $event)"
+            />
 
             <LControl position="bottomright">
                 <button
@@ -388,8 +393,8 @@ async function checkup(): Promise<void> {
                                             >
                                                 <InformationOutlineIcon class="h-5 w-5" aria-hidden="true" />
                                                 <span class="mt-1 truncate">
-                                                    <span class="font-semibold">{{ getOwnUnit.initials }}</span
-                                                    >: {{ getOwnUnit.name }}</span
+                                                    <span class="font-semibold">{{ getOwnUnit.initials }}:</span>
+                                                    {{ getOwnUnit.name }}</span
                                                 >
                                                 <span class="mt-1 truncate">
                                                     <span class="font-semibold">{{ $t('common.status') }}:</span>

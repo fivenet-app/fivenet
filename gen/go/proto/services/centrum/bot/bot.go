@@ -112,7 +112,8 @@ func (b *Bot) getAvailableUnit(ctx context.Context, point orb.Point) (*centrum.U
 				continue
 			}
 
-			if unit.Status == nil || unit.Status.Status != centrum.StatusUnit_STATUS_UNIT_AVAILABLE {
+			if (unit.Status == nil || unit.Status.Status != centrum.StatusUnit_STATUS_UNIT_AVAILABLE) &&
+				(unit.Attributes != nil && unit.Attributes.Has(centrum.UnitAttributeNoDispatchAutoAssign)) {
 				b.logger.Debug("skipping close by unit because of status", zap.String("job", user.Info.Job), zap.Any("unit_status", unit.Status))
 				continue
 			}
@@ -124,7 +125,9 @@ func (b *Bot) getAvailableUnit(ctx context.Context, point orb.Point) (*centrum.U
 	if len(units) == 0 {
 		b.logger.Warn("falling back to normal unit selection, no close by units found", zap.String("job", b.job))
 
-		units = b.state.FilterUnits(b.job, []centrum.StatusUnit{centrum.StatusUnit_STATUS_UNIT_AVAILABLE}, nil)
+		units = b.state.FilterUnits(b.job, []centrum.StatusUnit{centrum.StatusUnit_STATUS_UNIT_AVAILABLE}, nil, func(unit *centrum.Unit) bool {
+			return unit.Attributes == nil || !unit.Attributes.Has(centrum.UnitAttributeNoDispatchAutoAssign)
+		})
 		if len(units) == 0 {
 			return nil, false
 		}

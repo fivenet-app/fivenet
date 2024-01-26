@@ -122,12 +122,14 @@ const openUnit = ref(false);
                     {{ marker.user?.lastname }}
                 </li>
                 <li v-if="(marker.user?.jobGrade ?? 0) > 0 && marker.user?.jobGradeLabel">
-                    <span class="font-semibold">{{ $t('common.rank') }}</span
-                    >: {{ marker.user?.jobGradeLabel }} ({{ marker.user?.jobGrade }})
+                    <span class="font-semibold">{{ $t('common.rank') }}:</span> {{ marker.user?.jobGradeLabel }} ({{
+                        marker.user?.jobGrade
+                    }})
                 </li>
                 <li v-if="marker.unit">
-                    <span class="font-semibold">{{ $t('common.unit') }}</span
-                    >: {{ marker.unit.name }} ({{ marker.unit.initials }})
+                    <span class="font-semibold">{{ $t('common.unit') }}:</span> {{ marker.unit.name }} ({{
+                        marker.unit.initials
+                    }})
                 </li>
             </ul>
         </LPopup>

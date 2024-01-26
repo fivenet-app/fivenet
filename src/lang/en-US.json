@@ -332,7 +332,8 @@
                 "sub_title": "Update existing Marker."
             },
             "show_unit_names": "Show Unit Names (only affects Livemap)",
-            "show_unit_status": "Show Unit Status Color"
+            "show_unit_status": "Show Unit Status Color",
+            "show_all_dispatches": "Show all Dispatches (only affects Livemap)"
         },
         "rector": {
             "job_props": {
@@ -416,7 +417,8 @@
                     }
                 },
                 "attributes": {
-                    "static": "Static"
+                    "static": "Static",
+                    "no_dispatch_auto_assign": "No Dispatch Auto Assign"
                 }
             },
             "dispatches": {

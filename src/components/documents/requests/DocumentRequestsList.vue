@@ -124,12 +124,10 @@ async function deleteDocumentReq(id: string): Promise<void> {
                                 {{ $t(`enums.docstore.DocActivityType.${DocActivityType[request.requestType]}`) }}
                             </p>
                             <p class="mt-1 flex text-sm leading-5 text-gray-300">
-                                <span class="font-semibold">{{ $t('common.reason') }}</span
-                                >: {{ request.reason }}
+                                <span class="font-semibold">{{ $t('common.reason') }}:</span> {{ request.reason }}
                             </p>
                             <p v-if="request.accepted !== undefined" class="mt-1 flex gap-1 text-sm leading-5 text-gray-300">
-                                <span class="font-semibold">{{ $t('common.accept', 2) }}</span
-                                >:
+                                <span class="font-semibold">{{ $t('common.accept', 2) }}:</span>
                                 <span v-if="request.accepted" class="text-success-400">
                                     {{ $t('common.yes') }}
                                 </span>

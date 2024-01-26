@@ -112,6 +112,7 @@ async function applySelectedMarkerCentering(): Promise<void> {
                 :message="$t('components.livemap.starting_datastream')"
             />
         </div>
+
         <BaseMap :map-options="mapOptions">
             <template #default>
                 <ReconnectingPopup v-if="false" />

@@ -207,8 +207,7 @@ onConfirm(async (id) => deleteTemplate(id));
                         {{ template.title }}
                     </h2>
                     <p class="text-base text-neutral">
-                        <span class="font-semibold">{{ $t('common.description') }}</span
-                        >: {{ template.description }}
+                        <span class="font-semibold">{{ $t('common.description') }}:</span> {{ template.description }}
                     </p>
                 </div>
             </div>

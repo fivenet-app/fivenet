@@ -36,7 +36,7 @@ func (s *State) ListUnits(job string) ([]*centrum.Unit, bool) {
 	return us, true
 }
 
-func (s *State) FilterUnits(job string, statuses []centrum.StatusUnit, notStatuses []centrum.StatusUnit) []*centrum.Unit {
+func (s *State) FilterUnits(job string, statuses []centrum.StatusUnit, notStatuses []centrum.StatusUnit, filterFn func(unit *centrum.Unit) bool) []*centrum.Unit {
 	units, ok := s.ListUnits(job)
 	if !ok {
 		return nil
@@ -59,7 +59,7 @@ func (s *State) FilterUnits(job string, statuses []centrum.StatusUnit, notStatus
 			}
 		}
 
-		if include {
+		if include && (filterFn == nil || filterFn(units[i])) {
 			us = append(us, units[i])
 		}
 	}

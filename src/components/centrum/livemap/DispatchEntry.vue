@@ -45,26 +45,23 @@ const openDetails = ref(false);
             class="group my-0.5 flex w-full flex-col items-center rounded-md bg-error-700 p-2 text-xs font-medium text-neutral hover:bg-primary-100/10 hover:text-neutral hover:transition-all"
             @click="openDetails = true"
         >
-            <span class="mb-0.5 inline-flex w-full place-content-between items-center">
+            <span class="mb-0.5 inline-flex w-full place-content-between items-center flex-col sm:flex-row">
                 <span class="truncate font-bold"> DSP-{{ dispatch.id }} </span>
                 <span>
-                    <CarEmergencyIcon class="h-4 w-4" />
+                    <CarEmergencyIcon class="h-4 w-4 hidden sm:block" />
                 </span>
                 <span>
-                    <span class="font-semibold">{{ $t('common.postal') }}</span
-                    >: {{ dispatch.postal }}
+                    <span class="font-semibold">{{ $t('common.postal') }}:</span> {{ dispatch.postal }}
                 </span>
             </span>
-            <span class="truncate">
-                <span class="font-semibold">{{ $t('common.status') }}</span
-                >:
+            <span class="truncate inline-flex flex-col sm:flex-row sm:gap-1">
+                <span class="font-semibold">{{ $t('common.status') }}:</span>
                 <span :class="dispatchStatusToBGColor(dispatch.status?.status)">{{
                     $t(`enums.centrum.StatusDispatch.${StatusDispatch[dispatch.status?.status ?? 0]}`)
                 }}</span>
             </span>
-            <span class="mt-1 truncate">
-                <span class="font-semibold">{{ $t('common.sent_by') }}</span
-                >:
+            <span class="mt-1 truncate inline-flex flex-col sm:flex-row sm:gap-1">
+                <span class="font-semibold">{{ $t('common.sent_by') }}:</span>
                 <span v-if="dispatch.anon">
                     {{ $t('common.anon') }}
                 </span>
@@ -76,8 +73,7 @@ const openDetails = ref(false);
                 </span>
             </span>
             <span class="">
-                <span class="font-semibold">{{ $t('common.sent_at') }}</span
-                >:
+                <span class="font-semibold">{{ $t('common.sent_at') }}:</span>
                 <GenericTime :value="dispatch.createdAt" type="compact" />
             </span>
         </button>

@@ -8,7 +8,8 @@ import (
 )
 
 const (
-	UnitAttributeStatic = "static"
+	UnitAttributeStatic               = "static"
+	UnitAttributeNoDispatchAutoAssign = "no_dispatch_auto_assign"
 
 	DispatchAttributeMultiple  = "multiple"
 	DispatchAttributeDuplicate = "duplicate"

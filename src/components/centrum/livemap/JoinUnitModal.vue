@@ -143,8 +143,8 @@ const filteredUnits = computed(() =>
                                                                     @click="onSubmitThrottle(unit.id)"
                                                                 >
                                                                     <span class="mt-0.5 text-base">
-                                                                        <span class="font-semibold">{{ unit.initials }}</span
-                                                                        >: {{ unit.name }}
+                                                                        <span class="font-semibold">{{ unit.initials }}:</span>
+                                                                        {{ unit.name }}
                                                                     </span>
                                                                     <span class="mt-1 text-xs">
                                                                         {{ $t('common.member', unit.users.length) }}
@@ -153,10 +153,10 @@ const filteredUnits = computed(() =>
                                                                         v-if="unit.description && unit.description.length > 0"
                                                                         class="text-xs"
                                                                     >
-                                                                        <span class="font-semibold">{{
-                                                                            $t('common.description')
-                                                                        }}</span
-                                                                        >: {{ unit.description }}
+                                                                        <span class="font-semibold"
+                                                                            >{{ $t('common.description') }}:</span
+                                                                        >
+                                                                        {{ unit.description }}
                                                                     </span>
                                                                 </button>
                                                             </div>

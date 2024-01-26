@@ -117,7 +117,7 @@ const { handleSubmit, meta, values, setValues } = useForm<FormData>({
     },
     initialValues: {
         circleRadius: 50,
-        circleOpacity: 5,
+        circleOpacity: 3,
     },
     validateOnMount: true,
 });
@@ -126,7 +126,7 @@ async function setMarker(): Promise<void> {
     setValues({
         markerType: MarkerType.CIRCLE,
         circleRadius: 50,
-        circleOpacity: 5,
+        circleOpacity: 3,
     });
 }
 

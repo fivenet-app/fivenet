@@ -332,7 +332,8 @@
                 "sub_title": "Existierende Markierung aktualisieren."
             },
             "show_unit_names": "Zeige Einheiten Namen (gilt nur für Livemap)",
-            "show_unit_status": "Zeige Einheiten Status Farbe"
+            "show_unit_status": "Zeige Einheiten Status Farbe",
+            "show_all_dispatches": "Zeige alle Einsätze an (gilt nur für Livemap)"
         },
         "rector": {
             "job_props": {
@@ -416,7 +417,8 @@
                     }
                 },
                 "attributes": {
-                    "static": "Statisch"
+                    "static": "Statisch",
+                    "no_dispatch_auto_assign": "Keine automatische Einsatz Zuweisung"
                 }
             },
             "dispatches": {

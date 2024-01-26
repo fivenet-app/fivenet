@@ -68,8 +68,7 @@ const open = ref(false);
         <dd class="mt-1 text-sm leading-6 text-gray-400 sm:col-span-2 sm:mt-0">
             <ul role="list" class="divide-y divide-base-200 rounded-md border border-base-200">
                 <li class="flex items-center py-3 pl-3 pr-4 text-sm">
-                    <span class="font-medium">{{ $t('common.sent_by') }}</span
-                    >:
+                    <span class="font-medium">{{ $t('common.sent_by') }}:</span>
                     <span class="ml-1">
                         <template v-if="dispatch.anon">
                             {{ $t('common.anon') }}
@@ -81,13 +80,12 @@ const open = ref(false);
                     </span>
                 </li>
                 <li class="flex items-center py-3 pl-3 pr-4 text-sm">
-                    <span class="font-medium">{{ $t('common.message') }}</span
-                    >: <span class="ml-1 truncate">{{ dispatch.message }}</span>
+                    <span class="font-medium">{{ $t('common.message') }}:</span>
+                    <span class="ml-1 truncate">{{ dispatch.message }}</span>
                 </li>
                 <li class="py-3 pl-3 pr-4 text-sm">
                     <span class="block">
-                        <span class="font-medium">{{ $t('common.postal') }}</span
-                        >:
+                        <span class="font-medium">{{ $t('common.postal') }}:</span>
                         {{ dispatch.postal ?? $t('common.na') }}
                     </span>
                     <button
@@ -102,15 +100,13 @@ const open = ref(false);
                     </button>
                 </li>
                 <li class="flex items-center py-3 pl-3 pr-4 text-sm">
-                    <span class="font-medium">{{ $t('common.status') }}</span
-                    >:
+                    <span class="font-medium">{{ $t('common.status') }}:</span>
                     <span class="ml-1 text-neutral" :class="dispatchBackground">{{
                         $t(`enums.centrum.StatusDispatch.${StatusDispatch[dispatch.status?.status ?? 0]}`)
                     }}</span>
                 </li>
                 <li v-if="dispatch.attributes" class="flex items-center py-3 pl-3 pr-4 text-sm">
-                    <span class="font-medium">{{ $t('common.attributes') }}</span
-                    >:
+                    <span class="font-medium">{{ $t('common.attributes') }}:</span>
                     <span class="ml-1">
                         <DispatchAttributes :attributes="dispatch.attributes" />
                     </span>

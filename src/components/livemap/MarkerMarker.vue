@@ -1,6 +1,6 @@
 <script lang="ts" setup>
 import { RpcError } from '@protobuf-ts/runtime-rpc';
-import { LCircleMarker, LIcon, LMarker, LPopup } from '@vue-leaflet/vue-leaflet';
+import { LCircle, LIcon, LMarker, LPopup } from '@vue-leaflet/vue-leaflet';
 import { useConfirmDialog } from '@vueuse/core';
 import { type PointExpression } from 'leaflet';
 import { HelpIcon, MapMarkerQuestionIcon, TrashCanIcon } from 'mdi-vue3';
@@ -48,47 +48,46 @@ onConfirm(async (id) => deleteMarker(id));
 <template>
     <ConfirmDialog :open="isRevealed" :cancel="cancel" :confirm="() => confirm(marker.info!.id)" />
 
-    <LCircleMarker
+    <LCircle
         v-if="marker.data?.data.oneofKind === 'circle'"
         :key="marker.info!.id"
         :lat-lng="[marker.info!.y, marker.info!.x]"
-        :radius="marker.data?.data.circle.radius"
+        :radius="marker.data?.data.circle.radius / 0.6931471805599453"
         :color="marker.info?.color ? '#' + marker.info?.color : '#ffffff'"
-        :fill-opacity="(marker.data.data.circle.oapcity ?? 5) / 100"
+        :fill-opacity="(marker.data.data.circle.oapcity ?? 3) / 100"
     >
         <LPopup :options="{ closeButton: true }">
-            <ul>
-                <li class="inline-flex items-center">
-                    <span class="font-semibold">
-                        {{ marker.info?.name }}
-                    </span>
-                    <template v-if="can('LivemapperService.DeleteMarker')">
-                        <button type="button" :title="$t('common.delete')" class="flex flex-row items-center" @click="reveal()">
-                            <TrashCanIcon class="h-5 w-5" />
-                            <span class="sr-only">{{ $t('common.delete') }}</span>
-                        </button>
-                    </template>
+            <div v-if="can('LivemapperService.DeleteMarker')" class="mb-1 flex items-center gap-2">
+                <button
+                    type="button"
+                    :title="$t('common.delete')"
+                    class="inline-flex items-center text-primary-500 hover:text-primary-400"
+                    @click="reveal()"
+                >
+                    <TrashCanIcon class="h-5 w-5" />
+                    <span class="ml-1">{{ $t('common.delete') }}</span>
+                </button>
+            </div>
+            <span class="font-semibold"> {{ $t('common.marker') }}: {{ marker.info?.name }} </span>
+            <ul role="list" class="flex flex-col">
+                <li>
+                    <span class="font-semibold">{{ $t('common.job') }}:</span>
+                    {{ marker.info?.jobLabel ?? $t('common.na') }}
                 </li>
                 <li>
-                    <span class="font-semibold">{{ $t('common.description') }}</span
-                    >: {{ marker.info?.description ?? $t('common.na') }}
+                    <span class="font-semibold">{{ $t('common.description') }}:</span>
+                    {{ marker.info?.description ?? $t('common.na') }}
                 </li>
                 <li>
-                    <span class="font-semibold">{{ $t('common.sent_by') }}</span
-                    >:
+                    <span class="font-semibold">{{ $t('common.sent_by') }}:</span>
                     <CitizenInfoPopover v-if="marker.creator" :user="marker.creator" />
                     <span v-else>
                         {{ $t('common.unknown') }}
                     </span>
                 </li>
-                <li>
-                    <span class="">{{ $t('common.job') }}</span
-                    >:
-                    {{ marker.info?.jobLabel ?? $t('common.na') }}
-                </li>
             </ul>
         </LPopup>
-    </LCircleMarker>
+    </LCircle>
 
     <LMarker
         v-else-if="marker.data?.data.oneofKind === 'icon'"
@@ -102,7 +101,7 @@ onConfirm(async (id) => deleteMarker(id));
                     markerIcons.find((i) => marker.data?.data.oneofKind === 'icon' && i.name === marker.data?.data.icon.icon) ??
                     HelpIcon
                 "
-                class="h-5 w-5"
+                class="h-6 w-6"
                 :style="{ color: marker.info?.color ? '#' + marker.info?.color : 'currentColor' }"
             />
         </LIcon>
@@ -121,12 +120,11 @@ onConfirm(async (id) => deleteMarker(id));
                     </template>
                 </li>
                 <li>
-                    <span class="font-semibold">{{ $t('common.description') }}</span
-                    >: {{ marker.info?.description ?? $t('common.na') }}
+                    <span class="font-semibold">{{ $t('common.description') }}:</span>
+                    {{ marker.info?.description ?? $t('common.na') }}
                 </li>
                 <li>
-                    <span class="font-semibold">{{ $t('common.sent_by') }}</span
-                    >:
+                    <span class="font-semibold">{{ $t('common.sent_by') }}:</span>
                     <CitizenInfoPopover v-if="marker.creator" :user="marker.creator" />
                     <span v-else>
                         {{ $t('common.unknown') }}
@@ -155,12 +153,11 @@ onConfirm(async (id) => deleteMarker(id));
                     </template>
                 </li>
                 <li>
-                    <span class="font-semibold">{{ $t('common.description') }}</span
-                    >: {{ marker.info?.description ?? $t('common.na') }}
+                    <span class="font-semibold">{{ $t('common.description') }}:</span>
+                    {{ marker.info?.description ?? $t('common.na') }}
                 </li>
                 <li>
-                    <span class="font-semibold">{{ $t('common.sent_by') }}</span
-                    >:
+                    <span class="font-semibold">{{ $t('common.sent_by') }}:</span>
                     <CitizenInfoPopover v-if="marker.creator" :user="marker.creator" />
                     <span v-else>
                         {{ $t('common.unknown') }}

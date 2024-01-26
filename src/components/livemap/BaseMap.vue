@@ -255,9 +255,8 @@ onBeforeUnmount(() => {
             <LControlLayers :hide-single-base="true" />
 
             <LControl position="bottomleft" class="leaflet-control-attribution mouseposition text-xs">
-                <span class="font-semibold">{{ $t('common.longitude') }}</span
-                >: {{ mouseLat }} | <span class="font-semibold">{{ $t('common.latitude') }}</span
-                >: {{ mouseLong }}
+                <span class="font-semibold">{{ $t('common.longitude') }}:</span> {{ mouseLat }} |
+                <span class="font-semibold">{{ $t('common.latitude') }}:</span> {{ mouseLong }}
             </LControl>
 
             <slot />

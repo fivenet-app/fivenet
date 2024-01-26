@@ -40,7 +40,7 @@ interface FormData {
     homePostal?: string;
 }
 
-const availableAttributes: string[] = ['static'];
+const availableAttributes: string[] = ['static', 'no_dispatch_auto_assign'];
 const selectedAttributes = ref<string[]>([]);
 
 const color = ref('#000000');

@@ -52,13 +52,11 @@ const dispatchClasses = computed(() => [
             <IDCopyBadge :id="dispatch.id" class="mb-1" prefix="DSP" :action="selected" />
             <ul role="list" class="flex flex-col">
                 <li>
-                    <span class="font-semibold">{{ $t('common.sent_at') }}</span
-                    >: {{ $d(toDate(dispatch.createdAt), 'short') }}
+                    <span class="font-semibold">{{ $t('common.sent_at') }}:</span> {{ $d(toDate(dispatch.createdAt), 'short') }}
                 </li>
                 <li class="inline-flex gap-1">
                     <span class="flex-initial">
-                        <span class="font-semibold">{{ $t('common.sent_by') }}</span
-                        >:
+                        <span class="font-semibold">{{ $t('common.sent_by') }}:</span>
                     </span>
                     <span class="flex-1">
                         <template v-if="dispatch.anon">
@@ -71,28 +69,24 @@ const dispatchClasses = computed(() => [
                     </span>
                 </li>
                 <li>
-                    <span class="font-semibold">{{ $t('common.postal') }}</span
-                    >: {{ dispatch.postal ?? $t('common.na') }}
+                    <span class="font-semibold">{{ $t('common.postal') }}:</span> {{ dispatch.postal ?? $t('common.na') }}
                 </li>
                 <li>
-                    <span class="font-semibold">{{ $t('common.message') }}</span
-                    >: {{ dispatch.message }}
+                    <span class="font-semibold">{{ $t('common.message') }}:</span> {{ dispatch.message }}
                 </li>
                 <li class="truncate">
-                    <span class="font-semibold">{{ $t('common.description') }}</span
-                    >: {{ dispatch.description ?? $t('common.na') }}
+                    <span class="font-semibold">{{ $t('common.description') }}:</span>
+                    {{ dispatch.description ?? $t('common.na') }}
                 </li>
                 <li>
-                    <span class="font-semibold">{{ $t('common.status') }}</span
-                    >:
-                    <span :class="dispatchStatusToBGColor(dispatch.status?.status)">
+                    <span class="font-semibold">{{ $t('common.status') }}:</span>
+                    <span class="ml-1" :class="dispatchStatusToBGColor(dispatch.status?.status)">
                         {{ $t(`enums.centrum.StatusDispatch.${StatusDispatch[dispatch.status?.status ?? 0]}`) }}
                     </span>
                 </li>
                 <li>
-                    <span class="font-semibold">{{ $t('common.attributes', 2) }}</span
-                    >:
-                    <DispatchAttributes :attributes="dispatch.attributes" />
+                    <span class="font-semibold">{{ $t('common.attributes', 2) }}:</span>
+                    <DispatchAttributes class="ml-1" :attributes="dispatch.attributes" />
                 </li>
             </ul>
         </LPopup>
