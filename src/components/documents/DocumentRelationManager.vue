@@ -264,7 +264,7 @@ function removeRelation(id: string): void {
                                                                                     "
                                                                                 >
                                                                                     <OpenInNewIcon
-                                                                                        class="h-auto w-5 text-primary-500 hover:text-primary-300"
+                                                                                        class="w-5 h-auto text-primary-500 hover:text-primary-300"
                                                                                     />
                                                                                 </NuxtLink>
                                                                             </div>
@@ -280,7 +280,7 @@ function removeRelation(id: string): void {
                                                                                     @click="removeRelation(relation.id!)"
                                                                                 >
                                                                                     <AccountMinusIcon
-                                                                                        class="h-auto w-5 text-error-400 hover:text-error-200"
+                                                                                        class="w-5 h-auto text-error-400 hover:text-error-200"
                                                                                     />
                                                                                 </button>
                                                                             </div>
@@ -364,7 +364,7 @@ function removeRelation(id: string): void {
                                                                                     "
                                                                                 >
                                                                                     <AtIcon
-                                                                                        class="h-auto w-5 text-success-500 hover:text-success-300"
+                                                                                        class="w-5 h-auto text-success-500 hover:text-success-300"
                                                                                     />
                                                                                 </button>
                                                                             </div>
@@ -385,7 +385,7 @@ function removeRelation(id: string): void {
                                                                                     "
                                                                                 >
                                                                                     <TargetIcon
-                                                                                        class="h-auto w-5 text-warn-400 hover:text-warn-200"
+                                                                                        class="w-5 h-auto text-warn-400 hover:text-warn-200"
                                                                                     />
                                                                                 </button>
                                                                             </div>
@@ -406,7 +406,7 @@ function removeRelation(id: string): void {
                                                                                     "
                                                                                 >
                                                                                     <SourceCommitStartIcon
-                                                                                        class="h-auto w-5 text-error-400 hover:text-error-200"
+                                                                                        class="w-5 h-auto text-error-400 hover:text-error-200"
                                                                                     />
                                                                                 </button>
                                                                             </div>
@@ -505,7 +505,7 @@ function removeRelation(id: string): void {
                                                                                     "
                                                                                 >
                                                                                     <AtIcon
-                                                                                        class="h-auto w-5 text-success-500 hover:text-success-300"
+                                                                                        class="w-5 h-auto text-success-500 hover:text-success-300"
                                                                                     />
                                                                                 </button>
                                                                             </div>
@@ -523,7 +523,7 @@ function removeRelation(id: string): void {
                                                                                     "
                                                                                 >
                                                                                     <TargetIcon
-                                                                                        class="h-auto w-5 text-warn-400 hover:text-warn-200"
+                                                                                        class="w-5 h-auto text-warn-400 hover:text-warn-200"
                                                                                     />
                                                                                 </button>
                                                                             </div>
@@ -541,7 +541,7 @@ function removeRelation(id: string): void {
                                                                                     "
                                                                                 >
                                                                                     <SourceCommitStartIcon
-                                                                                        class="h-auto w-5 text-error-400 hover:text-error-200"
+                                                                                        class="w-5 h-auto text-error-400 hover:text-error-200"
                                                                                     />
                                                                                 </button>
                                                                             </div>

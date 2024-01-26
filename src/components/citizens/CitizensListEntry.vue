@@ -70,7 +70,7 @@ function addToClipboard(): void {
         <td class="whitespace-nowrap py-2 pl-3 pr-4 text-sm font-medium sm:pr-0">
             <div v-if="can('CitizenStoreService.GetUser')" class="flex flex-row justify-end">
                 <button class="flex-initial text-primary-500 hover:text-primary-400" @click="addToClipboard">
-                    <ClipboardPlusIcon class="ml-auto mr-2.5 h-auto w-5" />
+                    <ClipboardPlusIcon class="ml-auto mr-2.5 w-5 h-auto" />
                 </button>
                 <NuxtLink
                     :to="{
@@ -79,7 +79,7 @@ function addToClipboard(): void {
                     }"
                     class="flex-initial text-primary-500 hover:text-primary-400"
                 >
-                    <EyeIcon class="ml-auto mr-2.5 h-auto w-5" />
+                    <EyeIcon class="ml-auto mr-2.5 w-5 h-auto" />
                 </NuxtLink>
             </div>
         </td>

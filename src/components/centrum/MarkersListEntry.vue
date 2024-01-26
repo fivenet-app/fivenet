@@ -47,7 +47,7 @@ onConfirm(async (id) => deleteMarker(id));
                 :title="$t('common.go_to_location')"
                 @click="$emit('goto', { x: marker.info!.x, y: marker.info!.y })"
             >
-                <MapMarkerIcon class="ml-auto mr-1.5 h-auto w-5" aria-hidden="true" />
+                <MapMarkerIcon class="ml-auto mr-1.5 w-5 h-auto" aria-hidden="true" />
             </button>
             <button
                 v-if="can('LivemapperService.DeleteMarker')"

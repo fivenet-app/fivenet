@@ -12,7 +12,7 @@ const open = ref(false);
         class="flex h-12 w-12 items-center justify-center rounded-full bg-primary-500 text-neutral shadow-float hover:bg-primary-400"
         @click="open = true"
     >
-        <CalculatorIcon class="h-auto w-10" />
+        <CalculatorIcon class="w-10 h-auto" />
     </button>
 
     <GenericModal :open="open" @close="open = false">

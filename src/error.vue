@@ -79,7 +79,7 @@ onBeforeMount(() => {
                         {{ $t ? $t('pages.error.error_message') : 'Error message:' }}
                     </p>
                     <span v-if="error">
-                        <!-- @vue-expect-error -->
+                        <!-- @vue-ignore -->
                         <pre
                             v-if="error.statusMessage"
                             v-text="
@@ -87,7 +87,7 @@ onBeforeMount(() => {
                                 error.statusMessage
                             "
                         />
-                        <!-- @vue-expect-error -->
+                        <!-- @vue-ignore -->
                         <pre
                             v-else-if="
                                 // @ts-ignore
@@ -132,7 +132,7 @@ onBeforeMount(() => {
                         {{ $t('common.retry') }}
                     </button>
 
-                    <!-- @vue-expect-error -->
+                    <!-- @vue-ignore -->
                     <button
                         v-if="error && (error.statusMessage || error.message)"
                         class="w-60 rounded-md bg-base-600 px-3.5 py-2.5 text-sm font-semibold text-neutral hover:bg-base-400 focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-base-500 sm:ml-4"

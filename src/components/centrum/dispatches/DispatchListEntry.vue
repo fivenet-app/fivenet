@@ -72,7 +72,7 @@ const openStatus = ref(false);
                 :title="$t('common.assign')"
                 @click="openAssign = true"
             >
-                <AccountMultiplePlusIcon class="ml-auto mr-1.5 h-auto w-5" aria-hidden="true" />
+                <AccountMultiplePlusIcon class="ml-auto mr-1.5 w-5 h-auto" aria-hidden="true" />
             </button>
             <button
                 type="button"
@@ -80,7 +80,7 @@ const openStatus = ref(false);
                 :title="$t('common.go_to_location')"
                 @click="$emit('goto', { x: dispatch.x, y: dispatch.y })"
             >
-                <MapMarkerIcon class="ml-auto mr-1.5 h-auto w-5" aria-hidden="true" />
+                <MapMarkerIcon class="ml-auto mr-1.5 w-5 h-auto" aria-hidden="true" />
             </button>
             <button
                 v-if="!hideActions"
@@ -89,7 +89,7 @@ const openStatus = ref(false);
                 :title="$t('common.status')"
                 @click="openStatus = true"
             >
-                <CloseOctagonIcon class="ml-auto mr-1.5 h-auto w-5" aria-hidden="true" />
+                <CloseOctagonIcon class="ml-auto mr-1.5 w-5 h-auto" aria-hidden="true" />
             </button>
             <button
                 type="button"
@@ -97,7 +97,7 @@ const openStatus = ref(false);
                 :title="$t('common.detail', 2)"
                 @click="openDetails = true"
             >
-                <DotsVerticalIcon class="ml-auto mr-1.5 h-auto w-5" />
+                <DotsVerticalIcon class="ml-auto mr-1.5 w-5 h-auto" />
             </button>
         </td>
         <td class="whitespace-nowrap px-1 py-1 text-sm text-gray-300">

@@ -289,7 +289,7 @@ if (hash.value !== undefined && hash.value !== null) {
                                     type="button"
                                     class="inline-flex items-center gap-x-1.5 rounded-md bg-primary-500 px-3 py-2 text-sm font-semibold text-neutral hover:bg-primary-400"
                                 >
-                                    <PencilIcon class="-ml-0.5 h-auto w-5" aria-hidden="true" />
+                                    <PencilIcon class="-ml-0.5 w-5 h-auto" aria-hidden="true" />
                                     {{ $t('common.edit') }}
                                 </NuxtLink>
                                 <button
@@ -298,7 +298,7 @@ if (hash.value !== undefined && hash.value !== null) {
                                     class="inline-flex items-center gap-x-1.5 rounded-md bg-primary-500 px-3 py-2 text-sm font-semibold text-neutral hover:bg-primary-400"
                                     @click="openRequests = true"
                                 >
-                                    <FrequentlyAskedQuestionsIcon class="-ml-0.5 h-auto w-5" aria-hidden="true" />
+                                    <FrequentlyAskedQuestionsIcon class="-ml-0.5 w-5 h-auto" aria-hidden="true" />
                                     {{ $t('common.request', 2) }}
                                 </button>
                                 <button
@@ -318,7 +318,7 @@ if (hash.value !== undefined && hash.value !== null) {
                                     :disabled="doc?.creatorId === activeChar?.userId"
                                     @click="revealChangeOwner(documentId)"
                                 >
-                                    <CreationIcon class="-ml-0.5 h-auto w-5" aria-hidden="true" />
+                                    <CreationIcon class="-ml-0.5 w-5 h-auto" aria-hidden="true" />
                                     {{ $t('components.documents.document_view.take_ownership') }}
                                 </button>
                                 <button
@@ -330,7 +330,7 @@ if (hash.value !== undefined && hash.value !== null) {
                                     class="inline-flex items-center gap-x-1.5 rounded-md bg-primary-500 px-3 py-2 text-sm font-semibold text-neutral hover:bg-primary-400"
                                     @click="revealDelete(documentId)"
                                 >
-                                    <TrashCanIcon class="-ml-0.5 h-auto w-5" aria-hidden="true" />
+                                    <TrashCanIcon class="-ml-0.5 w-5 h-auto" aria-hidden="true" />
                                     {{ $t('common.delete') }}
                                 </button>
                             </div>
@@ -347,7 +347,7 @@ if (hash.value !== undefined && hash.value !== null) {
                                 v-if="doc.category"
                                 class="flex flex-initial flex-row gap-1 rounded-full bg-primary-100 px-2 py-1 text-primary-500"
                             >
-                                <ShapeIcon class="h-auto w-5" aria-hidden="true" />
+                                <ShapeIcon class="w-5 h-auto" aria-hidden="true" />
                                 <span
                                     class="inline-flex items-center text-sm font-medium text-primary-800"
                                     :title="doc.category.description ?? $t('common.na')"
@@ -376,13 +376,13 @@ if (hash.value !== undefined && hash.value !== null) {
                                 v-if="doc?.state"
                                 class="flex flex-initial flex-row gap-1 rounded-full bg-info-100 px-2 py-1 text-info-500"
                             >
-                                <NoteCheckIcon class="h-auto w-5" aria-hidden="true" />
+                                <NoteCheckIcon class="w-5 h-auto" aria-hidden="true" />
                                 <span class="text-sm font-medium text-info-800">
                                     {{ doc?.state }}
                                 </span>
                             </div>
                             <div class="flex flex-initial flex-row gap-1 rounded-full bg-base-100 px-2 py-1 text-base-500">
-                                <CommentTextMultipleIcon class="h-auto w-5" aria-hidden="true" />
+                                <CommentTextMultipleIcon class="w-5 h-auto" aria-hidden="true" />
                                 <span class="text-sm font-medium text-base-700">
                                     {{
                                         commentCount !== undefined
@@ -395,7 +395,7 @@ if (hash.value !== undefined && hash.value !== null) {
 
                         <div class="flex snap-x flex-row flex-wrap gap-2 overflow-x-auto pb-3 sm:pb-0">
                             <div class="flex flex-initial flex-row gap-1 rounded-full bg-base-100 px-2 py-1 text-base-500">
-                                <AccountIcon class="h-auto w-5" aria-hidden="true" />
+                                <AccountIcon class="w-5 h-auto" aria-hidden="true" />
                                 <span class="inline-flex items-center text-sm font-medium text-base-700">
                                     {{ $t('common.created_by') }}
                                     <CitizenInfoPopover
@@ -406,7 +406,7 @@ if (hash.value !== undefined && hash.value !== null) {
                             </div>
 
                             <div class="flex flex-initial flex-row gap-1 rounded-full bg-base-100 px-2 py-1 text-base-500">
-                                <CalendarIcon class="h-auto w-5" aria-hidden="true" />
+                                <CalendarIcon class="w-5 h-auto" aria-hidden="true" />
                                 <span class="text-sm font-medium text-base-700">
                                     {{ $t('common.created_at') }}
                                     <GenericTime :value="doc.createdAt" type="long" />
@@ -416,7 +416,7 @@ if (hash.value !== undefined && hash.value !== null) {
                                 v-if="doc.updatedAt"
                                 class="flex flex-initial flex-row gap-1 rounded-full bg-base-100 px-2 py-1 text-base-500"
                             >
-                                <CalendarEditIcon class="h-auto w-5" aria-hidden="true" />
+                                <CalendarEditIcon class="w-5 h-auto" aria-hidden="true" />
                                 <span class="text-sm font-medium text-base-700">
                                     {{ $t('common.updated_at') }}
                                     <GenericTime :value="doc.updatedAt" type="long" />
@@ -426,7 +426,7 @@ if (hash.value !== undefined && hash.value !== null) {
                                 v-if="doc.deletedAt"
                                 class="flex flex-initial flex-row gap-1 rounded-full bg-base-100 px-2 py-1 text-base-500"
                             >
-                                <CalendarRemoveIcon class="h-auto w-5" aria-hidden="true" />
+                                <CalendarRemoveIcon class="w-5 h-auto" aria-hidden="true" />
                                 <span class="text-sm font-medium text-base-700">
                                     {{ $t('common.deleted') }}
                                     <GenericTime :value="doc.deletedAt" type="long" />
@@ -460,7 +460,7 @@ if (hash.value !== undefined && hash.value !== null) {
                                     ]"
                                 >
                                     <span class="inline-flex items-center text-base font-semibold leading-7">
-                                        <AccountMultipleIcon class="mr-2 h-auto w-5" />
+                                        <AccountMultipleIcon class="mr-2 w-5 h-auto" />
                                         {{ $t('common.relation', 2) }}
                                     </span>
                                     <span class="ml-6 flex h-7 items-center">
@@ -491,7 +491,7 @@ if (hash.value !== undefined && hash.value !== null) {
                                     ]"
                                 >
                                     <span class="inline-flex items-center text-base font-semibold leading-7">
-                                        <FileDocumentIcon class="mr-2 h-auto w-5" />
+                                        <FileDocumentIcon class="mr-2 w-5 h-auto" />
                                         {{ $t('common.reference', 2) }}
                                     </span>
                                     <span class="ml-6 flex h-7 items-center">
@@ -523,7 +523,7 @@ if (hash.value !== undefined && hash.value !== null) {
                                     ]"
                                 >
                                     <span class="inline-flex items-center text-base font-semibold leading-7">
-                                        <LockIcon class="mr-2 h-auto w-5" />
+                                        <LockIcon class="mr-2 w-5 h-auto" />
                                         {{ $t('common.access') }}
                                     </span>
                                     <span class="ml-6 flex h-7 items-center">
@@ -587,7 +587,7 @@ if (hash.value !== undefined && hash.value !== null) {
                                     <h2
                                         class="inline-flex items-center p-2 text-left text-lg font-semibold text-neutral transition-colors"
                                     >
-                                        <CommentIcon class="mr-2 h-auto w-5" />
+                                        <CommentIcon class="mr-2 w-5 h-auto" />
                                         {{ $t('common.comment', 2) }}
                                     </h2>
 
@@ -624,7 +624,7 @@ if (hash.value !== undefined && hash.value !== null) {
                                     ]"
                                 >
                                     <span class="inline-flex items-center text-base font-semibold leading-7">
-                                        <CommentQuoteIcon class="mr-2 h-auto w-5" />
+                                        <CommentQuoteIcon class="mr-2 w-5 h-auto" />
                                         {{ $t('common.activity') }}
                                     </span>
                                     <span class="ml-6 flex h-7 items-center">

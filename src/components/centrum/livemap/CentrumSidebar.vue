@@ -609,7 +609,7 @@ async function checkup(): Promise<void> {
                                 :class="getOwnUnit.homePostal !== undefined ? 'rounded-l-full' : 'rounded-full'"
                                 @click="openTakeDispatch = true"
                             >
-                                <CarEmergencyIcon class="h-auto w-10" />
+                                <CarEmergencyIcon class="w-10 h-auto" />
                             </button>
                         </span>
                         <button
@@ -618,7 +618,7 @@ async function checkup(): Promise<void> {
                             class="flex h-12 w-12 items-center justify-center rounded-r-full bg-primary-500 text-neutral hover:bg-primary-400"
                             @click="setWaypointPLZ(getOwnUnit.homePostal)"
                         >
-                            <HomeFloorBIcon class="h-auto w-10" />
+                            <HomeFloorBIcon class="w-10 h-auto" />
                         </button>
                     </span>
                 </template>

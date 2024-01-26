@@ -112,10 +112,10 @@ const onSubmitThrottle = useThrottleFn(async (e) => {
                     </div>
                     <div v-if="comment.creatorId === activeChar?.userId || permissions.includes('superuser')">
                         <button v-if="can('JobsService.CreateRequest')" @click="editing = true">
-                            <PencilIcon class="ml-auto mr-2.5 h-auto w-5" />
+                            <PencilIcon class="ml-auto mr-2.5 w-5 h-auto" />
                         </button>
                         <button v-if="can('JobsService.DeleteRequestComment')" type="button" @click="reveal()">
-                            <TrashCanIcon class="ml-auto mr-2.5 h-auto w-5" />
+                            <TrashCanIcon class="ml-auto mr-2.5 w-5 h-auto" />
                         </button>
                     </div>
                 </div>
