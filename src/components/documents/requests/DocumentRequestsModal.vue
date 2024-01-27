@@ -26,7 +26,7 @@ const props = defineProps<{
     doc: DocumentShort;
 }>();
 
-const emits = defineEmits<{
+defineEmits<{
     (e: 'close'): void;
     (e: 'refresh'): void;
 }>();
@@ -66,8 +66,6 @@ async function createDocumentRequest(values: FormData): Promise<void> {
             content: { key: 'notifications.docstore.requests.created.content' },
             type: 'success',
         });
-
-        emits('close');
     } catch (e) {
         $grpc.handleError(e as RpcError);
         throw e;

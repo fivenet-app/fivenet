@@ -281,6 +281,11 @@ func (s *Server) UpdateDocumentReq(ctx context.Context, req *UpdateDocumentReqRe
 		return nil, errorsdocstore.ErrDocUpdateDenied
 	}
 
+	// Skip already accepted or declined document requests
+	if request.Accepted != nil && *request.Accepted {
+		return nil, errorsdocstore.ErrDocReqAlreadyCompleted
+	}
+
 	// Begin transaction
 	tx, err := s.db.BeginTx(ctx, nil)
 	if err != nil {

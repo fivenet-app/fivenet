@@ -1607,7 +1607,11 @@
             },
             "ErrDocSameOwner": "Sie sind bereits Ersteller des Dokumentes!",
             "ErrDocOwnerWrongJob": "Der neue Ersteller muss Teil ihres Jobs sein!",
-            "ErrDocReqOwnDoc": "Sie können keine Anfragen für Ihr eigenes Dokument erstellen!"
+            "ErrDocReqOwnDoc": "Sie können keine Anfragen für Ihr eigenes Dokument erstellen!",
+            "ErrDocReqAlreadyCompleted": {
+                "title": "Dokumenten Anfrage bereits angenommen/abgelehnt!",
+                "content": "Die zu aktualisierende Dokumenten Anfrage wurde bereits angenommen/abgelehnt."
+            }
         },
         "LivemapperService": {
             "ErrStreamFailed": "Livemap Datenstrom fehlgeschlagen!",

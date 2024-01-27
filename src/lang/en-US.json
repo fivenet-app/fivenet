@@ -1607,7 +1607,11 @@
             },
             "ErrDocSameOwner": "You are already the creator of this document!",
             "ErrDocOwnerWrongJob": "New document owner must be part of your job!",
-            "ErrDocReqOwnDoc": "You can't create requests against your own document!"
+            "ErrDocReqOwnDoc": "You can't create requests against your own document!",
+            "ErrDocReqAlreadyCompleted": {
+                "title": "Document Request has already been accepted/declined!",
+                "content": "The document request you are trying to accept/decline has already been processed."
+            }
         },
         "LivemapperService": {
             "ErrStreamFailed": "Failed to stream livemap data!",
