@@ -317,7 +317,6 @@
         },
         "livemap": {
             "starting_datastream": "Starte Livemap Datenstrom...",
-            "restarting_datastream": "Wiederherstellung des Datenstroms...",
             "failed_datastream": "Livemap Datenstrom fehlgeschlagen!",
             "center_selected_marker": "Zentriere ausgewählten Marker",
             "paused_datastream": "Livemap Datenstrom pausiert (Fenster nicht im Fokus).",
@@ -334,7 +333,8 @@
             },
             "show_unit_names": "Zeige Einheiten Namen (gilt nur für Livemap)",
             "show_unit_status": "Zeige Einheiten Status Farbe",
-            "show_all_dispatches": "Zeige alle Einsätze an (gilt nur für Livemap)"
+            "show_all_dispatches": "Zeige alle Einsätze an (gilt nur für Livemap)",
+            "restarting_datastream": "Wiederherstellung des Datenstroms..."
         },
         "rector": {
             "job_props": {
@@ -1335,7 +1335,8 @@
                     "Access": "Zugriffsanfrage",
                     "Closure": "Schließungsanfrage",
                     "Update": "Aktualisierungsanfrage",
-                    "Deletion": "Löschungsanfrage"
+                    "Deletion": "Löschungsanfrage",
+                    "OwnerChange": "Besitzerwechsel"
                 }
             },
             "DeleteDocumentReq": {
