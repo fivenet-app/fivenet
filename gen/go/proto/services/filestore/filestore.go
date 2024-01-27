@@ -32,7 +32,7 @@ func (s *Server) RegisterServer(srv *grpc.Server) {
 
 func (s *Server) Upload(ctx context.Context, req *UploadRequest) (*UploadResponse, error) {
 
-	// TODO implement access checks and upload logic
+	// TODO sanitize image file (https://www.libvips.org/), implement access checks and upload file process
 
 	return nil, nil
 }

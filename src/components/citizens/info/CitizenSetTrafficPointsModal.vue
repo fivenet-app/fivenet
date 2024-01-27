@@ -168,7 +168,7 @@ const onSubmitThrottle = useThrottleFn(async (e) => {
                                 <div class="absolute bottom-0 left-0 flex w-full">
                                     <button
                                         type="button"
-                                        class="rounded-bd flex-1 bg-base-500 px-3.5 py-2.5 text-sm font-semibold text-neutral hover:bg-base-400"
+                                        class="rounded-bd flex-1 bg-neutral text-gray-900 hover:bg-gray-200 px-3.5 py-2.5 text-sm font-semibold"
                                         @click="$emit('close')"
                                     >
                                         {{ $t('common.close', 1) }}

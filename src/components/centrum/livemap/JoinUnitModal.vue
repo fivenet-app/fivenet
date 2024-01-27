@@ -187,7 +187,7 @@ const filteredUnits = computed(() =>
                                             </button>
                                             <button
                                                 type="button"
-                                                class="relative inline-flex w-full items-center bg-neutral px-3 py-2 text-sm font-semibold text-gray-900 ring-1 ring-inset ring-gray-300 hover:bg-gray-50 hover:text-gray-900"
+                                                class="relative inline-flex w-full items-center bg-neutral px-3 py-2 text-sm font-semibold text-gray-900 ring-1 ring-inset ring-gray-300 hover:bg-gray-200 hover:text-gray-900"
                                                 :class="ownUnitId !== undefined ? '-ml-px rounded-r-md' : 'rounded-md'"
                                                 @click="$emit('close')"
                                             >

@@ -272,7 +272,7 @@ const openStatus = ref(false);
                                     <div class="flex flex-shrink-0 justify-end px-4 py-4">
                                         <button
                                             type="button"
-                                            class="w-full rounded-md bg-neutral px-3 py-2 text-sm font-semibold text-gray-900 shadow-sm ring-1 ring-inset ring-gray-300 hover:bg-gray-50"
+                                            class="w-full rounded-md bg-neutral px-3 py-2 text-sm font-semibold text-gray-900 shadow-sm ring-1 ring-inset ring-gray-300 hover:bg-gray-200"
                                             @click="$emit('close')"
                                         >
                                             {{ $t('common.close') }}
