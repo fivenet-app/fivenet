@@ -33,7 +33,7 @@ definePageMeta({
                                             type="button"
                                             class="relative inline-flex items-center rounded-md bg-primary-600 px-3 py-2 text-sm font-semibold text-neutral shadow-sm hover:bg-primary-500 focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-primary-600"
                                         >
-                                            Create new job
+                                            Create new Qualification
                                         </button>
                                     </div>
                                 </div>
