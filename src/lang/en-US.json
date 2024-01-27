@@ -317,7 +317,6 @@
         },
         "livemap": {
             "starting_datastream": "Starting Livemap data stream...",
-            "restarting_datastream": "Reconnecting data stream...",
             "failed_datastream": "Failed to stream Livemap data!",
             "center_selected_marker": "Center selected Marker",
             "paused_datastream": "Livemap data stream paused (window not in focus).",
@@ -334,7 +333,8 @@
             },
             "show_unit_names": "Show Unit Names (only affects Livemap)",
             "show_unit_status": "Show Unit Status Color",
-            "show_all_dispatches": "Show all Dispatches (only affects Livemap)"
+            "show_all_dispatches": "Show all Dispatches (only affects Livemap)",
+            "restarting_datastream": "Reconnecting data stream..."
         },
         "rector": {
             "job_props": {
