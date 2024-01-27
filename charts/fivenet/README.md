@@ -34,7 +34,7 @@ The following table lists the configurable parameters of the FiveNet chart and t
 | Parameter | Description | Default |
 |-----------|-------------|---------|
 | `affinity` |  | `{}` |
-| `discord` | FiveNet Discord Bot deployment config | `{"additionalEnv":[],"enabled":true,"image":{"pullPolicy":"IfNotPresent","repository":"docker.io/galexrt/fivenet","tag":""},"livenessProbe":{"httpGet":{"path":"/readiness","port":"metrics"},"initialDelaySeconds":15,"periodSeconds":10},"readinessProbe":null,"replicaCount":1,"resources":{},"serviceMonitor":{"additionalLabels":{},"enabled":false,"namespaceSelector":null,"scrapeInterval":"30s"},"startupProbe":{"failureThreshold":20,"httpGet":{"path":"/readiness","port":"metrics"},"initialDelaySeconds":5,"periodSeconds":10}}` |
+| `discord` | FiveNet Discord Bot deployment config | `{"additionalEnv":[],"enabled":true,"image":{"pullPolicy":"IfNotPresent","repository":"docker.io/galexrt/fivenet","tag":""},"livenessProbe":{"httpGet":{"path":"/readiness","port":"metrics"},"initialDelaySeconds":15,"periodSeconds":10},"readinessProbe":null,"replicaCount":1,"resources":{},"revisionHistoryLimit":1,"serviceMonitor":{"additionalLabels":{},"enabled":false,"namespaceSelector":null,"scrapeInterval":"30s"},"startupProbe":{"failureThreshold":20,"httpGet":{"path":"/readiness","port":"metrics"},"initialDelaySeconds":5,"periodSeconds":10}}` |
 | `discord.serviceMonitor.additionalLabels` | Additional Labels for the ServiceMonitor object | `{}` |
 | `discord.serviceMonitor.enabled` | Specifies whether a prometheus-operator ServiceMonitor should be created | `false` |
 | `discord.serviceMonitor.scrapeInterval` | Interval at which metrics should be scraped | `"30s"` |
@@ -48,6 +48,7 @@ The following table lists the configurable parameters of the FiveNet chart and t
 | `envoy.readinessProbe.httpGet.port` |  | `"admin"` |
 | `envoy.replicaCount` |  | `2` |
 | `envoy.resources` |  | `{}` |
+| `envoy.revisionHistoryLimit` |  | `1` |
 | `envoy.serviceMonitor.additionalLabels` | Additional Labels for the ServiceMonitor object | `{}` |
 | `envoy.serviceMonitor.enabled` | Specifies whether a prometheus-operator ServiceMonitor should be created | `false` |
 | `envoy.serviceMonitor.namespaceSelector` |  | `nil` |
@@ -67,6 +68,7 @@ The following table lists the configurable parameters of the FiveNet chart and t
 | `fivenet.readinessProbe` |  | `nil` |
 | `fivenet.replicaCount` |  | `1` |
 | `fivenet.resources` |  | `{}` |
+| `fivenet.revisionHistoryLimit` |  | `1` |
 | `fivenet.serviceMonitor.additionalLabels` | Additional Labels for the ServiceMonitor object | `{}` |
 | `fivenet.serviceMonitor.enabled` | Specifies whether a prometheus-operator ServiceMonitor should be created | `false` |
 | `fivenet.serviceMonitor.namespaceSelector` |  | `nil` |
@@ -100,7 +102,7 @@ The following table lists the configurable parameters of the FiveNet chart and t
 | `serviceAccount.create` |  | `true` |
 | `serviceAccount.name` |  | `""` |
 | `tolerations` |  | `[]` |
-| `worker` | FiveNet Worker deployment config | `{"additionalEnv":[],"enabled":true,"image":{"pullPolicy":"IfNotPresent","repository":"docker.io/galexrt/fivenet","tag":""},"livenessProbe":{"httpGet":{"path":"/readiness","port":"metrics"},"initialDelaySeconds":15,"periodSeconds":10},"readinessProbe":null,"replicaCount":1,"resources":{},"serviceMonitor":{"additionalLabels":{},"enabled":false,"namespaceSelector":null,"scrapeInterval":"30s"},"startupProbe":{"failureThreshold":20,"httpGet":{"path":"/readiness","port":"metrics"},"initialDelaySeconds":5,"periodSeconds":10}}` |
+| `worker` | FiveNet Worker deployment config | `{"additionalEnv":[],"enabled":true,"image":{"pullPolicy":"IfNotPresent","repository":"docker.io/galexrt/fivenet","tag":""},"livenessProbe":{"httpGet":{"path":"/readiness","port":"metrics"},"initialDelaySeconds":15,"periodSeconds":10},"readinessProbe":null,"replicaCount":1,"resources":{},"revisionHistoryLimit":1,"serviceMonitor":{"additionalLabels":{},"enabled":false,"namespaceSelector":null,"scrapeInterval":"30s"},"startupProbe":{"failureThreshold":20,"httpGet":{"path":"/readiness","port":"metrics"},"initialDelaySeconds":5,"periodSeconds":10}}` |
 | `worker.serviceMonitor.additionalLabels` | Additional Labels for the ServiceMonitor object | `{}` |
 | `worker.serviceMonitor.enabled` | Specifies whether a prometheus-operator ServiceMonitor should be created | `false` |
 | `worker.serviceMonitor.scrapeInterval` | Interval at which metrics should be scraped | `"30s"` |
