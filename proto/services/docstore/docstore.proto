@@ -406,7 +406,7 @@ service DocStoreService {
 
   // @perm
   rpc ListDocumentReqs(ListDocumentReqsRequest) returns (ListDocumentReqsResponse);
-  // @perm: Attrs=Types/StringList:[]string{"Access", "Closure", "Update", "Deletion"}§[]string{"Access"}
+  // @perm: Attrs=Types/StringList:[]string{"Access", "Closure", "Update", "Deletion", "OwnerChange"}§[]string{"Access"}
   rpc CreateDocumentReq(CreateDocumentReqRequest) returns (CreateDocumentReqResponse);
   // @perm: Name=CreateDocumentReq
   rpc UpdateDocumentReq(UpdateDocumentReqRequest) returns (UpdateDocumentReqResponse);

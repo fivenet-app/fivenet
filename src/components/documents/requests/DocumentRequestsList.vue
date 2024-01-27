@@ -6,9 +6,13 @@ import DataErrorBlock from '~/components/partials/data/DataErrorBlock.vue';
 import DataNoDataBlock from '~/components/partials/data/DataNoDataBlock.vue';
 import DataPendingBlock from '~/components/partials/data/DataPendingBlock.vue';
 import DocumentRequestsListEntry from '~/components/documents/requests/DocumentRequestsListEntry.vue';
+import { checkDocAccess } from '~/components/documents/helpers';
+import { AccessLevel, DocumentAccess } from '~~/gen/ts/resources/documents/access';
+import type { Document } from '~~/gen/ts/resources/documents/documents';
 
 const props = defineProps<{
-    documentId: string;
+    doc: Document;
+    access: DocumentAccess;
 }>();
 
 const { $grpc } = useNuxtApp();
@@ -20,7 +24,7 @@ const {
     pending,
     refresh,
     error,
-} = useLazyAsyncData(`document-${props.documentId}-requests-${offset.value}`, () => listDocumnetReqs(props.documentId));
+} = useLazyAsyncData(`document-${props.doc.id}-requests-${offset.value}`, () => listDocumnetReqs(props.doc.id));
 
 async function listDocumnetReqs(documentId: string): Promise<ListDocumentReqsResponse> {
     try {
@@ -38,6 +42,13 @@ async function listDocumnetReqs(documentId: string): Promise<ListDocumentReqsRes
         throw e;
     }
 }
+
+const canUpdate =
+    can('DocStoreService.CreateDocumentReq') &&
+    checkDocAccess(props.access, props.doc.creator, AccessLevel.EDIT, 'DocStoreService.CreateDocumentReq');
+const canDelete =
+    can('DocStoreService.DeleteDocumentReq') &&
+    checkDocAccess(props.access, props.doc.creator, AccessLevel.EDIT, 'DocStoreService.DeleteDocumentReq');
 </script>
 
 <template>
@@ -50,15 +61,17 @@ async function listDocumnetReqs(documentId: string): Promise<ListDocumentReqsRes
             :message="$t('common.not_found', [$t('common.request', 2)])"
         />
 
-        <div v-else>
+        <template v-else>
             <ul role="list" class="mb-6 divide-y divide-gray-100 rounded-md">
                 <DocumentRequestsListEntry
                     v-for="request in requests.requests"
                     :key="request.id"
                     :request="request"
+                    :can-update="canUpdate"
+                    :can-delete="canDelete"
                     @refresh="refresh()"
                 />
             </ul>
-        </div>
+        </template>
     </div>
 </template>

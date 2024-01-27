@@ -111,7 +111,7 @@ type DocStoreServiceClient interface {
 	ListDocumentActivity(ctx context.Context, in *ListDocumentActivityRequest, opts ...grpc.CallOption) (*ListDocumentActivityResponse, error)
 	// @perm
 	ListDocumentReqs(ctx context.Context, in *ListDocumentReqsRequest, opts ...grpc.CallOption) (*ListDocumentReqsResponse, error)
-	// @perm: Attrs=Types/StringList:[]string{"Access", "Closure", "Update", "Deletion"}§[]string{"Access"}
+	// @perm: Attrs=Types/StringList:[]string{"Access", "Closure", "Update", "Deletion", "OwnerChange"}§[]string{"Access"}
 	CreateDocumentReq(ctx context.Context, in *CreateDocumentReqRequest, opts ...grpc.CallOption) (*CreateDocumentReqResponse, error)
 	// @perm: Name=CreateDocumentReq
 	UpdateDocumentReq(ctx context.Context, in *UpdateDocumentReqRequest, opts ...grpc.CallOption) (*UpdateDocumentReqResponse, error)
@@ -499,7 +499,7 @@ type DocStoreServiceServer interface {
 	ListDocumentActivity(context.Context, *ListDocumentActivityRequest) (*ListDocumentActivityResponse, error)
 	// @perm
 	ListDocumentReqs(context.Context, *ListDocumentReqsRequest) (*ListDocumentReqsResponse, error)
-	// @perm: Attrs=Types/StringList:[]string{"Access", "Closure", "Update", "Deletion"}§[]string{"Access"}
+	// @perm: Attrs=Types/StringList:[]string{"Access", "Closure", "Update", "Deletion", "OwnerChange"}§[]string{"Access"}
 	CreateDocumentReq(context.Context, *CreateDocumentReqRequest) (*CreateDocumentReqResponse, error)
 	// @perm: Name=CreateDocumentReq
 	UpdateDocumentReq(context.Context, *UpdateDocumentReqRequest) (*UpdateDocumentReqResponse, error)

@@ -73,7 +73,7 @@ func init() {
 				{
 					Key:           permkeys.DocStoreServiceCreateDocumentReqTypesPermField,
 					Type:          permissions.StringListAttributeType,
-					ValidValues:   []string{"Access", "Closure", "Update", "Deletion"},
+					ValidValues:   []string{"Access", "Closure", "Update", "Deletion", "OwnerChange"},
 					DefaultValues: []string{"Access"},
 				},
 			},

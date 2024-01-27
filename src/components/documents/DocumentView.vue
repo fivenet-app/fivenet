@@ -227,8 +227,9 @@ if (hash.value !== undefined && hash.value !== null) {
 
         <div v-else class="rounded-lg bg-base-700">
             <DocumentRequestsModal
-                v-if="can('DocStoreService.CreateDocumentReq')"
+                v-if="can('DocStoreService.ListDocumentReqs') && access !== undefined"
                 :open="openRequests"
+                :access="access"
                 :doc="doc"
                 @close="openRequests = false"
                 @refresh="
@@ -293,7 +294,7 @@ if (hash.value !== undefined && hash.value !== null) {
                                     {{ $t('common.edit') }}
                                 </NuxtLink>
                                 <button
-                                    v-if="can('DocStoreService.CreateDocumentReq')"
+                                    v-if="can('DocStoreService.ListDocumentReqs')"
                                     type="button"
                                     class="inline-flex items-center gap-x-1.5 rounded-md bg-primary-500 px-3 py-2 text-sm font-semibold text-neutral hover:bg-primary-400"
                                     @click="openRequests = true"

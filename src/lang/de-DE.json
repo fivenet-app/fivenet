@@ -1309,8 +1309,8 @@
                 "description": "Dokumenten-Aktivität von Dokumente mit Status oder höher Zugriff sehen können."
             },
             "ListDocumentReqs": {
-                "key": "Auflistung der Dokumentenanforderungen",
-                "description": "Liste die Dokumentenanforderungen auf"
+                "key": "Auflistung der Dokumentenanfragen",
+                "description": "Liste die Dokumentenanfragen auf"
             },
             "ChangeDocumentOwner": {
                 "key": "Änderung des Dokumentenbesitzers",

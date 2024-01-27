@@ -12,6 +12,8 @@ import ConfirmDialog from '~/components/partials/ConfirmDialog.vue';
 
 const props = defineProps<{
     request: DocRequest;
+    canUpdate: boolean;
+    canDelete: boolean;
 }>();
 
 const emits = defineEmits<{
@@ -122,7 +124,7 @@ const onSubmitThrottle = useThrottleFn(async (accepted: boolean) => {
                 </div>
             </div>
             <div class="flex items-center gap-2">
-                <template v-if="request.accepted === undefined">
+                <template v-if="canUpdate && request.accepted === undefined">
                     <button
                         type="button"
                         :disabled="!canSubmit"
@@ -151,7 +153,7 @@ const onSubmitThrottle = useThrottleFn(async (accepted: boolean) => {
                     </button>
                 </template>
 
-                <Menu as="div" class="relative flex-none">
+                <Menu v-if="canDelete" as="div" class="relative flex-none">
                     <MenuButton class="block text-gray-300 hover:text-gray-100">
                         <span class="sr-only">{{ $t('common.open') }}</span>
                         <MenuIcon class="h-5 w-5" aria-hidden="true" />
@@ -169,7 +171,6 @@ const onSubmitThrottle = useThrottleFn(async (accepted: boolean) => {
                         >
                             <MenuItem v-slot="{ close }">
                                 <button
-                                    v-if="can('DocStoreService.DeleteDocumentReq')"
                                     type="button"
                                     class="inline-flex items-center px-4 py-2 text-sm text-neutral hover:transition-colors"
                                     :disabled="!canSubmit"

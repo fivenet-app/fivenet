@@ -236,7 +236,7 @@ export interface IDocStoreServiceClient {
      */
     listDocumentReqs(input: ListDocumentReqsRequest, options?: RpcOptions): UnaryCall<ListDocumentReqsRequest, ListDocumentReqsResponse>;
     /**
-     * @perm: Attrs=Types/StringList:[]string{"Access", "Closure", "Update", "Deletion"}§[]string{"Access"}
+     * @perm: Attrs=Types/StringList:[]string{"Access", "Closure", "Update", "Deletion", "OwnerChange"}§[]string{"Access"}
      *
      * @generated from protobuf rpc: CreateDocumentReq(services.docstore.CreateDocumentReqRequest) returns (services.docstore.CreateDocumentReqResponse);
      */
@@ -528,7 +528,7 @@ export class DocStoreServiceClient implements IDocStoreServiceClient, ServiceInf
         return stackIntercept<ListDocumentReqsRequest, ListDocumentReqsResponse>("unary", this._transport, method, opt, input);
     }
     /**
-     * @perm: Attrs=Types/StringList:[]string{"Access", "Closure", "Update", "Deletion"}§[]string{"Access"}
+     * @perm: Attrs=Types/StringList:[]string{"Access", "Closure", "Update", "Deletion", "OwnerChange"}§[]string{"Access"}
      *
      * @generated from protobuf rpc: CreateDocumentReq(services.docstore.CreateDocumentReqRequest) returns (services.docstore.CreateDocumentReqResponse);
      */

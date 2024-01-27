@@ -1335,7 +1335,8 @@
                     "Access": "Access",
                     "Closure": "Closure",
                     "Update": "Update",
-                    "Deletion": "Deletion"
+                    "Deletion": "Deletion",
+                    "OwnerChange": "Owner Change"
                 }
             },
             "DeleteDocumentReq": {

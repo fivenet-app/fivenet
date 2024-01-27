@@ -208,14 +208,14 @@ const trafficPointsModal = ref(false);
                                                     >
                                                         {{ $t('common.license', 2) }}
                                                     </dt>
-                                                    <dd class="mt-1 text-sm text-base-300 sm:col-span-2 sm:ml-6 sm:mt-0">
+                                                    <dd class="w-full mt-1 text-sm text-base-300 sm:col-span-2 sm:ml-6 sm:mt-0">
                                                         <span v-if="user?.licenses.length === 0">
                                                             {{ $t('common.no_licenses') }}
                                                         </span>
                                                         <ul
                                                             v-else
                                                             role="list"
-                                                            class="divide-y divide-base-200 rounded-md border border-base-200"
+                                                            class="w-full divide-y divide-base-200 rounded-md border border-base-200"
                                                         >
                                                             <li
                                                                 v-for="license in user?.licenses"
@@ -227,11 +227,11 @@ const trafficPointsModal = ref(false);
                                                                         class="h-5 w-5 flex-shrink-0 text-base-400"
                                                                         aria-hidden="true"
                                                                     />
-                                                                    <span class="ml-2 flex-1 truncate"
-                                                                        >{{ license.label }} ({{
-                                                                            license.type.toUpperCase()
-                                                                        }})</span
-                                                                    >
+                                                                    <span
+                                                                        class="ml-2 flex-1 truncate"
+                                                                        :title="`${license.type.toUpperCase()}`"
+                                                                        >{{ license.label }}
+                                                                    </span>
                                                                 </div>
                                                             </li>
                                                         </ul>
