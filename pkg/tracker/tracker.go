@@ -16,7 +16,6 @@ import (
 	"github.com/galexrt/fivenet/query/fivenet/table"
 	"github.com/gin-gonic/gin"
 	jet "github.com/go-jet/jet/v2/mysql"
-	"github.com/paulmach/orb"
 	"github.com/puzpuzpuz/xsync/v3"
 	tracesdk "go.opentelemetry.io/otel/sdk/trace"
 	"go.opentelemetry.io/otel/trace"
@@ -37,8 +36,6 @@ type ITracker interface {
 
 	Subscribe() chan *Event
 	Unsubscribe(c chan *Event)
-
-	GetUserJobLocations(job string) *coords.Coords[*livemap.UserMarker]
 }
 
 type UserInfo struct {
@@ -187,15 +184,9 @@ func (s *Tracker) cleanupUserIDs() error {
 
 			jobUsers, ok := s.usersCache.Load(info.Job)
 			if ok {
-				point, ok := jobUsers.Load(key)
-				if ok {
-					if locs := s.GetUserJobLocations(info.Job); locs != nil {
-						locs.Remove(point, func(p orb.Pointer) bool {
-							return p.(*livemap.UserMarker).UserId == point.UserId
-						})
-					}
+				if _, ok := jobUsers.Load(key); ok {
+					jobUsers.Delete(key)
 				}
-				jobUsers.Delete(key)
 			}
 		}
 
@@ -282,17 +273,6 @@ func (s *Tracker) refreshUserLocations(ctx context.Context, sendCurrentList bool
 
 		jobMarkers[job].Store(userId, dest[i])
 
-		if locs := s.GetUserJobLocations(job); locs != nil {
-			if locs.Has(dest[i], func(p orb.Pointer) bool {
-				return p.(*livemap.UserMarker).UserId == dest[i].UserId
-			}) {
-				locs.Remove(dest[i], func(p orb.Pointer) bool {
-					return p.(*livemap.UserMarker).UserId == dest[i].UserId
-				})
-			}
-			locs.Add(dest[i])
-		}
-
 		userInfo := &UserInfo{
 			Job:    dest[i].User.Job,
 			UserID: userId,
@@ -357,8 +337,4 @@ func (s *Tracker) Subscribe() chan *Event {
 
 func (s *Tracker) Unsubscribe(c chan *Event) {
 	s.broker.Unsubscribe(c)
-}
-
-func (s *Tracker) GetUserJobLocations(job string) *coords.Coords[*livemap.UserMarker] {
-	return s.locations[job]
 }

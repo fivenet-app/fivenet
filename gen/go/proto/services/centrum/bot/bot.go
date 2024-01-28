@@ -7,7 +7,6 @@ import (
 	"time"
 
 	"github.com/galexrt/fivenet/gen/go/proto/resources/centrum"
-	"github.com/galexrt/fivenet/gen/go/proto/resources/livemap"
 	"github.com/galexrt/fivenet/gen/go/proto/services/centrum/manager"
 	centrumutils "github.com/galexrt/fivenet/gen/go/proto/services/centrum/utils"
 	"github.com/galexrt/fivenet/pkg/tracker"
@@ -95,40 +94,9 @@ func (b *Bot) Run(ctx context.Context) error {
 }
 
 func (b *Bot) getAvailableUnit(ctx context.Context, point orb.Point) (*centrum.Unit, bool) {
-	var units []*centrum.Unit
-
-	locs := b.tracker.GetUserJobLocations(b.job)
-	if locs != nil {
-		points := locs.KNearest(point, 5, nil, 5000.0)
-		for _, point := range points {
-			user := point.(*livemap.UserMarker)
-			if user.UnitId == nil {
-				continue
-			}
-
-			unit, err := b.state.GetUnit(user.Info.Job, *user.UnitId)
-			if err != nil {
-				b.logger.Error("failed to get user's unit", zap.String("job", user.Info.Job), zap.Error(err))
-				continue
-			}
-
-			if (unit.Status == nil || unit.Status.Status != centrum.StatusUnit_STATUS_UNIT_AVAILABLE) &&
-				(unit.Attributes != nil && unit.Attributes.Has(centrum.UnitAttributeNoDispatchAutoAssign)) {
-				b.logger.Debug("skipping close by unit because of status", zap.String("job", user.Info.Job), zap.Any("unit_status", unit.Status))
-				continue
-			}
-
-			units = append(units, unit)
-		}
-	}
-
-	if len(units) == 0 {
-		b.logger.Warn("falling back to normal unit selection, no close by units found", zap.String("job", b.job))
-
-		units = b.state.FilterUnits(b.job, []centrum.StatusUnit{centrum.StatusUnit_STATUS_UNIT_AVAILABLE}, nil, func(unit *centrum.Unit) bool {
-			return unit.Attributes == nil || !unit.Attributes.Has(centrum.UnitAttributeNoDispatchAutoAssign)
-		})
-	}
+	units := b.state.FilterUnits(b.job, []centrum.StatusUnit{centrum.StatusUnit_STATUS_UNIT_AVAILABLE}, nil, func(unit *centrum.Unit) bool {
+		return unit.Attributes == nil || !unit.Attributes.Has(centrum.UnitAttributeNoDispatchAutoAssign)
+	})
 
 	b.logger.Debug("found available units", zap.Int("available_units_count", len(units)))
 	if len(units) == 0 {

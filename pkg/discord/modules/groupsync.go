@@ -46,6 +46,11 @@ func (g *GroupSync) Run() error {
 }
 
 func (g *GroupSync) createGroupRoles() error {
+	guild, err := g.discord.Guild(g.guild.ID)
+	if err != nil {
+		return err
+	}
+
 	dcRoles := map[string]config.DiscordGroupRole{}
 	for _, dcRole := range g.groupsToSync {
 		if _, ok := dcRoles[dcRole.RoleName]; !ok {
@@ -54,7 +59,7 @@ func (g *GroupSync) createGroupRoles() error {
 	}
 
 	for _, dcRole := range dcRoles {
-		if slices.ContainsFunc(g.guild.Roles, func(in *discordgo.Role) bool {
+		if slices.ContainsFunc(guild.Roles, func(in *discordgo.Role) bool {
 			if strings.EqualFold(in.Name, dcRole.RoleName) {
 				g.roles[dcRole.RoleName] = in
 				return true
@@ -76,6 +81,7 @@ func (g *GroupSync) createGroupRoles() error {
 			n.SetString(color, 16)
 			colorDec := int(n.Int64())
 
+			g.logger.Debug("updating group role", zap.String("gruop_name", dcRole.RoleName))
 			role, err := g.discord.GuildRoleEdit(g.guild.ID, g.roles[dcRole.RoleName].ID, &discordgo.RoleParams{
 				Name:        dcRole.RoleName,
 				Permissions: dcRole.Permissions,
@@ -93,6 +99,7 @@ func (g *GroupSync) createGroupRoles() error {
 			continue
 		}
 
+		g.logger.Debug("creating group role", zap.String("gruop_name", dcRole.RoleName))
 		role, err := g.discord.GuildRoleCreate(g.guild.ID, &discordgo.RoleParams{
 			Name:        dcRole.RoleName,
 			Permissions: dcRole.Permissions,
@@ -104,7 +111,7 @@ func (g *GroupSync) createGroupRoles() error {
 		g.roles[dcRole.RoleName] = role
 	}
 
-	g.logger.Debug("created group roles")
+	g.logger.Debug("created or updated group roles")
 
 	return nil
 }

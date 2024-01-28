@@ -5,6 +5,7 @@ import (
 	"database/sql"
 	"fmt"
 	"slices"
+	"sync/atomic"
 	"time"
 
 	"github.com/bwmarrin/discordgo"
@@ -128,8 +129,10 @@ func NewBot(p BotParams) (*Bot, error) {
 }
 
 func (b *Bot) start(ctx context.Context) error {
-	b.discord.AddHandler(func(discord *discordgo.Session, ready *discordgo.Ready) {
-		b.logger.Info(fmt.Sprintf("Ready with %d guilds", len(discord.State.Guilds)))
+	var ready atomic.Bool
+	b.discord.AddHandler(func(discord *discordgo.Session, r *discordgo.Ready) {
+		b.logger.Info(fmt.Sprintf("Ready with %d guilds", len(r.Guilds)))
+		ready.Store(true)
 	})
 
 	if err := b.discord.Open(); err != nil {
@@ -137,7 +140,7 @@ func (b *Bot) start(ctx context.Context) error {
 	}
 
 	for {
-		if b.discord.State.Ready.Version > 0 {
+		if b.discord.State.Ready.Version > 0 && ready.Load() {
 			return b.setBotPresence()
 		}
 
@@ -237,7 +240,7 @@ func (b *Bot) getGuilds() error {
 
 	for job, guildID := range guildsDB {
 		var found *discordgo.Guild
-		if !slices.ContainsFunc(b.discord.State.Guilds, func(in *discordgo.Guild) bool {
+		if !slices.ContainsFunc(b.discord.State.Ready.Guilds, func(in *discordgo.Guild) bool {
 			if in.ID == guildID {
 				found = in
 				return true
@@ -256,6 +259,7 @@ func (b *Bot) getGuilds() error {
 
 			continue
 		}
+
 		if found == nil {
 			return fmt.Errorf("didn't find bot being in guild %s (job: %s)", guildID, job)
 		}

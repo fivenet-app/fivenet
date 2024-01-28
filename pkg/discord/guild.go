@@ -1,6 +1,8 @@
 package discord
 
 import (
+	"fmt"
+
 	"github.com/bwmarrin/discordgo"
 	"github.com/galexrt/fivenet/pkg/discord/commands"
 	"github.com/galexrt/fivenet/pkg/discord/modules"
@@ -59,14 +61,33 @@ func NewGuild(b *Bot, guild *discordgo.Guild, job string) (*Guild, error) {
 
 func (g *Guild) Setup() error {
 	g.logger.Info("setting up guild")
+
+	if _, err := g.bot.discord.Guild(g.guild.ID); err != nil {
+		return fmt.Errorf("failed to retrieve guild. %w", err)
+	}
+
+	// Make sure that the guild roles are cached in state
+	if len(g.guild.Roles) == 0 {
+		if _, err := g.bot.discord.GuildRoles(g.guild.ID); err != nil {
+			return fmt.Errorf("failed to retrieve roles for guild. %w", err)
+		}
+	}
+
 	if g.commands != nil {
-		return g.commands.Register(g.bot.discord)
+		if err := g.commands.Register(g.bot.discord); err != nil {
+			return fmt.Errorf("failed to register bot commands. %w", err)
+		}
 	}
 
 	return nil
 }
 
 func (g *Guild) Run() error {
+	if g.guild.Unavailable {
+		g.logger.Warn("discord guild is unavailable, skipping sync run")
+		return nil
+	}
+
 	for key, module := range g.modules {
 		g.logger.Debug("running discord guild module", zap.String("dc_module", key))
 		if err := module.Run(); err != nil {
