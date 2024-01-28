@@ -1,14 +1,13 @@
 <script lang="ts" setup>
 import { LIcon, LMarker, LPopup } from '@vue-leaflet/vue-leaflet';
 import { type PointExpression } from 'leaflet';
-import { AccountGroupIcon, BellIcon, CarEmergencyIcon } from 'mdi-vue3';
+import { BellIcon, CarEmergencyIcon } from 'mdi-vue3';
 import { dispatchStatusAnimate, dispatchStatusToBGColor, dispatchStatusToFillColor } from '~/components/centrum/helpers';
 import IDCopyBadge from '~/components/partials/IDCopyBadge.vue';
 import CitizenInfoPopover from '~/components/partials/citizens/CitizenInfoPopover.vue';
 import { Dispatch, StatusDispatch } from '~~/gen/ts/resources/centrum/dispatches';
 import DispatchAttributes from '~/components/centrum/partials/DispatchAttributes.vue';
-import { useCentrumStore } from '~/store/centrum';
-import UnitInfoPopover from '../units/UnitInfoPopover.vue';
+import UnitInfoPopover from '~/components/centrum/units/UnitInfoPopover.vue';
 
 const props = withDefaults(
     defineProps<{
@@ -23,9 +22,6 @@ const props = withDefaults(
 const emit = defineEmits<{
     (e: 'selected', dsp: Dispatch): void;
 }>();
-
-const centrumStore = useCentrumStore();
-const { timeCorrection } = storeToRefs(centrumStore);
 
 const iconAnchor: PointExpression = [props.size / 2, props.size * 1.65];
 const popupAnchor: PointExpression = [0, -(props.size * 1.7)];
@@ -107,43 +103,19 @@ const dispatchClasses = computed(() => [
                 </li>
                 <li class="inline-flex gap-1">
                     <span class="font-semibold">{{ $t('common.units') }}:</span>
-                    <span v-if="dispatch.units.length === 0" class="block">
-                        {{ $t('common.unit', dispatch.units.length) }}
+                    <span v-if="dispatch.units.length === 0" class="italic">{{
+                        $t('enums.centrum.StatusDispatch.UNASSIGNED')
+                    }}</span>
+                    <span v-else class="mr-1 grid grid-cols-2 gap-1">
+                        <UnitInfoPopover
+                            v-for="unit in dispatch.units"
+                            :key="unit.unitId"
+                            :unit="unit.unit"
+                            :initials-only="true"
+                            :badge="true"
+                            :assignment="unit"
+                        />
                     </span>
-                    <div v-else class="rounded-md bg-base-800">
-                        <ul role="list" class="divide-y divide-gray-200 text-sm font-medium">
-                            <li
-                                v-for="unit in dispatch.units"
-                                :key="unit.unitId"
-                                class="flex items-center justify-between py-3 pl-3 pr-4"
-                            >
-                                <div class="flex flex-1 items-center">
-                                    <UnitInfoPopover
-                                        :unit="unit.unit"
-                                        :assignment="unit"
-                                        class="flex items-center justify-center"
-                                        text-class="text-gray-300"
-                                    >
-                                        <template #before>
-                                            <AccountGroupIcon
-                                                class="mr-1 h-5 w-5 flex-shrink-0 text-base-400"
-                                                aria-hidden="true"
-                                            />
-                                        </template>
-                                    </UnitInfoPopover>
-                                    <span v-if="unit.expiresAt" class="ml-2 inline-flex flex-1 items-center truncate">
-                                        -
-                                        {{
-                                            useLocaleTimeAgo(toDate(unit.expiresAt, timeCorrection), {
-                                                showSecond: true,
-                                                updateInterval: 1_000,
-                                            }).value
-                                        }}
-                                    </span>
-                                </div>
-                            </li>
-                        </ul>
-                    </div>
                 </li>
             </ul>
         </LPopup>
