@@ -9,6 +9,7 @@ import {
     EmoticonDevilIcon,
     ExclamationThickIcon,
     FlareIcon,
+    HandFrontRightIcon,
     HelpIcon,
     HospitalBoxIcon,
     MagnifyIcon,
@@ -50,6 +51,7 @@ export const markerIcons = markRaw([
     CarWrenchIcon,
     MagnifyIcon,
     StarFourPointsIcon,
+    HandFrontRightIcon,
     FlareIcon,
     EmoticonDevilIcon,
 ]);
