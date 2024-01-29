@@ -42,7 +42,7 @@ interface FormData {
     expiresAt?: string;
     markerType: MarkerType.CIRCLE;
     circleRadius: number;
-    circleOpacity: number;
+    circleOpacity?: number;
 }
 
 const color = ref('#EE4B2B');
@@ -73,7 +73,7 @@ async function createMarker(values: FormData): Promise<void> {
                     oneofKind: 'circle',
                     circle: {
                         radius: values.circleRadius,
-                        oapcity: values.circleOpacity,
+                        oapcity: values.circleOpacity ?? 3,
                     },
                 },
             };
@@ -127,7 +127,7 @@ const { handleSubmit, meta, values, setValues } = useForm<FormData>({
     initialValues: {
         expiresAt: toDatetimeLocal(defaultExpiresAt.value),
         circleRadius: 50,
-        circleOpacity: 3,
+        circleOpacity: 15,
     },
     validateOnMount: true,
 });

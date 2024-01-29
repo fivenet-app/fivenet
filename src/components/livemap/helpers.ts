@@ -4,6 +4,7 @@ import {
     AlertCircleIcon,
     AlertIcon,
     AlertOctagonIcon,
+    CameraIcon,
     CarWrenchIcon,
     CrosshairsGpsIcon,
     EmoticonDevilIcon,
@@ -16,6 +17,7 @@ import {
     MedicalBagIcon,
     MinusCircleIcon,
     OctagonIcon,
+    PartyPopperIcon,
     PistolIcon,
     PoliceBadgeIcon,
     PoliceStationIcon,
@@ -53,5 +55,7 @@ export const markerIcons = markRaw([
     StarFourPointsIcon,
     HandFrontRightIcon,
     FlareIcon,
+    PartyPopperIcon,
+    CameraIcon,
     EmoticonDevilIcon,
 ]);
