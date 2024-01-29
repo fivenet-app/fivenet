@@ -1,12 +1,13 @@
 <script lang="ts" setup>
 import {
+    Combobox,
+    ComboboxButton,
+    ComboboxInput,
+    ComboboxOption,
+    ComboboxOptions,
     Dialog,
     DialogPanel,
     DialogTitle,
-    Listbox,
-    ListboxButton,
-    ListboxOption,
-    ListboxOptions,
     TransitionChild,
     TransitionRoot,
 } from '@headlessui/vue';
@@ -22,7 +23,7 @@ import { useLivemapStore } from '~/store/livemap';
 import { Marker, MarkerType } from '~~/gen/ts/resources/livemap/livemap';
 import { markerIcons } from '~/components/livemap/helpers';
 
-defineProps<{
+const props = defineProps<{
     open: boolean;
 }>();
 
@@ -38,6 +39,7 @@ const { location } = storeToRefs(livemapStore);
 interface FormData {
     name: string;
     description: string;
+    expiresAt?: string;
     markerType: MarkerType.CIRCLE;
     circleRadius: number;
     circleOpacity: number;
@@ -47,6 +49,8 @@ const color = ref('#EE4B2B');
 const selectedIcon = shallowRef<DefineComponent>(HelpIcon);
 
 async function createMarker(values: FormData): Promise<void> {
+    const expiresAt = values.expiresAt && values.expiresAt !== '' ? toTimestamp(fromString(values.expiresAt)) : undefined;
+
     try {
         const marker: Marker = {
             info: {
@@ -59,6 +63,7 @@ async function createMarker(values: FormData): Promise<void> {
                 y: location.value?.y ?? 0,
                 color: color.value.replaceAll('#', ''),
             },
+            expiresAt,
             type: values.markerType,
         };
 
@@ -108,14 +113,19 @@ defineRule('max', max);
 defineRule('min_value', min_value);
 defineRule('max_value', max_value);
 
+const defaultExpiresAt = ref<Date>(new Date());
+defaultExpiresAt.value.setTime(defaultExpiresAt.value.getTime() + 1 * 60 * 60 * 1000);
+
 const { handleSubmit, meta, values, setValues } = useForm<FormData>({
     validationSchema: {
         name: { required: true, min: 3, max: 255 },
         description: { required: false, min: 6, max: 512 },
         circleRadius: { required: false, min_value: 5, max_value: 250 },
         circleOpacity: { required: false, min_value: 1, max_value: 75 },
+        expiresAt: { required: false },
     },
     initialValues: {
+        expiresAt: toDatetimeLocal(defaultExpiresAt.value),
         circleRadius: 50,
         circleOpacity: 3,
     },
@@ -123,7 +133,10 @@ const { handleSubmit, meta, values, setValues } = useForm<FormData>({
 });
 
 async function setMarker(): Promise<void> {
+    defaultExpiresAt.value.setTime(defaultExpiresAt.value.getTime() + 1 * 60 * 60 * 1000);
+
     setValues({
+        expiresAt: toDatetimeLocal(defaultExpiresAt.value),
         markerType: MarkerType.CIRCLE,
         circleRadius: 50,
         circleOpacity: 3,
@@ -131,6 +144,7 @@ async function setMarker(): Promise<void> {
 }
 
 onBeforeMount(async () => setMarker());
+watch(props, () => setMarker());
 
 const canSubmit = ref(true);
 const onSubmit = handleSubmit(
@@ -170,6 +184,7 @@ const onSubmitThrottle = useThrottleFn(async (e) => {
                                                 <DialogTitle class="text-base font-semibold leading-6 text-neutral">
                                                     {{ $t('components.livemap.create_marker.title') }}
                                                 </DialogTitle>
+
                                                 <div class="ml-3 flex h-7 items-center">
                                                     <button
                                                         type="button"
@@ -247,6 +262,35 @@ const onSubmitThrottle = useThrottleFn(async (e) => {
                                                                 />
                                                             </dd>
                                                         </div>
+                                                        <div class="px-4 py-3 sm:grid sm:grid-cols-3 sm:gap-4 sm:px-0">
+                                                            <dt class="text-sm font-medium leading-6 text-neutral">
+                                                                <label
+                                                                    for="expiresAt"
+                                                                    class="block text-sm font-medium leading-6 text-neutral"
+                                                                >
+                                                                    {{ $t('common.expires_at') }}
+                                                                </label>
+                                                            </dt>
+                                                            <dd
+                                                                class="mt-1 text-sm leading-6 text-gray-400 sm:col-span-2 sm:mt-0"
+                                                            >
+                                                                <VeeField
+                                                                    type="datetime-local"
+                                                                    name="expiresAt"
+                                                                    class="block w-full rounded-md border-0 bg-base-700 py-1.5 text-neutral placeholder:text-base-200 focus:ring-2 focus:ring-inset focus:ring-base-300 sm:text-sm sm:leading-6"
+                                                                    :placeholder="$t('common.expires_at')"
+                                                                    :label="$t('common.expires_at')"
+                                                                    @focusin="focusTablet(true)"
+                                                                    @focusout="focusTablet(false)"
+                                                                />
+                                                                <VeeErrorMessage
+                                                                    name="expiresAt"
+                                                                    as="p"
+                                                                    class="mt-2 text-sm text-error-400"
+                                                                />
+                                                            </dd>
+                                                        </div>
+
                                                         <div class="px-4 py-3 sm:grid sm:grid-cols-3 sm:gap-4 sm:px-0">
                                                             <dt class="text-sm font-medium leading-6 text-neutral">
                                                                 <label
@@ -367,13 +411,31 @@ const onSubmitThrottle = useThrottleFn(async (e) => {
                                                                     :placeholder="$t('common.icon')"
                                                                     :label="$t('common.icon')"
                                                                 >
-                                                                    <Listbox v-model="selectedIcon" as="div" class="mt-2">
+                                                                    <Combobox v-model="selectedIcon" as="div" class="mt-2">
                                                                         <div class="relative">
-                                                                            <ListboxButton
+                                                                            <ComboboxButton
+                                                                                as="div"
                                                                                 class="block w-full rounded-md border-0 bg-base-700 py-1.5 pl-3 text-left text-neutral placeholder:text-base-200 focus:ring-2 focus:ring-inset focus:ring-base-300 sm:text-sm sm:leading-6"
                                                                             >
+                                                                                <ComboboxInput
+                                                                                    autocomplete="off"
+                                                                                    class="block w-full rounded-md border-0 bg-base-700 py-1.5 text-neutral placeholder:text-base-200 focus:ring-2 focus:ring-inset focus:ring-base-300 sm:text-sm sm:leading-6"
+                                                                                    :placeholder="$t('common.icon')"
+                                                                                    @focusin="focusTablet(true)"
+                                                                                    @focusout="focusTablet(false)"
+                                                                                />
+
                                                                                 <span
-                                                                                    class="block inline-flex items-center truncate"
+                                                                                    class="pointer-events-none absolute inset-y-0 right-0 flex pt-4 pr-2"
+                                                                                >
+                                                                                    <ChevronDownIcon
+                                                                                        class="h-5 w-5 text-gray-400"
+                                                                                        aria-hidden="true"
+                                                                                    />
+                                                                                </span>
+
+                                                                                <span
+                                                                                    class="mt-1 block inline-flex items-center truncate"
                                                                                 >
                                                                                     <component
                                                                                         :is="selectedIcon"
@@ -388,25 +450,17 @@ const onSubmitThrottle = useThrottleFn(async (e) => {
                                                                                         )
                                                                                     }}
                                                                                 </span>
-                                                                                <span
-                                                                                    class="pointer-events-none absolute inset-y-0 right-0 flex items-center pr-2"
-                                                                                >
-                                                                                    <ChevronDownIcon
-                                                                                        class="h-5 w-5 text-gray-400"
-                                                                                        aria-hidden="true"
-                                                                                    />
-                                                                                </span>
-                                                                            </ListboxButton>
+                                                                            </ComboboxButton>
 
                                                                             <transition
                                                                                 leave-active-class="transition duration-100 ease-in"
                                                                                 leave-from-class="opacity-100"
                                                                                 leave-to-class="opacity-0"
                                                                             >
-                                                                                <ListboxOptions
+                                                                                <ComboboxOptions
                                                                                     class="absolute z-10 mt-1 max-h-44 w-full overflow-auto rounded-md bg-base-700 py-1 text-base sm:text-sm"
                                                                                 >
-                                                                                    <ListboxOption
+                                                                                    <ComboboxOption
                                                                                         v-for="icon in markerIcons"
                                                                                         v-slot="{ active, selected }"
                                                                                         :key="icon.name"
@@ -454,11 +508,11 @@ const onSubmitThrottle = useThrottleFn(async (e) => {
                                                                                                 />
                                                                                             </span>
                                                                                         </li>
-                                                                                    </ListboxOption>
-                                                                                </ListboxOptions>
+                                                                                    </ComboboxOption>
+                                                                                </ComboboxOptions>
                                                                             </transition>
                                                                         </div>
-                                                                    </Listbox>
+                                                                    </Combobox>
                                                                 </VeeField>
                                                                 <VeeErrorMessage
                                                                     name="icon"

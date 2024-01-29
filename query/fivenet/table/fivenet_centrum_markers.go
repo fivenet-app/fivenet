@@ -19,6 +19,7 @@ type fivenetCentrumMarkersTable struct {
 	// Columns
 	ID          mysql.ColumnInteger
 	CreatedAt   mysql.ColumnTimestamp
+	ExpiresAt   mysql.ColumnTimestamp
 	Job         mysql.ColumnString
 	Name        mysql.ColumnString
 	Description mysql.ColumnString
@@ -72,6 +73,7 @@ func newFivenetCentrumMarkersTableImpl(schemaName, tableName, alias string) five
 	var (
 		IDColumn          = mysql.IntegerColumn("id")
 		CreatedAtColumn   = mysql.TimestampColumn("created_at")
+		ExpiresAtColumn   = mysql.TimestampColumn("expires_at")
 		JobColumn         = mysql.StringColumn("job")
 		NameColumn        = mysql.StringColumn("name")
 		DescriptionColumn = mysql.StringColumn("description")
@@ -83,8 +85,8 @@ func newFivenetCentrumMarkersTableImpl(schemaName, tableName, alias string) five
 		MarkerTypeColumn  = mysql.IntegerColumn("marker_type")
 		MarkerDataColumn  = mysql.StringColumn("marker_data")
 		CreatorIDColumn   = mysql.IntegerColumn("creator_id")
-		allColumns        = mysql.ColumnList{IDColumn, CreatedAtColumn, JobColumn, NameColumn, DescriptionColumn, XColumn, YColumn, PostalColumn, ColorColumn, IconColumn, MarkerTypeColumn, MarkerDataColumn, CreatorIDColumn}
-		mutableColumns    = mysql.ColumnList{CreatedAtColumn, JobColumn, NameColumn, DescriptionColumn, XColumn, YColumn, PostalColumn, ColorColumn, IconColumn, MarkerTypeColumn, MarkerDataColumn, CreatorIDColumn}
+		allColumns        = mysql.ColumnList{IDColumn, CreatedAtColumn, ExpiresAtColumn, JobColumn, NameColumn, DescriptionColumn, XColumn, YColumn, PostalColumn, ColorColumn, IconColumn, MarkerTypeColumn, MarkerDataColumn, CreatorIDColumn}
+		mutableColumns    = mysql.ColumnList{CreatedAtColumn, ExpiresAtColumn, JobColumn, NameColumn, DescriptionColumn, XColumn, YColumn, PostalColumn, ColorColumn, IconColumn, MarkerTypeColumn, MarkerDataColumn, CreatorIDColumn}
 	)
 
 	return fivenetCentrumMarkersTable{
@@ -93,6 +95,7 @@ func newFivenetCentrumMarkersTableImpl(schemaName, tableName, alias string) five
 		//Columns
 		ID:          IDColumn,
 		CreatedAt:   CreatedAtColumn,
+		ExpiresAt:   ExpiresAtColumn,
 		Job:         JobColumn,
 		Name:        NameColumn,
 		Description: DescriptionColumn,

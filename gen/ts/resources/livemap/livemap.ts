@@ -102,15 +102,19 @@ export interface Marker {
      */
     type: MarkerType; // @gotags: alias:"markerType"
     /**
-     * @generated from protobuf field: optional resources.livemap.MarkerData data = 3;
+     * @generated from protobuf field: optional resources.timestamp.Timestamp expires_at = 3;
+     */
+    expiresAt?: Timestamp;
+    /**
+     * @generated from protobuf field: resources.livemap.MarkerData data = 4;
      */
     data?: MarkerData; // @gotags: alias:"markerData"
     /**
-     * @generated from protobuf field: optional int32 creator_id = 4;
+     * @generated from protobuf field: optional int32 creator_id = 5;
      */
     creatorId?: number;
     /**
-     * @generated from protobuf field: optional resources.users.UserShort creator = 5;
+     * @generated from protobuf field: optional resources.users.UserShort creator = 6;
      */
     creator?: UserShort;
 }
@@ -238,9 +242,10 @@ class Marker$Type extends MessageType<Marker> {
         super("resources.livemap.Marker", [
             { no: 1, name: "info", kind: "message", T: () => MarkerInfo },
             { no: 2, name: "type", kind: "enum", T: () => ["resources.livemap.MarkerType", MarkerType, "MARKER_TYPE_"] },
-            { no: 3, name: "data", kind: "message", T: () => MarkerData },
-            { no: 4, name: "creator_id", kind: "scalar", opt: true, T: 5 /*ScalarType.INT32*/ },
-            { no: 5, name: "creator", kind: "message", T: () => UserShort }
+            { no: 3, name: "expires_at", kind: "message", T: () => Timestamp },
+            { no: 4, name: "data", kind: "message", T: () => MarkerData },
+            { no: 5, name: "creator_id", kind: "scalar", opt: true, T: 5 /*ScalarType.INT32*/ },
+            { no: 6, name: "creator", kind: "message", T: () => UserShort }
         ]);
     }
 }

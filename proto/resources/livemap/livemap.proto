@@ -49,9 +49,10 @@ message UserMarker {
 message Marker {
   MarkerInfo info = 1;
   MarkerType type = 2; // @gotags: alias:"markerType"
-  optional MarkerData data = 3; // @gotags: alias:"markerData"
-  optional int32 creator_id = 4;
-  optional resources.users.UserShort creator = 5;
+  optional resources.timestamp.Timestamp expires_at = 3;
+  MarkerData data = 4; // @gotags: alias:"markerData"
+  optional int32 creator_id = 5;
+  optional resources.users.UserShort creator = 6;
 }
 
 message MarkerData {

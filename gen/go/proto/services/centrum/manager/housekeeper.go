@@ -251,7 +251,7 @@ func (s *Housekeeper) cancelExpiredDispatches(ctx context.Context) error {
 		// Dispatches that are older than time X and are not in a completed/cancelled/archived state, or have no status at all
 		WHERE(jet.AND(
 			tDispatch.CreatedAt.LT_EQ(
-				jet.CURRENT_TIMESTAMP().SUB(jet.INTERVAL(90, jet.MINUTE)),
+				jet.CURRENT_TIMESTAMP().SUB(jet.INTERVAL(60, jet.MINUTE)),
 			),
 			tDispatchStatus.ID.EQ(
 				jet.RawInt("SELECT MAX(`dispatchstatus`.`id`) FROM `fivenet_centrum_dispatches_status` AS `dispatchstatus` WHERE `dispatchstatus`.`dispatch_id` = `dispatch`.`id`"),

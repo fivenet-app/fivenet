@@ -84,31 +84,35 @@ func (s *Server) CreateOrUpdateMarker(ctx context.Context, req *CreateOrUpdateMa
 	// No marker id set
 	if req.Marker.Info.Id <= 0 {
 		tMarkers := table.FivenetCentrumMarkers
-		stmt := tMarkers.INSERT(
-			tMarkers.Job,
-			tMarkers.Name,
-			tMarkers.Description,
-			tMarkers.X,
-			tMarkers.Y,
-			tMarkers.Postal,
-			tMarkers.Color,
-			tMarkers.Icon,
-			tMarkers.MarkerType,
-			tMarkers.MarkerData,
-			tMarkers.CreatorID,
-		).VALUES(
-			userInfo.Job,
-			req.Marker.Info.Name,
-			req.Marker.Info.Description,
-			req.Marker.Info.X,
-			req.Marker.Info.Y,
-			req.Marker.Info.Postal,
-			req.Marker.Info.Color,
-			req.Marker.Info.Icon,
-			req.Marker.Type,
-			req.Marker.Data,
-			userInfo.UserId,
-		)
+		stmt := tMarkers.
+			INSERT(
+				tMarkers.ExpiresAt,
+				tMarkers.Job,
+				tMarkers.Name,
+				tMarkers.Description,
+				tMarkers.X,
+				tMarkers.Y,
+				tMarkers.Postal,
+				tMarkers.Color,
+				tMarkers.Icon,
+				tMarkers.MarkerType,
+				tMarkers.MarkerData,
+				tMarkers.CreatorID,
+			).
+			VALUES(
+				req.Marker.ExpiresAt,
+				userInfo.Job,
+				req.Marker.Info.Name,
+				req.Marker.Info.Description,
+				req.Marker.Info.X,
+				req.Marker.Info.Y,
+				req.Marker.Info.Postal,
+				req.Marker.Info.Color,
+				req.Marker.Info.Icon,
+				req.Marker.Type,
+				req.Marker.Data,
+				userInfo.UserId,
+			)
 
 		res, err := stmt.ExecContext(ctx, s.db)
 		if err != nil {
@@ -144,6 +148,7 @@ func (s *Server) CreateOrUpdateMarker(ctx context.Context, req *CreateOrUpdateMa
 
 		stmt := tMarkers.
 			UPDATE(
+				tMarkers.ExpiresAt,
 				tMarkers.Job,
 				tMarkers.Name,
 				tMarkers.Description,
@@ -156,6 +161,7 @@ func (s *Server) CreateOrUpdateMarker(ctx context.Context, req *CreateOrUpdateMa
 				tMarkers.MarkerData,
 			).
 			SET(
+				req.Marker.ExpiresAt,
 				userInfo.Job,
 				req.Marker.Info.Name,
 				req.Marker.Info.Description,
@@ -237,6 +243,7 @@ func (s *Server) getMarker(ctx context.Context, id uint64) (*livemap.Marker, err
 	stmt := tMarkers.
 		SELECT(
 			tMarkers.ID.AS("markerinfo.id"),
+			tMarkers.ExpiresAt,
 			tMarkers.Job.AS("markerinfo.job"),
 			tMarkers.Name.AS("markerinfo.name"),
 			tMarkers.Description.AS("markerinfo.description"),
@@ -299,6 +306,7 @@ func (s *Server) refreshMarkers(ctx context.Context) error {
 	stmt := tMarkers.
 		SELECT(
 			tMarkers.ID.AS("markerinfo.id"),
+			tMarkers.ExpiresAt,
 			tMarkers.Job.AS("markerinfo.job"),
 			tMarkers.Name.AS("markerinfo.name"),
 			tMarkers.Description.AS("markerinfo.description"),
@@ -325,11 +333,10 @@ func (s *Server) refreshMarkers(ctx context.Context) error {
 					tMarkers.CreatorID.EQ(tUsers.ID),
 				),
 		).
-		WHERE(
-			tMarkers.CreatedAt.GT_EQ(
-				jet.CURRENT_TIMESTAMP().SUB(jet.INTERVAL(60, jet.MINUTE)),
-			),
-		)
+		WHERE(jet.OR(
+			tMarkers.ExpiresAt.IS_NULL(),
+			tMarkers.ExpiresAt.GT_EQ(jet.NOW()),
+		))
 
 	var dest []*livemap.Marker
 	if err := stmt.QueryContext(ctx, s.db, &dest); err != nil {

@@ -142,6 +142,7 @@ CREATE TABLE
     IF NOT EXISTS `fivenet_centrum_markers` (
         `id` bigint(20) unsigned NOT NULL AUTO_INCREMENT,
         `created_at` datetime(3) DEFAULT CURRENT_TIMESTAMP(3),
+        `expires_at` datetime(3) DEFAULT NULL,
         `job` varchar(20) NOT NULL,
         `name` varchar(255) NOT NULL,
         `description` varchar(1024) NULL DEFAULT NULL,
@@ -154,6 +155,7 @@ CREATE TABLE
         `marker_data` blob DEFAULT NULL,
         `creator_id` int(11) NULL DEFAULT NULL,
         PRIMARY KEY (`id`),
+        KEY `idx_fivenet_centrum_markers_expires_at` (`expires_at`),
         KEY `idx_fivenet_centrum_markers_job` (`job`),
         CONSTRAINT `fk_fivenet_centrum_markers_creator_id` FOREIGN KEY (`creator_id`) REFERENCES `users` (`id`) ON DELETE CASCADE ON UPDATE CASCADE
     ) ENGINE = InnoDB DEFAULT CHARSET = utf8mb4 COLLATE = utf8mb4_unicode_ci;

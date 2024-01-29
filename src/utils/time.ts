@@ -84,7 +84,7 @@ export function toTimestamp(date?: Date): resourcesTimestampTimestamp.Timestamp 
 }
 
 export function toDatetimeLocal(date: Date): string {
-    return new Date(date.getTime() + date.getTimezoneOffset() * -60 * 1000).toISOString().slice(0, 19);
+    return new Date(date.getTime() + date.getTimezoneOffset() * -60 * 1000).toISOString().slice(0, 16);
 }
 
 export function dateToDateString(date: Date): string {

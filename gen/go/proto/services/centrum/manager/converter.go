@@ -55,9 +55,6 @@ func (s *Housekeeper) convertPhoneJobMsgToDispatch() error {
 		WHERE(jet.AND(
 			tGksPhoneJMsg.Jobm.REGEXP_LIKE(jet.String("\\[\"("+strings.Join(s.convertJobs, "|")+")\"\\]")),
 			tGksPhoneJMsg.Owner.EQ(jet.Int32(0)),
-			tGksPhoneJMsg.Time.LT_EQ(
-				jet.CURRENT_TIMESTAMP().SUB(jet.INTERVAL(2, jet.SECOND)),
-			),
 		))
 
 	var dest []struct {
