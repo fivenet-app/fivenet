@@ -1,12 +1,13 @@
 <script lang="ts" setup>
 import { LControl } from '@vue-leaflet/vue-leaflet';
 import { type LeafletMouseEvent } from 'leaflet';
+import { useDebounce } from '@vueuse/core';
 import DataErrorBlock from '~/components/partials/data/DataErrorBlock.vue';
 import DataPendingBlock from '~/components/partials/data/DataPendingBlock.vue';
 import { isNUIAvailable, setWaypoint } from '~/composables/nui';
 import { useLivemapStore } from '~/store/livemap';
 import { useSettingsStore } from '~/store/settings';
-import { MarkerInfo } from '~~/gen/ts/resources/livemap/livemap';
+import { Marker, MarkerInfo } from '~~/gen/ts/resources/livemap/livemap';
 import BaseMap from '~/components/livemap/BaseMap.vue';
 import CreateOrUpdateMarkerModal from '~/components/livemap/CreateOrUpdateMarkerModal.vue';
 import PlayerAndMarkersLayer from '~/components/livemap/PlayerAndMarkersLayer.vue';
@@ -15,7 +16,6 @@ import SettingsButton from '~/components/livemap/controls/SettingsButton.vue';
 import DispatchCreateOrUpdateModal from '~/components/centrum/dispatches/DispatchCreateOrUpdateModal.vue';
 import MapTempMarker from '~/components/livemap/MapTempMarker.vue';
 import ReconnectingPopup from '~/components/livemap/ReconnectingPopup.vue';
-import { useDebounce } from '@vueuse/core';
 
 defineProps<{
     showUnitNames?: boolean;
