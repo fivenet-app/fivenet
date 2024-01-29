@@ -530,7 +530,7 @@ const onSubmitThrottle = useThrottleFn(async (e) => {
                                         <span class="isolate inline-flex w-full rounded-md pr-4 shadow-sm">
                                             <button
                                                 type="submit"
-                                                class="relative flex w-full justify-center rounded-l-md px-3.5 py-2.5 text-sm font-semibold text-neutral"
+                                                class="relative flex w-full rounded-l-md px-3.5 py-2.5 text-sm font-semibold text-neutral"
                                                 :disabled="!meta.valid || !canSubmit"
                                                 :class="[
                                                     !meta.valid || !canSubmit
