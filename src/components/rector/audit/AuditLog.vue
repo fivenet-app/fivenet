@@ -38,9 +38,13 @@ async function viewAuditLog(): Promise<ViewAuditLogResponse> {
         },
         userIds: [],
     };
-    const users: number[] = [];
-    selectedCitizens.value?.forEach((v) => users.push(v.userId));
-    req.userIds = users;
+
+    if (selectedCitizens.value.length > 0) {
+        const users: number[] = [];
+        selectedCitizens.value?.forEach((v) => users.push(v.userId));
+        req.userIds = users;
+        console.log('selectedCitizens', selectedCitizens.value);
+    }
 
     if (query.value.from !== '') {
         req.from = toTimestamp(fromString(query.value.from)!);
@@ -104,6 +108,10 @@ function charsGetDisplayValue(chars: UserShort[]): string {
 
 watch(offset, async () => refresh());
 watchDebounced(query.value, async () => refresh(), {
+    debounce: 600,
+    maxWait: 1400,
+});
+watchDebounced(selectedCitizens.value, async () => refresh(), {
     debounce: 600,
     maxWait: 1400,
 });
