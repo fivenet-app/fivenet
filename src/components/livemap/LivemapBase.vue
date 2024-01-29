@@ -15,6 +15,7 @@ import SettingsButton from '~/components/livemap/controls/SettingsButton.vue';
 import DispatchCreateOrUpdateModal from '~/components/centrum/dispatches/DispatchCreateOrUpdateModal.vue';
 import MapTempMarker from '~/components/livemap/MapTempMarker.vue';
 import ReconnectingPopup from '~/components/livemap/ReconnectingPopup.vue';
+import { useDebounce } from '@vueuse/core';
 
 defineProps<{
     showUnitNames?: boolean;
@@ -102,19 +103,19 @@ async function applySelectedMarkerCentering(): Promise<void> {
 }
 
 function addActiveLayer(name: string): void {
-    console.log('addActiveLayer', name);
     if (!livemap.value.activeLayers.includes(name)) {
         livemap.value.activeLayers.push(name);
     }
 }
 
 function removeActiveLayer(name: string): void {
-    console.log('removeActiveLayer', name);
     const idx = livemap.value.activeLayers.indexOf(name);
     if (idx > -1) {
         livemap.value.activeLayers.splice(idx, 1);
     }
 }
+
+const reconnectingDebounced = useDebounce(reconnecting, 500);
 </script>
 
 <template>
@@ -147,8 +148,6 @@ function removeActiveLayer(name: string): void {
             @overlayremove="removeActiveLayer($event.name)"
         >
             <template #default>
-                <ReconnectingPopup v-if="reconnecting" />
-
                 <LControl position="bottomright">
                     <div class="form-control flex flex-col gap-2">
                         <SettingsButton />
@@ -172,6 +171,8 @@ function removeActiveLayer(name: string): void {
             </template>
 
             <template #afterMap>
+                <ReconnectingPopup v-if="reconnectingDebounced" />
+
                 <slot name="afterMap" />
             </template>
         </BaseMap>
