@@ -18,6 +18,8 @@ defineProps<{
 
 const emit = defineEmits<{
     (e: 'mapReady', map: L.Map): void;
+    (e: 'overlayadd', event: L.LayersControlEvent): void;
+    (e: 'overlayremove', event: L.LayersControlEvent): void;
 }>();
 
 const livemapStore = useLivemapStore();
@@ -34,7 +36,7 @@ function mapResize(): void {
 }
 
 const mapContainer = ref<HTMLElement | null>(null);
-const mapResizeDebounced = useDebounceFn(mapResize, 350, { maxWait: 750 });
+const mapResizeDebounced = useDebounceFn(mapResize, 350, { maxWait: 650 });
 useResizeObserver(mapContainer, (_) => mapResizeDebounced());
 
 const centerX = 117.3;
@@ -185,6 +187,13 @@ async function onMapReady($event: any): Promise<void> {
 
     map.on('baselayerchange', async (event: L.LayersControlEvent) => {
         updateBackground(event.name);
+    });
+
+    map.on('overlayadd', (event) => {
+        emit('overlayadd', event);
+    });
+    map.on('overlayremove', (event) => {
+        emit('overlayremove', event);
     });
 
     map.addEventListener('mousemove', async (event: L.LeafletMouseEvent) => {

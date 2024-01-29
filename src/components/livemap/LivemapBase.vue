@@ -34,6 +34,8 @@ const livemapStore = useLivemapStore();
 const { error, abort, reconnecting, location, showLocationMarker } = storeToRefs(livemapStore);
 const { startStream } = livemapStore;
 
+watch(livemap.value.activeLayers, () => console.log('activeLayers', livemap.value.activeLayers));
+
 interface ContextmenuItem {
     text: string;
     callback: (e: LeafletMouseEvent) => void;
@@ -98,6 +100,21 @@ async function applySelectedMarkerCentering(): Promise<void> {
 
     location.value = { x: selectedUserMarker.value.x, y: selectedUserMarker.value.y };
 }
+
+function addActiveLayer(name: string): void {
+    console.log('addActiveLayer', name);
+    if (!livemap.value.activeLayers.includes(name)) {
+        livemap.value.activeLayers.push(name);
+    }
+}
+
+function removeActiveLayer(name: string): void {
+    console.log('removeActiveLayer', name);
+    const idx = livemap.value.activeLayers.indexOf(name);
+    if (idx > -1) {
+        livemap.value.activeLayers.splice(idx, 1);
+    }
+}
 </script>
 
 <template>
@@ -124,7 +141,11 @@ async function applySelectedMarkerCentering(): Promise<void> {
             />
         </div>
 
-        <BaseMap :map-options="mapOptions">
+        <BaseMap
+            :map-options="mapOptions"
+            @overlayadd="addActiveLayer($event.name)"
+            @overlayremove="removeActiveLayer($event.name)"
+        >
             <template #default>
                 <ReconnectingPopup v-if="reconnecting" />
 

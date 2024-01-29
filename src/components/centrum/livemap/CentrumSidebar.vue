@@ -307,7 +307,7 @@ async function checkup(): Promise<void> {
     <LivemapBase @goto="$emit('goto', $event)">
         <template v-if="canStream" #default>
             <DispatchesLayer
-                :show-all-dispatches="livemap.showAllDisatches || getCurrentMode === CentrumMode.SIMPLIFIED"
+                :show-all-dispatches="livemap.showAllDispatches || getCurrentMode === CentrumMode.SIMPLIFIED"
                 @goto="$emit('goto', $event)"
             />
 

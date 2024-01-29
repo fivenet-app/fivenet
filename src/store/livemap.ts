@@ -43,11 +43,11 @@ export const useLivemapStore = defineStore('livemap', {
 
             initiated: false,
 
-            jobsMarkers: [] as Job[],
-            jobsUsers: [] as Job[],
+            jobsMarkers: [],
+            jobsUsers: [],
 
-            markersMarkers: [] as Marker[],
-            markersUsers: [] as UserMarker[],
+            markersMarkers: [],
+            markersUsers: [],
         }) as LivemapState,
     persist: false,
     actions: {

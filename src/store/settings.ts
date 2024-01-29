@@ -8,7 +8,8 @@ export interface SettingsState {
         centerSelectedMarker: boolean;
         showUnitNames: boolean;
         showUnitStatus: boolean;
-        showAllDisatches: boolean;
+        showAllDispatches: boolean;
+        activeLayers: string[];
     };
     documents: {
         editorTheme: 'default' | 'dark';
@@ -26,9 +27,12 @@ export const useSettingsStore = defineStore('settings', {
                 centerSelectedMarker: false,
                 showUnitNames: false,
                 showUnitStatus: false,
-                showAllDisatches: false,
+                showAllDispatches: false,
+                activeLayers: [],
             },
-            documents: {},
+            documents: {
+                editorTheme: 'default',
+            },
             startpage: '/overview',
         }) as SettingsState,
     persist: true,
