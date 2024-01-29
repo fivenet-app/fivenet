@@ -61,7 +61,13 @@ onConfirm(async (id) => deleteMarker(id));
             </button>
         </td>
         <td class="whitespace-nowrap px-1 py-1 text-sm text-gray-300">
-            <GenericTime :value="marker.info!.createdAt" type="compact" />
+            <GenericTime :value="marker.info!.createdAt" type="short" />
+        </td>
+        <td class="whitespace-nowrap px-1 py-1 text-sm text-gray-300">
+            <GenericTime v-if="marker.expiresAt" :value="marker.expiresAt" type="short" />
+            <span v-else>
+                {{ $t('common.na') }}
+            </span>
         </td>
         <td class="whitespace-nowrap px-1 py-1 text-sm text-gray-300">
             {{ marker.info!.name }}
@@ -70,7 +76,9 @@ onConfirm(async (id) => deleteMarker(id));
             {{ $t(`enums.livemap.MarkerType.${MarkerType[marker.type]}`) }}
         </td>
         <td class="whitespace-nowrap px-1 py-1 text-sm text-gray-300">
-            {{ marker.info?.description ?? $t('common.na') }}
+            <p class="max-h-14 overflow-y-scroll break-words">
+                {{ marker.info?.description ?? $t('common.na') }}
+            </p>
         </td>
         <td class="whitespace-nowrap px-1 py-1 text-sm text-gray-300">
             <span v-if="marker.creator">

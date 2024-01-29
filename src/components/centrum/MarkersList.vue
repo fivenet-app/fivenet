@@ -45,6 +45,12 @@ const { markersMarkers } = storeToRefs(livemapStore);
                                     scope="col"
                                     class="whitespace-nowrap px-1 py-1 text-left text-sm font-semibold text-gray-100"
                                 >
+                                    {{ $t('common.expires_at') }}
+                                </th>
+                                <th
+                                    scope="col"
+                                    class="whitespace-nowrap px-1 py-1 text-left text-sm font-semibold text-gray-100"
+                                >
                                     {{ $t('common.name') }}
                                 </th>
                                 <th

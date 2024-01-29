@@ -21,6 +21,7 @@ const props = withDefaults(
 
 const emit = defineEmits<{
     (e: 'selected', dsp: Dispatch): void;
+    (e: 'goto', loc: Coordinate): void;
 }>();
 
 const iconAnchor: PointExpression = [props.size / 2, props.size * 1.65];

@@ -53,6 +53,7 @@ const open = ref(false);
                 selectedDispatch = $event;
                 open = true;
             "
+            @goto="$emit('goto', $event)"
         />
     </LLayerGroup>
 
@@ -71,6 +72,7 @@ const open = ref(false);
                 selectedDispatch = $event;
                 open = true;
             "
+            @goto="$emit('goto', $event)"
         />
     </LLayerGroup>
 
