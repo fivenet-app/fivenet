@@ -9278,6 +9278,14 @@ vee-validate@4.12.4:
     "@vue/devtools-api" "^6.5.1"
     type-fest "^4.8.3"
 
+vee-validate@4.12.5:
+  version "4.12.5"
+  resolved "https://registry.yarnpkg.com/vee-validate/-/vee-validate-4.12.5.tgz#04e1cc3c23fba60ae7e49383cdd40d2ac60477ba"
+  integrity sha512-rvaDfLPSLwTk+mf016XWE4drB8yXzOsKXiKHTb9gNXNLTtQSZ0Ww26O0/xbIFQe+n3+u8Wv1Y8uO/aLDX4fxOg==
+  dependencies:
+    "@vue/devtools-api" "^6.5.1"
+    type-fest "^4.8.3"
+
 vinyl-contents@^2.0.0:
   version "2.0.0"
   resolved "https://registry.yarnpkg.com/vinyl-contents/-/vinyl-contents-2.0.0.tgz#cc2ba4db3a36658d069249e9e36d9e2b41935d89"
