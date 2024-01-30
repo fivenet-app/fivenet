@@ -30,7 +30,7 @@
         "@protobuf-ts/grpcweb-transport": "2.9.3",
         "@vee-validate/i18n": "4.12.4",
         "@vee-validate/nuxt": "4.12.4",
-        "@vee-validate/rules": "4.12.4",
+        "@vee-validate/rules": "4.12.5",
         "@vue-leaflet/vue-leaflet": "0.10.1",
         "@zxcvbn-ts/core": "3.0.4",
         "google-protobuf": "3.21.2",
