@@ -108,8 +108,8 @@ discord:
       #watchStatus: ""
     userInfoSync:
       enabled: false
-      roleFormat: "[%02d] %s"
-      employeeRoleFormat: "%s Personal"
+      gradeRoleFormat: "[%grade%] %grade_label%"
+      employeeRoleFormat: "%s Employees"
       nicknameRegex: "^(?P<prefix>\\[\\S+][ ]*)?(?P<name>[^\\[]+)(?P<suffix>[ ]*\\[\\S+])?"
       ignoreJobs: []
       #  - army

@@ -19,8 +19,8 @@ const DefaultNicknameRegex = `^(?P<prefix>\[\S+][ ]*)?(?P<name>[^\[]+)(?P<suffix
 type UserInfo struct {
 	*BaseModule
 
-	nicknameRegex *regexp.Regexp
-	roleFormat    string
+	nicknameRegex   *regexp.Regexp
+	gradeRoleFormat string
 
 	employeeRoleEnabled bool
 	employeeRoleFormat  string
@@ -51,9 +51,9 @@ func NewUserInfo(base *BaseModule) (Module, error) {
 	return &UserInfo{
 		BaseModule:          base,
 		nicknameRegex:       nicknameRegex,
-		roleFormat:          base.cfg.UserInfoSync.RoleFormat,
 		employeeRoleEnabled: true,
 		employeeRoleFormat:  base.cfg.UserInfoSync.EmployeeRoleFormat,
+		gradeRoleFormat:     base.cfg.UserInfoSync.GradeRoleFormat,
 		jobRoles:            map[int32]*discordgo.Role{},
 	}, nil
 }
@@ -63,22 +63,9 @@ func (g *UserInfo) Run() error {
 	if err != nil {
 		return err
 	}
-	if settings == nil {
-		return nil
-	}
 
 	if !settings.UserInfoSync {
 		return nil
-	}
-
-	if settings.UserInfoSyncSettings != nil {
-		g.employeeRoleEnabled = settings.UserInfoSyncSettings.EmployeeRoleEnabled
-
-		if settings.UserInfoSyncSettings.EmployeeRoleFormat != nil {
-			g.employeeRoleFormat = *settings.UserInfoSyncSettings.EmployeeRoleFormat
-		} else {
-			g.employeeRoleFormat = g.cfg.UserInfoSync.EmployeeRoleFormat
-		}
 	}
 
 	if err := g.createJobRoles(); err != nil {
@@ -207,7 +194,8 @@ func (g *UserInfo) createJobRoles() error {
 
 	for i := len(job.Grades) - 1; i >= 0; i-- {
 		grade := job.Grades[i]
-		name := fmt.Sprintf(g.roleFormat, grade.Grade, grade.Label)
+		name := strings.ReplaceAll(g.gradeRoleFormat, "%grade_label%", grade.Label)
+		name = strings.ReplaceAll(name, "%grade%", fmt.Sprintf("%02d", grade.Grade))
 
 		if slices.ContainsFunc(guild.Roles, func(in *discordgo.Role) bool {
 			if in.Name == name {

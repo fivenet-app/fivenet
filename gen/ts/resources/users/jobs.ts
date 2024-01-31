@@ -73,6 +73,10 @@ export interface JobProps {
      * @generated from protobuf field: resources.users.DiscordSyncSettings discord_sync_settings = 8;
      */
     discordSyncSettings?: DiscordSyncSettings;
+    /**
+     * @generated from protobuf field: optional string jobs_motd = 9;
+     */
+    jobsMotd?: string;
 }
 /**
  * @generated from protobuf message resources.users.QuickButtons
@@ -112,6 +116,10 @@ export interface UserInfoSyncSettings {
      * @generated from protobuf field: optional string employee_role_format = 2;
      */
     employeeRoleFormat?: string;
+    /**
+     * @generated from protobuf field: optional string grade_role_format = 3;
+     */
+    gradeRoleFormat?: string;
 }
 // @generated message type with reflection information, may provide speed optimized methods
 class Job$Type extends MessageType<Job> {
@@ -152,7 +160,8 @@ class JobProps$Type extends MessageType<JobProps> {
             { no: 5, name: "radio_frequency", kind: "scalar", opt: true, T: 9 /*ScalarType.STRING*/, options: { "validate.rules": { string: { maxLen: "6" } } } },
             { no: 6, name: "discord_guild_id", kind: "scalar", opt: true, T: 4 /*ScalarType.UINT64*/ },
             { no: 7, name: "discord_last_sync", kind: "message", T: () => Timestamp },
-            { no: 8, name: "discord_sync_settings", kind: "message", T: () => DiscordSyncSettings }
+            { no: 8, name: "discord_sync_settings", kind: "message", T: () => DiscordSyncSettings },
+            { no: 9, name: "jobs_motd", kind: "scalar", opt: true, T: 9 /*ScalarType.STRING*/, options: { "validate.rules": { string: { maxLen: "1024" } } } }
         ]);
     }
 }
@@ -191,7 +200,8 @@ class UserInfoSyncSettings$Type extends MessageType<UserInfoSyncSettings> {
     constructor() {
         super("resources.users.UserInfoSyncSettings", [
             { no: 1, name: "employee_role_enabled", kind: "scalar", T: 8 /*ScalarType.BOOL*/ },
-            { no: 2, name: "employee_role_format", kind: "scalar", opt: true, T: 9 /*ScalarType.STRING*/ }
+            { no: 2, name: "employee_role_format", kind: "scalar", opt: true, T: 9 /*ScalarType.STRING*/ },
+            { no: 3, name: "grade_role_format", kind: "scalar", opt: true, T: 9 /*ScalarType.STRING*/ }
         ]);
     }
 }

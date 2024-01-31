@@ -235,7 +235,7 @@ type DiscordPresence struct {
 
 type DiscordUserInfoSync struct {
 	Enabled            bool     `default:"false" yaml:"enabled"`
-	RoleFormat         string   `default:"[%02d] %s" yaml:"roleFormat"`
+	GradeRoleFormat    string   `default:"[%grade%] %grade_label%" yaml:"gradeRoleFormat"`
 	EmployeeRoleFormat string   `default:"%s Personal" yaml:"employeeRoleFormat"`
 	NicknameRegex      string   `yaml:"nicknameRegex"`
 	IgnoreJobs         []string `yaml:"ignoreJobs"`

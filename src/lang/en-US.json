@@ -349,7 +349,8 @@
                 "user_info_sync": "User Info Sync (Names and Job Grade Roles)",
                 "user_info_sync_settings": {
                     "employee_role_enabled": "Create and manage Employee Role",
-                    "employee_role_format": "Employee Role format (%s will be replaced by your job's name)"
+                    "employee_role_format": "Employee Role format (%s will be replaced by your job's name)",
+                    "grade_role_format": "Grade Role format (%grade% will be replaced by the grade number, %grade_label% will be replaced by the grade's label)"
                 }
             },
             "role_view": {

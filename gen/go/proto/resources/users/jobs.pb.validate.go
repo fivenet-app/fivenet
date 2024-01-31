@@ -502,6 +502,21 @@ func (m *JobProps) validate(all bool) error {
 
 	}
 
+	if m.JobsMotd != nil {
+
+		if utf8.RuneCountInString(m.GetJobsMotd()) > 1024 {
+			err := JobPropsValidationError{
+				field:  "JobsMotd",
+				reason: "value length must be at most 1024 runes",
+			}
+			if !all {
+				return err
+			}
+			errors = append(errors, err)
+		}
+
+	}
+
 	if len(errors) > 0 {
 		return JobPropsMultiError(errors)
 	}
@@ -847,6 +862,10 @@ func (m *UserInfoSyncSettings) validate(all bool) error {
 
 	if m.EmployeeRoleFormat != nil {
 		// no validation rules for EmployeeRoleFormat
+	}
+
+	if m.GradeRoleFormat != nil {
+		// no validation rules for GradeRoleFormat
 	}
 
 	if len(errors) > 0 {

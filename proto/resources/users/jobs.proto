@@ -47,4 +47,5 @@ message DiscordSyncSettings {
 message UserInfoSyncSettings {
   bool employee_role_enabled = 1;
   optional string employee_role_format = 2;
+  optional string grade_role_format = 3;
 }

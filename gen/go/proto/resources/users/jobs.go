@@ -8,7 +8,12 @@ import (
 
 var json = jsoniter.ConfigCompatibleWithStandardLibrary
 
-const DefaultLivemapMarkerColor = "5C7AFF"
+const (
+	DefaultLivemapMarkerColor = "5C7AFF"
+
+	DefaultEmployeeRoleFormat = "%s Personal"
+	DefaultGradeRoleFormat    = "[%grade%] %grade_label%"
+)
 
 func (x *Job) GetJob() string {
 	return x.Name
@@ -33,8 +38,24 @@ func (x *JobProps) Default(job string) {
 
 	if x.DiscordSyncSettings == nil {
 		x.DiscordSyncSettings = &DiscordSyncSettings{
-			UserInfoSync: true,
+			UserInfoSync: false,
 		}
+	}
+
+	if x.DiscordSyncSettings.UserInfoSyncSettings == nil {
+		x.DiscordSyncSettings.UserInfoSyncSettings = &UserInfoSyncSettings{
+			EmployeeRoleEnabled: true,
+		}
+	}
+
+	employeeRoleFormat := DefaultEmployeeRoleFormat
+	if x.DiscordSyncSettings.UserInfoSyncSettings.EmployeeRoleFormat == nil {
+		x.DiscordSyncSettings.UserInfoSyncSettings.EmployeeRoleFormat = &employeeRoleFormat
+	}
+
+	gradeRoleFormat := DefaultGradeRoleFormat
+	if x.DiscordSyncSettings.UserInfoSyncSettings.GradeRoleFormat == nil {
+		x.DiscordSyncSettings.UserInfoSyncSettings.GradeRoleFormat = &gradeRoleFormat
 	}
 }
 

@@ -22,27 +22,6 @@ async function getJobProps(): Promise<JobProps> {
         const call = $grpc.getRectorClient().getJobProps({});
         const { response } = await call;
 
-        if (response.jobProps) {
-            if (response.jobProps.quickButtons === undefined) {
-                response.jobProps.quickButtons = {
-                    penaltyCalculator: false,
-                    bodyCheckup: false,
-                };
-            }
-            if (response.jobProps.discordSyncSettings === undefined) {
-                response.jobProps.discordSyncSettings = {
-                    userInfoSync: false,
-                };
-            }
-
-            if (response.jobProps.discordSyncSettings.userInfoSyncSettings === undefined) {
-                response.jobProps.discordSyncSettings.userInfoSyncSettings = {
-                    employeeRoleEnabled: true,
-                    employeeRoleFormat: '%s Personal',
-                };
-            }
-        }
-
         return response.jobProps!;
     } catch (e) {
         $grpc.handleError(e as RpcError);
@@ -363,6 +342,36 @@ const onSubmitThrottle = useThrottleFn(async (_) => {
                                                             :label="
                                                                 $t(
                                                                     'components.rector.job_props.user_info_sync_settings.employee_role_format',
+                                                                )
+                                                            "
+                                                            maxlength="64"
+                                                            @focusin="focusTablet(true)"
+                                                            @focusout="focusTablet(false)"
+                                                        />
+
+                                                        <label for="gradeRoleFormat">
+                                                            {{
+                                                                $t(
+                                                                    'components.rector.job_props.user_info_sync_settings.grade_role_format',
+                                                                )
+                                                            }}:
+                                                        </label>
+                                                        <input
+                                                            v-model="
+                                                                jobProps.discordSyncSettings.userInfoSyncSettings!
+                                                                    .gradeRoleFormat
+                                                            "
+                                                            type="text"
+                                                            name="gradeRoleFormat"
+                                                            class="block w-full rounded-md border-0 bg-base-700 py-1.5 text-neutral placeholder:text-base-200 focus:ring-2 focus:ring-inset focus:ring-base-300 sm:text-sm sm:leading-6"
+                                                            :placeholder="
+                                                                $t(
+                                                                    'components.rector.job_props.user_info_sync_settings.grade_role_format',
+                                                                )
+                                                            "
+                                                            :label="
+                                                                $t(
+                                                                    'components.rector.job_props.user_info_sync_settings.grade_role_format',
                                                                 )
                                                             "
                                                             maxlength="64"
