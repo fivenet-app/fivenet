@@ -46,6 +46,7 @@ interface FormData {
 }
 
 const color = ref('#EE4B2B');
+const queryIcon = ref<string>('');
 const selectedIcon = shallowRef<DefineComponent>(HelpIcon);
 
 async function createMarker(values: FormData): Promise<void> {
@@ -399,7 +400,7 @@ const onSubmitThrottle = useThrottleFn(async (e) => {
                                                                     for="icon"
                                                                     class="block text-sm font-medium leading-6 text-neutral"
                                                                 >
-                                                                    {{ $t('common.radius') }}
+                                                                    {{ $t('common.icon') }}
                                                                 </label>
                                                             </dt>
                                                             <dd
@@ -421,6 +422,7 @@ const onSubmitThrottle = useThrottleFn(async (e) => {
                                                                                     autocomplete="off"
                                                                                     class="block w-full rounded-md border-0 bg-base-700 py-1.5 text-neutral placeholder:text-base-200 focus:ring-2 focus:ring-inset focus:ring-base-300 sm:text-sm sm:leading-6"
                                                                                     :placeholder="$t('common.icon')"
+                                                                                    @change="queryIcon = $event.target.value"
                                                                                     @focusin="focusTablet(true)"
                                                                                     @focusout="focusTablet(false)"
                                                                                 />
@@ -461,7 +463,10 @@ const onSubmitThrottle = useThrottleFn(async (e) => {
                                                                                     class="absolute z-10 mt-1 max-h-44 w-full overflow-auto rounded-md bg-base-700 py-1 text-base sm:text-sm"
                                                                                 >
                                                                                     <ComboboxOption
-                                                                                        v-for="icon in markerIcons"
+                                                                                        v-for="icon in markerIcons.filter(
+                                                                                            (icon) =>
+                                                                                                icon.name.includes(queryIcon),
+                                                                                        )"
                                                                                         v-slot="{ active, selected }"
                                                                                         :key="icon.name"
                                                                                         as="template"
