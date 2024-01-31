@@ -1,10 +1,8 @@
 <script lang="ts" setup>
-import { RpcError } from '@protobuf-ts/runtime-rpc';
 import { RadioHandheldIcon } from 'mdi-vue3';
-import TimeclockStatsBlock from '~/components/jobs/timeclock/TimeclockStatsBlock.vue';
+import TimeclockOverviewBlock from '~/components/jobs/timeclock/TimeclockOverviewBlock.vue';
 import GenericContainer from '~/components/partials/elements/GenericContainer.vue';
 import { useAuthStore } from '~/store/auth';
-import type { GetTimeclockStatsResponse } from '~~/gen/ts/services/jobs/timeclock';
 
 useHead({
     title: 'pages.jobs.overview.title',
@@ -15,25 +13,9 @@ definePageMeta({
     permission: 'JobsService.ListColleagues',
 });
 
-const { $grpc } = useNuxtApp();
-
 const authStore = useAuthStore();
 
 const { activeChar, jobProps } = storeToRefs(authStore);
-
-const { data: timeclockStats } = useLazyAsyncData(`jobs-timeclock-stats`, () => getTimeclockStats());
-
-async function getTimeclockStats(): Promise<GetTimeclockStatsResponse> {
-    try {
-        const call = $grpc.getJobsTimeclockClient().getTimeclockStats({});
-        const { response } = await call;
-
-        return response;
-    } catch (e) {
-        $grpc.handleError(e as RpcError);
-        throw e;
-    }
-}
 </script>
 
 <template>
@@ -71,12 +53,7 @@ async function getTimeclockStats(): Promise<GetTimeclockStatsResponse> {
                             </GenericContainer>
                         </div>
 
-                        <TimeclockStatsBlock
-                            v-if="can('JobsTimeclockService.ListTimeclock')"
-                            class="mt-4"
-                            :stats="timeclockStats?.stats"
-                            :weekly="timeclockStats?.weekly"
-                        />
+                        <TimeclockOverviewBlock v-if="can('JobsTimeclockService.ListTimeclock')" />
                     </div>
                 </div>
             </div>
