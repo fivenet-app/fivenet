@@ -71,7 +71,12 @@ async function getTimeclockStats(): Promise<GetTimeclockStatsResponse> {
                             </GenericContainer>
                         </div>
 
-                        <TimeclockStatsBlock class="mt-4" :stats="timeclockStats?.stats" :weekly="timeclockStats?.weekly" />
+                        <TimeclockStatsBlock
+                            v-if="can('JobsTimeclockService.ListTimeclock')"
+                            class="mt-4"
+                            :stats="timeclockStats?.stats"
+                            :weekly="timeclockStats?.weekly"
+                        />
                     </div>
                 </div>
             </div>

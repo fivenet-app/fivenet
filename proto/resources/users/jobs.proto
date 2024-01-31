@@ -31,6 +31,7 @@ message JobProps {
   optional uint64 discord_guild_id = 6 [jstype = JS_STRING];
   optional resources.timestamp.Timestamp discord_last_sync = 7;
   DiscordSyncSettings discord_sync_settings = 8;
+  optional string jobs_motd = 9 [(validate.rules).string.max_len = 1024];
 }
 
 message QuickButtons {
