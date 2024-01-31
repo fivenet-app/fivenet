@@ -4,6 +4,7 @@ import (
 	"fmt"
 	"path"
 	"path/filepath"
+	"slices"
 	"sort"
 	"strings"
 	"text/template"
@@ -85,6 +86,10 @@ func (p *PermifyModule) generate(fs []pgs.File) {
 		Permissions:           map[string]map[string]*Perm{},
 		PermissionRemap:       map[string]map[string]string{},
 	}
+
+	slices.SortFunc(fs, func(a, b pgs.File) int {
+		return strings.Compare(a.File().InputPath().String(), b.File().InputPath().String())
+	})
 
 	for _, f := range fs {
 		for _, s := range f.Services() {
