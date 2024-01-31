@@ -7,7 +7,7 @@ import DataPendingBlock from '~/components/partials/data/DataPendingBlock.vue';
 import { isNUIAvailable, setWaypoint } from '~/composables/nui';
 import { useLivemapStore } from '~/store/livemap';
 import { useSettingsStore } from '~/store/settings';
-import { Marker, MarkerInfo } from '~~/gen/ts/resources/livemap/livemap';
+import { MarkerInfo } from '~~/gen/ts/resources/livemap/livemap';
 import BaseMap from '~/components/livemap/BaseMap.vue';
 import CreateOrUpdateMarkerModal from '~/components/livemap/CreateOrUpdateMarkerModal.vue';
 import PlayerAndMarkersLayer from '~/components/livemap/PlayerAndMarkersLayer.vue';
@@ -34,8 +34,6 @@ const { livemap } = storeToRefs(settingsStore);
 const livemapStore = useLivemapStore();
 const { error, abort, reconnecting, location, showLocationMarker } = storeToRefs(livemapStore);
 const { startStream } = livemapStore;
-
-watch(livemap.value.activeLayers, () => console.log('activeLayers', livemap.value.activeLayers));
 
 interface ContextmenuItem {
     text: string;

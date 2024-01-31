@@ -135,7 +135,7 @@ func (s *Server) refreshCache() {
 func (s *Server) Stream(req *StreamRequest, srv LivemapperService_StreamServer) error {
 	userInfo := auth.MustGetUserInfoFromContext(srv.Context())
 
-	dispatchesAttr, err := s.ps.Attr(userInfo, permslivemapper.LivemapperServicePerm, permslivemapper.LivemapperServiceStreamPerm, permslivemapper.LivemapperServiceStreamMarkersPermField)
+	markersAttr, err := s.ps.Attr(userInfo, permslivemapper.LivemapperServicePerm, permslivemapper.LivemapperServiceStreamPerm, permslivemapper.LivemapperServiceStreamMarkersPermField)
 	if err != nil {
 		return ErrStreamFailed
 	}
@@ -144,12 +144,13 @@ func (s *Server) Stream(req *StreamRequest, srv LivemapperService_StreamServer) 
 		return ErrStreamFailed
 	}
 
-	var dispatchesJobs []string
-	if dispatchesAttr != nil {
-		dispatchesJobs = dispatchesAttr.([]string)
+	var markersJobs []string
+	if markersAttr != nil {
+		markersJobs = markersAttr.([]string)
 	}
 	if userInfo.SuperUser {
-		dispatchesJobs = s.trackedJobs
+		markersJobs = append(markersJobs, s.trackedJobs...)
+		markersJobs = utils.RemoveDuplicates(markersJobs)
 	}
 
 	var playersJobs map[string]int32
@@ -166,7 +167,7 @@ func (s *Server) Stream(req *StreamRequest, srv LivemapperService_StreamServer) 
 
 	resp := &StreamResponse{}
 
-	if len(dispatchesJobs) == 0 && len(playersJobs) == 0 {
+	if len(markersJobs) == 0 && len(playersJobs) == 0 {
 		if err := srv.Send(resp); err != nil {
 			return err
 		}
@@ -175,10 +176,10 @@ func (s *Server) Stream(req *StreamRequest, srv LivemapperService_StreamServer) 
 	}
 
 	// Add jobs to list visible jobs list
-	resp.JobsMarkers = make([]*users.Job, len(dispatchesJobs))
-	for i := 0; i < len(dispatchesJobs); i++ {
+	resp.JobsMarkers = make([]*users.Job, len(markersJobs))
+	for i := 0; i < len(markersJobs); i++ {
 		resp.JobsMarkers[i] = &users.Job{
-			Name: dispatchesJobs[i],
+			Name: markersJobs[i],
 		}
 		s.enricher.EnrichJobName(resp.JobsMarkers[i])
 	}
@@ -201,7 +202,7 @@ func (s *Server) Stream(req *StreamRequest, srv LivemapperService_StreamServer) 
 		}
 		resp.Users = userMarkers
 
-		markers, err := s.getMarkerMarkers(dispatchesJobs)
+		markers, err := s.getMarkerMarkers(markersJobs)
 		if err != nil {
 			return ErrStreamFailed
 		}
