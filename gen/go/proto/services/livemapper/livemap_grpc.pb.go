@@ -28,7 +28,7 @@ const (
 //
 // For semantics around ctx use and closing/ending streaming RPCs, please refer to https://pkg.go.dev/google.golang.org/grpc/?tab=doc#ClientConn.NewStream.
 type LivemapperServiceClient interface {
-	// @perm: Attrs=Markers/JobList:"config.Game.Livemap.Jobs"|Players/JobGradeList
+	// @perm: Attrs=Markers/JobList|Players/JobGradeList
 	Stream(ctx context.Context, in *StreamRequest, opts ...grpc.CallOption) (LivemapperService_StreamClient, error)
 	// @perm: Attrs=Access/StringList:[]string{"Own", "Lower_Rank", "Same_Rank", "Any"}§[]string{"Own"}
 	CreateOrUpdateMarker(ctx context.Context, in *CreateOrUpdateMarkerRequest, opts ...grpc.CallOption) (*CreateOrUpdateMarkerResponse, error)
@@ -98,7 +98,7 @@ func (c *livemapperServiceClient) DeleteMarker(ctx context.Context, in *DeleteMa
 // All implementations must embed UnimplementedLivemapperServiceServer
 // for forward compatibility
 type LivemapperServiceServer interface {
-	// @perm: Attrs=Markers/JobList:"config.Game.Livemap.Jobs"|Players/JobGradeList
+	// @perm: Attrs=Markers/JobList|Players/JobGradeList
 	Stream(*StreamRequest, LivemapperService_StreamServer) error
 	// @perm: Attrs=Access/StringList:[]string{"Own", "Lower_Rank", "Same_Rank", "Any"}§[]string{"Own"}
 	CreateOrUpdateMarker(context.Context, *CreateOrUpdateMarkerRequest) (*CreateOrUpdateMarkerResponse, error)

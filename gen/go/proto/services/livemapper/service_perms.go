@@ -42,9 +42,8 @@ func init() {
 			Name:     permkeys.LivemapperServiceStreamPerm,
 			Attrs: []perms.Attr{
 				{
-					Key:         permkeys.LivemapperServiceStreamMarkersPermField,
-					Type:        permissions.JobListAttributeType,
-					ValidValues: "config.Game.Livemap.Jobs",
+					Key:  permkeys.LivemapperServiceStreamMarkersPermField,
+					Type: permissions.JobListAttributeType,
 				},
 				{
 					Key:  permkeys.LivemapperServiceStreamPlayersPermField,

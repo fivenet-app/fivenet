@@ -32,7 +32,7 @@ message DeleteMarkerRequest {
 message DeleteMarkerResponse {}
 
 service LivemapperService {
-  // @perm: Attrs=Markers/JobList:"config.Game.Livemap.Jobs"|Players/JobGradeList
+  // @perm: Attrs=Markers/JobList|Players/JobGradeList
   rpc Stream(StreamRequest) returns (stream StreamResponse);
 
   // @perm: Attrs=Access/StringList:[]string{"Own", "Lower_Rank", "Same_Rank", "Any"}§[]string{"Own"}
