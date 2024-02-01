@@ -13,7 +13,6 @@ import { useLivemapStore } from '~/store/livemap';
 import CentrumFeed from '~/components/centrum/CentrumFeed.vue';
 import DispatchesLayer from '~/components/centrum/livemap/DispatchesLayer.vue';
 import MarkersList from '~/components/centrum/MarkersList.vue';
-import ReconnectingPopup from '~/components/livemap/ReconnectingPopup.vue';
 
 const centrumStore = useCentrumStore();
 const { error, abort, reconnecting, feed } = storeToRefs(centrumStore);

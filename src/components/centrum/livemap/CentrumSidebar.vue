@@ -244,6 +244,9 @@ onBeforeMount(async () => {
     if (canStream) {
         start();
         resume();
+    } else {
+        pause();
+        stop();
     }
 });
 
