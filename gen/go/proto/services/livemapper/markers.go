@@ -374,5 +374,12 @@ func (s *Server) refreshMarkers(ctx context.Context) error {
 		}
 	}
 
+	s.markersCache.Range(func(key string, value []*livemap.Marker) bool {
+		if _, ok := markers[key]; !ok {
+			s.markersCache.Delete(key)
+		}
+		return true
+	})
+
 	return nil
 }
