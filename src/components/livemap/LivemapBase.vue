@@ -157,6 +157,7 @@ const reconnectingDebounced = useDebounce(reconnecting, 500);
                     :show-unit-names="showUnitNames"
                     :show-unit-status="showUnitStatus"
                     @user-selected="selectedUserMarker = $event.info"
+                    @goto="$emit('goto', $event)"
                 />
 
                 <MapTempMarker />

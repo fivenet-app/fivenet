@@ -105,6 +105,7 @@ onBeforeUnmount(async () => {
             :marker="marker"
             :size="livemap.markerSize"
             @selected="$emit('markerSelected', marker)"
+            @goto="$emit('goto', $event)"
         />
     </LMarkerClusterGroup>
 

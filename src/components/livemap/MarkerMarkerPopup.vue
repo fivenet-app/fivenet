@@ -1,14 +1,19 @@
 <script lang="ts" setup>
 import { RpcError } from '@protobuf-ts/runtime-rpc';
 import { LPopup } from '@vue-leaflet/vue-leaflet';
-import { TrashCanIcon } from 'mdi-vue3';
+import { MapMarkerIcon, TrashCanIcon } from 'mdi-vue3';
 import { useConfirmDialog } from '@vueuse/core';
 import { Marker } from '~~/gen/ts/resources/livemap/livemap';
 import ConfirmDialog from '~/components/partials/ConfirmDialog.vue';
 import CitizenInfoPopover from '~/components/partials/citizens/CitizenInfoPopover.vue';
+import GenericTime from '../partials/elements/GenericTime.vue';
 
 defineProps<{
     marker: Marker;
+}>();
+
+defineEmits<{
+    (e: 'goto', loc: Coordinate): void;
 }>();
 
 const { $grpc } = useNuxtApp();
@@ -34,8 +39,18 @@ onConfirm(async (id) => deleteMarker(id));
     <ConfirmDialog :open="isRevealed" :cancel="cancel" :confirm="() => confirm(marker.info!.id)" />
 
     <LPopup :options="{ closeButton: true }">
-        <div v-if="can('LivemapperService.DeleteMarker')" class="mb-1 flex items-center gap-2">
+        <div class="mb-1 flex items-center gap-2">
             <button
+                v-if="marker.info?.x && marker.info?.y"
+                type="button"
+                class="inline-flex items-center text-primary-500 hover:text-primary-400"
+                @click="$emit('goto', { x: marker.info?.x, y: marker.info?.y })"
+            >
+                <MapMarkerIcon class="h-5 w-5" aria-hidden="true" />
+                <span class="ml-1">{{ $t('common.go_to_location') }}</span>
+            </button>
+            <button
+                v-if="can('LivemapperService.DeleteMarker')"
                 type="button"
                 :title="$t('common.delete')"
                 class="inline-flex items-center text-primary-500 hover:text-primary-400"
@@ -54,6 +69,10 @@ onConfirm(async (id) => deleteMarker(id));
             <li>
                 <span class="font-semibold">{{ $t('common.description') }}:</span>
                 {{ marker.info?.description ?? $t('common.na') }}
+            </li>
+            <li class="inline-flex gap-1">
+                <span class="font-semibold">{{ $t('common.expires_at') }}:</span>
+                <GenericTime :value="marker.expiresAt" />
             </li>
             <li class="inline-flex gap-1">
                 <span class="flex-initial">

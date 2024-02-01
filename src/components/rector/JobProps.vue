@@ -313,6 +313,35 @@ const onSubmitThrottle = useThrottleFn(async (_) => {
                                                         </SwitchLabel>
                                                     </SwitchGroup>
 
+                                                    <label for="gradeRoleFormat">
+                                                        {{
+                                                            $t(
+                                                                'components.rector.job_props.user_info_sync_settings.grade_role_format',
+                                                            )
+                                                        }}:
+                                                    </label>
+                                                    <input
+                                                        v-model="
+                                                            jobProps.discordSyncSettings.userInfoSyncSettings!.gradeRoleFormat
+                                                        "
+                                                        type="text"
+                                                        name="gradeRoleFormat"
+                                                        class="block w-full rounded-md border-0 bg-base-700 py-1.5 text-neutral placeholder:text-base-200 focus:ring-2 focus:ring-inset focus:ring-base-300 sm:text-sm sm:leading-6"
+                                                        :placeholder="
+                                                            $t(
+                                                                'components.rector.job_props.user_info_sync_settings.grade_role_format',
+                                                            )
+                                                        "
+                                                        :label="
+                                                            $t(
+                                                                'components.rector.job_props.user_info_sync_settings.grade_role_format',
+                                                            )
+                                                        "
+                                                        maxlength="64"
+                                                        @focusin="focusTablet(true)"
+                                                        @focusout="focusTablet(false)"
+                                                    />
+
                                                     <div
                                                         v-if="
                                                             jobProps.discordSyncSettings.userInfoSyncSettings
@@ -342,36 +371,6 @@ const onSubmitThrottle = useThrottleFn(async (_) => {
                                                             :label="
                                                                 $t(
                                                                     'components.rector.job_props.user_info_sync_settings.employee_role_format',
-                                                                )
-                                                            "
-                                                            maxlength="64"
-                                                            @focusin="focusTablet(true)"
-                                                            @focusout="focusTablet(false)"
-                                                        />
-
-                                                        <label for="gradeRoleFormat">
-                                                            {{
-                                                                $t(
-                                                                    'components.rector.job_props.user_info_sync_settings.grade_role_format',
-                                                                )
-                                                            }}:
-                                                        </label>
-                                                        <input
-                                                            v-model="
-                                                                jobProps.discordSyncSettings.userInfoSyncSettings!
-                                                                    .gradeRoleFormat
-                                                            "
-                                                            type="text"
-                                                            name="gradeRoleFormat"
-                                                            class="block w-full rounded-md border-0 bg-base-700 py-1.5 text-neutral placeholder:text-base-200 focus:ring-2 focus:ring-inset focus:ring-base-300 sm:text-sm sm:leading-6"
-                                                            :placeholder="
-                                                                $t(
-                                                                    'components.rector.job_props.user_info_sync_settings.grade_role_format',
-                                                                )
-                                                            "
-                                                            :label="
-                                                                $t(
-                                                                    'components.rector.job_props.user_info_sync_settings.grade_role_format',
                                                                 )
                                                             "
                                                             maxlength="64"

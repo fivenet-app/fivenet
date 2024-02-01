@@ -18,6 +18,7 @@ const props = withDefaults(
 
 defineEmits<{
     (e: 'selected'): void;
+    (e: 'goto', loc: Coordinate): void;
 }>();
 
 const iconAnchor = ref<PointExpression>([props.size / 2, props.size]);
@@ -34,7 +35,7 @@ const popupAnchor = ref<PointExpression>([0, (props.size / 2) * -1]);
         :fill-color="marker.info?.color ? '#' + marker.info?.color : '#ffffff'"
         :fill-opacity="(marker.data.data.circle.oapcity ?? 15) / 100"
     >
-        <MarkerMarkerPopup :marker="marker" />
+        <MarkerMarkerPopup :marker="marker" @goto="$emit('goto', $event)" />
     </LCircle>
 
     <LMarker
@@ -54,7 +55,7 @@ const popupAnchor = ref<PointExpression>([0, (props.size / 2) * -1]);
             />
         </LIcon>
 
-        <MarkerMarkerPopup :marker="marker" />
+        <MarkerMarkerPopup :marker="marker" @goto="$emit('goto', $event)" />
     </LMarker>
 
     <LMarker v-else :lat-lng="[marker.info!.y, marker.info!.x]" :name="marker.info!.name" @click="$emit('selected')">
@@ -65,6 +66,6 @@ const popupAnchor = ref<PointExpression>([0, (props.size / 2) * -1]);
             />
         </LIcon>
 
-        <MarkerMarkerPopup :marker="marker" />
+        <MarkerMarkerPopup :marker="marker" @goto="$emit('goto', $event)" />
     </LMarker>
 </template>
