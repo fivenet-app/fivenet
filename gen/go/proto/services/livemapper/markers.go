@@ -145,7 +145,7 @@ func (s *Server) CreateOrUpdateMarker(ctx context.Context, req *CreateOrUpdateMa
 		}
 
 		if !s.checkIfHasAccessToMarker(fields, marker, userInfo) {
-			return nil, ErrMarkerFailed
+			return nil, ErrMarkerDenied
 		}
 
 		stmt := tMarkers.
@@ -228,7 +228,7 @@ func (s *Server) DeleteMarker(ctx context.Context, req *DeleteMarkerRequest) (*D
 	}
 
 	if !s.checkIfHasAccessToMarker(fields, marker, userInfo) {
-		return nil, ErrMarkerFailed
+		return nil, ErrMarkerDenied
 	}
 
 	stmt := tMarkers.
