@@ -382,10 +382,10 @@ func (p *Perms) applyJobPermissionsToAttrs(ctx context.Context, roles collection
 				return in.Id == attr.PermissionId
 			}) {
 				if _, changed := attr.Value.Check(permissions.AttributeTypes(attr.Type), attr.ValidValues, maxValues); changed {
-					p.logger.Debug("attribute changed on role due to job perms change", zap.String("job", role.Job), zap.Uint64("attr_id", attr.AttrId))
+					p.logger.Debug("attribute changed on role due to job perms change", zap.String("job", role.Job), zap.Uint64("attr_id", attr.AttrId), zap.Any("attr_value", attr.Value), zap.Any("attr_valid_value", attr.ValidValues), zap.Any("attr_max_values", maxValues))
 					toUpdate = append(toUpdate, attr)
 				} else {
-					p.logger.Debug("attribute not changed on role due to job perms change", zap.String("job", role.Job), zap.Uint64("attr_id", attr.AttrId))
+					p.logger.Debug("attribute not changed on role due to job perms change", zap.String("job", role.Job), zap.Uint64("attr_id", attr.AttrId), zap.Any("attr_value", attr.Value), zap.Any("attr_valid_value", attr.ValidValues), zap.Any("attr_max_values", maxValues))
 				}
 			} else {
 				toRemove = append(toRemove, attr)
