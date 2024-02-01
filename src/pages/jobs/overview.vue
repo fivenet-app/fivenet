@@ -16,6 +16,8 @@ definePageMeta({
 const authStore = useAuthStore();
 
 const { activeChar, jobProps } = storeToRefs(authStore);
+
+const showRadioFrequency = ref(false);
 </script>
 
 <template>
@@ -40,7 +42,11 @@ const { activeChar, jobProps } = storeToRefs(authStore);
                                 </h3>
                                 <p class="flex items-center text-center text-lg font-bold">
                                     <RadioHandheldIcon class="h-auto w-6" />
-                                    <span>{{ jobProps?.radioFrequency }}.00</span>
+                                    <span
+                                        :class="showRadioFrequency ? '' : 'blur-md'"
+                                        @click="showRadioFrequency = !showRadioFrequency"
+                                        >{{ jobProps?.radioFrequency }}.00</span
+                                    >
                                 </p>
                                 <button
                                     v-if="isNUIAvailable()"

@@ -6,7 +6,7 @@ import { useConfirmDialog } from '@vueuse/core';
 import { Marker } from '~~/gen/ts/resources/livemap/livemap';
 import ConfirmDialog from '~/components/partials/ConfirmDialog.vue';
 import CitizenInfoPopover from '~/components/partials/citizens/CitizenInfoPopover.vue';
-import GenericTime from '../partials/elements/GenericTime.vue';
+import GenericTime from '~/components/partials/elements/GenericTime.vue';
 
 defineProps<{
     marker: Marker;
@@ -72,7 +72,8 @@ onConfirm(async (id) => deleteMarker(id));
             </li>
             <li class="inline-flex gap-1">
                 <span class="font-semibold">{{ $t('common.expires_at') }}:</span>
-                <GenericTime :value="marker.expiresAt" />
+                <GenericTime v-if="marker.expiresAt" :value="marker.expiresAt" />
+                <span v-else>{{ $t('common.na') }}</span>
             </li>
             <li class="inline-flex gap-1">
                 <span class="flex-initial">
