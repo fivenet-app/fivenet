@@ -7,7 +7,7 @@ CREATE TABLE IF NOT EXISTS `fivenet_job_props` (
   `theme` varchar(20) DEFAULT "default",
   `livemap_marker_color` char(6) DEFAULT "5C7AFF",
   `quick_buttons` varchar(255) DEFAULT NULL,
-  `radio_frequency` varchar(6) DEFAULT NULL,
+  `radio_frequency` varchar(24) DEFAULT NULL,
   `discord_guild_id` bigint(20) unsigned DEFAULT NULL,
   `discord_last_sync` datetime(3) DEFAULT NULL,
   `discord_sync_settings` longtext DEFAULT NULL,

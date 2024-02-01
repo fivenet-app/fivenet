@@ -118,7 +118,7 @@ const onSubmitThrottle = useThrottleFn(async (_) => {
                                         class="block w-full rounded-md border-0 bg-base-700 py-1.5 text-neutral placeholder:text-base-200 focus:ring-2 focus:ring-inset focus:ring-base-300 sm:text-sm sm:leading-6"
                                         :placeholder="$t('common.radio_frequency')"
                                         :label="$t('common.radio_frequency')"
-                                        maxlength="6"
+                                        maxlength="24"
                                         @focusin="focusTablet(true)"
                                         @focusout="focusTablet(false)"
                                     />

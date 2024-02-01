@@ -7,7 +7,7 @@ useHead({
 definePageMeta({
     title: 'components.rector.job_props.job_properties',
     requiresAuth: true,
-    permission: 'RectorService.ViewAuditLog',
+    permission: 'RectorService.GetJobProps',
     showQuickButtons: false,
 });
 </script>
