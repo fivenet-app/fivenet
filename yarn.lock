@@ -4173,7 +4173,20 @@ eslint-plugin-unicorn@^44.0.2:
     semver "^7.3.7"
     strip-indent "^3.0.0"
 
-eslint-plugin-vue@9.21.0, eslint-plugin-vue@^9.17.0, eslint-plugin-vue@^9.7.0:
+eslint-plugin-vue@9.21.1:
+  version "9.21.1"
+  resolved "https://registry.yarnpkg.com/eslint-plugin-vue/-/eslint-plugin-vue-9.21.1.tgz#da5629efa48527cec98278dca0daa90fada4caf7"
+  integrity sha512-XVtI7z39yOVBFJyi8Ljbn7kY9yHzznKXL02qQYn+ta63Iy4A9JFBw6o4OSB9hyD2++tVT+su9kQqetUyCCwhjw==
+  dependencies:
+    "@eslint-community/eslint-utils" "^4.4.0"
+    natural-compare "^1.4.0"
+    nth-check "^2.1.1"
+    postcss-selector-parser "^6.0.13"
+    semver "^7.5.4"
+    vue-eslint-parser "^9.4.2"
+    xml-name-validator "^4.0.0"
+
+eslint-plugin-vue@^9.17.0, eslint-plugin-vue@^9.7.0:
   version "9.21.0"
   resolved "https://registry.yarnpkg.com/eslint-plugin-vue/-/eslint-plugin-vue-9.21.0.tgz#5f2325279e0ce1e47105664dd6a6dd3ece84aa10"
   integrity sha512-B3NgZRtbi9kSl7M0x/PqhSMk7ULJUwWxQpTvM8b2Z6gNTORK0YSt5v1vzwY84oMs/2+3BWH5XmTepaQebcJwfA==
