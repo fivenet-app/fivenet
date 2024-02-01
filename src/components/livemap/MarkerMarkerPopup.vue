@@ -39,7 +39,7 @@ onConfirm(async (id) => deleteMarker(id));
                 type="button"
                 :title="$t('common.delete')"
                 class="inline-flex items-center text-primary-500 hover:text-primary-400"
-                @click="reveal()"
+                @click="reveal(marker.info!.id)"
             >
                 <TrashCanIcon class="h-5 w-5" />
                 <span class="ml-1">{{ $t('common.delete') }}</span>

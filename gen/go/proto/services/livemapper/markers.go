@@ -2,6 +2,7 @@ package livemapper
 
 import (
 	"context"
+	"errors"
 	"slices"
 
 	"github.com/galexrt/fivenet/gen/go/proto/resources/livemap"
@@ -14,6 +15,7 @@ import (
 	"github.com/galexrt/fivenet/query/fivenet/model"
 	"github.com/galexrt/fivenet/query/fivenet/table"
 	jet "github.com/go-jet/jet/v2/mysql"
+	"github.com/go-jet/jet/v2/qrm"
 	codes "google.golang.org/grpc/codes"
 	"google.golang.org/grpc/status"
 )
@@ -207,7 +209,7 @@ func (s *Server) DeleteMarker(ctx context.Context, req *DeleteMarkerRequest) (*D
 	}
 	defer s.auditer.Log(auditEntry, req)
 
-	fieldsAttr, err := s.ps.Attr(userInfo, permslivemapper.LivemapperServicePerm, permslivemapper.LivemapperServiceCreateOrUpdateMarkerPerm, permslivemapper.LivemapperServiceCreateOrUpdateMarkerAccessPermField)
+	fieldsAttr, err := s.ps.Attr(userInfo, permslivemapper.LivemapperServicePerm, permslivemapper.LivemapperServiceDeleteMarkerPerm, permslivemapper.LivemapperServiceDeleteMarkerAccessPermField)
 	if err != nil {
 		return nil, errswrap.NewError(ErrMarkerFailed, err)
 	}
@@ -218,7 +220,11 @@ func (s *Server) DeleteMarker(ctx context.Context, req *DeleteMarkerRequest) (*D
 
 	marker, err := s.getMarker(ctx, req.Id)
 	if err != nil {
-		return nil, errswrap.NewError(ErrMarkerFailed, err)
+		if !errors.Is(err, qrm.ErrNoRows) {
+			return nil, errswrap.NewError(ErrMarkerFailed, err)
+		}
+
+		return &DeleteMarkerResponse{}, nil
 	}
 
 	if !s.checkIfHasAccessToMarker(fields, marker, userInfo) {
