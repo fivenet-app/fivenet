@@ -63,6 +63,7 @@ type Permissions interface {
 	GetAllAttributes(ctx context.Context, job string, grade int32) ([]*permissions.RoleAttribute, error)
 	AddOrUpdateAttributesToRole(ctx context.Context, job string, grade int32, roleId uint64, attrs ...*permissions.RoleAttribute) error
 	RemoveAttributesFromRole(ctx context.Context, roleId uint64, attrs ...*permissions.RoleAttribute) error
+	ClearAttributeFromRole(ctx context.Context, roleId uint64, attrs ...*permissions.RoleAttribute) error
 	UpdateRoleAttributeMaxValues(ctx context.Context, roleId uint64, attrId uint64, maxValues *permissions.AttributeValues) error
 	GetClosestRoleAttrMaxVals(job string, grade int32, permId uint64, key Key) (*permissions.AttributeValues, uint64)
 
@@ -469,7 +470,7 @@ func (p *Perms) addOrUpdateRoleAttributeInMap(roleId uint64, permId uint64, attr
 
 func (p *Perms) updateRoleAttributeInMap(roleId uint64, permId uint64, attrId uint64, key Key, aType permissions.AttributeTypes, value *permissions.AttributeValues, max *permissions.AttributeValues) {
 	attrRoleMap, _ := p.attrsRoleMap.LoadOrCompute(roleId, xsync.NewMapOf[uint64, *cacheRoleAttr])
-	v, ok := attrRoleMap.Load(attrId)
+	cached, ok := attrRoleMap.Load(attrId)
 	if !ok {
 		attrRoleMap.Store(attrId, &cacheRoleAttr{
 			AttrID:       attrId,
@@ -480,11 +481,11 @@ func (p *Perms) updateRoleAttributeInMap(roleId uint64, permId uint64, attrId ui
 			Max:          max,
 		})
 	} else {
-		v.PermissionID = permId
-		v.Key = key
-		v.Type = aType
-		v.Value = value
-		v.Max = max
+		cached.PermissionID = permId
+		cached.Key = key
+		cached.Type = aType
+		cached.Value = value
+		cached.Max = max
 	}
 }
 

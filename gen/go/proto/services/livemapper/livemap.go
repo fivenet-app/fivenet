@@ -149,7 +149,10 @@ func (s *Server) Stream(req *StreamRequest, srv LivemapperService_StreamServer) 
 		markersJobs = markersAttr.([]string)
 	}
 	if userInfo.SuperUser {
-		markersJobs = append(markersJobs, s.trackedJobs...)
+		s.markersCache.Range(func(job string, _ []*livemap.Marker) bool {
+			markersJobs = append(markersJobs, job)
+			return true
+		})
 		markersJobs = utils.RemoveDuplicates(markersJobs)
 	}
 

@@ -436,9 +436,16 @@ func (s *Server) handleAttributeUpdate(ctx context.Context, userInfo *userinfo.U
 			return err
 		}
 	}
+
 	if len(attrUpdates.ToRemove) > 0 {
-		if err := s.ps.RemoveAttributesFromRole(ctx, role.ID, attrUpdates.ToRemove...); err != nil {
-			return err
+		if role.Grade > 1 {
+			if err := s.ps.RemoveAttributesFromRole(ctx, role.ID, attrUpdates.ToRemove...); err != nil {
+				return err
+			}
+		} else {
+			if err := s.ps.ClearAttributeFromRole(ctx, role.ID, attrUpdates.ToRemove...); err != nil {
+				return err
+			}
 		}
 	}
 

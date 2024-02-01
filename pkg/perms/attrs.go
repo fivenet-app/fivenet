@@ -811,6 +811,41 @@ func (p *Perms) RemoveAttributesFromRole(ctx context.Context, roleId uint64, att
 	return nil
 }
 
+func (p *Perms) ClearAttributeFromRole(ctx context.Context, roleId uint64, attrs ...*permissions.RoleAttribute) error {
+	ids := make([]jet.Expression, len(attrs))
+	for i := 0; i < len(attrs); i++ {
+		ids[i] = jet.Uint64(attrs[i].AttrId)
+	}
+
+	stmt := tRoleAttrs.
+		UPDATE(
+			tRoleAttrs.Value,
+		).
+		SET(
+			tRoleAttrs.Value.SET(jet.StringExp(jet.NULL)),
+		).
+		WHERE(jet.AND(
+			tRoleAttrs.RoleID.EQ(jet.Uint64(roleId)),
+			tRoleAttrs.AttrID.IN(ids...),
+		))
+
+	if _, err := stmt.ExecContext(ctx, p.db); err != nil {
+		return err
+	}
+
+	for i := 0; i < len(attrs); i++ {
+		p.updateRoleAttributeInMap(roleId, attrs[i].PermissionId, attrs[i].AttrId, Key(attrs[i].Key), permissions.AttributeTypes(attrs[i].Type), nil, attrs[i].MaxValues)
+
+		if err := p.publishMessage(RoleAttrUpdateSubject, RoleAttrUpdateEvent{
+			RoleID: roleId,
+		}); err != nil {
+			return err
+		}
+	}
+
+	return nil
+}
+
 func (p *Perms) GetRoleAttributeByID(roleId uint64, attrId uint64) (*permissions.RoleAttribute, bool) {
 	r, ok := p.lookupRoleAttribute(roleId, attrId)
 	if !ok {
