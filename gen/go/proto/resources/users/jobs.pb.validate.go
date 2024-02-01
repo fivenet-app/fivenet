@@ -452,10 +452,10 @@ func (m *JobProps) validate(all bool) error {
 
 	if m.RadioFrequency != nil {
 
-		if utf8.RuneCountInString(m.GetRadioFrequency()) > 6 {
+		if utf8.RuneCountInString(m.GetRadioFrequency()) > 24 {
 			err := JobPropsValidationError{
 				field:  "RadioFrequency",
-				reason: "value length must be at most 6 runes",
+				reason: "value length must be at most 24 runes",
 			}
 			if !all {
 				return err
