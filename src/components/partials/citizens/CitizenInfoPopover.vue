@@ -46,8 +46,12 @@ defineProps<{
                 class="absolute z-5 w-64 min-w-fit max-w-[18rem] rounded-lg border border-gray-600 bg-gray-800 text-sm text-gray-400 shadow-sm transition-opacity"
             >
                 <div class="p-3">
-                    <div class="mb-2 flex items-center gap-2">
+                    <div
+                        v-if="can('CitizenStoreService.ListCitizens') || user.phoneNumber"
+                        class="mb-2 flex items-center gap-2"
+                    >
                         <NuxtLink
+                            v-if="can('CitizenStoreService.ListCitizens')"
                             :to="{ name: 'citizens-id', params: { id: user.userId ?? 0 } }"
                             class="inline-flex items-center text-primary-500 hover:text-primary-400"
                         >

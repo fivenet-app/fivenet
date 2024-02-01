@@ -88,8 +88,12 @@ const openUnit = ref(false);
         </LIcon>
 
         <LPopup :options="{ closeButton: true }">
-            <div class="mb-1 flex items-center gap-2">
+            <div
+                v-if="can('CitizenStoreService.ListCitizens') || marker.user?.phoneNumber || hasUnit"
+                class="mb-1 flex items-center gap-2"
+            >
                 <NuxtLink
+                    v-if="can('CitizenStoreService.ListCitizens')"
                     :to="{ name: 'citizens-id', params: { id: marker.user?.userId ?? 0 } }"
                     class="inline-flex items-center text-primary-500 hover:text-primary-400"
                 >

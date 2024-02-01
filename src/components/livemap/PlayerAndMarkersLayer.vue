@@ -76,7 +76,7 @@ onBeforeUnmount(async () => {
     >
         <PlayerMarker
             v-for="marker in playerMarkersFiltered.filter((p) => p.user?.job === job.name)"
-            :key="marker.userId"
+            :key="`user_${marker.userId}`"
             :marker="marker"
             :active-char="activeChar"
             :size="livemap.markerSize"
@@ -101,7 +101,7 @@ onBeforeUnmount(async () => {
     >
         <MarkerMarker
             v-for="marker in markersMarkers.filter((p) => p.info?.job === job.name)"
-            :key="marker.info!.id"
+            :key="`marker_${marker.info!.id}`"
             :marker="marker"
             :size="livemap.markerSize"
             @selected="$emit('markerSelected', marker)"
