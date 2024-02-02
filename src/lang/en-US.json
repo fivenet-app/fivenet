@@ -2,7 +2,7 @@
     "pages": {
         "index": {
             "welcome": "Welcome to FiveNet!",
-            "subtext": "From searching the state's citizen and vehicles database, filling documents for investigations, court, and a livemap of your colleagues and dispatches. All that and more is (mostly) ready in this net, the FiveNet."
+            "subtext": "From searching the state's citizen and vehicles database, filling documents for investigations, court, and a map of your colleagues and dispatches. All that and more is (mostly) ready in this net, the FiveNet."
         },
         "overview": {
             "features": {
@@ -41,7 +41,7 @@
         },
         "rector": {
             "features": {
-                "properties": "Set your job properties (e.g., livemap color).",
+                "properties": "Set your job properties (e.g., employee marker color).",
                 "jobs": "Setup your factions roles job rank permissions.",
                 "audit_log": "An audit trail of everything your colleagues have done.",
                 "limiter": "Limit what factions can see each other.",
@@ -316,10 +316,10 @@
             }
         },
         "livemap": {
-            "starting_datastream": "Starting Livemap data stream...",
-            "failed_datastream": "Failed to stream Livemap data!",
+            "starting_datastream": "Starting Map data stream...",
+            "failed_datastream": "Failed to stream Map data!",
             "center_selected_marker": "Center selected Marker",
-            "paused_datastream": "Livemap data stream paused (window not in focus).",
+            "paused_datastream": "Map data stream paused (window not in focus).",
             "settings": {
                 "marker_size": "Marker Size"
             },
@@ -331,16 +331,16 @@
                 "title": "Update Marker",
                 "sub_title": "Update existing Marker."
             },
-            "show_unit_names": "Show Unit Names (only affects Livemap)",
+            "show_unit_names": "Show Unit Names (only affects Map)",
             "show_unit_status": "Show Unit Status Color",
-            "show_all_dispatches": "Show all Dispatches (only affects Livemap)",
+            "show_all_dispatches": "Show all Dispatches (only affects Map)",
             "restarting_datastream": "Reconnecting data stream..."
         },
         "rector": {
             "job_props": {
                 "job_properties": "Job Properties",
                 "your_job_properties": "Your job's FiveNet properties.",
-                "livemap_marker_color": "Livemap Marker Color",
+                "livemap_marker_color": "Map Marker Color",
                 "quick_buttons": "Quick Access Buttons",
                 "discord_guild_id": "Discord Guild/ Server ID",
                 "invite_bot": "Invite Bot",
@@ -517,7 +517,7 @@
             "introduction": {
                 "pre_title": "More time for GTA V RolePlay.",
                 "title": "A better workflow",
-                "content": "Easily search for citizens and vehicles. With the document access system it is easy to create and securely share documents with your colleagues. A livemap that shows last few dispatches and your colleagues locations.",
+                "content": "Easily search for citizens and vehicles. With the document access system it is easy to create and securely share documents with your colleagues. A Map that shows last few dispatches and your colleagues locations.",
                 "feature_one": {
                     "title": "Search State Data.",
                     "content": "You can search through citizens and vehicles. You can also set a citizen as wanted."
@@ -527,7 +527,7 @@
                     "content": "Documents can easily be shared with your colleagues and other factions on the server."
                 },
                 "feature_three": {
-                    "title": "Livemap.",
+                    "title": "Map.",
                     "content": "See the location of your colleagues and dispatches live. Different map styles are available as well."
                 }
             },
@@ -572,7 +572,7 @@
         "vehicle": "Vehicle | Vehicles",
         "document": "Document | Documents",
         "job": "Job | Jobs",
-        "livemap": "Livemap",
+        "livemap": "Map",
         "control_panel": "Control Panel",
         "about": "About",
         "search": "Search",
@@ -862,7 +862,7 @@
         },
         "max_access_entry": {
             "title": "Maximum amount of Access entries exceeded",
-            "content": "There can only be a maximum of {0} access entries on a Document"
+            "content": "There can only be a maximum of {max} access entries on a Document"
         },
         "document_created": {
             "title": "Document created!",
@@ -899,7 +899,7 @@
         "job_switcher": {
             "setjob": {
                 "title": "Job switched",
-                "content": "Your job has been set to {0}."
+                "content": "Your job has been set to {job}."
             }
         },
         "rector": {
@@ -952,12 +952,12 @@
                 },
                 "failed": {
                     "title": "Failed to login using provider",
-                    "content": "Error during social login ({0}), please try again."
+                    "content": "Error during social login ({msg}), please try again."
                 }
             },
             "no_permission": {
                 "title": "You don't have permission!",
-                "content": "No permission to go to {0}."
+                "content": "No permission to go to {path}."
             },
             "oauth2_connect": {
                 "success": {
@@ -980,7 +980,7 @@
         },
         "language_switched": {
             "title": "Language switched",
-            "content": "The language will be switched."
+            "content": "The language will be switched to {name}."
         },
         "penaltycalculator": {
             "title": "Penalty Calculator: Copied to clipboard",
@@ -1348,10 +1348,10 @@
             }
         },
         "LivemapperService": {
-            "category": "Livemap",
+            "category": "Map",
             "Stream": {
                 "key": "View",
-                "description": "Being able to view the Livemap.",
+                "description": "Being able to view the Map.",
                 "attrs_types": {
                     "Players": "Player Location",
                     "Markers": "Markers"
@@ -1359,7 +1359,7 @@
             },
             "CreateOrUpdateMarker": {
                 "key": "Create and Update Markers",
-                "description": "Being able to create and update markers on the Livemap.",
+                "description": "Being able to create and update markers on the Map.",
                 "attrs": {
                     "Own": "Own",
                     "Lower_Rank": "Lower Rank",
@@ -1372,7 +1372,7 @@
             },
             "DeleteMarker": {
                 "key": "Delete Marker",
-                "description": "Being able to delete markers on the Livemap.",
+                "description": "Being able to delete markers on the Map.",
                 "attrs": {
                     "Own": "Own",
                     "Lower_Rank": "Lower Rank",
@@ -1419,7 +1419,7 @@
             "category": "Dispatch Center",
             "CreateDispatch": {
                 "key": "Create Dispatches",
-                "description": "Create new dispatches via the Livemap/ Dispatch Center."
+                "description": "Create new dispatches via the Map/ Dispatch Center."
             },
             "Stream": {
                 "key": "Access to Dispatches and Units.",
@@ -1618,7 +1618,7 @@
             }
         },
         "LivemapperService": {
-            "ErrStreamFailed": "Failed to stream livemap data!",
+            "ErrStreamFailed": "Failed to stream Map data!",
             "ErrMarkerFailed": "Failed to create/ update/ delete marker!"
         },
         "NotificatorService": {
