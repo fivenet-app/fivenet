@@ -137,6 +137,8 @@ func (s *Server) ListCitizens(ctx context.Context, req *ListCitizensRequest) (*L
 			if req.OpenFines != nil && *req.OpenFines > 0 {
 				condition = condition.AND(tUserProps.OpenFines.GT_EQ(jet.Uint64(*req.OpenFines)))
 			}
+		case "UserProps.BloodType":
+			selectors = append(selectors, tUserProps.BloodType)
 		}
 	}
 
@@ -276,6 +278,8 @@ func (s *Server) GetUser(ctx context.Context, req *GetUserRequest) (*GetUserResp
 			selectors = append(selectors, tUserProps.TrafficInfractionPoints)
 		case "UserProps.OpenFines":
 			selectors = append(selectors, tUserProps.OpenFines)
+		case "UserProps.BloodType":
+			selectors = append(selectors, tUserProps.BloodType)
 		}
 	}
 
