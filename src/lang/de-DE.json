@@ -2,7 +2,7 @@
     "pages": {
         "index": {
             "welcome": "Willkommen bei FiveNet!",
-            "subtext": "Von der Suche in der Bürger- und Fahrzeugdatenbank des Staates über das Ausfüllen von Dokumenten für Untersuchungen, Gerichtsverfahren und einer Livemap Ihrer Kollegen und Einsätze. All das und mehr ist (weitestgehend) in diesem Netzwerk, dem FiveNet, bereit."
+            "subtext": "Von der Suche in der Bürger- und Fahrzeugdatenbank des Staates über das Ausfüllen von Dokumenten für Untersuchungen, Gerichtsverfahren und einer Karte Ihrer Kollegen und Einsätze. All das und mehr ist (weitestgehend) in diesem Netzwerk, dem FiveNet, bereit."
         },
         "overview": {
             "features": {
@@ -41,7 +41,7 @@
         },
         "rector": {
             "features": {
-                "properties": "Stelle deine Job Eigenschaften ein (e.g., Livemap Mitarbeiter Farbe).",
+                "properties": "Stelle deine Job Eigenschaften ein (e.g., Mitarbeiter-Marker-Farbe).",
                 "jobs": "Richten Sie die Rollen, Job Ränge und Berechtigungen für Ihre Fraktion ein.",
                 "audit_log": "Eine Überprüfung der Schritte, die von Ihren Kollegen unternommen wurden.",
                 "limiter": "Begrenzen was Fraktionen sehen können (Mitarbeiter Standorte, Einsätze...).",
@@ -316,10 +316,10 @@
             }
         },
         "livemap": {
-            "starting_datastream": "Starte Livemap Datenstrom...",
-            "failed_datastream": "Livemap Datenstrom fehlgeschlagen!",
+            "starting_datastream": "Starte Karten-Datenstrom...",
+            "failed_datastream": "Karten-Datenstrom fehlgeschlagen!",
             "center_selected_marker": "Zentriere ausgewählten Marker",
-            "paused_datastream": "Livemap Datenstrom pausiert (Fenster nicht im Fokus).",
+            "paused_datastream": "Karten-Datenstrom pausiert (Fenster nicht im Fokus).",
             "settings": {
                 "marker_size": "Größe der Kartenmarkierung"
             },
@@ -331,16 +331,16 @@
                 "title": "Markierung aktualisieren",
                 "sub_title": "Existierende Markierung aktualisieren."
             },
-            "show_unit_names": "Zeige Einheiten Namen (gilt nur für Livemap)",
+            "show_unit_names": "Zeige Einheiten Namen (gilt nur für Karten-Ansicht)",
             "show_unit_status": "Zeige Einheiten Status Farbe",
-            "show_all_dispatches": "Zeige alle Einsätze an (gilt nur für Livemap)",
+            "show_all_dispatches": "Zeige alle Einsätze an (gilt nur für Karten-Ansicht)",
             "restarting_datastream": "Wiederherstellung des Datenstroms..."
         },
         "rector": {
             "job_props": {
                 "job_properties": "Job Eigenschaften",
                 "your_job_properties": "Deine FiveNet Job Eigenschaften.",
-                "livemap_marker_color": "Livemap Marker Farbe",
+                "livemap_marker_color": "Karten-Marker-Farbe",
                 "quick_buttons": "Schnellzugriff Knöpfe",
                 "discord_guild_id": "Discord Guild/Server ID",
                 "invite_bot": "Bot einladen",
@@ -495,7 +495,7 @@
             "start_text": "Wussten sie schon...?",
             "click_me": "Klicke hier.",
             "commandpalette": {
-                "content": "FiveNet hat eine Befehlspalette für Power-User? Sie können diese mit folgenden Tastenkombination öffnen:",
+                "content": "FiveNet hat eine Befehlspalette für Power-User! Sie können diese mit folgenden Tastenkombination öffnen:",
                 "keyboard": "STRG+K"
             },
             "startpage": {
@@ -517,7 +517,7 @@
             "introduction": {
                 "pre_title": "Mehr Zeit für GTA V Roleplay.",
                 "title": "Ein besserer Arbeitsablauf",
-                "content": "Einfaches Suchen nach Bürgern und Fahrzeugen. Mit dem Dokumentzugriffssystem ist es einfach, Dokumente zu erstellen und sicher mit Ihren Kollegen zu teilen. Eine Livemap, die die letzten Einsätze und die Standorte Ihrer Kollegen anzeigt.",
+                "content": "Einfaches Suchen nach Bürgern und Fahrzeugen. Mit dem Dokumentzugriffssystem ist es einfach, Dokumente zu erstellen und sicher mit Ihren Kollegen zu teilen. Eine Karte, die die letzten Einsätze und die Standorte Ihrer Kollegen anzeigt.",
                 "feature_one": {
                     "title": "Suche nach Zustandsdaten.",
                     "content": "Sie können nach Bürgern und Fahrzeugen suchen. Sie können auch einen Bürger als gesucht markieren."
@@ -527,7 +527,7 @@
                     "content": "Dokumente können einfach mit Ihren Kollegen und anderen Fraktionen auf dem Server geteilt werden."
                 },
                 "feature_three": {
-                    "title": "Livemap.",
+                    "title": "Karte.",
                     "content": "Sehen Sie den Standort Ihrer Kollegen und Einsätze live. Es stehen verschiedene Kartentypen zur Verfügung."
                 }
             },
@@ -572,7 +572,7 @@
         "vehicle": "Fahrzeug | Fahrzeuge",
         "document": "Dokument | Dokumente",
         "job": "Beruf",
-        "livemap": "Livemap",
+        "livemap": "Karte",
         "control_panel": "Kontrollzentrum",
         "about": "Über",
         "search": "Suche",
@@ -783,7 +783,7 @@
         "ends_at": "Endet am",
         "hide": "Verstecken",
         "approve": "Genehmigen | Genehmigt",
-        "na": "Nicht verfügbar",
+        "na": "Nicht angegeben",
         "privacy_policy": "Datenschutzerklärung",
         "imprint": "Impressum",
         "comments": "Keine Kommentare | {n} Kommentar | {n} Kommentare",
@@ -1138,7 +1138,8 @@
                     "UserProps_Wanted": "Gesuchten Status",
                     "UserProps_Job": "Job",
                     "UserProps_TrafficInfractionPoints": "Verkehrspunkte",
-                    "UserProps_OpenFines": "Offene Geldstrafen"
+                    "UserProps_OpenFines": "Offene Geldstrafen",
+                    "UserProps_BloodType": "Blutgruppe"
                 },
                 "attrs_types": {
                     "Fields": "Felder"
@@ -1312,11 +1313,11 @@
             },
             "ListDocumentReqs": {
                 "key": "Auflistung der Dokumentenanfragen",
-                "description": "Liste die Dokumentenanfragen auf"
+                "description": "Liste die Dokumentenanfragen auf."
             },
             "ChangeDocumentOwner": {
                 "key": "Änderung des Dokumentenbesitzers",
-                "description": "Übernimm den Besitz des Dokumentes",
+                "description": "Übernimm den Besitz des Dokumentes.",
                 "attrs": {
                     "Own": "Eigene",
                     "Lower_Rank": "Niedrigerer Rang",
@@ -1347,10 +1348,10 @@
             }
         },
         "LivemapperService": {
-            "category": "Livemap",
+            "category": "Karte",
             "Stream": {
                 "key": "Aufrufen",
-                "description": "Livemap aufrufen können.",
+                "description": "Karte aufrufen können.",
                 "attrs_types": {
                     "Players": "Spieler Positionen",
                     "Markers": "Markierungen"
@@ -1358,7 +1359,7 @@
             },
             "CreateOrUpdateMarker": {
                 "key": "Erstellen und Aktualisieren von Markierungen",
-                "description": "Markierungen auf der Livemap erstellen und aktualisieren können.",
+                "description": "Markierungen auf der Karte erstellen und aktualisieren können.",
                 "attrs": {
                     "Own": "Eigene",
                     "Lower_Rank": "Niedrigerer Rang",
@@ -1371,7 +1372,7 @@
             },
             "DeleteMarker": {
                 "key": "Markierung Löschen",
-                "description": "Markierungen auf der Livemap löschen können.",
+                "description": "Markierungen auf der Karte löschen können.",
                 "attrs": {
                     "Own": "Eigene",
                     "Lower_Rank": "Niedrigerer Rang",
@@ -1418,7 +1419,7 @@
             "category": "Leitstelle",
             "CreateDispatch": {
                 "key": "Einsätze erstellen",
-                "description": "Neue Einsätze per Livemap/ Leitstelle erstellen."
+                "description": "Neue Einsätze per Karte/ Leitstelle erstellen."
             },
             "Stream": {
                 "key": "Zugriff auf Einsätze und Einheiten.",
@@ -1617,7 +1618,7 @@
             }
         },
         "LivemapperService": {
-            "ErrStreamFailed": "Livemap Datenstrom fehlgeschlagen!",
+            "ErrStreamFailed": "Karten-Datenstrom fehlgeschlagen!",
             "ErrMarkerFailed": "Fehler beim Erstellen/ Aktualisieren/ Löschen der Markierung!"
         },
         "NotificatorService": {
