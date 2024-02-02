@@ -30,7 +30,7 @@ require (
 	github.com/json-iterator/go v1.1.12
 	github.com/microcosm-cc/bluemonday v1.0.26
 	github.com/minio/minio-go/v7 v7.0.66
-	github.com/nats-io/nats-server/v2 v2.10.9
+	github.com/nats-io/nats-server/v2 v2.10.10
 	github.com/nats-io/nats.go v1.32.0
 	github.com/ory/dockertest/v3 v3.10.0
 	github.com/paulmach/orb v0.11.1
@@ -123,7 +123,7 @@ require (
 	github.com/hashicorp/hcl v1.0.0 // indirect
 	github.com/huandu/xstrings v1.4.0 // indirect
 	github.com/imdario/mergo v1.0.0 // indirect
-	github.com/klauspost/compress v1.17.4 // indirect
+	github.com/klauspost/compress v1.17.5 // indirect
 	github.com/klauspost/cpuid/v2 v2.2.6 // indirect
 	github.com/leodido/go-urn v1.2.4 // indirect
 	github.com/magiconair/properties v1.8.7 // indirect
