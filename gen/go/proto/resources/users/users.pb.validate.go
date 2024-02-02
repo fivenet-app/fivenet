@@ -822,6 +822,10 @@ func (m *UserProps) validate(all bool) error {
 		// no validation rules for OpenFines
 	}
 
+	if m.BloodType != nil {
+		// no validation rules for BloodType
+	}
+
 	if len(errors) > 0 {
 		return UserPropsMultiError(errors)
 	}

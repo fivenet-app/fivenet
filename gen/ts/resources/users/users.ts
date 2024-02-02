@@ -168,6 +168,10 @@ export interface UserProps {
      * @generated from protobuf field: optional int64 open_fines = 8;
      */
     openFines?: bigint;
+    /**
+     * @generated from protobuf field: optional string blood_type = 9;
+     */
+    bloodType?: string;
 }
 /**
  * @generated from protobuf message resources.users.UserActivity
@@ -307,7 +311,8 @@ class UserProps$Type extends MessageType<UserProps> {
             { no: 5, name: "job_grade_number", kind: "scalar", opt: true, T: 5 /*ScalarType.INT32*/ },
             { no: 6, name: "job_grade", kind: "message", T: () => JobGrade },
             { no: 7, name: "traffic_infraction_points", kind: "scalar", opt: true, T: 13 /*ScalarType.UINT32*/ },
-            { no: 8, name: "open_fines", kind: "scalar", opt: true, T: 3 /*ScalarType.INT64*/, L: 0 /*LongType.BIGINT*/ }
+            { no: 8, name: "open_fines", kind: "scalar", opt: true, T: 3 /*ScalarType.INT64*/, L: 0 /*LongType.BIGINT*/ },
+            { no: 9, name: "blood_type", kind: "scalar", opt: true, T: 9 /*ScalarType.STRING*/ }
         ]);
     }
 }

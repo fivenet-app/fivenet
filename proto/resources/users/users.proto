@@ -73,6 +73,7 @@ message UserProps {
   optional resources.users.JobGrade job_grade = 6;
   optional uint32 traffic_infraction_points = 7;
   optional int64 open_fines = 8;
+  optional string blood_type = 9;
 }
 
 enum UserActivityType {

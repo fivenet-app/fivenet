@@ -802,7 +802,8 @@
         "page": "Page",
         "department": "Department",
         "none": "No {0}",
-        "department_postal": "Department Postal"
+        "department_postal": "Department Postal",
+        "blood_type": "Blood type"
     },
     "notifications": {
         "clipboard": {
@@ -1137,7 +1138,8 @@
                     "UserProps_Wanted": "Wanted Status",
                     "UserProps_Job": "Job",
                     "UserProps_TrafficInfractionPoints": "Traffic Points",
-                    "UserProps_OpenFines": "Open Fines"
+                    "UserProps_OpenFines": "Open Fines",
+                    "UserProps_BloodType": "Blood Type"
                 },
                 "attrs_types": {
                     "Fields": "Fields"

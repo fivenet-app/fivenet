@@ -138,10 +138,27 @@ const trafficPointsModal = ref(false);
                                                     >
                                                         {{ $t('common.visum') }}
                                                     </dt>
-                                                    <dd
-                                                        class="mt-1 text-sm text-base-300 text-blue-400 sm:col-span-2 sm:ml-6 sm:mt-0"
-                                                    >
+                                                    <dd class="mt-1 text-sm text-blue-400 sm:col-span-2 sm:ml-6 sm:mt-0">
                                                         {{ user?.visum }}
+                                                    </dd>
+                                                </div>
+                                                <div
+                                                    v-if="
+                                                        attr(
+                                                            'CitizenStoreService.ListCitizens',
+                                                            'Fields',
+                                                            'UserProps.BloodType',
+                                                        )
+                                                    "
+                                                    class="sm:flex sm:px-5 sm:py-4"
+                                                >
+                                                    <dt
+                                                        class="text-sm font-medium text-neutral sm:w-40 sm:flex-shrink-0 lg:w-48"
+                                                    >
+                                                        {{ $t('common.blood_type') }}
+                                                    </dt>
+                                                    <dd class="mt-1 text-sm text-base-300 sm:col-span-2 sm:ml-6 sm:mt-0">
+                                                        {{ user?.props?.bloodType ?? $t('common.na') }}
                                                     </dd>
                                                 </div>
                                                 <div

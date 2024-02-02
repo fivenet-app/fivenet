@@ -802,7 +802,8 @@
         "page": "Seite",
         "department": "Dienststelle",
         "none": "Keine {0}",
-        "department_postal": "Postleitzahl der Dienststelle"
+        "department_postal": "Postleitzahl der Dienststelle",
+        "blood_type": "Bluttyp"
     },
     "notifications": {
         "clipboard": {
