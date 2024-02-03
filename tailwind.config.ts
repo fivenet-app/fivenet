@@ -160,7 +160,7 @@ export default <Partial<Config>>{
                                 800: '#0b5d7f',
                                 900: '#0e4d6b',
                             },
-                            // Based upn #9aa51d
+                            // Based upon #db561b
                             secondary: {
                                 100: '#fcecd8',
                                 200: '#f8d4b0',
@@ -172,7 +172,7 @@ export default <Partial<Config>>{
                                 800: '#91351b',
                                 900: '#752c19',
                             },
-                            // Based upon
+                            // Based upn #9aa51d
                             accent: {
                                 100: '#f8f8cf',
                                 200: '#f0f1a5',

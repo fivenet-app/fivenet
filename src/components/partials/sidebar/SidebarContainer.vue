@@ -322,7 +322,9 @@ watch(router.currentRoute, () => updateActiveItem());
                         leave-from="translate-x-0"
                         leave-to="-translate-x-full"
                     >
-                        <DialogPanel class="relative flex w-full max-w-xs flex-1 flex-col bg-accent-600 pb-4 pt-5">
+                        <DialogPanel
+                            class="relative flex w-full max-w-xs flex-1 flex-col defaultTheme:bg-accent-600 bg-secondary-600 pb-4 pt-5"
+                        >
                             <TransitionChild
                                 as="template"
                                 enter="ease-in-out duration-300"
