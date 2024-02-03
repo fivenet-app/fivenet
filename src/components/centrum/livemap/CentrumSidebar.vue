@@ -352,7 +352,10 @@ async function checkup(): Promise<void> {
                     @close="openDispatchStatus = false"
                 />
 
-                <div class="flex h-full grow gap-y-5 overflow-y-auto overflow-x-hidden bg-base-600 px-4 py-0.5">
+                <div
+                    class="flex h-full grow gap-y-5 overflow-y-auto overflow-x-hidden bg-base-600 py-0.5"
+                    :class="open || getOwnUnit !== undefined ? 'px-4' : ''"
+                >
                     <nav v-if="open" class="flex flex-1 flex-col min-w-48 max-w-48 md:min-w-64 md:max-w-64">
                         <ul role="list" class="flex flex-1 flex-col gap-y-2 divide-y divide-base-400">
                             <li class="-mx-2 -mb-1">
