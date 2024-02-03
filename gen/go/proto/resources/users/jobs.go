@@ -29,7 +29,7 @@ func (x *JobProps) Default(job string) {
 	}
 
 	if x.Theme == "" {
-		x.Theme = "default"
+		x.Theme = "defaultTheme"
 	}
 
 	if x.LivemapMarkerColor == "" {
