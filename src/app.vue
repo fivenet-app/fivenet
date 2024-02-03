@@ -27,11 +27,11 @@ const { locale: cookieLocale } = useCookieControl();
 
 useHead({
     htmlAttrs: {
-        class: 'h-full',
+        class: () => 'h-full ' + (jobProps.value?.theme ?? 'defaultTheme'),
         lang: 'en',
     },
     bodyAttrs: {
-        class: () => 'bg-body-color h-full overflow-hidden ' + (jobProps.value?.theme ?? 'defaultTheme'),
+        class: 'bg-body-color h-full overflow-hidden',
     },
     titleTemplate: (title?: string) => {
         if (title?.includes('.')) {

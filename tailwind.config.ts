@@ -13,7 +13,7 @@ export default <Partial<Config>>{
                         black: '#000000',
                         white: '#ffffff',
                         neutral: '#ffffff',
-                        'body-color': '#16171a', // bg-base-900
+                        'body-color': '#16171a', // `bg-base-900` from `defaultTheme`
                         base: {
                             100: '#e2e3e6',
                             200: '#c4c6cd',
@@ -109,38 +109,41 @@ export default <Partial<Config>>{
                 {
                     name: 'themePurple',
                     extend: {
-                        primary: {
-                            100: '#e3dffc',
-                            200: '#c6c0f9',
-                            300: '#aaa0f5',
-                            400: '#8d81f2',
-                            500: '#7161ef',
-                            600: '#5a4ebf',
-                            700: '#443a8f',
-                            800: '#2d2760',
-                            900: '#171330',
-                        },
-                        secondary: {
-                            100: '#dbd7e5',
-                            200: '#b7afca',
-                            300: '#9387b0',
-                            400: '#6f5f95',
-                            500: '#4b377b',
-                            600: '#3c2c62',
-                            700: '#2d214a',
-                            800: '#1e1631',
-                            900: '#0f0b19',
-                        },
-                        accent: {
-                            100: '#d4d5e8',
-                            200: '#a9abd0',
-                            300: '#7d80b9',
-                            400: '#5256a1',
-                            500: '#272c8a',
-                            600: '#1f236e',
-                            700: '#171a53',
-                            800: '#101237',
-                            900: '#08091c',
+                        colors: {
+                            'body-color': '#101129',
+                            primary: {
+                                100: '#e3dffc',
+                                200: '#c6c0f9',
+                                300: '#aaa0f5',
+                                400: '#8d81f2',
+                                500: '#7161ef',
+                                600: '#5a4ebf',
+                                700: '#443a8f',
+                                800: '#2d2760',
+                                900: '#171330',
+                            },
+                            secondary: {
+                                100: '#dbd7e5',
+                                200: '#b7afca',
+                                300: '#9387b0',
+                                400: '#6f5f95',
+                                500: '#4b377b',
+                                600: '#3c2c62',
+                                700: '#2d214a',
+                                800: '#1e1631',
+                                900: '#0f0b19',
+                            },
+                            accent: {
+                                100: '#d4d5e8',
+                                200: '#a9abd0',
+                                300: '#7d80b9',
+                                400: '#5256a1',
+                                500: '#272c8a',
+                                600: '#1f236e',
+                                700: '#171a53',
+                                800: '#101237',
+                                900: '#08091c',
+                            },
                         },
                     },
                 },
@@ -148,6 +151,7 @@ export default <Partial<Config>>{
                     name: 'themeBaddieOrange',
                     extend: {
                         colors: {
+                            'body-color': '#2a0f08',
                             // Based upon #0079a6
                             primary: {
                                 100: '#cafbff',
