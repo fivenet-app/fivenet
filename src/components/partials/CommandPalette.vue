@@ -304,7 +304,7 @@ async function onSelect(item: any): Promise<any> {
                 leave-from="opacity-100"
                 leave-to="opacity-0"
             >
-                <div class="fixed inset-0 bg-gray-900 bg-opacity-25 transition-opacity" />
+                <div class="fixed inset-0 bg-primary-900 bg-opacity-25 transition-opacity" />
             </TransitionChild>
 
             <div class="fixed inset-0 z-30 overflow-y-auto p-4 sm:p-6 md:p-20">
@@ -318,7 +318,7 @@ async function onSelect(item: any): Promise<any> {
                     leave-to="opacity-0 scale-95"
                 >
                     <DialogPanel
-                        class="mx-auto max-w-3xl transform overflow-hidden rounded-xl bg-gray-900 shadow-2xl ring-1 ring-black ring-opacity-5 transition-all"
+                        class="mx-auto max-w-3xl transform overflow-hidden rounded-xl bg-primary-900 shadow-2xl ring-1 ring-black ring-opacity-5 transition-all"
                     >
                         <Combobox @update:model-value="onSelect">
                             <div class="relative">

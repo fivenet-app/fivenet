@@ -36,7 +36,7 @@ const licenses = [
 <template>
     <div class="flex h-full flex-col justify-between">
         <div>
-            <div class="hero relative isolate bg-gray-900 px-6 py-24 sm:py-32 lg:px-8">
+            <div class="hero relative isolate bg-primary-900 px-6 py-24 sm:py-32 lg:px-8">
                 <div class="hero-overlay absolute left-0 top-0 z-[-1] h-full w-full"></div>
                 <div class="mx-auto max-w-2xl text-center">
                     <h2 class="text-4xl font-bold tracking-tight text-neutral sm:text-6xl">
@@ -48,7 +48,7 @@ const licenses = [
                 </div>
             </div>
 
-            <div class="bg-gray-900">
+            <div class="bg-primary-900">
                 <div class="mx-auto max-w-7xl px-6 py-24 sm:py-32 lg:px-8 lg:py-20">
                     <div class="mx-auto max-w-7xl divide-y divide-neutral/10">
                         <dl class="mt-10 space-y-6 divide-y divide-neutral/10">

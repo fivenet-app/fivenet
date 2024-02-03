@@ -78,7 +78,7 @@ const axis = ref<ChartAxis>({
                         {{ $t('components.jobs.timeclock.StatsBlock.7_days') }}
                     </h3>
                     <div class="grid grid-cols-1 gap-2">
-                        <GenericContainer v-for="stat in statsData" :key="stat.name" class="bg-gray-900">
+                        <GenericContainer v-for="stat in statsData" :key="stat.name" class="bg-primary-900">
                             <p class="text-sm font-medium leading-6 text-gray-400">{{ $t(stat.name) }}</p>
                             <p class="mt-2 flex w-full items-center gap-x-2 text-2xl font-semibold tracking-tight text-neutral">
                                 <template v-if="stat.value === undefined">

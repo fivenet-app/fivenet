@@ -51,7 +51,7 @@ function nextHint(): void {
     <div class="pt-2">
         <div class="pointer-events-none inset-x-0 min-w-full max-w-full sm:flex sm:justify-center sm:px-6 sm:pb-5 lg:px-8">
             <div
-                class="pointer-events-auto flex items-center justify-between gap-x-6 bg-gray-900 px-6 py-2.5 sm:rounded-xl sm:border-2 sm:border-neutral/20 sm:py-3 sm:pl-4 sm:pr-3.5"
+                class="pointer-events-auto flex items-center justify-between gap-x-6 bg-primary-900 px-6 py-2.5 sm:rounded-xl sm:border-2 sm:border-neutral/20 sm:py-3 sm:pl-4 sm:pr-3.5"
             >
                 <button type="button" class="text-white" @click="previousHint()">
                     <ArrowLeftBoldCircleIcon class="h-7 w-7" />

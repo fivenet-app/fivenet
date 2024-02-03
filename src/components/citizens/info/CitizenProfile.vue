@@ -277,7 +277,7 @@ const trafficPointsModal = ref(false);
                                 <div v-if="attr('CitizenStoreService.SetUserProps', 'Fields', 'Job')" class="flex-initial">
                                     <button
                                         type="button"
-                                        class="inline-flex w-full flex-shrink-0 items-center justify-center rounded-md bg-primary-500 px-3 py-2 text-sm font-semibold text-neutral transition-colors hover:bg-primary-400 focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-primary-500 sm:flex-1"
+                                        class="inline-flex w-full flex-shrink-0 items-center justify-center rounded-md bg-secondary-500 px-3 py-2 text-sm font-semibold text-neutral transition-colors hover:bg-secondary-400 focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-secondary-500 sm:flex-1"
                                         @click="setJobModal = true"
                                     >
                                         {{ $t('components.citizens.citizen_info_profile.set_job') }}
@@ -289,7 +289,7 @@ const trafficPointsModal = ref(false);
                                 >
                                     <button
                                         type="button"
-                                        class="inline-flex w-full flex-shrink-0 items-center justify-center rounded-md bg-secondary-500 px-3 py-2 text-sm font-semibold text-neutral transition-colors hover:bg-secondary-400 focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-primary-500 sm:flex-1"
+                                        class="inline-flex w-full flex-shrink-0 items-center justify-center rounded-md bg-secondary-500 px-3 py-2 text-sm font-semibold text-neutral transition-colors hover:bg-secondary-400 focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-secondary-500 sm:flex-1"
                                         @click="trafficPointsModal = true"
                                     >
                                         {{ $t('components.citizens.citizen_info_profile.set_traffic_points') }}

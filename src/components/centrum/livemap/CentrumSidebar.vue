@@ -585,7 +585,7 @@ async function checkup(): Promise<void> {
                             </span>
                             <button
                                 type="button"
-                                class="flex h-12 w-12 items-center justify-center bg-primary-500 text-neutral hover:bg-primary-400"
+                                class="flex h-12 w-12 items-center justify-center bg-accent-500 text-neutral hover:bg-accent-400"
                                 :class="getOwnUnit.homePostal !== undefined ? 'rounded-l-full' : 'rounded-full'"
                                 @click="openTakeDispatch = true"
                             >
@@ -595,7 +595,7 @@ async function checkup(): Promise<void> {
                         <button
                             v-if="getOwnUnit.homePostal !== undefined"
                             type="button"
-                            class="flex h-12 w-12 items-center justify-center rounded-r-full bg-primary-500 text-neutral hover:bg-primary-400"
+                            class="flex h-12 w-12 items-center justify-center rounded-r-full bg-accent-500 text-neutral hover:bg-accent-400"
                             @click="setWaypointPLZ(getOwnUnit.homePostal)"
                         >
                             <HomeFloorBIcon class="w-10 h-auto" />

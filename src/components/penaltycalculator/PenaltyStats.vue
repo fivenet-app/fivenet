@@ -9,7 +9,7 @@ defineProps<{
 <template>
     <div class="mx-auto max-w-7xl">
         <div class="mt-2 grid grid-cols-1 gap-2 sm:grid-cols-4">
-            <div class="bg-gray-900 px-4 py-6 sm:px-6 lg:px-8">
+            <div class="bg-primary-900 px-4 py-6 sm:px-6 lg:px-8">
                 <p class="text-sm font-medium leading-6 text-gray-400">
                     {{ $t('common.fine') }}
                 </p>
@@ -20,7 +20,7 @@ defineProps<{
                     <span class="text-sm text-gray-400">$</span>
                 </p>
             </div>
-            <div class="bg-gray-900 px-4 py-6 sm:px-6 lg:px-8">
+            <div class="bg-primary-900 px-4 py-6 sm:px-6 lg:px-8">
                 <p class="text-sm font-medium leading-6 text-gray-400">
                     {{ $t('common.detention_time') }}
                 </p>
@@ -33,7 +33,7 @@ defineProps<{
                     </span>
                 </p>
             </div>
-            <div class="bg-gray-900 px-4 py-6 sm:px-6 lg:px-8">
+            <div class="bg-primary-900 px-4 py-6 sm:px-6 lg:px-8">
                 <p class="text-sm font-medium leading-6 text-gray-400">
                     {{ $t('common.traffic_infraction_points', 2) }}
                 </p>
@@ -43,7 +43,7 @@ defineProps<{
                     </span>
                 </p>
             </div>
-            <div class="bg-gray-900 px-4 py-6 sm:px-6 lg:px-8">
+            <div class="bg-primary-900 px-4 py-6 sm:px-6 lg:px-8">
                 <p class="text-sm font-medium leading-6 text-gray-400">
                     {{ $t('common.total_count') }}
                 </p>

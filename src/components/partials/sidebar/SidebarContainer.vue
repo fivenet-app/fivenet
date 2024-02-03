@@ -186,7 +186,7 @@ watch(router.currentRoute, () => updateActiveItem());
 <template>
     <div class="h-dscreen flex">
         <!-- Sidebar -->
-        <div class="hidden w-28 overflow-y-auto bg-accent-600 md:block">
+        <div class="hidden w-28 overflow-y-auto defaultTheme:bg-accent-600 bg-secondary-600 md:block">
             <div class="flex h-full w-full flex-col items-center py-6">
                 <div class="flex flex-shrink-0 items-center">
                     <NuxtLink :to="{ name: accessToken ? 'overview' : 'index' }" aria-current-value="page">

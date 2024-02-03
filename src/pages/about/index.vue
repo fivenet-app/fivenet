@@ -42,7 +42,7 @@ const faqs = [
 <template>
     <div class="flex h-full flex-col justify-between">
         <div>
-            <div class="hero relative isolate bg-gray-900 px-6 py-12 sm:py-16 lg:px-8">
+            <div class="hero relative isolate bg-primary-900 px-6 py-12 sm:py-16 lg:px-8">
                 <div class="hero-overlay absolute left-0 top-0 z-[-1] h-full w-full"></div>
                 <div class="mx-auto max-w-2xl text-center">
                     <h2 class="text-4xl font-bold tracking-tight text-neutral sm:text-6xl">
@@ -80,7 +80,7 @@ const faqs = [
                         class="-ml-12 -mt-12 p-12 lg:sticky lg:top-4 lg:col-start-2 lg:row-span-2 lg:row-start-1 lg:overflow-hidden"
                     >
                         <img
-                            class="w-[48rem] max-w-none rounded-xl bg-gray-900 shadow-xl ring-1 ring-gray-400/10 sm:w-[57rem]"
+                            class="w-[48rem] max-w-none rounded-xl bg-primary-900 shadow-xl ring-1 ring-gray-400/10 sm:w-[57rem]"
                             src="/images/app-screenshot.png"
                             alt="FiveNet Overview - Screenshot"
                         />
@@ -124,7 +124,7 @@ const faqs = [
                     </div>
                 </div>
             </div>
-            <div class="bg-gray-900">
+            <div class="bg-primary-900">
                 <div class="mx-auto max-w-7xl px-6 py-12 sm:py-16 lg:px-8 lg:py-10">
                     <div class="mx-auto max-w-4xl divide-y divide-neutral/10">
                         <h2 class="text-2xl font-bold leading-10 tracking-tight text-neutral">
@@ -152,7 +152,7 @@ const faqs = [
                     </div>
                 </div>
             </div>
-            <div class="relative bg-gray-900">
+            <div class="relative bg-primary-900">
                 <div class="mx-auto max-w-7xl px-6 py-12 sm:py-16 lg:px-8 lg:py-10">
                     <div class="mx-auto max-w-4xl">
                         <p class="mt-2 text-3xl font-bold tracking-tight text-neutral sm:text-4xl">
@@ -176,7 +176,7 @@ const faqs = [
                     </div>
                 </div>
             </div>
-            <div class="relative bg-gray-900">
+            <div class="relative bg-primary-900">
                 <div class="mx-auto max-w-7xl px-6 py-12 sm:py-16 lg:px-8 lg:py-10">
                     <div class="mx-auto max-w-4xl">
                         <p class="mt-2 text-3xl font-bold tracking-tight text-neutral sm:text-4xl">

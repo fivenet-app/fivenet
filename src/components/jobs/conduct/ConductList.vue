@@ -10,7 +10,7 @@ import DataPendingBlock from '~/components/partials/data/DataPendingBlock.vue';
 import TablePagination from '~/components/partials/elements/TablePagination.vue';
 import { ConductEntry, ConductType } from '~~/gen/ts/resources/jobs/conduct';
 import { User } from '~~/gen/ts/resources/users/users';
-import CreateOrUpdateModal from '~/components/jobs/conduct/CreateOrUpdateModal.vue';
+import ConductCreateOrUpdateModal from '~/components/jobs/conduct/ConductCreateOrUpdateModal.vue';
 import ConductListEntry from '~/components/jobs/conduct/ConductListEntry.vue';
 import { useJobsStore } from '~/store/jobs';
 import type { ListConductEntriesResponse } from '~~/gen/ts/services/jobs/conduct';
@@ -137,7 +137,7 @@ onConfirm(async (id) => deleteConductEntry(id));
             :confirm="() => confirm(selectedEntry!.id)"
         />
 
-        <CreateOrUpdateModal
+        <ConductCreateOrUpdateModal
             :open="open"
             :entry="selectedEntry"
             @close="open = false"

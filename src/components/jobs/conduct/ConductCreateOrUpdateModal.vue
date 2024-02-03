@@ -169,7 +169,7 @@ const onSubmitThrottle = useThrottleFn(async (e) => {
                         >
                             <DialogPanel class="pointer-events-auto w-screen max-w-6xl">
                                 <form
-                                    class="flex h-full flex-col divide-y divide-gray-200 bg-gray-900 shadow-xl"
+                                    class="flex h-full flex-col divide-y divide-gray-200 bg-primary-900 shadow-xl"
                                     @submit.prevent="onSubmitThrottle"
                                 >
                                     <div class="h-0 flex-1 overflow-y-auto">
@@ -404,7 +404,7 @@ const onSubmitThrottle = useThrottleFn(async (e) => {
                                         <span class="isolate inline-flex w-full rounded-md pr-4 shadow-sm">
                                             <button
                                                 type="submit"
-                                                class="relative flex w-full justify-center rounded-l-md px-3.5 py-2.5 text-sm font-semibold text-neutral"
+                                                class="relative flex w-full items-center rounded-l-md px-3.5 py-2.5 text-sm font-semibold text-neutral"
                                                 :disabled="!meta.valid || !canSubmit"
                                                 :class="[
                                                     !meta.valid || !canSubmit

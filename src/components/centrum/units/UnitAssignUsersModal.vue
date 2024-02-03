@@ -115,7 +115,7 @@ const onSubmitThrottle = useThrottleFn(async () => {
                             leave-to="translate-x-full"
                         >
                             <DialogPanel class="pointer-events-auto w-screen max-w-3xl">
-                                <form class="flex h-full flex-col divide-y divide-gray-200 bg-gray-900 shadow-xl">
+                                <form class="flex h-full flex-col divide-y divide-gray-200 bg-primary-900 shadow-xl">
                                     <div class="h-0 flex-1 overflow-y-auto">
                                         <div class="bg-primary-700 px-4 py-6 sm:px-6">
                                             <div class="flex items-center justify-between">

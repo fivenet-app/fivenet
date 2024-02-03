@@ -22,7 +22,7 @@ export function dispatchStatusToFillColor(status: StatusDispatch | undefined): s
         case StatusDispatch.UNIT_DECLINED:
             return 'fill-error-600';
         case StatusDispatch.ON_SCENE:
-            return 'fill-primary-600';
+            return 'fill-info-700';
         case StatusDispatch.NEED_ASSISTANCE:
             return 'fill-warn-600';
         case StatusDispatch.COMPLETED:
@@ -46,7 +46,7 @@ export function dispatchStatusToBGColor(status: StatusDispatch | undefined): str
         case StatusDispatch.EN_ROUTE:
             return 'bg-info-500';
         case StatusDispatch.ON_SCENE:
-            return 'bg-primary-600';
+            return 'bg-info-700';
         case StatusDispatch.NEED_ASSISTANCE:
             return 'bg-warn-600';
         case StatusDispatch.COMPLETED:
