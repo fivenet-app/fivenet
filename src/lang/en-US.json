@@ -238,7 +238,7 @@
                 "description": "Are you sure want to do this potentially dangerous actions? All data associated will be permanently deleted from our servers forever. This action cannot be undone."
             },
             "table_pagination": {
-                "page_count": "Page {current} of {maxPage} à {size} records (Total: {total})"
+                "page_count": "Page {current} of {maxPage} à {size} records (Total {total})"
             }
         },
         "clipboard": {

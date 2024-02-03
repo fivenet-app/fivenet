@@ -238,7 +238,7 @@
                 "description": "Sind Sie sicher, dass Sie diese potenziell gefährlichen Aktionen durchführen wollen? Alle damit verbundenen Daten werden für immer von unseren Servern gelöscht. Diese Aktion kann nicht rückgängig gemacht werden."
             },
             "table_pagination": {
-                "page_count": "Seite {current} von {maxPage} à {size} Einträge (Gesamt: {total})"
+                "page_count": "Seite {current} von {maxPage} à {size} Einträge (Gesamt {total})"
             }
         },
         "clipboard": {
