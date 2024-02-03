@@ -33,8 +33,10 @@ func (x *JobProps) Default(job string) {
 	}
 
 	if x.QuickButtons == nil {
-		x.QuickButtons.BodyCheckup = false
-		x.QuickButtons.PenaltyCalculator = false
+		x.QuickButtons = &QuickButtons{
+			BodyCheckup:       false,
+			PenaltyCalculator: false,
+		}
 	}
 
 	if x.LivemapMarkerColor == "" {
