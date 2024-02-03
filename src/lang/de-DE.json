@@ -573,7 +573,7 @@
         "document": "Dokument | Dokumente",
         "job": "Beruf",
         "livemap": "Karte",
-        "control_panel": "Kontrollzentrum",
+        "control_panel": "Einstellungen",
         "about": "Über",
         "search": "Suche",
         "phone": "Telefon",
@@ -1385,7 +1385,7 @@
             }
         },
         "RectorService": {
-            "category": "Kontrollzentrum",
+            "category": "Einstellungen",
             "GetJobProps": {
                 "key": "Job Eigenschaften ansehen",
                 "description": "Die Eigenschaften deines Jobs anzeigen."
@@ -1431,11 +1431,11 @@
             },
             "CreateOrUpdateUnit": {
                 "key": "Erstellen und Aktualisieren von Einheiten",
-                "description": "Erlaubt das Erstellen und Aktualisieren von Einheiten via Kontrollzentrum."
+                "description": "Erlaubt das Erstellen und Aktualisieren von Einheiten via der Leistellen-Einstellungen."
             },
             "DeleteUnit": {
                 "key": "Einheiten löschen",
-                "description": "Erstellen von Einheiten per Kontrollzentrum."
+                "description": "Erstellen von Einheiten per Leitstellen-Einstellungen."
             },
             "TakeDispatch": {
                 "key": "Einsätze annehmen",
@@ -1626,7 +1626,7 @@
             "ErrFailedStream": "Fehler beim Benachrichtigungs-Datenstrom!"
         },
         "RectorService": {
-            "ErrFailedQuery": "Fehler beim Zugriff auf das Kontrollzentrum!",
+            "ErrFailedQuery": "Fehler beim Zugriff auf die Einstellungen!",
             "ErrInvalidRequest": "Ungültige Rollen Anfrage!",
             "ErrNoPermission": "Keine Berechtigung um Rollen zu erstellen/ ändern/ löschen!",
             "ErrRoleAlreadyExists": "Rolle existiert bereits!",
