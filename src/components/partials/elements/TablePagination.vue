@@ -87,6 +87,11 @@ const pageNumber = ref(currentPage.value.toString());
                 </template>
                 <template #total>
                     <span class="font-medium text-neutral">
+                        {{ total.toString() }}
+                    </span>
+                </template>
+                <template #maxPage>
+                    <span class="font-medium text-neutral">
                         {{ totalPages.toString() }}
                     </span>
                 </template>
