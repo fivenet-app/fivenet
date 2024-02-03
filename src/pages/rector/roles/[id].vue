@@ -8,7 +8,7 @@ useHead({
 definePageMeta({
     title: 'pages.rector.roles.id.title',
     requiresAuth: true,
-    permission: 'RectorService.GetRoles',
+    permission: ['RectorService.GetRoles', 'RectorService.SetJobProps'],
     showQuickButtons: false,
     validate: async (route) => {
         route = route as TypedRouteFromName<'rector-roles-id'>;
