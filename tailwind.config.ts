@@ -37,17 +37,6 @@ export default <Partial<Config>>{
                             900: '#171330',
                         },
                         secondary: {
-                            100: '#d4d5e8',
-                            200: '#a9abd0',
-                            300: '#7d80b9',
-                            400: '#5256a1',
-                            500: '#272c8a',
-                            600: '#1f236e',
-                            700: '#171a53',
-                            800: '#101237',
-                            900: '#08091c',
-                        },
-                        accent: {
                             100: '#dbd7e5',
                             200: '#b7afca',
                             300: '#9387b0',
@@ -57,6 +46,17 @@ export default <Partial<Config>>{
                             700: '#2d214a',
                             800: '#1e1631',
                             900: '#0f0b19',
+                        },
+                        accent: {
+                            100: '#d4d5e8',
+                            200: '#a9abd0',
+                            300: '#7d80b9',
+                            400: '#5256a1',
+                            500: '#272c8a',
+                            600: '#1f236e',
+                            700: '#171a53',
+                            800: '#101237',
+                            900: '#08091c',
                         },
                         error: {
                             100: '#f7d4d7',
@@ -107,7 +107,7 @@ export default <Partial<Config>>{
             },
             themes: [
                 {
-                    name: 'theme-purple',
+                    name: 'themePurple',
                     extend: {
                         primary: {
                             100: '#e3dffc',
@@ -145,7 +145,7 @@ export default <Partial<Config>>{
                     },
                 },
                 {
-                    name: 'theme-baddie-red',
+                    name: 'themeBaddieOrange',
                     extend: {
                         colors: {
                             // Based upon #0079a6

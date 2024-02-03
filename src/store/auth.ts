@@ -8,6 +8,7 @@ import { JobProps, QuickButtons } from '~~/gen/ts/resources/users/jobs';
 import { User } from '~~/gen/ts/resources/users/users';
 
 export type JobPropsState = {
+    theme: string;
     radioFrequency?: string;
     quickButtons?: QuickButtons;
 };
@@ -70,6 +71,7 @@ export const useAuthStore = defineStore('auth', {
                 this.jobProps = null;
             } else {
                 this.jobProps = {
+                    theme: jp.theme,
                     radioFrequency: jp.radioFrequency,
                     quickButtons: jp.quickButtons,
                 };

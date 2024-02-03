@@ -9,8 +9,12 @@ import { useClipboardStore } from '~/store/clipboard';
 import { useConfigStore } from '~/store/config';
 import { useDocumentEditorStore } from '~/store/documenteditor';
 import { useSettingsStore } from '~/store/settings';
+import { useAuthStore } from '~/store/auth';
 
 const { t, locale, finalizePendingLocaleChange } = useI18n();
+
+const authStore = useAuthStore();
+const { jobProps } = storeToRefs(authStore);
 
 const configStore = useConfigStore();
 const { isNUIAvailable, updateAvailable } = storeToRefs(configStore);
@@ -27,7 +31,7 @@ useHead({
         lang: 'en',
     },
     bodyAttrs: {
-        class: 'bg-body-color h-full overflow-hidden', // theme-baddie-red
+        class: () => 'bg-body-color h-full overflow-hidden ' + (jobProps.value?.theme ?? 'defaultTheme'),
     },
     titleTemplate: (title?: string) => {
         if (title?.includes('.')) {

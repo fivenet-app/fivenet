@@ -1,13 +1,25 @@
 <script lang="ts" setup>
-import { Disclosure, DisclosureButton, DisclosurePanel, Switch, SwitchGroup, SwitchLabel } from '@headlessui/vue';
+import {
+    Disclosure,
+    DisclosureButton,
+    DisclosurePanel,
+    Switch,
+    SwitchGroup,
+    SwitchLabel,
+    Listbox,
+    ListboxButton,
+    ListboxOption,
+    ListboxOptions,
+} from '@headlessui/vue';
 import { RpcError } from '@protobuf-ts/runtime-rpc';
 import { useThrottleFn } from '@vueuse/core';
-import { ChevronDownIcon, LoadingIcon, TuneIcon } from 'mdi-vue3';
+import { CheckIcon, ChevronDownIcon, LoadingIcon, TuneIcon } from 'mdi-vue3';
 import ColorInput from 'vue-color-input/dist/color-input.esm';
 import DataErrorBlock from '~/components/partials/data/DataErrorBlock.vue';
 import DataNoDataBlock from '~/components/partials/data/DataNoDataBlock.vue';
 import DataPendingBlock from '~/components/partials/data/DataPendingBlock.vue';
 import GenericTime from '~/components/partials/elements/GenericTime.vue';
+import { useAuthStore } from '~/store/auth';
 import { useNotificatorStore } from '~/store/notificator';
 import { JobProps } from '~~/gen/ts/resources/users/jobs';
 
@@ -15,7 +27,15 @@ const { $grpc } = useNuxtApp();
 
 const appConfig = useAppConfig();
 
+const authStore = useAuthStore();
+
 const notifications = useNotificatorStore();
+
+const availableThemes = [
+    { name: 'Default', key: 'defaultTheme' },
+    { name: 'Baddie Orange', key: 'themeBaddieOrange' },
+    { name: 'Purple', key: 'themePurple' },
+];
 
 async function getJobProps(): Promise<JobProps> {
     try {
@@ -46,6 +66,8 @@ async function saveJobProps(): Promise<void> {
             content: { key: 'notifications.rector.job_props.content', parameters: {} },
             type: 'success',
         });
+
+        authStore.setJobProps(jobProps.value);
     } catch (e) {
         $grpc.handleError(e as RpcError);
         throw e;
@@ -91,7 +113,66 @@ const onSubmitThrottle = useThrottleFn(async (_) => {
                                     {{ $t('common.theme') }}
                                 </dt>
                                 <dd class="mt-1 text-sm sm:col-span-2 sm:mt-0">
-                                    {{ jobProps.theme }}
+                                    <Listbox v-model="jobProps.theme" as="div">
+                                        <div class="relative">
+                                            <ListboxButton
+                                                class="block w-full rounded-md border-0 bg-base-700 py-1.5 pl-3 text-left text-neutral placeholder:text-base-200 focus:ring-2 focus:ring-inset focus:ring-base-300 sm:text-sm sm:leading-6"
+                                            >
+                                                <span class="block truncate">
+                                                    {{ availableThemes.find((t) => t.key === jobProps?.theme)?.name }}
+                                                </span>
+                                                <span
+                                                    class="pointer-events-none absolute inset-y-0 right-0 flex items-center pr-2"
+                                                >
+                                                    <ChevronDownIcon class="h-5 w-5 text-gray-400" aria-hidden="true" />
+                                                </span>
+                                            </ListboxButton>
+
+                                            <transition
+                                                leave-active-class="transition duration-100 ease-in"
+                                                leave-from-class="opacity-100"
+                                                leave-to-class="opacity-0"
+                                            >
+                                                <ListboxOptions
+                                                    class="absolute z-10 mt-1 max-h-44 w-full overflow-auto rounded-md bg-base-700 py-1 text-base sm:text-sm"
+                                                >
+                                                    <ListboxOption
+                                                        v-for="theme in availableThemes"
+                                                        :key="theme.key"
+                                                        v-slot="{ active, selected }"
+                                                        as="template"
+                                                        :value="theme.key"
+                                                    >
+                                                        <li
+                                                            :class="[
+                                                                active ? 'bg-primary-500' : '',
+                                                                'relative cursor-default select-none py-2 pl-8 pr-4 text-neutral',
+                                                            ]"
+                                                        >
+                                                            <span
+                                                                :class="[
+                                                                    selected ? 'font-semibold' : 'font-normal',
+                                                                    'block truncate',
+                                                                ]"
+                                                            >
+                                                                {{ theme.name }}
+                                                            </span>
+
+                                                            <span
+                                                                v-if="selected"
+                                                                :class="[
+                                                                    active ? 'text-neutral' : 'text-primary-500',
+                                                                    'absolute inset-y-0 left-0 flex items-center pl-1.5',
+                                                                ]"
+                                                            >
+                                                                <CheckIcon class="h-5 w-5" aria-hidden="true" />
+                                                            </span>
+                                                        </li>
+                                                    </ListboxOption>
+                                                </ListboxOptions>
+                                            </transition>
+                                        </div>
+                                    </Listbox>
                                 </dd>
                             </div>
                             <div class="py-4 sm:grid sm:grid-cols-3 sm:gap-4 sm:px-5 sm:py-4">
@@ -396,7 +477,7 @@ const onSubmitThrottle = useThrottleFn(async (_) => {
                                         :class="[
                                             !canSubmit
                                                 ? 'disabled bg-base-500 hover:bg-base-400 focus-visible:outline-base-500'
-                                                : 'bg-success-600 hover:bg-success-400 focus-visible:outline-success-500',
+                                                : 'bg-primary-600 hover:bg-primary-400 focus-visible:outline-primary-500',
                                         ]"
                                         :disabled="!canSubmit"
                                         @click="onSubmitThrottle"
