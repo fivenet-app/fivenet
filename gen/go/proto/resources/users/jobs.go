@@ -32,6 +32,11 @@ func (x *JobProps) Default(job string) {
 		x.Theme = "defaultTheme"
 	}
 
+	if x.QuickButtons == nil {
+		x.QuickButtons.BodyCheckup = false
+		x.QuickButtons.PenaltyCalculator = false
+	}
+
 	if x.LivemapMarkerColor == "" {
 		x.LivemapMarkerColor = DefaultLivemapMarkerColor
 	}
