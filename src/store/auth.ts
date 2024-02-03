@@ -36,6 +36,7 @@ export const useAuthStore = defineStore('auth', {
         loginError: null as null | string,
         permissions: [] as string[],
         jobProps: {
+            theme: 'defaultTheme',
             radioFrequency: undefined,
             quickButtons: {} as QuickButtons,
         } as null | JobPropsState,
