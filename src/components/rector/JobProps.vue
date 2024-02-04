@@ -35,6 +35,7 @@ const availableThemes = [
     { name: 'Default', key: 'defaultTheme' },
     { name: 'Baddie Orange', key: 'themeBaddieOrange' },
     { name: 'Baddie Pink', key: 'themeBaddiePink' },
+    { name: 'Baddie Yellow', key: 'themeBaddieYellow' },
     { name: 'Da Medic', key: 'themeDaMedic' },
     { name: 'Purple', key: 'themePurple' },
 ];
