@@ -63,7 +63,7 @@ function nextHint(): void {
                     <GenericBadge v-if="hint.keyboard" class="ml-1 text-black" color="gray">
                         <kbd class="font-sans">{{ $t(`components.hints.${hint.key}.keyboard`) }}</kbd>
                     </GenericBadge>
-                    <NuxtLink v-else-if="hint.link" :to="hint.link" class="ml-1 text-base-200 underline">
+                    <NuxtLink v-else-if="hint.link" :to="hint.link" class="ml-1 text-accent-200 underline">
                         {{ $t('components.hints.click_me') }}
                     </NuxtLink>
                 </p>

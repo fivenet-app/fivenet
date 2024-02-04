@@ -108,7 +108,7 @@ watchDebounced(query.value, () => refresh(), { debounce: 600, maxWait: 1400 });
                                         type="text"
                                         name="searchName"
                                         :placeholder="`${$t('common.citizen', 1)} ${$t('common.name')}`"
-                                        class="block w-full rounded-md border-0 bg-base-700 py-1.5 pr-14 text-neutral placeholder:text-base-200 focus:ring-2 focus:ring-inset focus:ring-base-300 sm:text-sm sm:leading-6"
+                                        class="block w-full rounded-md border-0 bg-base-700 py-1.5 pr-14 text-neutral placeholder:text-accent-200 focus:ring-2 focus:ring-inset focus:ring-base-300 sm:text-sm sm:leading-6"
                                     />
                                 </div>
                             </div>
@@ -125,7 +125,7 @@ watchDebounced(query.value, () => refresh(), { debounce: 600, maxWait: 1400 });
                                         name="dateofbirth"
                                         data-maska="##.##.####"
                                         :placeholder="`${$t('common.date_of_birth')} (DD.MM.YYYY)`"
-                                        class="block w-full rounded-md border-0 bg-base-700 py-1.5 pr-14 text-neutral placeholder:text-base-200 focus:ring-2 focus:ring-inset focus:ring-base-300 sm:text-sm sm:leading-6"
+                                        class="block w-full rounded-md border-0 bg-base-700 py-1.5 pr-14 text-neutral placeholder:text-accent-200 focus:ring-2 focus:ring-inset focus:ring-base-300 sm:text-sm sm:leading-6"
                                         @focusin="focusTablet(true)"
                                         @focusout="focusTablet(false)"
                                     />
@@ -162,7 +162,7 @@ watchDebounced(query.value, () => refresh(), { debounce: 600, maxWait: 1400 });
                         </div>
                         <Disclosure v-slot="{ open }" as="div" class="pt-2">
                             <DisclosureButton class="flex w-full items-start justify-between text-left text-sm text-neutral">
-                                <span class="leading-7 text-base-200">{{ $t('common.advanced_search') }}</span>
+                                <span class="leading-7 text-accent-200">{{ $t('common.advanced_search') }}</span>
                                 <span class="ml-6 flex h-7 items-center">
                                     <ChevronDownIcon
                                         :class="[open ? 'upsidedown' : '', 'h-5 w-5 transition-transform']"
@@ -186,7 +186,7 @@ watchDebounced(query.value, () => refresh(), { debounce: 600, maxWait: 1400 });
                                                 type="tel"
                                                 name="searchPhone"
                                                 :placeholder="$t('common.phone_number')"
-                                                class="block w-full rounded-md border-0 bg-base-700 py-1.5 pr-14 text-neutral placeholder:text-base-200 focus:ring-2 focus:ring-inset focus:ring-base-300 sm:text-sm sm:leading-6"
+                                                class="block w-full rounded-md border-0 bg-base-700 py-1.5 pr-14 text-neutral placeholder:text-accent-200 focus:ring-2 focus:ring-inset focus:ring-base-300 sm:text-sm sm:leading-6"
                                                 @focusin="focusTablet(true)"
                                                 @focusout="focusTablet(false)"
                                             />
@@ -206,7 +206,7 @@ watchDebounced(query.value, () => refresh(), { debounce: 600, maxWait: 1400 });
                                                 type="number"
                                                 name="trafficInfractionPoints"
                                                 :placeholder="`${$t('common.traffic_infraction_points')}`"
-                                                class="block w-full rounded-md border-0 bg-base-700 py-1.5 text-neutral placeholder:text-base-200 focus:ring-2 focus:ring-inset focus:ring-base-300 sm:text-sm sm:leading-6"
+                                                class="block w-full rounded-md border-0 bg-base-700 py-1.5 text-neutral placeholder:text-accent-200 focus:ring-2 focus:ring-inset focus:ring-base-300 sm:text-sm sm:leading-6"
                                                 @focusin="focusTablet(true)"
                                                 @focusout="focusTablet(false)"
                                             />
@@ -225,7 +225,7 @@ watchDebounced(query.value, () => refresh(), { debounce: 600, maxWait: 1400 });
                                                 type="number"
                                                 name="fine"
                                                 :placeholder="`${$t('common.fine')}`"
-                                                class="block w-full rounded-md border-0 bg-base-700 py-1.5 text-neutral placeholder:text-base-200 focus:ring-2 focus:ring-inset focus:ring-base-300 sm:text-sm sm:leading-6"
+                                                class="block w-full rounded-md border-0 bg-base-700 py-1.5 text-neutral placeholder:text-accent-200 focus:ring-2 focus:ring-inset focus:ring-base-300 sm:text-sm sm:leading-6"
                                                 @focusin="focusTablet(true)"
                                                 @focusout="focusTablet(false)"
                                             />

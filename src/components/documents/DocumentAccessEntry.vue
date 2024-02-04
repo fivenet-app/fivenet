@@ -230,14 +230,14 @@ watch(selectedAccessRole, () => {
                 type="text"
                 disabled
                 :value="accessTypes[0].name"
-                class="block w-full rounded-md border-0 bg-base-700 py-1.5 pl-3 text-left text-neutral placeholder:text-base-200 focus:ring-2 focus:ring-inset focus:ring-base-300 sm:text-sm sm:leading-6"
+                class="block w-full rounded-md border-0 bg-base-700 py-1.5 pl-3 text-left text-neutral placeholder:text-accent-200 focus:ring-2 focus:ring-inset focus:ring-base-300 sm:text-sm sm:leading-6"
                 @focusin="focusTablet(true)"
                 @focusout="focusTablet(false)"
             />
             <Listbox v-else v-model="selectedAccessType" as="div" :disabled="readOnly">
                 <div class="relative">
                     <ListboxButton
-                        class="block w-full rounded-md border-0 bg-base-700 py-1.5 pl-3 text-left text-neutral placeholder:text-base-200 focus:ring-2 focus:ring-inset focus:ring-base-300 sm:text-sm sm:leading-6"
+                        class="block w-full rounded-md border-0 bg-base-700 py-1.5 pl-3 text-left text-neutral placeholder:text-accent-200 focus:ring-2 focus:ring-inset focus:ring-base-300 sm:text-sm sm:leading-6"
                     >
                         <span class="block truncate">{{ selectedAccessType?.name }}</span>
                         <span class="pointer-events-none absolute inset-y-0 right-0 flex items-center pr-2">
@@ -293,7 +293,7 @@ watch(selectedAccessRole, () => {
                         <ComboboxButton as="div">
                             <ComboboxInput
                                 autocomplete="off"
-                                class="block w-full rounded-md border-0 bg-base-700 py-1.5 text-neutral placeholder:text-base-200 focus:ring-2 focus:ring-inset focus:ring-base-300 sm:text-sm sm:leading-6"
+                                class="block w-full rounded-md border-0 bg-base-700 py-1.5 text-neutral placeholder:text-accent-200 focus:ring-2 focus:ring-inset focus:ring-base-300 sm:text-sm sm:leading-6"
                                 :display-value="(char: any) => `${char?.firstname} ${char?.lastname} (${char?.dateofbirth})`"
                                 @change="queryCharRaw = $event.target.value"
                                 @focusin="focusTablet(true)"
@@ -345,7 +345,7 @@ watch(selectedAccessRole, () => {
                         <ComboboxButton as="div">
                             <ComboboxInput
                                 autocomplete="off"
-                                class="block w-full rounded-md border-0 bg-base-700 py-1.5 text-neutral placeholder:text-base-200 focus:ring-2 focus:ring-inset focus:ring-base-300 sm:text-sm sm:leading-6"
+                                class="block w-full rounded-md border-0 bg-base-700 py-1.5 text-neutral placeholder:text-accent-200 focus:ring-2 focus:ring-inset focus:ring-base-300 sm:text-sm sm:leading-6"
                                 :display-value="(job: any) => job?.label"
                                 @change="queryJobRaw = $event.target.value"
                                 @focusin="focusTablet(true)"
@@ -394,7 +394,7 @@ watch(selectedAccessRole, () => {
                         <ComboboxButton as="div">
                             <ComboboxInput
                                 autocomplete="off"
-                                class="block w-full rounded-md border-0 bg-base-700 py-1.5 text-neutral placeholder:text-base-200 focus:ring-2 focus:ring-inset focus:ring-base-300 sm:text-sm sm:leading-6"
+                                class="block w-full rounded-md border-0 bg-base-700 py-1.5 text-neutral placeholder:text-accent-200 focus:ring-2 focus:ring-inset focus:ring-base-300 sm:text-sm sm:leading-6"
                                 :display-value="(rank: any) => rank?.label"
                                 @change="queryMinimumRankRaw = $event.target.value"
                                 @focusin="focusTablet(true)"
@@ -445,7 +445,7 @@ watch(selectedAccessRole, () => {
                     <ComboboxButton as="div">
                         <ComboboxInput
                             autocomplete="off"
-                            class="block w-full rounded-md border-0 bg-base-700 py-1.5 text-neutral placeholder:text-base-200 focus:ring-2 focus:ring-inset focus:ring-base-300 sm:text-sm sm:leading-6"
+                            class="block w-full rounded-md border-0 bg-base-700 py-1.5 text-neutral placeholder:text-accent-200 focus:ring-2 focus:ring-inset focus:ring-base-300 sm:text-sm sm:leading-6"
                             :display-value="(role: any) => role.label"
                             @change="queryAccessRole = $event.target.value"
                             @focusin="focusTablet(true)"

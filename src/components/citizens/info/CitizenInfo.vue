@@ -149,7 +149,7 @@ const open = ref(false);
                                     <!-- Mobile menu button -->
                                     <button
                                         type="button"
-                                        class="relative inline-flex items-center justify-center rounded-md bg-base-500 p-2 text-base-200 hover:bg-base-400 hover:bg-opacity-75 hover:text-neutral focus:outline-none focus:ring-2 focus:ring-neutral focus:ring-offset-2 focus:ring-offset-base-600"
+                                        class="relative inline-flex items-center justify-center rounded-md bg-base-500 p-2 text-accent-200 hover:bg-base-400 hover:bg-opacity-75 hover:text-neutral focus:outline-none focus:ring-2 focus:ring-neutral focus:ring-offset-2 focus:ring-offset-base-600"
                                         @click="open = !open"
                                     >
                                         <span class="absolute -inset-0.5" />

@@ -42,7 +42,7 @@ defineEmits<{
                         </span>
                     </div>
                     <div class="mt-4" @click="$emit('selected', itemIdx)">
-                        <h3 class="text-base font-semibold leading-6 text-neutral">
+                        <h3 class="text-base font-semibold leading-6 text-accent-100">
                             <template v-if="item.href !== undefined">
                                 <NuxtLink :to="item.href" class="focus:outline-none">
                                     <!-- Extend touch target to entire panel -->
@@ -56,13 +56,13 @@ defineEmits<{
                                 {{ item.title }}
                             </template>
                         </h3>
-                        <p class="mt-2 text-sm text-base-200">
+                        <p class="mt-2 text-sm text-accent-200">
                             {{ item.description }}
                         </p>
                     </div>
                     <span
                         v-if="showIcon"
-                        class="pointer-events-none absolute right-6 top-6 text-base-300 group-hover:text-base-200"
+                        class="pointer-events-none absolute right-6 top-6 text-base-300 group-hover:text-accent-200"
                         aria-hidden="true"
                     >
                         <ChevronRightIcon class="h-5 w-5" />

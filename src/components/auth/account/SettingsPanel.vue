@@ -57,7 +57,7 @@ watch(darkModeActive, async () => {
                         <select
                             v-if="activeChar"
                             v-model="selectedHomepage"
-                            class="block w-full rounded-md border-0 bg-base-700 py-1.5 text-neutral placeholder:text-base-200 focus:ring-2 focus:ring-inset focus:ring-base-300 sm:text-sm sm:leading-6"
+                            class="block w-full rounded-md border-0 bg-base-700 py-1.5 text-neutral placeholder:text-accent-200 focus:ring-2 focus:ring-inset focus:ring-base-300 sm:text-sm sm:leading-6"
                             @focusin="focusTablet(true)"
                             @focusout="focusTablet(false)"
                         >

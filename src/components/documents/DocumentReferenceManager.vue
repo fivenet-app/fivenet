@@ -180,7 +180,7 @@ function removeReference(id: string): void {
                                             :class="[
                                                 selected
                                                     ? 'border-primary-500 text-primary-500'
-                                                    : 'border-transparent text-base-300 hover:border-base-300 hover:text-base-200',
+                                                    : 'border-transparent text-base-300 hover:border-base-300 hover:text-accent-200',
                                                 'text-m group inline-flex w-full items-center justify-center border-b-2 px-1 py-4 font-medium transition-colors',
                                             ]"
                                             :aria-current="selected ? 'page' : undefined"
@@ -188,7 +188,7 @@ function removeReference(id: string): void {
                                             <component
                                                 :is="tab.icon"
                                                 :class="[
-                                                    selected ? 'text-primary-500' : 'text-base-300 group-hover:text-base-200',
+                                                    selected ? 'text-primary-500' : 'text-base-300 group-hover:text-accent-200',
                                                     '-ml-0.5 mr-2 h-5 w-5 transition-colors',
                                                 ]"
                                                 aria-hidden="true"
@@ -483,7 +483,7 @@ function removeReference(id: string): void {
                                                     v-model="queryDoc"
                                                     type="text"
                                                     name="title"
-                                                    class="block w-full rounded-md border-0 bg-base-700 py-1.5 text-neutral placeholder:text-base-200 focus:ring-2 focus:ring-inset focus:ring-base-300 sm:text-sm sm:leading-6"
+                                                    class="block w-full rounded-md border-0 bg-base-700 py-1.5 text-neutral placeholder:text-accent-200 focus:ring-2 focus:ring-inset focus:ring-base-300 sm:text-sm sm:leading-6"
                                                     :placeholder="`${$t('common.document', 1)} ${$t('common.title')}`"
                                                     @focusin="focusTablet(true)"
                                                     @focusout="focusTablet(false)"

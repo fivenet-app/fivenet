@@ -34,13 +34,13 @@ function addToClipboard(): void {
         <td class="max-w-[4rem] whitespace-nowrap py-2 pl-4 pr-3 text-sm font-medium text-neutral sm:pl-1">
             <LicensePlate :plate="vehicle.plate" class="mr-2" />
         </td>
-        <td class="whitespace-nowrap px-1 py-1 text-left text-base-200">
+        <td class="whitespace-nowrap px-1 py-1 text-left text-accent-200">
             {{ vehicle.model }}
         </td>
-        <td class="whitespace-nowrap px-1 py-1 text-left text-base-200">
+        <td class="whitespace-nowrap px-1 py-1 text-left text-accent-200">
             {{ toTitleCase(vehicle.type) }}
         </td>
-        <td v-if="!hideOwner" class="whitespace-nowrap px-1 py-1 text-left text-base-200">
+        <td v-if="!hideOwner" class="whitespace-nowrap px-1 py-1 text-left text-accent-200">
             <CitizenInfoPopover :user="vehicle.owner" />
         </td>
         <td

@@ -222,7 +222,7 @@ const onSubmitThrottle = useThrottleFn(async (e) => {
                                                                 <VeeField
                                                                     type="text"
                                                                     name="name"
-                                                                    class="block w-full rounded-md border-0 bg-base-700 py-1.5 text-neutral placeholder:text-base-200 focus:ring-2 focus:ring-inset focus:ring-base-300 sm:text-sm sm:leading-6"
+                                                                    class="block w-full rounded-md border-0 bg-base-700 py-1.5 text-neutral placeholder:text-accent-200 focus:ring-2 focus:ring-inset focus:ring-base-300 sm:text-sm sm:leading-6"
                                                                     :placeholder="$t('common.name')"
                                                                     :label="$t('common.name')"
                                                                     @focusin="focusTablet(true)"
@@ -250,7 +250,7 @@ const onSubmitThrottle = useThrottleFn(async (e) => {
                                                                 <VeeField
                                                                     type="text"
                                                                     name="description"
-                                                                    class="block w-full rounded-md border-0 bg-base-700 py-1.5 text-neutral placeholder:text-base-200 focus:ring-2 focus:ring-inset focus:ring-base-300 sm:text-sm sm:leading-6"
+                                                                    class="block w-full rounded-md border-0 bg-base-700 py-1.5 text-neutral placeholder:text-accent-200 focus:ring-2 focus:ring-inset focus:ring-base-300 sm:text-sm sm:leading-6"
                                                                     :placeholder="$t('common.description')"
                                                                     :label="$t('common.description')"
                                                                     @focusin="focusTablet(true)"
@@ -278,7 +278,7 @@ const onSubmitThrottle = useThrottleFn(async (e) => {
                                                                 <VeeField
                                                                     type="datetime-local"
                                                                     name="expiresAt"
-                                                                    class="block w-full rounded-md border-0 bg-base-700 py-1.5 text-neutral placeholder:text-base-200 focus:ring-2 focus:ring-inset focus:ring-base-300 sm:text-sm sm:leading-6"
+                                                                    class="block w-full rounded-md border-0 bg-base-700 py-1.5 text-neutral placeholder:text-accent-200 focus:ring-2 focus:ring-inset focus:ring-base-300 sm:text-sm sm:leading-6"
                                                                     :placeholder="$t('common.expires_at')"
                                                                     :label="$t('common.expires_at')"
                                                                     @focusin="focusTablet(true)"
@@ -333,7 +333,7 @@ const onSubmitThrottle = useThrottleFn(async (e) => {
                                                                 >
                                                                     <select
                                                                         v-bind="field"
-                                                                        class="block w-full rounded-md border-0 bg-base-700 py-1.5 text-neutral placeholder:text-base-200 focus:ring-2 focus:ring-inset focus:ring-base-300 sm:text-sm sm:leading-6"
+                                                                        class="block w-full rounded-md border-0 bg-base-700 py-1.5 text-neutral placeholder:text-accent-200 focus:ring-2 focus:ring-inset focus:ring-base-300 sm:text-sm sm:leading-6"
                                                                         @focusin="focusTablet(true)"
                                                                         @focusout="focusTablet(false)"
                                                                     >
@@ -382,7 +382,7 @@ const onSubmitThrottle = useThrottleFn(async (e) => {
                                                                     name="circleRadius"
                                                                     min="5"
                                                                     max="250"
-                                                                    class="block w-full rounded-md border-0 bg-base-700 py-1.5 text-neutral placeholder:text-base-200 focus:ring-2 focus:ring-inset focus:ring-base-300 sm:text-sm sm:leading-6"
+                                                                    class="block w-full rounded-md border-0 bg-base-700 py-1.5 text-neutral placeholder:text-accent-200 focus:ring-2 focus:ring-inset focus:ring-base-300 sm:text-sm sm:leading-6"
                                                                     :placeholder="$t('common.radius')"
                                                                     :label="$t('common.radius')"
                                                                 />
@@ -418,11 +418,11 @@ const onSubmitThrottle = useThrottleFn(async (e) => {
                                                                         <div class="relative">
                                                                             <ComboboxButton
                                                                                 as="div"
-                                                                                class="block w-full rounded-md border-0 bg-base-700 py-1.5 pl-3 text-left text-neutral placeholder:text-base-200 focus:ring-2 focus:ring-inset focus:ring-base-300 sm:text-sm sm:leading-6"
+                                                                                class="block w-full rounded-md border-0 bg-base-700 py-1.5 pl-3 text-left text-neutral placeholder:text-accent-200 focus:ring-2 focus:ring-inset focus:ring-base-300 sm:text-sm sm:leading-6"
                                                                             >
                                                                                 <ComboboxInput
                                                                                     autocomplete="off"
-                                                                                    class="block w-full rounded-md border-0 bg-base-700 py-1.5 text-neutral placeholder:text-base-200 focus:ring-2 focus:ring-inset focus:ring-base-300 sm:text-sm sm:leading-6"
+                                                                                    class="block w-full rounded-md border-0 bg-base-700 py-1.5 text-neutral placeholder:text-accent-200 focus:ring-2 focus:ring-inset focus:ring-base-300 sm:text-sm sm:leading-6"
                                                                                     :placeholder="$t('common.icon')"
                                                                                     @change="queryIcon = $event.target.value"
                                                                                     @focusin="focusTablet(true)"

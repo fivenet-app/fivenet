@@ -48,7 +48,7 @@ defineEmits<{
                         min="0"
                         oninput="validity.valid||(value='');"
                         name="users"
-                        class="block w-full rounded-r-md border-0 bg-base-700 py-1.5 text-neutral transition-colors placeholder:text-base-200 focus:ring-2 focus:ring-inset focus:ring-base-300 disabled:text-base-400 sm:text-sm sm:leading-6"
+                        class="block w-full rounded-r-md border-0 bg-base-700 py-1.5 text-neutral transition-colors placeholder:text-accent-200 focus:ring-2 focus:ring-inset focus:ring-base-300 disabled:text-base-400 sm:text-sm sm:leading-6"
                         @focusin="focusTablet(true)"
                         @focusout="focusTablet(false)"
                     />
@@ -65,7 +65,7 @@ defineEmits<{
                         min="0"
                         oninput="validity.valid||(value='');"
                         name="users"
-                        class="block w-full rounded-r-md border-0 bg-base-700 py-1.5 text-neutral transition-colors placeholder:text-base-200 focus:ring-2 focus:ring-inset focus:ring-base-300 disabled:text-base-400 sm:text-sm sm:leading-6"
+                        class="block w-full rounded-r-md border-0 bg-base-700 py-1.5 text-neutral transition-colors placeholder:text-accent-200 focus:ring-2 focus:ring-inset focus:ring-base-300 disabled:text-base-400 sm:text-sm sm:leading-6"
                         @focusin="focusTablet(true)"
                         @focusout="focusTablet(false)"
                     />
@@ -100,7 +100,7 @@ defineEmits<{
                         min="0"
                         oninput="validity.valid||(value='');"
                         name="documents"
-                        class="block w-full rounded-r-md border-0 bg-base-700 py-1.5 text-neutral transition-colors placeholder:text-base-200 focus:ring-2 focus:ring-inset focus:ring-base-300 disabled:text-base-400 sm:text-sm sm:leading-6"
+                        class="block w-full rounded-r-md border-0 bg-base-700 py-1.5 text-neutral transition-colors placeholder:text-accent-200 focus:ring-2 focus:ring-inset focus:ring-base-300 disabled:text-base-400 sm:text-sm sm:leading-6"
                         @focusin="focusTablet(true)"
                         @focusout="focusTablet(false)"
                     />
@@ -117,7 +117,7 @@ defineEmits<{
                         min="0"
                         oninput="validity.valid||(value='');"
                         name="documents"
-                        class="block w-full rounded-r-md border-0 bg-base-700 py-1.5 text-neutral transition-colors placeholder:text-base-200 focus:ring-2 focus:ring-inset focus:ring-base-300 disabled:text-base-400 sm:text-sm sm:leading-6"
+                        class="block w-full rounded-r-md border-0 bg-base-700 py-1.5 text-neutral transition-colors placeholder:text-accent-200 focus:ring-2 focus:ring-inset focus:ring-base-300 disabled:text-base-400 sm:text-sm sm:leading-6"
                         @focusin="focusTablet(true)"
                         @focusout="focusTablet(false)"
                     />
@@ -152,7 +152,7 @@ defineEmits<{
                         min="0"
                         oninput="validity.valid||(value='');"
                         name="vehicles"
-                        class="block w-full rounded-r-md border-0 bg-base-700 py-1.5 text-neutral transition-colors placeholder:text-base-200 focus:ring-2 focus:ring-inset focus:ring-base-300 disabled:text-base-400 sm:text-sm sm:leading-6"
+                        class="block w-full rounded-r-md border-0 bg-base-700 py-1.5 text-neutral transition-colors placeholder:text-accent-200 focus:ring-2 focus:ring-inset focus:ring-base-300 disabled:text-base-400 sm:text-sm sm:leading-6"
                         @focusin="focusTablet(true)"
                         @focusout="focusTablet(false)"
                     />
@@ -169,7 +169,7 @@ defineEmits<{
                         min="0"
                         oninput="validity.valid||(value='');"
                         name="vehicles"
-                        class="block w-full rounded-r-md border-0 bg-base-700 py-1.5 text-neutral transition-colors placeholder:text-base-200 focus:ring-2 focus:ring-inset focus:ring-base-300 disabled:text-base-400 sm:text-sm sm:leading-6"
+                        class="block w-full rounded-r-md border-0 bg-base-700 py-1.5 text-neutral transition-colors placeholder:text-accent-200 focus:ring-2 focus:ring-inset focus:ring-base-300 disabled:text-base-400 sm:text-sm sm:leading-6"
                         @focusin="focusTablet(true)"
                         @focusout="focusTablet(false)"
                     />

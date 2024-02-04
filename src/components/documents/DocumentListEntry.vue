@@ -56,7 +56,7 @@ defineProps<{
                     </div>
                 </div>
 
-                <div class="flex flex-row gap-2 truncate text-base-200">
+                <div class="flex flex-row gap-2 truncate text-accent-200">
                     <h2 class="inline-flex items-center gap-1 truncate text-xl font-medium text-neutral">
                         <span
                             v-if="doc.category"
@@ -86,7 +86,7 @@ defineProps<{
                     </div>
                 </div>
 
-                <div class="flex flex-row gap-2 text-base-200">
+                <div class="flex flex-row gap-2 text-accent-200">
                     <div class="flex flex-1 flex-row items-center justify-start">
                         <CitizenInfoPopover :user="doc.creator">
                             <template #before>

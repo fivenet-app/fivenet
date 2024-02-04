@@ -96,7 +96,7 @@ const onSubmitThrottle = useThrottleFn(async (e) => {
                         autocomplete="registrationToken"
                         :placeholder="$t('components.auth.forgot_password.registration_token')"
                         :label="$t('components.auth.forgot_password.registration_token')"
-                        class="block w-full rounded-md border-0 bg-base-700 py-1.5 text-neutral placeholder:text-base-200 focus:ring-2 focus:ring-inset focus:ring-base-300 sm:text-lg sm:leading-6"
+                        class="block w-full rounded-md border-0 bg-base-700 py-1.5 text-neutral placeholder:text-accent-200 focus:ring-2 focus:ring-inset focus:ring-base-300 sm:text-lg sm:leading-6"
                         @focusin="focusTablet(true)"
                         @focusout="focusTablet(false)"
                     />
@@ -115,7 +115,7 @@ const onSubmitThrottle = useThrottleFn(async (e) => {
                         autocomplete="current-password"
                         :placeholder="$t('common.password')"
                         :label="$t('common.password')"
-                        class="block w-full rounded-md border-0 bg-base-700 py-1.5 text-neutral placeholder:text-base-200 focus:ring-2 focus:ring-inset focus:ring-base-300 sm:text-sm sm:leading-6"
+                        class="block w-full rounded-md border-0 bg-base-700 py-1.5 text-neutral placeholder:text-accent-200 focus:ring-2 focus:ring-inset focus:ring-base-300 sm:text-sm sm:leading-6"
                         @focusin="focusTablet(true)"
                         @focusout="focusTablet(false)"
                     />

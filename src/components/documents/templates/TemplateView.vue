@@ -221,7 +221,7 @@ onConfirm(async (id) => deleteTemplate(id));
                             <input
                                 type="text"
                                 name="weight"
-                                class="block w-full rounded-md border-0 bg-base-700 py-1.5 text-neutral placeholder:text-base-200 focus:ring-2 focus:ring-inset focus:ring-base-300 sm:text-sm sm:leading-6"
+                                class="block w-full rounded-md border-0 bg-base-700 py-1.5 text-neutral placeholder:text-accent-200 focus:ring-2 focus:ring-inset focus:ring-base-300 sm:text-sm sm:leading-6"
                                 disabled
                                 :value="template.weight"
                                 @focusin="focusTablet(true)"
@@ -251,7 +251,7 @@ onConfirm(async (id) => deleteTemplate(id));
                             <textarea
                                 rows="4"
                                 name="contentTitle"
-                                class="block w-full whitespace-pre-wrap rounded-md border-0 bg-base-700 py-1.5 text-neutral placeholder:text-base-200 focus:ring-2 focus:ring-inset focus:ring-base-300 sm:text-sm sm:leading-6"
+                                class="block w-full whitespace-pre-wrap rounded-md border-0 bg-base-700 py-1.5 text-neutral placeholder:text-accent-200 focus:ring-2 focus:ring-inset focus:ring-base-300 sm:text-sm sm:leading-6"
                                 disabled
                                 :value="template.contentTitle"
                                 @focusin="focusTablet(true)"
@@ -267,7 +267,7 @@ onConfirm(async (id) => deleteTemplate(id));
                             <input
                                 type="text"
                                 name="state"
-                                class="block w-full whitespace-pre-wrap rounded-md border-0 bg-base-700 py-1.5 text-neutral placeholder:text-base-200 focus:ring-2 focus:ring-inset focus:ring-base-300 sm:text-sm sm:leading-6"
+                                class="block w-full whitespace-pre-wrap rounded-md border-0 bg-base-700 py-1.5 text-neutral placeholder:text-accent-200 focus:ring-2 focus:ring-inset focus:ring-base-300 sm:text-sm sm:leading-6"
                                 disabled
                                 :value="template.state"
                                 @focusin="focusTablet(true)"
@@ -294,7 +294,7 @@ onConfirm(async (id) => deleteTemplate(id));
                             <textarea
                                 rows="4"
                                 name="content"
-                                class="block w-full rounded-md border-0 bg-base-700 py-1.5 text-neutral placeholder:text-base-200 focus:ring-2 focus:ring-inset focus:ring-base-300 sm:text-sm sm:leading-6"
+                                class="block w-full rounded-md border-0 bg-base-700 py-1.5 text-neutral placeholder:text-accent-200 focus:ring-2 focus:ring-inset focus:ring-base-300 sm:text-sm sm:leading-6"
                                 disabled
                                 :value="template.content"
                                 @focusin="focusTablet(true)"

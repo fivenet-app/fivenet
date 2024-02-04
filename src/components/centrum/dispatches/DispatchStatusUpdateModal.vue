@@ -208,7 +208,7 @@ watch(props, () => {
                                                                 <VeeField
                                                                     type="text"
                                                                     name="code"
-                                                                    class="block w-full rounded-md border-0 bg-base-700 py-1.5 text-neutral placeholder:text-base-200 focus:ring-2 focus:ring-inset focus:ring-base-300 sm:text-sm sm:leading-6"
+                                                                    class="block w-full rounded-md border-0 bg-base-700 py-1.5 text-neutral placeholder:text-accent-200 focus:ring-2 focus:ring-inset focus:ring-base-300 sm:text-sm sm:leading-6"
                                                                     :placeholder="$t('common.code')"
                                                                     :label="$t('common.code')"
                                                                     @focusin="focusTablet(true)"
@@ -236,7 +236,7 @@ watch(props, () => {
                                                                 <VeeField
                                                                     type="text"
                                                                     name="reason"
-                                                                    class="block w-full rounded-md border-0 bg-base-700 py-1.5 text-neutral placeholder:text-base-200 focus:ring-2 focus:ring-inset focus:ring-base-300 sm:text-sm sm:leading-6"
+                                                                    class="block w-full rounded-md border-0 bg-base-700 py-1.5 text-neutral placeholder:text-accent-200 focus:ring-2 focus:ring-inset focus:ring-base-300 sm:text-sm sm:leading-6"
                                                                     :placeholder="$t('common.reason')"
                                                                     :label="$t('common.reason')"
                                                                     @focusin="focusTablet(true)"

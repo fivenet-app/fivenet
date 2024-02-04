@@ -34,8 +34,9 @@ const notifications = useNotificatorStore();
 const availableThemes = [
     { name: 'Default', key: 'defaultTheme' },
     { name: 'Baddie Orange', key: 'themeBaddieOrange' },
-    { name: 'Purple', key: 'themePurple' },
     { name: 'Baddie Pink', key: 'themeBaddiePink' },
+    { name: 'Da Medic', key: 'themeDaMedic' },
+    { name: 'Purple', key: 'themePurple' },
 ];
 
 async function getJobProps(): Promise<JobProps> {
@@ -117,7 +118,7 @@ const onSubmitThrottle = useThrottleFn(async (_) => {
                                     <Listbox v-model="jobProps.theme" as="div">
                                         <div class="relative">
                                             <ListboxButton
-                                                class="block w-full rounded-md border-0 bg-base-700 py-1.5 pl-3 text-left text-neutral placeholder:text-base-200 focus:ring-2 focus:ring-inset focus:ring-base-300 sm:text-sm sm:leading-6"
+                                                class="block w-full rounded-md border-0 bg-base-700 py-1.5 pl-3 text-left text-neutral placeholder:text-accent-200 focus:ring-2 focus:ring-inset focus:ring-base-300 sm:text-sm sm:leading-6"
                                             >
                                                 <span class="block truncate">
                                                     {{ availableThemes.find((t) => t.key === jobProps?.theme)?.name }}
@@ -197,7 +198,7 @@ const onSubmitThrottle = useThrottleFn(async (_) => {
                                     <input
                                         v-model="jobProps.radioFrequency"
                                         type="text"
-                                        class="block w-full rounded-md border-0 bg-base-700 py-1.5 text-neutral placeholder:text-base-200 focus:ring-2 focus:ring-inset focus:ring-base-300 sm:text-sm sm:leading-6"
+                                        class="block w-full rounded-md border-0 bg-base-700 py-1.5 text-neutral placeholder:text-accent-200 focus:ring-2 focus:ring-inset focus:ring-base-300 sm:text-sm sm:leading-6"
                                         :placeholder="$t('common.radio_frequency')"
                                         :label="$t('common.radio_frequency')"
                                         maxlength="24"
@@ -277,7 +278,7 @@ const onSubmitThrottle = useThrottleFn(async (_) => {
                                     <input
                                         v-model="jobProps.discordGuildId"
                                         type="text"
-                                        class="block w-full rounded-md border-0 bg-base-700 py-1.5 text-neutral placeholder:text-base-200 focus:ring-2 focus:ring-inset focus:ring-base-300 sm:text-sm sm:leading-6"
+                                        class="block w-full rounded-md border-0 bg-base-700 py-1.5 text-neutral placeholder:text-accent-200 focus:ring-2 focus:ring-inset focus:ring-base-300 sm:text-sm sm:leading-6"
                                         :class="appConfig.discord.botInviteURL === undefined ? 'disabled' : ''"
                                         :disabled="appConfig.discord.botInviteURL === undefined"
                                         :placeholder="$t('components.rector.job_props.discord_guild_id')"
@@ -408,7 +409,7 @@ const onSubmitThrottle = useThrottleFn(async (_) => {
                                                         "
                                                         type="text"
                                                         name="gradeRoleFormat"
-                                                        class="block w-full rounded-md border-0 bg-base-700 py-1.5 text-neutral placeholder:text-base-200 focus:ring-2 focus:ring-inset focus:ring-base-300 sm:text-sm sm:leading-6"
+                                                        class="block w-full rounded-md border-0 bg-base-700 py-1.5 text-neutral placeholder:text-accent-200 focus:ring-2 focus:ring-inset focus:ring-base-300 sm:text-sm sm:leading-6"
                                                         :placeholder="
                                                             $t(
                                                                 'components.rector.job_props.user_info_sync_settings.grade_role_format',
@@ -444,7 +445,7 @@ const onSubmitThrottle = useThrottleFn(async (_) => {
                                                             "
                                                             type="text"
                                                             name="employeeRoleFormat"
-                                                            class="block w-full rounded-md border-0 bg-base-700 py-1.5 text-neutral placeholder:text-base-200 focus:ring-2 focus:ring-inset focus:ring-base-300 sm:text-sm sm:leading-6"
+                                                            class="block w-full rounded-md border-0 bg-base-700 py-1.5 text-neutral placeholder:text-accent-200 focus:ring-2 focus:ring-inset focus:ring-base-300 sm:text-sm sm:leading-6"
                                                             :placeholder="
                                                                 $t(
                                                                     'components.rector.job_props.user_info_sync_settings.employee_role_format',
@@ -478,7 +479,7 @@ const onSubmitThrottle = useThrottleFn(async (_) => {
                                         :class="[
                                             !canSubmit
                                                 ? 'disabled bg-base-500 hover:bg-base-400 focus-visible:outline-base-500'
-                                                : 'bg-primary-600 hover:bg-primary-400 focus-visible:outline-primary-500',
+                                                : 'bg-primary-500 hover:bg-primary-400 focus-visible:outline-primary-500',
                                         ]"
                                         :disabled="!canSubmit"
                                         @click="onSubmitThrottle"

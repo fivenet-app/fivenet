@@ -139,7 +139,7 @@ const onSubmitThrottle = useThrottleFn(async (e) => {
                                                             $t('components.auth.change_username_modal.current_username')
                                                         "
                                                         :label="$t('components.auth.change_username_modal.current_username')"
-                                                        class="block w-full rounded-md border-0 bg-base-700 py-1.5 text-neutral placeholder:text-base-200 focus:ring-2 focus:ring-inset focus:ring-base-300 sm:text-sm sm:leading-6"
+                                                        class="block w-full rounded-md border-0 bg-base-700 py-1.5 text-neutral placeholder:text-accent-200 focus:ring-2 focus:ring-inset focus:ring-base-300 sm:text-sm sm:leading-6"
                                                     />
                                                     <VeeErrorMessage
                                                         name="currentUsername"
@@ -159,7 +159,7 @@ const onSubmitThrottle = useThrottleFn(async (e) => {
                                                         autocomplete="new-username"
                                                         :placeholder="$t('components.auth.change_username_modal.new_username')"
                                                         :label="$t('components.auth.change_username_modal.new_username')"
-                                                        class="block w-full rounded-md border-0 bg-base-700 py-1.5 text-neutral placeholder:text-base-200 focus:ring-2 focus:ring-inset focus:ring-base-300 sm:text-sm sm:leading-6"
+                                                        class="block w-full rounded-md border-0 bg-base-700 py-1.5 text-neutral placeholder:text-accent-200 focus:ring-2 focus:ring-inset focus:ring-base-300 sm:text-sm sm:leading-6"
                                                     />
                                                     <VeeErrorMessage
                                                         name="newUsername"

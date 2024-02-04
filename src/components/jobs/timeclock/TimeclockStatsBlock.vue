@@ -111,18 +111,24 @@ const axis = ref<ChartAxis>({
                             >
                                 <template #layers>
                                     <Grid stroke-dasharray="2,2" />
-                                    <Bar :data-keys="['date', 'sum']" :bar-style="{ fill: '#443a8f' }" :gap="12" />
-                                    <Bar :data-keys="['date', 'avg']" :bar-style="{ fill: '#1f236e' }" :gap="12" />
-                                    <Bar :data-keys="['date', 'max']" :bar-style="{ fill: '#8d81f2' }" :gap="12" />
+                                    <Bar :data-keys="['date', 'sum']" :bar-style="{ class: 'fill-primary-600' }" :gap="12" />
+                                    <Bar :data-keys="['date', 'avg']" :bar-style="{ class: 'fill-primary-800' }" :gap="12" />
+                                    <Bar :data-keys="['date', 'max']" :bar-style="{ class: 'fill-primary-400' }" :gap="12" />
                                 </template>
                                 <template #widgets>
                                     <Tooltip
                                         border-color="#48CAE4"
                                         :config="{
                                             date: { label: $t('common.date'), color: '#2b2d34' },
-                                            sum: { label: $t('components.jobs.timeclock.StatsBlock.sum'), color: '#443a8f' },
-                                            avg: { label: $t('components.jobs.timeclock.StatsBlock.avg'), color: '#1f236e' },
-                                            max: { label: $t('components.jobs.timeclock.StatsBlock.max'), color: '#8d81f2' },
+                                            sum: {
+                                                label: $t('components.jobs.timeclock.StatsBlock.sum'),
+                                            },
+                                            avg: {
+                                                label: $t('components.jobs.timeclock.StatsBlock.avg'),
+                                            },
+                                            max: {
+                                                label: $t('components.jobs.timeclock.StatsBlock.max'),
+                                            },
                                         }"
                                     />
                                 </template>

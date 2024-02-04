@@ -22,13 +22,13 @@ const openMessage = ref(false);
         <td class="whitespace-nowrap py-2 pl-4 pr-3 text-base font-medium text-neutral sm:pl-1">
             <GenericTime :value="conduct.createdAt" />
         </td>
-        <td class="whitespace-nowrap px-1 py-1 text-left text-base font-medium text-base-200">
+        <td class="whitespace-nowrap px-1 py-1 text-left text-base font-medium text-accent-200">
             <GenericTime v-if="conduct.expiresAt" class="font-semibold" :value="conduct.expiresAt" />
             <span v-else>
                 {{ $t('components.jobs.conduct.List.no_expiration') }}
             </span>
         </td>
-        <td class="whitespace-nowrap px-1 py-1 text-left text-base-200">
+        <td class="whitespace-nowrap px-1 py-1 text-left text-accent-200">
             <div
                 class="rounded-md px-2 py-1 text-base font-medium ring-1 ring-inset"
                 :class="[
@@ -40,7 +40,7 @@ const openMessage = ref(false);
                 {{ $t(`enums.jobs.ConductType.${ConductType[conduct.type ?? (0 as number)]}`) }}
             </div>
         </td>
-        <td class="whitespace-wrap px-1 py-1 text-left text-base-200">
+        <td class="whitespace-wrap px-1 py-1 text-left text-accent-200">
             <p :class="openMessage ? '' : 'max-h-24 max-w-sm truncate'">
                 {{ conduct.message }}
             </p>
@@ -53,10 +53,10 @@ const openMessage = ref(false);
                 {{ openMessage ? $t('common.read_less') : $t('common.read_more') }}
             </button>
         </td>
-        <td class="whitespace-nowrap px-1 py-1 text-left text-base-200">
+        <td class="whitespace-nowrap px-1 py-1 text-left text-accent-200">
             <CitizenInfoPopover :user="conduct.targetUser" />
         </td>
-        <td class="whitespace-nowrap px-1 py-1 text-left text-base-200">
+        <td class="whitespace-nowrap px-1 py-1 text-left text-accent-200">
             <CitizenInfoPopover :user="conduct.creator" />
         </td>
         <td class="whitespace-nowrap py-2 pl-3 pr-4 text-base font-medium sm:pr-0">

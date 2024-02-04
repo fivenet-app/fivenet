@@ -199,7 +199,7 @@ watch(router.currentRoute, () => updateActiveItem());
                             :to="{ name: 'index' }"
                             active-class="bg-accent-100/20 text-neutral font-bold"
                             class="group my-2 flex w-full flex-col items-center rounded-md p-3 text-xs font-medium text-accent-100 hover:bg-accent-100/10 hover:text-neutral hover:transition-all"
-                            exact-active-class="text-neutral"
+                            exact-active-class="text-accent-200"
                             aria-current-value="page"
                         >
                             <HomeIcon class="h-auto w-6" aria-hidden="true" />
@@ -209,7 +209,7 @@ watch(router.currentRoute, () => updateActiveItem());
                             :to="{ name: 'auth-login' }"
                             active-class="bg-accent-100/20 text-neutral font-bold"
                             class="group my-2 flex w-full flex-col items-center rounded-md p-3 text-xs font-medium text-accent-100 hover:bg-accent-100/10 hover:text-neutral hover:transition-all"
-                            exact-active-class="text-neutral"
+                            exact-active-class="text-accent-200"
                             aria-current-value="page"
                         >
                             <LoginIcon class="h-auto w-6" aria-hidden="true" />
@@ -219,7 +219,7 @@ watch(router.currentRoute, () => updateActiveItem());
                             :to="{ name: 'auth-registration' }"
                             active-class="bg-accent-100/20 text-neutral font-bold"
                             class="group my-2 flex w-full flex-col items-center rounded-md p-3 text-xs font-medium text-accent-100 hover:bg-accent-100/10 hover:text-neutral hover:transition-all"
-                            exact-active-class="text-neutral"
+                            exact-active-class="text-accent-200"
                             aria-current-value="page"
                         >
                             <AccountPlusIcon class="h-auto w-6" aria-hidden="true" />
@@ -231,7 +231,7 @@ watch(router.currentRoute, () => updateActiveItem());
                             :to="{ name: 'index' }"
                             active-class="bg-accent-100/20 text-neutral font-bold"
                             class="group my-2 flex w-full flex-col items-center rounded-md p-3 text-xs font-medium text-accent-100 hover:bg-accent-100/10 hover:text-neutral hover:transition-all"
-                            exact-active-class="text-neutral"
+                            exact-active-class="text-accent-200"
                             aria-current-value="page"
                         >
                             <HomeIcon class="h-auto w-6" aria-hidden="true" />
@@ -241,7 +241,7 @@ watch(router.currentRoute, () => updateActiveItem());
                             :to="{ name: 'auth-character-selector' }"
                             active-class="bg-accent-100/20 text-neutral font-bold"
                             class="group my-2 flex w-full flex-col items-center rounded-md p-3 text-xs font-medium text-accent-100 hover:bg-accent-100/10 hover:text-neutral hover:transition-all"
-                            exact-active-class="text-neutral"
+                            exact-active-class="text-accent-200"
                             aria-current-value="page"
                         >
                             <UnfoldMoreHorizontalIcon class="h-auto w-6" aria-hidden="true" />
@@ -356,7 +356,7 @@ watch(router.currentRoute, () => updateActiveItem());
                                                 :to="{ name: 'index' }"
                                                 active-class="bg-accent-100/20 text-neutral font-bold"
                                                 class="group flex items-center rounded-md px-3 py-2 text-sm font-medium text-accent-100 hover:bg-accent-100/10 hover:text-neutral"
-                                                exact-active-class="text-neutral"
+                                                exact-active-class="text-accent-200"
                                                 aria-current-value="page"
                                                 @click="mobileMenuOpen = false"
                                             >
@@ -370,7 +370,7 @@ watch(router.currentRoute, () => updateActiveItem());
                                                 :to="{ name: 'auth-login' }"
                                                 active-class="bg-accent-100/20 text-neutral font-bold"
                                                 class="group flex items-center rounded-md px-3 py-2 text-sm font-medium text-accent-100 hover:bg-accent-100/10 hover:text-neutral"
-                                                exact-active-class="text-neutral"
+                                                exact-active-class="text-accent-200"
                                                 aria-current-value="page"
                                                 @click="mobileMenuOpen = false"
                                             >
@@ -384,7 +384,7 @@ watch(router.currentRoute, () => updateActiveItem());
                                                 :to="{ name: 'auth-registration' }"
                                                 active-class="bg-accent-100/20 text-neutral font-bold"
                                                 class="group flex items-center rounded-md px-3 py-2 text-sm font-medium text-accent-100 hover:bg-accent-100/10 hover:text-neutral"
-                                                exact-active-class="text-neutral"
+                                                exact-active-class="text-accent-200"
                                                 aria-current-value="page"
                                                 @click="mobileMenuOpen = false"
                                             >
@@ -503,7 +503,7 @@ watch(router.currentRoute, () => updateActiveItem());
                                                     :to="item.to"
                                                     :class="[
                                                         key === breadcrumbs.length - 1
-                                                            ? 'font-bold text-base-200'
+                                                            ? 'font-bold text-accent-200'
                                                             : 'font-medium text-base-400',
                                                         'ml-2 max-w-[5rem] truncate text-sm hover:text-neutral hover:transition-colors sm:ml-4 lg:max-w-full',
                                                     ]"
@@ -519,7 +519,7 @@ watch(router.currentRoute, () => updateActiveItem());
                         </div>
                         <div class="ml-2 flex items-center space-x-3 sm:ml-2 sm:space-x-4">
                             <JobSwitcherMenu v-if="can('SuperUser') && activeChar" />
-                            <div v-if="activeChar" class="hidden text-center text-sm font-medium text-base-200 sm:block">
+                            <div v-if="activeChar" class="hidden text-center text-sm font-medium text-accent-200 sm:block">
                                 <span> {{ activeChar.firstname }}, {{ activeChar.lastname }} </span>
                                 <br />
                                 <span> ({{ activeChar.jobLabel }}) </span>

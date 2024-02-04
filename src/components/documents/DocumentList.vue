@@ -178,7 +178,7 @@ const templatesOpen = ref(false);
                                     type="text"
                                     name="search"
                                     :placeholder="$t('common.title')"
-                                    class="block w-full rounded-md border-0 bg-base-700 py-1.5 pr-14 text-neutral placeholder:text-base-200 focus:ring-2 focus:ring-inset focus:ring-base-300 sm:text-sm sm:leading-6"
+                                    class="block w-full rounded-md border-0 bg-base-700 py-1.5 pr-14 text-neutral placeholder:text-accent-200 focus:ring-2 focus:ring-inset focus:ring-base-300 sm:text-sm sm:leading-6"
                                     @focusin="focusTablet(true)"
                                     @focusout="focusTablet(false)"
                                 />
@@ -212,7 +212,7 @@ const templatesOpen = ref(false);
 
                         <Disclosure v-slot="{ open }" as="div" class="pt-2">
                             <DisclosureButton class="flex w-full items-start justify-between text-left text-sm text-neutral">
-                                <span class="leading-7 text-base-200">{{ $t('common.advanced_search') }}</span>
+                                <span class="leading-7 text-accent-200">{{ $t('common.advanced_search') }}</span>
                                 <span class="ml-6 flex h-7 items-center">
                                     <ChevronDownIcon
                                         :class="[open ? 'upsidedown' : '', 'h-5 w-5 transition-transform']"
@@ -232,7 +232,7 @@ const templatesOpen = ref(false);
                                                 type="text"
                                                 name="search"
                                                 placeholder="DOC-..."
-                                                class="block w-full rounded-md border-0 bg-base-700 py-1.5 pr-14 text-neutral placeholder:text-base-200 focus:ring-2 focus:ring-inset focus:ring-base-300 sm:text-sm sm:leading-6"
+                                                class="block w-full rounded-md border-0 bg-base-700 py-1.5 pr-14 text-neutral placeholder:text-accent-200 focus:ring-2 focus:ring-inset focus:ring-base-300 sm:text-sm sm:leading-6"
                                                 @focusin="focusTablet(true)"
                                                 @focusout="focusTablet(false)"
                                             />
@@ -247,7 +247,7 @@ const templatesOpen = ref(false);
                                                 <ComboboxButton as="div">
                                                     <ComboboxInput
                                                         autocomplete="off"
-                                                        class="block w-full rounded-md border-0 bg-base-700 py-1.5 text-neutral placeholder:text-base-200 focus:ring-2 focus:ring-inset focus:ring-base-300 sm:text-sm sm:leading-6"
+                                                        class="block w-full rounded-md border-0 bg-base-700 py-1.5 text-neutral placeholder:text-accent-200 focus:ring-2 focus:ring-inset focus:ring-base-300 sm:text-sm sm:leading-6"
                                                         :display-value="(category: any) => category?.name"
                                                         :placeholder="$t('common.category', 1)"
                                                         @change="queryCategories = $event.target.value"
@@ -301,7 +301,7 @@ const templatesOpen = ref(false);
                                                 <ComboboxButton as="div">
                                                     <ComboboxInput
                                                         autocomplete="off"
-                                                        class="block w-full rounded-md border-0 bg-base-700 py-1.5 text-neutral placeholder:text-base-200 focus:ring-2 focus:ring-inset focus:ring-base-300 sm:text-sm sm:leading-6"
+                                                        class="block w-full rounded-md border-0 bg-base-700 py-1.5 text-neutral placeholder:text-accent-200 focus:ring-2 focus:ring-inset focus:ring-base-300 sm:text-sm sm:leading-6"
                                                         :display-value="
                                                             (char: any) =>
                                                                 `${char?.firstname} ${char?.lastname} (${char?.dateofbirth})`
@@ -360,7 +360,7 @@ const templatesOpen = ref(false);
                                         <Listbox v-model="queryClosed" as="div" class="mt-2">
                                             <div class="relative">
                                                 <ListboxButton
-                                                    class="block w-full rounded-md border-0 bg-base-700 py-1.5 pl-3 text-left text-neutral placeholder:text-base-200 focus:ring-2 focus:ring-inset focus:ring-base-300 sm:text-sm sm:leading-6"
+                                                    class="block w-full rounded-md border-0 bg-base-700 py-1.5 pl-3 text-left text-neutral placeholder:text-accent-200 focus:ring-2 focus:ring-inset focus:ring-base-300 sm:text-sm sm:leading-6"
                                                 >
                                                     <span class="block truncate">
                                                         {{ queryClosed?.label }}
@@ -427,7 +427,7 @@ const templatesOpen = ref(false);
                                                 type="datetime-local"
                                                 name="search"
                                                 :placeholder="`${$t('common.time_range')} ${$t('common.from')}`"
-                                                class="block w-full rounded-md border-0 bg-base-700 py-1.5 pr-14 text-neutral placeholder:text-base-200 focus:ring-2 focus:ring-inset focus:ring-base-300 sm:text-sm sm:leading-6"
+                                                class="block w-full rounded-md border-0 bg-base-700 py-1.5 pr-14 text-neutral placeholder:text-accent-200 focus:ring-2 focus:ring-inset focus:ring-base-300 sm:text-sm sm:leading-6"
                                             />
                                         </div>
                                     </div>
@@ -442,7 +442,7 @@ const templatesOpen = ref(false);
                                                 type="datetime-local"
                                                 name="search"
                                                 :placeholder="`${$t('common.time_range')} ${$t('common.to')}`"
-                                                class="block w-full rounded-md border-0 bg-base-700 py-1.5 pr-14 text-neutral placeholder:text-base-200 focus:ring-2 focus:ring-inset focus:ring-base-300 sm:text-sm sm:leading-6"
+                                                class="block w-full rounded-md border-0 bg-base-700 py-1.5 pr-14 text-neutral placeholder:text-accent-200 focus:ring-2 focus:ring-inset focus:ring-base-300 sm:text-sm sm:leading-6"
                                             />
                                         </div>
                                     </div>

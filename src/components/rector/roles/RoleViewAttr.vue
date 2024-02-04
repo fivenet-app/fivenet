@@ -357,7 +357,7 @@ onBeforeMount(async () => {
                                 >
                                     <div class="relative">
                                         <ListboxButton
-                                            class="block w-full rounded-md border-0 bg-base-700 py-1.5 pl-3 text-left text-neutral placeholder:text-base-200 focus:ring-2 focus:ring-inset focus:ring-base-300 disabled:cursor-not-allowed disabled:bg-base-800 disabled:text-neutral/50 sm:text-sm sm:leading-6"
+                                            class="block w-full rounded-md border-0 bg-base-700 py-1.5 pl-3 text-left text-neutral placeholder:text-accent-200 focus:ring-2 focus:ring-inset focus:ring-base-300 disabled:cursor-not-allowed disabled:bg-base-800 disabled:text-neutral/50 sm:text-sm sm:leading-6"
                                         >
                                             <span class="block truncate">{{ jobGrades.get(job.name)?.label }}</span>
                                             <span class="pointer-events-none absolute inset-y-0 right-0 flex items-center pr-2">

@@ -36,24 +36,24 @@ function addToClipboard(): void {
                 {{ $t('common.wanted').toUpperCase() }}
             </span>
         </td>
-        <td class="whitespace-nowrap px-1 py-1 text-left text-sm text-base-200">
+        <td class="whitespace-nowrap px-1 py-1 text-left text-sm text-accent-200">
             {{ user.jobLabel }}
         </td>
-        <td class="whitespace-nowrap px-1 py-1 text-left text-sm text-base-200">
+        <td class="whitespace-nowrap px-1 py-1 text-left text-sm text-accent-200">
             {{ user.sex!.toUpperCase() }}
         </td>
         <td
             v-if="attr('CitizenStoreService.ListCitizens', 'Fields', 'PhoneNumber')"
-            class="whitespace-nowrap px-1 py-1 text-left text-sm text-base-200"
+            class="whitespace-nowrap px-1 py-1 text-left text-sm text-accent-200"
         >
             <PhoneNumberBlock :number="user.phoneNumber" />
         </td>
-        <td class="whitespace-nowrap px-1 py-1 text-left text-sm text-base-200">
+        <td class="whitespace-nowrap px-1 py-1 text-left text-sm text-accent-200">
             {{ user.dateofbirth }}
         </td>
         <td
             v-if="attr('CitizenStoreService.ListCitizens', 'Fields', 'UserProps.TrafficInfractionPoints')"
-            class="whitespace-nowrap px-1 py-1 text-left text-sm text-base-200"
+            class="whitespace-nowrap px-1 py-1 text-left text-sm text-accent-200"
             :class="(user?.props?.trafficInfractionPoints ?? 0) >= 10 ? 'text-error-500' : ''"
         >
             {{ user.props?.trafficInfractionPoints ?? 0 }}
@@ -66,7 +66,7 @@ function addToClipboard(): void {
                 {{ $n(parseInt((user?.props?.openFines ?? 0n).toString(), 10), 'currency') }}
             </template>
         </td>
-        <td class="whitespace-nowrap px-1 py-1 text-left text-sm text-base-200">{{ user.height }}cm</td>
+        <td class="whitespace-nowrap px-1 py-1 text-left text-sm text-accent-200">{{ user.height }}cm</td>
         <td class="whitespace-nowrap py-2 pl-3 pr-4 text-sm font-medium sm:pr-0">
             <div v-if="can('CitizenStoreService.GetUser')" class="flex flex-row justify-end">
                 <button class="flex-initial text-primary-500 hover:text-primary-400" @click="addToClipboard">

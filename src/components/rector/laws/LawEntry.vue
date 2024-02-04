@@ -135,14 +135,14 @@ const editing = ref(props.startInEdit);
         <td class="py-2 pl-4 pr-3 text-sm font-medium text-neutral sm:pl-1">
             {{ law.name }}
         </td>
-        <td class="whitespace-nowrap px-1 py-1 text-left text-base-200">${{ law.fine }}</td>
-        <td class="whitespace-nowrap px-1 py-1 text-left text-base-200">
+        <td class="whitespace-nowrap px-1 py-1 text-left text-accent-200">${{ law.fine }}</td>
+        <td class="whitespace-nowrap px-1 py-1 text-left text-accent-200">
             {{ law.detentionTime }}
         </td>
-        <td class="whitespace-nowrap px-1 py-1 text-left text-base-200">
+        <td class="whitespace-nowrap px-1 py-1 text-left text-accent-200">
             {{ law.stvoPoints }}
         </td>
-        <td class="px-1 py-1 text-left text-sm font-medium text-base-200">
+        <td class="px-1 py-1 text-left text-sm font-medium text-accent-200">
             {{ law.description }}
         </td>
     </tr>
@@ -168,53 +168,53 @@ const editing = ref(props.startInEdit);
                 type="text"
                 :placeholder="$t('common.crime')"
                 :label="$t('common.crime')"
-                class="block w-full rounded-md border-0 bg-base-700 py-1.5 text-neutral placeholder:text-base-200 focus:ring-2 focus:ring-inset focus:ring-base-300 sm:text-sm sm:leading-6"
+                class="block w-full rounded-md border-0 bg-base-700 py-1.5 text-neutral placeholder:text-accent-200 focus:ring-2 focus:ring-inset focus:ring-base-300 sm:text-sm sm:leading-6"
                 @focusin="focusTablet(true)"
                 @focusout="focusTablet(false)"
             />
             <VeeErrorMessage name="name" as="p" class="mt-2 text-sm text-error-400" />
         </td>
-        <td class="whitespace-nowrap px-1 py-1 text-left text-base-200">
+        <td class="whitespace-nowrap px-1 py-1 text-left text-accent-200">
             <VeeField
                 name="fine"
                 type="number"
                 :placeholder="$t('common.fine')"
                 :label="$t('common.fine')"
-                class="block w-full rounded-md border-0 bg-base-700 py-1.5 text-neutral placeholder:text-base-200 focus:ring-2 focus:ring-inset focus:ring-base-300 sm:text-sm sm:leading-6"
+                class="block w-full rounded-md border-0 bg-base-700 py-1.5 text-neutral placeholder:text-accent-200 focus:ring-2 focus:ring-inset focus:ring-base-300 sm:text-sm sm:leading-6"
             />
             <VeeErrorMessage name="fine" as="p" class="mt-2 text-sm text-error-400" />
         </td>
-        <td class="whitespace-nowrap px-1 py-1 text-left text-base-200">
+        <td class="whitespace-nowrap px-1 py-1 text-left text-accent-200">
             <VeeField
                 name="detentionTime"
                 type="number"
                 :placeholder="$t('common.detention_time')"
                 :label="$t('common.detention_time')"
-                class="block w-full rounded-md border-0 bg-base-700 py-1.5 text-neutral placeholder:text-base-200 focus:ring-2 focus:ring-inset focus:ring-base-300 sm:text-sm sm:leading-6"
+                class="block w-full rounded-md border-0 bg-base-700 py-1.5 text-neutral placeholder:text-accent-200 focus:ring-2 focus:ring-inset focus:ring-base-300 sm:text-sm sm:leading-6"
                 @focusin="focusTablet(true)"
                 @focusout="focusTablet(false)"
             />
             <VeeErrorMessage name="detentionTime" as="p" class="mt-2 text-sm text-error-400" />
         </td>
-        <td class="whitespace-nowrap px-1 py-1 text-left text-base-200">
+        <td class="whitespace-nowrap px-1 py-1 text-left text-accent-200">
             <VeeField
                 name="stvoPoints"
                 type="text"
                 :placeholder="$t('common.traffic_infraction_points')"
                 :label="$t('common.traffic_infraction_points')"
-                class="block w-full rounded-md border-0 bg-base-700 py-1.5 text-neutral placeholder:text-base-200 focus:ring-2 focus:ring-inset focus:ring-base-300 sm:text-sm sm:leading-6"
+                class="block w-full rounded-md border-0 bg-base-700 py-1.5 text-neutral placeholder:text-accent-200 focus:ring-2 focus:ring-inset focus:ring-base-300 sm:text-sm sm:leading-6"
                 @focusin="focusTablet(true)"
                 @focusout="focusTablet(false)"
             />
             <VeeErrorMessage name="stvoPoints" as="p" class="mt-2 text-sm text-error-400" />
         </td>
-        <td class="px-1 py-1 text-left text-base-200">
+        <td class="px-1 py-1 text-left text-accent-200">
             <VeeField
                 name="description"
                 type="text"
                 :placeholder="$t('common.description')"
                 :label="$t('common.description')"
-                class="block w-full rounded-md border-0 bg-base-700 py-1.5 text-neutral placeholder:text-base-200 focus:ring-2 focus:ring-inset focus:ring-base-300 sm:text-sm sm:leading-6"
+                class="block w-full rounded-md border-0 bg-base-700 py-1.5 text-neutral placeholder:text-accent-200 focus:ring-2 focus:ring-inset focus:ring-base-300 sm:text-sm sm:leading-6"
                 @focusin="focusTablet(true)"
                 @focusout="focusTablet(false)"
             />

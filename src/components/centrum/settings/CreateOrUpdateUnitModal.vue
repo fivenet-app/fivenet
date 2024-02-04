@@ -182,7 +182,7 @@ onBeforeMount(async () => updateUnitInForm());
                                                     <VeeField
                                                         name="name"
                                                         type="text"
-                                                        class="block w-full rounded-md border-0 bg-base-700 py-1.5 text-neutral placeholder:text-base-200 focus:ring-2 focus:ring-inset focus:ring-base-300 sm:text-sm sm:leading-6"
+                                                        class="block w-full rounded-md border-0 bg-base-700 py-1.5 text-neutral placeholder:text-accent-200 focus:ring-2 focus:ring-inset focus:ring-base-300 sm:text-sm sm:leading-6"
                                                         :placeholder="$t('common.name')"
                                                         :label="$t('common.name')"
                                                         @focusin="focusTablet(true)"
@@ -200,7 +200,7 @@ onBeforeMount(async () => updateUnitInForm());
                                                     <VeeField
                                                         name="initials"
                                                         type="text"
-                                                        class="block w-full rounded-md border-0 bg-base-700 py-1.5 text-neutral placeholder:text-base-200 focus:ring-2 focus:ring-inset focus:ring-base-300 sm:text-sm sm:leading-6"
+                                                        class="block w-full rounded-md border-0 bg-base-700 py-1.5 text-neutral placeholder:text-accent-200 focus:ring-2 focus:ring-inset focus:ring-base-300 sm:text-sm sm:leading-6"
                                                         :placeholder="$t('common.initials')"
                                                         :label="$t('common.initials')"
                                                         @focusin="focusTablet(true)"
@@ -222,7 +222,7 @@ onBeforeMount(async () => updateUnitInForm());
                                                     <VeeField
                                                         name="description"
                                                         type="text"
-                                                        class="block w-full rounded-md border-0 bg-base-700 py-1.5 text-neutral placeholder:text-base-200 focus:ring-2 focus:ring-inset focus:ring-base-300 sm:text-sm sm:leading-6"
+                                                        class="block w-full rounded-md border-0 bg-base-700 py-1.5 text-neutral placeholder:text-accent-200 focus:ring-2 focus:ring-inset focus:ring-base-300 sm:text-sm sm:leading-6"
                                                         :placeholder="$t('common.description')"
                                                         :label="$t('common.description')"
                                                         @focusin="focusTablet(true)"
@@ -244,7 +244,7 @@ onBeforeMount(async () => updateUnitInForm());
                                                     <VeeField
                                                         name="attributes"
                                                         type="text"
-                                                        class="block w-full rounded-md border-0 bg-base-700 py-1.5 text-neutral placeholder:text-base-200 focus:ring-2 focus:ring-inset focus:ring-base-300 sm:text-sm sm:leading-6"
+                                                        class="block w-full rounded-md border-0 bg-base-700 py-1.5 text-neutral placeholder:text-accent-200 focus:ring-2 focus:ring-inset focus:ring-base-300 sm:text-sm sm:leading-6"
                                                         :placeholder="$t('common.attributes')"
                                                         :label="$t('common.attributes')"
                                                         @focusin="focusTablet(true)"
@@ -253,7 +253,7 @@ onBeforeMount(async () => updateUnitInForm());
                                                         <Listbox v-model="selectedAttributes" as="div" nullable multiple>
                                                             <div class="relative">
                                                                 <ListboxButton
-                                                                    class="block w-full rounded-md border-0 bg-base-700 py-1.5 pl-3 text-left text-neutral placeholder:text-base-200 focus:ring-2 focus:ring-inset focus:ring-base-300 sm:text-sm sm:leading-6"
+                                                                    class="block w-full rounded-md border-0 bg-base-700 py-1.5 pl-3 text-left text-neutral placeholder:text-accent-200 focus:ring-2 focus:ring-inset focus:ring-base-300 sm:text-sm sm:leading-6"
                                                                 >
                                                                     <span class="block truncate">
                                                                         <template v-if="selectedAttributes.length > 0">
@@ -368,7 +368,7 @@ onBeforeMount(async () => updateUnitInForm());
                                                     <VeeField
                                                         name="homePostal"
                                                         type="text"
-                                                        class="block w-full rounded-md border-0 bg-base-700 py-1.5 text-neutral placeholder:text-base-200 focus:ring-2 focus:ring-inset focus:ring-base-300 sm:text-sm sm:leading-6"
+                                                        class="block w-full rounded-md border-0 bg-base-700 py-1.5 text-neutral placeholder:text-accent-200 focus:ring-2 focus:ring-inset focus:ring-base-300 sm:text-sm sm:leading-6"
                                                         :placeholder="`${$t('common.department')} ${$t('common.postal')}`"
                                                         :label="`${$t('common.department')} ${$t('common.postal')}`"
                                                         @focusin="focusTablet(true)"

@@ -67,7 +67,7 @@ watch(selectedJob, () => setJob());
             <ComboboxButton as="div">
                 <ComboboxInput
                     autocomplete="off"
-                    class="hidden w-full rounded-md border-0 bg-base-700 py-1.5 text-neutral placeholder:text-base-200 focus:ring-2 focus:ring-inset focus:ring-base-300 sm:text-sm sm:leading-6 md:block"
+                    class="hidden w-full rounded-md border-0 bg-base-700 py-1.5 text-neutral placeholder:text-accent-200 focus:ring-2 focus:ring-inset focus:ring-base-300 sm:text-sm sm:leading-6 md:block"
                     :display-value="(job: any) => (job ? job?.label : '')"
                     :placeholder="`${$t('common.select')} ${$t('common.job')}`"
                     @click="listJobs"

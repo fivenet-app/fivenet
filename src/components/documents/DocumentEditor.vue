@@ -878,7 +878,7 @@ function setupCheckboxes(): void {
                         type="text"
                         :placeholder="$t('common.title')"
                         :label="$t('common.title')"
-                        class="block w-full rounded-md border-0 bg-base-700 py-1.5 text-neutral placeholder:text-base-200 focus:ring-2 focus:ring-inset focus:ring-base-300 sm:text-3xl sm:leading-6"
+                        class="block w-full rounded-md border-0 bg-base-700 py-1.5 text-neutral placeholder:text-accent-200 focus:ring-2 focus:ring-inset focus:ring-base-300 sm:text-3xl sm:leading-6"
                         :disabled="!canEdit || !canDo.edit"
                         @focusin="focusTablet(true)"
                         @focusout="focusTablet(false)"
@@ -895,7 +895,7 @@ function setupCheckboxes(): void {
                                 <ComboboxButton as="div">
                                     <ComboboxInput
                                         autocomplete="off"
-                                        class="block w-full rounded-md border-0 bg-base-700 py-1.5 text-neutral placeholder:text-base-200 focus:ring-2 focus:ring-inset focus:ring-base-300 sm:text-sm sm:leading-6"
+                                        class="block w-full rounded-md border-0 bg-base-700 py-1.5 text-neutral placeholder:text-accent-200 focus:ring-2 focus:ring-inset focus:ring-base-300 sm:text-sm sm:leading-6"
                                         :display-value="(category: any) => category?.name"
                                         @change="queryCategories = $event.target.value"
                                         @focusin="focusTablet(true)"
@@ -946,7 +946,7 @@ function setupCheckboxes(): void {
                         <VeeField
                             name="state"
                             type="text"
-                            class="block w-full rounded-md border-0 bg-base-700 py-1.5 text-neutral placeholder:text-base-200 focus:ring-2 focus:ring-inset focus:ring-base-300 sm:text-sm sm:leading-6"
+                            class="block w-full rounded-md border-0 bg-base-700 py-1.5 text-neutral placeholder:text-accent-200 focus:ring-2 focus:ring-inset focus:ring-base-300 sm:text-sm sm:leading-6"
                             :placeholder="`${$t('common.document', 1)} ${$t('common.state')}`"
                             :label="`${$t('common.document', 1)} ${$t('common.state')}`"
                             :disabled="!canEdit || !canDo.edit"
@@ -960,7 +960,7 @@ function setupCheckboxes(): void {
                         <Listbox v-model="doc.closed" as="div" :disabled="!canEdit || !canDo.edit">
                             <div class="relative">
                                 <ListboxButton
-                                    class="block w-full rounded-md border-0 bg-base-700 py-1.5 pl-3 text-left text-neutral placeholder:text-base-200 focus:ring-2 focus:ring-inset focus:ring-base-300 sm:text-sm sm:leading-6"
+                                    class="block w-full rounded-md border-0 bg-base-700 py-1.5 pl-3 text-left text-neutral placeholder:text-accent-200 focus:ring-2 focus:ring-inset focus:ring-base-300 sm:text-sm sm:leading-6"
                                 >
                                     <span class="block truncate">
                                         {{ openclose.find((e) => e.closed === doc.closed.closed)?.label }}</span
@@ -1034,7 +1034,7 @@ function setupCheckboxes(): void {
                     >
                         <div class="flex justify-center">
                             <AccountMultipleIcon
-                                class="-ml-0.5 mr-2 h-5 w-5 text-base-300 transition-colors group-hover:text-base-200"
+                                class="-ml-0.5 mr-2 h-5 w-5 text-base-300 transition-colors group-hover:text-accent-200"
                                 aria-hidden="true"
                             />
                             {{ $t('common.citizen', 1) }} {{ $t('common.relation', 2) }}
@@ -1050,7 +1050,7 @@ function setupCheckboxes(): void {
                     >
                         <div class="flex justify-center">
                             <FileDocumentIcon
-                                class="-ml-0.5 mr-2 h-5 w-5 text-base-300 transition-colors group-hover:text-base-200"
+                                class="-ml-0.5 mr-2 h-5 w-5 text-base-300 transition-colors group-hover:text-accent-200"
                                 aria-hidden="true"
                             />
                             {{ $t('common.document', 1) }} {{ $t('common.reference', 2) }}

@@ -220,7 +220,7 @@ export default <Partial<Config>>{
                                 800: '#ab0d5e',
                                 900: '#8b104e',
                             },
-                            // Based upon #F9DC5C
+                            // Based upon #f9dc5c
                             accent: {
                                 100: '#fdf7c4',
                                 200: '#fbeb8d',
@@ -231,6 +231,50 @@ export default <Partial<Config>>{
                                 700: '#9d5d0b',
                                 800: '#824a11',
                                 900: '#6f3d14',
+                            },
+                        },
+                    },
+                },
+                {
+                    name: 'themeDaMedic',
+                    extend: {
+                        colors: {
+                            'body-color': '#0d2744',
+                            // Based upon #1e81ce
+                            primary: {
+                                100: '#e2effc',
+                                200: '#bfddf8',
+                                300: '#87c1f2',
+                                400: '#47a2e9',
+                                500: '#1e81ce',
+                                600: '#126ab7',
+                                700: '#105494',
+                                800: '#11497b',
+                                900: '#143e66',
+                            },
+                            // Based upon #9bc9ff
+                            secondary: {
+                                100: '#daeaff',
+                                200: '#bedaff',
+                                300: '#9bc9ff',
+                                400: '#5da3fd',
+                                500: '#377ffa',
+                                600: '#2160ef',
+                                700: '#194adc',
+                                800: '#1b3db2',
+                                900: '#1c388c',
+                            },
+                            // Based upon #a2f5c3
+                            accent: {
+                                100: '#d0fbdf',
+                                200: '#a2f5c3',
+                                300: '#6aeba6',
+                                400: '#2fd882',
+                                500: '#0bbe6a',
+                                600: '#019a55',
+                                700: '#017b48',
+                                800: '#03623a',
+                                900: '#045031',
                             },
                         },
                     },

@@ -52,7 +52,7 @@ const open = ref(false);
                 </p>
                 <div
                     v-if="request?.approved !== undefined"
-                    class="flex flex-1 flex-row items-center justify-center text-base-200"
+                    class="flex flex-1 flex-row items-center justify-center text-accent-200"
                 >
                     <div
                         v-if="request?.approved"
@@ -73,7 +73,7 @@ const open = ref(false);
                         </span>
                     </div>
                 </div>
-                <div class="flex flex-1 flex-row items-center justify-end text-base-200">
+                <div class="flex flex-1 flex-row items-center justify-end text-accent-200">
                     <div v-if="request?.closed" class="flex flex-initial flex-row gap-1 rounded-full bg-error-100 px-2 py-1">
                         <LockIcon class="h-5 w-5 text-success-700" aria-hidden="true" />
                         <span class="text-sm font-medium text-error-700">
@@ -121,7 +121,7 @@ const open = ref(false);
                     </p>
                 </div>
             </div>
-            <div class="mt-2 flex flex-row gap-2 text-base-200">
+            <div class="mt-2 flex flex-row gap-2 text-accent-200">
                 <div class="flex flex-1 flex-row items-center justify-start gap-2">
                     <CitizenInfoPopover :user="request.creator">
                         <template #before>

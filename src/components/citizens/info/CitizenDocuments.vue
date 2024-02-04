@@ -145,7 +145,10 @@ watch(offset, async () => refresh());
                                                     <GenericTime :value="relation.createdAt" :ago="true" />
                                                 </span>
                                             </span>
-                                            <ChevronRightIcon class="h-5 w-5 flex-shrink-0 text-base-200" aria-hidden="true" />
+                                            <ChevronRightIcon
+                                                class="h-5 w-5 flex-shrink-0 text-accent-200"
+                                                aria-hidden="true"
+                                            />
                                         </span>
                                     </li>
                                 </ul>

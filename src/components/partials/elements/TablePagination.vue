@@ -181,7 +181,7 @@ const pageNumber = ref(currentPage.value.toString());
                                         type="number"
                                         min="1"
                                         :max="parseInt(totalPages.toString())"
-                                        class="remove-arrow block w-full rounded-md border-0 bg-base-700 py-1.5 text-neutral placeholder:text-base-200 focus:ring-2 focus:ring-inset focus:ring-base-300 sm:text-sm sm:leading-6"
+                                        class="remove-arrow block w-full rounded-md border-0 bg-base-700 py-1.5 text-neutral placeholder:text-accent-200 focus:ring-2 focus:ring-inset focus:ring-base-300 sm:text-sm sm:leading-6"
                                         name="page_number"
                                         :placeholder="$t('common.page')"
                                     />
