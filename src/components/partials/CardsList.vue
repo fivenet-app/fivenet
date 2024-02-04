@@ -20,7 +20,7 @@ defineEmits<{
 <template>
     <div class="sm:px-2">
         <div
-            class="w-full divide-y-4 divide-accent-900 overflow-hidden rounded-lg bg-base-900 sm:grid sm:gap-1 sm:divide-y-0"
+            class="w-full divide-y-4 divide-accent-900 overflow-hidden rounded-lg bg-primary-900 sm:grid sm:gap-1 sm:divide-y-0"
             :class="[items.length === 1 ? '' : 'sm:max-w-6xl sm:grid-cols-2']"
         >
             <template v-for="(item, itemIdx) in items">
@@ -33,7 +33,7 @@ defineEmits<{
                         itemIdx === items.length - 2 && itemIdx % 2 === 1 ? 'sm:rounded-br-lg' : '',
                         itemIdx === items.length - 1 && itemIdx % 2 === 0 ? 'rounded-br-lg' : '',
                         itemIdx === items.length - 1 ? 'rounded-bl-lg sm:rounded-bl-none' : '',
-                        'group relative bg-base-700 p-6 focus-within:ring-2 focus-within:ring-inset focus-within:ring-neutral',
+                        'group relative bg-primary-700 p-6 focus-within:ring-2 focus-within:ring-inset focus-within:ring-neutral',
                     ]"
                 >
                     <div v-if="item.icon">

@@ -176,7 +176,7 @@ export default <Partial<Config>>{
                                 800: '#91351b',
                                 900: '#752c19',
                             },
-                            // Based upn #9aa51d
+                            // Based upon #9aa51d
                             accent: {
                                 100: '#f8f8cf',
                                 200: '#f0f1a5',
@@ -187,6 +187,50 @@ export default <Partial<Config>>{
                                 700: '#6a7219',
                                 800: '#545b19',
                                 900: '#474d1a',
+                            },
+                        },
+                    },
+                },
+                {
+                    name: 'themeBaddiePink',
+                    extend: {
+                        colors: {
+                            'body-color': '#500724',
+                            // Based upon #f472b6
+                            primary: {
+                                100: '#fce7f3',
+                                200: '#fbcfe8',
+                                300: '#f9a8d4',
+                                400: '#f472b6',
+                                500: '#ec4899',
+                                600: '#db2777',
+                                700: '#be185d',
+                                800: '#9d174d',
+                                900: '#831843',
+                            },
+                            // Based upon #f43f5e
+                            secondary: {
+                                100: '#fee5f6',
+                                200: '#fecced',
+                                300: '#ffa2df',
+                                400: '#fe68c6',
+                                500: '#f93bae',
+                                600: '#e9198c',
+                                700: '#cb0b70',
+                                800: '#ab0d5e',
+                                900: '#8b104e',
+                            },
+                            // Based upon #F9DC5C
+                            accent: {
+                                100: '#fdf7c4',
+                                200: '#fbeb8d',
+                                300: '#f9dc5c',
+                                400: '#f4c31b',
+                                500: '#e4ab0e',
+                                600: '#c58309',
+                                700: '#9d5d0b',
+                                800: '#824a11',
+                                900: '#6f3d14',
                             },
                         },
                     },

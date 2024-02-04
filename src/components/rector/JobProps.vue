@@ -35,6 +35,7 @@ const availableThemes = [
     { name: 'Default', key: 'defaultTheme' },
     { name: 'Baddie Orange', key: 'themeBaddieOrange' },
     { name: 'Purple', key: 'themePurple' },
+    { name: 'Baddie Pink', key: 'themeBaddiePink' },
 ];
 
 async function getJobProps(): Promise<JobProps> {
