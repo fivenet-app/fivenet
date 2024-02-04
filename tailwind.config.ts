@@ -283,18 +283,18 @@ export default <Partial<Config>>{
                     name: 'themeBaddieYellow',
                     extend: {
                         colors: {
-                            'body-color': '#716212',
+                            'body-color': '#54380a',
                             // Based upon #fde047
                             primary: {
-                                100: '#fef5c3',
-                                200: '#feec8a',
-                                300: '#fde047',
-                                400: '#fad615',
-                                500: '#eac608',
-                                600: '#caaa04',
-                                700: '#a18807',
-                                800: '#85720e',
-                                900: '#716212',
+                                100: '#fdffc1',
+                                200: '#fffe86',
+                                300: '#fff641',
+                                400: '#ffe80d',
+                                500: '#ffd900',
+                                600: '#d1a000',
+                                700: '#a67202',
+                                800: '#89590a',
+                                900: '#74490f',
                             },
                             // Based upon #f59e0b
                             secondary: {
