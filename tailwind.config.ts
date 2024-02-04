@@ -283,7 +283,7 @@ export default <Partial<Config>>{
                     name: 'themeBaddieYellow',
                     extend: {
                         colors: {
-                            'body-color': '#500724',
+                            'body-color': '#716212',
                             // Based upon #fde047
                             primary: {
                                 100: '#fef5c3',
