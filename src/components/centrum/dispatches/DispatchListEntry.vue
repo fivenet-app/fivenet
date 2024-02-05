@@ -1,6 +1,6 @@
 <script lang="ts" setup>
 import { useDebounceFn } from '@vueuse/core';
-import { useSound } from '@vueuse/sound';
+import { useSound } from '@raffaelesgarro/vue-use-sound';
 import { AccountMultiplePlusIcon, CloseOctagonIcon, DotsVerticalIcon, MapMarkerIcon } from 'mdi-vue3';
 import DispatchAssignModal from '~/components/centrum/dispatches/DispatchAssignModal.vue';
 import DispatchDetails from '~/components/centrum/dispatches/DispatchDetails.vue';

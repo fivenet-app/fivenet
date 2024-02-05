@@ -2,7 +2,7 @@
 import { RpcError } from '@protobuf-ts/runtime-rpc';
 import { LControl } from '@vue-leaflet/vue-leaflet';
 import { useDebounceFn, useIntervalFn, useThrottleFn, useTimeoutFn, watchDebounced } from '@vueuse/core';
-import { useSound } from '@vueuse/sound';
+import { useSound } from '@raffaelesgarro/vue-use-sound';
 import {
     CarEmergencyIcon,
     HomeFloorBIcon,

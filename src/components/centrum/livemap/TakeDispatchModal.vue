@@ -2,7 +2,7 @@
 import { Dialog, DialogPanel, DialogTitle, TransitionChild, TransitionRoot } from '@headlessui/vue';
 import { RpcError } from '@protobuf-ts/runtime-rpc';
 import { computedAsync, useDebounceFn, useThrottleFn } from '@vueuse/core';
-import { useSound } from '@vueuse/sound';
+import { useSound } from '@raffaelesgarro/vue-use-sound';
 import { CarEmergencyIcon, CloseIcon, LoadingIcon } from 'mdi-vue3';
 import DataNoDataBlock from '~/components/partials/data/DataNoDataBlock.vue';
 import { useCentrumStore } from '~/store/centrum';
