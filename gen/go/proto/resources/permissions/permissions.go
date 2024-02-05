@@ -2,6 +2,7 @@ package permissions
 
 import (
 	"database/sql/driver"
+	"fmt"
 	"slices"
 
 	timestamp "github.com/galexrt/fivenet/gen/go/proto/resources/timestamp"
@@ -176,6 +177,7 @@ func ValidateStringList(in *StringList, validVals []string, maxVals []string) (b
 }
 
 func ValidateJobList(in *StringList, validVals []string, maxVals []string) (bool, bool) {
+	fmt.Printf("ValidateJobList: %+v --> %+v --> %+v\n", in, validVals, maxVals)
 	// If more values than valid/max values in the list, it can't be valid
 	if len(in.Strings) > len(maxVals) || (validVals != nil && len(in.Strings) > len(validVals)) {
 		in.Strings = []string{}
