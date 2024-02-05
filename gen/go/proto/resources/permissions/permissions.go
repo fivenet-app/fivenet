@@ -2,7 +2,6 @@ package permissions
 
 import (
 	"database/sql/driver"
-	"fmt"
 	"slices"
 
 	timestamp "github.com/galexrt/fivenet/gen/go/proto/resources/timestamp"
@@ -115,7 +114,7 @@ func (x *AttributeValues) Check(aType AttributeTypes, validVals *AttributeValues
 			valid = validVals.GetStringList().Strings
 		}
 		var max []string
-		if maxVals != nil {
+		if maxVals != nil && maxVals.GetJobList() != nil && maxVals.GetJobList().Strings != nil {
 			max = maxVals.GetStringList().Strings
 		}
 
@@ -127,7 +126,7 @@ func (x *AttributeValues) Check(aType AttributeTypes, validVals *AttributeValues
 			valid = validVals.GetJobList().Strings
 		}
 		var max []string
-		if maxVals != nil {
+		if maxVals != nil && maxVals.GetJobList() != nil && maxVals.GetJobList().Strings != nil {
 			max = maxVals.GetJobList().Strings
 		}
 
@@ -140,7 +139,7 @@ func (x *AttributeValues) Check(aType AttributeTypes, validVals *AttributeValues
 			valid = validVals.GetJobGradeList().Jobs
 		}
 		var max map[string]int32
-		if maxVals != nil {
+		if maxVals != nil && maxVals.GetJobGradeList() != nil && maxVals.GetJobGradeList().Jobs != nil {
 			max = maxVals.GetJobGradeList().Jobs
 		}
 
@@ -153,7 +152,7 @@ func (x *AttributeValues) Check(aType AttributeTypes, validVals *AttributeValues
 
 func ValidateStringList(in *StringList, validVals []string, maxVals []string) (bool, bool) {
 	// If more values than valid/max values in the list, it can't be valid
-	if (validVals != nil && len(in.Strings) > len(validVals)) || len(in.Strings) > len(maxVals) {
+	if len(in.Strings) > len(maxVals) || (len(validVals) > 0 && len(in.Strings) > len(validVals)) {
 		in.Strings = []string{}
 		return true, true
 	}
@@ -166,7 +165,7 @@ func ValidateStringList(in *StringList, validVals []string, maxVals []string) (b
 			continue
 		}
 
-		if validVals != nil && !slices.Contains(validVals, in.Strings[i]) {
+		if len(validVals) > 0 && !slices.Contains(validVals, in.Strings[i]) {
 			in.Strings = slices.Delete(in.Strings, i, i+1)
 			changed = true
 			continue
@@ -177,9 +176,8 @@ func ValidateStringList(in *StringList, validVals []string, maxVals []string) (b
 }
 
 func ValidateJobList(in *StringList, validVals []string, maxVals []string) (bool, bool) {
-	fmt.Printf("ValidateJobList: %+v --> %+v --> %+v\n", in, validVals, maxVals)
 	// If more values than valid/max values in the list, it can't be valid
-	if len(in.Strings) > len(maxVals) || (validVals != nil && len(in.Strings) > len(validVals)) {
+	if len(in.Strings) > len(maxVals) || (len(validVals) > 0 && len(in.Strings) > len(validVals)) {
 		in.Strings = []string{}
 		return true, true
 	}
@@ -192,7 +190,7 @@ func ValidateJobList(in *StringList, validVals []string, maxVals []string) (bool
 			continue
 		}
 
-		if validVals != nil && !slices.Contains(validVals, in.Strings[i]) {
+		if len(validVals) > 0 && !slices.Contains(validVals, in.Strings[i]) {
 			// Remove invalid jobs from list
 			in.Strings = slices.Delete(in.Strings, i, i+1)
 			changed = true

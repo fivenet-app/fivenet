@@ -500,7 +500,7 @@ func (p *Perms) FlattenRoleAttributes(job string, grade int32) ([]string, error)
 	return as, nil
 }
 
-func (p *Perms) AddOrUpdateAttributesToRole(ctx context.Context, job string, grade int32, roleId uint64, attrs ...*permissions.RoleAttribute) error {
+func (p *Perms) AddOrUpdateAttributesToRole(ctx context.Context, job string, roleId uint64, attrs ...*permissions.RoleAttribute) error {
 	for i := 0; i < len(attrs); i++ {
 		attrs[i].RoleId = roleId
 

@@ -61,7 +61,7 @@ type Permissions interface {
 	GetRoleAttributeByID(roleId uint64, attrId uint64) (*permissions.RoleAttribute, bool)
 	FlattenRoleAttributes(job string, grade int32) ([]string, error)
 	GetAllAttributes(ctx context.Context, job string, grade int32) ([]*permissions.RoleAttribute, error)
-	AddOrUpdateAttributesToRole(ctx context.Context, job string, grade int32, roleId uint64, attrs ...*permissions.RoleAttribute) error
+	AddOrUpdateAttributesToRole(ctx context.Context, job string, roleId uint64, attrs ...*permissions.RoleAttribute) error
 	RemoveAttributesFromRole(ctx context.Context, roleId uint64, attrs ...*permissions.RoleAttribute) error
 
 	GetJobAttrMaxVals(job string, attrId uint64) (*permissions.AttributeValues, bool)

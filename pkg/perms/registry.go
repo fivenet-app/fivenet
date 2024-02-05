@@ -421,14 +421,14 @@ func (p *Perms) applyJobPermissionsToAttrs(ctx context.Context, roles collection
 
 		if len(toRemove) > 0 {
 			p.logger.Debug("removing attribute from role due to job perms change", zap.String("job", role.Job), zap.Int("perms_length", len(toRemove)))
-			if p.RemoveAttributesFromRole(ctx, role.ID, toRemove...); err != nil {
+			if err := p.RemoveAttributesFromRole(ctx, role.ID, toRemove...); err != nil {
 				return err
 			}
 		}
 
 		if len(toUpdate) > 0 {
 			p.logger.Debug("updating attribute on role due to job perms change", zap.String("job", role.Job), zap.Int("perms_length", len(toUpdate)))
-			if p.AddOrUpdateAttributesToRole(ctx, role.Job, role.Grade, role.ID, toUpdate...); err != nil {
+			if err := p.AddOrUpdateAttributesToRole(ctx, role.Job, role.ID, toUpdate...); err != nil {
 				return err
 			}
 		}

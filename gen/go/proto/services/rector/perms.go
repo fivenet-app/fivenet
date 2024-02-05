@@ -16,7 +16,6 @@ import (
 	"github.com/galexrt/fivenet/pkg/perms/collections"
 	"github.com/galexrt/fivenet/query/fivenet/model"
 	"github.com/go-jet/jet/v2/qrm"
-	"go.uber.org/zap"
 )
 
 var (
@@ -141,7 +140,6 @@ func (s *Server) filterAttributes(ctx context.Context, userInfo *userinfo.UserIn
 
 		maxVal, _ := s.ps.GetJobAttrMaxVals(userInfo.Job, attr.AttrId)
 		valid, _ := attrs[i].Value.Check(permissions.AttributeTypes(attr.Type), attr.ValidValues, maxVal)
-		s.logger.Debug("filtered attribute", zap.Any("valid_values", attr.ValidValues), zap.Any("max_values", maxVal))
 		if !valid {
 			return fmt.Errorf("failed to validate attribute %d values (%q)", attrs[i].AttrId, attr.Value)
 		}
@@ -434,7 +432,7 @@ func (s *Server) handleAttributeUpdate(ctx context.Context, userInfo *userinfo.U
 	}
 
 	if len(attrUpdates.ToUpdate) > 0 {
-		if err := s.ps.AddOrUpdateAttributesToRole(ctx, userInfo.Job, userInfo.JobGrade, role.ID, attrUpdates.ToUpdate...); err != nil {
+		if err := s.ps.AddOrUpdateAttributesToRole(ctx, userInfo.Job, role.ID, attrUpdates.ToUpdate...); err != nil {
 			return err
 		}
 	}
