@@ -21,16 +21,16 @@
 LOCK TABLES `fivenet_attrs` WRITE;
 /*!40000 ALTER TABLE `fivenet_attrs` DISABLE KEYS */;
 INSERT INTO `fivenet_attrs` (`id`, `created_at`, `permission_id`, `key`, `type`, `valid_values`) VALUES (1,'2023-05-12 18:00:13.327',7595,'Jobs','JobGradeList',NULL),
-(2,'2023-05-12 18:00:13.345',3,'Fields','StringList','[\"PhoneNumber\",\"Licenses\",\"UserProps.Wanted\",\"UserProps.Job\"]'),
-(3,'2023-05-12 18:00:13.356',6,'Fields','StringList','[\"SourceUser\"]'),
-(4,'2023-05-12 18:00:13.366',8,'Fields','StringList','[\"Wanted\",\"Job\"]'),
-(5,'2023-05-12 18:00:13.378',11,'Jobs','JobList',NULL),
-(6,'2023-05-12 18:00:13.410',31,'Dispatches','JobList','[\"ambulance\",\"doj\",\"fib\",\"police\"]'),
-(7,'2023-05-12 18:00:13.419',31,'Players','JobList','[\"ambulance\",\"doj\",\"fib\",\"police\"]'),
-(8,'2023-05-12 18:00:13.434',77,'Jobs','JobList','[\"ambulance\",\"doj\",\"fib\",\"police\"]'),
-(9,'2023-05-24 17:11:04.280',5497,'Access','StringList','[\"Own\",\"Rank_Lower\",\"Rank_Same\",\"Rank_Higher\"]'),
-(10,'2023-05-24 17:11:04.291',21,'Access','StringList','[\"Own\",\"Rank_Lower\",\"Rank_Same\",\"Rank_Higher\"]'),
-(11,'2023-05-24 17:11:04.304',30,'Access','StringList','[\"Own\",\"Rank_Lower\",\"Rank_Same\",\"Rank_Higher\"]');
+(2,'2023-05-12 18:00:13.345',3,'Fields','StringList','{"stringList":{"strings":["PhoneNumber","Licenses","UserProps.Wanted","UserProps.Job","UserProps.TrafficInfractionPoints","UserProps.OpenFines","UserProps.BloodType"]}}'),
+(3,'2023-05-12 18:00:13.356',6,'Fields','StringList','{"stringList":{"strings":["SourceUser","Own"]}}'),
+(4,'2023-05-12 18:00:13.366',8,'Fields','StringList','{"stringList":{"strings":["Wanted","Job","TrafficInfractionPoints"]}}'),
+(5,'2023-05-12 18:00:13.378',11,'Jobs','JobList','{"jobList":{}}'),
+(6,'2023-05-12 18:00:13.410',31,'Dispatches','JobList','{"jobList":{}}'),
+(7,'2023-05-12 18:00:13.419',31,'Players','JobList','{"jobList":{}}'),
+(8,'2023-05-12 18:00:13.434',77,'Jobs','JobList','{"jobList":{}}'),
+(9,'2023-05-24 17:11:04.280',5497,'Access','StringList','{"stringList":{"strings":["Own","Lower_Rank","Same_Rank","Any"]}}'),
+(10,'2023-05-24 17:11:04.291',21,'Access','StringList','{"stringList":{"strings":["Own","Lower_Rank","Same_Rank","Any"]}}'),
+(11,'2023-05-24 17:11:04.304',30,'Access','StringList','{"stringList":{"strings":["Own","Lower_Rank","Same_Rank","Any"]}}');
 /*!40000 ALTER TABLE `fivenet_attrs` ENABLE KEYS */;
 UNLOCK TABLES;
 
@@ -104,10 +104,10 @@ UNLOCK TABLES;
 
 LOCK TABLES `fivenet_role_attrs` WRITE;
 /*!40000 ALTER TABLE `fivenet_role_attrs` DISABLE KEYS */;
-INSERT INTO `fivenet_role_attrs` (`role_id`, `created_at`, `updated_at`, `attr_id`, `value`) VALUES (3,'2023-05-16 18:05:22.073','2023-05-16 20:06:25.640',4,'[\"Wanted\",\"Job\"]'),
-(3,'2023-05-16 18:09:00.879','2023-05-16 20:06:25.649',6,'[\"ambulance\",\"police\"]'),
-(3,'2023-05-16 18:09:02.555','2023-05-16 20:15:20.546',7,'[\"ambulance\",\"police\"]'),
-(6,'2023-05-13 17:06:22.053',NULL,4,'[\"Wanted\",\"Job\"]');
+INSERT INTO `fivenet_role_attrs` (`role_id`, `created_at`, `updated_at`, `attr_id`, `value`) VALUES (3,'2023-05-16 18:05:22.073','2023-05-16 20:06:25.640',4,'{"stringList":{"strings":["UserProps.Wanted","UserProps.Job"]}}'),
+(3,'2023-05-16 18:09:00.879','2023-05-16 20:06:25.649',6,'{"jobList":{"strings":["ambulance","police"]}}'),
+(3,'2023-05-16 18:09:02.555','2023-05-16 20:15:20.546',7,'{"jobList":{"strings":["ambulance","police"]}}'),
+(6,'2023-05-13 17:06:22.053',NULL,4,'{"stringList":{"strings":["UserProps.Wanted","UserProps.Job"]}}');
 /*!40000 ALTER TABLE `fivenet_role_attrs` ENABLE KEYS */;
 UNLOCK TABLES;
 
