@@ -31,7 +31,6 @@ function calculateOffset(pageCount: number): bigint {
     }
 
     const o = pageSize.value * (pageC - 1n);
-    console.log(o, pageSize.value, pageCount, offset.value);
     if (o < 0) {
         return 0n;
     }

@@ -55,7 +55,8 @@ func (s *Housekeeper) convertPhoneJobMsgToDispatch() error {
 		WHERE(jet.AND(
 			tGksPhoneJMsg.Jobm.REGEXP_LIKE(jet.String("\\[\"("+strings.Join(s.convertJobs, "|")+")\"\\]")),
 			tGksPhoneJMsg.Owner.EQ(jet.Int32(0)),
-		))
+		)).
+		LIMIT(15)
 
 	var dest []struct {
 		*model.GksphoneJobMessage
@@ -65,6 +66,7 @@ func (s *Housekeeper) convertPhoneJobMsgToDispatch() error {
 		return err
 	}
 
+	s.logger.Debug("converting phone dispatch to fivenet", zap.Int("dispatch_count", len(dest)))
 	for _, msg := range dest {
 		job := strings.TrimSuffix(strings.TrimPrefix(*msg.Jobm, "[\""), "\"]")
 		gps, _ := strings.CutPrefix(*msg.Gps, "GPS: ")

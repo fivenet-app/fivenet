@@ -43,7 +43,6 @@ async function viewAuditLog(): Promise<ViewAuditLogResponse> {
         const users: number[] = [];
         selectedCitizens.value?.forEach((v) => users.push(v.userId));
         req.userIds = users;
-        console.log('selectedCitizens', selectedCitizens.value);
     }
 
     if (query.value.from !== '') {

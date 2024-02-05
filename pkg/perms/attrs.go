@@ -341,6 +341,16 @@ func (p *Perms) convertRawToRoleAttributes(in []*permissions.RawRoleAttribute, j
 			MaxValues:    &permissions.AttributeValues{},
 		}
 
+		if res[i].Value == nil {
+			res[i].Value = &permissions.AttributeValues{}
+			res[i].Value.Default(permissions.AttributeTypes(in[i].Type))
+		}
+
+		if res[i].ValidValues == nil {
+			res[i].ValidValues = &permissions.AttributeValues{}
+			res[i].ValidValues.Default(permissions.AttributeTypes(in[i].Type))
+		}
+
 		res[i].MaxValues, _ = p.GetJobAttrMaxVals(job, in[i].AttrId)
 		if res[i].MaxValues != nil {
 			res[i].MaxValues.Default(permissions.AttributeTypes(res[i].Type))
@@ -351,7 +361,13 @@ func (p *Perms) convertRawToRoleAttributes(in []*permissions.RawRoleAttribute, j
 }
 
 func (p *Perms) convertRawValue(targetVal *permissions.AttributeValues, rawVal string, aType permissions.AttributeTypes) error {
-	return protojson.Unmarshal([]byte(rawVal), targetVal)
+	if err := protojson.Unmarshal([]byte(rawVal), targetVal); err != nil {
+		return err
+	}
+
+	targetVal.Default(aType)
+
+	return nil
 }
 
 func (p *Perms) GetAllAttributes(ctx context.Context, job string, grade int32) ([]*permissions.RoleAttribute, error) {
@@ -525,34 +541,14 @@ func (p *Perms) addOrUpdateAttributesToRole(ctx context.Context, roleId uint64, 
 		}
 
 		if attrs[i].Value != nil {
-			var out string
-			var err error
-
 			attrs[i].Value.Default(permissions.AttributeTypes(a.Type))
 
-			switch permissions.AttributeTypes(a.Type) {
-			case permissions.StringListAttributeType:
-				out, err = json.MarshalToString(attrs[i].Value.GetStringList().Strings)
-				if err != nil {
-					return err
-				}
-
-			case permissions.JobListAttributeType:
-				out, err = json.MarshalToString(attrs[i].Value.GetJobList().Strings)
-				if err != nil {
-					return err
-				}
-
-			case permissions.JobGradeListAttributeType:
-				out, err = json.MarshalToString(attrs[i].Value.GetJobGradeList().Jobs)
-				if err != nil {
-					return err
-				}
+			out, err := protojson.Marshal(attrs[i].Value)
+			if err != nil {
+				return err
 			}
 
-			if out != "" && out != "null" {
-				attrValue = jet.String(out)
-			}
+			attrValue = jet.String(string(out))
 		}
 
 		stmt := tRoleAttrs.
@@ -643,32 +639,14 @@ func (p *Perms) UpdateJobAttributeMaxValues(ctx context.Context, job string, att
 
 	maxVal := jet.NULL
 	if maxValues != nil {
-		var out string
-		var err error
-
 		maxValues.Default(permissions.AttributeTypes(a.Type))
 
-		switch permissions.AttributeTypes(a.Type) {
-		case permissions.StringListAttributeType:
-			out, err = json.MarshalToString(maxValues.GetStringList().Strings)
-			if err != nil {
-				return err
-			}
-		case permissions.JobListAttributeType:
-			out, err = json.MarshalToString(maxValues.GetJobList().Strings)
-			if err != nil {
-				return err
-			}
-		case permissions.JobGradeListAttributeType:
-			out, err = json.MarshalToString(maxValues.GetJobGradeList().Jobs)
-			if err != nil {
-				return err
-			}
+		out, err := protojson.Marshal(maxValues)
+		if err != nil {
+			return err
 		}
 
-		if out != "" && out != "null" {
-			maxVal = jet.String(out)
-		}
+		maxVal = jet.String(string(out))
 	}
 
 	stmt := tJobAttrs.

@@ -72,49 +72,45 @@ if (maxValues === undefined) {
     }
 }
 
-function ensureDefaultState(): void {
-    if (!states.value.has(id.value)) {
-        switch (lowercaseFirstLetter(props.attribute.type)) {
-            case 'stringList': {
-                states.value.set(id.value, {
-                    validValues: {
-                        oneofKind: 'stringList',
-                        stringList: {
-                            strings: [],
-                        },
+if (!states.value.has(id.value) || states.value.get(id.value) === undefined) {
+    switch (lowercaseFirstLetter(props.attribute.type)) {
+        case 'stringList': {
+            states.value.set(id.value, {
+                validValues: {
+                    oneofKind: 'stringList',
+                    stringList: {
+                        strings: [],
                     },
-                });
-                break;
-            }
+                },
+            });
+            break;
+        }
 
-            case 'jobList': {
-                states.value.set(id.value, {
-                    validValues: {
-                        oneofKind: 'jobList',
-                        jobList: {
-                            strings: [],
-                        },
+        case 'jobList': {
+            states.value.set(id.value, {
+                validValues: {
+                    oneofKind: 'jobList',
+                    jobList: {
+                        strings: [],
                     },
-                });
-                break;
-            }
+                },
+            });
+            break;
+        }
 
-            case 'jobGradeList': {
-                states.value.set(id.value, {
-                    validValues: {
-                        oneofKind: 'jobGradeList',
-                        jobGradeList: {
-                            jobs: {},
-                        },
+        case 'jobGradeList': {
+            states.value.set(id.value, {
+                validValues: {
+                    oneofKind: 'jobGradeList',
+                    jobGradeList: {
+                        jobs: {},
                     },
-                });
-                break;
-            }
+                },
+            });
+            break;
         }
     }
 }
-
-ensureDefaultState();
 
 const currentValue = states.value.get(id.value)!;
 const validValues = ref<AttributeValues | undefined>(props.attribute.validValues);
@@ -310,7 +306,7 @@ onBeforeMount(async () => {
                         "
                         class="flex flex-col gap-2"
                     >
-                        <span v-if="maxValues.validValues.jobGradeList.jobs.length === 0">
+                        <span v-if="Object.keys(maxValues.validValues.jobGradeList.jobs).length === 0">
                             {{ $t('common.not_found', [$t('common.attributes', 2)]) }}
                         </span>
                         <template v-else>
