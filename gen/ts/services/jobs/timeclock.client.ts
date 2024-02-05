@@ -16,7 +16,7 @@ import type { RpcOptions } from "@protobuf-ts/runtime-rpc";
  */
 export interface IJobsTimeclockServiceClient {
     /**
-     * @perm: Attrs=Access/StringList:[]string{"All"}§[]string{}
+     * @perm: Attrs=Access/StringList:[]string{"All"}
      *
      * @generated from protobuf rpc: ListTimeclock(services.jobs.ListTimeclockRequest) returns (services.jobs.ListTimeclockResponse);
      */
@@ -38,7 +38,7 @@ export class JobsTimeclockServiceClient implements IJobsTimeclockServiceClient, 
     constructor(private readonly _transport: RpcTransport) {
     }
     /**
-     * @perm: Attrs=Access/StringList:[]string{"All"}§[]string{}
+     * @perm: Attrs=Access/StringList:[]string{"All"}
      *
      * @generated from protobuf rpc: ListTimeclock(services.jobs.ListTimeclockRequest) returns (services.jobs.ListTimeclockResponse);
      */

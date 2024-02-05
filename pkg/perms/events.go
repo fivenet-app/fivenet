@@ -17,6 +17,7 @@ const (
 
 	RolePermUpdateSubject events.Type = "roleperm.update"
 	RoleAttrUpdateSubject events.Type = "roleattr.update"
+	JobAttrUpdateSubject  events.Type = "jobattr.update"
 )
 
 type RolePermUpdateEvent struct {
@@ -25,6 +26,10 @@ type RolePermUpdateEvent struct {
 
 type RoleAttrUpdateEvent struct {
 	RoleID uint64
+}
+
+type JobAttrUpdateEvent struct {
+	Job string
 }
 
 func (p *Perms) registerEvents(ctx context.Context) error {
@@ -76,6 +81,18 @@ func (p *Perms) handleMessage(msg *nats.Msg) {
 
 		if err := p.loadRoleAttributes(p.ctx, event.RoleID); err != nil {
 			p.logger.Error("failed to update role permissions", zap.Error(err))
+			return
+		}
+
+	case JobAttrUpdateSubject:
+		event := &JobAttrUpdateEvent{}
+		if err := json.Unmarshal(msg.Data, event); err != nil {
+			p.logger.Error("failed to unmarshal message event data", zap.Error(err))
+			return
+		}
+
+		if err := p.loadJobAttrs(p.ctx, event.Job); err != nil {
+			p.logger.Error("failed to update job attributes", zap.Error(err))
 			return
 		}
 

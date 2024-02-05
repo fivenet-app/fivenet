@@ -75,13 +75,13 @@ type DocStoreServiceClient interface {
 	GetDocument(ctx context.Context, in *GetDocumentRequest, opts ...grpc.CallOption) (*GetDocumentResponse, error)
 	// @perm
 	CreateDocument(ctx context.Context, in *CreateDocumentRequest, opts ...grpc.CallOption) (*CreateDocumentResponse, error)
-	// @perm: Attrs=Access/StringList:[]string{"Own", "Lower_Rank", "Same_Rank", "Any"}§[]string{"Own"}
+	// @perm: Attrs=Access/StringList:[]string{"Own", "Lower_Rank", "Same_Rank", "Any"}
 	UpdateDocument(ctx context.Context, in *UpdateDocumentRequest, opts ...grpc.CallOption) (*UpdateDocumentResponse, error)
-	// @perm: Attrs=Access/StringList:[]string{"Own", "Lower_Rank", "Same_Rank", "Any"}§[]string{"Own"}
+	// @perm: Attrs=Access/StringList:[]string{"Own", "Lower_Rank", "Same_Rank", "Any"}
 	DeleteDocument(ctx context.Context, in *DeleteDocumentRequest, opts ...grpc.CallOption) (*DeleteDocumentResponse, error)
-	// @perm: Attrs=Access/StringList:[]string{"Own", "Lower_Rank", "Same_Rank", "Any"}§[]string{"Own"}
+	// @perm: Attrs=Access/StringList:[]string{"Own", "Lower_Rank", "Same_Rank", "Any"}
 	ToggleDocument(ctx context.Context, in *ToggleDocumentRequest, opts ...grpc.CallOption) (*ToggleDocumentResponse, error)
-	// @perm: Attrs=Access/StringList:[]string{"Own", "Lower_Rank", "Same_Rank", "Any"}§[]string{"Own"}
+	// @perm: Attrs=Access/StringList:[]string{"Own", "Lower_Rank", "Same_Rank", "Any"}
 	ChangeDocumentOwner(ctx context.Context, in *ChangeDocumentOwnerRequest, opts ...grpc.CallOption) (*ChangeDocumentOwnerResponse, error)
 	// @perm: Name=GetDocument
 	GetDocumentReferences(ctx context.Context, in *GetDocumentReferencesRequest, opts ...grpc.CallOption) (*GetDocumentReferencesResponse, error)
@@ -101,7 +101,7 @@ type DocStoreServiceClient interface {
 	PostComment(ctx context.Context, in *PostCommentRequest, opts ...grpc.CallOption) (*PostCommentResponse, error)
 	// @perm: Name=PostComment
 	EditComment(ctx context.Context, in *EditCommentRequest, opts ...grpc.CallOption) (*EditCommentResponse, error)
-	// @perm: Attrs=Access/StringList:[]string{"Own", "Lower_Rank", "Same_Rank", "Any"}§[]string{"Own"}
+	// @perm: Attrs=Access/StringList:[]string{"Own", "Lower_Rank", "Same_Rank", "Any"}
 	DeleteComment(ctx context.Context, in *DeleteCommentRequest, opts ...grpc.CallOption) (*DeleteCommentResponse, error)
 	// @perm: Name=GetDocument
 	GetDocumentAccess(ctx context.Context, in *GetDocumentAccessRequest, opts ...grpc.CallOption) (*GetDocumentAccessResponse, error)
@@ -111,7 +111,7 @@ type DocStoreServiceClient interface {
 	ListDocumentActivity(ctx context.Context, in *ListDocumentActivityRequest, opts ...grpc.CallOption) (*ListDocumentActivityResponse, error)
 	// @perm
 	ListDocumentReqs(ctx context.Context, in *ListDocumentReqsRequest, opts ...grpc.CallOption) (*ListDocumentReqsResponse, error)
-	// @perm: Attrs=Types/StringList:[]string{"Access", "Closure", "Update", "Deletion", "OwnerChange"}§[]string{"Access"}
+	// @perm: Attrs=Types/StringList:[]string{"Access", "Closure", "Update", "Deletion", "OwnerChange"}
 	CreateDocumentReq(ctx context.Context, in *CreateDocumentReqRequest, opts ...grpc.CallOption) (*CreateDocumentReqResponse, error)
 	// @perm: Name=CreateDocumentReq
 	UpdateDocumentReq(ctx context.Context, in *UpdateDocumentReqRequest, opts ...grpc.CallOption) (*UpdateDocumentReqResponse, error)
@@ -463,13 +463,13 @@ type DocStoreServiceServer interface {
 	GetDocument(context.Context, *GetDocumentRequest) (*GetDocumentResponse, error)
 	// @perm
 	CreateDocument(context.Context, *CreateDocumentRequest) (*CreateDocumentResponse, error)
-	// @perm: Attrs=Access/StringList:[]string{"Own", "Lower_Rank", "Same_Rank", "Any"}§[]string{"Own"}
+	// @perm: Attrs=Access/StringList:[]string{"Own", "Lower_Rank", "Same_Rank", "Any"}
 	UpdateDocument(context.Context, *UpdateDocumentRequest) (*UpdateDocumentResponse, error)
-	// @perm: Attrs=Access/StringList:[]string{"Own", "Lower_Rank", "Same_Rank", "Any"}§[]string{"Own"}
+	// @perm: Attrs=Access/StringList:[]string{"Own", "Lower_Rank", "Same_Rank", "Any"}
 	DeleteDocument(context.Context, *DeleteDocumentRequest) (*DeleteDocumentResponse, error)
-	// @perm: Attrs=Access/StringList:[]string{"Own", "Lower_Rank", "Same_Rank", "Any"}§[]string{"Own"}
+	// @perm: Attrs=Access/StringList:[]string{"Own", "Lower_Rank", "Same_Rank", "Any"}
 	ToggleDocument(context.Context, *ToggleDocumentRequest) (*ToggleDocumentResponse, error)
-	// @perm: Attrs=Access/StringList:[]string{"Own", "Lower_Rank", "Same_Rank", "Any"}§[]string{"Own"}
+	// @perm: Attrs=Access/StringList:[]string{"Own", "Lower_Rank", "Same_Rank", "Any"}
 	ChangeDocumentOwner(context.Context, *ChangeDocumentOwnerRequest) (*ChangeDocumentOwnerResponse, error)
 	// @perm: Name=GetDocument
 	GetDocumentReferences(context.Context, *GetDocumentReferencesRequest) (*GetDocumentReferencesResponse, error)
@@ -489,7 +489,7 @@ type DocStoreServiceServer interface {
 	PostComment(context.Context, *PostCommentRequest) (*PostCommentResponse, error)
 	// @perm: Name=PostComment
 	EditComment(context.Context, *EditCommentRequest) (*EditCommentResponse, error)
-	// @perm: Attrs=Access/StringList:[]string{"Own", "Lower_Rank", "Same_Rank", "Any"}§[]string{"Own"}
+	// @perm: Attrs=Access/StringList:[]string{"Own", "Lower_Rank", "Same_Rank", "Any"}
 	DeleteComment(context.Context, *DeleteCommentRequest) (*DeleteCommentResponse, error)
 	// @perm: Name=GetDocument
 	GetDocumentAccess(context.Context, *GetDocumentAccessRequest) (*GetDocumentAccessResponse, error)
@@ -499,7 +499,7 @@ type DocStoreServiceServer interface {
 	ListDocumentActivity(context.Context, *ListDocumentActivityRequest) (*ListDocumentActivityResponse, error)
 	// @perm
 	ListDocumentReqs(context.Context, *ListDocumentReqsRequest) (*ListDocumentReqsResponse, error)
-	// @perm: Attrs=Types/StringList:[]string{"Access", "Closure", "Update", "Deletion", "OwnerChange"}§[]string{"Access"}
+	// @perm: Attrs=Types/StringList:[]string{"Access", "Closure", "Update", "Deletion", "OwnerChange"}
 	CreateDocumentReq(context.Context, *CreateDocumentReqRequest) (*CreateDocumentReqResponse, error)
 	// @perm: Name=CreateDocumentReq
 	UpdateDocumentReq(context.Context, *UpdateDocumentReqRequest) (*UpdateDocumentReqResponse, error)

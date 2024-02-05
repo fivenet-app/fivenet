@@ -49,10 +49,9 @@ func init() {
 			Name:     permkeys.DocStoreServiceChangeDocumentOwnerPerm,
 			Attrs: []perms.Attr{
 				{
-					Key:           permkeys.DocStoreServiceChangeDocumentOwnerAccessPermField,
-					Type:          permissions.StringListAttributeType,
-					ValidValues:   []string{"Own", "Lower_Rank", "Same_Rank", "Any"},
-					DefaultValues: []string{"Own"},
+					Key:         permkeys.DocStoreServiceChangeDocumentOwnerAccessPermField,
+					Type:        permissions.StringListAttributeType,
+					ValidValues: []string{"Own", "Lower_Rank", "Same_Rank", "Any"},
 				},
 			},
 		},
@@ -71,10 +70,9 @@ func init() {
 			Name:     permkeys.DocStoreServiceCreateDocumentReqPerm,
 			Attrs: []perms.Attr{
 				{
-					Key:           permkeys.DocStoreServiceCreateDocumentReqTypesPermField,
-					Type:          permissions.StringListAttributeType,
-					ValidValues:   []string{"Access", "Closure", "Update", "Deletion", "OwnerChange"},
-					DefaultValues: []string{"Access"},
+					Key:         permkeys.DocStoreServiceCreateDocumentReqTypesPermField,
+					Type:        permissions.StringListAttributeType,
+					ValidValues: []string{"Access", "Closure", "Update", "Deletion", "OwnerChange"},
 				},
 			},
 		},
@@ -93,10 +91,9 @@ func init() {
 			Name:     permkeys.DocStoreServiceDeleteCommentPerm,
 			Attrs: []perms.Attr{
 				{
-					Key:           permkeys.DocStoreServiceDeleteCommentAccessPermField,
-					Type:          permissions.StringListAttributeType,
-					ValidValues:   []string{"Own", "Lower_Rank", "Same_Rank", "Any"},
-					DefaultValues: []string{"Own"},
+					Key:         permkeys.DocStoreServiceDeleteCommentAccessPermField,
+					Type:        permissions.StringListAttributeType,
+					ValidValues: []string{"Own", "Lower_Rank", "Same_Rank", "Any"},
 				},
 			},
 		},
@@ -105,10 +102,9 @@ func init() {
 			Name:     permkeys.DocStoreServiceDeleteDocumentPerm,
 			Attrs: []perms.Attr{
 				{
-					Key:           permkeys.DocStoreServiceDeleteDocumentAccessPermField,
-					Type:          permissions.StringListAttributeType,
-					ValidValues:   []string{"Own", "Lower_Rank", "Same_Rank", "Any"},
-					DefaultValues: []string{"Own"},
+					Key:         permkeys.DocStoreServiceDeleteDocumentAccessPermField,
+					Type:        permissions.StringListAttributeType,
+					ValidValues: []string{"Own", "Lower_Rank", "Same_Rank", "Any"},
 				},
 			},
 		},
@@ -167,10 +163,9 @@ func init() {
 			Name:     permkeys.DocStoreServiceToggleDocumentPerm,
 			Attrs: []perms.Attr{
 				{
-					Key:           permkeys.DocStoreServiceToggleDocumentAccessPermField,
-					Type:          permissions.StringListAttributeType,
-					ValidValues:   []string{"Own", "Lower_Rank", "Same_Rank", "Any"},
-					DefaultValues: []string{"Own"},
+					Key:         permkeys.DocStoreServiceToggleDocumentAccessPermField,
+					Type:        permissions.StringListAttributeType,
+					ValidValues: []string{"Own", "Lower_Rank", "Same_Rank", "Any"},
 				},
 			},
 		},
@@ -179,10 +174,9 @@ func init() {
 			Name:     permkeys.DocStoreServiceUpdateDocumentPerm,
 			Attrs: []perms.Attr{
 				{
-					Key:           permkeys.DocStoreServiceUpdateDocumentAccessPermField,
-					Type:          permissions.StringListAttributeType,
-					ValidValues:   []string{"Own", "Lower_Rank", "Same_Rank", "Any"},
-					DefaultValues: []string{"Own"},
+					Key:         permkeys.DocStoreServiceUpdateDocumentAccessPermField,
+					Type:        permissions.StringListAttributeType,
+					ValidValues: []string{"Own", "Lower_Rank", "Same_Rank", "Any"},
 				},
 			},
 		},

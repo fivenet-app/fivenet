@@ -204,6 +204,8 @@ func (p *Perms) CreateRole(ctx context.Context, job string, grade int32) (*model
 	grades, _ := p.permsJobsRoleMap.LoadOrCompute(role.Job, xsync.NewMapOf[int32, uint64])
 	grades.Store(role.Grade, role.ID)
 
+	p.roleIDToJobMap.Store(role.ID, role.Job)
+
 	return role, nil
 }
 
@@ -227,6 +229,8 @@ func (p *Perms) DeleteRole(ctx context.Context, id uint64) error {
 
 	grades, _ := p.permsJobsRoleMap.LoadOrCompute(role.Job, xsync.NewMapOf[int32, uint64])
 	grades.Delete(role.Grade)
+
+	p.roleIDToJobMap.Delete(role.ID)
 
 	return nil
 }

@@ -4,6 +4,8 @@ import (
 	"github.com/galexrt/fivenet/pkg/utils"
 )
 
+// Attrs
+
 func (p *Perms) LookupAttributeByID(id uint64) (*cacheAttr, bool) {
 	return p.attrsMap.Load(id)
 }
@@ -32,6 +34,11 @@ func (p *Perms) lookupRoleAttribute(roleId uint64, attrId uint64) (*cacheRoleAtt
 }
 
 // Roles
+
+func (p *Perms) lookupJobForRoleID(roleId uint64) (string, bool) {
+	return p.roleIDToJobMap.Load(roleId)
+}
+
 func (p *Perms) lookupRoleIDForJobAndGrade(job string, grade int32) (uint64, bool) {
 	roles, ok := p.lookupRoleIDsForJobUpToGrade(job, grade)
 	if !ok || len(roles) == 0 {
@@ -77,6 +84,7 @@ func (p *Perms) lookupRoleIDsForJobUpToGrade(job string, grade int32) ([]uint64,
 }
 
 // Permissions
+
 func (p *Perms) lookupPermIDByGuard(guard string) (uint64, bool) {
 	return p.permsGuardToIDMap.Load(guard)
 }

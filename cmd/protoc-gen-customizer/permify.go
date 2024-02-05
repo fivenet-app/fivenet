@@ -201,18 +201,10 @@ func (p *PermifyModule) parseComment(service string, method string, comment stri
 					validValue = strings.Join(validList[1:], ":")
 				}
 
-				defaultValue := ""
-				defaultSplit := strings.Split(validValue, "§")
-				if len(defaultSplit) > 1 {
-					validValue = defaultSplit[0]
-					defaultValue = defaultSplit[1]
-				}
-
 				perm.Attrs = append(perm.Attrs, Attr{
-					Key:     attrSplit[0],
-					Type:    attrType,
-					Valid:   validValue,
-					Default: defaultValue,
+					Key:   attrSplit[0],
+					Type:  attrType,
+					Valid: validValue,
 				})
 			}
 			continue
@@ -267,7 +259,6 @@ func init() {
                     Key: permkeys.{{ $sName }}{{ $perm.Name }}{{ $attr.Key }}PermField,
                     Type: permissions.{{ $attr.Type }}AttributeType,
                     {{ with $attr.Valid -}}ValidValues: {{ $attr.Valid }},{{ end }}
-                    {{ with $attr.Default -}}DefaultValues: {{ $attr.Default }},{{ end }}
                 },
             {{- end }}
             },

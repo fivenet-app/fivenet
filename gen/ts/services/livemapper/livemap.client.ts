@@ -25,13 +25,13 @@ export interface ILivemapperServiceClient {
      */
     stream(input: StreamRequest, options?: RpcOptions): ServerStreamingCall<StreamRequest, StreamResponse>;
     /**
-     * @perm: Attrs=Access/StringList:[]string{"Own", "Lower_Rank", "Same_Rank", "Any"}§[]string{"Own"}
+     * @perm: Attrs=Access/StringList:[]string{"Own", "Lower_Rank", "Same_Rank", "Any"}
      *
      * @generated from protobuf rpc: CreateOrUpdateMarker(services.livemapper.CreateOrUpdateMarkerRequest) returns (services.livemapper.CreateOrUpdateMarkerResponse);
      */
     createOrUpdateMarker(input: CreateOrUpdateMarkerRequest, options?: RpcOptions): UnaryCall<CreateOrUpdateMarkerRequest, CreateOrUpdateMarkerResponse>;
     /**
-     * @perm: Attrs=Access/StringList:[]string{"Own", "Lower_Rank", "Same_Rank", "Any"}§[]string{"Own"}
+     * @perm: Attrs=Access/StringList:[]string{"Own", "Lower_Rank", "Same_Rank", "Any"}
      *
      * @generated from protobuf rpc: DeleteMarker(services.livemapper.DeleteMarkerRequest) returns (services.livemapper.DeleteMarkerResponse);
      */
@@ -56,7 +56,7 @@ export class LivemapperServiceClient implements ILivemapperServiceClient, Servic
         return stackIntercept<StreamRequest, StreamResponse>("serverStreaming", this._transport, method, opt, input);
     }
     /**
-     * @perm: Attrs=Access/StringList:[]string{"Own", "Lower_Rank", "Same_Rank", "Any"}§[]string{"Own"}
+     * @perm: Attrs=Access/StringList:[]string{"Own", "Lower_Rank", "Same_Rank", "Any"}
      *
      * @generated from protobuf rpc: CreateOrUpdateMarker(services.livemapper.CreateOrUpdateMarkerRequest) returns (services.livemapper.CreateOrUpdateMarkerResponse);
      */
@@ -65,7 +65,7 @@ export class LivemapperServiceClient implements ILivemapperServiceClient, Servic
         return stackIntercept<CreateOrUpdateMarkerRequest, CreateOrUpdateMarkerResponse>("unary", this._transport, method, opt, input);
     }
     /**
-     * @perm: Attrs=Access/StringList:[]string{"Own", "Lower_Rank", "Same_Rank", "Any"}§[]string{"Own"}
+     * @perm: Attrs=Access/StringList:[]string{"Own", "Lower_Rank", "Same_Rank", "Any"}
      *
      * @generated from protobuf rpc: DeleteMarker(services.livemapper.DeleteMarkerRequest) returns (services.livemapper.DeleteMarkerResponse);
      */

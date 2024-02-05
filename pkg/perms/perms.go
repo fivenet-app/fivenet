@@ -55,17 +55,17 @@ type Permissions interface {
 	LookupAttributeByID(id uint64) (*cacheAttr, bool)
 	GetAttribute(category Category, name Name, key Key) (*permissions.RoleAttribute, error)
 	GetAttributeByIDs(ctx context.Context, ids ...uint64) ([]*permissions.RoleAttribute, error)
-	CreateAttribute(ctx context.Context, permId uint64, key Key, aType permissions.AttributeTypes, validValues any, defaultValues any) (uint64, error)
-	UpdateAttribute(ctx context.Context, attributeId uint64, permId uint64, key Key, aType permissions.AttributeTypes, validValues any, defaultValues any) error
+	CreateAttribute(ctx context.Context, permId uint64, key Key, aType permissions.AttributeTypes, validValues *permissions.AttributeValues) (uint64, error)
+	UpdateAttribute(ctx context.Context, attributeId uint64, permId uint64, key Key, aType permissions.AttributeTypes, validValues *permissions.AttributeValues) error
 	GetRoleAttributes(job string, grade int32) ([]*permissions.RoleAttribute, error)
 	GetRoleAttributeByID(roleId uint64, attrId uint64) (*permissions.RoleAttribute, bool)
 	FlattenRoleAttributes(job string, grade int32) ([]string, error)
 	GetAllAttributes(ctx context.Context, job string, grade int32) ([]*permissions.RoleAttribute, error)
 	AddOrUpdateAttributesToRole(ctx context.Context, job string, grade int32, roleId uint64, attrs ...*permissions.RoleAttribute) error
 	RemoveAttributesFromRole(ctx context.Context, roleId uint64, attrs ...*permissions.RoleAttribute) error
-	ClearAttributeFromRole(ctx context.Context, roleId uint64, attrs ...*permissions.RoleAttribute) error
-	UpdateRoleAttributeMaxValues(ctx context.Context, roleId uint64, attrId uint64, maxValues *permissions.AttributeValues) error
-	GetClosestRoleAttrMaxVals(job string, grade int32, permId uint64, key Key) (*permissions.AttributeValues, uint64)
+
+	GetJobAttrMaxVals(job string, attrId uint64) (*permissions.AttributeValues, bool)
+	UpdateJobAttributeMaxValues(ctx context.Context, job string, attrId uint64, maxValues *permissions.AttributeValues) error
 
 	Attr(userInfo *userinfo.UserInfo, category Category, name Name, key Key) (any, error)
 }
@@ -94,13 +94,17 @@ type Perms struct {
 	permsJobsRoleMap *xsync.MapOf[string, *xsync.MapOf[int32, uint64]]
 	// Role ID to map of permissions ID and result
 	permsRoleMap *xsync.MapOf[uint64, *xsync.MapOf[uint64, bool]]
+	// Role ID to Job map
+	roleIDToJobMap *xsync.MapOf[uint64, string]
 
 	// Attribute map (key: ID of attribute)
 	attrsMap *xsync.MapOf[uint64, *cacheAttr]
 	// Role ID to map of role attributes
 	attrsRoleMap *xsync.MapOf[uint64, *xsync.MapOf[uint64, *cacheRoleAttr]]
-	// Perm ID to map Key -> cached attribute
+	// Perm ID to map `Key` -> cached attribute
 	attrsPermsMap *xsync.MapOf[uint64, *xsync.MapOf[string, uint64]]
+	// Job to map attr ID to job max value attribute
+	attrsJobMaxValuesMap *xsync.MapOf[string, *xsync.MapOf[uint64, *permissions.AttributeValues]]
 
 	userCanCacheTTL time.Duration
 	userCanCache    *cache.Cache[userCacheKey, bool]
@@ -146,10 +150,12 @@ func New(p Params) (Permissions, error) {
 		permsGuardToIDMap: xsync.NewMapOf[string, uint64](),
 		permsJobsRoleMap:  xsync.NewMapOf[string, *xsync.MapOf[int32, uint64]](),
 		permsRoleMap:      xsync.NewMapOf[uint64, *xsync.MapOf[uint64, bool]](),
+		roleIDToJobMap:    xsync.NewMapOf[uint64, string](),
 
-		attrsMap:      xsync.NewMapOf[uint64, *cacheAttr](),
-		attrsRoleMap:  xsync.NewMapOf[uint64, *xsync.MapOf[uint64, *cacheRoleAttr]](),
-		attrsPermsMap: xsync.NewMapOf[uint64, *xsync.MapOf[string, uint64]](),
+		attrsMap:             xsync.NewMapOf[uint64, *cacheAttr](),
+		attrsRoleMap:         xsync.NewMapOf[uint64, *xsync.MapOf[uint64, *cacheRoleAttr]](),
+		attrsPermsMap:        xsync.NewMapOf[uint64, *xsync.MapOf[string, uint64]](),
+		attrsJobMaxValuesMap: xsync.NewMapOf[string, *xsync.MapOf[uint64, *permissions.AttributeValues]](),
 
 		userCanCacheTTL: 30 * time.Second,
 		userCanCache:    userCanCache,
@@ -215,23 +221,22 @@ type cachePerm struct {
 }
 
 type cacheAttr struct {
-	ID            uint64
-	PermissionID  uint64
-	Category      Category
-	Name          Name
-	Key           Key
-	Type          permissions.AttributeTypes
-	ValidValues   *permissions.AttributeValues
-	DefaultValues *permissions.AttributeValues
+	ID           uint64
+	PermissionID uint64
+	Category     Category
+	Name         Name
+	Key          Key
+	Type         permissions.AttributeTypes
+	ValidValues  *permissions.AttributeValues
 }
 
 type cacheRoleAttr struct {
+	Job          string
 	AttrID       uint64
 	PermissionID uint64
 	Key          Key
 	Type         permissions.AttributeTypes
 	Value        *permissions.AttributeValues
-	Max          *permissions.AttributeValues
 }
 
 func (p *Perms) load() error {
@@ -255,6 +260,10 @@ func (p *Perms) load() error {
 	}
 
 	if err := p.loadRoleAttributes(ctx, 0); err != nil {
+		return err
+	}
+
+	if err := p.loadJobAttrs(ctx, ""); err != nil {
 		return err
 	}
 
@@ -298,24 +307,22 @@ func (p *Perms) loadAttributes(ctx context.Context) error {
 			tAttrs.Key.AS("key"),
 			tAttrs.Type.AS("type"),
 			tAttrs.ValidValues.AS("valid_values"),
-			tAttrs.DefaultValues.AS("default_values"),
 		).
 		FROM(tAttrs)
 
 	var dest []struct {
-		ID            uint64
-		PermissionID  uint64
-		Key           Key
-		Type          permissions.AttributeTypes
-		ValidValues   string
-		DefaultValues string
+		ID           uint64
+		PermissionID uint64
+		Key          Key
+		Type         permissions.AttributeTypes
+		ValidValues  *permissions.AttributeValues
 	}
 	if err := stmt.QueryContext(ctx, p.db, &dest); err != nil {
 		return err
 	}
 
 	for _, attr := range dest {
-		if err := p.addOrUpdateAttributeInMap(attr.PermissionID, attr.ID, attr.Key, attr.Type, attr.ValidValues, attr.DefaultValues); err != nil {
+		if err := p.addOrUpdateAttributeInMap(attr.PermissionID, attr.ID, attr.Key, attr.Type, attr.ValidValues); err != nil {
 			return err
 		}
 	}
@@ -344,6 +351,8 @@ func (p *Perms) loadRoleIDs(ctx context.Context) error {
 	for _, role := range dest {
 		grades, _ := p.permsJobsRoleMap.LoadOrCompute(role.Job, xsync.NewMapOf[int32, uint64])
 		grades.Store(role.Grade, role.ID)
+
+		p.roleIDToJobMap.Store(role.ID, role.Job)
 	}
 
 	return nil
@@ -358,7 +367,8 @@ func (p *Perms) loadRolePermissions(ctx context.Context, roleId uint64) error {
 		).
 		FROM(tRolePerms.
 			INNER_JOIN(tRoles,
-				tRoles.ID.EQ(tRolePerms.RoleID)),
+				tRoles.ID.EQ(tRolePerms.RoleID),
+			),
 		).
 		ORDER_BY(
 			tRoles.Job.ASC(),
@@ -388,6 +398,41 @@ func (p *Perms) loadRolePermissions(ctx context.Context, roleId uint64) error {
 	return nil
 }
 
+func (p *Perms) loadJobAttrs(ctx context.Context, job string) error {
+	stmt := tJobAttrs.
+		SELECT(
+			tJobAttrs.Job.AS("job"),
+			tJobAttrs.AttrID.AS("attr_id"),
+			tJobAttrs.MaxValues.AS("max_values"),
+		).
+		FROM(tJobAttrs).
+		ORDER_BY(
+			tJobAttrs.Job.ASC(),
+		)
+
+	if job != "" {
+		stmt = stmt.WHERE(
+			tJobAttrs.Job.EQ(jet.String(job)),
+		)
+	}
+
+	var dest []struct {
+		Job       string
+		AttrID    uint64
+		MaxValues *permissions.AttributeValues
+	}
+	if err := stmt.QueryContext(ctx, p.db, &dest); err != nil {
+		return err
+	}
+
+	for _, jobAttrs := range dest {
+		attrs, _ := p.attrsJobMaxValuesMap.LoadOrCompute(jobAttrs.Job, xsync.NewMapOf[uint64, *permissions.AttributeValues])
+		attrs.Store(jobAttrs.AttrID, jobAttrs.MaxValues)
+	}
+
+	return nil
+}
+
 func (p *Perms) loadRoleAttributes(ctx context.Context, roleId uint64) error {
 	stmt := tRoleAttrs.
 		SELECT(
@@ -397,7 +442,6 @@ func (p *Perms) loadRoleAttributes(ctx context.Context, roleId uint64) error {
 			tAttrs.Key.AS("key"),
 			tAttrs.Type.AS("type"),
 			tRoleAttrs.Value.AS("value"),
-			tRoleAttrs.MaxValues.AS("max_values"),
 		).
 		FROM(
 			tRoleAttrs.
@@ -418,8 +462,7 @@ func (p *Perms) loadRoleAttributes(ctx context.Context, roleId uint64) error {
 		RoleID       uint64
 		Key          Key
 		Type         permissions.AttributeTypes
-		Value        string
-		MaxValues    string
+		Value        *permissions.AttributeValues
 	}
 
 	if err := stmt.QueryContext(ctx, p.db, &dest); err != nil {
@@ -429,63 +472,36 @@ func (p *Perms) loadRoleAttributes(ctx context.Context, roleId uint64) error {
 	}
 
 	for _, ra := range dest {
-		a, ok := p.LookupAttributeByID(ra.AttrID)
-		if !ok {
-			return fmt.Errorf("unable to find attribute ID %d for role %d", ra.AttrID, ra.RoleID)
-		}
-
-		if err := p.addOrUpdateRoleAttributeInMap(ra.RoleID, ra.PermissionID, ra.AttrID, ra.Key, ra.Type, ra.Value, ra.MaxValues); err != nil {
-			// Reset the attribute value to null/ empty because we encountered an error
-			if err := p.addOrUpdateAttributesToRole(p.ctx, ra.RoleID, &permissions.RoleAttribute{
-				RoleId: ra.RoleID,
-				AttrId: ra.AttrID,
-				Value:  a.DefaultValues,
-			}); err != nil {
-				return err
-			}
-		}
+		p.updateRoleAttributeInMap(ra.RoleID, ra.PermissionID, ra.AttrID, ra.Key, ra.Type, ra.Value)
 	}
 
 	return nil
 }
 
-func (p *Perms) addOrUpdateRoleAttributeInMap(roleId uint64, permId uint64, attrId uint64, key Key, aType permissions.AttributeTypes, rawValue string, rawMax string) error {
-	val := &permissions.AttributeValues{}
-	if err := p.convertRawValue(val, rawValue, aType); err != nil {
-		return err
+func (p *Perms) updateRoleAttributeInMap(roleId uint64, permId uint64, attrId uint64, key Key, aType permissions.AttributeTypes, value *permissions.AttributeValues) {
+	job, ok := p.lookupJobForRoleID(roleId)
+	if !ok {
+		p.logger.Error("unable to resolve role id to job", zap.Uint64("role_id", roleId))
+		return
 	}
 
-	var max *permissions.AttributeValues
-	if rawMax != "" {
-		max = &permissions.AttributeValues{}
-		if err := p.convertRawValue(max, rawMax, aType); err != nil {
-			return err
-		}
-	}
-
-	p.updateRoleAttributeInMap(roleId, permId, attrId, key, aType, val, max)
-
-	return nil
-}
-
-func (p *Perms) updateRoleAttributeInMap(roleId uint64, permId uint64, attrId uint64, key Key, aType permissions.AttributeTypes, value *permissions.AttributeValues, max *permissions.AttributeValues) {
 	attrRoleMap, _ := p.attrsRoleMap.LoadOrCompute(roleId, xsync.NewMapOf[uint64, *cacheRoleAttr])
 	cached, ok := attrRoleMap.Load(attrId)
 	if !ok {
 		attrRoleMap.Store(attrId, &cacheRoleAttr{
+			Job:          job,
 			AttrID:       attrId,
 			PermissionID: permId,
 			Key:          key,
 			Type:         aType,
 			Value:        value,
-			Max:          max,
 		})
 	} else {
+		cached.Job = job
 		cached.PermissionID = permId
 		cached.Key = key
 		cached.Type = aType
 		cached.Value = value
-		cached.Max = max
 	}
 }
 

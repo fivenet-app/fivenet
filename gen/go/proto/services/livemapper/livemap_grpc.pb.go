@@ -30,9 +30,9 @@ const (
 type LivemapperServiceClient interface {
 	// @perm: Attrs=Markers/JobList|Players/JobGradeList
 	Stream(ctx context.Context, in *StreamRequest, opts ...grpc.CallOption) (LivemapperService_StreamClient, error)
-	// @perm: Attrs=Access/StringList:[]string{"Own", "Lower_Rank", "Same_Rank", "Any"}§[]string{"Own"}
+	// @perm: Attrs=Access/StringList:[]string{"Own", "Lower_Rank", "Same_Rank", "Any"}
 	CreateOrUpdateMarker(ctx context.Context, in *CreateOrUpdateMarkerRequest, opts ...grpc.CallOption) (*CreateOrUpdateMarkerResponse, error)
-	// @perm: Attrs=Access/StringList:[]string{"Own", "Lower_Rank", "Same_Rank", "Any"}§[]string{"Own"}
+	// @perm: Attrs=Access/StringList:[]string{"Own", "Lower_Rank", "Same_Rank", "Any"}
 	DeleteMarker(ctx context.Context, in *DeleteMarkerRequest, opts ...grpc.CallOption) (*DeleteMarkerResponse, error)
 }
 
@@ -100,9 +100,9 @@ func (c *livemapperServiceClient) DeleteMarker(ctx context.Context, in *DeleteMa
 type LivemapperServiceServer interface {
 	// @perm: Attrs=Markers/JobList|Players/JobGradeList
 	Stream(*StreamRequest, LivemapperService_StreamServer) error
-	// @perm: Attrs=Access/StringList:[]string{"Own", "Lower_Rank", "Same_Rank", "Any"}§[]string{"Own"}
+	// @perm: Attrs=Access/StringList:[]string{"Own", "Lower_Rank", "Same_Rank", "Any"}
 	CreateOrUpdateMarker(context.Context, *CreateOrUpdateMarkerRequest) (*CreateOrUpdateMarkerResponse, error)
-	// @perm: Attrs=Access/StringList:[]string{"Own", "Lower_Rank", "Same_Rank", "Any"}§[]string{"Own"}
+	// @perm: Attrs=Access/StringList:[]string{"Own", "Lower_Rank", "Same_Rank", "Any"}
 	DeleteMarker(context.Context, *DeleteMarkerRequest) (*DeleteMarkerResponse, error)
 	mustEmbedUnimplementedLivemapperServiceServer()
 }

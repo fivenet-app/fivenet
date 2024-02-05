@@ -12,11 +12,10 @@ import (
 )
 
 type FivenetAttrs struct {
-	ID            uint64     `sql:"primary_key" json:"id"`
-	CreatedAt     *time.Time `json:"created_at"`
-	PermissionID  uint64     `json:"permission_id"`
-	Key           string     `json:"key"`
-	Type          string     `json:"type"`
-	ValidValues   *string    `json:"valid_values"`
-	DefaultValues *string    `json:"default_values"`
+	ID           uint64     `sql:"primary_key" json:"id"`
+	CreatedAt    *time.Time `json:"created_at"`
+	PermissionID uint64     `json:"permission_id"`
+	Key          string     `json:"key"`
+	Type         string     `json:"type"`
+	ValidValues  *string    `json:"valid_values"`
 }

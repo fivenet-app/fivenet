@@ -4,6 +4,7 @@ import (
 	"context"
 	"errors"
 	"fmt"
+	"reflect"
 	"slices"
 	"sync"
 
@@ -84,7 +85,7 @@ func (p *Perms) register(ctx context.Context, defaultRolePerms []string) error {
 				attr.ValidValues = p.cfg.Game.Livemap.Jobs
 			}
 
-			if _, err := p.createOrUpdateAttribute(ctx, permId, attr.Key, attr.Type, attr.ValidValues, attr.DefaultValues); err != nil {
+			if _, err := p.registerOrUpdateAttribute(ctx, permId, attr.Key, attr.Type, attr.ValidValues); err != nil {
 				return err
 			}
 		}
@@ -141,7 +142,7 @@ func (p *Perms) createOrUpdatePermission(ctx context.Context, category Category,
 	return p.CreatePermission(ctx, category, name)
 }
 
-func (p *Perms) createOrUpdateAttribute(ctx context.Context, permId uint64, key Key, aType permissions.AttributeTypes, validValues any, defaultValues any) (uint64, error) {
+func (p *Perms) registerOrUpdateAttribute(ctx context.Context, permId uint64, key Key, aType permissions.AttributeTypes, validValues any) (uint64, error) {
 	attr, err := p.getAttributeFromDatabase(ctx, permId, key)
 	if err != nil {
 		if !errors.Is(err, qrm.ErrNoRows) {
@@ -149,32 +150,57 @@ func (p *Perms) createOrUpdateAttribute(ctx context.Context, permId uint64, key 
 		}
 	}
 
-	if attr != nil && attr.ID > 0 {
-		var validVal interface{}
-		if validValues != nil {
-			validVal, err = json.MarshalToString(validValues)
-			if err != nil {
-				return 0, err
+	attrValidValues := &permissions.AttributeValues{}
+	if attr.ValidValues != nil {
+		if err := p.convertRawValue(attrValidValues, *attr.ValidValues, aType); err != nil {
+			return 0, err
+		}
+	}
+
+	var validValsOut string
+	// If the valid values is a nil or a string, don't do anything extra just set to an empty string
+	if validValues != nil {
+		vType := reflect.TypeOf(validValues).String()
+		if vType == "string" {
+			if validValues != "" {
+				validValsOut = validValues.(string)
+			}
+		} else {
+			if aType == "StringList" {
+				validValsOut, err = json.MarshalToString(validValues)
+				if err != nil {
+					return 0, err
+				}
+				validValsOut = "{\"stringList\":{\"strings\":" + validValsOut + "}}"
 			}
 		}
+	}
+	if validValsOut == "" {
+		validValsOut = "{}"
+	}
+	validVals := &permissions.AttributeValues{}
+	if err := p.convertRawValue(validVals, validValsOut, aType); err != nil {
+		return 0, err
+	}
 
-		if err := p.addOrUpdateAttributeInMap(permId, attr.ID, key, aType, validValues, defaultValues); err != nil {
+	if attr != nil && attr.ID > 0 {
+		if err := p.addOrUpdateAttributeInMap(permId, attr.ID, key, aType, validVals); err != nil {
 			return 0, err
 		}
 
-		if attr.Type != string(aType) || (attr.ValidValues == nil || validVal != *attr.ValidValues) || (attr.DefaultValues == nil || defaultValues != *attr.DefaultValues) {
-			return attr.ID, p.UpdateAttribute(ctx, attr.ID, permId, key, aType, validValues, defaultValues)
+		if attr.Type != string(aType) || (attr.ValidValues == nil || validVals != attrValidValues) {
+			return attr.ID, p.UpdateAttribute(ctx, attr.ID, permId, key, aType, validVals)
 		}
 
 		return attr.ID, nil
 	}
 
-	attrId, err := p.CreateAttribute(ctx, permId, key, aType, validValues, defaultValues)
+	attrId, err := p.CreateAttribute(ctx, permId, key, aType, validVals)
 	if err != nil {
 		return 0, err
 	}
 
-	if err := p.addOrUpdateAttributeInMap(permId, attrId, key, aType, validValues, defaultValues); err != nil {
+	if err := p.addOrUpdateAttributeInMap(permId, attrId, key, aType, validVals); err != nil {
 		return 0, err
 	}
 
@@ -377,7 +403,8 @@ func (p *Perms) applyJobPermissionsToAttrs(ctx context.Context, roles collection
 		toRemove := []*permissions.RoleAttribute{}
 		toUpdate := []*permissions.RoleAttribute{}
 		for _, attr := range attrs {
-			maxValues, _ := p.GetClosestRoleAttrMaxVals(role.Job, role.Grade, attr.PermissionId, Key(attr.Key))
+			maxValues, _ := p.GetJobAttrMaxVals(role.Job, attr.AttrId)
+
 			if slices.ContainsFunc(jps, func(in *permissions.Permission) bool {
 				return in.Id == attr.PermissionId
 			}) {

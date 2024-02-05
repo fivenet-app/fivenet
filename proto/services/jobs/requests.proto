@@ -106,7 +106,7 @@ message DeleteRequestCommentRequest {
 message DeleteRequestCommentResponse {}
 
 service JobsRequestsService {
-  // @perm: Attrs=Access/StringList:[]string{"Own", "All"}§[]string{"Own"}
+  // @perm: Attrs=Access/StringList:[]string{"Own", "All"}
   rpc ListRequests(ListRequestsRequest) returns (ListRequestsResponse);
   // @perm
   rpc CreateRequest(CreateRequestRequest) returns (CreateRequestResponse);

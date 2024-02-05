@@ -35,8 +35,8 @@ service LivemapperService {
   // @perm: Attrs=Markers/JobList|Players/JobGradeList
   rpc Stream(StreamRequest) returns (stream StreamResponse);
 
-  // @perm: Attrs=Access/StringList:[]string{"Own", "Lower_Rank", "Same_Rank", "Any"}§[]string{"Own"}
+  // @perm: Attrs=Access/StringList:[]string{"Own", "Lower_Rank", "Same_Rank", "Any"}
   rpc CreateOrUpdateMarker(CreateOrUpdateMarkerRequest) returns (CreateOrUpdateMarkerResponse);
-  // @perm: Attrs=Access/StringList:[]string{"Own", "Lower_Rank", "Same_Rank", "Any"}§[]string{"Own"}
+  // @perm: Attrs=Access/StringList:[]string{"Own", "Lower_Rank", "Same_Rank", "Any"}
   rpc DeleteMarker(DeleteMarkerRequest) returns (DeleteMarkerResponse);
 }

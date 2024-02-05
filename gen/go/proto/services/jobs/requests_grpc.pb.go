@@ -35,7 +35,7 @@ const (
 //
 // For semantics around ctx use and closing/ending streaming RPCs, please refer to https://pkg.go.dev/google.golang.org/grpc/?tab=doc#ClientConn.NewStream.
 type JobsRequestsServiceClient interface {
-	// @perm: Attrs=Access/StringList:[]string{"Own", "All"}§[]string{"Own"}
+	// @perm: Attrs=Access/StringList:[]string{"Own", "All"}
 	ListRequests(ctx context.Context, in *ListRequestsRequest, opts ...grpc.CallOption) (*ListRequestsResponse, error)
 	// @perm
 	CreateRequest(ctx context.Context, in *CreateRequestRequest, opts ...grpc.CallOption) (*CreateRequestResponse, error)
@@ -159,7 +159,7 @@ func (c *jobsRequestsServiceClient) DeleteRequestComment(ctx context.Context, in
 // All implementations must embed UnimplementedJobsRequestsServiceServer
 // for forward compatibility
 type JobsRequestsServiceServer interface {
-	// @perm: Attrs=Access/StringList:[]string{"Own", "All"}§[]string{"Own"}
+	// @perm: Attrs=Access/StringList:[]string{"Own", "All"}
 	ListRequests(context.Context, *ListRequestsRequest) (*ListRequestsResponse, error)
 	// @perm
 	CreateRequest(context.Context, *CreateRequestRequest) (*CreateRequestResponse, error)

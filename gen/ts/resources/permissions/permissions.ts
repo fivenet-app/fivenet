@@ -10,7 +10,7 @@ export interface Permission {
     /**
      * @generated from protobuf field: uint64 id = 1 [jstype = JS_STRING];
      */
-    id: string; // @gotags: alias:"id"
+    id: string;
     /**
      * @generated from protobuf field: optional resources.timestamp.Timestamp created_at = 2;
      */
@@ -18,7 +18,7 @@ export interface Permission {
     /**
      * @generated from protobuf field: string category = 3;
      */
-    category: string; // @gotags: alias:"category"
+    category: string;
     /**
      * @generated from protobuf field: string name = 4;
      */
@@ -26,11 +26,11 @@ export interface Permission {
     /**
      * @generated from protobuf field: string guard_name = 5;
      */
-    guardName: string; // @gotags: alias:"guard_name"
+    guardName: string;
     /**
      * @generated from protobuf field: bool val = 6;
      */
-    val: boolean; // @gotags: alias:"val"
+    val: boolean;
 }
 /**
  * @generated from protobuf message resources.permissions.Role
@@ -39,7 +39,7 @@ export interface Role {
     /**
      * @generated from protobuf field: uint64 id = 1 [jstype = JS_STRING];
      */
-    id: string; // @gotags: alias:"id"
+    id: string;
     /**
      * @generated from protobuf field: optional resources.timestamp.Timestamp created_at = 2;
      */
@@ -47,19 +47,19 @@ export interface Role {
     /**
      * @generated from protobuf field: string job = 3;
      */
-    job: string; // @gotags: alias:"job"
+    job: string;
     /**
      * @generated from protobuf field: optional string job_label = 4;
      */
-    jobLabel?: string; // @gotags: alias:"job_label"
+    jobLabel?: string;
     /**
      * @generated from protobuf field: int32 grade = 5;
      */
-    grade: number; // @gotags: alias:"grade"
+    grade: number;
     /**
      * @generated from protobuf field: optional string job_grade_label = 6;
      */
-    jobGradeLabel?: string; // @gotags: alias:"job_grade_label"
+    jobGradeLabel?: string;
     /**
      * @generated from protobuf field: repeated resources.permissions.Permission permissions = 7;
      */
@@ -76,7 +76,7 @@ export interface RawRoleAttribute {
     /**
      * @generated from protobuf field: uint64 role_id = 1 [jstype = JS_STRING];
      */
-    roleId: string; // @gotags: alias:"role_id"
+    roleId: string;
     /**
      * @generated from protobuf field: optional resources.timestamp.Timestamp created_at = 2;
      */
@@ -84,68 +84,15 @@ export interface RawRoleAttribute {
     /**
      * @generated from protobuf field: uint64 attr_id = 3 [jstype = JS_STRING];
      */
-    attrId: string; // @gotags: alias:"attr_id"
+    attrId: string;
     /**
      * @generated from protobuf field: uint64 permission_id = 4 [jstype = JS_STRING];
      */
-    permissionId: string; // @gotags: alias:"permission_id"
+    permissionId: string;
     /**
      * @generated from protobuf field: string category = 5;
      */
-    category: string; // @gotags: alias:"category"
-    /**
-     * @generated from protobuf field: string name = 6;
-     */
-    name: string;
-    /**
-     * @generated from protobuf field: string key = 7;
-     */
-    key: string;
-    /**
-     * @generated from protobuf field: string type = 8;
-     */
-    type: string;
-    /**
-     * @generated from protobuf field: string raw_valid_values = 9;
-     */
-    rawValidValues: string; // @gotags: alias:"valid_values"
-    /**
-     * @generated from protobuf field: optional string raw_default_values = 10;
-     */
-    rawDefaultValues?: string; // @gotags: alias:"default_values"
-    /**
-     * @generated from protobuf field: string raw_value = 11;
-     */
-    rawValue: string; // @gotags: alias:"value"
-    /**
-     * @generated from protobuf field: optional string raw_max_values = 12;
-     */
-    rawMaxValues?: string; // @gotags: alias:"max_values"
-}
-/**
- * @generated from protobuf message resources.permissions.RoleAttribute
- */
-export interface RoleAttribute {
-    /**
-     * @generated from protobuf field: uint64 role_id = 1 [jstype = JS_STRING];
-     */
-    roleId: string; // @gotags: alias:"role_id"
-    /**
-     * @generated from protobuf field: optional resources.timestamp.Timestamp created_at = 2;
-     */
-    createdAt?: Timestamp;
-    /**
-     * @generated from protobuf field: uint64 attr_id = 3 [jstype = JS_STRING];
-     */
-    attrId: string; // @gotags: alias:"attr_id"
-    /**
-     * @generated from protobuf field: uint64 permission_id = 4 [jstype = JS_STRING];
-     */
-    permissionId: string; // @gotags: alias:"permission_id"
-    /**
-     * @generated from protobuf field: string category = 5;
-     */
-    category: string; // @gotags: alias:"category"
+    category: string;
     /**
      * @generated from protobuf field: string name = 6;
      */
@@ -163,15 +110,56 @@ export interface RoleAttribute {
      */
     validValues?: AttributeValues;
     /**
-     * @generated from protobuf field: optional resources.permissions.AttributeValues default_values = 10;
+     * @generated from protobuf field: resources.permissions.AttributeValues value = 10;
      */
-    defaultValues?: AttributeValues;
+    value?: AttributeValues;
+}
+/**
+ * @generated from protobuf message resources.permissions.RoleAttribute
+ */
+export interface RoleAttribute {
     /**
-     * @generated from protobuf field: resources.permissions.AttributeValues value = 11;
+     * @generated from protobuf field: uint64 role_id = 1 [jstype = JS_STRING];
+     */
+    roleId: string;
+    /**
+     * @generated from protobuf field: optional resources.timestamp.Timestamp created_at = 2;
+     */
+    createdAt?: Timestamp;
+    /**
+     * @generated from protobuf field: uint64 attr_id = 3 [jstype = JS_STRING];
+     */
+    attrId: string;
+    /**
+     * @generated from protobuf field: uint64 permission_id = 4 [jstype = JS_STRING];
+     */
+    permissionId: string;
+    /**
+     * @generated from protobuf field: string category = 5;
+     */
+    category: string;
+    /**
+     * @generated from protobuf field: string name = 6;
+     */
+    name: string;
+    /**
+     * @generated from protobuf field: string key = 7;
+     */
+    key: string;
+    /**
+     * @generated from protobuf field: string type = 8;
+     */
+    type: string;
+    /**
+     * @generated from protobuf field: resources.permissions.AttributeValues valid_values = 9;
+     */
+    validValues?: AttributeValues;
+    /**
+     * @generated from protobuf field: resources.permissions.AttributeValues value = 10;
      */
     value?: AttributeValues;
     /**
-     * @generated from protobuf field: optional resources.permissions.AttributeValues max_values = 12;
+     * @generated from protobuf field: optional resources.permissions.AttributeValues max_values = 11;
      */
     maxValues?: AttributeValues;
 }
@@ -272,10 +260,8 @@ class RawRoleAttribute$Type extends MessageType<RawRoleAttribute> {
             { no: 6, name: "name", kind: "scalar", T: 9 /*ScalarType.STRING*/, options: { "validate.rules": { string: { maxLen: "255" } } } },
             { no: 7, name: "key", kind: "scalar", T: 9 /*ScalarType.STRING*/, options: { "validate.rules": { string: { maxLen: "255" } } } },
             { no: 8, name: "type", kind: "scalar", T: 9 /*ScalarType.STRING*/, options: { "validate.rules": { string: { maxLen: "255" } } } },
-            { no: 9, name: "raw_valid_values", kind: "scalar", T: 9 /*ScalarType.STRING*/ },
-            { no: 10, name: "raw_default_values", kind: "scalar", opt: true, T: 9 /*ScalarType.STRING*/ },
-            { no: 11, name: "raw_value", kind: "scalar", T: 9 /*ScalarType.STRING*/ },
-            { no: 12, name: "raw_max_values", kind: "scalar", opt: true, T: 9 /*ScalarType.STRING*/ }
+            { no: 9, name: "valid_values", kind: "message", T: () => AttributeValues },
+            { no: 10, name: "value", kind: "message", T: () => AttributeValues }
         ]);
     }
 }
@@ -296,9 +282,8 @@ class RoleAttribute$Type extends MessageType<RoleAttribute> {
             { no: 7, name: "key", kind: "scalar", T: 9 /*ScalarType.STRING*/, options: { "validate.rules": { string: { maxLen: "255" } } } },
             { no: 8, name: "type", kind: "scalar", T: 9 /*ScalarType.STRING*/, options: { "validate.rules": { string: { maxLen: "255" } } } },
             { no: 9, name: "valid_values", kind: "message", T: () => AttributeValues },
-            { no: 10, name: "default_values", kind: "message", T: () => AttributeValues },
-            { no: 11, name: "value", kind: "message", T: () => AttributeValues },
-            { no: 12, name: "max_values", kind: "message", T: () => AttributeValues }
+            { no: 10, name: "value", kind: "message", T: () => AttributeValues },
+            { no: 11, name: "max_values", kind: "message", T: () => AttributeValues }
         ]);
     }
 }

@@ -29,7 +29,7 @@ const (
 //
 // For semantics around ctx use and closing/ending streaming RPCs, please refer to https://pkg.go.dev/google.golang.org/grpc/?tab=doc#ClientConn.NewStream.
 type JobsConductServiceClient interface {
-	// @perm: Attrs=Access/StringList:[]string{"Own", "All"}§[]string{"Own"}
+	// @perm: Attrs=Access/StringList:[]string{"Own", "All"}
 	ListConductEntries(ctx context.Context, in *ListConductEntriesRequest, opts ...grpc.CallOption) (*ListConductEntriesResponse, error)
 	// @perm
 	CreateConductEntry(ctx context.Context, in *CreateConductEntryRequest, opts ...grpc.CallOption) (*CreateConductEntryResponse, error)
@@ -87,7 +87,7 @@ func (c *jobsConductServiceClient) DeleteConductEntry(ctx context.Context, in *D
 // All implementations must embed UnimplementedJobsConductServiceServer
 // for forward compatibility
 type JobsConductServiceServer interface {
-	// @perm: Attrs=Access/StringList:[]string{"Own", "All"}§[]string{"Own"}
+	// @perm: Attrs=Access/StringList:[]string{"Own", "All"}
 	ListConductEntries(context.Context, *ListConductEntriesRequest) (*ListConductEntriesResponse, error)
 	// @perm
 	CreateConductEntry(context.Context, *CreateConductEntryRequest) (*CreateConductEntryResponse, error)

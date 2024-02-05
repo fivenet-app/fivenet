@@ -305,10 +305,10 @@ onConfirm(async (id) => deleteRole(id));
                                 >
                                     <div class="flex flex-row gap-4">
                                         <div class="my-auto flex flex-1 flex-col">
-                                            <span class="truncate" :title="`${$t('common.id')}: ${perm.id}`">
+                                            <span :title="`${$t('common.id')}: ${perm.id}`">
                                                 {{ $t(`perms.${perm.category}.${perm.name}.key`) }}
                                             </span>
-                                            <span class="truncate text-base-500">
+                                            <span class="text-base-500">
                                                 {{ $t(`perms.${perm.category}.${perm.name}.description`) }}
                                             </span>
                                         </div>

@@ -138,7 +138,7 @@ func (s *Server) filterAttributes(ctx context.Context, userInfo *userinfo.UserIn
 			}
 		}
 
-		maxVal, _ := s.ps.GetClosestRoleAttrMaxVals(userInfo.Job, userInfo.JobGrade, attr.PermissionId, perms.Key(attr.Key))
+		maxVal, _ := s.ps.GetJobAttrMaxVals(userInfo.Job, attr.AttrId)
 		valid, _ := attrs[i].Value.Check(permissions.AttributeTypes(attr.Type), attr.ValidValues, maxVal)
 		if !valid {
 			return fmt.Errorf("failed to validate attribute %d values (%q)", attrs[i].AttrId, attr.Value)
@@ -438,14 +438,8 @@ func (s *Server) handleAttributeUpdate(ctx context.Context, userInfo *userinfo.U
 	}
 
 	if len(attrUpdates.ToRemove) > 0 {
-		if role.Grade > 1 {
-			if err := s.ps.RemoveAttributesFromRole(ctx, role.ID, attrUpdates.ToRemove...); err != nil {
-				return err
-			}
-		} else {
-			if err := s.ps.ClearAttributeFromRole(ctx, role.ID, attrUpdates.ToRemove...); err != nil {
-				return err
-			}
+		if err := s.ps.RemoveAttributesFromRole(ctx, role.ID, attrUpdates.ToRemove...); err != nil {
+			return err
 		}
 	}
 
@@ -493,9 +487,8 @@ func (s *Server) UpdateRoleLimits(ctx context.Context, req *UpdateRoleLimitsRequ
 	if err != nil {
 		return nil, errswrap.NewError(errorsrector.ErrInvalidRequest, err)
 	}
-
 	for _, attr := range req.Attrs.ToUpdate {
-		if err := s.ps.UpdateRoleAttributeMaxValues(ctx, role.ID, attr.AttrId, attr.MaxValues); err != nil {
+		if err := s.ps.UpdateJobAttributeMaxValues(ctx, role.Job, attr.AttrId, attr.MaxValues); err != nil {
 			return nil, errswrap.NewError(errorsrector.ErrFailedQuery, err)
 		}
 	}

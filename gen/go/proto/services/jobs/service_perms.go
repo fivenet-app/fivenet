@@ -47,10 +47,9 @@ func init() {
 			Name:     permkeys.JobsConductServiceListConductEntriesPerm,
 			Attrs: []perms.Attr{
 				{
-					Key:           permkeys.JobsConductServiceListConductEntriesAccessPermField,
-					Type:          permissions.StringListAttributeType,
-					ValidValues:   []string{"Own", "All"},
-					DefaultValues: []string{"Own"},
+					Key:         permkeys.JobsConductServiceListConductEntriesAccessPermField,
+					Type:        permissions.StringListAttributeType,
+					ValidValues: []string{"Own", "All"},
 				},
 			},
 		},
@@ -91,10 +90,9 @@ func init() {
 			Name:     permkeys.JobsRequestsServiceListRequestsPerm,
 			Attrs: []perms.Attr{
 				{
-					Key:           permkeys.JobsRequestsServiceListRequestsAccessPermField,
-					Type:          permissions.StringListAttributeType,
-					ValidValues:   []string{"Own", "All"},
-					DefaultValues: []string{"Own"},
+					Key:         permkeys.JobsRequestsServiceListRequestsAccessPermField,
+					Type:        permissions.StringListAttributeType,
+					ValidValues: []string{"Own", "All"},
 				},
 			},
 		},
@@ -117,10 +115,9 @@ func init() {
 			Name:     permkeys.JobsTimeclockServiceListTimeclockPerm,
 			Attrs: []perms.Attr{
 				{
-					Key:           permkeys.JobsTimeclockServiceListTimeclockAccessPermField,
-					Type:          permissions.StringListAttributeType,
-					ValidValues:   []string{"All"},
-					DefaultValues: []string{},
+					Key:         permkeys.JobsTimeclockServiceListTimeclockAccessPermField,
+					Type:        permissions.StringListAttributeType,
+					ValidValues: []string{"All"},
 				},
 			},
 		},

@@ -363,15 +363,15 @@ service DocStoreService {
   rpc GetDocument(GetDocumentRequest) returns (GetDocumentResponse);
   // @perm
   rpc CreateDocument(CreateDocumentRequest) returns (CreateDocumentResponse);
-  // @perm: Attrs=Access/StringList:[]string{"Own", "Lower_Rank", "Same_Rank", "Any"}§[]string{"Own"}
+  // @perm: Attrs=Access/StringList:[]string{"Own", "Lower_Rank", "Same_Rank", "Any"}
   rpc UpdateDocument(UpdateDocumentRequest) returns (UpdateDocumentResponse);
-  // @perm: Attrs=Access/StringList:[]string{"Own", "Lower_Rank", "Same_Rank", "Any"}§[]string{"Own"}
+  // @perm: Attrs=Access/StringList:[]string{"Own", "Lower_Rank", "Same_Rank", "Any"}
   rpc DeleteDocument(DeleteDocumentRequest) returns (DeleteDocumentResponse);
 
-  // @perm: Attrs=Access/StringList:[]string{"Own", "Lower_Rank", "Same_Rank", "Any"}§[]string{"Own"}
+  // @perm: Attrs=Access/StringList:[]string{"Own", "Lower_Rank", "Same_Rank", "Any"}
   rpc ToggleDocument(ToggleDocumentRequest) returns (ToggleDocumentResponse);
 
-  // @perm: Attrs=Access/StringList:[]string{"Own", "Lower_Rank", "Same_Rank", "Any"}§[]string{"Own"}
+  // @perm: Attrs=Access/StringList:[]string{"Own", "Lower_Rank", "Same_Rank", "Any"}
   rpc ChangeDocumentOwner(ChangeDocumentOwnerRequest) returns (ChangeDocumentOwnerResponse);
 
   // @perm: Name=GetDocument
@@ -393,7 +393,7 @@ service DocStoreService {
   rpc PostComment(PostCommentRequest) returns (PostCommentResponse);
   // @perm: Name=PostComment
   rpc EditComment(EditCommentRequest) returns (EditCommentResponse);
-  // @perm: Attrs=Access/StringList:[]string{"Own", "Lower_Rank", "Same_Rank", "Any"}§[]string{"Own"}
+  // @perm: Attrs=Access/StringList:[]string{"Own", "Lower_Rank", "Same_Rank", "Any"}
   rpc DeleteComment(DeleteCommentRequest) returns (DeleteCommentResponse);
 
   // @perm: Name=GetDocument
@@ -406,7 +406,7 @@ service DocStoreService {
 
   // @perm
   rpc ListDocumentReqs(ListDocumentReqsRequest) returns (ListDocumentReqsResponse);
-  // @perm: Attrs=Types/StringList:[]string{"Access", "Closure", "Update", "Deletion", "OwnerChange"}§[]string{"Access"}
+  // @perm: Attrs=Types/StringList:[]string{"Access", "Closure", "Update", "Deletion", "OwnerChange"}
   rpc CreateDocumentReq(CreateDocumentReqRequest) returns (CreateDocumentReqResponse);
   // @perm: Name=CreateDocumentReq
   rpc UpdateDocumentReq(UpdateDocumentReqRequest) returns (UpdateDocumentReqResponse);

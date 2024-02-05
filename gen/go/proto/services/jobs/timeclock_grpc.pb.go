@@ -27,7 +27,7 @@ const (
 //
 // For semantics around ctx use and closing/ending streaming RPCs, please refer to https://pkg.go.dev/google.golang.org/grpc/?tab=doc#ClientConn.NewStream.
 type JobsTimeclockServiceClient interface {
-	// @perm: Attrs=Access/StringList:[]string{"All"}§[]string{}
+	// @perm: Attrs=Access/StringList:[]string{"All"}
 	ListTimeclock(ctx context.Context, in *ListTimeclockRequest, opts ...grpc.CallOption) (*ListTimeclockResponse, error)
 	// @perm: Name=ListTimeclock
 	GetTimeclockStats(ctx context.Context, in *GetTimeclockStatsRequest, opts ...grpc.CallOption) (*GetTimeclockStatsResponse, error)
@@ -63,7 +63,7 @@ func (c *jobsTimeclockServiceClient) GetTimeclockStats(ctx context.Context, in *
 // All implementations must embed UnimplementedJobsTimeclockServiceServer
 // for forward compatibility
 type JobsTimeclockServiceServer interface {
-	// @perm: Attrs=Access/StringList:[]string{"All"}§[]string{}
+	// @perm: Attrs=Access/StringList:[]string{"All"}
 	ListTimeclock(context.Context, *ListTimeclockRequest) (*ListTimeclockResponse, error)
 	// @perm: Name=ListTimeclock
 	GetTimeclockStats(context.Context, *GetTimeclockStatsRequest) (*GetTimeclockStatsResponse, error)

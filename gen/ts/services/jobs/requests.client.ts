@@ -32,7 +32,7 @@ import type { RpcOptions } from "@protobuf-ts/runtime-rpc";
  */
 export interface IJobsRequestsServiceClient {
     /**
-     * @perm: Attrs=Access/StringList:[]string{"Own", "All"}§[]string{"Own"}
+     * @perm: Attrs=Access/StringList:[]string{"Own", "All"}
      *
      * @generated from protobuf rpc: ListRequests(services.jobs.ListRequestsRequest) returns (services.jobs.ListRequestsResponse);
      */
@@ -102,7 +102,7 @@ export class JobsRequestsServiceClient implements IJobsRequestsServiceClient, Se
     constructor(private readonly _transport: RpcTransport) {
     }
     /**
-     * @perm: Attrs=Access/StringList:[]string{"Own", "All"}§[]string{"Own"}
+     * @perm: Attrs=Access/StringList:[]string{"Own", "All"}
      *
      * @generated from protobuf rpc: ListRequests(services.jobs.ListRequestsRequest) returns (services.jobs.ListRequestsResponse);
      */
