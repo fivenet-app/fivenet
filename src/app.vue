@@ -8,7 +8,7 @@ import ConfirmDialog from '~/components/partials/ConfirmDialog.vue';
 import { useClipboardStore } from '~/store/clipboard';
 import { useConfigStore } from '~/store/config';
 import { useDocumentEditorStore } from '~/store/documenteditor';
-import { useSettingsStore } from '~/store/settings';
+import { JOB_THEME_KEY, useSettingsStore } from '~/store/settings';
 import { useAuthStore } from '~/store/auth';
 
 const { t, locale, finalizePendingLocaleChange } = useI18n();
@@ -20,14 +20,17 @@ const configStore = useConfigStore();
 const { isNUIAvailable, updateAvailable } = storeToRefs(configStore);
 
 const settings = useSettingsStore();
+const { theme } = storeToRefs(settings);
 
 const route = useRoute();
 
 const { locale: cookieLocale } = useCookieControl();
 
+const activeTheme = computed(() => (theme.value === JOB_THEME_KEY ? jobProps.value?.theme ?? 'defaultTheme' : theme.value));
+
 useHead({
     htmlAttrs: {
-        class: () => 'h-full ' + (jobProps.value?.theme ?? 'defaultTheme'),
+        class: () => 'h-full ' + activeTheme,
         lang: 'en',
     },
     bodyAttrs: {
