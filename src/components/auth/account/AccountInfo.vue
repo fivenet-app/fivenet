@@ -9,7 +9,7 @@ import ChangePasswordModal from '~/components/auth/account/ChangePasswordModal.v
 import ChangeUsernameModal from '~/components/auth/account/ChangeUsernameModal.vue';
 import DebugInfo from '~/components/auth/account/DebugInfo.vue';
 import OAuth2Connections from '~/components/auth/account/OAuth2Connections.vue';
-import SettingsPanel from '~/components/auth/account/SettingsPanel.vue';
+import UserSettingsPanel from '~/components/auth/account/UserSettingsPanel.vue';
 
 const { $grpc } = useNuxtApp();
 
@@ -116,7 +116,7 @@ async function removeOAuth2Connection(provider: string): Promise<void> {
                 </div>
             </div>
 
-            <SettingsPanel />
+            <UserSettingsPanel />
 
             <OAuth2Connections
                 v-if="account"

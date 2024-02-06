@@ -1,7 +1,11 @@
 <script lang="ts" setup>
-import { Switch, SwitchGroup, SwitchLabel } from '@headlessui/vue';
+import { CheckIcon, ChevronDownIcon } from 'mdi-vue3';
+import { Listbox, ListboxButton, ListboxOption, ListboxOptions, Switch, SwitchGroup, SwitchLabel } from '@headlessui/vue';
+import type { RoutePathSchema } from '@typed-router';
 import { useAuthStore } from '~/store/auth';
-import { useSettingsStore } from '~/store/settings';
+import { JOB_THEME_KEY, availableThemes, useSettingsStore } from '~/store/settings';
+
+const { t } = useI18n();
 
 const authStore = useAuthStore();
 const { activeChar } = storeToRefs(authStore);
@@ -9,7 +13,7 @@ const { activeChar } = storeToRefs(authStore);
 const settings = useSettingsStore();
 const { startpage, documents } = storeToRefs(settings);
 
-const homepages: { name: string; path: string; permission?: string }[] = [
+const homepages: { name: string; path: RoutePathSchema; permission?: string }[] = [
     { name: 'common.home', path: '/overview' },
     { name: 'pages.citizens.title', path: '/citizens', permission: 'CitizenStoreService.ListCitizens' },
     { name: 'pages.vehicles.title', path: '/vehicles', permission: 'DMVService.ListVehicles' },
@@ -35,6 +39,14 @@ watch(darkModeActive, async () => {
         documents.value.editorTheme = 'default';
     }
 });
+
+const themes = [
+    {
+        name: t('components.auth.settings_panel.app_theme.job_default_theme'),
+        key: JOB_THEME_KEY,
+    },
+    ...availableThemes,
+];
 </script>
 
 <template>
@@ -49,6 +61,66 @@ watch(darkModeActive, async () => {
         </div>
         <div class="border-t border-base-400 px-4 py-5 sm:p-0">
             <dl class="sm:divide-y sm:divide-base-400">
+                <div class="py-4 sm:grid sm:grid-cols-3 sm:gap-4 sm:px-5 sm:py-4">
+                    <dt class="text-sm font-medium">
+                        {{ $t('common.theme') }}
+                    </dt>
+                    <dd class="mt-1 text-sm sm:col-span-2 sm:mt-0">
+                        <Listbox v-model="settings.theme" as="div">
+                            <div class="relative">
+                                <ListboxButton
+                                    class="block w-full rounded-md border-0 bg-base-700 py-1.5 pl-3 text-left text-neutral placeholder:text-accent-200 focus:ring-2 focus:ring-inset focus:ring-base-300 sm:text-sm sm:leading-6"
+                                >
+                                    <span class="block truncate">
+                                        {{ themes.find((t) => t.key === settings.theme)?.name }}
+                                    </span>
+                                    <span class="pointer-events-none absolute inset-y-0 right-0 flex items-center pr-2">
+                                        <ChevronDownIcon class="h-5 w-5 text-gray-400" aria-hidden="true" />
+                                    </span>
+                                </ListboxButton>
+
+                                <transition
+                                    leave-active-class="transition duration-100 ease-in"
+                                    leave-from-class="opacity-100"
+                                    leave-to-class="opacity-0"
+                                >
+                                    <ListboxOptions
+                                        class="absolute z-10 mt-1 max-h-28 w-full overflow-auto rounded-md bg-base-700 py-1 text-base sm:text-sm"
+                                    >
+                                        <ListboxOption
+                                            v-for="theme in themes"
+                                            :key="theme.key"
+                                            v-slot="{ active, selected }"
+                                            as="template"
+                                            :value="theme.key"
+                                        >
+                                            <li
+                                                :class="[
+                                                    active ? 'bg-primary-500' : '',
+                                                    'relative cursor-default select-none py-2 pl-8 pr-4 text-neutral',
+                                                ]"
+                                            >
+                                                <span :class="[selected ? 'font-semibold' : 'font-normal', 'block truncate']">
+                                                    {{ theme.name }}
+                                                </span>
+
+                                                <span
+                                                    v-if="selected"
+                                                    :class="[
+                                                        active ? 'text-neutral' : 'text-primary-500',
+                                                        'absolute inset-y-0 left-0 flex items-center pl-1.5',
+                                                    ]"
+                                                >
+                                                    <CheckIcon class="h-5 w-5" aria-hidden="true" />
+                                                </span>
+                                            </li>
+                                        </ListboxOption>
+                                    </ListboxOptions>
+                                </transition>
+                            </div>
+                        </Listbox>
+                    </dd>
+                </div>
                 <div class="py-4 sm:grid sm:grid-cols-3 sm:gap-4 sm:px-5 sm:py-4">
                     <dt class="text-sm font-medium">
                         {{ $t('components.auth.settings_panel.set_startpage.title') }}

@@ -160,6 +160,9 @@
                 "editor_theme": {
                     "title": "Document Editor Theme",
                     "dark_mode": "Dark Mode"
+                },
+                "app_theme": {
+                    "job_default_theme": "Use Job's Theme"
                 }
             },
             "change_username_modal": {

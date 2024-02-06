@@ -21,6 +21,7 @@ import DataPendingBlock from '~/components/partials/data/DataPendingBlock.vue';
 import GenericTime from '~/components/partials/elements/GenericTime.vue';
 import { useAuthStore } from '~/store/auth';
 import { useNotificatorStore } from '~/store/notificator';
+import { availableThemes } from '~/store/settings';
 import { JobProps } from '~~/gen/ts/resources/users/jobs';
 
 const { $grpc } = useNuxtApp();
@@ -30,15 +31,6 @@ const appConfig = useAppConfig();
 const authStore = useAuthStore();
 
 const notifications = useNotificatorStore();
-
-const availableThemes = [
-    { name: 'Default', key: 'defaultTheme' },
-    { name: 'Baddie Orange', key: 'themeBaddieOrange' },
-    { name: 'Baddie Pink', key: 'themeBaddiePink' },
-    { name: 'Baddie Yellow', key: 'themeBaddieYellow' },
-    { name: 'Da Medic', key: 'themeDaMedic' },
-    { name: 'Purple', key: 'themePurple' },
-];
 
 async function getJobProps(): Promise<JobProps> {
     try {

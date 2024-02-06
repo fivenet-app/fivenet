@@ -160,6 +160,9 @@
                 "editor_theme": {
                     "title": "Dokumenten-Editor-Design",
                     "dark_mode": "Nacht Modus"
+                },
+                "app_theme": {
+                    "job_default_theme": "Nutze durch Beruf vorgegebenes Design"
                 }
             },
             "change_username_modal": {
