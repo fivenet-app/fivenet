@@ -3,7 +3,6 @@ package rector
 import (
 	"context"
 	"errors"
-	"fmt"
 
 	"github.com/galexrt/fivenet/gen/go/proto/resources/permissions"
 	rector "github.com/galexrt/fivenet/gen/go/proto/resources/rector"
@@ -103,51 +102,6 @@ func (s *Server) filterPermissionIDs(ctx context.Context, job string, full bool,
 		permIds[i] = filtered[i].Id
 	}
 	return permIds, nil
-}
-
-func (s *Server) filterAttributes(ctx context.Context, userInfo *userinfo.UserInfo, attrs []*permissions.RoleAttribute, nilOk bool) error {
-	if len(attrs) == 0 {
-		return nil
-	}
-
-	for i := 0; i < len(attrs); i++ {
-		attr, ok := s.ps.GetRoleAttributeByID(attrs[i].RoleId, attrs[i].AttrId)
-		if !ok {
-			aAttr, ok := s.ps.LookupAttributeByID(attrs[i].AttrId)
-			if !ok {
-				return fmt.Errorf("failed to find attribute by ID %d for role %d during filter", attrs[i].AttrId, attrs[i].RoleId)
-			}
-			if aAttr.ValidValues != nil {
-				aAttr.ValidValues.Default(aAttr.Type)
-			}
-
-			attr = &permissions.RoleAttribute{
-				AttrId:       attrs[i].AttrId,
-				PermissionId: aAttr.PermissionID,
-				Key:          string(aAttr.Key),
-				Type:         string(aAttr.Type),
-				ValidValues:  aAttr.ValidValues,
-			}
-		}
-
-		if attrs[i].Value == nil {
-			if nilOk {
-				continue
-			} else {
-				return fmt.Errorf("failed to validate attribute %d value because it is nil", attrs[i].AttrId)
-			}
-		}
-
-		maxVal, _ := s.ps.GetJobAttrMaxVals(userInfo.Job, attr.AttrId)
-		valid, _ := attrs[i].Value.Check(permissions.AttributeTypes(attr.Type), attr.ValidValues, maxVal)
-		if !valid {
-			return fmt.Errorf("failed to validate attribute %d values (%q)", attrs[i].AttrId, attr.Value)
-		}
-
-		attrs[i].Type = attr.Type
-	}
-
-	return nil
 }
 
 func (s *Server) GetRoles(ctx context.Context, req *GetRolesRequest) (*GetRolesResponse, error) {
@@ -423,14 +377,6 @@ func (s *Server) handlPermissionsUpdate(ctx context.Context, role *model.Fivenet
 }
 
 func (s *Server) handleAttributeUpdate(ctx context.Context, userInfo *userinfo.UserInfo, role *model.FivenetRoles, attrUpdates *AttrsUpdate) error {
-	if err := s.filterAttributes(ctx, userInfo, attrUpdates.ToUpdate, false); err != nil {
-		return err
-	}
-
-	if err := s.filterAttributes(ctx, userInfo, attrUpdates.ToRemove, true); err != nil {
-		return err
-	}
-
 	if len(attrUpdates.ToUpdate) > 0 {
 		if err := s.ps.AddOrUpdateAttributesToRole(ctx, userInfo.Job, role.ID, attrUpdates.ToUpdate...); err != nil {
 			return err

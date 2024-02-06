@@ -77,7 +77,7 @@ func (x *AttributeValues) Default(aType AttributeTypes) {
 		if x.GetStringList() == nil || x.GetStringList().Strings == nil {
 			x.ValidValues = &AttributeValues_StringList{
 				StringList: &StringList{
-					Strings: []string{},
+					Strings: nil,
 				},
 			}
 		}
@@ -86,7 +86,7 @@ func (x *AttributeValues) Default(aType AttributeTypes) {
 		if x.GetJobList() == nil || x.GetJobList().Strings == nil {
 			x.ValidValues = &AttributeValues_JobList{
 				JobList: &StringList{
-					Strings: []string{},
+					Strings: nil,
 				},
 			}
 		}
@@ -95,7 +95,7 @@ func (x *AttributeValues) Default(aType AttributeTypes) {
 		if x.GetJobGradeList() == nil || x.GetJobGradeList().Jobs == nil {
 			x.ValidValues = &AttributeValues_JobGradeList{
 				JobGradeList: &JobGradeList{
-					Jobs: map[string]int32{},
+					Jobs: nil,
 				},
 			}
 		}
@@ -114,7 +114,7 @@ func (x *AttributeValues) Check(aType AttributeTypes, validVals *AttributeValues
 			valid = validVals.GetStringList().Strings
 		}
 		var max []string
-		if maxVals != nil && maxVals.GetJobList() != nil && maxVals.GetJobList().Strings != nil {
+		if maxVals != nil && maxVals.GetStringList() != nil && maxVals.GetStringList().Strings != nil {
 			max = maxVals.GetStringList().Strings
 		}
 
