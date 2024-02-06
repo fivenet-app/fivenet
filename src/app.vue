@@ -26,11 +26,9 @@ const route = useRoute();
 
 const { locale: cookieLocale } = useCookieControl();
 
-const activeTheme = computed(() => (theme.value === JOB_THEME_KEY ? jobProps.value?.theme ?? 'defaultTheme' : theme.value));
-
 useHead({
     htmlAttrs: {
-        class: () => 'h-full ' + activeTheme.value,
+        class: () => (theme.value === JOB_THEME_KEY ? jobProps.value?.theme ?? 'defaultTheme' : theme.value),
         lang: 'en',
     },
     bodyAttrs: {

@@ -1,5 +1,5 @@
 import { type RoutesNamedLocations } from '@typed-router';
-// eslint-disable-next-line import/order
+// eslint-disable-next-line
 import { type DefineComponent } from 'vue';
 
 export type ArrayElement<ArrayType extends readonly unknown[]> = ArrayType extends readonly (infer ElementType)[]
