@@ -30,7 +30,7 @@ const activeTheme = computed(() => (theme.value === JOB_THEME_KEY ? jobProps.val
 
 useHead({
     htmlAttrs: {
-        class: () => 'h-full ' + activeTheme,
+        class: () => 'h-full ' + activeTheme.value,
         lang: 'en',
     },
     bodyAttrs: {
