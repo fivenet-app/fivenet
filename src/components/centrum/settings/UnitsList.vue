@@ -4,9 +4,9 @@ import DataErrorBlock from '~/components/partials/data/DataErrorBlock.vue';
 import DataNoDataBlock from '~/components/partials/data/DataNoDataBlock.vue';
 import DataPendingBlock from '~/components/partials/data/DataPendingBlock.vue';
 import { Unit } from '~~/gen/ts/resources/centrum/units';
-import CreateOrUpdateUnitModal from '~/components/centrum/settings/CreateOrUpdateUnitModal.vue';
+import UnitCreateOrUpdateModal from '~/components/centrum/settings/UnitCreateOrUpdateModal.vue';
 import UnitsListEntry from '~/components/centrum/settings/UnitsListEntry.vue';
-import SettingsModal from '~/components/centrum/settings/SettingsModal.vue';
+import CentrumSettingsModal from '~/components/centrum/settings/CentrumSettingsModal.vue';
 
 const { $grpc } = useNuxtApp();
 
@@ -31,8 +31,8 @@ const openSettings = ref(false);
 </script>
 
 <template>
-    <CreateOrUpdateUnitModal v-if="open" :open="open" @close="open = false" @created="refresh()" />
-    <SettingsModal :open="openSettings" @close="openSettings = false" />
+    <UnitCreateOrUpdateModal v-if="open" :open="open" @close="open = false" @created="refresh()" />
+    <CentrumSettingsModal :open="openSettings" @close="openSettings = false" />
 
     <div class="py-2">
         <div class="px-1 sm:px-2 lg:px-4">

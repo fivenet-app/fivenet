@@ -5,7 +5,7 @@ import { PencilIcon, TrashCanIcon } from 'mdi-vue3';
 import ColorInput from 'vue-color-input/dist/color-input.esm';
 import ConfirmDialog from '~/components/partials/ConfirmDialog.vue';
 import { Unit } from '~~/gen/ts/resources/centrum/units';
-import CreateOrUpdateUnitModal from '~/components/centrum/settings/CreateOrUpdateUnitModal.vue';
+import UnitCreateOrUpdateModal from '~/components/centrum/settings/UnitCreateOrUpdateModal.vue';
 
 const props = defineProps<{
     unit: Unit;
@@ -42,7 +42,7 @@ const open = ref(false);
 
 <template>
     <ConfirmDialog :open="isRevealed" :cancel="cancel" :confirm="() => confirm(unit.id)" />
-    <CreateOrUpdateUnitModal
+    <UnitCreateOrUpdateModal
         v-if="can('CentrumService.CreateOrUpdateUnit')"
         :unit="unit"
         :open="open"
