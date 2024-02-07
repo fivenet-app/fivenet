@@ -13,6 +13,7 @@ import {
 } from '@headlessui/vue';
 import { RpcError } from '@protobuf-ts/runtime-rpc';
 import { useThrottleFn } from '@vueuse/core';
+import { vMaska } from 'maska';
 import { CheckIcon, ChevronDownIcon, LoadingIcon, TuneIcon } from 'mdi-vue3';
 import ColorInput from 'vue-color-input/dist/color-input.esm';
 import DataErrorBlock from '~/components/partials/data/DataErrorBlock.vue';
@@ -190,6 +191,9 @@ const onSubmitThrottle = useThrottleFn(async (_) => {
                                 <dd class="mt-1 text-sm sm:col-span-2 sm:mt-0">
                                     <input
                                         v-model="jobProps.radioFrequency"
+                                        v-maska
+                                        data-maska="0.9"
+                                        data-maska-tokens="0:\d:multiple|9:\d:multiple"
                                         type="text"
                                         class="block w-full rounded-md border-0 bg-base-700 py-1.5 text-neutral placeholder:text-accent-200 focus:ring-2 focus:ring-inset focus:ring-base-300 sm:text-sm sm:leading-6"
                                         :placeholder="$t('common.radio_frequency')"
