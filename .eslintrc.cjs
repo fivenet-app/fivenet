@@ -14,8 +14,6 @@ module.exports = {
     rules: {
         'no-console': 0,
         'require-await': 0,
-        // Vue
-        'vue/multi-word-component-names': 0,
         // vee-validate requires v-bind for custom fields
         'vue/no-deprecated-v-bind-sync': 0,
     },

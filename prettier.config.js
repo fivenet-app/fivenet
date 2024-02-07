@@ -6,7 +6,7 @@ const config = {
     singleQuote: true,
     printWidth: 128,
     plugins: ['prettier-plugin-tailwindcss', 'prettier-plugin-organize-imports'],
-    tailwindConfig: './tailwind.config.cjs',
+    tailwindConfig: './tailwind.config.ts',
 };
 
 export default config;
