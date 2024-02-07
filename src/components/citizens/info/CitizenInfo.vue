@@ -15,6 +15,7 @@ import DataErrorBlock from '~/components/partials/data/DataErrorBlock.vue';
 import DataNoDataBlock from '~/components/partials/data/DataNoDataBlock.vue';
 import DataPendingBlock from '~/components/partials/data/DataPendingBlock.vue';
 import IDCopyBadge from '~/components/partials/IDCopyBadge.vue';
+import type { Perms } from '~~/gen/ts/perms';
 
 const props = defineProps<{
     id: string;
@@ -32,25 +33,25 @@ const tabs = [
         id: 'profile',
         name: t('common.profile'),
         icon: markRaw(AccountIcon),
-        permission: 'CitizenStoreService.ListCitizens',
+        permission: 'CitizenStoreService.ListCitizens' as Perms,
     },
     {
         id: 'vehicles',
         name: t('common.vehicle', 2),
         icon: markRaw(CarIcon),
-        permission: 'DMVService.ListVehicles',
+        permission: 'DMVService.ListVehicles' as Perms,
     },
     {
         id: 'documents',
         name: t('common.document', 2),
         icon: markRaw(FileDocumentMultipleIcon),
-        permission: 'DocStoreService.ListUserDocuments',
+        permission: 'DocStoreService.ListUserDocuments' as Perms,
     },
     {
         id: 'activity',
         name: t('common.activity'),
         icon: markRaw(BulletinBoardIcon),
-        permission: 'CitizenStoreService.ListUserActivity',
+        permission: 'CitizenStoreService.ListUserActivity' as Perms,
     },
 ].filter((tab) => can(tab.permission));
 

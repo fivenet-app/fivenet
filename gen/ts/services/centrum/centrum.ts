@@ -248,6 +248,24 @@ export interface ListDispatchesResponse {
     dispatches: Dispatch[];
 }
 /**
+ * @generated from protobuf message services.centrum.GetDispatchRequest
+ */
+export interface GetDispatchRequest {
+    /**
+     * @generated from protobuf field: uint64 id = 1 [jstype = JS_STRING];
+     */
+    id: string;
+}
+/**
+ * @generated from protobuf message services.centrum.GetDispatchResponse
+ */
+export interface GetDispatchResponse {
+    /**
+     * @generated from protobuf field: resources.centrum.Dispatch dispatch = 1;
+     */
+    dispatch?: Dispatch;
+}
+/**
  * @generated from protobuf message services.centrum.CreateDispatchRequest
  */
 export interface CreateDispatchRequest {
@@ -781,6 +799,30 @@ class ListDispatchesResponse$Type extends MessageType<ListDispatchesResponse> {
  */
 export const ListDispatchesResponse = new ListDispatchesResponse$Type();
 // @generated message type with reflection information, may provide speed optimized methods
+class GetDispatchRequest$Type extends MessageType<GetDispatchRequest> {
+    constructor() {
+        super("services.centrum.GetDispatchRequest", [
+            { no: 1, name: "id", kind: "scalar", T: 4 /*ScalarType.UINT64*/, options: { "validate.rules": { uint64: { gt: "0" } } } }
+        ]);
+    }
+}
+/**
+ * @generated MessageType for protobuf message services.centrum.GetDispatchRequest
+ */
+export const GetDispatchRequest = new GetDispatchRequest$Type();
+// @generated message type with reflection information, may provide speed optimized methods
+class GetDispatchResponse$Type extends MessageType<GetDispatchResponse> {
+    constructor() {
+        super("services.centrum.GetDispatchResponse", [
+            { no: 1, name: "dispatch", kind: "message", T: () => Dispatch }
+        ]);
+    }
+}
+/**
+ * @generated MessageType for protobuf message services.centrum.GetDispatchResponse
+ */
+export const GetDispatchResponse = new GetDispatchResponse$Type();
+// @generated message type with reflection information, may provide speed optimized methods
 class CreateDispatchRequest$Type extends MessageType<CreateDispatchRequest> {
     constructor() {
         super("services.centrum.CreateDispatchRequest", [
@@ -1026,6 +1068,7 @@ export const CentrumService = new ServiceType("services.centrum.CentrumService",
     { name: "JoinUnit", options: {}, I: JoinUnitRequest, O: JoinUnitResponse },
     { name: "ListUnits", options: {}, I: ListUnitsRequest, O: ListUnitsResponse },
     { name: "ListUnitActivity", options: {}, I: ListUnitActivityRequest, O: ListUnitActivityResponse },
+    { name: "GetDispatch", options: {}, I: GetDispatchRequest, O: GetDispatchResponse },
     { name: "ListDispatches", options: {}, I: ListDispatchesRequest, O: ListDispatchesResponse },
     { name: "ListDispatchActivity", options: {}, I: ListDispatchActivityRequest, O: ListDispatchActivityResponse },
     { name: "CreateOrUpdateUnit", options: {}, I: CreateOrUpdateUnitRequest, O: CreateOrUpdateUnitResponse },

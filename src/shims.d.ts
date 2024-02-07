@@ -1,8 +1,10 @@
+import type { Perms } from '~~/gen/ts/perms';
+
 declare module '#app' {
     interface PageMeta {
         title?: string;
         requiresAuth?: boolean;
-        permission?: string | string[];
+        permission?: Perms | Perms[];
         authOnlyToken?: boolean;
         showQuickButtons?: boolean;
         showCookieOptions?: boolean;
@@ -14,7 +16,7 @@ declare module 'vue-router' {
     interface RouteMeta {
         title?: string;
         requiresAuth?: boolean;
-        permission?: string;
+        permission?: Perms;
         authOnlyToken?: boolean;
         showQuickButtons?: boolean;
         showCookieOptions?: boolean;

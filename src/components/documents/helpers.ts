@@ -1,4 +1,5 @@
 import { useAuthStore } from '~/store/auth';
+import type { Perms } from '~~/gen/ts/perms';
 import { AccessLevel, DocumentAccess } from '~~/gen/ts/resources/documents/access';
 import { User, UserShort } from '~~/gen/ts/resources/users/users';
 
@@ -6,7 +7,7 @@ export function checkDocAccess(
     docAccess: DocumentAccess | undefined,
     creator: UserShort | undefined,
     level: AccessLevel,
-    perm?: string,
+    perm?: Perms,
 ): boolean {
     const authStore = useAuthStore();
     if (authStore.isSuperuser) {
@@ -58,7 +59,7 @@ function checkBaseDocAccess(
     return false;
 }
 
-function checkIfCanAccessOwnJobDocument(activeChar: User, creator: UserShort, perm: string): boolean {
+function checkIfCanAccessOwnJobDocument(activeChar: User, creator: UserShort, perm: Perms): boolean {
     const authStore = useAuthStore();
     if (authStore.isSuperuser) {
         return true;

@@ -182,6 +182,106 @@ func (s *Server) ListDispatches(ctx context.Context, req *ListDispatchesRequest)
 	return resp, nil
 }
 
+func (s *Server) GetDispatch(ctx context.Context, req *GetDispatchRequest) (*GetDispatchResponse, error) {
+	userInfo := auth.MustGetUserInfoFromContext(ctx)
+
+	auditEntry := &model.FivenetAuditLog{
+		Service: CentrumService_ServiceDesc.ServiceName,
+		Method:  "GetDispatch",
+		UserID:  userInfo.UserId,
+		UserJob: userInfo.Job,
+		State:   int16(rector.EventType_EVENT_TYPE_ERRORED),
+	}
+	defer s.auditer.Log(auditEntry, req)
+
+	condition := jet.AND(tDispatch.Job.EQ(jet.String(userInfo.Job)).
+		AND(
+			tDispatchStatus.ID.IS_NULL().OR(
+				tDispatchStatus.ID.EQ(
+					jet.RawInt("SELECT MAX(`dispatchstatus`.`id`) FROM `fivenet_centrum_dispatches_status` AS `dispatchstatus` WHERE `dispatchstatus`.`dispatch_id` = `dispatch`.`id`"),
+				),
+			))).
+		AND(tDispatch.ID.EQ(jet.Uint64(req.Id)))
+
+	resp := &GetDispatchResponse{}
+
+	stmt := tDispatch.
+		SELECT(
+			tDispatch.ID,
+			tDispatch.CreatedAt,
+			tDispatch.UpdatedAt,
+			tDispatch.Job,
+			tDispatch.Message,
+			tDispatch.Description,
+			tDispatch.Attributes,
+			tDispatch.X,
+			tDispatch.Y,
+			tDispatch.Postal,
+			tDispatch.Anon,
+			tDispatch.CreatorID,
+			tDispatchStatus.ID,
+			tDispatchStatus.CreatedAt,
+			tDispatchStatus.DispatchID,
+			tDispatchStatus.UnitID,
+			tDispatchStatus.Status,
+			tDispatchStatus.Reason,
+			tDispatchStatus.Code,
+			tDispatchStatus.UserID,
+			tDispatchStatus.X,
+			tDispatchStatus.Y,
+			tDispatchStatus.Postal,
+			tUsers.Identifier,
+			tUsers.Firstname,
+			tUsers.Lastname,
+			tUsers.Job,
+			tUsers.JobGrade,
+			tUsers.Sex,
+			tUsers.Dateofbirth,
+			tUsers.PhoneNumber,
+		).
+		FROM(tDispatch.
+			LEFT_JOIN(tDispatchStatus,
+				tDispatchStatus.DispatchID.EQ(tDispatch.ID),
+			).
+			LEFT_JOIN(tUsers,
+				tUsers.ID.EQ(tDispatchStatus.UserID),
+			)).
+		WHERE(condition).
+		ORDER_BY(
+			tDispatch.ID.DESC(),
+		).
+		LIMIT(1)
+
+	if err := stmt.QueryContext(ctx, s.db, &resp.Dispatch); err != nil {
+		return nil, errswrap.NewError(errorscentrum.ErrFailedQuery, err)
+	}
+
+	var err error
+	resp.Dispatch.Units, err = s.state.LoadDispatchAssignments(ctx, resp.Dispatch.Job, resp.Dispatch.Id)
+	if err != nil {
+		return nil, errswrap.NewError(errorscentrum.ErrFailedQuery, err)
+	}
+
+	if resp.Dispatch.CreatorId != nil {
+		resp.Dispatch.Creator, err = s.state.ResolveUserById(ctx, *resp.Dispatch.CreatorId)
+		if err != nil {
+			return nil, errswrap.NewError(errorscentrum.ErrFailedQuery, err)
+		}
+
+		if resp.Dispatch.Creator != nil {
+			// Clear dispatch creator's job info if not a visible job
+			if !slices.Contains(s.publicJobs, resp.Dispatch.Creator.Job) {
+				resp.Dispatch.Creator.Job = ""
+			}
+			resp.Dispatch.Creator.JobGrade = 0
+		}
+	}
+
+	auditEntry.State = int16(rector.EventType_EVENT_TYPE_VIEWED)
+
+	return resp, nil
+}
+
 func (s *Server) CreateDispatch(ctx context.Context, req *CreateDispatchRequest) (*CreateDispatchResponse, error) {
 	userInfo := auth.MustGetUserInfoFromContext(ctx)
 

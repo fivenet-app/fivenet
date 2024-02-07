@@ -271,6 +271,10 @@
             <ul>
               
                 <li>
+                  <a href="#resources.centrum.PredefinedStatus"><span class="badge">M</span>PredefinedStatus</a>
+                </li>
+              
+                <li>
                   <a href="#resources.centrum.Settings"><span class="badge">M</span>Settings</a>
                 </li>
               
@@ -1051,6 +1055,14 @@
               
                 <li>
                   <a href="#services.centrum.DeleteUnitResponse"><span class="badge">M</span>DeleteUnitResponse</a>
+                </li>
+              
+                <li>
+                  <a href="#services.centrum.GetDispatchRequest"><span class="badge">M</span>GetDispatchRequest</a>
+                </li>
+              
+                <li>
+                  <a href="#services.centrum.GetDispatchResponse"><span class="badge">M</span>GetDispatchResponse</a>
                 </li>
               
                 <li>
@@ -3062,6 +3074,37 @@
       <p></p>
 
       
+        <h3 id="resources.centrum.PredefinedStatus">PredefinedStatus</h3>
+        <p></p>
+
+        
+          <table class="field-table">
+            <thead>
+              <tr><td>Field</td><td>Type</td><td>Label</td><td>Description</td></tr>
+            </thead>
+            <tbody>
+              
+                <tr>
+                  <td>unit_status</td>
+                  <td><a href="#string">string</a></td>
+                  <td>repeated</td>
+                  <td><p> </p></td>
+                </tr>
+              
+                <tr>
+                  <td>dispatch_status</td>
+                  <td><a href="#string">string</a></td>
+                  <td>repeated</td>
+                  <td><p> </p></td>
+                </tr>
+              
+            </tbody>
+          </table>
+
+          
+
+        
+      
         <h3 id="resources.centrum.Settings">Settings</h3>
         <p></p>
 
@@ -3097,6 +3140,13 @@
                   <td>fallback_mode</td>
                   <td><a href="#resources.centrum.CentrumMode">CentrumMode</a></td>
                   <td></td>
+                  <td><p> </p></td>
+                </tr>
+              
+                <tr>
+                  <td>predefined_status</td>
+                  <td><a href="#resources.centrum.PredefinedStatus">PredefinedStatus</a></td>
+                  <td>optional</td>
                   <td><p> </p></td>
                 </tr>
               
@@ -12741,6 +12791,81 @@
 
         
       
+        <h3 id="services.centrum.GetDispatchRequest">GetDispatchRequest</h3>
+        <p></p>
+
+        
+          <table class="field-table">
+            <thead>
+              <tr><td>Field</td><td>Type</td><td>Label</td><td>Description</td></tr>
+            </thead>
+            <tbody>
+              
+                <tr>
+                  <td>id</td>
+                  <td><a href="#uint64">uint64</a></td>
+                  <td></td>
+                  <td><p> </p></td>
+                </tr>
+              
+            </tbody>
+          </table>
+
+          
+            
+            
+            <h4>Validated Fields</h4>
+            <table>
+              <thead>
+                <tr>
+                  <td>Field</td>
+                  <td>Validations</td>
+                </tr>
+              </thead>
+              <tbody>
+              
+                <tr>
+                  <td>id</td>
+                  <td>
+                    <ul>
+                    
+                      <li>uint64.gt: 0</li>
+                    
+                    </ul>
+                  </td>
+                </tr>
+              
+              </tbody>
+            </table>
+            
+          
+
+        
+      
+        <h3 id="services.centrum.GetDispatchResponse">GetDispatchResponse</h3>
+        <p></p>
+
+        
+          <table class="field-table">
+            <thead>
+              <tr><td>Field</td><td>Type</td><td>Label</td><td>Description</td></tr>
+            </thead>
+            <tbody>
+              
+                <tr>
+                  <td>dispatch</td>
+                  <td><a href="#resources.centrum.Dispatch">resources.centrum.Dispatch</a></td>
+                  <td></td>
+                  <td><p> </p></td>
+                </tr>
+              
+            </tbody>
+          </table>
+
+          
+
+        
+      
         <h3 id="services.centrum.GetSettingsRequest">GetSettingsRequest</h3>
         <p></p>
 
@@ -13896,6 +14021,13 @@
                 <td>ListUnitActivity</td>
                 <td><a href="#services.centrum.ListUnitActivityRequest">ListUnitActivityRequest</a></td>
                 <td><a href="#services.centrum.ListUnitActivityResponse">ListUnitActivityResponse</a></td>
+                <td><p>@perm: Name=Stream</p></td>
+              </tr>
+            
+              <tr>
+                <td>GetDispatch</td>
+                <td><a href="#services.centrum.GetDispatchRequest">GetDispatchRequest</a></td>
+                <td><a href="#services.centrum.GetDispatchResponse">GetDispatchResponse</a></td>
                 <td><p>@perm: Name=Stream</p></td>
               </tr>
             

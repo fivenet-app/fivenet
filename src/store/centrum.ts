@@ -664,7 +664,7 @@ export const useCentrumStore = defineStore('centrum', {
                     return can('CentrumService.TakeDispatch') && this.getCurrentMode !== CentrumMode.CENTRAL_COMMAND;
 
                 case 'AssignDispatch':
-                    return can('CentrumService.AssignDispatch');
+                    return can('CentrumService.TakeControl');
 
                 case 'UpdateDispatchStatus':
                     return (

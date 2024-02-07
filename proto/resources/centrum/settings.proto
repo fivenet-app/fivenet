@@ -19,4 +19,10 @@ message Settings {
   bool enabled = 2;
   CentrumMode mode = 3 [(validate.rules).enum.defined_only = true];
   CentrumMode fallback_mode = 4 [(validate.rules).enum.defined_only = true];
+  optional PredefinedStatus predefined_status = 5;
+}
+
+message PredefinedStatus {
+  repeated string unit_status = 1;
+  repeated string dispatch_status = 2;
 }

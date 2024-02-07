@@ -26,6 +26,7 @@ import JobSwitcherMenu from '~/components/partials/sidebar/JobSwitcherMenu.vue';
 import LanguageSwitcherMenu from '~/components/partials/sidebar/LanguageSwitcherMenu.vue';
 import NotificationsButton from '~/components/partials/sidebar/NotificationsButton.vue';
 import { useAuthStore } from '~/store/auth';
+import type { Perms } from '~~/gen/ts/perms';
 
 const authStore = useAuthStore();
 const { accessToken, activeChar } = storeToRefs(authStore);
@@ -38,7 +39,7 @@ const sidebarNavigation = ref<
         name: string;
         href: RoutesNamedLocations;
         activePath?: string;
-        permission: string;
+        permission?: Perms;
         icon: DefineComponent;
         position: 'top' | 'bottom';
         current: boolean;
@@ -49,7 +50,6 @@ const sidebarNavigation = ref<
     {
         name: 'common.overview',
         href: { name: 'overview' },
-        permission: '',
         icon: markRaw(HomeIcon),
         position: 'top',
         current: false,
@@ -115,13 +115,12 @@ const sidebarNavigation = ref<
     {
         name: 'common.about',
         href: { name: 'about' },
-        permission: '',
         icon: markRaw(HelpCircleIcon),
         position: 'bottom',
         current: false,
     },
 ]);
-const userNavigation = ref<{ name: string; href: RoutesNamedLocations; permission?: string }[]>([
+const userNavigation = ref<{ name: string; href: RoutesNamedLocations; permission?: Perms }[]>([
     { name: 'components.auth.login.title', href: { name: 'auth-login' } },
     { name: 'components.auth.registration_form.title', href: { name: 'auth-registration' } },
 ]);
@@ -250,7 +249,9 @@ watch(router.currentRoute, () => updateActiveItem());
                     </template>
                     <template v-else-if="accessToken && activeChar">
                         <NuxtLink
-                            v-for="item in sidebarNavigation.filter((e) => e.position === 'top' && can(e.permission))"
+                            v-for="item in sidebarNavigation.filter(
+                                (e) => e.position === 'top' && (e.permission === undefined || can(e.permission)),
+                            )"
                             :key="item.name"
                             :to="item.href"
                             :class="[
@@ -275,7 +276,9 @@ watch(router.currentRoute, () => updateActiveItem());
                 </div>
                 <div class="w-full flex-initial space-y-1 px-2 text-center">
                     <NuxtLink
-                        v-for="item in sidebarNavigation.filter((e) => e.position === 'bottom' && can(e.permission))"
+                        v-for="item in sidebarNavigation.filter(
+                            (e) => e.position === 'bottom' && (e.permission === undefined || can(e.permission)),
+                        )"
                         :key="item.name"
                         :to="item.href"
                         :class="[
@@ -397,7 +400,8 @@ watch(router.currentRoute, () => updateActiveItem());
                                         </template>
                                         <NuxtLink
                                             v-for="item in sidebarNavigation.filter(
-                                                (e) => e.position === 'top' && can(e.permission),
+                                                (e) =>
+                                                    e.position === 'top' && (e.permission === undefined || can(e.permission)),
                                             )"
                                             v-else-if="accessToken && activeChar"
                                             :key="item.name"
@@ -429,7 +433,9 @@ watch(router.currentRoute, () => updateActiveItem());
                                     <div class="space-y-1">
                                         <NuxtLink
                                             v-for="item in sidebarNavigation.filter(
-                                                (e) => e.position === 'bottom' && can(e.permission),
+                                                (e) =>
+                                                    e.position === 'bottom' &&
+                                                    (e.permission === undefined || can(e.permission)),
                                             )"
                                             :key="item.name"
                                             :to="item.href"

@@ -108,6 +108,14 @@ message ListDispatchesResponse {
   repeated resources.centrum.Dispatch dispatches = 2;
 }
 
+message GetDispatchRequest {
+  uint64 id = 1 [jstype = JS_STRING, (validate.rules).uint64.gt = 0];
+}
+
+message GetDispatchResponse {
+  resources.centrum.Dispatch dispatch = 1;
+}
+
 message CreateDispatchRequest {
   resources.centrum.Dispatch dispatch = 1 [(validate.rules).message.required = true];
 }
@@ -235,6 +243,8 @@ service CentrumService {
   // @perm: Name=Stream
   rpc ListUnitActivity(ListUnitActivityRequest) returns (ListUnitActivityResponse);
 
+  // @perm: Name=Stream
+  rpc GetDispatch(GetDispatchRequest) returns (GetDispatchResponse);
   // @perm: Name=Stream
   rpc ListDispatches(ListDispatchesRequest) returns (ListDispatchesResponse);
   // @perm: Name=Stream

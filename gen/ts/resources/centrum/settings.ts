@@ -22,6 +22,23 @@ export interface Settings {
      * @generated from protobuf field: resources.centrum.CentrumMode fallback_mode = 4;
      */
     fallbackMode: CentrumMode;
+    /**
+     * @generated from protobuf field: optional resources.centrum.PredefinedStatus predefined_status = 5;
+     */
+    predefinedStatus?: PredefinedStatus;
+}
+/**
+ * @generated from protobuf message resources.centrum.PredefinedStatus
+ */
+export interface PredefinedStatus {
+    /**
+     * @generated from protobuf field: repeated string unit_status = 1;
+     */
+    unitStatus: string[];
+    /**
+     * @generated from protobuf field: repeated string dispatch_status = 2;
+     */
+    dispatchStatus: string[];
 }
 /**
  * @generated from protobuf enum resources.centrum.CentrumMode
@@ -55,7 +72,8 @@ class Settings$Type extends MessageType<Settings> {
             { no: 1, name: "job", kind: "scalar", T: 9 /*ScalarType.STRING*/, options: { "validate.rules": { string: { maxLen: "20" } } } },
             { no: 2, name: "enabled", kind: "scalar", T: 8 /*ScalarType.BOOL*/ },
             { no: 3, name: "mode", kind: "enum", T: () => ["resources.centrum.CentrumMode", CentrumMode, "CENTRUM_MODE_"], options: { "validate.rules": { enum: { definedOnly: true } } } },
-            { no: 4, name: "fallback_mode", kind: "enum", T: () => ["resources.centrum.CentrumMode", CentrumMode, "CENTRUM_MODE_"], options: { "validate.rules": { enum: { definedOnly: true } } } }
+            { no: 4, name: "fallback_mode", kind: "enum", T: () => ["resources.centrum.CentrumMode", CentrumMode, "CENTRUM_MODE_"], options: { "validate.rules": { enum: { definedOnly: true } } } },
+            { no: 5, name: "predefined_status", kind: "message", T: () => PredefinedStatus }
         ]);
     }
 }
@@ -63,3 +81,16 @@ class Settings$Type extends MessageType<Settings> {
  * @generated MessageType for protobuf message resources.centrum.Settings
  */
 export const Settings = new Settings$Type();
+// @generated message type with reflection information, may provide speed optimized methods
+class PredefinedStatus$Type extends MessageType<PredefinedStatus> {
+    constructor() {
+        super("resources.centrum.PredefinedStatus", [
+            { no: 1, name: "unit_status", kind: "scalar", repeat: 2 /*RepeatType.UNPACKED*/, T: 9 /*ScalarType.STRING*/ },
+            { no: 2, name: "dispatch_status", kind: "scalar", repeat: 2 /*RepeatType.UNPACKED*/, T: 9 /*ScalarType.STRING*/ }
+        ]);
+    }
+}
+/**
+ * @generated MessageType for protobuf message resources.centrum.PredefinedStatus
+ */
+export const PredefinedStatus = new PredefinedStatus$Type();

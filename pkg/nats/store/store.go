@@ -15,7 +15,7 @@ import (
 	"google.golang.org/protobuf/proto"
 )
 
-const LockTimeout = 1 * time.Second
+const LockTimeout = 350 * time.Millisecond
 
 type protoMessage[T any] interface {
 	*T
@@ -35,9 +35,12 @@ type Store[T any, U protoMessage[T]] struct {
 	l *locks.Locks
 
 	onUpdate func(nats.KeyValueEntry) (U, error)
+	onDelete func(nats.KeyValueEntry) (U, error)
 }
 
-func New[T any, U protoMessage[T]](logger *zap.Logger, js nats.JetStreamContext, bucket string) (*Store[T, U], error) {
+type StoreOption[T any, U protoMessage[T]] func(s *Store[T, U]) error
+
+func New[T any, U protoMessage[T]](logger *zap.Logger, js nats.JetStreamContext, bucket string, opts ...StoreOption[T, U]) (*Store[T, U], error) {
 	kv, err := natsutils.CreateKeyValue(js, bucket, &nats.KeyValueConfig{
 		Bucket:      bucket,
 		Description: natsutils.Description,
@@ -59,7 +62,7 @@ func New[T any, U protoMessage[T]](logger *zap.Logger, js nats.JetStreamContext,
 	if err != nil {
 		return nil, err
 	}
-	l, err := locks.New(logger, lkv, lBucket, 9*time.Second)
+	l, err := locks.New(logger, lkv, lBucket, 6*LockTimeout)
 	if err != nil {
 		return nil, err
 	}
@@ -75,6 +78,12 @@ func New[T any, U protoMessage[T]](logger *zap.Logger, js nats.JetStreamContext,
 	}
 
 	s.onUpdate = s.update
+
+	for _, opt := range opts {
+		if err := opt(s); err != nil {
+			return nil, err
+		}
+	}
 
 	return s, nil
 }
@@ -273,9 +282,18 @@ func (s *Store[T, U]) Start(ctx context.Context) error {
 
 				s.logger.Debug("key update received via watcher", zap.String("key", entry.Key()))
 
-				if _, err := s.onUpdate(entry); err != nil {
-					s.logger.Error("failed to run on update logic in store watcher", zap.Error(err))
-					continue
+				if entry.Operation() == nats.KeyValueDelete || entry.Operation() == nats.KeyValuePurge {
+					if s.onDelete != nil {
+						if _, err := s.onDelete(entry); err != nil {
+							s.logger.Error("failed to run on update logic in store watcher", zap.Error(err))
+							continue
+						}
+					}
+				} else {
+					if _, err := s.onUpdate(entry); err != nil {
+						s.logger.Error("failed to run on update logic in store watcher", zap.Error(err))
+						continue
+					}
 				}
 			}
 		}

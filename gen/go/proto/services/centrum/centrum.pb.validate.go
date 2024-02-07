@@ -2721,6 +2721,250 @@ var _ interface {
 	ErrorName() string
 } = ListDispatchesResponseValidationError{}
 
+// Validate checks the field values on GetDispatchRequest with the rules
+// defined in the proto definition for this message. If any rules are
+// violated, the first error encountered is returned, or nil if there are no violations.
+func (m *GetDispatchRequest) Validate() error {
+	return m.validate(false)
+}
+
+// ValidateAll checks the field values on GetDispatchRequest with the rules
+// defined in the proto definition for this message. If any rules are
+// violated, the result is a list of violation errors wrapped in
+// GetDispatchRequestMultiError, or nil if none found.
+func (m *GetDispatchRequest) ValidateAll() error {
+	return m.validate(true)
+}
+
+func (m *GetDispatchRequest) validate(all bool) error {
+	if m == nil {
+		return nil
+	}
+
+	var errors []error
+
+	if m.GetId() <= 0 {
+		err := GetDispatchRequestValidationError{
+			field:  "Id",
+			reason: "value must be greater than 0",
+		}
+		if !all {
+			return err
+		}
+		errors = append(errors, err)
+	}
+
+	if len(errors) > 0 {
+		return GetDispatchRequestMultiError(errors)
+	}
+
+	return nil
+}
+
+// GetDispatchRequestMultiError is an error wrapping multiple validation errors
+// returned by GetDispatchRequest.ValidateAll() if the designated constraints
+// aren't met.
+type GetDispatchRequestMultiError []error
+
+// Error returns a concatenation of all the error messages it wraps.
+func (m GetDispatchRequestMultiError) Error() string {
+	var msgs []string
+	for _, err := range m {
+		msgs = append(msgs, err.Error())
+	}
+	return strings.Join(msgs, "; ")
+}
+
+// AllErrors returns a list of validation violation errors.
+func (m GetDispatchRequestMultiError) AllErrors() []error { return m }
+
+// GetDispatchRequestValidationError is the validation error returned by
+// GetDispatchRequest.Validate if the designated constraints aren't met.
+type GetDispatchRequestValidationError struct {
+	field  string
+	reason string
+	cause  error
+	key    bool
+}
+
+// Field function returns field value.
+func (e GetDispatchRequestValidationError) Field() string { return e.field }
+
+// Reason function returns reason value.
+func (e GetDispatchRequestValidationError) Reason() string { return e.reason }
+
+// Cause function returns cause value.
+func (e GetDispatchRequestValidationError) Cause() error { return e.cause }
+
+// Key function returns key value.
+func (e GetDispatchRequestValidationError) Key() bool { return e.key }
+
+// ErrorName returns error name.
+func (e GetDispatchRequestValidationError) ErrorName() string {
+	return "GetDispatchRequestValidationError"
+}
+
+// Error satisfies the builtin error interface
+func (e GetDispatchRequestValidationError) Error() string {
+	cause := ""
+	if e.cause != nil {
+		cause = fmt.Sprintf(" | caused by: %v", e.cause)
+	}
+
+	key := ""
+	if e.key {
+		key = "key for "
+	}
+
+	return fmt.Sprintf(
+		"invalid %sGetDispatchRequest.%s: %s%s",
+		key,
+		e.field,
+		e.reason,
+		cause)
+}
+
+var _ error = GetDispatchRequestValidationError{}
+
+var _ interface {
+	Field() string
+	Reason() string
+	Key() bool
+	Cause() error
+	ErrorName() string
+} = GetDispatchRequestValidationError{}
+
+// Validate checks the field values on GetDispatchResponse with the rules
+// defined in the proto definition for this message. If any rules are
+// violated, the first error encountered is returned, or nil if there are no violations.
+func (m *GetDispatchResponse) Validate() error {
+	return m.validate(false)
+}
+
+// ValidateAll checks the field values on GetDispatchResponse with the rules
+// defined in the proto definition for this message. If any rules are
+// violated, the result is a list of violation errors wrapped in
+// GetDispatchResponseMultiError, or nil if none found.
+func (m *GetDispatchResponse) ValidateAll() error {
+	return m.validate(true)
+}
+
+func (m *GetDispatchResponse) validate(all bool) error {
+	if m == nil {
+		return nil
+	}
+
+	var errors []error
+
+	if all {
+		switch v := interface{}(m.GetDispatch()).(type) {
+		case interface{ ValidateAll() error }:
+			if err := v.ValidateAll(); err != nil {
+				errors = append(errors, GetDispatchResponseValidationError{
+					field:  "Dispatch",
+					reason: "embedded message failed validation",
+					cause:  err,
+				})
+			}
+		case interface{ Validate() error }:
+			if err := v.Validate(); err != nil {
+				errors = append(errors, GetDispatchResponseValidationError{
+					field:  "Dispatch",
+					reason: "embedded message failed validation",
+					cause:  err,
+				})
+			}
+		}
+	} else if v, ok := interface{}(m.GetDispatch()).(interface{ Validate() error }); ok {
+		if err := v.Validate(); err != nil {
+			return GetDispatchResponseValidationError{
+				field:  "Dispatch",
+				reason: "embedded message failed validation",
+				cause:  err,
+			}
+		}
+	}
+
+	if len(errors) > 0 {
+		return GetDispatchResponseMultiError(errors)
+	}
+
+	return nil
+}
+
+// GetDispatchResponseMultiError is an error wrapping multiple validation
+// errors returned by GetDispatchResponse.ValidateAll() if the designated
+// constraints aren't met.
+type GetDispatchResponseMultiError []error
+
+// Error returns a concatenation of all the error messages it wraps.
+func (m GetDispatchResponseMultiError) Error() string {
+	var msgs []string
+	for _, err := range m {
+		msgs = append(msgs, err.Error())
+	}
+	return strings.Join(msgs, "; ")
+}
+
+// AllErrors returns a list of validation violation errors.
+func (m GetDispatchResponseMultiError) AllErrors() []error { return m }
+
+// GetDispatchResponseValidationError is the validation error returned by
+// GetDispatchResponse.Validate if the designated constraints aren't met.
+type GetDispatchResponseValidationError struct {
+	field  string
+	reason string
+	cause  error
+	key    bool
+}
+
+// Field function returns field value.
+func (e GetDispatchResponseValidationError) Field() string { return e.field }
+
+// Reason function returns reason value.
+func (e GetDispatchResponseValidationError) Reason() string { return e.reason }
+
+// Cause function returns cause value.
+func (e GetDispatchResponseValidationError) Cause() error { return e.cause }
+
+// Key function returns key value.
+func (e GetDispatchResponseValidationError) Key() bool { return e.key }
+
+// ErrorName returns error name.
+func (e GetDispatchResponseValidationError) ErrorName() string {
+	return "GetDispatchResponseValidationError"
+}
+
+// Error satisfies the builtin error interface
+func (e GetDispatchResponseValidationError) Error() string {
+	cause := ""
+	if e.cause != nil {
+		cause = fmt.Sprintf(" | caused by: %v", e.cause)
+	}
+
+	key := ""
+	if e.key {
+		key = "key for "
+	}
+
+	return fmt.Sprintf(
+		"invalid %sGetDispatchResponse.%s: %s%s",
+		key,
+		e.field,
+		e.reason,
+		cause)
+}
+
+var _ error = GetDispatchResponseValidationError{}
+
+var _ interface {
+	Field() string
+	Reason() string
+	Key() bool
+	Cause() error
+	ErrorName() string
+} = GetDispatchResponseValidationError{}
+
 // Validate checks the field values on CreateDispatchRequest with the rules
 // defined in the proto definition for this message. If any rules are
 // violated, the first error encountered is returned, or nil if there are no violations.

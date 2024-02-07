@@ -18,6 +18,8 @@ import type { ListDispatchActivityResponse } from "./centrum";
 import type { ListDispatchActivityRequest } from "./centrum";
 import type { ListDispatchesResponse } from "./centrum";
 import type { ListDispatchesRequest } from "./centrum";
+import type { GetDispatchResponse } from "./centrum";
+import type { GetDispatchRequest } from "./centrum";
 import type { ListUnitActivityResponse } from "./centrum";
 import type { ListUnitActivityRequest } from "./centrum";
 import type { ListUnitsResponse } from "./centrum";
@@ -122,6 +124,12 @@ export interface ICentrumServiceClient {
      * @generated from protobuf rpc: ListUnitActivity(services.centrum.ListUnitActivityRequest) returns (services.centrum.ListUnitActivityResponse);
      */
     listUnitActivity(input: ListUnitActivityRequest, options?: RpcOptions): UnaryCall<ListUnitActivityRequest, ListUnitActivityResponse>;
+    /**
+     * @perm: Name=Stream
+     *
+     * @generated from protobuf rpc: GetDispatch(services.centrum.GetDispatchRequest) returns (services.centrum.GetDispatchResponse);
+     */
+    getDispatch(input: GetDispatchRequest, options?: RpcOptions): UnaryCall<GetDispatchRequest, GetDispatchResponse>;
     /**
      * @perm: Name=Stream
      *
@@ -285,10 +293,19 @@ export class CentrumServiceClient implements ICentrumServiceClient, ServiceInfo 
     /**
      * @perm: Name=Stream
      *
+     * @generated from protobuf rpc: GetDispatch(services.centrum.GetDispatchRequest) returns (services.centrum.GetDispatchResponse);
+     */
+    getDispatch(input: GetDispatchRequest, options?: RpcOptions): UnaryCall<GetDispatchRequest, GetDispatchResponse> {
+        const method = this.methods[12], opt = this._transport.mergeOptions(options);
+        return stackIntercept<GetDispatchRequest, GetDispatchResponse>("unary", this._transport, method, opt, input);
+    }
+    /**
+     * @perm: Name=Stream
+     *
      * @generated from protobuf rpc: ListDispatches(services.centrum.ListDispatchesRequest) returns (services.centrum.ListDispatchesResponse);
      */
     listDispatches(input: ListDispatchesRequest, options?: RpcOptions): UnaryCall<ListDispatchesRequest, ListDispatchesResponse> {
-        const method = this.methods[12], opt = this._transport.mergeOptions(options);
+        const method = this.methods[13], opt = this._transport.mergeOptions(options);
         return stackIntercept<ListDispatchesRequest, ListDispatchesResponse>("unary", this._transport, method, opt, input);
     }
     /**
@@ -297,7 +314,7 @@ export class CentrumServiceClient implements ICentrumServiceClient, ServiceInfo 
      * @generated from protobuf rpc: ListDispatchActivity(services.centrum.ListDispatchActivityRequest) returns (services.centrum.ListDispatchActivityResponse);
      */
     listDispatchActivity(input: ListDispatchActivityRequest, options?: RpcOptions): UnaryCall<ListDispatchActivityRequest, ListDispatchActivityResponse> {
-        const method = this.methods[13], opt = this._transport.mergeOptions(options);
+        const method = this.methods[14], opt = this._transport.mergeOptions(options);
         return stackIntercept<ListDispatchActivityRequest, ListDispatchActivityResponse>("unary", this._transport, method, opt, input);
     }
     /**
@@ -306,7 +323,7 @@ export class CentrumServiceClient implements ICentrumServiceClient, ServiceInfo 
      * @generated from protobuf rpc: CreateOrUpdateUnit(services.centrum.CreateOrUpdateUnitRequest) returns (services.centrum.CreateOrUpdateUnitResponse);
      */
     createOrUpdateUnit(input: CreateOrUpdateUnitRequest, options?: RpcOptions): UnaryCall<CreateOrUpdateUnitRequest, CreateOrUpdateUnitResponse> {
-        const method = this.methods[14], opt = this._transport.mergeOptions(options);
+        const method = this.methods[15], opt = this._transport.mergeOptions(options);
         return stackIntercept<CreateOrUpdateUnitRequest, CreateOrUpdateUnitResponse>("unary", this._transport, method, opt, input);
     }
     /**
@@ -315,7 +332,7 @@ export class CentrumServiceClient implements ICentrumServiceClient, ServiceInfo 
      * @generated from protobuf rpc: DeleteUnit(services.centrum.DeleteUnitRequest) returns (services.centrum.DeleteUnitResponse);
      */
     deleteUnit(input: DeleteUnitRequest, options?: RpcOptions): UnaryCall<DeleteUnitRequest, DeleteUnitResponse> {
-        const method = this.methods[15], opt = this._transport.mergeOptions(options);
+        const method = this.methods[16], opt = this._transport.mergeOptions(options);
         return stackIntercept<DeleteUnitRequest, DeleteUnitResponse>("unary", this._transport, method, opt, input);
     }
     /**
@@ -324,7 +341,7 @@ export class CentrumServiceClient implements ICentrumServiceClient, ServiceInfo 
      * @generated from protobuf rpc: TakeDispatch(services.centrum.TakeDispatchRequest) returns (services.centrum.TakeDispatchResponse);
      */
     takeDispatch(input: TakeDispatchRequest, options?: RpcOptions): UnaryCall<TakeDispatchRequest, TakeDispatchResponse> {
-        const method = this.methods[16], opt = this._transport.mergeOptions(options);
+        const method = this.methods[17], opt = this._transport.mergeOptions(options);
         return stackIntercept<TakeDispatchRequest, TakeDispatchResponse>("unary", this._transport, method, opt, input);
     }
     /**
@@ -333,7 +350,7 @@ export class CentrumServiceClient implements ICentrumServiceClient, ServiceInfo 
      * @generated from protobuf rpc: UpdateUnitStatus(services.centrum.UpdateUnitStatusRequest) returns (services.centrum.UpdateUnitStatusResponse);
      */
     updateUnitStatus(input: UpdateUnitStatusRequest, options?: RpcOptions): UnaryCall<UpdateUnitStatusRequest, UpdateUnitStatusResponse> {
-        const method = this.methods[17], opt = this._transport.mergeOptions(options);
+        const method = this.methods[18], opt = this._transport.mergeOptions(options);
         return stackIntercept<UpdateUnitStatusRequest, UpdateUnitStatusResponse>("unary", this._transport, method, opt, input);
     }
     /**
@@ -342,7 +359,7 @@ export class CentrumServiceClient implements ICentrumServiceClient, ServiceInfo 
      * @generated from protobuf rpc: UpdateDispatchStatus(services.centrum.UpdateDispatchStatusRequest) returns (services.centrum.UpdateDispatchStatusResponse);
      */
     updateDispatchStatus(input: UpdateDispatchStatusRequest, options?: RpcOptions): UnaryCall<UpdateDispatchStatusRequest, UpdateDispatchStatusResponse> {
-        const method = this.methods[18], opt = this._transport.mergeOptions(options);
+        const method = this.methods[19], opt = this._transport.mergeOptions(options);
         return stackIntercept<UpdateDispatchStatusRequest, UpdateDispatchStatusResponse>("unary", this._transport, method, opt, input);
     }
 }

@@ -31,6 +31,7 @@ import { toggleTablet } from '~/composables/nui';
 import { DocumentShort } from '~~/gen/ts/resources/documents/documents';
 import { UserShort } from '~~/gen/ts/resources/users/users';
 import IDCopyBadge from '~/components/partials/IDCopyBadge.vue';
+import type { Perms } from '~~/gen/ts/perms';
 
 const { $grpc } = useNuxtApp();
 
@@ -72,7 +73,7 @@ type Item = {
     prefix?: string;
     icon?: DefineComponent;
     category: string;
-    permission?: string;
+    permission?: Perms;
     action: () => any;
 };
 

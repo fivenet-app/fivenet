@@ -25,7 +25,7 @@ defineEmits<{
         >
             <template v-for="(item, itemIdx) in items">
                 <div
-                    v-if="can(item.permission ?? '')"
+                    v-if="item.permission === undefined || can(item.permission)"
                     :key="item.title"
                     :class="[
                         itemIdx === 0 ? 'rounded-tl-lg rounded-tr-lg sm:rounded-tr-none' : '',

@@ -31,6 +31,7 @@ const (
 	CentrumService_JoinUnit_FullMethodName             = "/services.centrum.CentrumService/JoinUnit"
 	CentrumService_ListUnits_FullMethodName            = "/services.centrum.CentrumService/ListUnits"
 	CentrumService_ListUnitActivity_FullMethodName     = "/services.centrum.CentrumService/ListUnitActivity"
+	CentrumService_GetDispatch_FullMethodName          = "/services.centrum.CentrumService/GetDispatch"
 	CentrumService_ListDispatches_FullMethodName       = "/services.centrum.CentrumService/ListDispatches"
 	CentrumService_ListDispatchActivity_FullMethodName = "/services.centrum.CentrumService/ListDispatchActivity"
 	CentrumService_CreateOrUpdateUnit_FullMethodName   = "/services.centrum.CentrumService/CreateOrUpdateUnit"
@@ -68,6 +69,8 @@ type CentrumServiceClient interface {
 	ListUnits(ctx context.Context, in *ListUnitsRequest, opts ...grpc.CallOption) (*ListUnitsResponse, error)
 	// @perm: Name=Stream
 	ListUnitActivity(ctx context.Context, in *ListUnitActivityRequest, opts ...grpc.CallOption) (*ListUnitActivityResponse, error)
+	// @perm: Name=Stream
+	GetDispatch(ctx context.Context, in *GetDispatchRequest, opts ...grpc.CallOption) (*GetDispatchResponse, error)
 	// @perm: Name=Stream
 	ListDispatches(ctx context.Context, in *ListDispatchesRequest, opts ...grpc.CallOption) (*ListDispatchesResponse, error)
 	// @perm: Name=Stream
@@ -223,6 +226,15 @@ func (c *centrumServiceClient) ListUnitActivity(ctx context.Context, in *ListUni
 	return out, nil
 }
 
+func (c *centrumServiceClient) GetDispatch(ctx context.Context, in *GetDispatchRequest, opts ...grpc.CallOption) (*GetDispatchResponse, error) {
+	out := new(GetDispatchResponse)
+	err := c.cc.Invoke(ctx, CentrumService_GetDispatch_FullMethodName, in, out, opts...)
+	if err != nil {
+		return nil, err
+	}
+	return out, nil
+}
+
 func (c *centrumServiceClient) ListDispatches(ctx context.Context, in *ListDispatchesRequest, opts ...grpc.CallOption) (*ListDispatchesResponse, error) {
 	out := new(ListDispatchesResponse)
 	err := c.cc.Invoke(ctx, CentrumService_ListDispatches_FullMethodName, in, out, opts...)
@@ -315,6 +327,8 @@ type CentrumServiceServer interface {
 	// @perm: Name=Stream
 	ListUnitActivity(context.Context, *ListUnitActivityRequest) (*ListUnitActivityResponse, error)
 	// @perm: Name=Stream
+	GetDispatch(context.Context, *GetDispatchRequest) (*GetDispatchResponse, error)
+	// @perm: Name=Stream
 	ListDispatches(context.Context, *ListDispatchesRequest) (*ListDispatchesResponse, error)
 	// @perm: Name=Stream
 	ListDispatchActivity(context.Context, *ListDispatchActivityRequest) (*ListDispatchActivityResponse, error)
@@ -370,6 +384,9 @@ func (UnimplementedCentrumServiceServer) ListUnits(context.Context, *ListUnitsRe
 }
 func (UnimplementedCentrumServiceServer) ListUnitActivity(context.Context, *ListUnitActivityRequest) (*ListUnitActivityResponse, error) {
 	return nil, status.Errorf(codes.Unimplemented, "method ListUnitActivity not implemented")
+}
+func (UnimplementedCentrumServiceServer) GetDispatch(context.Context, *GetDispatchRequest) (*GetDispatchResponse, error) {
+	return nil, status.Errorf(codes.Unimplemented, "method GetDispatch not implemented")
 }
 func (UnimplementedCentrumServiceServer) ListDispatches(context.Context, *ListDispatchesRequest) (*ListDispatchesResponse, error) {
 	return nil, status.Errorf(codes.Unimplemented, "method ListDispatches not implemented")
@@ -624,6 +641,24 @@ func _CentrumService_ListUnitActivity_Handler(srv interface{}, ctx context.Conte
 	return interceptor(ctx, in, info, handler)
 }
 
+func _CentrumService_GetDispatch_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
+	in := new(GetDispatchRequest)
+	if err := dec(in); err != nil {
+		return nil, err
+	}
+	if interceptor == nil {
+		return srv.(CentrumServiceServer).GetDispatch(ctx, in)
+	}
+	info := &grpc.UnaryServerInfo{
+		Server:     srv,
+		FullMethod: CentrumService_GetDispatch_FullMethodName,
+	}
+	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
+		return srv.(CentrumServiceServer).GetDispatch(ctx, req.(*GetDispatchRequest))
+	}
+	return interceptor(ctx, in, info, handler)
+}
+
 func _CentrumService_ListDispatches_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
 	in := new(ListDispatchesRequest)
 	if err := dec(in); err != nil {
@@ -800,6 +835,10 @@ var CentrumService_ServiceDesc = grpc.ServiceDesc{
 		{
 			MethodName: "ListUnitActivity",
 			Handler:    _CentrumService_ListUnitActivity_Handler,
+		},
+		{
+			MethodName: "GetDispatch",
+			Handler:    _CentrumService_GetDispatch_Handler,
 		},
 		{
 			MethodName: "ListDispatches",

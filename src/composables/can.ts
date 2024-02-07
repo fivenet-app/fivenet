@@ -1,7 +1,12 @@
 import { useAuthStore } from '~/store/auth';
 import slug from '~/utils/slugify';
+import type { Perms } from '~~/gen/ts/perms';
 
-export function can(perm: string | string[], mode?: 'oneof' | 'all'): boolean {
+export function can(perm: Perms | Perms[], mode?: 'oneof' | 'all'): boolean {
+    return checkPerm(perm, mode);
+}
+
+function checkPerm(perm: string | string[], mode?: 'oneof' | 'all'): boolean {
     if (mode === undefined) {
         mode = 'oneof';
     }
@@ -11,11 +16,11 @@ export function can(perm: string | string[], mode?: 'oneof' | 'all'): boolean {
         return true;
     }
 
-    const input: String[] = [];
+    const input: string[] = [];
     if (typeof perm === 'string') {
         input.push(perm);
     } else {
-        const vals = perm as String[];
+        const vals = perm as string[];
         input.push(...vals);
     }
 
@@ -39,11 +44,11 @@ export function can(perm: string | string[], mode?: 'oneof' | 'all'): boolean {
     return can;
 }
 
-export function attr(perm: string, name: string, val: string): boolean {
-    return can(perm + '.' + name + (val !== undefined ? '.' + val : ''));
+export function attr(perm: Perms, name: string, val: string): boolean {
+    return checkPerm(perm + '.' + name + (val !== undefined ? '.' + val : ''));
 }
 
-export function attrList(perm: string, name: string): string[] {
+export function attrList(perm: Perms, name: string): string[] {
     const key = slug(perm + '.' + name + '.');
     const permissions = useAuthStore().permissions;
     return permissions.filter((p) => p.startsWith(key)).map((p) => p.substring(key.length + 1));

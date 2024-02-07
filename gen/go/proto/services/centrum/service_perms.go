@@ -13,6 +13,7 @@ var PermsRemap = map[string]string{
 	// Service: CentrumService
 	"CentrumService/AssignDispatch":       "CentrumService/TakeControl",
 	"CentrumService/AssignUnit":           "CentrumService/TakeControl",
+	"CentrumService/GetDispatch":          "CentrumService/Stream",
 	"CentrumService/GetSettings":          "CentrumService/Stream",
 	"CentrumService/JoinUnit":             "CentrumService/Stream",
 	"CentrumService/ListDispatchActivity": "CentrumService/Stream",

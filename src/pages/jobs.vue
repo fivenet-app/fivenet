@@ -1,19 +1,20 @@
 <script lang="ts" setup>
 import { CloseIcon, MenuIcon } from 'mdi-vue3';
 import { type RoutesNamedLocations } from '@typed-router';
+import type { Perms } from '~~/gen/ts/perms';
 
-const navigation: { name: string; to: RoutesNamedLocations; permission?: string }[] = [
+const navigation: { name: string; to: RoutesNamedLocations; permission?: Perms }[] = [
     { name: 'common.overview', to: { name: 'jobs-overview' }, permission: 'JobsService.ListColleagues' },
     { name: 'pages.jobs.colleagues.title', to: { name: 'jobs-colleagues' }, permission: 'JobsService.ListColleagues' },
     {
         name: 'pages.jobs.requests.title',
         to: { name: 'jobs-requests' },
-        permission: 'JobsRequestsService.ListRequestsRequestEntries',
+        permission: 'JobsRequestsService.ListRequests',
     },
     {
         name: 'pages.jobs.qualifications.title',
         to: { name: 'jobs-qualifications' },
-        permission: 'JobsService.QualificationsListEntries',
+        permission: 'TODOService.TODOMethod',
     },
     { name: 'pages.jobs.timeclock.title', to: { name: 'jobs-timeclock' }, permission: 'JobsTimeclockService.ListTimeclock' },
     { name: 'pages.jobs.conduct.title', to: { name: 'jobs-conduct' }, permission: 'JobsConductService.ListConductEntries' },

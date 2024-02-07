@@ -4,6 +4,7 @@ import { Listbox, ListboxButton, ListboxOption, ListboxOptions, Switch, SwitchGr
 import type { RoutePathSchema } from '@typed-router';
 import { useAuthStore } from '~/store/auth';
 import { JOB_THEME_KEY, availableThemes, useSettingsStore } from '~/store/settings';
+import type { Perms } from '~~/gen/ts/perms';
 
 const { t } = useI18n();
 
@@ -13,7 +14,7 @@ const { activeChar } = storeToRefs(authStore);
 const settings = useSettingsStore();
 const { startpage, documents } = storeToRefs(settings);
 
-const homepages: { name: string; path: RoutePathSchema; permission?: string }[] = [
+const homepages: { name: string; path: RoutePathSchema; permission?: Perms }[] = [
     { name: 'common.home', path: '/overview' },
     { name: 'pages.citizens.title', path: '/citizens', permission: 'CitizenStoreService.ListCitizens' },
     { name: 'pages.vehicles.title', path: '/vehicles', permission: 'DMVService.ListVehicles' },

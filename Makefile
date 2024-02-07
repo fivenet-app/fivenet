@@ -25,6 +25,9 @@ protoc-gen-validate: build_dir
 protoc-gen-customizer:
 	go build -o ./cmd/protoc-gen-customizer ./cmd/protoc-gen-customizer
 
+protoc-gen-fronthelper:
+	go build -o ./cmd/protoc-gen-fronthelper ./cmd/protoc-gen-fronthelper
+
 gdal2tiles-leaflet: build_dir
 	if test ! -d $(BUILD_DIR)gdal2tiles-leaflet/; then \
 		git clone https://github.com/commenthol/gdal2tiles-leaflet.git $(BUILD_DIR)gdal2tiles-leaflet; \
@@ -96,7 +99,7 @@ gen-sql:
 	find ./query/fivenet/table -type f -iname '*.go' -exec sed -i 's~("fivenet", ~("", ~g' {} \;
 
 .PHONY: gen-proto
-gen-proto: protoc-gen-validate protoc-gen-customizer
+gen-proto: protoc-gen-validate protoc-gen-customizer protoc-gen-fronthelper
 	PATH="$$PATH:./cmd/protoc-gen-customizer/" \
 	npx protoc \
 		--proto_path=./$(BUILD_DIR)validate-$(VALIDATE_VERSION) \
@@ -118,11 +121,14 @@ gen-proto: protoc-gen-validate protoc-gen-customizer
 		-exec protoc-go-inject-tag \
 			-input={} \;
 
+	PATH="$$PATH:./cmd/protoc-gen-fronthelper/" \
 	npx protoc \
 		--proto_path=./$(BUILD_DIR)validate-$(VALIDATE_VERSION) \
 		--proto_path=./proto \
 		--ts_out=./gen/ts \
 		--ts_opt=optimize_code_size,long_type_bigint \
+		--fronthelper_opt=paths=source_relative \
+		--fronthelper_out=./gen/ts \
 		$(shell find proto/ -iname "*.proto")
 
 	node ./internal/scripts/proto-patch.js
