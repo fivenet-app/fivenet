@@ -225,6 +225,21 @@ func (s *Server) UpdateRequest(ctx context.Context, req *UpdateRequestRequest) (
 		return nil, status.Error(codes.PermissionDenied, "Can't update this request")
 	}
 
+	stmt := tRequests.
+		UPDATE(
+			tRequests.Message,
+		).
+		SET(
+			tRequests.Message.SET(jet.String(req.Entry.Message)),
+		).
+		WHERE(
+			tRequests.ID.EQ(jet.Uint64(entry.Id)),
+		)
+
+	if _, err := stmt.ExecContext(ctx, s.db); err != nil {
+		return nil, errswrap.NewError(errorsjobs.ErrFailedQuery, err)
+	}
+
 	// TODO
 
 	auditEntry.State = int16(rector.EventType_EVENT_TYPE_UPDATED)
