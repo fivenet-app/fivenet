@@ -87,7 +87,7 @@ const open = ref(false);
                     class="flex-initial text-primary-500 hover:text-primary-400"
                     @click="open = true"
                 >
-                    <PencilIcon class="h-5 w-5 text-primary-500" aria-hidden="true" />
+                    <PencilIcon class="h-5 w-5" aria-hidden="true" />
                 </button>
                 <button
                     v-if="can('CentrumService.DeleteUnit')"
@@ -95,7 +95,7 @@ const open = ref(false);
                     class="flex-initial text-primary-500 hover:text-primary-400"
                     @click="reveal(unit.id)"
                 >
-                    <TrashCanIcon class="h-5 w-5 text-primary-500" aria-hidden="true" />
+                    <TrashCanIcon class="h-5 w-5" aria-hidden="true" />
                 </button>
             </div>
         </td>

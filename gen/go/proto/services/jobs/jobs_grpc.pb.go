@@ -20,6 +20,8 @@ const _ = grpc.SupportPackageIsVersion7
 
 const (
 	JobsService_ListColleagues_FullMethodName = "/services.jobs.JobsService/ListColleagues"
+	JobsService_GetMOTD_FullMethodName        = "/services.jobs.JobsService/GetMOTD"
+	JobsService_SetMOTD_FullMethodName        = "/services.jobs.JobsService/SetMOTD"
 )
 
 // JobsServiceClient is the client API for JobsService service.
@@ -28,6 +30,10 @@ const (
 type JobsServiceClient interface {
 	// @perm
 	ListColleagues(ctx context.Context, in *ListColleaguesRequest, opts ...grpc.CallOption) (*ListColleaguesResponse, error)
+	// @perm: Name=Any
+	GetMOTD(ctx context.Context, in *GetMOTDRequest, opts ...grpc.CallOption) (*GetMOTDResponse, error)
+	// @perm
+	SetMOTD(ctx context.Context, in *SetMOTDRequest, opts ...grpc.CallOption) (*SetMOTDResponse, error)
 }
 
 type jobsServiceClient struct {
@@ -47,12 +53,34 @@ func (c *jobsServiceClient) ListColleagues(ctx context.Context, in *ListColleagu
 	return out, nil
 }
 
+func (c *jobsServiceClient) GetMOTD(ctx context.Context, in *GetMOTDRequest, opts ...grpc.CallOption) (*GetMOTDResponse, error) {
+	out := new(GetMOTDResponse)
+	err := c.cc.Invoke(ctx, JobsService_GetMOTD_FullMethodName, in, out, opts...)
+	if err != nil {
+		return nil, err
+	}
+	return out, nil
+}
+
+func (c *jobsServiceClient) SetMOTD(ctx context.Context, in *SetMOTDRequest, opts ...grpc.CallOption) (*SetMOTDResponse, error) {
+	out := new(SetMOTDResponse)
+	err := c.cc.Invoke(ctx, JobsService_SetMOTD_FullMethodName, in, out, opts...)
+	if err != nil {
+		return nil, err
+	}
+	return out, nil
+}
+
 // JobsServiceServer is the server API for JobsService service.
 // All implementations must embed UnimplementedJobsServiceServer
 // for forward compatibility
 type JobsServiceServer interface {
 	// @perm
 	ListColleagues(context.Context, *ListColleaguesRequest) (*ListColleaguesResponse, error)
+	// @perm: Name=Any
+	GetMOTD(context.Context, *GetMOTDRequest) (*GetMOTDResponse, error)
+	// @perm
+	SetMOTD(context.Context, *SetMOTDRequest) (*SetMOTDResponse, error)
 	mustEmbedUnimplementedJobsServiceServer()
 }
 
@@ -62,6 +90,12 @@ type UnimplementedJobsServiceServer struct {
 
 func (UnimplementedJobsServiceServer) ListColleagues(context.Context, *ListColleaguesRequest) (*ListColleaguesResponse, error) {
 	return nil, status.Errorf(codes.Unimplemented, "method ListColleagues not implemented")
+}
+func (UnimplementedJobsServiceServer) GetMOTD(context.Context, *GetMOTDRequest) (*GetMOTDResponse, error) {
+	return nil, status.Errorf(codes.Unimplemented, "method GetMOTD not implemented")
+}
+func (UnimplementedJobsServiceServer) SetMOTD(context.Context, *SetMOTDRequest) (*SetMOTDResponse, error) {
+	return nil, status.Errorf(codes.Unimplemented, "method SetMOTD not implemented")
 }
 func (UnimplementedJobsServiceServer) mustEmbedUnimplementedJobsServiceServer() {}
 
@@ -94,6 +128,42 @@ func _JobsService_ListColleagues_Handler(srv interface{}, ctx context.Context, d
 	return interceptor(ctx, in, info, handler)
 }
 
+func _JobsService_GetMOTD_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
+	in := new(GetMOTDRequest)
+	if err := dec(in); err != nil {
+		return nil, err
+	}
+	if interceptor == nil {
+		return srv.(JobsServiceServer).GetMOTD(ctx, in)
+	}
+	info := &grpc.UnaryServerInfo{
+		Server:     srv,
+		FullMethod: JobsService_GetMOTD_FullMethodName,
+	}
+	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
+		return srv.(JobsServiceServer).GetMOTD(ctx, req.(*GetMOTDRequest))
+	}
+	return interceptor(ctx, in, info, handler)
+}
+
+func _JobsService_SetMOTD_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
+	in := new(SetMOTDRequest)
+	if err := dec(in); err != nil {
+		return nil, err
+	}
+	if interceptor == nil {
+		return srv.(JobsServiceServer).SetMOTD(ctx, in)
+	}
+	info := &grpc.UnaryServerInfo{
+		Server:     srv,
+		FullMethod: JobsService_SetMOTD_FullMethodName,
+	}
+	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
+		return srv.(JobsServiceServer).SetMOTD(ctx, req.(*SetMOTDRequest))
+	}
+	return interceptor(ctx, in, info, handler)
+}
+
 // JobsService_ServiceDesc is the grpc.ServiceDesc for JobsService service.
 // It's only intended for direct use with grpc.RegisterService,
 // and not to be introspected or modified (even as a copy)
@@ -104,6 +174,14 @@ var JobsService_ServiceDesc = grpc.ServiceDesc{
 		{
 			MethodName: "ListColleagues",
 			Handler:    _JobsService_ListColleagues_Handler,
+		},
+		{
+			MethodName: "GetMOTD",
+			Handler:    _JobsService_GetMOTD_Handler,
+		},
+		{
+			MethodName: "SetMOTD",
+			Handler:    _JobsService_SetMOTD_Handler,
 		},
 	},
 	Streams:  []grpc.StreamDesc{},

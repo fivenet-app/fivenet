@@ -21,7 +21,27 @@ message ListColleaguesResponse {
   repeated resources.users.User users = 2;
 }
 
+message GetMOTDRequest {}
+
+message GetMOTDResponse {
+  string motd = 1;
+}
+
+message SetMOTDRequest {
+  // @sanitize: method=StripTags
+  string motd = 1 [(validate.rules).string.max_len = 1024];
+}
+
+message SetMOTDResponse {
+  string motd = 1;
+}
+
 service JobsService {
   // @perm
   rpc ListColleagues(ListColleaguesRequest) returns (ListColleaguesResponse);
+
+  // @perm: Name=Any
+  rpc GetMOTD(GetMOTDRequest) returns (GetMOTDResponse);
+  // @perm
+  rpc SetMOTD(SetMOTDRequest) returns (SetMOTDResponse);
 }

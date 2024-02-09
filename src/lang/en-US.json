@@ -806,7 +806,8 @@
         "department": "Department",
         "none": "No {0}",
         "department_postal": "Department Postal",
-        "blood_type": "Blood type"
+        "blood_type": "Blood type",
+        "motd": "MOTD"
     },
     "notifications": {
         "clipboard": {

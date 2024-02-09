@@ -3,13 +3,21 @@ package jobs
 import (
 	"context"
 	"database/sql"
+	"errors"
 	sync "sync"
 
+	"github.com/galexrt/fivenet/gen/go/proto/resources/rector"
+	errorsjobs "github.com/galexrt/fivenet/gen/go/proto/services/jobs/errors"
+	"github.com/galexrt/fivenet/pkg/grpc/auth"
+	"github.com/galexrt/fivenet/pkg/grpc/errswrap"
 	"github.com/galexrt/fivenet/pkg/mstlystcdata"
 	"github.com/galexrt/fivenet/pkg/perms"
 	"github.com/galexrt/fivenet/pkg/server/audit"
 	"github.com/galexrt/fivenet/pkg/tracker"
+	"github.com/galexrt/fivenet/query/fivenet/model"
 	"github.com/galexrt/fivenet/query/fivenet/table"
+	jet "github.com/go-jet/jet/v2/mysql"
+	"github.com/go-jet/jet/v2/qrm"
 	tracesdk "go.opentelemetry.io/otel/sdk/trace"
 	"go.opentelemetry.io/otel/trace"
 	"go.uber.org/fx"
@@ -18,7 +26,8 @@ import (
 )
 
 var (
-	tUser = table.Users.AS("user")
+	tUser     = table.Users.AS("user")
+	tJobProps = table.FivenetJobProps
 )
 
 type Server struct {
@@ -96,4 +105,59 @@ func (s *Server) RegisterServer(srv *grpc.Server) {
 	RegisterJobsServiceServer(srv, s)
 	RegisterJobsRequestsServiceServer(srv, s)
 	RegisterJobsTimeclockServiceServer(srv, s)
+}
+
+func (s *Server) GetMOTD(ctx context.Context, req *GetMOTDRequest) (*GetMOTDResponse, error) {
+	userInfo := auth.MustGetUserInfoFromContext(ctx)
+
+	stmt := tJobProps.
+		SELECT(
+			tJobProps.JobsMotd.AS("getmotdresponse.motd"),
+		).
+		FROM(tJobProps).
+		WHERE(tJobProps.Job.EQ(jet.String(userInfo.Job))).
+		LIMIT(1)
+
+	resp := &GetMOTDResponse{}
+	if err := stmt.QueryContext(ctx, s.db, resp); err != nil {
+		if !errors.Is(err, qrm.ErrNoRows) {
+			return nil, errswrap.NewError(errorsjobs.ErrFailedQuery, err)
+		}
+	}
+
+	return resp, nil
+}
+
+func (s *Server) SetMOTD(ctx context.Context, req *SetMOTDRequest) (*SetMOTDResponse, error) {
+	userInfo := auth.MustGetUserInfoFromContext(ctx)
+
+	auditEntry := &model.FivenetAuditLog{
+		Service: JobsService_ServiceDesc.ServiceName,
+		Method:  "SetMOTD",
+		UserID:  userInfo.UserId,
+		UserJob: userInfo.Job,
+		State:   int16(rector.EventType_EVENT_TYPE_ERRORED),
+	}
+	defer s.auditer.Log(auditEntry, req)
+
+	stmt := tJobProps.
+		INSERT(
+			tJobProps.Job,
+			tJobProps.JobsMotd,
+		).
+		VALUES(
+			userInfo.Job,
+			req.Motd,
+		).
+		ON_DUPLICATE_KEY_UPDATE(
+			tJobProps.JobsMotd.SET(jet.String(req.Motd)),
+		)
+
+	if _, err := stmt.ExecContext(ctx, s.db); err != nil {
+		return nil, errswrap.NewError(errorsjobs.ErrFailedQuery, err)
+	}
+
+	return &SetMOTDResponse{
+		Motd: req.Motd,
+	}, nil
 }

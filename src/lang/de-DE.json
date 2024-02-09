@@ -806,7 +806,8 @@
         "department": "Dienststelle",
         "none": "Keine {0}",
         "department_postal": "Postleitzahl der Dienststelle",
-        "blood_type": "Blutgruppe"
+        "blood_type": "Blutgruppe",
+        "motd": "MOTD"
     },
     "notifications": {
         "clipboard": {

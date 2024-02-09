@@ -4,6 +4,10 @@
 import type { RpcTransport } from "@protobuf-ts/runtime-rpc";
 import type { ServiceInfo } from "@protobuf-ts/runtime-rpc";
 import { JobsService } from "./jobs";
+import type { SetMOTDResponse } from "./jobs";
+import type { SetMOTDRequest } from "./jobs";
+import type { GetMOTDResponse } from "./jobs";
+import type { GetMOTDRequest } from "./jobs";
 import { stackIntercept } from "@protobuf-ts/runtime-rpc";
 import type { ListColleaguesResponse } from "./jobs";
 import type { ListColleaguesRequest } from "./jobs";
@@ -19,6 +23,18 @@ export interface IJobsServiceClient {
      * @generated from protobuf rpc: ListColleagues(services.jobs.ListColleaguesRequest) returns (services.jobs.ListColleaguesResponse);
      */
     listColleagues(input: ListColleaguesRequest, options?: RpcOptions): UnaryCall<ListColleaguesRequest, ListColleaguesResponse>;
+    /**
+     * @perm: Name=Any
+     *
+     * @generated from protobuf rpc: GetMOTD(services.jobs.GetMOTDRequest) returns (services.jobs.GetMOTDResponse);
+     */
+    getMOTD(input: GetMOTDRequest, options?: RpcOptions): UnaryCall<GetMOTDRequest, GetMOTDResponse>;
+    /**
+     * @perm
+     *
+     * @generated from protobuf rpc: SetMOTD(services.jobs.SetMOTDRequest) returns (services.jobs.SetMOTDResponse);
+     */
+    setMOTD(input: SetMOTDRequest, options?: RpcOptions): UnaryCall<SetMOTDRequest, SetMOTDResponse>;
 }
 /**
  * @generated from protobuf service services.jobs.JobsService
@@ -37,5 +53,23 @@ export class JobsServiceClient implements IJobsServiceClient, ServiceInfo {
     listColleagues(input: ListColleaguesRequest, options?: RpcOptions): UnaryCall<ListColleaguesRequest, ListColleaguesResponse> {
         const method = this.methods[0], opt = this._transport.mergeOptions(options);
         return stackIntercept<ListColleaguesRequest, ListColleaguesResponse>("unary", this._transport, method, opt, input);
+    }
+    /**
+     * @perm: Name=Any
+     *
+     * @generated from protobuf rpc: GetMOTD(services.jobs.GetMOTDRequest) returns (services.jobs.GetMOTDResponse);
+     */
+    getMOTD(input: GetMOTDRequest, options?: RpcOptions): UnaryCall<GetMOTDRequest, GetMOTDResponse> {
+        const method = this.methods[1], opt = this._transport.mergeOptions(options);
+        return stackIntercept<GetMOTDRequest, GetMOTDResponse>("unary", this._transport, method, opt, input);
+    }
+    /**
+     * @perm
+     *
+     * @generated from protobuf rpc: SetMOTD(services.jobs.SetMOTDRequest) returns (services.jobs.SetMOTDResponse);
+     */
+    setMOTD(input: SetMOTDRequest, options?: RpcOptions): UnaryCall<SetMOTDRequest, SetMOTDResponse> {
+        const method = this.methods[2], opt = this._transport.mergeOptions(options);
+        return stackIntercept<SetMOTDRequest, SetMOTDResponse>("unary", this._transport, method, opt, input);
     }
 }

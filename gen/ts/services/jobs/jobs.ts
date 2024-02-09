@@ -36,6 +36,40 @@ export interface ListColleaguesResponse {
      */
     users: User[];
 }
+/**
+ * @generated from protobuf message services.jobs.GetMOTDRequest
+ */
+export interface GetMOTDRequest {
+}
+/**
+ * @generated from protobuf message services.jobs.GetMOTDResponse
+ */
+export interface GetMOTDResponse {
+    /**
+     * @generated from protobuf field: string motd = 1;
+     */
+    motd: string;
+}
+/**
+ * @generated from protobuf message services.jobs.SetMOTDRequest
+ */
+export interface SetMOTDRequest {
+    /**
+     * @sanitize: method=StripTags
+     *
+     * @generated from protobuf field: string motd = 1;
+     */
+    motd: string;
+}
+/**
+ * @generated from protobuf message services.jobs.SetMOTDResponse
+ */
+export interface SetMOTDResponse {
+    /**
+     * @generated from protobuf field: string motd = 1;
+     */
+    motd: string;
+}
 // @generated message type with reflection information, may provide speed optimized methods
 class ListColleaguesRequest$Type extends MessageType<ListColleaguesRequest> {
     constructor() {
@@ -62,9 +96,57 @@ class ListColleaguesResponse$Type extends MessageType<ListColleaguesResponse> {
  * @generated MessageType for protobuf message services.jobs.ListColleaguesResponse
  */
 export const ListColleaguesResponse = new ListColleaguesResponse$Type();
+// @generated message type with reflection information, may provide speed optimized methods
+class GetMOTDRequest$Type extends MessageType<GetMOTDRequest> {
+    constructor() {
+        super("services.jobs.GetMOTDRequest", []);
+    }
+}
+/**
+ * @generated MessageType for protobuf message services.jobs.GetMOTDRequest
+ */
+export const GetMOTDRequest = new GetMOTDRequest$Type();
+// @generated message type with reflection information, may provide speed optimized methods
+class GetMOTDResponse$Type extends MessageType<GetMOTDResponse> {
+    constructor() {
+        super("services.jobs.GetMOTDResponse", [
+            { no: 1, name: "motd", kind: "scalar", T: 9 /*ScalarType.STRING*/ }
+        ]);
+    }
+}
+/**
+ * @generated MessageType for protobuf message services.jobs.GetMOTDResponse
+ */
+export const GetMOTDResponse = new GetMOTDResponse$Type();
+// @generated message type with reflection information, may provide speed optimized methods
+class SetMOTDRequest$Type extends MessageType<SetMOTDRequest> {
+    constructor() {
+        super("services.jobs.SetMOTDRequest", [
+            { no: 1, name: "motd", kind: "scalar", T: 9 /*ScalarType.STRING*/, options: { "validate.rules": { string: { maxLen: "1024" } } } }
+        ]);
+    }
+}
+/**
+ * @generated MessageType for protobuf message services.jobs.SetMOTDRequest
+ */
+export const SetMOTDRequest = new SetMOTDRequest$Type();
+// @generated message type with reflection information, may provide speed optimized methods
+class SetMOTDResponse$Type extends MessageType<SetMOTDResponse> {
+    constructor() {
+        super("services.jobs.SetMOTDResponse", [
+            { no: 1, name: "motd", kind: "scalar", T: 9 /*ScalarType.STRING*/ }
+        ]);
+    }
+}
+/**
+ * @generated MessageType for protobuf message services.jobs.SetMOTDResponse
+ */
+export const SetMOTDResponse = new SetMOTDResponse$Type();
 /**
  * @generated ServiceType for protobuf service services.jobs.JobsService
  */
 export const JobsService = new ServiceType("services.jobs.JobsService", [
-    { name: "ListColleagues", options: {}, I: ListColleaguesRequest, O: ListColleaguesResponse }
+    { name: "ListColleagues", options: {}, I: ListColleaguesRequest, O: ListColleaguesResponse },
+    { name: "GetMOTD", options: {}, I: GetMOTDRequest, O: GetMOTDResponse },
+    { name: "SetMOTD", options: {}, I: SetMOTDRequest, O: SetMOTDResponse }
 ]);

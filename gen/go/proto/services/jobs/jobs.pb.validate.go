@@ -352,3 +352,418 @@ var _ interface {
 	Cause() error
 	ErrorName() string
 } = ListColleaguesResponseValidationError{}
+
+// Validate checks the field values on GetMOTDRequest with the rules defined in
+// the proto definition for this message. If any rules are violated, the first
+// error encountered is returned, or nil if there are no violations.
+func (m *GetMOTDRequest) Validate() error {
+	return m.validate(false)
+}
+
+// ValidateAll checks the field values on GetMOTDRequest with the rules defined
+// in the proto definition for this message. If any rules are violated, the
+// result is a list of violation errors wrapped in GetMOTDRequestMultiError,
+// or nil if none found.
+func (m *GetMOTDRequest) ValidateAll() error {
+	return m.validate(true)
+}
+
+func (m *GetMOTDRequest) validate(all bool) error {
+	if m == nil {
+		return nil
+	}
+
+	var errors []error
+
+	if len(errors) > 0 {
+		return GetMOTDRequestMultiError(errors)
+	}
+
+	return nil
+}
+
+// GetMOTDRequestMultiError is an error wrapping multiple validation errors
+// returned by GetMOTDRequest.ValidateAll() if the designated constraints
+// aren't met.
+type GetMOTDRequestMultiError []error
+
+// Error returns a concatenation of all the error messages it wraps.
+func (m GetMOTDRequestMultiError) Error() string {
+	var msgs []string
+	for _, err := range m {
+		msgs = append(msgs, err.Error())
+	}
+	return strings.Join(msgs, "; ")
+}
+
+// AllErrors returns a list of validation violation errors.
+func (m GetMOTDRequestMultiError) AllErrors() []error { return m }
+
+// GetMOTDRequestValidationError is the validation error returned by
+// GetMOTDRequest.Validate if the designated constraints aren't met.
+type GetMOTDRequestValidationError struct {
+	field  string
+	reason string
+	cause  error
+	key    bool
+}
+
+// Field function returns field value.
+func (e GetMOTDRequestValidationError) Field() string { return e.field }
+
+// Reason function returns reason value.
+func (e GetMOTDRequestValidationError) Reason() string { return e.reason }
+
+// Cause function returns cause value.
+func (e GetMOTDRequestValidationError) Cause() error { return e.cause }
+
+// Key function returns key value.
+func (e GetMOTDRequestValidationError) Key() bool { return e.key }
+
+// ErrorName returns error name.
+func (e GetMOTDRequestValidationError) ErrorName() string { return "GetMOTDRequestValidationError" }
+
+// Error satisfies the builtin error interface
+func (e GetMOTDRequestValidationError) Error() string {
+	cause := ""
+	if e.cause != nil {
+		cause = fmt.Sprintf(" | caused by: %v", e.cause)
+	}
+
+	key := ""
+	if e.key {
+		key = "key for "
+	}
+
+	return fmt.Sprintf(
+		"invalid %sGetMOTDRequest.%s: %s%s",
+		key,
+		e.field,
+		e.reason,
+		cause)
+}
+
+var _ error = GetMOTDRequestValidationError{}
+
+var _ interface {
+	Field() string
+	Reason() string
+	Key() bool
+	Cause() error
+	ErrorName() string
+} = GetMOTDRequestValidationError{}
+
+// Validate checks the field values on GetMOTDResponse with the rules defined
+// in the proto definition for this message. If any rules are violated, the
+// first error encountered is returned, or nil if there are no violations.
+func (m *GetMOTDResponse) Validate() error {
+	return m.validate(false)
+}
+
+// ValidateAll checks the field values on GetMOTDResponse with the rules
+// defined in the proto definition for this message. If any rules are
+// violated, the result is a list of violation errors wrapped in
+// GetMOTDResponseMultiError, or nil if none found.
+func (m *GetMOTDResponse) ValidateAll() error {
+	return m.validate(true)
+}
+
+func (m *GetMOTDResponse) validate(all bool) error {
+	if m == nil {
+		return nil
+	}
+
+	var errors []error
+
+	// no validation rules for Motd
+
+	if len(errors) > 0 {
+		return GetMOTDResponseMultiError(errors)
+	}
+
+	return nil
+}
+
+// GetMOTDResponseMultiError is an error wrapping multiple validation errors
+// returned by GetMOTDResponse.ValidateAll() if the designated constraints
+// aren't met.
+type GetMOTDResponseMultiError []error
+
+// Error returns a concatenation of all the error messages it wraps.
+func (m GetMOTDResponseMultiError) Error() string {
+	var msgs []string
+	for _, err := range m {
+		msgs = append(msgs, err.Error())
+	}
+	return strings.Join(msgs, "; ")
+}
+
+// AllErrors returns a list of validation violation errors.
+func (m GetMOTDResponseMultiError) AllErrors() []error { return m }
+
+// GetMOTDResponseValidationError is the validation error returned by
+// GetMOTDResponse.Validate if the designated constraints aren't met.
+type GetMOTDResponseValidationError struct {
+	field  string
+	reason string
+	cause  error
+	key    bool
+}
+
+// Field function returns field value.
+func (e GetMOTDResponseValidationError) Field() string { return e.field }
+
+// Reason function returns reason value.
+func (e GetMOTDResponseValidationError) Reason() string { return e.reason }
+
+// Cause function returns cause value.
+func (e GetMOTDResponseValidationError) Cause() error { return e.cause }
+
+// Key function returns key value.
+func (e GetMOTDResponseValidationError) Key() bool { return e.key }
+
+// ErrorName returns error name.
+func (e GetMOTDResponseValidationError) ErrorName() string { return "GetMOTDResponseValidationError" }
+
+// Error satisfies the builtin error interface
+func (e GetMOTDResponseValidationError) Error() string {
+	cause := ""
+	if e.cause != nil {
+		cause = fmt.Sprintf(" | caused by: %v", e.cause)
+	}
+
+	key := ""
+	if e.key {
+		key = "key for "
+	}
+
+	return fmt.Sprintf(
+		"invalid %sGetMOTDResponse.%s: %s%s",
+		key,
+		e.field,
+		e.reason,
+		cause)
+}
+
+var _ error = GetMOTDResponseValidationError{}
+
+var _ interface {
+	Field() string
+	Reason() string
+	Key() bool
+	Cause() error
+	ErrorName() string
+} = GetMOTDResponseValidationError{}
+
+// Validate checks the field values on SetMOTDRequest with the rules defined in
+// the proto definition for this message. If any rules are violated, the first
+// error encountered is returned, or nil if there are no violations.
+func (m *SetMOTDRequest) Validate() error {
+	return m.validate(false)
+}
+
+// ValidateAll checks the field values on SetMOTDRequest with the rules defined
+// in the proto definition for this message. If any rules are violated, the
+// result is a list of violation errors wrapped in SetMOTDRequestMultiError,
+// or nil if none found.
+func (m *SetMOTDRequest) ValidateAll() error {
+	return m.validate(true)
+}
+
+func (m *SetMOTDRequest) validate(all bool) error {
+	if m == nil {
+		return nil
+	}
+
+	var errors []error
+
+	if utf8.RuneCountInString(m.GetMotd()) > 1024 {
+		err := SetMOTDRequestValidationError{
+			field:  "Motd",
+			reason: "value length must be at most 1024 runes",
+		}
+		if !all {
+			return err
+		}
+		errors = append(errors, err)
+	}
+
+	if len(errors) > 0 {
+		return SetMOTDRequestMultiError(errors)
+	}
+
+	return nil
+}
+
+// SetMOTDRequestMultiError is an error wrapping multiple validation errors
+// returned by SetMOTDRequest.ValidateAll() if the designated constraints
+// aren't met.
+type SetMOTDRequestMultiError []error
+
+// Error returns a concatenation of all the error messages it wraps.
+func (m SetMOTDRequestMultiError) Error() string {
+	var msgs []string
+	for _, err := range m {
+		msgs = append(msgs, err.Error())
+	}
+	return strings.Join(msgs, "; ")
+}
+
+// AllErrors returns a list of validation violation errors.
+func (m SetMOTDRequestMultiError) AllErrors() []error { return m }
+
+// SetMOTDRequestValidationError is the validation error returned by
+// SetMOTDRequest.Validate if the designated constraints aren't met.
+type SetMOTDRequestValidationError struct {
+	field  string
+	reason string
+	cause  error
+	key    bool
+}
+
+// Field function returns field value.
+func (e SetMOTDRequestValidationError) Field() string { return e.field }
+
+// Reason function returns reason value.
+func (e SetMOTDRequestValidationError) Reason() string { return e.reason }
+
+// Cause function returns cause value.
+func (e SetMOTDRequestValidationError) Cause() error { return e.cause }
+
+// Key function returns key value.
+func (e SetMOTDRequestValidationError) Key() bool { return e.key }
+
+// ErrorName returns error name.
+func (e SetMOTDRequestValidationError) ErrorName() string { return "SetMOTDRequestValidationError" }
+
+// Error satisfies the builtin error interface
+func (e SetMOTDRequestValidationError) Error() string {
+	cause := ""
+	if e.cause != nil {
+		cause = fmt.Sprintf(" | caused by: %v", e.cause)
+	}
+
+	key := ""
+	if e.key {
+		key = "key for "
+	}
+
+	return fmt.Sprintf(
+		"invalid %sSetMOTDRequest.%s: %s%s",
+		key,
+		e.field,
+		e.reason,
+		cause)
+}
+
+var _ error = SetMOTDRequestValidationError{}
+
+var _ interface {
+	Field() string
+	Reason() string
+	Key() bool
+	Cause() error
+	ErrorName() string
+} = SetMOTDRequestValidationError{}
+
+// Validate checks the field values on SetMOTDResponse with the rules defined
+// in the proto definition for this message. If any rules are violated, the
+// first error encountered is returned, or nil if there are no violations.
+func (m *SetMOTDResponse) Validate() error {
+	return m.validate(false)
+}
+
+// ValidateAll checks the field values on SetMOTDResponse with the rules
+// defined in the proto definition for this message. If any rules are
+// violated, the result is a list of violation errors wrapped in
+// SetMOTDResponseMultiError, or nil if none found.
+func (m *SetMOTDResponse) ValidateAll() error {
+	return m.validate(true)
+}
+
+func (m *SetMOTDResponse) validate(all bool) error {
+	if m == nil {
+		return nil
+	}
+
+	var errors []error
+
+	// no validation rules for Motd
+
+	if len(errors) > 0 {
+		return SetMOTDResponseMultiError(errors)
+	}
+
+	return nil
+}
+
+// SetMOTDResponseMultiError is an error wrapping multiple validation errors
+// returned by SetMOTDResponse.ValidateAll() if the designated constraints
+// aren't met.
+type SetMOTDResponseMultiError []error
+
+// Error returns a concatenation of all the error messages it wraps.
+func (m SetMOTDResponseMultiError) Error() string {
+	var msgs []string
+	for _, err := range m {
+		msgs = append(msgs, err.Error())
+	}
+	return strings.Join(msgs, "; ")
+}
+
+// AllErrors returns a list of validation violation errors.
+func (m SetMOTDResponseMultiError) AllErrors() []error { return m }
+
+// SetMOTDResponseValidationError is the validation error returned by
+// SetMOTDResponse.Validate if the designated constraints aren't met.
+type SetMOTDResponseValidationError struct {
+	field  string
+	reason string
+	cause  error
+	key    bool
+}
+
+// Field function returns field value.
+func (e SetMOTDResponseValidationError) Field() string { return e.field }
+
+// Reason function returns reason value.
+func (e SetMOTDResponseValidationError) Reason() string { return e.reason }
+
+// Cause function returns cause value.
+func (e SetMOTDResponseValidationError) Cause() error { return e.cause }
+
+// Key function returns key value.
+func (e SetMOTDResponseValidationError) Key() bool { return e.key }
+
+// ErrorName returns error name.
+func (e SetMOTDResponseValidationError) ErrorName() string { return "SetMOTDResponseValidationError" }
+
+// Error satisfies the builtin error interface
+func (e SetMOTDResponseValidationError) Error() string {
+	cause := ""
+	if e.cause != nil {
+		cause = fmt.Sprintf(" | caused by: %v", e.cause)
+	}
+
+	key := ""
+	if e.key {
+		key = "key for "
+	}
+
+	return fmt.Sprintf(
+		"invalid %sSetMOTDResponse.%s: %s%s",
+		key,
+		e.field,
+		e.reason,
+		cause)
+}
+
+var _ error = SetMOTDResponseValidationError{}
+
+var _ interface {
+	Field() string
+	Reason() string
+	Key() bool
+	Cause() error
+	ErrorName() string
+} = SetMOTDResponseValidationError{}

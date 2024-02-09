@@ -20,6 +20,9 @@ var PermsRemap = map[string]string{
 	"JobsRequestsService/ListRequestTypes":    "JobsRequestsService/ListRequests",
 	"JobsRequestsService/PostRequestComment":  "JobsRequestsService/CreateRequest",
 
+	// Service: JobsService
+	"JobsService/GetMOTD": "Any",
+
 	// Service: JobsTimeclockService
 	"JobsTimeclockService/GetTimeclockStats": "JobsTimeclockService/ListTimeclock",
 }
@@ -106,6 +109,11 @@ func init() {
 		{
 			Category: permkeys.JobsServicePerm,
 			Name:     permkeys.JobsServiceListColleaguesPerm,
+			Attrs:    []perms.Attr{},
+		},
+		{
+			Category: permkeys.JobsServicePerm,
+			Name:     permkeys.JobsServiceSetMOTDPerm,
 			Attrs:    []perms.Attr{},
 		},
 
