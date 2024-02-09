@@ -1,3 +1,4 @@
+<!-- eslint-disable vue/multi-word-component-names -->
 <script setup lang="ts">
 import ContentCenterWrapper from '~/components/partials/ContentCenterWrapper.vue';
 import ContentHeroFull from '~/components/partials/ContentHeroFull.vue';
