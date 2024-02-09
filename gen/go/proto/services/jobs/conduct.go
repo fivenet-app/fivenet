@@ -16,6 +16,7 @@ import (
 	"github.com/galexrt/fivenet/query/fivenet/table"
 	jet "github.com/go-jet/jet/v2/mysql"
 	"github.com/go-jet/jet/v2/qrm"
+	"github.com/golang/protobuf/proto"
 )
 
 var (
@@ -159,7 +160,7 @@ func (s *Server) CreateConductEntry(ctx context.Context, req *CreateConductEntry
 	userInfo := auth.MustGetUserInfoFromContext(ctx)
 
 	auditEntry := &model.FivenetAuditLog{
-		Service: JobsService_ServiceDesc.ServiceName,
+		Service: JobsConductService_ServiceDesc.ServiceName,
 		Method:  "CreateConductEntry",
 		UserID:  userInfo.UserId,
 		UserJob: userInfo.Job,
@@ -217,13 +218,20 @@ func (s *Server) UpdateConductEntry(ctx context.Context, req *UpdateConductEntry
 	userInfo := auth.MustGetUserInfoFromContext(ctx)
 
 	auditEntry := &model.FivenetAuditLog{
-		Service: JobsService_ServiceDesc.ServiceName,
+		Service: JobsConductService_ServiceDesc.ServiceName,
 		Method:  "UpdateConductEntry",
 		UserID:  userInfo.UserId,
 		UserJob: userInfo.Job,
 		State:   int16(rector.EventType_EVENT_TYPE_ERRORED),
 	}
 	defer s.auditer.Log(auditEntry, req)
+
+	entry, err := s.getConductEntry(ctx, req.Entry.Id)
+	if err != nil {
+		return nil, errswrap.NewError(errorsjobs.ErrFailedQuery, err)
+	}
+
+	proto.Merge(entry, req.Entry)
 
 	tConduct := table.FivenetJobsConduct
 	stmt := tConduct.
@@ -235,27 +243,21 @@ func (s *Server) UpdateConductEntry(ctx context.Context, req *UpdateConductEntry
 			tConduct.TargetUserID,
 		).
 		SET(
-			tConduct.Type.SET(jet.Int16(int16(req.Entry.Type))),
-			tConduct.Message.SET(jet.String(req.Entry.Message)),
-			tConduct.ExpiresAt.SET(jet.TimestampT(req.Entry.ExpiresAt.AsTime())),
-			tConduct.TargetUserID.SET(jet.Int32(req.Entry.TargetUserId)),
+			tConduct.Type.SET(jet.Int16(int16(entry.Type))),
+			tConduct.Message.SET(jet.String(entry.Message)),
+			tConduct.ExpiresAt.SET(jet.TimestampT(entry.ExpiresAt.AsTime())),
+			tConduct.TargetUserID.SET(jet.Int32(entry.TargetUserId)),
 		).
 		WHERE(jet.AND(
 			tConduct.Job.EQ(jet.String(userInfo.Job)),
-			tConduct.ID.EQ(jet.Uint64(req.Entry.Id)),
+			tConduct.ID.EQ(jet.Uint64(entry.Id)),
 		))
 
-	res, err := stmt.ExecContext(ctx, s.db)
-	if err != nil {
+	if _, err := stmt.ExecContext(ctx, s.db); err != nil {
 		return nil, errswrap.NewError(errorsjobs.ErrFailedQuery, err)
 	}
 
-	lastId, err := res.LastInsertId()
-	if err != nil {
-		return nil, errswrap.NewError(errorsjobs.ErrFailedQuery, err)
-	}
-
-	entry, err := s.getConductEntry(ctx, uint64(lastId))
+	entry, err = s.getConductEntry(ctx, entry.Id)
 	if err != nil {
 		return nil, errswrap.NewError(errorsjobs.ErrFailedQuery, err)
 	}
@@ -271,7 +273,7 @@ func (s *Server) DeleteConductEntry(ctx context.Context, req *DeleteConductEntry
 	userInfo := auth.MustGetUserInfoFromContext(ctx)
 
 	auditEntry := &model.FivenetAuditLog{
-		Service: JobsService_ServiceDesc.ServiceName,
+		Service: JobsConductService_ServiceDesc.ServiceName,
 		Method:  "DeleteConductEntry",
 		UserID:  userInfo.UserId,
 		UserJob: userInfo.Job,

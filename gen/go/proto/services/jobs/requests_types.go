@@ -53,7 +53,7 @@ func (s *Server) CreateOrUpdateRequestType(ctx context.Context, req *CreateOrUpd
 	userInfo := auth.MustGetUserInfoFromContext(ctx)
 
 	auditEntry := &model.FivenetAuditLog{
-		Service: JobsService_ServiceDesc.ServiceName,
+		Service: JobsRequestsService_ServiceDesc.ServiceName,
 		Method:  "CreateOrUpdateRequestType",
 		UserID:  userInfo.UserId,
 		UserJob: userInfo.Job,
@@ -143,7 +143,7 @@ func (s *Server) DeleteRequestType(ctx context.Context, req *DeleteRequestTypeRe
 	userInfo := auth.MustGetUserInfoFromContext(ctx)
 
 	auditEntry := &model.FivenetAuditLog{
-		Service: JobsService_ServiceDesc.ServiceName,
+		Service: JobsRequestsService_ServiceDesc.ServiceName,
 		Method:  "DeleteRequestType",
 		UserID:  userInfo.UserId,
 		UserJob: userInfo.Job,

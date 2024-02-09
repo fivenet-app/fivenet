@@ -157,7 +157,7 @@ func (s *Server) CreateRequest(ctx context.Context, req *CreateRequestRequest) (
 	userInfo := auth.MustGetUserInfoFromContext(ctx)
 
 	auditEntry := &model.FivenetAuditLog{
-		Service: JobsService_ServiceDesc.ServiceName,
+		Service: JobsRequestsService_ServiceDesc.ServiceName,
 		Method:  "CreateRequest",
 		UserID:  userInfo.UserId,
 		UserJob: userInfo.Job,
@@ -208,7 +208,7 @@ func (s *Server) UpdateRequest(ctx context.Context, req *UpdateRequestRequest) (
 	userInfo := auth.MustGetUserInfoFromContext(ctx)
 
 	auditEntry := &model.FivenetAuditLog{
-		Service: JobsService_ServiceDesc.ServiceName,
+		Service: JobsRequestsService_ServiceDesc.ServiceName,
 		Method:  "UpdateRequest",
 		UserID:  userInfo.UserId,
 		UserJob: userInfo.Job,
@@ -236,7 +236,7 @@ func (s *Server) DeleteRequest(ctx context.Context, req *DeleteRequestRequest) (
 	userInfo := auth.MustGetUserInfoFromContext(ctx)
 
 	auditEntry := &model.FivenetAuditLog{
-		Service: JobsService_ServiceDesc.ServiceName,
+		Service: JobsRequestsService_ServiceDesc.ServiceName,
 		Method:  "DeleteRequest",
 		UserID:  userInfo.UserId,
 		UserJob: userInfo.Job,
@@ -337,7 +337,7 @@ func (s *Server) PostRequestComment(ctx context.Context, req *PostRequestComment
 	userInfo := auth.MustGetUserInfoFromContext(ctx)
 
 	auditEntry := &model.FivenetAuditLog{
-		Service: JobsService_ServiceDesc.ServiceName,
+		Service: JobsRequestsService_ServiceDesc.ServiceName,
 		Method:  "PostRequestComment",
 		UserID:  userInfo.UserId,
 		UserJob: userInfo.Job,
@@ -357,7 +357,7 @@ func (s *Server) DeleteRequestComment(ctx context.Context, req *DeleteRequestCom
 	userInfo := auth.MustGetUserInfoFromContext(ctx)
 
 	auditEntry := &model.FivenetAuditLog{
-		Service: JobsService_ServiceDesc.ServiceName,
+		Service: JobsRequestsService_ServiceDesc.ServiceName,
 		Method:  "DeleteRequestComment",
 		UserID:  userInfo.UserId,
 		UserJob: userInfo.Job,
