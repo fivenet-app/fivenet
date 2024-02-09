@@ -563,6 +563,11 @@ func (s *Server) SetUserProps(ctx context.Context, req *SetUserPropsRequest) (*S
 			return nil, ErrPropsJobPublic
 		}
 
+		if req.Props.JobGradeNumber == nil {
+			grade := int32(1)
+			req.Props.JobGradeNumber = &grade
+		}
+
 		req.Props.Job, req.Props.JobGrade = s.enricher.GetJobGrade(*req.Props.JobName, *req.Props.JobGradeNumber)
 		if req.Props.Job == nil || req.Props.JobGrade == nil {
 			return nil, ErrPropsJobInvalid

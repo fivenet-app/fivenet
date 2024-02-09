@@ -17,10 +17,11 @@ type fivenetCentrumSettingsTable struct {
 	mysql.Table
 
 	// Columns
-	Job          mysql.ColumnString
-	Enabled      mysql.ColumnBool
-	Mode         mysql.ColumnInteger
-	FallbackMode mysql.ColumnInteger
+	Job              mysql.ColumnString
+	Enabled          mysql.ColumnBool
+	Mode             mysql.ColumnInteger
+	FallbackMode     mysql.ColumnInteger
+	PredefinedStatus mysql.ColumnString
 
 	AllColumns     mysql.ColumnList
 	MutableColumns mysql.ColumnList
@@ -61,22 +62,24 @@ func newFivenetCentrumSettingsTable(schemaName, tableName, alias string) *Fivene
 
 func newFivenetCentrumSettingsTableImpl(schemaName, tableName, alias string) fivenetCentrumSettingsTable {
 	var (
-		JobColumn          = mysql.StringColumn("job")
-		EnabledColumn      = mysql.BoolColumn("enabled")
-		ModeColumn         = mysql.IntegerColumn("mode")
-		FallbackModeColumn = mysql.IntegerColumn("fallback_mode")
-		allColumns         = mysql.ColumnList{JobColumn, EnabledColumn, ModeColumn, FallbackModeColumn}
-		mutableColumns     = mysql.ColumnList{EnabledColumn, ModeColumn, FallbackModeColumn}
+		JobColumn              = mysql.StringColumn("job")
+		EnabledColumn          = mysql.BoolColumn("enabled")
+		ModeColumn             = mysql.IntegerColumn("mode")
+		FallbackModeColumn     = mysql.IntegerColumn("fallback_mode")
+		PredefinedStatusColumn = mysql.StringColumn("predefined_status")
+		allColumns             = mysql.ColumnList{JobColumn, EnabledColumn, ModeColumn, FallbackModeColumn, PredefinedStatusColumn}
+		mutableColumns         = mysql.ColumnList{EnabledColumn, ModeColumn, FallbackModeColumn, PredefinedStatusColumn}
 	)
 
 	return fivenetCentrumSettingsTable{
 		Table: mysql.NewTable(schemaName, tableName, alias, allColumns...),
 
 		//Columns
-		Job:          JobColumn,
-		Enabled:      EnabledColumn,
-		Mode:         ModeColumn,
-		FallbackMode: FallbackModeColumn,
+		Job:              JobColumn,
+		Enabled:          EnabledColumn,
+		Mode:             ModeColumn,
+		FallbackMode:     FallbackModeColumn,
+		PredefinedStatus: PredefinedStatusColumn,
 
 		AllColumns:     allColumns,
 		MutableColumns: mutableColumns,

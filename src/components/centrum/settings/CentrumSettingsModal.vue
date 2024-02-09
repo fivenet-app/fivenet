@@ -217,7 +217,7 @@ const onSubmitThrottle = useThrottleFn(async (e) => {
                                                         for="fallbackMode"
                                                         class="block text-sm font-medium leading-6 text-neutral"
                                                     >
-                                                        Fallback {{ $t('common.mode') }}
+                                                        {{ $t('common.fallback_mode') }}
                                                     </label>
                                                     <VeeField
                                                         v-slot="{ field }"

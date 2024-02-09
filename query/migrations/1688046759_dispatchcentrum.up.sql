@@ -8,6 +8,7 @@ CREATE TABLE
         `enabled` tinyint(1) DEFAULT 0 NOT NULL,
         `mode` mediumint(2) DEFAULT 0 NULL,
         `fallback_mode` mediumint(2) DEFAULT 0 NULL,
+        `predefined_status` text DEFAULT NULL,
         PRIMARY KEY (`job`)
     ) ENGINE = InnoDB DEFAULT CHARSET = utf8mb4 COLLATE = utf8mb4_unicode_ci;
 

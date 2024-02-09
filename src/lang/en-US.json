@@ -807,7 +807,8 @@
         "none": "No {0}",
         "department_postal": "Department Postal",
         "blood_type": "Blood type",
-        "motd": "MOTD"
+        "motd": "MOTD",
+        "fallback_mode": "Fallback Mode"
     },
     "notifications": {
         "clipboard": {

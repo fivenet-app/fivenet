@@ -18,18 +18,21 @@ func (s *Manager) UpdateSettingsInDB(ctx context.Context, job string, settings *
 			tCentrumSettings.Enabled,
 			tCentrumSettings.Mode,
 			tCentrumSettings.FallbackMode,
+			tCentrumSettings.PredefinedStatus,
 		).
 		VALUES(
 			job,
 			settings.Enabled,
 			settings.Mode,
 			settings.FallbackMode,
+			settings.PredefinedStatus,
 		).
 		ON_DUPLICATE_KEY_UPDATE(
 			tCentrumSettings.Job.SET(jet.String(job)),
 			tCentrumSettings.Enabled.SET(jet.Bool(settings.Enabled)),
 			tCentrumSettings.Mode.SET(jet.Int32(int32(settings.Mode))),
 			tCentrumSettings.FallbackMode.SET(jet.Int32(int32(settings.FallbackMode))),
+			tCentrumSettings.PredefinedStatus.SET(jet.StringExp(jet.Raw("VALUES(`predefined_status`)"))),
 		)
 
 	if _, err := stmt.ExecContext(ctx, s.db); err != nil {
