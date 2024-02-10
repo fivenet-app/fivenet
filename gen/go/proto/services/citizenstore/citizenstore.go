@@ -334,7 +334,8 @@ func (s *Server) GetUser(ctx context.Context, req *GetUserRequest) (*GetUserResp
 		}
 	}
 
-	if resp.User.Props != nil && resp.User.Props.JobName != nil {
+	// Only let user props override the job if the person isn't in a public job
+	if resp.User.Props != nil && resp.User.Props.JobName != nil && !slices.Contains(s.publicJobs, resp.User.Job) {
 		resp.User.Job = *resp.User.Props.JobName
 		if resp.User.Props.JobGradeNumber != nil {
 			resp.User.JobGrade = *resp.User.Props.JobGradeNumber
