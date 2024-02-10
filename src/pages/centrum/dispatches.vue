@@ -121,7 +121,7 @@ onBeforeUnmount(() => {
                                                 <div class="relative mt-2 flex items-center">
                                                     <input
                                                         v-model="query.id"
-                                                        type="number"
+                                                        type="text"
                                                         name="model"
                                                         min="1"
                                                         max="99999999999"

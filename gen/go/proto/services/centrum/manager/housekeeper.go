@@ -417,7 +417,8 @@ func (s *Housekeeper) deduplicateDispatches(ctx context.Context) error {
 					continue
 				}
 
-				closestsDsp := s.State.GetDispatchLocations(dsp.Job).KNearest(dsp.Point(), 8, func(p orb.Pointer) bool {
+				locs := s.State.GetDispatchLocations(dsp.Job)
+				closestsDsp := locs.KNearest(dsp.Point(), 8, func(p orb.Pointer) bool {
 					return p.(*centrum.Dispatch).Id != dsp.Id
 				}, 45.0)
 				s.logger.Debug("deduplicating dispatches", zap.String("job", dsp.Job), zap.Uint64("dispatch_id", dsp.Id), zap.Int("closeby_dsps", len(closestsDsp)))
@@ -441,6 +442,15 @@ func (s *Housekeeper) deduplicateDispatches(ctx context.Context) error {
 					}
 
 					closeByDsp := dest.(*centrum.Dispatch)
+
+					if (closeByDsp.Status != nil && centrumutils.IsStatusDispatchComplete(closeByDsp.Status.Status)) ||
+						closeByDsp.CreatedAt != nil && time.Since(closeByDsp.CreatedAt.AsTime()) >= 3*time.Minute {
+						locs.Remove(closeByDsp, func(p orb.Pointer) bool {
+							return p.(*centrum.Dispatch).Id == dsp.Id
+						})
+						continue
+					}
+
 					if closeByDsp.Creator == nil || closeByDsp.Anon {
 						description += fmt.Sprintf("DSP-%d\n", closeByDsp.Id)
 					} else {

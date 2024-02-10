@@ -575,7 +575,7 @@ func (s *Manager) UpdateDispatch(ctx context.Context, userJob string, userId *in
 	}
 
 	// Make sure the dispatch location is correct by removing and adding the dispatch
-	if locs := s.GetDispatchLocations(userJob); locs != nil {
+	if locs := s.State.GetDispatchLocations(userJob); locs != nil {
 		if locs.Has(dsp, func(p orb.Pointer) bool {
 			return p.(*centrum.Dispatch).Id == dsp.Id
 		}) {
