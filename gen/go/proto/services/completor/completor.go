@@ -39,7 +39,7 @@ type Server struct {
 	p        perms.Permissions
 	data     *mstlystcdata.Cache
 	tracker  tracker.ITracker
-	enricher *mstlystcdata.Enricher
+	enricher *mstlystcdata.UserAwareEnricher
 }
 
 type Params struct {
@@ -49,7 +49,7 @@ type Params struct {
 	Perms    perms.Permissions
 	Data     *mstlystcdata.Cache
 	Tracker  tracker.ITracker
-	Enricher *mstlystcdata.Enricher
+	Enricher *mstlystcdata.UserAwareEnricher
 }
 
 func NewServer(p Params) *Server {

@@ -52,7 +52,7 @@ type Server struct {
 	db       *sql.DB
 	ps       perms.Permissions
 	cache    *mstlystcdata.Cache
-	enricher *mstlystcdata.Enricher
+	enricher *mstlystcdata.UserAwareEnricher
 	auditer  audit.IAuditer
 	ui       userinfo.UserInfoRetriever
 	notif    notifi.INotifi
@@ -60,7 +60,7 @@ type Server struct {
 	htmlDiff *htmldiff.Config
 }
 
-func NewServer(db *sql.DB, ps perms.Permissions, cache *mstlystcdata.Cache, enricher *mstlystcdata.Enricher, auditer audit.IAuditer, ui userinfo.UserInfoRetriever, notif notifi.INotifi) *Server {
+func NewServer(db *sql.DB, ps perms.Permissions, cache *mstlystcdata.Cache, enricher *mstlystcdata.UserAwareEnricher, auditer audit.IAuditer, ui userinfo.UserInfoRetriever, notif notifi.INotifi) *Server {
 	return &Server{
 		db:       db,
 		ps:       ps,

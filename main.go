@@ -32,9 +32,6 @@ import (
 	// GRPC Services
 	pbauth "github.com/galexrt/fivenet/gen/go/proto/services/auth"
 	pbcentrum "github.com/galexrt/fivenet/gen/go/proto/services/centrum"
-	"github.com/galexrt/fivenet/gen/go/proto/services/centrum/bot"
-	"github.com/galexrt/fivenet/gen/go/proto/services/centrum/manager"
-	"github.com/galexrt/fivenet/gen/go/proto/services/centrum/state"
 	pbcitizenstore "github.com/galexrt/fivenet/gen/go/proto/services/citizenstore"
 	pbcompletor "github.com/galexrt/fivenet/gen/go/proto/services/completor"
 	pbdmv "github.com/galexrt/fivenet/gen/go/proto/services/dmv"
@@ -44,6 +41,11 @@ import (
 	pblivemapper "github.com/galexrt/fivenet/gen/go/proto/services/livemapper"
 	pbnotificator "github.com/galexrt/fivenet/gen/go/proto/services/notificator"
 	pbrector "github.com/galexrt/fivenet/gen/go/proto/services/rector"
+
+	// Modules
+	"github.com/galexrt/fivenet/gen/go/proto/services/centrum/bot"
+	"github.com/galexrt/fivenet/gen/go/proto/services/centrum/manager"
+	"github.com/galexrt/fivenet/gen/go/proto/services/centrum/state"
 )
 
 type Context struct{}
@@ -128,6 +130,7 @@ func getFxBaseOpts() []fx.Option {
 		fx.Provide(
 			mstlystcdata.NewCache,
 			mstlystcdata.NewEnricher,
+			mstlystcdata.NewUserAwareEnricher,
 			mstlystcdata.NewSearcher,
 			notifi.New,
 			tracker.New,

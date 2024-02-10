@@ -12,7 +12,7 @@ import (
 
 var json = jsoniter.ConfigCompatibleWithStandardLibrary
 
-type Postals = *coords.Coords[*Postal]
+type Postals = *coords.CoordsRO[*Postal]
 
 var postalCodesMap = map[string]*Postal{}
 
@@ -23,19 +23,22 @@ func New(cfg *config.Config) (Postals, error) {
 	}
 	defer file.Close()
 
-	buf, _ := io.ReadAll(file)
+	buf, err := io.ReadAll(file)
+	if err != nil {
+		return nil, err
+	}
 
 	var codes []*Postal
 	if err := json.Unmarshal(buf, &codes); err != nil {
 		return nil, err
 	}
 
-	cs := coords.New[*Postal]()
-	for k := range codes {
-		if err := cs.Add(codes[k]); err != nil {
-			return nil, fmt.Errorf("failed to add postal to postals map: %w", err)
-		}
+	cs, err := coords.NewReadOnly[*Postal](codes)
+	if err != nil {
+		return nil, fmt.Errorf("failed to add postals to postals coords map: %w", err)
+	}
 
+	for k := range codes {
 		if codes[k].Code != nil {
 			postalCodesMap[*codes[k].Code] = codes[k]
 		}

@@ -105,6 +105,9 @@ func TestBasicCentrumFlow(t *testing.T) {
 
 	tracker := tracker.NewForTests(ctx)
 
+	postals, err := postals.NewForTests()
+	require.NoError(t, err)
+
 	srv, err := NewServer(Params{
 		LC:      fxLC,
 		Logger:  logger,
@@ -116,7 +119,7 @@ func TestBasicCentrumFlow(t *testing.T) {
 		Config:  cfg,
 		Manager: mgr,
 		Tracker: tracker,
-		Postals: postals.NewForTests(),
+		Postals: postals,
 	})
 	require.NoError(t, err)
 

@@ -4,6 +4,6 @@ import (
 	"github.com/galexrt/fivenet/pkg/coords"
 )
 
-func NewForTests() Postals {
-	return coords.New[*Postal]()
+func NewForTests() (Postals, error) {
+	return coords.NewReadOnly[*Postal]([]*Postal{})
 }

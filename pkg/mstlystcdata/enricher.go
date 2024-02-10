@@ -19,7 +19,6 @@ const (
 
 type Enricher struct {
 	cache *Cache
-	ps    perms.Permissions
 
 	publicJobs         []string
 	unemployedJob      string
@@ -29,7 +28,6 @@ type Enricher struct {
 func NewEnricher(cache *Cache, ps perms.Permissions, cfg *config.Config) *Enricher {
 	return &Enricher{
 		cache: cache,
-		ps:    ps,
 
 		publicJobs:         cfg.Game.PublicJobs,
 		unemployedJob:      cfg.Game.UnemployedJob.Name,
@@ -113,7 +111,20 @@ func (e *Enricher) GetJobGrade(job string, grade int32) (*users.Job, *users.JobG
 	return nil, nil
 }
 
-func (e *Enricher) EnrichJobInfoSafe(userInfo *userinfo.UserInfo, usrs ...common.IJobInfo) {
+type UserAwareEnricher struct {
+	*Enricher
+
+	ps perms.Permissions
+}
+
+func NewUserAwareEnricher(enricher *Enricher, ps perms.Permissions) *UserAwareEnricher {
+	return &UserAwareEnricher{
+		Enricher: enricher,
+		ps:       ps,
+	}
+}
+
+func (e *UserAwareEnricher) EnrichJobInfoSafe(userInfo *userinfo.UserInfo, usrs ...common.IJobInfo) {
 	enrichFn := e.EnrichJobInfoSafeFunc(userInfo)
 
 	for _, usr := range usrs {
@@ -121,7 +132,7 @@ func (e *Enricher) EnrichJobInfoSafe(userInfo *userinfo.UserInfo, usrs ...common
 	}
 }
 
-func (e *Enricher) EnrichJobInfoSafeFunc(userInfo *userinfo.UserInfo) func(usr common.IJobInfo) {
+func (e *UserAwareEnricher) EnrichJobInfoSafeFunc(userInfo *userinfo.UserInfo) func(usr common.IJobInfo) {
 	jobGradesAttr, _ := e.ps.Attr(userInfo, permscitizenstore.CitizenStoreServicePerm, permscitizenstore.CitizenStoreServiceGetUserPerm, permscitizenstore.CitizenStoreServiceGetUserJobsPermField)
 	var jobGrades perms.JobGradeList
 	if jobGradesAttr != nil {

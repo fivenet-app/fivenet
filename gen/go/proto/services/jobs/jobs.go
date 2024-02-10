@@ -43,7 +43,7 @@ type Server struct {
 	tracer   trace.Tracer
 	db       *sql.DB
 	p        perms.Permissions
-	enricher *mstlystcdata.Enricher
+	enricher *mstlystcdata.UserAwareEnricher
 	auditer  audit.IAuditer
 	tracker  tracker.ITracker
 }
@@ -53,13 +53,13 @@ type Params struct {
 
 	LC fx.Lifecycle
 
-	Logger   *zap.Logger
-	TP       *tracesdk.TracerProvider
-	DB       *sql.DB
-	Perms    perms.Permissions
-	Enricher *mstlystcdata.Enricher
-	Audit    audit.IAuditer
-	Tracker  tracker.ITracker
+	Logger            *zap.Logger
+	TP                *tracesdk.TracerProvider
+	DB                *sql.DB
+	Perms             perms.Permissions
+	UserAwareEnricher *mstlystcdata.UserAwareEnricher
+	Audit             audit.IAuditer
+	Tracker           tracker.ITracker
 }
 
 func NewServer(p Params) *Server {
@@ -74,7 +74,7 @@ func NewServer(p Params) *Server {
 
 		db:       p.DB,
 		p:        p.Perms,
-		enricher: p.Enricher,
+		enricher: p.UserAwareEnricher,
 		auditer:  p.Audit,
 		tracker:  p.Tracker,
 	}

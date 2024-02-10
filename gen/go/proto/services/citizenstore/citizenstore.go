@@ -57,7 +57,7 @@ type Server struct {
 
 	db       *sql.DB
 	p        perms.Permissions
-	enricher *mstlystcdata.Enricher
+	enricher *mstlystcdata.UserAwareEnricher
 	aud      audit.IAuditer
 
 	publicJobs         []string
@@ -66,7 +66,7 @@ type Server struct {
 	unemployedJobGrade int32
 }
 
-func NewServer(db *sql.DB, p perms.Permissions, enricher *mstlystcdata.Enricher, aud audit.IAuditer, cfg *config.Config) *Server {
+func NewServer(db *sql.DB, p perms.Permissions, enricher *mstlystcdata.UserAwareEnricher, aud audit.IAuditer, cfg *config.Config) *Server {
 	return &Server{
 		db:       db,
 		p:        p,
