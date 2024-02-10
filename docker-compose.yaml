@@ -3,7 +3,7 @@ version: '3.5'
 services:
   envoy:
     container_name: envoy
-    image: docker.io/envoyproxy/envoy:v1.29.0
+    image: docker.io/envoyproxy/envoy:v1.29.1
     environment:
       - ENVOY_UID=0
     volumes:
