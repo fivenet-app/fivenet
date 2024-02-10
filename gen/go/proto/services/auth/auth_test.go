@@ -87,7 +87,7 @@ func TestFullAuthFlow(t *testing.T) {
 		Config: cfg,
 	})
 	assert.NoError(t, err)
-	enricher := mstlystcdata.NewEnricher(c, p, cfg)
+	enricher := mstlystcdata.NewEnricher(c, cfg)
 	srv := NewServer(Params{
 		Logger:   logger,
 		DB:       db,

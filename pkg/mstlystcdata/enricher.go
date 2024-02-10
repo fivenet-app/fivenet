@@ -25,7 +25,7 @@ type Enricher struct {
 	unemployedJobGrade int32
 }
 
-func NewEnricher(cache *Cache, ps perms.Permissions, cfg *config.Config) *Enricher {
+func NewEnricher(cache *Cache, cfg *config.Config) *Enricher {
 	return &Enricher{
 		cache: cache,
 

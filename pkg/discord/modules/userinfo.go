@@ -9,6 +9,7 @@ import (
 	"strings"
 
 	"github.com/bwmarrin/discordgo"
+	pbusers "github.com/galexrt/fivenet/gen/go/proto/resources/users"
 	jet "github.com/go-jet/jet/v2/mysql"
 	"github.com/go-jet/jet/v2/qrm"
 	"go.uber.org/zap"
@@ -24,9 +25,12 @@ type UserInfo struct {
 
 	employeeRoleEnabled bool
 	employeeRoleFormat  string
+	unemployedRoleName  string
+	unemployedMode      pbusers.UserInfoSyncUnemployedMode
 
-	jobRoles     map[int32]*discordgo.Role
-	employeeRole *discordgo.Role
+	jobRoles       map[int32]*discordgo.Role
+	employeeRole   *discordgo.Role
+	unemployedRole *discordgo.Role
 }
 
 type UserRoleMapping struct {
@@ -54,7 +58,9 @@ func NewUserInfo(base *BaseModule) (Module, error) {
 		employeeRoleEnabled: true,
 		employeeRoleFormat:  base.cfg.UserInfoSync.EmployeeRoleFormat,
 		gradeRoleFormat:     base.cfg.UserInfoSync.GradeRoleFormat,
-		jobRoles:            map[int32]*discordgo.Role{},
+		unemployedRoleName:  base.cfg.UserInfoSync.UnemployedRoleName,
+
+		jobRoles: map[int32]*discordgo.Role{},
 	}, nil
 }
 
@@ -68,8 +74,20 @@ func (g *UserInfo) Run() error {
 		return nil
 	}
 
+	g.employeeRoleEnabled = settings.UserInfoSyncSettings.EmployeeRoleEnabled
+	g.employeeRoleFormat = *settings.UserInfoSyncSettings.EmployeeRoleFormat
+	g.gradeRoleFormat = *settings.UserInfoSyncSettings.GradeRoleFormat
+	g.unemployedRoleName = *settings.UserInfoSyncSettings.UnemployedRoleName
+	g.unemployedMode = settings.UserInfoSyncSettings.UnemployedMode
+
 	if err := g.createJobRoles(); err != nil {
 		return err
+	}
+
+	if settings.UserInfoSyncSettings.UnemployedEnabled {
+		if err := g.createUnemployedRole(); err != nil {
+			return err
+		}
 	}
 
 	return g.syncUserInfo()
@@ -131,7 +149,7 @@ func (g *UserInfo) syncUserInfo() error {
 		}
 	}
 
-	return g.cleanupUserJobRoles(dest)
+	return g.cleanupUserJobRoles(g.guild, dest)
 }
 
 func (g *UserInfo) setUserNickname(member *discordgo.Member, firstname string, lastname string) error {
@@ -181,11 +199,6 @@ func (g *UserInfo) setUserNickname(member *discordgo.Member, firstname string, l
 }
 
 func (g *UserInfo) createJobRoles() error {
-	guild, err := g.discord.Guild(g.guild.ID)
-	if err != nil {
-		return err
-	}
-
 	job := g.enricher.GetJobByName(g.job)
 	if job == nil {
 		g.logger.Error("unknown job for discord guild, skipping")
@@ -197,7 +210,7 @@ func (g *UserInfo) createJobRoles() error {
 		name := strings.ReplaceAll(g.gradeRoleFormat, "%grade_label%", grade.Label)
 		name = strings.ReplaceAll(name, "%grade%", fmt.Sprintf("%02d", grade.Grade))
 
-		if slices.ContainsFunc(guild.Roles, func(in *discordgo.Role) bool {
+		if slices.ContainsFunc(g.guild.Roles, func(in *discordgo.Role) bool {
 			if in.Name == name {
 				g.jobRoles[grade.Grade] = in
 				return true
@@ -211,7 +224,7 @@ func (g *UserInfo) createJobRoles() error {
 			continue
 		}
 
-		role, err := g.discord.GuildRoleCreate(guild.ID, &discordgo.RoleParams{
+		role, err := g.discord.GuildRoleCreate(g.guild.ID, &discordgo.RoleParams{
 			Name: name,
 		})
 		if err != nil {
@@ -223,19 +236,20 @@ func (g *UserInfo) createJobRoles() error {
 
 	if g.employeeRoleEnabled {
 		employeeRoleName := fmt.Sprintf(g.employeeRoleFormat, job.Label)
-		if !slices.ContainsFunc(guild.Roles, func(in *discordgo.Role) bool {
+		if !slices.ContainsFunc(g.guild.Roles, func(in *discordgo.Role) bool {
 			if in.Name == employeeRoleName {
 				g.employeeRole = in
 				return true
 			}
 			return false
 		}) {
-			role, err := g.discord.GuildRoleCreate(guild.ID, &discordgo.RoleParams{
+			role, err := g.discord.GuildRoleCreate(g.guild.ID, &discordgo.RoleParams{
 				Name: employeeRoleName,
 			})
 			if err != nil {
 				return fmt.Errorf("failed to create employee role %s: %w", job.Label, err)
 			}
+
 			g.employeeRole = role
 		}
 	} else {
@@ -243,6 +257,27 @@ func (g *UserInfo) createJobRoles() error {
 	}
 
 	g.logger.Debug("created job employee and rank roles")
+
+	return nil
+}
+
+func (g *UserInfo) createUnemployedRole() error {
+	if !slices.ContainsFunc(g.guild.Roles, func(in *discordgo.Role) bool {
+		if in.Name == g.unemployedRoleName {
+			g.unemployedRole = in
+			return true
+		}
+		return false
+	}) {
+		role, err := g.discord.GuildRoleCreate(g.guild.ID, &discordgo.RoleParams{
+			Name: g.unemployedRoleName,
+		})
+		if err != nil {
+			return fmt.Errorf("failed to create employee role %s: %w", g.unemployedRoleName, err)
+		}
+
+		g.unemployedRole = role
+	}
 
 	return nil
 }
@@ -281,6 +316,11 @@ func (g *UserInfo) setUserJobRole(member *discordgo.Member, job string, grade in
 		}
 	}
 
+	// If unemployed role is enabled and user is an employee, make sure to remove the unemployed role
+	if g.unemployedRole != nil && slices.Contains(member.Roles, g.unemployedRole.ID) {
+		removeRoles = append(removeRoles, g.unemployedRole)
+	}
+
 	for _, role := range removeRoles {
 		logger.Debug("removing role from member", zap.String("discord_role_name", role.Name), zap.String("discord_role_id", role.ID))
 		if err := g.discord.GuildMemberRoleRemove(g.guild.ID, member.User.ID, role.ID); err != nil {
@@ -315,18 +355,18 @@ func (g *UserInfo) findGradeRoleByID(id string) (*discordgo.Role, bool) {
 	return nil, false
 }
 
-func (g *UserInfo) cleanupUserJobRoles(users []*UserRoleMapping) error {
-	guild, err := g.discord.State.Guild(g.guild.ID)
-	if err != nil {
-		return err
-	}
-
+func (g *UserInfo) cleanupUserJobRoles(guild *discordgo.Guild, users []*UserRoleMapping) error {
 outerLoop:
 	for i := 0; i < len(guild.Members); i++ {
 		member := guild.Members[i]
+		if member.User.Bot {
+			continue
+		}
+
+		isEmployee := false
 		for _, role := range g.jobRoles {
 			// If user isn't in one of the synced job roles, continue
-			if !slices.Contains(guild.Members[i].Roles, role.ID) {
+			if !slices.Contains(member.Roles, role.ID) {
 				continue
 			}
 
@@ -338,6 +378,7 @@ outerLoop:
 				}
 				return false
 			}) {
+				isEmployee = true
 				continue
 			}
 
@@ -363,22 +404,33 @@ outerLoop:
 			}
 		}
 
-		// If user isn't in the employee role, continue
-		if g.employeeRole == nil || !slices.Contains(guild.Members[i].Roles, g.employeeRole.ID) {
-			continue
+		// If employee role is disabled or user isn't in the employee role, continue
+		if g.employeeRole != nil && !isEmployee && slices.Contains(member.Roles, g.employeeRole.ID) {
+			g.logger.Debug("removing employee role from member", zap.String("discord_role_name", g.employeeRole.Name), zap.String("discord_role_id", g.employeeRole.ID),
+				zap.String("discord_user_id", member.User.ID), zap.String("discord_nickname", member.Nick))
+			if err := g.discord.GuildMemberRoleRemove(g.guild.ID, member.User.ID, g.employeeRole.ID); err != nil {
+				return fmt.Errorf("failed to remove member from employee job role %s (%s): %w", g.employeeRole.Name, g.employeeRole.ID, err)
+			}
 		}
 
-		// Check if member is suposed to have the employee role
-		if slices.ContainsFunc(users, func(in *UserRoleMapping) bool {
-			return in.ExternalID == member.User.ID
-		}) {
-			continue
-		}
+		// If unemployed role is enabled and user is not an employee, give them the unemployed role
+		if g.unemployedRole != nil && !isEmployee {
+			switch g.unemployedMode {
+			case pbusers.UserInfoSyncUnemployedMode_USER_INFO_SYNC_UNEMPLOYED_MODE_GIVE_ROLE:
+				if !slices.Contains(member.Roles, g.unemployedRole.ID) {
+					g.logger.Debug("adding unemployed role from member", zap.String("discord_role_name", g.unemployedRole.Name), zap.String("discord_role_id", g.employeeRole.ID),
+						zap.String("discord_user_id", member.User.ID), zap.String("discord_nickname", member.Nick))
+					if err := g.discord.GuildMemberRoleAdd(g.guild.ID, member.User.ID, g.unemployedRole.ID); err != nil {
+						return fmt.Errorf("failed to add member to unemployed role %s (%s): %w", g.unemployedRole.Name, g.employeeRole.ID, err)
+					}
+				}
 
-		g.logger.Debug("removing employee role from member", zap.String("discord_role_name", g.employeeRole.Name), zap.String("discord_role_id", g.employeeRole.ID),
-			zap.String("discord_user_id", member.User.ID), zap.String("discord_nickname", member.Nick))
-		if err := g.discord.GuildMemberRoleRemove(g.guild.ID, member.User.ID, g.employeeRole.ID); err != nil {
-			return fmt.Errorf("failed to remove member from employee job role %s (%s): %w", g.employeeRole.Name, g.employeeRole.ID, err)
+			case pbusers.UserInfoSyncUnemployedMode_USER_INFO_SYNC_UNEMPLOYED_MODE_KICK:
+				if err := g.discord.GuildMemberDeleteWithReason(g.guild.ID, member.User.ID,
+					fmt.Sprintf("no longer an employee of %s job", g.job)); err != nil {
+					return fmt.Errorf("failed to kick unemployed member %s (%s) from guild: %w", g.unemployedRole.Name, g.employeeRole.ID, err)
+				}
+			}
 		}
 	}
 

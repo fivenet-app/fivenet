@@ -860,12 +860,62 @@ func (m *UserInfoSyncSettings) validate(all bool) error {
 
 	// no validation rules for EmployeeRoleEnabled
 
+	// no validation rules for UnemployedEnabled
+
+	if _, ok := UserInfoSyncUnemployedMode_name[int32(m.GetUnemployedMode())]; !ok {
+		err := UserInfoSyncSettingsValidationError{
+			field:  "UnemployedMode",
+			reason: "value must be one of the defined enum values",
+		}
+		if !all {
+			return err
+		}
+		errors = append(errors, err)
+	}
+
 	if m.EmployeeRoleFormat != nil {
-		// no validation rules for EmployeeRoleFormat
+
+		if utf8.RuneCountInString(m.GetEmployeeRoleFormat()) > 48 {
+			err := UserInfoSyncSettingsValidationError{
+				field:  "EmployeeRoleFormat",
+				reason: "value length must be at most 48 runes",
+			}
+			if !all {
+				return err
+			}
+			errors = append(errors, err)
+		}
+
 	}
 
 	if m.GradeRoleFormat != nil {
-		// no validation rules for GradeRoleFormat
+
+		if utf8.RuneCountInString(m.GetGradeRoleFormat()) > 48 {
+			err := UserInfoSyncSettingsValidationError{
+				field:  "GradeRoleFormat",
+				reason: "value length must be at most 48 runes",
+			}
+			if !all {
+				return err
+			}
+			errors = append(errors, err)
+		}
+
+	}
+
+	if m.UnemployedRoleName != nil {
+
+		if utf8.RuneCountInString(m.GetUnemployedRoleName()) > 48 {
+			err := UserInfoSyncSettingsValidationError{
+				field:  "UnemployedRoleName",
+				reason: "value length must be at most 48 runes",
+			}
+			if !all {
+				return err
+			}
+			errors = append(errors, err)
+		}
+
 	}
 
 	if len(errors) > 0 {

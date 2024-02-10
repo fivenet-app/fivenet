@@ -23,7 +23,7 @@ import GenericTime from '~/components/partials/elements/GenericTime.vue';
 import { useAuthStore } from '~/store/auth';
 import { useNotificatorStore } from '~/store/notificator';
 import { availableThemes } from '~/store/settings';
-import { JobProps } from '~~/gen/ts/resources/users/jobs';
+import { JobProps, UserInfoSyncUnemployedMode } from '~~/gen/ts/resources/users/jobs';
 
 const { $grpc } = useNuxtApp();
 
@@ -417,7 +417,7 @@ const onSubmitThrottle = useThrottleFn(async (_) => {
                                                                 'components.rector.job_props.user_info_sync_settings.grade_role_format',
                                                             )
                                                         "
-                                                        maxlength="64"
+                                                        maxlength="48"
                                                         @focusin="focusTablet(true)"
                                                         @focusout="focusTablet(false)"
                                                     />
@@ -453,11 +453,182 @@ const onSubmitThrottle = useThrottleFn(async (_) => {
                                                                     'components.rector.job_props.user_info_sync_settings.employee_role_format',
                                                                 )
                                                             "
-                                                            maxlength="64"
+                                                            maxlength="48"
                                                             @focusin="focusTablet(true)"
                                                             @focusout="focusTablet(false)"
                                                         />
                                                     </div>
+
+                                                    <SwitchGroup
+                                                        v-if="jobProps.discordSyncSettings.userInfoSyncSettings !== undefined"
+                                                        as="div"
+                                                        class="flex items-center"
+                                                    >
+                                                        <Switch
+                                                            v-model="
+                                                                jobProps.discordSyncSettings.userInfoSyncSettings
+                                                                    .unemployedEnabled
+                                                            "
+                                                            :class="[
+                                                                jobProps.discordSyncSettings.userInfoSyncSettings
+                                                                    .unemployedEnabled
+                                                                    ? 'bg-indigo-600'
+                                                                    : 'bg-gray-200',
+                                                                'relative inline-flex h-6 w-11 flex-shrink-0 cursor-pointer rounded-full border-2 border-transparent transition-colors duration-200 ease-in-out focus:outline-none focus:ring-2 focus:ring-indigo-600 focus:ring-offset-2',
+                                                            ]"
+                                                        >
+                                                            <span
+                                                                aria-hidden="true"
+                                                                :class="[
+                                                                    jobProps.discordSyncSettings.userInfoSyncSettings
+                                                                        .unemployedEnabled
+                                                                        ? 'translate-x-5'
+                                                                        : 'translate-x-0',
+                                                                    'pointer-events-none inline-block h-5 w-5 transform rounded-full bg-white shadow ring-0 transition duration-200 ease-in-out',
+                                                                ]"
+                                                            />
+                                                        </Switch>
+                                                        <SwitchLabel as="span" class="ml-3 text-sm">
+                                                            <span class="font-medium text-gray-300">{{
+                                                                $t(
+                                                                    'components.rector.job_props.user_info_sync_settings.unemployed_enabled',
+                                                                )
+                                                            }}</span>
+                                                        </SwitchLabel>
+                                                    </SwitchGroup>
+                                                    <template
+                                                        v-if="
+                                                            jobProps.discordSyncSettings.userInfoSyncSettings.unemployedEnabled
+                                                        "
+                                                    >
+                                                        <div>
+                                                            <label for="unemployedMode">
+                                                                {{
+                                                                    $t(
+                                                                        'components.rector.job_props.user_info_sync_settings.unemployed_mode',
+                                                                    )
+                                                                }}:
+                                                            </label>
+
+                                                            <Listbox
+                                                                v-model="
+                                                                    jobProps.discordSyncSettings.userInfoSyncSettings!
+                                                                        .unemployedMode
+                                                                "
+                                                                as="div"
+                                                            >
+                                                                <div class="relative">
+                                                                    <ListboxButton
+                                                                        class="block w-full rounded-md border-0 bg-base-700 py-1.5 pl-3 text-left text-neutral placeholder:text-accent-200 focus:ring-2 focus:ring-inset focus:ring-base-300 sm:text-sm sm:leading-6"
+                                                                    >
+                                                                        <span class="block truncate">
+                                                                            {{
+                                                                                UserInfoSyncUnemployedMode[
+                                                                                    jobProps.discordSyncSettings
+                                                                                        .userInfoSyncSettings!.unemployedMode ??
+                                                                                        0
+                                                                                ]
+                                                                            }}
+                                                                        </span>
+                                                                        <span
+                                                                            class="pointer-events-none absolute inset-y-0 right-0 flex items-center pr-2"
+                                                                        >
+                                                                            <ChevronDownIcon
+                                                                                class="h-5 w-5 text-gray-400"
+                                                                                aria-hidden="true"
+                                                                            />
+                                                                        </span>
+                                                                    </ListboxButton>
+
+                                                                    <transition
+                                                                        leave-active-class="transition duration-100 ease-in"
+                                                                        leave-from-class="opacity-100"
+                                                                        leave-to-class="opacity-0"
+                                                                    >
+                                                                        <ListboxOptions
+                                                                            class="absolute z-10 mt-1 max-h-44 w-full overflow-auto rounded-md bg-base-700 py-1 text-base sm:text-sm"
+                                                                        >
+                                                                            <ListboxOption
+                                                                                v-for="mode in [
+                                                                                    UserInfoSyncUnemployedMode.GIVE_ROLE,
+                                                                                    UserInfoSyncUnemployedMode.KICK,
+                                                                                ]"
+                                                                                :key="mode"
+                                                                                v-slot="{ active, selected }"
+                                                                                as="template"
+                                                                                :value="mode"
+                                                                            >
+                                                                                <li
+                                                                                    :class="[
+                                                                                        active ? 'bg-primary-500' : '',
+                                                                                        'relative cursor-default select-none py-2 pl-8 pr-4 text-neutral',
+                                                                                    ]"
+                                                                                >
+                                                                                    <span
+                                                                                        :class="[
+                                                                                            selected
+                                                                                                ? 'font-semibold'
+                                                                                                : 'font-normal',
+                                                                                            'block truncate',
+                                                                                        ]"
+                                                                                    >
+                                                                                        {{ UserInfoSyncUnemployedMode[mode] }}
+                                                                                    </span>
+
+                                                                                    <span
+                                                                                        v-if="selected"
+                                                                                        :class="[
+                                                                                            active
+                                                                                                ? 'text-neutral'
+                                                                                                : 'text-primary-500',
+                                                                                            'absolute inset-y-0 left-0 flex items-center pl-1.5',
+                                                                                        ]"
+                                                                                    >
+                                                                                        <CheckIcon
+                                                                                            class="h-5 w-5"
+                                                                                            aria-hidden="true"
+                                                                                        />
+                                                                                    </span>
+                                                                                </li>
+                                                                            </ListboxOption>
+                                                                        </ListboxOptions>
+                                                                    </transition>
+                                                                </div>
+                                                            </Listbox>
+                                                        </div>
+
+                                                        <div>
+                                                            <label for="unemployedRoleName">
+                                                                {{
+                                                                    $t(
+                                                                        'components.rector.job_props.user_info_sync_settings.unemployed_role_name',
+                                                                    )
+                                                                }}:
+                                                            </label>
+                                                            <input
+                                                                v-model="
+                                                                    jobProps.discordSyncSettings.userInfoSyncSettings!
+                                                                        .unemployedRoleName
+                                                                "
+                                                                type="text"
+                                                                name="unemployedRoleName"
+                                                                class="block w-full rounded-md border-0 bg-base-700 py-1.5 text-neutral placeholder:text-accent-200 focus:ring-2 focus:ring-inset focus:ring-base-300 sm:text-sm sm:leading-6"
+                                                                :placeholder="
+                                                                    $t(
+                                                                        'components.rector.job_props.user_info_sync_settings.unemployed_role_name',
+                                                                    )
+                                                                "
+                                                                :label="
+                                                                    $t(
+                                                                        'components.rector.job_props.user_info_sync_settings.unemployed_role_name',
+                                                                    )
+                                                                "
+                                                                maxlength="48"
+                                                                @focusin="focusTablet(true)"
+                                                                @focusout="focusTablet(false)"
+                                                            />
+                                                        </div>
+                                                    </template>
                                                 </DisclosurePanel>
                                             </Disclosure>
                                         </div>

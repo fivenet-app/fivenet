@@ -120,6 +120,35 @@ export interface UserInfoSyncSettings {
      * @generated from protobuf field: optional string grade_role_format = 3;
      */
     gradeRoleFormat?: string;
+    /**
+     * @generated from protobuf field: bool unemployed_enabled = 4;
+     */
+    unemployedEnabled: boolean;
+    /**
+     * @generated from protobuf field: resources.users.UserInfoSyncUnemployedMode unemployed_mode = 5;
+     */
+    unemployedMode: UserInfoSyncUnemployedMode;
+    /**
+     * @generated from protobuf field: optional string unemployed_role_name = 6;
+     */
+    unemployedRoleName?: string;
+}
+/**
+ * @generated from protobuf enum resources.users.UserInfoSyncUnemployedMode
+ */
+export enum UserInfoSyncUnemployedMode {
+    /**
+     * @generated from protobuf enum value: USER_INFO_SYNC_UNEMPLOYED_MODE_UNSPECIFIED = 0;
+     */
+    UNSPECIFIED = 0,
+    /**
+     * @generated from protobuf enum value: USER_INFO_SYNC_UNEMPLOYED_MODE_GIVE_ROLE = 1;
+     */
+    GIVE_ROLE = 1,
+    /**
+     * @generated from protobuf enum value: USER_INFO_SYNC_UNEMPLOYED_MODE_KICK = 2;
+     */
+    KICK = 2
 }
 // @generated message type with reflection information, may provide speed optimized methods
 class Job$Type extends MessageType<Job> {
@@ -200,8 +229,11 @@ class UserInfoSyncSettings$Type extends MessageType<UserInfoSyncSettings> {
     constructor() {
         super("resources.users.UserInfoSyncSettings", [
             { no: 1, name: "employee_role_enabled", kind: "scalar", T: 8 /*ScalarType.BOOL*/ },
-            { no: 2, name: "employee_role_format", kind: "scalar", opt: true, T: 9 /*ScalarType.STRING*/ },
-            { no: 3, name: "grade_role_format", kind: "scalar", opt: true, T: 9 /*ScalarType.STRING*/ }
+            { no: 2, name: "employee_role_format", kind: "scalar", opt: true, T: 9 /*ScalarType.STRING*/, options: { "validate.rules": { string: { maxLen: "48" } } } },
+            { no: 3, name: "grade_role_format", kind: "scalar", opt: true, T: 9 /*ScalarType.STRING*/, options: { "validate.rules": { string: { maxLen: "48" } } } },
+            { no: 4, name: "unemployed_enabled", kind: "scalar", T: 8 /*ScalarType.BOOL*/ },
+            { no: 5, name: "unemployed_mode", kind: "enum", T: () => ["resources.users.UserInfoSyncUnemployedMode", UserInfoSyncUnemployedMode, "USER_INFO_SYNC_UNEMPLOYED_MODE_"], options: { "validate.rules": { enum: { definedOnly: true } } } },
+            { no: 6, name: "unemployed_role_name", kind: "scalar", opt: true, T: 9 /*ScalarType.STRING*/, options: { "validate.rules": { string: { maxLen: "48" } } } }
         ]);
     }
 }

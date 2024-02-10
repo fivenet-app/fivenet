@@ -44,8 +44,18 @@ message DiscordSyncSettings {
   optional UserInfoSyncSettings user_info_sync_settings = 2;
 }
 
+enum UserInfoSyncUnemployedMode {
+  USER_INFO_SYNC_UNEMPLOYED_MODE_UNSPECIFIED = 0;
+  USER_INFO_SYNC_UNEMPLOYED_MODE_GIVE_ROLE = 1;
+  USER_INFO_SYNC_UNEMPLOYED_MODE_KICK = 2;
+}
+
 message UserInfoSyncSettings {
   bool employee_role_enabled = 1;
-  optional string employee_role_format = 2;
-  optional string grade_role_format = 3;
+  optional string employee_role_format = 2 [(validate.rules).string.max_len = 48];
+  optional string grade_role_format = 3 [(validate.rules).string.max_len = 48];
+
+  bool unemployed_enabled = 4;
+  UserInfoSyncUnemployedMode unemployed_mode = 5 [(validate.rules).enum.defined_only = true];
+  optional string unemployed_role_name = 6 [(validate.rules).string.max_len = 48];
 }

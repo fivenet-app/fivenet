@@ -4,6 +4,7 @@ import (
 	"database/sql/driver"
 
 	jsoniter "github.com/json-iterator/go"
+	"google.golang.org/protobuf/encoding/protojson"
 )
 
 var json = jsoniter.ConfigCompatibleWithStandardLibrary
@@ -52,6 +53,8 @@ func (x *JobProps) Default(job string) {
 	if x.DiscordSyncSettings.UserInfoSyncSettings == nil {
 		x.DiscordSyncSettings.UserInfoSyncSettings = &UserInfoSyncSettings{
 			EmployeeRoleEnabled: true,
+			UnemployedEnabled:   false,
+			UnemployedMode:      UserInfoSyncUnemployedMode_USER_INFO_SYNC_UNEMPLOYED_MODE_GIVE_ROLE,
 		}
 	}
 
@@ -63,6 +66,11 @@ func (x *JobProps) Default(job string) {
 	gradeRoleFormat := DefaultGradeRoleFormat
 	if x.DiscordSyncSettings.UserInfoSyncSettings.GradeRoleFormat == nil {
 		x.DiscordSyncSettings.UserInfoSyncSettings.GradeRoleFormat = &gradeRoleFormat
+	}
+
+	unemployedRoleName := "Citizen"
+	if x.DiscordSyncSettings.UserInfoSyncSettings.UnemployedRoleName == nil {
+		x.DiscordSyncSettings.UserInfoSyncSettings.UnemployedRoleName = &unemployedRoleName
 	}
 }
 
@@ -89,9 +97,9 @@ func (x *QuickButtons) Value() (driver.Value, error) {
 func (x *DiscordSyncSettings) Scan(value any) error {
 	switch t := value.(type) {
 	case string:
-		return json.UnmarshalFromString(t, x)
+		return protojson.Unmarshal([]byte(t), x)
 	case []byte:
-		return json.Unmarshal(t, x)
+		return protojson.Unmarshal(t, x)
 	}
 	return nil
 }
@@ -102,6 +110,6 @@ func (x *DiscordSyncSettings) Value() (driver.Value, error) {
 		return nil, nil
 	}
 
-	out, err := json.MarshalToString(x)
-	return out, err
+	out, err := protojson.Marshal(x)
+	return string(out), err
 }

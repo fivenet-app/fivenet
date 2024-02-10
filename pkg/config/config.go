@@ -239,6 +239,7 @@ type DiscordUserInfoSync struct {
 	EmployeeRoleFormat string   `default:"%s Personal" yaml:"employeeRoleFormat"`
 	NicknameRegex      string   `yaml:"nicknameRegex"`
 	IgnoreJobs         []string `yaml:"ignoreJobs"`
+	UnemployedRoleName string   `default:"Citizen" yaml:"unemployedRoleName"`
 }
 
 type DiscordGroupSync struct {

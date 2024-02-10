@@ -353,7 +353,10 @@
                 "user_info_sync_settings": {
                     "employee_role_enabled": "Create and manage Employee Role",
                     "employee_role_format": "Employee Role format (%s will be replaced by your job's name)",
-                    "grade_role_format": "Grade Role format (%grade% will be replaced by the grade number, %grade_label% will be replaced by the grade's label)"
+                    "grade_role_format": "Grade Role format (%grade% will be replaced by the grade number, %grade_label% will be replaced by the grade's label)",
+                    "unemployed_enabled": "Manage the unemployed role",
+                    "unemployed_mode": "Mode for handling unemployed users",
+                    "unemployed_role_name": "Unemployed Role Name"
                 }
             },
             "role_view": {

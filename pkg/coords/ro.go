@@ -13,15 +13,14 @@ type CoordsRO[V orb.Pointer] struct {
 
 func NewReadOnly[V orb.Pointer](points []V) (*CoordsRO[V], error) {
 	tree := quadtree.New(orb.Bound{Min: orb.Point{-9_000, -9_000}, Max: orb.Point{11_000, 11_000}})
-	cs := &CoordsRO[V]{
-		tree: tree,
-	}
 
 	for _, point := range points {
-		cs.Add(point)
+		tree.Add(point)
 	}
 
-	return cs, nil
+	return &CoordsRO[V]{
+		tree: tree,
+	}, nil
 }
 
 func (p *CoordsRO[V]) Has(point orb.Pointer, fn quadtree.FilterFunc) bool {
