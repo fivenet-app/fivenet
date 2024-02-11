@@ -1,6 +1,7 @@
 package coords
 
 import (
+	"fmt"
 	"sync"
 
 	"github.com/paulmach/orb"
@@ -11,6 +12,8 @@ type ICoords[V orb.Pointer] interface {
 	Has(orb.Pointer, quadtree.FilterFunc) bool
 	Add(orb.Pointer) error
 	Remove(orb.Pointer, quadtree.FilterFunc) bool
+	Replace(orb.Pointer, quadtree.FilterFunc) error
+
 	Closest(float64, float64) V
 	KNearest(orb.Pointer, int, quadtree.FilterFunc, float64) []orb.Pointer
 }
@@ -56,6 +59,18 @@ func (p *Coords[V]) Remove(point orb.Pointer, fn quadtree.FilterFunc) bool {
 
 	ok := p.tree.Remove(point, fn)
 	return ok
+}
+
+func (p *Coords[V]) Replace(point orb.Pointer, fn quadtree.FilterFunc) error {
+	if p.Has(point, fn) {
+		p.Remove(point, fn)
+	}
+
+	if err := p.Add(point); err != nil {
+		return fmt.Errorf("failed to replace point in coords. %w", err)
+	}
+
+	return nil
 }
 
 func (p *Coords[V]) Closest(x, y float64) V {

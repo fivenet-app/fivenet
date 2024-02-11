@@ -13,7 +13,6 @@ import (
 	"github.com/galexrt/fivenet/gen/go/proto/resources/timestamp"
 	eventscentrum "github.com/galexrt/fivenet/gen/go/proto/services/centrum/events"
 	"github.com/galexrt/fivenet/gen/go/proto/services/centrum/manager"
-	centrumutils "github.com/galexrt/fivenet/gen/go/proto/services/centrum/utils"
 	"github.com/galexrt/fivenet/pkg/config"
 	"github.com/galexrt/fivenet/pkg/coords/postals"
 	"github.com/galexrt/fivenet/pkg/grpc/auth"
@@ -23,7 +22,6 @@ import (
 	"github.com/galexrt/fivenet/pkg/utils"
 	"github.com/galexrt/fivenet/query/fivenet/model"
 	"github.com/nats-io/nats.go"
-	"github.com/paulmach/orb"
 	tracesdk "go.opentelemetry.io/otel/sdk/trace"
 	"go.opentelemetry.io/otel/trace"
 	"go.uber.org/fx"
@@ -235,16 +233,6 @@ func (s *Server) watchForChanges(msg *nats.Msg) {
 				DispatchCreated: dest,
 			}
 
-			if locs := s.state.GetDispatchLocations(job); locs != nil {
-				if !locs.Has(dest, func(p orb.Pointer) bool {
-					return p.(*centrum.Dispatch).Id == dest.Id
-				}) {
-					if err := locs.Add(dest); err != nil {
-						s.logger.Error("failed to add dispatch to locations in event stream", zap.Uint64("dispatch_id", dest.Id))
-					}
-				}
-			}
-
 		case eventscentrum.TypeDispatchDeleted:
 			dest := &centrum.Dispatch{}
 			if err := proto.Unmarshal(msg.Data, dest); err != nil {
@@ -254,12 +242,6 @@ func (s *Server) watchForChanges(msg *nats.Msg) {
 
 			resp.Change = &StreamResponse_DispatchDeleted{
 				DispatchDeleted: dest,
-			}
-
-			if locs := s.state.GetDispatchLocations(job); locs != nil {
-				locs.Remove(dest, func(p orb.Pointer) bool {
-					return p.(*centrum.Dispatch).Id == dest.Id
-				})
 			}
 
 		case eventscentrum.TypeDispatchUpdated:
@@ -282,15 +264,6 @@ func (s *Server) watchForChanges(msg *nats.Msg) {
 
 			resp.Change = &StreamResponse_DispatchStatus{
 				DispatchStatus: dest,
-			}
-
-			// Remove completed dispatches from locations
-			if centrumutils.IsStatusDispatchComplete(dest.Status) {
-				if locs := s.state.GetDispatchLocations(job); locs != nil {
-					locs.Remove(dest, func(p orb.Pointer) bool {
-						return p.(*centrum.Dispatch).Id == dest.Id
-					})
-				}
 			}
 		}
 	}

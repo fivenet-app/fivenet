@@ -21,6 +21,8 @@ type State struct {
 	ctx context.Context
 	js  nats.JetStreamContext
 
+	logger *zap.Logger
+
 	settings   *xsync.MapOf[string, *centrum.Settings]
 	disponents *store.Store[centrum.Disponents, *centrum.Disponents]
 	units      *store.Store[centrum.Unit, *centrum.Unit]
@@ -98,6 +100,8 @@ func New(p Params) (*State, error) {
 	s := &State{
 		ctx: ctx,
 		js:  p.JS,
+
+		logger: p.Logger.Named("centrum_state"),
 
 		settings:   xsync.NewMapOf[string, *centrum.Settings](),
 		disponents: disponents,

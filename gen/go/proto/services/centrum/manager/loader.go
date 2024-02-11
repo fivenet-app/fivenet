@@ -11,7 +11,6 @@ import (
 	users "github.com/galexrt/fivenet/gen/go/proto/resources/users"
 	jet "github.com/go-jet/jet/v2/mysql"
 	"github.com/go-jet/jet/v2/qrm"
-	"github.com/paulmach/orb"
 	"go.uber.org/zap"
 )
 
@@ -367,16 +366,6 @@ func (s *Manager) LoadDispatchesFromDB(ctx context.Context, cond jet.BoolExpress
 
 		if err := s.State.UpdateDispatch(ctx, dsps[i].Job, dsps[i].Id, dsps[i]); err != nil {
 			return err
-		}
-
-		if locs := s.State.GetDispatchLocations(dsps[i].Job); locs != nil {
-			if !locs.Has(dsps[i], func(p orb.Pointer) bool {
-				return p.(*centrum.Dispatch).Id == dsps[i].Id
-			}) {
-				if err := locs.Add(dsps[i]); err != nil {
-					s.logger.Error("failed to add loaded dispatch to locations", zap.Uint64("dispatch_id", dsps[i].Id))
-				}
-			}
 		}
 	}
 

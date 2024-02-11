@@ -8,11 +8,13 @@ import { defineRule } from 'vee-validate';
 import { dispatchStatusToBGColor, dispatchStatuses } from '~/components/centrum/helpers';
 import IDCopyBadge from '~/components/partials/IDCopyBadge.vue';
 import { StatusDispatch } from '~~/gen/ts/resources/centrum/dispatches';
+import type { Settings } from '~~/gen/ts/resources/centrum/settings';
 
 const props = defineProps<{
     open: boolean;
     dispatchId: string;
     status?: StatusDispatch;
+    settings?: Settings;
 }>();
 
 const emit = defineEmits<{

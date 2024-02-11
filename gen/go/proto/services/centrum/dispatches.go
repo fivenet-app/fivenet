@@ -17,7 +17,6 @@ import (
 	"github.com/galexrt/fivenet/query/fivenet/table"
 	jet "github.com/go-jet/jet/v2/mysql"
 	"github.com/go-jet/jet/v2/qrm"
-	"github.com/paulmach/orb"
 )
 
 var (
@@ -321,18 +320,6 @@ func (s *Server) UpdateDispatch(ctx context.Context, req *UpdateDispatchRequest)
 		State:   int16(rector.EventType_EVENT_TYPE_ERRORED),
 	}
 	defer s.auditer.Log(auditEntry, req)
-
-	oldDsp, err := s.state.GetDispatch(userInfo.Job, req.Dispatch.Id)
-	if oldDsp == nil || err != nil {
-		return nil, errswrap.NewError(errorscentrum.ErrFailedQuery, err)
-	}
-	if oldDsp.X != req.Dispatch.X || oldDsp.Y != req.Dispatch.Y {
-		if locs := s.state.GetDispatchLocations(oldDsp.Job); locs != nil {
-			locs.Remove(oldDsp, func(p orb.Pointer) bool {
-				return p.(*centrum.Dispatch).Id == oldDsp.Id
-			})
-		}
-	}
 
 	if _, err := s.state.UpdateDispatch(ctx, userInfo.Job, &userInfo.UserId, req.Dispatch, true); err != nil {
 		return nil, errswrap.NewError(errorscentrum.ErrFailedQuery, err)

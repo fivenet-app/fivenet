@@ -7,12 +7,14 @@ import { CloseIcon, HoopHouseIcon, LoadingIcon } from 'mdi-vue3';
 import { defineRule } from 'vee-validate';
 import { unitStatusToBGColor, unitStatuses } from '~/components/centrum/helpers';
 import { StatusUnit, Unit } from '~~/gen/ts/resources/centrum/units';
+import type { Settings } from '~~/gen/ts/resources/centrum/settings';
 
 const props = defineProps<{
     open: boolean;
     unit: Unit;
     status?: StatusUnit;
     location?: Coordinate;
+    settings?: Settings;
 }>();
 
 const emit = defineEmits<{

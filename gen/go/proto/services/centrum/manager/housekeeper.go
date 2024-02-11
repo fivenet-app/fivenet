@@ -442,12 +442,11 @@ func (s *Housekeeper) deduplicateDispatches(ctx context.Context) error {
 					}
 
 					closeByDsp := dest.(*centrum.Dispatch)
+					if closeByDsp.Status != nil && centrumutils.IsStatusDispatchComplete(closeByDsp.Status.Status) {
+						continue
+					}
 
-					if (closeByDsp.Status != nil && centrumutils.IsStatusDispatchComplete(closeByDsp.Status.Status)) ||
-						closeByDsp.CreatedAt != nil && time.Since(closeByDsp.CreatedAt.AsTime()) >= 3*time.Minute {
-						locs.Remove(closeByDsp, func(p orb.Pointer) bool {
-							return p.(*centrum.Dispatch).Id == dsp.Id
-						})
+					if closeByDsp.CreatedAt != nil && time.Since(closeByDsp.CreatedAt.AsTime()) >= 3*time.Minute {
 						continue
 					}
 

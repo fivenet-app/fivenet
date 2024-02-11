@@ -20,7 +20,6 @@ import (
 	jet "github.com/go-jet/jet/v2/mysql"
 	"github.com/go-jet/jet/v2/qrm"
 	"github.com/nats-io/nats.go"
-	"github.com/paulmach/orb"
 	"go.uber.org/zap"
 	"google.golang.org/protobuf/proto"
 )
@@ -417,8 +416,7 @@ func (s *Manager) DeleteDispatch(ctx context.Context, job string, id uint64, all
 }
 
 func (s *Manager) CreateDispatch(ctx context.Context, dsp *centrum.Dispatch) (*centrum.Dispatch, error) {
-	postal := s.postals.Closest(dsp.X, dsp.Y)
-	if postal != nil {
+	if postal := s.postals.Closest(dsp.X, dsp.Y); postal != nil {
 		dsp.Postal = postal.Code
 	}
 
@@ -511,18 +509,7 @@ func (s *Manager) CreateDispatch(ctx context.Context, dsp *centrum.Dispatch) (*c
 		dsp.Creator = nil
 	}
 
-	if err := s.State.UpdateDispatch(ctx, dsp.Job, dsp.Id, dsp); err != nil {
-		return nil, err
-	}
-
-	// Make sure dispatch is in the locations list
-	if locs := s.State.GetDispatchLocations(dsp.Job); locs != nil {
-		if err := locs.Add(dsp); err != nil {
-			s.logger.Error("failed to add new dispatch to locations", zap.Uint64("dispatch_id", dsp.Id))
-		}
-	}
-
-	if err := s.State.UpdateDispatch(ctx, dsp.Job, dsp.Id, dsp); err != nil {
+	if err := s.State.CreateDispatch(ctx, dsp.Job, dsp.Id, dsp); err != nil {
 		return nil, err
 	}
 
@@ -572,21 +559,6 @@ func (s *Manager) UpdateDispatch(ctx context.Context, userJob string, userId *in
 
 	if _, err := stmt.ExecContext(ctx, s.db); err != nil {
 		return nil, err
-	}
-
-	// Make sure the dispatch location is correct by removing and adding the dispatch
-	if locs := s.State.GetDispatchLocations(userJob); locs != nil {
-		if locs.Has(dsp, func(p orb.Pointer) bool {
-			return p.(*centrum.Dispatch).Id == dsp.Id
-		}) {
-			locs.Remove(dsp, func(p orb.Pointer) bool {
-				return p.(*centrum.Dispatch).Id == dsp.Id
-			})
-		}
-
-		if err := locs.Add(dsp); err != nil {
-			s.logger.Error("failed to re-add updated dispatch's new coords to locations", zap.Error(err))
-		}
 	}
 
 	if err := s.State.UpdateDispatch(ctx, dsp.Job, dsp.Id, dsp); err != nil {

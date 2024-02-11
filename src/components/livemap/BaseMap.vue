@@ -261,7 +261,7 @@ onBeforeUnmount(() => {
                 :max-zoom="7"
             />
 
-            <LControlLayers :hide-single-base="true" />
+            <LControlLayers />
 
             <LControl position="bottomleft" class="leaflet-control-attribution mouseposition text-xs">
                 <span class="font-semibold">{{ $t('common.longitude') }}:</span> {{ mouseLat }} |
