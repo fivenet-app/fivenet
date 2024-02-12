@@ -417,25 +417,19 @@ func (s *Housekeeper) deduplicateDispatches(ctx context.Context) error {
 					continue
 				}
 
-				locs := s.State.GetDispatchLocations(dsp.Job)
-				closestsDsp := locs.KNearest(dsp.Point(), 8, func(p orb.Pointer) bool {
-					return p.(*centrum.Dispatch).Id != dsp.Id
-				}, 45.0)
-				s.logger.Debug("deduplicating dispatches", zap.String("job", dsp.Job), zap.Uint64("dispatch_id", dsp.Id), zap.Int("closeby_dsps", len(closestsDsp)))
-				if len(closestsDsp) == 0 {
-					continue
-				}
-
-				// Add "multiple" attribute when multiple dispatches close by
-				if err := s.AddAttributeToDispatch(ctx, dsp, centrum.DispatchAttributeMultiple); err != nil {
-					s.logger.Error("failed to update original dispatch attribute", zap.Error(err))
-				}
-
 				description := ""
 				if dsp.Description != nil {
 					description = *dsp.Description + "\n"
 				}
 
+				// Iterate over close by dispatches and collect the active ones
+				locs := s.State.GetDispatchLocations(dsp.Job)
+				closestsDsp := locs.KNearest(dsp.Point(), 8, func(p orb.Pointer) bool {
+					return p.(*centrum.Dispatch).Id != dsp.Id
+				}, 45.0)
+				s.logger.Debug("deduplicating dispatches", zap.String("job", dsp.Job), zap.Uint64("dispatch_id", dsp.Id), zap.Int("closeby_dsps", len(closestsDsp)))
+
+				activeDispatchesCloseBy := []*centrum.Dispatch{}
 				for _, dest := range closestsDsp {
 					if dest == nil {
 						continue
@@ -455,6 +449,13 @@ func (s *Housekeeper) deduplicateDispatches(ctx context.Context) error {
 					} else {
 						description += fmt.Sprintf("DSP-%d (%s, %s)\n", closeByDsp.Id, closeByDsp.Creator.Firstname, closeByDsp.Creator.Lastname)
 					}
+
+					activeDispatchesCloseBy = append(activeDispatchesCloseBy, closeByDsp)
+				}
+
+				// Prevent unnecessary updates to the dispatch description
+				if len(activeDispatchesCloseBy) == 0 {
+					continue
 				}
 
 				if description != "" {
@@ -465,12 +466,12 @@ func (s *Housekeeper) deduplicateDispatches(ctx context.Context) error {
 					}
 				}
 
-				for _, dest := range closestsDsp {
-					if dest == nil {
-						continue
-					}
+				// Add "multiple" attribute when multiple dispatches close by
+				if err := s.AddAttributeToDispatch(ctx, dsp, centrum.DispatchAttributeMultiple); err != nil {
+					s.logger.Error("failed to update original dispatch attribute", zap.Error(err))
+				}
 
-					closeByDsp := dest.(*centrum.Dispatch)
+				for _, closeByDsp := range activeDispatchesCloseBy {
 					// Already took care of the dispatch
 					if _, ok := dispatchIds[closeByDsp.Id]; ok {
 						continue
@@ -478,10 +479,6 @@ func (s *Housekeeper) deduplicateDispatches(ctx context.Context) error {
 					dispatchIds[closeByDsp.Id] = nil
 
 					if closeByDsp.Status != nil && centrumutils.IsStatusDispatchComplete(closeByDsp.Status.Status) {
-						continue
-					}
-
-					if closeByDsp.CreatedAt != nil && time.Since(closeByDsp.CreatedAt.AsTime()) >= 3*time.Minute {
 						continue
 					}
 

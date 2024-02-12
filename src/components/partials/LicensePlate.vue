@@ -18,7 +18,13 @@ const props = withDefaults(
 const backgroundColor = stringToColour(props.plate);
 
 const inverseColor = hexToRgb(backgroundColor) ?? ({ r: 0, g: 0, b: 0 } as RGB);
-const year = props.year ?? '201' + props.plate.charAt(props.plate.length - 1);
+const year =
+    props.year ??
+    '201' +
+        props.plate
+            .charCodeAt(props.plate.length - 1)
+            .toString()
+            .charAt(0);
 </script>
 
 <template>
