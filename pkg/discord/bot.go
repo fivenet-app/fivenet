@@ -144,9 +144,11 @@ func (b *Bot) start(ctx context.Context) error {
 
 	b.discord.AddHandler(func(s *discordgo.Session, i *discordgo.GuildCreate) {
 		b.logger.Info("discord server joined", zap.String("discord_guild_id", i.ID))
-		if err := b.cmds.Register(i.Guild); err != nil {
-			b.logger.Error("failed to register commands on newly joined server", zap.String("discord_guild_id", i.ID), zap.Error(err))
-			return
+		if b.cfg.Commands.Enabled {
+			if err := b.cmds.Register(i.Guild); err != nil {
+				b.logger.Error("failed to register commands on newly joined server", zap.String("discord_guild_id", i.ID), zap.Error(err))
+				return
+			}
 		}
 	})
 
@@ -337,14 +339,6 @@ func (b *Bot) setupSync() error {
 func (b *Bot) runSync(ctx context.Context) error {
 	if err := b.getGuilds(); err != nil {
 		return err
-	}
-
-	if b.cfg.Commands.Enabled {
-		// Setup commands on every server
-		for _, guild := range b.discord.State.Ready.Guilds {
-			b.cmds.Register(guild)
-		}
-
 	}
 
 	b.activeGuilds.Range(func(_ string, guild *Guild) bool {

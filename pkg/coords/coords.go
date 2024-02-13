@@ -62,11 +62,12 @@ func (p *Coords[V]) Remove(point orb.Pointer, fn quadtree.FilterFunc) bool {
 }
 
 func (p *Coords[V]) Replace(point orb.Pointer, fn quadtree.FilterFunc) error {
-	if p.Has(point, fn) {
-		p.Remove(point, fn)
-	}
+	p.mutex.Lock()
+	defer p.mutex.Unlock()
 
-	if err := p.Add(point); err != nil {
+	p.tree.Remove(point, fn)
+
+	if err := p.tree.Add(point); err != nil {
 		return fmt.Errorf("failed to replace point in coords. %w", err)
 	}
 

@@ -5,7 +5,6 @@ import (
 	"slices"
 
 	"github.com/bwmarrin/discordgo"
-	"github.com/galexrt/fivenet/pkg/utils"
 	"go.uber.org/zap"
 )
 
@@ -62,7 +61,7 @@ func (c *Cmds) Unregister(guild *discordgo.Guild) error {
 	}
 
 	// Remove duplicate commands
-	duplicates := utils.GetDuplicates(cmds)
+	duplicates := GetDuplicateCommands(cmds)
 	c.logger.Info("removing duplicate commands", zap.Int("duplicates", len(duplicates)))
 	for _, command := range duplicates {
 		if err := c.discord.ApplicationCommandDelete(c.discord.State.User.ID, guild.ID, command.ID); err != nil {
@@ -71,4 +70,21 @@ func (c *Cmds) Unregister(guild *discordgo.Guild) error {
 	}
 
 	return nil
+}
+
+func GetDuplicateCommands(in []*discordgo.ApplicationCommand) []*discordgo.ApplicationCommand {
+	allKeys := make(map[string]bool)
+	list := []*discordgo.ApplicationCommand{}
+
+	for _, item := range in {
+		if _, value := allKeys[item.Name]; !value {
+			allKeys[item.Name] = false
+		} else if !allKeys[item.Name] {
+			allKeys[item.Name] = true
+
+			list = append(list, item)
+		}
+	}
+
+	return list
 }
