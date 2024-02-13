@@ -9778,10 +9778,10 @@ vue-json-pretty@2.3.0:
   resolved "https://registry.yarnpkg.com/vue-json-pretty/-/vue-json-pretty-2.3.0.tgz#ad85a161575d7fcd7b3e6baad559b2af0df663fa"
   integrity sha512-iBul6Xg7vZfMV2MQC/gGtzbyg8FLk6cJ8KG91f37UEkQyXqHg91VQJ24bDBXNVuOSP04BUKxWagD3V2N/WEy0g==
 
-vue-leaflet-markercluster@0.5.1:
-  version "0.5.1"
-  resolved "https://registry.yarnpkg.com/vue-leaflet-markercluster/-/vue-leaflet-markercluster-0.5.1.tgz#dbedf6f00af35f4a1c64eda396171029808fe2a9"
-  integrity sha512-sEdF9aNqh3xSdsSRIC5w+sVUikHlhEC2IbGzEELo+YGaOqZgvrkDx8A7svDt2zKLCYgSRZim2aYwDZ7qliT5eg==
+vue-leaflet-markercluster@0.6.0:
+  version "0.6.0"
+  resolved "https://registry.yarnpkg.com/vue-leaflet-markercluster/-/vue-leaflet-markercluster-0.6.0.tgz#84acce231d360f3fe4754aebc1a33c248aed5a0d"
+  integrity sha512-xPETfxxmEooDARoq0r2KnSQzJt6PWqgIW2mlc2MqH4toFkE4fZBIgc0XzisLHtTnStjbxDzGN51UEuY71KcCJA==
   dependencies:
     vue "^3.3.4"
 
