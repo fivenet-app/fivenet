@@ -22,7 +22,7 @@
     },
     "dependencies": {
         "@fontsource/inter": "5.0.16",
-        "@headlessui-float/vue": "0.13.1",
+        "@headlessui-float/vue": "0.13.2",
         "@headlessui/vue": "1.7.19",
         "@nuxtjs/robots": "3.0.0",
         "@originjs/vite-plugin-commonjs": "1.0.3",

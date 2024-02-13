@@ -677,10 +677,10 @@
   dependencies:
     is-negated-glob "^1.0.0"
 
-"@headlessui-float/vue@0.13.1":
-  version "0.13.1"
-  resolved "https://registry.yarnpkg.com/@headlessui-float/vue/-/vue-0.13.1.tgz#b07c4f693d2bc16b7f3e9986eb874bc4ba44b67c"
-  integrity sha512-8dBr5ZMrx987usKdCpvsgit2ZaxJ7d0RmErV/wOqejWUYeIVHtQlOqGQP0jZxWrWKp4pTHVCpKkppEKW3NxASA==
+"@headlessui-float/vue@0.13.2":
+  version "0.13.2"
+  resolved "https://registry.yarnpkg.com/@headlessui-float/vue/-/vue-0.13.2.tgz#edb2f5f2bec4058b1b4c69602edf0d0eeacad268"
+  integrity sha512-cuFuuE0bFSntmFBpwEWV1pgog6mbl9iNdd/l2iEXF/amdJqp0Hd6z5XKxpO7ee8kRH6YonWGmd915XO/Sbrekw==
   dependencies:
     "@floating-ui/core" "^1.5.3"
     "@floating-ui/dom" "^1.5.4"
