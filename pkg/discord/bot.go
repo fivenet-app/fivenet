@@ -89,7 +89,7 @@ func NewBot(p BotParams) (*Bot, error) {
 	}
 	discord.Identify.Intents = discordgo.IntentsAllWithoutPrivileged | discordgo.IntentsGuilds | discordgo.IntentsGuildMembers | discordgo.IntentsGuildPresences
 
-	cmds := commands.New(discord)
+	cmds := commands.New(p.Logger, discord)
 
 	ctx, cancel := context.WithCancel(context.Background())
 	b := &Bot{
@@ -339,9 +339,12 @@ func (b *Bot) runSync(ctx context.Context) error {
 		return err
 	}
 
-	// Setup commands on every server
-	for _, guild := range b.discord.State.Ready.Guilds {
-		b.cmds.Register(guild)
+	if b.cfg.Commands.Enabled {
+		// Setup commands on every server
+		for _, guild := range b.discord.State.Ready.Guilds {
+			b.cmds.Register(guild)
+		}
+
 	}
 
 	b.activeGuilds.Range(func(_ string, guild *Guild) bool {
@@ -376,6 +379,15 @@ func (b *Bot) stop() error {
 	})
 
 	b.activeGuilds.Clear()
+
+	if b.cfg.Commands.Enabled {
+		// Unregister commands on every server
+		for _, guild := range b.discord.State.Ready.Guilds {
+			if err := b.cmds.Unregister(guild); err != nil {
+				b.logger.Error("failed to unregister bot commands", zap.Error(err))
+			}
+		}
+	}
 
 	if e != nil {
 		return e
