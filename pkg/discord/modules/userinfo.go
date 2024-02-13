@@ -80,12 +80,17 @@ func (g *UserInfo) Run() error {
 	g.unemployedRoleName = *settings.UserInfoSyncSettings.UnemployedRoleName
 	g.unemployedMode = settings.UserInfoSyncSettings.UnemployedMode
 
-	if err := g.createJobRoles(); err != nil {
+	guild, err := g.discord.Guild(g.guild.ID)
+	if err != nil {
+		return err
+	}
+
+	if err := g.createJobRoles(guild); err != nil {
 		return err
 	}
 
 	if settings.UserInfoSyncSettings.UnemployedEnabled {
-		if err := g.createUnemployedRole(); err != nil {
+		if err := g.createUnemployedRole(guild); err != nil {
 			return err
 		}
 	}
@@ -198,7 +203,7 @@ func (g *UserInfo) setUserNickname(member *discordgo.Member, firstname string, l
 	return nil
 }
 
-func (g *UserInfo) createJobRoles() error {
+func (g *UserInfo) createJobRoles(guild *discordgo.Guild) error {
 	job := g.enricher.GetJobByName(g.job)
 	if job == nil {
 		g.logger.Error("unknown job for discord guild, skipping")
@@ -210,7 +215,7 @@ func (g *UserInfo) createJobRoles() error {
 		name := strings.ReplaceAll(g.gradeRoleFormat, "%grade_label%", grade.Label)
 		name = strings.ReplaceAll(name, "%grade%", fmt.Sprintf("%02d", grade.Grade))
 
-		if slices.ContainsFunc(g.guild.Roles, func(in *discordgo.Role) bool {
+		if slices.ContainsFunc(guild.Roles, func(in *discordgo.Role) bool {
 			if in.Name == name {
 				g.jobRoles[grade.Grade] = in
 				return true
@@ -236,7 +241,7 @@ func (g *UserInfo) createJobRoles() error {
 
 	if g.employeeRoleEnabled {
 		employeeRoleName := fmt.Sprintf(g.employeeRoleFormat, job.Label)
-		if !slices.ContainsFunc(g.guild.Roles, func(in *discordgo.Role) bool {
+		if !slices.ContainsFunc(guild.Roles, func(in *discordgo.Role) bool {
 			if in.Name == employeeRoleName {
 				g.employeeRole = in
 				return true
@@ -261,15 +266,15 @@ func (g *UserInfo) createJobRoles() error {
 	return nil
 }
 
-func (g *UserInfo) createUnemployedRole() error {
-	if !slices.ContainsFunc(g.guild.Roles, func(in *discordgo.Role) bool {
+func (g *UserInfo) createUnemployedRole(guild *discordgo.Guild) error {
+	if !slices.ContainsFunc(guild.Roles, func(in *discordgo.Role) bool {
 		if in.Name == g.unemployedRoleName {
 			g.unemployedRole = in
 			return true
 		}
 		return false
 	}) {
-		role, err := g.discord.GuildRoleCreate(g.guild.ID, &discordgo.RoleParams{
+		role, err := g.discord.GuildRoleCreate(guild.ID, &discordgo.RoleParams{
 			Name: g.unemployedRoleName,
 		})
 		if err != nil {

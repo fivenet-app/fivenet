@@ -1467,6 +1467,10 @@
             "ListColleagues": {
                 "key": "List colleagues",
                 "description": "List your colleagues (of your own job)."
+            },
+            "SetMOTD": {
+                "key": "Update Job MOTD",
+                "description": "Update Job MOTD text on job page."
             }
         },
         "JobsConductService": {

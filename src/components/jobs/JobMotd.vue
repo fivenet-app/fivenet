@@ -61,32 +61,34 @@ const editing = ref(false);
                 {{ $t('common.motd') }}
             </h4>
 
-            <button
-                v-if="canEdit && !editing"
-                type="button"
-                class="text-primary-500 hover:text-primary-400"
-                @click="editing = !editing"
-            >
-                <PencilIcon class="h-5 w-5" />
-            </button>
-            <div v-else class="flex flex-row gap-1">
+            <template v-if="canEdit">
                 <button
+                    v-if="!editing"
                     type="button"
-                    class="inline-flex flex-row text-primary-500 hover:text-primary-400"
-                    @click="
-                        onSubmitThrottle(data?.motd ?? '');
-                        editing = !editing;
-                    "
+                    class="text-primary-500 hover:text-primary-400"
+                    @click="editing = !editing"
                 >
-                    <ContentSaveIcon class="h-5 w-5" />
-                    <template v-if="!canSubmit">
-                        <LoadingIcon class="mr-2 h-5 w-5 animate-spin" />
-                    </template>
+                    <PencilIcon class="h-5 w-5" />
                 </button>
-                <button type="button" class="text-primary-500 hover:text-primary-400" @click="editing = !editing">
-                    <CancelIcon class="h-5 w-5" />
-                </button>
-            </div>
+                <div v-else class="flex flex-row gap-1">
+                    <button
+                        type="button"
+                        class="inline-flex flex-row text-primary-500 hover:text-primary-400"
+                        @click="
+                            onSubmitThrottle(data?.motd ?? '');
+                            editing = !editing;
+                        "
+                    >
+                        <ContentSaveIcon class="h-5 w-5" />
+                        <template v-if="!canSubmit">
+                            <LoadingIcon class="mr-2 h-5 w-5 animate-spin" />
+                        </template>
+                    </button>
+                    <button type="button" class="text-primary-500 hover:text-primary-400" @click="editing = !editing">
+                        <CancelIcon class="h-5 w-5" />
+                    </button>
+                </div>
+            </template>
         </div>
 
         <div class="flex">

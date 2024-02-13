@@ -47,7 +47,7 @@ async function getJobProps(): Promise<JobProps> {
 
 const { data: jobProps, pending, refresh, error } = useLazyAsyncData(`rector-jobprops`, () => getJobProps());
 
-async function saveJobProps(): Promise<void> {
+async function setJobProps(): Promise<void> {
     if (!jobProps.value) {
         return;
     }
@@ -73,7 +73,7 @@ async function saveJobProps(): Promise<void> {
 const canSubmit = ref(true);
 const onSubmitThrottle = useThrottleFn(async (_) => {
     canSubmit.value = false;
-    await saveJobProps().finally(() => setTimeout(() => (canSubmit.value = true), 400));
+    await setJobProps().finally(() => setTimeout(() => (canSubmit.value = true), 400));
 }, 1000);
 </script>
 
