@@ -2,6 +2,7 @@ package commands
 
 import (
 	"fmt"
+	"slices"
 
 	"github.com/bwmarrin/discordgo"
 )
@@ -12,31 +13,38 @@ var (
 )
 
 type Cmds struct {
-	guildId            string
-	RegisteredCommands []*discordgo.ApplicationCommand
+	discord *discordgo.Session
 }
 
-func New(guildId string) *Cmds {
-	return &Cmds{
-		guildId:            guildId,
-		RegisteredCommands: []*discordgo.ApplicationCommand{},
-	}
-}
-
-func (c *Cmds) Register(s *discordgo.Session) error {
-	for _, v := range Commands {
-		cmd, err := s.ApplicationCommandCreate(s.State.User.ID, c.guildId, v)
-		if err != nil {
-			return fmt.Errorf("cannot create '%v' command for guild '%s': %v", v.Name, c.guildId, err)
-		}
-		c.RegisteredCommands = append(c.RegisteredCommands, cmd)
-	}
-
+func New(s *discordgo.Session) *Cmds {
 	s.AddHandler(func(s *discordgo.Session, i *discordgo.InteractionCreate) {
 		if h, ok := CommandHandlers[i.ApplicationCommandData().Name]; ok {
 			h(s, i)
 		}
 	})
+
+	return &Cmds{
+		discord: s,
+	}
+}
+
+func (c *Cmds) Register(guild *discordgo.Guild) error {
+	cmds, err := c.discord.ApplicationCommands(c.discord.State.User.ID, guild.ID)
+	if err != nil {
+		return err
+	}
+
+	for _, v := range Commands {
+		if slices.ContainsFunc(cmds, func(cmd *discordgo.ApplicationCommand) bool {
+			return cmd.Name == v.Name
+		}) {
+			continue
+		}
+
+		if _, err := c.discord.ApplicationCommandCreate(c.discord.State.User.ID, guild.ID, v); err != nil {
+			return fmt.Errorf("cannot create '%v' command for guild '%s': %v", v.Name, guild.ID, err)
+		}
+	}
 
 	return nil
 }

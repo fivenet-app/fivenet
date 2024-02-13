@@ -10,6 +10,7 @@ import (
 
 	"github.com/bwmarrin/discordgo"
 	"github.com/galexrt/fivenet/pkg/config"
+	"github.com/galexrt/fivenet/pkg/discord/commands"
 	"github.com/galexrt/fivenet/pkg/mstlystcdata"
 	"github.com/galexrt/fivenet/pkg/server/admin"
 	"github.com/galexrt/fivenet/query/fivenet/table"
@@ -69,6 +70,8 @@ type Bot struct {
 
 	syncInterval time.Duration
 
+	cmds *commands.Cmds
+
 	id           string
 	discord      *discordgo.Session
 	activeGuilds *xsync.MapOf[string, *Guild]
@@ -86,6 +89,8 @@ func NewBot(p BotParams) (*Bot, error) {
 	}
 	discord.Identify.Intents = discordgo.IntentsAllWithoutPrivileged | discordgo.IntentsGuilds | discordgo.IntentsGuildMembers | discordgo.IntentsGuildPresences
 
+	cmds := commands.New(discord)
+
 	ctx, cancel := context.WithCancel(context.Background())
 	b := &Bot{
 		ctx:      ctx,
@@ -94,6 +99,8 @@ func NewBot(p BotParams) (*Bot, error) {
 		db:       p.DB,
 		enricher: p.Enricher,
 		cfg:      &p.Config.Discord.Bot,
+
+		cmds: cmds,
 
 		discord:      discord,
 		activeGuilds: xsync.NewMapOf[string, *Guild](),
@@ -135,6 +142,14 @@ func (b *Bot) start(ctx context.Context) error {
 		ready.Store(true)
 	})
 
+	b.discord.AddHandler(func(s *discordgo.Session, i *discordgo.GuildCreate) {
+		b.logger.Info("discord server joined", zap.String("discord_guild_id", i.ID))
+		if err := b.cmds.Register(i.Guild); err != nil {
+			b.logger.Error("failed to register commands on newly joined server", zap.String("discord_guild_id", i.ID), zap.Error(err))
+			return
+		}
+	})
+
 	if err := b.discord.Open(); err != nil {
 		return fmt.Errorf("error opening connection: %w", err)
 	}
@@ -151,7 +166,6 @@ func (b *Bot) start(ctx context.Context) error {
 		case <-time.After(750 * time.Millisecond):
 		}
 	}
-
 }
 
 func (b *Bot) setBotPresence() error {
@@ -323,6 +337,11 @@ func (b *Bot) setupSync() error {
 func (b *Bot) runSync(ctx context.Context) error {
 	if err := b.getGuilds(); err != nil {
 		return err
+	}
+
+	// Setup commands on every server
+	for _, guild := range b.discord.State.Ready.Guilds {
+		b.cmds.Register(guild)
 	}
 
 	b.activeGuilds.Range(func(_ string, guild *Guild) bool {

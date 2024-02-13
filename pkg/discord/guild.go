@@ -4,7 +4,6 @@ import (
 	"fmt"
 
 	"github.com/bwmarrin/discordgo"
-	"github.com/galexrt/fivenet/pkg/discord/commands"
 	"github.com/galexrt/fivenet/pkg/discord/modules"
 	"go.uber.org/zap"
 )
@@ -13,11 +12,10 @@ type Guild struct {
 	Job string `alias:"job"`
 	ID  string `alias:"id"`
 
-	logger   *zap.Logger
-	bot      *Bot
-	guild    *discordgo.Guild
-	modules  map[string]modules.Module
-	commands *commands.Cmds
+	logger  *zap.Logger
+	bot     *Bot
+	guild   *discordgo.Guild
+	modules map[string]modules.Module
 }
 
 func NewGuild(b *Bot, guild *discordgo.Guild, job string) (*Guild, error) {
@@ -42,20 +40,14 @@ func NewGuild(b *Bot, guild *discordgo.Guild, job string) (*Guild, error) {
 		}
 	}
 
-	var cmds *commands.Cmds
-	if b.cfg.Commands.Enabled {
-		cmds = commands.New(guild.ID)
-	}
-
 	return &Guild{
 		Job: job,
 		ID:  guild.ID,
 
-		logger:   b.logger.Named("guild").With(zap.String("job", job), zap.String("discord_guild_id", guild.ID)),
-		bot:      b,
-		guild:    guild,
-		modules:  ms,
-		commands: cmds,
+		logger:  b.logger.Named("guild").With(zap.String("job", job), zap.String("discord_guild_id", guild.ID)),
+		bot:     b,
+		guild:   guild,
+		modules: ms,
 	}, nil
 }
 
@@ -70,12 +62,6 @@ func (g *Guild) Setup() error {
 	if len(g.guild.Roles) == 0 {
 		if _, err := g.bot.discord.GuildRoles(g.guild.ID); err != nil {
 			return fmt.Errorf("failed to retrieve roles for guild. %w", err)
-		}
-	}
-
-	if g.commands != nil {
-		if err := g.commands.Register(g.bot.discord); err != nil {
-			return fmt.Errorf("failed to register bot commands. %w", err)
 		}
 	}
 
