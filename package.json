@@ -53,7 +53,7 @@
         "vue3-charts": "^1.1.33"
     },
     "devDependencies": {
-        "@dargmuesli/nuxt-cookie-control": "7.2.5",
+        "@dargmuesli/nuxt-cookie-control": "7.2.6",
         "@nuxt/devtools": "1.0.8",
         "@nuxtjs/eslint-config-typescript": "12.1.0",
         "@nuxtjs/eslint-module": "4.1.0",
