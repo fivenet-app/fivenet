@@ -114,8 +114,12 @@ func (s *State) UpdateDispatch(ctx context.Context, job string, id uint64, dsp *
 			// Dispatch must not be existant yet, so make sure to add to the
 			// dispatch locations
 			if locs := s.GetDispatchLocations(dsp.Job); locs != nil {
-				if err := locs.Add(dsp); err != nil {
-					s.logger.Error("failed to add non-existant dispatch to locations", zap.Uint64("dispatch_id", dsp.Id))
+				if !locs.Has(dsp, func(p orb.Pointer) bool {
+					return p.(*centrum.Dispatch).Id == dsp.Id
+				}) {
+					if err := locs.Add(dsp); err != nil {
+						s.logger.Error("failed to add non-existant dispatch to locations", zap.Uint64("dispatch_id", dsp.Id))
+					}
 				}
 			}
 

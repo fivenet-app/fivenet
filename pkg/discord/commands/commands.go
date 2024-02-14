@@ -51,10 +51,14 @@ func (c *Cmds) Register(guild *discordgo.Guild) error {
 		}
 	}
 
+	if err := c.removeDuplicateDispatches(guild); err != nil {
+		return err
+	}
+
 	return nil
 }
 
-func (c *Cmds) Unregister(guild *discordgo.Guild) error {
+func (c *Cmds) removeDuplicateDispatches(guild *discordgo.Guild) error {
 	cmds, err := c.discord.ApplicationCommands(c.discord.State.User.ID, guild.ID)
 	if err != nil {
 		return err
@@ -65,7 +69,7 @@ func (c *Cmds) Unregister(guild *discordgo.Guild) error {
 	c.logger.Info("removing duplicate commands", zap.Int("duplicates", len(duplicates)))
 	for _, command := range duplicates {
 		if err := c.discord.ApplicationCommandDelete(c.discord.State.User.ID, guild.ID, command.ID); err != nil {
-			return fmt.Errorf("cannot delete '%v' command for guild '%s': %v", command.Name, guild.ID, err)
+			return fmt.Errorf("cannot delete '%v' duplicate command for guild '%s': %v", command.Name, guild.ID, err)
 		}
 	}
 

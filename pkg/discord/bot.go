@@ -126,10 +126,14 @@ func NewBot(p BotParams) (*Bot, error) {
 	}))
 
 	p.LC.Append(fx.StopHook(func(ctx context.Context) error {
+		// Stop all guilds and discord session
+		if err := b.stop(); err != nil {
+			return err
+		}
+
 		cancel()
 
-		// Stop all guilds and discord session
-		return b.stop()
+		return nil
 	}))
 
 	return b, nil
@@ -373,15 +377,6 @@ func (b *Bot) stop() error {
 	})
 
 	b.activeGuilds.Clear()
-
-	if b.cfg.Commands.Enabled {
-		// Unregister commands on every server
-		for _, guild := range b.discord.State.Ready.Guilds {
-			if err := b.cmds.Unregister(guild); err != nil {
-				b.logger.Error("failed to unregister bot commands", zap.Error(err))
-			}
-		}
-	}
 
 	if e != nil {
 		return e

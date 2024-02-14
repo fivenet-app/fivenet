@@ -8,6 +8,7 @@ import (
 	"github.com/galexrt/fivenet/pkg/coords"
 	"github.com/galexrt/fivenet/pkg/nats/store"
 	"github.com/nats-io/nats.go"
+	"github.com/paulmach/orb"
 	"github.com/puzpuzpuz/xsync/v3"
 	"go.uber.org/fx"
 	"go.uber.org/zap"
@@ -59,7 +60,36 @@ func New(p Params) (*State, error) {
 		return nil, err
 	}
 
-	dispatches, err := store.New[centrum.Dispatch, *centrum.Dispatch](p.Logger, p.JS, "centrum_dispatches")
+	dispatches, err := store.New[centrum.Dispatch, *centrum.Dispatch](p.Logger, p.JS, "centrum_dispatches",
+		func(s *store.Store[centrum.Dispatch, *centrum.Dispatch]) error {
+			s.OnUpdate = func(dsp *centrum.Dispatch) (*centrum.Dispatch, error) {
+				if loc := locs[dsp.Job]; loc != nil {
+					if err := loc.Add(dsp); err != nil {
+						p.Logger.Error("failed to add non-existant dispatch to locations", zap.Uint64("dispatch_id", dsp.Id))
+					}
+				}
+
+				return dsp, nil
+			}
+			return nil
+		},
+		func(s *store.Store[centrum.Dispatch, *centrum.Dispatch]) error {
+			s.OnDelete = func(entry nats.KeyValueEntry, item *centrum.Dispatch) error {
+				if item == nil {
+					p.Logger.Warn("unable to delete dispatch location, got nil dispatch item", zap.String("store_dispatch_key", entry.Key()))
+					return nil
+				}
+
+				if loc := locs[item.Job]; loc != nil {
+					loc.Remove(item, func(p orb.Pointer) bool {
+						return p.(*centrum.Dispatch).Id == item.Id
+					})
+				}
+
+				return nil
+			}
+			return nil
+		})
 	if err != nil {
 		return nil, err
 	}

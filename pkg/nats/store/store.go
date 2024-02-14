@@ -34,11 +34,14 @@ type Store[T any, U protoMessage[T]] struct {
 
 	l *locks.Locks
 
-	onUpdate func(nats.KeyValueEntry) (U, error)
-	onDelete func(nats.KeyValueEntry) (U, error)
+	OnUpdate OnUpdateFn[T, U]
+	OnDelete OnDeleteFn[T, U]
 }
 
 type StoreOption[T any, U protoMessage[T]] func(s *Store[T, U]) error
+
+type OnUpdateFn[T any, U protoMessage[T]] func(U) (U, error)
+type OnDeleteFn[T any, U protoMessage[T]] func(nats.KeyValueEntry, U) error
 
 func New[T any, U protoMessage[T]](logger *zap.Logger, js nats.JetStreamContext, bucket string, opts ...StoreOption[T, U]) (*Store[T, U], error) {
 	kv, err := natsutils.CreateKeyValue(js, bucket, &nats.KeyValueConfig{
@@ -76,8 +79,6 @@ func New[T any, U protoMessage[T]](logger *zap.Logger, js nats.JetStreamContext,
 
 		l: l,
 	}
-
-	s.onUpdate = s.update
 
 	for _, opt := range opts {
 		if err := opt(s); err != nil {
@@ -174,7 +175,7 @@ func (s *Store[T, U]) Load(key string) (U, error) {
 		return nil, err
 	}
 
-	return s.onUpdate(entry)
+	return s.update(entry)
 }
 
 func (s *Store[T, U]) update(entry nats.KeyValueEntry) (U, error) {
@@ -183,7 +184,12 @@ func (s *Store[T, U]) update(entry nats.KeyValueEntry) (U, error) {
 		return nil, fmt.Errorf("failed to unmarshal store watcher update: %w", err)
 	}
 
-	return s.updateFromType(entry.Key(), data), nil
+	item := s.updateFromType(entry.Key(), data)
+	if s.OnUpdate == nil {
+		return item, nil
+	}
+
+	return s.OnUpdate(item)
 }
 
 func (s *Store[T, U]) updateFromType(key string, updated U) U {
@@ -283,14 +289,15 @@ func (s *Store[T, U]) Start(ctx context.Context) error {
 				s.logger.Debug("key update received via watcher", zap.String("key", entry.Key()))
 
 				if entry.Operation() == nats.KeyValueDelete || entry.Operation() == nats.KeyValuePurge {
-					if s.onDelete != nil {
-						if _, err := s.onDelete(entry); err != nil {
+					if s.OnDelete != nil {
+						item, _ := s.data.Load(entry.Key())
+						if err := s.OnDelete(entry, item); err != nil {
 							s.logger.Error("failed to run on update logic in store watcher", zap.Error(err))
 							continue
 						}
 					}
 				} else {
-					if _, err := s.onUpdate(entry); err != nil {
+					if _, err := s.update(entry); err != nil {
 						s.logger.Error("failed to run on update logic in store watcher", zap.Error(err))
 						continue
 					}
