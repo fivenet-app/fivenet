@@ -92,7 +92,7 @@ func (c *Cmds) RemoveGuildCommands(guildID string) error {
 	c.logger.Debug("removing guild registered commands", zap.Any("commands", cmds))
 	for _, command := range cmds {
 		if err := c.discord.ApplicationCommandDelete(c.discord.State.User.ID, guildID, command.ID); err != nil {
-			return fmt.Errorf("cannot delete '%v' duplicate command for guild '%s'. %w", command.Name, guildID, err)
+			return fmt.Errorf("cannot delete '%v' guild registered command for guild '%s'. %w", command.Name, guildID, err)
 		}
 	}
 

@@ -52,6 +52,8 @@ async function setJobProps(): Promise<void> {
         return;
     }
 
+    jobProps.value.livemapMarkerColor.replace(/^#/, '');
+
     try {
         await $grpc.getRectorClient().setJobProps({
             jobProps: jobProps.value,
