@@ -14,6 +14,8 @@ func NewFivenetCommand(cfg *config.Config) (*discordgo.ApplicationCommand, Comma
 	return &discordgo.ApplicationCommand{
 			Name:        "fivenet",
 			Description: "FiveNet Website URL",
+			Type:        discordgo.ChatApplicationCommand,
+			GuildID:     GlobalCommandGuildID,
 		},
 		NewHandleFivenetCommand(url),
 		nil

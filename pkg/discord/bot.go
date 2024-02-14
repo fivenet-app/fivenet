@@ -151,16 +151,20 @@ func (b *Bot) start(ctx context.Context) error {
 
 	b.discord.AddHandler(func(s *discordgo.Session, i *discordgo.GuildCreate) {
 		b.logger.Info("discord server joined", zap.String("discord_guild_id", i.ID))
-		if b.cfg.Commands.Enabled {
-			if err := b.cmds.Register(i.Guild); err != nil {
-				b.logger.Error("failed to register commands on newly joined server", zap.String("discord_guild_id", i.ID), zap.Error(err))
-				return
-			}
+
+		if err := b.cmds.RemoveGuildCommands(i.ID); err != nil {
+			b.logger.Error("failed to remove guild commands", zap.Error(err))
 		}
 	})
 
 	if err := b.discord.Open(); err != nil {
 		return fmt.Errorf("error opening connection: %w", err)
+	}
+
+	if b.cfg.Commands.Enabled {
+		if err := b.cmds.RegisterGlobalCommands(); err != nil {
+			return fmt.Errorf("failed to register global commands. %w", err)
+		}
 	}
 
 	for {

@@ -9,6 +9,8 @@ import (
 	"go.uber.org/zap"
 )
 
+const GlobalCommandGuildID = "-1"
+
 type CommandHandler = func(s *discordgo.Session, i *discordgo.InteractionCreate)
 
 type CommandFactory = func(cfg *config.Config) (*discordgo.ApplicationCommand, CommandHandler, error)
@@ -50,45 +52,47 @@ func New(logger *zap.Logger, s *discordgo.Session, cfg *config.Config) (*Cmds, e
 	return c, nil
 }
 
-func (c *Cmds) Register(guild *discordgo.Guild) error {
-	cmds, err := c.discord.ApplicationCommands(c.discord.State.User.ID, guild.ID)
+func (c *Cmds) RegisterGlobalCommands() error {
+	cmds, err := c.discord.ApplicationCommands(c.discord.State.User.ID, "")
 	if err != nil {
 		return err
 	}
 
-	c.logger.Info("registering commands", zap.Int("count", len(Commands)))
+	toRegister := []*discordgo.ApplicationCommand{}
 	for _, command := range Commands {
-		if slices.ContainsFunc(cmds, func(cmd *discordgo.ApplicationCommand) bool {
-			return cmd.Name == command.Name
-		}) {
-			c.logger.Debug(fmt.Sprintf("command '%v' already registered", command.Name), zap.String("discord_guild_id", guild.ID))
-			continue
-		}
-
-		if _, err := c.discord.ApplicationCommandCreate(c.discord.State.User.ID, guild.ID, command); err != nil {
-			return fmt.Errorf("cannot create '%v' command for guild '%s'. %w", command.Name, guild.ID, err)
+		if command.GuildID == GlobalCommandGuildID {
+			toRegister = append(toRegister, command)
 		}
 	}
 
-	if err := c.removeDuplicateDispatches(guild); err != nil {
-		return err
+	c.logger.Info("registering global commands", zap.Int("count", len(toRegister)))
+	for _, command := range toRegister {
+		if slices.ContainsFunc(cmds, func(cmd *discordgo.ApplicationCommand) bool {
+			return cmd.Name == command.Name
+		}) {
+			c.logger.Debug(fmt.Sprintf("command '%v' already registered", command.Name))
+			continue
+		}
+
+		if _, err := c.discord.ApplicationCommandCreate(c.discord.State.User.ID, "", command); err != nil {
+			return fmt.Errorf("cannot create '%v' global command. %w", command.Name, err)
+		}
 	}
 
 	return nil
 }
 
-func (c *Cmds) removeDuplicateDispatches(guild *discordgo.Guild) error {
-	cmds, err := c.discord.ApplicationCommands(c.discord.State.User.ID, guild.ID)
+func (c *Cmds) RemoveGuildCommands(guildID string) error {
+	cmds, err := c.discord.ApplicationCommands(c.discord.State.User.ID, guildID)
 	if err != nil {
 		return err
 	}
 
-	// Remove duplicate commands
-	duplicates := GetDuplicateCommands(cmds)
-	c.logger.Info("removing duplicate commands", zap.Int("duplicates", len(duplicates)))
-	for _, command := range duplicates {
-		if err := c.discord.ApplicationCommandDelete(c.discord.State.User.ID, guild.ID, command.ID); err != nil {
-			return fmt.Errorf("cannot delete '%v' duplicate command for guild '%s'. %w", command.Name, guild.ID, err)
+	// Remove guild registered commands
+	c.logger.Debug("removing guild registered commands", zap.Any("commands", cmds))
+	for _, command := range cmds {
+		if err := c.discord.ApplicationCommandDelete(c.discord.State.User.ID, guildID, command.ID); err != nil {
+			return fmt.Errorf("cannot delete '%v' duplicate command for guild '%s'. %w", command.Name, guildID, err)
 		}
 	}
 
