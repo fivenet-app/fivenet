@@ -52,7 +52,7 @@ require (
 	golang.org/x/crypto v0.19.0
 	golang.org/x/exp v0.0.0-20240213143201-ec583247a57a
 	golang.org/x/oauth2 v0.17.0
-	google.golang.org/grpc v1.61.0
+	google.golang.org/grpc v1.61.1
 	google.golang.org/protobuf v1.32.0
 	gotest.tools v2.2.0+incompatible
 	gotest.tools/v3 v3.5.1
