@@ -5,7 +5,7 @@ import "github.com/bwmarrin/discordgo"
 func init() {
 	Commands = append(Commands, &discordgo.ApplicationCommand{
 		Name:        "fivenet",
-		Description: "FiveNet URL",
+		Description: "FiveNet Website URL",
 	})
 	CommandHandlers["fivenet"] = HandleFivenetCommand
 }

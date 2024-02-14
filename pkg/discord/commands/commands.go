@@ -43,11 +43,12 @@ func (c *Cmds) Register(guild *discordgo.Guild) error {
 		if slices.ContainsFunc(cmds, func(cmd *discordgo.ApplicationCommand) bool {
 			return cmd.Name == command.Name
 		}) {
+			c.logger.Debug(fmt.Sprintf("command '%v' already registered", command.Name), zap.String("discord_guild_id", guild.ID))
 			continue
 		}
 
 		if _, err := c.discord.ApplicationCommandCreate(c.discord.State.User.ID, guild.ID, command); err != nil {
-			return fmt.Errorf("cannot create '%v' command for guild '%s': %v", command.Name, guild.ID, err)
+			return fmt.Errorf("cannot create '%v' command for guild '%s'. %w", command.Name, guild.ID, err)
 		}
 	}
 
@@ -69,7 +70,7 @@ func (c *Cmds) removeDuplicateDispatches(guild *discordgo.Guild) error {
 	c.logger.Info("removing duplicate commands", zap.Int("duplicates", len(duplicates)))
 	for _, command := range duplicates {
 		if err := c.discord.ApplicationCommandDelete(c.discord.State.User.ID, guild.ID, command.ID); err != nil {
-			return fmt.Errorf("cannot delete '%v' duplicate command for guild '%s': %v", command.Name, guild.ID, err)
+			return fmt.Errorf("cannot delete '%v' duplicate command for guild '%s'. %w", command.Name, guild.ID, err)
 		}
 	}
 
@@ -82,10 +83,8 @@ func GetDuplicateCommands(in []*discordgo.ApplicationCommand) []*discordgo.Appli
 
 	for _, item := range in {
 		if _, value := allKeys[item.Name]; !value {
-			allKeys[item.Name] = false
-		} else if !allKeys[item.Name] {
 			allKeys[item.Name] = true
-
+		} else {
 			list = append(list, item)
 		}
 	}
