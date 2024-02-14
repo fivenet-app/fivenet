@@ -5,6 +5,7 @@ import (
 	"database/sql"
 	"fmt"
 	"slices"
+	"sync"
 	"sync/atomic"
 	"time"
 
@@ -21,6 +22,7 @@ import (
 	tracesdk "go.opentelemetry.io/otel/sdk/trace"
 	"go.opentelemetry.io/otel/trace"
 	"go.uber.org/fx"
+	"go.uber.org/multierr"
 	"go.uber.org/zap"
 )
 
@@ -117,11 +119,6 @@ func NewBot(p BotParams) (*Bot, error) {
 		}
 
 		go func() {
-			if err := b.setupSync(); err != nil {
-				b.logger.Error("failed to set up sync for guilds")
-				return
-			}
-
 			b.Sync()
 		}()
 
@@ -237,12 +234,12 @@ func (b *Bot) Sync() error {
 			return nil
 
 		case <-time.After(b.syncInterval):
-			b.logger.Info("running Discord Sync")
+			b.logger.Info("running discord sync")
 			func() {
 				ctx, span := b.tracer.Start(b.ctx, "discord_bot")
 				defer span.End()
 				if err := b.runSync(ctx); err != nil {
-					b.logger.Error("failed to sync roles", zap.Error(err))
+					b.logger.Error("failed to sync discord", zap.Error(err))
 				}
 			}()
 		}
@@ -329,47 +326,40 @@ func (b *Bot) getGuildsFromDB() (map[string]string, error) {
 	return guilds, nil
 }
 
-func (b *Bot) setupSync() error {
-	if err := b.getGuilds(); err != nil {
-		return err
-	}
-
-	var e error
-	b.activeGuilds.Range(func(key string, guild *Guild) bool {
-		if err := guild.Setup(); err != nil {
-			e = err
-			return false
-		}
-
-		return true
-	})
-
-	return e
-}
-
 func (b *Bot) runSync(ctx context.Context) error {
 	if err := b.getGuilds(); err != nil {
 		return err
 	}
 
+	wg := sync.WaitGroup{}
+	errs := multierr.Combine()
+
+	// TODO make sure to not run to many syncs at the same time
 	b.activeGuilds.Range(func(_ string, guild *Guild) bool {
-		logger := b.logger.With(zap.String("job", guild.Job), zap.String("discord_guild_id", guild.ID))
+		wg.Add(1)
+		go func() {
+			defer wg.Done()
+			logger := b.logger.With(zap.String("job", guild.Job), zap.String("discord_guild_id", guild.ID))
 
-		if err := guild.Run(); err != nil {
-			logger.Error("error during sync", zap.Error(err))
-			lastSync.WithLabelValues(guild.Job, "failed").SetToCurrentTime()
-		} else {
-			lastSync.WithLabelValues(guild.Job, "success").SetToCurrentTime()
-		}
+			if err := guild.Run(); err != nil {
+				logger.Error("error during sync", zap.Error(err))
+				errs = multierr.Append(errs, err)
 
-		if err := b.setLastSyncTime(ctx, guild.Job); err != nil {
-			logger.Error("error setting job props last sync time", zap.Error(err))
-		}
+				lastSync.WithLabelValues(guild.Job, "failed").SetToCurrentTime()
+			} else {
+				lastSync.WithLabelValues(guild.Job, "success").SetToCurrentTime()
+			}
+
+			if err := b.setLastSyncTime(ctx, guild.Job); err != nil {
+				logger.Error("error setting job props last sync time", zap.Error(err))
+				errs = multierr.Append(errs, err)
+			}
+		}()
 
 		return true
 	})
 
-	return nil
+	return errs
 }
 
 func (b *Bot) stop() error {
