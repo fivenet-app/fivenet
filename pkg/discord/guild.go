@@ -111,5 +111,6 @@ func (g *Guild) Run() error {
 
 func (g *Guild) Stop() error {
 	g.ready.Store(false)
+
 	return nil
 }

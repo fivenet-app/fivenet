@@ -74,6 +74,8 @@ type Bot struct {
 
 	cmds *commands.Cmds
 
+	wg sync.WaitGroup
+
 	id           string
 	discord      *discordgo.Session
 	activeGuilds *xsync.MapOf[string, *Guild]
@@ -105,12 +107,14 @@ func NewBot(p BotParams) (*Bot, error) {
 		enricher: p.Enricher,
 		cfg:      &p.Config.Discord.Bot,
 
+		syncInterval: p.Config.Discord.Bot.SyncInterval,
+
 		cmds: cmds,
+
+		wg: sync.WaitGroup{},
 
 		discord:      discord,
 		activeGuilds: xsync.NewMapOf[string, *Guild](),
-
-		syncInterval: p.Config.Discord.Bot.SyncInterval,
 	}
 
 	p.LC.Append(fx.StartHook(func(ctx context.Context) error {
@@ -247,12 +251,12 @@ func (b *Bot) Sync() error {
 }
 
 // getGuilds Each guild is effectively associated with a Job via the JobProps
-func (b *Bot) getGuilds() error {
+func (b *Bot) getGuilds(ctx context.Context) error {
 	if err := b.refreshBotGuilds(); err != nil {
 		return err
 	}
 
-	guildsDB, err := b.getGuildsFromDB()
+	guildsDB, err := b.getJobGuildsFromDB(ctx)
 	if err != nil {
 		return err
 	}
@@ -302,7 +306,7 @@ func (b *Bot) getGuilds() error {
 	return nil
 }
 
-func (b *Bot) getGuildsFromDB() (map[string]string, error) {
+func (b *Bot) getJobGuildsFromDB(ctx context.Context) (map[string]string, error) {
 	stmt := tJobProps.
 		SELECT(
 			tJobProps.Job.AS("guild.job"),
@@ -314,7 +318,7 @@ func (b *Bot) getGuildsFromDB() (map[string]string, error) {
 		)
 
 	var dest []*Guild
-	if err := stmt.QueryContext(b.ctx, b.db, &dest); err != nil {
+	if err := stmt.QueryContext(ctx, b.db, &dest); err != nil {
 		return nil, err
 	}
 
@@ -327,18 +331,17 @@ func (b *Bot) getGuildsFromDB() (map[string]string, error) {
 }
 
 func (b *Bot) runSync(ctx context.Context) error {
-	if err := b.getGuilds(); err != nil {
+	if err := b.getGuilds(ctx); err != nil {
 		return err
 	}
 
-	wg := sync.WaitGroup{}
 	errs := multierr.Combine()
 
 	// TODO make sure to not run to many syncs at the same time
 	b.activeGuilds.Range(func(_ string, guild *Guild) bool {
-		wg.Add(1)
+		b.wg.Add(1)
 		go func() {
-			defer wg.Done()
+			defer b.wg.Done()
 			logger := b.logger.With(zap.String("job", guild.Job), zap.String("discord_guild_id", guild.ID))
 
 			if err := guild.Run(); err != nil {
@@ -358,6 +361,8 @@ func (b *Bot) runSync(ctx context.Context) error {
 
 		return true
 	})
+
+	b.wg.Done()
 
 	return errs
 }
