@@ -35,14 +35,13 @@ func (s *Server) checkIfHasAccessToMarker(levels []string, marker *livemap.Marke
 		return true
 	}
 
-	if marker.Creator == nil {
-		return true
+	if marker.Info.Job != userInfo.Job {
+		return false
 	}
 
 	creator := marker.Creator
-
-	if creator.Job != userInfo.Job {
-		return false
+	if creator == nil {
+		return true
 	}
 
 	if len(levels) == 0 {
