@@ -94,6 +94,7 @@ type HTTP struct {
 	AdminListen string   `default:":7070" yaml:"adminListen"`
 	Sessions    Sessions `yaml:"sessions"`
 	Links       Links    `yaml:"links"`
+	PublicURL   string   `yaml:"publicURL"`
 }
 
 type Sessions struct {

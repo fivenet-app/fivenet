@@ -5,12 +5,18 @@ import (
 	"slices"
 
 	"github.com/bwmarrin/discordgo"
+	"github.com/galexrt/fivenet/pkg/config"
 	"go.uber.org/zap"
 )
 
+type CommandHandler = func(s *discordgo.Session, i *discordgo.InteractionCreate)
+
+type CommandFactory = func(cfg *config.Config) (*discordgo.ApplicationCommand, CommandHandler, error)
+
 var (
-	Commands        = []*discordgo.ApplicationCommand{}
-	CommandHandlers = map[string]func(s *discordgo.Session, i *discordgo.InteractionCreate){}
+	CommandsFactories = map[string]CommandFactory{}
+	Commands          = map[string]*discordgo.ApplicationCommand{}
+	CommandHandlers   = map[string]CommandHandler{}
 )
 
 type Cmds struct {
@@ -19,17 +25,29 @@ type Cmds struct {
 	discord *discordgo.Session
 }
 
-func New(logger *zap.Logger, s *discordgo.Session) *Cmds {
+func New(logger *zap.Logger, s *discordgo.Session, cfg *config.Config) (*Cmds, error) {
 	s.AddHandler(func(s *discordgo.Session, i *discordgo.InteractionCreate) {
 		if h, ok := CommandHandlers[i.ApplicationCommandData().Name]; ok {
 			h(s, i)
 		}
 	})
 
-	return &Cmds{
+	c := &Cmds{
 		logger:  logger,
 		discord: s,
 	}
+
+	for _, factory := range CommandsFactories {
+		command, handler, err := factory(cfg)
+		if err != nil {
+			return nil, err
+		}
+
+		Commands[command.Name] = command
+		CommandHandlers[command.Name] = handler
+	}
+
+	return c, nil
 }
 
 func (c *Cmds) Register(guild *discordgo.Guild) error {

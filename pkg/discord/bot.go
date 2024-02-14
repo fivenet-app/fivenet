@@ -85,11 +85,14 @@ func NewBot(p BotParams) (*Bot, error) {
 	// Create a new Discord session using the provided login information.
 	discord, err := discordgo.New("Bot " + p.Config.Discord.Bot.Token)
 	if err != nil {
-		return nil, fmt.Errorf("error creating Discord session: %w", err)
+		return nil, fmt.Errorf("error creating discord session. %w", err)
 	}
 	discord.Identify.Intents = discordgo.IntentsAllWithoutPrivileged | discordgo.IntentsGuilds | discordgo.IntentsGuildMembers | discordgo.IntentsGuildPresences
 
-	cmds := commands.New(p.Logger, discord)
+	cmds, err := commands.New(p.Logger, discord, p.Config)
+	if err != nil {
+		return nil, fmt.Errorf("error creating commands for discord bot. %w", err)
+	}
 
 	ctx, cancel := context.WithCancel(context.Background())
 	b := &Bot{
