@@ -25,7 +25,7 @@ const open = ref(false);
         <div
             class="flex w-12 flex-shrink-0 items-center justify-center rounded-l-md border-b border-l border-t text-sm font-medium"
             :class="isBright ? 'text-black' : 'text-neutral'"
-            :style="'background-color: #' + unit.color"
+            :style="'background-color: ' + unit.color"
         >
             {{ unit.initials }}
         </div>
