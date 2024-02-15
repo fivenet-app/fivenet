@@ -243,6 +243,7 @@ watch(selectedAccessRole, () => {
                 name="required"
                 data-te-toggle="tooltip"
                 class="h-8 w-8 rounded-md border-0 bg-base-700 text-primary-600 transition-colors hover:bg-base-600 hover:text-primary-500 focus:ring-2 focus:ring-inset focus:ring-base-300"
+                :class="readOnly ? 'disabled' : ''"
             />
         </div>
         <div class="mr-2 w-60 flex-initial">
@@ -259,6 +260,7 @@ watch(selectedAccessRole, () => {
                 <div class="relative">
                     <ListboxButton
                         class="block w-full rounded-md border-0 bg-base-700 py-1.5 pl-3 text-left text-neutral placeholder:text-accent-200 focus:ring-2 focus:ring-inset focus:ring-base-300 sm:text-sm sm:leading-6"
+                        :class="readOnly ? 'disabled' : ''"
                     >
                         <span class="block truncate">{{ selectedAccessType?.name }}</span>
                         <span class="pointer-events-none absolute inset-y-0 right-0 flex items-center pr-2">
@@ -316,6 +318,7 @@ watch(selectedAccessRole, () => {
                                 autocomplete="off"
                                 class="block w-full rounded-md border-0 bg-base-700 py-1.5 text-neutral placeholder:text-accent-200 focus:ring-2 focus:ring-inset focus:ring-base-300 sm:text-sm sm:leading-6"
                                 :display-value="(char: any) => `${char?.firstname} ${char?.lastname} (${char?.dateofbirth})`"
+                                :class="readOnly ? 'disabled' : ''"
                                 @change="queryCharRaw = $event.target.value"
                                 @focusin="focusTablet(true)"
                                 @focusout="focusTablet(false)"
@@ -368,6 +371,7 @@ watch(selectedAccessRole, () => {
                                 autocomplete="off"
                                 class="block w-full rounded-md border-0 bg-base-700 py-1.5 text-neutral placeholder:text-accent-200 focus:ring-2 focus:ring-inset focus:ring-base-300 sm:text-sm sm:leading-6"
                                 :display-value="(job: any) => job?.label"
+                                :class="readOnly ? 'disabled' : ''"
                                 @change="queryJobRaw = $event.target.value"
                                 @focusin="focusTablet(true)"
                                 @focusout="focusTablet(false)"
@@ -416,6 +420,7 @@ watch(selectedAccessRole, () => {
                             <ComboboxInput
                                 autocomplete="off"
                                 class="block w-full rounded-md border-0 bg-base-700 py-1.5 text-neutral placeholder:text-accent-200 focus:ring-2 focus:ring-inset focus:ring-base-300 sm:text-sm sm:leading-6"
+                                :class="readOnly ? 'disabled' : ''"
                                 :display-value="(rank: any) => rank?.label"
                                 @change="queryMinimumRankRaw = $event.target.value"
                                 @focusin="focusTablet(true)"
@@ -467,6 +472,7 @@ watch(selectedAccessRole, () => {
                         <ComboboxInput
                             autocomplete="off"
                             class="block w-full rounded-md border-0 bg-base-700 py-1.5 text-neutral placeholder:text-accent-200 focus:ring-2 focus:ring-inset focus:ring-base-300 sm:text-sm sm:leading-6"
+                            :class="readOnly ? 'disabled' : ''"
                             :display-value="(role: any) => role.label"
                             @change="queryAccessRole = $event.target.value"
                             @focusin="focusTablet(true)"

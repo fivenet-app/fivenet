@@ -170,7 +170,7 @@ onConfirm(async (id) => deleteTemplate(id));
 
     <TemplatePreviewModal v-if="openPreview" :id="templateId" :open="openPreview" @close="openPreview = false" />
 
-    <div class="py-2">
+    <div class="m-2">
         <DataPendingBlock v-if="pending" :message="$t('common.loading', [$t('common.template', 2)])" />
         <DataErrorBlock v-else-if="error" :title="$t('common.unable_to_load', [$t('common.template', 2)])" :retry="refresh" />
         <div v-else-if="template" class="px-1 sm:px-2 lg:px-4">
@@ -333,6 +333,7 @@ onConfirm(async (id) => deleteTemplate(id));
                                 :init="entry"
                                 :access-types="contentAccessTypes"
                                 :read-only="true"
+                                :show-required="true"
                             />
                         </div>
                     </div>

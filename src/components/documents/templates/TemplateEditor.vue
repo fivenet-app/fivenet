@@ -210,6 +210,7 @@ function addContentDocumentAccessEntry(): void {
         id: id.toString(),
         type: 1,
         values: {},
+        required: false,
     });
 }
 
@@ -235,7 +236,6 @@ function updateContentDocumentAccessEntryName(event: { id: string; job?: Job }):
 
     if (event.job) {
         accessEntry.values.job = event.job.name;
-
         contentAccess.value.set(event.id, accessEntry);
     }
 }
@@ -326,6 +326,7 @@ async function createOrUpdateTemplate(values: FormData, templateId?: string): Pr
                 documentId: '0',
                 userId: entry.values.char,
                 access: entry.values.accessRole,
+                required: entry.required,
             });
         } else if (entry.type === 1) {
             if (!entry.values.job) {
@@ -338,6 +339,7 @@ async function createOrUpdateTemplate(values: FormData, templateId?: string): Pr
                 job: entry.values.job!,
                 minimumGrade: entry.values.minimumGrade ? entry.values.minimumGrade : 0,
                 access: entry.values.accessRole,
+                required: entry.required,
             });
         }
     });
@@ -515,7 +517,7 @@ onMounted(async () => {
 </script>
 
 <template>
-    <div class="text-neutral">
+    <div class="m-2 text-neutral">
         <form @submit.prevent="onSubmitThrottle">
             <div>
                 <label for="content" class="block text-sm font-medium leading-6 text-gray-100">
