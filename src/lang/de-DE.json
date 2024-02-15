@@ -1467,6 +1467,10 @@
             "ListColleagues": {
                 "key": "Kollegen anzeigen",
                 "description": "Liste der Kollegen (vom eigenen Beruf) sehen können."
+            },
+            "SetMOTD": {
+                "key": "Beruf's MOTD aktualisieren",
+                "description": "Die Beruf's MOTD der Übersicht aktualisieren können."
             }
         },
         "JobsConductService": {
@@ -1623,6 +1627,10 @@
             "ErrDocReqAlreadyCompleted": {
                 "title": "Dokumenten Anfrage bereits angenommen/abgelehnt!",
                 "content": "Die zu aktualisierende Dokumenten Anfrage wurde bereits angenommen/abgelehnt."
+            },
+            "ErrDocRequiredAccessTemplate": {
+                "title": "Erforderlicher Dokumenten-Zugriff verändert/entfernt!",
+                "content": "Stellen sie sicher, dass sie keine erforderlichen Dokumenten-Zugriffe verändert oder entfernt haben."
             }
         },
         "LivemapperService": {
