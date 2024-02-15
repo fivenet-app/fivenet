@@ -90,14 +90,14 @@ const open = ref(false);
             </div>
             <div class="flex flex-row gap-2 truncate text-base-300">
                 <div v-if="request.beginsAt" class="flex flex-1 flex-row items-center justify-start">
-                    <ClockStartIcon class="mr-1.5 h-5 w-5 flex-shrink-0 text-base-400" aria-hidden="true" />
+                    <ClockStartIcon class="mr-1.5 h-5 w-5 flex-shrink-0 text-base-300" aria-hidden="true" />
                     <p>
                         {{ $t('common.begins_at') }}
                         <GenericTime :value="request.beginsAt" />
                     </p>
                 </div>
                 <div v-if="request.endsAt" class="flex flex-1 flex-row items-center justify-end">
-                    <ClockEndIcon class="mr-1.5 h-5 w-5 flex-shrink-0 text-base-400" aria-hidden="true" />
+                    <ClockEndIcon class="mr-1.5 h-5 w-5 flex-shrink-0 text-base-300" aria-hidden="true" />
                     <p>
                         {{ $t('common.ends_at') }}
                         <GenericTime :value="request.endsAt" />
@@ -110,11 +110,11 @@ const open = ref(false);
                     type="button"
                     class="flex flex-1 flex-row items-center justify-center font-bold text-base-100"
                 >
-                    <TrashCanIcon class="mr-1.5 h-5 w-5 flex-shrink-0 text-base-400" aria-hidden="true" />
+                    <TrashCanIcon class="mr-1.5 h-5 w-5 flex-shrink-0 text-base-300" aria-hidden="true" />
                     {{ $t('common.deleted') }}
                 </div>
                 <div v-if="request.updatedAt" class="flex flex-1 flex-row items-center justify-end">
-                    <UpdateIcon class="mr-1.5 h-5 w-5 flex-shrink-0 text-base-400" aria-hidden="true" />
+                    <UpdateIcon class="mr-1.5 h-5 w-5 flex-shrink-0 text-base-300" aria-hidden="true" />
                     <p>
                         {{ $t('common.updated') }}
                         <GenericTime :value="request.updatedAt" :ago="true" />
@@ -125,18 +125,18 @@ const open = ref(false);
                 <div class="flex flex-1 flex-row items-center justify-start gap-2">
                     <CitizenInfoPopover :user="request.creator">
                         <template #before>
-                            <AccountIcon class="mr-1.5 h-5 w-5 flex-shrink-0 text-base-400" aria-hidden="true" />
+                            <AccountIcon class="mr-1.5 h-5 w-5 flex-shrink-0 text-base-300" aria-hidden="true" />
                         </template>
                     </CitizenInfoPopover>
 
                     <CitizenInfoPopover v-if="request.approverUser" :user="request.approverUser">
                         <template #before>
-                            <AsteriskIcon class="mr-1.5 h-5 w-5 flex-shrink-0 text-base-400" aria-hidden="true" />
+                            <AsteriskIcon class="mr-1.5 h-5 w-5 flex-shrink-0 text-base-300" aria-hidden="true" />
                         </template>
                     </CitizenInfoPopover>
                 </div>
                 <div class="flex flex-1 flex-row items-center justify-end">
-                    <CalendarIcon class="mr-1.5 h-5 w-5 flex-shrink-0 text-base-400" aria-hidden="true" />
+                    <CalendarIcon class="mr-1.5 h-5 w-5 flex-shrink-0 text-base-300" aria-hidden="true" />
                     <p>
                         {{ $t('common.created_at') }}
                         <GenericTime :value="request.createdAt" />

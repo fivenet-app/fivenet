@@ -118,7 +118,7 @@ const onSubmitThrottle = useThrottleFn(async (e) => {
                         <GenericTime class="ml-2 text-sm" :value="comment.createdAt" />
                     </div>
                     <div v-if="comment.deletedAt" class="flex flex-1 flex-row items-center justify-center text-base-100">
-                        <TrashCanIcon type="button" class="mr-1.5 h-5 w-5 flex-shrink-0 text-base-400" aria-hidden="true" />
+                        <TrashCanIcon type="button" class="mr-1.5 h-5 w-5 flex-shrink-0" aria-hidden="true" />
                         {{ $t('common.deleted') }}
                     </div>
                     <div v-if="comment.creatorId === activeChar?.userId || permissions.includes('superuser')">

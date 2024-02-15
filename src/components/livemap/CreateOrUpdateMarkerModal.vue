@@ -217,7 +217,7 @@ const onSubmitThrottle = useThrottleFn(async (e) => {
                                                                 </label>
                                                             </dt>
                                                             <dd
-                                                                class="mt-1 text-sm leading-6 text-gray-400 sm:col-span-2 sm:mt-0"
+                                                                class="mt-1 text-sm leading-6 text-gray-300 sm:col-span-2 sm:mt-0"
                                                             >
                                                                 <VeeField
                                                                     type="text"
@@ -245,7 +245,7 @@ const onSubmitThrottle = useThrottleFn(async (e) => {
                                                                 </label>
                                                             </dt>
                                                             <dd
-                                                                class="mt-1 text-sm leading-6 text-gray-400 sm:col-span-2 sm:mt-0"
+                                                                class="mt-1 text-sm leading-6 text-gray-300 sm:col-span-2 sm:mt-0"
                                                             >
                                                                 <VeeField
                                                                     type="text"
@@ -273,7 +273,7 @@ const onSubmitThrottle = useThrottleFn(async (e) => {
                                                                 </label>
                                                             </dt>
                                                             <dd
-                                                                class="mt-1 text-sm leading-6 text-gray-400 sm:col-span-2 sm:mt-0"
+                                                                class="mt-1 text-sm leading-6 text-gray-300 sm:col-span-2 sm:mt-0"
                                                             >
                                                                 <VeeField
                                                                     type="datetime-local"
@@ -302,7 +302,7 @@ const onSubmitThrottle = useThrottleFn(async (e) => {
                                                                 </label>
                                                             </dt>
                                                             <dd
-                                                                class="mt-1 text-sm leading-6 text-gray-400 sm:col-span-2 sm:mt-0"
+                                                                class="mt-1 text-sm leading-6 text-gray-300 sm:col-span-2 sm:mt-0"
                                                             >
                                                                 <ColorInput
                                                                     v-model="color"
@@ -322,7 +322,7 @@ const onSubmitThrottle = useThrottleFn(async (e) => {
                                                                 </label>
                                                             </dt>
                                                             <dd
-                                                                class="mt-1 text-sm leading-6 text-gray-400 sm:col-span-2 sm:mt-0"
+                                                                class="mt-1 text-sm leading-6 text-gray-300 sm:col-span-2 sm:mt-0"
                                                             >
                                                                 <VeeField
                                                                     v-slot="{ field }"
@@ -375,7 +375,7 @@ const onSubmitThrottle = useThrottleFn(async (e) => {
                                                                 </label>
                                                             </dt>
                                                             <dd
-                                                                class="mt-1 text-sm leading-6 text-gray-400 sm:col-span-2 sm:mt-0"
+                                                                class="mt-1 text-sm leading-6 text-gray-300 sm:col-span-2 sm:mt-0"
                                                             >
                                                                 <VeeField
                                                                     type="number"
@@ -406,7 +406,7 @@ const onSubmitThrottle = useThrottleFn(async (e) => {
                                                                 </label>
                                                             </dt>
                                                             <dd
-                                                                class="mt-1 text-sm leading-6 text-gray-400 sm:col-span-2 sm:mt-0"
+                                                                class="mt-1 text-sm leading-6 text-gray-300 sm:col-span-2 sm:mt-0"
                                                             >
                                                                 <VeeField
                                                                     as="div"

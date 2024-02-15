@@ -74,11 +74,11 @@ defineProps<{
                         </span>
                     </h2>
                     <div v-if="doc.deletedAt" type="button" class="flex flex-1 flex-row items-center justify-center font-bold">
-                        <TrashCanIcon class="mr-1.5 h-5 w-5 flex-shrink-0 text-base-400" aria-hidden="true" />
+                        <TrashCanIcon class="mr-1.5 h-5 w-5 flex-shrink-0 text-base-300" aria-hidden="true" />
                         {{ $t('common.deleted') }}
                     </div>
                     <div v-if="doc.updatedAt" class="flex flex-1 flex-row items-center justify-end">
-                        <UpdateIcon class="mr-1.5 h-5 w-5 flex-shrink-0 text-base-400" aria-hidden="true" />
+                        <UpdateIcon class="mr-1.5 h-5 w-5 flex-shrink-0 text-base-300" aria-hidden="true" />
                         <p>
                             {{ $t('common.updated') }}
                             <GenericTime :value="doc.updatedAt" :ago="true" />
@@ -90,16 +90,16 @@ defineProps<{
                     <div class="flex flex-1 flex-row items-center justify-start">
                         <CitizenInfoPopover :user="doc.creator">
                             <template #before>
-                                <AccountIcon class="mr-1.5 h-5 w-5 flex-shrink-0 text-base-400" aria-hidden="true" />
+                                <AccountIcon class="mr-1.5 h-5 w-5 flex-shrink-0 text-base-300" aria-hidden="true" />
                             </template>
                         </CitizenInfoPopover>
                     </div>
                     <div class="flex flex-1 flex-row items-center justify-center">
-                        <BriefcaseIcon class="mr-1.5 h-5 w-5 flex-shrink-0 text-base-400" aria-hidden="true" />
+                        <BriefcaseIcon class="mr-1.5 h-5 w-5 flex-shrink-0 text-base-300" aria-hidden="true" />
                         {{ doc.creator?.jobLabel }}
                     </div>
                     <div class="flex flex-1 flex-row items-center justify-end">
-                        <CalendarIcon class="mr-1.5 h-5 w-5 flex-shrink-0 text-base-400" aria-hidden="true" />
+                        <CalendarIcon class="mr-1.5 h-5 w-5 flex-shrink-0 text-base-300" aria-hidden="true" />
                         <p>
                             {{ $t('common.created_at') }}
                             <GenericTime :value="doc.createdAt" />

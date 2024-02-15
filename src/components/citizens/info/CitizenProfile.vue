@@ -241,7 +241,7 @@ const trafficPointsModal = ref(false);
                                                             >
                                                                 <div class="flex flex-1 items-center">
                                                                     <LicenseIcon
-                                                                        class="h-5 w-5 flex-shrink-0 text-base-400"
+                                                                        class="h-5 w-5 flex-shrink-0"
                                                                         aria-hidden="true"
                                                                     />
                                                                     <span

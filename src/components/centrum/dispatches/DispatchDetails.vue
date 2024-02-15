@@ -237,7 +237,7 @@ const openStatus = ref(false);
                                                                                 >
                                                                                     <template #before>
                                                                                         <AccountGroupIcon
-                                                                                            class="mr-1 h-5 w-5 flex-shrink-0 text-base-400"
+                                                                                            class="mr-1 h-5 w-5 flex-shrink-0"
                                                                                             aria-hidden="true"
                                                                                         />
                                                                                     </template>

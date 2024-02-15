@@ -501,7 +501,7 @@ watch(router.currentRoute, () => updateActiveItem());
                                         <li v-if="key !== 0 && item.to !== undefined">
                                             <div class="flex items-center">
                                                 <ChevronRightIcon
-                                                    class="h-5 w-5 flex-shrink-0 text-base-400"
+                                                    class="h-5 w-5 flex-shrink-0 text-base-300"
                                                     aria-hidden="true"
                                                 />
                                                 <!-- @vue-ignore the route should be valid, as we construct it based on our pages -->
@@ -510,7 +510,7 @@ watch(router.currentRoute, () => updateActiveItem());
                                                     :class="[
                                                         key === breadcrumbs.length - 1
                                                             ? 'font-bold text-accent-200'
-                                                            : 'font-medium text-base-400',
+                                                            : 'font-medium text-base-300',
                                                         'ml-2 max-w-[5rem] truncate text-sm hover:text-neutral hover:transition-colors sm:ml-4 lg:max-w-full',
                                                     ]"
                                                     :aria-current="key === breadcrumbs.length - 1 ? 'page' : undefined"

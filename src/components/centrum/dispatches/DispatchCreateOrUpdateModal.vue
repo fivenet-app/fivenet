@@ -139,7 +139,7 @@ const onSubmitThrottle = useThrottleFn(async (e) => {
                                                                 </label>
                                                             </dt>
                                                             <dd
-                                                                class="mt-1 text-sm leading-6 text-gray-400 sm:col-span-2 sm:mt-0"
+                                                                class="mt-1 text-sm leading-6 text-gray-300 sm:col-span-2 sm:mt-0"
                                                             >
                                                                 <VeeField
                                                                     type="text"
@@ -167,7 +167,7 @@ const onSubmitThrottle = useThrottleFn(async (e) => {
                                                                 </label>
                                                             </dt>
                                                             <dd
-                                                                class="mt-1 text-sm leading-6 text-gray-400 sm:col-span-2 sm:mt-0"
+                                                                class="mt-1 text-sm leading-6 text-gray-300 sm:col-span-2 sm:mt-0"
                                                             >
                                                                 <VeeField
                                                                     type="text"
@@ -195,7 +195,7 @@ const onSubmitThrottle = useThrottleFn(async (e) => {
                                                                 </label>
                                                             </dt>
                                                             <dd
-                                                                class="mt-1 text-sm leading-6 text-gray-400 sm:col-span-2 sm:mt-0"
+                                                                class="mt-1 text-sm leading-6 text-gray-300 sm:col-span-2 sm:mt-0"
                                                             >
                                                                 <div class="flex h-6 items-center">
                                                                     <VeeField

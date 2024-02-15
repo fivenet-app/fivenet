@@ -247,6 +247,11 @@ func (s *Manager) UpdateDispatchAssignments(ctx context.Context, job string, use
 
 	key := state.JobIdKey(job, dspId)
 	if err := store.ComputeUpdate(key, true, func(key string, dsp *centrum.Dispatch) (*centrum.Dispatch, error) {
+		if dsp == nil {
+			s.logger.Error("nil dispatch in computing dispatch assignment logic", zap.String("key", key), zap.Any("dsp", dsp))
+			return dsp, nil
+		}
+
 		if len(toRemove) > 0 {
 			toAnnounce := []uint64{}
 			for i := len(dsp.Units) - 1; i >= 0; i-- {

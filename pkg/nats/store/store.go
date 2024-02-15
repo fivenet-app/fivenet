@@ -185,11 +185,11 @@ func (s *Store[T, U]) update(entry nats.KeyValueEntry) (U, error) {
 	}
 
 	item := s.updateFromType(entry.Key(), data)
-	if s.OnUpdate == nil {
-		return item, nil
+	if s.OnUpdate != nil {
+		return s.OnUpdate(item)
 	}
 
-	return s.OnUpdate(item)
+	return item, nil
 }
 
 func (s *Store[T, U]) updateFromType(key string, updated U) U {

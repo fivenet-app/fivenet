@@ -60,12 +60,14 @@ const open = ref(false);
                 />
                 <IDCopyBadge :id="dispatch.id" class="ml-2" prefix="DSP" :action="() => (open = true)" />
             </div>
-            <div v-if="expiresAt" class="mt-1 text-sm text-neutral">
-                {{ $t('common.expires_in') }}:
-                {{ useLocaleTimeAgo(toDate(expiresAt, timeCorrection), { showSecond: true, updateInterval: 1_000 }).value }}
+            <div v-if="expiresAt" class="mt-1 flex flex-col text-sm text-neutral">
+                <span class="font-semibold">{{ $t('common.expires_in') }}:</span>
+                <span>{{
+                    useLocaleTimeAgo(toDate(expiresAt, timeCorrection), { showSecond: true, updateInterval: 1_000 }).value
+                }}</span>
             </div>
         </dt>
-        <dd class="mt-1 text-sm leading-6 text-gray-400 sm:col-span-2 sm:mt-0">
+        <dd class="mt-1 text-sm leading-6 text-gray-300 sm:col-span-2 sm:mt-0">
             <ul role="list" class="divide-y divide-base-200 rounded-md border border-base-200">
                 <li class="flex items-center py-3 pl-3 pr-4 text-sm">
                     <span class="font-medium">{{ $t('common.sent_by') }}:</span>
@@ -113,7 +115,7 @@ const open = ref(false);
                 </li>
                 <li class="flex items-center justify-between py-3 pl-3 pr-4 text-sm">
                     <div class="flex flex-1 items-center">
-                        <AccountIcon class="mr-1 h-5 w-5 flex-shrink-0 text-base-400" aria-hidden="true" />
+                        <AccountIcon class="mr-1 h-5 w-5 flex-shrink-0" aria-hidden="true" />
                         <span class="mr-1 font-medium">{{ $t('common.units', 2) }}:</span>
                         <span v-if="dispatch.units.length === 0">{{ $t('common.member', 0) }}</span>
                         <span v-else class="ml-2 grid flex-1 grid-cols-2 gap-1 truncate">
