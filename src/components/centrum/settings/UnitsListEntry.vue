@@ -31,7 +31,7 @@ async function deleteUnit(id: string): Promise<void> {
     }
 }
 
-const color = ref(`#${props.unit.color ?? 'ffffff'}`);
+const color = ref(props.unit.color ?? '#ffffff');
 
 const { isRevealed, reveal, confirm, cancel, onConfirm } = useConfirmDialog();
 

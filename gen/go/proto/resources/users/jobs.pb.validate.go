@@ -369,10 +369,10 @@ func (m *JobProps) validate(all bool) error {
 		errors = append(errors, err)
 	}
 
-	if utf8.RuneCountInString(m.GetLivemapMarkerColor()) != 6 {
+	if utf8.RuneCountInString(m.GetLivemapMarkerColor()) != 7 {
 		err := JobPropsValidationError{
 			field:  "LivemapMarkerColor",
-			reason: "value length must be 6 runes",
+			reason: "value length must be 7 runes",
 		}
 		if !all {
 			return err
@@ -384,7 +384,7 @@ func (m *JobProps) validate(all bool) error {
 	if !_JobProps_LivemapMarkerColor_Pattern.MatchString(m.GetLivemapMarkerColor()) {
 		err := JobPropsValidationError{
 			field:  "LivemapMarkerColor",
-			reason: "value does not match regex pattern \"^[A-Fa-f0-9]{6}$\"",
+			reason: "value does not match regex pattern \"^#[A-Fa-f0-9]{6}$\"",
 		}
 		if !all {
 			return err
@@ -594,7 +594,7 @@ var _ interface {
 	ErrorName() string
 } = JobPropsValidationError{}
 
-var _JobProps_LivemapMarkerColor_Pattern = regexp.MustCompile("^[A-Fa-f0-9]{6}$")
+var _JobProps_LivemapMarkerColor_Pattern = regexp.MustCompile("^#[A-Fa-f0-9]{6}$")
 
 // Validate checks the field values on QuickButtons with the rules defined in
 // the proto definition for this message. If any rules are violated, the first

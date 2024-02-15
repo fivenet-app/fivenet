@@ -31,8 +31,8 @@ message MarkerInfo {
   // @sanitize
   optional string postal = 9  [(validate.rules).string.max_len = 48];
   optional string color = 10  [(validate.rules).string = {
-    len: 6,
-    pattern: "^[A-Fa-f0-9]{6}$",
+    len: 7,
+    pattern: "^#[A-Fa-f0-9]{6}$",
   }];
   optional string icon = 11;
 }

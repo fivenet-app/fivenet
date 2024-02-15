@@ -30,7 +30,7 @@ defineEmits<{
 
 function updateMarkerColor(): void {
     if (props.activeChar !== null && props.marker.user?.userId === props.activeChar.userId) {
-        props.marker.info!.color = 'FCAB10';
+        props.marker.info!.color = '#fcab10';
     }
 }
 
@@ -71,11 +71,11 @@ const openUnit = ref(false);
                     v-if="showUnitNames && marker.unit"
                     class="inset-0 whitespace-nowrap rounded-md border-2 border-black/20 bg-clip-padding focus:outline-none"
                     :class="isColourBright(inverseColor) ? 'text-black' : 'text-neutral'"
-                    :style="{ backgroundColor: '#' + (marker.unit?.color ?? '8d81f2') }"
+                    :style="{ backgroundColor: marker.unit?.color ?? '#8d81f2' }"
                 >
                     {{ marker.unit?.initials }}
                 </span>
-                <MapMarkerIcon class="h-full w-full" :style="{ color: '#' + (marker.info?.color ?? '8d81f2') }" />
+                <MapMarkerIcon class="h-full w-full" :style="{ color: marker.info?.color ?? '#8d81f2' }" />
             </div>
             <div v-if="showUnitStatus && marker.unit" class="pointer-events-none uppercase">
                 <span class="absolute right-0 top-0 -mr-2 -mt-1.5 flex h-3 w-3">

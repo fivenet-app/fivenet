@@ -23,8 +23,8 @@ message JobProps {
   string job = 1 [(validate.rules).string.max_len = 20];
   string theme = 2 [(validate.rules).string.max_len = 20];
   string livemap_marker_color = 3 [(validate.rules).string = {
-    len: 6,
-    pattern: "^[A-Fa-f0-9]{6}$",
+    len: 7,
+    pattern: "^#[A-Fa-f0-9]{6}$",
   }];
   QuickButtons quick_buttons = 4;
   optional string radio_frequency = 5 [(validate.rules).string.max_len = 24];

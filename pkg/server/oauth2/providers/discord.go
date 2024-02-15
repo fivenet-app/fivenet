@@ -34,9 +34,14 @@ func (p *Discord) GetUserInfo(ctx context.Context, code string) (*UserInfo, erro
 		return nil, err
 	}
 
+	username := dest.Username
+	if dest.Discriminator != "0" {
+		username = dest.Username + "#" + dest.Discriminator
+	}
+
 	return &UserInfo{
 		ID:       dest.ID,
-		Username: dest.Username + "#" + dest.Discriminator,
+		Username: username,
 		Avatar:   fmt.Sprintf("https://cdn.discordapp.com/avatars/%s/%s.png", dest.ID, dest.Avatar),
 	}, nil
 }

@@ -53,7 +53,7 @@ async function createOrUpdateUnit(values: FormData): Promise<void> {
                 job: '',
                 name: values.name,
                 initials: values.initials,
-                color: color.value.replaceAll('#', ''),
+                color: color.value,
                 description: values.description,
                 attributes: {
                     list: selectedAttributes.value,
@@ -109,7 +109,8 @@ async function updateUnitInForm(): Promise<void> {
             description: props.unit.description,
             homePostal: props.unit.homePostal,
         });
-        color.value = `#${props.unit.color}`;
+
+        color.value = props.unit.color;
 
         selectedAttributes.value = props.unit.attributes?.list ?? [];
     }

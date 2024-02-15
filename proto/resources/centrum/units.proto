@@ -25,8 +25,8 @@ message Unit {
     max_len: 4
   }];
   string color = 7 [(validate.rules).string = {
-    len: 6,
-    pattern: "^[A-Fa-f0-9]{6}$",
+    len: 7,
+    pattern: "^#[A-Fa-f0-9]{6}$",
   }];
   // @sanitize
   optional string description = 8 [(validate.rules).string.max_len = 255];

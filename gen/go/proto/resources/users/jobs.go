@@ -10,7 +10,7 @@ import (
 var json = jsoniter.ConfigCompatibleWithStandardLibrary
 
 const (
-	DefaultLivemapMarkerColor = "5C7AFF"
+	DefaultLivemapMarkerColor = "#5c7aff"
 
 	DefaultEmployeeRoleFormat = "%s Personal"
 	DefaultGradeRoleFormat    = "[%grade%] %grade_label%"

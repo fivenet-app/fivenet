@@ -12,7 +12,7 @@ defineEmits<{
     (e: 'goto', loc: Coordinate): void;
 }>();
 
-const unitColorHex = computed(() => hexToRgb('#' + props.unit.color) ?? ({ r: 0, g: 0, b: 0 } as RGB));
+const unitColorHex = computed(() => hexToRgb(props.unit.color) ?? ({ r: 0, g: 0, b: 0 } as RGB));
 const isBright = computed(() => isColourBright(unitColorHex.value));
 
 const open = ref(false);

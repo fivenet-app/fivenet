@@ -45,7 +45,7 @@ interface FormData {
     circleOpacity?: number;
 }
 
-const color = ref('#EE4B2B');
+const color = ref('#ee4b2b');
 const queryIcon = ref<string>('');
 const selectedIcon = shallowRef<DefineComponent>(HelpIcon);
 
@@ -62,7 +62,7 @@ async function createMarker(values: FormData): Promise<void> {
                 description: values.description,
                 x: location.value?.x ?? 0,
                 y: location.value?.y ?? 0,
-                color: color.value.replaceAll('#', ''),
+                color: color.value,
             },
             expiresAt,
             type: values.markerType,

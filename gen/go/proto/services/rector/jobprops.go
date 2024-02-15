@@ -70,7 +70,7 @@ func (s *Server) SetJobProps(ctx context.Context, req *SetJobPropsRequest) (*Set
 	// Ensure that the job is the user's job
 	req.JobProps.Job = userInfo.Job
 
-	req.JobProps.LivemapMarkerColor = strings.ToLower(strings.ReplaceAll(req.JobProps.LivemapMarkerColor, "#", ""))
+	req.JobProps.LivemapMarkerColor = strings.ToLower(req.JobProps.LivemapMarkerColor)
 
 	stmt := tJobProps.
 		INSERT(

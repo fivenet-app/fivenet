@@ -211,7 +211,7 @@ class MarkerInfo$Type extends MessageType<MarkerInfo> {
             { no: 7, name: "x", kind: "scalar", T: 1 /*ScalarType.DOUBLE*/ },
             { no: 8, name: "y", kind: "scalar", T: 1 /*ScalarType.DOUBLE*/ },
             { no: 9, name: "postal", kind: "scalar", opt: true, T: 9 /*ScalarType.STRING*/, options: { "validate.rules": { string: { maxLen: "48" } } } },
-            { no: 10, name: "color", kind: "scalar", opt: true, T: 9 /*ScalarType.STRING*/, options: { "validate.rules": { string: { len: "6", pattern: "^[A-Fa-f0-9]{6}$" } } } },
+            { no: 10, name: "color", kind: "scalar", opt: true, T: 9 /*ScalarType.STRING*/, options: { "validate.rules": { string: { len: "7", pattern: "^#[A-Fa-f0-9]{6}$" } } } },
             { no: 11, name: "icon", kind: "scalar", opt: true, T: 9 /*ScalarType.STRING*/ }
         ]);
     }
