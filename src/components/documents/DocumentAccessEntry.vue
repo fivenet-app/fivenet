@@ -34,6 +34,7 @@ const props = withDefaults(
                 accessRole?: AccessLevel;
                 minimumGrade?: number;
             };
+            required?: boolean;
         };
         accessTypes: AccessType[];
         accessRoles?: undefined | AccessLevel[];
@@ -67,7 +68,7 @@ const { jobs } = storeToRefs(completorStore);
 
 const { t } = useI18n();
 
-const required = ref<boolean | undefined>();
+const required = ref<boolean | undefined>(props.init.required);
 const selectedAccessType = ref<AccessType>({
     id: -1,
     name: '',

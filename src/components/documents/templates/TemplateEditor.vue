@@ -430,12 +430,12 @@ onMounted(async () => {
                 content: tpl.content,
                 contentState: tpl.state,
             });
-            if (tpl.category) {
+            if (tpl.category !== undefined) {
                 selectedCategory.value = tpl.category;
             }
 
             const tplAccess = tpl.jobAccess;
-            if (tplAccess) {
+            if (tplAccess !== undefined) {
                 let accessId = 0;
 
                 tplAccess.forEach((job) => {
@@ -445,8 +445,8 @@ onMounted(async () => {
                         type: 1,
                         values: {
                             job: job.job,
-                            accessRole: job.access,
                             minimumGrade: job.minimumGrade,
+                            accessRole: job.access,
                         },
                     });
                     accessId++;
@@ -454,29 +454,31 @@ onMounted(async () => {
             }
 
             const ctAccess = tpl.contentAccess;
-            if (ctAccess) {
+            if (ctAccess !== undefined) {
                 let accessId = 0n;
 
-                ctAccess.users.forEach((user) => {
+                ctAccess.users.forEach((access) => {
                     const id = accessId.toString();
                     contentAccess.value.set(id, {
                         id,
                         type: 0,
-                        values: { char: user.userId, accessRole: user.access },
+                        values: { char: access.userId, accessRole: access.access },
+                        required: access.required,
                     });
                     accessId++;
                 });
 
-                ctAccess.jobs.forEach((job) => {
+                ctAccess.jobs.forEach((access) => {
                     const id = accessId.toString();
                     contentAccess.value.set(id, {
                         id,
                         type: 1,
                         values: {
-                            job: job.job,
-                            accessRole: job.access,
-                            minimumGrade: job.minimumGrade,
+                            job: access.job,
+                            accessRole: access.access,
+                            minimumGrade: access.minimumGrade,
                         },
+                        required: access.required,
                     });
                     accessId++;
                 });
