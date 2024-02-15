@@ -139,7 +139,7 @@ watch(offset, async () => refresh());
                                                         {{ $t(`enums.docstore.DocRelation.${DocRelation[relation.relation]}`) }}
                                                     </span>
                                                     <span class="truncate">
-                                                        {{ relation.sourceUser?.firstname }},
+                                                        {{ relation.sourceUser?.firstname }}
                                                         {{ relation.sourceUser?.lastname }}
                                                     </span>
                                                     <GenericTime :value="relation.createdAt" :ago="true" />

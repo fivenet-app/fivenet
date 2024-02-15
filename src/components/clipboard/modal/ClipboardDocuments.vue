@@ -160,7 +160,7 @@ watch(props, async (newVal) => {
                     {{ item.title }}
                 </td>
                 <td class="whitespace-nowrap px-3 py-4 text-sm text-gray-300">
-                    {{ item.creator.firstname }}, {{ item.creator.lastname }}
+                    {{ item.creator.firstname }} {{ item.creator.lastname }}
                 </td>
                 <td class="relative whitespace-nowrap py-4 pl-3 pr-4 text-right text-sm font-medium sm:pr-0">
                     <button type="button" @click="remove(item, true)">

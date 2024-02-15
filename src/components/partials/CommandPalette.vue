@@ -368,7 +368,7 @@ async function onSelect(item: any): Promise<any> {
                                                 ]"
                                             >
                                                 <span class="ml-3 flex-auto truncate">
-                                                    {{ citizen.firstname }} {{ citizen.lastname }}
+                                                    {{ citizen.firstname }} {{ citizen.lastname }} ({{ citizen.dateofbirth }})
                                                 </span>
                                                 <IDCopyBadge :id="citizen.userId" prefix="CIT" class="self-end" />
                                             </li>

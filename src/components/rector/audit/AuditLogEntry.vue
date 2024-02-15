@@ -21,7 +21,7 @@ async function addToClipboard(): Promise<void> {
 
 `;
     if (user) {
-        text += `User: ${user?.firstname}, ${user?.lastname} (${user?.userId}; ${user?.identifier})
+        text += `User: ${user?.firstname} ${user?.lastname} (${user?.userId}; ${user?.identifier})
 `;
     }
     text += `Action: \`${props.log.service}/${props.log.method}\`

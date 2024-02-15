@@ -526,7 +526,7 @@ watch(router.currentRoute, () => updateActiveItem());
                         <div class="ml-2 flex items-center space-x-3 sm:ml-2 sm:space-x-4">
                             <JobSwitcherMenu v-if="can('SuperUser') && activeChar" />
                             <div v-if="activeChar" class="hidden text-center text-sm font-medium text-accent-200 sm:block">
-                                <span> {{ activeChar.firstname }}, {{ activeChar.lastname }} </span>
+                                <span> {{ activeChar.firstname }} {{ activeChar.lastname }} </span>
                                 <br />
                                 <span> ({{ activeChar.jobLabel }}) </span>
                             </div>

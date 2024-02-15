@@ -116,7 +116,7 @@ const open = ref(false);
                 <div class="my-4 px-4">
                     <div class="flex snap-x flex-row flex-wrap justify-between gap-2 overflow-x-auto">
                         <h1 class="flex-1 break-words py-1 pl-0.5 pr-0.5 text-4xl font-bold text-neutral sm:pl-1">
-                            {{ user?.firstname }}, {{ user?.lastname }}
+                            {{ user?.firstname }} {{ user?.lastname }}
                         </h1>
                         <IDCopyBadge
                             :id="user.userId"

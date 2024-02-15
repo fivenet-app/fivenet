@@ -283,6 +283,13 @@ func (s *Housekeeper) cancelExpiredDispatches(ctx context.Context) error {
 			continue
 		}
 
+		// Add "too old" attribute when we are able to retrieve the dispatch
+		if dsp, err := s.GetDispatch(ds.Job, ds.DispatchID); err == nil && dsp != nil {
+			if err := s.AddAttributeToDispatch(ctx, dsp, centrum.DispatchAttributeTooOld); err != nil {
+				s.logger.Error("failed to add too old attribute to cancelled dispatch", zap.Uint64("dispatch_id", ds.DispatchID), zap.Error(err))
+			}
+		}
+
 		if _, err := s.UpdateDispatchStatus(ctx, ds.Job, ds.DispatchID, &centrum.DispatchStatus{
 			CreatedAt:  timestamp.Now(),
 			DispatchId: ds.DispatchID,
@@ -292,15 +299,8 @@ func (s *Housekeeper) cancelExpiredDispatches(ctx context.Context) error {
 			continue
 		}
 
-		// Add "too old" attribute when we are able to retrieve the dispatch
-		if dsp, err := s.GetDispatch(ds.Job, ds.DispatchID); err == nil && dsp != nil {
-			if err := s.AddAttributeToDispatch(ctx, dsp, centrum.DispatchAttributeTooOld); err != nil {
-				s.logger.Error("failed to add too old attribute to cancelled dispatch", zap.Uint64("dispatch_id", ds.DispatchID), zap.Error(err))
-			}
-		}
-
 		// Remove dispatch from state and publish event so clients remove it
-		if err := s.DeleteDispatch(ctx, ds.Job, ds.DispatchID, true); err != nil {
+		if err := s.DeleteDispatch(ctx, ds.Job, ds.DispatchID, false); err != nil {
 			s.logger.Error("failed to delete cancelled dispatch", zap.Uint64("dispatch_id", ds.DispatchID), zap.Error(err))
 			continue
 		}

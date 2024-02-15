@@ -63,7 +63,7 @@ const openDetails = ref(false);
                     {{ $t('common.anon') }}
                 </span>
                 <template v-else-if="dispatch.creator">
-                    {{ dispatch.creator.firstname }}, {{ dispatch.creator.lastname }}
+                    {{ dispatch.creator.firstname }} {{ dispatch.creator.lastname }}
                 </template>
                 <span v-else>
                     {{ $t('common.unknown') }}

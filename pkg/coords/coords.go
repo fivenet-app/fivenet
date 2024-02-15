@@ -10,6 +10,7 @@ import (
 
 type ICoords[V orb.Pointer] interface {
 	Has(orb.Pointer, quadtree.FilterFunc) bool
+	Get(orb.Pointer, quadtree.FilterFunc) V
 	Add(orb.Pointer) error
 	Remove(orb.Pointer, quadtree.FilterFunc) bool
 	Replace(orb.Pointer, quadtree.FilterFunc) error
@@ -24,6 +25,9 @@ type Coords[V orb.Pointer] struct {
 	mutex sync.Mutex
 	tree  *quadtree.Quadtree
 }
+
+// CoordsEqualFn must return true if both points are equal
+type CoordsEqualFn = func(orb.Pointer, orb.Pointer) bool
 
 func New[V orb.Pointer]() *Coords[V] {
 	return NewWithBounds[V](orb.Bound{Min: orb.Point{-9_000, -9_000}, Max: orb.Point{11_000, 11_000}})
@@ -45,6 +49,14 @@ func (p *Coords[V]) Has(point orb.Pointer, fn quadtree.FilterFunc) bool {
 	return found != nil
 }
 
+func (p *Coords[V]) Get(point orb.Pointer, fn quadtree.FilterFunc) V {
+	p.mutex.Lock()
+	defer p.mutex.Unlock()
+
+	found := p.tree.Matching(point.Point(), fn)
+	return found.(V)
+}
+
 func (p *Coords[V]) Add(point orb.Pointer) error {
 	p.mutex.Lock()
 	defer p.mutex.Unlock()
@@ -61,11 +73,16 @@ func (p *Coords[V]) Remove(point orb.Pointer, fn quadtree.FilterFunc) bool {
 	return ok
 }
 
-func (p *Coords[V]) Replace(point orb.Pointer, fn quadtree.FilterFunc) error {
+func (p *Coords[V]) Replace(point orb.Pointer, fn quadtree.FilterFunc, equalFn CoordsEqualFn) error {
 	p.mutex.Lock()
 	defer p.mutex.Unlock()
 
-	p.tree.Remove(point, fn)
+	found := p.tree.Matching(point.Point(), fn)
+	if found != nil {
+		if equalFn == nil || !equalFn(point, found) {
+			p.tree.Remove(point, fn)
+		}
+	}
 
 	if err := p.tree.Add(point); err != nil {
 		return fmt.Errorf("failed to replace point in coords. %w", err)

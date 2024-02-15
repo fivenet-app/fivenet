@@ -28,7 +28,7 @@ function addToClipboard(): void {
 <template>
     <tr :key="user.userId" class="transition-colors even:bg-base-800 hover:bg-neutral/5">
         <td class="whitespace-nowrap py-2 pl-4 pr-3 text-sm font-medium text-neutral sm:pl-1">
-            {{ user.firstname }}, {{ user.lastname }}
+            {{ user.firstname }} {{ user.lastname }}
             <span
                 v-if="user.props?.wanted"
                 class="ml-1 inline-flex items-center rounded-full bg-error-100 px-2.5 py-0.5 text-sm font-medium text-error-700"

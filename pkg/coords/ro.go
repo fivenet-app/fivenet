@@ -28,6 +28,11 @@ func (p *CoordsRO[V]) Has(point orb.Pointer, fn quadtree.FilterFunc) bool {
 	return found != nil
 }
 
+func (p *CoordsRO[V]) Get(point orb.Pointer, fn quadtree.FilterFunc) V {
+	found := p.tree.Matching(point.Point(), fn)
+	return found.(V)
+}
+
 func (p *CoordsRO[V]) Closest(x, y float64) V {
 	point := p.tree.Find(orb.Point{x, y})
 	return point.(V)

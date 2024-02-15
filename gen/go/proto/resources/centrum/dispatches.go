@@ -5,6 +5,12 @@ import (
 	"google.golang.org/protobuf/proto"
 )
 
+func DispatchPointMatchFn(dspId uint64) func(p orb.Pointer) bool {
+	return func(p orb.Pointer) bool {
+		return p.(*Dispatch).Id == dspId
+	}
+}
+
 func (x *Dispatch) Merge(in *Dispatch) *Dispatch {
 	if x.Id != in.Id {
 		return x

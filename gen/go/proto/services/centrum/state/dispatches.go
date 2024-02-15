@@ -6,9 +6,6 @@ import (
 	"strconv"
 
 	"github.com/galexrt/fivenet/gen/go/proto/resources/centrum"
-	centrumutils "github.com/galexrt/fivenet/gen/go/proto/services/centrum/utils"
-	"github.com/paulmach/orb"
-	"go.uber.org/zap"
 )
 
 func (s *State) GetDispatch(job string, id uint64) (*centrum.Dispatch, error) {
@@ -90,17 +87,6 @@ func (s *State) FilterDispatches(job string, statuses []centrum.StatusDispatch, 
 }
 
 func (s *State) DeleteDispatch(job string, id uint64) error {
-	dsp, err := s.GetDispatch(job, id)
-	if err != nil {
-		return err
-	}
-
-	if locs := s.GetDispatchLocations(job); locs != nil {
-		locs.Remove(dsp, func(p orb.Pointer) bool {
-			return p.(*centrum.Dispatch).Id == dsp.Id
-		})
-	}
-
 	return s.dispatches.Delete(JobIdKey(job, id))
 }
 
@@ -111,39 +97,10 @@ func (s *State) CreateDispatch(ctx context.Context, job string, id uint64, dsp *
 func (s *State) UpdateDispatch(ctx context.Context, job string, id uint64, dsp *centrum.Dispatch) error {
 	if err := s.dispatches.ComputeUpdate(JobIdKey(job, id), true, func(key string, existing *centrum.Dispatch) (*centrum.Dispatch, error) {
 		if existing == nil {
-			// Dispatch must not be existant yet, so make sure to add to the
-			// dispatch locations
-			if locs := s.GetDispatchLocations(dsp.Job); locs != nil {
-				if !locs.Has(dsp, func(p orb.Pointer) bool {
-					return p.(*centrum.Dispatch).Id == dsp.Id
-				}) {
-					if err := locs.Add(dsp); err != nil {
-						s.logger.Error("failed to add non-existant dispatch to locations", zap.Uint64("dispatch_id", dsp.Id))
-					}
-				}
-			}
-
 			return dsp, nil
 		}
 
-		locsReplace := false
-		// Make sure to update the existing dispatch location if the dispatch
-		// has its location changed
-		if existing.X != dsp.X || existing.Y != dsp.Y {
-			locsReplace = true
-		}
-
 		existing.Merge(dsp)
-
-		if locsReplace {
-			if locs := s.GetDispatchLocations(existing.Job); locs != nil {
-				if err := locs.Replace(existing, func(p orb.Pointer) bool {
-					return p.(*centrum.Dispatch).Id == existing.Id
-				}); err != nil {
-					s.logger.Error("failed to replace updated dispatch's in locations tree", zap.Error(err))
-				}
-			}
-		}
 
 		return existing, nil
 	}); err != nil {
@@ -160,17 +117,6 @@ func (s *State) UpdateDispatchStatus(ctx context.Context, job string, id uint64,
 		}
 
 		existing.Status = status
-
-		if existing.Status != nil {
-			// Remove completed dispatches from locations
-			if centrumutils.IsStatusDispatchComplete(existing.Status.Status) {
-				if locs := s.GetDispatchLocations(job); locs != nil {
-					locs.Remove(existing, func(p orb.Pointer) bool {
-						return p.(*centrum.Dispatch).Id == existing.Id
-					})
-				}
-			}
-		}
 
 		return existing, nil
 	}); err != nil {
