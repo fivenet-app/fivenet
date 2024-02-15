@@ -185,6 +185,7 @@ const contentAccess = ref<
                 accessRole?: AccessLevel;
                 minimumGrade?: number;
             };
+            required?: boolean;
         }
     >
 >(new Map());
@@ -256,6 +257,16 @@ function updateContentDocumentAccessEntryAccess(event: { id: string; access: Acc
     }
 
     accessEntry.values.accessRole = event.access;
+    contentAccess.value.set(event.id, accessEntry);
+}
+
+function updateContentDocumentAccessEntryRequired(event: { id: string; required?: boolean }): void {
+    const accessEntry = contentAccess.value.get(event.id);
+    if (!accessEntry) {
+        return;
+    }
+
+    accessEntry.required = event.required;
     contentAccess.value.set(event.id, accessEntry);
 }
 
@@ -696,11 +707,13 @@ onMounted(async () => {
                     :key="entry.id"
                     :init="entry"
                     :access-types="contentAccessTypes"
+                    :show-required="true"
                     @type-change="updateContentDocumentAccessEntryType($event)"
                     @name-change="updateContentDocumentAccessEntryName($event)"
                     @rank-change="updateContentDocumentAccessEntryRank($event)"
                     @access-change="updateContentDocumentAccessEntryAccess($event)"
                     @delete-request="removeContentDocumentAccessEntry($event)"
+                    @required-change="updateContentDocumentAccessEntryRequired($event)"
                 />
                 <button
                     type="button"

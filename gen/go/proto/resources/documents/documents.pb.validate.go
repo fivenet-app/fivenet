@@ -315,6 +315,10 @@ func (m *Document) validate(all bool) error {
 
 	}
 
+	if m.TemplateId != nil {
+		// no validation rules for TemplateId
+	}
+
 	if len(errors) > 0 {
 		return DocumentMultiError(errors)
 	}

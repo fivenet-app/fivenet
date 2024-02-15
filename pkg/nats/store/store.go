@@ -122,6 +122,14 @@ func (s *Store[T, U]) put(key string, msg U) error {
 }
 
 func (s *Store[T, U]) ComputeUpdate(key string, load bool, fn func(key string, existing U) (U, error)) error {
+	ctx, cancel := context.WithTimeout(context.Background(), LockTimeout)
+	defer cancel()
+
+	if err := s.l.Lock(ctx, key); err != nil {
+		return err
+	}
+	defer s.l.Unlock(ctx, key)
+
 	var existing U
 	if load {
 		var err error
@@ -130,16 +138,12 @@ func (s *Store[T, U]) ComputeUpdate(key string, load bool, fn func(key string, e
 			return err
 		}
 	} else {
-		existing, _ = s.Get(key)
+		var ok bool
+		existing, ok = s.Get(key)
+		if !ok {
+			return fmt.Errorf("no item for key %s found in local store", key)
+		}
 	}
-
-	ctx, cancel := context.WithTimeout(context.Background(), LockTimeout)
-	defer cancel()
-
-	if err := s.l.Lock(ctx, key); err != nil {
-		return err
-	}
-	defer s.l.Unlock(ctx, key)
 
 	var cloned U
 	if existing != nil {

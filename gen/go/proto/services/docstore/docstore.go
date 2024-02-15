@@ -269,7 +269,15 @@ func (s *Server) CreateDocument(ctx context.Context, req *CreateDocumentRequest)
 	}
 	defer s.auditer.Log(auditEntry, req)
 
-	// TODO if request has a template id set, ensure that required access is set like in the template
+	if req.TemplateId != nil {
+		ok, err := s.checkAccessAgainstTemplate(ctx, *req.TemplateId, req.Access)
+		if err != nil {
+			return nil, errswrap.NewError(errorsdocstore.ErrFailedQuery, err)
+		}
+		if !ok {
+			return nil, errorsdocstore.ErrDocRequiredAccessTemplate
+		}
+	}
 
 	// Begin transaction
 	tx, err := s.db.BeginTx(ctx, nil)
@@ -397,6 +405,16 @@ func (s *Server) UpdateDocument(ctx context.Context, req *UpdateDocumentRequest)
 	}
 	if !s.checkIfHasAccess(fields, userInfo, doc.CreatorJob, doc.Creator) {
 		return nil, errorsdocstore.ErrDocUpdateDenied
+	}
+
+	if doc.TemplateId != nil {
+		ok, err := s.checkAccessAgainstTemplate(ctx, *doc.TemplateId, req.Access)
+		if err != nil {
+			return nil, errswrap.NewError(errorsdocstore.ErrFailedQuery, err)
+		}
+		if !ok {
+			return nil, errorsdocstore.ErrDocRequiredAccessTemplate
+		}
 	}
 
 	// Begin transaction

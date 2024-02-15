@@ -1627,6 +1627,10 @@
             "ErrDocReqAlreadyCompleted": {
                 "title": "Document Request has already been accepted/declined!",
                 "content": "The document request you are trying to accept/decline has already been processed."
+            },
+            "ErrDocRequiredAccessTemplate": {
+                "title": "Required document access missing!",
+                "content": "Make sure you have not edited or removed any required document access."
             }
         },
         "LivemapperService": {

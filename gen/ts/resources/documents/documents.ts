@@ -28,7 +28,7 @@ export interface Document {
     /**
      * @generated from protobuf field: optional uint64 category_id = 5 [jstype = JS_STRING];
      */
-    categoryId?: string; // @gotags: alias:"category_id"
+    categoryId?: string;
     /**
      * @generated from protobuf field: optional resources.documents.Category category = 6;
      */
@@ -38,7 +38,7 @@ export interface Document {
      *
      * @generated from protobuf field: string title = 7;
      */
-    title: string; // @gotags: alias:"title"
+    title: string;
     /**
      * @generated from protobuf field: resources.documents.DocContentType content_type = 8;
      */
@@ -48,7 +48,7 @@ export interface Document {
      *
      * @generated from protobuf field: string content = 9;
      */
-    content: string; // @gotags: alias:"content"
+    content: string;
     /**
      * @sanitize
      *
@@ -66,13 +66,13 @@ export interface Document {
     /**
      * @generated from protobuf field: string creator_job = 13;
      */
-    creatorJob: string; // @gotags: alias:"creator_job"
+    creatorJob: string;
     /**
      * @sanitize
      *
      * @generated from protobuf field: string state = 14;
      */
-    state: string; // @gotags: alias:"state"
+    state: string;
     /**
      * @generated from protobuf field: bool closed = 15;
      */
@@ -81,6 +81,10 @@ export interface Document {
      * @generated from protobuf field: bool public = 16;
      */
     public: boolean;
+    /**
+     * @generated from protobuf field: optional uint64 template_id = 17 [jstype = JS_STRING];
+     */
+    templateId?: string;
 }
 /**
  * @generated from protobuf message resources.documents.DocumentShort
@@ -105,7 +109,7 @@ export interface DocumentShort {
     /**
      * @generated from protobuf field: optional uint64 category_id = 5 [jstype = JS_STRING];
      */
-    categoryId?: string; // @gotags: alias:"category_id"
+    categoryId?: string;
     /**
      * @generated from protobuf field: optional resources.documents.Category category = 6;
      */
@@ -115,7 +119,7 @@ export interface DocumentShort {
      *
      * @generated from protobuf field: string title = 7;
      */
-    title: string; // @gotags: alias:"title"
+    title: string;
     /**
      * @generated from protobuf field: resources.documents.DocContentType content_type = 8;
      */
@@ -125,7 +129,7 @@ export interface DocumentShort {
      *
      * @generated from protobuf field: string content = 9;
      */
-    content: string; // @gotags: alias:"content"
+    content: string;
     /**
      * @generated from protobuf field: optional int32 creator_id = 10;
      */
@@ -317,7 +321,8 @@ class Document$Type extends MessageType<Document> {
             { no: 13, name: "creator_job", kind: "scalar", T: 9 /*ScalarType.STRING*/ },
             { no: 14, name: "state", kind: "scalar", T: 9 /*ScalarType.STRING*/, options: { "validate.rules": { string: { maxLen: "32" } } } },
             { no: 15, name: "closed", kind: "scalar", T: 8 /*ScalarType.BOOL*/ },
-            { no: 16, name: "public", kind: "scalar", T: 8 /*ScalarType.BOOL*/ }
+            { no: 16, name: "public", kind: "scalar", T: 8 /*ScalarType.BOOL*/ },
+            { no: 17, name: "template_id", kind: "scalar", opt: true, T: 4 /*ScalarType.UINT64*/ }
         ]);
     }
 }

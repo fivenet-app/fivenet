@@ -108,6 +108,7 @@ const access = ref<
                 accessRole?: AccessLevel;
                 minimumGrade?: number;
             };
+            required?: boolean;
         }
     >
 >(new Map());
@@ -168,6 +169,7 @@ onMounted(async () => {
                         id,
                         type: 0,
                         values: { char: user.userId, accessRole: user.access },
+                        required: user.required,
                     });
                     accessId++;
                 });
@@ -182,6 +184,7 @@ onMounted(async () => {
                             accessRole: job.access,
                             minimumGrade: job.minimumGrade,
                         },
+                        required: job.required,
                     });
                     accessId++;
                 });
@@ -1067,7 +1070,7 @@ function setupCheckboxes(): void {
                     :key="entry.id"
                     :init="entry"
                     :access-types="accessTypes"
-                    :read-only="!canDo.access"
+                    :read-only="!canDo.access || entry.required === true"
                     @type-change="updateDocumentAccessEntryType($event)"
                     @name-change="updateDocumentAccessEntryName($event)"
                     @rank-change="updateDocumentAccessEntryRank($event)"

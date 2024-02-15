@@ -1,10 +1,17 @@
 <script lang="ts" setup>
-import { LicenseIcon } from 'mdi-vue3';
+import {
+    AccountAlertIcon,
+    AccountCancelIcon,
+    BriefcaseIcon,
+    CounterIcon,
+    FileDocumentPlusIcon,
+    LicenseIcon,
+    LinkIcon,
+} from 'mdi-vue3';
 import { ref } from 'vue';
 import CharSexBadge from '~/components/partials/citizens/CharSexBadge.vue';
 import CitizenSetJobModal from '~/components/citizens/info/CitizenSetJobModal.vue';
 import TemplatesModal from '~/components/documents/templates/TemplatesModal.vue';
-import IDCopyBadge from '~/components/partials/IDCopyBadge.vue';
 import PhoneNumberBlock from '~/components/partials/citizens/PhoneNumberBlock.vue';
 import { attr } from '~/composables/can';
 import { useClipboardStore } from '~/store/clipboard';
@@ -267,6 +274,8 @@ const trafficPointsModal = ref(false);
                                         class="inline-flex w-full flex-shrink-0 items-center justify-center rounded-md bg-error-500 px-3 py-2 text-sm font-semibold text-neutral transition-colors hover:bg-error-400 focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-primary-500 sm:flex-1"
                                         @click="setWantedModal = true"
                                     >
+                                        <AccountAlertIcon v-if="user.props?.wanted" class="w-5 h-auto mr-1.5" />
+                                        <AccountCancelIcon v-else class="w-5 h-auto mr-1.5" />
                                         {{
                                             user.props?.wanted
                                                 ? $t('components.citizens.citizen_info_profile.revoke_wanted')
@@ -280,6 +289,7 @@ const trafficPointsModal = ref(false);
                                         class="inline-flex w-full flex-shrink-0 items-center justify-center rounded-md bg-secondary-500 px-3 py-2 text-sm font-semibold text-neutral transition-colors hover:bg-secondary-400 focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-secondary-500 sm:flex-1"
                                         @click="setJobModal = true"
                                     >
+                                        <BriefcaseIcon class="w-5 h-auto mr-1.5" />
                                         {{ $t('components.citizens.citizen_info_profile.set_job') }}
                                     </button>
                                 </div>
@@ -292,6 +302,7 @@ const trafficPointsModal = ref(false);
                                         class="inline-flex w-full flex-shrink-0 items-center justify-center rounded-md bg-secondary-500 px-3 py-2 text-sm font-semibold text-neutral transition-colors hover:bg-secondary-400 focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-secondary-500 sm:flex-1"
                                         @click="trafficPointsModal = true"
                                     >
+                                        <CounterIcon class="w-5 h-auto mr-1.5" />
                                         {{ $t('components.citizens.citizen_info_profile.set_traffic_points') }}
                                     </button>
                                 </div>
@@ -301,6 +312,7 @@ const trafficPointsModal = ref(false);
                                         class="inline-flex w-full flex-shrink-0 items-center justify-center rounded-md bg-base-700 px-3 py-2 text-sm font-semibold text-neutral transition-colors hover:bg-base-600 focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-primary-500 sm:flex-1"
                                         @click="openTemplates()"
                                     >
+                                        <FileDocumentPlusIcon class="w-5 h-auto mr-1.5" />
                                         {{ $t('components.citizens.citizen_info_profile.create_new_document') }}
                                     </button>
                                 </div>
@@ -310,17 +322,9 @@ const trafficPointsModal = ref(false);
                                         class="inline-flex w-full flex-shrink-0 items-center justify-center rounded-md bg-base-700 px-3 py-2 text-sm font-semibold text-neutral transition-colors hover:bg-base-600 focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-primary-500 sm:flex-1"
                                         @click="copyLinkToClipboard()"
                                     >
+                                        <LinkIcon class="w-5 h-auto mr-1.5" />
                                         {{ $t('components.citizens.citizen_info_profile.copy_profile_link') }}
                                     </button>
-                                </div>
-                                <div class="flex-initial">
-                                    <IDCopyBadge
-                                        :id="user.userId"
-                                        prefix="CIT"
-                                        :title="{ key: 'notifications.citizen_info.copy_citizen_id.title', parameters: {} }"
-                                        :content="{ key: 'notifications.citizen_info.copy_citizen_id.content', parameters: {} }"
-                                        class="w-full"
-                                    />
                                 </div>
                             </div>
                         </div>

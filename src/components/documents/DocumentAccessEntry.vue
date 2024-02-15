@@ -24,6 +24,7 @@ type AccessType = { id: number; name: string };
 const props = withDefaults(
     defineProps<{
         readOnly?: boolean;
+        showRequired?: boolean;
         init: {
             id: string;
             type: number;
@@ -39,6 +40,7 @@ const props = withDefaults(
     }>(),
     {
         readOnly: false,
+        showRequired: false,
         accessRoles: undefined,
     },
 );
@@ -51,11 +53,13 @@ const emit = defineEmits<{
             id: string;
             job: Job | undefined;
             char: UserShort | undefined;
+            required?: boolean;
         },
     ): void;
-    (e: 'rankChange', payload: { id: string; rank: JobGrade }): void;
-    (e: 'accessChange', payload: { id: string; access: AccessLevel }): void;
+    (e: 'rankChange', payload: { id: string; rank: JobGrade; required?: boolean }): void;
+    (e: 'accessChange', payload: { id: string; access: AccessLevel; required?: boolean }): void;
     (e: 'deleteRequest', payload: { id: string }): void;
+    (e: 'requiredChange', payload: { id: string; required?: boolean }): void;
 }>();
 
 const completorStore = useCompletorStore();
@@ -63,11 +67,11 @@ const { jobs } = storeToRefs(completorStore);
 
 const { t } = useI18n();
 
+const required = ref<boolean | undefined>();
 const selectedAccessType = ref<AccessType>({
     id: -1,
     name: '',
 });
-
 const entriesChars = ref<UserShort[]>();
 const queryCharRaw = ref('');
 const queryChar = computed(() => queryCharRaw.value.toLowerCase());
@@ -158,6 +162,10 @@ watchDebounced(queryChar, async () => (entriesChars.value = await findChars()), 
     maxWait: 1750,
 });
 
+watch(required, () => {
+    emit('requiredChange', { id: props.init.id, required: required.value });
+});
+
 watch(selectedAccessType, async () => {
     emit('typeChange', {
         id: props.init.id,
@@ -185,6 +193,7 @@ watch(selectedJob, () => {
         id: props.init.id,
         job: selectedJob.value,
         char: undefined,
+        required: required.value,
     });
 
     entriesMinimumRank.value = selectedJob.value.grades;
@@ -199,6 +208,7 @@ watch(selectedChar, () => {
         id: props.init.id,
         job: undefined,
         char: selectedChar.value,
+        required: required.value,
     });
 });
 
@@ -224,6 +234,17 @@ watch(selectedAccessRole, () => {
 
 <template>
     <div class="my-2 flex flex-row items-center">
+        <div v-if="showRequired" class="mr-2 flex-initial">
+            <input
+                v-model="required"
+                :disabled="readOnly"
+                :title="$t('common.require')"
+                type="checkbox"
+                name="required"
+                data-te-toggle="tooltip"
+                class="h-8 w-8 rounded-md border-0 bg-base-700 text-primary-600 transition-colors hover:bg-base-600 hover:text-primary-500 focus:ring-2 focus:ring-inset focus:ring-base-300"
+            />
+        </div>
         <div class="mr-2 w-60 flex-initial">
             <input
                 v-if="accessTypes.length === 1"
