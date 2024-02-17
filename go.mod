@@ -32,7 +32,7 @@ require (
 	github.com/microcosm-cc/bluemonday v1.0.26
 	github.com/minio/minio-go/v7 v7.0.67
 	github.com/nats-io/nats-server/v2 v2.10.11
-	github.com/nats-io/nats.go v1.33.0
+	github.com/nats-io/nats.go v1.33.1
 	github.com/ory/dockertest/v3 v3.10.0
 	github.com/paulmach/orb v0.11.1
 	github.com/pkg/errors v0.9.1
