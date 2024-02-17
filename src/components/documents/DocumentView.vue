@@ -163,7 +163,7 @@ function addToClipboard(): void {
     });
 }
 
-function setupCheckboxes(): void {
+function disableCheckboxes(): void {
     const checkboxes: NodeListOf<HTMLInputElement> = document.querySelectorAll('.prose input[type=checkbox]');
     checkboxes.forEach((el) => {
         el.setAttribute('disabled', 'disabled');
@@ -173,8 +173,8 @@ function setupCheckboxes(): void {
 
 watchOnce(doc, () =>
     setTimeout(() => {
-        setupCheckboxes();
-    }, 25),
+        disableCheckboxes();
+    }, 50),
 );
 
 const {

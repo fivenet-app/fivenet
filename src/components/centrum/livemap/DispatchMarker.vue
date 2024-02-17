@@ -32,8 +32,8 @@ function selected(_: string | number | string) {
 }
 
 const dispatchClasses = computed(() => [
-    dispatchStatusToFillColor(props.dispatch.status!.status),
-    dispatchStatusAnimate(props.dispatch.status!.status) ? 'animate-wiggle' : '',
+    dispatchStatusToFillColor(props.dispatch.status?.status ?? 0),
+    dispatchStatusAnimate(props.dispatch.status?.status ?? 0) ? 'animate-wiggle' : '',
 ]);
 </script>
 

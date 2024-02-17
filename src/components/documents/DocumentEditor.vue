@@ -850,6 +850,12 @@ function setupCheckboxes(): void {
             }),
     );
 }
+
+onBeforeUnmount(() => {
+    // Remove event listeners on unmount
+    const checkboxes: NodeListOf<HTMLInputElement> = document.querySelectorAll('.jodit-wysiwyg input[type=checkbox]');
+    checkboxes.forEach((el) => (el.onchange = null));
+});
 </script>
 
 <template>
