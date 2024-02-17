@@ -30,7 +30,7 @@ import { useNotificatorStore } from '~/store/notificator';
 import { StatusDispatch } from '~~/gen/ts/resources/centrum/dispatches';
 import { CentrumMode } from '~~/gen/ts/resources/centrum/settings';
 import { StatusUnit } from '~~/gen/ts/resources/centrum/units';
-import DispatchEntry from '~/components/centrum/livemap/DispatchEntry.vue';
+import OwnDispatchEntry from '~/components/centrum/livemap/OwnDispatchEntry.vue';
 import DispatchesLayer from '~/components/centrum/livemap/DispatchesLayer.vue';
 import JoinUnitModal from '~/components/centrum/livemap/JoinUnitModal.vue';
 import TakeDispatchModal from '~/components/centrum/livemap/TakeDispatchModal.vue';
@@ -556,7 +556,7 @@ async function checkup(): Promise<void> {
                                             </button>
                                         </li>
                                         <template v-else>
-                                            <DispatchEntry
+                                            <OwnDispatchEntry
                                                 v-for="id in getSortedOwnDispatches.slice().reverse()"
                                                 :key="id"
                                                 v-model:selected-dispatch="selectedDispatch"

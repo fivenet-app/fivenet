@@ -240,14 +240,14 @@ onBeforeMount(async () => updateUnitInForm());
                                                         for="attributes"
                                                         class="block text-sm font-medium leading-6 text-neutral"
                                                     >
-                                                        {{ $t('common.attributes') }}
+                                                        {{ $t('common.attributes', 2) }}
                                                     </label>
                                                     <VeeField
                                                         name="attributes"
                                                         type="text"
                                                         class="block w-full rounded-md border-0 bg-base-700 py-1.5 text-neutral placeholder:text-accent-200 focus:ring-2 focus:ring-inset focus:ring-base-300 sm:text-sm sm:leading-6"
-                                                        :placeholder="$t('common.attributes')"
-                                                        :label="$t('common.attributes')"
+                                                        :placeholder="$t('common.attributes', 2)"
+                                                        :label="$t('common.attributes', 2)"
                                                         @focusin="focusTablet(true)"
                                                         @focusout="focusTablet(false)"
                                                     >

@@ -42,7 +42,7 @@ const openDetails = ref(false);
         </div>
         <button
             type="button"
-            class="group my-0.5 flex w-full flex-col items-center rounded-md bg-error-700 p-2 text-xs font-medium text-neutral hover:bg-primary-100/10 hover:text-neutral hover:transition-all"
+            class="group my-0.5 flex w-full max-w-full flex-col items-center rounded-md bg-error-700 p-2 text-xs font-medium text-neutral hover:bg-primary-100/10 hover:text-neutral hover:transition-all"
             @click="openDetails = true"
         >
             <span class="mb-0.5 inline-flex w-full place-content-between items-center flex-col sm:flex-row">
@@ -57,7 +57,7 @@ const openDetails = ref(false);
                     $t(`enums.centrum.StatusDispatch.${StatusDispatch[dispatch.status?.status ?? 0]}`)
                 }}</span>
             </span>
-            <span class="mt-1 truncate inline-flex flex-col sm:flex-row sm:gap-1">
+            <span class="mt-1 inline-flex flex-col sm:flex-row sm:gap-1">
                 <span class="font-semibold">{{ $t('common.sent_by') }}:</span>
                 <span v-if="dispatch.anon">
                     {{ $t('common.anon') }}
@@ -69,7 +69,7 @@ const openDetails = ref(false);
                     {{ $t('common.unknown') }}
                 </span>
             </span>
-            <span class="truncate inline-flex flex-col sm:flex-row sm:gap-1">
+            <span class="inline-flex flex-col sm:flex-row sm:gap-1">
                 <span class="font-semibold">{{ $t('common.sent_at') }}:</span>
                 <GenericTime :value="dispatch.createdAt" type="compact" />
             </span>

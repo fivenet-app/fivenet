@@ -11,6 +11,7 @@ const props = defineProps<{
     title?: TranslateItem;
     content?: TranslateItem;
     action?: (id: string | number | string) => void;
+    hideIcon?: boolean;
 }>();
 
 function copyDocumentIDToClipboard(): void {
@@ -41,7 +42,7 @@ function click(): void {
         class="inline-flex flex-initial flex-row items-center gap-1 rounded-full bg-base-500 px-2 py-1 text-base-100"
         @click.prevent="click"
     >
-        <FingerprintIcon class="w-5 h-auto" aria-hidden="true" />
+        <FingerprintIcon v-if="hideIcon === undefined || !hideIcon" class="w-5 h-auto" aria-hidden="true" />
         <span class="break-keep text-sm font-medium text-base-100">{{ prefix }}-{{ id }}</span>
     </button>
 </template>

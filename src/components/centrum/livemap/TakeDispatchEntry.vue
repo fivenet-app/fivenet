@@ -43,10 +43,10 @@ const open = ref(false);
 </script>
 
 <template>
-    <div class="px-4 py-3 sm:grid sm:grid-cols-3 sm:gap-4 sm:px-0">
+    <div class="px-4 py-3 sm:grid sm:grid-cols-3 sm:gap-2 sm:px-0 flex">
         <DispatchDetails :open="open" :dispatch="dispatch" @close="open = false" @goto="$emit('goto', $event)" />
 
-        <dt class="text-sm font-medium leading-6 text-neutral">
+        <dt class="flex-initial text-sm font-medium leading-6 text-neutral">
             <div class="flex h-6 items-center">
                 <input
                     type="checkbox"
@@ -58,7 +58,7 @@ const open = ref(false);
                         $emit('selected', checked);
                     "
                 />
-                <IDCopyBadge :id="dispatch.id" class="ml-2" prefix="DSP" :action="() => (open = true)" />
+                <IDCopyBadge :id="dispatch.id" class="ml-2" prefix="DSP" :action="() => (open = true)" :hide-icon="true" />
             </div>
             <div v-if="expiresAt" class="mt-1 flex flex-col text-sm text-neutral">
                 <span class="font-semibold">{{ $t('common.expires_in') }}:</span>
@@ -66,8 +66,15 @@ const open = ref(false);
                     useLocaleTimeAgo(toDate(expiresAt, timeCorrection), { showSecond: true, updateInterval: 1_000 }).value
                 }}</span>
             </div>
+            <div v-if="expiresAt" class="mt-1 flex flex-col text-sm text-neutral">
+                <span class="font-semibold">{{ $t('common.created') }}:</span>
+                <span>{{
+                    useLocaleTimeAgo(toDate(dispatch.createdAt, timeCorrection), { showSecond: true, updateInterval: 1_000 })
+                        .value
+                }}</span>
+            </div>
         </dt>
-        <dd class="mt-1 text-sm leading-6 text-gray-300 sm:col-span-2 sm:mt-0">
+        <dd class="flex-1 mt-1 text-sm leading-6 text-gray-300 sm:col-span-2 sm:mt-0">
             <ul role="list" class="divide-y divide-base-200 rounded-md border border-base-200">
                 <li class="flex items-center py-3 pl-3 pr-4 text-sm">
                     <span class="font-medium">{{ $t('common.sent_by') }}:</span>
@@ -108,7 +115,7 @@ const open = ref(false);
                     }}</span>
                 </li>
                 <li v-if="dispatch.attributes" class="flex items-center py-3 pl-3 pr-4 text-sm">
-                    <span class="font-medium">{{ $t('common.attributes') }}:</span>
+                    <span class="font-medium">{{ $t('common.attributes', 2) }}:</span>
                     <span class="ml-1">
                         <DispatchAttributes :attributes="dispatch.attributes" />
                     </span>

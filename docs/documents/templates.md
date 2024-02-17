@@ -84,6 +84,12 @@ To learn more about different date and time formats, check out [the Golang `time
 {{ .CreatedAt | date "02.01.2006 15:04" }}
 ```
 
+### Checkbox
+
+```html
+<label contenteditable="false"><input type="checkbox"><span> Yes </span></label>
+```
+
 ## Examples
 
 ### Show List of Vehicles
