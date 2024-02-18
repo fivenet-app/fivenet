@@ -13,6 +13,7 @@ import (
 	"github.com/galexrt/fivenet/pkg/grpc"
 	"github.com/galexrt/fivenet/pkg/grpc/auth"
 	"github.com/galexrt/fivenet/pkg/grpc/auth/userinfo"
+	"github.com/galexrt/fivenet/pkg/htmlsanitizer"
 	"github.com/galexrt/fivenet/pkg/mstlystcdata"
 	"github.com/galexrt/fivenet/pkg/notifi"
 	"github.com/galexrt/fivenet/pkg/perms"
@@ -20,9 +21,11 @@ import (
 	"github.com/galexrt/fivenet/pkg/server"
 	"github.com/galexrt/fivenet/pkg/server/admin"
 	"github.com/galexrt/fivenet/pkg/server/audit"
+	"github.com/galexrt/fivenet/pkg/server/images"
 	"github.com/galexrt/fivenet/pkg/storage"
 	"github.com/galexrt/fivenet/pkg/tracker"
 	"github.com/galexrt/fivenet/query"
+	"github.com/microcosm-cc/bluemonday"
 	"go.uber.org/fx"
 	"go.uber.org/fx/fxevent"
 	"go.uber.org/zap"
@@ -107,9 +110,11 @@ func getFxBaseOpts() []fx.Option {
 		fx.StartTimeout(180 * time.Second),
 
 		LoggerModule,
+		htmlsanitizer.Module,
 		config.Module,
 		admin.Module,
 		server.HTTPServerModule,
+		images.Module,
 		grpc.ServerModule,
 		server.TracerProviderModule,
 		auth.AuthModule,
@@ -154,6 +159,7 @@ func getFxBaseOpts() []fx.Option {
 		),
 
 		fx.Invoke(func(admin.AdminServer) {}),
+		fx.Invoke(func(*bluemonday.Policy) {}),
 	}
 }
 

@@ -154,6 +154,12 @@ func (s *Store[T, U]) ComputeUpdate(key string, load bool, fn func(key string, e
 		return err
 	}
 
+	// Skip nil updates for now
+	if computed == nil {
+		s.logger.Error("compute update returned nil, skipping store put", zap.String("key", key))
+		return nil
+	}
+
 	if err := s.put(key, computed); err != nil {
 		return err
 	}

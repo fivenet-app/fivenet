@@ -11,6 +11,7 @@ import (
 	"github.com/galexrt/fivenet/pkg/config"
 	"github.com/galexrt/fivenet/pkg/grpc/auth"
 	"github.com/galexrt/fivenet/pkg/server/api"
+	"github.com/galexrt/fivenet/pkg/server/images"
 	"github.com/galexrt/fivenet/pkg/server/oauth2"
 	"github.com/gin-contrib/sessions"
 	"github.com/gin-contrib/sessions/cookie"
@@ -40,11 +41,12 @@ type Params struct {
 
 	LC fx.Lifecycle
 
-	Logger   *zap.Logger
-	Config   *config.Config
-	DB       *sql.DB
-	TP       *tracesdk.TracerProvider
-	TokenMgr *auth.TokenMgr
+	Logger     *zap.Logger
+	Config     *config.Config
+	DB         *sql.DB
+	TP         *tracesdk.TracerProvider
+	TokenMgr   *auth.TokenMgr
+	ImageProxy *images.ImageProxy
 }
 
 type Result struct {
@@ -135,6 +137,9 @@ func setupHTTPServer(p Params) *gin.Engine {
 	// Register HTTP API routes
 	rs := api.New(p.Logger, p.Config)
 	rs.Register(e)
+
+	// Register image proxy
+	p.ImageProxy.Register(e)
 
 	if len(p.Config.OAuth2.Providers) > 0 {
 		oauth := oauth2.New(p.Logger.Named("oauth2"), p.DB, p.TokenMgr, p.Config.OAuth2.Providers)

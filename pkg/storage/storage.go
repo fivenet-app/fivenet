@@ -4,6 +4,7 @@ import (
 	"context"
 	"io"
 	"mime"
+	"time"
 
 	"github.com/galexrt/fivenet/pkg/config"
 	"github.com/minio/minio-go/v7"
@@ -54,8 +55,13 @@ func (s *Storage) Get(ctx context.Context, filePath string) (Object, error) {
 
 // Put the file path must end with a file extension (e.g., `jpg`, `png`)
 func (s *Storage) Put(ctx context.Context, filePath string, reader io.Reader, size int64, contentType string) (string, error) {
+	return s.PutWithTTL(ctx, filePath, reader, size, contentType, time.Time{})
+}
+
+func (s *Storage) PutWithTTL(ctx context.Context, filePath string, reader io.Reader, size int64, contentType string, ttl time.Time) (string, error) {
 	uploadInfo, err := s.s3.PutObject(ctx, s.bucketName, filePath, reader, size, minio.PutObjectOptions{
 		ContentType: mime.TypeByExtension(filePath),
+		Expires:     ttl,
 	})
 	if err != nil {
 		return "", err

@@ -62,18 +62,18 @@ type Config struct {
 	Sentry  Sentry  `yaml:"sentry"`
 	Tracing Tracing `yaml:"tracing"`
 
-	HTTP     HTTP     `yaml:"http"`
-	GRPC     GRPC     `yaml:"grpc"`
-	Database Database `yaml:"database"`
-	NATS     NATS     `yaml:"nats"`
-	JWT      JWT      `yaml:"jwt"`
-	OAuth2   OAuth2   `yaml:"oauth2"`
-	Cache    Cache    `yaml:"cache"`
-	Audit    Audit    `yaml:"audit"`
-	Game     Game     `yaml:"game"`
-	Discord  Discord  `yaml:"discord"`
-
-	Storage Storage `yaml:"storage"`
+	HTTP       HTTP       `yaml:"http"`
+	GRPC       GRPC       `yaml:"grpc"`
+	Database   Database   `yaml:"database"`
+	NATS       NATS       `yaml:"nats"`
+	JWT        JWT        `yaml:"jwt"`
+	OAuth2     OAuth2     `yaml:"oauth2"`
+	Cache      Cache      `yaml:"cache"`
+	Audit      Audit      `yaml:"audit"`
+	Game       Game       `yaml:"game"`
+	Discord    Discord    `yaml:"discord"`
+	Storage    Storage    `yaml:"storage"`
+	ImageProxy ImageProxy `yaml:"imageProxy"`
 }
 
 type Sentry struct {
@@ -267,4 +267,9 @@ type Storage struct {
 	SecretAccessKey string `yaml:"secretAccessKey"`
 	UseSSL          bool   `default:"true" yaml:"useSSL"`
 	BucketName      string `yaml:"bucketName"`
+}
+
+type ImageProxy struct {
+	Enabled bool   `default:"true" yaml:"enabled"`
+	URL     string `default:"/api/image_proxy/" yaml:"url"`
 }

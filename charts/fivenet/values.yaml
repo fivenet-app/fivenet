@@ -252,6 +252,9 @@ fivenet:
       secretAccessKey: ""
       useSSL: true
       bucketName: ""
+    imageProxy:
+      enabled: true
+      url: "/api/image_proxy/"
 
 # -- FiveNet Worker deployment config
 worker:

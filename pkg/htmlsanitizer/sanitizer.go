@@ -2,83 +2,134 @@ package htmlsanitizer
 
 import (
 	"html"
+	"net/url"
 	"regexp"
 	"strings"
+	"sync"
 
+	"github.com/galexrt/fivenet/pkg/config"
 	"github.com/microcosm-cc/bluemonday"
+	"go.uber.org/fx"
 )
 
 var (
-	p         *bluemonday.Policy
-	stripTags *bluemonday.Policy
+	stripTagsOnce sync.Once
+	stripTags     *bluemonday.Policy
+
+	sanitizerOnce sync.Once
+	sanitizer     *bluemonday.Policy
 )
 
 var (
 	colorRegex = regexp.MustCompile(`(?m)(?i)^(#([0-9a-f]{3,4}|[0-9a-f]{6}|[0-9a-f]{8})|rgb\(\d{1,3},[ ]*\d{1,3},[ ]*\d{1,3}\))$`)
 )
 
+var Module = fx.Module("htmlsanitizer",
+	fx.Provide(
+		New,
+	),
+)
+
 func init() {
-	p = bluemonday.UGCPolicy()
+}
+
+func setupSanitizer() {
+	// Custom UGC Policy
+	sanitizer = bluemonday.UGCPolicy()
 
 	// "img" is permitted
-	p.AllowAttrs("align").Matching(bluemonday.ImageAlign).OnElements("img")
-	p.AllowAttrs("alt").Matching(bluemonday.Paragraph).OnElements("img")
-	p.AllowAttrs("height", "width").Matching(bluemonday.NumberOrPercent).OnElements("img")
+	sanitizer.AllowAttrs("align").Matching(bluemonday.ImageAlign).OnElements("img")
+	sanitizer.AllowAttrs("alt").Matching(bluemonday.Paragraph).OnElements("img")
+	sanitizer.AllowAttrs("height", "width").Matching(bluemonday.NumberOrPercent).OnElements("img")
 
 	// Standard URLs enabled
-	p.AllowAttrs("src").OnElements("img")
+	sanitizer.AllowAttrs("src").OnElements("img")
 
 	// Allow in-line images (for now)
-	p.AllowDataURIImages()
+	sanitizer.AllowDataURIImages()
 
 	// Style
-	p.AllowAttrs("style").OnElements("span", "p")
+	sanitizer.AllowAttrs("style").OnElements("span", "p")
 	// Allow the 'color' property with valid RGB(A) hex values only (on any element allowed a 'style' attribute)
-	p.AllowStyles("color").Matching(colorRegex).Globally()
-	p.AllowStyles("text-align").Globally()
-	p.AllowStyles("font-weight").Globally()
-	p.AllowStyles("font-size").Globally()
-	p.AllowStyles("line-height").Globally()
+	sanitizer.AllowStyles("color").Matching(colorRegex).Globally()
+	sanitizer.AllowStyles("text-align").Globally()
+	sanitizer.AllowStyles("font-weight").Globally()
+	sanitizer.AllowStyles("font-size").Globally()
+	sanitizer.AllowStyles("line-height").Globally()
 	// Allow the 'text-decoration' property to be set to 'underline', 'line-through' or 'none'
 	// on 'span' elements only
-	p.AllowStyles("text-decoration").MatchingEnum("underline", "line-through", "none").OnElements("span", "p")
+	sanitizer.AllowStyles("text-decoration").MatchingEnum("underline", "line-through", "none").OnElements("span", "p")
 
 	// Links
 	// Custom policy based on the origional "AllowStandardURLs" helper func
 	// URLs must be parseable by net/url.Parse()
-	p.RequireParseableURLs(true)
+	sanitizer.RequireParseableURLs(true)
 
-	// !url.IsAbs() is permitted
-	p.AllowRelativeURLs(true)
+	// Allow relative URLs (!url.IsAbs() is permitted)
+	sanitizer.AllowRelativeURLs(true)
 
 	// Most common URL schemes only
-	p.AllowURLSchemes("https")
+	sanitizer.AllowURLSchemes("https")
 
 	// For linking elements we will add rel="nofollow" if it does not already exist
 	// This applies to "a" "area" "link"
-	p.RequireNoFollowOnLinks(true)
+	sanitizer.RequireNoFollowOnLinks(true)
 	// CUSTOM END
 
-	p.AllowAttrs("cite").OnElements("blockquote", "q")
-	p.AllowAttrs("href").OnElements("a", "area")
-	p.AllowAttrs("src").OnElements("img")
-	p.AllowElements("hr", "sup", "sub", "h1", "h2", "h3", "h4", "h5", "code", "em")
-	p.AllowTables()
-	p.AllowLists()
+	sanitizer.AllowAttrs("cite").OnElements("blockquote", "q")
+	sanitizer.AllowAttrs("href").OnElements("a", "area")
+	sanitizer.AllowAttrs("src").OnElements("img")
+	sanitizer.AllowElements("hr", "sup", "sub", "h1", "h2", "h3", "h4", "h5", "code", "em")
+	sanitizer.AllowTables()
+	sanitizer.AllowLists()
 
 	// Checkboxes
-	p.AllowAttrs("contenteditable").Matching(regexp.MustCompile(`(?i)false`)).OnElements("label")
-	p.AllowAttrs("type").Matching(regexp.MustCompile(`(?i)checkbox`)).OnElements("input")
-	p.AllowAttrs("checked").Matching(regexp.MustCompile(`(?i)true`)).OnElements("input")
+	sanitizer.AllowAttrs("contenteditable").Matching(regexp.MustCompile(`(?i)false`)).OnElements("label")
+	sanitizer.AllowAttrs("type").Matching(regexp.MustCompile(`(?i)checkbox`)).OnElements("input")
+	sanitizer.AllowAttrs("checked").Matching(regexp.MustCompile(`(?i)true`)).OnElements("input")
+}
 
-	stripTags = bluemonday.StrictPolicy()
+func New(cfg *config.Config) (*bluemonday.Policy, error) {
+	sanitizerOnce.Do(setupSanitizer)
+
+	// Use Image Proxy if enabled
+	if cfg.ImageProxy.Enabled {
+		proxyUrl, err := url.Parse(cfg.ImageProxy.URL)
+		if err != nil {
+			return nil, err
+		}
+
+		sanitizer.RewriteSrc(func(u *url.URL) {
+			// Rewrite URLs to image proxy to proxy all requests through a single URL.
+			imgUrl, _ := url.PathUnescape(u.String())
+
+			if u.Scheme != proxyUrl.Scheme {
+				u.Scheme = proxyUrl.Scheme
+			}
+			if u.Host != proxyUrl.Host {
+				u.Host = proxyUrl.Host
+			}
+			if !strings.HasPrefix(u.Path, proxyUrl.Path) {
+				u.Path = proxyUrl.Path + imgUrl
+			}
+			u.RawQuery = ""
+		})
+	}
+
+	return sanitizer, nil
 }
 
 func Sanitize(in string) string {
-	out := p.Sanitize(in)
+	sanitizerOnce.Do(setupSanitizer)
+
+	out := sanitizer.Sanitize(in)
 	return strings.TrimSuffix(out, "<p><br></p>")
 }
 
 func StripTags(in string) string {
+	stripTagsOnce.Do(func() {
+		stripTags = bluemonday.StrictPolicy()
+	})
+
 	return html.UnescapeString(stripTags.Sanitize(in))
 }
