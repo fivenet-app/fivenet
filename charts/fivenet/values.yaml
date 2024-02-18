@@ -82,7 +82,7 @@ fivenet:
   livenessProbe:
     httpGet:
       path: /readiness
-      port: http
+      port: metrics
     failureThreshold: 3
     initialDelaySeconds: 25
     periodSeconds: 10
@@ -90,7 +90,7 @@ fivenet:
   startupProbe:
     httpGet:
       path: /readiness
-      port: http
+      port: metrics
     failureThreshold: 30
     initialDelaySeconds: 20
     periodSeconds: 10
