@@ -116,7 +116,7 @@ const openStatus = ref(false);
         </td>
         <td class="whitespace-nowrap px-1 py-1 text-sm text-gray-300">
             <span v-if="dispatch.units.length === 0" class="italic">{{ $t('enums.centrum.StatusDispatch.UNASSIGNED') }}</span>
-            <span v-else class="mr-1 grid grid-cols-2 gap-1">
+            <span v-else class="grid grid-flow-row sm:grid-flow-col auto-rows-auto gap-1">
                 <UnitInfoPopover
                     v-for="unit in dispatch.units"
                     :key="unit.unitId"

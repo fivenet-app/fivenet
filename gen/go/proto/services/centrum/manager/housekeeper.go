@@ -444,6 +444,11 @@ func (s *Housekeeper) deduplicateDispatches(ctx context.Context) error {
 						continue
 					}
 
+					// Skip dispatches that are marked as multiple or duplicate dispatches they have already been handled
+					if closeByDsp.Attributes != nil && (closeByDsp.Attributes.Has(centrum.DispatchAttributeMultiple) || closeByDsp.Attributes.Has(centrum.DispatchAttributeDuplicate)) {
+						continue
+					}
+
 					if closeByDsp.Creator == nil || closeByDsp.Anon {
 						description += fmt.Sprintf("DSP-%d\n", closeByDsp.Id)
 					} else {

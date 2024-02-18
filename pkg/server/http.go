@@ -148,8 +148,7 @@ func setupHTTPServer(p Params) *gin.Engine {
 
 	// Setup nuxt generated files serving
 	fs := static.LocalFile(".output/public/", false)
-	fileserver := http.FileServer(fs)
-	fileserver = http.StripPrefix("/", fileserver)
+	fileServer := http.StripPrefix("/", http.FileServer(fs))
 
 	e.NoRoute(func(c *gin.Context) {
 		requestPath := c.Request.URL.Path
@@ -159,12 +158,12 @@ func setupHTTPServer(p Params) *gin.Engine {
 
 		if strings.HasSuffix(requestPath, "/") || !strings.Contains(requestPath, ".") {
 			c.Request.URL.Path = "/"
-			fileserver.ServeHTTP(c.Writer, c.Request)
+			fileServer.ServeHTTP(c.Writer, c.Request)
 			c.Abort()
 			return
 		}
 
-		fileserver.ServeHTTP(c.Writer, c.Request)
+		fileServer.ServeHTTP(c.Writer, c.Request)
 		c.Abort()
 	})
 	// Register output dir for assets and other static files

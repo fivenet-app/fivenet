@@ -16,6 +16,6 @@ const open = ref(false);
     </button>
 
     <GenericModal :open="open" :unmount="false" @close="open = false">
-        <PenaltyCalculator />
+        <PenaltyCalculator :load-laws="open" />
     </GenericModal>
 </template>

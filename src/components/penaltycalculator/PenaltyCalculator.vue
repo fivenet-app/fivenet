@@ -17,7 +17,21 @@ const notifications = useNotificatorStore();
 
 const { t, d } = useI18n();
 
-const { data: lawBooks, pending, refresh, error } = useLazyAsyncData(`lawbooks`, () => completorStore.listLawBooks());
+const props = withDefaults(
+    defineProps<{
+        loadLaws: boolean;
+    }>(),
+    {
+        loadLaws: true,
+    },
+);
+
+const {
+    data: lawBooks,
+    pending,
+    refresh,
+    error,
+} = useLazyAsyncData(`lawbooks`, () => completorStore.listLawBooks(), { immediate: false });
 
 export type SelectedPenalty = {
     law: Law;
@@ -136,6 +150,12 @@ function reset(): void {
     rawQuery.value = '';
     selectedPenalties.value = [];
 }
+
+watch(props, () => {
+    if (lawBooks.value === null && pending.value) {
+        refresh();
+    }
+});
 </script>
 
 <template>
