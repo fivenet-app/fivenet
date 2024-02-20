@@ -83,7 +83,7 @@
         "i18next-scanner": "4.4.0",
         "nuxi": "3.10.1",
         "nuxt": "^3.10.2",
-        "nuxt-typed-router": "3.5.1",
+        "nuxt-typed-router": "3.6.0",
         "postcss": "8.4.35",
         "postcss-custom-properties": "13.3.5",
         "postcss-import": "16.0.1",

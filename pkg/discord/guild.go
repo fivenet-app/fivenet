@@ -110,8 +110,14 @@ func (g *Guild) Run() error {
 		return err
 	}
 
-	var logs []*discordgo.MessageEmbed
 	errs := multierr.Combine()
+	if settings.IsStatusLogEnabled() {
+		if err := g.sendStartStatusLog(*settings.StatusLogSettings.ChannelId); err != nil {
+			errs = multierr.Append(errs, err)
+		}
+	}
+
+	logs := []*discordgo.MessageEmbed{}
 	for key, module := range g.modules {
 		g.logger.Debug("running discord guild module", zap.String("dc_module", key))
 
@@ -136,6 +142,24 @@ func (g *Guild) Run() error {
 
 func (g *Guild) Stop() error {
 	g.ready.Store(false)
+
+	return nil
+}
+
+func (g *Guild) sendStartStatusLog(channelId string) error {
+	channel, err := g.bot.discord.Channel(channelId)
+	if err != nil {
+		return err
+	}
+
+	if _, err := g.bot.discord.ChannelMessageSendEmbed(channel.ID, &discordgo.MessageEmbed{
+		Type:   discordgo.EmbedTypeRich,
+		Title:  "Starting sync...",
+		Author: embeds.EmbedAuthor,
+		Color:  embeds.ColorInfo,
+	}); err != nil {
+		return err
+	}
 
 	return nil
 }
