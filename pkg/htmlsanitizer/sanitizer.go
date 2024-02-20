@@ -49,7 +49,7 @@ func setupSanitizer() {
 	sanitizer.AllowDataURIImages()
 
 	// Style
-	sanitizer.AllowAttrs("style").OnElements("span", "p")
+	sanitizer.AllowAttrs("style").OnElements("span", "p", "img")
 	// Allow the 'color' property with valid RGB(A) hex values only (on any element allowed a 'style' attribute)
 	sanitizer.AllowStyles("color").Matching(colorRegex).Globally()
 	sanitizer.AllowStyles("text-align").Globally()
