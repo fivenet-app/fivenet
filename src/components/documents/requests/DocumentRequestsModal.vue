@@ -98,7 +98,7 @@ const canCreate =
     props.doc.creatorId !== activeChar.value?.userId &&
     availableRequestTypes.value.length > 0 &&
     can('DocStoreService.CreateDocumentReq') &&
-    checkDocAccess(props.access, props.doc.creator, AccessLevel.VIEW, 'DocStoreService.CreateDocumentReq');
+    checkDocAccess(props.access, props.doc.creator, AccessLevel.VIEW);
 
 const canSubmit = ref(true);
 const onSubmit = handleSubmit(
