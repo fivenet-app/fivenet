@@ -116,6 +116,7 @@ const open = ref(false);
                     <template v-for="item in navigation" :key="item.name">
                         <NuxtLink
                             v-if="item.permission === undefined || can(item.permission)"
+                            v-slot="{ active }"
                             :to="item.to"
                             class="group flex w-full shrink-0 items-center items-center gap-2 rounded-md p-2 text-sm font-medium text-accent-100 hover:bg-accent-100/10 hover:text-neutral hover:transition-all"
                             active-class="bg-accent-100/20 text-neutral font-bold"
@@ -124,7 +125,7 @@ const open = ref(false);
                         >
                             <component
                                 :is="item.icon"
-                                :class="[selectedTab === index ? '' : 'group-hover:text-base-300', 'h-5 w-5']"
+                                :class="[active ? '' : 'group-hover:text-base-300', 'h-5 w-5']"
                                 aria-hidden="true"
                             />
                             {{ $t(item.name) }}
