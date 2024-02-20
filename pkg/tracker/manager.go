@@ -75,7 +75,7 @@ func NewManager(p ManagerParams) (*Manager, error) {
 	m := &Manager{
 		ctx:      ctx,
 		logger:   p.Logger,
-		tracer:   p.TP.Tracer("tracker-cache"),
+		tracer:   p.TP.Tracer("tracker-manager"),
 		js:       p.JS,
 		db:       p.DB,
 		enricher: p.Enricher,
@@ -126,7 +126,7 @@ func (m *Manager) start() {
 }
 
 func (m *Manager) refreshCache() {
-	ctx, span := m.tracer.Start(m.ctx, "livemap-refresh-cache")
+	ctx, span := m.tracer.Start(m.ctx, "tracker-refresh")
 	defer span.End()
 
 	if err := m.refreshUserLocations(ctx); err != nil {
