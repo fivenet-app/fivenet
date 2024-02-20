@@ -44,7 +44,7 @@ Golang templating is used. In addition to base [Golang html/template functions](
 * `.Firstname`
 * `.Lastname`
 * `.Dateofbirth` - In `DD.MM.YYYY` format.
-* `.Phone_number` - Optional, might not always be included.
+* `.PhoneNumber` - Optional, might not always be included.
 
 (\*these fields are only available on the `.activeChar` variable)
 
