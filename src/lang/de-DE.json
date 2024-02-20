@@ -357,6 +357,10 @@
                     "unemployed_enabled": "Verwalte die Rolle für Arbeitslose",
                     "unemployed_mode": "Modus für das behandeln von Arbeitslosen",
                     "unemployed_role_name": "Arbeitslosen Rolle"
+                },
+                "status_log": "Statusprotokoll",
+                "status_log_settings": {
+                    "channel_id": "Channel-ID"
                 }
             },
             "role_view": {
