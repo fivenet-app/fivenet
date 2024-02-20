@@ -72,6 +72,11 @@ func (x *JobProps) Default(job string) {
 	if x.DiscordSyncSettings.UserInfoSyncSettings.UnemployedRoleName == nil {
 		x.DiscordSyncSettings.UserInfoSyncSettings.UnemployedRoleName = &unemployedRoleName
 	}
+
+	// Status Log Settings
+	if x.DiscordSyncSettings.StatusLogSettings == nil {
+		x.DiscordSyncSettings.StatusLogSettings = &StatusLogSettings{}
+	}
 }
 
 func (x *QuickButtons) Scan(value any) error {

@@ -103,6 +103,14 @@ export interface DiscordSyncSettings {
      * @generated from protobuf field: optional resources.users.UserInfoSyncSettings user_info_sync_settings = 2;
      */
     userInfoSyncSettings?: UserInfoSyncSettings;
+    /**
+     * @generated from protobuf field: bool status_log = 3;
+     */
+    statusLog: boolean;
+    /**
+     * @generated from protobuf field: optional resources.users.StatusLogSettings status_log_settings = 4;
+     */
+    statusLogSettings?: StatusLogSettings;
 }
 /**
  * @generated from protobuf message resources.users.UserInfoSyncSettings
@@ -132,6 +140,15 @@ export interface UserInfoSyncSettings {
      * @generated from protobuf field: optional string unemployed_role_name = 6;
      */
     unemployedRoleName?: string;
+}
+/**
+ * @generated from protobuf message resources.users.StatusLogSettings
+ */
+export interface StatusLogSettings {
+    /**
+     * @generated from protobuf field: optional string channel_id = 1;
+     */
+    channelId?: string;
 }
 /**
  * @generated from protobuf enum resources.users.UserInfoSyncUnemployedMode
@@ -216,7 +233,9 @@ class DiscordSyncSettings$Type extends MessageType<DiscordSyncSettings> {
     constructor() {
         super("resources.users.DiscordSyncSettings", [
             { no: 1, name: "user_info_sync", kind: "scalar", T: 8 /*ScalarType.BOOL*/ },
-            { no: 2, name: "user_info_sync_settings", kind: "message", T: () => UserInfoSyncSettings }
+            { no: 2, name: "user_info_sync_settings", kind: "message", T: () => UserInfoSyncSettings },
+            { no: 3, name: "status_log", kind: "scalar", T: 8 /*ScalarType.BOOL*/ },
+            { no: 4, name: "status_log_settings", kind: "message", T: () => StatusLogSettings }
         ]);
     }
 }
@@ -241,3 +260,15 @@ class UserInfoSyncSettings$Type extends MessageType<UserInfoSyncSettings> {
  * @generated MessageType for protobuf message resources.users.UserInfoSyncSettings
  */
 export const UserInfoSyncSettings = new UserInfoSyncSettings$Type();
+// @generated message type with reflection information, may provide speed optimized methods
+class StatusLogSettings$Type extends MessageType<StatusLogSettings> {
+    constructor() {
+        super("resources.users.StatusLogSettings", [
+            { no: 1, name: "channel_id", kind: "scalar", opt: true, T: 9 /*ScalarType.STRING*/ }
+        ]);
+    }
+}
+/**
+ * @generated MessageType for protobuf message resources.users.StatusLogSettings
+ */
+export const StatusLogSettings = new StatusLogSettings$Type();
