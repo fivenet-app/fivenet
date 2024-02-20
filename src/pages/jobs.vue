@@ -1,23 +1,55 @@
 <script lang="ts" setup>
-import { CloseIcon, MenuIcon } from 'mdi-vue3';
+import {
+    AccountGroupIcon,
+    BriefcaseIcon,
+    CloseIcon,
+    FrequentlyAskedQuestionsIcon,
+    ListStatusIcon,
+    MenuIcon,
+    SchoolIcon,
+    TimelineClockIcon,
+} from 'mdi-vue3';
+import type { DefineComponent } from 'vue';
 import { type RoutesNamedLocations } from '@typed-router';
 import type { Perms } from '~~/gen/ts/perms';
 
-const navigation: { name: string; to: RoutesNamedLocations; permission?: Perms }[] = [
-    { name: 'common.overview', to: { name: 'jobs-overview' }, permission: 'JobsService.ListColleagues' },
-    { name: 'pages.jobs.colleagues.title', to: { name: 'jobs-colleagues' }, permission: 'JobsService.ListColleagues' },
+const navigation: { name: string; to: RoutesNamedLocations; permission?: Perms; icon: DefineComponent }[] = [
+    {
+        name: 'common.overview',
+        to: { name: 'jobs-overview' },
+        permission: 'JobsService.ListColleagues',
+        icon: markRaw(BriefcaseIcon),
+    },
+    {
+        name: 'pages.jobs.colleagues.title',
+        to: { name: 'jobs-colleagues' },
+        permission: 'JobsService.ListColleagues',
+        icon: markRaw(AccountGroupIcon),
+    },
     {
         name: 'pages.jobs.requests.title',
         to: { name: 'jobs-requests' },
         permission: 'JobsRequestsService.ListRequests',
+        icon: markRaw(FrequentlyAskedQuestionsIcon),
     },
     {
         name: 'pages.jobs.qualifications.title',
         to: { name: 'jobs-qualifications' },
         permission: 'TODOService.TODOMethod',
+        icon: markRaw(SchoolIcon),
     },
-    { name: 'pages.jobs.timeclock.title', to: { name: 'jobs-timeclock' }, permission: 'JobsTimeclockService.ListTimeclock' },
-    { name: 'pages.jobs.conduct.title', to: { name: 'jobs-conduct' }, permission: 'JobsConductService.ListConductEntries' },
+    {
+        name: 'pages.jobs.timeclock.title',
+        to: { name: 'jobs-timeclock' },
+        permission: 'JobsTimeclockService.ListTimeclock',
+        icon: markRaw(TimelineClockIcon),
+    },
+    {
+        name: 'pages.jobs.conduct.title',
+        to: { name: 'jobs-conduct' },
+        permission: 'JobsConductService.ListConductEntries',
+        icon: markRaw(ListStatusIcon),
+    },
 ];
 
 useHead({
@@ -38,7 +70,7 @@ const open = ref(false);
         <nav class="bg-base-700">
             <div class="mx-auto max-w-7xl px-4 sm:px-6 lg:px-8">
                 <div class="flex h-16 items-center justify-between">
-                    <div class="flex items-center">
+                    <div class="flex items-center overflow-y-scroll">
                         <div class="-ml-2 flex md:hidden">
                             <!-- Mobile menu button -->
                             <button
@@ -55,16 +87,23 @@ const open = ref(false);
                         <div class="hidden md:block">
                             <div class="flex items-baseline space-x-2">
                                 <template v-for="item in navigation" :key="item.name">
-                                    <NuxtLink
-                                        v-if="item.permission === undefined || can(item.permission)"
-                                        :to="item.to"
-                                        class="group flex shrink-0 flex-col items-center rounded-md p-3 text-sm font-medium text-accent-100 hover:bg-accent-100/10 hover:text-neutral hover:transition-all"
-                                        active-class="bg-accent-100/20 text-neutral font-bold"
-                                        exact-active-class="text-accent-200"
-                                        aria-current-value="page"
-                                    >
-                                        {{ $t(item.name) }}
-                                    </NuxtLink>
+                                    <span class="flex-1">
+                                        <NuxtLink
+                                            v-if="item.permission === undefined || can(item.permission)"
+                                            v-slot="{ active }"
+                                            :to="item.to"
+                                            class="group flex shrink-0 items-center gap-2 rounded-md p-3 text-sm font-medium text-accent-100 hover:bg-accent-100/10 hover:text-neutral hover:transition-all"
+                                            active-class="bg-accent-100/20 font-bold text-primary-300"
+                                            aria-current-value="page"
+                                        >
+                                            <component
+                                                :is="item.icon"
+                                                :class="[active ? '' : 'group-hover:text-base-300', 'h-5 w-5']"
+                                                aria-hidden="true"
+                                            />
+                                            {{ $t(item.name) }}
+                                        </NuxtLink>
+                                    </span>
                                 </template>
                             </div>
                         </div>
@@ -78,11 +117,16 @@ const open = ref(false);
                         <NuxtLink
                             v-if="item.permission === undefined || can(item.permission)"
                             :to="item.to"
-                            class="group flex w-full flex-col items-center rounded-md p-2 text-sm font-medium text-accent-100 hover:bg-accent-100/10 hover:text-neutral hover:transition-all"
+                            class="group flex w-full shrink-0 items-center items-center gap-2 rounded-md p-2 text-sm font-medium text-accent-100 hover:bg-accent-100/10 hover:text-neutral hover:transition-all"
                             active-class="bg-accent-100/20 text-neutral font-bold"
-                            exact-active-class="text-accent-200"
+                            exact-active-class="text-primary-300"
                             aria-current-value="page"
                         >
+                            <component
+                                :is="item.icon"
+                                :class="[selectedTab === index ? '' : 'group-hover:text-base-300', 'h-5 w-5']"
+                                aria-hidden="true"
+                            />
                             {{ $t(item.name) }}
                         </NuxtLink>
                     </template>

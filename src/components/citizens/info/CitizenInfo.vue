@@ -145,7 +145,7 @@ const open = ref(false);
                 <nav class="-ml-2 bg-base-700 lg:rounded-lg">
                     <div class="mx-auto ml-2 max-w-7xl px-4 sm:px-6 lg:px-8">
                         <div class="flex h-16 items-center justify-between">
-                            <div class="flex items-center">
+                            <div class="flex items-center overflow-y-scroll">
                                 <div class="-ml-2 flex md:hidden">
                                     <!-- Mobile menu button -->
                                     <button
@@ -159,7 +159,7 @@ const open = ref(false);
                                         <CloseIcon v-else class="block h-5 w-5" aria-hidden="true" />
                                     </button>
                                 </div>
-                                <div class="hidden md:block">
+                                <div class="md:block hidden">
                                     <div class="flex items-baseline space-x-2">
                                         <template v-for="(tab, index) in tabs" :key="tab.id">
                                             <span class="flex-1">
@@ -191,7 +191,7 @@ const open = ref(false);
                                 </div>
                             </div>
                         </div>
-                        <div class="md:hidden" :class="open ? 'block' : 'hidden'">
+                        <div class="-ml-3 -mr-3 md:hidden" :class="open ? 'block' : 'hidden'">
                             <div class="space-y-1 px-2 pb-3 pt-2 sm:px-3">
                                 <template v-for="(tab, index) in tabs" :key="tab.id">
                                     <button

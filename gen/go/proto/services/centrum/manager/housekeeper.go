@@ -100,7 +100,7 @@ func NewHousekeeper(p HousekeeperParams) *Housekeeper {
 		s.wg.Add(1)
 		go func() {
 			defer s.wg.Done()
-			s.runCancelDispatches()
+			s.runCancelOldDispatches()
 		}()
 
 		s.wg.Add(1)
@@ -215,7 +215,7 @@ func (s *Housekeeper) handleDispatchAssignmentExpiration(ctx context.Context) er
 	return nil
 }
 
-func (s *Housekeeper) runCancelDispatches() {
+func (s *Housekeeper) runCancelOldDispatches() {
 	for {
 		select {
 		case <-s.ctx.Done():
@@ -226,7 +226,7 @@ func (s *Housekeeper) runCancelDispatches() {
 				ctx, span := s.tracer.Start(s.ctx, "centrum-dispatch-cancel")
 				defer span.End()
 
-				if err := s.cancelExpiredDispatches(ctx); err != nil {
+				if err := s.cancelOldDispatches(ctx); err != nil {
 					s.logger.Error("failed to archive dispatches", zap.Error(err))
 				}
 			}()
@@ -235,7 +235,7 @@ func (s *Housekeeper) runCancelDispatches() {
 }
 
 // Cancel dispatches that haven't been worked on for some time
-func (s *Housekeeper) cancelExpiredDispatches(ctx context.Context) error {
+func (s *Housekeeper) cancelOldDispatches(ctx context.Context) error {
 	stmt := tDispatchStatus.
 		SELECT(
 			tDispatchStatus.DispatchID.AS("dispatch_id"),
