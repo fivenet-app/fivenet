@@ -94,7 +94,11 @@ const { handleSubmit, meta } = useForm<FormData>({
     validateOnMount: true,
 });
 
-const canCreate = props.doc.creatorId !== activeChar.value?.userId && availableRequestTypes.value.length > 0;
+const canCreate =
+    props.doc.creatorId !== activeChar.value?.userId &&
+    availableRequestTypes.value.length > 0 &&
+    can('DocStoreService.CreateDocumentReq') &&
+    checkDocAccess(props.access, props.doc.creator, AccessLevel.VIEW, 'DocStoreService.CreateDocumentReq');
 
 const canSubmit = ref(true);
 const onSubmit = handleSubmit(
@@ -268,16 +272,7 @@ const onSubmitThrottle = useThrottleFn(async (e) => {
                                     {{ $t('common.close', 1) }}
                                 </button>
                                 <button
-                                    v-if="
-                                        canCreate &&
-                                        can('DocStoreService.CreateDocumentReq') &&
-                                        checkDocAccess(
-                                            access,
-                                            doc.creator,
-                                            AccessLevel.VIEW,
-                                            'DocStoreService.CreateDocumentReq',
-                                        )
-                                    "
+                                    v-if="canCreate"
                                     type="button"
                                     class="rounded-bd flex flex-1 justify-center px-3.5 py-2.5 text-sm font-semibold text-neutral"
                                     :disabled="!meta.valid || !canSubmit"
