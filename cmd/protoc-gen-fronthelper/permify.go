@@ -116,6 +116,10 @@ func (p *PermifyModule) Execute(targets map[string]pgs.File, pkgs map[string]pgs
 		}
 	}
 
+	slices.SortStableFunc(data.FS, func(a, b pgs.File) int {
+		return strings.Compare(a.FullyQualifiedName(), b.FullyQualifiedName())
+	})
+
 	p.AddGeneratorTemplateFile(path.Join("perms.ts"), p.tpl, data)
 
 	return p.Artifacts()

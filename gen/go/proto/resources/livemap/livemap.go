@@ -38,3 +38,16 @@ func (x *UserMarker) Point() orb.Point {
 func (x *MarkerInfo) SetJobLabel(label string) {
 	x.JobLabel = label
 }
+
+func (x *UserMarker) Merge(in *UserMarker) *UserMarker {
+	if in.UnitId == nil {
+		x.UnitId = nil
+	}
+	if in.Unit == nil {
+		x.Unit = nil
+	}
+
+	proto.Merge(x, in)
+
+	return x
+}
