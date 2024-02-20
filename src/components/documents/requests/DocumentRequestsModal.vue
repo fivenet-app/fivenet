@@ -151,111 +151,114 @@ const onSubmitThrottle = useThrottleFn(async (e) => {
                                 {{ $t('common.request', 2) }}
                             </DialogTitle>
 
-                            <div v-if="canCreate" class="my-2 space-y-24">
-                                <div class="form-control flex-1">
-                                    <label for="reason" class="block text-sm font-medium leading-6 text-neutral">
-                                        {{ $t('common.reason') }}
-                                    </label>
-                                    <VeeField
-                                        type="text"
-                                        name="reason"
-                                        class="block w-full rounded-md border-0 bg-base-700 py-1.5 text-neutral placeholder:text-accent-200 focus:ring-2 focus:ring-inset focus:ring-base-300 sm:text-sm sm:leading-6"
-                                        :placeholder="$t('common.reason')"
-                                        :label="$t('common.reason')"
-                                        @focusin="focusTablet(true)"
-                                        @focusout="focusTablet(false)"
-                                    />
-                                    <VeeErrorMessage name="reason" as="p" class="mt-2 text-sm text-error-400" />
+                            <template v-if="canCreate">
+                                <div class="my-2 space-y-24">
+                                    <div class="form-control flex-1">
+                                        <label for="reason" class="block text-sm font-medium leading-6 text-neutral">
+                                            {{ $t('common.reason') }}
+                                        </label>
+                                        <VeeField
+                                            type="text"
+                                            name="reason"
+                                            class="block w-full rounded-md border-0 bg-base-700 py-1.5 text-neutral placeholder:text-accent-200 focus:ring-2 focus:ring-inset focus:ring-base-300 sm:text-sm sm:leading-6"
+                                            :placeholder="$t('common.reason')"
+                                            :label="$t('common.reason')"
+                                            @focusin="focusTablet(true)"
+                                            @focusout="focusTablet(false)"
+                                        />
+                                        <VeeErrorMessage name="reason" as="p" class="mt-2 text-sm text-error-400" />
+                                    </div>
                                 </div>
-                            </div>
-                            <div v-if="canCreate" class="my-2 space-y-20">
-                                <div class="form-control flex-1">
-                                    <label for="requestsType" class="block text-sm font-medium leading-6 text-neutral">
-                                        {{ $t('common.type', 2) }}
-                                    </label>
-                                    <VeeField
-                                        type="text"
-                                        name="requestsType"
-                                        class="block w-full rounded-md border-0 bg-base-700 py-1.5 text-neutral placeholder:text-accent-200 focus:ring-2 focus:ring-inset focus:ring-base-300 sm:text-sm sm:leading-6"
-                                        :placeholder="$t('common.type', 2)"
-                                        :label="$t('common.type', 2)"
-                                        @focusin="focusTablet(true)"
-                                        @focusout="focusTablet(false)"
-                                    >
-                                        <Listbox v-model="selectedRequestType" as="div">
-                                            <div class="relative">
-                                                <ListboxButton
-                                                    class="block w-full rounded-md border-0 bg-base-700 py-1.5 pl-3 text-left text-neutral placeholder:text-accent-200 focus:ring-2 focus:ring-inset focus:ring-base-300 sm:text-sm sm:leading-6"
-                                                >
-                                                    <span class="block truncate">
-                                                        {{
-                                                            $t(
-                                                                `enums.docstore.DocActivityType.${DocActivityType[selectedRequestType?.key ?? 0]}`,
-                                                                2,
-                                                            )
-                                                        }}
-                                                    </span>
-                                                    <span
-                                                        class="pointer-events-none absolute inset-y-0 right-0 flex items-center pr-2"
+                                <div class="my-2 space-y-20">
+                                    <div class="form-control flex-1">
+                                        <label for="requestsType" class="block text-sm font-medium leading-6 text-neutral">
+                                            {{ $t('common.type', 2) }}
+                                        </label>
+                                        <VeeField
+                                            type="text"
+                                            name="requestsType"
+                                            class="block w-full rounded-md border-0 bg-base-700 py-1.5 text-neutral placeholder:text-accent-200 focus:ring-2 focus:ring-inset focus:ring-base-300 sm:text-sm sm:leading-6"
+                                            :placeholder="$t('common.type', 2)"
+                                            :label="$t('common.type', 2)"
+                                            @focusin="focusTablet(true)"
+                                            @focusout="focusTablet(false)"
+                                        >
+                                            <Listbox v-model="selectedRequestType" as="div">
+                                                <div class="relative">
+                                                    <ListboxButton
+                                                        class="block w-full rounded-md border-0 bg-base-700 py-1.5 pl-3 text-left text-neutral placeholder:text-accent-200 focus:ring-2 focus:ring-inset focus:ring-base-300 sm:text-sm sm:leading-6"
                                                     >
-                                                        <ChevronDownIcon class="h-5 w-5 text-gray-400" aria-hidden="true" />
-                                                    </span>
-                                                </ListboxButton>
-
-                                                <transition
-                                                    leave-active-class="transition duration-100 ease-in"
-                                                    leave-from-class="opacity-100"
-                                                    leave-to-class="opacity-0"
-                                                >
-                                                    <ListboxOptions
-                                                        class="absolute z-10 mt-1 max-h-44 w-full overflow-auto rounded-md bg-base-700 py-1 text-base sm:text-sm"
-                                                    >
-                                                        <ListboxOption
-                                                            v-for="requestType in availableRequestTypes"
-                                                            :key="requestType.key"
-                                                            v-slot="{ active, selected }"
-                                                            as="template"
-                                                            :value="requestType"
+                                                        <span class="block truncate">
+                                                            {{
+                                                                $t(
+                                                                    `enums.docstore.DocActivityType.${DocActivityType[selectedRequestType?.key ?? 0]}`,
+                                                                    2,
+                                                                )
+                                                            }}
+                                                        </span>
+                                                        <span
+                                                            class="pointer-events-none absolute inset-y-0 right-0 flex items-center pr-2"
                                                         >
-                                                            <li
-                                                                :class="[
-                                                                    active ? 'bg-primary-500' : '',
-                                                                    'relative cursor-default select-none py-2 pl-8 pr-4 text-neutral',
-                                                                ]"
-                                                            >
-                                                                <span
-                                                                    :class="[
-                                                                        selected ? 'font-semibold' : 'font-normal',
-                                                                        'block truncate',
-                                                                    ]"
-                                                                >
-                                                                    {{
-                                                                        $t(
-                                                                            `enums.docstore.DocActivityType.${DocActivityType[requestType.key]}`,
-                                                                            2,
-                                                                        )
-                                                                    }}
-                                                                </span>
+                                                            <ChevronDownIcon class="h-5 w-5 text-gray-400" aria-hidden="true" />
+                                                        </span>
+                                                    </ListboxButton>
 
-                                                                <span
-                                                                    v-if="selected"
+                                                    <transition
+                                                        leave-active-class="transition duration-100 ease-in"
+                                                        leave-from-class="opacity-100"
+                                                        leave-to-class="opacity-0"
+                                                    >
+                                                        <ListboxOptions
+                                                            class="absolute z-10 mt-1 max-h-44 w-full overflow-auto rounded-md bg-base-700 py-1 text-base sm:text-sm"
+                                                        >
+                                                            <ListboxOption
+                                                                v-for="requestType in availableRequestTypes"
+                                                                :key="requestType.key"
+                                                                v-slot="{ active, selected }"
+                                                                as="template"
+                                                                :value="requestType"
+                                                            >
+                                                                <li
                                                                     :class="[
-                                                                        active ? 'text-neutral' : 'text-primary-500',
-                                                                        'absolute inset-y-0 left-0 flex items-center pl-1.5',
+                                                                        active ? 'bg-primary-500' : '',
+                                                                        'relative cursor-default select-none py-2 pl-8 pr-4 text-neutral',
                                                                     ]"
                                                                 >
-                                                                    <CheckIcon class="h-5 w-5" aria-hidden="true" />
-                                                                </span>
-                                                            </li>
-                                                        </ListboxOption>
-                                                    </ListboxOptions>
-                                                </transition>
-                                            </div>
-                                        </Listbox>
-                                    </VeeField>
-                                    <VeeErrorMessage name="requestsType" as="p" class="mt-2 text-sm text-error-400" />
+                                                                    <span
+                                                                        :class="[
+                                                                            selected ? 'font-semibold' : 'font-normal',
+                                                                            'block truncate',
+                                                                        ]"
+                                                                    >
+                                                                        {{
+                                                                            $t(
+                                                                                `enums.docstore.DocActivityType.${DocActivityType[requestType.key]}`,
+                                                                                2,
+                                                                            )
+                                                                        }}
+                                                                    </span>
+
+                                                                    <span
+                                                                        v-if="selected"
+                                                                        :class="[
+                                                                            active ? 'text-neutral' : 'text-primary-500',
+                                                                            'absolute inset-y-0 left-0 flex items-center pl-1.5',
+                                                                        ]"
+                                                                    >
+                                                                        <CheckIcon class="h-5 w-5" aria-hidden="true" />
+                                                                    </span>
+                                                                </li>
+                                                            </ListboxOption>
+                                                        </ListboxOptions>
+                                                    </transition>
+                                                </div>
+                                            </Listbox>
+                                        </VeeField>
+                                        <VeeErrorMessage name="requestsType" as="p" class="mt-2 text-sm text-error-400" />
+                                    </div>
                                 </div>
-                            </div>
+                            </template>
+
                             <div class="absolute bottom-0 left-0 flex w-full">
                                 <button
                                     type="button"
