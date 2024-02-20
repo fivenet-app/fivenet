@@ -38,7 +38,7 @@
             "mode": "auto",
             "program": "${workspaceFolder}",
             "cwd": "${workspaceFolder}",
-            "args": ["worker", "--module-audit-retention=false", "--module-centrum-bot=false", "--module-centrum-housekeeper=false"],
+            "args": ["worker", "--module-audit-retention=false", "--module-centrum-bot=false", "--module-centrum-housekeeper=false", "--module-user-tracker=false"],
             "buildFlags": "-a -installsuffix cgo",
             "env": {
                 "CGO_ENABLED": "0",
