@@ -34,7 +34,6 @@ database:
   connMaxLifetime: 60m
 nats:
   url: "nats://localhost:4222"
-  workerCount: 5
 jwt:
   secret: "your_generated_jwt_secret"
 oauth2:
@@ -139,3 +138,7 @@ storage:
 imageProxy:
   enabled: true
   url: "/api/image_proxy/"
+  cachePrefix: "images/"
+  options:
+    allowHosts: []
+    denyHosts: []

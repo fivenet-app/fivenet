@@ -123,8 +123,7 @@ type Database struct {
 }
 
 type NATS struct {
-	URL         string `default:"nats://localhost:4222" yaml:"url"`
-	WorkerCount int    `default:"5" yaml:"workerCount"`
+	URL string `default:"nats://localhost:4222" yaml:"url"`
 }
 
 type JWT struct {
@@ -270,6 +269,13 @@ type Storage struct {
 }
 
 type ImageProxy struct {
-	Enabled bool   `default:"true" yaml:"enabled"`
-	URL     string `default:"/api/image_proxy/" yaml:"url"`
+	Enabled     bool              `default:"true" yaml:"enabled"`
+	URL         string            `default:"/api/image_proxy/" yaml:"url"`
+	CachePrefix string            `default:"images/" yaml:"cachePrefix"`
+	Options     ImageProxyOptions `yaml:"options"`
+}
+
+type ImageProxyOptions struct {
+	AllowHosts []string `yaml:"allowHosts"`
+	DenyHosts  []string `yaml:"denyHosts"`
 }
