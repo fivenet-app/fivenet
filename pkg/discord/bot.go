@@ -27,7 +27,7 @@ import (
 )
 
 var (
-	tJobProps = table.FivenetJobProps
+	tJobProps = table.FivenetJobProps.AS("jobprops")
 )
 
 func wrapLogger(log *zap.Logger) *zap.Logger {
@@ -388,6 +388,7 @@ func (b *Bot) stop() error {
 }
 
 func (b *Bot) setLastSyncTime(ctx context.Context, job string) error {
+	tJobProps := table.FivenetJobProps
 	stmt := tJobProps.
 		UPDATE(
 			tJobProps.DiscordLastSync,

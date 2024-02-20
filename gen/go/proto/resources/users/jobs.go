@@ -118,3 +118,7 @@ func (x *DiscordSyncSettings) Value() (driver.Value, error) {
 	out, err := protojson.Marshal(x)
 	return string(out), err
 }
+
+func (x *DiscordSyncSettings) IsStatusLogEnabled() bool {
+	return x.StatusLog && x.StatusLogSettings != nil && x.StatusLogSettings.ChannelId != nil
+}

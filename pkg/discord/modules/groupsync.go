@@ -9,6 +9,7 @@ import (
 	"strings"
 
 	"github.com/bwmarrin/discordgo"
+	"github.com/galexrt/fivenet/gen/go/proto/resources/users"
 	"github.com/galexrt/fivenet/pkg/config"
 	jet "github.com/go-jet/jet/v2/mysql"
 	"github.com/go-jet/jet/v2/qrm"
@@ -37,12 +38,12 @@ func NewGroupSync(base *BaseModule) (Module, error) {
 	}, nil
 }
 
-func (g *GroupSync) Run() error {
+func (g *GroupSync) Run(settings *users.DiscordSyncSettings) ([]*discordgo.MessageEmbed, error) {
 	if err := g.createGroupRoles(); err != nil {
-		return err
+		return nil, err
 	}
 
-	return g.syncGroups()
+	return nil, g.syncGroups()
 }
 
 func (g *GroupSync) createGroupRoles() error {

@@ -3,7 +3,6 @@ package modules
 import (
 	"context"
 	"database/sql"
-	"errors"
 	"fmt"
 
 	"github.com/bwmarrin/discordgo"
@@ -11,8 +10,6 @@ import (
 	"github.com/galexrt/fivenet/pkg/config"
 	"github.com/galexrt/fivenet/pkg/mstlystcdata"
 	"github.com/galexrt/fivenet/query/fivenet/table"
-	jet "github.com/go-jet/jet/v2/mysql"
-	"github.com/go-jet/jet/v2/qrm"
 	"go.uber.org/zap"
 )
 
@@ -20,7 +17,6 @@ var (
 	tOauth2Accs = table.FivenetOauth2Accounts
 	tAccs       = table.FivenetAccounts
 	tUsers      = table.Users.AS("users")
-	tJobProps   = table.FivenetJobProps.AS("jobprops")
 )
 
 var Modules = map[string]NewModuleFunc{}
@@ -28,7 +24,7 @@ var Modules = map[string]NewModuleFunc{}
 type NewModuleFunc func(*BaseModule) (Module, error)
 
 type Module interface {
-	Run() error
+	Run(settings *users.DiscordSyncSettings) ([]*discordgo.MessageEmbed, error)
 }
 
 func GetModule(name string, base *BaseModule) (Module, error) {
@@ -67,28 +63,4 @@ func NewBaseModule(ctx context.Context, logger *zap.Logger, db *sql.DB, discord 
 
 		enricher: enricher,
 	}
-}
-
-func (g *BaseModule) GetSyncSettings(ctx context.Context, job string) (*users.DiscordSyncSettings, error) {
-	stmt := tJobProps.
-		SELECT(
-			tJobProps.DiscordSyncSettings,
-		).
-		FROM(tJobProps).
-		WHERE(
-			tJobProps.Job.EQ(jet.String(job)),
-		).
-		LIMIT(1)
-
-	var dest users.JobProps
-	if err := stmt.QueryContext(ctx, g.db, &dest); err != nil {
-		if !errors.Is(err, qrm.ErrNoRows) {
-			return nil, err
-		}
-	}
-
-	// Make sure the defaults are set
-	dest.Default(job)
-
-	return dest.DiscordSyncSettings, nil
 }

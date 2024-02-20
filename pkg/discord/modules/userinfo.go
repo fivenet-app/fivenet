@@ -10,6 +10,7 @@ import (
 
 	"github.com/bwmarrin/discordgo"
 	pbusers "github.com/galexrt/fivenet/gen/go/proto/resources/users"
+	"github.com/galexrt/fivenet/pkg/discord/embeds"
 	jet "github.com/go-jet/jet/v2/mysql"
 	"github.com/go-jet/jet/v2/qrm"
 	"go.uber.org/zap"
@@ -64,14 +65,9 @@ func NewUserInfo(base *BaseModule) (Module, error) {
 	}, nil
 }
 
-func (g *UserInfo) Run() error {
-	settings, err := g.GetSyncSettings(g.ctx, g.job)
-	if err != nil {
-		return err
-	}
-
+func (g *UserInfo) Run(settings *pbusers.DiscordSyncSettings) ([]*discordgo.MessageEmbed, error) {
 	if !settings.UserInfoSync {
-		return nil
+		return nil, nil
 	}
 
 	g.employeeRoleEnabled = settings.UserInfoSyncSettings.EmployeeRoleEnabled
@@ -82,23 +78,25 @@ func (g *UserInfo) Run() error {
 
 	guildRoles, err := g.discord.GuildRoles(g.guild.ID)
 	if err != nil {
-		return err
+		return nil, err
 	}
 
 	if err := g.createJobRoles(guildRoles); err != nil {
-		return err
+		return nil, err
 	}
 
 	if settings.UserInfoSyncSettings.UnemployedEnabled {
 		if err := g.createUnemployedRole(guildRoles); err != nil {
-			return err
+			return nil, err
 		}
 	}
 
 	return g.syncUserInfo()
 }
 
-func (g *UserInfo) syncUserInfo() error {
+func (g *UserInfo) syncUserInfo() ([]*discordgo.MessageEmbed, error) {
+	logs := []*discordgo.MessageEmbed{}
+
 	stmt := tOauth2Accs.
 		SELECT(
 			tOauth2Accs.AccountID.AS("userrolemapping.account_id"),
@@ -126,7 +124,7 @@ func (g *UserInfo) syncUserInfo() error {
 	var dest []*UserRoleMapping
 	if err := stmt.QueryContext(g.ctx, g.db, &dest); err != nil {
 		if !errors.Is(err, qrm.ErrNoRows) {
-			return err
+			return logs, err
 		}
 	}
 
@@ -137,10 +135,20 @@ func (g *UserInfo) syncUserInfo() error {
 				if restErr.Response.StatusCode == http.StatusNotFound {
 					g.logger.Warn("user not found on job discord server",
 						zap.String("discord_user_id", user.ExternalID), zap.Uint64("account_id", user.AccountID), zap.String("user", fmt.Sprintf("%s, %s", user.Firstname, user.Lastname)), zap.Int32("job_grade", user.JobGrade))
+
+					// Add log about user not being on discord
+					logs = append(logs, &discordgo.MessageEmbed{
+						Type:        discordgo.EmbedTypeRich,
+						Title:       fmt.Sprintf("Employee not found on Discord: %s, %s", user.Firstname, user.Lastname),
+						Description: fmt.Sprintf("Discord ID: %s, Rank: %d", user.ExternalID, user.JobGrade),
+						Author:      embeds.EmbedAuthor,
+						Color:       embeds.ColorWarn,
+					})
 					continue
 				}
 			}
-			return err
+
+			return logs, err
 		}
 
 		if err := g.setUserNickname(member, user.Firstname, user.Lastname); err != nil {
@@ -154,7 +162,7 @@ func (g *UserInfo) syncUserInfo() error {
 		}
 	}
 
-	return g.cleanupUserJobRoles(g.guild, dest)
+	return logs, g.cleanupUserJobRoles(g.guild, dest)
 }
 
 func (g *UserInfo) setUserNickname(member *discordgo.Member, firstname string, lastname string) error {
