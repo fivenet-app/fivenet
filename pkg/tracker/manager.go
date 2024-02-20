@@ -17,7 +17,6 @@ import (
 	"github.com/galexrt/fivenet/pkg/nats/store"
 	jet "github.com/go-jet/jet/v2/mysql"
 	"github.com/nats-io/nats.go"
-	"github.com/puzpuzpuz/xsync/v3"
 	tracesdk "go.opentelemetry.io/otel/sdk/trace"
 	"go.opentelemetry.io/otel/trace"
 	"go.uber.org/fx"
@@ -36,8 +35,7 @@ type Manager struct {
 	postals  postals.Postals
 	state    *state.State
 
-	userStore  *store.Store[livemap.UserMarker, *livemap.UserMarker]
-	usersCache *xsync.MapOf[string, *xsync.MapOf[int32, *livemap.UserMarker]]
+	userStore *store.Store[livemap.UserMarker, *livemap.UserMarker]
 
 	refreshTime time.Duration
 
@@ -82,8 +80,7 @@ func NewManager(p ManagerParams) (*Manager, error) {
 		postals:  p.Postals,
 		state:    p.State,
 
-		userStore:  userIDs,
-		usersCache: xsync.NewMapOf[string, *xsync.MapOf[int32, *livemap.UserMarker]](),
+		userStore: userIDs,
 
 		refreshTime: p.Config.Game.Livemap.RefreshTime,
 
@@ -159,7 +156,7 @@ func (m *Manager) cleanupUserIDs(found map[int32]interface{}) error {
 			continue
 		}
 
-		// Marker has been updated 10 seconds ago, skip
+		// Marker has been updated 30 seconds ago, skip
 		if marker.Info.UpdatedAt != nil && time.Since(marker.Info.UpdatedAt.AsTime()) <= 30*time.Second {
 			continue
 		}

@@ -386,7 +386,7 @@ outerLoop:
 			// Check if user is suposed to have that job grade role
 			if slices.ContainsFunc(users, func(in *UserRoleMapping) bool {
 				r, ok := g.findGradeRoleByID(role.ID)
-				if in.ExternalID == member.User.ID && (ok && r.ID == role.ID) {
+				if in.ExternalID == member.User.ID && ok && r.ID == role.ID {
 					return true
 				}
 				return false
@@ -430,12 +430,15 @@ outerLoop:
 		if g.unemployedRole != nil && !isEmployee {
 			switch g.unemployedMode {
 			case pbusers.UserInfoSyncUnemployedMode_USER_INFO_SYNC_UNEMPLOYED_MODE_GIVE_ROLE:
-				if !slices.Contains(member.Roles, g.unemployedRole.ID) {
-					g.logger.Debug("adding unemployed role from member", zap.String("discord_role_name", g.unemployedRole.Name), zap.String("discord_role_id", g.employeeRole.ID),
-						zap.String("discord_user_id", member.User.ID), zap.String("discord_nickname", member.Nick))
-					if err := g.discord.GuildMemberRoleAdd(g.guild.ID, member.User.ID, g.unemployedRole.ID); err != nil {
-						return fmt.Errorf("failed to add member to unemployed role %s (%s): %w", g.unemployedRole.Name, g.employeeRole.ID, err)
-					}
+				// Skip if user is already part of unemployed role
+				if slices.Contains(member.Roles, g.unemployedRole.ID) {
+					break
+				}
+
+				g.logger.Debug("adding unemployed role from member", zap.String("discord_role_name", g.unemployedRole.Name), zap.String("discord_role_id", g.employeeRole.ID),
+					zap.String("discord_user_id", member.User.ID), zap.String("discord_nickname", member.Nick))
+				if err := g.discord.GuildMemberRoleAdd(g.guild.ID, member.User.ID, g.unemployedRole.ID); err != nil {
+					return fmt.Errorf("failed to add member to unemployed role %s (%s): %w", g.unemployedRole.Name, g.employeeRole.ID, err)
 				}
 
 			case pbusers.UserInfoSyncUnemployedMode_USER_INFO_SYNC_UNEMPLOYED_MODE_KICK:

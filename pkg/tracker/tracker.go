@@ -2,20 +2,14 @@ package tracker
 
 import (
 	"context"
-	"database/sql"
 	"fmt"
 
 	"github.com/galexrt/fivenet/gen/go/proto/resources/livemap"
-	"github.com/galexrt/fivenet/gen/go/proto/services/centrum/state"
-	"github.com/galexrt/fivenet/pkg/config"
-	"github.com/galexrt/fivenet/pkg/coords/postals"
-	"github.com/galexrt/fivenet/pkg/mstlystcdata"
 	"github.com/galexrt/fivenet/pkg/nats/store"
 	"github.com/galexrt/fivenet/pkg/utils"
 	"github.com/galexrt/fivenet/query/fivenet/table"
 	"github.com/nats-io/nats.go"
 	"github.com/puzpuzpuz/xsync/v3"
-	tracesdk "go.opentelemetry.io/otel/sdk/trace"
 	"go.uber.org/fx"
 	"go.uber.org/zap"
 	"google.golang.org/protobuf/proto"
@@ -52,14 +46,8 @@ type Params struct {
 
 	LC fx.Lifecycle
 
-	Logger   *zap.Logger
-	JS       nats.JetStreamContext
-	TP       *tracesdk.TracerProvider
-	DB       *sql.DB
-	Enricher *mstlystcdata.Enricher
-	Postals  postals.Postals
-	Config   *config.Config
-	State    *state.State
+	Logger *zap.Logger
+	JS     nats.JetStreamContext
 }
 
 func New(p Params) (ITracker, error) {

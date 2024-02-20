@@ -130,7 +130,11 @@ func (g *Guild) Run() error {
 	}
 
 	if settings.IsStatusLogEnabled() {
-		if err := g.sendStatusLog(*settings.StatusLogSettings.ChannelId, logs, time.Since(start), errs); err != nil {
+		if err := g.sendStatusLog(*settings.StatusLogSettings.ChannelId, logs); err != nil {
+			errs = multierr.Append(errs, err)
+		}
+
+		if err := g.sendEndStatusLog(*settings.StatusLogSettings.ChannelId, time.Since(start), errs); err != nil {
 			errs = multierr.Append(errs, err)
 		}
 	}
@@ -164,12 +168,26 @@ func (g *Guild) sendStartStatusLog(channelId string) error {
 	return nil
 }
 
-func (g *Guild) sendStatusLog(channelId string, logs []*discordgo.MessageEmbed, duration time.Duration, errs error) error {
+func (g *Guild) sendStatusLog(channelId string, logs []*discordgo.MessageEmbed) error {
 	channel, err := g.bot.discord.Channel(channelId)
 	if err != nil {
 		return err
 	}
 
+	if _, err := g.bot.discord.ChannelMessageSendEmbeds(channel.ID, logs); err != nil {
+		return err
+	}
+
+	return nil
+}
+
+func (g *Guild) sendEndStatusLog(channelId string, duration time.Duration, errs error) error {
+	channel, err := g.bot.discord.Channel(channelId)
+	if err != nil {
+		return err
+	}
+
+	logs := []*discordgo.MessageEmbed{}
 	if errs != nil {
 		logs = append(logs, &discordgo.MessageEmbed{
 			Type:        discordgo.EmbedTypeRich,

@@ -87,9 +87,8 @@ const open = ref(false);
                         <div class="hidden md:block">
                             <div class="flex items-baseline space-x-2">
                                 <template v-for="item in navigation" :key="item.name">
-                                    <span class="flex-1">
+                                    <span v-if="item.permission === undefined || can(item.permission)" class="flex-1">
                                         <NuxtLink
-                                            v-if="item.permission === undefined || can(item.permission)"
                                             v-slot="{ active }"
                                             :to="item.to"
                                             class="group flex shrink-0 items-center gap-2 rounded-md p-3 text-sm font-medium text-accent-100 hover:bg-accent-100/10 hover:text-neutral hover:transition-all"
