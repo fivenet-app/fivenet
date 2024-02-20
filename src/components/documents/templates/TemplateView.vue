@@ -100,6 +100,7 @@ const contentAccess = ref<
                 accessRole?: AccessLevel;
                 minimumGrade?: number;
             };
+            required?: boolean;
         }
     >
 >(new Map());
@@ -132,26 +133,28 @@ watch(template, () => {
     if (docAccess) {
         let accessId = 0;
 
-        docAccess.users.forEach((user) => {
+        docAccess.users.forEach((access) => {
             const id = accessId.toString();
             contentAccess.value.set(id, {
                 id,
                 type: 0,
-                values: { char: user.userId, accessRole: user.access },
+                values: { char: access.userId, accessRole: access.access },
+                required: access.required,
             });
             accessId++;
         });
 
-        docAccess.jobs.forEach((job) => {
+        docAccess.jobs.forEach((access) => {
             const id = accessId.toString();
             contentAccess.value.set(id, {
                 id,
                 type: 1,
                 values: {
-                    job: job.job,
-                    accessRole: job.access,
-                    minimumGrade: job.minimumGrade,
+                    job: access.job,
+                    accessRole: access.access,
+                    minimumGrade: access.minimumGrade,
                 },
+                required: access.required,
             });
             accessId++;
         });

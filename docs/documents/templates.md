@@ -61,7 +61,7 @@ Golang templating is used. In addition to base [Golang html/template functions](
 Get the first user in the list (first in the user's clipboard):
 
 ```gotemplate
-{{- $citizen := first .users -}}
+{{- $citizen := first .Users -}}
 ```
 
 Example access citizen info:
