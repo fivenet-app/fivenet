@@ -8,7 +8,7 @@ export default defineNuxtConfig({
     srcDir: 'src/',
     telemetry: false,
     ssr: false,
-    // @ts-ignore ts2589 one of the modules probably has a typing issues
+    // @ts-ignore ts2589 one of the modules probably has a typing issue
     modules: [
         '@nuxt/devtools',
         'nuxt-typed-router',

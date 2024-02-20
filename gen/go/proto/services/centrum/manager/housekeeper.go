@@ -732,8 +732,7 @@ func (s *Housekeeper) watchUserChanges() {
 				ctx, span := s.tracer.Start(s.ctx, "centrum-watch-users")
 				defer span.End()
 
-				s.logger.Debug("received user changes", zap.Int("added", len(event.Added)), zap.String("added_users", fmt.Sprintf("%+v", event.Added)),
-					zap.Int("removed", len(event.Removed)), zap.String("removed_users", fmt.Sprintf("%+v", event.Removed)))
+				s.logger.Debug("received user changes", zap.Int("added", len(event.Added)), zap.Int("removed", len(event.Removed)))
 				for _, userMarker := range event.Added {
 					if _, ok := s.GetUserUnitID(userMarker.UserId); ok {
 						break
