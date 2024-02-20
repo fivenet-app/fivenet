@@ -70,7 +70,7 @@ const open = ref(false);
         <nav class="bg-base-700">
             <div class="mx-auto max-w-7xl px-4 sm:px-6 lg:px-8">
                 <div class="flex h-16 items-center justify-between">
-                    <div class="flex items-center overflow-y-scroll">
+                    <div class="flex items-center md:overflow-y-scroll">
                         <div class="-ml-2 flex md:hidden">
                             <!-- Mobile menu button -->
                             <button
@@ -118,9 +118,8 @@ const open = ref(false);
                             v-if="item.permission === undefined || can(item.permission)"
                             v-slot="{ active }"
                             :to="item.to"
-                            class="group flex w-full shrink-0 items-center items-center gap-2 rounded-md p-2 text-sm font-medium text-accent-100 hover:bg-accent-100/10 hover:text-neutral hover:transition-all"
-                            active-class="bg-accent-100/20 text-neutral font-bold"
-                            exact-active-class="text-primary-300"
+                            class="group flex shrink-0 items-center gap-2 rounded-md p-3 text-sm font-medium text-accent-100 hover:bg-accent-100/10 hover:text-neutral hover:transition-all"
+                            active-class="bg-accent-100/20 font-bold text-primary-300"
                             aria-current-value="page"
                         >
                             <component
