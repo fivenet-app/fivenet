@@ -11,10 +11,24 @@ option go_package = "github.com/galexrt/fivenet/gen/go/proto/services/livemapper
 message StreamRequest {}
 
 message StreamResponse {
-  repeated resources.users.Job jobs_users = 1;
-  repeated resources.livemap.UserMarker users = 2;
-  repeated resources.users.Job jobs_markers = 3;
-  repeated resources.livemap.Marker markers = 4;
+  oneof data {
+    JobsList jobs = 1;
+    UserMarkersUpdates users = 2;
+    MarkerMarkersUpdates markers = 3;
+  }
+}
+
+message JobsList {
+  repeated resources.users.Job users = 1;
+  repeated resources.users.Job markers = 2;
+}
+
+message UserMarkersUpdates {
+  repeated resources.livemap.UserMarker users = 1;
+}
+
+message MarkerMarkersUpdates {
+  repeated resources.livemap.Marker markers = 1;
 }
 
 message CreateOrUpdateMarkerRequest {

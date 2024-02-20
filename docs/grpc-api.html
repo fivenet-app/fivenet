@@ -833,6 +833,41 @@
         
           
           <li>
+            <a href="#resources%2fusers%2fusers.proto">resources/users/users.proto</a>
+            <ul>
+              
+                <li>
+                  <a href="#resources.users.License"><span class="badge">M</span>License</a>
+                </li>
+              
+                <li>
+                  <a href="#resources.users.User"><span class="badge">M</span>User</a>
+                </li>
+              
+                <li>
+                  <a href="#resources.users.UserActivity"><span class="badge">M</span>UserActivity</a>
+                </li>
+              
+                <li>
+                  <a href="#resources.users.UserProps"><span class="badge">M</span>UserProps</a>
+                </li>
+              
+                <li>
+                  <a href="#resources.users.UserShort"><span class="badge">M</span>UserShort</a>
+                </li>
+              
+              
+                <li>
+                  <a href="#resources.users.UserActivityType"><span class="badge">E</span>UserActivityType</a>
+                </li>
+              
+              
+              
+            </ul>
+          </li>
+        
+          
+          <li>
             <a href="#resources%2fusers%2fjobs.proto">resources/users/jobs.proto</a>
             <ul>
               
@@ -867,41 +902,6 @@
               
                 <li>
                   <a href="#resources.users.UserInfoSyncUnemployedMode"><span class="badge">E</span>UserInfoSyncUnemployedMode</a>
-                </li>
-              
-              
-              
-            </ul>
-          </li>
-        
-          
-          <li>
-            <a href="#resources%2fusers%2fusers.proto">resources/users/users.proto</a>
-            <ul>
-              
-                <li>
-                  <a href="#resources.users.License"><span class="badge">M</span>License</a>
-                </li>
-              
-                <li>
-                  <a href="#resources.users.User"><span class="badge">M</span>User</a>
-                </li>
-              
-                <li>
-                  <a href="#resources.users.UserActivity"><span class="badge">M</span>UserActivity</a>
-                </li>
-              
-                <li>
-                  <a href="#resources.users.UserProps"><span class="badge">M</span>UserProps</a>
-                </li>
-              
-                <li>
-                  <a href="#resources.users.UserShort"><span class="badge">M</span>UserShort</a>
-                </li>
-              
-              
-                <li>
-                  <a href="#resources.users.UserActivityType"><span class="badge">E</span>UserActivityType</a>
                 </li>
               
               
@@ -1902,11 +1902,23 @@
                 </li>
               
                 <li>
+                  <a href="#services.livemapper.JobsList"><span class="badge">M</span>JobsList</a>
+                </li>
+              
+                <li>
+                  <a href="#services.livemapper.MarkerMarkersUpdates"><span class="badge">M</span>MarkerMarkersUpdates</a>
+                </li>
+              
+                <li>
                   <a href="#services.livemapper.StreamRequest"><span class="badge">M</span>StreamRequest</a>
                 </li>
               
                 <li>
                   <a href="#services.livemapper.StreamResponse"><span class="badge">M</span>StreamResponse</a>
+                </li>
+              
+                <li>
+                  <a href="#services.livemapper.UserMarkersUpdates"><span class="badge">M</span>UserMarkersUpdates</a>
                 </li>
               
               
@@ -8996,6 +9008,13 @@
                   <td><p> </p></td>
                 </tr>
               
+                <tr>
+                  <td>updated</td>
+                  <td><a href="#resources.livemap.UserMarker">UserMarker</a></td>
+                  <td>repeated</td>
+                  <td><p> </p></td>
+                </tr>
+              
             </tbody>
           </table>
 
@@ -10149,584 +10168,6 @@
     
       
       <div class="file-heading">
-        <h2 id="resources/users/jobs.proto">resources/users/jobs.proto</h2><a href="#title">Top</a>
-      </div>
-      <p></p>
-
-      
-        <h3 id="resources.users.DiscordSyncSettings">DiscordSyncSettings</h3>
-        <p></p>
-
-        
-          <table class="field-table">
-            <thead>
-              <tr><td>Field</td><td>Type</td><td>Label</td><td>Description</td></tr>
-            </thead>
-            <tbody>
-              
-                <tr>
-                  <td>user_info_sync</td>
-                  <td><a href="#bool">bool</a></td>
-                  <td></td>
-                  <td><p> </p></td>
-                </tr>
-              
-                <tr>
-                  <td>user_info_sync_settings</td>
-                  <td><a href="#resources.users.UserInfoSyncSettings">UserInfoSyncSettings</a></td>
-                  <td>optional</td>
-                  <td><p> </p></td>
-                </tr>
-              
-                <tr>
-                  <td>status_log</td>
-                  <td><a href="#bool">bool</a></td>
-                  <td></td>
-                  <td><p> </p></td>
-                </tr>
-              
-                <tr>
-                  <td>status_log_settings</td>
-                  <td><a href="#resources.users.StatusLogSettings">StatusLogSettings</a></td>
-                  <td>optional</td>
-                  <td><p> </p></td>
-                </tr>
-              
-            </tbody>
-          </table>
-
-          
-
-        
-      
-        <h3 id="resources.users.Job">Job</h3>
-        <p></p>
-
-        
-          <table class="field-table">
-            <thead>
-              <tr><td>Field</td><td>Type</td><td>Label</td><td>Description</td></tr>
-            </thead>
-            <tbody>
-              
-                <tr>
-                  <td>name</td>
-                  <td><a href="#string">string</a></td>
-                  <td></td>
-                  <td><p>@gotags: sql:&#34;primary_key&#34; alias:&#34;name&#34; </p></td>
-                </tr>
-              
-                <tr>
-                  <td>label</td>
-                  <td><a href="#string">string</a></td>
-                  <td></td>
-                  <td><p> </p></td>
-                </tr>
-              
-                <tr>
-                  <td>grades</td>
-                  <td><a href="#resources.users.JobGrade">JobGrade</a></td>
-                  <td>repeated</td>
-                  <td><p> </p></td>
-                </tr>
-              
-            </tbody>
-          </table>
-
-          
-            
-            
-            <h4>Validated Fields</h4>
-            <table>
-              <thead>
-                <tr>
-                  <td>Field</td>
-                  <td>Validations</td>
-                </tr>
-              </thead>
-              <tbody>
-              
-                <tr>
-                  <td>name</td>
-                  <td>
-                    <ul>
-                    
-                      <li>string.max_len: 50</li>
-                    
-                    </ul>
-                  </td>
-                </tr>
-              
-                <tr>
-                  <td>label</td>
-                  <td>
-                    <ul>
-                    
-                      <li>string.max_len: 50</li>
-                    
-                    </ul>
-                  </td>
-                </tr>
-              
-              </tbody>
-            </table>
-            
-          
-
-        
-      
-        <h3 id="resources.users.JobGrade">JobGrade</h3>
-        <p></p>
-
-        
-          <table class="field-table">
-            <thead>
-              <tr><td>Field</td><td>Type</td><td>Label</td><td>Description</td></tr>
-            </thead>
-            <tbody>
-              
-                <tr>
-                  <td>job_name</td>
-                  <td><a href="#string">string</a></td>
-                  <td>optional</td>
-                  <td><p> </p></td>
-                </tr>
-              
-                <tr>
-                  <td>grade</td>
-                  <td><a href="#int32">int32</a></td>
-                  <td></td>
-                  <td><p> </p></td>
-                </tr>
-              
-                <tr>
-                  <td>label</td>
-                  <td><a href="#string">string</a></td>
-                  <td></td>
-                  <td><p> </p></td>
-                </tr>
-              
-            </tbody>
-          </table>
-
-          
-            
-            
-            <h4>Validated Fields</h4>
-            <table>
-              <thead>
-                <tr>
-                  <td>Field</td>
-                  <td>Validations</td>
-                </tr>
-              </thead>
-              <tbody>
-              
-                <tr>
-                  <td>job_name</td>
-                  <td>
-                    <ul>
-                    
-                      <li>string.max_len: 50</li>
-                    
-                    </ul>
-                  </td>
-                </tr>
-              
-                <tr>
-                  <td>grade</td>
-                  <td>
-                    <ul>
-                    
-                      <li>int32.gt: 0</li>
-                    
-                    </ul>
-                  </td>
-                </tr>
-              
-                <tr>
-                  <td>label</td>
-                  <td>
-                    <ul>
-                    
-                      <li>string.max_len: 50</li>
-                    
-                    </ul>
-                  </td>
-                </tr>
-              
-              </tbody>
-            </table>
-            
-          
-
-        
-      
-        <h3 id="resources.users.JobProps">JobProps</h3>
-        <p></p>
-
-        
-          <table class="field-table">
-            <thead>
-              <tr><td>Field</td><td>Type</td><td>Label</td><td>Description</td></tr>
-            </thead>
-            <tbody>
-              
-                <tr>
-                  <td>job</td>
-                  <td><a href="#string">string</a></td>
-                  <td></td>
-                  <td><p> </p></td>
-                </tr>
-              
-                <tr>
-                  <td>theme</td>
-                  <td><a href="#string">string</a></td>
-                  <td></td>
-                  <td><p> </p></td>
-                </tr>
-              
-                <tr>
-                  <td>livemap_marker_color</td>
-                  <td><a href="#string">string</a></td>
-                  <td></td>
-                  <td><p> </p></td>
-                </tr>
-              
-                <tr>
-                  <td>quick_buttons</td>
-                  <td><a href="#resources.users.QuickButtons">QuickButtons</a></td>
-                  <td></td>
-                  <td><p> </p></td>
-                </tr>
-              
-                <tr>
-                  <td>radio_frequency</td>
-                  <td><a href="#string">string</a></td>
-                  <td>optional</td>
-                  <td><p> </p></td>
-                </tr>
-              
-                <tr>
-                  <td>discord_guild_id</td>
-                  <td><a href="#uint64">uint64</a></td>
-                  <td>optional</td>
-                  <td><p> </p></td>
-                </tr>
-              
-                <tr>
-                  <td>discord_last_sync</td>
-                  <td><a href="#resources.timestamp.Timestamp">resources.timestamp.Timestamp</a></td>
-                  <td>optional</td>
-                  <td><p> </p></td>
-                </tr>
-              
-                <tr>
-                  <td>discord_sync_settings</td>
-                  <td><a href="#resources.users.DiscordSyncSettings">DiscordSyncSettings</a></td>
-                  <td></td>
-                  <td><p> </p></td>
-                </tr>
-              
-                <tr>
-                  <td>jobs_motd</td>
-                  <td><a href="#string">string</a></td>
-                  <td>optional</td>
-                  <td><p> </p></td>
-                </tr>
-              
-            </tbody>
-          </table>
-
-          
-            
-            
-            <h4>Validated Fields</h4>
-            <table>
-              <thead>
-                <tr>
-                  <td>Field</td>
-                  <td>Validations</td>
-                </tr>
-              </thead>
-              <tbody>
-              
-                <tr>
-                  <td>job</td>
-                  <td>
-                    <ul>
-                    
-                      <li>string.max_len: 20</li>
-                    
-                    </ul>
-                  </td>
-                </tr>
-              
-                <tr>
-                  <td>theme</td>
-                  <td>
-                    <ul>
-                    
-                      <li>string.max_len: 20</li>
-                    
-                    </ul>
-                  </td>
-                </tr>
-              
-                <tr>
-                  <td>livemap_marker_color</td>
-                  <td>
-                    <ul>
-                    
-                      <li>string.len: 7</li>
-                    
-                      <li>string.pattern: ^#[A-Fa-f0-9]{6}$</li>
-                    
-                    </ul>
-                  </td>
-                </tr>
-              
-                <tr>
-                  <td>radio_frequency</td>
-                  <td>
-                    <ul>
-                    
-                      <li>string.max_len: 24</li>
-                    
-                    </ul>
-                  </td>
-                </tr>
-              
-                <tr>
-                  <td>jobs_motd</td>
-                  <td>
-                    <ul>
-                    
-                      <li>string.max_len: 1024</li>
-                    
-                    </ul>
-                  </td>
-                </tr>
-              
-              </tbody>
-            </table>
-            
-          
-
-        
-      
-        <h3 id="resources.users.QuickButtons">QuickButtons</h3>
-        <p></p>
-
-        
-          <table class="field-table">
-            <thead>
-              <tr><td>Field</td><td>Type</td><td>Label</td><td>Description</td></tr>
-            </thead>
-            <tbody>
-              
-                <tr>
-                  <td>penalty_calculator</td>
-                  <td><a href="#bool">bool</a></td>
-                  <td></td>
-                  <td><p> </p></td>
-                </tr>
-              
-                <tr>
-                  <td>body_checkup</td>
-                  <td><a href="#bool">bool</a></td>
-                  <td></td>
-                  <td><p> </p></td>
-                </tr>
-              
-            </tbody>
-          </table>
-
-          
-
-        
-      
-        <h3 id="resources.users.StatusLogSettings">StatusLogSettings</h3>
-        <p></p>
-
-        
-          <table class="field-table">
-            <thead>
-              <tr><td>Field</td><td>Type</td><td>Label</td><td>Description</td></tr>
-            </thead>
-            <tbody>
-              
-                <tr>
-                  <td>channel_id</td>
-                  <td><a href="#string">string</a></td>
-                  <td>optional</td>
-                  <td><p> </p></td>
-                </tr>
-              
-            </tbody>
-          </table>
-
-          
-
-        
-      
-        <h3 id="resources.users.UserInfoSyncSettings">UserInfoSyncSettings</h3>
-        <p></p>
-
-        
-          <table class="field-table">
-            <thead>
-              <tr><td>Field</td><td>Type</td><td>Label</td><td>Description</td></tr>
-            </thead>
-            <tbody>
-              
-                <tr>
-                  <td>employee_role_enabled</td>
-                  <td><a href="#bool">bool</a></td>
-                  <td></td>
-                  <td><p> </p></td>
-                </tr>
-              
-                <tr>
-                  <td>employee_role_format</td>
-                  <td><a href="#string">string</a></td>
-                  <td>optional</td>
-                  <td><p> </p></td>
-                </tr>
-              
-                <tr>
-                  <td>grade_role_format</td>
-                  <td><a href="#string">string</a></td>
-                  <td>optional</td>
-                  <td><p> </p></td>
-                </tr>
-              
-                <tr>
-                  <td>unemployed_enabled</td>
-                  <td><a href="#bool">bool</a></td>
-                  <td></td>
-                  <td><p> </p></td>
-                </tr>
-              
-                <tr>
-                  <td>unemployed_mode</td>
-                  <td><a href="#resources.users.UserInfoSyncUnemployedMode">UserInfoSyncUnemployedMode</a></td>
-                  <td></td>
-                  <td><p> </p></td>
-                </tr>
-              
-                <tr>
-                  <td>unemployed_role_name</td>
-                  <td><a href="#string">string</a></td>
-                  <td>optional</td>
-                  <td><p> </p></td>
-                </tr>
-              
-            </tbody>
-          </table>
-
-          
-            
-            
-            <h4>Validated Fields</h4>
-            <table>
-              <thead>
-                <tr>
-                  <td>Field</td>
-                  <td>Validations</td>
-                </tr>
-              </thead>
-              <tbody>
-              
-                <tr>
-                  <td>employee_role_format</td>
-                  <td>
-                    <ul>
-                    
-                      <li>string.max_len: 48</li>
-                    
-                    </ul>
-                  </td>
-                </tr>
-              
-                <tr>
-                  <td>grade_role_format</td>
-                  <td>
-                    <ul>
-                    
-                      <li>string.max_len: 48</li>
-                    
-                    </ul>
-                  </td>
-                </tr>
-              
-                <tr>
-                  <td>unemployed_mode</td>
-                  <td>
-                    <ul>
-                    
-                      <li>enum.defined_only: true</li>
-                    
-                    </ul>
-                  </td>
-                </tr>
-              
-                <tr>
-                  <td>unemployed_role_name</td>
-                  <td>
-                    <ul>
-                    
-                      <li>string.max_len: 48</li>
-                    
-                    </ul>
-                  </td>
-                </tr>
-              
-              </tbody>
-            </table>
-            
-          
-
-        
-      
-
-      
-        <h3 id="resources.users.UserInfoSyncUnemployedMode">UserInfoSyncUnemployedMode</h3>
-        <p></p>
-        <table class="enum-table">
-          <thead>
-            <tr><td>Name</td><td>Number</td><td>Description</td></tr>
-          </thead>
-          <tbody>
-            
-              <tr>
-                <td>USER_INFO_SYNC_UNEMPLOYED_MODE_UNSPECIFIED</td>
-                <td>0</td>
-                <td><p></p></td>
-              </tr>
-            
-              <tr>
-                <td>USER_INFO_SYNC_UNEMPLOYED_MODE_GIVE_ROLE</td>
-                <td>1</td>
-                <td><p></p></td>
-              </tr>
-            
-              <tr>
-                <td>USER_INFO_SYNC_UNEMPLOYED_MODE_KICK</td>
-                <td>2</td>
-                <td><p></p></td>
-              </tr>
-            
-          </tbody>
-        </table>
-      
-
-      
-
-      
-    
-      
-      <div class="file-heading">
         <h2 id="resources/users/users.proto">resources/users/users.proto</h2><a href="#title">Top</a>
       </div>
       <p></p>
@@ -11587,6 +11028,584 @@
               <tr>
                 <td>USER_ACTIVITY_TYPE_CREATED</td>
                 <td>3</td>
+                <td><p></p></td>
+              </tr>
+            
+          </tbody>
+        </table>
+      
+
+      
+
+      
+    
+      
+      <div class="file-heading">
+        <h2 id="resources/users/jobs.proto">resources/users/jobs.proto</h2><a href="#title">Top</a>
+      </div>
+      <p></p>
+
+      
+        <h3 id="resources.users.DiscordSyncSettings">DiscordSyncSettings</h3>
+        <p></p>
+
+        
+          <table class="field-table">
+            <thead>
+              <tr><td>Field</td><td>Type</td><td>Label</td><td>Description</td></tr>
+            </thead>
+            <tbody>
+              
+                <tr>
+                  <td>user_info_sync</td>
+                  <td><a href="#bool">bool</a></td>
+                  <td></td>
+                  <td><p> </p></td>
+                </tr>
+              
+                <tr>
+                  <td>user_info_sync_settings</td>
+                  <td><a href="#resources.users.UserInfoSyncSettings">UserInfoSyncSettings</a></td>
+                  <td>optional</td>
+                  <td><p> </p></td>
+                </tr>
+              
+                <tr>
+                  <td>status_log</td>
+                  <td><a href="#bool">bool</a></td>
+                  <td></td>
+                  <td><p> </p></td>
+                </tr>
+              
+                <tr>
+                  <td>status_log_settings</td>
+                  <td><a href="#resources.users.StatusLogSettings">StatusLogSettings</a></td>
+                  <td>optional</td>
+                  <td><p> </p></td>
+                </tr>
+              
+            </tbody>
+          </table>
+
+          
+
+        
+      
+        <h3 id="resources.users.Job">Job</h3>
+        <p></p>
+
+        
+          <table class="field-table">
+            <thead>
+              <tr><td>Field</td><td>Type</td><td>Label</td><td>Description</td></tr>
+            </thead>
+            <tbody>
+              
+                <tr>
+                  <td>name</td>
+                  <td><a href="#string">string</a></td>
+                  <td></td>
+                  <td><p>@gotags: sql:&#34;primary_key&#34; alias:&#34;name&#34; </p></td>
+                </tr>
+              
+                <tr>
+                  <td>label</td>
+                  <td><a href="#string">string</a></td>
+                  <td></td>
+                  <td><p> </p></td>
+                </tr>
+              
+                <tr>
+                  <td>grades</td>
+                  <td><a href="#resources.users.JobGrade">JobGrade</a></td>
+                  <td>repeated</td>
+                  <td><p> </p></td>
+                </tr>
+              
+            </tbody>
+          </table>
+
+          
+            
+            
+            <h4>Validated Fields</h4>
+            <table>
+              <thead>
+                <tr>
+                  <td>Field</td>
+                  <td>Validations</td>
+                </tr>
+              </thead>
+              <tbody>
+              
+                <tr>
+                  <td>name</td>
+                  <td>
+                    <ul>
+                    
+                      <li>string.max_len: 50</li>
+                    
+                    </ul>
+                  </td>
+                </tr>
+              
+                <tr>
+                  <td>label</td>
+                  <td>
+                    <ul>
+                    
+                      <li>string.max_len: 50</li>
+                    
+                    </ul>
+                  </td>
+                </tr>
+              
+              </tbody>
+            </table>
+            
+          
+
+        
+      
+        <h3 id="resources.users.JobGrade">JobGrade</h3>
+        <p></p>
+
+        
+          <table class="field-table">
+            <thead>
+              <tr><td>Field</td><td>Type</td><td>Label</td><td>Description</td></tr>
+            </thead>
+            <tbody>
+              
+                <tr>
+                  <td>job_name</td>
+                  <td><a href="#string">string</a></td>
+                  <td>optional</td>
+                  <td><p> </p></td>
+                </tr>
+              
+                <tr>
+                  <td>grade</td>
+                  <td><a href="#int32">int32</a></td>
+                  <td></td>
+                  <td><p> </p></td>
+                </tr>
+              
+                <tr>
+                  <td>label</td>
+                  <td><a href="#string">string</a></td>
+                  <td></td>
+                  <td><p> </p></td>
+                </tr>
+              
+            </tbody>
+          </table>
+
+          
+            
+            
+            <h4>Validated Fields</h4>
+            <table>
+              <thead>
+                <tr>
+                  <td>Field</td>
+                  <td>Validations</td>
+                </tr>
+              </thead>
+              <tbody>
+              
+                <tr>
+                  <td>job_name</td>
+                  <td>
+                    <ul>
+                    
+                      <li>string.max_len: 50</li>
+                    
+                    </ul>
+                  </td>
+                </tr>
+              
+                <tr>
+                  <td>grade</td>
+                  <td>
+                    <ul>
+                    
+                      <li>int32.gt: 0</li>
+                    
+                    </ul>
+                  </td>
+                </tr>
+              
+                <tr>
+                  <td>label</td>
+                  <td>
+                    <ul>
+                    
+                      <li>string.max_len: 50</li>
+                    
+                    </ul>
+                  </td>
+                </tr>
+              
+              </tbody>
+            </table>
+            
+          
+
+        
+      
+        <h3 id="resources.users.JobProps">JobProps</h3>
+        <p></p>
+
+        
+          <table class="field-table">
+            <thead>
+              <tr><td>Field</td><td>Type</td><td>Label</td><td>Description</td></tr>
+            </thead>
+            <tbody>
+              
+                <tr>
+                  <td>job</td>
+                  <td><a href="#string">string</a></td>
+                  <td></td>
+                  <td><p> </p></td>
+                </tr>
+              
+                <tr>
+                  <td>theme</td>
+                  <td><a href="#string">string</a></td>
+                  <td></td>
+                  <td><p> </p></td>
+                </tr>
+              
+                <tr>
+                  <td>livemap_marker_color</td>
+                  <td><a href="#string">string</a></td>
+                  <td></td>
+                  <td><p> </p></td>
+                </tr>
+              
+                <tr>
+                  <td>quick_buttons</td>
+                  <td><a href="#resources.users.QuickButtons">QuickButtons</a></td>
+                  <td></td>
+                  <td><p> </p></td>
+                </tr>
+              
+                <tr>
+                  <td>radio_frequency</td>
+                  <td><a href="#string">string</a></td>
+                  <td>optional</td>
+                  <td><p> </p></td>
+                </tr>
+              
+                <tr>
+                  <td>discord_guild_id</td>
+                  <td><a href="#uint64">uint64</a></td>
+                  <td>optional</td>
+                  <td><p> </p></td>
+                </tr>
+              
+                <tr>
+                  <td>discord_last_sync</td>
+                  <td><a href="#resources.timestamp.Timestamp">resources.timestamp.Timestamp</a></td>
+                  <td>optional</td>
+                  <td><p> </p></td>
+                </tr>
+              
+                <tr>
+                  <td>discord_sync_settings</td>
+                  <td><a href="#resources.users.DiscordSyncSettings">DiscordSyncSettings</a></td>
+                  <td></td>
+                  <td><p> </p></td>
+                </tr>
+              
+                <tr>
+                  <td>jobs_motd</td>
+                  <td><a href="#string">string</a></td>
+                  <td>optional</td>
+                  <td><p> </p></td>
+                </tr>
+              
+            </tbody>
+          </table>
+
+          
+            
+            
+            <h4>Validated Fields</h4>
+            <table>
+              <thead>
+                <tr>
+                  <td>Field</td>
+                  <td>Validations</td>
+                </tr>
+              </thead>
+              <tbody>
+              
+                <tr>
+                  <td>job</td>
+                  <td>
+                    <ul>
+                    
+                      <li>string.max_len: 20</li>
+                    
+                    </ul>
+                  </td>
+                </tr>
+              
+                <tr>
+                  <td>theme</td>
+                  <td>
+                    <ul>
+                    
+                      <li>string.max_len: 20</li>
+                    
+                    </ul>
+                  </td>
+                </tr>
+              
+                <tr>
+                  <td>livemap_marker_color</td>
+                  <td>
+                    <ul>
+                    
+                      <li>string.len: 7</li>
+                    
+                      <li>string.pattern: ^#[A-Fa-f0-9]{6}$</li>
+                    
+                    </ul>
+                  </td>
+                </tr>
+              
+                <tr>
+                  <td>radio_frequency</td>
+                  <td>
+                    <ul>
+                    
+                      <li>string.max_len: 24</li>
+                    
+                    </ul>
+                  </td>
+                </tr>
+              
+                <tr>
+                  <td>jobs_motd</td>
+                  <td>
+                    <ul>
+                    
+                      <li>string.max_len: 1024</li>
+                    
+                    </ul>
+                  </td>
+                </tr>
+              
+              </tbody>
+            </table>
+            
+          
+
+        
+      
+        <h3 id="resources.users.QuickButtons">QuickButtons</h3>
+        <p></p>
+
+        
+          <table class="field-table">
+            <thead>
+              <tr><td>Field</td><td>Type</td><td>Label</td><td>Description</td></tr>
+            </thead>
+            <tbody>
+              
+                <tr>
+                  <td>penalty_calculator</td>
+                  <td><a href="#bool">bool</a></td>
+                  <td></td>
+                  <td><p> </p></td>
+                </tr>
+              
+                <tr>
+                  <td>body_checkup</td>
+                  <td><a href="#bool">bool</a></td>
+                  <td></td>
+                  <td><p> </p></td>
+                </tr>
+              
+            </tbody>
+          </table>
+
+          
+
+        
+      
+        <h3 id="resources.users.StatusLogSettings">StatusLogSettings</h3>
+        <p></p>
+
+        
+          <table class="field-table">
+            <thead>
+              <tr><td>Field</td><td>Type</td><td>Label</td><td>Description</td></tr>
+            </thead>
+            <tbody>
+              
+                <tr>
+                  <td>channel_id</td>
+                  <td><a href="#string">string</a></td>
+                  <td>optional</td>
+                  <td><p> </p></td>
+                </tr>
+              
+            </tbody>
+          </table>
+
+          
+
+        
+      
+        <h3 id="resources.users.UserInfoSyncSettings">UserInfoSyncSettings</h3>
+        <p></p>
+
+        
+          <table class="field-table">
+            <thead>
+              <tr><td>Field</td><td>Type</td><td>Label</td><td>Description</td></tr>
+            </thead>
+            <tbody>
+              
+                <tr>
+                  <td>employee_role_enabled</td>
+                  <td><a href="#bool">bool</a></td>
+                  <td></td>
+                  <td><p> </p></td>
+                </tr>
+              
+                <tr>
+                  <td>employee_role_format</td>
+                  <td><a href="#string">string</a></td>
+                  <td>optional</td>
+                  <td><p> </p></td>
+                </tr>
+              
+                <tr>
+                  <td>grade_role_format</td>
+                  <td><a href="#string">string</a></td>
+                  <td>optional</td>
+                  <td><p> </p></td>
+                </tr>
+              
+                <tr>
+                  <td>unemployed_enabled</td>
+                  <td><a href="#bool">bool</a></td>
+                  <td></td>
+                  <td><p> </p></td>
+                </tr>
+              
+                <tr>
+                  <td>unemployed_mode</td>
+                  <td><a href="#resources.users.UserInfoSyncUnemployedMode">UserInfoSyncUnemployedMode</a></td>
+                  <td></td>
+                  <td><p> </p></td>
+                </tr>
+              
+                <tr>
+                  <td>unemployed_role_name</td>
+                  <td><a href="#string">string</a></td>
+                  <td>optional</td>
+                  <td><p> </p></td>
+                </tr>
+              
+            </tbody>
+          </table>
+
+          
+            
+            
+            <h4>Validated Fields</h4>
+            <table>
+              <thead>
+                <tr>
+                  <td>Field</td>
+                  <td>Validations</td>
+                </tr>
+              </thead>
+              <tbody>
+              
+                <tr>
+                  <td>employee_role_format</td>
+                  <td>
+                    <ul>
+                    
+                      <li>string.max_len: 48</li>
+                    
+                    </ul>
+                  </td>
+                </tr>
+              
+                <tr>
+                  <td>grade_role_format</td>
+                  <td>
+                    <ul>
+                    
+                      <li>string.max_len: 48</li>
+                    
+                    </ul>
+                  </td>
+                </tr>
+              
+                <tr>
+                  <td>unemployed_mode</td>
+                  <td>
+                    <ul>
+                    
+                      <li>enum.defined_only: true</li>
+                    
+                    </ul>
+                  </td>
+                </tr>
+              
+                <tr>
+                  <td>unemployed_role_name</td>
+                  <td>
+                    <ul>
+                    
+                      <li>string.max_len: 48</li>
+                    
+                    </ul>
+                  </td>
+                </tr>
+              
+              </tbody>
+            </table>
+            
+          
+
+        
+      
+
+      
+        <h3 id="resources.users.UserInfoSyncUnemployedMode">UserInfoSyncUnemployedMode</h3>
+        <p></p>
+        <table class="enum-table">
+          <thead>
+            <tr><td>Name</td><td>Number</td><td>Description</td></tr>
+          </thead>
+          <tbody>
+            
+              <tr>
+                <td>USER_INFO_SYNC_UNEMPLOYED_MODE_UNSPECIFIED</td>
+                <td>0</td>
+                <td><p></p></td>
+              </tr>
+            
+              <tr>
+                <td>USER_INFO_SYNC_UNEMPLOYED_MODE_GIVE_ROLE</td>
+                <td>1</td>
+                <td><p></p></td>
+              </tr>
+            
+              <tr>
+                <td>USER_INFO_SYNC_UNEMPLOYED_MODE_KICK</td>
+                <td>2</td>
                 <td><p></p></td>
               </tr>
             
@@ -19976,6 +19995,61 @@
 
         
       
+        <h3 id="services.livemapper.JobsList">JobsList</h3>
+        <p></p>
+
+        
+          <table class="field-table">
+            <thead>
+              <tr><td>Field</td><td>Type</td><td>Label</td><td>Description</td></tr>
+            </thead>
+            <tbody>
+              
+                <tr>
+                  <td>users</td>
+                  <td><a href="#resources.users.Job">resources.users.Job</a></td>
+                  <td>repeated</td>
+                  <td><p> </p></td>
+                </tr>
+              
+                <tr>
+                  <td>markers</td>
+                  <td><a href="#resources.users.Job">resources.users.Job</a></td>
+                  <td>repeated</td>
+                  <td><p> </p></td>
+                </tr>
+              
+            </tbody>
+          </table>
+
+          
+
+        
+      
+        <h3 id="services.livemapper.MarkerMarkersUpdates">MarkerMarkersUpdates</h3>
+        <p></p>
+
+        
+          <table class="field-table">
+            <thead>
+              <tr><td>Field</td><td>Type</td><td>Label</td><td>Description</td></tr>
+            </thead>
+            <tbody>
+              
+                <tr>
+                  <td>markers</td>
+                  <td><a href="#resources.livemap.Marker">resources.livemap.Marker</a></td>
+                  <td>repeated</td>
+                  <td><p> </p></td>
+                </tr>
+              
+            </tbody>
+          </table>
+
+          
+
+        
+      
         <h3 id="services.livemapper.StreamRequest">StreamRequest</h3>
         <p></p>
 
@@ -19994,29 +20068,46 @@
             <tbody>
               
                 <tr>
-                  <td>jobs_users</td>
-                  <td><a href="#resources.users.Job">resources.users.Job</a></td>
-                  <td>repeated</td>
+                  <td>jobs</td>
+                  <td><a href="#services.livemapper.JobsList">JobsList</a></td>
+                  <td></td>
                   <td><p> </p></td>
                 </tr>
               
                 <tr>
                   <td>users</td>
-                  <td><a href="#resources.livemap.UserMarker">resources.livemap.UserMarker</a></td>
-                  <td>repeated</td>
-                  <td><p> </p></td>
-                </tr>
-              
-                <tr>
-                  <td>jobs_markers</td>
-                  <td><a href="#resources.users.Job">resources.users.Job</a></td>
-                  <td>repeated</td>
+                  <td><a href="#services.livemapper.UserMarkersUpdates">UserMarkersUpdates</a></td>
+                  <td></td>
                   <td><p> </p></td>
                 </tr>
               
                 <tr>
                   <td>markers</td>
-                  <td><a href="#resources.livemap.Marker">resources.livemap.Marker</a></td>
+                  <td><a href="#services.livemapper.MarkerMarkersUpdates">MarkerMarkersUpdates</a></td>
+                  <td></td>
+                  <td><p> </p></td>
+                </tr>
+              
+            </tbody>
+          </table>
+
+          
+
+        
+      
+        <h3 id="services.livemapper.UserMarkersUpdates">UserMarkersUpdates</h3>
+        <p></p>
+
+        
+          <table class="field-table">
+            <thead>
+              <tr><td>Field</td><td>Type</td><td>Label</td><td>Description</td></tr>
+            </thead>
+            <tbody>
+              
+                <tr>
+                  <td>users</td>
+                  <td><a href="#resources.livemap.UserMarker">resources.livemap.UserMarker</a></td>
                   <td>repeated</td>
                   <td><p> </p></td>
                 </tr>

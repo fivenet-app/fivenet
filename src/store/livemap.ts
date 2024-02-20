@@ -19,8 +19,6 @@ export interface LivemapState {
     offsetLocationZoom: boolean;
     zoom: number;
 
-    initiated: boolean;
-
     jobsMarkers: Job[];
     jobsUsers: Job[];
 
@@ -40,8 +38,6 @@ export const useLivemapStore = defineStore('livemap', {
             showLocationMarker: false,
             offsetLocationZoom: false,
             zoom: 2,
-
-            initiated: false,
 
             jobsMarkers: [],
             jobsUsers: [],
@@ -74,20 +70,20 @@ export const useLivemapStore = defineStore('livemap', {
                 for await (const resp of call.responses) {
                     this.error = undefined;
 
-                    if (resp === undefined) {
+                    if (resp === undefined || !resp.data) {
                         continue;
                     }
 
-                    if (!this.initiated) {
-                        this.jobsMarkers = resp.jobsMarkers;
-                        this.jobsUsers = resp.jobsUsers;
+                    console.debug('Centrum: Received change - Kind:', resp.data.oneofKind, resp.data);
 
-                        this.initiated = true;
+                    if (resp.data.oneofKind === 'jobs') {
+                        this.jobsMarkers = resp.data.jobs.markers;
+                        this.jobsUsers = resp.data.jobs.users;
+                    } else if (resp.data.oneofKind === 'markers') {
+                        this.markersMarkers = resp.data.markers.markers;
+                    } else if (resp.data.oneofKind === 'users') {
+                        this.markersUsers = resp.data.users.users;
                     }
-
-                    // Sort markers by id
-                    this.markersUsers = resp.users.sort((a, b) => (a.info?.id ?? '0').localeCompare(b.info?.id ?? '0'));
-                    this.markersMarkers = resp.markers.sort((a, b) => (a.info?.id ?? '0').localeCompare(b.info?.id ?? '0'));
                 }
             } catch (e) {
                 const error = e as RpcError;

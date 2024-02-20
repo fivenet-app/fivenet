@@ -270,6 +270,8 @@ func (m *Manager) refreshUserLocations(ctx context.Context) error {
 			// If not equal, update marker in store
 			if !proto.Equal(userMarker, dest[i]) {
 				userMarker.Merge(dest[i])
+				event.Updated = append(event.Updated, userMarker)
+
 				if err := m.userStore.Put(userIdKey(userId), userMarker); err != nil {
 					errs = multierr.Append(errs, err)
 					continue
@@ -278,7 +280,7 @@ func (m *Manager) refreshUserLocations(ctx context.Context) error {
 		}
 	}
 
-	if len(event.Added) > 0 {
+	if len(event.Added) > 0 || len(event.Updated) > 0 {
 		if err := m.sendUpdateEvent(UsersUpdate, event); err != nil {
 			return err
 		}

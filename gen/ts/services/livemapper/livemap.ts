@@ -16,19 +16,58 @@ export interface StreamRequest {
  */
 export interface StreamResponse {
     /**
-     * @generated from protobuf field: repeated resources.users.Job jobs_users = 1;
+     * @generated from protobuf oneof: data
      */
-    jobsUsers: Job[];
+    data: {
+        oneofKind: "jobs";
+        /**
+         * @generated from protobuf field: services.livemapper.JobsList jobs = 1;
+         */
+        jobs: JobsList;
+    } | {
+        oneofKind: "users";
+        /**
+         * @generated from protobuf field: services.livemapper.UserMarkersUpdates users = 2;
+         */
+        users: UserMarkersUpdates;
+    } | {
+        oneofKind: "markers";
+        /**
+         * @generated from protobuf field: services.livemapper.MarkerMarkersUpdates markers = 3;
+         */
+        markers: MarkerMarkersUpdates;
+    } | {
+        oneofKind: undefined;
+    };
+}
+/**
+ * @generated from protobuf message services.livemapper.JobsList
+ */
+export interface JobsList {
     /**
-     * @generated from protobuf field: repeated resources.livemap.UserMarker users = 2;
+     * @generated from protobuf field: repeated resources.users.Job users = 1;
+     */
+    users: Job[];
+    /**
+     * @generated from protobuf field: repeated resources.users.Job markers = 2;
+     */
+    markers: Job[];
+}
+/**
+ * @generated from protobuf message services.livemapper.UserMarkersUpdates
+ */
+export interface UserMarkersUpdates {
+    /**
+     * @generated from protobuf field: repeated resources.livemap.UserMarker users = 1;
      */
     users: UserMarker[];
+}
+/**
+ * @generated from protobuf message services.livemapper.MarkerMarkersUpdates
+ */
+export interface MarkerMarkersUpdates {
     /**
-     * @generated from protobuf field: repeated resources.users.Job jobs_markers = 3;
-     */
-    jobsMarkers: Job[];
-    /**
-     * @generated from protobuf field: repeated resources.livemap.Marker markers = 4;
+     * @generated from protobuf field: repeated resources.livemap.Marker markers = 1;
      */
     markers: Marker[];
 }
@@ -78,10 +117,9 @@ export const StreamRequest = new StreamRequest$Type();
 class StreamResponse$Type extends MessageType<StreamResponse> {
     constructor() {
         super("services.livemapper.StreamResponse", [
-            { no: 1, name: "jobs_users", kind: "message", repeat: 1 /*RepeatType.PACKED*/, T: () => Job },
-            { no: 2, name: "users", kind: "message", repeat: 1 /*RepeatType.PACKED*/, T: () => UserMarker },
-            { no: 3, name: "jobs_markers", kind: "message", repeat: 1 /*RepeatType.PACKED*/, T: () => Job },
-            { no: 4, name: "markers", kind: "message", repeat: 1 /*RepeatType.PACKED*/, T: () => Marker }
+            { no: 1, name: "jobs", kind: "message", oneof: "data", T: () => JobsList },
+            { no: 2, name: "users", kind: "message", oneof: "data", T: () => UserMarkersUpdates },
+            { no: 3, name: "markers", kind: "message", oneof: "data", T: () => MarkerMarkersUpdates }
         ]);
     }
 }
@@ -89,6 +127,43 @@ class StreamResponse$Type extends MessageType<StreamResponse> {
  * @generated MessageType for protobuf message services.livemapper.StreamResponse
  */
 export const StreamResponse = new StreamResponse$Type();
+// @generated message type with reflection information, may provide speed optimized methods
+class JobsList$Type extends MessageType<JobsList> {
+    constructor() {
+        super("services.livemapper.JobsList", [
+            { no: 1, name: "users", kind: "message", repeat: 1 /*RepeatType.PACKED*/, T: () => Job },
+            { no: 2, name: "markers", kind: "message", repeat: 1 /*RepeatType.PACKED*/, T: () => Job }
+        ]);
+    }
+}
+/**
+ * @generated MessageType for protobuf message services.livemapper.JobsList
+ */
+export const JobsList = new JobsList$Type();
+// @generated message type with reflection information, may provide speed optimized methods
+class UserMarkersUpdates$Type extends MessageType<UserMarkersUpdates> {
+    constructor() {
+        super("services.livemapper.UserMarkersUpdates", [
+            { no: 1, name: "users", kind: "message", repeat: 1 /*RepeatType.PACKED*/, T: () => UserMarker }
+        ]);
+    }
+}
+/**
+ * @generated MessageType for protobuf message services.livemapper.UserMarkersUpdates
+ */
+export const UserMarkersUpdates = new UserMarkersUpdates$Type();
+// @generated message type with reflection information, may provide speed optimized methods
+class MarkerMarkersUpdates$Type extends MessageType<MarkerMarkersUpdates> {
+    constructor() {
+        super("services.livemapper.MarkerMarkersUpdates", [
+            { no: 1, name: "markers", kind: "message", repeat: 1 /*RepeatType.PACKED*/, T: () => Marker }
+        ]);
+    }
+}
+/**
+ * @generated MessageType for protobuf message services.livemapper.MarkerMarkersUpdates
+ */
+export const MarkerMarkersUpdates = new MarkerMarkersUpdates$Type();
 // @generated message type with reflection information, may provide speed optimized methods
 class CreateOrUpdateMarkerRequest$Type extends MessageType<CreateOrUpdateMarkerRequest> {
     constructor() {

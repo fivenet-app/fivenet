@@ -11,6 +11,7 @@ import (
 	"github.com/galexrt/fivenet/pkg/config"
 	"github.com/galexrt/fivenet/pkg/grpc/auth"
 	"github.com/galexrt/fivenet/pkg/grpc/auth/userinfo"
+	"github.com/galexrt/fivenet/pkg/grpc/errswrap"
 	"github.com/galexrt/fivenet/pkg/mstlystcdata"
 	"github.com/galexrt/fivenet/pkg/perms"
 	"github.com/galexrt/fivenet/pkg/server/audit"
@@ -48,7 +49,7 @@ type Server struct {
 
 	markersCache *xsync.MapOf[string, []*livemap.Marker]
 
-	broker *utils.Broker[interface{}]
+	broker *utils.Broker[*livemap.UsersUpdateEvent]
 
 	refreshTime time.Duration
 	trackedJobs []string
@@ -72,7 +73,7 @@ type Params struct {
 func NewServer(p Params) *Server {
 	ctx, cancel := context.WithCancel(context.Background())
 
-	broker := utils.NewBroker[interface{}](ctx)
+	broker := utils.NewBroker[*livemap.UsersUpdateEvent](ctx)
 	s := &Server{
 		ctx:    ctx,
 		logger: p.Logger,
@@ -139,11 +140,11 @@ func (s *Server) Stream(req *StreamRequest, srv LivemapperService_StreamServer) 
 
 	markersAttr, err := s.ps.Attr(userInfo, permslivemapper.LivemapperServicePerm, permslivemapper.LivemapperServiceStreamPerm, permslivemapper.LivemapperServiceStreamMarkersPermField)
 	if err != nil {
-		return ErrStreamFailed
+		return errswrap.NewError(ErrStreamFailed, err)
 	}
 	playersAttr, err := s.ps.Attr(userInfo, permslivemapper.LivemapperServicePerm, permslivemapper.LivemapperServiceStreamPerm, permslivemapper.LivemapperServiceStreamPlayersPermField)
 	if err != nil {
-		return ErrStreamFailed
+		return errswrap.NewError(ErrStreamFailed, err)
 	}
 
 	var markersJobs []string
@@ -170,8 +171,9 @@ func (s *Server) Stream(req *StreamRequest, srv LivemapperService_StreamServer) 
 		}
 	}
 
-	resp := &StreamResponse{}
-
+	resp := &StreamResponse{
+		Data: &StreamResponse_Jobs{},
+	}
 	if len(markersJobs) == 0 && len(playersJobs) == 0 {
 		if err := srv.Send(resp); err != nil {
 			return err
@@ -180,21 +182,30 @@ func (s *Server) Stream(req *StreamRequest, srv LivemapperService_StreamServer) 
 		return nil
 	}
 
-	// Add jobs to list visible jobs list
-	resp.JobsMarkers = make([]*users.Job, len(markersJobs))
+	// Prepare jobs for client response
+	jobs := &StreamResponse_Jobs{
+		Jobs: &JobsList{
+			Markers: make([]*users.Job, len(markersJobs)),
+			Users:   []*users.Job{},
+		},
+	}
 	for i := 0; i < len(markersJobs); i++ {
-		resp.JobsMarkers[i] = &users.Job{
+		jobs.Jobs.Markers[i] = &users.Job{
 			Name: markersJobs[i],
 		}
-		s.enricher.EnrichJobName(resp.JobsMarkers[i])
+		s.enricher.EnrichJobName(jobs.Jobs.Markers[i])
 	}
-	resp.JobsUsers = []*users.Job{}
 	for job := range playersJobs {
 		j := &users.Job{
 			Name: job,
 		}
 		s.enricher.EnrichJobName(j)
-		resp.JobsUsers = append(resp.JobsUsers, j)
+		jobs.Jobs.Users = append(jobs.Jobs.Users, j)
+	}
+	resp.Data = jobs
+
+	if err := srv.Send(resp); err != nil {
+		return err
 	}
 
 	signalCh := s.broker.Subscribe()
@@ -203,16 +214,34 @@ func (s *Server) Stream(req *StreamRequest, srv LivemapperService_StreamServer) 
 	for {
 		userMarkers, _, err := s.getUserLocations(playersJobs, userInfo)
 		if err != nil {
-			return ErrStreamFailed
+			return errswrap.NewError(ErrStreamFailed, err)
 		}
-		resp.Users = userMarkers
+
+		resp := &StreamResponse{
+			Data: &StreamResponse_Users{
+				Users: &UserMarkersUpdates{
+					Users: userMarkers,
+				},
+			},
+		}
+
+		if err := srv.Send(resp); err != nil {
+			return err
+		}
 
 		markers, err := s.getMarkerMarkers(markersJobs)
 		if err != nil {
-			return ErrStreamFailed
+			return errswrap.NewError(ErrStreamFailed, err)
 		}
-		resp.Markers = markers
 
+		// Send current markers
+		resp = &StreamResponse{
+			Data: &StreamResponse_Markers{
+				Markers: &MarkerMarkersUpdates{
+					Markers: markers,
+				},
+			},
+		}
 		if err := srv.Send(resp); err != nil {
 			return err
 		}

@@ -15,13 +15,18 @@ export interface UsersUpdateEvent {
      * @generated from protobuf field: repeated resources.livemap.UserMarker removed = 2;
      */
     removed: UserMarker[];
+    /**
+     * @generated from protobuf field: repeated resources.livemap.UserMarker updated = 3;
+     */
+    updated: UserMarker[];
 }
 // @generated message type with reflection information, may provide speed optimized methods
 class UsersUpdateEvent$Type extends MessageType<UsersUpdateEvent> {
     constructor() {
         super("resources.livemap.UsersUpdateEvent", [
             { no: 1, name: "added", kind: "message", repeat: 1 /*RepeatType.PACKED*/, T: () => UserMarker },
-            { no: 2, name: "removed", kind: "message", repeat: 1 /*RepeatType.PACKED*/, T: () => UserMarker }
+            { no: 2, name: "removed", kind: "message", repeat: 1 /*RepeatType.PACKED*/, T: () => UserMarker },
+            { no: 3, name: "updated", kind: "message", repeat: 1 /*RepeatType.PACKED*/, T: () => UserMarker }
         ]);
     }
 }
