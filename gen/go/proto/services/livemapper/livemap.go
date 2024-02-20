@@ -138,6 +138,8 @@ func (s *Server) refreshCache() {
 func (s *Server) Stream(req *StreamRequest, srv LivemapperService_StreamServer) error {
 	userInfo := auth.MustGetUserInfoFromContext(srv.Context())
 
+	start := time.Now()
+	s.logger.Debug("starting livemap stream")
 	markersAttr, err := s.ps.Attr(userInfo, permslivemapper.LivemapperServicePerm, permslivemapper.LivemapperServiceStreamPerm, permslivemapper.LivemapperServiceStreamMarkersPermField)
 	if err != nil {
 		return errswrap.NewError(ErrStreamFailed, err)
@@ -211,7 +213,9 @@ func (s *Server) Stream(req *StreamRequest, srv LivemapperService_StreamServer) 
 	signalCh := s.broker.Subscribe()
 	defer s.broker.Unsubscribe(signalCh)
 
+	s.logger.Debug("sent jobs info in livemap stream", zap.Duration("duration", time.Since(start)))
 	for {
+		start = time.Now()
 		userMarkers, _, err := s.getUserLocations(playersJobs, userInfo)
 		if err != nil {
 			return errswrap.NewError(ErrStreamFailed, err)
@@ -245,6 +249,7 @@ func (s *Server) Stream(req *StreamRequest, srv LivemapperService_StreamServer) 
 		if err := srv.Send(resp); err != nil {
 			return err
 		}
+		s.logger.Debug("sent users and markers in livemap stream", zap.Duration("duration", time.Since(start)))
 
 		select {
 		case <-srv.Context().Done():
