@@ -6,7 +6,7 @@ import (
 	"slices"
 
 	"github.com/galexrt/fivenet/gen/go/proto/resources/jobs"
-	"github.com/galexrt/fivenet/pkg/tracker"
+	"github.com/galexrt/fivenet/gen/go/proto/resources/livemap"
 	"github.com/galexrt/fivenet/query/fivenet/table"
 	jet "github.com/go-jet/jet/v2/mysql"
 	"github.com/go-jet/jet/v2/qrm"
@@ -30,14 +30,10 @@ func (s *Server) runTimeclock() {
 					if err := s.addTimeclockEntries(ctx, event.Added); err != nil {
 						s.logger.Error("failed to add timeclock entries", zap.Error(err))
 					}
-				} else {
-					if err := s.addTimeclockEntries(ctx, event.Current); err != nil {
-						s.logger.Error("failed to add current timeclock entries", zap.Error(err))
-					}
 				}
 
 				for _, userInfo := range event.Removed {
-					if err := s.endTimeclockEntry(ctx, userInfo.UserID); err != nil {
+					if err := s.endTimeclockEntry(ctx, userInfo.UserId); err != nil {
 						s.logger.Error("failed to end timeclock entry", zap.Error(err))
 						continue
 					}
@@ -47,9 +43,9 @@ func (s *Server) runTimeclock() {
 	}
 }
 
-func (s *Server) addTimeclockEntries(ctx context.Context, users []*tracker.UserInfo) error {
-	for _, userInfo := range users {
-		if err := s.addTimeclockEntry(ctx, userInfo.UserID); err != nil {
+func (s *Server) addTimeclockEntries(ctx context.Context, users []*livemap.UserMarker) error {
+	for _, userMarker := range users {
+		if err := s.addTimeclockEntry(ctx, userMarker.UserId); err != nil {
 			s.logger.Error("failed to add timeclock entry", zap.Error(err))
 			continue
 		}

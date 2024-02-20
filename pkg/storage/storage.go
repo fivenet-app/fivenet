@@ -4,6 +4,7 @@ import (
 	"context"
 	"io"
 	"mime"
+	"path"
 	"time"
 
 	"github.com/galexrt/fivenet/pkg/config"
@@ -16,9 +17,16 @@ var Module = fx.Module("storage",
 	fx.Provide(New),
 )
 
+type IStorage interface {
+	Get(ctx context.Context, filePath string) (Object, error)
+	Put(ctx context.Context, filePath string, reader io.Reader, size int64, contentType string) (string, error)
+	Delete(ctx context.Context, filePath string) error
+}
+
 type Storage struct {
 	s3         *minio.Client
 	bucketName string
+	prefix     string
 }
 
 func New(cfg *config.Config) (*Storage, error) {
@@ -44,7 +52,16 @@ func New(cfg *config.Config) (*Storage, error) {
 	return st, nil
 }
 
+func (s *Storage) WithPrefix(prefix string) *Storage {
+	return &Storage{
+		s3:         s.s3,
+		bucketName: s.bucketName,
+		prefix:     prefix,
+	}
+}
+
 func (s *Storage) Get(ctx context.Context, filePath string) (Object, error) {
+	filePath = path.Join(s.prefix, filePath)
 	object, err := s.s3.GetObject(ctx, s.bucketName, filePath, minio.GetObjectOptions{})
 	if err != nil {
 		return nil, err
@@ -59,6 +76,7 @@ func (s *Storage) Put(ctx context.Context, filePath string, reader io.Reader, si
 }
 
 func (s *Storage) PutWithTTL(ctx context.Context, filePath string, reader io.Reader, size int64, contentType string, ttl time.Time) (string, error) {
+	filePath = path.Join(s.prefix, filePath)
 	uploadInfo, err := s.s3.PutObject(ctx, s.bucketName, filePath, reader, size, minio.PutObjectOptions{
 		ContentType: mime.TypeByExtension(filePath),
 		Expires:     ttl,
@@ -71,5 +89,6 @@ func (s *Storage) PutWithTTL(ctx context.Context, filePath string, reader io.Rea
 }
 
 func (s *Storage) Delete(ctx context.Context, filePath string) error {
+	filePath = path.Join(s.prefix, filePath)
 	return s.s3.RemoveObject(ctx, s.bucketName, filePath, minio.RemoveObjectOptions{})
 }

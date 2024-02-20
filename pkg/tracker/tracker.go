@@ -3,24 +3,22 @@ package tracker
 import (
 	"context"
 	"database/sql"
-	"time"
+	"fmt"
 
 	"github.com/galexrt/fivenet/gen/go/proto/resources/livemap"
-	"github.com/galexrt/fivenet/gen/go/proto/resources/users"
 	"github.com/galexrt/fivenet/gen/go/proto/services/centrum/state"
 	"github.com/galexrt/fivenet/pkg/config"
-	"github.com/galexrt/fivenet/pkg/coords"
 	"github.com/galexrt/fivenet/pkg/coords/postals"
 	"github.com/galexrt/fivenet/pkg/mstlystcdata"
+	"github.com/galexrt/fivenet/pkg/nats/store"
 	"github.com/galexrt/fivenet/pkg/utils"
 	"github.com/galexrt/fivenet/query/fivenet/table"
-	"github.com/gin-gonic/gin"
-	jet "github.com/go-jet/jet/v2/mysql"
+	"github.com/nats-io/nats.go"
 	"github.com/puzpuzpuz/xsync/v3"
 	tracesdk "go.opentelemetry.io/otel/sdk/trace"
-	"go.opentelemetry.io/otel/trace"
 	"go.uber.org/fx"
 	"go.uber.org/zap"
+	"google.golang.org/protobuf/proto"
 )
 
 var (
@@ -34,41 +32,19 @@ type ITracker interface {
 	GetUserById(id int32) (*livemap.UserMarker, bool)
 	IsUserOnDuty(userId int32) bool
 
-	Subscribe() chan *Event
-	Unsubscribe(c chan *Event)
-}
-
-type UserInfo struct {
-	Job    string
-	UserID int32
-	Time   time.Time
-}
-
-type Event struct {
-	Added   []*UserInfo
-	Removed []*UserInfo
-	Current []*UserInfo
+	Subscribe() chan *livemap.UsersUpdateEvent
+	Unsubscribe(c chan *livemap.UsersUpdateEvent)
 }
 
 type Tracker struct {
 	ITracker
 
-	ctx      context.Context
-	logger   *zap.Logger
-	tracer   trace.Tracer
-	db       *sql.DB
-	enricher *mstlystcdata.Enricher
-	postals  postals.Postals
-	state    *state.State
+	logger *zap.Logger
 
-	usersCache *xsync.MapOf[string, *xsync.MapOf[int32, *livemap.UserMarker]]
-	usersIDs   *xsync.MapOf[int32, *UserInfo]
+	userStore  *store.Store[livemap.UserMarker, *livemap.UserMarker]
+	usersByJob *xsync.MapOf[string, *xsync.MapOf[int32, *livemap.UserMarker]]
 
-	broker *utils.Broker[*Event]
-
-	refreshTime time.Duration
-
-	locations map[string]*coords.Coords[*livemap.UserMarker]
+	broker *utils.Broker[*livemap.UsersUpdateEvent]
 }
 
 type Params struct {
@@ -77,6 +53,7 @@ type Params struct {
 	LC fx.Lifecycle
 
 	Logger   *zap.Logger
+	JS       nats.JetStreamContext
 	TP       *tracesdk.TracerProvider
 	DB       *sql.DB
 	Enricher *mstlystcdata.Enricher
@@ -85,256 +62,109 @@ type Params struct {
 	State    *state.State
 }
 
-func New(p Params) ITracker {
-	ctx, cancel := context.WithCancel(context.Background())
+func New(p Params) (ITracker, error) {
+	usersByJob := xsync.NewMapOf[string, *xsync.MapOf[int32, *livemap.UserMarker]]()
 
-	broker := utils.NewBroker[*Event](ctx)
+	userIDs, err := store.NewWithLocks[livemap.UserMarker, *livemap.UserMarker](p.Logger, p.JS, "tracker", nil,
+		func(s *store.Store[livemap.UserMarker, *livemap.UserMarker]) error {
+			s.OnUpdate = func(um *livemap.UserMarker) (*livemap.UserMarker, error) {
+				if um == nil || um.Info == nil {
+					return um, nil
+				}
 
-	locs := map[string]*coords.Coords[*livemap.UserMarker]{}
-	for _, job := range p.Config.Game.Livemap.Jobs {
-		locs[job] = coords.New[*livemap.UserMarker]()
+				jobUsers, _ := usersByJob.LoadOrCompute(um.Info.Job, func() *xsync.MapOf[int32, *livemap.UserMarker] {
+					return xsync.NewMapOf[int32, *livemap.UserMarker]()
+				})
+				if m, ok := jobUsers.LoadOrStore(um.UserId, um); !ok {
+					// Merge value if loaded from local data store
+					m.Merge(um)
+				}
+
+				return um, nil
+			}
+			return nil
+		},
+		func(s *store.Store[livemap.UserMarker, *livemap.UserMarker]) error {
+			s.OnDelete = func(kve nats.KeyValueEntry, um *livemap.UserMarker) error {
+				if um == nil || um.Info == nil {
+					return nil
+				}
+
+				if jobUsers, ok := usersByJob.Load(um.Info.Job); ok {
+					jobUsers.Delete(um.UserId)
+				}
+
+				return nil
+			}
+			return nil
+		})
+	if err != nil {
+		return nil, err
 	}
 
-	t := &Tracker{
-		ctx:      ctx,
-		logger:   p.Logger,
-		tracer:   p.TP.Tracer("tracker-cache"),
-		db:       p.DB,
-		enricher: p.Enricher,
-		postals:  p.Postals,
-		state:    p.State,
+	ctx, cancel := context.WithCancel(context.Background())
 
-		usersCache: xsync.NewMapOf[string, *xsync.MapOf[int32, *livemap.UserMarker]](),
-		usersIDs:   xsync.NewMapOf[int32, *UserInfo](),
+	broker := utils.NewBroker[*livemap.UsersUpdateEvent](ctx)
+
+	t := &Tracker{
+		logger: p.Logger,
+
+		userStore:  userIDs,
+		usersByJob: usersByJob,
 
 		broker: broker,
-
-		refreshTime: p.Config.Game.Livemap.RefreshTime,
-
-		locations: locs,
 	}
 
 	p.LC.Append(fx.StartHook(func(_ context.Context) error {
 		go broker.Start()
 
-		// Only run the tracker random user marker generator in debug mode
-		if p.Config.Mode == gin.DebugMode {
-			go t.RandomizeUserMarkers()
+		if _, err := p.JS.Subscribe(fmt.Sprintf("%s.>", BaseSubject), t.watchForChanges, nats.DeliverLastPerSubject()); err != nil {
+			return err
 		}
 
-		go t.start()
+		if err := userIDs.Start(ctx); err != nil {
+			return err
+		}
 
 		return nil
 	}))
 
 	p.LC.Append(fx.StopHook(func(_ context.Context) error {
 		cancel()
+
 		return nil
 	}))
 
-	return t
+	return t, nil
 }
 
-func (s *Tracker) start() {
-	ticker := time.NewTicker(30 * time.Second)
-	defer ticker.Stop()
-
-	for {
-		select {
-		case <-s.ctx.Done():
-			return
-
-		case <-ticker.C:
-			s.refreshCache(true)
-
-		case <-time.After(s.refreshTime):
-			// Only refresh cache if broker has a subscriber
-			if s.broker.SubCount() <= 0 {
-				break
-			}
-
-			s.refreshCache(false)
-		}
-	}
-}
-
-func (s *Tracker) refreshCache(force bool) {
-	ctx, span := s.tracer.Start(s.ctx, "livemap-refresh-cache")
-	defer span.End()
-
-	if err := s.refreshUserLocations(ctx, force); err != nil {
-		s.logger.Error("failed to refresh livemap users cache", zap.Error(err))
-		// Return here so we don't taint the user "on-duty" cache/list
+func (s *Tracker) watchForChanges(msg *nats.Msg) {
+	dest := &livemap.UsersUpdateEvent{}
+	if err := proto.Unmarshal(msg.Data, dest); err != nil {
+		s.logger.Error("failed to unmarshal nats user update response", zap.Error(err))
 		return
 	}
 
-	if err := s.cleanupUserIDs(); err != nil {
-		s.logger.Error("failed to clean up user locations", zap.Error(err))
-	}
-}
-
-func (s *Tracker) cleanupUserIDs() error {
-	event := &Event{}
-
-	now := time.Now()
-	s.usersIDs.Range(func(key int32, info *UserInfo) bool {
-		if now.After(info.Time) {
-			event.Removed = append(event.Removed, info)
-			s.usersIDs.Delete(key)
-
-			jobUsers, ok := s.usersCache.Load(info.Job)
-			if ok {
-				if _, ok := jobUsers.Load(key); ok {
-					jobUsers.Delete(key)
-				}
-			}
-		}
-
-		return true
-	})
-
-	s.broker.Publish(event)
-
-	return nil
-}
-
-func (s *Tracker) refreshUserLocations(ctx context.Context, sendCurrentList bool) error {
-	tLocs := tLocs.AS("markerInfo")
-	stmt := tLocs.
-		SELECT(
-			tLocs.Identifier,
-			tLocs.Job,
-			tLocs.X,
-			tLocs.Y,
-			tLocs.UpdatedAt,
-			tUsers.ID.AS("usermarker.userid"),
-			tUsers.ID.AS("user.id"),
-			tUsers.ID.AS("markerInfo.id"),
-			tUsers.Identifier,
-			tLocs.Job.AS("user.job"),
-			tUsers.JobGrade,
-			tUsers.Firstname,
-			tUsers.Lastname,
-			tUsers.PhoneNumber,
-			tJobProps.LivemapMarkerColor.AS("markerInfo.color"),
-		).
-		FROM(
-			tLocs.
-				INNER_JOIN(tUsers,
-					tLocs.Identifier.EQ(tUsers.Identifier),
-				).
-				LEFT_JOIN(tJobProps,
-					tJobProps.Job.EQ(tUsers.Job),
-				),
-		).
-		WHERE(jet.AND(
-			tLocs.Hidden.IS_FALSE(),
-			jet.OR(
-				tLocs.UpdatedAt.IS_NULL(),
-				tLocs.UpdatedAt.GT_EQ(jet.CURRENT_TIMESTAMP().SUB(jet.INTERVAL(4, jet.HOUR))),
-			),
-		))
-
-	var dest []*livemap.UserMarker
-	if err := stmt.QueryContext(ctx, s.db, &dest); err != nil {
-		return err
-	}
-
-	event := &Event{}
-	expiration := time.Now().Add(7 * s.refreshTime)
-	jobMarkers := map[string]*xsync.MapOf[int32, *livemap.UserMarker]{}
-	for i := 0; i < len(dest); i++ {
-		s.enricher.EnrichJobInfo(dest[i].User)
-
-		job := dest[i].User.Job
-		if _, ok := jobMarkers[job]; !ok {
-			jobMarkers[job] = xsync.NewMapOf[int32, *livemap.UserMarker]()
-		}
-
-		if dest[i].Info.Color == nil {
-			defaultColor := users.DefaultLivemapMarkerColor
-			dest[i].Info.Color = &defaultColor
-		}
-
-		postal := s.postals.Closest(dest[i].Info.X, dest[i].Info.Y)
-		if postal != nil {
-			dest[i].Info.Postal = postal.Code
-		}
-
-		userId := dest[i].User.UserId
-
-		unitId, ok := s.state.GetUserUnitID(userId)
-		if ok {
-			dest[i].UnitId = &unitId
-			if unit, err := s.state.GetUnit(job, unitId); err == nil {
-				dest[i].Unit = unit
-			}
-		}
-
-		jobMarkers[job].Store(userId, dest[i])
-
-		userInfo := &UserInfo{
-			Job:    dest[i].User.Job,
-			UserID: userId,
-			Time:   expiration,
-		}
-		if ui, ok := s.usersIDs.LoadOrStore(userId, userInfo); ok {
-			ui.Job = userInfo.Job
-			ui.UserID = userInfo.UserID
-			ui.Time = userInfo.Time
-		} else {
-			// User wasn't in the list, so they must be new so add the user to event for keeping track of users
-			if _, ok := s.GetUserById(userId); !ok {
-				event.Added = append(event.Added, userInfo)
-			}
-		}
-
-		if sendCurrentList {
-			event.Current = append(event.Current, userInfo)
-		}
-	}
-
-	for job, markers := range jobMarkers {
-		s.usersCache.Store(job, markers)
-	}
-
-	if len(event.Added) > 0 || len(event.Removed) > 0 || len(event.Current) > 0 {
-		s.broker.Publish(event)
-	}
-
-	return nil
+	s.broker.Publish(dest)
 }
 
 func (s *Tracker) GetUsersByJob(job string) (*xsync.MapOf[int32, *livemap.UserMarker], bool) {
-	return s.usersCache.Load(job)
+	return s.usersByJob.Load(job)
 }
 
 func (s *Tracker) IsUserOnDuty(userId int32) bool {
-	if _, ok := s.usersIDs.Load(userId); !ok {
-		return false
-	}
-
-	return true
+	_, ok := s.userStore.Get(userIdKey(userId))
+	return ok
 }
 
 func (s *Tracker) GetUserById(id int32) (*livemap.UserMarker, bool) {
-	info, ok := s.usersIDs.Load(id)
-	if !ok {
-		return nil, false
-	}
-
-	users, ok := s.usersCache.Load(info.Job)
-	if !ok {
-		return nil, false
-	}
-
-	return users.Load(id)
+	return s.userStore.Get(userIdKey(id))
 }
 
-func (s *Tracker) Subscribe() chan *Event {
+func (s *Tracker) Subscribe() chan *livemap.UsersUpdateEvent {
 	return s.broker.Subscribe()
 }
 
-func (s *Tracker) Unsubscribe(c chan *Event) {
+func (s *Tracker) Unsubscribe(c chan *livemap.UsersUpdateEvent) {
 	s.broker.Unsubscribe(c)
 }

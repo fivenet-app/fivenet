@@ -6,7 +6,7 @@ import (
 )
 
 func (s *State) GetUserUnitID(userId int32) (uint64, bool) {
-	mapping, err := s.userIDToUnitID.Load(UserIdKey(userId))
+	mapping, err := s.userIDToUnitID.Load(userIdKey(userId))
 	if mapping == nil || err != nil {
 		return 0, false
 	}
@@ -22,7 +22,7 @@ func (s *State) SetUnitForUser(job string, userId int32, unitId uint64) error {
 		CreatedAt: timestamp.Now(),
 	}
 
-	if err := s.userIDToUnitID.Put(UserIdKey(userId), mapping); err != nil {
+	if err := s.userIDToUnitID.Put(userIdKey(userId), mapping); err != nil {
 		return err
 	}
 
@@ -30,5 +30,5 @@ func (s *State) SetUnitForUser(job string, userId int32, unitId uint64) error {
 }
 
 func (s *State) UnsetUnitIDForUser(userId int32) error {
-	return s.userIDToUnitID.Delete(UserIdKey(userId))
+	return s.userIDToUnitID.Delete(userIdKey(userId))
 }

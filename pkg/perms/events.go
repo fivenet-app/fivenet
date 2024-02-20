@@ -43,7 +43,7 @@ func (p *Perms) registerEvents(ctx context.Context) error {
 		Storage:     nats.MemoryStorage,
 	}
 
-	if _, err := natsutils.CreateOrUpdateStream(p.js, cfg); err != nil {
+	if _, err := natsutils.CreateOrUpdateStream(ctx, p.js, cfg); err != nil {
 		return err
 	}
 

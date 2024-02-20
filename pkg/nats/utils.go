@@ -1,6 +1,7 @@
 package natsutils
 
 import (
+	"context"
 	"errors"
 
 	"github.com/nats-io/nats.go"
@@ -26,14 +27,14 @@ func CreateKeyValue(js nats.JetStreamContext, bucket string, config *nats.KeyVal
 	return kv, err
 }
 
-func CreateOrUpdateStream(js nats.JetStreamContext, config *nats.StreamConfig) (*nats.StreamInfo, error) {
-	sub, err := js.UpdateStream(config)
+func CreateOrUpdateStream(ctx context.Context, js nats.JetStreamContext, config *nats.StreamConfig) (*nats.StreamInfo, error) {
+	sub, err := js.UpdateStream(config, nats.Context(ctx))
 	if err != nil {
 		if !errors.Is(err, nats.ErrStreamNotFound) {
 			return nil, err
 		}
 
-		if _, err := js.AddStream(config); err != nil {
+		if _, err := js.AddStream(config, nats.Context(ctx)); err != nil {
 			return nil, err
 		}
 	}

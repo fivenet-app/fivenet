@@ -11,7 +11,7 @@ func JobIdKey(job string, id uint64) string {
 	return job + "." + strconv.Itoa(int(id))
 }
 
-func UserIdKey(id int32) string {
+func userIdKey(id int32) string {
 	return strconv.Itoa(int(id))
 }
 

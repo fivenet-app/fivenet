@@ -95,10 +95,12 @@ func NewServer(p Params) *Server {
 	p.LC.Append(fx.StartHook(func(_ context.Context) error {
 		go broker.Start()
 		go s.start()
+
 		return nil
 	}))
 	p.LC.Append(fx.StopHook(func(_ context.Context) error {
 		cancel()
+
 		return nil
 	}))
 

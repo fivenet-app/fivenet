@@ -43,29 +43,13 @@ type StoreOption[T any, U protoMessage[T]] func(s *Store[T, U]) error
 type OnUpdateFn[T any, U protoMessage[T]] func(U) (U, error)
 type OnDeleteFn[T any, U protoMessage[T]] func(nats.KeyValueEntry, U) error
 
-func New[T any, U protoMessage[T]](logger *zap.Logger, js nats.JetStreamContext, bucket string, opts ...StoreOption[T, U]) (*Store[T, U], error) {
+func NewWithLocks[T any, U protoMessage[T]](logger *zap.Logger, js nats.JetStreamContext, bucket string, l *locks.Locks, opts ...StoreOption[T, U]) (*Store[T, U], error) {
 	kv, err := natsutils.CreateKeyValue(js, bucket, &nats.KeyValueConfig{
 		Bucket:      bucket,
 		Description: natsutils.Description,
 		History:     3,
 		Storage:     nats.MemoryStorage,
 	})
-	if err != nil {
-		return nil, err
-	}
-
-	lBucket := fmt.Sprintf("%s_locks", bucket)
-	lkv, err := natsutils.CreateKeyValue(js, lBucket, &nats.KeyValueConfig{
-		Bucket:      lBucket,
-		Description: natsutils.Description,
-		History:     3,
-		Storage:     nats.MemoryStorage,
-		TTL:         3 * LockTimeout,
-	})
-	if err != nil {
-		return nil, err
-	}
-	l, err := locks.New(logger, lkv, lBucket, 6*LockTimeout)
 	if err != nil {
 		return nil, err
 	}
@@ -89,15 +73,37 @@ func New[T any, U protoMessage[T]](logger *zap.Logger, js nats.JetStreamContext,
 	return s, nil
 }
 
+func New[T any, U protoMessage[T]](logger *zap.Logger, js nats.JetStreamContext, bucket string, opts ...StoreOption[T, U]) (*Store[T, U], error) {
+	lBucket := fmt.Sprintf("%s_locks", bucket)
+	lkv, err := natsutils.CreateKeyValue(js, lBucket, &nats.KeyValueConfig{
+		Bucket:      lBucket,
+		Description: natsutils.Description,
+		History:     3,
+		Storage:     nats.MemoryStorage,
+		TTL:         3 * LockTimeout,
+	})
+	if err != nil {
+		return nil, err
+	}
+	l, err := locks.New(logger, lkv, lBucket, 6*LockTimeout)
+	if err != nil {
+		return nil, err
+	}
+
+	return NewWithLocks[T, U](logger, js, bucket, l, opts...)
+}
+
 // Put upload the message to kv and local
 func (s *Store[T, U]) Put(key string, msg U) error {
 	ctx, cancel := context.WithTimeout(context.Background(), LockTimeout)
 	defer cancel()
 
-	if err := s.l.Lock(ctx, key); err != nil {
-		return err
+	if s.l != nil {
+		if err := s.l.Lock(ctx, key); err != nil {
+			return err
+		}
+		defer s.l.Unlock(ctx, key)
 	}
-	defer s.l.Unlock(ctx, key)
 
 	if err := s.put(key, msg); err != nil {
 		return err
@@ -125,10 +131,12 @@ func (s *Store[T, U]) ComputeUpdate(key string, load bool, fn func(key string, e
 	ctx, cancel := context.WithTimeout(context.Background(), LockTimeout)
 	defer cancel()
 
-	if err := s.l.Lock(ctx, key); err != nil {
-		return err
+	if s.l != nil {
+		if err := s.l.Lock(ctx, key); err != nil {
+			return err
+		}
+		defer s.l.Unlock(ctx, key)
 	}
-	defer s.l.Unlock(ctx, key)
 
 	var existing U
 	if load {
@@ -235,10 +243,12 @@ func (s *Store[T, U]) Delete(key string) error {
 	ctx, cancel := context.WithTimeout(context.Background(), LockTimeout)
 	defer cancel()
 
-	if err := s.l.Lock(ctx, key); err != nil {
-		return err
+	if s.l != nil {
+		if err := s.l.Lock(ctx, key); err != nil {
+			return err
+		}
+		defer s.l.Unlock(ctx, key)
 	}
-	defer s.l.Unlock(ctx, key)
 
 	if err := s.kv.Delete(key); err != nil {
 		return err
@@ -299,8 +309,8 @@ func (s *Store[T, U]) Start(ctx context.Context) error {
 				s.logger.Debug("key update received via watcher", zap.String("key", entry.Key()))
 
 				if entry.Operation() == nats.KeyValueDelete || entry.Operation() == nats.KeyValuePurge {
+					item, _ := s.data.LoadAndDelete(entry.Key())
 					if s.OnDelete != nil {
-						item, _ := s.data.Load(entry.Key())
 						if err := s.OnDelete(entry, item); err != nil {
 							s.logger.Error("failed to run on update logic in store watcher", zap.Error(err))
 							continue

@@ -70,8 +70,9 @@ func (c *ServerCmd) Run(ctx *Context) error {
 type WorkerCmd struct {
 	ModuleAuditRetention     bool `help:"Start Audit log retention module" default:"true"`
 	ModuleDiscordBot         bool `help:"Start Discord bot module" default:"true"`
-	ModuleCentrumBot         bool `help:"Start Centrum Bot module" default:"true"`
+	ModuleCentrumBot         bool `help:"Start Centrum bot module" default:"true"`
 	ModuleCentrumHousekeeper bool `help:"Start Centrum Housekeeper module" default:"true"`
+	ModuleUserTracker        bool `help:"Start User tracker module" default:"true"`
 }
 
 func (c *WorkerCmd) Run(ctx *Context) error {
@@ -88,6 +89,9 @@ func (c *WorkerCmd) Run(ctx *Context) error {
 	}
 	if c.ModuleDiscordBot {
 		fxOpts = append(fxOpts, fx.Invoke(func(*discord.Bot) {}))
+	}
+	if c.ModuleUserTracker {
+		fxOpts = append(fxOpts, fx.Invoke(func(*tracker.Manager) {}))
 	}
 
 	fx.New(fxOpts...).Run()
@@ -139,6 +143,7 @@ func getFxBaseOpts() []fx.Option {
 			mstlystcdata.NewSearcher,
 			notifi.New,
 			tracker.New,
+			tracker.NewManager,
 			userinfo.NewUIRetriever,
 			postals.New,
 		),

@@ -734,33 +734,33 @@ func (s *Housekeeper) watchUserChanges() {
 
 				s.logger.Debug("received user changes", zap.Int("added", len(event.Added)), zap.String("added_users", fmt.Sprintf("%+v", event.Added)),
 					zap.Int("removed", len(event.Removed)), zap.String("removed_users", fmt.Sprintf("%+v", event.Removed)))
-				for _, userInfo := range event.Added {
-					if _, ok := s.GetUserUnitID(userInfo.UserID); ok {
+				for _, userMarker := range event.Added {
+					if _, ok := s.GetUserUnitID(userMarker.UserId); ok {
 						break
 					}
 
-					unitId, err := s.LoadUnitIDForUserID(ctx, userInfo.UserID)
+					unitId, err := s.LoadUnitIDForUserID(ctx, userMarker.UserId)
 					if err != nil {
 						s.logger.Error("failed to load user unit id", zap.Error(err))
 						continue
 					}
 
 					if unitId == 0 {
-						if err := s.UnsetUnitIDForUser(userInfo.UserID); err != nil {
+						if err := s.UnsetUnitIDForUser(userMarker.UserId); err != nil {
 							s.logger.Error("failed to unset user's unit id", zap.Error(err))
 						}
 						continue
 					}
 
-					if err := s.SetUnitForUser(userInfo.Job, userInfo.UserID, unitId); err != nil {
+					if err := s.SetUnitForUser(userMarker.Info.Job, userMarker.UserId, unitId); err != nil {
 						s.logger.Error("failed to update user unit id mapping in kv", zap.Error(err))
 						continue
 					}
 				}
 
 				for _, userInfo := range event.Removed {
-					s.handleRemoveUserFromDisponents(ctx, userInfo.Job, userInfo.UserID)
-					s.handleRemoveUserFromUnit(ctx, userInfo.Job, userInfo.UserID)
+					s.handleRemoveUserFromDisponents(ctx, userInfo.Info.Job, userInfo.UserId)
+					s.handleRemoveUserFromUnit(ctx, userInfo.Info.Job, userInfo.UserId)
 				}
 			}()
 		}

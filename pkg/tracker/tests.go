@@ -9,18 +9,18 @@ import (
 )
 
 type TestTracker struct {
-	broker *utils.Broker[*Event]
+	broker *utils.Broker[*livemap.UsersUpdateEvent]
 
 	usersCache *xsync.MapOf[string, *xsync.MapOf[int32, *livemap.UserMarker]]
-	usersIDs   *xsync.MapOf[int32, *UserInfo]
+	usersIDs   *xsync.MapOf[int32, *livemap.UserMarker]
 }
 
 func NewForTests(ctx context.Context) *TestTracker {
-	broker := utils.NewBroker[*Event](ctx)
+	broker := utils.NewBroker[*livemap.UsersUpdateEvent](ctx)
 
 	return &TestTracker{
 		usersCache: xsync.NewMapOf[string, *xsync.MapOf[int32, *livemap.UserMarker]](),
-		usersIDs:   xsync.NewMapOf[int32, *UserInfo](),
+		usersIDs:   xsync.NewMapOf[int32, *livemap.UserMarker](),
 
 		broker: broker,
 	}
@@ -58,13 +58,13 @@ func (s *TestTracker) GetUserById(id int32) (*livemap.UserMarker, bool) {
 		return nil, false
 	}
 
-	return s.GetUserByJobAndID(info.Job, id)
+	return s.GetUserByJobAndID(info.Info.Job, id)
 }
 
-func (s *TestTracker) Subscribe() chan *Event {
+func (s *TestTracker) Subscribe() chan *livemap.UsersUpdateEvent {
 	return s.broker.Subscribe()
 }
 
-func (s *TestTracker) Unsubscribe(c chan *Event) {
+func (s *TestTracker) Unsubscribe(c chan *livemap.UsersUpdateEvent) {
 	s.broker.Unsubscribe(c)
 }
