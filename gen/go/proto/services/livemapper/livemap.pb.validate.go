@@ -199,47 +199,6 @@ func (m *StreamResponse) validate(all bool) error {
 			}
 		}
 
-	case *StreamResponse_Users:
-		if v == nil {
-			err := StreamResponseValidationError{
-				field:  "Data",
-				reason: "oneof value cannot be a typed-nil",
-			}
-			if !all {
-				return err
-			}
-			errors = append(errors, err)
-		}
-
-		if all {
-			switch v := interface{}(m.GetUsers()).(type) {
-			case interface{ ValidateAll() error }:
-				if err := v.ValidateAll(); err != nil {
-					errors = append(errors, StreamResponseValidationError{
-						field:  "Users",
-						reason: "embedded message failed validation",
-						cause:  err,
-					})
-				}
-			case interface{ Validate() error }:
-				if err := v.Validate(); err != nil {
-					errors = append(errors, StreamResponseValidationError{
-						field:  "Users",
-						reason: "embedded message failed validation",
-						cause:  err,
-					})
-				}
-			}
-		} else if v, ok := interface{}(m.GetUsers()).(interface{ Validate() error }); ok {
-			if err := v.Validate(); err != nil {
-				return StreamResponseValidationError{
-					field:  "Users",
-					reason: "embedded message failed validation",
-					cause:  err,
-				}
-			}
-		}
-
 	case *StreamResponse_Markers:
 		if v == nil {
 			err := StreamResponseValidationError{
@@ -281,7 +240,7 @@ func (m *StreamResponse) validate(all bool) error {
 			}
 		}
 
-	case *StreamResponse_UserUpdates:
+	case *StreamResponse_Users:
 		if v == nil {
 			err := StreamResponseValidationError{
 				field:  "Data",
@@ -294,11 +253,11 @@ func (m *StreamResponse) validate(all bool) error {
 		}
 
 		if all {
-			switch v := interface{}(m.GetUserUpdates()).(type) {
+			switch v := interface{}(m.GetUsers()).(type) {
 			case interface{ ValidateAll() error }:
 				if err := v.ValidateAll(); err != nil {
 					errors = append(errors, StreamResponseValidationError{
-						field:  "UserUpdates",
+						field:  "Users",
 						reason: "embedded message failed validation",
 						cause:  err,
 					})
@@ -306,16 +265,16 @@ func (m *StreamResponse) validate(all bool) error {
 			case interface{ Validate() error }:
 				if err := v.Validate(); err != nil {
 					errors = append(errors, StreamResponseValidationError{
-						field:  "UserUpdates",
+						field:  "Users",
 						reason: "embedded message failed validation",
 						cause:  err,
 					})
 				}
 			}
-		} else if v, ok := interface{}(m.GetUserUpdates()).(interface{ Validate() error }); ok {
+		} else if v, ok := interface{}(m.GetUsers()).(interface{ Validate() error }); ok {
 			if err := v.Validate(); err != nil {
 				return StreamResponseValidationError{
-					field:  "UserUpdates",
+					field:  "Users",
 					reason: "embedded message failed validation",
 					cause:  err,
 				}
@@ -571,6 +530,142 @@ var _ interface {
 	ErrorName() string
 } = JobsListValidationError{}
 
+// Validate checks the field values on MarkerMarkersUpdates with the rules
+// defined in the proto definition for this message. If any rules are
+// violated, the first error encountered is returned, or nil if there are no violations.
+func (m *MarkerMarkersUpdates) Validate() error {
+	return m.validate(false)
+}
+
+// ValidateAll checks the field values on MarkerMarkersUpdates with the rules
+// defined in the proto definition for this message. If any rules are
+// violated, the result is a list of violation errors wrapped in
+// MarkerMarkersUpdatesMultiError, or nil if none found.
+func (m *MarkerMarkersUpdates) ValidateAll() error {
+	return m.validate(true)
+}
+
+func (m *MarkerMarkersUpdates) validate(all bool) error {
+	if m == nil {
+		return nil
+	}
+
+	var errors []error
+
+	for idx, item := range m.GetMarkers() {
+		_, _ = idx, item
+
+		if all {
+			switch v := interface{}(item).(type) {
+			case interface{ ValidateAll() error }:
+				if err := v.ValidateAll(); err != nil {
+					errors = append(errors, MarkerMarkersUpdatesValidationError{
+						field:  fmt.Sprintf("Markers[%v]", idx),
+						reason: "embedded message failed validation",
+						cause:  err,
+					})
+				}
+			case interface{ Validate() error }:
+				if err := v.Validate(); err != nil {
+					errors = append(errors, MarkerMarkersUpdatesValidationError{
+						field:  fmt.Sprintf("Markers[%v]", idx),
+						reason: "embedded message failed validation",
+						cause:  err,
+					})
+				}
+			}
+		} else if v, ok := interface{}(item).(interface{ Validate() error }); ok {
+			if err := v.Validate(); err != nil {
+				return MarkerMarkersUpdatesValidationError{
+					field:  fmt.Sprintf("Markers[%v]", idx),
+					reason: "embedded message failed validation",
+					cause:  err,
+				}
+			}
+		}
+
+	}
+
+	if len(errors) > 0 {
+		return MarkerMarkersUpdatesMultiError(errors)
+	}
+
+	return nil
+}
+
+// MarkerMarkersUpdatesMultiError is an error wrapping multiple validation
+// errors returned by MarkerMarkersUpdates.ValidateAll() if the designated
+// constraints aren't met.
+type MarkerMarkersUpdatesMultiError []error
+
+// Error returns a concatenation of all the error messages it wraps.
+func (m MarkerMarkersUpdatesMultiError) Error() string {
+	var msgs []string
+	for _, err := range m {
+		msgs = append(msgs, err.Error())
+	}
+	return strings.Join(msgs, "; ")
+}
+
+// AllErrors returns a list of validation violation errors.
+func (m MarkerMarkersUpdatesMultiError) AllErrors() []error { return m }
+
+// MarkerMarkersUpdatesValidationError is the validation error returned by
+// MarkerMarkersUpdates.Validate if the designated constraints aren't met.
+type MarkerMarkersUpdatesValidationError struct {
+	field  string
+	reason string
+	cause  error
+	key    bool
+}
+
+// Field function returns field value.
+func (e MarkerMarkersUpdatesValidationError) Field() string { return e.field }
+
+// Reason function returns reason value.
+func (e MarkerMarkersUpdatesValidationError) Reason() string { return e.reason }
+
+// Cause function returns cause value.
+func (e MarkerMarkersUpdatesValidationError) Cause() error { return e.cause }
+
+// Key function returns key value.
+func (e MarkerMarkersUpdatesValidationError) Key() bool { return e.key }
+
+// ErrorName returns error name.
+func (e MarkerMarkersUpdatesValidationError) ErrorName() string {
+	return "MarkerMarkersUpdatesValidationError"
+}
+
+// Error satisfies the builtin error interface
+func (e MarkerMarkersUpdatesValidationError) Error() string {
+	cause := ""
+	if e.cause != nil {
+		cause = fmt.Sprintf(" | caused by: %v", e.cause)
+	}
+
+	key := ""
+	if e.key {
+		key = "key for "
+	}
+
+	return fmt.Sprintf(
+		"invalid %sMarkerMarkersUpdates.%s: %s%s",
+		key,
+		e.field,
+		e.reason,
+		cause)
+}
+
+var _ error = MarkerMarkersUpdatesValidationError{}
+
+var _ interface {
+	Field() string
+	Reason() string
+	Key() bool
+	Cause() error
+	ErrorName() string
+} = MarkerMarkersUpdatesValidationError{}
+
 // Validate checks the field values on UserMarkersUpdates with the rules
 // defined in the proto definition for this message. If any rules are
 // violated, the first error encountered is returned, or nil if there are no violations.
@@ -708,142 +803,6 @@ var _ interface {
 	Cause() error
 	ErrorName() string
 } = UserMarkersUpdatesValidationError{}
-
-// Validate checks the field values on MarkerMarkersUpdates with the rules
-// defined in the proto definition for this message. If any rules are
-// violated, the first error encountered is returned, or nil if there are no violations.
-func (m *MarkerMarkersUpdates) Validate() error {
-	return m.validate(false)
-}
-
-// ValidateAll checks the field values on MarkerMarkersUpdates with the rules
-// defined in the proto definition for this message. If any rules are
-// violated, the result is a list of violation errors wrapped in
-// MarkerMarkersUpdatesMultiError, or nil if none found.
-func (m *MarkerMarkersUpdates) ValidateAll() error {
-	return m.validate(true)
-}
-
-func (m *MarkerMarkersUpdates) validate(all bool) error {
-	if m == nil {
-		return nil
-	}
-
-	var errors []error
-
-	for idx, item := range m.GetMarkers() {
-		_, _ = idx, item
-
-		if all {
-			switch v := interface{}(item).(type) {
-			case interface{ ValidateAll() error }:
-				if err := v.ValidateAll(); err != nil {
-					errors = append(errors, MarkerMarkersUpdatesValidationError{
-						field:  fmt.Sprintf("Markers[%v]", idx),
-						reason: "embedded message failed validation",
-						cause:  err,
-					})
-				}
-			case interface{ Validate() error }:
-				if err := v.Validate(); err != nil {
-					errors = append(errors, MarkerMarkersUpdatesValidationError{
-						field:  fmt.Sprintf("Markers[%v]", idx),
-						reason: "embedded message failed validation",
-						cause:  err,
-					})
-				}
-			}
-		} else if v, ok := interface{}(item).(interface{ Validate() error }); ok {
-			if err := v.Validate(); err != nil {
-				return MarkerMarkersUpdatesValidationError{
-					field:  fmt.Sprintf("Markers[%v]", idx),
-					reason: "embedded message failed validation",
-					cause:  err,
-				}
-			}
-		}
-
-	}
-
-	if len(errors) > 0 {
-		return MarkerMarkersUpdatesMultiError(errors)
-	}
-
-	return nil
-}
-
-// MarkerMarkersUpdatesMultiError is an error wrapping multiple validation
-// errors returned by MarkerMarkersUpdates.ValidateAll() if the designated
-// constraints aren't met.
-type MarkerMarkersUpdatesMultiError []error
-
-// Error returns a concatenation of all the error messages it wraps.
-func (m MarkerMarkersUpdatesMultiError) Error() string {
-	var msgs []string
-	for _, err := range m {
-		msgs = append(msgs, err.Error())
-	}
-	return strings.Join(msgs, "; ")
-}
-
-// AllErrors returns a list of validation violation errors.
-func (m MarkerMarkersUpdatesMultiError) AllErrors() []error { return m }
-
-// MarkerMarkersUpdatesValidationError is the validation error returned by
-// MarkerMarkersUpdates.Validate if the designated constraints aren't met.
-type MarkerMarkersUpdatesValidationError struct {
-	field  string
-	reason string
-	cause  error
-	key    bool
-}
-
-// Field function returns field value.
-func (e MarkerMarkersUpdatesValidationError) Field() string { return e.field }
-
-// Reason function returns reason value.
-func (e MarkerMarkersUpdatesValidationError) Reason() string { return e.reason }
-
-// Cause function returns cause value.
-func (e MarkerMarkersUpdatesValidationError) Cause() error { return e.cause }
-
-// Key function returns key value.
-func (e MarkerMarkersUpdatesValidationError) Key() bool { return e.key }
-
-// ErrorName returns error name.
-func (e MarkerMarkersUpdatesValidationError) ErrorName() string {
-	return "MarkerMarkersUpdatesValidationError"
-}
-
-// Error satisfies the builtin error interface
-func (e MarkerMarkersUpdatesValidationError) Error() string {
-	cause := ""
-	if e.cause != nil {
-		cause = fmt.Sprintf(" | caused by: %v", e.cause)
-	}
-
-	key := ""
-	if e.key {
-		key = "key for "
-	}
-
-	return fmt.Sprintf(
-		"invalid %sMarkerMarkersUpdates.%s: %s%s",
-		key,
-		e.field,
-		e.reason,
-		cause)
-}
-
-var _ error = MarkerMarkersUpdatesValidationError{}
-
-var _ interface {
-	Field() string
-	Reason() string
-	Key() bool
-	Cause() error
-	ErrorName() string
-} = MarkerMarkersUpdatesValidationError{}
 
 // Validate checks the field values on CreateOrUpdateMarkerRequest with the
 // rules defined in the proto definition for this message. If any rules are

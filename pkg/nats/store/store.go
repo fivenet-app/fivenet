@@ -211,8 +211,8 @@ func (s *Store[T, U]) update(entry nats.KeyValueEntry) (U, error) {
 }
 
 func (s *Store[T, U]) updateFromType(key string, updated U) U {
-	current, ok := s.data.LoadOrStore(key, updated)
-	if ok && current != nil {
+	current, loaded := s.data.LoadOrStore(key, updated)
+	if loaded && current != nil {
 		// Compare using protobuf magic and merge if not equal
 		if !proto.Equal(current, updated) {
 			current.Merge(updated)

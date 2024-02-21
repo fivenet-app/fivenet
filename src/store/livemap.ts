@@ -123,16 +123,6 @@ export const useLivemapStore = defineStore('livemap', {
                         }
 
                         this.initiated = true;
-                    } else if (resp.data.oneofKind === 'userUpdates') {
-                        resp.data.userUpdates.removed.forEach((v) => {
-                            this.markersUsers.delete(v.info!.id);
-                        });
-                        resp.data.userUpdates.added.forEach((v) => {
-                            this.addOrpdateUserMarker(v);
-                        });
-                        resp.data.userUpdates.updated.forEach((v) => {
-                            this.addOrpdateUserMarker(v);
-                        });
                     } else {
                         console.warn('Centrum: Unknown data received - Kind: ' + resp.data.oneofKind);
                     }
@@ -283,6 +273,10 @@ export const useLivemapStore = defineStore('livemap', {
             if (dest.phoneNumber !== src.phoneNumber) {
                 dest.phoneNumber = src.phoneNumber;
             }
+        },
+
+        deleteMarkerMarker(id: string): void {
+            this.markersMarkers.delete(id);
         },
     },
 });

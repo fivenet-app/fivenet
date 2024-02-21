@@ -9,5 +9,4 @@ option go_package = "github.com/galexrt/fivenet/gen/go/proto/resources/livemap;l
 message UsersUpdateEvent {
   repeated UserMarker added = 1;
   repeated UserMarker removed = 2;
-  repeated UserMarker updated = 3;
 }

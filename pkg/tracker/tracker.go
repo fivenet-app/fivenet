@@ -63,7 +63,7 @@ func New(p Params) (ITracker, error) {
 				jobUsers, _ := usersByJob.LoadOrCompute(um.Info.Job, func() *xsync.MapOf[int32, *livemap.UserMarker] {
 					return xsync.NewMapOf[int32, *livemap.UserMarker]()
 				})
-				if m, ok := jobUsers.LoadOrStore(um.UserId, um); !ok {
+				if m, loaded := jobUsers.LoadOrStore(um.UserId, um); loaded {
 					// Merge value if loaded from local data store
 					m.Merge(um)
 				}
@@ -130,6 +130,10 @@ func (s *Tracker) watchForChanges(msg *nats.Msg) {
 	dest := &livemap.UsersUpdateEvent{}
 	if err := proto.Unmarshal(msg.Data, dest); err != nil {
 		s.logger.Error("failed to unmarshal nats user update response", zap.Error(err))
+		return
+	}
+
+	if s.broker.SubCount() <= 0 {
 		return
 	}
 

@@ -7,6 +7,7 @@ import { type MarkerMarker } from '~~/gen/ts/resources/livemap/livemap';
 import ConfirmDialog from '~/components/partials/ConfirmDialog.vue';
 import CitizenInfoPopover from '~/components/partials/citizens/CitizenInfoPopover.vue';
 import GenericTime from '~/components/partials/elements/GenericTime.vue';
+import { useLivemapStore } from '~/store/livemap';
 
 defineProps<{
     marker: MarkerMarker;
@@ -18,12 +19,17 @@ defineEmits<{
 
 const { $grpc } = useNuxtApp();
 
+const livemapStore = useLivemapStore();
+const { deleteMarkerMarker } = livemapStore;
+
 async function deleteMarker(id: string): Promise<void> {
     try {
         const call = $grpc.getLivemapperClient().deleteMarker({
             id,
         });
         await call;
+
+        deleteMarkerMarker(id);
     } catch (e) {
         $grpc.handleError(e as RpcError);
         throw e;

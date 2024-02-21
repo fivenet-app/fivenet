@@ -59,7 +59,7 @@ type ManagerParams struct {
 }
 
 func NewManager(p ManagerParams) (*Manager, error) {
-	userIDs, err := store.NewWithLocks[livemap.UserMarker, *livemap.UserMarker](p.Logger, p.JS, "tracker", nil)
+	userStore, err := store.NewWithLocks[livemap.UserMarker, *livemap.UserMarker](p.Logger, p.JS, "tracker", nil)
 	if err != nil {
 		return nil, err
 	}
@@ -81,7 +81,7 @@ func NewManager(p ManagerParams) (*Manager, error) {
 		postals:  p.Postals,
 		state:    p.State,
 
-		userStore: userIDs,
+		userStore: userStore,
 
 		refreshTime: p.Config.Game.Livemap.RefreshTime,
 
@@ -93,7 +93,7 @@ func NewManager(p ManagerParams) (*Manager, error) {
 			return err
 		}
 
-		if err := userIDs.Start(ctx); err != nil {
+		if err := userStore.Start(ctx); err != nil {
 			return err
 		}
 
@@ -167,10 +167,11 @@ func (m *Manager) cleanupUserIDs(found map[int32]interface{}) error {
 			continue
 		}
 
-		event.Removed = append(event.Removed, marker)
 		if err := m.userStore.Delete(key); err != nil {
 			return err
 		}
+
+		event.Removed = append(event.Removed, marker)
 	}
 
 	if len(event.Removed) > 0 {
@@ -255,28 +256,20 @@ func (m *Manager) refreshUserLocations(ctx context.Context) error {
 			}
 		}
 
-		userMarker, err := m.userStore.GetOrLoad(userIdKey(userId))
-		if err != nil && !errors.Is(err, nats.ErrKeyNotFound) {
-			errs = multierr.Append(errs, err)
-			continue
-		}
-
+		userMarker, ok := m.userStore.Get(userIdKey(userId))
 		// No user marker in key value store nor locally
-		if userMarker == nil {
+		if userMarker == nil || !ok {
 			// User wasn't in the list, so they must be new so add the user to event for keeping track of users
-			if _, ok := m.userStore.Get(userIdKey(userId)); !ok {
-				event.Added = append(event.Added, dest[i])
+			event.Added = append(event.Added, dest[i])
 
-				if err := m.userStore.Put(userIdKey(userId), dest[i]); err != nil {
-					errs = multierr.Append(errs, err)
-					continue
-				}
+			if err := m.userStore.Put(userIdKey(userId), dest[i]); err != nil {
+				errs = multierr.Append(errs, err)
+				continue
 			}
 		} else {
 			// If not equal, update marker in store
 			if !proto.Equal(userMarker, dest[i]) {
 				userMarker.Merge(dest[i])
-				event.Updated = append(event.Updated, userMarker)
 
 				if err := m.userStore.Put(userIdKey(userId), userMarker); err != nil {
 					errs = multierr.Append(errs, err)
@@ -286,7 +279,7 @@ func (m *Manager) refreshUserLocations(ctx context.Context) error {
 		}
 	}
 
-	if len(event.Added) > 0 || len(event.Updated) > 0 {
+	if len(event.Added) > 0 {
 		if err := m.sendUpdateEvent(UsersUpdate, event); err != nil {
 			return err
 		}

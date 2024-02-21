@@ -35,6 +35,7 @@ const { $grpc } = useNuxtApp();
 
 const livemapStore = useLivemapStore();
 const { location } = storeToRefs(livemapStore);
+const { addOrpdateMarkerMarker } = livemapStore;
 
 interface FormData {
     name: string;
@@ -92,7 +93,11 @@ async function createMarker(values: FormData): Promise<void> {
         const call = $grpc.getLivemapperClient().createOrUpdateMarker({
             marker,
         });
-        await call;
+        const { response } = await call;
+
+        if (response.marker !== undefined) {
+            addOrpdateMarkerMarker(response.marker);
+        }
 
         emit('close');
     } catch (e) {

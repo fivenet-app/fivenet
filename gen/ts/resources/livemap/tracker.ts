@@ -23,25 +23,19 @@ export interface UsersUpdateEvent {
      * @generated from protobuf field: repeated resources.livemap.UserMarker removed = 2;
      */
     removed: UserMarker[];
-    /**
-     * @generated from protobuf field: repeated resources.livemap.UserMarker updated = 3;
-     */
-    updated: UserMarker[];
 }
 // @generated message type with reflection information, may provide speed optimized methods
 class UsersUpdateEvent$Type extends MessageType<UsersUpdateEvent> {
     constructor() {
         super("resources.livemap.UsersUpdateEvent", [
             { no: 1, name: "added", kind: "message", repeat: 1 /*RepeatType.PACKED*/, T: () => UserMarker },
-            { no: 2, name: "removed", kind: "message", repeat: 1 /*RepeatType.PACKED*/, T: () => UserMarker },
-            { no: 3, name: "updated", kind: "message", repeat: 1 /*RepeatType.PACKED*/, T: () => UserMarker }
+            { no: 2, name: "removed", kind: "message", repeat: 1 /*RepeatType.PACKED*/, T: () => UserMarker }
         ]);
     }
     create(value?: PartialMessage<UsersUpdateEvent>): UsersUpdateEvent {
         const message = globalThis.Object.create((this.messagePrototype!));
         message.added = [];
         message.removed = [];
-        message.updated = [];
         if (value !== undefined)
             reflectionMergePartial<UsersUpdateEvent>(this, message, value);
         return message;
@@ -56,9 +50,6 @@ class UsersUpdateEvent$Type extends MessageType<UsersUpdateEvent> {
                     break;
                 case /* repeated resources.livemap.UserMarker removed */ 2:
                     message.removed.push(UserMarker.internalBinaryRead(reader, reader.uint32(), options));
-                    break;
-                case /* repeated resources.livemap.UserMarker updated */ 3:
-                    message.updated.push(UserMarker.internalBinaryRead(reader, reader.uint32(), options));
                     break;
                 default:
                     let u = options.readUnknownField;
@@ -78,9 +69,6 @@ class UsersUpdateEvent$Type extends MessageType<UsersUpdateEvent> {
         /* repeated resources.livemap.UserMarker removed = 2; */
         for (let i = 0; i < message.removed.length; i++)
             UserMarker.internalBinaryWrite(message.removed[i], writer.tag(2, WireType.LengthDelimited).fork(), options).join();
-        /* repeated resources.livemap.UserMarker updated = 3; */
-        for (let i = 0; i < message.updated.length; i++)
-            UserMarker.internalBinaryWrite(message.updated[i], writer.tag(3, WireType.LengthDelimited).fork(), options).join();
         let u = options.writeUnknownFields;
         if (u !== false)
             (u == true ? UnknownFieldHandler.onWrite : u)(this.typeName, message, writer);

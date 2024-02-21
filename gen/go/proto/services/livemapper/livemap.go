@@ -216,13 +216,6 @@ func (s *Server) Stream(req *StreamRequest, srv LivemapperService_StreamServer) 
 		}
 		s.enricher.EnrichJobName(jobs.Jobs.Markers[i])
 	}
-	if grade, ok := usersJobs[userInfo.Job]; !ok {
-		return nil
-	} else {
-		usersJobs = map[string]int32{
-			userInfo.Job: grade,
-		}
-	}
 	for job := range usersJobs {
 		j := &users.Job{
 			Name: job,
@@ -254,7 +247,7 @@ func (s *Server) Stream(req *StreamRequest, srv LivemapperService_StreamServer) 
 		return err
 	}
 
-	end, err := s.sendInitialUserMarkers(srv, usersJobs, userInfo)
+	end, err := s.sendChunkedUserMarkers(srv, usersJobs, userInfo)
 	if err != nil {
 		return err
 	}
@@ -270,25 +263,19 @@ func (s *Server) Stream(req *StreamRequest, srv LivemapperService_StreamServer) 
 		case <-srv.Context().Done():
 			return nil
 
-		case msg := <-signalCh:
-			if msg == nil {
-				continue
-			}
-
-			resp := &StreamResponse{
-				Data: &StreamResponse_UserUpdates{
-					UserUpdates: filterMarkerUpdates(userInfo.SuperUser, usersJobs, msg),
-				},
-			}
-
-			if err := srv.Send(resp); err != nil {
+		case <-time.After(3 * s.refreshTime):
+			end, err := s.sendChunkedUserMarkers(srv, usersJobs, userInfo)
+			if err != nil {
 				return err
+			}
+			if end {
+				return nil
 			}
 		}
 	}
 }
 
-func (s *Server) sendInitialUserMarkers(srv LivemapperService_StreamServer, usersJobs map[string]int32, userInfo *userinfo.UserInfo) (bool, error) {
+func (s *Server) sendChunkedUserMarkers(srv LivemapperService_StreamServer, usersJobs map[string]int32, userInfo *userinfo.UserInfo) (bool, error) {
 	// Send out chunked current users
 	chunkSize := 5
 	userMarkers, _, err := s.getUserLocations(usersJobs, userInfo)
