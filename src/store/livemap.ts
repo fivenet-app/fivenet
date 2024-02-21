@@ -19,6 +19,8 @@ export interface LivemapState {
     offsetLocationZoom: boolean;
     zoom: number;
 
+    initiated: boolean;
+
     jobsMarkers: Job[];
     jobsUsers: Job[];
 
@@ -38,6 +40,8 @@ export const useLivemapStore = defineStore('livemap', {
             showLocationMarker: false,
             offsetLocationZoom: false,
             zoom: 2,
+
+            initiated: false,
 
             jobsMarkers: [],
             jobsUsers: [],
@@ -79,6 +83,8 @@ export const useLivemapStore = defineStore('livemap', {
                     if (resp.data.oneofKind === 'jobs') {
                         this.jobsMarkers = resp.data.jobs.markers;
                         this.jobsUsers = resp.data.jobs.users;
+
+                        this.initiated = true;
                     } else if (resp.data.oneofKind === 'markers') {
                         const foundMarkers: string[] = [];
                         resp.data.markers.markers.forEach((v) => {

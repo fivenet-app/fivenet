@@ -33,7 +33,7 @@ const settingsStore = useSettingsStore();
 const { livemap } = storeToRefs(settingsStore);
 
 const livemapStore = useLivemapStore();
-const { error, abort, reconnecting, location, showLocationMarker } = storeToRefs(livemapStore);
+const { error, abort, reconnecting, initiated, location, showLocationMarker } = storeToRefs(livemapStore);
 const { startStream } = livemapStore;
 
 interface ContextmenuItem {
@@ -131,12 +131,12 @@ const reconnectingDebounced = useDebounce(reconnecting, 500);
         />
 
         <div
-            v-if="error !== undefined || (abort === undefined && !reconnecting)"
+            v-if="error !== undefined || !initiated || (abort === undefined && !reconnecting)"
             class="absolute inset-0 z-20 flex items-center justify-center bg-gray-600/70"
         >
             <DataErrorBlock v-if="error" :title="$t('components.livemap.failed_datastream')" :retry="startStream" />
             <DataPendingBlock
-                v-else-if="abort === undefined && !reconnecting"
+                v-else-if="!initiated || (abort === undefined && !reconnectingDebounced)"
                 :message="$t('components.livemap.starting_datastream')"
             />
         </div>
