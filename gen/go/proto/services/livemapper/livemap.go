@@ -119,7 +119,7 @@ func (s *Server) start() {
 		select {
 		case <-s.ctx.Done():
 			return
-		case <-time.After(s.refreshTime):
+		case <-time.After(4 * time.Second):
 		}
 	}
 }
@@ -231,6 +231,7 @@ func (s *Server) Stream(req *StreamRequest, srv LivemapperService_StreamServer) 
 	signalCh := s.broker.Subscribe()
 	defer s.broker.Unsubscribe(signalCh)
 
+	chunkSize := 12
 	s.logger.Debug("sent jobs info in livemap stream", zap.Duration("duration", time.Since(start)))
 	for {
 		start = time.Now()
@@ -239,16 +240,28 @@ func (s *Server) Stream(req *StreamRequest, srv LivemapperService_StreamServer) 
 			return errswrap.NewError(ErrStreamFailed, err)
 		}
 
-		resp := &StreamResponse{
-			Data: &StreamResponse_Users{
-				Users: &UserMarkersUpdates{
-					Users: userMarkers,
+		parts := int32(len(userMarkers) / chunkSize)
+		for chunkSize < len(userMarkers) {
+			resp := &StreamResponse{
+				Data: &StreamResponse_Users{
+					Users: &UserMarkersUpdates{
+						Users: userMarkers[0:chunkSize:chunkSize],
+						Part:  parts,
+					},
 				},
-			},
-		}
+			}
+			parts--
 
-		if err := srv.Send(resp); err != nil {
-			return err
+			if err := srv.Send(resp); err != nil {
+				return err
+			}
+
+			userMarkers = userMarkers[chunkSize:]
+			select {
+			case <-srv.Context().Done():
+				return nil
+			case <-time.After(100 * time.Millisecond):
+			}
 		}
 
 		s.logger.Debug("sent users and markers in livemap stream", zap.Duration("duration", time.Since(start)))

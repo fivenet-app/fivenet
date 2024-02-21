@@ -586,6 +586,8 @@ func (m *UserMarkersUpdates) validate(all bool) error {
 
 	}
 
+	// no validation rules for Part
+
 	if len(errors) > 0 {
 		return UserMarkersUpdatesMultiError(errors)
 	}

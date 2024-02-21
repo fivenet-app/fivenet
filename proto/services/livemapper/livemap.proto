@@ -25,6 +25,7 @@ message JobsList {
 
 message UserMarkersUpdates {
   repeated resources.livemap.UserMarker users = 1;
+  int32 part = 2;
 }
 
 message MarkerMarkersUpdates {

@@ -2,13 +2,13 @@
 import { LCircle, LIcon, LMarker } from '@vue-leaflet/vue-leaflet';
 import { type PointExpression } from 'leaflet';
 import { MapMarkerQuestionIcon } from 'mdi-vue3';
-import { Marker } from '~~/gen/ts/resources/livemap/livemap';
 import { markerIcons } from '~/components/livemap/helpers';
 import MarkerMarkerPopup from '~/components/livemap/MarkerMarkerPopup.vue';
+import { useLivemapStore } from '~/store/livemap';
 
 const props = withDefaults(
     defineProps<{
-        marker: Marker;
+        markerId: string;
         size?: number;
     }>(),
     {
@@ -20,6 +20,11 @@ defineEmits<{
     (e: 'selected'): void;
     (e: 'goto', loc: Coordinate): void;
 }>();
+
+const livemapStore = useLivemapStore();
+const { markersMarkers } = storeToRefs(livemapStore);
+
+const marker = markersMarkers.value.get(props.markerId)!;
 
 const iconAnchor = ref<PointExpression>([props.size / 2, props.size]);
 const popupAnchor = ref<PointExpression>([0, (props.size / 2) * -1]);

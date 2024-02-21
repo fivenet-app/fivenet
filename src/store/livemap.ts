@@ -72,6 +72,8 @@ export const useLivemapStore = defineStore('livemap', {
                     },
                 );
 
+                const foundUsers: string[] = [];
+
                 for await (const resp of call.responses) {
                     this.error = undefined;
 
@@ -100,22 +102,25 @@ export const useLivemapStore = defineStore('livemap', {
                                 removedMarkers++;
                             }
                         });
+                        foundMarkers.length = 0;
                         console.debug(`Livemap: Removed ${removedMarkers} old marker markers`);
                     } else if (resp.data.oneofKind === 'users') {
-                        const foundUsers: string[] = [];
                         resp.data.users.users.forEach((v) => {
                             foundUsers.push(v.info!.id);
                             this.addOrpdateUserMarker(v);
                         });
-                        // Remove user markers not found in latest state
-                        let removedMarkers = 0;
-                        this.markersUsers.forEach((_, id) => {
-                            if (!foundUsers.includes(id)) {
-                                this.markersUsers.delete(id);
-                                removedMarkers++;
-                            }
-                        });
-                        console.debug(`Livemap: Removed ${removedMarkers} old user markers`);
+                        if (resp.data.users.part <= 1) {
+                            // Remove user markers not found in latest state
+                            let removedMarkers = 0;
+                            this.markersUsers.forEach((_, id) => {
+                                if (!foundUsers.includes(id)) {
+                                    this.markersUsers.delete(id);
+                                    removedMarkers++;
+                                }
+                            });
+                            foundUsers.length = 0;
+                            console.debug(`Livemap: Removed ${removedMarkers} old user markers`);
+                        }
                     }
                 }
             } catch (e) {

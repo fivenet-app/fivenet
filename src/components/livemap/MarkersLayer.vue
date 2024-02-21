@@ -29,12 +29,12 @@ const { livemap } = storeToRefs(settingsStore);
         :disable-clustering-at-zoom="0"
         :single-marker-mode="true"
         :chunked-loading="true"
-        :animate="true"
+        :animate="false"
     >
         <MarkerMarker
             v-for="marker in [...markersMarkers.values()].filter((p) => p.info?.job === job.name)"
             :key="`marker_${marker.info!.id}`"
-            :marker="marker"
+            :marker-id="marker.info!.id"
             :size="livemap.markerSize"
             @selected="$emit('markerSelected', marker)"
             @goto="$emit('goto', $event)"

@@ -70,19 +70,22 @@ onBeforeUnmount(async () => {
         :disable-clustering-at-zoom="2"
         :single-marker-mode="true"
         :chunked-loading="true"
-        :animate="true"
+        :animate="false"
     >
-        <PlayerMarker
+        <template
             v-for="marker in playerMarkersFiltered.filter((p) => p.user?.job === job.name)"
-            :key="`user_${marker.userId}`"
-            :marker="marker"
-            :active-char="activeChar"
-            :size="livemap.markerSize"
-            :show-unit-names="showUnitNames || livemap.showUnitNames"
-            :show-unit-status="showUnitStatus || livemap.showUnitStatus"
-            @selected="$emit('userSelected', marker)"
-            @goto="$emit('goto', $event)"
-        />
+            :key="`user_${marker.info!.id}`"
+        >
+            <PlayerMarker
+                :marker-id="marker.info!.id"
+                :active-char="activeChar"
+                :size="livemap.markerSize"
+                :show-unit-names="showUnitNames || livemap.showUnitNames"
+                :show-unit-status="showUnitStatus || livemap.showUnitStatus"
+                @selected="$emit('userSelected', marker)"
+                @goto="$emit('goto', $event)"
+            />
+        </template>
     </LMarkerClusterGroup>
 
     <LControl v-if="filterPlayers" position="bottomleft">

@@ -69,6 +69,10 @@ export interface UserMarkersUpdates {
      * @generated from protobuf field: repeated resources.livemap.UserMarker users = 1;
      */
     users: UserMarker[];
+    /**
+     * @generated from protobuf field: int32 part = 2;
+     */
+    part: number;
 }
 /**
  * @generated from protobuf message services.livemapper.MarkerMarkersUpdates
@@ -265,12 +269,14 @@ export const JobsList = new JobsList$Type();
 class UserMarkersUpdates$Type extends MessageType<UserMarkersUpdates> {
     constructor() {
         super("services.livemapper.UserMarkersUpdates", [
-            { no: 1, name: "users", kind: "message", repeat: 1 /*RepeatType.PACKED*/, T: () => UserMarker }
+            { no: 1, name: "users", kind: "message", repeat: 1 /*RepeatType.PACKED*/, T: () => UserMarker },
+            { no: 2, name: "part", kind: "scalar", T: 5 /*ScalarType.INT32*/ }
         ]);
     }
     create(value?: PartialMessage<UserMarkersUpdates>): UserMarkersUpdates {
         const message = globalThis.Object.create((this.messagePrototype!));
         message.users = [];
+        message.part = 0;
         if (value !== undefined)
             reflectionMergePartial<UserMarkersUpdates>(this, message, value);
         return message;
@@ -282,6 +288,9 @@ class UserMarkersUpdates$Type extends MessageType<UserMarkersUpdates> {
             switch (fieldNo) {
                 case /* repeated resources.livemap.UserMarker users */ 1:
                     message.users.push(UserMarker.internalBinaryRead(reader, reader.uint32(), options));
+                    break;
+                case /* int32 part */ 2:
+                    message.part = reader.int32();
                     break;
                 default:
                     let u = options.readUnknownField;
@@ -298,6 +307,9 @@ class UserMarkersUpdates$Type extends MessageType<UserMarkersUpdates> {
         /* repeated resources.livemap.UserMarker users = 1; */
         for (let i = 0; i < message.users.length; i++)
             UserMarker.internalBinaryWrite(message.users[i], writer.tag(1, WireType.LengthDelimited).fork(), options).join();
+        /* int32 part = 2; */
+        if (message.part !== 0)
+            writer.tag(2, WireType.Varint).int32(message.part);
         let u = options.writeUnknownFields;
         if (u !== false)
             (u == true ? UnknownFieldHandler.onWrite : u)(this.typeName, message, writer);
