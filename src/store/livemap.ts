@@ -1,7 +1,7 @@
 import { RpcError } from '@protobuf-ts/runtime-rpc';
 import { defineStore, type StoreDefinition } from 'pinia';
 import { type Coordinate } from '~/composables/livemap';
-import { Marker, UserMarker } from '~~/gen/ts/resources/livemap/livemap';
+import { Marker, MarkerInfo, UserMarker } from '~~/gen/ts/resources/livemap/livemap';
 import { Job } from '~~/gen/ts/resources/users/jobs';
 import { LivemapperServiceClient } from '~~/gen/ts/services/livemapper/livemap.client';
 
@@ -22,8 +22,8 @@ export interface LivemapState {
     jobsMarkers: Job[];
     jobsUsers: Job[];
 
-    markersMarkers: Marker[];
-    markersUsers: UserMarker[];
+    markersMarkers: Map<string, Marker>;
+    markersUsers: Map<string, UserMarker>;
 }
 
 export const useLivemapStore = defineStore('livemap', {
@@ -42,8 +42,8 @@ export const useLivemapStore = defineStore('livemap', {
             jobsMarkers: [],
             jobsUsers: [],
 
-            markersMarkers: [],
-            markersUsers: [],
+            markersMarkers: new Map<string, Marker>(),
+            markersUsers: new Map<string, UserMarker>(),
         }) as LivemapState,
     persist: false,
     actions: {
@@ -80,9 +80,35 @@ export const useLivemapStore = defineStore('livemap', {
                         this.jobsMarkers = resp.data.jobs.markers;
                         this.jobsUsers = resp.data.jobs.users;
                     } else if (resp.data.oneofKind === 'markers') {
-                        this.markersMarkers = resp.data.markers.markers;
+                        const foundMarkers: string[] = [];
+                        resp.data.markers.markers.forEach((v) => {
+                            foundMarkers.push(v.info!.id);
+                            this.addOrpdateMarkerMarker(v);
+                        });
+                        // Remove marker markers not found in latest state
+                        let removedMarkers = 0;
+                        this.markersMarkers.forEach((_, id) => {
+                            if (!foundMarkers.includes(id)) {
+                                this.markersMarkers.delete(id);
+                                removedMarkers++;
+                            }
+                        });
+                        console.debug(`Livemap: Removed ${removedMarkers} old marker markers`);
                     } else if (resp.data.oneofKind === 'users') {
-                        this.markersUsers = resp.data.users.users;
+                        const foundUsers: string[] = [];
+                        resp.data.users.users.forEach((v) => {
+                            foundUsers.push(v.info!.id);
+                            this.addOrpdateUserMarker(v);
+                        });
+                        // Remove user markers not found in latest state
+                        let removedMarkers = 0;
+                        this.markersUsers.forEach((_, id) => {
+                            if (!foundUsers.includes(id)) {
+                                this.markersUsers.delete(id);
+                                removedMarkers++;
+                            }
+                        });
+                        console.debug(`Livemap: Removed ${removedMarkers} old user markers`);
                     }
                 }
             } catch (e) {
@@ -129,6 +155,48 @@ export const useLivemapStore = defineStore('livemap', {
                     this.startStream();
                 }
             }, this.reconnectBackoffTime * 1000);
+        },
+
+        addOrpdateMarkerMarker(marker: Marker): void {
+            const m = this.markersMarkers.get(marker.info!.id);
+            if (m === undefined) {
+                this.markersMarkers.set(marker.info!.id, marker);
+            } else {
+                this.updateMarkerInfo(m.info!, marker.info!);
+
+                m.type = marker.type;
+                m.creatorId = marker.creatorId;
+                m.creator = marker.creator;
+                m.data = marker.data;
+                m.expiresAt = marker.expiresAt;
+            }
+        },
+        addOrpdateUserMarker(marker: UserMarker): void {
+            const m = this.markersUsers.get(marker.info!.id);
+            if (m === undefined) {
+                this.markersUsers.set(marker.info!.id, marker);
+            } else {
+                this.updateMarkerInfo(m.info!, marker.info!);
+
+                m.userId = marker.userId;
+                m.user = marker.user;
+                m.unitId = marker.unitId;
+                m.unit = marker.unit;
+            }
+        },
+
+        updateMarkerInfo(dest: MarkerInfo, src: MarkerInfo): void {
+            dest!.id = src.id;
+            dest!.updatedAt = src.updatedAt;
+            dest!.job = src.job;
+            dest!.jobLabel = src.jobLabel;
+            dest!.name = src.name;
+            dest!.description = src.description;
+            dest!.x = src.x;
+            dest!.y = src.y;
+            dest!.postal = src.postal;
+            dest!.color = src.color;
+            dest!.icon = src.icon;
         },
     },
 });

@@ -10,7 +10,8 @@ import { useSettingsStore } from '~/store/settings';
 import { MarkerInfo } from '~~/gen/ts/resources/livemap/livemap';
 import BaseMap from '~/components/livemap/BaseMap.vue';
 import CreateOrUpdateMarkerModal from '~/components/livemap/CreateOrUpdateMarkerModal.vue';
-import PlayerAndMarkersLayer from '~/components/livemap/PlayerAndMarkersLayer.vue';
+import PlayersLayer from '~/components/livemap/PlayersLayer.vue';
+import MarkersLayer from '~/components/livemap/MarkersLayer.vue';
 import PostalSearch from '~/components/livemap/controls/PostalSearch.vue';
 import SettingsButton from '~/components/livemap/controls/SettingsButton.vue';
 import DispatchCreateOrUpdateModal from '~/components/centrum/dispatches/DispatchCreateOrUpdateModal.vue';
@@ -152,13 +153,15 @@ const reconnectingDebounced = useDebounce(reconnecting, 500);
                     </div>
                 </LControl>
 
-                <PlayerAndMarkersLayer
-                    v-if="can('LivemapperService.Stream')"
-                    :show-unit-names="showUnitNames"
-                    :show-unit-status="showUnitStatus"
-                    @user-selected="selectedUserMarker = $event.info"
-                    @goto="$emit('goto', $event)"
-                />
+                <template v-if="can('LivemapperService.Stream')">
+                    <PlayersLayer
+                        :show-unit-names="showUnitNames"
+                        :show-unit-status="showUnitStatus"
+                        @user-selected="selectedUserMarker = $event.info"
+                        @goto="$emit('goto', $event)"
+                    />
+                    <MarkersLayer v-if="can('LivemapperService.Stream')" @goto="$emit('goto', $event)" />
+                </template>
 
                 <MapTempMarker />
 

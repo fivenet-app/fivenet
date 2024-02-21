@@ -19,7 +19,7 @@ const { markersMarkers } = storeToRefs(livemapStore);
                 </h2>
                 <h2 class="text-base font-semibold text-gray-100">
                     {{ $t('common.count') }}:
-                    {{ markersMarkers.length }}
+                    {{ [...markersMarkers.values()].length }}
                 </h2>
             </div>
         </div>
@@ -81,8 +81,8 @@ const { markersMarkers } = storeToRefs(livemapStore);
                         </thead>
                         <tbody class="divide-y divide-base-800">
                             <MarkersListEntry
-                                v-for="marker in markersMarkers"
-                                :key="marker.info!.id"
+                                v-for="[key, marker] in markersMarkers"
+                                :key="key"
                                 :marker="marker"
                                 @goto="$emit('goto', $event)"
                             />

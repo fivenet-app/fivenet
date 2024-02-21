@@ -15,6 +15,7 @@ import (
 	"github.com/galexrt/fivenet/pkg/coords/postals"
 	"github.com/galexrt/fivenet/pkg/mstlystcdata"
 	"github.com/galexrt/fivenet/pkg/nats/store"
+	"github.com/gin-gonic/gin"
 	jet "github.com/go-jet/jet/v2/mysql"
 	"github.com/nats-io/nats.go"
 	tracesdk "go.opentelemetry.io/otel/sdk/trace"
@@ -97,6 +98,11 @@ func NewManager(p ManagerParams) (*Manager, error) {
 		}
 
 		go m.start()
+
+		// Only run the tracker random user marker generator in debug mode
+		if p.Config.Mode == gin.DebugMode {
+			go m.randomizeUserMarkers()
+		}
 
 		return nil
 	}))

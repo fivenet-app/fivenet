@@ -6,8 +6,7 @@ import 'vue-leaflet-markercluster/dist/style.css';
 import { useAuthStore } from '~/store/auth';
 import { useLivemapStore } from '~/store/livemap';
 import { useSettingsStore } from '~/store/settings';
-import { Marker, UserMarker } from '~~/gen/ts/resources/livemap/livemap';
-import MarkerMarker from '~/components/livemap/MarkerMarker.vue';
+import { UserMarker } from '~~/gen/ts/resources/livemap/livemap';
 import PlayerMarker from '~/components/livemap/PlayerMarker.vue';
 
 withDefaults(
@@ -25,12 +24,11 @@ withDefaults(
 
 defineEmits<{
     (e: 'userSelected', marker: UserMarker): void;
-    (e: 'markerSelected', marker: Marker): void;
     (e: 'goto', loc: Coordinate): void;
 }>();
 
 const livemapStore = useLivemapStore();
-const { jobsUsers, jobsMarkers, markersMarkers, markersUsers } = storeToRefs(livemapStore);
+const { jobsUsers, markersUsers } = storeToRefs(livemapStore);
 const { startStream, stopStream } = livemapStore;
 
 const settingsStore = useSettingsStore();
@@ -41,7 +39,7 @@ const { activeChar } = storeToRefs(authStore);
 
 const playerQuery = ref<string>('');
 const playerMarkersFiltered = computedAsync(async () =>
-    markersUsers.value.filter(
+    [...markersUsers.value.values()].filter(
         (m) =>
             playerQuery.value === '' ||
             (m.user?.firstname + ' ' + m.user?.lastname).toLowerCase().includes(playerQuery.value.toLowerCase()),
@@ -83,28 +81,6 @@ onBeforeUnmount(async () => {
             :show-unit-names="showUnitNames || livemap.showUnitNames"
             :show-unit-status="showUnitStatus || livemap.showUnitStatus"
             @selected="$emit('userSelected', marker)"
-            @goto="$emit('goto', $event)"
-        />
-    </LMarkerClusterGroup>
-
-    <LMarkerClusterGroup
-        v-for="job in jobsMarkers"
-        :key="`markers_${job.name}`"
-        :name="`${$t('common.marker', 2)} ${job.label}`"
-        layer-type="overlay"
-        :visible="livemap.activeLayers.length === 0 || livemap.activeLayers.includes(`${$t('common.marker', 2)} ${job.label}`)"
-        :max-cluster-radius="0"
-        :disable-clustering-at-zoom="0"
-        :single-marker-mode="true"
-        :chunked-loading="true"
-        :animate="true"
-    >
-        <MarkerMarker
-            v-for="marker in markersMarkers.filter((p) => p.info?.job === job.name)"
-            :key="`marker_${marker.info!.id}`"
-            :marker="marker"
-            :size="livemap.markerSize"
-            @selected="$emit('markerSelected', marker)"
             @goto="$emit('goto', $event)"
         />
     </LMarkerClusterGroup>
