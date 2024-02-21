@@ -3,7 +3,6 @@ import { LControl } from '@vue-leaflet/vue-leaflet';
 import { computedAsync, useTimeoutFn } from '@vueuse/core';
 import { LMarkerClusterGroup } from 'vue-leaflet-markercluster';
 import 'vue-leaflet-markercluster/dist/style.css';
-import { useAuthStore } from '~/store/auth';
 import { useLivemapStore } from '~/store/livemap';
 import { useSettingsStore } from '~/store/settings';
 import { UserMarker } from '~~/gen/ts/resources/livemap/livemap';
@@ -12,7 +11,7 @@ import PlayerMarker from '~/components/livemap/PlayerMarker.vue';
 withDefaults(
     defineProps<{
         centerSelectedMarker?: boolean;
-        filterPlayers?: boolean;
+        showUserFilter?: boolean;
         showUnitNames?: boolean;
         showUnitStatus?: boolean;
     }>(),
@@ -34,19 +33,7 @@ const { startStream, stopStream } = livemapStore;
 const settingsStore = useSettingsStore();
 const { livemap } = storeToRefs(settingsStore);
 
-const authStore = useAuthStore();
-const { activeChar } = storeToRefs(authStore);
-
-const playerQuery = ref<string>('');
-const playerMarkersFiltered = computedAsync(async () =>
-    [...markersUsers.value.values()].filter(
-        (m) =>
-            playerQuery.value === '' ||
-            (m.user?.firstname + ' ' + m.user?.lastname).toLowerCase().includes(playerQuery.value.toLowerCase()),
-    ),
-);
-
-const { start, stop } = useTimeoutFn(async () => startStream(), 650);
+const { start, stop } = useTimeoutFn(async () => startStream(), 150);
 
 onBeforeMount(async () => start());
 
@@ -55,12 +42,22 @@ onBeforeUnmount(async () => {
     stopStream();
     livemapStore.$reset();
 });
+
+const playerQueryRaw = ref<string>('');
+const playerQuery = computed(() => playerQueryRaw.value.toLowerCase().trim());
+
+const playerMarkersFiltered = computedAsync(async () =>
+    [...markersUsers.value.values()].filter(
+        (m) =>
+            playerQuery.value === '' || (m.user?.firstname + ' ' + m.user?.lastname).toLowerCase().includes(playerQuery.value),
+    ),
+);
 </script>
 
 <template>
     <LMarkerClusterGroup
         v-for="job in jobsUsers"
-        :key="`users_${job.name}`"
+        :key="job.name"
         :name="`${$t('common.employee', 2)} ${job.label}`"
         layer-type="overlay"
         :visible="
@@ -68,27 +65,23 @@ onBeforeUnmount(async () => {
         "
         :max-cluster-radius="15"
         :disable-clustering-at-zoom="2"
-        :single-marker-mode="true"
+        :single-marker-mode="false"
         :chunked-loading="true"
-        :animate="false"
+        :animate="true"
     >
-        <template
-            v-for="marker in playerMarkersFiltered.filter((p) => p.user?.job === job.name)"
-            :key="`user_${marker.info!.id}`"
-        >
-            <PlayerMarker
-                :marker-id="marker.info!.id"
-                :active-char="activeChar"
-                :size="livemap.markerSize"
-                :show-unit-names="showUnitNames || livemap.showUnitNames"
-                :show-unit-status="showUnitStatus || livemap.showUnitStatus"
-                @selected="$emit('userSelected', marker)"
-                @goto="$emit('goto', $event)"
-            />
-        </template>
+        <PlayerMarker
+            v-for="marker in playerMarkersFiltered.filter((m) => m.info?.job === job.name)"
+            :key="marker.info!.id"
+            :marker="marker"
+            :size="livemap.markerSize"
+            :show-unit-names="showUnitNames || livemap.showUnitNames"
+            :show-unit-status="showUnitStatus || livemap.showUnitStatus"
+            @selected="$emit('userSelected', marker)"
+            @goto="$emit('goto', $event)"
+        />
     </LMarkerClusterGroup>
 
-    <LControl v-if="filterPlayers" position="bottomleft">
+    <LControl v-if="showUserFilter" position="bottomleft">
         <div class="form-control flex flex-col gap-2">
             <input
                 v-model="playerQuery"

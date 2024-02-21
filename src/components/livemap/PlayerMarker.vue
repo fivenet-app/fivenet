@@ -5,15 +5,14 @@ import { type PointExpression } from 'leaflet';
 import { AccountIcon, GroupIcon, MapMarkerIcon } from 'mdi-vue3';
 import UnitDetails from '~/components//centrum/units/UnitDetails.vue';
 import PhoneNumberBlock from '~/components/partials/citizens/PhoneNumberBlock.vue';
-import { User } from '~~/gen/ts/resources/users/users';
 import { unitStatusToBGColor } from '~/components/centrum/helpers';
-import { useLivemapStore } from '~/store/livemap';
+import type { UserMarker } from '~~/gen/ts/resources/livemap/livemap';
+import { useAuthStore } from '~/store/auth';
 
 const props = withDefaults(
     defineProps<{
-        markerId: string;
+        marker: UserMarker;
         size?: number;
-        activeChar: null | User;
         showUnitNames?: boolean;
         showUnitStatus?: boolean;
     }>(),
@@ -29,31 +28,29 @@ defineEmits<{
     (e: 'goto', loc: Coordinate): void;
 }>();
 
-const livemapStore = useLivemapStore();
-const { markersUsers } = storeToRefs(livemapStore);
-
-const marker = markersUsers.value.get(props.markerId)!;
+const authStore = useAuthStore();
+const { activeChar } = storeToRefs(authStore);
 
 function updateMarkerColor(): void {
-    if (props.activeChar !== null && marker.user?.userId === props.activeChar.userId) {
-        marker.info!.color = '#fcab10';
+    if (activeChar !== null && props.marker.user?.userId === activeChar.value?.userId) {
+        props.marker.info!.color = '#fcab10';
     }
 }
 
-watchDebounced(marker, () => updateMarkerColor(), {
+watchDebounced(props.marker, () => updateMarkerColor(), {
     debounce: 75,
     maxWait: 250,
 });
 
 updateMarkerColor();
 
-const inverseColor = computed(() => hexToRgb(marker.unit?.color ?? '#8d81f2') ?? ({ r: 0, g: 0, b: 0 } as RGB));
+const inverseColor = computed(() => hexToRgb(props.marker.unit?.color ?? '#8d81f2') ?? ({ r: 0, g: 0, b: 0 } as RGB));
 
-const hasUnit = computed(() => props.showUnitNames && marker.unit !== undefined);
+const hasUnit = computed(() => props.showUnitNames && props.marker.unit !== undefined);
 const iconAnchor = computed<PointExpression | undefined>(() => [props.size / 2, props.size * (hasUnit.value ? 1.8 : 0.95)]);
 const popupAnchor = computed<PointExpression>(() => (hasUnit.value ? [0, -(props.size * 1.7)] : [0, -(props.size * 0.8)]));
 
-const unitStatusColor = computed(() => unitStatusToBGColor(marker.unit?.status?.status ?? 0));
+const unitStatusColor = computed(() => unitStatusToBGColor(props.marker.unit?.status?.status ?? 0));
 
 const openUnit = ref(false);
 </script>
@@ -71,7 +68,7 @@ const openUnit = ref(false);
         :key="`user_${marker.info!.id}`"
         :lat-lng="[marker.info!.y, marker.info!.x]"
         :name="marker.info!.name"
-        :z-index-offset="activeChar && marker.user?.identifier === activeChar.identifier ? 30 : 20"
+        :z-index-offset="activeChar && marker.user?.identifier === activeChar?.identifier ? 30 : 20"
         @click="$emit('selected')"
     >
         <LIcon :icon-anchor="iconAnchor" :popup-anchor="popupAnchor" :icon-size="[size, size]">

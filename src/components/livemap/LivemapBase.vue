@@ -160,7 +160,7 @@ const reconnectingDebounced = useDebounce(reconnecting, 500);
                         @user-selected="selectedUserMarker = $event.info"
                         @goto="$emit('goto', $event)"
                     />
-                    <MarkersLayer v-if="can('LivemapperService.Stream')" @goto="$emit('goto', $event)" />
+                    <MarkersLayer @goto="$emit('goto', $event)" />
                 </template>
 
                 <MapTempMarker />

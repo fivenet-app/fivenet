@@ -566,7 +566,7 @@ export const useCentrumStore = defineStore('centrum', {
                             }
                         }
                     } else {
-                        console.warn('Centrum: Unknown change received - Kind: ', resp.change.oneofKind, resp.change);
+                        console.warn('Centrum: Unknown change received - Kind: ' + resp.change.oneofKind);
                     }
 
                     if (resp.restart !== undefined && resp.restart) {

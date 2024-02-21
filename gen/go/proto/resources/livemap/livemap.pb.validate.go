@@ -469,21 +469,22 @@ var _ interface {
 	ErrorName() string
 } = UserMarkerValidationError{}
 
-// Validate checks the field values on Marker with the rules defined in the
-// proto definition for this message. If any rules are violated, the first
+// Validate checks the field values on MarkerMarker with the rules defined in
+// the proto definition for this message. If any rules are violated, the first
 // error encountered is returned, or nil if there are no violations.
-func (m *Marker) Validate() error {
+func (m *MarkerMarker) Validate() error {
 	return m.validate(false)
 }
 
-// ValidateAll checks the field values on Marker with the rules defined in the
-// proto definition for this message. If any rules are violated, the result is
-// a list of violation errors wrapped in MarkerMultiError, or nil if none found.
-func (m *Marker) ValidateAll() error {
+// ValidateAll checks the field values on MarkerMarker with the rules defined
+// in the proto definition for this message. If any rules are violated, the
+// result is a list of violation errors wrapped in MarkerMarkerMultiError, or
+// nil if none found.
+func (m *MarkerMarker) ValidateAll() error {
 	return m.validate(true)
 }
 
-func (m *Marker) validate(all bool) error {
+func (m *MarkerMarker) validate(all bool) error {
 	if m == nil {
 		return nil
 	}
@@ -494,7 +495,7 @@ func (m *Marker) validate(all bool) error {
 		switch v := interface{}(m.GetInfo()).(type) {
 		case interface{ ValidateAll() error }:
 			if err := v.ValidateAll(); err != nil {
-				errors = append(errors, MarkerValidationError{
+				errors = append(errors, MarkerMarkerValidationError{
 					field:  "Info",
 					reason: "embedded message failed validation",
 					cause:  err,
@@ -502,7 +503,7 @@ func (m *Marker) validate(all bool) error {
 			}
 		case interface{ Validate() error }:
 			if err := v.Validate(); err != nil {
-				errors = append(errors, MarkerValidationError{
+				errors = append(errors, MarkerMarkerValidationError{
 					field:  "Info",
 					reason: "embedded message failed validation",
 					cause:  err,
@@ -511,7 +512,7 @@ func (m *Marker) validate(all bool) error {
 		}
 	} else if v, ok := interface{}(m.GetInfo()).(interface{ Validate() error }); ok {
 		if err := v.Validate(); err != nil {
-			return MarkerValidationError{
+			return MarkerMarkerValidationError{
 				field:  "Info",
 				reason: "embedded message failed validation",
 				cause:  err,
@@ -525,7 +526,7 @@ func (m *Marker) validate(all bool) error {
 		switch v := interface{}(m.GetData()).(type) {
 		case interface{ ValidateAll() error }:
 			if err := v.ValidateAll(); err != nil {
-				errors = append(errors, MarkerValidationError{
+				errors = append(errors, MarkerMarkerValidationError{
 					field:  "Data",
 					reason: "embedded message failed validation",
 					cause:  err,
@@ -533,7 +534,7 @@ func (m *Marker) validate(all bool) error {
 			}
 		case interface{ Validate() error }:
 			if err := v.Validate(); err != nil {
-				errors = append(errors, MarkerValidationError{
+				errors = append(errors, MarkerMarkerValidationError{
 					field:  "Data",
 					reason: "embedded message failed validation",
 					cause:  err,
@@ -542,7 +543,7 @@ func (m *Marker) validate(all bool) error {
 		}
 	} else if v, ok := interface{}(m.GetData()).(interface{ Validate() error }); ok {
 		if err := v.Validate(); err != nil {
-			return MarkerValidationError{
+			return MarkerMarkerValidationError{
 				field:  "Data",
 				reason: "embedded message failed validation",
 				cause:  err,
@@ -556,7 +557,7 @@ func (m *Marker) validate(all bool) error {
 			switch v := interface{}(m.GetExpiresAt()).(type) {
 			case interface{ ValidateAll() error }:
 				if err := v.ValidateAll(); err != nil {
-					errors = append(errors, MarkerValidationError{
+					errors = append(errors, MarkerMarkerValidationError{
 						field:  "ExpiresAt",
 						reason: "embedded message failed validation",
 						cause:  err,
@@ -564,7 +565,7 @@ func (m *Marker) validate(all bool) error {
 				}
 			case interface{ Validate() error }:
 				if err := v.Validate(); err != nil {
-					errors = append(errors, MarkerValidationError{
+					errors = append(errors, MarkerMarkerValidationError{
 						field:  "ExpiresAt",
 						reason: "embedded message failed validation",
 						cause:  err,
@@ -573,7 +574,7 @@ func (m *Marker) validate(all bool) error {
 			}
 		} else if v, ok := interface{}(m.GetExpiresAt()).(interface{ Validate() error }); ok {
 			if err := v.Validate(); err != nil {
-				return MarkerValidationError{
+				return MarkerMarkerValidationError{
 					field:  "ExpiresAt",
 					reason: "embedded message failed validation",
 					cause:  err,
@@ -593,7 +594,7 @@ func (m *Marker) validate(all bool) error {
 			switch v := interface{}(m.GetCreator()).(type) {
 			case interface{ ValidateAll() error }:
 				if err := v.ValidateAll(); err != nil {
-					errors = append(errors, MarkerValidationError{
+					errors = append(errors, MarkerMarkerValidationError{
 						field:  "Creator",
 						reason: "embedded message failed validation",
 						cause:  err,
@@ -601,7 +602,7 @@ func (m *Marker) validate(all bool) error {
 				}
 			case interface{ Validate() error }:
 				if err := v.Validate(); err != nil {
-					errors = append(errors, MarkerValidationError{
+					errors = append(errors, MarkerMarkerValidationError{
 						field:  "Creator",
 						reason: "embedded message failed validation",
 						cause:  err,
@@ -610,7 +611,7 @@ func (m *Marker) validate(all bool) error {
 			}
 		} else if v, ok := interface{}(m.GetCreator()).(interface{ Validate() error }); ok {
 			if err := v.Validate(); err != nil {
-				return MarkerValidationError{
+				return MarkerMarkerValidationError{
 					field:  "Creator",
 					reason: "embedded message failed validation",
 					cause:  err,
@@ -621,18 +622,18 @@ func (m *Marker) validate(all bool) error {
 	}
 
 	if len(errors) > 0 {
-		return MarkerMultiError(errors)
+		return MarkerMarkerMultiError(errors)
 	}
 
 	return nil
 }
 
-// MarkerMultiError is an error wrapping multiple validation errors returned by
-// Marker.ValidateAll() if the designated constraints aren't met.
-type MarkerMultiError []error
+// MarkerMarkerMultiError is an error wrapping multiple validation errors
+// returned by MarkerMarker.ValidateAll() if the designated constraints aren't met.
+type MarkerMarkerMultiError []error
 
 // Error returns a concatenation of all the error messages it wraps.
-func (m MarkerMultiError) Error() string {
+func (m MarkerMarkerMultiError) Error() string {
 	var msgs []string
 	for _, err := range m {
 		msgs = append(msgs, err.Error())
@@ -641,11 +642,11 @@ func (m MarkerMultiError) Error() string {
 }
 
 // AllErrors returns a list of validation violation errors.
-func (m MarkerMultiError) AllErrors() []error { return m }
+func (m MarkerMarkerMultiError) AllErrors() []error { return m }
 
-// MarkerValidationError is the validation error returned by Marker.Validate if
-// the designated constraints aren't met.
-type MarkerValidationError struct {
+// MarkerMarkerValidationError is the validation error returned by
+// MarkerMarker.Validate if the designated constraints aren't met.
+type MarkerMarkerValidationError struct {
 	field  string
 	reason string
 	cause  error
@@ -653,22 +654,22 @@ type MarkerValidationError struct {
 }
 
 // Field function returns field value.
-func (e MarkerValidationError) Field() string { return e.field }
+func (e MarkerMarkerValidationError) Field() string { return e.field }
 
 // Reason function returns reason value.
-func (e MarkerValidationError) Reason() string { return e.reason }
+func (e MarkerMarkerValidationError) Reason() string { return e.reason }
 
 // Cause function returns cause value.
-func (e MarkerValidationError) Cause() error { return e.cause }
+func (e MarkerMarkerValidationError) Cause() error { return e.cause }
 
 // Key function returns key value.
-func (e MarkerValidationError) Key() bool { return e.key }
+func (e MarkerMarkerValidationError) Key() bool { return e.key }
 
 // ErrorName returns error name.
-func (e MarkerValidationError) ErrorName() string { return "MarkerValidationError" }
+func (e MarkerMarkerValidationError) ErrorName() string { return "MarkerMarkerValidationError" }
 
 // Error satisfies the builtin error interface
-func (e MarkerValidationError) Error() string {
+func (e MarkerMarkerValidationError) Error() string {
 	cause := ""
 	if e.cause != nil {
 		cause = fmt.Sprintf(" | caused by: %v", e.cause)
@@ -680,14 +681,14 @@ func (e MarkerValidationError) Error() string {
 	}
 
 	return fmt.Sprintf(
-		"invalid %sMarker.%s: %s%s",
+		"invalid %sMarkerMarker.%s: %s%s",
 		key,
 		e.field,
 		e.reason,
 		cause)
 }
 
-var _ error = MarkerValidationError{}
+var _ error = MarkerMarkerValidationError{}
 
 var _ interface {
 	Field() string
@@ -695,7 +696,7 @@ var _ interface {
 	Key() bool
 	Cause() error
 	ErrorName() string
-} = MarkerValidationError{}
+} = MarkerMarkerValidationError{}
 
 // Validate checks the field values on MarkerData with the rules defined in the
 // proto definition for this message. If any rules are violated, the first

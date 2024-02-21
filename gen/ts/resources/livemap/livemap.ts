@@ -98,9 +98,9 @@ export interface UserMarker {
     unit?: Unit;
 }
 /**
- * @generated from protobuf message resources.livemap.Marker
+ * @generated from protobuf message resources.livemap.MarkerMarker
  */
-export interface Marker {
+export interface MarkerMarker {
     /**
      * @generated from protobuf field: resources.livemap.MarkerInfo info = 1;
      */
@@ -410,9 +410,9 @@ class UserMarker$Type extends MessageType<UserMarker> {
  */
 export const UserMarker = new UserMarker$Type();
 // @generated message type with reflection information, may provide speed optimized methods
-class Marker$Type extends MessageType<Marker> {
+class MarkerMarker$Type extends MessageType<MarkerMarker> {
     constructor() {
-        super("resources.livemap.Marker", [
+        super("resources.livemap.MarkerMarker", [
             { no: 1, name: "info", kind: "message", T: () => MarkerInfo },
             { no: 2, name: "type", kind: "enum", T: () => ["resources.livemap.MarkerType", MarkerType, "MARKER_TYPE_"] },
             { no: 3, name: "expires_at", kind: "message", T: () => Timestamp },
@@ -421,14 +421,14 @@ class Marker$Type extends MessageType<Marker> {
             { no: 6, name: "creator", kind: "message", T: () => UserShort }
         ]);
     }
-    create(value?: PartialMessage<Marker>): Marker {
+    create(value?: PartialMessage<MarkerMarker>): MarkerMarker {
         const message = globalThis.Object.create((this.messagePrototype!));
         message.type = 0;
         if (value !== undefined)
-            reflectionMergePartial<Marker>(this, message, value);
+            reflectionMergePartial<MarkerMarker>(this, message, value);
         return message;
     }
-    internalBinaryRead(reader: IBinaryReader, length: number, options: BinaryReadOptions, target?: Marker): Marker {
+    internalBinaryRead(reader: IBinaryReader, length: number, options: BinaryReadOptions, target?: MarkerMarker): MarkerMarker {
         let message = target ?? this.create(), end = reader.pos + length;
         while (reader.pos < end) {
             let [fieldNo, wireType] = reader.tag();
@@ -462,7 +462,7 @@ class Marker$Type extends MessageType<Marker> {
         }
         return message;
     }
-    internalBinaryWrite(message: Marker, writer: IBinaryWriter, options: BinaryWriteOptions): IBinaryWriter {
+    internalBinaryWrite(message: MarkerMarker, writer: IBinaryWriter, options: BinaryWriteOptions): IBinaryWriter {
         /* resources.livemap.MarkerInfo info = 1; */
         if (message.info)
             MarkerInfo.internalBinaryWrite(message.info, writer.tag(1, WireType.LengthDelimited).fork(), options).join();
@@ -488,9 +488,9 @@ class Marker$Type extends MessageType<Marker> {
     }
 }
 /**
- * @generated MessageType for protobuf message resources.livemap.Marker
+ * @generated MessageType for protobuf message resources.livemap.MarkerMarker
  */
-export const Marker = new Marker$Type();
+export const MarkerMarker = new MarkerMarker$Type();
 // @generated message type with reflection information, may provide speed optimized methods
 class MarkerData$Type extends MessageType<MarkerData> {
     constructor() {

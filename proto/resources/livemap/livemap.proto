@@ -46,7 +46,7 @@ message UserMarker {
   optional resources.centrum.Unit unit = 5;
 }
 
-message Marker {
+message MarkerMarker {
   MarkerInfo info = 1;
   MarkerType type = 2; // @gotags: alias:"markerType"
   optional resources.timestamp.Timestamp expires_at = 3;

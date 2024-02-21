@@ -1,7 +1,7 @@
 import { RpcError } from '@protobuf-ts/runtime-rpc';
 import { defineStore, type StoreDefinition } from 'pinia';
 import { type Coordinate } from '~/composables/livemap';
-import { Marker, MarkerInfo, UserMarker } from '~~/gen/ts/resources/livemap/livemap';
+import { MarkerInfo, MarkerMarker, UserMarker } from '~~/gen/ts/resources/livemap/livemap';
 import { Job } from '~~/gen/ts/resources/users/jobs';
 import { type UserShort } from '~~/gen/ts/resources/users/users';
 import { LivemapperServiceClient } from '~~/gen/ts/services/livemapper/livemap.client';
@@ -25,7 +25,7 @@ export interface LivemapState {
     jobsMarkers: Job[];
     jobsUsers: Job[];
 
-    markersMarkers: Map<string, Marker>;
+    markersMarkers: Map<string, MarkerMarker>;
     markersUsers: Map<string, UserMarker>;
 }
 
@@ -47,7 +47,7 @@ export const useLivemapStore = defineStore('livemap', {
             jobsMarkers: [],
             jobsUsers: [],
 
-            markersMarkers: new Map<string, Marker>(),
+            markersMarkers: new Map<string, MarkerMarker>(),
             markersUsers: new Map<string, UserMarker>(),
         }) as LivemapState,
     persist: false,
@@ -74,6 +74,7 @@ export const useLivemapStore = defineStore('livemap', {
 
                 const foundUsers: string[] = [];
 
+                const start = performance.now();
                 for await (const resp of call.responses) {
                     this.error = undefined;
 
@@ -81,13 +82,11 @@ export const useLivemapStore = defineStore('livemap', {
                         continue;
                     }
 
-                    console.debug('Centrum: Received change - Kind:', resp.data.oneofKind, resp.data);
+                    console.debug('Livemap: Received change - Kind:', resp.data.oneofKind, resp.data);
 
                     if (resp.data.oneofKind === 'jobs') {
                         this.jobsMarkers = resp.data.jobs.markers;
                         this.jobsUsers = resp.data.jobs.users;
-
-                        this.initiated = true;
                     } else if (resp.data.oneofKind === 'markers') {
                         const foundMarkers: string[] = [];
                         resp.data.markers.markers.forEach((v) => {
@@ -109,7 +108,8 @@ export const useLivemapStore = defineStore('livemap', {
                             foundUsers.push(v.info!.id);
                             this.addOrpdateUserMarker(v);
                         });
-                        if (resp.data.users.part <= 1) {
+
+                        if (resp.data.users.part <= 0) {
                             // Remove user markers not found in latest state
                             let removedMarkers = 0;
                             this.markersUsers.forEach((_, id) => {
@@ -121,11 +121,29 @@ export const useLivemapStore = defineStore('livemap', {
                             foundUsers.length = 0;
                             console.debug(`Livemap: Removed ${removedMarkers} old user markers`);
                         }
+
+                        this.initiated = true;
+                    } else if (resp.data.oneofKind === 'userUpdates') {
+                        resp.data.userUpdates.removed.forEach((v) => {
+                            this.markersUsers.delete(v.info!.id);
+                        });
+                        resp.data.userUpdates.added.forEach((v) => {
+                            this.addOrpdateUserMarker(v);
+                        });
+                        resp.data.userUpdates.updated.forEach((v) => {
+                            this.addOrpdateUserMarker(v);
+                        });
+                    } else {
+                        console.warn('Centrum: Unknown data received - Kind: ' + resp.data.oneofKind);
                     }
+
+                    const end = performance.now();
+                    console.debug('Livemap: Time since stream start ' + (end - start) + 'ms');
                 }
             } catch (e) {
                 const error = e as RpcError;
                 if (error) {
+                    console.log('LIVEMAP: ERROR', error);
                     // Only restart when not cancelled and abort is still valid
                     if (error.code !== 'CANCELLED' && error.code !== 'ABORTED') {
                         console.error('Livemap: Data Stream Failed', error.code, error.message, error.cause);
@@ -169,7 +187,7 @@ export const useLivemapStore = defineStore('livemap', {
             }, this.reconnectBackoffTime * 1000);
         },
 
-        addOrpdateMarkerMarker(marker: Marker): void {
+        addOrpdateMarkerMarker(marker: MarkerMarker): void {
             const m = this.markersMarkers.get(marker.info!.id);
             if (m === undefined) {
                 this.markersMarkers.set(marker.info!.id, marker);
@@ -183,8 +201,12 @@ export const useLivemapStore = defineStore('livemap', {
                 if (marker.creator !== undefined) {
                     this.updateUserInfo(m.creator!, marker.creator);
                 }
-                m.data = marker.data;
-                m.expiresAt = marker.expiresAt;
+                if (m.data?.data.oneofKind !== marker.data?.data.oneofKind) {
+                    m.data = marker.data;
+                }
+                if (m.expiresAt !== marker.expiresAt) {
+                    m.expiresAt = marker.expiresAt;
+                }
             }
         },
         addOrpdateUserMarker(marker: UserMarker): void {
@@ -206,7 +228,9 @@ export const useLivemapStore = defineStore('livemap', {
         },
 
         updateMarkerInfo(dest: MarkerInfo, src: MarkerInfo): void {
-            // dest!.updatedAt = src.updatedAt;
+            if (dest!.updatedAt !== src.updatedAt) {
+                dest.updatedAt = src.updatedAt;
+            }
             if (dest!.job !== src!.job) {
                 dest!.job = src.job;
             }

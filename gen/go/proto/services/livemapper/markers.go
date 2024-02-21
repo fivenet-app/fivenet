@@ -27,10 +27,10 @@ var (
 
 var (
 	tUsers   = table.Users.AS("usershort")
-	tMarkers = table.FivenetCentrumMarkers.AS("marker")
+	tMarkers = table.FivenetCentrumMarkers.AS("markermarker")
 )
 
-func (s *Server) checkIfHasAccessToMarker(levels []string, marker *livemap.Marker, userInfo *userinfo.UserInfo) bool {
+func (s *Server) checkIfHasAccessToMarker(levels []string, marker *livemap.MarkerMarker, userInfo *userinfo.UserInfo) bool {
 	if userInfo.SuperUser {
 		return true
 	}
@@ -244,7 +244,7 @@ func (s *Server) DeleteMarker(ctx context.Context, req *DeleteMarkerRequest) (*D
 	return &DeleteMarkerResponse{}, nil
 }
 
-func (s *Server) getMarker(ctx context.Context, id uint64) (*livemap.Marker, error) {
+func (s *Server) getMarker(ctx context.Context, id uint64) (*livemap.MarkerMarker, error) {
 	stmt := tMarkers.
 		SELECT(
 			tMarkers.ID.AS("markerinfo.id"),
@@ -280,7 +280,7 @@ func (s *Server) getMarker(ctx context.Context, id uint64) (*livemap.Marker, err
 		).
 		LIMIT(1)
 
-	var dest livemap.Marker
+	var dest livemap.MarkerMarker
 	if err := stmt.QueryContext(ctx, s.db, &dest); err != nil {
 		return nil, err
 	}
@@ -292,8 +292,8 @@ func (s *Server) getMarker(ctx context.Context, id uint64) (*livemap.Marker, err
 	return &dest, nil
 }
 
-func (s *Server) getMarkerMarkers(jobs []string) ([]*livemap.Marker, error) {
-	ds := []*livemap.Marker{}
+func (s *Server) getMarkerMarkers(jobs []string) ([]*livemap.MarkerMarker, error) {
+	ds := []*livemap.MarkerMarker{}
 
 	for _, job := range jobs {
 		markers, ok := s.markersCache.Load(job)
@@ -343,14 +343,14 @@ func (s *Server) refreshMarkers(ctx context.Context) error {
 			tMarkers.ExpiresAt.GT_EQ(jet.NOW()),
 		))
 
-	var dest []*livemap.Marker
+	var dest []*livemap.MarkerMarker
 	if err := stmt.QueryContext(ctx, s.db, &dest); err != nil {
 		return err
 	}
 
-	markers := map[string][]*livemap.Marker{}
+	markers := map[string][]*livemap.MarkerMarker{}
 	for _, job := range s.trackedJobs {
-		markers[job] = []*livemap.Marker{}
+		markers[job] = []*livemap.MarkerMarker{}
 	}
 
 	for _, m := range dest {
@@ -359,7 +359,7 @@ func (s *Server) refreshMarkers(ctx context.Context) error {
 		}
 
 		if _, ok := markers[m.Info.Job]; !ok {
-			markers[m.Info.Job] = []*livemap.Marker{}
+			markers[m.Info.Job] = []*livemap.MarkerMarker{}
 		}
 
 		markers[m.Info.Job] = append(markers[m.Info.Job], m)
@@ -373,7 +373,7 @@ func (s *Server) refreshMarkers(ctx context.Context) error {
 		}
 	}
 
-	s.markersCache.Range(func(key string, value []*livemap.Marker) bool {
+	s.markersCache.Range(func(key string, value []*livemap.MarkerMarker) bool {
 		if _, ok := markers[key]; !ok {
 			s.markersCache.Delete(key)
 		}

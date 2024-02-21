@@ -3,13 +3,13 @@ import { RpcError } from '@protobuf-ts/runtime-rpc';
 import { LPopup } from '@vue-leaflet/vue-leaflet';
 import { MapMarkerIcon, TrashCanIcon } from 'mdi-vue3';
 import { useConfirmDialog } from '@vueuse/core';
-import { Marker } from '~~/gen/ts/resources/livemap/livemap';
+import { type MarkerMarker } from '~~/gen/ts/resources/livemap/livemap';
 import ConfirmDialog from '~/components/partials/ConfirmDialog.vue';
 import CitizenInfoPopover from '~/components/partials/citizens/CitizenInfoPopover.vue';
 import GenericTime from '~/components/partials/elements/GenericTime.vue';
 
 defineProps<{
-    marker: Marker;
+    marker: MarkerMarker;
 }>();
 
 defineEmits<{

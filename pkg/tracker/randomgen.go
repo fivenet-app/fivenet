@@ -160,7 +160,7 @@ func (s *Manager) randomizeUserMarkers() {
 			ctx, span := s.tracer.Start(s.ctx, "livemap-gen-users")
 			defer span.End()
 
-			if counter >= 15 {
+			if counter >= 60 {
 				resetMarkers()
 				counter = 0
 			} else {

@@ -47,7 +47,7 @@ type Server struct {
 	tracker  tracker.ITracker
 	auditer  audit.IAuditer
 
-	markersCache *xsync.MapOf[string, []*livemap.Marker]
+	markersCache *xsync.MapOf[string, []*livemap.MarkerMarker]
 
 	broker *utils.Broker[*livemap.UsersUpdateEvent]
 
@@ -85,7 +85,7 @@ func NewServer(p Params) *Server {
 		tracker:  p.Tracker,
 		auditer:  p.Audit,
 
-		markersCache: xsync.NewMapOf[string, []*livemap.Marker](),
+		markersCache: xsync.NewMapOf[string, []*livemap.MarkerMarker](),
 
 		broker: broker,
 
@@ -96,6 +96,20 @@ func NewServer(p Params) *Server {
 	p.LC.Append(fx.StartHook(func(_ context.Context) error {
 		go broker.Start()
 		go s.start()
+
+		go func() {
+			subCh := s.tracker.Subscribe()
+			defer s.tracker.Unsubscribe(subCh)
+
+			for {
+				select {
+				case <-s.ctx.Done():
+					return
+				case msg := <-subCh:
+					s.broker.Publish(msg)
+				}
+			}
+		}()
 
 		return nil
 	}))
@@ -138,7 +152,6 @@ func (s *Server) refreshCache() {
 func (s *Server) Stream(req *StreamRequest, srv LivemapperService_StreamServer) error {
 	userInfo := auth.MustGetUserInfoFromContext(srv.Context())
 
-	start := time.Now()
 	s.logger.Debug("starting livemap stream")
 	markerJobsAttr, err := s.ps.Attr(userInfo, permslivemapper.LivemapperServicePerm, permslivemapper.LivemapperServiceStreamPerm, permslivemapper.LivemapperServiceStreamMarkersPermField)
 	if err != nil {
@@ -154,7 +167,7 @@ func (s *Server) Stream(req *StreamRequest, srv LivemapperService_StreamServer) 
 		markersJobs = markerJobsAttr.([]string)
 	}
 	if userInfo.SuperUser {
-		s.markersCache.Range(func(job string, _ []*livemap.Marker) bool {
+		s.markersCache.Range(func(job string, _ []*livemap.MarkerMarker) bool {
 			markersJobs = append(markersJobs, job)
 			return true
 		})
@@ -228,50 +241,88 @@ func (s *Server) Stream(req *StreamRequest, srv LivemapperService_StreamServer) 
 		return err
 	}
 
+	end, err := s.sendInitialUserMarkers(srv, usersJobs, userInfo)
+	if err != nil {
+		return err
+	}
+	if end {
+		return nil
+	}
+
 	signalCh := s.broker.Subscribe()
 	defer s.broker.Unsubscribe(signalCh)
 
-	chunkSize := 12
-	s.logger.Debug("sent jobs info in livemap stream", zap.Duration("duration", time.Since(start)))
 	for {
-		start = time.Now()
-		userMarkers, _, err := s.getUserLocations(usersJobs, userInfo)
-		if err != nil {
-			return errswrap.NewError(ErrStreamFailed, err)
-		}
+		select {
+		case <-srv.Context().Done():
+			return nil
 
-		parts := int32(len(userMarkers) / chunkSize)
-		for chunkSize < len(userMarkers) {
+		case msg := <-signalCh:
+			if msg == nil {
+				continue
+			}
+
 			resp := &StreamResponse{
-				Data: &StreamResponse_Users{
-					Users: &UserMarkersUpdates{
-						Users: userMarkers[0:chunkSize:chunkSize],
-						Part:  parts,
-					},
+				Data: &StreamResponse_UserUpdates{
+					UserUpdates: filterMarkerUpdates(userInfo.SuperUser, usersJobs, msg),
 				},
 			}
-			parts--
 
 			if err := srv.Send(resp); err != nil {
 				return err
 			}
-
-			userMarkers = userMarkers[chunkSize:]
-			select {
-			case <-srv.Context().Done():
-				return nil
-			case <-time.After(100 * time.Millisecond):
-			}
-		}
-
-		s.logger.Debug("sent users and markers in livemap stream", zap.Duration("duration", time.Since(start)))
-
-		select {
-		case <-srv.Context().Done():
-			return nil
-		case <-signalCh:
 		}
 	}
+}
+
+func (s *Server) sendInitialUserMarkers(srv LivemapperService_StreamServer, usersJobs map[string]int32, userInfo *userinfo.UserInfo) (bool, error) {
+	// Send out chunked current users
+	chunkSize := 5
+	userMarkers, _, err := s.getUserLocations(usersJobs, userInfo)
+	if err != nil {
+		return true, errswrap.NewError(ErrStreamFailed, err)
+	}
+
+	parts := int32(len(userMarkers) / chunkSize)
+	for chunkSize < len(userMarkers) {
+		resp := &StreamResponse{
+			Data: &StreamResponse_Users{
+				Users: &UserMarkersUpdates{
+					Users: userMarkers[0:chunkSize:chunkSize],
+					Part:  parts,
+				},
+			},
+		}
+		parts--
+
+		if err := srv.Send(resp); err != nil {
+			return true, err
+		}
+
+		userMarkers = userMarkers[chunkSize:]
+		select {
+		case <-srv.Context().Done():
+			return true, nil
+		case <-time.After(250 * time.Millisecond):
+		}
+	}
+
+	if len(userMarkers) > 0 {
+		resp := &StreamResponse{
+			Data: &StreamResponse_Users{
+				Users: &UserMarkersUpdates{
+					Users: userMarkers,
+					Part:  0,
+				},
+			},
+		}
+
+		if err := srv.Send(resp); err != nil {
+			return true, err
+		}
+	}
+
+	return false, nil
 }
 
 func (s *Server) getUserLocations(jobs map[string]int32, userInfo *userinfo.UserInfo) ([]*livemap.UserMarker, bool, error) {

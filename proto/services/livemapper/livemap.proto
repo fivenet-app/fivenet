@@ -3,6 +3,7 @@ syntax = "proto3";
 package services.livemapper;
 
 import "resources/livemap/livemap.proto";
+import "resources/livemap/tracker.proto";
 import "resources/users/jobs.proto";
 import "validate/validate.proto";
 
@@ -15,6 +16,7 @@ message StreamResponse {
     JobsList jobs = 1;
     UserMarkersUpdates users = 2;
     MarkerMarkersUpdates markers = 3;
+    resources.livemap.UsersUpdateEvent user_updates = 4;
   }
 }
 
@@ -29,15 +31,15 @@ message UserMarkersUpdates {
 }
 
 message MarkerMarkersUpdates {
-  repeated resources.livemap.Marker markers = 1;
+  repeated resources.livemap.MarkerMarker markers = 1;
 }
 
 message CreateOrUpdateMarkerRequest {
-  resources.livemap.Marker marker = 1 [(validate.rules).message.required = true];
+  resources.livemap.MarkerMarker marker = 1 [(validate.rules).message.required = true];
 }
 
 message CreateOrUpdateMarkerResponse {
-  resources.livemap.Marker marker = 1;
+  resources.livemap.MarkerMarker marker = 1;
 }
 
 message DeleteMarkerRequest {

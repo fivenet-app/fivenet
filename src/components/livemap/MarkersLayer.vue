@@ -3,7 +3,7 @@ import { LMarkerClusterGroup } from 'vue-leaflet-markercluster';
 import 'vue-leaflet-markercluster/dist/style.css';
 import { useLivemapStore } from '~/store/livemap';
 import { useSettingsStore } from '~/store/settings';
-import { Marker } from '~~/gen/ts/resources/livemap/livemap';
+import { MarkerMarker as Marker } from '~~/gen/ts/resources/livemap/livemap';
 import MarkerMarker from '~/components/livemap/MarkerMarker.vue';
 
 defineEmits<{
@@ -21,20 +21,20 @@ const { livemap } = storeToRefs(settingsStore);
 <template>
     <LMarkerClusterGroup
         v-for="job in jobsMarkers"
-        :key="`markers_${job.name}`"
+        :key="job.name"
         :name="`${$t('common.marker', 2)} ${job.label}`"
         layer-type="overlay"
         :visible="livemap.activeLayers.length === 0 || livemap.activeLayers.includes(`${$t('common.marker', 2)} ${job.label}`)"
         :max-cluster-radius="0"
         :disable-clustering-at-zoom="0"
-        :single-marker-mode="true"
+        :single-marker-mode="false"
         :chunked-loading="true"
         :animate="false"
     >
         <MarkerMarker
             v-for="marker in [...markersMarkers.values()].filter((p) => p.info?.job === job.name)"
-            :key="`marker_${marker.info!.id}`"
-            :marker-id="marker.info!.id"
+            :key="marker.info!.id"
+            :marker="marker"
             :size="livemap.markerSize"
             @selected="$emit('markerSelected', marker)"
             @goto="$emit('goto', $event)"

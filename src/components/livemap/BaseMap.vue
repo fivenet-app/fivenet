@@ -36,7 +36,7 @@ function mapResize(): void {
 }
 
 const mapContainer = ref<HTMLElement | null>(null);
-const mapResizeDebounced = useDebounceFn(mapResize, 350, { maxWait: 650 });
+const mapResizeDebounced = useDebounceFn(mapResize, 350, { maxWait: 750 });
 useResizeObserver(mapContainer, (_) => mapResizeDebounced());
 
 const centerX = 117.3;
@@ -213,7 +213,7 @@ async function onMapReady($event: any): Promise<void> {
         isMoving.value = false;
     });
 
-    setTimeout(() => {
+    setTimeout(async () => {
         $loading.finish();
     }, 500);
 

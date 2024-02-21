@@ -20,7 +20,7 @@ import { defineRule } from 'vee-validate';
 import type { DefineComponent } from 'vue';
 import ColorInput from 'vue-color-input/dist/color-input.esm';
 import { useLivemapStore } from '~/store/livemap';
-import { Marker, MarkerType } from '~~/gen/ts/resources/livemap/livemap';
+import { type MarkerMarker, MarkerType } from '~~/gen/ts/resources/livemap/livemap';
 import { markerIcons } from '~/components/livemap/helpers';
 
 const props = defineProps<{
@@ -53,7 +53,7 @@ async function createMarker(values: FormData): Promise<void> {
     const expiresAt = values.expiresAt && values.expiresAt !== '' ? toTimestamp(fromString(values.expiresAt)) : undefined;
 
     try {
-        const marker: Marker = {
+        const marker: MarkerMarker = {
             info: {
                 id: '0',
                 job: '',

@@ -108,6 +108,11 @@ export default defineNuxtConfig({
                 transformMixedEsModules: true,
             },
             manifest: true,
+            terserOptions: {
+                compress: {
+                    drop_console: true,
+                },
+            },
         },
         server: {
             hmr: {

@@ -687,15 +687,15 @@
                 </li>
               
                 <li>
-                  <a href="#resources.livemap.Marker"><span class="badge">M</span>Marker</a>
-                </li>
-              
-                <li>
                   <a href="#resources.livemap.MarkerData"><span class="badge">M</span>MarkerData</a>
                 </li>
               
                 <li>
                   <a href="#resources.livemap.MarkerInfo"><span class="badge">M</span>MarkerInfo</a>
+                </li>
+              
+                <li>
+                  <a href="#resources.livemap.MarkerMarker"><span class="badge">M</span>MarkerMarker</a>
                 </li>
               
                 <li>
@@ -8625,65 +8625,6 @@
 
         
       
-        <h3 id="resources.livemap.Marker">Marker</h3>
-        <p></p>
-
-        
-          <table class="field-table">
-            <thead>
-              <tr><td>Field</td><td>Type</td><td>Label</td><td>Description</td></tr>
-            </thead>
-            <tbody>
-              
-                <tr>
-                  <td>info</td>
-                  <td><a href="#resources.livemap.MarkerInfo">MarkerInfo</a></td>
-                  <td></td>
-                  <td><p> </p></td>
-                </tr>
-              
-                <tr>
-                  <td>type</td>
-                  <td><a href="#resources.livemap.MarkerType">MarkerType</a></td>
-                  <td></td>
-                  <td><p>@gotags: alias:&#34;markerType&#34; </p></td>
-                </tr>
-              
-                <tr>
-                  <td>expires_at</td>
-                  <td><a href="#resources.timestamp.Timestamp">resources.timestamp.Timestamp</a></td>
-                  <td>optional</td>
-                  <td><p> </p></td>
-                </tr>
-              
-                <tr>
-                  <td>data</td>
-                  <td><a href="#resources.livemap.MarkerData">MarkerData</a></td>
-                  <td></td>
-                  <td><p>@gotags: alias:&#34;markerData&#34; </p></td>
-                </tr>
-              
-                <tr>
-                  <td>creator_id</td>
-                  <td><a href="#int32">int32</a></td>
-                  <td>optional</td>
-                  <td><p> </p></td>
-                </tr>
-              
-                <tr>
-                  <td>creator</td>
-                  <td><a href="#resources.users.UserShort">resources.users.UserShort</a></td>
-                  <td>optional</td>
-                  <td><p> </p></td>
-                </tr>
-              
-            </tbody>
-          </table>
-
-          
-
-        
-      
         <h3 id="resources.livemap.MarkerData">MarkerData</h3>
         <p></p>
 
@@ -8852,6 +8793,65 @@
               </tbody>
             </table>
             
+          
+
+        
+      
+        <h3 id="resources.livemap.MarkerMarker">MarkerMarker</h3>
+        <p></p>
+
+        
+          <table class="field-table">
+            <thead>
+              <tr><td>Field</td><td>Type</td><td>Label</td><td>Description</td></tr>
+            </thead>
+            <tbody>
+              
+                <tr>
+                  <td>info</td>
+                  <td><a href="#resources.livemap.MarkerInfo">MarkerInfo</a></td>
+                  <td></td>
+                  <td><p> </p></td>
+                </tr>
+              
+                <tr>
+                  <td>type</td>
+                  <td><a href="#resources.livemap.MarkerType">MarkerType</a></td>
+                  <td></td>
+                  <td><p>@gotags: alias:&#34;markerType&#34; </p></td>
+                </tr>
+              
+                <tr>
+                  <td>expires_at</td>
+                  <td><a href="#resources.timestamp.Timestamp">resources.timestamp.Timestamp</a></td>
+                  <td>optional</td>
+                  <td><p> </p></td>
+                </tr>
+              
+                <tr>
+                  <td>data</td>
+                  <td><a href="#resources.livemap.MarkerData">MarkerData</a></td>
+                  <td></td>
+                  <td><p>@gotags: alias:&#34;markerData&#34; </p></td>
+                </tr>
+              
+                <tr>
+                  <td>creator_id</td>
+                  <td><a href="#int32">int32</a></td>
+                  <td>optional</td>
+                  <td><p> </p></td>
+                </tr>
+              
+                <tr>
+                  <td>creator</td>
+                  <td><a href="#resources.users.UserShort">resources.users.UserShort</a></td>
+                  <td>optional</td>
+                  <td><p> </p></td>
+                </tr>
+              
+            </tbody>
+          </table>
+
           
 
         
@@ -19901,7 +19901,7 @@
               
                 <tr>
                   <td>marker</td>
-                  <td><a href="#resources.livemap.Marker">resources.livemap.Marker</a></td>
+                  <td><a href="#resources.livemap.MarkerMarker">resources.livemap.MarkerMarker</a></td>
                   <td></td>
                   <td><p> </p></td>
                 </tr>
@@ -19952,7 +19952,7 @@
               
                 <tr>
                   <td>marker</td>
-                  <td><a href="#resources.livemap.Marker">resources.livemap.Marker</a></td>
+                  <td><a href="#resources.livemap.MarkerMarker">resources.livemap.MarkerMarker</a></td>
                   <td></td>
                   <td><p> </p></td>
                 </tr>
@@ -20038,7 +20038,7 @@
               
                 <tr>
                   <td>markers</td>
-                  <td><a href="#resources.livemap.Marker">resources.livemap.Marker</a></td>
+                  <td><a href="#resources.livemap.MarkerMarker">resources.livemap.MarkerMarker</a></td>
                   <td>repeated</td>
                   <td><p> </p></td>
                 </tr>
@@ -20084,6 +20084,13 @@
                 <tr>
                   <td>markers</td>
                   <td><a href="#services.livemapper.MarkerMarkersUpdates">MarkerMarkersUpdates</a></td>
+                  <td></td>
+                  <td><p> </p></td>
+                </tr>
+              
+                <tr>
+                  <td>user_updates</td>
+                  <td><a href="#resources.livemap.UsersUpdateEvent">resources.livemap.UsersUpdateEvent</a></td>
                   <td></td>
                   <td><p> </p></td>
                 </tr>
