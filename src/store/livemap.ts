@@ -201,7 +201,7 @@ export const useLivemapStore = defineStore('livemap', {
         },
 
         updateMarkerInfo(dest: MarkerInfo, src: MarkerInfo): void {
-            dest!.updatedAt = src.updatedAt;
+            // dest!.updatedAt = src.updatedAt;
             if (dest!.job !== src!.job) {
                 dest!.job = src.job;
             }

@@ -210,6 +210,24 @@ func (s *Server) Stream(req *StreamRequest, srv LivemapperService_StreamServer) 
 		return err
 	}
 
+	// TODO send out marker markers changes only
+	markers, err := s.getMarkerMarkers(markersJobs)
+	if err != nil {
+		return errswrap.NewError(ErrStreamFailed, err)
+	}
+
+	// Send current markers
+	resp = &StreamResponse{
+		Data: &StreamResponse_Markers{
+			Markers: &MarkerMarkersUpdates{
+				Markers: markers,
+			},
+		},
+	}
+	if err := srv.Send(resp); err != nil {
+		return err
+	}
+
 	signalCh := s.broker.Subscribe()
 	defer s.broker.Unsubscribe(signalCh)
 
@@ -233,22 +251,6 @@ func (s *Server) Stream(req *StreamRequest, srv LivemapperService_StreamServer) 
 			return err
 		}
 
-		markers, err := s.getMarkerMarkers(markersJobs)
-		if err != nil {
-			return errswrap.NewError(ErrStreamFailed, err)
-		}
-
-		// Send current markers
-		resp = &StreamResponse{
-			Data: &StreamResponse_Markers{
-				Markers: &MarkerMarkersUpdates{
-					Markers: markers,
-				},
-			},
-		}
-		if err := srv.Send(resp); err != nil {
-			return err
-		}
 		s.logger.Debug("sent users and markers in livemap stream", zap.Duration("duration", time.Since(start)))
 
 		select {

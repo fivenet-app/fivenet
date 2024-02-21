@@ -126,7 +126,7 @@ gen-proto: protoc-gen-validate protoc-gen-customizer protoc-gen-fronthelper
 		--proto_path=./$(BUILD_DIR)validate-$(VALIDATE_VERSION) \
 		--proto_path=./proto \
 		--ts_out=./gen/ts \
-		--ts_opt=optimize_code_size,long_type_bigint \
+		--ts_opt=optimize_speed,long_type_bigint \
 		--fronthelper_opt=paths=source_relative \
 		--fronthelper_out=./gen/ts \
 		$(shell find proto/ -iname "*.proto")

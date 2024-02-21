@@ -169,6 +169,10 @@ func (g *Guild) sendStartStatusLog(channelId string) error {
 }
 
 func (g *Guild) sendStatusLog(channelId string, logs []*discordgo.MessageEmbed) error {
+	if len(logs) == 0 {
+		return nil
+	}
+
 	channel, err := g.bot.discord.Channel(channelId)
 	if err != nil {
 		return err
