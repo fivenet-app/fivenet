@@ -15,7 +15,7 @@ func filterMarkerUpdatesList(superUser bool, usersJobs map[string]int32, list []
 
 	for _, marker := range list {
 		grade, ok := usersJobs[marker.Info.Job]
-		if !ok {
+		if !ok && !superUser {
 			continue
 		}
 

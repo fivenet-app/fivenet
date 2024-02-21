@@ -106,11 +106,11 @@ func New(p Params) (ITracker, error) {
 	p.LC.Append(fx.StartHook(func(_ context.Context) error {
 		go broker.Start()
 
-		if _, err := p.JS.Subscribe(fmt.Sprintf("%s.>", BaseSubject), t.watchForChanges, nats.DeliverLastPerSubject()); err != nil {
+		if err := userIDs.Start(ctx); err != nil {
 			return err
 		}
 
-		if err := userIDs.Start(ctx); err != nil {
+		if _, err := p.JS.Subscribe(fmt.Sprintf("%s.>", BaseSubject), t.watchForChanges, nats.DeliverLastPerSubject()); err != nil {
 			return err
 		}
 

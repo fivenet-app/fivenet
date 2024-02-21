@@ -66,7 +66,7 @@ func NewHousekeeper(p HousekeeperParams) *Housekeeper {
 		Manager:     p.Manager,
 	}
 
-	p.LC.Append(fx.StartHook(func(ctx context.Context) error {
+	p.LC.Append(fx.StartHook(func(_ context.Context) error {
 		s.wg.Add(1)
 		go func() {
 			defer s.wg.Done()
@@ -115,7 +115,7 @@ func NewHousekeeper(p HousekeeperParams) *Housekeeper {
 
 			for {
 				// Load dispatches with null postal field
-				if err := s.LoadDispatchesFromDB(ctx, jet.AND(
+				if err := s.LoadDispatchesFromDB(s.ctx, jet.AND(
 					tDispatch.Postal.IS_NULL(),
 				)); err != nil {
 					s.logger.Error("failed loading new dispatches from DB", zap.Error(err))
@@ -123,7 +123,7 @@ func NewHousekeeper(p HousekeeperParams) *Housekeeper {
 				}
 
 				select {
-				case <-ctx.Done():
+				case <-s.ctx.Done():
 					return
 				case <-time.After(1 * time.Second):
 				}

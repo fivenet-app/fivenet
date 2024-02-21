@@ -143,7 +143,6 @@ export const useLivemapStore = defineStore('livemap', {
             } catch (e) {
                 const error = e as RpcError;
                 if (error) {
-                    console.log('LIVEMAP: ERROR', error);
                     // Only restart when not cancelled and abort is still valid
                     if (error.code !== 'CANCELLED' && error.code !== 'ABORTED') {
                         console.error('Livemap: Data Stream Failed', error.code, error.message, error.cause);

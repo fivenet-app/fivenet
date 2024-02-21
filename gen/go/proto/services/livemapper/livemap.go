@@ -105,7 +105,13 @@ func NewServer(p Params) *Server {
 				select {
 				case <-s.ctx.Done():
 					return
+
 				case msg := <-subCh:
+					if s.broker.SubCount() <= 0 {
+						continue
+					}
+
+					s.logger.Debug("received msg from user tracker")
 					s.broker.Publish(msg)
 				}
 			}
@@ -209,6 +215,13 @@ func (s *Server) Stream(req *StreamRequest, srv LivemapperService_StreamServer) 
 			Name: markersJobs[i],
 		}
 		s.enricher.EnrichJobName(jobs.Jobs.Markers[i])
+	}
+	if grade, ok := usersJobs[userInfo.Job]; !ok {
+		return nil
+	} else {
+		usersJobs = map[string]int32{
+			userInfo.Job: grade,
+		}
 	}
 	for job := range usersJobs {
 		j := &users.Job{

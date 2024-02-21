@@ -524,6 +524,7 @@ nats:
             # You should change the username and password
             - user: "fivenet"
               password: "fivenet"
+      max_payload: 3145728
 
 # -- Extra objects to deploy (value evaluated as a template)
 extraObjects: []
