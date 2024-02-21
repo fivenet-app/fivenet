@@ -263,7 +263,7 @@ func (s *Server) Stream(req *StreamRequest, srv LivemapperService_StreamServer) 
 		case <-srv.Context().Done():
 			return nil
 
-		case <-time.After(3 * s.refreshTime):
+		case <-time.After(2 * s.refreshTime):
 			end, err := s.sendChunkedUserMarkers(srv, usersJobs, userInfo)
 			if err != nil {
 				return err
@@ -277,7 +277,7 @@ func (s *Server) Stream(req *StreamRequest, srv LivemapperService_StreamServer) 
 
 func (s *Server) sendChunkedUserMarkers(srv LivemapperService_StreamServer, usersJobs map[string]int32, userInfo *userinfo.UserInfo) (bool, error) {
 	// Send out chunked current users
-	chunkSize := 5
+	chunkSize := 25
 	userMarkers, _, err := s.getUserLocations(usersJobs, userInfo)
 	if err != nil {
 		return true, errswrap.NewError(ErrStreamFailed, err)
@@ -303,7 +303,7 @@ func (s *Server) sendChunkedUserMarkers(srv LivemapperService_StreamServer, user
 		select {
 		case <-srv.Context().Done():
 			return true, nil
-		case <-time.After(250 * time.Millisecond):
+		case <-time.After(175 * time.Millisecond):
 		}
 	}
 
