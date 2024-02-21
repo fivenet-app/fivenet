@@ -3,6 +3,7 @@ import { defineStore, type StoreDefinition } from 'pinia';
 import { type Coordinate } from '~/composables/livemap';
 import { Marker, MarkerInfo, UserMarker } from '~~/gen/ts/resources/livemap/livemap';
 import { Job } from '~~/gen/ts/resources/users/jobs';
+import { type UserShort } from '~~/gen/ts/resources/users/users';
 import { LivemapperServiceClient } from '~~/gen/ts/services/livemapper/livemap.client';
 
 // In seconds
@@ -170,9 +171,13 @@ export const useLivemapStore = defineStore('livemap', {
             } else {
                 this.updateMarkerInfo(m.info!, marker.info!);
 
-                m.type = marker.type;
+                if (m.type !== marker.type) {
+                    m.type = marker.type;
+                }
                 m.creatorId = marker.creatorId;
-                m.creator = marker.creator;
+                if (marker.creator !== undefined) {
+                    this.updateUserInfo(m.creator!, marker.creator);
+                }
                 m.data = marker.data;
                 m.expiresAt = marker.expiresAt;
             }
@@ -184,25 +189,72 @@ export const useLivemapStore = defineStore('livemap', {
             } else {
                 this.updateMarkerInfo(m.info!, marker.info!);
 
-                m.userId = marker.userId;
-                m.user = marker.user;
-                m.unitId = marker.unitId;
-                m.unit = marker.unit;
+                if (m.userId !== marker.userId) {
+                    m.userId = marker.userId;
+                    this.updateUserInfo(m.user!, marker.user!);
+                }
+                if (m.unitId !== marker.unitId) {
+                    m.unitId = marker.unitId;
+                    m.unit = marker.unit;
+                }
             }
         },
 
         updateMarkerInfo(dest: MarkerInfo, src: MarkerInfo): void {
-            dest!.id = src.id;
             dest!.updatedAt = src.updatedAt;
-            dest!.job = src.job;
-            dest!.jobLabel = src.jobLabel;
-            dest!.name = src.name;
-            dest!.description = src.description;
-            dest!.x = src.x;
-            dest!.y = src.y;
-            dest!.postal = src.postal;
-            dest!.color = src.color;
-            dest!.icon = src.icon;
+            if (dest!.job !== src!.job) {
+                dest!.job = src.job;
+            }
+            if (dest!.jobLabel !== src.jobLabel) {
+                dest!.jobLabel = src.jobLabel;
+            }
+            if (dest!.name !== src.name) {
+                dest!.name = src.name;
+            }
+            if (dest!.description !== src.description) {
+                dest!.description = src.description;
+            }
+            if (dest!.x !== src.x) {
+                dest!.x = src.x;
+            }
+            if (dest!.y !== src.y) {
+                dest!.y = src.y;
+            }
+            if (dest!.postal !== src.postal) {
+                dest!.postal = src.postal;
+            }
+            if (dest!.color !== src.color) {
+                dest!.color = src.color;
+            }
+            if (dest!.icon !== src.icon) {
+                dest!.icon = src.icon;
+            }
+        },
+        updateUserInfo(dest: UserShort, src: UserShort): void {
+            if (dest.firstname !== src.firstname) {
+                dest.firstname = src.firstname;
+            }
+            if (dest.lastname !== src.lastname) {
+                dest.lastname = src.lastname;
+            }
+            if (dest.job !== src.job) {
+                dest.job = src.job;
+            }
+            if (dest.jobLabel !== src.jobLabel) {
+                dest.jobLabel = src.jobLabel;
+            }
+            if (dest.jobGrade !== src.jobGrade) {
+                dest.jobGrade = src.jobGrade;
+            }
+            if (dest.jobGradeLabel !== src.jobGradeLabel) {
+                dest.jobGradeLabel = src.jobGradeLabel;
+            }
+            if (dest.dateofbirth !== src.dateofbirth) {
+                dest.dateofbirth = src.dateofbirth;
+            }
+            if (dest.phoneNumber !== src.phoneNumber) {
+                dest.phoneNumber = src.phoneNumber;
+            }
         },
     },
 });

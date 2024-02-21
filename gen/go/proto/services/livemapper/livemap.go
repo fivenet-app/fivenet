@@ -140,18 +140,18 @@ func (s *Server) Stream(req *StreamRequest, srv LivemapperService_StreamServer) 
 
 	start := time.Now()
 	s.logger.Debug("starting livemap stream")
-	markersAttr, err := s.ps.Attr(userInfo, permslivemapper.LivemapperServicePerm, permslivemapper.LivemapperServiceStreamPerm, permslivemapper.LivemapperServiceStreamMarkersPermField)
+	markerJobsAttr, err := s.ps.Attr(userInfo, permslivemapper.LivemapperServicePerm, permslivemapper.LivemapperServiceStreamPerm, permslivemapper.LivemapperServiceStreamMarkersPermField)
 	if err != nil {
 		return errswrap.NewError(ErrStreamFailed, err)
 	}
-	playersAttr, err := s.ps.Attr(userInfo, permslivemapper.LivemapperServicePerm, permslivemapper.LivemapperServiceStreamPerm, permslivemapper.LivemapperServiceStreamPlayersPermField)
+	userJobsAttr, err := s.ps.Attr(userInfo, permslivemapper.LivemapperServicePerm, permslivemapper.LivemapperServiceStreamPerm, permslivemapper.LivemapperServiceStreamPlayersPermField)
 	if err != nil {
 		return errswrap.NewError(ErrStreamFailed, err)
 	}
 
 	var markersJobs []string
-	if markersAttr != nil {
-		markersJobs = markersAttr.([]string)
+	if markerJobsAttr != nil {
+		markersJobs = markerJobsAttr.([]string)
 	}
 	if userInfo.SuperUser {
 		s.markersCache.Range(func(job string, _ []*livemap.Marker) bool {
@@ -161,22 +161,22 @@ func (s *Server) Stream(req *StreamRequest, srv LivemapperService_StreamServer) 
 		markersJobs = utils.RemoveDuplicates(markersJobs)
 	}
 
-	var playersJobs map[string]int32
-	if playersAttr != nil {
-		playersJobs, _ = playersAttr.(map[string]int32)
+	var usersJobs map[string]int32
+	if userJobsAttr != nil {
+		usersJobs, _ = userJobsAttr.(map[string]int32)
 	}
 
 	if userInfo.SuperUser {
-		playersJobs = map[string]int32{}
+		usersJobs = map[string]int32{}
 		for _, j := range s.trackedJobs {
-			playersJobs[j] = -1
+			usersJobs[j] = -1
 		}
 	}
 
 	resp := &StreamResponse{
 		Data: &StreamResponse_Jobs{},
 	}
-	if len(markersJobs) == 0 && len(playersJobs) == 0 {
+	if len(markersJobs) == 0 && len(usersJobs) == 0 {
 		if err := srv.Send(resp); err != nil {
 			return err
 		}
@@ -197,7 +197,7 @@ func (s *Server) Stream(req *StreamRequest, srv LivemapperService_StreamServer) 
 		}
 		s.enricher.EnrichJobName(jobs.Jobs.Markers[i])
 	}
-	for job := range playersJobs {
+	for job := range usersJobs {
 		j := &users.Job{
 			Name: job,
 		}
@@ -216,7 +216,7 @@ func (s *Server) Stream(req *StreamRequest, srv LivemapperService_StreamServer) 
 	s.logger.Debug("sent jobs info in livemap stream", zap.Duration("duration", time.Since(start)))
 	for {
 		start = time.Now()
-		userMarkers, _, err := s.getUserLocations(playersJobs, userInfo)
+		userMarkers, _, err := s.getUserLocations(usersJobs, userInfo)
 		if err != nil {
 			return errswrap.NewError(ErrStreamFailed, err)
 		}
