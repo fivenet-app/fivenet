@@ -230,30 +230,16 @@ func (s *Server) Stream(req *StreamRequest, srv LivemapperService_StreamServer) 
 	}
 
 	// TODO send out marker markers changes only
-	markers, err := s.getMarkerMarkers(markersJobs)
-	if err != nil {
-		return errswrap.NewError(ErrStreamFailed, err)
-	}
-
-	// Send current markers
-	resp = &StreamResponse{
-		Data: &StreamResponse_Markers{
-			Markers: &MarkerMarkersUpdates{
-				Markers: markers,
-			},
-		},
-	}
-	if err := srv.Send(resp); err != nil {
+	if end, err := s.sendMarkerMarkers(srv, markersJobs, userInfo); end || err != nil {
 		return err
 	}
 
-	end, err := s.sendChunkedUserMarkers(srv, usersJobs, userInfo)
-	if err != nil {
+	if end, err := s.sendChunkedUserMarkers(srv, usersJobs, userInfo); end || err != nil {
 		return err
 	}
-	if end {
-		return nil
-	}
+
+	ticker := time.NewTicker(4 * s.refreshTime)
+	defer ticker.Stop()
 
 	signalCh := s.broker.Subscribe()
 	defer s.broker.Unsubscribe(signalCh)
@@ -263,13 +249,14 @@ func (s *Server) Stream(req *StreamRequest, srv LivemapperService_StreamServer) 
 		case <-srv.Context().Done():
 			return nil
 
-		case <-time.After(2 * s.refreshTime):
-			end, err := s.sendChunkedUserMarkers(srv, usersJobs, userInfo)
-			if err != nil {
+		case <-ticker.C:
+			if end, err := s.sendMarkerMarkers(srv, markersJobs, userInfo); end || err != nil {
 				return err
 			}
-			if end {
-				return nil
+
+		case <-time.After(s.refreshTime):
+			if end, err := s.sendChunkedUserMarkers(srv, usersJobs, userInfo); end || err != nil {
+				return err
 			}
 		}
 	}
@@ -320,6 +307,27 @@ func (s *Server) sendChunkedUserMarkers(srv LivemapperService_StreamServer, user
 		if err := srv.Send(resp); err != nil {
 			return true, err
 		}
+	}
+
+	return false, nil
+}
+
+func (s *Server) sendMarkerMarkers(srv LivemapperService_StreamServer, jobs []string, userInfo *userinfo.UserInfo) (bool, error) {
+	markers, err := s.getMarkerMarkers(jobs)
+	if err != nil {
+		return true, errswrap.NewError(ErrStreamFailed, err)
+	}
+
+	// Send current markers
+	resp := &StreamResponse{
+		Data: &StreamResponse_Markers{
+			Markers: &MarkerMarkersUpdates{
+				Markers: markers,
+			},
+		},
+	}
+	if err := srv.Send(resp); err != nil {
+		return true, err
 	}
 
 	return false, nil
