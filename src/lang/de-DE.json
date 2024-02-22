@@ -163,6 +163,10 @@
                 },
                 "app_theme": {
                     "job_default_theme": "Nutze durch Beruf vorgegebenes Design"
+                },
+                "volumes": {
+                    "title": "Lautstärke-Einstellungen",
+                    "subtitle": "Stelle die Lautstärke von den Sounds ein."
                 }
             },
             "change_username_modal": {
@@ -815,7 +819,8 @@
         "department_postal": "Postleitzahl der Dienststelle",
         "blood_type": "Blutgruppe",
         "motd": "MOTD",
-        "fallback_mode": "Fallback-Modus"
+        "fallback_mode": "Fallback-Modus",
+        "volume": "Lautstärke"
     },
     "notifications": {
         "clipboard": {
