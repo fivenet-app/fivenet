@@ -351,10 +351,6 @@
                 "discord_guild_id": "Discord Guild/ Server ID",
                 "invite_bot": "Invite Bot",
                 "last_sync": "Last Sync",
-                "discord_sync_settings": {
-                    "title": "Discord Sync Settings",
-                    "subtitle": "Manage the Discord Bot Sync settings."
-                },
                 "user_info_sync": "User Info Sync (Names and Job Grade Roles)",
                 "user_info_sync_settings": {
                     "employee_role_enabled": "Create and manage Employee Role",
@@ -367,6 +363,10 @@
                 "status_log": "Status Log",
                 "status_log_settings": {
                     "channel_id": "Channel ID"
+                },
+                "discord_sync_settings": {
+                    "title": "Discord Sync Settings",
+                    "subtitle": "Manage the Discord Bot Sync settings."
                 }
             },
             "role_view": {
@@ -529,7 +529,6 @@
             "unread": "Unread"
         },
         "about": {
-            "subtitle": "About FiveNet and it's creators.",
             "introduction": {
                 "pre_title": "More time for GTA V RolePlay.",
                 "title": "A better workflow",
@@ -572,6 +571,7 @@
             },
             "join_discord": "Join Galexrt Discord server",
             "licenses_list": "FiveNet License and list of third-party licenses used",
+            "subtitle": "About FiveNet and it's creators.",
             "licenses": {
                 "subtitle": "List and information about the Licenses of code, libraries and software, used by FiveNet."
             }
