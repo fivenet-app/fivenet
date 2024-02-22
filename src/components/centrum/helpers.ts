@@ -21,16 +21,20 @@ export function dispatchStatusToFillColor(status: StatusDispatch | undefined): s
         case StatusDispatch.UNASSIGNED:
         case StatusDispatch.UNIT_DECLINED:
             return 'fill-error-600';
+        case StatusDispatch.EN_ROUTE:
+            return 'fill-info-500';
         case StatusDispatch.ON_SCENE:
             return 'fill-info-700';
         case StatusDispatch.NEED_ASSISTANCE:
             return 'fill-warn-600';
         case StatusDispatch.COMPLETED:
-        case StatusDispatch.CANCELLED:
             return 'fill-success-600';
+        case StatusDispatch.CANCELLED:
+            return 'fill-success-800';
         case StatusDispatch.ARCHIVED:
             return 'fill-base-600';
-        case StatusDispatch.EN_ROUTE:
+        case StatusDispatch.UNIT_ACCEPTED:
+            return 'fill-info-600';
         default:
             return 'fill-info-500';
     }
@@ -55,6 +59,8 @@ export function dispatchStatusToBGColor(status: StatusDispatch | undefined): str
             return 'bg-success-800';
         case StatusDispatch.ARCHIVED:
             return 'bg-base-600';
+        case StatusDispatch.UNIT_ACCEPTED:
+            return 'bg-info-600';
         default:
             return 'bg-info-500';
     }
@@ -110,7 +116,6 @@ export const unitStatuses: {
     { icon: markRaw(CalendarCheckIcon), name: 'Available', status: StatusUnit.AVAILABLE },
     { icon: markRaw(CoffeeIcon), name: 'On Break', status: StatusUnit.ON_BREAK },
     { icon: markRaw(CalendarRemoveIcon), name: 'Busy', status: StatusUnit.BUSY },
-    // { icon: markRaw(ListStatusIcon), name: 'components.centrum.update_unit_status.title', class: 'bg-base-800' },
 ];
 
 export const dispatchStatuses: {
@@ -125,7 +130,6 @@ export const dispatchStatuses: {
     { icon: markRaw(HelpCircleIcon), name: 'Need Assistance', status: StatusDispatch.NEED_ASSISTANCE },
     { icon: markRaw(CheckBoldIcon), name: 'Completed', status: StatusDispatch.COMPLETED },
     { icon: markRaw(CancelIcon), name: 'Cancelled', status: StatusDispatch.CANCELLED },
-    // { icon: markRaw(ListStatusIcon), name: 'components.centrum.update_dispatch_status.title', class: 'bg-base-800' },
 ];
 
 export function isStatusDispatchCompleted(status: StatusDispatch): boolean {
