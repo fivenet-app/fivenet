@@ -13,11 +13,11 @@ const hints = shuffle([
     },
     {
         key: 'startpage',
-        link: { name: 'auth-account-info', hash: '#settings' },
+        link: { name: 'settings' },
     },
     {
         key: 'documenteditor',
-        link: { name: 'auth-account-info', hash: '#settings' },
+        link: { name: 'settings' },
     },
 ] as Hint[]);
 
