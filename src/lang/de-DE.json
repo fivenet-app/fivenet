@@ -331,11 +331,11 @@
             },
             "create_marker": {
                 "title": "Markierung erstellen",
-                "subtitle": "Neue Markierung erstellen."
+                "subtitle": "Erstelle eine neue Markierung."
             },
             "update_marker": {
                 "title": "Markierung aktualisieren",
-                "subtitle": "Existierende Markierung aktualisieren."
+                "subtitle": "Aktualisiere eine existierende Markierung."
             },
             "show_unit_names": "Zeige Einheiten Namen (gilt nur für Karten-Ansicht)",
             "show_unit_status": "Zeige Einheiten Status Farbe",
@@ -351,7 +351,6 @@
                 "discord_guild_id": "Discord Guild/Server ID",
                 "invite_bot": "Bot einladen",
                 "last_sync": "Letzte Synchronisation",
-                "discord_sync_settings": "Discord-Synchronisation-Einstellungen",
                 "user_info_sync": "Mitarbeiter Sync (Namen und Ränge-Rollen)",
                 "user_info_sync_settings": {
                     "employee_role_enabled": "Erstelle und Verwalte Mitarbeiter Rolle",
@@ -364,6 +363,10 @@
                 "status_log": "Statusprotokoll",
                 "status_log_settings": {
                     "channel_id": "Channel-ID"
+                },
+                "discord_sync_settings": {
+                    "title": "Discord-Bot-Synchronisations-Einstellungen",
+                    "subtitle": "Verwalte die Discord-Bot-Synchronisations-Einstellungen."
                 }
             },
             "role_view": {
@@ -389,7 +392,7 @@
         "centrum": {
             "create_dispatch": {
                 "title": "Einsatz Erstellen",
-                "subtitle": "Neuen Einsatz erstellen."
+                "subtitle": "Erstelle einen neuen Einsatz."
             },
             "assign_dispatch": {
                 "title": "Einsatz Zuweisen"
@@ -526,7 +529,6 @@
             "unread": "Ungelesen"
         },
         "about": {
-            "subtitle": "Über FiveNet und seine Ersteller.",
             "introduction": {
                 "pre_title": "Mehr Zeit für GTA V Roleplay.",
                 "title": "Ein besserer Arbeitsablauf",
@@ -569,6 +571,7 @@
             },
             "join_discord": "Tritt dem Discord-Server von Galexrt bei",
             "licenses_list": "FiveNet Lizenz und Liste der genutzten Third-Party Lizenzen",
+            "subtitle": "Über FiveNet und seine Ersteller.",
             "licenses": {
                 "subtitle": "Liste und Informationen zu den Lizenzen des in FiveNet verwendeten Code, Bibliotheken und Medien."
             }
