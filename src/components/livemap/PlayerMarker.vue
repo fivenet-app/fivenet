@@ -1,6 +1,5 @@
 <script lang="ts" setup>
 import { LIcon, LMarker, LPopup } from '@vue-leaflet/vue-leaflet';
-import { watchDebounced } from '@vueuse/core';
 import { type PointExpression } from 'leaflet';
 import { AccountIcon, GroupIcon, MapMarkerIcon } from 'mdi-vue3';
 import UnitDetails from '~/components//centrum/units/UnitDetails.vue';
