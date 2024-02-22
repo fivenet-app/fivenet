@@ -1,8 +1,6 @@
 <script lang="ts" setup>
-import { LControl } from '@vue-leaflet/vue-leaflet';
+import { LControl, LLayerGroup } from '@vue-leaflet/vue-leaflet';
 import { computedAsync, useTimeoutFn } from '@vueuse/core';
-import { LMarkerClusterGroup } from 'vue-leaflet-markercluster';
-import 'vue-leaflet-markercluster/dist/style.css';
 import { useLivemapStore } from '~/store/livemap';
 import { useSettingsStore } from '~/store/settings';
 import { UserMarker } from '~~/gen/ts/resources/livemap/livemap';
@@ -55,7 +53,7 @@ const playerMarkersFiltered = computedAsync(async () =>
 </script>
 
 <template>
-    <LMarkerClusterGroup
+    <LLayerGroup
         v-for="job in jobsUsers"
         :key="job.name"
         :name="`${$t('common.employee', 2)} ${job.label}`"
@@ -63,11 +61,6 @@ const playerMarkersFiltered = computedAsync(async () =>
         :visible="
             livemap.activeLayers.length === 0 || livemap.activeLayers.includes(`${$t('common.employee', 2)} ${job.label}`)
         "
-        :max-cluster-radius="15"
-        :disable-clustering-at-zoom="2"
-        :single-marker-mode="false"
-        :chunked-loading="true"
-        :animate="true"
     >
         <PlayerMarker
             v-for="marker in playerMarkersFiltered.filter((m) => m.info?.job === job.name)"
@@ -79,7 +72,7 @@ const playerMarkersFiltered = computedAsync(async () =>
             @selected="$emit('userSelected', marker)"
             @goto="$emit('goto', $event)"
         />
-    </LMarkerClusterGroup>
+    </LLayerGroup>
 
     <LControl v-if="showUserFilter" position="bottomleft">
         <div class="form-control flex flex-col gap-2">

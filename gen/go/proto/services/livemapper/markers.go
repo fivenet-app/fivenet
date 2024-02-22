@@ -191,6 +191,10 @@ func (s *Server) CreateOrUpdateMarker(ctx context.Context, req *CreateOrUpdateMa
 		return nil, errswrap.NewError(ErrMarkerFailed, err)
 	}
 
+	if err := s.sendUpdateEvent(MarkerUpdate, marker); err != nil {
+		return nil, errswrap.NewError(ErrMarkerFailed, err)
+	}
+
 	return &CreateOrUpdateMarkerResponse{
 		Marker: marker,
 	}, nil
@@ -238,6 +242,10 @@ func (s *Server) DeleteMarker(ctx context.Context, req *DeleteMarkerRequest) (*D
 		LIMIT(1)
 
 	if _, err := stmt.ExecContext(ctx, s.db); err != nil {
+		return nil, errswrap.NewError(ErrMarkerFailed, err)
+	}
+
+	if err := s.sendUpdateEvent(MarkerUpdate, marker); err != nil {
 		return nil, errswrap.NewError(ErrMarkerFailed, err)
 	}
 

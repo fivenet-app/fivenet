@@ -3,12 +3,14 @@ package livemapper
 import (
 	"context"
 	"database/sql"
+	"fmt"
 	"time"
 
 	"github.com/galexrt/fivenet/gen/go/proto/resources/livemap"
 	users "github.com/galexrt/fivenet/gen/go/proto/resources/users"
 	permslivemapper "github.com/galexrt/fivenet/gen/go/proto/services/livemapper/perms"
 	"github.com/galexrt/fivenet/pkg/config"
+	"github.com/galexrt/fivenet/pkg/events"
 	"github.com/galexrt/fivenet/pkg/grpc/auth"
 	"github.com/galexrt/fivenet/pkg/grpc/auth/userinfo"
 	"github.com/galexrt/fivenet/pkg/grpc/errswrap"
@@ -17,6 +19,7 @@ import (
 	"github.com/galexrt/fivenet/pkg/server/audit"
 	"github.com/galexrt/fivenet/pkg/tracker"
 	"github.com/galexrt/fivenet/pkg/utils"
+	"github.com/nats-io/nats.go"
 	"github.com/puzpuzpuz/xsync/v3"
 	tracesdk "go.opentelemetry.io/otel/sdk/trace"
 	"go.opentelemetry.io/otel/trace"
@@ -28,7 +31,7 @@ import (
 )
 
 const (
-	DispatchMarkerLimit = 60
+	userMarkerChunkSize = 30
 )
 
 var (
@@ -42,6 +45,7 @@ type Server struct {
 	logger   *zap.Logger
 	tracer   trace.Tracer
 	db       *sql.DB
+	js       nats.JetStreamContext
 	ps       perms.Permissions
 	enricher *mstlystcdata.Enricher
 	tracker  tracker.ITracker
@@ -49,7 +53,7 @@ type Server struct {
 
 	markersCache *xsync.MapOf[string, []*livemap.MarkerMarker]
 
-	broker *utils.Broker[*livemap.UsersUpdateEvent]
+	broker *utils.Broker[*brokerEvent]
 
 	refreshTime time.Duration
 	trackedJobs []string
@@ -63,6 +67,7 @@ type Params struct {
 	Logger   *zap.Logger
 	TP       *tracesdk.TracerProvider
 	DB       *sql.DB
+	JS       nats.JetStreamContext
 	Perms    perms.Permissions
 	Enricher *mstlystcdata.Enricher
 	Config   *config.Config
@@ -70,16 +75,21 @@ type Params struct {
 	Audit    audit.IAuditer
 }
 
+type brokerEvent struct {
+	Send events.Type
+}
+
 func NewServer(p Params) *Server {
 	ctx, cancel := context.WithCancel(context.Background())
 
-	broker := utils.NewBroker[*livemap.UsersUpdateEvent](ctx)
+	broker := utils.NewBroker[*brokerEvent](ctx)
 	s := &Server{
 		ctx:    ctx,
 		logger: p.Logger,
 
 		tracer:   p.TP.Tracer("livemapper-cache"),
 		db:       p.DB,
+		js:       p.JS,
 		ps:       p.Perms,
 		enricher: p.Enricher,
 		tracker:  p.Tracker,
@@ -93,29 +103,20 @@ func NewServer(p Params) *Server {
 		trackedJobs: p.Config.Game.Livemap.Jobs,
 	}
 
-	p.LC.Append(fx.StartHook(func(_ context.Context) error {
+	p.LC.Append(fx.StartHook(func(ctx context.Context) error {
+		if err := s.registerEvents(ctx); err != nil {
+			return err
+		}
+
 		go broker.Start()
-		go s.start()
 
-		go func() {
-			subCh := s.tracker.Subscribe()
-			defer s.tracker.Unsubscribe(subCh)
+		if err := s.refreshData(); err != nil {
+			return err
+		}
 
-			for {
-				select {
-				case <-s.ctx.Done():
-					return
-
-				case msg := <-subCh:
-					if s.broker.SubCount() <= 0 {
-						continue
-					}
-
-					s.logger.Debug("received msg from user tracker")
-					s.broker.Publish(msg)
-				}
-			}
-		}()
+		if _, err := p.JS.Subscribe(fmt.Sprintf("%s.>", BaseSubject), s.watchForEvents, nats.DeliverNew()); err != nil {
+			return err
+		}
 
 		return nil
 	}))
@@ -132,27 +133,15 @@ func (s *Server) RegisterServer(srv *grpc.Server) {
 	RegisterLivemapperServiceServer(srv, s)
 }
 
-func (s *Server) start() {
-	for {
-		s.refreshCache()
-
-		select {
-		case <-s.ctx.Done():
-			return
-		case <-time.After(4 * time.Second):
-		}
-	}
-}
-
-func (s *Server) refreshCache() {
+func (s *Server) refreshData() error {
 	ctx, span := s.tracer.Start(s.ctx, "livemap-refresh-cache")
 	defer span.End()
 
 	if err := s.refreshMarkers(ctx); err != nil {
-		s.logger.Error("failed to refresh livemap markers cache", zap.Error(err))
+		return err
 	}
 
-	s.broker.Publish(nil)
+	return nil
 }
 
 func (s *Server) Stream(req *StreamRequest, srv LivemapperService_StreamServer) error {
@@ -229,7 +218,6 @@ func (s *Server) Stream(req *StreamRequest, srv LivemapperService_StreamServer) 
 		return err
 	}
 
-	// TODO send out marker markers changes only
 	if end, err := s.sendMarkerMarkers(srv, markersJobs, userInfo); end || err != nil {
 		return err
 	}
@@ -241,8 +229,8 @@ func (s *Server) Stream(req *StreamRequest, srv LivemapperService_StreamServer) 
 	ticker := time.NewTicker(4 * s.refreshTime)
 	defer ticker.Stop()
 
-	signalCh := s.broker.Subscribe()
-	defer s.broker.Unsubscribe(signalCh)
+	updateCh := s.broker.Subscribe()
+	defer s.broker.Unsubscribe(updateCh)
 
 	for {
 		select {
@@ -254,6 +242,13 @@ func (s *Server) Stream(req *StreamRequest, srv LivemapperService_StreamServer) 
 				return err
 			}
 
+		case event := <-updateCh:
+			if event.Send == MarkerUpdate {
+				if end, err := s.sendMarkerMarkers(srv, markersJobs, userInfo); end || err != nil {
+					return err
+				}
+			}
+
 		case <-time.After(s.refreshTime):
 			if end, err := s.sendChunkedUserMarkers(srv, usersJobs, userInfo); end || err != nil {
 				return err
@@ -262,20 +257,19 @@ func (s *Server) Stream(req *StreamRequest, srv LivemapperService_StreamServer) 
 	}
 }
 
+// Sends out chunked current user markers
 func (s *Server) sendChunkedUserMarkers(srv LivemapperService_StreamServer, usersJobs map[string]int32, userInfo *userinfo.UserInfo) (bool, error) {
-	// Send out chunked current users
-	chunkSize := 25
 	userMarkers, _, err := s.getUserLocations(usersJobs, userInfo)
 	if err != nil {
 		return true, errswrap.NewError(ErrStreamFailed, err)
 	}
 
-	parts := int32(len(userMarkers) / chunkSize)
-	for chunkSize < len(userMarkers) {
+	parts := int32(len(userMarkers) / userMarkerChunkSize)
+	for userMarkerChunkSize < len(userMarkers) {
 		resp := &StreamResponse{
 			Data: &StreamResponse_Users{
 				Users: &UserMarkersUpdates{
-					Users: userMarkers[0:chunkSize:chunkSize],
+					Users: userMarkers[0:userMarkerChunkSize:userMarkerChunkSize],
 					Part:  parts,
 				},
 			},
@@ -286,11 +280,11 @@ func (s *Server) sendChunkedUserMarkers(srv LivemapperService_StreamServer, user
 			return true, err
 		}
 
-		userMarkers = userMarkers[chunkSize:]
+		userMarkers = userMarkers[userMarkerChunkSize:]
 		select {
 		case <-srv.Context().Done():
 			return true, nil
-		case <-time.After(175 * time.Millisecond):
+		case <-time.After(125 * time.Millisecond):
 		}
 	}
 

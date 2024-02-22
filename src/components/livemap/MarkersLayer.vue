@@ -1,6 +1,5 @@
 <script lang="ts" setup>
-import { LMarkerClusterGroup } from 'vue-leaflet-markercluster';
-import 'vue-leaflet-markercluster/dist/style.css';
+import { LLayerGroup } from '@vue-leaflet/vue-leaflet';
 import { useLivemapStore } from '~/store/livemap';
 import { useSettingsStore } from '~/store/settings';
 import { MarkerMarker as Marker } from '~~/gen/ts/resources/livemap/livemap';
@@ -19,17 +18,12 @@ const { livemap } = storeToRefs(settingsStore);
 </script>
 
 <template>
-    <LMarkerClusterGroup
+    <LLayerGroup
         v-for="job in jobsMarkers"
         :key="job.name"
         :name="`${$t('common.marker', 2)} ${job.label}`"
         layer-type="overlay"
         :visible="livemap.activeLayers.length === 0 || livemap.activeLayers.includes(`${$t('common.marker', 2)} ${job.label}`)"
-        :max-cluster-radius="0"
-        :disable-clustering-at-zoom="0"
-        :single-marker-mode="false"
-        :chunked-loading="true"
-        :animate="false"
     >
         <MarkerMarker
             v-for="marker in [...markersMarkers.values()].filter((p) => p.info?.job === job.name)"
@@ -39,5 +33,5 @@ const { livemap } = storeToRefs(settingsStore);
             @selected="$emit('markerSelected', marker)"
             @goto="$emit('goto', $event)"
         />
-    </LMarkerClusterGroup>
+    </LLayerGroup>
 </template>
