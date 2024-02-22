@@ -39,7 +39,7 @@ type Manager struct {
 
 	tracer trace.Tracer
 
-	bots *xsync.MapOf[string, context.CancelFunc]
+	bots *xsync.MapOf[string, *Bot]
 	js   nats.JetStreamContext
 
 	state   *manager.Manager
@@ -69,7 +69,7 @@ func NewManager(p Params) *Manager {
 
 		tracer: p.TP.Tracer("centrum-cache"),
 
-		bots:    xsync.NewMapOf[string, context.CancelFunc](),
+		bots:    xsync.NewMapOf[string, *Bot](),
 		js:      p.JS,
 		state:   p.State,
 		tracker: p.Tracker,
@@ -125,13 +125,13 @@ func (b *Manager) Start(job string) error {
 	}
 
 	b.logger.Info("starting centrum dispatch bot", zap.String("job", job))
-	bot := NewBot(b.logger.With(zap.String("job", job)), job, b.state, b.tracker)
-	ctx, cancel := context.WithCancel(b.ctx)
-	b.bots.Store(job, cancel)
+	bot := NewBot(b.ctx, b.logger.With(zap.String("job", job)), job, b.state, b.tracker)
+	b.bots.Store(job, bot)
+
 	b.wg.Add(1)
 	go func() {
 		defer b.wg.Done()
-		bot.Run(ctx)
+		bot.Run()
 	}()
 
 	metricBotActive.WithLabelValues(job).Set(1)
@@ -143,14 +143,14 @@ func (b *Manager) Stop(job string) error {
 	b.mutex.Lock()
 	defer b.mutex.Unlock()
 
-	cancel, ok := b.bots.Load(job)
+	bot, ok := b.bots.Load(job)
 	if !ok {
 		return nil
 	}
 
 	b.logger.Info("stopping centrum dispatch bot", zap.String("job", job))
 
-	cancel()
+	bot.Stop()
 
 	metricBotActive.WithLabelValues(job).Set(0)
 

@@ -22,6 +22,9 @@ const (
 )
 
 type Bot struct {
+	ctx    context.Context
+	cancel context.CancelFunc
+
 	logger *zap.Logger
 
 	job     string
@@ -31,8 +34,12 @@ type Bot struct {
 	lastAssignedUnits map[uint64]time.Time
 }
 
-func NewBot(logger *zap.Logger, job string, state *manager.Manager, tracker tracker.ITracker) *Bot {
+func NewBot(ctx context.Context, logger *zap.Logger, job string, state *manager.Manager, tracker tracker.ITracker) *Bot {
+	ctx, cancel := context.WithCancel(ctx)
+
 	return &Bot{
+		ctx:               ctx,
+		cancel:            cancel,
 		logger:            logger.Named("bot"),
 		job:               job,
 		state:             state,
@@ -41,11 +48,11 @@ func NewBot(logger *zap.Logger, job string, state *manager.Manager, tracker trac
 	}
 }
 
-func (b *Bot) Run(ctx context.Context) error {
+func (b *Bot) Run() {
 	for {
 		select {
-		case <-ctx.Done():
-			return nil
+		case <-b.ctx.Done():
+			return
 
 		case <-time.After(4 * time.Second):
 		}
@@ -63,15 +70,12 @@ func (b *Bot) Run(ctx context.Context) error {
 			centrum.StatusDispatch_STATUS_DISPATCH_ARCHIVED,
 		})
 
-		if len(dispatches) == 0 {
-			return nil
-		}
+		b.logger.Debug("trying to auto assign dispatches", zap.Int("dispatch_count", len(dispatches)))
 
 		sort.Slice(dispatches, func(i, j int) bool {
 			return dispatches[i].Id < dispatches[j].Id
 		})
 
-		b.logger.Debug("trying to auto assign dispatches", zap.Int("dispatch_count", len(dispatches)))
 		for _, dsp := range dispatches {
 			// Dispatch should be at least 5 seconds old to ensure deduplication has happened
 			if (dsp.CreatedAt != nil && time.Since(dsp.CreatedAt.AsTime()) <= 5*time.Second) ||
@@ -81,20 +85,26 @@ func (b *Bot) Run(ctx context.Context) error {
 
 			b.logger.Debug("trying to auto assign dispatch", zap.Uint64("dispatch_id", dsp.Id))
 
-			unit, ok := b.getAvailableUnit(ctx, dsp.Point())
+			unit, ok := b.getAvailableUnit(b.ctx, dsp.Point())
 			if !ok {
 				// No unit available
 				b.logger.Warn("no available units for dispatch", zap.Uint64("dispatch_id", dsp.Id))
 				break
 			}
 
-			if err := b.state.UpdateDispatchAssignments(ctx, b.job, nil, dsp.Id, []uint64{unit.Id}, nil,
+			if err := b.state.UpdateDispatchAssignments(b.ctx, b.job, nil, dsp.Id, []uint64{unit.Id}, nil,
 				b.state.DispatchAssignmentExpirationTime()); err != nil {
 				b.logger.Error("failed to assgin unit to dispatch", zap.Uint64("dispatch_id", dsp.Id), zap.Uint64("unit_id", unit.Id), zap.Error(err))
 				break
 			}
 		}
 	}
+}
+
+func (b *Bot) Stop() {
+	b.cancel()
+
+	<-b.ctx.Done()
 }
 
 func (b *Bot) getAvailableUnit(ctx context.Context, point orb.Point) (*centrum.Unit, bool) {

@@ -30,15 +30,13 @@ defineEmits<{
 const authStore = useAuthStore();
 const { activeChar } = storeToRefs(authStore);
 
-function updateMarkerColor(): void {
+function getMarkerColor(): string {
     if (activeChar !== null && props.marker.user?.userId === activeChar.value?.userId) {
-        props.marker.info!.color = '#fcab10';
+        return '#fcab10';
+    } else {
+        return props.marker.info?.color ?? '#8d81f2';
     }
 }
-
-watch(props.marker, () => updateMarkerColor());
-
-updateMarkerColor();
 
 const inverseColor = computed(() => hexToRgb(props.marker.unit?.color ?? '#8d81f2') ?? ({ r: 0, g: 0, b: 0 } as RGB));
 
@@ -64,7 +62,7 @@ const openUnit = ref(false);
         :key="`user_${marker.info!.id}`"
         :lat-lng="[marker.info!.y, marker.info!.x]"
         :name="marker.info!.name"
-        :z-index-offset="activeChar && marker.user?.identifier === activeChar?.identifier ? 30 : 20"
+        :z-index-offset="activeChar !== null && marker.user?.identifier === activeChar.identifier ? 30 : 20"
         @click="$emit('selected')"
     >
         <LIcon :icon-anchor="iconAnchor" :popup-anchor="popupAnchor" :icon-size="[size, size]">
@@ -77,7 +75,7 @@ const openUnit = ref(false);
                 >
                     {{ marker.unit?.initials }}
                 </span>
-                <MapMarkerIcon class="h-full w-full" :style="{ color: marker.info?.color ?? '#8d81f2' }" />
+                <MapMarkerIcon class="h-full w-full" :style="{ color: getMarkerColor() }" />
             </div>
             <div v-if="showUnitStatus && marker.unit" class="pointer-events-none uppercase">
                 <span class="absolute right-0 top-0 -mr-2 -mt-1.5 flex h-3 w-3">

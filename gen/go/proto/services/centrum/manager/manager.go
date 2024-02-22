@@ -5,7 +5,6 @@ import (
 	"database/sql"
 	"fmt"
 
-	"github.com/adrg/strutil/metrics"
 	eventscentrum "github.com/galexrt/fivenet/gen/go/proto/services/centrum/events"
 	"github.com/galexrt/fivenet/gen/go/proto/services/centrum/state"
 	"github.com/galexrt/fivenet/pkg/config"
@@ -59,9 +58,6 @@ type Params struct {
 
 func New(p Params) *Manager {
 	ctx, cancel := context.WithCancel(context.Background())
-
-	jw := metrics.NewJaroWinkler()
-	jw.CaseSensitive = false
 
 	s := &Manager{
 		ctx:    ctx,

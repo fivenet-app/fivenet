@@ -22,7 +22,11 @@ func (s *Manager) registerSubscriptions() error {
 func (s *Manager) watchTopicGeneral(msg *nats.Msg) {
 	job, _, tType := eventscentrum.SplitSubject(msg.Subject)
 
-	meta, _ := msg.Metadata()
+	meta, err := msg.Metadata()
+	if err != nil {
+		s.logger.Error("failed to read message metadata in centrum general topic subscription", zap.Error(err))
+		return
+	}
 	s.logger.Debug("received general message", zap.Uint64("stream_sequence_id", meta.Sequence.Stream),
 		zap.String("job", job), zap.String("type", string(tType)))
 
