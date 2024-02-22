@@ -181,17 +181,6 @@ func (s *Server) Stream(req *StreamRequest, srv LivemapperService_StreamServer) 
 		}
 	}
 
-	resp := &StreamResponse{
-		Data: &StreamResponse_Jobs{},
-	}
-	if len(markersJobs) == 0 && len(usersJobs) == 0 {
-		if err := srv.Send(resp); err != nil {
-			return err
-		}
-
-		return nil
-	}
-
 	// Prepare jobs for client response
 	jobs := &StreamResponse_Jobs{
 		Jobs: &JobsList{
@@ -199,6 +188,7 @@ func (s *Server) Stream(req *StreamRequest, srv LivemapperService_StreamServer) 
 			Users:   []*users.Job{},
 		},
 	}
+
 	for i := 0; i < len(markersJobs); i++ {
 		jobs.Jobs.Markers[i] = &users.Job{
 			Name: markersJobs[i],
@@ -212,9 +202,10 @@ func (s *Server) Stream(req *StreamRequest, srv LivemapperService_StreamServer) 
 		s.enricher.EnrichJobName(j)
 		jobs.Jobs.Users = append(jobs.Jobs.Users, j)
 	}
-	resp.Data = jobs
 
-	if err := srv.Send(resp); err != nil {
+	if err := srv.Send(&StreamResponse{
+		Data: jobs,
+	}); err != nil {
 		return err
 	}
 
@@ -226,9 +217,6 @@ func (s *Server) Stream(req *StreamRequest, srv LivemapperService_StreamServer) 
 		return err
 	}
 
-	ticker := time.NewTicker(4 * s.refreshTime)
-	defer ticker.Stop()
-
 	updateCh := s.broker.Subscribe()
 	defer s.broker.Unsubscribe(updateCh)
 
@@ -236,11 +224,6 @@ func (s *Server) Stream(req *StreamRequest, srv LivemapperService_StreamServer) 
 		select {
 		case <-srv.Context().Done():
 			return nil
-
-		case <-ticker.C:
-			if end, err := s.sendMarkerMarkers(srv, markersJobs, userInfo); end || err != nil {
-				return err
-			}
 
 		case event := <-updateCh:
 			if event.Send == MarkerUpdate {
@@ -264,6 +247,24 @@ func (s *Server) sendChunkedUserMarkers(srv LivemapperService_StreamServer, user
 		return true, errswrap.NewError(ErrStreamFailed, err)
 	}
 
+	// Less than chunk size or no markers, quick return here
+	if len(userMarkers) <= userMarkerChunkSize {
+		resp := &StreamResponse{
+			Data: &StreamResponse_Users{
+				Users: &UserMarkersUpdates{
+					Users: userMarkers,
+					Part:  0,
+				},
+			},
+		}
+
+		if err := srv.Send(resp); err != nil {
+			return true, err
+		}
+
+		return false, nil
+	}
+
 	parts := int32(len(userMarkers) / userMarkerChunkSize)
 	for userMarkerChunkSize < len(userMarkers) {
 		resp := &StreamResponse{
@@ -281,6 +282,7 @@ func (s *Server) sendChunkedUserMarkers(srv LivemapperService_StreamServer, user
 		}
 
 		userMarkers = userMarkers[userMarkerChunkSize:]
+
 		select {
 		case <-srv.Context().Done():
 			return true, nil
@@ -297,7 +299,6 @@ func (s *Server) sendChunkedUserMarkers(srv LivemapperService_StreamServer, user
 				},
 			},
 		}
-
 		if err := srv.Send(resp); err != nil {
 			return true, err
 		}
