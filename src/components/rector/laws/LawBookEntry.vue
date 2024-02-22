@@ -142,17 +142,13 @@ const editing = ref(props.startInEdit);
             </button>
             <h2 class="text-xl">{{ modelValue.name }}</h2>
             <p v-if="modelValue.description" class="pl-2">- {{ $t('common.description') }}: {{ modelValue.description }}</p>
-            <div class="pl-2">
-                <div class="w-full sm:flex-auto">
-                    <button
-                        type="button"
-                        class="rounded-md bg-primary-500 px-3 py-2 text-sm font-semibold text-neutral hover:bg-primary-400 focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-primary-500"
-                        @click="addLaw"
-                    >
-                        {{ $t('pages.rector.laws.add_new_law') }}
-                    </button>
-                </div>
-            </div>
+            <button
+                type="button"
+                class="ml-auto rounded-md bg-primary-500 px-3 py-2 text-sm font-semibold text-neutral hover:bg-primary-400 focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-primary-500"
+                @click="addLaw"
+            >
+                {{ $t('pages.rector.laws.add_new_law') }}
+            </button>
         </div>
         <form v-else class="flex w-full flex-row items-start gap-x-4 text-neutral" @submit.prevent="onSubmitThrottle">
             <button type="submit" :title="$t('common.save')">

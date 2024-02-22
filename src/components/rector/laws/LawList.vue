@@ -6,6 +6,7 @@ import DataPendingBlock from '~/components/partials/data/DataPendingBlock.vue';
 import { useCompletorStore } from '~/store/completor';
 import LawBookEntry from '~/components/rector/laws/LawBookEntry.vue';
 import type { Law } from '~~/gen/ts/resources/laws/laws';
+import GenericContainer from '~/components/partials/elements/GenericContainer.vue';
 
 const completorStore = useCompletorStore();
 
@@ -65,10 +66,10 @@ function updateLaw(law: Law): void {
             <div class="mt-2 flow-root">
                 <div class="-my-2 mx-0 overflow-x-auto">
                     <div class="inline-block min-w-full px-1 py-2 align-middle">
-                        <DataPendingBlock v-if="pending" :message="$t('common.loading', [$t('common.vehicle', 2)])" />
+                        <DataPendingBlock v-if="pending" :message="$t('common.loading', [$t('common.law', 2)])" />
                         <DataErrorBlock
                             v-else-if="error"
-                            :title="$t('common.unable_to_load', [$t('common.vehicle', 2)])"
+                            :title="$t('common.unable_to_load', [$t('common.law', 2)])"
                             :retry="refresh"
                         />
                         <DataNoDataBlock
@@ -76,19 +77,21 @@ function updateLaw(law: Law): void {
                             :icon="GavelIcon"
                             :type="$t('common.law', 2)"
                         />
-                        <div v-else>
-                            <ul role="list" class="space-y-3 divide-y divide-base-600">
+                        <template v-else>
+                            <ul role="list" class="space-y-3">
                                 <li v-for="(book, idx) in lawBooks" :key="book.id">
-                                    <LawBookEntry
-                                        v-model="lawBooks[idx]"
-                                        v-model:laws="lawBooks[idx].laws"
-                                        :start-in-edit="parseInt(book.id, 10) < 0"
-                                        @update:law="updateLaw($event)"
-                                        @deleted="deletedLawBook($event)"
-                                    />
+                                    <GenericContainer>
+                                        <LawBookEntry
+                                            v-model="lawBooks[idx]"
+                                            v-model:laws="lawBooks[idx].laws"
+                                            :start-in-edit="parseInt(book.id, 10) < 0"
+                                            @update:law="updateLaw($event)"
+                                            @deleted="deletedLawBook($event)"
+                                        />
+                                    </GenericContainer>
                                 </li>
                             </ul>
-                        </div>
+                        </template>
                     </div>
                 </div>
             </div>
