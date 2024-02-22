@@ -162,7 +162,7 @@ func (m *Manager) cleanupUserIDs(found map[int32]interface{}) error {
 			continue
 		}
 
-		// Marker has been updated 30 seconds ago, skip
+		// Marker has been updated in the latest 30 seconds, skip it
 		if marker.Info.UpdatedAt != nil && time.Since(marker.Info.UpdatedAt.AsTime()) <= 30*time.Second {
 			continue
 		}

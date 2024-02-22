@@ -124,11 +124,9 @@ func (s *Server) CompleteCitizens(ctx context.Context, req *CompleteCitizensRequ
 	}
 
 	if req.OnDuty != nil && *req.OnDuty {
-		for i := len(dest) - 1; i >= 0; i-- {
-			if !s.tracker.IsUserOnDuty(dest[i].UserId) {
-				dest = slices.Delete(dest, i, i+1)
-			}
-		}
+		dest = slices.DeleteFunc(dest, func(us *users.UserShort) bool {
+			return !s.tracker.IsUserOnDuty(us.UserId)
+		})
 	}
 
 	if currentJob {

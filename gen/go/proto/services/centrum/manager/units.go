@@ -226,20 +226,19 @@ func (s *Manager) UpdateUnitAssignments(ctx context.Context, job string, userId 
 	if err := store.ComputeUpdate(key, true, func(key string, unit *centrum.Unit) (*centrum.Unit, error) {
 		if len(toRemove) > 0 {
 			toAnnounce := []int32{}
-			for i := len(unit.Users) - 1; i >= 0; i-- {
-				if i > (len(unit.Users) - 1) {
-					break
-				}
 
+			unit.Users = slices.DeleteFunc(unit.Users, func(in *centrum.UnitAssignment) bool {
 				for k := 0; k < len(toRemove); k++ {
-					if unit.Users[i].UserId != toRemove[k] {
+					if in.UserId != toRemove[k] {
 						continue
 					}
 
 					toAnnounce = append(toAnnounce, toRemove[k])
-					unit.Users = slices.Delete(unit.Users, i, i+1)
+					return true
 				}
-			}
+
+				return false
+			})
 
 			// Send updates
 			for _, user := range toAnnounce {

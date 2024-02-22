@@ -254,24 +254,18 @@ func (s *Manager) UpdateDispatchAssignments(ctx context.Context, job string, use
 
 		if len(toRemove) > 0 {
 			toAnnounce := []uint64{}
-			for i := len(dsp.Units) - 1; i >= 0; i-- {
-				if i > (len(dsp.Units) - 1) {
-					break
-				}
-
+			dsp.Units = slices.DeleteFunc(dsp.Units, func(in *centrum.DispatchAssignment) bool {
 				for k := 0; k < len(toRemove); k++ {
-					if i > (len(dsp.Units) - 1) {
+					if in.UnitId != toRemove[k] {
 						continue
 					}
 
-					if dsp.Units[i].UnitId != toRemove[k] {
-						continue
-					}
-
-					dsp.Units = slices.Delete(dsp.Units, i, i+1)
 					toAnnounce = append(toAnnounce, toRemove[k])
+					return true
 				}
-			}
+
+				return false
+			})
 
 			// Send updates
 			for _, unitId := range toAnnounce {
@@ -822,11 +816,9 @@ func (s *Manager) TakeDispatch(ctx context.Context, job string, userId int32, un
 				status = centrum.StatusDispatch_STATUS_DISPATCH_UNIT_DECLINED
 
 				// Remove the unit's assignment
-				for i, u := range dsp.Units {
-					if u.UnitId == unit.Id {
-						dsp.Units = slices.Delete(dsp.Units, i, i+1)
-					}
-				}
+				dsp.Units = slices.DeleteFunc(dsp.Units, func(in *centrum.DispatchAssignment) bool {
+					return in.UnitId == unit.Id
+				})
 			}
 
 			if dsp.Status, err = s.AddDispatchStatus(ctx, s.db, job, &centrum.DispatchStatus{
