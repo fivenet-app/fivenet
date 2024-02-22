@@ -110,8 +110,8 @@
     "components": {
         "auth": {
             "account_info": {
-                "title": "Konto-Info",
-                "subtitle": "Deine FiveNet Konto Informationen.",
+                "title": "Konto-Informationen",
+                "subtitle": "Deine FiveNet Konto-Informationen.",
                 "license": "Identifier/ Lizenz",
                 "change_password": "Passwort ändern",
                 "change_password_button": "Konto-Passwort ändern",
@@ -226,7 +226,6 @@
         "partials": {
             "sidebar": {
                 "change_character": "Charakter wechseln",
-                "account_info": "Konto-Informationen",
                 "open_sidebar": "Seitenleiste öffnen",
                 "close_sidebar": "Seitenleiste schließen",
                 "open_usermenu": "Konto-Menü öffnen",
