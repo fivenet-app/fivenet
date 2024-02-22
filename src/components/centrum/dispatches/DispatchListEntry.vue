@@ -11,6 +11,7 @@ import CitizenInfoPopover from '~/components/partials/citizens/CitizenInfoPopove
 import GenericTime from '~/components/partials/elements/GenericTime.vue';
 import { Dispatch, StatusDispatch } from '~~/gen/ts/resources/centrum/dispatches';
 import DispatchAttributes from '~/components/centrum/partials/DispatchAttributes.vue';
+import { useSettingsStore } from '~/store/settings';
 
 const props = withDefaults(
     defineProps<{
@@ -26,11 +27,14 @@ defineEmits<{
     (e: 'goto', loc: Coordinate): void;
 }>();
 
+const settingsStore = useSettingsStore();
+const { audio: audioSettings } = storeToRefs(settingsStore);
+
 const dispatchBackground = computed(() => dispatchStatusToBGColor(props.dispatch.status?.status));
 const dispatchAnimated = computed(() => (dispatchStatusAnimate(props.dispatch.status?.status) ? 'animate-pulse' : ''));
 
 const dispatchAssistanceSound = useSound('/sounds/centrum/morse-sos.mp3', {
-    volume: 0.15,
+    volume: audioSettings.value.notificationsVolume,
 });
 const debouncedPlay = useDebounceFn(() => dispatchAssistanceSound.play(), 950);
 

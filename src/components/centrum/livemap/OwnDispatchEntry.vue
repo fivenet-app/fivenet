@@ -1,5 +1,5 @@
 <script lang="ts" setup>
-import { MapMarkerIcon } from 'mdi-vue3';
+import { CarEmergencyIcon, MapMarkerIcon } from 'mdi-vue3';
 import DispatchDetails from '~/components/centrum/dispatches/DispatchDetails.vue';
 import { dispatchStatusToBGColor } from '~/components/centrum/helpers';
 import GenericTime from '~/components/partials/elements/GenericTime.vue';
@@ -46,7 +46,10 @@ const openDetails = ref(false);
             @click="openDetails = true"
         >
             <span class="mb-0.5 flex w-full place-content-between items-center flex-col sm:flex-row sm:gap-1">
-                <span class="font-bold"> DSP-{{ dispatch.id }} </span>
+                <span class="inline-flex items-center md:gap-1 font-bold">
+                    <CarEmergencyIcon class="hidden md:block h-3 w-auto" />
+                    DSP-{{ dispatch.id }}
+                </span>
                 <span>
                     <span class="font-semibold">{{ $t('common.postal') }}:</span> <span>{{ dispatch.postal }}</span>
                 </span>

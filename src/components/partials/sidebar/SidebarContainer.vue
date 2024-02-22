@@ -146,6 +146,10 @@ function updateUserNav(): void {
                 name: 'components.partials.sidebar.account_info',
                 href: { name: 'auth-account-info' },
             },
+            {
+                name: 'components.auth.settings_panel.title',
+                href: { name: 'settings' },
+            },
             { name: 'common.sign_out', href: { name: 'auth-logout' } },
         );
     }

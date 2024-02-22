@@ -163,6 +163,10 @@
                 },
                 "app_theme": {
                     "job_default_theme": "Use Job's Theme"
+                },
+                "volumes": {
+                    "title": "Volume Control",
+                    "subtitle": "Control sound volumes."
                 }
             },
             "change_username_modal": {
@@ -815,7 +819,8 @@
         "department_postal": "Department Postal",
         "blood_type": "Blood type",
         "motd": "MOTD",
-        "fallback_mode": "Fallback Mode"
+        "fallback_mode": "Fallback Mode",
+        "volume": "Volume"
     },
     "notifications": {
         "clipboard": {

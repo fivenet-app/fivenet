@@ -27,6 +27,9 @@ export interface SettingsState {
     };
     startpage: string;
     theme: string;
+    audio: {
+        notificationsVolume: number;
+    };
 }
 
 export const useSettingsStore = defineStore('settings', {
@@ -47,6 +50,9 @@ export const useSettingsStore = defineStore('settings', {
             },
             startpage: '/overview',
             theme: JOB_THEME_KEY,
+            audio: {
+                notificationsVolume: 0.15,
+            },
         }) as SettingsState,
     persist: true,
     actions: {

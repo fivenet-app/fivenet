@@ -10,6 +10,7 @@ import { Dispatch, StatusDispatch, TakeDispatchResp } from '~~/gen/ts/resources/
 import { CentrumMode } from '~~/gen/ts/resources/centrum/settings';
 import TakeDispatchEntry from '~/components/centrum/livemap/TakeDispatchEntry.vue';
 import { isStatusDispatchCompleted } from '~/components/centrum/helpers';
+import { useSettingsStore } from '~/store/settings';
 
 defineProps<{
     open: boolean;
@@ -24,6 +25,9 @@ const { $grpc } = useNuxtApp();
 
 const centrumStore = useCentrumStore();
 const { dispatches, pendingDispatches, getCurrentMode } = storeToRefs(centrumStore);
+
+const settingsStore = useSettingsStore();
+const { audio: audioSettings } = storeToRefs(settingsStore);
 
 const selectedDispatches = ref<string[]>([]);
 const queryDispatches = ref('');
@@ -74,7 +78,7 @@ function selectDispatch(id: string, state: boolean): void {
 }
 
 const newDispatchSound = useSound('/sounds/centrum/message-incoming.mp3', {
-    volume: 0.15,
+    volume: audioSettings.value.notificationsVolume,
 });
 
 const debouncedPlay = useDebounceFn(() => newDispatchSound.play(), 2000, { maxWait: 5000 });

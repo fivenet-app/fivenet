@@ -56,7 +56,7 @@ const { startStream, stopStream } = centrumStore;
 const notifications = useNotificatorStore();
 
 const settingsStore = useSettingsStore();
-const { livemap } = storeToRefs(settingsStore);
+const { livemap, audio: audioSettings } = storeToRefs(settingsStore);
 
 const canStream = can('CentrumService.Stream');
 
@@ -257,15 +257,15 @@ onBeforeUnmount(async () => {
     centrumStore.$reset();
 });
 
-const unitCheckupStatusAge = 20 * 60 * 1000;
+const unitCheckupStatusAge = 12.5 * 60 * 1000;
 const unitCheckupStatusReping = 15 * 60 * 1000;
 
 const attentionSound = useSound('/sounds/centrum/attention.mp3', {
-    volume: 0.15,
-    playbackRate: 1.25,
+    volume: audioSettings.value.notificationsVolume,
+    playbackRate: 1.85,
 });
 
-const debouncedPlay = useDebounceFn(() => attentionSound.play(), 950);
+const attentionDebouncedPlay = useDebounceFn(() => attentionSound.play(), 950);
 
 const lastCheckupNotification = ref<Date | undefined>();
 
@@ -298,8 +298,8 @@ async function checkup(): Promise<void> {
         title: { key: 'notifications.centrum.unitUpdated.checkup.title', parameters: {} },
         content: { key: 'notifications.centrum.unitUpdated.checkup.content', parameters: {} },
         type: 'info',
-        duration: 10000,
-        callback: () => debouncedPlay(),
+        duration: 15000,
+        callback: () => attentionDebouncedPlay(),
     });
 
     lastCheckupNotification.value = now;
