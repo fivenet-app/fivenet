@@ -45,28 +45,30 @@ const openDetails = ref(false);
             class="group my-0.5 flex w-full max-w-full flex-col items-center rounded-md bg-error-700 p-2 text-xs font-medium text-neutral hover:bg-primary-100/10 hover:text-neutral hover:transition-all"
             @click="openDetails = true"
         >
-            <span class="mb-0.5 inline-flex w-full place-content-between items-center flex-col sm:flex-row">
+            <span class="mb-0.5 flex w-full place-content-between items-center flex-col sm:flex-row sm:gap-1">
                 <span class="font-bold"> DSP-{{ dispatch.id }} </span>
                 <span>
-                    <span class="font-semibold">{{ $t('common.postal') }}:</span> {{ dispatch.postal }}
+                    <span class="font-semibold">{{ $t('common.postal') }}:</span> <span>{{ dispatch.postal }}</span>
                 </span>
             </span>
-            <span class="truncate inline-flex flex-col sm:flex-row sm:gap-1">
+            <span class="mb-0.5 flex place-content-between items-center flex-col sm:flex-row sm:gap-1">
                 <span class="font-semibold">{{ $t('common.status') }}:</span>
-                <span :class="dispatchStatusToBGColor(dispatch.status?.status)">{{
+                <span class="break-words line-clamp-2" :class="dispatchStatusToBGColor(dispatch.status?.status)">{{
                     $t(`enums.centrum.StatusDispatch.${StatusDispatch[dispatch.status?.status ?? 0]}`)
                 }}</span>
             </span>
-            <span class="mt-1 inline-flex flex-col sm:flex-row sm:gap-1">
+            <span class="inline-flex flex-col sm:flex-row sm:gap-1 line-clamp-2">
                 <span class="font-semibold">{{ $t('common.sent_by') }}:</span>
-                <span v-if="dispatch.anon">
-                    {{ $t('common.anon') }}
-                </span>
-                <template v-else-if="dispatch.creator">
-                    {{ dispatch.creator.firstname }} {{ dispatch.creator.lastname }}
-                </template>
-                <span v-else>
-                    {{ $t('common.unknown') }}
+                <span>
+                    <template v-if="dispatch.anon">
+                        {{ $t('common.anon') }}
+                    </template>
+                    <template v-else-if="dispatch.creator">
+                        {{ dispatch.creator.firstname }} {{ dispatch.creator.lastname }}
+                    </template>
+                    <template v-else>
+                        {{ $t('common.unknown') }}
+                    </template>
                 </span>
             </span>
             <span class="inline-flex flex-col sm:flex-row sm:gap-1">
