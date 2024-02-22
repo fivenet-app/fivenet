@@ -37,10 +37,7 @@ function updateMarkerColor(): void {
     }
 }
 
-watchDebounced(props.marker, () => updateMarkerColor(), {
-    debounce: 75,
-    maxWait: 250,
-});
+watch(props.marker, () => updateMarkerColor());
 
 updateMarkerColor();
 

@@ -31,7 +31,7 @@ import (
 )
 
 const (
-	userMarkerChunkSize = 30
+	userMarkerChunkSize = 20
 )
 
 var (

@@ -74,7 +74,6 @@ export const useLivemapStore = defineStore('livemap', {
 
                 const foundUsers: string[] = [];
 
-                const start = performance.now();
                 for await (const resp of call.responses) {
                     this.error = undefined;
 
@@ -126,9 +125,6 @@ export const useLivemapStore = defineStore('livemap', {
                     } else {
                         console.warn('Centrum: Unknown data received - Kind: ' + resp.data.oneofKind);
                     }
-
-                    const end = performance.now();
-                    console.debug('Livemap: Time since stream start ' + (end - start) + 'ms');
                 }
             } catch (e) {
                 const error = e as RpcError;
