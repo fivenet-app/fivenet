@@ -194,7 +194,7 @@ const themes = [
                 <template #default>
                     <label for="minmax-range" class="block mb-2 text-sm font-medium text-gray-900 dark:text-white">
                         {{ $t('common.volume') }}:
-                        {{ audio.notificationsVolume <= 0 ? 0 : (audio.notificationsVolume * 100).toFixed(0) }}
+                        {{ audio.notificationsVolume <= 0 ? 0 : (audio.notificationsVolume * 100).toFixed(0) }}%
                     </label>
                     <input
                         v-model="audio.notificationsVolume"
