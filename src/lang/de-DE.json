@@ -331,11 +331,11 @@
             },
             "create_marker": {
                 "title": "Markierung erstellen",
-                "sub_title": "Neue Markierung erstellen."
+                "subtitle": "Neue Markierung erstellen."
             },
             "update_marker": {
                 "title": "Markierung aktualisieren",
-                "sub_title": "Existierende Markierung aktualisieren."
+                "subtitle": "Existierende Markierung aktualisieren."
             },
             "show_unit_names": "Zeige Einheiten Namen (gilt nur für Karten-Ansicht)",
             "show_unit_status": "Zeige Einheiten Status Farbe",
@@ -389,14 +389,14 @@
         "centrum": {
             "create_dispatch": {
                 "title": "Einsatz Erstellen",
-                "sub_title": "Neuen Einsatz erstellen."
+                "subtitle": "Neuen Einsatz erstellen."
             },
             "assign_dispatch": {
                 "title": "Einsatz Zuweisen"
             },
             "take_dispatch": {
                 "title": "Einsatz Annehmen",
-                "sub_title": "Übernehme zugewiesene Einsätze schnell und einfach."
+                "subtitle": "Übernehme zugewiesene Einsätze schnell und einfach."
             },
             "update_dispatch_status": {
                 "title": "Aktualisiere Einsatz Status"
@@ -526,7 +526,7 @@
             "unread": "Ungelesen"
         },
         "about": {
-            "sub_title": "Über FiveNet und seine Ersteller.",
+            "subtitle": "Über FiveNet und seine Ersteller.",
             "introduction": {
                 "pre_title": "Mehr Zeit für GTA V Roleplay.",
                 "title": "Ein besserer Arbeitsablauf",
@@ -570,7 +570,7 @@
             "join_discord": "Tritt dem Discord-Server von Galexrt bei",
             "licenses_list": "FiveNet Lizenz und Liste der genutzten Third-Party Lizenzen",
             "licenses": {
-                "sub_title": "Liste und Informationen zu den Lizenzen des in FiveNet verwendeten Code, Bibliotheken und Medien."
+                "subtitle": "Liste und Informationen zu den Lizenzen des in FiveNet verwendeten Code, Bibliotheken und Medien."
             }
         }
     },

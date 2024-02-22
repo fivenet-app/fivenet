@@ -331,11 +331,11 @@
             },
             "create_marker": {
                 "title": "Create Marker",
-                "sub_title": "Create a new Marker."
+                "subtitle": "Create a new Marker."
             },
             "update_marker": {
                 "title": "Update Marker",
-                "sub_title": "Update existing Marker."
+                "subtitle": "Update existing Marker."
             },
             "show_unit_names": "Show Unit Names (only affects Map)",
             "show_unit_status": "Show Unit Status Color",
@@ -351,7 +351,10 @@
                 "discord_guild_id": "Discord Guild/ Server ID",
                 "invite_bot": "Invite Bot",
                 "last_sync": "Last Sync",
-                "discord_sync_settings": "Discord Sync Settings",
+                "discord_sync_settings": {
+                    "title": "Discord Sync Settings",
+                    "subtitle": "Manage the Discord Bot Sync settings."
+                },
                 "user_info_sync": "User Info Sync (Names and Job Grade Roles)",
                 "user_info_sync_settings": {
                     "employee_role_enabled": "Create and manage Employee Role",
@@ -389,14 +392,14 @@
         "centrum": {
             "create_dispatch": {
                 "title": "Create Dispatch",
-                "sub_title": "Create a new Dispatch."
+                "subtitle": "Create a new Dispatch."
             },
             "assign_dispatch": {
                 "title": "Assign Dispatch"
             },
             "take_dispatch": {
                 "title": "Take Dispatches",
-                "sub_title": "Take assigned dispatches quickly or take dispatches normally."
+                "subtitle": "Take assigned dispatches quickly or take dispatches normally."
             },
             "update_dispatch_status": {
                 "title": "Update Dispatch Status"
@@ -526,7 +529,7 @@
             "unread": "Unread"
         },
         "about": {
-            "sub_title": "About FiveNet and it's creators.",
+            "subtitle": "About FiveNet and it's creators.",
             "introduction": {
                 "pre_title": "More time for GTA V RolePlay.",
                 "title": "A better workflow",
@@ -570,7 +573,7 @@
             "join_discord": "Join Galexrt Discord server",
             "licenses_list": "FiveNet License and list of third-party licenses used",
             "licenses": {
-                "sub_title": "List and information about the Licenses of code, libraries and software, used by FiveNet."
+                "subtitle": "List and information about the Licenses of code, libraries and software, used by FiveNet."
             }
         }
     },

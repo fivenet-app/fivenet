@@ -179,7 +179,7 @@ const themes = [
         </template>
     </GenericContainerPanel>
 
-    <GenericContainerPanel>
+    <GenericContainerPanel class="mt-3">
         <template #title>
             {{ $t('components.auth.settings_panel.volumes.title') }}
         </template>

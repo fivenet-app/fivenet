@@ -204,7 +204,7 @@ const onSubmitThrottle = useThrottleFn(async (e) => {
                                             </div>
                                             <div class="mt-1">
                                                 <p class="text-sm text-primary-300">
-                                                    {{ $t('components.livemap.create_marker.sub_title') }}
+                                                    {{ $t('components.livemap.create_marker.subtitle') }}
                                                 </p>
                                             </div>
                                         </div>

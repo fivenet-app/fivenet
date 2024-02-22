@@ -49,7 +49,7 @@ const faqs = [
                         {{ $t('common.about') }}
                     </h2>
                     <p class="mt-6 text-lg leading-8 text-gray-300">
-                        {{ $t('components.about.sub_title') }}
+                        {{ $t('components.about.subtitle') }}
                     </p>
                 </div>
             </div>

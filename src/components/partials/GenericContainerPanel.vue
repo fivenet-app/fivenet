@@ -1,7 +1,7 @@
 <script lang="ts" setup></script>
 
 <template>
-    <div class="mt-3 overflow-hidden bg-base-800 text-neutral shadow sm:rounded-lg">
+    <div class="m-2 overflow-hidden bg-base-800 text-neutral shadow sm:rounded-lg">
         <div id="settings" class="px-4 py-5 sm:px-6">
             <h3 class="text-base font-semibold leading-6">
                 <slot name="title" />

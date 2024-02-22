@@ -121,7 +121,7 @@ const onSubmitThrottle = useThrottleFn(async (e) => {
                                             </div>
                                             <div class="mt-1">
                                                 <p class="text-sm text-primary-300">
-                                                    {{ $t('components.centrum.create_dispatch.sub_title') }}
+                                                    {{ $t('components.centrum.create_dispatch.subtitle') }}
                                                 </p>
                                             </div>
                                         </div>
