@@ -7,6 +7,7 @@ import PhoneNumberBlock from '~/components/partials/citizens/PhoneNumberBlock.vu
 import { unitStatusToBGColor } from '~/components/centrum/helpers';
 import type { UserMarker } from '~~/gen/ts/resources/livemap/livemap';
 import { useAuthStore } from '~/store/auth';
+import { useCentrumStore } from '~/store/centrum';
 
 const props = withDefaults(
     defineProps<{
@@ -30,6 +31,9 @@ defineEmits<{
 const authStore = useAuthStore();
 const { activeChar } = storeToRefs(authStore);
 
+const centrumStore = useCentrumStore();
+const { units } = storeToRefs(centrumStore);
+
 function getMarkerColor(): string {
     if (activeChar !== null && props.marker.user?.userId === activeChar.value?.userId) {
         return '#fcab10';
@@ -38,21 +42,24 @@ function getMarkerColor(): string {
     }
 }
 
-const inverseColor = computed(() => hexToRgb(props.marker.unit?.color ?? '#8d81f2') ?? ({ r: 0, g: 0, b: 0 } as RGB));
+const unit = computed(() => (props.marker.unitId !== undefined ? units.value.get(props.marker.unitId) : undefined));
+const inverseColor = computed(() => {
+    return hexToRgb(unit.value?.color ?? '#8d81f2') ?? ({ r: 0, g: 0, b: 0 } as RGB);
+});
 
-const hasUnit = computed(() => props.showUnitNames && props.marker.unit !== undefined);
+const hasUnit = computed(() => props.showUnitNames && props.marker.unitId !== undefined);
 const iconAnchor = computed<PointExpression | undefined>(() => [props.size / 2, props.size * (hasUnit.value ? 1.8 : 0.95)]);
 const popupAnchor = computed<PointExpression>(() => (hasUnit.value ? [0, -(props.size * 1.7)] : [0, -(props.size * 0.8)]));
 
-const unitStatusColor = computed(() => unitStatusToBGColor(props.marker.unit?.status?.status ?? 0));
+const unitStatusColor = computed(() => unitStatusToBGColor(unit.value?.status?.status ?? 0));
 
 const openUnit = ref(false);
 </script>
 
 <template>
     <UnitDetails
-        v-if="hasUnit && marker.unit !== undefined"
-        :unit="marker.unit"
+        v-if="hasUnit && unit !== undefined"
+        :unit="unit"
         :open="openUnit"
         @close="openUnit = false"
         @goto="$emit('goto', $event)"
@@ -130,10 +137,8 @@ const openUnit = ref(false);
                         marker.user?.jobGrade
                     }})
                 </li>
-                <li v-if="marker.unit">
-                    <span class="font-semibold">{{ $t('common.unit') }}:</span> {{ marker.unit.name }} ({{
-                        marker.unit.initials
-                    }})
+                <li v-if="unit">
+                    <span class="font-semibold">{{ $t('common.unit') }}:</span> {{ unit.name }} ({{ unit.initials }})
                 </li>
             </ul>
         </LPopup>
