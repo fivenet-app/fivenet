@@ -143,7 +143,7 @@ function updateUserNav(): void {
     if (accessToken.value) {
         userNavigation.value.push(
             {
-                name: 'components.partials.sidebar.account_info',
+                name: 'components.auth.account_info.title',
                 href: { name: 'auth-account-info' },
             },
             {

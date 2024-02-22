@@ -226,7 +226,6 @@
         "partials": {
             "sidebar": {
                 "change_character": "Change Character",
-                "account_info": "Account Info",
                 "open_sidebar": "Open Sidebar",
                 "close_sidebar": "Close Sidebar",
                 "open_usermenu": "Open user menu",
