@@ -25,7 +25,6 @@ type ownedVehiclesTable struct {
 	Stored    mysql.ColumnBool
 	Carseller mysql.ColumnInteger
 	Owners    mysql.ColumnString
-	Storage   mysql.ColumnString
 	Trunk     mysql.ColumnString
 	Glovebox  mysql.ColumnString
 
@@ -76,11 +75,10 @@ func newOwnedVehiclesTableImpl(schemaName, tableName, alias string) ownedVehicle
 		StoredColumn    = mysql.BoolColumn("stored")
 		CarsellerColumn = mysql.IntegerColumn("carseller")
 		OwnersColumn    = mysql.StringColumn("owners")
-		StorageColumn   = mysql.StringColumn("storage")
 		TrunkColumn     = mysql.StringColumn("trunk")
 		GloveboxColumn  = mysql.StringColumn("glovebox")
-		allColumns      = mysql.ColumnList{OwnerColumn, PlateColumn, ModelColumn, VehicleColumn, TypeColumn, StoredColumn, CarsellerColumn, OwnersColumn, StorageColumn, TrunkColumn, GloveboxColumn}
-		mutableColumns  = mysql.ColumnList{OwnerColumn, ModelColumn, VehicleColumn, TypeColumn, StoredColumn, CarsellerColumn, OwnersColumn, StorageColumn, TrunkColumn, GloveboxColumn}
+		allColumns      = mysql.ColumnList{OwnerColumn, PlateColumn, ModelColumn, VehicleColumn, TypeColumn, StoredColumn, CarsellerColumn, OwnersColumn, TrunkColumn, GloveboxColumn}
+		mutableColumns  = mysql.ColumnList{OwnerColumn, ModelColumn, VehicleColumn, TypeColumn, StoredColumn, CarsellerColumn, OwnersColumn, TrunkColumn, GloveboxColumn}
 	)
 
 	return ownedVehiclesTable{
@@ -95,7 +93,6 @@ func newOwnedVehiclesTableImpl(schemaName, tableName, alias string) ownedVehicle
 		Stored:    StoredColumn,
 		Carseller: CarsellerColumn,
 		Owners:    OwnersColumn,
-		Storage:   StorageColumn,
 		Trunk:     TrunkColumn,
 		Glovebox:  GloveboxColumn,
 
