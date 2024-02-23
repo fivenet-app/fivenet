@@ -359,12 +359,12 @@
   resolved "https://registry.yarnpkg.com/@csstools/utilities/-/utilities-1.0.0.tgz#42f3c213f2fb929324d465684ab9f46a0febd4bb"
   integrity sha512-tAgvZQe/t2mlvpNosA4+CkMiZ2azISW5WPAcdSalZlEjQvUfghHxfQcrCiK/7/CrfAWVxyM88kGFYO82heIGDg==
 
-"@dargmuesli/nuxt-cookie-control@7.2.7":
-  version "7.2.7"
-  resolved "https://registry.yarnpkg.com/@dargmuesli/nuxt-cookie-control/-/nuxt-cookie-control-7.2.7.tgz#87b3fff03b00cdc2c5181b65ca1f67940d01f9e6"
-  integrity sha512-W8Cv2trKy1MnnJ6F2plCOkZy1hUh3R2ag48f/HOL5HvHJ2h2Hjgcjr2t8EzPxW4rRnp7jdxeM2BcNmlJYXaj6A==
+"@dargmuesli/nuxt-cookie-control@7.3.0":
+  version "7.3.0"
+  resolved "https://registry.yarnpkg.com/@dargmuesli/nuxt-cookie-control/-/nuxt-cookie-control-7.3.0.tgz#9287c95dac120e2233d324d5e9cec52280ef7743"
+  integrity sha512-jjvOc9807aRU5tjxjjS4Wq1nDs7FVMqWhXlt3ikjDACj8MKN7Q95CiU6vM5olAjIWCOn8xVxOLdJH1CfDCN5IQ==
   dependencies:
-    "@nuxt/kit" "3.10.2"
+    "@nuxt/kit" "3.10.3"
     "@sindresorhus/slugify" "^2.2.1"
     css-vars-ponyfill "^2.4.8"
     string-replace-loader "^3.1.0"
