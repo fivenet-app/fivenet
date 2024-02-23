@@ -53,7 +53,11 @@ if (props.notification.callback !== undefined) {
                             class="mt-1 text-sm leading-5 underline"
                             @click="notification.onClick(notification.data)"
                         >
-                            {{ $t('common.click_here') }}
+                            {{
+                                notification.onClickText
+                                    ? $t(notification.onClickText.key, notification.onClickText.parameters ?? {})
+                                    : $t('common.click_here')
+                            }}
                         </button>
                     </div>
                     <div class="ml-4 flex flex-shrink-0">

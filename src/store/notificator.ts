@@ -48,6 +48,7 @@ export const useNotificatorStore = defineStore('notifications', {
             position = 'top-right',
             callback = undefined,
             onClick = undefined,
+            onClickText = undefined,
         }: NotificationConfig) {
             const id = uuidv4();
             this.notifications.unshift({
@@ -60,6 +61,7 @@ export const useNotificatorStore = defineStore('notifications', {
                 position,
                 callback,
                 onClick,
+                onClickText,
             });
 
             if (autoClose) {

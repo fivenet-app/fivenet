@@ -22,6 +22,7 @@ import (
 	"github.com/galexrt/fivenet/pkg/server/admin"
 	"github.com/galexrt/fivenet/pkg/server/api"
 	"github.com/galexrt/fivenet/pkg/server/audit"
+	"github.com/galexrt/fivenet/pkg/server/filestore"
 	"github.com/galexrt/fivenet/pkg/server/images"
 	"github.com/galexrt/fivenet/pkg/server/oauth2"
 	"github.com/galexrt/fivenet/pkg/storage"
@@ -154,6 +155,7 @@ func getFxBaseOpts() []fx.Option {
 			server.AsService(api.New),
 			server.AsService(oauth2.New),
 			server.AsService(images.New),
+			server.AsService(filestore.New),
 		),
 
 		// GRPC Services

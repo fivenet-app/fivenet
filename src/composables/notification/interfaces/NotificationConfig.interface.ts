@@ -13,4 +13,5 @@ export interface NotificationConfig {
     position?: NotificationPosition;
     callback?: () => Promise<any>;
     onClick?: () => Promise<any>;
+    onClickText?: TranslateItem;
 }

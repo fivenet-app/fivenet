@@ -93,17 +93,17 @@ export class GRPCClients {
         const { $loading } = useNuxtApp();
         $loading.errored();
 
-        let traceId = 'UNKNOWN';
-        if (err.meta !== undefined && err.meta['x-trace-id'] !== undefined) {
-            traceId = err.meta['x-trace-id'] as string;
-        }
-
         const notification = {
             id: '',
             type: 'error',
             title: { key: 'notifications.grpc_errors.internal.title', parameters: {} },
             content: { key: err.message ?? 'Unknown error', parameters: {} },
         } as Notification;
+
+        let traceId = 'UNKNOWN';
+        if (err.meta !== undefined && err.meta['x-trace-id'] !== undefined) {
+            traceId = err.meta['x-trace-id'] as string;
+        }
 
         if (err.code !== undefined) {
             const route = useRoute();
@@ -146,6 +146,13 @@ export class GRPCClients {
                         key: 'notifications.grpc_errors.default.content',
                         parameters: { msg: err.message, code: err.code.valueOf() },
                     };
+                    notification.onClick = async () =>
+                        copyToClipboardWrapper(
+                            `## Error occured at ${new Date().toLocaleDateString()}:
+**Service/Method**: ${err.serviceName}/${err.methodName} => ${err.code}
+**Message**: ${err.message}
+**TraceID**: ${traceId}`,
+                        );
                     break;
             }
         }
@@ -168,6 +175,8 @@ export class GRPCClients {
             type: notification.type,
             title: notification.title,
             content: notification.content,
+            onClick: notification.onClick,
+            onClickText: { key: 'pages.error.copy_error', parameters: {} },
         });
 
         return true;
