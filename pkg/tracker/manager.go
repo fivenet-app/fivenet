@@ -93,7 +93,7 @@ func NewManager(p ManagerParams) (*Manager, error) {
 			return err
 		}
 
-		if err := userStore.Start(ctx); err != nil {
+		if err := userStore.Start(m.ctx); err != nil {
 			return err
 		}
 
@@ -123,13 +123,13 @@ func (m *Manager) start() {
 			return
 
 		case <-time.After(m.refreshTime):
-			m.refreshCache()
+			m.refreshCache(m.ctx)
 		}
 	}
 }
 
-func (m *Manager) refreshCache() {
-	ctx, span := m.tracer.Start(m.ctx, "tracker-refresh")
+func (m *Manager) refreshCache(ctx context.Context) {
+	ctx, span := m.tracer.Start(ctx, "tracker-refresh")
 	defer span.End()
 
 	if err := m.refreshUserLocations(ctx); err != nil {
@@ -214,10 +214,7 @@ func (m *Manager) refreshUserLocations(ctx context.Context) error {
 		).
 		WHERE(jet.AND(
 			tLocs.Hidden.IS_FALSE(),
-			jet.OR(
-				tLocs.UpdatedAt.IS_NULL(),
-				tLocs.UpdatedAt.GT_EQ(jet.CURRENT_TIMESTAMP().SUB(jet.INTERVAL(4, jet.HOUR))),
-			),
+			tLocs.UpdatedAt.GT_EQ(jet.CURRENT_TIMESTAMP().SUB(jet.INTERVAL(4, jet.HOUR))),
 		))
 
 	var dest []*livemap.UserMarker

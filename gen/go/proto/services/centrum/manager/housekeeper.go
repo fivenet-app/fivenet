@@ -721,6 +721,7 @@ func (s *Housekeeper) checkUnitUsers(ctx context.Context) error {
 
 func (s *Housekeeper) watchUserChanges() {
 	userCh := s.tracker.Subscribe()
+	defer s.tracker.Unsubscribe(userCh)
 
 	for {
 		select {

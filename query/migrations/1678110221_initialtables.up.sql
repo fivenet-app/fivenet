@@ -234,7 +234,7 @@ CREATE TABLE IF NOT EXISTS `fivenet_user_locations` (
   `x` decimal(24,14) DEFAULT NULL,
   `y` decimal(24,14) DEFAULT NULL,
   `hidden` tinyint(1) DEFAULT NULL,
-  `updated_at` datetime(3) DEFAULT NULL ON UPDATE CURRENT_TIMESTAMP(3),
+  `updated_at` datetime(3) DEFAULT CURRENT_TIMESTAMP(3) ON UPDATE CURRENT_TIMESTAMP(3),
   PRIMARY KEY (`identifier`),
   KEY `idx_fivenet_user_locations_job` (`job`),
   CONSTRAINT `fk_fivenet_user_locations_identifier` FOREIGN KEY (`identifier`) REFERENCES `users` (`identifier`) ON DELETE CASCADE ON UPDATE CASCADE

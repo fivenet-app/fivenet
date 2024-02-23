@@ -332,3 +332,18 @@ func (s *Store[T, U]) Start(ctx context.Context) error {
 func (s *Store[T, U]) GetBucket() string {
 	return s.bucket
 }
+
+func (s *Store[T, U]) List() ([]U, error) {
+	list := []U{}
+
+	s.data.Range(func(key string, value U) bool {
+		if value == nil {
+			return true
+		}
+
+		list = append(list, value)
+		return true
+	})
+
+	return list, nil
+}

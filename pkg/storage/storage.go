@@ -18,7 +18,7 @@ var Module = fx.Module("storage",
 )
 
 type IStorage interface {
-	Get(ctx context.Context, filePath string) (Object, error)
+	Get(ctx context.Context, filePath string) (IObject, error)
 	Put(ctx context.Context, filePath string, reader io.Reader, size int64, contentType string) (string, error)
 	Delete(ctx context.Context, filePath string) error
 }
@@ -60,14 +60,24 @@ func (s *Storage) WithPrefix(prefix string) *Storage {
 	}
 }
 
-func (s *Storage) Get(ctx context.Context, filePath string) (Object, error) {
+func (s *Storage) Get(ctx context.Context, filePath string) (IObject, IObjectInfo, error) {
 	filePath = path.Join(s.prefix, filePath)
 	object, err := s.s3.GetObject(ctx, s.bucketName, filePath, minio.GetObjectOptions{})
 	if err != nil {
-		return nil, err
+		return nil, nil, err
 	}
 
-	return object, nil
+	// Retrieve object info
+	info, err := object.Stat()
+	if err != nil {
+		return nil, nil, err
+	}
+
+	return object, &ObjectInfo{
+		contentType: info.ContentType,
+		size:        info.Size,
+		expiration:  info.Expiration,
+	}, nil
 }
 
 // Put the file path must end with a file extension (e.g., `jpg`, `png`)

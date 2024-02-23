@@ -52,6 +52,7 @@ import (
 	"github.com/galexrt/fivenet/gen/go/proto/services/centrum/bot"
 	"github.com/galexrt/fivenet/gen/go/proto/services/centrum/manager"
 	"github.com/galexrt/fivenet/gen/go/proto/services/centrum/state"
+	"github.com/galexrt/fivenet/gen/go/proto/services/jobs/timeclock"
 )
 
 type Context struct{}
@@ -95,6 +96,7 @@ func (c *WorkerCmd) Run(ctx *Context) error {
 	}
 	if c.ModuleUserTracker {
 		fxOpts = append(fxOpts, fx.Invoke(func(*tracker.Manager) {}))
+		fxOpts = append(fxOpts, fx.Invoke(func(*timeclock.Manager) {}))
 	}
 
 	fx.New(fxOpts...).Run()
@@ -149,8 +151,10 @@ func getFxBaseOpts() []fx.Option {
 			tracker.New,
 			userinfo.NewUIRetriever,
 			postals.New,
+			timeclock.New,
 		),
 
+		// HTTP Services
 		fx.Provide(
 			server.AsService(api.New),
 			server.AsService(oauth2.New),

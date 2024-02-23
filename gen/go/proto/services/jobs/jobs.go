@@ -13,7 +13,6 @@ import (
 	"github.com/galexrt/fivenet/pkg/mstlystcdata"
 	"github.com/galexrt/fivenet/pkg/perms"
 	"github.com/galexrt/fivenet/pkg/server/audit"
-	"github.com/galexrt/fivenet/pkg/tracker"
 	"github.com/galexrt/fivenet/query/fivenet/model"
 	"github.com/galexrt/fivenet/query/fivenet/table"
 	jet "github.com/go-jet/jet/v2/mysql"
@@ -36,7 +35,6 @@ type Server struct {
 	JobsRequestsServiceServer
 	JobsTimeclockServiceServer
 
-	ctx    context.Context
 	logger *zap.Logger
 	wg     sync.WaitGroup
 
@@ -45,7 +43,6 @@ type Server struct {
 	p        perms.Permissions
 	enricher *mstlystcdata.UserAwareEnricher
 	auditer  audit.IAuditer
-	tracker  tracker.ITracker
 }
 
 type Params struct {
@@ -59,14 +56,10 @@ type Params struct {
 	Perms             perms.Permissions
 	UserAwareEnricher *mstlystcdata.UserAwareEnricher
 	Audit             audit.IAuditer
-	Tracker           tracker.ITracker
 }
 
 func NewServer(p Params) *Server {
-	ctx, cancel := context.WithCancel(context.Background())
-
 	s := &Server{
-		ctx:    ctx,
 		logger: p.Logger.Named("jobs"),
 		wg:     sync.WaitGroup{},
 
@@ -76,26 +69,7 @@ func NewServer(p Params) *Server {
 		p:        p.Perms,
 		enricher: p.UserAwareEnricher,
 		auditer:  p.Audit,
-		tracker:  p.Tracker,
 	}
-
-	p.LC.Append(fx.StartHook(func(_ context.Context) error {
-		s.wg.Add(1)
-		go func() {
-			defer s.wg.Done()
-			s.runTimeclock()
-		}()
-
-		return nil
-	}))
-
-	p.LC.Append(fx.StopHook(func(_ context.Context) error {
-		cancel()
-
-		s.wg.Wait()
-
-		return nil
-	}))
 
 	return s
 }
