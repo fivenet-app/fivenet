@@ -1138,7 +1138,7 @@
     unimport "^3.7.1"
     untyped "^1.4.2"
 
-"@nuxt/kit@3.10.3", "@nuxt/kit@^3.0.0", "@nuxt/kit@^3.1.0", "@nuxt/kit@^3.5.0", "@nuxt/kit@^3.7.4", "@nuxt/kit@^3.8.0", "@nuxt/kit@^3.8.2", "@nuxt/kit@^3.9.1", "@nuxt/kit@^3.9.3":
+"@nuxt/kit@3.10.3", "@nuxt/kit@^3.0.0", "@nuxt/kit@^3.1.0", "@nuxt/kit@^3.10.2", "@nuxt/kit@^3.5.0", "@nuxt/kit@^3.7.4", "@nuxt/kit@^3.8.0", "@nuxt/kit@^3.8.2", "@nuxt/kit@^3.9.1", "@nuxt/kit@^3.9.3":
   version "3.10.3"
   resolved "https://registry.yarnpkg.com/@nuxt/kit/-/kit-3.10.3.tgz#911bc431d9b7541a7269e9e63333f70c8ecb5fd6"
   integrity sha512-PUjYB9Mvx0qD9H1QZBwwtY4fLlCLET+Mm9BVqUOtXCaGoXd6u6BE4e/dGFPk2UEKkIcDGrUMSbqkHYvsEuK9NQ==
@@ -7005,12 +7005,12 @@ nuxi@3.10.1, nuxi@^3.10.1:
   optionalDependencies:
     fsevents "~2.3.3"
 
-nuxt-typed-router@3.6.0:
-  version "3.6.0"
-  resolved "https://registry.yarnpkg.com/nuxt-typed-router/-/nuxt-typed-router-3.6.0.tgz#c9603a31f81d10d4a8cc65e2ac8d80024da8db46"
-  integrity sha512-GLlg+CwHS0JLf9+mdkL75mgcwnUlGgv0MZyg7vvjIV5Zq0tq9Bwu/X7v0iPEZrM/0r9zAK4DmPzq21KnRlvPSg==
+nuxt-typed-router@3.6.1:
+  version "3.6.1"
+  resolved "https://registry.yarnpkg.com/nuxt-typed-router/-/nuxt-typed-router-3.6.1.tgz#f91950db919e1dc14423951845d8bee6a975f48f"
+  integrity sha512-eQMwBF81krzNzbOr+dNlHi60CmDAvp/T3ViwT7KX1orbM1TC1WeDT0SV1IR+D5hLM5dYoJRXvCtOM0Aouq74xg==
   dependencies:
-    "@nuxt/kit" "3.10.2"
+    "@nuxt/kit" "^3.10.2"
     chalk "5.3.0"
     defu "6.1.4"
     lodash-es "4.17.21"
