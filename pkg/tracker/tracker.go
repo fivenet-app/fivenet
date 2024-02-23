@@ -104,6 +104,10 @@ func New(p Params) (ITracker, error) {
 	}
 
 	p.LC.Append(fx.StartHook(func(_ context.Context) error {
+		if err := registerStreams(ctx, p.JS); err != nil {
+			return err
+		}
+
 		go broker.Start()
 
 		if err := userIDs.Start(ctx); err != nil {

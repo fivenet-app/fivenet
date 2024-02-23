@@ -5,15 +5,8 @@ import (
 
 	"github.com/galexrt/fivenet/pkg/config"
 	"github.com/gin-gonic/gin"
-	"go.uber.org/fx"
 	"go.uber.org/zap"
 	"willnorris.com/go/imageproxy"
-)
-
-var Module = fx.Module("image_proxy",
-	fx.Provide(
-		New,
-	),
 )
 
 type ImageProxy struct {
@@ -22,16 +15,20 @@ type ImageProxy struct {
 	options config.ImageProxyOptions
 }
 
-func New(logger *zap.Logger, cfg *config.Config) (*ImageProxy, error) {
+func New(logger *zap.Logger, cfg *config.Config) *ImageProxy {
+	if !cfg.ImageProxy.Enabled {
+		return nil
+	}
+
 	ip := &ImageProxy{
 		logger:  logger,
 		options: cfg.ImageProxy.Options,
 	}
 
-	return ip, nil
+	return ip
 }
 
-func (p *ImageProxy) Register(e *gin.Engine) {
+func (p *ImageProxy) RegisterHTTP(e *gin.Engine) {
 	// Image Proxy
 	proxy := imageproxy.NewProxy(http.DefaultTransport, imageproxy.NopCache)
 	proxy.Logger = zap.NewStdLog(p.logger.Named("image_proxy"))

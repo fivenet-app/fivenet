@@ -20,8 +20,10 @@ import (
 	"github.com/galexrt/fivenet/pkg/sentry"
 	"github.com/galexrt/fivenet/pkg/server"
 	"github.com/galexrt/fivenet/pkg/server/admin"
+	"github.com/galexrt/fivenet/pkg/server/api"
 	"github.com/galexrt/fivenet/pkg/server/audit"
 	"github.com/galexrt/fivenet/pkg/server/images"
+	"github.com/galexrt/fivenet/pkg/server/oauth2"
 	"github.com/galexrt/fivenet/pkg/storage"
 	"github.com/galexrt/fivenet/pkg/tracker"
 	"github.com/galexrt/fivenet/query"
@@ -117,8 +119,8 @@ func getFxBaseOpts() []fx.Option {
 		htmlsanitizer.Module,
 		config.Module,
 		admin.Module,
+		server.HTTPEngineModule,
 		server.HTTPServerModule,
-		images.Module,
 		grpc.ServerModule,
 		server.TracerProviderModule,
 		auth.AuthModule,
@@ -146,6 +148,12 @@ func getFxBaseOpts() []fx.Option {
 			tracker.New,
 			userinfo.NewUIRetriever,
 			postals.New,
+		),
+
+		fx.Provide(
+			server.AsService(api.New),
+			server.AsService(oauth2.New),
+			server.AsService(images.New),
 		),
 
 		// GRPC Services

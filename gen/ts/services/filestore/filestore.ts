@@ -27,6 +27,10 @@ export interface UploadRequest {
      * @generated from protobuf field: bytes data = 3;
      */
     data: Uint8Array;
+    /**
+     * @generated from protobuf field: optional bool replace = 4;
+     */
+    replace?: boolean;
 }
 /**
  * @generated from protobuf message services.filestore.UploadResponse
@@ -37,9 +41,27 @@ export interface UploadResponse {
      */
     status: UploadStatus;
     /**
-     * @generated from protobuf field: optional string url = 2;
+     * @generated from protobuf field: optional uint64 id = 2;
+     */
+    id?: bigint;
+    /**
+     * @generated from protobuf field: optional string url = 3;
      */
     url?: string;
+}
+/**
+ * @generated from protobuf message services.filestore.DeleteRequest
+ */
+export interface DeleteRequest {
+    /**
+     * @generated from protobuf field: uint64 id = 1;
+     */
+    id: bigint;
+}
+/**
+ * @generated from protobuf message services.filestore.DeleteResponse
+ */
+export interface DeleteResponse {
 }
 /**
  * @generated from protobuf enum services.filestore.UploadStatus
@@ -50,9 +72,13 @@ export enum UploadStatus {
      */
     UNSPECIFIED = 0,
     /**
-     * @generated from protobuf enum value: UPLOAD_STATUS_SUCCESS = 1;
+     * @generated from protobuf enum value: UPLOAD_STATUS_FAILED = 1;
      */
-    SUCCESS = 1
+    FAILED = 1,
+    /**
+     * @generated from protobuf enum value: UPLOAD_STATUS_SUCCESS = 2;
+     */
+    SUCCESS = 2
 }
 // @generated message type with reflection information, may provide speed optimized methods
 class UploadRequest$Type extends MessageType<UploadRequest> {
@@ -60,7 +86,8 @@ class UploadRequest$Type extends MessageType<UploadRequest> {
         super("services.filestore.UploadRequest", [
             { no: 1, name: "key", kind: "scalar", T: 9 /*ScalarType.STRING*/, options: { "validate.rules": { string: { minLen: "12", maxLen: "24" } } } },
             { no: 2, name: "file_name", kind: "scalar", T: 9 /*ScalarType.STRING*/, options: { "validate.rules": { string: { minLen: "6", maxLen: "32" } } } },
-            { no: 3, name: "data", kind: "scalar", T: 12 /*ScalarType.BYTES*/, options: { "validate.rules": { bytes: { minLen: "1", maxLen: "2048" } } } }
+            { no: 3, name: "data", kind: "scalar", T: 12 /*ScalarType.BYTES*/, options: { "validate.rules": { bytes: { minLen: "1", maxLen: "2048" } } } },
+            { no: 4, name: "replace", kind: "scalar", opt: true, T: 8 /*ScalarType.BOOL*/ }
         ]);
     }
     create(value?: PartialMessage<UploadRequest>): UploadRequest {
@@ -86,6 +113,9 @@ class UploadRequest$Type extends MessageType<UploadRequest> {
                 case /* bytes data */ 3:
                     message.data = reader.bytes();
                     break;
+                case /* optional bool replace */ 4:
+                    message.replace = reader.bool();
+                    break;
                 default:
                     let u = options.readUnknownField;
                     if (u === "throw")
@@ -107,6 +137,9 @@ class UploadRequest$Type extends MessageType<UploadRequest> {
         /* bytes data = 3; */
         if (message.data.length)
             writer.tag(3, WireType.LengthDelimited).bytes(message.data);
+        /* optional bool replace = 4; */
+        if (message.replace !== undefined)
+            writer.tag(4, WireType.Varint).bool(message.replace);
         let u = options.writeUnknownFields;
         if (u !== false)
             (u == true ? UnknownFieldHandler.onWrite : u)(this.typeName, message, writer);
@@ -122,7 +155,8 @@ class UploadResponse$Type extends MessageType<UploadResponse> {
     constructor() {
         super("services.filestore.UploadResponse", [
             { no: 1, name: "status", kind: "enum", T: () => ["services.filestore.UploadStatus", UploadStatus, "UPLOAD_STATUS_"] },
-            { no: 2, name: "url", kind: "scalar", opt: true, T: 9 /*ScalarType.STRING*/ }
+            { no: 2, name: "id", kind: "scalar", opt: true, T: 4 /*ScalarType.UINT64*/, L: 0 /*LongType.BIGINT*/ },
+            { no: 3, name: "url", kind: "scalar", opt: true, T: 9 /*ScalarType.STRING*/ }
         ]);
     }
     create(value?: PartialMessage<UploadResponse>): UploadResponse {
@@ -140,7 +174,10 @@ class UploadResponse$Type extends MessageType<UploadResponse> {
                 case /* services.filestore.UploadStatus status */ 1:
                     message.status = reader.int32();
                     break;
-                case /* optional string url */ 2:
+                case /* optional uint64 id */ 2:
+                    message.id = reader.uint64().toBigInt();
+                    break;
+                case /* optional string url */ 3:
                     message.url = reader.string();
                     break;
                 default:
@@ -158,9 +195,12 @@ class UploadResponse$Type extends MessageType<UploadResponse> {
         /* services.filestore.UploadStatus status = 1; */
         if (message.status !== 0)
             writer.tag(1, WireType.Varint).int32(message.status);
-        /* optional string url = 2; */
+        /* optional uint64 id = 2; */
+        if (message.id !== undefined)
+            writer.tag(2, WireType.Varint).uint64(message.id);
+        /* optional string url = 3; */
         if (message.url !== undefined)
-            writer.tag(2, WireType.LengthDelimited).string(message.url);
+            writer.tag(3, WireType.LengthDelimited).string(message.url);
         let u = options.writeUnknownFields;
         if (u !== false)
             (u == true ? UnknownFieldHandler.onWrite : u)(this.typeName, message, writer);
@@ -171,9 +211,82 @@ class UploadResponse$Type extends MessageType<UploadResponse> {
  * @generated MessageType for protobuf message services.filestore.UploadResponse
  */
 export const UploadResponse = new UploadResponse$Type();
+// @generated message type with reflection information, may provide speed optimized methods
+class DeleteRequest$Type extends MessageType<DeleteRequest> {
+    constructor() {
+        super("services.filestore.DeleteRequest", [
+            { no: 1, name: "id", kind: "scalar", T: 4 /*ScalarType.UINT64*/, L: 0 /*LongType.BIGINT*/ }
+        ]);
+    }
+    create(value?: PartialMessage<DeleteRequest>): DeleteRequest {
+        const message = globalThis.Object.create((this.messagePrototype!));
+        message.id = 0n;
+        if (value !== undefined)
+            reflectionMergePartial<DeleteRequest>(this, message, value);
+        return message;
+    }
+    internalBinaryRead(reader: IBinaryReader, length: number, options: BinaryReadOptions, target?: DeleteRequest): DeleteRequest {
+        let message = target ?? this.create(), end = reader.pos + length;
+        while (reader.pos < end) {
+            let [fieldNo, wireType] = reader.tag();
+            switch (fieldNo) {
+                case /* uint64 id */ 1:
+                    message.id = reader.uint64().toBigInt();
+                    break;
+                default:
+                    let u = options.readUnknownField;
+                    if (u === "throw")
+                        throw new globalThis.Error(`Unknown field ${fieldNo} (wire type ${wireType}) for ${this.typeName}`);
+                    let d = reader.skip(wireType);
+                    if (u !== false)
+                        (u === true ? UnknownFieldHandler.onRead : u)(this.typeName, message, fieldNo, wireType, d);
+            }
+        }
+        return message;
+    }
+    internalBinaryWrite(message: DeleteRequest, writer: IBinaryWriter, options: BinaryWriteOptions): IBinaryWriter {
+        /* uint64 id = 1; */
+        if (message.id !== 0n)
+            writer.tag(1, WireType.Varint).uint64(message.id);
+        let u = options.writeUnknownFields;
+        if (u !== false)
+            (u == true ? UnknownFieldHandler.onWrite : u)(this.typeName, message, writer);
+        return writer;
+    }
+}
+/**
+ * @generated MessageType for protobuf message services.filestore.DeleteRequest
+ */
+export const DeleteRequest = new DeleteRequest$Type();
+// @generated message type with reflection information, may provide speed optimized methods
+class DeleteResponse$Type extends MessageType<DeleteResponse> {
+    constructor() {
+        super("services.filestore.DeleteResponse", []);
+    }
+    create(value?: PartialMessage<DeleteResponse>): DeleteResponse {
+        const message = globalThis.Object.create((this.messagePrototype!));
+        if (value !== undefined)
+            reflectionMergePartial<DeleteResponse>(this, message, value);
+        return message;
+    }
+    internalBinaryRead(reader: IBinaryReader, length: number, options: BinaryReadOptions, target?: DeleteResponse): DeleteResponse {
+        return target ?? this.create();
+    }
+    internalBinaryWrite(message: DeleteResponse, writer: IBinaryWriter, options: BinaryWriteOptions): IBinaryWriter {
+        let u = options.writeUnknownFields;
+        if (u !== false)
+            (u == true ? UnknownFieldHandler.onWrite : u)(this.typeName, message, writer);
+        return writer;
+    }
+}
+/**
+ * @generated MessageType for protobuf message services.filestore.DeleteResponse
+ */
+export const DeleteResponse = new DeleteResponse$Type();
 /**
  * @generated ServiceType for protobuf service services.filestore.FileStoreService
  */
 export const FileStoreService = new ServiceType("services.filestore.FileStoreService", [
-    { name: "Upload", options: {}, I: UploadRequest, O: UploadResponse }
+    { name: "Upload", options: {}, I: UploadRequest, O: UploadResponse },
+    { name: "Delete", options: {}, I: DeleteRequest, O: DeleteResponse }
 ]);

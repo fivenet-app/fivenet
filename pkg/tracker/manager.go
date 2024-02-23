@@ -89,7 +89,7 @@ func NewManager(p ManagerParams) (*Manager, error) {
 	}
 
 	p.LC.Append(fx.StartHook(func(ctx context.Context) error {
-		if err := m.registerEvents(ctx); err != nil {
+		if err := registerStreams(ctx, m.js); err != nil {
 			return err
 		}
 

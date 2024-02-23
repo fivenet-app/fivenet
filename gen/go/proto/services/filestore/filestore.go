@@ -36,3 +36,8 @@ func (s *Server) Upload(ctx context.Context, req *UploadRequest) (*UploadRespons
 
 	return nil, nil
 }
+
+func (s *Server) Delete(ctx context.Context, req *DeleteRequest) (*DeleteResponse, error) {
+
+	return nil, nil
+}

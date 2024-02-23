@@ -10,9 +10,6 @@ import (
 
 	"github.com/galexrt/fivenet/pkg/config"
 	"github.com/galexrt/fivenet/pkg/grpc/auth"
-	"github.com/galexrt/fivenet/pkg/server/api"
-	"github.com/galexrt/fivenet/pkg/server/images"
-	"github.com/galexrt/fivenet/pkg/server/oauth2"
 	"github.com/gin-contrib/sessions"
 	"github.com/gin-contrib/sessions/cookie"
 	"github.com/gin-contrib/static"
@@ -29,7 +26,7 @@ import (
 
 var HTTPServerModule = fx.Module("httpserver",
 	fx.Provide(
-		NewHTTP,
+		New,
 	),
 	fx.Decorate(wrapLogger),
 )
@@ -41,12 +38,9 @@ type Params struct {
 
 	LC fx.Lifecycle
 
-	Logger     *zap.Logger
-	Config     *config.Config
-	DB         *sql.DB
-	TP         *tracesdk.TracerProvider
-	TokenMgr   *auth.TokenMgr
-	ImageProxy *images.ImageProxy
+	Logger *zap.Logger
+	Config *config.Config
+	Engine *gin.Engine
 }
 
 type Result struct {
@@ -59,13 +53,13 @@ func wrapLogger(log *zap.Logger) *zap.Logger {
 	return log.Named("http_server")
 }
 
-// NewHTTP builds an HTTP server that will begin serving requests
+// New builds an HTTP server that will begin serving requests
 // when the Fx application starts.
-func NewHTTP(p Params) (Result, error) {
+func New(p Params) (Result, error) {
 	// Create HTTP Server for graceful shutdown handling
 	srv := &http.Server{
 		Addr:    p.Config.HTTP.Listen,
-		Handler: setupHTTPServer(p),
+		Handler: p.Engine,
 	}
 
 	p.LC.Append(fx.Hook{
@@ -89,7 +83,26 @@ func NewHTTP(p Params) (Result, error) {
 	}, nil
 }
 
-func setupHTTPServer(p Params) *gin.Engine {
+var HTTPEngineModule = fx.Module("httpengine",
+	fx.Provide(
+		NewEngine,
+	),
+	fx.Decorate(wrapLogger),
+)
+
+type EngineParams struct {
+	fx.In
+
+	Logger   *zap.Logger
+	Config   *config.Config
+	DB       *sql.DB
+	TP       *tracesdk.TracerProvider
+	TokenMgr *auth.TokenMgr
+
+	Services []Service `group:"httpservices"`
+}
+
+func NewEngine(p EngineParams) *gin.Engine {
 	// Gin HTTP Server
 	gin.SetMode(p.Config.Mode)
 	e := gin.New()
@@ -134,16 +147,12 @@ func setupHTTPServer(p Params) *gin.Engine {
 	e.Use(otelgin.Middleware("fivenet", otelgin.WithTracerProvider(p.TP)))
 	e.Use(InjectToHeaders(p.TP))
 
-	// Register HTTP API routes
-	rs := api.New(p.Logger, p.Config)
-	rs.Register(e)
+	for _, service := range p.Services {
+		if service == nil {
+			continue
+		}
 
-	// Register image proxy
-	p.ImageProxy.Register(e)
-
-	if len(p.Config.OAuth2.Providers) > 0 {
-		oauth := oauth2.New(p.Logger.Named("oauth2"), p.DB, p.TokenMgr, p.Config.OAuth2.Providers)
-		oauth.Register(e)
+		service.RegisterHTTP(e)
 	}
 
 	// Setup nuxt generated files serving
@@ -166,6 +175,7 @@ func setupHTTPServer(p Params) *gin.Engine {
 		fileServer.ServeHTTP(c.Writer, c.Request)
 		c.Abort()
 	})
+
 	// Register output dir for assets and other static files
 	e.Use(static.Serve("/", fs))
 

@@ -54,7 +54,7 @@ func New(logger *zap.Logger, cfg *config.Config) *Routes {
 	}
 }
 
-func (r *Routes) Register(e *gin.Engine) {
+func (r *Routes) RegisterHTTP(e *gin.Engine) {
 	// API Base
 	g := e.Group("/api")
 	{

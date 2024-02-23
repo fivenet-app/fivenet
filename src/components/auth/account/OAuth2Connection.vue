@@ -8,7 +8,7 @@ import OAuth2ConnectButton from '~/components/auth/account/OAuth2ConnectButton.v
 import ConfirmDialog from '~/components/partials/ConfirmDialog.vue';
 const { $grpc } = useNuxtApp();
 
-const props = defineProps<{
+defineProps<{
     provider: OAuth2Provider;
     account?: OAuth2Account;
 }>();

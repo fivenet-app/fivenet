@@ -19,6 +19,7 @@ import (
 	"github.com/gin-gonic/gin"
 	jet "github.com/go-jet/jet/v2/mysql"
 	"github.com/go-jet/jet/v2/qrm"
+	"go.uber.org/fx"
 	"go.uber.org/zap"
 	"golang.org/x/oauth2"
 )
@@ -28,6 +29,15 @@ var (
 	tOAuthAccs = table.FivenetOauth2Accounts
 )
 
+type Params struct {
+	fx.In
+
+	Logger *zap.Logger
+	DB     *sql.DB
+	TM     *auth.TokenMgr
+	Config *config.Config
+}
+
 type OAuth2 struct {
 	logger *zap.Logger
 	db     *sql.DB
@@ -36,15 +46,19 @@ type OAuth2 struct {
 	oauthConfigs map[string]providers.IProvider
 }
 
-func New(logger *zap.Logger, db *sql.DB, tm *auth.TokenMgr, oAuth2Providers []*config.OAuth2Provider) *OAuth2 {
-	o := &OAuth2{
-		logger:       logger,
-		db:           db,
-		tm:           tm,
-		oauthConfigs: make(map[string]providers.IProvider, len(oAuth2Providers)),
+func New(p Params) *OAuth2 {
+	if len(p.Config.OAuth2.Providers) == 0 {
+		return nil
 	}
 
-	for _, p := range oAuth2Providers {
+	o := &OAuth2{
+		logger:       p.Logger,
+		db:           p.DB,
+		tm:           p.TM,
+		oauthConfigs: make(map[string]providers.IProvider, len(p.Config.OAuth2.Providers)),
+	}
+
+	for _, p := range p.Config.OAuth2.Providers {
 		cfg := &oauth2.Config{
 			RedirectURL:  p.RedirectURL,
 			ClientID:     p.ClientID,
@@ -83,7 +97,7 @@ func New(logger *zap.Logger, db *sql.DB, tm *auth.TokenMgr, oAuth2Providers []*c
 	return o
 }
 
-func (o *OAuth2) Register(e *gin.Engine) {
+func (o *OAuth2) RegisterHTTP(e *gin.Engine) {
 	oauth := e.Group("/api/oauth2")
 	{
 		oauth.GET("/login/:provider", o.Login)

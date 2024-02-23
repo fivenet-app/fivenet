@@ -17,7 +17,7 @@ const (
 	UsersUpdate events.Type = "users_update"
 )
 
-func (m *Manager) registerEvents(ctx context.Context) error {
+func registerStreams(ctx context.Context, js nats.JetStreamContext) error {
 	cfg := &nats.StreamConfig{
 		Name:        "TRACKER",
 		Description: natsutils.Description,
@@ -26,7 +26,7 @@ func (m *Manager) registerEvents(ctx context.Context) error {
 		Discard:     nats.DiscardOld,
 		MaxAge:      2 * time.Minute,
 	}
-	if _, err := natsutils.CreateOrUpdateStream(ctx, m.js, cfg); err != nil {
+	if _, err := natsutils.CreateOrUpdateStream(ctx, js, cfg); err != nil {
 		return err
 	}
 
