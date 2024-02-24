@@ -18,12 +18,15 @@ var Module = fx.Module("storage",
 )
 
 type IStorage interface {
-	Get(ctx context.Context, filePath string) (IObject, error)
+	Get(ctx context.Context, filePath string) (IObject, IObjectInfo, error)
+	Stat(ctx context.Context, filePath string) (IObjectInfo, error)
 	Put(ctx context.Context, filePath string, reader io.Reader, size int64, contentType string) (string, error)
 	Delete(ctx context.Context, filePath string) error
 }
 
 type Storage struct {
+	IStorage
+
 	s3         *minio.Client
 	bucketName string
 	prefix     string
@@ -74,6 +77,20 @@ func (s *Storage) Get(ctx context.Context, filePath string) (IObject, IObjectInf
 	}
 
 	return object, &ObjectInfo{
+		contentType: info.ContentType,
+		size:        info.Size,
+		expiration:  info.Expiration,
+	}, nil
+}
+
+func (s *Storage) Stat(ctx context.Context, filePath string) (IObjectInfo, error) {
+	filePath = path.Join(s.prefix, filePath)
+	info, err := s.s3.StatObject(ctx, s.bucketName, filePath, minio.GetObjectOptions{})
+	if err != nil {
+		return nil, err
+	}
+
+	return &ObjectInfo{
 		contentType: info.ContentType,
 		size:        info.Size,
 		expiration:  info.Expiration,
