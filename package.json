@@ -74,7 +74,7 @@
         "@vueuse/core": "10.8.0",
         "@vueuse/router": "10.8.0",
         "autoprefixer": "10.4.17",
-        "cssnano": "6.0.4",
+        "cssnano": "6.0.5",
         "eslint": "8.57.0",
         "eslint-config-prettier": "9.1.0",
         "eslint-plugin-prettier": "5.1.3",
