@@ -47,3 +47,6 @@ localhost.*
 .cache
 .output
 .env
+
+# FiveNet
+.data/

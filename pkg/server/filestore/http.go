@@ -12,11 +12,11 @@ import (
 )
 
 type FilestoreHTTP struct {
-	st *storage.Storage
+	st storage.IStorage
 	tm *auth.TokenMgr
 }
 
-func New(st *storage.Storage, tm *auth.TokenMgr) *FilestoreHTTP {
+func New(st storage.IStorage, tm *auth.TokenMgr) *FilestoreHTTP {
 	return &FilestoreHTTP{
 		st: st,
 		tm: tm,
@@ -51,6 +51,7 @@ func (s *FilestoreHTTP) RegisterHTTP(e *gin.Engine) {
 				c.AbortWithError(http.StatusBadRequest, fmt.Errorf("failed to retrieve file from store. %w", err))
 				return
 			}
+			defer object.Close()
 
 			c.DataFromReader(200, info.GetSize(), info.GetContentType(), object, nil)
 		})

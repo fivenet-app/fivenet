@@ -226,6 +226,10 @@ func (s *Server) Stream(req *StreamRequest, srv LivemapperService_StreamServer) 
 			return nil
 
 		case event := <-updateCh:
+			if event == nil {
+				continue
+			}
+
 			if event.Send == MarkerUpdate {
 				if end, err := s.sendMarkerMarkers(srv, markersJobs, userInfo); end || err != nil {
 					return err

@@ -259,7 +259,17 @@ type DiscordCommands struct {
 }
 
 type Storage struct {
-	Enabled         bool   `default:"false" yaml:"enabled"`
+	Enabled    bool              `default:"false" yaml:"enabled"`
+	Type       string            `default:"filesystem" yaml:"type"`
+	Filesystem FilesystemStorage `yaml:"filesystem"`
+	S3         S3Storage         `yaml:"s3"`
+}
+
+type FilesystemStorage struct {
+	Path string `yaml:"path"`
+}
+
+type S3Storage struct {
 	Endpoint        string `yaml:"endpoint"`
 	Region          string `default:"us-east-1" yaml:"region"`
 	AccessKeyID     string `yaml:"accessKeyID"`

@@ -245,12 +245,16 @@ fivenet:
           enabled: true
     storage:
       enabled: false
-      endpoint: ""
-      region: "us-east-1"
-      accessKeyID: ""
-      secretAccessKey: ""
-      useSSL: true
-      bucketName: ""
+      type: "filesystem"
+      filesystem:
+        path: "/data"
+      s3:
+        endpoint: ""
+        region: "us-east-1"
+        accessKeyID: ""
+        secretAccessKey: ""
+        useSSL: true
+        bucketName: ""
     imageProxy:
       enabled: true
       url: "/api/image_proxy/"

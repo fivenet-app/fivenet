@@ -1,6 +1,19 @@
 package storage
 
-import "time"
+import (
+	"context"
+	"io"
+	"time"
+)
+
+type IStorage interface {
+	WithPrefix(prefix string) IStorage
+
+	Get(ctx context.Context, filePath string) (IObject, IObjectInfo, error)
+	Stat(ctx context.Context, filePath string) (IObjectInfo, error)
+	Put(ctx context.Context, filePath string, reader io.Reader, size int64, contentType string) (string, error)
+	Delete(ctx context.Context, filePath string) error
+}
 
 type IObject interface {
 	Read(p []byte) (n int, err error)

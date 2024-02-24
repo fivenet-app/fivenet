@@ -56,3 +56,6 @@ src/public/images/livemap/tiles/*/
 
 # i18next-scanner
 /lang/
+
+# FiveNet
+.data/

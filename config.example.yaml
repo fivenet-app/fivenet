@@ -128,13 +128,17 @@ discord:
     commands:
       enabled: true
 storage:
-  enabled: false
-  endpoint: ""
-  region: "us-east-1"
-  accessKeyID: ""
-  secretAccessKey: ""
-  useSSL: true
-  bucketName: ""
+  enabled: true
+  type: "filesystem"
+  filesystem:
+    path: ".data/"
+  s3:
+    endpoint: ""
+    region: "us-east-1"
+    accessKeyID: ""
+    secretAccessKey: ""
+    useSSL: true
+    bucketName: ""
 imageProxy:
   enabled: true
   url: "/api/image_proxy/"

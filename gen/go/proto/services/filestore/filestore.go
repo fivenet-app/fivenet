@@ -11,13 +11,13 @@ import (
 type Server struct {
 	FileStoreServiceServer
 
-	st *storage.Storage
+	st storage.IStorage
 }
 
 type Params struct {
 	fx.In
 
-	Storage *storage.Storage
+	Storage storage.IStorage
 }
 
 func NewServer(p Params) *Server {
