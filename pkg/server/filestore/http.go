@@ -26,7 +26,7 @@ func New(st storage.IStorage, tm *auth.TokenMgr) *FilestoreHTTP {
 func (s *FilestoreHTTP) RegisterHTTP(e *gin.Engine) {
 	g := e.Group("/api/filestore")
 	{
-		g.GET("/get/:fileName", func(c *gin.Context) {
+		g.GET("/v1/*fileName", func(c *gin.Context) {
 			token := c.GetHeader("Authorization")
 			if token == "" || !strings.HasPrefix(token, "Bearer ") {
 				c.AbortWithError(http.StatusForbidden, fmt.Errorf("invalid authorization token"))

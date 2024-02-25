@@ -43,12 +43,12 @@ func NewS3(cfg *config.Config) (IStorage, error) {
 	return s, nil
 }
 
-func (s *S3) WithPrefix(prefix string) IStorage {
+func (s *S3) WithPrefix(prefix string) (IStorage, error) {
 	return &S3{
 		s3:         s.s3,
 		bucketName: s.bucketName,
 		prefix:     prefix,
-	}
+	}, nil
 }
 
 func (s *S3) Get(ctx context.Context, filePath string) (IObject, IObjectInfo, error) {

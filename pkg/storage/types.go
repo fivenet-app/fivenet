@@ -2,12 +2,15 @@ package storage
 
 import (
 	"context"
+	"crypto/sha1"
+	"encoding/base64"
+	"fmt"
 	"io"
 	"time"
 )
 
 type IStorage interface {
-	WithPrefix(prefix string) IStorage
+	WithPrefix(prefix string) (IStorage, error)
 
 	Get(ctx context.Context, filePath string) (IObject, IObjectInfo, error)
 	Stat(ctx context.Context, filePath string) (IObjectInfo, error)
@@ -44,4 +47,14 @@ func (o *ObjectInfo) GetSize() int64 {
 
 func (o *ObjectInfo) GetExpiration() time.Time {
 	return o.expiration
+}
+
+func GetFilename(uid string, fileName string, fileExtension string) string {
+	hasher := sha1.New()
+	hasher.Write([]byte(fileName))
+	fileHash := base64.URLEncoding.EncodeToString(hasher.Sum(nil))
+
+	directory := fileHash[0:2]
+
+	return fmt.Sprintf("%s/%s-%s.%s", directory, uid, fileHash, fileExtension)
 }
