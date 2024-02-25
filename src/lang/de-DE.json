@@ -1812,7 +1812,8 @@
                 "POSITIVE": "Positiv",
                 "NEGATIVE": "Negativ",
                 "WARNING": "Verwarnung",
-                "SUSPENSION": "Suspendierung"
+                "SUSPENSION": "Suspendierung",
+                "NOTE": "Notiz"
             }
         }
     }
