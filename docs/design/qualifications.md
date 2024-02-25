@@ -15,7 +15,7 @@ title: "Qualifications"
     * Requirements: Requirements to be able to take the qualification.
 * Requests: List of user requests to take the test for the qualification.
 * Tests: Test progress of (started) tests from users.
-    * Config of the Test: E.g., how many questions need to be right to pass, how much time do they have, etc.
+    * Info/Config of the Test: E.g., how many questions need to be right to pass, how much time do they have, etc.
     * Test Questions: Questions for the qualification tests.
     * User Test Answers: Answered questions "waiting for approval" by a "trainer".
 

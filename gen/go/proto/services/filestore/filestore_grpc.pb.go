@@ -27,7 +27,9 @@ const (
 //
 // For semantics around ctx use and closing/ending streaming RPCs, please refer to https://pkg.go.dev/google.golang.org/grpc/?tab=doc#ClientConn.NewStream.
 type FileStoreServiceClient interface {
+	// @perm: Name=SuperUser
 	Upload(ctx context.Context, in *UploadRequest, opts ...grpc.CallOption) (*UploadResponse, error)
+	// @perm: Name=SuperUser
 	Delete(ctx context.Context, in *DeleteRequest, opts ...grpc.CallOption) (*DeleteResponse, error)
 }
 
@@ -61,7 +63,9 @@ func (c *fileStoreServiceClient) Delete(ctx context.Context, in *DeleteRequest, 
 // All implementations must embed UnimplementedFileStoreServiceServer
 // for forward compatibility
 type FileStoreServiceServer interface {
+	// @perm: Name=SuperUser
 	Upload(context.Context, *UploadRequest) (*UploadResponse, error)
+	// @perm: Name=SuperUser
 	Delete(context.Context, *DeleteRequest) (*DeleteResponse, error)
 	mustEmbedUnimplementedFileStoreServiceServer()
 }

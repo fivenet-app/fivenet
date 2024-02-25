@@ -41,7 +41,9 @@ message DeleteRequest {
 message DeleteResponse {}
 
 service FileStoreService {
+  // @perm: Name=SuperUser
   rpc Upload(UploadRequest) returns (UploadResponse);
 
+  // @perm: Name=SuperUser
   rpc Delete(DeleteRequest) returns (DeleteResponse);
 }

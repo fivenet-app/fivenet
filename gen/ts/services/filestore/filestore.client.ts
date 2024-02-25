@@ -16,10 +16,14 @@ import type { RpcOptions } from "@protobuf-ts/runtime-rpc";
  */
 export interface IFileStoreServiceClient {
     /**
+     * @perm: Name=SuperUser
+     *
      * @generated from protobuf rpc: Upload(services.filestore.UploadRequest) returns (services.filestore.UploadResponse);
      */
     upload(input: UploadRequest, options?: RpcOptions): UnaryCall<UploadRequest, UploadResponse>;
     /**
+     * @perm: Name=SuperUser
+     *
      * @generated from protobuf rpc: Delete(services.filestore.DeleteRequest) returns (services.filestore.DeleteResponse);
      */
     delete(input: DeleteRequest, options?: RpcOptions): UnaryCall<DeleteRequest, DeleteResponse>;
@@ -34,6 +38,8 @@ export class FileStoreServiceClient implements IFileStoreServiceClient, ServiceI
     constructor(private readonly _transport: RpcTransport) {
     }
     /**
+     * @perm: Name=SuperUser
+     *
      * @generated from protobuf rpc: Upload(services.filestore.UploadRequest) returns (services.filestore.UploadResponse);
      */
     upload(input: UploadRequest, options?: RpcOptions): UnaryCall<UploadRequest, UploadResponse> {
@@ -41,6 +47,8 @@ export class FileStoreServiceClient implements IFileStoreServiceClient, ServiceI
         return stackIntercept<UploadRequest, UploadResponse>("unary", this._transport, method, opt, input);
     }
     /**
+     * @perm: Name=SuperUser
+     *
      * @generated from protobuf rpc: Delete(services.filestore.DeleteRequest) returns (services.filestore.DeleteResponse);
      */
     delete(input: DeleteRequest, options?: RpcOptions): UnaryCall<DeleteRequest, DeleteResponse> {

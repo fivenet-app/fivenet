@@ -2,6 +2,8 @@
 title: User Activity
 ---
 
+## Entry Structure
+
 * Built-in
     * `DocStore.Relation`
         * If `newValue` set, user mention has been added.
