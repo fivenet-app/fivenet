@@ -17,3 +17,10 @@ func (m *Qualification) Sanitize() error {
 
 	return nil
 }
+
+func (m *QualificationResult) Sanitize() error {
+
+	m.Summary = htmlsanitizer.StripTags(m.Summary)
+
+	return nil
+}

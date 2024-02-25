@@ -11,17 +11,19 @@ title: "Qualifications"
 ### What elements are needed?
 
 * Qualification: Holds all basic infos about the qualification.
-* Qualification Access: Holds the access levels to the qualification.
-* Qualification Requirements: Requirements to be able to take the qualification.
-* Qualification Requests: List of user requests to take the test for the qualification.
-* Qualifcation Tests: Test progress of (started) tests from users.
-* Qualifcation User Test Answers: Answered questions "waiting for approval" by a "trainer".
-* Qualification Test Questions: Questions for the qualification tests.
+    * Access: Holds the access levels to the qualification.
+    * Requirements: Requirements to be able to take the qualification.
+* Requests: List of user requests to take the test for the qualification.
+* Tests: Test progress of (started) tests from users.
+    * Config of the Test: E.g., how many questions need to be right to pass, how much time do they have, etc.
+    * Test Questions: Questions for the qualification tests.
+    * User Test Answers: Answered questions "waiting for approval" by a "trainer".
 
 ## Qualification Access Levels
 
 * Blocked.
 * View.
-* Student.
-* Teacher.
+* Request.
+* Take.
+* Grade.
 * Edit.

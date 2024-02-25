@@ -1812,7 +1812,8 @@
                 "POSITIVE": "Positive",
                 "NEGATIVE": "Negative",
                 "WARNING": "Warning",
-                "SUSPENSION": "Suspension"
+                "SUSPENSION": "Suspension",
+                "NOTE": "Note"
             }
         }
     }

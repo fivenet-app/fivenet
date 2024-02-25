@@ -15,6 +15,7 @@ enum ConductType {
   CONDUCT_TYPE_NEGATIVE = 3;
   CONDUCT_TYPE_WARNING = 4;
   CONDUCT_TYPE_SUSPENSION = 5;
+  CONDUCT_TYPE_NOTE = 6;
 }
 
 message ConductEntry {

@@ -92,6 +92,7 @@ watchDebounced(queryTargets, async () => refresh(), {
 });
 
 const cTypes = ref<{ status: ConductType; selected?: boolean }[]>([
+    { status: ConductType.NOTE },
     { status: ConductType.NEUTRAL },
     { status: ConductType.POSITIVE },
     { status: ConductType.NEGATIVE },
@@ -121,7 +122,7 @@ const { handleSubmit, meta, setValues, setFieldValue, resetForm } = useForm<Form
         expiresAt: { required: false },
     },
     initialValues: {
-        type: ConductType.NEUTRAL,
+        type: ConductType.NOTE,
     },
     validateOnMount: true,
 });
@@ -131,7 +132,7 @@ watch(props, () => {
 
     setValues({
         targetUser: props.entry?.targetUserId,
-        type: props.entry?.type ?? ConductType.NEUTRAL,
+        type: props.entry?.type ?? ConductType.NOTE,
         message: props.entry?.message,
         expiresAt: props.entry?.expiresAt ? toDatetimeLocal(toDate(props.entry?.expiresAt)) : undefined,
     });

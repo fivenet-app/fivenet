@@ -33,6 +33,7 @@ message QualificationResult {
   int32 user_id = 5;
   resources.users.UserShort user = 6;
   uint32 rating = 7 [(validate.rules).uint32.lt = 100];
+  // @sanitize: method=StripTags
   string summary = 8 [(validate.rules).string = {min_len: 3, max_len: 512}];
   int32 creator_id = 9;
   resources.users.UserShort creator = 10;
@@ -41,10 +42,10 @@ message QualificationResult {
 enum AccessLevel {
   ACCESS_LEVEL_UNSPECIFIED = 0;
   ACCESS_LEVEL_VIEW = 1;
-  ACCESS_LEVEL_REGISTER = 2;
-  ACCESS_LEVEL_ATTEND = 3;
+  ACCESS_LEVEL_TAKE = 2;
+  ACCESS_LEVEL_GRADE = 3;
+  ACCESS_LEVEL_EDIT = 4;
 }
-
 
 message Access {
   repeated JobAccess job = 1;

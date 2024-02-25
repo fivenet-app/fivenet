@@ -4,7 +4,6 @@ import (
 	"fmt"
 	"net/http"
 	"path/filepath"
-	"strings"
 
 	"github.com/galexrt/fivenet/pkg/grpc/auth"
 	"github.com/galexrt/fivenet/pkg/storage"
@@ -27,18 +26,6 @@ func (s *FilestoreHTTP) RegisterHTTP(e *gin.Engine) {
 	g := e.Group("/api/filestore")
 	{
 		g.GET("/v1/*fileName", func(c *gin.Context) {
-			token := c.GetHeader("Authorization")
-			if token == "" || !strings.HasPrefix(token, "Bearer ") {
-				c.AbortWithError(http.StatusForbidden, fmt.Errorf("invalid authorization token"))
-				return
-			}
-			claims, err := s.tm.ParseWithClaims(token)
-			if err != nil {
-				c.AbortWithError(http.StatusForbidden, fmt.Errorf("invalid authorization token contents"))
-				return
-			}
-			_ = claims
-
 			fileName := c.Param("fileName")
 			fileName = filepath.Clean(fileName)
 			if fileName == "" {

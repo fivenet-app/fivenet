@@ -90,7 +90,11 @@ export enum ConductType {
     /**
      * @generated from protobuf enum value: CONDUCT_TYPE_SUSPENSION = 5;
      */
-    SUSPENSION = 5
+    SUSPENSION = 5,
+    /**
+     * @generated from protobuf enum value: CONDUCT_TYPE_NOTE = 6;
+     */
+    NOTE = 6
 }
 // @generated message type with reflection information, may provide speed optimized methods
 class ConductEntry$Type extends MessageType<ConductEntry> {

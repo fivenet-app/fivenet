@@ -100,6 +100,8 @@ export interface QualificationResult {
      */
     rating: number;
     /**
+     * @sanitize: method=StripTags
+     *
      * @generated from protobuf field: string summary = 8;
      */
     summary: string;
@@ -192,13 +194,17 @@ export enum AccessLevel {
      */
     VIEW = 1,
     /**
-     * @generated from protobuf enum value: ACCESS_LEVEL_REGISTER = 2;
+     * @generated from protobuf enum value: ACCESS_LEVEL_TAKE = 2;
      */
-    REGISTER = 2,
+    TAKE = 2,
     /**
-     * @generated from protobuf enum value: ACCESS_LEVEL_ATTEND = 3;
+     * @generated from protobuf enum value: ACCESS_LEVEL_GRADE = 3;
      */
-    ATTEND = 3
+    GRADE = 3,
+    /**
+     * @generated from protobuf enum value: ACCESS_LEVEL_EDIT = 4;
+     */
+    EDIT = 4
 }
 // @generated message type with reflection information, may provide speed optimized methods
 class Qualification$Type extends MessageType<Qualification> {
