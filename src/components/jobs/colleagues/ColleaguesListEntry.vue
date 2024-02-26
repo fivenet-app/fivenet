@@ -11,7 +11,7 @@ defineProps<{
 <template>
     <tr :key="user.userId" class="transition-colors even:bg-base-800 hover:bg-neutral/5">
         <td class="whitespace-nowrap py-2 pl-4 pr-3 text-base font-medium text-neutral sm:pl-1">
-            <AvatarImg :url="user.avatarUrl?.url" :name="`${user.firstname} ${user.lastname}`" size="sm" :rounded="false" />
+            <AvatarImg :url="user.avatar?.url" :name="`${user.firstname} ${user.lastname}`" size="sm" :rounded="false" />
         </td>
         <td class="whitespace-nowrap py-2 pl-4 pr-3 text-base font-medium text-neutral sm:pl-1">
             {{ user.firstname }} {{ user.lastname }}

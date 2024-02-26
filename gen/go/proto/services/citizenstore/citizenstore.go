@@ -10,6 +10,7 @@ import (
 	"strings"
 
 	"github.com/galexrt/fivenet/gen/go/proto/resources/common/database"
+	"github.com/galexrt/fivenet/gen/go/proto/resources/filestore"
 	"github.com/galexrt/fivenet/gen/go/proto/resources/rector"
 	users "github.com/galexrt/fivenet/gen/go/proto/resources/users"
 	permscitizenstore "github.com/galexrt/fivenet/gen/go/proto/services/citizenstore/perms"
@@ -19,12 +20,15 @@ import (
 	"github.com/galexrt/fivenet/pkg/mstlystcdata"
 	"github.com/galexrt/fivenet/pkg/perms"
 	"github.com/galexrt/fivenet/pkg/server/audit"
+	"github.com/galexrt/fivenet/pkg/storage"
+	"github.com/galexrt/fivenet/pkg/utils"
 	"github.com/galexrt/fivenet/query/fivenet/model"
 	"github.com/galexrt/fivenet/query/fivenet/table"
 	jet "github.com/go-jet/jet/v2/mysql"
 	"github.com/go-jet/jet/v2/qrm"
 	"go.opentelemetry.io/otel/attribute"
 	"go.opentelemetry.io/otel/trace"
+	"go.uber.org/fx"
 	grpc "google.golang.org/grpc"
 	"google.golang.org/grpc/codes"
 	"google.golang.org/grpc/status"
@@ -48,6 +52,7 @@ var (
 	ErrPropsJobPublic           = status.Error(codes.InvalidArgument, "errors.CitizenStoreService.ErrPropsJobPublic")
 	ErrPropsJobInvalid          = status.Error(codes.InvalidArgument, "errors.CitizenStoreService.ErrPropsJobInvalid")
 	ErrPropsTrafficPointsDenied = status.Error(codes.PermissionDenied, "errors.CitizenStoreService.ErrPropsTrafficPointsDenied")
+	ErrPropsMugShotDenied       = status.Error(codes.PermissionDenied, "errors.CitizenStoreService.ErrPropsMugShotDenied")
 )
 
 var ZeroTrafficInfractionPoints uint32 = 0
@@ -59,6 +64,7 @@ type Server struct {
 	p        perms.Permissions
 	enricher *mstlystcdata.UserAwareEnricher
 	aud      audit.IAuditer
+	st       storage.IStorage
 
 	publicJobs         []string
 	hiddenJobs         []string
@@ -66,17 +72,29 @@ type Server struct {
 	unemployedJobGrade int32
 }
 
-func NewServer(db *sql.DB, p perms.Permissions, enricher *mstlystcdata.UserAwareEnricher, aud audit.IAuditer, cfg *config.Config) *Server {
-	return &Server{
-		db:       db,
-		p:        p,
-		enricher: enricher,
-		aud:      aud,
+type Params struct {
+	fx.In
 
-		publicJobs:         cfg.Game.PublicJobs,
-		hiddenJobs:         cfg.Game.HiddenJobs,
-		unemployedJob:      cfg.Game.UnemployedJob.Name,
-		unemployedJobGrade: cfg.Game.UnemployedJob.Grade,
+	DB       *sql.DB
+	P        perms.Permissions
+	Enricher *mstlystcdata.UserAwareEnricher
+	Aud      audit.IAuditer
+	Cfg      *config.Config
+	Storage  storage.IStorage
+}
+
+func NewServer(p Params) *Server {
+	return &Server{
+		db:       p.DB,
+		p:        p.P,
+		enricher: p.Enricher,
+		aud:      p.Aud,
+		st:       p.Storage,
+
+		publicJobs:         p.Cfg.Game.PublicJobs,
+		hiddenJobs:         p.Cfg.Game.HiddenJobs,
+		unemployedJob:      p.Cfg.Game.UnemployedJob.Name,
+		unemployedJobGrade: p.Cfg.Game.UnemployedJob.Grade,
 	}
 }
 
@@ -139,6 +157,8 @@ func (s *Server) ListCitizens(ctx context.Context, req *ListCitizensRequest) (*L
 			}
 		case "UserProps.BloodType":
 			selectors = append(selectors, tUserProps.BloodType)
+		case "UserProps.MugShot":
+			selectors = append(selectors, tUserProps.MugShot)
 		}
 	}
 
@@ -280,6 +300,8 @@ func (s *Server) GetUser(ctx context.Context, req *GetUserRequest) (*GetUserResp
 			selectors = append(selectors, tUserProps.OpenFines)
 		case "UserProps.BloodType":
 			selectors = append(selectors, tUserProps.BloodType)
+		case "UserProps.MugShot":
+			selectors = append(selectors, tUserProps.MugShot)
 		}
 	}
 
@@ -555,6 +577,7 @@ func (s *Server) SetUserProps(ctx context.Context, req *SetUserPropsRequest) (*S
 	} else {
 		req.Props.Wanted = props.Wanted
 	}
+
 	if req.Props.JobName != nil {
 		if !slices.Contains(fields, "Job") {
 			return nil, ErrPropsJobDenied
@@ -582,6 +605,7 @@ func (s *Server) SetUserProps(ctx context.Context, req *SetUserPropsRequest) (*S
 		req.Props.JobGradeNumber = props.JobGradeNumber
 		req.Props.JobGrade = props.JobGrade
 	}
+
 	if req.Props.TrafficInfractionPoints != nil {
 		// Only update when it has actually changed
 		if !slices.Contains(fields, "TrafficInfractionPoints") {
@@ -591,6 +615,29 @@ func (s *Server) SetUserProps(ctx context.Context, req *SetUserPropsRequest) (*S
 		updateSets = append(updateSets, tUserProps.TrafficInfractionPoints.SET(jet.Uint32(*req.Props.TrafficInfractionPoints)))
 	} else {
 		req.Props.TrafficInfractionPoints = props.TrafficInfractionPoints
+	}
+
+	if req.Props.MugShot != nil {
+		// Only update when it has actually changed
+		if !slices.Contains(fields, "MugShot") {
+			return nil, ErrPropsMugShotDenied
+		}
+
+		updateSets = append(updateSets, tUserProps.MugShot.SET(jet.StringExp(jet.Raw("VALUES(`mug_shot`)"))))
+
+		if req.Props.MugShot != nil && len(req.Props.MugShot.Data) > 0 {
+			filler, err := utils.GenerateRandomString(64)
+			if err != nil {
+				return nil, errswrap.NewError(ErrFailedQuery, err)
+			}
+
+			fileName := fmt.Sprintf("%d-%s", props.UserId, filler)
+			if err := req.Props.MugShot.Upload(ctx, s.st, filestore.MugShots, fileName); err != nil {
+				return nil, errswrap.NewError(ErrFailedQuery, err)
+			}
+		}
+	} else {
+		req.Props.MugShot = props.MugShot
 	}
 
 	// Begin transaction
@@ -608,6 +655,7 @@ func (s *Server) SetUserProps(ctx context.Context, req *SetUserPropsRequest) (*S
 			tUserProps.Job,
 			tUserProps.JobGrade,
 			tUserProps.TrafficInfractionPoints,
+			tUserProps.MugShot,
 		).
 		VALUES(
 			req.Props.UserId,
@@ -615,6 +663,7 @@ func (s *Server) SetUserProps(ctx context.Context, req *SetUserPropsRequest) (*S
 			req.Props.JobName,
 			req.Props.JobGradeNumber,
 			req.Props.TrafficInfractionPoints,
+			req.Props.MugShot,
 		).
 		ON_DUPLICATE_KEY_UPDATE(
 			updateSets...,
@@ -643,6 +692,13 @@ func (s *Server) SetUserProps(ctx context.Context, req *SetUserPropsRequest) (*S
 		if err := s.addUserActivity(ctx, tx,
 			userInfo.UserId, req.Props.UserId, users.UserActivityType_USER_ACTIVITY_TYPE_CHANGED, "UserProps.TrafficInfractionPoints",
 			strconv.Itoa(int(*props.TrafficInfractionPoints)), strconv.Itoa(int(*req.Props.TrafficInfractionPoints)), req.Reason); err != nil {
+			return nil, errswrap.NewError(ErrFailedQuery, err)
+		}
+	}
+	if req.Props.MugShot != nil && (props.MugShot == nil || req.Props.MugShot.Url != props.MugShot.Url) {
+		if err := s.addUserActivity(ctx, tx,
+			userInfo.UserId, req.Props.UserId, users.UserActivityType_USER_ACTIVITY_TYPE_CHANGED, "UserProps.MugShot",
+			"", *req.Props.MugShot.Url, req.Reason); err != nil {
 			return nil, errswrap.NewError(ErrFailedQuery, err)
 		}
 	}
@@ -685,6 +741,7 @@ func (s *Server) getUserProps(ctx context.Context, userId int32) (*users.UserPro
 			tUserProps.Job,
 			tUserProps.JobGrade,
 			tUserProps.TrafficInfractionPoints,
+			tUserProps.MugShot,
 		).
 		FROM(tUserProps).
 		WHERE(

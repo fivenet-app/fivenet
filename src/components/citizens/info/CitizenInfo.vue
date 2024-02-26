@@ -117,7 +117,7 @@ const open = ref(false);
                 <div class="flex gap-4 my-4 px-4">
                     <div class="">
                         <AvatarImg
-                            :url="user.avatarUrl?.url"
+                            :url="user.avatar?.url"
                             :name="`${user.firstname} ${user.lastname}`"
                             size="xl"
                             :rounded="false"
@@ -242,6 +242,7 @@ const open = ref(false);
                                     user.jobGradeLabel = $event.grade.label;
                                 "
                                 @update:traffic-infraction-points="user.props!.trafficInfractionPoints = $event"
+                                @update:mug-shot="user.props!.mugShot = $event"
                             />
                         </TabPanel>
                         <TabPanel v-if="can('DMVService.ListVehicles')">

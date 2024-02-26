@@ -547,12 +547,12 @@ watch(router.currentRoute, () => updateActiveItem());
                                         {{ $t('components.partials.sidebar.open_usermenu') }}
                                     </span>
                                     <AccountIcon
-                                        v-if="!activeChar?.avatarUrl?.url"
+                                        v-if="!activeChar?.avatar?.url"
                                         class="h-10 w-auto rounded-full bg-base-800 fill-base-300 text-base-300 hover:fill-base-100 hover:text-base-100 hover:transition-colors"
                                     />
                                     <AvatarImg
                                         v-else
-                                        :url="activeChar.avatarUrl.url"
+                                        :url="activeChar.avatar.url"
                                         :name="`${activeChar.firstname} ${activeChar.lastname}`"
                                         size="md"
                                         :rounded="true"

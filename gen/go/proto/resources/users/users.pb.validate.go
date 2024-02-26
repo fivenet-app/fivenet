@@ -181,14 +181,14 @@ func (m *UserShort) validate(all bool) error {
 
 	}
 
-	if m.AvatarUrl != nil {
+	if m.Avatar != nil {
 
 		if all {
-			switch v := interface{}(m.GetAvatarUrl()).(type) {
+			switch v := interface{}(m.GetAvatar()).(type) {
 			case interface{ ValidateAll() error }:
 				if err := v.ValidateAll(); err != nil {
 					errors = append(errors, UserShortValidationError{
-						field:  "AvatarUrl",
+						field:  "Avatar",
 						reason: "embedded message failed validation",
 						cause:  err,
 					})
@@ -196,16 +196,16 @@ func (m *UserShort) validate(all bool) error {
 			case interface{ Validate() error }:
 				if err := v.Validate(); err != nil {
 					errors = append(errors, UserShortValidationError{
-						field:  "AvatarUrl",
+						field:  "Avatar",
 						reason: "embedded message failed validation",
 						cause:  err,
 					})
 				}
 			}
-		} else if v, ok := interface{}(m.GetAvatarUrl()).(interface{ Validate() error }); ok {
+		} else if v, ok := interface{}(m.GetAvatar()).(interface{ Validate() error }); ok {
 			if err := v.Validate(); err != nil {
 				return UserShortValidationError{
-					field:  "AvatarUrl",
+					field:  "Avatar",
 					reason: "embedded message failed validation",
 					cause:  err,
 				}
@@ -548,14 +548,14 @@ func (m *User) validate(all bool) error {
 
 	}
 
-	if m.AvatarUrl != nil {
+	if m.Avatar != nil {
 
 		if all {
-			switch v := interface{}(m.GetAvatarUrl()).(type) {
+			switch v := interface{}(m.GetAvatar()).(type) {
 			case interface{ ValidateAll() error }:
 				if err := v.ValidateAll(); err != nil {
 					errors = append(errors, UserValidationError{
-						field:  "AvatarUrl",
+						field:  "Avatar",
 						reason: "embedded message failed validation",
 						cause:  err,
 					})
@@ -563,16 +563,16 @@ func (m *User) validate(all bool) error {
 			case interface{ Validate() error }:
 				if err := v.Validate(); err != nil {
 					errors = append(errors, UserValidationError{
-						field:  "AvatarUrl",
+						field:  "Avatar",
 						reason: "embedded message failed validation",
 						cause:  err,
 					})
 				}
 			}
-		} else if v, ok := interface{}(m.GetAvatarUrl()).(interface{ Validate() error }); ok {
+		} else if v, ok := interface{}(m.GetAvatar()).(interface{ Validate() error }); ok {
 			if err := v.Validate(); err != nil {
 				return UserValidationError{
-					field:  "AvatarUrl",
+					field:  "Avatar",
 					reason: "embedded message failed validation",
 					cause:  err,
 				}
@@ -890,6 +890,39 @@ func (m *UserProps) validate(all bool) error {
 
 	if m.BloodType != nil {
 		// no validation rules for BloodType
+	}
+
+	if m.MugShot != nil {
+
+		if all {
+			switch v := interface{}(m.GetMugShot()).(type) {
+			case interface{ ValidateAll() error }:
+				if err := v.ValidateAll(); err != nil {
+					errors = append(errors, UserPropsValidationError{
+						field:  "MugShot",
+						reason: "embedded message failed validation",
+						cause:  err,
+					})
+				}
+			case interface{ Validate() error }:
+				if err := v.Validate(); err != nil {
+					errors = append(errors, UserPropsValidationError{
+						field:  "MugShot",
+						reason: "embedded message failed validation",
+						cause:  err,
+					})
+				}
+			}
+		} else if v, ok := interface{}(m.GetMugShot()).(interface{ Validate() error }); ok {
+			if err := v.Validate(); err != nil {
+				return UserPropsValidationError{
+					field:  "MugShot",
+					reason: "embedded message failed validation",
+					cause:  err,
+				}
+			}
+		}
+
 	}
 
 	if len(errors) > 0 {

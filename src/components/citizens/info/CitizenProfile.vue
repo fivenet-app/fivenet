@@ -3,6 +3,7 @@ import {
     AccountAlertIcon,
     AccountCancelIcon,
     BriefcaseIcon,
+    CameraIcon,
     CounterIcon,
     FileDocumentPlusIcon,
     LicenseIcon,
@@ -20,6 +21,8 @@ import CitizenSetTrafficPointsModal from '~/components/citizens/info/CitizenSetT
 import CitizenSetWantedModal from '~/components/citizens/info/CitizenSetWantedModal.vue';
 import type { Job, JobGrade } from '~~/gen/ts/resources/users/jobs';
 import { useNotificatorStore } from '~/store/notificator';
+import CitizenSetMugShotModal from '~/components/citizens/info/CitizenSetMugShotModal.vue';
+import type { File } from '~~/gen/ts/resources/filestore/file';
 
 const props = defineProps<{
     user: User;
@@ -29,6 +32,7 @@ defineEmits<{
     (e: 'update:wantedStatus', value: boolean): void;
     (e: 'update:job', value: { job: Job; grade: JobGrade }): void;
     (e: 'update:trafficInfractionPoints', value: number): void;
+    (e: 'update:mugShot', value?: File): void;
 }>();
 
 const w = window;
@@ -59,6 +63,7 @@ function copyLinkToClipboard(): void {
 const setJobModal = ref(false);
 const setWantedModal = ref(false);
 const trafficPointsModal = ref(false);
+const mugShotModal = ref(false);
 </script>
 
 <template>
@@ -85,6 +90,12 @@ const trafficPointsModal = ref(false);
                             :user="user"
                             @close="trafficPointsModal = false"
                             @update:traffic-infraction-points="$emit('update:trafficInfractionPoints', $event)"
+                        />
+                        <CitizenSetMugShotModal
+                            :open="mugShotModal"
+                            :user="user"
+                            @close="mugShotModal = false"
+                            @update:mug-shot="$emit('update:mugShot', $event)"
                         />
 
                         <div class="w-full grow lg:flex xl:px-2">
@@ -304,6 +315,16 @@ const trafficPointsModal = ref(false);
                                     >
                                         <CounterIcon class="w-5 h-auto mr-1.5" />
                                         {{ $t('components.citizens.citizen_info_profile.set_traffic_points') }}
+                                    </button>
+                                </div>
+                                <div v-if="attr('CitizenStoreService.SetUserProps', 'Fields', 'MugShot')" class="flex-initial">
+                                    <button
+                                        type="button"
+                                        class="inline-flex w-full flex-shrink-0 items-center justify-center rounded-md bg-secondary-500 px-3 py-2 text-sm font-semibold text-neutral transition-colors hover:bg-secondary-400 focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-secondary-500 sm:flex-1"
+                                        @click="mugShotModal = true"
+                                    >
+                                        <CameraIcon class="w-5 h-auto mr-1.5" />
+                                        {{ $t('components.citizens.citizen_info_profile.set_mug_shot') }}
                                     </button>
                                 </div>
                                 <div v-if="can('DocStoreService.CreateDocument')" class="flex-initial">

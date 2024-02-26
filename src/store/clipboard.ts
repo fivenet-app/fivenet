@@ -17,7 +17,7 @@ export class ClipboardUser {
     public lastname: string;
     public dateofbirth: string | undefined;
     public phoneNumber: string | undefined;
-    public avatarUrl: File | undefined;
+    public avatar: File | undefined;
 
     constructor(u: UserShort | User) {
         this.userId = u.userId;
@@ -30,7 +30,7 @@ export class ClipboardUser {
         this.lastname = u.lastname;
         this.dateofbirth = u.dateofbirth;
         this.phoneNumber = u.phoneNumber;
-        this.avatarUrl = u.avatarUrl;
+        this.avatar = u.avatar;
 
         return this;
     }
@@ -249,7 +249,7 @@ export function getUser(obj: ClipboardUser): User {
         dateofbirth: obj.dateofbirth ?? '',
         phoneNumber: obj.phoneNumber ?? '',
         licenses: [],
-        avatarUrl: { url: obj.avatarUrl?.url, type: undefined, data: new Uint8Array() },
+        avatar: { url: obj.avatar?.url, type: undefined, data: new Uint8Array() },
     };
 
     return u;

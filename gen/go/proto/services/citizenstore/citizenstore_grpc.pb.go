@@ -29,13 +29,13 @@ const (
 //
 // For semantics around ctx use and closing/ending streaming RPCs, please refer to https://pkg.go.dev/google.golang.org/grpc/?tab=doc#ClientConn.NewStream.
 type CitizenStoreServiceClient interface {
-	// @perm: Attrs=Fields/StringList:[]string{"PhoneNumber", "Licenses", "UserProps.Wanted", "UserProps.Job", "UserProps.TrafficInfractionPoints", "UserProps.OpenFines", "UserProps.BloodType", "UserProps.Picture", "UserProps.Picture.Update"}
+	// @perm: Attrs=Fields/StringList:[]string{"PhoneNumber", "Licenses", "UserProps.Wanted", "UserProps.Job", "UserProps.TrafficInfractionPoints", "UserProps.OpenFines", "UserProps.BloodType", "UserProps.MugShot"}
 	ListCitizens(ctx context.Context, in *ListCitizensRequest, opts ...grpc.CallOption) (*ListCitizensResponse, error)
 	// @perm: Attrs=Jobs/JobGradeList
 	GetUser(ctx context.Context, in *GetUserRequest, opts ...grpc.CallOption) (*GetUserResponse, error)
 	// @perm: Attrs=Fields/StringList:[]string{"SourceUser", "Own"}
 	ListUserActivity(ctx context.Context, in *ListUserActivityRequest, opts ...grpc.CallOption) (*ListUserActivityResponse, error)
-	// @perm: Attrs=Fields/StringList:[]string{"Wanted", "Job", "TrafficInfractionPoints"}
+	// @perm: Attrs=Fields/StringList:[]string{"Wanted", "Job", "TrafficInfractionPoints", "MugShot"}
 	SetUserProps(ctx context.Context, in *SetUserPropsRequest, opts ...grpc.CallOption) (*SetUserPropsResponse, error)
 }
 
@@ -87,13 +87,13 @@ func (c *citizenStoreServiceClient) SetUserProps(ctx context.Context, in *SetUse
 // All implementations must embed UnimplementedCitizenStoreServiceServer
 // for forward compatibility
 type CitizenStoreServiceServer interface {
-	// @perm: Attrs=Fields/StringList:[]string{"PhoneNumber", "Licenses", "UserProps.Wanted", "UserProps.Job", "UserProps.TrafficInfractionPoints", "UserProps.OpenFines", "UserProps.BloodType", "UserProps.Picture", "UserProps.Picture.Update"}
+	// @perm: Attrs=Fields/StringList:[]string{"PhoneNumber", "Licenses", "UserProps.Wanted", "UserProps.Job", "UserProps.TrafficInfractionPoints", "UserProps.OpenFines", "UserProps.BloodType", "UserProps.MugShot"}
 	ListCitizens(context.Context, *ListCitizensRequest) (*ListCitizensResponse, error)
 	// @perm: Attrs=Jobs/JobGradeList
 	GetUser(context.Context, *GetUserRequest) (*GetUserResponse, error)
 	// @perm: Attrs=Fields/StringList:[]string{"SourceUser", "Own"}
 	ListUserActivity(context.Context, *ListUserActivityRequest) (*ListUserActivityResponse, error)
-	// @perm: Attrs=Fields/StringList:[]string{"Wanted", "Job", "TrafficInfractionPoints"}
+	// @perm: Attrs=Fields/StringList:[]string{"Wanted", "Job", "TrafficInfractionPoints", "MugShot"}
 	SetUserProps(context.Context, *SetUserPropsRequest) (*SetUserPropsResponse, error)
 	mustEmbedUnimplementedCitizenStoreServiceServer()
 }

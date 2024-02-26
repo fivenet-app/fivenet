@@ -57,12 +57,12 @@ message SetUserPropsResponse {
 }
 
 service CitizenStoreService {
-  // @perm: Attrs=Fields/StringList:[]string{"PhoneNumber", "Licenses", "UserProps.Wanted", "UserProps.Job", "UserProps.TrafficInfractionPoints", "UserProps.OpenFines", "UserProps.BloodType", "UserProps.Picture", "UserProps.Picture.Update"}
+  // @perm: Attrs=Fields/StringList:[]string{"PhoneNumber", "Licenses", "UserProps.Wanted", "UserProps.Job", "UserProps.TrafficInfractionPoints", "UserProps.OpenFines", "UserProps.BloodType", "UserProps.MugShot"}
   rpc ListCitizens(ListCitizensRequest) returns (ListCitizensResponse);
   // @perm: Attrs=Jobs/JobGradeList
   rpc GetUser(GetUserRequest) returns (GetUserResponse);
   // @perm: Attrs=Fields/StringList:[]string{"SourceUser", "Own"}
   rpc ListUserActivity(ListUserActivityRequest) returns (ListUserActivityResponse);
-  // @perm: Attrs=Fields/StringList:[]string{"Wanted", "Job", "TrafficInfractionPoints"}
+  // @perm: Attrs=Fields/StringList:[]string{"Wanted", "Job", "TrafficInfractionPoints", "MugShot"}
   rpc SetUserProps(SetUserPropsRequest) returns (SetUserPropsResponse);
 }

@@ -194,7 +194,8 @@
                 "revoke_wanted": "Revoke Wanted Status",
                 "set_wanted": "Set Person Wanted",
                 "set_job": "Set Person's Job",
-                "set_traffic_points": "Set Traffic Infraction Points"
+                "set_traffic_points": "Set Traffic Infraction Points",
+                "set_mug_shot": "Set Mug Shot Photo"
             },
             "citizen_info_activity_feed_entry": {
                 "with_reason": "with reason",
@@ -207,6 +208,7 @@
                     "removed": "Removed citizen document relation in"
                 },
                 "userprops_job_set": "Set the citizen's job to ",
+                "userprops_mug_shot_set": "Set the citizen's mug shot picture",
                 "plugin_license": {
                     "added": "License added",
                     "removed": "License removed"
@@ -1161,7 +1163,8 @@
                     "UserProps_Job": "Job",
                     "UserProps_TrafficInfractionPoints": "Traffic Points",
                     "UserProps_OpenFines": "Open Fines",
-                    "UserProps_BloodType": "Blood Type"
+                    "UserProps_BloodType": "Blood Type",
+                    "UserProps_MugShot": "Mug Shot"
                 },
                 "attrs_types": {
                     "Fields": "Fields"
@@ -1184,7 +1187,8 @@
                 "attrs": {
                     "Wanted": "Wanted Status",
                     "Job": "Job",
-                    "TrafficInfractionPoints": "Traffic Points"
+                    "TrafficInfractionPoints": "Traffic Points",
+                    "MugShot": "Mug Shot"
                 },
                 "attrs_types": {
                     "Fields": "User Properties Fields"
@@ -1599,7 +1603,8 @@
             "ErrPropsJobDenied": "You are not allowed to set a user job!",
             "ErrPropsJobPublic": "You can't set a state job!",
             "ErrPropsJobInvalid": "Invalid job or job rank set!",
-            "ErrPropsTrafficPointsDenied": "You are not allowed to set a user's traffic infraction points!"
+            "ErrPropsTrafficPointsDenied": "You are not allowed to set a user's traffic infraction points!",
+            "ErrPropsMugShotDenied": "You are not allowed to set a user's mug shot!"
         },
         "CompletorService": {
             "ErrFailedSearch": "Failed to search the data!"

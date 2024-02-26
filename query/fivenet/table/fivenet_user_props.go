@@ -24,7 +24,8 @@ type fivenetUserPropsTable struct {
 	TrafficInfractionPoints mysql.ColumnInteger
 	OpenFines               mysql.ColumnInteger
 	BloodType               mysql.ColumnString
-	AvatarURL               mysql.ColumnString
+	Avatar                  mysql.ColumnString
+	MugShot                 mysql.ColumnString
 
 	AllColumns     mysql.ColumnList
 	MutableColumns mysql.ColumnList
@@ -72,9 +73,10 @@ func newFivenetUserPropsTableImpl(schemaName, tableName, alias string) fivenetUs
 		TrafficInfractionPointsColumn = mysql.IntegerColumn("traffic_infraction_points")
 		OpenFinesColumn               = mysql.IntegerColumn("open_fines")
 		BloodTypeColumn               = mysql.StringColumn("blood_type")
-		AvatarURLColumn               = mysql.StringColumn("avatar_url")
-		allColumns                    = mysql.ColumnList{UserIDColumn, WantedColumn, JobColumn, JobGradeColumn, TrafficInfractionPointsColumn, OpenFinesColumn, BloodTypeColumn, AvatarURLColumn}
-		mutableColumns                = mysql.ColumnList{UserIDColumn, WantedColumn, JobColumn, JobGradeColumn, TrafficInfractionPointsColumn, OpenFinesColumn, BloodTypeColumn, AvatarURLColumn}
+		AvatarColumn                  = mysql.StringColumn("avatar")
+		MugShotColumn                 = mysql.StringColumn("mug_shot")
+		allColumns                    = mysql.ColumnList{UserIDColumn, WantedColumn, JobColumn, JobGradeColumn, TrafficInfractionPointsColumn, OpenFinesColumn, BloodTypeColumn, AvatarColumn, MugShotColumn}
+		mutableColumns                = mysql.ColumnList{UserIDColumn, WantedColumn, JobColumn, JobGradeColumn, TrafficInfractionPointsColumn, OpenFinesColumn, BloodTypeColumn, AvatarColumn, MugShotColumn}
 	)
 
 	return fivenetUserPropsTable{
@@ -88,7 +90,8 @@ func newFivenetUserPropsTableImpl(schemaName, tableName, alias string) fivenetUs
 		TrafficInfractionPoints: TrafficInfractionPointsColumn,
 		OpenFines:               OpenFinesColumn,
 		BloodType:               BloodTypeColumn,
-		AvatarURL:               AvatarURLColumn,
+		Avatar:                  AvatarColumn,
+		MugShot:                 MugShotColumn,
 
 		AllColumns:     allColumns,
 		MutableColumns: mutableColumns,

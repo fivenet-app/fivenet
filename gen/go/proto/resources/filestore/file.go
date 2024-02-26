@@ -22,6 +22,7 @@ type FilePrefix = string
 const (
 	Avatars  FilePrefix = "avatars"
 	JobLogos FilePrefix = "job_logos"
+	MugShots FilePrefix = "mugshots"
 )
 
 func (x *File) Scan(value any) error {

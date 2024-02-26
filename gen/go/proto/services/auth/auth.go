@@ -472,7 +472,7 @@ func (s *Server) GetCharacters(ctx context.Context, req *GetCharactersRequest) (
 			tUsers.PhoneNumber,
 			tUsers.Visum,
 			tUsers.Playtime,
-			tUserProps.AvatarURL.AS("user.avatar_url"),
+			tUserProps.Avatar.AS("user.avatar"),
 		).
 		FROM(tUsers.
 			LEFT_JOIN(tJobs,
@@ -520,7 +520,7 @@ func (s *Server) getCharacter(ctx context.Context, charId int32) (*users.User, *
 			tUsers.Firstname,
 			tUsers.Lastname,
 			tUsers.Dateofbirth,
-			tUserProps.AvatarURL.AS("user.avatar_url"),
+			tUserProps.Avatar.AS("user.avatar"),
 			tUsers.Group.AS("group"),
 			tJobs.Label.AS("user.job_label"),
 			tJobGrades.Label.AS("user.job_grade_label"),

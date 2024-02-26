@@ -25,7 +25,7 @@ func (s *Server) ListColleagues(ctx context.Context, req *ListColleaguesRequest)
 		tUser.JobGrade,
 		tUser.Dateofbirth,
 		tUser.PhoneNumber,
-		tUserProps.AvatarURL.AS("user.avatar_url"),
+		tUserProps.Avatar.AS("user.avatar"),
 	}
 
 	condition := tUser.Job.EQ(jet.String(userInfo.Job))

@@ -15,5 +15,6 @@ type FivenetUserProps struct {
 	TrafficInfractionPoints *uint32 `json:"traffic_infraction_points"`
 	OpenFines               *int64  `json:"open_fines"`
 	BloodType               *string `json:"blood_type"`
-	AvatarURL               *string `json:"avatar_url"`
+	Avatar                  *string `json:"avatar"`
+	MugShot                 *string `json:"mug_shot"`
 }

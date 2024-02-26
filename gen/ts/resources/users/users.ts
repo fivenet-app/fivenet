@@ -59,9 +59,9 @@ export interface UserShort {
      */
     phoneNumber?: string;
     /**
-     * @generated from protobuf field: optional resources.filestore.File avatar_url = 17;
+     * @generated from protobuf field: optional resources.filestore.File avatar = 17;
      */
-    avatarUrl?: File;
+    avatar?: File;
 }
 /**
  * @generated from protobuf message resources.users.User
@@ -132,9 +132,9 @@ export interface User {
      */
     licenses: License[]; // @gotags: alias:"user_licenses"
     /**
-     * @generated from protobuf field: optional resources.filestore.File avatar_url = 17;
+     * @generated from protobuf field: optional resources.filestore.File avatar = 17;
      */
-    avatarUrl?: File;
+    avatar?: File;
 }
 /**
  * @generated from protobuf message resources.users.License
@@ -189,6 +189,10 @@ export interface UserProps {
      * @generated from protobuf field: optional string blood_type = 9;
      */
     bloodType?: string;
+    /**
+     * @generated from protobuf field: optional resources.filestore.File mug_shot = 11;
+     */
+    mugShot?: File;
 }
 /**
  * @generated from protobuf message resources.users.UserActivity
@@ -270,7 +274,7 @@ class UserShort$Type extends MessageType<UserShort> {
             { no: 8, name: "lastname", kind: "scalar", T: 9 /*ScalarType.STRING*/, options: { "validate.rules": { string: { minLen: "1", maxLen: "50" } } } },
             { no: 9, name: "dateofbirth", kind: "scalar", T: 9 /*ScalarType.STRING*/, options: { "validate.rules": { string: { len: "10" } } } },
             { no: 12, name: "phone_number", kind: "scalar", opt: true, T: 9 /*ScalarType.STRING*/, options: { "validate.rules": { string: { maxLen: "20" } } } },
-            { no: 17, name: "avatar_url", kind: "message", T: () => File }
+            { no: 17, name: "avatar", kind: "message", T: () => File }
         ]);
     }
     create(value?: PartialMessage<UserShort>): UserShort {
@@ -321,8 +325,8 @@ class UserShort$Type extends MessageType<UserShort> {
                 case /* optional string phone_number */ 12:
                     message.phoneNumber = reader.string();
                     break;
-                case /* optional resources.filestore.File avatar_url */ 17:
-                    message.avatarUrl = File.internalBinaryRead(reader, reader.uint32(), options, message.avatarUrl);
+                case /* optional resources.filestore.File avatar */ 17:
+                    message.avatar = File.internalBinaryRead(reader, reader.uint32(), options, message.avatar);
                     break;
                 default:
                     let u = options.readUnknownField;
@@ -366,9 +370,9 @@ class UserShort$Type extends MessageType<UserShort> {
         /* optional string phone_number = 12; */
         if (message.phoneNumber !== undefined)
             writer.tag(12, WireType.LengthDelimited).string(message.phoneNumber);
-        /* optional resources.filestore.File avatar_url = 17; */
-        if (message.avatarUrl)
-            File.internalBinaryWrite(message.avatarUrl, writer.tag(17, WireType.LengthDelimited).fork(), options).join();
+        /* optional resources.filestore.File avatar = 17; */
+        if (message.avatar)
+            File.internalBinaryWrite(message.avatar, writer.tag(17, WireType.LengthDelimited).fork(), options).join();
         let u = options.writeUnknownFields;
         if (u !== false)
             (u == true ? UnknownFieldHandler.onWrite : u)(this.typeName, message, writer);
@@ -399,7 +403,7 @@ class User$Type extends MessageType<User> {
             { no: 14, name: "playtime", kind: "scalar", opt: true, T: 5 /*ScalarType.INT32*/, options: { "validate.rules": { int32: { gte: 0 } } } },
             { no: 15, name: "props", kind: "message", T: () => UserProps },
             { no: 16, name: "licenses", kind: "message", repeat: 1 /*RepeatType.PACKED*/, T: () => License },
-            { no: 17, name: "avatar_url", kind: "message", T: () => File }
+            { no: 17, name: "avatar", kind: "message", T: () => File }
         ]);
     }
     create(value?: PartialMessage<User>): User {
@@ -469,8 +473,8 @@ class User$Type extends MessageType<User> {
                 case /* repeated resources.users.License licenses */ 16:
                     message.licenses.push(License.internalBinaryRead(reader, reader.uint32(), options));
                     break;
-                case /* optional resources.filestore.File avatar_url */ 17:
-                    message.avatarUrl = File.internalBinaryRead(reader, reader.uint32(), options, message.avatarUrl);
+                case /* optional resources.filestore.File avatar */ 17:
+                    message.avatar = File.internalBinaryRead(reader, reader.uint32(), options, message.avatar);
                     break;
                 default:
                     let u = options.readUnknownField;
@@ -532,9 +536,9 @@ class User$Type extends MessageType<User> {
         /* repeated resources.users.License licenses = 16; */
         for (let i = 0; i < message.licenses.length; i++)
             License.internalBinaryWrite(message.licenses[i], writer.tag(16, WireType.LengthDelimited).fork(), options).join();
-        /* optional resources.filestore.File avatar_url = 17; */
-        if (message.avatarUrl)
-            File.internalBinaryWrite(message.avatarUrl, writer.tag(17, WireType.LengthDelimited).fork(), options).join();
+        /* optional resources.filestore.File avatar = 17; */
+        if (message.avatar)
+            File.internalBinaryWrite(message.avatar, writer.tag(17, WireType.LengthDelimited).fork(), options).join();
         let u = options.writeUnknownFields;
         if (u !== false)
             (u == true ? UnknownFieldHandler.onWrite : u)(this.typeName, message, writer);
@@ -612,7 +616,8 @@ class UserProps$Type extends MessageType<UserProps> {
             { no: 6, name: "job_grade", kind: "message", T: () => JobGrade },
             { no: 7, name: "traffic_infraction_points", kind: "scalar", opt: true, T: 13 /*ScalarType.UINT32*/ },
             { no: 8, name: "open_fines", kind: "scalar", opt: true, T: 3 /*ScalarType.INT64*/, L: 0 /*LongType.BIGINT*/ },
-            { no: 9, name: "blood_type", kind: "scalar", opt: true, T: 9 /*ScalarType.STRING*/ }
+            { no: 9, name: "blood_type", kind: "scalar", opt: true, T: 9 /*ScalarType.STRING*/ },
+            { no: 11, name: "mug_shot", kind: "message", T: () => File }
         ]);
     }
     create(value?: PartialMessage<UserProps>): UserProps {
@@ -654,6 +659,9 @@ class UserProps$Type extends MessageType<UserProps> {
                 case /* optional string blood_type */ 9:
                     message.bloodType = reader.string();
                     break;
+                case /* optional resources.filestore.File mug_shot */ 11:
+                    message.mugShot = File.internalBinaryRead(reader, reader.uint32(), options, message.mugShot);
+                    break;
                 default:
                     let u = options.readUnknownField;
                     if (u === "throw")
@@ -693,6 +701,9 @@ class UserProps$Type extends MessageType<UserProps> {
         /* optional string blood_type = 9; */
         if (message.bloodType !== undefined)
             writer.tag(9, WireType.LengthDelimited).string(message.bloodType);
+        /* optional resources.filestore.File mug_shot = 11; */
+        if (message.mugShot)
+            File.internalBinaryWrite(message.mugShot, writer.tag(11, WireType.LengthDelimited).fork(), options).join();
         let u = options.writeUnknownFields;
         if (u !== false)
             (u == true ? UnknownFieldHandler.onWrite : u)(this.typeName, message, writer);

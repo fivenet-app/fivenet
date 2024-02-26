@@ -4,6 +4,7 @@ import {
     BellAlertIcon,
     BellSleepIcon,
     BriefcaseIcon,
+    CameraAccountIcon,
     DoorOpenIcon,
     HandcuffsIcon,
     HelpCircleIcon,
@@ -73,6 +74,13 @@ switch (props.activity.key) {
         actionText.value = t('components.citizens.citizen_info_activity_feed_entry.userprops_job_set');
         actionValue.value = props.activity.newValue;
         icon = BriefcaseIcon;
+        iconColor.value = 'text-secondary-400';
+        break;
+    }
+
+    case 'UserProps.MugShot': {
+        actionText.value = t('components.citizens.citizen_info_activity_feed_entry.userprops_mug_shot_set');
+        icon = CameraAccountIcon;
         iconColor.value = 'text-secondary-400';
         break;
     }

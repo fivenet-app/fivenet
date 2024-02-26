@@ -7612,7 +7612,15 @@ postcss-nested@^6.0.1:
   dependencies:
     postcss-selector-parser "^6.0.11"
 
-postcss-nesting@12.0.3, postcss-nesting@^12.0.2:
+postcss-nesting@12.0.4:
+  version "12.0.4"
+  resolved "https://registry.yarnpkg.com/postcss-nesting/-/postcss-nesting-12.0.4.tgz#593d577fd1fbbfbe0997a6c81dbff074b26c83a2"
+  integrity sha512-WuCe0KnP4vKjLZK8VNoUWKL8ZLOv/5jiM94mHcI3VszLropHwmjotdUyP/ObzqZpXuQKP2Jf9R12vIHKFSStKw==
+  dependencies:
+    "@csstools/selector-specificity" "^3.0.2"
+    postcss-selector-parser "^6.0.13"
+
+postcss-nesting@^12.0.2:
   version "12.0.3"
   resolved "https://registry.yarnpkg.com/postcss-nesting/-/postcss-nesting-12.0.3.tgz#ee451e5d2dc3f9f09d68434ddc7ad9d42b7f44e9"
   integrity sha512-yrtMRPFNkfZMv9ikBvZ/Eh3RxhpMBKQ3KzD7LCY8+jYVlgju/Mdcxi4JY8bW2Y7ISXw8GTLuF/o+kFtp+yaVfQ==
@@ -9820,6 +9828,7 @@ wide-align@^1.1.2:
     string-width "^1.0.2 || 2 || 3 || 4"
 
 "wrap-ansi-cjs@npm:wrap-ansi@^7.0.0", wrap-ansi@^7.0.0:
+  name wrap-ansi-cjs
   version "7.0.0"
   resolved "https://registry.yarnpkg.com/wrap-ansi/-/wrap-ansi-7.0.0.tgz#67e145cff510a6a6984bdf1152911d69d2eb9e43"
   integrity sha512-YVGIj2kamLSTxw6NsZjoBxfSwsn0ycdesmc4p+Q21c5zPuZ1pl+NfxVdxPtdHvmNVOQ6XSYG4AUtyt/Fi7D16Q==

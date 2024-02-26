@@ -26,7 +26,7 @@ message UserShort {
   }];
   string dateofbirth = 9 [(validate.rules).string.len = 10];
   optional string phone_number = 12 [(validate.rules).string.max_len = 20];
-  optional resources.filestore.File avatar_url = 17;
+  optional resources.filestore.File avatar = 17;
 }
 
 message User {
@@ -56,7 +56,7 @@ message User {
 
   UserProps props = 15; // @gotags: alias:"fivenet_user_props"
   repeated License licenses = 16; // @gotags: alias:"user_licenses"
-  optional resources.filestore.File avatar_url = 17;
+  optional resources.filestore.File avatar = 17;
 }
 
 message License {
@@ -77,6 +77,7 @@ message UserProps {
   optional uint32 traffic_infraction_points = 7;
   optional int64 open_fines = 8;
   optional string blood_type = 9;
+  optional resources.filestore.File mug_shot = 11;
 }
 
 enum UserActivityType {
