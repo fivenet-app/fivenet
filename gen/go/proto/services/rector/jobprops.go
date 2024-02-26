@@ -81,8 +81,7 @@ func (s *Server) SetJobProps(ctx context.Context, req *SetJobPropsRequest) (*Set
 	if req.JobProps.LogoUrl != nil {
 		// Set "current" image's url so the system will delete it if still exists
 		req.JobProps.LogoUrl.Url = jobProps.JobProps.LogoUrl.Url
-		req.JobProps.LogoUrl.Upload(ctx, s.st, filestore.JobLogos, userInfo.Job)
-		if err != nil {
+		if err := req.JobProps.LogoUrl.Upload(ctx, s.st, filestore.JobLogos, userInfo.Job); err != nil {
 			return nil, errswrap.NewError(errorsrector.ErrFailedQuery, err)
 		}
 	}
@@ -124,5 +123,12 @@ func (s *Server) SetJobProps(ctx context.Context, req *SetJobPropsRequest) (*Set
 
 	auditEntry.State = int16(rector.EventType_EVENT_TYPE_UPDATED)
 
-	return &SetJobPropsResponse{}, nil
+	jobProps, err = s.GetJobProps(ctx, &GetJobPropsRequest{})
+	if err != nil {
+		return nil, err
+	}
+
+	return &SetJobPropsResponse{
+		JobProps: jobProps.JobProps,
+	}, nil
 }

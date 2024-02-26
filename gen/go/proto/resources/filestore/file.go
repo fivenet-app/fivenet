@@ -9,9 +9,12 @@ import (
 	"strings"
 
 	"github.com/galexrt/fivenet/pkg/storage"
+	"golang.org/x/exp/slices"
 )
 
 const FilestoreURLPrefix = "/api/filestore/"
+
+var AllowedFileExtensions = []string{"jpg", "jpeg", "png", "webp"}
 
 type FilePrefix = string
 
@@ -50,6 +53,10 @@ func (x *File) Upload(ctx context.Context, st storage.IStorage, prefix FilePrefi
 	}
 	if x.Data == nil {
 		return fmt.Errorf("no file data given")
+	}
+
+	if !slices.Contains(AllowedFileExtensions, *x.Type) {
+		return fmt.Errorf("disallowed file extension")
 	}
 
 	fileName = path.Join(prefix, fmt.Sprintf("%s.%s", fileName, *x.Type))

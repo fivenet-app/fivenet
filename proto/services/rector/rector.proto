@@ -22,7 +22,9 @@ message SetJobPropsRequest {
   resources.users.JobProps job_props = 1;
 }
 
-message SetJobPropsResponse {}
+message SetJobPropsResponse {
+  resources.users.JobProps job_props = 1;
+}
 
 message GetRolesRequest {
   optional bool lowest_rank = 1;

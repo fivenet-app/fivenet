@@ -48,6 +48,10 @@ export interface SetJobPropsRequest {
  * @generated from protobuf message services.rector.SetJobPropsResponse
  */
 export interface SetJobPropsResponse {
+    /**
+     * @generated from protobuf field: resources.users.JobProps job_props = 1;
+     */
+    jobProps?: JobProps;
 }
 /**
  * @generated from protobuf message services.rector.GetRolesRequest
@@ -466,7 +470,9 @@ export const SetJobPropsRequest = new SetJobPropsRequest$Type();
 // @generated message type with reflection information, may provide speed optimized methods
 class SetJobPropsResponse$Type extends MessageType<SetJobPropsResponse> {
     constructor() {
-        super("services.rector.SetJobPropsResponse", []);
+        super("services.rector.SetJobPropsResponse", [
+            { no: 1, name: "job_props", kind: "message", T: () => JobProps }
+        ]);
     }
     create(value?: PartialMessage<SetJobPropsResponse>): SetJobPropsResponse {
         const message = globalThis.Object.create((this.messagePrototype!));
@@ -475,9 +481,28 @@ class SetJobPropsResponse$Type extends MessageType<SetJobPropsResponse> {
         return message;
     }
     internalBinaryRead(reader: IBinaryReader, length: number, options: BinaryReadOptions, target?: SetJobPropsResponse): SetJobPropsResponse {
-        return target ?? this.create();
+        let message = target ?? this.create(), end = reader.pos + length;
+        while (reader.pos < end) {
+            let [fieldNo, wireType] = reader.tag();
+            switch (fieldNo) {
+                case /* resources.users.JobProps job_props */ 1:
+                    message.jobProps = JobProps.internalBinaryRead(reader, reader.uint32(), options, message.jobProps);
+                    break;
+                default:
+                    let u = options.readUnknownField;
+                    if (u === "throw")
+                        throw new globalThis.Error(`Unknown field ${fieldNo} (wire type ${wireType}) for ${this.typeName}`);
+                    let d = reader.skip(wireType);
+                    if (u !== false)
+                        (u === true ? UnknownFieldHandler.onRead : u)(this.typeName, message, fieldNo, wireType, d);
+            }
+        }
+        return message;
     }
     internalBinaryWrite(message: SetJobPropsResponse, writer: IBinaryWriter, options: BinaryWriteOptions): IBinaryWriter {
+        /* resources.users.JobProps job_props = 1; */
+        if (message.jobProps)
+            JobProps.internalBinaryWrite(message.jobProps, writer.tag(1, WireType.LengthDelimited).fork(), options).join();
         let u = options.writeUnknownFields;
         if (u !== false)
             (u == true ? UnknownFieldHandler.onWrite : u)(this.typeName, message, writer);

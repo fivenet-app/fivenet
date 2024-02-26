@@ -46,7 +46,7 @@ async function setJobProps(): Promise<void> {
     }
 
     try {
-        await $grpc.getRectorClient().setJobProps({
+        const { response } = await $grpc.getRectorClient().setJobProps({
             jobProps: jobProps.value,
         });
 
@@ -56,7 +56,10 @@ async function setJobProps(): Promise<void> {
             type: 'success',
         });
 
-        authStore.setJobProps(jobProps.value);
+        if (response.jobProps) {
+            jobProps.value = response.jobProps;
+            authStore.setJobProps(jobProps.value);
+        }
     } catch (e) {
         $grpc.handleError(e as RpcError);
         throw e;
@@ -270,17 +273,18 @@ async function loadImage(): Promise<void> {
                                 {{ $t('common.logo') }}
                             </template>
                             <template #default>
-                                <div class="inline-flex flex-col gap-3">
-                                    <div class="inline-flex flex-row">
-                                        <input
-                                            ref="fileUploadRef"
-                                            type="file"
-                                            accept="image/x-png,image/gif,image/jpeg,image/webp"
-                                            @change="loadImage()"
-                                        />
-                                        <button type="button">Save</button>
+                                <div class="flex flex-col gap-3">
+                                    <input
+                                        ref="fileUploadRef"
+                                        type="file"
+                                        accept="image/x-png,image/jpeg,image/webp"
+                                        class="block w-full rounded-md border-0 bg-base-700 py-1.5 text-neutral placeholder:text-accent-200 focus:ring-2 focus:ring-inset focus:ring-base-300 sm:text-sm sm:leading-6"
+                                        @change="loadImage()"
+                                    />
+
+                                    <div>
+                                        <SquareImg v-if="jobProps.logoUrl?.url" size="xl" :url="jobProps.logoUrl.url" />
                                     </div>
-                                    <SquareImg v-if="jobProps.logoUrl?.url" size="lg" :url="jobProps.logoUrl.url" />
                                 </div>
                             </template>
                         </GenericContainerPanelEntry>
