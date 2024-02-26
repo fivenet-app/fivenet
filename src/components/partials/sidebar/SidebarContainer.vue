@@ -27,6 +27,7 @@ import LanguageSwitcherMenu from '~/components/partials/sidebar/LanguageSwitcher
 import NotificationsButton from '~/components/partials/sidebar/NotificationsButton.vue';
 import { useAuthStore } from '~/store/auth';
 import type { Perms } from '~~/gen/ts/perms';
+import AvatarImg from '~/components/partials/citizens/AvatarImg.vue';
 
 const authStore = useAuthStore();
 const { accessToken, activeChar } = storeToRefs(authStore);
@@ -546,10 +547,16 @@ watch(router.currentRoute, () => updateActiveItem());
                                         {{ $t('components.partials.sidebar.open_usermenu') }}
                                     </span>
                                     <AccountIcon
-                                        v-if="!activeChar?.avatarUrl"
+                                        v-if="!activeChar?.avatarUrl?.url"
                                         class="h-10 w-auto rounded-full bg-base-800 fill-base-300 text-base-300 hover:fill-base-100 hover:text-base-100 hover:transition-colors"
                                     />
-                                    <img v-else class="h-10 w-10 rounded-full" :src="activeChar.avatarUrl" alt="Avatar" />
+                                    <AvatarImg
+                                        v-else
+                                        :url="activeChar.avatarUrl.url"
+                                        :firstname="activeChar.firstname"
+                                        :lastname="activeChar.lastname"
+                                        size="md"
+                                    />
                                 </MenuButton>
                                 <transition
                                     enter-active-class="transition duration-100 ease-out"

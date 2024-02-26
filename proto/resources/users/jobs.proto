@@ -1,7 +1,7 @@
 syntax = "proto3";
 
 package resources.users;
-
+import "resources/filestore/file.proto";
 import "resources/timestamp/timestamp.proto";
 import "validate/validate.proto";
 
@@ -32,7 +32,7 @@ message JobProps {
   optional resources.timestamp.Timestamp discord_last_sync = 7;
   DiscordSyncSettings discord_sync_settings = 8;
   optional string motd = 9 [(validate.rules).string.max_len = 1024];
-  optional string logo_url = 10 [(validate.rules).string.max_len = 128];
+  optional resources.filestore.File logo_url = 10;
 }
 
 message QuickButtons {

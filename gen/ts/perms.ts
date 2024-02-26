@@ -14,6 +14,7 @@
 // source: resources/documents/documents.proto
 // source: resources/documents/requests.proto
 // source: resources/documents/templates.proto
+// source: resources/filestore/file.proto
 // source: resources/jobs/conduct.proto
 // source: resources/jobs/qualifications.proto
 // source: resources/jobs/requests.proto

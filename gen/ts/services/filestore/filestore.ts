@@ -12,215 +12,35 @@ import type { PartialMessage } from "@protobuf-ts/runtime";
 import { reflectionMergePartial } from "@protobuf-ts/runtime";
 import { MessageType } from "@protobuf-ts/runtime";
 /**
- * @generated from protobuf message services.filestore.UploadRequest
- */
-export interface UploadRequest {
-    /**
-     * @generated from protobuf field: string key = 1;
-     */
-    key: string;
-    /**
-     * @generated from protobuf field: string file_name = 2;
-     */
-    fileName: string;
-    /**
-     * @generated from protobuf field: bytes data = 3;
-     */
-    data: Uint8Array;
-    /**
-     * @generated from protobuf field: optional bool replace = 4;
-     */
-    replace?: boolean;
-}
-/**
- * @generated from protobuf message services.filestore.UploadResponse
- */
-export interface UploadResponse {
-    /**
-     * @generated from protobuf field: services.filestore.UploadStatus status = 1;
-     */
-    status: UploadStatus;
-    /**
-     * @generated from protobuf field: optional uint64 id = 2;
-     */
-    id?: bigint;
-    /**
-     * @generated from protobuf field: optional string url = 3;
-     */
-    url?: string;
-}
-/**
  * @generated from protobuf message services.filestore.DeleteRequest
  */
 export interface DeleteRequest {
     /**
-     * @generated from protobuf field: uint64 id = 1;
+     * @generated from protobuf field: string prefix = 1;
      */
-    id: bigint;
+    prefix: string;
+    /**
+     * @generated from protobuf field: string path = 2;
+     */
+    path: string;
 }
 /**
  * @generated from protobuf message services.filestore.DeleteResponse
  */
 export interface DeleteResponse {
 }
-/**
- * @generated from protobuf enum services.filestore.UploadStatus
- */
-export enum UploadStatus {
-    /**
-     * @generated from protobuf enum value: UPLOAD_STATUS_UNSPECIFIED = 0;
-     */
-    UNSPECIFIED = 0,
-    /**
-     * @generated from protobuf enum value: UPLOAD_STATUS_FAILED = 1;
-     */
-    FAILED = 1,
-    /**
-     * @generated from protobuf enum value: UPLOAD_STATUS_SUCCESS = 2;
-     */
-    SUCCESS = 2
-}
-// @generated message type with reflection information, may provide speed optimized methods
-class UploadRequest$Type extends MessageType<UploadRequest> {
-    constructor() {
-        super("services.filestore.UploadRequest", [
-            { no: 1, name: "key", kind: "scalar", T: 9 /*ScalarType.STRING*/, options: { "validate.rules": { string: { minLen: "12", maxLen: "24" } } } },
-            { no: 2, name: "file_name", kind: "scalar", T: 9 /*ScalarType.STRING*/, options: { "validate.rules": { string: { minLen: "6", maxLen: "32" } } } },
-            { no: 3, name: "data", kind: "scalar", T: 12 /*ScalarType.BYTES*/, options: { "validate.rules": { bytes: { minLen: "1", maxLen: "2048" } } } },
-            { no: 4, name: "replace", kind: "scalar", opt: true, T: 8 /*ScalarType.BOOL*/ }
-        ]);
-    }
-    create(value?: PartialMessage<UploadRequest>): UploadRequest {
-        const message = globalThis.Object.create((this.messagePrototype!));
-        message.key = "";
-        message.fileName = "";
-        message.data = new Uint8Array(0);
-        if (value !== undefined)
-            reflectionMergePartial<UploadRequest>(this, message, value);
-        return message;
-    }
-    internalBinaryRead(reader: IBinaryReader, length: number, options: BinaryReadOptions, target?: UploadRequest): UploadRequest {
-        let message = target ?? this.create(), end = reader.pos + length;
-        while (reader.pos < end) {
-            let [fieldNo, wireType] = reader.tag();
-            switch (fieldNo) {
-                case /* string key */ 1:
-                    message.key = reader.string();
-                    break;
-                case /* string file_name */ 2:
-                    message.fileName = reader.string();
-                    break;
-                case /* bytes data */ 3:
-                    message.data = reader.bytes();
-                    break;
-                case /* optional bool replace */ 4:
-                    message.replace = reader.bool();
-                    break;
-                default:
-                    let u = options.readUnknownField;
-                    if (u === "throw")
-                        throw new globalThis.Error(`Unknown field ${fieldNo} (wire type ${wireType}) for ${this.typeName}`);
-                    let d = reader.skip(wireType);
-                    if (u !== false)
-                        (u === true ? UnknownFieldHandler.onRead : u)(this.typeName, message, fieldNo, wireType, d);
-            }
-        }
-        return message;
-    }
-    internalBinaryWrite(message: UploadRequest, writer: IBinaryWriter, options: BinaryWriteOptions): IBinaryWriter {
-        /* string key = 1; */
-        if (message.key !== "")
-            writer.tag(1, WireType.LengthDelimited).string(message.key);
-        /* string file_name = 2; */
-        if (message.fileName !== "")
-            writer.tag(2, WireType.LengthDelimited).string(message.fileName);
-        /* bytes data = 3; */
-        if (message.data.length)
-            writer.tag(3, WireType.LengthDelimited).bytes(message.data);
-        /* optional bool replace = 4; */
-        if (message.replace !== undefined)
-            writer.tag(4, WireType.Varint).bool(message.replace);
-        let u = options.writeUnknownFields;
-        if (u !== false)
-            (u == true ? UnknownFieldHandler.onWrite : u)(this.typeName, message, writer);
-        return writer;
-    }
-}
-/**
- * @generated MessageType for protobuf message services.filestore.UploadRequest
- */
-export const UploadRequest = new UploadRequest$Type();
-// @generated message type with reflection information, may provide speed optimized methods
-class UploadResponse$Type extends MessageType<UploadResponse> {
-    constructor() {
-        super("services.filestore.UploadResponse", [
-            { no: 1, name: "status", kind: "enum", T: () => ["services.filestore.UploadStatus", UploadStatus, "UPLOAD_STATUS_"] },
-            { no: 2, name: "id", kind: "scalar", opt: true, T: 4 /*ScalarType.UINT64*/, L: 0 /*LongType.BIGINT*/ },
-            { no: 3, name: "url", kind: "scalar", opt: true, T: 9 /*ScalarType.STRING*/ }
-        ]);
-    }
-    create(value?: PartialMessage<UploadResponse>): UploadResponse {
-        const message = globalThis.Object.create((this.messagePrototype!));
-        message.status = 0;
-        if (value !== undefined)
-            reflectionMergePartial<UploadResponse>(this, message, value);
-        return message;
-    }
-    internalBinaryRead(reader: IBinaryReader, length: number, options: BinaryReadOptions, target?: UploadResponse): UploadResponse {
-        let message = target ?? this.create(), end = reader.pos + length;
-        while (reader.pos < end) {
-            let [fieldNo, wireType] = reader.tag();
-            switch (fieldNo) {
-                case /* services.filestore.UploadStatus status */ 1:
-                    message.status = reader.int32();
-                    break;
-                case /* optional uint64 id */ 2:
-                    message.id = reader.uint64().toBigInt();
-                    break;
-                case /* optional string url */ 3:
-                    message.url = reader.string();
-                    break;
-                default:
-                    let u = options.readUnknownField;
-                    if (u === "throw")
-                        throw new globalThis.Error(`Unknown field ${fieldNo} (wire type ${wireType}) for ${this.typeName}`);
-                    let d = reader.skip(wireType);
-                    if (u !== false)
-                        (u === true ? UnknownFieldHandler.onRead : u)(this.typeName, message, fieldNo, wireType, d);
-            }
-        }
-        return message;
-    }
-    internalBinaryWrite(message: UploadResponse, writer: IBinaryWriter, options: BinaryWriteOptions): IBinaryWriter {
-        /* services.filestore.UploadStatus status = 1; */
-        if (message.status !== 0)
-            writer.tag(1, WireType.Varint).int32(message.status);
-        /* optional uint64 id = 2; */
-        if (message.id !== undefined)
-            writer.tag(2, WireType.Varint).uint64(message.id);
-        /* optional string url = 3; */
-        if (message.url !== undefined)
-            writer.tag(3, WireType.LengthDelimited).string(message.url);
-        let u = options.writeUnknownFields;
-        if (u !== false)
-            (u == true ? UnknownFieldHandler.onWrite : u)(this.typeName, message, writer);
-        return writer;
-    }
-}
-/**
- * @generated MessageType for protobuf message services.filestore.UploadResponse
- */
-export const UploadResponse = new UploadResponse$Type();
 // @generated message type with reflection information, may provide speed optimized methods
 class DeleteRequest$Type extends MessageType<DeleteRequest> {
     constructor() {
         super("services.filestore.DeleteRequest", [
-            { no: 1, name: "id", kind: "scalar", T: 4 /*ScalarType.UINT64*/, L: 0 /*LongType.BIGINT*/ }
+            { no: 1, name: "prefix", kind: "scalar", T: 9 /*ScalarType.STRING*/, options: { "validate.rules": { string: { maxLen: "64" } } } },
+            { no: 2, name: "path", kind: "scalar", T: 9 /*ScalarType.STRING*/, options: { "validate.rules": { string: { maxLen: "128" } } } }
         ]);
     }
     create(value?: PartialMessage<DeleteRequest>): DeleteRequest {
         const message = globalThis.Object.create((this.messagePrototype!));
-        message.id = 0n;
+        message.prefix = "";
+        message.path = "";
         if (value !== undefined)
             reflectionMergePartial<DeleteRequest>(this, message, value);
         return message;
@@ -230,8 +50,11 @@ class DeleteRequest$Type extends MessageType<DeleteRequest> {
         while (reader.pos < end) {
             let [fieldNo, wireType] = reader.tag();
             switch (fieldNo) {
-                case /* uint64 id */ 1:
-                    message.id = reader.uint64().toBigInt();
+                case /* string prefix */ 1:
+                    message.prefix = reader.string();
+                    break;
+                case /* string path */ 2:
+                    message.path = reader.string();
                     break;
                 default:
                     let u = options.readUnknownField;
@@ -245,9 +68,12 @@ class DeleteRequest$Type extends MessageType<DeleteRequest> {
         return message;
     }
     internalBinaryWrite(message: DeleteRequest, writer: IBinaryWriter, options: BinaryWriteOptions): IBinaryWriter {
-        /* uint64 id = 1; */
-        if (message.id !== 0n)
-            writer.tag(1, WireType.Varint).uint64(message.id);
+        /* string prefix = 1; */
+        if (message.prefix !== "")
+            writer.tag(1, WireType.LengthDelimited).string(message.prefix);
+        /* string path = 2; */
+        if (message.path !== "")
+            writer.tag(2, WireType.LengthDelimited).string(message.path);
         let u = options.writeUnknownFields;
         if (u !== false)
             (u == true ? UnknownFieldHandler.onWrite : u)(this.typeName, message, writer);
@@ -287,6 +113,5 @@ export const DeleteResponse = new DeleteResponse$Type();
  * @generated ServiceType for protobuf service services.filestore.FileStoreService
  */
 export const FileStoreService = new ServiceType("services.filestore.FileStoreService", [
-    { name: "Upload", options: {}, I: UploadRequest, O: UploadResponse },
     { name: "Delete", options: {}, I: DeleteRequest, O: DeleteResponse }
 ]);

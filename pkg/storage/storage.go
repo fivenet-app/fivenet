@@ -14,10 +14,6 @@ var Module = fx.Module("storage",
 )
 
 func New(cfg *config.Config) (IStorage, error) {
-	if !cfg.Storage.Enabled {
-		return nil, nil
-	}
-
 	fn, ok := storageFactories[cfg.Storage.Type]
 	if !ok {
 		return nil, fmt.Errorf("invalid storage '%s' factory given", cfg.Storage.Type)

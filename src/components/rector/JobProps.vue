@@ -15,6 +15,8 @@ import { availableThemes } from '~/store/settings';
 import { JobProps, UserInfoSyncUnemployedMode } from '~~/gen/ts/resources/users/jobs';
 import GenericContainerPanel from '~/components/partials/GenericContainerPanel.vue';
 import GenericContainerPanelEntry from '~/components/partials/GenericContainerPanelEntry.vue';
+import SquareImg from '~/components/partials/SquareImg.vue';
+import { File } from '~~/gen/ts/resources/filestore/file';
 
 const { $grpc } = useNuxtApp();
 
@@ -66,6 +68,25 @@ const onSubmitThrottle = useThrottleFn(async (_) => {
     canSubmit.value = false;
     await setJobProps().finally(() => setTimeout(() => (canSubmit.value = true), 400));
 }, 1000);
+
+const fileUploadRef = ref<HTMLInputElement | null>(null);
+async function loadImage(): Promise<void> {
+    if (!jobProps.value || !fileUploadRef.value || !fileUploadRef.value.files || fileUploadRef.value.files.length <= 0) {
+        return;
+    }
+
+    if (fileUploadRef.value.files[0].size > 2097152) {
+        return;
+    }
+
+    if (jobProps.value.logoUrl === undefined) {
+        jobProps.value.logoUrl = {} as File;
+    }
+
+    const typeSplit = fileUploadRef.value.files[0].type.split('/');
+    jobProps.value.logoUrl.type = typeSplit[typeSplit.length - 1];
+    jobProps.value.logoUrl.data = new Uint8Array(await fileUploadRef.value.files[0].arrayBuffer());
+}
 </script>
 
 <template>
@@ -244,6 +265,26 @@ const onSubmitThrottle = useThrottleFn(async (_) => {
                                 </fieldset>
                             </template>
                         </GenericContainerPanelEntry>
+                        <GenericContainerPanelEntry>
+                            <template #title>
+                                {{ $t('common.logo') }}
+                            </template>
+                            <template #default>
+                                <div class="inline-flex flex-col gap-3">
+                                    <div class="inline-flex flex-row">
+                                        <input
+                                            ref="fileUploadRef"
+                                            type="file"
+                                            accept="image/x-png,image/gif,image/jpeg,image/webp"
+                                            @change="loadImage()"
+                                        />
+                                        <button type="button">Save</button>
+                                    </div>
+                                    <SquareImg v-if="jobProps.logoUrl?.url" size="lg" :url="jobProps.logoUrl.url" />
+                                </div>
+                            </template>
+                        </GenericContainerPanelEntry>
+
                         <!-- Save button -->
                         <GenericContainerPanelEntry v-if="can('RectorService.SetJobProps')">
                             <template #default>

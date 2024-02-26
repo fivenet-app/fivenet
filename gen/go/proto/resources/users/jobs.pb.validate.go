@@ -519,15 +519,33 @@ func (m *JobProps) validate(all bool) error {
 
 	if m.LogoUrl != nil {
 
-		if utf8.RuneCountInString(m.GetLogoUrl()) > 128 {
-			err := JobPropsValidationError{
-				field:  "LogoUrl",
-				reason: "value length must be at most 128 runes",
+		if all {
+			switch v := interface{}(m.GetLogoUrl()).(type) {
+			case interface{ ValidateAll() error }:
+				if err := v.ValidateAll(); err != nil {
+					errors = append(errors, JobPropsValidationError{
+						field:  "LogoUrl",
+						reason: "embedded message failed validation",
+						cause:  err,
+					})
+				}
+			case interface{ Validate() error }:
+				if err := v.Validate(); err != nil {
+					errors = append(errors, JobPropsValidationError{
+						field:  "LogoUrl",
+						reason: "embedded message failed validation",
+						cause:  err,
+					})
+				}
 			}
-			if !all {
-				return err
+		} else if v, ok := interface{}(m.GetLogoUrl()).(interface{ Validate() error }); ok {
+			if err := v.Validate(); err != nil {
+				return JobPropsValidationError{
+					field:  "LogoUrl",
+					reason: "embedded message failed validation",
+					cause:  err,
+				}
 			}
-			errors = append(errors, err)
 		}
 
 	}

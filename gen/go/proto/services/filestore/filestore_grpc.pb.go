@@ -19,7 +19,6 @@ import (
 const _ = grpc.SupportPackageIsVersion7
 
 const (
-	FileStoreService_Upload_FullMethodName = "/services.filestore.FileStoreService/Upload"
 	FileStoreService_Delete_FullMethodName = "/services.filestore.FileStoreService/Delete"
 )
 
@@ -27,8 +26,6 @@ const (
 //
 // For semantics around ctx use and closing/ending streaming RPCs, please refer to https://pkg.go.dev/google.golang.org/grpc/?tab=doc#ClientConn.NewStream.
 type FileStoreServiceClient interface {
-	// @perm: Name=SuperUser
-	Upload(ctx context.Context, in *UploadRequest, opts ...grpc.CallOption) (*UploadResponse, error)
 	// @perm: Name=SuperUser
 	Delete(ctx context.Context, in *DeleteRequest, opts ...grpc.CallOption) (*DeleteResponse, error)
 }
@@ -39,15 +36,6 @@ type fileStoreServiceClient struct {
 
 func NewFileStoreServiceClient(cc grpc.ClientConnInterface) FileStoreServiceClient {
 	return &fileStoreServiceClient{cc}
-}
-
-func (c *fileStoreServiceClient) Upload(ctx context.Context, in *UploadRequest, opts ...grpc.CallOption) (*UploadResponse, error) {
-	out := new(UploadResponse)
-	err := c.cc.Invoke(ctx, FileStoreService_Upload_FullMethodName, in, out, opts...)
-	if err != nil {
-		return nil, err
-	}
-	return out, nil
 }
 
 func (c *fileStoreServiceClient) Delete(ctx context.Context, in *DeleteRequest, opts ...grpc.CallOption) (*DeleteResponse, error) {
@@ -64,8 +52,6 @@ func (c *fileStoreServiceClient) Delete(ctx context.Context, in *DeleteRequest, 
 // for forward compatibility
 type FileStoreServiceServer interface {
 	// @perm: Name=SuperUser
-	Upload(context.Context, *UploadRequest) (*UploadResponse, error)
-	// @perm: Name=SuperUser
 	Delete(context.Context, *DeleteRequest) (*DeleteResponse, error)
 	mustEmbedUnimplementedFileStoreServiceServer()
 }
@@ -74,9 +60,6 @@ type FileStoreServiceServer interface {
 type UnimplementedFileStoreServiceServer struct {
 }
 
-func (UnimplementedFileStoreServiceServer) Upload(context.Context, *UploadRequest) (*UploadResponse, error) {
-	return nil, status.Errorf(codes.Unimplemented, "method Upload not implemented")
-}
 func (UnimplementedFileStoreServiceServer) Delete(context.Context, *DeleteRequest) (*DeleteResponse, error) {
 	return nil, status.Errorf(codes.Unimplemented, "method Delete not implemented")
 }
@@ -91,24 +74,6 @@ type UnsafeFileStoreServiceServer interface {
 
 func RegisterFileStoreServiceServer(s grpc.ServiceRegistrar, srv FileStoreServiceServer) {
 	s.RegisterService(&FileStoreService_ServiceDesc, srv)
-}
-
-func _FileStoreService_Upload_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
-	in := new(UploadRequest)
-	if err := dec(in); err != nil {
-		return nil, err
-	}
-	if interceptor == nil {
-		return srv.(FileStoreServiceServer).Upload(ctx, in)
-	}
-	info := &grpc.UnaryServerInfo{
-		Server:     srv,
-		FullMethod: FileStoreService_Upload_FullMethodName,
-	}
-	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
-		return srv.(FileStoreServiceServer).Upload(ctx, req.(*UploadRequest))
-	}
-	return interceptor(ctx, in, info, handler)
 }
 
 func _FileStoreService_Delete_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
@@ -136,10 +101,6 @@ var FileStoreService_ServiceDesc = grpc.ServiceDesc{
 	ServiceName: "services.filestore.FileStoreService",
 	HandlerType: (*FileStoreServiceServer)(nil),
 	Methods: []grpc.MethodDesc{
-		{
-			MethodName: "Upload",
-			Handler:    _FileStoreService_Upload_Handler,
-		},
 		{
 			MethodName: "Delete",
 			Handler:    _FileStoreService_Delete_Handler,

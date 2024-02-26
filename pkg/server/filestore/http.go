@@ -26,7 +26,7 @@ func New(st storage.IStorage, tm *auth.TokenMgr) *FilestoreHTTP {
 func (s *FilestoreHTTP) RegisterHTTP(e *gin.Engine) {
 	g := e.Group("/api/filestore")
 	{
-		g.GET("/v1/:prefix/*fileName", func(c *gin.Context) {
+		g.GET("/:prefix/*fileName", func(c *gin.Context) {
 			prefix := c.Param("prefix")
 			prefix = filepath.Clean(prefix)
 			fileName := c.Param("fileName")

@@ -926,6 +926,21 @@
         
           
           <li>
+            <a href="#resources%2ffilestore%2ffile.proto">resources/filestore/file.proto</a>
+            <ul>
+              
+                <li>
+                  <a href="#resources.filestore.File"><span class="badge">M</span>File</a>
+                </li>
+              
+              
+              
+              
+            </ul>
+          </li>
+        
+          
+          <li>
             <a href="#services%2fauth%2fauth.proto">services/auth/auth.proto</a>
             <ul>
               
@@ -1623,18 +1638,6 @@
                   <a href="#services.filestore.DeleteResponse"><span class="badge">M</span>DeleteResponse</a>
                 </li>
               
-                <li>
-                  <a href="#services.filestore.UploadRequest"><span class="badge">M</span>UploadRequest</a>
-                </li>
-              
-                <li>
-                  <a href="#services.filestore.UploadResponse"><span class="badge">M</span>UploadResponse</a>
-                </li>
-              
-              
-                <li>
-                  <a href="#services.filestore.UploadStatus"><span class="badge">E</span>UploadStatus</a>
-                </li>
               
               
               
@@ -10370,7 +10373,7 @@
               
                 <tr>
                   <td>avatar_url</td>
-                  <td><a href="#string">string</a></td>
+                  <td><a href="#resources.filestore.File">resources.filestore.File</a></td>
                   <td>optional</td>
                   <td><p> </p></td>
                 </tr>
@@ -10535,17 +10538,6 @@
                     <ul>
                     
                       <li>int32.gte: 0</li>
-                    
-                    </ul>
-                  </td>
-                </tr>
-              
-                <tr>
-                  <td>avatar_url</td>
-                  <td>
-                    <ul>
-                    
-                      <li>string.max_len: 128</li>
                     
                     </ul>
                   </td>
@@ -10893,7 +10885,7 @@
               
                 <tr>
                   <td>avatar_url</td>
-                  <td><a href="#string">string</a></td>
+                  <td><a href="#resources.filestore.File">resources.filestore.File</a></td>
                   <td>optional</td>
                   <td><p> </p></td>
                 </tr>
@@ -11023,17 +11015,6 @@
                     <ul>
                     
                       <li>string.max_len: 20</li>
-                    
-                    </ul>
-                  </td>
-                </tr>
-              
-                <tr>
-                  <td>avatar_url</td>
-                  <td>
-                    <ul>
-                    
-                      <li>string.max_len: 128</li>
                     
                     </ul>
                   </td>
@@ -11378,7 +11359,7 @@
               
                 <tr>
                   <td>logo_url</td>
-                  <td><a href="#string">string</a></td>
+                  <td><a href="#resources.filestore.File">resources.filestore.File</a></td>
                   <td>optional</td>
                   <td><p> </p></td>
                 </tr>
@@ -11451,17 +11432,6 @@
                     <ul>
                     
                       <li>string.max_len: 1024</li>
-                    
-                    </ul>
-                  </td>
-                </tr>
-              
-                <tr>
-                  <td>logo_url</td>
-                  <td>
-                    <ul>
-                    
-                      <li>string.max_len: 128</li>
                     
                     </ul>
                   </td>
@@ -11732,6 +11702,109 @@
             </tbody>
           </table>
 
+          
+
+        
+      
+
+      
+
+      
+
+      
+    
+      
+      <div class="file-heading">
+        <h2 id="resources/filestore/file.proto">resources/filestore/file.proto</h2><a href="#title">Top</a>
+      </div>
+      <p></p>
+
+      
+        <h3 id="resources.filestore.File">File</h3>
+        <p></p>
+
+        
+          <table class="field-table">
+            <thead>
+              <tr><td>Field</td><td>Type</td><td>Label</td><td>Description</td></tr>
+            </thead>
+            <tbody>
+              
+                <tr>
+                  <td>url</td>
+                  <td><a href="#string">string</a></td>
+                  <td>optional</td>
+                  <td><p> </p></td>
+                </tr>
+              
+                <tr>
+                  <td>type</td>
+                  <td><a href="#string">string</a></td>
+                  <td>optional</td>
+                  <td><p> </p></td>
+                </tr>
+              
+                <tr>
+                  <td>data</td>
+                  <td><a href="#bytes">bytes</a></td>
+                  <td></td>
+                  <td><p> </p></td>
+                </tr>
+              
+            </tbody>
+          </table>
+
+          
+            
+            
+            <h4>Validated Fields</h4>
+            <table>
+              <thead>
+                <tr>
+                  <td>Field</td>
+                  <td>Validations</td>
+                </tr>
+              </thead>
+              <tbody>
+              
+                <tr>
+                  <td>url</td>
+                  <td>
+                    <ul>
+                    
+                      <li>string.max_len: 128</li>
+                    
+                    </ul>
+                  </td>
+                </tr>
+              
+                <tr>
+                  <td>type</td>
+                  <td>
+                    <ul>
+                    
+                      <li>string.max_len: 4</li>
+                    
+                    </ul>
+                  </td>
+                </tr>
+              
+                <tr>
+                  <td>data</td>
+                  <td>
+                    <ul>
+                    
+                      <li>bytes.min_len: 1</li>
+                    
+                      <li>bytes.max_len: 2097152</li>
+                    
+                    </ul>
+                  </td>
+                </tr>
+              
+              </tbody>
+            </table>
+            
           
 
         
@@ -18135,61 +18208,16 @@
             <tbody>
               
                 <tr>
-                  <td>id</td>
-                  <td><a href="#uint64">uint64</a></td>
-                  <td></td>
-                  <td><p> </p></td>
-                </tr>
-              
-            </tbody>
-          </table>
-
-          
-
-        
-      
-        <h3 id="services.filestore.DeleteResponse">DeleteResponse</h3>
-        <p></p>
-
-        
-
-        
-      
-        <h3 id="services.filestore.UploadRequest">UploadRequest</h3>
-        <p></p>
-
-        
-          <table class="field-table">
-            <thead>
-              <tr><td>Field</td><td>Type</td><td>Label</td><td>Description</td></tr>
-            </thead>
-            <tbody>
-              
-                <tr>
-                  <td>key</td>
+                  <td>prefix</td>
                   <td><a href="#string">string</a></td>
                   <td></td>
                   <td><p> </p></td>
                 </tr>
               
                 <tr>
-                  <td>file_name</td>
+                  <td>path</td>
                   <td><a href="#string">string</a></td>
                   <td></td>
-                  <td><p> </p></td>
-                </tr>
-              
-                <tr>
-                  <td>data</td>
-                  <td><a href="#bytes">bytes</a></td>
-                  <td></td>
-                  <td><p> </p></td>
-                </tr>
-              
-                <tr>
-                  <td>replace</td>
-                  <td><a href="#bool">bool</a></td>
-                  <td>optional</td>
                   <td><p> </p></td>
                 </tr>
               
@@ -18210,39 +18238,22 @@
               <tbody>
               
                 <tr>
-                  <td>key</td>
+                  <td>prefix</td>
                   <td>
                     <ul>
                     
-                      <li>string.min_len: 12</li>
-                    
-                      <li>string.max_len: 24</li>
+                      <li>string.max_len: 64</li>
                     
                     </ul>
                   </td>
                 </tr>
               
                 <tr>
-                  <td>file_name</td>
+                  <td>path</td>
                   <td>
                     <ul>
                     
-                      <li>string.min_len: 6</li>
-                    
-                      <li>string.max_len: 32</li>
-                    
-                    </ul>
-                  </td>
-                </tr>
-              
-                <tr>
-                  <td>data</td>
-                  <td>
-                    <ul>
-                    
-                      <li>bytes.min_len: 1</li>
-                    
-                      <li>bytes.max_len: 2048</li>
+                      <li>string.max_len: 128</li>
                     
                     </ul>
                   </td>
@@ -18255,74 +18266,14 @@
 
         
       
-        <h3 id="services.filestore.UploadResponse">UploadResponse</h3>
+        <h3 id="services.filestore.DeleteResponse">DeleteResponse</h3>
         <p></p>
 
         
-          <table class="field-table">
-            <thead>
-              <tr><td>Field</td><td>Type</td><td>Label</td><td>Description</td></tr>
-            </thead>
-            <tbody>
-              
-                <tr>
-                  <td>status</td>
-                  <td><a href="#services.filestore.UploadStatus">UploadStatus</a></td>
-                  <td></td>
-                  <td><p> </p></td>
-                </tr>
-              
-                <tr>
-                  <td>id</td>
-                  <td><a href="#uint64">uint64</a></td>
-                  <td>optional</td>
-                  <td><p> </p></td>
-                </tr>
-              
-                <tr>
-                  <td>url</td>
-                  <td><a href="#string">string</a></td>
-                  <td>optional</td>
-                  <td><p> </p></td>
-                </tr>
-              
-            </tbody>
-          </table>
-
-          
 
         
       
 
-      
-        <h3 id="services.filestore.UploadStatus">UploadStatus</h3>
-        <p></p>
-        <table class="enum-table">
-          <thead>
-            <tr><td>Name</td><td>Number</td><td>Description</td></tr>
-          </thead>
-          <tbody>
-            
-              <tr>
-                <td>UPLOAD_STATUS_UNSPECIFIED</td>
-                <td>0</td>
-                <td><p></p></td>
-              </tr>
-            
-              <tr>
-                <td>UPLOAD_STATUS_FAILED</td>
-                <td>1</td>
-                <td><p></p></td>
-              </tr>
-            
-              <tr>
-                <td>UPLOAD_STATUS_SUCCESS</td>
-                <td>2</td>
-                <td><p></p></td>
-              </tr>
-            
-          </tbody>
-        </table>
       
 
       
@@ -18335,13 +18286,6 @@
             <tr><td>Method Name</td><td>Request Type</td><td>Response Type</td><td>Description</td></tr>
           </thead>
           <tbody>
-            
-              <tr>
-                <td>Upload</td>
-                <td><a href="#services.filestore.UploadRequest">UploadRequest</a></td>
-                <td><a href="#services.filestore.UploadResponse">UploadResponse</a></td>
-                <td><p>@perm: Name=SuperUser</p></td>
-              </tr>
             
               <tr>
                 <td>Delete</td>

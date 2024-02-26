@@ -1,9 +1,11 @@
 <script lang="ts" setup>
+import { imageSize, type imageSizes } from '~/components/partials/helpers';
+
 const props = withDefaults(
     defineProps<{
         url?: string;
         text?: string;
-        size?: 'md' | 'lg' | 'xl';
+        size?: imageSizes;
     }>(),
     {
         url: undefined,
@@ -12,17 +14,7 @@ const props = withDefaults(
     },
 );
 
-const size = computed(() => {
-    switch (props.size) {
-        case 'xl':
-            return 'text-lg h-20 w-20';
-        case 'lg':
-            return 'text-lg h-12 w-12';
-        case 'md':
-        default:
-            return 'text-base h-10 w-10';
-    }
-});
+const size = computed(() => imageSize(props.size));
 </script>
 
 <template>
@@ -30,6 +22,6 @@ const size = computed(() => {
         <span v-if="!url" class="font-medium leading-none text-white">
             {{ text }}
         </span>
-        <img v-else class="rounded-full" :class="size" :src="url" :alt="text" />
+        <img v-else class="rounded-sm" :class="size" :src="url" :alt="text" />
     </span>
 </template>

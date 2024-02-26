@@ -7,6 +7,7 @@ import (
 	"os"
 	"path"
 	"path/filepath"
+	"syscall"
 
 	"github.com/galexrt/fivenet/pkg/config"
 )
@@ -76,8 +77,8 @@ func (s *Filesystem) Stat(ctx context.Context, filePath string) (IObjectInfo, er
 	}, nil
 }
 
-func (s *Filesystem) Put(ctx context.Context, filePath string, reader io.Reader, size int64, contentType string) (string, error) {
-	filePath = path.Join(s.basePath, s.prefix, filePath)
+func (s *Filesystem) Put(ctx context.Context, filePathIn string, reader io.Reader, size int64, contentType string) (string, error) {
+	filePath := path.Join(s.basePath, s.prefix, filePathIn)
 
 	dir := filepath.Dir(filePath)
 	if _, err := os.Stat(dir); err != nil {
@@ -90,7 +91,7 @@ func (s *Filesystem) Put(ctx context.Context, filePath string, reader io.Reader,
 		}
 	}
 
-	f, err := os.OpenFile(filePath, os.O_WRONLY|os.O_TRUNC, 0600)
+	f, err := os.OpenFile(filePath, os.O_WRONLY|os.O_TRUNC|os.O_CREATE, 0600)
 	if err != nil {
 		return "", err
 	}
@@ -100,14 +101,17 @@ func (s *Filesystem) Put(ctx context.Context, filePath string, reader io.Reader,
 		return "", err
 	}
 
-	return path.Join(s.prefix, filePath), nil
+	return path.Join(s.prefix, filePathIn), nil
 }
 
 func (s *Filesystem) Delete(ctx context.Context, filePath string) error {
 	filePath = path.Join(s.basePath, s.prefix, filePath)
 
 	if err := os.Remove(filePath); err != nil {
-		return err
+		e, ok := err.(*os.PathError)
+		if ok && e.Err != syscall.ENOENT {
+			return err
+		}
 	}
 
 	return nil

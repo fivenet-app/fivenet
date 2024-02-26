@@ -10,6 +10,7 @@ import { UnknownFieldHandler } from "@protobuf-ts/runtime";
 import type { PartialMessage } from "@protobuf-ts/runtime";
 import { reflectionMergePartial } from "@protobuf-ts/runtime";
 import { MessageType } from "@protobuf-ts/runtime";
+import { File } from "../filestore/file";
 import { Timestamp } from "../timestamp/timestamp";
 /**
  * @generated from protobuf message resources.users.Job
@@ -86,9 +87,9 @@ export interface JobProps {
      */
     motd?: string;
     /**
-     * @generated from protobuf field: optional string logo_url = 10;
+     * @generated from protobuf field: optional resources.filestore.File logo_url = 10;
      */
-    logoUrl?: string;
+    logoUrl?: File;
 }
 /**
  * @generated from protobuf message resources.users.QuickButtons
@@ -317,7 +318,7 @@ class JobProps$Type extends MessageType<JobProps> {
             { no: 7, name: "discord_last_sync", kind: "message", T: () => Timestamp },
             { no: 8, name: "discord_sync_settings", kind: "message", T: () => DiscordSyncSettings },
             { no: 9, name: "motd", kind: "scalar", opt: true, T: 9 /*ScalarType.STRING*/, options: { "validate.rules": { string: { maxLen: "1024" } } } },
-            { no: 10, name: "logo_url", kind: "scalar", opt: true, T: 9 /*ScalarType.STRING*/, options: { "validate.rules": { string: { maxLen: "128" } } } }
+            { no: 10, name: "logo_url", kind: "message", T: () => File }
         ]);
     }
     create(value?: PartialMessage<JobProps>): JobProps {
@@ -361,8 +362,8 @@ class JobProps$Type extends MessageType<JobProps> {
                 case /* optional string motd */ 9:
                     message.motd = reader.string();
                     break;
-                case /* optional string logo_url */ 10:
-                    message.logoUrl = reader.string();
+                case /* optional resources.filestore.File logo_url */ 10:
+                    message.logoUrl = File.internalBinaryRead(reader, reader.uint32(), options, message.logoUrl);
                     break;
                 default:
                     let u = options.readUnknownField;
@@ -403,9 +404,9 @@ class JobProps$Type extends MessageType<JobProps> {
         /* optional string motd = 9; */
         if (message.motd !== undefined)
             writer.tag(9, WireType.LengthDelimited).string(message.motd);
-        /* optional string logo_url = 10; */
-        if (message.logoUrl !== undefined)
-            writer.tag(10, WireType.LengthDelimited).string(message.logoUrl);
+        /* optional resources.filestore.File logo_url = 10; */
+        if (message.logoUrl)
+            File.internalBinaryWrite(message.logoUrl, writer.tag(10, WireType.LengthDelimited).fork(), options).join();
         let u = options.writeUnknownFields;
         if (u !== false)
             (u == true ? UnknownFieldHandler.onWrite : u)(this.typeName, message, writer);

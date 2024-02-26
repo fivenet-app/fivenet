@@ -77,7 +77,7 @@ withDefaults(
                         </div>
                         <div class="inline-flex flex-row gap-2">
                             <div v-if="showAvatar === undefined || showAvatar">
-                                <AvatarImg :avatar-url="user.avatarUrl" :firstname="user.firstname" :lastname="user.lastname" />
+                                <AvatarImg :url="user.avatarUrl" :firstname="user.firstname" :lastname="user.lastname" />
                             </div>
                             <div>
                                 <p class="text-base font-semibold leading-none text-gray-900 dark:text-neutral">

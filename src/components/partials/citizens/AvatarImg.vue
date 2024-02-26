@@ -1,25 +1,27 @@
 <script lang="ts" setup>
+import { imageSize, type imageSizes } from '~/components/partials/helpers';
+
 const props = withDefaults(
     defineProps<{
-        avatarUrl?: string;
+        url?: string;
         firstname: string;
         lastname: string;
-        size?: 'md' | 'lg';
+        size?: imageSizes;
     }>(),
     {
-        avatarUrl: undefined,
+        url: undefined,
         size: 'lg',
     },
 );
 
-const size = computed(() => (props.size === 'lg' ? 'text-lg h-12 w-12' : 'text-base h-10 w-10'));
+const size = computed(() => imageSize(props.size));
 </script>
 
 <template>
     <span class="flex items-center justify-center rounded-full bg-gray-500 ring-2 ring-base-600" :class="size">
-        <span v-if="!avatarUrl" class="font-medium leading-none text-white">
+        <span v-if="!url" class="font-medium leading-none text-white">
             {{ getInitials(`${firstname} ${lastname}`) }}
         </span>
-        <img v-else class="rounded-full" :class="size" :src="avatarUrl" :alt="$t('common.avatar')" />
+        <img v-else class="rounded-full" :class="size" :src="url" :alt="$t('common.avatar')" />
     </span>
 </template>

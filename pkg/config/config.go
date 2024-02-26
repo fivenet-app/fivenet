@@ -259,7 +259,6 @@ type DiscordCommands struct {
 }
 
 type Storage struct {
-	Enabled    bool              `default:"false" yaml:"enabled"`
 	Type       string            `default:"filesystem" yaml:"type"`
 	Filesystem FilesystemStorage `yaml:"filesystem"`
 	S3         S3Storage         `yaml:"s3"`

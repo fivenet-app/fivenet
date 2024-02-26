@@ -128,7 +128,6 @@ discord:
     commands:
       enabled: true
 storage:
-  enabled: true
   type: "filesystem"
   filesystem:
     path: ".data/"

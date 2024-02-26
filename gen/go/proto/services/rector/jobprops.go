@@ -5,6 +5,7 @@ import (
 	"errors"
 	"strings"
 
+	"github.com/galexrt/fivenet/gen/go/proto/resources/filestore"
 	"github.com/galexrt/fivenet/gen/go/proto/resources/rector"
 	"github.com/galexrt/fivenet/gen/go/proto/resources/users"
 	errorsrector "github.com/galexrt/fivenet/gen/go/proto/services/rector/errors"
@@ -68,10 +69,23 @@ func (s *Server) SetJobProps(ctx context.Context, req *SetJobPropsRequest) (*Set
 	}
 	defer s.aud.Log(auditEntry, req)
 
+	jobProps, err := s.GetJobProps(ctx, &GetJobPropsRequest{})
+	if err != nil {
+		return nil, err
+	}
+
 	// Ensure that the job is the user's job
 	req.JobProps.Job = userInfo.Job
-
 	req.JobProps.LivemapMarkerColor = strings.ToLower(req.JobProps.LivemapMarkerColor)
+
+	if req.JobProps.LogoUrl != nil {
+		// Set "current" image's url so the system will delete it if still exists
+		req.JobProps.LogoUrl.Url = jobProps.JobProps.LogoUrl.Url
+		req.JobProps.LogoUrl.Upload(ctx, s.st, filestore.JobLogos, userInfo.Job)
+		if err != nil {
+			return nil, errswrap.NewError(errorsrector.ErrFailedQuery, err)
+		}
+	}
 
 	stmt := tJobProps.
 		INSERT(
@@ -82,6 +96,7 @@ func (s *Server) SetJobProps(ctx context.Context, req *SetJobPropsRequest) (*Set
 			tJobProps.QuickButtons,
 			tJobProps.DiscordGuildID,
 			tJobProps.DiscordSyncSettings,
+			tJobProps.LogoURL,
 		).
 		VALUES(
 			req.JobProps.Job,
@@ -91,6 +106,7 @@ func (s *Server) SetJobProps(ctx context.Context, req *SetJobPropsRequest) (*Set
 			req.JobProps.QuickButtons,
 			req.JobProps.DiscordGuildId,
 			req.JobProps.DiscordSyncSettings,
+			req.JobProps.LogoUrl,
 		).
 		ON_DUPLICATE_KEY_UPDATE(
 			tJobProps.Theme.SET(jet.String(req.JobProps.Theme)),
@@ -99,6 +115,7 @@ func (s *Server) SetJobProps(ctx context.Context, req *SetJobPropsRequest) (*Set
 			tJobProps.QuickButtons.SET(jet.StringExp(jet.Raw("VALUES(`quick_buttons`)"))),
 			tJobProps.DiscordGuildID.SET(jet.IntExp(jet.Raw("VALUES(`discord_guild_id`)"))),
 			tJobProps.DiscordSyncSettings.SET(jet.StringExp(jet.Raw("VALUES(`discord_sync_settings`)"))),
+			tJobProps.LogoURL.SET(jet.StringExp(jet.Raw("VALUES(`logo_url`)"))),
 		)
 
 	if _, err := stmt.ExecContext(ctx, s.db); err != nil {

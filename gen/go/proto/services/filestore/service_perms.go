@@ -11,7 +11,6 @@ var PermsRemap = map[string]string{
 
 	// Service: FileStoreService
 	"FileStoreService/Delete": "SuperUser",
-	"FileStoreService/Upload": "SuperUser",
 }
 
 func (s *Server) GetPermsRemap() map[string]string {

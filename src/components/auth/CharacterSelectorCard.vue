@@ -28,7 +28,7 @@ const onSubmitThrottle = useThrottleFn(async (_) => {
         <div>
             <div class="flex">
                 <div class="mt-4 mx-auto flex flex-row items-center gap-3">
-                    <AvatarImg :avatar-url="char.avatarUrl" :firstname="char.firstname" :lastname="char.lastname" />
+                    <AvatarImg :url="char.avatarUrl?.url" :firstname="char.firstname" :lastname="char.lastname" />
 
                     <h2 class="text-center text-2xl font-medium text-neutral">{{ char.firstname }} {{ char.lastname }}</h2>
                 </div>
@@ -60,7 +60,7 @@ const onSubmitThrottle = useThrottleFn(async (_) => {
                 <dt class="text-sm font-medium text-neutral">
                     {{ $t('common.playtime') }}
                 </dt>
-                <dd class="text-sm text-gray-300">
+                <dd class="text-sm text-gray-300 truncate">
                     {{ fromSecondsToFormattedDuration(char.playtime!) }}
                 </dd>
             </dl>

@@ -6,6 +6,8 @@ import (
 	"github.com/galexrt/fivenet/pkg/mstlystcdata"
 	"github.com/galexrt/fivenet/pkg/perms"
 	"github.com/galexrt/fivenet/pkg/server/audit"
+	"github.com/galexrt/fivenet/pkg/storage"
+	"go.uber.org/fx"
 	"go.uber.org/zap"
 	grpc "google.golang.org/grpc"
 )
@@ -19,16 +21,30 @@ type Server struct {
 	aud      audit.IAuditer
 	enricher *mstlystcdata.Enricher
 	cache    *mstlystcdata.Cache
+	st       storage.IStorage
 }
 
-func NewServer(logger *zap.Logger, db *sql.DB, ps perms.Permissions, aud audit.IAuditer, enricher *mstlystcdata.Enricher, cache *mstlystcdata.Cache) *Server {
+type Params struct {
+	fx.In
+
+	Logger   *zap.Logger
+	DB       *sql.DB
+	PS       perms.Permissions
+	Aud      audit.IAuditer
+	Enricher *mstlystcdata.Enricher
+	Cache    *mstlystcdata.Cache
+	Storage  storage.IStorage
+}
+
+func NewServer(p Params) *Server {
 	return &Server{
-		logger:   logger,
-		db:       db,
-		ps:       ps,
-		aud:      aud,
-		enricher: enricher,
-		cache:    cache,
+		logger:   p.Logger,
+		db:       p.DB,
+		ps:       p.PS,
+		aud:      p.Aud,
+		enricher: p.Enricher,
+		cache:    p.Cache,
+		st:       p.Storage,
 	}
 }
 

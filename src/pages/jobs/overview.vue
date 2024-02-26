@@ -33,7 +33,7 @@ const showRadioFrequency = ref(false);
                                 <div class="flex flex-row gap-4">
                                     <SquareImg
                                         v-if="jobProps && jobProps.logoUrl"
-                                        :url="jobProps?.logoUrl"
+                                        :url="jobProps?.logoUrl.url"
                                         :text="$t('common.logo')"
                                         size="xl"
                                     />

@@ -183,15 +183,33 @@ func (m *UserShort) validate(all bool) error {
 
 	if m.AvatarUrl != nil {
 
-		if utf8.RuneCountInString(m.GetAvatarUrl()) > 128 {
-			err := UserShortValidationError{
-				field:  "AvatarUrl",
-				reason: "value length must be at most 128 runes",
+		if all {
+			switch v := interface{}(m.GetAvatarUrl()).(type) {
+			case interface{ ValidateAll() error }:
+				if err := v.ValidateAll(); err != nil {
+					errors = append(errors, UserShortValidationError{
+						field:  "AvatarUrl",
+						reason: "embedded message failed validation",
+						cause:  err,
+					})
+				}
+			case interface{ Validate() error }:
+				if err := v.Validate(); err != nil {
+					errors = append(errors, UserShortValidationError{
+						field:  "AvatarUrl",
+						reason: "embedded message failed validation",
+						cause:  err,
+					})
+				}
 			}
-			if !all {
-				return err
+		} else if v, ok := interface{}(m.GetAvatarUrl()).(interface{ Validate() error }); ok {
+			if err := v.Validate(); err != nil {
+				return UserShortValidationError{
+					field:  "AvatarUrl",
+					reason: "embedded message failed validation",
+					cause:  err,
+				}
 			}
-			errors = append(errors, err)
 		}
 
 	}
@@ -532,15 +550,33 @@ func (m *User) validate(all bool) error {
 
 	if m.AvatarUrl != nil {
 
-		if utf8.RuneCountInString(m.GetAvatarUrl()) > 128 {
-			err := UserValidationError{
-				field:  "AvatarUrl",
-				reason: "value length must be at most 128 runes",
+		if all {
+			switch v := interface{}(m.GetAvatarUrl()).(type) {
+			case interface{ ValidateAll() error }:
+				if err := v.ValidateAll(); err != nil {
+					errors = append(errors, UserValidationError{
+						field:  "AvatarUrl",
+						reason: "embedded message failed validation",
+						cause:  err,
+					})
+				}
+			case interface{ Validate() error }:
+				if err := v.Validate(); err != nil {
+					errors = append(errors, UserValidationError{
+						field:  "AvatarUrl",
+						reason: "embedded message failed validation",
+						cause:  err,
+					})
+				}
 			}
-			if !all {
-				return err
+		} else if v, ok := interface{}(m.GetAvatarUrl()).(interface{ Validate() error }); ok {
+			if err := v.Validate(); err != nil {
+				return UserValidationError{
+					field:  "AvatarUrl",
+					reason: "embedded message failed validation",
+					cause:  err,
+				}
 			}
-			errors = append(errors, err)
 		}
 
 	}

@@ -13,6 +13,7 @@ import { MessageType } from "@protobuf-ts/runtime";
 import { Timestamp } from "../timestamp/timestamp";
 import { JobGrade } from "./jobs";
 import { Job } from "./jobs";
+import { File } from "../filestore/file";
 /**
  * @generated from protobuf message resources.users.UserShort
  */
@@ -58,9 +59,9 @@ export interface UserShort {
      */
     phoneNumber?: string;
     /**
-     * @generated from protobuf field: optional string avatar_url = 17;
+     * @generated from protobuf field: optional resources.filestore.File avatar_url = 17;
      */
-    avatarUrl?: string;
+    avatarUrl?: File;
 }
 /**
  * @generated from protobuf message resources.users.User
@@ -131,9 +132,9 @@ export interface User {
      */
     licenses: License[]; // @gotags: alias:"user_licenses"
     /**
-     * @generated from protobuf field: optional string avatar_url = 17;
+     * @generated from protobuf field: optional resources.filestore.File avatar_url = 17;
      */
-    avatarUrl?: string;
+    avatarUrl?: File;
 }
 /**
  * @generated from protobuf message resources.users.License
@@ -269,7 +270,7 @@ class UserShort$Type extends MessageType<UserShort> {
             { no: 8, name: "lastname", kind: "scalar", T: 9 /*ScalarType.STRING*/, options: { "validate.rules": { string: { minLen: "1", maxLen: "50" } } } },
             { no: 9, name: "dateofbirth", kind: "scalar", T: 9 /*ScalarType.STRING*/, options: { "validate.rules": { string: { len: "10" } } } },
             { no: 12, name: "phone_number", kind: "scalar", opt: true, T: 9 /*ScalarType.STRING*/, options: { "validate.rules": { string: { maxLen: "20" } } } },
-            { no: 17, name: "avatar_url", kind: "scalar", opt: true, T: 9 /*ScalarType.STRING*/, options: { "validate.rules": { string: { maxLen: "128" } } } }
+            { no: 17, name: "avatar_url", kind: "message", T: () => File }
         ]);
     }
     create(value?: PartialMessage<UserShort>): UserShort {
@@ -320,8 +321,8 @@ class UserShort$Type extends MessageType<UserShort> {
                 case /* optional string phone_number */ 12:
                     message.phoneNumber = reader.string();
                     break;
-                case /* optional string avatar_url */ 17:
-                    message.avatarUrl = reader.string();
+                case /* optional resources.filestore.File avatar_url */ 17:
+                    message.avatarUrl = File.internalBinaryRead(reader, reader.uint32(), options, message.avatarUrl);
                     break;
                 default:
                     let u = options.readUnknownField;
@@ -365,9 +366,9 @@ class UserShort$Type extends MessageType<UserShort> {
         /* optional string phone_number = 12; */
         if (message.phoneNumber !== undefined)
             writer.tag(12, WireType.LengthDelimited).string(message.phoneNumber);
-        /* optional string avatar_url = 17; */
-        if (message.avatarUrl !== undefined)
-            writer.tag(17, WireType.LengthDelimited).string(message.avatarUrl);
+        /* optional resources.filestore.File avatar_url = 17; */
+        if (message.avatarUrl)
+            File.internalBinaryWrite(message.avatarUrl, writer.tag(17, WireType.LengthDelimited).fork(), options).join();
         let u = options.writeUnknownFields;
         if (u !== false)
             (u == true ? UnknownFieldHandler.onWrite : u)(this.typeName, message, writer);
@@ -398,7 +399,7 @@ class User$Type extends MessageType<User> {
             { no: 14, name: "playtime", kind: "scalar", opt: true, T: 5 /*ScalarType.INT32*/, options: { "validate.rules": { int32: { gte: 0 } } } },
             { no: 15, name: "props", kind: "message", T: () => UserProps },
             { no: 16, name: "licenses", kind: "message", repeat: 1 /*RepeatType.PACKED*/, T: () => License },
-            { no: 17, name: "avatar_url", kind: "scalar", opt: true, T: 9 /*ScalarType.STRING*/, options: { "validate.rules": { string: { maxLen: "128" } } } }
+            { no: 17, name: "avatar_url", kind: "message", T: () => File }
         ]);
     }
     create(value?: PartialMessage<User>): User {
@@ -468,8 +469,8 @@ class User$Type extends MessageType<User> {
                 case /* repeated resources.users.License licenses */ 16:
                     message.licenses.push(License.internalBinaryRead(reader, reader.uint32(), options));
                     break;
-                case /* optional string avatar_url */ 17:
-                    message.avatarUrl = reader.string();
+                case /* optional resources.filestore.File avatar_url */ 17:
+                    message.avatarUrl = File.internalBinaryRead(reader, reader.uint32(), options, message.avatarUrl);
                     break;
                 default:
                     let u = options.readUnknownField;
@@ -531,9 +532,9 @@ class User$Type extends MessageType<User> {
         /* repeated resources.users.License licenses = 16; */
         for (let i = 0; i < message.licenses.length; i++)
             License.internalBinaryWrite(message.licenses[i], writer.tag(16, WireType.LengthDelimited).fork(), options).join();
-        /* optional string avatar_url = 17; */
-        if (message.avatarUrl !== undefined)
-            writer.tag(17, WireType.LengthDelimited).string(message.avatarUrl);
+        /* optional resources.filestore.File avatar_url = 17; */
+        if (message.avatarUrl)
+            File.internalBinaryWrite(message.avatarUrl, writer.tag(17, WireType.LengthDelimited).fork(), options).join();
         let u = options.writeUnknownFields;
         if (u !== false)
             (u == true ? UnknownFieldHandler.onWrite : u)(this.typeName, message, writer);

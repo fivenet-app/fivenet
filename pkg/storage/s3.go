@@ -73,6 +73,7 @@ func (s *S3) Get(ctx context.Context, filePath string) (IObject, IObjectInfo, er
 
 func (s *S3) Stat(ctx context.Context, filePath string) (IObjectInfo, error) {
 	filePath = path.Join(s.prefix, filePath)
+
 	info, err := s.s3.StatObject(ctx, s.bucketName, filePath, minio.GetObjectOptions{})
 	if err != nil {
 		return nil, err
@@ -92,6 +93,7 @@ func (s *S3) Put(ctx context.Context, filePath string, reader io.Reader, size in
 
 func (s *S3) PutWithTTL(ctx context.Context, filePath string, reader io.Reader, size int64, contentType string, ttl time.Time) (string, error) {
 	filePath = path.Join(s.prefix, filePath)
+
 	uploadInfo, err := s.s3.PutObject(ctx, s.bucketName, filePath, reader, size, minio.PutObjectOptions{
 		ContentType: mime.TypeByExtension(filePath),
 		Expires:     ttl,
@@ -105,5 +107,10 @@ func (s *S3) PutWithTTL(ctx context.Context, filePath string, reader io.Reader, 
 
 func (s *S3) Delete(ctx context.Context, filePath string) error {
 	filePath = path.Join(s.prefix, filePath)
-	return s.s3.RemoveObject(ctx, s.bucketName, filePath, minio.RemoveObjectOptions{})
+
+	if err := s.s3.RemoveObject(ctx, s.bucketName, filePath, minio.RemoveObjectOptions{}); err != nil {
+		return err
+	}
+
+	return nil
 }
