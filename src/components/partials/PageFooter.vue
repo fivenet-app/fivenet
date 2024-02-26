@@ -8,7 +8,7 @@ const year = new Date().getFullYear();
 
 <template>
     <footer class="w-full bg-base-800">
-        <div class="mx-auto flex w-fit flex-col items-center gap-5 py-6 text-neutral sm:py-8">
+        <div class="mx-auto flex w-fit flex-col items-center gap-4 py-4 text-neutral sm:py-6">
             <div class="flex flex-row items-center gap-4">
                 <FiveNetLogo class="h-auto w-16" />
                 <p class="text-center text-sm leading-5">

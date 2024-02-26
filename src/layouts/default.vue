@@ -20,10 +20,9 @@ const showSnowflakes = now.getMonth() + 1 === 12 && now.getDate() >= 21 && now.g
             <!-- Events-->
             <LazyPartialsEventsSnowflakesContainer v-if="showSnowflakes" />
 
-            <div class="h-full">
-                <LoadingBar />
-                <slot />
-            </div>
+            <LoadingBar />
+
+            <slot />
         </SidebarContainer>
         <CommandPalette v-if="activeChar" />
         <NotificatorProvider />

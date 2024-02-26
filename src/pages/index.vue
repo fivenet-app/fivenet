@@ -28,17 +28,20 @@ onBeforeMount(async () => {
 </script>
 
 <template>
-    <div class="flex h-full flex-col justify-between">
+    <div class="h-full flex flex-col">
         <ContentHeroFull>
             <ContentCenterWrapper class="mx-auto max-w-2xl text-center">
                 <div class="px-5 sm:px-0">
-                    <FiveNetLogo class="mx-auto mb-2 h-auto w-36" />
+                    <FiveNetLogo class="mx-auto mb-2 h-36 w-auto" />
 
-                    <h1 class="text-4xl font-bold tracking-tight text-neutral sm:text-6xl">
+                    <h1 class="text-5xl font-bold tracking-tight text-neutral sm:text-6xl">
                         {{ $t('pages.index.welcome') }}
                     </h1>
 
-                    <p v-t="'pages.index.subtext'" class="mt-6 text-lg leading-8 text-neutral"></p>
+                    <p class="mt-6 text-lg leading-8 text-neutral">
+                        {{ $t('pages.index.subtext') }}
+                    </p>
+
                     <div class="mt-4 flex items-center justify-center gap-x-6">
                         <NuxtLink
                             :to="{ name: 'auth-login' }"
@@ -56,6 +59,7 @@ onBeforeMount(async () => {
                 </div>
             </ContentCenterWrapper>
         </ContentHeroFull>
+
         <PageFooter />
     </div>
 </template>
