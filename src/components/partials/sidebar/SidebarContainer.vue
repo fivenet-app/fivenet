@@ -27,7 +27,7 @@ import LanguageSwitcherMenu from '~/components/partials/sidebar/LanguageSwitcher
 import NotificationsButton from '~/components/partials/sidebar/NotificationsButton.vue';
 import { useAuthStore } from '~/store/auth';
 import type { Perms } from '~~/gen/ts/perms';
-import AvatarImg from '~/components/partials/citizens/AvatarImg.vue';
+import ProfilePictureImg from '~/components/partials/citizens/ProfilePictureImg.vue';
 
 const authStore = useAuthStore();
 const { accessToken, activeChar } = storeToRefs(authStore);
@@ -550,7 +550,7 @@ watch(router.currentRoute, () => updateActiveItem());
                                         v-if="!activeChar?.avatar?.url"
                                         class="h-10 w-auto rounded-full bg-base-800 fill-base-300 text-base-300 hover:fill-base-100 hover:text-base-100 hover:transition-colors"
                                     />
-                                    <AvatarImg
+                                    <ProfilePictureImg
                                         v-else
                                         :url="activeChar.avatar.url"
                                         :name="`${activeChar.firstname} ${activeChar.lastname}`"

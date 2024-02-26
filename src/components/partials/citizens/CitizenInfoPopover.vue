@@ -5,7 +5,7 @@ import { AccountIcon } from 'mdi-vue3';
 import { type User, type UserShort } from '~~/gen/ts/resources/users/users';
 import PhoneNumberBlock from '~/components/partials/citizens/PhoneNumberBlock.vue';
 import { ClipboardUser } from '~/store/clipboard';
-import AvatarImg from '~/components/partials/citizens/AvatarImg.vue';
+import ProfilePictureImg from '~/components/partials/citizens/ProfilePictureImg.vue';
 
 withDefaults(
     defineProps<{
@@ -77,7 +77,7 @@ withDefaults(
                         </div>
                         <div class="inline-flex flex-row gap-2">
                             <div v-if="showAvatar === undefined || showAvatar">
-                                <AvatarImg :url="user.avatar?.url" :name="`${user.firstname} ${user.lastname}`" />
+                                <ProfilePictureImg :url="user.avatar?.url" :name="`${user.firstname} ${user.lastname}`" />
                             </div>
                             <div>
                                 <p class="text-base font-semibold leading-none text-gray-900 dark:text-neutral">

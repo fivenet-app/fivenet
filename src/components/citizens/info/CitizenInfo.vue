@@ -16,7 +16,7 @@ import DataNoDataBlock from '~/components/partials/data/DataNoDataBlock.vue';
 import DataPendingBlock from '~/components/partials/data/DataPendingBlock.vue';
 import IDCopyBadge from '~/components/partials/IDCopyBadge.vue';
 import type { Perms } from '~~/gen/ts/perms';
-import AvatarImg from '~/components/partials/citizens/AvatarImg.vue';
+import ProfilePictureImg from '~/components/partials/citizens/ProfilePictureImg.vue';
 
 const props = defineProps<{
     id: string;
@@ -115,11 +115,12 @@ const open = ref(false);
             <ClipboardButton />
             <div class="mb-14">
                 <div class="flex gap-4 my-4 px-4">
-                    <AvatarImg
+                    <ProfilePictureImg
                         :url="user.props?.mugShot?.url"
                         :name="`${user.firstname} ${user.lastname}`"
                         size="xl"
                         :rounded="false"
+                        :enable-popup="true"
                     />
                     <div class="w-full">
                         <div class="flex snap-x flex-row flex-wrap justify-between gap-2 overflow-x-auto">

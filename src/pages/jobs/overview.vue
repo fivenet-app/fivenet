@@ -74,6 +74,25 @@ const showRadioFrequency = ref(false);
                             </GenericContainer>
                         </div>
 
+                        <div class="mt-4 flex flex-row gap-2">
+                            <GenericContainer class="flex-1 text-neutral">
+                                <h3 class="text-lg font-semibold">Self Service</h3>
+
+                                <button
+                                    type="button"
+                                    class="mt-1 block rounded-md bg-primary-500 px-2 py-1 text-xs font-semibold text-neutral hover:bg-primary-400 focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-primary-500"
+                                >
+                                    Set Absent/Request Vacation
+                                </button>
+                                <button
+                                    type="button"
+                                    class="mt-1 block rounded-md bg-primary-500 px-2 py-1 text-xs font-semibold text-neutral hover:bg-primary-400 focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-primary-500"
+                                >
+                                    Update Profile Picture
+                                </button>
+                            </GenericContainer>
+                        </div>
+
                         <TimeclockOverviewBlock v-if="can('JobsTimeclockService.ListTimeclock')" />
                     </div>
                 </div>

@@ -5,7 +5,7 @@ import CharSexBadge from '~/components/partials/citizens/CharSexBadge.vue';
 import { useAuthStore } from '~/store/auth';
 import { fromSecondsToFormattedDuration } from '~/utils/time';
 import { User } from '~~/gen/ts/resources/users/users';
-import AvatarImg from '~/components/partials/citizens/AvatarImg.vue';
+import ProfilePictureImg from '~/components/partials/citizens/ProfilePictureImg.vue';
 
 const authStore = useAuthStore();
 
@@ -28,7 +28,7 @@ const onSubmitThrottle = useThrottleFn(async (_) => {
         <div>
             <div class="flex">
                 <div class="mt-4 mx-auto flex flex-row items-center gap-3">
-                    <AvatarImg :url="char.avatar?.url" :name="`${char.firstname} ${char.lastname}`" />
+                    <ProfilePictureImg :url="char.avatar?.url" :name="`${char.firstname} ${char.lastname}`" />
 
                     <h2 class="text-center text-2xl font-medium text-neutral">{{ char.firstname }} {{ char.lastname }}</h2>
                 </div>
