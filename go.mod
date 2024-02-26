@@ -35,7 +35,7 @@ require (
 	github.com/paulmach/orb v0.11.1
 	github.com/pkg/errors v0.9.1
 	github.com/prometheus/client_golang v1.18.0
-	github.com/puzpuzpuz/xsync/v3 v3.0.2
+	github.com/puzpuzpuz/xsync/v3 v3.1.0
 	github.com/spf13/viper v1.18.2
 	github.com/stretchr/testify v1.8.4
 	go.opentelemetry.io/contrib/instrumentation/github.com/gin-gonic/gin/otelgin v0.49.0
