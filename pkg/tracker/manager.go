@@ -38,7 +38,7 @@ type Manager struct {
 
 	userStore *store.Store[livemap.UserMarker, *livemap.UserMarker]
 
-	refreshTime time.Duration
+	dbRefreshTime time.Duration
 
 	locations map[string]*coords.Coords[*livemap.UserMarker]
 }
@@ -83,7 +83,7 @@ func NewManager(p ManagerParams) (*Manager, error) {
 
 		userStore: userStore,
 
-		refreshTime: p.Config.Game.Livemap.RefreshTime,
+		dbRefreshTime: p.Config.Game.Livemap.DBRefreshTime,
 
 		locations: locs,
 	}
@@ -122,7 +122,7 @@ func (m *Manager) start() {
 		case <-m.ctx.Done():
 			return
 
-		case <-time.After(m.refreshTime):
+		case <-time.After(m.dbRefreshTime):
 			m.refreshCache(m.ctx)
 		}
 	}

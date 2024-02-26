@@ -196,9 +196,10 @@ type UnemployedJob struct {
 }
 
 type Livemap struct {
-	RefreshTime time.Duration `default:"3s350ms" yaml:"refreshTime"`
-	Jobs        []string      `yaml:"jobs"`
-	PostalsFile string        `default:".output/public/data/postals.json" yaml:"postalsFile"`
+	RefreshTime   time.Duration `default:"3s350ms" yaml:"refreshTime"`
+	DBRefreshTime time.Duration `default:"1s" yaml:"dbRefreshTime"`
+	Jobs          []string      `yaml:"jobs"`
+	PostalsFile   string        `default:".output/public/data/postals.json" yaml:"postalsFile"`
 }
 
 type DispatchCenter struct {

@@ -84,6 +84,7 @@ game:
   hiddenJobs: []
   livemap:
     refreshTime: 3s350ms
+    dbRefreshTime: 1s
     jobs:
       - ambulance
       - doj
