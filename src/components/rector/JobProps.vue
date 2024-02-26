@@ -282,9 +282,7 @@ async function loadImage(): Promise<void> {
                                         @change="loadImage()"
                                     />
 
-                                    <div>
-                                        <SquareImg v-if="jobProps.logoUrl?.url" size="xl" :url="jobProps.logoUrl.url" />
-                                    </div>
+                                    <SquareImg v-if="jobProps.logoUrl?.url" size="xl" :url="jobProps.logoUrl.url" />
                                 </div>
                             </template>
                         </GenericContainerPanelEntry>
