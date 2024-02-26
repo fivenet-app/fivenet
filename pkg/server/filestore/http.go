@@ -1,6 +1,7 @@
 package filestore
 
 import (
+	"errors"
 	"fmt"
 	"net/http"
 	"path"
@@ -38,6 +39,11 @@ func (s *FilestoreHTTP) RegisterHTTP(e *gin.Engine) {
 
 			object, info, err := s.st.Get(c, path.Join(prefix, fileName))
 			if err != nil {
+				if errors.Is(err, storage.ErrNotFound) {
+					c.AbortWithStatus(http.StatusNotFound)
+					return
+				}
+
 				c.AbortWithError(http.StatusBadRequest, fmt.Errorf("failed to retrieve file from store. %w", err))
 				return
 			}

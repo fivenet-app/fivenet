@@ -4,9 +4,14 @@ import (
 	"context"
 	"crypto/sha1"
 	"encoding/base64"
+	"errors"
 	"fmt"
 	"io"
 	"time"
+)
+
+var (
+	ErrNotFound = errors.New("file not found")
 )
 
 type IStorage interface {

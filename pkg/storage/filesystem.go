@@ -51,7 +51,7 @@ func (s *Filesystem) Get(ctx context.Context, filePath string) (IObject, IObject
 
 	stat, err := os.Stat(filePath)
 	if os.IsNotExist(err) {
-		return nil, nil, err
+		return nil, nil, ErrNotFound
 	}
 
 	f, err := os.OpenFile(filePath, os.O_RDONLY, 0600)

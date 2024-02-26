@@ -55,12 +55,19 @@ func (s *S3) Get(ctx context.Context, filePath string) (IObject, IObjectInfo, er
 	filePath = path.Join(s.prefix, filePath)
 	object, err := s.s3.GetObject(ctx, s.bucketName, filePath, minio.GetObjectOptions{})
 	if err != nil {
+		if minio.ToErrorResponse(err).Code == "NoSuchKey" {
+			return nil, nil, ErrNotFound
+		}
 		return nil, nil, err
 	}
 
 	// Retrieve object info
 	info, err := object.Stat()
 	if err != nil {
+		if minio.ToErrorResponse(err).Code == "NoSuchKey" {
+			return nil, nil, ErrNotFound
+		}
+
 		return nil, nil, err
 	}
 
