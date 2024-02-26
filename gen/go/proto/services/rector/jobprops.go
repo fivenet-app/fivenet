@@ -55,6 +55,10 @@ func (s *Server) GetJobProps(ctx context.Context, req *GetJobPropsRequest) (*Get
 
 	resp.JobProps.Default(userInfo.Job)
 
+	if resp.JobProps != nil {
+		s.enricher.EnrichJobName(resp.JobProps)
+	}
+
 	return resp, nil
 }
 func (s *Server) SetJobProps(ctx context.Context, req *SetJobPropsRequest) (*SetJobPropsResponse, error) {
@@ -78,7 +82,11 @@ func (s *Server) SetJobProps(ctx context.Context, req *SetJobPropsRequest) (*Set
 	req.JobProps.Job = userInfo.Job
 	req.JobProps.LivemapMarkerColor = strings.ToLower(req.JobProps.LivemapMarkerColor)
 
-	if req.JobProps.LogoUrl != nil {
+	if req.JobProps.LogoUrl != nil && len(req.JobProps.LogoUrl.Data) > 0 {
+		if !req.JobProps.LogoUrl.IsImage() {
+			return nil, errorsrector.ErrFailedQuery
+		}
+
 		// Set "current" image's url so the system will delete it if still exists
 		req.JobProps.LogoUrl.Url = jobProps.JobProps.LogoUrl.Url
 		if err := req.JobProps.LogoUrl.Upload(ctx, s.st, filestore.JobLogos, userInfo.Job); err != nil {

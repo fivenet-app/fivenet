@@ -9,8 +9,5 @@ option go_package = "github.com/galexrt/fivenet/gen/go/proto/resources/filestore
 message File {
   optional string url = 1 [(validate.rules).string.max_len = 128];
   optional string type = 2 [(validate.rules).string.max_len = 4];
-  bytes data = 3 [(validate.rules).bytes = {
-    min_len: 1,
-    max_len: 2097152,
-  }];
+  bytes data = 3 [(validate.rules).bytes.max_len = 2097152];
 }

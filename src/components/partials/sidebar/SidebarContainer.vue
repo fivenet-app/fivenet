@@ -553,9 +553,9 @@ watch(router.currentRoute, () => updateActiveItem());
                                     <AvatarImg
                                         v-else
                                         :url="activeChar.avatarUrl.url"
-                                        :firstname="activeChar.firstname"
-                                        :lastname="activeChar.lastname"
+                                        :name="`${activeChar.firstname} ${activeChar.lastname}`"
                                         size="md"
+                                        :rounded="true"
                                     />
                                 </MenuButton>
                                 <transition

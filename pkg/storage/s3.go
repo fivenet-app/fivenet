@@ -5,6 +5,8 @@ import (
 	"io"
 	"mime"
 	"path"
+	"path/filepath"
+	"strings"
 	"time"
 
 	"github.com/galexrt/fivenet/pkg/config"
@@ -72,6 +74,7 @@ func (s *S3) Get(ctx context.Context, filePath string) (IObject, IObjectInfo, er
 	}
 
 	return object, &ObjectInfo{
+		extension:   strings.TrimPrefix(filepath.Ext(info.Key), "."),
 		contentType: info.ContentType,
 		size:        info.Size,
 		expiration:  info.Expiration,

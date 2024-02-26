@@ -9,6 +9,7 @@ import (
 	"strings"
 
 	"github.com/galexrt/fivenet/pkg/storage"
+	"github.com/h2non/filetype"
 	"golang.org/x/exp/slices"
 )
 
@@ -59,16 +60,21 @@ func (x *File) Upload(ctx context.Context, st storage.IStorage, prefix FilePrefi
 		return fmt.Errorf("disallowed file extension")
 	}
 
-	fileName = path.Join(prefix, fmt.Sprintf("%s.%s", fileName, *x.Type))
-
 	if x.Url != nil {
 		if err := st.Delete(ctx, strings.TrimPrefix(*x.Url, FilestoreURLPrefix)); err != nil {
 			return err
 		}
 	}
 
+	contentType, err := filetype.Match(x.Data)
+	if err != nil {
+		return err
+	}
+
+	fileName = path.Join(prefix, fmt.Sprintf("%s.%s", fileName, contentType.Extension))
+
 	rd := bytes.NewReader(x.Data)
-	url, err := st.Put(ctx, fileName, rd, int64(len(x.Data)), *x.Type)
+	url, err := st.Put(ctx, fileName, rd, int64(len(x.Data)), contentType.MIME.Value)
 	if err != nil {
 		return err
 	}
@@ -78,4 +84,8 @@ func (x *File) Upload(ctx context.Context, st storage.IStorage, prefix FilePrefi
 	x.Data = nil
 
 	return nil
+}
+
+func (x *File) IsImage() bool {
+	return filetype.IsImage(x.Data)
 }

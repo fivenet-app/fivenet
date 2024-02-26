@@ -6,11 +6,13 @@ const props = withDefaults(
         url?: string;
         text?: string;
         size?: imageSizes;
+        rounded?: boolean;
     }>(),
     {
         url: undefined,
         text: '',
         size: 'lg',
+        rounded: false,
     },
 );
 
@@ -18,10 +20,13 @@ const size = computed(() => imageSize(props.size));
 </script>
 
 <template>
-    <span class="flex items-center justify-center rounded-sm bg-gray-500 ring-2 ring-base-600" :class="size">
+    <span
+        class="flex items-center justify-center bg-gray-500 ring-2 ring-base-600"
+        :class="[size, rounded ? 'rounded-full' : 'rounded-md']"
+    >
         <span v-if="!url" class="font-medium leading-none text-white">
-            {{ text }}
+            <slot name="initials" />
         </span>
-        <img v-else class="rounded-sm" :class="size" :src="url" :alt="text" />
+        <img v-else :class="[size, rounded ? 'rounded-full' : 'rounded-md']" :src="url" :alt="text" />
     </span>
 </template>

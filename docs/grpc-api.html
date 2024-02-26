@@ -10415,6 +10415,13 @@
                 </tr>
               
                 <tr>
+                  <td>job_label</td>
+                  <td><a href="#string">string</a></td>
+                  <td>optional</td>
+                  <td><p> </p></td>
+                </tr>
+              
+                <tr>
                   <td>theme</td>
                   <td><a href="#string">string</a></td>
                   <td></td>
@@ -10499,6 +10506,17 @@
                     <ul>
                     
                       <li>string.max_len: 20</li>
+                    
+                    </ul>
+                  </td>
+                </tr>
+              
+                <tr>
+                  <td>job_label</td>
+                  <td>
+                    <ul>
+                    
+                      <li>string.max_len: 50</li>
                     
                     </ul>
                   </td>
@@ -11793,8 +11811,6 @@
                   <td>data</td>
                   <td>
                     <ul>
-                    
-                      <li>bytes.min_len: 1</li>
                     
                       <li>bytes.max_len: 2097152</li>
                     
@@ -14925,7 +14941,7 @@
                 <td>ListCitizens</td>
                 <td><a href="#services.citizenstore.ListCitizensRequest">ListCitizensRequest</a></td>
                 <td><a href="#services.citizenstore.ListCitizensResponse">ListCitizensResponse</a></td>
-                <td><p>@perm: Attrs=Fields/StringList:[]string{&#34;PhoneNumber&#34;, &#34;Licenses&#34;, &#34;UserProps.Wanted&#34;, &#34;UserProps.Job&#34;, &#34;UserProps.TrafficInfractionPoints&#34;, &#34;UserProps.OpenFines&#34;, &#34;UserProps.BloodType&#34;}</p></td>
+                <td><p>@perm: Attrs=Fields/StringList:[]string{&#34;PhoneNumber&#34;, &#34;Licenses&#34;, &#34;UserProps.Wanted&#34;, &#34;UserProps.Job&#34;, &#34;UserProps.TrafficInfractionPoints&#34;, &#34;UserProps.OpenFines&#34;, &#34;UserProps.BloodType&#34;, &#34;UserProps.Picture&#34;, &#34;UserProps.Picture.Update&#34;}</p></td>
               </tr>
             
               <tr>

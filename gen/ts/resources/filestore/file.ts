@@ -33,7 +33,7 @@ class File$Type extends MessageType<File> {
         super("resources.filestore.File", [
             { no: 1, name: "url", kind: "scalar", opt: true, T: 9 /*ScalarType.STRING*/, options: { "validate.rules": { string: { maxLen: "128" } } } },
             { no: 2, name: "type", kind: "scalar", opt: true, T: 9 /*ScalarType.STRING*/, options: { "validate.rules": { string: { maxLen: "4" } } } },
-            { no: 3, name: "data", kind: "scalar", T: 12 /*ScalarType.BYTES*/, options: { "validate.rules": { bytes: { minLen: "1", maxLen: "2097152" } } } }
+            { no: 3, name: "data", kind: "scalar", T: 12 /*ScalarType.BYTES*/, options: { "validate.rules": { bytes: { maxLen: "2097152" } } } }
         ]);
     }
     create(value?: PartialMessage<File>): File {

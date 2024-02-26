@@ -24,6 +24,10 @@ func (x *Job) SetJobLabel(label string) {
 	x.Label = label
 }
 
+func (x *JobProps) SetJobLabel(label string) {
+	x.JobLabel = &label
+}
+
 func (x *JobProps) Default(job string) {
 	if x.Job == "" {
 		x.Job = job

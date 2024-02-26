@@ -55,39 +55,43 @@ export interface JobProps {
      */
     job: string;
     /**
-     * @generated from protobuf field: string theme = 2;
+     * @generated from protobuf field: optional string job_label = 2;
+     */
+    jobLabel?: string;
+    /**
+     * @generated from protobuf field: string theme = 3;
      */
     theme: string;
     /**
-     * @generated from protobuf field: string livemap_marker_color = 3;
+     * @generated from protobuf field: string livemap_marker_color = 4;
      */
     livemapMarkerColor: string;
     /**
-     * @generated from protobuf field: resources.users.QuickButtons quick_buttons = 4;
+     * @generated from protobuf field: resources.users.QuickButtons quick_buttons = 5;
      */
     quickButtons?: QuickButtons;
     /**
-     * @generated from protobuf field: optional string radio_frequency = 5;
+     * @generated from protobuf field: optional string radio_frequency = 6;
      */
     radioFrequency?: string;
     /**
-     * @generated from protobuf field: optional uint64 discord_guild_id = 6 [jstype = JS_STRING];
+     * @generated from protobuf field: optional uint64 discord_guild_id = 7 [jstype = JS_STRING];
      */
     discordGuildId?: string;
     /**
-     * @generated from protobuf field: optional resources.timestamp.Timestamp discord_last_sync = 7;
+     * @generated from protobuf field: optional resources.timestamp.Timestamp discord_last_sync = 8;
      */
     discordLastSync?: Timestamp;
     /**
-     * @generated from protobuf field: resources.users.DiscordSyncSettings discord_sync_settings = 8;
+     * @generated from protobuf field: resources.users.DiscordSyncSettings discord_sync_settings = 9;
      */
     discordSyncSettings?: DiscordSyncSettings;
     /**
-     * @generated from protobuf field: optional string motd = 9;
+     * @generated from protobuf field: optional string motd = 10;
      */
     motd?: string;
     /**
-     * @generated from protobuf field: optional resources.filestore.File logo_url = 10;
+     * @generated from protobuf field: optional resources.filestore.File logo_url = 11;
      */
     logoUrl?: File;
 }
@@ -310,15 +314,16 @@ class JobProps$Type extends MessageType<JobProps> {
     constructor() {
         super("resources.users.JobProps", [
             { no: 1, name: "job", kind: "scalar", T: 9 /*ScalarType.STRING*/, options: { "validate.rules": { string: { maxLen: "20" } } } },
-            { no: 2, name: "theme", kind: "scalar", T: 9 /*ScalarType.STRING*/, options: { "validate.rules": { string: { maxLen: "20" } } } },
-            { no: 3, name: "livemap_marker_color", kind: "scalar", T: 9 /*ScalarType.STRING*/, options: { "validate.rules": { string: { len: "7", pattern: "^#[A-Fa-f0-9]{6}$" } } } },
-            { no: 4, name: "quick_buttons", kind: "message", T: () => QuickButtons },
-            { no: 5, name: "radio_frequency", kind: "scalar", opt: true, T: 9 /*ScalarType.STRING*/, options: { "validate.rules": { string: { maxLen: "24" } } } },
-            { no: 6, name: "discord_guild_id", kind: "scalar", opt: true, T: 4 /*ScalarType.UINT64*/ },
-            { no: 7, name: "discord_last_sync", kind: "message", T: () => Timestamp },
-            { no: 8, name: "discord_sync_settings", kind: "message", T: () => DiscordSyncSettings },
-            { no: 9, name: "motd", kind: "scalar", opt: true, T: 9 /*ScalarType.STRING*/, options: { "validate.rules": { string: { maxLen: "1024" } } } },
-            { no: 10, name: "logo_url", kind: "message", T: () => File }
+            { no: 2, name: "job_label", kind: "scalar", opt: true, T: 9 /*ScalarType.STRING*/, options: { "validate.rules": { string: { maxLen: "50" } } } },
+            { no: 3, name: "theme", kind: "scalar", T: 9 /*ScalarType.STRING*/, options: { "validate.rules": { string: { maxLen: "20" } } } },
+            { no: 4, name: "livemap_marker_color", kind: "scalar", T: 9 /*ScalarType.STRING*/, options: { "validate.rules": { string: { len: "7", pattern: "^#[A-Fa-f0-9]{6}$" } } } },
+            { no: 5, name: "quick_buttons", kind: "message", T: () => QuickButtons },
+            { no: 6, name: "radio_frequency", kind: "scalar", opt: true, T: 9 /*ScalarType.STRING*/, options: { "validate.rules": { string: { maxLen: "24" } } } },
+            { no: 7, name: "discord_guild_id", kind: "scalar", opt: true, T: 4 /*ScalarType.UINT64*/ },
+            { no: 8, name: "discord_last_sync", kind: "message", T: () => Timestamp },
+            { no: 9, name: "discord_sync_settings", kind: "message", T: () => DiscordSyncSettings },
+            { no: 10, name: "motd", kind: "scalar", opt: true, T: 9 /*ScalarType.STRING*/, options: { "validate.rules": { string: { maxLen: "1024" } } } },
+            { no: 11, name: "logo_url", kind: "message", T: () => File }
         ]);
     }
     create(value?: PartialMessage<JobProps>): JobProps {
@@ -338,31 +343,34 @@ class JobProps$Type extends MessageType<JobProps> {
                 case /* string job */ 1:
                     message.job = reader.string();
                     break;
-                case /* string theme */ 2:
+                case /* optional string job_label */ 2:
+                    message.jobLabel = reader.string();
+                    break;
+                case /* string theme */ 3:
                     message.theme = reader.string();
                     break;
-                case /* string livemap_marker_color */ 3:
+                case /* string livemap_marker_color */ 4:
                     message.livemapMarkerColor = reader.string();
                     break;
-                case /* resources.users.QuickButtons quick_buttons */ 4:
+                case /* resources.users.QuickButtons quick_buttons */ 5:
                     message.quickButtons = QuickButtons.internalBinaryRead(reader, reader.uint32(), options, message.quickButtons);
                     break;
-                case /* optional string radio_frequency */ 5:
+                case /* optional string radio_frequency */ 6:
                     message.radioFrequency = reader.string();
                     break;
-                case /* optional uint64 discord_guild_id = 6 [jstype = JS_STRING];*/ 6:
+                case /* optional uint64 discord_guild_id = 7 [jstype = JS_STRING];*/ 7:
                     message.discordGuildId = reader.uint64().toString();
                     break;
-                case /* optional resources.timestamp.Timestamp discord_last_sync */ 7:
+                case /* optional resources.timestamp.Timestamp discord_last_sync */ 8:
                     message.discordLastSync = Timestamp.internalBinaryRead(reader, reader.uint32(), options, message.discordLastSync);
                     break;
-                case /* resources.users.DiscordSyncSettings discord_sync_settings */ 8:
+                case /* resources.users.DiscordSyncSettings discord_sync_settings */ 9:
                     message.discordSyncSettings = DiscordSyncSettings.internalBinaryRead(reader, reader.uint32(), options, message.discordSyncSettings);
                     break;
-                case /* optional string motd */ 9:
+                case /* optional string motd */ 10:
                     message.motd = reader.string();
                     break;
-                case /* optional resources.filestore.File logo_url */ 10:
+                case /* optional resources.filestore.File logo_url */ 11:
                     message.logoUrl = File.internalBinaryRead(reader, reader.uint32(), options, message.logoUrl);
                     break;
                 default:
@@ -380,33 +388,36 @@ class JobProps$Type extends MessageType<JobProps> {
         /* string job = 1; */
         if (message.job !== "")
             writer.tag(1, WireType.LengthDelimited).string(message.job);
-        /* string theme = 2; */
+        /* optional string job_label = 2; */
+        if (message.jobLabel !== undefined)
+            writer.tag(2, WireType.LengthDelimited).string(message.jobLabel);
+        /* string theme = 3; */
         if (message.theme !== "")
-            writer.tag(2, WireType.LengthDelimited).string(message.theme);
-        /* string livemap_marker_color = 3; */
+            writer.tag(3, WireType.LengthDelimited).string(message.theme);
+        /* string livemap_marker_color = 4; */
         if (message.livemapMarkerColor !== "")
-            writer.tag(3, WireType.LengthDelimited).string(message.livemapMarkerColor);
-        /* resources.users.QuickButtons quick_buttons = 4; */
+            writer.tag(4, WireType.LengthDelimited).string(message.livemapMarkerColor);
+        /* resources.users.QuickButtons quick_buttons = 5; */
         if (message.quickButtons)
-            QuickButtons.internalBinaryWrite(message.quickButtons, writer.tag(4, WireType.LengthDelimited).fork(), options).join();
-        /* optional string radio_frequency = 5; */
+            QuickButtons.internalBinaryWrite(message.quickButtons, writer.tag(5, WireType.LengthDelimited).fork(), options).join();
+        /* optional string radio_frequency = 6; */
         if (message.radioFrequency !== undefined)
-            writer.tag(5, WireType.LengthDelimited).string(message.radioFrequency);
-        /* optional uint64 discord_guild_id = 6 [jstype = JS_STRING]; */
+            writer.tag(6, WireType.LengthDelimited).string(message.radioFrequency);
+        /* optional uint64 discord_guild_id = 7 [jstype = JS_STRING]; */
         if (message.discordGuildId !== undefined)
-            writer.tag(6, WireType.Varint).uint64(message.discordGuildId);
-        /* optional resources.timestamp.Timestamp discord_last_sync = 7; */
+            writer.tag(7, WireType.Varint).uint64(message.discordGuildId);
+        /* optional resources.timestamp.Timestamp discord_last_sync = 8; */
         if (message.discordLastSync)
-            Timestamp.internalBinaryWrite(message.discordLastSync, writer.tag(7, WireType.LengthDelimited).fork(), options).join();
-        /* resources.users.DiscordSyncSettings discord_sync_settings = 8; */
+            Timestamp.internalBinaryWrite(message.discordLastSync, writer.tag(8, WireType.LengthDelimited).fork(), options).join();
+        /* resources.users.DiscordSyncSettings discord_sync_settings = 9; */
         if (message.discordSyncSettings)
-            DiscordSyncSettings.internalBinaryWrite(message.discordSyncSettings, writer.tag(8, WireType.LengthDelimited).fork(), options).join();
-        /* optional string motd = 9; */
+            DiscordSyncSettings.internalBinaryWrite(message.discordSyncSettings, writer.tag(9, WireType.LengthDelimited).fork(), options).join();
+        /* optional string motd = 10; */
         if (message.motd !== undefined)
-            writer.tag(9, WireType.LengthDelimited).string(message.motd);
-        /* optional resources.filestore.File logo_url = 10; */
+            writer.tag(10, WireType.LengthDelimited).string(message.motd);
+        /* optional resources.filestore.File logo_url = 11; */
         if (message.logoUrl)
-            File.internalBinaryWrite(message.logoUrl, writer.tag(10, WireType.LengthDelimited).fork(), options).join();
+            File.internalBinaryWrite(message.logoUrl, writer.tag(11, WireType.LengthDelimited).fork(), options).join();
         let u = options.writeUnknownFields;
         if (u !== false)
             (u == true ? UnknownFieldHandler.onWrite : u)(this.typeName, message, writer);

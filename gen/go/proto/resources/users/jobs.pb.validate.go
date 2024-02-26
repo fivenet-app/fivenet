@@ -450,6 +450,21 @@ func (m *JobProps) validate(all bool) error {
 		}
 	}
 
+	if m.JobLabel != nil {
+
+		if utf8.RuneCountInString(m.GetJobLabel()) > 50 {
+			err := JobPropsValidationError{
+				field:  "JobLabel",
+				reason: "value length must be at most 50 runes",
+			}
+			if !all {
+				return err
+			}
+			errors = append(errors, err)
+		}
+
+	}
+
 	if m.RadioFrequency != nil {
 
 		if utf8.RuneCountInString(m.GetRadioFrequency()) > 24 {

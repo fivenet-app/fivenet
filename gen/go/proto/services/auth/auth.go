@@ -564,6 +564,10 @@ func (s *Server) getCharacter(ctx context.Context, charId int32) (*users.User, *
 		return nil, nil, "", err
 	}
 
+	if dest.JobProps != nil {
+		s.enricher.EnrichJobName(dest.JobProps)
+	}
+
 	return &dest.User, dest.JobProps, dest.Group, nil
 }
 
@@ -718,6 +722,7 @@ func (s *Server) getJobWithProps(ctx context.Context, jobName string) (*users.Jo
 			tJobProps.LivemapMarkerColor,
 			tJobProps.RadioFrequency,
 			tJobProps.QuickButtons,
+			tJobProps.LogoURL,
 		).
 		FROM(
 			js.
@@ -740,6 +745,10 @@ func (s *Server) getJobWithProps(ctx context.Context, jobName string) (*users.Jo
 	}
 	if err := stmt.QueryContext(ctx, s.db, &dest); err != nil {
 		return nil, 0, nil, err
+	}
+
+	if dest.JobProps != nil {
+		s.enricher.EnrichJobName(dest.JobProps)
 	}
 
 	return dest.Job, dest.JobGrade, dest.JobProps, nil

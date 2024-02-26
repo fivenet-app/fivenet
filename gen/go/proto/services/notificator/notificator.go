@@ -15,6 +15,7 @@ import (
 	"github.com/galexrt/fivenet/pkg/grpc/auth"
 	"github.com/galexrt/fivenet/pkg/grpc/auth/userinfo"
 	"github.com/galexrt/fivenet/pkg/grpc/errswrap"
+	"github.com/galexrt/fivenet/pkg/mstlystcdata"
 	"github.com/galexrt/fivenet/pkg/notifi"
 	"github.com/galexrt/fivenet/pkg/perms"
 	"github.com/galexrt/fivenet/query/fivenet/table"
@@ -45,12 +46,13 @@ var (
 type Server struct {
 	NotificatorServiceServer
 
-	logger *zap.Logger
-	db     *sql.DB
-	p      perms.Permissions
-	tm     *auth.TokenMgr
-	ui     userinfo.UserInfoRetriever
-	js     nats.JetStreamContext
+	logger   *zap.Logger
+	db       *sql.DB
+	p        perms.Permissions
+	tm       *auth.TokenMgr
+	ui       userinfo.UserInfoRetriever
+	js       nats.JetStreamContext
+	enricher *mstlystcdata.Enricher
 }
 
 type Params struct {
@@ -58,22 +60,24 @@ type Params struct {
 
 	LC fx.Lifecycle
 
-	Logger *zap.Logger
-	DB     *sql.DB
-	Perms  perms.Permissions
-	TM     *auth.TokenMgr
-	UI     userinfo.UserInfoRetriever
-	JS     nats.JetStreamContext
+	Logger   *zap.Logger
+	DB       *sql.DB
+	Perms    perms.Permissions
+	TM       *auth.TokenMgr
+	UI       userinfo.UserInfoRetriever
+	JS       nats.JetStreamContext
+	Enricher *mstlystcdata.Enricher
 }
 
 func NewServer(p Params) *Server {
 	s := &Server{
-		logger: p.Logger,
-		db:     p.DB,
-		p:      p.Perms,
-		tm:     p.TM,
-		ui:     p.UI,
-		js:     p.JS,
+		logger:   p.Logger,
+		db:       p.DB,
+		p:        p.Perms,
+		tm:       p.TM,
+		ui:       p.UI,
+		js:       p.JS,
+		enricher: p.Enricher,
 	}
 
 	return s
@@ -504,11 +508,15 @@ func (s *Server) getCharacter(ctx context.Context, charId int32) (*users.User, *
 	var dest struct {
 		users.User
 		Group    string
-		JobProps users.JobProps
+		JobProps *users.JobProps
 	}
 	if err := stmt.QueryContext(ctx, s.db, &dest); err != nil {
 		return nil, nil, "", err
 	}
 
-	return &dest.User, &dest.JobProps, dest.Group, nil
+	if dest.JobProps != nil {
+		s.enricher.EnrichJobName(dest.JobProps)
+	}
+
+	return &dest.User, dest.JobProps, dest.Group, nil
 }

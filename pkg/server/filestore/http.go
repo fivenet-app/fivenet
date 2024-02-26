@@ -10,6 +10,7 @@ import (
 	"github.com/galexrt/fivenet/pkg/grpc/auth"
 	"github.com/galexrt/fivenet/pkg/storage"
 	"github.com/gin-gonic/gin"
+	"github.com/h2non/filetype"
 )
 
 type FilestoreHTTP struct {
@@ -49,7 +50,9 @@ func (s *FilestoreHTTP) RegisterHTTP(e *gin.Engine) {
 			}
 			defer object.Close()
 
-			c.DataFromReader(200, info.GetSize(), info.GetContentType(), object, nil)
+			mimeType := filetype.GetType(info.GetExtension())
+
+			c.DataFromReader(200, info.GetSize(), mimeType.MIME.Value, object, nil)
 		})
 	}
 }

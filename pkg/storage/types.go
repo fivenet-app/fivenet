@@ -31,15 +31,21 @@ type IObject interface {
 }
 
 type IObjectInfo interface {
+	GetExtension() string
 	GetContentType() string
 	GetSize() int64
 	GetExpiration() time.Time
 }
 
 type ObjectInfo struct {
+	extension   string
 	contentType string
 	size        int64
 	expiration  time.Time
+}
+
+func (o *ObjectInfo) GetExtension() string {
+	return o.extension
 }
 
 func (o *ObjectInfo) GetContentType() string {

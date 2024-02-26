@@ -34,7 +34,7 @@ const showRadioFrequency = ref(false);
                                     <SquareImg
                                         v-if="jobProps && jobProps.logoUrl"
                                         :url="jobProps?.logoUrl.url"
-                                        :text="$t('common.logo')"
+                                        :text="`${jobProps.jobLabel} ${$t('common.logo')}`"
                                         size="xl"
                                     />
 

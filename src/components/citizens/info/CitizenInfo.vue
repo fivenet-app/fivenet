@@ -16,6 +16,7 @@ import DataNoDataBlock from '~/components/partials/data/DataNoDataBlock.vue';
 import DataPendingBlock from '~/components/partials/data/DataPendingBlock.vue';
 import IDCopyBadge from '~/components/partials/IDCopyBadge.vue';
 import type { Perms } from '~~/gen/ts/perms';
+import AvatarImg from '~/components/partials/citizens/AvatarImg.vue';
 
 const props = defineProps<{
     id: string;
@@ -113,32 +114,42 @@ const open = ref(false);
         <template v-else>
             <ClipboardButton />
             <div class="mb-14">
-                <div class="my-4 px-4">
-                    <div class="flex snap-x flex-row flex-wrap justify-between gap-2 overflow-x-auto">
-                        <h1 class="flex-1 break-words py-1 pl-0.5 pr-0.5 text-4xl font-bold text-neutral sm:pl-1">
-                            {{ user?.firstname }} {{ user?.lastname }}
-                        </h1>
-                        <IDCopyBadge
-                            :id="user.userId"
-                            prefix="CIT"
-                            :title="{ key: 'notifications.citizen_info.copy_citizen_id.title', parameters: {} }"
-                            :content="{ key: 'notifications.citizen_info.copy_citizen_id.content', parameters: {} }"
-                            class="min-h-9 self-end"
+                <div class="flex gap-4 my-4 px-4">
+                    <div class="">
+                        <AvatarImg
+                            :url="user.avatarUrl?.url"
+                            :name="`${user.firstname} ${user.lastname}`"
+                            size="xl"
+                            :rounded="false"
                         />
                     </div>
-                    <div class="my-2 flex flex-row items-center gap-2">
-                        <span
-                            class="inline-flex items-center rounded-full bg-base-100 px-2.5 py-0.5 text-sm font-medium text-base-800"
-                        >
-                            {{ user.jobLabel }}
-                            <span v-if="user.jobGrade > 0">&nbsp;({{ $t('common.rank') }}: {{ user.jobGradeLabel }})</span>
-                        </span>
-                        <span
-                            v-if="user.props?.wanted"
-                            class="inline-flex items-center rounded-full bg-error-100 px-2.5 py-0.5 text-sm font-medium text-error-700"
-                        >
-                            {{ $t('common.wanted').toUpperCase() }}
-                        </span>
+                    <div>
+                        <div class="flex snap-x flex-row flex-wrap justify-between gap-2 overflow-x-auto">
+                            <h1 class="flex-1 break-words py-1 pl-0.5 pr-0.5 text-4xl font-bold text-neutral sm:pl-1">
+                                {{ user?.firstname }} {{ user?.lastname }}
+                            </h1>
+                            <IDCopyBadge
+                                :id="user.userId"
+                                prefix="CIT"
+                                :title="{ key: 'notifications.citizen_info.copy_citizen_id.title', parameters: {} }"
+                                :content="{ key: 'notifications.citizen_info.copy_citizen_id.content', parameters: {} }"
+                                class="min-h-9 self-end"
+                            />
+                        </div>
+                        <div class="my-2 flex flex-row items-center gap-2">
+                            <span
+                                class="inline-flex items-center rounded-full bg-base-100 px-2.5 py-0.5 text-sm font-medium text-base-800"
+                            >
+                                {{ user.jobLabel }}
+                                <span v-if="user.jobGrade > 0">&nbsp;({{ $t('common.rank') }}: {{ user.jobGradeLabel }})</span>
+                            </span>
+                            <span
+                                v-if="user.props?.wanted"
+                                class="inline-flex items-center rounded-full bg-error-100 px-2.5 py-0.5 text-sm font-medium text-error-700"
+                            >
+                                {{ $t('common.wanted').toUpperCase() }}
+                            </span>
+                        </div>
                     </div>
                 </div>
 

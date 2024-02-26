@@ -56,10 +56,10 @@ func (m *File) validate(all bool) error {
 
 	var errors []error
 
-	if l := len(m.GetData()); l < 1 || l > 2097152 {
+	if len(m.GetData()) > 2097152 {
 		err := FileValidationError{
 			field:  "Data",
-			reason: "value length must be between 1 and 2097152 bytes, inclusive",
+			reason: "value length must be at most 2097152 bytes",
 		}
 		if !all {
 			return err

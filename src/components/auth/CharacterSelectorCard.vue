@@ -28,7 +28,7 @@ const onSubmitThrottle = useThrottleFn(async (_) => {
         <div>
             <div class="flex">
                 <div class="mt-4 mx-auto flex flex-row items-center gap-3">
-                    <AvatarImg :url="char.avatarUrl?.url" :firstname="char.firstname" :lastname="char.lastname" />
+                    <AvatarImg :url="char.avatarUrl?.url" :name="`${char.firstname} ${char.lastname}`" />
 
                     <h2 class="text-center text-2xl font-medium text-neutral">{{ char.firstname }} {{ char.lastname }}</h2>
                 </div>

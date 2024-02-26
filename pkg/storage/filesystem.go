@@ -7,6 +7,7 @@ import (
 	"os"
 	"path"
 	"path/filepath"
+	"strings"
 	"syscall"
 
 	"github.com/galexrt/fivenet/pkg/config"
@@ -60,7 +61,8 @@ func (s *Filesystem) Get(ctx context.Context, filePath string) (IObject, IObject
 	}
 
 	return f, &ObjectInfo{
-		size: stat.Size(),
+		extension: strings.TrimPrefix(filepath.Ext(f.Name()), "."),
+		size:      stat.Size(),
 	}, nil
 }
 

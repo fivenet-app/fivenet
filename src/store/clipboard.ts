@@ -2,6 +2,7 @@ import { defineStore, type StoreDefinition } from 'pinia';
 import { Category } from '~~/gen/ts/resources/documents/category';
 import { DocContentType, Document, DocumentShort } from '~~/gen/ts/resources/documents/documents';
 import { ObjectSpecs, TemplateData } from '~~/gen/ts/resources/documents/templates';
+import type { File } from '~~/gen/ts/resources/filestore/file';
 import { User, UserShort } from '~~/gen/ts/resources/users/users';
 import { Vehicle } from '~~/gen/ts/resources/vehicles/vehicles';
 
@@ -16,7 +17,7 @@ export class ClipboardUser {
     public lastname: string;
     public dateofbirth: string | undefined;
     public phoneNumber: string | undefined;
-    public avatarUrl: string | undefined;
+    public avatarUrl: File | undefined;
 
     constructor(u: UserShort | User) {
         this.userId = u.userId;
@@ -29,7 +30,7 @@ export class ClipboardUser {
         this.lastname = u.lastname;
         this.dateofbirth = u.dateofbirth;
         this.phoneNumber = u.phoneNumber;
-        this.avatarUrl = u.avatarUrl?.url;
+        this.avatarUrl = u.avatarUrl;
 
         return this;
     }
@@ -248,7 +249,7 @@ export function getUser(obj: ClipboardUser): User {
         dateofbirth: obj.dateofbirth ?? '',
         phoneNumber: obj.phoneNumber ?? '',
         licenses: [],
-        avatarUrl: { url: obj.avatarUrl, data: new Uint8Array() },
+        avatarUrl: { url: obj.avatarUrl?.url, type: undefined, data: new Uint8Array() },
     };
 
     return u;
