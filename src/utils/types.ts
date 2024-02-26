@@ -20,3 +20,7 @@ export type CardElement = {
 };
 
 export type CardElements = CardElement[];
+
+export function isNumber(value?: string | number): boolean {
+    return value !== undefined && value !== null && value !== '' && !isNaN(Number(value.toString()));
+}

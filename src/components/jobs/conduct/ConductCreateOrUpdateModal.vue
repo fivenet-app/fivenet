@@ -128,7 +128,9 @@ const { handleSubmit, meta, setValues, setFieldValue, resetForm } = useForm<Form
 });
 
 watch(props, () => {
-    if (props.entry) targetUser.value = props.entry.targetUser!;
+    if (props.entry) {
+        targetUser.value = props.entry.targetUser!;
+    }
 
     setValues({
         targetUser: props.entry?.targetUserId,

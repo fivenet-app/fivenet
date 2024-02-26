@@ -138,7 +138,9 @@ async function findChars(userId?: number): Promise<UserShort[]> {
 
 onMounted(async () => {
     const passedType = props.accessTypes.find((e) => e.id === props.init.type);
-    if (passedType) selectedAccessType.value = passedType;
+    if (passedType) {
+        selectedAccessType.value = passedType;
+    }
 
     if (props.init.type === 0 && props.init.values.char !== undefined && props.init.values.accessRole !== undefined) {
         const users = await findChars(props.init.values.char);

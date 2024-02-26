@@ -27,7 +27,9 @@ function getBreadcrumbs(input: string) {
         // strip the last path segment (/my/cool/path -> /my/cool)
         node.pathname = currentPathName.substring(0, currentPathName.lastIndexOf('/'));
         // if the input was provided with a trailing slash we need to honour that
-        if (appendsTrailingSlash) node.pathname = withTrailingSlash(node.pathname.substring(0, node.pathname.lastIndexOf('/')));
+        if (appendsTrailingSlash) {
+            node.pathname = withTrailingSlash(node.pathname.substring(0, node.pathname.lastIndexOf('/')));
+        }
 
         // if we still have a pathname, and it's different, traverse
         if (node.pathname !== currentPathName) stepNode(node, nodes);

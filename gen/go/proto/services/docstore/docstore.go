@@ -71,9 +71,9 @@ func NewServer(db *sql.DB, ps perms.Permissions, cache *mstlystcdata.Cache, enri
 		notif:    notif,
 		htmlDiff: &htmldiff.Config{
 			Granularity:  5,
-			InsertedSpan: []htmldiff.Attribute{{Key: "class", Val: "bg-success-600"}},
-			DeletedSpan:  []htmldiff.Attribute{{Key: "class", Val: "bg-error-600"}},
-			ReplacedSpan: []htmldiff.Attribute{{Key: "class", Val: "bg-info-600"}},
+			InsertedSpan: []htmldiff.Attribute{{Key: "class", Val: "htmldiff bg-success-600"}},
+			DeletedSpan:  []htmldiff.Attribute{{Key: "class", Val: "htmldiff bg-error-600"}},
+			ReplacedSpan: []htmldiff.Attribute{{Key: "class", Val: "htmldiff bg-info-600"}},
 			CleanTags:    []string{""},
 		},
 	}

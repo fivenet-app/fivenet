@@ -344,7 +344,9 @@ async function createOrUpdateTemplate(values: FormData, templateId?: string): Pr
         }
     });
 
-    if (typeof values.weight === 'string') values.weight = parseInt(values.weight as string, 10);
+    if (typeof values.weight === 'string') {
+        values.weight = parseInt(values.weight as string);
+    }
 
     const req: CreateTemplateRequest | UpdateTemplateRequest = {
         template: {

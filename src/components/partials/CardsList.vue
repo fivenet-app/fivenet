@@ -20,7 +20,7 @@ defineEmits<{
 <template>
     <div class="sm:px-2">
         <div
-            class="w-full divide-y-4 divide-accent-900 overflow-hidden rounded-lg bg-primary-900 sm:grid sm:gap-1 sm:divide-y-0"
+            class="w-full divide-y-4 divide-accent-900 overflow-hidden rounded-lg bg-primary-900 sm:grid sm:gap-1 sm:divide-y-0 border-4 border-primary-900"
             :class="[items.length === 1 ? '' : 'sm:max-w-6xl sm:grid-cols-2']"
         >
             <template v-for="(item, itemIdx) in items">

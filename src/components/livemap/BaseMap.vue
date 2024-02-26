@@ -154,7 +154,9 @@ function stringifyHash(currZoom: number, centerLat: number, centerLong: number):
 }
 
 function parseHash(hash: string): { latlng: L.LatLng; zoom: number } | undefined {
-    if (hash.indexOf('#') === 0) hash = hash.substring(1);
+    if (hash.indexOf('#') === 0) {
+        hash = hash.substring(1);
+    }
 
     const args = hash.split('/');
     if (args.length !== 3) {

@@ -170,39 +170,46 @@ func (s *Server) generateDiff(oldContent string, newContent string) (string, err
 	}
 
 	out := res[0]
-	// If no change markers found, return empty string
-	if !strings.Contains(out, "bg-") {
+	// If no "htmldiff" change markers are found, return empty string
+	if !strings.Contains(out, "htmldiff") {
 		return "", nil
 	}
 
 	return out, nil
 }
 
-func (s *Server) generateDocumentDiff(old *documents.Document, newDoc *documents.Document) (*documents.DocUpdated, error) {
+// generateDocumentDiff Only generates diff if the old and new contents are not equal, using a simple "string comparison"
+func (s *Server) generateDocumentDiff(oldDoc *documents.Document, newDoc *documents.Document) (*documents.DocUpdated, error) {
 	diff := &documents.DocUpdated{}
 
-	titleDiff, err := s.generateDiff(old.Title, newDoc.Title)
-	if err != nil {
-		return nil, err
-	}
-	if titleDiff != "" {
-		diff.TitleDiff = &titleDiff
-	}
-
-	contentDiff, err := s.generateDiff(old.Content, newDoc.Content)
-	if err != nil {
-		return nil, err
-	}
-	if contentDiff != "" {
-		diff.ContentDiff = &contentDiff
+	if !strings.EqualFold(oldDoc.Title, newDoc.Title) {
+		titleDiff, err := s.generateDiff(oldDoc.Title, newDoc.Title)
+		if err != nil {
+			return nil, err
+		}
+		if titleDiff != "" {
+			diff.TitleDiff = &titleDiff
+		}
 	}
 
-	stateDiff, err := s.generateDiff(old.State, newDoc.State)
-	if err != nil {
-		return nil, err
+	if !strings.EqualFold(oldDoc.Content, newDoc.Content) {
+		contentDiff, err := s.generateDiff(oldDoc.Content, newDoc.Content)
+		if err != nil {
+			return nil, err
+		}
+		if contentDiff != "" {
+			diff.ContentDiff = &contentDiff
+		}
 	}
-	if stateDiff != "" {
-		diff.StateDiff = &stateDiff
+
+	if !strings.EqualFold(oldDoc.State, newDoc.State) {
+		stateDiff, err := s.generateDiff(oldDoc.State, newDoc.State)
+		if err != nil {
+			return nil, err
+		}
+		if stateDiff != "" {
+			diff.StateDiff = &stateDiff
+		}
 	}
 
 	return diff, nil

@@ -460,7 +460,9 @@ async function createDocument(values: FormData, content: string, closed: boolean
         public: doc.value.public,
         templateId: templateId.value,
     };
-    if (selectedCategory.value !== undefined) req.categoryId = selectedCategory.value.id;
+    if (selectedCategory.value !== undefined) {
+        req.categoryId = selectedCategory.value.id;
+    }
 
     const reqAccess: DocumentAccess = {
         jobs: [],
@@ -555,7 +557,9 @@ async function updateDocument(id: string, values: FormData, content: string, clo
         state: values.state,
         public: doc.value.public,
     };
-    if (selectedCategory.value !== undefined) req.categoryId = selectedCategory.value.id;
+    if (selectedCategory.value !== undefined) {
+        req.categoryId = selectedCategory.value.id;
+    }
 
     const reqAccess: DocumentAccess = {
         jobs: [],

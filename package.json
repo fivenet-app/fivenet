@@ -97,7 +97,7 @@
         "tailwindcss-themer": "^4.0.0",
         "typescript": "5.3.3",
         "vite-svg-loader": "5.1.0",
-        "vue": "3.4.19",
+        "vue": "3.4.20",
         "vue-i18n-routing": "^1.2.0",
         "vue-router": "4.3.0",
         "vue-tsc": "1.8.27"

@@ -37,7 +37,7 @@ const route = useRoute();
 const sidebarNavigation = ref<
     {
         name: string;
-        href: RoutesNamedLocations;
+        to: RoutesNamedLocations;
         activePath?: string;
         permission?: Perms;
         icon: DefineComponent;
@@ -49,14 +49,14 @@ const sidebarNavigation = ref<
 >([
     {
         name: 'common.overview',
-        href: { name: 'overview' },
+        to: { name: 'overview' },
         icon: markRaw(HomeIcon),
         position: 'top',
         current: false,
     },
     {
         name: 'common.citizen',
-        href: { name: 'citizens' },
+        to: { name: 'citizens' },
         permission: 'CitizenStoreService.ListCitizens',
         icon: markRaw(AccountMultipleIcon),
         position: 'top',
@@ -64,7 +64,7 @@ const sidebarNavigation = ref<
     },
     {
         name: 'common.vehicle',
-        href: { name: 'vehicles' },
+        to: { name: 'vehicles' },
         permission: 'DMVService.ListVehicles',
         icon: markRaw(CarIcon),
         position: 'top',
@@ -72,7 +72,7 @@ const sidebarNavigation = ref<
     },
     {
         name: 'common.document',
-        href: { name: 'documents' },
+        to: { name: 'documents' },
         permission: 'DocStoreService.ListDocuments',
         icon: markRaw(FileDocumentMultipleIcon),
         position: 'top',
@@ -80,7 +80,7 @@ const sidebarNavigation = ref<
     },
     {
         name: 'common.job',
-        href: { name: 'jobs-overview' },
+        to: { name: 'jobs-overview' },
         activePath: '/jobs',
         permission: 'JobsService.ListColleagues',
         icon: markRaw(BriefcaseIcon),
@@ -89,7 +89,7 @@ const sidebarNavigation = ref<
     },
     {
         name: 'common.livemap',
-        href: { name: 'livemap' },
+        to: { name: 'livemap' },
         permission: 'LivemapperService.Stream',
         icon: markRaw(MapIcon),
         position: 'top',
@@ -97,7 +97,7 @@ const sidebarNavigation = ref<
     },
     {
         name: 'common.dispatch_center',
-        href: { name: 'centrum' },
+        to: { name: 'centrum' },
         permission: 'CentrumService.TakeControl',
         icon: markRaw(CarEmergencyIcon),
         position: 'top',
@@ -105,7 +105,7 @@ const sidebarNavigation = ref<
     },
     {
         name: 'common.control_panel',
-        href: { name: 'rector' },
+        to: { name: 'rector' },
         permission: 'RectorService.GetRoles',
         icon: markRaw(CogIcon),
         position: 'top',
@@ -114,15 +114,15 @@ const sidebarNavigation = ref<
 
     {
         name: 'common.about',
-        href: { name: 'about' },
+        to: { name: 'about' },
         icon: markRaw(HelpCircleIcon),
         position: 'bottom',
         current: false,
     },
 ]);
-const userNavigation = ref<{ name: string; href: RoutesNamedLocations; permission?: Perms }[]>([
-    { name: 'components.auth.login.title', href: { name: 'auth-login' } },
-    { name: 'components.auth.registration_form.title', href: { name: 'auth-registration' } },
+const userNavigation = ref<{ name: string; to: RoutesNamedLocations; permission?: Perms }[]>([
+    { name: 'components.auth.login.title', to: { name: 'auth-login' } },
+    { name: 'components.auth.registration_form.title', to: { name: 'auth-registration' } },
 ]);
 const breadcrumbs = useBreadcrumbs();
 const mobileMenuOpen = ref(false);
@@ -137,26 +137,26 @@ function updateUserNav(): void {
     if (activeChar.value) {
         userNavigation.value.push({
             name: 'components.partials.sidebar.change_character',
-            href: { name: 'auth-character-selector' },
+            to: { name: 'auth-character-selector' },
         });
     }
     if (accessToken.value) {
         userNavigation.value.push(
             {
                 name: 'components.auth.account_info.title',
-                href: { name: 'auth-account-info' },
+                to: { name: 'auth-account-info' },
             },
             {
                 name: 'components.auth.settings_panel.title',
-                href: { name: 'settings' },
+                to: { name: 'settings' },
             },
-            { name: 'common.sign_out', href: { name: 'auth-logout' } },
+            { name: 'common.sign_out', to: { name: 'auth-logout' } },
         );
     }
     if (userNavigation.value.length === 0) {
         userNavigation.value = [
-            { name: 'components.auth.login.title', href: { name: 'auth-login' } },
-            { name: 'components.auth.registration_form.title', href: { name: 'auth-registration' } },
+            { name: 'components.auth.login.title', to: { name: 'auth-login' } },
+            { name: 'components.auth.registration_form.title', to: { name: 'auth-registration' } },
         ];
     }
 }
@@ -165,7 +165,7 @@ function updateActiveItem(): void {
     const route = router.currentRoute.value;
     if (route.path) {
         sidebarNavigation.value.forEach((e) => {
-            const itemRoute = useRouter().resolve(e.href);
+            const itemRoute = useRouter().resolve(e.to);
             if (
                 route.path.toLowerCase().startsWith(itemRoute.path.toLowerCase()) ||
                 (e.activePath && route.path.toLowerCase().startsWith(e.activePath))
@@ -257,7 +257,7 @@ watch(router.currentRoute, () => updateActiveItem());
                                 (e) => e.position === 'top' && (e.permission === undefined || can(e.permission)),
                             )"
                             :key="item.name"
-                            :to="item.href"
+                            :to="item.to"
                             :class="[
                                 item.current
                                     ? 'bg-accent-100/20 font-bold text-neutral'
@@ -284,7 +284,7 @@ watch(router.currentRoute, () => updateActiveItem());
                             (e) => e.position === 'bottom' && (e.permission === undefined || can(e.permission)),
                         )"
                         :key="item.name"
-                        :to="item.href"
+                        :to="item.to"
                         :class="[
                             item.current
                                 ? 'bg-accent-100/20 font-bold text-neutral'
@@ -409,7 +409,7 @@ watch(router.currentRoute, () => updateActiveItem());
                                             )"
                                             v-else-if="accessToken && activeChar"
                                             :key="item.name"
-                                            :to="item.href"
+                                            :to="item.to"
                                             :class="[
                                                 item.current
                                                     ? 'bg-accent-100/20 font-bold text-neutral'
@@ -442,7 +442,7 @@ watch(router.currentRoute, () => updateActiveItem());
                                                     (e.permission === undefined || can(e.permission)),
                                             )"
                                             :key="item.name"
-                                            :to="item.href"
+                                            :to="item.to"
                                             :class="[
                                                 item.current
                                                     ? 'bg-accent-100/20 font-bold text-neutral'
@@ -501,8 +501,8 @@ watch(router.currentRoute, () => updateActiveItem());
                                             </NuxtLink>
                                         </div>
                                     </li>
-                                    <template v-for="(item, key) in breadcrumbs" :key="key">
-                                        <li v-if="key !== 0 && item.to !== undefined">
+                                    <template v-for="(page, key) in breadcrumbs" :key="key">
+                                        <li v-if="key !== 0 && page.to !== undefined">
                                             <div class="flex items-center">
                                                 <ChevronRightIcon
                                                     class="h-5 w-5 flex-shrink-0 text-base-300"
@@ -510,7 +510,7 @@ watch(router.currentRoute, () => updateActiveItem());
                                                 />
                                                 <!-- @vue-ignore the route should be valid, as we construct it based on our pages -->
                                                 <NuxtLink
-                                                    :to="item.to"
+                                                    :to="page.to"
                                                     :class="[
                                                         key === breadcrumbs.length - 1
                                                             ? 'font-bold text-accent-200'
@@ -519,7 +519,7 @@ watch(router.currentRoute, () => updateActiveItem());
                                                     ]"
                                                     :aria-current="key === breadcrumbs.length - 1 ? 'page' : undefined"
                                                 >
-                                                    {{ $t(item.title as string) }}
+                                                    {{ $t(page.title as string) }}
                                                 </NuxtLink>
                                             </div>
                                         </li>
@@ -568,7 +568,7 @@ watch(router.currentRoute, () => updateActiveItem());
                                             v-slot="{ close }"
                                         >
                                             <NuxtLink
-                                                :to="item.href"
+                                                :to="item.to"
                                                 class="block px-4 py-2 text-sm text-neutral hover:transition-colors"
                                                 active-class="bg-primary-500"
                                                 @mouseup="close"

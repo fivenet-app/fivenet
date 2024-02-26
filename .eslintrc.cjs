@@ -16,5 +16,6 @@ module.exports = {
         'require-await': 0,
         // vee-validate requires v-bind for custom fields
         'vue/no-deprecated-v-bind-sync': 0,
+        'no-restricted-syntax': ['error', 'IfStatement > ExpressionStatement > AssignmentExpression'],
     },
 };

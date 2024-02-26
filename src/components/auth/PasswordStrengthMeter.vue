@@ -39,7 +39,9 @@ watch(result, () => {
             break;
     }
 
-    if (props.input === '') color.value = 'bg-base-700';
+    if (props.input === '') {
+        color.value = 'bg-base-700';
+    }
 });
 </script>
 

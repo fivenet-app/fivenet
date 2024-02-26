@@ -86,8 +86,8 @@ const items = [
         permission: 'CitizenStoreService.GetUser',
         prefix: 'CIT-',
         action: () => {
-            const id = query.value.substring(query.value.indexOf('-') + 1);
-            if (id.length > 0) {
+            const id = query.value.substring(query.value.indexOf('-') + 1).trim();
+            if (id.length > 0 && isNumber(id)) {
                 navigateTo({ name: 'citizens-id', params: { id } });
                 open.value = false;
             }
@@ -101,8 +101,8 @@ const items = [
         permission: 'DocStoreService.GetDocument',
         prefix: 'DOC-',
         action: () => {
-            const id = query.value.substring(query.value.indexOf('-') + 1);
-            if (id.length > 0) {
+            const id = query.value.substring(query.value.indexOf('-') + 1).trim();
+            if (id.length > 0 && isNumber(id)) {
                 navigateTo({ name: 'documents-id', params: { id } });
                 open.value = false;
             }
@@ -260,10 +260,14 @@ watchDebounced(
     async () => {
         if (query.value.length > 1) {
             if (rawQuery.value.startsWith('@')) {
-                if (documents.value.length > 0) documents.value.length = 0;
+                if (documents.value.length > 0) {
+                    documents.value.length = 0;
+                }
                 listCitizens();
             } else if (rawQuery.value.startsWith('#')) {
-                if (citizens.value.length > 0) citizens.value.length = 0;
+                if (citizens.value.length > 0) {
+                    citizens.value.length = 0;
+                }
                 listDocuments();
             }
         } else {
@@ -324,13 +328,13 @@ async function onSelect(item: any): Promise<any> {
                         <Combobox @update:model-value="onSelect">
                             <div class="relative">
                                 <MagnifyIcon
-                                    class="pointer-events-none absolute left-4 top-3.5 h-5 w-5 text-gray-400"
+                                    class="pointer-events-none absolute left-4 top-3.5 h-5 w-5 text-gray-300"
                                     aria-hidden="true"
                                 />
                                 <ComboboxInput
                                     autocomplete="off"
-                                    class="h-12 w-full border-0 bg-transparent pl-11 pr-4 text-gray-200 placeholder:text-gray-400 focus:ring-0 sm:text-sm"
-                                    placeholder="Search..."
+                                    class="h-12 w-full border-0 bg-transparent pl-11 pr-4 text-gray-200 placeholder:text-gray-300 focus:ring-0 sm:text-sm"
+                                    :placeholder="`${$t('common.search')}...`"
                                     @change="rawQuery = $event.target.value"
                                     @focusin="focusTablet(true)"
                                     @focusout="focusTablet(false)"
@@ -341,19 +345,22 @@ async function onSelect(item: any): Promise<any> {
                                 v-if="rawQuery === ''"
                                 class="border-t border-gray-100 px-6 py-14 text-center text-sm sm:px-14"
                             >
-                                <GlobeModelIcon class="mx-auto h-5 w-5 text-gray-400" aria-hidden="true" />
+                                <GlobeModelIcon class="mx-auto h-5 w-5 text-gray-300" aria-hidden="true" />
                                 <p class="mt-4 font-semibold text-gray-200">
                                     {{ $t('commandpalette.input.title') }}
                                 </p>
-                                <p class="mt-2 text-gray-500">
+                                <p class="mt-2 text-gray-300">
                                     {{ $t('commandpalette.input.content') }}
                                 </p>
                             </div>
 
-                            <ComboboxOptions static class="max-h-80 scroll-pb-2 scroll-pt-11 space-y-2 overflow-y-auto pb-2">
+                            <ComboboxOptions
+                                static
+                                class="max-h-80 scroll-pb-2 scroll-pt-11 space-y-2 overflow-y-auto pb-2 sm:border-t sm:border-base-400"
+                            >
                                 <li v-if="citizens.length > 0" class="p-2">
                                     <h2 class="text-xs font-semibold text-gray-900">{{ $t('common.citizen', 2) }}</h2>
-                                    <ul class="-mx-2 mt-2 text-sm text-gray-400">
+                                    <ul class="-mx-2 mt-2 text-sm text-gray-300">
                                         <ComboboxOption
                                             v-for="citizen in citizens"
                                             :key="citizen.userId"
@@ -377,7 +384,7 @@ async function onSelect(item: any): Promise<any> {
                                 </li>
                                 <li v-else-if="documents.length > 0" class="p-2">
                                     <h2 class="text-xs font-semibold text-gray-900">{{ $t('common.document', 2) }}</h2>
-                                    <ul class="-mx-2 mt-2 text-sm text-gray-400">
+                                    <ul class="-mx-2 mt-2 text-sm text-gray-300">
                                         <ComboboxOption
                                             v-for="document in documents"
                                             :key="document.id"
@@ -402,7 +409,7 @@ async function onSelect(item: any): Promise<any> {
                                         <h2 class="px-4 py-2.5 text-xs font-semibold text-gray-200">
                                             {{ $t(`commandpalette.groups.${category}.label`) }}
                                         </h2>
-                                        <ul class="-mx-2 mt-2 text-sm text-gray-400">
+                                        <ul class="-mx-2 mt-2 text-sm text-gray-300">
                                             <ComboboxOption
                                                 v-for="item in cItems.filter(
                                                     (e) => e.permission === undefined || can(e.permission),
@@ -423,7 +430,7 @@ async function onSelect(item: any): Promise<any> {
                                                         v-if="item.icon"
                                                         :class="[
                                                             'h-5 w-5 flex-none',
-                                                            active ? 'text-neutral' : 'text-gray-500',
+                                                            active ? 'text-neutral' : 'text-gray-300',
                                                         ]"
                                                         aria-hidden="true"
                                                     />
@@ -440,7 +447,7 @@ async function onSelect(item: any): Promise<any> {
                                 v-if="(rawQuery.startsWith('@') || rawQuery.startsWith('#')) && loading"
                                 class="border-t border-gray-100 px-6 py-14 text-center text-sm sm:px-14"
                             >
-                                <RefreshIcon class="mx-auto h-5 w-5 animate-spin text-gray-400" aria-hidden="true" />
+                                <RefreshIcon class="mx-auto h-5 w-5 animate-spin text-gray-300" aria-hidden="true" />
                                 <p class="mt-4 font-semibold text-gray-200">
                                     {{ $t('common.loading', [$t('common.result', 2)]) }}
                                 </p>
@@ -454,11 +461,11 @@ async function onSelect(item: any): Promise<any> {
                                 "
                                 class="border-t border-gray-100 px-6 py-14 text-center text-sm sm:px-14"
                             >
-                                <GlobeModelIcon class="mx-auto h-5 w-5 text-gray-400" aria-hidden="true" />
+                                <GlobeModelIcon class="mx-auto h-5 w-5 text-gray-300" aria-hidden="true" />
                                 <p class="mt-4 font-semibold text-gray-200">
                                     {{ $t('commandpalette.empty.title') }}
                                 </p>
-                                <p class="mt-2 text-gray-500">
+                                <p class="mt-2 text-gray-300">
                                     {{ $t('commandpalette.empty.content') }}
                                 </p>
                             </div>

@@ -98,7 +98,7 @@ export const useAuthStore = defineStore('auth', {
                 const { response } = await call;
 
                 this.loginStop(null);
-                this.setAccessToken(response.token, toDate(response.expires) as null | Date);
+                this.setAccessToken(response.token, toDate(response.expires));
             } catch (e) {
                 this.loginStop((e as RpcError).message);
                 this.setAccessToken(null, null);
@@ -140,7 +140,7 @@ export const useAuthStore = defineStore('auth', {
                     throw new Error('Server Error! No character in choose character response.');
                 }
 
-                this.setAccessToken(response.token, toDate(response.expires) as null | Date);
+                this.setAccessToken(response.token, toDate(response.expires));
                 this.setActiveChar(response.char);
                 this.setPermissions(response.permissions);
                 this.setJobProps(response.jobProps);
@@ -170,8 +170,9 @@ export const useAuthStore = defineStore('auth', {
             return state.permissions.includes('superuser');
         },
         getAccessTokenExpiration(state): null | Date {
-            if (typeof state.accessTokenExpiration === 'string')
+            if (typeof state.accessTokenExpiration === 'string') {
                 state.accessTokenExpiration = new Date(Date.parse(state.accessTokenExpiration));
+            }
 
             return state.accessTokenExpiration;
         },

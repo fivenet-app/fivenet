@@ -36,7 +36,7 @@ async function setJob(): Promise<void> {
         });
         const { response } = await call;
 
-        setAccessToken(response.token, toDate(response.expires) as null | Date);
+        setAccessToken(response.token, toDate(response.expires));
         setActiveChar(response.char!);
         setJobProps(response.jobProps);
 
