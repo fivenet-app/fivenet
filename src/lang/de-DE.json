@@ -822,7 +822,10 @@
         "blood_type": "Blutgruppe",
         "motd": "MOTD",
         "fallback_mode": "Fallback-Modus",
-        "volume": "Lautstärke"
+        "volume": "Lautstärke",
+        "avatar": "Profilbild",
+        "image": "Bild",
+        "logo": "Logo"
     },
     "notifications": {
         "clipboard": {
