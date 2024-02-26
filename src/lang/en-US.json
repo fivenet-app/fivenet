@@ -208,7 +208,6 @@
                     "removed": "Removed citizen document relation in"
                 },
                 "userprops_job_set": "Set the citizen's job to ",
-                "userprops_mug_shot_set": "Set the citizen's mug shot picture",
                 "plugin_license": {
                     "added": "License added",
                     "removed": "License removed"
@@ -222,7 +221,8 @@
                     "paid": "Fine paid",
                     "removed": "Fine removed",
                     "created": "Fine created"
-                }
+                },
+                "userprops_mug_shot_set": "Set the citizen's mug shot picture"
             }
         },
         "partials": {
