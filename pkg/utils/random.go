@@ -5,14 +5,14 @@ import (
 	"math/big"
 )
 
+const letters = "0123456789ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz"
+
 // Taken from https://gist.github.com/dopey/c69559607800d2f2f90b1b1ed4e550fb
 // GenerateRandomString returns a securely generated random string.
 // It will return an error if the system's secure random
 // number generator fails to function correctly, in which
 // case the caller should not continue.
 func GenerateRandomString(n int) (string, error) {
-	const letters = "0123456789ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz-_"
-
 	ret := make([]byte, n)
 	for i := 0; i < n; i++ {
 		num, err := rand.Int(rand.Reader, big.NewInt(int64(len(letters))))

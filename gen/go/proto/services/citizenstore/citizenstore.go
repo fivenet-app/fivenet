@@ -625,22 +625,22 @@ func (s *Server) SetUserProps(ctx context.Context, req *SetUserPropsRequest) (*S
 
 		updateSets = append(updateSets, tUserProps.MugShot.SET(jet.StringExp(jet.Raw("VALUES(`mug_shot`)"))))
 
-		if req.Props.MugShot != nil {
-			if len(req.Props.MugShot.Data) > 0 {
-				filler, err := utils.GenerateRandomString(64)
-				if err != nil {
-					return nil, errswrap.NewError(ErrFailedQuery, err)
-				}
+		if len(req.Props.MugShot.Data) > 0 {
+			req.Props.MugShot.Url = props.MugShot.Url
 
-				fileName := fmt.Sprintf("%d-%s", props.UserId, filler)
-				if err := req.Props.MugShot.Upload(ctx, s.st, filestore.MugShots, fileName); err != nil {
+			filler, err := utils.GenerateRandomString(64)
+			if err != nil {
+				return nil, errswrap.NewError(ErrFailedQuery, err)
+			}
+
+			fileName := fmt.Sprintf("%d-%s", props.UserId, filler)
+			if err := req.Props.MugShot.Upload(ctx, s.st, filestore.MugShots, fileName); err != nil {
+				return nil, errswrap.NewError(ErrFailedQuery, err)
+			}
+		} else {
+			if props.MugShot != nil && props.MugShot.Url != nil {
+				if err := s.st.Delete(ctx, strings.TrimPrefix(*props.MugShot.Url, filestore.FilestoreURLPrefix)); err != nil {
 					return nil, errswrap.NewError(ErrFailedQuery, err)
-				}
-			} else {
-				if props.MugShot != nil && props.MugShot.Url != nil {
-					if err := s.st.Delete(ctx, strings.TrimPrefix(*props.MugShot.Url, filestore.FilestoreURLPrefix)); err != nil {
-						return nil, errswrap.NewError(ErrFailedQuery, err)
-					}
 				}
 			}
 		}
