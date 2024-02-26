@@ -74,7 +74,7 @@ const showRadioFrequency = ref(false);
                             </GenericContainer>
                         </div>
 
-                        <div class="mt-4 flex flex-row gap-2">
+                        <div v-if="can('SuperUser')" class="mt-4 flex flex-row gap-2">
                             <GenericContainer class="flex-1 text-neutral">
                                 <h3 class="text-lg font-semibold">Self Service</h3>
 
