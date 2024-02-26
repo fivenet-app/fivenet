@@ -479,6 +479,7 @@ func (s *Server) getCharacter(ctx context.Context, charId int32) (*users.User, *
 			tJobProps.Theme,
 			tJobProps.RadioFrequency,
 			tJobProps.QuickButtons,
+			tJobProps.LogoURL,
 		).
 		FROM(
 			tUsers.

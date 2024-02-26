@@ -27,7 +27,7 @@ defineProps<{
             </PopoverButton>
 
             <PopoverPanel
-                class="absolute z-5 w-64 min-w-fit max-w-[18rem] rounded-lg border border-gray-600 bg-gray-800 text-sm text-gray-400 shadow-sm transition-opacity"
+                class="absolute z-5 w-72 min-w-fit max-w-[18rem] rounded-lg border border-gray-600 bg-gray-800 text-sm text-gray-400 shadow-sm transition-opacity"
             >
                 <div class="p-3">
                     <p class="text-base font-semibold leading-none text-gray-900 dark:text-neutral">

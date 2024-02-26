@@ -3,6 +3,7 @@ package filestore
 import (
 	"fmt"
 	"net/http"
+	"path"
 	"path/filepath"
 
 	"github.com/galexrt/fivenet/pkg/grpc/auth"
@@ -25,7 +26,9 @@ func New(st storage.IStorage, tm *auth.TokenMgr) *FilestoreHTTP {
 func (s *FilestoreHTTP) RegisterHTTP(e *gin.Engine) {
 	g := e.Group("/api/filestore")
 	{
-		g.GET("/v1/*fileName", func(c *gin.Context) {
+		g.GET("/v1/:prefix/*fileName", func(c *gin.Context) {
+			prefix := c.Param("prefix")
+			prefix = filepath.Clean(prefix)
 			fileName := c.Param("fileName")
 			fileName = filepath.Clean(fileName)
 			if fileName == "" {
@@ -33,7 +36,7 @@ func (s *FilestoreHTTP) RegisterHTTP(e *gin.Engine) {
 				return
 			}
 
-			object, info, err := s.st.Get(c, fileName)
+			object, info, err := s.st.Get(c, path.Join(prefix, fileName))
 			if err != nil {
 				c.AbortWithError(http.StatusBadRequest, fmt.Errorf("failed to retrieve file from store. %w", err))
 				return

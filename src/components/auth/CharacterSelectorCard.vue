@@ -5,6 +5,7 @@ import CharSexBadge from '~/components/partials/citizens/CharSexBadge.vue';
 import { useAuthStore } from '~/store/auth';
 import { fromSecondsToFormattedDuration } from '~/utils/time';
 import { User } from '~~/gen/ts/resources/users/users';
+import AvatarImg from '~/components/partials/citizens/AvatarImg.vue';
 
 const authStore = useAuthStore();
 
@@ -23,12 +24,18 @@ const onSubmitThrottle = useThrottleFn(async (_) => {
 </script>
 
 <template>
-    <div :key="char.userId" class="flex flex-col content-end divide-y rounded-lg bg-base-800 shadow-float">
-        <div class="flex flex-1 flex-col p-8">
-            <div class="mx-auto flex flex-row items-center gap-3">
-                <h2 class="text-center text-2xl font-medium text-neutral">{{ char.firstname }} {{ char.lastname }}</h2>
+    <div :key="char.userId" class="flex flex-col content-end rounded-lg bg-base-800 shadow-float">
+        <div>
+            <div class="flex">
+                <div class="mt-4 mx-auto flex flex-row items-center gap-3">
+                    <AvatarImg :avatar-url="char.avatarUrl" :firstname="char.firstname" :lastname="char.lastname" />
+
+                    <h2 class="text-center text-2xl font-medium text-neutral">{{ char.firstname }} {{ char.lastname }}</h2>
+                </div>
             </div>
-            <dl class="mt-2 flex flex-grow flex-col justify-between text-center">
+        </div>
+        <div class="flex flex-1 flex-col p-4">
+            <dl class="flex flex-grow flex-col justify-between text-center">
                 <dd class="mb-2 inline-flex items-center justify-center gap-1">
                     <CharSexBadge :sex="char.sex!" />
                     <span

@@ -35,6 +35,7 @@ func (s *Server) GetJobProps(ctx context.Context, req *GetJobPropsRequest) (*Get
 			tJobProps.DiscordGuildID,
 			tJobProps.DiscordLastSync,
 			tJobProps.DiscordSyncSettings,
+			tJobProps.LogoURL,
 		).
 		FROM(tJobProps).
 		WHERE(

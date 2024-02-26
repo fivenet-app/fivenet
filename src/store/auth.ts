@@ -4,14 +4,8 @@ import { parseQuery } from 'vue-router';
 import { useClipboardStore } from '~/store/clipboard';
 import { useNotificatorStore } from '~/store/notificator';
 import { useSettingsStore } from '~/store/settings';
-import { JobProps, QuickButtons } from '~~/gen/ts/resources/users/jobs';
+import { type JobProps } from '~~/gen/ts/resources/users/jobs';
 import { User } from '~~/gen/ts/resources/users/users';
-
-export type JobPropsState = {
-    theme: string;
-    radioFrequency?: string;
-    quickButtons?: QuickButtons;
-};
 
 export interface AuthState {
     accessToken: null | string;
@@ -21,7 +15,7 @@ export interface AuthState {
     loggingIn: boolean;
     loginError: null | string;
     permissions: string[];
-    jobProps: null | JobPropsState;
+    jobProps: null | JobProps;
 }
 
 export const useAuthStore = defineStore('auth', {
@@ -36,10 +30,12 @@ export const useAuthStore = defineStore('auth', {
         loginError: null as null | string,
         permissions: [] as string[],
         jobProps: {
+            job: '',
             theme: 'defaultTheme',
             radioFrequency: undefined,
-            quickButtons: {} as QuickButtons,
-        } as null | JobPropsState,
+            quickButtons: {},
+            logoUrl: undefined,
+        } as null | JobProps,
     }),
     persist: {
         paths: ['accessToken', 'accessTokenExpiration', 'lastCharID'],
@@ -71,11 +67,7 @@ export const useAuthStore = defineStore('auth', {
             if (jp === undefined) {
                 this.jobProps = null;
             } else {
-                this.jobProps = {
-                    theme: jp.theme,
-                    radioFrequency: jp.radioFrequency,
-                    quickButtons: jp.quickButtons,
-                };
+                this.jobProps = jp;
             }
         },
         clearAuthInfo(): void {

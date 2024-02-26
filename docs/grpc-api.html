@@ -10368,6 +10368,13 @@
                   <td><p>@gotags: alias:&#34;user_licenses&#34; </p></td>
                 </tr>
               
+                <tr>
+                  <td>avatar_url</td>
+                  <td><a href="#string">string</a></td>
+                  <td>optional</td>
+                  <td><p> </p></td>
+                </tr>
+              
             </tbody>
           </table>
 
@@ -10528,6 +10535,17 @@
                     <ul>
                     
                       <li>int32.gte: 0</li>
+                    
+                    </ul>
+                  </td>
+                </tr>
+              
+                <tr>
+                  <td>avatar_url</td>
+                  <td>
+                    <ul>
+                    
+                      <li>string.max_len: 128</li>
                     
                     </ul>
                   </td>
@@ -10873,6 +10891,13 @@
                   <td><p> </p></td>
                 </tr>
               
+                <tr>
+                  <td>avatar_url</td>
+                  <td><a href="#string">string</a></td>
+                  <td>optional</td>
+                  <td><p> </p></td>
+                </tr>
+              
             </tbody>
           </table>
 
@@ -10998,6 +11023,17 @@
                     <ul>
                     
                       <li>string.max_len: 20</li>
+                    
+                    </ul>
+                  </td>
+                </tr>
+              
+                <tr>
+                  <td>avatar_url</td>
+                  <td>
+                    <ul>
+                    
+                      <li>string.max_len: 128</li>
                     
                     </ul>
                   </td>
@@ -11334,7 +11370,14 @@
                 </tr>
               
                 <tr>
-                  <td>jobs_motd</td>
+                  <td>motd</td>
+                  <td><a href="#string">string</a></td>
+                  <td>optional</td>
+                  <td><p> </p></td>
+                </tr>
+              
+                <tr>
+                  <td>logo_url</td>
                   <td><a href="#string">string</a></td>
                   <td>optional</td>
                   <td><p> </p></td>
@@ -11403,11 +11446,22 @@
                 </tr>
               
                 <tr>
-                  <td>jobs_motd</td>
+                  <td>motd</td>
                   <td>
                     <ul>
                     
                       <li>string.max_len: 1024</li>
+                    
+                    </ul>
+                  </td>
+                </tr>
+              
+                <tr>
+                  <td>logo_url</td>
+                  <td>
+                    <ul>
+                    
+                      <li>string.max_len: 128</li>
                     
                     </ul>
                   </td>

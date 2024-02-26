@@ -25,8 +25,9 @@ import (
 )
 
 var (
-	tUser     = table.Users.AS("user")
-	tJobProps = table.FivenetJobProps
+	tUser      = table.Users.AS("user")
+	tUserProps = table.FivenetUserProps
+	tJobProps  = table.FivenetJobProps
 )
 
 type Server struct {
@@ -86,7 +87,7 @@ func (s *Server) GetMOTD(ctx context.Context, req *GetMOTDRequest) (*GetMOTDResp
 
 	stmt := tJobProps.
 		SELECT(
-			tJobProps.JobsMotd.AS("getmotdresponse.motd"),
+			tJobProps.Motd.AS("getmotdresponse.motd"),
 		).
 		FROM(tJobProps).
 		WHERE(tJobProps.Job.EQ(jet.String(userInfo.Job))).
@@ -117,14 +118,14 @@ func (s *Server) SetMOTD(ctx context.Context, req *SetMOTDRequest) (*SetMOTDResp
 	stmt := tJobProps.
 		INSERT(
 			tJobProps.Job,
-			tJobProps.JobsMotd,
+			tJobProps.Motd,
 		).
 		VALUES(
 			userInfo.Job,
 			req.Motd,
 		).
 		ON_DUPLICATE_KEY_UPDATE(
-			tJobProps.JobsMotd.SET(jet.String(req.Motd)),
+			tJobProps.Motd.SET(jet.String(req.Motd)),
 		)
 
 	if _, err := stmt.ExecContext(ctx, s.db); err != nil {

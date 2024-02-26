@@ -24,6 +24,7 @@ type fivenetUserPropsTable struct {
 	TrafficInfractionPoints mysql.ColumnInteger
 	OpenFines               mysql.ColumnInteger
 	BloodType               mysql.ColumnString
+	AvatarURL               mysql.ColumnString
 
 	AllColumns     mysql.ColumnList
 	MutableColumns mysql.ColumnList
@@ -71,8 +72,9 @@ func newFivenetUserPropsTableImpl(schemaName, tableName, alias string) fivenetUs
 		TrafficInfractionPointsColumn = mysql.IntegerColumn("traffic_infraction_points")
 		OpenFinesColumn               = mysql.IntegerColumn("open_fines")
 		BloodTypeColumn               = mysql.StringColumn("blood_type")
-		allColumns                    = mysql.ColumnList{UserIDColumn, WantedColumn, JobColumn, JobGradeColumn, TrafficInfractionPointsColumn, OpenFinesColumn, BloodTypeColumn}
-		mutableColumns                = mysql.ColumnList{UserIDColumn, WantedColumn, JobColumn, JobGradeColumn, TrafficInfractionPointsColumn, OpenFinesColumn, BloodTypeColumn}
+		AvatarURLColumn               = mysql.StringColumn("avatar_url")
+		allColumns                    = mysql.ColumnList{UserIDColumn, WantedColumn, JobColumn, JobGradeColumn, TrafficInfractionPointsColumn, OpenFinesColumn, BloodTypeColumn, AvatarURLColumn}
+		mutableColumns                = mysql.ColumnList{UserIDColumn, WantedColumn, JobColumn, JobGradeColumn, TrafficInfractionPointsColumn, OpenFinesColumn, BloodTypeColumn, AvatarURLColumn}
 	)
 
 	return fivenetUserPropsTable{
@@ -86,6 +88,7 @@ func newFivenetUserPropsTableImpl(schemaName, tableName, alias string) fivenetUs
 		TrafficInfractionPoints: TrafficInfractionPointsColumn,
 		OpenFines:               OpenFinesColumn,
 		BloodType:               BloodTypeColumn,
+		AvatarURL:               AvatarURLColumn,
 
 		AllColumns:     allColumns,
 		MutableColumns: mutableColumns,

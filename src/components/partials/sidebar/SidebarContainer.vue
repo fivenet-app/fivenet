@@ -497,7 +497,7 @@ watch(router.currentRoute, () => updateActiveItem());
                                                 class="text-base-400 hover:text-neutral hover:transition-colors"
                                             >
                                                 <HomeIcon class="h-5 w-5 flex-shrink-0" aria-hidden="true" />
-                                                <span class="sr-only">Home</span>
+                                                <span class="sr-only">{{ $t('common.home') }}</span>
                                             </NuxtLink>
                                         </div>
                                     </li>
@@ -546,8 +546,10 @@ watch(router.currentRoute, () => updateActiveItem());
                                         {{ $t('components.partials.sidebar.open_usermenu') }}
                                     </span>
                                     <AccountIcon
+                                        v-if="!activeChar?.avatarUrl"
                                         class="h-10 w-auto rounded-full bg-base-800 fill-base-300 text-base-300 hover:fill-base-100 hover:text-base-100 hover:transition-colors"
                                     />
+                                    <img v-else class="h-10 w-10 rounded-full" :src="activeChar.avatarUrl" alt="Avatar" />
                                 </MenuButton>
                                 <transition
                                     enter-active-class="transition duration-100 ease-out"

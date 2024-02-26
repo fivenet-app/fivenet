@@ -25,6 +25,7 @@ func (s *Server) ListColleagues(ctx context.Context, req *ListColleaguesRequest)
 		tUser.JobGrade,
 		tUser.Dateofbirth,
 		tUser.PhoneNumber,
+		tUserProps.AvatarURL.AS("user.avatar_url"),
 	}
 
 	condition := tUser.Job.EQ(jet.String(userInfo.Job))
@@ -69,7 +70,12 @@ func (s *Server) ListColleagues(ctx context.Context, req *ListColleaguesRequest)
 			selectors[0], selectors[1:]...,
 		).
 		OPTIMIZER_HINTS(jet.OptimizerHint("idx_users_firstname_lastname_fulltext")).
-		FROM(tUser).
+		FROM(
+			tUser.
+				LEFT_JOIN(tUserProps,
+					tUserProps.UserID.EQ(tUser.ID),
+				),
+		).
 		WHERE(condition).
 		OFFSET(req.Pagination.Offset).
 		ORDER_BY(

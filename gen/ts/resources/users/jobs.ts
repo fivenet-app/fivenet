@@ -82,9 +82,13 @@ export interface JobProps {
      */
     discordSyncSettings?: DiscordSyncSettings;
     /**
-     * @generated from protobuf field: optional string jobs_motd = 9;
+     * @generated from protobuf field: optional string motd = 9;
      */
-    jobsMotd?: string;
+    motd?: string;
+    /**
+     * @generated from protobuf field: optional string logo_url = 10;
+     */
+    logoUrl?: string;
 }
 /**
  * @generated from protobuf message resources.users.QuickButtons
@@ -312,7 +316,8 @@ class JobProps$Type extends MessageType<JobProps> {
             { no: 6, name: "discord_guild_id", kind: "scalar", opt: true, T: 4 /*ScalarType.UINT64*/ },
             { no: 7, name: "discord_last_sync", kind: "message", T: () => Timestamp },
             { no: 8, name: "discord_sync_settings", kind: "message", T: () => DiscordSyncSettings },
-            { no: 9, name: "jobs_motd", kind: "scalar", opt: true, T: 9 /*ScalarType.STRING*/, options: { "validate.rules": { string: { maxLen: "1024" } } } }
+            { no: 9, name: "motd", kind: "scalar", opt: true, T: 9 /*ScalarType.STRING*/, options: { "validate.rules": { string: { maxLen: "1024" } } } },
+            { no: 10, name: "logo_url", kind: "scalar", opt: true, T: 9 /*ScalarType.STRING*/, options: { "validate.rules": { string: { maxLen: "128" } } } }
         ]);
     }
     create(value?: PartialMessage<JobProps>): JobProps {
@@ -353,8 +358,11 @@ class JobProps$Type extends MessageType<JobProps> {
                 case /* resources.users.DiscordSyncSettings discord_sync_settings */ 8:
                     message.discordSyncSettings = DiscordSyncSettings.internalBinaryRead(reader, reader.uint32(), options, message.discordSyncSettings);
                     break;
-                case /* optional string jobs_motd */ 9:
-                    message.jobsMotd = reader.string();
+                case /* optional string motd */ 9:
+                    message.motd = reader.string();
+                    break;
+                case /* optional string logo_url */ 10:
+                    message.logoUrl = reader.string();
                     break;
                 default:
                     let u = options.readUnknownField;
@@ -392,9 +400,12 @@ class JobProps$Type extends MessageType<JobProps> {
         /* resources.users.DiscordSyncSettings discord_sync_settings = 8; */
         if (message.discordSyncSettings)
             DiscordSyncSettings.internalBinaryWrite(message.discordSyncSettings, writer.tag(8, WireType.LengthDelimited).fork(), options).join();
-        /* optional string jobs_motd = 9; */
-        if (message.jobsMotd !== undefined)
-            writer.tag(9, WireType.LengthDelimited).string(message.jobsMotd);
+        /* optional string motd = 9; */
+        if (message.motd !== undefined)
+            writer.tag(9, WireType.LengthDelimited).string(message.motd);
+        /* optional string logo_url = 10; */
+        if (message.logoUrl !== undefined)
+            writer.tag(10, WireType.LengthDelimited).string(message.logoUrl);
         let u = options.writeUnknownFields;
         if (u !== false)
             (u == true ? UnknownFieldHandler.onWrite : u)(this.typeName, message, writer);

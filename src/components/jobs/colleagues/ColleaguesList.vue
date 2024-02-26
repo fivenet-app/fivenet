@@ -83,6 +83,10 @@ watchDebounced(query.value, () => refresh(), { debounce: 600, maxWait: 1400 });
                                         <th
                                             scope="col"
                                             class="py-3.5 pl-4 pr-3 text-left text-sm font-semibold text-neutral sm:pl-1"
+                                        ></th>
+                                        <th
+                                            scope="col"
+                                            class="py-3.5 pl-4 pr-3 text-left text-sm font-semibold text-neutral sm:pl-1"
                                         >
                                             {{ $t('common.name') }}
                                         </th>
@@ -102,6 +106,10 @@ watchDebounced(query.value, () => refresh(), { debounce: 600, maxWait: 1400 });
                                 </tbody>
                                 <thead>
                                     <tr>
+                                        <th
+                                            scope="col"
+                                            class="py-3.5 pl-4 pr-3 text-left text-sm font-semibold text-neutral sm:pl-1"
+                                        ></th>
                                         <th
                                             scope="col"
                                             class="py-3.5 pl-4 pr-3 text-left text-sm font-semibold text-neutral sm:pl-1"

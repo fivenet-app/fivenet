@@ -12,10 +12,11 @@ export class ClipboardUser {
     public jobLabel: string | undefined;
     public jobGrade: number | undefined;
     public jobGradeLabel: string | undefined;
-    public firstname: string | undefined;
-    public lastname: string | undefined;
+    public firstname: string;
+    public lastname: string;
     public dateofbirth: string | undefined;
     public phoneNumber: string | undefined;
+    public avatarUrl: string | undefined;
 
     constructor(u: UserShort | User) {
         this.userId = u.userId;
@@ -28,6 +29,7 @@ export class ClipboardUser {
         this.lastname = u.lastname;
         this.dateofbirth = u.dateofbirth;
         this.phoneNumber = u.phoneNumber;
+        this.avatarUrl = u.avatarUrl;
 
         return this;
     }
@@ -246,6 +248,7 @@ export function getUser(obj: ClipboardUser): User {
         dateofbirth: obj.dateofbirth ?? '',
         phoneNumber: obj.phoneNumber ?? '',
         licenses: [],
+        avatarUrl: obj.avatarUrl,
     };
 
     return u;

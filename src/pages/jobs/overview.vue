@@ -2,6 +2,7 @@
 import { RadioHandheldIcon } from 'mdi-vue3';
 import JobMotd from '~/components/jobs/JobMotd.vue';
 import TimeclockOverviewBlock from '~/components/jobs/timeclock/TimeclockOverviewBlock.vue';
+import SquareImg from '~/components/partials/SquareImg.vue';
 import GenericContainer from '~/components/partials/elements/GenericContainer.vue';
 import { useAuthStore } from '~/store/auth';
 
@@ -29,13 +30,22 @@ const showRadioFrequency = ref(false);
                     <div class="sm:flex-auto">
                         <div class="flex flex-row gap-2">
                             <GenericContainer class="flex-1">
-                                <div>
-                                    <h1 class="text-3xl font-semibold leading-6 text-neutral">
-                                        {{ activeChar?.jobLabel }}
-                                    </h1>
-                                    <h2 class="mt-2 text-xl font-semibold leading-6 text-neutral">
-                                        {{ $t('common.rank') }}: {{ activeChar?.jobGradeLabel }}
-                                    </h2>
+                                <div class="flex flex-row gap-4">
+                                    <SquareImg
+                                        v-if="jobProps && jobProps.logoUrl"
+                                        :url="jobProps?.logoUrl"
+                                        :text="$t('common.logo')"
+                                        size="xl"
+                                    />
+
+                                    <div>
+                                        <h1 class="text-3xl font-semibold leading-6 text-neutral">
+                                            {{ activeChar?.jobLabel }}
+                                        </h1>
+                                        <h2 class="mt-2 text-xl font-semibold leading-6 text-neutral">
+                                            {{ $t('common.rank') }}: {{ activeChar?.jobGradeLabel }}
+                                        </h2>
+                                    </div>
                                 </div>
 
                                 <JobMotd />

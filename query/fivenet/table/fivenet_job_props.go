@@ -26,7 +26,8 @@ type fivenetJobPropsTable struct {
 	DiscordGuildID      mysql.ColumnInteger
 	DiscordLastSync     mysql.ColumnTimestamp
 	DiscordSyncSettings mysql.ColumnString
-	JobsMotd            mysql.ColumnString
+	Motd                mysql.ColumnString
+	LogoURL             mysql.ColumnString
 
 	AllColumns     mysql.ColumnList
 	MutableColumns mysql.ColumnList
@@ -76,9 +77,10 @@ func newFivenetJobPropsTableImpl(schemaName, tableName, alias string) fivenetJob
 		DiscordGuildIDColumn      = mysql.IntegerColumn("discord_guild_id")
 		DiscordLastSyncColumn     = mysql.TimestampColumn("discord_last_sync")
 		DiscordSyncSettingsColumn = mysql.StringColumn("discord_sync_settings")
-		JobsMotdColumn            = mysql.StringColumn("jobs_motd")
-		allColumns                = mysql.ColumnList{JobColumn, UpdatedAtColumn, ThemeColumn, LivemapMarkerColorColumn, QuickButtonsColumn, RadioFrequencyColumn, DiscordGuildIDColumn, DiscordLastSyncColumn, DiscordSyncSettingsColumn, JobsMotdColumn}
-		mutableColumns            = mysql.ColumnList{JobColumn, UpdatedAtColumn, ThemeColumn, LivemapMarkerColorColumn, QuickButtonsColumn, RadioFrequencyColumn, DiscordGuildIDColumn, DiscordLastSyncColumn, DiscordSyncSettingsColumn, JobsMotdColumn}
+		MotdColumn                = mysql.StringColumn("motd")
+		LogoURLColumn             = mysql.StringColumn("logo_url")
+		allColumns                = mysql.ColumnList{JobColumn, UpdatedAtColumn, ThemeColumn, LivemapMarkerColorColumn, QuickButtonsColumn, RadioFrequencyColumn, DiscordGuildIDColumn, DiscordLastSyncColumn, DiscordSyncSettingsColumn, MotdColumn, LogoURLColumn}
+		mutableColumns            = mysql.ColumnList{JobColumn, UpdatedAtColumn, ThemeColumn, LivemapMarkerColorColumn, QuickButtonsColumn, RadioFrequencyColumn, DiscordGuildIDColumn, DiscordLastSyncColumn, DiscordSyncSettingsColumn, MotdColumn, LogoURLColumn}
 	)
 
 	return fivenetJobPropsTable{
@@ -94,7 +96,8 @@ func newFivenetJobPropsTableImpl(schemaName, tableName, alias string) fivenetJob
 		DiscordGuildID:      DiscordGuildIDColumn,
 		DiscordLastSync:     DiscordLastSyncColumn,
 		DiscordSyncSettings: DiscordSyncSettingsColumn,
-		JobsMotd:            JobsMotdColumn,
+		Motd:                MotdColumn,
+		LogoURL:             LogoURLColumn,
 
 		AllColumns:     allColumns,
 		MutableColumns: mutableColumns,

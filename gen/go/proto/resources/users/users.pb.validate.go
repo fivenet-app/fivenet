@@ -181,6 +181,21 @@ func (m *UserShort) validate(all bool) error {
 
 	}
 
+	if m.AvatarUrl != nil {
+
+		if utf8.RuneCountInString(m.GetAvatarUrl()) > 128 {
+			err := UserShortValidationError{
+				field:  "AvatarUrl",
+				reason: "value length must be at most 128 runes",
+			}
+			if !all {
+				return err
+			}
+			errors = append(errors, err)
+		}
+
+	}
+
 	if len(errors) > 0 {
 		return UserShortMultiError(errors)
 	}
@@ -506,6 +521,21 @@ func (m *User) validate(all bool) error {
 			err := UserValidationError{
 				field:  "Playtime",
 				reason: "value must be greater than or equal to 0",
+			}
+			if !all {
+				return err
+			}
+			errors = append(errors, err)
+		}
+
+	}
+
+	if m.AvatarUrl != nil {
+
+		if utf8.RuneCountInString(m.GetAvatarUrl()) > 128 {
+			err := UserValidationError{
+				field:  "AvatarUrl",
+				reason: "value length must be at most 128 runes",
 			}
 			if !all {
 				return err

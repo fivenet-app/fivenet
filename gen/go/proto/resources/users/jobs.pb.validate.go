@@ -502,12 +502,27 @@ func (m *JobProps) validate(all bool) error {
 
 	}
 
-	if m.JobsMotd != nil {
+	if m.Motd != nil {
 
-		if utf8.RuneCountInString(m.GetJobsMotd()) > 1024 {
+		if utf8.RuneCountInString(m.GetMotd()) > 1024 {
 			err := JobPropsValidationError{
-				field:  "JobsMotd",
+				field:  "Motd",
 				reason: "value length must be at most 1024 runes",
+			}
+			if !all {
+				return err
+			}
+			errors = append(errors, err)
+		}
+
+	}
+
+	if m.LogoUrl != nil {
+
+		if utf8.RuneCountInString(m.GetLogoUrl()) > 128 {
+			err := JobPropsValidationError{
+				field:  "LogoUrl",
+				reason: "value length must be at most 128 runes",
 			}
 			if !all {
 				return err

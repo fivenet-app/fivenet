@@ -822,7 +822,10 @@
         "blood_type": "Blood type",
         "motd": "MOTD",
         "fallback_mode": "Fallback Mode",
-        "volume": "Volume"
+        "volume": "Volume",
+        "avatar": "Profile Picture",
+        "image": "Image",
+        "logo": "Logo"
     },
     "notifications": {
         "clipboard": {

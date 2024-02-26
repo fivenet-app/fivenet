@@ -34,6 +34,7 @@ import (
 var (
 	tAccounts  = table.FivenetAccounts
 	tUsers     = table.Users.AS("user")
+	tUserProps = table.FivenetUserProps.AS("user_props")
 	tJobs      = table.Jobs
 	tJobGrades = table.JobGrades
 	tJobProps  = table.FivenetJobProps.AS("jobprops")
@@ -471,6 +472,7 @@ func (s *Server) GetCharacters(ctx context.Context, req *GetCharactersRequest) (
 			tUsers.PhoneNumber,
 			tUsers.Visum,
 			tUsers.Playtime,
+			tUserProps.AvatarURL.AS("user.avatar_url"),
 		).
 		FROM(tUsers.
 			LEFT_JOIN(tJobs,
@@ -481,6 +483,9 @@ func (s *Server) GetCharacters(ctx context.Context, req *GetCharactersRequest) (
 					tJobGrades.Grade.EQ(tUsers.JobGrade),
 					tJobGrades.JobName.EQ(tUsers.Job),
 				),
+			).
+			LEFT_JOIN(tUserProps,
+				tUserProps.UserID.EQ(tUsers.ID),
 			),
 		).
 		WHERE(
@@ -515,12 +520,14 @@ func (s *Server) getCharacter(ctx context.Context, charId int32) (*users.User, *
 			tUsers.Firstname,
 			tUsers.Lastname,
 			tUsers.Dateofbirth,
+			tUserProps.AvatarURL.AS("user.avatar_url"),
 			tUsers.Group.AS("group"),
 			tJobs.Label.AS("user.job_label"),
 			tJobGrades.Label.AS("user.job_grade_label"),
 			tJobProps.Theme,
 			tJobProps.RadioFrequency,
 			tJobProps.QuickButtons,
+			tJobProps.LogoURL,
 		).
 		FROM(
 			tUsers.
@@ -535,6 +542,9 @@ func (s *Server) getCharacter(ctx context.Context, charId int32) (*users.User, *
 				).
 				LEFT_JOIN(tJobProps,
 					tJobProps.Job.EQ(tJobs.Name),
+				).
+				LEFT_JOIN(tUserProps,
+					tUserProps.UserID.EQ(tUsers.ID),
 				),
 		).
 		WHERE(
