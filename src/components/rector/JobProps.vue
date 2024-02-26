@@ -86,8 +86,6 @@ async function loadImage(): Promise<void> {
         jobProps.value.logoUrl = {} as File;
     }
 
-    const typeSplit = fileUploadRef.value.files[0].type.split('/');
-    jobProps.value.logoUrl.type = typeSplit[typeSplit.length - 1];
     jobProps.value.logoUrl.data = new Uint8Array(await fileUploadRef.value.files[0].arrayBuffer());
 }
 </script>
@@ -277,7 +275,7 @@ async function loadImage(): Promise<void> {
                                     <input
                                         ref="fileUploadRef"
                                         type="file"
-                                        accept="image/x-png,image/jpeg,image/webp"
+                                        accept="image/x-png,image/jpeg"
                                         class="block w-full rounded-md border-0 bg-base-700 py-1.5 text-neutral placeholder:text-accent-200 focus:ring-2 focus:ring-inset focus:ring-base-300 sm:text-sm sm:leading-6"
                                         @change="loadImage()"
                                     />

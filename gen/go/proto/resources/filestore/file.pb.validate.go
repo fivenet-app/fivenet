@@ -82,21 +82,6 @@ func (m *File) validate(all bool) error {
 
 	}
 
-	if m.Type != nil {
-
-		if utf8.RuneCountInString(m.GetType()) > 4 {
-			err := FileValidationError{
-				field:  "Type",
-				reason: "value length must be at most 4 runes",
-			}
-			if !all {
-				return err
-			}
-			errors = append(errors, err)
-		}
-
-	}
-
 	if len(errors) > 0 {
 		return FileMultiError(errors)
 	}

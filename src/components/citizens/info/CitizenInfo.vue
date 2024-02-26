@@ -117,7 +117,7 @@ const open = ref(false);
                 <div class="flex gap-4 my-4 px-4">
                     <div class="">
                         <AvatarImg
-                            :url="user.avatar?.url"
+                            :url="user.props?.mugShot?.url"
                             :name="`${user.firstname} ${user.lastname}`"
                             size="xl"
                             :rounded="false"

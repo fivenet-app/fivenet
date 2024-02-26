@@ -625,15 +625,23 @@ func (s *Server) SetUserProps(ctx context.Context, req *SetUserPropsRequest) (*S
 
 		updateSets = append(updateSets, tUserProps.MugShot.SET(jet.StringExp(jet.Raw("VALUES(`mug_shot`)"))))
 
-		if req.Props.MugShot != nil && len(req.Props.MugShot.Data) > 0 {
-			filler, err := utils.GenerateRandomString(64)
-			if err != nil {
-				return nil, errswrap.NewError(ErrFailedQuery, err)
-			}
+		if req.Props.MugShot != nil {
+			if len(req.Props.MugShot.Data) > 0 {
+				filler, err := utils.GenerateRandomString(64)
+				if err != nil {
+					return nil, errswrap.NewError(ErrFailedQuery, err)
+				}
 
-			fileName := fmt.Sprintf("%d-%s", props.UserId, filler)
-			if err := req.Props.MugShot.Upload(ctx, s.st, filestore.MugShots, fileName); err != nil {
-				return nil, errswrap.NewError(ErrFailedQuery, err)
+				fileName := fmt.Sprintf("%d-%s", props.UserId, filler)
+				if err := req.Props.MugShot.Upload(ctx, s.st, filestore.MugShots, fileName); err != nil {
+					return nil, errswrap.NewError(ErrFailedQuery, err)
+				}
+			} else {
+				if props.MugShot != nil && props.MugShot.Url != nil {
+					if err := s.st.Delete(ctx, strings.TrimPrefix(*props.MugShot.Url, filestore.FilestoreURLPrefix)); err != nil {
+						return nil, errswrap.NewError(ErrFailedQuery, err)
+					}
+				}
 			}
 		}
 	} else {
@@ -696,9 +704,18 @@ func (s *Server) SetUserProps(ctx context.Context, req *SetUserPropsRequest) (*S
 		}
 	}
 	if req.Props.MugShot != nil && (props.MugShot == nil || req.Props.MugShot.Url != props.MugShot.Url) {
+		previousUrl := ""
+		if props.MugShot != nil && props.MugShot.Url != nil {
+			previousUrl = *props.MugShot.Url
+		}
+		currentUrl := ""
+		if req.Props != nil && req.Props.MugShot != nil && req.Props.MugShot.Url != nil {
+			currentUrl = *req.Props.MugShot.Url
+		}
+
 		if err := s.addUserActivity(ctx, tx,
 			userInfo.UserId, req.Props.UserId, users.UserActivityType_USER_ACTIVITY_TYPE_CHANGED, "UserProps.MugShot",
-			"", *req.Props.MugShot.Url, req.Reason); err != nil {
+			previousUrl, currentUrl, req.Reason); err != nil {
 			return nil, errswrap.NewError(ErrFailedQuery, err)
 		}
 	}

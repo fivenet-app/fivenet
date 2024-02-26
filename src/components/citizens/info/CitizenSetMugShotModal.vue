@@ -25,27 +25,32 @@ const notifications = useNotificatorStore();
 
 interface FormData {
     reason: string;
+    reset?: boolean;
 }
 
 const fileUploadRef = ref<HTMLInputElement | null>(null);
 
 async function setMugShot(values: FormData): Promise<void> {
-    if (!fileUploadRef.value || !fileUploadRef.value.files || fileUploadRef.value.files.length <= 0) {
-        return;
-    }
-
-    if (fileUploadRef.value.files[0].size > 2097152) {
-        return;
-    }
-
-    const typeSplit = fileUploadRef.value.files[0].type.split('/');
     const userProps: UserProps = {
         userId: props.user.userId,
-        mugShot: {
-            type: typeSplit[typeSplit.length - 1],
-            data: new Uint8Array(await fileUploadRef.value.files[0].arrayBuffer()),
-        },
     };
+    if (values.reset) {
+        userProps.mugShot = {
+            data: new Uint8Array(),
+        };
+    } else {
+        if (!fileUploadRef.value || !fileUploadRef.value.files || fileUploadRef.value.files.length <= 0) {
+            return;
+        }
+
+        if (fileUploadRef.value.files[0].size > 2097152) {
+            return;
+        }
+
+        userProps.mugShot = {
+            data: new Uint8Array(await fileUploadRef.value.files[0].arrayBuffer()),
+        };
+    }
 
     try {
         const call = $grpc.getCitizenStoreClient().setUserProps({
@@ -73,10 +78,9 @@ defineRule('required', required);
 defineRule('min', min);
 defineRule('max', max);
 
-const { handleSubmit, meta } = useForm<FormData>({
+const { handleSubmit, meta, setFieldValue } = useForm<FormData>({
     validationSchema: {
         reason: { required: true, min: 3, max: 255 },
-        mugShot: { required: true },
     },
     validateOnMount: true,
 });
@@ -169,7 +173,7 @@ const onSubmitThrottle = useThrottleFn(async (e) => {
                                             <input
                                                 ref="fileUploadRef"
                                                 type="file"
-                                                accept="image/x-png,image/jpeg,image/webp"
+                                                accept="image/x-png,image/jpeg"
                                                 class="block w-full rounded-md border-0 bg-base-700 py-1.5 text-neutral placeholder:text-accent-200 focus:ring-2 focus:ring-inset focus:ring-base-300 sm:text-sm sm:leading-6"
                                                 @change="handleChange"
                                                 @blur="handleBlur"
@@ -187,7 +191,26 @@ const onSubmitThrottle = useThrottleFn(async (e) => {
                                         {{ $t('common.close', 1) }}
                                     </button>
                                     <button
-                                        type="submit"
+                                        type="button"
+                                        class="rounded-bd flex flex-1 justify-center px-3.5 py-2.5 text-sm font-semibold text-neutral"
+                                        :disabled="!meta.valid || !canSubmit"
+                                        :class="[
+                                            !meta.valid || !canSubmit
+                                                ? 'disabled bg-base-500 hover:bg-base-400 focus-visible:outline-base-500'
+                                                : 'bg-error-500 hover:bg-error-400 focus-visible:outline-error-500',
+                                        ]"
+                                        @click="
+                                            setFieldValue('reset', true);
+                                            onSubmitThrottle($event);
+                                        "
+                                    >
+                                        <template v-if="!canSubmit">
+                                            <LoadingIcon class="mr-2 h-5 w-5 animate-spin" />
+                                        </template>
+                                        {{ $t('common.reset') }}
+                                    </button>
+                                    <button
+                                        type="button"
                                         class="rounded-bd flex flex-1 justify-center px-3.5 py-2.5 text-sm font-semibold text-neutral"
                                         :disabled="!meta.valid || !canSubmit"
                                         :class="[
@@ -195,6 +218,10 @@ const onSubmitThrottle = useThrottleFn(async (e) => {
                                                 ? 'disabled bg-base-500 hover:bg-base-400 focus-visible:outline-base-500'
                                                 : 'bg-primary-500 hover:bg-primary-400 focus-visible:outline-primary-500',
                                         ]"
+                                        @click="
+                                            setFieldValue('reset', false);
+                                            onSubmitThrottle($event);
+                                        "
                                     >
                                         <template v-if="!canSubmit">
                                             <LoadingIcon class="mr-2 h-5 w-5 animate-spin" />

@@ -249,7 +249,7 @@ export function getUser(obj: ClipboardUser): User {
         dateofbirth: obj.dateofbirth ?? '',
         phoneNumber: obj.phoneNumber ?? '',
         licenses: [],
-        avatar: { url: obj.avatar?.url, type: undefined, data: new Uint8Array() },
+        avatar: { url: obj.avatar?.url, data: new Uint8Array() },
     };
 
     return u;

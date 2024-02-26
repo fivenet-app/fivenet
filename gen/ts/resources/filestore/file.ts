@@ -19,11 +19,7 @@ export interface File {
      */
     url?: string;
     /**
-     * @generated from protobuf field: optional string type = 2;
-     */
-    type?: string;
-    /**
-     * @generated from protobuf field: bytes data = 3;
+     * @generated from protobuf field: bytes data = 2;
      */
     data: Uint8Array;
 }
@@ -32,8 +28,7 @@ class File$Type extends MessageType<File> {
     constructor() {
         super("resources.filestore.File", [
             { no: 1, name: "url", kind: "scalar", opt: true, T: 9 /*ScalarType.STRING*/, options: { "validate.rules": { string: { maxLen: "128" } } } },
-            { no: 2, name: "type", kind: "scalar", opt: true, T: 9 /*ScalarType.STRING*/, options: { "validate.rules": { string: { maxLen: "4" } } } },
-            { no: 3, name: "data", kind: "scalar", T: 12 /*ScalarType.BYTES*/, options: { "validate.rules": { bytes: { maxLen: "2097152" } } } }
+            { no: 2, name: "data", kind: "scalar", T: 12 /*ScalarType.BYTES*/, options: { "validate.rules": { bytes: { maxLen: "2097152" } } } }
         ]);
     }
     create(value?: PartialMessage<File>): File {
@@ -51,10 +46,7 @@ class File$Type extends MessageType<File> {
                 case /* optional string url */ 1:
                     message.url = reader.string();
                     break;
-                case /* optional string type */ 2:
-                    message.type = reader.string();
-                    break;
-                case /* bytes data */ 3:
+                case /* bytes data */ 2:
                     message.data = reader.bytes();
                     break;
                 default:
@@ -72,12 +64,9 @@ class File$Type extends MessageType<File> {
         /* optional string url = 1; */
         if (message.url !== undefined)
             writer.tag(1, WireType.LengthDelimited).string(message.url);
-        /* optional string type = 2; */
-        if (message.type !== undefined)
-            writer.tag(2, WireType.LengthDelimited).string(message.type);
-        /* bytes data = 3; */
+        /* bytes data = 2; */
         if (message.data.length)
-            writer.tag(3, WireType.LengthDelimited).bytes(message.data);
+            writer.tag(2, WireType.LengthDelimited).bytes(message.data);
         let u = options.writeUnknownFields;
         if (u !== false)
             (u == true ? UnknownFieldHandler.onWrite : u)(this.typeName, message, writer);

@@ -10,12 +10,20 @@ import (
 
 	"github.com/galexrt/fivenet/pkg/storage"
 	"github.com/h2non/filetype"
-	"golang.org/x/exp/slices"
+	"github.com/h2non/filetype/matchers"
 )
 
 const FilestoreURLPrefix = "/api/filestore/"
 
-var AllowedFileExtensions = []string{"jpg", "jpeg", "png", "webp"}
+var validFilesMap = matchers.Map{
+	matchers.TypeJpeg: matchers.Jpeg,
+	matchers.TypePng:  matchers.Png,
+}
+
+var imagesMatchersMap = matchers.Map{
+	matchers.TypeJpeg: matchers.Jpeg,
+	matchers.TypePng:  matchers.Png,
+}
 
 type FilePrefix = string
 
@@ -50,15 +58,12 @@ func (x *File) Value() (driver.Value, error) {
 }
 
 func (x *File) Upload(ctx context.Context, st storage.IStorage, prefix FilePrefix, fileName string) error {
-	if x.Type == nil {
-		return fmt.Errorf("no file type given")
-	}
 	if x.Data == nil {
 		return fmt.Errorf("no file data given")
 	}
 
-	if !slices.Contains(AllowedFileExtensions, *x.Type) {
-		return fmt.Errorf("disallowed file extension")
+	if !filetype.MatchesMap(x.Data, validFilesMap) {
+		return fmt.Errorf("invalid file type")
 	}
 
 	if x.Url != nil {
@@ -88,5 +93,5 @@ func (x *File) Upload(ctx context.Context, st storage.IStorage, prefix FilePrefi
 }
 
 func (x *File) IsImage() bool {
-	return filetype.IsImage(x.Data)
+	return filetype.MatchesMap(x.Data, imagesMatchersMap)
 }
