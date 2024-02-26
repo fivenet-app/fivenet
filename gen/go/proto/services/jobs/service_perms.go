@@ -21,7 +21,8 @@ var PermsRemap = map[string]string{
 	"JobsRequestsService/PostRequestComment":  "JobsRequestsService/CreateRequest",
 
 	// Service: JobsService
-	"JobsService/GetMOTD": "Any",
+	"JobsService/GetColleague": "SuperUser",
+	"JobsService/GetMOTD":      "Any",
 
 	// Service: JobsTimeclockService
 	"JobsTimeclockService/GetTimeclockStats": "JobsTimeclockService/ListTimeclock",

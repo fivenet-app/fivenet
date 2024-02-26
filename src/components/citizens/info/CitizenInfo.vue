@@ -115,15 +115,13 @@ const open = ref(false);
             <ClipboardButton />
             <div class="mb-14">
                 <div class="flex gap-4 my-4 px-4">
-                    <div class="">
-                        <AvatarImg
-                            :url="user.props?.mugShot?.url"
-                            :name="`${user.firstname} ${user.lastname}`"
-                            size="xl"
-                            :rounded="false"
-                        />
-                    </div>
-                    <div>
+                    <AvatarImg
+                        :url="user.props?.mugShot?.url"
+                        :name="`${user.firstname} ${user.lastname}`"
+                        size="xl"
+                        :rounded="false"
+                    />
+                    <div class="w-full">
                         <div class="flex snap-x flex-row flex-wrap justify-between gap-2 overflow-x-auto">
                             <h1 class="flex-1 break-words py-1 pl-0.5 pr-0.5 text-4xl font-bold text-neutral sm:pl-1">
                                 {{ user?.firstname }} {{ user?.lastname }}
@@ -133,7 +131,7 @@ const open = ref(false);
                                 prefix="CIT"
                                 :title="{ key: 'notifications.citizen_info.copy_citizen_id.title', parameters: {} }"
                                 :content="{ key: 'notifications.citizen_info.copy_citizen_id.content', parameters: {} }"
-                                class="min-h-9 self-end"
+                                class="min-h-9 place-self-end"
                             />
                         </div>
                         <div class="my-2 flex flex-row items-center gap-2">

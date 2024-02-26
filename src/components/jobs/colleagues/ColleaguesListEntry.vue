@@ -1,4 +1,5 @@
 <script lang="ts" setup>
+import { EyeIcon } from 'mdi-vue3';
 import AvatarImg from '~/components/partials/citizens/AvatarImg.vue';
 import PhoneNumberBlock from '~/components/partials/citizens/PhoneNumberBlock.vue';
 import { User } from '~~/gen/ts/resources/users/users';
@@ -22,6 +23,19 @@ defineProps<{
         </td>
         <td class="whitespace-nowrap px-1 py-1 text-left text-accent-200">
             {{ user.dateofbirth }}
+        </td>
+        <td v-if="can('SuperUser')" class="whitespace-nowrap px-1 py-1 text-left text-accent-200">
+            <div class="flex flex-row justify-end">
+                <NuxtLink
+                    :to="{
+                        name: 'jobs-colleagues-id',
+                        params: { id: user.userId ?? 0 },
+                    }"
+                    class="flex-initial text-primary-500 hover:text-primary-400"
+                >
+                    <EyeIcon class="ml-auto mr-2.5 w-5 h-auto" />
+                </NuxtLink>
+            </div>
         </td>
     </tr>
 </template>

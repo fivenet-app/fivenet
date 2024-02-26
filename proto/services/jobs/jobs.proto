@@ -21,6 +21,14 @@ message ListColleaguesResponse {
   repeated resources.users.User users = 2;
 }
 
+message GetColleagueRequest {
+  int32 user_id = 1;
+}
+
+message GetColleagueResponse {}
+
+// MOTD
+
 message GetMOTDRequest {}
 
 message GetMOTDResponse {
@@ -39,6 +47,9 @@ message SetMOTDResponse {
 service JobsService {
   // @perm
   rpc ListColleagues(ListColleaguesRequest) returns (ListColleaguesResponse);
+
+  // @perm: Name=SuperUser
+  rpc GetColleague(GetColleagueRequest) returns (GetColleagueResponse);
 
   // @perm: Name=Any
   rpc GetMOTD(GetMOTDRequest) returns (GetMOTDResponse);

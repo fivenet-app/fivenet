@@ -353,6 +353,212 @@ var _ interface {
 	ErrorName() string
 } = ListColleaguesResponseValidationError{}
 
+// Validate checks the field values on GetColleagueRequest with the rules
+// defined in the proto definition for this message. If any rules are
+// violated, the first error encountered is returned, or nil if there are no violations.
+func (m *GetColleagueRequest) Validate() error {
+	return m.validate(false)
+}
+
+// ValidateAll checks the field values on GetColleagueRequest with the rules
+// defined in the proto definition for this message. If any rules are
+// violated, the result is a list of violation errors wrapped in
+// GetColleagueRequestMultiError, or nil if none found.
+func (m *GetColleagueRequest) ValidateAll() error {
+	return m.validate(true)
+}
+
+func (m *GetColleagueRequest) validate(all bool) error {
+	if m == nil {
+		return nil
+	}
+
+	var errors []error
+
+	// no validation rules for UserId
+
+	if len(errors) > 0 {
+		return GetColleagueRequestMultiError(errors)
+	}
+
+	return nil
+}
+
+// GetColleagueRequestMultiError is an error wrapping multiple validation
+// errors returned by GetColleagueRequest.ValidateAll() if the designated
+// constraints aren't met.
+type GetColleagueRequestMultiError []error
+
+// Error returns a concatenation of all the error messages it wraps.
+func (m GetColleagueRequestMultiError) Error() string {
+	var msgs []string
+	for _, err := range m {
+		msgs = append(msgs, err.Error())
+	}
+	return strings.Join(msgs, "; ")
+}
+
+// AllErrors returns a list of validation violation errors.
+func (m GetColleagueRequestMultiError) AllErrors() []error { return m }
+
+// GetColleagueRequestValidationError is the validation error returned by
+// GetColleagueRequest.Validate if the designated constraints aren't met.
+type GetColleagueRequestValidationError struct {
+	field  string
+	reason string
+	cause  error
+	key    bool
+}
+
+// Field function returns field value.
+func (e GetColleagueRequestValidationError) Field() string { return e.field }
+
+// Reason function returns reason value.
+func (e GetColleagueRequestValidationError) Reason() string { return e.reason }
+
+// Cause function returns cause value.
+func (e GetColleagueRequestValidationError) Cause() error { return e.cause }
+
+// Key function returns key value.
+func (e GetColleagueRequestValidationError) Key() bool { return e.key }
+
+// ErrorName returns error name.
+func (e GetColleagueRequestValidationError) ErrorName() string {
+	return "GetColleagueRequestValidationError"
+}
+
+// Error satisfies the builtin error interface
+func (e GetColleagueRequestValidationError) Error() string {
+	cause := ""
+	if e.cause != nil {
+		cause = fmt.Sprintf(" | caused by: %v", e.cause)
+	}
+
+	key := ""
+	if e.key {
+		key = "key for "
+	}
+
+	return fmt.Sprintf(
+		"invalid %sGetColleagueRequest.%s: %s%s",
+		key,
+		e.field,
+		e.reason,
+		cause)
+}
+
+var _ error = GetColleagueRequestValidationError{}
+
+var _ interface {
+	Field() string
+	Reason() string
+	Key() bool
+	Cause() error
+	ErrorName() string
+} = GetColleagueRequestValidationError{}
+
+// Validate checks the field values on GetColleagueResponse with the rules
+// defined in the proto definition for this message. If any rules are
+// violated, the first error encountered is returned, or nil if there are no violations.
+func (m *GetColleagueResponse) Validate() error {
+	return m.validate(false)
+}
+
+// ValidateAll checks the field values on GetColleagueResponse with the rules
+// defined in the proto definition for this message. If any rules are
+// violated, the result is a list of violation errors wrapped in
+// GetColleagueResponseMultiError, or nil if none found.
+func (m *GetColleagueResponse) ValidateAll() error {
+	return m.validate(true)
+}
+
+func (m *GetColleagueResponse) validate(all bool) error {
+	if m == nil {
+		return nil
+	}
+
+	var errors []error
+
+	if len(errors) > 0 {
+		return GetColleagueResponseMultiError(errors)
+	}
+
+	return nil
+}
+
+// GetColleagueResponseMultiError is an error wrapping multiple validation
+// errors returned by GetColleagueResponse.ValidateAll() if the designated
+// constraints aren't met.
+type GetColleagueResponseMultiError []error
+
+// Error returns a concatenation of all the error messages it wraps.
+func (m GetColleagueResponseMultiError) Error() string {
+	var msgs []string
+	for _, err := range m {
+		msgs = append(msgs, err.Error())
+	}
+	return strings.Join(msgs, "; ")
+}
+
+// AllErrors returns a list of validation violation errors.
+func (m GetColleagueResponseMultiError) AllErrors() []error { return m }
+
+// GetColleagueResponseValidationError is the validation error returned by
+// GetColleagueResponse.Validate if the designated constraints aren't met.
+type GetColleagueResponseValidationError struct {
+	field  string
+	reason string
+	cause  error
+	key    bool
+}
+
+// Field function returns field value.
+func (e GetColleagueResponseValidationError) Field() string { return e.field }
+
+// Reason function returns reason value.
+func (e GetColleagueResponseValidationError) Reason() string { return e.reason }
+
+// Cause function returns cause value.
+func (e GetColleagueResponseValidationError) Cause() error { return e.cause }
+
+// Key function returns key value.
+func (e GetColleagueResponseValidationError) Key() bool { return e.key }
+
+// ErrorName returns error name.
+func (e GetColleagueResponseValidationError) ErrorName() string {
+	return "GetColleagueResponseValidationError"
+}
+
+// Error satisfies the builtin error interface
+func (e GetColleagueResponseValidationError) Error() string {
+	cause := ""
+	if e.cause != nil {
+		cause = fmt.Sprintf(" | caused by: %v", e.cause)
+	}
+
+	key := ""
+	if e.key {
+		key = "key for "
+	}
+
+	return fmt.Sprintf(
+		"invalid %sGetColleagueResponse.%s: %s%s",
+		key,
+		e.field,
+		e.reason,
+		cause)
+}
+
+var _ error = GetColleagueResponseValidationError{}
+
+var _ interface {
+	Field() string
+	Reason() string
+	Key() bool
+	Cause() error
+	ErrorName() string
+} = GetColleagueResponseValidationError{}
+
 // Validate checks the field values on GetMOTDRequest with the rules defined in
 // the proto definition for this message. If any rules are violated, the first
 // error encountered is returned, or nil if there are no violations.

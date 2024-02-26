@@ -45,6 +45,22 @@ export interface ListColleaguesResponse {
     users: User[];
 }
 /**
+ * @generated from protobuf message services.jobs.GetColleagueRequest
+ */
+export interface GetColleagueRequest {
+    /**
+     * @generated from protobuf field: int32 user_id = 1;
+     */
+    userId: number;
+}
+/**
+ * @generated from protobuf message services.jobs.GetColleagueResponse
+ */
+export interface GetColleagueResponse {
+}
+// MOTD
+
+/**
  * @generated from protobuf message services.jobs.GetMOTDRequest
  */
 export interface GetMOTDRequest {
@@ -186,6 +202,78 @@ class ListColleaguesResponse$Type extends MessageType<ListColleaguesResponse> {
  * @generated MessageType for protobuf message services.jobs.ListColleaguesResponse
  */
 export const ListColleaguesResponse = new ListColleaguesResponse$Type();
+// @generated message type with reflection information, may provide speed optimized methods
+class GetColleagueRequest$Type extends MessageType<GetColleagueRequest> {
+    constructor() {
+        super("services.jobs.GetColleagueRequest", [
+            { no: 1, name: "user_id", kind: "scalar", T: 5 /*ScalarType.INT32*/ }
+        ]);
+    }
+    create(value?: PartialMessage<GetColleagueRequest>): GetColleagueRequest {
+        const message = globalThis.Object.create((this.messagePrototype!));
+        message.userId = 0;
+        if (value !== undefined)
+            reflectionMergePartial<GetColleagueRequest>(this, message, value);
+        return message;
+    }
+    internalBinaryRead(reader: IBinaryReader, length: number, options: BinaryReadOptions, target?: GetColleagueRequest): GetColleagueRequest {
+        let message = target ?? this.create(), end = reader.pos + length;
+        while (reader.pos < end) {
+            let [fieldNo, wireType] = reader.tag();
+            switch (fieldNo) {
+                case /* int32 user_id */ 1:
+                    message.userId = reader.int32();
+                    break;
+                default:
+                    let u = options.readUnknownField;
+                    if (u === "throw")
+                        throw new globalThis.Error(`Unknown field ${fieldNo} (wire type ${wireType}) for ${this.typeName}`);
+                    let d = reader.skip(wireType);
+                    if (u !== false)
+                        (u === true ? UnknownFieldHandler.onRead : u)(this.typeName, message, fieldNo, wireType, d);
+            }
+        }
+        return message;
+    }
+    internalBinaryWrite(message: GetColleagueRequest, writer: IBinaryWriter, options: BinaryWriteOptions): IBinaryWriter {
+        /* int32 user_id = 1; */
+        if (message.userId !== 0)
+            writer.tag(1, WireType.Varint).int32(message.userId);
+        let u = options.writeUnknownFields;
+        if (u !== false)
+            (u == true ? UnknownFieldHandler.onWrite : u)(this.typeName, message, writer);
+        return writer;
+    }
+}
+/**
+ * @generated MessageType for protobuf message services.jobs.GetColleagueRequest
+ */
+export const GetColleagueRequest = new GetColleagueRequest$Type();
+// @generated message type with reflection information, may provide speed optimized methods
+class GetColleagueResponse$Type extends MessageType<GetColleagueResponse> {
+    constructor() {
+        super("services.jobs.GetColleagueResponse", []);
+    }
+    create(value?: PartialMessage<GetColleagueResponse>): GetColleagueResponse {
+        const message = globalThis.Object.create((this.messagePrototype!));
+        if (value !== undefined)
+            reflectionMergePartial<GetColleagueResponse>(this, message, value);
+        return message;
+    }
+    internalBinaryRead(reader: IBinaryReader, length: number, options: BinaryReadOptions, target?: GetColleagueResponse): GetColleagueResponse {
+        return target ?? this.create();
+    }
+    internalBinaryWrite(message: GetColleagueResponse, writer: IBinaryWriter, options: BinaryWriteOptions): IBinaryWriter {
+        let u = options.writeUnknownFields;
+        if (u !== false)
+            (u == true ? UnknownFieldHandler.onWrite : u)(this.typeName, message, writer);
+        return writer;
+    }
+}
+/**
+ * @generated MessageType for protobuf message services.jobs.GetColleagueResponse
+ */
+export const GetColleagueResponse = new GetColleagueResponse$Type();
 // @generated message type with reflection information, may provide speed optimized methods
 class GetMOTDRequest$Type extends MessageType<GetMOTDRequest> {
     constructor() {
@@ -357,6 +445,7 @@ export const SetMOTDResponse = new SetMOTDResponse$Type();
  */
 export const JobsService = new ServiceType("services.jobs.JobsService", [
     { name: "ListColleagues", options: {}, I: ListColleaguesRequest, O: ListColleaguesResponse },
+    { name: "GetColleague", options: {}, I: GetColleagueRequest, O: GetColleagueResponse },
     { name: "GetMOTD", options: {}, I: GetMOTDRequest, O: GetMOTDResponse },
     { name: "SetMOTD", options: {}, I: SetMOTDRequest, O: SetMOTDResponse }
 ]);

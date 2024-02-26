@@ -99,6 +99,13 @@ watchDebounced(query.value, () => refresh(), { debounce: 600, maxWait: 1400 });
                                         <th scope="col" class="px-2 py-3.5 text-left text-sm font-semibold text-neutral">
                                             {{ $t('common.date_of_birth') }}
                                         </th>
+                                        <th
+                                            v-if="can('SuperUser')"
+                                            scope="col"
+                                            class="relative py-3.5 pl-3 pr-4 text-right text-sm font-semibold text-neutral sm:pr-0"
+                                        >
+                                            {{ $t('common.action', 2) }}
+                                        </th>
                                     </tr>
                                 </thead>
                                 <tbody class="divide-y divide-base-800">
@@ -124,6 +131,13 @@ watchDebounced(query.value, () => refresh(), { debounce: 600, maxWait: 1400 });
                                         </th>
                                         <th scope="col" class="px-2 py-3.5 text-left text-sm font-semibold text-neutral">
                                             {{ $t('common.date_of_birth') }}
+                                        </th>
+                                        <th
+                                            v-if="can('SuperUser')"
+                                            scope="col"
+                                            class="relative py-3.5 pl-3 pr-4 text-right text-sm font-semibold text-neutral sm:pr-0"
+                                        >
+                                            {{ $t('common.action', 2) }}
                                         </th>
                                     </tr>
                                 </thead>

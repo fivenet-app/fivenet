@@ -6,11 +6,13 @@ import (
 	"net/http"
 	"path"
 	"path/filepath"
+	"time"
 
 	"github.com/galexrt/fivenet/pkg/grpc/auth"
 	"github.com/galexrt/fivenet/pkg/storage"
 	"github.com/gin-gonic/gin"
 	"github.com/h2non/filetype"
+	cachecontrol "go.eigsys.de/gin-cachecontrol/v2"
 )
 
 type FilestoreHTTP struct {
@@ -26,7 +28,21 @@ func New(st storage.IStorage, tm *auth.TokenMgr) *FilestoreHTTP {
 }
 
 func (s *FilestoreHTTP) RegisterHTTP(e *gin.Engine) {
-	g := e.Group("/api/filestore")
+	g := e.Group("/api/filestore", cachecontrol.New(cachecontrol.Config{
+		MustRevalidate:       true,
+		NoCache:              false,
+		NoStore:              false,
+		NoTransform:          false,
+		Public:               true,
+		Private:              false,
+		ProxyRevalidate:      true,
+		MaxAge:               cachecontrol.Duration(48 * time.Hour),
+		SMaxAge:              nil,
+		Immutable:            false,
+		StaleWhileRevalidate: cachecontrol.Duration(1 * time.Hour),
+		StaleIfError:         cachecontrol.Duration(1 * time.Hour),
+	}))
+
 	{
 		g.GET("/:prefix/*fileName", func(c *gin.Context) {
 			prefix := c.Param("prefix")
