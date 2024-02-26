@@ -194,7 +194,8 @@
                 "revoke_wanted": "Fahndungsstatus aufheben",
                 "set_wanted": "Person zur Fahndung ausschreiben",
                 "set_job": "Job der Person setzen",
-                "set_traffic_points": "Setze StVo Punkte"
+                "set_traffic_points": "Setze StVo Punkte",
+                "set_mug_shot": "Setze Fahndungsfoto"
             },
             "citizen_info_activity_feed_entry": {
                 "with_reason": "mit dem Grund",
@@ -220,7 +221,8 @@
                     "paid": "Strafe bezahlt",
                     "removed": "Strafe entfernt",
                     "created": "Strafe erstellt"
-                }
+                },
+                "userprops_mug_shot_set": "Setze das Fahndungsfoto der Person"
             }
         },
         "partials": {
@@ -1161,7 +1163,8 @@
                     "UserProps_Job": "Job",
                     "UserProps_TrafficInfractionPoints": "Verkehrspunkte",
                     "UserProps_OpenFines": "Offene Geldstrafen",
-                    "UserProps_BloodType": "Blutgruppe"
+                    "UserProps_BloodType": "Blutgruppe",
+                    "UserProps_MugShot": "Fahndungsfoto"
                 },
                 "attrs_types": {
                     "Fields": "Felder"
@@ -1184,7 +1187,8 @@
                 "attrs": {
                     "Wanted": "Gesuchter Status",
                     "Job": "Job",
-                    "TrafficInfractionPoints": "Verkehrspunkte"
+                    "TrafficInfractionPoints": "Verkehrspunkte",
+                    "MugShot": "Fahndungsfoto"
                 },
                 "attrs_types": {
                     "Fields": "Bürger Eigenschaften"
@@ -1599,7 +1603,8 @@
             "ErrPropsJobDenied": "Sie haben keine Berechtigung den Beruf des Bürgers zusetzen!",
             "ErrPropsJobPublic": "Sie haben können keinen Staatsberuf für den Bürger setzen!",
             "ErrPropsJobInvalid": "Ungültiger Beruf oder Rang gegeben!",
-            "ErrPropsTrafficPointsDenied": "Sie haben keine Berechtigung die StVo Punkte des Bürger zu setzen!"
+            "ErrPropsTrafficPointsDenied": "Sie haben keine Berechtigung die StVo Punkte des Bürger zu setzen!",
+            "ErrPropsMugShotDenied": "Sie dürfen nicht das Fahndungsfoto der Person ändern!"
         },
         "CompletorService": {
             "ErrFailedSearch": "Fehler beim Laden der Autovervollständigung!"
