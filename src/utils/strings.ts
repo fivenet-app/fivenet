@@ -6,8 +6,8 @@ export function lowercaseFirstLetter(s: string): string {
     return s.charAt(0).toLowerCase() + s.slice(1);
 }
 
-export function getInitials(string: string): string {
-    const names = string.split(' ');
+export function getInitials(input: string): string {
+    const names = input.split(' ');
     let initials = names[0].substring(0, 1).toUpperCase();
 
     if (names.length > 1) {

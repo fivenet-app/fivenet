@@ -18,7 +18,7 @@ withDefaults(
 </script>
 
 <template>
-    <SquareImg :text="$t('common.avatar')" :size="size" :rounded="rounded">
+    <SquareImg :url="url" :text="$t('common.avatar')" :size="size" :rounded="rounded">
         <template #initials>
             {{ getInitials(name) }}
         </template>
