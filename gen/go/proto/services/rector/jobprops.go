@@ -88,7 +88,9 @@ func (s *Server) SetJobProps(ctx context.Context, req *SetJobPropsRequest) (*Set
 		}
 
 		// Set "current" image's url so the system will delete it if still exists
-		req.JobProps.LogoUrl.Url = jobProps.JobProps.LogoUrl.Url
+		if jobProps.JobProps != nil && jobProps.JobProps.LogoUrl != nil {
+			req.JobProps.LogoUrl.Url = jobProps.JobProps.LogoUrl.Url
+		}
 		if err := req.JobProps.LogoUrl.Upload(ctx, s.st, filestore.JobLogos, userInfo.Job); err != nil {
 			return nil, errswrap.NewError(errorsrector.ErrFailedQuery, err)
 		}
