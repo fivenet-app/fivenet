@@ -72,7 +72,7 @@
         "@types/zxcvbn": "4.4.4",
         "@unhead/vue": "1.8.10",
         "@vueuse/core": "10.8.0",
-        "@vueuse/router": "10.8.0",
+        "@vueuse/router": "10.9.0",
         "autoprefixer": "10.4.17",
         "cssnano": "6.0.5",
         "eslint": "8.57.0",
