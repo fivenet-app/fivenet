@@ -62,6 +62,15 @@ const features = [
         iconForeground: 'text-error-900',
         iconBackground: 'bg-error-100',
     },
+    {
+        title: t('pages.rector.filestore.title'),
+        description: t('pages.rector.features.filestore'),
+        href: { name: 'rector-filestore' },
+        permission: 'SuperUser',
+        icon: markRaw(ScaleBalanceIcon),
+        iconForeground: 'text-error-900',
+        iconBackground: 'bg-error-100',
+    },
 ] as CardElements;
 </script>
 
