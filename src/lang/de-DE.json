@@ -170,6 +170,10 @@
                 "volumes": {
                     "title": "Lautstärke-Einstellungen",
                     "subtitle": "Stelle die Lautstärke von den Sounds ein."
+                },
+                "streamer_mode": {
+                    "title": "Streamer-Modus",
+                    "description": "Bilder standardmäßig unscharf machen und andere Informationen ausblenden."
                 }
             },
             "change_username_modal": {
@@ -1499,6 +1503,20 @@
             "SetMOTD": {
                 "key": "Beruf's MOTD aktualisieren",
                 "description": "Die Beruf's MOTD der Übersicht aktualisieren können."
+            },
+            "GetColleague": {
+                "key": "Detailierte Kollegen-Info anzeigen",
+                "description": "Rufe die detailierte Kollegen-Info Übersicht auf."
+            },
+            "SetJobsUserProps": {
+                "key": "Setzte die Eigenschaften eines Kollegen",
+                "description": "E.g., Abwesenheitsdatum.",
+                "attrs": {
+                    "Own": "Eigene",
+                    "Lower_Rank": "Niedrigerer Rang",
+                    "Same_Rank": "Gleicher Rang",
+                    "Any": "Egal"
+                }
             }
         },
         "JobsConductService": {
@@ -1732,6 +1750,10 @@
         "update_available": {
             "title": "Neue FiveNet Version verfügbar ({version})!",
             "content": "Um das FiveNet weiter nutzen zu können, müssen Sie die Seite neu laden, wenn Sie dazu gerade in der Lage sind."
+        },
+        "streamer_mode": {
+            "title": "Streamer-Modus aktiviert!",
+            "description": "Um dies zu sehen, müssen Sie den Streamer-Modus in Ihren Benutzereinstellungen deaktivieren."
         }
     },
     "enums": {
