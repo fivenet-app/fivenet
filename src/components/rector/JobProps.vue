@@ -218,8 +218,8 @@ async function loadImage(): Promise<void> {
                                             <Switch
                                                 v-model="jobProps.quickButtons.penaltyCalculator"
                                                 :class="[
-                                                    jobProps.quickButtons.penaltyCalculator ? 'bg-indigo-600' : 'bg-gray-200',
-                                                    'relative inline-flex h-6 w-11 flex-shrink-0 cursor-pointer rounded-full border-2 border-transparent transition-colors duration-200 ease-in-out focus:outline-none focus:ring-2 focus:ring-indigo-600 focus:ring-offset-2',
+                                                    jobProps.quickButtons.penaltyCalculator ? 'bg-primary-600' : 'bg-gray-200',
+                                                    'relative inline-flex h-6 w-11 flex-shrink-0 cursor-pointer rounded-full border-2 border-transparent transition-colors duration-200 ease-in-out focus:outline-none focus:ring-2 focus:ring-primary-600 focus:ring-offset-2',
                                                 ]"
                                             >
                                                 <span
@@ -244,8 +244,8 @@ async function loadImage(): Promise<void> {
                                             <Switch
                                                 v-model="jobProps.quickButtons.bodyCheckup"
                                                 :class="[
-                                                    jobProps.quickButtons.bodyCheckup ? 'bg-indigo-600' : 'bg-gray-200',
-                                                    'relative inline-flex h-6 w-11 flex-shrink-0 cursor-pointer rounded-full border-2 border-transparent transition-colors duration-200 ease-in-out focus:outline-none focus:ring-2 focus:ring-indigo-600 focus:ring-offset-2',
+                                                    jobProps.quickButtons.bodyCheckup ? 'bg-primary-600' : 'bg-gray-200',
+                                                    'relative inline-flex h-6 w-11 flex-shrink-0 cursor-pointer rounded-full border-2 border-transparent transition-colors duration-200 ease-in-out focus:outline-none focus:ring-2 focus:ring-primary-600 focus:ring-offset-2',
                                                 ]"
                                             >
                                                 <span
@@ -280,7 +280,12 @@ async function loadImage(): Promise<void> {
                                         @change="loadImage()"
                                     />
 
-                                    <SquareImg v-if="jobProps.logoUrl?.url" size="xl" :url="jobProps.logoUrl.url" />
+                                    <SquareImg
+                                        v-if="jobProps.logoUrl?.url"
+                                        size="xl"
+                                        :url="jobProps.logoUrl.url"
+                                        :no-blur="true"
+                                    />
                                 </div>
                             </template>
                         </GenericContainerPanelEntry>
@@ -357,8 +362,8 @@ async function loadImage(): Promise<void> {
                                     <Switch
                                         v-model="jobProps.discordSyncSettings.statusLog"
                                         :class="[
-                                            jobProps.discordSyncSettings.statusLog ? 'bg-indigo-600' : 'bg-gray-200',
-                                            'relative inline-flex h-6 w-11 flex-shrink-0 cursor-pointer rounded-full border-2 border-transparent transition-colors duration-200 ease-in-out focus:outline-none focus:ring-2 focus:ring-indigo-600 focus:ring-offset-2',
+                                            jobProps.discordSyncSettings.statusLog ? 'bg-primary-600' : 'bg-gray-200',
+                                            'relative inline-flex h-6 w-11 flex-shrink-0 cursor-pointer rounded-full border-2 border-transparent transition-colors duration-200 ease-in-out focus:outline-none focus:ring-2 focus:ring-primary-600 focus:ring-offset-2',
                                         ]"
                                     >
                                         <span
@@ -405,8 +410,8 @@ async function loadImage(): Promise<void> {
                                     <Switch
                                         v-model="jobProps.discordSyncSettings.userInfoSync"
                                         :class="[
-                                            jobProps.discordSyncSettings.userInfoSync ? 'bg-indigo-600' : 'bg-gray-200',
-                                            'relative inline-flex h-6 w-11 flex-shrink-0 cursor-pointer rounded-full border-2 border-transparent transition-colors duration-200 ease-in-out focus:outline-none focus:ring-2 focus:ring-indigo-600 focus:ring-offset-2',
+                                            jobProps.discordSyncSettings.userInfoSync ? 'bg-primary-600' : 'bg-gray-200',
+                                            'relative inline-flex h-6 w-11 flex-shrink-0 cursor-pointer rounded-full border-2 border-transparent transition-colors duration-200 ease-in-out focus:outline-none focus:ring-2 focus:ring-primary-600 focus:ring-offset-2',
                                         ]"
                                     >
                                         <span
@@ -450,9 +455,9 @@ async function loadImage(): Promise<void> {
                                             v-model="jobProps.discordSyncSettings.userInfoSyncSettings.employeeRoleEnabled"
                                             :class="[
                                                 jobProps.discordSyncSettings.userInfoSyncSettings.employeeRoleEnabled
-                                                    ? 'bg-indigo-600'
+                                                    ? 'bg-primary-600'
                                                     : 'bg-gray-200',
-                                                'relative inline-flex h-6 w-11 flex-shrink-0 cursor-pointer rounded-full border-2 border-transparent transition-colors duration-200 ease-in-out focus:outline-none focus:ring-2 focus:ring-indigo-600 focus:ring-offset-2',
+                                                'relative inline-flex h-6 w-11 flex-shrink-0 cursor-pointer rounded-full border-2 border-transparent transition-colors duration-200 ease-in-out focus:outline-none focus:ring-2 focus:ring-primary-600 focus:ring-offset-2',
                                             ]"
                                         >
                                             <span
@@ -501,9 +506,9 @@ async function loadImage(): Promise<void> {
                                                 v-model="jobProps.discordSyncSettings.userInfoSyncSettings.unemployedEnabled"
                                                 :class="[
                                                     jobProps.discordSyncSettings.userInfoSyncSettings.unemployedEnabled
-                                                        ? 'bg-indigo-600'
+                                                        ? 'bg-primary-600'
                                                         : 'bg-gray-200',
-                                                    'relative inline-flex h-6 w-11 flex-shrink-0 cursor-pointer rounded-full border-2 border-transparent transition-colors duration-200 ease-in-out focus:outline-none focus:ring-2 focus:ring-indigo-600 focus:ring-offset-2',
+                                                    'relative inline-flex h-6 w-11 flex-shrink-0 cursor-pointer rounded-full border-2 border-transparent transition-colors duration-200 ease-in-out focus:outline-none focus:ring-2 focus:ring-primary-600 focus:ring-offset-2',
                                                 ]"
                                             >
                                                 <span

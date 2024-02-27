@@ -11,19 +11,21 @@ withDefaults(
         size?: imageSizes;
         rounded?: boolean;
         enablePopup?: boolean;
+        noBlur?: boolean;
     }>(),
     {
         url: undefined,
         size: 'lg',
         rounded: false,
         enablePopup: false,
+        noBlur: false,
     },
 );
 </script>
 
 <template>
     <template v-if="!enablePopup">
-        <SquareImg :url="url" :text="$t('common.avatar')" :size="size" :rounded="rounded">
+        <SquareImg :url="url" :text="$t('common.avatar')" :size="size" :rounded="rounded" :no-blur="noBlur">
             <template #initials>
                 {{ getInitials(name) }}
             </template>
@@ -32,7 +34,7 @@ withDefaults(
     <Popover v-else-if="url" class="relative">
         <Float portal auto-placement :offset="16">
             <PopoverButton class="inline-flex items-center">
-                <SquareImg :url="url" :text="$t('common.avatar')" :size="size" :rounded="rounded">
+                <SquareImg :url="url" :text="$t('common.avatar')" :size="size" :rounded="rounded" :no-blur="noBlur">
                     <template #initials>
                         {{ getInitials(name) }}
                     </template>
@@ -43,7 +45,7 @@ withDefaults(
                 class="absolute z-5 w-96 min-w-fit max-w-[18rem] rounded-lg border border-gray-600 bg-gray-800 text-sm text-gray-400 shadow-sm transition-opacity"
             >
                 <div class="p-3">
-                    <img class="rounded-md max-w-96" :src="url" />
+                    <img class="rounded-md w-96 max-w-full" :src="url" :alt="$t('common.mug_shot')" />
                 </div>
             </PopoverPanel>
         </Float>

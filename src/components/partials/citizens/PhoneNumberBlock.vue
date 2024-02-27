@@ -2,6 +2,7 @@
 import { PhoneIcon } from 'mdi-vue3';
 import { isNUIAvailable, phoneCallNumber } from '~/composables/nui';
 import { useNotificatorStore } from '~/store/notificator';
+import { useSettingsStore } from '~/store/settings';
 
 const props = withDefaults(
     defineProps<{
@@ -16,6 +17,9 @@ const props = withDefaults(
         width: 'w-6',
     },
 );
+
+const settingsStore = useSettingsStore();
+const { streamerMode } = storeToRefs(settingsStore);
 
 const notifications = useNotificatorStore();
 
@@ -58,9 +62,9 @@ async function doCall(): Promise<void> {
                 <span v-if="showLabel" class="ml-1">{{ $t('common.call') }}</span>
             </button>
 
-            <template v-if="hideNumber === undefined || !hideNumber">
+            <span v-if="hideNumber === undefined || !hideNumber" :class="streamerMode ? 'blur' : ''">
                 <span v-for="(part, idx) in (number ?? '').match(/.{1,3}/g)" :key="idx" class="mr-1">{{ part }}</span>
-            </template>
+            </span>
         </template>
     </div>
 </template>

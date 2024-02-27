@@ -74,8 +74,8 @@ const { livemap } = storeToRefs(settingsStore);
                                                 <Switch
                                                     v-model="livemap.centerSelectedMarker"
                                                     :class="[
-                                                        livemap.centerSelectedMarker ? 'bg-indigo-600' : 'bg-gray-200',
-                                                        'relative my-2 inline-flex h-6 w-11 flex-shrink-0 cursor-pointer rounded-full border-2 border-transparent transition-colors duration-200 ease-in-out focus:outline-none focus:ring-2 focus:ring-indigo-600 focus:ring-offset-2',
+                                                        livemap.centerSelectedMarker ? 'bg-primary-600' : 'bg-gray-200',
+                                                        'relative my-2 inline-flex h-6 w-11 flex-shrink-0 cursor-pointer rounded-full border-2 border-transparent transition-colors duration-200 ease-in-out focus:outline-none focus:ring-2 focus:ring-primary-600 focus:ring-offset-2',
                                                     ]"
                                                 >
                                                     <span
@@ -116,8 +116,8 @@ const { livemap } = storeToRefs(settingsStore);
                                                 <Switch
                                                     v-model="livemap.showUnitNames"
                                                     :class="[
-                                                        livemap.showUnitNames ? 'bg-indigo-600' : 'bg-gray-200',
-                                                        'relative my-2 inline-flex h-6 w-11 flex-shrink-0 cursor-pointer rounded-full border-2 border-transparent transition-colors duration-200 ease-in-out focus:outline-none focus:ring-2 focus:ring-indigo-600 focus:ring-offset-2',
+                                                        livemap.showUnitNames ? 'bg-primary-600' : 'bg-gray-200',
+                                                        'relative my-2 inline-flex h-6 w-11 flex-shrink-0 cursor-pointer rounded-full border-2 border-transparent transition-colors duration-200 ease-in-out focus:outline-none focus:ring-2 focus:ring-primary-600 focus:ring-offset-2',
                                                     ]"
                                                 >
                                                     <span
@@ -139,8 +139,8 @@ const { livemap } = storeToRefs(settingsStore);
                                                 <Switch
                                                     v-model="livemap.showUnitStatus"
                                                     :class="[
-                                                        livemap.showUnitStatus ? 'bg-indigo-600' : 'bg-gray-200',
-                                                        'relative my-2 inline-flex h-6 w-11 flex-shrink-0 cursor-pointer rounded-full border-2 border-transparent transition-colors duration-200 ease-in-out focus:outline-none focus:ring-2 focus:ring-indigo-600 focus:ring-offset-2',
+                                                        livemap.showUnitStatus ? 'bg-primary-600' : 'bg-gray-200',
+                                                        'relative my-2 inline-flex h-6 w-11 flex-shrink-0 cursor-pointer rounded-full border-2 border-transparent transition-colors duration-200 ease-in-out focus:outline-none focus:ring-2 focus:ring-primary-600 focus:ring-offset-2',
                                                     ]"
                                                 >
                                                     <span
@@ -162,8 +162,8 @@ const { livemap } = storeToRefs(settingsStore);
                                                 <Switch
                                                     v-model="livemap.showAllDispatches"
                                                     :class="[
-                                                        livemap.showAllDispatches ? 'bg-indigo-600' : 'bg-gray-200',
-                                                        'relative my-2 inline-flex h-6 w-11 flex-shrink-0 cursor-pointer rounded-full border-2 border-transparent transition-colors duration-200 ease-in-out focus:outline-none focus:ring-2 focus:ring-indigo-600 focus:ring-offset-2',
+                                                        livemap.showAllDispatches ? 'bg-primary-600' : 'bg-gray-200',
+                                                        'relative my-2 inline-flex h-6 w-11 flex-shrink-0 cursor-pointer rounded-full border-2 border-transparent transition-colors duration-200 ease-in-out focus:outline-none focus:ring-2 focus:ring-primary-600 focus:ring-offset-2',
                                                     ]"
                                                 >
                                                     <span

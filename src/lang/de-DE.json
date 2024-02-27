@@ -836,7 +836,8 @@
         "avatar": "Profilbild",
         "image": "Bild",
         "logo": "Logo",
-        "absence_date": "Abwesenheitsdatum"
+        "absence_date": "Abwesenheitsdatum",
+        "mug_shot": "Fahndungsfoto"
     },
     "notifications": {
         "clipboard": {

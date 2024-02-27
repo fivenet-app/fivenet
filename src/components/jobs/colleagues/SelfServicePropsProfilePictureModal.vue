@@ -138,7 +138,6 @@ const fileUploadRef = ref<HTMLInputElement | null>(null);
                                         </label>
                                         <VeeField
                                             v-slot="{ handleChange, handleBlur }"
-                                            type="file"
                                             name="avatar"
                                             class="block w-full rounded-md border-0 bg-base-700 py-1.5 text-neutral placeholder:text-accent-200 focus:ring-2 focus:ring-inset focus:ring-base-300 sm:text-sm sm:leading-6"
                                             :placeholder="$t('common.image')"
@@ -164,6 +163,7 @@ const fileUploadRef = ref<HTMLInputElement | null>(null);
                                         :url="activeChar?.avatar?.url"
                                         :name="`${activeChar?.firstname} ${activeChar?.lastname}`"
                                         size="huge"
+                                        :no-blur="true"
                                     />
                                 </div>
                                 <div class="absolute bottom-0 left-0 flex w-full">

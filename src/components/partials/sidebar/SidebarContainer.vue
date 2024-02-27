@@ -556,6 +556,7 @@ watch(router.currentRoute, () => updateActiveItem());
                                         :name="`${activeChar.firstname} ${activeChar.lastname}`"
                                         size="md"
                                         :rounded="true"
+                                        :no-blur="true"
                                     />
                                 </MenuButton>
                                 <transition

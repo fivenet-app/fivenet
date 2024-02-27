@@ -30,6 +30,7 @@ export interface SettingsState {
     audio: {
         notificationsVolume: number;
     };
+    streamerMode: boolean;
     toggles: {};
 }
 
@@ -54,6 +55,7 @@ export const useSettingsStore = defineStore('settings', {
             audio: {
                 notificationsVolume: 0.15,
             },
+            streamerMode: false,
             toggles: {},
         }) as SettingsState,
     persist: true,

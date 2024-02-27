@@ -76,7 +76,11 @@ const pageNumber = ref(currentPage.value.toString());
 </script>
 
 <template>
-    <nav class="flex items-center justify-between border-t px-4 py-3 sm:px-6" aria-label="Pagination">
+    <nav
+        v-if="pagination !== undefined"
+        class="flex items-center justify-between border-t px-4 py-3 sm:px-6"
+        aria-label="Pagination"
+    >
         <div class="hidden sm:block">
             <I18nT keypath="components.partials.table_pagination.page_count" tag="p" class="text-sm text-gray-300">
                 <template #current>

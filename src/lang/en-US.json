@@ -170,6 +170,10 @@
                 "volumes": {
                     "title": "Volume Control",
                     "subtitle": "Control sound volumes."
+                },
+                "streamer_mode": {
+                    "title": "Streamer Mode",
+                    "description": "Blur images by default and hide other information."
                 }
             },
             "change_username_modal": {
@@ -836,7 +840,8 @@
         "avatar": "Profile Picture",
         "image": "Image",
         "logo": "Logo",
-        "absence_date": "Absence Date"
+        "absence_date": "Absence Date",
+        "mug_shot": "Mug Shot"
     },
     "notifications": {
         "clipboard": {

@@ -37,6 +37,7 @@ const showRadioFrequency = ref(false);
                                         :url="jobProps?.logoUrl.url"
                                         :text="`${jobProps.jobLabel} ${$t('common.logo')}`"
                                         size="xl"
+                                        :no-blur="true"
                                     />
 
                                     <div>
@@ -59,7 +60,7 @@ const showRadioFrequency = ref(false);
                                 <p class="flex items-center text-center text-lg font-bold">
                                     <RadioHandheldIcon class="h-auto w-6" />
                                     <span
-                                        :class="showRadioFrequency ? '' : 'blur-md'"
+                                        :class="showRadioFrequency ? '' : 'blur'"
                                         @click="showRadioFrequency = !showRadioFrequency"
                                         >{{ jobProps?.radioFrequency }}.00</span
                                     >
@@ -75,7 +76,7 @@ const showRadioFrequency = ref(false);
                             </GenericContainer>
                         </div>
 
-                        <div v-if="activeChar && can('SuperUser')" class="mt-4 flex flex-row gap-2">
+                        <div v-if="activeChar" class="mt-4 flex flex-row gap-2">
                             <JobSelfService :user-id="activeChar.userId" />
                         </div>
 

@@ -5,6 +5,7 @@ import { max, min, required } from '@vee-validate/rules';
 import { useThrottleFn } from '@vueuse/core';
 import { CloseIcon, LoadingIcon } from 'mdi-vue3';
 import { defineRule } from 'vee-validate';
+import SquareImg from '~/components/partials/SquareImg.vue';
 import { useNotificatorStore } from '~/store/notificator';
 import type { File } from '~~/gen/ts/resources/filestore/file';
 import { User, UserProps } from '~~/gen/ts/resources/users/users';
@@ -181,6 +182,15 @@ const onSubmitThrottle = useThrottleFn(async (e) => {
                                         </VeeField>
                                         <VeeErrorMessage name="mugShot" as="p" class="mt-2 text-sm text-error-400" />
                                     </div>
+                                </div>
+                                <div class="flex-1 flex items-center">
+                                    <SquareImg
+                                        class="mx-auto my-auto"
+                                        :url="user?.props?.mugShot?.url"
+                                        size="6xl"
+                                        :alt="$t('common.mug_shot')"
+                                        :no-blur="true"
+                                    />
                                 </div>
                                 <div class="absolute bottom-0 left-0 flex w-full">
                                     <button
