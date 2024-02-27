@@ -46,7 +46,8 @@
                 "audit_log": "Eine Überprüfung der Schritte, die von Ihren Kollegen unternommen wurden.",
                 "limiter": "Begrenzen was Fraktionen sehen können (Mitarbeiter Standorte, Einsätze...).",
                 "laws": "Erstelle und aktualisiere die Gesetzbücher des Staates.",
-                "units": "Anzeigen, Erstellen und Aktualisieren von Einheiten für die Leitstelle."
+                "units": "Anzeigen, Erstellen und Aktualisieren von Einheiten für die Leitstelle.",
+                "filestore": "Auflisten und verwalten aller Dateien."
             },
             "roles": {
                 "title": "Rollen",
@@ -61,6 +62,9 @@
                 "title": "Gesetzbücher",
                 "add_new_law": "Gesetz hinzufügen",
                 "add_new_law_book": "Gesetzbuch erstellen"
+            },
+            "filestore": {
+                "title": "Datenspeicher"
             }
         },
         "notfound": {
