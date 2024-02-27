@@ -1,5 +1,5 @@
 <script lang="ts" setup>
-import { AccountGroupIcon, CarSpeedLimiterIcon, MathLogIcon, ScaleBalanceIcon, TuneIcon } from 'mdi-vue3';
+import { AccountGroupIcon, CarSpeedLimiterIcon, FileMultipleIcon, MathLogIcon, ScaleBalanceIcon, TuneIcon } from 'mdi-vue3';
 import CardsList from '~/components/partials/CardsList.vue';
 import ContentCenterWrapper from '~/components/partials/ContentCenterWrapper.vue';
 import { type CardElements } from '~/utils/types';
@@ -67,9 +67,9 @@ const features = [
         description: t('pages.rector.features.filestore'),
         href: { name: 'rector-filestore' },
         permission: 'SuperUser',
-        icon: markRaw(ScaleBalanceIcon),
-        iconForeground: 'text-error-900',
-        iconBackground: 'bg-error-100',
+        icon: markRaw(FileMultipleIcon),
+        iconForeground: 'text-blue-900',
+        iconBackground: 'bg-blue-100',
     },
 ] as CardElements;
 </script>

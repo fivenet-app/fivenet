@@ -16,6 +16,7 @@ withDefaults(
     {
         centerSelectedMarker: true,
         filterPlayers: true,
+        showUserFilter: true,
     },
 );
 
@@ -77,7 +78,7 @@ const playerMarkersFiltered = computedAsync(async () =>
     <LControl v-if="showUserFilter" position="bottomleft">
         <div class="form-control flex flex-col gap-2">
             <input
-                v-model="playerQuery"
+                v-model="playerQueryRaw"
                 class="w-full max-w-[11rem] rounded-md border-2 border-black/20 bg-clip-padding p-0.5 px-1"
                 type="text"
                 name="searchPlayer"

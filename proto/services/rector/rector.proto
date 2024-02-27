@@ -143,6 +143,16 @@ message DeleteLawRequest {
 
 message DeleteLawResponse {}
 
+// Filestore
+
+message ListFilesRequest {}
+
+message ListFilesResponse {}
+
+message DeleteFileRequest {}
+
+message DeleteFileResponse {}
+
 service RectorService {
   // @perm
   rpc GetJobProps(GetJobPropsRequest) returns (GetJobPropsResponse);
@@ -178,4 +188,9 @@ service RectorService {
   rpc CreateOrUpdateLaw(CreateOrUpdateLawRequest) returns (CreateOrUpdateLawResponse);
   // @perm: Name=SuperUser
   rpc DeleteLaw(DeleteLawRequest) returns (DeleteLawResponse);
+
+  // @perm: Name=SuperUser
+  rpc ListFiles(ListFilesRequest) returns (ListFilesResponse);
+  // @perm: Name=SuperUser
+  rpc DeleteFile(DeleteFileRequest) returns (DeleteFileResponse);
 }
