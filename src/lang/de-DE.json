@@ -78,7 +78,10 @@
         "jobs": {
             "title": "Beruf",
             "colleagues": {
-                "title": "Kollegen"
+                "title": "Kollegen",
+                "single": {
+                    "title": "Kollegen-Info"
+                }
             },
             "conduct": {
                 "title": "Führungsregister"
@@ -499,6 +502,11 @@
                     "avg": "Durchschnittliche Dienstzeit",
                     "max": "Längste Dienstzeit"
                 }
+            },
+            "self_service": {
+                "title": "Selbstverwaltung",
+                "set_absence_date": "Abwesenheitsdatum setzen",
+                "set_profile_picture": "Profilbild aktualisieren"
             }
         },
         "bodycheckup": {
