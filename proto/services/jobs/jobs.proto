@@ -21,6 +21,12 @@ message ListColleaguesResponse {
   repeated resources.jobs.Colleague colleagues = 2;
 }
 
+message GetSelfRequest {}
+
+message GetSelfResponse {
+  resources.jobs.Colleague colleague = 1;
+}
+
 message GetColleagueRequest {
   int32 user_id = 1;
 }
@@ -63,10 +69,12 @@ message SetMOTDResponse {
 service JobsService {
   // @perm
   rpc ListColleagues(ListColleaguesRequest) returns (ListColleaguesResponse);
+  // @perm: Name=ListColleagues
+  rpc GetSelf(GetSelfRequest) returns (GetSelfResponse);
 
-  // @perm: Name=SuperUser
-  rpc GetColleague(GetColleagueRequest) returns (GetColleagueResponse);
   // @perm
+  rpc GetColleague(GetColleagueRequest) returns (GetColleagueResponse);
+  // @perm: Attrs=Access/StringList:[]string{"Own", "Lower_Rank", "Same_Rank", "Any"}
   rpc SetJobsUserProps(SetJobsUserPropsRequest) returns (SetJobsUserPropsResponse);
 
   // @perm: Name=Any

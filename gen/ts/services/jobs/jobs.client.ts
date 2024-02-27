@@ -12,6 +12,8 @@ import type { SetJobsUserPropsResponse } from "./jobs";
 import type { SetJobsUserPropsRequest } from "./jobs";
 import type { GetColleagueResponse } from "./jobs";
 import type { GetColleagueRequest } from "./jobs";
+import type { GetSelfResponse } from "./jobs";
+import type { GetSelfRequest } from "./jobs";
 import { stackIntercept } from "@protobuf-ts/runtime-rpc";
 import type { ListColleaguesResponse } from "./jobs";
 import type { ListColleaguesRequest } from "./jobs";
@@ -28,13 +30,19 @@ export interface IJobsServiceClient {
      */
     listColleagues(input: ListColleaguesRequest, options?: RpcOptions): UnaryCall<ListColleaguesRequest, ListColleaguesResponse>;
     /**
-     * @perm: Name=SuperUser
+     * @perm: Name=ListColleagues
+     *
+     * @generated from protobuf rpc: GetSelf(services.jobs.GetSelfRequest) returns (services.jobs.GetSelfResponse);
+     */
+    getSelf(input: GetSelfRequest, options?: RpcOptions): UnaryCall<GetSelfRequest, GetSelfResponse>;
+    /**
+     * @perm
      *
      * @generated from protobuf rpc: GetColleague(services.jobs.GetColleagueRequest) returns (services.jobs.GetColleagueResponse);
      */
     getColleague(input: GetColleagueRequest, options?: RpcOptions): UnaryCall<GetColleagueRequest, GetColleagueResponse>;
     /**
-     * @perm
+     * @perm: Attrs=Access/StringList:[]string{"Own", "Lower_Rank", "Same_Rank", "Any"}
      *
      * @generated from protobuf rpc: SetJobsUserProps(services.jobs.SetJobsUserPropsRequest) returns (services.jobs.SetJobsUserPropsResponse);
      */
@@ -71,21 +79,30 @@ export class JobsServiceClient implements IJobsServiceClient, ServiceInfo {
         return stackIntercept<ListColleaguesRequest, ListColleaguesResponse>("unary", this._transport, method, opt, input);
     }
     /**
-     * @perm: Name=SuperUser
+     * @perm: Name=ListColleagues
      *
-     * @generated from protobuf rpc: GetColleague(services.jobs.GetColleagueRequest) returns (services.jobs.GetColleagueResponse);
+     * @generated from protobuf rpc: GetSelf(services.jobs.GetSelfRequest) returns (services.jobs.GetSelfResponse);
      */
-    getColleague(input: GetColleagueRequest, options?: RpcOptions): UnaryCall<GetColleagueRequest, GetColleagueResponse> {
+    getSelf(input: GetSelfRequest, options?: RpcOptions): UnaryCall<GetSelfRequest, GetSelfResponse> {
         const method = this.methods[1], opt = this._transport.mergeOptions(options);
-        return stackIntercept<GetColleagueRequest, GetColleagueResponse>("unary", this._transport, method, opt, input);
+        return stackIntercept<GetSelfRequest, GetSelfResponse>("unary", this._transport, method, opt, input);
     }
     /**
      * @perm
      *
+     * @generated from protobuf rpc: GetColleague(services.jobs.GetColleagueRequest) returns (services.jobs.GetColleagueResponse);
+     */
+    getColleague(input: GetColleagueRequest, options?: RpcOptions): UnaryCall<GetColleagueRequest, GetColleagueResponse> {
+        const method = this.methods[2], opt = this._transport.mergeOptions(options);
+        return stackIntercept<GetColleagueRequest, GetColleagueResponse>("unary", this._transport, method, opt, input);
+    }
+    /**
+     * @perm: Attrs=Access/StringList:[]string{"Own", "Lower_Rank", "Same_Rank", "Any"}
+     *
      * @generated from protobuf rpc: SetJobsUserProps(services.jobs.SetJobsUserPropsRequest) returns (services.jobs.SetJobsUserPropsResponse);
      */
     setJobsUserProps(input: SetJobsUserPropsRequest, options?: RpcOptions): UnaryCall<SetJobsUserPropsRequest, SetJobsUserPropsResponse> {
-        const method = this.methods[2], opt = this._transport.mergeOptions(options);
+        const method = this.methods[3], opt = this._transport.mergeOptions(options);
         return stackIntercept<SetJobsUserPropsRequest, SetJobsUserPropsResponse>("unary", this._transport, method, opt, input);
     }
     /**
@@ -94,7 +111,7 @@ export class JobsServiceClient implements IJobsServiceClient, ServiceInfo {
      * @generated from protobuf rpc: GetMOTD(services.jobs.GetMOTDRequest) returns (services.jobs.GetMOTDResponse);
      */
     getMOTD(input: GetMOTDRequest, options?: RpcOptions): UnaryCall<GetMOTDRequest, GetMOTDResponse> {
-        const method = this.methods[3], opt = this._transport.mergeOptions(options);
+        const method = this.methods[4], opt = this._transport.mergeOptions(options);
         return stackIntercept<GetMOTDRequest, GetMOTDResponse>("unary", this._transport, method, opt, input);
     }
     /**
@@ -103,7 +120,7 @@ export class JobsServiceClient implements IJobsServiceClient, ServiceInfo {
      * @generated from protobuf rpc: SetMOTD(services.jobs.SetMOTDRequest) returns (services.jobs.SetMOTDResponse);
      */
     setMOTD(input: SetMOTDRequest, options?: RpcOptions): UnaryCall<SetMOTDRequest, SetMOTDResponse> {
-        const method = this.methods[4], opt = this._transport.mergeOptions(options);
+        const method = this.methods[5], opt = this._transport.mergeOptions(options);
         return stackIntercept<SetMOTDRequest, SetMOTDResponse>("unary", this._transport, method, opt, input);
     }
 }

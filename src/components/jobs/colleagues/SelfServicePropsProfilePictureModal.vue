@@ -1,53 +1,58 @@
 <script lang="ts" setup>
 import { Dialog, DialogPanel, DialogTitle, TransitionChild, TransitionRoot } from '@headlessui/vue';
 import { RpcError } from '@protobuf-ts/runtime-rpc';
-import { max, min, numeric, required } from '@vee-validate/rules';
 import { useThrottleFn } from '@vueuse/core';
 import { CloseIcon, LoadingIcon } from 'mdi-vue3';
-import { defineRule } from 'vee-validate';
+import ProfilePictureImg from '~/components/partials/citizens/ProfilePictureImg.vue';
+import { useAuthStore } from '~/store/auth';
 import { useNotificatorStore } from '~/store/notificator';
-import { User, UserProps } from '~~/gen/ts/resources/users/users';
+import type { SetProfilePictureRequest } from '~~/gen/ts/services/citizenstore/citizenstore';
 
-const props = defineProps<{
+defineProps<{
     open: boolean;
-    user: User;
 }>();
 
 const emit = defineEmits<{
     (e: 'close'): void;
-    (e: 'update:trafficInfractionPoints', value: number): void;
 }>();
 
 const { $grpc } = useNuxtApp();
 
+const authStore = useAuthStore();
+const { activeChar } = storeToRefs(authStore);
+
 const notifications = useNotificatorStore();
 
 interface FormData {
-    reason: string;
-    trafficPoints: number;
     reset?: boolean;
 }
 
-async function setTrafficPoints(values: FormData): Promise<void> {
-    if (!values.reset && values.trafficPoints === 0) {
-        return;
+async function setProfilePicture(values: FormData): Promise<void> {
+    const req = {} as SetProfilePictureRequest;
+    if (!values.reset) {
+        if (!fileUploadRef.value) {
+            return;
+        }
+        if (!fileUploadRef.value.files || fileUploadRef.value.files.length <= 0) {
+            return;
+        }
+        // File too big
+        if (fileUploadRef.value.files[0].size > 2097152) {
+            return;
+        }
+
+        req.avatar = { data: new Uint8Array(await fileUploadRef.value.files[0].arrayBuffer()) };
+    } else {
+        req.avatar = { data: new Uint8Array(), delete: true };
     }
 
-    const points = values.reset ? 0 : (props.user.props?.trafficInfractionPoints ?? 0) + values.trafficPoints;
-
-    const userProps: UserProps = {
-        userId: props.user.userId,
-        trafficInfractionPoints: points,
-    };
-
     try {
-        const call = $grpc.getCitizenStoreClient().setUserProps({
-            props: userProps,
-            reason: values.reason,
-        });
+        const call = $grpc.getCitizenStoreClient().setProfilePicture(req);
         const { response } = await call;
 
-        emit('update:trafficInfractionPoints', response.props?.trafficInfractionPoints ?? 0);
+        if (activeChar.value) {
+            activeChar.value.avatar = response.avatar;
+        }
 
         notifications.dispatchNotification({
             title: { key: 'notifications.action_successfull.title', parameters: {} },
@@ -62,15 +67,9 @@ async function setTrafficPoints(values: FormData): Promise<void> {
     }
 }
 
-defineRule('required', required);
-defineRule('min', min);
-defineRule('max', max);
-defineRule('numeric', numeric);
-
 const { handleSubmit, meta, setFieldValue } = useForm<FormData>({
     validationSchema: {
-        reason: { required: true, min: 3, max: 255 },
-        trafficPoints: { required: true, numeric: true, min: 0, max: 5 },
+        avatar: {},
     },
     validateOnMount: true,
 });
@@ -78,13 +77,15 @@ const { handleSubmit, meta, setFieldValue } = useForm<FormData>({
 const canSubmit = ref(true);
 const onSubmit = handleSubmit(
     async (values): Promise<void> =>
-        await setTrafficPoints(values).finally(() => setTimeout(() => (canSubmit.value = true), 400)),
+        await setProfilePicture(values).finally(() => setTimeout(() => (canSubmit.value = true), 400)),
 );
 const onSubmitThrottle = useThrottleFn(async (e) => {
     canSubmit.value = false;
     await onSubmit(e);
     setFieldValue('reset', false);
 }, 1000);
+
+const fileUploadRef = ref<HTMLInputElement | null>(null);
 </script>
 
 <template>
@@ -127,44 +128,43 @@ const onSubmitThrottle = useThrottleFn(async (e) => {
                                 </button>
                             </div>
                             <DialogTitle as="h3" class="text-base font-semibold leading-6">
-                                {{ $t('components.citizens.citizen_info_profile.set_traffic_points') }}
+                                {{ $t('components.jobs.self_service.set_profile_picture') }}
                             </DialogTitle>
                             <form @submit.prevent="onSubmitThrottle">
                                 <div class="my-2 space-y-24">
                                     <div class="form-control flex-1">
-                                        <label for="reason" class="block text-sm font-medium leading-6 text-neutral">
-                                            {{ $t('common.reason') }}
+                                        <label for="job" class="block text-sm font-medium leading-6 text-neutral">
+                                            {{ $t('common.avatar') }}
                                         </label>
                                         <VeeField
-                                            type="text"
-                                            name="reason"
+                                            v-slot="{ handleChange, handleBlur }"
+                                            type="file"
+                                            name="avatar"
                                             class="block w-full rounded-md border-0 bg-base-700 py-1.5 text-neutral placeholder:text-accent-200 focus:ring-2 focus:ring-inset focus:ring-base-300 sm:text-sm sm:leading-6"
-                                            :placeholder="$t('common.reason')"
-                                            :label="$t('common.reason')"
+                                            :placeholder="$t('common.image')"
+                                            :label="$t('common.image')"
                                             @focusin="focusTablet(true)"
                                             @focusout="focusTablet(false)"
-                                        />
-                                        <VeeErrorMessage name="reason" as="p" class="mt-2 text-sm text-error-400" />
+                                        >
+                                            <input
+                                                ref="fileUploadRef"
+                                                type="file"
+                                                accept="image/png,image/jpeg"
+                                                class="block w-full rounded-md border-0 bg-base-700 py-1.5 text-neutral placeholder:text-accent-200 focus:ring-2 focus:ring-inset focus:ring-base-300 sm:text-sm sm:leading-6"
+                                                @change="handleChange"
+                                                @blur="handleBlur"
+                                            />
+                                        </VeeField>
+                                        <VeeErrorMessage name="avatar" as="p" class="mt-2 text-sm text-error-400" />
                                     </div>
                                 </div>
-                                <div class="my-2 space-y-20">
-                                    <div class="form-control flex-1">
-                                        <label for="trafficPoints" class="block text-sm font-medium leading-6 text-neutral">
-                                            {{ $t('common.traffic_infraction_points') }}
-                                        </label>
-                                        <VeeField
-                                            type="number"
-                                            name="trafficPoints"
-                                            min="0"
-                                            max="9999999"
-                                            class="block w-full rounded-md border-0 bg-base-700 py-1.5 text-neutral placeholder:text-accent-200 focus:ring-2 focus:ring-inset focus:ring-base-300 sm:text-sm sm:leading-6"
-                                            :placeholder="$t('common.traffic_infraction_points')"
-                                            :label="$t('common.traffic_infraction_points')"
-                                            @focusin="focusTablet(true)"
-                                            @focusout="focusTablet(false)"
-                                        />
-                                        <VeeErrorMessage name="trafficPoints" as="p" class="mt-2 text-sm text-error-400" />
-                                    </div>
+                                <div class="flex-1 flex items-center">
+                                    <ProfilePictureImg
+                                        class="mx-auto my-auto"
+                                        :url="activeChar?.avatar?.url"
+                                        :name="`${activeChar?.firstname} ${activeChar?.lastname}`"
+                                        size="huge"
+                                    />
                                 </div>
                                 <div class="absolute bottom-0 left-0 flex w-full">
                                     <button
@@ -194,7 +194,7 @@ const onSubmitThrottle = useThrottleFn(async (e) => {
                                         {{ $t('common.reset') }}
                                     </button>
                                     <button
-                                        type="button"
+                                        type="submit"
                                         class="rounded-bd flex flex-1 justify-center px-3.5 py-2.5 text-sm font-semibold text-neutral"
                                         :disabled="!meta.valid || !canSubmit"
                                         :class="[
@@ -202,15 +202,11 @@ const onSubmitThrottle = useThrottleFn(async (e) => {
                                                 ? 'disabled bg-base-500 hover:bg-base-400 focus-visible:outline-base-500'
                                                 : 'bg-primary-500 hover:bg-primary-400 focus-visible:outline-primary-500',
                                         ]"
-                                        @click="
-                                            setFieldValue('reset', false);
-                                            onSubmitThrottle($event);
-                                        "
                                     >
                                         <template v-if="!canSubmit">
                                             <LoadingIcon class="mr-2 h-5 w-5 animate-spin" />
                                         </template>
-                                        {{ $t('common.add') }}
+                                        {{ $t('common.save') }}
                                     </button>
                                 </div>
                             </form>

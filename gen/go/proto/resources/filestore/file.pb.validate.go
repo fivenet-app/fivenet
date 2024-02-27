@@ -82,6 +82,10 @@ func (m *File) validate(all bool) error {
 
 	}
 
+	if m.Delete != nil {
+		// no validation rules for Delete
+	}
+
 	if len(errors) > 0 {
 		return FileMultiError(errors)
 	}

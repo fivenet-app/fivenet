@@ -19,10 +19,11 @@ import (
 const _ = grpc.SupportPackageIsVersion7
 
 const (
-	CitizenStoreService_ListCitizens_FullMethodName     = "/services.citizenstore.CitizenStoreService/ListCitizens"
-	CitizenStoreService_GetUser_FullMethodName          = "/services.citizenstore.CitizenStoreService/GetUser"
-	CitizenStoreService_ListUserActivity_FullMethodName = "/services.citizenstore.CitizenStoreService/ListUserActivity"
-	CitizenStoreService_SetUserProps_FullMethodName     = "/services.citizenstore.CitizenStoreService/SetUserProps"
+	CitizenStoreService_ListCitizens_FullMethodName      = "/services.citizenstore.CitizenStoreService/ListCitizens"
+	CitizenStoreService_GetUser_FullMethodName           = "/services.citizenstore.CitizenStoreService/GetUser"
+	CitizenStoreService_ListUserActivity_FullMethodName  = "/services.citizenstore.CitizenStoreService/ListUserActivity"
+	CitizenStoreService_SetUserProps_FullMethodName      = "/services.citizenstore.CitizenStoreService/SetUserProps"
+	CitizenStoreService_SetProfilePicture_FullMethodName = "/services.citizenstore.CitizenStoreService/SetProfilePicture"
 )
 
 // CitizenStoreServiceClient is the client API for CitizenStoreService service.
@@ -37,6 +38,8 @@ type CitizenStoreServiceClient interface {
 	ListUserActivity(ctx context.Context, in *ListUserActivityRequest, opts ...grpc.CallOption) (*ListUserActivityResponse, error)
 	// @perm: Attrs=Fields/StringList:[]string{"Wanted", "Job", "TrafficInfractionPoints", "MugShot"}
 	SetUserProps(ctx context.Context, in *SetUserPropsRequest, opts ...grpc.CallOption) (*SetUserPropsResponse, error)
+	// @perm: Name=Any
+	SetProfilePicture(ctx context.Context, in *SetProfilePictureRequest, opts ...grpc.CallOption) (*SetProfilePictureResponse, error)
 }
 
 type citizenStoreServiceClient struct {
@@ -83,6 +86,15 @@ func (c *citizenStoreServiceClient) SetUserProps(ctx context.Context, in *SetUse
 	return out, nil
 }
 
+func (c *citizenStoreServiceClient) SetProfilePicture(ctx context.Context, in *SetProfilePictureRequest, opts ...grpc.CallOption) (*SetProfilePictureResponse, error) {
+	out := new(SetProfilePictureResponse)
+	err := c.cc.Invoke(ctx, CitizenStoreService_SetProfilePicture_FullMethodName, in, out, opts...)
+	if err != nil {
+		return nil, err
+	}
+	return out, nil
+}
+
 // CitizenStoreServiceServer is the server API for CitizenStoreService service.
 // All implementations must embed UnimplementedCitizenStoreServiceServer
 // for forward compatibility
@@ -95,6 +107,8 @@ type CitizenStoreServiceServer interface {
 	ListUserActivity(context.Context, *ListUserActivityRequest) (*ListUserActivityResponse, error)
 	// @perm: Attrs=Fields/StringList:[]string{"Wanted", "Job", "TrafficInfractionPoints", "MugShot"}
 	SetUserProps(context.Context, *SetUserPropsRequest) (*SetUserPropsResponse, error)
+	// @perm: Name=Any
+	SetProfilePicture(context.Context, *SetProfilePictureRequest) (*SetProfilePictureResponse, error)
 	mustEmbedUnimplementedCitizenStoreServiceServer()
 }
 
@@ -113,6 +127,9 @@ func (UnimplementedCitizenStoreServiceServer) ListUserActivity(context.Context, 
 }
 func (UnimplementedCitizenStoreServiceServer) SetUserProps(context.Context, *SetUserPropsRequest) (*SetUserPropsResponse, error) {
 	return nil, status.Errorf(codes.Unimplemented, "method SetUserProps not implemented")
+}
+func (UnimplementedCitizenStoreServiceServer) SetProfilePicture(context.Context, *SetProfilePictureRequest) (*SetProfilePictureResponse, error) {
+	return nil, status.Errorf(codes.Unimplemented, "method SetProfilePicture not implemented")
 }
 func (UnimplementedCitizenStoreServiceServer) mustEmbedUnimplementedCitizenStoreServiceServer() {}
 
@@ -199,6 +216,24 @@ func _CitizenStoreService_SetUserProps_Handler(srv interface{}, ctx context.Cont
 	return interceptor(ctx, in, info, handler)
 }
 
+func _CitizenStoreService_SetProfilePicture_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
+	in := new(SetProfilePictureRequest)
+	if err := dec(in); err != nil {
+		return nil, err
+	}
+	if interceptor == nil {
+		return srv.(CitizenStoreServiceServer).SetProfilePicture(ctx, in)
+	}
+	info := &grpc.UnaryServerInfo{
+		Server:     srv,
+		FullMethod: CitizenStoreService_SetProfilePicture_FullMethodName,
+	}
+	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
+		return srv.(CitizenStoreServiceServer).SetProfilePicture(ctx, req.(*SetProfilePictureRequest))
+	}
+	return interceptor(ctx, in, info, handler)
+}
+
 // CitizenStoreService_ServiceDesc is the grpc.ServiceDesc for CitizenStoreService service.
 // It's only intended for direct use with grpc.RegisterService,
 // and not to be introspected or modified (even as a copy)
@@ -221,6 +256,10 @@ var CitizenStoreService_ServiceDesc = grpc.ServiceDesc{
 		{
 			MethodName: "SetUserProps",
 			Handler:    _CitizenStoreService_SetUserProps_Handler,
+		},
+		{
+			MethodName: "SetProfilePicture",
+			Handler:    _CitizenStoreService_SetProfilePicture_Handler,
 		},
 	},
 	Streams:  []grpc.StreamDesc{},

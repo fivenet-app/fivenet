@@ -31,7 +31,7 @@ withDefaults(
     </template>
     <Popover v-else-if="url" class="relative">
         <Float portal auto-placement :offset="16">
-            <PopoverButton class="inline-flex items-center" :class="buttonClass">
+            <PopoverButton class="inline-flex items-center">
                 <SquareImg :url="url" :text="$t('common.avatar')" :size="size" :rounded="rounded">
                     <template #initials>
                         {{ getInitials(name) }}

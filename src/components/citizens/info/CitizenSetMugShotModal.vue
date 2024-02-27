@@ -34,22 +34,21 @@ async function setMugShot(values: FormData): Promise<void> {
     const userProps: UserProps = {
         userId: props.user.userId,
     };
-    if (values.reset) {
-        userProps.mugShot = {
-            data: new Uint8Array(),
-        };
-    } else {
-        if (!fileUploadRef.value || !fileUploadRef.value.files || fileUploadRef.value.files.length <= 0) {
+    if (!values.reset) {
+        if (!fileUploadRef.value) {
             return;
         }
-
+        if (!fileUploadRef.value.files || fileUploadRef.value.files.length <= 0) {
+            return;
+        }
+        // File too big
         if (fileUploadRef.value.files[0].size > 2097152) {
             return;
         }
 
-        userProps.mugShot = {
-            data: new Uint8Array(await fileUploadRef.value.files[0].arrayBuffer()),
-        };
+        userProps.mugShot = { data: new Uint8Array(await fileUploadRef.value.files[0].arrayBuffer()) };
+    } else {
+        userProps.mugShot = { data: new Uint8Array(), delete: true };
     }
 
     try {
@@ -92,6 +91,7 @@ const onSubmit = handleSubmit(
 const onSubmitThrottle = useThrottleFn(async (e) => {
     canSubmit.value = false;
     await onSubmit(e);
+    setFieldValue('reset', false);
 }, 1000);
 </script>
 

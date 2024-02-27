@@ -6,6 +6,7 @@ import DataPendingBlock from '~/components/partials/data/DataPendingBlock.vue';
 import TablePagination from '~/components/partials/elements/TablePagination.vue';
 import ColleaguesListEntry from '~/components/jobs/colleagues/ColleaguesListEntry.vue';
 import { useJobsStore } from '~/store/jobs';
+import type { Perms } from '~~/gen/ts/perms';
 
 const query = ref<{ name: string }>({
     name: '',
@@ -103,7 +104,7 @@ watchDebounced(query.value, () => refresh(), { debounce: 600, maxWait: 1400 });
                                             {{ $t('common.date_of_birth') }}
                                         </th>
                                         <th
-                                            v-if="can('SuperUser')"
+                                            v-if="can(['JobsService.GetColleague', 'JobsService.SetJobsUserProps'] as Perms[])"
                                             scope="col"
                                             class="relative py-3.5 pl-3 pr-4 text-right text-sm font-semibold text-neutral sm:pr-0"
                                         >
@@ -139,7 +140,7 @@ watchDebounced(query.value, () => refresh(), { debounce: 600, maxWait: 1400 });
                                             {{ $t('common.date_of_birth') }}
                                         </th>
                                         <th
-                                            v-if="can('SuperUser')"
+                                            v-if="can(['JobsService.GetColleague', 'JobsService.SetJobsUserProps'] as Perms[])"
                                             scope="col"
                                             class="relative py-3.5 pl-3 pr-4 text-right text-sm font-semibold text-neutral sm:pr-0"
                                         >

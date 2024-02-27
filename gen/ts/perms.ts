@@ -100,6 +100,7 @@ export type Perms =
 	| 'JobsRequestsService.DeleteRequestType'
 	| 'JobsRequestsService.ListRequests'
 	| 'JobsRequestsService.UpdateRequest'
+	| 'JobsService.GetColleague'
 	| 'JobsService.ListColleagues'
 	| 'JobsService.SetJobsUserProps'
 	| 'JobsService.SetMOTD'

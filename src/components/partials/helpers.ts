@@ -1,7 +1,9 @@
-export type imageSizes = 'sm' | 'md' | 'lg' | 'xl';
+export type imageSizes = 'sm' | 'md' | 'lg' | 'xl' | 'huge';
 
 export function imageSize(size: imageSizes): string {
     switch (size) {
+        case 'huge':
+            return 'text-8xl h-44 w-44';
         case 'xl':
             return 'text-3xl h-20 w-20';
         case 'lg':

@@ -293,10 +293,10 @@ const onSubmitThrottle = useThrottleFn(async (e) => {
                                                                                 class="absolute z-10 mt-1 max-h-44 w-full overflow-auto rounded-md bg-base-700 py-1 text-base sm:text-sm"
                                                                             >
                                                                                 <ComboboxOption
-                                                                                    v-for="char in data?.users"
-                                                                                    :key="char.identifier"
+                                                                                    v-for="colleague in data?.colleagues"
+                                                                                    :key="colleague.identifier"
                                                                                     v-slot="{ active, selected }"
-                                                                                    :value="char"
+                                                                                    :value="colleague"
                                                                                     as="char"
                                                                                 >
                                                                                     <li
@@ -311,8 +311,8 @@ const onSubmitThrottle = useThrottleFn(async (e) => {
                                                                                                 selected && 'font-semibold',
                                                                                             ]"
                                                                                         >
-                                                                                            {{ char.firstname }}
-                                                                                            {{ char.lastname }}
+                                                                                            {{ colleague.firstname }}
+                                                                                            {{ colleague.lastname }}
                                                                                         </span>
 
                                                                                         <span

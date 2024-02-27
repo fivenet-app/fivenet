@@ -803,3 +803,88 @@ func (s *Server) addUserActivity(ctx context.Context, tx qrm.DB, userId int32, t
 	_, err := stmt.ExecContext(ctx, tx)
 	return err
 }
+
+func (s *Server) SetProfilePicture(ctx context.Context, req *SetProfilePictureRequest) (*SetProfilePictureResponse, error) {
+	userInfo := auth.MustGetUserInfoFromContext(ctx)
+
+	trace.SpanFromContext(ctx).SetAttributes(attribute.Int64("fivenet.citizenstore.user_id", int64(userInfo.UserId)))
+
+	auditEntry := &model.FivenetAuditLog{
+		Service: CitizenStoreService_ServiceDesc.ServiceName,
+		Method:  "SetUserProps",
+		UserID:  userInfo.UserId,
+		UserJob: userInfo.Job,
+		State:   int16(rector.EventType_EVENT_TYPE_ERRORED),
+	}
+	defer s.aud.Log(auditEntry, req)
+
+	avatarFile, err := s.getUserAvatar(ctx, userInfo.UserId)
+	if err != nil {
+		return nil, errswrap.NewError(ErrFailedQuery, err)
+	}
+
+	if len(req.Avatar.Data) > 0 {
+		if avatarFile != nil {
+			req.Avatar.Url = avatarFile.Url
+		}
+
+		filler, err := utils.GenerateRandomString(64)
+		if err != nil {
+			return nil, errswrap.NewError(ErrFailedQuery, err)
+		}
+
+		fileName := fmt.Sprintf("%d-%s", userInfo.UserId, filler)
+		if err := req.Avatar.Upload(ctx, s.st, filestore.Avatars, fileName); err != nil {
+			return nil, errswrap.NewError(ErrFailedQuery, err)
+		}
+	} else if req.Avatar.Delete != nil && *req.Avatar.Delete {
+		// Delete mug shot from store
+		if avatarFile != nil && avatarFile.Url != nil {
+			if err := s.st.Delete(ctx, strings.TrimPrefix(*avatarFile.Url, filestore.FilestoreURLPrefix)); err != nil {
+				return nil, errswrap.NewError(ErrFailedQuery, err)
+			}
+		}
+	}
+
+	stmt := tUserProps.
+		INSERT(
+			tUserProps.UserID,
+			tUserProps.Avatar,
+		).
+		VALUES(
+			userInfo.UserId,
+			req.Avatar,
+		).
+		ON_DUPLICATE_KEY_UPDATE(
+			tUserProps.Avatar.SET(jet.StringExp(jet.Raw("VALUES(`avatar`)"))),
+		)
+
+	if _, err := stmt.ExecContext(ctx, s.db); err != nil {
+		return nil, errswrap.NewError(ErrFailedQuery, err)
+	}
+
+	return &SetProfilePictureResponse{
+		Avatar: req.Avatar,
+	}, nil
+}
+
+func (s *Server) getUserAvatar(ctx context.Context, userId int32) (*filestore.File, error) {
+	stmt := tUserProps.
+		SELECT(
+			tUserProps.Avatar.AS("usershort.avatar"),
+		).
+		FROM(tUserProps).
+		WHERE(
+			tUserProps.UserID.EQ(jet.Int32(userId)),
+		).
+		LIMIT(1)
+
+	var dest users.UserShort
+	if err := stmt.QueryContext(ctx, s.db, &dest); err != nil {
+		if !errors.Is(err, qrm.ErrNoRows) {
+			return nil, err
+		}
+	}
+
+	return dest.Avatar, nil
+}

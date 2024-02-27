@@ -11,6 +11,7 @@ import { UnknownFieldHandler } from "@protobuf-ts/runtime";
 import type { PartialMessage } from "@protobuf-ts/runtime";
 import { reflectionMergePartial } from "@protobuf-ts/runtime";
 import { MessageType } from "@protobuf-ts/runtime";
+import { File } from "../../resources/filestore/file";
 import { UserProps } from "../../resources/users/users";
 import { UserActivity } from "../../resources/users/users";
 import { User } from "../../resources/users/users";
@@ -131,6 +132,24 @@ export interface SetUserPropsResponse {
      * @generated from protobuf field: resources.users.UserProps props = 1;
      */
     props?: UserProps;
+}
+/**
+ * @generated from protobuf message services.citizenstore.SetProfilePictureRequest
+ */
+export interface SetProfilePictureRequest {
+    /**
+     * @generated from protobuf field: resources.filestore.File avatar = 1;
+     */
+    avatar?: File;
+}
+/**
+ * @generated from protobuf message services.citizenstore.SetProfilePictureResponse
+ */
+export interface SetProfilePictureResponse {
+    /**
+     * @generated from protobuf field: resources.filestore.File avatar = 1;
+     */
+    avatar?: File;
 }
 // @generated message type with reflection information, may provide speed optimized methods
 class ListCitizensRequest$Type extends MessageType<ListCitizensRequest> {
@@ -576,6 +595,98 @@ class SetUserPropsResponse$Type extends MessageType<SetUserPropsResponse> {
  * @generated MessageType for protobuf message services.citizenstore.SetUserPropsResponse
  */
 export const SetUserPropsResponse = new SetUserPropsResponse$Type();
+// @generated message type with reflection information, may provide speed optimized methods
+class SetProfilePictureRequest$Type extends MessageType<SetProfilePictureRequest> {
+    constructor() {
+        super("services.citizenstore.SetProfilePictureRequest", [
+            { no: 1, name: "avatar", kind: "message", T: () => File }
+        ]);
+    }
+    create(value?: PartialMessage<SetProfilePictureRequest>): SetProfilePictureRequest {
+        const message = globalThis.Object.create((this.messagePrototype!));
+        if (value !== undefined)
+            reflectionMergePartial<SetProfilePictureRequest>(this, message, value);
+        return message;
+    }
+    internalBinaryRead(reader: IBinaryReader, length: number, options: BinaryReadOptions, target?: SetProfilePictureRequest): SetProfilePictureRequest {
+        let message = target ?? this.create(), end = reader.pos + length;
+        while (reader.pos < end) {
+            let [fieldNo, wireType] = reader.tag();
+            switch (fieldNo) {
+                case /* resources.filestore.File avatar */ 1:
+                    message.avatar = File.internalBinaryRead(reader, reader.uint32(), options, message.avatar);
+                    break;
+                default:
+                    let u = options.readUnknownField;
+                    if (u === "throw")
+                        throw new globalThis.Error(`Unknown field ${fieldNo} (wire type ${wireType}) for ${this.typeName}`);
+                    let d = reader.skip(wireType);
+                    if (u !== false)
+                        (u === true ? UnknownFieldHandler.onRead : u)(this.typeName, message, fieldNo, wireType, d);
+            }
+        }
+        return message;
+    }
+    internalBinaryWrite(message: SetProfilePictureRequest, writer: IBinaryWriter, options: BinaryWriteOptions): IBinaryWriter {
+        /* resources.filestore.File avatar = 1; */
+        if (message.avatar)
+            File.internalBinaryWrite(message.avatar, writer.tag(1, WireType.LengthDelimited).fork(), options).join();
+        let u = options.writeUnknownFields;
+        if (u !== false)
+            (u == true ? UnknownFieldHandler.onWrite : u)(this.typeName, message, writer);
+        return writer;
+    }
+}
+/**
+ * @generated MessageType for protobuf message services.citizenstore.SetProfilePictureRequest
+ */
+export const SetProfilePictureRequest = new SetProfilePictureRequest$Type();
+// @generated message type with reflection information, may provide speed optimized methods
+class SetProfilePictureResponse$Type extends MessageType<SetProfilePictureResponse> {
+    constructor() {
+        super("services.citizenstore.SetProfilePictureResponse", [
+            { no: 1, name: "avatar", kind: "message", T: () => File }
+        ]);
+    }
+    create(value?: PartialMessage<SetProfilePictureResponse>): SetProfilePictureResponse {
+        const message = globalThis.Object.create((this.messagePrototype!));
+        if (value !== undefined)
+            reflectionMergePartial<SetProfilePictureResponse>(this, message, value);
+        return message;
+    }
+    internalBinaryRead(reader: IBinaryReader, length: number, options: BinaryReadOptions, target?: SetProfilePictureResponse): SetProfilePictureResponse {
+        let message = target ?? this.create(), end = reader.pos + length;
+        while (reader.pos < end) {
+            let [fieldNo, wireType] = reader.tag();
+            switch (fieldNo) {
+                case /* resources.filestore.File avatar */ 1:
+                    message.avatar = File.internalBinaryRead(reader, reader.uint32(), options, message.avatar);
+                    break;
+                default:
+                    let u = options.readUnknownField;
+                    if (u === "throw")
+                        throw new globalThis.Error(`Unknown field ${fieldNo} (wire type ${wireType}) for ${this.typeName}`);
+                    let d = reader.skip(wireType);
+                    if (u !== false)
+                        (u === true ? UnknownFieldHandler.onRead : u)(this.typeName, message, fieldNo, wireType, d);
+            }
+        }
+        return message;
+    }
+    internalBinaryWrite(message: SetProfilePictureResponse, writer: IBinaryWriter, options: BinaryWriteOptions): IBinaryWriter {
+        /* resources.filestore.File avatar = 1; */
+        if (message.avatar)
+            File.internalBinaryWrite(message.avatar, writer.tag(1, WireType.LengthDelimited).fork(), options).join();
+        let u = options.writeUnknownFields;
+        if (u !== false)
+            (u == true ? UnknownFieldHandler.onWrite : u)(this.typeName, message, writer);
+        return writer;
+    }
+}
+/**
+ * @generated MessageType for protobuf message services.citizenstore.SetProfilePictureResponse
+ */
+export const SetProfilePictureResponse = new SetProfilePictureResponse$Type();
 /**
  * @generated ServiceType for protobuf service services.citizenstore.CitizenStoreService
  */
@@ -583,5 +694,6 @@ export const CitizenStoreService = new ServiceType("services.citizenstore.Citize
     { name: "ListCitizens", options: {}, I: ListCitizensRequest, O: ListCitizensResponse },
     { name: "GetUser", options: {}, I: GetUserRequest, O: GetUserResponse },
     { name: "ListUserActivity", options: {}, I: ListUserActivityRequest, O: ListUserActivityResponse },
-    { name: "SetUserProps", options: {}, I: SetUserPropsRequest, O: SetUserPropsResponse }
+    { name: "SetUserProps", options: {}, I: SetUserPropsRequest, O: SetUserPropsResponse },
+    { name: "SetProfilePicture", options: {}, I: SetProfilePictureRequest, O: SetProfilePictureResponse }
 ]);

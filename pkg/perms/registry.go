@@ -151,7 +151,7 @@ func (p *Perms) registerOrUpdateAttribute(ctx context.Context, permId uint64, ke
 	}
 
 	attrValidValues := &permissions.AttributeValues{}
-	if attr.ValidValues != nil {
+	if attr != nil && attr.ValidValues != nil {
 		if err := p.convertRawValue(attrValidValues, *attr.ValidValues, aType); err != nil {
 			return 0, err
 		}

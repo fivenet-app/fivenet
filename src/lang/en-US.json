@@ -1498,6 +1498,20 @@
             "SetMOTD": {
                 "key": "Update Job MOTD",
                 "description": "Update Job MOTD text on job page."
+            },
+            "GetColleague": {
+                "key": "Get a colleague's profile",
+                "description": "Retrieve a colleague's detailed profile."
+            },
+            "SetJobsUserProps": {
+                "key": "Set a colleague's properties",
+                "description": "E.g., absence date.",
+                "attrs": {
+                    "Own": "Own",
+                    "Lower_Rank": "Lower Rank",
+                    "Same_Rank": "Same Rank",
+                    "Any": "Any"
+                }
             }
         },
         "JobsConductService": {

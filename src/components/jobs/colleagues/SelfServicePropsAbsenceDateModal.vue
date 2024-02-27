@@ -11,7 +11,8 @@ import type { Timestamp } from '~~/gen/ts/resources/timestamp/timestamp';
 
 const props = defineProps<{
     open: boolean;
-    userProps: JobsUserProps;
+    userId: number;
+    userProps?: JobsUserProps;
 }>();
 
 const emit = defineEmits<{
@@ -25,13 +26,13 @@ const notifications = useNotificatorStore();
 
 interface FormData {
     reason: string;
-    absenceDate?: Date;
+    absenceDate?: string;
 }
 
-async function setWantedState(values: FormData): Promise<void> {
+async function setAbsenceDate(values: FormData): Promise<void> {
     const userProps: JobsUserProps = {
-        userId: props.userProps.userId,
-        absenceDate: values.absenceDate ? toTimestamp(values.absenceDate) : undefined,
+        userId: props.userId,
+        absenceDate: values.absenceDate ? toTimestamp(fromString(values.absenceDate)) : {},
     };
 
     try {
@@ -60,7 +61,7 @@ defineRule('required', required);
 defineRule('min', min);
 defineRule('max', max);
 
-const { handleSubmit, meta } = useForm<FormData>({
+const { handleSubmit, meta, setFieldValue } = useForm<FormData>({
     validationSchema: {
         reason: { required: true, min: 3, max: 255 },
         absenceDate: {},
@@ -68,10 +69,20 @@ const { handleSubmit, meta } = useForm<FormData>({
     validateOnMount: true,
 });
 
+function updateAbsenceDateField(): void {
+    setFieldValue(
+        'absenceDate',
+        props.userProps?.absenceDate ? toDatetimeLocal(toDate(props.userProps.absenceDate)).split('T')[0] : '',
+    );
+}
+
+watch(props, () => updateAbsenceDateField());
+updateAbsenceDateField();
+
 const canSubmit = ref(true);
 const onSubmit = handleSubmit(
     async (values): Promise<void> =>
-        await setWantedState(values).finally(() => setTimeout(() => (canSubmit.value = true), 400)),
+        await setAbsenceDate(values).finally(() => setTimeout(() => (canSubmit.value = true), 400)),
 );
 const onSubmitThrottle = useThrottleFn(async (e) => {
     canSubmit.value = false;
@@ -119,7 +130,7 @@ const onSubmitThrottle = useThrottleFn(async (e) => {
                                 </button>
                             </div>
                             <DialogTitle as="h3" class="text-base font-semibold leading-6">
-                                {{ $t('components.jobs.colleagues.set_absence_date') }}
+                                {{ $t('components.jobs.self_service.set_absence_date') }}
                             </DialogTitle>
                             <form @submit.prevent="onSubmitThrottle">
                                 <div class="my-2 space-y-24">
@@ -163,6 +174,25 @@ const onSubmitThrottle = useThrottleFn(async (e) => {
                                         @click="$emit('close')"
                                     >
                                         {{ $t('common.close', 1) }}
+                                    </button>
+                                    <button
+                                        type="button"
+                                        class="rounded-bd flex flex-1 justify-center px-3.5 py-2.5 text-sm font-semibold text-neutral"
+                                        :disabled="!meta.valid || !canSubmit"
+                                        :class="[
+                                            !meta.valid || !canSubmit
+                                                ? 'disabled bg-base-500 hover:bg-base-400 focus-visible:outline-base-500'
+                                                : 'bg-error-500 hover:bg-error-400 focus-visible:outline-error-500',
+                                        ]"
+                                        @click="
+                                            setFieldValue('absenceDate', undefined);
+                                            onSubmitThrottle($event);
+                                        "
+                                    >
+                                        <template v-if="!canSubmit">
+                                            <LoadingIcon class="mr-2 h-5 w-5 animate-spin" />
+                                        </template>
+                                        {{ $t('common.reset') }}
                                     </button>
                                     <button
                                         type="submit"

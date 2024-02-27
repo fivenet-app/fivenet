@@ -151,7 +151,9 @@ watchDebounced(
     async () => {
         if (canAccessAll) {
             await refreshColleagues();
-            if (query.value.user_ids) colleagues.value?.users.unshift(...query.value.user_ids);
+            if (query.value.user_ids) {
+                colleagues.value?.colleagues.unshift(...query.value.user_ids);
+            }
         }
     },
     {
@@ -225,11 +227,11 @@ function updateDates(): void {
                                             </ComboboxButton>
 
                                             <ComboboxOptions
-                                                v-if="colleagues?.users && colleagues?.users?.length > 0"
+                                                v-if="colleagues?.colleagues && colleagues?.colleagues?.length > 0"
                                                 class="absolute z-10 mt-1 max-h-44 w-full overflow-auto rounded-md bg-base-700 py-1 text-base sm:text-sm"
                                             >
                                                 <ComboboxOption
-                                                    v-for="char in colleagues?.users"
+                                                    v-for="char in colleagues?.colleagues"
                                                     :key="char.identifier"
                                                     v-slot="{ active, selected }"
                                                     :value="char"

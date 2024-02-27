@@ -46,6 +46,20 @@ export interface ListColleaguesResponse {
     colleagues: Colleague[];
 }
 /**
+ * @generated from protobuf message services.jobs.GetSelfRequest
+ */
+export interface GetSelfRequest {
+}
+/**
+ * @generated from protobuf message services.jobs.GetSelfResponse
+ */
+export interface GetSelfResponse {
+    /**
+     * @generated from protobuf field: resources.jobs.Colleague colleague = 1;
+     */
+    colleague?: Colleague;
+}
+/**
  * @generated from protobuf message services.jobs.GetColleagueRequest
  */
 export interface GetColleagueRequest {
@@ -231,6 +245,77 @@ class ListColleaguesResponse$Type extends MessageType<ListColleaguesResponse> {
  * @generated MessageType for protobuf message services.jobs.ListColleaguesResponse
  */
 export const ListColleaguesResponse = new ListColleaguesResponse$Type();
+// @generated message type with reflection information, may provide speed optimized methods
+class GetSelfRequest$Type extends MessageType<GetSelfRequest> {
+    constructor() {
+        super("services.jobs.GetSelfRequest", []);
+    }
+    create(value?: PartialMessage<GetSelfRequest>): GetSelfRequest {
+        const message = globalThis.Object.create((this.messagePrototype!));
+        if (value !== undefined)
+            reflectionMergePartial<GetSelfRequest>(this, message, value);
+        return message;
+    }
+    internalBinaryRead(reader: IBinaryReader, length: number, options: BinaryReadOptions, target?: GetSelfRequest): GetSelfRequest {
+        return target ?? this.create();
+    }
+    internalBinaryWrite(message: GetSelfRequest, writer: IBinaryWriter, options: BinaryWriteOptions): IBinaryWriter {
+        let u = options.writeUnknownFields;
+        if (u !== false)
+            (u == true ? UnknownFieldHandler.onWrite : u)(this.typeName, message, writer);
+        return writer;
+    }
+}
+/**
+ * @generated MessageType for protobuf message services.jobs.GetSelfRequest
+ */
+export const GetSelfRequest = new GetSelfRequest$Type();
+// @generated message type with reflection information, may provide speed optimized methods
+class GetSelfResponse$Type extends MessageType<GetSelfResponse> {
+    constructor() {
+        super("services.jobs.GetSelfResponse", [
+            { no: 1, name: "colleague", kind: "message", T: () => Colleague }
+        ]);
+    }
+    create(value?: PartialMessage<GetSelfResponse>): GetSelfResponse {
+        const message = globalThis.Object.create((this.messagePrototype!));
+        if (value !== undefined)
+            reflectionMergePartial<GetSelfResponse>(this, message, value);
+        return message;
+    }
+    internalBinaryRead(reader: IBinaryReader, length: number, options: BinaryReadOptions, target?: GetSelfResponse): GetSelfResponse {
+        let message = target ?? this.create(), end = reader.pos + length;
+        while (reader.pos < end) {
+            let [fieldNo, wireType] = reader.tag();
+            switch (fieldNo) {
+                case /* resources.jobs.Colleague colleague */ 1:
+                    message.colleague = Colleague.internalBinaryRead(reader, reader.uint32(), options, message.colleague);
+                    break;
+                default:
+                    let u = options.readUnknownField;
+                    if (u === "throw")
+                        throw new globalThis.Error(`Unknown field ${fieldNo} (wire type ${wireType}) for ${this.typeName}`);
+                    let d = reader.skip(wireType);
+                    if (u !== false)
+                        (u === true ? UnknownFieldHandler.onRead : u)(this.typeName, message, fieldNo, wireType, d);
+            }
+        }
+        return message;
+    }
+    internalBinaryWrite(message: GetSelfResponse, writer: IBinaryWriter, options: BinaryWriteOptions): IBinaryWriter {
+        /* resources.jobs.Colleague colleague = 1; */
+        if (message.colleague)
+            Colleague.internalBinaryWrite(message.colleague, writer.tag(1, WireType.LengthDelimited).fork(), options).join();
+        let u = options.writeUnknownFields;
+        if (u !== false)
+            (u == true ? UnknownFieldHandler.onWrite : u)(this.typeName, message, writer);
+        return writer;
+    }
+}
+/**
+ * @generated MessageType for protobuf message services.jobs.GetSelfResponse
+ */
+export const GetSelfResponse = new GetSelfResponse$Type();
 // @generated message type with reflection information, may provide speed optimized methods
 class GetColleagueRequest$Type extends MessageType<GetColleagueRequest> {
     constructor() {
@@ -595,6 +680,7 @@ export const SetMOTDResponse = new SetMOTDResponse$Type();
  */
 export const JobsService = new ServiceType("services.jobs.JobsService", [
     { name: "ListColleagues", options: {}, I: ListColleaguesRequest, O: ListColleaguesResponse },
+    { name: "GetSelf", options: {}, I: GetSelfRequest, O: GetSelfResponse },
     { name: "GetColleague", options: {}, I: GetColleagueRequest, O: GetColleagueResponse },
     { name: "SetJobsUserProps", options: {}, I: SetJobsUserPropsRequest, O: SetJobsUserPropsResponse },
     { name: "GetMOTD", options: {}, I: GetMOTDRequest, O: GetMOTDResponse },

@@ -1270,6 +1270,14 @@
                 </li>
               
                 <li>
+                  <a href="#services.citizenstore.SetProfilePictureRequest"><span class="badge">M</span>SetProfilePictureRequest</a>
+                </li>
+              
+                <li>
+                  <a href="#services.citizenstore.SetProfilePictureResponse"><span class="badge">M</span>SetProfilePictureResponse</a>
+                </li>
+              
+                <li>
                   <a href="#services.citizenstore.SetUserPropsRequest"><span class="badge">M</span>SetUserPropsRequest</a>
                 </li>
               
@@ -1890,6 +1898,14 @@
               
                 <li>
                   <a href="#services.jobs.GetMOTDResponse"><span class="badge">M</span>GetMOTDResponse</a>
+                </li>
+              
+                <li>
+                  <a href="#services.jobs.GetSelfRequest"><span class="badge">M</span>GetSelfRequest</a>
+                </li>
+              
+                <li>
+                  <a href="#services.jobs.GetSelfResponse"><span class="badge">M</span>GetSelfResponse</a>
                 </li>
               
                 <li>
@@ -12107,6 +12123,13 @@
                   <td><p> </p></td>
                 </tr>
               
+                <tr>
+                  <td>delete</td>
+                  <td><a href="#bool">bool</a></td>
+                  <td>optional</td>
+                  <td><p> </p></td>
+                </tr>
+              
             </tbody>
           </table>
 
@@ -15155,6 +15178,54 @@
 
         
       
+        <h3 id="services.citizenstore.SetProfilePictureRequest">SetProfilePictureRequest</h3>
+        <p></p>
+
+        
+          <table class="field-table">
+            <thead>
+              <tr><td>Field</td><td>Type</td><td>Label</td><td>Description</td></tr>
+            </thead>
+            <tbody>
+              
+                <tr>
+                  <td>avatar</td>
+                  <td><a href="#resources.filestore.File">resources.filestore.File</a></td>
+                  <td></td>
+                  <td><p> </p></td>
+                </tr>
+              
+            </tbody>
+          </table>
+
+          
+
+        
+      
+        <h3 id="services.citizenstore.SetProfilePictureResponse">SetProfilePictureResponse</h3>
+        <p></p>
+
+        
+          <table class="field-table">
+            <thead>
+              <tr><td>Field</td><td>Type</td><td>Label</td><td>Description</td></tr>
+            </thead>
+            <tbody>
+              
+                <tr>
+                  <td>avatar</td>
+                  <td><a href="#resources.filestore.File">resources.filestore.File</a></td>
+                  <td></td>
+                  <td><p> </p></td>
+                </tr>
+              
+            </tbody>
+          </table>
+
+          
+
+        
+      
         <h3 id="services.citizenstore.SetUserPropsRequest">SetUserPropsRequest</h3>
         <p></p>
 
@@ -15290,6 +15361,13 @@
                 <td><a href="#services.citizenstore.SetUserPropsRequest">SetUserPropsRequest</a></td>
                 <td><a href="#services.citizenstore.SetUserPropsResponse">SetUserPropsResponse</a></td>
                 <td><p>@perm: Attrs=Fields/StringList:[]string{&#34;Wanted&#34;, &#34;Job&#34;, &#34;TrafficInfractionPoints&#34;, &#34;MugShot&#34;}</p></td>
+              </tr>
+            
+              <tr>
+                <td>SetProfilePicture</td>
+                <td><a href="#services.citizenstore.SetProfilePictureRequest">SetProfilePictureRequest</a></td>
+                <td><a href="#services.citizenstore.SetProfilePictureResponse">SetProfilePictureResponse</a></td>
+                <td><p>@perm: Name=Any</p></td>
               </tr>
             
           </tbody>
@@ -20127,6 +20205,37 @@
 
         
       
+        <h3 id="services.jobs.GetSelfRequest">GetSelfRequest</h3>
+        <p></p>
+
+        
+
+        
+      
+        <h3 id="services.jobs.GetSelfResponse">GetSelfResponse</h3>
+        <p></p>
+
+        
+          <table class="field-table">
+            <thead>
+              <tr><td>Field</td><td>Type</td><td>Label</td><td>Description</td></tr>
+            </thead>
+            <tbody>
+              
+                <tr>
+                  <td>colleague</td>
+                  <td><a href="#resources.jobs.Colleague">resources.jobs.Colleague</a></td>
+                  <td></td>
+                  <td><p> </p></td>
+                </tr>
+              
+            </tbody>
+          </table>
+
+          
+
+        
+      
         <h3 id="services.jobs.ListColleaguesRequest">ListColleaguesRequest</h3>
         <p></p>
 
@@ -20408,17 +20517,24 @@
               </tr>
             
               <tr>
+                <td>GetSelf</td>
+                <td><a href="#services.jobs.GetSelfRequest">GetSelfRequest</a></td>
+                <td><a href="#services.jobs.GetSelfResponse">GetSelfResponse</a></td>
+                <td><p>@perm: Name=ListColleagues</p></td>
+              </tr>
+            
+              <tr>
                 <td>GetColleague</td>
                 <td><a href="#services.jobs.GetColleagueRequest">GetColleagueRequest</a></td>
                 <td><a href="#services.jobs.GetColleagueResponse">GetColleagueResponse</a></td>
-                <td><p>@perm: Name=SuperUser</p></td>
+                <td><p>@perm</p></td>
               </tr>
             
               <tr>
                 <td>SetJobsUserProps</td>
                 <td><a href="#services.jobs.SetJobsUserPropsRequest">SetJobsUserPropsRequest</a></td>
                 <td><a href="#services.jobs.SetJobsUserPropsResponse">SetJobsUserPropsResponse</a></td>
-                <td><p>@perm</p></td>
+                <td><p>@perm: Attrs=Access/StringList:[]string{&#34;Own&#34;, &#34;Lower_Rank&#34;, &#34;Same_Rank&#34;, &#34;Any&#34;}</p></td>
               </tr>
             
               <tr>

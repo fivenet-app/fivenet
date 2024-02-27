@@ -137,11 +137,11 @@ onMounted(async () => {
                                             </ComboboxButton>
 
                                             <ComboboxOptions
-                                                v-if="colleagues?.users && colleagues.users.length > 0"
+                                                v-if="colleagues?.colleagues && colleagues.colleagues.length > 0"
                                                 class="absolute z-10 mt-1 max-h-44 w-full overflow-auto rounded-md bg-base-700 py-1 text-base sm:text-sm"
                                             >
                                                 <ComboboxOption
-                                                    v-for="char in colleagues.users"
+                                                    v-for="char in colleagues.colleagues"
                                                     v-slot="{ active, selected }"
                                                     :key="char.identifier"
                                                     :value="char"

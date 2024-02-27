@@ -1240,3 +1240,265 @@ var _ interface {
 	Cause() error
 	ErrorName() string
 } = SetUserPropsResponseValidationError{}
+
+// Validate checks the field values on SetProfilePictureRequest with the rules
+// defined in the proto definition for this message. If any rules are
+// violated, the first error encountered is returned, or nil if there are no violations.
+func (m *SetProfilePictureRequest) Validate() error {
+	return m.validate(false)
+}
+
+// ValidateAll checks the field values on SetProfilePictureRequest with the
+// rules defined in the proto definition for this message. If any rules are
+// violated, the result is a list of violation errors wrapped in
+// SetProfilePictureRequestMultiError, or nil if none found.
+func (m *SetProfilePictureRequest) ValidateAll() error {
+	return m.validate(true)
+}
+
+func (m *SetProfilePictureRequest) validate(all bool) error {
+	if m == nil {
+		return nil
+	}
+
+	var errors []error
+
+	if all {
+		switch v := interface{}(m.GetAvatar()).(type) {
+		case interface{ ValidateAll() error }:
+			if err := v.ValidateAll(); err != nil {
+				errors = append(errors, SetProfilePictureRequestValidationError{
+					field:  "Avatar",
+					reason: "embedded message failed validation",
+					cause:  err,
+				})
+			}
+		case interface{ Validate() error }:
+			if err := v.Validate(); err != nil {
+				errors = append(errors, SetProfilePictureRequestValidationError{
+					field:  "Avatar",
+					reason: "embedded message failed validation",
+					cause:  err,
+				})
+			}
+		}
+	} else if v, ok := interface{}(m.GetAvatar()).(interface{ Validate() error }); ok {
+		if err := v.Validate(); err != nil {
+			return SetProfilePictureRequestValidationError{
+				field:  "Avatar",
+				reason: "embedded message failed validation",
+				cause:  err,
+			}
+		}
+	}
+
+	if len(errors) > 0 {
+		return SetProfilePictureRequestMultiError(errors)
+	}
+
+	return nil
+}
+
+// SetProfilePictureRequestMultiError is an error wrapping multiple validation
+// errors returned by SetProfilePictureRequest.ValidateAll() if the designated
+// constraints aren't met.
+type SetProfilePictureRequestMultiError []error
+
+// Error returns a concatenation of all the error messages it wraps.
+func (m SetProfilePictureRequestMultiError) Error() string {
+	var msgs []string
+	for _, err := range m {
+		msgs = append(msgs, err.Error())
+	}
+	return strings.Join(msgs, "; ")
+}
+
+// AllErrors returns a list of validation violation errors.
+func (m SetProfilePictureRequestMultiError) AllErrors() []error { return m }
+
+// SetProfilePictureRequestValidationError is the validation error returned by
+// SetProfilePictureRequest.Validate if the designated constraints aren't met.
+type SetProfilePictureRequestValidationError struct {
+	field  string
+	reason string
+	cause  error
+	key    bool
+}
+
+// Field function returns field value.
+func (e SetProfilePictureRequestValidationError) Field() string { return e.field }
+
+// Reason function returns reason value.
+func (e SetProfilePictureRequestValidationError) Reason() string { return e.reason }
+
+// Cause function returns cause value.
+func (e SetProfilePictureRequestValidationError) Cause() error { return e.cause }
+
+// Key function returns key value.
+func (e SetProfilePictureRequestValidationError) Key() bool { return e.key }
+
+// ErrorName returns error name.
+func (e SetProfilePictureRequestValidationError) ErrorName() string {
+	return "SetProfilePictureRequestValidationError"
+}
+
+// Error satisfies the builtin error interface
+func (e SetProfilePictureRequestValidationError) Error() string {
+	cause := ""
+	if e.cause != nil {
+		cause = fmt.Sprintf(" | caused by: %v", e.cause)
+	}
+
+	key := ""
+	if e.key {
+		key = "key for "
+	}
+
+	return fmt.Sprintf(
+		"invalid %sSetProfilePictureRequest.%s: %s%s",
+		key,
+		e.field,
+		e.reason,
+		cause)
+}
+
+var _ error = SetProfilePictureRequestValidationError{}
+
+var _ interface {
+	Field() string
+	Reason() string
+	Key() bool
+	Cause() error
+	ErrorName() string
+} = SetProfilePictureRequestValidationError{}
+
+// Validate checks the field values on SetProfilePictureResponse with the rules
+// defined in the proto definition for this message. If any rules are
+// violated, the first error encountered is returned, or nil if there are no violations.
+func (m *SetProfilePictureResponse) Validate() error {
+	return m.validate(false)
+}
+
+// ValidateAll checks the field values on SetProfilePictureResponse with the
+// rules defined in the proto definition for this message. If any rules are
+// violated, the result is a list of violation errors wrapped in
+// SetProfilePictureResponseMultiError, or nil if none found.
+func (m *SetProfilePictureResponse) ValidateAll() error {
+	return m.validate(true)
+}
+
+func (m *SetProfilePictureResponse) validate(all bool) error {
+	if m == nil {
+		return nil
+	}
+
+	var errors []error
+
+	if all {
+		switch v := interface{}(m.GetAvatar()).(type) {
+		case interface{ ValidateAll() error }:
+			if err := v.ValidateAll(); err != nil {
+				errors = append(errors, SetProfilePictureResponseValidationError{
+					field:  "Avatar",
+					reason: "embedded message failed validation",
+					cause:  err,
+				})
+			}
+		case interface{ Validate() error }:
+			if err := v.Validate(); err != nil {
+				errors = append(errors, SetProfilePictureResponseValidationError{
+					field:  "Avatar",
+					reason: "embedded message failed validation",
+					cause:  err,
+				})
+			}
+		}
+	} else if v, ok := interface{}(m.GetAvatar()).(interface{ Validate() error }); ok {
+		if err := v.Validate(); err != nil {
+			return SetProfilePictureResponseValidationError{
+				field:  "Avatar",
+				reason: "embedded message failed validation",
+				cause:  err,
+			}
+		}
+	}
+
+	if len(errors) > 0 {
+		return SetProfilePictureResponseMultiError(errors)
+	}
+
+	return nil
+}
+
+// SetProfilePictureResponseMultiError is an error wrapping multiple validation
+// errors returned by SetProfilePictureResponse.ValidateAll() if the
+// designated constraints aren't met.
+type SetProfilePictureResponseMultiError []error
+
+// Error returns a concatenation of all the error messages it wraps.
+func (m SetProfilePictureResponseMultiError) Error() string {
+	var msgs []string
+	for _, err := range m {
+		msgs = append(msgs, err.Error())
+	}
+	return strings.Join(msgs, "; ")
+}
+
+// AllErrors returns a list of validation violation errors.
+func (m SetProfilePictureResponseMultiError) AllErrors() []error { return m }
+
+// SetProfilePictureResponseValidationError is the validation error returned by
+// SetProfilePictureResponse.Validate if the designated constraints aren't met.
+type SetProfilePictureResponseValidationError struct {
+	field  string
+	reason string
+	cause  error
+	key    bool
+}
+
+// Field function returns field value.
+func (e SetProfilePictureResponseValidationError) Field() string { return e.field }
+
+// Reason function returns reason value.
+func (e SetProfilePictureResponseValidationError) Reason() string { return e.reason }
+
+// Cause function returns cause value.
+func (e SetProfilePictureResponseValidationError) Cause() error { return e.cause }
+
+// Key function returns key value.
+func (e SetProfilePictureResponseValidationError) Key() bool { return e.key }
+
+// ErrorName returns error name.
+func (e SetProfilePictureResponseValidationError) ErrorName() string {
+	return "SetProfilePictureResponseValidationError"
+}
+
+// Error satisfies the builtin error interface
+func (e SetProfilePictureResponseValidationError) Error() string {
+	cause := ""
+	if e.cause != nil {
+		cause = fmt.Sprintf(" | caused by: %v", e.cause)
+	}
+
+	key := ""
+	if e.key {
+		key = "key for "
+	}
+
+	return fmt.Sprintf(
+		"invalid %sSetProfilePictureResponse.%s: %s%s",
+		key,
+		e.field,
+		e.reason,
+		cause)
+}
+
+var _ error = SetProfilePictureResponseValidationError{}
+
+var _ interface {
+	Field() string
+	Reason() string
+	Key() bool
+	Cause() error
+	ErrorName() string
+} = SetProfilePictureResponseValidationError{}

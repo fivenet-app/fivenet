@@ -4,6 +4,8 @@
 import type { RpcTransport } from "@protobuf-ts/runtime-rpc";
 import type { ServiceInfo } from "@protobuf-ts/runtime-rpc";
 import { CitizenStoreService } from "./citizenstore";
+import type { SetProfilePictureResponse } from "./citizenstore";
+import type { SetProfilePictureRequest } from "./citizenstore";
 import type { SetUserPropsResponse } from "./citizenstore";
 import type { SetUserPropsRequest } from "./citizenstore";
 import type { ListUserActivityResponse } from "./citizenstore";
@@ -43,6 +45,12 @@ export interface ICitizenStoreServiceClient {
      * @generated from protobuf rpc: SetUserProps(services.citizenstore.SetUserPropsRequest) returns (services.citizenstore.SetUserPropsResponse);
      */
     setUserProps(input: SetUserPropsRequest, options?: RpcOptions): UnaryCall<SetUserPropsRequest, SetUserPropsResponse>;
+    /**
+     * @perm: Name=Any
+     *
+     * @generated from protobuf rpc: SetProfilePicture(services.citizenstore.SetProfilePictureRequest) returns (services.citizenstore.SetProfilePictureResponse);
+     */
+    setProfilePicture(input: SetProfilePictureRequest, options?: RpcOptions): UnaryCall<SetProfilePictureRequest, SetProfilePictureResponse>;
 }
 /**
  * @generated from protobuf service services.citizenstore.CitizenStoreService
@@ -88,5 +96,14 @@ export class CitizenStoreServiceClient implements ICitizenStoreServiceClient, Se
     setUserProps(input: SetUserPropsRequest, options?: RpcOptions): UnaryCall<SetUserPropsRequest, SetUserPropsResponse> {
         const method = this.methods[3], opt = this._transport.mergeOptions(options);
         return stackIntercept<SetUserPropsRequest, SetUserPropsResponse>("unary", this._transport, method, opt, input);
+    }
+    /**
+     * @perm: Name=Any
+     *
+     * @generated from protobuf rpc: SetProfilePicture(services.citizenstore.SetProfilePictureRequest) returns (services.citizenstore.SetProfilePictureResponse);
+     */
+    setProfilePicture(input: SetProfilePictureRequest, options?: RpcOptions): UnaryCall<SetProfilePictureRequest, SetProfilePictureResponse> {
+        const method = this.methods[4], opt = this._transport.mergeOptions(options);
+        return stackIntercept<SetProfilePictureRequest, SetProfilePictureResponse>("unary", this._transport, method, opt, input);
     }
 }

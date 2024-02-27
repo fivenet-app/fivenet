@@ -3,6 +3,7 @@ syntax = "proto3";
 package services.citizenstore;
 
 import "resources/common/database/database.proto";
+import "resources/filestore/file.proto";
 import "resources/users/users.proto";
 import "validate/validate.proto";
 
@@ -56,6 +57,14 @@ message SetUserPropsResponse {
   resources.users.UserProps props = 1;
 }
 
+message SetProfilePictureRequest {
+  resources.filestore.File avatar = 1;
+}
+
+message SetProfilePictureResponse {
+  resources.filestore.File avatar = 1;
+}
+
 service CitizenStoreService {
   // @perm: Attrs=Fields/StringList:[]string{"PhoneNumber", "Licenses", "UserProps.Wanted", "UserProps.Job", "UserProps.TrafficInfractionPoints", "UserProps.OpenFines", "UserProps.BloodType", "UserProps.MugShot"}
   rpc ListCitizens(ListCitizensRequest) returns (ListCitizensResponse);
@@ -65,4 +74,7 @@ service CitizenStoreService {
   rpc ListUserActivity(ListUserActivityRequest) returns (ListUserActivityResponse);
   // @perm: Attrs=Fields/StringList:[]string{"Wanted", "Job", "TrafficInfractionPoints", "MugShot"}
   rpc SetUserProps(SetUserPropsRequest) returns (SetUserPropsResponse);
+
+  // @perm: Name=Any
+  rpc SetProfilePicture(SetProfilePictureRequest) returns (SetProfilePictureResponse);
 }

@@ -108,7 +108,9 @@ watchDebounced(
     queryTargets,
     async () => {
         await refreshColleagues();
-        if (query.value.user_ids) colleagues.value?.users.unshift(...query.value.user_ids);
+        if (query.value.user_ids) {
+            colleagues.value?.colleagues.unshift(...query.value.user_ids);
+        }
     },
     {
         debounce: 600,

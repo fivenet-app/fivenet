@@ -1,11 +1,43 @@
 <script lang="ts" setup>
+import { RpcError } from '@protobuf-ts/runtime-rpc';
 import { CameraIcon, IslandIcon } from 'mdi-vue3';
 import GenericContainer from '~/components/partials/elements/GenericContainer.vue';
-import JobsUserPropsAbsenceDateModal from '~/components/jobs/colleagues/JobsUserPropsAbsenceDateModal.vue';
+import SelfServicePropsAbsenceDateModal from '~/components/jobs/colleagues/SelfServicePropsAbsenceDateModal.vue';
+import SelfServicePropsProfilePictureModal from '~/components/jobs/colleagues/SelfServicePropsProfilePictureModal.vue';
+import type { Timestamp } from '~~/gen/ts/resources/timestamp/timestamp';
 
 defineProps<{
     userId: number;
 }>();
+
+const { $grpc } = useNuxtApp();
+
+const { data: colleagueSelf } = useLazyAsyncData('jobs-selfcolleague', async () => {
+    try {
+        const call = $grpc.getJobsClient().getSelf({});
+        const { response } = await call;
+
+        return response;
+    } catch (e) {
+        $grpc.handleError(e as RpcError);
+        throw e;
+    }
+});
+
+function updateAbsenceDate(value?: Timestamp): void {
+    if (colleagueSelf.value === null) {
+        return;
+    }
+
+    if (colleagueSelf.value.colleague!.props === undefined) {
+        colleagueSelf.value.colleague!.props = {
+            userId: colleagueSelf.value!.colleague!.userId,
+            absenceDate: value,
+        };
+    } else {
+        colleagueSelf.value.colleague!.props.absenceDate = value;
+    }
+}
 
 const absenceDateModal = ref(false);
 const profilePictureModal = ref(false);
@@ -13,13 +45,14 @@ const profilePictureModal = ref(false);
 
 <template>
     <GenericContainer class="flex-1 text-neutral">
-        <JobsUserPropsAbsenceDateModal
+        <SelfServicePropsAbsenceDateModal
             :open="absenceDateModal"
-            :user-props="{
-                userId: 0,
-            }"
+            :user-id="userId"
+            :user-props="colleagueSelf?.colleague?.props"
             @close="absenceDateModal = false"
+            @update:absence-date="updateAbsenceDate($event)"
         />
+        <SelfServicePropsProfilePictureModal :open="profilePictureModal" @close="profilePictureModal = false" />
 
         <h3 class="text-lg font-semibold">{{ $t('components.jobs.self_service.title') }}</h3>
 

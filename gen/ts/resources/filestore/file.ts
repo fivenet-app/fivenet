@@ -22,13 +22,18 @@ export interface File {
      * @generated from protobuf field: bytes data = 2;
      */
     data: Uint8Array;
+    /**
+     * @generated from protobuf field: optional bool delete = 3;
+     */
+    delete?: boolean;
 }
 // @generated message type with reflection information, may provide speed optimized methods
 class File$Type extends MessageType<File> {
     constructor() {
         super("resources.filestore.File", [
             { no: 1, name: "url", kind: "scalar", opt: true, T: 9 /*ScalarType.STRING*/, options: { "validate.rules": { string: { maxLen: "128" } } } },
-            { no: 2, name: "data", kind: "scalar", T: 12 /*ScalarType.BYTES*/, options: { "validate.rules": { bytes: { maxLen: "2097152" } } } }
+            { no: 2, name: "data", kind: "scalar", T: 12 /*ScalarType.BYTES*/, options: { "validate.rules": { bytes: { maxLen: "2097152" } } } },
+            { no: 3, name: "delete", kind: "scalar", opt: true, T: 8 /*ScalarType.BOOL*/ }
         ]);
     }
     create(value?: PartialMessage<File>): File {
@@ -49,6 +54,9 @@ class File$Type extends MessageType<File> {
                 case /* bytes data */ 2:
                     message.data = reader.bytes();
                     break;
+                case /* optional bool delete */ 3:
+                    message.delete = reader.bool();
+                    break;
                 default:
                     let u = options.readUnknownField;
                     if (u === "throw")
@@ -67,6 +75,9 @@ class File$Type extends MessageType<File> {
         /* bytes data = 2; */
         if (message.data.length)
             writer.tag(2, WireType.LengthDelimited).bytes(message.data);
+        /* optional bool delete = 3; */
+        if (message.delete !== undefined)
+            writer.tag(3, WireType.Varint).bool(message.delete);
         let u = options.writeUnknownFields;
         if (u !== false)
             (u == true ? UnknownFieldHandler.onWrite : u)(this.typeName, message, writer);

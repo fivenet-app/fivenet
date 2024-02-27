@@ -6,7 +6,7 @@ import type { GetMOTDResponse, SetMOTDResponse } from '~~/gen/ts/services/jobs/j
 
 const { $grpc } = useNuxtApp();
 
-const { data } = useLazyAsyncData(`jobs-motd`, () => getMOTD());
+const { data } = useLazyAsyncData('jobs-motd', () => getMOTD());
 
 async function getMOTD(): Promise<GetMOTDResponse> {
     try {
