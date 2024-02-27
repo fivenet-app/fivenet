@@ -7,6 +7,7 @@ import TablePagination from '~/components/partials/elements/TablePagination.vue'
 import ColleaguesListEntry from '~/components/jobs/colleagues/ColleaguesListEntry.vue';
 import { useJobsStore } from '~/store/jobs';
 import type { Perms } from '~~/gen/ts/perms';
+import type { Timestamp } from '~~/gen/ts/resources/timestamp/timestamp';
 
 const query = ref<{ name: string }>({
     name: '',
@@ -32,6 +33,23 @@ function focusSearch(): void {
 
 watch(offset, async () => refresh());
 watchDebounced(query.value, () => refresh(), { debounce: 600, maxWait: 1400 });
+
+function updateAbsenceDate(value: { userId: number; absenceDate?: Timestamp }): void {
+    console.log('updateAbsenceDate', value);
+    const colleague = data.value?.colleagues.find((c) => c.userId === value.userId);
+    if (colleague === undefined) {
+        return;
+    }
+
+    if (colleague.props === undefined) {
+        colleague.props = {
+            userId: colleague.userId,
+            absenceDate: value.absenceDate,
+        };
+    } else {
+        colleague.props.absenceDate = value.absenceDate;
+    }
+}
 </script>
 
 <template>
@@ -113,7 +131,12 @@ watchDebounced(query.value, () => refresh(), { debounce: 600, maxWait: 1400 });
                                     </tr>
                                 </thead>
                                 <tbody class="divide-y divide-base-800">
-                                    <ColleaguesListEntry v-for="user in data?.colleagues" :key="user.userId" :user="user" />
+                                    <ColleaguesListEntry
+                                        v-for="user in data?.colleagues"
+                                        :key="user.userId"
+                                        :user="user"
+                                        @update:absence-date="updateAbsenceDate($event)"
+                                    />
                                 </tbody>
                                 <thead>
                                     <tr>

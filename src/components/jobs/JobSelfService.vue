@@ -24,7 +24,7 @@ const { data: colleagueSelf } = useLazyAsyncData('jobs-selfcolleague', async () 
     }
 });
 
-function updateAbsenceDate(value?: Timestamp): void {
+function updateAbsenceDate(value: { userId: number; absenceDate?: Timestamp }): void {
     if (colleagueSelf.value === null) {
         return;
     }
@@ -32,10 +32,10 @@ function updateAbsenceDate(value?: Timestamp): void {
     if (colleagueSelf.value.colleague!.props === undefined) {
         colleagueSelf.value.colleague!.props = {
             userId: colleagueSelf.value!.colleague!.userId,
-            absenceDate: value,
+            absenceDate: value.absenceDate,
         };
     } else {
-        colleagueSelf.value.colleague!.props.absenceDate = value;
+        colleagueSelf.value.colleague!.props.absenceDate = value.absenceDate;
     }
 }
 

@@ -7,6 +7,7 @@ import GenericTime from '~/components/partials/elements/GenericTime.vue';
 import SelfServicePropsAbsenceDateModal from '~/components/jobs/colleagues/SelfServicePropsAbsenceDateModal.vue';
 import { useAuthStore } from '~/store/auth';
 import { checkIfCanAccessColleague } from '~/components/jobs/colleagues/helpers';
+import type { Timestamp } from '~~/gen/ts/resources/timestamp/timestamp';
 
 defineProps<{
     user: Colleague;
@@ -14,6 +15,10 @@ defineProps<{
 
 const authStore = useAuthStore();
 const { activeChar } = storeToRefs(authStore);
+
+defineEmits<{
+    (e: 'update:absenceDate', value: { userId: number; absenceDate?: Timestamp }): void;
+}>();
 
 const absenceDateModal = ref(false);
 </script>
@@ -25,6 +30,7 @@ const absenceDateModal = ref(false);
             :user-id="user.userId"
             :user-props="user.props"
             @close="absenceDateModal = false"
+            @update:absence-date="$emit('update:absenceDate', $event)"
         />
         <td class="whitespace-nowrap py-2 pl-4 pr-3 text-base font-medium text-neutral sm:pl-1">
             <ProfilePictureImg

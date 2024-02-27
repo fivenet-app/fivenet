@@ -17,7 +17,7 @@ const props = defineProps<{
 
 const emit = defineEmits<{
     (e: 'close'): void;
-    (e: 'update:absenceDate', value?: Timestamp): void;
+    (e: 'update:absenceDate', value: { userId: number; absenceDate?: Timestamp }): void;
 }>();
 
 const { $grpc } = useNuxtApp();
@@ -42,7 +42,7 @@ async function setAbsenceDate(values: FormData): Promise<void> {
         });
         const { response } = await call;
 
-        emit('update:absenceDate', response.props?.absenceDate);
+        emit('update:absenceDate', { userId: props.userId, absenceDate: response.props?.absenceDate });
 
         notifications.dispatchNotification({
             title: { key: 'notifications.action_successfull.title', parameters: {} },

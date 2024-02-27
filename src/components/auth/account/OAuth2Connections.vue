@@ -15,8 +15,6 @@ defineEmits<{
 function getProviderConnection(provider: string): undefined | OAuth2Account {
     return props.connections.find((v) => v.providerName === provider);
 }
-
-console.log(props.connections);
 </script>
 
 <template>

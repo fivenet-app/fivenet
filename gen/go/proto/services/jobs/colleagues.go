@@ -190,6 +190,7 @@ func (s *Server) GetSelf(ctx context.Context, req *GetSelfRequest) (*GetSelfResp
 }
 
 func (s *Server) getJobsUserProps(ctx context.Context, userId int32) (*jobs.JobsUserProps, error) {
+	tJobsUserProps := tJobsUserProps.AS("jobsuserprops")
 	stmt := tJobsUserProps.
 		SELECT(
 			tJobsUserProps.UserID,
@@ -199,7 +200,9 @@ func (s *Server) getJobsUserProps(ctx context.Context, userId int32) (*jobs.Jobs
 		WHERE(tJobsUserProps.UserID.EQ(jet.Int32(userId))).
 		LIMIT(1)
 
-	dest := &jobs.JobsUserProps{}
+	dest := &jobs.JobsUserProps{
+		UserId: userId,
+	}
 	if err := stmt.QueryContext(ctx, s.db, dest); err != nil {
 		if !errors.Is(err, qrm.ErrNoRows) {
 			return nil, errswrap.NewError(errorsjobs.ErrFailedQuery, err)
