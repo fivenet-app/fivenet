@@ -652,6 +652,25 @@
         
           
           <li>
+            <a href="#resources%2fjobs%2fcolleagues.proto">resources/jobs/colleagues.proto</a>
+            <ul>
+              
+                <li>
+                  <a href="#resources.jobs.Colleague"><span class="badge">M</span>Colleague</a>
+                </li>
+              
+                <li>
+                  <a href="#resources.jobs.JobsUserProps"><span class="badge">M</span>JobsUserProps</a>
+                </li>
+              
+              
+              
+              
+            </ul>
+          </li>
+        
+          
+          <li>
             <a href="#resources%2flaws%2flaws.proto">resources/laws/laws.proto</a>
             <ul>
               
@@ -1712,53 +1731,6 @@
         
           
           <li>
-            <a href="#services%2fjobs%2fjobs.proto">services/jobs/jobs.proto</a>
-            <ul>
-              
-                <li>
-                  <a href="#services.jobs.GetColleagueRequest"><span class="badge">M</span>GetColleagueRequest</a>
-                </li>
-              
-                <li>
-                  <a href="#services.jobs.GetColleagueResponse"><span class="badge">M</span>GetColleagueResponse</a>
-                </li>
-              
-                <li>
-                  <a href="#services.jobs.GetMOTDRequest"><span class="badge">M</span>GetMOTDRequest</a>
-                </li>
-              
-                <li>
-                  <a href="#services.jobs.GetMOTDResponse"><span class="badge">M</span>GetMOTDResponse</a>
-                </li>
-              
-                <li>
-                  <a href="#services.jobs.ListColleaguesRequest"><span class="badge">M</span>ListColleaguesRequest</a>
-                </li>
-              
-                <li>
-                  <a href="#services.jobs.ListColleaguesResponse"><span class="badge">M</span>ListColleaguesResponse</a>
-                </li>
-              
-                <li>
-                  <a href="#services.jobs.SetMOTDRequest"><span class="badge">M</span>SetMOTDRequest</a>
-                </li>
-              
-                <li>
-                  <a href="#services.jobs.SetMOTDResponse"><span class="badge">M</span>SetMOTDResponse</a>
-                </li>
-              
-              
-              
-              
-                <li>
-                  <a href="#services.jobs.JobsService"><span class="badge">S</span>JobsService</a>
-                </li>
-              
-            </ul>
-          </li>
-        
-          
-          <li>
             <a href="#services%2fjobs%2frequests.proto">services/jobs/requests.proto</a>
             <ul>
               
@@ -1894,6 +1866,61 @@
               
                 <li>
                   <a href="#services.jobs.JobsTimeclockService"><span class="badge">S</span>JobsTimeclockService</a>
+                </li>
+              
+            </ul>
+          </li>
+        
+          
+          <li>
+            <a href="#services%2fjobs%2fjobs.proto">services/jobs/jobs.proto</a>
+            <ul>
+              
+                <li>
+                  <a href="#services.jobs.GetColleagueRequest"><span class="badge">M</span>GetColleagueRequest</a>
+                </li>
+              
+                <li>
+                  <a href="#services.jobs.GetColleagueResponse"><span class="badge">M</span>GetColleagueResponse</a>
+                </li>
+              
+                <li>
+                  <a href="#services.jobs.GetMOTDRequest"><span class="badge">M</span>GetMOTDRequest</a>
+                </li>
+              
+                <li>
+                  <a href="#services.jobs.GetMOTDResponse"><span class="badge">M</span>GetMOTDResponse</a>
+                </li>
+              
+                <li>
+                  <a href="#services.jobs.ListColleaguesRequest"><span class="badge">M</span>ListColleaguesRequest</a>
+                </li>
+              
+                <li>
+                  <a href="#services.jobs.ListColleaguesResponse"><span class="badge">M</span>ListColleaguesResponse</a>
+                </li>
+              
+                <li>
+                  <a href="#services.jobs.SetJobsUserPropsRequest"><span class="badge">M</span>SetJobsUserPropsRequest</a>
+                </li>
+              
+                <li>
+                  <a href="#services.jobs.SetJobsUserPropsResponse"><span class="badge">M</span>SetJobsUserPropsResponse</a>
+                </li>
+              
+                <li>
+                  <a href="#services.jobs.SetMOTDRequest"><span class="badge">M</span>SetMOTDRequest</a>
+                </li>
+              
+                <li>
+                  <a href="#services.jobs.SetMOTDResponse"><span class="badge">M</span>SetMOTDResponse</a>
+                </li>
+              
+              
+              
+              
+                <li>
+                  <a href="#services.jobs.JobsService"><span class="badge">S</span>JobsService</a>
                 </li>
               
             </ul>
@@ -8324,6 +8351,309 @@
             
           </tbody>
         </table>
+      
+
+      
+
+      
+    
+      
+      <div class="file-heading">
+        <h2 id="resources/jobs/colleagues.proto">resources/jobs/colleagues.proto</h2><a href="#title">Top</a>
+      </div>
+      <p></p>
+
+      
+        <h3 id="resources.jobs.Colleague">Colleague</h3>
+        <p></p>
+
+        
+          <table class="field-table">
+            <thead>
+              <tr><td>Field</td><td>Type</td><td>Label</td><td>Description</td></tr>
+            </thead>
+            <tbody>
+              
+                <tr>
+                  <td>user_id</td>
+                  <td><a href="#int32">int32</a></td>
+                  <td></td>
+                  <td><p>@gotags: alias:&#34;id&#34; </p></td>
+                </tr>
+              
+                <tr>
+                  <td>identifier</td>
+                  <td><a href="#string">string</a></td>
+                  <td></td>
+                  <td><p> </p></td>
+                </tr>
+              
+                <tr>
+                  <td>job</td>
+                  <td><a href="#string">string</a></td>
+                  <td></td>
+                  <td><p> </p></td>
+                </tr>
+              
+                <tr>
+                  <td>job_label</td>
+                  <td><a href="#string">string</a></td>
+                  <td>optional</td>
+                  <td><p> </p></td>
+                </tr>
+              
+                <tr>
+                  <td>job_grade</td>
+                  <td><a href="#int32">int32</a></td>
+                  <td></td>
+                  <td><p> </p></td>
+                </tr>
+              
+                <tr>
+                  <td>job_grade_label</td>
+                  <td><a href="#string">string</a></td>
+                  <td>optional</td>
+                  <td><p> </p></td>
+                </tr>
+              
+                <tr>
+                  <td>firstname</td>
+                  <td><a href="#string">string</a></td>
+                  <td></td>
+                  <td><p> </p></td>
+                </tr>
+              
+                <tr>
+                  <td>lastname</td>
+                  <td><a href="#string">string</a></td>
+                  <td></td>
+                  <td><p> </p></td>
+                </tr>
+              
+                <tr>
+                  <td>dateofbirth</td>
+                  <td><a href="#string">string</a></td>
+                  <td></td>
+                  <td><p> </p></td>
+                </tr>
+              
+                <tr>
+                  <td>phone_number</td>
+                  <td><a href="#string">string</a></td>
+                  <td>optional</td>
+                  <td><p> </p></td>
+                </tr>
+              
+                <tr>
+                  <td>avatar</td>
+                  <td><a href="#resources.filestore.File">resources.filestore.File</a></td>
+                  <td>optional</td>
+                  <td><p> </p></td>
+                </tr>
+              
+                <tr>
+                  <td>props</td>
+                  <td><a href="#resources.jobs.JobsUserProps">JobsUserProps</a></td>
+                  <td></td>
+                  <td><p>@gotags: alias:&#34;fivenet_jobs_user_props&#34; </p></td>
+                </tr>
+              
+            </tbody>
+          </table>
+
+          
+            
+            
+            <h4>Validated Fields</h4>
+            <table>
+              <thead>
+                <tr>
+                  <td>Field</td>
+                  <td>Validations</td>
+                </tr>
+              </thead>
+              <tbody>
+              
+                <tr>
+                  <td>user_id</td>
+                  <td>
+                    <ul>
+                    
+                      <li>int32.gt: 0</li>
+                    
+                    </ul>
+                  </td>
+                </tr>
+              
+                <tr>
+                  <td>identifier</td>
+                  <td>
+                    <ul>
+                    
+                      <li>string.len: 46</li>
+                    
+                    </ul>
+                  </td>
+                </tr>
+              
+                <tr>
+                  <td>job</td>
+                  <td>
+                    <ul>
+                    
+                      <li>string.max_len: 20</li>
+                    
+                    </ul>
+                  </td>
+                </tr>
+              
+                <tr>
+                  <td>job_label</td>
+                  <td>
+                    <ul>
+                    
+                      <li>string.max_len: 50</li>
+                    
+                    </ul>
+                  </td>
+                </tr>
+              
+                <tr>
+                  <td>job_grade</td>
+                  <td>
+                    <ul>
+                    
+                      <li>int32.gt: -1</li>
+                    
+                    </ul>
+                  </td>
+                </tr>
+              
+                <tr>
+                  <td>job_grade_label</td>
+                  <td>
+                    <ul>
+                    
+                      <li>string.max_len: 50</li>
+                    
+                    </ul>
+                  </td>
+                </tr>
+              
+                <tr>
+                  <td>firstname</td>
+                  <td>
+                    <ul>
+                    
+                      <li>string.min_len: 1</li>
+                    
+                      <li>string.max_len: 50</li>
+                    
+                    </ul>
+                  </td>
+                </tr>
+              
+                <tr>
+                  <td>lastname</td>
+                  <td>
+                    <ul>
+                    
+                      <li>string.min_len: 1</li>
+                    
+                      <li>string.max_len: 50</li>
+                    
+                    </ul>
+                  </td>
+                </tr>
+              
+                <tr>
+                  <td>dateofbirth</td>
+                  <td>
+                    <ul>
+                    
+                      <li>string.len: 10</li>
+                    
+                    </ul>
+                  </td>
+                </tr>
+              
+                <tr>
+                  <td>phone_number</td>
+                  <td>
+                    <ul>
+                    
+                      <li>string.max_len: 20</li>
+                    
+                    </ul>
+                  </td>
+                </tr>
+              
+              </tbody>
+            </table>
+            
+          
+
+        
+      
+        <h3 id="resources.jobs.JobsUserProps">JobsUserProps</h3>
+        <p></p>
+
+        
+          <table class="field-table">
+            <thead>
+              <tr><td>Field</td><td>Type</td><td>Label</td><td>Description</td></tr>
+            </thead>
+            <tbody>
+              
+                <tr>
+                  <td>user_id</td>
+                  <td><a href="#int32">int32</a></td>
+                  <td></td>
+                  <td><p> </p></td>
+                </tr>
+              
+                <tr>
+                  <td>absence_date</td>
+                  <td><a href="#resources.timestamp.Timestamp">resources.timestamp.Timestamp</a></td>
+                  <td>optional</td>
+                  <td><p> </p></td>
+                </tr>
+              
+            </tbody>
+          </table>
+
+          
+            
+            
+            <h4>Validated Fields</h4>
+            <table>
+              <thead>
+                <tr>
+                  <td>Field</td>
+                  <td>Validations</td>
+                </tr>
+              </thead>
+              <tbody>
+              
+                <tr>
+                  <td>user_id</td>
+                  <td>
+                    <ul>
+                    
+                      <li>int32.gt: 0</li>
+                    
+                    </ul>
+                  </td>
+                </tr>
+              
+              </tbody>
+            </table>
+            
+          
+
+        
+      
+
       
 
       
@@ -18705,297 +19035,6 @@
     
       
       <div class="file-heading">
-        <h2 id="services/jobs/jobs.proto">services/jobs/jobs.proto</h2><a href="#title">Top</a>
-      </div>
-      <p></p>
-
-      
-        <h3 id="services.jobs.GetColleagueRequest">GetColleagueRequest</h3>
-        <p></p>
-
-        
-          <table class="field-table">
-            <thead>
-              <tr><td>Field</td><td>Type</td><td>Label</td><td>Description</td></tr>
-            </thead>
-            <tbody>
-              
-                <tr>
-                  <td>user_id</td>
-                  <td><a href="#int32">int32</a></td>
-                  <td></td>
-                  <td><p> </p></td>
-                </tr>
-              
-            </tbody>
-          </table>
-
-          
-
-        
-      
-        <h3 id="services.jobs.GetColleagueResponse">GetColleagueResponse</h3>
-        <p></p>
-
-        
-
-        
-      
-        <h3 id="services.jobs.GetMOTDRequest">GetMOTDRequest</h3>
-        <p></p>
-
-        
-
-        
-      
-        <h3 id="services.jobs.GetMOTDResponse">GetMOTDResponse</h3>
-        <p></p>
-
-        
-          <table class="field-table">
-            <thead>
-              <tr><td>Field</td><td>Type</td><td>Label</td><td>Description</td></tr>
-            </thead>
-            <tbody>
-              
-                <tr>
-                  <td>motd</td>
-                  <td><a href="#string">string</a></td>
-                  <td></td>
-                  <td><p> </p></td>
-                </tr>
-              
-            </tbody>
-          </table>
-
-          
-
-        
-      
-        <h3 id="services.jobs.ListColleaguesRequest">ListColleaguesRequest</h3>
-        <p></p>
-
-        
-          <table class="field-table">
-            <thead>
-              <tr><td>Field</td><td>Type</td><td>Label</td><td>Description</td></tr>
-            </thead>
-            <tbody>
-              
-                <tr>
-                  <td>pagination</td>
-                  <td><a href="#resources.common.database.PaginationRequest">resources.common.database.PaginationRequest</a></td>
-                  <td></td>
-                  <td><p> </p></td>
-                </tr>
-              
-                <tr>
-                  <td>search_name</td>
-                  <td><a href="#string">string</a></td>
-                  <td></td>
-                  <td><p>Search params </p></td>
-                </tr>
-              
-            </tbody>
-          </table>
-
-          
-            
-            
-            <h4>Validated Fields</h4>
-            <table>
-              <thead>
-                <tr>
-                  <td>Field</td>
-                  <td>Validations</td>
-                </tr>
-              </thead>
-              <tbody>
-              
-                <tr>
-                  <td>pagination</td>
-                  <td>
-                    <ul>
-                    
-                      <li>message.required: true</li>
-                    
-                    </ul>
-                  </td>
-                </tr>
-              
-                <tr>
-                  <td>search_name</td>
-                  <td>
-                    <ul>
-                    
-                      <li>string.max_len: 50</li>
-                    
-                    </ul>
-                  </td>
-                </tr>
-              
-              </tbody>
-            </table>
-            
-          
-
-        
-      
-        <h3 id="services.jobs.ListColleaguesResponse">ListColleaguesResponse</h3>
-        <p></p>
-
-        
-          <table class="field-table">
-            <thead>
-              <tr><td>Field</td><td>Type</td><td>Label</td><td>Description</td></tr>
-            </thead>
-            <tbody>
-              
-                <tr>
-                  <td>pagination</td>
-                  <td><a href="#resources.common.database.PaginationResponse">resources.common.database.PaginationResponse</a></td>
-                  <td></td>
-                  <td><p> </p></td>
-                </tr>
-              
-                <tr>
-                  <td>users</td>
-                  <td><a href="#resources.users.User">resources.users.User</a></td>
-                  <td>repeated</td>
-                  <td><p> </p></td>
-                </tr>
-              
-            </tbody>
-          </table>
-
-          
-
-        
-      
-        <h3 id="services.jobs.SetMOTDRequest">SetMOTDRequest</h3>
-        <p></p>
-
-        
-          <table class="field-table">
-            <thead>
-              <tr><td>Field</td><td>Type</td><td>Label</td><td>Description</td></tr>
-            </thead>
-            <tbody>
-              
-                <tr>
-                  <td>motd</td>
-                  <td><a href="#string">string</a></td>
-                  <td></td>
-                  <td><p>@sanitize: method=StripTags </p></td>
-                </tr>
-              
-            </tbody>
-          </table>
-
-          
-            
-            
-            <h4>Validated Fields</h4>
-            <table>
-              <thead>
-                <tr>
-                  <td>Field</td>
-                  <td>Validations</td>
-                </tr>
-              </thead>
-              <tbody>
-              
-                <tr>
-                  <td>motd</td>
-                  <td>
-                    <ul>
-                    
-                      <li>string.max_len: 1024</li>
-                    
-                    </ul>
-                  </td>
-                </tr>
-              
-              </tbody>
-            </table>
-            
-          
-
-        
-      
-        <h3 id="services.jobs.SetMOTDResponse">SetMOTDResponse</h3>
-        <p></p>
-
-        
-          <table class="field-table">
-            <thead>
-              <tr><td>Field</td><td>Type</td><td>Label</td><td>Description</td></tr>
-            </thead>
-            <tbody>
-              
-                <tr>
-                  <td>motd</td>
-                  <td><a href="#string">string</a></td>
-                  <td></td>
-                  <td><p> </p></td>
-                </tr>
-              
-            </tbody>
-          </table>
-
-          
-
-        
-      
-
-      
-
-      
-
-      
-        <h3 id="services.jobs.JobsService">JobsService</h3>
-        <p></p>
-        <table class="enum-table">
-          <thead>
-            <tr><td>Method Name</td><td>Request Type</td><td>Response Type</td><td>Description</td></tr>
-          </thead>
-          <tbody>
-            
-              <tr>
-                <td>ListColleagues</td>
-                <td><a href="#services.jobs.ListColleaguesRequest">ListColleaguesRequest</a></td>
-                <td><a href="#services.jobs.ListColleaguesResponse">ListColleaguesResponse</a></td>
-                <td><p>@perm</p></td>
-              </tr>
-            
-              <tr>
-                <td>GetColleague</td>
-                <td><a href="#services.jobs.GetColleagueRequest">GetColleagueRequest</a></td>
-                <td><a href="#services.jobs.GetColleagueResponse">GetColleagueResponse</a></td>
-                <td><p>@perm: Name=SuperUser</p></td>
-              </tr>
-            
-              <tr>
-                <td>GetMOTD</td>
-                <td><a href="#services.jobs.GetMOTDRequest">GetMOTDRequest</a></td>
-                <td><a href="#services.jobs.GetMOTDResponse">GetMOTDResponse</a></td>
-                <td><p>@perm: Name=Any</p></td>
-              </tr>
-            
-              <tr>
-                <td>SetMOTD</td>
-                <td><a href="#services.jobs.SetMOTDRequest">SetMOTDRequest</a></td>
-                <td><a href="#services.jobs.SetMOTDResponse">SetMOTDResponse</a></td>
-                <td><p>@perm</p></td>
-              </tr>
-            
-          </tbody>
-        </table>
-
-        
-    
-      
-      <div class="file-heading">
         <h2 id="services/jobs/requests.proto">services/jobs/requests.proto</h2><a href="#title">Top</a>
       </div>
       <p></p>
@@ -19995,6 +20034,405 @@
                 <td><a href="#services.jobs.GetTimeclockStatsRequest">GetTimeclockStatsRequest</a></td>
                 <td><a href="#services.jobs.GetTimeclockStatsResponse">GetTimeclockStatsResponse</a></td>
                 <td><p>@perm: Name=ListTimeclock</p></td>
+              </tr>
+            
+          </tbody>
+        </table>
+
+        
+    
+      
+      <div class="file-heading">
+        <h2 id="services/jobs/jobs.proto">services/jobs/jobs.proto</h2><a href="#title">Top</a>
+      </div>
+      <p></p>
+
+      
+        <h3 id="services.jobs.GetColleagueRequest">GetColleagueRequest</h3>
+        <p></p>
+
+        
+          <table class="field-table">
+            <thead>
+              <tr><td>Field</td><td>Type</td><td>Label</td><td>Description</td></tr>
+            </thead>
+            <tbody>
+              
+                <tr>
+                  <td>user_id</td>
+                  <td><a href="#int32">int32</a></td>
+                  <td></td>
+                  <td><p> </p></td>
+                </tr>
+              
+            </tbody>
+          </table>
+
+          
+
+        
+      
+        <h3 id="services.jobs.GetColleagueResponse">GetColleagueResponse</h3>
+        <p></p>
+
+        
+          <table class="field-table">
+            <thead>
+              <tr><td>Field</td><td>Type</td><td>Label</td><td>Description</td></tr>
+            </thead>
+            <tbody>
+              
+                <tr>
+                  <td>colleague</td>
+                  <td><a href="#resources.jobs.Colleague">resources.jobs.Colleague</a></td>
+                  <td></td>
+                  <td><p> </p></td>
+                </tr>
+              
+            </tbody>
+          </table>
+
+          
+
+        
+      
+        <h3 id="services.jobs.GetMOTDRequest">GetMOTDRequest</h3>
+        <p></p>
+
+        
+
+        
+      
+        <h3 id="services.jobs.GetMOTDResponse">GetMOTDResponse</h3>
+        <p></p>
+
+        
+          <table class="field-table">
+            <thead>
+              <tr><td>Field</td><td>Type</td><td>Label</td><td>Description</td></tr>
+            </thead>
+            <tbody>
+              
+                <tr>
+                  <td>motd</td>
+                  <td><a href="#string">string</a></td>
+                  <td></td>
+                  <td><p> </p></td>
+                </tr>
+              
+            </tbody>
+          </table>
+
+          
+
+        
+      
+        <h3 id="services.jobs.ListColleaguesRequest">ListColleaguesRequest</h3>
+        <p></p>
+
+        
+          <table class="field-table">
+            <thead>
+              <tr><td>Field</td><td>Type</td><td>Label</td><td>Description</td></tr>
+            </thead>
+            <tbody>
+              
+                <tr>
+                  <td>pagination</td>
+                  <td><a href="#resources.common.database.PaginationRequest">resources.common.database.PaginationRequest</a></td>
+                  <td></td>
+                  <td><p> </p></td>
+                </tr>
+              
+                <tr>
+                  <td>search_name</td>
+                  <td><a href="#string">string</a></td>
+                  <td></td>
+                  <td><p>Search params </p></td>
+                </tr>
+              
+            </tbody>
+          </table>
+
+          
+            
+            
+            <h4>Validated Fields</h4>
+            <table>
+              <thead>
+                <tr>
+                  <td>Field</td>
+                  <td>Validations</td>
+                </tr>
+              </thead>
+              <tbody>
+              
+                <tr>
+                  <td>pagination</td>
+                  <td>
+                    <ul>
+                    
+                      <li>message.required: true</li>
+                    
+                    </ul>
+                  </td>
+                </tr>
+              
+                <tr>
+                  <td>search_name</td>
+                  <td>
+                    <ul>
+                    
+                      <li>string.max_len: 50</li>
+                    
+                    </ul>
+                  </td>
+                </tr>
+              
+              </tbody>
+            </table>
+            
+          
+
+        
+      
+        <h3 id="services.jobs.ListColleaguesResponse">ListColleaguesResponse</h3>
+        <p></p>
+
+        
+          <table class="field-table">
+            <thead>
+              <tr><td>Field</td><td>Type</td><td>Label</td><td>Description</td></tr>
+            </thead>
+            <tbody>
+              
+                <tr>
+                  <td>pagination</td>
+                  <td><a href="#resources.common.database.PaginationResponse">resources.common.database.PaginationResponse</a></td>
+                  <td></td>
+                  <td><p> </p></td>
+                </tr>
+              
+                <tr>
+                  <td>colleagues</td>
+                  <td><a href="#resources.jobs.Colleague">resources.jobs.Colleague</a></td>
+                  <td>repeated</td>
+                  <td><p> </p></td>
+                </tr>
+              
+            </tbody>
+          </table>
+
+          
+
+        
+      
+        <h3 id="services.jobs.SetJobsUserPropsRequest">SetJobsUserPropsRequest</h3>
+        <p></p>
+
+        
+          <table class="field-table">
+            <thead>
+              <tr><td>Field</td><td>Type</td><td>Label</td><td>Description</td></tr>
+            </thead>
+            <tbody>
+              
+                <tr>
+                  <td>props</td>
+                  <td><a href="#resources.jobs.JobsUserProps">resources.jobs.JobsUserProps</a></td>
+                  <td></td>
+                  <td><p> </p></td>
+                </tr>
+              
+                <tr>
+                  <td>reason</td>
+                  <td><a href="#string">string</a></td>
+                  <td></td>
+                  <td><p>@sanitize </p></td>
+                </tr>
+              
+            </tbody>
+          </table>
+
+          
+            
+            
+            <h4>Validated Fields</h4>
+            <table>
+              <thead>
+                <tr>
+                  <td>Field</td>
+                  <td>Validations</td>
+                </tr>
+              </thead>
+              <tbody>
+              
+                <tr>
+                  <td>reason</td>
+                  <td>
+                    <ul>
+                    
+                      <li>string.min_len: 3</li>
+                    
+                      <li>string.max_len: 255</li>
+                    
+                    </ul>
+                  </td>
+                </tr>
+              
+              </tbody>
+            </table>
+            
+          
+
+        
+      
+        <h3 id="services.jobs.SetJobsUserPropsResponse">SetJobsUserPropsResponse</h3>
+        <p></p>
+
+        
+          <table class="field-table">
+            <thead>
+              <tr><td>Field</td><td>Type</td><td>Label</td><td>Description</td></tr>
+            </thead>
+            <tbody>
+              
+                <tr>
+                  <td>props</td>
+                  <td><a href="#resources.jobs.JobsUserProps">resources.jobs.JobsUserProps</a></td>
+                  <td></td>
+                  <td><p> </p></td>
+                </tr>
+              
+            </tbody>
+          </table>
+
+          
+
+        
+      
+        <h3 id="services.jobs.SetMOTDRequest">SetMOTDRequest</h3>
+        <p></p>
+
+        
+          <table class="field-table">
+            <thead>
+              <tr><td>Field</td><td>Type</td><td>Label</td><td>Description</td></tr>
+            </thead>
+            <tbody>
+              
+                <tr>
+                  <td>motd</td>
+                  <td><a href="#string">string</a></td>
+                  <td></td>
+                  <td><p>@sanitize: method=StripTags </p></td>
+                </tr>
+              
+            </tbody>
+          </table>
+
+          
+            
+            
+            <h4>Validated Fields</h4>
+            <table>
+              <thead>
+                <tr>
+                  <td>Field</td>
+                  <td>Validations</td>
+                </tr>
+              </thead>
+              <tbody>
+              
+                <tr>
+                  <td>motd</td>
+                  <td>
+                    <ul>
+                    
+                      <li>string.max_len: 1024</li>
+                    
+                    </ul>
+                  </td>
+                </tr>
+              
+              </tbody>
+            </table>
+            
+          
+
+        
+      
+        <h3 id="services.jobs.SetMOTDResponse">SetMOTDResponse</h3>
+        <p></p>
+
+        
+          <table class="field-table">
+            <thead>
+              <tr><td>Field</td><td>Type</td><td>Label</td><td>Description</td></tr>
+            </thead>
+            <tbody>
+              
+                <tr>
+                  <td>motd</td>
+                  <td><a href="#string">string</a></td>
+                  <td></td>
+                  <td><p> </p></td>
+                </tr>
+              
+            </tbody>
+          </table>
+
+          
+
+        
+      
+
+      
+
+      
+
+      
+        <h3 id="services.jobs.JobsService">JobsService</h3>
+        <p></p>
+        <table class="enum-table">
+          <thead>
+            <tr><td>Method Name</td><td>Request Type</td><td>Response Type</td><td>Description</td></tr>
+          </thead>
+          <tbody>
+            
+              <tr>
+                <td>ListColleagues</td>
+                <td><a href="#services.jobs.ListColleaguesRequest">ListColleaguesRequest</a></td>
+                <td><a href="#services.jobs.ListColleaguesResponse">ListColleaguesResponse</a></td>
+                <td><p>@perm</p></td>
+              </tr>
+            
+              <tr>
+                <td>GetColleague</td>
+                <td><a href="#services.jobs.GetColleagueRequest">GetColleagueRequest</a></td>
+                <td><a href="#services.jobs.GetColleagueResponse">GetColleagueResponse</a></td>
+                <td><p>@perm: Name=SuperUser</p></td>
+              </tr>
+            
+              <tr>
+                <td>SetJobsUserProps</td>
+                <td><a href="#services.jobs.SetJobsUserPropsRequest">SetJobsUserPropsRequest</a></td>
+                <td><a href="#services.jobs.SetJobsUserPropsResponse">SetJobsUserPropsResponse</a></td>
+                <td><p>@perm</p></td>
+              </tr>
+            
+              <tr>
+                <td>GetMOTD</td>
+                <td><a href="#services.jobs.GetMOTDRequest">GetMOTDRequest</a></td>
+                <td><a href="#services.jobs.GetMOTDResponse">GetMOTDResponse</a></td>
+                <td><p>@perm: Name=Any</p></td>
+              </tr>
+            
+              <tr>
+                <td>SetMOTD</td>
+                <td><a href="#services.jobs.SetMOTDRequest">SetMOTDRequest</a></td>
+                <td><a href="#services.jobs.SetMOTDResponse">SetMOTDResponse</a></td>
+                <td><p>@perm</p></td>
               </tr>
             
           </tbody>

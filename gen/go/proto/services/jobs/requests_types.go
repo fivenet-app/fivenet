@@ -59,7 +59,7 @@ func (s *Server) CreateOrUpdateRequestType(ctx context.Context, req *CreateOrUpd
 		UserJob: userInfo.Job,
 		State:   int16(rector.EventType_EVENT_TYPE_ERRORED),
 	}
-	defer s.auditer.Log(auditEntry, req)
+	defer s.aud.Log(auditEntry, req)
 
 	// Begin transaction
 	tx, err := s.db.BeginTx(ctx, nil)
@@ -149,7 +149,7 @@ func (s *Server) DeleteRequestType(ctx context.Context, req *DeleteRequestTypeRe
 		UserJob: userInfo.Job,
 		State:   int16(rector.EventType_EVENT_TYPE_ERRORED),
 	}
-	defer s.auditer.Log(auditEntry, req)
+	defer s.aud.Log(auditEntry, req)
 
 	stmt := tReqTypes.
 		DELETE().

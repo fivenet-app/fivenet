@@ -29,7 +29,7 @@ func (s *Server) ListConductEntries(ctx context.Context, req *ListConductEntries
 	condition := tConduct.Job.EQ(jet.String(userInfo.Job))
 
 	// Field Permission Check
-	fieldsAttr, err := s.p.Attr(userInfo, permsjobs.JobsConductServicePerm, permsjobs.JobsConductServiceListConductEntriesPerm, permsjobs.JobsConductServiceListConductEntriesAccessPermField)
+	fieldsAttr, err := s.ps.Attr(userInfo, permsjobs.JobsConductServicePerm, permsjobs.JobsConductServiceListConductEntriesPerm, permsjobs.JobsConductServiceListConductEntriesAccessPermField)
 	if err != nil {
 		return nil, errswrap.NewError(errorsjobs.ErrFailedQuery, err)
 	}
@@ -166,7 +166,7 @@ func (s *Server) CreateConductEntry(ctx context.Context, req *CreateConductEntry
 		UserJob: userInfo.Job,
 		State:   int16(rector.EventType_EVENT_TYPE_ERRORED),
 	}
-	defer s.auditer.Log(auditEntry, req)
+	defer s.aud.Log(auditEntry, req)
 
 	expiresAt := jet.NULL
 	if req.Entry.ExpiresAt != nil {
@@ -224,7 +224,7 @@ func (s *Server) UpdateConductEntry(ctx context.Context, req *UpdateConductEntry
 		UserJob: userInfo.Job,
 		State:   int16(rector.EventType_EVENT_TYPE_ERRORED),
 	}
-	defer s.auditer.Log(auditEntry, req)
+	defer s.aud.Log(auditEntry, req)
 
 	entry, err := s.getConductEntry(ctx, req.Entry.Id)
 	if err != nil {
@@ -279,7 +279,7 @@ func (s *Server) DeleteConductEntry(ctx context.Context, req *DeleteConductEntry
 		UserJob: userInfo.Job,
 		State:   int16(rector.EventType_EVENT_TYPE_ERRORED),
 	}
-	defer s.auditer.Log(auditEntry, req)
+	defer s.aud.Log(auditEntry, req)
 
 	stmt := tConduct.
 		DELETE().

@@ -78,7 +78,10 @@
         "jobs": {
             "title": "Job",
             "colleagues": {
-                "title": "Colleagues"
+                "title": "Colleagues",
+                "single": {
+                    "title": "Kollegen-Info"
+                }
             },
             "conduct": {
                 "title": "Conduct Register"
@@ -499,6 +502,11 @@
                     "avg": "Average on duty time",
                     "max": "Longest on duty time"
                 }
+            },
+            "self_service": {
+                "title": "Self Service",
+                "set_absence_date": "Set Absence Date",
+                "set_profile_picture": "Update Profile Picture"
             }
         },
         "bodycheckup": {
@@ -827,7 +835,8 @@
         "volume": "Volume",
         "avatar": "Profile Picture",
         "image": "Image",
-        "logo": "Logo"
+        "logo": "Logo",
+        "absence_date": "Absence Date"
     },
     "notifications": {
         "clipboard": {

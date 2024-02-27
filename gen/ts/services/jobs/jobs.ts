@@ -11,7 +11,8 @@ import { UnknownFieldHandler } from "@protobuf-ts/runtime";
 import type { PartialMessage } from "@protobuf-ts/runtime";
 import { reflectionMergePartial } from "@protobuf-ts/runtime";
 import { MessageType } from "@protobuf-ts/runtime";
-import { User } from "../../resources/users/users";
+import { JobsUserProps } from "../../resources/jobs/colleagues";
+import { Colleague } from "../../resources/jobs/colleagues";
 import { PaginationResponse } from "../../resources/common/database/database";
 import { PaginationRequest } from "../../resources/common/database/database";
 // Colleagues
@@ -40,9 +41,9 @@ export interface ListColleaguesResponse {
      */
     pagination?: PaginationResponse;
     /**
-     * @generated from protobuf field: repeated resources.users.User users = 2;
+     * @generated from protobuf field: repeated resources.jobs.Colleague colleagues = 2;
      */
-    users: User[];
+    colleagues: Colleague[];
 }
 /**
  * @generated from protobuf message services.jobs.GetColleagueRequest
@@ -57,6 +58,34 @@ export interface GetColleagueRequest {
  * @generated from protobuf message services.jobs.GetColleagueResponse
  */
 export interface GetColleagueResponse {
+    /**
+     * @generated from protobuf field: resources.jobs.Colleague colleague = 1;
+     */
+    colleague?: Colleague;
+}
+/**
+ * @generated from protobuf message services.jobs.SetJobsUserPropsRequest
+ */
+export interface SetJobsUserPropsRequest {
+    /**
+     * @generated from protobuf field: resources.jobs.JobsUserProps props = 1;
+     */
+    props?: JobsUserProps;
+    /**
+     * @sanitize
+     *
+     * @generated from protobuf field: string reason = 2;
+     */
+    reason: string;
+}
+/**
+ * @generated from protobuf message services.jobs.SetJobsUserPropsResponse
+ */
+export interface SetJobsUserPropsResponse {
+    /**
+     * @generated from protobuf field: resources.jobs.JobsUserProps props = 1;
+     */
+    props?: JobsUserProps;
 }
 // MOTD
 
@@ -153,12 +182,12 @@ class ListColleaguesResponse$Type extends MessageType<ListColleaguesResponse> {
     constructor() {
         super("services.jobs.ListColleaguesResponse", [
             { no: 1, name: "pagination", kind: "message", T: () => PaginationResponse },
-            { no: 2, name: "users", kind: "message", repeat: 1 /*RepeatType.PACKED*/, T: () => User }
+            { no: 2, name: "colleagues", kind: "message", repeat: 1 /*RepeatType.PACKED*/, T: () => Colleague }
         ]);
     }
     create(value?: PartialMessage<ListColleaguesResponse>): ListColleaguesResponse {
         const message = globalThis.Object.create((this.messagePrototype!));
-        message.users = [];
+        message.colleagues = [];
         if (value !== undefined)
             reflectionMergePartial<ListColleaguesResponse>(this, message, value);
         return message;
@@ -171,8 +200,8 @@ class ListColleaguesResponse$Type extends MessageType<ListColleaguesResponse> {
                 case /* resources.common.database.PaginationResponse pagination */ 1:
                     message.pagination = PaginationResponse.internalBinaryRead(reader, reader.uint32(), options, message.pagination);
                     break;
-                case /* repeated resources.users.User users */ 2:
-                    message.users.push(User.internalBinaryRead(reader, reader.uint32(), options));
+                case /* repeated resources.jobs.Colleague colleagues */ 2:
+                    message.colleagues.push(Colleague.internalBinaryRead(reader, reader.uint32(), options));
                     break;
                 default:
                     let u = options.readUnknownField;
@@ -189,9 +218,9 @@ class ListColleaguesResponse$Type extends MessageType<ListColleaguesResponse> {
         /* resources.common.database.PaginationResponse pagination = 1; */
         if (message.pagination)
             PaginationResponse.internalBinaryWrite(message.pagination, writer.tag(1, WireType.LengthDelimited).fork(), options).join();
-        /* repeated resources.users.User users = 2; */
-        for (let i = 0; i < message.users.length; i++)
-            User.internalBinaryWrite(message.users[i], writer.tag(2, WireType.LengthDelimited).fork(), options).join();
+        /* repeated resources.jobs.Colleague colleagues = 2; */
+        for (let i = 0; i < message.colleagues.length; i++)
+            Colleague.internalBinaryWrite(message.colleagues[i], writer.tag(2, WireType.LengthDelimited).fork(), options).join();
         let u = options.writeUnknownFields;
         if (u !== false)
             (u == true ? UnknownFieldHandler.onWrite : u)(this.typeName, message, writer);
@@ -252,7 +281,9 @@ export const GetColleagueRequest = new GetColleagueRequest$Type();
 // @generated message type with reflection information, may provide speed optimized methods
 class GetColleagueResponse$Type extends MessageType<GetColleagueResponse> {
     constructor() {
-        super("services.jobs.GetColleagueResponse", []);
+        super("services.jobs.GetColleagueResponse", [
+            { no: 1, name: "colleague", kind: "message", T: () => Colleague }
+        ]);
     }
     create(value?: PartialMessage<GetColleagueResponse>): GetColleagueResponse {
         const message = globalThis.Object.create((this.messagePrototype!));
@@ -261,9 +292,28 @@ class GetColleagueResponse$Type extends MessageType<GetColleagueResponse> {
         return message;
     }
     internalBinaryRead(reader: IBinaryReader, length: number, options: BinaryReadOptions, target?: GetColleagueResponse): GetColleagueResponse {
-        return target ?? this.create();
+        let message = target ?? this.create(), end = reader.pos + length;
+        while (reader.pos < end) {
+            let [fieldNo, wireType] = reader.tag();
+            switch (fieldNo) {
+                case /* resources.jobs.Colleague colleague */ 1:
+                    message.colleague = Colleague.internalBinaryRead(reader, reader.uint32(), options, message.colleague);
+                    break;
+                default:
+                    let u = options.readUnknownField;
+                    if (u === "throw")
+                        throw new globalThis.Error(`Unknown field ${fieldNo} (wire type ${wireType}) for ${this.typeName}`);
+                    let d = reader.skip(wireType);
+                    if (u !== false)
+                        (u === true ? UnknownFieldHandler.onRead : u)(this.typeName, message, fieldNo, wireType, d);
+            }
+        }
+        return message;
     }
     internalBinaryWrite(message: GetColleagueResponse, writer: IBinaryWriter, options: BinaryWriteOptions): IBinaryWriter {
+        /* resources.jobs.Colleague colleague = 1; */
+        if (message.colleague)
+            Colleague.internalBinaryWrite(message.colleague, writer.tag(1, WireType.LengthDelimited).fork(), options).join();
         let u = options.writeUnknownFields;
         if (u !== false)
             (u == true ? UnknownFieldHandler.onWrite : u)(this.typeName, message, writer);
@@ -274,6 +324,106 @@ class GetColleagueResponse$Type extends MessageType<GetColleagueResponse> {
  * @generated MessageType for protobuf message services.jobs.GetColleagueResponse
  */
 export const GetColleagueResponse = new GetColleagueResponse$Type();
+// @generated message type with reflection information, may provide speed optimized methods
+class SetJobsUserPropsRequest$Type extends MessageType<SetJobsUserPropsRequest> {
+    constructor() {
+        super("services.jobs.SetJobsUserPropsRequest", [
+            { no: 1, name: "props", kind: "message", T: () => JobsUserProps },
+            { no: 2, name: "reason", kind: "scalar", T: 9 /*ScalarType.STRING*/, options: { "validate.rules": { string: { minLen: "3", maxLen: "255", ignoreEmpty: true } } } }
+        ]);
+    }
+    create(value?: PartialMessage<SetJobsUserPropsRequest>): SetJobsUserPropsRequest {
+        const message = globalThis.Object.create((this.messagePrototype!));
+        message.reason = "";
+        if (value !== undefined)
+            reflectionMergePartial<SetJobsUserPropsRequest>(this, message, value);
+        return message;
+    }
+    internalBinaryRead(reader: IBinaryReader, length: number, options: BinaryReadOptions, target?: SetJobsUserPropsRequest): SetJobsUserPropsRequest {
+        let message = target ?? this.create(), end = reader.pos + length;
+        while (reader.pos < end) {
+            let [fieldNo, wireType] = reader.tag();
+            switch (fieldNo) {
+                case /* resources.jobs.JobsUserProps props */ 1:
+                    message.props = JobsUserProps.internalBinaryRead(reader, reader.uint32(), options, message.props);
+                    break;
+                case /* string reason */ 2:
+                    message.reason = reader.string();
+                    break;
+                default:
+                    let u = options.readUnknownField;
+                    if (u === "throw")
+                        throw new globalThis.Error(`Unknown field ${fieldNo} (wire type ${wireType}) for ${this.typeName}`);
+                    let d = reader.skip(wireType);
+                    if (u !== false)
+                        (u === true ? UnknownFieldHandler.onRead : u)(this.typeName, message, fieldNo, wireType, d);
+            }
+        }
+        return message;
+    }
+    internalBinaryWrite(message: SetJobsUserPropsRequest, writer: IBinaryWriter, options: BinaryWriteOptions): IBinaryWriter {
+        /* resources.jobs.JobsUserProps props = 1; */
+        if (message.props)
+            JobsUserProps.internalBinaryWrite(message.props, writer.tag(1, WireType.LengthDelimited).fork(), options).join();
+        /* string reason = 2; */
+        if (message.reason !== "")
+            writer.tag(2, WireType.LengthDelimited).string(message.reason);
+        let u = options.writeUnknownFields;
+        if (u !== false)
+            (u == true ? UnknownFieldHandler.onWrite : u)(this.typeName, message, writer);
+        return writer;
+    }
+}
+/**
+ * @generated MessageType for protobuf message services.jobs.SetJobsUserPropsRequest
+ */
+export const SetJobsUserPropsRequest = new SetJobsUserPropsRequest$Type();
+// @generated message type with reflection information, may provide speed optimized methods
+class SetJobsUserPropsResponse$Type extends MessageType<SetJobsUserPropsResponse> {
+    constructor() {
+        super("services.jobs.SetJobsUserPropsResponse", [
+            { no: 1, name: "props", kind: "message", T: () => JobsUserProps }
+        ]);
+    }
+    create(value?: PartialMessage<SetJobsUserPropsResponse>): SetJobsUserPropsResponse {
+        const message = globalThis.Object.create((this.messagePrototype!));
+        if (value !== undefined)
+            reflectionMergePartial<SetJobsUserPropsResponse>(this, message, value);
+        return message;
+    }
+    internalBinaryRead(reader: IBinaryReader, length: number, options: BinaryReadOptions, target?: SetJobsUserPropsResponse): SetJobsUserPropsResponse {
+        let message = target ?? this.create(), end = reader.pos + length;
+        while (reader.pos < end) {
+            let [fieldNo, wireType] = reader.tag();
+            switch (fieldNo) {
+                case /* resources.jobs.JobsUserProps props */ 1:
+                    message.props = JobsUserProps.internalBinaryRead(reader, reader.uint32(), options, message.props);
+                    break;
+                default:
+                    let u = options.readUnknownField;
+                    if (u === "throw")
+                        throw new globalThis.Error(`Unknown field ${fieldNo} (wire type ${wireType}) for ${this.typeName}`);
+                    let d = reader.skip(wireType);
+                    if (u !== false)
+                        (u === true ? UnknownFieldHandler.onRead : u)(this.typeName, message, fieldNo, wireType, d);
+            }
+        }
+        return message;
+    }
+    internalBinaryWrite(message: SetJobsUserPropsResponse, writer: IBinaryWriter, options: BinaryWriteOptions): IBinaryWriter {
+        /* resources.jobs.JobsUserProps props = 1; */
+        if (message.props)
+            JobsUserProps.internalBinaryWrite(message.props, writer.tag(1, WireType.LengthDelimited).fork(), options).join();
+        let u = options.writeUnknownFields;
+        if (u !== false)
+            (u == true ? UnknownFieldHandler.onWrite : u)(this.typeName, message, writer);
+        return writer;
+    }
+}
+/**
+ * @generated MessageType for protobuf message services.jobs.SetJobsUserPropsResponse
+ */
+export const SetJobsUserPropsResponse = new SetJobsUserPropsResponse$Type();
 // @generated message type with reflection information, may provide speed optimized methods
 class GetMOTDRequest$Type extends MessageType<GetMOTDRequest> {
     constructor() {
@@ -446,6 +596,7 @@ export const SetMOTDResponse = new SetMOTDResponse$Type();
 export const JobsService = new ServiceType("services.jobs.JobsService", [
     { name: "ListColleagues", options: {}, I: ListColleaguesRequest, O: ListColleaguesResponse },
     { name: "GetColleague", options: {}, I: GetColleagueRequest, O: GetColleagueResponse },
+    { name: "SetJobsUserProps", options: {}, I: SetJobsUserPropsRequest, O: SetJobsUserPropsResponse },
     { name: "GetMOTD", options: {}, I: GetMOTDRequest, O: GetMOTDResponse },
     { name: "SetMOTD", options: {}, I: SetMOTDRequest, O: SetMOTDResponse }
 ]);

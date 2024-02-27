@@ -114,6 +114,11 @@ func init() {
 		},
 		{
 			Category: permkeys.JobsServicePerm,
+			Name:     permkeys.JobsServiceSetJobsUserPropsPerm,
+			Attrs:    []perms.Attr{},
+		},
+		{
+			Category: permkeys.JobsServicePerm,
 			Name:     permkeys.JobsServiceSetMOTDPerm,
 			Attrs:    []perms.Attr{},
 		},

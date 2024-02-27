@@ -32,6 +32,7 @@ const (
 	JobsRequestsServiceListRequestsAccessPermField      perms.Key  = "Access"
 	JobsRequestsServiceUpdateRequestPerm                perms.Name = "UpdateRequest"
 	JobsServiceListColleaguesPerm                       perms.Name = "ListColleagues"
+	JobsServiceSetJobsUserPropsPerm                     perms.Name = "SetJobsUserProps"
 	JobsServiceSetMOTDPerm                              perms.Name = "SetMOTD"
 	JobsTimeclockServiceListTimeclockPerm               perms.Name = "ListTimeclock"
 	JobsTimeclockServiceListTimeclockAccessPermField    perms.Key  = "Access"

@@ -827,7 +827,8 @@
         "volume": "Lautstärke",
         "avatar": "Profilbild",
         "image": "Bild",
-        "logo": "Logo"
+        "logo": "Logo",
+        "absence_date": "Abwesenheitsdatum"
     },
     "notifications": {
         "clipboard": {

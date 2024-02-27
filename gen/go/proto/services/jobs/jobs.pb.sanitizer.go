@@ -7,6 +7,13 @@ import (
 	"github.com/galexrt/fivenet/pkg/htmlsanitizer"
 )
 
+func (m *SetJobsUserPropsRequest) Sanitize() error {
+
+	m.Reason = htmlsanitizer.Sanitize(m.Reason)
+
+	return nil
+}
+
 func (m *SetMOTDRequest) Sanitize() error {
 
 	m.Motd = htmlsanitizer.StripTags(m.Motd)

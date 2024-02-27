@@ -41,9 +41,9 @@ type Server struct {
 
 	tracer   trace.Tracer
 	db       *sql.DB
-	p        perms.Permissions
+	ps       perms.Permissions
 	enricher *mstlystcdata.UserAwareEnricher
-	auditer  audit.IAuditer
+	aud      audit.IAuditer
 }
 
 type Params struct {
@@ -67,9 +67,9 @@ func NewServer(p Params) *Server {
 		tracer: p.TP.Tracer("jobs"),
 
 		db:       p.DB,
-		p:        p.Perms,
+		ps:       p.Perms,
 		enricher: p.UserAwareEnricher,
-		auditer:  p.Audit,
+		aud:      p.Audit,
 	}
 
 	return s
@@ -113,7 +113,7 @@ func (s *Server) SetMOTD(ctx context.Context, req *SetMOTDRequest) (*SetMOTDResp
 		UserJob: userInfo.Job,
 		State:   int16(rector.EventType_EVENT_TYPE_ERRORED),
 	}
-	defer s.auditer.Log(auditEntry, req)
+	defer s.aud.Log(auditEntry, req)
 
 	stmt := tJobProps.
 		INSERT(

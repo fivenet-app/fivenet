@@ -3,7 +3,7 @@ syntax = "proto3";
 package services.jobs;
 
 import "resources/common/database/database.proto";
-import "resources/users/users.proto";
+import "resources/jobs/colleagues.proto";
 import "validate/validate.proto";
 
 option go_package = "github.com/galexrt/fivenet/gen/go/proto/services/jobs;jobs";
@@ -18,14 +18,30 @@ message ListColleaguesRequest {
 
 message ListColleaguesResponse {
   resources.common.database.PaginationResponse pagination = 1;
-  repeated resources.users.User users = 2;
+  repeated resources.jobs.Colleague colleagues = 2;
 }
 
 message GetColleagueRequest {
   int32 user_id = 1;
 }
 
-message GetColleagueResponse {}
+message GetColleagueResponse {
+  resources.jobs.Colleague colleague = 1;
+}
+
+message SetJobsUserPropsRequest {
+  resources.jobs.JobsUserProps props = 1;
+  // @sanitize
+  string reason = 2 [(validate.rules).string = {
+    ignore_empty: true,
+    min_len: 3,
+    max_len: 255
+  }];
+}
+
+message SetJobsUserPropsResponse {
+  resources.jobs.JobsUserProps props = 1;
+}
 
 // MOTD
 
@@ -50,6 +66,8 @@ service JobsService {
 
   // @perm: Name=SuperUser
   rpc GetColleague(GetColleagueRequest) returns (GetColleagueResponse);
+  // @perm
+  rpc SetJobsUserProps(SetJobsUserPropsRequest) returns (SetJobsUserPropsResponse);
 
   // @perm: Name=Any
   rpc GetMOTD(GetMOTDRequest) returns (GetMOTDResponse);

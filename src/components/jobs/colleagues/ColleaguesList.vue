@@ -72,7 +72,7 @@ watchDebounced(query.value, () => refresh(), { debounce: 600, maxWait: 1400 });
                             :retry="refresh"
                         />
                         <DataNoDataBlock
-                            v-else-if="data?.users.length === 0"
+                            v-else-if="data?.colleagues.length === 0"
                             :focus="focusSearch"
                             :message="$t('components.citizens.citizens_list.no_citizens')"
                         />
@@ -94,6 +94,9 @@ watchDebounced(query.value, () => refresh(), { debounce: 600, maxWait: 1400 });
                                             {{ $t('common.rank', 1) }}
                                         </th>
                                         <th scope="col" class="px-2 py-3.5 text-left text-sm font-semibold text-neutral">
+                                            {{ $t('common.absence_date') }}
+                                        </th>
+                                        <th scope="col" class="px-2 py-3.5 text-left text-sm font-semibold text-neutral">
                                             {{ $t('common.phone_number') }}
                                         </th>
                                         <th scope="col" class="px-2 py-3.5 text-left text-sm font-semibold text-neutral">
@@ -109,7 +112,7 @@ watchDebounced(query.value, () => refresh(), { debounce: 600, maxWait: 1400 });
                                     </tr>
                                 </thead>
                                 <tbody class="divide-y divide-base-800">
-                                    <ColleaguesListEntry v-for="user in data?.users" :key="user.userId" :user="user" />
+                                    <ColleaguesListEntry v-for="user in data?.colleagues" :key="user.userId" :user="user" />
                                 </tbody>
                                 <thead>
                                     <tr>
@@ -125,6 +128,9 @@ watchDebounced(query.value, () => refresh(), { debounce: 600, maxWait: 1400 });
                                         </th>
                                         <th scope="col" class="px-2 py-3.5 text-left text-sm font-semibold text-neutral">
                                             {{ $t('common.rank', 1) }}
+                                        </th>
+                                        <th scope="col" class="px-2 py-3.5 text-left text-sm font-semibold text-neutral">
+                                            {{ $t('common.absence_date') }}
                                         </th>
                                         <th scope="col" class="px-2 py-3.5 text-left text-sm font-semibold text-neutral">
                                             {{ $t('common.phone_number') }}

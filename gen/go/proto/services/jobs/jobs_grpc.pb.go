@@ -19,10 +19,11 @@ import (
 const _ = grpc.SupportPackageIsVersion7
 
 const (
-	JobsService_ListColleagues_FullMethodName = "/services.jobs.JobsService/ListColleagues"
-	JobsService_GetColleague_FullMethodName   = "/services.jobs.JobsService/GetColleague"
-	JobsService_GetMOTD_FullMethodName        = "/services.jobs.JobsService/GetMOTD"
-	JobsService_SetMOTD_FullMethodName        = "/services.jobs.JobsService/SetMOTD"
+	JobsService_ListColleagues_FullMethodName   = "/services.jobs.JobsService/ListColleagues"
+	JobsService_GetColleague_FullMethodName     = "/services.jobs.JobsService/GetColleague"
+	JobsService_SetJobsUserProps_FullMethodName = "/services.jobs.JobsService/SetJobsUserProps"
+	JobsService_GetMOTD_FullMethodName          = "/services.jobs.JobsService/GetMOTD"
+	JobsService_SetMOTD_FullMethodName          = "/services.jobs.JobsService/SetMOTD"
 )
 
 // JobsServiceClient is the client API for JobsService service.
@@ -33,6 +34,8 @@ type JobsServiceClient interface {
 	ListColleagues(ctx context.Context, in *ListColleaguesRequest, opts ...grpc.CallOption) (*ListColleaguesResponse, error)
 	// @perm: Name=SuperUser
 	GetColleague(ctx context.Context, in *GetColleagueRequest, opts ...grpc.CallOption) (*GetColleagueResponse, error)
+	// @perm
+	SetJobsUserProps(ctx context.Context, in *SetJobsUserPropsRequest, opts ...grpc.CallOption) (*SetJobsUserPropsResponse, error)
 	// @perm: Name=Any
 	GetMOTD(ctx context.Context, in *GetMOTDRequest, opts ...grpc.CallOption) (*GetMOTDResponse, error)
 	// @perm
@@ -65,6 +68,15 @@ func (c *jobsServiceClient) GetColleague(ctx context.Context, in *GetColleagueRe
 	return out, nil
 }
 
+func (c *jobsServiceClient) SetJobsUserProps(ctx context.Context, in *SetJobsUserPropsRequest, opts ...grpc.CallOption) (*SetJobsUserPropsResponse, error) {
+	out := new(SetJobsUserPropsResponse)
+	err := c.cc.Invoke(ctx, JobsService_SetJobsUserProps_FullMethodName, in, out, opts...)
+	if err != nil {
+		return nil, err
+	}
+	return out, nil
+}
+
 func (c *jobsServiceClient) GetMOTD(ctx context.Context, in *GetMOTDRequest, opts ...grpc.CallOption) (*GetMOTDResponse, error) {
 	out := new(GetMOTDResponse)
 	err := c.cc.Invoke(ctx, JobsService_GetMOTD_FullMethodName, in, out, opts...)
@@ -91,6 +103,8 @@ type JobsServiceServer interface {
 	ListColleagues(context.Context, *ListColleaguesRequest) (*ListColleaguesResponse, error)
 	// @perm: Name=SuperUser
 	GetColleague(context.Context, *GetColleagueRequest) (*GetColleagueResponse, error)
+	// @perm
+	SetJobsUserProps(context.Context, *SetJobsUserPropsRequest) (*SetJobsUserPropsResponse, error)
 	// @perm: Name=Any
 	GetMOTD(context.Context, *GetMOTDRequest) (*GetMOTDResponse, error)
 	// @perm
@@ -107,6 +121,9 @@ func (UnimplementedJobsServiceServer) ListColleagues(context.Context, *ListColle
 }
 func (UnimplementedJobsServiceServer) GetColleague(context.Context, *GetColleagueRequest) (*GetColleagueResponse, error) {
 	return nil, status.Errorf(codes.Unimplemented, "method GetColleague not implemented")
+}
+func (UnimplementedJobsServiceServer) SetJobsUserProps(context.Context, *SetJobsUserPropsRequest) (*SetJobsUserPropsResponse, error) {
+	return nil, status.Errorf(codes.Unimplemented, "method SetJobsUserProps not implemented")
 }
 func (UnimplementedJobsServiceServer) GetMOTD(context.Context, *GetMOTDRequest) (*GetMOTDResponse, error) {
 	return nil, status.Errorf(codes.Unimplemented, "method GetMOTD not implemented")
@@ -163,6 +180,24 @@ func _JobsService_GetColleague_Handler(srv interface{}, ctx context.Context, dec
 	return interceptor(ctx, in, info, handler)
 }
 
+func _JobsService_SetJobsUserProps_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
+	in := new(SetJobsUserPropsRequest)
+	if err := dec(in); err != nil {
+		return nil, err
+	}
+	if interceptor == nil {
+		return srv.(JobsServiceServer).SetJobsUserProps(ctx, in)
+	}
+	info := &grpc.UnaryServerInfo{
+		Server:     srv,
+		FullMethod: JobsService_SetJobsUserProps_FullMethodName,
+	}
+	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
+		return srv.(JobsServiceServer).SetJobsUserProps(ctx, req.(*SetJobsUserPropsRequest))
+	}
+	return interceptor(ctx, in, info, handler)
+}
+
 func _JobsService_GetMOTD_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
 	in := new(GetMOTDRequest)
 	if err := dec(in); err != nil {
@@ -213,6 +248,10 @@ var JobsService_ServiceDesc = grpc.ServiceDesc{
 		{
 			MethodName: "GetColleague",
 			Handler:    _JobsService_GetColleague_Handler,
+		},
+		{
+			MethodName: "SetJobsUserProps",
+			Handler:    _JobsService_SetJobsUserProps_Handler,
 		},
 		{
 			MethodName: "GetMOTD",

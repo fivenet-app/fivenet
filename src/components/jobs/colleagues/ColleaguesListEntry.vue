@@ -2,10 +2,11 @@
 import { EyeIcon } from 'mdi-vue3';
 import ProfilePictureImg from '~/components/partials/citizens/ProfilePictureImg.vue';
 import PhoneNumberBlock from '~/components/partials/citizens/PhoneNumberBlock.vue';
-import { User } from '~~/gen/ts/resources/users/users';
+import type { Colleague } from '~~/gen/ts/resources/jobs/colleagues';
+import GenericTime from '~/components/partials/elements/GenericTime.vue';
 
 defineProps<{
-    user: User;
+    user: Colleague;
 }>();
 </script>
 
@@ -23,6 +24,9 @@ defineProps<{
             {{ user.firstname }} {{ user.lastname }}
         </td>
         <td class="whitespace-nowrap px-1 py-1 text-left text-accent-200">{{ user.jobGradeLabel }} ({{ user.jobGrade }})</td>
+        <td class="whitespace-nowrap py-2 pl-4 pr-3 text-base font-medium text-neutral sm:pl-1">
+            <GenericTime v-if="user.props?.absenceDate" :value="user.props?.absenceDate" type="date" />
+        </td>
         <td class="whitespace-nowrap px-1 py-1 text-left text-accent-200">
             <PhoneNumberBlock :number="user.phoneNumber" />
         </td>

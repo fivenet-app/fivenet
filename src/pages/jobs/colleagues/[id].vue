@@ -1,11 +1,11 @@
 <script lang="ts" setup>
-import ColleaguesList from '~/components/jobs/colleagues/ColleaguesList.vue';
+import ColleagueInfo from '~/components/jobs/colleagues/ColleagueInfo.vue';
 
 useHead({
-    title: 'pages.jobs.colleagues.title',
+    title: 'pages.jobs.colleagues.single.title',
 });
 definePageMeta({
-    title: 'pages.jobs.colleagues.title',
+    title: 'pages.jobs.colleagues.single.title',
     requiresAuth: true,
     permission: 'JobsService.ListColleagues',
 });
@@ -13,6 +13,6 @@ definePageMeta({
 
 <template>
     <div>
-        <ColleaguesList />
+        <ColleagueInfo />
     </div>
 </template>

@@ -15,6 +15,7 @@
 // source: resources/documents/requests.proto
 // source: resources/documents/templates.proto
 // source: resources/filestore/file.proto
+// source: resources/jobs/colleagues.proto
 // source: resources/jobs/conduct.proto
 // source: resources/jobs/qualifications.proto
 // source: resources/jobs/requests.proto
@@ -100,6 +101,7 @@ export type Perms =
 	| 'JobsRequestsService.ListRequests'
 	| 'JobsRequestsService.UpdateRequest'
 	| 'JobsService.ListColleagues'
+	| 'JobsService.SetJobsUserProps'
 	| 'JobsService.SetMOTD'
 	| 'JobsTimeclockService.ListTimeclock'
 	| 'LivemapperService.CreateOrUpdateMarker'

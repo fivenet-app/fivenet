@@ -568,6 +568,7 @@ func (s *Server) SetUserProps(ctx context.Context, req *SetUserPropsRequest) (*S
 	}
 
 	updateSets := []jet.ColumnAssigment{}
+	// Generate the update sets
 	if req.Props.Wanted != nil {
 		if !slices.Contains(fields, "Wanted") {
 			return nil, ErrPropsWantedDenied
@@ -638,6 +639,7 @@ func (s *Server) SetUserProps(ctx context.Context, req *SetUserPropsRequest) (*S
 				return nil, errswrap.NewError(ErrFailedQuery, err)
 			}
 		} else {
+			// Delete mug shot from store
 			if props.MugShot != nil && props.MugShot.Url != nil {
 				if err := s.st.Delete(ctx, strings.TrimPrefix(*props.MugShot.Url, filestore.FilestoreURLPrefix)); err != nil {
 					return nil, errswrap.NewError(ErrFailedQuery, err)

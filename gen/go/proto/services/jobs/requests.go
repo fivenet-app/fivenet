@@ -32,7 +32,7 @@ func (s *Server) ListRequests(ctx context.Context, req *ListRequestsRequest) (*L
 	condition := tRequests.Job.EQ(jet.String(userInfo.Job))
 
 	// Field Permission Check
-	fieldsAttr, err := s.p.Attr(userInfo, permsjobs.JobsRequestsServicePerm, perms.Name(permsjobs.JobsRequestsServicePerm), permsjobs.JobsRequestsServiceListRequestsAccessPermField)
+	fieldsAttr, err := s.ps.Attr(userInfo, permsjobs.JobsRequestsServicePerm, perms.Name(permsjobs.JobsRequestsServicePerm), permsjobs.JobsRequestsServiceListRequestsAccessPermField)
 	if err != nil {
 		return nil, errswrap.NewError(errorsjobs.ErrFailedQuery, err)
 	}
@@ -163,7 +163,7 @@ func (s *Server) CreateRequest(ctx context.Context, req *CreateRequestRequest) (
 		UserJob: userInfo.Job,
 		State:   int16(rector.EventType_EVENT_TYPE_ERRORED),
 	}
-	defer s.auditer.Log(auditEntry, req)
+	defer s.aud.Log(auditEntry, req)
 
 	tRequests := table.FivenetJobsRequests
 	stmt := tRequests.
@@ -214,7 +214,7 @@ func (s *Server) UpdateRequest(ctx context.Context, req *UpdateRequestRequest) (
 		UserJob: userInfo.Job,
 		State:   int16(rector.EventType_EVENT_TYPE_ERRORED),
 	}
-	defer s.auditer.Log(auditEntry, req)
+	defer s.aud.Log(auditEntry, req)
 
 	entry, err := s.getRequest(ctx, userInfo.Job, req.Entry.Id)
 	if err != nil {
@@ -257,7 +257,7 @@ func (s *Server) DeleteRequest(ctx context.Context, req *DeleteRequestRequest) (
 		UserJob: userInfo.Job,
 		State:   int16(rector.EventType_EVENT_TYPE_ERRORED),
 	}
-	defer s.auditer.Log(auditEntry, req)
+	defer s.aud.Log(auditEntry, req)
 
 	stmt := tRequests.
 		DELETE().
@@ -358,7 +358,7 @@ func (s *Server) PostRequestComment(ctx context.Context, req *PostRequestComment
 		UserJob: userInfo.Job,
 		State:   int16(rector.EventType_EVENT_TYPE_ERRORED),
 	}
-	defer s.auditer.Log(auditEntry, req)
+	defer s.aud.Log(auditEntry, req)
 
 	tReqComments := table.FivenetJobsRequestsComments
 	_ = tReqComments
@@ -378,7 +378,7 @@ func (s *Server) DeleteRequestComment(ctx context.Context, req *DeleteRequestCom
 		UserJob: userInfo.Job,
 		State:   int16(rector.EventType_EVENT_TYPE_ERRORED),
 	}
-	defer s.auditer.Log(auditEntry, req)
+	defer s.aud.Log(auditEntry, req)
 
 	stmt := tReqComments.
 		DELETE().

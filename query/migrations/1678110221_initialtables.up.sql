@@ -250,6 +250,7 @@ CREATE TABLE IF NOT EXISTS `fivenet_user_props` (
   `open_fines` bigint(20) DEFAULT 0,
   `blood_type` varchar(3) DEFAULT NULL,
   `avatar` varchar(128) DEFAULT NULL,
+  `mug_shot` varchar(128) DEFAULT NULL,
   UNIQUE KEY `idx_fivenet_user_props_unique` (`user_id`),
   KEY `idx_fivenet_user_props_wanted` (`wanted`),
   CONSTRAINT `fk_fivenet_user_props_user_id` FOREIGN KEY (`user_id`) REFERENCES `users` (`id`) ON DELETE CASCADE ON UPDATE CASCADE
