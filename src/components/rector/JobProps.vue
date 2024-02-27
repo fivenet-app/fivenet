@@ -11,7 +11,7 @@ import DataPendingBlock from '~/components/partials/data/DataPendingBlock.vue';
 import GenericTime from '~/components/partials/elements/GenericTime.vue';
 import { useAuthStore } from '~/store/auth';
 import { useNotificatorStore } from '~/store/notificator';
-import { availableThemes } from '~/store/settings';
+import { availableThemes, useSettingsStore } from '~/store/settings';
 import { JobProps, UserInfoSyncUnemployedMode } from '~~/gen/ts/resources/users/jobs';
 import GenericContainerPanel from '~/components/partials/GenericContainerPanel.vue';
 import GenericContainerPanelEntry from '~/components/partials/GenericContainerPanelEntry.vue';
@@ -19,6 +19,9 @@ import SquareImg from '~/components/partials/SquareImg.vue';
 import { File } from '~~/gen/ts/resources/filestore/file';
 
 const { $grpc } = useNuxtApp();
+
+const settingsStore = useSettingsStore();
+const { streamerMode } = storeToRefs(settingsStore);
 
 const appConfig = useAppConfig();
 
@@ -91,8 +94,18 @@ async function loadImage(): Promise<void> {
 </script>
 
 <template>
-    <div class="p-2">
-        <div class="mx-auto max-w-5xl">
+    <div class="mx-auto max-w-5xl py-2">
+        <template v-if="streamerMode">
+            <GenericContainerPanel>
+                <template #title>
+                    {{ $t('system.streamer_mode.title') }}
+                </template>
+                <template #description>
+                    {{ $t('system.streamer_mode.description') }}
+                </template>
+            </GenericContainerPanel>
+        </template>
+        <template v-else>
             <DataPendingBlock v-if="pending" :message="$t('common.loading', [`${$t('common.job', 1)} ${$t('common.prop')}`])" />
             <DataErrorBlock
                 v-else-if="error"
@@ -672,6 +685,6 @@ async function loadImage(): Promise<void> {
                     </template>
                 </GenericContainerPanel>
             </template>
-        </div>
+        </template>
     </div>
 </template>

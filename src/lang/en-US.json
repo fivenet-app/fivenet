@@ -1750,6 +1750,10 @@
         "update_available": {
             "title": "New FiveNet version available ({version})!",
             "content": "To continue using FiveNet, you need to reload the page if you currently can."
+        },
+        "streamer_mode": {
+            "title": "Streamer mode enabled!",
+            "description": "To view this, you must disable streamer mode in your user settings."
         }
     },
     "enums": {

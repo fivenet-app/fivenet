@@ -1,5 +1,7 @@
 <script lang="ts" setup>
 import { KeyIcon } from 'mdi-vue3';
+import GenericContainerPanel from '~/components/partials/GenericContainerPanel.vue';
+import GenericContainerPanelEntry from '~/components/partials/GenericContainerPanelEntry.vue';
 import GenericTime from '~/components/partials/elements/GenericTime.vue';
 import { useAuthStore } from '~/store/auth';
 import { useClipboardStore } from '~/store/clipboard';
@@ -8,9 +10,9 @@ import { useSettingsStore } from '~/store/settings';
 
 const clipboardStore = useClipboardStore();
 
-const settings = useSettingsStore();
-
 const config = useConfigStore();
+
+const settings = useSettingsStore();
 
 const authStore = useAuthStore();
 const { activeChar, permissions, getAccessTokenExpiration } = storeToRefs(authStore);
@@ -26,65 +28,61 @@ async function resetLocalStorage(): Promise<void> {
 </script>
 
 <template>
-    <div class="mt-3 overflow-hidden bg-base-800 text-neutral shadow sm:rounded-lg">
-        <div class="px-4 py-5 sm:px-6">
-            <h3 class="text-base font-semibold leading-6">
+    <div class="mx-auto max-w-5xl py-2">
+        <GenericContainerPanel>
+            <template #title>
                 {{ $t('components.debug_info.title') }}
-            </h3>
-            <p class="mt-1 max-w-2xl text-sm">
+            </template>
+            <template #description>
                 {{ $t('components.debug_info.subtitle') }}
-            </p>
-        </div>
-        <div class="border-t border-base-400 px-4 py-5 sm:p-0">
-            <dl class="sm:divide-y sm:divide-base-400">
-                <div class="py-4 sm:grid sm:grid-cols-3 sm:gap-4 sm:px-5 sm:py-4">
-                    <dt class="text-sm font-medium">
+            </template>
+            <template #default>
+                <GenericContainerPanelEntry>
+                    <template #title>
                         {{ $t('components.debug_info.version') }}
-                    </dt>
-                    <dd class="mt-1 text-sm sm:col-span-2 sm:mt-0">
+                    </template>
+                    <template #default>
                         {{ settings.version }}
-                    </dd>
-                </div>
-                <div v-if="activeChar" class="py-4 sm:grid sm:grid-cols-3 sm:gap-4 sm:px-5 sm:py-4">
-                    <dt class="text-sm font-medium">
+                    </template>
+                </GenericContainerPanelEntry>
+                <GenericContainerPanelEntry v-if="activeChar">
+                    <template #title>
                         {{ $t('components.debug_info.active_char_id') }}
-                    </dt>
-                    <dd class="mt-1 text-sm sm:col-span-2 sm:mt-0">
+                    </template>
+                    <template #default>
                         {{ activeChar.userId }}
-                    </dd>
-                </div>
-                <div v-if="activeChar" class="py-4 sm:grid sm:grid-cols-3 sm:gap-4 sm:px-5 sm:py-4">
-                    <dt class="text-sm font-medium">
+                    </template>
+                </GenericContainerPanelEntry>
+                <GenericContainerPanelEntry v-if="activeChar">
+                    <template #title>
                         {{ $t('common.job') }}
-                    </dt>
-                    <dd class="mt-1 text-sm sm:col-span-2 sm:mt-0">
-                        {{ activeChar.job }} ({{ $t('common.rank') }}: {{ activeChar.jobGrade }})
-                    </dd>
-                </div>
-                <div v-if="getAccessTokenExpiration" class="py-4 sm:grid sm:grid-cols-3 sm:gap-4 sm:px-5 sm:py-4">
-                    <dt class="text-sm font-medium">
+                    </template>
+                    <template #default> {{ activeChar.job }} ({{ $t('common.rank') }}: {{ activeChar.jobGrade }}) </template>
+                </GenericContainerPanelEntry>
+                <GenericContainerPanelEntry v-if="getAccessTokenExpiration">
+                    <template #title>
                         {{ $t('components.debug_info.access_token_expiration') }}
-                    </dt>
-                    <dd class="mt-1 text-sm sm:col-span-2 sm:mt-0">
+                    </template>
+                    <template #default>
                         <GenericTime :value="getAccessTokenExpiration" :ago="true" />
                         (<GenericTime :value="getAccessTokenExpiration" type="long" />)
-                    </dd>
-                </div>
-                <div class="py-4 sm:grid sm:grid-cols-3 sm:gap-4 sm:px-5 sm:py-4">
-                    <dt class="text-sm font-medium">
+                    </template>
+                </GenericContainerPanelEntry>
+                <GenericContainerPanelEntry>
+                    <template #title>
                         {{ $t('components.debug_info.nui_info') }}
-                    </dt>
-                    <dd class="mt-1 text-sm sm:col-span-2 sm:mt-0">
+                    </template>
+                    <template #default>
                         {{ config.nuiEnabled ? $t('common.enabled') : $t('common.disabled') }}:
                         {{ config.nuiResourceName ?? $t('common.na') }}
-                    </dd>
-                </div>
-                <div class="py-4 sm:grid sm:grid-cols-3 sm:gap-4 sm:px-5 sm:py-4">
-                    <dt class="text-sm font-medium">
+                    </template>
+                </GenericContainerPanelEntry>
+                <GenericContainerPanelEntry>
+                    <template #title>
                         {{ $t('components.debug_info.debug_functions') }}
-                    </dt>
-                    <dd class="mt-1 text-sm sm:col-span-2 sm:mt-0">
-                        <span class="isolate inline-flex rounded-md shadow-sm">
+                    </template>
+                    <template #default>
+                        <div class="isolate inline-flex rounded-md shadow-sm">
                             <button
                                 type="button"
                                 class="inline-flex w-full items-center rounded-md bg-base-500 px-3.5 py-2.5 text-sm font-semibold text-neutral hover:bg-base-400"
@@ -106,14 +104,14 @@ async function resetLocalStorage(): Promise<void> {
                             >
                                 {{ $t('components.debug_info.factory_reset') }}
                             </NuxtLink>
-                        </span>
-                    </dd>
-                </div>
-                <div v-if="permissions.length > 0" class="py-4 sm:grid sm:grid-cols-3 sm:gap-4 sm:px-5 sm:py-4">
-                    <dt class="text-sm font-medium">
+                        </div>
+                    </template>
+                </GenericContainerPanelEntry>
+                <GenericContainerPanelEntry v-if="permissions.length > 0">
+                    <template #title>
                         {{ $t('components.debug_info.perms') }}
-                    </dt>
-                    <dd class="mt-1 text-sm sm:col-span-2 sm:mt-0">
+                    </template>
+                    <template #default>
                         <ul role="list" class="divide-y divide-gray-100 rounded-md border border-gray-200">
                             <li
                                 v-for="perm in permissions"
@@ -128,9 +126,9 @@ async function resetLocalStorage(): Promise<void> {
                                 </div>
                             </li>
                         </ul>
-                    </dd>
-                </div>
-            </dl>
-        </div>
+                    </template>
+                </GenericContainerPanelEntry>
+            </template>
+        </GenericContainerPanel>
     </div>
 </template>
