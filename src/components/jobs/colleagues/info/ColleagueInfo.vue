@@ -161,7 +161,7 @@ const absenceDateModal = ref(false);
                 <nav class="bg-base-700 lg:rounded-lg">
                     <div class="mx-auto ml-2 max-w-7xl px-4 sm:px-6 lg:px-8">
                         <div class="flex h-16 items-center justify-between">
-                            <div class="flex items-center md:overflow-x-scroll">
+                            <div class="flex items-center md:overflow-x-auto">
                                 <div class="-ml-2 flex md:hidden">
                                     <!-- Mobile menu button -->
                                     <button
