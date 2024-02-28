@@ -148,7 +148,7 @@ func (m *Manager) cleanupUserIDs(found map[int32]interface{}) error {
 	}
 
 	for _, key := range keys {
-		idKey, err := strconv.Atoi(key)
+		idKey, err := strconv.ParseInt(key, 10, 32)
 		if err != nil {
 			continue
 		}
