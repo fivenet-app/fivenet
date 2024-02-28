@@ -177,9 +177,9 @@ const fileUploadRef = ref<HTMLInputElement | null>(null);
                                     <button
                                         type="button"
                                         class="rounded-bd flex flex-1 justify-center px-3.5 py-2.5 text-sm font-semibold text-neutral"
-                                        :disabled="!meta.valid || !canSubmit"
+                                        :disabled="!meta.valid || !canSubmit || !activeChar?.avatar"
                                         :class="[
-                                            !meta.valid || !canSubmit
+                                            !meta.valid || !canSubmit || !activeChar?.avatar
                                                 ? 'disabled bg-base-500 hover:bg-base-400 focus-visible:outline-base-500'
                                                 : 'bg-error-500 hover:bg-error-400 focus-visible:outline-error-500',
                                         ]"
@@ -196,9 +196,19 @@ const fileUploadRef = ref<HTMLInputElement | null>(null);
                                     <button
                                         type="submit"
                                         class="rounded-bd flex flex-1 justify-center px-3.5 py-2.5 text-sm font-semibold text-neutral"
-                                        :disabled="!meta.valid || !canSubmit"
+                                        :disabled="
+                                            !meta.valid ||
+                                            !canSubmit ||
+                                            !fileUploadRef ||
+                                            !fileUploadRef.files ||
+                                            fileUploadRef.files.length <= 0
+                                        "
                                         :class="[
-                                            !meta.valid || !canSubmit
+                                            !meta.valid ||
+                                            !canSubmit ||
+                                            !fileUploadRef ||
+                                            !fileUploadRef.files ||
+                                            fileUploadRef.files.length <= 0
                                                 ? 'disabled bg-base-500 hover:bg-base-400 focus-visible:outline-base-500'
                                                 : 'bg-primary-500 hover:bg-primary-400 focus-visible:outline-primary-500',
                                         ]"

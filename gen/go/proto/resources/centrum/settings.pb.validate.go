@@ -224,6 +224,28 @@ func (m *PredefinedStatus) validate(all bool) error {
 
 	var errors []error
 
+	if len(m.GetUnitStatus()) > 5 {
+		err := PredefinedStatusValidationError{
+			field:  "UnitStatus",
+			reason: "value must contain no more than 5 item(s)",
+		}
+		if !all {
+			return err
+		}
+		errors = append(errors, err)
+	}
+
+	if len(m.GetDispatchStatus()) > 5 {
+		err := PredefinedStatusValidationError{
+			field:  "DispatchStatus",
+			reason: "value must contain no more than 5 item(s)",
+		}
+		if !all {
+			return err
+		}
+		errors = append(errors, err)
+	}
+
 	if len(errors) > 0 {
 		return PredefinedStatusMultiError(errors)
 	}

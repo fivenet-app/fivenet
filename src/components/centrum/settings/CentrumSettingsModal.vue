@@ -88,9 +88,7 @@ function setSettingsValues(): void {
     });
 }
 
-watch(settings, () => {
-    setSettingsValues();
-});
+watch(settings, () => setSettingsValues());
 
 setSettingsValues();
 
@@ -256,6 +254,7 @@ const onSubmitThrottle = useThrottleFn(async (e) => {
                                                         class="mt-2 text-sm text-error-400"
                                                     />
                                                 </div>
+                                                <!-- TODO Allow adding/updating/deleting predefined unit and dispatch status -->
                                             </div>
                                         </div>
                                     </div>

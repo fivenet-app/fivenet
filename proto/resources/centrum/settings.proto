@@ -23,6 +23,6 @@ message Settings {
 }
 
 message PredefinedStatus {
-  repeated string unit_status = 1;
-  repeated string dispatch_status = 2;
+  repeated string unit_status = 1 [(validate.rules).repeated.max_items = 5];
+  repeated string dispatch_status = 2 [(validate.rules).repeated.max_items = 5];
 }
