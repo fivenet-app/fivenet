@@ -1861,9 +1861,9 @@
             },
             "JobsUserActivityType": {
                 "UNSPECIFIED": "Unspecified",
-                "HIRED": "Hired",
+                "ABSENCE_DATE": "Absence Date",
                 "FIRED": "Fired",
-                "ABSENCE_DATE": "Absence Date"
+                "HIRED": "Hired"
             }
         }
     }
