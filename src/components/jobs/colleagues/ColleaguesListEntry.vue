@@ -39,6 +39,7 @@ const absenceDateModal = ref(false);
                 :name="`${colleague.firstname} ${colleague.lastname}`"
                 size="sm"
                 :rounded="false"
+                :enable-popup="true"
             />
         </td>
         <td class="whitespace-nowrap py-2 pl-4 pr-3 text-base font-medium text-neutral sm:pl-1">
