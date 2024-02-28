@@ -15,7 +15,7 @@ func ResizePNG(input io.Reader, height int, width int) (io.Reader, error) {
 
 	dst := resizeImageIfNecessary(src, height, width)
 	if dst == nil {
-		return nil, nil
+		return input, nil
 	}
 
 	// Encode to output
