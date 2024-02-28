@@ -209,11 +209,10 @@
                 "set_mug_shot": "Setze Fahndungsfoto"
             },
             "citizen_info_activity_feed_entry": {
-                "with_reason": "mit dem Grund",
                 "traffic_infraction_points": {
                     "action_text": "Setzte Verkehrspunkte von"
                 },
-                "bool_set_citizen": "Setze den Bürger als",
+                "bool_set_citizen": "Setzte den Bürger als",
                 "document_relation": {
                     "added": "Bürger zugehörig zu",
                     "removed": "Bürger nicht mehr zugehörig zu"
@@ -233,7 +232,7 @@
                     "removed": "Strafe entfernt",
                     "created": "Strafe erstellt"
                 },
-                "userprops_mug_shot_set": "Setze das Fahndungsfoto der Person"
+                "userprops_mug_shot_set": "Setzte das Fahndungsfoto der Person"
             }
         },
         "partials": {

@@ -12,6 +12,7 @@ import type { PartialMessage } from "@protobuf-ts/runtime";
 import { reflectionMergePartial } from "@protobuf-ts/runtime";
 import { MessageType } from "@protobuf-ts/runtime";
 import { JobsUserProps } from "../../resources/jobs/colleagues";
+import { JobsUserActivity } from "../../resources/jobs/colleagues";
 import { Colleague } from "../../resources/jobs/colleagues";
 import { PaginationResponse } from "../../resources/common/database/database";
 import { PaginationRequest } from "../../resources/common/database/database";
@@ -31,6 +32,10 @@ export interface ListColleaguesRequest {
      * @generated from protobuf field: string search_name = 2;
      */
     searchName: string;
+    /**
+     * @generated from protobuf field: optional int32 user_id = 3;
+     */
+    userId?: number;
 }
 /**
  * @generated from protobuf message services.jobs.ListColleaguesResponse
@@ -76,6 +81,32 @@ export interface GetColleagueResponse {
      * @generated from protobuf field: resources.jobs.Colleague colleague = 1;
      */
     colleague?: Colleague;
+}
+/**
+ * @generated from protobuf message services.jobs.ListColleagueActivityRequest
+ */
+export interface ListColleagueActivityRequest {
+    /**
+     * @generated from protobuf field: resources.common.database.PaginationRequest pagination = 1;
+     */
+    pagination?: PaginationRequest;
+    /**
+     * @generated from protobuf field: int32 user_id = 2;
+     */
+    userId: number;
+}
+/**
+ * @generated from protobuf message services.jobs.ListColleagueActivityResponse
+ */
+export interface ListColleagueActivityResponse {
+    /**
+     * @generated from protobuf field: resources.common.database.PaginationResponse pagination = 1;
+     */
+    pagination?: PaginationResponse;
+    /**
+     * @generated from protobuf field: repeated resources.jobs.JobsUserActivity activity = 2;
+     */
+    activity: JobsUserActivity[];
 }
 /**
  * @generated from protobuf message services.jobs.SetJobsUserPropsRequest
@@ -142,7 +173,8 @@ class ListColleaguesRequest$Type extends MessageType<ListColleaguesRequest> {
     constructor() {
         super("services.jobs.ListColleaguesRequest", [
             { no: 1, name: "pagination", kind: "message", T: () => PaginationRequest, options: { "validate.rules": { message: { required: true } } } },
-            { no: 2, name: "search_name", kind: "scalar", T: 9 /*ScalarType.STRING*/, options: { "validate.rules": { string: { maxLen: "50" } } } }
+            { no: 2, name: "search_name", kind: "scalar", T: 9 /*ScalarType.STRING*/, options: { "validate.rules": { string: { maxLen: "50" } } } },
+            { no: 3, name: "user_id", kind: "scalar", opt: true, T: 5 /*ScalarType.INT32*/ }
         ]);
     }
     create(value?: PartialMessage<ListColleaguesRequest>): ListColleaguesRequest {
@@ -163,6 +195,9 @@ class ListColleaguesRequest$Type extends MessageType<ListColleaguesRequest> {
                 case /* string search_name */ 2:
                     message.searchName = reader.string();
                     break;
+                case /* optional int32 user_id */ 3:
+                    message.userId = reader.int32();
+                    break;
                 default:
                     let u = options.readUnknownField;
                     if (u === "throw")
@@ -181,6 +216,9 @@ class ListColleaguesRequest$Type extends MessageType<ListColleaguesRequest> {
         /* string search_name = 2; */
         if (message.searchName !== "")
             writer.tag(2, WireType.LengthDelimited).string(message.searchName);
+        /* optional int32 user_id = 3; */
+        if (message.userId !== undefined)
+            writer.tag(3, WireType.Varint).int32(message.userId);
         let u = options.writeUnknownFields;
         if (u !== false)
             (u == true ? UnknownFieldHandler.onWrite : u)(this.typeName, message, writer);
@@ -409,6 +447,114 @@ class GetColleagueResponse$Type extends MessageType<GetColleagueResponse> {
  * @generated MessageType for protobuf message services.jobs.GetColleagueResponse
  */
 export const GetColleagueResponse = new GetColleagueResponse$Type();
+// @generated message type with reflection information, may provide speed optimized methods
+class ListColleagueActivityRequest$Type extends MessageType<ListColleagueActivityRequest> {
+    constructor() {
+        super("services.jobs.ListColleagueActivityRequest", [
+            { no: 1, name: "pagination", kind: "message", T: () => PaginationRequest, options: { "validate.rules": { message: { required: true } } } },
+            { no: 2, name: "user_id", kind: "scalar", T: 5 /*ScalarType.INT32*/ }
+        ]);
+    }
+    create(value?: PartialMessage<ListColleagueActivityRequest>): ListColleagueActivityRequest {
+        const message = globalThis.Object.create((this.messagePrototype!));
+        message.userId = 0;
+        if (value !== undefined)
+            reflectionMergePartial<ListColleagueActivityRequest>(this, message, value);
+        return message;
+    }
+    internalBinaryRead(reader: IBinaryReader, length: number, options: BinaryReadOptions, target?: ListColleagueActivityRequest): ListColleagueActivityRequest {
+        let message = target ?? this.create(), end = reader.pos + length;
+        while (reader.pos < end) {
+            let [fieldNo, wireType] = reader.tag();
+            switch (fieldNo) {
+                case /* resources.common.database.PaginationRequest pagination */ 1:
+                    message.pagination = PaginationRequest.internalBinaryRead(reader, reader.uint32(), options, message.pagination);
+                    break;
+                case /* int32 user_id */ 2:
+                    message.userId = reader.int32();
+                    break;
+                default:
+                    let u = options.readUnknownField;
+                    if (u === "throw")
+                        throw new globalThis.Error(`Unknown field ${fieldNo} (wire type ${wireType}) for ${this.typeName}`);
+                    let d = reader.skip(wireType);
+                    if (u !== false)
+                        (u === true ? UnknownFieldHandler.onRead : u)(this.typeName, message, fieldNo, wireType, d);
+            }
+        }
+        return message;
+    }
+    internalBinaryWrite(message: ListColleagueActivityRequest, writer: IBinaryWriter, options: BinaryWriteOptions): IBinaryWriter {
+        /* resources.common.database.PaginationRequest pagination = 1; */
+        if (message.pagination)
+            PaginationRequest.internalBinaryWrite(message.pagination, writer.tag(1, WireType.LengthDelimited).fork(), options).join();
+        /* int32 user_id = 2; */
+        if (message.userId !== 0)
+            writer.tag(2, WireType.Varint).int32(message.userId);
+        let u = options.writeUnknownFields;
+        if (u !== false)
+            (u == true ? UnknownFieldHandler.onWrite : u)(this.typeName, message, writer);
+        return writer;
+    }
+}
+/**
+ * @generated MessageType for protobuf message services.jobs.ListColleagueActivityRequest
+ */
+export const ListColleagueActivityRequest = new ListColleagueActivityRequest$Type();
+// @generated message type with reflection information, may provide speed optimized methods
+class ListColleagueActivityResponse$Type extends MessageType<ListColleagueActivityResponse> {
+    constructor() {
+        super("services.jobs.ListColleagueActivityResponse", [
+            { no: 1, name: "pagination", kind: "message", T: () => PaginationResponse },
+            { no: 2, name: "activity", kind: "message", repeat: 1 /*RepeatType.PACKED*/, T: () => JobsUserActivity }
+        ]);
+    }
+    create(value?: PartialMessage<ListColleagueActivityResponse>): ListColleagueActivityResponse {
+        const message = globalThis.Object.create((this.messagePrototype!));
+        message.activity = [];
+        if (value !== undefined)
+            reflectionMergePartial<ListColleagueActivityResponse>(this, message, value);
+        return message;
+    }
+    internalBinaryRead(reader: IBinaryReader, length: number, options: BinaryReadOptions, target?: ListColleagueActivityResponse): ListColleagueActivityResponse {
+        let message = target ?? this.create(), end = reader.pos + length;
+        while (reader.pos < end) {
+            let [fieldNo, wireType] = reader.tag();
+            switch (fieldNo) {
+                case /* resources.common.database.PaginationResponse pagination */ 1:
+                    message.pagination = PaginationResponse.internalBinaryRead(reader, reader.uint32(), options, message.pagination);
+                    break;
+                case /* repeated resources.jobs.JobsUserActivity activity */ 2:
+                    message.activity.push(JobsUserActivity.internalBinaryRead(reader, reader.uint32(), options));
+                    break;
+                default:
+                    let u = options.readUnknownField;
+                    if (u === "throw")
+                        throw new globalThis.Error(`Unknown field ${fieldNo} (wire type ${wireType}) for ${this.typeName}`);
+                    let d = reader.skip(wireType);
+                    if (u !== false)
+                        (u === true ? UnknownFieldHandler.onRead : u)(this.typeName, message, fieldNo, wireType, d);
+            }
+        }
+        return message;
+    }
+    internalBinaryWrite(message: ListColleagueActivityResponse, writer: IBinaryWriter, options: BinaryWriteOptions): IBinaryWriter {
+        /* resources.common.database.PaginationResponse pagination = 1; */
+        if (message.pagination)
+            PaginationResponse.internalBinaryWrite(message.pagination, writer.tag(1, WireType.LengthDelimited).fork(), options).join();
+        /* repeated resources.jobs.JobsUserActivity activity = 2; */
+        for (let i = 0; i < message.activity.length; i++)
+            JobsUserActivity.internalBinaryWrite(message.activity[i], writer.tag(2, WireType.LengthDelimited).fork(), options).join();
+        let u = options.writeUnknownFields;
+        if (u !== false)
+            (u == true ? UnknownFieldHandler.onWrite : u)(this.typeName, message, writer);
+        return writer;
+    }
+}
+/**
+ * @generated MessageType for protobuf message services.jobs.ListColleagueActivityResponse
+ */
+export const ListColleagueActivityResponse = new ListColleagueActivityResponse$Type();
 // @generated message type with reflection information, may provide speed optimized methods
 class SetJobsUserPropsRequest$Type extends MessageType<SetJobsUserPropsRequest> {
     constructor() {
@@ -682,6 +828,7 @@ export const JobsService = new ServiceType("services.jobs.JobsService", [
     { name: "ListColleagues", options: {}, I: ListColleaguesRequest, O: ListColleaguesResponse },
     { name: "GetSelf", options: {}, I: GetSelfRequest, O: GetSelfResponse },
     { name: "GetColleague", options: {}, I: GetColleagueRequest, O: GetColleagueResponse },
+    { name: "ListColleagueActivity", options: {}, I: ListColleagueActivityRequest, O: ListColleagueActivityResponse },
     { name: "SetJobsUserProps", options: {}, I: SetJobsUserPropsRequest, O: SetJobsUserPropsResponse },
     { name: "GetMOTD", options: {}, I: GetMOTDRequest, O: GetMOTDResponse },
     { name: "SetMOTD", options: {}, I: SetMOTDRequest, O: SetMOTDResponse }

@@ -19,12 +19,13 @@ import (
 const _ = grpc.SupportPackageIsVersion7
 
 const (
-	JobsService_ListColleagues_FullMethodName   = "/services.jobs.JobsService/ListColleagues"
-	JobsService_GetSelf_FullMethodName          = "/services.jobs.JobsService/GetSelf"
-	JobsService_GetColleague_FullMethodName     = "/services.jobs.JobsService/GetColleague"
-	JobsService_SetJobsUserProps_FullMethodName = "/services.jobs.JobsService/SetJobsUserProps"
-	JobsService_GetMOTD_FullMethodName          = "/services.jobs.JobsService/GetMOTD"
-	JobsService_SetMOTD_FullMethodName          = "/services.jobs.JobsService/SetMOTD"
+	JobsService_ListColleagues_FullMethodName        = "/services.jobs.JobsService/ListColleagues"
+	JobsService_GetSelf_FullMethodName               = "/services.jobs.JobsService/GetSelf"
+	JobsService_GetColleague_FullMethodName          = "/services.jobs.JobsService/GetColleague"
+	JobsService_ListColleagueActivity_FullMethodName = "/services.jobs.JobsService/ListColleagueActivity"
+	JobsService_SetJobsUserProps_FullMethodName      = "/services.jobs.JobsService/SetJobsUserProps"
+	JobsService_GetMOTD_FullMethodName               = "/services.jobs.JobsService/GetMOTD"
+	JobsService_SetMOTD_FullMethodName               = "/services.jobs.JobsService/SetMOTD"
 )
 
 // JobsServiceClient is the client API for JobsService service.
@@ -37,6 +38,8 @@ type JobsServiceClient interface {
 	GetSelf(ctx context.Context, in *GetSelfRequest, opts ...grpc.CallOption) (*GetSelfResponse, error)
 	// @perm
 	GetColleague(ctx context.Context, in *GetColleagueRequest, opts ...grpc.CallOption) (*GetColleagueResponse, error)
+	// @perm: Name=GetColleague
+	ListColleagueActivity(ctx context.Context, in *ListColleagueActivityRequest, opts ...grpc.CallOption) (*ListColleagueActivityResponse, error)
 	// @perm: Attrs=Access/StringList:[]string{"Own", "Lower_Rank", "Same_Rank", "Any"}
 	SetJobsUserProps(ctx context.Context, in *SetJobsUserPropsRequest, opts ...grpc.CallOption) (*SetJobsUserPropsResponse, error)
 	// @perm: Name=Any
@@ -80,6 +83,15 @@ func (c *jobsServiceClient) GetColleague(ctx context.Context, in *GetColleagueRe
 	return out, nil
 }
 
+func (c *jobsServiceClient) ListColleagueActivity(ctx context.Context, in *ListColleagueActivityRequest, opts ...grpc.CallOption) (*ListColleagueActivityResponse, error) {
+	out := new(ListColleagueActivityResponse)
+	err := c.cc.Invoke(ctx, JobsService_ListColleagueActivity_FullMethodName, in, out, opts...)
+	if err != nil {
+		return nil, err
+	}
+	return out, nil
+}
+
 func (c *jobsServiceClient) SetJobsUserProps(ctx context.Context, in *SetJobsUserPropsRequest, opts ...grpc.CallOption) (*SetJobsUserPropsResponse, error) {
 	out := new(SetJobsUserPropsResponse)
 	err := c.cc.Invoke(ctx, JobsService_SetJobsUserProps_FullMethodName, in, out, opts...)
@@ -117,6 +129,8 @@ type JobsServiceServer interface {
 	GetSelf(context.Context, *GetSelfRequest) (*GetSelfResponse, error)
 	// @perm
 	GetColleague(context.Context, *GetColleagueRequest) (*GetColleagueResponse, error)
+	// @perm: Name=GetColleague
+	ListColleagueActivity(context.Context, *ListColleagueActivityRequest) (*ListColleagueActivityResponse, error)
 	// @perm: Attrs=Access/StringList:[]string{"Own", "Lower_Rank", "Same_Rank", "Any"}
 	SetJobsUserProps(context.Context, *SetJobsUserPropsRequest) (*SetJobsUserPropsResponse, error)
 	// @perm: Name=Any
@@ -138,6 +152,9 @@ func (UnimplementedJobsServiceServer) GetSelf(context.Context, *GetSelfRequest) 
 }
 func (UnimplementedJobsServiceServer) GetColleague(context.Context, *GetColleagueRequest) (*GetColleagueResponse, error) {
 	return nil, status.Errorf(codes.Unimplemented, "method GetColleague not implemented")
+}
+func (UnimplementedJobsServiceServer) ListColleagueActivity(context.Context, *ListColleagueActivityRequest) (*ListColleagueActivityResponse, error) {
+	return nil, status.Errorf(codes.Unimplemented, "method ListColleagueActivity not implemented")
 }
 func (UnimplementedJobsServiceServer) SetJobsUserProps(context.Context, *SetJobsUserPropsRequest) (*SetJobsUserPropsResponse, error) {
 	return nil, status.Errorf(codes.Unimplemented, "method SetJobsUserProps not implemented")
@@ -215,6 +232,24 @@ func _JobsService_GetColleague_Handler(srv interface{}, ctx context.Context, dec
 	return interceptor(ctx, in, info, handler)
 }
 
+func _JobsService_ListColleagueActivity_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
+	in := new(ListColleagueActivityRequest)
+	if err := dec(in); err != nil {
+		return nil, err
+	}
+	if interceptor == nil {
+		return srv.(JobsServiceServer).ListColleagueActivity(ctx, in)
+	}
+	info := &grpc.UnaryServerInfo{
+		Server:     srv,
+		FullMethod: JobsService_ListColleagueActivity_FullMethodName,
+	}
+	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
+		return srv.(JobsServiceServer).ListColleagueActivity(ctx, req.(*ListColleagueActivityRequest))
+	}
+	return interceptor(ctx, in, info, handler)
+}
+
 func _JobsService_SetJobsUserProps_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
 	in := new(SetJobsUserPropsRequest)
 	if err := dec(in); err != nil {
@@ -287,6 +322,10 @@ var JobsService_ServiceDesc = grpc.ServiceDesc{
 		{
 			MethodName: "GetColleague",
 			Handler:    _JobsService_GetColleague_Handler,
+		},
+		{
+			MethodName: "ListColleagueActivity",
+			Handler:    _JobsService_ListColleagueActivity_Handler,
 		},
 		{
 			MethodName: "SetJobsUserProps",

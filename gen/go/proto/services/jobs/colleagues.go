@@ -25,7 +25,8 @@ import (
 )
 
 var (
-	tJobsUserProps = table.FivenetJobsUserProps
+	tJobsUserProps    = table.FivenetJobsUserProps
+	tJobsUserActivity = table.FivenetJobsUserActivity
 )
 
 func (s *Server) ListColleagues(ctx context.Context, req *ListColleaguesRequest) (*ListColleaguesResponse, error) {
@@ -34,15 +35,19 @@ func (s *Server) ListColleagues(ctx context.Context, req *ListColleaguesRequest)
 	tUser := tUser.AS("colleague")
 	condition := tUser.Job.EQ(jet.String(userInfo.Job))
 
-	req.SearchName = strings.TrimSpace(req.SearchName)
-	req.SearchName = strings.ReplaceAll(req.SearchName, "%", "")
-	req.SearchName = strings.ReplaceAll(req.SearchName, " ", "%")
-	if req.SearchName != "" {
-		req.SearchName = "%" + req.SearchName + "%"
-		condition = condition.AND(
-			jet.CONCAT(tUser.Firstname, jet.String(" "), tUser.Lastname).
-				LIKE(jet.String(req.SearchName)),
-		)
+	if req.UserId != nil && *req.UserId > 0 {
+		condition = condition.AND(tUser.ID.EQ(jet.Int32(*req.UserId)))
+	} else {
+		req.SearchName = strings.TrimSpace(req.SearchName)
+		req.SearchName = strings.ReplaceAll(req.SearchName, "%", "")
+		req.SearchName = strings.ReplaceAll(req.SearchName, " ", "%")
+		if req.SearchName != "" {
+			req.SearchName = "%" + req.SearchName + "%"
+			condition = condition.AND(
+				jet.CONCAT(tUser.Firstname, jet.String(" "), tUser.Lastname).
+					LIKE(jet.String(req.SearchName)),
+			)
+		}
 	}
 
 	// Get total count of values
@@ -116,6 +121,7 @@ func (s *Server) ListColleagues(ctx context.Context, req *ListColleaguesRequest)
 }
 
 func (s *Server) getColleague(ctx context.Context, userId int32) (*jobs.Colleague, error) {
+	tUser := tUser.AS("colleague")
 	stmt := tUser.
 		SELECT(
 			tUser.ID,
@@ -148,6 +154,8 @@ func (s *Server) getColleague(ctx context.Context, userId int32) (*jobs.Colleagu
 	if err := stmt.QueryContext(ctx, s.db, dest); err != nil {
 		return nil, err
 	}
+
+	s.enricher.EnrichJobInfo(dest)
 
 	return dest, nil
 }
@@ -264,7 +272,13 @@ func (s *Server) SetJobsUserProps(ctx context.Context, req *SetJobsUserPropsRequ
 		req.Props.AbsenceDate = props.AbsenceDate
 	}
 
-	// TODO add fivenet_jobs_user_activity entries
+	// Begin transaction
+	tx, err := s.db.BeginTx(ctx, nil)
+	if err != nil {
+		return nil, errswrap.NewError(errorsjobs.ErrFailedQuery, err)
+	}
+	// Defer a rollback in case anything fails
+	defer tx.Rollback()
 
 	stmt := tJobsUserProps.
 		INSERT(
@@ -279,7 +293,32 @@ func (s *Server) SetJobsUserProps(ctx context.Context, req *SetJobsUserPropsRequ
 			tJobsUserProps.AbsenceDate.SET(absenceDate),
 		)
 
-	if _, err := stmt.ExecContext(ctx, s.db); err != nil {
+	if _, err := stmt.ExecContext(ctx, tx); err != nil {
+		return nil, errswrap.NewError(errorsjobs.ErrFailedQuery, err)
+	}
+
+	// Compare absence date if any was set
+	if req.Props.AbsenceDate != nil && (props.AbsenceDate == nil || req.Props.AbsenceDate.AsTime().Compare(props.AbsenceDate.AsTime()) != 0) {
+		if err := s.addJobsUserActivity(ctx, tx, &jobs.JobsUserActivity{
+			Job:          userInfo.Job,
+			SourceUserId: userInfo.UserId,
+			TargetUserId: req.Props.UserId,
+			ActivityType: jobs.JobsUserActivityType_JOBS_USER_ACTIVITY_TYPE_ABSENCE_DATE,
+			Reason:       req.Reason,
+			Data: &jobs.JobsUserActivityData{
+				Data: &jobs.JobsUserActivityData_AbsenceDate{
+					AbsenceDate: &jobs.ColleagueAbsenceDate{
+						AbsenceDate: timestamp.New(req.Props.AbsenceDate.AsTime()),
+					},
+				},
+			},
+		}); err != nil {
+			return nil, errswrap.NewError(errorsjobs.ErrFailedQuery, err)
+		}
+	}
+
+	// Commit the transaction
+	if err := tx.Commit(); err != nil {
 		return nil, errswrap.NewError(errorsjobs.ErrFailedQuery, err)
 	}
 
@@ -295,9 +334,40 @@ func (s *Server) SetJobsUserProps(ctx context.Context, req *SetJobsUserPropsRequ
 	}, nil
 }
 
+func (s *Server) addJobsUserActivity(ctx context.Context, tx qrm.DB, activity *jobs.JobsUserActivity) error {
+	stmt := tJobsUserActivity.
+		INSERT(
+			tJobsUserActivity.Job,
+			tJobsUserActivity.SourceUserID,
+			tJobsUserActivity.TargetUserID,
+			tJobsUserActivity.ActivityType,
+			tJobsUserActivity.Reason,
+			tJobsUserActivity.Data,
+		).
+		VALUES(
+			activity.Job,
+			activity.SourceUserId,
+			activity.TargetUserId,
+			activity.ActivityType,
+			activity.Reason,
+			activity.Data,
+		)
+
+	if _, err := stmt.ExecContext(ctx, tx); err != nil {
+		return err
+	}
+
+	return nil
+}
+
 func (s *Server) checkIfHasAccessToColleague(levels []string, userInfo *userinfo.UserInfo, target *users.UserShort) bool {
 	if userInfo.SuperUser {
 		return true
+	}
+
+	// Not the same job, can't do anything
+	if userInfo.Job != target.Job {
+		return false
 	}
 
 	// If the creator is nil, treat it like a normal doc access check
@@ -330,4 +400,116 @@ func (s *Server) checkIfHasAccessToColleague(levels []string, userInfo *userinfo
 	}
 
 	return false
+}
+
+func (s *Server) ListColleagueActivity(ctx context.Context, req *ListColleagueActivityRequest) (*ListColleagueActivityResponse, error) {
+	userInfo := auth.MustGetUserInfoFromContext(ctx)
+
+	// Field Permission Check
+	fieldsAttr, err := s.ps.Attr(userInfo, permsjobs.JobsServicePerm, permsjobs.JobsServiceSetJobsUserPropsPerm, permsjobs.JobsServiceSetJobsUserPropsAccessPermField)
+	if err != nil {
+		return nil, errswrap.NewError(errorsjobs.ErrFailedQuery, err)
+	}
+	var fields perms.StringList
+	if fieldsAttr != nil {
+		fields = fieldsAttr.([]string)
+	}
+
+	targetUser, err := s.getColleague(ctx, req.UserId)
+	if err != nil {
+		return nil, errswrap.NewError(errorsjobs.ErrFailedQuery, err)
+	}
+
+	if !s.checkIfHasAccessToColleague(fields, userInfo, &users.UserShort{
+		UserId:   targetUser.UserId,
+		Job:      targetUser.Job,
+		JobGrade: targetUser.JobGrade,
+	}) {
+		return nil, errorsjobs.ErrFailedQuery
+	}
+
+	tJobsUserActivity := tJobsUserActivity.AS("jobsuseractivity")
+	condition := tJobsUserActivity.Job.EQ(jet.String(userInfo.Job)).
+		AND(tJobsUserActivity.TargetUserID.EQ(jet.Int32(req.UserId)))
+
+	// Get total count of values
+	countStmt := tJobsUserActivity.
+		SELECT(
+			jet.COUNT(tJobsUserActivity.ID).AS("datacount.totalcount"),
+		).
+		FROM(tJobsUserActivity).
+		WHERE(condition)
+
+	var count database.DataCount
+	if err := countStmt.QueryContext(ctx, s.db, &count); err != nil {
+		if !errors.Is(err, qrm.ErrNoRows) {
+			return nil, errswrap.NewError(errorsjobs.ErrFailedQuery, err)
+		}
+	}
+
+	pag, limit := req.Pagination.GetResponseWithPageSize(15)
+	resp := &ListColleagueActivityResponse{
+		Pagination: pag,
+	}
+	if count.TotalCount <= 0 {
+		return resp, nil
+	}
+
+	tUTarget := tUser.AS("target_user")
+	tUSource := tUser.AS("source_user")
+	stmt := tJobsUserActivity.
+		SELECT(
+			tJobsUserActivity.ID,
+			tJobsUserActivity.CreatedAt,
+			tJobsUserActivity.Job,
+			tJobsUserActivity.SourceUserID,
+			tJobsUserActivity.TargetUserID,
+			tJobsUserActivity.ActivityType,
+			tJobsUserActivity.Reason,
+			tJobsUserActivity.Data,
+			tUTarget.ID,
+			tUTarget.Identifier,
+			tUTarget.Job,
+			tUTarget.JobGrade,
+			tUTarget.Firstname,
+			tUTarget.Lastname,
+			tUSource.ID,
+			tUSource.Identifier,
+			tUSource.Job,
+			tUSource.JobGrade,
+			tUSource.Firstname,
+			tUSource.Lastname,
+		).
+		FROM(
+			tJobsUserActivity.
+				LEFT_JOIN(tUTarget,
+					tUTarget.ID.EQ(tJobsUserActivity.TargetUserID),
+				).
+				LEFT_JOIN(tUSource,
+					tUSource.ID.EQ(tJobsUserActivity.SourceUserID),
+				),
+		).
+		WHERE(condition).
+		OFFSET(pag.Offset).
+		LIMIT(limit)
+
+	if err := stmt.QueryContext(ctx, s.db, &resp.Activity); err != nil {
+		if !errors.Is(err, qrm.ErrNoRows) {
+			return nil, err
+		}
+	}
+
+	pag.Update(count.TotalCount, len(resp.Activity))
+
+	jobInfoFn := s.enricher.EnrichJobInfoSafeFunc(userInfo)
+	for i := 0; i < len(resp.Activity); i++ {
+		if resp.Activity[i].SourceUser != nil {
+			jobInfoFn(resp.Activity[i].SourceUser)
+		}
+		if resp.Activity[i].TargetUser != nil {
+			jobInfoFn(resp.Activity[i].TargetUser)
+		}
+	}
+
+	return resp, nil
 }

@@ -15,6 +15,11 @@ import ConductListEntry from '~/components/jobs/conduct/ConductListEntry.vue';
 import { useJobsStore } from '~/store/jobs';
 import type { ListConductEntriesResponse } from '~~/gen/ts/services/jobs/conduct';
 
+const props = defineProps<{
+    userId?: number;
+    hideUserSearch?: boolean;
+}>();
+
 const { $grpc } = useNuxtApp();
 
 const query = ref<{ types: ConductType[]; showExpired?: boolean; user_ids?: User[] }>({
@@ -27,13 +32,16 @@ const offset = ref(0n);
 const { data, pending, refresh, error } = useLazyAsyncData(`jobs-conduct-${offset}`, () => listConductEntries());
 
 async function listConductEntries(): Promise<ListConductEntriesResponse> {
+    const userIds = props.userId
+        ? [props.userId]
+        : query.value.user_ids?.map((u) => (typeof u === 'number' ? u : u.userId)) ?? [];
     try {
         const call = $grpc.getJobsConductClient().listConductEntries({
             pagination: {
                 offset: offset.value,
             },
             types: [],
-            userIds: query.value.user_ids?.map((u) => u.userId) ?? [],
+            userIds,
             showExpired: query.value.showExpired,
         });
         const { response } = await call;
@@ -79,6 +87,7 @@ const { data: colleagues, refresh: refreshColleagues } = useLazyAsyncData(
         jobsStore.listColleagues({
             pagination: { offset: 0n },
             searchName: queryTargets.value,
+            userId: props.userId,
         }),
     {
         immediate: false,
@@ -108,7 +117,7 @@ watchDebounced(
     queryTargets,
     async () => {
         await refreshColleagues();
-        if (query.value.user_ids) {
+        if (!props.hideUserSearch && query.value.user_ids) {
             colleagues.value?.colleagues.unshift(...query.value.user_ids);
         }
     },
@@ -142,6 +151,7 @@ onConfirm(async (id) => deleteConductEntry(id));
         <ConductCreateOrUpdateModal
             :open="open"
             :entry="selectedEntry"
+            :user-id="userId"
             @close="open = false"
             @created="data?.entries.unshift($event)"
             @update="updateEntryInPlace($event)"
@@ -152,7 +162,7 @@ onConfirm(async (id) => deleteConductEntry(id));
                 <div class="sm:flex-auto">
                     <form @submit.prevent="">
                         <div class="mx-auto flex flex-row gap-4">
-                            <div class="form-control flex-1">
+                            <div v-if="hideUserSearch !== true" class="form-control flex-1">
                                 <label for="searchName" class="block text-sm font-medium leading-6 text-neutral">
                                     {{ $t('common.search') }}
                                     {{ $t('common.target') }}

@@ -1,5 +1,11 @@
 package jobs
 
+import (
+	"database/sql/driver"
+
+	"google.golang.org/protobuf/encoding/protojson"
+)
+
 func (x *Colleague) SetJob(job string) {
 	x.Job = job
 }
@@ -14,4 +20,24 @@ func (x *Colleague) SetJobGrade(grade int32) {
 
 func (x *Colleague) SetJobGradeLabel(label string) {
 	x.JobGradeLabel = &label
+}
+
+func (x *JobsUserActivityData) Scan(value any) error {
+	switch t := value.(type) {
+	case string:
+		return protojson.Unmarshal([]byte(t), x)
+	case []byte:
+		return protojson.Unmarshal(t, x)
+	}
+	return nil
+}
+
+// Scan implements driver.Valuer for protobuf JobsUserActivityData.
+func (x *JobsUserActivityData) Value() (driver.Value, error) {
+	if x == nil {
+		return nil, nil
+	}
+
+	out, err := protojson.Marshal(x)
+	return string(out), err
 }

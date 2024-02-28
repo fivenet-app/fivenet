@@ -14,6 +14,7 @@ message ListColleaguesRequest {
   resources.common.database.PaginationRequest pagination = 1 [(validate.rules).message.required = true];
   // Search params
   string search_name = 2 [(validate.rules).string.max_len = 50];
+  optional int32 user_id = 3;
 }
 
 message ListColleaguesResponse {
@@ -33,6 +34,16 @@ message GetColleagueRequest {
 
 message GetColleagueResponse {
   resources.jobs.Colleague colleague = 1;
+}
+
+message ListColleagueActivityRequest {
+  resources.common.database.PaginationRequest pagination = 1 [(validate.rules).message.required = true];
+  int32 user_id = 2;
+}
+
+message ListColleagueActivityResponse {
+  resources.common.database.PaginationResponse pagination = 1;
+  repeated resources.jobs.JobsUserActivity activity = 2;
 }
 
 message SetJobsUserPropsRequest {
@@ -74,6 +85,8 @@ service JobsService {
 
   // @perm
   rpc GetColleague(GetColleagueRequest) returns (GetColleagueResponse);
+  // @perm: Name=GetColleague
+  rpc ListColleagueActivity(ListColleagueActivityRequest) returns (ListColleagueActivityResponse);
   // @perm: Attrs=Access/StringList:[]string{"Own", "Lower_Rank", "Same_Rank", "Any"}
   rpc SetJobsUserProps(SetJobsUserPropsRequest) returns (SetJobsUserPropsResponse);
 

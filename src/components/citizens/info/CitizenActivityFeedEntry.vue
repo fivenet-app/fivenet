@@ -34,7 +34,6 @@ const actionValue = ref<string>(`${props.activity.oldValue} -> ${props.activity.
 const actionReason = ref<string>(props.activity.reason);
 const actionLink = ref<RoutesNamedLocations>();
 const actionLinkText = ref<string>('');
-const reasonText = ref<string>('components.citizens.citizen_info_activity_feed_entry.with_reason');
 
 switch (props.activity.key) {
     case 'DocStore.Relation': {
@@ -95,7 +94,6 @@ switch (props.activity.key) {
     }
 
     case 'Plugin.Licenses': {
-        reasonText.value = '';
         icon = LicenseIcon;
         if (props.activity.newValue !== '') {
             actionText.value = t('components.citizens.citizen_info_activity_feed_entry.plugin_license.added');
@@ -110,7 +108,6 @@ switch (props.activity.key) {
     }
 
     case 'Plugin.Jail': {
-        reasonText.value = '';
         actionValue.value = '';
         if (props.activity.oldValue === '' && props.activity.newValue !== '0') {
             icon = HandcuffsIcon;
@@ -164,23 +161,25 @@ switch (props.activity.key) {
                         <!-- eslint-disable-next-line vue/no-v-html -->
                         <span v-else v-html="actionValue"></span>
                     </span>
-                    <span v-if="reasonText">
-                        {{ ' ' + $t(reasonText) }}
-                    </span>
-                    <span v-if="actionReason">
-                        <span class="font-bold">
-                            {{ ' ' + actionReason }}
-                        </span>
-                    </span>
                 </h3>
                 <p class="text-sm text-gray-400">
                     <GenericTime :value="activity.createdAt" type="long" />
                 </p>
             </div>
-            <p class="inline-flex text-sm text-gray-300">
-                {{ $t('common.created_by') }}
-                <CitizenInfoPopover class="ml-1" text-class="underline" :user="activity.sourceUser" />
-            </p>
+            <div class="flex items-center justify-between">
+                <p class="inline-flex gap-1 text-sm text-gray-300">
+                    <template v-if="actionReason">
+                        <span>{{ $t('common.reason') }}:</span>
+                        <span class="font-bold">
+                            {{ actionReason }}
+                        </span>
+                    </template>
+                </p>
+                <p class="inline-flex text-sm text-gray-300">
+                    {{ $t('common.created_by') }}
+                    <CitizenInfoPopover class="ml-1" text-class="underline" :user="activity.sourceUser" />
+                </p>
+            </div>
         </div>
     </div>
 </template>

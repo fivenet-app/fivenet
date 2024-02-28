@@ -1157,7 +1157,16 @@ func (m *UserActivity) validate(all bool) error {
 		errors = append(errors, err)
 	}
 
-	// no validation rules for Reason
+	if utf8.RuneCountInString(m.GetReason()) > 255 {
+		err := UserActivityValidationError{
+			field:  "Reason",
+			reason: "value length must be at most 255 runes",
+		}
+		if !all {
+			return err
+		}
+		errors = append(errors, err)
+	}
 
 	if len(errors) > 0 {
 		return UserActivityMultiError(errors)

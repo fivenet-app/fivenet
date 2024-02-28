@@ -10,6 +10,8 @@ import type { GetMOTDResponse } from "./jobs";
 import type { GetMOTDRequest } from "./jobs";
 import type { SetJobsUserPropsResponse } from "./jobs";
 import type { SetJobsUserPropsRequest } from "./jobs";
+import type { ListColleagueActivityResponse } from "./jobs";
+import type { ListColleagueActivityRequest } from "./jobs";
 import type { GetColleagueResponse } from "./jobs";
 import type { GetColleagueRequest } from "./jobs";
 import type { GetSelfResponse } from "./jobs";
@@ -41,6 +43,12 @@ export interface IJobsServiceClient {
      * @generated from protobuf rpc: GetColleague(services.jobs.GetColleagueRequest) returns (services.jobs.GetColleagueResponse);
      */
     getColleague(input: GetColleagueRequest, options?: RpcOptions): UnaryCall<GetColleagueRequest, GetColleagueResponse>;
+    /**
+     * @perm: Name=GetColleague
+     *
+     * @generated from protobuf rpc: ListColleagueActivity(services.jobs.ListColleagueActivityRequest) returns (services.jobs.ListColleagueActivityResponse);
+     */
+    listColleagueActivity(input: ListColleagueActivityRequest, options?: RpcOptions): UnaryCall<ListColleagueActivityRequest, ListColleagueActivityResponse>;
     /**
      * @perm: Attrs=Access/StringList:[]string{"Own", "Lower_Rank", "Same_Rank", "Any"}
      *
@@ -97,12 +105,21 @@ export class JobsServiceClient implements IJobsServiceClient, ServiceInfo {
         return stackIntercept<GetColleagueRequest, GetColleagueResponse>("unary", this._transport, method, opt, input);
     }
     /**
+     * @perm: Name=GetColleague
+     *
+     * @generated from protobuf rpc: ListColleagueActivity(services.jobs.ListColleagueActivityRequest) returns (services.jobs.ListColleagueActivityResponse);
+     */
+    listColleagueActivity(input: ListColleagueActivityRequest, options?: RpcOptions): UnaryCall<ListColleagueActivityRequest, ListColleagueActivityResponse> {
+        const method = this.methods[3], opt = this._transport.mergeOptions(options);
+        return stackIntercept<ListColleagueActivityRequest, ListColleagueActivityResponse>("unary", this._transport, method, opt, input);
+    }
+    /**
      * @perm: Attrs=Access/StringList:[]string{"Own", "Lower_Rank", "Same_Rank", "Any"}
      *
      * @generated from protobuf rpc: SetJobsUserProps(services.jobs.SetJobsUserPropsRequest) returns (services.jobs.SetJobsUserPropsResponse);
      */
     setJobsUserProps(input: SetJobsUserPropsRequest, options?: RpcOptions): UnaryCall<SetJobsUserPropsRequest, SetJobsUserPropsResponse> {
-        const method = this.methods[3], opt = this._transport.mergeOptions(options);
+        const method = this.methods[4], opt = this._transport.mergeOptions(options);
         return stackIntercept<SetJobsUserPropsRequest, SetJobsUserPropsResponse>("unary", this._transport, method, opt, input);
     }
     /**
@@ -111,7 +128,7 @@ export class JobsServiceClient implements IJobsServiceClient, ServiceInfo {
      * @generated from protobuf rpc: GetMOTD(services.jobs.GetMOTDRequest) returns (services.jobs.GetMOTDResponse);
      */
     getMOTD(input: GetMOTDRequest, options?: RpcOptions): UnaryCall<GetMOTDRequest, GetMOTDResponse> {
-        const method = this.methods[4], opt = this._transport.mergeOptions(options);
+        const method = this.methods[5], opt = this._transport.mergeOptions(options);
         return stackIntercept<GetMOTDRequest, GetMOTDResponse>("unary", this._transport, method, opt, input);
     }
     /**
@@ -120,7 +137,7 @@ export class JobsServiceClient implements IJobsServiceClient, ServiceInfo {
      * @generated from protobuf rpc: SetMOTD(services.jobs.SetMOTDRequest) returns (services.jobs.SetMOTDResponse);
      */
     setMOTD(input: SetMOTDRequest, options?: RpcOptions): UnaryCall<SetMOTDRequest, SetMOTDResponse> {
-        const method = this.methods[5], opt = this._transport.mergeOptions(options);
+        const method = this.methods[6], opt = this._transport.mergeOptions(options);
         return stackIntercept<SetMOTDRequest, SetMOTDResponse>("unary", this._transport, method, opt, input);
     }
 }

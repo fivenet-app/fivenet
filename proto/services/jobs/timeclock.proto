@@ -27,7 +27,9 @@ message ListTimeclockResponse {
   repeated resources.jobs.TimeclockWeeklyStats weekly = 4;
 }
 
-message GetTimeclockStatsRequest {}
+message GetTimeclockStatsRequest {
+  optional int32 user_id = 1;
+}
 
 message GetTimeclockStatsResponse {
   resources.jobs.TimeclockStats stats = 1;

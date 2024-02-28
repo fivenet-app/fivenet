@@ -71,6 +71,10 @@ export interface ListTimeclockResponse {
  * @generated from protobuf message services.jobs.GetTimeclockStatsRequest
  */
 export interface GetTimeclockStatsRequest {
+    /**
+     * @generated from protobuf field: optional int32 user_id = 1;
+     */
+    userId?: number;
 }
 /**
  * @generated from protobuf message services.jobs.GetTimeclockStatsResponse
@@ -240,7 +244,9 @@ export const ListTimeclockResponse = new ListTimeclockResponse$Type();
 // @generated message type with reflection information, may provide speed optimized methods
 class GetTimeclockStatsRequest$Type extends MessageType<GetTimeclockStatsRequest> {
     constructor() {
-        super("services.jobs.GetTimeclockStatsRequest", []);
+        super("services.jobs.GetTimeclockStatsRequest", [
+            { no: 1, name: "user_id", kind: "scalar", opt: true, T: 5 /*ScalarType.INT32*/ }
+        ]);
     }
     create(value?: PartialMessage<GetTimeclockStatsRequest>): GetTimeclockStatsRequest {
         const message = globalThis.Object.create((this.messagePrototype!));
@@ -249,9 +255,28 @@ class GetTimeclockStatsRequest$Type extends MessageType<GetTimeclockStatsRequest
         return message;
     }
     internalBinaryRead(reader: IBinaryReader, length: number, options: BinaryReadOptions, target?: GetTimeclockStatsRequest): GetTimeclockStatsRequest {
-        return target ?? this.create();
+        let message = target ?? this.create(), end = reader.pos + length;
+        while (reader.pos < end) {
+            let [fieldNo, wireType] = reader.tag();
+            switch (fieldNo) {
+                case /* optional int32 user_id */ 1:
+                    message.userId = reader.int32();
+                    break;
+                default:
+                    let u = options.readUnknownField;
+                    if (u === "throw")
+                        throw new globalThis.Error(`Unknown field ${fieldNo} (wire type ${wireType}) for ${this.typeName}`);
+                    let d = reader.skip(wireType);
+                    if (u !== false)
+                        (u === true ? UnknownFieldHandler.onRead : u)(this.typeName, message, fieldNo, wireType, d);
+            }
+        }
+        return message;
     }
     internalBinaryWrite(message: GetTimeclockStatsRequest, writer: IBinaryWriter, options: BinaryWriteOptions): IBinaryWriter {
+        /* optional int32 user_id = 1; */
+        if (message.userId !== undefined)
+            writer.tag(1, WireType.Varint).int32(message.userId);
         let u = options.writeUnknownFields;
         if (u !== false)
             (u == true ? UnknownFieldHandler.onWrite : u)(this.typeName, message, writer);

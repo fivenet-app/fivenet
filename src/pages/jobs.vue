@@ -33,16 +33,16 @@ const navigation: { name: string; to: RoutesNamedLocations; permission?: Perms; 
         icon: markRaw(FrequentlyAskedQuestionsIcon),
     },
     {
-        name: 'pages.jobs.qualifications.title',
-        to: { name: 'jobs-qualifications' },
-        permission: 'TODOService.TODOMethod',
-        icon: markRaw(SchoolIcon),
-    },
-    {
         name: 'pages.jobs.timeclock.title',
         to: { name: 'jobs-timeclock' },
         permission: 'JobsTimeclockService.ListTimeclock',
         icon: markRaw(TimelineClockIcon),
+    },
+    {
+        name: 'pages.jobs.qualifications.title',
+        to: { name: 'jobs-qualifications' },
+        permission: 'TODOService.TODOMethod',
+        icon: markRaw(SchoolIcon),
     },
     {
         name: 'pages.jobs.conduct.title',

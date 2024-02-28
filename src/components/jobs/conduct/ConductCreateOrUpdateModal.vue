@@ -23,6 +23,7 @@ import { UserShort } from '~~/gen/ts/resources/users/users';
 const props = defineProps<{
     open: boolean;
     entry?: ConductEntry;
+    userId?: number;
 }>();
 
 const emit = defineEmits<{
@@ -82,6 +83,7 @@ const { data, refresh } = useLazyAsyncData(`jobs-colleagues-0-${queryTargets.val
     jobsStore.listColleagues({
         pagination: { offset: 0n },
         searchName: queryTargets.value,
+        userId: props.userId,
     }),
 );
 

@@ -150,8 +150,24 @@ func (s *Server) ListTimeclock(ctx context.Context, req *ListTimeclockRequest) (
 func (s *Server) GetTimeclockStats(ctx context.Context, req *GetTimeclockStatsRequest) (*GetTimeclockStatsResponse, error) {
 	userInfo := auth.MustGetUserInfoFromContext(ctx)
 
+	userId := userInfo.UserId
+	if req.UserId != nil && *req.UserId > 0 && *req.UserId != userInfo.UserId {
+		// Field Permission Check
+		fieldsAttr, err := s.ps.Attr(userInfo, permsjobs.JobsTimeclockServicePerm, permsjobs.JobsTimeclockServiceListTimeclockPerm, permsjobs.JobsTimeclockServiceListTimeclockAccessPermField)
+		if err != nil {
+			return nil, errswrap.NewError(errorsjobs.ErrFailedQuery, err)
+		}
+		var fields perms.StringList
+		if fieldsAttr != nil {
+			fields = fieldsAttr.([]string)
+		}
+		if slices.Contains(fields, "All") {
+			userId = *req.UserId
+		}
+	}
+
 	condition := tTimeClock.Job.EQ(jet.String(userInfo.Job)).
-		AND(tTimeClock.UserID.EQ(jet.Int32(userInfo.UserId)))
+		AND(tTimeClock.UserID.EQ(jet.Int32(userId)))
 
 	stats, err := s.getTimeclockStats(ctx, condition)
 	if err != nil {

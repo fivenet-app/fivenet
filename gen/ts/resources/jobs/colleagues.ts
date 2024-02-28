@@ -10,6 +10,7 @@ import { UnknownFieldHandler } from "@protobuf-ts/runtime";
 import type { PartialMessage } from "@protobuf-ts/runtime";
 import { reflectionMergePartial } from "@protobuf-ts/runtime";
 import { MessageType } from "@protobuf-ts/runtime";
+import { UserShort } from "../users/users";
 import { Timestamp } from "../timestamp/timestamp";
 import { File } from "../filestore/file";
 /**
@@ -77,6 +78,92 @@ export interface JobsUserProps {
      * @generated from protobuf field: optional resources.timestamp.Timestamp absence_date = 2;
      */
     absenceDate?: Timestamp;
+}
+/**
+ * @generated from protobuf message resources.jobs.JobsUserActivity
+ */
+export interface JobsUserActivity {
+    /**
+     * @generated from protobuf field: uint64 id = 1 [jstype = JS_STRING];
+     */
+    id: string; // @gotags: sql:"primary_key" alias:"id"
+    /**
+     * @generated from protobuf field: optional resources.timestamp.Timestamp created_at = 2;
+     */
+    createdAt?: Timestamp;
+    /**
+     * @generated from protobuf field: string job = 4;
+     */
+    job: string;
+    /**
+     * @generated from protobuf field: int32 source_user_id = 5;
+     */
+    sourceUserId: number;
+    /**
+     * @generated from protobuf field: resources.users.UserShort source_user = 6;
+     */
+    sourceUser?: UserShort; // @gotags: alias:"source_user"
+    /**
+     * @generated from protobuf field: int32 target_user_id = 7;
+     */
+    targetUserId: number;
+    /**
+     * @generated from protobuf field: resources.users.UserShort target_user = 8;
+     */
+    targetUser?: UserShort; // @gotags: alias:"target_user"
+    /**
+     * @generated from protobuf field: resources.jobs.JobsUserActivityType activity_type = 9;
+     */
+    activityType: JobsUserActivityType;
+    /**
+     * @sanitize
+     *
+     * @generated from protobuf field: string reason = 10;
+     */
+    reason: string;
+    /**
+     * @generated from protobuf field: resources.jobs.JobsUserActivityData data = 11;
+     */
+    data?: JobsUserActivityData;
+}
+/**
+ * @generated from protobuf message resources.jobs.JobsUserActivityData
+ */
+export interface JobsUserActivityData {
+    /**
+     * @generated from protobuf oneof: data
+     */
+    data: {
+        oneofKind: "absenceDate";
+        /**
+         * @generated from protobuf field: resources.jobs.ColleagueAbsenceDate absence_date = 1;
+         */
+        absenceDate: ColleagueAbsenceDate;
+    } | {
+        oneofKind: undefined;
+    };
+}
+/**
+ * @generated from protobuf message resources.jobs.ColleagueAbsenceDate
+ */
+export interface ColleagueAbsenceDate {
+    /**
+     * @generated from protobuf field: optional resources.timestamp.Timestamp absence_date = 1;
+     */
+    absenceDate?: Timestamp;
+}
+/**
+ * @generated from protobuf enum resources.jobs.JobsUserActivityType
+ */
+export enum JobsUserActivityType {
+    /**
+     * @generated from protobuf enum value: JOBS_USER_ACTIVITY_TYPE_UNSPECIFIED = 0;
+     */
+    UNSPECIFIED = 0,
+    /**
+     * @generated from protobuf enum value: JOBS_USER_ACTIVITY_TYPE_ABSENCE_DATE = 1;
+     */
+    ABSENCE_DATE = 1
 }
 // @generated message type with reflection information, may provide speed optimized methods
 class Colleague$Type extends MessageType<Colleague> {
@@ -262,3 +349,214 @@ class JobsUserProps$Type extends MessageType<JobsUserProps> {
  * @generated MessageType for protobuf message resources.jobs.JobsUserProps
  */
 export const JobsUserProps = new JobsUserProps$Type();
+// @generated message type with reflection information, may provide speed optimized methods
+class JobsUserActivity$Type extends MessageType<JobsUserActivity> {
+    constructor() {
+        super("resources.jobs.JobsUserActivity", [
+            { no: 1, name: "id", kind: "scalar", T: 4 /*ScalarType.UINT64*/ },
+            { no: 2, name: "created_at", kind: "message", T: () => Timestamp },
+            { no: 4, name: "job", kind: "scalar", T: 9 /*ScalarType.STRING*/, options: { "validate.rules": { string: { maxLen: "20" } } } },
+            { no: 5, name: "source_user_id", kind: "scalar", T: 5 /*ScalarType.INT32*/, options: { "validate.rules": { int32: { gt: 0 } } } },
+            { no: 6, name: "source_user", kind: "message", T: () => UserShort },
+            { no: 7, name: "target_user_id", kind: "scalar", T: 5 /*ScalarType.INT32*/, options: { "validate.rules": { int32: { gt: 0 } } } },
+            { no: 8, name: "target_user", kind: "message", T: () => UserShort },
+            { no: 9, name: "activity_type", kind: "enum", T: () => ["resources.jobs.JobsUserActivityType", JobsUserActivityType, "JOBS_USER_ACTIVITY_TYPE_"] },
+            { no: 10, name: "reason", kind: "scalar", T: 9 /*ScalarType.STRING*/, options: { "validate.rules": { string: { maxLen: "255" } } } },
+            { no: 11, name: "data", kind: "message", T: () => JobsUserActivityData }
+        ]);
+    }
+    create(value?: PartialMessage<JobsUserActivity>): JobsUserActivity {
+        const message = globalThis.Object.create((this.messagePrototype!));
+        message.id = "0";
+        message.job = "";
+        message.sourceUserId = 0;
+        message.targetUserId = 0;
+        message.activityType = 0;
+        message.reason = "";
+        if (value !== undefined)
+            reflectionMergePartial<JobsUserActivity>(this, message, value);
+        return message;
+    }
+    internalBinaryRead(reader: IBinaryReader, length: number, options: BinaryReadOptions, target?: JobsUserActivity): JobsUserActivity {
+        let message = target ?? this.create(), end = reader.pos + length;
+        while (reader.pos < end) {
+            let [fieldNo, wireType] = reader.tag();
+            switch (fieldNo) {
+                case /* uint64 id = 1 [jstype = JS_STRING];*/ 1:
+                    message.id = reader.uint64().toString();
+                    break;
+                case /* optional resources.timestamp.Timestamp created_at */ 2:
+                    message.createdAt = Timestamp.internalBinaryRead(reader, reader.uint32(), options, message.createdAt);
+                    break;
+                case /* string job */ 4:
+                    message.job = reader.string();
+                    break;
+                case /* int32 source_user_id */ 5:
+                    message.sourceUserId = reader.int32();
+                    break;
+                case /* resources.users.UserShort source_user */ 6:
+                    message.sourceUser = UserShort.internalBinaryRead(reader, reader.uint32(), options, message.sourceUser);
+                    break;
+                case /* int32 target_user_id */ 7:
+                    message.targetUserId = reader.int32();
+                    break;
+                case /* resources.users.UserShort target_user */ 8:
+                    message.targetUser = UserShort.internalBinaryRead(reader, reader.uint32(), options, message.targetUser);
+                    break;
+                case /* resources.jobs.JobsUserActivityType activity_type */ 9:
+                    message.activityType = reader.int32();
+                    break;
+                case /* string reason */ 10:
+                    message.reason = reader.string();
+                    break;
+                case /* resources.jobs.JobsUserActivityData data */ 11:
+                    message.data = JobsUserActivityData.internalBinaryRead(reader, reader.uint32(), options, message.data);
+                    break;
+                default:
+                    let u = options.readUnknownField;
+                    if (u === "throw")
+                        throw new globalThis.Error(`Unknown field ${fieldNo} (wire type ${wireType}) for ${this.typeName}`);
+                    let d = reader.skip(wireType);
+                    if (u !== false)
+                        (u === true ? UnknownFieldHandler.onRead : u)(this.typeName, message, fieldNo, wireType, d);
+            }
+        }
+        return message;
+    }
+    internalBinaryWrite(message: JobsUserActivity, writer: IBinaryWriter, options: BinaryWriteOptions): IBinaryWriter {
+        /* uint64 id = 1 [jstype = JS_STRING]; */
+        if (message.id !== "0")
+            writer.tag(1, WireType.Varint).uint64(message.id);
+        /* optional resources.timestamp.Timestamp created_at = 2; */
+        if (message.createdAt)
+            Timestamp.internalBinaryWrite(message.createdAt, writer.tag(2, WireType.LengthDelimited).fork(), options).join();
+        /* string job = 4; */
+        if (message.job !== "")
+            writer.tag(4, WireType.LengthDelimited).string(message.job);
+        /* int32 source_user_id = 5; */
+        if (message.sourceUserId !== 0)
+            writer.tag(5, WireType.Varint).int32(message.sourceUserId);
+        /* resources.users.UserShort source_user = 6; */
+        if (message.sourceUser)
+            UserShort.internalBinaryWrite(message.sourceUser, writer.tag(6, WireType.LengthDelimited).fork(), options).join();
+        /* int32 target_user_id = 7; */
+        if (message.targetUserId !== 0)
+            writer.tag(7, WireType.Varint).int32(message.targetUserId);
+        /* resources.users.UserShort target_user = 8; */
+        if (message.targetUser)
+            UserShort.internalBinaryWrite(message.targetUser, writer.tag(8, WireType.LengthDelimited).fork(), options).join();
+        /* resources.jobs.JobsUserActivityType activity_type = 9; */
+        if (message.activityType !== 0)
+            writer.tag(9, WireType.Varint).int32(message.activityType);
+        /* string reason = 10; */
+        if (message.reason !== "")
+            writer.tag(10, WireType.LengthDelimited).string(message.reason);
+        /* resources.jobs.JobsUserActivityData data = 11; */
+        if (message.data)
+            JobsUserActivityData.internalBinaryWrite(message.data, writer.tag(11, WireType.LengthDelimited).fork(), options).join();
+        let u = options.writeUnknownFields;
+        if (u !== false)
+            (u == true ? UnknownFieldHandler.onWrite : u)(this.typeName, message, writer);
+        return writer;
+    }
+}
+/**
+ * @generated MessageType for protobuf message resources.jobs.JobsUserActivity
+ */
+export const JobsUserActivity = new JobsUserActivity$Type();
+// @generated message type with reflection information, may provide speed optimized methods
+class JobsUserActivityData$Type extends MessageType<JobsUserActivityData> {
+    constructor() {
+        super("resources.jobs.JobsUserActivityData", [
+            { no: 1, name: "absence_date", kind: "message", oneof: "data", T: () => ColleagueAbsenceDate }
+        ]);
+    }
+    create(value?: PartialMessage<JobsUserActivityData>): JobsUserActivityData {
+        const message = globalThis.Object.create((this.messagePrototype!));
+        message.data = { oneofKind: undefined };
+        if (value !== undefined)
+            reflectionMergePartial<JobsUserActivityData>(this, message, value);
+        return message;
+    }
+    internalBinaryRead(reader: IBinaryReader, length: number, options: BinaryReadOptions, target?: JobsUserActivityData): JobsUserActivityData {
+        let message = target ?? this.create(), end = reader.pos + length;
+        while (reader.pos < end) {
+            let [fieldNo, wireType] = reader.tag();
+            switch (fieldNo) {
+                case /* resources.jobs.ColleagueAbsenceDate absence_date */ 1:
+                    message.data = {
+                        oneofKind: "absenceDate",
+                        absenceDate: ColleagueAbsenceDate.internalBinaryRead(reader, reader.uint32(), options, (message.data as any).absenceDate)
+                    };
+                    break;
+                default:
+                    let u = options.readUnknownField;
+                    if (u === "throw")
+                        throw new globalThis.Error(`Unknown field ${fieldNo} (wire type ${wireType}) for ${this.typeName}`);
+                    let d = reader.skip(wireType);
+                    if (u !== false)
+                        (u === true ? UnknownFieldHandler.onRead : u)(this.typeName, message, fieldNo, wireType, d);
+            }
+        }
+        return message;
+    }
+    internalBinaryWrite(message: JobsUserActivityData, writer: IBinaryWriter, options: BinaryWriteOptions): IBinaryWriter {
+        /* resources.jobs.ColleagueAbsenceDate absence_date = 1; */
+        if (message.data.oneofKind === "absenceDate")
+            ColleagueAbsenceDate.internalBinaryWrite(message.data.absenceDate, writer.tag(1, WireType.LengthDelimited).fork(), options).join();
+        let u = options.writeUnknownFields;
+        if (u !== false)
+            (u == true ? UnknownFieldHandler.onWrite : u)(this.typeName, message, writer);
+        return writer;
+    }
+}
+/**
+ * @generated MessageType for protobuf message resources.jobs.JobsUserActivityData
+ */
+export const JobsUserActivityData = new JobsUserActivityData$Type();
+// @generated message type with reflection information, may provide speed optimized methods
+class ColleagueAbsenceDate$Type extends MessageType<ColleagueAbsenceDate> {
+    constructor() {
+        super("resources.jobs.ColleagueAbsenceDate", [
+            { no: 1, name: "absence_date", kind: "message", T: () => Timestamp }
+        ]);
+    }
+    create(value?: PartialMessage<ColleagueAbsenceDate>): ColleagueAbsenceDate {
+        const message = globalThis.Object.create((this.messagePrototype!));
+        if (value !== undefined)
+            reflectionMergePartial<ColleagueAbsenceDate>(this, message, value);
+        return message;
+    }
+    internalBinaryRead(reader: IBinaryReader, length: number, options: BinaryReadOptions, target?: ColleagueAbsenceDate): ColleagueAbsenceDate {
+        let message = target ?? this.create(), end = reader.pos + length;
+        while (reader.pos < end) {
+            let [fieldNo, wireType] = reader.tag();
+            switch (fieldNo) {
+                case /* optional resources.timestamp.Timestamp absence_date */ 1:
+                    message.absenceDate = Timestamp.internalBinaryRead(reader, reader.uint32(), options, message.absenceDate);
+                    break;
+                default:
+                    let u = options.readUnknownField;
+                    if (u === "throw")
+                        throw new globalThis.Error(`Unknown field ${fieldNo} (wire type ${wireType}) for ${this.typeName}`);
+                    let d = reader.skip(wireType);
+                    if (u !== false)
+                        (u === true ? UnknownFieldHandler.onRead : u)(this.typeName, message, fieldNo, wireType, d);
+            }
+        }
+        return message;
+    }
+    internalBinaryWrite(message: ColleagueAbsenceDate, writer: IBinaryWriter, options: BinaryWriteOptions): IBinaryWriter {
+        /* optional resources.timestamp.Timestamp absence_date = 1; */
+        if (message.absenceDate)
+            Timestamp.internalBinaryWrite(message.absenceDate, writer.tag(1, WireType.LengthDelimited).fork(), options).join();
+        let u = options.writeUnknownFields;
+        if (u !== false)
+            (u == true ? UnknownFieldHandler.onWrite : u)(this.typeName, message, writer);
+        return writer;
+    }
+}
+/**
+ * @generated MessageType for protobuf message resources.jobs.ColleagueAbsenceDate
+ */
+export const ColleagueAbsenceDate = new ColleagueAbsenceDate$Type();

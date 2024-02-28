@@ -660,9 +660,25 @@
                 </li>
               
                 <li>
+                  <a href="#resources.jobs.ColleagueAbsenceDate"><span class="badge">M</span>ColleagueAbsenceDate</a>
+                </li>
+              
+                <li>
+                  <a href="#resources.jobs.JobsUserActivity"><span class="badge">M</span>JobsUserActivity</a>
+                </li>
+              
+                <li>
+                  <a href="#resources.jobs.JobsUserActivityData"><span class="badge">M</span>JobsUserActivityData</a>
+                </li>
+              
+                <li>
                   <a href="#resources.jobs.JobsUserProps"><span class="badge">M</span>JobsUserProps</a>
                 </li>
               
+              
+                <li>
+                  <a href="#resources.jobs.JobsUserActivityType"><span class="badge">E</span>JobsUserActivityType</a>
+                </li>
               
               
               
@@ -1887,6 +1903,14 @@
               
                 <li>
                   <a href="#services.jobs.GetSelfResponse"><span class="badge">M</span>GetSelfResponse</a>
+                </li>
+              
+                <li>
+                  <a href="#services.jobs.ListColleagueActivityRequest"><span class="badge">M</span>ListColleagueActivityRequest</a>
+                </li>
+              
+                <li>
+                  <a href="#services.jobs.ListColleagueActivityResponse"><span class="badge">M</span>ListColleagueActivityResponse</a>
                 </li>
               
                 <li>
@@ -8608,6 +8632,201 @@
 
         
       
+        <h3 id="resources.jobs.ColleagueAbsenceDate">ColleagueAbsenceDate</h3>
+        <p></p>
+
+        
+          <table class="field-table">
+            <thead>
+              <tr><td>Field</td><td>Type</td><td>Label</td><td>Description</td></tr>
+            </thead>
+            <tbody>
+              
+                <tr>
+                  <td>absence_date</td>
+                  <td><a href="#resources.timestamp.Timestamp">resources.timestamp.Timestamp</a></td>
+                  <td>optional</td>
+                  <td><p> </p></td>
+                </tr>
+              
+            </tbody>
+          </table>
+
+          
+
+        
+      
+        <h3 id="resources.jobs.JobsUserActivity">JobsUserActivity</h3>
+        <p></p>
+
+        
+          <table class="field-table">
+            <thead>
+              <tr><td>Field</td><td>Type</td><td>Label</td><td>Description</td></tr>
+            </thead>
+            <tbody>
+              
+                <tr>
+                  <td>id</td>
+                  <td><a href="#uint64">uint64</a></td>
+                  <td></td>
+                  <td><p>@gotags: sql:&#34;primary_key&#34; alias:&#34;id&#34; </p></td>
+                </tr>
+              
+                <tr>
+                  <td>created_at</td>
+                  <td><a href="#resources.timestamp.Timestamp">resources.timestamp.Timestamp</a></td>
+                  <td>optional</td>
+                  <td><p> </p></td>
+                </tr>
+              
+                <tr>
+                  <td>job</td>
+                  <td><a href="#string">string</a></td>
+                  <td></td>
+                  <td><p> </p></td>
+                </tr>
+              
+                <tr>
+                  <td>source_user_id</td>
+                  <td><a href="#int32">int32</a></td>
+                  <td></td>
+                  <td><p> </p></td>
+                </tr>
+              
+                <tr>
+                  <td>source_user</td>
+                  <td><a href="#resources.users.UserShort">resources.users.UserShort</a></td>
+                  <td></td>
+                  <td><p>@gotags: alias:&#34;source_user&#34; </p></td>
+                </tr>
+              
+                <tr>
+                  <td>target_user_id</td>
+                  <td><a href="#int32">int32</a></td>
+                  <td></td>
+                  <td><p> </p></td>
+                </tr>
+              
+                <tr>
+                  <td>target_user</td>
+                  <td><a href="#resources.users.UserShort">resources.users.UserShort</a></td>
+                  <td></td>
+                  <td><p>@gotags: alias:&#34;target_user&#34; </p></td>
+                </tr>
+              
+                <tr>
+                  <td>activity_type</td>
+                  <td><a href="#resources.jobs.JobsUserActivityType">JobsUserActivityType</a></td>
+                  <td></td>
+                  <td><p> </p></td>
+                </tr>
+              
+                <tr>
+                  <td>reason</td>
+                  <td><a href="#string">string</a></td>
+                  <td></td>
+                  <td><p>@sanitize </p></td>
+                </tr>
+              
+                <tr>
+                  <td>data</td>
+                  <td><a href="#resources.jobs.JobsUserActivityData">JobsUserActivityData</a></td>
+                  <td></td>
+                  <td><p> </p></td>
+                </tr>
+              
+            </tbody>
+          </table>
+
+          
+            
+            
+            <h4>Validated Fields</h4>
+            <table>
+              <thead>
+                <tr>
+                  <td>Field</td>
+                  <td>Validations</td>
+                </tr>
+              </thead>
+              <tbody>
+              
+                <tr>
+                  <td>job</td>
+                  <td>
+                    <ul>
+                    
+                      <li>string.max_len: 20</li>
+                    
+                    </ul>
+                  </td>
+                </tr>
+              
+                <tr>
+                  <td>source_user_id</td>
+                  <td>
+                    <ul>
+                    
+                      <li>int32.gt: 0</li>
+                    
+                    </ul>
+                  </td>
+                </tr>
+              
+                <tr>
+                  <td>target_user_id</td>
+                  <td>
+                    <ul>
+                    
+                      <li>int32.gt: 0</li>
+                    
+                    </ul>
+                  </td>
+                </tr>
+              
+                <tr>
+                  <td>reason</td>
+                  <td>
+                    <ul>
+                    
+                      <li>string.max_len: 255</li>
+                    
+                    </ul>
+                  </td>
+                </tr>
+              
+              </tbody>
+            </table>
+            
+          
+
+        
+      
+        <h3 id="resources.jobs.JobsUserActivityData">JobsUserActivityData</h3>
+        <p></p>
+
+        
+          <table class="field-table">
+            <thead>
+              <tr><td>Field</td><td>Type</td><td>Label</td><td>Description</td></tr>
+            </thead>
+            <tbody>
+              
+                <tr>
+                  <td>absence_date</td>
+                  <td><a href="#resources.jobs.ColleagueAbsenceDate">ColleagueAbsenceDate</a></td>
+                  <td></td>
+                  <td><p> </p></td>
+                </tr>
+              
+            </tbody>
+          </table>
+
+          
+
+        
+      
         <h3 id="resources.jobs.JobsUserProps">JobsUserProps</h3>
         <p></p>
 
@@ -8667,6 +8886,29 @@
         
       
 
+      
+        <h3 id="resources.jobs.JobsUserActivityType">JobsUserActivityType</h3>
+        <p></p>
+        <table class="enum-table">
+          <thead>
+            <tr><td>Name</td><td>Number</td><td>Description</td></tr>
+          </thead>
+          <tbody>
+            
+              <tr>
+                <td>JOBS_USER_ACTIVITY_TYPE_UNSPECIFIED</td>
+                <td>0</td>
+                <td><p></p></td>
+              </tr>
+            
+              <tr>
+                <td>JOBS_USER_ACTIVITY_TYPE_ABSENCE_DATE</td>
+                <td>1</td>
+                <td><p></p></td>
+              </tr>
+            
+          </tbody>
+        </table>
       
 
       
@@ -11638,6 +11880,17 @@
                     <ul>
                     
                       <li>string.max_len: 256</li>
+                    
+                    </ul>
+                  </td>
+                </tr>
+              
+                <tr>
+                  <td>reason</td>
+                  <td>
+                    <ul>
+                    
+                      <li>string.max_len: 255</li>
                     
                     </ul>
                   </td>
@@ -19875,6 +20128,23 @@
         <p></p>
 
         
+          <table class="field-table">
+            <thead>
+              <tr><td>Field</td><td>Type</td><td>Label</td><td>Description</td></tr>
+            </thead>
+            <tbody>
+              
+                <tr>
+                  <td>user_id</td>
+                  <td><a href="#int32">int32</a></td>
+                  <td>optional</td>
+                  <td><p> </p></td>
+                </tr>
+              
+            </tbody>
+          </table>
+
+          
 
         
       
@@ -20183,6 +20453,95 @@
 
         
       
+        <h3 id="services.jobs.ListColleagueActivityRequest">ListColleagueActivityRequest</h3>
+        <p></p>
+
+        
+          <table class="field-table">
+            <thead>
+              <tr><td>Field</td><td>Type</td><td>Label</td><td>Description</td></tr>
+            </thead>
+            <tbody>
+              
+                <tr>
+                  <td>pagination</td>
+                  <td><a href="#resources.common.database.PaginationRequest">resources.common.database.PaginationRequest</a></td>
+                  <td></td>
+                  <td><p> </p></td>
+                </tr>
+              
+                <tr>
+                  <td>user_id</td>
+                  <td><a href="#int32">int32</a></td>
+                  <td></td>
+                  <td><p> </p></td>
+                </tr>
+              
+            </tbody>
+          </table>
+
+          
+            
+            
+            <h4>Validated Fields</h4>
+            <table>
+              <thead>
+                <tr>
+                  <td>Field</td>
+                  <td>Validations</td>
+                </tr>
+              </thead>
+              <tbody>
+              
+                <tr>
+                  <td>pagination</td>
+                  <td>
+                    <ul>
+                    
+                      <li>message.required: true</li>
+                    
+                    </ul>
+                  </td>
+                </tr>
+              
+              </tbody>
+            </table>
+            
+          
+
+        
+      
+        <h3 id="services.jobs.ListColleagueActivityResponse">ListColleagueActivityResponse</h3>
+        <p></p>
+
+        
+          <table class="field-table">
+            <thead>
+              <tr><td>Field</td><td>Type</td><td>Label</td><td>Description</td></tr>
+            </thead>
+            <tbody>
+              
+                <tr>
+                  <td>pagination</td>
+                  <td><a href="#resources.common.database.PaginationResponse">resources.common.database.PaginationResponse</a></td>
+                  <td></td>
+                  <td><p> </p></td>
+                </tr>
+              
+                <tr>
+                  <td>activity</td>
+                  <td><a href="#resources.jobs.JobsUserActivity">resources.jobs.JobsUserActivity</a></td>
+                  <td>repeated</td>
+                  <td><p> </p></td>
+                </tr>
+              
+            </tbody>
+          </table>
+
+          
+
+        
+      
         <h3 id="services.jobs.ListColleaguesRequest">ListColleaguesRequest</h3>
         <p></p>
 
@@ -20205,6 +20564,13 @@
                   <td><a href="#string">string</a></td>
                   <td></td>
                   <td><p>Search params </p></td>
+                </tr>
+              
+                <tr>
+                  <td>user_id</td>
+                  <td><a href="#int32">int32</a></td>
+                  <td>optional</td>
+                  <td><p> </p></td>
                 </tr>
               
             </tbody>
@@ -20475,6 +20841,13 @@
                 <td><a href="#services.jobs.GetColleagueRequest">GetColleagueRequest</a></td>
                 <td><a href="#services.jobs.GetColleagueResponse">GetColleagueResponse</a></td>
                 <td><p>@perm</p></td>
+              </tr>
+            
+              <tr>
+                <td>ListColleagueActivity</td>
+                <td><a href="#services.jobs.ListColleagueActivityRequest">ListColleagueActivityRequest</a></td>
+                <td><a href="#services.jobs.ListColleagueActivityResponse">ListColleagueActivityResponse</a></td>
+                <td><p>@perm: Name=GetColleague</p></td>
               </tr>
             
               <tr>

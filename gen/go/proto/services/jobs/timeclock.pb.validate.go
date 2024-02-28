@@ -497,6 +497,10 @@ func (m *GetTimeclockStatsRequest) validate(all bool) error {
 
 	var errors []error
 
+	if m.UserId != nil {
+		// no validation rules for UserId
+	}
+
 	if len(errors) > 0 {
 		return GetTimeclockStatsRequestMultiError(errors)
 	}

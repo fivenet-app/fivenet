@@ -108,6 +108,10 @@ func (m *ListColleaguesRequest) validate(all bool) error {
 		errors = append(errors, err)
 	}
 
+	if m.UserId != nil {
+		// no validation rules for UserId
+	}
+
 	if len(errors) > 0 {
 		return ListColleaguesRequestMultiError(errors)
 	}
@@ -816,6 +820,317 @@ var _ interface {
 	Cause() error
 	ErrorName() string
 } = GetColleagueResponseValidationError{}
+
+// Validate checks the field values on ListColleagueActivityRequest with the
+// rules defined in the proto definition for this message. If any rules are
+// violated, the first error encountered is returned, or nil if there are no violations.
+func (m *ListColleagueActivityRequest) Validate() error {
+	return m.validate(false)
+}
+
+// ValidateAll checks the field values on ListColleagueActivityRequest with the
+// rules defined in the proto definition for this message. If any rules are
+// violated, the result is a list of violation errors wrapped in
+// ListColleagueActivityRequestMultiError, or nil if none found.
+func (m *ListColleagueActivityRequest) ValidateAll() error {
+	return m.validate(true)
+}
+
+func (m *ListColleagueActivityRequest) validate(all bool) error {
+	if m == nil {
+		return nil
+	}
+
+	var errors []error
+
+	if m.GetPagination() == nil {
+		err := ListColleagueActivityRequestValidationError{
+			field:  "Pagination",
+			reason: "value is required",
+		}
+		if !all {
+			return err
+		}
+		errors = append(errors, err)
+	}
+
+	if all {
+		switch v := interface{}(m.GetPagination()).(type) {
+		case interface{ ValidateAll() error }:
+			if err := v.ValidateAll(); err != nil {
+				errors = append(errors, ListColleagueActivityRequestValidationError{
+					field:  "Pagination",
+					reason: "embedded message failed validation",
+					cause:  err,
+				})
+			}
+		case interface{ Validate() error }:
+			if err := v.Validate(); err != nil {
+				errors = append(errors, ListColleagueActivityRequestValidationError{
+					field:  "Pagination",
+					reason: "embedded message failed validation",
+					cause:  err,
+				})
+			}
+		}
+	} else if v, ok := interface{}(m.GetPagination()).(interface{ Validate() error }); ok {
+		if err := v.Validate(); err != nil {
+			return ListColleagueActivityRequestValidationError{
+				field:  "Pagination",
+				reason: "embedded message failed validation",
+				cause:  err,
+			}
+		}
+	}
+
+	// no validation rules for UserId
+
+	if len(errors) > 0 {
+		return ListColleagueActivityRequestMultiError(errors)
+	}
+
+	return nil
+}
+
+// ListColleagueActivityRequestMultiError is an error wrapping multiple
+// validation errors returned by ListColleagueActivityRequest.ValidateAll() if
+// the designated constraints aren't met.
+type ListColleagueActivityRequestMultiError []error
+
+// Error returns a concatenation of all the error messages it wraps.
+func (m ListColleagueActivityRequestMultiError) Error() string {
+	var msgs []string
+	for _, err := range m {
+		msgs = append(msgs, err.Error())
+	}
+	return strings.Join(msgs, "; ")
+}
+
+// AllErrors returns a list of validation violation errors.
+func (m ListColleagueActivityRequestMultiError) AllErrors() []error { return m }
+
+// ListColleagueActivityRequestValidationError is the validation error returned
+// by ListColleagueActivityRequest.Validate if the designated constraints
+// aren't met.
+type ListColleagueActivityRequestValidationError struct {
+	field  string
+	reason string
+	cause  error
+	key    bool
+}
+
+// Field function returns field value.
+func (e ListColleagueActivityRequestValidationError) Field() string { return e.field }
+
+// Reason function returns reason value.
+func (e ListColleagueActivityRequestValidationError) Reason() string { return e.reason }
+
+// Cause function returns cause value.
+func (e ListColleagueActivityRequestValidationError) Cause() error { return e.cause }
+
+// Key function returns key value.
+func (e ListColleagueActivityRequestValidationError) Key() bool { return e.key }
+
+// ErrorName returns error name.
+func (e ListColleagueActivityRequestValidationError) ErrorName() string {
+	return "ListColleagueActivityRequestValidationError"
+}
+
+// Error satisfies the builtin error interface
+func (e ListColleagueActivityRequestValidationError) Error() string {
+	cause := ""
+	if e.cause != nil {
+		cause = fmt.Sprintf(" | caused by: %v", e.cause)
+	}
+
+	key := ""
+	if e.key {
+		key = "key for "
+	}
+
+	return fmt.Sprintf(
+		"invalid %sListColleagueActivityRequest.%s: %s%s",
+		key,
+		e.field,
+		e.reason,
+		cause)
+}
+
+var _ error = ListColleagueActivityRequestValidationError{}
+
+var _ interface {
+	Field() string
+	Reason() string
+	Key() bool
+	Cause() error
+	ErrorName() string
+} = ListColleagueActivityRequestValidationError{}
+
+// Validate checks the field values on ListColleagueActivityResponse with the
+// rules defined in the proto definition for this message. If any rules are
+// violated, the first error encountered is returned, or nil if there are no violations.
+func (m *ListColleagueActivityResponse) Validate() error {
+	return m.validate(false)
+}
+
+// ValidateAll checks the field values on ListColleagueActivityResponse with
+// the rules defined in the proto definition for this message. If any rules
+// are violated, the result is a list of violation errors wrapped in
+// ListColleagueActivityResponseMultiError, or nil if none found.
+func (m *ListColleagueActivityResponse) ValidateAll() error {
+	return m.validate(true)
+}
+
+func (m *ListColleagueActivityResponse) validate(all bool) error {
+	if m == nil {
+		return nil
+	}
+
+	var errors []error
+
+	if all {
+		switch v := interface{}(m.GetPagination()).(type) {
+		case interface{ ValidateAll() error }:
+			if err := v.ValidateAll(); err != nil {
+				errors = append(errors, ListColleagueActivityResponseValidationError{
+					field:  "Pagination",
+					reason: "embedded message failed validation",
+					cause:  err,
+				})
+			}
+		case interface{ Validate() error }:
+			if err := v.Validate(); err != nil {
+				errors = append(errors, ListColleagueActivityResponseValidationError{
+					field:  "Pagination",
+					reason: "embedded message failed validation",
+					cause:  err,
+				})
+			}
+		}
+	} else if v, ok := interface{}(m.GetPagination()).(interface{ Validate() error }); ok {
+		if err := v.Validate(); err != nil {
+			return ListColleagueActivityResponseValidationError{
+				field:  "Pagination",
+				reason: "embedded message failed validation",
+				cause:  err,
+			}
+		}
+	}
+
+	for idx, item := range m.GetActivity() {
+		_, _ = idx, item
+
+		if all {
+			switch v := interface{}(item).(type) {
+			case interface{ ValidateAll() error }:
+				if err := v.ValidateAll(); err != nil {
+					errors = append(errors, ListColleagueActivityResponseValidationError{
+						field:  fmt.Sprintf("Activity[%v]", idx),
+						reason: "embedded message failed validation",
+						cause:  err,
+					})
+				}
+			case interface{ Validate() error }:
+				if err := v.Validate(); err != nil {
+					errors = append(errors, ListColleagueActivityResponseValidationError{
+						field:  fmt.Sprintf("Activity[%v]", idx),
+						reason: "embedded message failed validation",
+						cause:  err,
+					})
+				}
+			}
+		} else if v, ok := interface{}(item).(interface{ Validate() error }); ok {
+			if err := v.Validate(); err != nil {
+				return ListColleagueActivityResponseValidationError{
+					field:  fmt.Sprintf("Activity[%v]", idx),
+					reason: "embedded message failed validation",
+					cause:  err,
+				}
+			}
+		}
+
+	}
+
+	if len(errors) > 0 {
+		return ListColleagueActivityResponseMultiError(errors)
+	}
+
+	return nil
+}
+
+// ListColleagueActivityResponseMultiError is an error wrapping multiple
+// validation errors returned by ListColleagueActivityResponse.ValidateAll()
+// if the designated constraints aren't met.
+type ListColleagueActivityResponseMultiError []error
+
+// Error returns a concatenation of all the error messages it wraps.
+func (m ListColleagueActivityResponseMultiError) Error() string {
+	var msgs []string
+	for _, err := range m {
+		msgs = append(msgs, err.Error())
+	}
+	return strings.Join(msgs, "; ")
+}
+
+// AllErrors returns a list of validation violation errors.
+func (m ListColleagueActivityResponseMultiError) AllErrors() []error { return m }
+
+// ListColleagueActivityResponseValidationError is the validation error
+// returned by ListColleagueActivityResponse.Validate if the designated
+// constraints aren't met.
+type ListColleagueActivityResponseValidationError struct {
+	field  string
+	reason string
+	cause  error
+	key    bool
+}
+
+// Field function returns field value.
+func (e ListColleagueActivityResponseValidationError) Field() string { return e.field }
+
+// Reason function returns reason value.
+func (e ListColleagueActivityResponseValidationError) Reason() string { return e.reason }
+
+// Cause function returns cause value.
+func (e ListColleagueActivityResponseValidationError) Cause() error { return e.cause }
+
+// Key function returns key value.
+func (e ListColleagueActivityResponseValidationError) Key() bool { return e.key }
+
+// ErrorName returns error name.
+func (e ListColleagueActivityResponseValidationError) ErrorName() string {
+	return "ListColleagueActivityResponseValidationError"
+}
+
+// Error satisfies the builtin error interface
+func (e ListColleagueActivityResponseValidationError) Error() string {
+	cause := ""
+	if e.cause != nil {
+		cause = fmt.Sprintf(" | caused by: %v", e.cause)
+	}
+
+	key := ""
+	if e.key {
+		key = "key for "
+	}
+
+	return fmt.Sprintf(
+		"invalid %sListColleagueActivityResponse.%s: %s%s",
+		key,
+		e.field,
+		e.reason,
+		cause)
+}
+
+var _ error = ListColleagueActivityResponseValidationError{}
+
+var _ interface {
+	Field() string
+	Reason() string
+	Key() bool
+	Cause() error
+	ErrorName() string
+} = ListColleagueActivityResponseValidationError{}
 
 // Validate checks the field values on SetJobsUserPropsRequest with the rules
 // defined in the proto definition for this message. If any rules are
