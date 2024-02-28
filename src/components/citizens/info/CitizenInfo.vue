@@ -2,6 +2,7 @@
 import { RpcError } from '@protobuf-ts/runtime-rpc';
 import { Tab, TabGroup, TabList, TabPanel, TabPanels } from '@headlessui/vue';
 import { AccountIcon, BulletinBoardIcon, CarIcon, CloseIcon, FileDocumentMultipleIcon, MenuIcon } from 'mdi-vue3';
+import type { DefineComponent } from 'vue';
 import AddToButton from '~/components/clipboard/AddToButton.vue';
 import { useClipboardStore } from '~/store/clipboard';
 import { useNotificatorStore } from '~/store/notificator';
@@ -29,7 +30,7 @@ const notifications = useNotificatorStore();
 
 const { t } = useI18n();
 
-const tabs = [
+const tabs: { id: string; name: string; icon: DefineComponent; permission: Perms }[] = [
     {
         id: 'profile',
         name: t('common.profile'),

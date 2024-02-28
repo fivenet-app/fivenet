@@ -2,6 +2,7 @@
 import { Tab, TabGroup, TabList, TabPanel, TabPanels } from '@headlessui/vue';
 import { RpcError } from '@protobuf-ts/runtime-rpc';
 import { BulletinBoardIcon, CloseIcon, ListStatusIcon, MenuIcon, SchoolIcon, TimelineClockIcon } from 'mdi-vue3';
+import type { DefineComponent } from 'vue';
 import ProfilePictureImg from '~/components/partials/citizens/ProfilePictureImg.vue';
 import DataErrorBlock from '~/components/partials/data/DataErrorBlock.vue';
 import DataNoDataBlock from '~/components/partials/data/DataNoDataBlock.vue';
@@ -10,6 +11,7 @@ import type { GetColleagueResponse } from '~~/gen/ts/services/jobs/jobs';
 import ColleagueActivityFeed from '~/components/jobs/colleagues/info/ColleagueActivityFeed.vue';
 import TimeclockOverviewBlock from '~/components/jobs/timeclock/TimeclockOverviewBlock.vue';
 import ConductList from '~/components/jobs/conduct/ConductList.vue';
+import type { Perms } from '~~/gen/ts/perms';
 
 const props = defineProps<{
     userId: number;
@@ -38,33 +40,33 @@ async function getColleague(userId: number): Promise<GetColleagueResponse> {
     }
 }
 
-const tabs = [
+const tabs: { id: string; name: string; icon: DefineComponent; permission: Perms }[] = [
     {
         id: 'activity',
         name: 'common.activity',
-        permission: 'JobsService.GetColleague',
         icon: markRaw(BulletinBoardIcon),
+        permission: 'JobsService.GetColleague' as Perms,
     },
     {
         id: 'timeclock',
         name: 'common.timeclock',
-        permission: 'JobsTimeclockService.ListTimeclock',
         icon: markRaw(TimelineClockIcon),
+        permission: 'JobsTimeclockService.ListTimeclock' as Perms,
     },
     {
         id: 'qualifications',
         name: 'pages.jobs.qualifications.title',
         to: { name: 'jobs-qualifications' },
-        permission: 'TODOService.TODOMethod',
         icon: markRaw(SchoolIcon),
+        permission: 'TODOService.TODOMethod' as Perms,
     },
     {
         id: 'conduct',
         name: 'pages.jobs.conduct.title',
         icon: markRaw(ListStatusIcon),
-        permission: 'JobsConductService.ListConductEntries',
+        permission: 'JobsConductService.ListConductEntries' as Perms,
     },
-];
+].filter((tab) => can(tab.permission));
 
 const selectedTab = ref(0);
 
@@ -77,7 +79,7 @@ const open = ref(false);
 
 <template>
     <div>
-        <DataPendingBlock v-if="pending" :message="$t('common.loading', [$t('common.citizen', 1)])" />
+        <DataPendingBlock v-if="pending" :message="$t('common.loading', [$t('common.colleague', 1)])" />
         <DataErrorBlock
             v-else-if="error"
             :title="$t('common.unable_to_load', [$t('common.colleague', 1)])"
@@ -200,6 +202,7 @@ const open = ref(false);
                             <TimeclockOverviewBlock :user-id="userId" />
                         </TabPanel>
                         <TabPanel>
+                            <p class="text-xl text-neutral">TODO</p>
                             <!-- TODO show colleague's qualifications -->
                         </TabPanel>
                         <TabPanel>
