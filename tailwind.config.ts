@@ -21,6 +21,7 @@ export default <Partial<Config>>{
     plugins: [
         require('@tailwindcss/forms'),
         require('@tailwindcss/typography'),
+        require('tailwind-scrollbar'),
         // eslint-disable-next-line @typescript-eslint/no-var-requires
         require('tailwindcss-themer')({
             defaultTheme: {
