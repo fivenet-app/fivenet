@@ -209,7 +209,6 @@
                 "set_mug_shot": "Set Mug Shot Photo"
             },
             "citizen_info_activity_feed_entry": {
-                "with_reason": "with reason",
                 "traffic_infraction_points": {
                     "action_text": "Set traffic points from"
                 },
@@ -1859,6 +1858,10 @@
                 "WARNING": "Warning",
                 "SUSPENSION": "Suspension",
                 "NOTE": "Note"
+            },
+            "JobsUserActivityType": {
+                "UNSPECIFIED": "Unspecified",
+                "ABSENCE_DATE": "Absence Date"
             }
         }
     }
