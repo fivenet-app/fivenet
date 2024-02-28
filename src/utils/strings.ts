@@ -6,7 +6,9 @@ export function lowercaseFirstLetter(s: string): string {
     return s.charAt(0).toLowerCase() + s.slice(1);
 }
 
+const initialsCleanerRegex = /(Prof\.|Dr\.)[ ]*/gm;
 export function getInitials(input: string): string {
+    input = input.replaceAll(initialsCleanerRegex, '');
     const names = input.split(' ');
     let initials = names[0].substring(0, 1).toUpperCase();
 

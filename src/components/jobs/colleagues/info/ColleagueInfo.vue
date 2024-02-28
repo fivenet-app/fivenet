@@ -236,17 +236,17 @@ const absenceDateModal = ref(false);
                         <Tab v-for="tab in tabs" :key="tab.id"></Tab>
                     </TabList>
                     <TabPanels class="mt-2 bg-transparent">
-                        <TabPanel>
+                        <TabPanel v-if="can('JobsService.GetColleague')">
                             <ColleagueActivityFeed :user-id="userId" />
                         </TabPanel>
-                        <TabPanel>
+                        <TabPanel v-if="can('JobsTimeclockService.ListTimeclock')">
                             <TimeclockOverviewBlock :user-id="userId" />
                         </TabPanel>
-                        <TabPanel>
+                        <TabPanel v-if="can('TODOService.TODOMethod')">
                             <p class="text-xl text-neutral">TODO</p>
                             <!-- TODO show colleague's qualifications -->
                         </TabPanel>
-                        <TabPanel>
+                        <TabPanel v-if="can('JobsConductService.ListConductEntries')">
                             <ConductList :user-id="userId" :hide-user-search="true" />
                         </TabPanel>
                     </TabPanels>

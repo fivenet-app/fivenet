@@ -5,12 +5,17 @@ import GenericContainer from '~/components/partials/elements/GenericContainer.vu
 import SelfServicePropsAbsenceDateModal from '~/components/jobs/colleagues/SelfServicePropsAbsenceDateModal.vue';
 import SelfServicePropsProfilePictureModal from '~/components/jobs/colleagues/SelfServicePropsProfilePictureModal.vue';
 import type { Timestamp } from '~~/gen/ts/resources/timestamp/timestamp';
+import { checkIfCanAccessColleague } from '~/components/jobs/colleagues/helpers';
+import { useAuthStore } from '~/store/auth';
 
 defineProps<{
     userId: number;
 }>();
 
 const { $grpc } = useNuxtApp();
+
+const authStore = useAuthStore();
+const { activeChar } = storeToRefs(authStore);
 
 const { data: colleagueSelf } = useLazyAsyncData('jobs-selfcolleague', async () => {
     try {
@@ -58,6 +63,11 @@ const profilePictureModal = ref(false);
 
         <div class="flex items-center flex-initial gap-1">
             <button
+                v-if="
+                    colleagueSelf?.colleague &&
+                    can('JobsService.SetJobsUserProps') &&
+                    checkIfCanAccessColleague(activeChar!, colleagueSelf.colleague, 'JobsService.SetJobsUserProps')
+                "
                 type="button"
                 class="w-full inline-flex rounded-md bg-primary-500 px-3 py-2 text-sm font-semibold text-neutral hover:bg-primary-400 focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-primary-500"
                 @click="absenceDateModal = true"
