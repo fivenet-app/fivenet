@@ -13,11 +13,14 @@ func ResizePNG(input io.Reader, height int, width int) (io.Reader, error) {
 		return nil, err
 	}
 
-	resizeImageIfNecessary(src, height, width)
+	dst := resizeImageIfNecessary(src, height, width)
+	if dst == nil {
+		return nil, nil
+	}
 
 	// Encode to output
 	output := bytes.NewBuffer([]byte{})
-	if err := png.Encode(output, src); err != nil {
+	if err := png.Encode(output, dst); err != nil {
 		return nil, err
 	}
 

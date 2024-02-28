@@ -83,7 +83,7 @@ func (x *File) Optimize(ctx context.Context) error {
 	x.ContentType = &contentType.MIME.Value
 
 	if x.IsImage() {
-		data, err = images.ResizeImage(contentType, data, 500, 500)
+		data, err = images.ResizeImage(contentType, data, 850, 850)
 		if err != nil {
 			return err
 		}

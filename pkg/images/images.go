@@ -18,12 +18,16 @@ func ResizeImage(iType types.Type, input io.Reader, height int, width int) (io.R
 	return input, nil
 }
 
-func resizeImageIfNecessary(src image.Image, height int, width int) {
+func resizeImageIfNecessary(src image.Image, height int, width int) *image.RGBA {
 	if src.Bounds().Max.X > height || src.Bounds().Max.Y > width {
 		// Set the expected size we want
 		dst := image.NewRGBA(image.Rect(0, 0, height, width))
 
 		// Resize image
 		draw.ApproxBiLinear.Scale(dst, dst.Rect, src, src.Bounds(), draw.Over, nil)
+
+		return dst
 	}
+
+	return nil
 }

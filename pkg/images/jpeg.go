@@ -13,11 +13,14 @@ func ResizeJPEG(input io.Reader, height int, width int) (io.Reader, error) {
 		return nil, err
 	}
 
-	resizeImageIfNecessary(src, height, width)
+	dst := resizeImageIfNecessary(src, height, width)
+	if dst == nil {
+		return nil, nil
+	}
 
 	// Encode to output
 	output := bytes.NewBuffer([]byte{})
-	if err := jpeg.Encode(output, src, &jpeg.Options{Quality: 90}); err != nil {
+	if err := jpeg.Encode(output, dst, &jpeg.Options{Quality: 90}); err != nil {
 		return nil, err
 	}
 
