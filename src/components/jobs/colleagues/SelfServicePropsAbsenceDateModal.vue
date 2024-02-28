@@ -70,10 +70,12 @@ const { handleSubmit, meta, setFieldValue } = useForm<FormData>({
 });
 
 function updateAbsenceDateField(): void {
-    setFieldValue(
-        'absenceDate',
-        props.userProps?.absenceDate ? toDatetimeLocal(toDate(props.userProps.absenceDate)).split('T')[0] : '',
-    );
+    let date = '';
+    if (props.userProps?.absenceDate && toDate(props.userProps.absenceDate).getTime() > new Date().getTime()) {
+        date = toDatetimeLocal(toDate(props.userProps.absenceDate)).split('T')[0];
+    }
+
+    setFieldValue('absenceDate', date);
 }
 
 watch(props, () => updateAbsenceDateField());

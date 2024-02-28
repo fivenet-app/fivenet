@@ -131,9 +131,9 @@ function updateAbsenceDate(value: { userId: number; absenceDate?: Timestamp }): 
                                 </thead>
                                 <tbody class="divide-y divide-base-800">
                                     <ColleaguesListEntry
-                                        v-for="user in data?.colleagues"
-                                        :key="user.userId"
-                                        :user="user"
+                                        v-for="colleague in data?.colleagues"
+                                        :key="colleague.userId"
+                                        :colleague="colleague"
                                         @update:absence-date="updateAbsenceDate($event)"
                                     />
                                 </tbody>

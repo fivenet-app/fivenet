@@ -10,7 +10,7 @@ import { checkIfCanAccessColleague } from '~/components/jobs/colleagues/helpers'
 import type { Timestamp } from '~~/gen/ts/resources/timestamp/timestamp';
 
 defineProps<{
-    user: Colleague;
+    colleague: Colleague;
 }>();
 
 const authStore = useAuthStore();
@@ -24,41 +24,48 @@ const absenceDateModal = ref(false);
 </script>
 
 <template>
-    <tr :key="user.userId" class="transition-colors even:bg-base-800 hover:bg-neutral/5">
+    <tr :key="colleague.userId" class="transition-colors even:bg-base-800 hover:bg-neutral/5">
         <SelfServicePropsAbsenceDateModal
             :open="absenceDateModal"
-            :user-id="user.userId"
-            :user-props="user.props"
+            :user-id="colleague.userId"
+            :user-props="colleague.props"
             @close="absenceDateModal = false"
             @update:absence-date="$emit('update:absenceDate', $event)"
         />
+
         <td class="whitespace-nowrap py-2 pl-4 pr-3 text-base font-medium text-neutral sm:pl-1">
             <ProfilePictureImg
-                :url="user.avatar?.url"
-                :name="`${user.firstname} ${user.lastname}`"
+                :url="colleague.avatar?.url"
+                :name="`${colleague.firstname} ${colleague.lastname}`"
                 size="sm"
                 :rounded="false"
             />
         </td>
         <td class="whitespace-nowrap py-2 pl-4 pr-3 text-base font-medium text-neutral sm:pl-1">
-            {{ user.firstname }} {{ user.lastname }}
+            {{ colleague.firstname }} {{ colleague.lastname }}
         </td>
-        <td class="whitespace-nowrap px-1 py-1 text-left text-accent-200">{{ user.jobGradeLabel }} ({{ user.jobGrade }})</td>
+        <td class="whitespace-nowrap px-1 py-1 text-left text-accent-200">
+            {{ colleague.jobGradeLabel }} ({{ colleague.jobGrade }})
+        </td>
         <td class="whitespace-nowrap py-2 pl-4 pr-3 text-base font-medium text-neutral sm:pl-1">
-            <GenericTime v-if="user.props?.absenceDate" :value="user.props?.absenceDate" type="date" />
+            <GenericTime
+                v-if="colleague.props?.absenceDate && toDate(colleague.props?.absenceDate).getTime() > new Date().getTime()"
+                :value="colleague.props?.absenceDate"
+                type="date"
+            />
         </td>
         <td class="whitespace-nowrap px-1 py-1 text-left text-accent-200">
-            <PhoneNumberBlock :number="user.phoneNumber" />
+            <PhoneNumberBlock :number="colleague.phoneNumber" />
         </td>
         <td class="whitespace-nowrap px-1 py-1 text-left text-accent-200">
-            {{ user.dateofbirth }}
+            {{ colleague.dateofbirth }}
         </td>
         <td class="whitespace-nowrap px-1 py-1 text-left text-accent-200">
             <div class="flex flex-row justify-end">
                 <button
                     v-if="
                         can('JobsService.SetJobsUserProps') &&
-                        checkIfCanAccessColleague(activeChar!, user, 'JobsService.SetJobsUserProps')
+                        checkIfCanAccessColleague(activeChar!, colleague, 'JobsService.SetJobsUserProps')
                     "
                     type="button"
                     class="flex-initial text-primary-500 hover:text-primary-400"
@@ -69,11 +76,11 @@ const absenceDateModal = ref(false);
                 <NuxtLink
                     v-if="
                         can('JobsService.GetColleague') &&
-                        checkIfCanAccessColleague(activeChar!, user, 'JobsService.GetColleague')
+                        checkIfCanAccessColleague(activeChar!, colleague, 'JobsService.GetColleague')
                     "
                     :to="{
                         name: 'jobs-colleagues-id',
-                        params: { id: user.userId ?? 0 },
+                        params: { id: colleague.userId ?? 0 },
                     }"
                     class="flex-initial text-primary-500 hover:text-primary-400"
                 >

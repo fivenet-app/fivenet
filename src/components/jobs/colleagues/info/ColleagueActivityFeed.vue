@@ -33,6 +33,8 @@ async function listColleagueActivity(userId: number): Promise<ListColleagueActiv
         throw e;
     }
 }
+
+watch(props, async () => refresh());
 </script>
 
 <template>

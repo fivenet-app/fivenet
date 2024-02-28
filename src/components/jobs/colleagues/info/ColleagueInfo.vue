@@ -1,7 +1,7 @@
 <script lang="ts" setup>
 import { Tab, TabGroup, TabList, TabPanel, TabPanels } from '@headlessui/vue';
 import { RpcError } from '@protobuf-ts/runtime-rpc';
-import { BulletinBoardIcon, CloseIcon, ListStatusIcon, MenuIcon, SchoolIcon, TimelineClockIcon } from 'mdi-vue3';
+import { BulletinBoardIcon, CloseIcon, IslandIcon, ListStatusIcon, MenuIcon, SchoolIcon, TimelineClockIcon } from 'mdi-vue3';
 import type { DefineComponent } from 'vue';
 import ProfilePictureImg from '~/components/partials/citizens/ProfilePictureImg.vue';
 import DataErrorBlock from '~/components/partials/data/DataErrorBlock.vue';
@@ -12,12 +12,19 @@ import ColleagueActivityFeed from '~/components/jobs/colleagues/info/ColleagueAc
 import TimeclockOverviewBlock from '~/components/jobs/timeclock/TimeclockOverviewBlock.vue';
 import ConductList from '~/components/jobs/conduct/ConductList.vue';
 import type { Perms } from '~~/gen/ts/perms';
+import SelfServicePropsAbsenceDateModal from '~/components/jobs/colleagues/SelfServicePropsAbsenceDateModal.vue';
+import { checkIfCanAccessColleague } from '~/components/jobs/colleagues/helpers';
+import { useAuthStore } from '~/store/auth';
+import GenericTime from '~/components/partials/elements/GenericTime.vue';
 
 const props = defineProps<{
     userId: number;
 }>();
 
 const { $grpc } = useNuxtApp();
+
+const authStore = useAuthStore();
+const { activeChar } = storeToRefs(authStore);
 
 const {
     data: colleague,
@@ -75,6 +82,8 @@ function changeTab(index: number) {
 }
 
 const open = ref(false);
+
+const absenceDateModal = ref(false);
 </script>
 
 <template>
@@ -89,6 +98,13 @@ const open = ref(false);
         <DataNoDataBlock v-else-if="colleague === null || !colleague.colleague" />
 
         <template v-else>
+            <SelfServicePropsAbsenceDateModal
+                :open="absenceDateModal"
+                :user-id="colleague.colleague.userId"
+                :user-props="colleague.colleague.props"
+                @close="absenceDateModal = false"
+            />
+
             <div class="mb-6">
                 <div class="flex gap-4 my-4 px-4">
                     <ProfilePictureImg
@@ -103,6 +119,19 @@ const open = ref(false);
                             <h1 class="flex-1 break-words py-1 pl-0.5 pr-0.5 text-4xl font-bold text-neutral sm:pl-1">
                                 {{ colleague.colleague.firstname }} {{ colleague.colleague.lastname }}
                             </h1>
+
+                            <button
+                                v-if="
+                                    can('JobsService.SetJobsUserProps') &&
+                                    checkIfCanAccessColleague(activeChar!, colleague.colleague, 'JobsService.SetJobsUserProps')
+                                "
+                                type="button"
+                                class="place-self-end inline-flex items-center gap-x-1.5 rounded-md bg-primary-500 px-3 py-2 text-sm font-semibold text-neutral hover:bg-primary-400"
+                                @click="absenceDateModal = true"
+                            >
+                                <IslandIcon class="w-5 h-auto" />
+                                {{ $t('components.jobs.self_service.set_absence_date') }}
+                            </button>
                         </div>
                         <div class="my-2 flex flex-row items-center gap-2">
                             <span
@@ -112,6 +141,18 @@ const open = ref(false);
                                 <span v-if="colleague.colleague.jobGrade > 0"
                                     >&nbsp;({{ $t('common.rank') }}: {{ colleague.colleague.jobGradeLabel }})</span
                                 >
+                            </span>
+
+                            <span
+                                v-if="
+                                    colleague.colleague.props?.absenceDate &&
+                                    toDate(colleague.colleague.props?.absenceDate).getTime() > new Date().getTime()
+                                "
+                                class="inline-flex gap-1 items-center rounded-full bg-base-100 px-2.5 py-0.5 text-sm font-medium text-base-800"
+                            >
+                                <IslandIcon class="h-5 w-5" />
+                                <span>{{ $t('common.absence_date') }}:</span>
+                                <GenericTime :value="colleague.colleague.props?.absenceDate" />
                             </span>
                         </div>
                     </div>
