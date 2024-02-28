@@ -1510,7 +1510,16 @@
             },
             "GetColleague": {
                 "key": "Detailierte Kollegen-Info anzeigen",
-                "description": "Rufe die detailierte Kollegen-Info Übersicht auf."
+                "description": "Rufe die detailierte Kollegen-Info Übersicht auf.",
+                "attrs": {
+                    "Own": "Eigene",
+                    "Lower_Rank": "Niedrigerer Rang",
+                    "Same_Rank": "Gleicher Rang",
+                    "Any": "Egal"
+                },
+                "attrs_types": {
+                    "Access": "Zugriff auf Kollegen"
+                }
             },
             "SetJobsUserProps": {
                 "key": "Setzte die Eigenschaften eines Kollegen",
@@ -1520,6 +1529,9 @@
                     "Lower_Rank": "Niedrigerer Rang",
                     "Same_Rank": "Gleicher Rang",
                     "Any": "Egal"
+                },
+                "attrs_types": {
+                    "Access": "Zugriff auf Kollegen Eigenschaften"
                 }
             }
         },
