@@ -1863,7 +1863,9 @@
                 "UNSPECIFIED": "Unbestimmt",
                 "ABSENCE_DATE": "Abwesenheitsdatum",
                 "FIRED": "Gefeuert",
-                "HIRED": "Angestellt"
+                "HIRED": "Angestellt",
+                "PROMOTED": "Befördert",
+                "DEMOTED": "Degradiert"
             }
         }
     }
