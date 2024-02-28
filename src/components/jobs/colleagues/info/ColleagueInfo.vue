@@ -200,6 +200,9 @@ const open = ref(false);
                             <TimeclockOverviewBlock :user-id="userId" />
                         </TabPanel>
                         <TabPanel>
+                            <!-- TODO show colleague's qualifications -->
+                        </TabPanel>
+                        <TabPanel>
                             <ConductList :user-id="userId" :hide-user-search="true" />
                         </TabPanel>
                     </TabPanels>
