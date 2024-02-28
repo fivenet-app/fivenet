@@ -140,6 +140,12 @@ export interface JobsUserActivityData {
          */
         absenceDate: ColleagueAbsenceDate;
     } | {
+        oneofKind: "gradeChange";
+        /**
+         * @generated from protobuf field: resources.jobs.ColleagueGradeChange grade_change = 2;
+         */
+        gradeChange: ColleagueGradeChange;
+    } | {
         oneofKind: undefined;
     };
 }
@@ -151,6 +157,19 @@ export interface ColleagueAbsenceDate {
      * @generated from protobuf field: optional resources.timestamp.Timestamp absence_date = 1;
      */
     absenceDate?: Timestamp;
+}
+/**
+ * @generated from protobuf message resources.jobs.ColleagueGradeChange
+ */
+export interface ColleagueGradeChange {
+    /**
+     * @generated from protobuf field: int32 grade = 1;
+     */
+    grade: number;
+    /**
+     * @generated from protobuf field: string grade_label = 2;
+     */
+    gradeLabel: string;
 }
 /**
  * @generated from protobuf enum resources.jobs.JobsUserActivityType
@@ -169,9 +188,17 @@ export enum JobsUserActivityType {
      */
     FIRED = 2,
     /**
-     * @generated from protobuf enum value: JOBS_USER_ACTIVITY_TYPE_ABSENCE_DATE = 3;
+     * @generated from protobuf enum value: JOBS_USER_ACTIVITY_TYPE_PROMOTED = 3;
      */
-    ABSENCE_DATE = 3
+    PROMOTED = 3,
+    /**
+     * @generated from protobuf enum value: JOBS_USER_ACTIVITY_TYPE_DEMOTED = 4;
+     */
+    DEMOTED = 4,
+    /**
+     * @generated from protobuf enum value: JOBS_USER_ACTIVITY_TYPE_ABSENCE_DATE = 5;
+     */
+    ABSENCE_DATE = 5
 }
 // @generated message type with reflection information, may provide speed optimized methods
 class Colleague$Type extends MessageType<Colleague> {
@@ -476,7 +503,8 @@ export const JobsUserActivity = new JobsUserActivity$Type();
 class JobsUserActivityData$Type extends MessageType<JobsUserActivityData> {
     constructor() {
         super("resources.jobs.JobsUserActivityData", [
-            { no: 1, name: "absence_date", kind: "message", oneof: "data", T: () => ColleagueAbsenceDate }
+            { no: 1, name: "absence_date", kind: "message", oneof: "data", T: () => ColleagueAbsenceDate },
+            { no: 2, name: "grade_change", kind: "message", oneof: "data", T: () => ColleagueGradeChange }
         ]);
     }
     create(value?: PartialMessage<JobsUserActivityData>): JobsUserActivityData {
@@ -497,6 +525,12 @@ class JobsUserActivityData$Type extends MessageType<JobsUserActivityData> {
                         absenceDate: ColleagueAbsenceDate.internalBinaryRead(reader, reader.uint32(), options, (message.data as any).absenceDate)
                     };
                     break;
+                case /* resources.jobs.ColleagueGradeChange grade_change */ 2:
+                    message.data = {
+                        oneofKind: "gradeChange",
+                        gradeChange: ColleagueGradeChange.internalBinaryRead(reader, reader.uint32(), options, (message.data as any).gradeChange)
+                    };
+                    break;
                 default:
                     let u = options.readUnknownField;
                     if (u === "throw")
@@ -512,6 +546,9 @@ class JobsUserActivityData$Type extends MessageType<JobsUserActivityData> {
         /* resources.jobs.ColleagueAbsenceDate absence_date = 1; */
         if (message.data.oneofKind === "absenceDate")
             ColleagueAbsenceDate.internalBinaryWrite(message.data.absenceDate, writer.tag(1, WireType.LengthDelimited).fork(), options).join();
+        /* resources.jobs.ColleagueGradeChange grade_change = 2; */
+        if (message.data.oneofKind === "gradeChange")
+            ColleagueGradeChange.internalBinaryWrite(message.data.gradeChange, writer.tag(2, WireType.LengthDelimited).fork(), options).join();
         let u = options.writeUnknownFields;
         if (u !== false)
             (u == true ? UnknownFieldHandler.onWrite : u)(this.typeName, message, writer);
@@ -568,3 +605,58 @@ class ColleagueAbsenceDate$Type extends MessageType<ColleagueAbsenceDate> {
  * @generated MessageType for protobuf message resources.jobs.ColleagueAbsenceDate
  */
 export const ColleagueAbsenceDate = new ColleagueAbsenceDate$Type();
+// @generated message type with reflection information, may provide speed optimized methods
+class ColleagueGradeChange$Type extends MessageType<ColleagueGradeChange> {
+    constructor() {
+        super("resources.jobs.ColleagueGradeChange", [
+            { no: 1, name: "grade", kind: "scalar", T: 5 /*ScalarType.INT32*/ },
+            { no: 2, name: "grade_label", kind: "scalar", T: 9 /*ScalarType.STRING*/ }
+        ]);
+    }
+    create(value?: PartialMessage<ColleagueGradeChange>): ColleagueGradeChange {
+        const message = globalThis.Object.create((this.messagePrototype!));
+        message.grade = 0;
+        message.gradeLabel = "";
+        if (value !== undefined)
+            reflectionMergePartial<ColleagueGradeChange>(this, message, value);
+        return message;
+    }
+    internalBinaryRead(reader: IBinaryReader, length: number, options: BinaryReadOptions, target?: ColleagueGradeChange): ColleagueGradeChange {
+        let message = target ?? this.create(), end = reader.pos + length;
+        while (reader.pos < end) {
+            let [fieldNo, wireType] = reader.tag();
+            switch (fieldNo) {
+                case /* int32 grade */ 1:
+                    message.grade = reader.int32();
+                    break;
+                case /* string grade_label */ 2:
+                    message.gradeLabel = reader.string();
+                    break;
+                default:
+                    let u = options.readUnknownField;
+                    if (u === "throw")
+                        throw new globalThis.Error(`Unknown field ${fieldNo} (wire type ${wireType}) for ${this.typeName}`);
+                    let d = reader.skip(wireType);
+                    if (u !== false)
+                        (u === true ? UnknownFieldHandler.onRead : u)(this.typeName, message, fieldNo, wireType, d);
+            }
+        }
+        return message;
+    }
+    internalBinaryWrite(message: ColleagueGradeChange, writer: IBinaryWriter, options: BinaryWriteOptions): IBinaryWriter {
+        /* int32 grade = 1; */
+        if (message.grade !== 0)
+            writer.tag(1, WireType.Varint).int32(message.grade);
+        /* string grade_label = 2; */
+        if (message.gradeLabel !== "")
+            writer.tag(2, WireType.LengthDelimited).string(message.gradeLabel);
+        let u = options.writeUnknownFields;
+        if (u !== false)
+            (u == true ? UnknownFieldHandler.onWrite : u)(this.typeName, message, writer);
+        return writer;
+    }
+}
+/**
+ * @generated MessageType for protobuf message resources.jobs.ColleagueGradeChange
+ */
+export const ColleagueGradeChange = new ColleagueGradeChange$Type();

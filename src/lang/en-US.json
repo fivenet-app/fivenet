@@ -1863,7 +1863,9 @@
                 "UNSPECIFIED": "Unspecified",
                 "ABSENCE_DATE": "Absence Date",
                 "FIRED": "Fired",
-                "HIRED": "Hired"
+                "HIRED": "Hired",
+                "PROMOTED": "Promoted",
+                "DEMOTED": "Demoted"
             }
         }
     }

@@ -21,8 +21,14 @@ defineProps<{
             <div class="flex items-center justify-between">
                 <h3 class="text-sm font-medium text-neutral">
                     {{ $t(`enums.jobs.JobsUserActivityType.${JobsUserActivityType[activity.activityType]}`) }}
-                    <template v-if="activity.data?.data.oneofKind === 'absenceDate'">
-                        {{ ' - ' }}<GenericTime :value="activity.data?.data.absenceDate.absenceDate" type="date" />
+                    <template v-if="activity.data?.data.oneofKind !== undefined">
+                        {{ ' - ' }}
+                        <template v-if="activity.data?.data.oneofKind === 'absenceDate'">
+                            <GenericTime :value="activity.data?.data.absenceDate.absenceDate" type="date" />
+                        </template>
+                        <template v-else-if="activity.data?.data.oneofKind === 'gradeChange'">
+                            {{ activity.data?.data.gradeChange.gradeLabel }} ({{ activity.data?.data.gradeChange.grade }})
+                        </template>
                     </template>
                 </h3>
                 <p class="text-sm text-gray-400">
@@ -30,11 +36,13 @@ defineProps<{
                 </p>
             </div>
             <div class="flex items-center justify-between">
-                <p v-if="activity.reason" class="inline-flex gap-1 text-sm text-gray-300">
-                    <span>{{ $t('common.reason') }}:</span>
-                    <span class="font-bold">
-                        {{ activity.reason }}
-                    </span>
+                <p class="inline-flex gap-1 text-sm text-gray-300">
+                    <template v-if="activity.reason">
+                        <span>{{ $t('common.reason') }}:</span>
+                        <span class="font-bold">
+                            {{ activity.reason }}
+                        </span>
+                    </template>
                 </p>
                 <p class="inline-flex text-sm text-gray-300">
                     {{ $t('common.created_by') }}

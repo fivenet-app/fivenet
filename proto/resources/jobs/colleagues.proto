@@ -39,7 +39,9 @@ enum JobsUserActivityType {
   JOBS_USER_ACTIVITY_TYPE_UNSPECIFIED = 0;
   JOBS_USER_ACTIVITY_TYPE_HIRED = 1;
   JOBS_USER_ACTIVITY_TYPE_FIRED = 2;
-  JOBS_USER_ACTIVITY_TYPE_ABSENCE_DATE = 3;
+  JOBS_USER_ACTIVITY_TYPE_PROMOTED = 3;
+  JOBS_USER_ACTIVITY_TYPE_DEMOTED = 4;
+  JOBS_USER_ACTIVITY_TYPE_ABSENCE_DATE = 5;
 }
 
 message JobsUserActivity {
@@ -59,9 +61,15 @@ message JobsUserActivity {
 message JobsUserActivityData {
   oneof data {
     ColleagueAbsenceDate absence_date = 1;
+    ColleagueGradeChange grade_change = 2;
   }
 }
 
 message ColleagueAbsenceDate {
   optional resources.timestamp.Timestamp absence_date = 1;
+}
+
+message ColleagueGradeChange {
+  int32 grade = 1;
+  string grade_label = 2;
 }
