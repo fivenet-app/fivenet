@@ -1510,7 +1510,16 @@
             },
             "GetColleague": {
                 "key": "Get a colleague's profile",
-                "description": "Retrieve a colleague's detailed profile."
+                "description": "Retrieve a colleague's detailed profile.",
+                "attrs": {
+                    "Own": "Own",
+                    "Lower_Rank": "Lower Rank",
+                    "Same_Rank": "Same Rank",
+                    "Any": "Any"
+                },
+                "attrs_types": {
+                    "Access": "Access to factions-own colleague"
+                }
             },
             "SetJobsUserProps": {
                 "key": "Set a colleague's properties",
@@ -1520,6 +1529,9 @@
                     "Lower_Rank": "Lower Rank",
                     "Same_Rank": "Same Rank",
                     "Any": "Any"
+                },
+                "attrs_types": {
+                    "Access": "Access to factions-own colleague's properties"
                 }
             }
         },

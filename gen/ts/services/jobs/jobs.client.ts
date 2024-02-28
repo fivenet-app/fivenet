@@ -38,7 +38,7 @@ export interface IJobsServiceClient {
      */
     getSelf(input: GetSelfRequest, options?: RpcOptions): UnaryCall<GetSelfRequest, GetSelfResponse>;
     /**
-     * @perm
+     * @perm: Attrs=Access/StringList:[]string{"Own", "Lower_Rank", "Same_Rank", "Any"}
      *
      * @generated from protobuf rpc: GetColleague(services.jobs.GetColleagueRequest) returns (services.jobs.GetColleagueResponse);
      */
@@ -96,7 +96,7 @@ export class JobsServiceClient implements IJobsServiceClient, ServiceInfo {
         return stackIntercept<GetSelfRequest, GetSelfResponse>("unary", this._transport, method, opt, input);
     }
     /**
-     * @perm
+     * @perm: Attrs=Access/StringList:[]string{"Own", "Lower_Rank", "Same_Rank", "Any"}
      *
      * @generated from protobuf rpc: GetColleague(services.jobs.GetColleagueRequest) returns (services.jobs.GetColleagueResponse);
      */

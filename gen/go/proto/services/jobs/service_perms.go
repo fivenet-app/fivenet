@@ -111,7 +111,13 @@ func init() {
 		{
 			Category: permkeys.JobsServicePerm,
 			Name:     permkeys.JobsServiceGetColleaguePerm,
-			Attrs:    []perms.Attr{},
+			Attrs: []perms.Attr{
+				{
+					Key:         permkeys.JobsServiceGetColleagueAccessPermField,
+					Type:        permissions.StringListAttributeType,
+					ValidValues: []string{"Own", "Lower_Rank", "Same_Rank", "Any"},
+				},
+			},
 		},
 		{
 			Category: permkeys.JobsServicePerm,

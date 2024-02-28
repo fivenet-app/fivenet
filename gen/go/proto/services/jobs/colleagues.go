@@ -172,7 +172,30 @@ func (s *Server) GetColleague(ctx context.Context, req *GetColleagueRequest) (*G
 	}
 	defer s.aud.Log(auditEntry, req)
 
-	colleague, err := s.getColleague(ctx, req.UserId)
+	// Field Permission Check
+	fieldsAttr, err := s.ps.Attr(userInfo, permsjobs.JobsServicePerm, permsjobs.JobsServiceGetColleaguePerm, permsjobs.JobsServiceGetColleagueAccessPermField)
+	if err != nil {
+		return nil, errswrap.NewError(errorsjobs.ErrFailedQuery, err)
+	}
+	var fields perms.StringList
+	if fieldsAttr != nil {
+		fields = fieldsAttr.([]string)
+	}
+
+	targetUser, err := s.getColleague(ctx, req.UserId)
+	if err != nil {
+		return nil, errswrap.NewError(errorsjobs.ErrFailedQuery, err)
+	}
+
+	if !s.checkIfHasAccessToColleague(fields, userInfo, &users.UserShort{
+		UserId:   targetUser.UserId,
+		Job:      targetUser.Job,
+		JobGrade: targetUser.JobGrade,
+	}) {
+		return nil, errorsjobs.ErrFailedQuery
+	}
+
+	colleague, err := s.getColleague(ctx, targetUser.UserId)
 	if err != nil {
 		return nil, errswrap.NewError(errorsjobs.ErrFailedQuery, err)
 	}

@@ -36,7 +36,7 @@ type JobsServiceClient interface {
 	ListColleagues(ctx context.Context, in *ListColleaguesRequest, opts ...grpc.CallOption) (*ListColleaguesResponse, error)
 	// @perm: Name=ListColleagues
 	GetSelf(ctx context.Context, in *GetSelfRequest, opts ...grpc.CallOption) (*GetSelfResponse, error)
-	// @perm
+	// @perm: Attrs=Access/StringList:[]string{"Own", "Lower_Rank", "Same_Rank", "Any"}
 	GetColleague(ctx context.Context, in *GetColleagueRequest, opts ...grpc.CallOption) (*GetColleagueResponse, error)
 	// @perm: Name=GetColleague
 	ListColleagueActivity(ctx context.Context, in *ListColleagueActivityRequest, opts ...grpc.CallOption) (*ListColleagueActivityResponse, error)
@@ -127,7 +127,7 @@ type JobsServiceServer interface {
 	ListColleagues(context.Context, *ListColleaguesRequest) (*ListColleaguesResponse, error)
 	// @perm: Name=ListColleagues
 	GetSelf(context.Context, *GetSelfRequest) (*GetSelfResponse, error)
-	// @perm
+	// @perm: Attrs=Access/StringList:[]string{"Own", "Lower_Rank", "Same_Rank", "Any"}
 	GetColleague(context.Context, *GetColleagueRequest) (*GetColleagueResponse, error)
 	// @perm: Name=GetColleague
 	ListColleagueActivity(context.Context, *ListColleagueActivityRequest) (*ListColleagueActivityResponse, error)

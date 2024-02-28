@@ -1851,37 +1851,6 @@
         
           
           <li>
-            <a href="#services%2fjobs%2ftimeclock.proto">services/jobs/timeclock.proto</a>
-            <ul>
-              
-                <li>
-                  <a href="#services.jobs.GetTimeclockStatsRequest"><span class="badge">M</span>GetTimeclockStatsRequest</a>
-                </li>
-              
-                <li>
-                  <a href="#services.jobs.GetTimeclockStatsResponse"><span class="badge">M</span>GetTimeclockStatsResponse</a>
-                </li>
-              
-                <li>
-                  <a href="#services.jobs.ListTimeclockRequest"><span class="badge">M</span>ListTimeclockRequest</a>
-                </li>
-              
-                <li>
-                  <a href="#services.jobs.ListTimeclockResponse"><span class="badge">M</span>ListTimeclockResponse</a>
-                </li>
-              
-              
-              
-              
-                <li>
-                  <a href="#services.jobs.JobsTimeclockService"><span class="badge">S</span>JobsTimeclockService</a>
-                </li>
-              
-            </ul>
-          </li>
-        
-          
-          <li>
             <a href="#services%2fjobs%2fjobs.proto">services/jobs/jobs.proto</a>
             <ul>
               
@@ -1946,6 +1915,37 @@
               
                 <li>
                   <a href="#services.jobs.JobsService"><span class="badge">S</span>JobsService</a>
+                </li>
+              
+            </ul>
+          </li>
+        
+          
+          <li>
+            <a href="#services%2fjobs%2ftimeclock.proto">services/jobs/timeclock.proto</a>
+            <ul>
+              
+                <li>
+                  <a href="#services.jobs.GetTimeclockStatsRequest"><span class="badge">M</span>GetTimeclockStatsRequest</a>
+                </li>
+              
+                <li>
+                  <a href="#services.jobs.GetTimeclockStatsResponse"><span class="badge">M</span>GetTimeclockStatsResponse</a>
+                </li>
+              
+                <li>
+                  <a href="#services.jobs.ListTimeclockRequest"><span class="badge">M</span>ListTimeclockRequest</a>
+                </li>
+              
+                <li>
+                  <a href="#services.jobs.ListTimeclockResponse"><span class="badge">M</span>ListTimeclockResponse</a>
+                </li>
+              
+              
+              
+              
+                <li>
+                  <a href="#services.jobs.JobsTimeclockService"><span class="badge">S</span>JobsTimeclockService</a>
                 </li>
               
             </ul>
@@ -20185,225 +20185,6 @@
     
       
       <div class="file-heading">
-        <h2 id="services/jobs/timeclock.proto">services/jobs/timeclock.proto</h2><a href="#title">Top</a>
-      </div>
-      <p></p>
-
-      
-        <h3 id="services.jobs.GetTimeclockStatsRequest">GetTimeclockStatsRequest</h3>
-        <p></p>
-
-        
-          <table class="field-table">
-            <thead>
-              <tr><td>Field</td><td>Type</td><td>Label</td><td>Description</td></tr>
-            </thead>
-            <tbody>
-              
-                <tr>
-                  <td>user_id</td>
-                  <td><a href="#int32">int32</a></td>
-                  <td>optional</td>
-                  <td><p> </p></td>
-                </tr>
-              
-            </tbody>
-          </table>
-
-          
-
-        
-      
-        <h3 id="services.jobs.GetTimeclockStatsResponse">GetTimeclockStatsResponse</h3>
-        <p></p>
-
-        
-          <table class="field-table">
-            <thead>
-              <tr><td>Field</td><td>Type</td><td>Label</td><td>Description</td></tr>
-            </thead>
-            <tbody>
-              
-                <tr>
-                  <td>stats</td>
-                  <td><a href="#resources.jobs.TimeclockStats">resources.jobs.TimeclockStats</a></td>
-                  <td></td>
-                  <td><p> </p></td>
-                </tr>
-              
-                <tr>
-                  <td>weekly</td>
-                  <td><a href="#resources.jobs.TimeclockWeeklyStats">resources.jobs.TimeclockWeeklyStats</a></td>
-                  <td>repeated</td>
-                  <td><p> </p></td>
-                </tr>
-              
-            </tbody>
-          </table>
-
-          
-
-        
-      
-        <h3 id="services.jobs.ListTimeclockRequest">ListTimeclockRequest</h3>
-        <p></p>
-
-        
-          <table class="field-table">
-            <thead>
-              <tr><td>Field</td><td>Type</td><td>Label</td><td>Description</td></tr>
-            </thead>
-            <tbody>
-              
-                <tr>
-                  <td>pagination</td>
-                  <td><a href="#resources.common.database.PaginationRequest">resources.common.database.PaginationRequest</a></td>
-                  <td></td>
-                  <td><p> </p></td>
-                </tr>
-              
-                <tr>
-                  <td>user_ids</td>
-                  <td><a href="#int32">int32</a></td>
-                  <td>repeated</td>
-                  <td><p>Search </p></td>
-                </tr>
-              
-                <tr>
-                  <td>from</td>
-                  <td><a href="#resources.timestamp.Timestamp">resources.timestamp.Timestamp</a></td>
-                  <td>optional</td>
-                  <td><p> </p></td>
-                </tr>
-              
-                <tr>
-                  <td>to</td>
-                  <td><a href="#resources.timestamp.Timestamp">resources.timestamp.Timestamp</a></td>
-                  <td>optional</td>
-                  <td><p> </p></td>
-                </tr>
-              
-                <tr>
-                  <td>per_day</td>
-                  <td><a href="#bool">bool</a></td>
-                  <td>optional</td>
-                  <td><p> </p></td>
-                </tr>
-              
-            </tbody>
-          </table>
-
-          
-            
-            
-            <h4>Validated Fields</h4>
-            <table>
-              <thead>
-                <tr>
-                  <td>Field</td>
-                  <td>Validations</td>
-                </tr>
-              </thead>
-              <tbody>
-              
-                <tr>
-                  <td>pagination</td>
-                  <td>
-                    <ul>
-                    
-                      <li>message.required: true</li>
-                    
-                    </ul>
-                  </td>
-                </tr>
-              
-              </tbody>
-            </table>
-            
-          
-
-        
-      
-        <h3 id="services.jobs.ListTimeclockResponse">ListTimeclockResponse</h3>
-        <p></p>
-
-        
-          <table class="field-table">
-            <thead>
-              <tr><td>Field</td><td>Type</td><td>Label</td><td>Description</td></tr>
-            </thead>
-            <tbody>
-              
-                <tr>
-                  <td>pagination</td>
-                  <td><a href="#resources.common.database.PaginationResponse">resources.common.database.PaginationResponse</a></td>
-                  <td></td>
-                  <td><p> </p></td>
-                </tr>
-              
-                <tr>
-                  <td>entries</td>
-                  <td><a href="#resources.jobs.TimeclockEntry">resources.jobs.TimeclockEntry</a></td>
-                  <td>repeated</td>
-                  <td><p> </p></td>
-                </tr>
-              
-                <tr>
-                  <td>stats</td>
-                  <td><a href="#resources.jobs.TimeclockStats">resources.jobs.TimeclockStats</a></td>
-                  <td></td>
-                  <td><p> </p></td>
-                </tr>
-              
-                <tr>
-                  <td>weekly</td>
-                  <td><a href="#resources.jobs.TimeclockWeeklyStats">resources.jobs.TimeclockWeeklyStats</a></td>
-                  <td>repeated</td>
-                  <td><p> </p></td>
-                </tr>
-              
-            </tbody>
-          </table>
-
-          
-
-        
-      
-
-      
-
-      
-
-      
-        <h3 id="services.jobs.JobsTimeclockService">JobsTimeclockService</h3>
-        <p></p>
-        <table class="enum-table">
-          <thead>
-            <tr><td>Method Name</td><td>Request Type</td><td>Response Type</td><td>Description</td></tr>
-          </thead>
-          <tbody>
-            
-              <tr>
-                <td>ListTimeclock</td>
-                <td><a href="#services.jobs.ListTimeclockRequest">ListTimeclockRequest</a></td>
-                <td><a href="#services.jobs.ListTimeclockResponse">ListTimeclockResponse</a></td>
-                <td><p>@perm: Attrs=Access/StringList:[]string{&#34;All&#34;}</p></td>
-              </tr>
-            
-              <tr>
-                <td>GetTimeclockStats</td>
-                <td><a href="#services.jobs.GetTimeclockStatsRequest">GetTimeclockStatsRequest</a></td>
-                <td><a href="#services.jobs.GetTimeclockStatsResponse">GetTimeclockStatsResponse</a></td>
-                <td><p>@perm: Name=ListTimeclock</p></td>
-              </tr>
-            
-          </tbody>
-        </table>
-
-        
-    
-      
-      <div class="file-heading">
         <h2 id="services/jobs/jobs.proto">services/jobs/jobs.proto</h2><a href="#title">Top</a>
       </div>
       <p></p>
@@ -20906,7 +20687,7 @@
                 <td>GetColleague</td>
                 <td><a href="#services.jobs.GetColleagueRequest">GetColleagueRequest</a></td>
                 <td><a href="#services.jobs.GetColleagueResponse">GetColleagueResponse</a></td>
-                <td><p>@perm</p></td>
+                <td><p>@perm: Attrs=Access/StringList:[]string{&#34;Own&#34;, &#34;Lower_Rank&#34;, &#34;Same_Rank&#34;, &#34;Any&#34;}</p></td>
               </tr>
             
               <tr>
@@ -20935,6 +20716,225 @@
                 <td><a href="#services.jobs.SetMOTDRequest">SetMOTDRequest</a></td>
                 <td><a href="#services.jobs.SetMOTDResponse">SetMOTDResponse</a></td>
                 <td><p>@perm</p></td>
+              </tr>
+            
+          </tbody>
+        </table>
+
+        
+    
+      
+      <div class="file-heading">
+        <h2 id="services/jobs/timeclock.proto">services/jobs/timeclock.proto</h2><a href="#title">Top</a>
+      </div>
+      <p></p>
+
+      
+        <h3 id="services.jobs.GetTimeclockStatsRequest">GetTimeclockStatsRequest</h3>
+        <p></p>
+
+        
+          <table class="field-table">
+            <thead>
+              <tr><td>Field</td><td>Type</td><td>Label</td><td>Description</td></tr>
+            </thead>
+            <tbody>
+              
+                <tr>
+                  <td>user_id</td>
+                  <td><a href="#int32">int32</a></td>
+                  <td>optional</td>
+                  <td><p> </p></td>
+                </tr>
+              
+            </tbody>
+          </table>
+
+          
+
+        
+      
+        <h3 id="services.jobs.GetTimeclockStatsResponse">GetTimeclockStatsResponse</h3>
+        <p></p>
+
+        
+          <table class="field-table">
+            <thead>
+              <tr><td>Field</td><td>Type</td><td>Label</td><td>Description</td></tr>
+            </thead>
+            <tbody>
+              
+                <tr>
+                  <td>stats</td>
+                  <td><a href="#resources.jobs.TimeclockStats">resources.jobs.TimeclockStats</a></td>
+                  <td></td>
+                  <td><p> </p></td>
+                </tr>
+              
+                <tr>
+                  <td>weekly</td>
+                  <td><a href="#resources.jobs.TimeclockWeeklyStats">resources.jobs.TimeclockWeeklyStats</a></td>
+                  <td>repeated</td>
+                  <td><p> </p></td>
+                </tr>
+              
+            </tbody>
+          </table>
+
+          
+
+        
+      
+        <h3 id="services.jobs.ListTimeclockRequest">ListTimeclockRequest</h3>
+        <p></p>
+
+        
+          <table class="field-table">
+            <thead>
+              <tr><td>Field</td><td>Type</td><td>Label</td><td>Description</td></tr>
+            </thead>
+            <tbody>
+              
+                <tr>
+                  <td>pagination</td>
+                  <td><a href="#resources.common.database.PaginationRequest">resources.common.database.PaginationRequest</a></td>
+                  <td></td>
+                  <td><p> </p></td>
+                </tr>
+              
+                <tr>
+                  <td>user_ids</td>
+                  <td><a href="#int32">int32</a></td>
+                  <td>repeated</td>
+                  <td><p>Search </p></td>
+                </tr>
+              
+                <tr>
+                  <td>from</td>
+                  <td><a href="#resources.timestamp.Timestamp">resources.timestamp.Timestamp</a></td>
+                  <td>optional</td>
+                  <td><p> </p></td>
+                </tr>
+              
+                <tr>
+                  <td>to</td>
+                  <td><a href="#resources.timestamp.Timestamp">resources.timestamp.Timestamp</a></td>
+                  <td>optional</td>
+                  <td><p> </p></td>
+                </tr>
+              
+                <tr>
+                  <td>per_day</td>
+                  <td><a href="#bool">bool</a></td>
+                  <td>optional</td>
+                  <td><p> </p></td>
+                </tr>
+              
+            </tbody>
+          </table>
+
+          
+            
+            
+            <h4>Validated Fields</h4>
+            <table>
+              <thead>
+                <tr>
+                  <td>Field</td>
+                  <td>Validations</td>
+                </tr>
+              </thead>
+              <tbody>
+              
+                <tr>
+                  <td>pagination</td>
+                  <td>
+                    <ul>
+                    
+                      <li>message.required: true</li>
+                    
+                    </ul>
+                  </td>
+                </tr>
+              
+              </tbody>
+            </table>
+            
+          
+
+        
+      
+        <h3 id="services.jobs.ListTimeclockResponse">ListTimeclockResponse</h3>
+        <p></p>
+
+        
+          <table class="field-table">
+            <thead>
+              <tr><td>Field</td><td>Type</td><td>Label</td><td>Description</td></tr>
+            </thead>
+            <tbody>
+              
+                <tr>
+                  <td>pagination</td>
+                  <td><a href="#resources.common.database.PaginationResponse">resources.common.database.PaginationResponse</a></td>
+                  <td></td>
+                  <td><p> </p></td>
+                </tr>
+              
+                <tr>
+                  <td>entries</td>
+                  <td><a href="#resources.jobs.TimeclockEntry">resources.jobs.TimeclockEntry</a></td>
+                  <td>repeated</td>
+                  <td><p> </p></td>
+                </tr>
+              
+                <tr>
+                  <td>stats</td>
+                  <td><a href="#resources.jobs.TimeclockStats">resources.jobs.TimeclockStats</a></td>
+                  <td></td>
+                  <td><p> </p></td>
+                </tr>
+              
+                <tr>
+                  <td>weekly</td>
+                  <td><a href="#resources.jobs.TimeclockWeeklyStats">resources.jobs.TimeclockWeeklyStats</a></td>
+                  <td>repeated</td>
+                  <td><p> </p></td>
+                </tr>
+              
+            </tbody>
+          </table>
+
+          
+
+        
+      
+
+      
+
+      
+
+      
+        <h3 id="services.jobs.JobsTimeclockService">JobsTimeclockService</h3>
+        <p></p>
+        <table class="enum-table">
+          <thead>
+            <tr><td>Method Name</td><td>Request Type</td><td>Response Type</td><td>Description</td></tr>
+          </thead>
+          <tbody>
+            
+              <tr>
+                <td>ListTimeclock</td>
+                <td><a href="#services.jobs.ListTimeclockRequest">ListTimeclockRequest</a></td>
+                <td><a href="#services.jobs.ListTimeclockResponse">ListTimeclockResponse</a></td>
+                <td><p>@perm: Attrs=Access/StringList:[]string{&#34;All&#34;}</p></td>
+              </tr>
+            
+              <tr>
+                <td>GetTimeclockStats</td>
+                <td><a href="#services.jobs.GetTimeclockStatsRequest">GetTimeclockStatsRequest</a></td>
+                <td><a href="#services.jobs.GetTimeclockStatsResponse">GetTimeclockStatsResponse</a></td>
+                <td><p>@perm: Name=ListTimeclock</p></td>
               </tr>
             
           </tbody>

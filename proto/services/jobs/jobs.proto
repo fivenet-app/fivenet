@@ -83,7 +83,7 @@ service JobsService {
   // @perm: Name=ListColleagues
   rpc GetSelf(GetSelfRequest) returns (GetSelfResponse);
 
-  // @perm
+  // @perm: Attrs=Access/StringList:[]string{"Own", "Lower_Rank", "Same_Rank", "Any"}
   rpc GetColleague(GetColleagueRequest) returns (GetColleagueResponse);
   // @perm: Name=GetColleague
   rpc ListColleagueActivity(ListColleagueActivityRequest) returns (ListColleagueActivityResponse);
