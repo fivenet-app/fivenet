@@ -7,7 +7,6 @@ import (
 	"database/sql/driver"
 	"encoding/base64"
 	"fmt"
-	"io"
 	"path"
 	"strings"
 
@@ -72,9 +71,6 @@ func (x *File) IsImage() bool {
 }
 
 func (x *File) Optimize(ctx context.Context) error {
-	var data io.Reader
-	data = bytes.NewReader(x.Data)
-
 	contentType, err := filetype.Match(x.Data)
 	if err != nil {
 		return err
@@ -83,12 +79,13 @@ func (x *File) Optimize(ctx context.Context) error {
 	x.ContentType = &contentType.MIME.Value
 
 	if x.IsImage() {
-		data, err = images.ResizeImage(contentType, data, 850, 850)
+		data, err := images.ResizeImage(contentType, bytes.NewReader(x.Data), 850, 850)
 		if err != nil {
 			return err
 		}
-
-		x.Data, _ = io.ReadAll(data)
+		if data != nil {
+			x.Data = data
+		}
 	}
 
 	return nil

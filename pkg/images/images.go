@@ -8,14 +8,14 @@ import (
 	"golang.org/x/image/draw"
 )
 
-func ResizeImage(iType types.Type, input io.Reader, height int, width int) (io.Reader, error) {
+func ResizeImage(iType types.Type, input io.Reader, height int, width int) ([]byte, error) {
 	if iType.Extension == "png" {
 		return ResizePNG(input, height, width)
 	} else if iType.Extension == "jpg" || iType.Extension == "jpeg" {
 		return ResizeJPEG(input, height, width)
 	}
 
-	return input, nil
+	return nil, nil
 }
 
 func resizeImageIfNecessary(src image.Image, height int, width int) *image.RGBA {

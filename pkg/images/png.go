@@ -6,7 +6,7 @@ import (
 	"io"
 )
 
-func ResizePNG(input io.Reader, height int, width int) (io.Reader, error) {
+func ResizePNG(input io.Reader, height int, width int) ([]byte, error) {
 	// Decode the image (from PNG to image.Image)
 	src, err := png.Decode(input)
 	if err != nil {
@@ -15,14 +15,14 @@ func ResizePNG(input io.Reader, height int, width int) (io.Reader, error) {
 
 	dst := resizeImageIfNecessary(src, height, width)
 	if dst == nil {
-		return input, nil
+		return nil, nil
 	}
 
 	// Encode to output
-	output := bytes.NewBuffer([]byte{})
+	output := new(bytes.Buffer)
 	if err := png.Encode(output, dst); err != nil {
 		return nil, err
 	}
 
-	return output, nil
+	return output.Bytes(), nil
 }
