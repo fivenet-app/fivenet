@@ -10,6 +10,7 @@ import { UnknownFieldHandler } from "@protobuf-ts/runtime";
 import type { PartialMessage } from "@protobuf-ts/runtime";
 import { reflectionMergePartial } from "@protobuf-ts/runtime";
 import { MessageType } from "@protobuf-ts/runtime";
+import { Timestamp } from "../timestamp/timestamp";
 /**
  * @generated from protobuf message resources.filestore.File
  */
@@ -26,6 +27,35 @@ export interface File {
      * @generated from protobuf field: optional bool delete = 3;
      */
     delete?: boolean;
+    /**
+     * @generated from protobuf field: optional string content_type = 4;
+     */
+    contentType?: string;
+    /**
+     * @generated from protobuf field: optional string extension = 5;
+     */
+    extension?: string;
+}
+/**
+ * @generated from protobuf message resources.filestore.FileInfo
+ */
+export interface FileInfo {
+    /**
+     * @generated from protobuf field: string name = 1;
+     */
+    name: string;
+    /**
+     * @generated from protobuf field: optional resources.timestamp.Timestamp last_modified = 2;
+     */
+    lastModified?: Timestamp;
+    /**
+     * @generated from protobuf field: int64 size = 3;
+     */
+    size: bigint;
+    /**
+     * @generated from protobuf field: string content_type = 4;
+     */
+    contentType: string;
 }
 // @generated message type with reflection information, may provide speed optimized methods
 class File$Type extends MessageType<File> {
@@ -33,7 +63,9 @@ class File$Type extends MessageType<File> {
         super("resources.filestore.File", [
             { no: 1, name: "url", kind: "scalar", opt: true, T: 9 /*ScalarType.STRING*/, options: { "validate.rules": { string: { maxLen: "128" } } } },
             { no: 2, name: "data", kind: "scalar", T: 12 /*ScalarType.BYTES*/, options: { "validate.rules": { bytes: { maxLen: "2097152" } } } },
-            { no: 3, name: "delete", kind: "scalar", opt: true, T: 8 /*ScalarType.BOOL*/ }
+            { no: 3, name: "delete", kind: "scalar", opt: true, T: 8 /*ScalarType.BOOL*/ },
+            { no: 4, name: "content_type", kind: "scalar", opt: true, T: 9 /*ScalarType.STRING*/ },
+            { no: 5, name: "extension", kind: "scalar", opt: true, T: 9 /*ScalarType.STRING*/ }
         ]);
     }
     create(value?: PartialMessage<File>): File {
@@ -57,6 +89,12 @@ class File$Type extends MessageType<File> {
                 case /* optional bool delete */ 3:
                     message.delete = reader.bool();
                     break;
+                case /* optional string content_type */ 4:
+                    message.contentType = reader.string();
+                    break;
+                case /* optional string extension */ 5:
+                    message.extension = reader.string();
+                    break;
                 default:
                     let u = options.readUnknownField;
                     if (u === "throw")
@@ -78,6 +116,12 @@ class File$Type extends MessageType<File> {
         /* optional bool delete = 3; */
         if (message.delete !== undefined)
             writer.tag(3, WireType.Varint).bool(message.delete);
+        /* optional string content_type = 4; */
+        if (message.contentType !== undefined)
+            writer.tag(4, WireType.LengthDelimited).string(message.contentType);
+        /* optional string extension = 5; */
+        if (message.extension !== undefined)
+            writer.tag(5, WireType.LengthDelimited).string(message.extension);
         let u = options.writeUnknownFields;
         if (u !== false)
             (u == true ? UnknownFieldHandler.onWrite : u)(this.typeName, message, writer);
@@ -88,3 +132,73 @@ class File$Type extends MessageType<File> {
  * @generated MessageType for protobuf message resources.filestore.File
  */
 export const File = new File$Type();
+// @generated message type with reflection information, may provide speed optimized methods
+class FileInfo$Type extends MessageType<FileInfo> {
+    constructor() {
+        super("resources.filestore.FileInfo", [
+            { no: 1, name: "name", kind: "scalar", T: 9 /*ScalarType.STRING*/ },
+            { no: 2, name: "last_modified", kind: "message", T: () => Timestamp },
+            { no: 3, name: "size", kind: "scalar", T: 3 /*ScalarType.INT64*/, L: 0 /*LongType.BIGINT*/ },
+            { no: 4, name: "content_type", kind: "scalar", T: 9 /*ScalarType.STRING*/ }
+        ]);
+    }
+    create(value?: PartialMessage<FileInfo>): FileInfo {
+        const message = globalThis.Object.create((this.messagePrototype!));
+        message.name = "";
+        message.size = 0n;
+        message.contentType = "";
+        if (value !== undefined)
+            reflectionMergePartial<FileInfo>(this, message, value);
+        return message;
+    }
+    internalBinaryRead(reader: IBinaryReader, length: number, options: BinaryReadOptions, target?: FileInfo): FileInfo {
+        let message = target ?? this.create(), end = reader.pos + length;
+        while (reader.pos < end) {
+            let [fieldNo, wireType] = reader.tag();
+            switch (fieldNo) {
+                case /* string name */ 1:
+                    message.name = reader.string();
+                    break;
+                case /* optional resources.timestamp.Timestamp last_modified */ 2:
+                    message.lastModified = Timestamp.internalBinaryRead(reader, reader.uint32(), options, message.lastModified);
+                    break;
+                case /* int64 size */ 3:
+                    message.size = reader.int64().toBigInt();
+                    break;
+                case /* string content_type */ 4:
+                    message.contentType = reader.string();
+                    break;
+                default:
+                    let u = options.readUnknownField;
+                    if (u === "throw")
+                        throw new globalThis.Error(`Unknown field ${fieldNo} (wire type ${wireType}) for ${this.typeName}`);
+                    let d = reader.skip(wireType);
+                    if (u !== false)
+                        (u === true ? UnknownFieldHandler.onRead : u)(this.typeName, message, fieldNo, wireType, d);
+            }
+        }
+        return message;
+    }
+    internalBinaryWrite(message: FileInfo, writer: IBinaryWriter, options: BinaryWriteOptions): IBinaryWriter {
+        /* string name = 1; */
+        if (message.name !== "")
+            writer.tag(1, WireType.LengthDelimited).string(message.name);
+        /* optional resources.timestamp.Timestamp last_modified = 2; */
+        if (message.lastModified)
+            Timestamp.internalBinaryWrite(message.lastModified, writer.tag(2, WireType.LengthDelimited).fork(), options).join();
+        /* int64 size = 3; */
+        if (message.size !== 0n)
+            writer.tag(3, WireType.Varint).int64(message.size);
+        /* string content_type = 4; */
+        if (message.contentType !== "")
+            writer.tag(4, WireType.LengthDelimited).string(message.contentType);
+        let u = options.writeUnknownFields;
+        if (u !== false)
+            (u == true ? UnknownFieldHandler.onWrite : u)(this.typeName, message, writer);
+        return writer;
+    }
+}
+/**
+ * @generated MessageType for protobuf message resources.filestore.FileInfo
+ */
+export const FileInfo = new FileInfo$Type();

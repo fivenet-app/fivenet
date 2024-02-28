@@ -86,6 +86,14 @@ func (m *File) validate(all bool) error {
 		// no validation rules for Delete
 	}
 
+	if m.ContentType != nil {
+		// no validation rules for ContentType
+	}
+
+	if m.Extension != nil {
+		// no validation rules for Extension
+	}
+
 	if len(errors) > 0 {
 		return FileMultiError(errors)
 	}
@@ -162,3 +170,141 @@ var _ interface {
 	Cause() error
 	ErrorName() string
 } = FileValidationError{}
+
+// Validate checks the field values on FileInfo with the rules defined in the
+// proto definition for this message. If any rules are violated, the first
+// error encountered is returned, or nil if there are no violations.
+func (m *FileInfo) Validate() error {
+	return m.validate(false)
+}
+
+// ValidateAll checks the field values on FileInfo with the rules defined in
+// the proto definition for this message. If any rules are violated, the
+// result is a list of violation errors wrapped in FileInfoMultiError, or nil
+// if none found.
+func (m *FileInfo) ValidateAll() error {
+	return m.validate(true)
+}
+
+func (m *FileInfo) validate(all bool) error {
+	if m == nil {
+		return nil
+	}
+
+	var errors []error
+
+	// no validation rules for Name
+
+	// no validation rules for Size
+
+	// no validation rules for ContentType
+
+	if m.LastModified != nil {
+
+		if all {
+			switch v := interface{}(m.GetLastModified()).(type) {
+			case interface{ ValidateAll() error }:
+				if err := v.ValidateAll(); err != nil {
+					errors = append(errors, FileInfoValidationError{
+						field:  "LastModified",
+						reason: "embedded message failed validation",
+						cause:  err,
+					})
+				}
+			case interface{ Validate() error }:
+				if err := v.Validate(); err != nil {
+					errors = append(errors, FileInfoValidationError{
+						field:  "LastModified",
+						reason: "embedded message failed validation",
+						cause:  err,
+					})
+				}
+			}
+		} else if v, ok := interface{}(m.GetLastModified()).(interface{ Validate() error }); ok {
+			if err := v.Validate(); err != nil {
+				return FileInfoValidationError{
+					field:  "LastModified",
+					reason: "embedded message failed validation",
+					cause:  err,
+				}
+			}
+		}
+
+	}
+
+	if len(errors) > 0 {
+		return FileInfoMultiError(errors)
+	}
+
+	return nil
+}
+
+// FileInfoMultiError is an error wrapping multiple validation errors returned
+// by FileInfo.ValidateAll() if the designated constraints aren't met.
+type FileInfoMultiError []error
+
+// Error returns a concatenation of all the error messages it wraps.
+func (m FileInfoMultiError) Error() string {
+	var msgs []string
+	for _, err := range m {
+		msgs = append(msgs, err.Error())
+	}
+	return strings.Join(msgs, "; ")
+}
+
+// AllErrors returns a list of validation violation errors.
+func (m FileInfoMultiError) AllErrors() []error { return m }
+
+// FileInfoValidationError is the validation error returned by
+// FileInfo.Validate if the designated constraints aren't met.
+type FileInfoValidationError struct {
+	field  string
+	reason string
+	cause  error
+	key    bool
+}
+
+// Field function returns field value.
+func (e FileInfoValidationError) Field() string { return e.field }
+
+// Reason function returns reason value.
+func (e FileInfoValidationError) Reason() string { return e.reason }
+
+// Cause function returns cause value.
+func (e FileInfoValidationError) Cause() error { return e.cause }
+
+// Key function returns key value.
+func (e FileInfoValidationError) Key() bool { return e.key }
+
+// ErrorName returns error name.
+func (e FileInfoValidationError) ErrorName() string { return "FileInfoValidationError" }
+
+// Error satisfies the builtin error interface
+func (e FileInfoValidationError) Error() string {
+	cause := ""
+	if e.cause != nil {
+		cause = fmt.Sprintf(" | caused by: %v", e.cause)
+	}
+
+	key := ""
+	if e.key {
+		key = "key for "
+	}
+
+	return fmt.Sprintf(
+		"invalid %sFileInfo.%s: %s%s",
+		key,
+		e.field,
+		e.reason,
+		cause)
+}
+
+var _ error = FileInfoValidationError{}
+
+var _ interface {
+	Field() string
+	Reason() string
+	Key() bool
+	Cause() error
+	ErrorName() string
+} = FileInfoValidationError{}

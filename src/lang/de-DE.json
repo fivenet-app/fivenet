@@ -845,7 +845,8 @@
         "image": "Bild",
         "logo": "Logo",
         "absence_date": "Abwesenheitsdatum",
-        "mug_shot": "Fahndungsfoto"
+        "mug_shot": "Fahndungsfoto",
+        "file_size": "Dateigröße"
     },
     "notifications": {
         "clipboard": {

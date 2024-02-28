@@ -82,17 +82,30 @@ func (s *Server) SetJobProps(ctx context.Context, req *SetJobPropsRequest) (*Set
 	req.JobProps.Job = userInfo.Job
 	req.JobProps.LivemapMarkerColor = strings.ToLower(req.JobProps.LivemapMarkerColor)
 
-	if req.JobProps.LogoUrl != nil && len(req.JobProps.LogoUrl.Data) > 0 {
-		if !req.JobProps.LogoUrl.IsImage() {
-			return nil, errorsrector.ErrFailedQuery
-		}
-
+	if req.JobProps.LogoUrl != nil {
 		// Set "current" image's url so the system will delete it if still exists
 		if jobProps.JobProps != nil && jobProps.JobProps.LogoUrl != nil {
 			req.JobProps.LogoUrl.Url = jobProps.JobProps.LogoUrl.Url
 		}
-		if err := req.JobProps.LogoUrl.Upload(ctx, s.st, filestore.JobLogos, userInfo.Job); err != nil {
-			return nil, errswrap.NewError(errorsrector.ErrFailedQuery, err)
+
+		if len(req.JobProps.LogoUrl.Data) > 0 {
+			if !req.JobProps.LogoUrl.IsImage() {
+				return nil, errorsrector.ErrFailedQuery
+			}
+
+			if err := req.JobProps.LogoUrl.Optimize(ctx); err != nil {
+				return nil, errswrap.NewError(errorsrector.ErrFailedQuery, err)
+			}
+
+			if err := req.JobProps.LogoUrl.Upload(ctx, s.st, filestore.JobLogos, userInfo.Job); err != nil {
+				return nil, errswrap.NewError(errorsrector.ErrFailedQuery, err)
+			}
+		} else {
+			if jobProps.JobProps.LogoUrl != nil && jobProps.JobProps.LogoUrl.Url != nil {
+				if err := s.st.Delete(ctx, strings.TrimPrefix(*jobProps.JobProps.LogoUrl.Url, filestore.FilestoreURLPrefix)); err != nil {
+					return nil, errswrap.NewError(errorsrector.ErrFailedQuery, err)
+				}
+			}
 		}
 	}
 

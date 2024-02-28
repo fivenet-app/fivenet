@@ -42,7 +42,7 @@ interface FormData {
 
 async function conductCreateOrUpdateEntry(values: FormData, id?: string): Promise<void> {
     try {
-        const expiresAt = values.expiresAt ? toTimestamp(new Date(values.expiresAt)) : undefined;
+        const expiresAt = values.expiresAt ? toTimestamp(fromString(values.expiresAt)) : undefined;
 
         const req = {
             entry: {
@@ -68,7 +68,6 @@ async function conductCreateOrUpdateEntry(values: FormData, id?: string): Promis
             emit('update', response.entry!);
         }
 
-        resetForm();
         emit('close');
     } catch (e) {
         $grpc.handleError(e as RpcError);
@@ -128,8 +127,10 @@ const { handleSubmit, meta, setValues, setFieldValue, resetForm } = useForm<Form
 });
 
 watch(props, () => {
+    resetForm();
+
     if (props.entry) {
-        targetUser.value = props.entry.targetUser!;
+        targetUser.value = props.entry.targetUser;
     }
 
     setValues({

@@ -10,6 +10,7 @@ import (
 	"time"
 
 	"github.com/galexrt/fivenet/pkg/config"
+	"github.com/h2non/filetype"
 	"github.com/minio/minio-go/v7"
 	"github.com/minio/minio-go/v7/pkg/credentials"
 )
@@ -123,4 +124,47 @@ func (s *S3) Delete(ctx context.Context, filePath string) error {
 	}
 
 	return nil
+}
+
+func (s *S3) List(ctx context.Context, filePath string, offset int, pageSize int) ([]*FileInfo, error) {
+	filePath = path.Join(s.prefix, filePath)
+	if filePath == "." {
+		filePath = ""
+	}
+
+	i := 0
+	files := []*FileInfo{}
+
+	opts := minio.ListObjectsOptions{
+		Recursive: true,
+		Prefix:    filePath,
+	}
+	for object := range s.s3.ListObjects(ctx, s.bucketName, opts) {
+		if object.Err != nil {
+			return nil, object.Err
+		}
+
+		if i < offset {
+			i++
+			continue
+		}
+
+		// Verify if we have listed page size count of objects.
+		if i == offset+pageSize {
+			break
+		}
+
+		contentType := filetype.GetType(strings.TrimPrefix(filepath.Ext(object.Key), "."))
+
+		files = append(files, &FileInfo{
+			Name:         object.Key,
+			LastModified: object.LastModified,
+			Size:         object.Size,
+			ContentType:  contentType.MIME.Value,
+		})
+
+		i++
+	}
+
+	return files, nil
 }

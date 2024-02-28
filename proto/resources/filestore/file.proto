@@ -2,6 +2,7 @@ syntax = "proto3";
 
 package resources.filestore;
 
+import "resources/timestamp/timestamp.proto";
 import "validate/validate.proto";
 
 option go_package = "github.com/galexrt/fivenet/gen/go/proto/resources/filestore;filestore";
@@ -10,4 +11,13 @@ message File {
   optional string url = 1 [(validate.rules).string.max_len = 128];
   bytes data = 2 [(validate.rules).bytes.max_len = 2097152];
   optional bool delete = 3;
+  optional string content_type = 4;
+  optional string extension = 5;
+}
+
+message FileInfo {
+  string name = 1;
+  optional resources.timestamp.Timestamp last_modified = 2;
+  int64 size = 3;
+  string content_type = 4;
 }

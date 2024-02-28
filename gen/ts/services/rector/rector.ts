@@ -11,6 +11,7 @@ import type { IBinaryReader } from "@protobuf-ts/runtime";
 import type { PartialMessage } from "@protobuf-ts/runtime";
 import { reflectionMergePartial } from "@protobuf-ts/runtime";
 import { MessageType } from "@protobuf-ts/runtime";
+import { FileInfo } from "../../resources/filestore/file";
 import { Law } from "../../resources/laws/laws";
 import { LawBook } from "../../resources/laws/laws";
 import { AuditEntry } from "../../resources/rector/audit";
@@ -349,6 +350,48 @@ export interface DeleteLawRequest {
  * @generated from protobuf message services.rector.DeleteLawResponse
  */
 export interface DeleteLawResponse {
+}
+// Filestore
+
+/**
+ * @generated from protobuf message services.rector.ListFilesRequest
+ */
+export interface ListFilesRequest {
+    /**
+     * @generated from protobuf field: resources.common.database.PaginationRequest pagination = 1;
+     */
+    pagination?: PaginationRequest;
+    /**
+     * @generated from protobuf field: optional string path = 2;
+     */
+    path?: string;
+}
+/**
+ * @generated from protobuf message services.rector.ListFilesResponse
+ */
+export interface ListFilesResponse {
+    /**
+     * @generated from protobuf field: resources.common.database.PaginationResponse pagination = 1;
+     */
+    pagination?: PaginationResponse;
+    /**
+     * @generated from protobuf field: repeated resources.filestore.FileInfo files = 2;
+     */
+    files: FileInfo[];
+}
+/**
+ * @generated from protobuf message services.rector.DeleteFileRequest
+ */
+export interface DeleteFileRequest {
+    /**
+     * @generated from protobuf field: string path = 1;
+     */
+    path: string;
+}
+/**
+ * @generated from protobuf message services.rector.DeleteFileResponse
+ */
+export interface DeleteFileResponse {
 }
 // @generated message type with reflection information, may provide speed optimized methods
 class GetJobPropsRequest$Type extends MessageType<GetJobPropsRequest> {
@@ -1812,6 +1855,185 @@ class DeleteLawResponse$Type extends MessageType<DeleteLawResponse> {
  * @generated MessageType for protobuf message services.rector.DeleteLawResponse
  */
 export const DeleteLawResponse = new DeleteLawResponse$Type();
+// @generated message type with reflection information, may provide speed optimized methods
+class ListFilesRequest$Type extends MessageType<ListFilesRequest> {
+    constructor() {
+        super("services.rector.ListFilesRequest", [
+            { no: 1, name: "pagination", kind: "message", T: () => PaginationRequest, options: { "validate.rules": { message: { required: true } } } },
+            { no: 2, name: "path", kind: "scalar", opt: true, T: 9 /*ScalarType.STRING*/, options: { "validate.rules": { string: { maxLen: "128" } } } }
+        ]);
+    }
+    create(value?: PartialMessage<ListFilesRequest>): ListFilesRequest {
+        const message = globalThis.Object.create((this.messagePrototype!));
+        if (value !== undefined)
+            reflectionMergePartial<ListFilesRequest>(this, message, value);
+        return message;
+    }
+    internalBinaryRead(reader: IBinaryReader, length: number, options: BinaryReadOptions, target?: ListFilesRequest): ListFilesRequest {
+        let message = target ?? this.create(), end = reader.pos + length;
+        while (reader.pos < end) {
+            let [fieldNo, wireType] = reader.tag();
+            switch (fieldNo) {
+                case /* resources.common.database.PaginationRequest pagination */ 1:
+                    message.pagination = PaginationRequest.internalBinaryRead(reader, reader.uint32(), options, message.pagination);
+                    break;
+                case /* optional string path */ 2:
+                    message.path = reader.string();
+                    break;
+                default:
+                    let u = options.readUnknownField;
+                    if (u === "throw")
+                        throw new globalThis.Error(`Unknown field ${fieldNo} (wire type ${wireType}) for ${this.typeName}`);
+                    let d = reader.skip(wireType);
+                    if (u !== false)
+                        (u === true ? UnknownFieldHandler.onRead : u)(this.typeName, message, fieldNo, wireType, d);
+            }
+        }
+        return message;
+    }
+    internalBinaryWrite(message: ListFilesRequest, writer: IBinaryWriter, options: BinaryWriteOptions): IBinaryWriter {
+        /* resources.common.database.PaginationRequest pagination = 1; */
+        if (message.pagination)
+            PaginationRequest.internalBinaryWrite(message.pagination, writer.tag(1, WireType.LengthDelimited).fork(), options).join();
+        /* optional string path = 2; */
+        if (message.path !== undefined)
+            writer.tag(2, WireType.LengthDelimited).string(message.path);
+        let u = options.writeUnknownFields;
+        if (u !== false)
+            (u == true ? UnknownFieldHandler.onWrite : u)(this.typeName, message, writer);
+        return writer;
+    }
+}
+/**
+ * @generated MessageType for protobuf message services.rector.ListFilesRequest
+ */
+export const ListFilesRequest = new ListFilesRequest$Type();
+// @generated message type with reflection information, may provide speed optimized methods
+class ListFilesResponse$Type extends MessageType<ListFilesResponse> {
+    constructor() {
+        super("services.rector.ListFilesResponse", [
+            { no: 1, name: "pagination", kind: "message", T: () => PaginationResponse },
+            { no: 2, name: "files", kind: "message", repeat: 1 /*RepeatType.PACKED*/, T: () => FileInfo }
+        ]);
+    }
+    create(value?: PartialMessage<ListFilesResponse>): ListFilesResponse {
+        const message = globalThis.Object.create((this.messagePrototype!));
+        message.files = [];
+        if (value !== undefined)
+            reflectionMergePartial<ListFilesResponse>(this, message, value);
+        return message;
+    }
+    internalBinaryRead(reader: IBinaryReader, length: number, options: BinaryReadOptions, target?: ListFilesResponse): ListFilesResponse {
+        let message = target ?? this.create(), end = reader.pos + length;
+        while (reader.pos < end) {
+            let [fieldNo, wireType] = reader.tag();
+            switch (fieldNo) {
+                case /* resources.common.database.PaginationResponse pagination */ 1:
+                    message.pagination = PaginationResponse.internalBinaryRead(reader, reader.uint32(), options, message.pagination);
+                    break;
+                case /* repeated resources.filestore.FileInfo files */ 2:
+                    message.files.push(FileInfo.internalBinaryRead(reader, reader.uint32(), options));
+                    break;
+                default:
+                    let u = options.readUnknownField;
+                    if (u === "throw")
+                        throw new globalThis.Error(`Unknown field ${fieldNo} (wire type ${wireType}) for ${this.typeName}`);
+                    let d = reader.skip(wireType);
+                    if (u !== false)
+                        (u === true ? UnknownFieldHandler.onRead : u)(this.typeName, message, fieldNo, wireType, d);
+            }
+        }
+        return message;
+    }
+    internalBinaryWrite(message: ListFilesResponse, writer: IBinaryWriter, options: BinaryWriteOptions): IBinaryWriter {
+        /* resources.common.database.PaginationResponse pagination = 1; */
+        if (message.pagination)
+            PaginationResponse.internalBinaryWrite(message.pagination, writer.tag(1, WireType.LengthDelimited).fork(), options).join();
+        /* repeated resources.filestore.FileInfo files = 2; */
+        for (let i = 0; i < message.files.length; i++)
+            FileInfo.internalBinaryWrite(message.files[i], writer.tag(2, WireType.LengthDelimited).fork(), options).join();
+        let u = options.writeUnknownFields;
+        if (u !== false)
+            (u == true ? UnknownFieldHandler.onWrite : u)(this.typeName, message, writer);
+        return writer;
+    }
+}
+/**
+ * @generated MessageType for protobuf message services.rector.ListFilesResponse
+ */
+export const ListFilesResponse = new ListFilesResponse$Type();
+// @generated message type with reflection information, may provide speed optimized methods
+class DeleteFileRequest$Type extends MessageType<DeleteFileRequest> {
+    constructor() {
+        super("services.rector.DeleteFileRequest", [
+            { no: 1, name: "path", kind: "scalar", T: 9 /*ScalarType.STRING*/ }
+        ]);
+    }
+    create(value?: PartialMessage<DeleteFileRequest>): DeleteFileRequest {
+        const message = globalThis.Object.create((this.messagePrototype!));
+        message.path = "";
+        if (value !== undefined)
+            reflectionMergePartial<DeleteFileRequest>(this, message, value);
+        return message;
+    }
+    internalBinaryRead(reader: IBinaryReader, length: number, options: BinaryReadOptions, target?: DeleteFileRequest): DeleteFileRequest {
+        let message = target ?? this.create(), end = reader.pos + length;
+        while (reader.pos < end) {
+            let [fieldNo, wireType] = reader.tag();
+            switch (fieldNo) {
+                case /* string path */ 1:
+                    message.path = reader.string();
+                    break;
+                default:
+                    let u = options.readUnknownField;
+                    if (u === "throw")
+                        throw new globalThis.Error(`Unknown field ${fieldNo} (wire type ${wireType}) for ${this.typeName}`);
+                    let d = reader.skip(wireType);
+                    if (u !== false)
+                        (u === true ? UnknownFieldHandler.onRead : u)(this.typeName, message, fieldNo, wireType, d);
+            }
+        }
+        return message;
+    }
+    internalBinaryWrite(message: DeleteFileRequest, writer: IBinaryWriter, options: BinaryWriteOptions): IBinaryWriter {
+        /* string path = 1; */
+        if (message.path !== "")
+            writer.tag(1, WireType.LengthDelimited).string(message.path);
+        let u = options.writeUnknownFields;
+        if (u !== false)
+            (u == true ? UnknownFieldHandler.onWrite : u)(this.typeName, message, writer);
+        return writer;
+    }
+}
+/**
+ * @generated MessageType for protobuf message services.rector.DeleteFileRequest
+ */
+export const DeleteFileRequest = new DeleteFileRequest$Type();
+// @generated message type with reflection information, may provide speed optimized methods
+class DeleteFileResponse$Type extends MessageType<DeleteFileResponse> {
+    constructor() {
+        super("services.rector.DeleteFileResponse", []);
+    }
+    create(value?: PartialMessage<DeleteFileResponse>): DeleteFileResponse {
+        const message = globalThis.Object.create((this.messagePrototype!));
+        if (value !== undefined)
+            reflectionMergePartial<DeleteFileResponse>(this, message, value);
+        return message;
+    }
+    internalBinaryRead(reader: IBinaryReader, length: number, options: BinaryReadOptions, target?: DeleteFileResponse): DeleteFileResponse {
+        return target ?? this.create();
+    }
+    internalBinaryWrite(message: DeleteFileResponse, writer: IBinaryWriter, options: BinaryWriteOptions): IBinaryWriter {
+        let u = options.writeUnknownFields;
+        if (u !== false)
+            (u == true ? UnknownFieldHandler.onWrite : u)(this.typeName, message, writer);
+        return writer;
+    }
+}
+/**
+ * @generated MessageType for protobuf message services.rector.DeleteFileResponse
+ */
+export const DeleteFileResponse = new DeleteFileResponse$Type();
 /**
  * @generated ServiceType for protobuf service services.rector.RectorService
  */
@@ -1829,5 +2051,7 @@ export const RectorService = new ServiceType("services.rector.RectorService", [
     { name: "CreateOrUpdateLawBook", options: {}, I: CreateOrUpdateLawBookRequest, O: CreateOrUpdateLawBookResponse },
     { name: "DeleteLawBook", options: {}, I: DeleteLawBookRequest, O: DeleteLawBookResponse },
     { name: "CreateOrUpdateLaw", options: {}, I: CreateOrUpdateLawRequest, O: CreateOrUpdateLawResponse },
-    { name: "DeleteLaw", options: {}, I: DeleteLawRequest, O: DeleteLawResponse }
+    { name: "DeleteLaw", options: {}, I: DeleteLawRequest, O: DeleteLawResponse },
+    { name: "ListFiles", options: {}, I: ListFilesRequest, O: ListFilesResponse },
+    { name: "DeleteFile", options: {}, I: DeleteFileRequest, O: DeleteFileResponse }
 ]);

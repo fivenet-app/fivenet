@@ -7,6 +7,7 @@ import (
 	"errors"
 	"fmt"
 	"io"
+	"path"
 	"time"
 )
 
@@ -21,6 +22,8 @@ type IStorage interface {
 	Stat(ctx context.Context, filePath string) (IObjectInfo, error)
 	Put(ctx context.Context, filePath string, reader io.Reader, size int64, contentType string) (string, error)
 	Delete(ctx context.Context, filePath string) error
+
+	List(ctx context.Context, filePath string, offset int, pageSize int) ([]*FileInfo, error)
 }
 
 type IObject interface {
@@ -60,6 +63,13 @@ func (o *ObjectInfo) GetExpiration() time.Time {
 	return o.expiration
 }
 
+type FileInfo struct {
+	Name         string
+	LastModified time.Time
+	Size         int64
+	ContentType  string
+}
+
 func GetFilename(uid string, fileName string, fileExtension string) string {
 	hasher := sha1.New()
 	hasher.Write([]byte(fileName))
@@ -68,4 +78,14 @@ func GetFilename(uid string, fileName string, fileExtension string) string {
 	directory := fileHash[0:2]
 
 	return fmt.Sprintf("%s/%s-%s.%s", directory, uid, fileHash, fileExtension)
+}
+
+func FileNameSplitter(fileName string) string {
+	if len(fileName) < 3 {
+		fileName = "00" + fileName
+	}
+
+	chars := fileName
+	part1 := chars[0:2]
+	return path.Join(part1, fileName)
 }

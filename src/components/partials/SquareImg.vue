@@ -15,7 +15,7 @@ const props = withDefaults(
         text: '',
         size: 'lg',
         rounded: false,
-        noBlur: false,
+        noBlur: undefined,
     },
 );
 
@@ -24,10 +24,10 @@ const size = computed(() => imageSize(props.size));
 const settings = useSettingsStore();
 const { streamerMode } = storeToRefs(settings);
 
-const visible = ref(streamerMode.value || props.noBlur);
+const visible = ref(props.noBlur || !streamerMode.value);
 
 function toggleBlur(): void {
-    if (!props.noBlur) {
+    if ((streamerMode.value && props.noBlur === undefined) || props.noBlur === false) {
         visible.value = !visible.value;
     }
 }
@@ -43,7 +43,7 @@ function toggleBlur(): void {
         </span>
         <img
             v-else
-            :class="[size, rounded ? 'rounded-full' : 'rounded-md', noBlur && visible ? '' : 'blur']"
+            :class="[size, rounded ? 'rounded-full' : 'rounded-md', visible ? '' : 'blur']"
             :src="url"
             :alt="text"
             @click="toggleBlur()"

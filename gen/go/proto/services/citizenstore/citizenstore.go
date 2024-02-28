@@ -21,7 +21,6 @@ import (
 	"github.com/galexrt/fivenet/pkg/perms"
 	"github.com/galexrt/fivenet/pkg/server/audit"
 	"github.com/galexrt/fivenet/pkg/storage"
-	"github.com/galexrt/fivenet/pkg/utils"
 	"github.com/galexrt/fivenet/query/fivenet/model"
 	"github.com/galexrt/fivenet/query/fivenet/table"
 	jet "github.com/go-jet/jet/v2/mysql"
@@ -627,15 +626,20 @@ func (s *Server) SetUserProps(ctx context.Context, req *SetUserPropsRequest) (*S
 		updateSets = append(updateSets, tUserProps.MugShot.SET(jet.StringExp(jet.Raw("VALUES(`mug_shot`)"))))
 
 		if len(req.Props.MugShot.Data) > 0 {
-			req.Props.MugShot.Url = props.MugShot.Url
+			if props.MugShot != nil {
+				req.Props.MugShot.Url = props.MugShot.Url
+			}
 
-			filler, err := utils.GenerateRandomString(64)
-			if err != nil {
+			if !req.Props.MugShot.IsImage() {
+				return nil, ErrFailedQuery
+			}
+
+			if err := req.Props.MugShot.Optimize(ctx); err != nil {
 				return nil, errswrap.NewError(ErrFailedQuery, err)
 			}
 
-			fileName := fmt.Sprintf("%d-%s", props.UserId, filler)
-			if err := req.Props.MugShot.Upload(ctx, s.st, filestore.MugShots, fileName); err != nil {
+			fileName := fmt.Sprintf("%s-%d", req.Props.MugShot.GetHash(), props.UserId)
+			if err := req.Props.MugShot.Upload(ctx, s.st, filestore.MugShots, storage.FileNameSplitter(fileName)); err != nil {
 				return nil, errswrap.NewError(ErrFailedQuery, err)
 			}
 		} else {
@@ -828,13 +832,16 @@ func (s *Server) SetProfilePicture(ctx context.Context, req *SetProfilePictureRe
 			req.Avatar.Url = avatarFile.Url
 		}
 
-		filler, err := utils.GenerateRandomString(64)
-		if err != nil {
+		if !req.Avatar.IsImage() {
+			return nil, ErrFailedQuery
+		}
+
+		if err := req.Avatar.Optimize(ctx); err != nil {
 			return nil, errswrap.NewError(ErrFailedQuery, err)
 		}
 
-		fileName := fmt.Sprintf("%d-%s", userInfo.UserId, filler)
-		if err := req.Avatar.Upload(ctx, s.st, filestore.Avatars, fileName); err != nil {
+		fileName := fmt.Sprintf("%s-%d", req.Avatar.GetHash(), userInfo.UserId)
+		if err := req.Avatar.Upload(ctx, s.st, filestore.Avatars, storage.FileNameSplitter(fileName)); err != nil {
 			return nil, errswrap.NewError(ErrFailedQuery, err)
 		}
 	} else if req.Avatar.Delete != nil && *req.Avatar.Delete {

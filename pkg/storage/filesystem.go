@@ -11,6 +11,7 @@ import (
 	"syscall"
 
 	"github.com/galexrt/fivenet/pkg/config"
+	"github.com/h2non/filetype"
 )
 
 func init() {
@@ -117,4 +118,33 @@ func (s *Filesystem) Delete(ctx context.Context, filePath string) error {
 	}
 
 	return nil
+}
+
+func (s *Filesystem) List(ctx context.Context, filePath string, offset int, pageSize int) ([]*FileInfo, error) {
+	filePath = path.Join(s.basePath, s.prefix, filePath)
+
+	entries, err := os.ReadDir(filePath)
+	if err != nil {
+		return nil, err
+	}
+
+	files := []*FileInfo{}
+	for _, e := range entries {
+		info, err := e.Info()
+		if err != nil {
+			return nil, err
+		}
+
+		name := e.Name()
+		contentType := filetype.GetType(strings.TrimPrefix(filepath.Ext(name), "."))
+
+		files = append(files, &FileInfo{
+			Name:         name,
+			LastModified: info.ModTime(),
+			Size:         info.Size(),
+			ContentType:  contentType.MIME.Value,
+		})
+	}
+
+	return files, nil
 }

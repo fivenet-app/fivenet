@@ -18,7 +18,7 @@ withDefaults(
         size: 'lg',
         rounded: false,
         enablePopup: false,
-        noBlur: false,
+        noBlur: undefined,
     },
 );
 </script>

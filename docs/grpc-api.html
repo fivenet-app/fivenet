@@ -952,6 +952,10 @@
                   <a href="#resources.filestore.File"><span class="badge">M</span>File</a>
                 </li>
               
+                <li>
+                  <a href="#resources.filestore.FileInfo"><span class="badge">M</span>FileInfo</a>
+                </li>
+              
               
               
               
@@ -1654,29 +1658,6 @@
         
           
           <li>
-            <a href="#services%2ffilestore%2ffilestore.proto">services/filestore/filestore.proto</a>
-            <ul>
-              
-                <li>
-                  <a href="#services.filestore.DeleteRequest"><span class="badge">M</span>DeleteRequest</a>
-                </li>
-              
-                <li>
-                  <a href="#services.filestore.DeleteResponse"><span class="badge">M</span>DeleteResponse</a>
-                </li>
-              
-              
-              
-              
-                <li>
-                  <a href="#services.filestore.FileStoreService"><span class="badge">S</span>FileStoreService</a>
-                </li>
-              
-            </ul>
-          </li>
-        
-          
-          <li>
             <a href="#services%2fjobs%2fqualifications.proto">services/jobs/qualifications.proto</a>
             <ul>
               
@@ -2074,6 +2055,14 @@
                 </li>
               
                 <li>
+                  <a href="#services.rector.DeleteFileRequest"><span class="badge">M</span>DeleteFileRequest</a>
+                </li>
+              
+                <li>
+                  <a href="#services.rector.DeleteFileResponse"><span class="badge">M</span>DeleteFileResponse</a>
+                </li>
+              
+                <li>
                   <a href="#services.rector.DeleteLawBookRequest"><span class="badge">M</span>DeleteLawBookRequest</a>
                 </li>
               
@@ -2127,6 +2116,14 @@
               
                 <li>
                   <a href="#services.rector.GetRolesResponse"><span class="badge">M</span>GetRolesResponse</a>
+                </li>
+              
+                <li>
+                  <a href="#services.rector.ListFilesRequest"><span class="badge">M</span>ListFilesRequest</a>
+                </li>
+              
+                <li>
+                  <a href="#services.rector.ListFilesResponse"><span class="badge">M</span>ListFilesResponse</a>
                 </li>
               
                 <li>
@@ -12130,6 +12127,20 @@
                   <td><p> </p></td>
                 </tr>
               
+                <tr>
+                  <td>content_type</td>
+                  <td><a href="#string">string</a></td>
+                  <td>optional</td>
+                  <td><p> </p></td>
+                </tr>
+              
+                <tr>
+                  <td>extension</td>
+                  <td><a href="#string">string</a></td>
+                  <td>optional</td>
+                  <td><p> </p></td>
+                </tr>
+              
             </tbody>
           </table>
 
@@ -12171,6 +12182,51 @@
               </tbody>
             </table>
             
+          
+
+        
+      
+        <h3 id="resources.filestore.FileInfo">FileInfo</h3>
+        <p></p>
+
+        
+          <table class="field-table">
+            <thead>
+              <tr><td>Field</td><td>Type</td><td>Label</td><td>Description</td></tr>
+            </thead>
+            <tbody>
+              
+                <tr>
+                  <td>name</td>
+                  <td><a href="#string">string</a></td>
+                  <td></td>
+                  <td><p> </p></td>
+                </tr>
+              
+                <tr>
+                  <td>last_modified</td>
+                  <td><a href="#resources.timestamp.Timestamp">resources.timestamp.Timestamp</a></td>
+                  <td>optional</td>
+                  <td><p> </p></td>
+                </tr>
+              
+                <tr>
+                  <td>size</td>
+                  <td><a href="#int64">int64</a></td>
+                  <td></td>
+                  <td><p> </p></td>
+                </tr>
+              
+                <tr>
+                  <td>content_type</td>
+                  <td><a href="#string">string</a></td>
+                  <td></td>
+                  <td><p> </p></td>
+                </tr>
+              
+            </tbody>
+          </table>
+
           
 
         
@@ -18613,115 +18669,6 @@
     
       
       <div class="file-heading">
-        <h2 id="services/filestore/filestore.proto">services/filestore/filestore.proto</h2><a href="#title">Top</a>
-      </div>
-      <p></p>
-
-      
-        <h3 id="services.filestore.DeleteRequest">DeleteRequest</h3>
-        <p></p>
-
-        
-          <table class="field-table">
-            <thead>
-              <tr><td>Field</td><td>Type</td><td>Label</td><td>Description</td></tr>
-            </thead>
-            <tbody>
-              
-                <tr>
-                  <td>prefix</td>
-                  <td><a href="#string">string</a></td>
-                  <td></td>
-                  <td><p> </p></td>
-                </tr>
-              
-                <tr>
-                  <td>path</td>
-                  <td><a href="#string">string</a></td>
-                  <td></td>
-                  <td><p> </p></td>
-                </tr>
-              
-            </tbody>
-          </table>
-
-          
-            
-            
-            <h4>Validated Fields</h4>
-            <table>
-              <thead>
-                <tr>
-                  <td>Field</td>
-                  <td>Validations</td>
-                </tr>
-              </thead>
-              <tbody>
-              
-                <tr>
-                  <td>prefix</td>
-                  <td>
-                    <ul>
-                    
-                      <li>string.max_len: 64</li>
-                    
-                    </ul>
-                  </td>
-                </tr>
-              
-                <tr>
-                  <td>path</td>
-                  <td>
-                    <ul>
-                    
-                      <li>string.max_len: 128</li>
-                    
-                    </ul>
-                  </td>
-                </tr>
-              
-              </tbody>
-            </table>
-            
-          
-
-        
-      
-        <h3 id="services.filestore.DeleteResponse">DeleteResponse</h3>
-        <p></p>
-
-        
-
-        
-      
-
-      
-
-      
-
-      
-        <h3 id="services.filestore.FileStoreService">FileStoreService</h3>
-        <p></p>
-        <table class="enum-table">
-          <thead>
-            <tr><td>Method Name</td><td>Request Type</td><td>Response Type</td><td>Description</td></tr>
-          </thead>
-          <tbody>
-            
-              <tr>
-                <td>Delete</td>
-                <td><a href="#services.filestore.DeleteRequest">DeleteRequest</a></td>
-                <td><a href="#services.filestore.DeleteResponse">DeleteResponse</a></td>
-                <td><p>@perm: Name=SuperUser</p></td>
-              </tr>
-            
-          </tbody>
-        </table>
-
-        
-    
-      
-      <div class="file-heading">
         <h2 id="services/jobs/qualifications.proto">services/jobs/qualifications.proto</h2><a href="#title">Top</a>
       </div>
       <p></p>
@@ -21486,6 +21433,37 @@
 
         
       
+        <h3 id="services.rector.DeleteFileRequest">DeleteFileRequest</h3>
+        <p></p>
+
+        
+          <table class="field-table">
+            <thead>
+              <tr><td>Field</td><td>Type</td><td>Label</td><td>Description</td></tr>
+            </thead>
+            <tbody>
+              
+                <tr>
+                  <td>path</td>
+                  <td><a href="#string">string</a></td>
+                  <td></td>
+                  <td><p> </p></td>
+                </tr>
+              
+            </tbody>
+          </table>
+
+          
+
+        
+      
+        <h3 id="services.rector.DeleteFileResponse">DeleteFileResponse</h3>
+        <p></p>
+
+        
+
+        
+      
         <h3 id="services.rector.DeleteLawBookRequest">DeleteLawBookRequest</h3>
         <p></p>
 
@@ -21764,6 +21742,106 @@
                 <tr>
                   <td>roles</td>
                   <td><a href="#resources.permissions.Role">resources.permissions.Role</a></td>
+                  <td>repeated</td>
+                  <td><p> </p></td>
+                </tr>
+              
+            </tbody>
+          </table>
+
+          
+
+        
+      
+        <h3 id="services.rector.ListFilesRequest">ListFilesRequest</h3>
+        <p></p>
+
+        
+          <table class="field-table">
+            <thead>
+              <tr><td>Field</td><td>Type</td><td>Label</td><td>Description</td></tr>
+            </thead>
+            <tbody>
+              
+                <tr>
+                  <td>pagination</td>
+                  <td><a href="#resources.common.database.PaginationRequest">resources.common.database.PaginationRequest</a></td>
+                  <td></td>
+                  <td><p> </p></td>
+                </tr>
+              
+                <tr>
+                  <td>path</td>
+                  <td><a href="#string">string</a></td>
+                  <td>optional</td>
+                  <td><p> </p></td>
+                </tr>
+              
+            </tbody>
+          </table>
+
+          
+            
+            
+            <h4>Validated Fields</h4>
+            <table>
+              <thead>
+                <tr>
+                  <td>Field</td>
+                  <td>Validations</td>
+                </tr>
+              </thead>
+              <tbody>
+              
+                <tr>
+                  <td>pagination</td>
+                  <td>
+                    <ul>
+                    
+                      <li>message.required: true</li>
+                    
+                    </ul>
+                  </td>
+                </tr>
+              
+                <tr>
+                  <td>path</td>
+                  <td>
+                    <ul>
+                    
+                      <li>string.max_len: 128</li>
+                    
+                    </ul>
+                  </td>
+                </tr>
+              
+              </tbody>
+            </table>
+            
+          
+
+        
+      
+        <h3 id="services.rector.ListFilesResponse">ListFilesResponse</h3>
+        <p></p>
+
+        
+          <table class="field-table">
+            <thead>
+              <tr><td>Field</td><td>Type</td><td>Label</td><td>Description</td></tr>
+            </thead>
+            <tbody>
+              
+                <tr>
+                  <td>pagination</td>
+                  <td><a href="#resources.common.database.PaginationResponse">resources.common.database.PaginationResponse</a></td>
+                  <td></td>
+                  <td><p> </p></td>
+                </tr>
+              
+                <tr>
+                  <td>files</td>
+                  <td><a href="#resources.filestore.FileInfo">resources.filestore.FileInfo</a></td>
                   <td>repeated</td>
                   <td><p> </p></td>
                 </tr>
@@ -22241,6 +22319,20 @@
                 <td>DeleteLaw</td>
                 <td><a href="#services.rector.DeleteLawRequest">DeleteLawRequest</a></td>
                 <td><a href="#services.rector.DeleteLawResponse">DeleteLawResponse</a></td>
+                <td><p>@perm: Name=SuperUser</p></td>
+              </tr>
+            
+              <tr>
+                <td>ListFiles</td>
+                <td><a href="#services.rector.ListFilesRequest">ListFilesRequest</a></td>
+                <td><a href="#services.rector.ListFilesResponse">ListFilesResponse</a></td>
+                <td><p>@perm: Name=SuperUser</p></td>
+              </tr>
+            
+              <tr>
+                <td>DeleteFile</td>
+                <td><a href="#services.rector.DeleteFileRequest">DeleteFileRequest</a></td>
+                <td><a href="#services.rector.DeleteFileResponse">DeleteFileResponse</a></td>
                 <td><p>@perm: Name=SuperUser</p></td>
               </tr>
             

@@ -13,10 +13,12 @@ var PermsRemap = map[string]string{
 	// Service: RectorService
 	"RectorService/CreateOrUpdateLaw":     "SuperUser",
 	"RectorService/CreateOrUpdateLawBook": "SuperUser",
+	"RectorService/DeleteFile":            "SuperUser",
 	"RectorService/DeleteLaw":             "SuperUser",
 	"RectorService/DeleteLawBook":         "SuperUser",
 	"RectorService/GetPermissions":        "RectorService/GetRoles",
 	"RectorService/GetRole":               "RectorService/GetRoles",
+	"RectorService/ListFiles":             "SuperUser",
 	"RectorService/UpdateRoleLimits":      "SuperUser",
 }
 

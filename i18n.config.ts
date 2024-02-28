@@ -51,7 +51,7 @@ export default defineI18nConfig(() => ({
             },
             short: {
                 year: 'numeric',
-                month: 'short',
+                month: '2-digit',
                 day: '2-digit',
                 hour: 'numeric',
                 minute: 'numeric',
@@ -79,7 +79,7 @@ export default defineI18nConfig(() => ({
             },
             short: {
                 year: 'numeric',
-                month: 'short',
+                month: '2-digit',
                 day: '2-digit',
                 hour: 'numeric',
                 minute: 'numeric',

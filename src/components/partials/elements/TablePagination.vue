@@ -81,7 +81,7 @@ const pageNumber = ref(currentPage.value.toString());
         class="flex items-center justify-between border-t px-4 py-3 sm:px-6"
         aria-label="Pagination"
     >
-        <div class="hidden sm:block">
+        <div v-if="total > -1" class="hidden sm:block">
             <I18nT keypath="components.partials.table_pagination.page_count" tag="p" class="text-sm text-gray-300">
                 <template #current>
                     <span class="font-medium text-neutral">
@@ -122,100 +122,127 @@ const pageNumber = ref(currentPage.value.toString());
             </button>
 
             <nav class="isolate inline-flex -space-x-px rounded-md shadow-sm" aria-label="Pagination">
-                <button
-                    :disabled="offset <= 0n"
-                    type="button"
-                    :class="[
-                        offset <= 0n
-                            ? 'disabled bg-base-500 hover:bg-base-400 focus-visible:outline-base-500'
-                            : 'bg-primary-500 hover:bg-primary-400 focus-visible:outline-primary-500',
-                        'relative ml-3 inline-flex cursor-pointer items-center rounded-l-md px-3 py-2 text-sm font-semibold text-neutral focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2',
-                    ]"
-                    @click="$emit('offsetChange', calculateOffset(parseInt((currentPage - 1n).toString())))"
-                >
-                    {{ $t('common.previous') }}
-                </button>
+                <template v-if="total > -1">
+                    <button
+                        :disabled="offset <= 0n"
+                        type="button"
+                        :class="[
+                            offset <= 0n
+                                ? 'disabled bg-base-500 hover:bg-base-400 focus-visible:outline-base-500'
+                                : 'bg-primary-500 hover:bg-primary-400 focus-visible:outline-primary-500',
+                            'relative ml-3 inline-flex cursor-pointer items-center rounded-l-md px-3 py-2 text-sm font-semibold text-neutral focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2',
+                        ]"
+                        @click="$emit('offsetChange', calculateOffset(parseInt((currentPage - 1n).toString())))"
+                    >
+                        {{ $t('common.previous') }}
+                    </button>
 
-                <button
-                    v-for="page in beforePages"
-                    :key="page"
-                    type="button"
-                    class="relative inline-flex items-center bg-secondary-500 px-4 py-2 text-sm font-semibold text-neutral hover:bg-base-400 focus:z-20 focus:outline-offset-0"
-                    @click="$emit('offsetChange', calculateOffset(page))"
-                >
-                    {{ page }}
-                </button>
+                    <button
+                        v-for="page in beforePages"
+                        :key="page"
+                        type="button"
+                        class="relative inline-flex items-center bg-secondary-500 px-4 py-2 text-sm font-semibold text-neutral hover:bg-base-400 focus:z-20 focus:outline-offset-0"
+                        @click="$emit('offsetChange', calculateOffset(page))"
+                    >
+                        {{ page }}
+                    </button>
 
-                <button
-                    type="button"
-                    class="relative inline-flex items-center bg-primary-500 px-4 py-2 text-sm font-semibold text-neutral underline hover:bg-primary-400 focus-visible:outline-primary-500"
-                    disabled
-                >
-                    {{ currentPage }}
-                </button>
+                    <button
+                        type="button"
+                        class="relative inline-flex items-center bg-primary-500 px-4 py-2 text-sm font-semibold text-neutral underline hover:bg-primary-400 focus-visible:outline-primary-500"
+                        disabled
+                    >
+                        {{ currentPage }}
+                    </button>
 
-                <button
-                    v-for="page in afterPages"
-                    :key="page"
-                    type="button"
-                    class="relative inline-flex items-center bg-secondary-500 px-4 py-2 text-sm font-semibold text-neutral hover:bg-base-400 focus:z-20 focus:outline-offset-0"
-                    @click="$emit('offsetChange', calculateOffset(page))"
-                >
-                    {{ page }}
-                </button>
+                    <button
+                        v-for="page in afterPages"
+                        :key="page"
+                        type="button"
+                        class="relative inline-flex items-center bg-secondary-500 px-4 py-2 text-sm font-semibold text-neutral hover:bg-base-400 focus:z-20 focus:outline-offset-0"
+                        @click="$emit('offsetChange', calculateOffset(page))"
+                    >
+                        {{ page }}
+                    </button>
 
-                <Popover v-if="totalPages > 4n" class="relative">
-                    <Float portal placement="top-start" :offset="12">
-                        <PopoverButton
-                            class="relative inline-flex items-center bg-secondary-500 px-4 py-2 text-sm font-semibold text-neutral hover:bg-base-400 focus:z-20 focus:outline-offset-0"
-                            @click="pageNumber = ''"
-                        >
-                            ...
-                        </PopoverButton>
+                    <Popover v-if="totalPages > 4n" class="relative">
+                        <Float portal placement="top-start" :offset="12">
+                            <PopoverButton
+                                class="relative inline-flex items-center bg-secondary-500 px-4 py-2 text-sm font-semibold text-neutral hover:bg-base-400 focus:z-20 focus:outline-offset-0"
+                                @click="pageNumber = ''"
+                            >
+                                ...
+                            </PopoverButton>
 
-                        <PopoverPanel
-                            focus
-                            class="absolute z-5 w-24 min-w-fit max-w-24 rounded-lg border border-gray-600 bg-gray-800 text-sm text-gray-400 shadow-sm transition-opacity"
-                        >
-                            <div class="p-3">
-                                <form @submit.prevent="$emit('offsetChange', calculateOffset(parseInt(pageNumber)))">
-                                    <input
-                                        v-model="pageNumber"
-                                        type="number"
-                                        min="1"
-                                        :max="parseInt(totalPages.toString())"
-                                        class="remove-arrow block w-full rounded-md border-0 bg-base-700 py-1.5 text-neutral placeholder:text-accent-200 focus:ring-2 focus:ring-inset focus:ring-base-300 sm:text-sm sm:leading-6"
-                                        name="page_number"
-                                        :placeholder="$t('common.page')"
-                                    />
-                                </form>
-                            </div>
-                        </PopoverPanel>
-                    </Float>
-                </Popover>
+                            <PopoverPanel
+                                focus
+                                class="absolute z-5 w-24 min-w-fit max-w-24 rounded-lg border border-gray-600 bg-gray-800 text-sm text-gray-400 shadow-sm transition-opacity"
+                            >
+                                <div class="p-3">
+                                    <form @submit.prevent="$emit('offsetChange', calculateOffset(parseInt(pageNumber)))">
+                                        <input
+                                            v-model="pageNumber"
+                                            type="number"
+                                            min="1"
+                                            :max="parseInt(totalPages.toString())"
+                                            class="remove-arrow block w-full rounded-md border-0 bg-base-700 py-1.5 text-neutral placeholder:text-accent-200 focus:ring-2 focus:ring-inset focus:ring-base-300 sm:text-sm sm:leading-6"
+                                            name="page_number"
+                                            :placeholder="$t('common.page')"
+                                        />
+                                    </form>
+                                </div>
+                            </PopoverPanel>
+                        </Float>
+                    </Popover>
 
-                <button
-                    v-if="currentPage <= totalPages - 2n"
-                    type="button"
-                    class="relative inline-flex items-center bg-secondary-500 px-4 py-2 text-sm font-semibold text-neutral hover:bg-base-400 focus:z-20 focus:outline-offset-0"
-                    @click="$emit('offsetChange', calculateOffset(parseInt(totalPages.toString())))"
-                >
-                    {{ totalPages }}
-                </button>
+                    <button
+                        v-if="currentPage <= totalPages - 2n"
+                        type="button"
+                        class="relative inline-flex items-center bg-secondary-500 px-4 py-2 text-sm font-semibold text-neutral hover:bg-base-400 focus:z-20 focus:outline-offset-0"
+                        @click="$emit('offsetChange', calculateOffset(parseInt(totalPages.toString())))"
+                    >
+                        {{ totalPages }}
+                    </button>
 
-                <button
-                    :disabled="total - end <= 0n"
-                    type="button"
-                    :class="[
-                        total - end <= 0n
-                            ? 'disabled bg-base-500 hover:bg-base-400 focus-visible:outline-base-500'
-                            : 'bg-primary-500 hover:bg-primary-400 focus-visible:outline-primary-500',
-                        'relative ml-3 inline-flex cursor-pointer items-center rounded-r-md px-3 py-2 text-sm font-semibold text-neutral focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2',
-                    ]"
-                    @click="$emit('offsetChange', end)"
-                >
-                    {{ $t('common.next') }}
-                </button>
+                    <button
+                        :disabled="total - end <= 0n"
+                        type="button"
+                        :class="[
+                            total - end <= 0n
+                                ? 'disabled bg-base-500 hover:bg-base-400 focus-visible:outline-base-500'
+                                : 'bg-primary-500 hover:bg-primary-400 focus-visible:outline-primary-500',
+                            'relative ml-3 inline-flex cursor-pointer items-center rounded-r-md px-3 py-2 text-sm font-semibold text-neutral focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2',
+                        ]"
+                        @click="$emit('offsetChange', end)"
+                    >
+                        {{ $t('common.next') }}
+                    </button>
+                </template>
+                <template v-else>
+                    <button
+                        :disabled="offset <= 0n"
+                        type="button"
+                        :class="[
+                            offset <= 0n
+                                ? 'disabled bg-base-500 hover:bg-base-400 focus-visible:outline-base-500'
+                                : 'bg-primary-500 hover:bg-primary-400 focus-visible:outline-primary-500',
+                            'relative ml-3 inline-flex cursor-pointer items-center rounded-l-md px-3 py-2 text-sm font-semibold text-neutral focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2',
+                        ]"
+                        @click="$emit('offsetChange', offset - pageSize < 0n ? 0n : offset - pageSize)"
+                    >
+                        {{ $t('common.previous') }}
+                    </button>
+                    <button
+                        type="button"
+                        :class="[
+                            'bg-primary-500 hover:bg-primary-400 focus-visible:outline-primary-500',
+                            'relative ml-3 inline-flex cursor-pointer items-center rounded-r-md px-3 py-2 text-sm font-semibold text-neutral focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2',
+                        ]"
+                        @click="$emit('offsetChange', offset + pageSize)"
+                    >
+                        {{ $t('common.next') }}
+                    </button>
+                </template>
             </nav>
         </div>
     </nav>

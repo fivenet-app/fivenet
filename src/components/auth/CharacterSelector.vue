@@ -6,7 +6,7 @@ import { User } from '~~/gen/ts/resources/users/users';
 import CharacterSelectorCard from '~/components/auth/CharacterSelectorCard.vue';
 
 const { $grpc } = useNuxtApp();
-const { data: chars, pending, refresh, error } = useLazyAsyncData(`chars`, () => fetchCharacters());
+const { data: chars, pending, refresh, error } = useLazyAsyncData('chars', () => fetchCharacters());
 
 async function fetchCharacters(): Promise<User[]> {
     try {

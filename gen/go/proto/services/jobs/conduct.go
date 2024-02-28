@@ -168,6 +168,8 @@ func (s *Server) CreateConductEntry(ctx context.Context, req *CreateConductEntry
 	}
 	defer s.aud.Log(auditEntry, req)
 
+	req.Entry.Job = userInfo.Job
+
 	expiresAt := jet.NULL
 	if req.Entry.ExpiresAt != nil {
 		expiresAt = jet.TimestampT(req.Entry.ExpiresAt.AsTime())
@@ -232,6 +234,8 @@ func (s *Server) UpdateConductEntry(ctx context.Context, req *UpdateConductEntry
 	}
 
 	proto.Merge(entry, req.Entry)
+
+	req.Entry.Job = userInfo.Job
 
 	tConduct := table.FivenetJobsConduct
 	stmt := tConduct.

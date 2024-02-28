@@ -3,11 +3,15 @@ package filestore
 import (
 	"bytes"
 	"context"
+	"crypto/sha256"
 	"database/sql/driver"
+	"encoding/base64"
 	"fmt"
+	"io"
 	"path"
 	"strings"
 
+	"github.com/galexrt/fivenet/pkg/images"
 	"github.com/galexrt/fivenet/pkg/storage"
 	"github.com/h2non/filetype"
 	"github.com/h2non/filetype/matchers"
@@ -29,7 +33,7 @@ type FilePrefix = string
 
 const (
 	Avatars  FilePrefix = "avatars"
-	JobLogos FilePrefix = "job_logos"
+	JobLogos FilePrefix = "joblogos"
 	MugShots FilePrefix = "mugshots"
 )
 
@@ -57,6 +61,39 @@ func (x *File) Value() (driver.Value, error) {
 	return *x.Url, nil
 }
 
+func (x *File) GetHash() string {
+	hasher := sha256.New()
+	hasher.Write(x.Data)
+	return base64.URLEncoding.EncodeToString(hasher.Sum(nil))
+}
+
+func (x *File) IsImage() bool {
+	return filetype.MatchesMap(x.Data, imagesMatchersMap)
+}
+
+func (x *File) Optimize(ctx context.Context) error {
+	var data io.Reader
+	data = bytes.NewReader(x.Data)
+
+	contentType, err := filetype.Match(x.Data)
+	if err != nil {
+		return err
+	}
+	x.Extension = &contentType.Extension
+	x.ContentType = &contentType.MIME.Value
+
+	if x.IsImage() {
+		data, err = images.ResizeImage(contentType, data, 500, 500)
+		if err != nil {
+			return err
+		}
+
+		x.Data, _ = io.ReadAll(data)
+	}
+
+	return nil
+}
+
 func (x *File) Upload(ctx context.Context, st storage.IStorage, prefix FilePrefix, fileName string) error {
 	if x.Data == nil {
 		return fmt.Errorf("no file data given")
@@ -72,15 +109,8 @@ func (x *File) Upload(ctx context.Context, st storage.IStorage, prefix FilePrefi
 		}
 	}
 
-	contentType, err := filetype.Match(x.Data)
-	if err != nil {
-		return err
-	}
-
-	fileName = path.Join(prefix, fmt.Sprintf("%s.%s", fileName, contentType.Extension))
-
-	rd := bytes.NewReader(x.Data)
-	url, err := st.Put(ctx, fileName, rd, int64(len(x.Data)), contentType.MIME.Value)
+	fileName = path.Join(prefix, fmt.Sprintf("%s.%s", fileName, *x.Extension))
+	url, err := st.Put(ctx, fileName, bytes.NewReader(x.Data), int64(len(x.Data)), *x.ContentType)
 	if err != nil {
 		return err
 	}
@@ -90,8 +120,4 @@ func (x *File) Upload(ctx context.Context, st storage.IStorage, prefix FilePrefi
 	x.Data = nil
 
 	return nil
-}
-
-func (x *File) IsImage() bool {
-	return filetype.MatchesMap(x.Data, imagesMatchersMap)
 }

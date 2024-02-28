@@ -34,7 +34,7 @@ func (p *PaginationRequest) GetResponseWithPageSize(maxPageSize int64) (*Paginat
 func (p *PaginationResponse) Update(totalCount int64, length int) {
 	p.TotalCount = totalCount
 
-	if p.Offset >= p.TotalCount {
+	if p.TotalCount != -1 && p.Offset >= p.TotalCount {
 		p.Offset = 0
 	}
 

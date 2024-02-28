@@ -91,10 +91,6 @@ func (s *Server) ViewAuditLog(ctx context.Context, req *ViewAuditLogRequest) (*V
 		return resp, nil
 	}
 
-	if count.TotalCount <= 0 {
-		return resp, nil
-	}
-
 	stmt := tAuditLog.
 		SELECT(
 			tAuditLog.ID,

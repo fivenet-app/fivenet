@@ -36,7 +36,6 @@
 // source: services/completor/completor.proto
 // source: services/dmv/vehicles.proto
 // source: services/docstore/docstore.proto
-// source: services/filestore/filestore.proto
 // source: services/jobs/conduct.proto
 // source: services/jobs/jobs.proto
 // source: services/jobs/qualifications.proto

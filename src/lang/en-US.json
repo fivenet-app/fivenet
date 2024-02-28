@@ -845,7 +845,8 @@
         "image": "Image",
         "logo": "Logo",
         "absence_date": "Absence Date",
-        "mug_shot": "Mug Shot"
+        "mug_shot": "Mug Shot",
+        "file_size": "File Size"
     },
     "notifications": {
         "clipboard": {
