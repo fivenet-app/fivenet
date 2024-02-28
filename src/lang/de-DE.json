@@ -1861,7 +1861,9 @@
             },
             "JobsUserActivityType": {
                 "UNSPECIFIED": "Unbestimmt",
-                "ABSENCE_DATE": "Abwesenheitsdatum"
+                "ABSENCE_DATE": "Abwesenheitsdatum",
+                "FIRED": "Gefeuert",
+                "HIRED": "Angestellt"
             }
         }
     }
