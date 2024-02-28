@@ -21,6 +21,9 @@ defineProps<{
             <div class="flex items-center justify-between">
                 <h3 class="text-sm font-medium text-neutral">
                     {{ $t(`enums.jobs.JobsUserActivityType.${JobsUserActivityType[activity.activityType]}`) }}
+                    <template v-if="activity.data?.data.oneofKind === 'absenceDate'">
+                        {{ ' - ' }}<GenericTime :value="activity.data?.data.absenceDate.absenceDate" type="date" />
+                    </template>
                 </h3>
                 <p class="text-sm text-gray-400">
                     <GenericTime :value="activity.createdAt" type="long" />

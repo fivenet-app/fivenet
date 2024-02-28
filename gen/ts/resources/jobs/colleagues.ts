@@ -161,9 +161,17 @@ export enum JobsUserActivityType {
      */
     UNSPECIFIED = 0,
     /**
-     * @generated from protobuf enum value: JOBS_USER_ACTIVITY_TYPE_ABSENCE_DATE = 1;
+     * @generated from protobuf enum value: JOBS_USER_ACTIVITY_TYPE_HIRED = 1;
      */
-    ABSENCE_DATE = 1
+    HIRED = 1,
+    /**
+     * @generated from protobuf enum value: JOBS_USER_ACTIVITY_TYPE_FIRED = 2;
+     */
+    FIRED = 2,
+    /**
+     * @generated from protobuf enum value: JOBS_USER_ACTIVITY_TYPE_ABSENCE_DATE = 3;
+     */
+    ABSENCE_DATE = 3
 }
 // @generated message type with reflection information, may provide speed optimized methods
 class Colleague$Type extends MessageType<Colleague> {

@@ -1,4 +1,4 @@
-import { HelpIcon, IslandIcon } from 'mdi-vue3';
+import { ExitRunIcon, HelpIcon, IslandIcon, NewBoxIcon } from 'mdi-vue3';
 import type { DefineComponent } from 'vue';
 import { JobsUserActivityType } from '~~/gen/ts/resources/jobs/colleagues';
 
@@ -16,6 +16,10 @@ export function jobsUserActivityTypeIcon(activityType: JobsUserActivityType | un
     switch (activityType) {
         case JobsUserActivityType.ABSENCE_DATE:
             return markRaw(IslandIcon);
+        case JobsUserActivityType.HIRED:
+            return markRaw(NewBoxIcon);
+        case JobsUserActivityType.FIRED:
+            return markRaw(ExitRunIcon);
         case JobsUserActivityType.UNSPECIFIED:
         default:
             return markRaw(HelpIcon);

@@ -491,6 +491,7 @@ func (s *Server) ListColleagueActivity(ctx context.Context, req *ListColleagueAc
 		).
 		WHERE(condition).
 		OFFSET(pag.Offset).
+		ORDER_BY(tJobsUserActivity.CreatedAt.DESC(), tJobsUserActivity.ID.DESC()).
 		LIMIT(limit)
 
 	if err := stmt.QueryContext(ctx, s.db, &resp.Activity); err != nil {
