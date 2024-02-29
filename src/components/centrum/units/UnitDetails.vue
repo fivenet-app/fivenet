@@ -254,7 +254,7 @@ const openStatus = ref(false);
                                                                         class="flex flex-row items-center rounded bg-neutral/10 px-2 py-1 text-xs font-semibold text-neutral shadow-sm hover:bg-neutral/20"
                                                                         @click="openAssign = true"
                                                                     >
-                                                                        <PencilIcon class="h-5 w-5" />
+                                                                        <PencilIcon class="h-5 w-5" aria-hidden="true" />
                                                                         <span class="ml-0.5 truncate">
                                                                             {{ $t('common.assign') }}
                                                                         </span>

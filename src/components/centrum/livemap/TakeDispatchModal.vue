@@ -235,7 +235,7 @@ const onSubmitThrottle = useThrottleFn(async (resp: TakeDispatchResp) => {
                                                 @click="onSubmitThrottle(TakeDispatchResp.ACCEPTED)"
                                             >
                                                 <template v-if="!canSubmit">
-                                                    <LoadingIcon class="mr-2 h-5 w-5 animate-spin" />
+                                                    <LoadingIcon class="mr-2 h-5 w-5 animate-spin" aria-hidden="true" />
                                                 </template>
                                                 {{ $t('common.accept') }}
                                             </button>
@@ -247,7 +247,7 @@ const onSubmitThrottle = useThrottleFn(async (resp: TakeDispatchResp) => {
                                                 @click="onSubmitThrottle(TakeDispatchResp.DECLINED)"
                                             >
                                                 <template v-if="!canSubmit">
-                                                    <LoadingIcon class="mr-2 h-5 w-5 animate-spin" />
+                                                    <LoadingIcon class="mr-2 h-5 w-5 animate-spin" aria-hidden="true" />
                                                 </template>
                                                 {{ $t('common.decline') }}
                                             </button>

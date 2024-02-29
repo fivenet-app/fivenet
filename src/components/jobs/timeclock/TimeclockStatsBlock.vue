@@ -82,7 +82,7 @@ const axis = ref<ChartAxis>({
                             <p class="text-sm font-medium leading-6 text-gray-300">{{ $t(stat.name) }}</p>
                             <p class="mt-2 flex w-full items-center gap-x-2 text-2xl font-semibold tracking-tight text-neutral">
                                 <template v-if="stat.value === undefined">
-                                    <LoadingIcon class="h-5 w-5 animate-spin" />
+                                    <LoadingIcon class="h-5 w-5 animate-spin" aria-hidden="true" />
                                 </template>
                                 <template v-else>
                                     {{ fromSecondsToFormattedDuration(stat.value, { seconds: false }) }}

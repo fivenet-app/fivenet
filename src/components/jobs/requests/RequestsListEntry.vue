@@ -193,7 +193,7 @@ const open = ref(false);
                     type="button"
                     class="inline-flex justify-center rounded-md bg-primary-500 px-3 py-2 text-sm font-semibold text-neutral hover:bg-primary-400 focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-primary-500"
                 >
-                    <TrashCanIcon class="h-5 w-5" />
+                    <TrashCanIcon class="h-5 w-5" aria-hidden="true" />
                     {{ $t('common.delete') }}
                 </button>
                 <button
@@ -201,7 +201,7 @@ const open = ref(false);
                     class="inline-flex items-center justify-center gap-x-1.5 rounded-md bg-primary-500 px-3 py-2 text-sm font-semibold text-neutral hover:bg-primary-400"
                     @click="open = false"
                 >
-                    <CloseIcon class="h-5 w-5" />
+                    <CloseIcon class="h-5 w-5" aria-hidden="true" />
                     {{ $t('common.hide') }}
                 </button>
             </div>

@@ -183,7 +183,7 @@ const onSubmitThrottle = useThrottleFn(async (e) => {
                                                     ]"
                                                 >
                                                     <template v-if="!canSubmit">
-                                                        <LoadingIcon class="mr-2 h-5 w-5 animate-spin" />
+                                                        <LoadingIcon class="mr-2 h-5 w-5 animate-spin" aria-hidden="true" />
                                                     </template>
                                                     {{ $t('components.auth.change_password_modal.change_password') }}
                                                 </button>

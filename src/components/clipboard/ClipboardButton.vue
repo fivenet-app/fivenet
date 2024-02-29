@@ -15,6 +15,6 @@ const open = ref(false);
         class="fixed bottom-2 right-6 z-10 flex h-12 w-12 items-center justify-center rounded-full bg-accent-500 text-neutral shadow-float hover:bg-accent-400"
         @click="open = true"
     >
-        <ClipboardListIcon class="w-10 h-auto" />
+        <ClipboardListIcon class="w-10 h-auto" aria-hidden="true" />
     </button>
 </template>

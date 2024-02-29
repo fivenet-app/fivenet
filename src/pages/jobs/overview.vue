@@ -58,7 +58,7 @@ const showRadioFrequency = ref(false);
                                     {{ $t('common.radio_frequency') }}
                                 </h3>
                                 <p class="flex items-center text-center text-lg font-bold">
-                                    <RadioHandheldIcon class="h-auto w-6" />
+                                    <RadioHandheldIcon class="h-auto w-6" aria-hidden="true" />
                                     <span
                                         :class="showRadioFrequency ? '' : 'blur'"
                                         @click="showRadioFrequency = !showRadioFrequency"

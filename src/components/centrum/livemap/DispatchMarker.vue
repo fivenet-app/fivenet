@@ -46,7 +46,7 @@ const dispatchClasses = computed(() => [
                 >
                     DSP-{{ dispatch.id }}
                 </span>
-                <BellIcon class="h-full w-full" :class="dispatchClasses" />
+                <BellIcon class="h-full w-full" :class="dispatchClasses" aria-hidden="true" />
             </div>
         </LIcon>
 
@@ -59,7 +59,7 @@ const dispatchClasses = computed(() => [
                     class="inline-flex items-center text-primary-500 hover:text-primary-400"
                     @click="selected(dispatch.id)"
                 >
-                    <CarEmergencyIcon class="h-5 w-5" />
+                    <CarEmergencyIcon class="h-5 w-5" aria-hidden="true" />
                     <span class="ml-1">{{ $t('common.detail', 2) }}</span>
                 </button>
             </div>

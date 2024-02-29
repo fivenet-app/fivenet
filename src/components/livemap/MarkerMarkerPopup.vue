@@ -62,7 +62,7 @@ onConfirm(async (id) => deleteMarker(id));
                 class="inline-flex items-center text-primary-500 hover:text-primary-400"
                 @click="reveal(marker.info!.id)"
             >
-                <TrashCanIcon class="h-5 w-5" />
+                <TrashCanIcon class="h-5 w-5" aria-hidden="true" />
                 <span class="ml-1">{{ $t('common.delete') }}</span>
             </button>
         </div>

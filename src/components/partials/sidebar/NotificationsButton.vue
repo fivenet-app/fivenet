@@ -15,6 +15,7 @@ const open = ref(false);
             <span class="sr-only">{{ $t('common.notification', 2) }}</span>
             <BellOutlineIcon
                 class="h-10 w-10 rounded-full bg-base-800 p-1 text-base-300 hover:text-base-100 hover:transition-colors"
+                aria-hidden="true"
             />
         </button>
 

@@ -11,10 +11,6 @@ func (s *State) GetDisponents(job string) ([]*users.UserShort, error) {
 		return nil, err
 	}
 
-	if disponents == nil {
-		return nil, nil
-	}
-
 	return disponents.Disponents, nil
 }
 

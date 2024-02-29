@@ -252,7 +252,7 @@ onConfirm(async (id) => deleteRole(id));
                 <h2 class="text-3xl text-neutral" :title="`ID: ${role.id}`">
                     {{ role?.jobLabel! }} - {{ role?.jobGradeLabel }} ({{ role.grade }})
                     <button v-if="can('RectorService.DeleteRole')" type="button" class="ml-1" @click="reveal()">
-                        <TrashCanIcon class="mx-auto h-5 w-5 text-neutral" />
+                        <TrashCanIcon class="mx-auto h-5 w-5 text-neutral" aria-hidden="true" />
                     </button>
                 </h2>
                 <GenericDivider :label="$t('common.permission', 2)" />
@@ -318,14 +318,14 @@ onConfirm(async (id) => deleteRole(id));
                                                 class="rounded-l-lg bg-success-600/50 p-1 text-base-300 transition-colors hover:bg-success-600/70 data-[active=true]:bg-success-600 data-[active=true]:text-neutral"
                                                 @click="updatePermissionState(perm.id, true)"
                                             >
-                                                <CheckIcon class="h-5 w-5" />
+                                                <CheckIcon class="h-5 w-5" aria-hidden="true" />
                                             </button>
                                             <button
                                                 :data-active="!permStates.has(perm.id) || permStates.get(perm.id) === undefined"
                                                 class="bg-base-700 p-1 text-base-300 transition-colors hover:bg-base-600 data-[active=true]:bg-base-500 data-[active=true]:text-neutral"
                                                 @click="updatePermissionState(perm.id, undefined)"
                                             >
-                                                <MinusIcon class="h-5 w-5" />
+                                                <MinusIcon class="h-5 w-5" aria-hidden="true" />
                                             </button>
                                             <button
                                                 :data-active="
@@ -336,7 +336,7 @@ onConfirm(async (id) => deleteRole(id));
                                                 class="rounded-r-lg bg-error-600/50 p-1 text-base-300 transition-colors hover:bg-error-600/70 data-[active=true]:bg-error-600 data-[active=true]:text-neutral"
                                                 @click="updatePermissionState(perm.id, false)"
                                             >
-                                                <CloseIcon class="h-5 w-5" />
+                                                <CloseIcon class="h-5 w-5" aria-hidden="true" />
                                             </button>
                                         </div>
                                     </div>

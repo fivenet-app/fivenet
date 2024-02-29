@@ -72,7 +72,7 @@ const absenceDateModal = ref(false);
                     class="flex-initial text-primary-500 hover:text-primary-400"
                     @click="absenceDateModal = true"
                 >
-                    <IslandIcon class="mr-2.5 w-5 h-auto" />
+                    <IslandIcon class="mr-2.5 w-5 h-auto" aria-hidden="true" />
                 </button>
                 <NuxtLink
                     v-if="
@@ -85,7 +85,7 @@ const absenceDateModal = ref(false);
                     }"
                     class="flex-initial text-primary-500 hover:text-primary-400"
                 >
-                    <EyeIcon class="mr-2.5 w-5 h-auto" />
+                    <EyeIcon class="mr-2.5 w-5 h-auto" aria-hidden="true" />
                 </NuxtLink>
             </div>
         </td>

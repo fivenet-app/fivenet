@@ -1,13 +1,13 @@
 <script lang="ts" setup>
 import { Dialog, DialogPanel, DialogTitle, TransitionChild, TransitionRoot } from '@headlessui/vue';
 import { RpcError } from '@protobuf-ts/runtime-rpc';
-import { required } from '@vee-validate/rules';
+import { max, min, required } from '@vee-validate/rules';
 import { useThrottleFn } from '@vueuse/core';
-import { CloseIcon, GroupIcon, LoadingIcon } from 'mdi-vue3';
+import { CloseIcon, GroupIcon, LoadingIcon, PlusIcon } from 'mdi-vue3';
 import { defineRule } from 'vee-validate';
 import { CentrumMode, Settings } from '~~/gen/ts/resources/centrum/settings';
 
-defineProps<{
+const props = defineProps<{
     open: boolean;
 }>();
 
@@ -42,6 +42,8 @@ interface FormData {
     enabled: boolean;
     mode: CentrumMode;
     fallbackMode: CentrumMode;
+    unitStatus: string[];
+    dispatchStatus: string[];
 }
 
 async function updateSettings(values: FormData): Promise<void> {
@@ -52,6 +54,10 @@ async function updateSettings(values: FormData): Promise<void> {
                 enabled: values.enabled,
                 mode: values.mode,
                 fallbackMode: values.fallbackMode,
+                predefinedStatus: {
+                    dispatchStatus: values.dispatchStatus.filter((s) => s.trim().length > 0),
+                    unitStatus: values.unitStatus.filter((s) => s.trim().length > 0),
+                },
             },
         });
         await call;
@@ -66,12 +72,16 @@ async function updateSettings(values: FormData): Promise<void> {
 }
 
 defineRule('required', required);
+defineRule('min', min);
+defineRule('max', max);
 
 const { handleSubmit, meta, setValues } = useForm<FormData>({
     validationSchema: {
         enabled: { required: false },
         mode: { required: true },
         fallbackMode: { required: true },
+        unitStatus: { max: 255 },
+        dispatchStatus: { max: 255 },
     },
     validateOnMount: true,
 });
@@ -85,9 +95,12 @@ function setSettingsValues(): void {
         enabled: settings.value.enabled,
         mode: settings.value.mode,
         fallbackMode: settings.value.fallbackMode,
+        unitStatus: settings.value.predefinedStatus?.unitStatus ?? [],
+        dispatchStatus: settings.value.predefinedStatus?.dispatchStatus ?? [],
     });
 }
 
+watch(props, () => setSettingsValues());
 watch(settings, () => setSettingsValues());
 
 setSettingsValues();
@@ -101,6 +114,10 @@ const onSubmitThrottle = useThrottleFn(async (e) => {
     canSubmit.value = false;
     await onSubmit(e);
 }, 1000);
+
+const { remove: usRemove, push: usPush, fields: usFields } = useFieldArray<string>('unitStatus');
+
+const { remove: dspRemove, push: dspPush, fields: dspFields } = useFieldArray<string>('dispatchStatus');
 </script>
 
 <template>
@@ -254,7 +271,100 @@ const onSubmitThrottle = useThrottleFn(async (e) => {
                                                         class="mt-2 text-sm text-error-400"
                                                     />
                                                 </div>
-                                                <!-- TODO Allow adding/updating/deleting predefined unit and dispatch status -->
+                                                <!-- Predefined Unit Status Reason -->
+                                                <div class="form-control flex-1">
+                                                    <label
+                                                        for="unitStatus"
+                                                        class="block text-sm font-medium leading-6 text-neutral"
+                                                    >
+                                                        {{ `${$t('common.units')} ${$t('common.status')}` }}
+                                                    </label>
+                                                    <div class="flex flex-col gap-1">
+                                                        <div
+                                                            v-for="(field, idx) in usFields"
+                                                            :key="field.key"
+                                                            class="flex gap-1 items-center"
+                                                        >
+                                                            <VeeField
+                                                                :name="`unitStatus[${idx}]`"
+                                                                type="text"
+                                                                class="flex-1 block w-full rounded-md border-0 bg-base-700 py-1.5 text-neutral placeholder:text-accent-200 focus:ring-2 focus:ring-inset focus:ring-base-300 sm:text-sm sm:leading-6"
+                                                                :placeholder="$t('common.reason')"
+                                                                :label="$t('common.reason')"
+                                                                @focusin="focusTablet(true)"
+                                                                @focusout="focusTablet(false)"
+                                                            />
+
+                                                            <button
+                                                                type="button"
+                                                                class="rounded-full bg-primary-500 p-1.5 text-neutral hover:bg-primary-400 focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-primary-500"
+                                                                @click="usRemove(idx)"
+                                                            >
+                                                                <CloseIcon class="h-5 w-5" aria-hidden="true" />
+                                                            </button>
+                                                        </div>
+                                                    </div>
+                                                    <button
+                                                        type="button"
+                                                        class="mt-2 rounded-full p-1.5 text-neutral focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2"
+                                                        :disabled="!canSubmit || usFields.length >= 4"
+                                                        :class="
+                                                            !canSubmit || usFields.length >= 4
+                                                                ? 'disabled bg-base-500 hover:bg-base-400 focus-visible:outline-base-500'
+                                                                : 'bg-primary-500 hover:bg-primary-400 focus-visible:outline-primary-500'
+                                                        "
+                                                        @click="usPush('')"
+                                                    >
+                                                        <PlusIcon class="h-5 w-5" aria-hidden="true" />
+                                                    </button>
+                                                </div>
+                                                <!-- Predefined Dispatch Status Reason -->
+                                                <div class="form-control flex-1">
+                                                    <label
+                                                        for="dispatchStatus"
+                                                        class="block text-sm font-medium leading-6 text-neutral"
+                                                    >
+                                                        {{ `${$t('common.dispatches')} ${$t('common.status')}` }}
+                                                    </label>
+                                                    <div class="flex flex-col gap-1">
+                                                        <div
+                                                            v-for="(field, idx) in dspFields"
+                                                            :key="field.key"
+                                                            class="flex gap-1 items-center"
+                                                        >
+                                                            <VeeField
+                                                                :name="`dispatchStatus[${idx}]`"
+                                                                type="text"
+                                                                class="flex-1 block w-full rounded-md border-0 bg-base-700 py-1.5 text-neutral placeholder:text-accent-200 focus:ring-2 focus:ring-inset focus:ring-base-300 sm:text-sm sm:leading-6"
+                                                                :placeholder="$t('common.reason')"
+                                                                :label="$t('common.reason')"
+                                                                @focusin="focusTablet(true)"
+                                                                @focusout="focusTablet(false)"
+                                                            />
+
+                                                            <button
+                                                                type="button"
+                                                                class="rounded-full bg-primary-500 p-1.5 text-neutral hover:bg-primary-400 focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-primary-500"
+                                                                @click="dspRemove(idx)"
+                                                            >
+                                                                <CloseIcon class="h-5 w-5" aria-hidden="true" />
+                                                            </button>
+                                                        </div>
+                                                    </div>
+                                                    <button
+                                                        type="button"
+                                                        class="mt-2 rounded-full p-1.5 text-neutral focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2"
+                                                        :disabled="!canSubmit || dspFields.length >= 4"
+                                                        :class="
+                                                            !canSubmit || dspFields.length >= 4
+                                                                ? 'disabled bg-base-500 hover:bg-base-400 focus-visible:outline-base-500'
+                                                                : 'bg-primary-500 hover:bg-primary-400 focus-visible:outline-primary-500'
+                                                        "
+                                                        @click="dspPush('')"
+                                                    >
+                                                        <PlusIcon class="h-5 w-5" aria-hidden="true" />
+                                                    </button>
+                                                </div>
                                             </div>
                                         </div>
                                     </div>
@@ -272,7 +382,7 @@ const onSubmitThrottle = useThrottleFn(async (e) => {
                                         ]"
                                     >
                                         <template v-if="!canSubmit">
-                                            <LoadingIcon class="mr-2 h-5 w-5 animate-spin" />
+                                            <LoadingIcon class="mr-2 h-5 w-5 animate-spin" aria-hidden="true" />
                                         </template>
                                         {{ $t('common.update') }}
                                     </button>

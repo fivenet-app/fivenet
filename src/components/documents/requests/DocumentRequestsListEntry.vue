@@ -136,7 +136,7 @@ const onSubmitThrottle = useThrottleFn(async (accepted: boolean) => {
                         ]"
                         @click="onSubmitThrottle(true)"
                     >
-                        <CheckBoldIcon class="h-5 w-5 text-success-400" />
+                        <CheckBoldIcon class="h-5 w-5 text-success-400" aria-hidden="true" />
                     </button>
                     <button
                         type="button"
@@ -149,7 +149,7 @@ const onSubmitThrottle = useThrottleFn(async (accepted: boolean) => {
                         ]"
                         @click="onSubmitThrottle(false)"
                     >
-                        <CloseThickIcon class="h-5 w-5 text-error-400" />
+                        <CloseThickIcon class="h-5 w-5 text-error-400" aria-hidden="true" />
                     </button>
                 </template>
 
@@ -184,7 +184,7 @@ const onSubmitThrottle = useThrottleFn(async (accepted: boolean) => {
                                         reveal();
                                     "
                                 >
-                                    <TrashCanIcon class="h-5 w-5" />
+                                    <TrashCanIcon class="h-5 w-5" aria-hidden="true" />
                                     {{ $t('common.delete') }}
                                 </button>
                             </MenuItem>

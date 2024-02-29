@@ -60,7 +60,7 @@ onConfirm(async (provider) => disconnectOAuth2Connection(provider));
                     class="inline-flex items-center gap-1 rounded-md bg-error-600 px-3.5 py-2.5 text-sm font-semibold text-neutral hover:bg-error-700"
                     @click="reveal(provider)"
                 >
-                    <CloseCircleIcon class="h-5 w-5" />
+                    <CloseCircleIcon class="h-5 w-5" aria-hidden="true" />
                     <span>{{ $t('common.disconnect') }}</span>
                 </button>
             </div>

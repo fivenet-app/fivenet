@@ -8,10 +8,11 @@ import (
 func (s *State) GetSettings(job string) *centrum.Settings {
 	settings, _ := s.settings.LoadOrCompute(job, func() *centrum.Settings {
 		return &centrum.Settings{
-			Job:          job,
-			Enabled:      false,
-			Mode:         centrum.CentrumMode_CENTRUM_MODE_MANUAL,
-			FallbackMode: centrum.CentrumMode_CENTRUM_MODE_MANUAL,
+			Job:              job,
+			Enabled:          false,
+			Mode:             centrum.CentrumMode_CENTRUM_MODE_MANUAL,
+			FallbackMode:     centrum.CentrumMode_CENTRUM_MODE_MANUAL,
+			PredefinedStatus: &centrum.PredefinedStatus{},
 		}
 	})
 

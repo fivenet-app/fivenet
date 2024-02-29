@@ -126,10 +126,10 @@ const editing = ref(props.startInEdit);
     <tr v-if="!editing">
         <td class="flex flex-row py-2 pl-4 pr-3 text-sm font-medium text-neutral sm:pl-1">
             <button type="button" class="pl-2" :title="$t('common.edit')" @click="editing = true">
-                <PencilIcon class="h-5 w-5" />
+                <PencilIcon class="h-5 w-5" aria-hidden="true" />
             </button>
             <button type="button" class="pl-2" :title="$t('common.delete')" @click="reveal()">
-                <TrashCanIcon class="h-5 w-5" />
+                <TrashCanIcon class="h-5 w-5" aria-hidden="true" />
             </button>
         </td>
         <td class="py-2 pl-4 pr-3 text-sm font-medium text-neutral sm:pl-1">
@@ -149,7 +149,7 @@ const editing = ref(props.startInEdit);
     <tr v-else>
         <td class="py-2 pl-4 pr-3 text-sm font-medium text-neutral sm:pl-1">
             <button type="button" :title="$t('common.save')" @click="onSubmitThrottle">
-                <ContentSaveIcon class="h-5 w-5" />
+                <ContentSaveIcon class="h-5 w-5" aria-hidden="true" />
             </button>
             <button
                 type="button"
@@ -159,7 +159,7 @@ const editing = ref(props.startInEdit);
                     parseInt(law.id, 10) < 0 && $emit('deleted', law.id);
                 "
             >
-                <CancelIcon class="h-5 w-5" />
+                <CancelIcon class="h-5 w-5" aria-hidden="true" />
             </button>
         </td>
         <td class="py-2 pl-4 pr-3 text-sm font-medium text-neutral sm:pl-1">

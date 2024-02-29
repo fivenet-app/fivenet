@@ -129,7 +129,7 @@ const absenceDateModal = ref(false);
                                 class="place-self-end inline-flex items-center gap-x-1.5 rounded-md bg-primary-500 px-3 py-2 text-sm font-semibold text-neutral hover:bg-primary-400"
                                 @click="absenceDateModal = true"
                             >
-                                <IslandIcon class="w-5 h-auto" />
+                                <IslandIcon class="w-5 h-auto" aria-hidden="true" />
                                 {{ $t('components.jobs.self_service.set_absence_date') }}
                             </button>
                         </div>
@@ -150,7 +150,7 @@ const absenceDateModal = ref(false);
                                 "
                                 class="inline-flex gap-1 items-center rounded-full bg-base-100 px-2.5 py-0.5 text-sm font-medium text-base-800"
                             >
-                                <IslandIcon class="h-5 w-5" />
+                                <IslandIcon class="h-5 w-5" aria-hidden="true" />
                                 <span>{{ $t('common.absence_date') }}:</span>
                                 <GenericTime :value="colleague.colleague.props?.absenceDate" />
                             </span>

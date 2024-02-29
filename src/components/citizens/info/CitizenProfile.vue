@@ -300,7 +300,7 @@ const mugShotModal = ref(false);
                                         class="inline-flex w-full flex-shrink-0 items-center justify-center rounded-md bg-secondary-500 px-3 py-2 text-sm font-semibold text-neutral transition-colors hover:bg-secondary-400 focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-secondary-500 sm:flex-1"
                                         @click="setJobModal = true"
                                     >
-                                        <BriefcaseIcon class="w-5 h-auto mr-1.5" />
+                                        <BriefcaseIcon class="w-5 h-auto mr-1.5" aria-hidden="true" />
                                         {{ $t('components.citizens.citizen_info_profile.set_job') }}
                                     </button>
                                 </div>
@@ -313,7 +313,7 @@ const mugShotModal = ref(false);
                                         class="inline-flex w-full flex-shrink-0 items-center justify-center rounded-md bg-secondary-500 px-3 py-2 text-sm font-semibold text-neutral transition-colors hover:bg-secondary-400 focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-secondary-500 sm:flex-1"
                                         @click="trafficPointsModal = true"
                                     >
-                                        <CounterIcon class="w-5 h-auto mr-1.5" />
+                                        <CounterIcon class="w-5 h-auto mr-1.5" aria-hidden="true" />
                                         {{ $t('components.citizens.citizen_info_profile.set_traffic_points') }}
                                     </button>
                                 </div>
@@ -323,7 +323,7 @@ const mugShotModal = ref(false);
                                         class="inline-flex w-full flex-shrink-0 items-center justify-center rounded-md bg-secondary-500 px-3 py-2 text-sm font-semibold text-neutral transition-colors hover:bg-secondary-400 focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-secondary-500 sm:flex-1"
                                         @click="mugShotModal = true"
                                     >
-                                        <CameraIcon class="w-5 h-auto mr-1.5" />
+                                        <CameraIcon class="w-5 h-auto mr-1.5" aria-hidden="true" />
                                         {{ $t('components.citizens.citizen_info_profile.set_mug_shot') }}
                                     </button>
                                 </div>
@@ -333,7 +333,7 @@ const mugShotModal = ref(false);
                                         class="inline-flex w-full flex-shrink-0 items-center justify-center rounded-md bg-base-700 px-3 py-2 text-sm font-semibold text-neutral transition-colors hover:bg-base-600 focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-primary-500 sm:flex-1"
                                         @click="openTemplates()"
                                     >
-                                        <FileDocumentPlusIcon class="w-5 h-auto mr-1.5" />
+                                        <FileDocumentPlusIcon class="w-5 h-auto mr-1.5" aria-hidden="true" />
                                         {{ $t('components.citizens.citizen_info_profile.create_new_document') }}
                                     </button>
                                 </div>
@@ -343,7 +343,7 @@ const mugShotModal = ref(false);
                                         class="inline-flex w-full flex-shrink-0 items-center justify-center rounded-md bg-base-700 px-3 py-2 text-sm font-semibold text-neutral transition-colors hover:bg-base-600 focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-primary-500 sm:flex-1"
                                         @click="copyLinkToClipboard()"
                                     >
-                                        <LinkIcon class="w-5 h-auto mr-1.5" />
+                                        <LinkIcon class="w-5 h-auto mr-1.5" aria-hidden="true" />
                                         {{ $t('components.citizens.citizen_info_profile.copy_profile_link') }}
                                     </button>
                                 </div>

@@ -318,7 +318,7 @@ async function loadImage(): Promise<void> {
                                     @click="onSubmitThrottle"
                                 >
                                     <template v-if="!canSubmit">
-                                        <LoadingIcon class="mr-2 h-5 w-5 animate-spin" />
+                                        <LoadingIcon class="mr-2 h-5 w-5 animate-spin" aria-hidden="true" />
                                     </template>
                                     {{ $t('common.save', 1) }}
                                 </button>
@@ -676,7 +676,7 @@ async function loadImage(): Promise<void> {
                                     @click="onSubmitThrottle"
                                 >
                                     <template v-if="!canSubmit">
-                                        <LoadingIcon class="mr-2 h-5 w-5 animate-spin" />
+                                        <LoadingIcon class="mr-2 h-5 w-5 animate-spin" aria-hidden="true" />
                                     </template>
                                     {{ $t('common.save', 1) }}
                                 </button>

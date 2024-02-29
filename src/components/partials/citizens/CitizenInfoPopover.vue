@@ -65,7 +65,7 @@ withDefaults(
                                 :to="{ name: 'citizens-id', params: { id: user.userId ?? 0 } }"
                                 class="inline-flex items-center text-primary-500 hover:text-primary-400"
                             >
-                                <AccountIcon class="h-5 w-5" />
+                                <AccountIcon class="h-5 w-5" aria-hidden="true" />
                                 <span class="ml-1">{{ $t('common.profile') }}</span>
                             </NuxtLink>
                             <PhoneNumberBlock

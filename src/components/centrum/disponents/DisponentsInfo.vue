@@ -54,7 +54,7 @@ const open = ref(false);
                             >
                                 <LocationEnterIcon v-if="canSubmit" class="h-7 w-7" />
                                 <template v-else>
-                                    <LoadingIcon class="mr-2 h-7 w-7 animate-spin" />
+                                    <LoadingIcon class="mr-2 h-7 w-7 animate-spin" aria-hidden="true" />
                                 </template>
                                 <span class="px-1">{{ $t('common.join') }}</span>
                             </button>
@@ -66,7 +66,7 @@ const open = ref(false);
                             >
                                 <LocationExitIcon v-if="canSubmit" class="h-7 w-7" />
                                 <template v-else>
-                                    <LoadingIcon class="mr-2 h-7 w-7 animate-spin" />
+                                    <LoadingIcon class="mr-2 h-7 w-7 animate-spin" aria-hidden="true" />
                                 </template>
                                 <span class="px-1">{{ $t('common.leave') }}</span>
                             </button>

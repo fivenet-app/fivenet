@@ -47,7 +47,7 @@ const openDetails = ref(false);
         >
             <span class="mb-0.5 flex w-full place-content-between items-center flex-col sm:flex-row sm:gap-1">
                 <span class="inline-flex items-center md:gap-1 font-bold">
-                    <CarEmergencyIcon class="hidden md:block h-3 w-auto" />
+                    <CarEmergencyIcon class="hidden md:block h-3 w-auto" aria-hidden="true" />
                     DSP-{{ dispatch.id }}
                 </span>
                 <span>

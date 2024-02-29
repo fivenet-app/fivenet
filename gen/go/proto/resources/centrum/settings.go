@@ -1,6 +1,11 @@
 package centrum
 
-import users "github.com/galexrt/fivenet/gen/go/proto/resources/users"
+import (
+	"database/sql/driver"
+
+	users "github.com/galexrt/fivenet/gen/go/proto/resources/users"
+	"google.golang.org/protobuf/encoding/protojson"
+)
 
 func (x *Disponents) Merge(in *Disponents) *Disponents {
 	if len(in.Disponents) == 0 {
@@ -22,4 +27,24 @@ func (x *UserUnitMapping) Merge(in *UserUnitMapping) *UserUnitMapping {
 	}
 
 	return x
+}
+
+func (x *PredefinedStatus) Scan(value any) error {
+	switch t := value.(type) {
+	case string:
+		return protojson.Unmarshal([]byte(t), x)
+	case []byte:
+		return protojson.Unmarshal(t, x)
+	}
+	return nil
+}
+
+// Scan implements driver.Valuer for protobuf PredefinedStatus.
+func (x *PredefinedStatus) Value() (driver.Value, error) {
+	if x == nil {
+		return nil, nil
+	}
+
+	out, err := protojson.Marshal(x)
+	return string(out), err
 }

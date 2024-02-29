@@ -59,7 +59,7 @@ defineEmits<{
 
                 <span class="inline-flex items-center">
                     <button v-if="item.x && item.y" type="button" @click="$emit('goto', { x: item.x, y: item.y })">
-                        <MapMarkerIcon class="h-5 w-5 text-primary-400 hover:text-primary-600" />
+                        <MapMarkerIcon class="h-5 w-5 text-primary-400 hover:text-primary-600" aria-hidden="true" />
                     </button>
                     <CitizenInfoPopover v-if="item.user" text-class="font-medium text-gray-400 pl-1" :user="item.user" />
                 </span>
@@ -88,7 +88,7 @@ defineEmits<{
 
                 <span class="inline-flex items-center">
                     <button v-if="item.x && item.y" type="button" @click="$emit('goto', { x: item.x, y: item.y })">
-                        <MapMarkerIcon class="h-5 w-5 text-primary-400 hover:text-primary-600" />
+                        <MapMarkerIcon class="h-5 w-5 text-primary-400 hover:text-primary-600" aria-hidden="true" />
                     </button>
                     <CitizenInfoPopover v-if="item.user" text-class="font-medium text-gray-400 pl-1" :user="item.user" />
                 </span>
@@ -117,7 +117,7 @@ defineEmits<{
 
                 <span class="inline-flex items-center">
                     <button v-if="item.x && item.y" type="button" @click="$emit('goto', { x: item.x, y: item.y })">
-                        <MapMarkerIcon class="h-5 w-5 text-primary-400 hover:text-primary-600" />
+                        <MapMarkerIcon class="h-5 w-5 text-primary-400 hover:text-primary-600" aria-hidden="true" />
                     </button>
                     <CitizenInfoPopover v-if="item.user" text-class="font-medium text-gray-400 pl-1" :user="item.user" />
                 </span>
@@ -146,7 +146,7 @@ defineEmits<{
 
                 <span class="inline-flex items-center">
                     <button v-if="item.x && item.y" type="button" @click="$emit('goto', { x: item.x, y: item.y })">
-                        <MapMarkerIcon class="h-5 w-5 text-primary-400 hover:text-primary-600" />
+                        <MapMarkerIcon class="h-5 w-5 text-primary-400 hover:text-primary-600" aria-hidden="true" />
                     </button>
                     <CitizenInfoPopover v-if="item.user" text-class="font-medium text-gray-400 pl-1" :user="item.user" />
                 </span>
@@ -175,7 +175,7 @@ defineEmits<{
 
                 <span class="inline-flex items-center">
                     <button v-if="item.x && item.y" type="button" @click="$emit('goto', { x: item.x, y: item.y })">
-                        <MapMarkerIcon class="h-5 w-5 text-primary-400 hover:text-primary-600" />
+                        <MapMarkerIcon class="h-5 w-5 text-primary-400 hover:text-primary-600" aria-hidden="true" />
                     </button>
                     <CitizenInfoPopover v-if="item.user" text-class="font-medium text-gray-400 pl-1" :user="item.user" />
                 </span>
@@ -204,7 +204,7 @@ defineEmits<{
 
                 <span class="inline-flex items-center">
                     <button v-if="item.x && item.y" type="button" @click="$emit('goto', { x: item.x, y: item.y })">
-                        <MapMarkerIcon class="h-5 w-5 text-primary-400 hover:text-primary-600" />
+                        <MapMarkerIcon class="h-5 w-5 text-primary-400 hover:text-primary-600" aria-hidden="true" />
                     </button>
                     <CitizenInfoPopover v-if="item.user" text-class="font-medium text-gray-400 pl-1" :user="item.user" />
                 </span>
@@ -233,7 +233,7 @@ defineEmits<{
 
                 <span class="inline-flex items-center">
                     <button v-if="item.x && item.y" type="button" @click="$emit('goto', { x: item.x, y: item.y })">
-                        <MapMarkerIcon class="h-5 w-5 text-primary-400 hover:text-primary-600" />
+                        <MapMarkerIcon class="h-5 w-5 text-primary-400 hover:text-primary-600" aria-hidden="true" />
                     </button>
                     <CitizenInfoPopover v-if="item.user" text-class="font-medium text-gray-400 pl-1" :user="item.user" />
                 </span>
@@ -261,7 +261,7 @@ defineEmits<{
 
                 <span class="inline-flex items-center">
                     <button v-if="item.x && item.y" type="button" @click="$emit('goto', { x: item.x, y: item.y })">
-                        <MapMarkerIcon class="h-5 w-5 text-primary-400 hover:text-primary-600" />
+                        <MapMarkerIcon class="h-5 w-5 text-primary-400 hover:text-primary-600" aria-hidden="true" />
                     </button>
                     <CitizenInfoPopover v-if="item.user" text-class="font-medium text-gray-400 pl-1" :user="item.user" />
                 </span>
@@ -290,7 +290,7 @@ defineEmits<{
 
                 <span class="inline-flex items-center">
                     <button v-if="item.x && item.y" type="button" @click="$emit('goto', { x: item.x, y: item.y })">
-                        <MapMarkerIcon class="h-5 w-5 text-primary-400 hover:text-primary-600" />
+                        <MapMarkerIcon class="h-5 w-5 text-primary-400 hover:text-primary-600" aria-hidden="true" />
                     </button>
                     <CitizenInfoPopover v-if="item.user" text-class="font-medium text-gray-400 pl-1" :user="item.user" />
                 </span>
@@ -319,7 +319,7 @@ defineEmits<{
 
                 <span class="inline-flex items-center">
                     <button v-if="item.x && item.y" type="button" @click="$emit('goto', { x: item.x, y: item.y })">
-                        <MapMarkerIcon class="h-5 w-5 text-primary-400 hover:text-primary-600" />
+                        <MapMarkerIcon class="h-5 w-5 text-primary-400 hover:text-primary-600" aria-hidden="true" />
                     </button>
                     <CitizenInfoPopover v-if="item.user" text-class="font-medium text-gray-400 pl-1" :user="item.user" />
                 </span>
@@ -348,7 +348,7 @@ defineEmits<{
 
                 <span class="inline-flex items-center">
                     <button v-if="item.x && item.y" type="button" @click="$emit('goto', { x: item.x, y: item.y })">
-                        <MapMarkerIcon class="h-5 w-5 text-primary-400 hover:text-primary-600" />
+                        <MapMarkerIcon class="h-5 w-5 text-primary-400 hover:text-primary-600" aria-hidden="true" />
                     </button>
                     <CitizenInfoPopover v-if="item.user" text-class="font-medium text-gray-400 pl-1" :user="item.user" />
                 </span>
@@ -377,7 +377,7 @@ defineEmits<{
 
                 <span class="inline-flex items-center">
                     <button v-if="item.x && item.y" type="button" @click="$emit('goto', { x: item.x, y: item.y })">
-                        <MapMarkerIcon class="h-5 w-5 text-primary-400 hover:text-primary-600" />
+                        <MapMarkerIcon class="h-5 w-5 text-primary-400 hover:text-primary-600" aria-hidden="true" />
                     </button>
                     <CitizenInfoPopover v-if="item.user" text-class="font-medium text-gray-400 pl-1" :user="item.user" />
                 </span>
@@ -406,7 +406,7 @@ defineEmits<{
 
                 <span class="inline-flex items-center">
                     <button v-if="item.x && item.y" type="button" @click="$emit('goto', { x: item.x, y: item.y })">
-                        <MapMarkerIcon class="h-5 w-5 text-primary-400 hover:text-primary-600" />
+                        <MapMarkerIcon class="h-5 w-5 text-primary-400 hover:text-primary-600" aria-hidden="true" />
                     </button>
                     <CitizenInfoPopover v-if="item.user" text-class="font-medium text-gray-400 pl-1" :user="item.user" />
                 </span>

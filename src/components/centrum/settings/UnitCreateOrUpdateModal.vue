@@ -397,7 +397,7 @@ onBeforeMount(async () => updateUnitInForm());
                                         ]"
                                     >
                                         <template v-if="!canSubmit">
-                                            <LoadingIcon class="mr-2 h-5 w-5 animate-spin" />
+                                            <LoadingIcon class="mr-2 h-5 w-5 animate-spin" aria-hidden="true" />
                                         </template>
                                         <span v-if="unit && unit?.id">
                                             {{ $t('components.centrum.units.update_unit') }}

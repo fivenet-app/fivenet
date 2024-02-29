@@ -206,7 +206,7 @@ function reset(): void {
                                             @focusout="focusTablet(false)"
                                         />
                                         <span class="ml-1" @click="removePin(idx)">
-                                            <TrashCanIcon class="h-5 w-5" />
+                                            <TrashCanIcon class="h-5 w-5" aria-hidden="true" />
                                         </span>
                                     </li>
                                 </ol>

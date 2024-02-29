@@ -743,7 +743,7 @@ onMounted(async () => {
                     ]"
                 >
                     <template v-if="!canSubmit">
-                        <LoadingIcon class="mr-2 h-5 w-5 animate-spin" />
+                        <LoadingIcon class="mr-2 h-5 w-5 animate-spin" aria-hidden="true" />
                     </template>
                     {{ templateId ? $t('common.save') : $t('common.create') }}
                 </button>

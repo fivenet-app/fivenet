@@ -314,7 +314,7 @@ function updateDates(): void {
                                     ]"
                                     @click="dayForward()"
                                 >
-                                    <ChevronLeftIcon class="h-5 w-5" />
+                                    <ChevronLeftIcon class="h-5 w-5" aria-hidden="true" />
                                     {{ $t('common.forward') }} - {{ $d(futureDay, 'date') }}
                                 </button>
                             </div>
@@ -324,7 +324,7 @@ function updateDates(): void {
                                     disabled
                                     class="disabled relative inline-flex inline-flex w-full cursor-pointer place-content-end items-center items-center rounded-md bg-base-500 px-3 py-2 text-sm font-semibold text-neutral hover:bg-base-400 focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-base-500"
                                 >
-                                    <CalendarIcon class="mr-1 h-5 w-5" />
+                                    <CalendarIcon class="mr-1 h-5 w-5" aria-hidden="true" />
                                     {{ $d(currentDay, 'date') }}
                                 </button>
                             </div>
@@ -335,7 +335,7 @@ function updateDates(): void {
                                     @click="dayBackwards()"
                                 >
                                     {{ $d(previousDay, 'date') }} - {{ $t('common.previous') }}
-                                    <ChevronRightIcon class="h-5 w-5" />
+                                    <ChevronRightIcon class="h-5 w-5" aria-hidden="true" />
                                 </button>
                             </div>
                         </div>

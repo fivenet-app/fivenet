@@ -368,7 +368,7 @@ func (p *Perms) applyJobPermissions(ctx context.Context, job string) error {
 
 		if len(toRemove) > 0 {
 			p.logger.Debug("removing permissions from role due to job perms change", zap.String("job", job), zap.Int("perms_length", len(toRemove)))
-			if p.RemovePermissionsFromRole(ctx, role.ID, toRemove...); err != nil {
+			if err := p.RemovePermissionsFromRole(ctx, role.ID, toRemove...); err != nil {
 				return err
 			}
 		}

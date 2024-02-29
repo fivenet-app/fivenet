@@ -3,11 +3,8 @@ package users
 import (
 	"database/sql/driver"
 
-	jsoniter "github.com/json-iterator/go"
 	"google.golang.org/protobuf/encoding/protojson"
 )
-
-var json = jsoniter.ConfigCompatibleWithStandardLibrary
 
 const (
 	DefaultLivemapMarkerColor = "#5c7aff"
@@ -86,9 +83,9 @@ func (x *JobProps) Default(job string) {
 func (x *QuickButtons) Scan(value any) error {
 	switch t := value.(type) {
 	case string:
-		return json.UnmarshalFromString(t, x)
+		return protojson.Unmarshal([]byte(t), x)
 	case []byte:
-		return json.Unmarshal(t, x)
+		return protojson.Unmarshal(t, x)
 	}
 	return nil
 }
@@ -99,8 +96,8 @@ func (x *QuickButtons) Value() (driver.Value, error) {
 		return nil, nil
 	}
 
-	out, err := json.MarshalToString(x)
-	return out, err
+	out, err := protojson.Marshal(x)
+	return string(out), err
 }
 
 func (x *DiscordSyncSettings) Scan(value any) error {

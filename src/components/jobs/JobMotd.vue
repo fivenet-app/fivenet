@@ -68,7 +68,7 @@ const editing = ref(false);
                     class="text-primary-500 hover:text-primary-400"
                     @click="editing = !editing"
                 >
-                    <PencilIcon class="h-5 w-5" />
+                    <PencilIcon class="h-5 w-5" aria-hidden="true" />
                 </button>
                 <div v-else class="flex flex-row gap-1">
                     <button
@@ -79,13 +79,13 @@ const editing = ref(false);
                             editing = !editing;
                         "
                     >
-                        <ContentSaveIcon class="h-5 w-5" />
+                        <ContentSaveIcon class="h-5 w-5" aria-hidden="true" />
                         <template v-if="!canSubmit">
-                            <LoadingIcon class="mr-2 h-5 w-5 animate-spin" />
+                            <LoadingIcon class="mr-2 h-5 w-5 animate-spin" aria-hidden="true" />
                         </template>
                     </button>
                     <button type="button" class="text-primary-500 hover:text-primary-400" @click="editing = !editing">
-                        <CancelIcon class="h-5 w-5" />
+                        <CancelIcon class="h-5 w-5" aria-hidden="true" />
                     </button>
                 </div>
             </template>

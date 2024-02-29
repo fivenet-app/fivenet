@@ -215,7 +215,7 @@ const onSubmitThrottle = useThrottleFn(async (e) => {
                                         "
                                     >
                                         <template v-if="!canSubmit">
-                                            <LoadingIcon class="mr-2 h-5 w-5 animate-spin" />
+                                            <LoadingIcon class="mr-2 h-5 w-5 animate-spin" aria-hidden="true" />
                                         </template>
                                         {{ $t('common.reset') }}
                                     </button>
@@ -234,7 +234,7 @@ const onSubmitThrottle = useThrottleFn(async (e) => {
                                         "
                                     >
                                         <template v-if="!canSubmit">
-                                            <LoadingIcon class="mr-2 h-5 w-5 animate-spin" />
+                                            <LoadingIcon class="mr-2 h-5 w-5 animate-spin" aria-hidden="true" />
                                         </template>
                                         {{ $t('common.save') }}
                                     </button>

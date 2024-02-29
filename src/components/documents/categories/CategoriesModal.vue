@@ -230,7 +230,7 @@ const onSubmitThrottle = useThrottleFn(async (e) => {
                                         @click="deleteCategory()"
                                     >
                                         <template v-if="!canSubmit">
-                                            <LoadingIcon class="mr-2 h-5 w-5 animate-spin" />
+                                            <LoadingIcon class="mr-2 h-5 w-5 animate-spin" aria-hidden="true" />
                                         </template>
                                         {{ $t('common.delete') }}
                                     </button>
@@ -245,7 +245,7 @@ const onSubmitThrottle = useThrottleFn(async (e) => {
                                         ]"
                                     >
                                         <template v-if="!canSubmit">
-                                            <LoadingIcon class="mr-2 h-5 w-5 animate-spin" />
+                                            <LoadingIcon class="mr-2 h-5 w-5 animate-spin" aria-hidden="true" />
                                         </template>
                                         {{ category === undefined ? $t('common.create') : $t('common.update') }}
                                     </button>

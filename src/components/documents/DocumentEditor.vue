@@ -1110,7 +1110,7 @@ onBeforeUnmount(() => {
                     ]"
                 >
                     <template v-if="!canSubmit">
-                        <LoadingIcon class="mr-2 h-5 w-5 animate-spin" />
+                        <LoadingIcon class="mr-2 h-5 w-5 animate-spin" aria-hidden="true" />
                     </template>
                     <template v-if="!props.id">
                         {{ t('common.create') }}

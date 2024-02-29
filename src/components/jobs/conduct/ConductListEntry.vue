@@ -67,7 +67,7 @@ const openMessage = ref(false);
                     class="flex-initial text-primary-500 hover:text-primary-400"
                     @click="$emit('selected')"
                 >
-                    <PencilIcon class="ml-auto mr-2.5 w-5 h-auto" />
+                    <PencilIcon class="ml-auto mr-2.5 w-5 h-auto" aria-hidden="true" />
                 </button>
 
                 <button
@@ -76,7 +76,7 @@ const openMessage = ref(false);
                     class="flex-initial text-primary-500 hover:text-primary-400"
                     @click="$emit('delete')"
                 >
-                    <TrashCanIcon class="ml-auto mr-2.5 w-5 h-auto" />
+                    <TrashCanIcon class="ml-auto mr-2.5 w-5 h-auto" aria-hidden="true" />
                 </button>
             </div>
         </td>

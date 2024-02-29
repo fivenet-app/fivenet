@@ -461,7 +461,7 @@ if (hash.value !== undefined && hash.value !== null) {
                                     ]"
                                 >
                                     <span class="inline-flex items-center text-base font-semibold leading-7">
-                                        <AccountMultipleIcon class="mr-2 w-5 h-auto" />
+                                        <AccountMultipleIcon class="mr-2 w-5 h-auto" aria-hidden="true" />
                                         {{ $t('common.relation', 2) }}
                                     </span>
                                     <span class="ml-6 flex h-7 items-center">
@@ -492,7 +492,7 @@ if (hash.value !== undefined && hash.value !== null) {
                                     ]"
                                 >
                                     <span class="inline-flex items-center text-base font-semibold leading-7">
-                                        <FileDocumentIcon class="mr-2 w-5 h-auto" />
+                                        <FileDocumentIcon class="mr-2 w-5 h-auto" aria-hidden="true" />
                                         {{ $t('common.reference', 2) }}
                                     </span>
                                     <span class="ml-6 flex h-7 items-center">
@@ -524,7 +524,7 @@ if (hash.value !== undefined && hash.value !== null) {
                                     ]"
                                 >
                                     <span class="inline-flex items-center text-base font-semibold leading-7">
-                                        <LockIcon class="mr-2 w-5 h-auto" />
+                                        <LockIcon class="mr-2 w-5 h-auto" aria-hidden="true" />
                                         {{ $t('common.access') }}
                                     </span>
                                     <span class="ml-6 flex h-7 items-center">
@@ -588,7 +588,7 @@ if (hash.value !== undefined && hash.value !== null) {
                                     <h2
                                         class="inline-flex items-center p-2 text-left text-lg font-semibold text-neutral transition-colors"
                                     >
-                                        <CommentIcon class="mr-2 w-5 h-auto" />
+                                        <CommentIcon class="mr-2 w-5 h-auto" aria-hidden="true" />
                                         {{ $t('common.comment', 2) }}
                                     </h2>
 
@@ -625,7 +625,7 @@ if (hash.value !== undefined && hash.value !== null) {
                                     ]"
                                 >
                                     <span class="inline-flex items-center text-base font-semibold leading-7">
-                                        <CommentQuoteIcon class="mr-2 w-5 h-auto" />
+                                        <CommentQuoteIcon class="mr-2 w-5 h-auto" aria-hidden="true" />
                                         {{ $t('common.activity') }}
                                     </span>
                                     <span class="ml-6 flex h-7 items-center">

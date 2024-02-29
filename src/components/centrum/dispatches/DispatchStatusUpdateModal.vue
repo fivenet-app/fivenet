@@ -7,14 +7,13 @@ import { CloseIcon, HoopHouseIcon, LoadingIcon } from 'mdi-vue3';
 import { defineRule } from 'vee-validate';
 import { dispatchStatusToBGColor, dispatchStatuses } from '~/components/centrum/helpers';
 import IDCopyBadge from '~/components/partials/IDCopyBadge.vue';
+import { useCentrumStore } from '~/store/centrum';
 import { StatusDispatch } from '~~/gen/ts/resources/centrum/dispatches';
-import type { Settings } from '~~/gen/ts/resources/centrum/settings';
 
 const props = defineProps<{
     open: boolean;
     dispatchId: string;
     status?: StatusDispatch;
-    settings?: Settings;
 }>();
 
 const emit = defineEmits<{
@@ -22,6 +21,9 @@ const emit = defineEmits<{
 }>();
 
 const { $grpc } = useNuxtApp();
+
+const centrumStore = useCentrumStore();
+const { settings } = storeToRefs(centrumStore);
 
 const status: number = props.status ?? StatusDispatch.NEW;
 
@@ -81,6 +83,10 @@ watch(props, () => {
         setFieldValue('status', props.status.valueOf());
     }
 });
+
+function updateReasonField(value: string): void {
+    setFieldValue('reason', value);
+}
 </script>
 
 <template>
@@ -249,6 +255,34 @@ watch(props, () => {
                                                                     as="p"
                                                                     class="mt-2 text-sm text-error-400"
                                                                 />
+
+                                                                <template
+                                                                    v-if="
+                                                                        settings?.predefinedStatus &&
+                                                                        settings?.predefinedStatus.dispatchStatus.length > 0
+                                                                    "
+                                                                >
+                                                                    <select
+                                                                        class="mt-2 block w-full rounded-md border-0 bg-base-700 py-1.5 text-neutral placeholder:text-accent-200 focus:ring-2 focus:ring-inset focus:ring-base-300 sm:text-sm sm:leading-6"
+                                                                        @focusin="focusTablet(true)"
+                                                                        @focusout="focusTablet(false)"
+                                                                        @change="
+                                                                            updateReasonField(
+                                                                                ($event.target as HTMLSelectElement).value,
+                                                                            )
+                                                                        "
+                                                                    >
+                                                                        <option value=""></option>
+                                                                        <option
+                                                                            v-for="(preStatus, idx) in settings
+                                                                                ?.predefinedStatus.dispatchStatus"
+                                                                            :key="idx"
+                                                                            :value="preStatus"
+                                                                        >
+                                                                            {{ preStatus }}
+                                                                        </option>
+                                                                    </select>
+                                                                </template>
                                                             </dd>
                                                         </div>
                                                     </dl>
@@ -269,7 +303,7 @@ watch(props, () => {
                                                 ]"
                                             >
                                                 <template v-if="!canSubmit">
-                                                    <LoadingIcon class="mr-2 h-5 w-5 animate-spin" />
+                                                    <LoadingIcon class="mr-2 h-5 w-5 animate-spin" aria-hidden="true" />
                                                 </template>
                                                 {{ $t('common.update') }}
                                             </button>

@@ -665,7 +665,7 @@ func (p *Perms) UpdateJobAttributeMaxValues(ctx context.Context, job string, att
 		)
 
 	if _, err := stmt.ExecContext(ctx, p.db); err != nil {
-		if err != nil && !dbutils.IsDuplicateError(err) {
+		if !dbutils.IsDuplicateError(err) {
 			return err
 		}
 	}

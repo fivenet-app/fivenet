@@ -101,7 +101,7 @@ const openStatus = ref(false);
                 :title="$t('common.detail', 2)"
                 @click="openDetails = true"
             >
-                <DotsVerticalIcon class="ml-auto mr-1.5 w-5 h-auto" />
+                <DotsVerticalIcon class="ml-auto mr-1.5 w-5 h-auto" aria-hidden="true" />
             </button>
         </td>
         <td class="whitespace-nowrap px-1 py-1 text-sm text-gray-300">

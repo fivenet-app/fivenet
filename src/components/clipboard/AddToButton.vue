@@ -19,6 +19,6 @@ withDefaults(
         class="fixed bottom-16 right-6 z-10 flex h-12 w-12 items-center justify-center rounded-full bg-accent-500 text-neutral shadow-float hover:bg-accent-400"
         @click="callback()"
     >
-        <ClipboardPlusIcon class="w-10 h-auto" />
+        <ClipboardPlusIcon class="w-10 h-auto" aria-hidden="true" />
     </button>
 </template>

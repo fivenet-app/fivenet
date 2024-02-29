@@ -6,15 +6,14 @@ import { useThrottleFn } from '@vueuse/core';
 import { CloseIcon, HoopHouseIcon, LoadingIcon } from 'mdi-vue3';
 import { defineRule } from 'vee-validate';
 import { unitStatusToBGColor, unitStatuses } from '~/components/centrum/helpers';
+import { useCentrumStore } from '~/store/centrum';
 import { StatusUnit, Unit } from '~~/gen/ts/resources/centrum/units';
-import type { Settings } from '~~/gen/ts/resources/centrum/settings';
 
 const props = defineProps<{
     open: boolean;
     unit: Unit;
     status?: StatusUnit;
     location?: Coordinate;
-    settings?: Settings;
 }>();
 
 const emit = defineEmits<{
@@ -22,6 +21,9 @@ const emit = defineEmits<{
 }>();
 
 const { $grpc } = useNuxtApp();
+
+const centrumStore = useCentrumStore();
+const { settings } = storeToRefs(centrumStore);
 
 const status: number = props.status ?? props.unit?.status?.status ?? StatusUnit.UNKNOWN;
 
@@ -81,6 +83,14 @@ const onSubmitThrottle = useThrottleFn(async (e) => {
     canSubmit.value = false;
     await onSubmit(e);
 }, 1000);
+
+function updateReasonField(value: string): void {
+    if (value.length === 0) {
+        return;
+    }
+
+    setFieldValue('reason', value);
+}
 </script>
 
 <template>
@@ -247,6 +257,33 @@ const onSubmitThrottle = useThrottleFn(async (e) => {
                                                                     as="p"
                                                                     class="mt-2 text-sm text-error-400"
                                                                 />
+                                                                <template
+                                                                    v-if="
+                                                                        settings?.predefinedStatus &&
+                                                                        settings?.predefinedStatus.unitStatus.length > 0
+                                                                    "
+                                                                >
+                                                                    <select
+                                                                        class="mt-2 block w-full rounded-md border-0 bg-base-700 py-1.5 text-neutral placeholder:text-accent-200 focus:ring-2 focus:ring-inset focus:ring-base-300 sm:text-sm sm:leading-6"
+                                                                        @focusin="focusTablet(true)"
+                                                                        @focusout="focusTablet(false)"
+                                                                        @change="
+                                                                            updateReasonField(
+                                                                                ($event.target as HTMLSelectElement).value,
+                                                                            )
+                                                                        "
+                                                                    >
+                                                                        <option value=""></option>
+                                                                        <option
+                                                                            v-for="(preStatus, idx) in settings
+                                                                                ?.predefinedStatus.unitStatus"
+                                                                            :key="idx"
+                                                                            :value="preStatus"
+                                                                        >
+                                                                            {{ preStatus }}
+                                                                        </option>
+                                                                    </select>
+                                                                </template>
                                                             </dd>
                                                         </div>
                                                     </dl>
@@ -267,7 +304,7 @@ const onSubmitThrottle = useThrottleFn(async (e) => {
                                                 ]"
                                             >
                                                 <template v-if="!canSubmit">
-                                                    <LoadingIcon class="mr-2 h-5 w-5 animate-spin" />
+                                                    <LoadingIcon class="mr-2 h-5 w-5 animate-spin" aria-hidden="true" />
                                                 </template>
                                                 {{ $t('common.update') }}
                                             </button>

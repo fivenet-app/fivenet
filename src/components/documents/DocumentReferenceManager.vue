@@ -285,6 +285,7 @@ function removeReference(id: string): void {
                                                                                 >
                                                                                     <OpenInNewIcon
                                                                                         class="w-5 h-auto text-primary-500 hover:text-primary-300"
+                                                                                        aria-hidden="true"
                                                                                     />
                                                                                 </NuxtLink>
                                                                             </div>
@@ -301,6 +302,7 @@ function removeReference(id: string): void {
                                                                                 >
                                                                                     <FileDocumentMinusIcon
                                                                                         class="w-5 h-auto text-error-400 hover:text-error-200"
+                                                                                        aria-hidden="true"
                                                                                     />
                                                                                 </button>
                                                                             </div>
@@ -405,6 +407,7 @@ function removeReference(id: string): void {
                                                                                 >
                                                                                     <LinkIcon
                                                                                         class="w-5 h-auto text-info-500 hover:text-info-300"
+                                                                                        aria-hidden="true"
                                                                                     />
                                                                                 </button>
                                                                                 <button
@@ -424,6 +427,7 @@ function removeReference(id: string): void {
                                                                                 >
                                                                                     <CheckIcon
                                                                                         class="w-5 h-auto text-success-500 hover:text-success-300"
+                                                                                        aria-hidden="true"
                                                                                     />
                                                                                 </button>
                                                                                 <button
@@ -443,6 +447,7 @@ function removeReference(id: string): void {
                                                                                 >
                                                                                     <CloseBoxIcon
                                                                                         class="w-5 h-auto text-error-500 hover:text-error-300"
+                                                                                        aria-hidden="true"
                                                                                     />
                                                                                 </button>
                                                                                 <button
@@ -462,6 +467,7 @@ function removeReference(id: string): void {
                                                                                 >
                                                                                     <LockClockIcon
                                                                                         class="w-5 h-auto text-warn-500 hover:text-warn-300"
+                                                                                        aria-hidden="true"
                                                                                     />
                                                                                 </button>
                                                                             </div>
@@ -581,6 +587,7 @@ function removeReference(id: string): void {
                                                                                 >
                                                                                     <LinkIcon
                                                                                         class="w-5 h-auto text-info-500 hover:text-info-300"
+                                                                                        aria-hidden="true"
                                                                                     />
                                                                                 </button>
                                                                                 <button
@@ -600,6 +607,7 @@ function removeReference(id: string): void {
                                                                                 >
                                                                                     <CheckIcon
                                                                                         class="w-5 h-auto text-success-500 hover:text-success-300"
+                                                                                        aria-hidden="true"
                                                                                     />
                                                                                 </button>
                                                                                 <button
@@ -619,6 +627,7 @@ function removeReference(id: string): void {
                                                                                 >
                                                                                     <CloseBoxIcon
                                                                                         class="w-5 h-auto text-error-500 hover:text-error-300"
+                                                                                        aria-hidden="true"
                                                                                     />
                                                                                 </button>
                                                                                 <button
@@ -638,6 +647,7 @@ function removeReference(id: string): void {
                                                                                 >
                                                                                     <LockClockIcon
                                                                                         class="w-5 h-auto text-warn-500 hover:text-warn-300"
+                                                                                        aria-hidden="true"
                                                                                     />
                                                                                 </button>
                                                                             </div>
