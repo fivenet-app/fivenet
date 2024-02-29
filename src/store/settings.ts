@@ -31,7 +31,9 @@ export interface SettingsState {
         notificationsVolume: number;
     };
     streamerMode: boolean;
-    toggles: {};
+    toggles: {
+        desktop: boolean;
+    };
 }
 
 export const useSettingsStore = defineStore('settings', {
@@ -56,7 +58,9 @@ export const useSettingsStore = defineStore('settings', {
                 notificationsVolume: 0.15,
             },
             streamerMode: false,
-            toggles: {},
+            toggles: {
+                desktop: false,
+            },
         }) as SettingsState,
     persist: true,
     actions: {
