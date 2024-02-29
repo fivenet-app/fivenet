@@ -1,7 +1,7 @@
 <script lang="ts" setup>
 import { RpcError } from '@protobuf-ts/runtime-rpc';
 import { FileMultipleIcon } from 'mdi-vue3';
-import GenericContainerPanel from '~/components/partials/GenericContainerPanel.vue';
+import GenericContainerPanel from '~/components/partials/elements/GenericContainerPanel.vue';
 import DataErrorBlock from '~/components/partials/data/DataErrorBlock.vue';
 import DataNoDataBlock from '~/components/partials/data/DataNoDataBlock.vue';
 import DataPendingBlock from '~/components/partials/data/DataPendingBlock.vue';
@@ -9,7 +9,7 @@ import TablePagination from '~/components/partials/elements/TablePagination.vue'
 import { useSettingsStore } from '~/store/settings';
 import type { ListFilesResponse } from '~~/gen/ts/services/rector/rector';
 import FileListEntry from '~/components/rector/filestore/FileListEntry.vue';
-import GenericTable from '~/components/partials/GenericTable.vue';
+import GenericTable from '~/components/partials/elements/GenericTable.vue';
 
 const { $grpc } = useNuxtApp();
 

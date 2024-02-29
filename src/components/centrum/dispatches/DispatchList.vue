@@ -5,7 +5,7 @@ import { useCentrumStore } from '~/store/centrum';
 import DispatchListEntry from '~/components/centrum/dispatches/DispatchListEntry.vue';
 import { Dispatch } from '~~/gen/ts/resources/centrum/dispatches';
 import GenericTime from '~/components/partials/elements/GenericTime.vue';
-import GenericTable from '~/components/partials/GenericTable.vue';
+import GenericTable from '~/components/partials/elements/GenericTable.vue';
 
 const props = withDefaults(
     defineProps<{

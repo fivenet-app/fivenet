@@ -67,7 +67,7 @@ ${jsonStringify(jsonParse(props.log.data!), 2)}
             <span v-if="!log.data">N/A</span>
             <span v-else>
                 <VueJsonPretty
-                    :data="jsonParse(props.log.data!) as any"
+                    :data="jsonParse(props.log.data!)"
                     :show-icon="true"
                     :show-length="true"
                     :virtual="true"

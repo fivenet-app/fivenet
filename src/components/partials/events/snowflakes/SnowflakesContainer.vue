@@ -43,11 +43,8 @@
 /* Customizable snowflake styling */
 .snowflake {
     color: #ffffff;
-
     font-size: 1em;
-
     font-family: Arial, sans-serif;
-
     text-shadow: 0 0 5px #000;
 }
 
@@ -56,6 +53,7 @@
     animation-iteration-count: infinite;
     animation-play-state: running;
 }
+
 @keyframes snowflakes-fall {
     0% {
         transform: translateY(0);
@@ -73,6 +71,7 @@
         transform: translateX(80px);
     }
 }
+
 .snowflake {
     position: fixed;
     top: -10%;

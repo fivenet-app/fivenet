@@ -1,7 +1,7 @@
 <script setup lang="ts">
 import { Dialog, DialogPanel, DialogTitle, TransitionChild, TransitionRoot } from '@headlessui/vue';
 import { BellOutlineIcon, CloseIcon } from 'mdi-vue3';
-import NotificationsList from '../notification/NotificationsList.vue';
+import NotificationsList from '~/components/partials/notification/NotificationsList.vue';
 
 const open = ref(false);
 </script>

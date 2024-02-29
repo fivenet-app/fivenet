@@ -17,7 +17,7 @@ export const useConfigStore = defineStore('config', {
         paths: ['nuiEnabled', 'nuiResourceName'],
     },
     actions: {
-        setUpdateAvailable(version: string): void {
+        async setUpdateAvailable(version: string): Promise<void> {
             this.updateAvailable = version;
         },
         setNuiDetails(enabled: boolean, resourceName: string | undefined): void {

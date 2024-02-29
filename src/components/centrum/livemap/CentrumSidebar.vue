@@ -444,7 +444,11 @@ async function checkup(): Promise<void> {
                                     <ul role="list" class="-mx-2 space-y-0.5">
                                         <div class="inline-flex items-center text-xs font-semibold leading-6 text-base-100">
                                             {{ $t('common.unit') }}
-                                            <LoadingIcon v-if="!canSubmitUnitStatus" class="ml-1 h-4 w-4 animate-spin" />
+                                            <LoadingIcon
+                                                v-if="!canSubmitUnitStatus"
+                                                class="ml-1 h-4 w-4 animate-spin"
+                                                aria-hidden="true"
+                                            />
                                         </div>
                                         <UnitStatusUpdateModal
                                             :unit="getOwnUnit"
@@ -494,7 +498,11 @@ async function checkup(): Promise<void> {
                                     <ul role="list" class="-mx-2 space-y-0.5">
                                         <div class="inline-flex items-center text-xs font-semibold leading-6 text-base-100">
                                             {{ $t('common.dispatch') }} {{ $t('common.status') }}
-                                            <LoadingIcon v-if="!canSubmitDispatchStatus" class="ml-1 h-4 w-4 animate-spin" />
+                                            <LoadingIcon
+                                                v-if="!canSubmitDispatchStatus"
+                                                class="ml-1 h-4 w-4 animate-spin"
+                                                aria-hidden="true"
+                                            />
                                         </div>
                                         <li>
                                             <div class="grid grid-cols-2 gap-0.5">

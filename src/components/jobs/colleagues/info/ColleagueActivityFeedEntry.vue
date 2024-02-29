@@ -15,6 +15,7 @@ defineProps<{
             <component
                 :is="jobsUserActivityTypeIcon(activity.activityType)"
                 :class="[jobsUserActivityTypeBGColor(activity.activityType), 'h-full w-full']"
+                aria-hidden="true"
             />
         </div>
         <div class="flex-1 space-y-1">

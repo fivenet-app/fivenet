@@ -2,7 +2,7 @@
 import { RpcError } from '@protobuf-ts/runtime-rpc';
 import { useConfirmDialog } from '@vueuse/core';
 import { CloseCircleIcon } from 'mdi-vue3';
-import GenericContainerPanelEntry from '~/components/partials/GenericContainerPanelEntry.vue';
+import GenericContainerPanelEntry from '~/components/partials/elements/GenericContainerPanelEntry.vue';
 import type { OAuth2Account, OAuth2Provider } from '~~/gen/ts/resources/accounts/oauth2';
 import OAuth2ConnectButton from '~/components/auth/account/OAuth2ConnectButton.vue';
 import ConfirmDialog from '~/components/partials/ConfirmDialog.vue';

@@ -5,7 +5,7 @@ import { max, min, required } from '@vee-validate/rules';
 import { useThrottleFn } from '@vueuse/core';
 import { CloseIcon, LoadingIcon } from 'mdi-vue3';
 import { defineRule } from 'vee-validate';
-import SquareImg from '~/components/partials/SquareImg.vue';
+import SquareImg from '~/components/partials/elements/SquareImg.vue';
 import { useNotificatorStore } from '~/store/notificator';
 import type { File } from '~~/gen/ts/resources/filestore/file';
 import { User, UserProps } from '~~/gen/ts/resources/users/users';

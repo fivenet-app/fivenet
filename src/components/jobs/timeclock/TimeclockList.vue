@@ -15,7 +15,7 @@ import TimeclockStatsBlock from '~/components/jobs/timeclock/TimeclockStatsBlock
 import { useJobsStore } from '~/store/jobs';
 import { dateToDateString } from '~/utils/time';
 import type { ListTimeclockRequest, ListTimeclockResponse } from '~~/gen/ts/services/jobs/timeclock';
-import GenericTable from '~/components/partials/GenericTable.vue';
+import GenericTable from '~/components/partials/elements/GenericTable.vue';
 
 const { $grpc } = useNuxtApp();
 

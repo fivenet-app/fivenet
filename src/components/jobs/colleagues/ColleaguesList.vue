@@ -8,7 +8,7 @@ import ColleaguesListEntry from '~/components/jobs/colleagues/ColleaguesListEntr
 import { useJobsStore } from '~/store/jobs';
 import type { Perms } from '~~/gen/ts/perms';
 import type { Timestamp } from '~~/gen/ts/resources/timestamp/timestamp';
-import GenericTable from '~/components/partials/GenericTable.vue';
+import GenericTable from '~/components/partials/elements/GenericTable.vue';
 
 const query = ref<{ name: string }>({
     name: '',

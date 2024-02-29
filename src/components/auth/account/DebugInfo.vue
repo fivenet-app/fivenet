@@ -1,7 +1,7 @@
 <script lang="ts" setup>
 import { KeyIcon } from 'mdi-vue3';
-import GenericContainerPanel from '~/components/partials/GenericContainerPanel.vue';
-import GenericContainerPanelEntry from '~/components/partials/GenericContainerPanelEntry.vue';
+import GenericContainerPanel from '~/components/partials/elements/GenericContainerPanel.vue';
+import GenericContainerPanelEntry from '~/components/partials/elements/GenericContainerPanelEntry.vue';
 import GenericTime from '~/components/partials/elements/GenericTime.vue';
 import { useAuthStore } from '~/store/auth';
 import { useClipboardStore } from '~/store/clipboard';

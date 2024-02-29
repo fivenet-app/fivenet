@@ -12,7 +12,7 @@ import { useCompletorStore } from '~/store/completor';
 import { UserShort } from '~~/gen/ts/resources/users/users';
 import { ListVehiclesResponse } from '~~/gen/ts/services/dmv/vehicles';
 import VehiclesListEntry from '~/components/vehicles/VehiclesListEntry.vue';
-import GenericTable from '../partials/GenericTable.vue';
+import GenericTable from '~/components/partials/elements/GenericTable.vue';
 
 const { $grpc } = useNuxtApp();
 

@@ -1,8 +1,7 @@
 import { RpcError } from '@protobuf-ts/runtime-rpc';
 import { defineStore, type StoreDefinition } from 'pinia';
 import { v4 as uuidv4 } from 'uuid';
-import { type Notification, type NotificationType } from '~/composables/notification/interfaces/Notification.interface';
-import { type NotificationConfig } from '~/composables/notification/interfaces/NotificationConfig.interface';
+import { type Notification, type NotificationConfig, type NotificationType } from '~/composables/notifications/notifications';
 import { useAuthStore } from '~/store/auth';
 import { NotificationCategory } from '~~/gen/ts/resources/notifications/notifications';
 import { MarkNotificationsRequest } from '~~/gen/ts/services/notificator/notificator';

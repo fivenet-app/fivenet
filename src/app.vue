@@ -116,7 +116,7 @@ watch(updateAvailable, () => (open.value = true));
         :confirm="() => reloadNuxtApp({ persistState: false, force: true })"
         :title="$t('system.update_available.title', { version: updateAvailable })"
         :description="$t('system.update_available.content')"
-        :icon="UpdateIcon"
+        :icon="markRaw(UpdateIcon)"
         @close="open = false"
     />
 </template>

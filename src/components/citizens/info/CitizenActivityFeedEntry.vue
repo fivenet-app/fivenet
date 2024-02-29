@@ -148,7 +148,7 @@ switch (props.activity.key) {
 <template>
     <div class="flex space-x-3">
         <div class="my-auto flex h-10 w-10 items-center justify-center rounded-full">
-            <component :is="icon" :class="[iconColor, 'h-full w-full']" />
+            <component :is="icon" :class="[iconColor, 'h-full w-full']" aria-hidden="true" />
         </div>
         <div class="flex-1 space-y-1">
             <div class="flex items-center justify-between">

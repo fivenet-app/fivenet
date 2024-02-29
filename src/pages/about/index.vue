@@ -64,10 +64,10 @@ const faqs = [
                     >
                         <div class="lg:pr-4">
                             <div class="lg:max-w-lg">
-                                <p class="text-base font-semibold leading-7 text-primary-400">
+                                <p class="text-base font-semibold leading-7 text-primary-300">
                                     {{ $t('components.about.introduction.pre_title') }}
                                 </p>
-                                <h1 class="mt-2 text-3xl font-bold tracking-tight text-gray-400 sm:text-4xl">
+                                <h1 class="mt-2 text-3xl font-bold tracking-tight text-gray-300 sm:text-4xl">
                                     {{ $t('components.about.introduction.title') }}
                                 </h1>
                                 <p class="mt-6 text-xl leading-8 text-gray-100">
@@ -81,7 +81,7 @@ const faqs = [
                     >
                         <img
                             class="w-[48rem] max-w-none rounded-xl bg-primary-900 shadow-xl ring-1 ring-gray-400/10 sm:w-[57rem]"
-                            src="/images/app-screenshot.png"
+                            src="/images/screenshots/overview.png"
                             alt="FiveNet Overview - Screenshot"
                         />
                     </div>
@@ -90,7 +90,7 @@ const faqs = [
                     >
                         <div class="lg:pr-4">
                             <div class="max-w-xl text-base leading-7 text-gray-100 lg:max-w-lg">
-                                <ul role="list" class="mt-8 space-y-8 text-gray-400">
+                                <ul role="list" class="mt-8 space-y-8 text-gray-300">
                                     <li class="flex gap-x-3">
                                         <MagnifyIcon class="mt-1 h-5 w-5 flex-none text-primary-300" aria-hidden="true" />
                                         <span>

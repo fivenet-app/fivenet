@@ -7,7 +7,7 @@ import { Unit } from '~~/gen/ts/resources/centrum/units';
 import UnitCreateOrUpdateModal from '~/components/centrum/settings/UnitCreateOrUpdateModal.vue';
 import UnitsListEntry from '~/components/centrum/settings/UnitsListEntry.vue';
 import CentrumSettingsModal from '~/components/centrum/settings/CentrumSettingsModal.vue';
-import GenericTable from '~/components/partials/GenericTable.vue';
+import GenericTable from '~/components/partials/elements/GenericTable.vue';
 
 const { $grpc } = useNuxtApp();
 

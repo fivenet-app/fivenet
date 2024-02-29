@@ -5,7 +5,7 @@ import "github.com/bwmarrin/discordgo"
 var EmbedAuthor = &discordgo.MessageEmbedAuthor{
 	Name:    "FiveNet Discord Bot",
 	URL:     "https://fivenet.app/",
-	IconURL: "https://raw.githubusercontent.com/galexrt/fivenet/main/src/public/images/logo-512x512.png",
+	IconURL: "https://raw.githubusercontent.com/galexrt/fivenet/main/src/public/images/logo-200x200.png",
 }
 
 const (

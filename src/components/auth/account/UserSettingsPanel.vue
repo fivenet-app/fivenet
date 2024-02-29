@@ -5,8 +5,8 @@ import type { RoutePathSchema } from '@typed-router';
 import { useAuthStore } from '~/store/auth';
 import { JOB_THEME_KEY, availableThemes, useSettingsStore } from '~/store/settings';
 import type { Perms } from '~~/gen/ts/perms';
-import GenericContainerPanel from '~/components/partials/GenericContainerPanel.vue';
-import GenericContainerPanelEntry from '~/components/partials/GenericContainerPanelEntry.vue';
+import GenericContainerPanel from '~/components/partials/elements/GenericContainerPanel.vue';
+import GenericContainerPanelEntry from '~/components/partials/elements/GenericContainerPanelEntry.vue';
 
 const { t } = useI18n();
 

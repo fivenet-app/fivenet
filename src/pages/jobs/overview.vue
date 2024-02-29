@@ -3,7 +3,7 @@ import { RadioHandheldIcon } from 'mdi-vue3';
 import JobMotd from '~/components/jobs/JobMotd.vue';
 import JobSelfService from '~/components/jobs/JobSelfService.vue';
 import TimeclockOverviewBlock from '~/components/jobs/timeclock/TimeclockOverviewBlock.vue';
-import SquareImg from '~/components/partials/SquareImg.vue';
+import SquareImg from '~/components/partials/elements/SquareImg.vue';
 import GenericContainer from '~/components/partials/elements/GenericContainer.vue';
 import { useAuthStore } from '~/store/auth';
 

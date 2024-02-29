@@ -55,8 +55,8 @@ onBeforeUnmount(() => {
                             @click="retry()"
                         >
                             {{ retryMessage ?? $t('common.retry') }}
-                            <RefreshIcon v-if="timeout === undefined" class="ml-2 h-5 w-5" />
-                            <CancelIcon v-else class="ml-2 h-5 w-5" />
+                            <RefreshIcon v-if="timeout === undefined" class="ml-2 h-5 w-5" aria-hidden="true" />
+                            <CancelIcon v-else class="ml-2 h-5 w-5" aria-hidden="true" />
                         </button>
                     </div>
                 </div>

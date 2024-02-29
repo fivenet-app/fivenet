@@ -14,7 +14,7 @@ import ConductCreateOrUpdateModal from '~/components/jobs/conduct/ConductCreateO
 import ConductListEntry from '~/components/jobs/conduct/ConductListEntry.vue';
 import { useJobsStore } from '~/store/jobs';
 import type { ListConductEntriesResponse } from '~~/gen/ts/services/jobs/conduct';
-import GenericTable from '~/components/partials/GenericTable.vue';
+import GenericTable from '~/components/partials/elements/GenericTable.vue';
 
 const props = defineProps<{
     userId?: number;

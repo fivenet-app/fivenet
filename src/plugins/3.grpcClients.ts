@@ -10,7 +10,7 @@ import {
     type RpcOptions,
     type RpcTransport,
 } from '@protobuf-ts/runtime-rpc';
-import { type Notification } from '~/composables/notification/interfaces/Notification.interface';
+import { type Notification } from '~/composables/notifications/notifications';
 import { useAuthStore } from '~/store/auth';
 import { useNotificatorStore } from '~/store/notificator';
 import { AuthServiceClient } from '~~/gen/ts/services/auth/auth.client';

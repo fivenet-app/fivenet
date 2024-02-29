@@ -13,9 +13,9 @@ import { useAuthStore } from '~/store/auth';
 import { useNotificatorStore } from '~/store/notificator';
 import { availableThemes, useSettingsStore } from '~/store/settings';
 import { JobProps, UserInfoSyncUnemployedMode } from '~~/gen/ts/resources/users/jobs';
-import GenericContainerPanel from '~/components/partials/GenericContainerPanel.vue';
-import GenericContainerPanelEntry from '~/components/partials/GenericContainerPanelEntry.vue';
-import SquareImg from '~/components/partials/SquareImg.vue';
+import GenericContainerPanel from '~/components/partials/elements/GenericContainerPanel.vue';
+import GenericContainerPanelEntry from '~/components/partials/elements/GenericContainerPanelEntry.vue';
+import SquareImg from '~/components/partials/elements/SquareImg.vue';
 import { File } from '~~/gen/ts/resources/filestore/file';
 
 const { $grpc } = useNuxtApp();

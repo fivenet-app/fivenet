@@ -1,7 +1,7 @@
 <script lang="ts" setup>
 import { useLivemapStore } from '~/store/livemap';
 import MarkersListEntry from '~/components/centrum/MarkersListEntry.vue';
-import GenericTable from '../partials/GenericTable.vue';
+import GenericTable from '~/components/partials/elements/GenericTable.vue';
 
 defineEmits<{
     (e: 'goto', loc: Coordinate): void;

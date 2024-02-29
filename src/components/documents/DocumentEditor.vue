@@ -1030,7 +1030,7 @@ onBeforeUnmount(() => {
                 <JoditEditor v-model="content" :config="config" :plugins="plugins" :extra-buttons="extraButtons" />
                 <template v-if="saving">
                     <div class="flex animate-pulse justify-center">
-                        <ContentSaveIcon class="mr-2 h-auto w-4 animate-spin" />
+                        <ContentSaveIcon class="mr-2 h-auto w-4 animate-spin" aria-hidden="true" />
                         {{ $t('common.save', 2) }}...
                     </div>
                 </template>

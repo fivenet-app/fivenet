@@ -186,7 +186,7 @@ const onSubmitThrottle = useThrottleFn(async () => {
                                                                             v-else-if="unit.users.length > 0"
                                                                             class="h-5 w-5"
                                                                         />
-                                                                        <CancelIcon v-else class="h-5 w-5" />
+                                                                        <CancelIcon v-else class="h-5 w-5" aria-hidden="true" />
 
                                                                         <div
                                                                             class="ml-0.5 flex w-full flex-col place-items-start"

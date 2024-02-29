@@ -285,8 +285,12 @@ const mugShotModal = ref(false);
                                         class="inline-flex w-full flex-shrink-0 items-center justify-center rounded-md bg-error-500 px-3 py-2 text-sm font-semibold text-neutral transition-colors hover:bg-error-400 focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-primary-500 sm:flex-1"
                                         @click="setWantedModal = true"
                                     >
-                                        <AccountAlertIcon v-if="user.props?.wanted" class="w-5 h-auto mr-1.5" />
-                                        <AccountCancelIcon v-else class="w-5 h-auto mr-1.5" />
+                                        <AccountAlertIcon
+                                            v-if="user.props?.wanted"
+                                            class="w-5 h-auto mr-1.5"
+                                            aria-hidden="true"
+                                        />
+                                        <AccountCancelIcon v-else class="w-5 h-auto mr-1.5" aria-hidden="true" />
                                         {{
                                             user.props?.wanted
                                                 ? $t('components.citizens.citizen_info_profile.revoke_wanted')

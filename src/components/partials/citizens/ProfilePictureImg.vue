@@ -2,7 +2,7 @@
 import { Float } from '@headlessui-float/vue';
 import { Popover, PopoverButton, PopoverPanel } from '@headlessui/vue';
 import { type imageSizes } from '~/components/partials/helpers';
-import SquareImg from '~/components/partials/SquareImg.vue';
+import SquareImg from '~/components/partials/elements/SquareImg.vue';
 
 withDefaults(
     defineProps<{

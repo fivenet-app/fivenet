@@ -15,7 +15,7 @@ definePageMeta({
 
 const licenses = [
     {
-        title: 'FiveNet License',
+        title: 'FiveNet Project License',
         path: '/licenses/LICENSE',
     },
     {

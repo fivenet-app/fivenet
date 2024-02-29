@@ -2,9 +2,9 @@ import { defineNuxtPlugin } from '#app';
 import type { AppConfig } from '~/shims';
 
 async function loadConfig(): Promise<void> {
-    // 6 seconds should be enough
+    // 10 seconds should be enough to retrieve the config
     const abort = new AbortController();
-    const tId = setTimeout(() => abort.abort(), 8000);
+    const tId = setTimeout(() => abort.abort(), 10 * 1000);
 
     const resp = await fetch('/api/config', {
         method: 'POST',

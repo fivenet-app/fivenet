@@ -451,6 +451,7 @@ const onSubmitThrottle = useThrottleFn(async (e) => {
                                                                                         v-if="selectedIcon"
                                                                                         class="mr-1 h-5 w-5"
                                                                                         :style="{ color: color }"
+                                                                                        aria-hidden="true"
                                                                                     />
                                                                                     {{
                                                                                         (selectedIcon.name ?? 'N/A').replace(
@@ -496,6 +497,7 @@ const onSubmitThrottle = useThrottleFn(async (e) => {
                                                                                                 <component
                                                                                                     :is="icon"
                                                                                                     class="mr-1 h-5 w-5"
+                                                                                                    aria-hidden="true"
                                                                                                 />
                                                                                                 {{
                                                                                                     icon.name.replace(

@@ -1,6 +1,6 @@
 <script lang="ts" setup>
 import { OAuth2Account, OAuth2Provider } from '~~/gen/ts/resources/accounts/oauth2';
-import GenericContainerPanel from '~/components/partials/GenericContainerPanel.vue';
+import GenericContainerPanel from '~/components/partials/elements/GenericContainerPanel.vue';
 import OAuth2Connection from '~/components/auth/account/OAuth2Connection.vue';
 
 const props = defineProps<{

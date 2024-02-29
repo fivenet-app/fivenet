@@ -97,7 +97,7 @@ function getDocAtivityIcon(activityType: DocActivityType): DefineComponent {
     <div class="p-1">
         <div v-if="!disclosureNeeded(entry.activityType)" class="flex space-x-3">
             <div class="my-auto flex h-10 w-10 items-center justify-center rounded-full">
-                <component :is="getDocAtivityIcon(entry.activityType)" class="h-7 w-7" />
+                <component :is="getDocAtivityIcon(entry.activityType)" class="h-7 w-7" aria-hidden="true" />
             </div>
             <div class="flex-1 space-y-1">
                 <div class="flex items-center justify-between">
@@ -131,7 +131,7 @@ function getDocAtivityIcon(activityType: DocActivityType): DefineComponent {
             <DisclosureButton class="flex w-full items-start justify-between text-left transition">
                 <div class="flex w-full space-x-3">
                     <div class="my-auto flex h-10 w-10 items-center justify-center rounded-full">
-                        <component :is="getDocAtivityIcon(entry.activityType)" class="h-7 w-7" />
+                        <component :is="getDocAtivityIcon(entry.activityType)" class="h-7 w-7" aria-hidden="true" />
                     </div>
                     <div class="flex-1 space-y-1">
                         <div class="flex items-center justify-between">
