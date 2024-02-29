@@ -30,7 +30,7 @@ useHead({
     htmlAttrs: {
         class: () =>
             (theme.value === JOB_THEME_KEY ? jobProps.value?.theme ?? 'defaultTheme' : theme.value) +
-            'scrollbar-thin scrollbar-thumb-sky-700 scrollbar-track-sky-300',
+            ' scrollbar-thin scrollbar-thumb-sky-700 scrollbar-track-sky-300',
         lang: 'en',
     },
     bodyAttrs: {
