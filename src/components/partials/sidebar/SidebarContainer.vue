@@ -531,9 +531,10 @@ watch(router.currentRoute, () => updateActiveItem());
                         <div class="ml-2 flex items-center space-x-3 sm:ml-2 sm:space-x-4">
                             <JobSwitcherMenu v-if="can('SuperUser') && activeChar" />
                             <div v-if="activeChar" class="hidden text-center text-sm font-medium text-accent-200 sm:block">
-                                <span> {{ activeChar.firstname }} {{ activeChar.lastname }} </span>
-                                <br />
-                                <span> ({{ activeChar.jobLabel }}) </span>
+                                <span class="line-clamp-3">
+                                    <span class="line-clamp-2">{{ activeChar.firstname }} {{ activeChar.lastname }}</span>
+                                    ({{ activeChar.jobLabel }})
+                                </span>
                             </div>
                             <NotificationsButton v-if="activeChar" />
                             <LanguageSwitcherMenu />
