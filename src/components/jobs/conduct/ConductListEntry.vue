@@ -21,8 +21,17 @@ const openMessage = ref(false);
     <tr class="transition-colors even:bg-base-800 hover:bg-neutral/5">
         <td class="whitespace-nowrap py-2 pl-4 pr-3 text-base font-medium text-neutral sm:pl-1">
             <GenericTime :value="conduct.createdAt" />
+            <dl class="font-normal lg:hidden">
+                <dt class="sr-only">{{ $t('common.expires_at') }}</dt>
+                <dd class="mt-1 truncate text-accent-200">
+                    <GenericTime v-if="conduct.expiresAt" class="font-semibold" :value="conduct.expiresAt" />
+                    <span v-else>
+                        {{ $t('components.jobs.conduct.List.no_expiration') }}
+                    </span>
+                </dd>
+            </dl>
         </td>
-        <td class="whitespace-nowrap px-1 py-1 text-left text-base font-medium text-accent-200">
+        <td class="whitespace-nowrap px-1 py-1 text-left text-base font-medium text-accent-200 hidden lg:table-cell">
             <GenericTime v-if="conduct.expiresAt" class="font-semibold" :value="conduct.expiresAt" />
             <span v-else>
                 {{ $t('components.jobs.conduct.List.no_expiration') }}
@@ -60,7 +69,7 @@ const openMessage = ref(false);
             <CitizenInfoPopover :user="conduct.creator" />
         </td>
         <td class="whitespace-nowrap py-2 pl-3 pr-4 text-base font-medium sm:pr-0">
-            <div class="flex flex-row justify-end">
+            <div class="flex flex-col md:flex-row gap-1 justify-end">
                 <button
                     v-if="can('JobsConductService.UpdateConductEntry')"
                     type="button"

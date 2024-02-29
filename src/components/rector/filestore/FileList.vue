@@ -9,6 +9,7 @@ import TablePagination from '~/components/partials/elements/TablePagination.vue'
 import { useSettingsStore } from '~/store/settings';
 import type { ListFilesResponse } from '~~/gen/ts/services/rector/rector';
 import FileListEntry from '~/components/rector/filestore/FileListEntry.vue';
+import GenericTable from '~/components/partials/GenericTable.vue';
 
 const { $grpc } = useNuxtApp();
 
@@ -60,8 +61,8 @@ watch(offset, () => refresh());
                 <DataNoDataBlock v-else-if="data === null" :icon="FileMultipleIcon" :type="$t('common.data', 1)" />
 
                 <template v-else>
-                    <table class="min-w-full divide-y divide-base-600">
-                        <thead>
+                    <GenericTable :double-header="false">
+                        <template #thead>
                             <tr>
                                 <th
                                     scope="col"
@@ -94,16 +95,16 @@ watch(offset, () => refresh());
                                     {{ $t('common.type') }}
                                 </th>
                             </tr>
-                        </thead>
-                        <tbody class="divide-y divide-base-800">
+                        </template>
+                        <template #tbody>
                             <FileListEntry
                                 v-for="(file, idx) in data.files"
                                 :key="file.name"
                                 :file="file"
                                 @deleted="data.files.splice(idx, 1)"
                             />
-                        </tbody>
-                    </table>
+                        </template>
+                    </GenericTable>
 
                     <TablePagination :pagination="data.pagination" :refresh="refresh" @offset-change="offset = $event" />
                 </template>

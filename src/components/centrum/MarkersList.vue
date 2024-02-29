@@ -1,6 +1,7 @@
 <script lang="ts" setup>
 import { useLivemapStore } from '~/store/livemap';
 import MarkersListEntry from '~/components/centrum/MarkersListEntry.vue';
+import GenericTable from '../partials/GenericTable.vue';
 
 defineEmits<{
     (e: 'goto', loc: Coordinate): void;
@@ -26,8 +27,8 @@ const { markersMarkers } = storeToRefs(livemapStore);
         <div class="mt-0.5 flow-root">
             <div class="-mx-2 sm:-mx-6 lg:-mx-8">
                 <div class="inline-block min-w-full py-2 align-middle sm:px-2 lg:px-2">
-                    <table class="min-w-full divide-y divide-base-600">
-                        <thead>
+                    <GenericTable>
+                        <template #thead>
                             <tr>
                                 <th
                                     scope="col"
@@ -78,16 +79,16 @@ const { markersMarkers } = storeToRefs(livemapStore);
                                     {{ $t('common.job') }}
                                 </th>
                             </tr>
-                        </thead>
-                        <tbody class="divide-y divide-base-800">
+                        </template>
+                        <template #tbody>
                             <MarkersListEntry
                                 v-for="[key, marker] in markersMarkers"
                                 :key="key"
                                 :marker="marker"
                                 @goto="$emit('goto', $event)"
                             />
-                        </tbody>
-                    </table>
+                        </template>
+                    </GenericTable>
                 </div>
             </div>
         </div>

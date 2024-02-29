@@ -33,8 +33,8 @@ const year =
         :style="{ backgroundColor }"
     >
         <div class="grid w-full grid-cols-2 justify-items-center rounded-t-lg bg-error-600">
-            <div class="hidden select-none text-xs text-warn-400 sm:block">{{ state }}</div>
-            <div class="select-none text-xs text-warn-400 sm:hidden">{{ stateShort }}</div>
+            <div class="hidden select-none text-xs text-warn-400 md:block">{{ state }}</div>
+            <div class="select-none text-xs text-warn-400 md:hidden">{{ stateShort }}</div>
             <div class="select-none text-xs">{{ year }}</div>
         </div>
         <div class="text-base" :class="isColourBright(inverseColor) ? 'text-black' : 'text-neutral'">

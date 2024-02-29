@@ -28,18 +28,23 @@ function addToClipboard(): void {
 <template>
     <tr :key="user.userId" class="transition-colors even:bg-base-800 hover:bg-neutral/5">
         <td class="whitespace-nowrap py-2 pl-4 pr-3 text-sm font-medium text-neutral sm:pl-1">
-            {{ user.firstname }} {{ user.lastname }}
+            <span>{{ user.firstname }} {{ user.lastname }}</span>
+            <span class="lg:hidden"> ({{ user.dateofbirth }}) </span>
             <span
                 v-if="user.props?.wanted"
                 class="ml-1 inline-flex items-center rounded-full bg-error-100 px-2.5 py-0.5 text-sm font-medium text-error-700"
             >
                 {{ $t('common.wanted').toUpperCase() }}
             </span>
+            <dl class="font-normal lg:hidden">
+                <dt class="sr-only">{{ $t('common.sex') }} - {{ $t('common.job') }}</dt>
+                <dd class="mt-1 truncate text-accent-200">{{ user.sex!.toUpperCase() }} - {{ user.jobLabel }}</dd>
+            </dl>
         </td>
-        <td class="whitespace-nowrap px-1 py-1 text-left text-sm text-accent-200">
+        <td class="whitespace-nowrap px-1 py-1 text-left text-sm text-accent-200 hidden lg:table-cell">
             {{ user.jobLabel }}
         </td>
-        <td class="whitespace-nowrap px-1 py-1 text-left text-sm text-accent-200">
+        <td class="whitespace-nowrap px-1 py-1 text-left text-sm text-accent-200 hidden lg:table-cell">
             {{ user.sex!.toUpperCase() }}
         </td>
         <td
@@ -48,7 +53,7 @@ function addToClipboard(): void {
         >
             <PhoneNumberBlock :number="user.phoneNumber" />
         </td>
-        <td class="whitespace-nowrap px-1 py-1 text-left text-sm text-accent-200">
+        <td class="whitespace-nowrap px-1 py-1 text-left text-sm text-accent-200 hidden lg:table-cell">
             {{ user.dateofbirth }}
         </td>
         <td
@@ -66,12 +71,13 @@ function addToClipboard(): void {
                 {{ $n(parseInt((user?.props?.openFines ?? 0n).toString(), 10), 'currency') }}
             </template>
         </td>
-        <td class="whitespace-nowrap px-1 py-1 text-left text-sm text-accent-200">{{ user.height }}cm</td>
+        <td class="whitespace-nowrap px-1 py-1 text-left text-sm text-accent-200 hidden md:table-cell">{{ user.height }}cm</td>
         <td class="whitespace-nowrap py-2 pl-3 pr-4 text-sm font-medium sm:pr-0">
-            <div v-if="can('CitizenStoreService.GetUser')" class="flex flex-row justify-end">
-                <button class="flex-initial text-primary-500 hover:text-primary-400" @click="addToClipboard">
-                    <ClipboardPlusIcon class="ml-auto mr-2.5 w-5 h-auto" />
+            <div v-if="can('CitizenStoreService.GetUser')" class="flex flex-col md:flex-row gap-1 justify-end">
+                <button type="button" class="flex-initial text-primary-500 hover:text-primary-400" @click="addToClipboard">
+                    <ClipboardPlusIcon class="ml-auto mr-2.5 w-5 h-auto" aria-hidden="true" />
                 </button>
+
                 <NuxtLink
                     :to="{
                         name: 'citizens-id',

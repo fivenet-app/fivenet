@@ -7,6 +7,7 @@ import { Unit } from '~~/gen/ts/resources/centrum/units';
 import UnitCreateOrUpdateModal from '~/components/centrum/settings/UnitCreateOrUpdateModal.vue';
 import UnitsListEntry from '~/components/centrum/settings/UnitsListEntry.vue';
 import CentrumSettingsModal from '~/components/centrum/settings/CentrumSettingsModal.vue';
+import GenericTable from '~/components/partials/GenericTable.vue';
 
 const { $grpc } = useNuxtApp();
 
@@ -66,9 +67,9 @@ const openSettings = ref(false);
                             :retry="refresh"
                         />
                         <DataNoDataBlock v-else-if="units && units.length === 0" :type="$t('common.units')" />
-                        <div v-else>
-                            <table class="min-w-full divide-y divide-base-600">
-                                <thead>
+                        <template v-else>
+                            <GenericTable>
+                                <template #thead>
                                     <tr>
                                         <th scope="col" class="px-2 py-3.5 text-left text-sm font-semibold text-neutral">
                                             {{ $t('common.name') }}
@@ -95,40 +96,12 @@ const openSettings = ref(false);
                                             {{ $t('common.action', 2) }}
                                         </th>
                                     </tr>
-                                </thead>
-                                <tbody class="divide-y divide-base-800">
+                                </template>
+                                <template #tbody>
                                     <UnitsListEntry v-for="unit in units" :key="unit.id" :unit="unit" @updated="refresh()" />
-                                </tbody>
-                                <thead>
-                                    <tr>
-                                        <th scope="col" class="px-2 py-3.5 text-left text-sm font-semibold text-neutral">
-                                            {{ $t('common.name') }}
-                                        </th>
-                                        <th scope="col" class="px-2 py-3.5 text-left text-sm font-semibold text-neutral">
-                                            {{ $t('common.initials') }}
-                                        </th>
-                                        <th scope="col" class="px-2 py-3.5 text-left text-sm font-semibold text-neutral">
-                                            {{ $t('common.description') }}
-                                        </th>
-                                        <th scope="col" class="px-2 py-3.5 text-left text-sm font-semibold text-neutral">
-                                            {{ $t('common.attributes', 2) }}
-                                        </th>
-                                        <th scope="col" class="px-2 py-3.5 text-left text-sm font-semibold text-neutral">
-                                            {{ $t('common.color') }}
-                                        </th>
-                                        <th scope="col" class="px-2 py-3.5 text-left text-sm font-semibold text-neutral">
-                                            {{ $t('common.department_postal') }}
-                                        </th>
-                                        <th
-                                            scope="col"
-                                            class="relative py-3.5 pl-3 pr-4 text-right text-sm font-semibold text-neutral sm:pr-0"
-                                        >
-                                            {{ $t('common.action', 2) }}
-                                        </th>
-                                    </tr>
-                                </thead>
-                            </table>
-                        </div>
+                                </template>
+                            </GenericTable>
+                        </template>
                     </div>
                 </div>
             </div>

@@ -14,6 +14,7 @@ import ConductCreateOrUpdateModal from '~/components/jobs/conduct/ConductCreateO
 import ConductListEntry from '~/components/jobs/conduct/ConductListEntry.vue';
 import { useJobsStore } from '~/store/jobs';
 import type { ListConductEntriesResponse } from '~~/gen/ts/services/jobs/conduct';
+import GenericTable from '~/components/partials/GenericTable.vue';
 
 const props = defineProps<{
     userId?: number;
@@ -342,9 +343,9 @@ onConfirm(async (id) => deleteConductEntry(id));
                             :focus="focusSearch"
                             :message="$t('components.citizens.citizens_list.no_citizens')"
                         />
-                        <div v-else>
-                            <table class="min-w-full divide-y divide-base-600">
-                                <thead>
+                        <template v-else>
+                            <GenericTable>
+                                <template #thead>
                                     <tr>
                                         <th
                                             scope="col"
@@ -352,7 +353,10 @@ onConfirm(async (id) => deleteConductEntry(id));
                                         >
                                             {{ $t('common.created_at') }}
                                         </th>
-                                        <th scope="col" class="px-2 py-3.5 text-left text-sm font-semibold text-neutral">
+                                        <th
+                                            scope="col"
+                                            class="px-2 py-3.5 text-left text-sm font-semibold text-neutral hidden lg:table-cell"
+                                        >
                                             {{ $t('common.expires_at') }}
                                         </th>
                                         <th scope="col" class="px-2 py-3.5 text-left text-sm font-semibold text-neutral">
@@ -374,8 +378,8 @@ onConfirm(async (id) => deleteConductEntry(id));
                                             {{ $t('common.action', 2) }}
                                         </th>
                                     </tr>
-                                </thead>
-                                <tbody class="divide-y divide-base-800">
+                                </template>
+                                <template #tbody>
                                     <ConductListEntry
                                         v-for="conduct in data?.entries"
                                         :key="conduct.id"
@@ -389,46 +393,15 @@ onConfirm(async (id) => deleteConductEntry(id));
                                             reveal();
                                         "
                                     />
-                                </tbody>
-                                <thead>
-                                    <tr>
-                                        <th
-                                            scope="col"
-                                            class="py-3.5 pl-4 pr-3 text-left text-sm font-semibold text-neutral sm:pl-1"
-                                        >
-                                            {{ $t('common.created_at') }}
-                                        </th>
-                                        <th scope="col" class="px-2 py-3.5 text-left text-sm font-semibold text-neutral">
-                                            {{ $t('common.expires_at') }}
-                                        </th>
-                                        <th scope="col" class="px-2 py-3.5 text-left text-sm font-semibold text-neutral">
-                                            {{ $t('common.type') }}
-                                        </th>
-                                        <th scope="col" class="px-2 py-3.5 text-left text-sm font-semibold text-neutral">
-                                            {{ $t('common.description') }}
-                                        </th>
-                                        <th scope="col" class="px-2 py-3.5 text-left text-sm font-semibold text-neutral">
-                                            {{ $t('common.target') }}
-                                        </th>
-                                        <th scope="col" class="px-2 py-3.5 text-left text-sm font-semibold text-neutral">
-                                            {{ $t('common.creator') }}
-                                        </th>
-                                        <th
-                                            scope="col"
-                                            class="relative py-3.5 pl-3 pr-4 text-right text-sm font-semibold text-neutral sm:pr-0"
-                                        >
-                                            {{ $t('common.action', 2) }}
-                                        </th>
-                                    </tr>
-                                </thead>
-                            </table>
+                                </template>
+                            </GenericTable>
 
                             <TablePagination
                                 :pagination="data?.pagination"
                                 :refresh="refresh"
                                 @offset-change="offset = $event"
                             />
-                        </div>
+                        </template>
                     </div>
                 </div>
             </div>

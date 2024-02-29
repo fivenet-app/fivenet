@@ -15,6 +15,7 @@ import TimeclockStatsBlock from '~/components/jobs/timeclock/TimeclockStatsBlock
 import { useJobsStore } from '~/store/jobs';
 import { dateToDateString } from '~/utils/time';
 import type { ListTimeclockRequest, ListTimeclockResponse } from '~~/gen/ts/services/jobs/timeclock';
+import GenericTable from '~/components/partials/GenericTable.vue';
 
 const { $grpc } = useNuxtApp();
 
@@ -356,26 +357,27 @@ function updateDates(): void {
                             :focus="focusSearch"
                             :message="$t('components.citizens.citizens_list.no_citizens')"
                         />
-                        <div v-else>
-                            <table class="min-w-full divide-y divide-base-600">
-                                <thead>
+                        <template v-else>
+                            <GenericTable class="min-w-full divide-y divide-base-600">
+                                <template #thead>
                                     <tr>
                                         <th
-                                            v-if="!perDay"
                                             scope="col"
                                             class="py-3.5 pl-4 pr-3 text-left text-sm font-semibold text-neutral sm:pl-1"
                                         >
-                                            {{ $t('common.date') }}
+                                            <template v-if="!perDay">
+                                                {{ $t('common.date') }}
+                                            </template>
                                         </th>
-                                        <th v-else scope="col" class="px-2 py-3.5 text-left text-sm font-semibold text-neutral">
+                                        <th scope="col" class="px-2 py-3.5 text-left text-sm font-semibold text-neutral">
                                             {{ $t('common.name') }}
                                         </th>
                                         <th scope="col" class="px-2 py-3.5 text-left text-sm font-semibold text-neutral">
                                             {{ $t('common.time') }}
                                         </th>
                                     </tr>
-                                </thead>
-                                <tbody class="divide-y divide-base-800">
+                                </template>
+                                <template #tbody>
                                     <template v-for="group in grouped" :key="group.key">
                                         <TimeclockListEntry
                                             v-for="(entry, idx) in group.entries"
@@ -385,32 +387,15 @@ function updateDates(): void {
                                             :show-date="!perDay"
                                         />
                                     </template>
-                                </tbody>
-                                <thead>
-                                    <tr>
-                                        <th
-                                            v-if="!perDay"
-                                            scope="col"
-                                            class="py-3.5 pl-4 pr-3 text-left text-sm font-semibold text-neutral sm:pl-1"
-                                        >
-                                            {{ $t('common.date') }}
-                                        </th>
-                                        <th v-else scope="col" class="px-2 py-3.5 text-left text-sm font-semibold text-neutral">
-                                            {{ $t('common.name') }}
-                                        </th>
-                                        <th scope="col" class="px-2 py-3.5 text-left text-sm font-semibold text-neutral">
-                                            {{ $t('common.time') }}
-                                        </th>
-                                    </tr>
-                                </thead>
-                            </table>
+                                </template>
+                            </GenericTable>
 
                             <TablePagination
                                 :pagination="data?.pagination"
                                 :refresh="refresh"
                                 @offset-change="offset = $event"
                             />
-                        </div>
+                        </template>
                     </div>
                 </div>
             </div>

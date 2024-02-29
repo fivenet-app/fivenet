@@ -8,6 +8,7 @@ import ColleaguesListEntry from '~/components/jobs/colleagues/ColleaguesListEntr
 import { useJobsStore } from '~/store/jobs';
 import type { Perms } from '~~/gen/ts/perms';
 import type { Timestamp } from '~~/gen/ts/resources/timestamp/timestamp';
+import GenericTable from '~/components/partials/GenericTable.vue';
 
 const query = ref<{ name: string }>({
     name: '',
@@ -95,8 +96,8 @@ function updateAbsenceDate(value: { userId: number; absenceDate?: Timestamp }): 
                             :message="$t('components.citizens.citizens_list.no_citizens')"
                         />
                         <div v-else>
-                            <table class="min-w-full divide-y divide-base-600">
-                                <thead>
+                            <GenericTable>
+                                <template #thead>
                                     <tr>
                                         <th
                                             scope="col"
@@ -108,7 +109,10 @@ function updateAbsenceDate(value: { userId: number; absenceDate?: Timestamp }): 
                                         >
                                             {{ $t('common.name') }}
                                         </th>
-                                        <th scope="col" class="px-2 py-3.5 text-left text-sm font-semibold text-neutral">
+                                        <th
+                                            scope="col"
+                                            class="px-2 py-3.5 text-left text-sm font-semibold text-neutral hidden lg:table-cell"
+                                        >
                                             {{ $t('common.rank', 1) }}
                                         </th>
                                         <th scope="col" class="px-2 py-3.5 text-left text-sm font-semibold text-neutral">
@@ -128,49 +132,16 @@ function updateAbsenceDate(value: { userId: number; absenceDate?: Timestamp }): 
                                             {{ $t('common.action', 2) }}
                                         </th>
                                     </tr>
-                                </thead>
-                                <tbody class="divide-y divide-base-800">
+                                </template>
+                                <template #tbody>
                                     <ColleaguesListEntry
                                         v-for="colleague in data?.colleagues"
                                         :key="colleague.userId"
                                         :colleague="colleague"
                                         @update:absence-date="updateAbsenceDate($event)"
                                     />
-                                </tbody>
-                                <thead>
-                                    <tr>
-                                        <th
-                                            scope="col"
-                                            class="py-3.5 pl-4 pr-3 text-left text-sm font-semibold text-neutral sm:pl-1"
-                                        ></th>
-                                        <th
-                                            scope="col"
-                                            class="py-3.5 pl-4 pr-3 text-left text-sm font-semibold text-neutral sm:pl-1"
-                                        >
-                                            {{ $t('common.name') }}
-                                        </th>
-                                        <th scope="col" class="px-2 py-3.5 text-left text-sm font-semibold text-neutral">
-                                            {{ $t('common.rank', 1) }}
-                                        </th>
-                                        <th scope="col" class="px-2 py-3.5 text-left text-sm font-semibold text-neutral">
-                                            {{ $t('common.absence_date') }}
-                                        </th>
-                                        <th scope="col" class="px-2 py-3.5 text-left text-sm font-semibold text-neutral">
-                                            {{ $t('common.phone_number') }}
-                                        </th>
-                                        <th scope="col" class="px-2 py-3.5 text-left text-sm font-semibold text-neutral">
-                                            {{ $t('common.date_of_birth') }}
-                                        </th>
-                                        <th
-                                            v-if="can(['JobsService.GetColleague', 'JobsService.SetJobsUserProps'] as Perms[])"
-                                            scope="col"
-                                            class="relative py-3.5 pl-3 pr-4 text-right text-sm font-semibold text-neutral sm:pr-0"
-                                        >
-                                            {{ $t('common.action', 2) }}
-                                        </th>
-                                    </tr>
-                                </thead>
-                            </table>
+                                </template>
+                            </GenericTable>
 
                             <TablePagination
                                 :pagination="data?.pagination"

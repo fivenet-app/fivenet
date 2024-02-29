@@ -115,11 +115,15 @@ func (s *Server) ListTimeclock(ctx context.Context, req *ListTimeclockRequest) (
 			tUser.Firstname,
 			tUser.Lastname,
 			tUser.PhoneNumber,
+			tUserProps.Avatar.AS("user_short.avatar"),
 		).
 		FROM(
 			tTimeClock.
 				INNER_JOIN(tUser,
 					tUser.ID.EQ(tTimeClock.UserID),
+				).
+				LEFT_JOIN(tUserProps,
+					tUserProps.UserID.EQ(tUser.ID),
 				),
 		).
 		WHERE(condition).

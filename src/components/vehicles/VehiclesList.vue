@@ -12,6 +12,7 @@ import { useCompletorStore } from '~/store/completor';
 import { UserShort } from '~~/gen/ts/resources/users/users';
 import { ListVehiclesResponse } from '~~/gen/ts/services/dmv/vehicles';
 import VehiclesListEntry from '~/components/vehicles/VehiclesListEntry.vue';
+import GenericTable from '../partials/GenericTable.vue';
 
 const { $grpc } = useNuxtApp();
 
@@ -231,9 +232,9 @@ watch(selectedChar, () => {
                             :focus="focusSearch"
                             :type="$t('common.vehicle', 2)"
                         />
-                        <div v-else>
-                            <table class="min-w-full divide-y divide-base-600">
-                                <thead>
+                        <template v-else>
+                            <GenericTable>
+                                <template #thead>
                                     <tr>
                                         <th
                                             scope="col"
@@ -241,10 +242,16 @@ watch(selectedChar, () => {
                                         >
                                             {{ $t('common.plate') }}
                                         </th>
-                                        <th scope="col" class="px-2 py-3.5 text-left text-sm font-semibold text-neutral">
+                                        <th
+                                            scope="col"
+                                            class="px-2 py-3.5 text-left text-sm font-semibold text-neutral hidden sm:table-cell"
+                                        >
                                             {{ $t('common.model') }}
                                         </th>
-                                        <th scope="col" class="px-2 py-3.5 text-left text-sm font-semibold text-neutral">
+                                        <th
+                                            scope="col"
+                                            class="px-2 py-3.5 text-left text-sm font-semibold text-neutral hidden lg:table-cell"
+                                        >
                                             {{ $t('common.type') }}
                                         </th>
                                         <th
@@ -262,8 +269,8 @@ watch(selectedChar, () => {
                                             {{ $t('common.action', 2) }}
                                         </th>
                                     </tr>
-                                </thead>
-                                <tbody class="divide-y divide-base-800">
+                                </template>
+                                <template #tbody>
                                     <VehiclesListEntry
                                         v-for="vehicle in data?.vehicles"
                                         :key="vehicle.plate"
@@ -272,45 +279,15 @@ watch(selectedChar, () => {
                                         :hide-citizen-link="hideCitizenLink"
                                         :hide-copy="hideCopy"
                                     />
-                                </tbody>
-                                <thead>
-                                    <tr>
-                                        <th
-                                            scope="col"
-                                            class="py-3.5 pl-4 pr-3 text-left text-sm font-semibold text-neutral sm:pl-1"
-                                        >
-                                            {{ $t('common.plate') }}
-                                        </th>
-                                        <th scope="col" class="px-2 py-3.5 text-left text-sm font-semibold text-neutral">
-                                            {{ $t('common.model') }}
-                                        </th>
-                                        <th scope="col" class="px-2 py-3.5 text-left text-sm font-semibold text-neutral">
-                                            {{ $t('common.type') }}
-                                        </th>
-                                        <th
-                                            v-if="!hideOwner"
-                                            scope="col"
-                                            class="px-2 py-3.5 text-left text-sm font-semibold text-neutral"
-                                        >
-                                            {{ $t('common.owner') }}
-                                        </th>
-                                        <th
-                                            v-if="!hideCitizenLink && !hideCopy"
-                                            scope="col"
-                                            class="relative py-3.5 pl-3 pr-4 text-right text-sm font-semibold text-neutral sm:pr-0"
-                                        >
-                                            {{ $t('common.action', 2) }}
-                                        </th>
-                                    </tr>
-                                </thead>
-                            </table>
+                                </template>
+                            </GenericTable>
 
                             <TablePagination
                                 :pagination="data?.pagination"
                                 :refresh="refresh"
                                 @offset-change="offset = $event"
                             />
-                        </div>
+                        </template>
                     </div>
                 </div>
             </div>

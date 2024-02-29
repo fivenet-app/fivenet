@@ -11,6 +11,7 @@ import { useCompletorStore } from '~/store/completor';
 import { UserShort } from '~~/gen/ts/resources/users/users';
 import { ViewAuditLogRequest, ViewAuditLogResponse } from '~~/gen/ts/services/rector/rector';
 import AuditLogEntry from '~/components/rector/audit/AuditLogEntry.vue';
+import GenericTable from '~/components/partials/GenericTable.vue';
 
 const { $grpc } = useNuxtApp();
 
@@ -287,9 +288,9 @@ watchDebounced(queryCitizens, async () => await findChars(), {
                             :focus="focusSearch"
                         />
 
-                        <div v-else>
-                            <table class="min-w-full divide-y divide-base-600">
-                                <thead>
+                        <template v-else>
+                            <GenericTable>
+                                <template #thead>
                                     <tr>
                                         <th
                                             scope="col"
@@ -319,49 +320,18 @@ watchDebounced(queryCitizens, async () => await findChars(), {
                                             {{ $t('common.action', 2) }}
                                         </th>
                                     </tr>
-                                </thead>
-                                <tbody class="divide-y divide-base-800">
+                                </template>
+                                <template #tbody>
                                     <AuditLogEntry v-for="log in data?.logs" :key="log.id" :log="log" />
-                                </tbody>
-                                <thead>
-                                    <tr>
-                                        <th
-                                            scope="col"
-                                            class="py-3.5 pl-4 pr-3 text-left text-sm font-semibold text-neutral sm:pl-1"
-                                        >
-                                            {{ $t('common.id') }}
-                                        </th>
-                                        <th scope="col" class="px-2 py-3.5 text-left text-sm font-semibold text-neutral">
-                                            {{ $t('common.time') }}
-                                        </th>
-                                        <th scope="col" class="px-2 py-3.5 text-left text-sm font-semibold text-neutral">
-                                            {{ $t('common.user', 1) }}
-                                        </th>
-                                        <th scope="col" class="px-2 py-3.5 text-left text-sm font-semibold text-neutral">
-                                            {{ $t('common.service') }}/{{ $t('common.method') }}
-                                        </th>
-                                        <th scope="col" class="px-2 py-3.5 text-left text-sm font-semibold text-neutral">
-                                            {{ $t('common.state') }}
-                                        </th>
-                                        <th scope="col" class="px-2 py-3.5 text-left text-sm font-semibold text-neutral">
-                                            {{ $t('common.data') }}
-                                        </th>
-                                        <th
-                                            scope="col"
-                                            class="relative py-3.5 pl-3 pr-4 text-right text-sm font-semibold text-neutral sm:pr-0"
-                                        >
-                                            {{ $t('common.action', 2) }}
-                                        </th>
-                                    </tr>
-                                </thead>
-                            </table>
+                                </template>
+                            </GenericTable>
 
                             <TablePagination
                                 :pagination="data?.pagination"
                                 :refresh="refresh"
                                 @offset-change="offset = $event"
                             />
-                        </div>
+                        </template>
                     </div>
                 </div>
             </div>

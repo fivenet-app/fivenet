@@ -61,7 +61,7 @@ const profilePictureModal = ref(false);
 
         <h3 class="text-lg font-semibold">{{ $t('components.jobs.self_service.title') }}</h3>
 
-        <div class="flex items-center flex-initial gap-1">
+        <div class="flex flex-col md:flex-row items-center flex-initial gap-1">
             <button
                 v-if="
                     colleagueSelf?.colleague &&

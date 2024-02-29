@@ -13,6 +13,7 @@ import { attr } from '~/composables/can';
 import GenericInput from '~/composables/partials/forms/GenericInput.vue';
 import { ListCitizensRequest, ListCitizensResponse } from '~~/gen/ts/services/citizenstore/citizenstore';
 import CitizensListEntry from '~/components/citizens/CitizensListEntry.vue';
+import GenericTable from '~/components/partials/GenericTable.vue';
 
 const { $grpc } = useNuxtApp();
 
@@ -251,9 +252,9 @@ watchDebounced(query.value, () => refresh(), { debounce: 600, maxWait: 1400 });
                             :focus="focusSearch"
                             :message="$t('components.citizens.citizens_list.no_citizens')"
                         />
-                        <div v-else>
-                            <table class="min-w-full divide-y divide-base-600">
-                                <thead>
+                        <template v-else>
+                            <GenericTable>
+                                <template #thead>
                                     <tr>
                                         <th
                                             scope="col"
@@ -261,10 +262,16 @@ watchDebounced(query.value, () => refresh(), { debounce: 600, maxWait: 1400 });
                                         >
                                             {{ $t('common.name') }}
                                         </th>
-                                        <th scope="col" class="px-2 py-3.5 text-left text-sm font-semibold text-neutral">
+                                        <th
+                                            scope="col"
+                                            class="px-2 py-3.5 text-left text-sm font-semibold text-neutral hidden lg:table-cell"
+                                        >
                                             {{ $t('common.job', 1) }}
                                         </th>
-                                        <th scope="col" class="px-2 py-3.5 text-left text-sm font-semibold text-neutral">
+                                        <th
+                                            scope="col"
+                                            class="px-2 py-3.5 text-left text-sm font-semibold text-neutral hidden lg:table-cell"
+                                        >
                                             {{ $t('common.sex') }}
                                         </th>
                                         <th
@@ -274,7 +281,10 @@ watchDebounced(query.value, () => refresh(), { debounce: 600, maxWait: 1400 });
                                         >
                                             {{ $t('common.phone_number') }}
                                         </th>
-                                        <th scope="col" class="px-2 py-3.5 text-left text-sm font-semibold text-neutral">
+                                        <th
+                                            scope="col"
+                                            class="px-2 py-3.5 text-left text-sm font-semibold text-neutral hidden lg:table-cell"
+                                        >
                                             {{ $t('common.date_of_birth') }}
                                         </th>
                                         <th
@@ -297,7 +307,10 @@ watchDebounced(query.value, () => refresh(), { debounce: 600, maxWait: 1400 });
                                         >
                                             {{ $t('common.fine') }}
                                         </th>
-                                        <th scope="col" class="px-2 py-3.5 text-left text-sm font-semibold text-neutral">
+                                        <th
+                                            scope="col"
+                                            class="px-2 py-3.5 text-left text-sm font-semibold text-neutral hidden md:table-cell"
+                                        >
                                             {{ $t('common.height') }}
                                         </th>
                                         <th
@@ -307,66 +320,18 @@ watchDebounced(query.value, () => refresh(), { debounce: 600, maxWait: 1400 });
                                             {{ $t('common.action', 2) }}
                                         </th>
                                     </tr>
-                                </thead>
-                                <tbody class="divide-y divide-base-800">
+                                </template>
+                                <template #tbody>
                                     <CitizensListEntry v-for="user in data?.users" :key="user.userId" :user="user" />
-                                </tbody>
-                                <thead>
-                                    <tr>
-                                        <th
-                                            scope="col"
-                                            class="py-3.5 pl-4 pr-3 text-left text-sm font-semibold text-neutral sm:pl-1"
-                                        >
-                                            {{ $t('common.name') }}
-                                        </th>
-                                        <th scope="col" class="px-2 py-3.5 text-left text-sm font-semibold text-neutral">
-                                            {{ $t('common.job', 1) }}
-                                        </th>
-                                        <th scope="col" class="px-2 py-3.5 text-left text-sm font-semibold text-neutral">
-                                            {{ $t('common.sex') }}
-                                        </th>
-                                        <th
-                                            v-if="attr('CitizenStoreService.ListCitizens', 'Fields', 'PhoneNumber')"
-                                            scope="col"
-                                            class="px-2 py-3.5 text-left text-sm font-semibold text-neutral"
-                                        >
-                                            {{ $t('common.phone_number') }}
-                                        </th>
-                                        <th scope="col" class="px-2 py-3.5 text-left text-sm font-semibold text-neutral">
-                                            {{ $t('common.date_of_birth') }}
-                                        </th>
-                                        <th
-                                            v-if="
-                                                attr(
-                                                    'CitizenStoreService.ListCitizens',
-                                                    'Fields',
-                                                    'UserProps.TrafficInfractionPoints',
-                                                )
-                                            "
-                                            scope="col"
-                                            class="px-2 py-3.5 text-left text-sm font-semibold text-neutral"
-                                        >
-                                            {{ $t('common.traffic_infraction_points') }}
-                                        </th>
-                                        <th scope="col" class="px-2 py-3.5 text-left text-sm font-semibold text-neutral">
-                                            {{ $t('common.height') }}
-                                        </th>
-                                        <th
-                                            scope="col"
-                                            class="relative py-3.5 pl-3 pr-4 text-right text-sm font-semibold text-neutral sm:pr-0"
-                                        >
-                                            {{ $t('common.action', 2) }}
-                                        </th>
-                                    </tr>
-                                </thead>
-                            </table>
+                                </template>
+                            </GenericTable>
 
                             <TablePagination
                                 :pagination="data?.pagination"
                                 :refresh="refresh"
                                 @offset-change="offset = $event"
                             />
-                        </div>
+                        </template>
                     </div>
                 </div>
             </div>

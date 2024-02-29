@@ -1,6 +1,7 @@
 <script lang="ts" setup>
 import { CalendarIcon } from 'mdi-vue3';
 import CitizenInfoPopover from '~/components/partials/citizens/CitizenInfoPopover.vue';
+import ProfilePictureImg from '~/components/partials/citizens/ProfilePictureImg.vue';
 import { TimeclockEntry } from '~~/gen/ts/resources/jobs/timeclock';
 
 const props = defineProps<{
@@ -15,13 +16,18 @@ const spentTime = parseFloat(((Math.round(props.entry.spentTime * 100) / 100) * 
 
 <template>
     <tr class="transition-colors even:bg-base-800 hover:bg-neutral/5">
-        <td
-            v-if="showDate"
-            class="inline-flex items-center whitespace-nowrap py-1 pl-4 pr-3 text-base font-medium text-neutral sm:pl-1"
-        >
-            <template v-if="first">
+        <td class="inline-flex items-center whitespace-nowrap py-1 pl-4 pr-3 text-base font-medium text-neutral sm:pl-1">
+            <template v-if="showDate && first">
                 <CalendarIcon class="h-5 w-5 pr-2" aria-hidden="true" />
                 {{ $d(first, 'date') }}
+            </template>
+            <template v-else>
+                <ProfilePictureImg
+                    :url="entry.user?.avatar?.url"
+                    :name="`${entry.user?.firstname} ${entry.user?.lastname}`"
+                    size="sm"
+                    :rounded="false"
+                />
             </template>
         </td>
         <td v-if="!showDate" class="whitespace-nowrap px-1 py-1 text-left text-accent-200">

@@ -5,6 +5,7 @@ import { useCentrumStore } from '~/store/centrum';
 import DispatchListEntry from '~/components/centrum/dispatches/DispatchListEntry.vue';
 import { Dispatch } from '~~/gen/ts/resources/centrum/dispatches';
 import GenericTime from '~/components/partials/elements/GenericTime.vue';
+import GenericTable from '~/components/partials/GenericTable.vue';
 
 const props = withDefaults(
     defineProps<{
@@ -75,8 +76,8 @@ const grouped = computedAsync(async () => {
         <div class="mt-0.5 flow-root">
             <div class="-mx-2 sm:-mx-6 lg:-mx-8">
                 <div class="inline-block min-w-full py-2 align-middle sm:px-2 lg:px-2">
-                    <table class="min-w-full divide-y divide-base-600">
-                        <thead>
+                    <GenericTable :double-header="false">
+                        <template #thead>
                             <tr>
                                 <th
                                     scope="col"
@@ -133,8 +134,8 @@ const grouped = computedAsync(async () => {
                                     {{ $t('common.message') }}
                                 </th>
                             </tr>
-                        </thead>
-                        <tbody class="divide-y divide-base-800">
+                        </template>
+                        <template #tbody>
                             <template v-for="(group, idx) in grouped" :key="group.key">
                                 <tr v-if="alwaysShowDay || idx !== 0">
                                     <td class="whitespace-nowrap px-1 py-1 text-sm text-gray-300" colspan="5">
@@ -149,8 +150,8 @@ const grouped = computedAsync(async () => {
                                     @goto="$emit('goto', $event)"
                                 />
                             </template>
-                        </tbody>
-                    </table>
+                        </template>
+                    </GenericTable>
                 </div>
             </div>
         </div>

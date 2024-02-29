@@ -44,8 +44,12 @@ const absenceDateModal = ref(false);
         </td>
         <td class="whitespace-nowrap py-2 pl-4 pr-3 text-base font-medium text-neutral sm:pl-1">
             {{ colleague.firstname }} {{ colleague.lastname }}
+            <dl class="font-normal lg:hidden">
+                <dt class="sr-only">{{ $t('common.job_grade') }}</dt>
+                <dd class="mt-1 truncate text-accent-200">{{ colleague.jobGradeLabel }} ({{ colleague.jobGrade }})</dd>
+            </dl>
         </td>
-        <td class="whitespace-nowrap px-1 py-1 text-left text-accent-200">
+        <td class="whitespace-nowrap px-1 py-1 text-left text-accent-200 hidden lg:table-cell">
             {{ colleague.jobGradeLabel }} ({{ colleague.jobGrade }})
         </td>
         <td class="whitespace-nowrap py-2 pl-4 pr-3 text-base font-medium text-neutral sm:pl-1">
@@ -62,7 +66,7 @@ const absenceDateModal = ref(false);
             {{ colleague.dateofbirth }}
         </td>
         <td class="whitespace-nowrap px-1 py-1 text-left text-accent-200">
-            <div class="flex flex-row justify-end">
+            <div class="flex flex-col md:flex-row justify-end">
                 <button
                     v-if="
                         can('JobsService.SetJobsUserProps') &&
@@ -74,6 +78,7 @@ const absenceDateModal = ref(false);
                 >
                     <IslandIcon class="mr-2.5 w-5 h-auto" aria-hidden="true" />
                 </button>
+
                 <NuxtLink
                     v-if="
                         can('JobsService.GetColleague') &&
