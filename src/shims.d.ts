@@ -45,8 +45,6 @@ type Links = {
 
 export type AppConfig = {
     version: string;
-    sentryDSN?: string;
-    sentryEnv?: string;
     login: LoginConfig;
     discord: DiscordConfig;
     links: Links;

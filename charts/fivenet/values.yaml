@@ -115,11 +115,6 @@ fivenet:
     logLevel: "INFO"
     # debug or release
     mode: "release"
-    sentry:
-      environment: "live"
-      # Your Sentry or Glitchtip SDN
-      clientDSN: ""
-      serverDSN: ""
     tracing:
       enabled: false
       # Jaeger Tracing endpoint (should have the right API path in the URL `/api/traces`)

@@ -2,7 +2,6 @@ import type { AppConfig } from '~/shims';
 
 export default defineAppConfig({
     version: '',
-    sentryDSN: '',
     login: {
         signupEnabled: true,
         providers: [],

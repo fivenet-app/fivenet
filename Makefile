@@ -35,6 +35,11 @@ gdal2tiles-leaflet: build_dir
 		git -C $(BUILD_DIR)gdal2tiles-leaflet pull --all; \
 	fi
 
+go-licenses:
+ifeq (, $(shell which go-licenses))
+	@GO111MODULE=on go install github.com/google/go-licenses@latest
+endif
+
 # ====================================================================================
 # Makefile helper functions for helm-docs: https://github.com/norwoodj/helm-docs
 #
@@ -150,9 +155,11 @@ fmt-js:
 	yarn prettier --write ./src
 
 .PHONY: gen-licenses
-gen-licenses:
+gen-licenses: go-licenses
 	yarn licenses generate-disclaimer > ./src/public/licenses/frontend.txt
-	go-licenses report . --template internal/scripts/licenses-backend.txt.tpl > ./src/public/licenses/backend.txt
+	go-licenses report ./... --ignore $$(go list -m) --include_tests \
+        --ignore $$(go list std | awk 'NR > 1 { printf(",") } { printf("%s",$$0) } END { print "" }') \
+		--template internal/scripts/licenses-backend.txt.tpl > ./src/public/licenses/backend.txt
 
 .PHONY: gen-tiles
 gen-tiles: gdal2tiles-leaflet

@@ -15,7 +15,6 @@ import (
 	grpc_sanitizer "github.com/galexrt/fivenet/pkg/grpc/interceptors/sanitizer"
 	"github.com/galexrt/fivenet/pkg/grpc/interceptors/tracing"
 	"github.com/galexrt/fivenet/pkg/perms"
-	"github.com/getsentry/sentry-go"
 	grpcprom "github.com/grpc-ecosystem/go-grpc-middleware/providers/prometheus"
 	"github.com/grpc-ecosystem/go-grpc-middleware/v2/interceptors/logging"
 	"github.com/grpc-ecosystem/go-grpc-middleware/v2/interceptors/recovery"
@@ -180,7 +179,6 @@ func grpcPanicRecoveryHandler(logger *zap.Logger) recovery.RecoveryHandlerFunc {
 
 		if e, ok := pa.(error); ok {
 			logger.Error("recovered from panic", zap.Error(e))
-			sentry.CaptureException(e)
 		} else {
 			logger.Error("recovered from panic", zap.Any("err", pa), zap.Stack("stacktrace"))
 		}

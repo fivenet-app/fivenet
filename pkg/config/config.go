@@ -59,7 +59,6 @@ type Config struct {
 	LogLevel string `default:"DEBUG" yaml:"logLevel"`
 	Mode     string `default:"debug" yaml:"mode"`
 
-	Sentry  Sentry  `yaml:"sentry"`
 	Tracing Tracing `yaml:"tracing"`
 
 	HTTP       HTTP       `yaml:"http"`
@@ -74,12 +73,6 @@ type Config struct {
 	Discord    Discord    `yaml:"discord"`
 	Storage    Storage    `yaml:"storage"`
 	ImageProxy ImageProxy `yaml:"imageProxy"`
-}
-
-type Sentry struct {
-	ClientDSN   string `default:"" yaml:"clientDSN"`
-	ServerDSN   string `default:"" yaml:"serverDSN"`
-	Environment string `default:"dev" yaml:"environment"`
 }
 
 type Tracing struct {

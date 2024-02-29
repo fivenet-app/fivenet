@@ -12,7 +12,6 @@ require (
 	github.com/creasty/defaults v1.7.0
 	github.com/documize/html-diff v0.0.0-20160503140253-f61c192c7796
 	github.com/envoyproxy/protoc-gen-validate v1.0.4
-	github.com/getsentry/sentry-go v0.27.0
 	github.com/gin-contrib/pprof v1.4.0
 	github.com/gin-contrib/sessions v0.0.5
 	github.com/gin-contrib/static v1.1.0

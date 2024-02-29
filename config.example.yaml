@@ -1,11 +1,6 @@
 logLevel: "DEBUG"
 # debug or release
 mode: "debug"
-sentry:
-  environment: "dev"
-  # Your Sentry or Glitchtip SDN
-  clientDSN: ""
-  serverDSN: ""
 tracing:
   enabled: false
   # Jaeger Tracing endpoint (should have the right API path in the URL `/api/traces`)
