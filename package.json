@@ -35,7 +35,7 @@
         "@zxcvbn-ts/core": "3.0.4",
         "google-protobuf": "3.21.2",
         "grpc-web": "1.5.0",
-        "jodit": "4.0.14",
+        "jodit": "4.0.16",
         "jodit-vue": "3.1.0",
         "leaflet": "1.9.4",
         "leaflet-contextmenu": "1.4.0",
@@ -98,7 +98,7 @@
         "tailwindcss-themer": "^4.0.0",
         "typescript": "5.3.3",
         "vite-svg-loader": "5.1.0",
-        "vue": "3.4.20",
+        "vue": "3.4.21",
         "vue-i18n-routing": "^1.2.0",
         "vue-router": "4.3.0",
         "vue-tsc": "1.8.27"
