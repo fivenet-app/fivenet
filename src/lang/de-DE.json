@@ -845,7 +845,8 @@
         "logo": "Logo",
         "absence_date": "Abwesenheitsdatum",
         "mug_shot": "Fahndungsfoto",
-        "file_size": "Dateigröße"
+        "file_size": "Dateigröße",
+        "predefined": "Vordefiniert | Vordefinierte"
     },
     "notifications": {
         "clipboard": {

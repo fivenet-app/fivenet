@@ -255,34 +255,49 @@ function updateReasonField(value: string): void {
                                                                     as="p"
                                                                     class="mt-2 text-sm text-error-400"
                                                                 />
+                                                            </dd>
+                                                        </div>
 
-                                                                <template
-                                                                    v-if="
-                                                                        settings?.predefinedStatus &&
-                                                                        settings?.predefinedStatus.dispatchStatus.length > 0
+                                                        <div
+                                                            v-if="
+                                                                settings?.predefinedStatus &&
+                                                                settings?.predefinedStatus.dispatchStatus.length > 0
+                                                            "
+                                                            class="px-4 py-3 sm:grid sm:grid-cols-3 sm:gap-4 sm:px-0"
+                                                        >
+                                                            <dt class="text-sm font-medium leading-6 text-neutral">
+                                                                <label
+                                                                    for="dispatchStatus"
+                                                                    class="block text-sm font-medium leading-6 text-neutral"
+                                                                >
+                                                                    {{ $t('common.predefined', 2) }}
+                                                                    {{ $t('common.reason', 2) }}
+                                                                </label>
+                                                            </dt>
+                                                            <dd
+                                                                class="mt-1 text-sm leading-6 text-gray-300 sm:col-span-2 sm:mt-0"
+                                                            >
+                                                                <select
+                                                                    name="dispatchStatus"
+                                                                    class="mt-1 block w-full rounded-md border-0 bg-base-700 py-1.5 text-neutral placeholder:text-accent-200 focus:ring-2 focus:ring-inset focus:ring-base-300 sm:text-sm sm:leading-6"
+                                                                    @focusin="focusTablet(true)"
+                                                                    @focusout="focusTablet(false)"
+                                                                    @change="
+                                                                        updateReasonField(
+                                                                            ($event.target as HTMLSelectElement).value,
+                                                                        )
                                                                     "
                                                                 >
-                                                                    <select
-                                                                        class="mt-2 block w-full rounded-md border-0 bg-base-700 py-1.5 text-neutral placeholder:text-accent-200 focus:ring-2 focus:ring-inset focus:ring-base-300 sm:text-sm sm:leading-6"
-                                                                        @focusin="focusTablet(true)"
-                                                                        @focusout="focusTablet(false)"
-                                                                        @change="
-                                                                            updateReasonField(
-                                                                                ($event.target as HTMLSelectElement).value,
-                                                                            )
-                                                                        "
+                                                                    <option value=""></option>
+                                                                    <option
+                                                                        v-for="(preStatus, idx) in settings?.predefinedStatus
+                                                                            .dispatchStatus"
+                                                                        :key="idx"
+                                                                        :value="preStatus"
                                                                     >
-                                                                        <option value=""></option>
-                                                                        <option
-                                                                            v-for="(preStatus, idx) in settings
-                                                                                ?.predefinedStatus.dispatchStatus"
-                                                                            :key="idx"
-                                                                            :value="preStatus"
-                                                                        >
-                                                                            {{ preStatus }}
-                                                                        </option>
-                                                                    </select>
-                                                                </template>
+                                                                        {{ preStatus }}
+                                                                    </option>
+                                                                </select>
                                                             </dd>
                                                         </div>
                                                     </dl>
