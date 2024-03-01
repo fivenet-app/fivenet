@@ -128,6 +128,14 @@ export interface DiscordSyncSettings {
      * @generated from protobuf field: optional resources.users.StatusLogSettings status_log_settings = 4;
      */
     statusLogSettings?: StatusLogSettings;
+    /**
+     * @generated from protobuf field: bool jobs_absence = 5;
+     */
+    jobsAbsence: boolean;
+    /**
+     * @generated from protobuf field: optional resources.users.JobsAbsenceSettings jobs_absence_settings = 6;
+     */
+    jobsAbsenceSettings?: JobsAbsenceSettings;
 }
 /**
  * @generated from protobuf message resources.users.UserInfoSyncSettings
@@ -166,6 +174,15 @@ export interface StatusLogSettings {
      * @generated from protobuf field: optional string channel_id = 1;
      */
     channelId?: string;
+}
+/**
+ * @generated from protobuf message resources.users.JobsAbsenceSettings
+ */
+export interface JobsAbsenceSettings {
+    /**
+     * @generated from protobuf field: string absence_role = 1;
+     */
+    absenceRole: string;
 }
 /**
  * @generated from protobuf enum resources.users.UserInfoSyncUnemployedMode
@@ -490,13 +507,16 @@ class DiscordSyncSettings$Type extends MessageType<DiscordSyncSettings> {
             { no: 1, name: "user_info_sync", kind: "scalar", T: 8 /*ScalarType.BOOL*/ },
             { no: 2, name: "user_info_sync_settings", kind: "message", T: () => UserInfoSyncSettings },
             { no: 3, name: "status_log", kind: "scalar", T: 8 /*ScalarType.BOOL*/ },
-            { no: 4, name: "status_log_settings", kind: "message", T: () => StatusLogSettings }
+            { no: 4, name: "status_log_settings", kind: "message", T: () => StatusLogSettings },
+            { no: 5, name: "jobs_absence", kind: "scalar", T: 8 /*ScalarType.BOOL*/ },
+            { no: 6, name: "jobs_absence_settings", kind: "message", T: () => JobsAbsenceSettings }
         ]);
     }
     create(value?: PartialMessage<DiscordSyncSettings>): DiscordSyncSettings {
         const message = globalThis.Object.create((this.messagePrototype!));
         message.userInfoSync = false;
         message.statusLog = false;
+        message.jobsAbsence = false;
         if (value !== undefined)
             reflectionMergePartial<DiscordSyncSettings>(this, message, value);
         return message;
@@ -517,6 +537,12 @@ class DiscordSyncSettings$Type extends MessageType<DiscordSyncSettings> {
                     break;
                 case /* optional resources.users.StatusLogSettings status_log_settings */ 4:
                     message.statusLogSettings = StatusLogSettings.internalBinaryRead(reader, reader.uint32(), options, message.statusLogSettings);
+                    break;
+                case /* bool jobs_absence */ 5:
+                    message.jobsAbsence = reader.bool();
+                    break;
+                case /* optional resources.users.JobsAbsenceSettings jobs_absence_settings */ 6:
+                    message.jobsAbsenceSettings = JobsAbsenceSettings.internalBinaryRead(reader, reader.uint32(), options, message.jobsAbsenceSettings);
                     break;
                 default:
                     let u = options.readUnknownField;
@@ -542,6 +568,12 @@ class DiscordSyncSettings$Type extends MessageType<DiscordSyncSettings> {
         /* optional resources.users.StatusLogSettings status_log_settings = 4; */
         if (message.statusLogSettings)
             StatusLogSettings.internalBinaryWrite(message.statusLogSettings, writer.tag(4, WireType.LengthDelimited).fork(), options).join();
+        /* bool jobs_absence = 5; */
+        if (message.jobsAbsence !== false)
+            writer.tag(5, WireType.Varint).bool(message.jobsAbsence);
+        /* optional resources.users.JobsAbsenceSettings jobs_absence_settings = 6; */
+        if (message.jobsAbsenceSettings)
+            JobsAbsenceSettings.internalBinaryWrite(message.jobsAbsenceSettings, writer.tag(6, WireType.LengthDelimited).fork(), options).join();
         let u = options.writeUnknownFields;
         if (u !== false)
             (u == true ? UnknownFieldHandler.onWrite : u)(this.typeName, message, writer);
@@ -682,3 +714,50 @@ class StatusLogSettings$Type extends MessageType<StatusLogSettings> {
  * @generated MessageType for protobuf message resources.users.StatusLogSettings
  */
 export const StatusLogSettings = new StatusLogSettings$Type();
+// @generated message type with reflection information, may provide speed optimized methods
+class JobsAbsenceSettings$Type extends MessageType<JobsAbsenceSettings> {
+    constructor() {
+        super("resources.users.JobsAbsenceSettings", [
+            { no: 1, name: "absence_role", kind: "scalar", T: 9 /*ScalarType.STRING*/, options: { "validate.rules": { string: { maxLen: "48" } } } }
+        ]);
+    }
+    create(value?: PartialMessage<JobsAbsenceSettings>): JobsAbsenceSettings {
+        const message = globalThis.Object.create((this.messagePrototype!));
+        message.absenceRole = "";
+        if (value !== undefined)
+            reflectionMergePartial<JobsAbsenceSettings>(this, message, value);
+        return message;
+    }
+    internalBinaryRead(reader: IBinaryReader, length: number, options: BinaryReadOptions, target?: JobsAbsenceSettings): JobsAbsenceSettings {
+        let message = target ?? this.create(), end = reader.pos + length;
+        while (reader.pos < end) {
+            let [fieldNo, wireType] = reader.tag();
+            switch (fieldNo) {
+                case /* string absence_role */ 1:
+                    message.absenceRole = reader.string();
+                    break;
+                default:
+                    let u = options.readUnknownField;
+                    if (u === "throw")
+                        throw new globalThis.Error(`Unknown field ${fieldNo} (wire type ${wireType}) for ${this.typeName}`);
+                    let d = reader.skip(wireType);
+                    if (u !== false)
+                        (u === true ? UnknownFieldHandler.onRead : u)(this.typeName, message, fieldNo, wireType, d);
+            }
+        }
+        return message;
+    }
+    internalBinaryWrite(message: JobsAbsenceSettings, writer: IBinaryWriter, options: BinaryWriteOptions): IBinaryWriter {
+        /* string absence_role = 1; */
+        if (message.absenceRole !== "")
+            writer.tag(1, WireType.LengthDelimited).string(message.absenceRole);
+        let u = options.writeUnknownFields;
+        if (u !== false)
+            (u == true ? UnknownFieldHandler.onWrite : u)(this.typeName, message, writer);
+        return writer;
+    }
+}
+/**
+ * @generated MessageType for protobuf message resources.users.JobsAbsenceSettings
+ */
+export const JobsAbsenceSettings = new JobsAbsenceSettings$Type();

@@ -892,6 +892,10 @@
                 </li>
               
                 <li>
+                  <a href="#resources.users.JobsAbsenceSettings"><span class="badge">M</span>JobsAbsenceSettings</a>
+                </li>
+              
+                <li>
                   <a href="#resources.users.QuickButtons"><span class="badge">M</span>QuickButtons</a>
                 </li>
               
@@ -10924,6 +10928,20 @@
                   <td><p> </p></td>
                 </tr>
               
+                <tr>
+                  <td>jobs_absence</td>
+                  <td><a href="#bool">bool</a></td>
+                  <td></td>
+                  <td><p> </p></td>
+                </tr>
+              
+                <tr>
+                  <td>jobs_absence_settings</td>
+                  <td><a href="#resources.users.JobsAbsenceSettings">JobsAbsenceSettings</a></td>
+                  <td>optional</td>
+                  <td><p> </p></td>
+                </tr>
+              
             </tbody>
           </table>
 
@@ -11260,6 +11278,57 @@
                     <ul>
                     
                       <li>string.max_len: 1024</li>
+                    
+                    </ul>
+                  </td>
+                </tr>
+              
+              </tbody>
+            </table>
+            
+          
+
+        
+      
+        <h3 id="resources.users.JobsAbsenceSettings">JobsAbsenceSettings</h3>
+        <p></p>
+
+        
+          <table class="field-table">
+            <thead>
+              <tr><td>Field</td><td>Type</td><td>Label</td><td>Description</td></tr>
+            </thead>
+            <tbody>
+              
+                <tr>
+                  <td>absence_role</td>
+                  <td><a href="#string">string</a></td>
+                  <td></td>
+                  <td><p> </p></td>
+                </tr>
+              
+            </tbody>
+          </table>
+
+          
+            
+            
+            <h4>Validated Fields</h4>
+            <table>
+              <thead>
+                <tr>
+                  <td>Field</td>
+                  <td>Validations</td>
+                </tr>
+              </thead>
+              <tbody>
+              
+                <tr>
+                  <td>absence_role</td>
+                  <td>
+                    <ul>
+                    
+                      <li>string.max_len: 48</li>
                     
                     </ul>
                   </td>

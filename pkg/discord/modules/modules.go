@@ -14,9 +14,10 @@ import (
 )
 
 var (
-	tOauth2Accs = table.FivenetOauth2Accounts
-	tAccs       = table.FivenetAccounts
-	tUsers      = table.Users.AS("users")
+	tOauth2Accs    = table.FivenetOauth2Accounts
+	tAccs          = table.FivenetAccounts
+	tUsers         = table.Users.AS("users")
+	tJobsUserProps = table.FivenetJobsUserProps
 )
 
 var Modules = map[string]NewModuleFunc{}

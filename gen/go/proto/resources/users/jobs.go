@@ -7,10 +7,13 @@ import (
 )
 
 const (
+	DefaultTheme              = "defaultTheme"
 	DefaultLivemapMarkerColor = "#5c7aff"
 
-	DefaultEmployeeRoleFormat = "%s Personal"
-	DefaultGradeRoleFormat    = "[%grade%] %grade_label%"
+	DefaultEmployeeRoleFormat  = "%s Personal"
+	DefaultGradeRoleFormat     = "[%grade%] %grade_label%"
+	DefaultUnemployedRoleName  = "Citizen"
+	DefaultJobsAbsenceRoleName = "Absent"
 )
 
 func (x *Job) GetJob() string {
@@ -31,7 +34,7 @@ func (x *JobProps) Default(job string) {
 	}
 
 	if x.Theme == "" {
-		x.Theme = "defaultTheme"
+		x.Theme = DefaultTheme
 	}
 
 	if x.QuickButtons == nil {
@@ -69,7 +72,7 @@ func (x *JobProps) Default(job string) {
 		x.DiscordSyncSettings.UserInfoSyncSettings.GradeRoleFormat = &gradeRoleFormat
 	}
 
-	unemployedRoleName := "Citizen"
+	unemployedRoleName := DefaultUnemployedRoleName
 	if x.DiscordSyncSettings.UserInfoSyncSettings.UnemployedRoleName == nil {
 		x.DiscordSyncSettings.UserInfoSyncSettings.UnemployedRoleName = &unemployedRoleName
 	}
@@ -77,6 +80,13 @@ func (x *JobProps) Default(job string) {
 	// Status Log Settings
 	if x.DiscordSyncSettings.StatusLogSettings == nil {
 		x.DiscordSyncSettings.StatusLogSettings = &StatusLogSettings{}
+	}
+
+	// Jobs Abscene Role
+	if x.DiscordSyncSettings.JobsAbsenceSettings == nil {
+		x.DiscordSyncSettings.JobsAbsenceSettings = &JobsAbsenceSettings{
+			AbsenceRole: DefaultJobsAbsenceRoleName,
+		}
 	}
 }
 

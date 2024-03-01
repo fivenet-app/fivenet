@@ -657,6 +657,64 @@ async function loadImage(): Promise<void> {
                                                 />
                                             </div>
                                         </template>
+
+                                        <SwitchGroup as="div" class="flex items-center mt-2 mb-1">
+                                            <Switch
+                                                v-model="jobProps.discordSyncSettings.jobsAbsence"
+                                                :class="[
+                                                    jobProps.discordSyncSettings.jobsAbsence ? 'bg-primary-600' : 'bg-gray-200',
+                                                    'relative inline-flex h-6 w-11 flex-shrink-0 cursor-pointer rounded-full border-2 border-transparent transition-colors duration-200 ease-in-out focus:outline-none focus:ring-2 focus:ring-primary-600 focus:ring-offset-2',
+                                                ]"
+                                            >
+                                                <span
+                                                    aria-hidden="true"
+                                                    :class="[
+                                                        jobProps.discordSyncSettings.jobsAbsence
+                                                            ? 'translate-x-5'
+                                                            : 'translate-x-0',
+                                                        'pointer-events-none inline-block h-5 w-5 transform rounded-full bg-white shadow ring-0 transition duration-200 ease-in-out',
+                                                    ]"
+                                                />
+                                            </Switch>
+                                            <SwitchLabel as="span" class="ml-3 text-sm">
+                                                <span class="font-medium text-gray-300">{{
+                                                    $t(
+                                                        'components.rector.job_props.jobs_absence_settings.jobs_absence_role_enabled',
+                                                    )
+                                                }}</span>
+                                            </SwitchLabel>
+                                        </SwitchGroup>
+
+                                        <template v-if="jobProps.discordSyncSettings.jobsAbsence">
+                                            <div>
+                                                <label for="jobsAbsenceRole">
+                                                    {{
+                                                        $t(
+                                                            'components.rector.job_props.jobs_absence_settings.jobs_absence_role_name',
+                                                        )
+                                                    }}:
+                                                </label>
+                                                <input
+                                                    v-model="jobProps.discordSyncSettings.jobsAbsenceSettings!.absenceRole"
+                                                    type="text"
+                                                    name="jobsAbsenceRole"
+                                                    class="block w-full rounded-md border-0 bg-base-700 py-1.5 text-neutral placeholder:text-accent-200 focus:ring-2 focus:ring-inset focus:ring-base-300 sm:text-sm sm:leading-6"
+                                                    :placeholder="
+                                                        $t(
+                                                            'components.rector.job_props.jobs_absence_settings.jobs_absence_role_name',
+                                                        )
+                                                    "
+                                                    :label="
+                                                        $t(
+                                                            'components.rector.job_props.jobs_absence_settings.jobs_absence_role_name',
+                                                        )
+                                                    "
+                                                    maxlength="48"
+                                                    @focusin="focusTablet(true)"
+                                                    @focusout="focusTablet(false)"
+                                                />
+                                            </div>
+                                        </template>
                                     </template>
                                 </template>
                             </template>

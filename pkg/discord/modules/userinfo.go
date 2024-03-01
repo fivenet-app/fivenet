@@ -7,8 +7,10 @@ import (
 	"regexp"
 	"slices"
 	"strings"
+	"time"
 
 	"github.com/bwmarrin/discordgo"
+	"github.com/galexrt/fivenet/gen/go/proto/resources/timestamp"
 	pbusers "github.com/galexrt/fivenet/gen/go/proto/resources/users"
 	"github.com/galexrt/fivenet/pkg/discord/embeds"
 	jet "github.com/go-jet/jet/v2/mysql"
@@ -29,18 +31,23 @@ type UserInfo struct {
 	unemployedRoleName  string
 	unemployedMode      pbusers.UserInfoSyncUnemployedMode
 
+	jobsAbsenceEnabled  bool
+	jobsAbsenceRoleName string
+	jobsAbsenceRole     *discordgo.Role
+
 	jobRoles       map[int32]*discordgo.Role
 	employeeRole   *discordgo.Role
 	unemployedRole *discordgo.Role
 }
 
 type UserRoleMapping struct {
-	AccountID  uint64 `alias:"account_id"`
-	ExternalID string `alias:"external_id"`
-	JobGrade   int32  `alias:"job_grade"`
-	Firstname  string `alias:"firstname"`
-	Lastname   string `alias:"lastname"`
-	Job        string `alias:"job"`
+	AccountID   uint64               `alias:"account_id"`
+	ExternalID  string               `alias:"external_id"`
+	JobGrade    int32                `alias:"job_grade"`
+	Firstname   string               `alias:"firstname"`
+	Lastname    string               `alias:"lastname"`
+	Job         string               `alias:"job"`
+	AbsenceDate *timestamp.Timestamp `alias:"absence_date"`
 }
 
 func init() {
@@ -76,6 +83,9 @@ func (g *UserInfo) Run(settings *pbusers.DiscordSyncSettings) ([]*discordgo.Mess
 	g.unemployedRoleName = *settings.UserInfoSyncSettings.UnemployedRoleName
 	g.unemployedMode = settings.UserInfoSyncSettings.UnemployedMode
 
+	g.jobsAbsenceEnabled = settings.JobsAbsence
+	g.jobsAbsenceRoleName = settings.JobsAbsenceSettings.AbsenceRole
+
 	guildRoles, err := g.discord.GuildRoles(g.guild.ID)
 	if err != nil {
 		return nil, err
@@ -105,6 +115,7 @@ func (g *UserInfo) syncUserInfo() ([]*discordgo.MessageEmbed, error) {
 			tUsers.Firstname.AS("userrolemapping.firstname"),
 			tUsers.Lastname.AS("userrolemapping.lastname"),
 			tUsers.Job.AS("userrolemapping.job"),
+			tJobsUserProps.AbsenceDate.AS("userrolemapping.absence_date"),
 		).
 		FROM(
 			tOauth2Accs.
@@ -113,11 +124,15 @@ func (g *UserInfo) syncUserInfo() ([]*discordgo.MessageEmbed, error) {
 				).
 				INNER_JOIN(tUsers,
 					tUsers.Identifier.LIKE(jet.CONCAT(jet.String("char%:"), tAccs.License)),
+				).
+				LEFT_JOIN(tJobsUserProps,
+					tJobsUserProps.UserID.EQ(tUsers.ID),
 				),
 		).
 		WHERE(jet.AND(
 			tOauth2Accs.Provider.EQ(jet.String("discord")),
 			tUsers.Job.EQ(jet.String(g.job)),
+			tUsers.ID.EQ(jet.Int32(26061)),
 		)).
 		ORDER_BY(tUsers.ID.ASC())
 
@@ -159,6 +174,13 @@ func (g *UserInfo) syncUserInfo() ([]*discordgo.MessageEmbed, error) {
 		if err := g.setUserJobRole(member, user.Job, user.JobGrade); err != nil {
 			g.logger.Error(fmt.Sprintf("failed to set user's job roles %s", user.ExternalID), zap.Error(err))
 			continue
+		}
+
+		if g.jobsAbsenceEnabled && g.jobsAbsenceRole != nil {
+			if err := g.setJobsAbsenceRole(member, user.AbsenceDate); err != nil {
+				g.logger.Error(fmt.Sprintf("failed to set user's jobs absence roles %s", user.ExternalID), zap.Error(err))
+				continue
+			}
 		}
 	}
 
@@ -269,6 +291,27 @@ func (g *UserInfo) createJobRoles(roles []*discordgo.Role) error {
 		g.employeeRole = nil
 	}
 
+	if g.jobsAbsenceEnabled {
+		if !slices.ContainsFunc(roles, func(in *discordgo.Role) bool {
+			if in.Name == g.jobsAbsenceRoleName {
+				g.jobsAbsenceRole = in
+				return true
+			}
+			return false
+		}) {
+			role, err := g.discord.GuildRoleCreate(g.guild.ID, &discordgo.RoleParams{
+				Name: g.jobsAbsenceRoleName,
+			})
+			if err != nil {
+				return fmt.Errorf("failed to create jobs absence role %s: %w", job.Label, err)
+			}
+
+			g.jobsAbsenceRole = role
+		}
+	} else {
+		g.jobsAbsenceRole = nil
+	}
+
 	g.logger.Debug("created job employee and rank roles")
 
 	return nil
@@ -353,6 +396,31 @@ func (g *UserInfo) setUserJobRole(member *discordgo.Member, job string, grade in
 		if err := g.discord.GuildMemberRoleAdd(g.guild.ID, member.User.ID, r.ID); err != nil {
 			return fmt.Errorf("failed to add role %s (%s) member %s: %w", r.Name, r.ID, member.User.ID, err)
 		}
+	}
+
+	return nil
+}
+
+func (g *UserInfo) setJobsAbsenceRole(member *discordgo.Member, date *timestamp.Timestamp) error {
+	// Either the user has no date set or the absence is "almost" over
+	if date == nil || time.Since(date.AsTime()) > -1*time.Hour {
+		if !slices.Contains(member.Roles, g.jobsAbsenceRole.ID) {
+			return nil
+		}
+
+		if err := g.discord.GuildMemberRoleRemove(g.guild.ID, member.User.ID, g.jobsAbsenceRole.ID); err != nil {
+			return fmt.Errorf("failed to remove jobs absence role %s (%s) from member %s: %w", g.jobsAbsenceRole.Name, g.jobsAbsenceRole.ID, member.User.ID, err)
+		}
+
+		return nil
+	}
+
+	if slices.Contains(member.Roles, g.jobsAbsenceRole.ID) {
+		return nil
+	}
+
+	if err := g.discord.GuildMemberRoleAdd(g.guild.ID, member.User.ID, g.jobsAbsenceRole.ID); err != nil {
+		return fmt.Errorf("failed to add role %s (%s) member %s: %w", g.jobsAbsenceRole.Name, g.jobsAbsenceRole.ID, member.User.ID, err)
 	}
 
 	return nil
