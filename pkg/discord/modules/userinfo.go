@@ -33,11 +33,11 @@ type UserInfo struct {
 
 	jobsAbsenceEnabled  bool
 	jobsAbsenceRoleName string
-	jobsAbsenceRole     *discordgo.Role
 
-	jobRoles       map[int32]*discordgo.Role
-	employeeRole   *discordgo.Role
-	unemployedRole *discordgo.Role
+	jobRoles        map[int32]*discordgo.Role
+	employeeRole    *discordgo.Role
+	unemployedRole  *discordgo.Role
+	jobsAbsenceRole *discordgo.Role
 }
 
 type UserRoleMapping struct {
@@ -175,7 +175,7 @@ func (g *UserInfo) syncUserInfo() ([]*discordgo.MessageEmbed, error) {
 			continue
 		}
 
-		if g.jobsAbsenceEnabled && g.jobsAbsenceRole != nil {
+		if g.jobsAbsenceRole != nil {
 			if err := g.setJobsAbsenceRole(member, user.AbsenceDate); err != nil {
 				g.logger.Error(fmt.Sprintf("failed to set user's jobs absence roles %s", user.ExternalID), zap.Error(err))
 				continue
@@ -410,16 +410,14 @@ func (g *UserInfo) setJobsAbsenceRole(member *discordgo.Member, date *timestamp.
 		if err := g.discord.GuildMemberRoleRemove(g.guild.ID, member.User.ID, g.jobsAbsenceRole.ID); err != nil {
 			return fmt.Errorf("failed to remove jobs absence role %s (%s) from member %s: %w", g.jobsAbsenceRole.Name, g.jobsAbsenceRole.ID, member.User.ID, err)
 		}
+	} else {
+		if slices.Contains(member.Roles, g.jobsAbsenceRole.ID) {
+			return nil
+		}
 
-		return nil
-	}
-
-	if slices.Contains(member.Roles, g.jobsAbsenceRole.ID) {
-		return nil
-	}
-
-	if err := g.discord.GuildMemberRoleAdd(g.guild.ID, member.User.ID, g.jobsAbsenceRole.ID); err != nil {
-		return fmt.Errorf("failed to add role %s (%s) member %s: %w", g.jobsAbsenceRole.Name, g.jobsAbsenceRole.ID, member.User.ID, err)
+		if err := g.discord.GuildMemberRoleAdd(g.guild.ID, member.User.ID, g.jobsAbsenceRole.ID); err != nil {
+			return fmt.Errorf("failed to add role %s (%s) member %s: %w", g.jobsAbsenceRole.Name, g.jobsAbsenceRole.ID, member.User.ID, err)
+		}
 	}
 
 	return nil
@@ -484,16 +482,16 @@ outerLoop:
 			}
 		}
 
-		// If employee role is disabled or user isn't in the employee role, continue
-		if g.employeeRole != nil && !isEmployee && slices.Contains(member.Roles, g.employeeRole.ID) {
-			g.logger.Debug("removing employee role from member", zap.String("discord_role_name", g.employeeRole.Name), zap.String("discord_role_id", g.employeeRole.ID),
-				zap.String("discord_user_id", member.User.ID), zap.String("discord_nickname", member.Nick))
-			if err := g.discord.GuildMemberRoleRemove(g.guild.ID, member.User.ID, g.employeeRole.ID); err != nil {
-				return fmt.Errorf("failed to remove member from employee job role %s (%s): %w", g.employeeRole.Name, g.employeeRole.ID, err)
-			}
-		}
-
 		if !isEmployee {
+			// If employee role is disabled or user isn't in the employee role, continue
+			if g.employeeRole != nil && slices.Contains(member.Roles, g.employeeRole.ID) {
+				g.logger.Debug("removing employee role from member", zap.String("discord_role_name", g.employeeRole.Name), zap.String("discord_role_id", g.employeeRole.ID),
+					zap.String("discord_user_id", member.User.ID), zap.String("discord_nickname", member.Nick))
+				if err := g.discord.GuildMemberRoleRemove(g.guild.ID, member.User.ID, g.employeeRole.ID); err != nil {
+					return fmt.Errorf("failed to remove member from employee job role %s (%s): %w", g.employeeRole.Name, g.employeeRole.ID, err)
+				}
+			}
+
 			// If unemployed role is enabled and user is not an employee, give them the unemployed role
 			if g.unemployedRole != nil {
 				switch g.unemployedMode {
@@ -503,26 +501,26 @@ outerLoop:
 						break
 					}
 
-					g.logger.Debug("adding unemployed role from member", zap.String("discord_role_name", g.unemployedRole.Name), zap.String("discord_role_id", g.employeeRole.ID),
+					g.logger.Debug("adding unemployed role from member", zap.String("discord_role_name", g.unemployedRole.Name), zap.String("discord_role_id", g.unemployedRole.ID),
 						zap.String("discord_user_id", member.User.ID), zap.String("discord_nickname", member.Nick))
 					if err := g.discord.GuildMemberRoleAdd(g.guild.ID, member.User.ID, g.unemployedRole.ID); err != nil {
-						return fmt.Errorf("failed to add member to unemployed role %s (%s): %w", g.unemployedRole.Name, g.employeeRole.ID, err)
+						return fmt.Errorf("failed to add member to unemployed role %s (%s): %w", g.unemployedRole.Name, g.unemployedRole.ID, err)
 					}
 
 				case pbusers.UserInfoSyncUnemployedMode_USER_INFO_SYNC_UNEMPLOYED_MODE_KICK:
 					if err := g.discord.GuildMemberDeleteWithReason(g.guild.ID, member.User.ID,
 						fmt.Sprintf("no longer an employee of %s job", g.job)); err != nil {
-						return fmt.Errorf("failed to kick unemployed member %s (%s) from guild: %w", g.unemployedRole.Name, g.employeeRole.ID, err)
+						return fmt.Errorf("failed to kick unemployed member %s (%s) from guild: %w", member.User.Username, member.User.ID, err)
 					}
 				}
 			}
 
-			if g.jobsAbsenceEnabled && g.jobsAbsenceRole != nil {
-				// Remove user from jobs absence role when no longer an employee
-				if slices.Contains(member.Roles, g.unemployedRole.ID) {
-					if err := g.discord.GuildMemberRoleRemove(g.guild.ID, member.User.ID, g.unemployedRole.ID); err != nil {
-						return fmt.Errorf("failed to remove member from jobs absence role %s (%s): %w", g.unemployedRole.Name, g.unemployedRole.ID, err)
-					}
+			// Remove user from jobs absence role when no longer an employee
+			if g.jobsAbsenceRole != nil && slices.Contains(member.Roles, g.jobsAbsenceRole.ID) {
+				g.logger.Debug("removing jobs absence role from unemployed member", zap.String("discord_role_name", g.jobsAbsenceRole.Name), zap.String("discord_role_id", g.jobsAbsenceRole.ID),
+					zap.String("discord_user_id", member.User.ID), zap.String("discord_nickname", member.Nick))
+				if err := g.discord.GuildMemberRoleRemove(g.guild.ID, member.User.ID, g.jobsAbsenceRole.ID); err != nil {
+					return fmt.Errorf("failed to remove member from jobs absence role %s (%s): %w", g.jobsAbsenceRole.Name, g.jobsAbsenceRole.ID, err)
 				}
 			}
 		}
