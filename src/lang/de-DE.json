@@ -379,6 +379,10 @@
                 "discord_sync_settings": {
                     "title": "Discord-Bot-Synchronisations-Einstellungen",
                     "subtitle": "Verwalte die Discord-Bot-Synchronisations-Einstellungen."
+                },
+                "jobs_absence_settings": {
+                    "jobs_absence_role_enabled": "Verwalte die Abwesenheitsrolle",
+                    "jobs_absence_role_name": "Abwesenheitsrolle"
                 }
             },
             "role_view": {
