@@ -100,13 +100,16 @@ func (s *Server) SetJobProps(ctx context.Context, req *SetJobPropsRequest) (*Set
 			if err := req.JobProps.LogoUrl.Upload(ctx, s.st, filestore.JobLogos, userInfo.Job); err != nil {
 				return nil, errswrap.NewError(errorsrector.ErrFailedQuery, err)
 			}
-		} else {
+		} else if req.JobProps.LogoUrl != nil && *req.JobProps.LogoUrl.Delete {
+			// Delete avatar from store
 			if jobProps.JobProps.LogoUrl != nil && jobProps.JobProps.LogoUrl.Url != nil {
 				if err := s.st.Delete(ctx, strings.TrimPrefix(*jobProps.JobProps.LogoUrl.Url, filestore.FilestoreURLPrefix)); err != nil {
 					return nil, errswrap.NewError(errorsrector.ErrFailedQuery, err)
 				}
 			}
 		}
+	} else {
+		req.JobProps.LogoUrl = jobProps.JobProps.LogoUrl
 	}
 
 	stmt := tJobProps.
