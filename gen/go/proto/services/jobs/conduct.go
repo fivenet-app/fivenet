@@ -94,7 +94,9 @@ func (s *Server) ListConductEntries(ctx context.Context, req *ListConductEntries
 	}
 
 	tUser := tUser.AS("target_user")
+	tUserUserProps := tUserProps.AS("target_user_props")
 	tCreator := tUser.AS("creator")
+	tCreatorUserProps := tUserProps.AS("creator_props")
 	stmt := tConduct.
 		SELECT(
 			tConduct.ID,
@@ -107,10 +109,13 @@ func (s *Server) ListConductEntries(ctx context.Context, req *ListConductEntries
 			tConduct.TargetUserID,
 			tUser.ID,
 			tUser.Identifier,
+			tUser.Job,
+			tUser.JobGrade,
 			tUser.Firstname,
 			tUser.Lastname,
 			tUser.Dateofbirth,
 			tUser.PhoneNumber,
+			tUserUserProps.Avatar.AS("target_user.avatar"),
 			tConduct.CreatorID,
 			tCreator.ID,
 			tCreator.Identifier,
@@ -120,14 +125,21 @@ func (s *Server) ListConductEntries(ctx context.Context, req *ListConductEntries
 			tCreator.Lastname,
 			tCreator.Dateofbirth,
 			tCreator.PhoneNumber,
+			tCreatorUserProps.Avatar.AS("creator.avatar"),
 		).
 		FROM(
 			tConduct.
 				INNER_JOIN(tUser,
 					tUser.ID.EQ(tConduct.TargetUserID),
 				).
+				LEFT_JOIN(tUserUserProps,
+					tUserUserProps.UserID.EQ(tUser.ID),
+				).
 				LEFT_JOIN(tCreator,
 					tCreator.ID.EQ(tConduct.CreatorID),
+				).
+				LEFT_JOIN(tCreatorUserProps,
+					tCreatorUserProps.UserID.EQ(tConduct.CreatorID),
 				),
 		).
 		WHERE(condition).
