@@ -144,7 +144,7 @@ watch(selectedChar, () => {
                                     />
                                 </div>
                             </div>
-                            <div class="form-control flex-1">
+                            <div v-if="!hideModell" class="form-control flex-1">
                                 <label for="model" class="block text-sm font-medium leading-6 text-neutral">
                                     {{ $t('common.model') }}
                                 </label>
