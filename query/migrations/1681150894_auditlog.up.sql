@@ -20,6 +20,6 @@ CREATE TABLE IF NOT EXISTS `fivenet_audit_log` (
   KEY `idx_fivenet_audit_log_service` (`service`),
   KEY `idx_fivenet_audit_log_method` (`method`),
   FULLTEXT KEY `idx_fivenet_audit_log_data` (`data`)
-) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
+) ENGINE=InnoDB;
 
 COMMIT;

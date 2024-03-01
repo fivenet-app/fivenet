@@ -135,6 +135,7 @@ storage:
     secretAccessKey: ""
     useSSL: true
     bucketName: ""
+    prefix: ""
 imageProxy:
   enabled: true
   url: "/api/image_proxy/"

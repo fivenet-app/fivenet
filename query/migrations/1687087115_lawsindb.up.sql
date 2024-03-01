@@ -9,7 +9,7 @@ CREATE TABLE IF NOT EXISTS `fivenet_lawbooks` (
   `description` varchar(255) NULL,
   PRIMARY KEY (`id`),
   UNIQUE KEY (`name`)
-) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
+) ENGINE=InnoDB;
 
 -- Table: fivenet_lawbooks_laws
 CREATE TABLE IF NOT EXISTS `fivenet_lawbooks_laws` (
@@ -25,6 +25,6 @@ CREATE TABLE IF NOT EXISTS `fivenet_lawbooks_laws` (
   PRIMARY KEY (`id`),
   UNIQUE KEY (`lawbook_id`, `name`),
   CONSTRAINT `fk_fivenet_lawbooks_laws_lawbook_id` FOREIGN KEY (`lawbook_id`) REFERENCES `fivenet_lawbooks` (`id`) ON DELETE CASCADE ON UPDATE CASCADE
-) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
+) ENGINE=InnoDB;
 
 COMMIT;

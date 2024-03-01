@@ -41,6 +41,7 @@ func NewS3(cfg *config.Config) (IStorage, error) {
 	s := &S3{
 		s3:         mc,
 		bucketName: cfg.Storage.S3.BucketName,
+		prefix:     cfg.Storage.S3.Prefix,
 	}
 
 	return s, nil
@@ -50,7 +51,7 @@ func (s *S3) WithPrefix(prefix string) (IStorage, error) {
 	return &S3{
 		s3:         s.s3,
 		bucketName: s.bucketName,
-		prefix:     prefix,
+		prefix:     path.Join(s.prefix, prefix),
 	}, nil
 }
 

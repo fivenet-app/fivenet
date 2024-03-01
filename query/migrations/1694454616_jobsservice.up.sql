@@ -65,7 +65,7 @@ CREATE TABLE IF NOT EXISTS `fivenet_jobs_requests_types` (
   KEY `idx_fivenet_jobs_requests_job` (`job`),
   KEY `idx_fivenet_jobs_requests_weight` (`weight`),
   KEY `idx_fivenet_jobs_requests_types_deleted_at` (`deleted_at`)
-) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
+) ENGINE=InnoDB;
 
 -- Table: fivenet_jobs_requests
 CREATE TABLE IF NOT EXISTS `fivenet_jobs_requests` (
@@ -93,7 +93,7 @@ CREATE TABLE IF NOT EXISTS `fivenet_jobs_requests` (
   FULLTEXT KEY `idx_fivenet_jobs_requests_message` (`message`),
   CONSTRAINT `fk_fivenet_jobs_requests_types` FOREIGN KEY (`type_id`) REFERENCES `fivenet_jobs_requests_types` (`id`) ON DELETE SET NULL ON UPDATE SET NULL,
   CONSTRAINT `fk_fivenet_jobs_requests_creator_id` FOREIGN KEY (`creator_id`) REFERENCES `users` (`id`) ON DELETE SET NULL ON UPDATE SET NULL
-) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
+) ENGINE=InnoDB;
 
 -- Table: fivenet_jobs_requests_comments
 CREATE TABLE IF NOT EXISTS `fivenet_jobs_requests_comments` (
@@ -109,7 +109,7 @@ CREATE TABLE IF NOT EXISTS `fivenet_jobs_requests_comments` (
   KEY `idx_fivenet_jobs_requests_comments_creator_id` (`creator_id`),
   CONSTRAINT `fk_fivenet_jobs_requests_comments_request_id` FOREIGN KEY (`request_id`) REFERENCES `fivenet_jobs_requests` (`id`) ON DELETE CASCADE ON UPDATE CASCADE,
   CONSTRAINT `fk_fivenet_jobs_requests_comments_creator_id` FOREIGN KEY (`creator_id`) REFERENCES `users` (`id`) ON DELETE CASCADE ON UPDATE CASCADE
-) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
+) ENGINE=InnoDB;
 
 -- Table: fivenet_jobs_user_props
 CREATE TABLE IF NOT EXISTS `fivenet_jobs_user_props` (
@@ -117,7 +117,7 @@ CREATE TABLE IF NOT EXISTS `fivenet_jobs_user_props` (
   `absence_date` datetime(3) DEFAULT NULL,
   UNIQUE KEY `idx_fivenet_jobs_user_props_unique` (`user_id`),
   CONSTRAINT `fk_fivenet_jobs_user_props_user_id` FOREIGN KEY (`user_id`) REFERENCES `users` (`id`) ON DELETE CASCADE ON UPDATE CASCADE
-) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
+) ENGINE=InnoDB;
 
 -- Table: fivenet_jobs_user_activity
 CREATE TABLE IF NOT EXISTS `fivenet_jobs_user_activity` (
@@ -136,7 +136,7 @@ CREATE TABLE IF NOT EXISTS `fivenet_jobs_user_activity` (
   KEY `idx_fivenet_jobs_user_activity_activity_type` (`activity_type`),
   CONSTRAINT `fk_fivenet_jobs_user_activity_source_user_id` FOREIGN KEY (`source_user_id`) REFERENCES `users` (`id`) ON DELETE SET NULL ON UPDATE SET NULL,
   CONSTRAINT `fk_fivenet_jobs_user_activity_target_user_id` FOREIGN KEY (`target_user_id`) REFERENCES `users` (`id`) ON DELETE CASCADE ON UPDATE CASCADE
-) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
+) ENGINE=InnoDB;
 
 -- Table: fivenet_jobs_qualifications
 -- TODO

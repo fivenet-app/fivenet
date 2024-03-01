@@ -88,21 +88,10 @@ func (m *Document) validate(all bool) error {
 		}
 	}
 
-	if utf8.RuneCountInString(m.GetTitle()) < 3 {
+	if l := utf8.RuneCountInString(m.GetTitle()); l < 3 || l > 1024 {
 		err := DocumentValidationError{
 			field:  "Title",
-			reason: "value length must be at least 3 runes",
-		}
-		if !all {
-			return err
-		}
-		errors = append(errors, err)
-	}
-
-	if len(m.GetTitle()) > 21845 {
-		err := DocumentValidationError{
-			field:  "Title",
-			reason: "value length must be at most 21845 bytes",
+			reason: "value length must be between 3 and 1024 runes, inclusive",
 		}
 		if !all {
 			return err
@@ -449,10 +438,10 @@ func (m *DocumentShort) validate(all bool) error {
 		}
 	}
 
-	if utf8.RuneCountInString(m.GetTitle()) < 3 {
+	if l := utf8.RuneCountInString(m.GetTitle()); l < 3 || l > 1024 {
 		err := DocumentShortValidationError{
 			field:  "Title",
-			reason: "value length must be at least 3 runes",
+			reason: "value length must be between 3 and 1024 runes, inclusive",
 		}
 		if !all {
 			return err

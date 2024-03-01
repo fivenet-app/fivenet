@@ -17,7 +17,7 @@ CREATE TABLE IF NOT EXISTS `fivenet_accounts` (
   UNIQUE KEY `idx_fivenet_accounts_license` (`license`),
   UNIQUE KEY `idx_fivenet_accounts_username_license` (`username`, `license`),
   UNIQUE KEY `idx_fivenet_accounts_reg_token` (`reg_token`)
-) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
+) ENGINE=InnoDB;
 
 -- Table: fivenet_documents_categories
 CREATE TABLE IF NOT EXISTS `fivenet_documents_categories` (
@@ -28,7 +28,7 @@ CREATE TABLE IF NOT EXISTS `fivenet_documents_categories` (
   PRIMARY KEY (`id`),
   KEY `idx_fivenet_documents_categories_job` (`job`)
 )
-ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
+ENGINE=InnoDB;
 
 -- Table: fivenet_documents_templates
 CREATE TABLE IF NOT EXISTS `fivenet_documents_templates` (
@@ -53,7 +53,7 @@ CREATE TABLE IF NOT EXISTS `fivenet_documents_templates` (
   KEY `idx_fivenet_documents_templates_category_id` (`category_id`),
   CONSTRAINT `fk_fivenet_documents_templates_categories` FOREIGN KEY (`category_id`) REFERENCES `fivenet_documents_categories` (`id`) ON DELETE SET NULL ON UPDATE SET NULL,
   CONSTRAINT `fk_fivenet_documents_templates_creator_id` FOREIGN KEY (`creator_id`) REFERENCES `users` (`id`) ON DELETE SET NULL ON UPDATE SET NULL
-) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
+) ENGINE=InnoDB;
 
 -- Table: fivenet_documents
 CREATE TABLE IF NOT EXISTS `fivenet_documents` (
@@ -82,7 +82,7 @@ CREATE TABLE IF NOT EXISTS `fivenet_documents` (
   FULLTEXT KEY `idx_fivenet_documents_content` (`content`),
   CONSTRAINT `fk_fivenet_documents_categories` FOREIGN KEY (`category_id`) REFERENCES `fivenet_documents_categories` (`id`) ON DELETE SET NULL ON UPDATE SET NULL,
   CONSTRAINT `fk_fivenet_documents_creator_id` FOREIGN KEY (`creator_id`) REFERENCES `users` (`id`) ON DELETE SET NULL ON UPDATE SET NULL
-) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
+) ENGINE=InnoDB;
 
 -- Table:fivenet_documents_comments
 CREATE TABLE IF NOT EXISTS `fivenet_documents_comments` (
@@ -98,7 +98,7 @@ CREATE TABLE IF NOT EXISTS `fivenet_documents_comments` (
   KEY `idx_fivenet_documents_comments_creator_id` (`creator_id`),
   CONSTRAINT `fk_fivenet_documents_comments_document_id` FOREIGN KEY (`document_id`) REFERENCES `fivenet_documents` (`id`) ON DELETE CASCADE ON UPDATE CASCADE,
   CONSTRAINT `fk_fivenet_documents_comments_creator_id` FOREIGN KEY (`creator_id`) REFERENCES `users` (`id`) ON DELETE CASCADE ON UPDATE CASCADE
-) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
+) ENGINE=InnoDB;
 
 -- Table: fivenet_documents_job_access
 CREATE TABLE IF NOT EXISTS `fivenet_documents_job_access` (
@@ -112,7 +112,7 @@ CREATE TABLE IF NOT EXISTS `fivenet_documents_job_access` (
   UNIQUE KEY `idx_fivenet_documents_job_access` (`document_id`, `job`, `minimum_grade`),
   KEY `idx_fivenet_documents_job_access_document_id` (`document_id`),
   CONSTRAINT `fk_fivenet_documents_job_access_document_id` FOREIGN KEY (`document_id`) REFERENCES `fivenet_documents` (`id`) ON DELETE CASCADE ON UPDATE CASCADE
-) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
+) ENGINE=InnoDB;
 
 -- Table: fivenet_documents_references
 CREATE TABLE IF NOT EXISTS `fivenet_documents_references` (
@@ -132,7 +132,7 @@ CREATE TABLE IF NOT EXISTS `fivenet_documents_references` (
   CONSTRAINT `fk_fivenet_documents_references_source_document_id` FOREIGN KEY (`source_document_id`) REFERENCES `fivenet_documents` (`id`) ON DELETE CASCADE ON UPDATE CASCADE,
   CONSTRAINT `fk_fivenet_documents_references_target_document_id` FOREIGN KEY (`target_document_id`) REFERENCES `fivenet_documents` (`id`) ON DELETE CASCADE ON UPDATE CASCADE,
   CONSTRAINT `fk_fivenet_documents_references_creator_id` FOREIGN KEY (`creator_id`) REFERENCES `users` (`id`) ON DELETE SET NULL ON UPDATE SET NULL
-) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
+) ENGINE=InnoDB;
 
 -- Table: fivenet_documents_relations
 CREATE TABLE IF NOT EXISTS `fivenet_documents_relations` (
@@ -152,7 +152,7 @@ CREATE TABLE IF NOT EXISTS `fivenet_documents_relations` (
   CONSTRAINT `fk_fivenet_documents_relations_document_id` FOREIGN KEY (`document_id`) REFERENCES `fivenet_documents` (`id`) ON DELETE CASCADE ON UPDATE CASCADE,
   CONSTRAINT `fk_fivenet_documents_relations_source_user_id` FOREIGN KEY (`source_user_id`) REFERENCES `users` (`id`) ON DELETE SET NULL ON UPDATE SET NULL,
   CONSTRAINT `fk_fivenet_documents_relations_target_user_id` FOREIGN KEY (`target_user_id`) REFERENCES `users` (`id`) ON DELETE CASCADE ON UPDATE CASCADE
-) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
+) ENGINE=InnoDB;
 
 -- Table: fivenet_documents_user_access
 CREATE TABLE IF NOT EXISTS `fivenet_documents_user_access` (
@@ -167,7 +167,7 @@ CREATE TABLE IF NOT EXISTS `fivenet_documents_user_access` (
   KEY `idx_fivenet_documents_user_access_user_id` (`user_id`),
   CONSTRAINT `fk_fivenet_documents_user_access_document_id` FOREIGN KEY (`document_id`) REFERENCES `fivenet_documents` (`id`) ON DELETE CASCADE ON UPDATE CASCADE,
   CONSTRAINT `fk_fivenet_documents_user_access_user_id` FOREIGN KEY (`user_id`) REFERENCES `users` (`id`) ON DELETE CASCADE ON UPDATE CASCADE
-) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
+) ENGINE=InnoDB;
 
 -- Table: fivenet_documents_activity
 CREATE TABLE IF NOT EXISTS `fivenet_documents_activity` (
@@ -185,7 +185,7 @@ CREATE TABLE IF NOT EXISTS `fivenet_documents_activity` (
   KEY `idx_fivenet_documents_activity_activity_type` (`activity_type`),
   CONSTRAINT `fk_fivenet_documents_activity_document_id` FOREIGN KEY (`document_id`) REFERENCES `fivenet_documents` (`id`) ON DELETE CASCADE ON UPDATE CASCADE,
   CONSTRAINT `fk_fivenet_documents_activity_creator_id` FOREIGN KEY (`creator_id`) REFERENCES `users` (`id`) ON DELETE SET NULL ON UPDATE SET NULL
-) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
+) ENGINE=InnoDB;
 
 -- Table: fivenet_documents_requests
 CREATE TABLE IF NOT EXISTS `fivenet_documents_requests` (
@@ -207,7 +207,7 @@ CREATE TABLE IF NOT EXISTS `fivenet_documents_requests` (
   KEY `idx_fivenet_documents_requests_unique` (`document_id`, `request_type`),
   CONSTRAINT `fk_fivenet_documents_requests_document_id` FOREIGN KEY (`document_id`) REFERENCES `fivenet_documents` (`id`) ON DELETE CASCADE ON UPDATE CASCADE,
   CONSTRAINT `fk_fivenet_documents_requests_creator_id` FOREIGN KEY (`creator_id`) REFERENCES `users` (`id`) ON DELETE SET NULL ON UPDATE SET NULL
-) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
+) ENGINE=InnoDB;
 
 -- Table: fivenet_user_activity
 CREATE TABLE IF NOT EXISTS `fivenet_user_activity` (
@@ -225,7 +225,7 @@ CREATE TABLE IF NOT EXISTS `fivenet_user_activity` (
   KEY `idx_fivenet_user_activity_target_user_id` (`target_user_id`),
   CONSTRAINT `fk_fivenet_user_activity_source_user_id` FOREIGN KEY (`source_user_id`) REFERENCES `users` (`id`) ON DELETE SET NULL ON UPDATE SET NULL,
   CONSTRAINT `fk_fivenet_user_activity_target_user_id` FOREIGN KEY (`target_user_id`) REFERENCES `users` (`id`) ON DELETE CASCADE ON UPDATE CASCADE
-) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
+) ENGINE=InnoDB;
 
 -- Table: fivenet_user_locations
 CREATE TABLE IF NOT EXISTS `fivenet_user_locations` (
@@ -238,7 +238,7 @@ CREATE TABLE IF NOT EXISTS `fivenet_user_locations` (
   PRIMARY KEY (`identifier`),
   KEY `idx_fivenet_user_locations_job` (`job`),
   CONSTRAINT `fk_fivenet_user_locations_identifier` FOREIGN KEY (`identifier`) REFERENCES `users` (`identifier`) ON DELETE CASCADE ON UPDATE CASCADE
-) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
+) ENGINE=InnoDB;
 
 -- Table: fivenet_user_props
 CREATE TABLE IF NOT EXISTS `fivenet_user_props` (
@@ -254,6 +254,6 @@ CREATE TABLE IF NOT EXISTS `fivenet_user_props` (
   UNIQUE KEY `idx_fivenet_user_props_unique` (`user_id`),
   KEY `idx_fivenet_user_props_wanted` (`wanted`),
   CONSTRAINT `fk_fivenet_user_props_user_id` FOREIGN KEY (`user_id`) REFERENCES `users` (`id`) ON DELETE CASCADE ON UPDATE CASCADE
-) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
+) ENGINE=InnoDB;
 
 COMMIT;

@@ -10,14 +10,14 @@ BEGIN;
 --   `skin_male` longtext NOT NULL,
 --   `skin_female` longtext NOT NULL,
 --   PRIMARY KEY (`job_name`,`grade`)
--- ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
+-- ) ENGINE=InnoDB;
 
 -- Table: jobs - Should already exist
 -- CREATE TABLE IF NOT EXISTS `jobs` (
 --   `name` varchar(50) NOT NULL,
 --   `label` varchar(50) DEFAULT NULL,
 --   PRIMARY KEY (`name`)
--- ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
+-- ) ENGINE=InnoDB;
 
 -- Table: owned_vehicles -- Should already exist
 -- CREATE TABLE IF NOT EXISTS `owned_vehicles` (
@@ -35,7 +35,7 @@ BEGIN;
 --   KEY `IDX_OWNED_VEHICLES_OWNER` (`owner`),
 --   KEY `IDX_OWNED_VEHICLES_OWNERTYPE` (`owner`,`type`),
 --   KEY `IDX_OWNED_VEHICLES_OWNERRMODELTYPE` (`owner`,`model`,`type`)
--- ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
+-- ) ENGINE=InnoDB;
 -- Add indexes for better sorting performance
 set @x := (select count(*) from information_schema.statistics where table_name = 'owned_vehicles' and index_name = 'idx_owned_vehicles_model' and table_schema = database());
 set @sql := if( @x > 0, 'select ''owned_vehicles model index exists.''', 'ALTER TABLE owned_vehicles ADD KEY `idx_owned_vehicles_model` (`model`);');
@@ -53,7 +53,7 @@ EXECUTE stmt;
 --   `owner` varchar(64) NOT NULL,
 --   PRIMARY KEY (`type`,`owner`),
 --   KEY `idx_user_licenses_owner` (`owner`)
--- ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
+-- ) ENGINE=InnoDB;
 
 -- Table: users - Should already exist
 -- Add firstname + lastname fulltext index

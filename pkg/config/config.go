@@ -270,6 +270,7 @@ type S3Storage struct {
 	SecretAccessKey string `yaml:"secretAccessKey"`
 	UseSSL          bool   `default:"true" yaml:"useSSL"`
 	BucketName      string `yaml:"bucketName"`
+	Prefix          string `yaml:"prefix"`
 }
 
 type ImageProxy struct {
