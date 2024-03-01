@@ -37,7 +37,7 @@ require (
 	github.com/prometheus/client_golang v1.19.0
 	github.com/puzpuzpuz/xsync/v3 v3.1.0
 	github.com/spf13/viper v1.18.2
-	github.com/stretchr/testify v1.8.4
+	github.com/stretchr/testify v1.9.0
 	go.eigsys.de/gin-cachecontrol/v2 v2.1.0
 	go.opentelemetry.io/contrib/instrumentation/github.com/gin-gonic/gin/otelgin v0.49.0
 	go.opentelemetry.io/contrib/instrumentation/google.golang.org/grpc/otelgrpc v0.49.0
