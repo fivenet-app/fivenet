@@ -600,6 +600,8 @@ export const useCentrumStore = defineStore('centrum', {
             if (this.abort !== undefined) {
                 this.abort.abort();
                 this.abort = undefined;
+
+                console.debug('Centrum: Stopping Data Stream');
             }
 
             if (!this.reconnecting) {
@@ -608,8 +610,6 @@ export const useCentrumStore = defineStore('centrum', {
                     this.cleanupIntervalId = undefined;
                 }
             }
-
-            console.debug('Centrum: Stopping Data Stream');
         },
         async restartStream(isCenter?: boolean): Promise<void> {
             this.reconnecting = true;

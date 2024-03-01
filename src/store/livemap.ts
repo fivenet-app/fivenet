@@ -148,7 +148,11 @@ export const useLivemapStore = defineStore('livemap', {
             console.debug('Livemap: Data Stream Ended');
         },
         async stopStream(): Promise<void> {
-            if (this.abort !== undefined) this.abort.abort();
+            if (this.abort === undefined) {
+                return;
+            }
+
+            this.abort.abort();
             this.abort = undefined;
             console.debug('Livemap: Stopping Data Stream');
         },

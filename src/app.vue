@@ -86,6 +86,12 @@ async function onBeforeEnter(): Promise<void> {
 
 watch(locale, () => setLocaleGlobally(locale.value));
 
+// NUI message handling
+if (isNUIAvailable.value) {
+    onMounted(async () => window.addEventListener('message', onNUIMessage));
+    onBeforeUnmount(async () => window.removeEventListener('message', onNUIMessage));
+}
+
 // Open update available confirm dialog
 const open = ref(false);
 

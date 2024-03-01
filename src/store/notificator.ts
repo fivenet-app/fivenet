@@ -190,9 +190,12 @@ export const useNotificatorStore = defineStore('notifications', {
         },
 
         async stopStream(): Promise<void> {
-            if (this.abort !== undefined) this.abort?.abort();
-            this.abort = undefined;
+            if (this.abort === undefined) {
+                return;
+            }
 
+            this.abort?.abort();
+            this.abort = undefined;
             console.debug('Notificator: Stopping Data Stream');
         },
 
