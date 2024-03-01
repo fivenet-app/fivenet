@@ -493,25 +493,36 @@ outerLoop:
 			}
 		}
 
-		// If unemployed role is enabled and user is not an employee, give them the unemployed role
-		if g.unemployedRole != nil && !isEmployee {
-			switch g.unemployedMode {
-			case pbusers.UserInfoSyncUnemployedMode_USER_INFO_SYNC_UNEMPLOYED_MODE_GIVE_ROLE:
-				// Skip if user is already part of unemployed role
+		if !isEmployee {
+			// If unemployed role is enabled and user is not an employee, give them the unemployed role
+			if g.unemployedRole != nil {
+				switch g.unemployedMode {
+				case pbusers.UserInfoSyncUnemployedMode_USER_INFO_SYNC_UNEMPLOYED_MODE_GIVE_ROLE:
+					// Skip if user is already part of unemployed role
+					if slices.Contains(member.Roles, g.unemployedRole.ID) {
+						break
+					}
+
+					g.logger.Debug("adding unemployed role from member", zap.String("discord_role_name", g.unemployedRole.Name), zap.String("discord_role_id", g.employeeRole.ID),
+						zap.String("discord_user_id", member.User.ID), zap.String("discord_nickname", member.Nick))
+					if err := g.discord.GuildMemberRoleAdd(g.guild.ID, member.User.ID, g.unemployedRole.ID); err != nil {
+						return fmt.Errorf("failed to add member to unemployed role %s (%s): %w", g.unemployedRole.Name, g.employeeRole.ID, err)
+					}
+
+				case pbusers.UserInfoSyncUnemployedMode_USER_INFO_SYNC_UNEMPLOYED_MODE_KICK:
+					if err := g.discord.GuildMemberDeleteWithReason(g.guild.ID, member.User.ID,
+						fmt.Sprintf("no longer an employee of %s job", g.job)); err != nil {
+						return fmt.Errorf("failed to kick unemployed member %s (%s) from guild: %w", g.unemployedRole.Name, g.employeeRole.ID, err)
+					}
+				}
+			}
+
+			if g.jobsAbsenceEnabled && g.jobsAbsenceRole != nil {
+				// Remove user from jobs absence role when no longer an employee
 				if slices.Contains(member.Roles, g.unemployedRole.ID) {
-					break
-				}
-
-				g.logger.Debug("adding unemployed role from member", zap.String("discord_role_name", g.unemployedRole.Name), zap.String("discord_role_id", g.employeeRole.ID),
-					zap.String("discord_user_id", member.User.ID), zap.String("discord_nickname", member.Nick))
-				if err := g.discord.GuildMemberRoleAdd(g.guild.ID, member.User.ID, g.unemployedRole.ID); err != nil {
-					return fmt.Errorf("failed to add member to unemployed role %s (%s): %w", g.unemployedRole.Name, g.employeeRole.ID, err)
-				}
-
-			case pbusers.UserInfoSyncUnemployedMode_USER_INFO_SYNC_UNEMPLOYED_MODE_KICK:
-				if err := g.discord.GuildMemberDeleteWithReason(g.guild.ID, member.User.ID,
-					fmt.Sprintf("no longer an employee of %s job", g.job)); err != nil {
-					return fmt.Errorf("failed to kick unemployed member %s (%s) from guild: %w", g.unemployedRole.Name, g.employeeRole.ID, err)
+					if err := g.discord.GuildMemberRoleRemove(g.guild.ID, member.User.ID, g.unemployedRole.ID); err != nil {
+						return fmt.Errorf("failed to remove member from jobs absence role %s (%s): %w", g.unemployedRole.Name, g.unemployedRole.ID, err)
+					}
 				}
 			}
 		}
