@@ -5858,10 +5858,10 @@ jodit-vue@3.1.0:
   dependencies:
     jodit "^3.24.5"
 
-jodit@4.0.16:
-  version "4.0.16"
-  resolved "https://registry.yarnpkg.com/jodit/-/jodit-4.0.16.tgz#cf17be0b31b4f37fa39f679ac36cc5eb3e5fb47a"
-  integrity sha512-TfmHfuT5JNKdtRQ0m2cJMHRDQZb/0jBfX233TOVDCBG7jajbSQ5uNQYBkggBMNwUVn0kGcVGG8QjaHgTvLGA4A==
+jodit@4.0.18:
+  version "4.0.18"
+  resolved "https://registry.yarnpkg.com/jodit/-/jodit-4.0.18.tgz#353e5a9de012b26891ca39789c83f3f8ec481220"
+  integrity sha512-S2Eorn+7ZhIFEaPMDwoBpLhTwli/NP9FwSWY7AbsBvAy3nnltwczxRkcfXGCYyrdlqua1Mml3MPTuQtOT8SGBg==
   dependencies:
     autobind-decorator "^2.4.0"
 
@@ -9852,6 +9852,7 @@ wide-align@^1.1.2:
     string-width "^1.0.2 || 2 || 3 || 4"
 
 "wrap-ansi-cjs@npm:wrap-ansi@^7.0.0", wrap-ansi@^7.0.0:
+  name wrap-ansi-cjs
   version "7.0.0"
   resolved "https://registry.yarnpkg.com/wrap-ansi/-/wrap-ansi-7.0.0.tgz#67e145cff510a6a6984bdf1152911d69d2eb9e43"
   integrity sha512-YVGIj2kamLSTxw6NsZjoBxfSwsn0ycdesmc4p+Q21c5zPuZ1pl+NfxVdxPtdHvmNVOQ6XSYG4AUtyt/Fi7D16Q==
