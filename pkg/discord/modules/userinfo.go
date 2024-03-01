@@ -501,16 +501,16 @@ outerLoop:
 						break
 					}
 
-					g.logger.Debug("adding unemployed role from member", zap.String("discord_role_name", g.unemployedRole.Name), zap.String("discord_role_id", g.unemployedRole.ID),
+					g.logger.Debug("adding unemployed role to member", zap.String("discord_role_name", g.unemployedRole.Name), zap.String("discord_role_id", g.unemployedRole.ID),
 						zap.String("discord_user_id", member.User.ID), zap.String("discord_nickname", member.Nick))
 					if err := g.discord.GuildMemberRoleAdd(g.guild.ID, member.User.ID, g.unemployedRole.ID); err != nil {
-						return fmt.Errorf("failed to add member to unemployed role %s (%s): %w", g.unemployedRole.Name, g.unemployedRole.ID, err)
+						return fmt.Errorf("failed to add member to unemployed role %s: %w", g.unemployedRole.ID, err)
 					}
 
 				case pbusers.UserInfoSyncUnemployedMode_USER_INFO_SYNC_UNEMPLOYED_MODE_KICK:
 					if err := g.discord.GuildMemberDeleteWithReason(g.guild.ID, member.User.ID,
 						fmt.Sprintf("no longer an employee of %s job", g.job)); err != nil {
-						return fmt.Errorf("failed to kick unemployed member %s (%s) from guild: %w", member.User.Username, member.User.ID, err)
+						return fmt.Errorf("failed to kick unemployed member %s from guild: %w", member.User.ID, err)
 					}
 				}
 			}
