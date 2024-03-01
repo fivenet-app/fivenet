@@ -346,7 +346,7 @@ watch(selectedAccessRole, () => {
                                     ]"
                                 >
                                     <span :class="['block truncate', selected && 'font-semibold']">
-                                        {{ char.firstname }} {{ char.lastname }} ({{ char?.dateofbirth }})
+                                        {{ char.firstname }} {{ char.lastname }} ({{ char.dateofbirth }})
                                     </span>
 
                                     <span

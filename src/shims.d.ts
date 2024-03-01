@@ -43,11 +43,14 @@ type Links = {
     privacyPolicy?: string;
 };
 
+type FeatureGates = {};
+
 export type AppConfig = {
     version: string;
     login: LoginConfig;
     discord: DiscordConfig;
     links: Links;
+    featureGates: FeatureGates;
 };
 
 // It is always important to ensure you import/export something when augmenting a type

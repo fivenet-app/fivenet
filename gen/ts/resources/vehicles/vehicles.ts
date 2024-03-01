@@ -20,9 +20,9 @@ export interface Vehicle {
      */
     plate: string;
     /**
-     * @generated from protobuf field: string model = 2;
+     * @generated from protobuf field: optional string model = 2;
      */
-    model: string;
+    model?: string;
     /**
      * @generated from protobuf field: string type = 3;
      */
@@ -37,7 +37,7 @@ class Vehicle$Type extends MessageType<Vehicle> {
     constructor() {
         super("resources.vehicles.Vehicle", [
             { no: 1, name: "plate", kind: "scalar", T: 9 /*ScalarType.STRING*/ },
-            { no: 2, name: "model", kind: "scalar", T: 9 /*ScalarType.STRING*/ },
+            { no: 2, name: "model", kind: "scalar", opt: true, T: 9 /*ScalarType.STRING*/ },
             { no: 3, name: "type", kind: "scalar", T: 9 /*ScalarType.STRING*/ },
             { no: 4, name: "owner", kind: "message", T: () => UserShort }
         ]);
@@ -45,7 +45,6 @@ class Vehicle$Type extends MessageType<Vehicle> {
     create(value?: PartialMessage<Vehicle>): Vehicle {
         const message = globalThis.Object.create((this.messagePrototype!));
         message.plate = "";
-        message.model = "";
         message.type = "";
         if (value !== undefined)
             reflectionMergePartial<Vehicle>(this, message, value);
@@ -59,7 +58,7 @@ class Vehicle$Type extends MessageType<Vehicle> {
                 case /* string plate */ 1:
                     message.plate = reader.string();
                     break;
-                case /* string model */ 2:
+                case /* optional string model */ 2:
                     message.model = reader.string();
                     break;
                 case /* string type */ 3:
@@ -83,8 +82,8 @@ class Vehicle$Type extends MessageType<Vehicle> {
         /* string plate = 1; */
         if (message.plate !== "")
             writer.tag(1, WireType.LengthDelimited).string(message.plate);
-        /* string model = 2; */
-        if (message.model !== "")
+        /* optional string model = 2; */
+        if (message.model !== undefined)
             writer.tag(2, WireType.LengthDelimited).string(message.model);
         /* string type = 3; */
         if (message.type !== "")

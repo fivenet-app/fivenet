@@ -150,7 +150,7 @@ const mugShotModal = ref(false);
                                                         <PhoneNumberBlock :number="user.phoneNumber" />
                                                     </dd>
                                                 </div>
-                                                <div class="sm:flex sm:px-5 sm:py-4">
+                                                <div v-if="user.visum" class="sm:flex sm:px-5 sm:py-4">
                                                     <dt
                                                         class="text-sm font-medium text-neutral sm:w-40 sm:flex-shrink-0 lg:w-48"
                                                     >

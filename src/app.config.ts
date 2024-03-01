@@ -10,4 +10,5 @@ export default defineAppConfig({
         botInviteURL: '',
     },
     links: {},
+    featureGates: {},
 } as AppConfig);

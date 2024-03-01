@@ -1,10 +1,15 @@
 package api
 
+type Version struct {
+	Version string `json:"version"`
+}
+
 type ClientConfig struct {
-	Version string      `json:"version"`
-	Login   LoginConfig `json:"login"`
-	Discord *Discord    `json:"discord"`
-	Links   Links       `json:"links"`
+	Version      string       `json:"version"`
+	Login        LoginConfig  `json:"login"`
+	Discord      Discord      `json:"discord"`
+	Links        Links        `json:"links"`
+	FeatureGates FeatureGates `json:"featureGates"`
 }
 
 type LoginConfig struct {
@@ -18,7 +23,7 @@ type ProviderConfig struct {
 }
 
 type Discord struct {
-	BotInviteURL string `json:"botInviteURL"`
+	BotInviteURL *string `json:"botInviteURL"`
 }
 
 type Links struct {
@@ -26,6 +31,5 @@ type Links struct {
 	PrivacyPolicy *string `json:"privacyPolicy"`
 }
 
-type Version struct {
-	Version string `json:"version"`
+type FeatureGates struct {
 }

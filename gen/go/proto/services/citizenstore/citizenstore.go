@@ -22,6 +22,7 @@ import (
 	"github.com/galexrt/fivenet/pkg/perms"
 	"github.com/galexrt/fivenet/pkg/server/audit"
 	"github.com/galexrt/fivenet/pkg/storage"
+	"github.com/galexrt/fivenet/pkg/utils/dbutils"
 	"github.com/galexrt/fivenet/query/fivenet/model"
 	"github.com/galexrt/fivenet/query/fivenet/table"
 	jet "github.com/go-jet/jet/v2/mysql"
@@ -56,6 +57,7 @@ type Server struct {
 	hiddenJobs         []string
 	unemployedJob      string
 	unemployedJobGrade int32
+	customColumns      dbutils.CustomColumns
 }
 
 type Params struct {
@@ -65,7 +67,7 @@ type Params struct {
 	P        perms.Permissions
 	Enricher *mstlystcdata.UserAwareEnricher
 	Aud      audit.IAuditer
-	Cfg      *config.Config
+	Config   *config.Config
 	Storage  storage.IStorage
 }
 
@@ -77,10 +79,11 @@ func NewServer(p Params) *Server {
 		aud:      p.Aud,
 		st:       p.Storage,
 
-		publicJobs:         p.Cfg.Game.PublicJobs,
-		hiddenJobs:         p.Cfg.Game.HiddenJobs,
-		unemployedJob:      p.Cfg.Game.UnemployedJob.Name,
-		unemployedJobGrade: p.Cfg.Game.UnemployedJob.Grade,
+		publicJobs:         p.Config.Game.PublicJobs,
+		hiddenJobs:         p.Config.Game.HiddenJobs,
+		unemployedJob:      p.Config.Game.UnemployedJob.Name,
+		unemployedJobGrade: p.Config.Game.UnemployedJob.Grade,
+		customColumns:      p.Config.Database.CustomColumns,
 	}
 }
 
@@ -91,8 +94,7 @@ func (s *Server) RegisterServer(srv *grpc.Server) {
 func (s *Server) ListCitizens(ctx context.Context, req *ListCitizensRequest) (*ListCitizensResponse, error) {
 	userInfo := auth.MustGetUserInfoFromContext(ctx)
 
-	selectors := jet.ProjectionList{
-		tUser.ID,
+	selectors := dbutils.Columns{
 		tUser.Identifier,
 		tUser.Firstname,
 		tUser.Lastname,
@@ -101,8 +103,8 @@ func (s *Server) ListCitizens(ctx context.Context, req *ListCitizensRequest) (*L
 		tUser.Dateofbirth,
 		tUser.Sex,
 		tUser.Height,
-		tUser.Visum,
 		tUserProps.UserID,
+		s.customColumns.User.GetVisum(tUser.Alias()),
 	}
 
 	condition := jet.Bool(true)
@@ -192,7 +194,8 @@ func (s *Server) ListCitizens(ctx context.Context, req *ListCitizensRequest) (*L
 
 	stmt := tUser.
 		SELECT(
-			selectors[0], selectors[1:]...,
+			tUser.ID,
+			selectors.Get()...,
 		).
 		OPTIMIZER_HINTS(jet.OptimizerHint("idx_users_firstname_lastname_fulltext")).
 		FROM(tUser.
@@ -248,8 +251,7 @@ func (s *Server) GetUser(ctx context.Context, req *GetUserRequest) (*GetUserResp
 	}
 	defer s.aud.Log(auditEntry, req)
 
-	selectors := jet.ProjectionList{
-		tUser.ID,
+	selectors := dbutils.Columns{
 		tUser.Identifier,
 		tUser.Firstname,
 		tUser.Lastname,
@@ -258,8 +260,8 @@ func (s *Server) GetUser(ctx context.Context, req *GetUserRequest) (*GetUserResp
 		tUser.Dateofbirth,
 		tUser.Sex,
 		tUser.Height,
-		tUser.Visum,
 		tUserProps.UserID,
+		s.customColumns.User.GetVisum(tUser.Alias()),
 	}
 
 	// Field Permission Check
@@ -296,7 +298,8 @@ func (s *Server) GetUser(ctx context.Context, req *GetUserRequest) (*GetUserResp
 	}
 	stmt := tUser.
 		SELECT(
-			selectors[0], selectors[1:]...,
+			tUser.ID,
+			selectors.Get()...,
 		).
 		FROM(
 			tUser.

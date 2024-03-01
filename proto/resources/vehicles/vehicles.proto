@@ -8,7 +8,7 @@ option go_package = "github.com/galexrt/fivenet/gen/go/proto/resources/vehicles;
 
 message Vehicle {
   string plate = 1;
-  string model = 2;
+  optional string model = 2;
   string type = 3;
   resources.users.UserShort owner = 4;
 }

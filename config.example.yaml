@@ -27,6 +27,12 @@ database:
   maxIdleConns: 5
   connMaxIdleTime: 15m
   connMaxLifetime: 60m
+  customColumns:
+    user:
+      visum: "visum"
+      playtime: "playtime"
+    vehicle:
+      model: "model"
 nats:
   url: "nats://localhost:4222"
 jwt:

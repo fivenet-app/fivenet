@@ -75,7 +75,7 @@ func (s *Server) GetComments(ctx context.Context, req *GetCommentsRequest) (*Get
 		return resp, nil
 	}
 
-	columns := []jet.Projection{
+	columns := jet.ProjectionList{
 		tDComments.ID,
 		tDComments.DocumentID,
 		tDComments.CreatedAt,

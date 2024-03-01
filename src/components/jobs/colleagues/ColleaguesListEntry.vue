@@ -46,11 +46,13 @@ const absenceDateModal = ref(false);
             {{ colleague.firstname }} {{ colleague.lastname }}
             <dl class="font-normal lg:hidden">
                 <dt class="sr-only">{{ $t('common.job_grade') }}</dt>
-                <dd class="mt-1 truncate text-accent-200">{{ colleague.jobGradeLabel }} ({{ colleague.jobGrade }})</dd>
+                <dd class="mt-1 truncate text-accent-200">
+                    {{ colleague.jobGradeLabel }}<span v-if="colleague.jobGrade > 0"> ({{ colleague.jobGrade }})</span>
+                </dd>
             </dl>
         </td>
         <td class="whitespace-nowrap px-1 py-1 text-left text-accent-200 hidden lg:table-cell">
-            {{ colleague.jobGradeLabel }} ({{ colleague.jobGrade }})
+            {{ colleague.jobGradeLabel }}<span v-if="colleague.jobGrade > 0"> ({{ colleague.jobGrade }})</span>
         </td>
         <td class="whitespace-nowrap py-2 pl-4 pr-3 text-base font-medium text-neutral sm:pl-1">
             <GenericTime

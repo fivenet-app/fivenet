@@ -58,8 +58,6 @@ func (m *Vehicle) validate(all bool) error {
 
 	// no validation rules for Plate
 
-	// no validation rules for Model
-
 	// no validation rules for Type
 
 	if all {
@@ -89,6 +87,10 @@ func (m *Vehicle) validate(all bool) error {
 				cause:  err,
 			}
 		}
+	}
+
+	if m.Model != nil {
+		// no validation rules for Model
 	}
 
 	if len(errors) > 0 {

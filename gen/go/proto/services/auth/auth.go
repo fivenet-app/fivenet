@@ -72,6 +72,7 @@ type Server struct {
 	signupEnabled   bool
 	superuserGroups []string
 	oauth2Providers []*config.OAuth2Provider
+	customColumns   dbutils.CustomColumns
 }
 
 type Params struct {
@@ -101,6 +102,7 @@ func NewServer(p Params) *Server {
 		signupEnabled:   p.Config.Game.Auth.SignupEnabled,
 		superuserGroups: p.Config.Game.Auth.SuperuserGroups,
 		oauth2Providers: p.Config.OAuth2.Providers,
+		customColumns:   p.Config.Database.CustomColumns,
 	}
 }
 
@@ -459,20 +461,22 @@ func (s *Server) GetCharacters(ctx context.Context, req *GetCharactersRequest) (
 	stmt := tUsers.
 		SELECT(
 			tUsers.ID,
-			tUsers.Identifier,
-			tUsers.Job,
-			tJobs.Label.AS("user.job_label"),
-			tUsers.JobGrade,
-			tJobGrades.Label.AS("user.job_grade_label"),
-			tUsers.Firstname,
-			tUsers.Lastname,
-			tUsers.Dateofbirth,
-			tUsers.Sex,
-			tUsers.Height,
-			tUsers.PhoneNumber,
-			tUsers.Visum,
-			tUsers.Playtime,
-			tUserProps.Avatar.AS("user.avatar"),
+			dbutils.Columns{
+				tUsers.Identifier,
+				tUsers.Job,
+				tJobs.Label.AS("user.job_label"),
+				tUsers.JobGrade,
+				tJobGrades.Label.AS("user.job_grade_label"),
+				tUsers.Firstname,
+				tUsers.Lastname,
+				tUsers.Dateofbirth,
+				tUsers.Sex,
+				tUsers.Height,
+				tUsers.PhoneNumber,
+				tUserProps.Avatar.AS("user.avatar"),
+				s.customColumns.User.GetVisum(tUsers.Alias()),
+				s.customColumns.User.GetPlaytime(tUsers.Alias()),
+			}.Get()...,
 		).
 		FROM(tUsers.
 			LEFT_JOIN(tJobs,

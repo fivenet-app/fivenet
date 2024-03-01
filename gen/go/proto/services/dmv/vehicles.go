@@ -10,14 +10,17 @@ import (
 	"github.com/galexrt/fivenet/gen/go/proto/resources/rector"
 	permscitizenstore "github.com/galexrt/fivenet/gen/go/proto/services/citizenstore/perms"
 	errorsdmv "github.com/galexrt/fivenet/gen/go/proto/services/dmv/errors"
+	"github.com/galexrt/fivenet/pkg/config"
 	"github.com/galexrt/fivenet/pkg/grpc/auth"
 	"github.com/galexrt/fivenet/pkg/grpc/errswrap"
 	"github.com/galexrt/fivenet/pkg/mstlystcdata"
 	"github.com/galexrt/fivenet/pkg/perms"
 	"github.com/galexrt/fivenet/pkg/server/audit"
+	"github.com/galexrt/fivenet/pkg/utils/dbutils"
 	"github.com/galexrt/fivenet/query/fivenet/model"
 	"github.com/galexrt/fivenet/query/fivenet/table"
 	jet "github.com/go-jet/jet/v2/mysql"
+	"go.uber.org/fx"
 	grpc "google.golang.org/grpc"
 )
 
@@ -29,18 +32,30 @@ var (
 type Server struct {
 	DMVServiceServer
 
-	db *sql.DB
-	ps perms.Permissions
-	c  *mstlystcdata.Enricher
-	a  audit.IAuditer
+	db            *sql.DB
+	ps            perms.Permissions
+	enricher      *mstlystcdata.Enricher
+	aud           audit.IAuditer
+	customColumns dbutils.CustomColumns
 }
 
-func NewServer(db *sql.DB, p perms.Permissions, c *mstlystcdata.Enricher, aud audit.IAuditer) *Server {
+type Params struct {
+	fx.In
+
+	DB       *sql.DB
+	Ps       perms.Permissions
+	Enricher *mstlystcdata.Enricher
+	Aud      audit.IAuditer
+	Config   *config.Config
+}
+
+func NewServer(p Params) *Server {
 	return &Server{
-		db: db,
-		ps: p,
-		c:  c,
-		a:  aud,
+		db:            p.DB,
+		ps:            p.Ps,
+		enricher:      p.Enricher,
+		aud:           p.Aud,
+		customColumns: p.Config.Database.CustomColumns,
 	}
 }
 
@@ -58,7 +73,9 @@ func (s *Server) ListVehicles(ctx context.Context, req *ListVehiclesRequest) (*L
 			strings.ReplaceAll(*req.Search, "%", "")+"%",
 		)))
 	}
-	if req.Model != nil && *req.Model != "" {
+	// Make sure the model column is available
+	modelColumn := s.customColumns.Vehicle.GetModel(tVehicles.Alias())
+	if modelColumn != nil && req.Model != nil && *req.Model != "" {
 		condition = jet.AND(condition, tVehicles.Model.LIKE(jet.String(
 			strings.ReplaceAll(*req.Model, "%", "")+"%",
 		)))
@@ -72,7 +89,7 @@ func (s *Server) ListVehicles(ctx context.Context, req *ListVehiclesRequest) (*L
 	}
 
 	if req.Pagination.Offset <= 0 {
-		s.a.Log(&model.FivenetAuditLog{
+		s.aud.Log(&model.FivenetAuditLog{
 			Service: DMVService_ServiceDesc.ServiceName,
 			Method:  "ListVehicles",
 			UserID:  userInfo.UserId,
@@ -133,9 +150,8 @@ func (s *Server) ListVehicles(ctx context.Context, req *ListVehiclesRequest) (*L
 		)
 	}
 
-	columns := []jet.Projection{
-		tVehicles.Plate,
-		tVehicles.Model,
+	columns := dbutils.Columns{
+		modelColumn,
 		jet.REPLACE(tVehicles.Type, jet.String("_"), jet.String(" ")).AS("vehicle.type"),
 		tUsers.ID,
 		tUsers.Identifier,
@@ -160,8 +176,8 @@ func (s *Server) ListVehicles(ctx context.Context, req *ListVehiclesRequest) (*L
 
 	stmt := tVehicles.
 		SELECT(
-			columns[0],
-			columns[1:]...,
+			tVehicles.Plate,
+			columns.Get()...,
 		).
 		FROM(
 			tVehicles.

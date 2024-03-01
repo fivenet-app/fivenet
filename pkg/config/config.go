@@ -6,6 +6,7 @@ import (
 	"time"
 
 	"github.com/creasty/defaults"
+	"github.com/galexrt/fivenet/pkg/utils/dbutils"
 	"github.com/spf13/viper"
 	"go.uber.org/fx"
 )
@@ -113,6 +114,8 @@ type Database struct {
 	MaxIdleConns    int           `default:"5" yaml:"maxIdleConns"`
 	ConnMaxIdleTime time.Duration `default:"15m" yaml:"connMaxIdleTime"`
 	ConnMaxLifetime time.Duration `default:"60m" yaml:"connMaxLifetime"`
+
+	CustomColumns dbutils.CustomColumns `yaml:"customColumns"`
 }
 
 type NATS struct {

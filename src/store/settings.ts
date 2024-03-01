@@ -31,7 +31,7 @@ export interface SettingsState {
         notificationsVolume: number;
     };
     streamerMode: boolean;
-    toggles: {
+    featureGates: {
         desktop: boolean;
     };
 }
@@ -58,7 +58,7 @@ export const useSettingsStore = defineStore('settings', {
                 notificationsVolume: 0.15,
             },
             streamerMode: false,
-            toggles: {
+            featureGates: {
                 desktop: false,
             },
         }) as SettingsState,

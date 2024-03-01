@@ -50,6 +50,8 @@ const { data, pending, refresh, error } = useLazyAsyncData(`vehicles-${offset.va
     return listVehicles();
 });
 
+const hideModell = ref(false);
+
 async function listVehicles(): Promise<ListVehiclesResponse> {
     try {
         const call = $grpc.getDMVClient().listVehicles({
@@ -62,6 +64,14 @@ async function listVehicles(): Promise<ListVehiclesResponse> {
             model: query.value.model,
         });
         const { response } = await call;
+
+        if (response.vehicles.length > 0) {
+            if (response.vehicles[0].model === undefined) {
+                hideModell.value = true;
+            } else {
+                hideModell.value = false;
+            }
+        }
 
         return response;
     } catch (e) {
@@ -243,6 +253,7 @@ watch(selectedChar, () => {
                                             {{ $t('common.plate') }}
                                         </th>
                                         <th
+                                            v-if="!hideModell"
                                             scope="col"
                                             class="px-2 py-3.5 text-left text-sm font-semibold text-neutral hidden sm:table-cell"
                                         >

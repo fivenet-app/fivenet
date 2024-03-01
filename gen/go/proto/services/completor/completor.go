@@ -98,7 +98,13 @@ func (s *Server) CompleteCitizens(ctx context.Context, req *CompleteCitizensRequ
 		condition = condition.AND(tUsers.ID.EQ(jet.Int32(*req.UserId)))
 	}
 
-	columns := []jet.Projection{tUsers.ID, tUsers.Identifier, tUsers.Firstname, tUsers.Lastname, tUsers.Dateofbirth}
+	columns := jet.ProjectionList{
+		tUsers.ID,
+		tUsers.Identifier,
+		tUsers.Firstname,
+		tUsers.Lastname,
+		tUsers.Dateofbirth,
+	}
 	if currentJob {
 		columns = append(columns, tUsers.Job, tUsers.JobGrade)
 	}

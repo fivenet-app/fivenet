@@ -55,14 +55,18 @@ const onSubmitThrottle = useThrottleFn(async (_) => {
                 <dd class="text-sm text-gray-300">{{ char.dateofbirth }}</dd>
                 <dt class="text-sm font-medium text-neutral">{{ $t('common.height') }}</dt>
                 <dd class="text-sm text-gray-300">{{ char.height }}cm</dd>
-                <dt class="text-sm font-medium text-neutral">{{ $t('common.visum') }}</dt>
-                <dd class="text-sm text-gray-300">{{ char.visum }}</dd>
-                <dt class="text-sm font-medium text-neutral">
-                    {{ $t('common.playtime') }}
-                </dt>
-                <dd class="text-sm text-gray-300 truncate">
-                    {{ fromSecondsToFormattedDuration(char.playtime!) }}
-                </dd>
+                <template v-if="char.visum">
+                    <dt class="text-sm font-medium text-neutral">{{ $t('common.visum') }}</dt>
+                    <dd class="text-sm text-gray-300">{{ char.visum }}</dd>
+                </template>
+                <template v-if="char.playtime">
+                    <dt class="text-sm font-medium text-neutral">
+                        {{ $t('common.playtime') }}
+                    </dt>
+                    <dd class="text-sm text-gray-300 truncate">
+                        {{ fromSecondsToFormattedDuration(char.playtime!) }}
+                    </dd>
+                </template>
             </dl>
         </div>
         <div>

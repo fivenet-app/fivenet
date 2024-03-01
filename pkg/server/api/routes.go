@@ -31,12 +31,12 @@ func New(logger *zap.Logger, cfg *config.Config) *Routes {
 			SignupEnabled: cfg.Game.Auth.SignupEnabled,
 			Providers:     providers,
 		},
-		Discord: &Discord{},
+		Discord: Discord{},
 		Links:   Links{},
 	}
 
 	if cfg.Discord.Bot.Enabled {
-		clientCfg.Discord.BotInviteURL = cfg.Discord.Bot.InviteURL
+		clientCfg.Discord.BotInviteURL = &cfg.Discord.Bot.InviteURL
 	}
 
 	if cfg.HTTP.Links.Imprint != nil {
