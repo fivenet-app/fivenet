@@ -37,7 +37,7 @@ CREATE TABLE IF NOT EXISTS `users` (
   KEY `idx_users_job` (`job`),
   KEY `idx_users_dateofbirth` (`dateofbirth`),
   FULLTEXT KEY `idx_users_firstname_lastname_fulltext` (`firstname`,`lastname`)
-) ENGINE = InnoDB AUTO_INCREMENT = 1 DEFAULT CHARSET = utf8mb4 COLLATE = utf8mb4_unicode_ci;
+) ENGINE = InnoDB AUTO_INCREMENT = 1;
 -- Table data: Add 5 users into the database
 INSERT INTO users (id, identifier, license, `group`, skin, job, job_grade, loadout, `position`, firstname, lastname, dateofbirth, sex, height, is_dead, last_property, jail, inventory, phone_number, accounts, tattoos, disabled, visum, playtime, levelData, onDuty, health, armor, created_at, last_seen, meta)
 VALUES(1, 'char1:3c7681d6f7ad895eb7b1cc05cf895c7f1d1622c4', NULL, 'user', '{}', 'ambulance', 17, '{}', '{"z":49.45,"heading":141.73,"x":-1820.74,"y":-353.96}', 'Dr. Amy', 'Clockwork', '08.04.2003', 'f', '182', 0, NULL, 0, '{}', '3542786', '{}', '[]', 0, 139, 1493920, '{}', 0, 138, 0, '2023-01-26 09:01:51.000', '2023-03-10 22:11:09.000', NULL);
@@ -76,7 +76,7 @@ CREATE TABLE IF NOT EXISTS `jobs` (
   `name` varchar(50) NOT NULL,
   `label` varchar(50) DEFAULT NULL,
   PRIMARY KEY (`name`)
-) ENGINE = InnoDB DEFAULT CHARSET = utf8mb4 COLLATE = utf8mb4_unicode_ci;
+) ENGINE = InnoDB;
 -- Table data: jobs
 INSERT INTO jobs (name, label) VALUES('ambulance', 'LSMD');
 INSERT INTO jobs (name, label) VALUES('doj', 'DOJ');
@@ -92,7 +92,7 @@ CREATE TABLE IF NOT EXISTS `job_grades` (
   `skin_male` longtext NOT NULL,
   `skin_female` longtext NOT NULL,
   PRIMARY KEY (`job_name`, `grade`)
-) ENGINE = InnoDB DEFAULT CHARSET = utf8mb4 COLLATE = utf8mb4_unicode_ci;
+) ENGINE = InnoDB;
 -- Table data: job_grades
 INSERT INTO job_grades (job_name, grade, name, label, salary, skin_male, skin_female) VALUES('ambulance', 1, 'auszubildender_rettungshelfer', 'Auszubildender Rettungshelfer', 0, '{}', '{}');
 INSERT INTO job_grades (job_name, grade, name, label, salary, skin_male, skin_female) VALUES('ambulance', 2, 'rettungshelfer', 'Rettungshelfer', 0, '{}', '{}');

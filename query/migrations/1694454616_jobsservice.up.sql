@@ -18,7 +18,7 @@ CREATE TABLE
         KEY (`target_user_id`),
         CONSTRAINT `fk_fivenet_jobs_conduct_target_user_id` FOREIGN KEY (`target_user_id`) REFERENCES `users` (`id`) ON DELETE CASCADE ON UPDATE CASCADE,
         CONSTRAINT `fk_fivenet_jobs_conduct_creator_id` FOREIGN KEY (`creator_id`) REFERENCES `users` (`id`) ON DELETE SET NULL ON UPDATE CASCADE
-    ) ENGINE = InnoDB DEFAULT CHARSET = utf8mb4 COLLATE = utf8mb4_unicode_ci;
+    ) ENGINE = InnoDB;
 
 -- Table: fivenet_jobs_timeclock
 CREATE TABLE
@@ -31,12 +31,13 @@ CREATE TABLE
         `spent_time` decimal(10,2) DEFAULT 0.0,
         PRIMARY KEY (`job`, `user_id`, `date`),
         CONSTRAINT `fk_fivenet_jobs_timeclock_user_id` FOREIGN KEY (`user_id`) REFERENCES `users` (`id`) ON DELETE CASCADE ON UPDATE CASCADE
-    ) ENGINE = InnoDB DEFAULT CHARSET = utf8mb4 COLLATE = utf8mb4_unicode_ci;
+    ) ENGINE = InnoDB;
 
 DROP TRIGGER IF EXISTS `fivenet_jobs_timeclock_spent_time_calc`;
 
 -- Trigger: fivenet_jobs_timeclock_spent_time_calc
 -- Requires `SUPER` privilege to be created...
+/*
 CREATE TRIGGER `fivenet_jobs_timeclock_spent_time_calc` BEFORE UPDATE ON `fivenet_jobs_timeclock`
     FOR EACH ROW BEGIN
         DECLARE `duration` DECIMAL(10,2);
@@ -50,6 +51,7 @@ CREATE TRIGGER `fivenet_jobs_timeclock_spent_time_calc` BEFORE UPDATE ON `fivene
         SET NEW.`end_time` = NULL;
     END IF;
 END;
+*/
 
 -- Table: fivenet_jobs_requests_types
 CREATE TABLE IF NOT EXISTS `fivenet_jobs_requests_types` (
