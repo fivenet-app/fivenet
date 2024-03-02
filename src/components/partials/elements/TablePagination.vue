@@ -166,7 +166,17 @@ const pageNumber = ref(currentPage.value.toString());
                     </button>
 
                     <Popover v-if="totalPages > 4n" class="relative">
-                        <Float portal placement="top-start" :offset="12">
+                        <Float
+                            portal
+                            placement="top-start"
+                            :offset="12"
+                            enter="transition duration-150 ease-out"
+                            enter-from="scale-95 opacity-0"
+                            enter-to="scale-100 opacity-100"
+                            leave="transition duration-100 ease-in"
+                            leave-from="scale-100 opacity-100"
+                            leave-to="scale-95 opacity-0"
+                        >
                             <PopoverButton
                                 class="relative inline-flex items-center bg-secondary-500 px-4 py-2 text-sm font-semibold text-neutral hover:bg-base-400 focus:z-20 focus:outline-offset-0"
                                 @click="pageNumber = ''"

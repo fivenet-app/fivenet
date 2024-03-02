@@ -5,7 +5,6 @@ package services.jobs;
 import "resources/common/database/database.proto";
 import "resources/jobs/timeclock.proto";
 import "resources/timestamp/timestamp.proto";
-import "resources/jobs/colleagues.proto";
 import "validate/validate.proto";
 
 option go_package = "github.com/galexrt/fivenet/gen/go/proto/services/jobs;jobs";

@@ -49,12 +49,12 @@ const openMessage = ref(false);
                 {{ $t(`enums.jobs.ConductType.${ConductType[conduct.type ?? (0 as number)]}`) }}
             </div>
         </td>
-        <td class="whitespace-wrap px-1 py-1 text-left text-accent-200">
-            <p :class="openMessage ? '' : 'max-h-24 max-w-sm truncate'">
+        <td class="whitespace-wrap px-1 py-1 text-left text-accent-200 max-w-24 md:max-w-full">
+            <p :class="openMessage ? '' : 'line-clamp-2 hover:line-clamp-6'">
                 {{ conduct.message }}
             </p>
             <button
-                v-if="conduct.message.length > 50"
+                v-if="conduct.message.length > 75"
                 type="button"
                 class="flex justify-center rounded-md bg-accent-500 px-1 py-1 text-sm font-semibold text-neutral transition-colors hover:bg-accent-400 focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-accent-500"
                 @click="openMessage = !openMessage"
@@ -64,8 +64,14 @@ const openMessage = ref(false);
         </td>
         <td class="whitespace-nowrap px-1 py-1 text-left text-accent-200">
             <CitizenInfoPopover :user="conduct.targetUser" />
+            <dl class="font-normal lg:hidden">
+                <dt class="sr-only">{{ $t('common.creator') }}</dt>
+                <dd class="mt-1 truncate text-accent-200">
+                    <CitizenInfoPopover :user="conduct.creator" />
+                </dd>
+            </dl>
         </td>
-        <td class="whitespace-nowrap px-1 py-1 text-left text-accent-200">
+        <td class="whitespace-nowrap px-1 py-1 text-left text-accent-200 hidden lg:table-cell">
             <CitizenInfoPopover :user="conduct.creator" />
         </td>
         <td class="whitespace-nowrap py-2 pl-3 pr-4 text-base font-medium sm:pr-0">

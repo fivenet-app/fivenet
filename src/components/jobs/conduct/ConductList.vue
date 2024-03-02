@@ -368,8 +368,12 @@ onConfirm(async (id) => deleteConductEntry(id));
                                         </th>
                                         <th scope="col" class="px-2 py-3.5 text-left text-sm font-semibold text-neutral">
                                             {{ $t('common.target') }}
+                                            <span class="lg:hidden">/{{ $t('common.creator') }}</span>
                                         </th>
-                                        <th scope="col" class="px-2 py-3.5 text-left text-sm font-semibold text-neutral">
+                                        <th
+                                            scope="col"
+                                            class="px-2 py-3.5 text-left text-sm font-semibold text-neutral hidden lg:table-cell"
+                                        >
                                             {{ $t('common.creator') }}
                                         </th>
                                         <th

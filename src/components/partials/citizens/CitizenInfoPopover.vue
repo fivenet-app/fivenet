@@ -1,5 +1,5 @@
 <script lang="ts" setup>
-import { Float } from '@headlessui-float/vue';
+import { Float, FloatArrow } from '@headlessui-float/vue';
 import { Popover, PopoverButton, PopoverPanel } from '@headlessui/vue';
 import { AccountIcon } from 'mdi-vue3';
 import { type User, type UserShort } from '~~/gen/ts/resources/users/users';
@@ -44,7 +44,17 @@ withDefaults(
         </span>
     </template>
     <Popover v-else class="relative">
-        <Float portal auto-placement :offset="16">
+        <Float
+            portal
+            auto-placement
+            :offset="35"
+            enter="transition duration-150 ease-out"
+            enter-from="scale-95 opacity-0"
+            enter-to="scale-100 opacity-100"
+            leave="transition duration-100 ease-in"
+            leave-from="scale-100 opacity-100"
+            leave-to="scale-95 opacity-0"
+        >
             <PopoverButton class="inline-flex items-center" :class="buttonClass">
                 <slot name="before" />
                 <span :class="textClass"> {{ user.firstname }} {{ user.lastname }} </span>

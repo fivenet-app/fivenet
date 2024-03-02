@@ -352,237 +352,249 @@ async function checkup(): Promise<void> {
                     @close="openDispatchStatus = false"
                 />
 
-                <div
-                    class="flex h-full grow gap-y-5 overflow-y-auto overflow-x-hidden bg-base-600 py-0.5"
-                    :class="open || getOwnUnit !== undefined ? 'px-4' : ''"
+                <transition
+                    enter-active-class="transform transition ease-in-out duration-100 sm:duration-200"
+                    enter-from-class="translate-x-full"
+                    enter-to-class="translate-x-0"
+                    leave-active-class="transform transition ease-in-out duration-100 sm:duration-200"
+                    leave-from-class="translate-x-0"
+                    leave-to-class="translate-x-full"
                 >
-                    <nav v-if="open" class="flex flex-1 flex-col min-w-48 max-w-48 md:min-w-64 md:max-w-64">
-                        <ul role="list" class="flex flex-1 flex-col gap-y-2 divide-y divide-base-400">
-                            <li class="-mx-2 -mb-1">
-                                <DisponentsModal :open="openDisponents" @close="openDisponents = false" />
+                    <div
+                        v-if="open"
+                        class="flex h-full grow gap-y-5 overflow-y-auto overflow-x-hidden bg-base-600 py-0.5"
+                        :class="open || getOwnUnit !== undefined ? 'px-4' : ''"
+                    >
+                        <nav class="flex flex-1 flex-col min-w-48 max-w-48 md:min-w-64 md:max-w-64">
+                            <ul role="list" class="flex flex-1 flex-col gap-y-2 divide-y divide-base-400">
+                                <li class="-mx-2 -mb-1">
+                                    <DisponentsModal :open="openDisponents" @close="openDisponents = false" />
 
-                                <button
-                                    type="button"
-                                    class="group mt-0.5 flex w-full flex-row items-center justify-center rounded-md p-1 text-xs font-medium text-neutral hover:bg-primary-100/10 hover:text-neutral hover:transition-all"
-                                    :class="
-                                        getCurrentMode === CentrumMode.AUTO_ROUND_ROBIN
-                                            ? 'bg-info-400/10 text-info-500 ring-info-400/20'
-                                            : disponents.length === 0
-                                              ? 'bg-warn-400/10 text-warn-500 ring-warn-400/20'
-                                              : 'bg-success-500/10 text-success-400 ring-success-500/20'
-                                    "
-                                    @click="openDisponents = true"
-                                >
-                                    <template v-if="getCurrentMode !== CentrumMode.AUTO_ROUND_ROBIN">
-                                        <MonitorIcon class="mr-1 h-5 w-5" aria-hidden="true" />
-                                        <span class="truncate">
-                                            {{ $t('common.disponent', disponents.length) }}
-                                        </span>
-                                    </template>
-                                    <template v-else>
-                                        <RobotIcon class="mr-1 h-5 w-5" aria-hidden="true" />
-                                        <span class="truncate">
-                                            {{ $t('enums.centrum.CentrumMode.AUTO_ROUND_ROBIN') }}
-                                        </span>
-                                    </template>
-                                </button>
-                            </li>
-                            <li>
-                                <ul role="list" class="-mx-2 mt-1 space-y-0.5">
-                                    <li>
-                                        <template v-if="getOwnUnit !== undefined">
-                                            <button
-                                                type="button"
-                                                class="group flex w-full flex-col items-center rounded-md p-1.5 text-xs font-medium text-neutral hover:bg-primary-100/10 hover:text-neutral hover:transition-all"
-                                                :class="ownUnitStatus"
-                                                @click="openUnitDetails = true"
-                                            >
-                                                <InformationOutlineIcon class="h-5 w-5" aria-hidden="true" />
-                                                <span class="mt-1 truncate">
-                                                    <span class="font-semibold">{{ getOwnUnit.initials }}:</span>
-                                                    {{ getOwnUnit.name }}</span
-                                                >
-                                                <span class="mt-1 truncate">
-                                                    <span class="font-semibold">{{ $t('common.status') }}:</span>
-                                                    {{
-                                                        $t(
-                                                            `enums.centrum.StatusUnit.${
-                                                                StatusUnit[getOwnUnit.status?.status ?? 0]
-                                                            }`,
-                                                        )
-                                                    }}
-                                                </span>
-                                            </button>
-
-                                            <UnitDetails
-                                                :unit="getOwnUnit"
-                                                :open="openUnitDetails"
-                                                @close="openUnitDetails = false"
-                                                @goto="$emit('goto', $event)"
-                                            />
-                                        </template>
-                                        <button
-                                            type="button"
-                                            class="group my-0.5 flex flex w-full w-full flex-col flex-col items-center items-center rounded-md bg-info-700 p-1.5 text-xs font-medium text-neutral hover:bg-primary-100/10 hover:text-neutral hover:transition-all"
-                                            @click="joinUnitOpen = true"
-                                        >
-                                            <template v-if="getOwnUnit === undefined">
-                                                <InformationOutlineIcon class="h-5 w-5" aria-hidden="true" />
-                                                <span class="mt-1 truncate">{{ $t('common.no_own_unit') }}</span>
-                                            </template>
-                                            <template v-else>
-                                                <span class="truncate">{{ $t('common.leave_unit') }}</span>
-                                            </template>
-                                        </button>
-
-                                        <JoinUnitModal :open="joinUnitOpen" @close="joinUnitOpen = false" />
-                                    </li>
-                                </ul>
-                            </li>
-                            <template v-if="getOwnUnit !== undefined">
-                                <li>
-                                    <ul role="list" class="-mx-2 space-y-0.5">
-                                        <div class="inline-flex items-center text-xs font-semibold leading-6 text-base-100">
-                                            {{ $t('common.unit') }}
-                                            <LoadingIcon
-                                                v-if="!canSubmitUnitStatus"
-                                                class="ml-1 h-4 w-4 animate-spin"
-                                                aria-hidden="true"
-                                            />
-                                        </div>
-                                        <UnitStatusUpdateModal
-                                            :unit="getOwnUnit"
-                                            :open="openUnitStatus"
-                                            @close="openUnitStatus = false"
-                                        />
-                                        <li>
-                                            <div class="grid grid-cols-2 gap-0.5">
-                                                <button
-                                                    v-for="item in unitStatuses"
-                                                    :key="item.name"
-                                                    type="button"
-                                                    class="bg-primary group my-0.5 flex w-full flex-col items-center rounded-md p-1.5 text-xs font-medium text-neutral hover:bg-primary-100/10 hover:text-neutral hover:transition-all"
-                                                    :disabled="!canSubmitUnitStatus"
-                                                    :class="[
-                                                        !canSubmitUnitStatus ? 'disabled' : '',
-                                                        item.status ? unitStatusToBGColor(item.status) : item.class,
-                                                        item.class,
-                                                    ]"
-                                                    @click="onSubmitUnitStatusThrottle(getOwnUnit.id!, item.status)"
-                                                >
-                                                    <component
-                                                        :is="item.icon ?? HoopHouseIcon"
-                                                        class="h-5 w-5 shrink-0 text-base-100 group-hover:text-neutral"
-                                                        aria-hidden="true"
-                                                    />
-                                                    <span class="mt-1">
-                                                        {{
-                                                            item.status
-                                                                ? $t(`enums.centrum.StatusUnit.${StatusUnit[item.status ?? 0]}`)
-                                                                : $t(item.name)
-                                                        }}
-                                                    </span>
-                                                </button>
-                                                <button
-                                                    type="button"
-                                                    class="group col-span-2 my-0.5 flex w-full flex-col items-center rounded-md bg-base-800 p-1.5 text-xs font-medium text-neutral hover:bg-primary-100/10 hover:text-neutral hover:transition-all"
-                                                    @click="updateUtStatus(getOwnUnit.id)"
-                                                >
-                                                    {{ $t('components.centrum.update_unit_status.title') }}
-                                                </button>
-                                            </div>
-                                        </li>
-                                    </ul>
-                                </li>
-                                <li>
-                                    <ul role="list" class="-mx-2 space-y-0.5">
-                                        <div class="inline-flex items-center text-xs font-semibold leading-6 text-base-100">
-                                            {{ $t('common.dispatch') }} {{ $t('common.status') }}
-                                            <LoadingIcon
-                                                v-if="!canSubmitDispatchStatus"
-                                                class="ml-1 h-4 w-4 animate-spin"
-                                                aria-hidden="true"
-                                            />
-                                        </div>
-                                        <li>
-                                            <div class="grid grid-cols-2 gap-0.5">
-                                                <button
-                                                    v-for="item in dispatchStatuses.filter(
-                                                        (s) => s.status !== StatusDispatch.CANCELLED,
-                                                    )"
-                                                    :key="item.name"
-                                                    type="button"
-                                                    class="bg-primary group my-0.5 flex w-full flex-col items-center rounded-md p-1.5 text-xs font-medium text-neutral hover:bg-primary-100/10 hover:text-neutral hover:transition-all"
-                                                    :disabled="!canSubmitDispatchStatus"
-                                                    :class="[
-                                                        !canSubmitDispatchStatus ? 'disabled' : '',
-                                                        item.status ? dispatchStatusToBGColor(item.status) : item.class,
-                                                        item.class,
-                                                    ]"
-                                                    @click="onSubmitDispatchStatusThrottle(selectedDispatch, item.status)"
-                                                >
-                                                    <component
-                                                        :is="item.icon ?? HoopHouseIcon"
-                                                        class="h-5 w-5 shrink-0 text-base-100 group-hover:text-neutral"
-                                                        aria-hidden="true"
-                                                    />
-                                                    <span class="mt-1">
-                                                        {{
-                                                            item.status
-                                                                ? $t(
-                                                                      `enums.centrum.StatusDispatch.${
-                                                                          StatusDispatch[item.status ?? 0]
-                                                                      }`,
-                                                                  )
-                                                                : $t(item.name)
-                                                        }}
-                                                    </span>
-                                                </button>
-                                                <button
-                                                    type="button"
-                                                    class="group col-span-2 my-0.5 flex w-full flex-col items-center rounded-md bg-base-800 p-1.5 text-xs font-medium text-neutral hover:bg-primary-100/10 hover:text-neutral hover:transition-all"
-                                                    @click="updateDspStatus(selectedDispatch)"
-                                                >
-                                                    {{ $t('components.centrum.update_dispatch_status.title') }}
-                                                </button>
-                                            </div>
-                                        </li>
-                                    </ul>
-                                </li>
-                                <li>
-                                    <div class="text-xs font-semibold leading-6 text-base-100">
-                                        {{ $t('common.your_dispatches') }}
-                                    </div>
-                                    <ul role="list" class="-mx-2 mt-1 space-y-0.5">
-                                        <li v-if="getSortedOwnDispatches.length === 0">
-                                            <button
-                                                type="button"
-                                                class="group my-0.5 flex w-full flex-col items-center rounded-md bg-primary-100/10 p-1.5 text-xs font-medium text-neutral hover:text-neutral hover:transition-all"
-                                            >
-                                                <CarEmergencyIcon class="h-5 w-5" aria-hidden="true" />
-                                                <span class="mt-1 truncate">{{ $t('common.no_assigned_dispatches') }}</span>
-                                            </button>
-                                        </li>
-                                        <template v-else>
-                                            <OwnDispatchEntry
-                                                v-for="id in getSortedOwnDispatches.slice().reverse()"
-                                                :key="id"
-                                                v-model:selected-dispatch="selectedDispatch"
-                                                :dispatch="dispatches.get(id)!"
-                                                @goto="$emit('goto', $event)"
-                                            />
-                                        </template>
-                                    </ul>
-                                    <div
-                                        class="mb-0.5 mt-1 divide-y border-t border-base-400 text-center text-xs leading-4 text-neutral"
+                                    <button
+                                        type="button"
+                                        class="group mt-0.5 flex w-full flex-row items-center justify-center rounded-md p-1 text-xs font-medium text-neutral hover:bg-primary-100/10 hover:text-neutral hover:transition-all"
+                                        :class="
+                                            getCurrentMode === CentrumMode.AUTO_ROUND_ROBIN
+                                                ? 'bg-info-400/10 text-info-500 ring-info-400/20'
+                                                : disponents.length === 0
+                                                  ? 'bg-warn-400/10 text-warn-500 ring-warn-400/20'
+                                                  : 'bg-success-500/10 text-success-400 ring-success-500/20'
+                                        "
+                                        @click="openDisponents = true"
                                     >
-                                        {{ $t('components.centrum.livemap.total_dispatches') }}: {{ dispatches.size }}
-                                    </div>
+                                        <template v-if="getCurrentMode !== CentrumMode.AUTO_ROUND_ROBIN">
+                                            <MonitorIcon class="mr-1 h-5 w-5" aria-hidden="true" />
+                                            <span class="truncate">
+                                                {{ $t('common.disponent', disponents.length) }}
+                                            </span>
+                                        </template>
+                                        <template v-else>
+                                            <RobotIcon class="mr-1 h-5 w-5" aria-hidden="true" />
+                                            <span class="truncate">
+                                                {{ $t('enums.centrum.CentrumMode.AUTO_ROUND_ROBIN') }}
+                                            </span>
+                                        </template>
+                                    </button>
                                 </li>
-                            </template>
-                        </ul>
-                    </nav>
-                </div>
+                                <li>
+                                    <ul role="list" class="-mx-2 mt-1 space-y-0.5">
+                                        <li>
+                                            <template v-if="getOwnUnit !== undefined">
+                                                <button
+                                                    type="button"
+                                                    class="group flex w-full flex-col items-center rounded-md p-1.5 text-xs font-medium text-neutral hover:bg-primary-100/10 hover:text-neutral hover:transition-all"
+                                                    :class="ownUnitStatus"
+                                                    @click="openUnitDetails = true"
+                                                >
+                                                    <InformationOutlineIcon class="h-5 w-5" aria-hidden="true" />
+                                                    <span class="mt-1 truncate">
+                                                        <span class="font-semibold">{{ getOwnUnit.initials }}:</span>
+                                                        {{ getOwnUnit.name }}</span
+                                                    >
+                                                    <span class="mt-1 truncate">
+                                                        <span class="font-semibold">{{ $t('common.status') }}:</span>
+                                                        {{
+                                                            $t(
+                                                                `enums.centrum.StatusUnit.${
+                                                                    StatusUnit[getOwnUnit.status?.status ?? 0]
+                                                                }`,
+                                                            )
+                                                        }}
+                                                    </span>
+                                                </button>
+
+                                                <UnitDetails
+                                                    :unit="getOwnUnit"
+                                                    :open="openUnitDetails"
+                                                    @close="openUnitDetails = false"
+                                                    @goto="$emit('goto', $event)"
+                                                />
+                                            </template>
+                                            <button
+                                                type="button"
+                                                class="group my-0.5 flex flex w-full w-full flex-col flex-col items-center items-center rounded-md bg-info-700 p-1.5 text-xs font-medium text-neutral hover:bg-primary-100/10 hover:text-neutral hover:transition-all"
+                                                @click="joinUnitOpen = true"
+                                            >
+                                                <template v-if="getOwnUnit === undefined">
+                                                    <InformationOutlineIcon class="h-5 w-5" aria-hidden="true" />
+                                                    <span class="mt-1 truncate">{{ $t('common.no_own_unit') }}</span>
+                                                </template>
+                                                <template v-else>
+                                                    <span class="truncate">{{ $t('common.leave_unit') }}</span>
+                                                </template>
+                                            </button>
+
+                                            <JoinUnitModal :open="joinUnitOpen" @close="joinUnitOpen = false" />
+                                        </li>
+                                    </ul>
+                                </li>
+                                <template v-if="getOwnUnit !== undefined">
+                                    <li>
+                                        <ul role="list" class="-mx-2 space-y-0.5">
+                                            <div class="inline-flex items-center text-xs font-semibold leading-6 text-base-100">
+                                                {{ $t('common.unit') }}
+                                                <LoadingIcon
+                                                    v-if="!canSubmitUnitStatus"
+                                                    class="ml-1 h-4 w-4 animate-spin"
+                                                    aria-hidden="true"
+                                                />
+                                            </div>
+                                            <UnitStatusUpdateModal
+                                                :unit="getOwnUnit"
+                                                :open="openUnitStatus"
+                                                @close="openUnitStatus = false"
+                                            />
+                                            <li>
+                                                <div class="grid grid-cols-2 gap-0.5">
+                                                    <button
+                                                        v-for="item in unitStatuses"
+                                                        :key="item.name"
+                                                        type="button"
+                                                        class="bg-primary group my-0.5 flex w-full flex-col items-center rounded-md p-1.5 text-xs font-medium text-neutral hover:bg-primary-100/10 hover:text-neutral hover:transition-all"
+                                                        :disabled="!canSubmitUnitStatus"
+                                                        :class="[
+                                                            !canSubmitUnitStatus ? 'disabled' : '',
+                                                            item.status ? unitStatusToBGColor(item.status) : item.class,
+                                                            item.class,
+                                                        ]"
+                                                        @click="onSubmitUnitStatusThrottle(getOwnUnit.id!, item.status)"
+                                                    >
+                                                        <component
+                                                            :is="item.icon ?? HoopHouseIcon"
+                                                            class="h-5 w-5 shrink-0 text-base-100 group-hover:text-neutral"
+                                                            aria-hidden="true"
+                                                        />
+                                                        <span class="mt-1">
+                                                            {{
+                                                                item.status
+                                                                    ? $t(
+                                                                          `enums.centrum.StatusUnit.${StatusUnit[item.status ?? 0]}`,
+                                                                      )
+                                                                    : $t(item.name)
+                                                            }}
+                                                        </span>
+                                                    </button>
+                                                    <button
+                                                        type="button"
+                                                        class="group col-span-2 my-0.5 flex w-full flex-col items-center rounded-md bg-base-800 p-1.5 text-xs font-medium text-neutral hover:bg-primary-100/10 hover:text-neutral hover:transition-all"
+                                                        @click="updateUtStatus(getOwnUnit.id)"
+                                                    >
+                                                        {{ $t('components.centrum.update_unit_status.title') }}
+                                                    </button>
+                                                </div>
+                                            </li>
+                                        </ul>
+                                    </li>
+                                    <li>
+                                        <ul role="list" class="-mx-2 space-y-0.5">
+                                            <div class="inline-flex items-center text-xs font-semibold leading-6 text-base-100">
+                                                {{ $t('common.dispatch') }} {{ $t('common.status') }}
+                                                <LoadingIcon
+                                                    v-if="!canSubmitDispatchStatus"
+                                                    class="ml-1 h-4 w-4 animate-spin"
+                                                    aria-hidden="true"
+                                                />
+                                            </div>
+                                            <li>
+                                                <div class="grid grid-cols-2 gap-0.5">
+                                                    <button
+                                                        v-for="item in dispatchStatuses.filter(
+                                                            (s) => s.status !== StatusDispatch.CANCELLED,
+                                                        )"
+                                                        :key="item.name"
+                                                        type="button"
+                                                        class="bg-primary group my-0.5 flex w-full flex-col items-center rounded-md p-1.5 text-xs font-medium text-neutral hover:bg-primary-100/10 hover:text-neutral hover:transition-all"
+                                                        :disabled="!canSubmitDispatchStatus"
+                                                        :class="[
+                                                            !canSubmitDispatchStatus ? 'disabled' : '',
+                                                            item.status ? dispatchStatusToBGColor(item.status) : item.class,
+                                                            item.class,
+                                                        ]"
+                                                        @click="onSubmitDispatchStatusThrottle(selectedDispatch, item.status)"
+                                                    >
+                                                        <component
+                                                            :is="item.icon ?? HoopHouseIcon"
+                                                            class="h-5 w-5 shrink-0 text-base-100 group-hover:text-neutral"
+                                                            aria-hidden="true"
+                                                        />
+                                                        <span class="mt-1">
+                                                            {{
+                                                                item.status
+                                                                    ? $t(
+                                                                          `enums.centrum.StatusDispatch.${
+                                                                              StatusDispatch[item.status ?? 0]
+                                                                          }`,
+                                                                      )
+                                                                    : $t(item.name)
+                                                            }}
+                                                        </span>
+                                                    </button>
+                                                    <button
+                                                        type="button"
+                                                        class="group col-span-2 my-0.5 flex w-full flex-col items-center rounded-md bg-base-800 p-1.5 text-xs font-medium text-neutral hover:bg-primary-100/10 hover:text-neutral hover:transition-all"
+                                                        @click="updateDspStatus(selectedDispatch)"
+                                                    >
+                                                        {{ $t('components.centrum.update_dispatch_status.title') }}
+                                                    </button>
+                                                </div>
+                                            </li>
+                                        </ul>
+                                    </li>
+                                    <li>
+                                        <div class="text-xs font-semibold leading-6 text-base-100">
+                                            {{ $t('common.your_dispatches') }}
+                                        </div>
+                                        <ul role="list" class="-mx-2 mt-1 space-y-0.5">
+                                            <li v-if="getSortedOwnDispatches.length === 0">
+                                                <button
+                                                    type="button"
+                                                    class="group my-0.5 flex w-full flex-col items-center rounded-md bg-primary-100/10 p-1.5 text-xs font-medium text-neutral hover:text-neutral hover:transition-all"
+                                                >
+                                                    <CarEmergencyIcon class="h-5 w-5" aria-hidden="true" />
+                                                    <span class="mt-1 truncate">{{ $t('common.no_assigned_dispatches') }}</span>
+                                                </button>
+                                            </li>
+                                            <template v-else>
+                                                <OwnDispatchEntry
+                                                    v-for="id in getSortedOwnDispatches.slice().reverse()"
+                                                    :key="id"
+                                                    v-model:selected-dispatch="selectedDispatch"
+                                                    :dispatch="dispatches.get(id)!"
+                                                    @goto="$emit('goto', $event)"
+                                                />
+                                            </template>
+                                        </ul>
+                                        <div
+                                            class="mb-0.5 mt-1 divide-y border-t border-base-400 text-center text-xs leading-4 text-neutral"
+                                        >
+                                            {{ $t('components.centrum.livemap.total_dispatches') }}: {{ dispatches.size }}
+                                        </div>
+                                    </li>
+                                </template>
+                            </ul>
+                        </nav>
+                    </div>
+                </transition>
 
                 <!-- "Take Dispatches" Button -->
                 <template v-if="getOwnUnit !== undefined">

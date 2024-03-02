@@ -32,7 +32,17 @@ withDefaults(
         </SquareImg>
     </template>
     <Popover v-else class="relative">
-        <Float portal auto-placement :offset="16">
+        <Float
+            portal
+            auto-placement
+            :offset="15"
+            enter="transition duration-150 ease-out"
+            enter-from="scale-95 opacity-0"
+            enter-to="scale-100 opacity-100"
+            leave="transition duration-100 ease-in"
+            leave-from="scale-100 opacity-100"
+            leave-to="scale-95 opacity-0"
+        >
             <PopoverButton class="inline-flex items-center">
                 <SquareImg :url="url" :text="$t('common.avatar')" :size="size" :rounded="rounded" :no-blur="noBlur">
                     <template #initials>

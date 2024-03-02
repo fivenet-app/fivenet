@@ -36,10 +36,10 @@ const openStatus = ref(false);
                     <div class="pointer-events-none fixed inset-y-0 right-0 flex max-w-2xl pl-10 sm:pl-16">
                         <TransitionChild
                             as="template"
-                            enter="transform transition ease-in-out duration-150 sm:duration-300"
+                            enter="transform transition ease-in-out duration-100 sm:duration-200"
                             enter-from="translate-x-full"
                             enter-to="translate-x-0"
-                            leave="transform transition ease-in-out duration-150 sm:duration-300"
+                            leave="transform transition ease-in-out duration-100 sm:duration-200"
                             leave-from="translate-x-0"
                             leave-to="translate-x-full"
                         >
