@@ -856,7 +856,8 @@
         "file_size": "File Size",
         "predefined": "Predefined",
         "discord": "Discord",
-        "redirecting_to": "You are being redirect to {0} ..."
+        "redirecting_to": "You are being redirect to {0} ...",
+        "absent": "Absent"
     },
     "notifications": {
         "clipboard": {

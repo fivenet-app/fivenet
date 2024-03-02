@@ -36,6 +36,10 @@ export interface ListColleaguesRequest {
      * @generated from protobuf field: optional int32 user_id = 3;
      */
     userId?: number;
+    /**
+     * @generated from protobuf field: optional bool absent = 4;
+     */
+    absent?: boolean;
 }
 /**
  * @generated from protobuf message services.jobs.ListColleaguesResponse
@@ -174,7 +178,8 @@ class ListColleaguesRequest$Type extends MessageType<ListColleaguesRequest> {
         super("services.jobs.ListColleaguesRequest", [
             { no: 1, name: "pagination", kind: "message", T: () => PaginationRequest, options: { "validate.rules": { message: { required: true } } } },
             { no: 2, name: "search_name", kind: "scalar", T: 9 /*ScalarType.STRING*/, options: { "validate.rules": { string: { maxLen: "50" } } } },
-            { no: 3, name: "user_id", kind: "scalar", opt: true, T: 5 /*ScalarType.INT32*/ }
+            { no: 3, name: "user_id", kind: "scalar", opt: true, T: 5 /*ScalarType.INT32*/ },
+            { no: 4, name: "absent", kind: "scalar", opt: true, T: 8 /*ScalarType.BOOL*/ }
         ]);
     }
     create(value?: PartialMessage<ListColleaguesRequest>): ListColleaguesRequest {
@@ -198,6 +203,9 @@ class ListColleaguesRequest$Type extends MessageType<ListColleaguesRequest> {
                 case /* optional int32 user_id */ 3:
                     message.userId = reader.int32();
                     break;
+                case /* optional bool absent */ 4:
+                    message.absent = reader.bool();
+                    break;
                 default:
                     let u = options.readUnknownField;
                     if (u === "throw")
@@ -219,6 +227,9 @@ class ListColleaguesRequest$Type extends MessageType<ListColleaguesRequest> {
         /* optional int32 user_id = 3; */
         if (message.userId !== undefined)
             writer.tag(3, WireType.Varint).int32(message.userId);
+        /* optional bool absent = 4; */
+        if (message.absent !== undefined)
+            writer.tag(4, WireType.Varint).bool(message.absent);
         let u = options.writeUnknownFields;
         if (u !== false)
             (u == true ? UnknownFieldHandler.onWrite : u)(this.typeName, message, writer);

@@ -21,6 +21,12 @@ defineEmits<{
 }>();
 
 const absenceDateModal = ref(false);
+
+const today = new Date();
+today.setHours(0);
+today.setMinutes(0);
+today.setSeconds(0);
+today.setMilliseconds(0);
 </script>
 
 <template>
@@ -56,7 +62,7 @@ const absenceDateModal = ref(false);
         </td>
         <td class="whitespace-nowrap py-2 pl-4 pr-3 text-base font-medium text-neutral sm:pl-1">
             <GenericTime
-                v-if="colleague.props?.absenceDate && toDate(colleague.props?.absenceDate).getTime() > new Date().getTime()"
+                v-if="colleague.props?.absenceDate && toDate(colleague.props?.absenceDate).getTime() >= today.getTime()"
                 :value="colleague.props?.absenceDate"
                 type="date"
             />

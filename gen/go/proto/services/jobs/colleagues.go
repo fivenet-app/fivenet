@@ -17,7 +17,6 @@ import (
 	"github.com/galexrt/fivenet/pkg/grpc/auth/userinfo"
 	"github.com/galexrt/fivenet/pkg/grpc/errswrap"
 	"github.com/galexrt/fivenet/pkg/perms"
-	timeutils "github.com/galexrt/fivenet/pkg/utils/time"
 	"github.com/galexrt/fivenet/query/fivenet/model"
 	"github.com/galexrt/fivenet/query/fivenet/table"
 	jet "github.com/go-jet/jet/v2/mysql"
@@ -51,13 +50,25 @@ func (s *Server) ListColleagues(ctx context.Context, req *ListColleaguesRequest)
 		}
 	}
 
+	if req.Absent != nil && *req.Absent {
+		condition = condition.AND(jet.AND(
+			tJobsUserProps.AbsenceDate.IS_NOT_NULL(),
+			tJobsUserProps.AbsenceDate.GT_EQ(jet.CURRENT_DATE()),
+		))
+	}
+
 	// Get total count of values
 	countStmt := tUser.
 		SELECT(
 			jet.COUNT(tUser.ID).AS("datacount.totalcount"),
 		).
 		OPTIMIZER_HINTS(jet.OptimizerHint("idx_users_firstname_lastname_fulltext")).
-		FROM(tUser).
+		FROM(
+			tUser.
+				LEFT_JOIN(tJobsUserProps,
+					tJobsUserProps.UserID.EQ(tUser.ID),
+				),
+		).
 		WHERE(condition)
 
 	var count database.DataCount
@@ -284,13 +295,13 @@ func (s *Server) SetJobsUserProps(ctx context.Context, req *SetJobsUserPropsRequ
 		return nil, errswrap.NewError(errorsjobs.ErrFailedQuery, err)
 	}
 
-	absenceDate := jet.TimestampExp(jet.NULL)
+	absenceDate := jet.DateExp(jet.NULL)
 	if req.Props.AbsenceDate != nil {
 		if req.Props.AbsenceDate.Timestamp == nil {
 			req.Props.AbsenceDate = nil
 		} else {
-			req.Props.AbsenceDate = timestamp.New(timeutils.TruncateToDay(req.Props.AbsenceDate.AsTime()))
-			absenceDate = jet.DateTimeT(req.Props.AbsenceDate.AsTime())
+			req.Props.AbsenceDate = timestamp.New(req.Props.AbsenceDate.AsTime())
+			absenceDate = jet.DateT(req.Props.AbsenceDate.AsTime())
 		}
 	} else {
 		req.Props.AbsenceDate = props.AbsenceDate

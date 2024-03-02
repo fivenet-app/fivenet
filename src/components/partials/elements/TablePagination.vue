@@ -73,8 +73,6 @@ const onSubmitThrottle = useThrottleFn(async () => {
 }, 1000);
 
 const pageNumber = ref(currentPage.value.toString());
-
-console.log(props.pagination);
 </script>
 
 <template>

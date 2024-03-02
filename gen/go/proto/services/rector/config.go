@@ -10,6 +10,7 @@ import (
 	"github.com/galexrt/fivenet/query/fivenet/table"
 	jet "github.com/go-jet/jet/v2/mysql"
 	"github.com/go-jet/jet/v2/qrm"
+	"google.golang.org/protobuf/types/known/durationpb"
 )
 
 var (
@@ -53,8 +54,20 @@ func (s *Server) GetAppConfig(ctx context.Context, req *GetAppConfigRequest) (*G
 		return nil, err
 	}
 
+	config.Auth.SignupEnabled = s.cfg.Game.Auth.SignupEnabled
+
 	config.Website.Links.Imprint = s.cfg.HTTP.Links.Imprint
 	config.Website.Links.PrivacyPolicy = s.cfg.HTTP.Links.PrivacyPolicy
+
+	config.JobInfo.HiddenJobs = s.cfg.Game.HiddenJobs
+	config.JobInfo.PublicJobs = s.cfg.Game.PublicJobs
+
+	config.UserTracker.RefreshTime = durationpb.New(s.cfg.Game.Livemap.RefreshTime)
+	config.UserTracker.DbRefreshTime = durationpb.New(s.cfg.Game.Livemap.DBRefreshTime)
+	config.UserTracker.LivemapJobs = s.cfg.Game.Livemap.Jobs
+	config.UserTracker.TimeclockJobs = []string{}
+
+	config.Discord.Enabled = s.cfg.Discord.Enabled
 
 	auditEntry.State = int16(rector.EventType_EVENT_TYPE_VIEWED)
 
@@ -62,6 +75,7 @@ func (s *Server) GetAppConfig(ctx context.Context, req *GetAppConfigRequest) (*G
 		Config: config,
 	}, nil
 }
+
 func (s *Server) UpdateAppConfig(ctx context.Context, req *UpdateAppConfigRequest) (*UpdateAppConfigResponse, error) {
 	userInfo := auth.MustGetUserInfoFromContext(ctx)
 
@@ -75,14 +89,16 @@ func (s *Server) UpdateAppConfig(ctx context.Context, req *UpdateAppConfigReques
 	defer s.aud.Log(auditEntry, req)
 
 	stmt := tConfig.
-		UPDATE(
+		INSERT(
+			tConfig.Key,
 			tConfig.AppConfig,
 		).
-		SET(
+		VALUES(
+			1,
 			req.Config,
 		).
-		WHERE(
-			tConfig.Key.EQ(jet.Uint64(1)),
+		ON_DUPLICATE_KEY_UPDATE(
+			tConfig.AppConfig.SET(jet.RawString("VALUES(`app_config`)")),
 		)
 
 	if _, err := stmt.ExecContext(ctx, s.db); err != nil {

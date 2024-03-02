@@ -1,4 +1,5 @@
 <script lang="ts" setup>
+import { Switch } from '@headlessui/vue';
 import { watchDebounced } from '@vueuse/core';
 import DataErrorBlock from '~/components/partials/data/DataErrorBlock.vue';
 import DataNoDataBlock from '~/components/partials/data/DataNoDataBlock.vue';
@@ -10,8 +11,12 @@ import type { Perms } from '~~/gen/ts/perms';
 import type { Timestamp } from '~~/gen/ts/resources/timestamp/timestamp';
 import GenericTable from '~/components/partials/elements/GenericTable.vue';
 
-const query = ref<{ name: string }>({
+const query = ref<{
+    name: string;
+    absent?: boolean;
+}>({
     name: '',
+    absent: false,
 });
 const offset = ref(0n);
 
@@ -22,6 +27,7 @@ const { data, pending, refresh, error } = useLazyAsyncData(`jobs-colleagues-${of
             offset: offset.value,
         },
         searchName: query.value.name,
+        absent: query.value.absent,
     }),
 );
 
@@ -75,6 +81,31 @@ function updateAbsenceDate(value: { userId: number; absenceDate?: Timestamp }): 
                                         @focusin="focusTablet(true)"
                                         @focusout="focusTablet(false)"
                                     />
+                                </div>
+                            </div>
+                            <div class="form-control flex-initial">
+                                <label for="search" class="block text-sm font-medium leading-6 text-neutral">
+                                    {{ $t('common.absent') }}
+                                </label>
+                                <div class="relative mt-3 flex items-center">
+                                    <Switch
+                                        v-model="query.absent"
+                                        :class="[
+                                            query.absent ? 'bg-error-500' : 'bg-base-700',
+                                            'relative inline-flex h-6 w-11 flex-shrink-0 cursor-pointer rounded-full border-2 border-transparent transition-colors duration-200 ease-in-out focus:outline-none focus:ring-2 focus:ring-neutral focus:ring-offset-2',
+                                        ]"
+                                    >
+                                        <span class="sr-only">
+                                            {{ $t('common.absent') }}
+                                        </span>
+                                        <span
+                                            aria-hidden="true"
+                                            :class="[
+                                                query.absent ? 'translate-x-5' : 'translate-x-0',
+                                                'pointer-events-none inline-block h-5 w-5 transform rounded-full bg-neutral ring-0 transition duration-200 ease-in-out',
+                                            ]"
+                                        />
+                                    </Switch>
                                 </div>
                             </div>
                         </div>

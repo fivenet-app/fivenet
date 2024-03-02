@@ -116,7 +116,7 @@ CREATE TABLE IF NOT EXISTS `fivenet_jobs_requests_comments` (
 -- Table: fivenet_jobs_user_props
 CREATE TABLE IF NOT EXISTS `fivenet_jobs_user_props` (
   `user_id` int(11) NOT NULL,
-  `absence_date` datetime(3) DEFAULT NULL,
+  `absence_date` date DEFAULT NULL,
   UNIQUE KEY `idx_fivenet_jobs_user_props_unique` (`user_id`),
   CONSTRAINT `fk_fivenet_jobs_user_props_user_id` FOREIGN KEY (`user_id`) REFERENCES `users` (`id`) ON DELETE CASCADE ON UPDATE CASCADE
 ) ENGINE=InnoDB;

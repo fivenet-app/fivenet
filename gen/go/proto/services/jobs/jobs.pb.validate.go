@@ -112,6 +112,10 @@ func (m *ListColleaguesRequest) validate(all bool) error {
 		// no validation rules for UserId
 	}
 
+	if m.Absent != nil {
+		// no validation rules for Absent
+	}
+
 	if len(errors) > 0 {
 		return ListColleaguesRequestMultiError(errors)
 	}

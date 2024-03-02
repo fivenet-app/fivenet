@@ -15,6 +15,7 @@ message ListColleaguesRequest {
   // Search params
   string search_name = 2 [(validate.rules).string.max_len = 50];
   optional int32 user_id = 3;
+  optional bool absent = 4;
 }
 
 message ListColleaguesResponse {

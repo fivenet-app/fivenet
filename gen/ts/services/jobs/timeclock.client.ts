@@ -4,8 +4,6 @@
 import type { RpcTransport } from "@protobuf-ts/runtime-rpc";
 import type { ServiceInfo } from "@protobuf-ts/runtime-rpc";
 import { JobsTimeclockService } from "./timeclock";
-import type { ListInactiveUsersResponse } from "./timeclock";
-import type { ListInactiveUsersRequest } from "./timeclock";
 import type { GetTimeclockStatsResponse } from "./timeclock";
 import type { GetTimeclockStatsRequest } from "./timeclock";
 import { stackIntercept } from "@protobuf-ts/runtime-rpc";
@@ -29,12 +27,6 @@ export interface IJobsTimeclockServiceClient {
      * @generated from protobuf rpc: GetTimeclockStats(services.jobs.GetTimeclockStatsRequest) returns (services.jobs.GetTimeclockStatsResponse);
      */
     getTimeclockStats(input: GetTimeclockStatsRequest, options?: RpcOptions): UnaryCall<GetTimeclockStatsRequest, GetTimeclockStatsResponse>;
-    /**
-     * @perm: Name=ListTimeclock
-     *
-     * @generated from protobuf rpc: ListInactiveUsers(services.jobs.ListInactiveUsersRequest) returns (services.jobs.ListInactiveUsersResponse);
-     */
-    listInactiveUsers(input: ListInactiveUsersRequest, options?: RpcOptions): UnaryCall<ListInactiveUsersRequest, ListInactiveUsersResponse>;
 }
 /**
  * @generated from protobuf service services.jobs.JobsTimeclockService
@@ -62,14 +54,5 @@ export class JobsTimeclockServiceClient implements IJobsTimeclockServiceClient, 
     getTimeclockStats(input: GetTimeclockStatsRequest, options?: RpcOptions): UnaryCall<GetTimeclockStatsRequest, GetTimeclockStatsResponse> {
         const method = this.methods[1], opt = this._transport.mergeOptions(options);
         return stackIntercept<GetTimeclockStatsRequest, GetTimeclockStatsResponse>("unary", this._transport, method, opt, input);
-    }
-    /**
-     * @perm: Name=ListTimeclock
-     *
-     * @generated from protobuf rpc: ListInactiveUsers(services.jobs.ListInactiveUsersRequest) returns (services.jobs.ListInactiveUsersResponse);
-     */
-    listInactiveUsers(input: ListInactiveUsersRequest, options?: RpcOptions): UnaryCall<ListInactiveUsersRequest, ListInactiveUsersResponse> {
-        const method = this.methods[2], opt = this._transport.mergeOptions(options);
-        return stackIntercept<ListInactiveUsersRequest, ListInactiveUsersResponse>("unary", this._transport, method, opt, input);
     }
 }

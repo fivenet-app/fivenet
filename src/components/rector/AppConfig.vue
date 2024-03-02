@@ -60,12 +60,11 @@ async function updateAppConfig(): Promise<void> {
     }
 }
 
-const canSubmit = ref(true);
+const canSubmit = ref(false);
 const onSubmitThrottle = useThrottleFn(async (_) => {
     canSubmit.value = false;
     await updateAppConfig().finally(() => setTimeout(() => (canSubmit.value = true), 400));
 }, 1000);
-// TODO
 </script>
 
 <template>
@@ -113,9 +112,14 @@ const onSubmitThrottle = useThrottleFn(async (_) => {
                                         />
                                     </Switch>
                                     <SwitchLabel as="span" class="ml-3 text-sm">
-                                        <span class="font-medium text-gray-300">{{
-                                            $t('components.penaltycalculator.title')
-                                        }}</span>
+                                        <span class="font-medium text-gray-300">
+                                            <template v-if="data.config!.auth!.signupEnabled">
+                                                {{ $t('common.enabled') }}
+                                            </template>
+                                            <template v-else>
+                                                {{ $t('common.disabled') }}
+                                            </template>
+                                        </span>
                                     </SwitchLabel>
                                 </SwitchGroup>
                             </template>
@@ -248,7 +252,14 @@ const onSubmitThrottle = useThrottleFn(async (_) => {
                                         />
                                     </Switch>
                                     <SwitchLabel as="span" class="ml-3 text-sm">
-                                        <span class="font-medium text-gray-300">{{ $t('common.discord') }}</span>
+                                        <span class="font-medium text-gray-300">
+                                            <template v-if="data.config!.discord!.enabled">
+                                                {{ $t('common.enabled') }}
+                                            </template>
+                                            <template v-else>
+                                                {{ $t('common.disabled') }}
+                                            </template>
+                                        </span>
                                     </SwitchLabel>
                                 </SwitchGroup>
                             </template>
@@ -274,7 +285,7 @@ const onSubmitThrottle = useThrottleFn(async (_) => {
                                     :disabled="!canSubmit"
                                     @click="onSubmitThrottle"
                                 >
-                                    <template v-if="!canSubmit">
+                                    <template v-if="!canSubmit && false">
                                         <LoadingIcon class="mr-2 h-5 w-5 animate-spin" aria-hidden="true" />
                                     </template>
                                     {{ $t('common.save', 1) }}
