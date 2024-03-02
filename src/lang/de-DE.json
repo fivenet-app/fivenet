@@ -47,7 +47,8 @@
                 "limiter": "Begrenzen was Fraktionen sehen können (Mitarbeiter Standorte, Einsätze...).",
                 "laws": "Erstelle und aktualisiere die Gesetzbücher des Staates.",
                 "units": "Anzeigen, Erstellen und Aktualisieren von Einheiten für die Leitstelle.",
-                "filestore": "Auflisten und verwalten aller Dateien."
+                "filestore": "Auflisten und verwalten aller Dateien.",
+                "settings": "Verwalten von FiveNet-Einstellungen."
             },
             "roles": {
                 "title": "Rollen",
@@ -65,6 +66,9 @@
             },
             "filestore": {
                 "title": "Datenspeicher"
+            },
+            "settings": {
+                "title": "FiveNet-Einstellungen"
             }
         },
         "notfound": {
