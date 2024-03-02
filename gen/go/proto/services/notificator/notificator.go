@@ -227,17 +227,12 @@ func (s *Server) Stream(req *StreamRequest, srv NotificatorService_StreamServer)
 		return ErrFailedStream
 	}
 
+	// Restart stream after x minutes
+	restartTime := time.NewTicker(9 * time.Minute)
+	defer restartTime.Stop()
+
 	// Track changes to user info, so we can send an updated user info to the user
-	currentUserInfo := userinfo.UserInfo{
-		AccId:        userInfo.AccId,
-		UserId:       userInfo.UserId,
-		Job:          userInfo.Job,
-		JobGrade:     userInfo.JobGrade,
-		OrigJob:      userInfo.OrigJob,
-		OrigJobGrade: userInfo.OrigJobGrade,
-		Group:        userInfo.Group,
-		SuperUser:    userInfo.SuperUser,
-	}
+	currentUserInfo := userInfo.Clone()
 
 	msgCh := make(chan *nats.Msg, 16)
 	sub, err := s.js.ChanSubscribe(fmt.Sprintf("%s.%s.%d", notifi.BaseSubject, notifi.UserNotification, currentUserInfo.UserId), msgCh, nats.DeliverNew())
@@ -271,6 +266,13 @@ func (s *Server) Stream(req *StreamRequest, srv NotificatorService_StreamServer)
 		select {
 		case <-srv.Context().Done():
 			return nil
+
+		case <-restartTime.C:
+			restart := true
+			resp.Restart = &restart
+			err := srv.Send(resp)
+
+			return err
 
 		case <-updateTicker.C:
 			// Check for new user notifications
@@ -421,7 +423,7 @@ func (s *Server) checkAndUpdateToken(ctx context.Context) (*auth.CitizenInfoClai
 }
 
 func (s *Server) checkAndUpdateUserInfo(ctx context.Context, tu *TokenUpdate, currentUserInfo *userinfo.UserInfo) error {
-	userInfo, err := s.ui.GetUserInfo(ctx, currentUserInfo.UserId, currentUserInfo.AccId)
+	userInfo, err := s.ui.GetUserInfo(ctx, currentUserInfo.UserId, currentUserInfo.AccountId)
 	if err != nil {
 		return err
 	}

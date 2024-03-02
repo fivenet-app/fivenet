@@ -10,17 +10,17 @@ var (
 )
 
 type UserInfo struct {
-	Enabled bool
-	AccId   uint64
-	UserId  int32
+	Enabled   bool
+	AccountId uint64
+	UserId    int32
+
+	Group     string
+	SuperUser bool
 
 	Job          string
 	JobGrade     int32
 	OrigJob      string
 	OrigJobGrade int32
-
-	Group     string
-	SuperUser bool
 }
 
 func (u *UserInfo) Equal(in *UserInfo) bool {
@@ -29,4 +29,20 @@ func (u *UserInfo) Equal(in *UserInfo) bool {
 	}
 
 	return *u == *in
+}
+
+func (u *UserInfo) Clone() UserInfo {
+	return UserInfo{
+		Enabled:   u.Enabled,
+		AccountId: u.AccountId,
+		UserId:    u.UserId,
+
+		Group:     u.Group,
+		SuperUser: u.SuperUser,
+
+		Job:          u.Job,
+		JobGrade:     u.JobGrade,
+		OrigJob:      u.OrigJob,
+		OrigJobGrade: u.OrigJobGrade,
+	}
 }

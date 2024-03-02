@@ -1938,6 +1938,14 @@
                 </li>
               
                 <li>
+                  <a href="#services.jobs.ListInactiveUsersRequest"><span class="badge">M</span>ListInactiveUsersRequest</a>
+                </li>
+              
+                <li>
+                  <a href="#services.jobs.ListInactiveUsersResponse"><span class="badge">M</span>ListInactiveUsersResponse</a>
+                </li>
+              
+                <li>
                   <a href="#services.jobs.ListTimeclockRequest"><span class="badge">M</span>ListTimeclockRequest</a>
                 </li>
               
@@ -21115,6 +21123,54 @@
 
         
       
+        <h3 id="services.jobs.ListInactiveUsersRequest">ListInactiveUsersRequest</h3>
+        <p></p>
+
+        
+          <table class="field-table">
+            <thead>
+              <tr><td>Field</td><td>Type</td><td>Label</td><td>Description</td></tr>
+            </thead>
+            <tbody>
+              
+                <tr>
+                  <td>days</td>
+                  <td><a href="#int32">int32</a></td>
+                  <td></td>
+                  <td><p> </p></td>
+                </tr>
+              
+            </tbody>
+          </table>
+
+          
+
+        
+      
+        <h3 id="services.jobs.ListInactiveUsersResponse">ListInactiveUsersResponse</h3>
+        <p></p>
+
+        
+          <table class="field-table">
+            <thead>
+              <tr><td>Field</td><td>Type</td><td>Label</td><td>Description</td></tr>
+            </thead>
+            <tbody>
+              
+                <tr>
+                  <td>users</td>
+                  <td><a href="#resources.jobs.Colleague">resources.jobs.Colleague</a></td>
+                  <td>repeated</td>
+                  <td><p> </p></td>
+                </tr>
+              
+            </tbody>
+          </table>
+
+          
+
+        
+      
         <h3 id="services.jobs.ListTimeclockRequest">ListTimeclockRequest</h3>
         <p></p>
 
@@ -21264,6 +21320,13 @@
                 <td>GetTimeclockStats</td>
                 <td><a href="#services.jobs.GetTimeclockStatsRequest">GetTimeclockStatsRequest</a></td>
                 <td><a href="#services.jobs.GetTimeclockStatsResponse">GetTimeclockStatsResponse</a></td>
+                <td><p>@perm: Name=ListTimeclock</p></td>
+              </tr>
+            
+              <tr>
+                <td>ListInactiveUsers</td>
+                <td><a href="#services.jobs.ListInactiveUsersRequest">ListInactiveUsersRequest</a></td>
+                <td><a href="#services.jobs.ListInactiveUsersResponse">ListInactiveUsersResponse</a></td>
                 <td><p>@perm: Name=ListTimeclock</p></td>
               </tr>
             

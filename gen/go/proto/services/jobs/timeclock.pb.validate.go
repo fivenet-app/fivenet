@@ -745,3 +745,243 @@ var _ interface {
 	Cause() error
 	ErrorName() string
 } = GetTimeclockStatsResponseValidationError{}
+
+// Validate checks the field values on ListInactiveUsersRequest with the rules
+// defined in the proto definition for this message. If any rules are
+// violated, the first error encountered is returned, or nil if there are no violations.
+func (m *ListInactiveUsersRequest) Validate() error {
+	return m.validate(false)
+}
+
+// ValidateAll checks the field values on ListInactiveUsersRequest with the
+// rules defined in the proto definition for this message. If any rules are
+// violated, the result is a list of violation errors wrapped in
+// ListInactiveUsersRequestMultiError, or nil if none found.
+func (m *ListInactiveUsersRequest) ValidateAll() error {
+	return m.validate(true)
+}
+
+func (m *ListInactiveUsersRequest) validate(all bool) error {
+	if m == nil {
+		return nil
+	}
+
+	var errors []error
+
+	// no validation rules for Days
+
+	if len(errors) > 0 {
+		return ListInactiveUsersRequestMultiError(errors)
+	}
+
+	return nil
+}
+
+// ListInactiveUsersRequestMultiError is an error wrapping multiple validation
+// errors returned by ListInactiveUsersRequest.ValidateAll() if the designated
+// constraints aren't met.
+type ListInactiveUsersRequestMultiError []error
+
+// Error returns a concatenation of all the error messages it wraps.
+func (m ListInactiveUsersRequestMultiError) Error() string {
+	var msgs []string
+	for _, err := range m {
+		msgs = append(msgs, err.Error())
+	}
+	return strings.Join(msgs, "; ")
+}
+
+// AllErrors returns a list of validation violation errors.
+func (m ListInactiveUsersRequestMultiError) AllErrors() []error { return m }
+
+// ListInactiveUsersRequestValidationError is the validation error returned by
+// ListInactiveUsersRequest.Validate if the designated constraints aren't met.
+type ListInactiveUsersRequestValidationError struct {
+	field  string
+	reason string
+	cause  error
+	key    bool
+}
+
+// Field function returns field value.
+func (e ListInactiveUsersRequestValidationError) Field() string { return e.field }
+
+// Reason function returns reason value.
+func (e ListInactiveUsersRequestValidationError) Reason() string { return e.reason }
+
+// Cause function returns cause value.
+func (e ListInactiveUsersRequestValidationError) Cause() error { return e.cause }
+
+// Key function returns key value.
+func (e ListInactiveUsersRequestValidationError) Key() bool { return e.key }
+
+// ErrorName returns error name.
+func (e ListInactiveUsersRequestValidationError) ErrorName() string {
+	return "ListInactiveUsersRequestValidationError"
+}
+
+// Error satisfies the builtin error interface
+func (e ListInactiveUsersRequestValidationError) Error() string {
+	cause := ""
+	if e.cause != nil {
+		cause = fmt.Sprintf(" | caused by: %v", e.cause)
+	}
+
+	key := ""
+	if e.key {
+		key = "key for "
+	}
+
+	return fmt.Sprintf(
+		"invalid %sListInactiveUsersRequest.%s: %s%s",
+		key,
+		e.field,
+		e.reason,
+		cause)
+}
+
+var _ error = ListInactiveUsersRequestValidationError{}
+
+var _ interface {
+	Field() string
+	Reason() string
+	Key() bool
+	Cause() error
+	ErrorName() string
+} = ListInactiveUsersRequestValidationError{}
+
+// Validate checks the field values on ListInactiveUsersResponse with the rules
+// defined in the proto definition for this message. If any rules are
+// violated, the first error encountered is returned, or nil if there are no violations.
+func (m *ListInactiveUsersResponse) Validate() error {
+	return m.validate(false)
+}
+
+// ValidateAll checks the field values on ListInactiveUsersResponse with the
+// rules defined in the proto definition for this message. If any rules are
+// violated, the result is a list of violation errors wrapped in
+// ListInactiveUsersResponseMultiError, or nil if none found.
+func (m *ListInactiveUsersResponse) ValidateAll() error {
+	return m.validate(true)
+}
+
+func (m *ListInactiveUsersResponse) validate(all bool) error {
+	if m == nil {
+		return nil
+	}
+
+	var errors []error
+
+	for idx, item := range m.GetUsers() {
+		_, _ = idx, item
+
+		if all {
+			switch v := interface{}(item).(type) {
+			case interface{ ValidateAll() error }:
+				if err := v.ValidateAll(); err != nil {
+					errors = append(errors, ListInactiveUsersResponseValidationError{
+						field:  fmt.Sprintf("Users[%v]", idx),
+						reason: "embedded message failed validation",
+						cause:  err,
+					})
+				}
+			case interface{ Validate() error }:
+				if err := v.Validate(); err != nil {
+					errors = append(errors, ListInactiveUsersResponseValidationError{
+						field:  fmt.Sprintf("Users[%v]", idx),
+						reason: "embedded message failed validation",
+						cause:  err,
+					})
+				}
+			}
+		} else if v, ok := interface{}(item).(interface{ Validate() error }); ok {
+			if err := v.Validate(); err != nil {
+				return ListInactiveUsersResponseValidationError{
+					field:  fmt.Sprintf("Users[%v]", idx),
+					reason: "embedded message failed validation",
+					cause:  err,
+				}
+			}
+		}
+
+	}
+
+	if len(errors) > 0 {
+		return ListInactiveUsersResponseMultiError(errors)
+	}
+
+	return nil
+}
+
+// ListInactiveUsersResponseMultiError is an error wrapping multiple validation
+// errors returned by ListInactiveUsersResponse.ValidateAll() if the
+// designated constraints aren't met.
+type ListInactiveUsersResponseMultiError []error
+
+// Error returns a concatenation of all the error messages it wraps.
+func (m ListInactiveUsersResponseMultiError) Error() string {
+	var msgs []string
+	for _, err := range m {
+		msgs = append(msgs, err.Error())
+	}
+	return strings.Join(msgs, "; ")
+}
+
+// AllErrors returns a list of validation violation errors.
+func (m ListInactiveUsersResponseMultiError) AllErrors() []error { return m }
+
+// ListInactiveUsersResponseValidationError is the validation error returned by
+// ListInactiveUsersResponse.Validate if the designated constraints aren't met.
+type ListInactiveUsersResponseValidationError struct {
+	field  string
+	reason string
+	cause  error
+	key    bool
+}
+
+// Field function returns field value.
+func (e ListInactiveUsersResponseValidationError) Field() string { return e.field }
+
+// Reason function returns reason value.
+func (e ListInactiveUsersResponseValidationError) Reason() string { return e.reason }
+
+// Cause function returns cause value.
+func (e ListInactiveUsersResponseValidationError) Cause() error { return e.cause }
+
+// Key function returns key value.
+func (e ListInactiveUsersResponseValidationError) Key() bool { return e.key }
+
+// ErrorName returns error name.
+func (e ListInactiveUsersResponseValidationError) ErrorName() string {
+	return "ListInactiveUsersResponseValidationError"
+}
+
+// Error satisfies the builtin error interface
+func (e ListInactiveUsersResponseValidationError) Error() string {
+	cause := ""
+	if e.cause != nil {
+		cause = fmt.Sprintf(" | caused by: %v", e.cause)
+	}
+
+	key := ""
+	if e.key {
+		key = "key for "
+	}
+
+	return fmt.Sprintf(
+		"invalid %sListInactiveUsersResponse.%s: %s%s",
+		key,
+		e.field,
+		e.reason,
+		cause)
+}
+
+var _ error = ListInactiveUsersResponseValidationError{}
+
+var _ interface {
+	Field() string
+	Reason() string
+	Key() bool
+	Cause() error
+	ErrorName() string
+} = ListInactiveUsersResponseValidationError{}

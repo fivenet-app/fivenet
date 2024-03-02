@@ -188,3 +188,13 @@ func (s *Server) GetTimeclockStats(ctx context.Context, req *GetTimeclockStatsRe
 		Weekly: weekly,
 	}, nil
 }
+
+func (s *Server) ListInactiveUsers(ctx context.Context, req *ListInactiveUsersRequest) (*ListInactiveUsersResponse, error) {
+	userInfo := auth.MustGetUserInfoFromContext(ctx)
+
+	_ = userInfo
+
+	// TODO
+
+	return nil, nil
+}

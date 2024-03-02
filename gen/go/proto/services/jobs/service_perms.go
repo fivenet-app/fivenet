@@ -27,6 +27,7 @@ var PermsRemap = map[string]string{
 
 	// Service: JobsTimeclockService
 	"JobsTimeclockService/GetTimeclockStats": "JobsTimeclockService/ListTimeclock",
+	"JobsTimeclockService/ListInactiveUsers": "JobsTimeclockService/ListTimeclock",
 }
 
 func (s *Server) GetPermsRemap() map[string]string {
