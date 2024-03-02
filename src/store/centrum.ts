@@ -35,7 +35,7 @@ export interface CentrumState {
     pendingDispatches: string[];
 }
 
-type canDoAction = 'TakeControl' | 'TakeDispatch' | 'AssignDispatch' | 'UpdateDispatchStatus' | 'UpdateUnitStatus';
+export type canDoAction = 'TakeControl' | 'TakeDispatch' | 'AssignDispatch' | 'UpdateDispatchStatus' | 'UpdateUnitStatus';
 
 export const useCentrumStore = defineStore('centrum', {
     state: () =>

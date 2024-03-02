@@ -10,14 +10,10 @@ export interface CompletorState {
     jobs: Job[];
 }
 
-export interface ClipboardState extends CompletorState {
-    activeStack: CompletorState;
-}
-
 export const useCompletorStore = defineStore('completor', {
     state: () =>
         ({
-            jobs: [] as Job[],
+            jobs: [],
         }) as CompletorState,
     persist: false,
     actions: {
