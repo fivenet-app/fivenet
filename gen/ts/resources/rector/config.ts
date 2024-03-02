@@ -20,23 +20,27 @@ export interface AppConfig {
      */
     auth?: Auth;
     /**
-     * @generated from protobuf field: resources.rector.Website website = 2;
+     * @generated from protobuf field: resources.rector.Perms perms = 2;
+     */
+    perms?: Perms;
+    /**
+     * @generated from protobuf field: resources.rector.Website website = 3;
      */
     website?: Website;
     /**
-     * @generated from protobuf field: resources.rector.JobInfo job_info = 3;
+     * @generated from protobuf field: resources.rector.JobInfo job_info = 4;
      */
     jobInfo?: JobInfo;
     /**
-     * @generated from protobuf field: resources.rector.UserTracker user_tracker = 4;
+     * @generated from protobuf field: resources.rector.UserTracker user_tracker = 5;
      */
     userTracker?: UserTracker;
     /**
-     * @generated from protobuf field: resources.rector.OAuth2 oauth2 = 5;
+     * @generated from protobuf field: resources.rector.OAuth2 oauth2 = 6;
      */
     oauth2?: OAuth2;
     /**
-     * @generated from protobuf field: resources.rector.Discord discord = 6;
+     * @generated from protobuf field: resources.rector.Discord discord = 7;
      */
     discord?: Discord;
 }
@@ -47,7 +51,14 @@ export interface Auth {
     /**
      * @generated from protobuf field: bool signup_enabled = 1;
      */
-    signupEnabled: boolean; // TODO default perms and attributes
+    signupEnabled: boolean;
+}
+/**
+ * TODO default perms and attributes
+ *
+ * @generated from protobuf message resources.rector.Perms
+ */
+export interface Perms {
 }
 /**
  * @generated from protobuf message resources.rector.Website
@@ -214,11 +225,12 @@ class AppConfig$Type extends MessageType<AppConfig> {
     constructor() {
         super("resources.rector.AppConfig", [
             { no: 1, name: "auth", kind: "message", T: () => Auth },
-            { no: 2, name: "website", kind: "message", T: () => Website },
-            { no: 3, name: "job_info", kind: "message", T: () => JobInfo },
-            { no: 4, name: "user_tracker", kind: "message", T: () => UserTracker },
-            { no: 5, name: "oauth2", kind: "message", T: () => OAuth2 },
-            { no: 6, name: "discord", kind: "message", T: () => Discord }
+            { no: 2, name: "perms", kind: "message", T: () => Perms },
+            { no: 3, name: "website", kind: "message", T: () => Website },
+            { no: 4, name: "job_info", kind: "message", T: () => JobInfo },
+            { no: 5, name: "user_tracker", kind: "message", T: () => UserTracker },
+            { no: 6, name: "oauth2", kind: "message", T: () => OAuth2 },
+            { no: 7, name: "discord", kind: "message", T: () => Discord }
         ]);
     }
     create(value?: PartialMessage<AppConfig>): AppConfig {
@@ -235,19 +247,22 @@ class AppConfig$Type extends MessageType<AppConfig> {
                 case /* resources.rector.Auth auth */ 1:
                     message.auth = Auth.internalBinaryRead(reader, reader.uint32(), options, message.auth);
                     break;
-                case /* resources.rector.Website website */ 2:
+                case /* resources.rector.Perms perms */ 2:
+                    message.perms = Perms.internalBinaryRead(reader, reader.uint32(), options, message.perms);
+                    break;
+                case /* resources.rector.Website website */ 3:
                     message.website = Website.internalBinaryRead(reader, reader.uint32(), options, message.website);
                     break;
-                case /* resources.rector.JobInfo job_info */ 3:
+                case /* resources.rector.JobInfo job_info */ 4:
                     message.jobInfo = JobInfo.internalBinaryRead(reader, reader.uint32(), options, message.jobInfo);
                     break;
-                case /* resources.rector.UserTracker user_tracker */ 4:
+                case /* resources.rector.UserTracker user_tracker */ 5:
                     message.userTracker = UserTracker.internalBinaryRead(reader, reader.uint32(), options, message.userTracker);
                     break;
-                case /* resources.rector.OAuth2 oauth2 */ 5:
+                case /* resources.rector.OAuth2 oauth2 */ 6:
                     message.oauth2 = OAuth2.internalBinaryRead(reader, reader.uint32(), options, message.oauth2);
                     break;
-                case /* resources.rector.Discord discord */ 6:
+                case /* resources.rector.Discord discord */ 7:
                     message.discord = Discord.internalBinaryRead(reader, reader.uint32(), options, message.discord);
                     break;
                 default:
@@ -265,21 +280,24 @@ class AppConfig$Type extends MessageType<AppConfig> {
         /* resources.rector.Auth auth = 1; */
         if (message.auth)
             Auth.internalBinaryWrite(message.auth, writer.tag(1, WireType.LengthDelimited).fork(), options).join();
-        /* resources.rector.Website website = 2; */
+        /* resources.rector.Perms perms = 2; */
+        if (message.perms)
+            Perms.internalBinaryWrite(message.perms, writer.tag(2, WireType.LengthDelimited).fork(), options).join();
+        /* resources.rector.Website website = 3; */
         if (message.website)
-            Website.internalBinaryWrite(message.website, writer.tag(2, WireType.LengthDelimited).fork(), options).join();
-        /* resources.rector.JobInfo job_info = 3; */
+            Website.internalBinaryWrite(message.website, writer.tag(3, WireType.LengthDelimited).fork(), options).join();
+        /* resources.rector.JobInfo job_info = 4; */
         if (message.jobInfo)
-            JobInfo.internalBinaryWrite(message.jobInfo, writer.tag(3, WireType.LengthDelimited).fork(), options).join();
-        /* resources.rector.UserTracker user_tracker = 4; */
+            JobInfo.internalBinaryWrite(message.jobInfo, writer.tag(4, WireType.LengthDelimited).fork(), options).join();
+        /* resources.rector.UserTracker user_tracker = 5; */
         if (message.userTracker)
-            UserTracker.internalBinaryWrite(message.userTracker, writer.tag(4, WireType.LengthDelimited).fork(), options).join();
-        /* resources.rector.OAuth2 oauth2 = 5; */
+            UserTracker.internalBinaryWrite(message.userTracker, writer.tag(5, WireType.LengthDelimited).fork(), options).join();
+        /* resources.rector.OAuth2 oauth2 = 6; */
         if (message.oauth2)
-            OAuth2.internalBinaryWrite(message.oauth2, writer.tag(5, WireType.LengthDelimited).fork(), options).join();
-        /* resources.rector.Discord discord = 6; */
+            OAuth2.internalBinaryWrite(message.oauth2, writer.tag(6, WireType.LengthDelimited).fork(), options).join();
+        /* resources.rector.Discord discord = 7; */
         if (message.discord)
-            Discord.internalBinaryWrite(message.discord, writer.tag(6, WireType.LengthDelimited).fork(), options).join();
+            Discord.internalBinaryWrite(message.discord, writer.tag(7, WireType.LengthDelimited).fork(), options).join();
         let u = options.writeUnknownFields;
         if (u !== false)
             (u == true ? UnknownFieldHandler.onWrite : u)(this.typeName, message, writer);
@@ -337,6 +355,31 @@ class Auth$Type extends MessageType<Auth> {
  * @generated MessageType for protobuf message resources.rector.Auth
  */
 export const Auth = new Auth$Type();
+// @generated message type with reflection information, may provide speed optimized methods
+class Perms$Type extends MessageType<Perms> {
+    constructor() {
+        super("resources.rector.Perms", []);
+    }
+    create(value?: PartialMessage<Perms>): Perms {
+        const message = globalThis.Object.create((this.messagePrototype!));
+        if (value !== undefined)
+            reflectionMergePartial<Perms>(this, message, value);
+        return message;
+    }
+    internalBinaryRead(reader: IBinaryReader, length: number, options: BinaryReadOptions, target?: Perms): Perms {
+        return target ?? this.create();
+    }
+    internalBinaryWrite(message: Perms, writer: IBinaryWriter, options: BinaryWriteOptions): IBinaryWriter {
+        let u = options.writeUnknownFields;
+        if (u !== false)
+            (u == true ? UnknownFieldHandler.onWrite : u)(this.typeName, message, writer);
+        return writer;
+    }
+}
+/**
+ * @generated MessageType for protobuf message resources.rector.Perms
+ */
+export const Perms = new Perms$Type();
 // @generated message type with reflection information, may provide speed optimized methods
 class Website$Type extends MessageType<Website> {
     constructor() {

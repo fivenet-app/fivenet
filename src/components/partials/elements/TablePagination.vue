@@ -73,6 +73,8 @@ const onSubmitThrottle = useThrottleFn(async () => {
 }, 1000);
 
 const pageNumber = ref(currentPage.value.toString());
+
+console.log(props.pagination);
 </script>
 
 <template>
@@ -220,8 +222,8 @@ const pageNumber = ref(currentPage.value.toString());
                 </template>
                 <template v-else>
                     <button
-                        :disabled="offset <= 0n"
                         type="button"
+                        :disabled="offset <= 0n"
                         :class="[
                             offset <= 0n
                                 ? 'disabled bg-base-500 hover:bg-base-400 focus-visible:outline-base-500'
@@ -234,8 +236,11 @@ const pageNumber = ref(currentPage.value.toString());
                     </button>
                     <button
                         type="button"
+                        :disabled="end < pageSize"
                         :class="[
-                            'bg-primary-500 hover:bg-primary-400 focus-visible:outline-primary-500',
+                            end < pageSize
+                                ? 'disabled bg-base-500 hover:bg-base-400 focus-visible:outline-base-500'
+                                : 'bg-primary-500 hover:bg-primary-400 focus-visible:outline-primary-500',
                             'relative ml-3 inline-flex cursor-pointer items-center rounded-r-md px-3 py-2 text-sm font-semibold text-neutral focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2',
                         ]"
                         @click="$emit('offsetChange', offset + pageSize)"

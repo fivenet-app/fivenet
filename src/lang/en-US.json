@@ -854,7 +854,9 @@
         "absence_date": "Absence Date",
         "mug_shot": "Mug Shot",
         "file_size": "File Size",
-        "predefined": "Predefined"
+        "predefined": "Predefined",
+        "discord": "Discord",
+        "redirecting_to": "You are being redirect to {0} ..."
     },
     "notifications": {
         "clipboard": {
@@ -973,6 +975,10 @@
             "audit_log": {
                 "title": "Audit Log: Copied to clipboard",
                 "content": "Entry copied to clipboard."
+            },
+            "app_config": {
+                "title": "Updated App Config",
+                "content": "FiveNet app config have been updated."
             }
         },
         "document_deleted": {

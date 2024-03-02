@@ -8,15 +8,19 @@ option go_package = "github.com/galexrt/fivenet/gen/go/proto/resources/rector;re
 
 message AppConfig {
   Auth auth = 1;
-  Website website = 2;
-  JobInfo job_info = 3;
-  UserTracker user_tracker = 4;
-  OAuth2 oauth2 = 5;
-  Discord discord = 6;
+  Perms perms = 2;
+  Website website = 3;
+  JobInfo job_info = 4;
+  UserTracker user_tracker = 5;
+  OAuth2 oauth2 = 6;
+  Discord discord = 7;
 }
 
 message Auth {
   bool signup_enabled = 1;
+}
+
+message Perms {
   // TODO default perms and attributes
 }
 

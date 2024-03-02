@@ -1,7 +1,7 @@
 <script lang="ts" setup>
 import FiveNetLogo from '~/components/partials/logos/FiveNetLogo.vue';
 
-const appConfig = useAppConfig();
+const { links } = useAppConfig();
 
 const year = new Date().getFullYear();
 </script>
@@ -21,10 +21,10 @@ const year = new Date().getFullYear();
                     </p>
 
                     <p class="inline-flex flex-row gap-2 underline">
-                        <NuxtLink v-if="appConfig.links?.privacyPolicy" :external="true" :to="appConfig.links.privacyPolicy">
+                        <NuxtLink v-if="links?.privacyPolicy" :external="true" :to="links.privacyPolicy">
                             {{ $t('common.privacy_policy') }}
                         </NuxtLink>
-                        <NuxtLink v-if="appConfig.links?.imprint" :external="true" :to="appConfig.links.imprint">
+                        <NuxtLink v-if="links?.imprint" :external="true" :to="links.imprint">
                             {{ $t('common.imprint') }}
                         </NuxtLink>
                     </p>

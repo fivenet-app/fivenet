@@ -53,6 +53,9 @@ func (s *Server) GetAppConfig(ctx context.Context, req *GetAppConfigRequest) (*G
 		return nil, err
 	}
 
+	config.Website.Links.Imprint = s.cfg.HTTP.Links.Imprint
+	config.Website.Links.PrivacyPolicy = s.cfg.HTTP.Links.PrivacyPolicy
+
 	auditEntry.State = int16(rector.EventType_EVENT_TYPE_VIEWED)
 
 	return &GetAppConfigResponse{

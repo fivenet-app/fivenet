@@ -3,6 +3,7 @@ package rector
 import (
 	"database/sql"
 
+	"github.com/galexrt/fivenet/pkg/config"
 	"github.com/galexrt/fivenet/pkg/mstlystcdata"
 	"github.com/galexrt/fivenet/pkg/perms"
 	"github.com/galexrt/fivenet/pkg/server/audit"
@@ -23,6 +24,7 @@ type Server struct {
 	enricher *mstlystcdata.Enricher
 	cache    *mstlystcdata.Cache
 	st       storage.IStorage
+	cfg      *config.Config
 }
 
 type Params struct {
@@ -35,6 +37,7 @@ type Params struct {
 	Enricher *mstlystcdata.Enricher
 	Cache    *mstlystcdata.Cache
 	Storage  storage.IStorage
+	Config   *config.Config
 }
 
 func NewServer(p Params) *Server {
@@ -46,6 +49,7 @@ func NewServer(p Params) *Server {
 		enricher: p.Enricher,
 		cache:    p.Cache,
 		st:       p.Storage,
+		cfg:      p.Config,
 	}
 }
 
