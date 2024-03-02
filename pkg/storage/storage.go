@@ -7,19 +7,26 @@ import (
 	"go.uber.org/fx"
 )
 
-var storageFactories = map[string]func(cfg *config.Config) (IStorage, error){}
+var storageFactories = map[string]func(lc fx.Lifecycle, cfg *config.Config) (IStorage, error){}
 
 var Module = fx.Module("storage",
 	fx.Provide(New),
 )
 
-func New(cfg *config.Config) (IStorage, error) {
-	fn, ok := storageFactories[cfg.Storage.Type]
+type Params struct {
+	fx.In
+
+	LC     fx.Lifecycle
+	Config *config.Config
+}
+
+func New(p Params) (IStorage, error) {
+	fn, ok := storageFactories[p.Config.Storage.Type]
 	if !ok {
-		return nil, fmt.Errorf("invalid storage '%s' factory given", cfg.Storage.Type)
+		return nil, fmt.Errorf("invalid storage '%s' factory given", p.Config.Storage.Type)
 	}
 
-	st, err := fn(cfg)
+	st, err := fn(p.LC, p.Config)
 	if err != nil {
 		return nil, err
 	}

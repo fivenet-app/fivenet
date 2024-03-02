@@ -2,8 +2,8 @@ package rector
 
 import (
 	"context"
+	"path"
 	"path/filepath"
-	"strconv"
 	"strings"
 
 	"github.com/galexrt/fivenet/gen/go/proto/resources/filestore"
@@ -13,7 +13,6 @@ import (
 	"github.com/galexrt/fivenet/query/fivenet/model"
 	"github.com/galexrt/fivenet/query/fivenet/table"
 	jet "github.com/go-jet/jet/v2/mysql"
-	"go.uber.org/zap"
 )
 
 const listFilesPageSize = 50
@@ -80,35 +79,22 @@ func (s *Server) DeleteFile(ctx context.Context, req *DeleteFileRequest) (*Delet
 	}
 	defer s.aud.Log(auditEntry, req)
 
-	filePath := filepath.Clean(req.Path)
+	fullFilePath := filepath.Clean(req.Path)
 
-	if err := s.st.Delete(ctx, filePath); err != nil {
+	if err := s.st.Delete(ctx, fullFilePath); err != nil {
 		return nil, err
 	}
 
 	resp := &DeleteFileResponse{}
 
-	prefixSplit := strings.Split(filePath, "/")
+	prefixSplit := strings.Split(fullFilePath, "/")
 	if len(prefixSplit) <= 1 {
 		return resp, nil
 	}
 
-	prefix := prefixSplit[0]
-	fileName := strings.Join(prefixSplit[1:], "/")
-
 	// Remove reference to file(s) from database for our "known file prefixes"
-	switch prefix {
+	switch prefixSplit[0] {
 	case filestore.Avatars:
-		file := getFileName(fileName)
-		id, err := getIdFromFile(file)
-		if err != nil {
-			s.logger.Error("failed to get user id from file name", zap.Error(err))
-			break
-		}
-		if id <= 0 {
-			break
-		}
-
 		stmt := tUserProps.
 			UPDATE(
 				tUserProps.Avatar,
@@ -117,7 +103,7 @@ func (s *Server) DeleteFile(ctx context.Context, req *DeleteFileRequest) (*Delet
 				tUserProps.Avatar.SET(jet.StringExp(jet.NULL)),
 			).
 			WHERE(
-				tUserProps.UserID.EQ(jet.Int32(int32(id))),
+				tUserProps.Avatar.EQ(jet.String(path.Join(filestore.FilestoreURLPrefix, fullFilePath))),
 			)
 
 		if _, err := stmt.ExecContext(ctx, s.db); err != nil {
@@ -125,25 +111,15 @@ func (s *Server) DeleteFile(ctx context.Context, req *DeleteFileRequest) (*Delet
 		}
 
 	case filestore.MugShots:
-		file := getFileName(fileName)
-		id, err := getIdFromFile(file)
-		if err != nil {
-			s.logger.Error("failed to get user id from file name", zap.Error(err))
-			break
-		}
-		if id <= 0 {
-			break
-		}
-
 		stmt := tUserProps.
 			UPDATE(
-				tUserProps.Avatar,
+				tUserProps.MugShot,
 			).
 			SET(
-				tUserProps.Avatar.SET(jet.StringExp(jet.NULL)),
+				tUserProps.MugShot.SET(jet.StringExp(jet.NULL)),
 			).
 			WHERE(
-				tUserProps.UserID.EQ(jet.Int32(int32(id))),
+				tUserProps.MugShot.EQ(jet.String(path.Join(filestore.FilestoreURLPrefix, fullFilePath))),
 			)
 
 		if _, err := stmt.ExecContext(ctx, s.db); err != nil {
@@ -151,7 +127,6 @@ func (s *Server) DeleteFile(ctx context.Context, req *DeleteFileRequest) (*Delet
 		}
 
 	case filestore.JobLogos:
-		job := getFileName(fileName)
 		stmt := tJobProps.
 			UPDATE(
 				tJobProps.LogoURL,
@@ -160,7 +135,7 @@ func (s *Server) DeleteFile(ctx context.Context, req *DeleteFileRequest) (*Delet
 				tJobProps.LogoURL.SET(jet.StringExp(jet.NULL)),
 			).
 			WHERE(
-				tJobProps.Job.EQ(jet.String(job)),
+				tJobProps.LogoURL.EQ(jet.String(path.Join(filestore.FilestoreURLPrefix, fullFilePath))),
 			)
 
 		if _, err := stmt.ExecContext(ctx, s.db); err != nil {
@@ -171,14 +146,4 @@ func (s *Server) DeleteFile(ctx context.Context, req *DeleteFileRequest) (*Delet
 	auditEntry.State = int16(rector.EventType_EVENT_TYPE_DELETED)
 
 	return resp, nil
-}
-
-func getIdFromFile(in string) (int, error) {
-	parts := strings.Split(in, "-")
-	return strconv.Atoi(parts[len(parts)-1])
-}
-
-func getFileName(in string) string {
-	file := filepath.Base(in)
-	return strings.TrimSuffix(file, filepath.Ext(file))
 }

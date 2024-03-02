@@ -630,8 +630,7 @@ func (s *Server) SetUserProps(ctx context.Context, req *SetUserPropsRequest) (*S
 				return nil, errswrap.NewError(errorscitizenstore.ErrFailedQuery, err)
 			}
 
-			fileName := fmt.Sprintf("%s-%d", req.Props.MugShot.GetHash(), props.UserId)
-			if err := req.Props.MugShot.Upload(ctx, s.st, filestore.MugShots, storage.FileNameSplitter(fileName)); err != nil {
+			if err := req.Props.MugShot.Upload(ctx, s.st, filestore.MugShots, storage.FileNameSplitter(req.Props.MugShot.GetHash())); err != nil {
 				return nil, errswrap.NewError(errorscitizenstore.ErrFailedQuery, err)
 			}
 		} else {
@@ -832,8 +831,7 @@ func (s *Server) SetProfilePicture(ctx context.Context, req *SetProfilePictureRe
 			return nil, errswrap.NewError(errorscitizenstore.ErrFailedQuery, err)
 		}
 
-		fileName := fmt.Sprintf("%s-%d", req.Avatar.GetHash(), userInfo.UserId)
-		if err := req.Avatar.Upload(ctx, s.st, filestore.Avatars, storage.FileNameSplitter(fileName)); err != nil {
+		if err := req.Avatar.Upload(ctx, s.st, filestore.Avatars, storage.FileNameSplitter(req.Avatar.GetHash())); err != nil {
 			return nil, errswrap.NewError(errorscitizenstore.ErrFailedQuery, err)
 		}
 	} else if req.Avatar.Delete != nil && *req.Avatar.Delete {

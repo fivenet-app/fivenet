@@ -253,6 +253,8 @@ CREATE TABLE IF NOT EXISTS `fivenet_user_props` (
   `mug_shot` varchar(128) DEFAULT NULL,
   UNIQUE KEY `idx_fivenet_user_props_unique` (`user_id`),
   KEY `idx_fivenet_user_props_wanted` (`wanted`),
+  KEY `idx_fivenet_user_props_avatar` (`avatar`),
+  KEY `idx_fivenet_user_props_mug_shot` (`mug_shot`),
   CONSTRAINT `fk_fivenet_user_props_user_id` FOREIGN KEY (`user_id`) REFERENCES `users` (`id`) ON DELETE CASCADE ON UPDATE CASCADE
 ) ENGINE=InnoDB;
 

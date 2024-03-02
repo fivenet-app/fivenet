@@ -12,6 +12,7 @@ import (
 
 	"github.com/galexrt/fivenet/pkg/config"
 	"github.com/h2non/filetype"
+	"go.uber.org/fx"
 )
 
 func init() {
@@ -25,7 +26,7 @@ type Filesystem struct {
 	prefix   string
 }
 
-func NewFilesystem(cfg *config.Config) (IStorage, error) {
+func NewFilesystem(lc fx.Lifecycle, cfg *config.Config) (IStorage, error) {
 	f := &Filesystem{
 		basePath: cfg.Storage.Filesystem.Path,
 	}

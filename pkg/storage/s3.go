@@ -2,6 +2,7 @@ package storage
 
 import (
 	"context"
+	"fmt"
 	"io"
 	"mime"
 	"path"
@@ -13,6 +14,7 @@ import (
 	"github.com/h2non/filetype"
 	"github.com/minio/minio-go/v7"
 	"github.com/minio/minio-go/v7/pkg/credentials"
+	"go.uber.org/fx"
 )
 
 func init() {
@@ -27,7 +29,7 @@ type S3 struct {
 	prefix     string
 }
 
-func NewS3(cfg *config.Config) (IStorage, error) {
+func NewS3(lc fx.Lifecycle, cfg *config.Config) (IStorage, error) {
 	// Initialize minio client object.
 	mc, err := minio.New(cfg.Storage.S3.Endpoint, &minio.Options{
 		Creds:  credentials.NewStaticV4(cfg.Storage.S3.AccessKeyID, cfg.Storage.S3.SecretAccessKey, ""),
@@ -43,6 +45,18 @@ func NewS3(cfg *config.Config) (IStorage, error) {
 		bucketName: cfg.Storage.S3.BucketName,
 		prefix:     cfg.Storage.S3.Prefix,
 	}
+
+	lc.Append(fx.StartHook(func(ctx context.Context) error {
+		exists, err := s.s3.BucketExists(ctx, s.bucketName)
+		if err != nil {
+			return err
+		}
+		if !exists {
+			return fmt.Errorf("storage: s3 bucket '%s' doesn't exist/can't access", s.bucketName)
+		}
+
+		return nil
+	}))
 
 	return s, nil
 }

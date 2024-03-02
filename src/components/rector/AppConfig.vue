@@ -98,13 +98,25 @@ async function getAppConfig(): Promise<GetAppConfigResponse> {
                         <GenericContainerPanelEntry>
                             <template #title>Refresh Times</template>
                             <template #default>
-                                {{ jsonStringify(data.config?.userTracker?.refreshTime) }}
+                                {{
+                                    parseFloat(
+                                        data.config?.userTracker?.refreshTime?.seconds.toString() +
+                                            '.' +
+                                            data.config?.userTracker?.refreshTime?.nanos / 1000000,
+                                    ).toLocaleString()
+                                }}s
                             </template>
                         </GenericContainerPanelEntry>
                         <GenericContainerPanelEntry>
                             <template #title>DB Refresh Times</template>
                             <template #default>
-                                {{ jsonStringify(data.config?.userTracker?.dbRefreshTime) }}
+                                {{
+                                    parseFloat(
+                                        data.config?.userTracker?.dbRefreshTime?.seconds.toString() +
+                                            '.' +
+                                            data.config?.userTracker?.dbRefreshTime?.nanos / 1000000,
+                                    )
+                                }}s
                             </template>
                         </GenericContainerPanelEntry>
                         <GenericContainerPanelEntry>
