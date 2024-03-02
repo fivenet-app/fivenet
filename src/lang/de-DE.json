@@ -976,6 +976,10 @@
             "audit_log": {
                 "title": "Audit Protokoll: Eintrag kopiert",
                 "content": "Eintrag in die Zwischenablage kopiert."
+            },
+            "app_config": {
+                "title": "FiveNet-Einstellungen aktualisiert",
+                "content": "FiveNet-Einstellungen wurden aktualisiert."
             }
         },
         "document_deleted": {
