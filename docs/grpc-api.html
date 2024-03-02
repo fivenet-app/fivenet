@@ -869,6 +869,49 @@
         
           
           <li>
+            <a href="#resources%2frector%2fconfig.proto">resources/rector/config.proto</a>
+            <ul>
+              
+                <li>
+                  <a href="#resources.rector.AppConfig"><span class="badge">M</span>AppConfig</a>
+                </li>
+              
+                <li>
+                  <a href="#resources.rector.Auth"><span class="badge">M</span>Auth</a>
+                </li>
+              
+                <li>
+                  <a href="#resources.rector.Discord"><span class="badge">M</span>Discord</a>
+                </li>
+              
+                <li>
+                  <a href="#resources.rector.JobInfo"><span class="badge">M</span>JobInfo</a>
+                </li>
+              
+                <li>
+                  <a href="#resources.rector.Links"><span class="badge">M</span>Links</a>
+                </li>
+              
+                <li>
+                  <a href="#resources.rector.PluginConfig"><span class="badge">M</span>PluginConfig</a>
+                </li>
+              
+                <li>
+                  <a href="#resources.rector.UserTracker"><span class="badge">M</span>UserTracker</a>
+                </li>
+              
+                <li>
+                  <a href="#resources.rector.Website"><span class="badge">M</span>Website</a>
+                </li>
+              
+              
+              
+              
+            </ul>
+          </li>
+        
+          
+          <li>
             <a href="#resources%2ftimestamp%2ftimestamp.proto">resources/timestamp/timestamp.proto</a>
             <ul>
               
@@ -2215,6 +2258,37 @@
               
                 <li>
                   <a href="#services.rector.RectorService"><span class="badge">S</span>RectorService</a>
+                </li>
+              
+            </ul>
+          </li>
+        
+          
+          <li>
+            <a href="#services%2frector%2fconfig.proto">services/rector/config.proto</a>
+            <ul>
+              
+                <li>
+                  <a href="#services.rector.GetAppConfigRequest"><span class="badge">M</span>GetAppConfigRequest</a>
+                </li>
+              
+                <li>
+                  <a href="#services.rector.GetAppConfigResponse"><span class="badge">M</span>GetAppConfigResponse</a>
+                </li>
+              
+                <li>
+                  <a href="#services.rector.UpdateAppConfigRequest"><span class="badge">M</span>UpdateAppConfigRequest</a>
+                </li>
+              
+                <li>
+                  <a href="#services.rector.UpdateAppConfigResponse"><span class="badge">M</span>UpdateAppConfigResponse</a>
+                </li>
+              
+              
+              
+              
+                <li>
+                  <a href="#services.rector.RectorConfigService"><span class="badge">S</span>RectorConfigService</a>
                 </li>
               
             </ul>
@@ -11066,6 +11140,258 @@
             
           </tbody>
         </table>
+      
+
+      
+
+      
+    
+      
+      <div class="file-heading">
+        <h2 id="resources/rector/config.proto">resources/rector/config.proto</h2><a href="#title">Top</a>
+      </div>
+      <p></p>
+
+      
+        <h3 id="resources.rector.AppConfig">AppConfig</h3>
+        <p></p>
+
+        
+          <table class="field-table">
+            <thead>
+              <tr><td>Field</td><td>Type</td><td>Label</td><td>Description</td></tr>
+            </thead>
+            <tbody>
+              
+                <tr>
+                  <td>auth</td>
+                  <td><a href="#resources.rector.Auth">Auth</a></td>
+                  <td></td>
+                  <td><p> </p></td>
+                </tr>
+              
+                <tr>
+                  <td>website</td>
+                  <td><a href="#resources.rector.Website">Website</a></td>
+                  <td></td>
+                  <td><p> </p></td>
+                </tr>
+              
+                <tr>
+                  <td>job_info</td>
+                  <td><a href="#resources.rector.JobInfo">JobInfo</a></td>
+                  <td></td>
+                  <td><p> </p></td>
+                </tr>
+              
+                <tr>
+                  <td>user_tracker</td>
+                  <td><a href="#resources.rector.UserTracker">UserTracker</a></td>
+                  <td></td>
+                  <td><p> </p></td>
+                </tr>
+              
+                <tr>
+                  <td>discord</td>
+                  <td><a href="#resources.rector.Discord">Discord</a></td>
+                  <td></td>
+                  <td><p> </p></td>
+                </tr>
+              
+            </tbody>
+          </table>
+
+          
+
+        
+      
+        <h3 id="resources.rector.Auth">Auth</h3>
+        <p></p>
+
+        
+          <table class="field-table">
+            <thead>
+              <tr><td>Field</td><td>Type</td><td>Label</td><td>Description</td></tr>
+            </thead>
+            <tbody>
+              
+                <tr>
+                  <td>signup_enabled</td>
+                  <td><a href="#bool">bool</a></td>
+                  <td></td>
+                  <td><p>TODO default perms and attributes </p></td>
+                </tr>
+              
+            </tbody>
+          </table>
+
+          
+
+        
+      
+        <h3 id="resources.rector.Discord">Discord</h3>
+        <p></p>
+
+        
+          <table class="field-table">
+            <thead>
+              <tr><td>Field</td><td>Type</td><td>Label</td><td>Description</td></tr>
+            </thead>
+            <tbody>
+              
+                <tr>
+                  <td>enabled</td>
+                  <td><a href="#bool">bool</a></td>
+                  <td></td>
+                  <td><p>TODO </p></td>
+                </tr>
+              
+            </tbody>
+          </table>
+
+          
+
+        
+      
+        <h3 id="resources.rector.JobInfo">JobInfo</h3>
+        <p></p>
+
+        
+          <table class="field-table">
+            <thead>
+              <tr><td>Field</td><td>Type</td><td>Label</td><td>Description</td></tr>
+            </thead>
+            <tbody>
+              
+                <tr>
+                  <td>public_jobs</td>
+                  <td><a href="#string">string</a></td>
+                  <td>repeated</td>
+                  <td><p> </p></td>
+                </tr>
+              
+                <tr>
+                  <td>hidden_jobs</td>
+                  <td><a href="#string">string</a></td>
+                  <td>repeated</td>
+                  <td><p> </p></td>
+                </tr>
+              
+            </tbody>
+          </table>
+
+          
+
+        
+      
+        <h3 id="resources.rector.Links">Links</h3>
+        <p></p>
+
+        
+          <table class="field-table">
+            <thead>
+              <tr><td>Field</td><td>Type</td><td>Label</td><td>Description</td></tr>
+            </thead>
+            <tbody>
+              
+                <tr>
+                  <td>privacy_policy</td>
+                  <td><a href="#string">string</a></td>
+                  <td>optional</td>
+                  <td><p> </p></td>
+                </tr>
+              
+                <tr>
+                  <td>imprint</td>
+                  <td><a href="#string">string</a></td>
+                  <td>optional</td>
+                  <td><p> </p></td>
+                </tr>
+              
+            </tbody>
+          </table>
+
+          
+
+        
+      
+        <h3 id="resources.rector.PluginConfig">PluginConfig</h3>
+        <p>TODO</p>
+
+        
+
+        
+      
+        <h3 id="resources.rector.UserTracker">UserTracker</h3>
+        <p></p>
+
+        
+          <table class="field-table">
+            <thead>
+              <tr><td>Field</td><td>Type</td><td>Label</td><td>Description</td></tr>
+            </thead>
+            <tbody>
+              
+                <tr>
+                  <td>refresh_time</td>
+                  <td><a href="#google.protobuf.Duration">google.protobuf.Duration</a></td>
+                  <td></td>
+                  <td><p> </p></td>
+                </tr>
+              
+                <tr>
+                  <td>db_refresh_time</td>
+                  <td><a href="#google.protobuf.Duration">google.protobuf.Duration</a></td>
+                  <td></td>
+                  <td><p> </p></td>
+                </tr>
+              
+                <tr>
+                  <td>livemap_jobs</td>
+                  <td><a href="#string">string</a></td>
+                  <td>repeated</td>
+                  <td><p> </p></td>
+                </tr>
+              
+                <tr>
+                  <td>timeclock_jobs</td>
+                  <td><a href="#string">string</a></td>
+                  <td>repeated</td>
+                  <td><p> </p></td>
+                </tr>
+              
+            </tbody>
+          </table>
+
+          
+
+        
+      
+        <h3 id="resources.rector.Website">Website</h3>
+        <p></p>
+
+        
+          <table class="field-table">
+            <thead>
+              <tr><td>Field</td><td>Type</td><td>Label</td><td>Description</td></tr>
+            </thead>
+            <tbody>
+              
+                <tr>
+                  <td>links</td>
+                  <td><a href="#resources.rector.Links">Links</a></td>
+                  <td></td>
+                  <td><p> </p></td>
+                </tr>
+              
+            </tbody>
+          </table>
+
+          
+
+        
+      
+
       
 
       
@@ -23106,6 +23432,152 @@
                 <td>DeleteFile</td>
                 <td><a href="#services.rector.DeleteFileRequest">DeleteFileRequest</a></td>
                 <td><a href="#services.rector.DeleteFileResponse">DeleteFileResponse</a></td>
+                <td><p>@perm: Name=SuperUser</p></td>
+              </tr>
+            
+          </tbody>
+        </table>
+
+        
+    
+      
+      <div class="file-heading">
+        <h2 id="services/rector/config.proto">services/rector/config.proto</h2><a href="#title">Top</a>
+      </div>
+      <p></p>
+
+      
+        <h3 id="services.rector.GetAppConfigRequest">GetAppConfigRequest</h3>
+        <p></p>
+
+        
+
+        
+      
+        <h3 id="services.rector.GetAppConfigResponse">GetAppConfigResponse</h3>
+        <p></p>
+
+        
+          <table class="field-table">
+            <thead>
+              <tr><td>Field</td><td>Type</td><td>Label</td><td>Description</td></tr>
+            </thead>
+            <tbody>
+              
+                <tr>
+                  <td>config</td>
+                  <td><a href="#resources.rector.AppConfig">resources.rector.AppConfig</a></td>
+                  <td></td>
+                  <td><p> </p></td>
+                </tr>
+              
+            </tbody>
+          </table>
+
+          
+
+        
+      
+        <h3 id="services.rector.UpdateAppConfigRequest">UpdateAppConfigRequest</h3>
+        <p></p>
+
+        
+          <table class="field-table">
+            <thead>
+              <tr><td>Field</td><td>Type</td><td>Label</td><td>Description</td></tr>
+            </thead>
+            <tbody>
+              
+                <tr>
+                  <td>config</td>
+                  <td><a href="#resources.rector.AppConfig">resources.rector.AppConfig</a></td>
+                  <td></td>
+                  <td><p> </p></td>
+                </tr>
+              
+            </tbody>
+          </table>
+
+          
+            
+            
+            <h4>Validated Fields</h4>
+            <table>
+              <thead>
+                <tr>
+                  <td>Field</td>
+                  <td>Validations</td>
+                </tr>
+              </thead>
+              <tbody>
+              
+                <tr>
+                  <td>config</td>
+                  <td>
+                    <ul>
+                    
+                      <li>message.required: true</li>
+                    
+                    </ul>
+                  </td>
+                </tr>
+              
+              </tbody>
+            </table>
+            
+          
+
+        
+      
+        <h3 id="services.rector.UpdateAppConfigResponse">UpdateAppConfigResponse</h3>
+        <p></p>
+
+        
+          <table class="field-table">
+            <thead>
+              <tr><td>Field</td><td>Type</td><td>Label</td><td>Description</td></tr>
+            </thead>
+            <tbody>
+              
+                <tr>
+                  <td>config</td>
+                  <td><a href="#resources.rector.AppConfig">resources.rector.AppConfig</a></td>
+                  <td></td>
+                  <td><p> </p></td>
+                </tr>
+              
+            </tbody>
+          </table>
+
+          
+
+        
+      
+
+      
+
+      
+
+      
+        <h3 id="services.rector.RectorConfigService">RectorConfigService</h3>
+        <p></p>
+        <table class="enum-table">
+          <thead>
+            <tr><td>Method Name</td><td>Request Type</td><td>Response Type</td><td>Description</td></tr>
+          </thead>
+          <tbody>
+            
+              <tr>
+                <td>GetAppConfig</td>
+                <td><a href="#services.rector.GetAppConfigRequest">GetAppConfigRequest</a></td>
+                <td><a href="#services.rector.GetAppConfigResponse">GetAppConfigResponse</a></td>
+                <td><p>@perm: Name=SuperUser</p></td>
+              </tr>
+            
+              <tr>
+                <td>UpdateAppConfig</td>
+                <td><a href="#services.rector.UpdateAppConfigRequest">UpdateAppConfigRequest</a></td>
+                <td><a href="#services.rector.UpdateAppConfigResponse">UpdateAppConfigResponse</a></td>
                 <td><p>@perm: Name=SuperUser</p></td>
               </tr>
             

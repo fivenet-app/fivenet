@@ -25,7 +25,7 @@ defineProps<{
         </div>
         <div class="flex shrink-0 items-center gap-x-4">
             <div class="hidden sm:flex sm:flex-col sm:items-end">
-                <p class="text-sm leading-6 text-gray-900">{{ $t('common.rank') }}: {{ qualification.jobAccess }}</p>
+                <p class="text-sm leading-6 text-gray-900">{{ $t('common.rank') }}: {{ qualification.access }}</p>
                 <p v-if="qualification.createdAt" class="mt-1 text-xs leading-5 text-gray-500">
                     {{ $t('common.created_at') }} <GenericTime :value="qualification.createdAt" />
                 </p>

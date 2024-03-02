@@ -74,10 +74,10 @@ async function listCitizens(): Promise<ListCitizensResponse> {
     }
 }
 
-const searchNameInput = ref<HTMLInputElement | null>(null);
+const searchInput = ref<HTMLInputElement | null>(null);
 function focusSearch(): void {
-    if (searchNameInput.value) {
-        searchNameInput.value.focus();
+    if (searchInput.value) {
+        searchInput.value.focus();
     }
 }
 
@@ -104,7 +104,7 @@ watchDebounced(query.value, () => refresh(), { debounce: 600, maxWait: 1400 });
                                 </label>
                                 <div class="relative mt-2 flex items-center">
                                     <GenericInput
-                                        ref="searchNameInput"
+                                        ref="searchInput"
                                         v-model="query.name"
                                         type="text"
                                         name="searchName"

@@ -55,10 +55,10 @@ async function listRequests(): Promise<ListRequestsResponse> {
 
 const queryTargets = ref<string>('');
 
-const searchNameInput = ref<HTMLInputElement | null>(null);
+const searchInput = ref<HTMLInputElement | null>(null);
 function focusSearch(): void {
-    if (searchNameInput.value) {
-        searchNameInput.value.focus();
+    if (searchInput.value) {
+        searchInput.value.focus();
     }
 }
 

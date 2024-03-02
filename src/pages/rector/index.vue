@@ -1,5 +1,13 @@
 <script lang="ts" setup>
-import { AccountGroupIcon, CarSpeedLimiterIcon, FileMultipleIcon, MathLogIcon, ScaleBalanceIcon, TuneIcon } from 'mdi-vue3';
+import {
+    AccountGroupIcon,
+    CarSpeedLimiterIcon,
+    FileMultipleIcon,
+    MathLogIcon,
+    OfficeBuildingCogIcon,
+    ScaleBalanceIcon,
+    TuneIcon,
+} from 'mdi-vue3';
 import CardsList from '~/components/partials/CardsList.vue';
 import ContentCenterWrapper from '~/components/partials/ContentCenterWrapper.vue';
 import { type CardElements } from '~/utils/types';
@@ -70,6 +78,15 @@ const features = [
         icon: markRaw(FileMultipleIcon),
         iconForeground: 'text-blue-900',
         iconBackground: 'bg-blue-100',
+    },
+    {
+        title: t('pages.rector.settings.title'),
+        description: t('pages.rector.features.settings'),
+        href: { name: 'rector-settings' },
+        permission: 'SuperUser',
+        icon: markRaw(OfficeBuildingCogIcon),
+        iconForeground: 'text-red-900',
+        iconBackground: 'bg-red-100',
     },
 ] as CardElements;
 </script>

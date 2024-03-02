@@ -60,7 +60,7 @@ export class ClipboardDocument {
 
 export class ClipboardVehicle {
     public plate: string;
-    public model: string;
+    public model: string | undefined;
     public type: string;
     public owner: ClipboardUser;
 

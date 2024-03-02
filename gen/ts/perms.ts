@@ -26,6 +26,7 @@
 // source: resources/notifications/notifications.proto
 // source: resources/permissions/permissions.proto
 // source: resources/rector/audit.proto
+// source: resources/rector/config.proto
 // source: resources/timestamp/timestamp.proto
 // source: resources/users/jobs.proto
 // source: resources/users/users.proto
@@ -43,6 +44,7 @@
 // source: services/jobs/timeclock.proto
 // source: services/livemapper/livemap.proto
 // source: services/notificator/notificator.proto
+// source: services/rector/config.proto
 // source: services/rector/rector.proto
 
 export type Perms =

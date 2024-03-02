@@ -14,6 +14,7 @@ import (
 
 type Server struct {
 	RectorServiceServer
+	RectorConfigServiceServer
 
 	logger   *zap.Logger
 	db       *sql.DB
@@ -50,4 +51,5 @@ func NewServer(p Params) *Server {
 
 func (s *Server) RegisterServer(srv *grpc.Server) {
 	RegisterRectorServiceServer(srv, s)
+	RegisterRectorConfigServiceServer(srv, s)
 }

@@ -10,7 +10,10 @@ const trainings = ref<Qualification[]>([
         description: 'Test training module',
         open: true,
         abbreviation: 'TR1',
-        jobAccess: [],
+        access: {
+            job: [],
+            requiredQualification: [],
+        },
         weight: 0,
     },
 ]);

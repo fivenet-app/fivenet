@@ -9,6 +9,7 @@ import (
 
 	users "github.com/galexrt/fivenet/gen/go/proto/resources/users"
 	permscompletor "github.com/galexrt/fivenet/gen/go/proto/services/completor/perms"
+	"github.com/galexrt/fivenet/pkg/config"
 	"github.com/galexrt/fivenet/pkg/grpc/auth"
 	"github.com/galexrt/fivenet/pkg/grpc/errswrap"
 	"github.com/galexrt/fivenet/pkg/mstlystcdata"
@@ -40,6 +41,8 @@ type Server struct {
 	data     *mstlystcdata.Cache
 	tracker  tracker.ITracker
 	enricher *mstlystcdata.UserAwareEnricher
+
+	customDB config.CustomDB
 }
 
 type Params struct {
@@ -50,6 +53,7 @@ type Params struct {
 	Data     *mstlystcdata.Cache
 	Tracker  tracker.ITracker
 	Enricher *mstlystcdata.UserAwareEnricher
+	Config   *config.Config
 }
 
 func NewServer(p Params) *Server {
@@ -59,6 +63,8 @@ func NewServer(p Params) *Server {
 		data:     p.Data,
 		tracker:  p.Tracker,
 		enricher: p.Enricher,
+
+		customDB: p.Config.Database.Custom,
 	}
 
 	return s
@@ -71,7 +77,7 @@ func (s *Server) RegisterServer(srv *grpc.Server) {
 func (s *Server) CompleteCitizens(ctx context.Context, req *CompleteCitizensRequest) (*CompleteCitizensRespoonse, error) {
 	userInfo := auth.MustGetUserInfoFromContext(ctx)
 
-	condition := jet.Bool(true)
+	condition := s.customDB.Conditions.User.GetFilter(tUsers.Alias())
 
 	currentJob := false
 	if req.CurrentJob != nil && *req.CurrentJob {

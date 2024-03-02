@@ -71,10 +71,10 @@ const queryTypes = ref('');
 const entriesChars = ref<User[]>([]);
 const queryTargets = ref<string>('');
 
-const searchNameInput = ref<HTMLInputElement | null>(null);
+const searchInput = ref<HTMLInputElement | null>(null);
 function focusSearch(): void {
-    if (searchNameInput.value) {
-        searchNameInput.value.focus();
+    if (searchInput.value) {
+        searchInput.value.focus();
     }
 }
 
@@ -173,6 +173,7 @@ onConfirm(async (id) => deleteConductEntry(id));
                                         <div class="relative">
                                             <ComboboxButton as="div">
                                                 <ComboboxInput
+                                                    ref="searchInput"
                                                     autocomplete="off"
                                                     class="block w-full rounded-md border-0 bg-base-700 py-1.5 text-neutral placeholder:text-accent-200 focus:ring-2 focus:ring-inset focus:ring-base-300 sm:text-sm sm:leading-6"
                                                     :display-value="

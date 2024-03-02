@@ -33,7 +33,8 @@ func (s *Server) ListColleagues(ctx context.Context, req *ListColleaguesRequest)
 	userInfo := auth.MustGetUserInfoFromContext(ctx)
 
 	tUser := tUser.AS("colleague")
-	condition := tUser.Job.EQ(jet.String(userInfo.Job))
+	condition := tUser.Job.EQ(jet.String(userInfo.Job)).
+		AND(s.customDB.Conditions.User.GetFilter(tUser.Alias()))
 
 	if req.UserId != nil && *req.UserId > 0 {
 		condition = condition.AND(tUser.ID.EQ(jet.Int32(*req.UserId)))

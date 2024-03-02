@@ -1,60 +1,10 @@
 package config
 
 import (
-	"fmt"
-	"os"
 	"time"
 
-	"github.com/creasty/defaults"
 	"github.com/galexrt/fivenet/pkg/utils/dbutils"
-	"github.com/spf13/viper"
-	"go.uber.org/fx"
 )
-
-var Module = fx.Module("config",
-	fx.Provide(
-		Load,
-	),
-)
-
-func Load() (*Config, error) {
-	// Viper Config reading setup
-	viper.SetEnvPrefix("FIVENET")
-	viper.SetConfigType("yaml")
-
-	if configFile := os.Getenv("FIVENET_CONFIG_FILE"); configFile != "" {
-		viper.SetConfigFile(configFile)
-	} else {
-		viper.SetConfigName("config")
-		viper.AddConfigPath(".")
-		viper.AddConfigPath("/config")
-	}
-
-	// Find and read the config file
-	if err := viper.ReadInConfig(); err != nil {
-		return nil, fmt.Errorf("fatal error config file: %w", err)
-	}
-
-	c := &Config{}
-	if err := defaults.Set(c); err != nil {
-		return nil, fmt.Errorf("failed to set config defaults: %w", err)
-	}
-
-	if err := viper.Unmarshal(c); err != nil {
-		return nil, fmt.Errorf("failed to unmarshal config: %w", err)
-	}
-
-	return c, nil
-}
-
-func LoadTest() (*Config, error) {
-	c := &Config{}
-	if err := defaults.Set(c); err != nil {
-		return nil, fmt.Errorf("failed to set config defaults: %w", err)
-	}
-
-	return c, nil
-}
 
 type Config struct {
 	LogLevel string `default:"DEBUG" yaml:"logLevel"`
@@ -115,7 +65,12 @@ type Database struct {
 	ConnMaxIdleTime time.Duration `default:"15m" yaml:"connMaxIdleTime"`
 	ConnMaxLifetime time.Duration `default:"60m" yaml:"connMaxLifetime"`
 
-	CustomColumns dbutils.CustomColumns `yaml:"customColumns"`
+	Custom CustomDB `yaml:"custom"`
+}
+
+type CustomDB struct {
+	Columns    dbutils.CustomColumns    `yaml:"columns"`
+	Conditions dbutils.CustomConditions `yaml:"conditions"`
 }
 
 type NATS struct {
@@ -208,10 +163,6 @@ type Perm struct {
 }
 
 type Discord struct {
-	Bot DiscordBot `yaml:"bot"`
-}
-
-type DiscordBot struct {
 	Enabled      bool                `default:"false" yaml:"enabled"`
 	SyncInterval time.Duration       `default:"15m" yaml:"syncInterval"`
 	InviteURL    string              `yaml:"inviteURL"`

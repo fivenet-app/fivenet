@@ -32,11 +32,11 @@ var (
 type Server struct {
 	DMVServiceServer
 
-	db            *sql.DB
-	ps            perms.Permissions
-	enricher      *mstlystcdata.Enricher
-	aud           audit.IAuditer
-	customColumns dbutils.CustomColumns
+	db       *sql.DB
+	ps       perms.Permissions
+	enricher *mstlystcdata.Enricher
+	aud      audit.IAuditer
+	customDB config.CustomDB
 }
 
 type Params struct {
@@ -51,11 +51,11 @@ type Params struct {
 
 func NewServer(p Params) *Server {
 	return &Server{
-		db:            p.DB,
-		ps:            p.Ps,
-		enricher:      p.Enricher,
-		aud:           p.Aud,
-		customColumns: p.Config.Database.CustomColumns,
+		db:       p.DB,
+		ps:       p.Ps,
+		enricher: p.Enricher,
+		aud:      p.Aud,
+		customDB: p.Config.Database.Custom,
 	}
 }
 
@@ -74,7 +74,7 @@ func (s *Server) ListVehicles(ctx context.Context, req *ListVehiclesRequest) (*L
 		)))
 	}
 	// Make sure the model column is available
-	modelColumn := s.customColumns.Vehicle.GetModel(tVehicles.Alias())
+	modelColumn := s.customDB.Columns.Vehicle.GetModel(tVehicles.Alias())
 	if modelColumn != nil && req.Model != nil && *req.Model != "" {
 		condition = jet.AND(condition, tVehicles.Model.LIKE(jet.String(
 			strings.ReplaceAll(*req.Model, "%", "")+"%",

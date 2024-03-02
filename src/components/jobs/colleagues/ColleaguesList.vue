@@ -25,10 +25,10 @@ const { data, pending, refresh, error } = useLazyAsyncData(`jobs-colleagues-${of
     }),
 );
 
-const searchNameInput = ref<HTMLInputElement | null>(null);
+const searchInput = ref<HTMLInputElement | null>(null);
 function focusSearch(): void {
-    if (searchNameInput.value) {
-        searchNameInput.value.focus();
+    if (searchInput.value) {
+        searchInput.value.focus();
     }
 }
 
@@ -66,7 +66,7 @@ function updateAbsenceDate(value: { userId: number; absenceDate?: Timestamp }): 
                                 </label>
                                 <div class="relative mt-2 flex items-center">
                                     <input
-                                        ref="searchNameInput"
+                                        ref="searchInput"
                                         v-model="query.name"
                                         type="text"
                                         name="searchName"

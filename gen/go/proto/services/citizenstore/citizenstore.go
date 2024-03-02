@@ -57,7 +57,8 @@ type Server struct {
 	hiddenJobs         []string
 	unemployedJob      string
 	unemployedJobGrade int32
-	customColumns      dbutils.CustomColumns
+
+	customDB config.CustomDB
 }
 
 type Params struct {
@@ -83,7 +84,8 @@ func NewServer(p Params) *Server {
 		hiddenJobs:         p.Config.Game.HiddenJobs,
 		unemployedJob:      p.Config.Game.UnemployedJob.Name,
 		unemployedJobGrade: p.Config.Game.UnemployedJob.Grade,
-		customColumns:      p.Config.Database.CustomColumns,
+
+		customDB: p.Config.Database.Custom,
 	}
 }
 
@@ -104,10 +106,10 @@ func (s *Server) ListCitizens(ctx context.Context, req *ListCitizensRequest) (*L
 		tUser.Sex,
 		tUser.Height,
 		tUserProps.UserID,
-		s.customColumns.User.GetVisum(tUser.Alias()),
+		s.customDB.Columns.User.GetVisum(tUser.Alias()),
 	}
 
-	condition := jet.Bool(true)
+	condition := s.customDB.Conditions.User.GetFilter(tUser.Alias())
 	// Field Permission Check
 	fieldsAttr, err := s.p.Attr(userInfo, permscitizenstore.CitizenStoreServicePerm, permscitizenstore.CitizenStoreServiceListCitizensPerm, permscitizenstore.CitizenStoreServiceListCitizensFieldsPermField)
 	if err != nil {
@@ -261,7 +263,7 @@ func (s *Server) GetUser(ctx context.Context, req *GetUserRequest) (*GetUserResp
 		tUser.Sex,
 		tUser.Height,
 		tUserProps.UserID,
-		s.customColumns.User.GetVisum(tUser.Alias()),
+		s.customDB.Columns.User.GetVisum(tUser.Alias()),
 	}
 
 	// Field Permission Check

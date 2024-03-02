@@ -72,7 +72,7 @@ type Server struct {
 	signupEnabled   bool
 	superuserGroups []string
 	oauth2Providers []*config.OAuth2Provider
-	customColumns   dbutils.CustomColumns
+	customDB        config.CustomDB
 }
 
 type Params struct {
@@ -102,7 +102,7 @@ func NewServer(p Params) *Server {
 		signupEnabled:   p.Config.Game.Auth.SignupEnabled,
 		superuserGroups: p.Config.Game.Auth.SuperuserGroups,
 		oauth2Providers: p.Config.OAuth2.Providers,
-		customColumns:   p.Config.Database.CustomColumns,
+		customDB:        p.Config.Database.Custom,
 	}
 }
 
@@ -474,8 +474,8 @@ func (s *Server) GetCharacters(ctx context.Context, req *GetCharactersRequest) (
 				tUsers.Height,
 				tUsers.PhoneNumber,
 				tUserProps.Avatar.AS("user.avatar"),
-				s.customColumns.User.GetVisum(tUsers.Alias()),
-				s.customColumns.User.GetPlaytime(tUsers.Alias()),
+				s.customDB.Columns.User.GetVisum(tUsers.Alias()),
+				s.customDB.Columns.User.GetPlaytime(tUsers.Alias()),
 			}.Get()...,
 		).
 		FROM(tUsers.

@@ -27,12 +27,16 @@ database:
   maxIdleConns: 5
   connMaxIdleTime: 15m
   connMaxLifetime: 60m
-  customColumns:
-    user:
-      visum: "visum"
-      playtime: "playtime"
-    vehicle:
-      model: "model"
+  custom:
+    columns:
+      user:
+        visum: "visum"
+        playtime: "playtime"
+      vehicle:
+        model: "model"
+    conditions:
+      user:
+        filterEmptyName: false
 nats:
   url: "nats://localhost:4222"
 jwt:
@@ -96,40 +100,39 @@ game:
     convertJobs: []
       #- police
 discord:
-  bot:
+  enabled: true
+  syncInterval: 15m
+  inviteURL: "your_discord_bot_invite_url" # Recommended bot perms: `-42471713`
+  token: "your_discord_bot_token"
+  presence:
+    gameStatus: "FiveNet"
+    #listeningStatus: ""
+    #streamingStatus: ""
+    #streamingStatusUrl: ""
+    #watchStatus: ""
+  userInfoSync:
+    enabled: false
+    gradeRoleFormat: "[%grade%] %grade_label%"
+    employeeRoleFormat: "%s Employees"
+    unemployedRoleName: "Citizen"
+    nicknameRegex: "^(?P<prefix>\\[\\S+][ ]*)?(?P<name>[^\\[]+)(?P<suffix>[ ]*\\[\\S+])?"
+    ignoreJobs: []
+    #  - army
+    jobsAbsceneRoleName: "Absent"
+  groupSync:
+    enabled: false
+    mapping:
+      fraktionsverwaltung:
+        roleName: "Fraktionsverwaltung"
+        #permissions: 0
+        #color: "#9B59B6"
+        notSameJob: true
+      teamleitung:
+        roleName: "Teamleitung"
+        #permissions: 0
+        #color: "#9B59B6"
+  commands:
     enabled: true
-    syncInterval: 15m
-    inviteURL: "your_discord_bot_invite_url" # Recommended bot perms: `-42471713`
-    token: "your_discord_bot_token"
-    presence:
-      gameStatus: "FiveNet"
-      #listeningStatus: ""
-      #streamingStatus: ""
-      #streamingStatusUrl: ""
-      #watchStatus: ""
-    userInfoSync:
-      enabled: false
-      gradeRoleFormat: "[%grade%] %grade_label%"
-      employeeRoleFormat: "%s Employees"
-      unemployedRoleName: "Citizen"
-      nicknameRegex: "^(?P<prefix>\\[\\S+][ ]*)?(?P<name>[^\\[]+)(?P<suffix>[ ]*\\[\\S+])?"
-      ignoreJobs: []
-      #  - army
-      jobsAbsceneRoleName: "Absent"
-    groupSync:
-      enabled: false
-      mapping:
-        fraktionsverwaltung:
-          roleName: "Fraktionsverwaltung"
-          #permissions: 0
-          #color: "#9B59B6"
-          notSameJob: true
-        teamleitung:
-          roleName: "Teamleitung"
-          #permissions: 0
-          #color: "#9B59B6"
-    commands:
-      enabled: true
 storage:
   type: "filesystem"
   filesystem:

@@ -47,12 +47,12 @@ type BaseModule struct {
 	discord *discordgo.Session
 	guild   *discordgo.Guild
 	job     string
-	cfg     *config.DiscordBot
+	cfg     *config.Discord
 
 	enricher *mstlystcdata.Enricher
 }
 
-func NewBaseModule(ctx context.Context, logger *zap.Logger, db *sql.DB, discord *discordgo.Session, guild *discordgo.Guild, job string, cfg *config.DiscordBot, enricher *mstlystcdata.Enricher) *BaseModule {
+func NewBaseModule(ctx context.Context, logger *zap.Logger, db *sql.DB, discord *discordgo.Session, guild *discordgo.Guild, job string, cfg *config.Discord, enricher *mstlystcdata.Enricher) *BaseModule {
 	return &BaseModule{
 		ctx:     ctx,
 		logger:  logger,

@@ -68,7 +68,7 @@ type Bot struct {
 	tracer   trace.Tracer
 	db       *sql.DB
 	enricher *mstlystcdata.Enricher
-	cfg      *config.DiscordBot
+	cfg      *config.Discord
 
 	syncInterval time.Duration
 
@@ -82,12 +82,12 @@ type Bot struct {
 }
 
 func NewBot(p BotParams) (*Bot, error) {
-	if !p.Config.Discord.Bot.Enabled {
+	if !p.Config.Discord.Enabled {
 		return nil, nil
 	}
 
 	// Create a new Discord session using the provided login information.
-	discord, err := discordgo.New("Bot " + p.Config.Discord.Bot.Token)
+	discord, err := discordgo.New("Bot " + p.Config.Discord.Token)
 	if err != nil {
 		return nil, fmt.Errorf("error creating discord session. %w", err)
 	}
@@ -105,9 +105,9 @@ func NewBot(p BotParams) (*Bot, error) {
 		tracer:   p.TP.Tracer("discord_bot"),
 		db:       p.DB,
 		enricher: p.Enricher,
-		cfg:      &p.Config.Discord.Bot,
+		cfg:      &p.Config.Discord,
 
-		syncInterval: p.Config.Discord.Bot.SyncInterval,
+		syncInterval: p.Config.Discord.SyncInterval,
 
 		cmds: cmds,
 

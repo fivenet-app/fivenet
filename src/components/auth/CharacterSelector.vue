@@ -4,8 +4,14 @@ import DataErrorBlock from '~/components/partials/data/DataErrorBlock.vue';
 import DataPendingBlock from '~/components/partials/data/DataPendingBlock.vue';
 import { User } from '~~/gen/ts/resources/users/users';
 import CharacterSelectorCard from '~/components/auth/CharacterSelectorCard.vue';
+import { useAuthStore } from '~/store/auth';
 
 const { $grpc } = useNuxtApp();
+
+const authStore = useAuthStore();
+
+const { chooseCharacter } = authStore;
+
 const { data: chars, pending, refresh, error } = useLazyAsyncData('chars', () => fetchCharacters());
 
 async function fetchCharacters(): Promise<User[]> {
@@ -19,6 +25,13 @@ async function fetchCharacters(): Promise<User[]> {
         throw e;
     }
 }
+
+watch(chars, async () => {
+    // If user only has one char, auto select that char
+    if (chars.value?.length === 1) {
+        await chooseCharacter(chars.value[0].userId);
+    }
+});
 </script>
 
 <template>

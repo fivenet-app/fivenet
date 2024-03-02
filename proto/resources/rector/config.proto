@@ -1,0 +1,50 @@
+syntax = "proto3";
+
+package resources.rector;
+
+import "google/protobuf/duration.proto";
+
+option go_package = "github.com/galexrt/fivenet/gen/go/proto/resources/rector;rector";
+
+message AppConfig {
+  Auth auth = 1;
+  Website website = 2;
+  JobInfo job_info = 3;
+  UserTracker user_tracker = 4;
+  Discord discord = 5;
+}
+
+message Auth {
+  bool signup_enabled = 1;
+  // TODO default perms and attributes
+}
+
+message Website {
+  Links links = 1;
+}
+
+message Links {
+  optional string privacy_policy = 1;
+  optional string imprint = 2;
+}
+
+message JobInfo {
+  repeated string public_jobs = 1;
+  repeated string hidden_jobs = 2;
+}
+
+message UserTracker {
+  google.protobuf.Duration refresh_time = 1;
+  google.protobuf.Duration db_refresh_time = 2;
+  repeated string livemap_jobs = 3;
+  repeated string timeclock_jobs = 4;
+}
+
+message Discord {
+  bool enabled = 1;
+  // TODO
+}
+
+message PluginConfig {
+  // TODO
+}

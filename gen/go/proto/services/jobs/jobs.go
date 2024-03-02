@@ -8,6 +8,7 @@ import (
 
 	"github.com/galexrt/fivenet/gen/go/proto/resources/rector"
 	errorsjobs "github.com/galexrt/fivenet/gen/go/proto/services/jobs/errors"
+	"github.com/galexrt/fivenet/pkg/config"
 	"github.com/galexrt/fivenet/pkg/grpc/auth"
 	"github.com/galexrt/fivenet/pkg/grpc/errswrap"
 	"github.com/galexrt/fivenet/pkg/mstlystcdata"
@@ -44,6 +45,8 @@ type Server struct {
 	ps       perms.Permissions
 	enricher *mstlystcdata.UserAwareEnricher
 	aud      audit.IAuditer
+
+	customDB config.CustomDB
 }
 
 type Params struct {
@@ -57,6 +60,7 @@ type Params struct {
 	Perms             perms.Permissions
 	UserAwareEnricher *mstlystcdata.UserAwareEnricher
 	Audit             audit.IAuditer
+	Config            *config.Config
 }
 
 func NewServer(p Params) *Server {
@@ -70,6 +74,8 @@ func NewServer(p Params) *Server {
 		ps:       p.Perms,
 		enricher: p.UserAwareEnricher,
 		aud:      p.Audit,
+
+		customDB: p.Config.Database.Custom,
 	}
 
 	return s
