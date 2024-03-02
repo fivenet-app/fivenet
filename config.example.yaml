@@ -41,6 +41,29 @@ nats:
   url: "nats://localhost:4222"
 jwt:
   secret: "your_generated_jwt_secret"
+cache:
+  refreshTime: 2m
+audit:
+  retentionDays: 90
+storage:
+  type: "filesystem"
+  filesystem:
+    path: ".data/"
+  s3:
+    endpoint: ""
+    region: "us-east-1"
+    accessKeyID: ""
+    secretAccessKey: ""
+    useSSL: true
+    bucketName: ""
+    prefix: ""
+imageProxy:
+  enabled: true
+  url: "/api/image_proxy/"
+  cachePrefix: "images/"
+  options:
+    allowHosts: []
+    denyHosts: []
 oauth2:
   providers:
     - name: "discord"
@@ -57,10 +80,6 @@ oauth2:
       endpoints:
         authURL: "https://discord.com/api/oauth2/authorize"
         tokenURL: "https://discord.com/api/oauth2/token"
-cache:
-  refreshTime: 2m
-audit:
-  retentionDays: 90
 game:
   auth:
     signupEnabled: true
@@ -133,22 +152,3 @@ discord:
         #color: "#9B59B6"
   commands:
     enabled: true
-storage:
-  type: "filesystem"
-  filesystem:
-    path: ".data/"
-  s3:
-    endpoint: ""
-    region: "us-east-1"
-    accessKeyID: ""
-    secretAccessKey: ""
-    useSSL: true
-    bucketName: ""
-    prefix: ""
-imageProxy:
-  enabled: true
-  url: "/api/image_proxy/"
-  cachePrefix: "images/"
-  options:
-    allowHosts: []
-    denyHosts: []

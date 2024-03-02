@@ -11,7 +11,8 @@ message AppConfig {
   Website website = 2;
   JobInfo job_info = 3;
   UserTracker user_tracker = 4;
-  Discord discord = 5;
+  OAuth2 oauth2 = 5;
+  Discord discord = 6;
 }
 
 message Auth {
@@ -38,6 +39,35 @@ message UserTracker {
   google.protobuf.Duration db_refresh_time = 2;
   repeated string livemap_jobs = 3;
   repeated string timeclock_jobs = 4;
+}
+
+message OAuth2 {
+  repeated OAuth2Provider providers = 1;
+}
+
+message OAuth2Provider {
+  string name = 1;
+  string label = 2;
+  string homepage = 3;
+  string type = 4;
+  string redirect_url = 5;
+  string client_id = 6;
+  string client_secret = 7;
+  repeated string scopes = 8;
+  OAuth2Endpoints endpoints = 9;
+  OAuth2Mapping mapping = 10;
+}
+
+message OAuth2Endpoints {
+  optional string auth_url = 1;
+  optional string token_url = 2;
+  optional string user_info_url = 3;
+}
+
+message OAuth2Mapping {
+  string id = 1;
+  string username = 2;
+  string avatar = 3;
 }
 
 message Discord {
