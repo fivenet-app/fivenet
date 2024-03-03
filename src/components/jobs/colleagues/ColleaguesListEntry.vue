@@ -61,11 +61,18 @@ today.setMilliseconds(0);
             {{ colleague.jobGradeLabel }}<span v-if="colleague.jobGrade > 0"> ({{ colleague.jobGrade }})</span>
         </td>
         <td class="whitespace-nowrap py-2 pl-4 pr-3 text-base font-medium text-neutral sm:pl-1">
-            <GenericTime
-                v-if="colleague.props?.absenceDate && toDate(colleague.props?.absenceDate).getTime() >= today.getTime()"
-                :value="colleague.props?.absenceDate"
-                type="date"
-            />
+            <dl
+                v-if="colleague.props?.absenceEnd && toDate(colleague.props?.absenceEnd).getTime() >= today.getTime()"
+                class="font-normal hidden sm:block"
+            >
+                <dd class="truncate text-accent-200">
+                    {{ $t('common.from') }}:
+                    <GenericTime :value="colleague.props?.absenceBegin" type="date" />
+                </dd>
+                <dd class="truncate text-accent-200">
+                    {{ $t('common.to') }}: <GenericTime :value="colleague.props?.absenceEnd" type="date" />
+                </dd>
+            </dl>
         </td>
         <td class="whitespace-nowrap px-1 py-1 text-left text-accent-200">
             <PhoneNumberBlock :number="colleague.phoneNumber" />

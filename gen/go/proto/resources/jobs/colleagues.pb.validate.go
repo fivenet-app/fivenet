@@ -353,14 +353,14 @@ func (m *JobsUserProps) validate(all bool) error {
 		errors = append(errors, err)
 	}
 
-	if m.AbsenceDate != nil {
+	if m.AbsenceBegin != nil {
 
 		if all {
-			switch v := interface{}(m.GetAbsenceDate()).(type) {
+			switch v := interface{}(m.GetAbsenceBegin()).(type) {
 			case interface{ ValidateAll() error }:
 				if err := v.ValidateAll(); err != nil {
 					errors = append(errors, JobsUserPropsValidationError{
-						field:  "AbsenceDate",
+						field:  "AbsenceBegin",
 						reason: "embedded message failed validation",
 						cause:  err,
 					})
@@ -368,16 +368,49 @@ func (m *JobsUserProps) validate(all bool) error {
 			case interface{ Validate() error }:
 				if err := v.Validate(); err != nil {
 					errors = append(errors, JobsUserPropsValidationError{
-						field:  "AbsenceDate",
+						field:  "AbsenceBegin",
 						reason: "embedded message failed validation",
 						cause:  err,
 					})
 				}
 			}
-		} else if v, ok := interface{}(m.GetAbsenceDate()).(interface{ Validate() error }); ok {
+		} else if v, ok := interface{}(m.GetAbsenceBegin()).(interface{ Validate() error }); ok {
 			if err := v.Validate(); err != nil {
 				return JobsUserPropsValidationError{
-					field:  "AbsenceDate",
+					field:  "AbsenceBegin",
+					reason: "embedded message failed validation",
+					cause:  err,
+				}
+			}
+		}
+
+	}
+
+	if m.AbsenceEnd != nil {
+
+		if all {
+			switch v := interface{}(m.GetAbsenceEnd()).(type) {
+			case interface{ ValidateAll() error }:
+				if err := v.ValidateAll(); err != nil {
+					errors = append(errors, JobsUserPropsValidationError{
+						field:  "AbsenceEnd",
+						reason: "embedded message failed validation",
+						cause:  err,
+					})
+				}
+			case interface{ Validate() error }:
+				if err := v.Validate(); err != nil {
+					errors = append(errors, JobsUserPropsValidationError{
+						field:  "AbsenceEnd",
+						reason: "embedded message failed validation",
+						cause:  err,
+					})
+				}
+			}
+		} else if v, ok := interface{}(m.GetAbsenceEnd()).(interface{ Validate() error }); ok {
+			if err := v.Validate(); err != nil {
+				return JobsUserPropsValidationError{
+					field:  "AbsenceEnd",
 					reason: "embedded message failed validation",
 					cause:  err,
 				}
@@ -943,37 +976,62 @@ func (m *ColleagueAbsenceDate) validate(all bool) error {
 
 	var errors []error
 
-	if m.AbsenceDate != nil {
-
-		if all {
-			switch v := interface{}(m.GetAbsenceDate()).(type) {
-			case interface{ ValidateAll() error }:
-				if err := v.ValidateAll(); err != nil {
-					errors = append(errors, ColleagueAbsenceDateValidationError{
-						field:  "AbsenceDate",
-						reason: "embedded message failed validation",
-						cause:  err,
-					})
-				}
-			case interface{ Validate() error }:
-				if err := v.Validate(); err != nil {
-					errors = append(errors, ColleagueAbsenceDateValidationError{
-						field:  "AbsenceDate",
-						reason: "embedded message failed validation",
-						cause:  err,
-					})
-				}
-			}
-		} else if v, ok := interface{}(m.GetAbsenceDate()).(interface{ Validate() error }); ok {
-			if err := v.Validate(); err != nil {
-				return ColleagueAbsenceDateValidationError{
-					field:  "AbsenceDate",
+	if all {
+		switch v := interface{}(m.GetAbsenceBegin()).(type) {
+		case interface{ ValidateAll() error }:
+			if err := v.ValidateAll(); err != nil {
+				errors = append(errors, ColleagueAbsenceDateValidationError{
+					field:  "AbsenceBegin",
 					reason: "embedded message failed validation",
 					cause:  err,
-				}
+				})
+			}
+		case interface{ Validate() error }:
+			if err := v.Validate(); err != nil {
+				errors = append(errors, ColleagueAbsenceDateValidationError{
+					field:  "AbsenceBegin",
+					reason: "embedded message failed validation",
+					cause:  err,
+				})
 			}
 		}
+	} else if v, ok := interface{}(m.GetAbsenceBegin()).(interface{ Validate() error }); ok {
+		if err := v.Validate(); err != nil {
+			return ColleagueAbsenceDateValidationError{
+				field:  "AbsenceBegin",
+				reason: "embedded message failed validation",
+				cause:  err,
+			}
+		}
+	}
 
+	if all {
+		switch v := interface{}(m.GetAbsenceEnd()).(type) {
+		case interface{ ValidateAll() error }:
+			if err := v.ValidateAll(); err != nil {
+				errors = append(errors, ColleagueAbsenceDateValidationError{
+					field:  "AbsenceEnd",
+					reason: "embedded message failed validation",
+					cause:  err,
+				})
+			}
+		case interface{ Validate() error }:
+			if err := v.Validate(); err != nil {
+				errors = append(errors, ColleagueAbsenceDateValidationError{
+					field:  "AbsenceEnd",
+					reason: "embedded message failed validation",
+					cause:  err,
+				})
+			}
+		}
+	} else if v, ok := interface{}(m.GetAbsenceEnd()).(interface{ Validate() error }); ok {
+		if err := v.Validate(); err != nil {
+			return ColleagueAbsenceDateValidationError{
+				field:  "AbsenceEnd",
+				reason: "embedded message failed validation",
+				cause:  err,
+			}
+		}
 	}
 
 	if len(errors) > 0 {

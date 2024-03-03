@@ -34,7 +34,7 @@ useHead({
         lang: 'en',
     },
     bodyAttrs: {
-        class: 'bg-body-color h-full overflow-hidden',
+        class: 'bg-body-color h-full overflow-y-hidden',
     },
     titleTemplate: (title?: string) => {
         if (title?.includes('.')) {

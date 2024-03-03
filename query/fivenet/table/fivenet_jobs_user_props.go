@@ -17,8 +17,9 @@ type fivenetJobsUserPropsTable struct {
 	mysql.Table
 
 	// Columns
-	UserID      mysql.ColumnInteger
-	AbsenceDate mysql.ColumnDate
+	UserID       mysql.ColumnInteger
+	AbsenceBegin mysql.ColumnDate
+	AbsenceEnd   mysql.ColumnDate
 
 	AllColumns     mysql.ColumnList
 	MutableColumns mysql.ColumnList
@@ -59,18 +60,20 @@ func newFivenetJobsUserPropsTable(schemaName, tableName, alias string) *FivenetJ
 
 func newFivenetJobsUserPropsTableImpl(schemaName, tableName, alias string) fivenetJobsUserPropsTable {
 	var (
-		UserIDColumn      = mysql.IntegerColumn("user_id")
-		AbsenceDateColumn = mysql.DateColumn("absence_date")
-		allColumns        = mysql.ColumnList{UserIDColumn, AbsenceDateColumn}
-		mutableColumns    = mysql.ColumnList{UserIDColumn, AbsenceDateColumn}
+		UserIDColumn       = mysql.IntegerColumn("user_id")
+		AbsenceBeginColumn = mysql.DateColumn("absence_begin")
+		AbsenceEndColumn   = mysql.DateColumn("absence_end")
+		allColumns         = mysql.ColumnList{UserIDColumn, AbsenceBeginColumn, AbsenceEndColumn}
+		mutableColumns     = mysql.ColumnList{UserIDColumn, AbsenceBeginColumn, AbsenceEndColumn}
 	)
 
 	return fivenetJobsUserPropsTable{
 		Table: mysql.NewTable(schemaName, tableName, alias, allColumns...),
 
 		//Columns
-		UserID:      UserIDColumn,
-		AbsenceDate: AbsenceDateColumn,
+		UserID:       UserIDColumn,
+		AbsenceBegin: AbsenceBeginColumn,
+		AbsenceEnd:   AbsenceEndColumn,
 
 		AllColumns:     allColumns,
 		MutableColumns: mutableColumns,

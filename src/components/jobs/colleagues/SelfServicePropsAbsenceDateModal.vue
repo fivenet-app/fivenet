@@ -17,7 +17,7 @@ const props = defineProps<{
 
 const emit = defineEmits<{
     (e: 'close'): void;
-    (e: 'update:absenceDate', value: { userId: number; absenceDate?: Timestamp }): void;
+    (e: 'update:absenceDates', value: { userId: number; absenceBegin?: Timestamp; absenceEnd?: Timestamp }): void;
 }>();
 
 const { $grpc } = useNuxtApp();
@@ -26,13 +26,15 @@ const notifications = useNotificatorStore();
 
 interface FormData {
     reason: string;
-    absenceDate?: string;
+    absenceBegin?: string;
+    absenceEnd?: string;
 }
 
 async function setAbsenceDate(values: FormData): Promise<void> {
     const userProps: JobsUserProps = {
         userId: props.userId,
-        absenceDate: values.absenceDate ? toTimestamp(fromString(values.absenceDate)) : {},
+        absenceBegin: values.absenceBegin ? toTimestamp(fromString(values.absenceBegin)) : {},
+        absenceEnd: values.absenceEnd ? toTimestamp(fromString(values.absenceEnd)) : {},
     };
 
     try {
@@ -42,7 +44,11 @@ async function setAbsenceDate(values: FormData): Promise<void> {
         });
         const { response } = await call;
 
-        emit('update:absenceDate', { userId: props.userId, absenceDate: response.props?.absenceDate });
+        emit('update:absenceDates', {
+            userId: props.userId,
+            absenceBegin: response.props?.absenceBegin,
+            absenceEnd: response.props?.absenceEnd,
+        });
 
         notifications.dispatchNotification({
             title: { key: 'notifications.action_successfull.title', parameters: {} },
@@ -64,18 +70,24 @@ defineRule('max', max);
 const { handleSubmit, meta, setFieldValue } = useForm<FormData>({
     validationSchema: {
         reason: { required: true, min: 3, max: 255 },
-        absenceDate: {},
+        absenceBegin: { required: true },
+        absenceEnd: { required: true },
     },
     validateOnMount: true,
 });
 
 function updateAbsenceDateField(): void {
-    let date = '';
-    if (props.userProps?.absenceDate && toDate(props.userProps.absenceDate).getTime() > new Date().getTime()) {
-        date = toDatetimeLocal(toDate(props.userProps.absenceDate)).split('T')[0];
+    if (props.userProps?.absenceBegin && toDate(props.userProps.absenceBegin).getTime() > new Date().getTime()) {
+        setFieldValue('absenceBegin', toDatetimeLocal(toDate(props.userProps.absenceBegin)).split('T')[0]);
+    } else {
+        setFieldValue('absenceBegin', toDatetimeLocal(new Date()).split('T')[0]);
     }
 
-    setFieldValue('absenceDate', date);
+    if (props.userProps?.absenceEnd && toDate(props.userProps.absenceEnd).getTime() > new Date().getTime()) {
+        setFieldValue('absenceEnd', toDatetimeLocal(toDate(props.userProps.absenceEnd)).split('T')[0]);
+    } else {
+        setFieldValue('absenceEnd', undefined);
+    }
 }
 
 watch(props, () => updateAbsenceDateField());
@@ -154,19 +166,36 @@ const onSubmitThrottle = useThrottleFn(async (e) => {
                                 </div>
                                 <div class="my-2 space-y-24">
                                     <div class="form-control flex-1">
-                                        <label for="job" class="block text-sm font-medium leading-6 text-neutral">
-                                            {{ $t('common.absence_date') }}
+                                        <label for="absenceBegin" class="block text-sm font-medium leading-6 text-neutral">
+                                            {{ $t('common.from') }}
                                         </label>
                                         <VeeField
                                             type="date"
-                                            name="absenceDate"
+                                            name="absenceBegin"
                                             class="block w-full rounded-md border-0 bg-base-700 py-1.5 text-neutral placeholder:text-accent-200 focus:ring-2 focus:ring-inset focus:ring-base-300 sm:text-sm sm:leading-6"
-                                            :placeholder="$t('common.absence_date')"
-                                            :label="$t('common.absence_date')"
+                                            :placeholder="$t('common.from')"
+                                            :label="$t('common.from')"
                                             @focusin="focusTablet(true)"
                                             @focusout="focusTablet(false)"
                                         />
-                                        <VeeErrorMessage name="absenceDate" as="p" class="mt-2 text-sm text-error-400" />
+                                        <VeeErrorMessage name="absenceBegin" as="p" class="mt-2 text-sm text-error-400" />
+                                    </div>
+                                </div>
+                                <div class="my-2 space-y-24">
+                                    <div class="form-control flex-1">
+                                        <label for="absenceEnd" class="block text-sm font-medium leading-6 text-neutral">
+                                            {{ $t('common.to') }}
+                                        </label>
+                                        <VeeField
+                                            type="date"
+                                            name="absenceEnd"
+                                            class="block w-full rounded-md border-0 bg-base-700 py-1.5 text-neutral placeholder:text-accent-200 focus:ring-2 focus:ring-inset focus:ring-base-300 sm:text-sm sm:leading-6"
+                                            :placeholder="$t('common.to')"
+                                            :label="$t('common.to')"
+                                            @focusin="focusTablet(true)"
+                                            @focusout="focusTablet(false)"
+                                        />
+                                        <VeeErrorMessage name="absenceEnd" as="p" class="mt-2 text-sm text-error-400" />
                                     </div>
                                 </div>
                                 <div class="absolute bottom-0 left-0 flex w-full">
@@ -187,7 +216,8 @@ const onSubmitThrottle = useThrottleFn(async (e) => {
                                                 : 'bg-error-500 hover:bg-error-400 focus-visible:outline-error-500',
                                         ]"
                                         @click="
-                                            setFieldValue('absenceDate', undefined);
+                                            setFieldValue('absenceBegin', undefined);
+                                            setFieldValue('absenceEnd', undefined);
                                             onSubmitThrottle($event);
                                         "
                                     >

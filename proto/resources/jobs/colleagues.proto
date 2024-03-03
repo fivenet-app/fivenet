@@ -32,7 +32,8 @@ message Colleague {
 
 message JobsUserProps {
   int32 user_id = 1 [(validate.rules).int32.gt = 0];
-  optional resources.timestamp.Timestamp absence_date = 2;
+  optional resources.timestamp.Timestamp absence_begin = 2;
+  optional resources.timestamp.Timestamp absence_end = 3;
 }
 
 enum JobsUserActivityType {
@@ -66,7 +67,8 @@ message JobsUserActivityData {
 }
 
 message ColleagueAbsenceDate {
-  optional resources.timestamp.Timestamp absence_date = 1;
+  resources.timestamp.Timestamp absence_begin = 1;
+  resources.timestamp.Timestamp absence_end = 2;
 }
 
 message ColleagueGradeChange {

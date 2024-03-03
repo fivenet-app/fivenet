@@ -1,9 +1,7 @@
 <script lang="ts" setup>
 import { useTimeoutFn } from '@vueuse/core';
 import { LoadingIcon } from 'mdi-vue3';
-import ContentCenterWrapper from '~/components/partials/ContentCenterWrapper.vue';
-import ContentHeroFull from '~/components/partials/ContentHeroFull.vue';
-import PageFooter from '~/components/partials/PageFooter.vue';
+import HeroPage from '~/components/partials/HeroPage.vue';
 
 useHead({
     title: 'common.privacy_policy',
@@ -16,24 +14,22 @@ definePageMeta({
 
 const { links } = useAppConfig();
 
-useTimeoutFn(() => navigateTo(links.privacyPolicy, { external: true }), 2000);
+if (links.privacyPolicy === undefined) {
+    navigateTo({ name: 'index' });
+} else {
+    useTimeoutFn(() => navigateTo(links.privacyPolicy!, { external: true }), 1750);
+}
 </script>
 
 <template>
-    <div class="h-full flex flex-col">
-        <ContentHeroFull>
-            <ContentCenterWrapper class="mx-auto max-w-2xl text-center">
-                <div class="px-5 sm:px-0">
-                    <h1 class="text-5xl font-bold tracking-tight text-neutral sm:text-6xl">
-                        {{ $t('common.redirecting_to', [$t('common.privacy_policy')]) }}
-                    </h1>
-                    <h2 class="mt-4 inline-flex items-center text-4xl text-neutral">
-                        <LoadingIcon class="w-20 h-20 animate-spin" aria-hidden="true" />
-                    </h2>
-                </div>
-            </ContentCenterWrapper>
-        </ContentHeroFull>
-
-        <PageFooter />
-    </div>
+    <HeroPage>
+        <template #default>
+            <h1 class="text-5xl font-bold tracking-tight text-neutral sm:text-6xl">
+                {{ $t('common.redirecting_to', [$t('common.privacy_policy')]) }}
+            </h1>
+            <h2 class="mt-4 inline-flex items-center text-4xl text-neutral">
+                <LoadingIcon class="w-20 h-20 animate-spin" aria-hidden="true" />
+            </h2>
+        </template>
+    </HeroPage>
 </template>

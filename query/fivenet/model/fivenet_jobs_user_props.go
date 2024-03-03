@@ -12,6 +12,7 @@ import (
 )
 
 type FivenetJobsUserProps struct {
-	UserID      int32      `json:"user_id"`
-	AbsenceDate *time.Time `json:"absence_date"`
+	UserID       int32      `json:"user_id"`
+	AbsenceBegin *time.Time `json:"absence_begin"`
+	AbsenceEnd   *time.Time `json:"absence_end"`
 }

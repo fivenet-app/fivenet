@@ -149,6 +149,11 @@ ${t('common.crime', selectedPenalties.value.length)}:
 function reset(): void {
     rawQuery.value = '';
     selectedPenalties.value = [];
+
+    summary.value.count = 0;
+    summary.value.detentionTime = 0;
+    summary.value.fine = 0;
+    summary.value.stvoPoints = 0;
 }
 
 watch(props, () => {

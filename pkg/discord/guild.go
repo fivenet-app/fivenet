@@ -121,12 +121,12 @@ func (g *Guild) Run() error {
 	for key, module := range g.modules {
 		g.logger.Debug("running discord guild module", zap.String("dc_module", key))
 
-		moduleLogs, err := module.Run(settings)
+		mLogs, err := module.Run(settings)
 		if err != nil {
 			errs = multierr.Append(errs, err)
 		}
 
-		logs = append(logs, moduleLogs...)
+		logs = append(logs, mLogs...)
 	}
 
 	if settings.IsStatusLogEnabled() {

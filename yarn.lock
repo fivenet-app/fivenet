@@ -2219,10 +2219,10 @@
   resolved "https://registry.yarnpkg.com/@vue/devtools-api/-/devtools-api-6.6.1.tgz#7c14346383751d9f6ad4bea0963245b30220ef83"
   integrity sha512-LgPscpE3Vs0x96PzSSB4IGVSZXZBZHpfxs+ZA1d+VEPwHdOXowy/Y2CsvCAIFrf+ssVU1pD1jidj505EpUnfbA==
 
-"@vue/language-core@2.0.2":
-  version "2.0.2"
-  resolved "https://registry.yarnpkg.com/@vue/language-core/-/language-core-2.0.2.tgz#bd1544d9cfd78ba559894efe93ddfefcaebc7536"
-  integrity sha512-MT8pGTFouwDOS/ton1OqyW2MtTv02I8kEymvD05lW3NM8HJf63Xu9sZc0nh5SGZN35EFdnSsD+emhRKRzHLEug==
+"@vue/language-core@2.0.3":
+  version "2.0.3"
+  resolved "https://registry.yarnpkg.com/@vue/language-core/-/language-core-2.0.3.tgz#49e290c928b216a5b0f07012ff6e1065a6e15258"
+  integrity sha512-hnVF/Q3cD2v+EFD4pD1YdITGBcdM38P18SYqilVQDezKw5RobWny4BwIckWGS1fJmUstsO9mTX30ZOyzyR2Q+Q==
   dependencies:
     "@volar/language-core" "~2.1.0"
     "@vue/compiler-dom" "^3.4.0"
@@ -9733,13 +9733,13 @@ vue-template-compiler@^2.7.14:
     de-indent "^1.0.2"
     he "^1.2.0"
 
-vue-tsc@2.0.2:
-  version "2.0.2"
-  resolved "https://registry.yarnpkg.com/vue-tsc/-/vue-tsc-2.0.2.tgz#57d3498c658f27d095dc3ca9291885db42cb753b"
-  integrity sha512-y/McoUhK62cJdI9m8xTCADOELPczi/EhLcjwq84xTqmsqEFugM7vOy5l7X/2ZNdMKopg74jVn2Nd4GdUxPMGWw==
+vue-tsc@2.0.3:
+  version "2.0.3"
+  resolved "https://registry.yarnpkg.com/vue-tsc/-/vue-tsc-2.0.3.tgz#9b736f6ad478a5c98a23aeef509eb0b73d115b26"
+  integrity sha512-aMJqbgLiKDAwAglWqMoGf1Ez6Wwqhlk2MDxEjFGziiLW0A+tHOWE1+YQJZQ1Vm6zaENPA2KJAubFhaR988UvGg==
   dependencies:
     "@volar/typescript" "~2.1.0"
-    "@vue/language-core" "2.0.2"
+    "@vue/language-core" "2.0.3"
     semver "^7.5.4"
 
 vue3-charts@^1.1.33:

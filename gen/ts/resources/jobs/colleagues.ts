@@ -75,9 +75,13 @@ export interface JobsUserProps {
      */
     userId: number;
     /**
-     * @generated from protobuf field: optional resources.timestamp.Timestamp absence_date = 2;
+     * @generated from protobuf field: optional resources.timestamp.Timestamp absence_begin = 2;
      */
-    absenceDate?: Timestamp;
+    absenceBegin?: Timestamp;
+    /**
+     * @generated from protobuf field: optional resources.timestamp.Timestamp absence_end = 3;
+     */
+    absenceEnd?: Timestamp;
 }
 /**
  * @generated from protobuf message resources.jobs.JobsUserActivity
@@ -154,9 +158,13 @@ export interface JobsUserActivityData {
  */
 export interface ColleagueAbsenceDate {
     /**
-     * @generated from protobuf field: optional resources.timestamp.Timestamp absence_date = 1;
+     * @generated from protobuf field: resources.timestamp.Timestamp absence_begin = 1;
      */
-    absenceDate?: Timestamp;
+    absenceBegin?: Timestamp;
+    /**
+     * @generated from protobuf field: resources.timestamp.Timestamp absence_end = 2;
+     */
+    absenceEnd?: Timestamp;
 }
 /**
  * @generated from protobuf message resources.jobs.ColleagueGradeChange
@@ -335,7 +343,8 @@ class JobsUserProps$Type extends MessageType<JobsUserProps> {
     constructor() {
         super("resources.jobs.JobsUserProps", [
             { no: 1, name: "user_id", kind: "scalar", T: 5 /*ScalarType.INT32*/, options: { "validate.rules": { int32: { gt: 0 } } } },
-            { no: 2, name: "absence_date", kind: "message", T: () => Timestamp }
+            { no: 2, name: "absence_begin", kind: "message", T: () => Timestamp },
+            { no: 3, name: "absence_end", kind: "message", T: () => Timestamp }
         ]);
     }
     create(value?: PartialMessage<JobsUserProps>): JobsUserProps {
@@ -353,8 +362,11 @@ class JobsUserProps$Type extends MessageType<JobsUserProps> {
                 case /* int32 user_id */ 1:
                     message.userId = reader.int32();
                     break;
-                case /* optional resources.timestamp.Timestamp absence_date */ 2:
-                    message.absenceDate = Timestamp.internalBinaryRead(reader, reader.uint32(), options, message.absenceDate);
+                case /* optional resources.timestamp.Timestamp absence_begin */ 2:
+                    message.absenceBegin = Timestamp.internalBinaryRead(reader, reader.uint32(), options, message.absenceBegin);
+                    break;
+                case /* optional resources.timestamp.Timestamp absence_end */ 3:
+                    message.absenceEnd = Timestamp.internalBinaryRead(reader, reader.uint32(), options, message.absenceEnd);
                     break;
                 default:
                     let u = options.readUnknownField;
@@ -371,9 +383,12 @@ class JobsUserProps$Type extends MessageType<JobsUserProps> {
         /* int32 user_id = 1; */
         if (message.userId !== 0)
             writer.tag(1, WireType.Varint).int32(message.userId);
-        /* optional resources.timestamp.Timestamp absence_date = 2; */
-        if (message.absenceDate)
-            Timestamp.internalBinaryWrite(message.absenceDate, writer.tag(2, WireType.LengthDelimited).fork(), options).join();
+        /* optional resources.timestamp.Timestamp absence_begin = 2; */
+        if (message.absenceBegin)
+            Timestamp.internalBinaryWrite(message.absenceBegin, writer.tag(2, WireType.LengthDelimited).fork(), options).join();
+        /* optional resources.timestamp.Timestamp absence_end = 3; */
+        if (message.absenceEnd)
+            Timestamp.internalBinaryWrite(message.absenceEnd, writer.tag(3, WireType.LengthDelimited).fork(), options).join();
         let u = options.writeUnknownFields;
         if (u !== false)
             (u == true ? UnknownFieldHandler.onWrite : u)(this.typeName, message, writer);
@@ -563,7 +578,8 @@ export const JobsUserActivityData = new JobsUserActivityData$Type();
 class ColleagueAbsenceDate$Type extends MessageType<ColleagueAbsenceDate> {
     constructor() {
         super("resources.jobs.ColleagueAbsenceDate", [
-            { no: 1, name: "absence_date", kind: "message", T: () => Timestamp }
+            { no: 1, name: "absence_begin", kind: "message", T: () => Timestamp },
+            { no: 2, name: "absence_end", kind: "message", T: () => Timestamp }
         ]);
     }
     create(value?: PartialMessage<ColleagueAbsenceDate>): ColleagueAbsenceDate {
@@ -577,8 +593,11 @@ class ColleagueAbsenceDate$Type extends MessageType<ColleagueAbsenceDate> {
         while (reader.pos < end) {
             let [fieldNo, wireType] = reader.tag();
             switch (fieldNo) {
-                case /* optional resources.timestamp.Timestamp absence_date */ 1:
-                    message.absenceDate = Timestamp.internalBinaryRead(reader, reader.uint32(), options, message.absenceDate);
+                case /* resources.timestamp.Timestamp absence_begin */ 1:
+                    message.absenceBegin = Timestamp.internalBinaryRead(reader, reader.uint32(), options, message.absenceBegin);
+                    break;
+                case /* resources.timestamp.Timestamp absence_end */ 2:
+                    message.absenceEnd = Timestamp.internalBinaryRead(reader, reader.uint32(), options, message.absenceEnd);
                     break;
                 default:
                     let u = options.readUnknownField;
@@ -592,9 +611,12 @@ class ColleagueAbsenceDate$Type extends MessageType<ColleagueAbsenceDate> {
         return message;
     }
     internalBinaryWrite(message: ColleagueAbsenceDate, writer: IBinaryWriter, options: BinaryWriteOptions): IBinaryWriter {
-        /* optional resources.timestamp.Timestamp absence_date = 1; */
-        if (message.absenceDate)
-            Timestamp.internalBinaryWrite(message.absenceDate, writer.tag(1, WireType.LengthDelimited).fork(), options).join();
+        /* resources.timestamp.Timestamp absence_begin = 1; */
+        if (message.absenceBegin)
+            Timestamp.internalBinaryWrite(message.absenceBegin, writer.tag(1, WireType.LengthDelimited).fork(), options).join();
+        /* resources.timestamp.Timestamp absence_end = 2; */
+        if (message.absenceEnd)
+            Timestamp.internalBinaryWrite(message.absenceEnd, writer.tag(2, WireType.LengthDelimited).fork(), options).join();
         let u = options.writeUnknownFields;
         if (u !== false)
             (u == true ? UnknownFieldHandler.onWrite : u)(this.typeName, message, writer);

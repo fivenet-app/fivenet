@@ -9,7 +9,6 @@ import (
 	database "github.com/galexrt/fivenet/gen/go/proto/resources/common/database"
 	jobs "github.com/galexrt/fivenet/gen/go/proto/resources/jobs"
 	"github.com/galexrt/fivenet/gen/go/proto/resources/rector"
-	"github.com/galexrt/fivenet/gen/go/proto/resources/timestamp"
 	"github.com/galexrt/fivenet/gen/go/proto/resources/users"
 	errorsjobs "github.com/galexrt/fivenet/gen/go/proto/services/jobs/errors"
 	permsjobs "github.com/galexrt/fivenet/gen/go/proto/services/jobs/perms"
@@ -52,8 +51,8 @@ func (s *Server) ListColleagues(ctx context.Context, req *ListColleaguesRequest)
 
 	if req.Absent != nil && *req.Absent {
 		condition = condition.AND(jet.AND(
-			tJobsUserProps.AbsenceDate.IS_NOT_NULL(),
-			tJobsUserProps.AbsenceDate.GT_EQ(jet.CURRENT_DATE()),
+			tJobsUserProps.AbsenceBegin.IS_NOT_NULL(),
+			tJobsUserProps.AbsenceBegin.GT_EQ(jet.CURRENT_DATE()),
 		))
 	}
 
@@ -98,7 +97,8 @@ func (s *Server) ListColleagues(ctx context.Context, req *ListColleaguesRequest)
 			tUser.PhoneNumber,
 			tUserProps.Avatar.AS("colleague.avatar"),
 			tJobsUserProps.UserID,
-			tJobsUserProps.AbsenceDate,
+			tJobsUserProps.AbsenceBegin,
+			tJobsUserProps.AbsenceEnd,
 		).
 		OPTIMIZER_HINTS(jet.OptimizerHint("idx_users_firstname_lastname_fulltext")).
 		FROM(
@@ -146,7 +146,8 @@ func (s *Server) getColleague(ctx context.Context, userId int32) (*jobs.Colleagu
 			tUser.PhoneNumber,
 			tUserProps.Avatar.AS("colleague.avatar"),
 			tJobsUserProps.UserID,
-			tJobsUserProps.AbsenceDate,
+			tJobsUserProps.AbsenceBegin,
+			tJobsUserProps.AbsenceEnd,
 		).
 		FROM(
 			tUser.
@@ -237,7 +238,8 @@ func (s *Server) getJobsUserProps(ctx context.Context, userId int32) (*jobs.Jobs
 	stmt := tJobsUserProps.
 		SELECT(
 			tJobsUserProps.UserID,
-			tJobsUserProps.AbsenceDate,
+			tJobsUserProps.AbsenceBegin,
+			tJobsUserProps.AbsenceEnd,
 		).
 		FROM(tJobsUserProps).
 		WHERE(tJobsUserProps.UserID.EQ(jet.Int32(userId))).
@@ -295,16 +297,23 @@ func (s *Server) SetJobsUserProps(ctx context.Context, req *SetJobsUserPropsRequ
 		return nil, errswrap.NewError(errorsjobs.ErrFailedQuery, err)
 	}
 
-	absenceDate := jet.DateExp(jet.NULL)
-	if req.Props.AbsenceDate != nil {
-		if req.Props.AbsenceDate.Timestamp == nil {
-			req.Props.AbsenceDate = nil
+	absenceBegin := jet.DateExp(jet.NULL)
+	absenceEnd := jet.DateExp(jet.NULL)
+	if req.Props.AbsenceBegin != nil && req.Props.AbsenceEnd != nil {
+		if req.Props.AbsenceBegin.Timestamp == nil {
+			req.Props.AbsenceBegin = nil
 		} else {
-			req.Props.AbsenceDate = timestamp.New(req.Props.AbsenceDate.AsTime())
-			absenceDate = jet.DateT(req.Props.AbsenceDate.AsTime())
+			absenceBegin = jet.DateT(req.Props.AbsenceBegin.AsTime())
+		}
+
+		if req.Props.AbsenceEnd.Timestamp == nil {
+			req.Props.AbsenceEnd = nil
+		} else {
+			absenceEnd = jet.DateT(req.Props.AbsenceEnd.AsTime())
 		}
 	} else {
-		req.Props.AbsenceDate = props.AbsenceDate
+		req.Props.AbsenceBegin = props.AbsenceBegin
+		req.Props.AbsenceEnd = props.AbsenceEnd
 	}
 
 	// Begin transaction
@@ -318,22 +327,29 @@ func (s *Server) SetJobsUserProps(ctx context.Context, req *SetJobsUserPropsRequ
 	stmt := tJobsUserProps.
 		INSERT(
 			tJobsUserProps.UserID,
-			tJobsUserProps.AbsenceDate,
+			tJobsUserProps.AbsenceBegin,
+			tJobsUserProps.AbsenceEnd,
 		).
 		VALUES(
 			req.Props.UserId,
-			req.Props.AbsenceDate,
+			absenceBegin,
+			absenceEnd,
 		).
 		ON_DUPLICATE_KEY_UPDATE(
-			tJobsUserProps.AbsenceDate.SET(absenceDate),
+			tJobsUserProps.AbsenceBegin.SET(jet.DateExp(jet.Raw("VALUES(`absence_begin`)"))),
+			tJobsUserProps.AbsenceEnd.SET(jet.DateExp(jet.Raw("VALUES(`absence_end`)"))),
 		)
 
 	if _, err := stmt.ExecContext(ctx, tx); err != nil {
 		return nil, errswrap.NewError(errorsjobs.ErrFailedQuery, err)
 	}
 
-	// Compare absence date if any was set
-	if req.Props.AbsenceDate != nil && (props.AbsenceDate == nil || req.Props.AbsenceDate.AsTime().Compare(props.AbsenceDate.AsTime()) != 0) {
+	// Compare absence dates if any were set
+	if req.Props.AbsenceBegin != nil && req.Props.AbsenceEnd != nil &&
+		(props.AbsenceBegin == nil ||
+			props.AbsenceEnd == nil ||
+			req.Props.AbsenceBegin.AsTime().Compare(props.AbsenceBegin.AsTime()) != 0 ||
+			req.Props.AbsenceEnd.AsTime().Compare(props.AbsenceEnd.AsTime()) != 0) {
 		if err := s.addJobsUserActivity(ctx, tx, &jobs.JobsUserActivity{
 			Job:          userInfo.Job,
 			SourceUserId: userInfo.UserId,
@@ -343,7 +359,8 @@ func (s *Server) SetJobsUserProps(ctx context.Context, req *SetJobsUserPropsRequ
 			Data: &jobs.JobsUserActivityData{
 				Data: &jobs.JobsUserActivityData_AbsenceDate{
 					AbsenceDate: &jobs.ColleagueAbsenceDate{
-						AbsenceDate: timestamp.New(req.Props.AbsenceDate.AsTime()),
+						AbsenceBegin: req.Props.AbsenceBegin,
+						AbsenceEnd:   req.Props.AbsenceEnd,
 					},
 				},
 			},

@@ -41,13 +41,14 @@ type UserInfo struct {
 }
 
 type UserRoleMapping struct {
-	AccountID   uint64               `alias:"account_id"`
-	ExternalID  string               `alias:"external_id"`
-	JobGrade    int32                `alias:"job_grade"`
-	Firstname   string               `alias:"firstname"`
-	Lastname    string               `alias:"lastname"`
-	Job         string               `alias:"job"`
-	AbsenceDate *timestamp.Timestamp `alias:"absence_date"`
+	AccountID    uint64               `alias:"account_id"`
+	ExternalID   string               `alias:"external_id"`
+	JobGrade     int32                `alias:"job_grade"`
+	Firstname    string               `alias:"firstname"`
+	Lastname     string               `alias:"lastname"`
+	Job          string               `alias:"job"`
+	AbsenceBegin *timestamp.Timestamp `alias:"absence_begin"`
+	AbsenceEnd   *timestamp.Timestamp `alias:"absence_end"`
 }
 
 func init() {
@@ -115,7 +116,8 @@ func (g *UserInfo) syncUserInfo() ([]*discordgo.MessageEmbed, error) {
 			tUsers.Firstname.AS("userrolemapping.firstname"),
 			tUsers.Lastname.AS("userrolemapping.lastname"),
 			tUsers.Job.AS("userrolemapping.job"),
-			tJobsUserProps.AbsenceDate.AS("userrolemapping.absence_date"),
+			tJobsUserProps.AbsenceBegin.AS("userrolemapping.absence_begin"),
+			tJobsUserProps.AbsenceEnd.AS("userrolemapping.absence_end"),
 		).
 		FROM(
 			tOauth2Accs.
@@ -176,7 +178,7 @@ func (g *UserInfo) syncUserInfo() ([]*discordgo.MessageEmbed, error) {
 		}
 
 		if g.jobsAbsenceRole != nil {
-			if err := g.setJobsAbsenceRole(member, user.AbsenceDate); err != nil {
+			if err := g.setJobsAbsenceRole(member, user.AbsenceBegin, user.AbsenceEnd); err != nil {
 				g.logger.Error(fmt.Sprintf("failed to set user's jobs absence roles %s", user.ExternalID), zap.Error(err))
 				continue
 			}
@@ -400,9 +402,9 @@ func (g *UserInfo) setUserJobRole(member *discordgo.Member, job string, grade in
 	return nil
 }
 
-func (g *UserInfo) setJobsAbsenceRole(member *discordgo.Member, date *timestamp.Timestamp) error {
-	// Either the user has no date set or the absence is "almost" over
-	if date == nil || time.Since(date.AsTime()) > -1*time.Hour {
+func (g *UserInfo) setJobsAbsenceRole(member *discordgo.Member, beginDate *timestamp.Timestamp, endDate *timestamp.Timestamp) error {
+	// Either the user has no dates set or the absence is over (due to dates we have to think end date + 24 hours)
+	if (beginDate == nil || endDate == nil) || time.Since(endDate.AsTime()) > 24*time.Hour {
 		if !slices.Contains(member.Roles, g.jobsAbsenceRole.ID) {
 			return nil
 		}
