@@ -84,6 +84,12 @@ function changeTab(index: number) {
 const open = ref(false);
 
 const absenceDateModal = ref(false);
+
+const today = new Date();
+today.setHours(0);
+today.setMinutes(0);
+today.setSeconds(0);
+today.setMilliseconds(0);
 </script>
 
 <template>
@@ -134,25 +140,24 @@ const absenceDateModal = ref(false);
                             </button>
                         </div>
                         <div class="my-2 flex flex-row items-center gap-2">
-                            <span
-                                class="inline-flex items-center rounded-full bg-base-100 px-2.5 py-0.5 text-sm font-medium text-base-800"
-                            >
+                            <span class="rounded-full bg-base-100 px-2.5 py-0.5 text-sm font-medium text-base-800">
                                 {{ colleague.colleague.jobLabel }}
-                                <span v-if="colleague.colleague.jobGrade > 0"
-                                    >&nbsp;({{ $t('common.rank') }}: {{ colleague.colleague.jobGradeLabel }})</span
+                                <span v-if="colleague.colleague.jobGrade > 0">
+                                    ({{ $t('common.rank') }}: {{ colleague.colleague.jobGradeLabel }})</span
                                 >
                             </span>
 
                             <span
                                 v-if="
-                                    colleague.colleague.props?.absenceDate &&
-                                    toDate(colleague.colleague.props?.absenceDate).getTime() > new Date().getTime()
+                                    colleague.colleague.props?.absenceEnd &&
+                                    toDate(colleague.colleague.props?.absenceEnd).getTime() >= today.getTime()
                                 "
                                 class="inline-flex gap-1 items-center rounded-full bg-base-100 px-2.5 py-0.5 text-sm font-medium text-base-800"
                             >
                                 <IslandIcon class="h-5 w-5" aria-hidden="true" />
-                                <span>{{ $t('common.absence_date') }}:</span>
-                                <GenericTime :value="colleague.colleague.props?.absenceDate" />
+                                <GenericTime :value="colleague.colleague.props?.absenceBegin" type="date" />
+                                <span>{{ $t('common.to') }}</span>
+                                <GenericTime :value="colleague.colleague.props?.absenceEnd" type="date" />
                             </span>
                         </div>
                     </div>

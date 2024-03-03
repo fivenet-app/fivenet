@@ -137,11 +137,9 @@ const open = ref(false);
                             />
                         </div>
                         <div class="my-2 flex flex-row items-center gap-2">
-                            <span
-                                class="inline-flex items-center rounded-full bg-base-100 px-2.5 py-0.5 text-sm font-medium text-base-800"
-                            >
+                            <span class="rounded-full bg-base-100 px-2.5 py-0.5 text-sm font-medium text-base-800">
                                 {{ user.jobLabel }}
-                                <span v-if="user.jobGrade > 0">&nbsp;({{ $t('common.rank') }}: {{ user.jobGradeLabel }})</span>
+                                <span v-if="user.jobGrade > 0"> ({{ $t('common.rank') }}: {{ user.jobGradeLabel }})</span>
                             </span>
                             <span
                                 v-if="user.props?.wanted"
