@@ -25,7 +25,11 @@ defineProps<{
                     <template v-if="activity.data?.data.oneofKind !== undefined">
                         {{ ' - ' }}
                         <template v-if="activity.data?.data.oneofKind === 'absenceDate'">
-                            <GenericTime :value="activity.data?.data.absenceDate.absenceDate" type="date" />
+                            <span class="inline-flex gap-1">
+                                <GenericTime :value="activity.data?.data.absenceDate.absenceBegin" type="date" />
+                                <span>{{ $t('common.to') }}</span>
+                                <GenericTime :value="activity.data?.data.absenceDate.absenceEnd" type="date" />
+                            </span>
                         </template>
                         <template v-else-if="activity.data?.data.oneofKind === 'gradeChange'">
                             {{ activity.data?.data.gradeChange.gradeLabel }} ({{ activity.data?.data.gradeChange.grade }})
@@ -39,8 +43,8 @@ defineProps<{
             <div class="flex items-center justify-between">
                 <p class="inline-flex gap-1 text-sm text-gray-300">
                     <template v-if="activity.reason">
-                        <span>{{ $t('common.reason') }}:</span>
-                        <span class="font-bold">
+                        <span class="font-semibold">{{ $t('common.reason') }}:</span>
+                        <span>
                             {{ activity.reason }}
                         </span>
                     </template>

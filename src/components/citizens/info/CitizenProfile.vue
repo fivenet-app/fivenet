@@ -100,7 +100,7 @@ const mugShotModal = ref(false);
 
                         <div class="w-full grow lg:flex xl:px-2">
                             <div class="flex-1 xl:flex">
-                                <div class="px-2 py-3 xl:flex-1">
+                                <div class="xl:flex-1">
                                     <div class="divide-y divide-base-200">
                                         <div class="px-4 py-5 sm:px-0 sm:py-0">
                                             <dl class="space-y-4 sm:space-y-0 sm:divide-y sm:divide-base-200">
@@ -278,7 +278,7 @@ const mugShotModal = ref(false);
                                 </div>
                             </div>
 
-                            <div class="flex shrink-0 flex-col gap-2 px-2 py-4 pr-2 lg:w-96">
+                            <div class="flex shrink-0 flex-col gap-2 px-2 py-4 pr-0 lg:w-96">
                                 <div v-if="attr('CitizenStoreService.SetUserProps', 'Fields', 'Wanted')" class="flex-initial">
                                     <button
                                         type="button"
