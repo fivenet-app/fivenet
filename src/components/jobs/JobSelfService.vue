@@ -29,7 +29,7 @@ const { data: colleagueSelf } = useLazyAsyncData('jobs-selfcolleague', async () 
     }
 });
 
-function updateAbsenceDate(value: { userId: number; absenceDate?: Timestamp }): void {
+function updateAbsenceDate(value: { userId: number; absenceBegin?: Timestamp; absenceEnd?: Timestamp }): void {
     if (colleagueSelf.value === null) {
         return;
     }
@@ -37,10 +37,12 @@ function updateAbsenceDate(value: { userId: number; absenceDate?: Timestamp }): 
     if (colleagueSelf.value.colleague!.props === undefined) {
         colleagueSelf.value.colleague!.props = {
             userId: colleagueSelf.value!.colleague!.userId,
-            absenceDate: value.absenceDate,
+            absenceBegin: value.absenceBegin,
+            absenceEnd: value.absenceEnd,
         };
     } else {
-        colleagueSelf.value.colleague!.props.absenceDate = value.absenceDate;
+        colleagueSelf.value.colleague!.props.absenceBegin = value.absenceBegin;
+        colleagueSelf.value.colleague!.props.absenceEnd = value.absenceEnd;
     }
 }
 
@@ -55,7 +57,7 @@ const profilePictureModal = ref(false);
             :user-id="userId"
             :user-props="colleagueSelf?.colleague?.props"
             @close="absenceDateModal = false"
-            @update:absence-date="updateAbsenceDate($event)"
+            @update:absence-dates="updateAbsenceDate($event)"
         />
         <SelfServicePropsProfilePictureModal :open="profilePictureModal" @close="profilePictureModal = false" />
 
