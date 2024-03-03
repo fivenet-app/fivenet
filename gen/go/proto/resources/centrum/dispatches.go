@@ -1,7 +1,10 @@
 package centrum
 
 import (
+	"database/sql/driver"
+
 	"github.com/paulmach/orb"
+	"google.golang.org/protobuf/encoding/protojson"
 	"google.golang.org/protobuf/proto"
 )
 
@@ -89,6 +92,14 @@ func (x *Dispatch) Merge(in *Dispatch) *Dispatch {
 
 	x.Units = in.Units
 
+	if in.DuplicateDispatches != nil {
+		if x.DuplicateDispatches == nil {
+			x.DuplicateDispatches = in.DuplicateDispatches
+		} else {
+			x.DuplicateDispatches.DispatchIds = in.DuplicateDispatches.DispatchIds
+		}
+	}
+
 	return x
 }
 
@@ -102,4 +113,24 @@ func (x *DispatchStatus) Point() orb.Point {
 	}
 
 	return orb.Point{*x.X, *x.Y}
+}
+
+func (x *DuplicateDispatches) Scan(value any) error {
+	switch t := value.(type) {
+	case string:
+		return protojson.Unmarshal([]byte(t), x)
+	case []byte:
+		return protojson.Unmarshal(t, x)
+	}
+	return nil
+}
+
+// Scan implements driver.Valuer for protobuf DuplicateDispatches.
+func (x *DuplicateDispatches) Value() (driver.Value, error) {
+	if x == nil {
+		return nil, nil
+	}
+
+	out, err := protojson.Marshal(x)
+	return string(out), err
 }
