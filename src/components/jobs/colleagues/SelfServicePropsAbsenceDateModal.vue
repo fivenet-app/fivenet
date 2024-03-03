@@ -6,6 +6,7 @@ import { useThrottleFn } from '@vueuse/core';
 import { CloseIcon, LoadingIcon } from 'mdi-vue3';
 import { defineRule } from 'vee-validate';
 import { useNotificatorStore } from '~/store/notificator';
+import { dateRequiredValidator } from '~/utils/validator';
 import type { JobsUserProps } from '~~/gen/ts/resources/jobs/colleagues';
 import type { Timestamp } from '~~/gen/ts/resources/timestamp/timestamp';
 
@@ -66,14 +67,26 @@ async function setAbsenceDate(values: FormData): Promise<void> {
 defineRule('required', required);
 defineRule('min', min);
 defineRule('max', max);
+defineRule('date_required', dateRequiredValidator);
 
 const { handleSubmit, meta, setFieldValue } = useForm<FormData>({
     validationSchema: {
         reason: { required: true, min: 3, max: 255 },
-        absenceBegin: { required: true },
-        absenceEnd: { required: true },
+        absenceBegin: { date_required: true },
+        absenceEnd: { date_required: true },
     },
     validateOnMount: true,
+    initialValues: {
+        absenceBegin: toDatetimeLocal(
+            props.userProps?.absenceBegin && toDate(props.userProps.absenceBegin).getTime() > new Date().getTime()
+                ? toDate(props.userProps.absenceBegin)
+                : new Date(),
+        ).split('T')[0],
+        absenceEnd:
+            props.userProps?.absenceEnd && toDate(props.userProps.absenceEnd).getTime() > new Date().getTime()
+                ? toDatetimeLocal(toDate(props.userProps.absenceEnd)).split('T')[0]
+                : undefined,
+    },
 });
 
 function updateAbsenceDateField(): void {
@@ -91,7 +104,6 @@ function updateAbsenceDateField(): void {
 }
 
 watch(props, () => updateAbsenceDateField());
-updateAbsenceDateField();
 
 const canSubmit = ref(true);
 const onSubmit = handleSubmit(
@@ -205,26 +217,6 @@ const onSubmitThrottle = useThrottleFn(async (e) => {
                                         @click="$emit('close')"
                                     >
                                         {{ $t('common.close', 1) }}
-                                    </button>
-                                    <button
-                                        type="button"
-                                        class="rounded-bd flex flex-1 justify-center px-3.5 py-2.5 text-sm font-semibold text-neutral"
-                                        :disabled="!meta.valid || !canSubmit"
-                                        :class="[
-                                            !meta.valid || !canSubmit
-                                                ? 'disabled bg-base-500 hover:bg-base-400 focus-visible:outline-base-500'
-                                                : 'bg-error-500 hover:bg-error-400 focus-visible:outline-error-500',
-                                        ]"
-                                        @click="
-                                            setFieldValue('absenceBegin', undefined);
-                                            setFieldValue('absenceEnd', undefined);
-                                            onSubmitThrottle($event);
-                                        "
-                                    >
-                                        <template v-if="!canSubmit">
-                                            <LoadingIcon class="mr-2 h-5 w-5 animate-spin" aria-hidden="true" />
-                                        </template>
-                                        {{ $t('common.reset') }}
                                     </button>
                                     <button
                                         type="submit"
