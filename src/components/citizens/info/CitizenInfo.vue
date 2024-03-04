@@ -122,6 +122,7 @@ const open = ref(false);
                         size="xl"
                         :rounded="false"
                         :enable-popup="true"
+                        :alt-text="$t('common.mug_shot')"
                     />
                     <div class="w-full">
                         <div class="flex snap-x flex-row flex-wrap justify-between gap-2 overflow-x-auto">

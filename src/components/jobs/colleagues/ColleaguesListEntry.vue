@@ -17,7 +17,7 @@ const authStore = useAuthStore();
 const { activeChar } = storeToRefs(authStore);
 
 defineEmits<{
-    (e: 'update:absenceDate', value: { userId: number; absenceDate?: Timestamp }): void;
+    (e: 'update:absenceDates', value: { userId: number; absenceBegin?: Timestamp; absenceEnd?: Timestamp }): void;
 }>();
 
 const absenceDateModal = ref(false);
@@ -36,7 +36,7 @@ today.setMilliseconds(0);
             :user-id="colleague.userId"
             :user-props="colleague.props"
             @close="absenceDateModal = false"
-            @update:absence-date="$emit('update:absenceDate', $event)"
+            @update:absence-dates="$emit('update:absenceDates', $event)"
         />
 
         <td class="whitespace-nowrap py-2 pl-4 pr-3 text-base font-medium text-neutral sm:pl-1">

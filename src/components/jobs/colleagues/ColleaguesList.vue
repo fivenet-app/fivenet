@@ -41,7 +41,7 @@ function focusSearch(): void {
 watch(offset, async () => refresh());
 watchDebounced(query.value, () => refresh(), { debounce: 600, maxWait: 1400 });
 
-function updateAbsenceDate(value: { userId: number; absenceDate?: Timestamp }): void {
+function updateAbsenceDates(value: { userId: number; absenceBegin?: Timestamp; absenceEnd?: Timestamp }): void {
     const colleague = data.value?.colleagues.find((c) => c.userId === value.userId);
     if (colleague === undefined) {
         return;
@@ -50,10 +50,12 @@ function updateAbsenceDate(value: { userId: number; absenceDate?: Timestamp }): 
     if (colleague.props === undefined) {
         colleague.props = {
             userId: colleague.userId,
-            absenceDate: value.absenceDate,
+            absenceBegin: value.absenceBegin,
+            absenceEnd: value.absenceEnd,
         };
     } else {
-        colleague.props.absenceDate = value.absenceDate;
+        colleague.props.absenceBegin = value.absenceBegin;
+        colleague.props.absenceEnd = value.absenceEnd;
     }
 }
 </script>
@@ -169,7 +171,7 @@ function updateAbsenceDate(value: { userId: number; absenceDate?: Timestamp }): 
                                         v-for="colleague in data?.colleagues"
                                         :key="colleague.userId"
                                         :colleague="colleague"
-                                        @update:absence-date="updateAbsenceDate($event)"
+                                        @update:absence-dates="updateAbsenceDates($event)"
                                     />
                                 </template>
                             </GenericTable>

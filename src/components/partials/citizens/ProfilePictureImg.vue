@@ -4,7 +4,9 @@ import { Popover, PopoverButton, PopoverPanel } from '@headlessui/vue';
 import { type imageSizes } from '~/components/partials/helpers';
 import SquareImg from '~/components/partials/elements/SquareImg.vue';
 
-withDefaults(
+const { t } = useI18n();
+
+const props = withDefaults(
     defineProps<{
         url?: string;
         name: string;
@@ -12,6 +14,7 @@ withDefaults(
         rounded?: boolean;
         enablePopup?: boolean;
         noBlur?: boolean;
+        altText?: string;
     }>(),
     {
         url: undefined,
@@ -19,13 +22,16 @@ withDefaults(
         rounded: false,
         enablePopup: false,
         noBlur: undefined,
+        altText: undefined,
     },
 );
+
+const altText = computed(() => (props.altText !== undefined ? props.altText : t('common.avatar')));
 </script>
 
 <template>
-    <template v-if="!enablePopup">
-        <SquareImg :url="url" :text="$t('common.avatar')" :size="size" :rounded="rounded" :no-blur="noBlur">
+    <template v-if="!url || !enablePopup">
+        <SquareImg :url="url" :text="altText" :size="size" :rounded="rounded" :no-blur="noBlur">
             <template #initials>
                 {{ getInitials(name) }}
             </template>
@@ -44,7 +50,7 @@ withDefaults(
             leave-to="scale-95 opacity-0"
         >
             <PopoverButton class="inline-flex items-center">
-                <SquareImg :url="url" :text="$t('common.avatar')" :size="size" :rounded="rounded" :no-blur="noBlur">
+                <SquareImg :url="url" :text="altText" :size="size" :rounded="rounded" :no-blur="noBlur">
                     <template #initials>
                         {{ getInitials(name) }}
                     </template>
@@ -55,7 +61,7 @@ withDefaults(
                 class="absolute z-5 w-96 min-w-fit max-w-[18rem] rounded-lg border border-gray-600 bg-gray-800 text-sm text-gray-400 shadow-sm transition-opacity"
             >
                 <div class="p-3">
-                    <img class="rounded-md w-96 max-w-full" :src="url" :alt="$t('common.mug_shot')" />
+                    <img class="rounded-md w-96 max-w-full" :src="url" :alt="altText" />
                 </div>
             </PopoverPanel>
         </Float>
