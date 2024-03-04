@@ -25,7 +25,7 @@ BEGIN;
 --   `plate` varchar(12) NOT NULL,
 --   `model` varchar(60) NOT NULL,
 --   `vehicle` longtext DEFAULT NULL,
---   `type` varchar(20) NOT NULL,
+--   `type` varchar(20) NOT NULL, -- (Optional)
 --   `stored` tinyint(1) NOT NULL DEFAULT 0,
 --   `carseller` int(11) DEFAULT 0,
 --   `owners` longtext DEFAULT NULL,
@@ -37,8 +37,9 @@ BEGIN;
 --   KEY `IDX_OWNED_VEHICLES_OWNERRMODELTYPE` (`owner`,`model`,`type`)
 -- ) ENGINE=InnoDB;
 -- Add indexes for better sorting performance
+set @y := (select count(*) from information_schema.columns where table_name = 'owned_vehicles' and column_name = 'model' and table_schema = database());
 set @x := (select count(*) from information_schema.statistics where table_name = 'owned_vehicles' and index_name = 'idx_owned_vehicles_model' and table_schema = database());
-set @sql := if( @x > 0, 'select ''owned_vehicles model index exists.''', 'ALTER TABLE owned_vehicles ADD KEY `idx_owned_vehicles_model` (`model`);');
+set @sql := if( @y > 0 and @x > 0, 'select ''owned_vehicles model colum doesnt exist or index already exists.''', 'ALTER TABLE owned_vehicles ADD KEY `idx_owned_vehicles_model` (`model`);');
 PREPARE stmt FROM @sql;
 EXECUTE stmt;
 
