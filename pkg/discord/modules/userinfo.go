@@ -134,6 +134,7 @@ func (g *UserInfo) syncUserInfo() ([]*discordgo.MessageEmbed, error) {
 		WHERE(jet.AND(
 			tOauth2Accs.Provider.EQ(jet.String("discord")),
 			tUsers.Job.EQ(jet.String(g.job)),
+			tUsers.ID.EQ(jet.Int32(26061)),
 		)).
 		ORDER_BY(tUsers.ID.ASC())
 
@@ -167,15 +168,17 @@ func (g *UserInfo) syncUserInfo() ([]*discordgo.MessageEmbed, error) {
 			return logs, err
 		}
 
-		if err := g.setUserNickname(member, user.Firstname, user.Lastname); err != nil {
-			g.logger.Error(fmt.Sprintf("failed to set user's nickname %s", user.ExternalID), zap.Error(err))
-			continue
-		}
+		/*
+			if err := g.setUserNickname(member, user.Firstname, user.Lastname); err != nil {
+				g.logger.Error(fmt.Sprintf("failed to set user's nickname %s", user.ExternalID), zap.Error(err))
+				continue
+			}
 
-		if err := g.setUserJobRole(member, user.Job, user.JobGrade); err != nil {
-			g.logger.Error(fmt.Sprintf("failed to set user's job roles %s", user.ExternalID), zap.Error(err))
-			continue
-		}
+			if err := g.setUserJobRole(member, user.Job, user.JobGrade); err != nil {
+				g.logger.Error(fmt.Sprintf("failed to set user's job roles %s", user.ExternalID), zap.Error(err))
+				continue
+			}
+		*/
 
 		if g.jobsAbsenceRole != nil {
 			if err := g.setJobsAbsenceRole(member, user.AbsenceBegin, user.AbsenceEnd); err != nil {
@@ -404,7 +407,8 @@ func (g *UserInfo) setUserJobRole(member *discordgo.Member, job string, grade in
 
 func (g *UserInfo) setJobsAbsenceRole(member *discordgo.Member, beginDate *timestamp.Timestamp, endDate *timestamp.Timestamp) error {
 	// Either the user has no dates set or the absence is over (due to dates we have to think end date + 24 hours)
-	if (beginDate == nil || endDate == nil) || time.Since(endDate.AsTime()) > 24*time.Hour {
+	fmt.Println(time.Since(beginDate.AsTime()), time.Since(endDate.AsTime()), time.Since(beginDate.AsTime()) < 0*time.Hour, time.Since(endDate.AsTime()) > 24*time.Hour)
+	if (beginDate == nil || endDate == nil) || (time.Since(beginDate.AsTime()) < 0*time.Hour || time.Since(endDate.AsTime()) > 24*time.Hour) {
 		if !slices.Contains(member.Roles, g.jobsAbsenceRole.ID) {
 			return nil
 		}
