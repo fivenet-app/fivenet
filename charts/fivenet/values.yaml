@@ -507,9 +507,9 @@ envoy:
                         address: '{{ include "fivenet.fullname" . }}'
                         port_value: 9090
 
-# -- NATS server config values: https://artifacthub.io/packages/helm/nats/nats#values
+# -- NATS server/cluster config values: https://artifacthub.io/packages/helm/nats/nats#values
 nats:
-  enabled: true
+  enabled: true # if disabled you must run your own Nats server or cluster
   config:
     cluster:
       enabled: true
@@ -534,6 +534,36 @@ nats:
             # You should change the username and password
             - user: "fivenet"
               password: "fivenet"
+      max_payload: 3145728 # user tracker can create big updates at the moment
+  promExporter:
+    enabled: true
+    image:
+      repository: docker.io/natsio/prometheus-nats-exporter
+      tag: 0.14.0
+
+    patch:
+      - op: replace
+        path: /args
+        value:
+          - -port=7777
+          - -channelz
+          - -connz
+          - -routez
+          - -subz
+          - -varz
+          - -prefix=nats
+          - -serverz
+          - -use_internal_server_id
+          - -jsz=streams
+          - -ri=15
+          - http://localhost:8222/
+
+    podMonitor:
+      enabled: false # enable only if your have the prometheus-operator deployed
+      patch:
+        - op: add
+          path: /spec/podMetricsEndpoints/0/interval
+          value: 30s
 
 # -- Extra objects to deploy (value evaluated as a template)
 extraObjects: []
