@@ -165,7 +165,7 @@ const pageNumber = ref(currentPage.value.toString());
                         {{ page }}
                     </button>
 
-                    <Popover v-if="totalPages > 4n" class="relative">
+                    <Popover v-if="totalPages > 1n" class="relative">
                         <Float
                             portal
                             placement="top-start"
@@ -206,7 +206,7 @@ const pageNumber = ref(currentPage.value.toString());
                     </Popover>
 
                     <button
-                        v-if="currentPage <= totalPages - 2n"
+                        v-if="currentPage <= totalPages - 1n"
                         type="button"
                         class="relative inline-flex items-center bg-secondary-500 px-4 py-2 text-sm font-semibold text-neutral hover:bg-base-400 focus:z-20 focus:outline-offset-0"
                         @click="$emit('offsetChange', calculateOffset(parseInt(totalPages.toString())))"

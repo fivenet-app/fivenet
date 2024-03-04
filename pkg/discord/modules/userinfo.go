@@ -168,17 +168,15 @@ func (g *UserInfo) syncUserInfo() ([]*discordgo.MessageEmbed, error) {
 			return logs, err
 		}
 
-		/*
-			if err := g.setUserNickname(member, user.Firstname, user.Lastname); err != nil {
-				g.logger.Error(fmt.Sprintf("failed to set user's nickname %s", user.ExternalID), zap.Error(err))
-				continue
-			}
+		if err := g.setUserNickname(member, user.Firstname, user.Lastname); err != nil {
+			g.logger.Error(fmt.Sprintf("failed to set user's nickname %s", user.ExternalID), zap.Error(err))
+			continue
+		}
 
-			if err := g.setUserJobRole(member, user.Job, user.JobGrade); err != nil {
-				g.logger.Error(fmt.Sprintf("failed to set user's job roles %s", user.ExternalID), zap.Error(err))
-				continue
-			}
-		*/
+		if err := g.setUserJobRole(member, user.Job, user.JobGrade); err != nil {
+			g.logger.Error(fmt.Sprintf("failed to set user's job roles %s", user.ExternalID), zap.Error(err))
+			continue
+		}
 
 		if g.jobsAbsenceRole != nil {
 			if err := g.setJobsAbsenceRole(member, user.AbsenceBegin, user.AbsenceEnd); err != nil {
