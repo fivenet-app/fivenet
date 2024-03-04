@@ -21,7 +21,7 @@
         "i18next-scanner": "npx i18next-scanner --config ./internal/scripts/i18next-scanner.config.cjs"
     },
     "dependencies": {
-        "@fontsource/inter": "5.0.16",
+        "@fontsource/inter": "5.0.17",
         "@headlessui-float/vue": "0.13.2",
         "@headlessui/vue": "1.7.19",
         "@nuxtjs/robots": "3.0.0",
