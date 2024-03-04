@@ -86,18 +86,9 @@ export interface Dispatch {
      */
     units: DispatchAssignment[];
     /**
-     * @generated from protobuf field: optional resources.centrum.DuplicateDispatches duplicate_dispatches = 17;
+     * @generated from protobuf field: optional resources.centrum.DispatchReferences references = 17;
      */
-    duplicateDispatches?: DuplicateDispatches;
-}
-/**
- * @generated from protobuf message resources.centrum.DuplicateDispatches
- */
-export interface DuplicateDispatches {
-    /**
-     * @generated from protobuf field: repeated uint64 dispatch_ids = 1;
-     */
-    dispatchIds: bigint[];
+    references?: DispatchReferences;
 }
 /**
  * @generated from protobuf message resources.centrum.DispatchAssignments
@@ -205,6 +196,28 @@ export interface DispatchStatus {
     postal?: string;
 }
 /**
+ * @generated from protobuf message resources.centrum.DispatchReferences
+ */
+export interface DispatchReferences {
+    /**
+     * @generated from protobuf field: repeated resources.centrum.DispatchReference references = 1;
+     */
+    references: DispatchReference[];
+}
+/**
+ * @generated from protobuf message resources.centrum.DispatchReference
+ */
+export interface DispatchReference {
+    /**
+     * @generated from protobuf field: uint64 target_dispatch_id = 1;
+     */
+    targetDispatchId: bigint;
+    /**
+     * @generated from protobuf field: resources.centrum.DispatchReferenceType reference_type = 2;
+     */
+    referenceType: DispatchReferenceType;
+}
+/**
  * @generated from protobuf enum resources.centrum.StatusDispatch
  */
 export enum StatusDispatch {
@@ -286,6 +299,27 @@ export enum TakeDispatchResp {
      */
     DECLINED = 3
 }
+/**
+ * @generated from protobuf enum resources.centrum.DispatchReferenceType
+ */
+export enum DispatchReferenceType {
+    /**
+     * @generated from protobuf enum value: DISPATCH_REFERENCE_UNSPECIFIED = 0;
+     */
+    DISPATCH_REFERENCE_UNSPECIFIED = 0,
+    /**
+     * @generated from protobuf enum value: DISPATCH_REFERENCE_REFERENCED = 1;
+     */
+    DISPATCH_REFERENCE_REFERENCED = 1,
+    /**
+     * @generated from protobuf enum value: DISPATCH_REFERENCE_DUPLICATED_BY = 2;
+     */
+    DISPATCH_REFERENCE_DUPLICATED_BY = 2,
+    /**
+     * @generated from protobuf enum value: DISPATCH_REFERENCE_DUPLICATES = 3;
+     */
+    DISPATCH_REFERENCE_DUPLICATES = 3
+}
 // @generated message type with reflection information, may provide speed optimized methods
 class Dispatch$Type extends MessageType<Dispatch> {
     constructor() {
@@ -305,7 +339,7 @@ class Dispatch$Type extends MessageType<Dispatch> {
             { no: 14, name: "creator_id", kind: "scalar", opt: true, T: 5 /*ScalarType.INT32*/, options: { "validate.rules": { int32: { gt: 0 } } } },
             { no: 15, name: "creator", kind: "message", T: () => User },
             { no: 16, name: "units", kind: "message", repeat: 1 /*RepeatType.PACKED*/, T: () => DispatchAssignment },
-            { no: 17, name: "duplicate_dispatches", kind: "message", T: () => DuplicateDispatches }
+            { no: 17, name: "references", kind: "message", T: () => DispatchReferences }
         ]);
     }
     create(value?: PartialMessage<Dispatch>): Dispatch {
@@ -371,8 +405,8 @@ class Dispatch$Type extends MessageType<Dispatch> {
                 case /* repeated resources.centrum.DispatchAssignment units */ 16:
                     message.units.push(DispatchAssignment.internalBinaryRead(reader, reader.uint32(), options));
                     break;
-                case /* optional resources.centrum.DuplicateDispatches duplicate_dispatches */ 17:
-                    message.duplicateDispatches = DuplicateDispatches.internalBinaryRead(reader, reader.uint32(), options, message.duplicateDispatches);
+                case /* optional resources.centrum.DispatchReferences references */ 17:
+                    message.references = DispatchReferences.internalBinaryRead(reader, reader.uint32(), options, message.references);
                     break;
                 default:
                     let u = options.readUnknownField;
@@ -431,9 +465,9 @@ class Dispatch$Type extends MessageType<Dispatch> {
         /* repeated resources.centrum.DispatchAssignment units = 16; */
         for (let i = 0; i < message.units.length; i++)
             DispatchAssignment.internalBinaryWrite(message.units[i], writer.tag(16, WireType.LengthDelimited).fork(), options).join();
-        /* optional resources.centrum.DuplicateDispatches duplicate_dispatches = 17; */
-        if (message.duplicateDispatches)
-            DuplicateDispatches.internalBinaryWrite(message.duplicateDispatches, writer.tag(17, WireType.LengthDelimited).fork(), options).join();
+        /* optional resources.centrum.DispatchReferences references = 17; */
+        if (message.references)
+            DispatchReferences.internalBinaryWrite(message.references, writer.tag(17, WireType.LengthDelimited).fork(), options).join();
         let u = options.writeUnknownFields;
         if (u !== false)
             (u == true ? UnknownFieldHandler.onWrite : u)(this.typeName, message, writer);
@@ -444,61 +478,6 @@ class Dispatch$Type extends MessageType<Dispatch> {
  * @generated MessageType for protobuf message resources.centrum.Dispatch
  */
 export const Dispatch = new Dispatch$Type();
-// @generated message type with reflection information, may provide speed optimized methods
-class DuplicateDispatches$Type extends MessageType<DuplicateDispatches> {
-    constructor() {
-        super("resources.centrum.DuplicateDispatches", [
-            { no: 1, name: "dispatch_ids", kind: "scalar", repeat: 1 /*RepeatType.PACKED*/, T: 4 /*ScalarType.UINT64*/, L: 0 /*LongType.BIGINT*/ }
-        ]);
-    }
-    create(value?: PartialMessage<DuplicateDispatches>): DuplicateDispatches {
-        const message = globalThis.Object.create((this.messagePrototype!));
-        message.dispatchIds = [];
-        if (value !== undefined)
-            reflectionMergePartial<DuplicateDispatches>(this, message, value);
-        return message;
-    }
-    internalBinaryRead(reader: IBinaryReader, length: number, options: BinaryReadOptions, target?: DuplicateDispatches): DuplicateDispatches {
-        let message = target ?? this.create(), end = reader.pos + length;
-        while (reader.pos < end) {
-            let [fieldNo, wireType] = reader.tag();
-            switch (fieldNo) {
-                case /* repeated uint64 dispatch_ids */ 1:
-                    if (wireType === WireType.LengthDelimited)
-                        for (let e = reader.int32() + reader.pos; reader.pos < e;)
-                            message.dispatchIds.push(reader.uint64().toBigInt());
-                    else
-                        message.dispatchIds.push(reader.uint64().toBigInt());
-                    break;
-                default:
-                    let u = options.readUnknownField;
-                    if (u === "throw")
-                        throw new globalThis.Error(`Unknown field ${fieldNo} (wire type ${wireType}) for ${this.typeName}`);
-                    let d = reader.skip(wireType);
-                    if (u !== false)
-                        (u === true ? UnknownFieldHandler.onRead : u)(this.typeName, message, fieldNo, wireType, d);
-            }
-        }
-        return message;
-    }
-    internalBinaryWrite(message: DuplicateDispatches, writer: IBinaryWriter, options: BinaryWriteOptions): IBinaryWriter {
-        /* repeated uint64 dispatch_ids = 1; */
-        if (message.dispatchIds.length) {
-            writer.tag(1, WireType.LengthDelimited).fork();
-            for (let i = 0; i < message.dispatchIds.length; i++)
-                writer.uint64(message.dispatchIds[i]);
-            writer.join();
-        }
-        let u = options.writeUnknownFields;
-        if (u !== false)
-            (u == true ? UnknownFieldHandler.onWrite : u)(this.typeName, message, writer);
-        return writer;
-    }
-}
-/**
- * @generated MessageType for protobuf message resources.centrum.DuplicateDispatches
- */
-export const DuplicateDispatches = new DuplicateDispatches$Type();
 // @generated message type with reflection information, may provide speed optimized methods
 class DispatchAssignments$Type extends MessageType<DispatchAssignments> {
     constructor() {
@@ -771,3 +750,105 @@ class DispatchStatus$Type extends MessageType<DispatchStatus> {
  * @generated MessageType for protobuf message resources.centrum.DispatchStatus
  */
 export const DispatchStatus = new DispatchStatus$Type();
+// @generated message type with reflection information, may provide speed optimized methods
+class DispatchReferences$Type extends MessageType<DispatchReferences> {
+    constructor() {
+        super("resources.centrum.DispatchReferences", [
+            { no: 1, name: "references", kind: "message", repeat: 1 /*RepeatType.PACKED*/, T: () => DispatchReference }
+        ]);
+    }
+    create(value?: PartialMessage<DispatchReferences>): DispatchReferences {
+        const message = globalThis.Object.create((this.messagePrototype!));
+        message.references = [];
+        if (value !== undefined)
+            reflectionMergePartial<DispatchReferences>(this, message, value);
+        return message;
+    }
+    internalBinaryRead(reader: IBinaryReader, length: number, options: BinaryReadOptions, target?: DispatchReferences): DispatchReferences {
+        let message = target ?? this.create(), end = reader.pos + length;
+        while (reader.pos < end) {
+            let [fieldNo, wireType] = reader.tag();
+            switch (fieldNo) {
+                case /* repeated resources.centrum.DispatchReference references */ 1:
+                    message.references.push(DispatchReference.internalBinaryRead(reader, reader.uint32(), options));
+                    break;
+                default:
+                    let u = options.readUnknownField;
+                    if (u === "throw")
+                        throw new globalThis.Error(`Unknown field ${fieldNo} (wire type ${wireType}) for ${this.typeName}`);
+                    let d = reader.skip(wireType);
+                    if (u !== false)
+                        (u === true ? UnknownFieldHandler.onRead : u)(this.typeName, message, fieldNo, wireType, d);
+            }
+        }
+        return message;
+    }
+    internalBinaryWrite(message: DispatchReferences, writer: IBinaryWriter, options: BinaryWriteOptions): IBinaryWriter {
+        /* repeated resources.centrum.DispatchReference references = 1; */
+        for (let i = 0; i < message.references.length; i++)
+            DispatchReference.internalBinaryWrite(message.references[i], writer.tag(1, WireType.LengthDelimited).fork(), options).join();
+        let u = options.writeUnknownFields;
+        if (u !== false)
+            (u == true ? UnknownFieldHandler.onWrite : u)(this.typeName, message, writer);
+        return writer;
+    }
+}
+/**
+ * @generated MessageType for protobuf message resources.centrum.DispatchReferences
+ */
+export const DispatchReferences = new DispatchReferences$Type();
+// @generated message type with reflection information, may provide speed optimized methods
+class DispatchReference$Type extends MessageType<DispatchReference> {
+    constructor() {
+        super("resources.centrum.DispatchReference", [
+            { no: 1, name: "target_dispatch_id", kind: "scalar", T: 4 /*ScalarType.UINT64*/, L: 0 /*LongType.BIGINT*/ },
+            { no: 2, name: "reference_type", kind: "enum", T: () => ["resources.centrum.DispatchReferenceType", DispatchReferenceType], options: { "validate.rules": { enum: { definedOnly: true } } } }
+        ]);
+    }
+    create(value?: PartialMessage<DispatchReference>): DispatchReference {
+        const message = globalThis.Object.create((this.messagePrototype!));
+        message.targetDispatchId = 0n;
+        message.referenceType = 0;
+        if (value !== undefined)
+            reflectionMergePartial<DispatchReference>(this, message, value);
+        return message;
+    }
+    internalBinaryRead(reader: IBinaryReader, length: number, options: BinaryReadOptions, target?: DispatchReference): DispatchReference {
+        let message = target ?? this.create(), end = reader.pos + length;
+        while (reader.pos < end) {
+            let [fieldNo, wireType] = reader.tag();
+            switch (fieldNo) {
+                case /* uint64 target_dispatch_id */ 1:
+                    message.targetDispatchId = reader.uint64().toBigInt();
+                    break;
+                case /* resources.centrum.DispatchReferenceType reference_type */ 2:
+                    message.referenceType = reader.int32();
+                    break;
+                default:
+                    let u = options.readUnknownField;
+                    if (u === "throw")
+                        throw new globalThis.Error(`Unknown field ${fieldNo} (wire type ${wireType}) for ${this.typeName}`);
+                    let d = reader.skip(wireType);
+                    if (u !== false)
+                        (u === true ? UnknownFieldHandler.onRead : u)(this.typeName, message, fieldNo, wireType, d);
+            }
+        }
+        return message;
+    }
+    internalBinaryWrite(message: DispatchReference, writer: IBinaryWriter, options: BinaryWriteOptions): IBinaryWriter {
+        /* uint64 target_dispatch_id = 1; */
+        if (message.targetDispatchId !== 0n)
+            writer.tag(1, WireType.Varint).uint64(message.targetDispatchId);
+        /* resources.centrum.DispatchReferenceType reference_type = 2; */
+        if (message.referenceType !== 0)
+            writer.tag(2, WireType.Varint).int32(message.referenceType);
+        let u = options.writeUnknownFields;
+        if (u !== false)
+            (u == true ? UnknownFieldHandler.onWrite : u)(this.typeName, message, writer);
+        return writer;
+    }
+}
+/**
+ * @generated MessageType for protobuf message resources.centrum.DispatchReference
+ */
+export const DispatchReference = new DispatchReference$Type();

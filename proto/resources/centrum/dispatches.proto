@@ -29,11 +29,7 @@ message Dispatch {
   optional int32 creator_id = 14 [(validate.rules).int32.gt = 0];
   optional resources.users.User creator = 15;
   repeated DispatchAssignment units = 16;
-  optional DuplicateDispatches duplicate_dispatches = 17;
-}
-
-message DuplicateDispatches {
-  repeated uint64 dispatch_ids = 1;
+  optional DispatchReferences references = 17;
 }
 
 message DispatchAssignments {
@@ -91,4 +87,20 @@ enum TakeDispatchResp {
   TAKE_DISPATCH_RESP_TIMEOUT = 1;
   TAKE_DISPATCH_RESP_ACCEPTED = 2;
   TAKE_DISPATCH_RESP_DECLINED = 3;
+}
+
+message DispatchReferences {
+  repeated DispatchReference references = 1;
+}
+
+message DispatchReference {
+  uint64 target_dispatch_id = 1;
+  DispatchReferenceType reference_type = 2 [(validate.rules).enum.defined_only = true];
+}
+
+enum DispatchReferenceType {
+  DISPATCH_REFERENCE_UNSPECIFIED = 0;
+  DISPATCH_REFERENCE_REFERENCED = 1;
+  DISPATCH_REFERENCE_DUPLICATED_BY = 2;
+  DISPATCH_REFERENCE_DUPLICATES = 3;
 }

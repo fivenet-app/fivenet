@@ -92,11 +92,11 @@ func (x *Dispatch) Merge(in *Dispatch) *Dispatch {
 
 	x.Units = in.Units
 
-	if in.DuplicateDispatches != nil {
-		if x.DuplicateDispatches == nil {
-			x.DuplicateDispatches = in.DuplicateDispatches
+	if in.References != nil {
+		if x.References == nil {
+			x.References = in.References
 		} else {
-			x.DuplicateDispatches.DispatchIds = in.DuplicateDispatches.DispatchIds
+			x.References.References = in.References.References
 		}
 	}
 
@@ -115,7 +115,7 @@ func (x *DispatchStatus) Point() orb.Point {
 	return orb.Point{*x.X, *x.Y}
 }
 
-func (x *DuplicateDispatches) Scan(value any) error {
+func (x *DispatchReferences) Scan(value any) error {
 	switch t := value.(type) {
 	case string:
 		return protojson.Unmarshal([]byte(t), x)
@@ -125,8 +125,8 @@ func (x *DuplicateDispatches) Scan(value any) error {
 	return nil
 }
 
-// Scan implements driver.Valuer for protobuf DuplicateDispatches.
-func (x *DuplicateDispatches) Value() (driver.Value, error) {
+// Scan implements driver.Valuer for protobuf DispatchReferences.
+func (x *DispatchReferences) Value() (driver.Value, error) {
 	if x == nil {
 		return nil, nil
 	}

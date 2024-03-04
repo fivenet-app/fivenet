@@ -331,14 +331,14 @@ func (m *Dispatch) validate(all bool) error {
 
 	}
 
-	if m.DuplicateDispatches != nil {
+	if m.References != nil {
 
 		if all {
-			switch v := interface{}(m.GetDuplicateDispatches()).(type) {
+			switch v := interface{}(m.GetReferences()).(type) {
 			case interface{ ValidateAll() error }:
 				if err := v.ValidateAll(); err != nil {
 					errors = append(errors, DispatchValidationError{
-						field:  "DuplicateDispatches",
+						field:  "References",
 						reason: "embedded message failed validation",
 						cause:  err,
 					})
@@ -346,16 +346,16 @@ func (m *Dispatch) validate(all bool) error {
 			case interface{ Validate() error }:
 				if err := v.Validate(); err != nil {
 					errors = append(errors, DispatchValidationError{
-						field:  "DuplicateDispatches",
+						field:  "References",
 						reason: "embedded message failed validation",
 						cause:  err,
 					})
 				}
 			}
-		} else if v, ok := interface{}(m.GetDuplicateDispatches()).(interface{ Validate() error }); ok {
+		} else if v, ok := interface{}(m.GetReferences()).(interface{ Validate() error }); ok {
 			if err := v.Validate(); err != nil {
 				return DispatchValidationError{
-					field:  "DuplicateDispatches",
+					field:  "References",
 					reason: "embedded message failed validation",
 					cause:  err,
 				}
@@ -440,108 +440,6 @@ var _ interface {
 	Cause() error
 	ErrorName() string
 } = DispatchValidationError{}
-
-// Validate checks the field values on DuplicateDispatches with the rules
-// defined in the proto definition for this message. If any rules are
-// violated, the first error encountered is returned, or nil if there are no violations.
-func (m *DuplicateDispatches) Validate() error {
-	return m.validate(false)
-}
-
-// ValidateAll checks the field values on DuplicateDispatches with the rules
-// defined in the proto definition for this message. If any rules are
-// violated, the result is a list of violation errors wrapped in
-// DuplicateDispatchesMultiError, or nil if none found.
-func (m *DuplicateDispatches) ValidateAll() error {
-	return m.validate(true)
-}
-
-func (m *DuplicateDispatches) validate(all bool) error {
-	if m == nil {
-		return nil
-	}
-
-	var errors []error
-
-	if len(errors) > 0 {
-		return DuplicateDispatchesMultiError(errors)
-	}
-
-	return nil
-}
-
-// DuplicateDispatchesMultiError is an error wrapping multiple validation
-// errors returned by DuplicateDispatches.ValidateAll() if the designated
-// constraints aren't met.
-type DuplicateDispatchesMultiError []error
-
-// Error returns a concatenation of all the error messages it wraps.
-func (m DuplicateDispatchesMultiError) Error() string {
-	var msgs []string
-	for _, err := range m {
-		msgs = append(msgs, err.Error())
-	}
-	return strings.Join(msgs, "; ")
-}
-
-// AllErrors returns a list of validation violation errors.
-func (m DuplicateDispatchesMultiError) AllErrors() []error { return m }
-
-// DuplicateDispatchesValidationError is the validation error returned by
-// DuplicateDispatches.Validate if the designated constraints aren't met.
-type DuplicateDispatchesValidationError struct {
-	field  string
-	reason string
-	cause  error
-	key    bool
-}
-
-// Field function returns field value.
-func (e DuplicateDispatchesValidationError) Field() string { return e.field }
-
-// Reason function returns reason value.
-func (e DuplicateDispatchesValidationError) Reason() string { return e.reason }
-
-// Cause function returns cause value.
-func (e DuplicateDispatchesValidationError) Cause() error { return e.cause }
-
-// Key function returns key value.
-func (e DuplicateDispatchesValidationError) Key() bool { return e.key }
-
-// ErrorName returns error name.
-func (e DuplicateDispatchesValidationError) ErrorName() string {
-	return "DuplicateDispatchesValidationError"
-}
-
-// Error satisfies the builtin error interface
-func (e DuplicateDispatchesValidationError) Error() string {
-	cause := ""
-	if e.cause != nil {
-		cause = fmt.Sprintf(" | caused by: %v", e.cause)
-	}
-
-	key := ""
-	if e.key {
-		key = "key for "
-	}
-
-	return fmt.Sprintf(
-		"invalid %sDuplicateDispatches.%s: %s%s",
-		key,
-		e.field,
-		e.reason,
-		cause)
-}
-
-var _ error = DuplicateDispatchesValidationError{}
-
-var _ interface {
-	Field() string
-	Reason() string
-	Key() bool
-	Cause() error
-	ErrorName() string
-} = DuplicateDispatchesValidationError{}
 
 // Validate checks the field values on DispatchAssignments with the rules
 // defined in the proto definition for this message. If any rules are
@@ -1182,3 +1080,254 @@ var _ interface {
 	Cause() error
 	ErrorName() string
 } = DispatchStatusValidationError{}
+
+// Validate checks the field values on DispatchReferences with the rules
+// defined in the proto definition for this message. If any rules are
+// violated, the first error encountered is returned, or nil if there are no violations.
+func (m *DispatchReferences) Validate() error {
+	return m.validate(false)
+}
+
+// ValidateAll checks the field values on DispatchReferences with the rules
+// defined in the proto definition for this message. If any rules are
+// violated, the result is a list of violation errors wrapped in
+// DispatchReferencesMultiError, or nil if none found.
+func (m *DispatchReferences) ValidateAll() error {
+	return m.validate(true)
+}
+
+func (m *DispatchReferences) validate(all bool) error {
+	if m == nil {
+		return nil
+	}
+
+	var errors []error
+
+	for idx, item := range m.GetReferences() {
+		_, _ = idx, item
+
+		if all {
+			switch v := interface{}(item).(type) {
+			case interface{ ValidateAll() error }:
+				if err := v.ValidateAll(); err != nil {
+					errors = append(errors, DispatchReferencesValidationError{
+						field:  fmt.Sprintf("References[%v]", idx),
+						reason: "embedded message failed validation",
+						cause:  err,
+					})
+				}
+			case interface{ Validate() error }:
+				if err := v.Validate(); err != nil {
+					errors = append(errors, DispatchReferencesValidationError{
+						field:  fmt.Sprintf("References[%v]", idx),
+						reason: "embedded message failed validation",
+						cause:  err,
+					})
+				}
+			}
+		} else if v, ok := interface{}(item).(interface{ Validate() error }); ok {
+			if err := v.Validate(); err != nil {
+				return DispatchReferencesValidationError{
+					field:  fmt.Sprintf("References[%v]", idx),
+					reason: "embedded message failed validation",
+					cause:  err,
+				}
+			}
+		}
+
+	}
+
+	if len(errors) > 0 {
+		return DispatchReferencesMultiError(errors)
+	}
+
+	return nil
+}
+
+// DispatchReferencesMultiError is an error wrapping multiple validation errors
+// returned by DispatchReferences.ValidateAll() if the designated constraints
+// aren't met.
+type DispatchReferencesMultiError []error
+
+// Error returns a concatenation of all the error messages it wraps.
+func (m DispatchReferencesMultiError) Error() string {
+	var msgs []string
+	for _, err := range m {
+		msgs = append(msgs, err.Error())
+	}
+	return strings.Join(msgs, "; ")
+}
+
+// AllErrors returns a list of validation violation errors.
+func (m DispatchReferencesMultiError) AllErrors() []error { return m }
+
+// DispatchReferencesValidationError is the validation error returned by
+// DispatchReferences.Validate if the designated constraints aren't met.
+type DispatchReferencesValidationError struct {
+	field  string
+	reason string
+	cause  error
+	key    bool
+}
+
+// Field function returns field value.
+func (e DispatchReferencesValidationError) Field() string { return e.field }
+
+// Reason function returns reason value.
+func (e DispatchReferencesValidationError) Reason() string { return e.reason }
+
+// Cause function returns cause value.
+func (e DispatchReferencesValidationError) Cause() error { return e.cause }
+
+// Key function returns key value.
+func (e DispatchReferencesValidationError) Key() bool { return e.key }
+
+// ErrorName returns error name.
+func (e DispatchReferencesValidationError) ErrorName() string {
+	return "DispatchReferencesValidationError"
+}
+
+// Error satisfies the builtin error interface
+func (e DispatchReferencesValidationError) Error() string {
+	cause := ""
+	if e.cause != nil {
+		cause = fmt.Sprintf(" | caused by: %v", e.cause)
+	}
+
+	key := ""
+	if e.key {
+		key = "key for "
+	}
+
+	return fmt.Sprintf(
+		"invalid %sDispatchReferences.%s: %s%s",
+		key,
+		e.field,
+		e.reason,
+		cause)
+}
+
+var _ error = DispatchReferencesValidationError{}
+
+var _ interface {
+	Field() string
+	Reason() string
+	Key() bool
+	Cause() error
+	ErrorName() string
+} = DispatchReferencesValidationError{}
+
+// Validate checks the field values on DispatchReference with the rules defined
+// in the proto definition for this message. If any rules are violated, the
+// first error encountered is returned, or nil if there are no violations.
+func (m *DispatchReference) Validate() error {
+	return m.validate(false)
+}
+
+// ValidateAll checks the field values on DispatchReference with the rules
+// defined in the proto definition for this message. If any rules are
+// violated, the result is a list of violation errors wrapped in
+// DispatchReferenceMultiError, or nil if none found.
+func (m *DispatchReference) ValidateAll() error {
+	return m.validate(true)
+}
+
+func (m *DispatchReference) validate(all bool) error {
+	if m == nil {
+		return nil
+	}
+
+	var errors []error
+
+	// no validation rules for TargetDispatchId
+
+	if _, ok := DispatchReferenceType_name[int32(m.GetReferenceType())]; !ok {
+		err := DispatchReferenceValidationError{
+			field:  "ReferenceType",
+			reason: "value must be one of the defined enum values",
+		}
+		if !all {
+			return err
+		}
+		errors = append(errors, err)
+	}
+
+	if len(errors) > 0 {
+		return DispatchReferenceMultiError(errors)
+	}
+
+	return nil
+}
+
+// DispatchReferenceMultiError is an error wrapping multiple validation errors
+// returned by DispatchReference.ValidateAll() if the designated constraints
+// aren't met.
+type DispatchReferenceMultiError []error
+
+// Error returns a concatenation of all the error messages it wraps.
+func (m DispatchReferenceMultiError) Error() string {
+	var msgs []string
+	for _, err := range m {
+		msgs = append(msgs, err.Error())
+	}
+	return strings.Join(msgs, "; ")
+}
+
+// AllErrors returns a list of validation violation errors.
+func (m DispatchReferenceMultiError) AllErrors() []error { return m }
+
+// DispatchReferenceValidationError is the validation error returned by
+// DispatchReference.Validate if the designated constraints aren't met.
+type DispatchReferenceValidationError struct {
+	field  string
+	reason string
+	cause  error
+	key    bool
+}
+
+// Field function returns field value.
+func (e DispatchReferenceValidationError) Field() string { return e.field }
+
+// Reason function returns reason value.
+func (e DispatchReferenceValidationError) Reason() string { return e.reason }
+
+// Cause function returns cause value.
+func (e DispatchReferenceValidationError) Cause() error { return e.cause }
+
+// Key function returns key value.
+func (e DispatchReferenceValidationError) Key() bool { return e.key }
+
+// ErrorName returns error name.
+func (e DispatchReferenceValidationError) ErrorName() string {
+	return "DispatchReferenceValidationError"
+}
+
+// Error satisfies the builtin error interface
+func (e DispatchReferenceValidationError) Error() string {
+	cause := ""
+	if e.cause != nil {
+		cause = fmt.Sprintf(" | caused by: %v", e.cause)
+	}
+
+	key := ""
+	if e.key {
+		key = "key for "
+	}
+
+	return fmt.Sprintf(
+		"invalid %sDispatchReference.%s: %s%s",
+		key,
+		e.field,
+		e.reason,
+		cause)
+}
+
+var _ error = DispatchReferenceValidationError{}
+
+var _ interface {
+	Field() string
+	Reason() string
+	Key() bool
+	Cause() error
+	ErrorName() string
+} = DispatchReferenceValidationError{}
