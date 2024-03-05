@@ -519,8 +519,8 @@
                 }
             },
             "self_service": {
-                "title": "Selbstverwaltung",
-                "set_absence_date": "Abwesenheitsdatum setzen",
+                "title": "Eigenverwaltung",
+                "set_absence_date": "Urlaub eintragen",
                 "set_profile_picture": "Profilbild aktualisieren"
             }
         },
@@ -689,7 +689,6 @@
         "longitude": "Längengrad",
         "filter": "Filter",
         "postal": "PLZ",
-        "postal_code": "Postleitzahl",
         "retry": "Erneut versuchen",
         "time_range": "Zeitspanne",
         "from": "Von",
@@ -859,7 +858,8 @@
         "discord": "Discord",
         "redirecting_to": "Sie werden weitergeleitet zu {0}...",
         "absent": "Abwesend",
-        "upload": "Hochladen"
+        "upload": "Hochladen",
+        "postal_code": "Postleitzahl"
     },
     "notifications": {
         "clipboard": {
