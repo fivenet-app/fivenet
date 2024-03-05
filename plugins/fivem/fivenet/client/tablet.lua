@@ -173,7 +173,7 @@ RegisterNUICallback('phoneCallNumber', function(data, cb)
 		CloseTablet()
 	end
 
-    -- Your phone plugin call a number code here
+    -- Your phone plugin call a number code here: data.phoneNumber
 
 	cb(true)
 end)

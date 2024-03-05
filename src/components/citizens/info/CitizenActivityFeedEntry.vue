@@ -275,12 +275,7 @@ const props = defineProps<{
                     </p>
                 </div>
                 <div class="flex items-center justify-between">
-                    <p class="inline-flex gap-1 text-sm text-gray-300">
-                        <span>{{ $t('common.reason') }}:</span>
-                        <span class="font-semibold">
-                            {{ activity.reason }}
-                        </span>
-                    </p>
+                    <p class="inline-flex gap-1 text-sm text-gray-300"></p>
                     <p class="inline-flex text-sm text-gray-300">
                         {{ $t('common.created_by') }}
                         <CitizenInfoPopover class="ml-1" text-class="underline" :user="activity.sourceUser" />

@@ -42,7 +42,7 @@ function setWebUrl(url) {
 }
 
 function openFiveNetWebsite(path) {
-    window.invokeNative('openUrl', webUrl + path ?? '');
+    window.invokeNative('openUrl', webUrl + (path === undefined ? '' : path));
 }
 
 // Tablet
