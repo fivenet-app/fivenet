@@ -1,5 +1,5 @@
 <script lang="ts" setup>
-import { Float, FloatArrow } from '@headlessui-float/vue';
+import { Float } from '@headlessui-float/vue';
 import { Popover, PopoverButton, PopoverPanel } from '@headlessui/vue';
 import { AccountIcon } from 'mdi-vue3';
 import { type User, type UserShort } from '~~/gen/ts/resources/users/users';

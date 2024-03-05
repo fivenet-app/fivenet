@@ -1873,7 +1873,7 @@
                 "UNSPECIFIED": "Unspecified",
                 "REFERENCED": "Referenced",
                 "DUPLICATED_BY": "Duplicated by",
-                "DUPLICATES": "Duplicates"
+                "DUPLICATE_OF": "Duplicates"
             }
         },
         "livemap": {

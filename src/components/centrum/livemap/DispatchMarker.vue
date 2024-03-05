@@ -55,7 +55,7 @@ const dispatchClasses = computed(() => [
                 <IDCopyBadge :id="dispatch.id" prefix="DSP" :action="selected" />
                 <button
                     type="button"
-                    :title="$t('common.delete')"
+                    :title="$t('common.detail', 2)"
                     class="inline-flex items-center text-primary-500 hover:text-primary-400"
                     @click="selected(dispatch.id)"
                 >

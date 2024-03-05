@@ -1,4 +1,5 @@
 <script lang="ts" setup>
+import { LinkVariantIcon } from 'mdi-vue3';
 import { type DispatchReferences, DispatchReferenceType } from '~~/gen/ts/resources/centrum/dispatches';
 import DispatchDetailsByID from '~/components/centrum/dispatches/DispatchDetailsByID.vue';
 
@@ -27,14 +28,23 @@ const selectedDispatch = ref<string | undefined>();
                 v-for="reference in references?.references"
                 :key="reference.targetDispatchId"
                 class="inline-flex items-center rounded-md bg-info-400/10 px-2 py-1 text-xs font-medium text-info-400 ring-1 ring-inset ring-info-400/20"
-                @click="
-                    selectedDispatch = reference.targetDispatchId;
-                    $emit('selectedDispatch', reference.targetDispatchId);
-                "
             >
-                {{ $t(`enums.centrum.DispatchReferenceType.${DispatchReferenceType[reference.referenceType]}`) }} - DSP-{{
-                    reference.targetDispatchId
-                }}
+                <span>
+                    {{ $t(`enums.centrum.DispatchReferenceType.${DispatchReferenceType[reference.referenceType]}`) }} DSP-{{
+                        reference.targetDispatchId
+                    }}
+                </span>
+
+                <button
+                    type="button"
+                    @click="
+                        selectedDispatch = reference.targetDispatchId;
+                        $emit('selectedDispatch', reference.targetDispatchId);
+                    "
+                >
+                    <span class="sr-only">{{ $t('common.open') }}</span>
+                    <LinkVariantIcon class="ml-1 h-5 w-5" aria-hidden="true" />
+                </button>
             </span>
         </div>
     </template>

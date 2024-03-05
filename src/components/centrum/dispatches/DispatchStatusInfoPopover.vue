@@ -3,6 +3,7 @@ import { Float } from '@headlessui-float/vue';
 import { Popover, PopoverButton, PopoverPanel } from '@headlessui/vue';
 import { DispatchStatus, StatusDispatch } from '~~/gen/ts/resources/centrum/dispatches';
 import DispatchDetailsByID from '~/components/centrum/dispatches//DispatchDetailsByID.vue';
+import { CarEmergencyIcon } from 'mdi-vue3';
 
 defineProps<{
     status: DispatchStatus | undefined;
@@ -45,14 +46,27 @@ const open = ref(false);
                 <PopoverPanel
                     class="absolute z-5 w-72 min-w-fit max-w-[18rem] rounded-lg border border-gray-600 bg-gray-800 text-sm text-gray-400 shadow-sm transition-opacity"
                 >
-                    <div class="p-3">
-                        <p class="text-base font-semibold leading-none text-gray-900 dark:text-neutral">
-                            DSP-{{ status.dispatchId }}
-                        </p>
-                        <p class="inline-flex items-center justify-center text-sm font-normal">
-                            <span class="font-semibold"> {{ $t('common.status') }} </span>:
-                            {{ $t(`enums.centrum.StatusDispatch.${StatusDispatch[status.status ?? 0]}`) }}
-                        </p>
+                    <div class="inline-flex p-3 gap-2">
+                        <div class="mb-2 flex items-center gap-2">
+                            <button
+                                type="button"
+                                :title="$t('common.detail', 2)"
+                                class="inline-flex items-center text-primary-500 hover:text-primary-400"
+                                @click="open = true"
+                            >
+                                <CarEmergencyIcon class="h-5 w-5" aria-hidden="true" />
+                                <span class="ml-1">{{ $t('common.detail', 2) }}</span>
+                            </button>
+                        </div>
+                        <div>
+                            <p class="text-base font-semibold leading-none text-gray-900 dark:text-neutral">
+                                DSP-{{ status.dispatchId }}
+                            </p>
+                            <p class="inline-flex items-center justify-center text-sm font-normal">
+                                <span class="font-semibold"> {{ $t('common.status') }} </span>:
+                                {{ $t(`enums.centrum.StatusDispatch.${StatusDispatch[status.status ?? 0]}`) }}
+                            </p>
+                        </div>
                     </div>
                 </PopoverPanel>
             </Float>
