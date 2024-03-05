@@ -70,7 +70,7 @@ type Params struct {
 	JS       nats.JetStreamContext
 	Perms    perms.Permissions
 	Enricher *mstlystcdata.Enricher
-	Config   *config.Config
+	Config   *config.BaseConfig
 	Tracker  tracker.ITracker
 	Audit    audit.IAuditer
 }

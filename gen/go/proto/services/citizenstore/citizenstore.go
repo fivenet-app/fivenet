@@ -68,7 +68,7 @@ type Params struct {
 	P        perms.Permissions
 	Enricher *mstlystcdata.UserAwareEnricher
 	Aud      audit.IAuditer
-	Config   *config.Config
+	Config   *config.BaseConfig
 	Storage  storage.IStorage
 }
 

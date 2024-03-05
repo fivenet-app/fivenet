@@ -1,12 +1,25 @@
 package config
 
 import (
+	"sync/atomic"
 	"time"
 
 	"github.com/galexrt/fivenet/pkg/utils/dbutils"
 )
 
 type Config struct {
+	cfg atomic.Pointer[BaseConfig]
+}
+
+func (c *Config) Get() *BaseConfig {
+	return c.cfg.Load()
+}
+
+func (c *Config) Set(val *BaseConfig) {
+	c.cfg.Store(val)
+}
+
+type BaseConfig struct {
 	LogLevel string `default:"DEBUG" yaml:"logLevel"`
 	Mode     string `default:"debug" yaml:"mode"`
 

@@ -65,7 +65,7 @@ type Params struct {
 	JS      nats.JetStreamContext
 	Tracker tracker.ITracker
 	Postals postals.Postals
-	Config  *config.Config
+	Config  *config.BaseConfig
 	Manager *manager.Manager
 }
 

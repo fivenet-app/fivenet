@@ -16,7 +16,7 @@ type Postals = *coords.CoordsRO[*Postal]
 
 var postalCodesMap = map[string]*Postal{}
 
-func New(cfg *config.Config) (Postals, error) {
+func New(cfg *config.BaseConfig) (Postals, error) {
 	file, err := os.Open(cfg.Game.Livemap.PostalsFile)
 	if err != nil {
 		return nil, err

@@ -86,7 +86,7 @@ type Params struct {
 	Enricher *mstlystcdata.Enricher
 	Aud      audit.IAuditer
 	UI       userinfo.UserInfoRetriever
-	Config   *config.Config
+	Config   *config.BaseConfig
 }
 
 func NewServer(p Params) *Server {

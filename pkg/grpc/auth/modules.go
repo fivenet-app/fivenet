@@ -11,7 +11,7 @@ var TokenMgrModule = fx.Module("tokenMgr",
 	),
 )
 
-func NewTokenMgrFromConfig(cfg *config.Config) *TokenMgr {
+func NewTokenMgrFromConfig(cfg *config.BaseConfig) *TokenMgr {
 	return NewTokenMgr(cfg.JWT.Secret)
 }
 

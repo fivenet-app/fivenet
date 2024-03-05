@@ -56,7 +56,7 @@ type Params struct {
 	Logger *zap.Logger
 	TP     *tracesdk.TracerProvider
 	DB     *sql.DB
-	Config *config.Config
+	Config *config.BaseConfig
 }
 
 func NewCache(p Params) (*Cache, error) {

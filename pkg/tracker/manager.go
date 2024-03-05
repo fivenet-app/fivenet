@@ -54,7 +54,7 @@ type ManagerParams struct {
 	DB       *sql.DB
 	Enricher *mstlystcdata.Enricher
 	Postals  postals.Postals
-	Config   *config.Config
+	Config   *config.BaseConfig
 	State    *state.State
 }
 

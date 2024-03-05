@@ -49,7 +49,7 @@ type Params struct {
 	Logger *zap.Logger
 	TP     *tracesdk.TracerProvider
 	DB     *sql.DB
-	Config *config.Config
+	Config *config.BaseConfig
 }
 
 func New(p Params) IAuditer {

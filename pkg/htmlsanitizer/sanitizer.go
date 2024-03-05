@@ -89,7 +89,7 @@ func setupSanitizer() {
 	sanitizer.AllowAttrs("checked").Matching(regexp.MustCompile(`(?i)true`)).OnElements("input")
 }
 
-func New(cfg *config.Config) (*bluemonday.Policy, error) {
+func New(cfg *config.BaseConfig) (*bluemonday.Policy, error) {
 	sanitizerOnce.Do(setupSanitizer)
 
 	// Use Image Proxy if enabled

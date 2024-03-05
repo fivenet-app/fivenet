@@ -51,7 +51,7 @@ type Params struct {
 	Enricher *mstlystcdata.Enricher
 	Postals  postals.Postals
 	Tracker  tracker.ITracker
-	Config   *config.Config
+	Config   *config.BaseConfig
 
 	State *state.State
 }

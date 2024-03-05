@@ -39,7 +39,7 @@ type Params struct {
 
 	LC     fx.Lifecycle
 	DB     *sql.DB
-	Config *config.Config
+	Config *config.BaseConfig
 }
 
 func NewUIRetriever(p Params) UserInfoRetriever {

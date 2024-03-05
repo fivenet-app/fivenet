@@ -60,7 +60,7 @@ type Params struct {
 	Perms             perms.Permissions
 	UserAwareEnricher *mstlystcdata.UserAwareEnricher
 	Audit             audit.IAuditer
-	Config            *config.Config
+	Config            *config.BaseConfig
 }
 
 func NewServer(p Params) *Server {

@@ -39,7 +39,7 @@ type Params struct {
 	LC fx.Lifecycle
 
 	Logger *zap.Logger
-	Config *config.Config
+	Config *config.BaseConfig
 	Engine *gin.Engine
 }
 
@@ -94,7 +94,7 @@ type EngineParams struct {
 	fx.In
 
 	Logger   *zap.Logger
-	Config   *config.Config
+	Config   *config.BaseConfig
 	DB       *sql.DB
 	TP       *tracesdk.TracerProvider
 	TokenMgr *auth.TokenMgr

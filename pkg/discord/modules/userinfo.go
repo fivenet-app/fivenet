@@ -134,7 +134,6 @@ func (g *UserInfo) syncUserInfo() ([]*discordgo.MessageEmbed, error) {
 		WHERE(jet.AND(
 			tOauth2Accs.Provider.EQ(jet.String("discord")),
 			tUsers.Job.EQ(jet.String(g.job)),
-			tUsers.ID.EQ(jet.Int32(26061)),
 		)).
 		ORDER_BY(tUsers.ID.ASC())
 

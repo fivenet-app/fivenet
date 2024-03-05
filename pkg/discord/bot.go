@@ -59,7 +59,7 @@ type BotParams struct {
 	TP       *tracesdk.TracerProvider
 	DB       *sql.DB
 	Enricher *mstlystcdata.Enricher
-	Config   *config.Config
+	Config   *config.BaseConfig
 }
 
 type Bot struct {

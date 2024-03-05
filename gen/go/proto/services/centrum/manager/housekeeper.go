@@ -50,7 +50,7 @@ type HousekeeperParams struct {
 	TP      *tracesdk.TracerProvider
 	DB      *sql.DB
 	Manager *Manager
-	Config  *config.Config
+	Config  *config.BaseConfig
 }
 
 func NewHousekeeper(p HousekeeperParams) *Housekeeper {

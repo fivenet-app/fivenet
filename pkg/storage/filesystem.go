@@ -26,7 +26,7 @@ type Filesystem struct {
 	prefix   string
 }
 
-func NewFilesystem(lc fx.Lifecycle, cfg *config.Config) (IStorage, error) {
+func NewFilesystem(lc fx.Lifecycle, cfg *config.BaseConfig) (IStorage, error) {
 	f := &Filesystem{
 		basePath: cfg.Storage.Filesystem.Path,
 	}

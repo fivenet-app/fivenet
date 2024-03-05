@@ -198,7 +198,7 @@ var LoggerModule = fx.Module("logger",
 	),
 )
 
-func NewLogger(cfg *config.Config) (*zap.Logger, error) {
+func NewLogger(cfg *config.BaseConfig) (*zap.Logger, error) {
 	// Logger Setup
 	loggerConfig := zap.NewProductionConfig()
 	level, err := zapcore.ParseLevel(cfg.LogLevel)

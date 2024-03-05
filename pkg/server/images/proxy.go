@@ -15,7 +15,7 @@ type ImageProxy struct {
 	config config.ImageProxy
 }
 
-func New(logger *zap.Logger, cfg *config.Config) *ImageProxy {
+func New(logger *zap.Logger, cfg *config.BaseConfig) *ImageProxy {
 	ip := &ImageProxy{
 		logger: logger,
 		config: cfg.ImageProxy,
