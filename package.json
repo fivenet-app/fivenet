@@ -101,7 +101,7 @@
         "vue": "3.4.21",
         "vue-i18n-routing": "^1.2.0",
         "vue-router": "4.3.0",
-        "vue-tsc": "2.0.4"
+        "vue-tsc": "2.0.5"
     },
     "resolutions": {
         "string-width": "4.2.3"

@@ -49,7 +49,7 @@ onConfirm(async (provider) => disconnectOAuth2Connection(provider));
                 <img
                     :src="account.avatar"
                     alt="Avatar"
-                    class="h-10 w-auto rounded-full bg-base-800 fill-base-300 text-base-300 ring-2 ring-neutral hover:fill-base-100 hover:text-base-100 hover:transition-colors"
+                    class="h-10 w-10 rounded-full bg-base-800 fill-base-300 text-base-300 ring-2 ring-neutral hover:fill-base-100 hover:text-base-100 hover:transition-colors"
                 />
                 <span class="text-left" :title="`ID: ${account.externalId}`">
                     {{ account.username }}
@@ -57,7 +57,7 @@ onConfirm(async (provider) => disconnectOAuth2Connection(provider));
 
                 <button
                     type="button"
-                    class="inline-flex items-center gap-1 rounded-md bg-error-600 px-3.5 py-2.5 text-sm font-semibold text-neutral hover:bg-error-700"
+                    class="inline-flex items-center gap-1 rounded-md bg-error-600 px-2 py-2 text-sm font-semibold text-neutral hover:bg-error-700"
                     @click="reveal(provider)"
                 >
                     <CloseCircleIcon class="h-5 w-5" aria-hidden="true" />
