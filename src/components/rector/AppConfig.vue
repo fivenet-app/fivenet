@@ -1,8 +1,17 @@
 <script lang="ts" setup>
 import { RpcError } from '@protobuf-ts/runtime-rpc';
-import { Switch, SwitchGroup, SwitchLabel } from '@headlessui/vue';
+import {
+    Combobox,
+    ComboboxButton,
+    ComboboxInput,
+    ComboboxOption,
+    ComboboxOptions,
+    Switch,
+    SwitchGroup,
+    SwitchLabel,
+} from '@headlessui/vue';
 import { useThrottleFn } from '@vueuse/core';
-import { LoadingIcon, OfficeBuildingCogIcon } from 'mdi-vue3';
+import { CheckIcon, LoadingIcon, OfficeBuildingCogIcon } from 'mdi-vue3';
 import { useSettingsStore } from '~/store/settings';
 import GenericContainerPanel from '~/components/partials/elements/GenericContainerPanel.vue';
 import GenericContainerPanelEntry from '~/components/partials/elements/GenericContainerPanelEntry.vue';
@@ -11,6 +20,7 @@ import DataNoDataBlock from '~/components/partials/data/DataNoDataBlock.vue';
 import DataPendingBlock from '~/components/partials/data/DataPendingBlock.vue';
 import { type GetAppConfigResponse } from '~~/gen/ts/services/rector/config';
 import { useNotificatorStore } from '~/store/notificator';
+import { useCompletorStore } from '~/store/completor';
 
 const { $grpc } = useNuxtApp();
 
@@ -60,11 +70,21 @@ async function updateAppConfig(): Promise<void> {
     }
 }
 
+const completorStore = useCompletorStore();
+const { listJobs } = completorStore;
+
+const { data: jobs } = useLazyAsyncData(`rector-appconfig-jobs`, () => listJobs());
+
+const queryJobsRaw = ref('');
+const queryJobs = computed(() => queryJobsRaw.value.trim());
+
 const canSubmit = ref(false);
 const onSubmitThrottle = useThrottleFn(async (_) => {
     canSubmit.value = false;
     await updateAppConfig().finally(() => setTimeout(() => (canSubmit.value = true), 400));
 }, 1000);
+
+watch(data, () => console.log('data', data.value?.config));
 </script>
 
 <template>
@@ -173,15 +193,113 @@ const onSubmitThrottle = useThrottleFn(async (_) => {
                         <GenericContainerPanelEntry>
                             <template #title>Public Jobs</template>
                             <template #default>
-                                Combobox here
-                                {{ jsonStringify(data.config?.jobInfo?.publicJobs) }}
+                                <Combobox v-model="data.config!.jobInfo!.publicJobs" as="div" multiple nullable>
+                                    <div class="relative">
+                                        <ComboboxButton as="div">
+                                            <ComboboxInput
+                                                autocomplete="off"
+                                                class="block w-full rounded-md border-0 bg-base-700 py-1.5 text-neutral placeholder:text-accent-200 focus:ring-2 focus:ring-inset focus:ring-base-300 sm:text-sm sm:leading-6"
+                                                :display-value="(js: any) => (js ? js.join(', ') : $t('common.na'))"
+                                                :placeholder="$t('common.job', 2)"
+                                                @change="queryJobsRaw = $event.target.value"
+                                                @focusin="focusTablet(true)"
+                                                @focusout="focusTablet(false)"
+                                            />
+                                        </ComboboxButton>
+
+                                        <ComboboxOptions
+                                            v-if="jobs !== null && jobs.length > 0"
+                                            class="absolute z-30 mt-1 max-h-44 w-full overflow-auto rounded-md bg-base-700 py-1 text-base sm:text-sm"
+                                        >
+                                            <ComboboxOption
+                                                v-for="job in jobs.filter(
+                                                    (j) => j.label.includes(queryJobs) || j.name.includes(queryJobs),
+                                                )"
+                                                v-slot="{ active, selected }"
+                                                :key="job.name"
+                                                :value="job.name"
+                                                as="template"
+                                            >
+                                                <li
+                                                    :class="[
+                                                        'relative cursor-default select-none py-2 pl-8 pr-4 text-neutral',
+                                                        active ? 'bg-primary-500' : '',
+                                                    ]"
+                                                >
+                                                    <span :class="['block truncate', selected && 'font-semibold']">
+                                                        {{ job.label }}
+                                                    </span>
+
+                                                    <span
+                                                        v-if="selected"
+                                                        :class="[
+                                                            active ? 'text-neutral' : 'text-primary-500',
+                                                            'absolute inset-y-0 left-0 flex items-center pl-1.5',
+                                                        ]"
+                                                    >
+                                                        <CheckIcon class="h-5 w-5" aria-hidden="true" />
+                                                    </span>
+                                                </li>
+                                            </ComboboxOption>
+                                        </ComboboxOptions>
+                                    </div>
+                                </Combobox>
                             </template>
                         </GenericContainerPanelEntry>
                         <GenericContainerPanelEntry>
                             <template #title>Hidden Jobs</template>
                             <template #default>
-                                Combobox here
-                                {{ jsonStringify(data.config?.jobInfo?.hiddenJobs) }}
+                                <Combobox v-model="data.config!.jobInfo!.hiddenJobs" as="div" multiple nullable>
+                                    <div class="relative">
+                                        <ComboboxButton as="div">
+                                            <ComboboxInput
+                                                autocomplete="off"
+                                                class="block w-full rounded-md border-0 bg-base-700 py-1.5 text-neutral placeholder:text-accent-200 focus:ring-2 focus:ring-inset focus:ring-base-300 sm:text-sm sm:leading-6"
+                                                :display-value="(js: any) => (js ? js.join(', ') : $t('common.na'))"
+                                                :placeholder="$t('common.job', 2)"
+                                                @change="queryJobsRaw = $event.target.value"
+                                                @focusin="focusTablet(true)"
+                                                @focusout="focusTablet(false)"
+                                            />
+                                        </ComboboxButton>
+
+                                        <ComboboxOptions
+                                            v-if="jobs !== null && jobs.length > 0"
+                                            class="absolute z-30 mt-1 max-h-44 w-full overflow-auto rounded-md bg-base-700 py-1 text-base sm:text-sm"
+                                        >
+                                            <ComboboxOption
+                                                v-for="job in jobs.filter(
+                                                    (j) => j.label.includes(queryJobs) || j.name.includes(queryJobs),
+                                                )"
+                                                v-slot="{ active, selected }"
+                                                :key="job.name"
+                                                :value="job.name"
+                                                as="template"
+                                            >
+                                                <li
+                                                    :class="[
+                                                        'relative cursor-default select-none py-2 pl-8 pr-4 text-neutral',
+                                                        active ? 'bg-primary-500' : '',
+                                                    ]"
+                                                >
+                                                    <span :class="['block truncate', selected && 'font-semibold']">
+                                                        {{ job.label }}
+                                                    </span>
+
+                                                    <span
+                                                        v-if="selected"
+                                                        :class="[
+                                                            active ? 'text-neutral' : 'text-primary-500',
+                                                            'absolute inset-y-0 left-0 flex items-center pl-1.5',
+                                                        ]"
+                                                    >
+                                                        <CheckIcon class="h-5 w-5" aria-hidden="true" />
+                                                    </span>
+                                                </li>
+                                            </ComboboxOption>
+                                        </ComboboxOptions>
+                                    </div>
+                                </Combobox>
                             </template>
                         </GenericContainerPanelEntry>
                     </template>
@@ -197,7 +315,7 @@ const onSubmitThrottle = useThrottleFn(async (_) => {
                                         data.config?.userTracker?.refreshTime?.seconds.toString() +
                                             '.' +
                                             (data.config?.userTracker?.refreshTime?.nanos ?? 0) / 1000000,
-                                    ).toLocaleString()
+                                    ).toString()
                                 }}s
                             </template>
                         </GenericContainerPanelEntry>
@@ -209,22 +327,120 @@ const onSubmitThrottle = useThrottleFn(async (_) => {
                                         data.config?.userTracker?.dbRefreshTime?.seconds.toString() +
                                             '.' +
                                             (data.config?.userTracker?.dbRefreshTime?.nanos ?? 0) / 1000000,
-                                    )
+                                    ).toString()
                                 }}s
                             </template>
                         </GenericContainerPanelEntry>
                         <GenericContainerPanelEntry>
                             <template #title>Livemap Jobs</template>
                             <template #default>
-                                Combobox here
-                                {{ jsonStringify(data.config?.userTracker?.livemapJobs) }}
+                                <Combobox v-model="data.config!.userTracker!.livemapJobs" as="div" multiple nullable>
+                                    <div class="relative">
+                                        <ComboboxButton as="div">
+                                            <ComboboxInput
+                                                autocomplete="off"
+                                                class="block w-full rounded-md border-0 bg-base-700 py-1.5 text-neutral placeholder:text-accent-200 focus:ring-2 focus:ring-inset focus:ring-base-300 sm:text-sm sm:leading-6"
+                                                :display-value="(js: any) => (js ? js.join(', ') : $t('common.na'))"
+                                                :placeholder="$t('common.job', 2)"
+                                                @change="queryJobsRaw = $event.target.value"
+                                                @focusin="focusTablet(true)"
+                                                @focusout="focusTablet(false)"
+                                            />
+                                        </ComboboxButton>
+
+                                        <ComboboxOptions
+                                            v-if="jobs !== null && jobs.length > 0"
+                                            class="absolute z-30 mt-1 max-h-44 w-full overflow-auto rounded-md bg-base-700 py-1 text-base sm:text-sm"
+                                        >
+                                            <ComboboxOption
+                                                v-for="job in jobs.filter(
+                                                    (j) => j.label.includes(queryJobs) || j.name.includes(queryJobs),
+                                                )"
+                                                v-slot="{ active, selected }"
+                                                :key="job.name"
+                                                :value="job.name"
+                                                as="template"
+                                            >
+                                                <li
+                                                    :class="[
+                                                        'relative cursor-default select-none py-2 pl-8 pr-4 text-neutral',
+                                                        active ? 'bg-primary-500' : '',
+                                                    ]"
+                                                >
+                                                    <span :class="['block truncate', selected && 'font-semibold']">
+                                                        {{ job.label }}
+                                                    </span>
+
+                                                    <span
+                                                        v-if="selected"
+                                                        :class="[
+                                                            active ? 'text-neutral' : 'text-primary-500',
+                                                            'absolute inset-y-0 left-0 flex items-center pl-1.5',
+                                                        ]"
+                                                    >
+                                                        <CheckIcon class="h-5 w-5" aria-hidden="true" />
+                                                    </span>
+                                                </li>
+                                            </ComboboxOption>
+                                        </ComboboxOptions>
+                                    </div>
+                                </Combobox>
                             </template>
                         </GenericContainerPanelEntry>
                         <GenericContainerPanelEntry>
                             <template #title>Timeclock Jobs</template>
                             <template #default>
-                                Combobox here
-                                {{ jsonStringify(data.config?.userTracker?.timeclockJobs) }}
+                                <Combobox v-model="data.config!.userTracker!.timeclockJobs" as="div" multiple nullable>
+                                    <div class="relative">
+                                        <ComboboxButton as="div">
+                                            <ComboboxInput
+                                                autocomplete="off"
+                                                class="block w-full rounded-md border-0 bg-base-700 py-1.5 text-neutral placeholder:text-accent-200 focus:ring-2 focus:ring-inset focus:ring-base-300 sm:text-sm sm:leading-6"
+                                                :display-value="(js: any) => (js ? js.join(', ') : $t('common.na'))"
+                                                :placeholder="$t('common.job', 2)"
+                                                @change="queryJobsRaw = $event.target.value"
+                                                @focusin="focusTablet(true)"
+                                                @focusout="focusTablet(false)"
+                                            />
+                                        </ComboboxButton>
+
+                                        <ComboboxOptions
+                                            v-if="jobs !== null && jobs.length > 0"
+                                            class="absolute z-30 mt-1 max-h-44 w-full overflow-auto rounded-md bg-base-700 py-1 text-base sm:text-sm"
+                                        >
+                                            <ComboboxOption
+                                                v-for="job in jobs.filter(
+                                                    (j) => j.label.includes(queryJobs) || j.name.includes(queryJobs),
+                                                )"
+                                                v-slot="{ active, selected }"
+                                                :key="job.name"
+                                                :value="job.name"
+                                                as="template"
+                                            >
+                                                <li
+                                                    :class="[
+                                                        'relative cursor-default select-none py-2 pl-8 pr-4 text-neutral',
+                                                        active ? 'bg-primary-500' : '',
+                                                    ]"
+                                                >
+                                                    <span :class="['block truncate', selected && 'font-semibold']">
+                                                        {{ job.label }}
+                                                    </span>
+
+                                                    <span
+                                                        v-if="selected"
+                                                        :class="[
+                                                            active ? 'text-neutral' : 'text-primary-500',
+                                                            'absolute inset-y-0 left-0 flex items-center pl-1.5',
+                                                        ]"
+                                                    >
+                                                        <CheckIcon class="h-5 w-5" aria-hidden="true" />
+                                                    </span>
+                                                </li>
+                                            </ComboboxOption>
+                                        </ComboboxOptions>
+                                    </div>
+                                </Combobox>
                             </template>
                         </GenericContainerPanelEntry>
                     </template>
@@ -294,7 +510,6 @@ const onSubmitThrottle = useThrottleFn(async (_) => {
                         </GenericContainerPanelEntry>
                     </template>
                 </GenericContainerPanel>
-                <!-- TODO -->
             </template>
         </template>
     </div>

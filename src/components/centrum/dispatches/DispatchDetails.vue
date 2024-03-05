@@ -15,13 +15,12 @@ import GenericTime from '~/components/partials/elements/GenericTime.vue';
 import { useCentrumStore } from '~/store/centrum';
 import { useNotificatorStore } from '~/store/notificator';
 import { Dispatch, StatusDispatch, TakeDispatchResp } from '~~/gen/ts/resources/centrum/dispatches';
-import { Settings } from '~~/gen/ts/resources/centrum/settings';
 import DispatchAttributes from '~/components/centrum/partials/DispatchAttributes.vue';
+import DispatchReferences from '~/components/centrum/partials/DispatchReferences.vue';
 
 const props = defineProps<{
     open: boolean;
     dispatch: Dispatch;
-    settings?: Settings;
 }>();
 
 defineEmits<{
@@ -206,6 +205,14 @@ const openStatus = ref(false);
                                                             </dt>
                                                             <dd class="mt-2 text-sm text-gray-300 sm:col-span-2 sm:mt-0">
                                                                 <DispatchAttributes :attributes="dispatch.attributes" />
+                                                            </dd>
+                                                        </div>
+                                                        <div class="px-4 py-3 sm:grid sm:grid-cols-3 sm:gap-4 sm:px-0">
+                                                            <dt class="text-sm font-medium leading-6 text-neutral">
+                                                                {{ $t('common.reference', 2) }}
+                                                            </dt>
+                                                            <dd class="mt-2 text-sm text-gray-300 sm:col-span-2 sm:mt-0">
+                                                                <DispatchReferences :references="dispatch.references" />
                                                             </dd>
                                                         </div>
                                                         <div class="px-4 py-3 sm:grid sm:grid-cols-3 sm:gap-4 sm:px-0">

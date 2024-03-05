@@ -200,6 +200,7 @@ export const useCentrumStore = defineStore('centrum', {
                 d!.message = dispatch.message;
                 d!.description = dispatch.description;
                 d!.attributes = dispatch.attributes;
+                d!.references = dispatch.references;
                 d!.x = dispatch.x;
                 d!.y = dispatch.y;
                 d!.anon = dispatch.anon;

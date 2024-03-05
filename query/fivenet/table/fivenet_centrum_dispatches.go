@@ -24,6 +24,7 @@ type fivenetCentrumDispatchesTable struct {
 	Message     mysql.ColumnString
 	Description mysql.ColumnString
 	Attributes  mysql.ColumnString
+	References  mysql.ColumnString
 	X           mysql.ColumnFloat
 	Y           mysql.ColumnFloat
 	Postal      mysql.ColumnString
@@ -76,13 +77,14 @@ func newFivenetCentrumDispatchesTableImpl(schemaName, tableName, alias string) f
 		MessageColumn     = mysql.StringColumn("message")
 		DescriptionColumn = mysql.StringColumn("description")
 		AttributesColumn  = mysql.StringColumn("attributes")
+		ReferencesColumn  = mysql.StringColumn("references")
 		XColumn           = mysql.FloatColumn("x")
 		YColumn           = mysql.FloatColumn("y")
 		PostalColumn      = mysql.StringColumn("postal")
 		AnonColumn        = mysql.BoolColumn("anon")
 		CreatorIDColumn   = mysql.IntegerColumn("creator_id")
-		allColumns        = mysql.ColumnList{IDColumn, CreatedAtColumn, UpdatedAtColumn, JobColumn, MessageColumn, DescriptionColumn, AttributesColumn, XColumn, YColumn, PostalColumn, AnonColumn, CreatorIDColumn}
-		mutableColumns    = mysql.ColumnList{CreatedAtColumn, UpdatedAtColumn, JobColumn, MessageColumn, DescriptionColumn, AttributesColumn, XColumn, YColumn, PostalColumn, AnonColumn, CreatorIDColumn}
+		allColumns        = mysql.ColumnList{IDColumn, CreatedAtColumn, UpdatedAtColumn, JobColumn, MessageColumn, DescriptionColumn, AttributesColumn, ReferencesColumn, XColumn, YColumn, PostalColumn, AnonColumn, CreatorIDColumn}
+		mutableColumns    = mysql.ColumnList{CreatedAtColumn, UpdatedAtColumn, JobColumn, MessageColumn, DescriptionColumn, AttributesColumn, ReferencesColumn, XColumn, YColumn, PostalColumn, AnonColumn, CreatorIDColumn}
 	)
 
 	return fivenetCentrumDispatchesTable{
@@ -96,6 +98,7 @@ func newFivenetCentrumDispatchesTableImpl(schemaName, tableName, alias string) f
 		Message:     MessageColumn,
 		Description: DescriptionColumn,
 		Attributes:  AttributesColumn,
+		References:  ReferencesColumn,
 		X:           XColumn,
 		Y:           YColumn,
 		Postal:      PostalColumn,

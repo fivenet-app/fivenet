@@ -102,7 +102,9 @@ const { livemap } = storeToRefs(settingsStore);
                                                     max="30"
                                                     step="2"
                                                     :value="livemap.markerSize"
-                                                    @change="livemap.markerSize = parseInt(($event.target as any).value, 10)"
+                                                    @change="
+                                                        livemap.markerSize = parseInt(($event.target as HTMLInputElement).value)
+                                                    "
                                                 />
                                                 <span class="text-sm text-gray-300">{{ livemap.markerSize }}</span>
                                             </div>

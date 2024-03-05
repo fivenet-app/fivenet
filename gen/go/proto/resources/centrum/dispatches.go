@@ -2,6 +2,7 @@ package centrum
 
 import (
 	"database/sql/driver"
+	"slices"
 
 	"github.com/paulmach/orb"
 	"google.golang.org/protobuf/encoding/protojson"
@@ -133,4 +134,40 @@ func (x *DispatchReferences) Value() (driver.Value, error) {
 
 	out, err := protojson.Marshal(x)
 	return string(out), err
+}
+
+func (x *DispatchReferences) Has(dspId uint64) bool {
+	if len(x.References) == 0 {
+		return false
+	}
+
+	return slices.ContainsFunc(x.References, func(r *DispatchReference) bool {
+		return r.TargetDispatchId == dspId
+	})
+}
+
+func (x *DispatchReferences) Add(ref *DispatchReference) bool {
+	if x.Has(ref.TargetDispatchId) {
+		return false
+	}
+
+	if x.References == nil {
+		x.References = []*DispatchReference{ref}
+	} else {
+		x.References = append(x.References, ref)
+	}
+
+	return true
+}
+
+func (x *DispatchReferences) Remove(dspId uint64) bool {
+	if !x.Has(dspId) {
+		return false
+	}
+
+	x.References = slices.DeleteFunc(x.References, func(item *DispatchReference) bool {
+		return item.TargetDispatchId == dspId
+	})
+
+	return true
 }

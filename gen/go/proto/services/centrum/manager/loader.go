@@ -273,6 +273,7 @@ func (s *Manager) LoadDispatchesFromDB(ctx context.Context, cond jet.BoolExpress
 			tDispatch.Message,
 			tDispatch.Description,
 			tDispatch.Attributes,
+			tDispatch.References,
 			tDispatch.X,
 			tDispatch.Y,
 			tDispatch.Postal,

@@ -90,6 +90,7 @@ CREATE TABLE
         `message` varchar(255) NOT NULL,
         `description` varchar(1024) NULL DEFAULT NULL,
         `attributes` varchar(2048) NULL DEFAULT NULL,
+        `references` varchar(2048) NULL DEFAULT NULL,
         `x` decimal(24, 14) DEFAULT NULL,
         `y` decimal(24, 14) DEFAULT NULL,
         `postal` varchar(48) DEFAULT NULL,

@@ -443,6 +443,7 @@ func (s *Manager) CreateDispatch(ctx context.Context, dsp *centrum.Dispatch) (*c
 			tDispatch.Message,
 			tDispatch.Description,
 			tDispatch.Attributes,
+			tDispatch.References,
 			tDispatch.X,
 			tDispatch.Y,
 			tDispatch.Postal,
@@ -455,6 +456,7 @@ func (s *Manager) CreateDispatch(ctx context.Context, dsp *centrum.Dispatch) (*c
 			dsp.Message,
 			dsp.Description,
 			dsp.Attributes,
+			dsp.References,
 			dsp.X,
 			dsp.Y,
 			dsp.Postal,
@@ -533,6 +535,7 @@ func (s *Manager) UpdateDispatch(ctx context.Context, userJob string, userId *in
 			tDispatch.Message,
 			tDispatch.Description,
 			tDispatch.Attributes,
+			tDispatch.References,
 			tDispatch.X,
 			tDispatch.Y,
 			tDispatch.Postal,
@@ -545,6 +548,7 @@ func (s *Manager) UpdateDispatch(ctx context.Context, userJob string, userId *in
 			dsp.Message,
 			dsp.Description,
 			dsp.Attributes,
+			dsp.References,
 			dsp.X,
 			dsp.Y,
 			dsp.Postal,
@@ -869,6 +873,33 @@ func (s *Manager) AddAttributeToDispatch(ctx context.Context, dsp *centrum.Dispa
 		update = true
 	} else {
 		update = newDsp.Attributes.Add(attribute)
+	}
+
+	if update {
+		if _, err := s.UpdateDispatch(ctx, dsp.Job, nil, newDsp, true); err != nil {
+			return err
+		}
+	}
+
+	return nil
+}
+func (s *Manager) AddReferencesOnDispatch(ctx context.Context, dsp *centrum.Dispatch, refs ...*centrum.DispatchReference) error {
+	newDsp := proto.Clone(dsp).(*centrum.Dispatch)
+
+	update := false
+	if newDsp.References == nil {
+		newDsp.References = &centrum.DispatchReferences{
+			References: refs,
+		}
+
+		update = true
+	} else {
+		for _, ref := range refs {
+			upd := newDsp.References.Add(ref)
+			if upd {
+				update = true
+			}
+		}
 	}
 
 	if update {

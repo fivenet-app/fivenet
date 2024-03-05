@@ -1868,6 +1868,12 @@
                 "ON_BREAK": "On Break",
                 "BUSY": "Busy",
                 "UNKNOWN": "Unknown"
+            },
+            "DispatchReferenceType": {
+                "UNSPECIFIED": "Unspecified",
+                "REFERENCED": "Referenced",
+                "DUPLICATED_BY": "Duplicated by",
+                "DUPLICATES": "Duplicates"
             }
         },
         "livemap": {

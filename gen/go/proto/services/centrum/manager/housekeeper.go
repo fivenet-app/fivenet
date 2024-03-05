@@ -3,8 +3,6 @@ package manager
 import (
 	"context"
 	"database/sql"
-	"fmt"
-	"strings"
 	"sync"
 	"time"
 
@@ -417,11 +415,6 @@ func (s *Housekeeper) deduplicateDispatches(ctx context.Context) error {
 					continue
 				}
 
-				description := ""
-				if dsp.Description != nil {
-					description = *dsp.Description + "\n"
-				}
-
 				// Iterate over close by dispatches and collect the active ones
 				locs := s.State.GetDispatchLocations(dsp.Job)
 				closestsDsp := locs.KNearest(dsp.Point(), 8, func(p orb.Pointer) bool {
@@ -429,6 +422,7 @@ func (s *Housekeeper) deduplicateDispatches(ctx context.Context) error {
 				}, 45.0)
 				s.logger.Debug("deduplicating dispatches", zap.String("job", dsp.Job), zap.Uint64("dispatch_id", dsp.Id), zap.Int("closeby_dsps", len(closestsDsp)))
 
+				refs := []*centrum.DispatchReference{}
 				activeDispatchesCloseBy := []*centrum.Dispatch{}
 				for _, dest := range closestsDsp {
 					if dest == nil {
@@ -449,11 +443,11 @@ func (s *Housekeeper) deduplicateDispatches(ctx context.Context) error {
 						continue
 					}
 
-					if closeByDsp.Creator == nil || closeByDsp.Anon {
-						description += fmt.Sprintf("DSP-%d\n", closeByDsp.Id)
-					} else {
-						description += fmt.Sprintf("DSP-%d (%s, %s)\n", closeByDsp.Id, closeByDsp.Creator.Firstname, closeByDsp.Creator.Lastname)
-					}
+					// Add close by dispatch as a referenc
+					refs = append(refs, &centrum.DispatchReference{
+						TargetDispatchId: closeByDsp.Id,
+						ReferenceType:    centrum.DispatchReferenceType_DISPATCH_REFERENCE_TYPE_DUPLICATED_BY,
+					})
 
 					activeDispatchesCloseBy = append(activeDispatchesCloseBy, closeByDsp)
 				}
@@ -463,17 +457,19 @@ func (s *Housekeeper) deduplicateDispatches(ctx context.Context) error {
 					continue
 				}
 
-				if description != "" {
-					description = strings.Trim(description, "\n")
-					dsp.Description = &description
-					if _, err := s.UpdateDispatch(ctx, dsp.Job, nil, dsp, true); err != nil {
-						s.logger.Error("failed to update original dispatch description", zap.Error(err))
-					}
-				}
-
 				// Add "multiple" attribute when multiple dispatches close by
 				if err := s.AddAttributeToDispatch(ctx, dsp, centrum.DispatchAttributeMultiple); err != nil {
 					s.logger.Error("failed to update original dispatch attribute", zap.Error(err))
+				}
+
+				// Set dispatch references on dispatch
+				if err := s.AddReferencesOnDispatch(ctx, dsp, refs...); err != nil {
+					s.logger.Error("failed to update duplicate dispatch references", zap.Error(err))
+				}
+
+				dspRef := &centrum.DispatchReference{
+					TargetDispatchId: dsp.Id,
+					ReferenceType:    centrum.DispatchReferenceType_DISPATCH_REFERENCE_TYPE_DUPLICATE_OF,
 				}
 
 				for _, closeByDsp := range activeDispatchesCloseBy {
@@ -487,10 +483,12 @@ func (s *Housekeeper) deduplicateDispatches(ctx context.Context) error {
 						continue
 					}
 
-					if closeByDsp.Attributes != nil && !closeByDsp.Attributes.Has(centrum.DispatchAttributeDuplicate) {
-						if err := s.AddAttributeToDispatch(ctx, closeByDsp, centrum.DispatchAttributeDuplicate); err != nil {
-							s.logger.Error("failed to update duplicate dispatch attribute", zap.Error(err))
-						}
+					if err := s.AddAttributeToDispatch(ctx, closeByDsp, centrum.DispatchAttributeDuplicate); err != nil {
+						s.logger.Error("failed to update duplicate dispatch attribute", zap.Error(err))
+					}
+
+					if err := s.AddReferencesOnDispatch(ctx, closeByDsp, dspRef); err != nil {
+						s.logger.Error("failed to update duplicate dispatch references", zap.Error(err))
 					}
 
 					if _, err := s.UpdateDispatchStatus(ctx, closeByDsp.Job, closeByDsp.Id, &centrum.DispatchStatus{

@@ -108,6 +108,7 @@ func (s *Server) ListDispatches(ctx context.Context, req *ListDispatchesRequest)
 			tDispatch.Message,
 			tDispatch.Description,
 			tDispatch.Attributes,
+			tDispatch.References,
 			tDispatch.X,
 			tDispatch.Y,
 			tDispatch.Postal,
@@ -202,7 +203,9 @@ func (s *Server) GetDispatch(ctx context.Context, req *GetDispatchRequest) (*Get
 			))).
 		AND(tDispatch.ID.EQ(jet.Uint64(req.Id)))
 
-	resp := &GetDispatchResponse{}
+	resp := &GetDispatchResponse{
+		Dispatch: &centrum.Dispatch{},
+	}
 
 	stmt := tDispatch.
 		SELECT(
@@ -213,6 +216,7 @@ func (s *Server) GetDispatch(ctx context.Context, req *GetDispatchRequest) (*Get
 			tDispatch.Message,
 			tDispatch.Description,
 			tDispatch.Attributes,
+			tDispatch.References,
 			tDispatch.X,
 			tDispatch.Y,
 			tDispatch.Postal,
@@ -251,7 +255,7 @@ func (s *Server) GetDispatch(ctx context.Context, req *GetDispatchRequest) (*Get
 		).
 		LIMIT(1)
 
-	if err := stmt.QueryContext(ctx, s.db, &resp.Dispatch); err != nil {
+	if err := stmt.QueryContext(ctx, s.db, resp.Dispatch); err != nil {
 		return nil, errswrap.NewError(errorscentrum.ErrFailedQuery, err)
 	}
 

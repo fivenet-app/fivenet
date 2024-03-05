@@ -19,6 +19,7 @@ type FivenetCentrumDispatches struct {
 	Message     string     `json:"message"`
 	Description *string    `json:"description"`
 	Attributes  *string    `json:"attributes"`
+	References  *string    `json:"references"`
 	X           *float64   `json:"x"`
 	Y           *float64   `json:"y"`
 	Postal      *string    `json:"postal"`

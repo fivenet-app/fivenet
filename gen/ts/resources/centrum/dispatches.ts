@@ -209,9 +209,9 @@ export interface DispatchReferences {
  */
 export interface DispatchReference {
     /**
-     * @generated from protobuf field: uint64 target_dispatch_id = 1;
+     * @generated from protobuf field: uint64 target_dispatch_id = 1 [jstype = JS_STRING];
      */
-    targetDispatchId: bigint;
+    targetDispatchId: string;
     /**
      * @generated from protobuf field: resources.centrum.DispatchReferenceType reference_type = 2;
      */
@@ -304,21 +304,21 @@ export enum TakeDispatchResp {
  */
 export enum DispatchReferenceType {
     /**
-     * @generated from protobuf enum value: DISPATCH_REFERENCE_UNSPECIFIED = 0;
+     * @generated from protobuf enum value: DISPATCH_REFERENCE_TYPE_UNSPECIFIED = 0;
      */
-    DISPATCH_REFERENCE_UNSPECIFIED = 0,
+    UNSPECIFIED = 0,
     /**
-     * @generated from protobuf enum value: DISPATCH_REFERENCE_REFERENCED = 1;
+     * @generated from protobuf enum value: DISPATCH_REFERENCE_TYPE_REFERENCED = 1;
      */
-    DISPATCH_REFERENCE_REFERENCED = 1,
+    REFERENCED = 1,
     /**
-     * @generated from protobuf enum value: DISPATCH_REFERENCE_DUPLICATED_BY = 2;
+     * @generated from protobuf enum value: DISPATCH_REFERENCE_TYPE_DUPLICATED_BY = 2;
      */
-    DISPATCH_REFERENCE_DUPLICATED_BY = 2,
+    DUPLICATED_BY = 2,
     /**
-     * @generated from protobuf enum value: DISPATCH_REFERENCE_DUPLICATES = 3;
+     * @generated from protobuf enum value: DISPATCH_REFERENCE_TYPE_DUPLICATE_OF = 3;
      */
-    DISPATCH_REFERENCE_DUPLICATES = 3
+    DUPLICATE_OF = 3
 }
 // @generated message type with reflection information, may provide speed optimized methods
 class Dispatch$Type extends MessageType<Dispatch> {
@@ -801,13 +801,13 @@ export const DispatchReferences = new DispatchReferences$Type();
 class DispatchReference$Type extends MessageType<DispatchReference> {
     constructor() {
         super("resources.centrum.DispatchReference", [
-            { no: 1, name: "target_dispatch_id", kind: "scalar", T: 4 /*ScalarType.UINT64*/, L: 0 /*LongType.BIGINT*/ },
-            { no: 2, name: "reference_type", kind: "enum", T: () => ["resources.centrum.DispatchReferenceType", DispatchReferenceType], options: { "validate.rules": { enum: { definedOnly: true } } } }
+            { no: 1, name: "target_dispatch_id", kind: "scalar", T: 4 /*ScalarType.UINT64*/ },
+            { no: 2, name: "reference_type", kind: "enum", T: () => ["resources.centrum.DispatchReferenceType", DispatchReferenceType, "DISPATCH_REFERENCE_TYPE_"], options: { "validate.rules": { enum: { definedOnly: true } } } }
         ]);
     }
     create(value?: PartialMessage<DispatchReference>): DispatchReference {
         const message = globalThis.Object.create((this.messagePrototype!));
-        message.targetDispatchId = 0n;
+        message.targetDispatchId = "0";
         message.referenceType = 0;
         if (value !== undefined)
             reflectionMergePartial<DispatchReference>(this, message, value);
@@ -818,8 +818,8 @@ class DispatchReference$Type extends MessageType<DispatchReference> {
         while (reader.pos < end) {
             let [fieldNo, wireType] = reader.tag();
             switch (fieldNo) {
-                case /* uint64 target_dispatch_id */ 1:
-                    message.targetDispatchId = reader.uint64().toBigInt();
+                case /* uint64 target_dispatch_id = 1 [jstype = JS_STRING];*/ 1:
+                    message.targetDispatchId = reader.uint64().toString();
                     break;
                 case /* resources.centrum.DispatchReferenceType reference_type */ 2:
                     message.referenceType = reader.int32();
@@ -836,8 +836,8 @@ class DispatchReference$Type extends MessageType<DispatchReference> {
         return message;
     }
     internalBinaryWrite(message: DispatchReference, writer: IBinaryWriter, options: BinaryWriteOptions): IBinaryWriter {
-        /* uint64 target_dispatch_id = 1; */
-        if (message.targetDispatchId !== 0n)
+        /* uint64 target_dispatch_id = 1 [jstype = JS_STRING]; */
+        if (message.targetDispatchId !== "0")
             writer.tag(1, WireType.Varint).uint64(message.targetDispatchId);
         /* resources.centrum.DispatchReferenceType reference_type = 2; */
         if (message.referenceType !== 0)
