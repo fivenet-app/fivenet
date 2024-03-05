@@ -364,14 +364,14 @@ onBeforeMount(async () => updateUnitInForm());
                                                         for="homePostal"
                                                         class="block text-sm font-medium leading-6 text-neutral"
                                                     >
-                                                        {{ `${$t('common.department')} ${$t('common.postal')}` }}
+                                                        {{ `${$t('common.department')} ${$t('common.postal_code')}` }}
                                                     </label>
                                                     <VeeField
                                                         name="homePostal"
                                                         type="text"
                                                         class="block w-full rounded-md border-0 bg-base-700 py-1.5 text-neutral placeholder:text-accent-200 focus:ring-2 focus:ring-inset focus:ring-base-300 sm:text-sm sm:leading-6"
-                                                        :placeholder="`${$t('common.department')} ${$t('common.postal')}`"
-                                                        :label="`${$t('common.department')} ${$t('common.postal')}`"
+                                                        :placeholder="`${$t('common.department')} ${$t('common.postal_code')}`"
+                                                        :label="`${$t('common.department')} ${$t('common.postal_code')}`"
                                                         @focusin="focusTablet(true)"
                                                         @focusout="focusTablet(false)"
                                                     />
