@@ -23,13 +23,13 @@ const selectedDispatch = ref<string | undefined>();
             @close="selectedDispatch = undefined"
         />
 
-        <div class="inline-flex gap-1 line-clamp-2">
+        <div class="grid grid-cols-2 gap-1">
             <span
                 v-for="reference in references?.references"
                 :key="reference.targetDispatchId"
-                class="inline-flex items-center rounded-md bg-info-400/10 px-2 py-1 text-xs font-medium text-info-400 ring-1 ring-inset ring-info-400/20"
+                class="flex items-center rounded-md bg-info-400/10 px-2 py-1 text-xs font-medium text-info-400 ring-1 ring-inset ring-info-400/20"
             >
-                <span>
+                <span class="flex-1">
                     {{ $t(`enums.centrum.DispatchReferenceType.${DispatchReferenceType[reference.referenceType]}`) }} DSP-{{
                         reference.targetDispatchId
                     }}
