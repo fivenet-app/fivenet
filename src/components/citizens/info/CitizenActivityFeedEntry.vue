@@ -15,171 +15,360 @@ import {
     RunFastIcon,
     TrafficConeIcon,
 } from 'mdi-vue3';
-import { type DefineComponent } from 'vue';
-import { type RoutesNamedLocations } from '@typed-router';
 import CitizenInfoPopover from '~/components/partials/citizens/CitizenInfoPopover.vue';
 import GenericTime from '~/components/partials/elements/GenericTime.vue';
 import { UserActivity } from '~~/gen/ts/resources/users/users';
+import IDCopyBadge from '~/components/partials/IDCopyBadge.vue';
 
 const props = defineProps<{
     activity: UserActivity;
 }>();
-
-const { t, n } = useI18n();
-
-let icon: DefineComponent = markRaw(HelpCircleIcon);
-const iconColor = ref<string>('text-neutral');
-const actionText = ref<string>(props.activity.key);
-const actionValue = ref<string>(`${props.activity.oldValue} -> ${props.activity.newValue}`);
-const actionReason = ref<string>(props.activity.reason);
-const actionLink = ref<RoutesNamedLocations>();
-const actionLinkText = ref<string>('');
-
-switch (props.activity.key) {
-    case 'DocStore.Relation': {
-        actionText.value = t('components.citizens.citizen_info_activity_feed_entry.document_relation.added');
-        icon = markRaw(AtIcon);
-        actionLink.value = { name: 'documents-id', params: { id: 0 } };
-        actionLinkText.value = t('common.document', 1);
-        actionReason.value = t(`enums.docstore.DocRelation.${props.activity.reason.replace('DOC_RELATION_', '')}`);
-
-        if (props.activity.newValue !== '') {
-            iconColor.value = 'text-info-600';
-            actionLink.value.params.id = props.activity.newValue;
-        } else if (props.activity.oldValue !== '') {
-            actionText.value = t('components.citizens.citizen_info_activity_feed_entry.document_relation.removed');
-            iconColor.value = 'text-base-600';
-            actionLink.value.params.id = props.activity.oldValue;
-        }
-        break;
-    }
-
-    case 'UserProps.Wanted': {
-        actionText.value = t('components.citizens.citizen_info_activity_feed_entry.bool_set_citizen');
-        actionValue.value =
-            props.activity.newValue === 'true' ? t('common.wanted') : `${t('common.not').toLowerCase()} ${t('common.wanted')}`;
-
-        if (props.activity.newValue === 'true') {
-            icon = BellAlertIcon;
-            iconColor.value = 'text-error-400';
-        } else {
-            icon = BellSleepIcon;
-            iconColor.value = 'text-success-400';
-        }
-        break;
-    }
-
-    case 'UserProps.Job': {
-        actionText.value = t('components.citizens.citizen_info_activity_feed_entry.userprops_job_set');
-        actionValue.value = props.activity.newValue;
-        icon = BriefcaseIcon;
-        iconColor.value = 'text-secondary-400';
-        break;
-    }
-
-    case 'UserProps.TrafficInfractionPoints': {
-        actionText.value = t('components.citizens.citizen_info_activity_feed_entry.traffic_infraction_points.action_text');
-        actionValue.value = `${props.activity.oldValue} ${t('common.to').toLocaleLowerCase()} ${props.activity.newValue}`;
-        icon = TrafficConeIcon;
-        iconColor.value = 'text-secondary-400';
-        break;
-    }
-
-    case 'UserProps.MugShot': {
-        actionText.value = t('components.citizens.citizen_info_activity_feed_entry.userprops_mug_shot_set');
-        actionValue.value = '';
-        icon = CameraAccountIcon;
-        iconColor.value = 'text-secondary-400';
-        break;
-    }
-
-    case 'Plugin.Licenses': {
-        icon = LicenseIcon;
-        if (props.activity.newValue !== '') {
-            actionText.value = t('components.citizens.citizen_info_activity_feed_entry.plugin_license.added');
-            actionValue.value = '';
-            iconColor.value = 'text-info-600';
-        } else {
-            actionText.value = t('components.citizens.citizen_info_activity_feed_entry.plugin_license.removed');
-            actionValue.value = '';
-            iconColor.value = 'text-warn-600';
-        }
-        break;
-    }
-
-    case 'Plugin.Jail': {
-        actionValue.value = '';
-        if (props.activity.oldValue === '' && props.activity.newValue !== '0') {
-            icon = HandcuffsIcon;
-            actionText.value = t('components.citizens.citizen_info_activity_feed_entry.plugin_jail.jailed');
-            actionValue.value = fromSecondsToFormattedDuration(parseInt(props.activity.newValue, 10));
-        } else if (props.activity.newValue === '0') {
-            icon = DoorOpenIcon;
-            actionText.value = t('components.citizens.citizen_info_activity_feed_entry.plugin_jail.unjailed');
-        } else {
-            icon = RunFastIcon;
-            actionText.value = t('components.citizens.citizen_info_activity_feed_entry.plugin_jail.escaped');
-        }
-        break;
-    }
-
-    case 'Plugin.Billing.Fines': {
-        if (props.activity.newValue === '0') {
-            icon = ReceiptTextCheckIcon;
-            actionText.value = t('components.citizens.citizen_info_activity_feed_entry.plugin_billing_fines.paid');
-            actionValue.value = n(parseInt(props.activity.oldValue, 10), 'currency');
-            iconColor.value = 'text-success-400';
-        } else if (props.activity.newValue === props.activity.oldValue) {
-            icon = ReceiptTextRemoveIcon;
-            actionText.value = t('components.citizens.citizen_info_activity_feed_entry.plugin_billing_fines.removed');
-            actionValue.value = n(parseInt(props.activity.oldValue, 10), 'currency');
-            iconColor.value = 'text-secondary-400';
-        } else {
-            icon = ReceiptTextPlusIcon;
-            actionText.value = t('components.citizens.citizen_info_activity_feed_entry.plugin_billing_fines.created');
-            actionValue.value = n(parseInt(props.activity.newValue, 10), 'currency');
-            iconColor.value = 'text-info-400';
-        }
-        break;
-    }
-}
 </script>
 
 <template>
-    <div class="flex space-x-3">
-        <div class="my-auto flex h-10 w-10 items-center justify-center rounded-full">
-            <component :is="icon" :class="[iconColor, 'h-full w-full']" aria-hidden="true" />
-        </div>
-        <div class="flex-1 space-y-1">
-            <div class="flex items-center justify-between">
-                <h3 class="text-sm font-medium text-neutral">
-                    {{ actionText }}
-                    <span class="font-bold">
-                        <NuxtLink v-if="actionLink" :to="actionLink">
-                            {{ actionLinkText }}
-                        </NuxtLink>
-                        <!-- eslint-disable-next-line vue/no-v-html -->
-                        <span v-else v-html="actionValue"></span>
-                    </span>
-                </h3>
-                <p class="text-sm text-gray-400">
-                    <GenericTime :value="activity.createdAt" type="long" />
-                </p>
+    <template v-if="activity.key === 'DocStore.Relation'">
+        <div class="flex space-x-3">
+            <div class="my-auto flex h-10 w-10 items-center justify-center rounded-full">
+                <AtIcon
+                    class="h-full w-full"
+                    :class="activity.newValue !== '' ? 'text-info-600' : 'text-base-600'"
+                    aria-hidden="true"
+                />
             </div>
-            <div class="flex items-center justify-between">
-                <p class="inline-flex gap-1 text-sm text-gray-300">
-                    <template v-if="actionReason">
+            <div class="flex-1 space-y-1">
+                <div class="flex items-center justify-between">
+                    <h3 class="inline-flex items-center gap-1 text-sm font-medium text-neutral">
+                        <span
+                            ><template v-if="activity.newValue !== ''">
+                                {{ $t('components.citizens.citizen_info_activity_feed_entry.document_relation.added') }}
+                            </template>
+                            <template v-else>
+                                {{ $t('components.citizens.citizen_info_activity_feed_entry.document_relation.removed') }}
+                            </template>
+                        </span>
+                        <span class="font-semibold">
+                            <NuxtLink
+                                :to="{
+                                    name: 'documents-id',
+                                    params: { id: activity.newValue !== '' ? activity.newValue : activity.oldValue },
+                                }"
+                            >
+                                {{ $t('common.document', 1) }}
+                            </NuxtLink>
+                        </span>
+                        <IDCopyBadge :id="activity.newValue !== '' ? activity.newValue : activity.oldValue" prefix="DOC" />
+                    </h3>
+                    <p class="text-sm text-gray-400">
+                        <GenericTime :value="activity.createdAt" type="long" />
+                    </p>
+                </div>
+                <div class="flex items-center justify-between">
+                    <p class="inline-flex gap-1 text-sm text-gray-300">
                         <span>{{ $t('common.reason') }}:</span>
                         <span class="font-bold">
-                            {{ actionReason }}
+                            {{ $t(`enums.docstore.DocRelation.${activity.reason.replace('DOC_RELATION_', '')}`) }}
                         </span>
-                    </template>
-                </p>
-                <p class="inline-flex text-sm text-gray-300">
-                    {{ $t('common.created_by') }}
-                    <CitizenInfoPopover class="ml-1" text-class="underline" :user="activity.sourceUser" />
-                </p>
+                    </p>
+                    <p class="inline-flex text-sm text-gray-300">
+                        {{ $t('common.created_by') }}
+                        <CitizenInfoPopover class="ml-1" text-class="underline" :user="activity.sourceUser" />
+                    </p>
+                </div>
             </div>
         </div>
-    </div>
+    </template>
+    <template v-else-if="activity.key === 'UserProps.Wanted'">
+        <div class="flex space-x-3">
+            <div class="my-auto flex h-10 w-10 items-center justify-center rounded-full">
+                <BellAlertIcon v-if="activity.newValue === 'true'" class="text-error-400 h-full w-full" aria-hidden="true" />
+                <BellSleepIcon v-else class="text-success-400 h-full w-full" aria-hidden="true" />
+            </div>
+            <div class="flex-1 space-y-1">
+                <div class="flex items-center justify-between">
+                    <h3 class="text-sm font-medium text-neutral">
+                        {{ $t('components.citizens.citizen_info_activity_feed_entry.bool_set_citizen') }}
+                        <span class="font-semibold">
+                            {{
+                                activity.newValue === 'true'
+                                    ? $t('common.wanted')
+                                    : `${$t('common.not').toLowerCase()} ${$t('common.wanted')}`
+                            }}
+                        </span>
+                    </h3>
+                    <p class="text-sm text-gray-400">
+                        <GenericTime :value="activity.createdAt" type="long" />
+                    </p>
+                </div>
+                <div class="flex items-center justify-between">
+                    <p class="inline-flex gap-1 text-sm text-gray-300">
+                        <span>{{ $t('common.reason') }}:</span>
+                        <span class="font-semibold">
+                            {{ activity.reason }}
+                        </span>
+                    </p>
+                    <p class="inline-flex text-sm text-gray-300">
+                        {{ $t('common.created_by') }}
+                        <CitizenInfoPopover class="ml-1" text-class="underline" :user="activity.sourceUser" />
+                    </p>
+                </div>
+            </div>
+        </div>
+    </template>
+    <template v-else-if="activity.key === 'UserProps.Job'">
+        <div class="flex space-x-3">
+            <div class="my-auto flex h-10 w-10 items-center justify-center rounded-full">
+                <BriefcaseIcon class="text-secondary-400 h-full w-full" aria-hidden="true" />
+            </div>
+            <div class="flex-1 space-y-1">
+                <div class="flex items-center justify-between">
+                    <h3 class="text-sm font-medium text-neutral">
+                        {{ $t('components.citizens.citizen_info_activity_feed_entry.userprops_job_set') }}
+                        <span class="font-semibold">
+                            {{ activity.newValue }}
+                        </span>
+                    </h3>
+                    <p class="text-sm text-gray-400">
+                        <GenericTime :value="activity.createdAt" type="long" />
+                    </p>
+                </div>
+                <div class="flex items-center justify-between">
+                    <p class="inline-flex gap-1 text-sm text-gray-300">
+                        <span>{{ $t('common.reason') }}:</span>
+                        <span class="font-semibold">
+                            {{ activity.reason }}
+                        </span>
+                    </p>
+                    <p class="inline-flex text-sm text-gray-300">
+                        {{ $t('common.created_by') }}
+                        <CitizenInfoPopover class="ml-1" text-class="underline" :user="activity.sourceUser" />
+                    </p>
+                </div>
+            </div>
+        </div>
+    </template>
+    <template v-else-if="activity.key === 'UserProps.TrafficInfractionPoints'">
+        <div class="flex space-x-3">
+            <div class="my-auto flex h-10 w-10 items-center justify-center rounded-full">
+                <TrafficConeIcon class="text-secondary-400 h-full w-full" aria-hidden="true" />
+            </div>
+            <div class="flex-1 space-y-1">
+                <div class="flex items-center justify-between">
+                    <h3 class="text-sm font-medium text-neutral">
+                        {{ $t('components.citizens.citizen_info_activity_feed_entry.traffic_infraction_points.action_text') }}
+                        <span>
+                            <span class="font-semibold">{{ activity.oldValue }}</span>
+                            {{ $t('common.to').toLocaleLowerCase() }}
+                            <span class="font-semibold">{{ activity.newValue }}</span>
+                        </span>
+                    </h3>
+                    <p class="text-sm text-gray-400">
+                        <GenericTime :value="activity.createdAt" type="long" />
+                    </p>
+                </div>
+                <div class="flex items-center justify-between">
+                    <p class="inline-flex gap-1 text-sm text-gray-300">
+                        <span>{{ $t('common.reason') }}:</span>
+                        <span class="font-semibold">
+                            {{ activity.reason }}
+                        </span>
+                    </p>
+                    <p class="inline-flex text-sm text-gray-300">
+                        {{ $t('common.created_by') }}
+                        <CitizenInfoPopover class="ml-1" text-class="underline" :user="activity.sourceUser" />
+                    </p>
+                </div>
+            </div>
+        </div>
+    </template>
+    <template v-else-if="activity.key === 'UserProps.MugShot'">
+        <div class="flex space-x-3">
+            <div class="my-auto flex h-10 w-10 items-center justify-center rounded-full">
+                <CameraAccountIcon class="text-secondary-400 h-full w-full" aria-hidden="true" />
+            </div>
+            <div class="flex-1 space-y-1">
+                <div class="flex items-center justify-between">
+                    <h3 class="text-sm font-medium text-neutral">
+                        {{ $t('components.citizens.citizen_info_activity_feed_entry.userprops_mug_shot_set') }}
+                    </h3>
+                    <p class="text-sm text-gray-400">
+                        <GenericTime :value="activity.createdAt" type="long" />
+                    </p>
+                </div>
+                <div class="flex items-center justify-between">
+                    <p class="inline-flex gap-1 text-sm text-gray-300">
+                        <span>{{ $t('common.reason') }}:</span>
+                        <span class="font-semibold">
+                            {{ activity.reason }}
+                        </span>
+                    </p>
+                    <p class="inline-flex text-sm text-gray-300">
+                        {{ $t('common.created_by') }}
+                        <CitizenInfoPopover class="ml-1" text-class="underline" :user="activity.sourceUser" />
+                    </p>
+                </div>
+            </div>
+        </div>
+    </template>
+    <template v-else-if="activity.key === 'Plugin.Licenses'">
+        <div class="flex space-x-3">
+            <div class="my-auto flex h-10 w-10 items-center justify-center rounded-full">
+                <LicenseIcon
+                    class="h-full w-full"
+                    :class="activity.newValue !== 'text-info-600' ? 'text-warn-600' : ''"
+                    aria-hidden="true"
+                />
+            </div>
+            <div class="flex-1 space-y-1">
+                <div class="flex items-center justify-between">
+                    <h3 class="text-sm font-medium text-neutral">
+                        {{
+                            activity.newValue !== ''
+                                ? $t('components.citizens.citizen_info_activity_feed_entry.plugin_license.added')
+                                : $t('components.citizens.citizen_info_activity_feed_entry.plugin_license.removed')
+                        }}
+                    </h3>
+                    <p class="text-sm text-gray-400">
+                        <GenericTime :value="activity.createdAt" type="long" />
+                    </p>
+                </div>
+                <div class="flex items-center justify-between">
+                    <p class="inline-flex gap-1 text-sm text-gray-300">
+                        <span>{{ $t('common.reason') }}:</span>
+                        <span class="font-semibold">
+                            {{ activity.reason }}
+                        </span>
+                    </p>
+                    <p class="inline-flex text-sm text-gray-300">
+                        {{ $t('common.created_by') }}
+                        <CitizenInfoPopover class="ml-1" text-class="underline" :user="activity.sourceUser" />
+                    </p>
+                </div>
+            </div>
+        </div>
+    </template>
+    <template v-else-if="activity.key === 'Plugin.Jail'">
+        <div class="flex space-x-3">
+            <div class="my-auto flex h-10 w-10 items-center justify-center rounded-full text-neutral">
+                <HandcuffsIcon
+                    v-if="activity.oldValue === '' && activity.newValue !== '0'"
+                    class="h-full w-full"
+                    aria-hidden="true"
+                />
+                <DoorOpenIcon v-else-if="activity.newValue === '0'" class="h-full w-full" aria-hidden="true" />
+                <RunFastIcon v-else class="h-full w-full" aria-hidden="true" />
+            </div>
+            <div class="flex-1 space-y-1">
+                <div class="flex items-center justify-between">
+                    <h3 class="text-sm font-medium text-neutral">
+                        <template v-if="activity.oldValue === '' && activity.newValue !== '0'">
+                            {{ $t('components.citizens.citizen_info_activity_feed_entry.plugin_jail.jailed') }}
+                            {{ fromSecondsToFormattedDuration(parseInt(props.activity.newValue)) }}
+                        </template>
+                        <template v-else-if="activity.newValue === '0'">
+                            {{ $t('components.citizens.citizen_info_activity_feed_entry.plugin_jail.unjailed') }}
+                        </template>
+                        <template v-else>
+                            {{ $t('components.citizens.citizen_info_activity_feed_entry.plugin_jail.escaped') }}
+                        </template>
+                    </h3>
+                    <p class="text-sm text-gray-400">
+                        <GenericTime :value="activity.createdAt" type="long" />
+                    </p>
+                </div>
+                <div class="flex items-center justify-between">
+                    <p class="inline-flex gap-1 text-sm text-gray-300">
+                        <span>{{ $t('common.reason') }}:</span>
+                        <span class="font-semibold">
+                            {{ activity.reason }}
+                        </span>
+                    </p>
+                    <p class="inline-flex text-sm text-gray-300">
+                        {{ $t('common.created_by') }}
+                        <CitizenInfoPopover class="ml-1" text-class="underline" :user="activity.sourceUser" />
+                    </p>
+                </div>
+            </div>
+        </div>
+    </template>
+    <template v-else-if="activity.key === 'Plugin.Billing.Fines'">
+        <div class="flex space-x-3">
+            <div class="my-auto flex h-10 w-10 items-center justify-center rounded-full">
+                <ReceiptTextCheckIcon
+                    v-if="activity.newValue === '0'"
+                    class="text-success-400 h-full w-full"
+                    aria-hidden="true"
+                />
+                <ReceiptTextRemoveIcon
+                    v-else-if="activity.newValue === activity.oldValue"
+                    class="text-secondary-400 h-full w-full"
+                    aria-hidden="true"
+                />
+                <ReceiptTextPlusIcon v-else class="text-info-400 h-full w-full" aria-hidden="true" />
+            </div>
+            <div class="flex-1 space-y-1">
+                <div class="flex items-center justify-between">
+                    <h3 class="text-sm font-medium text-neutral">
+                        <template v-if="activity.newValue === '0'">
+                            {{ $t('components.citizens.citizen_info_activity_feed_entry.plugin_billing_fines.paid') }}
+                        </template>
+                        <template v-else-if="activity.newValue === activity.oldValue">
+                            {{
+                                $t('components.citizens.citizen_info_activity_feed_entry.plugin_billing_fines.removed')
+                            }}</template
+                        >
+                        <template v-else>
+                            {{ $t('components.citizens.citizen_info_activity_feed_entry.plugin_billing_fines.created') }}
+                        </template>
+                        <span>
+                            {{ $n(parseInt(props.activity.newValue), 'currency') }}
+                        </span>
+                    </h3>
+                    <p class="text-sm text-gray-400">
+                        <GenericTime :value="activity.createdAt" type="long" />
+                    </p>
+                </div>
+                <div class="flex items-center justify-between">
+                    <p class="inline-flex gap-1 text-sm text-gray-300">
+                        <span>{{ $t('common.reason') }}:</span>
+                        <span class="font-semibold">
+                            {{ activity.reason }}
+                        </span>
+                    </p>
+                    <p class="inline-flex text-sm text-gray-300">
+                        {{ $t('common.created_by') }}
+                        <CitizenInfoPopover class="ml-1" text-class="underline" :user="activity.sourceUser" />
+                    </p>
+                </div>
+            </div>
+        </div>
+    </template>
+    <template v-else>
+        <div class="flex space-x-3">
+            <div class="my-auto flex h-10 w-10 items-center justify-center rounded-full">
+                <HelpCircleIcon class="text-neutral h-full w-full" aria-hidden="true" />
+            </div>
+            <div class="flex-1 space-y-1">
+                <div class="flex items-center justify-between">
+                    <h3 class="text-sm font-medium text-neutral">
+                        {{ `${props.activity.oldValue} -> ${props.activity.newValue}` }}
+                    </h3>
+                    <p class="text-sm text-gray-400">
+                        <GenericTime :value="activity.createdAt" type="long" />
+                    </p>
+                </div>
+                <div class="flex items-center justify-between">
+                    <p class="inline-flex gap-1 text-sm text-gray-300">
+                        <span>{{ $t('common.reason') }}:</span>
+                        <span class="font-semibold">
+                            {{ activity.reason }}
+                        </span>
+                    </p>
+                    <p class="inline-flex text-sm text-gray-300">
+                        {{ $t('common.created_by') }}
+                        <CitizenInfoPopover class="ml-1" text-class="underline" :user="activity.sourceUser" />
+                    </p>
+                </div>
+            </div>
+        </div>
+    </template>
 </template>
