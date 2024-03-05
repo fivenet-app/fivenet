@@ -689,7 +689,6 @@
         "longitude": "Longitude",
         "filter": "Filter",
         "postal": "ZIP",
-        "postal_code": "Postal Code",
         "retry": "Retry",
         "time_range": "Time Range",
         "from": "From",
@@ -859,7 +858,8 @@
         "discord": "Discord",
         "redirecting_to": "You are being redirect to {0} ...",
         "absent": "Absent",
-        "upload": "Upload"
+        "upload": "Upload",
+        "postal_code": "Postal Code"
     },
     "notifications": {
         "clipboard": {
