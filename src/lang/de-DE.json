@@ -857,7 +857,8 @@
         "predefined": "Vordefiniert | Vordefinierte",
         "discord": "Discord",
         "redirecting_to": "Sie werden weitergeleitet zu {0}...",
-        "absent": "Abwesend"
+        "absent": "Abwesend",
+        "upload": "Hochladen"
     },
     "notifications": {
         "clipboard": {
