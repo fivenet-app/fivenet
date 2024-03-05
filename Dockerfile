@@ -9,7 +9,7 @@ RUN rm -rf ./.nuxt/ && \
     yarn && yarn generate
 
 # Backend Build
-FROM docker.io/library/golang:1.21.7 AS gobuilder
+FROM docker.io/library/golang:1.22.1 AS gobuilder
 WORKDIR /go/src/github.com/galexrt/fivenet/
 COPY . ./
 RUN apt-get update && \
