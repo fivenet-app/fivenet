@@ -6,7 +6,7 @@ toolchain go1.21.1
 
 require (
 	github.com/lyft/protoc-gen-star/v2 v2.0.3
-	google.golang.org/protobuf v1.32.0
+	google.golang.org/protobuf v1.33.0
 )
 
 require (
