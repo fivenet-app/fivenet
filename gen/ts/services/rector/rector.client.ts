@@ -4,18 +4,6 @@
 import type { RpcTransport } from "@protobuf-ts/runtime-rpc";
 import type { ServiceInfo } from "@protobuf-ts/runtime-rpc";
 import { RectorService } from "./rector";
-import type { DeleteFileResponse } from "./rector";
-import type { DeleteFileRequest } from "./rector";
-import type { ListFilesResponse } from "./rector";
-import type { ListFilesRequest } from "./rector";
-import type { DeleteLawResponse } from "./rector";
-import type { DeleteLawRequest } from "./rector";
-import type { CreateOrUpdateLawResponse } from "./rector";
-import type { CreateOrUpdateLawRequest } from "./rector";
-import type { DeleteLawBookResponse } from "./rector";
-import type { DeleteLawBookRequest } from "./rector";
-import type { CreateOrUpdateLawBookResponse } from "./rector";
-import type { CreateOrUpdateLawBookRequest } from "./rector";
 import type { UpdateRoleLimitsResponse } from "./rector";
 import type { UpdateRoleLimitsRequest } from "./rector";
 import type { ViewAuditLogResponse } from "./rector";
@@ -103,42 +91,6 @@ export interface IRectorServiceClient {
      * @generated from protobuf rpc: UpdateRoleLimits(services.rector.UpdateRoleLimitsRequest) returns (services.rector.UpdateRoleLimitsResponse);
      */
     updateRoleLimits(input: UpdateRoleLimitsRequest, options?: RpcOptions): UnaryCall<UpdateRoleLimitsRequest, UpdateRoleLimitsResponse>;
-    /**
-     * @perm: Name=SuperUser
-     *
-     * @generated from protobuf rpc: CreateOrUpdateLawBook(services.rector.CreateOrUpdateLawBookRequest) returns (services.rector.CreateOrUpdateLawBookResponse);
-     */
-    createOrUpdateLawBook(input: CreateOrUpdateLawBookRequest, options?: RpcOptions): UnaryCall<CreateOrUpdateLawBookRequest, CreateOrUpdateLawBookResponse>;
-    /**
-     * @perm: Name=SuperUser
-     *
-     * @generated from protobuf rpc: DeleteLawBook(services.rector.DeleteLawBookRequest) returns (services.rector.DeleteLawBookResponse);
-     */
-    deleteLawBook(input: DeleteLawBookRequest, options?: RpcOptions): UnaryCall<DeleteLawBookRequest, DeleteLawBookResponse>;
-    /**
-     * @perm: Name=SuperUser
-     *
-     * @generated from protobuf rpc: CreateOrUpdateLaw(services.rector.CreateOrUpdateLawRequest) returns (services.rector.CreateOrUpdateLawResponse);
-     */
-    createOrUpdateLaw(input: CreateOrUpdateLawRequest, options?: RpcOptions): UnaryCall<CreateOrUpdateLawRequest, CreateOrUpdateLawResponse>;
-    /**
-     * @perm: Name=SuperUser
-     *
-     * @generated from protobuf rpc: DeleteLaw(services.rector.DeleteLawRequest) returns (services.rector.DeleteLawResponse);
-     */
-    deleteLaw(input: DeleteLawRequest, options?: RpcOptions): UnaryCall<DeleteLawRequest, DeleteLawResponse>;
-    /**
-     * @perm: Name=SuperUser
-     *
-     * @generated from protobuf rpc: ListFiles(services.rector.ListFilesRequest) returns (services.rector.ListFilesResponse);
-     */
-    listFiles(input: ListFilesRequest, options?: RpcOptions): UnaryCall<ListFilesRequest, ListFilesResponse>;
-    /**
-     * @perm: Name=SuperUser
-     *
-     * @generated from protobuf rpc: DeleteFile(services.rector.DeleteFileRequest) returns (services.rector.DeleteFileResponse);
-     */
-    deleteFile(input: DeleteFileRequest, options?: RpcOptions): UnaryCall<DeleteFileRequest, DeleteFileResponse>;
 }
 /**
  * @generated from protobuf service services.rector.RectorService
@@ -238,59 +190,5 @@ export class RectorServiceClient implements IRectorServiceClient, ServiceInfo {
     updateRoleLimits(input: UpdateRoleLimitsRequest, options?: RpcOptions): UnaryCall<UpdateRoleLimitsRequest, UpdateRoleLimitsResponse> {
         const method = this.methods[9], opt = this._transport.mergeOptions(options);
         return stackIntercept<UpdateRoleLimitsRequest, UpdateRoleLimitsResponse>("unary", this._transport, method, opt, input);
-    }
-    /**
-     * @perm: Name=SuperUser
-     *
-     * @generated from protobuf rpc: CreateOrUpdateLawBook(services.rector.CreateOrUpdateLawBookRequest) returns (services.rector.CreateOrUpdateLawBookResponse);
-     */
-    createOrUpdateLawBook(input: CreateOrUpdateLawBookRequest, options?: RpcOptions): UnaryCall<CreateOrUpdateLawBookRequest, CreateOrUpdateLawBookResponse> {
-        const method = this.methods[10], opt = this._transport.mergeOptions(options);
-        return stackIntercept<CreateOrUpdateLawBookRequest, CreateOrUpdateLawBookResponse>("unary", this._transport, method, opt, input);
-    }
-    /**
-     * @perm: Name=SuperUser
-     *
-     * @generated from protobuf rpc: DeleteLawBook(services.rector.DeleteLawBookRequest) returns (services.rector.DeleteLawBookResponse);
-     */
-    deleteLawBook(input: DeleteLawBookRequest, options?: RpcOptions): UnaryCall<DeleteLawBookRequest, DeleteLawBookResponse> {
-        const method = this.methods[11], opt = this._transport.mergeOptions(options);
-        return stackIntercept<DeleteLawBookRequest, DeleteLawBookResponse>("unary", this._transport, method, opt, input);
-    }
-    /**
-     * @perm: Name=SuperUser
-     *
-     * @generated from protobuf rpc: CreateOrUpdateLaw(services.rector.CreateOrUpdateLawRequest) returns (services.rector.CreateOrUpdateLawResponse);
-     */
-    createOrUpdateLaw(input: CreateOrUpdateLawRequest, options?: RpcOptions): UnaryCall<CreateOrUpdateLawRequest, CreateOrUpdateLawResponse> {
-        const method = this.methods[12], opt = this._transport.mergeOptions(options);
-        return stackIntercept<CreateOrUpdateLawRequest, CreateOrUpdateLawResponse>("unary", this._transport, method, opt, input);
-    }
-    /**
-     * @perm: Name=SuperUser
-     *
-     * @generated from protobuf rpc: DeleteLaw(services.rector.DeleteLawRequest) returns (services.rector.DeleteLawResponse);
-     */
-    deleteLaw(input: DeleteLawRequest, options?: RpcOptions): UnaryCall<DeleteLawRequest, DeleteLawResponse> {
-        const method = this.methods[13], opt = this._transport.mergeOptions(options);
-        return stackIntercept<DeleteLawRequest, DeleteLawResponse>("unary", this._transport, method, opt, input);
-    }
-    /**
-     * @perm: Name=SuperUser
-     *
-     * @generated from protobuf rpc: ListFiles(services.rector.ListFilesRequest) returns (services.rector.ListFilesResponse);
-     */
-    listFiles(input: ListFilesRequest, options?: RpcOptions): UnaryCall<ListFilesRequest, ListFilesResponse> {
-        const method = this.methods[14], opt = this._transport.mergeOptions(options);
-        return stackIntercept<ListFilesRequest, ListFilesResponse>("unary", this._transport, method, opt, input);
-    }
-    /**
-     * @perm: Name=SuperUser
-     *
-     * @generated from protobuf rpc: DeleteFile(services.rector.DeleteFileRequest) returns (services.rector.DeleteFileResponse);
-     */
-    deleteFile(input: DeleteFileRequest, options?: RpcOptions): UnaryCall<DeleteFileRequest, DeleteFileResponse> {
-        const method = this.methods[15], opt = this._transport.mergeOptions(options);
-        return stackIntercept<DeleteFileRequest, DeleteFileResponse>("unary", this._transport, method, opt, input);
     }
 }

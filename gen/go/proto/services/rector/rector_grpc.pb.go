@@ -19,22 +19,16 @@ import (
 const _ = grpc.SupportPackageIsVersion7
 
 const (
-	RectorService_GetJobProps_FullMethodName           = "/services.rector.RectorService/GetJobProps"
-	RectorService_SetJobProps_FullMethodName           = "/services.rector.RectorService/SetJobProps"
-	RectorService_GetRoles_FullMethodName              = "/services.rector.RectorService/GetRoles"
-	RectorService_GetRole_FullMethodName               = "/services.rector.RectorService/GetRole"
-	RectorService_CreateRole_FullMethodName            = "/services.rector.RectorService/CreateRole"
-	RectorService_DeleteRole_FullMethodName            = "/services.rector.RectorService/DeleteRole"
-	RectorService_UpdateRolePerms_FullMethodName       = "/services.rector.RectorService/UpdateRolePerms"
-	RectorService_GetPermissions_FullMethodName        = "/services.rector.RectorService/GetPermissions"
-	RectorService_ViewAuditLog_FullMethodName          = "/services.rector.RectorService/ViewAuditLog"
-	RectorService_UpdateRoleLimits_FullMethodName      = "/services.rector.RectorService/UpdateRoleLimits"
-	RectorService_CreateOrUpdateLawBook_FullMethodName = "/services.rector.RectorService/CreateOrUpdateLawBook"
-	RectorService_DeleteLawBook_FullMethodName         = "/services.rector.RectorService/DeleteLawBook"
-	RectorService_CreateOrUpdateLaw_FullMethodName     = "/services.rector.RectorService/CreateOrUpdateLaw"
-	RectorService_DeleteLaw_FullMethodName             = "/services.rector.RectorService/DeleteLaw"
-	RectorService_ListFiles_FullMethodName             = "/services.rector.RectorService/ListFiles"
-	RectorService_DeleteFile_FullMethodName            = "/services.rector.RectorService/DeleteFile"
+	RectorService_GetJobProps_FullMethodName      = "/services.rector.RectorService/GetJobProps"
+	RectorService_SetJobProps_FullMethodName      = "/services.rector.RectorService/SetJobProps"
+	RectorService_GetRoles_FullMethodName         = "/services.rector.RectorService/GetRoles"
+	RectorService_GetRole_FullMethodName          = "/services.rector.RectorService/GetRole"
+	RectorService_CreateRole_FullMethodName       = "/services.rector.RectorService/CreateRole"
+	RectorService_DeleteRole_FullMethodName       = "/services.rector.RectorService/DeleteRole"
+	RectorService_UpdateRolePerms_FullMethodName  = "/services.rector.RectorService/UpdateRolePerms"
+	RectorService_GetPermissions_FullMethodName   = "/services.rector.RectorService/GetPermissions"
+	RectorService_ViewAuditLog_FullMethodName     = "/services.rector.RectorService/ViewAuditLog"
+	RectorService_UpdateRoleLimits_FullMethodName = "/services.rector.RectorService/UpdateRoleLimits"
 )
 
 // RectorServiceClient is the client API for RectorService service.
@@ -61,18 +55,6 @@ type RectorServiceClient interface {
 	ViewAuditLog(ctx context.Context, in *ViewAuditLogRequest, opts ...grpc.CallOption) (*ViewAuditLogResponse, error)
 	// @perm: Name=SuperUser
 	UpdateRoleLimits(ctx context.Context, in *UpdateRoleLimitsRequest, opts ...grpc.CallOption) (*UpdateRoleLimitsResponse, error)
-	// @perm: Name=SuperUser
-	CreateOrUpdateLawBook(ctx context.Context, in *CreateOrUpdateLawBookRequest, opts ...grpc.CallOption) (*CreateOrUpdateLawBookResponse, error)
-	// @perm: Name=SuperUser
-	DeleteLawBook(ctx context.Context, in *DeleteLawBookRequest, opts ...grpc.CallOption) (*DeleteLawBookResponse, error)
-	// @perm: Name=SuperUser
-	CreateOrUpdateLaw(ctx context.Context, in *CreateOrUpdateLawRequest, opts ...grpc.CallOption) (*CreateOrUpdateLawResponse, error)
-	// @perm: Name=SuperUser
-	DeleteLaw(ctx context.Context, in *DeleteLawRequest, opts ...grpc.CallOption) (*DeleteLawResponse, error)
-	// @perm: Name=SuperUser
-	ListFiles(ctx context.Context, in *ListFilesRequest, opts ...grpc.CallOption) (*ListFilesResponse, error)
-	// @perm: Name=SuperUser
-	DeleteFile(ctx context.Context, in *DeleteFileRequest, opts ...grpc.CallOption) (*DeleteFileResponse, error)
 }
 
 type rectorServiceClient struct {
@@ -173,60 +155,6 @@ func (c *rectorServiceClient) UpdateRoleLimits(ctx context.Context, in *UpdateRo
 	return out, nil
 }
 
-func (c *rectorServiceClient) CreateOrUpdateLawBook(ctx context.Context, in *CreateOrUpdateLawBookRequest, opts ...grpc.CallOption) (*CreateOrUpdateLawBookResponse, error) {
-	out := new(CreateOrUpdateLawBookResponse)
-	err := c.cc.Invoke(ctx, RectorService_CreateOrUpdateLawBook_FullMethodName, in, out, opts...)
-	if err != nil {
-		return nil, err
-	}
-	return out, nil
-}
-
-func (c *rectorServiceClient) DeleteLawBook(ctx context.Context, in *DeleteLawBookRequest, opts ...grpc.CallOption) (*DeleteLawBookResponse, error) {
-	out := new(DeleteLawBookResponse)
-	err := c.cc.Invoke(ctx, RectorService_DeleteLawBook_FullMethodName, in, out, opts...)
-	if err != nil {
-		return nil, err
-	}
-	return out, nil
-}
-
-func (c *rectorServiceClient) CreateOrUpdateLaw(ctx context.Context, in *CreateOrUpdateLawRequest, opts ...grpc.CallOption) (*CreateOrUpdateLawResponse, error) {
-	out := new(CreateOrUpdateLawResponse)
-	err := c.cc.Invoke(ctx, RectorService_CreateOrUpdateLaw_FullMethodName, in, out, opts...)
-	if err != nil {
-		return nil, err
-	}
-	return out, nil
-}
-
-func (c *rectorServiceClient) DeleteLaw(ctx context.Context, in *DeleteLawRequest, opts ...grpc.CallOption) (*DeleteLawResponse, error) {
-	out := new(DeleteLawResponse)
-	err := c.cc.Invoke(ctx, RectorService_DeleteLaw_FullMethodName, in, out, opts...)
-	if err != nil {
-		return nil, err
-	}
-	return out, nil
-}
-
-func (c *rectorServiceClient) ListFiles(ctx context.Context, in *ListFilesRequest, opts ...grpc.CallOption) (*ListFilesResponse, error) {
-	out := new(ListFilesResponse)
-	err := c.cc.Invoke(ctx, RectorService_ListFiles_FullMethodName, in, out, opts...)
-	if err != nil {
-		return nil, err
-	}
-	return out, nil
-}
-
-func (c *rectorServiceClient) DeleteFile(ctx context.Context, in *DeleteFileRequest, opts ...grpc.CallOption) (*DeleteFileResponse, error) {
-	out := new(DeleteFileResponse)
-	err := c.cc.Invoke(ctx, RectorService_DeleteFile_FullMethodName, in, out, opts...)
-	if err != nil {
-		return nil, err
-	}
-	return out, nil
-}
-
 // RectorServiceServer is the server API for RectorService service.
 // All implementations must embed UnimplementedRectorServiceServer
 // for forward compatibility
@@ -251,18 +179,6 @@ type RectorServiceServer interface {
 	ViewAuditLog(context.Context, *ViewAuditLogRequest) (*ViewAuditLogResponse, error)
 	// @perm: Name=SuperUser
 	UpdateRoleLimits(context.Context, *UpdateRoleLimitsRequest) (*UpdateRoleLimitsResponse, error)
-	// @perm: Name=SuperUser
-	CreateOrUpdateLawBook(context.Context, *CreateOrUpdateLawBookRequest) (*CreateOrUpdateLawBookResponse, error)
-	// @perm: Name=SuperUser
-	DeleteLawBook(context.Context, *DeleteLawBookRequest) (*DeleteLawBookResponse, error)
-	// @perm: Name=SuperUser
-	CreateOrUpdateLaw(context.Context, *CreateOrUpdateLawRequest) (*CreateOrUpdateLawResponse, error)
-	// @perm: Name=SuperUser
-	DeleteLaw(context.Context, *DeleteLawRequest) (*DeleteLawResponse, error)
-	// @perm: Name=SuperUser
-	ListFiles(context.Context, *ListFilesRequest) (*ListFilesResponse, error)
-	// @perm: Name=SuperUser
-	DeleteFile(context.Context, *DeleteFileRequest) (*DeleteFileResponse, error)
 	mustEmbedUnimplementedRectorServiceServer()
 }
 
@@ -299,24 +215,6 @@ func (UnimplementedRectorServiceServer) ViewAuditLog(context.Context, *ViewAudit
 }
 func (UnimplementedRectorServiceServer) UpdateRoleLimits(context.Context, *UpdateRoleLimitsRequest) (*UpdateRoleLimitsResponse, error) {
 	return nil, status.Errorf(codes.Unimplemented, "method UpdateRoleLimits not implemented")
-}
-func (UnimplementedRectorServiceServer) CreateOrUpdateLawBook(context.Context, *CreateOrUpdateLawBookRequest) (*CreateOrUpdateLawBookResponse, error) {
-	return nil, status.Errorf(codes.Unimplemented, "method CreateOrUpdateLawBook not implemented")
-}
-func (UnimplementedRectorServiceServer) DeleteLawBook(context.Context, *DeleteLawBookRequest) (*DeleteLawBookResponse, error) {
-	return nil, status.Errorf(codes.Unimplemented, "method DeleteLawBook not implemented")
-}
-func (UnimplementedRectorServiceServer) CreateOrUpdateLaw(context.Context, *CreateOrUpdateLawRequest) (*CreateOrUpdateLawResponse, error) {
-	return nil, status.Errorf(codes.Unimplemented, "method CreateOrUpdateLaw not implemented")
-}
-func (UnimplementedRectorServiceServer) DeleteLaw(context.Context, *DeleteLawRequest) (*DeleteLawResponse, error) {
-	return nil, status.Errorf(codes.Unimplemented, "method DeleteLaw not implemented")
-}
-func (UnimplementedRectorServiceServer) ListFiles(context.Context, *ListFilesRequest) (*ListFilesResponse, error) {
-	return nil, status.Errorf(codes.Unimplemented, "method ListFiles not implemented")
-}
-func (UnimplementedRectorServiceServer) DeleteFile(context.Context, *DeleteFileRequest) (*DeleteFileResponse, error) {
-	return nil, status.Errorf(codes.Unimplemented, "method DeleteFile not implemented")
 }
 func (UnimplementedRectorServiceServer) mustEmbedUnimplementedRectorServiceServer() {}
 
@@ -511,114 +409,6 @@ func _RectorService_UpdateRoleLimits_Handler(srv interface{}, ctx context.Contex
 	return interceptor(ctx, in, info, handler)
 }
 
-func _RectorService_CreateOrUpdateLawBook_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
-	in := new(CreateOrUpdateLawBookRequest)
-	if err := dec(in); err != nil {
-		return nil, err
-	}
-	if interceptor == nil {
-		return srv.(RectorServiceServer).CreateOrUpdateLawBook(ctx, in)
-	}
-	info := &grpc.UnaryServerInfo{
-		Server:     srv,
-		FullMethod: RectorService_CreateOrUpdateLawBook_FullMethodName,
-	}
-	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
-		return srv.(RectorServiceServer).CreateOrUpdateLawBook(ctx, req.(*CreateOrUpdateLawBookRequest))
-	}
-	return interceptor(ctx, in, info, handler)
-}
-
-func _RectorService_DeleteLawBook_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
-	in := new(DeleteLawBookRequest)
-	if err := dec(in); err != nil {
-		return nil, err
-	}
-	if interceptor == nil {
-		return srv.(RectorServiceServer).DeleteLawBook(ctx, in)
-	}
-	info := &grpc.UnaryServerInfo{
-		Server:     srv,
-		FullMethod: RectorService_DeleteLawBook_FullMethodName,
-	}
-	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
-		return srv.(RectorServiceServer).DeleteLawBook(ctx, req.(*DeleteLawBookRequest))
-	}
-	return interceptor(ctx, in, info, handler)
-}
-
-func _RectorService_CreateOrUpdateLaw_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
-	in := new(CreateOrUpdateLawRequest)
-	if err := dec(in); err != nil {
-		return nil, err
-	}
-	if interceptor == nil {
-		return srv.(RectorServiceServer).CreateOrUpdateLaw(ctx, in)
-	}
-	info := &grpc.UnaryServerInfo{
-		Server:     srv,
-		FullMethod: RectorService_CreateOrUpdateLaw_FullMethodName,
-	}
-	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
-		return srv.(RectorServiceServer).CreateOrUpdateLaw(ctx, req.(*CreateOrUpdateLawRequest))
-	}
-	return interceptor(ctx, in, info, handler)
-}
-
-func _RectorService_DeleteLaw_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
-	in := new(DeleteLawRequest)
-	if err := dec(in); err != nil {
-		return nil, err
-	}
-	if interceptor == nil {
-		return srv.(RectorServiceServer).DeleteLaw(ctx, in)
-	}
-	info := &grpc.UnaryServerInfo{
-		Server:     srv,
-		FullMethod: RectorService_DeleteLaw_FullMethodName,
-	}
-	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
-		return srv.(RectorServiceServer).DeleteLaw(ctx, req.(*DeleteLawRequest))
-	}
-	return interceptor(ctx, in, info, handler)
-}
-
-func _RectorService_ListFiles_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
-	in := new(ListFilesRequest)
-	if err := dec(in); err != nil {
-		return nil, err
-	}
-	if interceptor == nil {
-		return srv.(RectorServiceServer).ListFiles(ctx, in)
-	}
-	info := &grpc.UnaryServerInfo{
-		Server:     srv,
-		FullMethod: RectorService_ListFiles_FullMethodName,
-	}
-	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
-		return srv.(RectorServiceServer).ListFiles(ctx, req.(*ListFilesRequest))
-	}
-	return interceptor(ctx, in, info, handler)
-}
-
-func _RectorService_DeleteFile_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
-	in := new(DeleteFileRequest)
-	if err := dec(in); err != nil {
-		return nil, err
-	}
-	if interceptor == nil {
-		return srv.(RectorServiceServer).DeleteFile(ctx, in)
-	}
-	info := &grpc.UnaryServerInfo{
-		Server:     srv,
-		FullMethod: RectorService_DeleteFile_FullMethodName,
-	}
-	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
-		return srv.(RectorServiceServer).DeleteFile(ctx, req.(*DeleteFileRequest))
-	}
-	return interceptor(ctx, in, info, handler)
-}
-
 // RectorService_ServiceDesc is the grpc.ServiceDesc for RectorService service.
 // It's only intended for direct use with grpc.RegisterService,
 // and not to be introspected or modified (even as a copy)
@@ -665,30 +455,6 @@ var RectorService_ServiceDesc = grpc.ServiceDesc{
 		{
 			MethodName: "UpdateRoleLimits",
 			Handler:    _RectorService_UpdateRoleLimits_Handler,
-		},
-		{
-			MethodName: "CreateOrUpdateLawBook",
-			Handler:    _RectorService_CreateOrUpdateLawBook_Handler,
-		},
-		{
-			MethodName: "DeleteLawBook",
-			Handler:    _RectorService_DeleteLawBook_Handler,
-		},
-		{
-			MethodName: "CreateOrUpdateLaw",
-			Handler:    _RectorService_CreateOrUpdateLaw_Handler,
-		},
-		{
-			MethodName: "DeleteLaw",
-			Handler:    _RectorService_DeleteLaw_Handler,
-		},
-		{
-			MethodName: "ListFiles",
-			Handler:    _RectorService_ListFiles_Handler,
-		},
-		{
-			MethodName: "DeleteFile",
-			Handler:    _RectorService_DeleteFile_Handler,
 		},
 	},
 	Streams:  []grpc.StreamDesc{},

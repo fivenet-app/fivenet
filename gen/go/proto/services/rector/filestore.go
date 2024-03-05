@@ -26,7 +26,7 @@ func (s *Server) ListFiles(ctx context.Context, req *ListFilesRequest) (*ListFil
 
 	if req.Pagination.Offset <= 0 {
 		defer s.aud.Log(&model.FivenetAuditLog{
-			Service: RectorService_ServiceDesc.ServiceName,
+			Service: RectorFilestoreService_ServiceDesc.ServiceName,
 			Method:  "ViewAuditLog",
 			UserID:  userInfo.UserId,
 			UserJob: userInfo.Job,
@@ -67,11 +67,48 @@ func (s *Server) ListFiles(ctx context.Context, req *ListFilesRequest) (*ListFil
 
 	return resp, nil
 }
+
+func (s *Server) UploadFile(ctx context.Context, req *UploadFileRequest) (*UploadFileResponse, error) {
+	userInfo := auth.MustGetUserInfoFromContext(ctx)
+
+	auditEntry := &model.FivenetAuditLog{
+		Service: RectorFilestoreService_ServiceDesc.ServiceName,
+		Method:  "UploadFile",
+		UserID:  userInfo.UserId,
+		UserJob: userInfo.Job,
+		State:   int16(rector.EventType_EVENT_TYPE_ERRORED),
+	}
+	defer s.aud.Log(auditEntry, req)
+
+	if err := req.File.Upload(ctx, s.st, filestore.FilePrefix(req.Prefix), req.Name); err != nil {
+		return nil, err
+	}
+
+	auditEntry.State = int16(rector.EventType_EVENT_TYPE_CREATED)
+
+	obj, objInfo, err := s.st.Get(ctx, *req.File.Url)
+	if err != nil {
+		return nil, err
+	}
+	if err := obj.Close(); err != nil {
+		return nil, err
+	}
+
+	return &UploadFileResponse{
+		File: &filestore.FileInfo{
+			Name:         objInfo.GetName(),
+			LastModified: timestamp.New(objInfo.GetLastModified()),
+			Size:         objInfo.GetSize(),
+			ContentType:  objInfo.GetContentType(),
+		},
+	}, nil
+}
+
 func (s *Server) DeleteFile(ctx context.Context, req *DeleteFileRequest) (*DeleteFileResponse, error) {
 	userInfo := auth.MustGetUserInfoFromContext(ctx)
 
 	auditEntry := &model.FivenetAuditLog{
-		Service: RectorService_ServiceDesc.ServiceName,
+		Service: RectorFilestoreService_ServiceDesc.ServiceName,
 		Method:  "DeleteFile",
 		UserID:  userInfo.UserId,
 		UserJob: userInfo.Job,

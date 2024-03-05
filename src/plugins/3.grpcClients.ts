@@ -26,6 +26,8 @@ import { JobsTimeclockServiceClient } from '~~/gen/ts/services/jobs/timeclock.cl
 import { LivemapperServiceClient } from '~~/gen/ts/services/livemapper/livemap.client';
 import { NotificatorServiceClient } from '~~/gen/ts/services/notificator/notificator.client';
 import { RectorConfigServiceClient } from '~~/gen/ts/services/rector/config.client';
+import { RectorFilestoreServiceClient } from '~~/gen/ts/services/rector/filestore.client';
+import { RectorLawsServiceClient } from '~~/gen/ts/services/rector/laws.client';
 import { RectorServiceClient } from '~~/gen/ts/services/rector/rector.client';
 
 export default defineNuxtPlugin(() => {
@@ -240,6 +242,14 @@ export class GRPCClients {
 
     getRectorConfigClient(): RectorConfigServiceClient {
         return new RectorConfigServiceClient(this.transport);
+    }
+
+    getRectorFilestoreClient(): RectorFilestoreServiceClient {
+        return new RectorFilestoreServiceClient(this.transport);
+    }
+
+    getRectorLawsClient(): RectorLawsServiceClient {
+        return new RectorLawsServiceClient(this.transport);
     }
 
     // Jobs

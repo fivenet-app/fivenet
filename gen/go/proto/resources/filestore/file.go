@@ -31,9 +31,10 @@ var imagesMatchersMap = matchers.Map{
 type FilePrefix = string
 
 const (
-	Avatars  FilePrefix = "avatars"
-	JobLogos FilePrefix = "joblogos"
-	MugShots FilePrefix = "mugshots"
+	Avatars   FilePrefix = "avatars"
+	JobLogos  FilePrefix = "joblogos"
+	MugShots  FilePrefix = "mugshots"
+	JobAssets FilePrefix = "jobassets"
 )
 
 func (x *File) Scan(value any) error {
@@ -70,7 +71,7 @@ func (x *File) IsImage() bool {
 	return filetype.MatchesMap(x.Data, imagesMatchersMap)
 }
 
-func (x *File) Optimize(ctx context.Context) error {
+func (x *File) MatchFileExt() error {
 	contentType, err := filetype.Match(x.Data)
 	if err != nil {
 		return err
@@ -78,8 +79,18 @@ func (x *File) Optimize(ctx context.Context) error {
 	x.Extension = &contentType.Extension
 	x.ContentType = &contentType.MIME.Value
 
+	return nil
+}
+
+func (x *File) Optimize(ctx context.Context) error {
+	if x.Extension == nil {
+		if err := x.MatchFileExt(); err != nil {
+			return err
+		}
+	}
+
 	if x.IsImage() {
-		data, err := images.ResizeImage(contentType, bytes.NewReader(x.Data), 850, 850)
+		data, err := images.ResizeImage(*x.Extension, bytes.NewReader(x.Data), 850, 850)
 		if err != nil {
 			return err
 		}
@@ -102,6 +113,12 @@ func (x *File) Upload(ctx context.Context, st storage.IStorage, prefix FilePrefi
 
 	if x.Url != nil {
 		if err := st.Delete(ctx, strings.TrimPrefix(*x.Url, FilestoreURLPrefix)); err != nil {
+			return err
+		}
+	}
+
+	if x.Extension == nil {
+		if err := x.MatchFileExt(); err != nil {
 			return err
 		}
 	}

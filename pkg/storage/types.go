@@ -34,17 +34,25 @@ type IObject interface {
 }
 
 type IObjectInfo interface {
+	GetName() string
 	GetExtension() string
 	GetContentType() string
 	GetSize() int64
+	GetLastModified() time.Time
 	GetExpiration() time.Time
 }
 
 type ObjectInfo struct {
-	extension   string
-	contentType string
-	size        int64
-	expiration  time.Time
+	name         string
+	extension    string
+	contentType  string
+	size         int64
+	lastModified time.Time
+	expiration   time.Time
+}
+
+func (o *ObjectInfo) GetName() string {
+	return o.name
 }
 
 func (o *ObjectInfo) GetExtension() string {
@@ -61,6 +69,19 @@ func (o *ObjectInfo) GetSize() int64 {
 
 func (o *ObjectInfo) GetExpiration() time.Time {
 	return o.expiration
+}
+
+func (o *ObjectInfo) GetLastModified() time.Time {
+	return o.lastModified
+}
+
+func (o *ObjectInfo) GetFileInfo() *FileInfo {
+	return &FileInfo{
+		Name:         o.name,
+		Size:         o.size,
+		ContentType:  o.contentType,
+		LastModified: o.lastModified,
+	}
 }
 
 type FileInfo struct {

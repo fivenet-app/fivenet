@@ -3,8 +3,6 @@ syntax = "proto3";
 package services.rector;
 
 import "resources/common/database/database.proto";
-import "resources/filestore/file.proto";
-import "resources/laws/laws.proto";
 import "resources/permissions/permissions.proto";
 import "resources/rector/audit.proto";
 import "resources/timestamp/timestamp.proto";
@@ -115,53 +113,6 @@ message UpdateRoleLimitsRequest {
 
 message UpdateRoleLimitsResponse {}
 
-// Laws
-
-message CreateOrUpdateLawBookRequest {
-  resources.laws.LawBook lawBook = 1  [(validate.rules).message.required = true];
-}
-
-message CreateOrUpdateLawBookResponse {
-  resources.laws.LawBook lawBook = 1;
-}
-
-message DeleteLawBookRequest {
-  uint64 id = 1 [jstype = JS_STRING];
-}
-message DeleteLawBookResponse {}
-
-message CreateOrUpdateLawRequest {
-  resources.laws.Law law = 1  [(validate.rules).message.required = true];
-}
-
-message CreateOrUpdateLawResponse {
-  resources.laws.Law law = 1;
-}
-
-message DeleteLawRequest {
-  uint64 id = 1 [jstype = JS_STRING];
-}
-
-message DeleteLawResponse {}
-
-// Filestore
-
-message ListFilesRequest {
-  resources.common.database.PaginationRequest pagination = 1 [(validate.rules).message.required = true];
-  optional string path = 2 [(validate.rules).string.max_len = 128];
-}
-
-message ListFilesResponse {
-  resources.common.database.PaginationResponse pagination = 1;
-  repeated resources.filestore.FileInfo files = 2;
-}
-
-message DeleteFileRequest {
-  string path = 1;
-}
-
-message DeleteFileResponse {}
-
 service RectorService {
   // @perm
   rpc GetJobProps(GetJobPropsRequest) returns (GetJobPropsResponse);
@@ -188,18 +139,4 @@ service RectorService {
 
   // @perm: Name=SuperUser
   rpc UpdateRoleLimits(UpdateRoleLimitsRequest) returns (UpdateRoleLimitsResponse);
-
-  // @perm: Name=SuperUser
-  rpc CreateOrUpdateLawBook(CreateOrUpdateLawBookRequest) returns (CreateOrUpdateLawBookResponse);
-  // @perm: Name=SuperUser
-  rpc DeleteLawBook(DeleteLawBookRequest) returns (DeleteLawBookResponse);
-  // @perm: Name=SuperUser
-  rpc CreateOrUpdateLaw(CreateOrUpdateLawRequest) returns (CreateOrUpdateLawResponse);
-  // @perm: Name=SuperUser
-  rpc DeleteLaw(DeleteLawRequest) returns (DeleteLawResponse);
-
-  // @perm: Name=SuperUser
-  rpc ListFiles(ListFilesRequest) returns (ListFilesResponse);
-  // @perm: Name=SuperUser
-  rpc DeleteFile(DeleteFileRequest) returns (DeleteFileResponse);
 }

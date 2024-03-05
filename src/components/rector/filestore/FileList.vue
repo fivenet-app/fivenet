@@ -7,9 +7,10 @@ import DataNoDataBlock from '~/components/partials/data/DataNoDataBlock.vue';
 import DataPendingBlock from '~/components/partials/data/DataPendingBlock.vue';
 import TablePagination from '~/components/partials/elements/TablePagination.vue';
 import { useSettingsStore } from '~/store/settings';
-import type { ListFilesResponse } from '~~/gen/ts/services/rector/rector';
+import type { ListFilesResponse } from '~~/gen/ts/services/rector/filestore';
 import FileListEntry from '~/components/rector/filestore/FileListEntry.vue';
 import GenericTable from '~/components/partials/elements/GenericTable.vue';
+import FileUploadDialog from '~/components/rector/filestore/FileUploadDialog.vue';
 
 const { $grpc } = useNuxtApp();
 
@@ -23,7 +24,7 @@ const { data, pending, refresh, error } = useLazyAsyncData('chars', () => listFi
 
 async function listFiles(prefix: string): Promise<ListFilesResponse> {
     try {
-        const { response } = $grpc.getRectorClient().listFiles({
+        const { response } = $grpc.getRectorFilestoreClient().listFiles({
             pagination: { offset: offset.value },
             path: prefix,
         });
@@ -36,6 +37,8 @@ async function listFiles(prefix: string): Promise<ListFilesResponse> {
 }
 
 watch(offset, () => refresh());
+
+const uploadFileDialog = ref(false);
 </script>
 
 <template>
@@ -52,6 +55,24 @@ watch(offset, () => refresh());
                 </GenericContainerPanel>
             </template>
             <template v-else>
+                <FileUploadDialog
+                    :open="uploadFileDialog"
+                    @uploaded-file="data?.files.push($event)"
+                    @close="uploadFileDialog = false"
+                />
+
+                <div class="sm:flex sm:items-center">
+                    <div class="w-full sm:flex-auto">
+                        <button
+                            type="button"
+                            class="w-full rounded-md bg-primary-500 px-3 py-2 text-sm font-semibold text-neutral hover:bg-primary-400 focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-primary-500"
+                            @click="uploadFileDialog = true"
+                        >
+                            {{ $t('common.upload') }}
+                        </button>
+                    </div>
+                </div>
+
                 <DataPendingBlock v-if="pending" :message="$t('common.loading', [$t('common.data', 1)])" />
                 <DataErrorBlock
                     v-else-if="error"

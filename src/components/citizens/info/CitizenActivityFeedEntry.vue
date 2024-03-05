@@ -6,6 +6,8 @@ import {
     BriefcaseIcon,
     CameraAccountIcon,
     DoorOpenIcon,
+    FileAccountIcon,
+    FileAccountOutlineIcon,
     HandcuffsIcon,
     HelpCircleIcon,
     LicenseIcon,
@@ -29,11 +31,8 @@ const props = defineProps<{
     <template v-if="activity.key === 'DocStore.Relation'">
         <div class="flex space-x-3">
             <div class="my-auto flex h-10 w-10 items-center justify-center rounded-full">
-                <AtIcon
-                    class="h-full w-full"
-                    :class="activity.newValue !== '' ? 'text-info-600' : 'text-base-600'"
-                    aria-hidden="true"
-                />
+                <FileAccountIcon v-if="activity.newValue !== ''" class="text-info-600 h-full w-full" aria-hidden="true" />
+                <FileAccountOutlineIcon v-else class="text-base-600 h-full w-full" aria-hidden="true" />
             </div>
             <div class="flex-1 space-y-1">
                 <div class="flex items-center justify-between">
@@ -214,7 +213,7 @@ const props = defineProps<{
             <div class="my-auto flex h-10 w-10 items-center justify-center rounded-full">
                 <LicenseIcon
                     class="h-full w-full"
-                    :class="activity.newValue !== 'text-info-600' ? 'text-warn-600' : ''"
+                    :class="activity.newValue !== '' ? 'text-info-600' : 'text-warn-600'"
                     aria-hidden="true"
                 />
             </div>

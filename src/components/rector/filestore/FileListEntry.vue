@@ -5,7 +5,7 @@ import { EyeIcon, TrashCanIcon } from 'mdi-vue3';
 import ConfirmDialog from '~/components/partials/ConfirmDialog.vue';
 import GenericTime from '~/components/partials/elements/GenericTime.vue';
 import type { FileInfo } from '~~/gen/ts/resources/filestore/file';
-import type { DeleteFileResponse } from '~~/gen/ts/services/rector/rector';
+import type { DeleteFileResponse } from '~~/gen/ts/services/rector/filestore';
 
 defineProps<{
     file: FileInfo;
@@ -19,7 +19,7 @@ const { $grpc } = useNuxtApp();
 
 async function deleteFile(path: string): Promise<DeleteFileResponse> {
     try {
-        const { response } = $grpc.getRectorClient().deleteFile({
+        const { response } = $grpc.getRectorFilestoreClient().deleteFile({
             path,
         });
 

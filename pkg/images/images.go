@@ -4,14 +4,13 @@ import (
 	"image"
 	"io"
 
-	"github.com/h2non/filetype/types"
 	"golang.org/x/image/draw"
 )
 
-func ResizeImage(iType types.Type, input io.Reader, height int, width int) ([]byte, error) {
-	if iType.Extension == "png" {
+func ResizeImage(ext string, input io.Reader, height int, width int) ([]byte, error) {
+	if ext == "png" {
 		return ResizePNG(input, height, width)
-	} else if iType.Extension == "jpg" || iType.Extension == "jpeg" {
+	} else if ext == "jpg" || ext == "jpeg" {
 		return ResizeJPEG(input, height, width)
 	}
 

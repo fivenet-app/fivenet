@@ -22,7 +22,7 @@ func (s *Server) CreateOrUpdateLawBook(ctx context.Context, req *CreateOrUpdateL
 	userInfo := auth.MustGetUserInfoFromContext(ctx)
 
 	auditEntry := &model.FivenetAuditLog{
-		Service: RectorService_ServiceDesc.ServiceName,
+		Service: RectorLawsService_ServiceDesc.ServiceName,
 		Method:  "CreateOrUpdateLawBook",
 		UserID:  userInfo.UserId,
 		UserJob: userInfo.Job,
@@ -91,7 +91,7 @@ func (s *Server) DeleteLawBook(ctx context.Context, req *DeleteLawBookRequest) (
 	userInfo := auth.MustGetUserInfoFromContext(ctx)
 
 	auditEntry := &model.FivenetAuditLog{
-		Service: RectorService_ServiceDesc.ServiceName,
+		Service: RectorLawsService_ServiceDesc.ServiceName,
 		Method:  "DeleteLawBook",
 		UserID:  userInfo.UserId,
 		UserJob: userInfo.Job,
@@ -150,7 +150,7 @@ func (s *Server) CreateOrUpdateLaw(ctx context.Context, req *CreateOrUpdateLawRe
 	userInfo := auth.MustGetUserInfoFromContext(ctx)
 
 	auditEntry := &model.FivenetAuditLog{
-		Service: RectorService_ServiceDesc.ServiceName,
+		Service: RectorLawsService_ServiceDesc.ServiceName,
 		Method:  "CreateOrUpdateLaw",
 		UserID:  userInfo.UserId,
 		UserJob: userInfo.Job,
@@ -237,7 +237,7 @@ func (s *Server) DeleteLaw(ctx context.Context, req *DeleteLawRequest) (*DeleteL
 	userInfo := auth.MustGetUserInfoFromContext(ctx)
 
 	auditEntry := &model.FivenetAuditLog{
-		Service: RectorService_ServiceDesc.ServiceName,
+		Service: RectorLawsService_ServiceDesc.ServiceName,
 		Method:  "DeleteLaw",
 		UserID:  userInfo.UserId,
 		UserJob: userInfo.Job,

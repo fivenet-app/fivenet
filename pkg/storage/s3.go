@@ -90,10 +90,12 @@ func (s *S3) Get(ctx context.Context, filePath string) (IObject, IObjectInfo, er
 	}
 
 	return object, &ObjectInfo{
-		extension:   strings.TrimPrefix(filepath.Ext(info.Key), "."),
-		contentType: info.ContentType,
-		size:        info.Size,
-		expiration:  info.Expiration,
+		name:         info.Key,
+		extension:    strings.TrimPrefix(filepath.Ext(info.Key), "."),
+		contentType:  info.ContentType,
+		size:         info.Size,
+		lastModified: info.LastModified,
+		expiration:   info.Expiration,
 	}, nil
 }
 

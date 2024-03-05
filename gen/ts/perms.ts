@@ -45,6 +45,8 @@
 // source: services/livemapper/livemap.proto
 // source: services/notificator/notificator.proto
 // source: services/rector/config.proto
+// source: services/rector/filestore.proto
+// source: services/rector/laws.proto
 // source: services/rector/rector.proto
 
 export type Perms =

@@ -857,7 +857,8 @@
         "predefined": "Predefined",
         "discord": "Discord",
         "redirecting_to": "You are being redirect to {0} ...",
-        "absent": "Absent"
+        "absent": "Absent",
+        "upload": "Upload"
     },
     "notifications": {
         "clipboard": {

@@ -62,9 +62,13 @@ func (s *Filesystem) Get(ctx context.Context, filePath string) (IObject, IObject
 		return nil, nil, err
 	}
 
+	name := f.Name()
+
 	return f, &ObjectInfo{
-		extension: strings.TrimPrefix(filepath.Ext(f.Name()), "."),
-		size:      stat.Size(),
+		name:         name,
+		extension:    strings.TrimPrefix(filepath.Ext(name), "."),
+		size:         stat.Size(),
+		lastModified: stat.ModTime(),
 	}, nil
 }
 

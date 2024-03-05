@@ -28,7 +28,7 @@ async function deleteLaw(id: string): Promise<void> {
     }
 
     try {
-        const call = $grpc.getRectorClient().deleteLaw({
+        const call = $grpc.getRectorLawsClient().deleteLaw({
             id,
         });
         await call;
@@ -50,7 +50,7 @@ interface FormData {
 
 async function saveLaw(lawBookId: string, id: string, values: FormData): Promise<void> {
     try {
-        const call = $grpc.getRectorClient().createOrUpdateLaw({
+        const call = $grpc.getRectorLawsClient().createOrUpdateLaw({
             law: {
                 id: parseInt(id, 10) < 0 ? '0' : id,
                 lawbookId: lawBookId,

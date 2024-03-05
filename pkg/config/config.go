@@ -35,7 +35,9 @@ type BaseConfig struct {
 	Cache      Cache      `yaml:"cache"`
 	Audit      Audit      `yaml:"audit"`
 
-	AppConfig
+	OAuth2  OAuth2  `yaml:"oauth2"`
+	Game    Game    `yaml:"game"`
+	Discord Discord `yaml:"discord"`
 }
 
 type Tracing struct {
