@@ -41,10 +41,6 @@ nats:
   url: "nats://localhost:4222"
 jwt:
   secret: "your_generated_jwt_secret"
-cache:
-  refreshTime: 2m
-audit:
-  retentionDays: 90
 storage:
   type: "filesystem"
   filesystem:
@@ -64,6 +60,10 @@ imageProxy:
   options:
     allowHosts: []
     denyHosts: []
+cache:
+  refreshTime: 2m
+audit:
+  retentionDays: 90
 oauth2:
   providers:
     - name: "discord"

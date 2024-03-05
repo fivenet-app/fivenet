@@ -30,13 +30,14 @@ type BaseConfig struct {
 	Database   Database   `yaml:"database"`
 	NATS       NATS       `yaml:"nats"`
 	JWT        JWT        `yaml:"jwt"`
-	OAuth2     OAuth2     `yaml:"oauth2"`
-	Cache      Cache      `yaml:"cache"`
-	Audit      Audit      `yaml:"audit"`
-	Game       Game       `yaml:"game"`
-	Discord    Discord    `yaml:"discord"`
 	Storage    Storage    `yaml:"storage"`
 	ImageProxy ImageProxy `yaml:"imageProxy"`
+	Cache      Cache      `yaml:"cache"`
+	Audit      Audit      `yaml:"audit"`
+
+	OAuth2  OAuth2  `yaml:"oauth2"`
+	Game    Game    `yaml:"game"`
+	Discord Discord `yaml:"discord"`
 }
 
 type Tracing struct {
