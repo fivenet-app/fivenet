@@ -1868,6 +1868,12 @@
                 "ON_BREAK": "Pause",
                 "BUSY": "Beschäftigt",
                 "UNKNOWN": "Unbekannt"
+            },
+            "DispatchReferenceType": {
+                "UNSPECIFIED": "Unbestimmt",
+                "REFERENCED": "Referenziert",
+                "DUPLICATED_BY": "Dupliziert",
+                "DUPLICATES": "Duplikat von"
             }
         },
         "livemap": {
