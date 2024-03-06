@@ -6,9 +6,8 @@
 
 ## Roadmap
 
-* Employee Management
-    * "Führingsregister": Positive, neutral and negative entries for employees.
-* Dispatch Center ("Leitstelle"), see [design doc](./docs/design/dispatch-center.md).
+Things on the roadmap may or may not be implemented/changed/removed without warning.
+For the roadmap [click here](https://github.com/users/galexrt/projects/2/views/1).
 
 ## Features
 
