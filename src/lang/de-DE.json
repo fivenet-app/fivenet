@@ -391,6 +391,47 @@
             },
             "role_view": {
                 "add_permission": "Berechtigung hinzufügen"
+            },
+            "app_config": {
+                "auth": {
+                    "title": "Authentifizierung",
+                    "description": "Authentifizierung Einstellungen",
+                    "sign_up": "Registrierung"
+                },
+                "perms": {
+                    "title": "Berechtigungen",
+                    "description": "Berechtigungssystem Optionen.",
+                    "default_perms": "Standardberechtigungen"
+                },
+                "website": {
+                    "title": "Website",
+                    "description": "Website Einstellunge, wie zum Beispiel die Fußzeilen Verlinkungen.",
+                    "links": {
+                        "title": "Verlinkungen"
+                    }
+                },
+                "job_info": {
+                    "title": "Berufs-Info",
+                    "description": "Arbeitslosen-Beruf-Info für das System und Liste der öffentlichen und versteckten Berufe.",
+                    "unemployed_job": "Beruf der Arbeitslosen",
+                    "public_jobs": "Öffentliche Berufe",
+                    "hidden_jobs": "Versteckte Berufe"
+                },
+                "user_tracker": {
+                    "title": "Spieler-Tracker",
+                    "description": "Liste der über die Livemap getrackten Berufe, und welche Berufe in der Stempeluhr getrackt werden sollen.",
+                    "refresh_time": "Aktualisierungszeit",
+                    "db_refresh_time": "Datenbank-Aktualisierungszeit",
+                    "livemap_jobs": "Livemap-Berufe"
+                },
+                "discord": {
+                    "description": "FiveNet Discord-Bot-Einstellungen.",
+                    "bot_invite_url": "Bot-Einladungs-URL",
+                    "sync_interval": "Synchronisierungsinterval"
+                },
+                "save": {
+                    "description": "Stellen Sie sicher, dass Sie alle Konfigurationsoptionen vor dem Speichern der Konfiguration überprüfen."
+                }
             }
         },
         "debug_info": {
@@ -859,7 +900,8 @@
         "redirecting_to": "Sie werden weitergeleitet zu {0}...",
         "absent": "Abwesend",
         "upload": "Hochladen",
-        "postal_code": "Postleitzahl"
+        "postal_code": "Postleitzahl",
+        "duration": "Dauer"
     },
     "notifications": {
         "clipboard": {
