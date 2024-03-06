@@ -12,7 +12,6 @@ export default defineNuxtConfig({
     modules: [
         '@nuxt/devtools',
         'nuxt-typed-router',
-        '@nuxtjs/eslint-module',
         '@nuxtjs/robots',
         '@nuxtjs/tailwindcss',
         '@nuxtjs/i18n',
