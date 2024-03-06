@@ -13,9 +13,6 @@ http:
   sessions:
     cookieSecret: "your_generated_cookie_secret"
     domain: "localhost"
-  links:
-    imprint: "https://example.com/your_imprint/"
-    privacyPolicy: "https://example.com/your_privacy_policy/"
 grpc:
   listen: ":9090"
 database:

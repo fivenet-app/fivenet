@@ -127,9 +127,6 @@ fivenet:
       sessions:
         cookieSecret: "your_generated_cookie_secret"
         domain: "localhost"
-      links:
-        imprint: "https://example.com/your_imprint/"
-        privacyPolicy: "https://example.com/your_privacy_policy/"
       publicURL: "https://fivenet.example.com"
     grpc:
       listen: ":9090"
