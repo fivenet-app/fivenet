@@ -1451,12 +1451,12 @@ func (m *Discord) validate(all bool) error {
 		} else {
 
 			lt := time.Duration(180000000*time.Second + 0*time.Nanosecond)
-			gte := time.Duration(6000*time.Second + 0*time.Nanosecond)
+			gte := time.Duration(60*time.Second + 0*time.Nanosecond)
 
 			if dur < gte || dur >= lt {
 				err := DiscordValidationError{
 					field:  "SyncInterval",
-					reason: "value must be inside range [1h40m0s, 50000h0m0s)",
+					reason: "value must be inside range [1m0s, 50000h0m0s)",
 				}
 				if !all {
 					return err

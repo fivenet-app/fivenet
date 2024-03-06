@@ -199,20 +199,29 @@ function setSettingsValues(): void {
         jobInfoUnemployedName: data.value.config?.jobInfo?.unemployedJob?.name,
         jobInfoUnemployedGrade: data.value.config?.jobInfo?.unemployedJob?.grade,
 
-        userTrackerRefreshTime:
-            parseFloat(
-                data.value.config?.userTracker?.refreshTime?.seconds.toString() +
-                    '.' +
-                    (data.value.config?.userTracker?.refreshTime?.nanos ?? 0) / 1000000,
-            ).toString() + 's',
-        userTrackerDbRefreshTime:
-            parseFloat(
-                data.value.config?.userTracker?.dbRefreshTime?.seconds.toString() +
-                    '.' +
-                    (data.value.config?.userTracker?.dbRefreshTime?.nanos ?? 0) / 1000000,
-            ).toString() + 's',
+        userTrackerRefreshTime: data.value.config?.userTracker?.refreshTime
+            ? parseFloat(
+                  data.value.config?.userTracker?.refreshTime?.seconds.toString() +
+                      '.' +
+                      (data.value.config?.userTracker?.refreshTime?.nanos ?? 0) / 1000000,
+              ).toString() + 's'
+            : undefined,
+        userTrackerDbRefreshTime: data.value.config?.userTracker?.dbRefreshTime
+            ? parseFloat(
+                  data.value.config?.userTracker?.dbRefreshTime?.seconds.toString() +
+                      '.' +
+                      (data.value.config?.userTracker?.dbRefreshTime?.nanos ?? 0) / 1000000,
+              ).toString() + 's'
+            : undefined,
 
         discordBotInviteUrl: data.value.config?.discord?.inviteUrl,
+        discordSyncInterval: data.value.config?.discord?.syncInterval
+            ? parseFloat(
+                  data.value.config?.discord?.syncInterval?.seconds.toString() +
+                      '.' +
+                      (data.value.config?.discord?.syncInterval?.nanos ?? 0) / 1000000,
+              ).toString() + 's'
+            : undefined,
     });
 }
 

@@ -73,12 +73,12 @@ func TestFullAuthFlow(t *testing.T) {
 	fxLC := fxtest.NewLifecycle(t)
 
 	p, err := perms.New(perms.Params{
-		LC:     fxLC,
-		Logger: logger,
-		DB:     db,
-		TP:     tp,
-		JS:     js,
-		Config: cfg,
+		LC:        fxLC,
+		Logger:    logger,
+		DB:        db,
+		TP:        tp,
+		JS:        js,
+		AppConfig: appCfg,
 	})
 	assert.NoError(t, err)
 

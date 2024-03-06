@@ -110,8 +110,37 @@ func (p *Perms) SetDefaultRolePerms(ctx context.Context, defaultPerms []string) 
 		}
 	}
 
-	if err := p.UpdateRolePermissions(ctx, role.ID, addPerms...); err != nil {
+	currentPerms, err := p.GetRolePermissions(ctx, role.ID)
+	if err != nil {
 		return err
+	}
+
+	removePerms := []uint64{}
+	for _, p := range currentPerms {
+		if slices.ContainsFunc(addPerms, func(ap AddPerm) bool {
+			return ap.Id == p.Id
+		}) {
+			// Remove perm that are already set on the role
+			addPerms = slices.DeleteFunc(addPerms, func(ap AddPerm) bool {
+				return ap.Id == p.Id && ap.Val == p.Val
+			})
+			continue
+		}
+
+		// Perm not in the default perms? Remove it!
+		removePerms = append(removePerms, p.Id)
+	}
+
+	if len(addPerms) > 0 {
+		if err := p.UpdateRolePermissions(ctx, role.ID, addPerms...); err != nil {
+			return err
+		}
+	}
+
+	if len(removePerms) > 0 {
+		if err := p.RemovePermissionsFromRole(ctx, role.ID, removePerms...); err != nil {
+			return err
+		}
 	}
 
 	return nil

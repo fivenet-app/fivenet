@@ -11,6 +11,7 @@ import (
 
 	"github.com/bwmarrin/discordgo"
 	"github.com/galexrt/fivenet/pkg/config"
+	"github.com/galexrt/fivenet/pkg/config/appconfig"
 	"github.com/galexrt/fivenet/pkg/discord/commands"
 	"github.com/galexrt/fivenet/pkg/mstlystcdata"
 	"github.com/galexrt/fivenet/pkg/server/admin"
@@ -55,11 +56,12 @@ type BotParams struct {
 
 	LC fx.Lifecycle
 
-	Logger   *zap.Logger
-	TP       *tracesdk.TracerProvider
-	DB       *sql.DB
-	Enricher *mstlystcdata.Enricher
-	Config   *config.Config
+	Logger    *zap.Logger
+	TP        *tracesdk.TracerProvider
+	DB        *sql.DB
+	Enricher  *mstlystcdata.Enricher
+	Config    *config.Config
+	AppConfig *appconfig.Config
 }
 
 type Bot struct {

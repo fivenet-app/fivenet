@@ -163,8 +163,7 @@ type OAuth2Mapping struct {
 }
 
 type Auth struct {
-	SuperuserGroups    []string `yaml:"superuserGroups"`
-	DefaultPermissions []Perm   `yaml:"defaultPermissions"`
+	SuperuserGroups []string `yaml:"superuserGroups"`
 }
 
 type Livemap struct {

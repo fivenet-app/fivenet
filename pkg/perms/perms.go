@@ -11,7 +11,7 @@ import (
 	cache "github.com/Code-Hex/go-generics-cache"
 	"github.com/Code-Hex/go-generics-cache/policy/lru"
 	"github.com/galexrt/fivenet/gen/go/proto/resources/permissions"
-	"github.com/galexrt/fivenet/pkg/config"
+	"github.com/galexrt/fivenet/pkg/config/appconfig"
 	"github.com/galexrt/fivenet/pkg/grpc/auth/userinfo"
 	"github.com/galexrt/fivenet/pkg/perms/collections"
 	"github.com/galexrt/fivenet/query/fivenet/model"
@@ -78,10 +78,9 @@ type userCacheKey struct {
 }
 
 type Perms struct {
-	logger       *zap.Logger
-	db           *sql.DB
-	wg           sync.WaitGroup
-	defaultPerms []config.Perm
+	logger *zap.Logger
+	db     *sql.DB
+	wg     sync.WaitGroup
 
 	tracer trace.Tracer
 	ctx    context.Context
@@ -120,12 +119,12 @@ type JobPermission struct {
 type Params struct {
 	fx.In
 
-	LC     fx.Lifecycle
-	Logger *zap.Logger
-	DB     *sql.DB
-	TP     *tracesdk.TracerProvider
-	JS     nats.JetStreamContext
-	Config *config.Config
+	LC        fx.Lifecycle
+	Logger    *zap.Logger
+	DB        *sql.DB
+	TP        *tracesdk.TracerProvider
+	JS        nats.JetStreamContext
+	AppConfig *appconfig.Config
 }
 
 func New(p Params) (Permissions, error) {
@@ -138,10 +137,9 @@ func New(p Params) (Permissions, error) {
 	)
 
 	ps := &Perms{
-		logger:       p.Logger,
-		db:           p.DB,
-		wg:           sync.WaitGroup{},
-		defaultPerms: p.Config.Auth.DefaultPermissions,
+		logger: p.Logger,
+		db:     p.DB,
+		wg:     sync.WaitGroup{},
 
 		tracer: p.TP.Tracer("perms"),
 		ctx:    ctx,
@@ -164,14 +162,20 @@ func New(p Params) (Permissions, error) {
 	}
 
 	p.LC.Append(fx.StartHook(func(ctx context.Context) error {
-		if err := ps.init(ctx); err != nil {
+		cfgDefaultPerms := p.AppConfig.Get().Perms.Default
+		defaultPerms := make([]string, len(cfgDefaultPerms))
+		for i := 0; i < len(cfgDefaultPerms); i++ {
+			defaultPerms[i] = BuildGuard(Category(cfgDefaultPerms[i].Category), Name(cfgDefaultPerms[i].Name))
+		}
+
+		if err := ps.init(ctx, defaultPerms); err != nil {
 			return err
 		}
 
 		ps.wg.Add(1)
 		go func() {
 			defer ps.wg.Done()
-			if err := ps.ApplyJobPermissions(ctx, ""); err != nil {
+			if err := ps.ApplyJobPermissions(ps.ctx, ""); err != nil {
 				ps.logger.Error("failed to apply job permissions", zap.Error(err))
 				return
 			}
@@ -181,16 +185,17 @@ func New(p Params) (Permissions, error) {
 	}))
 
 	p.LC.Append(fx.StopHook(func(_ context.Context) error {
+		cancel()
+
 		ps.wg.Wait()
 
-		cancel()
 		return ps.stop()
 	}))
 
 	return ps, nil
 }
 
-func (p *Perms) init(ctx context.Context) error {
+func (p *Perms) init(ctx context.Context, defaultPerms []string) error {
 	ctx, span := p.tracer.Start(ctx, "perms-init")
 	defer span.End()
 
@@ -200,11 +205,6 @@ func (p *Perms) init(ctx context.Context) error {
 
 	if err := p.registerEvents(ctx); err != nil {
 		return err
-	}
-
-	defaultPerms := make([]string, len(p.defaultPerms))
-	for i := 0; i < len(p.defaultPerms); i++ {
-		defaultPerms[i] = BuildGuard(Category(p.defaultPerms[i].Category), Name(p.defaultPerms[i].Name))
 	}
 
 	if err := p.register(ctx, defaultPerms); err != nil {
