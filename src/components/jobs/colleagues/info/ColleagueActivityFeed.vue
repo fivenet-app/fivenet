@@ -8,9 +8,16 @@ import TablePagination from '~/components/partials/elements/TablePagination.vue'
 import ColleagueActivityFeedEntry from '~/components/jobs/colleagues/info/ColleagueActivityFeedEntry.vue';
 import type { ListColleagueActivityResponse } from '~~/gen/ts/services/jobs/jobs';
 
-const props = defineProps<{
-    userId: number;
-}>();
+const props = withDefaults(
+    defineProps<{
+        userId?: number;
+        showTargetUser?: boolean;
+    }>(),
+    {
+        userId: undefined,
+        showTargetUser: false,
+    },
+);
 
 const { $grpc } = useNuxtApp();
 
@@ -19,7 +26,7 @@ const { data, pending, refresh, error } = useLazyAsyncData(`jobs-colleague-${pro
     listColleagueActivity(props.userId),
 );
 
-async function listColleagueActivity(userId: number): Promise<ListColleagueActivityResponse> {
+async function listColleagueActivity(userId?: number): Promise<ListColleagueActivityResponse> {
     try {
         const call = $grpc.getJobsClient().listColleagueActivity({
             userId,
@@ -61,7 +68,7 @@ watch(props, async () => refresh());
                             <div v-else>
                                 <ul role="list" class="divide-y divide-gray-200">
                                     <li v-for="activity in data?.activity" :key="activity.id" class="py-4">
-                                        <ColleagueActivityFeedEntry :activity="activity" />
+                                        <ColleagueActivityFeedEntry :activity="activity" :show-target-user="showTargetUser" />
                                     </li>
                                 </ul>
 

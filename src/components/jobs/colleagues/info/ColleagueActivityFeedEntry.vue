@@ -4,9 +4,15 @@ import GenericTime from '~/components/partials/elements/GenericTime.vue';
 import { jobsUserActivityTypeBGColor, jobsUserActivityTypeIcon } from '~/components/jobs/colleagues/info/helpers';
 import { JobsUserActivityType, type JobsUserActivity } from '~~/gen/ts/resources/jobs/colleagues';
 
-defineProps<{
-    activity: JobsUserActivity;
-}>();
+withDefaults(
+    defineProps<{
+        activity: JobsUserActivity;
+        showTargetUser?: boolean;
+    }>(),
+    {
+        showTargetUser: false,
+    },
+);
 </script>
 
 <template>
@@ -41,12 +47,20 @@ defineProps<{
                 </p>
             </div>
             <div class="flex items-center justify-between">
-                <p class="inline-flex gap-1 text-sm text-gray-300">
+                <p class="flex flex-col gap-1 text-sm text-gray-300">
                     <template v-if="activity.reason">
-                        <span class="font-semibold">{{ $t('common.reason') }}:</span>
-                        <span>
-                            {{ activity.reason }}
-                        </span>
+                        <div class="inline-flex gap-1">
+                            <span class="font-semibold">{{ $t('common.reason') }}:</span>
+                            <span>
+                                {{ activity.reason }}
+                            </span>
+                        </div>
+                    </template>
+                    <template v-if="showTargetUser">
+                        <div class="inline-flex text-sm text-gray-300">
+                            <span class="font-semibold">{{ $t('common.colleague') }}:</span>
+                            <CitizenInfoPopover class="ml-1" text-class="underline" :user="activity.targetUser" />
+                        </div>
                     </template>
                 </p>
                 <p class="inline-flex text-sm text-gray-300">

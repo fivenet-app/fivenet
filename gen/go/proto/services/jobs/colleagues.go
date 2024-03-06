@@ -454,6 +454,33 @@ func (s *Server) checkIfHasAccessToColleague(levels []string, userInfo *userinfo
 	return false
 }
 
+func (s *Server) getConditionForColleagueAccess(actTable *table.FivenetJobsUserActivityTable, usersTable *table.UsersTable, levels []string, userInfo *userinfo.UserInfo) jet.BoolExpression {
+	condition := jet.Bool(true)
+	if userInfo.SuperUser {
+		return condition
+	}
+
+	// If no levels set, assume "Own" as default
+	if len(levels) == 0 {
+		return actTable.TargetUserID.EQ(jet.Int32(userInfo.UserId))
+	}
+
+	if slices.Contains(levels, "Any") {
+		return condition
+	}
+	if slices.Contains(levels, "Lower_Rank") {
+		return usersTable.ID.LT(jet.Int32(userInfo.JobGrade))
+	}
+	if slices.Contains(levels, "Same_Rank") {
+		return usersTable.ID.LT_EQ(jet.Int32(userInfo.JobGrade))
+	}
+	if slices.Contains(levels, "Own") {
+		return usersTable.ID.EQ(jet.Int32(userInfo.UserId))
+	}
+
+	return jet.Bool(false)
+}
+
 func (s *Server) ListColleagueActivity(ctx context.Context, req *ListColleagueActivityRequest) (*ListColleagueActivityResponse, error) {
 	userInfo := auth.MustGetUserInfoFromContext(ctx)
 
@@ -467,29 +494,41 @@ func (s *Server) ListColleagueActivity(ctx context.Context, req *ListColleagueAc
 		fields = fieldsAttr.([]string)
 	}
 
-	targetUser, err := s.getColleague(ctx, req.UserId)
-	if err != nil {
-		return nil, errswrap.NewError(errorsjobs.ErrFailedQuery, err)
-	}
-
-	if !s.checkIfHasAccessToColleague(fields, userInfo, &users.UserShort{
-		UserId:   targetUser.UserId,
-		Job:      targetUser.Job,
-		JobGrade: targetUser.JobGrade,
-	}) {
-		return nil, errorsjobs.ErrFailedQuery
-	}
-
 	tJobsUserActivity := tJobsUserActivity.AS("jobsuseractivity")
-	condition := tJobsUserActivity.Job.EQ(jet.String(userInfo.Job)).
-		AND(tJobsUserActivity.TargetUserID.EQ(jet.Int32(req.UserId)))
+	tUTarget := tUser.AS("target_user")
+	tUSource := tUser.AS("source_user")
+
+	condition := tJobsUserActivity.Job.EQ(jet.String(userInfo.Job))
+	if req.UserId != nil {
+		targetUser, err := s.getColleague(ctx, *req.UserId)
+		if err != nil {
+			return nil, errswrap.NewError(errorsjobs.ErrFailedQuery, err)
+		}
+
+		if !s.checkIfHasAccessToColleague(fields, userInfo, &users.UserShort{
+			UserId:   targetUser.UserId,
+			Job:      targetUser.Job,
+			JobGrade: targetUser.JobGrade,
+		}) {
+			return nil, errorsjobs.ErrFailedQuery
+		}
+
+		condition = condition.AND(tJobsUserActivity.TargetUserID.EQ(jet.Int32(*req.UserId)))
+	} else {
+		condition = condition.AND(s.getConditionForColleagueAccess(tJobsUserActivity, tUTarget, fields, userInfo))
+	}
 
 	// Get total count of values
 	countStmt := tJobsUserActivity.
 		SELECT(
 			jet.COUNT(tJobsUserActivity.ID).AS("datacount.totalcount"),
 		).
-		FROM(tJobsUserActivity).
+		FROM(
+			tJobsUserActivity.
+				INNER_JOIN(tUTarget,
+					tUTarget.ID.EQ(tJobsUserActivity.TargetUserID),
+				),
+		).
 		WHERE(condition)
 
 	var count database.DataCount
@@ -507,8 +546,6 @@ func (s *Server) ListColleagueActivity(ctx context.Context, req *ListColleagueAc
 		return resp, nil
 	}
 
-	tUTarget := tUser.AS("target_user")
-	tUSource := tUser.AS("source_user")
 	stmt := tJobsUserActivity.
 		SELECT(
 			tJobsUserActivity.ID,
@@ -534,7 +571,7 @@ func (s *Server) ListColleagueActivity(ctx context.Context, req *ListColleagueAc
 		).
 		FROM(
 			tJobsUserActivity.
-				LEFT_JOIN(tUTarget,
+				INNER_JOIN(tUTarget,
 					tUTarget.ID.EQ(tJobsUserActivity.TargetUserID),
 				).
 				LEFT_JOIN(tUSource,

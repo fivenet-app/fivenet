@@ -887,7 +887,9 @@ func (m *ListColleagueActivityRequest) validate(all bool) error {
 		}
 	}
 
-	// no validation rules for UserId
+	if m.UserId != nil {
+		// no validation rules for UserId
+	}
 
 	if len(errors) > 0 {
 		return ListColleagueActivityRequestMultiError(errors)

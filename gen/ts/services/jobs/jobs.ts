@@ -95,9 +95,9 @@ export interface ListColleagueActivityRequest {
      */
     pagination?: PaginationRequest;
     /**
-     * @generated from protobuf field: int32 user_id = 2;
+     * @generated from protobuf field: optional int32 user_id = 2;
      */
-    userId: number;
+    userId?: number;
 }
 /**
  * @generated from protobuf message services.jobs.ListColleagueActivityResponse
@@ -463,12 +463,11 @@ class ListColleagueActivityRequest$Type extends MessageType<ListColleagueActivit
     constructor() {
         super("services.jobs.ListColleagueActivityRequest", [
             { no: 1, name: "pagination", kind: "message", T: () => PaginationRequest, options: { "validate.rules": { message: { required: true } } } },
-            { no: 2, name: "user_id", kind: "scalar", T: 5 /*ScalarType.INT32*/ }
+            { no: 2, name: "user_id", kind: "scalar", opt: true, T: 5 /*ScalarType.INT32*/ }
         ]);
     }
     create(value?: PartialMessage<ListColleagueActivityRequest>): ListColleagueActivityRequest {
         const message = globalThis.Object.create((this.messagePrototype!));
-        message.userId = 0;
         if (value !== undefined)
             reflectionMergePartial<ListColleagueActivityRequest>(this, message, value);
         return message;
@@ -481,7 +480,7 @@ class ListColleagueActivityRequest$Type extends MessageType<ListColleagueActivit
                 case /* resources.common.database.PaginationRequest pagination */ 1:
                     message.pagination = PaginationRequest.internalBinaryRead(reader, reader.uint32(), options, message.pagination);
                     break;
-                case /* int32 user_id */ 2:
+                case /* optional int32 user_id */ 2:
                     message.userId = reader.int32();
                     break;
                 default:
@@ -499,8 +498,8 @@ class ListColleagueActivityRequest$Type extends MessageType<ListColleagueActivit
         /* resources.common.database.PaginationRequest pagination = 1; */
         if (message.pagination)
             PaginationRequest.internalBinaryWrite(message.pagination, writer.tag(1, WireType.LengthDelimited).fork(), options).join();
-        /* int32 user_id = 2; */
-        if (message.userId !== 0)
+        /* optional int32 user_id = 2; */
+        if (message.userId !== undefined)
             writer.tag(2, WireType.Varint).int32(message.userId);
         let u = options.writeUnknownFields;
         if (u !== false)
