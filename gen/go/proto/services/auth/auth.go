@@ -12,6 +12,7 @@ import (
 	"github.com/galexrt/fivenet/gen/go/proto/resources/timestamp"
 	users "github.com/galexrt/fivenet/gen/go/proto/resources/users"
 	"github.com/galexrt/fivenet/pkg/config"
+	"github.com/galexrt/fivenet/pkg/config/appconfig"
 	"github.com/galexrt/fivenet/pkg/grpc/auth"
 	"github.com/galexrt/fivenet/pkg/grpc/auth/userinfo"
 	"github.com/galexrt/fivenet/pkg/grpc/errswrap"
@@ -64,12 +65,12 @@ type Server struct {
 	db       *sql.DB
 	auth     *auth.GRPCAuth
 	tm       *auth.TokenMgr
-	p        perms.Permissions
+	ps       perms.Permissions
 	enricher *mstlystcdata.Enricher
-	a        audit.IAuditer
+	aud      audit.IAuditer
 	ui       userinfo.UserInfoRetriever
+	appCfg   *appconfig.Config
 
-	signupEnabled   bool
 	superuserGroups []string
 	oauth2Providers []*config.OAuth2Provider
 	customDB        config.CustomDB
@@ -78,15 +79,16 @@ type Server struct {
 type Params struct {
 	fx.In
 
-	Logger   *zap.Logger
-	DB       *sql.DB
-	Auth     *auth.GRPCAuth
-	TM       *auth.TokenMgr
-	Perms    perms.Permissions
-	Enricher *mstlystcdata.Enricher
-	Aud      audit.IAuditer
-	UI       userinfo.UserInfoRetriever
-	Config   *config.Config
+	Logger    *zap.Logger
+	DB        *sql.DB
+	Auth      *auth.GRPCAuth
+	TM        *auth.TokenMgr
+	Perms     perms.Permissions
+	Enricher  *mstlystcdata.Enricher
+	Aud       audit.IAuditer
+	UI        userinfo.UserInfoRetriever
+	Config    *config.Config
+	AppConfig *appconfig.Config
 }
 
 func NewServer(p Params) *Server {
@@ -95,15 +97,15 @@ func NewServer(p Params) *Server {
 		db:       p.DB,
 		auth:     p.Auth,
 		tm:       p.TM,
-		p:        p.Perms,
+		ps:       p.Perms,
 		enricher: p.Enricher,
-		a:        p.Aud,
+		aud:      p.Aud,
 		ui:       p.UI,
+		appCfg:   p.AppConfig,
 
-		signupEnabled:   p.Config.Game.Auth.SignupEnabled,
-		superuserGroups: p.Config.Game.Auth.SuperuserGroups,
 		oauth2Providers: p.Config.OAuth2.Providers,
 		customDB:        p.Config.Database.Custom,
+		superuserGroups: p.Config.Auth.SuperuserGroups,
 	}
 }
 
@@ -208,7 +210,7 @@ func (s *Server) Logout(ctx context.Context, req *LogoutRequest) (*LogoutRespons
 }
 
 func (s *Server) CreateAccount(ctx context.Context, req *CreateAccountRequest) (*CreateAccountResponse, error) {
-	if !s.signupEnabled {
+	if !s.appCfg.Get().Auth.SignupEnabled {
 		return nil, ErrSignupDisabled
 	}
 
@@ -616,7 +618,7 @@ func (s *Server) ChooseCharacter(ctx context.Context, req *ChooseCharacterReques
 	}
 
 	// Load permissions of user
-	userPs, err := s.p.GetPermissionsOfUser(&userinfo.UserInfo{
+	userPs, err := s.ps.GetPermissionsOfUser(&userinfo.UserInfo{
 		UserId:   char.UserId,
 		Job:      char.Job,
 		JobGrade: char.JobGrade,
@@ -630,7 +632,7 @@ func (s *Server) ChooseCharacter(ctx context.Context, req *ChooseCharacterReques
 		ps = append(ps, common.SuperuserPermission)
 	}
 
-	attrs, err := s.p.FlattenRoleAttributes(char.Job, char.JobGrade)
+	attrs, err := s.ps.FlattenRoleAttributes(char.Job, char.JobGrade)
 	if err != nil {
 		return nil, errswrap.NewError(ErrGenericLogin, err)
 	}
@@ -642,7 +644,7 @@ func (s *Server) ChooseCharacter(ctx context.Context, req *ChooseCharacterReques
 		return nil, ErrUnableToChooseChar
 	}
 
-	s.a.Log(&model.FivenetAuditLog{
+	s.aud.Log(&model.FivenetAuditLog{
 		Service: AuthService_ServiceDesc.ServiceName,
 		Method:  "ChooseCharacter",
 		UserID:  char.UserId,

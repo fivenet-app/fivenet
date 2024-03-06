@@ -8,7 +8,7 @@ import (
 	"github.com/galexrt/fivenet/gen/go/proto/resources/documents"
 	"github.com/galexrt/fivenet/gen/go/proto/resources/users"
 	permscitizenstore "github.com/galexrt/fivenet/gen/go/proto/services/citizenstore/perms"
-	"github.com/galexrt/fivenet/pkg/config"
+	"github.com/galexrt/fivenet/pkg/config/appconfig"
 	"github.com/galexrt/fivenet/pkg/grpc/auth/userinfo"
 	"github.com/galexrt/fivenet/pkg/perms"
 )
@@ -20,18 +20,14 @@ const (
 type Enricher struct {
 	cache *Cache
 
-	publicJobs         []string
-	unemployedJob      string
-	unemployedJobGrade int32
+	appCfg *appconfig.Config
 }
 
-func NewEnricher(cache *Cache, cfg *config.Config) *Enricher {
+func NewEnricher(cache *Cache, appCfg *appconfig.Config) *Enricher {
 	return &Enricher{
 		cache: cache,
 
-		publicJobs:         cfg.Game.PublicJobs,
-		unemployedJob:      cfg.Game.UnemployedJob.Name,
-		unemployedJobGrade: cfg.Game.UnemployedJob.Grade,
+		appCfg: appCfg,
 	}
 }
 
@@ -139,13 +135,16 @@ func (e *UserAwareEnricher) EnrichJobInfoSafeFunc(userInfo *userinfo.UserInfo) f
 		jobGrades = jobGradesAttr.(map[string]int32)
 	}
 
+	appCfg := e.appCfg.Get()
+	publicJobs := appCfg.JobInfo.PublicJobs
+	unemployedJob := appCfg.JobInfo.UnemployedJob
 	return func(usr common.IJobInfo) {
 		// Make sure user has permission to see that grade, otherwise "hide" the user's job grade
 		grade, ok := jobGrades[usr.GetJob()]
 		if !ok && !userInfo.SuperUser {
-			if !slices.Contains(e.publicJobs, usr.GetJob()) {
-				usr.SetJob(e.unemployedJob)
-				usr.SetJobGrade(e.unemployedJobGrade)
+			if !slices.Contains(publicJobs, usr.GetJob()) {
+				usr.SetJob(unemployedJob.Name)
+				usr.SetJobGrade(unemployedJob.Grade)
 			} else {
 				usr.SetJobGrade(0)
 			}

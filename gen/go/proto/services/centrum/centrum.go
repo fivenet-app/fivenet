@@ -14,6 +14,7 @@ import (
 	eventscentrum "github.com/galexrt/fivenet/gen/go/proto/services/centrum/events"
 	"github.com/galexrt/fivenet/gen/go/proto/services/centrum/manager"
 	"github.com/galexrt/fivenet/pkg/config"
+	"github.com/galexrt/fivenet/pkg/config/appconfig"
 	"github.com/galexrt/fivenet/pkg/coords/postals"
 	"github.com/galexrt/fivenet/pkg/grpc/auth"
 	"github.com/galexrt/fivenet/pkg/perms"
@@ -44,10 +45,9 @@ type Server struct {
 	js      nats.JetStreamContext
 	tracker tracker.ITracker
 	postals postals.Postals
+	appCfg  *appconfig.Config
 
 	brokers map[string]*utils.Broker[*StreamResponse]
-
-	publicJobs []string
 
 	state *manager.Manager
 }
@@ -57,25 +57,23 @@ type Params struct {
 
 	LC fx.Lifecycle
 
-	Logger  *zap.Logger
-	TP      *tracesdk.TracerProvider
-	DB      *sql.DB
-	Perms   perms.Permissions
-	Audit   audit.IAuditer
-	JS      nats.JetStreamContext
-	Tracker tracker.ITracker
-	Postals postals.Postals
-	Config  *config.Config
-	Manager *manager.Manager
+	Logger    *zap.Logger
+	TP        *tracesdk.TracerProvider
+	DB        *sql.DB
+	Perms     perms.Permissions
+	Audit     audit.IAuditer
+	JS        nats.JetStreamContext
+	Tracker   tracker.ITracker
+	Postals   postals.Postals
+	Config    *config.Config
+	AppConfig *appconfig.Config
+	Manager   *manager.Manager
 }
 
 func NewServer(p Params) (*Server, error) {
 	ctx, cancel := context.WithCancel(context.Background())
 
 	brokers := map[string]*utils.Broker[*StreamResponse]{}
-	for _, job := range p.Config.Game.Livemap.Jobs {
-		brokers[job] = utils.NewBroker[*StreamResponse](ctx)
-	}
 
 	s := &Server{
 		ctx:    ctx,
@@ -90,17 +88,17 @@ func NewServer(p Params) (*Server, error) {
 		js:      p.JS,
 		tracker: p.Tracker,
 		postals: p.Postals,
+		appCfg:  p.AppConfig,
 
 		brokers: brokers,
-
-		publicJobs: p.Config.Game.PublicJobs,
 
 		state: p.Manager,
 	}
 
 	p.LC.Append(fx.StartHook(func(ctx context.Context) error {
-		for _, broker := range s.brokers {
-			go broker.Start()
+		for _, job := range p.AppConfig.Get().UserTracker.LivemapJobs {
+			brokers[job] = utils.NewBroker[*StreamResponse](ctx)
+			go brokers[job].Start()
 		}
 
 		if err := s.registerSubscriptions(ctx); err != nil {

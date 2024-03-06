@@ -12,18 +12,21 @@ type Config struct {
 
 	Tracing Tracing `yaml:"tracing"`
 
-	HTTP       HTTP       `yaml:"http"`
-	GRPC       GRPC       `yaml:"grpc"`
-	Database   Database   `yaml:"database"`
-	NATS       NATS       `yaml:"nats"`
-	JWT        JWT        `yaml:"jwt"`
-	Storage    Storage    `yaml:"storage"`
-	ImageProxy ImageProxy `yaml:"imageProxy"`
-	Cache      Cache      `yaml:"cache"`
-	Audit      Audit      `yaml:"audit"`
-	OAuth2     OAuth2     `yaml:"oauth2"`
+	HTTP        HTTP       `yaml:"http"`
+	GRPC        GRPC       `yaml:"grpc"`
+	Database    Database   `yaml:"database"`
+	NATS        NATS       `yaml:"nats"`
+	JWT         JWT        `yaml:"jwt"`
+	Storage     Storage    `yaml:"storage"`
+	ImageProxy  ImageProxy `yaml:"imageProxy"`
+	Cache       Cache      `yaml:"cache"`
+	Audit       Audit      `yaml:"audit"`
+	OAuth2      OAuth2     `yaml:"oauth2"`
+	PostalsFile string     `default:".output/public/data/postals.json" yaml:"postalsFile"`
 
-	Game    Game    `yaml:"game"`
+	Auth           Auth           `yaml:"auth"`
+	DispatchCenter DispatchCenter `yaml:"dispatchCenter"`
+
 	Discord Discord `yaml:"discord"`
 }
 
@@ -159,36 +162,15 @@ type OAuth2Mapping struct {
 	Avatar   string `yaml:"avatar"`
 }
 
-type AppConfig struct {
-	Game    Game    `yaml:"game"`
-	Discord Discord `yaml:"discord"`
-}
-
-type Game struct {
-	Auth           Auth           `yaml:"auth"`
-	UnemployedJob  UnemployedJob  `yaml:"unemployedJob"`
-	PublicJobs     []string       `yaml:"publicJobs"`
-	HiddenJobs     []string       `yaml:"hiddenJobs"`
-	Livemap        Livemap        `yaml:"livemap"`
-	DispatchCenter DispatchCenter `yaml:"dispatchCenter"`
-}
-
 type Auth struct {
-	SignupEnabled      bool     `default:"true" yaml:"signupEnabled"`
 	SuperuserGroups    []string `yaml:"superuserGroups"`
 	DefaultPermissions []Perm   `yaml:"defaultPermissions"`
-}
-
-type UnemployedJob struct {
-	Name  string `default:"unemployed" yaml:"job"`
-	Grade int32  `default:"1" yaml:"grade"`
 }
 
 type Livemap struct {
 	RefreshTime   time.Duration `default:"3s350ms" yaml:"refreshTime"`
 	DBRefreshTime time.Duration `default:"1s" yaml:"dbRefreshTime"`
 	Jobs          []string      `yaml:"jobs"`
-	PostalsFile   string        `default:".output/public/data/postals.json" yaml:"postalsFile"`
 }
 
 type DispatchCenter struct {

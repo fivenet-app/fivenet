@@ -357,7 +357,7 @@ func (s *Server) refreshMarkers(ctx context.Context) error {
 	}
 
 	markers := map[string][]*livemap.MarkerMarker{}
-	for _, job := range s.trackedJobs {
+	for _, job := range s.appCfg.Get().UserTracker.GetLivemapJobs() {
 		markers[job] = []*livemap.MarkerMarker{}
 	}
 

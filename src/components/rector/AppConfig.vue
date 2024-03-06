@@ -470,6 +470,28 @@ watch(data, () => console.log('data', data.value?.config));
                                 </SwitchGroup>
                             </template>
                         </GenericContainerPanelEntry>
+                        <GenericContainerPanelEntry>
+                            <template #title>Bot Invite URL</template>
+                            <template #default>
+                                <div class="flex-1 form-control">
+                                    <label for="discordBotInviteUrl">
+                                        {{ $t('common.discord_bot_invite_url') }}
+                                    </label>
+                                    <input
+                                        v-model="data.config!.discord!.inviteUrl"
+                                        type="url"
+                                        pattern="https://discord.com/.*"
+                                        name="discordBotInviteUrl"
+                                        class="block w-full rounded-md border-0 bg-base-700 py-1.5 text-neutral placeholder:text-accent-200 focus:ring-2 focus:ring-inset focus:ring-base-300 sm:text-sm sm:leading-6"
+                                        :placeholder="$t('common.discord_bot_invite_url')"
+                                        :label="$t('common.discord_bot_invite_url')"
+                                        maxlength="128"
+                                        @focusin="focusTablet(true)"
+                                        @focusout="focusTablet(false)"
+                                    />
+                                </div>
+                            </template>
+                        </GenericContainerPanelEntry>
                     </template>
                 </GenericContainerPanel>
 

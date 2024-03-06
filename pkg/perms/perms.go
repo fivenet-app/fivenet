@@ -76,10 +76,10 @@ type userCacheKey struct {
 }
 
 type Perms struct {
-	logger *zap.Logger
-	db     *sql.DB
-	cfg    config.Game
-	wg     sync.WaitGroup
+	logger       *zap.Logger
+	db           *sql.DB
+	wg           sync.WaitGroup
+	defaultPerms []config.Perm
 
 	tracer trace.Tracer
 	ctx    context.Context
@@ -136,10 +136,10 @@ func New(p Params) (Permissions, error) {
 	)
 
 	ps := &Perms{
-		logger: p.Logger,
-		db:     p.DB,
-		cfg:    p.Config.Game,
-		wg:     sync.WaitGroup{},
+		logger:       p.Logger,
+		db:           p.DB,
+		wg:           sync.WaitGroup{},
+		defaultPerms: p.Config.Auth.DefaultPermissions,
 
 		tracer: p.TP.Tracer("perms"),
 		ctx:    ctx,
@@ -200,10 +200,9 @@ func (p *Perms) init(ctx context.Context) error {
 		return err
 	}
 
-	cfgDefaultPerms := p.cfg.Auth.DefaultPermissions
-	defaultPerms := make([]string, len(p.cfg.Auth.DefaultPermissions))
-	for i := 0; i < len(p.cfg.Auth.DefaultPermissions); i++ {
-		defaultPerms[i] = BuildGuard(Category(cfgDefaultPerms[i].Category), Name(cfgDefaultPerms[i].Name))
+	defaultPerms := make([]string, len(p.defaultPerms))
+	for i := 0; i < len(p.defaultPerms); i++ {
+		defaultPerms[i] = BuildGuard(Category(p.defaultPerms[i].Category), Name(p.defaultPerms[i].Name))
 	}
 
 	if err := p.register(ctx, defaultPerms); err != nil {

@@ -154,6 +154,7 @@ func (s *Server) ListDispatches(ctx context.Context, req *ListDispatchesRequest)
 
 	resp.Pagination.Update(count.TotalCount, len(resp.Dispatches))
 
+	publicJobs := s.appCfg.Get().JobInfo.PublicJobs
 	for i := 0; i < len(resp.Dispatches); i++ {
 		var err error
 		resp.Dispatches[i].Units, err = s.state.LoadDispatchAssignments(ctx, resp.Dispatches[i].Job, resp.Dispatches[i].Id)
@@ -169,7 +170,7 @@ func (s *Server) ListDispatches(ctx context.Context, req *ListDispatchesRequest)
 
 			if resp.Dispatches[i].Creator != nil {
 				// Clear dispatch creator's job info if not a visible job
-				if !slices.Contains(s.publicJobs, resp.Dispatches[i].Creator.Job) {
+				if !slices.Contains(publicJobs, resp.Dispatches[i].Creator.Job) {
 					resp.Dispatches[i].Creator.Job = ""
 				}
 				resp.Dispatches[i].Creator.JobGrade = 0
@@ -273,7 +274,7 @@ func (s *Server) GetDispatch(ctx context.Context, req *GetDispatchRequest) (*Get
 
 		if resp.Dispatch.Creator != nil {
 			// Clear dispatch creator's job info if not a visible job
-			if !slices.Contains(s.publicJobs, resp.Dispatch.Creator.Job) {
+			if !slices.Contains(s.appCfg.Get().JobInfo.PublicJobs, resp.Dispatch.Creator.Job) {
 				resp.Dispatch.Creator.Job = ""
 			}
 			resp.Dispatch.Creator.JobGrade = 0

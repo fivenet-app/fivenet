@@ -1150,6 +1150,39 @@ func (m *Discord) validate(all bool) error {
 
 	// no validation rules for Enabled
 
+	if all {
+		switch v := interface{}(m.GetSyncTime()).(type) {
+		case interface{ ValidateAll() error }:
+			if err := v.ValidateAll(); err != nil {
+				errors = append(errors, DiscordValidationError{
+					field:  "SyncTime",
+					reason: "embedded message failed validation",
+					cause:  err,
+				})
+			}
+		case interface{ Validate() error }:
+			if err := v.Validate(); err != nil {
+				errors = append(errors, DiscordValidationError{
+					field:  "SyncTime",
+					reason: "embedded message failed validation",
+					cause:  err,
+				})
+			}
+		}
+	} else if v, ok := interface{}(m.GetSyncTime()).(interface{ Validate() error }); ok {
+		if err := v.Validate(); err != nil {
+			return DiscordValidationError{
+				field:  "SyncTime",
+				reason: "embedded message failed validation",
+				cause:  err,
+			}
+		}
+	}
+
+	if m.InviteUrl != nil {
+		// no validation rules for InviteUrl
+	}
+
 	if len(errors) > 0 {
 		return DiscordMultiError(errors)
 	}

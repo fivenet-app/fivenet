@@ -60,7 +60,7 @@ func NewHousekeeper(p HousekeeperParams) *Housekeeper {
 		wg:          sync.WaitGroup{},
 		tracer:      p.TP.Tracer("centrum-manager-housekeeper"),
 		db:          p.DB,
-		convertJobs: p.Config.Game.DispatchCenter.ConvertJobs,
+		convertJobs: p.Config.DispatchCenter.ConvertJobs,
 		Manager:     p.Manager,
 	}
 
@@ -381,7 +381,7 @@ func (s *Housekeeper) runDispatchDeduplication() {
 func (s *Housekeeper) deduplicateDispatches(ctx context.Context) error {
 	wg := sync.WaitGroup{}
 
-	for _, job := range s.trackedJobs {
+	for _, job := range s.appCfg.Get().UserTracker.LivemapJobs {
 		if locs := s.State.GetDispatchLocations(job); locs == nil {
 			continue
 		}
@@ -554,7 +554,7 @@ func (s *Housekeeper) runCleanupUnits() {
 // Remove empty units from dispatches (if no other unit is assigned to dispatch update status to UNASSIGNED) by
 // iterating over the dispatches and making sure the assigned units aren't empty
 func (s *Housekeeper) removeDispatchesFromEmptyUnits(ctx context.Context) error {
-	for _, job := range s.trackedJobs {
+	for _, job := range s.appCfg.Get().UserTracker.LivemapJobs {
 		dsps := s.State.FilterDispatches(job, nil, []centrum.StatusDispatch{
 			centrum.StatusDispatch_STATUS_DISPATCH_ARCHIVED,
 			centrum.StatusDispatch_STATUS_DISPATCH_CANCELLED,
@@ -614,7 +614,7 @@ func (s *Housekeeper) removeDispatchesFromEmptyUnits(ctx context.Context) error 
 
 // Iterate over units to ensure that, e.g., an empty unit status is set to `unavailable`
 func (s *Housekeeper) cleanupUnitStatus(ctx context.Context) error {
-	for _, job := range s.trackedJobs {
+	for _, job := range s.appCfg.Get().UserTracker.LivemapJobs {
 		units, ok := s.ListUnits(job)
 		if !ok {
 			continue
@@ -665,7 +665,7 @@ func (s *Housekeeper) cleanupUnitStatus(ctx context.Context) error {
 }
 
 func (s *Housekeeper) checkUnitUsers(ctx context.Context) error {
-	for _, job := range s.trackedJobs {
+	for _, job := range s.appCfg.Get().UserTracker.LivemapJobs {
 		units, ok := s.ListUnits(job)
 		if !ok {
 			continue

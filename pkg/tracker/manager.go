@@ -11,7 +11,7 @@ import (
 	"github.com/galexrt/fivenet/gen/go/proto/resources/users"
 	"github.com/galexrt/fivenet/gen/go/proto/services/centrum/state"
 	"github.com/galexrt/fivenet/pkg/config"
-	"github.com/galexrt/fivenet/pkg/coords"
+	"github.com/galexrt/fivenet/pkg/config/appconfig"
 	"github.com/galexrt/fivenet/pkg/coords/postals"
 	"github.com/galexrt/fivenet/pkg/mstlystcdata"
 	"github.com/galexrt/fivenet/pkg/nats/store"
@@ -35,12 +35,9 @@ type Manager struct {
 	enricher *mstlystcdata.Enricher
 	postals  postals.Postals
 	state    *state.State
+	appCfg   *appconfig.Config
 
 	userStore *store.Store[livemap.UserMarker, *livemap.UserMarker]
-
-	dbRefreshTime time.Duration
-
-	locations map[string]*coords.Coords[*livemap.UserMarker]
 }
 
 type ManagerParams struct {
@@ -48,14 +45,15 @@ type ManagerParams struct {
 
 	LC fx.Lifecycle
 
-	Logger   *zap.Logger
-	JS       nats.JetStreamContext
-	TP       *tracesdk.TracerProvider
-	DB       *sql.DB
-	Enricher *mstlystcdata.Enricher
-	Postals  postals.Postals
-	Config   *config.Config
-	State    *state.State
+	Logger    *zap.Logger
+	JS        nats.JetStreamContext
+	TP        *tracesdk.TracerProvider
+	DB        *sql.DB
+	Enricher  *mstlystcdata.Enricher
+	Postals   postals.Postals
+	Config    *config.Config
+	State     *state.State
+	AppConfig *appconfig.Config
 }
 
 func NewManager(p ManagerParams) (*Manager, error) {
@@ -66,11 +64,6 @@ func NewManager(p ManagerParams) (*Manager, error) {
 
 	ctx, cancel := context.WithCancel(context.Background())
 
-	locs := map[string]*coords.Coords[*livemap.UserMarker]{}
-	for _, job := range p.Config.Game.Livemap.Jobs {
-		locs[job] = coords.New[*livemap.UserMarker]()
-	}
-
 	m := &Manager{
 		ctx:      ctx,
 		logger:   p.Logger,
@@ -80,12 +73,9 @@ func NewManager(p ManagerParams) (*Manager, error) {
 		enricher: p.Enricher,
 		postals:  p.Postals,
 		state:    p.State,
+		appCfg:   p.AppConfig,
 
 		userStore: userStore,
-
-		dbRefreshTime: p.Config.Game.Livemap.DBRefreshTime,
-
-		locations: locs,
 	}
 
 	p.LC.Append(fx.StartHook(func(ctx context.Context) error {
@@ -122,7 +112,7 @@ func (m *Manager) start() {
 		case <-m.ctx.Done():
 			return
 
-		case <-time.After(m.dbRefreshTime):
+		case <-time.After(m.appCfg.Get().UserTracker.DbRefreshTime.AsDuration()):
 			m.refreshCache(m.ctx)
 		}
 	}

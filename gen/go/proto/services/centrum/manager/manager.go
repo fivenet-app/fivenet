@@ -6,6 +6,7 @@ import (
 
 	"github.com/galexrt/fivenet/gen/go/proto/services/centrum/state"
 	"github.com/galexrt/fivenet/pkg/config"
+	"github.com/galexrt/fivenet/pkg/config/appconfig"
 	"github.com/galexrt/fivenet/pkg/coords/postals"
 	"github.com/galexrt/fivenet/pkg/mstlystcdata"
 	"github.com/galexrt/fivenet/pkg/tracker"
@@ -31,8 +32,7 @@ type Manager struct {
 	tracker  tracker.ITracker
 	postals  postals.Postals
 
-	trackedJobs []string
-	publicJobs  []string
+	appCfg *appconfig.Config
 
 	*state.State
 }
@@ -42,14 +42,15 @@ type Params struct {
 
 	LC fx.Lifecycle
 
-	Logger   *zap.Logger
-	TP       *tracesdk.TracerProvider
-	DB       *sql.DB
-	JS       nats.JetStreamContext
-	Enricher *mstlystcdata.Enricher
-	Postals  postals.Postals
-	Tracker  tracker.ITracker
-	Config   *config.Config
+	Logger    *zap.Logger
+	TP        *tracesdk.TracerProvider
+	DB        *sql.DB
+	JS        nats.JetStreamContext
+	Enricher  *mstlystcdata.Enricher
+	Postals   postals.Postals
+	Tracker   tracker.ITracker
+	Config    *config.Config
+	AppConfig *appconfig.Config
 
 	State *state.State
 }
@@ -68,8 +69,7 @@ func New(p Params) *Manager {
 		postals:  p.Postals,
 		tracker:  p.Tracker,
 
-		trackedJobs: p.Config.Game.Livemap.Jobs,
-		publicJobs:  p.Config.Game.PublicJobs,
+		appCfg: p.AppConfig,
 
 		State: p.State,
 	}

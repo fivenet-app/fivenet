@@ -16,17 +16,19 @@ import (
 	"go.uber.org/zap"
 )
 
+type Cfg = rector.AppConfig
+
 var (
 	tConfig = table.FivenetConfig.AS("appconfig")
 )
 
 type IConfig interface {
-	Get() *rector.AppConfig
-	Set(val *rector.AppConfig)
-	Update(*rector.AppConfig) error
+	Get() *Cfg
+	Set(val *Cfg)
+	Update(*Cfg) error
 
-	Subscribe() chan *rector.AppConfig
-	Unsubscribe(c chan *rector.AppConfig)
+	Subscribe() chan *Cfg
+	Unsubscribe(c chan *Cfg)
 }
 
 var Module = fx.Module("appconfig",
@@ -45,9 +47,9 @@ type Config struct {
 
 	jsSub *nats.Subscription
 
-	cfg atomic.Pointer[rector.AppConfig]
+	cfg atomic.Pointer[Cfg]
 
-	broker *utils.Broker[*rector.AppConfig]
+	broker *utils.Broker[*Cfg]
 }
 
 type Params struct {
@@ -69,13 +71,15 @@ func New(p Params) (*Config, error) {
 		db:     p.DB,
 		js:     p.JS,
 
-		cfg: atomic.Pointer[rector.AppConfig]{},
+		cfg: atomic.Pointer[Cfg]{},
 
-		broker: utils.NewBroker[*rector.AppConfig](ctx),
+		broker: utils.NewBroker[*Cfg](ctx),
 	}
 
 	p.LC.Append(fx.StartHook(func(ctx context.Context) error {
-		if err := c.updateConfigFromDB(ctx); err != nil {
+		go c.broker.Start()
+
+		if _, err := c.updateConfigFromDB(ctx); err != nil {
 			return err
 		}
 
@@ -95,44 +99,45 @@ func New(p Params) (*Config, error) {
 	return c, nil
 }
 
-func (c *Config) Get() *rector.AppConfig {
+func (c *Config) Get() *Cfg {
 	return c.cfg.Load()
 }
 
-func (c *Config) Set(val *rector.AppConfig) {
+func (c *Config) Set(val *Cfg) {
 	c.cfg.Store(val)
 }
 
-func (c *Config) Update(val *rector.AppConfig) error {
+func (c *Config) Update(val *Cfg) error {
+	c.Set(val)
+
+	// Send update message to inform components
 	if _, err := c.js.Publish(fmt.Sprintf("%s.%s", BaseSubject, UpdateSubject), nil); err != nil {
 		return err
 	}
 
-	c.Set(val)
-
 	return nil
 }
 
-func (c *Config) Subscribe() chan *rector.AppConfig {
+func (c *Config) Subscribe() chan *Cfg {
 	return c.broker.Subscribe()
 }
 
-func (c *Config) Unsubscribe(ch chan *rector.AppConfig) {
+func (c *Config) Unsubscribe(ch chan *Cfg) {
 	c.broker.Unsubscribe(ch)
 }
 
-func (c *Config) updateConfigFromDB(ctx context.Context) error {
+func (c *Config) updateConfigFromDB(ctx context.Context) (*Cfg, error) {
 	cfg, err := c.LoadFromDB(c.ctx)
 	if err != nil {
-		return err
+		return nil, err
 	}
 
 	c.Set(cfg)
 
-	return nil
+	return cfg, nil
 }
 
-func (c *Config) LoadFromDB(ctx context.Context) (*rector.AppConfig, error) {
+func (c *Config) LoadFromDB(ctx context.Context) (*Cfg, error) {
 	stmt := tConfig.
 		SELECT(
 			tConfig.AppConfig.AS("appconfig"),
@@ -141,9 +146,9 @@ func (c *Config) LoadFromDB(ctx context.Context) (*rector.AppConfig, error) {
 		LIMIT(1)
 
 	dest := struct {
-		AppConfig *rector.AppConfig
+		AppConfig *Cfg
 	}{
-		AppConfig: &rector.AppConfig{},
+		AppConfig: &Cfg{},
 	}
 	if err := stmt.QueryContext(ctx, c.db, &dest); err != nil {
 		if !errors.Is(err, qrm.ErrNoRows) {
@@ -154,4 +159,17 @@ func (c *Config) LoadFromDB(ctx context.Context) (*rector.AppConfig, error) {
 	dest.AppConfig.Default()
 
 	return dest.AppConfig, nil
+}
+
+func LoadTest() (*Config, error) {
+	cfg := &Config{
+		cfg: atomic.Pointer[rector.AppConfig]{},
+	}
+
+	c := &Cfg{}
+	c.Default()
+
+	cfg.Set(c)
+
+	return cfg, nil
 }

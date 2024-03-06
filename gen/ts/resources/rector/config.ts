@@ -132,7 +132,15 @@ export interface Discord {
     /**
      * @generated from protobuf field: bool enabled = 1;
      */
-    enabled: boolean; // TODO
+    enabled: boolean;
+    /**
+     * @generated from protobuf field: google.protobuf.Duration sync_time = 2;
+     */
+    syncTime?: Duration;
+    /**
+     * @generated from protobuf field: optional string invite_url = 3;
+     */
+    inviteUrl?: string;
 }
 // @generated message type with reflection information, may provide speed optimized methods
 class AppConfig$Type extends MessageType<AppConfig> {
@@ -568,7 +576,9 @@ export const UserTracker = new UserTracker$Type();
 class Discord$Type extends MessageType<Discord> {
     constructor() {
         super("resources.rector.Discord", [
-            { no: 1, name: "enabled", kind: "scalar", T: 8 /*ScalarType.BOOL*/ }
+            { no: 1, name: "enabled", kind: "scalar", T: 8 /*ScalarType.BOOL*/ },
+            { no: 2, name: "sync_time", kind: "message", T: () => Duration },
+            { no: 3, name: "invite_url", kind: "scalar", opt: true, T: 9 /*ScalarType.STRING*/ }
         ]);
     }
     create(value?: PartialMessage<Discord>): Discord {
@@ -586,6 +596,12 @@ class Discord$Type extends MessageType<Discord> {
                 case /* bool enabled */ 1:
                     message.enabled = reader.bool();
                     break;
+                case /* google.protobuf.Duration sync_time */ 2:
+                    message.syncTime = Duration.internalBinaryRead(reader, reader.uint32(), options, message.syncTime);
+                    break;
+                case /* optional string invite_url */ 3:
+                    message.inviteUrl = reader.string();
+                    break;
                 default:
                     let u = options.readUnknownField;
                     if (u === "throw")
@@ -601,6 +617,12 @@ class Discord$Type extends MessageType<Discord> {
         /* bool enabled = 1; */
         if (message.enabled !== false)
             writer.tag(1, WireType.Varint).bool(message.enabled);
+        /* google.protobuf.Duration sync_time = 2; */
+        if (message.syncTime)
+            Duration.internalBinaryWrite(message.syncTime, writer.tag(2, WireType.LengthDelimited).fork(), options).join();
+        /* optional string invite_url = 3; */
+        if (message.inviteUrl !== undefined)
+            writer.tag(3, WireType.LengthDelimited).string(message.inviteUrl);
         let u = options.writeUnknownFields;
         if (u !== false)
             (u == true ? UnknownFieldHandler.onWrite : u)(this.typeName, message, writer);

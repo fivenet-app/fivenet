@@ -11,6 +11,7 @@ import (
 	"github.com/galexrt/fivenet/internal/tests/proto"
 	"github.com/galexrt/fivenet/internal/tests/servers"
 	"github.com/galexrt/fivenet/pkg/config"
+	"github.com/galexrt/fivenet/pkg/config/appconfig"
 	"github.com/galexrt/fivenet/pkg/grpc/auth"
 	"github.com/galexrt/fivenet/pkg/grpc/auth/userinfo"
 	"github.com/galexrt/fivenet/pkg/mstlystcdata"
@@ -62,6 +63,10 @@ func TestFullAuthFlow(t *testing.T) {
 	cfg.NATS.URL = servers.TestNATSServer.GetURL()
 	cfg.Cache.RefreshTime = 1 * time.Hour
 
+	appCfg, err := appconfig.LoadTest()
+	require.NoError(t, err)
+	require.NotNil(t, cfg)
+
 	js, err := servers.TestNATSServer.GetJS()
 	require.NoError(t, err)
 
@@ -87,7 +92,8 @@ func TestFullAuthFlow(t *testing.T) {
 		Config: cfg,
 	})
 	assert.NoError(t, err)
-	enricher := mstlystcdata.NewEnricher(c, cfg)
+	enricher := mstlystcdata.NewEnricher(c, appCfg)
+
 	srv := NewServer(Params{
 		Logger:   logger,
 		DB:       db,

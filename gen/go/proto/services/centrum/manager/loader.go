@@ -110,7 +110,7 @@ func (s *Manager) LoadDisponentsFromDB(ctx context.Context, job string) error {
 	}
 
 	perJob := map[string][]*users.UserShort{}
-	for _, j := range s.trackedJobs {
+	for _, j := range s.appCfg.Get().UserTracker.LivemapJobs {
 		if _, ok := perJob[j]; !ok {
 			perJob[j] = []*users.UserShort{}
 		}
@@ -320,6 +320,7 @@ func (s *Manager) LoadDispatchesFromDB(ctx context.Context, cond jet.BoolExpress
 		}
 	}
 
+	publicJobs := s.appCfg.Get().JobInfo.PublicJobs
 	for i := 0; i < len(dsps); i++ {
 		var err error
 		dsps[i].Units, err = s.LoadDispatchAssignments(ctx, dsps[i].Job, dsps[i].Id)
@@ -335,7 +336,7 @@ func (s *Manager) LoadDispatchesFromDB(ctx context.Context, cond jet.BoolExpress
 
 			if dsps[i].Creator != nil {
 				// Clear dispatch creator's job info if not a visible job
-				if !slices.Contains(s.publicJobs, dsps[i].Creator.Job) {
+				if !slices.Contains(publicJobs, dsps[i].Creator.Job) {
 					dsps[i].Creator.Job = ""
 				}
 				dsps[i].Creator.JobGrade = 0

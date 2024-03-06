@@ -10,6 +10,7 @@ import (
 	users "github.com/galexrt/fivenet/gen/go/proto/resources/users"
 	permslivemapper "github.com/galexrt/fivenet/gen/go/proto/services/livemapper/perms"
 	"github.com/galexrt/fivenet/pkg/config"
+	"github.com/galexrt/fivenet/pkg/config/appconfig"
 	"github.com/galexrt/fivenet/pkg/events"
 	"github.com/galexrt/fivenet/pkg/grpc/auth"
 	"github.com/galexrt/fivenet/pkg/grpc/auth/userinfo"
@@ -50,13 +51,11 @@ type Server struct {
 	enricher *mstlystcdata.Enricher
 	tracker  tracker.ITracker
 	auditer  audit.IAuditer
+	appCfg   *appconfig.Config
 
 	markersCache *xsync.MapOf[string, []*livemap.MarkerMarker]
 
 	broker *utils.Broker[*brokerEvent]
-
-	refreshTime time.Duration
-	trackedJobs []string
 }
 
 type Params struct {
@@ -64,15 +63,16 @@ type Params struct {
 
 	LC fx.Lifecycle
 
-	Logger   *zap.Logger
-	TP       *tracesdk.TracerProvider
-	DB       *sql.DB
-	JS       nats.JetStreamContext
-	Perms    perms.Permissions
-	Enricher *mstlystcdata.Enricher
-	Config   *config.Config
-	Tracker  tracker.ITracker
-	Audit    audit.IAuditer
+	Logger    *zap.Logger
+	TP        *tracesdk.TracerProvider
+	DB        *sql.DB
+	JS        nats.JetStreamContext
+	Perms     perms.Permissions
+	Enricher  *mstlystcdata.Enricher
+	Config    *config.Config
+	Tracker   tracker.ITracker
+	Audit     audit.IAuditer
+	AppConfig *appconfig.Config
 }
 
 type brokerEvent struct {
@@ -94,13 +94,11 @@ func NewServer(p Params) *Server {
 		enricher: p.Enricher,
 		tracker:  p.Tracker,
 		auditer:  p.Audit,
+		appCfg:   p.AppConfig,
 
 		markersCache: xsync.NewMapOf[string, []*livemap.MarkerMarker](),
 
 		broker: broker,
-
-		refreshTime: p.Config.Game.Livemap.RefreshTime,
-		trackedJobs: p.Config.Game.Livemap.Jobs,
 	}
 
 	p.LC.Append(fx.StartHook(func(ctx context.Context) error {
@@ -176,7 +174,7 @@ func (s *Server) Stream(req *StreamRequest, srv LivemapperService_StreamServer) 
 
 	if userInfo.SuperUser {
 		usersJobs = map[string]int32{}
-		for _, j := range s.trackedJobs {
+		for _, j := range s.appCfg.Get().UserTracker.GetLivemapJobs() {
 			usersJobs[j] = -1
 		}
 	}
@@ -236,7 +234,7 @@ func (s *Server) Stream(req *StreamRequest, srv LivemapperService_StreamServer) 
 				}
 			}
 
-		case <-time.After(s.refreshTime):
+		case <-time.After(s.appCfg.Get().UserTracker.RefreshTime.AsDuration()):
 			if end, err := s.sendChunkedUserMarkers(srv, usersJobs, userInfo); end || err != nil {
 				return err
 			}

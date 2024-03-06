@@ -51,5 +51,8 @@ message UserTracker {
 
 message Discord {
   bool enabled = 1;
+  google.protobuf.Duration sync_time = 2;
+  optional string invite_url = 3;
+
   // TODO
 }

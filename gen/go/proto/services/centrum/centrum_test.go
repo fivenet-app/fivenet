@@ -11,6 +11,7 @@ import (
 	"github.com/galexrt/fivenet/gen/go/proto/services/centrum/state"
 	"github.com/galexrt/fivenet/internal/tests/servers"
 	"github.com/galexrt/fivenet/pkg/config"
+	"github.com/galexrt/fivenet/pkg/config/appconfig"
 	"github.com/galexrt/fivenet/pkg/coords/postals"
 	"github.com/galexrt/fivenet/pkg/mstlystcdata"
 	"github.com/galexrt/fivenet/pkg/perms"
@@ -57,6 +58,10 @@ func TestBasicCentrumFlow(t *testing.T) {
 	cfg.NATS.URL = servers.TestNATSServer.GetURL()
 	cfg.Cache.RefreshTime = 1 * time.Hour
 
+	appCfg, err := appconfig.LoadTest()
+	require.NoError(t, err)
+	require.NotNil(t, cfg)
+
 	js, err := servers.TestNATSServer.GetJS()
 	require.NoError(t, err)
 
@@ -82,13 +87,13 @@ func TestBasicCentrumFlow(t *testing.T) {
 		Config: cfg,
 	})
 	require.NoError(t, err)
-	enricher := mstlystcdata.NewEnricher(c, cfg)
+	enricher := mstlystcdata.NewEnricher(c, appCfg)
 
 	state, err := state.New(state.Params{
-		LC:     fxLC,
-		Logger: logger,
-		JS:     js,
-		Config: cfg,
+		LC:        fxLC,
+		Logger:    logger,
+		JS:        js,
+		AppConfig: appCfg,
 	})
 	require.NoError(t, err)
 

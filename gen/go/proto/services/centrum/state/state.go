@@ -5,7 +5,7 @@ import (
 
 	"github.com/galexrt/fivenet/gen/go/proto/resources/centrum"
 	centrumutils "github.com/galexrt/fivenet/gen/go/proto/services/centrum/utils"
-	"github.com/galexrt/fivenet/pkg/config"
+	"github.com/galexrt/fivenet/pkg/config/appconfig"
 	"github.com/galexrt/fivenet/pkg/coords"
 	"github.com/galexrt/fivenet/pkg/nats/store"
 	"github.com/nats-io/nats.go"
@@ -40,16 +40,13 @@ type Params struct {
 
 	LC fx.Lifecycle
 
-	Logger *zap.Logger
-	JS     nats.JetStreamContext
-	Config *config.Config
+	Logger    *zap.Logger
+	JS        nats.JetStreamContext
+	AppConfig *appconfig.Config
 }
 
 func New(p Params) (*State, error) {
 	locs := map[string]*coords.Coords[*centrum.Dispatch]{}
-	for _, job := range p.Config.Game.Livemap.Jobs {
-		locs[job] = coords.New[*centrum.Dispatch]()
-	}
 
 	disponents, err := store.New[centrum.Disponents, *centrum.Disponents](p.Logger, p.JS, "centrum_disponents")
 	if err != nil {
@@ -118,6 +115,10 @@ func New(p Params) (*State, error) {
 	ctx, cancel := context.WithCancel(context.Background())
 
 	p.LC.Append(fx.StartHook(func(_ context.Context) error {
+		for _, job := range p.AppConfig.Get().UserTracker.LivemapJobs {
+			locs[job] = coords.New[*centrum.Dispatch]()
+		}
+
 		if err := userIDToUnitID.Start(ctx); err != nil {
 			return err
 		}

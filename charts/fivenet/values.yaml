@@ -196,45 +196,26 @@ fivenet:
         #  endpoints:
         #    authURL: "https://discord.com/api/oauth2/authorize"
         #    tokenURL: "https://discord.com/api/oauth2/token"
-    game:
-      auth:
-        signupEnabled: true
-        superuserGroups:
-          - projektleiter
-          - teamleitung
-        defaultPermissions:
-          - category: AuthService
-            name: ChooseCharacter
-          - category: CompletorService
-            name: CompleteJobs
-          - category: DocStoreService
-            name: ListDocuments
-          - category: DocStoreService
-            name: GetDocument
-          - category: DocStoreService
-            name: PostComment
-      unemployedJob:
-        name: "unemployed"
-        grade: 1
-      publicJobs:
-        - ambulance
-        - doj
-        - gov
-        - police
-      hiddenJobs:
-        - fib
-      livemap:
-        refreshTime: 3s350ms
-        dbRefreshTime: 1s
-        jobs:
-          - ambulance
-          - doj
-          - fib
-          - police
-        #postalsFile: ".output/public/data/postals.json"
-      dispatchCenter:
-        convertJobs: []
-          #- police
+    #postalsFile: ".output/public/data/postals.json"
+    auth:
+      signupEnabled: true
+      superuserGroups:
+        - projektleiter
+        - teamleitung
+      defaultPermissions:
+        - category: AuthService
+          name: ChooseCharacter
+        - category: CompletorService
+          name: CompleteJobs
+        - category: DocStoreService
+          name: ListDocuments
+        - category: DocStoreService
+          name: GetDocument
+        - category: DocStoreService
+          name: PostComment
+    dispatchCenter:
+      convertJobs: []
+        #- police
     discord:
       enabled: true
       syncInterval: 15m

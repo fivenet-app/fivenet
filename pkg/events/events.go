@@ -69,7 +69,7 @@ func New(p Params) (res Result, err error) {
 				case <-ctx.Done():
 					return
 
-				case <-time.After(10 * time.Second):
+				case <-time.After(5 * time.Second):
 					metricsNats.Set(float64(js.PublishAsyncPending()))
 				}
 			}

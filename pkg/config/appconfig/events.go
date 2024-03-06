@@ -51,8 +51,12 @@ func (c *Config) handleMessage(msg *nats.Msg) {
 	}
 
 	if split[1] == string(UpdateSubject) {
-		if err := c.updateConfigFromDB(c.ctx); err != nil {
+		cfg, err := c.updateConfigFromDB(c.ctx)
+		if err != nil {
 			c.logger.Error("failed to update app config from db", zap.Error(err))
+			return
 		}
+
+		c.broker.Publish(cfg)
 	}
 }

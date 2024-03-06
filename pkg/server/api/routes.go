@@ -1,55 +1,112 @@
 package api
 
 import (
+	"context"
 	"net/http"
+	"sync/atomic"
 
 	"github.com/galexrt/fivenet/pkg/config"
+	"github.com/galexrt/fivenet/pkg/config/appconfig"
 	"github.com/galexrt/fivenet/pkg/version"
 	"github.com/gin-gonic/gin"
+	"go.uber.org/fx"
 	"go.uber.org/zap"
 )
 
 type Routes struct {
 	logger *zap.Logger
 
-	clientCfg *ClientConfig
+	clientCfg *atomic.Pointer[ClientConfig]
 }
 
-func New(logger *zap.Logger, cfg *config.Config) *Routes {
-	providers := make([]*ProviderConfig, len(cfg.OAuth2.Providers))
+type Params struct {
+	fx.In
 
-	for i, p := range cfg.OAuth2.Providers {
+	LC fx.Lifecycle
+
+	Logger    *zap.Logger
+	Config    *config.Config
+	AppConfig *appconfig.Config
+}
+
+func New(p Params) *Routes {
+	r := &Routes{
+		logger:    p.Logger,
+		clientCfg: &atomic.Pointer[ClientConfig]{},
+	}
+
+	providers := make([]*ProviderConfig, len(p.Config.OAuth2.Providers))
+
+	for i, p := range p.Config.OAuth2.Providers {
 		providers[i] = &ProviderConfig{
 			Name:  p.Name,
 			Label: p.Label,
 		}
 	}
 
+	ctx, cancel := context.WithCancel(context.Background())
+
+	configUpdateCh := p.AppConfig.Subscribe()
+
+	p.LC.Append(fx.StartHook(func(_ context.Context) error {
+		r.handleAppConfigUpdate(providers, p.AppConfig.Get())
+
+		go func() {
+			for {
+				select {
+				case <-ctx.Done():
+					return
+
+				case cfg := <-configUpdateCh:
+					r.handleAppConfigUpdate(providers, cfg)
+				}
+			}
+		}()
+
+		return nil
+	}))
+
+	p.LC.Append(fx.StopHook(func() error {
+		cancel()
+
+		p.AppConfig.Unsubscribe(configUpdateCh)
+
+		return nil
+	}))
+
+	return r
+}
+
+func (r *Routes) handleAppConfigUpdate(providers []*ProviderConfig, appCfg *appconfig.Cfg) {
+	clientCfg := r.buildClientConfig(providers, appCfg)
+	r.clientCfg.Store(clientCfg)
+}
+
+func (r *Routes) buildClientConfig(providers []*ProviderConfig, appCfg *appconfig.Cfg) *ClientConfig {
 	clientCfg := &ClientConfig{
 		Version: version.Version,
 		Login: LoginConfig{
-			SignupEnabled: cfg.Game.Auth.SignupEnabled,
+			SignupEnabled: appCfg.Auth.SignupEnabled,
 			Providers:     providers,
 		},
 		Discord: Discord{},
 		Links:   Links{},
 	}
 
-	if cfg.Discord.Enabled {
-		clientCfg.Discord.BotInviteURL = &cfg.Discord.InviteURL
+	clientCfg.Discord.BotInviteURL = appCfg.Discord.InviteUrl
+
+	if appCfg.Website.Links.Imprint != nil {
+		clientCfg.Links.Imprint = appCfg.Website.Links.Imprint
+	}
+	if appCfg.Website.Links.PrivacyPolicy != nil {
+		clientCfg.Links.PrivacyPolicy = appCfg.Website.Links.PrivacyPolicy
 	}
 
-	if cfg.HTTP.Links.Imprint != nil {
-		clientCfg.Links.Imprint = cfg.HTTP.Links.Imprint
-	}
-	if cfg.HTTP.Links.PrivacyPolicy != nil {
-		clientCfg.Links.PrivacyPolicy = cfg.HTTP.Links.PrivacyPolicy
-	}
+	return clientCfg
+}
 
-	return &Routes{
-		logger:    logger,
-		clientCfg: clientCfg,
-	}
+var versionInfo = &Version{
+	Version: version.Version,
 }
 
 func (r *Routes) RegisterHTTP(e *gin.Engine) {
@@ -61,7 +118,7 @@ func (r *Routes) RegisterHTTP(e *gin.Engine) {
 		})
 
 		g.POST("/config", func(c *gin.Context) {
-			c.JSON(http.StatusOK, r.clientCfg)
+			c.JSON(http.StatusOK, r.clientCfg.Load())
 		})
 
 		g.GET("/clear-site-data", func(c *gin.Context) {
@@ -69,11 +126,8 @@ func (r *Routes) RegisterHTTP(e *gin.Engine) {
 			c.String(http.StatusOK, "Your local site data should be cleared now, please go back to the FiveNet homepage yourself.")
 		})
 
-		ver := &Version{
-			Version: r.clientCfg.Version,
-		}
 		g.GET("/version", func(c *gin.Context) {
-			c.JSON(http.StatusOK, ver)
+			c.JSON(http.StatusOK, versionInfo)
 		})
 	}
 }

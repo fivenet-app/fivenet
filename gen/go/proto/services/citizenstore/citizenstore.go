@@ -16,6 +16,7 @@ import (
 	errorscitizenstore "github.com/galexrt/fivenet/gen/go/proto/services/citizenstore/errors"
 	permscitizenstore "github.com/galexrt/fivenet/gen/go/proto/services/citizenstore/perms"
 	"github.com/galexrt/fivenet/pkg/config"
+	"github.com/galexrt/fivenet/pkg/config/appconfig"
 	"github.com/galexrt/fivenet/pkg/grpc/auth"
 	"github.com/galexrt/fivenet/pkg/grpc/errswrap"
 	"github.com/galexrt/fivenet/pkg/mstlystcdata"
@@ -52,11 +53,7 @@ type Server struct {
 	enricher *mstlystcdata.UserAwareEnricher
 	aud      audit.IAuditer
 	st       storage.IStorage
-
-	publicJobs         []string
-	hiddenJobs         []string
-	unemployedJob      string
-	unemployedJobGrade int32
+	appCfg   *appconfig.Config
 
 	customDB config.CustomDB
 }
@@ -64,12 +61,13 @@ type Server struct {
 type Params struct {
 	fx.In
 
-	DB       *sql.DB
-	P        perms.Permissions
-	Enricher *mstlystcdata.UserAwareEnricher
-	Aud      audit.IAuditer
-	Config   *config.Config
-	Storage  storage.IStorage
+	DB        *sql.DB
+	P         perms.Permissions
+	Enricher  *mstlystcdata.UserAwareEnricher
+	Aud       audit.IAuditer
+	Config    *config.Config
+	Storage   storage.IStorage
+	AppConfig *appconfig.Config
 }
 
 func NewServer(p Params) *Server {
@@ -79,11 +77,7 @@ func NewServer(p Params) *Server {
 		enricher: p.Enricher,
 		aud:      p.Aud,
 		st:       p.Storage,
-
-		publicJobs:         p.Config.Game.PublicJobs,
-		hiddenJobs:         p.Config.Game.HiddenJobs,
-		unemployedJob:      p.Config.Game.UnemployedJob.Name,
-		unemployedJobGrade: p.Config.Game.UnemployedJob.Grade,
+		appCfg:   p.AppConfig,
 
 		customDB: p.Config.Database.Custom,
 	}
@@ -322,7 +316,8 @@ func (s *Server) GetUser(ctx context.Context, req *GetUserRequest) (*GetUserResp
 
 	auditEntry.TargetUserJob = &resp.User.Job
 
-	if slices.Contains(s.publicJobs, resp.User.Job) || slices.Contains(s.hiddenJobs, resp.User.Job) {
+	if slices.Contains(s.appCfg.Get().JobInfo.PublicJobs, resp.User.Job) ||
+		slices.Contains(s.appCfg.Get().JobInfo.HiddenJobs, resp.User.Job) {
 		// Make sure user has permission to see that grade
 		jobGradesAttr, err := s.p.Attr(userInfo, permscitizenstore.CitizenStoreServicePerm, permscitizenstore.CitizenStoreServiceGetUserPerm, permscitizenstore.CitizenStoreServiceGetUserJobsPermField)
 		if err != nil {
@@ -348,7 +343,8 @@ func (s *Server) GetUser(ctx context.Context, req *GetUserRequest) (*GetUserResp
 	}
 
 	// Only let user props override the job if the person isn't in a public job
-	if resp.User.Props != nil && resp.User.Props.JobName != nil && !slices.Contains(s.publicJobs, resp.User.Job) {
+	if resp.User.Props != nil && resp.User.Props.JobName != nil &&
+		!slices.Contains(s.appCfg.Get().JobInfo.PublicJobs, resp.User.Job) {
 		resp.User.Job = *resp.User.Props.JobName
 		if resp.User.Props.JobGradeNumber != nil {
 			resp.User.JobGrade = *resp.User.Props.JobGradeNumber
@@ -528,11 +524,12 @@ func (s *Server) SetUserProps(ctx context.Context, req *SetUserPropsRequest) (*S
 		wanted := false
 		props.Wanted = &wanted
 	}
+	unemployedJob := s.appCfg.Get().JobInfo.UnemployedJob
 	if props.JobName == nil {
-		props.JobName = &s.unemployedJob
+		props.JobName = &unemployedJob.Name
 	}
 	if props.JobGradeNumber == nil {
-		props.JobGradeNumber = &s.unemployedJobGrade
+		props.JobGradeNumber = &unemployedJob.Grade
 	}
 	if props.TrafficInfractionPoints == nil {
 		props.TrafficInfractionPoints = &ZeroTrafficInfractionPoints
@@ -541,7 +538,7 @@ func (s *Server) SetUserProps(ctx context.Context, req *SetUserPropsRequest) (*S
 	props.Job, props.JobGrade = s.enricher.GetJobGrade(*props.JobName, *props.JobGradeNumber)
 	// Make sure a job is set
 	if props.Job == nil {
-		props.Job, props.JobGrade = s.enricher.GetJobGrade(s.unemployedJob, s.unemployedJobGrade)
+		props.Job, props.JobGrade = s.enricher.GetJobGrade(unemployedJob.Name, unemployedJob.Grade)
 	}
 
 	resp := &SetUserPropsResponse{
@@ -575,7 +572,7 @@ func (s *Server) SetUserProps(ctx context.Context, req *SetUserPropsRequest) (*S
 			return nil, errorscitizenstore.ErrPropsJobDenied
 		}
 
-		if slices.Contains(s.publicJobs, *req.Props.JobName) {
+		if slices.Contains(s.appCfg.Get().JobInfo.PublicJobs, *req.Props.JobName) {
 			return nil, errorscitizenstore.ErrPropsJobPublic
 		}
 
