@@ -86,7 +86,7 @@ func (s *Server) UploadFile(ctx context.Context, req *UploadFileRequest) (*Uploa
 
 	auditEntry.State = int16(rector.EventType_EVENT_TYPE_CREATED)
 
-	obj, objInfo, err := s.st.Get(ctx, *req.File.Url)
+	obj, objInfo, err := s.st.Get(ctx, filestore.FilePrefix(filestore.StripURLPrefix(*req.File.Url)))
 	if err != nil {
 		return nil, err
 	}
@@ -129,6 +129,7 @@ func (s *Server) DeleteFile(ctx context.Context, req *DeleteFileRequest) (*Delet
 		return resp, nil
 	}
 
+	fileUrlPath := path.Join(filestore.FilestoreURLPrefix, fullFilePath)
 	// Remove reference to file(s) from database for our "known file prefixes"
 	switch prefixSplit[0] {
 	case filestore.Avatars:
@@ -140,7 +141,7 @@ func (s *Server) DeleteFile(ctx context.Context, req *DeleteFileRequest) (*Delet
 				tUserProps.Avatar.SET(jet.StringExp(jet.NULL)),
 			).
 			WHERE(
-				tUserProps.Avatar.EQ(jet.String(path.Join(filestore.FilestoreURLPrefix, fullFilePath))),
+				tUserProps.Avatar.EQ(jet.String(fileUrlPath)),
 			)
 
 		if _, err := stmt.ExecContext(ctx, s.db); err != nil {
@@ -156,7 +157,7 @@ func (s *Server) DeleteFile(ctx context.Context, req *DeleteFileRequest) (*Delet
 				tUserProps.MugShot.SET(jet.StringExp(jet.NULL)),
 			).
 			WHERE(
-				tUserProps.MugShot.EQ(jet.String(path.Join(filestore.FilestoreURLPrefix, fullFilePath))),
+				tUserProps.MugShot.EQ(jet.String(fileUrlPath)),
 			)
 
 		if _, err := stmt.ExecContext(ctx, s.db); err != nil {
@@ -172,7 +173,7 @@ func (s *Server) DeleteFile(ctx context.Context, req *DeleteFileRequest) (*Delet
 				tJobProps.LogoURL.SET(jet.StringExp(jet.NULL)),
 			).
 			WHERE(
-				tJobProps.LogoURL.EQ(jet.String(path.Join(filestore.FilestoreURLPrefix, fullFilePath))),
+				tJobProps.LogoURL.EQ(jet.String(fileUrlPath)),
 			)
 
 		if _, err := stmt.ExecContext(ctx, s.db); err != nil {

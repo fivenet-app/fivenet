@@ -103,7 +103,7 @@ func (s *Server) SetJobProps(ctx context.Context, req *SetJobPropsRequest) (*Set
 		} else if req.JobProps.LogoUrl.Delete != nil && *req.JobProps.LogoUrl.Delete {
 			// Delete avatar from store
 			if jobProps.JobProps.LogoUrl != nil && jobProps.JobProps.LogoUrl.Url != nil {
-				if err := s.st.Delete(ctx, strings.TrimPrefix(*jobProps.JobProps.LogoUrl.Url, filestore.FilestoreURLPrefix)); err != nil {
+				if err := s.st.Delete(ctx, filestore.StripURLPrefix(*jobProps.JobProps.LogoUrl.Url)); err != nil {
 					return nil, errswrap.NewError(errorsrector.ErrFailedQuery, err)
 				}
 			}

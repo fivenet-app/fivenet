@@ -633,7 +633,7 @@ func (s *Server) SetUserProps(ctx context.Context, req *SetUserPropsRequest) (*S
 		} else {
 			// Delete mug shot from store
 			if props.MugShot != nil && props.MugShot.Url != nil {
-				if err := s.st.Delete(ctx, strings.TrimPrefix(*props.MugShot.Url, filestore.FilestoreURLPrefix)); err != nil {
+				if err := s.st.Delete(ctx, filestore.StripURLPrefix(*props.MugShot.Url)); err != nil {
 					return nil, errswrap.NewError(errorscitizenstore.ErrFailedQuery, err)
 				}
 			}
@@ -834,7 +834,7 @@ func (s *Server) SetProfilePicture(ctx context.Context, req *SetProfilePictureRe
 	} else if req.Avatar.Delete != nil && *req.Avatar.Delete {
 		// Delete mug shot from store
 		if avatarFile != nil && avatarFile.Url != nil {
-			if err := s.st.Delete(ctx, strings.TrimPrefix(*avatarFile.Url, filestore.FilestoreURLPrefix)); err != nil {
+			if err := s.st.Delete(ctx, filestore.StripURLPrefix(*avatarFile.Url)); err != nil {
 				return nil, errswrap.NewError(errorscitizenstore.ErrFailedQuery, err)
 			}
 		}

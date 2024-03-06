@@ -18,6 +18,10 @@ import (
 
 const FilestoreURLPrefix = "/api/filestore/"
 
+func StripURLPrefix(in string) string {
+	return strings.TrimPrefix(in, FilestoreURLPrefix)
+}
+
 var validFilesMap = matchers.Map{
 	matchers.TypeJpeg: matchers.Jpeg,
 	matchers.TypePng:  matchers.Png,
@@ -112,7 +116,7 @@ func (x *File) Upload(ctx context.Context, st storage.IStorage, prefix FilePrefi
 	}
 
 	if x.Url != nil {
-		if err := st.Delete(ctx, strings.TrimPrefix(*x.Url, FilestoreURLPrefix)); err != nil {
+		if err := st.Delete(ctx, StripURLPrefix(*x.Url)); err != nil {
 			return err
 		}
 	}

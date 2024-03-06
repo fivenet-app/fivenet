@@ -60,7 +60,7 @@ const { handleSubmit, meta } = useForm<FormData>({
     validationSchema: {
         prefix: { required: true },
         name: { required: true, min: 3, max: 128 },
-        file: {},
+        file: { required: true, mimes: ['image/jpeg', 'image/jpg', 'image/png'], size: 2000 },
     },
     validateOnMount: true,
 });
@@ -115,12 +115,12 @@ const onSubmitThrottle = useThrottleFn(async (e) => {
                                 </button>
                             </div>
                             <DialogTitle as="h3" class="text-base font-semibold leading-6">
-                                {{ $t('components.jobs.self_service.set_absence_date') }}
+                                {{ $t('common.upload') }}
                             </DialogTitle>
                             <form @submit.prevent="onSubmitThrottle">
                                 <div class="my-2 space-y-24">
                                     <div class="form-control flex-1">
-                                        <label for="job" class="block text-sm font-medium leading-6 text-neutral">
+                                        <label for="prefix" class="block text-sm font-medium leading-6 text-neutral">
                                             {{ $t('common.category') }}
                                         </label>
                                         <VeeField
@@ -153,7 +153,7 @@ const onSubmitThrottle = useThrottleFn(async (e) => {
                                 </div>
                                 <div class="my-2 space-y-24">
                                     <div class="form-control flex-1">
-                                        <label for="job" class="block text-sm font-medium leading-6 text-neutral">
+                                        <label for="name" class="block text-sm font-medium leading-6 text-neutral">
                                             {{ $t('common.name') }}
                                         </label>
                                         <VeeField
@@ -170,13 +170,12 @@ const onSubmitThrottle = useThrottleFn(async (e) => {
                                 </div>
                                 <div class="my-2 space-y-24">
                                     <div class="form-control flex-1">
-                                        <label for="absenceBegin" class="block text-sm font-medium leading-6 text-neutral">
+                                        <label for="file" class="block text-sm font-medium leading-6 text-neutral">
                                             {{ $t('common.image') }}
                                         </label>
                                         <VeeField
                                             v-slot="{ handleChange, handleBlur }"
                                             name="file"
-                                            class="block w-full rounded-md border-0 bg-base-700 py-1.5 text-neutral placeholder:text-accent-200 focus:ring-2 focus:ring-inset focus:ring-base-300 sm:text-sm sm:leading-6"
                                             :placeholder="$t('common.image')"
                                             :label="$t('common.image')"
                                             @focusin="focusTablet(true)"
@@ -190,7 +189,7 @@ const onSubmitThrottle = useThrottleFn(async (e) => {
                                                 @blur="handleBlur"
                                             />
                                         </VeeField>
-                                        <VeeErrorMessage name="absenceBegin" as="p" class="mt-2 text-sm text-error-400" />
+                                        <VeeErrorMessage name="file" as="p" class="mt-2 text-sm text-error-400" />
                                     </div>
                                 </div>
                                 <div class="absolute bottom-0 left-0 flex w-full">
