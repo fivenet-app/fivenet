@@ -391,6 +391,47 @@
             },
             "role_view": {
                 "add_permission": "Add Permission"
+            },
+            "app_config": {
+                "auth": {
+                    "title": "Auth",
+                    "description": "Authentication settings",
+                    "sign_up": "Sign-up"
+                },
+                "perms": {
+                    "title": "Permissions",
+                    "description": "Permissions system options.",
+                    "default_perms": "Default Permissions"
+                },
+                "website": {
+                    "title": "Website",
+                    "description": "Website settings, such as the footer links.",
+                    "links": {
+                        "title": "Links"
+                    }
+                },
+                "job_info": {
+                    "title": "Job Info",
+                    "description": "Unemployed job info for the system to fill in and list of public and hidden jobs.",
+                    "unemployed_job": "Unemployed Job",
+                    "public_jobs": "Public Jobs",
+                    "hidden_jobs": "Hidden Jobs"
+                },
+                "user_tracker": {
+                    "title": "User Tracker",
+                    "description": "List of jobs to track on the livemap and to maintain timeclock updates for.",
+                    "refresh_time": "Refresh Time",
+                    "db_refresh_time": "DB Refresh Time",
+                    "livemap_jobs": "Livemap Jobs"
+                },
+                "discord": {
+                    "description": "FiveNet Discord Bot settings.",
+                    "bot_invite_url": "Bot Invite URL",
+                    "sync_interval": "Sync Interval"
+                },
+                "save": {
+                    "description": "Make sure to double check any config options before saving the config."
+                }
             }
         },
         "debug_info": {
@@ -859,7 +900,8 @@
         "redirecting_to": "You are being redirect to {0} ...",
         "absent": "Absent",
         "upload": "Upload",
-        "postal_code": "Postal Code"
+        "postal_code": "Postal Code",
+        "duration": "Duration"
     },
     "notifications": {
         "clipboard": {

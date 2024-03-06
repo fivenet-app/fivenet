@@ -12,7 +12,6 @@ import (
 	"github.com/galexrt/fivenet/gen/go/proto/resources/users"
 	"github.com/galexrt/fivenet/pkg/perms/collections"
 	"github.com/galexrt/fivenet/pkg/perms/helpers"
-	"github.com/galexrt/fivenet/query/fivenet/model"
 	"github.com/galexrt/fivenet/query/fivenet/table"
 	jet "github.com/go-jet/jet/v2/mysql"
 	"github.com/go-jet/jet/v2/qrm"
@@ -61,11 +60,6 @@ func (p *Perms) register(ctx context.Context, defaultRolePerms []string) error {
 		return err
 	}
 
-	defaultRole, err := p.CreateRole(ctx, DefaultRoleJob, DefaultRoleJobGrade)
-	if err != nil {
-		return err
-	}
-
 	for _, perm := range permsList {
 		permId, err := p.createOrUpdatePermission(ctx, perm.Category, perm.Name)
 		if err != nil {
@@ -86,16 +80,21 @@ func (p *Perms) register(ctx context.Context, defaultRolePerms []string) error {
 		}
 	}
 
-	if err := p.setupDefaultRolePerms(ctx, defaultRole, defaultRolePerms); err != nil {
+	if err := p.SetDefaultRolePerms(ctx, defaultRolePerms); err != nil {
 		return err
 	}
 
 	return nil
 }
 
-func (p *Perms) setupDefaultRolePerms(ctx context.Context, role *model.FivenetRoles, defaultPerms []string) error {
+func (p *Perms) SetDefaultRolePerms(ctx context.Context, defaultPerms []string) error {
 	if len(defaultPerms) == 0 {
 		return nil
+	}
+
+	role, err := p.CreateRole(ctx, DefaultRoleJob, DefaultRoleJobGrade)
+	if err != nil {
+		return err
 	}
 
 	addPerms := make([]AddPerm, len(defaultPerms))

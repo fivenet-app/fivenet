@@ -353,7 +353,7 @@ func (b *Bot) runSync(ctx context.Context) error {
 				lastSync.WithLabelValues(guild.Job, "success").SetToCurrentTime()
 			}
 
-			if err := b.setLastSyncTime(ctx, guild.Job); err != nil {
+			if err := b.setLastSyncInterval(ctx, guild.Job); err != nil {
 				logger.Error("error setting job props last sync time", zap.Error(err))
 				errs = multierr.Append(errs, err)
 			}
@@ -387,7 +387,7 @@ func (b *Bot) stop() error {
 	return b.discord.Close()
 }
 
-func (b *Bot) setLastSyncTime(ctx context.Context, job string) error {
+func (b *Bot) setLastSyncInterval(ctx context.Context, job string) error {
 	tJobProps := table.FivenetJobProps
 	stmt := tJobProps.
 		UPDATE(

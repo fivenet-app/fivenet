@@ -429,6 +429,51 @@ func (m *Perms) validate(all bool) error {
 
 	var errors []error
 
+	if len(m.GetDefault()) > 100 {
+		err := PermsValidationError{
+			field:  "Default",
+			reason: "value must contain no more than 100 item(s)",
+		}
+		if !all {
+			return err
+		}
+		errors = append(errors, err)
+	}
+
+	for idx, item := range m.GetDefault() {
+		_, _ = idx, item
+
+		if all {
+			switch v := interface{}(item).(type) {
+			case interface{ ValidateAll() error }:
+				if err := v.ValidateAll(); err != nil {
+					errors = append(errors, PermsValidationError{
+						field:  fmt.Sprintf("Default[%v]", idx),
+						reason: "embedded message failed validation",
+						cause:  err,
+					})
+				}
+			case interface{ Validate() error }:
+				if err := v.Validate(); err != nil {
+					errors = append(errors, PermsValidationError{
+						field:  fmt.Sprintf("Default[%v]", idx),
+						reason: "embedded message failed validation",
+						cause:  err,
+					})
+				}
+			}
+		} else if v, ok := interface{}(item).(interface{ Validate() error }); ok {
+			if err := v.Validate(); err != nil {
+				return PermsValidationError{
+					field:  fmt.Sprintf("Default[%v]", idx),
+					reason: "embedded message failed validation",
+					cause:  err,
+				}
+			}
+		}
+
+	}
+
 	if len(errors) > 0 {
 		return PermsMultiError(errors)
 	}
@@ -505,6 +550,126 @@ var _ interface {
 	Cause() error
 	ErrorName() string
 } = PermsValidationError{}
+
+// Validate checks the field values on Perm with the rules defined in the proto
+// definition for this message. If any rules are violated, the first error
+// encountered is returned, or nil if there are no violations.
+func (m *Perm) Validate() error {
+	return m.validate(false)
+}
+
+// ValidateAll checks the field values on Perm with the rules defined in the
+// proto definition for this message. If any rules are violated, the result is
+// a list of violation errors wrapped in PermMultiError, or nil if none found.
+func (m *Perm) ValidateAll() error {
+	return m.validate(true)
+}
+
+func (m *Perm) validate(all bool) error {
+	if m == nil {
+		return nil
+	}
+
+	var errors []error
+
+	if utf8.RuneCountInString(m.GetCategory()) > 128 {
+		err := PermValidationError{
+			field:  "Category",
+			reason: "value length must be at most 128 runes",
+		}
+		if !all {
+			return err
+		}
+		errors = append(errors, err)
+	}
+
+	if utf8.RuneCountInString(m.GetName()) > 255 {
+		err := PermValidationError{
+			field:  "Name",
+			reason: "value length must be at most 255 runes",
+		}
+		if !all {
+			return err
+		}
+		errors = append(errors, err)
+	}
+
+	if len(errors) > 0 {
+		return PermMultiError(errors)
+	}
+
+	return nil
+}
+
+// PermMultiError is an error wrapping multiple validation errors returned by
+// Perm.ValidateAll() if the designated constraints aren't met.
+type PermMultiError []error
+
+// Error returns a concatenation of all the error messages it wraps.
+func (m PermMultiError) Error() string {
+	var msgs []string
+	for _, err := range m {
+		msgs = append(msgs, err.Error())
+	}
+	return strings.Join(msgs, "; ")
+}
+
+// AllErrors returns a list of validation violation errors.
+func (m PermMultiError) AllErrors() []error { return m }
+
+// PermValidationError is the validation error returned by Perm.Validate if the
+// designated constraints aren't met.
+type PermValidationError struct {
+	field  string
+	reason string
+	cause  error
+	key    bool
+}
+
+// Field function returns field value.
+func (e PermValidationError) Field() string { return e.field }
+
+// Reason function returns reason value.
+func (e PermValidationError) Reason() string { return e.reason }
+
+// Cause function returns cause value.
+func (e PermValidationError) Cause() error { return e.cause }
+
+// Key function returns key value.
+func (e PermValidationError) Key() bool { return e.key }
+
+// ErrorName returns error name.
+func (e PermValidationError) ErrorName() string { return "PermValidationError" }
+
+// Error satisfies the builtin error interface
+func (e PermValidationError) Error() string {
+	cause := ""
+	if e.cause != nil {
+		cause = fmt.Sprintf(" | caused by: %v", e.cause)
+	}
+
+	key := ""
+	if e.key {
+		key = "key for "
+	}
+
+	return fmt.Sprintf(
+		"invalid %sPerm.%s: %s%s",
+		key,
+		e.field,
+		e.reason,
+		cause)
+}
+
+var _ error = PermValidationError{}
+
+var _ interface {
+	Field() string
+	Reason() string
+	Key() bool
+	Cause() error
+	ErrorName() string
+} = PermValidationError{}
 
 // Validate checks the field values on Website with the rules defined in the
 // proto definition for this message. If any rules are violated, the first
@@ -655,11 +820,33 @@ func (m *Links) validate(all bool) error {
 	var errors []error
 
 	if m.PrivacyPolicy != nil {
-		// no validation rules for PrivacyPolicy
+
+		if utf8.RuneCountInString(m.GetPrivacyPolicy()) > 255 {
+			err := LinksValidationError{
+				field:  "PrivacyPolicy",
+				reason: "value length must be at most 255 runes",
+			}
+			if !all {
+				return err
+			}
+			errors = append(errors, err)
+		}
+
 	}
 
 	if m.Imprint != nil {
-		// no validation rules for Imprint
+
+		if utf8.RuneCountInString(m.GetImprint()) > 255 {
+			err := LinksValidationError{
+				field:  "Imprint",
+				reason: "value length must be at most 255 runes",
+			}
+			if !all {
+				return err
+			}
+			errors = append(errors, err)
+		}
+
 	}
 
 	if len(errors) > 0 {
@@ -760,6 +947,17 @@ func (m *JobInfo) validate(all bool) error {
 
 	var errors []error
 
+	if m.GetUnemployedJob() == nil {
+		err := JobInfoValidationError{
+			field:  "UnemployedJob",
+			reason: "value is required",
+		}
+		if !all {
+			return err
+		}
+		errors = append(errors, err)
+	}
+
 	if all {
 		switch v := interface{}(m.GetUnemployedJob()).(type) {
 		case interface{ ValidateAll() error }:
@@ -787,6 +985,28 @@ func (m *JobInfo) validate(all bool) error {
 				cause:  err,
 			}
 		}
+	}
+
+	if len(m.GetPublicJobs()) > 100 {
+		err := JobInfoValidationError{
+			field:  "PublicJobs",
+			reason: "value must contain no more than 100 item(s)",
+		}
+		if !all {
+			return err
+		}
+		errors = append(errors, err)
+	}
+
+	if len(m.GetHiddenJobs()) > 100 {
+		err := JobInfoValidationError{
+			field:  "HiddenJobs",
+			reason: "value must contain no more than 100 item(s)",
+		}
+		if !all {
+			return err
+		}
+		errors = append(errors, err)
 	}
 
 	if len(errors) > 0 {
@@ -888,9 +1108,27 @@ func (m *UnemployedJob) validate(all bool) error {
 
 	var errors []error
 
-	// no validation rules for Name
+	if utf8.RuneCountInString(m.GetName()) > 20 {
+		err := UnemployedJobValidationError{
+			field:  "Name",
+			reason: "value length must be at most 20 runes",
+		}
+		if !all {
+			return err
+		}
+		errors = append(errors, err)
+	}
 
-	// no validation rules for Grade
+	if m.GetGrade() <= 0 {
+		err := UnemployedJobValidationError{
+			field:  "Grade",
+			reason: "value must be greater than 0",
+		}
+		if !all {
+			return err
+		}
+		errors = append(errors, err)
+	}
 
 	if len(errors) > 0 {
 		return UnemployedJobMultiError(errors)
@@ -992,62 +1230,99 @@ func (m *UserTracker) validate(all bool) error {
 
 	var errors []error
 
-	if all {
-		switch v := interface{}(m.GetRefreshTime()).(type) {
-		case interface{ ValidateAll() error }:
-			if err := v.ValidateAll(); err != nil {
-				errors = append(errors, UserTrackerValidationError{
-					field:  "RefreshTime",
-					reason: "embedded message failed validation",
-					cause:  err,
-				})
-			}
-		case interface{ Validate() error }:
-			if err := v.Validate(); err != nil {
-				errors = append(errors, UserTrackerValidationError{
-					field:  "RefreshTime",
-					reason: "embedded message failed validation",
-					cause:  err,
-				})
-			}
+	if m.GetRefreshTime() == nil {
+		err := UserTrackerValidationError{
+			field:  "RefreshTime",
+			reason: "value is required",
 		}
-	} else if v, ok := interface{}(m.GetRefreshTime()).(interface{ Validate() error }); ok {
-		if err := v.Validate(); err != nil {
-			return UserTrackerValidationError{
+		if !all {
+			return err
+		}
+		errors = append(errors, err)
+	}
+
+	if d := m.GetRefreshTime(); d != nil {
+		dur, err := d.AsDuration(), d.CheckValid()
+		if err != nil {
+			err = UserTrackerValidationError{
 				field:  "RefreshTime",
-				reason: "embedded message failed validation",
+				reason: "value is not a valid duration",
 				cause:  err,
 			}
+			if !all {
+				return err
+			}
+			errors = append(errors, err)
+		} else {
+
+			lt := time.Duration(60*time.Second + 0*time.Nanosecond)
+			gte := time.Duration(0*time.Second + 500000000*time.Nanosecond)
+
+			if dur < gte || dur >= lt {
+				err := UserTrackerValidationError{
+					field:  "RefreshTime",
+					reason: "value must be inside range [500ms, 1m0s)",
+				}
+				if !all {
+					return err
+				}
+				errors = append(errors, err)
+			}
+
 		}
 	}
 
-	if all {
-		switch v := interface{}(m.GetDbRefreshTime()).(type) {
-		case interface{ ValidateAll() error }:
-			if err := v.ValidateAll(); err != nil {
-				errors = append(errors, UserTrackerValidationError{
-					field:  "DbRefreshTime",
-					reason: "embedded message failed validation",
-					cause:  err,
-				})
-			}
-		case interface{ Validate() error }:
-			if err := v.Validate(); err != nil {
-				errors = append(errors, UserTrackerValidationError{
-					field:  "DbRefreshTime",
-					reason: "embedded message failed validation",
-					cause:  err,
-				})
-			}
+	if m.GetDbRefreshTime() == nil {
+		err := UserTrackerValidationError{
+			field:  "DbRefreshTime",
+			reason: "value is required",
 		}
-	} else if v, ok := interface{}(m.GetDbRefreshTime()).(interface{ Validate() error }); ok {
-		if err := v.Validate(); err != nil {
-			return UserTrackerValidationError{
+		if !all {
+			return err
+		}
+		errors = append(errors, err)
+	}
+
+	if d := m.GetDbRefreshTime(); d != nil {
+		dur, err := d.AsDuration(), d.CheckValid()
+		if err != nil {
+			err = UserTrackerValidationError{
 				field:  "DbRefreshTime",
-				reason: "embedded message failed validation",
+				reason: "value is not a valid duration",
 				cause:  err,
 			}
+			if !all {
+				return err
+			}
+			errors = append(errors, err)
+		} else {
+
+			lt := time.Duration(60*time.Second + 0*time.Nanosecond)
+			gte := time.Duration(0*time.Second + 500000000*time.Nanosecond)
+
+			if dur < gte || dur >= lt {
+				err := UserTrackerValidationError{
+					field:  "DbRefreshTime",
+					reason: "value must be inside range [500ms, 1m0s)",
+				}
+				if !all {
+					return err
+				}
+				errors = append(errors, err)
+			}
+
 		}
+	}
+
+	if len(m.GetLivemapJobs()) > 100 {
+		err := UserTrackerValidationError{
+			field:  "LivemapJobs",
+			reason: "value must contain no more than 100 item(s)",
+		}
+		if !all {
+			return err
+		}
+		errors = append(errors, err)
 	}
 
 	if len(errors) > 0 {
@@ -1150,37 +1425,61 @@ func (m *Discord) validate(all bool) error {
 
 	// no validation rules for Enabled
 
-	if all {
-		switch v := interface{}(m.GetSyncTime()).(type) {
-		case interface{ ValidateAll() error }:
-			if err := v.ValidateAll(); err != nil {
-				errors = append(errors, DiscordValidationError{
-					field:  "SyncTime",
-					reason: "embedded message failed validation",
-					cause:  err,
-				})
-			}
-		case interface{ Validate() error }:
-			if err := v.Validate(); err != nil {
-				errors = append(errors, DiscordValidationError{
-					field:  "SyncTime",
-					reason: "embedded message failed validation",
-					cause:  err,
-				})
-			}
+	if m.GetSyncInterval() == nil {
+		err := DiscordValidationError{
+			field:  "SyncInterval",
+			reason: "value is required",
 		}
-	} else if v, ok := interface{}(m.GetSyncTime()).(interface{ Validate() error }); ok {
-		if err := v.Validate(); err != nil {
-			return DiscordValidationError{
-				field:  "SyncTime",
-				reason: "embedded message failed validation",
+		if !all {
+			return err
+		}
+		errors = append(errors, err)
+	}
+
+	if d := m.GetSyncInterval(); d != nil {
+		dur, err := d.AsDuration(), d.CheckValid()
+		if err != nil {
+			err = DiscordValidationError{
+				field:  "SyncInterval",
+				reason: "value is not a valid duration",
 				cause:  err,
 			}
+			if !all {
+				return err
+			}
+			errors = append(errors, err)
+		} else {
+
+			lt := time.Duration(180000000*time.Second + 0*time.Nanosecond)
+			gte := time.Duration(6000*time.Second + 0*time.Nanosecond)
+
+			if dur < gte || dur >= lt {
+				err := DiscordValidationError{
+					field:  "SyncInterval",
+					reason: "value must be inside range [1h40m0s, 50000h0m0s)",
+				}
+				if !all {
+					return err
+				}
+				errors = append(errors, err)
+			}
+
 		}
 	}
 
 	if m.InviteUrl != nil {
-		// no validation rules for InviteUrl
+
+		if utf8.RuneCountInString(m.GetInviteUrl()) > 255 {
+			err := DiscordValidationError{
+				field:  "InviteUrl",
+				reason: "value length must be at most 255 runes",
+			}
+			if !all {
+				return err
+			}
+			errors = append(errors, err)
+		}
+
 	}
 
 	if len(errors) > 0 {

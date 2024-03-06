@@ -68,6 +68,8 @@ type Permissions interface {
 	UpdateJobAttributeMaxValues(ctx context.Context, job string, attrId uint64, maxValues *permissions.AttributeValues) error
 
 	Attr(userInfo *userinfo.UserInfo, category Category, name Name, key Key) (any, error)
+
+	SetDefaultRolePerms(ctx context.Context, defaultPerms []string) error
 }
 
 type userCacheKey struct {

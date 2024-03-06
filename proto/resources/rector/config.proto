@@ -3,6 +3,7 @@ syntax = "proto3";
 package resources.rector;
 
 import "google/protobuf/duration.proto";
+import "validate/validate.proto";
 
 option go_package = "github.com/galexrt/fivenet/gen/go/proto/resources/rector;rector";
 
@@ -20,7 +21,12 @@ message Auth {
 }
 
 message Perms {
-  // TODO default perms and attributes
+ repeated Perm default = 1 [(validate.rules).repeated.max_items = 100];
+}
+
+message Perm {
+  string category = 1 [(validate.rules).string.max_len = 128];
+  string name = 2 [(validate.rules).string.max_len = 255];
 }
 
 message Website {
@@ -28,31 +34,43 @@ message Website {
 }
 
 message Links {
-  optional string privacy_policy = 1;
-  optional string imprint = 2;
+  optional string privacy_policy = 1 [(validate.rules).string.max_len = 255];
+  optional string imprint = 2 [(validate.rules).string.max_len = 255];
 }
 
 message JobInfo {
-  UnemployedJob unemployed_job = 1;
-  repeated string public_jobs = 2;
-  repeated string hidden_jobs = 3;
+  UnemployedJob unemployed_job = 1 [(validate.rules).message.required = true];
+  repeated string public_jobs = 2 [(validate.rules).repeated.max_items = 100];
+  repeated string hidden_jobs = 3 [(validate.rules).repeated.max_items = 100];
 }
 
 message UnemployedJob {
-  string name = 1;
-  int32 grade = 2;
+  string name = 1 [(validate.rules).string.max_len = 20];
+  int32 grade = 2 [(validate.rules).int32.gt = 0];
 }
 
 message UserTracker {
-  google.protobuf.Duration refresh_time = 1;
-  google.protobuf.Duration db_refresh_time = 2;
-  repeated string livemap_jobs = 3;
+  google.protobuf.Duration refresh_time = 1 [(validate.rules).duration = {
+    required: true,
+    lt:  {seconds: 60}
+    gte: {nanos: 500000000},
+  }];
+  google.protobuf.Duration db_refresh_time = 2 [(validate.rules).duration = {
+    required: true,
+    lt:  {seconds: 60}
+    gte: {nanos: 500000000},
+  }];
+  repeated string livemap_jobs = 3 [(validate.rules).repeated.max_items = 100];
 }
 
 message Discord {
   bool enabled = 1;
-  google.protobuf.Duration sync_time = 2;
-  optional string invite_url = 3;
+  google.protobuf.Duration sync_interval = 2 [(validate.rules).duration = {
+    required: true,
+    lt:  {seconds: 180000000}
+    gte: {seconds: 6000},
+  }];
+  optional string invite_url = 3 [(validate.rules).string.max_len = 255];
 
   // TODO
 }

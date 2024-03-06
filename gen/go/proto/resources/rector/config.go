@@ -11,12 +11,40 @@ import (
 const (
 	DefaultUserTrackerRefreshTime   = 3*time.Second + 350*time.Millisecond
 	DefaultUserTrackerDbRefreshTime = 1 * time.Second
+
+	DefaultDiscordSyncInterval = 15 * time.Minute
 )
 
 func (x *AppConfig) Default() {
 	if x.Auth == nil {
 		x.Auth = &Auth{
 			SignupEnabled: false,
+		}
+	}
+	if x.Perms == nil {
+		x.Perms = &Perms{
+			Default: []*Perm{
+				{
+					Category: "AuthService",
+					Name:     "ChooseCharacter",
+				},
+				{
+					Category: "CompletorService",
+					Name:     "CompleteJobs",
+				},
+				{
+					Category: "DocStoreService",
+					Name:     "ListDocuments",
+				},
+				{
+					Category: "DocStoreService",
+					Name:     "GetDocument",
+				},
+				{
+					Category: "DocStoreService",
+					Name:     "PostComment",
+				},
+			},
 		}
 	}
 
@@ -58,6 +86,9 @@ func (x *AppConfig) Default() {
 		x.Discord = &Discord{
 			Enabled: false,
 		}
+	}
+	if x.Discord.SyncInterval == nil {
+		x.Discord.SyncInterval = durationpb.New(DefaultDiscordSyncInterval)
 	}
 }
 
