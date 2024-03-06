@@ -1,28 +1,29 @@
 package images
 
 import (
-	"bytes"
+	"image"
 	"image/png"
 	"io"
 )
 
-func ResizePNG(input io.Reader, height int, width int) ([]byte, error) {
+type PNG struct {
+	ImageType
+}
+
+func (g PNG) Decode(input io.Reader) (image.Image, error) {
 	// Decode the image (from PNG to image.Image)
 	src, err := png.Decode(input)
 	if err != nil {
 		return nil, err
 	}
 
-	dst := resizeImageIfNecessary(src, height, width)
-	if dst == nil {
-		return nil, nil
+	return src, err
+}
+
+func (g PNG) Encode(w io.Writer, m image.Image) error {
+	if err := png.Encode(w, m); err != nil {
+		return err
 	}
 
-	// Encode to output
-	output := new(bytes.Buffer)
-	if err := png.Encode(output, dst); err != nil {
-		return nil, err
-	}
-
-	return output.Bytes(), nil
+	return nil
 }
