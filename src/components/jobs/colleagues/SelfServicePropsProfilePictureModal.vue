@@ -1,8 +1,10 @@
 <script lang="ts" setup>
 import { Dialog, DialogPanel, DialogTitle, TransitionChild, TransitionRoot } from '@headlessui/vue';
 import { RpcError } from '@protobuf-ts/runtime-rpc';
+import { mimes, required, size } from '@vee-validate/rules';
 import { useThrottleFn } from '@vueuse/core';
 import { CloseIcon, LoadingIcon } from 'mdi-vue3';
+import { defineRule } from 'vee-validate';
 import ProfilePictureImg from '~/components/partials/citizens/ProfilePictureImg.vue';
 import { useAuthStore } from '~/store/auth';
 import { useNotificatorStore } from '~/store/notificator';
@@ -24,24 +26,18 @@ const { activeChar } = storeToRefs(authStore);
 const notifications = useNotificatorStore();
 
 interface FormData {
+    avatar?: Blob;
     reset?: boolean;
 }
 
 async function setProfilePicture(values: FormData): Promise<void> {
     const req = {} as SetProfilePictureRequest;
     if (!values.reset) {
-        if (!fileUploadRef.value) {
-            return;
-        }
-        if (!fileUploadRef.value.files || fileUploadRef.value.files.length <= 0) {
-            return;
-        }
-        // File too big
-        if (fileUploadRef.value.files[0].size > 2097152) {
+        if (!values.avatar) {
             return;
         }
 
-        req.avatar = { data: new Uint8Array(await fileUploadRef.value.files[0].arrayBuffer()) };
+        req.avatar = { data: new Uint8Array(await values.avatar.arrayBuffer()) };
     } else {
         req.avatar = { data: new Uint8Array(), delete: true };
     }
@@ -67,9 +63,13 @@ async function setProfilePicture(values: FormData): Promise<void> {
     }
 }
 
+defineRule('required', required);
+defineRule('size', size);
+defineRule('mimes', mimes);
+
 const { handleSubmit, meta, setFieldValue } = useForm<FormData>({
     validationSchema: {
-        avatar: {},
+        avatar: { required: false, mimes: ['image/jpeg', 'image/jpg', 'image/png'], size: 2000 },
     },
     validateOnMount: true,
 });
@@ -84,8 +84,6 @@ const onSubmitThrottle = useThrottleFn(async (e) => {
     await onSubmit(e);
     setFieldValue('reset', false);
 }, 1000);
-
-const fileUploadRef = ref<HTMLInputElement | null>(null);
 </script>
 
 <template>
@@ -139,16 +137,14 @@ const fileUploadRef = ref<HTMLInputElement | null>(null);
                                         <VeeField
                                             v-slot="{ handleChange, handleBlur }"
                                             name="avatar"
-                                            class="block w-full rounded-md border-0 bg-base-700 py-1.5 text-neutral placeholder:text-accent-200 focus:ring-2 focus:ring-inset focus:ring-base-300 sm:text-sm sm:leading-6"
                                             :placeholder="$t('common.image')"
                                             :label="$t('common.image')"
                                             @focusin="focusTablet(true)"
                                             @focusout="focusTablet(false)"
                                         >
                                             <input
-                                                ref="fileUploadRef"
                                                 type="file"
-                                                accept="image/png,image/jpeg"
+                                                accept="image/jpeg,image/jpg,image/png"
                                                 class="block w-full rounded-md border-0 bg-base-700 py-1.5 text-neutral placeholder:text-accent-200 focus:ring-2 focus:ring-inset focus:ring-base-300 sm:text-sm sm:leading-6"
                                                 @change="handleChange"
                                                 @blur="handleBlur"
@@ -196,19 +192,9 @@ const fileUploadRef = ref<HTMLInputElement | null>(null);
                                     <button
                                         type="submit"
                                         class="rounded-bd flex flex-1 justify-center px-3.5 py-2.5 text-sm font-semibold text-neutral"
-                                        :disabled="
-                                            !meta.valid ||
-                                            !canSubmit ||
-                                            !fileUploadRef ||
-                                            !fileUploadRef.files ||
-                                            fileUploadRef.files.length <= 0
-                                        "
+                                        :disabled="!meta.valid || !canSubmit"
                                         :class="[
-                                            !meta.valid ||
-                                            !canSubmit ||
-                                            !fileUploadRef ||
-                                            !fileUploadRef.files ||
-                                            fileUploadRef.files.length <= 0
+                                            !meta.valid || !canSubmit
                                                 ? 'disabled bg-base-500 hover:bg-base-400 focus-visible:outline-base-500'
                                                 : 'bg-primary-500 hover:bg-primary-400 focus-visible:outline-primary-500',
                                         ]"

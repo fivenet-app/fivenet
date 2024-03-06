@@ -1,10 +1,12 @@
 <script lang="ts" setup>
 import { Switch, SwitchGroup, SwitchLabel, Listbox, ListboxButton, ListboxOption, ListboxOptions } from '@headlessui/vue';
 import { RpcError } from '@protobuf-ts/runtime-rpc';
+import { mimes, size } from '@vee-validate/rules';
 import { useThrottleFn } from '@vueuse/core';
 import { vMaska } from 'maska';
 import { CheckIcon, ChevronDownIcon, LoadingIcon, TuneIcon } from 'mdi-vue3';
 import ColorInput from 'vue-color-input/dist/color-input.esm';
+import { defineRule } from 'vee-validate';
 import DataErrorBlock from '~/components/partials/data/DataErrorBlock.vue';
 import DataNoDataBlock from '~/components/partials/data/DataNoDataBlock.vue';
 import DataPendingBlock from '~/components/partials/data/DataPendingBlock.vue';
@@ -16,7 +18,6 @@ import { JobProps, UserInfoSyncUnemployedMode } from '~~/gen/ts/resources/users/
 import GenericContainerPanel from '~/components/partials/elements/GenericContainerPanel.vue';
 import GenericContainerPanelEntry from '~/components/partials/elements/GenericContainerPanelEntry.vue';
 import SquareImg from '~/components/partials/elements/SquareImg.vue';
-import { File } from '~~/gen/ts/resources/filestore/file';
 
 const { $grpc } = useNuxtApp();
 
@@ -43,9 +44,17 @@ async function getJobProps(): Promise<JobProps> {
 
 const { data: jobProps, pending, refresh, error } = useLazyAsyncData(`rector-jobprops`, () => getJobProps());
 
-async function setJobProps(): Promise<void> {
+interface FormData {
+    jobLogo?: Blob;
+}
+
+async function setJobProps(values: FormData): Promise<void> {
     if (!jobProps.value) {
         return;
+    }
+
+    if (values.jobLogo) {
+        jobProps.value.logoUrl = { data: new Uint8Array(await values.jobLogo.arrayBuffer()) };
     }
 
     try {
@@ -69,28 +78,24 @@ async function setJobProps(): Promise<void> {
     }
 }
 
+defineRule('mimes', mimes);
+defineRule('size', size);
+
+const { handleSubmit, meta } = useForm<FormData>({
+    validationSchema: {
+        jobLogo: { required: false, mimes: ['image/jpeg', 'image/jpg', 'image/png'], size: 2000 },
+    },
+    validateOnMount: true,
+});
+
 const canSubmit = ref(true);
-const onSubmitThrottle = useThrottleFn(async (_) => {
+const onSubmit = handleSubmit(
+    async (values): Promise<void> => await setJobProps(values).finally(() => setTimeout(() => (canSubmit.value = true), 400)),
+);
+const onSubmitThrottle = useThrottleFn(async (e) => {
     canSubmit.value = false;
-    await setJobProps().finally(() => setTimeout(() => (canSubmit.value = true), 400));
+    await onSubmit(e);
 }, 1000);
-
-const fileUploadRef = ref<HTMLInputElement | null>(null);
-async function loadImage(): Promise<void> {
-    if (!jobProps.value || !fileUploadRef.value || !fileUploadRef.value.files || fileUploadRef.value.files.length <= 0) {
-        return;
-    }
-
-    if (fileUploadRef.value.files[0].size > 2097152) {
-        return;
-    }
-
-    if (jobProps.value.logoUrl === undefined) {
-        jobProps.value.logoUrl = {} as File;
-    }
-
-    jobProps.value.logoUrl.data = new Uint8Array(await fileUploadRef.value.files[0].arrayBuffer());
-}
 </script>
 
 <template>
@@ -287,20 +292,31 @@ async function loadImage(): Promise<void> {
                                 {{ $t('common.logo') }}
                             </template>
                             <template #default>
-                                <div class="flex flex-col gap-3">
-                                    <input
-                                        ref="fileUploadRef"
-                                        type="file"
-                                        accept="image/png,image/jpeg"
-                                        class="block w-full rounded-md border-0 bg-base-700 py-1.5 text-neutral placeholder:text-accent-200 focus:ring-2 focus:ring-inset focus:ring-base-300 sm:text-sm sm:leading-6"
-                                        @change="loadImage()"
-                                    />
+                                <div class="flex flex-col">
+                                    <VeeField
+                                        v-slot="{ handleChange, handleBlur }"
+                                        name="jobLogo"
+                                        :placeholder="$t('common.image')"
+                                        :label="$t('common.image')"
+                                        @focusin="focusTablet(true)"
+                                        @focusout="focusTablet(false)"
+                                    >
+                                        <input
+                                            type="file"
+                                            accept="image/jpeg,image/jpg,image/png"
+                                            class="block w-full rounded-md border-0 bg-base-700 py-1.5 text-neutral placeholder:text-accent-200 focus:ring-2 focus:ring-inset focus:ring-base-300 sm:text-sm sm:leading-6"
+                                            @change="handleChange"
+                                            @blur="handleBlur"
+                                        />
+                                    </VeeField>
+                                    <VeeErrorMessage name="jobLogo" as="p" class="text-sm text-error-400" />
 
                                     <SquareImg
                                         v-if="jobProps.logoUrl?.url"
                                         size="xl"
                                         :url="jobProps.logoUrl.url"
                                         :no-blur="true"
+                                        class="mt-2"
                                     />
                                 </div>
                             </template>
@@ -313,11 +329,11 @@ async function loadImage(): Promise<void> {
                                     type="button"
                                     class="flex w-full justify-center rounded-md px-3 py-2 text-sm font-semibold text-neutral transition-colors focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2"
                                     :class="[
-                                        !canSubmit
+                                        !canSubmit || !meta.valid
                                             ? 'disabled bg-base-500 hover:bg-base-400 focus-visible:outline-base-500'
                                             : 'bg-primary-500 hover:bg-primary-400 focus-visible:outline-primary-500',
                                     ]"
-                                    :disabled="!canSubmit"
+                                    :disabled="!canSubmit || !meta.valid"
                                     @click="onSubmitThrottle"
                                 >
                                     <template v-if="!canSubmit">
@@ -729,11 +745,11 @@ async function loadImage(): Promise<void> {
                                     type="button"
                                     class="flex w-full justify-center rounded-md px-3 py-2 text-sm font-semibold text-neutral transition-colors focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2"
                                     :class="[
-                                        !canSubmit
+                                        !canSubmit || !meta.valid
                                             ? 'disabled bg-base-500 hover:bg-base-400 focus-visible:outline-base-500'
                                             : 'bg-primary-500 hover:bg-primary-400 focus-visible:outline-primary-500',
                                     ]"
-                                    :disabled="!canSubmit"
+                                    :disabled="!canSubmit || !meta.valid"
                                     @click="onSubmitThrottle"
                                 >
                                     <template v-if="!canSubmit">

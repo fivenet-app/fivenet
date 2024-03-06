@@ -22,22 +22,13 @@ const { $grpc } = useNuxtApp();
 interface FormData {
     prefix: string;
     name: string;
+    file: Blob;
 }
 
 async function uploadFile(values: FormData): Promise<UploadFileResponse | undefined> {
     const file = {} as File;
 
-    if (!fileUploadRef.value) {
-        return;
-    }
-    if (!fileUploadRef.value.files || fileUploadRef.value.files.length <= 0) {
-        return;
-    }
-    // File too big
-    if (fileUploadRef.value.files[0].size > 2097152) {
-        return;
-    }
-    file.data = new Uint8Array(await fileUploadRef.value.files[0].arrayBuffer());
+    file.data = new Uint8Array(await values.file.arrayBuffer());
 
     try {
         const { response } = await $grpc.getRectorFilestoreClient().uploadFile({
@@ -82,8 +73,6 @@ const onSubmitThrottle = useThrottleFn(async (e) => {
     canSubmit.value = false;
     await onSubmit(e);
 }, 1000);
-
-const fileUploadRef = ref<HTMLInputElement | null>(null);
 </script>
 
 <template>
@@ -194,9 +183,8 @@ const fileUploadRef = ref<HTMLInputElement | null>(null);
                                             @focusout="focusTablet(false)"
                                         >
                                             <input
-                                                ref="fileUploadRef"
                                                 type="file"
-                                                accept="image/png,image/jpeg"
+                                                accept="image/jpeg,image/jpg,image/png"
                                                 class="block w-full rounded-md border-0 bg-base-700 py-1.5 text-neutral placeholder:text-accent-200 focus:ring-2 focus:ring-inset focus:ring-base-300 sm:text-sm sm:leading-6"
                                                 @change="handleChange"
                                                 @blur="handleBlur"

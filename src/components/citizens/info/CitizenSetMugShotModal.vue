@@ -1,7 +1,7 @@
 <script lang="ts" setup>
 import { Dialog, DialogPanel, DialogTitle, TransitionChild, TransitionRoot } from '@headlessui/vue';
 import { RpcError } from '@protobuf-ts/runtime-rpc';
-import { max, min, required } from '@vee-validate/rules';
+import { max, min, required, mimes, size } from '@vee-validate/rules';
 import { useThrottleFn } from '@vueuse/core';
 import { CloseIcon, LoadingIcon } from 'mdi-vue3';
 import { defineRule } from 'vee-validate';
@@ -26,28 +26,20 @@ const notifications = useNotificatorStore();
 
 interface FormData {
     reason: string;
+    mugShot?: Blob;
     reset?: boolean;
 }
-
-const fileUploadRef = ref<HTMLInputElement | null>(null);
 
 async function setMugShot(values: FormData): Promise<void> {
     const userProps: UserProps = {
         userId: props.user.userId,
     };
     if (!values.reset) {
-        if (!fileUploadRef.value) {
-            return;
-        }
-        if (!fileUploadRef.value.files || fileUploadRef.value.files.length <= 0) {
-            return;
-        }
-        // File too big
-        if (fileUploadRef.value.files[0].size > 2097152) {
+        if (!values.mugShot) {
             return;
         }
 
-        userProps.mugShot = { data: new Uint8Array(await fileUploadRef.value.files[0].arrayBuffer()) };
+        userProps.mugShot = { data: new Uint8Array(await values.mugShot.arrayBuffer()) };
     } else {
         userProps.mugShot = { data: new Uint8Array(), delete: true };
     }
@@ -77,10 +69,13 @@ async function setMugShot(values: FormData): Promise<void> {
 defineRule('required', required);
 defineRule('min', min);
 defineRule('max', max);
+defineRule('size', size);
+defineRule('mimes', mimes);
 
 const { handleSubmit, meta, setFieldValue } = useForm<FormData>({
     validationSchema: {
         reason: { required: true, min: 3, max: 255 },
+        mugShot: { required: false, mimes: ['image/jpeg', 'image/jpg', 'image/png'], size: 2000 },
     },
     validateOnMount: true,
 });
@@ -165,16 +160,14 @@ const onSubmitThrottle = useThrottleFn(async (e) => {
                                             v-slot="{ handleChange, handleBlur }"
                                             type="text"
                                             name="mugShot"
-                                            class="block w-full rounded-md border-0 bg-base-700 py-1.5 text-neutral placeholder:text-accent-200 focus:ring-2 focus:ring-inset focus:ring-base-300 sm:text-sm sm:leading-6"
                                             :placeholder="$t('common.image')"
                                             :label="$t('common.image')"
                                             @focusin="focusTablet(true)"
                                             @focusout="focusTablet(false)"
                                         >
                                             <input
-                                                ref="fileUploadRef"
                                                 type="file"
-                                                accept="image/png,image/jpeg"
+                                                accept="image/jpeg,image/jpg,image/png"
                                                 class="block w-full rounded-md border-0 bg-base-700 py-1.5 text-neutral placeholder:text-accent-200 focus:ring-2 focus:ring-inset focus:ring-base-300 sm:text-sm sm:leading-6"
                                                 @change="handleChange"
                                                 @blur="handleBlur"
