@@ -143,6 +143,10 @@ func (p *Perms) SetDefaultRolePerms(ctx context.Context, defaultPerms []string) 
 		}
 	}
 
+	if err := p.loadRolePermissions(ctx, role.ID); err != nil {
+		return err
+	}
+
 	return nil
 }
 

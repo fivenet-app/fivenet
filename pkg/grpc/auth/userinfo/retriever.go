@@ -135,10 +135,7 @@ func (ui *UIRetriever) GetUserInfoWithoutAccountId(ctx context.Context, userId i
 			tUsers.JobGrade,
 			tUsers.Group,
 		).
-		FROM(
-			tUsers,
-			tFivenetAccounts,
-		).
+		FROM(tUsers).
 		WHERE(jet.AND(
 			tUsers.ID.EQ(jet.Int32(userId)),
 		)).
@@ -149,7 +146,7 @@ func (ui *UIRetriever) GetUserInfoWithoutAccountId(ctx context.Context, userId i
 	}
 
 	// Check if user is superuser
-	if slices.Contains(ui.superuserGroups, dest.Group) {
+	if slices.Contains(ui.superuserGroups, dest.Group) || slices.Contains(ui.superuserUsers, dest.License) {
 		dest.SuperUser = true
 	}
 
