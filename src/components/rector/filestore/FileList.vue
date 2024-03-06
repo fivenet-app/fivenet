@@ -11,6 +11,7 @@ import type { ListFilesResponse } from '~~/gen/ts/services/rector/filestore';
 import FileListEntry from '~/components/rector/filestore/FileListEntry.vue';
 import GenericTable from '~/components/partials/elements/GenericTable.vue';
 import FileUploadDialog from '~/components/rector/filestore/FileUploadDialog.vue';
+import type { FileInfo } from '~~/gen/ts/resources/filestore/file';
 
 const { $grpc } = useNuxtApp();
 
@@ -38,6 +39,19 @@ async function listFiles(prefix: string): Promise<ListFilesResponse> {
 
 watch(offset, () => refresh());
 
+function addUploadedFile(file: FileInfo): void {
+    const idx = data.value?.files.findIndex((f) => f.name === file.name);
+    if (idx === undefined) {
+        return;
+    }
+
+    if (idx > -1) {
+        data.value?.files.unshift(file);
+    } else {
+        data.value?.files.splice(idx, 1, file);
+    }
+}
+
 const uploadFileDialog = ref(false);
 </script>
 
@@ -57,7 +71,7 @@ const uploadFileDialog = ref(false);
             <template v-else>
                 <FileUploadDialog
                     :open="uploadFileDialog"
-                    @uploaded-file="data?.files.push($event)"
+                    @uploaded-file="addUploadedFile($event)"
                     @close="uploadFileDialog = false"
                 />
 
