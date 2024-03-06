@@ -13,10 +13,7 @@ func UnmarshalPartial(b []byte, m proto.Message) error {
 }
 
 func Marshal(m proto.Message) ([]byte, error) {
-	return protojson.MarshalOptions{
-		Multiline: false,
-		Indent:    " ",
-	}.Marshal(m)
+	return protojson.MarshalOptions{}.Marshal(m)
 }
 
 func MarshalPretty(m proto.Message) ([]byte, error) {

@@ -146,7 +146,7 @@ func (ui *UIRetriever) GetUserInfoWithoutAccountId(ctx context.Context, userId i
 	}
 
 	// Check if user is superuser
-	if slices.Contains(ui.superuserGroups, dest.Group) || slices.Contains(ui.superuserUsers, dest.License) {
+	if slices.Contains(ui.superuserGroups, dest.Group) {
 		dest.SuperUser = true
 	}
 
