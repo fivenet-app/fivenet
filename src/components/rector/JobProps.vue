@@ -106,7 +106,10 @@ async function loadImage(): Promise<void> {
             </GenericContainerPanel>
         </template>
         <template v-else>
-            <DataPendingBlock v-if="pending" :message="$t('common.loading', [`${$t('common.job', 1)} ${$t('common.prop')}`])" />
+            <DataPendingBlock
+                v-if="pending"
+                :message="$t('common.loading', [$t('components.rector.job_props.job_properties')])"
+            />
             <DataErrorBlock
                 v-else-if="error"
                 :title="$t('common.unable_to_load', [`${$t('common.job', 1)} ${$t('common.prop')}`])"

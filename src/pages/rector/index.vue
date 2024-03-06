@@ -26,7 +26,7 @@ definePageMeta({
 
 const features = [
     {
-        title: t('common.propertie', 2),
+        title: t('components.rector.job_props.job_properties'),
         description: t('pages.rector.features.properties'),
         href: { name: 'rector-props' },
         permission: 'RectorService.GetJobProps',
