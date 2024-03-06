@@ -36,7 +36,7 @@ type RetentionParams struct {
 	Logger *zap.Logger
 	TP     *tracesdk.TracerProvider
 	DB     *sql.DB
-	Config *config.BaseConfig
+	Config *config.Config
 }
 
 func NewRetention(p RetentionParams) *Retention {

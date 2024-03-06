@@ -55,7 +55,7 @@ func TestFullAuthFlow(t *testing.T) {
 	ui := userinfo.NewMockUserInfoRetriever(map[int32]*userinfo.UserInfo{})
 	tm := auth.NewTokenMgr("")
 
-	cfg, err := config.LoadTest()
+	cfg, err := config.LoadBaseConfigTest()
 	require.NoError(t, err)
 	require.NotNil(t, cfg)
 

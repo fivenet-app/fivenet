@@ -5,6 +5,7 @@ import (
 	"slices"
 
 	timestamp "github.com/galexrt/fivenet/gen/go/proto/resources/timestamp"
+	"github.com/galexrt/fivenet/pkg/utils/protoutils"
 	"github.com/galexrt/fivenet/query/fivenet/model"
 	"google.golang.org/protobuf/encoding/protojson"
 )
@@ -67,7 +68,7 @@ func (x *AttributeValues) Value() (driver.Value, error) {
 		return nil, nil
 	}
 
-	out, err := protojson.Marshal(x)
+	out, err := protoutils.Marshal(x)
 	return string(out), err
 }
 

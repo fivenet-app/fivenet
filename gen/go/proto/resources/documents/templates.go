@@ -3,6 +3,7 @@ package documents
 import (
 	"database/sql/driver"
 
+	"github.com/galexrt/fivenet/pkg/utils/protoutils"
 	"google.golang.org/protobuf/encoding/protojson"
 )
 
@@ -22,6 +23,6 @@ func (x *TemplateSchema) Value() (driver.Value, error) {
 		return nil, nil
 	}
 
-	out, err := protojson.Marshal(x)
+	out, err := protoutils.Marshal(x)
 	return string(out), err
 }

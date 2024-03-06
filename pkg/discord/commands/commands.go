@@ -13,7 +13,7 @@ const GlobalCommandGuildID = "-1"
 
 type CommandHandler = func(s *discordgo.Session, i *discordgo.InteractionCreate)
 
-type CommandFactory = func(cfg *config.BaseConfig) (*discordgo.ApplicationCommand, CommandHandler, error)
+type CommandFactory = func(cfg *config.Config) (*discordgo.ApplicationCommand, CommandHandler, error)
 
 var (
 	CommandsFactories = map[string]CommandFactory{}
@@ -27,7 +27,7 @@ type Cmds struct {
 	discord *discordgo.Session
 }
 
-func New(logger *zap.Logger, s *discordgo.Session, cfg *config.BaseConfig) (*Cmds, error) {
+func New(logger *zap.Logger, s *discordgo.Session, cfg *config.Config) (*Cmds, error) {
 	s.AddHandler(func(s *discordgo.Session, i *discordgo.InteractionCreate) {
 		if h, ok := CommandHandlers[i.ApplicationCommandData().Name]; ok {
 			h(s, i)

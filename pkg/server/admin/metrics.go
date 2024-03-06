@@ -39,7 +39,7 @@ type Params struct {
 	LC fx.Lifecycle
 
 	Logger *zap.Logger
-	Config *config.BaseConfig
+	Config *config.Config
 }
 
 type Result struct {

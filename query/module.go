@@ -18,7 +18,7 @@ type Params struct {
 
 	LC     fx.Lifecycle
 	Logger *zap.Logger
-	Config *config.BaseConfig
+	Config *config.Config
 }
 
 func wrapLogger(log *zap.Logger) *zap.Logger {

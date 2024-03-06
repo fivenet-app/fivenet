@@ -53,7 +53,7 @@ type Params struct {
 	Data     *mstlystcdata.Cache
 	Tracker  tracker.ITracker
 	Enricher *mstlystcdata.UserAwareEnricher
-	Config   *config.BaseConfig
+	Config   *config.Config
 }
 
 func NewServer(p Params) *Server {

@@ -35,7 +35,7 @@ type Params struct {
 	Logger *zap.Logger
 	DB     *sql.DB
 	TM     *auth.TokenMgr
-	Config *config.BaseConfig
+	Config *config.Config
 }
 
 type OAuth2 struct {

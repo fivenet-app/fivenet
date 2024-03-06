@@ -905,27 +905,11 @@
                 </li>
               
                 <li>
-                  <a href="#resources.rector.OAuth2"><span class="badge">M</span>OAuth2</a>
-                </li>
-              
-                <li>
-                  <a href="#resources.rector.OAuth2Endpoints"><span class="badge">M</span>OAuth2Endpoints</a>
-                </li>
-              
-                <li>
-                  <a href="#resources.rector.OAuth2Mapping"><span class="badge">M</span>OAuth2Mapping</a>
-                </li>
-              
-                <li>
-                  <a href="#resources.rector.OAuth2Provider"><span class="badge">M</span>OAuth2Provider</a>
-                </li>
-              
-                <li>
                   <a href="#resources.rector.Perms"><span class="badge">M</span>Perms</a>
                 </li>
               
                 <li>
-                  <a href="#resources.rector.PluginConfig"><span class="badge">M</span>PluginConfig</a>
+                  <a href="#resources.rector.UnemployedJob"><span class="badge">M</span>UnemployedJob</a>
                 </li>
               
                 <li>
@@ -11407,13 +11391,6 @@
                 </tr>
               
                 <tr>
-                  <td>oauth2</td>
-                  <td><a href="#resources.rector.OAuth2">OAuth2</a></td>
-                  <td></td>
-                  <td><p> </p></td>
-                </tr>
-              
-                <tr>
                   <td>discord</td>
                   <td><a href="#resources.rector.Discord">Discord</a></td>
                   <td></td>
@@ -11486,6 +11463,13 @@
             <tbody>
               
                 <tr>
+                  <td>unemployed_job</td>
+                  <td><a href="#resources.rector.UnemployedJob">UnemployedJob</a></td>
+                  <td></td>
+                  <td><p> </p></td>
+                </tr>
+              
+                <tr>
                   <td>public_jobs</td>
                   <td><a href="#string">string</a></td>
                   <td>repeated</td>
@@ -11537,107 +11521,14 @@
 
         
       
-        <h3 id="resources.rector.OAuth2">OAuth2</h3>
-        <p></p>
+        <h3 id="resources.rector.Perms">Perms</h3>
+        <p>TODO default perms and attributes</p>
 
         
-          <table class="field-table">
-            <thead>
-              <tr><td>Field</td><td>Type</td><td>Label</td><td>Description</td></tr>
-            </thead>
-            <tbody>
-              
-                <tr>
-                  <td>providers</td>
-                  <td><a href="#resources.rector.OAuth2Provider">OAuth2Provider</a></td>
-                  <td>repeated</td>
-                  <td><p> </p></td>
-                </tr>
-              
-            </tbody>
-          </table>
-
-          
 
         
       
-        <h3 id="resources.rector.OAuth2Endpoints">OAuth2Endpoints</h3>
-        <p></p>
-
-        
-          <table class="field-table">
-            <thead>
-              <tr><td>Field</td><td>Type</td><td>Label</td><td>Description</td></tr>
-            </thead>
-            <tbody>
-              
-                <tr>
-                  <td>auth_url</td>
-                  <td><a href="#string">string</a></td>
-                  <td>optional</td>
-                  <td><p> </p></td>
-                </tr>
-              
-                <tr>
-                  <td>token_url</td>
-                  <td><a href="#string">string</a></td>
-                  <td>optional</td>
-                  <td><p> </p></td>
-                </tr>
-              
-                <tr>
-                  <td>user_info_url</td>
-                  <td><a href="#string">string</a></td>
-                  <td>optional</td>
-                  <td><p> </p></td>
-                </tr>
-              
-            </tbody>
-          </table>
-
-          
-
-        
-      
-        <h3 id="resources.rector.OAuth2Mapping">OAuth2Mapping</h3>
-        <p></p>
-
-        
-          <table class="field-table">
-            <thead>
-              <tr><td>Field</td><td>Type</td><td>Label</td><td>Description</td></tr>
-            </thead>
-            <tbody>
-              
-                <tr>
-                  <td>id</td>
-                  <td><a href="#string">string</a></td>
-                  <td></td>
-                  <td><p> </p></td>
-                </tr>
-              
-                <tr>
-                  <td>username</td>
-                  <td><a href="#string">string</a></td>
-                  <td></td>
-                  <td><p> </p></td>
-                </tr>
-              
-                <tr>
-                  <td>avatar</td>
-                  <td><a href="#string">string</a></td>
-                  <td></td>
-                  <td><p> </p></td>
-                </tr>
-              
-            </tbody>
-          </table>
-
-          
-
-        
-      
-        <h3 id="resources.rector.OAuth2Provider">OAuth2Provider</h3>
+        <h3 id="resources.rector.UnemployedJob">UnemployedJob</h3>
         <p></p>
 
         
@@ -11655,64 +11546,8 @@
                 </tr>
               
                 <tr>
-                  <td>label</td>
-                  <td><a href="#string">string</a></td>
-                  <td></td>
-                  <td><p> </p></td>
-                </tr>
-              
-                <tr>
-                  <td>homepage</td>
-                  <td><a href="#string">string</a></td>
-                  <td></td>
-                  <td><p> </p></td>
-                </tr>
-              
-                <tr>
-                  <td>type</td>
-                  <td><a href="#string">string</a></td>
-                  <td></td>
-                  <td><p> </p></td>
-                </tr>
-              
-                <tr>
-                  <td>redirect_url</td>
-                  <td><a href="#string">string</a></td>
-                  <td></td>
-                  <td><p> </p></td>
-                </tr>
-              
-                <tr>
-                  <td>client_id</td>
-                  <td><a href="#string">string</a></td>
-                  <td></td>
-                  <td><p> </p></td>
-                </tr>
-              
-                <tr>
-                  <td>client_secret</td>
-                  <td><a href="#string">string</a></td>
-                  <td></td>
-                  <td><p> </p></td>
-                </tr>
-              
-                <tr>
-                  <td>scopes</td>
-                  <td><a href="#string">string</a></td>
-                  <td>repeated</td>
-                  <td><p> </p></td>
-                </tr>
-              
-                <tr>
-                  <td>endpoints</td>
-                  <td><a href="#resources.rector.OAuth2Endpoints">OAuth2Endpoints</a></td>
-                  <td></td>
-                  <td><p> </p></td>
-                </tr>
-              
-                <tr>
-                  <td>mapping</td>
-                  <td><a href="#resources.rector.OAuth2Mapping">OAuth2Mapping</a></td>
+                  <td>grade</td>
+                  <td><a href="#int32">int32</a></td>
                   <td></td>
                   <td><p> </p></td>
                 </tr>
@@ -11721,20 +11556,6 @@
           </table>
 
           
-
-        
-      
-        <h3 id="resources.rector.Perms">Perms</h3>
-        <p>TODO default perms and attributes</p>
-
-        
-
-        
-      
-        <h3 id="resources.rector.PluginConfig">PluginConfig</h3>
-        <p>TODO</p>
-
-        
 
         
       
@@ -11764,13 +11585,6 @@
               
                 <tr>
                   <td>livemap_jobs</td>
-                  <td><a href="#string">string</a></td>
-                  <td>repeated</td>
-                  <td><p> </p></td>
-                </tr>
-              
-                <tr>
-                  <td>timeclock_jobs</td>
                   <td><a href="#string">string</a></td>
                   <td>repeated</td>
                   <td><p> </p></td>

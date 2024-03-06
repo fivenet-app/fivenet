@@ -8,6 +8,7 @@ import (
 	"github.com/galexrt/fivenet/pkg/grpc/auth/userinfo"
 	"github.com/galexrt/fivenet/pkg/perms/helpers"
 	"github.com/galexrt/fivenet/pkg/utils/dbutils"
+	"github.com/galexrt/fivenet/pkg/utils/protoutils"
 	"github.com/galexrt/fivenet/query/fivenet/model"
 	"github.com/galexrt/fivenet/query/fivenet/table"
 	jet "github.com/go-jet/jet/v2/mysql"
@@ -543,7 +544,7 @@ func (p *Perms) addOrUpdateAttributesToRole(ctx context.Context, roleId uint64, 
 		if attrs[i].Value != nil {
 			attrs[i].Value.Default(permissions.AttributeTypes(a.Type))
 
-			out, err := protojson.Marshal(attrs[i].Value)
+			out, err := protoutils.Marshal(attrs[i].Value)
 			if err != nil {
 				return err
 			}
@@ -641,7 +642,7 @@ func (p *Perms) UpdateJobAttributeMaxValues(ctx context.Context, job string, att
 	if maxValues != nil {
 		maxValues.Default(permissions.AttributeTypes(a.Type))
 
-		out, err := protojson.Marshal(maxValues)
+		out, err := protoutils.Marshal(maxValues)
 		if err != nil {
 			return err
 		}

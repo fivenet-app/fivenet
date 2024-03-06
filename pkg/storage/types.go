@@ -102,11 +102,11 @@ func GetFilename(uid string, fileName string, fileExtension string) string {
 }
 
 func FileNameSplitter(fileName string) string {
-	if len(fileName) < 3 {
-		fileName = "00" + fileName
+	if len(fileName) < 2 {
+		fileName = "0" + fileName
 	}
 
 	chars := fileName
-	part1 := chars[0:2]
+	part1 := chars[0:1]
 	return path.Join(part1, fileName)
 }

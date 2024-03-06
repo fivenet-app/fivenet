@@ -46,7 +46,7 @@ type Params struct {
 	Ps       perms.Permissions
 	Enricher *mstlystcdata.Enricher
 	Aud      audit.IAuditer
-	Config   *config.BaseConfig
+	Config   *config.Config
 }
 
 func NewServer(p Params) *Server {

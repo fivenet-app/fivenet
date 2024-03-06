@@ -60,7 +60,7 @@ type ServerParams struct {
 	LC fx.Lifecycle
 
 	Logger   *zap.Logger
-	Config   *config.BaseConfig
+	Config   *config.Config
 	DB       *sql.DB
 	TP       *tracesdk.TracerProvider
 	Services []Service `group:"grpcservices"`

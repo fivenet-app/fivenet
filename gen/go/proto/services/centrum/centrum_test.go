@@ -50,7 +50,7 @@ func TestBasicCentrumFlow(t *testing.T) {
 	logger := zap.NewNop()
 	tp := tracesdk.NewTracerProvider()
 
-	cfg, err := config.LoadTest()
+	cfg, err := config.LoadBaseConfigTest()
 	require.NoError(t, err)
 	require.NotNil(t, cfg)
 

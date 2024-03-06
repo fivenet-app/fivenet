@@ -45,7 +45,7 @@ func BuildSubject(topic events.Topic, tType events.Type, job string) string {
 	return fmt.Sprintf("%s.%s.%s.%s", BaseSubject, job, topic, tType)
 }
 
-func RegisterStreams(ctx context.Context, js nats.JetStreamContext) error {
+func RegisterStream(ctx context.Context, js nats.JetStreamContext) error {
 	cfg := &nats.StreamConfig{
 		Name:        "CENTRUM",
 		Description: natsutils.Description,

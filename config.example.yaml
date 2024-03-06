@@ -1,6 +1,6 @@
 logLevel: "DEBUG"
 # debug or release
-mode: "debug"
+mode: "release"
 tracing:
   enabled: false
   # Jaeger Tracing endpoint (should have the right API path in the URL `/api/traces`)

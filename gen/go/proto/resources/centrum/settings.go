@@ -4,6 +4,7 @@ import (
 	"database/sql/driver"
 
 	users "github.com/galexrt/fivenet/gen/go/proto/resources/users"
+	"github.com/galexrt/fivenet/pkg/utils/protoutils"
 	"google.golang.org/protobuf/encoding/protojson"
 )
 
@@ -45,6 +46,6 @@ func (x *PredefinedStatus) Value() (driver.Value, error) {
 		return nil, nil
 	}
 
-	out, err := protojson.Marshal(x)
+	out, err := protoutils.Marshal(x)
 	return string(out), err
 }

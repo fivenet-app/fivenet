@@ -123,7 +123,7 @@ type Params struct {
 	DB     *sql.DB
 	TP     *tracesdk.TracerProvider
 	JS     nats.JetStreamContext
-	Config *config.BaseConfig
+	Config *config.Config
 }
 
 func New(p Params) (Permissions, error) {

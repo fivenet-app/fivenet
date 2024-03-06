@@ -4,6 +4,7 @@ import (
 	"database/sql"
 
 	"github.com/galexrt/fivenet/pkg/config"
+	"github.com/galexrt/fivenet/pkg/config/appconfig"
 	"github.com/galexrt/fivenet/pkg/mstlystcdata"
 	"github.com/galexrt/fivenet/pkg/perms"
 	"github.com/galexrt/fivenet/pkg/server/audit"
@@ -26,20 +27,22 @@ type Server struct {
 	enricher *mstlystcdata.Enricher
 	cache    *mstlystcdata.Cache
 	st       storage.IStorage
-	cfg      *config.BaseConfig
+	cfg      *config.Config
+	appCfg   *appconfig.Config
 }
 
 type Params struct {
 	fx.In
 
-	Logger   *zap.Logger
-	DB       *sql.DB
-	PS       perms.Permissions
-	Aud      audit.IAuditer
-	Enricher *mstlystcdata.Enricher
-	Cache    *mstlystcdata.Cache
-	Storage  storage.IStorage
-	Config   *config.BaseConfig
+	Logger    *zap.Logger
+	DB        *sql.DB
+	PS        perms.Permissions
+	Aud       audit.IAuditer
+	Enricher  *mstlystcdata.Enricher
+	Cache     *mstlystcdata.Cache
+	Storage   storage.IStorage
+	Config    *config.Config
+	AppConfig *appconfig.Config
 }
 
 func NewServer(p Params) *Server {
@@ -52,6 +55,7 @@ func NewServer(p Params) *Server {
 		cache:    p.Cache,
 		st:       p.Storage,
 		cfg:      p.Config,
+		appCfg:   p.AppConfig,
 	}
 }
 

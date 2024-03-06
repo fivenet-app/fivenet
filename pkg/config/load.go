@@ -15,7 +15,7 @@ var Module = fx.Module("config",
 	),
 )
 
-func Load() (*BaseConfig, error) {
+func Load() (*Config, error) {
 	// Viper Config reading setup
 	viper.SetEnvPrefix("FIVENET")
 	viper.SetConfigType("yaml")
@@ -33,7 +33,7 @@ func Load() (*BaseConfig, error) {
 		return nil, fmt.Errorf("fatal error config file: %w", err)
 	}
 
-	c := &BaseConfig{}
+	c := &Config{}
 	if err := defaults.Set(c); err != nil {
 		return nil, fmt.Errorf("failed to set config defaults: %w", err)
 	}
@@ -45,8 +45,8 @@ func Load() (*BaseConfig, error) {
 	return c, nil
 }
 
-func LoadTest() (*BaseConfig, error) {
-	c := &BaseConfig{}
+func LoadBaseConfigTest() (*Config, error) {
+	c := &Config{}
 	if err := defaults.Set(c); err != nil {
 		return nil, fmt.Errorf("failed to set config defaults: %w", err)
 	}

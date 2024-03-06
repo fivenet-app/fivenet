@@ -29,7 +29,7 @@ type S3 struct {
 	prefix     string
 }
 
-func NewS3(lc fx.Lifecycle, cfg *config.BaseConfig) (IStorage, error) {
+func NewS3(lc fx.Lifecycle, cfg *config.Config) (IStorage, error) {
 	// Initialize minio client object.
 	mc, err := minio.New(cfg.Storage.S3.Endpoint, &minio.Options{
 		Creds:  credentials.NewStaticV4(cfg.Storage.S3.AccessKeyID, cfg.Storage.S3.SecretAccessKey, ""),

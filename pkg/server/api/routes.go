@@ -15,7 +15,7 @@ type Routes struct {
 	clientCfg *ClientConfig
 }
 
-func New(logger *zap.Logger, cfg *config.BaseConfig) *Routes {
+func New(logger *zap.Logger, cfg *config.Config) *Routes {
 	providers := make([]*ProviderConfig, len(cfg.OAuth2.Providers))
 
 	for i, p := range cfg.OAuth2.Providers {

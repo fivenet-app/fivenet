@@ -7,6 +7,7 @@ import (
 
 	"github.com/alecthomas/kong"
 	"github.com/galexrt/fivenet/pkg/config"
+	"github.com/galexrt/fivenet/pkg/config/appconfig"
 	"github.com/galexrt/fivenet/pkg/coords/postals"
 	"github.com/galexrt/fivenet/pkg/discord"
 	"github.com/galexrt/fivenet/pkg/events"
@@ -119,6 +120,7 @@ func getFxBaseOpts() []fx.Option {
 		LoggerModule,
 		htmlsanitizer.Module,
 		config.Module,
+		appconfig.Module,
 		admin.Module,
 		server.HTTPEngineModule,
 		server.HTTPServerModule,
@@ -198,7 +200,7 @@ var LoggerModule = fx.Module("logger",
 	),
 )
 
-func NewLogger(cfg *config.BaseConfig) (*zap.Logger, error) {
+func NewLogger(cfg *config.Config) (*zap.Logger, error) {
 	// Logger Setup
 	loggerConfig := zap.NewProductionConfig()
 	level, err := zapcore.ParseLevel(cfg.LogLevel)

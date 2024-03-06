@@ -203,35 +203,6 @@ func (m *AppConfig) validate(all bool) error {
 	}
 
 	if all {
-		switch v := interface{}(m.GetOauth2()).(type) {
-		case interface{ ValidateAll() error }:
-			if err := v.ValidateAll(); err != nil {
-				errors = append(errors, AppConfigValidationError{
-					field:  "Oauth2",
-					reason: "embedded message failed validation",
-					cause:  err,
-				})
-			}
-		case interface{ Validate() error }:
-			if err := v.Validate(); err != nil {
-				errors = append(errors, AppConfigValidationError{
-					field:  "Oauth2",
-					reason: "embedded message failed validation",
-					cause:  err,
-				})
-			}
-		}
-	} else if v, ok := interface{}(m.GetOauth2()).(interface{ Validate() error }); ok {
-		if err := v.Validate(); err != nil {
-			return AppConfigValidationError{
-				field:  "Oauth2",
-				reason: "embedded message failed validation",
-				cause:  err,
-			}
-		}
-	}
-
-	if all {
 		switch v := interface{}(m.GetDiscord()).(type) {
 		case interface{ ValidateAll() error }:
 			if err := v.ValidateAll(); err != nil {
@@ -789,6 +760,35 @@ func (m *JobInfo) validate(all bool) error {
 
 	var errors []error
 
+	if all {
+		switch v := interface{}(m.GetUnemployedJob()).(type) {
+		case interface{ ValidateAll() error }:
+			if err := v.ValidateAll(); err != nil {
+				errors = append(errors, JobInfoValidationError{
+					field:  "UnemployedJob",
+					reason: "embedded message failed validation",
+					cause:  err,
+				})
+			}
+		case interface{ Validate() error }:
+			if err := v.Validate(); err != nil {
+				errors = append(errors, JobInfoValidationError{
+					field:  "UnemployedJob",
+					reason: "embedded message failed validation",
+					cause:  err,
+				})
+			}
+		}
+	} else if v, ok := interface{}(m.GetUnemployedJob()).(interface{ Validate() error }); ok {
+		if err := v.Validate(); err != nil {
+			return JobInfoValidationError{
+				field:  "UnemployedJob",
+				reason: "embedded message failed validation",
+				cause:  err,
+			}
+		}
+	}
+
 	if len(errors) > 0 {
 		return JobInfoMultiError(errors)
 	}
@@ -865,6 +865,110 @@ var _ interface {
 	Cause() error
 	ErrorName() string
 } = JobInfoValidationError{}
+
+// Validate checks the field values on UnemployedJob with the rules defined in
+// the proto definition for this message. If any rules are violated, the first
+// error encountered is returned, or nil if there are no violations.
+func (m *UnemployedJob) Validate() error {
+	return m.validate(false)
+}
+
+// ValidateAll checks the field values on UnemployedJob with the rules defined
+// in the proto definition for this message. If any rules are violated, the
+// result is a list of violation errors wrapped in UnemployedJobMultiError, or
+// nil if none found.
+func (m *UnemployedJob) ValidateAll() error {
+	return m.validate(true)
+}
+
+func (m *UnemployedJob) validate(all bool) error {
+	if m == nil {
+		return nil
+	}
+
+	var errors []error
+
+	// no validation rules for Name
+
+	// no validation rules for Grade
+
+	if len(errors) > 0 {
+		return UnemployedJobMultiError(errors)
+	}
+
+	return nil
+}
+
+// UnemployedJobMultiError is an error wrapping multiple validation errors
+// returned by UnemployedJob.ValidateAll() if the designated constraints
+// aren't met.
+type UnemployedJobMultiError []error
+
+// Error returns a concatenation of all the error messages it wraps.
+func (m UnemployedJobMultiError) Error() string {
+	var msgs []string
+	for _, err := range m {
+		msgs = append(msgs, err.Error())
+	}
+	return strings.Join(msgs, "; ")
+}
+
+// AllErrors returns a list of validation violation errors.
+func (m UnemployedJobMultiError) AllErrors() []error { return m }
+
+// UnemployedJobValidationError is the validation error returned by
+// UnemployedJob.Validate if the designated constraints aren't met.
+type UnemployedJobValidationError struct {
+	field  string
+	reason string
+	cause  error
+	key    bool
+}
+
+// Field function returns field value.
+func (e UnemployedJobValidationError) Field() string { return e.field }
+
+// Reason function returns reason value.
+func (e UnemployedJobValidationError) Reason() string { return e.reason }
+
+// Cause function returns cause value.
+func (e UnemployedJobValidationError) Cause() error { return e.cause }
+
+// Key function returns key value.
+func (e UnemployedJobValidationError) Key() bool { return e.key }
+
+// ErrorName returns error name.
+func (e UnemployedJobValidationError) ErrorName() string { return "UnemployedJobValidationError" }
+
+// Error satisfies the builtin error interface
+func (e UnemployedJobValidationError) Error() string {
+	cause := ""
+	if e.cause != nil {
+		cause = fmt.Sprintf(" | caused by: %v", e.cause)
+	}
+
+	key := ""
+	if e.key {
+		key = "key for "
+	}
+
+	return fmt.Sprintf(
+		"invalid %sUnemployedJob.%s: %s%s",
+		key,
+		e.field,
+		e.reason,
+		cause)
+}
+
+var _ error = UnemployedJobValidationError{}
+
+var _ interface {
+	Field() string
+	Reason() string
+	Key() bool
+	Cause() error
+	ErrorName() string
+} = UnemployedJobValidationError{}
 
 // Validate checks the field values on UserTracker with the rules defined in
 // the proto definition for this message. If any rules are violated, the first
@@ -1023,528 +1127,6 @@ var _ interface {
 	ErrorName() string
 } = UserTrackerValidationError{}
 
-// Validate checks the field values on OAuth2 with the rules defined in the
-// proto definition for this message. If any rules are violated, the first
-// error encountered is returned, or nil if there are no violations.
-func (m *OAuth2) Validate() error {
-	return m.validate(false)
-}
-
-// ValidateAll checks the field values on OAuth2 with the rules defined in the
-// proto definition for this message. If any rules are violated, the result is
-// a list of violation errors wrapped in OAuth2MultiError, or nil if none found.
-func (m *OAuth2) ValidateAll() error {
-	return m.validate(true)
-}
-
-func (m *OAuth2) validate(all bool) error {
-	if m == nil {
-		return nil
-	}
-
-	var errors []error
-
-	for idx, item := range m.GetProviders() {
-		_, _ = idx, item
-
-		if all {
-			switch v := interface{}(item).(type) {
-			case interface{ ValidateAll() error }:
-				if err := v.ValidateAll(); err != nil {
-					errors = append(errors, OAuth2ValidationError{
-						field:  fmt.Sprintf("Providers[%v]", idx),
-						reason: "embedded message failed validation",
-						cause:  err,
-					})
-				}
-			case interface{ Validate() error }:
-				if err := v.Validate(); err != nil {
-					errors = append(errors, OAuth2ValidationError{
-						field:  fmt.Sprintf("Providers[%v]", idx),
-						reason: "embedded message failed validation",
-						cause:  err,
-					})
-				}
-			}
-		} else if v, ok := interface{}(item).(interface{ Validate() error }); ok {
-			if err := v.Validate(); err != nil {
-				return OAuth2ValidationError{
-					field:  fmt.Sprintf("Providers[%v]", idx),
-					reason: "embedded message failed validation",
-					cause:  err,
-				}
-			}
-		}
-
-	}
-
-	if len(errors) > 0 {
-		return OAuth2MultiError(errors)
-	}
-
-	return nil
-}
-
-// OAuth2MultiError is an error wrapping multiple validation errors returned by
-// OAuth2.ValidateAll() if the designated constraints aren't met.
-type OAuth2MultiError []error
-
-// Error returns a concatenation of all the error messages it wraps.
-func (m OAuth2MultiError) Error() string {
-	var msgs []string
-	for _, err := range m {
-		msgs = append(msgs, err.Error())
-	}
-	return strings.Join(msgs, "; ")
-}
-
-// AllErrors returns a list of validation violation errors.
-func (m OAuth2MultiError) AllErrors() []error { return m }
-
-// OAuth2ValidationError is the validation error returned by OAuth2.Validate if
-// the designated constraints aren't met.
-type OAuth2ValidationError struct {
-	field  string
-	reason string
-	cause  error
-	key    bool
-}
-
-// Field function returns field value.
-func (e OAuth2ValidationError) Field() string { return e.field }
-
-// Reason function returns reason value.
-func (e OAuth2ValidationError) Reason() string { return e.reason }
-
-// Cause function returns cause value.
-func (e OAuth2ValidationError) Cause() error { return e.cause }
-
-// Key function returns key value.
-func (e OAuth2ValidationError) Key() bool { return e.key }
-
-// ErrorName returns error name.
-func (e OAuth2ValidationError) ErrorName() string { return "OAuth2ValidationError" }
-
-// Error satisfies the builtin error interface
-func (e OAuth2ValidationError) Error() string {
-	cause := ""
-	if e.cause != nil {
-		cause = fmt.Sprintf(" | caused by: %v", e.cause)
-	}
-
-	key := ""
-	if e.key {
-		key = "key for "
-	}
-
-	return fmt.Sprintf(
-		"invalid %sOAuth2.%s: %s%s",
-		key,
-		e.field,
-		e.reason,
-		cause)
-}
-
-var _ error = OAuth2ValidationError{}
-
-var _ interface {
-	Field() string
-	Reason() string
-	Key() bool
-	Cause() error
-	ErrorName() string
-} = OAuth2ValidationError{}
-
-// Validate checks the field values on OAuth2Provider with the rules defined in
-// the proto definition for this message. If any rules are violated, the first
-// error encountered is returned, or nil if there are no violations.
-func (m *OAuth2Provider) Validate() error {
-	return m.validate(false)
-}
-
-// ValidateAll checks the field values on OAuth2Provider with the rules defined
-// in the proto definition for this message. If any rules are violated, the
-// result is a list of violation errors wrapped in OAuth2ProviderMultiError,
-// or nil if none found.
-func (m *OAuth2Provider) ValidateAll() error {
-	return m.validate(true)
-}
-
-func (m *OAuth2Provider) validate(all bool) error {
-	if m == nil {
-		return nil
-	}
-
-	var errors []error
-
-	// no validation rules for Name
-
-	// no validation rules for Label
-
-	// no validation rules for Homepage
-
-	// no validation rules for Type
-
-	// no validation rules for RedirectUrl
-
-	// no validation rules for ClientId
-
-	// no validation rules for ClientSecret
-
-	if all {
-		switch v := interface{}(m.GetEndpoints()).(type) {
-		case interface{ ValidateAll() error }:
-			if err := v.ValidateAll(); err != nil {
-				errors = append(errors, OAuth2ProviderValidationError{
-					field:  "Endpoints",
-					reason: "embedded message failed validation",
-					cause:  err,
-				})
-			}
-		case interface{ Validate() error }:
-			if err := v.Validate(); err != nil {
-				errors = append(errors, OAuth2ProviderValidationError{
-					field:  "Endpoints",
-					reason: "embedded message failed validation",
-					cause:  err,
-				})
-			}
-		}
-	} else if v, ok := interface{}(m.GetEndpoints()).(interface{ Validate() error }); ok {
-		if err := v.Validate(); err != nil {
-			return OAuth2ProviderValidationError{
-				field:  "Endpoints",
-				reason: "embedded message failed validation",
-				cause:  err,
-			}
-		}
-	}
-
-	if all {
-		switch v := interface{}(m.GetMapping()).(type) {
-		case interface{ ValidateAll() error }:
-			if err := v.ValidateAll(); err != nil {
-				errors = append(errors, OAuth2ProviderValidationError{
-					field:  "Mapping",
-					reason: "embedded message failed validation",
-					cause:  err,
-				})
-			}
-		case interface{ Validate() error }:
-			if err := v.Validate(); err != nil {
-				errors = append(errors, OAuth2ProviderValidationError{
-					field:  "Mapping",
-					reason: "embedded message failed validation",
-					cause:  err,
-				})
-			}
-		}
-	} else if v, ok := interface{}(m.GetMapping()).(interface{ Validate() error }); ok {
-		if err := v.Validate(); err != nil {
-			return OAuth2ProviderValidationError{
-				field:  "Mapping",
-				reason: "embedded message failed validation",
-				cause:  err,
-			}
-		}
-	}
-
-	if len(errors) > 0 {
-		return OAuth2ProviderMultiError(errors)
-	}
-
-	return nil
-}
-
-// OAuth2ProviderMultiError is an error wrapping multiple validation errors
-// returned by OAuth2Provider.ValidateAll() if the designated constraints
-// aren't met.
-type OAuth2ProviderMultiError []error
-
-// Error returns a concatenation of all the error messages it wraps.
-func (m OAuth2ProviderMultiError) Error() string {
-	var msgs []string
-	for _, err := range m {
-		msgs = append(msgs, err.Error())
-	}
-	return strings.Join(msgs, "; ")
-}
-
-// AllErrors returns a list of validation violation errors.
-func (m OAuth2ProviderMultiError) AllErrors() []error { return m }
-
-// OAuth2ProviderValidationError is the validation error returned by
-// OAuth2Provider.Validate if the designated constraints aren't met.
-type OAuth2ProviderValidationError struct {
-	field  string
-	reason string
-	cause  error
-	key    bool
-}
-
-// Field function returns field value.
-func (e OAuth2ProviderValidationError) Field() string { return e.field }
-
-// Reason function returns reason value.
-func (e OAuth2ProviderValidationError) Reason() string { return e.reason }
-
-// Cause function returns cause value.
-func (e OAuth2ProviderValidationError) Cause() error { return e.cause }
-
-// Key function returns key value.
-func (e OAuth2ProviderValidationError) Key() bool { return e.key }
-
-// ErrorName returns error name.
-func (e OAuth2ProviderValidationError) ErrorName() string { return "OAuth2ProviderValidationError" }
-
-// Error satisfies the builtin error interface
-func (e OAuth2ProviderValidationError) Error() string {
-	cause := ""
-	if e.cause != nil {
-		cause = fmt.Sprintf(" | caused by: %v", e.cause)
-	}
-
-	key := ""
-	if e.key {
-		key = "key for "
-	}
-
-	return fmt.Sprintf(
-		"invalid %sOAuth2Provider.%s: %s%s",
-		key,
-		e.field,
-		e.reason,
-		cause)
-}
-
-var _ error = OAuth2ProviderValidationError{}
-
-var _ interface {
-	Field() string
-	Reason() string
-	Key() bool
-	Cause() error
-	ErrorName() string
-} = OAuth2ProviderValidationError{}
-
-// Validate checks the field values on OAuth2Endpoints with the rules defined
-// in the proto definition for this message. If any rules are violated, the
-// first error encountered is returned, or nil if there are no violations.
-func (m *OAuth2Endpoints) Validate() error {
-	return m.validate(false)
-}
-
-// ValidateAll checks the field values on OAuth2Endpoints with the rules
-// defined in the proto definition for this message. If any rules are
-// violated, the result is a list of violation errors wrapped in
-// OAuth2EndpointsMultiError, or nil if none found.
-func (m *OAuth2Endpoints) ValidateAll() error {
-	return m.validate(true)
-}
-
-func (m *OAuth2Endpoints) validate(all bool) error {
-	if m == nil {
-		return nil
-	}
-
-	var errors []error
-
-	if m.AuthUrl != nil {
-		// no validation rules for AuthUrl
-	}
-
-	if m.TokenUrl != nil {
-		// no validation rules for TokenUrl
-	}
-
-	if m.UserInfoUrl != nil {
-		// no validation rules for UserInfoUrl
-	}
-
-	if len(errors) > 0 {
-		return OAuth2EndpointsMultiError(errors)
-	}
-
-	return nil
-}
-
-// OAuth2EndpointsMultiError is an error wrapping multiple validation errors
-// returned by OAuth2Endpoints.ValidateAll() if the designated constraints
-// aren't met.
-type OAuth2EndpointsMultiError []error
-
-// Error returns a concatenation of all the error messages it wraps.
-func (m OAuth2EndpointsMultiError) Error() string {
-	var msgs []string
-	for _, err := range m {
-		msgs = append(msgs, err.Error())
-	}
-	return strings.Join(msgs, "; ")
-}
-
-// AllErrors returns a list of validation violation errors.
-func (m OAuth2EndpointsMultiError) AllErrors() []error { return m }
-
-// OAuth2EndpointsValidationError is the validation error returned by
-// OAuth2Endpoints.Validate if the designated constraints aren't met.
-type OAuth2EndpointsValidationError struct {
-	field  string
-	reason string
-	cause  error
-	key    bool
-}
-
-// Field function returns field value.
-func (e OAuth2EndpointsValidationError) Field() string { return e.field }
-
-// Reason function returns reason value.
-func (e OAuth2EndpointsValidationError) Reason() string { return e.reason }
-
-// Cause function returns cause value.
-func (e OAuth2EndpointsValidationError) Cause() error { return e.cause }
-
-// Key function returns key value.
-func (e OAuth2EndpointsValidationError) Key() bool { return e.key }
-
-// ErrorName returns error name.
-func (e OAuth2EndpointsValidationError) ErrorName() string { return "OAuth2EndpointsValidationError" }
-
-// Error satisfies the builtin error interface
-func (e OAuth2EndpointsValidationError) Error() string {
-	cause := ""
-	if e.cause != nil {
-		cause = fmt.Sprintf(" | caused by: %v", e.cause)
-	}
-
-	key := ""
-	if e.key {
-		key = "key for "
-	}
-
-	return fmt.Sprintf(
-		"invalid %sOAuth2Endpoints.%s: %s%s",
-		key,
-		e.field,
-		e.reason,
-		cause)
-}
-
-var _ error = OAuth2EndpointsValidationError{}
-
-var _ interface {
-	Field() string
-	Reason() string
-	Key() bool
-	Cause() error
-	ErrorName() string
-} = OAuth2EndpointsValidationError{}
-
-// Validate checks the field values on OAuth2Mapping with the rules defined in
-// the proto definition for this message. If any rules are violated, the first
-// error encountered is returned, or nil if there are no violations.
-func (m *OAuth2Mapping) Validate() error {
-	return m.validate(false)
-}
-
-// ValidateAll checks the field values on OAuth2Mapping with the rules defined
-// in the proto definition for this message. If any rules are violated, the
-// result is a list of violation errors wrapped in OAuth2MappingMultiError, or
-// nil if none found.
-func (m *OAuth2Mapping) ValidateAll() error {
-	return m.validate(true)
-}
-
-func (m *OAuth2Mapping) validate(all bool) error {
-	if m == nil {
-		return nil
-	}
-
-	var errors []error
-
-	// no validation rules for Id
-
-	// no validation rules for Username
-
-	// no validation rules for Avatar
-
-	if len(errors) > 0 {
-		return OAuth2MappingMultiError(errors)
-	}
-
-	return nil
-}
-
-// OAuth2MappingMultiError is an error wrapping multiple validation errors
-// returned by OAuth2Mapping.ValidateAll() if the designated constraints
-// aren't met.
-type OAuth2MappingMultiError []error
-
-// Error returns a concatenation of all the error messages it wraps.
-func (m OAuth2MappingMultiError) Error() string {
-	var msgs []string
-	for _, err := range m {
-		msgs = append(msgs, err.Error())
-	}
-	return strings.Join(msgs, "; ")
-}
-
-// AllErrors returns a list of validation violation errors.
-func (m OAuth2MappingMultiError) AllErrors() []error { return m }
-
-// OAuth2MappingValidationError is the validation error returned by
-// OAuth2Mapping.Validate if the designated constraints aren't met.
-type OAuth2MappingValidationError struct {
-	field  string
-	reason string
-	cause  error
-	key    bool
-}
-
-// Field function returns field value.
-func (e OAuth2MappingValidationError) Field() string { return e.field }
-
-// Reason function returns reason value.
-func (e OAuth2MappingValidationError) Reason() string { return e.reason }
-
-// Cause function returns cause value.
-func (e OAuth2MappingValidationError) Cause() error { return e.cause }
-
-// Key function returns key value.
-func (e OAuth2MappingValidationError) Key() bool { return e.key }
-
-// ErrorName returns error name.
-func (e OAuth2MappingValidationError) ErrorName() string { return "OAuth2MappingValidationError" }
-
-// Error satisfies the builtin error interface
-func (e OAuth2MappingValidationError) Error() string {
-	cause := ""
-	if e.cause != nil {
-		cause = fmt.Sprintf(" | caused by: %v", e.cause)
-	}
-
-	key := ""
-	if e.key {
-		key = "key for "
-	}
-
-	return fmt.Sprintf(
-		"invalid %sOAuth2Mapping.%s: %s%s",
-		key,
-		e.field,
-		e.reason,
-		cause)
-}
-
-var _ error = OAuth2MappingValidationError{}
-
-var _ interface {
-	Field() string
-	Reason() string
-	Key() bool
-	Cause() error
-	ErrorName() string
-} = OAuth2MappingValidationError{}
-
 // Validate checks the field values on Discord with the rules defined in the
 // proto definition for this message. If any rules are violated, the first
 // error encountered is returned, or nil if there are no violations.
@@ -1644,102 +1226,3 @@ var _ interface {
 	Cause() error
 	ErrorName() string
 } = DiscordValidationError{}
-
-// Validate checks the field values on PluginConfig with the rules defined in
-// the proto definition for this message. If any rules are violated, the first
-// error encountered is returned, or nil if there are no violations.
-func (m *PluginConfig) Validate() error {
-	return m.validate(false)
-}
-
-// ValidateAll checks the field values on PluginConfig with the rules defined
-// in the proto definition for this message. If any rules are violated, the
-// result is a list of violation errors wrapped in PluginConfigMultiError, or
-// nil if none found.
-func (m *PluginConfig) ValidateAll() error {
-	return m.validate(true)
-}
-
-func (m *PluginConfig) validate(all bool) error {
-	if m == nil {
-		return nil
-	}
-
-	var errors []error
-
-	if len(errors) > 0 {
-		return PluginConfigMultiError(errors)
-	}
-
-	return nil
-}
-
-// PluginConfigMultiError is an error wrapping multiple validation errors
-// returned by PluginConfig.ValidateAll() if the designated constraints aren't met.
-type PluginConfigMultiError []error
-
-// Error returns a concatenation of all the error messages it wraps.
-func (m PluginConfigMultiError) Error() string {
-	var msgs []string
-	for _, err := range m {
-		msgs = append(msgs, err.Error())
-	}
-	return strings.Join(msgs, "; ")
-}
-
-// AllErrors returns a list of validation violation errors.
-func (m PluginConfigMultiError) AllErrors() []error { return m }
-
-// PluginConfigValidationError is the validation error returned by
-// PluginConfig.Validate if the designated constraints aren't met.
-type PluginConfigValidationError struct {
-	field  string
-	reason string
-	cause  error
-	key    bool
-}
-
-// Field function returns field value.
-func (e PluginConfigValidationError) Field() string { return e.field }
-
-// Reason function returns reason value.
-func (e PluginConfigValidationError) Reason() string { return e.reason }
-
-// Cause function returns cause value.
-func (e PluginConfigValidationError) Cause() error { return e.cause }
-
-// Key function returns key value.
-func (e PluginConfigValidationError) Key() bool { return e.key }
-
-// ErrorName returns error name.
-func (e PluginConfigValidationError) ErrorName() string { return "PluginConfigValidationError" }
-
-// Error satisfies the builtin error interface
-func (e PluginConfigValidationError) Error() string {
-	cause := ""
-	if e.cause != nil {
-		cause = fmt.Sprintf(" | caused by: %v", e.cause)
-	}
-
-	key := ""
-	if e.key {
-		key = "key for "
-	}
-
-	return fmt.Sprintf(
-		"invalid %sPluginConfig.%s: %s%s",
-		key,
-		e.field,
-		e.reason,
-		cause)
-}
-
-var _ error = PluginConfigValidationError{}
-
-var _ interface {
-	Field() string
-	Reason() string
-	Key() bool
-	Cause() error
-	ErrorName() string
-} = PluginConfigValidationError{}

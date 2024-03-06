@@ -4,6 +4,7 @@ import (
 	"database/sql/driver"
 	"slices"
 
+	"github.com/galexrt/fivenet/pkg/utils/protoutils"
 	"github.com/paulmach/orb"
 	"google.golang.org/protobuf/encoding/protojson"
 	"google.golang.org/protobuf/proto"
@@ -132,7 +133,7 @@ func (x *DispatchReferences) Value() (driver.Value, error) {
 		return nil, nil
 	}
 
-	out, err := protojson.Marshal(x)
+	out, err := protoutils.Marshal(x)
 	return string(out), err
 }
 

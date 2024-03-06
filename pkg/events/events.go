@@ -32,7 +32,7 @@ type Params struct {
 	fx.In
 
 	LC     fx.Lifecycle
-	Config *config.BaseConfig
+	Config *config.Config
 }
 
 type Result struct {

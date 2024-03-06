@@ -36,11 +36,7 @@ export interface AppConfig {
      */
     userTracker?: UserTracker;
     /**
-     * @generated from protobuf field: resources.rector.OAuth2 oauth2 = 6;
-     */
-    oauth2?: OAuth2;
-    /**
-     * @generated from protobuf field: resources.rector.Discord discord = 7;
+     * @generated from protobuf field: resources.rector.Discord discord = 6;
      */
     discord?: Discord;
 }
@@ -87,13 +83,30 @@ export interface Links {
  */
 export interface JobInfo {
     /**
-     * @generated from protobuf field: repeated string public_jobs = 1;
+     * @generated from protobuf field: resources.rector.UnemployedJob unemployed_job = 1;
+     */
+    unemployedJob?: UnemployedJob;
+    /**
+     * @generated from protobuf field: repeated string public_jobs = 2;
      */
     publicJobs: string[];
     /**
-     * @generated from protobuf field: repeated string hidden_jobs = 2;
+     * @generated from protobuf field: repeated string hidden_jobs = 3;
      */
     hiddenJobs: string[];
+}
+/**
+ * @generated from protobuf message resources.rector.UnemployedJob
+ */
+export interface UnemployedJob {
+    /**
+     * @generated from protobuf field: string name = 1;
+     */
+    name: string;
+    /**
+     * @generated from protobuf field: int32 grade = 2;
+     */
+    grade: number;
 }
 /**
  * @generated from protobuf message resources.rector.UserTracker
@@ -111,98 +124,6 @@ export interface UserTracker {
      * @generated from protobuf field: repeated string livemap_jobs = 3;
      */
     livemapJobs: string[];
-    /**
-     * @generated from protobuf field: repeated string timeclock_jobs = 4;
-     */
-    timeclockJobs: string[];
-}
-/**
- * @generated from protobuf message resources.rector.OAuth2
- */
-export interface OAuth2 {
-    /**
-     * @generated from protobuf field: repeated resources.rector.OAuth2Provider providers = 1;
-     */
-    providers: OAuth2Provider[];
-}
-/**
- * @generated from protobuf message resources.rector.OAuth2Provider
- */
-export interface OAuth2Provider {
-    /**
-     * @generated from protobuf field: string name = 1;
-     */
-    name: string;
-    /**
-     * @generated from protobuf field: string label = 2;
-     */
-    label: string;
-    /**
-     * @generated from protobuf field: string homepage = 3;
-     */
-    homepage: string;
-    /**
-     * @generated from protobuf field: string type = 4;
-     */
-    type: string;
-    /**
-     * @generated from protobuf field: string redirect_url = 5;
-     */
-    redirectUrl: string;
-    /**
-     * @generated from protobuf field: string client_id = 6;
-     */
-    clientId: string;
-    /**
-     * @generated from protobuf field: string client_secret = 7;
-     */
-    clientSecret: string;
-    /**
-     * @generated from protobuf field: repeated string scopes = 8;
-     */
-    scopes: string[];
-    /**
-     * @generated from protobuf field: resources.rector.OAuth2Endpoints endpoints = 9;
-     */
-    endpoints?: OAuth2Endpoints;
-    /**
-     * @generated from protobuf field: resources.rector.OAuth2Mapping mapping = 10;
-     */
-    mapping?: OAuth2Mapping;
-}
-/**
- * @generated from protobuf message resources.rector.OAuth2Endpoints
- */
-export interface OAuth2Endpoints {
-    /**
-     * @generated from protobuf field: optional string auth_url = 1;
-     */
-    authUrl?: string;
-    /**
-     * @generated from protobuf field: optional string token_url = 2;
-     */
-    tokenUrl?: string;
-    /**
-     * @generated from protobuf field: optional string user_info_url = 3;
-     */
-    userInfoUrl?: string;
-}
-/**
- * @generated from protobuf message resources.rector.OAuth2Mapping
- */
-export interface OAuth2Mapping {
-    /**
-     * @generated from protobuf field: string id = 1;
-     */
-    id: string;
-    /**
-     * @generated from protobuf field: string username = 2;
-     */
-    username: string;
-    /**
-     * @generated from protobuf field: string avatar = 3;
-     */
-    avatar: string;
 }
 /**
  * @generated from protobuf message resources.rector.Discord
@@ -213,13 +134,6 @@ export interface Discord {
      */
     enabled: boolean; // TODO
 }
-/**
- * TODO
- *
- * @generated from protobuf message resources.rector.PluginConfig
- */
-export interface PluginConfig {
-}
 // @generated message type with reflection information, may provide speed optimized methods
 class AppConfig$Type extends MessageType<AppConfig> {
     constructor() {
@@ -229,8 +143,7 @@ class AppConfig$Type extends MessageType<AppConfig> {
             { no: 3, name: "website", kind: "message", T: () => Website },
             { no: 4, name: "job_info", kind: "message", T: () => JobInfo },
             { no: 5, name: "user_tracker", kind: "message", T: () => UserTracker },
-            { no: 6, name: "oauth2", kind: "message", T: () => OAuth2 },
-            { no: 7, name: "discord", kind: "message", T: () => Discord }
+            { no: 6, name: "discord", kind: "message", T: () => Discord }
         ]);
     }
     create(value?: PartialMessage<AppConfig>): AppConfig {
@@ -259,10 +172,7 @@ class AppConfig$Type extends MessageType<AppConfig> {
                 case /* resources.rector.UserTracker user_tracker */ 5:
                     message.userTracker = UserTracker.internalBinaryRead(reader, reader.uint32(), options, message.userTracker);
                     break;
-                case /* resources.rector.OAuth2 oauth2 */ 6:
-                    message.oauth2 = OAuth2.internalBinaryRead(reader, reader.uint32(), options, message.oauth2);
-                    break;
-                case /* resources.rector.Discord discord */ 7:
+                case /* resources.rector.Discord discord */ 6:
                     message.discord = Discord.internalBinaryRead(reader, reader.uint32(), options, message.discord);
                     break;
                 default:
@@ -292,12 +202,9 @@ class AppConfig$Type extends MessageType<AppConfig> {
         /* resources.rector.UserTracker user_tracker = 5; */
         if (message.userTracker)
             UserTracker.internalBinaryWrite(message.userTracker, writer.tag(5, WireType.LengthDelimited).fork(), options).join();
-        /* resources.rector.OAuth2 oauth2 = 6; */
-        if (message.oauth2)
-            OAuth2.internalBinaryWrite(message.oauth2, writer.tag(6, WireType.LengthDelimited).fork(), options).join();
-        /* resources.rector.Discord discord = 7; */
+        /* resources.rector.Discord discord = 6; */
         if (message.discord)
-            Discord.internalBinaryWrite(message.discord, writer.tag(7, WireType.LengthDelimited).fork(), options).join();
+            Discord.internalBinaryWrite(message.discord, writer.tag(6, WireType.LengthDelimited).fork(), options).join();
         let u = options.writeUnknownFields;
         if (u !== false)
             (u == true ? UnknownFieldHandler.onWrite : u)(this.typeName, message, writer);
@@ -483,8 +390,9 @@ export const Links = new Links$Type();
 class JobInfo$Type extends MessageType<JobInfo> {
     constructor() {
         super("resources.rector.JobInfo", [
-            { no: 1, name: "public_jobs", kind: "scalar", repeat: 2 /*RepeatType.UNPACKED*/, T: 9 /*ScalarType.STRING*/ },
-            { no: 2, name: "hidden_jobs", kind: "scalar", repeat: 2 /*RepeatType.UNPACKED*/, T: 9 /*ScalarType.STRING*/ }
+            { no: 1, name: "unemployed_job", kind: "message", T: () => UnemployedJob },
+            { no: 2, name: "public_jobs", kind: "scalar", repeat: 2 /*RepeatType.UNPACKED*/, T: 9 /*ScalarType.STRING*/ },
+            { no: 3, name: "hidden_jobs", kind: "scalar", repeat: 2 /*RepeatType.UNPACKED*/, T: 9 /*ScalarType.STRING*/ }
         ]);
     }
     create(value?: PartialMessage<JobInfo>): JobInfo {
@@ -500,10 +408,13 @@ class JobInfo$Type extends MessageType<JobInfo> {
         while (reader.pos < end) {
             let [fieldNo, wireType] = reader.tag();
             switch (fieldNo) {
-                case /* repeated string public_jobs */ 1:
+                case /* resources.rector.UnemployedJob unemployed_job */ 1:
+                    message.unemployedJob = UnemployedJob.internalBinaryRead(reader, reader.uint32(), options, message.unemployedJob);
+                    break;
+                case /* repeated string public_jobs */ 2:
                     message.publicJobs.push(reader.string());
                     break;
-                case /* repeated string hidden_jobs */ 2:
+                case /* repeated string hidden_jobs */ 3:
                     message.hiddenJobs.push(reader.string());
                     break;
                 default:
@@ -518,12 +429,15 @@ class JobInfo$Type extends MessageType<JobInfo> {
         return message;
     }
     internalBinaryWrite(message: JobInfo, writer: IBinaryWriter, options: BinaryWriteOptions): IBinaryWriter {
-        /* repeated string public_jobs = 1; */
+        /* resources.rector.UnemployedJob unemployed_job = 1; */
+        if (message.unemployedJob)
+            UnemployedJob.internalBinaryWrite(message.unemployedJob, writer.tag(1, WireType.LengthDelimited).fork(), options).join();
+        /* repeated string public_jobs = 2; */
         for (let i = 0; i < message.publicJobs.length; i++)
-            writer.tag(1, WireType.LengthDelimited).string(message.publicJobs[i]);
-        /* repeated string hidden_jobs = 2; */
+            writer.tag(2, WireType.LengthDelimited).string(message.publicJobs[i]);
+        /* repeated string hidden_jobs = 3; */
         for (let i = 0; i < message.hiddenJobs.length; i++)
-            writer.tag(2, WireType.LengthDelimited).string(message.hiddenJobs[i]);
+            writer.tag(3, WireType.LengthDelimited).string(message.hiddenJobs[i]);
         let u = options.writeUnknownFields;
         if (u !== false)
             (u == true ? UnknownFieldHandler.onWrite : u)(this.typeName, message, writer);
@@ -535,19 +449,72 @@ class JobInfo$Type extends MessageType<JobInfo> {
  */
 export const JobInfo = new JobInfo$Type();
 // @generated message type with reflection information, may provide speed optimized methods
+class UnemployedJob$Type extends MessageType<UnemployedJob> {
+    constructor() {
+        super("resources.rector.UnemployedJob", [
+            { no: 1, name: "name", kind: "scalar", T: 9 /*ScalarType.STRING*/ },
+            { no: 2, name: "grade", kind: "scalar", T: 5 /*ScalarType.INT32*/ }
+        ]);
+    }
+    create(value?: PartialMessage<UnemployedJob>): UnemployedJob {
+        const message = globalThis.Object.create((this.messagePrototype!));
+        message.name = "";
+        message.grade = 0;
+        if (value !== undefined)
+            reflectionMergePartial<UnemployedJob>(this, message, value);
+        return message;
+    }
+    internalBinaryRead(reader: IBinaryReader, length: number, options: BinaryReadOptions, target?: UnemployedJob): UnemployedJob {
+        let message = target ?? this.create(), end = reader.pos + length;
+        while (reader.pos < end) {
+            let [fieldNo, wireType] = reader.tag();
+            switch (fieldNo) {
+                case /* string name */ 1:
+                    message.name = reader.string();
+                    break;
+                case /* int32 grade */ 2:
+                    message.grade = reader.int32();
+                    break;
+                default:
+                    let u = options.readUnknownField;
+                    if (u === "throw")
+                        throw new globalThis.Error(`Unknown field ${fieldNo} (wire type ${wireType}) for ${this.typeName}`);
+                    let d = reader.skip(wireType);
+                    if (u !== false)
+                        (u === true ? UnknownFieldHandler.onRead : u)(this.typeName, message, fieldNo, wireType, d);
+            }
+        }
+        return message;
+    }
+    internalBinaryWrite(message: UnemployedJob, writer: IBinaryWriter, options: BinaryWriteOptions): IBinaryWriter {
+        /* string name = 1; */
+        if (message.name !== "")
+            writer.tag(1, WireType.LengthDelimited).string(message.name);
+        /* int32 grade = 2; */
+        if (message.grade !== 0)
+            writer.tag(2, WireType.Varint).int32(message.grade);
+        let u = options.writeUnknownFields;
+        if (u !== false)
+            (u == true ? UnknownFieldHandler.onWrite : u)(this.typeName, message, writer);
+        return writer;
+    }
+}
+/**
+ * @generated MessageType for protobuf message resources.rector.UnemployedJob
+ */
+export const UnemployedJob = new UnemployedJob$Type();
+// @generated message type with reflection information, may provide speed optimized methods
 class UserTracker$Type extends MessageType<UserTracker> {
     constructor() {
         super("resources.rector.UserTracker", [
             { no: 1, name: "refresh_time", kind: "message", T: () => Duration },
             { no: 2, name: "db_refresh_time", kind: "message", T: () => Duration },
-            { no: 3, name: "livemap_jobs", kind: "scalar", repeat: 2 /*RepeatType.UNPACKED*/, T: 9 /*ScalarType.STRING*/ },
-            { no: 4, name: "timeclock_jobs", kind: "scalar", repeat: 2 /*RepeatType.UNPACKED*/, T: 9 /*ScalarType.STRING*/ }
+            { no: 3, name: "livemap_jobs", kind: "scalar", repeat: 2 /*RepeatType.UNPACKED*/, T: 9 /*ScalarType.STRING*/ }
         ]);
     }
     create(value?: PartialMessage<UserTracker>): UserTracker {
         const message = globalThis.Object.create((this.messagePrototype!));
         message.livemapJobs = [];
-        message.timeclockJobs = [];
         if (value !== undefined)
             reflectionMergePartial<UserTracker>(this, message, value);
         return message;
@@ -565,9 +532,6 @@ class UserTracker$Type extends MessageType<UserTracker> {
                     break;
                 case /* repeated string livemap_jobs */ 3:
                     message.livemapJobs.push(reader.string());
-                    break;
-                case /* repeated string timeclock_jobs */ 4:
-                    message.timeclockJobs.push(reader.string());
                     break;
                 default:
                     let u = options.readUnknownField;
@@ -590,9 +554,6 @@ class UserTracker$Type extends MessageType<UserTracker> {
         /* repeated string livemap_jobs = 3; */
         for (let i = 0; i < message.livemapJobs.length; i++)
             writer.tag(3, WireType.LengthDelimited).string(message.livemapJobs[i]);
-        /* repeated string timeclock_jobs = 4; */
-        for (let i = 0; i < message.timeclockJobs.length; i++)
-            writer.tag(4, WireType.LengthDelimited).string(message.timeclockJobs[i]);
         let u = options.writeUnknownFields;
         if (u !== false)
             (u == true ? UnknownFieldHandler.onWrite : u)(this.typeName, message, writer);
@@ -603,293 +564,6 @@ class UserTracker$Type extends MessageType<UserTracker> {
  * @generated MessageType for protobuf message resources.rector.UserTracker
  */
 export const UserTracker = new UserTracker$Type();
-// @generated message type with reflection information, may provide speed optimized methods
-class OAuth2$Type extends MessageType<OAuth2> {
-    constructor() {
-        super("resources.rector.OAuth2", [
-            { no: 1, name: "providers", kind: "message", repeat: 1 /*RepeatType.PACKED*/, T: () => OAuth2Provider }
-        ]);
-    }
-    create(value?: PartialMessage<OAuth2>): OAuth2 {
-        const message = globalThis.Object.create((this.messagePrototype!));
-        message.providers = [];
-        if (value !== undefined)
-            reflectionMergePartial<OAuth2>(this, message, value);
-        return message;
-    }
-    internalBinaryRead(reader: IBinaryReader, length: number, options: BinaryReadOptions, target?: OAuth2): OAuth2 {
-        let message = target ?? this.create(), end = reader.pos + length;
-        while (reader.pos < end) {
-            let [fieldNo, wireType] = reader.tag();
-            switch (fieldNo) {
-                case /* repeated resources.rector.OAuth2Provider providers */ 1:
-                    message.providers.push(OAuth2Provider.internalBinaryRead(reader, reader.uint32(), options));
-                    break;
-                default:
-                    let u = options.readUnknownField;
-                    if (u === "throw")
-                        throw new globalThis.Error(`Unknown field ${fieldNo} (wire type ${wireType}) for ${this.typeName}`);
-                    let d = reader.skip(wireType);
-                    if (u !== false)
-                        (u === true ? UnknownFieldHandler.onRead : u)(this.typeName, message, fieldNo, wireType, d);
-            }
-        }
-        return message;
-    }
-    internalBinaryWrite(message: OAuth2, writer: IBinaryWriter, options: BinaryWriteOptions): IBinaryWriter {
-        /* repeated resources.rector.OAuth2Provider providers = 1; */
-        for (let i = 0; i < message.providers.length; i++)
-            OAuth2Provider.internalBinaryWrite(message.providers[i], writer.tag(1, WireType.LengthDelimited).fork(), options).join();
-        let u = options.writeUnknownFields;
-        if (u !== false)
-            (u == true ? UnknownFieldHandler.onWrite : u)(this.typeName, message, writer);
-        return writer;
-    }
-}
-/**
- * @generated MessageType for protobuf message resources.rector.OAuth2
- */
-export const OAuth2 = new OAuth2$Type();
-// @generated message type with reflection information, may provide speed optimized methods
-class OAuth2Provider$Type extends MessageType<OAuth2Provider> {
-    constructor() {
-        super("resources.rector.OAuth2Provider", [
-            { no: 1, name: "name", kind: "scalar", T: 9 /*ScalarType.STRING*/ },
-            { no: 2, name: "label", kind: "scalar", T: 9 /*ScalarType.STRING*/ },
-            { no: 3, name: "homepage", kind: "scalar", T: 9 /*ScalarType.STRING*/ },
-            { no: 4, name: "type", kind: "scalar", T: 9 /*ScalarType.STRING*/ },
-            { no: 5, name: "redirect_url", kind: "scalar", T: 9 /*ScalarType.STRING*/ },
-            { no: 6, name: "client_id", kind: "scalar", T: 9 /*ScalarType.STRING*/ },
-            { no: 7, name: "client_secret", kind: "scalar", T: 9 /*ScalarType.STRING*/ },
-            { no: 8, name: "scopes", kind: "scalar", repeat: 2 /*RepeatType.UNPACKED*/, T: 9 /*ScalarType.STRING*/ },
-            { no: 9, name: "endpoints", kind: "message", T: () => OAuth2Endpoints },
-            { no: 10, name: "mapping", kind: "message", T: () => OAuth2Mapping }
-        ]);
-    }
-    create(value?: PartialMessage<OAuth2Provider>): OAuth2Provider {
-        const message = globalThis.Object.create((this.messagePrototype!));
-        message.name = "";
-        message.label = "";
-        message.homepage = "";
-        message.type = "";
-        message.redirectUrl = "";
-        message.clientId = "";
-        message.clientSecret = "";
-        message.scopes = [];
-        if (value !== undefined)
-            reflectionMergePartial<OAuth2Provider>(this, message, value);
-        return message;
-    }
-    internalBinaryRead(reader: IBinaryReader, length: number, options: BinaryReadOptions, target?: OAuth2Provider): OAuth2Provider {
-        let message = target ?? this.create(), end = reader.pos + length;
-        while (reader.pos < end) {
-            let [fieldNo, wireType] = reader.tag();
-            switch (fieldNo) {
-                case /* string name */ 1:
-                    message.name = reader.string();
-                    break;
-                case /* string label */ 2:
-                    message.label = reader.string();
-                    break;
-                case /* string homepage */ 3:
-                    message.homepage = reader.string();
-                    break;
-                case /* string type */ 4:
-                    message.type = reader.string();
-                    break;
-                case /* string redirect_url */ 5:
-                    message.redirectUrl = reader.string();
-                    break;
-                case /* string client_id */ 6:
-                    message.clientId = reader.string();
-                    break;
-                case /* string client_secret */ 7:
-                    message.clientSecret = reader.string();
-                    break;
-                case /* repeated string scopes */ 8:
-                    message.scopes.push(reader.string());
-                    break;
-                case /* resources.rector.OAuth2Endpoints endpoints */ 9:
-                    message.endpoints = OAuth2Endpoints.internalBinaryRead(reader, reader.uint32(), options, message.endpoints);
-                    break;
-                case /* resources.rector.OAuth2Mapping mapping */ 10:
-                    message.mapping = OAuth2Mapping.internalBinaryRead(reader, reader.uint32(), options, message.mapping);
-                    break;
-                default:
-                    let u = options.readUnknownField;
-                    if (u === "throw")
-                        throw new globalThis.Error(`Unknown field ${fieldNo} (wire type ${wireType}) for ${this.typeName}`);
-                    let d = reader.skip(wireType);
-                    if (u !== false)
-                        (u === true ? UnknownFieldHandler.onRead : u)(this.typeName, message, fieldNo, wireType, d);
-            }
-        }
-        return message;
-    }
-    internalBinaryWrite(message: OAuth2Provider, writer: IBinaryWriter, options: BinaryWriteOptions): IBinaryWriter {
-        /* string name = 1; */
-        if (message.name !== "")
-            writer.tag(1, WireType.LengthDelimited).string(message.name);
-        /* string label = 2; */
-        if (message.label !== "")
-            writer.tag(2, WireType.LengthDelimited).string(message.label);
-        /* string homepage = 3; */
-        if (message.homepage !== "")
-            writer.tag(3, WireType.LengthDelimited).string(message.homepage);
-        /* string type = 4; */
-        if (message.type !== "")
-            writer.tag(4, WireType.LengthDelimited).string(message.type);
-        /* string redirect_url = 5; */
-        if (message.redirectUrl !== "")
-            writer.tag(5, WireType.LengthDelimited).string(message.redirectUrl);
-        /* string client_id = 6; */
-        if (message.clientId !== "")
-            writer.tag(6, WireType.LengthDelimited).string(message.clientId);
-        /* string client_secret = 7; */
-        if (message.clientSecret !== "")
-            writer.tag(7, WireType.LengthDelimited).string(message.clientSecret);
-        /* repeated string scopes = 8; */
-        for (let i = 0; i < message.scopes.length; i++)
-            writer.tag(8, WireType.LengthDelimited).string(message.scopes[i]);
-        /* resources.rector.OAuth2Endpoints endpoints = 9; */
-        if (message.endpoints)
-            OAuth2Endpoints.internalBinaryWrite(message.endpoints, writer.tag(9, WireType.LengthDelimited).fork(), options).join();
-        /* resources.rector.OAuth2Mapping mapping = 10; */
-        if (message.mapping)
-            OAuth2Mapping.internalBinaryWrite(message.mapping, writer.tag(10, WireType.LengthDelimited).fork(), options).join();
-        let u = options.writeUnknownFields;
-        if (u !== false)
-            (u == true ? UnknownFieldHandler.onWrite : u)(this.typeName, message, writer);
-        return writer;
-    }
-}
-/**
- * @generated MessageType for protobuf message resources.rector.OAuth2Provider
- */
-export const OAuth2Provider = new OAuth2Provider$Type();
-// @generated message type with reflection information, may provide speed optimized methods
-class OAuth2Endpoints$Type extends MessageType<OAuth2Endpoints> {
-    constructor() {
-        super("resources.rector.OAuth2Endpoints", [
-            { no: 1, name: "auth_url", kind: "scalar", opt: true, T: 9 /*ScalarType.STRING*/ },
-            { no: 2, name: "token_url", kind: "scalar", opt: true, T: 9 /*ScalarType.STRING*/ },
-            { no: 3, name: "user_info_url", kind: "scalar", opt: true, T: 9 /*ScalarType.STRING*/ }
-        ]);
-    }
-    create(value?: PartialMessage<OAuth2Endpoints>): OAuth2Endpoints {
-        const message = globalThis.Object.create((this.messagePrototype!));
-        if (value !== undefined)
-            reflectionMergePartial<OAuth2Endpoints>(this, message, value);
-        return message;
-    }
-    internalBinaryRead(reader: IBinaryReader, length: number, options: BinaryReadOptions, target?: OAuth2Endpoints): OAuth2Endpoints {
-        let message = target ?? this.create(), end = reader.pos + length;
-        while (reader.pos < end) {
-            let [fieldNo, wireType] = reader.tag();
-            switch (fieldNo) {
-                case /* optional string auth_url */ 1:
-                    message.authUrl = reader.string();
-                    break;
-                case /* optional string token_url */ 2:
-                    message.tokenUrl = reader.string();
-                    break;
-                case /* optional string user_info_url */ 3:
-                    message.userInfoUrl = reader.string();
-                    break;
-                default:
-                    let u = options.readUnknownField;
-                    if (u === "throw")
-                        throw new globalThis.Error(`Unknown field ${fieldNo} (wire type ${wireType}) for ${this.typeName}`);
-                    let d = reader.skip(wireType);
-                    if (u !== false)
-                        (u === true ? UnknownFieldHandler.onRead : u)(this.typeName, message, fieldNo, wireType, d);
-            }
-        }
-        return message;
-    }
-    internalBinaryWrite(message: OAuth2Endpoints, writer: IBinaryWriter, options: BinaryWriteOptions): IBinaryWriter {
-        /* optional string auth_url = 1; */
-        if (message.authUrl !== undefined)
-            writer.tag(1, WireType.LengthDelimited).string(message.authUrl);
-        /* optional string token_url = 2; */
-        if (message.tokenUrl !== undefined)
-            writer.tag(2, WireType.LengthDelimited).string(message.tokenUrl);
-        /* optional string user_info_url = 3; */
-        if (message.userInfoUrl !== undefined)
-            writer.tag(3, WireType.LengthDelimited).string(message.userInfoUrl);
-        let u = options.writeUnknownFields;
-        if (u !== false)
-            (u == true ? UnknownFieldHandler.onWrite : u)(this.typeName, message, writer);
-        return writer;
-    }
-}
-/**
- * @generated MessageType for protobuf message resources.rector.OAuth2Endpoints
- */
-export const OAuth2Endpoints = new OAuth2Endpoints$Type();
-// @generated message type with reflection information, may provide speed optimized methods
-class OAuth2Mapping$Type extends MessageType<OAuth2Mapping> {
-    constructor() {
-        super("resources.rector.OAuth2Mapping", [
-            { no: 1, name: "id", kind: "scalar", T: 9 /*ScalarType.STRING*/ },
-            { no: 2, name: "username", kind: "scalar", T: 9 /*ScalarType.STRING*/ },
-            { no: 3, name: "avatar", kind: "scalar", T: 9 /*ScalarType.STRING*/ }
-        ]);
-    }
-    create(value?: PartialMessage<OAuth2Mapping>): OAuth2Mapping {
-        const message = globalThis.Object.create((this.messagePrototype!));
-        message.id = "";
-        message.username = "";
-        message.avatar = "";
-        if (value !== undefined)
-            reflectionMergePartial<OAuth2Mapping>(this, message, value);
-        return message;
-    }
-    internalBinaryRead(reader: IBinaryReader, length: number, options: BinaryReadOptions, target?: OAuth2Mapping): OAuth2Mapping {
-        let message = target ?? this.create(), end = reader.pos + length;
-        while (reader.pos < end) {
-            let [fieldNo, wireType] = reader.tag();
-            switch (fieldNo) {
-                case /* string id */ 1:
-                    message.id = reader.string();
-                    break;
-                case /* string username */ 2:
-                    message.username = reader.string();
-                    break;
-                case /* string avatar */ 3:
-                    message.avatar = reader.string();
-                    break;
-                default:
-                    let u = options.readUnknownField;
-                    if (u === "throw")
-                        throw new globalThis.Error(`Unknown field ${fieldNo} (wire type ${wireType}) for ${this.typeName}`);
-                    let d = reader.skip(wireType);
-                    if (u !== false)
-                        (u === true ? UnknownFieldHandler.onRead : u)(this.typeName, message, fieldNo, wireType, d);
-            }
-        }
-        return message;
-    }
-    internalBinaryWrite(message: OAuth2Mapping, writer: IBinaryWriter, options: BinaryWriteOptions): IBinaryWriter {
-        /* string id = 1; */
-        if (message.id !== "")
-            writer.tag(1, WireType.LengthDelimited).string(message.id);
-        /* string username = 2; */
-        if (message.username !== "")
-            writer.tag(2, WireType.LengthDelimited).string(message.username);
-        /* string avatar = 3; */
-        if (message.avatar !== "")
-            writer.tag(3, WireType.LengthDelimited).string(message.avatar);
-        let u = options.writeUnknownFields;
-        if (u !== false)
-            (u == true ? UnknownFieldHandler.onWrite : u)(this.typeName, message, writer);
-        return writer;
-    }
-}
-/**
- * @generated MessageType for protobuf message resources.rector.OAuth2Mapping
- */
-export const OAuth2Mapping = new OAuth2Mapping$Type();
 // @generated message type with reflection information, may provide speed optimized methods
 class Discord$Type extends MessageType<Discord> {
     constructor() {
@@ -937,28 +611,3 @@ class Discord$Type extends MessageType<Discord> {
  * @generated MessageType for protobuf message resources.rector.Discord
  */
 export const Discord = new Discord$Type();
-// @generated message type with reflection information, may provide speed optimized methods
-class PluginConfig$Type extends MessageType<PluginConfig> {
-    constructor() {
-        super("resources.rector.PluginConfig", []);
-    }
-    create(value?: PartialMessage<PluginConfig>): PluginConfig {
-        const message = globalThis.Object.create((this.messagePrototype!));
-        if (value !== undefined)
-            reflectionMergePartial<PluginConfig>(this, message, value);
-        return message;
-    }
-    internalBinaryRead(reader: IBinaryReader, length: number, options: BinaryReadOptions, target?: PluginConfig): PluginConfig {
-        return target ?? this.create();
-    }
-    internalBinaryWrite(message: PluginConfig, writer: IBinaryWriter, options: BinaryWriteOptions): IBinaryWriter {
-        let u = options.writeUnknownFields;
-        if (u !== false)
-            (u == true ? UnknownFieldHandler.onWrite : u)(this.typeName, message, writer);
-        return writer;
-    }
-}
-/**
- * @generated MessageType for protobuf message resources.rector.PluginConfig
- */
-export const PluginConfig = new PluginConfig$Type();

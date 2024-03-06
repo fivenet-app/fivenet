@@ -7,7 +7,7 @@ import (
 	"go.uber.org/fx"
 )
 
-var storageFactories = map[string]func(lc fx.Lifecycle, cfg *config.BaseConfig) (IStorage, error){}
+var storageFactories = map[string]func(lc fx.Lifecycle, cfg *config.Config) (IStorage, error){}
 
 var Module = fx.Module("storage",
 	fx.Provide(New),
@@ -17,7 +17,7 @@ type Params struct {
 	fx.In
 
 	LC     fx.Lifecycle
-	Config *config.BaseConfig
+	Config *config.Config
 }
 
 func New(p Params) (IStorage, error) {

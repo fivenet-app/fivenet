@@ -78,7 +78,7 @@ const { data: jobs } = useLazyAsyncData(`rector-appconfig-jobs`, () => listJobs(
 const queryJobsRaw = ref('');
 const queryJobs = computed(() => queryJobsRaw.value.trim());
 
-const canSubmit = ref(false);
+const canSubmit = ref(true);
 const onSubmitThrottle = useThrottleFn(async (_) => {
     canSubmit.value = false;
     await updateAppConfig().finally(() => setTimeout(() => (canSubmit.value = true), 400));
@@ -161,28 +161,38 @@ watch(data, () => console.log('data', data.value?.config));
                         <GenericContainerPanelEntry>
                             <template #title>Links</template>
                             <template #default>
-                                {{ $t('common.privacy_policy') }}
-                                <input
-                                    v-model="data.config!.website!.links!.privacyPolicy"
-                                    type="text"
-                                    class="block w-full rounded-md border-0 bg-base-700 py-1.5 text-neutral placeholder:text-accent-200 focus:ring-2 focus:ring-inset focus:ring-base-300 sm:text-sm sm:leading-6"
-                                    :placeholder="$t('common.privacy_policy')"
-                                    :label="$t('common.privacy_policy')"
-                                    maxlength="128"
-                                    @focusin="focusTablet(true)"
-                                    @focusout="focusTablet(false)"
-                                />
-                                {{ $t('common.imprint') }}
-                                <input
-                                    v-model="data.config!.website!.links!.imprint"
-                                    type="text"
-                                    class="block w-full rounded-md border-0 bg-base-700 py-1.5 text-neutral placeholder:text-accent-200 focus:ring-2 focus:ring-inset focus:ring-base-300 sm:text-sm sm:leading-6"
-                                    :placeholder="$t('common.imprint')"
-                                    :label="$t('common.imprint')"
-                                    maxlength="128"
-                                    @focusin="focusTablet(true)"
-                                    @focusout="focusTablet(false)"
-                                />
+                                <div class="flex-1 form-control">
+                                    <label for="privacyPolicy">
+                                        {{ $t('common.privacy_policy') }}
+                                    </label>
+                                    <input
+                                        v-model="data.config!.website!.links!.privacyPolicy"
+                                        type="text"
+                                        name="privacyPolicy"
+                                        class="block w-full rounded-md border-0 bg-base-700 py-1.5 text-neutral placeholder:text-accent-200 focus:ring-2 focus:ring-inset focus:ring-base-300 sm:text-sm sm:leading-6"
+                                        :placeholder="$t('common.privacy_policy')"
+                                        :label="$t('common.privacy_policy')"
+                                        maxlength="128"
+                                        @focusin="focusTablet(true)"
+                                        @focusout="focusTablet(false)"
+                                    />
+                                </div>
+                                <div class="flex-1 form-control">
+                                    <label for="imprint">
+                                        {{ $t('common.imprint') }}
+                                    </label>
+                                    <input
+                                        v-model="data.config!.website!.links!.imprint"
+                                        type="text"
+                                        name="imprint"
+                                        class="block w-full rounded-md border-0 bg-base-700 py-1.5 text-neutral placeholder:text-accent-200 focus:ring-2 focus:ring-inset focus:ring-base-300 sm:text-sm sm:leading-6"
+                                        :placeholder="$t('common.imprint')"
+                                        :label="$t('common.imprint')"
+                                        maxlength="128"
+                                        @focusin="focusTablet(true)"
+                                        @focusout="focusTablet(false)"
+                                    />
+                                </div>
                             </template>
                         </GenericContainerPanelEntry>
                     </template>
@@ -190,6 +200,42 @@ watch(data, () => console.log('data', data.value?.config));
                 <GenericContainerPanel>
                     <template #title> Job Info </template>
                     <template #default>
+                        <GenericContainerPanelEntry>
+                            <template #title>Unemployed Job</template>
+                            <template #default>
+                                <div class="flex-1 form-control">
+                                    <label for="unemployedJobName"> {{ $t('common.job') }} {{ $t('common.name') }} </label>
+                                    <input
+                                        v-model="data.config!.jobInfo!.unemployedJob!.name"
+                                        type="text"
+                                        name="unemployedJobName"
+                                        class="block w-full rounded-md border-0 bg-base-700 py-1.5 text-neutral placeholder:text-accent-200 focus:ring-2 focus:ring-inset focus:ring-base-300 sm:text-sm sm:leading-6"
+                                        :placeholder="$t('common.privacy_policy')"
+                                        :label="$t('common.privacy_policy')"
+                                        maxlength="128"
+                                        @focusin="focusTablet(true)"
+                                        @focusout="focusTablet(false)"
+                                    />
+                                </div>
+                                <div class="flex-1 form-control">
+                                    <label for="unemployedJobGrade">
+                                        {{ $t('common.rank') }}
+                                    </label>
+                                    <input
+                                        v-model="data.config!.jobInfo!.unemployedJob!.grade"
+                                        type="number"
+                                        min="1"
+                                        max="99999"
+                                        name="unemployedJobGrade"
+                                        class="block w-full rounded-md border-0 bg-base-700 py-1.5 text-neutral placeholder:text-accent-200 focus:ring-2 focus:ring-inset focus:ring-base-300 sm:text-sm sm:leading-6"
+                                        :placeholder="$t('common.rank')"
+                                        :label="$t('common.rank')"
+                                        @focusin="focusTablet(true)"
+                                        @focusout="focusTablet(false)"
+                                    />
+                                </div>
+                            </template>
+                        </GenericContainerPanelEntry>
                         <GenericContainerPanelEntry>
                             <template #title>Public Jobs</template>
                             <template #default>
@@ -335,62 +381,6 @@ watch(data, () => console.log('data', data.value?.config));
                             <template #title>Livemap Jobs</template>
                             <template #default>
                                 <Combobox v-model="data.config!.userTracker!.livemapJobs" as="div" multiple nullable>
-                                    <div class="relative">
-                                        <ComboboxButton as="div">
-                                            <ComboboxInput
-                                                autocomplete="off"
-                                                class="block w-full rounded-md border-0 bg-base-700 py-1.5 text-neutral placeholder:text-accent-200 focus:ring-2 focus:ring-inset focus:ring-base-300 sm:text-sm sm:leading-6"
-                                                :display-value="(js: any) => (js ? js.join(', ') : $t('common.na'))"
-                                                :placeholder="$t('common.job', 2)"
-                                                @change="queryJobsRaw = $event.target.value"
-                                                @focusin="focusTablet(true)"
-                                                @focusout="focusTablet(false)"
-                                            />
-                                        </ComboboxButton>
-
-                                        <ComboboxOptions
-                                            v-if="jobs !== null && jobs.length > 0"
-                                            class="absolute z-30 mt-1 max-h-44 w-full overflow-auto rounded-md bg-base-700 py-1 text-base sm:text-sm"
-                                        >
-                                            <ComboboxOption
-                                                v-for="job in jobs.filter(
-                                                    (j) => j.label.includes(queryJobs) || j.name.includes(queryJobs),
-                                                )"
-                                                v-slot="{ active, selected }"
-                                                :key="job.name"
-                                                :value="job.name"
-                                                as="template"
-                                            >
-                                                <li
-                                                    :class="[
-                                                        'relative cursor-default select-none py-2 pl-8 pr-4 text-neutral',
-                                                        active ? 'bg-primary-500' : '',
-                                                    ]"
-                                                >
-                                                    <span :class="['block truncate', selected && 'font-semibold']">
-                                                        {{ job.label }}
-                                                    </span>
-
-                                                    <span
-                                                        v-if="selected"
-                                                        :class="[
-                                                            active ? 'text-neutral' : 'text-primary-500',
-                                                            'absolute inset-y-0 left-0 flex items-center pl-1.5',
-                                                        ]"
-                                                    >
-                                                        <CheckIcon class="h-5 w-5" aria-hidden="true" />
-                                                    </span>
-                                                </li>
-                                            </ComboboxOption>
-                                        </ComboboxOptions>
-                                    </div>
-                                </Combobox>
-                            </template>
-                        </GenericContainerPanelEntry>
-                        <GenericContainerPanelEntry>
-                            <template #title>Timeclock Jobs</template>
-                            <template #default>
-                                <Combobox v-model="data.config!.userTracker!.timeclockJobs" as="div" multiple nullable>
                                     <div class="relative">
                                         <ComboboxButton as="div">
                                             <ComboboxInput

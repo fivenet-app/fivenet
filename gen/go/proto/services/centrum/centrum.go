@@ -65,7 +65,7 @@ type Params struct {
 	JS      nats.JetStreamContext
 	Tracker tracker.ITracker
 	Postals postals.Postals
-	Config  *config.BaseConfig
+	Config  *config.Config
 	Manager *manager.Manager
 }
 
@@ -103,11 +103,7 @@ func NewServer(p Params) (*Server, error) {
 			go broker.Start()
 		}
 
-		if err := eventscentrum.RegisterStreams(ctx, s.js); err != nil {
-			return fmt.Errorf("failed to register events: %w", err)
-		}
-
-		if err := s.RegisterSubscriptions(ctx); err != nil {
+		if err := s.registerSubscriptions(ctx); err != nil {
 			return fmt.Errorf("failed to subscribe to events: %w", err)
 		}
 
@@ -129,7 +125,11 @@ func (s *Server) RegisterServer(srv *grpc.Server) {
 	RegisterCentrumServiceServer(srv, s)
 }
 
-func (s *Server) RegisterSubscriptions(ctx context.Context) error {
+func (s *Server) registerSubscriptions(ctx context.Context) error {
+	if err := eventscentrum.RegisterStream(ctx, s.js); err != nil {
+		return fmt.Errorf("failed to register events: %w", err)
+	}
+
 	if _, err := s.js.Subscribe(fmt.Sprintf("%s.>", eventscentrum.BaseSubject), s.watchForChanges, nats.DeliverLastPerSubject()); err != nil {
 		return err
 	}

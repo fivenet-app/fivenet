@@ -26,7 +26,7 @@ type TracingParams struct {
 
 	LC fx.Lifecycle
 
-	Config *config.BaseConfig
+	Config *config.Config
 }
 
 // tracerProvider returns an OpenTelemetry TracerProvider configured to use

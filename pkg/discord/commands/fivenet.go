@@ -9,7 +9,7 @@ func init() {
 	CommandsFactories["fivenet"] = NewFivenetCommand
 }
 
-func NewFivenetCommand(cfg *config.BaseConfig) (*discordgo.ApplicationCommand, CommandHandler, error) {
+func NewFivenetCommand(cfg *config.Config) (*discordgo.ApplicationCommand, CommandHandler, error) {
 	url := cfg.HTTP.PublicURL
 	return &discordgo.ApplicationCommand{
 			Name:        "fivenet",

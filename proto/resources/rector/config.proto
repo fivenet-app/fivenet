@@ -12,8 +12,7 @@ message AppConfig {
   Website website = 3;
   JobInfo job_info = 4;
   UserTracker user_tracker = 5;
-  OAuth2 oauth2 = 6;
-  Discord discord = 7;
+  Discord discord = 6;
 }
 
 message Auth {
@@ -34,51 +33,23 @@ message Links {
 }
 
 message JobInfo {
-  repeated string public_jobs = 1;
-  repeated string hidden_jobs = 2;
+  UnemployedJob unemployed_job = 1;
+  repeated string public_jobs = 2;
+  repeated string hidden_jobs = 3;
+}
+
+message UnemployedJob {
+  string name = 1;
+  int32 grade = 2;
 }
 
 message UserTracker {
   google.protobuf.Duration refresh_time = 1;
   google.protobuf.Duration db_refresh_time = 2;
   repeated string livemap_jobs = 3;
-  repeated string timeclock_jobs = 4;
-}
-
-message OAuth2 {
-  repeated OAuth2Provider providers = 1;
-}
-
-message OAuth2Provider {
-  string name = 1;
-  string label = 2;
-  string homepage = 3;
-  string type = 4;
-  string redirect_url = 5;
-  string client_id = 6;
-  string client_secret = 7;
-  repeated string scopes = 8;
-  OAuth2Endpoints endpoints = 9;
-  OAuth2Mapping mapping = 10;
-}
-
-message OAuth2Endpoints {
-  optional string auth_url = 1;
-  optional string token_url = 2;
-  optional string user_info_url = 3;
-}
-
-message OAuth2Mapping {
-  string id = 1;
-  string username = 2;
-  string avatar = 3;
 }
 
 message Discord {
   bool enabled = 1;
-  // TODO
-}
-
-message PluginConfig {
   // TODO
 }

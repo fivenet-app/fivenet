@@ -3,9 +3,7 @@ package manager
 import (
 	"context"
 	"database/sql"
-	"fmt"
 
-	eventscentrum "github.com/galexrt/fivenet/gen/go/proto/services/centrum/events"
 	"github.com/galexrt/fivenet/gen/go/proto/services/centrum/state"
 	"github.com/galexrt/fivenet/pkg/config"
 	"github.com/galexrt/fivenet/pkg/coords/postals"
@@ -51,7 +49,7 @@ type Params struct {
 	Enricher *mstlystcdata.Enricher
 	Postals  postals.Postals
 	Tracker  tracker.ITracker
-	Config   *config.BaseConfig
+	Config   *config.Config
 
 	State *state.State
 }
@@ -77,15 +75,11 @@ func New(p Params) *Manager {
 	}
 
 	p.LC.Append(fx.StartHook(func(ctx context.Context) error {
-		if err := eventscentrum.RegisterStreams(ctx, s.js); err != nil {
-			return fmt.Errorf("failed to register events: %w", err)
-		}
-
 		if err := s.loadData(); err != nil {
 			return err
 		}
 
-		if err := s.registerSubscriptions(); err != nil {
+		if err := s.registerSubscriptions(ctx); err != nil {
 			return err
 		}
 

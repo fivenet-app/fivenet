@@ -70,7 +70,7 @@ type Params struct {
 	JS       nats.JetStreamContext
 	Perms    perms.Permissions
 	Enricher *mstlystcdata.Enricher
-	Config   *config.BaseConfig
+	Config   *config.Config
 	Tracker  tracker.ITracker
 	Audit    audit.IAuditer
 }
@@ -114,7 +114,7 @@ func NewServer(p Params) *Server {
 			return err
 		}
 
-		if _, err := p.JS.Subscribe(fmt.Sprintf("%s.>", BaseSubject), s.watchForEvents, nats.DeliverNew()); err != nil {
+		if _, err := s.js.Subscribe(fmt.Sprintf("%s.>", BaseSubject), s.watchForEvents, nats.DeliverNew()); err != nil {
 			return err
 		}
 

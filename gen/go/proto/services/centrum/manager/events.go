@@ -1,6 +1,7 @@
 package manager
 
 import (
+	"context"
 	"fmt"
 
 	"github.com/galexrt/fivenet/gen/go/proto/resources/centrum"
@@ -10,7 +11,11 @@ import (
 	"google.golang.org/protobuf/proto"
 )
 
-func (s *Manager) registerSubscriptions() error {
+func (s *Manager) registerSubscriptions(ctx context.Context) error {
+	if err := eventscentrum.RegisterStream(ctx, s.js); err != nil {
+		return fmt.Errorf("failed to register events: %w", err)
+	}
+
 	if _, err := s.js.Subscribe(fmt.Sprintf("%s.*.%s.>", eventscentrum.BaseSubject, eventscentrum.TopicGeneral), s.watchTopicGeneral, nats.DeliverLastPerSubject()); err != nil {
 		s.logger.Error("failed to subscribe to centrum general topic", zap.Error(err))
 		return err

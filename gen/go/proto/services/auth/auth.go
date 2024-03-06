@@ -86,19 +86,20 @@ type Params struct {
 	Enricher *mstlystcdata.Enricher
 	Aud      audit.IAuditer
 	UI       userinfo.UserInfoRetriever
-	Config   *config.BaseConfig
+	Config   *config.Config
 }
 
 func NewServer(p Params) *Server {
 	return &Server{
-		logger:          p.Logger.Named("grpc.auth"),
-		db:              p.DB,
-		auth:            p.Auth,
-		tm:              p.TM,
-		p:               p.Perms,
-		enricher:        p.Enricher,
-		a:               p.Aud,
-		ui:              p.UI,
+		logger:   p.Logger.Named("grpc.auth"),
+		db:       p.DB,
+		auth:     p.Auth,
+		tm:       p.TM,
+		p:        p.Perms,
+		enricher: p.Enricher,
+		a:        p.Aud,
+		ui:       p.UI,
+
 		signupEnabled:   p.Config.Game.Auth.SignupEnabled,
 		superuserGroups: p.Config.Game.Auth.SuperuserGroups,
 		oauth2Providers: p.Config.OAuth2.Providers,
