@@ -85,13 +85,12 @@ auth:
   superuserGroups:
     - projektleiter
     - teamleitung
+  superuserUsers: []
 dispatchCenter:
   convertJobs: []
     #- police
 discord:
   enabled: true
-  syncInterval: 15m
-  inviteURL: "your_discord_bot_invite_url" # Recommended bot perms: `-42471713`
   token: "your_discord_bot_token"
   presence:
     gameStatus: "FiveNet"

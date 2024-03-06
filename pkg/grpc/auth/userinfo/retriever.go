@@ -32,6 +32,7 @@ type UIRetriever struct {
 	userCacheTTL time.Duration
 
 	superuserGroups []string
+	superuserUsers  []string
 }
 
 type Params struct {
@@ -64,6 +65,7 @@ func NewUIRetriever(p Params) UserInfoRetriever {
 		userCacheTTL: 30 * time.Second,
 
 		superuserGroups: p.Config.Auth.SuperuserGroups,
+		superuserUsers:  p.Config.Auth.SuperuserUsers,
 	}
 }
 
@@ -86,6 +88,7 @@ func (ui *UIRetriever) GetUserInfo(ctx context.Context, userId int32, accountId 
 			tUsers.Group,
 			tFivenetAccounts.ID.AS("userinfo.acc_id"),
 			tFivenetAccounts.Enabled.AS("userinfo.enabled"),
+			tFivenetAccounts.License.AS("userinfo.license"),
 			tFivenetAccounts.OverrideJob.AS("userinfo.orig_job"),
 			tFivenetAccounts.OverrideJobGrade.AS("userinfo.orig_job_grade"),
 		).
@@ -109,7 +112,7 @@ func (ui *UIRetriever) GetUserInfo(ctx context.Context, userId int32, accountId 
 	}
 
 	// Check if user is superuser
-	if slices.Contains(ui.superuserGroups, dest.Group) {
+	if slices.Contains(ui.superuserGroups, dest.Group) || slices.Contains(ui.superuserUsers, dest.License) {
 		dest.SuperUser = true
 		if dest.OrigJob != "" {
 			dest.Job = dest.OrigJob

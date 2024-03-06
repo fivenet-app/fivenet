@@ -164,27 +164,15 @@ type OAuth2Mapping struct {
 
 type Auth struct {
 	SuperuserGroups []string `yaml:"superuserGroups"`
-}
-
-type Livemap struct {
-	RefreshTime   time.Duration `default:"3s350ms" yaml:"refreshTime"`
-	DBRefreshTime time.Duration `default:"1s" yaml:"dbRefreshTime"`
-	Jobs          []string      `yaml:"jobs"`
+	SuperuserUsers  []string `yaml:"superuserUsers"`
 }
 
 type DispatchCenter struct {
 	ConvertJobs []string `yaml:"convertJobs"`
 }
 
-type Perm struct {
-	Category string `yaml:"category"`
-	Name     string `yaml:"name"`
-}
-
 type Discord struct {
 	Enabled      bool                `default:"false" yaml:"enabled"`
-	SyncInterval time.Duration       `default:"15m" yaml:"syncInterval"`
-	InviteURL    string              `yaml:"inviteURL"`
 	Token        string              `yaml:"token"`
 	Presence     DiscordPresence     `yaml:"presence,omitempty"`
 	UserInfoSync DiscordUserInfoSync `yaml:"userInfoSync"`

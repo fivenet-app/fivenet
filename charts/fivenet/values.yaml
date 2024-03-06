@@ -198,17 +198,15 @@ fivenet:
         #    tokenURL: "https://discord.com/api/oauth2/token"
     #postalsFile: ".output/public/data/postals.json"
     auth:
-      signupEnabled: true
       superuserGroups:
         - projektleiter
         - teamleitung
+      superuserUsers: []
     dispatchCenter:
       convertJobs: []
         #- police
     discord:
       enabled: true
-      syncInterval: 15m
-      inviteURL: "your_discord_bot_invite_url"
       token: "your_discord_bot_token"
       presence:
         gameStatus: "FiveNet"

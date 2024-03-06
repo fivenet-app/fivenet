@@ -13,6 +13,7 @@ type UserInfo struct {
 	Enabled   bool
 	AccountId uint64
 	UserId    int32
+	License   string
 
 	Group     string
 	SuperUser bool
