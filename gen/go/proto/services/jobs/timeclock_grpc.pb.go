@@ -19,8 +19,9 @@ import (
 const _ = grpc.SupportPackageIsVersion7
 
 const (
-	JobsTimeclockService_ListTimeclock_FullMethodName     = "/services.jobs.JobsTimeclockService/ListTimeclock"
-	JobsTimeclockService_GetTimeclockStats_FullMethodName = "/services.jobs.JobsTimeclockService/GetTimeclockStats"
+	JobsTimeclockService_ListTimeclock_FullMethodName         = "/services.jobs.JobsTimeclockService/ListTimeclock"
+	JobsTimeclockService_GetTimeclockStats_FullMethodName     = "/services.jobs.JobsTimeclockService/GetTimeclockStats"
+	JobsTimeclockService_ListInactiveEmployees_FullMethodName = "/services.jobs.JobsTimeclockService/ListInactiveEmployees"
 )
 
 // JobsTimeclockServiceClient is the client API for JobsTimeclockService service.
@@ -31,6 +32,8 @@ type JobsTimeclockServiceClient interface {
 	ListTimeclock(ctx context.Context, in *ListTimeclockRequest, opts ...grpc.CallOption) (*ListTimeclockResponse, error)
 	// @perm: Name=ListTimeclock
 	GetTimeclockStats(ctx context.Context, in *GetTimeclockStatsRequest, opts ...grpc.CallOption) (*GetTimeclockStatsResponse, error)
+	// @perm
+	ListInactiveEmployees(ctx context.Context, in *ListInactiveEmployeesRequest, opts ...grpc.CallOption) (*ListInactiveEmployeesResponse, error)
 }
 
 type jobsTimeclockServiceClient struct {
@@ -59,6 +62,15 @@ func (c *jobsTimeclockServiceClient) GetTimeclockStats(ctx context.Context, in *
 	return out, nil
 }
 
+func (c *jobsTimeclockServiceClient) ListInactiveEmployees(ctx context.Context, in *ListInactiveEmployeesRequest, opts ...grpc.CallOption) (*ListInactiveEmployeesResponse, error) {
+	out := new(ListInactiveEmployeesResponse)
+	err := c.cc.Invoke(ctx, JobsTimeclockService_ListInactiveEmployees_FullMethodName, in, out, opts...)
+	if err != nil {
+		return nil, err
+	}
+	return out, nil
+}
+
 // JobsTimeclockServiceServer is the server API for JobsTimeclockService service.
 // All implementations must embed UnimplementedJobsTimeclockServiceServer
 // for forward compatibility
@@ -67,6 +79,8 @@ type JobsTimeclockServiceServer interface {
 	ListTimeclock(context.Context, *ListTimeclockRequest) (*ListTimeclockResponse, error)
 	// @perm: Name=ListTimeclock
 	GetTimeclockStats(context.Context, *GetTimeclockStatsRequest) (*GetTimeclockStatsResponse, error)
+	// @perm
+	ListInactiveEmployees(context.Context, *ListInactiveEmployeesRequest) (*ListInactiveEmployeesResponse, error)
 	mustEmbedUnimplementedJobsTimeclockServiceServer()
 }
 
@@ -79,6 +93,9 @@ func (UnimplementedJobsTimeclockServiceServer) ListTimeclock(context.Context, *L
 }
 func (UnimplementedJobsTimeclockServiceServer) GetTimeclockStats(context.Context, *GetTimeclockStatsRequest) (*GetTimeclockStatsResponse, error) {
 	return nil, status.Errorf(codes.Unimplemented, "method GetTimeclockStats not implemented")
+}
+func (UnimplementedJobsTimeclockServiceServer) ListInactiveEmployees(context.Context, *ListInactiveEmployeesRequest) (*ListInactiveEmployeesResponse, error) {
+	return nil, status.Errorf(codes.Unimplemented, "method ListInactiveEmployees not implemented")
 }
 func (UnimplementedJobsTimeclockServiceServer) mustEmbedUnimplementedJobsTimeclockServiceServer() {}
 
@@ -129,6 +146,24 @@ func _JobsTimeclockService_GetTimeclockStats_Handler(srv interface{}, ctx contex
 	return interceptor(ctx, in, info, handler)
 }
 
+func _JobsTimeclockService_ListInactiveEmployees_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
+	in := new(ListInactiveEmployeesRequest)
+	if err := dec(in); err != nil {
+		return nil, err
+	}
+	if interceptor == nil {
+		return srv.(JobsTimeclockServiceServer).ListInactiveEmployees(ctx, in)
+	}
+	info := &grpc.UnaryServerInfo{
+		Server:     srv,
+		FullMethod: JobsTimeclockService_ListInactiveEmployees_FullMethodName,
+	}
+	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
+		return srv.(JobsTimeclockServiceServer).ListInactiveEmployees(ctx, req.(*ListInactiveEmployeesRequest))
+	}
+	return interceptor(ctx, in, info, handler)
+}
+
 // JobsTimeclockService_ServiceDesc is the grpc.ServiceDesc for JobsTimeclockService service.
 // It's only intended for direct use with grpc.RegisterService,
 // and not to be introspected or modified (even as a copy)
@@ -143,6 +178,10 @@ var JobsTimeclockService_ServiceDesc = grpc.ServiceDesc{
 		{
 			MethodName: "GetTimeclockStats",
 			Handler:    _JobsTimeclockService_GetTimeclockStats_Handler,
+		},
+		{
+			MethodName: "ListInactiveEmployees",
+			Handler:    _JobsTimeclockService_ListInactiveEmployees_Handler,
 		},
 	},
 	Streams:  []grpc.StreamDesc{},

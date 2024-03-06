@@ -18,7 +18,6 @@
 // source: resources/jobs/colleagues.proto
 // source: resources/jobs/conduct.proto
 // source: resources/jobs/qualifications.proto
-// source: resources/jobs/requests.proto
 // source: resources/jobs/timeclock.proto
 // source: resources/laws/laws.proto
 // source: resources/livemap/livemap.proto
@@ -40,7 +39,6 @@
 // source: services/jobs/conduct.proto
 // source: services/jobs/jobs.proto
 // source: services/jobs/qualifications.proto
-// source: services/jobs/requests.proto
 // source: services/jobs/timeclock.proto
 // source: services/livemapper/livemap.proto
 // source: services/notificator/notificator.proto
@@ -96,17 +94,11 @@ export type Perms =
 	| 'JobsConductService.DeleteConductEntry'
 	| 'JobsConductService.ListConductEntries'
 	| 'JobsConductService.UpdateConductEntry'
-	| 'JobsRequestsService.CreateOrUpdateRequestType'
-	| 'JobsRequestsService.CreateRequest'
-	| 'JobsRequestsService.DeleteRequest'
-	| 'JobsRequestsService.DeleteRequestComment'
-	| 'JobsRequestsService.DeleteRequestType'
-	| 'JobsRequestsService.ListRequests'
-	| 'JobsRequestsService.UpdateRequest'
 	| 'JobsService.GetColleague'
 	| 'JobsService.ListColleagues'
 	| 'JobsService.SetJobsUserProps'
 	| 'JobsService.SetMOTD'
+	| 'JobsTimeclockService.ListInactiveEmployees'
 	| 'JobsTimeclockService.ListTimeclock'
 	| 'LivemapperService.CreateOrUpdateMarker'
 	| 'LivemapperService.DeleteMarker'

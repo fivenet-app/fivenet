@@ -2,7 +2,6 @@
 // source: services/jobs/conduct.proto
 // source: services/jobs/jobs.proto
 // source: services/jobs/qualifications.proto
-// source: services/jobs/requests.proto
 // source: services/jobs/timeclock.proto
 
 package jobs
@@ -14,11 +13,6 @@ import (
 )
 
 var PermsRemap = map[string]string{
-
-	// Service: JobsRequestsService
-	"JobsRequestsService/ListRequestComments": "JobsRequestsService/ListRequests",
-	"JobsRequestsService/ListRequestTypes":    "JobsRequestsService/ListRequests",
-	"JobsRequestsService/PostRequestComment":  "JobsRequestsService/CreateRequest",
 
 	// Service: JobsService
 	"JobsService/GetMOTD":               "Any",
@@ -64,49 +58,6 @@ func init() {
 			Attrs:    []perms.Attr{},
 		},
 
-		// Service: JobsRequestsService
-		{
-			Category: permkeys.JobsRequestsServicePerm,
-			Name:     permkeys.JobsRequestsServiceCreateOrUpdateRequestTypePerm,
-			Attrs:    []perms.Attr{},
-		},
-		{
-			Category: permkeys.JobsRequestsServicePerm,
-			Name:     permkeys.JobsRequestsServiceCreateRequestPerm,
-			Attrs:    []perms.Attr{},
-		},
-		{
-			Category: permkeys.JobsRequestsServicePerm,
-			Name:     permkeys.JobsRequestsServiceDeleteRequestPerm,
-			Attrs:    []perms.Attr{},
-		},
-		{
-			Category: permkeys.JobsRequestsServicePerm,
-			Name:     permkeys.JobsRequestsServiceDeleteRequestCommentPerm,
-			Attrs:    []perms.Attr{},
-		},
-		{
-			Category: permkeys.JobsRequestsServicePerm,
-			Name:     permkeys.JobsRequestsServiceDeleteRequestTypePerm,
-			Attrs:    []perms.Attr{},
-		},
-		{
-			Category: permkeys.JobsRequestsServicePerm,
-			Name:     permkeys.JobsRequestsServiceListRequestsPerm,
-			Attrs: []perms.Attr{
-				{
-					Key:         permkeys.JobsRequestsServiceListRequestsAccessPermField,
-					Type:        permissions.StringListAttributeType,
-					ValidValues: []string{"Own", "All"},
-				},
-			},
-		},
-		{
-			Category: permkeys.JobsRequestsServicePerm,
-			Name:     permkeys.JobsRequestsServiceUpdateRequestPerm,
-			Attrs:    []perms.Attr{},
-		},
-
 		// Service: JobsService
 		{
 			Category: permkeys.JobsServicePerm,
@@ -142,6 +93,11 @@ func init() {
 		},
 
 		// Service: JobsTimeclockService
+		{
+			Category: permkeys.JobsTimeclockServicePerm,
+			Name:     permkeys.JobsTimeclockServiceListInactiveEmployeesPerm,
+			Attrs:    []perms.Attr{},
+		},
 		{
 			Category: permkeys.JobsTimeclockServicePerm,
 			Name:     permkeys.JobsTimeclockServiceListTimeclockPerm,

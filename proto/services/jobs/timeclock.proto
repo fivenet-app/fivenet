@@ -36,9 +36,18 @@ message GetTimeclockStatsResponse {
   repeated resources.jobs.TimeclockWeeklyStats weekly = 2;
 }
 
+message ListInactiveEmployeesRequest {
+  int64 days = 1;
+}
+
+message ListInactiveEmployeesResponse {}
+
 service JobsTimeclockService {
   // @perm: Attrs=Access/StringList:[]string{"All"}
   rpc ListTimeclock(ListTimeclockRequest) returns (ListTimeclockResponse);
   // @perm: Name=ListTimeclock
   rpc GetTimeclockStats(GetTimeclockStatsRequest) returns (GetTimeclockStatsResponse);
+
+  // @perm
+  rpc ListInactiveEmployees(ListInactiveEmployeesRequest) returns (ListInactiveEmployeesResponse);
 }

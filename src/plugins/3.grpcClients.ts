@@ -21,7 +21,6 @@ import { DMVServiceClient } from '~~/gen/ts/services/dmv/vehicles.client';
 import { DocStoreServiceClient } from '~~/gen/ts/services/docstore/docstore.client';
 import { JobsConductServiceClient } from '~~/gen/ts/services/jobs/conduct.client';
 import { JobsServiceClient } from '~~/gen/ts/services/jobs/jobs.client';
-import { JobsRequestsServiceClient } from '~~/gen/ts/services/jobs/requests.client';
 import { JobsTimeclockServiceClient } from '~~/gen/ts/services/jobs/timeclock.client';
 import { LivemapperServiceClient } from '~~/gen/ts/services/livemapper/livemap.client';
 import { NotificatorServiceClient } from '~~/gen/ts/services/notificator/notificator.client';
@@ -259,10 +258,6 @@ export class GRPCClients {
 
     getJobsConductClient(): JobsConductServiceClient {
         return new JobsConductServiceClient(this.transport);
-    }
-
-    getJobsRequestsClient(): JobsRequestsServiceClient {
-        return new JobsRequestsServiceClient(this.transport);
     }
 
     getJobsTimeclockClient(): JobsTimeclockServiceClient {

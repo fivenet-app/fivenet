@@ -188,3 +188,12 @@ func (s *Server) GetTimeclockStats(ctx context.Context, req *GetTimeclockStatsRe
 		Weekly: weekly,
 	}, nil
 }
+
+func (s *Server) ListInactiveEmployees(ctx context.Context, req *ListInactiveEmployeesRequest) (*ListInactiveEmployeesResponse, error) {
+
+	// TODO
+
+	resp := &ListInactiveEmployeesResponse{}
+
+	return resp, nil
+}

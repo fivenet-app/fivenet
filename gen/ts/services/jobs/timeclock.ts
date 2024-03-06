@@ -89,6 +89,20 @@ export interface GetTimeclockStatsResponse {
      */
     weekly: TimeclockWeeklyStats[];
 }
+/**
+ * @generated from protobuf message services.jobs.ListInactiveEmployeesRequest
+ */
+export interface ListInactiveEmployeesRequest {
+    /**
+     * @generated from protobuf field: int64 days = 1;
+     */
+    days: bigint;
+}
+/**
+ * @generated from protobuf message services.jobs.ListInactiveEmployeesResponse
+ */
+export interface ListInactiveEmployeesResponse {
+}
 // @generated message type with reflection information, may provide speed optimized methods
 class ListTimeclockRequest$Type extends MessageType<ListTimeclockRequest> {
     constructor() {
@@ -341,10 +355,83 @@ class GetTimeclockStatsResponse$Type extends MessageType<GetTimeclockStatsRespon
  * @generated MessageType for protobuf message services.jobs.GetTimeclockStatsResponse
  */
 export const GetTimeclockStatsResponse = new GetTimeclockStatsResponse$Type();
+// @generated message type with reflection information, may provide speed optimized methods
+class ListInactiveEmployeesRequest$Type extends MessageType<ListInactiveEmployeesRequest> {
+    constructor() {
+        super("services.jobs.ListInactiveEmployeesRequest", [
+            { no: 1, name: "days", kind: "scalar", T: 3 /*ScalarType.INT64*/, L: 0 /*LongType.BIGINT*/ }
+        ]);
+    }
+    create(value?: PartialMessage<ListInactiveEmployeesRequest>): ListInactiveEmployeesRequest {
+        const message = globalThis.Object.create((this.messagePrototype!));
+        message.days = 0n;
+        if (value !== undefined)
+            reflectionMergePartial<ListInactiveEmployeesRequest>(this, message, value);
+        return message;
+    }
+    internalBinaryRead(reader: IBinaryReader, length: number, options: BinaryReadOptions, target?: ListInactiveEmployeesRequest): ListInactiveEmployeesRequest {
+        let message = target ?? this.create(), end = reader.pos + length;
+        while (reader.pos < end) {
+            let [fieldNo, wireType] = reader.tag();
+            switch (fieldNo) {
+                case /* int64 days */ 1:
+                    message.days = reader.int64().toBigInt();
+                    break;
+                default:
+                    let u = options.readUnknownField;
+                    if (u === "throw")
+                        throw new globalThis.Error(`Unknown field ${fieldNo} (wire type ${wireType}) for ${this.typeName}`);
+                    let d = reader.skip(wireType);
+                    if (u !== false)
+                        (u === true ? UnknownFieldHandler.onRead : u)(this.typeName, message, fieldNo, wireType, d);
+            }
+        }
+        return message;
+    }
+    internalBinaryWrite(message: ListInactiveEmployeesRequest, writer: IBinaryWriter, options: BinaryWriteOptions): IBinaryWriter {
+        /* int64 days = 1; */
+        if (message.days !== 0n)
+            writer.tag(1, WireType.Varint).int64(message.days);
+        let u = options.writeUnknownFields;
+        if (u !== false)
+            (u == true ? UnknownFieldHandler.onWrite : u)(this.typeName, message, writer);
+        return writer;
+    }
+}
+/**
+ * @generated MessageType for protobuf message services.jobs.ListInactiveEmployeesRequest
+ */
+export const ListInactiveEmployeesRequest = new ListInactiveEmployeesRequest$Type();
+// @generated message type with reflection information, may provide speed optimized methods
+class ListInactiveEmployeesResponse$Type extends MessageType<ListInactiveEmployeesResponse> {
+    constructor() {
+        super("services.jobs.ListInactiveEmployeesResponse", []);
+    }
+    create(value?: PartialMessage<ListInactiveEmployeesResponse>): ListInactiveEmployeesResponse {
+        const message = globalThis.Object.create((this.messagePrototype!));
+        if (value !== undefined)
+            reflectionMergePartial<ListInactiveEmployeesResponse>(this, message, value);
+        return message;
+    }
+    internalBinaryRead(reader: IBinaryReader, length: number, options: BinaryReadOptions, target?: ListInactiveEmployeesResponse): ListInactiveEmployeesResponse {
+        return target ?? this.create();
+    }
+    internalBinaryWrite(message: ListInactiveEmployeesResponse, writer: IBinaryWriter, options: BinaryWriteOptions): IBinaryWriter {
+        let u = options.writeUnknownFields;
+        if (u !== false)
+            (u == true ? UnknownFieldHandler.onWrite : u)(this.typeName, message, writer);
+        return writer;
+    }
+}
+/**
+ * @generated MessageType for protobuf message services.jobs.ListInactiveEmployeesResponse
+ */
+export const ListInactiveEmployeesResponse = new ListInactiveEmployeesResponse$Type();
 /**
  * @generated ServiceType for protobuf service services.jobs.JobsTimeclockService
  */
 export const JobsTimeclockService = new ServiceType("services.jobs.JobsTimeclockService", [
     { name: "ListTimeclock", options: {}, I: ListTimeclockRequest, O: ListTimeclockResponse },
-    { name: "GetTimeclockStats", options: {}, I: GetTimeclockStatsRequest, O: GetTimeclockStatsResponse }
+    { name: "GetTimeclockStats", options: {}, I: GetTimeclockStatsRequest, O: GetTimeclockStatsResponse },
+    { name: "ListInactiveEmployees", options: {}, I: ListInactiveEmployeesRequest, O: ListInactiveEmployeesResponse }
 ]);

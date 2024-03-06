@@ -1633,44 +1633,6 @@
                 }
             },
             "category": "Job Timeclock"
-        },
-        "JobsRequestsService": {
-            "CreateRequest": {
-                "key": "Requests: Create Request",
-                "description": "Create Requests."
-            },
-            "CreateOrUpdateRequestType": {
-                "key": "Requests: Create and update Request Types",
-                "description": "Create and update Request Types."
-            },
-            "DeleteRequest": {
-                "key": "Requests: Delete Entry",
-                "description": "Delete Requests."
-            },
-            "DeleteRequestType": {
-                "key": "Requests: Delete Request Types",
-                "description": "Delete Request Types."
-            },
-            "ListRequests": {
-                "key": "Requests: List Requests",
-                "description": "List and View Requests.",
-                "attrs": {
-                    "Own": "Own",
-                    "All": "All"
-                },
-                "attrs_types": {
-                    "Access": "Access to requests"
-                }
-            },
-            "UpdateRequest": {
-                "key": "Requests: Update Request",
-                "description": "Update Requests."
-            },
-            "DeleteRequestComment": {
-                "key": "Requests: Delete Comment",
-                "description": "Delete Comments made on Requests."
-            },
-            "category": "Job Requests"
         }
     },
     "errors": {

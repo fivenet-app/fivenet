@@ -34,7 +34,6 @@ var (
 type Server struct {
 	JobsConductServiceServer
 	JobsServiceServer
-	JobsRequestsServiceServer
 	JobsTimeclockServiceServer
 
 	logger *zap.Logger
@@ -84,7 +83,6 @@ func NewServer(p Params) *Server {
 func (s *Server) RegisterServer(srv *grpc.Server) {
 	RegisterJobsConductServiceServer(srv, s)
 	RegisterJobsServiceServer(srv, s)
-	RegisterJobsRequestsServiceServer(srv, s)
 	RegisterJobsTimeclockServiceServer(srv, s)
 }
 

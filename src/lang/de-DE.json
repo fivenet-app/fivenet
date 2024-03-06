@@ -1633,44 +1633,6 @@
                 }
             },
             "category": "Beruf Stempeluhr"
-        },
-        "JobsRequestsService": {
-            "CreateRequest": {
-                "key": "Anfragen: Anfrage erstellen",
-                "description": "Anfragen erstellen."
-            },
-            "CreateOrUpdateRequestType": {
-                "key": "Anfragen: Erstellen und Aktualisieren von Anfrage-Typen",
-                "description": "Erstellen und Aktualisieren von Anfrage-Typen."
-            },
-            "DeleteRequest": {
-                "key": "Anfragen: Anfrage löschen",
-                "description": "Löschen von Anfragen."
-            },
-            "DeleteRequestType": {
-                "key": "Anfragen: Löschen von Anfrage-Typen",
-                "description": "Löschen von Anfragen-Typen."
-            },
-            "ListRequests": {
-                "key": "Anfragen: Auflisten und Anzeigen",
-                "description": "Anfragen auflisten und anzeigen.",
-                "attrs": {
-                    "Own": "Eigene",
-                    "All": "Alle"
-                },
-                "attrs_types": {
-                    "Access": "Zugriff auf fraktionseigene Anfragen"
-                }
-            },
-            "UpdateRequest": {
-                "key": "Anfragen: Aktualisieren von Anfragen",
-                "description": "Aktualisieren von Anfragen."
-            },
-            "DeleteRequestComment": {
-                "key": "Anfragen: Anfragen-Kommentare löschen",
-                "description": "Löschen von Anfragen-Kommentaren."
-            },
-            "category": "Beruf Anfragen"
         }
     },
     "errors": {

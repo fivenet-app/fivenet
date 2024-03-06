@@ -2,7 +2,6 @@
 // source: services/jobs/conduct.proto
 // source: services/jobs/jobs.proto
 // source: services/jobs/qualifications.proto
-// source: services/jobs/requests.proto
 // source: services/jobs/timeclock.proto
 
 package permsjobs
@@ -14,7 +13,6 @@ import (
 const (
 	JobsConductServicePerm        perms.Category = "JobsConductService"
 	JobsQualificationsServicePerm perms.Category = "JobsQualificationsService"
-	JobsRequestsServicePerm       perms.Category = "JobsRequestsService"
 	JobsServicePerm               perms.Category = "JobsService"
 	JobsTimeclockServicePerm      perms.Category = "JobsTimeclockService"
 
@@ -23,20 +21,13 @@ const (
 	JobsConductServiceListConductEntriesPerm            perms.Name = "ListConductEntries"
 	JobsConductServiceListConductEntriesAccessPermField perms.Key  = "Access"
 	JobsConductServiceUpdateConductEntryPerm            perms.Name = "UpdateConductEntry"
-	JobsRequestsServiceCreateOrUpdateRequestTypePerm    perms.Name = "CreateOrUpdateRequestType"
-	JobsRequestsServiceCreateRequestPerm                perms.Name = "CreateRequest"
-	JobsRequestsServiceDeleteRequestPerm                perms.Name = "DeleteRequest"
-	JobsRequestsServiceDeleteRequestCommentPerm         perms.Name = "DeleteRequestComment"
-	JobsRequestsServiceDeleteRequestTypePerm            perms.Name = "DeleteRequestType"
-	JobsRequestsServiceListRequestsPerm                 perms.Name = "ListRequests"
-	JobsRequestsServiceListRequestsAccessPermField      perms.Key  = "Access"
-	JobsRequestsServiceUpdateRequestPerm                perms.Name = "UpdateRequest"
 	JobsServiceGetColleaguePerm                         perms.Name = "GetColleague"
 	JobsServiceGetColleagueAccessPermField              perms.Key  = "Access"
 	JobsServiceListColleaguesPerm                       perms.Name = "ListColleagues"
 	JobsServiceSetJobsUserPropsPerm                     perms.Name = "SetJobsUserProps"
 	JobsServiceSetJobsUserPropsAccessPermField          perms.Key  = "Access"
 	JobsServiceSetMOTDPerm                              perms.Name = "SetMOTD"
+	JobsTimeclockServiceListInactiveEmployeesPerm       perms.Name = "ListInactiveEmployees"
 	JobsTimeclockServiceListTimeclockPerm               perms.Name = "ListTimeclock"
 	JobsTimeclockServiceListTimeclockAccessPermField    perms.Key  = "Access"
 )

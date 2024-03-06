@@ -745,3 +745,211 @@ var _ interface {
 	Cause() error
 	ErrorName() string
 } = GetTimeclockStatsResponseValidationError{}
+
+// Validate checks the field values on ListInactiveEmployeesRequest with the
+// rules defined in the proto definition for this message. If any rules are
+// violated, the first error encountered is returned, or nil if there are no violations.
+func (m *ListInactiveEmployeesRequest) Validate() error {
+	return m.validate(false)
+}
+
+// ValidateAll checks the field values on ListInactiveEmployeesRequest with the
+// rules defined in the proto definition for this message. If any rules are
+// violated, the result is a list of violation errors wrapped in
+// ListInactiveEmployeesRequestMultiError, or nil if none found.
+func (m *ListInactiveEmployeesRequest) ValidateAll() error {
+	return m.validate(true)
+}
+
+func (m *ListInactiveEmployeesRequest) validate(all bool) error {
+	if m == nil {
+		return nil
+	}
+
+	var errors []error
+
+	// no validation rules for Days
+
+	if len(errors) > 0 {
+		return ListInactiveEmployeesRequestMultiError(errors)
+	}
+
+	return nil
+}
+
+// ListInactiveEmployeesRequestMultiError is an error wrapping multiple
+// validation errors returned by ListInactiveEmployeesRequest.ValidateAll() if
+// the designated constraints aren't met.
+type ListInactiveEmployeesRequestMultiError []error
+
+// Error returns a concatenation of all the error messages it wraps.
+func (m ListInactiveEmployeesRequestMultiError) Error() string {
+	var msgs []string
+	for _, err := range m {
+		msgs = append(msgs, err.Error())
+	}
+	return strings.Join(msgs, "; ")
+}
+
+// AllErrors returns a list of validation violation errors.
+func (m ListInactiveEmployeesRequestMultiError) AllErrors() []error { return m }
+
+// ListInactiveEmployeesRequestValidationError is the validation error returned
+// by ListInactiveEmployeesRequest.Validate if the designated constraints
+// aren't met.
+type ListInactiveEmployeesRequestValidationError struct {
+	field  string
+	reason string
+	cause  error
+	key    bool
+}
+
+// Field function returns field value.
+func (e ListInactiveEmployeesRequestValidationError) Field() string { return e.field }
+
+// Reason function returns reason value.
+func (e ListInactiveEmployeesRequestValidationError) Reason() string { return e.reason }
+
+// Cause function returns cause value.
+func (e ListInactiveEmployeesRequestValidationError) Cause() error { return e.cause }
+
+// Key function returns key value.
+func (e ListInactiveEmployeesRequestValidationError) Key() bool { return e.key }
+
+// ErrorName returns error name.
+func (e ListInactiveEmployeesRequestValidationError) ErrorName() string {
+	return "ListInactiveEmployeesRequestValidationError"
+}
+
+// Error satisfies the builtin error interface
+func (e ListInactiveEmployeesRequestValidationError) Error() string {
+	cause := ""
+	if e.cause != nil {
+		cause = fmt.Sprintf(" | caused by: %v", e.cause)
+	}
+
+	key := ""
+	if e.key {
+		key = "key for "
+	}
+
+	return fmt.Sprintf(
+		"invalid %sListInactiveEmployeesRequest.%s: %s%s",
+		key,
+		e.field,
+		e.reason,
+		cause)
+}
+
+var _ error = ListInactiveEmployeesRequestValidationError{}
+
+var _ interface {
+	Field() string
+	Reason() string
+	Key() bool
+	Cause() error
+	ErrorName() string
+} = ListInactiveEmployeesRequestValidationError{}
+
+// Validate checks the field values on ListInactiveEmployeesResponse with the
+// rules defined in the proto definition for this message. If any rules are
+// violated, the first error encountered is returned, or nil if there are no violations.
+func (m *ListInactiveEmployeesResponse) Validate() error {
+	return m.validate(false)
+}
+
+// ValidateAll checks the field values on ListInactiveEmployeesResponse with
+// the rules defined in the proto definition for this message. If any rules
+// are violated, the result is a list of violation errors wrapped in
+// ListInactiveEmployeesResponseMultiError, or nil if none found.
+func (m *ListInactiveEmployeesResponse) ValidateAll() error {
+	return m.validate(true)
+}
+
+func (m *ListInactiveEmployeesResponse) validate(all bool) error {
+	if m == nil {
+		return nil
+	}
+
+	var errors []error
+
+	if len(errors) > 0 {
+		return ListInactiveEmployeesResponseMultiError(errors)
+	}
+
+	return nil
+}
+
+// ListInactiveEmployeesResponseMultiError is an error wrapping multiple
+// validation errors returned by ListInactiveEmployeesResponse.ValidateAll()
+// if the designated constraints aren't met.
+type ListInactiveEmployeesResponseMultiError []error
+
+// Error returns a concatenation of all the error messages it wraps.
+func (m ListInactiveEmployeesResponseMultiError) Error() string {
+	var msgs []string
+	for _, err := range m {
+		msgs = append(msgs, err.Error())
+	}
+	return strings.Join(msgs, "; ")
+}
+
+// AllErrors returns a list of validation violation errors.
+func (m ListInactiveEmployeesResponseMultiError) AllErrors() []error { return m }
+
+// ListInactiveEmployeesResponseValidationError is the validation error
+// returned by ListInactiveEmployeesResponse.Validate if the designated
+// constraints aren't met.
+type ListInactiveEmployeesResponseValidationError struct {
+	field  string
+	reason string
+	cause  error
+	key    bool
+}
+
+// Field function returns field value.
+func (e ListInactiveEmployeesResponseValidationError) Field() string { return e.field }
+
+// Reason function returns reason value.
+func (e ListInactiveEmployeesResponseValidationError) Reason() string { return e.reason }
+
+// Cause function returns cause value.
+func (e ListInactiveEmployeesResponseValidationError) Cause() error { return e.cause }
+
+// Key function returns key value.
+func (e ListInactiveEmployeesResponseValidationError) Key() bool { return e.key }
+
+// ErrorName returns error name.
+func (e ListInactiveEmployeesResponseValidationError) ErrorName() string {
+	return "ListInactiveEmployeesResponseValidationError"
+}
+
+// Error satisfies the builtin error interface
+func (e ListInactiveEmployeesResponseValidationError) Error() string {
+	cause := ""
+	if e.cause != nil {
+		cause = fmt.Sprintf(" | caused by: %v", e.cause)
+	}
+
+	key := ""
+	if e.key {
+		key = "key for "
+	}
+
+	return fmt.Sprintf(
+		"invalid %sListInactiveEmployeesResponse.%s: %s%s",
+		key,
+		e.field,
+		e.reason,
+		cause)
+}
+
+var _ error = ListInactiveEmployeesResponseValidationError{}
+
+var _ interface {
+	Field() string
+	Reason() string
+	Key() bool
+	Cause() error
+	ErrorName() string
+} = ListInactiveEmployeesResponseValidationError{}
