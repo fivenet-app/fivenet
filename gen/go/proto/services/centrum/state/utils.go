@@ -16,5 +16,8 @@ func userIdKey(id int32) string {
 }
 
 func (s *State) GetDispatchLocations(job string) *coords.Coords[*centrum.Dispatch] {
+	s.dispatchLocationsMutex.RLock()
+	defer s.dispatchLocationsMutex.RUnlock()
+
 	return s.dispatchLocations[job]
 }

@@ -104,7 +104,6 @@ func TestBasicCentrumFlow(t *testing.T) {
 		TP:       tp,
 		JS:       js,
 		Enricher: enricher,
-		Config:   cfg,
 		State:    state,
 	})
 

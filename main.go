@@ -65,7 +65,8 @@ func (c *ServerCmd) Run(ctx *Context) error {
 		fx.Invoke(func(server.HTTPServer) {}),
 	)
 
-	fx.New(fxOpts...).Run()
+	app := fx.New(fxOpts...)
+	app.Run()
 
 	return nil
 }
@@ -98,13 +99,15 @@ func (c *WorkerCmd) Run(ctx *Context) error {
 		fxOpts = append(fxOpts, fx.Invoke(func(*timeclock.Manager) {}))
 	}
 
-	fx.New(fxOpts...).Run()
+	app := fx.New(fxOpts...)
+	app.Run()
 
 	return nil
 }
 
 var cli struct {
-	Config string `help:"Alternative config file (env var: FIVENET_CONFIG_FILE)"`
+	Config       string        `help:"Alternative config file (env var: FIVENET_CONFIG_FILE)"`
+	StartTimeout time.Duration `help:"App start timeout duration"`
 
 	Server ServerCmd `cmd:"" help:"Run FiveNet server."`
 	Worker WorkerCmd `cmd:"" help:"Run FiveNet worker."`
@@ -115,7 +118,7 @@ func getFxBaseOpts() []fx.Option {
 		fx.WithLogger(func(log *zap.Logger) fxevent.Logger {
 			return &fxevent.ZapLogger{Logger: log}
 		}),
-		fx.StartTimeout(180 * time.Second),
+		fx.StartTimeout(15 * time.Second),
 
 		LoggerModule,
 		htmlsanitizer.Module,
@@ -188,6 +191,9 @@ func main() {
 		if err := os.Setenv("FIVENET_CONFIG_FILE", cli.Config); err != nil {
 			panic(err)
 		}
+	}
+	if cli.StartTimeout <= 0 {
+		cli.StartTimeout = 180 * time.Second
 	}
 
 	err := ctx.Run(&Context{})

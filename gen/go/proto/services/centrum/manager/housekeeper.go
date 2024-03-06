@@ -664,6 +664,7 @@ func (s *Housekeeper) cleanupUnitStatus(ctx context.Context) error {
 	return nil
 }
 
+// Make sure that all users in units are still on duty
 func (s *Housekeeper) checkUnitUsers(ctx context.Context) error {
 	for _, job := range s.appCfg.Get().UserTracker.LivemapJobs {
 		units, ok := s.ListUnits(job)

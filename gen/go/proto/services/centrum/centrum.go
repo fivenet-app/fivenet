@@ -47,7 +47,8 @@ type Server struct {
 	postals postals.Postals
 	appCfg  *appconfig.Config
 
-	brokers map[string]*utils.Broker[*StreamResponse]
+	brokersMutex sync.RWMutex
+	brokers      map[string]*utils.Broker[*StreamResponse]
 
 	state *manager.Manager
 }
@@ -90,20 +91,33 @@ func NewServer(p Params) (*Server, error) {
 		postals: p.Postals,
 		appCfg:  p.AppConfig,
 
-		brokers: brokers,
+		brokersMutex: sync.RWMutex{},
+		brokers:      brokers,
 
 		state: p.Manager,
 	}
 
 	p.LC.Append(fx.StartHook(func(ctx context.Context) error {
-		for _, job := range p.AppConfig.Get().UserTracker.LivemapJobs {
-			brokers[job] = utils.NewBroker[*StreamResponse](ctx)
-			go brokers[job].Start()
-		}
+		s.handleAppConfigUpdate(p.AppConfig.Get())
 
 		if err := s.registerSubscriptions(ctx); err != nil {
 			return fmt.Errorf("failed to subscribe to events: %w", err)
 		}
+
+		// Handle app config updates
+		go func() {
+			configUpdateCh := p.AppConfig.Subscribe()
+			for {
+				select {
+				case <-s.ctx.Done():
+					p.AppConfig.Unsubscribe(configUpdateCh)
+					return
+
+				case cfg := <-configUpdateCh:
+					s.handleAppConfigUpdate(cfg)
+				}
+			}
+		}()
 
 		return nil
 	}))
@@ -133,6 +147,18 @@ func (s *Server) registerSubscriptions(ctx context.Context) error {
 	}
 
 	return nil
+}
+
+func (s *Server) handleAppConfigUpdate(cfg *appconfig.Cfg) {
+	s.brokersMutex.Lock()
+	defer s.brokersMutex.Unlock()
+
+	for _, job := range cfg.UserTracker.LivemapJobs {
+		if _, ok := s.brokers[job]; !ok {
+			s.brokers[job] = utils.NewBroker[*StreamResponse](s.ctx)
+			go s.brokers[job].Start()
+		}
+	}
 }
 
 func (s *Server) watchForChanges(msg *nats.Msg) {
@@ -356,6 +382,9 @@ func (s *Server) Stream(req *StreamRequest, srv CentrumService_StreamServer) err
 }
 
 func (s *Server) getJobBroker(job string) (*utils.Broker[*StreamResponse], bool) {
+	s.brokersMutex.RLock()
+	defer s.brokersMutex.RUnlock()
+
 	broker, ok := s.brokers[job]
 	return broker, ok
 }

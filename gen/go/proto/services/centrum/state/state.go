@@ -2,6 +2,7 @@ package state
 
 import (
 	"context"
+	"sync"
 
 	"github.com/galexrt/fivenet/gen/go/proto/resources/centrum"
 	centrumutils "github.com/galexrt/fivenet/gen/go/proto/services/centrum/utils"
@@ -30,7 +31,8 @@ type State struct {
 	units      *store.Store[centrum.Unit, *centrum.Unit]
 	dispatches *store.Store[centrum.Dispatch, *centrum.Dispatch]
 
-	dispatchLocations map[string]*coords.Coords[*centrum.Dispatch]
+	dispatchLocationsMutex sync.RWMutex
+	dispatchLocations      map[string]*coords.Coords[*centrum.Dispatch]
 
 	userIDToUnitID *store.Store[centrum.UserUnitMapping, *centrum.UserUnitMapping]
 }
@@ -46,38 +48,64 @@ type Params struct {
 }
 
 func New(p Params) (*State, error) {
-	locs := map[string]*coords.Coords[*centrum.Dispatch]{}
+	logger := p.Logger.Named("centrum_state")
 
-	disponents, err := store.New[centrum.Disponents, *centrum.Disponents](p.Logger, p.JS, "centrum_disponents")
+	dspLocs := map[string]*coords.Coords[*centrum.Dispatch]{}
+
+	disponents, err := store.New[centrum.Disponents, *centrum.Disponents](logger, p.JS, "centrum_disponents")
 	if err != nil {
 		return nil, err
 	}
 
-	units, err := store.New[centrum.Unit, *centrum.Unit](p.Logger, p.JS, "centrum_units")
+	units, err := store.New[centrum.Unit, *centrum.Unit](logger, p.JS, "centrum_units")
 	if err != nil {
 		return nil, err
 	}
 
-	dispatches, err := store.New[centrum.Dispatch, *centrum.Dispatch](p.Logger, p.JS, "centrum_dispatches",
-		func(s *store.Store[centrum.Dispatch, *centrum.Dispatch]) error {
-			s.OnUpdate = func(dsp *centrum.Dispatch) (*centrum.Dispatch, error) {
+	userIDToUnitID, err := store.New[centrum.UserUnitMapping, *centrum.UserUnitMapping](logger, p.JS, "centrum_usersunits")
+	if err != nil {
+		return nil, err
+	}
+
+	s := &State{
+		js: p.JS,
+
+		logger: logger,
+
+		settings:   xsync.NewMapOf[string, *centrum.Settings](),
+		disponents: disponents,
+
+		units: units,
+
+		dispatchLocationsMutex: sync.RWMutex{},
+		dispatchLocations:      dspLocs,
+
+		userIDToUnitID: userIDToUnitID,
+	}
+
+	dispatches, err := store.New[centrum.Dispatch, *centrum.Dispatch](logger, p.JS, "centrum_dispatches",
+		func(st *store.Store[centrum.Dispatch, *centrum.Dispatch]) error {
+			st.OnUpdate = func(dsp *centrum.Dispatch) (*centrum.Dispatch, error) {
 				if dsp == nil {
-					p.Logger.Warn("unable to update dispatch location, got nil dispatch")
+					logger.Warn("unable to update dispatch location, got nil dispatch")
 					return dsp, nil
 				}
 
-				if loc := locs[dsp.Job]; loc != nil {
+				s.dispatchLocationsMutex.Lock()
+				defer s.dispatchLocationsMutex.Unlock()
+
+				if locs := dspLocs[dsp.Job]; locs != nil {
 					if dsp.Status != nil && centrumutils.IsStatusDispatchComplete(dsp.Status.Status) {
-						if loc.Has(dsp, centrum.DispatchPointMatchFn(dsp.Id)) {
-							loc.Remove(dsp, centrum.DispatchPointMatchFn(dsp.Id))
+						if locs.Has(dsp, centrum.DispatchPointMatchFn(dsp.Id)) {
+							locs.Remove(dsp, centrum.DispatchPointMatchFn(dsp.Id))
 						}
 					} else {
-						if err := loc.Replace(dsp, func(p orb.Pointer) bool {
+						if err := locs.Replace(dsp, func(p orb.Pointer) bool {
 							return p.(*centrum.Dispatch).Id == dsp.Id
 						}, func(p1, p2 orb.Pointer) bool {
 							return p1.Point().Equal(p2.Point())
 						}); err != nil {
-							p.Logger.Error("failed to add non-existant dispatch to locations", zap.Uint64("dispatch_id", dsp.Id))
+							logger.Error("failed to add non-existant dispatch to locations", zap.Uint64("dispatch_id", dsp.Id))
 						}
 					}
 				}
@@ -86,14 +114,17 @@ func New(p Params) (*State, error) {
 			}
 			return nil
 		},
-		func(s *store.Store[centrum.Dispatch, *centrum.Dispatch]) error {
-			s.OnDelete = func(entry nats.KeyValueEntry, dsp *centrum.Dispatch) error {
+		func(st *store.Store[centrum.Dispatch, *centrum.Dispatch]) error {
+			st.OnDelete = func(entry nats.KeyValueEntry, dsp *centrum.Dispatch) error {
 				if dsp == nil {
-					p.Logger.Warn("unable to delete dispatch location, got nil dispatch item", zap.String("store_dispatch_key", entry.Key()))
+					logger.Warn("unable to delete dispatch location, got nil dispatch item", zap.String("store_dispatch_key", entry.Key()))
 					return nil
 				}
 
-				if loc := locs[dsp.Job]; loc != nil {
+				s.dispatchLocationsMutex.Lock()
+				defer s.dispatchLocationsMutex.Unlock()
+
+				if loc := dspLocs[dsp.Job]; loc != nil {
 					if loc.Has(dsp, centrum.DispatchPointMatchFn(dsp.Id)) {
 						loc.Remove(dsp, centrum.DispatchPointMatchFn(dsp.Id))
 					}
@@ -107,17 +138,13 @@ func New(p Params) (*State, error) {
 		return nil, err
 	}
 
-	userIDToUnitID, err := store.New[centrum.UserUnitMapping, *centrum.UserUnitMapping](p.Logger, p.JS, "centrum_usersunits")
-	if err != nil {
-		return nil, err
-	}
+	s.dispatches = dispatches
 
 	ctx, cancel := context.WithCancel(context.Background())
+	s.ctx = ctx
 
 	p.LC.Append(fx.StartHook(func(_ context.Context) error {
-		for _, job := range p.AppConfig.Get().UserTracker.LivemapJobs {
-			locs[job] = coords.New[*centrum.Dispatch]()
-		}
+		s.handleAppConfigUpdate(p.AppConfig.Get())
 
 		if err := userIDToUnitID.Start(ctx); err != nil {
 			return err
@@ -135,6 +162,21 @@ func New(p Params) (*State, error) {
 			return err
 		}
 
+		// Handle app config updates
+		go func() {
+			configUpdateCh := p.AppConfig.Subscribe()
+			for {
+				select {
+				case <-s.ctx.Done():
+					p.AppConfig.Unsubscribe(configUpdateCh)
+					return
+
+				case cfg := <-configUpdateCh:
+					s.handleAppConfigUpdate(cfg)
+				}
+			}
+		}()
+
 		return nil
 	}))
 
@@ -144,24 +186,18 @@ func New(p Params) (*State, error) {
 		return nil
 	}))
 
-	s := &State{
-		ctx: ctx,
-		js:  p.JS,
-
-		logger: p.Logger.Named("centrum_state"),
-
-		settings:   xsync.NewMapOf[string, *centrum.Settings](),
-		disponents: disponents,
-
-		units: units,
-
-		dispatches:        dispatches,
-		dispatchLocations: locs,
-
-		userIDToUnitID: userIDToUnitID,
-	}
-
 	return s, nil
+}
+
+func (s *State) handleAppConfigUpdate(appCfg *appconfig.Cfg) {
+	s.dispatchLocationsMutex.Lock()
+	defer s.dispatchLocationsMutex.Unlock()
+
+	for _, job := range appCfg.UserTracker.LivemapJobs {
+		if _, ok := s.dispatchLocations[job]; !ok {
+			s.dispatchLocations[job] = coords.New[*centrum.Dispatch]()
+		}
+	}
 }
 
 // Expose the stores for deeper interaction with updates

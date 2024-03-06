@@ -5,7 +5,6 @@ import (
 	"database/sql"
 
 	"github.com/galexrt/fivenet/gen/go/proto/services/centrum/state"
-	"github.com/galexrt/fivenet/pkg/config"
 	"github.com/galexrt/fivenet/pkg/config/appconfig"
 	"github.com/galexrt/fivenet/pkg/coords/postals"
 	"github.com/galexrt/fivenet/pkg/mstlystcdata"
@@ -49,7 +48,6 @@ type Params struct {
 	Enricher  *mstlystcdata.Enricher
 	Postals   postals.Postals
 	Tracker   tracker.ITracker
-	Config    *config.Config
 	AppConfig *appconfig.Config
 
 	State *state.State

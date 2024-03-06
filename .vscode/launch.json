@@ -12,9 +12,10 @@
             "program": "${workspaceFolder}",
             "cwd": "${workspaceFolder}",
             "args": ["server"],
-            "buildFlags": "-a -installsuffix cgo",
+            "buildFlags": "-race -a -installsuffix cgo",
             "env": {
-                "CGO_ENABLED": "0"
+                "CGO_ENABLED": "1",
+                "FIVENET_CONFIG_FILE": "./config.yaml"
             }
         },
         {
@@ -25,9 +26,9 @@
             "program": "${workspaceFolder}",
             "cwd": "${workspaceFolder}",
             "args": ["worker", "--module-discord-bot=false","--module-audit-retention=false", "--module-centrum-bot=true", "--module-centrum-housekeeper=true"],
-            "buildFlags": "-a -installsuffix cgo",
+            "buildFlags": "-race -a -installsuffix cgo",
             "env": {
-                "CGO_ENABLED": "0",
+                "CGO_ENABLED": "1",
                 "FIVENET_CONFIG_FILE": "./config.worker.yaml"
             }
         },
@@ -39,9 +40,9 @@
             "program": "${workspaceFolder}",
             "cwd": "${workspaceFolder}",
             "args": ["worker", "--module-audit-retention=false", "--module-centrum-bot=false", "--module-centrum-housekeeper=false", "--module-user-tracker=false"],
-            "buildFlags": "-a -installsuffix cgo",
+            "buildFlags": "-race -a -installsuffix cgo",
             "env": {
-                "CGO_ENABLED": "0",
+                "CGO_ENABLED": "1",
                 "FIVENET_CONFIG_FILE": "./config.worker.yaml"
             }
         },

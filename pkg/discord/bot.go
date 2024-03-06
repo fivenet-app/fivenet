@@ -43,7 +43,7 @@ var BotModule = fx.Module("discord_bot",
 )
 
 var (
-	lastSync = promauto.NewGaugeVec(prometheus.GaugeOpts{
+	lastSyncMetric = promauto.NewGaugeVec(prometheus.GaugeOpts{
 		Namespace: admin.MetricsNamespace,
 		Subsystem: "discord_bot",
 		Name:      "last_sync",
@@ -71,8 +71,7 @@ type Bot struct {
 	db       *sql.DB
 	enricher *mstlystcdata.Enricher
 	cfg      *config.Discord
-
-	syncInterval time.Duration
+	appCfg   *appconfig.Config
 
 	cmds *commands.Cmds
 
@@ -108,8 +107,7 @@ func NewBot(p BotParams) (*Bot, error) {
 		db:       p.DB,
 		enricher: p.Enricher,
 		cfg:      &p.Config.Discord,
-
-		syncInterval: p.Config.Discord.SyncInterval,
+		appCfg:   p.AppConfig,
 
 		cmds: cmds,
 
@@ -154,10 +152,6 @@ func (b *Bot) start(ctx context.Context) error {
 
 	b.discord.AddHandler(func(s *discordgo.Session, i *discordgo.GuildCreate) {
 		b.logger.Info("discord server joined", zap.String("discord_guild_id", i.ID))
-
-		if err := b.cmds.RemoveGuildCommands(i.ID); err != nil {
-			b.logger.Error("failed to remove guild commands", zap.Error(err))
-		}
 	})
 
 	if err := b.discord.Open(); err != nil {
@@ -239,7 +233,7 @@ func (b *Bot) Sync() error {
 		case <-b.ctx.Done():
 			return nil
 
-		case <-time.After(b.syncInterval):
+		case <-time.After(b.appCfg.Get().Discord.SyncInterval.AsDuration()):
 			b.logger.Info("running discord sync")
 			func() {
 				ctx, span := b.tracer.Start(b.ctx, "discord_bot")
@@ -350,9 +344,9 @@ func (b *Bot) runSync(ctx context.Context) error {
 				logger.Error("error during sync", zap.Error(err))
 				errs = multierr.Append(errs, err)
 
-				lastSync.WithLabelValues(guild.Job, "failed").SetToCurrentTime()
+				lastSyncMetric.WithLabelValues(guild.Job, "failed").SetToCurrentTime()
 			} else {
-				lastSync.WithLabelValues(guild.Job, "success").SetToCurrentTime()
+				lastSyncMetric.WithLabelValues(guild.Job, "success").SetToCurrentTime()
 			}
 
 			if err := b.setLastSyncInterval(ctx, guild.Job); err != nil {

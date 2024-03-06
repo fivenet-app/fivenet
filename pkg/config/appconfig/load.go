@@ -127,7 +127,7 @@ func (c *Config) Unsubscribe(ch chan *Cfg) {
 }
 
 func (c *Config) updateConfigFromDB(ctx context.Context) (*Cfg, error) {
-	cfg, err := c.LoadFromDB(c.ctx)
+	cfg, err := c.LoadFromDB(ctx)
 	if err != nil {
 		return nil, err
 	}

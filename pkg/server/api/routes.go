@@ -46,15 +46,16 @@ func New(p Params) *Routes {
 
 	ctx, cancel := context.WithCancel(context.Background())
 
-	configUpdateCh := p.AppConfig.Subscribe()
-
 	p.LC.Append(fx.StartHook(func(_ context.Context) error {
 		r.handleAppConfigUpdate(providers, p.AppConfig.Get())
 
+		// Handle app config updates
 		go func() {
+			configUpdateCh := p.AppConfig.Subscribe()
 			for {
 				select {
 				case <-ctx.Done():
+					p.AppConfig.Unsubscribe(configUpdateCh)
 					return
 
 				case cfg := <-configUpdateCh:
@@ -68,8 +69,6 @@ func New(p Params) *Routes {
 
 	p.LC.Append(fx.StopHook(func() error {
 		cancel()
-
-		p.AppConfig.Unsubscribe(configUpdateCh)
 
 		return nil
 	}))

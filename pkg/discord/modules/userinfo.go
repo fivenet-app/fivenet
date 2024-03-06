@@ -404,7 +404,6 @@ func (g *UserInfo) setUserJobRole(member *discordgo.Member, job string, grade in
 
 func (g *UserInfo) setJobsAbsenceRole(member *discordgo.Member, beginDate *timestamp.Timestamp, endDate *timestamp.Timestamp) error {
 	// Either the user has no dates set or the absence is over (due to dates we have to think end date + 24 hours)
-	fmt.Println(time.Since(beginDate.AsTime()), time.Since(endDate.AsTime()), time.Since(beginDate.AsTime()) < 0*time.Hour, time.Since(endDate.AsTime()) > 24*time.Hour)
 	if (beginDate == nil || endDate == nil) || (time.Since(beginDate.AsTime()) < 0*time.Hour || time.Since(endDate.AsTime()) > 24*time.Hour) {
 		if !slices.Contains(member.Roles, g.jobsAbsenceRole.ID) {
 			return nil
