@@ -325,7 +325,7 @@ func (p *Perms) Attr(userInfo *userinfo.UserInfo, category Category, name Name, 
 	return nil, fmt.Errorf("unknown role attribute type")
 }
 
-func (p *Perms) convertRawToRoleAttributes(in []*permissions.RawRoleAttribute, job string, grade int32) ([]*permissions.RoleAttribute, error) {
+func (p *Perms) convertRawToRoleAttributes(in []*permissions.RawRoleAttribute, job string) ([]*permissions.RoleAttribute, error) {
 	res := make([]*permissions.RoleAttribute, len(in))
 	for i := 0; i < len(in); i++ {
 		res[i] = &permissions.RoleAttribute{
@@ -395,7 +395,7 @@ func (p *Perms) GetAllAttributes(ctx context.Context, job string, grade int32) (
 		}
 	}
 
-	return p.convertRawToRoleAttributes(dest, job, grade)
+	return p.convertRawToRoleAttributes(dest, job)
 }
 
 func (p *Perms) GetRoleAttributes(job string, grade int32) ([]*permissions.RoleAttribute, error) {
@@ -576,7 +576,7 @@ func (p *Perms) addOrUpdateAttributesToRole(ctx context.Context, roleId uint64, 
 		p.updateRoleAttributeInMap(roleId, a.PermissionID, a.ID, a.Key, a.Type, attrs[i].Value)
 	}
 
-	if err := p.publishMessage(RoleAttrUpdateSubject, RoleAttrUpdateEvent{
+	if err := p.publishMessage(ctx, RoleAttrUpdateSubject, RoleAttrUpdateEvent{
 		RoleID: roleId,
 	}); err != nil {
 		return err
@@ -605,7 +605,7 @@ func (p *Perms) RemoveAttributesFromRole(ctx context.Context, roleId uint64, att
 	for i := 0; i < len(attrs); i++ {
 		p.removeRoleAttributeFromMap(roleId, attrs[i].AttrId)
 
-		if err := p.publishMessage(RoleAttrUpdateSubject, RoleAttrUpdateEvent{
+		if err := p.publishMessage(ctx, RoleAttrUpdateSubject, RoleAttrUpdateEvent{
 			RoleID: roleId,
 		}); err != nil {
 			return err
@@ -671,7 +671,7 @@ func (p *Perms) UpdateJobAttributeMaxValues(ctx context.Context, job string, att
 		}
 	}
 
-	if err := p.publishMessage(JobAttrUpdateSubject, JobAttrUpdateEvent{
+	if err := p.publishMessage(ctx, JobAttrUpdateSubject, JobAttrUpdateEvent{
 		Job: job,
 	}); err != nil {
 		return err

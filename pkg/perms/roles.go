@@ -340,7 +340,7 @@ func (p *Perms) UpdateRolePermissions(ctx context.Context, roleId uint64, perms 
 		roleCache.Store(v.PermissionID, v.Val)
 	}
 
-	if err := p.publishMessage(RolePermUpdateSubject, RolePermUpdateEvent{
+	if err := p.publishMessage(ctx, RolePermUpdateSubject, RolePermUpdateEvent{
 		RoleID: roleId,
 	}); err != nil {
 		return err
@@ -373,7 +373,7 @@ func (p *Perms) RemovePermissionsFromRole(ctx context.Context, roleId uint64, pe
 		}
 	}
 
-	if err := p.publishMessage(RolePermUpdateSubject, RolePermUpdateEvent{
+	if err := p.publishMessage(ctx, RolePermUpdateSubject, RolePermUpdateEvent{
 		RoleID: roleId,
 	}); err != nil {
 		return err

@@ -8,7 +8,7 @@ import (
 	"github.com/galexrt/fivenet/gen/go/proto/services/centrum/manager"
 	"github.com/galexrt/fivenet/pkg/server/admin"
 	"github.com/galexrt/fivenet/pkg/tracker"
-	"github.com/nats-io/nats.go"
+	"github.com/nats-io/nats.go/jetstream"
 	"github.com/prometheus/client_golang/prometheus"
 	"github.com/prometheus/client_golang/prometheus/promauto"
 	"github.com/puzpuzpuz/xsync/v3"
@@ -32,7 +32,6 @@ var Module = fx.Module("centrum_bot_manager", fx.Provide(
 ))
 
 type Manager struct {
-	ctx    context.Context
 	logger *zap.Logger
 	mutex  sync.RWMutex
 	wg     sync.WaitGroup
@@ -40,7 +39,7 @@ type Manager struct {
 	tracer trace.Tracer
 
 	bots *xsync.MapOf[string, *Bot]
-	js   nats.JetStreamContext
+	js   jetstream.JetStream
 
 	state   *manager.Manager
 	tracker tracker.ITracker
@@ -54,7 +53,7 @@ type Params struct {
 	Logger  *zap.Logger
 	TP      *tracesdk.TracerProvider
 	State   *manager.Manager
-	JS      nats.JetStreamContext
+	JS      jetstream.JetStream
 	Tracker tracker.ITracker
 }
 
@@ -62,7 +61,6 @@ func NewManager(p Params) *Manager {
 	ctx, cancel := context.WithCancel(context.Background())
 
 	b := &Manager{
-		ctx:    ctx,
 		logger: p.Logger.Named("centrum.bot.manager"),
 		mutex:  sync.RWMutex{},
 		wg:     sync.WaitGroup{},
@@ -75,11 +73,11 @@ func NewManager(p Params) *Manager {
 		tracker: p.Tracker,
 	}
 
-	p.LC.Append(fx.StartHook(func(ctx context.Context) error {
+	p.LC.Append(fx.StartHook(func(c context.Context) error {
 		b.wg.Add(1)
 		go func() {
 			defer b.wg.Done()
-			b.Run()
+			b.Run(ctx)
 		}()
 
 		return nil
@@ -96,15 +94,15 @@ func NewManager(p Params) *Manager {
 	return b
 }
 
-func (s *Manager) Run() {
+func (s *Manager) Run(ctx context.Context) {
 	for {
 		select {
-		case <-s.ctx.Done():
+		case <-ctx.Done():
 			return
 
 		case <-time.After(3 * time.Second):
 			func() {
-				ctx, span := s.tracer.Start(s.ctx, "centrum-bots-check")
+				ctx, span := s.tracer.Start(ctx, "centrum-bots-check")
 				defer span.End()
 
 				if err := s.checkIfBotsAreNeeded(ctx); err != nil {
@@ -115,7 +113,7 @@ func (s *Manager) Run() {
 	}
 }
 
-func (b *Manager) Start(job string) error {
+func (b *Manager) Start(ctx context.Context, job string) error {
 	b.mutex.Lock()
 	defer b.mutex.Unlock()
 
@@ -125,7 +123,7 @@ func (b *Manager) Start(job string) error {
 	}
 
 	b.logger.Info("starting centrum dispatch bot", zap.String("job", job))
-	bot := NewBot(b.ctx, b.logger.With(zap.String("job", job)), job, b.state, b.tracker)
+	bot := NewBot(ctx, b.logger.With(zap.String("job", job)), job, b.state, b.tracker)
 	b.bots.Store(job, bot)
 
 	b.wg.Add(1)
@@ -160,9 +158,9 @@ func (b *Manager) Stop(job string) error {
 }
 
 func (s *Manager) checkIfBotsAreNeeded(ctx context.Context) error {
-	for _, settings := range s.state.ListSettings() {
-		if s.state.CheckIfBotNeeded(settings.Job) {
-			if err := s.Start(settings.Job); err != nil {
+	for _, settings := range s.state.ListSettings(ctx) {
+		if s.state.CheckIfBotNeeded(ctx, settings.Job) {
+			if err := s.Start(ctx, settings.Job); err != nil {
 				s.logger.Error("failed to start dispatch center bot for job", zap.String("job", settings.Job))
 			}
 		} else {

@@ -3,7 +3,6 @@ package livemapper
 import (
 	"context"
 	"database/sql"
-	"fmt"
 	"time"
 
 	"github.com/galexrt/fivenet/gen/go/proto/resources/livemap"
@@ -20,7 +19,7 @@ import (
 	"github.com/galexrt/fivenet/pkg/server/audit"
 	"github.com/galexrt/fivenet/pkg/tracker"
 	"github.com/galexrt/fivenet/pkg/utils"
-	"github.com/nats-io/nats.go"
+	"github.com/nats-io/nats.go/jetstream"
 	"github.com/puzpuzpuz/xsync/v3"
 	tracesdk "go.opentelemetry.io/otel/sdk/trace"
 	"go.opentelemetry.io/otel/trace"
@@ -42,11 +41,12 @@ var (
 type Server struct {
 	LivemapperServiceServer
 
-	ctx      context.Context
-	logger   *zap.Logger
+	logger *zap.Logger
+	jsCons jetstream.ConsumeContext
+
 	tracer   trace.Tracer
 	db       *sql.DB
-	js       nats.JetStreamContext
+	js       jetstream.JetStream
 	ps       perms.Permissions
 	enricher *mstlystcdata.Enricher
 	tracker  tracker.ITracker
@@ -66,7 +66,7 @@ type Params struct {
 	Logger    *zap.Logger
 	TP        *tracesdk.TracerProvider
 	DB        *sql.DB
-	JS        nats.JetStreamContext
+	JS        jetstream.JetStream
 	Perms     perms.Permissions
 	Enricher  *mstlystcdata.Enricher
 	Config    *config.Config
@@ -82,9 +82,8 @@ type brokerEvent struct {
 func NewServer(p Params) *Server {
 	ctx, cancel := context.WithCancel(context.Background())
 
-	broker := utils.NewBroker[*brokerEvent](ctx)
+	broker := utils.NewBroker[*brokerEvent]()
 	s := &Server{
-		ctx:    ctx,
 		logger: p.Logger,
 
 		tracer:   p.TP.Tracer("livemapper-cache"),
@@ -101,18 +100,14 @@ func NewServer(p Params) *Server {
 		broker: broker,
 	}
 
-	p.LC.Append(fx.StartHook(func(ctx context.Context) error {
-		if err := s.registerEvents(ctx); err != nil {
+	p.LC.Append(fx.StartHook(func(c context.Context) error {
+		go broker.Start(ctx)
+
+		if err := s.registerEvents(c, ctx); err != nil {
 			return err
 		}
 
-		go broker.Start()
-
-		if err := s.refreshData(); err != nil {
-			return err
-		}
-
-		if _, err := s.js.Subscribe(fmt.Sprintf("%s.>", BaseSubject), s.watchForEvents, nats.DeliverNew()); err != nil {
+		if err := s.refreshData(ctx); err != nil {
 			return err
 		}
 
@@ -120,6 +115,8 @@ func NewServer(p Params) *Server {
 	}))
 	p.LC.Append(fx.StopHook(func(_ context.Context) error {
 		cancel()
+
+		s.jsCons.Stop()
 
 		return nil
 	}))
@@ -131,8 +128,8 @@ func (s *Server) RegisterServer(srv *grpc.Server) {
 	RegisterLivemapperServiceServer(srv, s)
 }
 
-func (s *Server) refreshData() error {
-	ctx, span := s.tracer.Start(s.ctx, "livemap-refresh-cache")
+func (s *Server) refreshData(ctx context.Context) error {
+	ctx, span := s.tracer.Start(ctx, "livemap-refresh-cache")
 	defer span.End()
 
 	if err := s.refreshMarkers(ctx); err != nil {
@@ -207,7 +204,7 @@ func (s *Server) Stream(req *StreamRequest, srv LivemapperService_StreamServer) 
 		return err
 	}
 
-	if end, err := s.sendMarkerMarkers(srv, markersJobs, userInfo); end || err != nil {
+	if end, err := s.sendMarkerMarkers(srv, markersJobs); end || err != nil {
 		return err
 	}
 
@@ -229,7 +226,7 @@ func (s *Server) Stream(req *StreamRequest, srv LivemapperService_StreamServer) 
 			}
 
 			if event.Send == MarkerUpdate {
-				if end, err := s.sendMarkerMarkers(srv, markersJobs, userInfo); end || err != nil {
+				if end, err := s.sendMarkerMarkers(srv, markersJobs); end || err != nil {
 					return err
 				}
 			}
@@ -309,7 +306,7 @@ func (s *Server) sendChunkedUserMarkers(srv LivemapperService_StreamServer, user
 	return false, nil
 }
 
-func (s *Server) sendMarkerMarkers(srv LivemapperService_StreamServer, jobs []string, userInfo *userinfo.UserInfo) (bool, error) {
+func (s *Server) sendMarkerMarkers(srv LivemapperService_StreamServer, jobs []string) (bool, error) {
 	markers, err := s.getMarkerMarkers(jobs)
 	if err != nil {
 		return true, errswrap.NewError(ErrStreamFailed, err)

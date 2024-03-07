@@ -91,7 +91,7 @@ func (p *Perms) Can(userInfo *userinfo.UserInfo, category Category, name Name) b
 	if userInfo.SuperUser {
 		result = true
 	} else {
-		result = p.checkIfCan(permId, userInfo, category, name)
+		result = p.checkIfCan(permId, userInfo)
 	}
 
 	p.userCanCache.Set(cacheKey, result,
@@ -100,7 +100,7 @@ func (p *Perms) Can(userInfo *userinfo.UserInfo, category Category, name Name) b
 	return result
 }
 
-func (p *Perms) checkIfCan(permId uint64, userInfo *userinfo.UserInfo, category Category, name Name) (result bool) {
+func (p *Perms) checkIfCan(permId uint64, userInfo *userinfo.UserInfo) (result bool) {
 	return p.checkRoleJob(userInfo.Job, userInfo.JobGrade, permId)
 }
 

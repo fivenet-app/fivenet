@@ -17,7 +17,7 @@ import (
 	"github.com/galexrt/fivenet/query/fivenet/model"
 	jet "github.com/go-jet/jet/v2/mysql"
 	"github.com/go-jet/jet/v2/qrm"
-	"github.com/nats-io/nats.go"
+	"github.com/nats-io/nats.go/jetstream"
 	"github.com/puzpuzpuz/xsync/v3"
 	tracesdk "go.opentelemetry.io/otel/sdk/trace"
 	"go.opentelemetry.io/otel/trace"
@@ -83,10 +83,9 @@ type Perms struct {
 	wg     sync.WaitGroup
 
 	tracer trace.Tracer
-	ctx    context.Context
 
-	js    nats.JetStreamContext
-	jsSub *nats.Subscription
+	js     jetstream.JetStream
+	jsCons jetstream.ConsumeContext
 
 	permsMap *xsync.MapOf[uint64, *cachePerm]
 	// Guard name to permission ID
@@ -123,7 +122,7 @@ type Params struct {
 	Logger    *zap.Logger
 	DB        *sql.DB
 	TP        *tracesdk.TracerProvider
-	JS        nats.JetStreamContext
+	JS        jetstream.JetStream
 	AppConfig appconfig.IConfig
 }
 
@@ -142,7 +141,6 @@ func New(p Params) (Permissions, error) {
 		wg:     sync.WaitGroup{},
 
 		tracer: p.TP.Tracer("perms"),
-		ctx:    ctx,
 
 		js: p.JS,
 
@@ -161,21 +159,32 @@ func New(p Params) (Permissions, error) {
 		userCanCache:    userCanCache,
 	}
 
-	p.LC.Append(fx.StartHook(func(ctx context.Context) error {
+	p.LC.Append(fx.StartHook(func(c context.Context) error {
 		cfgDefaultPerms := p.AppConfig.Get().Perms.Default
 		defaultPerms := make([]string, len(cfgDefaultPerms))
 		for i := 0; i < len(cfgDefaultPerms); i++ {
 			defaultPerms[i] = BuildGuard(Category(cfgDefaultPerms[i].Category), Name(cfgDefaultPerms[i].Name))
 		}
 
-		if err := ps.init(ctx, defaultPerms); err != nil {
+		ctx, span := ps.tracer.Start(ctx, "perms-start")
+		defer span.End()
+
+		if err := ps.load(ctx); err != nil {
 			return err
+		}
+
+		if err := ps.registerSubscriptions(c, ctx); err != nil {
+			return err
+		}
+
+		if err := ps.register(ctx, defaultPerms); err != nil {
+			return fmt.Errorf("failed to register permissions. %w", err)
 		}
 
 		ps.wg.Add(1)
 		go func() {
 			defer ps.wg.Done()
-			if err := ps.ApplyJobPermissions(ps.ctx, ""); err != nil {
+			if err := ps.ApplyJobPermissions(ctx, ""); err != nil {
 				ps.logger.Error("failed to apply job permissions", zap.Error(err))
 				return
 			}
@@ -189,29 +198,12 @@ func New(p Params) (Permissions, error) {
 
 		ps.wg.Wait()
 
-		return ps.stop()
+		ps.jsCons.Stop()
+
+		return nil
 	}))
 
 	return ps, nil
-}
-
-func (p *Perms) init(ctx context.Context, defaultPerms []string) error {
-	ctx, span := p.tracer.Start(ctx, "perms-init")
-	defer span.End()
-
-	if err := p.load(); err != nil {
-		return err
-	}
-
-	if err := p.registerEvents(ctx); err != nil {
-		return err
-	}
-
-	if err := p.register(ctx, defaultPerms); err != nil {
-		return fmt.Errorf("failed to register permissions. %w", err)
-	}
-
-	return nil
 }
 
 type cachePerm struct {
@@ -240,8 +232,8 @@ type cacheRoleAttr struct {
 	Value        *permissions.AttributeValues
 }
 
-func (p *Perms) load() error {
-	ctx, span := p.tracer.Start(p.ctx, "perms-load")
+func (p *Perms) load(ctx context.Context) error {
+	ctx, span := p.tracer.Start(ctx, "perms-load")
 	defer span.End()
 
 	if err := p.loadPermissions(ctx); err != nil {
@@ -513,8 +505,4 @@ func (p *Perms) removeRoleAttributeFromMap(roleId uint64, attrId uint64) {
 	}
 
 	attrMap.Delete(attrId)
-}
-
-func (p *Perms) stop() error {
-	return p.jsSub.Unsubscribe()
 }

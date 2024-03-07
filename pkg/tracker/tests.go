@@ -16,7 +16,9 @@ type TestTracker struct {
 }
 
 func NewForTests(ctx context.Context) *TestTracker {
-	broker := utils.NewBroker[*livemap.UsersUpdateEvent](ctx)
+	broker := utils.NewBroker[*livemap.UsersUpdateEvent]()
+
+	broker.Start(ctx)
 
 	return &TestTracker{
 		usersCache: xsync.NewMapOf[string, *xsync.MapOf[int32, *livemap.UserMarker]](),

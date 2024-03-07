@@ -8,8 +8,6 @@ import (
 // Tweaked version of https://stackoverflow.com/a/49877632 CC-BY-SA 4.0 [icza](https://stackoverflow.com/users/1705598/icza)
 
 type Broker[T any] struct {
-	ctx context.Context
-
 	subs      atomic.Int64
 	stopCh    chan struct{}
 	publishCh chan T
@@ -17,9 +15,8 @@ type Broker[T any] struct {
 	unsubCh   chan chan T
 }
 
-func NewBroker[T any](ctx context.Context) *Broker[T] {
+func NewBroker[T any]() *Broker[T] {
 	return &Broker[T]{
-		ctx:       ctx,
 		stopCh:    make(chan struct{}),
 		publishCh: make(chan T, 1),
 		subCh:     make(chan chan T, 1),
@@ -27,7 +24,7 @@ func NewBroker[T any](ctx context.Context) *Broker[T] {
 	}
 }
 
-func (b *Broker[T]) Start() {
+func (b *Broker[T]) Start(ctx context.Context) {
 	subs := map[chan T]struct{}{}
 	for {
 		select {
@@ -50,7 +47,7 @@ func (b *Broker[T]) Start() {
 				default:
 				}
 			}
-		case <-b.ctx.Done():
+		case <-ctx.Done():
 			b.Stop()
 			return
 		}

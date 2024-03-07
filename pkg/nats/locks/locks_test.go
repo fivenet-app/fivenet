@@ -11,7 +11,7 @@ import (
 	"time"
 
 	"github.com/galexrt/fivenet/internal/tests/servers"
-	"github.com/nats-io/nats.go"
+	"github.com/nats-io/nats.go/jetstream"
 	"github.com/stretchr/testify/require"
 	"go.uber.org/zap"
 )
@@ -32,7 +32,10 @@ func getNatsClient(t *testing.T, bucket string) *Locks {
 	js, err := servers.TestNATSServer.GetJS()
 	require.NoError(t, err)
 
-	kv, err := js.CreateKeyValue(&nats.KeyValueConfig{
+	ctx, cancel := context.WithCancel(context.Background())
+	defer cancel()
+
+	kv, err := js.CreateKeyValue(ctx, jetstream.KeyValueConfig{
 		Bucket: bucket,
 	})
 	require.NoError(t, err)

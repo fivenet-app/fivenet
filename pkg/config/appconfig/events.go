@@ -8,7 +8,7 @@ import (
 
 	"github.com/galexrt/fivenet/pkg/events"
 	natsutils "github.com/galexrt/fivenet/pkg/nats"
-	"github.com/nats-io/nats.go"
+	"github.com/nats-io/nats.go/jetstream"
 	"go.uber.org/zap"
 )
 
@@ -18,45 +18,55 @@ const (
 	UpdateSubject events.Type = "update"
 )
 
-func (c *Config) registerEvents(ctx context.Context) error {
-	cfg := &nats.StreamConfig{
+func (c *Config) registerSubscriptions(ctx context.Context) error {
+	cfg := jetstream.StreamConfig{
 		Name:        "APPCONFIG",
 		Description: natsutils.Description,
-		Retention:   nats.InterestPolicy,
+		Retention:   jetstream.InterestPolicy,
 		Subjects:    []string{fmt.Sprintf("%s.>", BaseSubject)},
-		Discard:     nats.DiscardOld,
+		Discard:     jetstream.DiscardOld,
 		MaxAge:      10 * time.Second,
-		Storage:     nats.MemoryStorage,
+		Storage:     jetstream.MemoryStorage,
 	}
 
 	if _, err := natsutils.CreateOrUpdateStream(ctx, c.js, cfg); err != nil {
 		return err
 	}
 
-	sub, err := c.js.Subscribe(fmt.Sprintf("%s.>", BaseSubject), c.handleMessage, nats.DeliverNew())
+	consumer, err := c.js.CreateConsumer(ctx, cfg.Name, jetstream.ConsumerConfig{
+		DeliverPolicy: jetstream.DeliverNewPolicy,
+		FilterSubject: fmt.Sprintf("%s.>", BaseSubject),
+	})
 	if err != nil {
 		return err
 	}
-	c.jsSub = sub
+
+	cons, err := consumer.Consume(c.handleMessageFunc(ctx))
+	if err != nil {
+		return err
+	}
+	c.jsCons = cons
 
 	return nil
 }
 
-func (c *Config) handleMessage(msg *nats.Msg) {
-	split := strings.Split(msg.Subject, ".")
+func (c *Config) handleMessageFunc(ctx context.Context) jetstream.MessageHandler {
+	return func(msg jetstream.Msg) {
+		split := strings.Split(msg.Subject(), ".")
 
-	if len(split) < 2 {
-		c.logger.Warn("unknown app config subject received", zap.String("subject", msg.Subject))
-		return
-	}
-
-	if split[1] == string(UpdateSubject) {
-		cfg, err := c.updateConfigFromDB(c.ctx)
-		if err != nil {
-			c.logger.Error("failed to update app config from db", zap.Error(err))
+		if len(split) < 2 {
+			c.logger.Warn("unknown app config subject received", zap.String("subject", msg.Subject()))
 			return
 		}
 
-		c.broker.Publish(cfg)
+		if split[1] == string(UpdateSubject) {
+			cfg, err := c.updateConfigFromDB(ctx)
+			if err != nil {
+				c.logger.Error("failed to update app config from db", zap.Error(err))
+				return
+			}
+
+			c.broker.Publish(cfg)
+		}
 	}
 }

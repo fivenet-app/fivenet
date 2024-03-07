@@ -2,13 +2,12 @@ package tracker
 
 import (
 	"context"
-	"fmt"
 
 	"github.com/galexrt/fivenet/gen/go/proto/resources/livemap"
 	"github.com/galexrt/fivenet/pkg/nats/store"
 	"github.com/galexrt/fivenet/pkg/utils"
 	"github.com/galexrt/fivenet/query/fivenet/table"
-	"github.com/nats-io/nats.go"
+	"github.com/nats-io/nats.go/jetstream"
 	"github.com/puzpuzpuz/xsync/v3"
 	"go.uber.org/fx"
 	"go.uber.org/zap"
@@ -35,6 +34,9 @@ type Tracker struct {
 	ITracker
 
 	logger *zap.Logger
+	js     jetstream.JetStream
+
+	jsCons jetstream.ConsumeContext
 
 	userStore  *store.Store[livemap.UserMarker, *livemap.UserMarker]
 	usersByJob *xsync.MapOf[string, *xsync.MapOf[int32, *livemap.UserMarker]]
@@ -48,74 +50,71 @@ type Params struct {
 	LC fx.Lifecycle
 
 	Logger *zap.Logger
-	JS     nats.JetStreamContext
+	JS     jetstream.JetStream
 }
 
 func New(p Params) (ITracker, error) {
-	usersByJob := xsync.NewMapOf[string, *xsync.MapOf[int32, *livemap.UserMarker]]()
-
-	userIDs, err := store.NewWithLocks[livemap.UserMarker, *livemap.UserMarker](p.Logger, p.JS, "tracker", nil,
-		func(s *store.Store[livemap.UserMarker, *livemap.UserMarker]) error {
-			s.OnUpdate = func(um *livemap.UserMarker) (*livemap.UserMarker, error) {
-				if um == nil || um.Info == nil {
-					return um, nil
-				}
-
-				jobUsers, _ := usersByJob.LoadOrCompute(um.Info.Job, func() *xsync.MapOf[int32, *livemap.UserMarker] {
-					return xsync.NewMapOf[int32, *livemap.UserMarker]()
-				})
-				if m, loaded := jobUsers.LoadOrStore(um.UserId, um); loaded {
-					// Merge value if loaded from local data store
-					m.Merge(um)
-				}
-
-				return um, nil
-			}
-			return nil
-		},
-		func(s *store.Store[livemap.UserMarker, *livemap.UserMarker]) error {
-			s.OnDelete = func(kve nats.KeyValueEntry, um *livemap.UserMarker) error {
-				if um == nil || um.Info == nil {
-					return nil
-				}
-
-				if jobUsers, ok := usersByJob.Load(um.Info.Job); ok {
-					jobUsers.Delete(um.UserId)
-				}
-
-				return nil
-			}
-			return nil
-		})
-	if err != nil {
-		return nil, err
-	}
-
 	ctx, cancel := context.WithCancel(context.Background())
-
-	broker := utils.NewBroker[*livemap.UsersUpdateEvent](ctx)
 
 	t := &Tracker{
 		logger: p.Logger,
+		js:     p.JS,
 
-		userStore:  userIDs,
-		usersByJob: usersByJob,
+		usersByJob: xsync.NewMapOf[string, *xsync.MapOf[int32, *livemap.UserMarker]](),
 
-		broker: broker,
+		broker: utils.NewBroker[*livemap.UsersUpdateEvent](),
 	}
 
-	p.LC.Append(fx.StartHook(func(_ context.Context) error {
-		if err := registerStreams(ctx, p.JS); err != nil {
+	p.LC.Append(fx.StartHook(func(c context.Context) error {
+		if err := registerStreams(c, p.JS); err != nil {
 			return err
 		}
 
-		go broker.Start()
+		go t.broker.Start(ctx)
 
-		if err := userIDs.Start(ctx); err != nil {
+		userIDs, err := store.NewWithLocks[livemap.UserMarker, *livemap.UserMarker](ctx, p.Logger, p.JS, "tracker", nil,
+			func(s *store.Store[livemap.UserMarker, *livemap.UserMarker]) error {
+				s.OnUpdate = func(um *livemap.UserMarker) (*livemap.UserMarker, error) {
+					if um == nil || um.Info == nil {
+						return um, nil
+					}
+
+					jobUsers, _ := t.usersByJob.LoadOrCompute(um.Info.Job, func() *xsync.MapOf[int32, *livemap.UserMarker] {
+						return xsync.NewMapOf[int32, *livemap.UserMarker]()
+					})
+					if m, loaded := jobUsers.LoadOrStore(um.UserId, um); loaded {
+						// Merge value if loaded from local data store
+						m.Merge(um)
+					}
+
+					return um, nil
+				}
+				return nil
+			},
+			func(s *store.Store[livemap.UserMarker, *livemap.UserMarker]) error {
+				s.OnDelete = func(kve jetstream.KeyValueEntry, um *livemap.UserMarker) error {
+					if um == nil || um.Info == nil {
+						return nil
+					}
+
+					if jobUsers, ok := t.usersByJob.Load(um.Info.Job); ok {
+						jobUsers.Delete(um.UserId)
+					}
+
+					return nil
+				}
+				return nil
+			})
+		if err != nil {
 			return err
 		}
 
-		if _, err := p.JS.Subscribe(fmt.Sprintf("%s.>", BaseSubject), t.watchForChanges, nats.DeliverNew()); err != nil {
+		if err := userIDs.Start(c); err != nil {
+			return err
+		}
+		t.userStore = userIDs
+
+		if err := t.registerSubscriptions(c); err != nil {
 			return err
 		}
 
@@ -125,15 +124,17 @@ func New(p Params) (ITracker, error) {
 	p.LC.Append(fx.StopHook(func(_ context.Context) error {
 		cancel()
 
+		t.jsCons.Stop()
+
 		return nil
 	}))
 
 	return t, nil
 }
 
-func (s *Tracker) watchForChanges(msg *nats.Msg) {
+func (s *Tracker) watchForChanges(msg jetstream.Msg) {
 	dest := &livemap.UsersUpdateEvent{}
-	if err := proto.Unmarshal(msg.Data, dest); err != nil {
+	if err := proto.Unmarshal(msg.Data(), dest); err != nil {
 		s.logger.Error("failed to unmarshal nats user update response", zap.Error(err))
 		return
 	}

@@ -57,7 +57,7 @@ func (b *Bot) Run() {
 		case <-time.After(4 * time.Second):
 		}
 
-		dispatches := b.state.FilterDispatches(b.job, nil, []centrum.StatusDispatch{
+		dispatches := b.state.FilterDispatches(b.ctx, b.job, nil, []centrum.StatusDispatch{
 			// Dispatch status that mean it is being worked on
 			centrum.StatusDispatch_STATUS_DISPATCH_UNIT_ASSIGNED,
 			centrum.StatusDispatch_STATUS_DISPATCH_UNIT_ACCEPTED,
@@ -108,7 +108,7 @@ func (b *Bot) Stop() {
 }
 
 func (b *Bot) getAvailableUnit(ctx context.Context, point orb.Point) (*centrum.Unit, bool) {
-	units := b.state.FilterUnits(b.job, []centrum.StatusUnit{centrum.StatusUnit_STATUS_UNIT_AVAILABLE}, nil, func(unit *centrum.Unit) bool {
+	units := b.state.FilterUnits(ctx, b.job, []centrum.StatusUnit{centrum.StatusUnit_STATUS_UNIT_AVAILABLE}, nil, func(unit *centrum.Unit) bool {
 		return unit.Attributes == nil || !unit.Attributes.Has(centrum.UnitAttributeNoDispatchAutoAssign)
 	})
 

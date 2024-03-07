@@ -9,7 +9,7 @@ import (
 	"github.com/galexrt/fivenet/pkg/coords/postals"
 	"github.com/galexrt/fivenet/pkg/mstlystcdata"
 	"github.com/galexrt/fivenet/pkg/tracker"
-	"github.com/nats-io/nats.go"
+	"github.com/nats-io/nats.go/jetstream"
 	tracesdk "go.opentelemetry.io/otel/sdk/trace"
 	"go.opentelemetry.io/otel/trace"
 	"go.uber.org/fx"
@@ -21,12 +21,12 @@ var Module = fx.Module("centrum_manager", fx.Provide(
 ))
 
 type Manager struct {
-	ctx    context.Context
 	logger *zap.Logger
+	jsCons jetstream.ConsumeContext
 
 	tracer   trace.Tracer
 	db       *sql.DB
-	js       nats.JetStreamContext
+	js       jetstream.JetStream
 	enricher *mstlystcdata.Enricher
 	tracker  tracker.ITracker
 	postals  postals.Postals
@@ -44,7 +44,7 @@ type Params struct {
 	Logger    *zap.Logger
 	TP        *tracesdk.TracerProvider
 	DB        *sql.DB
-	JS        nats.JetStreamContext
+	JS        jetstream.JetStream
 	Enricher  *mstlystcdata.Enricher
 	Postals   postals.Postals
 	Tracker   tracker.ITracker
@@ -57,7 +57,6 @@ func New(p Params) *Manager {
 	ctx, cancel := context.WithCancel(context.Background())
 
 	s := &Manager{
-		ctx:    ctx,
 		logger: p.Logger.Named("centrum.state"),
 
 		tracer:   p.TP.Tracer("centrum-manager"),
@@ -72,12 +71,12 @@ func New(p Params) *Manager {
 		State: p.State,
 	}
 
-	p.LC.Append(fx.StartHook(func(ctx context.Context) error {
-		if err := s.loadData(); err != nil {
+	p.LC.Append(fx.StartHook(func(c context.Context) error {
+		if err := s.loadData(ctx); err != nil {
 			return err
 		}
 
-		if err := s.registerSubscriptions(ctx); err != nil {
+		if err := s.registerSubscriptions(c, ctx); err != nil {
 			return err
 		}
 
@@ -86,6 +85,8 @@ func New(p Params) *Manager {
 
 	p.LC.Append(fx.StopHook(func(_ context.Context) error {
 		cancel()
+
+		s.jsCons.Stop()
 
 		return nil
 	}))

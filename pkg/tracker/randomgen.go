@@ -1,6 +1,7 @@
 package tracker
 
 import (
+	"context"
 	"math/rand"
 	"time"
 
@@ -9,7 +10,7 @@ import (
 	"go.uber.org/zap"
 )
 
-func (s *Manager) randomizeUserMarkers() {
+func (s *Manager) randomizeUserMarkers(ctx context.Context) {
 	userIdentifiers := []string{
 		// Users in job ambulance
 		"char1:034c716223e6b4e431db6de501b28f65d8560cb1",
@@ -219,7 +220,7 @@ func (s *Manager) randomizeUserMarkers() {
 	counter := 0
 	for {
 		func() {
-			ctx, span := s.tracer.Start(s.ctx, "livemap-gen-users")
+			ctx, span := s.tracer.Start(ctx, "livemap-gen-users")
 			defer span.End()
 
 			if counter >= 60 {

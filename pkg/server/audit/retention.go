@@ -20,7 +20,6 @@ var RetentionModule = fx.Module("audit_retention",
 )
 
 type Retention struct {
-	ctx    context.Context
 	tracer trace.Tracer
 	logger *zap.Logger
 	db     *sql.DB
@@ -43,7 +42,6 @@ func NewRetention(p RetentionParams) *Retention {
 	ctx, cancel := context.WithCancel(context.Background())
 
 	r := &Retention{
-		ctx:    ctx,
 		logger: p.Logger.Named("audit_retention"),
 		tracer: p.TP.Tracer("audit-retention"),
 		db:     p.DB,
@@ -61,7 +59,7 @@ func NewRetention(p RetentionParams) *Retention {
 				}
 
 				func() {
-					ctx, span := r.tracer.Start(r.ctx, "audit-retention")
+					ctx, span := r.tracer.Start(ctx, "audit-retention")
 					defer span.End()
 
 					if err := r.run(ctx); err != nil {
@@ -76,6 +74,7 @@ func NewRetention(p RetentionParams) *Retention {
 
 	p.LC.Append(fx.StopHook(func(_ context.Context) error {
 		cancel()
+
 		return nil
 	}))
 
@@ -86,7 +85,7 @@ func (r *Retention) run(ctx context.Context) error {
 	if r.auditRetentionDays != nil {
 		// Now minus retention days
 		t := time.Now().AddDate(0, 0, -*r.auditRetentionDays)
-		if err := r.Cleanup(t); err != nil {
+		if err := r.Cleanup(ctx, t); err != nil {
 			return err
 		}
 	}
@@ -94,7 +93,7 @@ func (r *Retention) run(ctx context.Context) error {
 	return nil
 }
 
-func (r *Retention) Cleanup(before time.Time) error {
+func (r *Retention) Cleanup(ctx context.Context, before time.Time) error {
 	r.logger.Debug("starting audit store cleanup", zap.Time("before_time", before))
 
 	stmt := tAudit.
@@ -103,7 +102,7 @@ func (r *Retention) Cleanup(before time.Time) error {
 			jet.TimestampT(before),
 		))
 
-	res, err := stmt.ExecContext(r.ctx, r.db)
+	res, err := stmt.ExecContext(ctx, r.db)
 	if err != nil {
 		return err
 	}

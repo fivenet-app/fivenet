@@ -10,6 +10,7 @@ import (
 	natsutils "github.com/galexrt/fivenet/pkg/nats"
 	"github.com/galexrt/fivenet/pkg/nats/locks"
 	"github.com/nats-io/nats.go"
+	"github.com/nats-io/nats.go/jetstream"
 	"github.com/puzpuzpuz/xsync/v3"
 	"go.uber.org/zap"
 	"google.golang.org/protobuf/proto"
@@ -26,7 +27,7 @@ type protoMessage[T any] interface {
 
 type Store[T any, U protoMessage[T]] struct {
 	logger *zap.Logger
-	kv     nats.KeyValue
+	kv     jetstream.KeyValue
 
 	bucket string
 
@@ -41,14 +42,14 @@ type Store[T any, U protoMessage[T]] struct {
 type StoreOption[T any, U protoMessage[T]] func(s *Store[T, U]) error
 
 type OnUpdateFn[T any, U protoMessage[T]] func(U) (U, error)
-type OnDeleteFn[T any, U protoMessage[T]] func(nats.KeyValueEntry, U) error
+type OnDeleteFn[T any, U protoMessage[T]] func(jetstream.KeyValueEntry, U) error
 
-func NewWithLocks[T any, U protoMessage[T]](logger *zap.Logger, js nats.JetStreamContext, bucket string, l *locks.Locks, opts ...StoreOption[T, U]) (*Store[T, U], error) {
-	kv, err := natsutils.CreateKeyValue(js, bucket, &nats.KeyValueConfig{
+func NewWithLocks[T any, U protoMessage[T]](ctx context.Context, logger *zap.Logger, js jetstream.JetStream, bucket string, l *locks.Locks, opts ...StoreOption[T, U]) (*Store[T, U], error) {
+	kv, err := natsutils.CreateKeyValue(ctx, js, jetstream.KeyValueConfig{
 		Bucket:      bucket,
 		Description: natsutils.Description,
 		History:     3,
-		Storage:     nats.MemoryStorage,
+		Storage:     jetstream.MemoryStorage,
 	})
 	if err != nil {
 		return nil, err
@@ -73,13 +74,13 @@ func NewWithLocks[T any, U protoMessage[T]](logger *zap.Logger, js nats.JetStrea
 	return s, nil
 }
 
-func New[T any, U protoMessage[T]](logger *zap.Logger, js nats.JetStreamContext, bucket string, opts ...StoreOption[T, U]) (*Store[T, U], error) {
+func New[T any, U protoMessage[T]](ctx context.Context, logger *zap.Logger, js jetstream.JetStream, bucket string, opts ...StoreOption[T, U]) (*Store[T, U], error) {
 	lBucket := fmt.Sprintf("%s_locks", bucket)
-	lkv, err := natsutils.CreateKeyValue(js, lBucket, &nats.KeyValueConfig{
+	lkv, err := natsutils.CreateKeyValue(ctx, js, jetstream.KeyValueConfig{
 		Bucket:      lBucket,
 		Description: natsutils.Description,
 		History:     3,
-		Storage:     nats.MemoryStorage,
+		Storage:     jetstream.MemoryStorage,
 		TTL:         3 * LockTimeout,
 	})
 	if err != nil {
@@ -90,12 +91,12 @@ func New[T any, U protoMessage[T]](logger *zap.Logger, js nats.JetStreamContext,
 		return nil, err
 	}
 
-	return NewWithLocks[T, U](logger, js, bucket, l, opts...)
+	return NewWithLocks[T, U](ctx, logger, js, bucket, l, opts...)
 }
 
 // Put upload the message to kv and local
-func (s *Store[T, U]) Put(key string, msg U) error {
-	ctx, cancel := context.WithTimeout(context.Background(), LockTimeout)
+func (s *Store[T, U]) Put(ctx context.Context, key string, msg U) error {
+	ctx, cancel := context.WithTimeout(ctx, LockTimeout)
 	defer cancel()
 
 	if s.l != nil {
@@ -105,20 +106,20 @@ func (s *Store[T, U]) Put(key string, msg U) error {
 		defer s.l.Unlock(ctx, key)
 	}
 
-	if err := s.put(key, msg); err != nil {
+	if err := s.put(ctx, key, msg); err != nil {
 		return err
 	}
 
 	return nil
 }
 
-func (s *Store[T, U]) put(key string, msg U) error {
+func (s *Store[T, U]) put(ctx context.Context, key string, msg U) error {
 	data, err := proto.Marshal(msg)
 	if err != nil {
 		return err
 	}
 
-	if _, err := s.kv.Put(key, data); err != nil {
+	if _, err := s.kv.Put(ctx, key, data); err != nil {
 		return err
 	}
 
@@ -127,8 +128,8 @@ func (s *Store[T, U]) put(key string, msg U) error {
 	return nil
 }
 
-func (s *Store[T, U]) ComputeUpdate(key string, load bool, fn func(key string, existing U) (U, error)) error {
-	ctx, cancel := context.WithTimeout(context.Background(), LockTimeout)
+func (s *Store[T, U]) ComputeUpdate(ctx context.Context, key string, load bool, fn func(key string, existing U) (U, error)) error {
+	ctx, cancel := context.WithTimeout(ctx, LockTimeout)
 	defer cancel()
 
 	if s.l != nil {
@@ -141,8 +142,8 @@ func (s *Store[T, U]) ComputeUpdate(key string, load bool, fn func(key string, e
 	var existing U
 	if load {
 		var err error
-		existing, err = s.Load(key)
-		if err != nil && !errors.Is(err, nats.ErrKeyNotFound) {
+		existing, err = s.Load(ctx, key)
+		if err != nil && !errors.Is(err, jetstream.ErrKeyNotFound) {
 			return err
 		}
 	} else {
@@ -168,7 +169,7 @@ func (s *Store[T, U]) ComputeUpdate(key string, load bool, fn func(key string, e
 		return nil
 	}
 
-	if err := s.put(key, computed); err != nil {
+	if err := s.put(ctx, key, computed); err != nil {
 		return err
 	}
 
@@ -187,8 +188,8 @@ func (s *Store[T, U]) Get(key string) (U, bool) {
 
 // Load data from kv store (this will add/update any existing local data entry)
 // No record will be returned as nil and not stored
-func (s *Store[T, U]) Load(key string) (U, error) {
-	entry, err := s.kv.Get(key)
+func (s *Store[T, U]) Load(ctx context.Context, key string) (U, error) {
+	entry, err := s.kv.Get(ctx, key)
 	if err != nil {
 		return nil, err
 	}
@@ -196,7 +197,7 @@ func (s *Store[T, U]) Load(key string) (U, error) {
 	return s.update(entry)
 }
 
-func (s *Store[T, U]) update(entry nats.KeyValueEntry) (U, error) {
+func (s *Store[T, U]) update(entry jetstream.KeyValueEntry) (U, error) {
 	data, err := s.unmarshal(entry.Value())
 	if err != nil {
 		return nil, fmt.Errorf("failed to unmarshal store watcher update: %w", err)
@@ -224,11 +225,11 @@ func (s *Store[T, U]) updateFromType(key string, updated U) U {
 	return updated
 }
 
-func (s *Store[T, U]) GetOrLoad(key string) (U, error) {
+func (s *Store[T, U]) GetOrLoad(ctx context.Context, key string) (U, error) {
 	i, ok := s.Get(key)
 	if !ok || i == nil {
 		var err error
-		i, err = s.Load(key)
+		i, err = s.Load(ctx, key)
 		if err != nil {
 			return nil, err
 		}
@@ -239,8 +240,8 @@ func (s *Store[T, U]) GetOrLoad(key string) (U, error) {
 	return i, nil
 }
 
-func (s *Store[T, U]) Delete(key string) error {
-	ctx, cancel := context.WithTimeout(context.Background(), LockTimeout)
+func (s *Store[T, U]) Delete(ctx context.Context, key string) error {
+	ctx, cancel := context.WithTimeout(ctx, LockTimeout)
 	defer cancel()
 
 	if s.l != nil {
@@ -250,31 +251,33 @@ func (s *Store[T, U]) Delete(key string) error {
 		defer s.l.Unlock(ctx, key)
 	}
 
-	if err := s.kv.Delete(key); err != nil {
+	if err := s.kv.Delete(ctx, key); err != nil {
 		return err
 	}
 
 	return nil
 }
 
-func (s *Store[T, U]) Keys(prefix string) ([]string, error) {
-	keys, err := s.kv.Keys(nats.MetaOnly())
+func (s *Store[T, U]) Keys(ctx context.Context, prefix string) ([]string, error) {
+	lister, err := s.kv.ListKeys(ctx, jetstream.MetaOnly())
 	if err != nil {
 		return nil, err
 	}
 
-	if prefix == "" {
-		return keys, nil
-	}
+	hasPrefix := prefix != ""
 
-	filtered := []string{}
-	for i := 0; i < len(keys); i++ {
-		if strings.HasPrefix(keys[i], prefix+".") {
-			filtered = append(filtered, keys[i])
+	keys := []string{}
+	for key := range lister.Keys() {
+		if hasPrefix {
+			if strings.HasPrefix(key, prefix+".") {
+				keys = append(keys, key)
+			}
+		} else {
+			keys = append(keys, key)
 		}
 	}
 
-	return filtered, nil
+	return keys, nil
 }
 
 func (s *Store[T, U]) unmarshal(data []byte) (U, error) {
@@ -308,7 +311,7 @@ func (s *Store[T, U]) Start(ctx context.Context) error {
 
 				s.logger.Debug("key update received via watcher", zap.String("key", entry.Key()))
 
-				if entry.Operation() == nats.KeyValueDelete || entry.Operation() == nats.KeyValuePurge {
+				if entry.Operation() == jetstream.KeyValueDelete || entry.Operation() == jetstream.KeyValuePurge {
 					item, _ := s.data.LoadAndDelete(entry.Key())
 					if s.OnDelete != nil {
 						if err := s.OnDelete(entry, item); err != nil {

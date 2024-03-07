@@ -7,7 +7,7 @@ import (
 
 	"github.com/galexrt/fivenet/gen/go/proto/resources/notifications"
 	"github.com/galexrt/fivenet/query/fivenet/table"
-	"github.com/nats-io/nats.go"
+	"github.com/nats-io/nats.go/jetstream"
 	"go.uber.org/fx"
 	"go.uber.org/zap"
 	"google.golang.org/protobuf/proto"
@@ -33,7 +33,7 @@ type INotifi interface {
 type Notifi struct {
 	logger *zap.Logger
 	db     *sql.DB
-	js     nats.JetStreamContext
+	js     jetstream.JetStream
 }
 
 type Params struct {
@@ -42,7 +42,7 @@ type Params struct {
 	LC     fx.Lifecycle
 	Logger *zap.Logger
 	DB     *sql.DB
-	JS     nats.JetStreamContext
+	JS     jetstream.JetStream
 }
 
 func New(p Params) INotifi {

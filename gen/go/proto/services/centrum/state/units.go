@@ -8,20 +8,20 @@ import (
 	"github.com/galexrt/fivenet/gen/go/proto/resources/centrum"
 )
 
-func (s *State) GetUnit(job string, id uint64) (*centrum.Unit, error) {
-	return s.units.GetOrLoad(JobIdKey(job, id))
+func (s *State) GetUnit(ctx context.Context, job string, id uint64) (*centrum.Unit, error) {
+	return s.units.GetOrLoad(ctx, JobIdKey(job, id))
 }
 
-func (s *State) ListUnits(job string) ([]*centrum.Unit, bool) {
+func (s *State) ListUnits(ctx context.Context, job string) ([]*centrum.Unit, bool) {
 	us := []*centrum.Unit{}
 
-	ids, err := s.units.Keys(job)
+	ids, err := s.units.Keys(ctx, job)
 	if err != nil {
 		return us, false
 	}
 
 	for _, id := range ids {
-		unit, err := s.units.GetOrLoad(id)
+		unit, err := s.units.GetOrLoad(ctx, id)
 		if err != nil {
 			continue
 		}
@@ -36,8 +36,8 @@ func (s *State) ListUnits(job string) ([]*centrum.Unit, bool) {
 	return us, true
 }
 
-func (s *State) FilterUnits(job string, statuses []centrum.StatusUnit, notStatuses []centrum.StatusUnit, filterFn func(unit *centrum.Unit) bool) []*centrum.Unit {
-	units, ok := s.ListUnits(job)
+func (s *State) FilterUnits(ctx context.Context, job string, statuses []centrum.StatusUnit, notStatuses []centrum.StatusUnit, filterFn func(unit *centrum.Unit) bool) []*centrum.Unit {
+	units, ok := s.ListUnits(ctx, job)
 	if !ok {
 		return nil
 	}
@@ -67,12 +67,12 @@ func (s *State) FilterUnits(job string, statuses []centrum.StatusUnit, notStatus
 	return us
 }
 
-func (s *State) DeleteUnit(job string, id uint64) error {
-	return s.units.Delete(JobIdKey(job, id))
+func (s *State) DeleteUnit(ctx context.Context, job string, id uint64) error {
+	return s.units.Delete(ctx, JobIdKey(job, id))
 }
 
 func (s *State) UpdateUnit(ctx context.Context, job string, id uint64, unit *centrum.Unit) error {
-	if err := s.units.ComputeUpdate(JobIdKey(job, id), true, func(key string, existing *centrum.Unit) (*centrum.Unit, error) {
+	if err := s.units.ComputeUpdate(ctx, JobIdKey(job, id), true, func(key string, existing *centrum.Unit) (*centrum.Unit, error) {
 		if existing == nil {
 			return unit, nil
 		}
@@ -88,7 +88,7 @@ func (s *State) UpdateUnit(ctx context.Context, job string, id uint64, unit *cen
 }
 
 func (s *State) UpdateUnitStatus(ctx context.Context, job string, id uint64, status *centrum.UnitStatus) error {
-	if err := s.units.ComputeUpdate(JobIdKey(job, id), true, func(key string, existing *centrum.Unit) (*centrum.Unit, error) {
+	if err := s.units.ComputeUpdate(ctx, JobIdKey(job, id), true, func(key string, existing *centrum.Unit) (*centrum.Unit, error) {
 		if existing == nil {
 			return nil, nil
 		}
@@ -104,7 +104,7 @@ func (s *State) UpdateUnitStatus(ctx context.Context, job string, id uint64, sta
 }
 
 func (s *State) UpdateUnitUsers(ctx context.Context, job string, id uint64, users []*centrum.UnitAssignment) error {
-	if err := s.units.ComputeUpdate(JobIdKey(job, id), true, func(key string, existing *centrum.Unit) (*centrum.Unit, error) {
+	if err := s.units.ComputeUpdate(ctx, JobIdKey(job, id), true, func(key string, existing *centrum.Unit) (*centrum.Unit, error) {
 		if existing == nil {
 			return nil, nil
 		}

@@ -347,7 +347,7 @@ func (s *Server) TakeDispatch(ctx context.Context, req *TakeDispatchRequest) (*T
 	}
 	defer s.auditer.Log(auditEntry, req)
 
-	unitId, ok := s.state.GetUserUnitID(userInfo.UserId)
+	unitId, ok := s.state.GetUserUnitID(ctx, userInfo.UserId)
 	if !ok {
 		return nil, errorscentrum.ErrFailedQuery
 	}
@@ -373,19 +373,19 @@ func (s *Server) UpdateDispatchStatus(ctx context.Context, req *UpdateDispatchSt
 	}
 	defer s.auditer.Log(auditEntry, req)
 
-	dsp, err := s.state.GetDispatch(userInfo.Job, req.DispatchId)
+	dsp, err := s.state.GetDispatch(ctx, userInfo.Job, req.DispatchId)
 	if err != nil {
 		return nil, errswrap.NewError(errorscentrum.ErrFailedQuery, err)
 	}
 
-	if !s.state.CheckIfUserIsPartOfDispatch(userInfo, dsp, true) && !userInfo.SuperUser {
+	if !s.state.CheckIfUserIsPartOfDispatch(ctx, userInfo, dsp, true) && !userInfo.SuperUser {
 		return nil, errorscentrum.ErrNotPartOfDispatch
 	}
 
 	var statusUnitId *uint64
-	unitId, ok := s.state.GetUserUnitID(userInfo.UserId)
+	unitId, ok := s.state.GetUserUnitID(ctx, userInfo.UserId)
 	if !ok {
-		if !s.state.CheckIfUserIsDisponent(userInfo.Job, userInfo.UserId) {
+		if !s.state.CheckIfUserIsDisponent(ctx, userInfo.Job, userInfo.UserId) {
 			return nil, errorscentrum.ErrNotPartOfDispatch
 		}
 	} else {
@@ -407,7 +407,7 @@ func (s *Server) UpdateDispatchStatus(ctx context.Context, req *UpdateDispatchSt
 	if req.Status == centrum.StatusDispatch_STATUS_DISPATCH_EN_ROUTE ||
 		req.Status == centrum.StatusDispatch_STATUS_DISPATCH_ON_SCENE ||
 		req.Status == centrum.StatusDispatch_STATUS_DISPATCH_NEED_ASSISTANCE {
-		if unit, err := s.state.GetUnit(userInfo.Job, unitId); err == nil {
+		if unit, err := s.state.GetUnit(ctx, userInfo.Job, unitId); err == nil {
 			// Set unit to busy when unit accepts a dispatch
 			if unit.Status == nil || unit.Status.Status != centrum.StatusUnit_STATUS_UNIT_BUSY {
 				if _, err := s.state.UpdateUnitStatus(ctx, userInfo.Job, unitId, &centrum.UnitStatus{
@@ -440,7 +440,7 @@ func (s *Server) AssignDispatch(ctx context.Context, req *AssignDispatchRequest)
 	}
 	defer s.auditer.Log(auditEntry, req)
 
-	dsp, err := s.state.GetDispatch(userInfo.Job, req.DispatchId)
+	dsp, err := s.state.GetDispatch(ctx, userInfo.Job, req.DispatchId)
 	if err != nil {
 		return nil, errswrap.NewError(errorscentrum.ErrFailedQuery, err)
 	}
@@ -538,7 +538,7 @@ func (s *Server) ListDispatchActivity(ctx context.Context, req *ListDispatchActi
 	for i := 0; i < len(resp.Activity); i++ {
 		if resp.Activity[i].UnitId != nil && *resp.Activity[i].UnitId > 0 {
 			var err error
-			resp.Activity[i].Unit, err = s.state.GetUnit(userInfo.Job, *resp.Activity[i].UnitId)
+			resp.Activity[i].Unit, err = s.state.GetUnit(ctx, userInfo.Job, *resp.Activity[i].UnitId)
 			if err != nil {
 				return nil, errswrap.NewError(errorscentrum.ErrFailedQuery, err)
 			}

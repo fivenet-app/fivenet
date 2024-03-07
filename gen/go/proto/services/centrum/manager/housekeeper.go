@@ -282,7 +282,7 @@ func (s *Housekeeper) cancelOldDispatches(ctx context.Context) error {
 		}
 
 		// Add "too old" attribute when we are able to retrieve the dispatch
-		if dsp, err := s.GetDispatch(ds.Job, ds.DispatchID); err == nil && dsp != nil {
+		if dsp, err := s.GetDispatch(ctx, ds.Job, ds.DispatchID); err == nil && dsp != nil {
 			if err := s.AddAttributeToDispatch(ctx, dsp, centrum.DispatchAttributeTooOld); err != nil {
 				s.logger.Error("failed to add too old attribute to cancelled dispatch", zap.Uint64("dispatch_id", ds.DispatchID), zap.Error(err))
 			}
@@ -390,7 +390,7 @@ func (s *Housekeeper) deduplicateDispatches(ctx context.Context) error {
 		go func(job string) {
 			defer wg.Done()
 
-			dsps := s.State.FilterDispatches(job, nil, []centrum.StatusDispatch{
+			dsps := s.State.FilterDispatches(ctx, job, nil, []centrum.StatusDispatch{
 				centrum.StatusDispatch_STATUS_DISPATCH_ARCHIVED,
 				centrum.StatusDispatch_STATUS_DISPATCH_CANCELLED,
 				centrum.StatusDispatch_STATUS_DISPATCH_COMPLETED,
@@ -555,7 +555,7 @@ func (s *Housekeeper) runCleanupUnits() {
 // iterating over the dispatches and making sure the assigned units aren't empty
 func (s *Housekeeper) removeDispatchesFromEmptyUnits(ctx context.Context) error {
 	for _, job := range s.appCfg.Get().UserTracker.LivemapJobs {
-		dsps := s.State.FilterDispatches(job, nil, []centrum.StatusDispatch{
+		dsps := s.State.FilterDispatches(ctx, job, nil, []centrum.StatusDispatch{
 			centrum.StatusDispatch_STATUS_DISPATCH_ARCHIVED,
 			centrum.StatusDispatch_STATUS_DISPATCH_CANCELLED,
 			centrum.StatusDispatch_STATUS_DISPATCH_COMPLETED,
@@ -588,7 +588,7 @@ func (s *Housekeeper) removeDispatchesFromEmptyUnits(ctx context.Context) error 
 					continue
 				}
 
-				unit, err := s.GetUnit(job, unitId)
+				unit, err := s.GetUnit(ctx, job, unitId)
 				if err != nil {
 					continue
 				}
@@ -615,7 +615,7 @@ func (s *Housekeeper) removeDispatchesFromEmptyUnits(ctx context.Context) error 
 // Iterate over units to ensure that, e.g., an empty unit status is set to `unavailable`
 func (s *Housekeeper) cleanupUnitStatus(ctx context.Context) error {
 	for _, job := range s.appCfg.Get().UserTracker.LivemapJobs {
-		units, ok := s.ListUnits(job)
+		units, ok := s.ListUnits(ctx, job)
 		if !ok {
 			continue
 		}
@@ -667,13 +667,13 @@ func (s *Housekeeper) cleanupUnitStatus(ctx context.Context) error {
 // Make sure that all users in units are still on duty
 func (s *Housekeeper) checkUnitUsers(ctx context.Context) error {
 	for _, job := range s.appCfg.Get().UserTracker.LivemapJobs {
-		units, ok := s.ListUnits(job)
+		units, ok := s.ListUnits(ctx, job)
 		if !ok {
 			continue
 		}
 
 		for _, u := range units {
-			unit, err := s.GetUnit(job, u.Id)
+			unit, err := s.GetUnit(ctx, job, u.Id)
 			if err != nil {
 				continue
 			}
@@ -694,7 +694,7 @@ func (s *Housekeeper) checkUnitUsers(ctx context.Context) error {
 					continue
 				}
 
-				unitId, _ := s.GetUserUnitID(userId)
+				unitId, _ := s.GetUserUnitID(ctx, userId)
 				// If user is in that unit and still on duty, nothing to do, otherwise remove the user from the unit
 				if unit.Id == unitId && s.tracker.IsUserOnDuty(userId) {
 					continue
@@ -734,7 +734,7 @@ func (s *Housekeeper) watchUserChanges() {
 
 				s.logger.Debug("received user changes", zap.Int("added", len(event.Added)), zap.Int("removed", len(event.Removed)))
 				for _, userMarker := range event.Added {
-					if _, ok := s.GetUserUnitID(userMarker.UserId); ok {
+					if _, ok := s.GetUserUnitID(ctx, userMarker.UserId); ok {
 						break
 					}
 
@@ -745,13 +745,13 @@ func (s *Housekeeper) watchUserChanges() {
 					}
 
 					if unitId == 0 {
-						if err := s.UnsetUnitIDForUser(userMarker.UserId); err != nil {
+						if err := s.UnsetUnitIDForUser(ctx, userMarker.UserId); err != nil {
 							s.logger.Error("failed to unset user's unit id", zap.Error(err))
 						}
 						continue
 					}
 
-					if err := s.SetUnitForUser(userMarker.Info.Job, userMarker.UserId, unitId); err != nil {
+					if err := s.SetUnitForUser(ctx, userMarker.Info.Job, userMarker.UserId, unitId); err != nil {
 						s.logger.Error("failed to update user unit id mapping in kv", zap.Error(err))
 						continue
 					}
@@ -767,7 +767,7 @@ func (s *Housekeeper) watchUserChanges() {
 }
 
 func (s *Housekeeper) handleRemoveUserFromDisponents(ctx context.Context, job string, userId int32) {
-	if s.CheckIfUserIsDisponent(job, userId) {
+	if s.CheckIfUserIsDisponent(ctx, job, userId) {
 		if err := s.DisponentSignOn(ctx, job, userId, false); err != nil {
 			s.logger.Error("failed to remove user from disponents", zap.Error(err))
 			return
@@ -776,15 +776,15 @@ func (s *Housekeeper) handleRemoveUserFromDisponents(ctx context.Context, job st
 }
 
 func (s *Housekeeper) handleRemoveUserFromUnit(ctx context.Context, job string, userId int32) bool {
-	unitId, ok := s.GetUserUnitID(userId)
+	unitId, ok := s.GetUserUnitID(ctx, userId)
 	if !ok {
 		// Nothing to do
 		return false
 	}
 
-	unit, err := s.GetUnit(job, unitId)
+	unit, err := s.GetUnit(ctx, job, unitId)
 	if err != nil {
-		if err := s.UnsetUnitIDForUser(userId); err != nil {
+		if err := s.UnsetUnitIDForUser(ctx, userId); err != nil {
 			s.logger.Error("failed to unset user's unit id", zap.Error(err))
 		}
 		return false

@@ -8,7 +8,7 @@ import (
 
 	"github.com/galexrt/fivenet/pkg/events"
 	natsutils "github.com/galexrt/fivenet/pkg/nats"
-	"github.com/nats-io/nats.go"
+	"github.com/nats-io/nats.go/jetstream"
 	"go.uber.org/zap"
 	"google.golang.org/protobuf/proto"
 )
@@ -19,52 +19,68 @@ const (
 	MarkerUpdate events.Type = "marker_update"
 )
 
-func (s *Server) registerEvents(ctx context.Context) error {
-	cfg := &nats.StreamConfig{
+func (s *Server) registerEvents(ctx context.Context, c context.Context) error {
+	cfg := jetstream.StreamConfig{
 		Name:        "LIVEMAP",
 		Description: natsutils.Description,
-		Retention:   nats.InterestPolicy,
+		Retention:   jetstream.InterestPolicy,
 		Subjects:    []string{fmt.Sprintf("%s.>", BaseSubject)},
-		Discard:     nats.DiscardOld,
+		Discard:     jetstream.DiscardOld,
 		MaxAge:      2 * time.Minute,
 	}
 	if _, err := natsutils.CreateOrUpdateStream(ctx, s.js, cfg); err != nil {
 		return err
 	}
 
+	consumer, err := s.js.CreateConsumer(ctx, cfg.Name, jetstream.ConsumerConfig{
+		DeliverPolicy: jetstream.DeliverNewPolicy,
+		FilterSubject: fmt.Sprintf("%s.>", BaseSubject),
+	})
+	if err != nil {
+		return err
+	}
+
+	cons, err := consumer.Consume(s.watchForEventsFunc(c))
+	if err != nil {
+		return err
+	}
+	s.jsCons = cons
+
 	return nil
 }
 
-func (s *Server) sendUpdateEvent(tType events.Type, event proto.Message) error {
+func (s *Server) sendUpdateEvent(ctx context.Context, tType events.Type, event proto.Message) error {
 	data, err := proto.Marshal(event)
 	if err != nil {
 		return err
 	}
 
-	if _, err := s.js.Publish(fmt.Sprintf("%s.%s", BaseSubject, tType), data); err != nil {
+	if _, err := s.js.Publish(ctx, fmt.Sprintf("%s.%s", BaseSubject, tType), data); err != nil {
 		return err
 	}
 
 	return nil
 }
 
-func (s *Server) watchForEvents(msg *nats.Msg) {
-	split := strings.Split(msg.Subject, ".")
-	if len(split) < 2 {
-		return
-	}
-
-	tType := events.Type(split[1])
-	if tType == MarkerUpdate {
-		if err := s.refreshData(); err != nil {
-			s.logger.Error("failed to refresh livemap markers cache", zap.Error(err))
+func (s *Server) watchForEventsFunc(ctx context.Context) jetstream.MessageHandler {
+	return func(msg jetstream.Msg) {
+		split := strings.Split(msg.Subject(), ".")
+		if len(split) < 2 {
 			return
 		}
 
-		// Send marker update when data has been refreshed and we have at least one subscriber
-		if s.broker.SubCount() <= 0 {
-			return
+		tType := events.Type(split[1])
+		if tType == MarkerUpdate {
+			if err := s.refreshData(ctx); err != nil {
+				s.logger.Error("failed to refresh livemap markers cache", zap.Error(err))
+				return
+			}
+
+			// Send marker update when data has been refreshed and we have at least one subscriber
+			if s.broker.SubCount() <= 0 {
+				return
+			}
+			s.broker.Publish(&brokerEvent{Send: MarkerUpdate})
 		}
-		s.broker.Publish(&brokerEvent{Send: MarkerUpdate})
 	}
 }

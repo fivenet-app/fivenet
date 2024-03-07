@@ -13,7 +13,7 @@ import (
 func (s *Server) GetSettings(ctx context.Context, req *GetSettingsRequest) (*GetSettingsResponse, error) {
 	userInfo := auth.MustGetUserInfoFromContext(ctx)
 
-	settings := s.state.GetSettings(userInfo.Job)
+	settings := s.state.GetSettings(ctx, userInfo.Job)
 
 	return &GetSettingsResponse{
 		Settings: settings,

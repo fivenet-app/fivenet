@@ -17,7 +17,7 @@ import (
 	"github.com/galexrt/fivenet/pkg/nats/store"
 	"github.com/gin-gonic/gin"
 	jet "github.com/go-jet/jet/v2/mysql"
-	"github.com/nats-io/nats.go"
+	"github.com/nats-io/nats.go/jetstream"
 	tracesdk "go.opentelemetry.io/otel/sdk/trace"
 	"go.opentelemetry.io/otel/trace"
 	"go.uber.org/fx"
@@ -27,10 +27,9 @@ import (
 )
 
 type Manager struct {
-	ctx      context.Context
 	logger   *zap.Logger
 	tracer   trace.Tracer
-	js       nats.JetStreamContext
+	js       jetstream.JetStream
 	db       *sql.DB
 	enricher *mstlystcdata.Enricher
 	postals  postals.Postals
@@ -46,7 +45,7 @@ type ManagerParams struct {
 	LC fx.Lifecycle
 
 	Logger    *zap.Logger
-	JS        nats.JetStreamContext
+	JS        jetstream.JetStream
 	TP        *tracesdk.TracerProvider
 	DB        *sql.DB
 	Enricher  *mstlystcdata.Enricher
@@ -57,15 +56,9 @@ type ManagerParams struct {
 }
 
 func NewManager(p ManagerParams) (*Manager, error) {
-	userStore, err := store.NewWithLocks[livemap.UserMarker, *livemap.UserMarker](p.Logger, p.JS, "tracker", nil)
-	if err != nil {
-		return nil, err
-	}
-
 	ctx, cancel := context.WithCancel(context.Background())
 
 	m := &Manager{
-		ctx:      ctx,
 		logger:   p.Logger,
 		tracer:   p.TP.Tracer("tracker-manager"),
 		js:       p.JS,
@@ -74,24 +67,28 @@ func NewManager(p ManagerParams) (*Manager, error) {
 		postals:  p.Postals,
 		state:    p.State,
 		appCfg:   p.AppConfig,
-
-		userStore: userStore,
 	}
 
-	p.LC.Append(fx.StartHook(func(ctx context.Context) error {
-		if err := registerStreams(ctx, m.js); err != nil {
+	p.LC.Append(fx.StartHook(func(c context.Context) error {
+		userStore, err := store.NewWithLocks[livemap.UserMarker, *livemap.UserMarker](c, p.Logger, p.JS, "tracker", nil)
+		if err != nil {
 			return err
 		}
 
-		if err := userStore.Start(m.ctx); err != nil {
+		if err := userStore.Start(ctx); err != nil {
+			return err
+		}
+		m.userStore = userStore
+
+		if err := registerStreams(c, m.js); err != nil {
 			return err
 		}
 
-		go m.start()
+		go m.start(ctx)
 
 		// Only run the tracker random user marker generator in debug mode
 		if p.Config.Mode == gin.DebugMode {
-			go m.randomizeUserMarkers()
+			go m.randomizeUserMarkers(ctx)
 		}
 
 		return nil
@@ -106,14 +103,14 @@ func NewManager(p ManagerParams) (*Manager, error) {
 	return m, nil
 }
 
-func (m *Manager) start() {
+func (m *Manager) start(ctx context.Context) {
 	for {
 		select {
-		case <-m.ctx.Done():
+		case <-ctx.Done():
 			return
 
 		case <-time.After(m.appCfg.Get().UserTracker.DbRefreshTime.AsDuration()):
-			m.refreshCache(m.ctx)
+			m.refreshCache(ctx)
 		}
 	}
 }
@@ -129,11 +126,11 @@ func (m *Manager) refreshCache(ctx context.Context) {
 	}
 }
 
-func (m *Manager) cleanupUserIDs(found map[int32]interface{}) error {
+func (m *Manager) cleanupUserIDs(ctx context.Context, found map[int32]interface{}) error {
 	event := &livemap.UsersUpdateEvent{}
 
-	keys, err := m.userStore.Keys("")
-	if err != nil && !errors.Is(err, nats.ErrNoKeysFound) {
+	keys, err := m.userStore.Keys(ctx, "")
+	if err != nil && !errors.Is(err, jetstream.ErrNoKeysFound) {
 		return err
 	}
 
@@ -157,7 +154,7 @@ func (m *Manager) cleanupUserIDs(found map[int32]interface{}) error {
 			continue
 		}
 
-		if err := m.userStore.Delete(key); err != nil {
+		if err := m.userStore.Delete(ctx, key); err != nil {
 			return err
 		}
 
@@ -165,7 +162,7 @@ func (m *Manager) cleanupUserIDs(found map[int32]interface{}) error {
 	}
 
 	if len(event.Removed) > 0 {
-		if err := m.sendUpdateEvent(UsersUpdate, event); err != nil {
+		if err := m.sendUpdateEvent(ctx, UsersUpdate, event); err != nil {
 			return err
 		}
 	}
@@ -234,11 +231,11 @@ func (m *Manager) refreshUserLocations(ctx context.Context) error {
 
 		userId := dest[i].User.UserId
 
-		unitId, ok := m.state.GetUserUnitID(userId)
+		unitId, ok := m.state.GetUserUnitID(ctx, userId)
 		if ok {
 			dest[i].UnitId = &unitId
 			job := dest[i].User.Job
-			if unit, err := m.state.GetUnit(job, unitId); err == nil {
+			if unit, err := m.state.GetUnit(ctx, job, unitId); err == nil {
 				dest[i].Unit = unit
 			}
 		}
@@ -249,7 +246,7 @@ func (m *Manager) refreshUserLocations(ctx context.Context) error {
 			// User wasn't in the list, so they must be new so add the user to event for keeping track of users
 			event.Added = append(event.Added, dest[i])
 
-			if err := m.userStore.Put(userIdKey(userId), dest[i]); err != nil {
+			if err := m.userStore.Put(ctx, userIdKey(userId), dest[i]); err != nil {
 				errs = multierr.Append(errs, err)
 				continue
 			}
@@ -258,7 +255,7 @@ func (m *Manager) refreshUserLocations(ctx context.Context) error {
 			if !proto.Equal(userMarker, dest[i]) {
 				userMarker.Merge(dest[i])
 
-				if err := m.userStore.Put(userIdKey(userId), userMarker); err != nil {
+				if err := m.userStore.Put(ctx, userIdKey(userId), userMarker); err != nil {
 					errs = multierr.Append(errs, err)
 					continue
 				}
@@ -267,12 +264,12 @@ func (m *Manager) refreshUserLocations(ctx context.Context) error {
 	}
 
 	if len(event.Added) > 0 {
-		if err := m.sendUpdateEvent(UsersUpdate, event); err != nil {
+		if err := m.sendUpdateEvent(ctx, UsersUpdate, event); err != nil {
 			return err
 		}
 	}
 
-	if err := m.cleanupUserIDs(foundUserIds); err != nil {
+	if err := m.cleanupUserIDs(ctx, foundUserIds); err != nil {
 		return err
 	}
 

@@ -35,10 +35,25 @@ const dispatchClasses = computed(() => [
     dispatchStatusToFillColor(props.dispatch.status?.status),
     dispatchStatusAnimate(props.dispatch.status?.status) ? 'animate-wiggle' : '',
 ]);
+
+const zIndexOffset = computed(() => {
+    switch (props.dispatch.status?.status) {
+        case StatusDispatch.COMPLETED:
+        case StatusDispatch.CANCELLED:
+        case StatusDispatch.ARCHIVED:
+            return 5;
+        case StatusDispatch.NEW:
+        case StatusDispatch.UNASSIGNED:
+        case StatusDispatch.UNIT_DECLINED:
+            return 15;
+        default:
+            return 10;
+    }
+});
 </script>
 
 <template>
-    <LMarker :key="dispatch.id" :lat-lng="[dispatch.y, dispatch.x]" :name="dispatch.message" :z-index-offset="10">
+    <LMarker :key="dispatch.id" :lat-lng="[dispatch.y, dispatch.x]" :name="dispatch.id" :z-index-offset="zIndexOffset">
         <LIcon :icon-anchor="iconAnchor" :popup-anchor="popupAnchor" :icon-size="[size, size]">
             <div class="flex flex-col items-center uppercase">
                 <span

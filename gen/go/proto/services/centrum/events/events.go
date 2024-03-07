@@ -8,7 +8,7 @@ import (
 
 	"github.com/galexrt/fivenet/pkg/events"
 	natsutils "github.com/galexrt/fivenet/pkg/nats"
-	"github.com/nats-io/nats.go"
+	"github.com/nats-io/nats.go/jetstream"
 )
 
 const (
@@ -45,20 +45,20 @@ func BuildSubject(topic events.Topic, tType events.Type, job string) string {
 	return fmt.Sprintf("%s.%s.%s.%s", BaseSubject, job, topic, tType)
 }
 
-func RegisterStream(ctx context.Context, js nats.JetStreamContext) error {
-	cfg := &nats.StreamConfig{
+func RegisterStream(ctx context.Context, js jetstream.JetStream) (jetstream.StreamConfig, error) {
+	cfg := jetstream.StreamConfig{
 		Name:        "CENTRUM",
 		Description: natsutils.Description,
-		Retention:   nats.InterestPolicy,
+		Retention:   jetstream.InterestPolicy,
 		Subjects:    []string{fmt.Sprintf("%s.>", BaseSubject)},
-		Discard:     nats.DiscardOld,
+		Discard:     jetstream.DiscardOld,
 		MaxAge:      120 * time.Second,
-		Storage:     nats.MemoryStorage,
+		Storage:     jetstream.MemoryStorage,
 		Duplicates:  20 * time.Second,
 	}
 	if _, err := natsutils.CreateOrUpdateStream(ctx, js, cfg); err != nil {
-		return err
+		return cfg, err
 	}
 
-	return nil
+	return cfg, nil
 }

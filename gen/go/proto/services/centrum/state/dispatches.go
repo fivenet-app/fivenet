@@ -8,20 +8,20 @@ import (
 	"github.com/galexrt/fivenet/gen/go/proto/resources/centrum"
 )
 
-func (s *State) GetDispatch(job string, id uint64) (*centrum.Dispatch, error) {
-	return s.dispatches.GetOrLoad(JobIdKey(job, id))
+func (s *State) GetDispatch(ctx context.Context, job string, id uint64) (*centrum.Dispatch, error) {
+	return s.dispatches.GetOrLoad(ctx, JobIdKey(job, id))
 }
 
-func (s *State) ListDispatches(job string) ([]*centrum.Dispatch, bool) {
+func (s *State) ListDispatches(ctx context.Context, job string) ([]*centrum.Dispatch, bool) {
 	ds := []*centrum.Dispatch{}
 
-	ids, err := s.dispatches.Keys(job)
+	ids, err := s.dispatches.Keys(ctx, job)
 	if err != nil {
 		return ds, false
 	}
 
 	for _, id := range ids {
-		dsp, err := s.dispatches.GetOrLoad(id)
+		dsp, err := s.dispatches.GetOrLoad(ctx, id)
 		if err != nil {
 			continue
 		}
@@ -33,7 +33,7 @@ func (s *State) ListDispatches(job string) ([]*centrum.Dispatch, bool) {
 				return ds, false
 			}
 
-			if err := s.DeleteDispatch(job, uint64(dId)); err != nil {
+			if err := s.DeleteDispatch(ctx, job, uint64(dId)); err != nil {
 				return ds, false
 			}
 
@@ -50,8 +50,8 @@ func (s *State) ListDispatches(job string) ([]*centrum.Dispatch, bool) {
 	return ds, true
 }
 
-func (s *State) FilterDispatches(job string, statuses []centrum.StatusDispatch, notStatuses []centrum.StatusDispatch) []*centrum.Dispatch {
-	dispatches, ok := s.ListDispatches(job)
+func (s *State) FilterDispatches(ctx context.Context, job string, statuses []centrum.StatusDispatch, notStatuses []centrum.StatusDispatch) []*centrum.Dispatch {
+	dispatches, ok := s.ListDispatches(ctx, job)
 	if !ok {
 		return nil
 	}
@@ -86,8 +86,8 @@ func (s *State) FilterDispatches(job string, statuses []centrum.StatusDispatch, 
 	return dsps
 }
 
-func (s *State) DeleteDispatch(job string, id uint64) error {
-	return s.dispatches.Delete(JobIdKey(job, id))
+func (s *State) DeleteDispatch(ctx context.Context, job string, id uint64) error {
+	return s.dispatches.Delete(ctx, JobIdKey(job, id))
 }
 
 func (s *State) CreateDispatch(ctx context.Context, job string, id uint64, dsp *centrum.Dispatch) error {
@@ -95,7 +95,7 @@ func (s *State) CreateDispatch(ctx context.Context, job string, id uint64, dsp *
 }
 
 func (s *State) UpdateDispatch(ctx context.Context, job string, id uint64, dsp *centrum.Dispatch) error {
-	if err := s.dispatches.ComputeUpdate(JobIdKey(job, id), true, func(key string, existing *centrum.Dispatch) (*centrum.Dispatch, error) {
+	if err := s.dispatches.ComputeUpdate(ctx, JobIdKey(job, id), true, func(key string, existing *centrum.Dispatch) (*centrum.Dispatch, error) {
 		if existing == nil {
 			return dsp, nil
 		}
@@ -111,7 +111,7 @@ func (s *State) UpdateDispatch(ctx context.Context, job string, id uint64, dsp *
 }
 
 func (s *State) UpdateDispatchStatus(ctx context.Context, job string, id uint64, status *centrum.DispatchStatus) error {
-	if err := s.dispatches.ComputeUpdate(JobIdKey(job, id), true, func(key string, existing *centrum.Dispatch) (*centrum.Dispatch, error) {
+	if err := s.dispatches.ComputeUpdate(ctx, JobIdKey(job, id), true, func(key string, existing *centrum.Dispatch) (*centrum.Dispatch, error) {
 		if existing == nil {
 			return nil, nil
 		}
@@ -127,7 +127,7 @@ func (s *State) UpdateDispatchStatus(ctx context.Context, job string, id uint64,
 }
 
 func (s *State) UpdateDispatchUnits(ctx context.Context, job string, id uint64, units []*centrum.DispatchAssignment) error {
-	if err := s.dispatches.ComputeUpdate(JobIdKey(job, id), true, func(key string, existing *centrum.Dispatch) (*centrum.Dispatch, error) {
+	if err := s.dispatches.ComputeUpdate(ctx, JobIdKey(job, id), true, func(key string, existing *centrum.Dispatch) (*centrum.Dispatch, error) {
 		if existing == nil {
 			return nil, nil
 		}

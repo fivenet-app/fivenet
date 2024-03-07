@@ -78,7 +78,7 @@ func (s *Server) UpdateAppConfig(ctx context.Context, req *UpdateAppConfigReques
 	}
 
 	// Update config state
-	if err := s.appCfg.Update(req.Config); err != nil {
+	if err := s.appCfg.Update(ctx, req.Config); err != nil {
 		return nil, err
 	}
 

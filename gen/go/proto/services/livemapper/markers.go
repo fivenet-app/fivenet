@@ -191,7 +191,7 @@ func (s *Server) CreateOrUpdateMarker(ctx context.Context, req *CreateOrUpdateMa
 		return nil, errswrap.NewError(ErrMarkerFailed, err)
 	}
 
-	if err := s.sendUpdateEvent(MarkerUpdate, marker); err != nil {
+	if err := s.sendUpdateEvent(ctx, MarkerUpdate, marker); err != nil {
 		return nil, errswrap.NewError(ErrMarkerFailed, err)
 	}
 
@@ -245,7 +245,7 @@ func (s *Server) DeleteMarker(ctx context.Context, req *DeleteMarkerRequest) (*D
 		return nil, errswrap.NewError(ErrMarkerFailed, err)
 	}
 
-	if err := s.sendUpdateEvent(MarkerUpdate, marker); err != nil {
+	if err := s.sendUpdateEvent(ctx, MarkerUpdate, marker); err != nil {
 		return nil, errswrap.NewError(ErrMarkerFailed, err)
 	}
 

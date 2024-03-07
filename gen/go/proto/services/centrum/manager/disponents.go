@@ -62,7 +62,7 @@ func (s *Manager) DisponentSignOn(ctx context.Context, job string, userId int32,
 		return errswrap.NewError(errorscentrum.ErrFailedQuery, err)
 	}
 
-	disponents, err := s.GetDisponents(job)
+	disponents, err := s.GetDisponents(ctx, job)
 	if err != nil {
 		return errorscentrum.ErrFailedQuery
 	}
@@ -76,7 +76,7 @@ func (s *Manager) DisponentSignOn(ctx context.Context, job string, userId int32,
 		return errswrap.NewError(errorscentrum.ErrFailedQuery, err)
 	}
 
-	if _, err := s.js.Publish(eventscentrum.BuildSubject(eventscentrum.TopicGeneral, eventscentrum.TypeGeneralDisponents, job), data); err != nil {
+	if _, err := s.js.Publish(ctx, eventscentrum.BuildSubject(eventscentrum.TopicGeneral, eventscentrum.TypeGeneralDisponents, job), data); err != nil {
 		return err
 	}
 

@@ -25,8 +25,7 @@ type UserInfoRetriever interface {
 }
 
 type UIRetriever struct {
-	ctx context.Context
-	db  *sql.DB
+	db *sql.DB
 
 	userCache    *cache.Cache[int32, *UserInfo]
 	userCacheTTL time.Duration
@@ -54,12 +53,12 @@ func NewUIRetriever(p Params) UserInfoRetriever {
 
 	p.LC.Append(fx.StopHook(func(_ context.Context) error {
 		cancel()
+
 		return nil
 	}))
 
 	return &UIRetriever{
-		ctx: ctx,
-		db:  p.DB,
+		db: p.DB,
 
 		userCache:    userCache,
 		userCacheTTL: 30 * time.Second,

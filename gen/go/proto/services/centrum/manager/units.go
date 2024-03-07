@@ -22,7 +22,7 @@ import (
 )
 
 func (s *Manager) UpdateUnitStatus(ctx context.Context, job string, unitId uint64, in *centrum.UnitStatus) (*centrum.UnitStatus, error) {
-	unit, err := s.GetUnit(job, unitId)
+	unit, err := s.GetUnit(ctx, job, unitId)
 	if err != nil {
 		return nil, errswrap.NewError(errorscentrum.ErrFailedQuery, err)
 	}
@@ -119,7 +119,7 @@ func (s *Manager) UpdateUnitStatus(ctx context.Context, job string, unitId uint6
 		return nil, err
 	}
 
-	if _, err := s.js.Publish(eventscentrum.BuildSubject(eventscentrum.TopicUnit, eventscentrum.TypeUnitStatus, job), data); err != nil {
+	if _, err := s.js.Publish(ctx, eventscentrum.BuildSubject(eventscentrum.TopicUnit, eventscentrum.TypeUnitStatus, job), data); err != nil {
 		return nil, fmt.Errorf("failed to publish unit status event (size: %d, message: '%+v'): %w", len(data), in, err)
 	}
 
@@ -178,7 +178,7 @@ func (s *Manager) UpdateUnitAssignments(ctx context.Context, job string, userId 
 				continue
 			}
 
-			unit, err := s.GetUnit(job, unitId)
+			unit, err := s.GetUnit(ctx, job, unitId)
 			if err != nil {
 				return err
 			}
@@ -223,7 +223,7 @@ func (s *Manager) UpdateUnitAssignments(ctx context.Context, job string, userId 
 	store := s.State.UnitsStore()
 
 	key := state.JobIdKey(job, unitId)
-	if err := store.ComputeUpdate(key, true, func(key string, unit *centrum.Unit) (*centrum.Unit, error) {
+	if err := store.ComputeUpdate(ctx, key, true, func(key string, unit *centrum.Unit) (*centrum.Unit, error) {
 		if len(toRemove) > 0 {
 			toAnnounce := []int32{}
 
@@ -255,7 +255,7 @@ func (s *Manager) UpdateUnitAssignments(ctx context.Context, job string, userId 
 					return nil, err
 				}
 
-				if err := s.UnsetUnitIDForUser(user); err != nil {
+				if err := s.UnsetUnitIDForUser(ctx, user); err != nil {
 					return nil, err
 				}
 			}
@@ -305,7 +305,7 @@ func (s *Manager) UpdateUnitAssignments(ctx context.Context, job string, userId 
 					return nil, err
 				}
 
-				if err := s.SetUnitForUser(user.Job, user.UserId, unit.Id); err != nil {
+				if err := s.SetUnitForUser(ctx, user.Job, user.UserId, unit.Id); err != nil {
 					return nil, err
 				}
 			}
@@ -332,7 +332,7 @@ func (s *Manager) UpdateUnitAssignments(ctx context.Context, job string, userId 
 		return err
 	}
 
-	unit, err := s.GetUnit(job, unitId)
+	unit, err := s.GetUnit(ctx, job, unitId)
 	if err != nil {
 		return err
 	}
@@ -342,7 +342,7 @@ func (s *Manager) UpdateUnitAssignments(ctx context.Context, job string, userId 
 		return err
 	}
 
-	if _, err := s.js.Publish(eventscentrum.BuildSubject(eventscentrum.TopicUnit, eventscentrum.TypeUnitUpdated, job), data); err != nil {
+	if _, err := s.js.Publish(ctx, eventscentrum.BuildSubject(eventscentrum.TopicUnit, eventscentrum.TypeUnitUpdated, job), data); err != nil {
 		return err
 	}
 
@@ -415,7 +415,7 @@ func (s *Manager) CreateUnit(ctx context.Context, job string, unit *centrum.Unit
 		return nil, errswrap.NewError(errorscentrum.ErrFailedQuery, err)
 	}
 
-	if _, err := s.js.Publish(eventscentrum.BuildSubject(eventscentrum.TopicUnit, eventscentrum.TypeUnitCreated, job), data); err != nil {
+	if _, err := s.js.Publish(ctx, eventscentrum.BuildSubject(eventscentrum.TopicUnit, eventscentrum.TypeUnitCreated, job), data); err != nil {
 		return nil, err
 	}
 
@@ -468,7 +468,7 @@ func (s *Manager) UpdateUnit(ctx context.Context, job string, unit *centrum.Unit
 		return nil, errswrap.NewError(errorscentrum.ErrFailedQuery, err)
 	}
 
-	if _, err := s.js.Publish(eventscentrum.BuildSubject(eventscentrum.TopicUnit, eventscentrum.TypeUnitUpdated, job), data); err != nil {
+	if _, err := s.js.Publish(ctx, eventscentrum.BuildSubject(eventscentrum.TopicUnit, eventscentrum.TypeUnitUpdated, job), data); err != nil {
 		return nil, err
 	}
 
@@ -523,7 +523,7 @@ func (s *Manager) AddUnitStatus(ctx context.Context, tx qrm.DB, job string, stat
 		return nil, err
 	}
 
-	if _, err := s.js.Publish(eventscentrum.BuildSubject(eventscentrum.TopicUnit, eventscentrum.TypeUnitStatus, job), data); err != nil {
+	if _, err := s.js.Publish(ctx, eventscentrum.BuildSubject(eventscentrum.TopicUnit, eventscentrum.TypeUnitStatus, job), data); err != nil {
 		return nil, err
 	}
 
@@ -576,7 +576,7 @@ func (s *Manager) GetUnitStatus(ctx context.Context, tx qrm.DB, job string, id u
 	}
 
 	if dest.UnitId > 0 && dest.User != nil {
-		unit, err := s.GetUnit(job, dest.UnitId)
+		unit, err := s.GetUnit(ctx, job, dest.UnitId)
 		if err != nil {
 			return nil, errswrap.NewError(errorscentrum.ErrFailedQuery, err)
 		}
@@ -589,7 +589,7 @@ func (s *Manager) GetUnitStatus(ctx context.Context, tx qrm.DB, job string, id u
 }
 
 func (s *Manager) DeleteUnit(ctx context.Context, job string, id uint64) error {
-	unit, err := s.State.GetUnit(job, id)
+	unit, err := s.State.GetUnit(ctx, job, id)
 	if err != nil {
 		return nil
 	}
@@ -615,11 +615,11 @@ func (s *Manager) DeleteUnit(ctx context.Context, job string, id uint64) error {
 		return err
 	}
 
-	if err := s.State.DeleteUnit(job, id); err != nil {
+	if err := s.State.DeleteUnit(ctx, job, id); err != nil {
 		return err
 	}
 
-	if _, err := s.js.Publish(eventscentrum.BuildSubject(eventscentrum.TopicUnit, eventscentrum.TypeUnitDeleted, job), data); err != nil {
+	if _, err := s.js.Publish(ctx, eventscentrum.BuildSubject(eventscentrum.TopicUnit, eventscentrum.TypeUnitDeleted, job), data); err != nil {
 		return err
 	}
 

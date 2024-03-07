@@ -6,6 +6,7 @@ import (
 
 	"github.com/nats-io/nats-server/v2/server"
 	"github.com/nats-io/nats.go"
+	"github.com/nats-io/nats.go/jetstream"
 )
 
 var TestNATSServer *natsServer
@@ -50,13 +51,13 @@ func (m *natsServer) GetClient() (*nats.Conn, error) {
 	return nats.Connect(m.GetURL())
 }
 
-func (m *natsServer) GetJS() (nats.JetStreamContext, error) {
+func (m *natsServer) GetJS() (jetstream.JetStream, error) {
 	cli, err := m.GetClient()
 	if err != nil {
 		return nil, err
 	}
 
-	return cli.JetStream()
+	return jetstream.New(cli)
 }
 
 func (m *natsServer) Stop() {

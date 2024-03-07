@@ -11,7 +11,7 @@ import (
 	"github.com/galexrt/fivenet/pkg/utils"
 	"github.com/galexrt/fivenet/query/fivenet/table"
 	"github.com/go-jet/jet/v2/qrm"
-	"github.com/nats-io/nats.go"
+	"github.com/nats-io/nats.go/jetstream"
 	"go.uber.org/fx"
 	"go.uber.org/zap"
 )
@@ -25,7 +25,7 @@ var (
 type IConfig interface {
 	Get() *Cfg
 	Set(val *Cfg)
-	Update(val *Cfg) error
+	Update(ctx context.Context, val *Cfg) error
 	Reload(ctx context.Context) (*Cfg, error)
 
 	Subscribe() chan *Cfg
@@ -41,12 +41,11 @@ var Module = fx.Module("appconfig",
 type Config struct {
 	IConfig
 
-	ctx    context.Context
 	logger *zap.Logger
 	db     *sql.DB
-	js     nats.JetStreamContext
+	js     jetstream.JetStream
 
-	jsSub *nats.Subscription
+	jsCons jetstream.ConsumeContext
 
 	cfg atomic.Pointer[Cfg]
 
@@ -59,45 +58,42 @@ type Params struct {
 	LC fx.Lifecycle
 
 	Logger *zap.Logger
-	JS     nats.JetStreamContext
+	JS     jetstream.JetStream
 	DB     *sql.DB
 }
 
 func New(p Params) (IConfig, error) {
 	ctx, cancel := context.WithCancel(context.Background())
 
-	c := &Config{
-		ctx:    ctx,
+	cfg := &Config{
 		logger: p.Logger,
 		db:     p.DB,
 		js:     p.JS,
 
 		cfg: atomic.Pointer[Cfg]{},
 
-		broker: utils.NewBroker[*Cfg](ctx),
+		broker: utils.NewBroker[*Cfg](),
 	}
 
-	p.LC.Append(fx.StartHook(func(ctx context.Context) error {
-		go c.broker.Start()
+	p.LC.Append(fx.StartHook(func(c context.Context) error {
+		go cfg.broker.Start(ctx)
 
-		if _, err := c.updateConfigFromDB(ctx); err != nil {
+		if _, err := cfg.updateConfigFromDB(c); err != nil {
 			return err
 		}
 
-		return c.registerEvents(ctx)
+		return cfg.registerSubscriptions(c)
 	}))
 
 	p.LC.Append(fx.StopHook(func(ctx context.Context) error {
-		if c.jsSub != nil {
-			return c.jsSub.Unsubscribe()
-		}
-
 		cancel()
+
+		cfg.jsCons.Stop()
 
 		return nil
 	}))
 
-	return c, nil
+	return cfg, nil
 }
 
 func (c *Config) Get() *Cfg {
@@ -108,11 +104,11 @@ func (c *Config) Set(val *Cfg) {
 	c.cfg.Store(val)
 }
 
-func (c *Config) Update(val *Cfg) error {
+func (c *Config) Update(ctx context.Context, val *Cfg) error {
 	c.Set(val)
 
 	// Send update message to inform components
-	if _, err := c.js.Publish(fmt.Sprintf("%s.%s", BaseSubject, UpdateSubject), nil); err != nil {
+	if _, err := c.js.Publish(ctx, fmt.Sprintf("%s.%s", BaseSubject, UpdateSubject), nil); err != nil {
 		return err
 	}
 

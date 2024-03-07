@@ -44,14 +44,14 @@ func (s *Manager) UpdateSettingsInDB(ctx context.Context, job string, settings *
 		return nil, errswrap.NewError(errorscentrum.ErrFailedQuery, err)
 	}
 
-	set := s.GetSettings(job)
+	set := s.GetSettings(ctx, job)
 
 	data, err := proto.Marshal(set)
 	if err != nil {
 		return nil, errswrap.NewError(errorscentrum.ErrFailedQuery, err)
 	}
 
-	if _, err := s.js.Publish(eventscentrum.BuildSubject(eventscentrum.TopicGeneral, eventscentrum.TypeGeneralSettings, job), data); err != nil {
+	if _, err := s.js.Publish(ctx, eventscentrum.BuildSubject(eventscentrum.TopicGeneral, eventscentrum.TypeGeneralSettings, job), data); err != nil {
 		return nil, err
 	}
 

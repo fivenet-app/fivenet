@@ -15,7 +15,7 @@ import (
 	"github.com/galexrt/fivenet/query/fivenet/table"
 	jet "github.com/go-jet/jet/v2/mysql"
 	"github.com/go-jet/jet/v2/qrm"
-	"github.com/nats-io/nats.go"
+	"github.com/nats-io/nats.go/jetstream"
 	"go.uber.org/zap"
 	"google.golang.org/protobuf/proto"
 )
@@ -42,7 +42,7 @@ func (s *Server) ListUnits(ctx context.Context, req *ListUnitsRequest) (*ListUni
 		Units: []*centrum.Unit{},
 	}
 
-	resp.Units = s.state.FilterUnits(userInfo.Job, req.Status, nil, nil)
+	resp.Units = s.state.FilterUnits(ctx, userInfo.Job, req.Status, nil, nil)
 	if resp.Units == nil {
 		return nil, errorscentrum.ErrModeForbidsAction
 	}
@@ -125,12 +125,12 @@ func (s *Server) UpdateUnitStatus(ctx context.Context, req *UpdateUnitStatusRequ
 	}
 	defer s.auditer.Log(auditEntry, req)
 
-	unit, err := s.state.GetUnit(userInfo.Job, req.UnitId)
+	unit, err := s.state.GetUnit(ctx, userInfo.Job, req.UnitId)
 	if err != nil {
 		return nil, errswrap.NewError(errorscentrum.ErrFailedQuery, err)
 	}
 
-	if !s.state.CheckIfUserPartOfUnit(userInfo.Job, userInfo.UserId, unit, true) {
+	if !s.state.CheckIfUserPartOfUnit(ctx, userInfo.Job, userInfo.UserId, unit, true) {
 		return nil, errorscentrum.ErrNotPartOfUnit
 	}
 
@@ -163,7 +163,7 @@ func (s *Server) AssignUnit(ctx context.Context, req *AssignUnitRequest) (*Assig
 	}
 	defer s.auditer.Log(auditEntry, req)
 
-	unit, err := s.state.GetUnit(userInfo.Job, req.UnitId)
+	unit, err := s.state.GetUnit(ctx, userInfo.Job, req.UnitId)
 	if err != nil {
 		return nil, errswrap.NewError(errorscentrum.ErrFailedQuery, err)
 	}
@@ -185,14 +185,14 @@ func (s *Server) JoinUnit(ctx context.Context, req *JoinUnitRequest) (*JoinUnitR
 
 	// Check if user is on duty
 	if _, ok := s.tracker.GetUserById(userInfo.UserId); !ok {
-		if err := s.state.UnsetUnitIDForUser(userInfo.UserId); err != nil {
+		if err := s.state.UnsetUnitIDForUser(ctx, userInfo.UserId); err != nil {
 			return nil, errswrap.NewError(errorscentrum.ErrFailedQuery, err)
 		}
 
 		return nil, errorscentrum.ErrNotOnDuty
 	}
 
-	currentUnitId, _ := s.state.GetUserUnitID(userInfo.UserId)
+	currentUnitId, _ := s.state.GetUserUnitID(ctx, userInfo.UserId)
 
 	resp := &JoinUnitResponse{}
 	// User tries to join his own unit
@@ -200,8 +200,8 @@ func (s *Server) JoinUnit(ctx context.Context, req *JoinUnitRequest) (*JoinUnitR
 		return resp, nil
 	}
 
-	currentUnit, err := s.state.GetUnit(userInfo.Job, currentUnitId)
-	if err != nil && !errors.Is(err, nats.ErrKeyNotFound) {
+	currentUnit, err := s.state.GetUnit(ctx, userInfo.Job, currentUnitId)
+	if err != nil && !errors.Is(err, jetstream.ErrKeyNotFound) {
 		return nil, errorscentrum.ErrNotOnDuty
 	}
 
@@ -215,7 +215,7 @@ func (s *Server) JoinUnit(ctx context.Context, req *JoinUnitRequest) (*JoinUnitR
 			}
 		}
 
-		newUnit, err := s.state.GetUnit(userInfo.Job, *req.UnitId)
+		newUnit, err := s.state.GetUnit(ctx, userInfo.Job, *req.UnitId)
 		if err != nil {
 			return nil, errswrap.NewError(errorscentrum.ErrFailedQuery, err)
 		}
@@ -313,7 +313,7 @@ func (s *Server) ListUnitActivity(ctx context.Context, req *ListUnitActivityRequ
 
 	for i := 0; i < len(resp.Activity); i++ {
 		if resp.Activity[i].UnitId > 0 && resp.Activity[i].User != nil {
-			unit, err := s.state.GetUnit(userInfo.Job, resp.Activity[i].UnitId)
+			unit, err := s.state.GetUnit(ctx, userInfo.Job, resp.Activity[i].UnitId)
 			if err != nil {
 				return nil, errswrap.NewError(errorscentrum.ErrFailedQuery, err)
 			}

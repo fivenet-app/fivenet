@@ -17,7 +17,7 @@ type TestConfig struct {
 func NewTest(ctx context.Context) (IConfig, error) {
 	cfg := &TestConfig{
 		cfg:    atomic.Pointer[rector.AppConfig]{},
-		broker: utils.NewBroker[*Cfg](ctx),
+		broker: utils.NewBroker[*Cfg](),
 	}
 
 	c := &Cfg{}
@@ -25,7 +25,7 @@ func NewTest(ctx context.Context) (IConfig, error) {
 
 	cfg.Set(c)
 
-	go cfg.broker.Start()
+	go cfg.broker.Start(ctx)
 
 	return cfg, nil
 }
@@ -38,7 +38,7 @@ func (c *TestConfig) Set(val *Cfg) {
 	c.cfg.Store(val)
 }
 
-func (c *TestConfig) Update(val *Cfg) error {
+func (c *TestConfig) Update(ctx context.Context, val *Cfg) error {
 	c.Set(val)
 
 	return nil

@@ -1,11 +1,13 @@
 package state
 
 import (
+	"context"
+
 	"github.com/galexrt/fivenet/gen/go/proto/resources/centrum"
 	"google.golang.org/protobuf/proto"
 )
 
-func (s *State) GetSettings(job string) *centrum.Settings {
+func (s *State) GetSettings(ctx context.Context, job string) *centrum.Settings {
 	settings, _ := s.settings.LoadOrCompute(job, func() *centrum.Settings {
 		return &centrum.Settings{
 			Job:              job,
@@ -19,15 +21,15 @@ func (s *State) GetSettings(job string) *centrum.Settings {
 	return settings
 }
 
-func (s *State) UpdateSettings(job string, in *centrum.Settings) error {
-	current := s.GetSettings(job)
+func (s *State) UpdateSettings(ctx context.Context, job string, in *centrum.Settings) error {
+	current := s.GetSettings(ctx, job)
 	// Simply use protobuf merge to update existing settings with incoming settings
 	proto.Merge(current, in)
 
 	return nil
 }
 
-func (s *State) ListSettings() []*centrum.Settings {
+func (s *State) ListSettings(ctx context.Context) []*centrum.Settings {
 	list := []*centrum.Settings{}
 
 	s.settings.Range(func(_ string, settings *centrum.Settings) bool {

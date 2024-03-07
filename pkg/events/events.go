@@ -8,13 +8,17 @@ import (
 	"github.com/galexrt/fivenet/pkg/config"
 	"github.com/galexrt/fivenet/pkg/server/admin"
 	"github.com/nats-io/nats.go"
+	"github.com/nats-io/nats.go/jetstream"
 	"github.com/prometheus/client_golang/prometheus"
 	"github.com/prometheus/client_golang/prometheus/promauto"
 	"go.uber.org/fx"
 )
 
+// Default `defaultAsyncPubAckInflight` is `4000` (`nats.go`)
+const DefaultDefaultAsyncPubAckInflight = 256
+
 var (
-	metricsNats = promauto.NewGauge(prometheus.GaugeOpts{
+	natsAsyncPendingMetric = promauto.NewGauge(prometheus.GaugeOpts{
 		Namespace: admin.MetricsNamespace,
 		Subsystem: "nats",
 		Name:      "jetstream_async_pending_count",
@@ -38,7 +42,7 @@ type Params struct {
 type Result struct {
 	fx.Out
 
-	JS nats.JetStreamContext
+	JS jetstream.JetStream
 }
 
 func New(p Params) (res Result, err error) {
@@ -48,12 +52,10 @@ func New(p Params) (res Result, err error) {
 		return res, err
 	}
 
-	// Default `defaultAsyncPubAckInflight` is `4000` (`nats.go`)
-	js, err := nc.JetStream(nats.PublishAsyncMaxPending(256))
+	res.JS, err = jetstream.New(nc, jetstream.WithPublishAsyncMaxPending(DefaultDefaultAsyncPubAckInflight))
 	if err != nil {
 		return res, err
 	}
-	res.JS = js
 
 	wg := sync.WaitGroup{}
 	ctx, cancel := context.WithCancel(context.Background())
@@ -70,7 +72,7 @@ func New(p Params) (res Result, err error) {
 					return
 
 				case <-time.After(5 * time.Second):
-					metricsNats.Set(float64(js.PublishAsyncPending()))
+					natsAsyncPendingMetric.Set(float64(res.JS.PublishAsyncPending()))
 				}
 			}
 		}()

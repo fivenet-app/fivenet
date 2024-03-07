@@ -39,7 +39,6 @@ type Cache struct {
 	refreshTime time.Duration
 
 	tracer             trace.Tracer
-	ctx                context.Context
 	jobs               *cache.Cache[string, *users.Job]
 	docCategories      *cache.Cache[uint64, *documents.Category]
 	docCategoriesByJob *cache.Cache[string, []*documents.Category]
@@ -62,14 +61,13 @@ type Params struct {
 func NewCache(p Params) (*Cache, error) {
 	ctx, cancel := context.WithCancel(context.Background())
 
-	c := &Cache{
+	cc := &Cache{
 		logger: p.Logger,
 		db:     p.DB,
 
 		refreshTime: p.Config.Cache.RefreshTime,
 
 		tracer:             p.TP.Tracer("mstlystcdata-cache"),
-		ctx:                ctx,
 		jobs:               cache.NewContext[string, *users.Job](ctx),
 		docCategories:      cache.NewContext[uint64, *documents.Category](ctx),
 		docCategoriesByJob: cache.NewContext[string, []*documents.Category](ctx),
@@ -77,15 +75,15 @@ func NewCache(p Params) (*Cache, error) {
 	}
 
 	var err error
-	c.searcher, err = NewSearcher(c)
-	c.searcher.addDataToIndex()
+	cc.searcher, err = NewSearcher(cc)
+	cc.searcher.addDataToIndex()
 
-	p.LC.Append(fx.StartHook(func(_ context.Context) error {
-		if err := c.refreshCache(); err != nil {
+	p.LC.Append(fx.StartHook(func(c context.Context) error {
+		if err := cc.refreshCache(c); err != nil {
 			return err
 		}
 
-		go c.start()
+		go cc.start(ctx)
 		return nil
 	}))
 
@@ -94,17 +92,17 @@ func NewCache(p Params) (*Cache, error) {
 		return nil
 	}))
 
-	return c, err
+	return cc, err
 }
 
-func (c *Cache) start() {
+func (c *Cache) start(ctx context.Context) {
 	for {
-		if err := c.refreshCache(); err != nil {
+		if err := c.refreshCache(ctx); err != nil {
 			c.logger.Error("failed to refresh mostly static data cache", zap.Error(err))
 		}
 
 		select {
-		case <-c.ctx.Done():
+		case <-ctx.Done():
 			return
 		case <-time.After(c.refreshTime):
 		}
@@ -115,8 +113,8 @@ func (c *Cache) GetSearcher() *Searcher {
 	return c.searcher
 }
 
-func (c *Cache) refreshCache() error {
-	ctx, span := c.tracer.Start(c.ctx, "mstlystcdata-refresh-cache")
+func (c *Cache) refreshCache(ctx context.Context) error {
+	ctx, span := c.tracer.Start(ctx, "mstlystcdata-refresh-cache")
 	defer span.End()
 
 	if err := c.refreshCategories(ctx); err != nil {

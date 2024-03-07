@@ -1,12 +1,14 @@
 package manager
 
 import (
+	"context"
+
 	"github.com/galexrt/fivenet/gen/go/proto/resources/centrum"
 	"github.com/galexrt/fivenet/pkg/grpc/auth/userinfo"
 )
 
-func (s *Manager) CheckIfUserIsDisponent(job string, userId int32) bool {
-	disponents, err := s.GetDisponents(job)
+func (s *Manager) CheckIfUserIsDisponent(ctx context.Context, job string, userId int32) bool {
+	disponents, err := s.GetDisponents(ctx, job)
 	if err != nil {
 		return false
 	}
@@ -24,20 +26,20 @@ func (s *Manager) CheckIfUserIsDisponent(job string, userId int32) bool {
 	return false
 }
 
-func (s *Manager) CheckIfUserIsPartOfDispatch(userInfo *userinfo.UserInfo, dsp *centrum.Dispatch, disponentOkay bool) bool {
+func (s *Manager) CheckIfUserIsPartOfDispatch(ctx context.Context, userInfo *userinfo.UserInfo, dsp *centrum.Dispatch, disponentOkay bool) bool {
 	// Check if user is a disponent
-	if disponentOkay && s.CheckIfUserIsDisponent(userInfo.Job, userInfo.UserId) {
+	if disponentOkay && s.CheckIfUserIsDisponent(ctx, userInfo.Job, userInfo.UserId) {
 		return true
 	}
 
 	// Iterate over units of dispatch and check if the user is in one of the units
 	for i := 0; i < len(dsp.Units); i++ {
-		unit, err := s.GetUnit(dsp.Units[i].Unit.Job, dsp.Units[i].UnitId)
+		unit, err := s.GetUnit(ctx, dsp.Units[i].Unit.Job, dsp.Units[i].UnitId)
 		if unit == nil || err != nil {
 			continue
 		}
 
-		if s.CheckIfUserPartOfUnit(userInfo.Job, userInfo.UserId, unit, disponentOkay) {
+		if s.CheckIfUserPartOfUnit(ctx, userInfo.Job, userInfo.UserId, unit, disponentOkay) {
 			return true
 		}
 	}
@@ -45,9 +47,9 @@ func (s *Manager) CheckIfUserIsPartOfDispatch(userInfo *userinfo.UserInfo, dsp *
 	return false
 }
 
-func (s *Manager) CheckIfUserPartOfUnit(job string, userId int32, unit *centrum.Unit, disponentOkay bool) bool {
+func (s *Manager) CheckIfUserPartOfUnit(ctx context.Context, job string, userId int32, unit *centrum.Unit, disponentOkay bool) bool {
 	// Check if user is a disponent
-	if disponentOkay && s.CheckIfUserIsDisponent(job, userId) {
+	if disponentOkay && s.CheckIfUserIsDisponent(ctx, job, userId) {
 		return true
 	}
 
@@ -59,14 +61,14 @@ func (s *Manager) CheckIfUserPartOfUnit(job string, userId int32, unit *centrum.
 
 	return false
 }
-func (s *Manager) CheckIfBotNeeded(job string) bool {
-	settings := s.GetSettings(job)
+func (s *Manager) CheckIfBotNeeded(ctx context.Context, job string) bool {
+	settings := s.GetSettings(ctx, job)
 
 	if settings.Mode == centrum.CentrumMode_CENTRUM_MODE_AUTO_ROUND_ROBIN {
 		return true
 	}
 
-	disponents, err := s.GetDisponents(job)
+	disponents, err := s.GetDisponents(ctx, job)
 	if err != nil {
 		return false
 	}

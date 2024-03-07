@@ -14,8 +14,8 @@ import (
 	"go.uber.org/zap"
 )
 
-func (s *Manager) loadData() error {
-	ctx, span := s.tracer.Start(s.ctx, "centrum-loaddata")
+func (s *Manager) loadData(ctx context.Context) error {
+	ctx, span := s.tracer.Start(ctx, "centrum-loaddata")
 	defer span.End()
 
 	s.logger.Debug("loading settings")
@@ -68,7 +68,7 @@ func (s *Manager) LoadSettingsFromDB(ctx context.Context, job string) error {
 	}
 
 	for _, settings := range dest {
-		if err := s.State.UpdateSettings(settings.Job, settings); err != nil {
+		if err := s.State.UpdateSettings(ctx, settings.Job, settings); err != nil {
 			return err
 		}
 	}
@@ -127,12 +127,12 @@ func (s *Manager) LoadDisponentsFromDB(ctx context.Context, job string) error {
 	}
 
 	if job != "" {
-		if err := s.UpdateDisponents(job, perJob[job]); err != nil {
+		if err := s.UpdateDisponents(ctx, job, perJob[job]); err != nil {
 			return err
 		}
 	} else {
 		for job, us := range perJob {
-			if err := s.UpdateDisponents(job, us); err != nil {
+			if err := s.UpdateDisponents(ctx, job, us); err != nil {
 				return err
 			}
 		}
@@ -210,7 +210,7 @@ func (s *Manager) LoadUnitsFromDB(ctx context.Context, id uint64) error {
 		}
 
 		for _, user := range units[i].Users {
-			if err := s.SetUnitForUser(user.User.Job, user.UserId, units[i].Id); err != nil {
+			if err := s.SetUnitForUser(ctx, user.User.Job, user.UserId, units[i].Id); err != nil {
 				s.logger.Error("failed to set user's unit id", zap.Error(err))
 			}
 		}
@@ -400,7 +400,7 @@ func (s *Manager) LoadDispatchAssignments(ctx context.Context, job string, dispa
 
 	// Resolve units based on the dispatch unit assignments
 	for i := 0; i < len(dest); i++ {
-		unit, err := s.GetUnit(job, dest[i].UnitId)
+		unit, err := s.GetUnit(ctx, job, dest[i].UnitId)
 		if unit == nil || err != nil {
 			return nil, fmt.Errorf("no unit found with id")
 		}

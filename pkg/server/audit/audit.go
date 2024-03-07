@@ -36,7 +36,6 @@ type AuditStorer struct {
 	logger *zap.Logger
 	tracer trace.Tracer
 	db     *sql.DB
-	ctx    context.Context
 	wg     sync.WaitGroup
 	input  chan *model.FivenetAuditLog
 }
@@ -59,7 +58,6 @@ func New(p Params) IAuditer {
 		logger: p.Logger.Named("audit"),
 		tracer: p.TP.Tracer("audit"),
 		db:     p.DB,
-		ctx:    ctx,
 		wg:     sync.WaitGroup{},
 		input:  make(chan *model.FivenetAuditLog),
 	}
@@ -67,7 +65,7 @@ func New(p Params) IAuditer {
 	p.LC.Append(fx.StartHook(func(_ context.Context) error {
 		for i := 0; i < 4; i++ {
 			a.wg.Add(1)
-			go a.worker()
+			go a.worker(ctx)
 		}
 
 		return nil
@@ -83,17 +81,18 @@ func New(p Params) IAuditer {
 	return a
 }
 
-func (a *AuditStorer) worker() {
+func (a *AuditStorer) worker(ctx context.Context) {
 	defer a.wg.Done()
 	for {
 		select {
+		case <-ctx.Done():
+			return
+
 		case in := <-a.input:
-			if err := a.store(in); err != nil {
+			if err := a.store(ctx, in); err != nil {
 				a.logger.Error("failed to store audit log", zap.Error(err))
 				continue
 			}
-		case <-a.ctx.Done():
-			return
 		}
 	}
 }
@@ -107,12 +106,12 @@ func (a *AuditStorer) Log(in *model.FivenetAuditLog, data any) {
 	a.input <- in
 }
 
-func (a *AuditStorer) store(in *model.FivenetAuditLog) error {
+func (a *AuditStorer) store(ctx context.Context, in *model.FivenetAuditLog) error {
 	if in == nil {
 		return nil
 	}
 
-	ctx, span := a.tracer.Start(a.ctx, "audit-store")
+	ctx, span := a.tracer.Start(ctx, "audit-store")
 	defer span.End()
 
 	// Remove everything but the last part of the GRPC service name

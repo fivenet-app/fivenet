@@ -21,7 +21,7 @@ import (
 	"github.com/galexrt/fivenet/query/fivenet/table"
 	jet "github.com/go-jet/jet/v2/mysql"
 	"github.com/go-jet/jet/v2/qrm"
-	"github.com/nats-io/nats.go"
+	"github.com/nats-io/nats.go/jetstream"
 	"go.uber.org/fx"
 	"go.uber.org/zap"
 	grpc "google.golang.org/grpc"
@@ -51,7 +51,7 @@ type Server struct {
 	p        perms.Permissions
 	tm       *auth.TokenMgr
 	ui       userinfo.UserInfoRetriever
-	js       nats.JetStreamContext
+	js       jetstream.JetStream
 	enricher *mstlystcdata.Enricher
 }
 
@@ -65,7 +65,7 @@ type Params struct {
 	Perms    perms.Permissions
 	TM       *auth.TokenMgr
 	UI       userinfo.UserInfoRetriever
-	JS       nats.JetStreamContext
+	JS       jetstream.JetStream
 	Enricher *mstlystcdata.Enricher
 }
 
@@ -234,12 +234,32 @@ func (s *Server) Stream(req *StreamRequest, srv NotificatorService_StreamServer)
 	// Track changes to user info, so we can send an updated user info to the user
 	currentUserInfo := userInfo.Clone()
 
-	msgCh := make(chan *nats.Msg, 16)
-	sub, err := s.js.ChanSubscribe(fmt.Sprintf("%s.%s.%d", notifi.BaseSubject, notifi.UserNotification, currentUserInfo.UserId), msgCh, nats.DeliverNew())
+	// Setup consumer
+	c, err := s.js.CreateConsumer(srv.Context(), notifi.StreamName, jetstream.ConsumerConfig{
+		FilterSubject: fmt.Sprintf("%s.%s.%d", notifi.BaseSubject, notifi.UserNotification, currentUserInfo.UserId),
+	})
 	if err != nil {
-		return err
+		return errswrap.NewError(ErrFailedStream, err)
 	}
-	defer sub.Unsubscribe()
+
+	cons, err := c.Messages()
+	if err != nil {
+		return errswrap.NewError(ErrFailedStream, err)
+	}
+	defer cons.Stop()
+
+	msgCh := make(chan jetstream.Msg, 8)
+	go func() {
+		for {
+			msg, err := cons.Next()
+			if errors.Is(err, jetstream.ErrMsgIteratorClosed) {
+				close(msgCh)
+				break
+			}
+
+			msgCh <- msg
+		}
+	}()
 
 	// Update Ticker
 	updateTicker := time.NewTicker(40 * time.Second)
@@ -288,24 +308,13 @@ func (s *Server) Stream(req *StreamRequest, srv NotificatorService_StreamServer)
 				return nil
 			}
 
-			// Make sure message queue subscription is still valid, otherwise restart stream
-			if !sub.IsValid() {
-				restart := true
-				if err := srv.Send(&StreamResponse{
-					LastId:  req.LastId,
-					Restart: &restart,
-				}); err != nil {
-					return ErrFailedStream
-				}
-			}
-
 		case msg := <-msgCh:
 			// Publish notifications sent directly to user via the message queue
 			msg.Ack()
 
 			var dest notifications.Notification
-			if err := proto.Unmarshal(msg.Data, &dest); err != nil {
-				return err
+			if err := proto.Unmarshal(msg.Data(), &dest); err != nil {
+				return errswrap.NewError(ErrFailedStream, err)
 			}
 
 			resp.Data = &StreamResponse_Notifications{
@@ -315,7 +324,7 @@ func (s *Server) Stream(req *StreamRequest, srv NotificatorService_StreamServer)
 			}
 
 			if err := srv.Send(resp); err != nil {
-				return ErrFailedStream
+				return errswrap.NewError(ErrFailedStream, err)
 			}
 		}
 	}

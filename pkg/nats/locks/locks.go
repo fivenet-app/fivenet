@@ -11,7 +11,7 @@ import (
 	"sync"
 	"time"
 
-	"github.com/nats-io/nats.go"
+	"github.com/nats-io/nats.go/jetstream"
 	"go.uber.org/zap"
 )
 
@@ -19,7 +19,7 @@ const keyPrefix = "LOCK."
 
 type Locks struct {
 	logger *zap.Logger
-	kv     nats.KeyValue
+	kv     jetstream.KeyValue
 
 	bucket string
 
@@ -29,7 +29,7 @@ type Locks struct {
 	maplock sync.Mutex
 }
 
-func New(logger *zap.Logger, kv nats.KeyValue, bucket string, maxLockAge time.Duration) (*Locks, error) {
+func New(logger *zap.Logger, kv jetstream.KeyValue, bucket string, maxLockAge time.Duration) (*Locks, error) {
 	l := &Locks{
 		logger: logger.Named("locks").With(zap.String("bucket", bucket)),
 		kv:     kv,
@@ -69,8 +69,8 @@ func (l *Locks) Lock(ctx context.Context, key string) error {
 loop:
 	for {
 		// Check for existing lock
-		revision, err := l.kv.Get(lockKey)
-		if err != nil && !errors.Is(err, nats.ErrKeyNotFound) {
+		revision, err := l.kv.Get(ctx, lockKey)
+		if err != nil && !errors.Is(err, jetstream.ErrKeyNotFound) {
 			return err
 		}
 
@@ -80,7 +80,7 @@ loop:
 
 		if time.Since(revision.Created()) > l.maxLockAge {
 			l.logger.Warn("cleanin up old lock", zap.String("key", key))
-			if err := l.kv.Delete(lockKey, nats.LastRevision(revision.Revision())); err != nil && !errors.Is(err, nats.ErrKeyNotFound) {
+			if err := l.kv.Delete(ctx, lockKey, jetstream.LastRevision(revision.Revision())); err != nil && !errors.Is(err, jetstream.ErrKeyNotFound) {
 				return err
 			}
 
@@ -113,7 +113,7 @@ loop:
 	// lock doesn't exist, create it
 	contents := make([]byte, 8)
 	binary.LittleEndian.PutUint64(contents, uint64(time.Now().Add(time.Duration(5*time.Minute)).UnixNano()))
-	nrev, err := l.kv.Create(lockKey, contents)
+	nrev, err := l.kv.Create(ctx, lockKey, contents)
 	if err != nil && isWrongSequence(err) {
 		// another process created the lock in the meantime
 		// try again
@@ -130,8 +130,8 @@ loop:
 
 func (l *Locks) IsLocked(ctx context.Context, key string) (bool, error) {
 	// Check for existing lock
-	revision, err := l.kv.Get(key)
-	if err != nil && !errors.Is(err, nats.ErrKeyNotFound) {
+	revision, err := l.kv.Get(ctx, key)
+	if err != nil && !errors.Is(err, jetstream.ErrKeyNotFound) {
 		return false, err
 	}
 
@@ -145,7 +145,7 @@ func (l *Locks) IsLocked(ctx context.Context, key string) (bool, error) {
 func (l *Locks) Unlock(ctx context.Context, key string) error {
 	l.logger.Info("unlock", zap.String("key", key))
 	lockKey := keyPrefix + key
-	return l.kv.Delete(lockKey, nats.LastRevision(l.getRev(lockKey)))
+	return l.kv.Delete(ctx, lockKey, jetstream.LastRevision(l.getRev(lockKey)))
 }
 
 func (l *Locks) setRev(key string, value uint64) {
