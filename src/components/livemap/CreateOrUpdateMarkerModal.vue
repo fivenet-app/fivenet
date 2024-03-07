@@ -84,7 +84,7 @@ async function createMarker(values: FormData): Promise<void> {
                 data: {
                     oneofKind: 'icon',
                     icon: {
-                        icon: selectedIcon.value.name,
+                        icon: selectedIcon.value.name ?? '',
                     },
                 },
             };
@@ -473,7 +473,7 @@ const onSubmitThrottle = useThrottleFn(async (e) => {
                                                                                     <ComboboxOption
                                                                                         v-for="icon in markerIcons.filter(
                                                                                             (icon) =>
-                                                                                                icon.name.includes(queryIcon),
+                                                                                                icon?.name?.includes(queryIcon),
                                                                                         )"
                                                                                         v-slot="{ active, selected }"
                                                                                         :key="icon.name"
@@ -500,7 +500,7 @@ const onSubmitThrottle = useThrottleFn(async (e) => {
                                                                                                     aria-hidden="true"
                                                                                                 />
                                                                                                 {{
-                                                                                                    icon.name.replace(
+                                                                                                    icon?.name?.replace(
                                                                                                         'Icon',
                                                                                                         '',
                                                                                                     )
