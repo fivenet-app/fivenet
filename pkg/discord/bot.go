@@ -61,7 +61,7 @@ type BotParams struct {
 	DB        *sql.DB
 	Enricher  *mstlystcdata.Enricher
 	Config    *config.Config
-	AppConfig *appconfig.Config
+	AppConfig appconfig.IConfig
 }
 
 type Bot struct {
@@ -71,7 +71,7 @@ type Bot struct {
 	db       *sql.DB
 	enricher *mstlystcdata.Enricher
 	cfg      *config.Discord
-	appCfg   *appconfig.Config
+	appCfg   appconfig.IConfig
 
 	cmds *commands.Cmds
 

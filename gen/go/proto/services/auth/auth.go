@@ -69,7 +69,7 @@ type Server struct {
 	enricher *mstlystcdata.Enricher
 	aud      audit.IAuditer
 	ui       userinfo.UserInfoRetriever
-	appCfg   *appconfig.Config
+	appCfg   appconfig.IConfig
 
 	superuserGroups []string
 	oauth2Providers []*config.OAuth2Provider
@@ -88,7 +88,7 @@ type Params struct {
 	Aud       audit.IAuditer
 	UI        userinfo.UserInfoRetriever
 	Config    *config.Config
-	AppConfig *appconfig.Config
+	AppConfig appconfig.IConfig
 }
 
 func NewServer(p Params) *Server {

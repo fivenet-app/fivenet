@@ -26,7 +26,7 @@ type Params struct {
 
 	Logger    *zap.Logger
 	Config    *config.Config
-	AppConfig *appconfig.Config
+	AppConfig appconfig.IConfig
 }
 
 func New(p Params) *Routes {

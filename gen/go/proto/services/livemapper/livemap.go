@@ -51,7 +51,7 @@ type Server struct {
 	enricher *mstlystcdata.Enricher
 	tracker  tracker.ITracker
 	auditer  audit.IAuditer
-	appCfg   *appconfig.Config
+	appCfg   appconfig.IConfig
 
 	markersCache *xsync.MapOf[string, []*livemap.MarkerMarker]
 
@@ -72,7 +72,7 @@ type Params struct {
 	Config    *config.Config
 	Tracker   tracker.ITracker
 	Audit     audit.IAuditer
-	AppConfig *appconfig.Config
+	AppConfig appconfig.IConfig
 }
 
 type brokerEvent struct {

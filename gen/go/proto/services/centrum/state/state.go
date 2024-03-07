@@ -44,7 +44,7 @@ type Params struct {
 
 	Logger    *zap.Logger
 	JS        nats.JetStreamContext
-	AppConfig *appconfig.Config
+	AppConfig appconfig.IConfig
 }
 
 func New(p Params) (*State, error) {

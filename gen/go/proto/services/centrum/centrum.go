@@ -45,7 +45,7 @@ type Server struct {
 	js      nats.JetStreamContext
 	tracker tracker.ITracker
 	postals postals.Postals
-	appCfg  *appconfig.Config
+	appCfg  appconfig.IConfig
 
 	brokersMutex sync.RWMutex
 	brokers      map[string]*utils.Broker[*StreamResponse]
@@ -67,7 +67,7 @@ type Params struct {
 	Tracker   tracker.ITracker
 	Postals   postals.Postals
 	Config    *config.Config
-	AppConfig *appconfig.Config
+	AppConfig appconfig.IConfig
 	Manager   *manager.Manager
 }
 

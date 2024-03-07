@@ -35,7 +35,7 @@ type Manager struct {
 	enricher *mstlystcdata.Enricher
 	postals  postals.Postals
 	state    *state.State
-	appCfg   *appconfig.Config
+	appCfg   appconfig.IConfig
 
 	userStore *store.Store[livemap.UserMarker, *livemap.UserMarker]
 }
@@ -53,7 +53,7 @@ type ManagerParams struct {
 	Postals   postals.Postals
 	Config    *config.Config
 	State     *state.State
-	AppConfig *appconfig.Config
+	AppConfig appconfig.IConfig
 }
 
 func NewManager(p ManagerParams) (*Manager, error) {

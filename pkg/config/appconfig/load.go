@@ -25,10 +25,11 @@ var (
 type IConfig interface {
 	Get() *Cfg
 	Set(val *Cfg)
-	Update(*Cfg) error
+	Update(val *Cfg) error
+	Reload(ctx context.Context) (*Cfg, error)
 
 	Subscribe() chan *Cfg
-	Unsubscribe(c chan *Cfg)
+	Unsubscribe(ch chan *Cfg)
 }
 
 var Module = fx.Module("appconfig",
@@ -62,7 +63,7 @@ type Params struct {
 	DB     *sql.DB
 }
 
-func New(p Params) (*Config, error) {
+func New(p Params) (IConfig, error) {
 	ctx, cancel := context.WithCancel(context.Background())
 
 	c := &Config{
@@ -127,7 +128,7 @@ func (c *Config) Unsubscribe(ch chan *Cfg) {
 }
 
 func (c *Config) updateConfigFromDB(ctx context.Context) (*Cfg, error) {
-	cfg, err := c.LoadFromDB(ctx)
+	cfg, err := c.Reload(ctx)
 	if err != nil {
 		return nil, err
 	}
@@ -137,7 +138,7 @@ func (c *Config) updateConfigFromDB(ctx context.Context) (*Cfg, error) {
 	return cfg, nil
 }
 
-func (c *Config) LoadFromDB(ctx context.Context) (*Cfg, error) {
+func (c *Config) Reload(ctx context.Context) (*Cfg, error) {
 	stmt := tConfig.
 		SELECT(
 			tConfig.AppConfig.AS("appconfig"),
@@ -159,17 +160,4 @@ func (c *Config) LoadFromDB(ctx context.Context) (*Cfg, error) {
 	dest.AppConfig.Default()
 
 	return dest.AppConfig, nil
-}
-
-func LoadTest() (*Config, error) {
-	cfg := &Config{
-		cfg: atomic.Pointer[rector.AppConfig]{},
-	}
-
-	c := &Cfg{}
-	c.Default()
-
-	cfg.Set(c)
-
-	return cfg, nil
 }

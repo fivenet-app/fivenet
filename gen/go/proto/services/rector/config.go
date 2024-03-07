@@ -27,7 +27,7 @@ func (s *Server) GetAppConfig(ctx context.Context, req *GetAppConfigRequest) (*G
 	}
 	defer s.aud.Log(auditEntry, req)
 
-	config, err := s.appCfg.LoadFromDB(ctx)
+	config, err := s.appCfg.Reload(ctx)
 	if err != nil {
 		return nil, err
 	}
@@ -84,7 +84,7 @@ func (s *Server) UpdateAppConfig(ctx context.Context, req *UpdateAppConfigReques
 
 	auditEntry.State = int16(rector.EventType_EVENT_TYPE_UPDATED)
 
-	config, err := s.appCfg.LoadFromDB(ctx)
+	config, err := s.appCfg.Reload(ctx)
 	if err != nil {
 		return nil, err
 	}

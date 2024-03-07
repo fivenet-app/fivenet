@@ -3,13 +3,15 @@ VERSION := $(shell cat VERSION)
 VALIDATE_VERSION ?= v1.0.2
 BUILD_DIR := .build/
 
+GO ?= go
+
 .DEFAULT: run-server
 
 # Build, Format, etc., Tools, Dependency checkouts
 
 buf:
 ifeq (, $(shell which buf))
-	go install github.com/bufbuild/buf/cmd/buf@v1.26.1
+	$(GO) install github.com/bufbuild/buf/cmd/buf@v1.26.1
 endif
 
 protoc-gen-validate: build_dir
@@ -23,10 +25,10 @@ protoc-gen-validate: build_dir
 	cd $(BUILD_DIR) && ln -sfn validate-$(VALIDATE_VERSION)/ validate
 
 protoc-gen-customizer:
-	go build -o ./cmd/protoc-gen-customizer ./cmd/protoc-gen-customizer
+	$(GO) build -o ./cmd/protoc-gen-customizer ./cmd/protoc-gen-customizer
 
 protoc-gen-fronthelper:
-	go build -o ./cmd/protoc-gen-fronthelper ./cmd/protoc-gen-fronthelper
+	$(GO) build -o ./cmd/protoc-gen-fronthelper ./cmd/protoc-gen-fronthelper
 
 gdal2tiles-leaflet: build_dir
 	if test ! -d $(BUILD_DIR)gdal2tiles-leaflet/; then \
@@ -37,7 +39,7 @@ gdal2tiles-leaflet: build_dir
 
 go-licenses:
 ifeq (, $(shell which go-licenses))
-	@GO111MODULE=on go install github.com/google/go-licenses@latest
+	@GO111MODULE=on $(GO) install github.com/google/go-licenses@latest
 endif
 
 # ====================================================================================
@@ -49,7 +51,7 @@ HELM_DOCS := helm-docs
 HELM_DOCS_REPO := github.com/norwoodj/helm-docs/cmd/helm-docs
 
 bin-$(HELM_DOCS): ## Installs helm-docs
-	@GO111MODULE=on go install $(HELM_DOCS_REPO)@$(HELM_DOCS_VERSION)
+	@GO111MODULE=on $(GO) install $(HELM_DOCS_REPO)@$(HELM_DOCS_VERSION)
 
 # Actual targets
 
@@ -74,9 +76,16 @@ build-container:
 release:
 	docker tag docker.io/galexrt/fivenet:latest docker.io/galexrt/fivenet:$(VERSION)
 
+.PHONY: tests
+tests: tests-go
+
+.PHONY: tests-go
+tests-go:
+	$(GO) test -v ./...
+
 .PHONY: build-go
 build-go:
-	CGO_ENABLED=0 go \
+	CGO_ENABLED=0 $(GO) \
 		build \
 		-a \
 		-installsuffix cgo \
@@ -91,14 +100,14 @@ build-yarn:
 .PHONY: run-server
 run-server:
 	mkdir -p ./.nuxt/dist/
-	go run . server
+	$(GO) run . server
 
 .PHONY: gen
 gen: gen-sql gen-proto
 
 .PHONY: gen-sql
 gen-sql:
-	go run ./query/gen/
+	$(GO) run ./query/gen/
 
 	# Remove schema/database name from the generated table code, so it uses the currently selected database
 	find ./query/fivenet/table -type f -iname '*.go' -exec sed -i 's~("fivenet", ~("", ~g' {} \;
@@ -157,8 +166,8 @@ fmt-js:
 .PHONY: gen-licenses
 gen-licenses: go-licenses
 	yarn licenses generate-disclaimer > ./src/public/licenses/frontend.txt
-	go-licenses report ./... --ignore $$(go list -m) --include_tests \
-        --ignore $$(go list std | awk 'NR > 1 { printf(",") } { printf("%s",$$0) } END { print "" }') \
+	go-licenses report ./... --ignore $$($(GO) list -m) --include_tests \
+        --ignore $$($(GO) list std | awk 'NR > 1 { printf(",") } { printf("%s",$$0) } END { print "" }') \
 		--template internal/scripts/go-licenses-backend.txt.tpl > ./src/public/licenses/backend.txt
 
 .PHONY: gen-tiles

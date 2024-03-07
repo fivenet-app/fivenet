@@ -20,10 +20,10 @@ const (
 type Enricher struct {
 	cache *Cache
 
-	appCfg *appconfig.Config
+	appCfg appconfig.IConfig
 }
 
-func NewEnricher(cache *Cache, appCfg *appconfig.Config) *Enricher {
+func NewEnricher(cache *Cache, appCfg appconfig.IConfig) *Enricher {
 	return &Enricher{
 		cache: cache,
 

@@ -53,7 +53,7 @@ type Server struct {
 	enricher *mstlystcdata.UserAwareEnricher
 	aud      audit.IAuditer
 	st       storage.IStorage
-	appCfg   *appconfig.Config
+	appCfg   appconfig.IConfig
 
 	customDB config.CustomDB
 }
@@ -67,7 +67,7 @@ type Params struct {
 	Aud       audit.IAuditer
 	Config    *config.Config
 	Storage   storage.IStorage
-	AppConfig *appconfig.Config
+	AppConfig appconfig.IConfig
 }
 
 func NewServer(p Params) *Server {

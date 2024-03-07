@@ -124,7 +124,7 @@ type Params struct {
 	DB        *sql.DB
 	TP        *tracesdk.TracerProvider
 	JS        nats.JetStreamContext
-	AppConfig *appconfig.Config
+	AppConfig appconfig.IConfig
 }
 
 func New(p Params) (Permissions, error) {

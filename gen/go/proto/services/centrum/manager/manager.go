@@ -31,7 +31,7 @@ type Manager struct {
 	tracker  tracker.ITracker
 	postals  postals.Postals
 
-	appCfg *appconfig.Config
+	appCfg appconfig.IConfig
 
 	*state.State
 }
@@ -48,7 +48,7 @@ type Params struct {
 	Enricher  *mstlystcdata.Enricher
 	Postals   postals.Postals
 	Tracker   tracker.ITracker
-	AppConfig *appconfig.Config
+	AppConfig appconfig.IConfig
 
 	State *state.State
 }

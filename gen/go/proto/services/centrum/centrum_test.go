@@ -47,7 +47,8 @@ func TestBasicCentrumFlow(t *testing.T) {
 	db, err := servers.TestDBServer.DB()
 	require.NoError(t, err)
 
-	ctx := context.Background()
+	ctx, cancel := context.WithCancel(context.Background())
+	defer cancel()
 	logger := zap.NewNop()
 	tp := tracesdk.NewTracerProvider()
 
@@ -58,7 +59,7 @@ func TestBasicCentrumFlow(t *testing.T) {
 	cfg.NATS.URL = servers.TestNATSServer.GetURL()
 	cfg.Cache.RefreshTime = 1 * time.Hour
 
-	appCfg, err := appconfig.LoadTest()
+	appCfg, err := appconfig.NewTest(ctx)
 	require.NoError(t, err)
 	require.NotNil(t, cfg)
 

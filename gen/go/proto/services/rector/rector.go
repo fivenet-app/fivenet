@@ -28,7 +28,7 @@ type Server struct {
 	cache    *mstlystcdata.Cache
 	st       storage.IStorage
 	cfg      *config.Config
-	appCfg   *appconfig.Config
+	appCfg   appconfig.IConfig
 }
 
 type Params struct {
@@ -42,7 +42,7 @@ type Params struct {
 	Cache     *mstlystcdata.Cache
 	Storage   storage.IStorage
 	Config    *config.Config
-	AppConfig *appconfig.Config
+	AppConfig appconfig.IConfig
 }
 
 func NewServer(p Params) *Server {
