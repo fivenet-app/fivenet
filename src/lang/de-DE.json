@@ -163,21 +163,21 @@
             },
             "settings_panel": {
                 "title": "Einstellungen",
-                "subtitle": "Client-seitige FiveNet-Einstellungen.",
+                "subtitle": "Eigene FiveNet-Einstellungen.",
                 "set_startpage": {
-                    "title": "Startseite nach Characterauswahl",
-                    "no_char_selected": "Um eine Startseite auszuwählen, müssen sie zuerst einen Character auswählen."
+                    "title": "Startseite nach Charakterauswahl",
+                    "no_char_selected": "Um eine Startseite auszuwählen, müssen Sie zuerst einen Charakter auswählen."
                 },
                 "editor_theme": {
                     "title": "Dokumenten-Editor-Design",
-                    "dark_mode": "Nacht Modus"
+                    "dark_mode": "Dunkler Modus"
                 },
                 "app_theme": {
-                    "job_default_theme": "Nutze durch Beruf vorgegebenes Design"
+                    "job_default_theme": "Nutze das durch den Beruf vorgegebene Design"
                 },
                 "volumes": {
                     "title": "Lautstärke-Einstellungen",
-                    "subtitle": "Stelle die Lautstärke von den Sounds ein."
+                    "subtitle": "Stelle die Lautstärke von Sounds ein."
                 },
                 "streamer_mode": {
                     "title": "Streamer-Modus",
@@ -190,7 +190,7 @@
                 "new_username": "Neuer Benutzername"
             },
             "character_selector": {
-                "title": "Character Auswahl"
+                "title": "Charakter Auswahl"
             },
             "logout": {
                 "subtitle": "Sie werden in wenigen Sekunden zur Homepage weitergeleitet.",
@@ -574,7 +574,7 @@
             "height": "Größe (in Metern)"
         },
         "hints": {
-            "start_text": "Wussten sie schon...?",
+            "start_text": "Wussten Sie schon...?",
             "click_me": "Klicke hier.",
             "commandpalette": {
                 "content": "FiveNet hat eine Befehlspalette für Power-User! Sie können diese mit folgenden Tastenkombination öffnen:",
@@ -584,7 +584,7 @@
                 "content": "Die Startseite von FiveNet können Sie in Ihren Kontoinformationen festlegen."
             },
             "documenteditor": {
-                "content": "Sie können in den Konto-Einstellungen einen Nacht-Modus für den Editor aktivieren."
+                "content": "Sie können in den Konto-Einstellungen einen dunklen Modus für den Editor aktivieren."
             }
         },
         "notifications": {
@@ -1068,7 +1068,7 @@
                 },
                 "failed": {
                     "title": "Fehler beim verbinden deines Kontos",
-                    "content": "Fehler beim Social Login ihres Kontos (Fehler: {0}), bitte versuchen sie es erneut."
+                    "content": "Fehler beim Social Login ihres Kontos (Fehler: {0}), bitte versuchen Sie es erneut."
                 }
             },
             "change_username": {
@@ -1170,7 +1170,7 @@
                 },
                 "checkup": {
                     "title": "Status Check",
-                    "content": "Bitte stellen sie sicher, dass ihr Einheiten Status aktuell ist."
+                    "content": "Bitte stellen Sie sicher, dass ihr Einheiten Status aktuell ist."
                 }
             }
         },
@@ -1225,7 +1225,7 @@
         "AuthService": {
             "category": "Authentifizierung",
             "ChooseCharacter": {
-                "key": "Character Auswählen",
+                "key": "Charakter Auswählen",
                 "description": "Berechtigung zur Charakterauswahl, um den Zugriff auf FiveNet zu erlauben oder zu verweigern."
             }
         },
@@ -1593,6 +1593,20 @@
                 "attrs_types": {
                     "Access": "Zugriff auf Kollegen Eigenschaften"
                 }
+            },
+            "ListColleagueActivity": {
+                "key": "View Colleague Activity",
+                "description": "View activities by types of your colleagues",
+                "attrs": {
+                    "HIRED": "Angestellt",
+                    "FIRED": "Gefeuert",
+                    "PROMOTED": "Befördert",
+                    "DEMOTED": "Degradiert",
+                    "ABSENCE_DATE": "Abwesenheitsdatum"
+                },
+                "attrs_types": {
+                    "Types": "Aktivitäts-Arten"
+                }
             }
         },
         "JobsConductService": {
@@ -1649,17 +1663,17 @@
             "ErrAccountCreateFailed": "Bitte überprüfen sie ihren Registrierungstoken!",
             "ErrInvalidLogin": "Falscher Username oder Passwort!",
             "ErrNoAccount": "Sie müssen zuerst einen Account mit ihrem Registrierungstoken erstellen.",
-            "ErrNoCharFound": "Keine(n) Character für deinen Account gefunden.",
+            "ErrNoCharFound": "Keine(n) Charakter für deinen Account gefunden.",
             "ErrGenericLogin": "Fehler bei der Anmeldung, bitte versuche es erneut.",
             "ErrUnableToChooseChar": "Sie haben nicht genug Berechtigungen um den Charakter auszuwählen!",
             "ErrUpdateAccount": "Fehler beim Aktualisieren Ihres Benutzers!",
             "ErrChangePassword": "Fehler beim Ändern Ihres Passworts!",
             "ErrForgotPassword": "Fehler beim zurücksetzen ihres Passworts!",
-            "ErrAccountExistsFailed": "Bitte nutzen sie die Passwort vergessen Funktion!",
+            "ErrAccountExistsFailed": "Bitte nutzen Sie die Passwort vergessen Funktion!",
             "ErrSignupDisabled": "Konto-Erstellung ist deaktiviert!",
-            "ErrAccountDuplicate": "Benutzername bereits verwendet, bitte nutzen sie einen anderen Benutzernamen.",
+            "ErrAccountDuplicate": "Benutzername bereits verwendet, bitte nutzen Sie einen anderen Benutzernamen.",
             "ErrChangeUsername": "Fehler beim Ändern des Benutzernamen!",
-            "ErrBadUsername": "Bitte stellen sie sicher, dass der jetzige Benutzername korrekt ist! Versuchen es mit einem anderen neuen Benutzernamen erneut."
+            "ErrBadUsername": "Bitte stellen Sie sicher, dass der jetzige Benutzername korrekt ist! Versuchen es mit einem anderen neuen Benutzernamen erneut."
         },
         "CitizenStoreService": {
             "ErrFailedQuery": "Fehler beim Laden von Bürger Daten!",
@@ -1715,7 +1729,7 @@
             },
             "ErrDocRequiredAccessTemplate": {
                 "title": "Erforderlicher Dokumenten-Zugriff verändert/entfernt!",
-                "content": "Stellen sie sicher, dass sie keine erforderlichen Dokumenten-Zugriffe verändert oder entfernt haben."
+                "content": "Stellen Sie sicher, dass Sie keine erforderlichen Dokumenten-Zugriffe verändert oder entfernt haben."
             }
         },
         "LivemapperService": {
@@ -1741,7 +1755,7 @@
             "ErrNotPartOfDispatch": "Sie sind nicht Teil dieses Einsatzes!",
             "ErrNotOnDuty": {
                 "title": "Sie sind nicht im Dienst!",
-                "content": "Stellen sie sicher dass sie im Dienst sind."
+                "content": "Stellen Sie sicher, dass Sie im Dienst sind."
             },
             "ErrModeForbidsAction": {
                 "title": "Leitstelle verbietet diese Aktion!",
@@ -1757,7 +1771,7 @@
         "general": {
             "internal_error": {
                 "title": "Interner Serverfehler",
-                "content": "Ein interner Serverfehler ist aufgetreten. Bitte versuchen sie es erneut."
+                "content": "Ein interner Serverfehler ist aufgetreten. Bitte versuchen Sie es erneut."
             }
         },
         "JobsService": {
@@ -1771,7 +1785,7 @@
         },
         "empty": {
             "title": "Keine Ergebnisse gefunden.",
-            "content": "Es konnte nichts gefunden werden. Versuchen sie es erneut."
+            "content": "Es konnte nichts gefunden werden. Versuchen Sie es erneut."
         },
         "groups": {
             "shortcuts": {
