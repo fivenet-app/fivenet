@@ -1965,10 +1965,10 @@
     hookable "^5.5.3"
     unhead "1.8.11"
 
-"@vee-validate/i18n@4.12.5":
-  version "4.12.5"
-  resolved "https://registry.yarnpkg.com/@vee-validate/i18n/-/i18n-4.12.5.tgz#1ead23dc5b63f081219d851aa8d39636d0c1e425"
-  integrity sha512-cY3AHrtnM65fw70Hhdi3VdQdF8WyrrK5OfF3pWH8T3eDA/q1LxBJostFOlHSpglRkXyVVfQdpq8eW0UktlMpDA==
+"@vee-validate/i18n@4.12.6":
+  version "4.12.6"
+  resolved "https://registry.yarnpkg.com/@vee-validate/i18n/-/i18n-4.12.6.tgz#fa2fa9b42e35d194fb2887f04127d93af74cf955"
+  integrity sha512-K3xbjLIQQwDrllS18Ka5nyQDIF/1FuHnedXTr6bfmTm44/7C4MyMGo9KDahnrMWTcFkYIKR7XMshM3R6o54MFg==
 
 "@vee-validate/nuxt@4.12.5":
   version "4.12.5"
@@ -9684,6 +9684,7 @@ wide-align@^1.1.2:
     string-width "^1.0.2 || 2 || 3 || 4"
 
 "wrap-ansi-cjs@npm:wrap-ansi@^7.0.0", wrap-ansi@^7.0.0:
+  name wrap-ansi-cjs
   version "7.0.0"
   resolved "https://registry.yarnpkg.com/wrap-ansi/-/wrap-ansi-7.0.0.tgz#67e145cff510a6a6984bdf1152911d69d2eb9e43"
   integrity sha512-YVGIj2kamLSTxw6NsZjoBxfSwsn0ycdesmc4p+Q21c5zPuZ1pl+NfxVdxPtdHvmNVOQ6XSYG4AUtyt/Fi7D16Q==
