@@ -5,6 +5,7 @@ import (
 	"errors"
 	"fmt"
 	"strings"
+	"sync"
 	"time"
 
 	natsutils "github.com/galexrt/fivenet/pkg/nats"
@@ -31,6 +32,7 @@ type Store[T any, U protoMessage[T]] struct {
 
 	bucket string
 
+	mu   *xsync.MapOf[string, sync.Mutex]
 	data *xsync.MapOf[string, U]
 
 	l *locks.Locks
@@ -44,8 +46,12 @@ type StoreOption[T any, U protoMessage[T]] func(s *Store[T, U]) error
 type OnUpdateFn[T any, U protoMessage[T]] func(U) (U, error)
 type OnDeleteFn[T any, U protoMessage[T]] func(jetstream.KeyValueEntry, U) error
 
+func mutexCompute() sync.Mutex {
+	return sync.Mutex{}
+}
+
 func NewWithLocks[T any, U protoMessage[T]](ctx context.Context, logger *zap.Logger, js jetstream.JetStream, bucket string, l *locks.Locks, opts ...StoreOption[T, U]) (*Store[T, U], error) {
-	kv, err := natsutils.CreateKeyValue(ctx, js, jetstream.KeyValueConfig{
+	kv, err := js.CreateOrUpdateKeyValue(ctx, jetstream.KeyValueConfig{
 		Bucket:      bucket,
 		Description: natsutils.Description,
 		History:     3,
@@ -60,6 +66,7 @@ func NewWithLocks[T any, U protoMessage[T]](ctx context.Context, logger *zap.Log
 		bucket: bucket,
 		kv:     kv,
 
+		mu:   xsync.NewMapOf[string, sync.Mutex](),
 		data: xsync.NewMapOf[string, U](),
 
 		l: l,
@@ -76,7 +83,7 @@ func NewWithLocks[T any, U protoMessage[T]](ctx context.Context, logger *zap.Log
 
 func New[T any, U protoMessage[T]](ctx context.Context, logger *zap.Logger, js jetstream.JetStream, bucket string, opts ...StoreOption[T, U]) (*Store[T, U], error) {
 	lBucket := fmt.Sprintf("%s_locks", bucket)
-	lkv, err := natsutils.CreateKeyValue(ctx, js, jetstream.KeyValueConfig{
+	lkv, err := js.CreateOrUpdateKeyValue(ctx, jetstream.KeyValueConfig{
 		Bucket:      lBucket,
 		Description: natsutils.Description,
 		History:     3,
@@ -96,6 +103,10 @@ func New[T any, U protoMessage[T]](ctx context.Context, logger *zap.Logger, js j
 
 // Put upload the message to kv and local
 func (s *Store[T, U]) Put(ctx context.Context, key string, msg U) error {
+	mu, _ := s.mu.LoadOrCompute(key, mutexCompute)
+	mu.Lock()
+	defer mu.Unlock()
+
 	ctx, cancel := context.WithTimeout(ctx, LockTimeout)
 	defer cancel()
 
@@ -129,6 +140,10 @@ func (s *Store[T, U]) put(ctx context.Context, key string, msg U) error {
 }
 
 func (s *Store[T, U]) ComputeUpdate(ctx context.Context, key string, load bool, fn func(key string, existing U) (U, error)) error {
+	mu, _ := s.mu.LoadOrCompute(key, mutexCompute)
+	mu.Lock()
+	defer mu.Unlock()
+
 	ctx, cancel := context.WithTimeout(ctx, LockTimeout)
 	defer cancel()
 
@@ -154,11 +169,7 @@ func (s *Store[T, U]) ComputeUpdate(ctx context.Context, key string, load bool, 
 		}
 	}
 
-	var cloned U
-	if existing != nil {
-		cloned = proto.Clone(existing).(U)
-	}
-	computed, err := fn(key, cloned)
+	computed, err := fn(key, existing)
 	if err != nil {
 		return err
 	}
@@ -176,19 +187,27 @@ func (s *Store[T, U]) ComputeUpdate(ctx context.Context, key string, load bool, 
 	return nil
 }
 
-// Get data from local data
+// Get copy of data from local data
 func (s *Store[T, U]) Get(key string) (U, bool) {
+	mu, _ := s.mu.LoadOrCompute(key, mutexCompute)
+	mu.Lock()
+	defer mu.Unlock()
+
 	i, ok := s.data.Load(key)
 	if !ok {
 		return nil, ok
 	}
 
-	return i, true
+	return proto.Clone(i).(U), true
 }
 
 // Load data from kv store (this will add/update any existing local data entry)
 // No record will be returned as nil and not stored
 func (s *Store[T, U]) Load(ctx context.Context, key string) (U, error) {
+	mu, _ := s.mu.LoadOrCompute(key, mutexCompute)
+	mu.Lock()
+	defer mu.Unlock()
+
 	entry, err := s.kv.Get(ctx, key)
 	if err != nil {
 		return nil, err
@@ -198,8 +217,8 @@ func (s *Store[T, U]) Load(ctx context.Context, key string) (U, error) {
 }
 
 func (s *Store[T, U]) update(entry jetstream.KeyValueEntry) (U, error) {
-	data, err := s.unmarshal(entry.Value())
-	if err != nil {
+	data := U(new(T))
+	if err := proto.Unmarshal(entry.Value(), data); err != nil {
 		return nil, fmt.Errorf("failed to unmarshal store watcher update: %w", err)
 	}
 
@@ -208,7 +227,7 @@ func (s *Store[T, U]) update(entry jetstream.KeyValueEntry) (U, error) {
 		return s.OnUpdate(item)
 	}
 
-	return item, nil
+	return proto.Clone(item).(U), nil
 }
 
 func (s *Store[T, U]) updateFromType(key string, updated U) U {
@@ -241,6 +260,10 @@ func (s *Store[T, U]) GetOrLoad(ctx context.Context, key string) (U, error) {
 }
 
 func (s *Store[T, U]) Delete(ctx context.Context, key string) error {
+	mu, _ := s.mu.LoadOrCompute(key, mutexCompute)
+	mu.Lock()
+	defer mu.Unlock()
+
 	ctx, cancel := context.WithTimeout(ctx, LockTimeout)
 	defer cancel()
 
@@ -250,6 +273,8 @@ func (s *Store[T, U]) Delete(ctx context.Context, key string) error {
 		}
 		defer s.l.Unlock(ctx, key)
 	}
+
+	s.mu.Delete(key)
 
 	if err := s.kv.Delete(ctx, key); err != nil {
 		return err
@@ -280,15 +305,6 @@ func (s *Store[T, U]) Keys(ctx context.Context, prefix string) ([]string, error)
 	return keys, nil
 }
 
-func (s *Store[T, U]) unmarshal(data []byte) (U, error) {
-	msg := U(new(T))
-	if err := proto.Unmarshal(data, msg); err != nil {
-		return nil, err
-	}
-
-	return msg, nil
-}
-
 func (s *Store[T, U]) Start(ctx context.Context) error {
 	watcher, err := s.kv.WatchAll(nats.Context(ctx))
 	if err != nil {
@@ -312,28 +328,36 @@ func (s *Store[T, U]) Start(ctx context.Context) error {
 				s.logger.Debug("key update received via watcher", zap.String("key", entry.Key()))
 
 				if entry.Operation() == jetstream.KeyValueDelete || entry.Operation() == jetstream.KeyValuePurge {
-					item, _ := s.data.LoadAndDelete(entry.Key())
-					if s.OnDelete != nil {
-						if err := s.OnDelete(entry, item); err != nil {
-							s.logger.Error("failed to run on update logic in store watcher", zap.Error(err))
-							continue
+					func() {
+						mu, _ := s.mu.LoadOrCompute(entry.Key(), mutexCompute)
+						mu.Lock()
+						defer mu.Unlock()
+
+						if s.OnDelete != nil {
+							item, _ := s.data.LoadAndDelete(entry.Key())
+							if err := s.OnDelete(entry, item); err != nil {
+								s.logger.Error("failed to run on delete logic in store watcher", zap.Error(err))
+							}
 						}
-					}
+
+						s.mu.Delete(entry.Key())
+					}()
 				} else {
-					if _, err := s.update(entry); err != nil {
-						s.logger.Error("failed to run on update logic in store watcher", zap.Error(err))
-						continue
-					}
+					func() {
+						mu, _ := s.mu.LoadOrCompute(entry.Key(), mutexCompute)
+						mu.Lock()
+						defer mu.Unlock()
+
+						if _, err := s.update(entry); err != nil {
+							s.logger.Error("failed to run on update logic in store watcher", zap.Error(err))
+						}
+					}()
 				}
 			}
 		}
 	}()
 
 	return nil
-}
-
-func (s *Store[T, U]) GetBucket() string {
-	return s.bucket
 }
 
 func (s *Store[T, U]) List() ([]U, error) {
@@ -344,7 +368,11 @@ func (s *Store[T, U]) List() ([]U, error) {
 			return true
 		}
 
-		list = append(list, value)
+		mu, _ := s.mu.LoadOrCompute(key, mutexCompute)
+		mu.Lock()
+		defer mu.Unlock()
+
+		list = append(list, proto.Clone(value).(U))
 		return true
 	})
 

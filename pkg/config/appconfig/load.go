@@ -8,7 +8,7 @@ import (
 	"sync/atomic"
 
 	"github.com/galexrt/fivenet/gen/go/proto/resources/rector"
-	"github.com/galexrt/fivenet/pkg/utils"
+	"github.com/galexrt/fivenet/pkg/utils/broker"
 	"github.com/galexrt/fivenet/query/fivenet/table"
 	"github.com/go-jet/jet/v2/qrm"
 	"github.com/nats-io/nats.go/jetstream"
@@ -49,7 +49,7 @@ type Config struct {
 
 	cfg atomic.Pointer[Cfg]
 
-	broker *utils.Broker[*Cfg]
+	broker *broker.Broker[*Cfg]
 }
 
 type Params struct {
@@ -72,7 +72,7 @@ func New(p Params) (IConfig, error) {
 
 		cfg: atomic.Pointer[Cfg]{},
 
-		broker: utils.NewBroker[*Cfg](),
+		broker: broker.New[*Cfg](),
 	}
 
 	p.LC.Append(fx.StartHook(func(c context.Context) error {

@@ -2,7 +2,6 @@ package grpc
 
 import (
 	"context"
-	"database/sql"
 	"fmt"
 	"net"
 	"time"
@@ -61,12 +60,15 @@ type ServerParams struct {
 
 	Logger   *zap.Logger
 	Config   *config.Config
-	DB       *sql.DB
 	TP       *tracesdk.TracerProvider
-	Services []Service `group:"grpcservices"`
 	TokenMgr *auth.TokenMgr
 	UserInfo userinfo.UserInfoRetriever
 	Perms    perms.Permissions
+
+	GRPCAuth *auth.GRPCAuth
+	GRPCPerm *auth.GRPCPerm
+
+	Services []Service `group:"grpcservices"`
 }
 
 type ServerResult struct {
@@ -101,9 +103,6 @@ func NewServer(p ServerParams) (ServerResult, error) {
 	otel.SetTracerProvider(p.TP)
 	otel.SetTextMapPropagator(propagation.NewCompositeTextMapPropagator(propagation.TraceContext{}, propagation.Baggage{}))
 
-	grpcAuth := auth.NewGRPCAuth(p.UserInfo, p.TokenMgr)
-	grpcPerm := auth.NewGRPCPerms(p.Perms)
-
 	srv := grpc.NewServer(
 		grpc.ChainUnaryInterceptor(
 			otelgrpc.UnaryServerInterceptor(),
@@ -113,8 +112,8 @@ func NewServer(p ServerParams) (ServerResult, error) {
 				logging.WithLogOnEvents(logging.StartCall, logging.FinishCall),
 			),
 			tracing.UnaryServerInterceptor(),
-			grpc_auth.UnaryServerInterceptor(grpcAuth.GRPCAuthFunc),
-			grpc_permission.UnaryServerInterceptor(grpcPerm.GRPCPermissionUnaryFunc),
+			grpc_auth.UnaryServerInterceptor(p.GRPCAuth.GRPCAuthFunc),
+			grpc_permission.UnaryServerInterceptor(p.GRPCPerm.GRPCPermissionUnaryFunc),
 			validator.UnaryServerInterceptor(),
 			grpc_sanitizer.UnaryServerInterceptor(),
 			recovery.UnaryServerInterceptor(
@@ -129,8 +128,8 @@ func NewServer(p ServerParams) (ServerResult, error) {
 				logging.WithLogOnEvents(logging.StartCall, logging.FinishCall),
 			),
 			tracing.StreamServerInterceptor(),
-			grpc_auth.StreamServerInterceptor(grpcAuth.GRPCAuthFunc),
-			grpc_permission.StreamServerInterceptor(grpcPerm.GRPCPermissionStreamFunc),
+			grpc_auth.StreamServerInterceptor(p.GRPCAuth.GRPCAuthFunc),
+			grpc_permission.StreamServerInterceptor(p.GRPCPerm.GRPCPermissionStreamFunc),
 			validator.StreamServerInterceptor(),
 			recovery.StreamServerInterceptor(
 				recovery.WithRecoveryHandler(grpcPanicRecoveryHandler(p.Logger)),

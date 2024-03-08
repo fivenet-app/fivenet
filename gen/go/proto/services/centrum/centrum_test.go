@@ -5,22 +5,18 @@ import (
 	"fmt"
 	"os"
 	"testing"
-	"time"
 
 	"github.com/galexrt/fivenet/gen/go/proto/services/centrum/manager"
 	"github.com/galexrt/fivenet/gen/go/proto/services/centrum/state"
+	"github.com/galexrt/fivenet/internal/modules"
 	"github.com/galexrt/fivenet/internal/tests/servers"
-	"github.com/galexrt/fivenet/pkg/config"
-	"github.com/galexrt/fivenet/pkg/config/appconfig"
-	"github.com/galexrt/fivenet/pkg/coords/postals"
-	"github.com/galexrt/fivenet/pkg/mstlystcdata"
-	"github.com/galexrt/fivenet/pkg/perms"
-	"github.com/galexrt/fivenet/pkg/server/audit"
+	grpcserver "github.com/galexrt/fivenet/pkg/grpc"
 	"github.com/galexrt/fivenet/pkg/tracker"
+	"github.com/stretchr/testify/assert"
 	"github.com/stretchr/testify/require"
-	tracesdk "go.opentelemetry.io/otel/sdk/trace"
+	"go.uber.org/fx"
 	"go.uber.org/fx/fxtest"
-	"go.uber.org/zap"
+	"google.golang.org/grpc"
 )
 
 func TestMain(m *testing.M) {
@@ -44,97 +40,38 @@ func TestMain(m *testing.M) {
 func TestBasicCentrumFlow(t *testing.T) {
 	defer servers.TestDBServer.Reset()
 
-	db, err := servers.TestDBServer.DB()
-	require.NoError(t, err)
-
 	ctx, cancel := context.WithCancel(context.Background())
 	defer cancel()
-	logger := zap.NewNop()
-	tp := tracesdk.NewTracerProvider()
 
-	cfg, err := config.LoadBaseConfigTest()
-	require.NoError(t, err)
-	require.NotNil(t, cfg)
-
-	cfg.NATS.URL = servers.TestNATSServer.GetURL()
-	cfg.Cache.RefreshTime = 1 * time.Hour
-
-	appCfg, err := appconfig.NewTest(ctx)
-	require.NoError(t, err)
-	require.NotNil(t, cfg)
-
-	js, err := servers.TestNATSServer.GetJS()
+	clientConn, grpcSrvModule, err := modules.TestGRPCServer(ctx)
 	require.NoError(t, err)
 
-	fxLC := fxtest.NewLifecycle(t)
+	var srv *Server
+	app := fxtest.New(t,
+		modules.GetFxTestOpts(
+			fx.Provide(tracker.NewForTests),
+			state.StateModule,
+			manager.Module,
+			fx.Provide(grpcSrvModule),
+			fx.Provide(grpcserver.AsService(func(p Params) (*Server, error) {
+				srv, err = NewServer(p)
+				return srv, err
+			})),
 
-	p, err := perms.New(perms.Params{
-		LC:        fxLC,
-		Logger:    logger,
-		DB:        db,
-		TP:        tp,
-		JS:        js,
-		AppConfig: appCfg,
-	})
-	require.NoError(t, err)
+			fx.Invoke(func(*grpc.Server) {}),
+		)...,
+	)
+	assert.NotNil(t, app)
 
-	aud := &audit.Noop{}
+	app.RequireStart()
+	assert.NotNil(t, srv)
 
-	c, err := mstlystcdata.NewCache(mstlystcdata.Params{
-		LC:     fxLC,
-		Logger: logger,
-		TP:     tp,
-		DB:     db,
-		Config: cfg,
-	})
-	require.NoError(t, err)
-	enricher := mstlystcdata.NewEnricher(c, appCfg)
-
-	state, err := state.New(state.Params{
-		LC:        fxLC,
-		Logger:    logger,
-		JS:        js,
-		AppConfig: appCfg,
-	})
-	require.NoError(t, err)
-
-	mgr := manager.New(manager.Params{
-		LC:       fxLC,
-		Logger:   logger,
-		DB:       db,
-		TP:       tp,
-		JS:       js,
-		Enricher: enricher,
-		State:    state,
-	})
-
-	tracker := tracker.NewForTests(ctx)
-
-	postals, err := postals.NewForTests()
-	require.NoError(t, err)
-
-	srv, err := NewServer(Params{
-		LC:      fxLC,
-		Logger:  logger,
-		TP:      tp,
-		DB:      db,
-		Perms:   p,
-		Audit:   aud,
-		JS:      js,
-		Config:  cfg,
-		Manager: mgr,
-		Tracker: tracker,
-		Postals: postals,
-	})
-	require.NoError(t, err)
-
-	fxLC.RequireStart()
-	defer fxLC.RequireStop()
-
-	client, _, cancel := NewTestCentrumServiceClient(srv)
+	client := NewCentrumServiceClient(clientConn)
 	defer cancel()
 	_ = ctx
 	_ = client
 
 	// TODO add tests
+
+	app.RequireStop()
 }

@@ -16,7 +16,7 @@ import (
 	"go.uber.org/zap"
 )
 
-var TestDBServer *dbServer
+var TestDBServer = &dbServer{}
 
 type dbServer struct {
 	db       *sql.DB
@@ -24,10 +24,6 @@ type dbServer struct {
 	resource *dockertest.Resource
 
 	stopped bool
-}
-
-func init() {
-	TestDBServer = &dbServer{}
 }
 
 func (m *dbServer) Setup() error {

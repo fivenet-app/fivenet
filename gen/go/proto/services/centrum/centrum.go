@@ -20,7 +20,7 @@ import (
 	"github.com/galexrt/fivenet/pkg/perms"
 	"github.com/galexrt/fivenet/pkg/server/audit"
 	"github.com/galexrt/fivenet/pkg/tracker"
-	"github.com/galexrt/fivenet/pkg/utils"
+	"github.com/galexrt/fivenet/pkg/utils/broker"
 	"github.com/galexrt/fivenet/query/fivenet/model"
 	"github.com/nats-io/nats.go/jetstream"
 	tracesdk "go.opentelemetry.io/otel/sdk/trace"
@@ -48,7 +48,7 @@ type Server struct {
 	appCfg  appconfig.IConfig
 
 	brokersMutex sync.RWMutex
-	brokers      map[string]*utils.Broker[*StreamResponse]
+	brokers      map[string]*broker.Broker[*StreamResponse]
 
 	state *manager.Manager
 }
@@ -64,17 +64,17 @@ type Params struct {
 	Perms     perms.Permissions
 	Audit     audit.IAuditer
 	JS        jetstream.JetStream
-	Tracker   tracker.ITracker
-	Postals   postals.Postals
 	Config    *config.Config
 	AppConfig appconfig.IConfig
+	Tracker   tracker.ITracker
+	Postals   postals.Postals
 	Manager   *manager.Manager
 }
 
 func NewServer(p Params) (*Server, error) {
 	ctx, cancel := context.WithCancel(context.Background())
 
-	brokers := map[string]*utils.Broker[*StreamResponse]{}
+	brokers := map[string]*broker.Broker[*StreamResponse]{}
 
 	s := &Server{
 		logger: p.Logger.Named("centrum"),
@@ -166,7 +166,7 @@ func (s *Server) handleAppConfigUpdate(ctx context.Context, cfg *appconfig.Cfg) 
 
 	for _, job := range cfg.UserTracker.LivemapJobs {
 		if _, ok := s.brokers[job]; !ok {
-			s.brokers[job] = utils.NewBroker[*StreamResponse]()
+			s.brokers[job] = broker.New[*StreamResponse]()
 			go s.brokers[job].Start(ctx)
 		}
 	}
@@ -399,7 +399,7 @@ func (s *Server) Stream(req *StreamRequest, srv CentrumService_StreamServer) err
 	}
 }
 
-func (s *Server) getJobBroker(job string) (*utils.Broker[*StreamResponse], bool) {
+func (s *Server) getJobBroker(job string) (*broker.Broker[*StreamResponse], bool) {
 	s.brokersMutex.RLock()
 	defer s.brokersMutex.RUnlock()
 

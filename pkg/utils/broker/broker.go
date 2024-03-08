@@ -1,4 +1,4 @@
-package utils
+package broker
 
 import (
 	"context"
@@ -15,7 +15,7 @@ type Broker[T any] struct {
 	unsubCh   chan chan T
 }
 
-func NewBroker[T any]() *Broker[T] {
+func New[T any]() *Broker[T] {
 	return &Broker[T]{
 		stopCh:    make(chan struct{}),
 		publishCh: make(chan T, 1),

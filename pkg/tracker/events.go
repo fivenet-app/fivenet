@@ -28,7 +28,7 @@ func registerStreams(ctx context.Context, js jetstream.JetStream) error {
 		Discard:     jetstream.DiscardOld,
 		MaxAge:      2 * time.Minute,
 	}
-	if _, err := natsutils.CreateOrUpdateStream(ctx, js, cfg); err != nil {
+	if _, err := js.CreateOrUpdateStream(ctx, cfg); err != nil {
 		return err
 	}
 

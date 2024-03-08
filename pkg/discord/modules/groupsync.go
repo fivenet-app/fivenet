@@ -16,7 +16,7 @@ import (
 	"go.uber.org/zap"
 )
 
-const GroupSyncDefaultRoleColor = "#9B59B6"
+const DefaultGroupSyncRoleColor = "#9B59B6"
 
 type GroupSync struct {
 	*BaseModule

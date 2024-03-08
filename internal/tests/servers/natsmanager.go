@@ -9,14 +9,10 @@ import (
 	"github.com/nats-io/nats.go/jetstream"
 )
 
-var TestNATSServer *natsServer
+var TestNATSServer = &natsServer{}
 
 type natsServer struct {
 	server *server.Server
-}
-
-func init() {
-	TestNATSServer = &natsServer{}
 }
 
 func (m *natsServer) Setup() error {

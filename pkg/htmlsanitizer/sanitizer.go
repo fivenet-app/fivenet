@@ -30,9 +30,6 @@ var Module = fx.Module("htmlsanitizer",
 	),
 )
 
-func init() {
-}
-
 func setupSanitizer() {
 	// Custom UGC Policy
 	sanitizer = bluemonday.UGCPolicy()

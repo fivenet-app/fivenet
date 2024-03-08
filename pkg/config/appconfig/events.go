@@ -29,7 +29,7 @@ func (c *Config) registerSubscriptions(ctx context.Context) error {
 		Storage:     jetstream.MemoryStorage,
 	}
 
-	if _, err := natsutils.CreateOrUpdateStream(ctx, c.js, cfg); err != nil {
+	if _, err := c.js.CreateOrUpdateStream(ctx, cfg); err != nil {
 		return err
 	}
 

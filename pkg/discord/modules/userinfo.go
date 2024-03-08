@@ -18,8 +18,6 @@ import (
 	"go.uber.org/zap"
 )
 
-const DefaultNicknameRegex = `^(?P<prefix>\[\S+][ ]*)?(?P<name>[^\[]+)(?P<suffix>[ ]*\[\S+])?`
-
 type UserInfo struct {
 	*BaseModule
 

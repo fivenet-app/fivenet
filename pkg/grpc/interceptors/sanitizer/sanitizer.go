@@ -13,16 +13,16 @@ type ISanitize interface {
 }
 
 func UnaryServerInterceptor() grpc.UnaryServerInterceptor {
-
 	return func(ctx context.Context, req interface{}, info *grpc.UnaryServerInfo, handler grpc.UnaryHandler) (interface{}, error) {
 		if err := sanitize(ctx, req); err != nil {
 			return nil, err
 		}
+
 		return handler(ctx, req)
 	}
 }
 
-func sanitize(ctx context.Context, reqOrRes interface{}) (err error) {
+func sanitize(_ context.Context, reqOrRes interface{}) (err error) {
 	switch v := reqOrRes.(type) {
 	case ISanitize:
 		err = v.Sanitize()

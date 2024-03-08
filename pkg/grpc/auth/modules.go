@@ -15,8 +15,14 @@ func NewTokenMgrFromConfig(cfg *config.Config) *TokenMgr {
 	return NewTokenMgr(cfg.JWT.Secret)
 }
 
-var AuthModule = fx.Module("auth",
+var AuthModule = fx.Module("grpc_auth",
 	fx.Provide(
 		NewGRPCAuth,
+	),
+)
+
+var PermsModule = fx.Module("grpc_perms",
+	fx.Provide(
+		NewGRPCPerms,
 	),
 )

@@ -5,19 +5,32 @@ import (
 	"sync/atomic"
 
 	"github.com/galexrt/fivenet/gen/go/proto/resources/rector"
-	"github.com/galexrt/fivenet/pkg/utils"
+	"github.com/galexrt/fivenet/pkg/utils/broker"
+	"go.uber.org/fx"
 )
 
 type TestConfig struct {
 	cfg atomic.Pointer[Cfg]
 
-	broker *utils.Broker[*Cfg]
+	broker *broker.Broker[*Cfg]
 }
 
-func NewTest(ctx context.Context) (IConfig, error) {
+var TestModule = fx.Module("appconfig_test",
+	fx.Provide(
+		NewTest,
+	),
+)
+
+type TestParams struct {
+	fx.In
+
+	LC fx.Lifecycle
+}
+
+func NewTest(p TestParams) (IConfig, error) {
 	cfg := &TestConfig{
 		cfg:    atomic.Pointer[rector.AppConfig]{},
-		broker: utils.NewBroker[*Cfg](),
+		broker: broker.New[*Cfg](),
 	}
 
 	c := &Cfg{}
@@ -25,7 +38,17 @@ func NewTest(ctx context.Context) (IConfig, error) {
 
 	cfg.Set(c)
 
-	go cfg.broker.Start(ctx)
+	p.LC.Append(fx.StartHook(func(ctx context.Context) error {
+		go cfg.broker.Start(ctx)
+
+		return nil
+	}))
+
+	p.LC.Append(fx.StartHook(func(ctx context.Context) error {
+		cfg.broker.Stop()
+
+		return nil
+	}))
 
 	return cfg, nil
 }

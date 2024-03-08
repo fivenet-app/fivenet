@@ -27,7 +27,7 @@ func (n *Notifi) registerEvents(ctx context.Context) error {
 		Discard:     jetstream.DiscardOld,
 		MaxAge:      30 * time.Minute,
 	}
-	if _, err := natsutils.CreateOrUpdateStream(ctx, n.js, cfg); err != nil {
+	if _, err := n.js.CreateOrUpdateStream(ctx, cfg); err != nil {
 		return err
 	}
 

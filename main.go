@@ -1,11 +1,11 @@
 package main
 
 import (
-	"fmt"
 	"os"
 	"time"
 
 	"github.com/alecthomas/kong"
+	"github.com/galexrt/fivenet/internal/modules"
 	"github.com/galexrt/fivenet/pkg/config"
 	"github.com/galexrt/fivenet/pkg/config/appconfig"
 	"github.com/galexrt/fivenet/pkg/coords/postals"
@@ -32,7 +32,6 @@ import (
 	"go.uber.org/fx"
 	"go.uber.org/fx/fxevent"
 	"go.uber.org/zap"
-	"go.uber.org/zap/zapcore"
 
 	grpcserver "google.golang.org/grpc"
 	// GRPC Services
@@ -59,7 +58,7 @@ type Context struct{}
 type ServerCmd struct{}
 
 func (c *ServerCmd) Run(ctx *Context) error {
-	fxOpts := getFxBaseOpts()
+	fxOpts := getFxBaseOpts(cli.StartTimeout)
 	fxOpts = append(fxOpts,
 		fx.Invoke(func(*grpcserver.Server) {}),
 		fx.Invoke(func(server.HTTPServer) {}),
@@ -80,7 +79,7 @@ type WorkerCmd struct {
 }
 
 func (c *WorkerCmd) Run(ctx *Context) error {
-	fxOpts := getFxBaseOpts()
+	fxOpts := getFxBaseOpts(cli.StartTimeout)
 
 	if c.ModuleAuditRetention {
 		fxOpts = append(fxOpts, fx.Invoke(func(*audit.Retention) {}))
@@ -113,24 +112,25 @@ var cli struct {
 	Worker WorkerCmd `cmd:"" help:"Run FiveNet worker."`
 }
 
-func getFxBaseOpts() []fx.Option {
+func getFxBaseOpts(startTimeout time.Duration) []fx.Option {
 	return []fx.Option{
 		fx.WithLogger(func(log *zap.Logger) fxevent.Logger {
 			return &fxevent.ZapLogger{Logger: log}
 		}),
-		fx.StartTimeout(15 * time.Second),
+		fx.StartTimeout(startTimeout),
 
-		LoggerModule,
+		modules.LoggerModule,
 		htmlsanitizer.Module,
 		config.Module,
 		appconfig.Module,
+		modules.TracerProviderModule,
 		admin.Module,
 		server.HTTPEngineModule,
 		server.HTTPServerModule,
 		grpc.ServerModule,
-		server.TracerProviderModule,
 		auth.AuthModule,
 		auth.TokenMgrModule,
+		auth.PermsModule,
 		query.Module,
 		perms.Module,
 		events.Module,
@@ -198,27 +198,4 @@ func main() {
 
 	err := ctx.Run(&Context{})
 	ctx.FatalIfErrorf(err)
-}
-
-var LoggerModule = fx.Module("logger",
-	fx.Provide(
-		NewLogger,
-	),
-)
-
-func NewLogger(cfg *config.Config) (*zap.Logger, error) {
-	// Logger Setup
-	loggerConfig := zap.NewProductionConfig()
-	level, err := zapcore.ParseLevel(cfg.LogLevel)
-	if err != nil {
-		return nil, fmt.Errorf("failed to parse log level from config. %w", err)
-	}
-	loggerConfig.Level.SetLevel(level)
-
-	logger, err := loggerConfig.Build()
-	if err != nil {
-		return nil, fmt.Errorf("failed to configure logger. %w", err)
-	}
-
-	return logger, nil
 }

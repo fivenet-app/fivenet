@@ -5,7 +5,7 @@ import (
 
 	"github.com/galexrt/fivenet/gen/go/proto/resources/livemap"
 	"github.com/galexrt/fivenet/pkg/nats/store"
-	"github.com/galexrt/fivenet/pkg/utils"
+	"github.com/galexrt/fivenet/pkg/utils/broker"
 	"github.com/galexrt/fivenet/query/fivenet/table"
 	"github.com/nats-io/nats.go/jetstream"
 	"github.com/puzpuzpuz/xsync/v3"
@@ -41,7 +41,7 @@ type Tracker struct {
 	userStore  *store.Store[livemap.UserMarker, *livemap.UserMarker]
 	usersByJob *xsync.MapOf[string, *xsync.MapOf[int32, *livemap.UserMarker]]
 
-	broker *utils.Broker[*livemap.UsersUpdateEvent]
+	broker *broker.Broker[*livemap.UsersUpdateEvent]
 }
 
 type Params struct {
@@ -57,12 +57,12 @@ func New(p Params) (ITracker, error) {
 	ctx, cancel := context.WithCancel(context.Background())
 
 	t := &Tracker{
-		logger: p.Logger,
+		logger: p.Logger.Named("tracker"),
 		js:     p.JS,
 
 		usersByJob: xsync.NewMapOf[string, *xsync.MapOf[int32, *livemap.UserMarker]](),
 
-		broker: utils.NewBroker[*livemap.UsersUpdateEvent](),
+		broker: broker.New[*livemap.UsersUpdateEvent](),
 	}
 
 	p.LC.Append(fx.StartHook(func(c context.Context) error {
@@ -109,7 +109,7 @@ func New(p Params) (ITracker, error) {
 			return err
 		}
 
-		if err := userIDs.Start(c); err != nil {
+		if err := userIDs.Start(ctx); err != nil {
 			return err
 		}
 		t.userStore = userIDs

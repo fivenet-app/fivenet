@@ -28,7 +28,7 @@ func (s *Server) registerEvents(ctx context.Context, c context.Context) error {
 		Discard:     jetstream.DiscardOld,
 		MaxAge:      2 * time.Minute,
 	}
-	if _, err := natsutils.CreateOrUpdateStream(ctx, s.js, cfg); err != nil {
+	if _, err := s.js.CreateOrUpdateStream(ctx, cfg); err != nil {
 		return err
 	}
 

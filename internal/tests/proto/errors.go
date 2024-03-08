@@ -3,8 +3,8 @@ package proto
 import (
 	"testing"
 
+	"github.com/stretchr/testify/assert"
 	"google.golang.org/grpc/status"
-	"gotest.tools/assert"
 )
 
 func CompareGRPCError(t *testing.T, expected error, err error) {

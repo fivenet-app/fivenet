@@ -5,24 +5,19 @@ import (
 	"fmt"
 	"os"
 	"testing"
-	"time"
 
 	permsauth "github.com/galexrt/fivenet/gen/go/proto/services/auth/perms"
+	"github.com/galexrt/fivenet/internal/modules"
 	"github.com/galexrt/fivenet/internal/tests/proto"
 	"github.com/galexrt/fivenet/internal/tests/servers"
-	"github.com/galexrt/fivenet/pkg/config"
-	"github.com/galexrt/fivenet/pkg/config/appconfig"
-	"github.com/galexrt/fivenet/pkg/grpc/auth"
-	"github.com/galexrt/fivenet/pkg/grpc/auth/userinfo"
-	"github.com/galexrt/fivenet/pkg/mstlystcdata"
+	grpcserver "github.com/galexrt/fivenet/pkg/grpc"
 	"github.com/galexrt/fivenet/pkg/perms"
-	"github.com/galexrt/fivenet/pkg/server/audit"
 	_ "github.com/go-sql-driver/mysql"
 	"github.com/stretchr/testify/assert"
 	"github.com/stretchr/testify/require"
-	tracesdk "go.opentelemetry.io/otel/sdk/trace"
+	"go.uber.org/fx"
 	"go.uber.org/fx/fxtest"
-	"go.uber.org/zap"
+	"google.golang.org/grpc"
 	"google.golang.org/grpc/metadata"
 )
 
@@ -47,71 +42,30 @@ func TestMain(m *testing.M) {
 func TestFullAuthFlow(t *testing.T) {
 	defer servers.TestDBServer.Reset()
 
-	db, err := servers.TestDBServer.DB()
-	require.NoError(t, err)
-
 	ctx, cancel := context.WithCancel(context.Background())
 	defer cancel()
-	logger := zap.NewNop()
-	tp := tracesdk.NewTracerProvider()
-	ui := userinfo.NewMockUserInfoRetriever(map[int32]*userinfo.UserInfo{})
-	tm := auth.NewTokenMgr("")
 
-	cfg, err := config.LoadBaseConfigTest()
-	require.NoError(t, err)
-	require.NotNil(t, cfg)
-
-	cfg.NATS.URL = servers.TestNATSServer.GetURL()
-	cfg.Cache.RefreshTime = 1 * time.Hour
-
-	appCfg, err := appconfig.NewTest(ctx)
-	require.NoError(t, err)
-	require.NotNil(t, cfg)
-
-	js, err := servers.TestNATSServer.GetJS()
+	clientConn, grpcSrvModule, err := modules.TestGRPCServer(ctx)
 	require.NoError(t, err)
 
-	fxLC := fxtest.NewLifecycle(t)
+	var srv *Server
+	app := fxtest.New(t,
+		modules.GetFxTestOpts(
+			fx.Provide(grpcSrvModule),
+			fx.Provide(grpcserver.AsService(func(p Params) *Server {
+				srv = NewServer(p)
+				return srv
+			})),
 
-	p, err := perms.New(perms.Params{
-		LC:        fxLC,
-		Logger:    logger,
-		DB:        db,
-		TP:        tp,
-		JS:        js,
-		AppConfig: appCfg,
-	})
-	assert.NoError(t, err)
+			fx.Invoke(func(*grpc.Server) {}),
+		)...,
+	)
+	assert.NotNil(t, app)
 
-	aud := &audit.Noop{}
+	app.RequireStart()
+	assert.NotNil(t, srv)
 
-	c, err := mstlystcdata.NewCache(mstlystcdata.Params{
-		LC:     fxLC,
-		Logger: logger,
-		TP:     tp,
-		DB:     db,
-		Config: cfg,
-	})
-	assert.NoError(t, err)
-	enricher := mstlystcdata.NewEnricher(c, appCfg)
-
-	srv := NewServer(Params{
-		Logger:   logger,
-		DB:       db,
-		Auth:     auth.NewGRPCAuth(ui, tm),
-		TM:       tm,
-		Perms:    p,
-		Enricher: enricher,
-		Aud:      aud,
-		UI:       ui,
-		Config:   cfg,
-	})
-
-	fxLC.RequireStart()
-	defer fxLC.RequireStop()
-
-	client, _, cancel := NewTestAuthServiceClient(srv)
-	defer cancel()
+	client := NewAuthServiceClient(clientConn)
 
 	// First login without credentials
 	loginReq := &LoginRequest{}
@@ -184,19 +138,19 @@ func TestFullAuthFlow(t *testing.T) {
 	assert.Nil(t, chooseCharRes)
 	proto.CompareGRPCError(t, ErrUnableToChooseChar, err)
 
-	role, err := p.GetRoleByJobAndGrade(ctx, "ambulance", 1)
+	role, err := srv.ps.GetRoleByJobAndGrade(ctx, "ambulance", 1)
 	assert.NoError(t, err)
 	assert.NotNil(t, role)
 
-	perm, err := p.GetPermission(ctx, permsauth.AuthServicePerm, permsauth.AuthServiceChooseCharacterPerm)
+	perm, err := srv.ps.GetPermission(ctx, permsauth.AuthServicePerm, permsauth.AuthServiceChooseCharacterPerm)
 	assert.NoError(t, err)
 	assert.NotNil(t, perm)
 
 	// user-1: Choose valid character but we don't have permissions on the role
-	err = p.RemovePermissionsFromRole(ctx, role.ID, perm.Id)
+	err = srv.ps.RemovePermissionsFromRole(ctx, role.ID, perm.Id)
 	assert.NoError(t, err)
 	// Disable choose char perm from ambulance rank 1 role, `user-1` is a medic rank 1+
-	err = p.UpdateRolePermissions(ctx, role.ID, perms.AddPerm{
+	err = srv.ps.UpdateRolePermissions(ctx, role.ID, perms.AddPerm{
 		Id:  perm.Id,
 		Val: false,
 	})
@@ -208,7 +162,7 @@ func TestFullAuthFlow(t *testing.T) {
 	proto.CompareGRPCError(t, ErrUnableToChooseChar, err)
 
 	// user-1: Choose valid character, now we add a permssion
-	err = p.UpdateRolePermissions(ctx, role.ID, perms.AddPerm{
+	err = srv.ps.UpdateRolePermissions(ctx, role.ID, perms.AddPerm{
 		Id:  perm.Id,
 		Val: true,
 	})
@@ -217,4 +171,6 @@ func TestFullAuthFlow(t *testing.T) {
 	chooseCharRes, err = client.ChooseCharacter(ctx, chooseCharReq)
 	assert.NoError(t, err)
 	assert.NotNil(t, chooseCharRes)
+
+	app.RequireStop()
 }

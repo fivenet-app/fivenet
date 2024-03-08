@@ -56,7 +56,7 @@ func RegisterStream(ctx context.Context, js jetstream.JetStream) (jetstream.Stre
 		Storage:     jetstream.MemoryStorage,
 		Duplicates:  20 * time.Second,
 	}
-	if _, err := natsutils.CreateOrUpdateStream(ctx, js, cfg); err != nil {
+	if _, err := js.CreateOrUpdateStream(ctx, cfg); err != nil {
 		return cfg, err
 	}
 

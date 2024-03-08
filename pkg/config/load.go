@@ -15,7 +15,14 @@ var Module = fx.Module("config",
 	),
 )
 
-func Load() (*Config, error) {
+type Result struct {
+	fx.Out
+
+	Config        *Config
+	DiscordConfig *Discord
+}
+
+func Load() (Result, error) {
 	// Viper Config reading setup
 	viper.SetEnvPrefix("FIVENET")
 	viper.SetConfigType("yaml")
@@ -28,24 +35,34 @@ func Load() (*Config, error) {
 		viper.AddConfigPath("/config")
 	}
 
+	res := Result{}
 	// Find and read the config file
 	if err := viper.ReadInConfig(); err != nil {
-		return nil, fmt.Errorf("fatal error config file: %w", err)
+		return res, fmt.Errorf("fatal error config file: %w", err)
 	}
 
 	c := &Config{}
 	if err := defaults.Set(c); err != nil {
-		return nil, fmt.Errorf("failed to set config defaults: %w", err)
+		return res, fmt.Errorf("failed to set config defaults: %w", err)
 	}
+	res.Config = c
+
+	res.DiscordConfig = &c.Discord
 
 	if err := viper.Unmarshal(c); err != nil {
-		return nil, fmt.Errorf("failed to unmarshal config: %w", err)
+		return res, fmt.Errorf("failed to unmarshal config: %w", err)
 	}
 
-	return c, nil
+	return res, nil
 }
 
-func LoadBaseConfigTest() (*Config, error) {
+var TestModule = fx.Module("config_test",
+	fx.Provide(
+		LoadTestConfig,
+	),
+)
+
+func LoadTestConfig() (*Config, error) {
 	c := &Config{}
 	if err := defaults.Set(c); err != nil {
 		return nil, fmt.Errorf("failed to set config defaults: %w", err)

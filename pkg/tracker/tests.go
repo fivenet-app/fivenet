@@ -4,21 +4,40 @@ import (
 	"context"
 
 	"github.com/galexrt/fivenet/gen/go/proto/resources/livemap"
-	"github.com/galexrt/fivenet/pkg/utils"
+	"github.com/galexrt/fivenet/pkg/utils/broker"
 	"github.com/puzpuzpuz/xsync/v3"
+	"go.uber.org/fx"
 )
 
 type TestTracker struct {
-	broker *utils.Broker[*livemap.UsersUpdateEvent]
+	ITracker
+
+	broker *broker.Broker[*livemap.UsersUpdateEvent]
 
 	usersCache *xsync.MapOf[string, *xsync.MapOf[int32, *livemap.UserMarker]]
 	usersIDs   *xsync.MapOf[int32, *livemap.UserMarker]
 }
 
-func NewForTests(ctx context.Context) *TestTracker {
-	broker := utils.NewBroker[*livemap.UsersUpdateEvent]()
+type TestParams struct {
+	fx.In
 
-	broker.Start(ctx)
+	LC fx.Lifecycle
+}
+
+func NewForTests(p TestParams) ITracker {
+	broker := broker.New[*livemap.UsersUpdateEvent]()
+
+	p.LC.Append(fx.StartHook(func(ctx context.Context) error {
+		go broker.Start(context.Background())
+
+		return nil
+	}))
+
+	p.LC.Append(fx.StopHook(func(ctx context.Context) error {
+		broker.Stop()
+
+		return nil
+	}))
 
 	return &TestTracker{
 		usersCache: xsync.NewMapOf[string, *xsync.MapOf[int32, *livemap.UserMarker]](),

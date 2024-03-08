@@ -190,11 +190,11 @@ const selectedAccessLevel = ref<AccessLevel>(AccessLevel.VIEW);
                                                             class="absolute z-10 mt-1 max-h-44 w-full overflow-auto rounded-md bg-base-700 py-1 text-base sm:text-sm"
                                                         >
                                                             <ListboxOption
-                                                                v-for="accessLevel in accessLevels"
-                                                                :key="accessLevel"
+                                                                v-for="level in accessLevels"
+                                                                :key="level"
                                                                 v-slot="{ active, selected }"
                                                                 as="template"
-                                                                :value="accessLevel"
+                                                                :value="level"
                                                             >
                                                                 <li
                                                                     :class="[
@@ -210,7 +210,7 @@ const selectedAccessLevel = ref<AccessLevel>(AccessLevel.VIEW);
                                                                     >
                                                                         {{
                                                                             $t(
-                                                                                `enums.docstore.AccessLevel.${AccessLevel[accessLevel]}`,
+                                                                                `enums.docstore.AccessLevel.${AccessLevel[level]}`,
                                                                                 2,
                                                                             )
                                                                         }}

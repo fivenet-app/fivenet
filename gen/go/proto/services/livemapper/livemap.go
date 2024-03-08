@@ -19,6 +19,7 @@ import (
 	"github.com/galexrt/fivenet/pkg/server/audit"
 	"github.com/galexrt/fivenet/pkg/tracker"
 	"github.com/galexrt/fivenet/pkg/utils"
+	"github.com/galexrt/fivenet/pkg/utils/broker"
 	"github.com/nats-io/nats.go/jetstream"
 	"github.com/puzpuzpuz/xsync/v3"
 	tracesdk "go.opentelemetry.io/otel/sdk/trace"
@@ -55,7 +56,7 @@ type Server struct {
 
 	markersCache *xsync.MapOf[string, []*livemap.MarkerMarker]
 
-	broker *utils.Broker[*brokerEvent]
+	broker *broker.Broker[*brokerEvent]
 }
 
 type Params struct {
@@ -82,7 +83,7 @@ type brokerEvent struct {
 func NewServer(p Params) *Server {
 	ctx, cancel := context.WithCancel(context.Background())
 
-	broker := utils.NewBroker[*brokerEvent]()
+	broker := broker.New[*brokerEvent]()
 	s := &Server{
 		logger: p.Logger,
 

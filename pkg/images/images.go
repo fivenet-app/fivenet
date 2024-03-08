@@ -96,5 +96,6 @@ func calcScaleFactors(width uint, height uint, oldWidth float64, oldHeight float
 			scaleY = oldHeight / float64(height)
 		}
 	}
+
 	return
 }

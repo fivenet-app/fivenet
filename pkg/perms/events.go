@@ -43,7 +43,7 @@ func (p *Perms) registerSubscriptions(ctx context.Context, c context.Context) er
 		Storage:     jetstream.MemoryStorage,
 	}
 
-	if _, err := natsutils.CreateOrUpdateStream(ctx, p.js, cfg); err != nil {
+	if _, err := p.js.CreateOrUpdateStream(ctx, cfg); err != nil {
 		return err
 	}
 

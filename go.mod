@@ -55,7 +55,6 @@ require (
 	golang.org/x/oauth2 v0.18.0
 	google.golang.org/grpc v1.62.1
 	google.golang.org/protobuf v1.33.0
-	gotest.tools v2.2.0+incompatible
 	gotest.tools/v3 v3.5.1
 	willnorris.com/go/imageproxy v0.11.2
 )

@@ -37,6 +37,11 @@ func TestSanitize(t *testing.T) {
 			result: "</h2>HELLO WORLD!</p> This<table> test",
 			msg:    "Broken tags",
 		},
+		{
+			input:  "<script src=\"test123.com\"></script>HELLO WORLD!</p> This<table is a> test</table.",
+			result: "HELLO WORLD!</p> This<table> test",
+			msg:    "Make sure bad tag is removed, even with broken tags",
+		},
 	} {
 		assert.Equal(t, Sanitize(run.input), run.result, run.msg)
 	}
@@ -62,6 +67,11 @@ func TestStripTags(t *testing.T) {
 			input:  "</h2>HELLO WORLD!</p> This<table is a> test</table.",
 			result: "HELLO WORLD! This test",
 			msg:    "Broken tags",
+		},
+		{
+			input:  "<script src=\"test123.com\"></script>HELLO WORLD!</p> This<table is a> test</table.",
+			result: "HELLO WORLD! This test",
+			msg:    "Make sure bad tag is removed, even with broken tags",
 		},
 	} {
 		assert.Equal(t, StripTags(run.input), run.result, run.msg)
