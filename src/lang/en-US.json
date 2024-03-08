@@ -1646,6 +1646,10 @@
                     "Access": "Access to time clock entries"
                 }
             },
+            "ListInactiveEmployees": {
+                "key": "Timeclock Entries: List inactive colleagues",
+                "description": "List inactive colleagues."
+            },
             "category": "Job Timeclock"
         }
     },

@@ -11,6 +11,7 @@ import { WireType } from "@protobuf-ts/runtime";
 import type { PartialMessage } from "@protobuf-ts/runtime";
 import { reflectionMergePartial } from "@protobuf-ts/runtime";
 import { MessageType } from "@protobuf-ts/runtime";
+import { Colleague } from "../../resources/jobs/colleagues";
 import { TimeclockWeeklyStats } from "../../resources/jobs/timeclock";
 import { TimeclockStats } from "../../resources/jobs/timeclock";
 import { TimeclockEntry } from "../../resources/jobs/timeclock";
@@ -94,7 +95,11 @@ export interface GetTimeclockStatsResponse {
  */
 export interface ListInactiveEmployeesRequest {
     /**
-     * @generated from protobuf field: int64 days = 1;
+     * @generated from protobuf field: resources.common.database.PaginationRequest pagination = 1;
+     */
+    pagination?: PaginationRequest;
+    /**
+     * @generated from protobuf field: int64 days = 2;
      */
     days: bigint;
 }
@@ -102,6 +107,14 @@ export interface ListInactiveEmployeesRequest {
  * @generated from protobuf message services.jobs.ListInactiveEmployeesResponse
  */
 export interface ListInactiveEmployeesResponse {
+    /**
+     * @generated from protobuf field: resources.common.database.PaginationResponse pagination = 1;
+     */
+    pagination?: PaginationResponse;
+    /**
+     * @generated from protobuf field: repeated resources.jobs.Colleague colleagues = 2;
+     */
+    colleagues: Colleague[];
 }
 // @generated message type with reflection information, may provide speed optimized methods
 class ListTimeclockRequest$Type extends MessageType<ListTimeclockRequest> {
@@ -359,7 +372,8 @@ export const GetTimeclockStatsResponse = new GetTimeclockStatsResponse$Type();
 class ListInactiveEmployeesRequest$Type extends MessageType<ListInactiveEmployeesRequest> {
     constructor() {
         super("services.jobs.ListInactiveEmployeesRequest", [
-            { no: 1, name: "days", kind: "scalar", T: 3 /*ScalarType.INT64*/, L: 0 /*LongType.BIGINT*/ }
+            { no: 1, name: "pagination", kind: "message", T: () => PaginationRequest, options: { "validate.rules": { message: { required: true } } } },
+            { no: 2, name: "days", kind: "scalar", T: 3 /*ScalarType.INT64*/, L: 0 /*LongType.BIGINT*/ }
         ]);
     }
     create(value?: PartialMessage<ListInactiveEmployeesRequest>): ListInactiveEmployeesRequest {
@@ -374,7 +388,10 @@ class ListInactiveEmployeesRequest$Type extends MessageType<ListInactiveEmployee
         while (reader.pos < end) {
             let [fieldNo, wireType] = reader.tag();
             switch (fieldNo) {
-                case /* int64 days */ 1:
+                case /* resources.common.database.PaginationRequest pagination */ 1:
+                    message.pagination = PaginationRequest.internalBinaryRead(reader, reader.uint32(), options, message.pagination);
+                    break;
+                case /* int64 days */ 2:
                     message.days = reader.int64().toBigInt();
                     break;
                 default:
@@ -389,9 +406,12 @@ class ListInactiveEmployeesRequest$Type extends MessageType<ListInactiveEmployee
         return message;
     }
     internalBinaryWrite(message: ListInactiveEmployeesRequest, writer: IBinaryWriter, options: BinaryWriteOptions): IBinaryWriter {
-        /* int64 days = 1; */
+        /* resources.common.database.PaginationRequest pagination = 1; */
+        if (message.pagination)
+            PaginationRequest.internalBinaryWrite(message.pagination, writer.tag(1, WireType.LengthDelimited).fork(), options).join();
+        /* int64 days = 2; */
         if (message.days !== 0n)
-            writer.tag(1, WireType.Varint).int64(message.days);
+            writer.tag(2, WireType.Varint).int64(message.days);
         let u = options.writeUnknownFields;
         if (u !== false)
             (u == true ? UnknownFieldHandler.onWrite : u)(this.typeName, message, writer);
@@ -405,18 +425,47 @@ export const ListInactiveEmployeesRequest = new ListInactiveEmployeesRequest$Typ
 // @generated message type with reflection information, may provide speed optimized methods
 class ListInactiveEmployeesResponse$Type extends MessageType<ListInactiveEmployeesResponse> {
     constructor() {
-        super("services.jobs.ListInactiveEmployeesResponse", []);
+        super("services.jobs.ListInactiveEmployeesResponse", [
+            { no: 1, name: "pagination", kind: "message", T: () => PaginationResponse },
+            { no: 2, name: "colleagues", kind: "message", repeat: 1 /*RepeatType.PACKED*/, T: () => Colleague }
+        ]);
     }
     create(value?: PartialMessage<ListInactiveEmployeesResponse>): ListInactiveEmployeesResponse {
         const message = globalThis.Object.create((this.messagePrototype!));
+        message.colleagues = [];
         if (value !== undefined)
             reflectionMergePartial<ListInactiveEmployeesResponse>(this, message, value);
         return message;
     }
     internalBinaryRead(reader: IBinaryReader, length: number, options: BinaryReadOptions, target?: ListInactiveEmployeesResponse): ListInactiveEmployeesResponse {
-        return target ?? this.create();
+        let message = target ?? this.create(), end = reader.pos + length;
+        while (reader.pos < end) {
+            let [fieldNo, wireType] = reader.tag();
+            switch (fieldNo) {
+                case /* resources.common.database.PaginationResponse pagination */ 1:
+                    message.pagination = PaginationResponse.internalBinaryRead(reader, reader.uint32(), options, message.pagination);
+                    break;
+                case /* repeated resources.jobs.Colleague colleagues */ 2:
+                    message.colleagues.push(Colleague.internalBinaryRead(reader, reader.uint32(), options));
+                    break;
+                default:
+                    let u = options.readUnknownField;
+                    if (u === "throw")
+                        throw new globalThis.Error(`Unknown field ${fieldNo} (wire type ${wireType}) for ${this.typeName}`);
+                    let d = reader.skip(wireType);
+                    if (u !== false)
+                        (u === true ? UnknownFieldHandler.onRead : u)(this.typeName, message, fieldNo, wireType, d);
+            }
+        }
+        return message;
     }
     internalBinaryWrite(message: ListInactiveEmployeesResponse, writer: IBinaryWriter, options: BinaryWriteOptions): IBinaryWriter {
+        /* resources.common.database.PaginationResponse pagination = 1; */
+        if (message.pagination)
+            PaginationResponse.internalBinaryWrite(message.pagination, writer.tag(1, WireType.LengthDelimited).fork(), options).join();
+        /* repeated resources.jobs.Colleague colleagues = 2; */
+        for (let i = 0; i < message.colleagues.length; i++)
+            Colleague.internalBinaryWrite(message.colleagues[i], writer.tag(2, WireType.LengthDelimited).fork(), options).join();
         let u = options.writeUnknownFields;
         if (u !== false)
             (u == true ? UnknownFieldHandler.onWrite : u)(this.typeName, message, writer);
