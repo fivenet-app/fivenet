@@ -3,7 +3,6 @@ package jobs
 import (
 	"context"
 	"errors"
-	"fmt"
 	"slices"
 	"strings"
 
@@ -119,8 +118,6 @@ func (s *Server) ListColleagues(ctx context.Context, req *ListColleaguesRequest)
 			tUser.Lastname.ASC(),
 		).
 		LIMIT(limit)
-
-	fmt.Println(stmt.DebugSql())
 
 	if err := stmt.QueryContext(ctx, s.db, &resp.Colleagues); err != nil {
 		if !errors.Is(err, qrm.ErrNoRows) {
@@ -505,20 +502,21 @@ func (s *Server) ListColleagueActivity(ctx context.Context, req *ListColleagueAc
 
 	condition := tJobsUserActivity.Job.EQ(jet.String(userInfo.Job))
 
-	if len(req.UserIds) >= 2 {
-		userIds := make([]jet.Expression, len(req.UserIds))
-		for i := 0; i < len(req.UserIds); i++ {
-			userIds[i] = jet.Int32(req.UserIds[i])
-		}
-
-		condition = condition.AND(tUTarget.ID.IN(userIds...))
+	// If no user IDs given or more than 2, show all the user has access to
+	if len(req.UserIds) == 0 || len(req.UserIds) >= 2 {
 		condition = condition.AND(s.getConditionForColleagueAccess(tJobsUserActivity, tUTarget, access, userInfo))
-	} else {
-		userId := userInfo.UserId
-		// No IDs given, return own user colleague activity
-		if len(req.UserIds) == 1 {
-			userId = req.UserIds[0]
+
+		if len(req.UserIds) >= 2 {
+			// More than 2 user ids
+			userIds := make([]jet.Expression, len(req.UserIds))
+			for i := 0; i < len(req.UserIds); i++ {
+				userIds[i] = jet.Int32(req.UserIds[i])
+			}
+
+			condition = condition.AND(tUTarget.ID.IN(userIds...))
 		}
+	} else {
+		userId := req.UserIds[0]
 
 		targetUser, err := s.getColleague(ctx, userId)
 		if err != nil {
@@ -546,23 +544,30 @@ func (s *Server) ListColleagueActivity(ctx context.Context, req *ListColleagueAc
 		types = typesAttr.([]string)
 	}
 	if len(types) == 0 {
-		return &ListColleagueActivityResponse{}, nil
+		if !userInfo.SuperUser {
+			return &ListColleagueActivityResponse{}, nil
+		}
+		types = append(types, "HIRED", "FIRED", "PROMOTED", "DEMOTED", "ABSENCE_DATE")
 	}
 
 	condTypes := []jet.Expression{}
 	for _, aType := range types {
-		switch strings.ToLower(aType) {
+		switch strings.ToUpper(aType) {
 		case "HIRED":
-			condTypes = append(condTypes, jet.Int16(int16(jobs.JobsUserActivityType_JOBS_USER_ACTIVITY_TYPE_HIRED)))
+			condTypes = append(condTypes, jet.Int32(int32(jobs.JobsUserActivityType_JOBS_USER_ACTIVITY_TYPE_HIRED)))
 		case "FIRED":
-			condTypes = append(condTypes, jet.Int16(int16(jobs.JobsUserActivityType_JOBS_USER_ACTIVITY_TYPE_FIRED)))
+			condTypes = append(condTypes, jet.Int32(int32(jobs.JobsUserActivityType_JOBS_USER_ACTIVITY_TYPE_FIRED)))
 		case "PROMOTED":
-			condTypes = append(condTypes, jet.Int16(int16(jobs.JobsUserActivityType_JOBS_USER_ACTIVITY_TYPE_PROMOTED)))
+			condTypes = append(condTypes, jet.Int32(int32(jobs.JobsUserActivityType_JOBS_USER_ACTIVITY_TYPE_PROMOTED)))
 		case "DEMOTED":
-			condTypes = append(condTypes, jet.Int16(int16(jobs.JobsUserActivityType_JOBS_USER_ACTIVITY_TYPE_DEMOTED)))
+			condTypes = append(condTypes, jet.Int32(int32(jobs.JobsUserActivityType_JOBS_USER_ACTIVITY_TYPE_DEMOTED)))
 		case "ABSENCE_DATE":
-			condTypes = append(condTypes, jet.Int16(int16(jobs.JobsUserActivityType_JOBS_USER_ACTIVITY_TYPE_ABSENCE_DATE)))
+			condTypes = append(condTypes, jet.Int32(int32(jobs.JobsUserActivityType_JOBS_USER_ACTIVITY_TYPE_ABSENCE_DATE)))
 		}
+	}
+
+	if len(condTypes) == 0 {
+		return &ListColleagueActivityResponse{}, nil
 	}
 
 	condition = condition.AND(tJobsUserActivity.ActivityType.IN(condTypes...))

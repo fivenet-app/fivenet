@@ -1593,6 +1593,20 @@
                 "attrs_types": {
                     "Access": "Access to factions-own colleague's properties"
                 }
+            },
+            "ListColleagueActivity": {
+                "key": "View Colleague Activity",
+                "description": "View activities by types of your colleagues",
+                "attrs": {
+                    "HIRED": "Hired",
+                    "FIRED": "Fired",
+                    "PROMOTED": "Promoted",
+                    "DEMOTED": "Demoted",
+                    "ABSENCE_DATE": "Absence Date"
+                },
+                "attrs_types": {
+                    "Types": "Types"
+                }
             }
         },
         "JobsConductService": {
