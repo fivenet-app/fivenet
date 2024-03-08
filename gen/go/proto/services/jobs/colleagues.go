@@ -535,7 +535,7 @@ func (s *Server) ListColleagueActivity(ctx context.Context, req *ListColleagueAc
 	}
 
 	// Types Field Permission Check
-	typesAttr, err := s.ps.Attr(userInfo, permsjobs.JobsServicePerm, permsjobs.JobsServiceListColleaguesPerm, permsjobs.JobsServiceListColleagueActivityTypesPermField)
+	typesAttr, err := s.ps.Attr(userInfo, permsjobs.JobsServicePerm, permsjobs.JobsServiceListColleagueActivityPerm, permsjobs.JobsServiceListColleagueActivityTypesPermField)
 	if err != nil {
 		return nil, errswrap.NewError(errorsjobs.ErrFailedQuery, err)
 	}
@@ -543,10 +543,21 @@ func (s *Server) ListColleagueActivity(ctx context.Context, req *ListColleagueAc
 	if typesAttr != nil {
 		types = typesAttr.([]string)
 	}
+
+	resp := &ListColleagueActivityResponse{
+		Pagination: &database.PaginationResponse{
+			TotalCount: 0,
+			Offset:     0,
+			End:        0,
+			PageSize:   15,
+		},
+	}
+
 	if len(types) == 0 {
 		if !userInfo.SuperUser {
-			return &ListColleagueActivityResponse{}, nil
+			return resp, nil
 		}
+
 		types = append(types, "HIRED", "FIRED", "PROMOTED", "DEMOTED", "ABSENCE_DATE")
 	}
 
@@ -567,7 +578,7 @@ func (s *Server) ListColleagueActivity(ctx context.Context, req *ListColleagueAc
 	}
 
 	if len(condTypes) == 0 {
-		return &ListColleagueActivityResponse{}, nil
+		return resp, nil
 	}
 
 	condition = condition.AND(tJobsUserActivity.ActivityType.IN(condTypes...))
@@ -593,9 +604,7 @@ func (s *Server) ListColleagueActivity(ctx context.Context, req *ListColleagueAc
 	}
 
 	pag, limit := req.Pagination.GetResponseWithPageSize(count.TotalCount, 15)
-	resp := &ListColleagueActivityResponse{
-		Pagination: pag,
-	}
+	resp.Pagination = pag
 	if count.TotalCount <= 0 {
 		return resp, nil
 	}

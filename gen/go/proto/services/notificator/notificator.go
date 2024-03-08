@@ -252,7 +252,7 @@ func (s *Server) Stream(req *StreamRequest, srv NotificatorService_StreamServer)
 	go func() {
 		for {
 			msg, err := cons.Next()
-			if errors.Is(err, jetstream.ErrMsgIteratorClosed) {
+			if err != nil {
 				close(msgCh)
 				break
 			}

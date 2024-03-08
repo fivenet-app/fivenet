@@ -84,7 +84,10 @@ const accessAttrs = attrList('JobsService.GetColleague', 'Access');
 const colleagueSearchAttrs = ['own', 'lower_rank', 'same_rank', 'any'];
 
 watch(props, async () => refresh());
-watch(selectedUsers, async () => refresh());
+watchDebounced(selectedUsers, async () => refresh(), {
+    debounce: 500,
+    maxWait: 1250,
+});
 
 function charsGetDisplayValue(chars: Colleague[]): string {
     const cs: string[] = [];
