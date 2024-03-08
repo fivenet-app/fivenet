@@ -1595,8 +1595,8 @@
                 }
             },
             "ListColleagueActivity": {
-                "key": "View Colleague Activity",
-                "description": "View activities by types of your colleagues",
+                "key": "Zeige Aktivitäten deiner Kollegen an",
+                "description": "Zeige Aktivitäten deiner Kollegen an",
                 "attrs": {
                     "HIRED": "Angestellt",
                     "FIRED": "Gefeuert",
