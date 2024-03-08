@@ -192,6 +192,35 @@ func (s *Server) GetTimeclockStats(ctx context.Context, req *GetTimeclockStatsRe
 func (s *Server) ListInactiveEmployees(ctx context.Context, req *ListInactiveEmployeesRequest) (*ListInactiveEmployeesResponse, error) {
 
 	// TODO
+	/*
+		SELECT
+		    fjt.`user_id`,
+		    u.firstname,
+		    u.lastname
+		FROM
+		    fivenet_jobs_timeclock fjt
+		INNER JOIN users u ON
+		    (u.id = fjt.user_id)
+		LEFT JOIN fivenet_jobs_user_props fjup ON
+			(fjup.user_id = fjt.user_id)
+		WHERE
+		    fjt.`job` = 'ambulance'
+		    AND u.job = 'ambulance'
+		    AND (fjup.absence_begin IS NULL OR fjup.absence_begin >= DATE(NOW() - INTERVAL 14 DAY))
+		    AND fjt.`user_id` NOT IN (
+		    SELECT
+		        fjt.`user_id`
+		    FROM
+		        fivenet_jobs_timeclock fjt
+		    WHERE
+		        fjt.`job` = 'ambulance'
+		        AND fjt.`date` >= DATE(NOW() - INTERVAL 14 DAY)
+		    GROUP BY
+		        fjt.`user_id`
+		)
+		GROUP BY
+		    fjt.`user_id`;
+	*/
 
 	resp := &ListInactiveEmployeesResponse{}
 
