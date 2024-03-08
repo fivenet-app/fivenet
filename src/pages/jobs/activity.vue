@@ -1,5 +1,5 @@
 <script lang="ts" setup>
-import ColleaguesList from '~/components/jobs/colleagues/ColleaguesList.vue';
+import ColleagueActivityFeed from '~/components/jobs/colleagues/info/ColleagueActivityFeed.vue';
 
 useHead({
     title: 'pages.jobs.colleagues.title',
@@ -7,12 +7,12 @@ useHead({
 definePageMeta({
     title: 'pages.jobs.colleagues.title',
     requiresAuth: true,
-    permission: 'JobsService.ListColleagues',
+    permission: 'JobsService.ListColleagueActivity',
 });
 </script>
 
 <template>
     <div>
-        <ColleaguesList />
+        <ColleagueActivityFeed :show-target-user="true" />
     </div>
 </template>

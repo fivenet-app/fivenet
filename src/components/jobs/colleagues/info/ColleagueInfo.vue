@@ -52,7 +52,7 @@ const tabs: { id: string; name: string; icon: DefineComponent; permission: Perms
         id: 'activity',
         name: 'common.activity',
         icon: markRaw(BulletinBoardIcon),
-        permission: 'JobsService.GetColleague' as Perms,
+        permission: 'JobsService.ListColleagueActivity' as Perms,
     },
     {
         id: 'timeclock',

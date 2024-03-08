@@ -115,7 +115,7 @@ func (s *Server) ListVehicles(ctx context.Context, req *ListVehiclesRequest) (*L
 		return nil, errswrap.NewError(errorsdmv.ErrFailedQuery, err)
 	}
 
-	pag, limit := req.Pagination.GetResponseWithPageSize(15)
+	pag, limit := req.Pagination.GetResponseWithPageSize(count.TotalCount, 15)
 	resp := &ListVehiclesResponse{
 		Pagination: pag,
 	}
@@ -194,7 +194,7 @@ func (s *Server) ListVehicles(ctx context.Context, req *ListVehiclesRequest) (*L
 		return nil, errswrap.NewError(errorsdmv.ErrFailedQuery, err)
 	}
 
-	resp.Pagination.Update(count.TotalCount, len(resp.Vehicles))
+	resp.Pagination.Update(len(resp.Vehicles))
 
 	return resp, nil
 }

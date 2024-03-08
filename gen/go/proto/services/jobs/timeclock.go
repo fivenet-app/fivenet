@@ -80,7 +80,7 @@ func (s *Server) ListTimeclock(ctx context.Context, req *ListTimeclockRequest) (
 		return nil, errswrap.NewError(errorsjobs.ErrFailedQuery, err)
 	}
 
-	pag, limit := req.Pagination.GetResponseWithPageSize(25)
+	pag, limit := req.Pagination.GetResponseWithPageSize(count.TotalCount, 25)
 	resp := &ListTimeclockResponse{
 		Pagination: pag,
 	}
@@ -146,7 +146,7 @@ func (s *Server) ListTimeclock(ctx context.Context, req *ListTimeclockRequest) (
 		}
 	}
 
-	resp.Pagination.Update(count.TotalCount, len(resp.Entries))
+	resp.Pagination.Update(len(resp.Entries))
 
 	return resp, nil
 }

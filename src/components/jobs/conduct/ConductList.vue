@@ -68,7 +68,6 @@ async function deleteConductEntry(id: string): Promise<void> {
 
 const queryTypes = ref('');
 
-const entriesChars = ref<User[]>([]);
 const queryTargets = ref<string>('');
 
 const searchInput = ref<HTMLInputElement | null>(null);
@@ -127,6 +126,15 @@ watchDebounced(
         maxWait: 1400,
     },
 );
+
+const cTypes = ref<{ status: ConductType; selected?: boolean }[]>([
+    { status: ConductType.NOTE },
+    { status: ConductType.NEUTRAL },
+    { status: ConductType.POSITIVE },
+    { status: ConductType.NEGATIVE },
+    { status: ConductType.WARNING },
+    { status: ConductType.SUSPENSION },
+]);
 
 onMounted(async () => {
     await refreshColleagues();
@@ -187,11 +195,11 @@ onConfirm(async (id) => deleteConductEntry(id));
                                             </ComboboxButton>
 
                                             <ComboboxOptions
-                                                v-if="entriesChars.length > 0"
+                                                v-if="colleagues?.colleagues !== undefined && colleagues?.colleagues.length > 0"
                                                 class="absolute z-10 mt-1 max-h-44 w-full overflow-auto rounded-md bg-base-700 py-1 text-base sm:text-sm"
                                             >
                                                 <ComboboxOption
-                                                    v-for="char in entriesChars"
+                                                    v-for="char in colleagues.colleagues"
                                                     :key="char.identifier"
                                                     v-slot="{ active, selected }"
                                                     :value="char"
@@ -250,10 +258,10 @@ onConfirm(async (id) => deleteConductEntry(id));
                                                 class="absolute z-10 mt-1 max-h-44 w-full overflow-auto rounded-md bg-base-700 py-1 text-base sm:text-sm"
                                             >
                                                 <ComboboxOption
-                                                    v-for="cType in ConductType"
-                                                    :key="cType.valueOf()"
+                                                    v-for="cType in cTypes"
+                                                    :key="cType.status"
                                                     v-slot="{ active, selected }"
-                                                    :value="cType"
+                                                    :value="cType.status"
                                                     as="char"
                                                 >
                                                     <li
@@ -263,7 +271,7 @@ onConfirm(async (id) => deleteConductEntry(id));
                                                         ]"
                                                     >
                                                         <span :class="['block truncate', selected && 'font-semibold']">
-                                                            {{ cType }}
+                                                            {{ $t(`enums.jobs.ConductType.${ConductType[cType.status]}`) }}
                                                         </span>
 
                                                         <span

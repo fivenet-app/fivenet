@@ -6,6 +6,7 @@ import (
 	"path/filepath"
 	"strings"
 
+	database "github.com/galexrt/fivenet/gen/go/proto/resources/common/database"
 	"github.com/galexrt/fivenet/gen/go/proto/resources/filestore"
 	rector "github.com/galexrt/fivenet/gen/go/proto/resources/rector"
 	"github.com/galexrt/fivenet/gen/go/proto/resources/timestamp"
@@ -42,7 +43,7 @@ func (s *Server) ListFiles(ctx context.Context, req *ListFilesRequest) (*ListFil
 		filePath = "/"
 	}
 
-	pag, _ := req.Pagination.GetResponseWithPageSize(listFilesPageSize)
+	pag, _ := req.Pagination.GetResponseWithPageSize(database.NoTotalCount, listFilesPageSize)
 	resp := &ListFilesResponse{
 		Pagination: pag,
 	}
@@ -63,7 +64,7 @@ func (s *Server) ListFiles(ctx context.Context, req *ListFilesRequest) (*ListFil
 	}
 	resp.Files = fs
 
-	resp.Pagination.Update(-1, len(resp.Files))
+	resp.Pagination.Update(len(resp.Files))
 
 	return resp, nil
 }

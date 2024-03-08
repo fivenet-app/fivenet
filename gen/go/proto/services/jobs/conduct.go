@@ -85,7 +85,7 @@ func (s *Server) ListConductEntries(ctx context.Context, req *ListConductEntries
 		return nil, errswrap.NewError(errorsjobs.ErrFailedQuery, err)
 	}
 
-	pag, limit := req.Pagination.GetResponse()
+	pag, limit := req.Pagination.GetResponse(count.TotalCount)
 	resp := &ListConductEntriesResponse{
 		Pagination: pag,
 	}
@@ -163,7 +163,7 @@ func (s *Server) ListConductEntries(ctx context.Context, req *ListConductEntries
 		}
 	}
 
-	resp.Pagination.Update(count.TotalCount, len(resp.Entries))
+	resp.Pagination.Update(len(resp.Entries))
 
 	return resp, nil
 }

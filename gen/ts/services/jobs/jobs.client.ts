@@ -44,7 +44,7 @@ export interface IJobsServiceClient {
      */
     getColleague(input: GetColleagueRequest, options?: RpcOptions): UnaryCall<GetColleagueRequest, GetColleagueResponse>;
     /**
-     * @perm: Name=GetColleague
+     * @perm: Attrs=Types/StringList:[]string{"HIRED", "FIRED", "PROMOTED", "DEMOTED", "ABSENCE_DATE"}
      *
      * @generated from protobuf rpc: ListColleagueActivity(services.jobs.ListColleagueActivityRequest) returns (services.jobs.ListColleagueActivityResponse);
      */
@@ -105,7 +105,7 @@ export class JobsServiceClient implements IJobsServiceClient, ServiceInfo {
         return stackIntercept<GetColleagueRequest, GetColleagueResponse>("unary", this._transport, method, opt, input);
     }
     /**
-     * @perm: Name=GetColleague
+     * @perm: Attrs=Types/StringList:[]string{"HIRED", "FIRED", "PROMOTED", "DEMOTED", "ABSENCE_DATE"}
      *
      * @generated from protobuf rpc: ListColleagueActivity(services.jobs.ListColleagueActivityRequest) returns (services.jobs.ListColleagueActivityResponse);
      */

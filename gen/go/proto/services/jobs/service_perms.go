@@ -15,9 +15,8 @@ import (
 var PermsRemap = map[string]string{
 
 	// Service: JobsService
-	"JobsService/GetMOTD":               "Any",
-	"JobsService/GetSelf":               "JobsService/ListColleagues",
-	"JobsService/ListColleagueActivity": "JobsService/GetColleague",
+	"JobsService/GetMOTD": "Any",
+	"JobsService/GetSelf": "JobsService/ListColleagues",
 
 	// Service: JobsTimeclockService
 	"JobsTimeclockService/GetTimeclockStats": "JobsTimeclockService/ListTimeclock",
@@ -67,6 +66,17 @@ func init() {
 					Key:         permkeys.JobsServiceGetColleagueAccessPermField,
 					Type:        permissions.StringListAttributeType,
 					ValidValues: []string{"Own", "Lower_Rank", "Same_Rank", "Any"},
+				},
+			},
+		},
+		{
+			Category: permkeys.JobsServicePerm,
+			Name:     permkeys.JobsServiceListColleagueActivityPerm,
+			Attrs: []perms.Attr{
+				{
+					Key:         permkeys.JobsServiceListColleagueActivityTypesPermField,
+					Type:        permissions.StringListAttributeType,
+					ValidValues: []string{"HIRED", "FIRED", "PROMOTED", "DEMOTED", "ABSENCE_DATE"},
 				},
 			},
 		},

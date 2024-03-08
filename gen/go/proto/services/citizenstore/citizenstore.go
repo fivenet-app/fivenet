@@ -180,7 +180,7 @@ func (s *Server) ListCitizens(ctx context.Context, req *ListCitizensRequest) (*L
 		return nil, errswrap.NewError(errorscitizenstore.ErrFailedQuery, err)
 	}
 
-	pag, limit := req.Pagination.GetResponse()
+	pag, limit := req.Pagination.GetResponse(count.TotalCount)
 	resp := &ListCitizensResponse{
 		Pagination: pag,
 	}
@@ -211,7 +211,7 @@ func (s *Server) ListCitizens(ctx context.Context, req *ListCitizensRequest) (*L
 		return nil, errswrap.NewError(errorscitizenstore.ErrFailedQuery, err)
 	}
 
-	resp.Pagination.Update(count.TotalCount, len(resp.Users))
+	resp.Pagination.Update(len(resp.Users))
 
 	jobInfoFn := s.enricher.EnrichJobInfoSafeFunc(userInfo)
 	for i := 0; i < len(resp.Users); i++ {
@@ -392,11 +392,10 @@ func (s *Server) ListUserActivity(ctx context.Context, req *ListUserActivityRequ
 
 	userInfo := auth.MustGetUserInfoFromContext(ctx)
 
-	pag, limit := req.Pagination.GetResponseWithPageSize(15)
 	resp := &ListUserActivityResponse{
-		Pagination: pag,
-		Activity:   []*users.UserActivity{},
+		Activity: []*users.UserActivity{},
 	}
+
 	// User can't see their own activities, unless they have "Own" perm attribute, or are a superuser
 	fieldsAttr, err := s.p.Attr(userInfo, permscitizenstore.CitizenStoreServicePerm, permscitizenstore.CitizenStoreServiceListUserActivityPerm, permscitizenstore.CitizenStoreServiceListUserActivityFieldsPermField)
 	if err != nil {
@@ -429,6 +428,8 @@ func (s *Server) ListUserActivity(ctx context.Context, req *ListUserActivityRequ
 		return nil, errswrap.NewError(errorscitizenstore.ErrFailedQuery, err)
 	}
 
+	pag, limit := req.Pagination.GetResponseWithPageSize(count.TotalCount, 15)
+	resp.Pagination = pag
 	if count.TotalCount <= 0 {
 		return resp, nil
 	}
@@ -491,7 +492,7 @@ func (s *Server) ListUserActivity(ctx context.Context, req *ListUserActivityRequ
 		}
 	}
 
-	resp.Pagination.Update(count.TotalCount, len(resp.Activity))
+	resp.Pagination.Update(len(resp.Activity))
 
 	return resp, nil
 }

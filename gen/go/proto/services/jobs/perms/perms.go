@@ -23,6 +23,8 @@ const (
 	JobsConductServiceUpdateConductEntryPerm            perms.Name = "UpdateConductEntry"
 	JobsServiceGetColleaguePerm                         perms.Name = "GetColleague"
 	JobsServiceGetColleagueAccessPermField              perms.Key  = "Access"
+	JobsServiceListColleagueActivityPerm                perms.Name = "ListColleagueActivity"
+	JobsServiceListColleagueActivityTypesPermField      perms.Key  = "Types"
 	JobsServiceListColleaguesPerm                       perms.Name = "ListColleagues"
 	JobsServiceSetJobsUserPropsPerm                     perms.Name = "SetJobsUserProps"
 	JobsServiceSetJobsUserPropsAccessPermField          perms.Key  = "Access"

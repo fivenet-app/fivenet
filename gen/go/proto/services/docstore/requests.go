@@ -63,7 +63,7 @@ func (s *Server) ListDocumentReqs(ctx context.Context, req *ListDocumentReqsRequ
 		}
 	}
 
-	pag, limit := req.Pagination.GetResponseWithPageSize(ActivityDefaultPageLimit)
+	pag, limit := req.Pagination.GetResponseWithPageSize(count.TotalCount, ActivityDefaultPageLimit)
 	resp := &ListDocumentReqsResponse{
 		Pagination: pag,
 		Requests:   []*documents.DocRequest{},
@@ -111,7 +111,7 @@ func (s *Server) ListDocumentReqs(ctx context.Context, req *ListDocumentReqsRequ
 		return nil, errswrap.NewError(errorsdocstore.ErrFailedQuery, err)
 	}
 
-	resp.Pagination.Update(count.TotalCount, len(resp.Requests))
+	resp.Pagination.Update(len(resp.Requests))
 
 	jobInfoFn := s.enricher.EnrichJobInfoSafeFunc(userInfo)
 	for i := 0; i < len(resp.Requests); i++ {

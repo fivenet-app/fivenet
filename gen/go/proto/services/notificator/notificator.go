@@ -111,7 +111,7 @@ func (s *Server) GetNotifications(ctx context.Context, req *GetNotificationsRequ
 		return nil, errswrap.NewError(ErrFailedRequest, err)
 	}
 
-	pag, limit := req.Pagination.GetResponse()
+	pag, limit := req.Pagination.GetResponse(count.TotalCount)
 	resp := &GetNotificationsResponse{
 		Pagination: pag,
 	}
@@ -144,7 +144,7 @@ func (s *Server) GetNotifications(ctx context.Context, req *GetNotificationsRequ
 		}
 	}
 
-	resp.Pagination.Update(count.TotalCount, len(resp.Notifications))
+	resp.Pagination.Update(len(resp.Notifications))
 
 	return resp, nil
 }

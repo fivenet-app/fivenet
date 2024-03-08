@@ -39,7 +39,7 @@ message GetColleagueResponse {
 
 message ListColleagueActivityRequest {
   resources.common.database.PaginationRequest pagination = 1 [(validate.rules).message.required = true];
-  optional int32 user_id = 2;
+  repeated int32 user_ids = 2;
 }
 
 message ListColleagueActivityResponse {
@@ -86,7 +86,7 @@ service JobsService {
 
   // @perm: Attrs=Access/StringList:[]string{"Own", "Lower_Rank", "Same_Rank", "Any"}
   rpc GetColleague(GetColleagueRequest) returns (GetColleagueResponse);
-  // @perm: Name=GetColleague
+  // @perm: Attrs=Types/StringList:[]string{"HIRED", "FIRED", "PROMOTED", "DEMOTED", "ABSENCE_DATE"}
   rpc ListColleagueActivity(ListColleagueActivityRequest) returns (ListColleagueActivityResponse);
   // @perm: Attrs=Access/StringList:[]string{"Own", "Lower_Rank", "Same_Rank", "Any"}
   rpc SetJobsUserProps(SetJobsUserPropsRequest) returns (SetJobsUserPropsResponse);

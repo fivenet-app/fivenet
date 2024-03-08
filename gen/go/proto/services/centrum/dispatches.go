@@ -91,7 +91,7 @@ func (s *Server) ListDispatches(ctx context.Context, req *ListDispatchesRequest)
 		return nil, errswrap.NewError(errorscentrum.ErrFailedQuery, err)
 	}
 
-	pag, limit := req.Pagination.GetResponseWithPageSize(15)
+	pag, limit := req.Pagination.GetResponseWithPageSize(count.TotalCount, 15)
 	resp := &ListDispatchesResponse{
 		Pagination: pag,
 	}
@@ -152,7 +152,7 @@ func (s *Server) ListDispatches(ctx context.Context, req *ListDispatchesRequest)
 		return nil, errswrap.NewError(errorscentrum.ErrFailedQuery, err)
 	}
 
-	resp.Pagination.Update(count.TotalCount, len(resp.Dispatches))
+	resp.Pagination.Update(len(resp.Dispatches))
 
 	publicJobs := s.appCfg.Get().JobInfo.PublicJobs
 	for i := 0; i < len(resp.Dispatches); i++ {
@@ -486,7 +486,7 @@ func (s *Server) ListDispatchActivity(ctx context.Context, req *ListDispatchActi
 		return nil, errswrap.NewError(errorscentrum.ErrFailedQuery, err)
 	}
 
-	pag, limit := req.Pagination.GetResponseWithPageSize(10)
+	pag, limit := req.Pagination.GetResponseWithPageSize(count.TotalCount, 10)
 	resp := &ListDispatchActivityResponse{
 		Pagination: pag,
 	}
@@ -545,7 +545,7 @@ func (s *Server) ListDispatchActivity(ctx context.Context, req *ListDispatchActi
 		}
 	}
 
-	resp.Pagination.Update(count.TotalCount, len(resp.Activity))
+	resp.Pagination.Update(len(resp.Activity))
 
 	return resp, nil
 }

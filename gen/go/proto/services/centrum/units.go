@@ -261,7 +261,7 @@ func (s *Server) ListUnitActivity(ctx context.Context, req *ListUnitActivityRequ
 		return nil, errswrap.NewError(errorscentrum.ErrFailedQuery, err)
 	}
 
-	pag, limit := req.Pagination.GetResponseWithPageSize(10)
+	pag, limit := req.Pagination.GetResponseWithPageSize(count.TotalCount, 10)
 	resp := &ListUnitActivityResponse{
 		Pagination: pag,
 	}
@@ -323,7 +323,7 @@ func (s *Server) ListUnitActivity(ctx context.Context, req *ListUnitActivityRequ
 		}
 	}
 
-	resp.Pagination.Update(count.TotalCount, len(resp.Activity))
+	resp.Pagination.Update(len(resp.Activity))
 
 	return resp, nil
 }

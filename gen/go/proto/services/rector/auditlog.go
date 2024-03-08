@@ -83,7 +83,7 @@ func (s *Server) ViewAuditLog(ctx context.Context, req *ViewAuditLogRequest) (*V
 		return nil, errswrap.NewError(errorsrector.ErrFailedQuery, err)
 	}
 
-	pag, limit := req.Pagination.GetResponseWithPageSize(AuditLogPageSize)
+	pag, limit := req.Pagination.GetResponseWithPageSize(count.TotalCount, AuditLogPageSize)
 	resp := &ViewAuditLogResponse{
 		Pagination: pag,
 	}
@@ -126,7 +126,7 @@ func (s *Server) ViewAuditLog(ctx context.Context, req *ViewAuditLogRequest) (*V
 		return nil, errswrap.NewError(errorsrector.ErrFailedQuery, err)
 	}
 
-	resp.Pagination.Update(count.TotalCount, len(resp.Logs))
+	resp.Pagination.Update(len(resp.Logs))
 
 	return resp, nil
 }

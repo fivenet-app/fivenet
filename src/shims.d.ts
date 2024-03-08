@@ -16,7 +16,7 @@ declare module 'vue-router' {
     interface RouteMeta {
         title?: string;
         requiresAuth?: boolean;
-        permission?: Perms;
+        permission?: Perms | Perms[];
         authOnlyToken?: boolean;
         showQuickButtons?: boolean;
         showCookieOptions?: boolean;

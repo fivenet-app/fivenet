@@ -149,7 +149,7 @@ func (s *Server) ListDocuments(ctx context.Context, req *ListDocumentsRequest) (
 		return nil, errswrap.NewError(errorsdocstore.ErrFailedQuery, err)
 	}
 
-	pag, limit := req.Pagination.GetResponseWithPageSize(DocsDefaultPageLimit)
+	pag, limit := req.Pagination.GetResponseWithPageSize(count.TotalCount, DocsDefaultPageLimit)
 	resp := &ListDocumentsResponse{
 		Pagination: pag,
 	}
@@ -174,7 +174,7 @@ func (s *Server) ListDocuments(ctx context.Context, req *ListDocumentsRequest) (
 		}
 	}
 
-	resp.Pagination.Update(count.TotalCount, len(resp.Documents))
+	resp.Pagination.Update(len(resp.Documents))
 
 	return resp, nil
 }

@@ -77,7 +77,7 @@ func (s *Server) ListUserDocuments(ctx context.Context, req *ListUserDocumentsRe
 		return nil, errswrap.NewError(errorsdocstore.ErrFailedQuery, err)
 	}
 
-	pag, limit := req.Pagination.GetResponseWithPageSize(15)
+	pag, limit := req.Pagination.GetResponseWithPageSize(count.TotalCount, 15)
 	resp := &ListUserDocumentsResponse{
 		Pagination: pag,
 		Relations:  []*documents.DocumentRelation{},
@@ -207,7 +207,7 @@ func (s *Server) ListUserDocuments(ctx context.Context, req *ListUserDocumentsRe
 		}
 	}
 
-	resp.Pagination.Update(count.TotalCount, len(resp.Relations))
+	resp.Pagination.Update(len(resp.Relations))
 
 	return resp, nil
 }

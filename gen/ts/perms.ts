@@ -95,6 +95,7 @@ export type Perms =
 	| 'JobsConductService.ListConductEntries'
 	| 'JobsConductService.UpdateConductEntry'
 	| 'JobsService.GetColleague'
+	| 'JobsService.ListColleagueActivity'
 	| 'JobsService.ListColleagues'
 	| 'JobsService.SetJobsUserProps'
 	| 'JobsService.SetMOTD'

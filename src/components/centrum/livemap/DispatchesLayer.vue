@@ -22,7 +22,7 @@ const settingsStore = useSettingsStore();
 const { livemap } = storeToRefs(settingsStore);
 
 const dispatchQueryRaw = ref<string>('');
-const dispatchQuery = computed(() => dispatchQueryRaw.value.toLowerCase());
+const dispatchQuery = computed(() => dispatchQueryRaw.value.trim().toLowerCase());
 
 const dispatchesFiltered = computedAsync(async () =>
     [...dispatches.value.values()].filter(

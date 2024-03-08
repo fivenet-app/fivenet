@@ -3,6 +3,7 @@ package jobs
 import (
 	"context"
 	"errors"
+	"fmt"
 	"slices"
 	"strings"
 
@@ -77,7 +78,7 @@ func (s *Server) ListColleagues(ctx context.Context, req *ListColleaguesRequest)
 		}
 	}
 
-	pag, limit := req.Pagination.GetResponseWithPageSize(15)
+	pag, limit := req.Pagination.GetResponseWithPageSize(count.TotalCount, 15)
 	resp := &ListColleaguesResponse{
 		Pagination: pag,
 	}
@@ -119,11 +120,15 @@ func (s *Server) ListColleagues(ctx context.Context, req *ListColleaguesRequest)
 		).
 		LIMIT(limit)
 
+	fmt.Println(stmt.DebugSql())
+
 	if err := stmt.QueryContext(ctx, s.db, &resp.Colleagues); err != nil {
-		return nil, errswrap.NewError(errorsjobs.ErrFailedQuery, err)
+		if !errors.Is(err, qrm.ErrNoRows) {
+			return nil, errswrap.NewError(errorsjobs.ErrFailedQuery, err)
+		}
 	}
 
-	resp.Pagination.Update(count.TotalCount, len(resp.Colleagues))
+	resp.Pagination.Update(len(resp.Colleagues))
 
 	for i := 0; i < len(resp.Colleagues); i++ {
 		s.enricher.EnrichJobInfo(resp.Colleagues[i])
@@ -484,14 +489,14 @@ func (s *Server) getConditionForColleagueAccess(actTable *table.FivenetJobsUserA
 func (s *Server) ListColleagueActivity(ctx context.Context, req *ListColleagueActivityRequest) (*ListColleagueActivityResponse, error) {
 	userInfo := auth.MustGetUserInfoFromContext(ctx)
 
-	// Field Permission Check
-	fieldsAttr, err := s.ps.Attr(userInfo, permsjobs.JobsServicePerm, permsjobs.JobsServiceSetJobsUserPropsPerm, permsjobs.JobsServiceSetJobsUserPropsAccessPermField)
+	// Access Field Permission Check
+	accessAttr, err := s.ps.Attr(userInfo, permsjobs.JobsServicePerm, permsjobs.JobsServiceGetColleaguePerm, permsjobs.JobsServiceGetColleagueAccessPermField)
 	if err != nil {
 		return nil, errswrap.NewError(errorsjobs.ErrFailedQuery, err)
 	}
-	var fields perms.StringList
-	if fieldsAttr != nil {
-		fields = fieldsAttr.([]string)
+	var access perms.StringList
+	if accessAttr != nil {
+		access = accessAttr.([]string)
 	}
 
 	tJobsUserActivity := tJobsUserActivity.AS("jobsuseractivity")
@@ -499,13 +504,28 @@ func (s *Server) ListColleagueActivity(ctx context.Context, req *ListColleagueAc
 	tUSource := tUser.AS("source_user")
 
 	condition := tJobsUserActivity.Job.EQ(jet.String(userInfo.Job))
-	if req.UserId != nil {
-		targetUser, err := s.getColleague(ctx, *req.UserId)
+
+	if len(req.UserIds) >= 2 {
+		userIds := make([]jet.Expression, len(req.UserIds))
+		for i := 0; i < len(req.UserIds); i++ {
+			userIds[i] = jet.Int32(req.UserIds[i])
+		}
+
+		condition = condition.AND(tUTarget.ID.IN(userIds...))
+		condition = condition.AND(s.getConditionForColleagueAccess(tJobsUserActivity, tUTarget, access, userInfo))
+	} else {
+		userId := userInfo.UserId
+		// No IDs given, return own user colleague activity
+		if len(req.UserIds) == 1 {
+			userId = req.UserIds[0]
+		}
+
+		targetUser, err := s.getColleague(ctx, userId)
 		if err != nil {
 			return nil, errswrap.NewError(errorsjobs.ErrFailedQuery, err)
 		}
 
-		if !s.checkIfHasAccessToColleague(fields, userInfo, &users.UserShort{
+		if !s.checkIfHasAccessToColleague(access, userInfo, &users.UserShort{
 			UserId:   targetUser.UserId,
 			Job:      targetUser.Job,
 			JobGrade: targetUser.JobGrade,
@@ -513,10 +533,39 @@ func (s *Server) ListColleagueActivity(ctx context.Context, req *ListColleagueAc
 			return nil, errorsjobs.ErrFailedQuery
 		}
 
-		condition = condition.AND(tJobsUserActivity.TargetUserID.EQ(jet.Int32(*req.UserId)))
-	} else {
-		condition = condition.AND(s.getConditionForColleagueAccess(tJobsUserActivity, tUTarget, fields, userInfo))
+		condition = condition.AND(tJobsUserActivity.TargetUserID.EQ(jet.Int32(userId)))
 	}
+
+	// Types Field Permission Check
+	typesAttr, err := s.ps.Attr(userInfo, permsjobs.JobsServicePerm, permsjobs.JobsServiceListColleaguesPerm, permsjobs.JobsServiceListColleagueActivityTypesPermField)
+	if err != nil {
+		return nil, errswrap.NewError(errorsjobs.ErrFailedQuery, err)
+	}
+	var types perms.StringList
+	if typesAttr != nil {
+		types = typesAttr.([]string)
+	}
+	if len(types) == 0 {
+		return &ListColleagueActivityResponse{}, nil
+	}
+
+	condTypes := []jet.Expression{}
+	for _, aType := range types {
+		switch strings.ToLower(aType) {
+		case "HIRED":
+			condTypes = append(condTypes, jet.Int16(int16(jobs.JobsUserActivityType_JOBS_USER_ACTIVITY_TYPE_HIRED)))
+		case "FIRED":
+			condTypes = append(condTypes, jet.Int16(int16(jobs.JobsUserActivityType_JOBS_USER_ACTIVITY_TYPE_FIRED)))
+		case "PROMOTED":
+			condTypes = append(condTypes, jet.Int16(int16(jobs.JobsUserActivityType_JOBS_USER_ACTIVITY_TYPE_PROMOTED)))
+		case "DEMOTED":
+			condTypes = append(condTypes, jet.Int16(int16(jobs.JobsUserActivityType_JOBS_USER_ACTIVITY_TYPE_DEMOTED)))
+		case "ABSENCE_DATE":
+			condTypes = append(condTypes, jet.Int16(int16(jobs.JobsUserActivityType_JOBS_USER_ACTIVITY_TYPE_ABSENCE_DATE)))
+		}
+	}
+
+	condition = condition.AND(tJobsUserActivity.ActivityType.IN(condTypes...))
 
 	// Get total count of values
 	countStmt := tJobsUserActivity.
@@ -538,7 +587,7 @@ func (s *Server) ListColleagueActivity(ctx context.Context, req *ListColleagueAc
 		}
 	}
 
-	pag, limit := req.Pagination.GetResponseWithPageSize(15)
+	pag, limit := req.Pagination.GetResponseWithPageSize(count.TotalCount, 15)
 	resp := &ListColleagueActivityResponse{
 		Pagination: pag,
 	}
@@ -589,7 +638,7 @@ func (s *Server) ListColleagueActivity(ctx context.Context, req *ListColleagueAc
 		}
 	}
 
-	pag.Update(count.TotalCount, len(resp.Activity))
+	pag.Update(len(resp.Activity))
 
 	jobInfoFn := s.enricher.EnrichJobInfoSafeFunc(userInfo)
 	for i := 0; i < len(resp.Activity); i++ {

@@ -95,9 +95,9 @@ export interface ListColleagueActivityRequest {
      */
     pagination?: PaginationRequest;
     /**
-     * @generated from protobuf field: optional int32 user_id = 2;
+     * @generated from protobuf field: repeated int32 user_ids = 2;
      */
-    userId?: number;
+    userIds: number[];
 }
 /**
  * @generated from protobuf message services.jobs.ListColleagueActivityResponse
@@ -463,11 +463,12 @@ class ListColleagueActivityRequest$Type extends MessageType<ListColleagueActivit
     constructor() {
         super("services.jobs.ListColleagueActivityRequest", [
             { no: 1, name: "pagination", kind: "message", T: () => PaginationRequest, options: { "validate.rules": { message: { required: true } } } },
-            { no: 2, name: "user_id", kind: "scalar", opt: true, T: 5 /*ScalarType.INT32*/ }
+            { no: 2, name: "user_ids", kind: "scalar", repeat: 1 /*RepeatType.PACKED*/, T: 5 /*ScalarType.INT32*/ }
         ]);
     }
     create(value?: PartialMessage<ListColleagueActivityRequest>): ListColleagueActivityRequest {
         const message = globalThis.Object.create((this.messagePrototype!));
+        message.userIds = [];
         if (value !== undefined)
             reflectionMergePartial<ListColleagueActivityRequest>(this, message, value);
         return message;
@@ -480,8 +481,12 @@ class ListColleagueActivityRequest$Type extends MessageType<ListColleagueActivit
                 case /* resources.common.database.PaginationRequest pagination */ 1:
                     message.pagination = PaginationRequest.internalBinaryRead(reader, reader.uint32(), options, message.pagination);
                     break;
-                case /* optional int32 user_id */ 2:
-                    message.userId = reader.int32();
+                case /* repeated int32 user_ids */ 2:
+                    if (wireType === WireType.LengthDelimited)
+                        for (let e = reader.int32() + reader.pos; reader.pos < e;)
+                            message.userIds.push(reader.int32());
+                    else
+                        message.userIds.push(reader.int32());
                     break;
                 default:
                     let u = options.readUnknownField;
@@ -498,9 +503,13 @@ class ListColleagueActivityRequest$Type extends MessageType<ListColleagueActivit
         /* resources.common.database.PaginationRequest pagination = 1; */
         if (message.pagination)
             PaginationRequest.internalBinaryWrite(message.pagination, writer.tag(1, WireType.LengthDelimited).fork(), options).join();
-        /* optional int32 user_id = 2; */
-        if (message.userId !== undefined)
-            writer.tag(2, WireType.Varint).int32(message.userId);
+        /* repeated int32 user_ids = 2; */
+        if (message.userIds.length) {
+            writer.tag(2, WireType.LengthDelimited).fork();
+            for (let i = 0; i < message.userIds.length; i++)
+                writer.int32(message.userIds[i]);
+            writer.join();
+        }
         let u = options.writeUnknownFields;
         if (u !== false)
             (u == true ? UnknownFieldHandler.onWrite : u)(this.typeName, message, writer);

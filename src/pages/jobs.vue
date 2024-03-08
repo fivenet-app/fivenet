@@ -1,5 +1,14 @@
 <script lang="ts" setup>
-import { AccountGroupIcon, BriefcaseIcon, CloseIcon, ListStatusIcon, MenuIcon, SchoolIcon, TimelineClockIcon } from 'mdi-vue3';
+import {
+    AccountGroupIcon,
+    BriefcaseIcon,
+    BulletinBoardIcon,
+    CloseIcon,
+    ListStatusIcon,
+    MenuIcon,
+    SchoolIcon,
+    TimelineClockIcon,
+} from 'mdi-vue3';
 import type { DefineComponent } from 'vue';
 import { type RoutesNamedLocations } from '@typed-router';
 import type { Perms } from '~~/gen/ts/perms';
@@ -16,6 +25,12 @@ const navigation: { name: string; to: RoutesNamedLocations; permission?: Perms; 
         to: { name: 'jobs-colleagues' },
         permission: 'JobsService.ListColleagues',
         icon: markRaw(AccountGroupIcon),
+    },
+    {
+        name: 'common.activity',
+        to: { name: 'jobs-activity' },
+        permission: 'JobsService.GetColleague',
+        icon: markRaw(BulletinBoardIcon),
     },
     {
         name: 'pages.jobs.timeclock.title',
