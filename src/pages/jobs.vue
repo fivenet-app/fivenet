@@ -94,10 +94,12 @@ const open = ref(false);
                                             class="group flex shrink-0 items-center gap-2 rounded-md p-3 text-sm font-medium text-accent-100 hover:bg-accent-100/10 hover:text-neutral hover:transition-all"
                                             active-class="bg-accent-100/20 font-bold text-primary-300"
                                             aria-current-value="page"
+                                            @click="open = false"
                                         >
                                             <component
                                                 :is="item.icon"
-                                                :class="[active ? '' : 'group-hover:text-base-300', 'h-5 w-5']"
+                                                class="h-5 w-5"
+                                                :class="active ? '' : 'group-hover:text-base-300'"
                                                 aria-hidden="true"
                                             />
                                             {{ $t(item.name) }}
@@ -120,6 +122,7 @@ const open = ref(false);
                             class="group flex shrink-0 items-center gap-2 rounded-md p-3 text-sm font-medium text-accent-100 hover:bg-accent-100/10 hover:text-neutral hover:transition-all"
                             active-class="bg-accent-100/20 font-bold text-primary-300"
                             aria-current-value="page"
+                            @click="open = false"
                         >
                             <component
                                 :is="item.icon"
