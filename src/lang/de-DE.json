@@ -335,6 +335,11 @@
             },
             "document_view": {
                 "take_ownership": "Besitz übernehmen"
+            },
+            "document_request_access": {
+                "title": "Sie haben keinen Zugriff auf das Dokument",
+                "message": "Jedoch können Sie Zugriff auf das Dokument per unterem Knopf beanfragen.",
+                "callback_message": "Hier Zugriff beanfragen"
             }
         },
         "livemap": {
