@@ -1,7 +1,7 @@
 <script lang="ts" setup>
 import { RpcError } from '@protobuf-ts/runtime-rpc';
 import { watchDebounced } from '@vueuse/core';
-import { ArrowLeftIcon } from 'mdi-vue3';
+import { ArrowLeftIcon, MinusIcon, PlusIcon } from 'mdi-vue3';
 import DataErrorBlock from '~/components/partials/data/DataErrorBlock.vue';
 import DataNoDataBlock from '~/components/partials/data/DataNoDataBlock.vue';
 import DataPendingBlock from '~/components/partials/data/DataPendingBlock.vue';
@@ -79,13 +79,12 @@ watch(offset, async () => refresh());
                                     <input
                                         ref="searchInput"
                                         v-model="query.days"
-                                        type="range"
                                         name="searchDays"
-                                        step="1"
+                                        type="number"
                                         min="3"
                                         max="31"
+                                        class="block w-full rounded-md border-0 bg-base-700 py-1.5 text-neutral placeholder:text-accent-200 focus:ring-2 focus:ring-inset focus:ring-base-300 sm:text-sm sm:leading-6"
                                         :placeholder="$t('common.time_ago.day', 2)"
-                                        class="w-full h-2 bg-gray-200 rounded-lg appearance-none cursor-pointer dark:bg-gray-700"
                                         @focusin="focusTablet(true)"
                                         @focusout="focusTablet(false)"
                                     />
