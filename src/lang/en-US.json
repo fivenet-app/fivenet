@@ -1647,11 +1647,11 @@
                     "Access": "Access to time clock entries"
                 }
             },
+            "category": "Job Timeclock",
             "ListInactiveEmployees": {
                 "key": "List inactive colleagues",
                 "description": "List inactive colleagues."
-            },
-            "category": "Job Timeclock"
+            }
         }
     },
     "errors": {
