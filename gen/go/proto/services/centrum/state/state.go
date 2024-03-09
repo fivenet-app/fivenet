@@ -115,9 +115,6 @@ func New(p Params) (*State, error) {
 						return nil
 					}
 
-					s.dispatchLocationsMutex.Lock()
-					defer s.dispatchLocationsMutex.Unlock()
-
 					if locs := s.GetDispatchLocations(dsp.Job); locs != nil {
 						if locs.Has(dsp, centrum.DispatchPointMatchFn(dsp.Id)) {
 							locs.Remove(dsp, centrum.DispatchPointMatchFn(dsp.Id))

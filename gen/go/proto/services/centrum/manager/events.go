@@ -37,6 +37,10 @@ func (s *Manager) registerSubscriptions(ctx context.Context, c context.Context) 
 
 func (s *Manager) watchTopicGeneralFunc(ctx context.Context) jetstream.MessageHandler {
 	return func(msg jetstream.Msg) {
+		if err := msg.Ack(); err != nil {
+			s.logger.Error("failed to ack message", zap.Error(err))
+		}
+
 		job, _, tType := eventscentrum.SplitSubject(msg.Subject())
 
 		meta, err := msg.Metadata()

@@ -13,9 +13,9 @@ CREATE TABLE
         `target_user_id` int(11) NULL DEFAULT NULL,
         `creator_id` int(11) NULL DEFAULT NULL,
         PRIMARY KEY (`id`),
-        KEY (`type`),
-        KEY (`created_at`),
-        KEY (`target_user_id`),
+        KEY `fivenet_jobs_conduct_type` (`type`),
+        KEY `fivenet_jobs_conduct_created_at` (`created_at`),
+        KEY `fivenet_jobs_conduct_target_user_id` (`target_user_id`),
         CONSTRAINT `fk_fivenet_jobs_conduct_target_user_id` FOREIGN KEY (`target_user_id`) REFERENCES `users` (`id`) ON DELETE CASCADE ON UPDATE CASCADE,
         CONSTRAINT `fk_fivenet_jobs_conduct_creator_id` FOREIGN KEY (`creator_id`) REFERENCES `users` (`id`) ON DELETE SET NULL ON UPDATE CASCADE
     ) ENGINE = InnoDB;
@@ -82,15 +82,34 @@ CREATE TABLE IF NOT EXISTS `fivenet_jobs_user_activity` (
 ) ENGINE=InnoDB;
 
 -- Table: fivenet_jobs_qualifications
--- TODO
-
--- Table: fivenet_jobs_qualifications_results
--- TODO
+CREATE TABLE
+    IF NOT EXISTS `fivenet_jobs_qualifications` (
+        `id` bigint(20) unsigned NOT NULL AUTO_INCREMENT,
+        `created_at` datetime(3) DEFAULT CURRENT_TIMESTAMP(3),
+        `updated_at` datetime(3) DEFAULT NULL ON UPDATE CURRENT_TIMESTAMP(3),
+        `deleted_at` datetime(3) DEFAULT CURRENT_TIMESTAMP(3),
+        `job` varchar(20) NOT NULL,
+        `weight` int(11) unsigned DEFAULT 0,
+        `closed` tinyint(1) DEFAULT 0,
+        `abbreviation` varchar(20) NOT NULL,
+        `title` longtext,
+        `description` longtext,
+        `creator_id` int(11) NULL DEFAULT NULL,
+        `creator_job` varchar(50) NOT NULL,
+        PRIMARY KEY (`id`),
+        KEY `idx_fivenet_jobs_qualifications_deleted_at` (`deleted_at`),
+        KEY `idx_fivenet_jobs_qualifications_job` (`job`),
+        KEY `idx_fivenet_jobs_qualifications_weight` (`weight`),
+        CONSTRAINT `fk_fivenet_jobs_qualifications_creator_id` FOREIGN KEY (`creator_id`) REFERENCES `users` (`id`) ON DELETE SET NULL ON UPDATE CASCADE
+    ) ENGINE = InnoDB;
 
 -- Table: fivenet_jobs_qualifications_job_access
 -- TODO
 
 -- Table: fivenet_jobs_qualifications_reqs_access
+-- TODO
+
+-- Table: fivenet_jobs_qualifications_results
 -- TODO
 
 COMMIT;

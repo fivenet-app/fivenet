@@ -73,7 +73,7 @@ watch(offset, async () => refresh());
                         <div class="mx-auto flex flex-row gap-4">
                             <div class="form-control flex-1">
                                 <label for="searchName" class="block text-sm font-medium leading-6 text-neutral">
-                                    {{ $t('common.time_ago.day', 2) }}: {{ query.days }}
+                                    {{ $t('common.time_ago.day', 2) }}
                                 </label>
                                 <div class="relative mt-2 flex items-center">
                                     <input

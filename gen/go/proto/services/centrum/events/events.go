@@ -52,9 +52,9 @@ func RegisterStream(ctx context.Context, js jetstream.JetStream) (jetstream.Stre
 		Retention:   jetstream.InterestPolicy,
 		Subjects:    []string{fmt.Sprintf("%s.>", BaseSubject)},
 		Discard:     jetstream.DiscardOld,
-		MaxAge:      120 * time.Second,
+		MaxAge:      60 * time.Second,
 		Storage:     jetstream.MemoryStorage,
-		Duplicates:  20 * time.Second,
+		Duplicates:  10 * time.Second,
 	}
 	if _, err := js.CreateOrUpdateStream(ctx, cfg); err != nil {
 		return cfg, err

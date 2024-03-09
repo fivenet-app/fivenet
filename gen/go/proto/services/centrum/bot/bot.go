@@ -10,7 +10,6 @@ import (
 	"github.com/galexrt/fivenet/gen/go/proto/services/centrum/manager"
 	centrumutils "github.com/galexrt/fivenet/gen/go/proto/services/centrum/utils"
 	"github.com/galexrt/fivenet/pkg/tracker"
-	"github.com/paulmach/orb"
 	"go.uber.org/zap"
 )
 
@@ -85,7 +84,7 @@ func (b *Bot) Run() {
 
 			b.logger.Debug("trying to auto assign dispatch", zap.Uint64("dispatch_id", dsp.Id))
 
-			unit, ok := b.getAvailableUnit(b.ctx, dsp.Point())
+			unit, ok := b.getAvailableUnit(b.ctx)
 			if !ok {
 				// No unit available
 				b.logger.Warn("no available units for dispatch", zap.Uint64("dispatch_id", dsp.Id))
@@ -107,10 +106,12 @@ func (b *Bot) Stop() {
 	<-b.ctx.Done()
 }
 
-func (b *Bot) getAvailableUnit(ctx context.Context, point orb.Point) (*centrum.Unit, bool) {
-	units := b.state.FilterUnits(ctx, b.job, []centrum.StatusUnit{centrum.StatusUnit_STATUS_UNIT_AVAILABLE}, nil, func(unit *centrum.Unit) bool {
-		return unit.Attributes == nil || !unit.Attributes.Has(centrum.UnitAttributeNoDispatchAutoAssign)
-	})
+func (b *Bot) getAvailableUnit(ctx context.Context) (*centrum.Unit, bool) {
+	units := b.state.FilterUnits(ctx, b.job, []centrum.StatusUnit{centrum.StatusUnit_STATUS_UNIT_AVAILABLE}, nil,
+		func(unit *centrum.Unit) bool {
+			return unit.Attributes == nil || !unit.Attributes.Has(centrum.UnitAttributeNoDispatchAutoAssign)
+		},
+	)
 
 	b.logger.Debug("found available units", zap.Int("available_units_count", len(units)))
 	if len(units) == 0 {

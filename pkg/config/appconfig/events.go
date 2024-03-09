@@ -52,6 +52,10 @@ func (c *Config) registerSubscriptions(ctx context.Context) error {
 
 func (c *Config) handleMessageFunc(ctx context.Context) jetstream.MessageHandler {
 	return func(msg jetstream.Msg) {
+		if err := msg.Ack(); err != nil {
+			c.logger.Error("failed to ack message", zap.Error(err))
+		}
+
 		split := strings.Split(msg.Subject(), ".")
 
 		if len(split) < 2 {

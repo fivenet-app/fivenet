@@ -82,10 +82,9 @@ func New(p Params) (ITracker, error) {
 					jobUsers, _ := t.usersByJob.LoadOrCompute(um.Info.Job, func() *xsync.MapOf[int32, *livemap.UserMarker] {
 						return xsync.NewMapOf[int32, *livemap.UserMarker]()
 					})
-					if m, loaded := jobUsers.LoadOrStore(um.UserId, um); loaded {
-						// Merge value if loaded from local data store
-						m.Merge(um)
-					}
+					// Maybe we can be smarted about updating the user marker here, but
+					// without mutexes it will be problematic
+					jobUsers.Store(um.UserId, um)
 
 					return um, nil
 				}
@@ -133,6 +132,10 @@ func New(p Params) (ITracker, error) {
 }
 
 func (s *Tracker) watchForChanges(msg jetstream.Msg) {
+	if err := msg.Ack(); err != nil {
+		s.logger.Error("failed to ack message", zap.Error(err))
+	}
+
 	dest := &livemap.UsersUpdateEvent{}
 	if err := proto.Unmarshal(msg.Data(), dest); err != nil {
 		s.logger.Error("failed to unmarshal nats user update response", zap.Error(err))

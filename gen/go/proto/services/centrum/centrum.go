@@ -173,6 +173,10 @@ func (s *Server) handleAppConfigUpdate(ctx context.Context, cfg *appconfig.Cfg) 
 }
 
 func (s *Server) watchForChanges(msg jetstream.Msg) {
+	if err := msg.Ack(); err != nil {
+		s.logger.Error("failed to ack message", zap.Error(err))
+	}
+
 	job, topic, tType := eventscentrum.SplitSubject(msg.Subject())
 
 	broker, ok := s.getJobBroker(job)

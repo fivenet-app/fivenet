@@ -143,7 +143,7 @@ func (s *Server) refreshData(ctx context.Context) error {
 func (s *Server) Stream(req *StreamRequest, srv LivemapperService_StreamServer) error {
 	userInfo := auth.MustGetUserInfoFromContext(srv.Context())
 
-	s.logger.Debug("starting livemap stream")
+	s.logger.Debug("starting livemap stream", zap.Int32("user_id", userInfo.UserId))
 	markerJobsAttr, err := s.ps.Attr(userInfo, permslivemapper.LivemapperServicePerm, permslivemapper.LivemapperServiceStreamPerm, permslivemapper.LivemapperServiceStreamMarkersPermField)
 	if err != nil {
 		return errswrap.NewError(ErrStreamFailed, err)

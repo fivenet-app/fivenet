@@ -66,6 +66,10 @@ func (p *Perms) registerSubscriptions(ctx context.Context, c context.Context) er
 
 func (p *Perms) handleMessageFunc(ctx context.Context) jetstream.MessageHandler {
 	return func(msg jetstream.Msg) {
+		if err := msg.Ack(); err != nil {
+			p.logger.Error("failed to ack message", zap.Error(err))
+		}
+
 		p.logger.Debug("received event message", zap.String("subject", msg.Subject()))
 
 		switch events.Type(strings.TrimPrefix(msg.Subject(), string(BaseSubject)+".")) {

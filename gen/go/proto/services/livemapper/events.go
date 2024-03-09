@@ -64,6 +64,10 @@ func (s *Server) sendUpdateEvent(ctx context.Context, tType events.Type, event p
 
 func (s *Server) watchForEventsFunc(ctx context.Context) jetstream.MessageHandler {
 	return func(msg jetstream.Msg) {
+		if err := msg.Ack(); err != nil {
+			s.logger.Error("failed to ack message", zap.Error(err))
+		}
+
 		split := strings.Split(msg.Subject(), ".")
 		if len(split) < 2 {
 			return

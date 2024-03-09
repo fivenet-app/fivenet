@@ -39,7 +39,7 @@ message Document {
   }]; // @gotags: alias:"data"
   optional int32 creator_id = 11; // @gotags: alias:"creator_id"
   optional resources.users.UserShort creator = 12; // @gotags: alias:"creator"
-  string creator_job = 13;
+  string creator_job = 13 [(validate.rules).string.max_len = 20];
   // @sanitize
   string state = 14 [(validate.rules).string.max_len = 32];
   bool closed = 15;
@@ -64,7 +64,7 @@ message DocumentShort {
   string content = 9 [(validate.rules).string = {max_bytes: 1024}];
   optional int32 creator_id = 10; // @gotags: alias:"creator_id"
   optional resources.users.UserShort creator = 11; // @gotags: alias:"creator"
-  string creator_job = 12; // @gotags: alias:"creator_job"
+  string creator_job = 12 [(validate.rules).string.max_len = 20]; // @gotags: alias:"creator_job"
   // @sanitize
   string state = 13 [(validate.rules).string.max_len = 32]; // @gotags: alias:"state"
   bool closed = 14;

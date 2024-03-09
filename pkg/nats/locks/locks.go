@@ -21,8 +21,6 @@ type Locks struct {
 	logger *zap.Logger
 	kv     jetstream.KeyValue
 
-	bucket string
-
 	maxLockAge time.Duration
 
 	revMap  map[string]uint64
@@ -33,8 +31,6 @@ func New(logger *zap.Logger, kv jetstream.KeyValue, bucket string, maxLockAge ti
 	l := &Locks{
 		logger: logger.Named("locks").With(zap.String("bucket", bucket)),
 		kv:     kv,
-
-		bucket: bucket,
 
 		maxLockAge: maxLockAge,
 
