@@ -1611,15 +1611,15 @@
         },
         "JobsConductService": {
             "CreateConductEntry": {
-                "key": "Conduct Entries: Create",
+                "key": "Create Conduct Register entries",
                 "description": "Create Conduct Register entries."
             },
             "DeleteConductEntry": {
-                "key": "Conduct Entries: Delete",
+                "key": "Delete Conduct Register Entries",
                 "description": "Delete Conduct Register entries."
             },
             "ListConductEntries": {
-                "key": "Conduct Entries: List",
+                "key": "List Conduct Register Entries",
                 "description": "List Conduct Register entries.",
                 "attrs": {
                     "Own": "Own",
@@ -1630,21 +1630,25 @@
                 }
             },
             "UpdateConductEntry": {
-                "key": "Conduct Entries: Update",
+                "key": "Update Conduct Register Entries",
                 "description": "Update Conduct Register entries."
             },
             "category": "Job Conduct Register"
         },
         "JobsTimeclockService": {
             "ListTimeclock": {
-                "key": "Timeclock Entries: List",
-                "description": "List Timeclock entries.",
+                "key": "View Timeclock",
+                "description": "See Timeclock entries.",
                 "attrs": {
                     "All": "All"
                 },
                 "attrs_types": {
                     "Access": "Access to time clock entries"
                 }
+            },
+            "ListInactiveEmployees": {
+                "key": "List inactive colleagues",
+                "description": "List inactive colleagues."
             },
             "category": "Job Timeclock"
         }

@@ -808,7 +808,16 @@ func (m *ListInactiveEmployeesRequest) validate(all bool) error {
 		}
 	}
 
-	// no validation rules for Days
+	if m.GetDays() < 1 {
+		err := ListInactiveEmployeesRequestValidationError{
+			field:  "Days",
+			reason: "value must be greater than or equal to 1",
+		}
+		if !all {
+			return err
+		}
+		errors = append(errors, err)
+	}
 
 	if len(errors) > 0 {
 		return ListInactiveEmployeesRequestMultiError(errors)

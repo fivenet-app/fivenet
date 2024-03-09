@@ -4,9 +4,9 @@ import (
 	"context"
 	"errors"
 	"slices"
-	"time"
 
 	database "github.com/galexrt/fivenet/gen/go/proto/resources/common/database"
+	jobs "github.com/galexrt/fivenet/gen/go/proto/resources/jobs"
 	errorsjobs "github.com/galexrt/fivenet/gen/go/proto/services/jobs/errors"
 	permsjobs "github.com/galexrt/fivenet/gen/go/proto/services/jobs/perms"
 	"github.com/galexrt/fivenet/pkg/grpc/auth"
@@ -21,8 +21,6 @@ import (
 var (
 	tTimeClock = table.FivenetJobsTimeclock.AS("timeclock_entry")
 )
-
-const TimeclockStatsSpan = 7 * 24 * time.Hour
 
 func (s *Server) ListTimeclock(ctx context.Context, req *ListTimeclockRequest) (*ListTimeclockResponse, error) {
 	userInfo := auth.MustGetUserInfoFromContext(ctx)
@@ -190,39 +188,68 @@ func (s *Server) GetTimeclockStats(ctx context.Context, req *GetTimeclockStatsRe
 }
 
 func (s *Server) ListInactiveEmployees(ctx context.Context, req *ListInactiveEmployeesRequest) (*ListInactiveEmployeesResponse, error) {
+	userInfo := auth.MustGetUserInfoFromContext(ctx)
+
+	tUser := tUser.AS("colleague")
+	stmt := tTimeClock.
+		SELECT(
+			tTimeClock.UserID,
+			tUser.ID,
+			tUser.Identifier,
+			tUser.Firstname,
+			tUser.Lastname,
+			tUser.Job,
+			tUser.JobGrade,
+			tUser.Dateofbirth,
+			tUser.PhoneNumber,
+			tUserProps.Avatar.AS("colleague.avatar"),
+		).
+		FROM(
+			tTimeClock.
+				INNER_JOIN(tUser,
+					tUser.ID.EQ(tTimeClock.UserID),
+				).
+				LEFT_JOIN(tJobsUserProps,
+					tJobsUserProps.UserID.EQ(tTimeClock.UserID),
+				).
+				LEFT_JOIN(tUserProps,
+					tUserProps.UserID.EQ(tTimeClock.UserID),
+				),
+		).
+		WHERE(jet.AND(
+			tTimeClock.Job.EQ(jet.String(userInfo.Job)),
+			jet.OR(
+				tJobsUserProps.AbsenceBegin.IS_NULL(),
+				tJobsUserProps.AbsenceBegin.GT_EQ(
+					jet.DateExp(jet.CURRENT_DATE().SUB(jet.INTERVAL(req.Days, jet.DAY))),
+				),
+			),
+			tTimeClock.UserID.NOT_IN(
+				tTimeClock.
+					SELECT(
+						tTimeClock.UserID,
+					).
+					FROM(tTimeClock).
+					WHERE(jet.AND(
+						tTimeClock.Job.EQ(jet.String(userInfo.Job)),
+						tTimeClock.Date.GT_EQ(jet.CURRENT_DATE().SUB(jet.INTERVAL(req.Days, jet.DAY))),
+					)).
+					GROUP_BY(tTimeClock.UserID),
+			),
+		)).
+		GROUP_BY(tTimeClock.UserID)
+
+	resp := &ListInactiveEmployeesResponse{
+		Colleagues: []*jobs.Colleague{},
+	}
+
+	if err := stmt.QueryContext(ctx, s.db, resp.Colleagues); err != nil {
+		if !errors.Is(err, qrm.ErrNoRows) {
+			return nil, errswrap.NewError(errorsjobs.ErrFailedQuery, err)
+		}
+	}
 
 	// TODO
-	/*
-		SELECT
-		    fjt.`user_id`,
-		    u.firstname,
-		    u.lastname
-		FROM
-		    fivenet_jobs_timeclock fjt
-		INNER JOIN users u ON
-		    (u.id = fjt.user_id)
-		LEFT JOIN fivenet_jobs_user_props fjup ON
-			(fjup.user_id = fjt.user_id)
-		WHERE
-		    fjt.`job` = 'ambulance'
-		    AND u.job = 'ambulance'
-		    AND (fjup.absence_begin IS NULL OR fjup.absence_begin >= DATE(NOW() - INTERVAL 14 DAY))
-		    AND fjt.`user_id` NOT IN (
-		    SELECT
-		        fjt.`user_id`
-		    FROM
-		        fivenet_jobs_timeclock fjt
-		    WHERE
-		        fjt.`job` = 'ambulance'
-		        AND fjt.`date` >= DATE(NOW() - INTERVAL 14 DAY)
-		    GROUP BY
-		        fjt.`user_id`
-		)
-		GROUP BY
-		    fjt.`user_id`;
-	*/
-
-	resp := &ListInactiveEmployeesResponse{}
 
 	return resp, nil
 }

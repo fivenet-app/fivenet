@@ -373,7 +373,7 @@ class ListInactiveEmployeesRequest$Type extends MessageType<ListInactiveEmployee
     constructor() {
         super("services.jobs.ListInactiveEmployeesRequest", [
             { no: 1, name: "pagination", kind: "message", T: () => PaginationRequest, options: { "validate.rules": { message: { required: true } } } },
-            { no: 2, name: "days", kind: "scalar", T: 3 /*ScalarType.INT64*/, L: 0 /*LongType.BIGINT*/ }
+            { no: 2, name: "days", kind: "scalar", T: 3 /*ScalarType.INT64*/, L: 0 /*LongType.BIGINT*/, options: { "validate.rules": { int64: { gte: "1" } } } }
         ]);
     }
     create(value?: PartialMessage<ListInactiveEmployeesRequest>): ListInactiveEmployeesRequest {
