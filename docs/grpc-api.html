@@ -4437,6 +4437,44 @@
           </table>
 
           
+            
+            
+            <h4>Validated Fields</h4>
+            <table>
+              <thead>
+                <tr>
+                  <td>Field</td>
+                  <td>Validations</td>
+                </tr>
+              </thead>
+              <tbody>
+              
+                <tr>
+                  <td>jobs</td>
+                  <td>
+                    <ul>
+                    
+                      <li>repeated.max_items: 20</li>
+                    
+                    </ul>
+                  </td>
+                </tr>
+              
+                <tr>
+                  <td>users</td>
+                  <td>
+                    <ul>
+                    
+                      <li>repeated.max_items: 20</li>
+                    
+                    </ul>
+                  </td>
+                </tr>
+              
+              </tbody>
+            </table>
+            
+          
 
         
       
@@ -5834,6 +5872,17 @@
                 </tr>
               
                 <tr>
+                  <td>creator_job</td>
+                  <td>
+                    <ul>
+                    
+                      <li>string.max_len: 20</li>
+                    
+                    </ul>
+                  </td>
+                </tr>
+              
+                <tr>
                   <td>state</td>
                   <td>
                     <ul>
@@ -6256,6 +6305,17 @@
                 </tr>
               
                 <tr>
+                  <td>creator_job</td>
+                  <td>
+                    <ul>
+                    
+                      <li>string.max_len: 20</li>
+                    
+                    </ul>
+                  </td>
+                </tr>
+              
+                <tr>
                   <td>state</td>
                   <td>
                     <ul>
@@ -6644,6 +6704,17 @@
                     <ul>
                     
                       <li>string.max_len: 20</li>
+                    
+                    </ul>
+                  </td>
+                </tr>
+              
+                <tr>
+                  <td>job_access</td>
+                  <td>
+                    <ul>
+                    
+                      <li>repeated.max_items: 20</li>
                     
                     </ul>
                   </td>
@@ -7797,13 +7868,6 @@
                 </tr>
               
                 <tr>
-                  <td>title</td>
-                  <td><a href="#string">string</a></td>
-                  <td></td>
-                  <td><p>@sanitize </p></td>
-                </tr>
-              
-                <tr>
                   <td>abbreviation</td>
                   <td><a href="#string">string</a></td>
                   <td></td>
@@ -7811,10 +7875,38 @@
                 </tr>
               
                 <tr>
+                  <td>title</td>
+                  <td><a href="#string">string</a></td>
+                  <td></td>
+                  <td><p>@sanitize </p></td>
+                </tr>
+              
+                <tr>
                   <td>description</td>
                   <td><a href="#string">string</a></td>
                   <td></td>
                   <td><p>@sanitize </p></td>
+                </tr>
+              
+                <tr>
+                  <td>creator_id</td>
+                  <td><a href="#int32">int32</a></td>
+                  <td></td>
+                  <td><p> </p></td>
+                </tr>
+              
+                <tr>
+                  <td>creator</td>
+                  <td><a href="#resources.users.UserShort">resources.users.UserShort</a></td>
+                  <td>optional</td>
+                  <td><p>@gotags: alias:&#34;creator&#34; </p></td>
+                </tr>
+              
+                <tr>
+                  <td>creator_job</td>
+                  <td><a href="#string">string</a></td>
+                  <td></td>
+                  <td><p> </p></td>
                 </tr>
               
                 <tr>
@@ -7863,6 +7955,17 @@
                 </tr>
               
                 <tr>
+                  <td>abbreviation</td>
+                  <td>
+                    <ul>
+                    
+                      <li>string.max_len: 20</li>
+                    
+                    </ul>
+                  </td>
+                </tr>
+              
+                <tr>
                   <td>title</td>
                   <td>
                     <ul>
@@ -7876,17 +7979,6 @@
                 </tr>
               
                 <tr>
-                  <td>abbreviation</td>
-                  <td>
-                    <ul>
-                    
-                      <li>string.max_len: 20</li>
-                    
-                    </ul>
-                  </td>
-                </tr>
-              
-                <tr>
                   <td>description</td>
                   <td>
                     <ul>
@@ -7894,6 +7986,17 @@
                       <li>string.min_len: 20</li>
                     
                       <li>string.max_bytes: 500000</li>
+                    
+                    </ul>
+                  </td>
+                </tr>
+              
+                <tr>
+                  <td>creator_job</td>
+                  <td>
+                    <ul>
+                    
+                      <li>string.max_len: 20</li>
                     
                     </ul>
                   </td>
@@ -8295,26 +8398,32 @@
               </tr>
             
               <tr>
-                <td>ACCESS_LEVEL_VIEW</td>
+                <td>ACCESS_LEVEL_BLOCKED</td>
                 <td>1</td>
                 <td><p></p></td>
               </tr>
             
               <tr>
-                <td>ACCESS_LEVEL_TAKE</td>
+                <td>ACCESS_LEVEL_VIEW</td>
                 <td>2</td>
                 <td><p></p></td>
               </tr>
             
               <tr>
-                <td>ACCESS_LEVEL_GRADE</td>
+                <td>ACCESS_LEVEL_TAKE</td>
                 <td>3</td>
                 <td><p></p></td>
               </tr>
             
               <tr>
-                <td>ACCESS_LEVEL_EDIT</td>
+                <td>ACCESS_LEVEL_GRADE</td>
                 <td>4</td>
+                <td><p></p></td>
+              </tr>
+            
+              <tr>
+                <td>ACCESS_LEVEL_EDIT</td>
+                <td>5</td>
                 <td><p></p></td>
               </tr>
             

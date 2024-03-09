@@ -205,6 +205,17 @@ func (m *Template) validate(all bool) error {
 		}
 	}
 
+	if len(m.GetJobAccess()) > 20 {
+		err := TemplateValidationError{
+			field:  "JobAccess",
+			reason: "value must contain no more than 20 item(s)",
+		}
+		if !all {
+			return err
+		}
+		errors = append(errors, err)
+	}
+
 	for idx, item := range m.GetJobAccess() {
 		_, _ = idx, item
 

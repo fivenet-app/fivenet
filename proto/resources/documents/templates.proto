@@ -35,7 +35,7 @@ message Template {
   optional int32 creator_id = 12; // @gotags: alias:"creator_id"
   optional resources.users.UserShort creator = 13;
   optional string creator_job = 14 [(validate.rules).string.max_len = 20];
-  repeated TemplateJobAccess job_access = 15;
+  repeated TemplateJobAccess job_access = 15 [(validate.rules).repeated.max_items = 20];
   resources.documents.DocumentAccess content_access = 16; // @gotags: alias:"access"
 }
 

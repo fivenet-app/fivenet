@@ -36,10 +36,11 @@ message Qualification {
 
 enum AccessLevel {
   ACCESS_LEVEL_UNSPECIFIED = 0;
-  ACCESS_LEVEL_VIEW = 1;
-  ACCESS_LEVEL_TAKE = 2;
-  ACCESS_LEVEL_GRADE = 3;
-  ACCESS_LEVEL_EDIT = 4;
+  ACCESS_LEVEL_BLOCKED = 1;
+  ACCESS_LEVEL_VIEW = 2;
+  ACCESS_LEVEL_TAKE = 3;
+  ACCESS_LEVEL_GRADE = 4;
+  ACCESS_LEVEL_EDIT = 5;
 }
 
 message QualificationAccess {

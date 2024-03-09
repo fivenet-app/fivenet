@@ -83,10 +83,10 @@ func (m *Qualification) validate(all bool) error {
 
 	// no validation rules for Open
 
-	if l := utf8.RuneCountInString(m.GetTitle()); l < 3 || l > 1024 {
+	if utf8.RuneCountInString(m.GetAbbreviation()) > 20 {
 		err := QualificationValidationError{
-			field:  "Title",
-			reason: "value length must be between 3 and 1024 runes, inclusive",
+			field:  "Abbreviation",
+			reason: "value length must be at most 20 runes",
 		}
 		if !all {
 			return err
@@ -94,10 +94,10 @@ func (m *Qualification) validate(all bool) error {
 		errors = append(errors, err)
 	}
 
-	if utf8.RuneCountInString(m.GetAbbreviation()) > 20 {
+	if l := utf8.RuneCountInString(m.GetTitle()); l < 3 || l > 1024 {
 		err := QualificationValidationError{
-			field:  "Abbreviation",
-			reason: "value length must be at most 20 runes",
+			field:  "Title",
+			reason: "value length must be between 3 and 1024 runes, inclusive",
 		}
 		if !all {
 			return err
@@ -120,6 +120,19 @@ func (m *Qualification) validate(all bool) error {
 		err := QualificationValidationError{
 			field:  "Description",
 			reason: "value length must be at most 500000 bytes",
+		}
+		if !all {
+			return err
+		}
+		errors = append(errors, err)
+	}
+
+	// no validation rules for CreatorId
+
+	if utf8.RuneCountInString(m.GetCreatorJob()) > 20 {
+		err := QualificationValidationError{
+			field:  "CreatorJob",
+			reason: "value length must be at most 20 runes",
 		}
 		if !all {
 			return err
@@ -247,6 +260,39 @@ func (m *Qualification) validate(all bool) error {
 			if err := v.Validate(); err != nil {
 				return QualificationValidationError{
 					field:  "DeletedAt",
+					reason: "embedded message failed validation",
+					cause:  err,
+				}
+			}
+		}
+
+	}
+
+	if m.Creator != nil {
+
+		if all {
+			switch v := interface{}(m.GetCreator()).(type) {
+			case interface{ ValidateAll() error }:
+				if err := v.ValidateAll(); err != nil {
+					errors = append(errors, QualificationValidationError{
+						field:  "Creator",
+						reason: "embedded message failed validation",
+						cause:  err,
+					})
+				}
+			case interface{ Validate() error }:
+				if err := v.Validate(); err != nil {
+					errors = append(errors, QualificationValidationError{
+						field:  "Creator",
+						reason: "embedded message failed validation",
+						cause:  err,
+					})
+				}
+			}
+		} else if v, ok := interface{}(m.GetCreator()).(interface{ Validate() error }); ok {
+			if err := v.Validate(); err != nil {
+				return QualificationValidationError{
+					field:  "Creator",
 					reason: "embedded message failed validation",
 					cause:  err,
 				}

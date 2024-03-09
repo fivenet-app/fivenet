@@ -157,8 +157,8 @@ export enum AccessLevel {
 class DocumentAccess$Type extends MessageType<DocumentAccess> {
     constructor() {
         super("resources.documents.DocumentAccess", [
-            { no: 1, name: "jobs", kind: "message", repeat: 1 /*RepeatType.PACKED*/, T: () => DocumentJobAccess },
-            { no: 2, name: "users", kind: "message", repeat: 1 /*RepeatType.PACKED*/, T: () => DocumentUserAccess }
+            { no: 1, name: "jobs", kind: "message", repeat: 1 /*RepeatType.PACKED*/, T: () => DocumentJobAccess, options: { "validate.rules": { repeated: { maxItems: "20" } } } },
+            { no: 2, name: "users", kind: "message", repeat: 1 /*RepeatType.PACKED*/, T: () => DocumentUserAccess, options: { "validate.rules": { repeated: { maxItems: "20" } } } }
         ]);
     }
     create(value?: PartialMessage<DocumentAccess>): DocumentAccess {

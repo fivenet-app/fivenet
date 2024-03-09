@@ -57,6 +57,17 @@ func (m *DocumentAccess) validate(all bool) error {
 
 	var errors []error
 
+	if len(m.GetJobs()) > 20 {
+		err := DocumentAccessValidationError{
+			field:  "Jobs",
+			reason: "value must contain no more than 20 item(s)",
+		}
+		if !all {
+			return err
+		}
+		errors = append(errors, err)
+	}
+
 	for idx, item := range m.GetJobs() {
 		_, _ = idx, item
 
@@ -89,6 +100,17 @@ func (m *DocumentAccess) validate(all bool) error {
 			}
 		}
 
+	}
+
+	if len(m.GetUsers()) > 20 {
+		err := DocumentAccessValidationError{
+			field:  "Users",
+			reason: "value must contain no more than 20 item(s)",
+		}
+		if !all {
+			return err
+		}
+		errors = append(errors, err)
 	}
 
 	for idx, item := range m.GetUsers() {

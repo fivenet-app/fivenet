@@ -45,17 +45,17 @@ export interface Qualification {
      */
     open: boolean;
     /**
-     * @sanitize
-     *
-     * @generated from protobuf field: string title = 8;
-     */
-    title: string;
-    /**
      * @sanitize: method=StripTags
      *
-     * @generated from protobuf field: string abbreviation = 9;
+     * @generated from protobuf field: string abbreviation = 8;
      */
     abbreviation: string;
+    /**
+     * @sanitize
+     *
+     * @generated from protobuf field: string title = 9;
+     */
+    title: string;
     /**
      * @sanitize
      *
@@ -63,7 +63,19 @@ export interface Qualification {
      */
     description: string;
     /**
-     * @generated from protobuf field: resources.jobs.QualificationAccess access = 11;
+     * @generated from protobuf field: int32 creator_id = 11;
+     */
+    creatorId: number;
+    /**
+     * @generated from protobuf field: optional resources.users.UserShort creator = 12;
+     */
+    creator?: UserShort; // @gotags: alias:"creator"
+    /**
+     * @generated from protobuf field: string creator_job = 13;
+     */
+    creatorJob: string;
+    /**
+     * @generated from protobuf field: resources.jobs.QualificationAccess access = 14;
      */
     access?: QualificationAccess;
 }
@@ -261,21 +273,25 @@ export enum AccessLevel {
      */
     UNSPECIFIED = 0,
     /**
-     * @generated from protobuf enum value: ACCESS_LEVEL_VIEW = 1;
+     * @generated from protobuf enum value: ACCESS_LEVEL_BLOCKED = 1;
      */
-    VIEW = 1,
+    BLOCKED = 1,
     /**
-     * @generated from protobuf enum value: ACCESS_LEVEL_TAKE = 2;
+     * @generated from protobuf enum value: ACCESS_LEVEL_VIEW = 2;
      */
-    TAKE = 2,
+    VIEW = 2,
     /**
-     * @generated from protobuf enum value: ACCESS_LEVEL_GRADE = 3;
+     * @generated from protobuf enum value: ACCESS_LEVEL_TAKE = 3;
      */
-    GRADE = 3,
+    TAKE = 3,
     /**
-     * @generated from protobuf enum value: ACCESS_LEVEL_EDIT = 4;
+     * @generated from protobuf enum value: ACCESS_LEVEL_GRADE = 4;
      */
-    EDIT = 4
+    GRADE = 4,
+    /**
+     * @generated from protobuf enum value: ACCESS_LEVEL_EDIT = 5;
+     */
+    EDIT = 5
 }
 // @generated message type with reflection information, may provide speed optimized methods
 class Qualification$Type extends MessageType<Qualification> {
@@ -288,10 +304,13 @@ class Qualification$Type extends MessageType<Qualification> {
             { no: 5, name: "job", kind: "scalar", T: 9 /*ScalarType.STRING*/, options: { "validate.rules": { string: { maxLen: "20" } } } },
             { no: 6, name: "weight", kind: "scalar", T: 13 /*ScalarType.UINT32*/, options: { "validate.rules": { uint32: { lt: 4294967295 } } } },
             { no: 7, name: "open", kind: "scalar", T: 8 /*ScalarType.BOOL*/ },
-            { no: 8, name: "title", kind: "scalar", T: 9 /*ScalarType.STRING*/, options: { "validate.rules": { string: { minLen: "3", maxLen: "1024" } } } },
-            { no: 9, name: "abbreviation", kind: "scalar", T: 9 /*ScalarType.STRING*/, options: { "validate.rules": { string: { maxLen: "20" } } } },
+            { no: 8, name: "abbreviation", kind: "scalar", T: 9 /*ScalarType.STRING*/, options: { "validate.rules": { string: { maxLen: "20" } } } },
+            { no: 9, name: "title", kind: "scalar", T: 9 /*ScalarType.STRING*/, options: { "validate.rules": { string: { minLen: "3", maxLen: "1024" } } } },
             { no: 10, name: "description", kind: "scalar", T: 9 /*ScalarType.STRING*/, options: { "validate.rules": { string: { minLen: "20", maxBytes: "500000" } } } },
-            { no: 11, name: "access", kind: "message", T: () => QualificationAccess }
+            { no: 11, name: "creator_id", kind: "scalar", T: 5 /*ScalarType.INT32*/ },
+            { no: 12, name: "creator", kind: "message", T: () => UserShort },
+            { no: 13, name: "creator_job", kind: "scalar", T: 9 /*ScalarType.STRING*/, options: { "validate.rules": { string: { maxLen: "20" } } } },
+            { no: 14, name: "access", kind: "message", T: () => QualificationAccess }
         ]);
     }
     create(value?: PartialMessage<Qualification>): Qualification {
@@ -300,9 +319,11 @@ class Qualification$Type extends MessageType<Qualification> {
         message.job = "";
         message.weight = 0;
         message.open = false;
-        message.title = "";
         message.abbreviation = "";
+        message.title = "";
         message.description = "";
+        message.creatorId = 0;
+        message.creatorJob = "";
         if (value !== undefined)
             reflectionMergePartial<Qualification>(this, message, value);
         return message;
@@ -333,16 +354,25 @@ class Qualification$Type extends MessageType<Qualification> {
                 case /* bool open */ 7:
                     message.open = reader.bool();
                     break;
-                case /* string title */ 8:
-                    message.title = reader.string();
-                    break;
-                case /* string abbreviation */ 9:
+                case /* string abbreviation */ 8:
                     message.abbreviation = reader.string();
+                    break;
+                case /* string title */ 9:
+                    message.title = reader.string();
                     break;
                 case /* string description */ 10:
                     message.description = reader.string();
                     break;
-                case /* resources.jobs.QualificationAccess access */ 11:
+                case /* int32 creator_id */ 11:
+                    message.creatorId = reader.int32();
+                    break;
+                case /* optional resources.users.UserShort creator */ 12:
+                    message.creator = UserShort.internalBinaryRead(reader, reader.uint32(), options, message.creator);
+                    break;
+                case /* string creator_job */ 13:
+                    message.creatorJob = reader.string();
+                    break;
+                case /* resources.jobs.QualificationAccess access */ 14:
                     message.access = QualificationAccess.internalBinaryRead(reader, reader.uint32(), options, message.access);
                     break;
                 default:
@@ -378,18 +408,27 @@ class Qualification$Type extends MessageType<Qualification> {
         /* bool open = 7; */
         if (message.open !== false)
             writer.tag(7, WireType.Varint).bool(message.open);
-        /* string title = 8; */
-        if (message.title !== "")
-            writer.tag(8, WireType.LengthDelimited).string(message.title);
-        /* string abbreviation = 9; */
+        /* string abbreviation = 8; */
         if (message.abbreviation !== "")
-            writer.tag(9, WireType.LengthDelimited).string(message.abbreviation);
+            writer.tag(8, WireType.LengthDelimited).string(message.abbreviation);
+        /* string title = 9; */
+        if (message.title !== "")
+            writer.tag(9, WireType.LengthDelimited).string(message.title);
         /* string description = 10; */
         if (message.description !== "")
             writer.tag(10, WireType.LengthDelimited).string(message.description);
-        /* resources.jobs.QualificationAccess access = 11; */
+        /* int32 creator_id = 11; */
+        if (message.creatorId !== 0)
+            writer.tag(11, WireType.Varint).int32(message.creatorId);
+        /* optional resources.users.UserShort creator = 12; */
+        if (message.creator)
+            UserShort.internalBinaryWrite(message.creator, writer.tag(12, WireType.LengthDelimited).fork(), options).join();
+        /* string creator_job = 13; */
+        if (message.creatorJob !== "")
+            writer.tag(13, WireType.LengthDelimited).string(message.creatorJob);
+        /* resources.jobs.QualificationAccess access = 14; */
         if (message.access)
-            QualificationAccess.internalBinaryWrite(message.access, writer.tag(11, WireType.LengthDelimited).fork(), options).join();
+            QualificationAccess.internalBinaryWrite(message.access, writer.tag(14, WireType.LengthDelimited).fork(), options).join();
         let u = options.writeUnknownFields;
         if (u !== false)
             (u == true ? UnknownFieldHandler.onWrite : u)(this.typeName, message, writer);
