@@ -39,7 +39,7 @@ message GetTimeclockStatsResponse {
 
 message ListInactiveEmployeesRequest {
   resources.common.database.PaginationRequest pagination = 1 [(validate.rules).message.required = true];
-  int64 days = 2 [(validate.rules).int64.gte = 1];
+  int32 days = 2 [(validate.rules).int32.gte = 1];
 }
 
 message ListInactiveEmployeesResponse {

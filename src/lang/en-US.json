@@ -901,7 +901,8 @@
         "absent": "Absent",
         "upload": "Upload",
         "postal_code": "Postal Code",
-        "duration": "Duration"
+        "duration": "Duration",
+        "inactive_colleagues": "Inactive Colleagues"
     },
     "notifications": {
         "clipboard": {

@@ -191,6 +191,64 @@ func (s *Server) ListInactiveEmployees(ctx context.Context, req *ListInactiveEmp
 	userInfo := auth.MustGetUserInfoFromContext(ctx)
 
 	tUser := tUser.AS("colleague")
+
+	condition := jet.AND(
+		tTimeClock.Job.EQ(jet.String(userInfo.Job)),
+		tUser.Job.EQ(jet.String(userInfo.Job)),
+		jet.OR(
+			tJobsUserProps.AbsenceBegin.IS_NULL(),
+			tJobsUserProps.AbsenceBegin.GT_EQ(
+				jet.DateExp(jet.CURRENT_DATE().SUB(jet.INTERVAL(req.Days, jet.DAY))),
+			),
+		),
+		tTimeClock.UserID.NOT_IN(
+			tTimeClock.
+				SELECT(
+					tTimeClock.UserID,
+				).
+				FROM(tTimeClock).
+				WHERE(jet.AND(
+					tTimeClock.Job.EQ(jet.String(userInfo.Job)),
+					tTimeClock.Date.GT_EQ(jet.CURRENT_DATE().SUB(jet.INTERVAL(req.Days, jet.DAY))),
+				)).
+				GROUP_BY(tTimeClock.UserID),
+		),
+	)
+
+	countStmt := tTimeClock.
+		SELECT(
+			jet.COUNT(jet.DISTINCT(tTimeClock.UserID)).AS("datacount.totalcount"),
+		).
+		FROM(
+			tTimeClock.
+				INNER_JOIN(tUser,
+					tUser.ID.EQ(tTimeClock.UserID),
+				).
+				LEFT_JOIN(tJobsUserProps,
+					tJobsUserProps.UserID.EQ(tTimeClock.UserID),
+				).
+				LEFT_JOIN(tUserProps,
+					tUserProps.UserID.EQ(tTimeClock.UserID),
+				),
+		).
+		WHERE(condition)
+
+	var count database.DataCount
+	if err := countStmt.QueryContext(ctx, s.db, &count); err != nil {
+		if !errors.Is(err, qrm.ErrNoRows) {
+			return nil, errswrap.NewError(errorsjobs.ErrFailedQuery, err)
+		}
+	}
+
+	pag, limit := req.Pagination.GetResponseWithPageSize(count.TotalCount, 15)
+	resp := &ListInactiveEmployeesResponse{
+		Pagination: pag,
+		Colleagues: []*jobs.Colleague{},
+	}
+	if count.TotalCount <= 0 {
+		return resp, nil
+	}
+
 	stmt := tTimeClock.
 		SELECT(
 			tTimeClock.UserID,
@@ -216,40 +274,27 @@ func (s *Server) ListInactiveEmployees(ctx context.Context, req *ListInactiveEmp
 					tUserProps.UserID.EQ(tTimeClock.UserID),
 				),
 		).
-		WHERE(jet.AND(
-			tTimeClock.Job.EQ(jet.String(userInfo.Job)),
-			jet.OR(
-				tJobsUserProps.AbsenceBegin.IS_NULL(),
-				tJobsUserProps.AbsenceBegin.GT_EQ(
-					jet.DateExp(jet.CURRENT_DATE().SUB(jet.INTERVAL(req.Days, jet.DAY))),
-				),
-			),
-			tTimeClock.UserID.NOT_IN(
-				tTimeClock.
-					SELECT(
-						tTimeClock.UserID,
-					).
-					FROM(tTimeClock).
-					WHERE(jet.AND(
-						tTimeClock.Job.EQ(jet.String(userInfo.Job)),
-						tTimeClock.Date.GT_EQ(jet.CURRENT_DATE().SUB(jet.INTERVAL(req.Days, jet.DAY))),
-					)).
-					GROUP_BY(tTimeClock.UserID),
-			),
-		)).
-		GROUP_BY(tTimeClock.UserID)
+		WHERE(condition).
+		ORDER_BY(
+			tUser.JobGrade.ASC(),
+			tUser.Firstname.ASC(),
+			tUser.Lastname.ASC(),
+		).
+		GROUP_BY(tTimeClock.UserID).
+		OFFSET(req.Pagination.Offset).
+		LIMIT(limit)
 
-	resp := &ListInactiveEmployeesResponse{
-		Colleagues: []*jobs.Colleague{},
-	}
-
-	if err := stmt.QueryContext(ctx, s.db, resp.Colleagues); err != nil {
+	if err := stmt.QueryContext(ctx, s.db, &resp.Colleagues); err != nil {
 		if !errors.Is(err, qrm.ErrNoRows) {
 			return nil, errswrap.NewError(errorsjobs.ErrFailedQuery, err)
 		}
 	}
 
-	// TODO
+	resp.Pagination.Update(len(resp.Colleagues))
+
+	for i := 0; i < len(resp.Colleagues); i++ {
+		s.enricher.EnrichJobInfo(resp.Colleagues[i])
+	}
 
 	return resp, nil
 }

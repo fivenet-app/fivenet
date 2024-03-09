@@ -51,6 +51,8 @@ async function listColleagueActivity(userIds: number[]): Promise<ListColleagueAc
     }
 }
 
+watch(offset, () => refresh());
+
 const queryColleagueNameRaw = ref('');
 const queryColleagueName = computed(() => queryColleagueNameRaw.value.trim().toLowerCase());
 
@@ -102,7 +104,7 @@ function charsGetDisplayValue(chars: Colleague[]): string {
         <div class="px-1 sm:px-2 lg:px-4">
             <div
                 v-if="userId === undefined && accessAttrs.some((a) => colleagueSearchAttrs.includes(a))"
-                class="sm:flex sm:items-center"
+                class="sm:flex sm:items-center mb-4"
             >
                 <div class="sm:flex-auto">
                     <form @submit.prevent="refresh()">

@@ -99,9 +99,9 @@ export interface ListInactiveEmployeesRequest {
      */
     pagination?: PaginationRequest;
     /**
-     * @generated from protobuf field: int64 days = 2;
+     * @generated from protobuf field: int32 days = 2;
      */
-    days: bigint;
+    days: number;
 }
 /**
  * @generated from protobuf message services.jobs.ListInactiveEmployeesResponse
@@ -373,12 +373,12 @@ class ListInactiveEmployeesRequest$Type extends MessageType<ListInactiveEmployee
     constructor() {
         super("services.jobs.ListInactiveEmployeesRequest", [
             { no: 1, name: "pagination", kind: "message", T: () => PaginationRequest, options: { "validate.rules": { message: { required: true } } } },
-            { no: 2, name: "days", kind: "scalar", T: 3 /*ScalarType.INT64*/, L: 0 /*LongType.BIGINT*/, options: { "validate.rules": { int64: { gte: "1" } } } }
+            { no: 2, name: "days", kind: "scalar", T: 5 /*ScalarType.INT32*/, options: { "validate.rules": { int32: { gte: 1 } } } }
         ]);
     }
     create(value?: PartialMessage<ListInactiveEmployeesRequest>): ListInactiveEmployeesRequest {
         const message = globalThis.Object.create((this.messagePrototype!));
-        message.days = 0n;
+        message.days = 0;
         if (value !== undefined)
             reflectionMergePartial<ListInactiveEmployeesRequest>(this, message, value);
         return message;
@@ -391,8 +391,8 @@ class ListInactiveEmployeesRequest$Type extends MessageType<ListInactiveEmployee
                 case /* resources.common.database.PaginationRequest pagination */ 1:
                     message.pagination = PaginationRequest.internalBinaryRead(reader, reader.uint32(), options, message.pagination);
                     break;
-                case /* int64 days */ 2:
-                    message.days = reader.int64().toBigInt();
+                case /* int32 days */ 2:
+                    message.days = reader.int32();
                     break;
                 default:
                     let u = options.readUnknownField;
@@ -409,9 +409,9 @@ class ListInactiveEmployeesRequest$Type extends MessageType<ListInactiveEmployee
         /* resources.common.database.PaginationRequest pagination = 1; */
         if (message.pagination)
             PaginationRequest.internalBinaryWrite(message.pagination, writer.tag(1, WireType.LengthDelimited).fork(), options).join();
-        /* int64 days = 2; */
-        if (message.days !== 0n)
-            writer.tag(2, WireType.Varint).int64(message.days);
+        /* int32 days = 2; */
+        if (message.days !== 0)
+            writer.tag(2, WireType.Varint).int32(message.days);
         let u = options.writeUnknownFields;
         if (u !== false)
             (u == true ? UnknownFieldHandler.onWrite : u)(this.typeName, message, writer);
