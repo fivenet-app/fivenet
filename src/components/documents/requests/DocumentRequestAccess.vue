@@ -10,8 +10,11 @@ defineProps<{
 const open = ref(false);
 </script>
 
-<template v-if="can('DocStoreService.CreateDocumentReq') && attr('DocStoreService.CreateDocumentReq', 'Types', 'Access')">
-    <div class="mx-auto max-w-md rounded-md">
+<template>
+    <div
+        v-if="can('DocStoreService.CreateDocumentReq') && attr('DocStoreService.CreateDocumentReq', 'Types', 'Access')"
+        class="mx-auto max-w-md rounded-md"
+    >
         <DocumentRequestAccessModal :document-id="documentId" :open="open" @close="open = false" />
 
         <GenericAlert
