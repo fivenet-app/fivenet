@@ -901,7 +901,8 @@
         "absent": "Abwesend",
         "upload": "Hochladen",
         "postal_code": "Postleitzahl",
-        "duration": "Dauer"
+        "duration": "Dauer",
+        "inactive_colleagues": "Inaktive Kollegen"
     },
     "notifications": {
         "clipboard": {
@@ -1646,7 +1647,11 @@
                     "Access": "Zugriff auf Stempeluhr-Einträge"
                 }
             },
-            "category": "Beruf Stempeluhr"
+            "category": "Beruf Stempeluhr",
+            "ListInactiveEmployees": {
+                "key": "Zeige inaktive Kollegen an",
+                "description": "Zeige inaktive Kollegen nach Tagen an."
+            }
         }
     },
     "errors": {
