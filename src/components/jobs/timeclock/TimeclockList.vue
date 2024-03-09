@@ -202,15 +202,13 @@ function updateDates(): void {
     <div class="py-2 pb-14">
         <div v-if="can('JobsTimeclockService.ListInactiveEmployees')" class="px-1 sm:px-2 lg:px-4">
             <div class="sm:flex sm:items-center">
-                <div class="sm:flex-auto">
-                    <NuxtLink
-                        :to="{ name: 'jobs-timeclock-inactive' }"
-                        class="inline-flex rounded-md bg-primary-500 px-3 py-2 text-sm font-semibold text-neutral hover:bg-primary-400 focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-primary-500"
-                    >
-                        {{ $t('common.inactive_colleagues') }}
-                        <ArrowRightIcon class="h-5 w-5 ml-1" />
-                    </NuxtLink>
-                </div>
+                <NuxtLink
+                    :to="{ name: 'jobs-timeclock-inactive' }"
+                    class="ml-auto inline-flex rounded-md bg-primary-500 px-3 py-2 text-sm font-semibold text-neutral hover:bg-primary-400 focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-primary-500"
+                >
+                    {{ $t('common.inactive_colleagues') }}
+                    <ArrowRightIcon class="h-5 w-5 ml-1" />
+                </NuxtLink>
             </div>
         </div>
         <div class="px-1 sm:px-2 lg:px-4">

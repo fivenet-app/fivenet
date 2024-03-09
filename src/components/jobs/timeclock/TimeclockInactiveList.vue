@@ -57,15 +57,13 @@ watch(offset, async () => refresh());
     <div class="py-2 pb-4">
         <div v-if="can('JobsTimeclockService.ListTimeclock')" class="px-1 sm:px-2 lg:px-4">
             <div class="sm:flex sm:items-center">
-                <div class="sm:flex-auto">
-                    <NuxtLink
-                        :to="{ name: 'jobs-timeclock' }"
-                        class="inline-flex rounded-md bg-primary-500 px-3 py-2 text-sm font-semibold text-neutral hover:bg-primary-400 focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-primary-500"
-                    >
-                        <ArrowLeftIcon class="h-5 w-5 mr-1" />
-                        {{ $t('common.timeclock') }}
-                    </NuxtLink>
-                </div>
+                <NuxtLink
+                    :to="{ name: 'jobs-timeclock' }"
+                    class="inline-flex rounded-md bg-primary-500 px-3 py-2 text-sm font-semibold text-neutral hover:bg-primary-400 focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-primary-500"
+                >
+                    <ArrowLeftIcon class="h-5 w-5 mr-1" />
+                    {{ $t('common.timeclock') }}
+                </NuxtLink>
             </div>
         </div>
         <div class="px-1 sm:px-2 lg:px-4">
@@ -75,18 +73,19 @@ watch(offset, async () => refresh());
                         <div class="mx-auto flex flex-row gap-4">
                             <div class="form-control flex-1">
                                 <label for="searchName" class="block text-sm font-medium leading-6 text-neutral">
-                                    {{ $t('common.time_ago.day', 2) }}
+                                    {{ $t('common.time_ago.day', 2) }}: {{ query.days }}
                                 </label>
                                 <div class="relative mt-2 flex items-center">
                                     <input
                                         ref="searchInput"
                                         v-model="query.days"
-                                        type="number"
+                                        type="range"
                                         name="searchDays"
+                                        step="1"
                                         min="3"
                                         max="31"
                                         :placeholder="$t('common.time_ago.day', 2)"
-                                        class="block w-full rounded-md border-0 bg-base-700 py-1.5 pr-14 text-neutral placeholder:text-accent-200 focus:ring-2 focus:ring-inset focus:ring-base-300 sm:text-sm sm:leading-6"
+                                        class="w-full h-2 bg-gray-200 rounded-lg appearance-none cursor-pointer dark:bg-gray-700"
                                         @focusin="focusTablet(true)"
                                         @focusout="focusTablet(false)"
                                     />

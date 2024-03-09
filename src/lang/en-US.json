@@ -335,6 +335,11 @@
             },
             "document_view": {
                 "take_ownership": "Take Ownership"
+            },
+            "document_request_access": {
+                "title": "You don't have access to this document",
+                "message": "But you can request access to this document using the button below.",
+                "callback_message": "Request Access here"
             }
         },
         "livemap": {

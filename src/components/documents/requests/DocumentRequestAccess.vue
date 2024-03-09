@@ -15,11 +15,11 @@ const open = ref(false);
         <DocumentRequestAccessModal :document-id="documentId" :open="open" @close="open = false" />
 
         <GenericAlert
-            title="You don't have access to this document"
-            message="But you can request access to this document using the button below."
             type="info"
+            :title="$t('components.documents.document_request_access.title')"
+            :message="$t('components.documents.document_request_access.message')"
             :icon="markRaw(LockQuestionIcon)"
-            callback-message="Request Access here"
+            :callback-message="$t('components.documents.document_request_access.callback_message')"
             @clicked="open = true"
         />
     </div>
