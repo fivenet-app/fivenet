@@ -36,7 +36,10 @@ func getNatsClient(t *testing.T, bucket string) *Locks {
 	defer cancel()
 
 	kv, err := js.CreateOrUpdateKeyValue(ctx, jetstream.KeyValueConfig{
-		Bucket: bucket,
+		Bucket:  bucket,
+		History: 3,
+		Storage: jetstream.MemoryStorage,
+		TTL:     3 * LockTimeout,
 	})
 	require.NoError(t, err)
 

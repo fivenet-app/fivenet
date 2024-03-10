@@ -9,7 +9,7 @@ import (
 )
 
 const (
-	DefaultUserTrackerRefreshTime   = 3*time.Second + 350*time.Millisecond
+	DefaultUserTrackerRefreshTime   = 3*time.Second + 250*time.Millisecond
 	DefaultUserTrackerDbRefreshTime = 1 * time.Second
 
 	DefaultDiscordSyncInterval = 15 * time.Minute

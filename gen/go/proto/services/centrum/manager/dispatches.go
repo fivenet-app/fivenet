@@ -246,10 +246,10 @@ func (s *Manager) UpdateDispatchAssignments(ctx context.Context, job string, use
 	store := s.State.DispatchesStore()
 
 	key := state.JobIdKey(job, dspId)
-	if err := store.ComputeUpdate(ctx, key, true, func(key string, dsp *centrum.Dispatch) (*centrum.Dispatch, error) {
+	if err := store.ComputeUpdate(ctx, key, true, func(key string, dsp *centrum.Dispatch) (*centrum.Dispatch, bool, error) {
 		if dsp == nil {
 			s.logger.Error("nil dispatch in computing dispatch assignment logic", zap.String("key", key), zap.Any("dsp", dsp))
-			return dsp, nil
+			return dsp, false, nil
 		}
 
 		if len(toRemove) > 0 {
@@ -279,7 +279,7 @@ func (s *Manager) UpdateDispatchAssignments(ctx context.Context, job string, use
 					Y:          y,
 					Postal:     postal,
 				}, true); err != nil {
-					return nil, err
+					return nil, false, err
 				}
 			}
 		}
@@ -333,12 +333,12 @@ func (s *Manager) UpdateDispatchAssignments(ctx context.Context, job string, use
 					Y:          y,
 					Postal:     postal,
 				}, true); err != nil {
-					return nil, err
+					return nil, false, err
 				}
 			}
 		}
 
-		return dsp, nil
+		return dsp, len(toRemove) > 0 || len(toAdd) > 0, nil
 	}); err != nil {
 		return err
 	}
@@ -753,19 +753,19 @@ func (s *Manager) TakeDispatch(ctx context.Context, job string, userId int32, un
 		}
 
 		key := state.JobIdKey(job, dspId)
-		if err := store.ComputeUpdate(ctx, key, true, func(key string, dsp *centrum.Dispatch) (*centrum.Dispatch, error) {
+		if err := store.ComputeUpdate(ctx, key, true, func(key string, dsp *centrum.Dispatch) (*centrum.Dispatch, bool, error) {
 			// If the dispatch center is in central command mode, units can't self assign dispatches
 			if settings.Mode == centrum.CentrumMode_CENTRUM_MODE_CENTRAL_COMMAND {
 				if !slices.ContainsFunc(dsp.Units, func(in *centrum.DispatchAssignment) bool {
 					return in.UnitId == unitId
 				}) {
-					return nil, errorscentrum.ErrModeForbidsAction
+					return nil, false, errorscentrum.ErrModeForbidsAction
 				}
 			}
 
 			// If dispatch is completed, disallow to accept the dispatch
 			if dsp.Status != nil && centrumutils.IsStatusDispatchComplete(dsp.Status.Status) {
-				return nil, errorscentrum.ErrDispatchAlreadyCompleted
+				return nil, false, errorscentrum.ErrDispatchAlreadyCompleted
 			}
 
 			status := centrum.StatusDispatch_STATUS_DISPATCH_UNSPECIFIED
@@ -811,7 +811,7 @@ func (s *Manager) TakeDispatch(ctx context.Context, job string, userId int32, un
 							Y:         y,
 							Postal:    postal,
 						}); err != nil {
-							return nil, errswrap.NewError(errorscentrum.ErrFailedQuery, err)
+							return nil, false, errswrap.NewError(errorscentrum.ErrFailedQuery, err)
 						}
 					}
 				}
@@ -835,10 +835,10 @@ func (s *Manager) TakeDispatch(ctx context.Context, job string, userId int32, un
 				Y:          y,
 				Postal:     postal,
 			}, true); err != nil {
-				return nil, errswrap.NewError(errorscentrum.ErrFailedQuery, err)
+				return nil, false, errswrap.NewError(errorscentrum.ErrFailedQuery, err)
 			}
 
-			return dsp, nil
+			return dsp, true, nil
 		}); err != nil {
 			return err
 		}

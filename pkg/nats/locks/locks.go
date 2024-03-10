@@ -15,7 +15,11 @@ import (
 	"go.uber.org/zap"
 )
 
-const keyPrefix = "LOCK."
+const (
+	LockTimeout = 500 * time.Millisecond
+
+	keyPrefix = "LOCK."
+)
 
 type Locks struct {
 	logger *zap.Logger

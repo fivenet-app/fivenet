@@ -223,7 +223,7 @@ func (s *Manager) UpdateUnitAssignments(ctx context.Context, job string, userId 
 	store := s.State.UnitsStore()
 
 	key := state.JobIdKey(job, unitId)
-	if err := store.ComputeUpdate(ctx, key, true, func(key string, unit *centrum.Unit) (*centrum.Unit, error) {
+	if err := store.ComputeUpdate(ctx, key, true, func(key string, unit *centrum.Unit) (*centrum.Unit, bool, error) {
 		if len(toRemove) > 0 {
 			toAnnounce := []int32{}
 
@@ -252,11 +252,11 @@ func (s *Manager) UpdateUnitAssignments(ctx context.Context, job string, userId 
 					Y:         y,
 					Postal:    postal,
 				}); err != nil {
-					return nil, err
+					return nil, false, err
 				}
 
 				if err := s.UnsetUnitIDForUser(ctx, user); err != nil {
-					return nil, err
+					return nil, false, err
 				}
 			}
 		}
@@ -280,7 +280,7 @@ func (s *Manager) UpdateUnitAssignments(ctx context.Context, job string, userId 
 
 			users, err := s.resolveUserShortsByIds(ctx, notFound)
 			if err != nil {
-				return nil, err
+				return nil, false, err
 			}
 
 			for _, user := range users {
@@ -302,11 +302,11 @@ func (s *Manager) UpdateUnitAssignments(ctx context.Context, job string, userId 
 					Y:         y,
 					Postal:    postal,
 				}); err != nil {
-					return nil, err
+					return nil, false, err
 				}
 
 				if err := s.SetUnitForUser(ctx, user.Job, user.UserId, unit.Id); err != nil {
-					return nil, err
+					return nil, false, err
 				}
 			}
 		}
@@ -323,11 +323,11 @@ func (s *Manager) UpdateUnitAssignments(ctx context.Context, job string, userId 
 				Y:         y,
 				Postal:    postal,
 			}); err != nil {
-				return nil, err
+				return nil, false, err
 			}
 		}
 
-		return unit, nil
+		return unit, true, nil
 	}); err != nil {
 		return err
 	}

@@ -6,6 +6,7 @@ import (
 	"strings"
 
 	"github.com/galexrt/fivenet/gen/go/proto/resources/centrum"
+	"google.golang.org/protobuf/proto"
 )
 
 func (s *State) GetUnit(ctx context.Context, job string, id uint64) (*centrum.Unit, error) {
@@ -72,14 +73,17 @@ func (s *State) DeleteUnit(ctx context.Context, job string, id uint64) error {
 }
 
 func (s *State) UpdateUnit(ctx context.Context, job string, id uint64, unit *centrum.Unit) error {
-	if err := s.units.ComputeUpdate(ctx, JobIdKey(job, id), true, func(key string, existing *centrum.Unit) (*centrum.Unit, error) {
+	if err := s.units.ComputeUpdate(ctx, JobIdKey(job, id), true, func(key string, existing *centrum.Unit) (*centrum.Unit, bool, error) {
 		if existing == nil {
-			return unit, nil
+			return unit, false, nil
 		}
 
-		existing.Merge(unit)
+		if !proto.Equal(existing, unit) {
+			existing.Merge(unit)
+			return existing, true, nil
+		}
 
-		return existing, nil
+		return existing, false, nil
 	}); err != nil {
 		return err
 	}
@@ -88,14 +92,14 @@ func (s *State) UpdateUnit(ctx context.Context, job string, id uint64, unit *cen
 }
 
 func (s *State) UpdateUnitStatus(ctx context.Context, job string, id uint64, status *centrum.UnitStatus) error {
-	if err := s.units.ComputeUpdate(ctx, JobIdKey(job, id), true, func(key string, existing *centrum.Unit) (*centrum.Unit, error) {
+	if err := s.units.ComputeUpdate(ctx, JobIdKey(job, id), true, func(key string, existing *centrum.Unit) (*centrum.Unit, bool, error) {
 		if existing == nil {
-			return nil, nil
+			return existing, false, nil
 		}
 
 		existing.Status = status
 
-		return existing, nil
+		return existing, true, nil
 	}); err != nil {
 		return err
 	}
@@ -104,9 +108,9 @@ func (s *State) UpdateUnitStatus(ctx context.Context, job string, id uint64, sta
 }
 
 func (s *State) UpdateUnitUsers(ctx context.Context, job string, id uint64, users []*centrum.UnitAssignment) error {
-	if err := s.units.ComputeUpdate(ctx, JobIdKey(job, id), true, func(key string, existing *centrum.Unit) (*centrum.Unit, error) {
+	if err := s.units.ComputeUpdate(ctx, JobIdKey(job, id), true, func(key string, existing *centrum.Unit) (*centrum.Unit, bool, error) {
 		if existing == nil {
-			return nil, nil
+			return existing, false, nil
 		}
 
 		if users == nil {
@@ -115,7 +119,7 @@ func (s *State) UpdateUnitUsers(ctx context.Context, job string, id uint64, user
 			existing.Users = users
 		}
 
-		return existing, nil
+		return existing, true, nil
 	}); err != nil {
 		return err
 	}

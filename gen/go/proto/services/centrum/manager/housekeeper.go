@@ -15,6 +15,7 @@ import (
 	tracesdk "go.opentelemetry.io/otel/sdk/trace"
 	"go.opentelemetry.io/otel/trace"
 	"go.uber.org/fx"
+	"go.uber.org/multierr"
 	"go.uber.org/zap"
 )
 
@@ -313,13 +314,17 @@ func (s *Housekeeper) runDeleteOldDispatches() {
 		case <-s.ctx.Done():
 			return
 
-		case <-time.After(5 * time.Minute):
+		case <-time.After(2*time.Minute + 30*time.Second):
 			func() {
 				ctx, span := s.tracer.Start(s.ctx, "centrum-dispatch-old-delete")
 				defer span.End()
 
 				if err := s.deleteOldDispatches(ctx); err != nil {
 					s.logger.Error("failed to remove old dispatches", zap.Error(err))
+				}
+
+				if err := s.deleteOldDispatchesFromKV(ctx); err != nil {
+					s.logger.Error("failed to remove old dispatches from kv", zap.Error(err))
 				}
 			}()
 		}
@@ -359,6 +364,32 @@ func (s *Housekeeper) deleteOldDispatches(ctx context.Context) error {
 
 	return nil
 }
+
+func (s *Housekeeper) deleteOldDispatchesFromKV(ctx context.Context) error {
+	dsps, err := s.State.DispatchesStore().List()
+	if err != nil {
+		return err
+	}
+
+	errs := multierr.Combine()
+	for _, dsp := range dsps {
+		if dsp == nil {
+			continue
+		}
+
+		// Remove Dispatches with nil status and dispatches which are in a "complete" state and the status is older than 15 minutes
+		if dsp.Status == nil || (centrumutils.IsStatusDispatchComplete(dsp.Status.Status) &&
+			time.Since(dsp.Status.CreatedAt.AsTime()) > 1*time.Minute) {
+			if err := s.DeleteDispatch(ctx, dsp.Job, dsp.Id, false); err != nil {
+				errs = multierr.Append(errs, err)
+				continue
+			}
+		}
+	}
+
+	return errs
+}
+
 func (s *Housekeeper) runDispatchDeduplication() {
 	for {
 		select {

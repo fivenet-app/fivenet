@@ -6,6 +6,7 @@ import (
 	"strconv"
 
 	"github.com/galexrt/fivenet/gen/go/proto/resources/centrum"
+	"google.golang.org/protobuf/proto"
 )
 
 func (s *State) GetDispatch(ctx context.Context, job string, id uint64) (*centrum.Dispatch, error) {
@@ -95,14 +96,17 @@ func (s *State) CreateDispatch(ctx context.Context, job string, id uint64, dsp *
 }
 
 func (s *State) UpdateDispatch(ctx context.Context, job string, id uint64, dsp *centrum.Dispatch) error {
-	if err := s.dispatches.ComputeUpdate(ctx, JobIdKey(job, id), true, func(key string, existing *centrum.Dispatch) (*centrum.Dispatch, error) {
+	if err := s.dispatches.ComputeUpdate(ctx, JobIdKey(job, id), true, func(key string, existing *centrum.Dispatch) (*centrum.Dispatch, bool, error) {
 		if existing == nil {
-			return dsp, nil
+			return dsp, false, nil
 		}
 
-		existing.Merge(dsp)
+		if !proto.Equal(existing, dsp) {
+			existing.Merge(dsp)
+			return existing, true, nil
+		}
 
-		return existing, nil
+		return existing, false, nil
 	}); err != nil {
 		return err
 	}
@@ -111,14 +115,14 @@ func (s *State) UpdateDispatch(ctx context.Context, job string, id uint64, dsp *
 }
 
 func (s *State) UpdateDispatchStatus(ctx context.Context, job string, id uint64, status *centrum.DispatchStatus) error {
-	if err := s.dispatches.ComputeUpdate(ctx, JobIdKey(job, id), true, func(key string, existing *centrum.Dispatch) (*centrum.Dispatch, error) {
+	if err := s.dispatches.ComputeUpdate(ctx, JobIdKey(job, id), true, func(key string, existing *centrum.Dispatch) (*centrum.Dispatch, bool, error) {
 		if existing == nil {
-			return nil, nil
+			return existing, false, nil
 		}
 
 		existing.Status = status
 
-		return existing, nil
+		return existing, true, nil
 	}); err != nil {
 		return err
 	}
@@ -127,9 +131,9 @@ func (s *State) UpdateDispatchStatus(ctx context.Context, job string, id uint64,
 }
 
 func (s *State) UpdateDispatchUnits(ctx context.Context, job string, id uint64, units []*centrum.DispatchAssignment) error {
-	if err := s.dispatches.ComputeUpdate(ctx, JobIdKey(job, id), true, func(key string, existing *centrum.Dispatch) (*centrum.Dispatch, error) {
+	if err := s.dispatches.ComputeUpdate(ctx, JobIdKey(job, id), true, func(key string, existing *centrum.Dispatch) (*centrum.Dispatch, bool, error) {
 		if existing == nil {
-			return nil, nil
+			return existing, false, nil
 		}
 
 		if units == nil {
@@ -138,7 +142,7 @@ func (s *State) UpdateDispatchUnits(ctx context.Context, job string, id uint64, 
 			existing.Units = units
 		}
 
-		return existing, nil
+		return existing, true, nil
 	}); err != nil {
 		return err
 	}

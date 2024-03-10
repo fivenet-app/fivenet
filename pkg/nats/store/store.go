@@ -6,7 +6,6 @@ import (
 	"fmt"
 	"strings"
 	"sync"
-	"time"
 
 	natsutils "github.com/galexrt/fivenet/pkg/nats"
 	"github.com/galexrt/fivenet/pkg/nats/locks"
@@ -15,8 +14,6 @@ import (
 	"go.uber.org/zap"
 	"google.golang.org/protobuf/proto"
 )
-
-const LockTimeout = 350 * time.Millisecond
 
 type protoMessage[T any] interface {
 	*T
@@ -28,26 +25,27 @@ type protoMessage[T any] interface {
 type Store[T any, U protoMessage[T]] struct {
 	logger *zap.Logger
 	kv     jetstream.KeyValue
+	l      *locks.Locks
 
 	mu   *xsync.MapOf[string, *sync.Mutex]
 	data *xsync.MapOf[string, U]
 
-	l *locks.Locks
-
-	OnUpdate OnUpdateFn[T, U]
-	OnDelete OnDeleteFn[T, U]
+	OnUpdate   OnUpdateFn[T, U]
+	OnDelete   OnDeleteFn[T, U]
+	OnNotFound OnNotFoundFn[T, U]
 }
 
-type StoreOption[T any, U protoMessage[T]] func(s *Store[T, U]) error
+type Option[T any, U protoMessage[T]] func(s *Store[T, U]) error
 
 type OnUpdateFn[T any, U protoMessage[T]] func(U) (U, error)
 type OnDeleteFn[T any, U protoMessage[T]] func(jetstream.KeyValueEntry, U) error
+type OnNotFoundFn[T any, U protoMessage[T]] func(ctx context.Context, key string) (U, error)
 
 func mutexCompute() *sync.Mutex {
 	return &sync.Mutex{}
 }
 
-func NewWithLocks[T any, U protoMessage[T]](ctx context.Context, logger *zap.Logger, js jetstream.JetStream, bucket string, l *locks.Locks, opts ...StoreOption[T, U]) (*Store[T, U], error) {
+func NewWithLocks[T any, U protoMessage[T]](ctx context.Context, logger *zap.Logger, js jetstream.JetStream, bucket string, l *locks.Locks, opts ...Option[T, U]) (*Store[T, U], error) {
 	kv, err := js.CreateOrUpdateKeyValue(ctx, jetstream.KeyValueConfig{
 		Bucket:      bucket,
 		Description: natsutils.Description,
@@ -61,11 +59,10 @@ func NewWithLocks[T any, U protoMessage[T]](ctx context.Context, logger *zap.Log
 	s := &Store[T, U]{
 		logger: logger.Named("store").With(zap.String("bucket", bucket)),
 		kv:     kv,
+		l:      l,
 
 		mu:   xsync.NewMapOf[string, *sync.Mutex](),
 		data: xsync.NewMapOf[string, U](),
-
-		l: l,
 	}
 
 	for _, opt := range opts {
@@ -77,19 +74,19 @@ func NewWithLocks[T any, U protoMessage[T]](ctx context.Context, logger *zap.Log
 	return s, nil
 }
 
-func New[T any, U protoMessage[T]](ctx context.Context, logger *zap.Logger, js jetstream.JetStream, bucket string, opts ...StoreOption[T, U]) (*Store[T, U], error) {
+func New[T any, U protoMessage[T]](ctx context.Context, logger *zap.Logger, js jetstream.JetStream, bucket string, opts ...Option[T, U]) (*Store[T, U], error) {
 	lBucket := fmt.Sprintf("%s_locks", bucket)
 	lkv, err := js.CreateOrUpdateKeyValue(ctx, jetstream.KeyValueConfig{
 		Bucket:      lBucket,
 		Description: natsutils.Description,
 		History:     3,
 		Storage:     jetstream.MemoryStorage,
-		TTL:         3 * LockTimeout,
+		TTL:         3 * locks.LockTimeout,
 	})
 	if err != nil {
 		return nil, err
 	}
-	l, err := locks.New(logger, lkv, lBucket, 6*LockTimeout)
+	l, err := locks.New(logger, lkv, lBucket, 6*locks.LockTimeout)
 	if err != nil {
 		return nil, err
 	}
@@ -103,7 +100,7 @@ func (s *Store[T, U]) Put(ctx context.Context, key string, msg U) error {
 	mu.Lock()
 	defer mu.Unlock()
 
-	ctx, cancel := context.WithTimeout(ctx, LockTimeout)
+	ctx, cancel := context.WithTimeout(ctx, locks.LockTimeout)
 	defer cancel()
 
 	if s.l != nil {
@@ -135,12 +132,12 @@ func (s *Store[T, U]) put(ctx context.Context, key string, msg U) error {
 	return nil
 }
 
-func (s *Store[T, U]) ComputeUpdate(ctx context.Context, key string, load bool, fn func(key string, existing U) (U, error)) error {
+func (s *Store[T, U]) ComputeUpdate(ctx context.Context, key string, load bool, fn func(key string, existing U) (U, bool, error)) error {
 	mu, _ := s.mu.LoadOrCompute(key, mutexCompute)
 	mu.Lock()
 	defer mu.Unlock()
 
-	ctx, cancel := context.WithTimeout(ctx, LockTimeout)
+	ctx, cancel := context.WithTimeout(ctx, locks.LockTimeout)
 	defer cancel()
 
 	if s.l != nil {
@@ -154,8 +151,16 @@ func (s *Store[T, U]) ComputeUpdate(ctx context.Context, key string, load bool, 
 	if load {
 		var err error
 		existing, err = s.load(ctx, key)
-		if err != nil && !errors.Is(err, jetstream.ErrKeyNotFound) {
-			return err
+		if err != nil {
+			// Use on not found to try to get the value
+			if errors.Is(err, jetstream.ErrKeyNotFound) && s.OnNotFound != nil {
+				existing, err = s.OnNotFound(ctx, key)
+				if err != nil {
+					return err
+				}
+			} else {
+				return err
+			}
 		}
 	} else {
 		var ok bool
@@ -165,19 +170,22 @@ func (s *Store[T, U]) ComputeUpdate(ctx context.Context, key string, load bool, 
 		}
 	}
 
-	computed, err := fn(key, existing)
+	computed, changed, err := fn(key, existing)
 	if err != nil {
-		return err
+		return fmt.Errorf("store compute update function call returned error. %w", err)
 	}
 
-	// Skip nil updates for now
+	// Skip computed nil updates for now
 	if computed == nil {
 		s.logger.Error("compute update returned nil, skipping store put", zap.String("key", key))
 		return nil
 	}
 
-	if err := s.put(ctx, key, computed); err != nil {
-		return err
+	// Only update key if it was changed (indicated by the compute update function call)
+	if changed {
+		if err := s.put(ctx, key, computed); err != nil {
+			return err
+		}
 	}
 
 	return nil
@@ -273,7 +281,7 @@ func (s *Store[T, U]) Delete(ctx context.Context, key string) error {
 	mu.Lock()
 	defer mu.Unlock()
 
-	ctx, cancel := context.WithTimeout(ctx, LockTimeout)
+	ctx, cancel := context.WithTimeout(ctx, locks.LockTimeout)
 	defer cancel()
 
 	if s.l != nil {
@@ -293,15 +301,10 @@ func (s *Store[T, U]) Delete(ctx context.Context, key string) error {
 }
 
 func (s *Store[T, U]) Keys(ctx context.Context, prefix string) ([]string, error) {
-	lister, err := s.kv.ListKeys(ctx, jetstream.MetaOnly())
-	if err != nil {
-		return nil, err
-	}
-
 	hasPrefix := prefix != ""
 
 	keys := []string{}
-	for key := range lister.Keys() {
+	s.data.Range(func(key string, _ U) bool {
 		if hasPrefix {
 			if strings.HasPrefix(key, prefix+".") {
 				keys = append(keys, key)
@@ -309,7 +312,9 @@ func (s *Store[T, U]) Keys(ctx context.Context, prefix string) ([]string, error)
 		} else {
 			keys = append(keys, key)
 		}
-	}
+
+		return true
+	})
 
 	return keys, nil
 }
@@ -345,7 +350,9 @@ func (s *Store[T, U]) Start(ctx context.Context) error {
 		for {
 			select {
 			case <-ctx.Done():
-				watcher.Stop()
+				if err := watcher.Stop(); err != nil {
+					s.logger.Error("error while stopping watcher", zap.Error(err))
+				}
 				return
 
 			case entry := <-updateCh:
