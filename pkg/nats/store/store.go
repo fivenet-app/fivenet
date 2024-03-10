@@ -15,6 +15,8 @@ import (
 	"google.golang.org/protobuf/proto"
 )
 
+var ErrNotFound = errors.New("store: not found")
+
 type protoMessage[T any] interface {
 	*T
 	proto.Message
@@ -152,14 +154,15 @@ func (s *Store[T, U]) ComputeUpdate(ctx context.Context, key string, load bool, 
 		var err error
 		existing, err = s.load(ctx, key)
 		if err != nil {
-			// Use on not found to try to get the value
-			if errors.Is(err, jetstream.ErrKeyNotFound) && s.OnNotFound != nil {
+			// Return if it isn't a not found value
+			if !errors.Is(err, jetstream.ErrKeyNotFound) {
+				return err
+			} else if s.OnNotFound != nil {
+				// Try to load value using not found method
 				existing, err = s.OnNotFound(ctx, key)
-				if err != nil {
+				if err != nil && !errors.Is(err, ErrNotFound) {
 					return err
 				}
-			} else {
-				return err
 			}
 		}
 	} else {
@@ -181,11 +184,13 @@ func (s *Store[T, U]) ComputeUpdate(ctx context.Context, key string, load bool, 
 		return nil
 	}
 
-	// Only update key if it was changed (indicated by the compute update function call)
+	// Only update key if no existing key it was changed (indicated by the compute update function call)
 	if changed {
 		if err := s.put(ctx, key, computed); err != nil {
 			return err
 		}
+	} else {
+		s.logger.Debug("store compute update has not changed state", zap.String("key", key))
 	}
 
 	return nil

@@ -106,9 +106,7 @@ func New(p Params) (*State, error) {
 
 					return dsp, nil
 				}
-				return nil
-			},
-			func(st *store.Store[centrum.Dispatch, *centrum.Dispatch]) error {
+
 				st.OnDelete = func(entry jetstream.KeyValueEntry, dsp *centrum.Dispatch) error {
 					if dsp == nil {
 						logger.Warn("unable to delete dispatch location, got nil dispatch item", zap.String("store_dispatch_key", entry.Key()))
@@ -123,6 +121,7 @@ func New(p Params) (*State, error) {
 
 					return nil
 				}
+
 				return nil
 			})
 		if err != nil {
