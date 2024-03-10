@@ -907,7 +907,8 @@
         "upload": "Upload",
         "postal_code": "Postal Code",
         "duration": "Duration",
-        "inactive_colleagues": "Inactive Colleagues"
+        "inactive_colleagues": "Inactive Colleagues",
+        "qualifications": "Qualification | Qualifications"
     },
     "notifications": {
         "clipboard": {

@@ -2,6 +2,54 @@ syntax = "proto3";
 
 package services.jobs;
 
+import "resources/common/database/database.proto";
+import "resources/jobs/qualifications.proto";
+import "validate/validate.proto";
+
 option go_package = "github.com/galexrt/fivenet/gen/go/proto/services/jobs;jobs";
 
-service JobsQualificationsService {}
+message ListQualificationsRequest {
+  resources.common.database.PaginationRequest pagination = 1 [(validate.rules).message.required = true];
+  // Search params
+}
+
+message ListQualificationsResponse {
+  resources.common.database.PaginationResponse pagination = 1;
+  repeated resources.jobs.Qualification qualifications = 2;
+}
+
+message CreateQualificationRequest {
+  resources.jobs.Qualification qualification = 1;
+}
+
+message CreateQualificationResponse {
+  resources.jobs.Qualification qualification = 1;
+}
+
+message UpdateQualificationRequest {
+  resources.jobs.Qualification qualification = 1;
+}
+
+message UpdateQualificationResponse {
+  resources.jobs.Qualification qualification = 1;
+}
+
+message DeleteQualificationRequest {
+  uint64 id = 1;
+}
+
+message DeleteQualificationResponse {}
+
+service JobsQualificationsService {
+  // @perm
+  rpc ListQualifications(ListQualificationsRequest) returns (ListQualificationsResponse);
+
+  // @perm
+  rpc CreateQualification(CreateQualificationRequest) returns (CreateQualificationResponse);
+  // @perm
+  rpc UpdateQualification(UpdateQualificationRequest) returns (UpdateQualificationResponse);
+  // @perm
+  rpc DeleteQualification(DeleteQualificationRequest) returns (DeleteQualificationResponse);
+
+  // TODO
+}

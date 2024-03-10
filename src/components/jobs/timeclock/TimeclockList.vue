@@ -413,7 +413,13 @@ function updateDates(): void {
             <div v-if="data && data.stats" class="mb-4 flow-root">
                 <div class="mt-2 sm:flex sm:items-center">
                     <div class="sm:flex-auto">
-                        <TimeclockStatsBlock :stats="data.stats" :weekly="data.weekly" :hide-header="true" />
+                        <TimeclockStatsBlock
+                            :stats="data.stats"
+                            :weekly="data.weekly"
+                            :hide-header="true"
+                            :failed="error !== null"
+                            @refresh="refresh()"
+                        />
                     </div>
                 </div>
             </div>

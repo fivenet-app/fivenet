@@ -267,14 +267,15 @@ func (s *Server) GetDispatch(ctx context.Context, req *GetDispatchRequest) (*Get
 	}
 
 	if resp.Dispatch.CreatorId != nil {
-		resp.Dispatch.Creator, err = s.state.ResolveUserById(ctx, *resp.Dispatch.CreatorId)
+		creator, err := s.state.ResolveUserById(ctx, *resp.Dispatch.CreatorId)
 		if err != nil {
 			return nil, errswrap.NewError(errorscentrum.ErrFailedQuery, err)
 		}
 
-		if resp.Dispatch.Creator != nil {
+		if creator != nil {
+			resp.Dispatch.Creator = creator
 			// Clear dispatch creator's job info if not a visible job
-			if !slices.Contains(s.appCfg.Get().JobInfo.PublicJobs, resp.Dispatch.Creator.Job) {
+			if !slices.Contains(s.appCfg.Get().JobInfo.PublicJobs, creator.Job) {
 				resp.Dispatch.Creator.Job = ""
 			}
 			resp.Dispatch.Creator.JobGrade = 0

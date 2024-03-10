@@ -126,7 +126,7 @@ watchDebounced(includeRead, async () => refresh(), { debounce: 500, maxWait: 150
                             :type="$t('common.notification', 2)"
                             :icon="BellIcon"
                         />
-                        <div v-else>
+                        <template v-else>
                             <ul class="flex flex-col">
                                 <li
                                     v-for="not in data?.notifications"
@@ -184,7 +184,7 @@ watchDebounced(includeRead, async () => refresh(), { debounce: 500, maxWait: 150
                                 :refresh="refresh"
                                 @offset-change="offset = $event"
                             />
-                        </div>
+                        </template>
                     </div>
                 </div>
             </div>

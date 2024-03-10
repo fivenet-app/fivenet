@@ -1,7 +1,9 @@
 <script lang="ts" setup>
 import { RpcError } from '@protobuf-ts/runtime-rpc';
+import { min, numeric, required } from '@vee-validate/rules';
 import { watchDebounced } from '@vueuse/core';
-import { ArrowLeftIcon, MinusIcon, PlusIcon } from 'mdi-vue3';
+import { ArrowLeftIcon } from 'mdi-vue3';
+import { defineRule } from 'vee-validate';
 import DataErrorBlock from '~/components/partials/data/DataErrorBlock.vue';
 import DataNoDataBlock from '~/components/partials/data/DataNoDataBlock.vue';
 import DataPendingBlock from '~/components/partials/data/DataPendingBlock.vue';
@@ -42,6 +44,20 @@ async function listInactiveEmployees(): Promise<ListInactiveEmployeesResponse> {
     }
 }
 
+interface FormData {
+    days: number;
+}
+
+defineRule('required', required);
+defineRule('min', min);
+defineRule('numeric', numeric);
+
+const { meta } = useForm<FormData>({
+    validationSchema: {
+        days: { required: true, min: 1, numeric: true },
+    },
+});
+
 const searchInput = ref<HTMLInputElement | null>(null);
 function focusSearch(): void {
     if (searchInput.value) {
@@ -49,7 +65,15 @@ function focusSearch(): void {
     }
 }
 
-watchDebounced(query.value, async () => refresh(), { debounce: 600, maxWait: 1400 });
+watchDebounced(
+    query.value,
+    async () => {
+        if (meta.value.valid) {
+            refresh();
+        }
+    },
+    { debounce: 600, maxWait: 1400 },
+);
 watch(offset, async () => refresh());
 </script>
 
@@ -72,22 +96,24 @@ watch(offset, async () => refresh());
                     <form @submit.prevent="refresh()">
                         <div class="mx-auto flex flex-row gap-4">
                             <div class="form-control flex-1">
-                                <label for="searchName" class="block text-sm font-medium leading-6 text-neutral">
+                                <label for="days" class="block text-sm font-medium leading-6 text-neutral">
                                     {{ $t('common.time_ago.day', 2) }}
                                 </label>
-                                <div class="relative mt-2 flex items-center">
-                                    <input
+                                <div class="relative mt-2">
+                                    <VeeField
                                         ref="searchInput"
                                         v-model="query.days"
-                                        name="searchDays"
+                                        name="days"
                                         type="number"
                                         min="3"
                                         max="31"
                                         class="block w-full rounded-md border-0 bg-base-700 py-1.5 text-neutral placeholder:text-accent-200 focus:ring-2 focus:ring-inset focus:ring-base-300 sm:text-sm sm:leading-6"
+                                        :label="$t('common.time_ago.day', 2)"
                                         :placeholder="$t('common.time_ago.day', 2)"
                                         @focusin="focusTablet(true)"
                                         @focusout="focusTablet(false)"
                                     />
+                                    <VeeErrorMessage name="days" as="p" class="mt-2 text-sm text-error-400" />
                                 </div>
                             </div>
                         </div>
@@ -108,7 +134,7 @@ watch(offset, async () => refresh());
                             :focus="focusSearch"
                             :message="$t('components.citizens.citizens_list.no_citizens')"
                         />
-                        <div v-else>
+                        <template v-else>
                             <GenericTable>
                                 <template #thead>
                                     <tr>
@@ -157,7 +183,7 @@ watch(offset, async () => refresh());
                                 :refresh="refresh"
                                 @offset-change="offset = $event"
                             />
-                        </div>
+                        </template>
                     </div>
                 </div>
             </div>

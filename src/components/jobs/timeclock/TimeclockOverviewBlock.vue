@@ -9,7 +9,7 @@ const props = defineProps<{
 
 const { $grpc } = useNuxtApp();
 
-const { data: timeclockStats } = useLazyAsyncData(`jobs-timeclock-stats`, () => getTimeclockStats());
+const { data: timeclockStats, error, refresh } = useLazyAsyncData(`jobs-timeclock-stats`, () => getTimeclockStats());
 
 async function getTimeclockStats(): Promise<GetTimeclockStatsResponse> {
     try {
@@ -27,5 +27,11 @@ async function getTimeclockStats(): Promise<GetTimeclockStatsResponse> {
 </script>
 
 <template>
-    <TimeclockStatsBlock class="mt-4" :stats="timeclockStats?.stats" :weekly="timeclockStats?.weekly" />
+    <TimeclockStatsBlock
+        class="mt-4"
+        :stats="timeclockStats?.stats"
+        :weekly="timeclockStats?.weekly"
+        :failed="error !== null"
+        @refresh="refresh()"
+    />
 </template>

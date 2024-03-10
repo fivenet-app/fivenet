@@ -128,7 +128,7 @@ function updateAbsenceDates(value: { userId: number; absenceBegin?: Timestamp; a
                             :focus="focusSearch"
                             :message="$t('components.citizens.citizens_list.no_citizens')"
                         />
-                        <div v-else>
+                        <template v-else>
                             <GenericTable>
                                 <template #thead>
                                     <tr>
@@ -181,7 +181,7 @@ function updateAbsenceDates(value: { userId: number; absenceBegin?: Timestamp; a
                                 :refresh="refresh"
                                 @offset-change="offset = $event"
                             />
-                        </div>
+                        </template>
                     </div>
                 </div>
             </div>

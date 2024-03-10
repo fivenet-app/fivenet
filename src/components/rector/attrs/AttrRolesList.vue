@@ -11,6 +11,7 @@ import { useNotificatorStore } from '~/store/notificator';
 import { Role } from '~~/gen/ts/resources/permissions/permissions';
 import { Job } from '~~/gen/ts/resources/users/jobs';
 import AttrRolesListEntry from '~/components/rector/attrs/AttrRolesListEntry.vue';
+import GenericTable from '~/components/partials/elements/GenericTable.vue';
 
 const { $grpc } = useNuxtApp();
 
@@ -177,45 +178,30 @@ onBeforeMount(async () => await listJobs());
                                 :retry="refresh"
                             />
                             <DataNoDataBlock v-else-if="roles && roles.length === 0" :type="$t('common.role', 2)" />
-                            <div v-else>
-                                <table class="min-w-full divide-y divide-base-600">
-                                    <thead>
-                                        <tr>
-                                            <th scope="col" class="px-2 py-3.5 text-left text-sm font-semibold text-neutral">
-                                                {{ $t('common.name') }}
-                                            </th>
-                                            <th
-                                                scope="col"
-                                                class="relative py-3.5 pl-3 pr-4 text-right text-sm font-semibold text-neutral sm:pr-0"
-                                            >
-                                                {{ $t('common.action', 2) }}
-                                            </th>
-                                        </tr>
-                                    </thead>
-                                    <tbody class="divide-y divide-base-800">
-                                        <AttrRolesListEntry
-                                            v-for="role in sortedRoles"
-                                            :key="role.id"
-                                            :role="role"
-                                            :class="selectedRole?.id === role.id ? 'bg-base-800' : ''"
-                                            @selected="selectedRole = role"
-                                        />
-                                    </tbody>
-                                    <thead>
-                                        <tr>
-                                            <th scope="col" class="px-2 py-3.5 text-left text-sm font-semibold text-neutral">
-                                                {{ $t('common.name') }}
-                                            </th>
-                                            <th
-                                                scope="col"
-                                                class="relative py-3.5 pl-3 pr-4 text-right text-sm font-semibold text-neutral sm:pr-0"
-                                            >
-                                                {{ $t('common.action', 2) }}
-                                            </th>
-                                        </tr>
-                                    </thead>
-                                </table>
-                            </div>
+                            <GenericTable v-else>
+                                <template #thead>
+                                    <tr>
+                                        <th scope="col" class="px-2 py-3.5 text-left text-sm font-semibold text-neutral">
+                                            {{ $t('common.name') }}
+                                        </th>
+                                        <th
+                                            scope="col"
+                                            class="relative py-3.5 pl-3 pr-4 text-right text-sm font-semibold text-neutral sm:pr-0"
+                                        >
+                                            {{ $t('common.action', 2) }}
+                                        </th>
+                                    </tr>
+                                </template>
+                                <template #tbody>
+                                    <AttrRolesListEntry
+                                        v-for="role in sortedRoles"
+                                        :key="role.id"
+                                        :role="role"
+                                        :class="selectedRole?.id === role.id ? 'bg-base-800' : ''"
+                                        @selected="selectedRole = role"
+                                    />
+                                </template>
+                            </GenericTable>
                         </div>
                     </div>
                 </div>

@@ -102,7 +102,7 @@ const open = ref(false);
 </script>
 
 <template>
-    <div>
+    <div class="m-2">
         <DataPendingBlock v-if="pending" :message="$t('common.loading', [$t('common.citizen', 1)])" />
         <DataErrorBlock
             v-else-if="error"

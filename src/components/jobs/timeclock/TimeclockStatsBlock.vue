@@ -1,7 +1,8 @@
 <script lang="ts" setup>
-import { LoadingIcon } from 'mdi-vue3';
+import { AlertCircleIcon, LoadingIcon } from 'mdi-vue3';
 import { Bar, Chart, Grid, Responsive, Tooltip } from 'vue3-charts';
 import type { ChartAxis } from 'vue3-charts/dist/types';
+import DataErrorBlock from '~/components/partials/data/DataErrorBlock.vue';
 import DataNoDataBlock from '~/components/partials/data/DataNoDataBlock.vue';
 import GenericContainer from '~/components/partials/elements/GenericContainer.vue';
 import { TimeclockStats, TimeclockWeeklyStats } from '~~/gen/ts/resources/jobs/timeclock';
@@ -11,6 +12,7 @@ const props = withDefaults(
         stats?: TimeclockStats | null;
         weekly?: TimeclockWeeklyStats[];
         hideHeader?: boolean;
+        failed?: boolean;
     }>(),
     {
         stats: null,
@@ -18,6 +20,10 @@ const props = withDefaults(
         hideHeader: false,
     },
 );
+
+defineEmits<{
+    (e: 'refresh'): void;
+}>();
 
 const statsData = ref<Record<string, { name: string; value?: number }>>({
     sum: {
@@ -84,6 +90,9 @@ const axis = ref<ChartAxis>({
                                 <template v-if="stat.value === undefined">
                                     <LoadingIcon class="h-5 w-5 animate-spin" aria-hidden="true" />
                                 </template>
+                                <template v-else-if="failed">
+                                    <AlertCircleIcon class="h-5 w-5" aria-hidden="true" />
+                                </template>
                                 <template v-else>
                                     {{ fromSecondsToFormattedDuration(stat.value, { seconds: false }) }}
                                 </template>
@@ -97,7 +106,8 @@ const axis = ref<ChartAxis>({
                         {{ $t('components.jobs.timeclock.StatsBlock.weekly') }}
                     </h3>
 
-                    <DataNoDataBlock v-if="weekly === undefined" />
+                    <DataErrorBlock v-if="failed" :retry="async () => $emit('refresh')" />
+                    <DataNoDataBlock v-else-if="weekly === undefined" />
                     <Responsive v-else class="w-ful">
                         <template #main="{ width }">
                             <!-- @vue-ignore our own data format works fine.. but the package type is "off" -->

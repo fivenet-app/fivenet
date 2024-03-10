@@ -34,3 +34,1043 @@ var (
 	_ = anypb.Any{}
 	_ = sort.Sort
 )
+
+// Validate checks the field values on ListQualificationsRequest with the rules
+// defined in the proto definition for this message. If any rules are
+// violated, the first error encountered is returned, or nil if there are no violations.
+func (m *ListQualificationsRequest) Validate() error {
+	return m.validate(false)
+}
+
+// ValidateAll checks the field values on ListQualificationsRequest with the
+// rules defined in the proto definition for this message. If any rules are
+// violated, the result is a list of violation errors wrapped in
+// ListQualificationsRequestMultiError, or nil if none found.
+func (m *ListQualificationsRequest) ValidateAll() error {
+	return m.validate(true)
+}
+
+func (m *ListQualificationsRequest) validate(all bool) error {
+	if m == nil {
+		return nil
+	}
+
+	var errors []error
+
+	if m.GetPagination() == nil {
+		err := ListQualificationsRequestValidationError{
+			field:  "Pagination",
+			reason: "value is required",
+		}
+		if !all {
+			return err
+		}
+		errors = append(errors, err)
+	}
+
+	if all {
+		switch v := interface{}(m.GetPagination()).(type) {
+		case interface{ ValidateAll() error }:
+			if err := v.ValidateAll(); err != nil {
+				errors = append(errors, ListQualificationsRequestValidationError{
+					field:  "Pagination",
+					reason: "embedded message failed validation",
+					cause:  err,
+				})
+			}
+		case interface{ Validate() error }:
+			if err := v.Validate(); err != nil {
+				errors = append(errors, ListQualificationsRequestValidationError{
+					field:  "Pagination",
+					reason: "embedded message failed validation",
+					cause:  err,
+				})
+			}
+		}
+	} else if v, ok := interface{}(m.GetPagination()).(interface{ Validate() error }); ok {
+		if err := v.Validate(); err != nil {
+			return ListQualificationsRequestValidationError{
+				field:  "Pagination",
+				reason: "embedded message failed validation",
+				cause:  err,
+			}
+		}
+	}
+
+	if len(errors) > 0 {
+		return ListQualificationsRequestMultiError(errors)
+	}
+
+	return nil
+}
+
+// ListQualificationsRequestMultiError is an error wrapping multiple validation
+// errors returned by ListQualificationsRequest.ValidateAll() if the
+// designated constraints aren't met.
+type ListQualificationsRequestMultiError []error
+
+// Error returns a concatenation of all the error messages it wraps.
+func (m ListQualificationsRequestMultiError) Error() string {
+	var msgs []string
+	for _, err := range m {
+		msgs = append(msgs, err.Error())
+	}
+	return strings.Join(msgs, "; ")
+}
+
+// AllErrors returns a list of validation violation errors.
+func (m ListQualificationsRequestMultiError) AllErrors() []error { return m }
+
+// ListQualificationsRequestValidationError is the validation error returned by
+// ListQualificationsRequest.Validate if the designated constraints aren't met.
+type ListQualificationsRequestValidationError struct {
+	field  string
+	reason string
+	cause  error
+	key    bool
+}
+
+// Field function returns field value.
+func (e ListQualificationsRequestValidationError) Field() string { return e.field }
+
+// Reason function returns reason value.
+func (e ListQualificationsRequestValidationError) Reason() string { return e.reason }
+
+// Cause function returns cause value.
+func (e ListQualificationsRequestValidationError) Cause() error { return e.cause }
+
+// Key function returns key value.
+func (e ListQualificationsRequestValidationError) Key() bool { return e.key }
+
+// ErrorName returns error name.
+func (e ListQualificationsRequestValidationError) ErrorName() string {
+	return "ListQualificationsRequestValidationError"
+}
+
+// Error satisfies the builtin error interface
+func (e ListQualificationsRequestValidationError) Error() string {
+	cause := ""
+	if e.cause != nil {
+		cause = fmt.Sprintf(" | caused by: %v", e.cause)
+	}
+
+	key := ""
+	if e.key {
+		key = "key for "
+	}
+
+	return fmt.Sprintf(
+		"invalid %sListQualificationsRequest.%s: %s%s",
+		key,
+		e.field,
+		e.reason,
+		cause)
+}
+
+var _ error = ListQualificationsRequestValidationError{}
+
+var _ interface {
+	Field() string
+	Reason() string
+	Key() bool
+	Cause() error
+	ErrorName() string
+} = ListQualificationsRequestValidationError{}
+
+// Validate checks the field values on ListQualificationsResponse with the
+// rules defined in the proto definition for this message. If any rules are
+// violated, the first error encountered is returned, or nil if there are no violations.
+func (m *ListQualificationsResponse) Validate() error {
+	return m.validate(false)
+}
+
+// ValidateAll checks the field values on ListQualificationsResponse with the
+// rules defined in the proto definition for this message. If any rules are
+// violated, the result is a list of violation errors wrapped in
+// ListQualificationsResponseMultiError, or nil if none found.
+func (m *ListQualificationsResponse) ValidateAll() error {
+	return m.validate(true)
+}
+
+func (m *ListQualificationsResponse) validate(all bool) error {
+	if m == nil {
+		return nil
+	}
+
+	var errors []error
+
+	if all {
+		switch v := interface{}(m.GetPagination()).(type) {
+		case interface{ ValidateAll() error }:
+			if err := v.ValidateAll(); err != nil {
+				errors = append(errors, ListQualificationsResponseValidationError{
+					field:  "Pagination",
+					reason: "embedded message failed validation",
+					cause:  err,
+				})
+			}
+		case interface{ Validate() error }:
+			if err := v.Validate(); err != nil {
+				errors = append(errors, ListQualificationsResponseValidationError{
+					field:  "Pagination",
+					reason: "embedded message failed validation",
+					cause:  err,
+				})
+			}
+		}
+	} else if v, ok := interface{}(m.GetPagination()).(interface{ Validate() error }); ok {
+		if err := v.Validate(); err != nil {
+			return ListQualificationsResponseValidationError{
+				field:  "Pagination",
+				reason: "embedded message failed validation",
+				cause:  err,
+			}
+		}
+	}
+
+	for idx, item := range m.GetQualifications() {
+		_, _ = idx, item
+
+		if all {
+			switch v := interface{}(item).(type) {
+			case interface{ ValidateAll() error }:
+				if err := v.ValidateAll(); err != nil {
+					errors = append(errors, ListQualificationsResponseValidationError{
+						field:  fmt.Sprintf("Qualifications[%v]", idx),
+						reason: "embedded message failed validation",
+						cause:  err,
+					})
+				}
+			case interface{ Validate() error }:
+				if err := v.Validate(); err != nil {
+					errors = append(errors, ListQualificationsResponseValidationError{
+						field:  fmt.Sprintf("Qualifications[%v]", idx),
+						reason: "embedded message failed validation",
+						cause:  err,
+					})
+				}
+			}
+		} else if v, ok := interface{}(item).(interface{ Validate() error }); ok {
+			if err := v.Validate(); err != nil {
+				return ListQualificationsResponseValidationError{
+					field:  fmt.Sprintf("Qualifications[%v]", idx),
+					reason: "embedded message failed validation",
+					cause:  err,
+				}
+			}
+		}
+
+	}
+
+	if len(errors) > 0 {
+		return ListQualificationsResponseMultiError(errors)
+	}
+
+	return nil
+}
+
+// ListQualificationsResponseMultiError is an error wrapping multiple
+// validation errors returned by ListQualificationsResponse.ValidateAll() if
+// the designated constraints aren't met.
+type ListQualificationsResponseMultiError []error
+
+// Error returns a concatenation of all the error messages it wraps.
+func (m ListQualificationsResponseMultiError) Error() string {
+	var msgs []string
+	for _, err := range m {
+		msgs = append(msgs, err.Error())
+	}
+	return strings.Join(msgs, "; ")
+}
+
+// AllErrors returns a list of validation violation errors.
+func (m ListQualificationsResponseMultiError) AllErrors() []error { return m }
+
+// ListQualificationsResponseValidationError is the validation error returned
+// by ListQualificationsResponse.Validate if the designated constraints aren't met.
+type ListQualificationsResponseValidationError struct {
+	field  string
+	reason string
+	cause  error
+	key    bool
+}
+
+// Field function returns field value.
+func (e ListQualificationsResponseValidationError) Field() string { return e.field }
+
+// Reason function returns reason value.
+func (e ListQualificationsResponseValidationError) Reason() string { return e.reason }
+
+// Cause function returns cause value.
+func (e ListQualificationsResponseValidationError) Cause() error { return e.cause }
+
+// Key function returns key value.
+func (e ListQualificationsResponseValidationError) Key() bool { return e.key }
+
+// ErrorName returns error name.
+func (e ListQualificationsResponseValidationError) ErrorName() string {
+	return "ListQualificationsResponseValidationError"
+}
+
+// Error satisfies the builtin error interface
+func (e ListQualificationsResponseValidationError) Error() string {
+	cause := ""
+	if e.cause != nil {
+		cause = fmt.Sprintf(" | caused by: %v", e.cause)
+	}
+
+	key := ""
+	if e.key {
+		key = "key for "
+	}
+
+	return fmt.Sprintf(
+		"invalid %sListQualificationsResponse.%s: %s%s",
+		key,
+		e.field,
+		e.reason,
+		cause)
+}
+
+var _ error = ListQualificationsResponseValidationError{}
+
+var _ interface {
+	Field() string
+	Reason() string
+	Key() bool
+	Cause() error
+	ErrorName() string
+} = ListQualificationsResponseValidationError{}
+
+// Validate checks the field values on CreateQualificationRequest with the
+// rules defined in the proto definition for this message. If any rules are
+// violated, the first error encountered is returned, or nil if there are no violations.
+func (m *CreateQualificationRequest) Validate() error {
+	return m.validate(false)
+}
+
+// ValidateAll checks the field values on CreateQualificationRequest with the
+// rules defined in the proto definition for this message. If any rules are
+// violated, the result is a list of violation errors wrapped in
+// CreateQualificationRequestMultiError, or nil if none found.
+func (m *CreateQualificationRequest) ValidateAll() error {
+	return m.validate(true)
+}
+
+func (m *CreateQualificationRequest) validate(all bool) error {
+	if m == nil {
+		return nil
+	}
+
+	var errors []error
+
+	if all {
+		switch v := interface{}(m.GetQualification()).(type) {
+		case interface{ ValidateAll() error }:
+			if err := v.ValidateAll(); err != nil {
+				errors = append(errors, CreateQualificationRequestValidationError{
+					field:  "Qualification",
+					reason: "embedded message failed validation",
+					cause:  err,
+				})
+			}
+		case interface{ Validate() error }:
+			if err := v.Validate(); err != nil {
+				errors = append(errors, CreateQualificationRequestValidationError{
+					field:  "Qualification",
+					reason: "embedded message failed validation",
+					cause:  err,
+				})
+			}
+		}
+	} else if v, ok := interface{}(m.GetQualification()).(interface{ Validate() error }); ok {
+		if err := v.Validate(); err != nil {
+			return CreateQualificationRequestValidationError{
+				field:  "Qualification",
+				reason: "embedded message failed validation",
+				cause:  err,
+			}
+		}
+	}
+
+	if len(errors) > 0 {
+		return CreateQualificationRequestMultiError(errors)
+	}
+
+	return nil
+}
+
+// CreateQualificationRequestMultiError is an error wrapping multiple
+// validation errors returned by CreateQualificationRequest.ValidateAll() if
+// the designated constraints aren't met.
+type CreateQualificationRequestMultiError []error
+
+// Error returns a concatenation of all the error messages it wraps.
+func (m CreateQualificationRequestMultiError) Error() string {
+	var msgs []string
+	for _, err := range m {
+		msgs = append(msgs, err.Error())
+	}
+	return strings.Join(msgs, "; ")
+}
+
+// AllErrors returns a list of validation violation errors.
+func (m CreateQualificationRequestMultiError) AllErrors() []error { return m }
+
+// CreateQualificationRequestValidationError is the validation error returned
+// by CreateQualificationRequest.Validate if the designated constraints aren't met.
+type CreateQualificationRequestValidationError struct {
+	field  string
+	reason string
+	cause  error
+	key    bool
+}
+
+// Field function returns field value.
+func (e CreateQualificationRequestValidationError) Field() string { return e.field }
+
+// Reason function returns reason value.
+func (e CreateQualificationRequestValidationError) Reason() string { return e.reason }
+
+// Cause function returns cause value.
+func (e CreateQualificationRequestValidationError) Cause() error { return e.cause }
+
+// Key function returns key value.
+func (e CreateQualificationRequestValidationError) Key() bool { return e.key }
+
+// ErrorName returns error name.
+func (e CreateQualificationRequestValidationError) ErrorName() string {
+	return "CreateQualificationRequestValidationError"
+}
+
+// Error satisfies the builtin error interface
+func (e CreateQualificationRequestValidationError) Error() string {
+	cause := ""
+	if e.cause != nil {
+		cause = fmt.Sprintf(" | caused by: %v", e.cause)
+	}
+
+	key := ""
+	if e.key {
+		key = "key for "
+	}
+
+	return fmt.Sprintf(
+		"invalid %sCreateQualificationRequest.%s: %s%s",
+		key,
+		e.field,
+		e.reason,
+		cause)
+}
+
+var _ error = CreateQualificationRequestValidationError{}
+
+var _ interface {
+	Field() string
+	Reason() string
+	Key() bool
+	Cause() error
+	ErrorName() string
+} = CreateQualificationRequestValidationError{}
+
+// Validate checks the field values on CreateQualificationResponse with the
+// rules defined in the proto definition for this message. If any rules are
+// violated, the first error encountered is returned, or nil if there are no violations.
+func (m *CreateQualificationResponse) Validate() error {
+	return m.validate(false)
+}
+
+// ValidateAll checks the field values on CreateQualificationResponse with the
+// rules defined in the proto definition for this message. If any rules are
+// violated, the result is a list of violation errors wrapped in
+// CreateQualificationResponseMultiError, or nil if none found.
+func (m *CreateQualificationResponse) ValidateAll() error {
+	return m.validate(true)
+}
+
+func (m *CreateQualificationResponse) validate(all bool) error {
+	if m == nil {
+		return nil
+	}
+
+	var errors []error
+
+	if all {
+		switch v := interface{}(m.GetQualification()).(type) {
+		case interface{ ValidateAll() error }:
+			if err := v.ValidateAll(); err != nil {
+				errors = append(errors, CreateQualificationResponseValidationError{
+					field:  "Qualification",
+					reason: "embedded message failed validation",
+					cause:  err,
+				})
+			}
+		case interface{ Validate() error }:
+			if err := v.Validate(); err != nil {
+				errors = append(errors, CreateQualificationResponseValidationError{
+					field:  "Qualification",
+					reason: "embedded message failed validation",
+					cause:  err,
+				})
+			}
+		}
+	} else if v, ok := interface{}(m.GetQualification()).(interface{ Validate() error }); ok {
+		if err := v.Validate(); err != nil {
+			return CreateQualificationResponseValidationError{
+				field:  "Qualification",
+				reason: "embedded message failed validation",
+				cause:  err,
+			}
+		}
+	}
+
+	if len(errors) > 0 {
+		return CreateQualificationResponseMultiError(errors)
+	}
+
+	return nil
+}
+
+// CreateQualificationResponseMultiError is an error wrapping multiple
+// validation errors returned by CreateQualificationResponse.ValidateAll() if
+// the designated constraints aren't met.
+type CreateQualificationResponseMultiError []error
+
+// Error returns a concatenation of all the error messages it wraps.
+func (m CreateQualificationResponseMultiError) Error() string {
+	var msgs []string
+	for _, err := range m {
+		msgs = append(msgs, err.Error())
+	}
+	return strings.Join(msgs, "; ")
+}
+
+// AllErrors returns a list of validation violation errors.
+func (m CreateQualificationResponseMultiError) AllErrors() []error { return m }
+
+// CreateQualificationResponseValidationError is the validation error returned
+// by CreateQualificationResponse.Validate if the designated constraints
+// aren't met.
+type CreateQualificationResponseValidationError struct {
+	field  string
+	reason string
+	cause  error
+	key    bool
+}
+
+// Field function returns field value.
+func (e CreateQualificationResponseValidationError) Field() string { return e.field }
+
+// Reason function returns reason value.
+func (e CreateQualificationResponseValidationError) Reason() string { return e.reason }
+
+// Cause function returns cause value.
+func (e CreateQualificationResponseValidationError) Cause() error { return e.cause }
+
+// Key function returns key value.
+func (e CreateQualificationResponseValidationError) Key() bool { return e.key }
+
+// ErrorName returns error name.
+func (e CreateQualificationResponseValidationError) ErrorName() string {
+	return "CreateQualificationResponseValidationError"
+}
+
+// Error satisfies the builtin error interface
+func (e CreateQualificationResponseValidationError) Error() string {
+	cause := ""
+	if e.cause != nil {
+		cause = fmt.Sprintf(" | caused by: %v", e.cause)
+	}
+
+	key := ""
+	if e.key {
+		key = "key for "
+	}
+
+	return fmt.Sprintf(
+		"invalid %sCreateQualificationResponse.%s: %s%s",
+		key,
+		e.field,
+		e.reason,
+		cause)
+}
+
+var _ error = CreateQualificationResponseValidationError{}
+
+var _ interface {
+	Field() string
+	Reason() string
+	Key() bool
+	Cause() error
+	ErrorName() string
+} = CreateQualificationResponseValidationError{}
+
+// Validate checks the field values on UpdateQualificationRequest with the
+// rules defined in the proto definition for this message. If any rules are
+// violated, the first error encountered is returned, or nil if there are no violations.
+func (m *UpdateQualificationRequest) Validate() error {
+	return m.validate(false)
+}
+
+// ValidateAll checks the field values on UpdateQualificationRequest with the
+// rules defined in the proto definition for this message. If any rules are
+// violated, the result is a list of violation errors wrapped in
+// UpdateQualificationRequestMultiError, or nil if none found.
+func (m *UpdateQualificationRequest) ValidateAll() error {
+	return m.validate(true)
+}
+
+func (m *UpdateQualificationRequest) validate(all bool) error {
+	if m == nil {
+		return nil
+	}
+
+	var errors []error
+
+	if all {
+		switch v := interface{}(m.GetQualification()).(type) {
+		case interface{ ValidateAll() error }:
+			if err := v.ValidateAll(); err != nil {
+				errors = append(errors, UpdateQualificationRequestValidationError{
+					field:  "Qualification",
+					reason: "embedded message failed validation",
+					cause:  err,
+				})
+			}
+		case interface{ Validate() error }:
+			if err := v.Validate(); err != nil {
+				errors = append(errors, UpdateQualificationRequestValidationError{
+					field:  "Qualification",
+					reason: "embedded message failed validation",
+					cause:  err,
+				})
+			}
+		}
+	} else if v, ok := interface{}(m.GetQualification()).(interface{ Validate() error }); ok {
+		if err := v.Validate(); err != nil {
+			return UpdateQualificationRequestValidationError{
+				field:  "Qualification",
+				reason: "embedded message failed validation",
+				cause:  err,
+			}
+		}
+	}
+
+	if len(errors) > 0 {
+		return UpdateQualificationRequestMultiError(errors)
+	}
+
+	return nil
+}
+
+// UpdateQualificationRequestMultiError is an error wrapping multiple
+// validation errors returned by UpdateQualificationRequest.ValidateAll() if
+// the designated constraints aren't met.
+type UpdateQualificationRequestMultiError []error
+
+// Error returns a concatenation of all the error messages it wraps.
+func (m UpdateQualificationRequestMultiError) Error() string {
+	var msgs []string
+	for _, err := range m {
+		msgs = append(msgs, err.Error())
+	}
+	return strings.Join(msgs, "; ")
+}
+
+// AllErrors returns a list of validation violation errors.
+func (m UpdateQualificationRequestMultiError) AllErrors() []error { return m }
+
+// UpdateQualificationRequestValidationError is the validation error returned
+// by UpdateQualificationRequest.Validate if the designated constraints aren't met.
+type UpdateQualificationRequestValidationError struct {
+	field  string
+	reason string
+	cause  error
+	key    bool
+}
+
+// Field function returns field value.
+func (e UpdateQualificationRequestValidationError) Field() string { return e.field }
+
+// Reason function returns reason value.
+func (e UpdateQualificationRequestValidationError) Reason() string { return e.reason }
+
+// Cause function returns cause value.
+func (e UpdateQualificationRequestValidationError) Cause() error { return e.cause }
+
+// Key function returns key value.
+func (e UpdateQualificationRequestValidationError) Key() bool { return e.key }
+
+// ErrorName returns error name.
+func (e UpdateQualificationRequestValidationError) ErrorName() string {
+	return "UpdateQualificationRequestValidationError"
+}
+
+// Error satisfies the builtin error interface
+func (e UpdateQualificationRequestValidationError) Error() string {
+	cause := ""
+	if e.cause != nil {
+		cause = fmt.Sprintf(" | caused by: %v", e.cause)
+	}
+
+	key := ""
+	if e.key {
+		key = "key for "
+	}
+
+	return fmt.Sprintf(
+		"invalid %sUpdateQualificationRequest.%s: %s%s",
+		key,
+		e.field,
+		e.reason,
+		cause)
+}
+
+var _ error = UpdateQualificationRequestValidationError{}
+
+var _ interface {
+	Field() string
+	Reason() string
+	Key() bool
+	Cause() error
+	ErrorName() string
+} = UpdateQualificationRequestValidationError{}
+
+// Validate checks the field values on UpdateQualificationResponse with the
+// rules defined in the proto definition for this message. If any rules are
+// violated, the first error encountered is returned, or nil if there are no violations.
+func (m *UpdateQualificationResponse) Validate() error {
+	return m.validate(false)
+}
+
+// ValidateAll checks the field values on UpdateQualificationResponse with the
+// rules defined in the proto definition for this message. If any rules are
+// violated, the result is a list of violation errors wrapped in
+// UpdateQualificationResponseMultiError, or nil if none found.
+func (m *UpdateQualificationResponse) ValidateAll() error {
+	return m.validate(true)
+}
+
+func (m *UpdateQualificationResponse) validate(all bool) error {
+	if m == nil {
+		return nil
+	}
+
+	var errors []error
+
+	if all {
+		switch v := interface{}(m.GetQualification()).(type) {
+		case interface{ ValidateAll() error }:
+			if err := v.ValidateAll(); err != nil {
+				errors = append(errors, UpdateQualificationResponseValidationError{
+					field:  "Qualification",
+					reason: "embedded message failed validation",
+					cause:  err,
+				})
+			}
+		case interface{ Validate() error }:
+			if err := v.Validate(); err != nil {
+				errors = append(errors, UpdateQualificationResponseValidationError{
+					field:  "Qualification",
+					reason: "embedded message failed validation",
+					cause:  err,
+				})
+			}
+		}
+	} else if v, ok := interface{}(m.GetQualification()).(interface{ Validate() error }); ok {
+		if err := v.Validate(); err != nil {
+			return UpdateQualificationResponseValidationError{
+				field:  "Qualification",
+				reason: "embedded message failed validation",
+				cause:  err,
+			}
+		}
+	}
+
+	if len(errors) > 0 {
+		return UpdateQualificationResponseMultiError(errors)
+	}
+
+	return nil
+}
+
+// UpdateQualificationResponseMultiError is an error wrapping multiple
+// validation errors returned by UpdateQualificationResponse.ValidateAll() if
+// the designated constraints aren't met.
+type UpdateQualificationResponseMultiError []error
+
+// Error returns a concatenation of all the error messages it wraps.
+func (m UpdateQualificationResponseMultiError) Error() string {
+	var msgs []string
+	for _, err := range m {
+		msgs = append(msgs, err.Error())
+	}
+	return strings.Join(msgs, "; ")
+}
+
+// AllErrors returns a list of validation violation errors.
+func (m UpdateQualificationResponseMultiError) AllErrors() []error { return m }
+
+// UpdateQualificationResponseValidationError is the validation error returned
+// by UpdateQualificationResponse.Validate if the designated constraints
+// aren't met.
+type UpdateQualificationResponseValidationError struct {
+	field  string
+	reason string
+	cause  error
+	key    bool
+}
+
+// Field function returns field value.
+func (e UpdateQualificationResponseValidationError) Field() string { return e.field }
+
+// Reason function returns reason value.
+func (e UpdateQualificationResponseValidationError) Reason() string { return e.reason }
+
+// Cause function returns cause value.
+func (e UpdateQualificationResponseValidationError) Cause() error { return e.cause }
+
+// Key function returns key value.
+func (e UpdateQualificationResponseValidationError) Key() bool { return e.key }
+
+// ErrorName returns error name.
+func (e UpdateQualificationResponseValidationError) ErrorName() string {
+	return "UpdateQualificationResponseValidationError"
+}
+
+// Error satisfies the builtin error interface
+func (e UpdateQualificationResponseValidationError) Error() string {
+	cause := ""
+	if e.cause != nil {
+		cause = fmt.Sprintf(" | caused by: %v", e.cause)
+	}
+
+	key := ""
+	if e.key {
+		key = "key for "
+	}
+
+	return fmt.Sprintf(
+		"invalid %sUpdateQualificationResponse.%s: %s%s",
+		key,
+		e.field,
+		e.reason,
+		cause)
+}
+
+var _ error = UpdateQualificationResponseValidationError{}
+
+var _ interface {
+	Field() string
+	Reason() string
+	Key() bool
+	Cause() error
+	ErrorName() string
+} = UpdateQualificationResponseValidationError{}
+
+// Validate checks the field values on DeleteQualificationRequest with the
+// rules defined in the proto definition for this message. If any rules are
+// violated, the first error encountered is returned, or nil if there are no violations.
+func (m *DeleteQualificationRequest) Validate() error {
+	return m.validate(false)
+}
+
+// ValidateAll checks the field values on DeleteQualificationRequest with the
+// rules defined in the proto definition for this message. If any rules are
+// violated, the result is a list of violation errors wrapped in
+// DeleteQualificationRequestMultiError, or nil if none found.
+func (m *DeleteQualificationRequest) ValidateAll() error {
+	return m.validate(true)
+}
+
+func (m *DeleteQualificationRequest) validate(all bool) error {
+	if m == nil {
+		return nil
+	}
+
+	var errors []error
+
+	// no validation rules for Id
+
+	if len(errors) > 0 {
+		return DeleteQualificationRequestMultiError(errors)
+	}
+
+	return nil
+}
+
+// DeleteQualificationRequestMultiError is an error wrapping multiple
+// validation errors returned by DeleteQualificationRequest.ValidateAll() if
+// the designated constraints aren't met.
+type DeleteQualificationRequestMultiError []error
+
+// Error returns a concatenation of all the error messages it wraps.
+func (m DeleteQualificationRequestMultiError) Error() string {
+	var msgs []string
+	for _, err := range m {
+		msgs = append(msgs, err.Error())
+	}
+	return strings.Join(msgs, "; ")
+}
+
+// AllErrors returns a list of validation violation errors.
+func (m DeleteQualificationRequestMultiError) AllErrors() []error { return m }
+
+// DeleteQualificationRequestValidationError is the validation error returned
+// by DeleteQualificationRequest.Validate if the designated constraints aren't met.
+type DeleteQualificationRequestValidationError struct {
+	field  string
+	reason string
+	cause  error
+	key    bool
+}
+
+// Field function returns field value.
+func (e DeleteQualificationRequestValidationError) Field() string { return e.field }
+
+// Reason function returns reason value.
+func (e DeleteQualificationRequestValidationError) Reason() string { return e.reason }
+
+// Cause function returns cause value.
+func (e DeleteQualificationRequestValidationError) Cause() error { return e.cause }
+
+// Key function returns key value.
+func (e DeleteQualificationRequestValidationError) Key() bool { return e.key }
+
+// ErrorName returns error name.
+func (e DeleteQualificationRequestValidationError) ErrorName() string {
+	return "DeleteQualificationRequestValidationError"
+}
+
+// Error satisfies the builtin error interface
+func (e DeleteQualificationRequestValidationError) Error() string {
+	cause := ""
+	if e.cause != nil {
+		cause = fmt.Sprintf(" | caused by: %v", e.cause)
+	}
+
+	key := ""
+	if e.key {
+		key = "key for "
+	}
+
+	return fmt.Sprintf(
+		"invalid %sDeleteQualificationRequest.%s: %s%s",
+		key,
+		e.field,
+		e.reason,
+		cause)
+}
+
+var _ error = DeleteQualificationRequestValidationError{}
+
+var _ interface {
+	Field() string
+	Reason() string
+	Key() bool
+	Cause() error
+	ErrorName() string
+} = DeleteQualificationRequestValidationError{}
+
+// Validate checks the field values on DeleteQualificationResponse with the
+// rules defined in the proto definition for this message. If any rules are
+// violated, the first error encountered is returned, or nil if there are no violations.
+func (m *DeleteQualificationResponse) Validate() error {
+	return m.validate(false)
+}
+
+// ValidateAll checks the field values on DeleteQualificationResponse with the
+// rules defined in the proto definition for this message. If any rules are
+// violated, the result is a list of violation errors wrapped in
+// DeleteQualificationResponseMultiError, or nil if none found.
+func (m *DeleteQualificationResponse) ValidateAll() error {
+	return m.validate(true)
+}
+
+func (m *DeleteQualificationResponse) validate(all bool) error {
+	if m == nil {
+		return nil
+	}
+
+	var errors []error
+
+	if len(errors) > 0 {
+		return DeleteQualificationResponseMultiError(errors)
+	}
+
+	return nil
+}
+
+// DeleteQualificationResponseMultiError is an error wrapping multiple
+// validation errors returned by DeleteQualificationResponse.ValidateAll() if
+// the designated constraints aren't met.
+type DeleteQualificationResponseMultiError []error
+
+// Error returns a concatenation of all the error messages it wraps.
+func (m DeleteQualificationResponseMultiError) Error() string {
+	var msgs []string
+	for _, err := range m {
+		msgs = append(msgs, err.Error())
+	}
+	return strings.Join(msgs, "; ")
+}
+
+// AllErrors returns a list of validation violation errors.
+func (m DeleteQualificationResponseMultiError) AllErrors() []error { return m }
+
+// DeleteQualificationResponseValidationError is the validation error returned
+// by DeleteQualificationResponse.Validate if the designated constraints
+// aren't met.
+type DeleteQualificationResponseValidationError struct {
+	field  string
+	reason string
+	cause  error
+	key    bool
+}
+
+// Field function returns field value.
+func (e DeleteQualificationResponseValidationError) Field() string { return e.field }
+
+// Reason function returns reason value.
+func (e DeleteQualificationResponseValidationError) Reason() string { return e.reason }
+
+// Cause function returns cause value.
+func (e DeleteQualificationResponseValidationError) Cause() error { return e.cause }
+
+// Key function returns key value.
+func (e DeleteQualificationResponseValidationError) Key() bool { return e.key }
+
+// ErrorName returns error name.
+func (e DeleteQualificationResponseValidationError) ErrorName() string {
+	return "DeleteQualificationResponseValidationError"
+}
+
+// Error satisfies the builtin error interface
+func (e DeleteQualificationResponseValidationError) Error() string {
+	cause := ""
+	if e.cause != nil {
+		cause = fmt.Sprintf(" | caused by: %v", e.cause)
+	}
+
+	key := ""
+	if e.key {
+		key = "key for "
+	}
+
+	return fmt.Sprintf(
+		"invalid %sDeleteQualificationResponse.%s: %s%s",
+		key,
+		e.field,
+		e.reason,
+		cause)
+}
+
+var _ error = DeleteQualificationResponseValidationError{}
+
+var _ interface {
+	Field() string
+	Reason() string
+	Key() bool
+	Cause() error
+	ErrorName() string
+} = DeleteQualificationResponseValidationError{}

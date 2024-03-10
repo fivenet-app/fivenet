@@ -202,7 +202,7 @@ func (s *Store[T, U]) get(key string) (U, bool) {
 }
 
 // Load data from kv store (this will add/update any existing local data entry)
-// No record will be returned as nil and not stored
+// If no key is found, the original nats error is returned.
 func (s *Store[T, U]) Load(ctx context.Context, key string) (U, error) {
 	mu, _ := s.mu.LoadOrCompute(key, mutexCompute)
 	mu.Lock()
