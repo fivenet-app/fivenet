@@ -6,7 +6,6 @@ import { useThrottleFn } from '@vueuse/core';
 import { CloseIcon, LoadingIcon } from 'mdi-vue3';
 import { defineRule } from 'vee-validate';
 import { useNotificatorStore } from '~/store/notificator';
-import { dateRequiredValidator } from '~/utils/validator';
 import type { JobsUserProps } from '~~/gen/ts/resources/jobs/colleagues';
 import type { Timestamp } from '~~/gen/ts/resources/timestamp/timestamp';
 
@@ -67,13 +66,12 @@ async function setAbsenceDate(values: FormData): Promise<void> {
 defineRule('required', required);
 defineRule('min', min);
 defineRule('max', max);
-defineRule('date_required', dateRequiredValidator);
 
-const { handleSubmit, meta, setFieldValue } = useForm<FormData>({
+const { handleSubmit, meta, setFieldValue, resetForm, controlledValues } = useForm<FormData>({
     validationSchema: {
         reason: { required: true, min: 3, max: 255 },
-        absenceBegin: { date_required: true },
-        absenceEnd: { date_required: true },
+        absenceBegin: { required: true },
+        absenceEnd: { required: true },
     },
     validateOnMount: true,
     initialValues: {
@@ -90,6 +88,8 @@ const { handleSubmit, meta, setFieldValue } = useForm<FormData>({
 });
 
 function updateAbsenceDateField(): void {
+    resetForm();
+
     if (props.userProps?.absenceBegin && toDate(props.userProps.absenceBegin).getTime() > new Date().getTime()) {
         setFieldValue('absenceBegin', toDatetimeLocal(toDate(props.userProps.absenceBegin)).split('T')[0]);
     } else {
@@ -104,6 +104,8 @@ function updateAbsenceDateField(): void {
 }
 
 watch(props, () => updateAbsenceDateField());
+
+watch(meta, () => console.log(meta.value, controlledValues.value));
 
 const canSubmit = ref(true);
 const onSubmit = handleSubmit(

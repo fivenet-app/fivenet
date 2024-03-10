@@ -28,8 +28,6 @@ const currentDay = ref(new Date(today.getFullYear(), today.getMonth(), today.get
 const futureDay = ref(new Date(currentDay.value.getFullYear(), currentDay.value.getMonth(), currentDay.value.getDate() + 1));
 const previousDay = ref(new Date(currentDay.value.getFullYear(), currentDay.value.getMonth(), currentDay.value.getDate() - 1));
 
-const perDay = ref(canAccessAll);
-
 const query = ref<{
     user_ids?: User[];
     from?: string;
@@ -38,7 +36,7 @@ const query = ref<{
 }>({
     from: dateToDateString(currentDay.value),
     to: canAccessAll ? dateToDateString(previousDay.value) : undefined,
-    perDay: perDay.value,
+    perDay: canAccessAll,
 });
 const offset = ref(0n);
 
@@ -111,15 +109,15 @@ watchDebounced(
     async () => {
         if (canAccessAll) {
             if (query.value.user_ids !== undefined && query.value.user_ids.length > 0) {
-                if (perDay.value) {
-                    perDay.value = false;
+                if (query.value.perDay) {
+                    query.value.perDay = false;
                     query.value.to = undefined;
                 }
             } else {
-                perDay.value = true;
+                query.value.perDay = true;
             }
         } else {
-            perDay.value = false;
+            query.value.perDay = false;
         }
 
         return refresh();
@@ -277,7 +275,7 @@ function updateDates(): void {
                             </div>
                             <div class="form-control flex-1">
                                 <label for="search" class="block text-sm font-medium leading-6 text-neutral">
-                                    <template v-if="perDay"> {{ $t('common.date') }}: </template>
+                                    <template v-if="query.perDay"> {{ $t('common.date') }}: </template>
                                     <template v-else>
                                         {{ $t('common.time_range') }}:
                                         {{ $t('common.from') }}
@@ -295,7 +293,7 @@ function updateDates(): void {
                                     />
                                 </div>
                             </div>
-                            <div v-if="!perDay" class="form-control flex-1">
+                            <div v-if="!query.perDay" class="form-control flex-1">
                                 <label for="search" class="block text-sm font-medium leading-6 text-neutral">
                                     {{ $t('common.time_range') }}:
                                     {{ $t('common.to') }}
@@ -313,7 +311,7 @@ function updateDates(): void {
                                 </div>
                             </div>
                         </div>
-                        <div v-if="perDay" class="mx-auto flex flex-row gap-4 pt-2">
+                        <div v-if="query.perDay" class="mx-auto flex flex-row gap-4 pt-2">
                             <div class="form-control flex-1">
                                 <button
                                     type="button"
@@ -373,14 +371,21 @@ function updateDates(): void {
                                 <template #thead>
                                     <tr>
                                         <th
+                                            v-if="!query.perDay"
                                             scope="col"
                                             class="py-3.5 pl-4 pr-3 text-left text-sm font-semibold text-neutral sm:pl-1"
                                         >
-                                            <template v-if="!perDay">
-                                                {{ $t('common.date') }}
-                                            </template>
+                                            {{ $t('common.date') }}
                                         </th>
-                                        <th scope="col" class="px-2 py-3.5 text-left text-sm font-semibold text-neutral">
+                                        <th
+                                            v-if="
+                                                query.user_ids === undefined ||
+                                                query.user_ids.length === 0 ||
+                                                query.user_ids?.length >= 1
+                                            "
+                                            scope="col"
+                                            class="px-2 py-3.5 text-left text-sm font-semibold text-neutral"
+                                        >
                                             {{ $t('common.name') }}
                                         </th>
                                         <th scope="col" class="px-2 py-3.5 text-left text-sm font-semibold text-neutral">
@@ -395,7 +400,7 @@ function updateDates(): void {
                                             :key="entry.userId + toDate(entry.date).toString()"
                                             :entry="entry"
                                             :first="idx === 0 ? group.date : undefined"
-                                            :show-date="!perDay"
+                                            :show-date="!query.perDay"
                                         />
                                     </template>
                                 </template>

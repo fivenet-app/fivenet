@@ -16,21 +16,21 @@ const spentTime = parseFloat(((Math.round(props.entry.spentTime * 100) / 100) * 
 
 <template>
     <tr class="transition-colors even:bg-base-800 hover:bg-neutral/5">
-        <td class="inline-flex items-center whitespace-nowrap py-1 pl-4 pr-3 text-base font-medium text-neutral sm:pl-1">
-            <template v-if="showDate && first">
-                <CalendarIcon class="h-5 w-5 pr-2" aria-hidden="true" />
-                {{ $d(first, 'date') }}
-            </template>
-            <template v-else>
-                <ProfilePictureImg
-                    :url="entry.user?.avatar?.url"
-                    :name="`${entry.user?.firstname} ${entry.user?.lastname}`"
-                    size="sm"
-                    :rounded="false"
-                />
+        <td v-if="showDate" class="whitespace-nowrap py-1 pl-4 pr-3 text-base font-medium text-neutral sm:pl-1">
+            <template v-if="first">
+                <div class="inline-flex items-center">
+                    <CalendarIcon class="h-5 w-5 pr-2" aria-hidden="true" />
+                    {{ $d(first, 'date') }}
+                </div>
             </template>
         </td>
-        <td v-if="!showDate" class="whitespace-nowrap px-1 py-1 text-left text-accent-200">
+        <td class="inline-flex items-center gap-2 whitespace-nowrap px-1 py-1 text-left text-accent-200">
+            <ProfilePictureImg
+                :url="entry.user?.avatar?.url"
+                :name="`${entry.user?.firstname} ${entry.user?.lastname}`"
+                size="sm"
+                :rounded="false"
+            />
             <CitizenInfoPopover :user="entry.user" />
         </td>
         <td class="whitespace-nowrap px-1 py-1 text-left text-accent-200">
