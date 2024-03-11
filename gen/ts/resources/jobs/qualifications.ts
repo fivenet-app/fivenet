@@ -151,6 +151,61 @@ export interface QualificationRequirementsAccess {
     access: AccessLevel;
 }
 /**
+ * @generated from protobuf message resources.jobs.QualificationResult
+ */
+export interface QualificationResult {
+    /**
+     * @generated from protobuf field: uint64 id = 1 [jstype = JS_STRING];
+     */
+    id: string;
+    /**
+     * @generated from protobuf field: optional resources.timestamp.Timestamp created_at = 2;
+     */
+    createdAt?: Timestamp;
+    /**
+     * @generated from protobuf field: optional resources.timestamp.Timestamp deleted_at = 3;
+     */
+    deletedAt?: Timestamp;
+    /**
+     * @generated from protobuf field: uint64 qualification_id = 4 [jstype = JS_STRING];
+     */
+    qualificationId: string;
+    /**
+     * @generated from protobuf field: int32 user_id = 5;
+     */
+    userId: number;
+    /**
+     * @generated from protobuf field: resources.users.UserShort user = 6;
+     */
+    user?: UserShort;
+    /**
+     * @generated from protobuf field: bool successful = 7;
+     */
+    successful: boolean;
+    /**
+     * @generated from protobuf field: uint32 score = 8;
+     */
+    score: number;
+    /**
+     * @sanitize: method=StripTags
+     *
+     * @generated from protobuf field: string summary = 9;
+     */
+    summary: string;
+    /**
+     * @generated from protobuf field: int32 creator_id = 10;
+     */
+    creatorId: number;
+    /**
+     * @generated from protobuf field: resources.users.UserShort creator = 11;
+     */
+    creator?: UserShort;
+    /**
+     * @generated from protobuf field: string creator_job = 12;
+     */
+    creatorJob: string;
+}
+/**
  * @generated from protobuf message resources.jobs.QualificationRequest
  */
 export interface QualificationRequest {
@@ -190,53 +245,6 @@ export interface QualificationRequest {
      * @generated from protobuf field: optional resources.users.UserShort approver = 9;
      */
     approver?: UserShort;
-}
-/**
- * @generated from protobuf message resources.jobs.QualificationResult
- */
-export interface QualificationResult {
-    /**
-     * @generated from protobuf field: uint64 id = 1 [jstype = JS_STRING];
-     */
-    id: string;
-    /**
-     * @generated from protobuf field: optional resources.timestamp.Timestamp created_at = 2;
-     */
-    createdAt?: Timestamp;
-    /**
-     * @generated from protobuf field: optional resources.timestamp.Timestamp deleted_at = 3;
-     */
-    deletedAt?: Timestamp;
-    /**
-     * @generated from protobuf field: uint64 qualification_id = 4 [jstype = JS_STRING];
-     */
-    qualificationId: string;
-    /**
-     * @generated from protobuf field: int32 user_id = 5;
-     */
-    userId: number;
-    /**
-     * @generated from protobuf field: resources.users.UserShort user = 6;
-     */
-    user?: UserShort;
-    /**
-     * @generated from protobuf field: uint32 rating = 7;
-     */
-    rating: number;
-    /**
-     * @sanitize: method=StripTags
-     *
-     * @generated from protobuf field: string summary = 8;
-     */
-    summary: string;
-    /**
-     * @generated from protobuf field: int32 creator_id = 9;
-     */
-    creatorId: number;
-    /**
-     * @generated from protobuf field: resources.users.UserShort creator = 10;
-     */
-    creator?: UserShort;
 }
 /**
  * @generated from protobuf message resources.jobs.QualificationTestQuestion
@@ -690,6 +698,137 @@ class QualificationRequirementsAccess$Type extends MessageType<QualificationRequ
  */
 export const QualificationRequirementsAccess = new QualificationRequirementsAccess$Type();
 // @generated message type with reflection information, may provide speed optimized methods
+class QualificationResult$Type extends MessageType<QualificationResult> {
+    constructor() {
+        super("resources.jobs.QualificationResult", [
+            { no: 1, name: "id", kind: "scalar", T: 4 /*ScalarType.UINT64*/ },
+            { no: 2, name: "created_at", kind: "message", T: () => Timestamp },
+            { no: 3, name: "deleted_at", kind: "message", T: () => Timestamp },
+            { no: 4, name: "qualification_id", kind: "scalar", T: 4 /*ScalarType.UINT64*/ },
+            { no: 5, name: "user_id", kind: "scalar", T: 5 /*ScalarType.INT32*/ },
+            { no: 6, name: "user", kind: "message", T: () => UserShort },
+            { no: 7, name: "successful", kind: "scalar", T: 8 /*ScalarType.BOOL*/ },
+            { no: 8, name: "score", kind: "scalar", T: 13 /*ScalarType.UINT32*/, options: { "validate.rules": { uint32: { lt: 1000 } } } },
+            { no: 9, name: "summary", kind: "scalar", T: 9 /*ScalarType.STRING*/, options: { "validate.rules": { string: { minLen: "3", maxLen: "512" } } } },
+            { no: 10, name: "creator_id", kind: "scalar", T: 5 /*ScalarType.INT32*/ },
+            { no: 11, name: "creator", kind: "message", T: () => UserShort },
+            { no: 12, name: "creator_job", kind: "scalar", T: 9 /*ScalarType.STRING*/, options: { "validate.rules": { string: { maxLen: "20" } } } }
+        ]);
+    }
+    create(value?: PartialMessage<QualificationResult>): QualificationResult {
+        const message = globalThis.Object.create((this.messagePrototype!));
+        message.id = "0";
+        message.qualificationId = "0";
+        message.userId = 0;
+        message.successful = false;
+        message.score = 0;
+        message.summary = "";
+        message.creatorId = 0;
+        message.creatorJob = "";
+        if (value !== undefined)
+            reflectionMergePartial<QualificationResult>(this, message, value);
+        return message;
+    }
+    internalBinaryRead(reader: IBinaryReader, length: number, options: BinaryReadOptions, target?: QualificationResult): QualificationResult {
+        let message = target ?? this.create(), end = reader.pos + length;
+        while (reader.pos < end) {
+            let [fieldNo, wireType] = reader.tag();
+            switch (fieldNo) {
+                case /* uint64 id = 1 [jstype = JS_STRING];*/ 1:
+                    message.id = reader.uint64().toString();
+                    break;
+                case /* optional resources.timestamp.Timestamp created_at */ 2:
+                    message.createdAt = Timestamp.internalBinaryRead(reader, reader.uint32(), options, message.createdAt);
+                    break;
+                case /* optional resources.timestamp.Timestamp deleted_at */ 3:
+                    message.deletedAt = Timestamp.internalBinaryRead(reader, reader.uint32(), options, message.deletedAt);
+                    break;
+                case /* uint64 qualification_id = 4 [jstype = JS_STRING];*/ 4:
+                    message.qualificationId = reader.uint64().toString();
+                    break;
+                case /* int32 user_id */ 5:
+                    message.userId = reader.int32();
+                    break;
+                case /* resources.users.UserShort user */ 6:
+                    message.user = UserShort.internalBinaryRead(reader, reader.uint32(), options, message.user);
+                    break;
+                case /* bool successful */ 7:
+                    message.successful = reader.bool();
+                    break;
+                case /* uint32 score */ 8:
+                    message.score = reader.uint32();
+                    break;
+                case /* string summary */ 9:
+                    message.summary = reader.string();
+                    break;
+                case /* int32 creator_id */ 10:
+                    message.creatorId = reader.int32();
+                    break;
+                case /* resources.users.UserShort creator */ 11:
+                    message.creator = UserShort.internalBinaryRead(reader, reader.uint32(), options, message.creator);
+                    break;
+                case /* string creator_job */ 12:
+                    message.creatorJob = reader.string();
+                    break;
+                default:
+                    let u = options.readUnknownField;
+                    if (u === "throw")
+                        throw new globalThis.Error(`Unknown field ${fieldNo} (wire type ${wireType}) for ${this.typeName}`);
+                    let d = reader.skip(wireType);
+                    if (u !== false)
+                        (u === true ? UnknownFieldHandler.onRead : u)(this.typeName, message, fieldNo, wireType, d);
+            }
+        }
+        return message;
+    }
+    internalBinaryWrite(message: QualificationResult, writer: IBinaryWriter, options: BinaryWriteOptions): IBinaryWriter {
+        /* uint64 id = 1 [jstype = JS_STRING]; */
+        if (message.id !== "0")
+            writer.tag(1, WireType.Varint).uint64(message.id);
+        /* optional resources.timestamp.Timestamp created_at = 2; */
+        if (message.createdAt)
+            Timestamp.internalBinaryWrite(message.createdAt, writer.tag(2, WireType.LengthDelimited).fork(), options).join();
+        /* optional resources.timestamp.Timestamp deleted_at = 3; */
+        if (message.deletedAt)
+            Timestamp.internalBinaryWrite(message.deletedAt, writer.tag(3, WireType.LengthDelimited).fork(), options).join();
+        /* uint64 qualification_id = 4 [jstype = JS_STRING]; */
+        if (message.qualificationId !== "0")
+            writer.tag(4, WireType.Varint).uint64(message.qualificationId);
+        /* int32 user_id = 5; */
+        if (message.userId !== 0)
+            writer.tag(5, WireType.Varint).int32(message.userId);
+        /* resources.users.UserShort user = 6; */
+        if (message.user)
+            UserShort.internalBinaryWrite(message.user, writer.tag(6, WireType.LengthDelimited).fork(), options).join();
+        /* bool successful = 7; */
+        if (message.successful !== false)
+            writer.tag(7, WireType.Varint).bool(message.successful);
+        /* uint32 score = 8; */
+        if (message.score !== 0)
+            writer.tag(8, WireType.Varint).uint32(message.score);
+        /* string summary = 9; */
+        if (message.summary !== "")
+            writer.tag(9, WireType.LengthDelimited).string(message.summary);
+        /* int32 creator_id = 10; */
+        if (message.creatorId !== 0)
+            writer.tag(10, WireType.Varint).int32(message.creatorId);
+        /* resources.users.UserShort creator = 11; */
+        if (message.creator)
+            UserShort.internalBinaryWrite(message.creator, writer.tag(11, WireType.LengthDelimited).fork(), options).join();
+        /* string creator_job = 12; */
+        if (message.creatorJob !== "")
+            writer.tag(12, WireType.LengthDelimited).string(message.creatorJob);
+        let u = options.writeUnknownFields;
+        if (u !== false)
+            (u == true ? UnknownFieldHandler.onWrite : u)(this.typeName, message, writer);
+        return writer;
+    }
+}
+/**
+ * @generated MessageType for protobuf message resources.jobs.QualificationResult
+ */
+export const QualificationResult = new QualificationResult$Type();
+// @generated message type with reflection information, may provide speed optimized methods
 class QualificationRequest$Type extends MessageType<QualificationRequest> {
     constructor() {
         super("resources.jobs.QualificationRequest", [
@@ -793,121 +932,6 @@ class QualificationRequest$Type extends MessageType<QualificationRequest> {
  * @generated MessageType for protobuf message resources.jobs.QualificationRequest
  */
 export const QualificationRequest = new QualificationRequest$Type();
-// @generated message type with reflection information, may provide speed optimized methods
-class QualificationResult$Type extends MessageType<QualificationResult> {
-    constructor() {
-        super("resources.jobs.QualificationResult", [
-            { no: 1, name: "id", kind: "scalar", T: 4 /*ScalarType.UINT64*/ },
-            { no: 2, name: "created_at", kind: "message", T: () => Timestamp },
-            { no: 3, name: "deleted_at", kind: "message", T: () => Timestamp },
-            { no: 4, name: "qualification_id", kind: "scalar", T: 4 /*ScalarType.UINT64*/ },
-            { no: 5, name: "user_id", kind: "scalar", T: 5 /*ScalarType.INT32*/ },
-            { no: 6, name: "user", kind: "message", T: () => UserShort },
-            { no: 7, name: "rating", kind: "scalar", T: 13 /*ScalarType.UINT32*/, options: { "validate.rules": { uint32: { lt: 100 } } } },
-            { no: 8, name: "summary", kind: "scalar", T: 9 /*ScalarType.STRING*/, options: { "validate.rules": { string: { minLen: "3", maxLen: "512" } } } },
-            { no: 9, name: "creator_id", kind: "scalar", T: 5 /*ScalarType.INT32*/ },
-            { no: 10, name: "creator", kind: "message", T: () => UserShort }
-        ]);
-    }
-    create(value?: PartialMessage<QualificationResult>): QualificationResult {
-        const message = globalThis.Object.create((this.messagePrototype!));
-        message.id = "0";
-        message.qualificationId = "0";
-        message.userId = 0;
-        message.rating = 0;
-        message.summary = "";
-        message.creatorId = 0;
-        if (value !== undefined)
-            reflectionMergePartial<QualificationResult>(this, message, value);
-        return message;
-    }
-    internalBinaryRead(reader: IBinaryReader, length: number, options: BinaryReadOptions, target?: QualificationResult): QualificationResult {
-        let message = target ?? this.create(), end = reader.pos + length;
-        while (reader.pos < end) {
-            let [fieldNo, wireType] = reader.tag();
-            switch (fieldNo) {
-                case /* uint64 id = 1 [jstype = JS_STRING];*/ 1:
-                    message.id = reader.uint64().toString();
-                    break;
-                case /* optional resources.timestamp.Timestamp created_at */ 2:
-                    message.createdAt = Timestamp.internalBinaryRead(reader, reader.uint32(), options, message.createdAt);
-                    break;
-                case /* optional resources.timestamp.Timestamp deleted_at */ 3:
-                    message.deletedAt = Timestamp.internalBinaryRead(reader, reader.uint32(), options, message.deletedAt);
-                    break;
-                case /* uint64 qualification_id = 4 [jstype = JS_STRING];*/ 4:
-                    message.qualificationId = reader.uint64().toString();
-                    break;
-                case /* int32 user_id */ 5:
-                    message.userId = reader.int32();
-                    break;
-                case /* resources.users.UserShort user */ 6:
-                    message.user = UserShort.internalBinaryRead(reader, reader.uint32(), options, message.user);
-                    break;
-                case /* uint32 rating */ 7:
-                    message.rating = reader.uint32();
-                    break;
-                case /* string summary */ 8:
-                    message.summary = reader.string();
-                    break;
-                case /* int32 creator_id */ 9:
-                    message.creatorId = reader.int32();
-                    break;
-                case /* resources.users.UserShort creator */ 10:
-                    message.creator = UserShort.internalBinaryRead(reader, reader.uint32(), options, message.creator);
-                    break;
-                default:
-                    let u = options.readUnknownField;
-                    if (u === "throw")
-                        throw new globalThis.Error(`Unknown field ${fieldNo} (wire type ${wireType}) for ${this.typeName}`);
-                    let d = reader.skip(wireType);
-                    if (u !== false)
-                        (u === true ? UnknownFieldHandler.onRead : u)(this.typeName, message, fieldNo, wireType, d);
-            }
-        }
-        return message;
-    }
-    internalBinaryWrite(message: QualificationResult, writer: IBinaryWriter, options: BinaryWriteOptions): IBinaryWriter {
-        /* uint64 id = 1 [jstype = JS_STRING]; */
-        if (message.id !== "0")
-            writer.tag(1, WireType.Varint).uint64(message.id);
-        /* optional resources.timestamp.Timestamp created_at = 2; */
-        if (message.createdAt)
-            Timestamp.internalBinaryWrite(message.createdAt, writer.tag(2, WireType.LengthDelimited).fork(), options).join();
-        /* optional resources.timestamp.Timestamp deleted_at = 3; */
-        if (message.deletedAt)
-            Timestamp.internalBinaryWrite(message.deletedAt, writer.tag(3, WireType.LengthDelimited).fork(), options).join();
-        /* uint64 qualification_id = 4 [jstype = JS_STRING]; */
-        if (message.qualificationId !== "0")
-            writer.tag(4, WireType.Varint).uint64(message.qualificationId);
-        /* int32 user_id = 5; */
-        if (message.userId !== 0)
-            writer.tag(5, WireType.Varint).int32(message.userId);
-        /* resources.users.UserShort user = 6; */
-        if (message.user)
-            UserShort.internalBinaryWrite(message.user, writer.tag(6, WireType.LengthDelimited).fork(), options).join();
-        /* uint32 rating = 7; */
-        if (message.rating !== 0)
-            writer.tag(7, WireType.Varint).uint32(message.rating);
-        /* string summary = 8; */
-        if (message.summary !== "")
-            writer.tag(8, WireType.LengthDelimited).string(message.summary);
-        /* int32 creator_id = 9; */
-        if (message.creatorId !== 0)
-            writer.tag(9, WireType.Varint).int32(message.creatorId);
-        /* resources.users.UserShort creator = 10; */
-        if (message.creator)
-            UserShort.internalBinaryWrite(message.creator, writer.tag(10, WireType.LengthDelimited).fork(), options).join();
-        let u = options.writeUnknownFields;
-        if (u !== false)
-            (u == true ? UnknownFieldHandler.onWrite : u)(this.typeName, message, writer);
-        return writer;
-    }
-}
-/**
- * @generated MessageType for protobuf message resources.jobs.QualificationResult
- */
-export const QualificationResult = new QualificationResult$Type();
 // @generated message type with reflection information, may provide speed optimized methods
 class QualificationTestQuestion$Type extends MessageType<QualificationTestQuestion> {
     constructor() {

@@ -8332,7 +8332,14 @@
                 </tr>
               
                 <tr>
-                  <td>rating</td>
+                  <td>successful</td>
+                  <td><a href="#bool">bool</a></td>
+                  <td></td>
+                  <td><p> </p></td>
+                </tr>
+              
+                <tr>
+                  <td>score</td>
                   <td><a href="#uint32">uint32</a></td>
                   <td></td>
                   <td><p> </p></td>
@@ -8359,6 +8366,13 @@
                   <td><p> </p></td>
                 </tr>
               
+                <tr>
+                  <td>creator_job</td>
+                  <td><a href="#string">string</a></td>
+                  <td></td>
+                  <td><p> </p></td>
+                </tr>
+              
             </tbody>
           </table>
 
@@ -8376,11 +8390,11 @@
               <tbody>
               
                 <tr>
-                  <td>rating</td>
+                  <td>score</td>
                   <td>
                     <ul>
                     
-                      <li>uint32.lt: 100</li>
+                      <li>uint32.lt: 1000</li>
                     
                     </ul>
                   </td>
@@ -8394,6 +8408,17 @@
                       <li>string.min_len: 3</li>
                     
                       <li>string.max_len: 512</li>
+                    
+                    </ul>
+                  </td>
+                </tr>
+              
+                <tr>
+                  <td>creator_job</td>
+                  <td>
+                    <ul>
+                    
+                      <li>string.max_len: 20</li>
                     
                     </ul>
                   </td>

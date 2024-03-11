@@ -132,6 +132,7 @@ CREATE TABLE IF NOT EXISTS `fivenet_jobs_qualifications_reqs_access` (
 CREATE TABLE IF NOT EXISTS `fivenet_jobs_qualifications_results` (
   `id` bigint(20) unsigned NOT NULL AUTO_INCREMENT,
   `created_at` datetime(3) DEFAULT CURRENT_TIMESTAMP(3),
+  `deleted_at` datetime(3) DEFAULT CURRENT_TIMESTAMP(3),
   `qualification_id` bigint(20) unsigned NOT NULL,
   `user_id` int(11) NOT NULL,
   `successful` tinyint(1) DEFAULT 0,
@@ -146,5 +147,8 @@ CREATE TABLE IF NOT EXISTS `fivenet_jobs_qualifications_results` (
   CONSTRAINT `fk_fivenet_jobs_qualifications_results_user_id` FOREIGN KEY (`user_id`) REFERENCES `users` (`id`) ON DELETE CASCADE ON UPDATE CASCADE,
   CONSTRAINT `fk_fivenet_jobs_qualifications_results_creator_id` FOREIGN KEY (`creator_id`) REFERENCES `users` (`id`) ON DELETE SET NULL ON UPDATE CASCADE
 ) ENGINE=InnoDB;
+
+-- Table: fivenet_jobs_qualifications_requests
+-- TODO
 
 COMMIT;
