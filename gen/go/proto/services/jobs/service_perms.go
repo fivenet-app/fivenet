@@ -70,6 +70,11 @@ func init() {
 		},
 		{
 			Category: permkeys.JobsQualificationsServicePerm,
+			Name:     permkeys.JobsQualificationsServiceGetQualificationPerm,
+			Attrs:    []perms.Attr{},
+		},
+		{
+			Category: permkeys.JobsQualificationsServicePerm,
 			Name:     permkeys.JobsQualificationsServiceListQualificationsPerm,
 			Attrs:    []perms.Attr{},
 		},

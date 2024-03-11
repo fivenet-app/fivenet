@@ -610,10 +610,6 @@
             <ul>
               
                 <li>
-                  <a href="#resources.jobs.JobAccess"><span class="badge">M</span>JobAccess</a>
-                </li>
-              
-                <li>
                   <a href="#resources.jobs.Qualification"><span class="badge">M</span>Qualification</a>
                 </li>
               
@@ -622,7 +618,15 @@
                 </li>
               
                 <li>
+                  <a href="#resources.jobs.QualificationJobAccess"><span class="badge">M</span>QualificationJobAccess</a>
+                </li>
+              
+                <li>
                   <a href="#resources.jobs.QualificationRequest"><span class="badge">M</span>QualificationRequest</a>
+                </li>
+              
+                <li>
+                  <a href="#resources.jobs.QualificationRequirementsAccess"><span class="badge">M</span>QualificationRequirementsAccess</a>
                 </li>
               
                 <li>
@@ -637,13 +641,13 @@
                   <a href="#resources.jobs.QualificationTestQuestion"><span class="badge">M</span>QualificationTestQuestion</a>
                 </li>
               
-                <li>
-                  <a href="#resources.jobs.RequiredQualification"><span class="badge">M</span>RequiredQualification</a>
-                </li>
-              
               
                 <li>
                   <a href="#resources.jobs.AccessLevel"><span class="badge">E</span>AccessLevel</a>
+                </li>
+              
+                <li>
+                  <a href="#resources.jobs.AccessLevelUpdateMode"><span class="badge">E</span>AccessLevelUpdateMode</a>
                 </li>
               
               
@@ -1754,11 +1758,35 @@
                 </li>
               
                 <li>
+                  <a href="#services.jobs.GetQualificationAccessRequest"><span class="badge">M</span>GetQualificationAccessRequest</a>
+                </li>
+              
+                <li>
+                  <a href="#services.jobs.GetQualificationAccessResponse"><span class="badge">M</span>GetQualificationAccessResponse</a>
+                </li>
+              
+                <li>
+                  <a href="#services.jobs.GetQualificationRequest"><span class="badge">M</span>GetQualificationRequest</a>
+                </li>
+              
+                <li>
+                  <a href="#services.jobs.GetQualificationResponse"><span class="badge">M</span>GetQualificationResponse</a>
+                </li>
+              
+                <li>
                   <a href="#services.jobs.ListQualificationsRequest"><span class="badge">M</span>ListQualificationsRequest</a>
                 </li>
               
                 <li>
                   <a href="#services.jobs.ListQualificationsResponse"><span class="badge">M</span>ListQualificationsResponse</a>
+                </li>
+              
+                <li>
+                  <a href="#services.jobs.SetQualificationAccessRequest"><span class="badge">M</span>SetQualificationAccessRequest</a>
+                </li>
+              
+                <li>
+                  <a href="#services.jobs.SetQualificationAccessResponse"><span class="badge">M</span>SetQualificationAccessResponse</a>
                 </li>
               
                 <li>
@@ -7696,150 +7724,6 @@
       <p></p>
 
       
-        <h3 id="resources.jobs.JobAccess">JobAccess</h3>
-        <p></p>
-
-        
-          <table class="field-table">
-            <thead>
-              <tr><td>Field</td><td>Type</td><td>Label</td><td>Description</td></tr>
-            </thead>
-            <tbody>
-              
-                <tr>
-                  <td>id</td>
-                  <td><a href="#uint64">uint64</a></td>
-                  <td></td>
-                  <td><p>@gotags: alias:&#34;id&#34; </p></td>
-                </tr>
-              
-                <tr>
-                  <td>created_at</td>
-                  <td><a href="#resources.timestamp.Timestamp">resources.timestamp.Timestamp</a></td>
-                  <td>optional</td>
-                  <td><p> </p></td>
-                </tr>
-              
-                <tr>
-                  <td>qualification_id</td>
-                  <td><a href="#uint64">uint64</a></td>
-                  <td></td>
-                  <td><p> </p></td>
-                </tr>
-              
-                <tr>
-                  <td>job</td>
-                  <td><a href="#string">string</a></td>
-                  <td></td>
-                  <td><p> </p></td>
-                </tr>
-              
-                <tr>
-                  <td>job_label</td>
-                  <td><a href="#string">string</a></td>
-                  <td>optional</td>
-                  <td><p> </p></td>
-                </tr>
-              
-                <tr>
-                  <td>minimum_grade</td>
-                  <td><a href="#int32">int32</a></td>
-                  <td></td>
-                  <td><p> </p></td>
-                </tr>
-              
-                <tr>
-                  <td>job_grade_label</td>
-                  <td><a href="#string">string</a></td>
-                  <td>optional</td>
-                  <td><p> </p></td>
-                </tr>
-              
-                <tr>
-                  <td>access</td>
-                  <td><a href="#resources.jobs.AccessLevel">AccessLevel</a></td>
-                  <td></td>
-                  <td><p>@gotags: alias:&#34;access&#34; </p></td>
-                </tr>
-              
-            </tbody>
-          </table>
-
-          
-            
-            
-            <h4>Validated Fields</h4>
-            <table>
-              <thead>
-                <tr>
-                  <td>Field</td>
-                  <td>Validations</td>
-                </tr>
-              </thead>
-              <tbody>
-              
-                <tr>
-                  <td>job</td>
-                  <td>
-                    <ul>
-                    
-                      <li>string.max_len: 20</li>
-                    
-                    </ul>
-                  </td>
-                </tr>
-              
-                <tr>
-                  <td>job_label</td>
-                  <td>
-                    <ul>
-                    
-                      <li>string.max_len: 50</li>
-                    
-                    </ul>
-                  </td>
-                </tr>
-              
-                <tr>
-                  <td>minimum_grade</td>
-                  <td>
-                    <ul>
-                    
-                      <li>int32.gt: 0</li>
-                    
-                    </ul>
-                  </td>
-                </tr>
-              
-                <tr>
-                  <td>job_grade_label</td>
-                  <td>
-                    <ul>
-                    
-                      <li>string.max_len: 50</li>
-                    
-                    </ul>
-                  </td>
-                </tr>
-              
-                <tr>
-                  <td>access</td>
-                  <td>
-                    <ul>
-                    
-                      <li>enum.defined_only: true</li>
-                    
-                    </ul>
-                  </td>
-                </tr>
-              
-              </tbody>
-            </table>
-            
-          
-
-        
-      
         <h3 id="resources.jobs.Qualification">Qualification</h3>
         <p></p>
 
@@ -8052,15 +7936,15 @@
             <tbody>
               
                 <tr>
-                  <td>job</td>
-                  <td><a href="#resources.jobs.JobAccess">JobAccess</a></td>
+                  <td>jobs</td>
+                  <td><a href="#resources.jobs.QualificationJobAccess">QualificationJobAccess</a></td>
                   <td>repeated</td>
                   <td><p> </p></td>
                 </tr>
               
                 <tr>
-                  <td>required_qualification</td>
-                  <td><a href="#resources.jobs.RequiredQualification">RequiredQualification</a></td>
+                  <td>requirements</td>
+                  <td><a href="#resources.jobs.QualificationRequirementsAccess">QualificationRequirementsAccess</a></td>
                   <td>repeated</td>
                   <td><p> </p></td>
                 </tr>
@@ -8068,6 +7952,150 @@
             </tbody>
           </table>
 
+          
+
+        
+      
+        <h3 id="resources.jobs.QualificationJobAccess">QualificationJobAccess</h3>
+        <p></p>
+
+        
+          <table class="field-table">
+            <thead>
+              <tr><td>Field</td><td>Type</td><td>Label</td><td>Description</td></tr>
+            </thead>
+            <tbody>
+              
+                <tr>
+                  <td>id</td>
+                  <td><a href="#uint64">uint64</a></td>
+                  <td></td>
+                  <td><p>@gotags: alias:&#34;id&#34; </p></td>
+                </tr>
+              
+                <tr>
+                  <td>created_at</td>
+                  <td><a href="#resources.timestamp.Timestamp">resources.timestamp.Timestamp</a></td>
+                  <td>optional</td>
+                  <td><p> </p></td>
+                </tr>
+              
+                <tr>
+                  <td>qualification_id</td>
+                  <td><a href="#uint64">uint64</a></td>
+                  <td></td>
+                  <td><p> </p></td>
+                </tr>
+              
+                <tr>
+                  <td>job</td>
+                  <td><a href="#string">string</a></td>
+                  <td></td>
+                  <td><p> </p></td>
+                </tr>
+              
+                <tr>
+                  <td>job_label</td>
+                  <td><a href="#string">string</a></td>
+                  <td>optional</td>
+                  <td><p> </p></td>
+                </tr>
+              
+                <tr>
+                  <td>minimum_grade</td>
+                  <td><a href="#int32">int32</a></td>
+                  <td></td>
+                  <td><p> </p></td>
+                </tr>
+              
+                <tr>
+                  <td>job_grade_label</td>
+                  <td><a href="#string">string</a></td>
+                  <td>optional</td>
+                  <td><p> </p></td>
+                </tr>
+              
+                <tr>
+                  <td>access</td>
+                  <td><a href="#resources.jobs.AccessLevel">AccessLevel</a></td>
+                  <td></td>
+                  <td><p> </p></td>
+                </tr>
+              
+            </tbody>
+          </table>
+
+          
+            
+            
+            <h4>Validated Fields</h4>
+            <table>
+              <thead>
+                <tr>
+                  <td>Field</td>
+                  <td>Validations</td>
+                </tr>
+              </thead>
+              <tbody>
+              
+                <tr>
+                  <td>job</td>
+                  <td>
+                    <ul>
+                    
+                      <li>string.max_len: 20</li>
+                    
+                    </ul>
+                  </td>
+                </tr>
+              
+                <tr>
+                  <td>job_label</td>
+                  <td>
+                    <ul>
+                    
+                      <li>string.max_len: 50</li>
+                    
+                    </ul>
+                  </td>
+                </tr>
+              
+                <tr>
+                  <td>minimum_grade</td>
+                  <td>
+                    <ul>
+                    
+                      <li>int32.gt: 0</li>
+                    
+                    </ul>
+                  </td>
+                </tr>
+              
+                <tr>
+                  <td>job_grade_label</td>
+                  <td>
+                    <ul>
+                    
+                      <li>string.max_len: 50</li>
+                    
+                    </ul>
+                  </td>
+                </tr>
+              
+                <tr>
+                  <td>access</td>
+                  <td>
+                    <ul>
+                    
+                      <li>enum.defined_only: true</li>
+                    
+                    </ul>
+                  </td>
+                </tr>
+              
+              </tbody>
+            </table>
+            
           
 
         
@@ -8167,6 +8195,78 @@
                     <ul>
                     
                       <li>string.max_len: 512</li>
+                    
+                    </ul>
+                  </td>
+                </tr>
+              
+              </tbody>
+            </table>
+            
+          
+
+        
+      
+        <h3 id="resources.jobs.QualificationRequirementsAccess">QualificationRequirementsAccess</h3>
+        <p></p>
+
+        
+          <table class="field-table">
+            <thead>
+              <tr><td>Field</td><td>Type</td><td>Label</td><td>Description</td></tr>
+            </thead>
+            <tbody>
+              
+                <tr>
+                  <td>id</td>
+                  <td><a href="#uint64">uint64</a></td>
+                  <td></td>
+                  <td><p>@gotags: alias:&#34;id&#34; </p></td>
+                </tr>
+              
+                <tr>
+                  <td>created_at</td>
+                  <td><a href="#resources.timestamp.Timestamp">resources.timestamp.Timestamp</a></td>
+                  <td>optional</td>
+                  <td><p> </p></td>
+                </tr>
+              
+                <tr>
+                  <td>qualification_id</td>
+                  <td><a href="#uint64">uint64</a></td>
+                  <td></td>
+                  <td><p> </p></td>
+                </tr>
+              
+                <tr>
+                  <td>access</td>
+                  <td><a href="#resources.jobs.AccessLevel">AccessLevel</a></td>
+                  <td></td>
+                  <td><p> </p></td>
+                </tr>
+              
+            </tbody>
+          </table>
+
+          
+            
+            
+            <h4>Validated Fields</h4>
+            <table>
+              <thead>
+                <tr>
+                  <td>Field</td>
+                  <td>Validations</td>
+                </tr>
+              </thead>
+              <tbody>
+              
+                <tr>
+                  <td>access</td>
+                  <td>
+                    <ul>
+                    
+                      <li>enum.defined_only: true</li>
                     
                     </ul>
                   </td>
@@ -8375,44 +8475,6 @@
 
         
       
-        <h3 id="resources.jobs.RequiredQualification">RequiredQualification</h3>
-        <p></p>
-
-        
-          <table class="field-table">
-            <thead>
-              <tr><td>Field</td><td>Type</td><td>Label</td><td>Description</td></tr>
-            </thead>
-            <tbody>
-              
-                <tr>
-                  <td>id</td>
-                  <td><a href="#uint64">uint64</a></td>
-                  <td></td>
-                  <td><p>@gotags: alias:&#34;id&#34; </p></td>
-                </tr>
-              
-                <tr>
-                  <td>created_at</td>
-                  <td><a href="#resources.timestamp.Timestamp">resources.timestamp.Timestamp</a></td>
-                  <td>optional</td>
-                  <td><p> </p></td>
-                </tr>
-              
-                <tr>
-                  <td>qualification_id</td>
-                  <td><a href="#uint64">uint64</a></td>
-                  <td></td>
-                  <td><p> </p></td>
-                </tr>
-              
-            </tbody>
-          </table>
-
-          
-
-        
-      
 
       
         <h3 id="resources.jobs.AccessLevel">AccessLevel</h3>
@@ -8456,6 +8518,41 @@
               <tr>
                 <td>ACCESS_LEVEL_EDIT</td>
                 <td>5</td>
+                <td><p></p></td>
+              </tr>
+            
+          </tbody>
+        </table>
+      
+        <h3 id="resources.jobs.AccessLevelUpdateMode">AccessLevelUpdateMode</h3>
+        <p></p>
+        <table class="enum-table">
+          <thead>
+            <tr><td>Name</td><td>Number</td><td>Description</td></tr>
+          </thead>
+          <tbody>
+            
+              <tr>
+                <td>ACCESS_LEVEL_UPDATE_MODE_UNSPECIFIED</td>
+                <td>0</td>
+                <td><p></p></td>
+              </tr>
+            
+              <tr>
+                <td>ACCESS_LEVEL_UPDATE_MODE_UPDATE</td>
+                <td>1</td>
+                <td><p></p></td>
+              </tr>
+            
+              <tr>
+                <td>ACCESS_LEVEL_UPDATE_MODE_DELETE</td>
+                <td>2</td>
+                <td><p></p></td>
+              </tr>
+            
+              <tr>
+                <td>ACCESS_LEVEL_UPDATE_MODE_CLEAR</td>
+                <td>3</td>
                 <td><p></p></td>
               </tr>
             
@@ -19853,7 +19950,7 @@
             <tbody>
               
                 <tr>
-                  <td>id</td>
+                  <td>qualification_id</td>
                   <td><a href="#uint64">uint64</a></td>
                   <td></td>
                   <td><p> </p></td>
@@ -19870,6 +19967,129 @@
         <p></p>
 
         
+
+        
+      
+        <h3 id="services.jobs.GetQualificationAccessRequest">GetQualificationAccessRequest</h3>
+        <p>Access =====================================================================</p>
+
+        
+          <table class="field-table">
+            <thead>
+              <tr><td>Field</td><td>Type</td><td>Label</td><td>Description</td></tr>
+            </thead>
+            <tbody>
+              
+                <tr>
+                  <td>qualification_id</td>
+                  <td><a href="#uint64">uint64</a></td>
+                  <td></td>
+                  <td><p> </p></td>
+                </tr>
+              
+            </tbody>
+          </table>
+
+          
+
+        
+      
+        <h3 id="services.jobs.GetQualificationAccessResponse">GetQualificationAccessResponse</h3>
+        <p></p>
+
+        
+          <table class="field-table">
+            <thead>
+              <tr><td>Field</td><td>Type</td><td>Label</td><td>Description</td></tr>
+            </thead>
+            <tbody>
+              
+                <tr>
+                  <td>access</td>
+                  <td><a href="#resources.jobs.QualificationAccess">resources.jobs.QualificationAccess</a></td>
+                  <td></td>
+                  <td><p> </p></td>
+                </tr>
+              
+            </tbody>
+          </table>
+
+          
+            
+            
+            <h4>Validated Fields</h4>
+            <table>
+              <thead>
+                <tr>
+                  <td>Field</td>
+                  <td>Validations</td>
+                </tr>
+              </thead>
+              <tbody>
+              
+                <tr>
+                  <td>access</td>
+                  <td>
+                    <ul>
+                    
+                      <li>message.required: true</li>
+                    
+                    </ul>
+                  </td>
+                </tr>
+              
+              </tbody>
+            </table>
+            
+          
+
+        
+      
+        <h3 id="services.jobs.GetQualificationRequest">GetQualificationRequest</h3>
+        <p></p>
+
+        
+          <table class="field-table">
+            <thead>
+              <tr><td>Field</td><td>Type</td><td>Label</td><td>Description</td></tr>
+            </thead>
+            <tbody>
+              
+                <tr>
+                  <td>qualification_id</td>
+                  <td><a href="#uint64">uint64</a></td>
+                  <td></td>
+                  <td><p> </p></td>
+                </tr>
+              
+            </tbody>
+          </table>
+
+          
+
+        
+      
+        <h3 id="services.jobs.GetQualificationResponse">GetQualificationResponse</h3>
+        <p></p>
+
+        
+          <table class="field-table">
+            <thead>
+              <tr><td>Field</td><td>Type</td><td>Label</td><td>Description</td></tr>
+            </thead>
+            <tbody>
+              
+                <tr>
+                  <td>qualification</td>
+                  <td><a href="#resources.jobs.Qualification">resources.jobs.Qualification</a></td>
+                  <td></td>
+                  <td><p> </p></td>
+                </tr>
+              
+            </tbody>
+          </table>
+
+          
 
         
       
@@ -19955,6 +20175,89 @@
 
         
       
+        <h3 id="services.jobs.SetQualificationAccessRequest">SetQualificationAccessRequest</h3>
+        <p></p>
+
+        
+          <table class="field-table">
+            <thead>
+              <tr><td>Field</td><td>Type</td><td>Label</td><td>Description</td></tr>
+            </thead>
+            <tbody>
+              
+                <tr>
+                  <td>qualification_id</td>
+                  <td><a href="#uint64">uint64</a></td>
+                  <td></td>
+                  <td><p> </p></td>
+                </tr>
+              
+                <tr>
+                  <td>mode</td>
+                  <td><a href="#resources.jobs.AccessLevelUpdateMode">resources.jobs.AccessLevelUpdateMode</a></td>
+                  <td></td>
+                  <td><p> </p></td>
+                </tr>
+              
+                <tr>
+                  <td>access</td>
+                  <td><a href="#resources.jobs.QualificationAccess">resources.jobs.QualificationAccess</a></td>
+                  <td></td>
+                  <td><p> </p></td>
+                </tr>
+              
+            </tbody>
+          </table>
+
+          
+            
+            
+            <h4>Validated Fields</h4>
+            <table>
+              <thead>
+                <tr>
+                  <td>Field</td>
+                  <td>Validations</td>
+                </tr>
+              </thead>
+              <tbody>
+              
+                <tr>
+                  <td>mode</td>
+                  <td>
+                    <ul>
+                    
+                      <li>enum.defined_only: true</li>
+                    
+                    </ul>
+                  </td>
+                </tr>
+              
+                <tr>
+                  <td>access</td>
+                  <td>
+                    <ul>
+                    
+                      <li>message.required: true</li>
+                    
+                    </ul>
+                  </td>
+                </tr>
+              
+              </tbody>
+            </table>
+            
+          
+
+        
+      
+        <h3 id="services.jobs.SetQualificationAccessResponse">SetQualificationAccessResponse</h3>
+        <p></p>
+
+        
+
+        
+      
         <h3 id="services.jobs.UpdateQualificationRequest">UpdateQualificationRequest</h3>
         <p></p>
 
@@ -20021,6 +20324,13 @@
                 <td>ListQualifications</td>
                 <td><a href="#services.jobs.ListQualificationsRequest">ListQualificationsRequest</a></td>
                 <td><a href="#services.jobs.ListQualificationsResponse">ListQualificationsResponse</a></td>
+                <td><p>@perm</p></td>
+              </tr>
+            
+              <tr>
+                <td>GetQualification</td>
+                <td><a href="#services.jobs.GetQualificationRequest">GetQualificationRequest</a></td>
+                <td><a href="#services.jobs.GetQualificationResponse">GetQualificationResponse</a></td>
                 <td><p>@perm</p></td>
               </tr>
             

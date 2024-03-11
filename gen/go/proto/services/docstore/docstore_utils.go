@@ -16,7 +16,7 @@ import (
 	"github.com/go-jet/jet/v2/qrm"
 )
 
-func (s *Server) listDocumentsQuery(where jet.BoolExpression, onlyColumns jet.ProjectionList, contentLength int, userInfo *userinfo.UserInfo) jet.SelectStatement {
+func (s *Server) listDocumentsQuery(where jet.BoolExpression, onlyColumns jet.ProjectionList, userInfo *userinfo.UserInfo) jet.SelectStatement {
 	tDocument := tDocument.AS("documentshort")
 	wheres := []jet.BoolExpression{}
 	if !userInfo.SuperUser {
@@ -107,7 +107,8 @@ func (s *Server) listDocumentsQuery(where jet.BoolExpression, onlyColumns jet.Pr
 		tables = tDocument.
 			LEFT_JOIN(tDUserAccess,
 				tDUserAccess.DocumentID.EQ(tDocument.ID).
-					AND(tDUserAccess.UserID.EQ(jet.Int32(userInfo.UserId)))).
+					AND(tDUserAccess.UserID.EQ(jet.Int32(userInfo.UserId))),
+			).
 			LEFT_JOIN(tDJobAccess,
 				tDJobAccess.DocumentID.EQ(tDocument.ID).
 					AND(tDJobAccess.Job.EQ(jet.String(userInfo.Job))).
@@ -142,7 +143,7 @@ func (s *Server) listDocumentsQuery(where jet.BoolExpression, onlyColumns jet.Pr
 		)
 }
 
-func (s *Server) getDocumentsQuery(where jet.BoolExpression, onlyColumns jet.ProjectionList, userInfo *userinfo.UserInfo) jet.SelectStatement {
+func (s *Server) getDocumentQuery(where jet.BoolExpression, onlyColumns jet.ProjectionList, userInfo *userinfo.UserInfo) jet.SelectStatement {
 	var wheres []jet.BoolExpression
 	if !userInfo.SuperUser {
 		wheres = []jet.BoolExpression{
@@ -233,7 +234,8 @@ func (s *Server) getDocumentsQuery(where jet.BoolExpression, onlyColumns jet.Pro
 		tables = tDocument.
 			LEFT_JOIN(tDUserAccess,
 				tDUserAccess.DocumentID.EQ(tDocument.ID).
-					AND(tDUserAccess.UserID.EQ(jet.Int32(userInfo.UserId)))).
+					AND(tDUserAccess.UserID.EQ(jet.Int32(userInfo.UserId))),
+			).
 			LEFT_JOIN(tDJobAccess,
 				tDJobAccess.DocumentID.EQ(tDocument.ID).
 					AND(tDJobAccess.Job.EQ(jet.String(userInfo.Job))).
@@ -317,7 +319,8 @@ func (s *Server) checkIfUserHasAccessToDocIDs(ctx context.Context, userInfo *use
 			tDocument.
 				LEFT_JOIN(tDUserAccess,
 					tDUserAccess.DocumentID.EQ(tDocument.ID).
-						AND(tDUserAccess.UserID.EQ(jet.Int32(userInfo.UserId)))).
+						AND(tDUserAccess.UserID.EQ(jet.Int32(userInfo.UserId))),
+				).
 				LEFT_JOIN(tDJobAccess,
 					tDJobAccess.DocumentID.EQ(tDocument.ID).
 						AND(tDJobAccess.Job.EQ(jet.String(userInfo.Job))).

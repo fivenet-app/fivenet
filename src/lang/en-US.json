@@ -101,7 +101,10 @@
                 "title": "Time Clock"
             },
             "qualifications": {
-                "title": "Qualifications"
+                "title": "Qualifications",
+                "single": {
+                    "title": "Qualification"
+                }
             },
             "overview": {
                 "title": "Job Overview"

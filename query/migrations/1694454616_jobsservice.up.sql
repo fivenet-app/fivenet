@@ -104,12 +104,47 @@ CREATE TABLE
     ) ENGINE = InnoDB;
 
 -- Table: fivenet_jobs_qualifications_job_access
--- TODO
+CREATE TABLE IF NOT EXISTS `fivenet_jobs_qualifications_job_access` (
+  `id` bigint(20) unsigned NOT NULL AUTO_INCREMENT,
+  `created_at` datetime(3) DEFAULT CURRENT_TIMESTAMP(3),
+  `qualification_id` bigint(20) unsigned NOT NULL,
+  `job` varchar(40) NOT NULL,
+  `minimum_grade` int(11) NOT NULL DEFAULT 1,
+  `access` smallint(2) NOT NULL,
+  PRIMARY KEY (`id`),
+  UNIQUE KEY `idx_fivenet_jobs_qualifications_job_access` (`qualification_id`, `job`, `minimum_grade`),
+  KEY `idx_fivenet_jobs_qualifications_job_access_qualification_id` (`qualification_id`),
+  CONSTRAINT `fk_fivenet_jobs_qualifications_job_access_qualification_id` FOREIGN KEY (`qualification_id`) REFERENCES `fivenet_jobs_qualifications` (`id`) ON DELETE CASCADE ON UPDATE CASCADE
+) ENGINE=InnoDB;
 
 -- Table: fivenet_jobs_qualifications_reqs_access
--- TODO
+CREATE TABLE IF NOT EXISTS `fivenet_jobs_qualifications_reqs_access` (
+  `id` bigint(20) unsigned NOT NULL AUTO_INCREMENT,
+  `created_at` datetime(3) DEFAULT CURRENT_TIMESTAMP(3),
+  `qualification_id` bigint(20) unsigned NOT NULL,
+  `access` smallint(2) NOT NULL,
+  PRIMARY KEY (`id`),
+  KEY `idx_fivenet_jobs_qualifications_reqs_access_qualification_id` (`qualification_id`),
+  CONSTRAINT `fk_fivenet_jobs_qualifications_reqs_access_qualification_id` FOREIGN KEY (`qualification_id`) REFERENCES `fivenet_jobs_qualifications` (`id`) ON DELETE CASCADE ON UPDATE CASCADE
+) ENGINE=InnoDB;
 
 -- Table: fivenet_jobs_qualifications_results
--- TODO
+CREATE TABLE IF NOT EXISTS `fivenet_jobs_qualifications_results` (
+  `id` bigint(20) unsigned NOT NULL AUTO_INCREMENT,
+  `created_at` datetime(3) DEFAULT CURRENT_TIMESTAMP(3),
+  `qualification_id` bigint(20) unsigned NOT NULL,
+  `user_id` int(11) NOT NULL,
+  `successful` tinyint(1) DEFAULT 0,
+  `score` int(4) NOT NULL,
+  `summary` varchar(255) DEFAULT NULL,
+  `creator_id` int(11) NULL DEFAULT NULL,
+  `creator_job` varchar(50) NOT NULL,
+  PRIMARY KEY (`id`),
+  KEY `idx_fivenet_jobs_qualifications_results_qualification_id_user_id` (`qualification_id`, `user_id`),
+  KEY `idx_fivenet_jobs_qualifications_results_successful` (`successful`),
+  CONSTRAINT `fk_fivenet_jobs_qualifications_results_qualification_id` FOREIGN KEY (`qualification_id`) REFERENCES `fivenet_jobs_qualifications` (`id`) ON DELETE CASCADE ON UPDATE CASCADE,
+  CONSTRAINT `fk_fivenet_jobs_qualifications_results_user_id` FOREIGN KEY (`user_id`) REFERENCES `users` (`id`) ON DELETE CASCADE ON UPDATE CASCADE,
+  CONSTRAINT `fk_fivenet_jobs_qualifications_results_creator_id` FOREIGN KEY (`creator_id`) REFERENCES `users` (`id`) ON DELETE SET NULL ON UPDATE CASCADE
+) ENGINE=InnoDB;
 
 COMMIT;

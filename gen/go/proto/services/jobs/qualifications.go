@@ -2,43 +2,35 @@ package jobs
 
 import (
 	"context"
-	"errors"
 
 	database "github.com/galexrt/fivenet/gen/go/proto/resources/common/database"
 	jobs "github.com/galexrt/fivenet/gen/go/proto/resources/jobs"
+	"github.com/galexrt/fivenet/gen/go/proto/resources/rector"
 	errorsjobs "github.com/galexrt/fivenet/gen/go/proto/services/jobs/errors"
 	"github.com/galexrt/fivenet/pkg/grpc/auth"
 	"github.com/galexrt/fivenet/pkg/grpc/errswrap"
+	"github.com/galexrt/fivenet/query/fivenet/model"
 	"github.com/galexrt/fivenet/query/fivenet/table"
 	jet "github.com/go-jet/jet/v2/mysql"
-	"github.com/go-jet/jet/v2/qrm"
+	"go.opentelemetry.io/otel/attribute"
+	"go.opentelemetry.io/otel/trace"
 )
 
 var (
-	tQuali = table.FivenetJobsQualifications
+	tQuali = table.FivenetJobsQualifications.AS("qualification")
 )
 
 func (s *Server) ListQualifications(ctx context.Context, req *ListQualificationsRequest) (*ListQualificationsResponse, error) {
 	userInfo := auth.MustGetUserInfoFromContext(ctx)
-	_ = userInfo
 
-	condition := tQuali.DeletedAt.IS_NULL()
+	condition := jet.Bool(true)
 
-	// Get total count of values
-	countStmt := tQuali.
-		SELECT(
-			jet.COUNT(tQuali.ID).AS("datacount.totalcount"),
-		).
-		FROM(
-			tQuali,
-		).
-		WHERE(condition)
+	countStmt := s.listQualificationsQuery(
+		condition, jet.ProjectionList{jet.COUNT(jet.DISTINCT(tQuali.ID)).AS("datacount.totalcount")}, userInfo)
 
 	var count database.DataCount
 	if err := countStmt.QueryContext(ctx, s.db, &count); err != nil {
-		if !errors.Is(err, qrm.ErrNoRows) {
-			return nil, errswrap.NewError(errorsjobs.ErrFailedQuery, err)
-		}
+		return nil, errswrap.NewError(errorsjobs.ErrFailedQuery, err)
 	}
 
 	pag, limit := req.Pagination.GetResponseWithPageSize(count.TotalCount, 15)
@@ -50,29 +42,19 @@ func (s *Server) ListQualifications(ctx context.Context, req *ListQualifications
 		return resp, nil
 	}
 
-	stmt := tQuali.
-		SELECT(
-			tQuali.ID,
-			tQuali.CreatedAt,
-			tQuali.UpdatedAt,
-			tQuali.DeletedAt,
-			tQuali.Job,
-			tQuali.Weight,
-			tQuali.Closed,
-			tQuali.Abbreviation,
-			tQuali.Title,
-			tQuali.Description,
-			tQuali.CreatorID,
-			tQuali.CreatorJob,
-		).
-		FROM(tQuali).
-		WHERE(condition).
+	stmt := s.listQualificationsQuery(condition, nil, userInfo).
 		OFFSET(req.Pagination.Offset).
+		GROUP_BY(tQuali.ID).
 		LIMIT(limit)
 
 	if err := stmt.QueryContext(ctx, s.db, &resp.Qualifications); err != nil {
-		if !errors.Is(err, qrm.ErrNoRows) {
-			return nil, errswrap.NewError(errorsjobs.ErrFailedQuery, err)
+		return nil, errswrap.NewError(errorsjobs.ErrFailedQuery, err)
+	}
+
+	jobInfoFn := s.enricher.EnrichJobInfoSafeFunc(userInfo)
+	for i := 0; i < len(resp.Qualifications); i++ {
+		if resp.Qualifications[i].Creator != nil {
+			jobInfoFn(resp.Qualifications[i].Creator)
 		}
 	}
 
@@ -81,21 +63,65 @@ func (s *Server) ListQualifications(ctx context.Context, req *ListQualifications
 	return resp, nil
 }
 
-func (s *Server) CreateQualification(context.Context, *CreateQualificationRequest) (*CreateQualificationResponse, error) {
+func (s *Server) GetQualification(ctx context.Context, req *GetQualificationRequest) (*GetQualificationResponse, error) {
+	trace.SpanFromContext(ctx).SetAttributes(attribute.Int64("fivenet.jobs.qualifications.id", int64(req.QualificationId)))
+
+	userInfo := auth.MustGetUserInfoFromContext(ctx)
+
+	auditEntry := &model.FivenetAuditLog{
+		Service: JobsQualificationsService_ServiceDesc.ServiceName,
+		Method:  "GetQualification",
+		UserID:  userInfo.UserId,
+		UserJob: userInfo.Job,
+		State:   int16(rector.EventType_EVENT_TYPE_ERRORED),
+	}
+	defer s.aud.Log(auditEntry, req)
+
+	check, err := s.checkIfUserHasAccessToQuali(ctx, req.QualificationId, userInfo, jobs.AccessLevel_ACCESS_LEVEL_VIEW)
+	if err != nil {
+		return nil, errswrap.NewError(errorsjobs.ErrFailedQuery, err)
+	}
+	if !check && !userInfo.SuperUser {
+		return nil, errorsjobs.ErrFailedQuery
+	}
+
+	resp := &GetQualificationResponse{}
+	resp.Qualification, err = s.getQualification(ctx,
+		tQuali.ID.EQ(jet.Uint64(req.QualificationId)), userInfo)
+	if err != nil {
+		return nil, errswrap.NewError(errorsjobs.ErrFailedQuery, err)
+	}
+
+	if resp.Qualification == nil || resp.Qualification.Id <= 0 {
+		return nil, errorsjobs.ErrFailedQuery
+	}
+
+	if resp.Qualification.Creator != nil {
+		s.enricher.EnrichJobInfoSafe(userInfo, resp.Qualification.Creator)
+	}
+
+	// TODO retrieve qualifications access
+
+	auditEntry.State = int16(rector.EventType_EVENT_TYPE_VIEWED)
+
+	return resp, nil
+}
+
+func (s *Server) CreateQualification(ctx context.Context, req *CreateQualificationRequest) (*CreateQualificationResponse, error) {
 
 	// TODO
 
 	return nil, nil
 }
 
-func (s *Server) UpdateQualification(context.Context, *UpdateQualificationRequest) (*UpdateQualificationResponse, error) {
+func (s *Server) UpdateQualification(ctx context.Context, req *UpdateQualificationRequest) (*UpdateQualificationResponse, error) {
 
 	// TODO
 
 	return nil, nil
 }
 
-func (s *Server) DeleteQualification(context.Context, *DeleteQualificationRequest) (*DeleteQualificationResponse, error) {
+func (s *Server) DeleteQualification(ctx context.Context, req *DeleteQualificationRequest) (*DeleteQualificationResponse, error) {
 
 	// TODO
 

@@ -17,6 +17,8 @@ import (
 	"unicode/utf8"
 
 	"google.golang.org/protobuf/types/known/anypb"
+
+	jobs "github.com/galexrt/fivenet/gen/go/proto/resources/jobs"
 )
 
 // ensure the imports are used
@@ -33,6 +35,8 @@ var (
 	_ = (*mail.Address)(nil)
 	_ = anypb.Any{}
 	_ = sort.Sort
+
+	_ = jobs.AccessLevelUpdateMode(0)
 )
 
 // Validate checks the field values on ListQualificationsRequest with the rules
@@ -341,6 +345,241 @@ var _ interface {
 	Cause() error
 	ErrorName() string
 } = ListQualificationsResponseValidationError{}
+
+// Validate checks the field values on GetQualificationRequest with the rules
+// defined in the proto definition for this message. If any rules are
+// violated, the first error encountered is returned, or nil if there are no violations.
+func (m *GetQualificationRequest) Validate() error {
+	return m.validate(false)
+}
+
+// ValidateAll checks the field values on GetQualificationRequest with the
+// rules defined in the proto definition for this message. If any rules are
+// violated, the result is a list of violation errors wrapped in
+// GetQualificationRequestMultiError, or nil if none found.
+func (m *GetQualificationRequest) ValidateAll() error {
+	return m.validate(true)
+}
+
+func (m *GetQualificationRequest) validate(all bool) error {
+	if m == nil {
+		return nil
+	}
+
+	var errors []error
+
+	// no validation rules for QualificationId
+
+	if len(errors) > 0 {
+		return GetQualificationRequestMultiError(errors)
+	}
+
+	return nil
+}
+
+// GetQualificationRequestMultiError is an error wrapping multiple validation
+// errors returned by GetQualificationRequest.ValidateAll() if the designated
+// constraints aren't met.
+type GetQualificationRequestMultiError []error
+
+// Error returns a concatenation of all the error messages it wraps.
+func (m GetQualificationRequestMultiError) Error() string {
+	var msgs []string
+	for _, err := range m {
+		msgs = append(msgs, err.Error())
+	}
+	return strings.Join(msgs, "; ")
+}
+
+// AllErrors returns a list of validation violation errors.
+func (m GetQualificationRequestMultiError) AllErrors() []error { return m }
+
+// GetQualificationRequestValidationError is the validation error returned by
+// GetQualificationRequest.Validate if the designated constraints aren't met.
+type GetQualificationRequestValidationError struct {
+	field  string
+	reason string
+	cause  error
+	key    bool
+}
+
+// Field function returns field value.
+func (e GetQualificationRequestValidationError) Field() string { return e.field }
+
+// Reason function returns reason value.
+func (e GetQualificationRequestValidationError) Reason() string { return e.reason }
+
+// Cause function returns cause value.
+func (e GetQualificationRequestValidationError) Cause() error { return e.cause }
+
+// Key function returns key value.
+func (e GetQualificationRequestValidationError) Key() bool { return e.key }
+
+// ErrorName returns error name.
+func (e GetQualificationRequestValidationError) ErrorName() string {
+	return "GetQualificationRequestValidationError"
+}
+
+// Error satisfies the builtin error interface
+func (e GetQualificationRequestValidationError) Error() string {
+	cause := ""
+	if e.cause != nil {
+		cause = fmt.Sprintf(" | caused by: %v", e.cause)
+	}
+
+	key := ""
+	if e.key {
+		key = "key for "
+	}
+
+	return fmt.Sprintf(
+		"invalid %sGetQualificationRequest.%s: %s%s",
+		key,
+		e.field,
+		e.reason,
+		cause)
+}
+
+var _ error = GetQualificationRequestValidationError{}
+
+var _ interface {
+	Field() string
+	Reason() string
+	Key() bool
+	Cause() error
+	ErrorName() string
+} = GetQualificationRequestValidationError{}
+
+// Validate checks the field values on GetQualificationResponse with the rules
+// defined in the proto definition for this message. If any rules are
+// violated, the first error encountered is returned, or nil if there are no violations.
+func (m *GetQualificationResponse) Validate() error {
+	return m.validate(false)
+}
+
+// ValidateAll checks the field values on GetQualificationResponse with the
+// rules defined in the proto definition for this message. If any rules are
+// violated, the result is a list of violation errors wrapped in
+// GetQualificationResponseMultiError, or nil if none found.
+func (m *GetQualificationResponse) ValidateAll() error {
+	return m.validate(true)
+}
+
+func (m *GetQualificationResponse) validate(all bool) error {
+	if m == nil {
+		return nil
+	}
+
+	var errors []error
+
+	if all {
+		switch v := interface{}(m.GetQualification()).(type) {
+		case interface{ ValidateAll() error }:
+			if err := v.ValidateAll(); err != nil {
+				errors = append(errors, GetQualificationResponseValidationError{
+					field:  "Qualification",
+					reason: "embedded message failed validation",
+					cause:  err,
+				})
+			}
+		case interface{ Validate() error }:
+			if err := v.Validate(); err != nil {
+				errors = append(errors, GetQualificationResponseValidationError{
+					field:  "Qualification",
+					reason: "embedded message failed validation",
+					cause:  err,
+				})
+			}
+		}
+	} else if v, ok := interface{}(m.GetQualification()).(interface{ Validate() error }); ok {
+		if err := v.Validate(); err != nil {
+			return GetQualificationResponseValidationError{
+				field:  "Qualification",
+				reason: "embedded message failed validation",
+				cause:  err,
+			}
+		}
+	}
+
+	if len(errors) > 0 {
+		return GetQualificationResponseMultiError(errors)
+	}
+
+	return nil
+}
+
+// GetQualificationResponseMultiError is an error wrapping multiple validation
+// errors returned by GetQualificationResponse.ValidateAll() if the designated
+// constraints aren't met.
+type GetQualificationResponseMultiError []error
+
+// Error returns a concatenation of all the error messages it wraps.
+func (m GetQualificationResponseMultiError) Error() string {
+	var msgs []string
+	for _, err := range m {
+		msgs = append(msgs, err.Error())
+	}
+	return strings.Join(msgs, "; ")
+}
+
+// AllErrors returns a list of validation violation errors.
+func (m GetQualificationResponseMultiError) AllErrors() []error { return m }
+
+// GetQualificationResponseValidationError is the validation error returned by
+// GetQualificationResponse.Validate if the designated constraints aren't met.
+type GetQualificationResponseValidationError struct {
+	field  string
+	reason string
+	cause  error
+	key    bool
+}
+
+// Field function returns field value.
+func (e GetQualificationResponseValidationError) Field() string { return e.field }
+
+// Reason function returns reason value.
+func (e GetQualificationResponseValidationError) Reason() string { return e.reason }
+
+// Cause function returns cause value.
+func (e GetQualificationResponseValidationError) Cause() error { return e.cause }
+
+// Key function returns key value.
+func (e GetQualificationResponseValidationError) Key() bool { return e.key }
+
+// ErrorName returns error name.
+func (e GetQualificationResponseValidationError) ErrorName() string {
+	return "GetQualificationResponseValidationError"
+}
+
+// Error satisfies the builtin error interface
+func (e GetQualificationResponseValidationError) Error() string {
+	cause := ""
+	if e.cause != nil {
+		cause = fmt.Sprintf(" | caused by: %v", e.cause)
+	}
+
+	key := ""
+	if e.key {
+		key = "key for "
+	}
+
+	return fmt.Sprintf(
+		"invalid %sGetQualificationResponse.%s: %s%s",
+		key,
+		e.field,
+		e.reason,
+		cause)
+}
+
+var _ error = GetQualificationResponseValidationError{}
+
+var _ interface {
+	Field() string
+	Reason() string
+	Key() bool
+	Cause() error
+	ErrorName() string
+} = GetQualificationResponseValidationError{}
 
 // Validate checks the field values on CreateQualificationRequest with the
 // rules defined in the proto definition for this message. If any rules are
@@ -890,7 +1129,7 @@ func (m *DeleteQualificationRequest) validate(all bool) error {
 
 	var errors []error
 
-	// no validation rules for Id
+	// no validation rules for QualificationId
 
 	if len(errors) > 0 {
 		return DeleteQualificationRequestMultiError(errors)
@@ -1074,3 +1313,510 @@ var _ interface {
 	Cause() error
 	ErrorName() string
 } = DeleteQualificationResponseValidationError{}
+
+// Validate checks the field values on GetQualificationAccessRequest with the
+// rules defined in the proto definition for this message. If any rules are
+// violated, the first error encountered is returned, or nil if there are no violations.
+func (m *GetQualificationAccessRequest) Validate() error {
+	return m.validate(false)
+}
+
+// ValidateAll checks the field values on GetQualificationAccessRequest with
+// the rules defined in the proto definition for this message. If any rules
+// are violated, the result is a list of violation errors wrapped in
+// GetQualificationAccessRequestMultiError, or nil if none found.
+func (m *GetQualificationAccessRequest) ValidateAll() error {
+	return m.validate(true)
+}
+
+func (m *GetQualificationAccessRequest) validate(all bool) error {
+	if m == nil {
+		return nil
+	}
+
+	var errors []error
+
+	// no validation rules for QualificationId
+
+	if len(errors) > 0 {
+		return GetQualificationAccessRequestMultiError(errors)
+	}
+
+	return nil
+}
+
+// GetQualificationAccessRequestMultiError is an error wrapping multiple
+// validation errors returned by GetQualificationAccessRequest.ValidateAll()
+// if the designated constraints aren't met.
+type GetQualificationAccessRequestMultiError []error
+
+// Error returns a concatenation of all the error messages it wraps.
+func (m GetQualificationAccessRequestMultiError) Error() string {
+	var msgs []string
+	for _, err := range m {
+		msgs = append(msgs, err.Error())
+	}
+	return strings.Join(msgs, "; ")
+}
+
+// AllErrors returns a list of validation violation errors.
+func (m GetQualificationAccessRequestMultiError) AllErrors() []error { return m }
+
+// GetQualificationAccessRequestValidationError is the validation error
+// returned by GetQualificationAccessRequest.Validate if the designated
+// constraints aren't met.
+type GetQualificationAccessRequestValidationError struct {
+	field  string
+	reason string
+	cause  error
+	key    bool
+}
+
+// Field function returns field value.
+func (e GetQualificationAccessRequestValidationError) Field() string { return e.field }
+
+// Reason function returns reason value.
+func (e GetQualificationAccessRequestValidationError) Reason() string { return e.reason }
+
+// Cause function returns cause value.
+func (e GetQualificationAccessRequestValidationError) Cause() error { return e.cause }
+
+// Key function returns key value.
+func (e GetQualificationAccessRequestValidationError) Key() bool { return e.key }
+
+// ErrorName returns error name.
+func (e GetQualificationAccessRequestValidationError) ErrorName() string {
+	return "GetQualificationAccessRequestValidationError"
+}
+
+// Error satisfies the builtin error interface
+func (e GetQualificationAccessRequestValidationError) Error() string {
+	cause := ""
+	if e.cause != nil {
+		cause = fmt.Sprintf(" | caused by: %v", e.cause)
+	}
+
+	key := ""
+	if e.key {
+		key = "key for "
+	}
+
+	return fmt.Sprintf(
+		"invalid %sGetQualificationAccessRequest.%s: %s%s",
+		key,
+		e.field,
+		e.reason,
+		cause)
+}
+
+var _ error = GetQualificationAccessRequestValidationError{}
+
+var _ interface {
+	Field() string
+	Reason() string
+	Key() bool
+	Cause() error
+	ErrorName() string
+} = GetQualificationAccessRequestValidationError{}
+
+// Validate checks the field values on GetQualificationAccessResponse with the
+// rules defined in the proto definition for this message. If any rules are
+// violated, the first error encountered is returned, or nil if there are no violations.
+func (m *GetQualificationAccessResponse) Validate() error {
+	return m.validate(false)
+}
+
+// ValidateAll checks the field values on GetQualificationAccessResponse with
+// the rules defined in the proto definition for this message. If any rules
+// are violated, the result is a list of violation errors wrapped in
+// GetQualificationAccessResponseMultiError, or nil if none found.
+func (m *GetQualificationAccessResponse) ValidateAll() error {
+	return m.validate(true)
+}
+
+func (m *GetQualificationAccessResponse) validate(all bool) error {
+	if m == nil {
+		return nil
+	}
+
+	var errors []error
+
+	if m.GetAccess() == nil {
+		err := GetQualificationAccessResponseValidationError{
+			field:  "Access",
+			reason: "value is required",
+		}
+		if !all {
+			return err
+		}
+		errors = append(errors, err)
+	}
+
+	if all {
+		switch v := interface{}(m.GetAccess()).(type) {
+		case interface{ ValidateAll() error }:
+			if err := v.ValidateAll(); err != nil {
+				errors = append(errors, GetQualificationAccessResponseValidationError{
+					field:  "Access",
+					reason: "embedded message failed validation",
+					cause:  err,
+				})
+			}
+		case interface{ Validate() error }:
+			if err := v.Validate(); err != nil {
+				errors = append(errors, GetQualificationAccessResponseValidationError{
+					field:  "Access",
+					reason: "embedded message failed validation",
+					cause:  err,
+				})
+			}
+		}
+	} else if v, ok := interface{}(m.GetAccess()).(interface{ Validate() error }); ok {
+		if err := v.Validate(); err != nil {
+			return GetQualificationAccessResponseValidationError{
+				field:  "Access",
+				reason: "embedded message failed validation",
+				cause:  err,
+			}
+		}
+	}
+
+	if len(errors) > 0 {
+		return GetQualificationAccessResponseMultiError(errors)
+	}
+
+	return nil
+}
+
+// GetQualificationAccessResponseMultiError is an error wrapping multiple
+// validation errors returned by GetQualificationAccessResponse.ValidateAll()
+// if the designated constraints aren't met.
+type GetQualificationAccessResponseMultiError []error
+
+// Error returns a concatenation of all the error messages it wraps.
+func (m GetQualificationAccessResponseMultiError) Error() string {
+	var msgs []string
+	for _, err := range m {
+		msgs = append(msgs, err.Error())
+	}
+	return strings.Join(msgs, "; ")
+}
+
+// AllErrors returns a list of validation violation errors.
+func (m GetQualificationAccessResponseMultiError) AllErrors() []error { return m }
+
+// GetQualificationAccessResponseValidationError is the validation error
+// returned by GetQualificationAccessResponse.Validate if the designated
+// constraints aren't met.
+type GetQualificationAccessResponseValidationError struct {
+	field  string
+	reason string
+	cause  error
+	key    bool
+}
+
+// Field function returns field value.
+func (e GetQualificationAccessResponseValidationError) Field() string { return e.field }
+
+// Reason function returns reason value.
+func (e GetQualificationAccessResponseValidationError) Reason() string { return e.reason }
+
+// Cause function returns cause value.
+func (e GetQualificationAccessResponseValidationError) Cause() error { return e.cause }
+
+// Key function returns key value.
+func (e GetQualificationAccessResponseValidationError) Key() bool { return e.key }
+
+// ErrorName returns error name.
+func (e GetQualificationAccessResponseValidationError) ErrorName() string {
+	return "GetQualificationAccessResponseValidationError"
+}
+
+// Error satisfies the builtin error interface
+func (e GetQualificationAccessResponseValidationError) Error() string {
+	cause := ""
+	if e.cause != nil {
+		cause = fmt.Sprintf(" | caused by: %v", e.cause)
+	}
+
+	key := ""
+	if e.key {
+		key = "key for "
+	}
+
+	return fmt.Sprintf(
+		"invalid %sGetQualificationAccessResponse.%s: %s%s",
+		key,
+		e.field,
+		e.reason,
+		cause)
+}
+
+var _ error = GetQualificationAccessResponseValidationError{}
+
+var _ interface {
+	Field() string
+	Reason() string
+	Key() bool
+	Cause() error
+	ErrorName() string
+} = GetQualificationAccessResponseValidationError{}
+
+// Validate checks the field values on SetQualificationAccessRequest with the
+// rules defined in the proto definition for this message. If any rules are
+// violated, the first error encountered is returned, or nil if there are no violations.
+func (m *SetQualificationAccessRequest) Validate() error {
+	return m.validate(false)
+}
+
+// ValidateAll checks the field values on SetQualificationAccessRequest with
+// the rules defined in the proto definition for this message. If any rules
+// are violated, the result is a list of violation errors wrapped in
+// SetQualificationAccessRequestMultiError, or nil if none found.
+func (m *SetQualificationAccessRequest) ValidateAll() error {
+	return m.validate(true)
+}
+
+func (m *SetQualificationAccessRequest) validate(all bool) error {
+	if m == nil {
+		return nil
+	}
+
+	var errors []error
+
+	// no validation rules for QualificationId
+
+	if _, ok := jobs.AccessLevelUpdateMode_name[int32(m.GetMode())]; !ok {
+		err := SetQualificationAccessRequestValidationError{
+			field:  "Mode",
+			reason: "value must be one of the defined enum values",
+		}
+		if !all {
+			return err
+		}
+		errors = append(errors, err)
+	}
+
+	if m.GetAccess() == nil {
+		err := SetQualificationAccessRequestValidationError{
+			field:  "Access",
+			reason: "value is required",
+		}
+		if !all {
+			return err
+		}
+		errors = append(errors, err)
+	}
+
+	if all {
+		switch v := interface{}(m.GetAccess()).(type) {
+		case interface{ ValidateAll() error }:
+			if err := v.ValidateAll(); err != nil {
+				errors = append(errors, SetQualificationAccessRequestValidationError{
+					field:  "Access",
+					reason: "embedded message failed validation",
+					cause:  err,
+				})
+			}
+		case interface{ Validate() error }:
+			if err := v.Validate(); err != nil {
+				errors = append(errors, SetQualificationAccessRequestValidationError{
+					field:  "Access",
+					reason: "embedded message failed validation",
+					cause:  err,
+				})
+			}
+		}
+	} else if v, ok := interface{}(m.GetAccess()).(interface{ Validate() error }); ok {
+		if err := v.Validate(); err != nil {
+			return SetQualificationAccessRequestValidationError{
+				field:  "Access",
+				reason: "embedded message failed validation",
+				cause:  err,
+			}
+		}
+	}
+
+	if len(errors) > 0 {
+		return SetQualificationAccessRequestMultiError(errors)
+	}
+
+	return nil
+}
+
+// SetQualificationAccessRequestMultiError is an error wrapping multiple
+// validation errors returned by SetQualificationAccessRequest.ValidateAll()
+// if the designated constraints aren't met.
+type SetQualificationAccessRequestMultiError []error
+
+// Error returns a concatenation of all the error messages it wraps.
+func (m SetQualificationAccessRequestMultiError) Error() string {
+	var msgs []string
+	for _, err := range m {
+		msgs = append(msgs, err.Error())
+	}
+	return strings.Join(msgs, "; ")
+}
+
+// AllErrors returns a list of validation violation errors.
+func (m SetQualificationAccessRequestMultiError) AllErrors() []error { return m }
+
+// SetQualificationAccessRequestValidationError is the validation error
+// returned by SetQualificationAccessRequest.Validate if the designated
+// constraints aren't met.
+type SetQualificationAccessRequestValidationError struct {
+	field  string
+	reason string
+	cause  error
+	key    bool
+}
+
+// Field function returns field value.
+func (e SetQualificationAccessRequestValidationError) Field() string { return e.field }
+
+// Reason function returns reason value.
+func (e SetQualificationAccessRequestValidationError) Reason() string { return e.reason }
+
+// Cause function returns cause value.
+func (e SetQualificationAccessRequestValidationError) Cause() error { return e.cause }
+
+// Key function returns key value.
+func (e SetQualificationAccessRequestValidationError) Key() bool { return e.key }
+
+// ErrorName returns error name.
+func (e SetQualificationAccessRequestValidationError) ErrorName() string {
+	return "SetQualificationAccessRequestValidationError"
+}
+
+// Error satisfies the builtin error interface
+func (e SetQualificationAccessRequestValidationError) Error() string {
+	cause := ""
+	if e.cause != nil {
+		cause = fmt.Sprintf(" | caused by: %v", e.cause)
+	}
+
+	key := ""
+	if e.key {
+		key = "key for "
+	}
+
+	return fmt.Sprintf(
+		"invalid %sSetQualificationAccessRequest.%s: %s%s",
+		key,
+		e.field,
+		e.reason,
+		cause)
+}
+
+var _ error = SetQualificationAccessRequestValidationError{}
+
+var _ interface {
+	Field() string
+	Reason() string
+	Key() bool
+	Cause() error
+	ErrorName() string
+} = SetQualificationAccessRequestValidationError{}
+
+// Validate checks the field values on SetQualificationAccessResponse with the
+// rules defined in the proto definition for this message. If any rules are
+// violated, the first error encountered is returned, or nil if there are no violations.
+func (m *SetQualificationAccessResponse) Validate() error {
+	return m.validate(false)
+}
+
+// ValidateAll checks the field values on SetQualificationAccessResponse with
+// the rules defined in the proto definition for this message. If any rules
+// are violated, the result is a list of violation errors wrapped in
+// SetQualificationAccessResponseMultiError, or nil if none found.
+func (m *SetQualificationAccessResponse) ValidateAll() error {
+	return m.validate(true)
+}
+
+func (m *SetQualificationAccessResponse) validate(all bool) error {
+	if m == nil {
+		return nil
+	}
+
+	var errors []error
+
+	if len(errors) > 0 {
+		return SetQualificationAccessResponseMultiError(errors)
+	}
+
+	return nil
+}
+
+// SetQualificationAccessResponseMultiError is an error wrapping multiple
+// validation errors returned by SetQualificationAccessResponse.ValidateAll()
+// if the designated constraints aren't met.
+type SetQualificationAccessResponseMultiError []error
+
+// Error returns a concatenation of all the error messages it wraps.
+func (m SetQualificationAccessResponseMultiError) Error() string {
+	var msgs []string
+	for _, err := range m {
+		msgs = append(msgs, err.Error())
+	}
+	return strings.Join(msgs, "; ")
+}
+
+// AllErrors returns a list of validation violation errors.
+func (m SetQualificationAccessResponseMultiError) AllErrors() []error { return m }
+
+// SetQualificationAccessResponseValidationError is the validation error
+// returned by SetQualificationAccessResponse.Validate if the designated
+// constraints aren't met.
+type SetQualificationAccessResponseValidationError struct {
+	field  string
+	reason string
+	cause  error
+	key    bool
+}
+
+// Field function returns field value.
+func (e SetQualificationAccessResponseValidationError) Field() string { return e.field }
+
+// Reason function returns reason value.
+func (e SetQualificationAccessResponseValidationError) Reason() string { return e.reason }
+
+// Cause function returns cause value.
+func (e SetQualificationAccessResponseValidationError) Cause() error { return e.cause }
+
+// Key function returns key value.
+func (e SetQualificationAccessResponseValidationError) Key() bool { return e.key }
+
+// ErrorName returns error name.
+func (e SetQualificationAccessResponseValidationError) ErrorName() string {
+	return "SetQualificationAccessResponseValidationError"
+}
+
+// Error satisfies the builtin error interface
+func (e SetQualificationAccessResponseValidationError) Error() string {
+	cause := ""
+	if e.cause != nil {
+		cause = fmt.Sprintf(" | caused by: %v", e.cause)
+	}
+
+	key := ""
+	if e.key {
+		key = "key for "
+	}
+
+	return fmt.Sprintf(
+		"invalid %sSetQualificationAccessResponse.%s: %s%s",
+		key,
+		e.field,
+		e.reason,
+		cause)
+}
+
+var _ error = SetQualificationAccessResponseValidationError{}
+
+var _ interface {
+	Field() string
+	Reason() string
+	Key() bool
+	Cause() error
+	ErrorName() string
+} = SetQualificationAccessResponseValidationError{}

@@ -20,6 +20,7 @@ const _ = grpc.SupportPackageIsVersion7
 
 const (
 	JobsQualificationsService_ListQualifications_FullMethodName  = "/services.jobs.JobsQualificationsService/ListQualifications"
+	JobsQualificationsService_GetQualification_FullMethodName    = "/services.jobs.JobsQualificationsService/GetQualification"
 	JobsQualificationsService_CreateQualification_FullMethodName = "/services.jobs.JobsQualificationsService/CreateQualification"
 	JobsQualificationsService_UpdateQualification_FullMethodName = "/services.jobs.JobsQualificationsService/UpdateQualification"
 	JobsQualificationsService_DeleteQualification_FullMethodName = "/services.jobs.JobsQualificationsService/DeleteQualification"
@@ -31,6 +32,8 @@ const (
 type JobsQualificationsServiceClient interface {
 	// @perm
 	ListQualifications(ctx context.Context, in *ListQualificationsRequest, opts ...grpc.CallOption) (*ListQualificationsResponse, error)
+	// @perm
+	GetQualification(ctx context.Context, in *GetQualificationRequest, opts ...grpc.CallOption) (*GetQualificationResponse, error)
 	// @perm
 	CreateQualification(ctx context.Context, in *CreateQualificationRequest, opts ...grpc.CallOption) (*CreateQualificationResponse, error)
 	// @perm
@@ -50,6 +53,15 @@ func NewJobsQualificationsServiceClient(cc grpc.ClientConnInterface) JobsQualifi
 func (c *jobsQualificationsServiceClient) ListQualifications(ctx context.Context, in *ListQualificationsRequest, opts ...grpc.CallOption) (*ListQualificationsResponse, error) {
 	out := new(ListQualificationsResponse)
 	err := c.cc.Invoke(ctx, JobsQualificationsService_ListQualifications_FullMethodName, in, out, opts...)
+	if err != nil {
+		return nil, err
+	}
+	return out, nil
+}
+
+func (c *jobsQualificationsServiceClient) GetQualification(ctx context.Context, in *GetQualificationRequest, opts ...grpc.CallOption) (*GetQualificationResponse, error) {
+	out := new(GetQualificationResponse)
+	err := c.cc.Invoke(ctx, JobsQualificationsService_GetQualification_FullMethodName, in, out, opts...)
 	if err != nil {
 		return nil, err
 	}
@@ -90,6 +102,8 @@ type JobsQualificationsServiceServer interface {
 	// @perm
 	ListQualifications(context.Context, *ListQualificationsRequest) (*ListQualificationsResponse, error)
 	// @perm
+	GetQualification(context.Context, *GetQualificationRequest) (*GetQualificationResponse, error)
+	// @perm
 	CreateQualification(context.Context, *CreateQualificationRequest) (*CreateQualificationResponse, error)
 	// @perm
 	UpdateQualification(context.Context, *UpdateQualificationRequest) (*UpdateQualificationResponse, error)
@@ -104,6 +118,9 @@ type UnimplementedJobsQualificationsServiceServer struct {
 
 func (UnimplementedJobsQualificationsServiceServer) ListQualifications(context.Context, *ListQualificationsRequest) (*ListQualificationsResponse, error) {
 	return nil, status.Errorf(codes.Unimplemented, "method ListQualifications not implemented")
+}
+func (UnimplementedJobsQualificationsServiceServer) GetQualification(context.Context, *GetQualificationRequest) (*GetQualificationResponse, error) {
+	return nil, status.Errorf(codes.Unimplemented, "method GetQualification not implemented")
 }
 func (UnimplementedJobsQualificationsServiceServer) CreateQualification(context.Context, *CreateQualificationRequest) (*CreateQualificationResponse, error) {
 	return nil, status.Errorf(codes.Unimplemented, "method CreateQualification not implemented")
@@ -142,6 +159,24 @@ func _JobsQualificationsService_ListQualifications_Handler(srv interface{}, ctx 
 	}
 	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
 		return srv.(JobsQualificationsServiceServer).ListQualifications(ctx, req.(*ListQualificationsRequest))
+	}
+	return interceptor(ctx, in, info, handler)
+}
+
+func _JobsQualificationsService_GetQualification_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
+	in := new(GetQualificationRequest)
+	if err := dec(in); err != nil {
+		return nil, err
+	}
+	if interceptor == nil {
+		return srv.(JobsQualificationsServiceServer).GetQualification(ctx, in)
+	}
+	info := &grpc.UnaryServerInfo{
+		Server:     srv,
+		FullMethod: JobsQualificationsService_GetQualification_FullMethodName,
+	}
+	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
+		return srv.(JobsQualificationsServiceServer).GetQualification(ctx, req.(*GetQualificationRequest))
 	}
 	return interceptor(ctx, in, info, handler)
 }
@@ -210,6 +245,10 @@ var JobsQualificationsService_ServiceDesc = grpc.ServiceDesc{
 		{
 			MethodName: "ListQualifications",
 			Handler:    _JobsQualificationsService_ListQualifications_Handler,
+		},
+		{
+			MethodName: "GetQualification",
+			Handler:    _JobsQualificationsService_GetQualification_Handler,
 		},
 		{
 			MethodName: "CreateQualification",

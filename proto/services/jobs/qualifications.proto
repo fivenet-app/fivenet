@@ -18,6 +18,14 @@ message ListQualificationsResponse {
   repeated resources.jobs.Qualification qualifications = 2;
 }
 
+message GetQualificationRequest {
+  uint64 qualification_id = 1 [jstype = JS_STRING];
+}
+
+message GetQualificationResponse {
+  resources.jobs.Qualification qualification = 1;
+}
+
 message CreateQualificationRequest {
   resources.jobs.Qualification qualification = 1;
 }
@@ -35,14 +43,33 @@ message UpdateQualificationResponse {
 }
 
 message DeleteQualificationRequest {
-  uint64 id = 1;
+  uint64 qualification_id = 1 [jstype = JS_STRING];
 }
 
 message DeleteQualificationResponse {}
 
+// Access =====================================================================
+message GetQualificationAccessRequest {
+  uint64 qualification_id = 1 [jstype = JS_STRING];
+}
+
+message GetQualificationAccessResponse {
+  resources.jobs.QualificationAccess access = 1 [(validate.rules).message.required = true];
+}
+
+message SetQualificationAccessRequest {
+  uint64 qualification_id = 1 [jstype = JS_STRING];
+  resources.jobs.AccessLevelUpdateMode mode = 2 [(validate.rules).enum.defined_only = true];
+  resources.jobs.QualificationAccess access = 3 [(validate.rules).message.required = true];
+}
+
+message SetQualificationAccessResponse {}
+
 service JobsQualificationsService {
   // @perm
   rpc ListQualifications(ListQualificationsRequest) returns (ListQualificationsResponse);
+  // @perm
+  rpc GetQualification(GetQualificationRequest) returns (GetQualificationResponse);
 
   // @perm
   rpc CreateQualification(CreateQualificationRequest) returns (CreateQualificationResponse);

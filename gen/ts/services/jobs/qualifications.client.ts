@@ -10,6 +10,8 @@ import type { UpdateQualificationResponse } from "./qualifications";
 import type { UpdateQualificationRequest } from "./qualifications";
 import type { CreateQualificationResponse } from "./qualifications";
 import type { CreateQualificationRequest } from "./qualifications";
+import type { GetQualificationResponse } from "./qualifications";
+import type { GetQualificationRequest } from "./qualifications";
 import { stackIntercept } from "@protobuf-ts/runtime-rpc";
 import type { ListQualificationsResponse } from "./qualifications";
 import type { ListQualificationsRequest } from "./qualifications";
@@ -25,6 +27,12 @@ export interface IJobsQualificationsServiceClient {
      * @generated from protobuf rpc: ListQualifications(services.jobs.ListQualificationsRequest) returns (services.jobs.ListQualificationsResponse);
      */
     listQualifications(input: ListQualificationsRequest, options?: RpcOptions): UnaryCall<ListQualificationsRequest, ListQualificationsResponse>;
+    /**
+     * @perm
+     *
+     * @generated from protobuf rpc: GetQualification(services.jobs.GetQualificationRequest) returns (services.jobs.GetQualificationResponse);
+     */
+    getQualification(input: GetQualificationRequest, options?: RpcOptions): UnaryCall<GetQualificationRequest, GetQualificationResponse>;
     /**
      * @perm
      *
@@ -65,10 +73,19 @@ export class JobsQualificationsServiceClient implements IJobsQualificationsServi
     /**
      * @perm
      *
+     * @generated from protobuf rpc: GetQualification(services.jobs.GetQualificationRequest) returns (services.jobs.GetQualificationResponse);
+     */
+    getQualification(input: GetQualificationRequest, options?: RpcOptions): UnaryCall<GetQualificationRequest, GetQualificationResponse> {
+        const method = this.methods[1], opt = this._transport.mergeOptions(options);
+        return stackIntercept<GetQualificationRequest, GetQualificationResponse>("unary", this._transport, method, opt, input);
+    }
+    /**
+     * @perm
+     *
      * @generated from protobuf rpc: CreateQualification(services.jobs.CreateQualificationRequest) returns (services.jobs.CreateQualificationResponse);
      */
     createQualification(input: CreateQualificationRequest, options?: RpcOptions): UnaryCall<CreateQualificationRequest, CreateQualificationResponse> {
-        const method = this.methods[1], opt = this._transport.mergeOptions(options);
+        const method = this.methods[2], opt = this._transport.mergeOptions(options);
         return stackIntercept<CreateQualificationRequest, CreateQualificationResponse>("unary", this._transport, method, opt, input);
     }
     /**
@@ -77,7 +94,7 @@ export class JobsQualificationsServiceClient implements IJobsQualificationsServi
      * @generated from protobuf rpc: UpdateQualification(services.jobs.UpdateQualificationRequest) returns (services.jobs.UpdateQualificationResponse);
      */
     updateQualification(input: UpdateQualificationRequest, options?: RpcOptions): UnaryCall<UpdateQualificationRequest, UpdateQualificationResponse> {
-        const method = this.methods[2], opt = this._transport.mergeOptions(options);
+        const method = this.methods[3], opt = this._transport.mergeOptions(options);
         return stackIntercept<UpdateQualificationRequest, UpdateQualificationResponse>("unary", this._transport, method, opt, input);
     }
     /**
@@ -86,7 +103,7 @@ export class JobsQualificationsServiceClient implements IJobsQualificationsServi
      * @generated from protobuf rpc: DeleteQualification(services.jobs.DeleteQualificationRequest) returns (services.jobs.DeleteQualificationResponse);
      */
     deleteQualification(input: DeleteQualificationRequest, options?: RpcOptions): UnaryCall<DeleteQualificationRequest, DeleteQualificationResponse> {
-        const method = this.methods[3], opt = this._transport.mergeOptions(options);
+        const method = this.methods[4], opt = this._transport.mergeOptions(options);
         return stackIntercept<DeleteQualificationRequest, DeleteQualificationResponse>("unary", this._transport, method, opt, input);
     }
 }

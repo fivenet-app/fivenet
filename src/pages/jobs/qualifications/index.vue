@@ -7,7 +7,7 @@ useHead({
 definePageMeta({
     title: 'pages.jobs.qualifications.title',
     requiresAuth: true,
-    permission: 'JobsQualificationsService.ListTrainings',
+    permission: 'JobsQualificationsService.ListQualifications',
 });
 </script>
 
@@ -29,12 +29,12 @@ definePageMeta({
                                         </p>
                                     </div>
                                     <div class="ml-4 mt-4 flex-shrink-0">
-                                        <button
-                                            type="button"
+                                        <NuxtLink
+                                            :to="{ name: 'jobs-qualifications-create' }"
                                             class="relative inline-flex items-center rounded-md bg-primary-500 px-3 py-2 text-sm font-semibold text-neutral shadow-sm hover:bg-primary-500 focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-primary-600"
                                         >
                                             Create new Qualification
-                                        </button>
+                                        </NuxtLink>
                                     </div>
                                 </div>
                             </div>

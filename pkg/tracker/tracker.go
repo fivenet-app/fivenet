@@ -88,9 +88,7 @@ func New(p Params) (ITracker, error) {
 
 					return um, nil
 				}
-				return nil
-			},
-			func(s *store.Store[livemap.UserMarker, *livemap.UserMarker]) error {
+
 				s.OnDelete = func(kve jetstream.KeyValueEntry, um *livemap.UserMarker) error {
 					if um == nil || um.Info == nil {
 						return nil

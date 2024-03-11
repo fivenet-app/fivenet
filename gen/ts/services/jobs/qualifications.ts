@@ -11,6 +11,8 @@ import { UnknownFieldHandler } from "@protobuf-ts/runtime";
 import type { PartialMessage } from "@protobuf-ts/runtime";
 import { reflectionMergePartial } from "@protobuf-ts/runtime";
 import { MessageType } from "@protobuf-ts/runtime";
+import { AccessLevelUpdateMode } from "../../resources/jobs/qualifications";
+import { QualificationAccess } from "../../resources/jobs/qualifications";
 import { Qualification } from "../../resources/jobs/qualifications";
 import { PaginationResponse } from "../../resources/common/database/database";
 import { PaginationRequest } from "../../resources/common/database/database";
@@ -35,6 +37,24 @@ export interface ListQualificationsResponse {
      * @generated from protobuf field: repeated resources.jobs.Qualification qualifications = 2;
      */
     qualifications: Qualification[];
+}
+/**
+ * @generated from protobuf message services.jobs.GetQualificationRequest
+ */
+export interface GetQualificationRequest {
+    /**
+     * @generated from protobuf field: uint64 qualification_id = 1 [jstype = JS_STRING];
+     */
+    qualificationId: string;
+}
+/**
+ * @generated from protobuf message services.jobs.GetQualificationResponse
+ */
+export interface GetQualificationResponse {
+    /**
+     * @generated from protobuf field: resources.jobs.Qualification qualification = 1;
+     */
+    qualification?: Qualification;
 }
 /**
  * @generated from protobuf message services.jobs.CreateQualificationRequest
@@ -77,14 +97,56 @@ export interface UpdateQualificationResponse {
  */
 export interface DeleteQualificationRequest {
     /**
-     * @generated from protobuf field: uint64 id = 1;
+     * @generated from protobuf field: uint64 qualification_id = 1 [jstype = JS_STRING];
      */
-    id: bigint;
+    qualificationId: string;
 }
 /**
  * @generated from protobuf message services.jobs.DeleteQualificationResponse
  */
 export interface DeleteQualificationResponse {
+}
+/**
+ * Access =====================================================================
+ *
+ * @generated from protobuf message services.jobs.GetQualificationAccessRequest
+ */
+export interface GetQualificationAccessRequest {
+    /**
+     * @generated from protobuf field: uint64 qualification_id = 1 [jstype = JS_STRING];
+     */
+    qualificationId: string;
+}
+/**
+ * @generated from protobuf message services.jobs.GetQualificationAccessResponse
+ */
+export interface GetQualificationAccessResponse {
+    /**
+     * @generated from protobuf field: resources.jobs.QualificationAccess access = 1;
+     */
+    access?: QualificationAccess;
+}
+/**
+ * @generated from protobuf message services.jobs.SetQualificationAccessRequest
+ */
+export interface SetQualificationAccessRequest {
+    /**
+     * @generated from protobuf field: uint64 qualification_id = 1 [jstype = JS_STRING];
+     */
+    qualificationId: string;
+    /**
+     * @generated from protobuf field: resources.jobs.AccessLevelUpdateMode mode = 2;
+     */
+    mode: AccessLevelUpdateMode;
+    /**
+     * @generated from protobuf field: resources.jobs.QualificationAccess access = 3;
+     */
+    access?: QualificationAccess;
+}
+/**
+ * @generated from protobuf message services.jobs.SetQualificationAccessResponse
+ */
+export interface SetQualificationAccessResponse {
 }
 // @generated message type with reflection information, may provide speed optimized methods
 class ListQualificationsRequest$Type extends MessageType<ListQualificationsRequest> {
@@ -186,6 +248,99 @@ class ListQualificationsResponse$Type extends MessageType<ListQualificationsResp
  * @generated MessageType for protobuf message services.jobs.ListQualificationsResponse
  */
 export const ListQualificationsResponse = new ListQualificationsResponse$Type();
+// @generated message type with reflection information, may provide speed optimized methods
+class GetQualificationRequest$Type extends MessageType<GetQualificationRequest> {
+    constructor() {
+        super("services.jobs.GetQualificationRequest", [
+            { no: 1, name: "qualification_id", kind: "scalar", T: 4 /*ScalarType.UINT64*/ }
+        ]);
+    }
+    create(value?: PartialMessage<GetQualificationRequest>): GetQualificationRequest {
+        const message = globalThis.Object.create((this.messagePrototype!));
+        message.qualificationId = "0";
+        if (value !== undefined)
+            reflectionMergePartial<GetQualificationRequest>(this, message, value);
+        return message;
+    }
+    internalBinaryRead(reader: IBinaryReader, length: number, options: BinaryReadOptions, target?: GetQualificationRequest): GetQualificationRequest {
+        let message = target ?? this.create(), end = reader.pos + length;
+        while (reader.pos < end) {
+            let [fieldNo, wireType] = reader.tag();
+            switch (fieldNo) {
+                case /* uint64 qualification_id = 1 [jstype = JS_STRING];*/ 1:
+                    message.qualificationId = reader.uint64().toString();
+                    break;
+                default:
+                    let u = options.readUnknownField;
+                    if (u === "throw")
+                        throw new globalThis.Error(`Unknown field ${fieldNo} (wire type ${wireType}) for ${this.typeName}`);
+                    let d = reader.skip(wireType);
+                    if (u !== false)
+                        (u === true ? UnknownFieldHandler.onRead : u)(this.typeName, message, fieldNo, wireType, d);
+            }
+        }
+        return message;
+    }
+    internalBinaryWrite(message: GetQualificationRequest, writer: IBinaryWriter, options: BinaryWriteOptions): IBinaryWriter {
+        /* uint64 qualification_id = 1 [jstype = JS_STRING]; */
+        if (message.qualificationId !== "0")
+            writer.tag(1, WireType.Varint).uint64(message.qualificationId);
+        let u = options.writeUnknownFields;
+        if (u !== false)
+            (u == true ? UnknownFieldHandler.onWrite : u)(this.typeName, message, writer);
+        return writer;
+    }
+}
+/**
+ * @generated MessageType for protobuf message services.jobs.GetQualificationRequest
+ */
+export const GetQualificationRequest = new GetQualificationRequest$Type();
+// @generated message type with reflection information, may provide speed optimized methods
+class GetQualificationResponse$Type extends MessageType<GetQualificationResponse> {
+    constructor() {
+        super("services.jobs.GetQualificationResponse", [
+            { no: 1, name: "qualification", kind: "message", T: () => Qualification }
+        ]);
+    }
+    create(value?: PartialMessage<GetQualificationResponse>): GetQualificationResponse {
+        const message = globalThis.Object.create((this.messagePrototype!));
+        if (value !== undefined)
+            reflectionMergePartial<GetQualificationResponse>(this, message, value);
+        return message;
+    }
+    internalBinaryRead(reader: IBinaryReader, length: number, options: BinaryReadOptions, target?: GetQualificationResponse): GetQualificationResponse {
+        let message = target ?? this.create(), end = reader.pos + length;
+        while (reader.pos < end) {
+            let [fieldNo, wireType] = reader.tag();
+            switch (fieldNo) {
+                case /* resources.jobs.Qualification qualification */ 1:
+                    message.qualification = Qualification.internalBinaryRead(reader, reader.uint32(), options, message.qualification);
+                    break;
+                default:
+                    let u = options.readUnknownField;
+                    if (u === "throw")
+                        throw new globalThis.Error(`Unknown field ${fieldNo} (wire type ${wireType}) for ${this.typeName}`);
+                    let d = reader.skip(wireType);
+                    if (u !== false)
+                        (u === true ? UnknownFieldHandler.onRead : u)(this.typeName, message, fieldNo, wireType, d);
+            }
+        }
+        return message;
+    }
+    internalBinaryWrite(message: GetQualificationResponse, writer: IBinaryWriter, options: BinaryWriteOptions): IBinaryWriter {
+        /* resources.jobs.Qualification qualification = 1; */
+        if (message.qualification)
+            Qualification.internalBinaryWrite(message.qualification, writer.tag(1, WireType.LengthDelimited).fork(), options).join();
+        let u = options.writeUnknownFields;
+        if (u !== false)
+            (u == true ? UnknownFieldHandler.onWrite : u)(this.typeName, message, writer);
+        return writer;
+    }
+}
+/**
+ * @generated MessageType for protobuf message services.jobs.GetQualificationResponse
+ */
+export const GetQualificationResponse = new GetQualificationResponse$Type();
 // @generated message type with reflection information, may provide speed optimized methods
 class CreateQualificationRequest$Type extends MessageType<CreateQualificationRequest> {
     constructor() {
@@ -374,12 +529,12 @@ export const UpdateQualificationResponse = new UpdateQualificationResponse$Type(
 class DeleteQualificationRequest$Type extends MessageType<DeleteQualificationRequest> {
     constructor() {
         super("services.jobs.DeleteQualificationRequest", [
-            { no: 1, name: "id", kind: "scalar", T: 4 /*ScalarType.UINT64*/, L: 0 /*LongType.BIGINT*/ }
+            { no: 1, name: "qualification_id", kind: "scalar", T: 4 /*ScalarType.UINT64*/ }
         ]);
     }
     create(value?: PartialMessage<DeleteQualificationRequest>): DeleteQualificationRequest {
         const message = globalThis.Object.create((this.messagePrototype!));
-        message.id = 0n;
+        message.qualificationId = "0";
         if (value !== undefined)
             reflectionMergePartial<DeleteQualificationRequest>(this, message, value);
         return message;
@@ -389,8 +544,8 @@ class DeleteQualificationRequest$Type extends MessageType<DeleteQualificationReq
         while (reader.pos < end) {
             let [fieldNo, wireType] = reader.tag();
             switch (fieldNo) {
-                case /* uint64 id */ 1:
-                    message.id = reader.uint64().toBigInt();
+                case /* uint64 qualification_id = 1 [jstype = JS_STRING];*/ 1:
+                    message.qualificationId = reader.uint64().toString();
                     break;
                 default:
                     let u = options.readUnknownField;
@@ -404,9 +559,9 @@ class DeleteQualificationRequest$Type extends MessageType<DeleteQualificationReq
         return message;
     }
     internalBinaryWrite(message: DeleteQualificationRequest, writer: IBinaryWriter, options: BinaryWriteOptions): IBinaryWriter {
-        /* uint64 id = 1; */
-        if (message.id !== 0n)
-            writer.tag(1, WireType.Varint).uint64(message.id);
+        /* uint64 qualification_id = 1 [jstype = JS_STRING]; */
+        if (message.qualificationId !== "0")
+            writer.tag(1, WireType.Varint).uint64(message.qualificationId);
         let u = options.writeUnknownFields;
         if (u !== false)
             (u == true ? UnknownFieldHandler.onWrite : u)(this.typeName, message, writer);
@@ -442,11 +597,192 @@ class DeleteQualificationResponse$Type extends MessageType<DeleteQualificationRe
  * @generated MessageType for protobuf message services.jobs.DeleteQualificationResponse
  */
 export const DeleteQualificationResponse = new DeleteQualificationResponse$Type();
+// @generated message type with reflection information, may provide speed optimized methods
+class GetQualificationAccessRequest$Type extends MessageType<GetQualificationAccessRequest> {
+    constructor() {
+        super("services.jobs.GetQualificationAccessRequest", [
+            { no: 1, name: "qualification_id", kind: "scalar", T: 4 /*ScalarType.UINT64*/ }
+        ]);
+    }
+    create(value?: PartialMessage<GetQualificationAccessRequest>): GetQualificationAccessRequest {
+        const message = globalThis.Object.create((this.messagePrototype!));
+        message.qualificationId = "0";
+        if (value !== undefined)
+            reflectionMergePartial<GetQualificationAccessRequest>(this, message, value);
+        return message;
+    }
+    internalBinaryRead(reader: IBinaryReader, length: number, options: BinaryReadOptions, target?: GetQualificationAccessRequest): GetQualificationAccessRequest {
+        let message = target ?? this.create(), end = reader.pos + length;
+        while (reader.pos < end) {
+            let [fieldNo, wireType] = reader.tag();
+            switch (fieldNo) {
+                case /* uint64 qualification_id = 1 [jstype = JS_STRING];*/ 1:
+                    message.qualificationId = reader.uint64().toString();
+                    break;
+                default:
+                    let u = options.readUnknownField;
+                    if (u === "throw")
+                        throw new globalThis.Error(`Unknown field ${fieldNo} (wire type ${wireType}) for ${this.typeName}`);
+                    let d = reader.skip(wireType);
+                    if (u !== false)
+                        (u === true ? UnknownFieldHandler.onRead : u)(this.typeName, message, fieldNo, wireType, d);
+            }
+        }
+        return message;
+    }
+    internalBinaryWrite(message: GetQualificationAccessRequest, writer: IBinaryWriter, options: BinaryWriteOptions): IBinaryWriter {
+        /* uint64 qualification_id = 1 [jstype = JS_STRING]; */
+        if (message.qualificationId !== "0")
+            writer.tag(1, WireType.Varint).uint64(message.qualificationId);
+        let u = options.writeUnknownFields;
+        if (u !== false)
+            (u == true ? UnknownFieldHandler.onWrite : u)(this.typeName, message, writer);
+        return writer;
+    }
+}
+/**
+ * @generated MessageType for protobuf message services.jobs.GetQualificationAccessRequest
+ */
+export const GetQualificationAccessRequest = new GetQualificationAccessRequest$Type();
+// @generated message type with reflection information, may provide speed optimized methods
+class GetQualificationAccessResponse$Type extends MessageType<GetQualificationAccessResponse> {
+    constructor() {
+        super("services.jobs.GetQualificationAccessResponse", [
+            { no: 1, name: "access", kind: "message", T: () => QualificationAccess, options: { "validate.rules": { message: { required: true } } } }
+        ]);
+    }
+    create(value?: PartialMessage<GetQualificationAccessResponse>): GetQualificationAccessResponse {
+        const message = globalThis.Object.create((this.messagePrototype!));
+        if (value !== undefined)
+            reflectionMergePartial<GetQualificationAccessResponse>(this, message, value);
+        return message;
+    }
+    internalBinaryRead(reader: IBinaryReader, length: number, options: BinaryReadOptions, target?: GetQualificationAccessResponse): GetQualificationAccessResponse {
+        let message = target ?? this.create(), end = reader.pos + length;
+        while (reader.pos < end) {
+            let [fieldNo, wireType] = reader.tag();
+            switch (fieldNo) {
+                case /* resources.jobs.QualificationAccess access */ 1:
+                    message.access = QualificationAccess.internalBinaryRead(reader, reader.uint32(), options, message.access);
+                    break;
+                default:
+                    let u = options.readUnknownField;
+                    if (u === "throw")
+                        throw new globalThis.Error(`Unknown field ${fieldNo} (wire type ${wireType}) for ${this.typeName}`);
+                    let d = reader.skip(wireType);
+                    if (u !== false)
+                        (u === true ? UnknownFieldHandler.onRead : u)(this.typeName, message, fieldNo, wireType, d);
+            }
+        }
+        return message;
+    }
+    internalBinaryWrite(message: GetQualificationAccessResponse, writer: IBinaryWriter, options: BinaryWriteOptions): IBinaryWriter {
+        /* resources.jobs.QualificationAccess access = 1; */
+        if (message.access)
+            QualificationAccess.internalBinaryWrite(message.access, writer.tag(1, WireType.LengthDelimited).fork(), options).join();
+        let u = options.writeUnknownFields;
+        if (u !== false)
+            (u == true ? UnknownFieldHandler.onWrite : u)(this.typeName, message, writer);
+        return writer;
+    }
+}
+/**
+ * @generated MessageType for protobuf message services.jobs.GetQualificationAccessResponse
+ */
+export const GetQualificationAccessResponse = new GetQualificationAccessResponse$Type();
+// @generated message type with reflection information, may provide speed optimized methods
+class SetQualificationAccessRequest$Type extends MessageType<SetQualificationAccessRequest> {
+    constructor() {
+        super("services.jobs.SetQualificationAccessRequest", [
+            { no: 1, name: "qualification_id", kind: "scalar", T: 4 /*ScalarType.UINT64*/ },
+            { no: 2, name: "mode", kind: "enum", T: () => ["resources.jobs.AccessLevelUpdateMode", AccessLevelUpdateMode, "ACCESS_LEVEL_UPDATE_MODE_"], options: { "validate.rules": { enum: { definedOnly: true } } } },
+            { no: 3, name: "access", kind: "message", T: () => QualificationAccess, options: { "validate.rules": { message: { required: true } } } }
+        ]);
+    }
+    create(value?: PartialMessage<SetQualificationAccessRequest>): SetQualificationAccessRequest {
+        const message = globalThis.Object.create((this.messagePrototype!));
+        message.qualificationId = "0";
+        message.mode = 0;
+        if (value !== undefined)
+            reflectionMergePartial<SetQualificationAccessRequest>(this, message, value);
+        return message;
+    }
+    internalBinaryRead(reader: IBinaryReader, length: number, options: BinaryReadOptions, target?: SetQualificationAccessRequest): SetQualificationAccessRequest {
+        let message = target ?? this.create(), end = reader.pos + length;
+        while (reader.pos < end) {
+            let [fieldNo, wireType] = reader.tag();
+            switch (fieldNo) {
+                case /* uint64 qualification_id = 1 [jstype = JS_STRING];*/ 1:
+                    message.qualificationId = reader.uint64().toString();
+                    break;
+                case /* resources.jobs.AccessLevelUpdateMode mode */ 2:
+                    message.mode = reader.int32();
+                    break;
+                case /* resources.jobs.QualificationAccess access */ 3:
+                    message.access = QualificationAccess.internalBinaryRead(reader, reader.uint32(), options, message.access);
+                    break;
+                default:
+                    let u = options.readUnknownField;
+                    if (u === "throw")
+                        throw new globalThis.Error(`Unknown field ${fieldNo} (wire type ${wireType}) for ${this.typeName}`);
+                    let d = reader.skip(wireType);
+                    if (u !== false)
+                        (u === true ? UnknownFieldHandler.onRead : u)(this.typeName, message, fieldNo, wireType, d);
+            }
+        }
+        return message;
+    }
+    internalBinaryWrite(message: SetQualificationAccessRequest, writer: IBinaryWriter, options: BinaryWriteOptions): IBinaryWriter {
+        /* uint64 qualification_id = 1 [jstype = JS_STRING]; */
+        if (message.qualificationId !== "0")
+            writer.tag(1, WireType.Varint).uint64(message.qualificationId);
+        /* resources.jobs.AccessLevelUpdateMode mode = 2; */
+        if (message.mode !== 0)
+            writer.tag(2, WireType.Varint).int32(message.mode);
+        /* resources.jobs.QualificationAccess access = 3; */
+        if (message.access)
+            QualificationAccess.internalBinaryWrite(message.access, writer.tag(3, WireType.LengthDelimited).fork(), options).join();
+        let u = options.writeUnknownFields;
+        if (u !== false)
+            (u == true ? UnknownFieldHandler.onWrite : u)(this.typeName, message, writer);
+        return writer;
+    }
+}
+/**
+ * @generated MessageType for protobuf message services.jobs.SetQualificationAccessRequest
+ */
+export const SetQualificationAccessRequest = new SetQualificationAccessRequest$Type();
+// @generated message type with reflection information, may provide speed optimized methods
+class SetQualificationAccessResponse$Type extends MessageType<SetQualificationAccessResponse> {
+    constructor() {
+        super("services.jobs.SetQualificationAccessResponse", []);
+    }
+    create(value?: PartialMessage<SetQualificationAccessResponse>): SetQualificationAccessResponse {
+        const message = globalThis.Object.create((this.messagePrototype!));
+        if (value !== undefined)
+            reflectionMergePartial<SetQualificationAccessResponse>(this, message, value);
+        return message;
+    }
+    internalBinaryRead(reader: IBinaryReader, length: number, options: BinaryReadOptions, target?: SetQualificationAccessResponse): SetQualificationAccessResponse {
+        return target ?? this.create();
+    }
+    internalBinaryWrite(message: SetQualificationAccessResponse, writer: IBinaryWriter, options: BinaryWriteOptions): IBinaryWriter {
+        let u = options.writeUnknownFields;
+        if (u !== false)
+            (u == true ? UnknownFieldHandler.onWrite : u)(this.typeName, message, writer);
+        return writer;
+    }
+}
+/**
+ * @generated MessageType for protobuf message services.jobs.SetQualificationAccessResponse
+ */
+export const SetQualificationAccessResponse = new SetQualificationAccessResponse$Type();
 /**
  * @generated ServiceType for protobuf service services.jobs.JobsQualificationsService
  */
 export const JobsQualificationsService = new ServiceType("services.jobs.JobsQualificationsService", [
     { name: "ListQualifications", options: {}, I: ListQualificationsRequest, O: ListQualificationsResponse },
+    { name: "GetQualification", options: {}, I: GetQualificationRequest, O: GetQualificationResponse },
     { name: "CreateQualification", options: {}, I: CreateQualificationRequest, O: CreateQualificationResponse },
     { name: "UpdateQualification", options: {}, I: UpdateQualificationRequest, O: UpdateQualificationResponse },
     { name: "DeleteQualification", options: {}, I: DeleteQualificationRequest, O: DeleteQualificationResponse }

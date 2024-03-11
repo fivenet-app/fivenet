@@ -110,13 +110,13 @@ func (s *Server) handleDocumentAccessChanges(ctx context.Context, tx qrm.DB, mod
 	case documents.AccessLevelUpdateMode_ACCESS_LEVEL_UPDATE_MODE_UNSPECIFIED:
 		fallthrough
 	case documents.AccessLevelUpdateMode_ACCESS_LEVEL_UPDATE_MODE_UPDATE:
-		toCreate, toUpdate, toDelete := s.compareDocumentAccess(tx, current, access)
+		toCreate, toUpdate, toDelete := s.compareDocumentAccess(current, access)
 
-		if err := s.createDocumentAccess(ctx, tx, documentId, userInfo.UserId, toCreate); err != nil {
+		if err := s.createDocumentAccess(ctx, tx, documentId, toCreate); err != nil {
 			return err
 		}
 
-		if err := s.updateDocumentAccess(ctx, tx, documentId, userInfo.UserId, toUpdate); err != nil {
+		if err := s.updateDocumentAccess(ctx, tx, documentId, toUpdate); err != nil {
 			return err
 		}
 
@@ -154,7 +154,7 @@ func (s *Server) handleDocumentAccessChanges(ctx context.Context, tx qrm.DB, mod
 	return nil
 }
 
-func (s *Server) compareDocumentAccess(tx qrm.DB, current, in *documents.DocumentAccess) (toCreate *documents.DocumentAccess, toUpdate *documents.DocumentAccess, toDelete *documents.DocumentAccess) {
+func (s *Server) compareDocumentAccess(current, in *documents.DocumentAccess) (toCreate *documents.DocumentAccess, toUpdate *documents.DocumentAccess, toDelete *documents.DocumentAccess) {
 	toCreate = &documents.DocumentAccess{}
 	toUpdate = &documents.DocumentAccess{}
 	toDelete = &documents.DocumentAccess{}
@@ -329,7 +329,7 @@ func (s *Server) getDocumentAccess(ctx context.Context, documentId uint64) (*doc
 	}, nil
 }
 
-func (s *Server) createDocumentAccess(ctx context.Context, tx qrm.DB, documentId uint64, userId int32, access *documents.DocumentAccess) error {
+func (s *Server) createDocumentAccess(ctx context.Context, tx qrm.DB, documentId uint64, access *documents.DocumentAccess) error {
 	if access == nil {
 		return nil
 	}
@@ -383,7 +383,7 @@ func (s *Server) createDocumentAccess(ctx context.Context, tx qrm.DB, documentId
 	return nil
 }
 
-func (s *Server) updateDocumentAccess(ctx context.Context, tx qrm.DB, documentId uint64, userId int32, access *documents.DocumentAccess) error {
+func (s *Server) updateDocumentAccess(ctx context.Context, tx qrm.DB, documentId uint64, access *documents.DocumentAccess) error {
 	if access == nil {
 		return nil
 	}

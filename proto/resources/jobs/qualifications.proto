@@ -34,6 +34,13 @@ message Qualification {
   QualificationAccess access = 14;
 }
 
+enum AccessLevelUpdateMode {
+  ACCESS_LEVEL_UPDATE_MODE_UNSPECIFIED = 0;
+  ACCESS_LEVEL_UPDATE_MODE_UPDATE = 1;
+  ACCESS_LEVEL_UPDATE_MODE_DELETE = 2;
+  ACCESS_LEVEL_UPDATE_MODE_CLEAR = 3;
+}
+
 enum AccessLevel {
   ACCESS_LEVEL_UNSPECIFIED = 0;
   ACCESS_LEVEL_BLOCKED = 1;
@@ -44,11 +51,11 @@ enum AccessLevel {
 }
 
 message QualificationAccess {
-  repeated JobAccess job = 1;
-  repeated RequiredQualification required_qualification = 2;
+  repeated QualificationJobAccess jobs = 1;
+  repeated QualificationRequirementsAccess requirements = 2;
 }
 
-message JobAccess {
+message QualificationJobAccess {
   uint64 id = 1 [jstype = JS_STRING]; // @gotags: alias:"id"
   optional resources.timestamp.Timestamp created_at = 2;
   uint64 qualification_id = 4 [jstype = JS_STRING];
@@ -56,13 +63,14 @@ message JobAccess {
   optional string job_label = 6 [(validate.rules).string.max_len = 50];
   int32 minimum_grade = 7 [(validate.rules).int32.gt = 0];
   optional string job_grade_label = 8 [(validate.rules).string.max_len = 50];
-  AccessLevel access = 9 [(validate.rules).enum.defined_only = true]; // @gotags: alias:"access"
+  AccessLevel access = 9 [(validate.rules).enum.defined_only = true];
 }
 
-message RequiredQualification {
+message QualificationRequirementsAccess {
   uint64 id = 1 [jstype = JS_STRING]; // @gotags: alias:"id"
   optional resources.timestamp.Timestamp created_at = 2;
   uint64 qualification_id = 3 [jstype = JS_STRING];
+  AccessLevel access = 4 [(validate.rules).enum.defined_only = true];
 }
 
 message QualificationRequest {

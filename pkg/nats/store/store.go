@@ -302,6 +302,8 @@ func (s *Store[T, U]) Delete(ctx context.Context, key string) error {
 		return err
 	}
 
+	s.data.Delete(key)
+
 	return nil
 }
 
@@ -375,7 +377,6 @@ func (s *Store[T, U]) Start(ctx context.Context) error {
 						defer mu.Unlock()
 
 						if s.OnDelete != nil {
-
 							item, _ := s.data.LoadAndDelete(entry.Key())
 							if err := s.OnDelete(entry, item); err != nil {
 								s.logger.Error("failed to run on delete logic in store watcher", zap.Error(err))

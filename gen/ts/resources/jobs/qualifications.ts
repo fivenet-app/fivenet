@@ -84,18 +84,18 @@ export interface Qualification {
  */
 export interface QualificationAccess {
     /**
-     * @generated from protobuf field: repeated resources.jobs.JobAccess job = 1;
+     * @generated from protobuf field: repeated resources.jobs.QualificationJobAccess jobs = 1;
      */
-    job: JobAccess[];
+    jobs: QualificationJobAccess[];
     /**
-     * @generated from protobuf field: repeated resources.jobs.RequiredQualification required_qualification = 2;
+     * @generated from protobuf field: repeated resources.jobs.QualificationRequirementsAccess requirements = 2;
      */
-    requiredQualification: RequiredQualification[];
+    requirements: QualificationRequirementsAccess[];
 }
 /**
- * @generated from protobuf message resources.jobs.JobAccess
+ * @generated from protobuf message resources.jobs.QualificationJobAccess
  */
-export interface JobAccess {
+export interface QualificationJobAccess {
     /**
      * @generated from protobuf field: uint64 id = 1 [jstype = JS_STRING];
      */
@@ -127,12 +127,12 @@ export interface JobAccess {
     /**
      * @generated from protobuf field: resources.jobs.AccessLevel access = 9;
      */
-    access: AccessLevel; // @gotags: alias:"access"
+    access: AccessLevel;
 }
 /**
- * @generated from protobuf message resources.jobs.RequiredQualification
+ * @generated from protobuf message resources.jobs.QualificationRequirementsAccess
  */
-export interface RequiredQualification {
+export interface QualificationRequirementsAccess {
     /**
      * @generated from protobuf field: uint64 id = 1 [jstype = JS_STRING];
      */
@@ -145,6 +145,10 @@ export interface RequiredQualification {
      * @generated from protobuf field: uint64 qualification_id = 3 [jstype = JS_STRING];
      */
     qualificationId: string;
+    /**
+     * @generated from protobuf field: resources.jobs.AccessLevel access = 4;
+     */
+    access: AccessLevel;
 }
 /**
  * @generated from protobuf message resources.jobs.QualificationRequest
@@ -263,6 +267,27 @@ export interface QualificationTestAnswer {
      * @generated from protobuf field: int32 user_id = 3;
      */
     userId: number; // TODO
+}
+/**
+ * @generated from protobuf enum resources.jobs.AccessLevelUpdateMode
+ */
+export enum AccessLevelUpdateMode {
+    /**
+     * @generated from protobuf enum value: ACCESS_LEVEL_UPDATE_MODE_UNSPECIFIED = 0;
+     */
+    UNSPECIFIED = 0,
+    /**
+     * @generated from protobuf enum value: ACCESS_LEVEL_UPDATE_MODE_UPDATE = 1;
+     */
+    UPDATE = 1,
+    /**
+     * @generated from protobuf enum value: ACCESS_LEVEL_UPDATE_MODE_DELETE = 2;
+     */
+    DELETE = 2,
+    /**
+     * @generated from protobuf enum value: ACCESS_LEVEL_UPDATE_MODE_CLEAR = 3;
+     */
+    CLEAR = 3
 }
 /**
  * @generated from protobuf enum resources.jobs.AccessLevel
@@ -443,14 +468,14 @@ export const Qualification = new Qualification$Type();
 class QualificationAccess$Type extends MessageType<QualificationAccess> {
     constructor() {
         super("resources.jobs.QualificationAccess", [
-            { no: 1, name: "job", kind: "message", repeat: 1 /*RepeatType.PACKED*/, T: () => JobAccess },
-            { no: 2, name: "required_qualification", kind: "message", repeat: 1 /*RepeatType.PACKED*/, T: () => RequiredQualification }
+            { no: 1, name: "jobs", kind: "message", repeat: 1 /*RepeatType.PACKED*/, T: () => QualificationJobAccess },
+            { no: 2, name: "requirements", kind: "message", repeat: 1 /*RepeatType.PACKED*/, T: () => QualificationRequirementsAccess }
         ]);
     }
     create(value?: PartialMessage<QualificationAccess>): QualificationAccess {
         const message = globalThis.Object.create((this.messagePrototype!));
-        message.job = [];
-        message.requiredQualification = [];
+        message.jobs = [];
+        message.requirements = [];
         if (value !== undefined)
             reflectionMergePartial<QualificationAccess>(this, message, value);
         return message;
@@ -460,11 +485,11 @@ class QualificationAccess$Type extends MessageType<QualificationAccess> {
         while (reader.pos < end) {
             let [fieldNo, wireType] = reader.tag();
             switch (fieldNo) {
-                case /* repeated resources.jobs.JobAccess job */ 1:
-                    message.job.push(JobAccess.internalBinaryRead(reader, reader.uint32(), options));
+                case /* repeated resources.jobs.QualificationJobAccess jobs */ 1:
+                    message.jobs.push(QualificationJobAccess.internalBinaryRead(reader, reader.uint32(), options));
                     break;
-                case /* repeated resources.jobs.RequiredQualification required_qualification */ 2:
-                    message.requiredQualification.push(RequiredQualification.internalBinaryRead(reader, reader.uint32(), options));
+                case /* repeated resources.jobs.QualificationRequirementsAccess requirements */ 2:
+                    message.requirements.push(QualificationRequirementsAccess.internalBinaryRead(reader, reader.uint32(), options));
                     break;
                 default:
                     let u = options.readUnknownField;
@@ -478,12 +503,12 @@ class QualificationAccess$Type extends MessageType<QualificationAccess> {
         return message;
     }
     internalBinaryWrite(message: QualificationAccess, writer: IBinaryWriter, options: BinaryWriteOptions): IBinaryWriter {
-        /* repeated resources.jobs.JobAccess job = 1; */
-        for (let i = 0; i < message.job.length; i++)
-            JobAccess.internalBinaryWrite(message.job[i], writer.tag(1, WireType.LengthDelimited).fork(), options).join();
-        /* repeated resources.jobs.RequiredQualification required_qualification = 2; */
-        for (let i = 0; i < message.requiredQualification.length; i++)
-            RequiredQualification.internalBinaryWrite(message.requiredQualification[i], writer.tag(2, WireType.LengthDelimited).fork(), options).join();
+        /* repeated resources.jobs.QualificationJobAccess jobs = 1; */
+        for (let i = 0; i < message.jobs.length; i++)
+            QualificationJobAccess.internalBinaryWrite(message.jobs[i], writer.tag(1, WireType.LengthDelimited).fork(), options).join();
+        /* repeated resources.jobs.QualificationRequirementsAccess requirements = 2; */
+        for (let i = 0; i < message.requirements.length; i++)
+            QualificationRequirementsAccess.internalBinaryWrite(message.requirements[i], writer.tag(2, WireType.LengthDelimited).fork(), options).join();
         let u = options.writeUnknownFields;
         if (u !== false)
             (u == true ? UnknownFieldHandler.onWrite : u)(this.typeName, message, writer);
@@ -495,9 +520,9 @@ class QualificationAccess$Type extends MessageType<QualificationAccess> {
  */
 export const QualificationAccess = new QualificationAccess$Type();
 // @generated message type with reflection information, may provide speed optimized methods
-class JobAccess$Type extends MessageType<JobAccess> {
+class QualificationJobAccess$Type extends MessageType<QualificationJobAccess> {
     constructor() {
-        super("resources.jobs.JobAccess", [
+        super("resources.jobs.QualificationJobAccess", [
             { no: 1, name: "id", kind: "scalar", T: 4 /*ScalarType.UINT64*/ },
             { no: 2, name: "created_at", kind: "message", T: () => Timestamp },
             { no: 4, name: "qualification_id", kind: "scalar", T: 4 /*ScalarType.UINT64*/ },
@@ -508,7 +533,7 @@ class JobAccess$Type extends MessageType<JobAccess> {
             { no: 9, name: "access", kind: "enum", T: () => ["resources.jobs.AccessLevel", AccessLevel, "ACCESS_LEVEL_"], options: { "validate.rules": { enum: { definedOnly: true } } } }
         ]);
     }
-    create(value?: PartialMessage<JobAccess>): JobAccess {
+    create(value?: PartialMessage<QualificationJobAccess>): QualificationJobAccess {
         const message = globalThis.Object.create((this.messagePrototype!));
         message.id = "0";
         message.qualificationId = "0";
@@ -516,10 +541,10 @@ class JobAccess$Type extends MessageType<JobAccess> {
         message.minimumGrade = 0;
         message.access = 0;
         if (value !== undefined)
-            reflectionMergePartial<JobAccess>(this, message, value);
+            reflectionMergePartial<QualificationJobAccess>(this, message, value);
         return message;
     }
-    internalBinaryRead(reader: IBinaryReader, length: number, options: BinaryReadOptions, target?: JobAccess): JobAccess {
+    internalBinaryRead(reader: IBinaryReader, length: number, options: BinaryReadOptions, target?: QualificationJobAccess): QualificationJobAccess {
         let message = target ?? this.create(), end = reader.pos + length;
         while (reader.pos < end) {
             let [fieldNo, wireType] = reader.tag();
@@ -559,7 +584,7 @@ class JobAccess$Type extends MessageType<JobAccess> {
         }
         return message;
     }
-    internalBinaryWrite(message: JobAccess, writer: IBinaryWriter, options: BinaryWriteOptions): IBinaryWriter {
+    internalBinaryWrite(message: QualificationJobAccess, writer: IBinaryWriter, options: BinaryWriteOptions): IBinaryWriter {
         /* uint64 id = 1 [jstype = JS_STRING]; */
         if (message.id !== "0")
             writer.tag(1, WireType.Varint).uint64(message.id);
@@ -591,27 +616,29 @@ class JobAccess$Type extends MessageType<JobAccess> {
     }
 }
 /**
- * @generated MessageType for protobuf message resources.jobs.JobAccess
+ * @generated MessageType for protobuf message resources.jobs.QualificationJobAccess
  */
-export const JobAccess = new JobAccess$Type();
+export const QualificationJobAccess = new QualificationJobAccess$Type();
 // @generated message type with reflection information, may provide speed optimized methods
-class RequiredQualification$Type extends MessageType<RequiredQualification> {
+class QualificationRequirementsAccess$Type extends MessageType<QualificationRequirementsAccess> {
     constructor() {
-        super("resources.jobs.RequiredQualification", [
+        super("resources.jobs.QualificationRequirementsAccess", [
             { no: 1, name: "id", kind: "scalar", T: 4 /*ScalarType.UINT64*/ },
             { no: 2, name: "created_at", kind: "message", T: () => Timestamp },
-            { no: 3, name: "qualification_id", kind: "scalar", T: 4 /*ScalarType.UINT64*/ }
+            { no: 3, name: "qualification_id", kind: "scalar", T: 4 /*ScalarType.UINT64*/ },
+            { no: 4, name: "access", kind: "enum", T: () => ["resources.jobs.AccessLevel", AccessLevel, "ACCESS_LEVEL_"], options: { "validate.rules": { enum: { definedOnly: true } } } }
         ]);
     }
-    create(value?: PartialMessage<RequiredQualification>): RequiredQualification {
+    create(value?: PartialMessage<QualificationRequirementsAccess>): QualificationRequirementsAccess {
         const message = globalThis.Object.create((this.messagePrototype!));
         message.id = "0";
         message.qualificationId = "0";
+        message.access = 0;
         if (value !== undefined)
-            reflectionMergePartial<RequiredQualification>(this, message, value);
+            reflectionMergePartial<QualificationRequirementsAccess>(this, message, value);
         return message;
     }
-    internalBinaryRead(reader: IBinaryReader, length: number, options: BinaryReadOptions, target?: RequiredQualification): RequiredQualification {
+    internalBinaryRead(reader: IBinaryReader, length: number, options: BinaryReadOptions, target?: QualificationRequirementsAccess): QualificationRequirementsAccess {
         let message = target ?? this.create(), end = reader.pos + length;
         while (reader.pos < end) {
             let [fieldNo, wireType] = reader.tag();
@@ -625,6 +652,9 @@ class RequiredQualification$Type extends MessageType<RequiredQualification> {
                 case /* uint64 qualification_id = 3 [jstype = JS_STRING];*/ 3:
                     message.qualificationId = reader.uint64().toString();
                     break;
+                case /* resources.jobs.AccessLevel access */ 4:
+                    message.access = reader.int32();
+                    break;
                 default:
                     let u = options.readUnknownField;
                     if (u === "throw")
@@ -636,7 +666,7 @@ class RequiredQualification$Type extends MessageType<RequiredQualification> {
         }
         return message;
     }
-    internalBinaryWrite(message: RequiredQualification, writer: IBinaryWriter, options: BinaryWriteOptions): IBinaryWriter {
+    internalBinaryWrite(message: QualificationRequirementsAccess, writer: IBinaryWriter, options: BinaryWriteOptions): IBinaryWriter {
         /* uint64 id = 1 [jstype = JS_STRING]; */
         if (message.id !== "0")
             writer.tag(1, WireType.Varint).uint64(message.id);
@@ -646,6 +676,9 @@ class RequiredQualification$Type extends MessageType<RequiredQualification> {
         /* uint64 qualification_id = 3 [jstype = JS_STRING]; */
         if (message.qualificationId !== "0")
             writer.tag(3, WireType.Varint).uint64(message.qualificationId);
+        /* resources.jobs.AccessLevel access = 4; */
+        if (message.access !== 0)
+            writer.tag(4, WireType.Varint).int32(message.access);
         let u = options.writeUnknownFields;
         if (u !== false)
             (u == true ? UnknownFieldHandler.onWrite : u)(this.typeName, message, writer);
@@ -653,9 +686,9 @@ class RequiredQualification$Type extends MessageType<RequiredQualification> {
     }
 }
 /**
- * @generated MessageType for protobuf message resources.jobs.RequiredQualification
+ * @generated MessageType for protobuf message resources.jobs.QualificationRequirementsAccess
  */
-export const RequiredQualification = new RequiredQualification$Type();
+export const QualificationRequirementsAccess = new QualificationRequirementsAccess$Type();
 // @generated message type with reflection information, may provide speed optimized methods
 class QualificationRequest$Type extends MessageType<QualificationRequest> {
     constructor() {

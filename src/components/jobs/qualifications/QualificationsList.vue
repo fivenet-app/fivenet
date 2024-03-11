@@ -10,7 +10,7 @@ const { $grpc } = useNuxtApp();
 
 const offset = ref(0n);
 
-const { data, pending, refresh, error } = useLazyAsyncData(`jobs-colleagues-${offset.value}`, () => listQualifications());
+const { data, pending, refresh, error } = useLazyAsyncData(`jobs-qualifications-${offset.value}`, () => listQualifications());
 
 async function listQualifications(): Promise<ListQualificationsResponse> {
     try {
@@ -39,6 +39,7 @@ async function listQualifications(): Promise<ListQualificationsResponse> {
                 :retry="refresh"
             />
             <DataNoDataBlock v-else-if="data?.qualifications.length === 0" />
+
             <template v-else>
                 <ul role="list" class="divide-y divide-gray-100">
                     <QualificationsListEntry

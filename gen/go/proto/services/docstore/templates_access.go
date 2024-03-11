@@ -6,7 +6,6 @@ import (
 	"slices"
 
 	"github.com/galexrt/fivenet/gen/go/proto/resources/documents"
-	"github.com/galexrt/fivenet/pkg/grpc/auth"
 	"github.com/galexrt/fivenet/pkg/grpc/auth/userinfo"
 	"github.com/galexrt/fivenet/query/fivenet/table"
 	jet "github.com/go-jet/jet/v2/mysql"
@@ -14,21 +13,19 @@ import (
 )
 
 func (s *Server) handleTemplateAccessChanges(ctx context.Context, tx qrm.DB, templateId uint64, access []*documents.TemplateJobAccess) error {
-	userInfo := auth.MustGetUserInfoFromContext(ctx)
-
 	// Get existing job and user accesses from database
 	current, err := s.getTemplateJobAccess(ctx, templateId)
 	if err != nil {
 		return err
 	}
 
-	toCreate, toUpdate, toDelete := s.compareTemplateJobAccess(tx, current, access)
+	toCreate, toUpdate, toDelete := s.compareTemplateJobAccess(current, access)
 
-	if err := s.createTemplateJobAccess(ctx, tx, templateId, userInfo.UserId, toCreate); err != nil {
+	if err := s.createTemplateJobAccess(ctx, tx, templateId, toCreate); err != nil {
 		return err
 	}
 
-	if err := s.updateTemplateJobAccess(ctx, tx, templateId, userInfo.UserId, toUpdate); err != nil {
+	if err := s.updateTemplateJobAccess(ctx, tx, templateId, toUpdate); err != nil {
 		return err
 	}
 
@@ -70,7 +67,7 @@ func (s *Server) getTemplateJobAccess(ctx context.Context, templateId uint64) ([
 	return jobAccess, nil
 }
 
-func (s *Server) compareTemplateJobAccess(tx qrm.DB, current, in []*documents.TemplateJobAccess) (toCreate []*documents.TemplateJobAccess, toUpdate []*documents.TemplateJobAccess, toDelete []*documents.TemplateJobAccess) {
+func (s *Server) compareTemplateJobAccess(current, in []*documents.TemplateJobAccess) (toCreate []*documents.TemplateJobAccess, toUpdate []*documents.TemplateJobAccess, toDelete []*documents.TemplateJobAccess) {
 	toCreate = []*documents.TemplateJobAccess{}
 	toUpdate = []*documents.TemplateJobAccess{}
 	toDelete = []*documents.TemplateJobAccess{}
@@ -135,7 +132,7 @@ func (s *Server) compareTemplateJobAccess(tx qrm.DB, current, in []*documents.Te
 	return
 }
 
-func (s *Server) createTemplateJobAccess(ctx context.Context, tx qrm.DB, templateId uint64, userId int32, access []*documents.TemplateJobAccess) error {
+func (s *Server) createTemplateJobAccess(ctx context.Context, tx qrm.DB, templateId uint64, access []*documents.TemplateJobAccess) error {
 	if access == nil {
 		return nil
 	}
@@ -165,7 +162,7 @@ func (s *Server) createTemplateJobAccess(ctx context.Context, tx qrm.DB, templat
 	return nil
 }
 
-func (s *Server) updateTemplateJobAccess(ctx context.Context, tx qrm.DB, templateId uint64, userId int32, access []*documents.TemplateJobAccess) error {
+func (s *Server) updateTemplateJobAccess(ctx context.Context, tx qrm.DB, templateId uint64, access []*documents.TemplateJobAccess) error {
 	if access == nil {
 		return nil
 	}
@@ -231,12 +228,12 @@ func (s *Server) deleteTemplateJobAccess(ctx context.Context, tx qrm.DB, templat
 	return nil
 }
 
-func (s *Server) checkIfUserHasAccessToTemplate(ctx context.Context, templateId uint64, userInfo *userinfo.UserInfo, highestRankOk bool, access documents.AccessLevel) (bool, error) {
-	out, err := s.checkIfUserHasAccessToTemplateIDs(ctx, userInfo, highestRankOk, access, templateId)
+func (s *Server) checkIfUserHasAccessToTemplate(ctx context.Context, templateId uint64, userInfo *userinfo.UserInfo, access documents.AccessLevel) (bool, error) {
+	out, err := s.checkIfUserHasAccessToTemplateIDs(ctx, userInfo, access, templateId)
 	return len(out) > 0, err
 }
 
-func (s *Server) checkIfUserHasAccessToTemplateIDs(ctx context.Context, userInfo *userinfo.UserInfo, highestRankOk bool, access documents.AccessLevel, templateIds ...uint64) ([]uint64, error) {
+func (s *Server) checkIfUserHasAccessToTemplateIDs(ctx context.Context, userInfo *userinfo.UserInfo, access documents.AccessLevel, templateIds ...uint64) ([]uint64, error) {
 	if len(templateIds) == 0 {
 		return templateIds, nil
 	}

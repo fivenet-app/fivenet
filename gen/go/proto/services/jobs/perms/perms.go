@@ -23,6 +23,7 @@ const (
 	JobsConductServiceUpdateConductEntryPerm            perms.Name = "UpdateConductEntry"
 	JobsQualificationsServiceCreateQualificationPerm    perms.Name = "CreateQualification"
 	JobsQualificationsServiceDeleteQualificationPerm    perms.Name = "DeleteQualification"
+	JobsQualificationsServiceGetQualificationPerm       perms.Name = "GetQualification"
 	JobsQualificationsServiceListQualificationsPerm     perms.Name = "ListQualifications"
 	JobsQualificationsServiceUpdateQualificationPerm    perms.Name = "UpdateQualification"
 	JobsServiceGetColleaguePerm                         perms.Name = "GetColleague"

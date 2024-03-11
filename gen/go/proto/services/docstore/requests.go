@@ -352,7 +352,7 @@ func (s *Server) UpdateDocumentReq(ctx context.Context, req *UpdateDocumentReqRe
 				return nil, errswrap.NewError(errorsdocstore.ErrFailedQuery, err)
 			}
 
-			if err := s.createDocumentAccess(ctx, tx, request.DocumentId, userInfo.UserId, &documents.DocumentAccess{
+			if err := s.createDocumentAccess(ctx, tx, request.DocumentId, &documents.DocumentAccess{
 				Users: []*documents.DocumentUserAccess{
 					{
 						UserId:     *request.CreatorId,
