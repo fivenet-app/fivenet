@@ -75,7 +75,7 @@ func (s *State) DeleteUnit(ctx context.Context, job string, id uint64) error {
 func (s *State) UpdateUnit(ctx context.Context, job string, id uint64, unit *centrum.Unit) error {
 	if err := s.units.ComputeUpdate(ctx, JobIdKey(job, id), true, func(key string, existing *centrum.Unit) (*centrum.Unit, bool, error) {
 		if existing == nil {
-			return unit, false, nil
+			return unit, unit != nil, nil
 		}
 
 		if !proto.Equal(existing, unit) {

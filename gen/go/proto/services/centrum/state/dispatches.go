@@ -98,7 +98,7 @@ func (s *State) CreateDispatch(ctx context.Context, job string, id uint64, dsp *
 func (s *State) UpdateDispatch(ctx context.Context, job string, id uint64, dsp *centrum.Dispatch) error {
 	if err := s.dispatches.ComputeUpdate(ctx, JobIdKey(job, id), true, func(key string, existing *centrum.Dispatch) (*centrum.Dispatch, bool, error) {
 		if existing == nil {
-			return dsp, false, nil
+			return dsp, dsp != nil, nil
 		}
 
 		if !proto.Equal(existing, dsp) {
