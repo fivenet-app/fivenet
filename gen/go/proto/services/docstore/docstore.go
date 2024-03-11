@@ -661,9 +661,7 @@ func (s *Server) ChangeDocumentOwner(ctx context.Context, req *ChangeDocumentOwn
 		return nil, errswrap.NewError(errorsdocstore.ErrNotFoundOrNoPerms, err)
 	}
 	if !check && !userInfo.SuperUser {
-		if !userInfo.SuperUser {
-			return nil, errorsdocstore.ErrDocToggleDenied
-		}
+		return nil, errorsdocstore.ErrDocOwnerFailed
 	}
 
 	doc, err := s.getDocument(ctx, tDocument.ID.EQ(jet.Uint64(req.DocumentId)), userInfo)
@@ -691,7 +689,7 @@ func (s *Server) ChangeDocumentOwner(ctx context.Context, req *ChangeDocumentOwn
 		fields = fieldsAttr.([]string)
 	}
 	if !s.checkIfHasAccess(fields, userInfo, doc.CreatorJob, doc.Creator) {
-		return nil, errorsdocstore.ErrDocToggleDenied
+		return nil, errorsdocstore.ErrDocOwnerFailed
 	}
 
 	tUsers := tUsers.AS("user_short")
