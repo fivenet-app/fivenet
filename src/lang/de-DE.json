@@ -1744,7 +1744,8 @@
             "ErrDocRequiredAccessTemplate": {
                 "title": "Erforderlicher Dokumenten-Zugriff verändert/entfernt!",
                 "content": "Stellen Sie sicher, dass Sie keine erforderlichen Dokumenten-Zugriffe verändert oder entfernt haben."
-            }
+            },
+            "ErrDocOwnerFailed": "Sie müssen Editier-Rechte auf das Dokument haben!"
         },
         "LivemapperService": {
             "ErrStreamFailed": "Karten-Datenstrom fehlgeschlagen!",
