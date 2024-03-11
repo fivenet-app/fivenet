@@ -149,6 +149,25 @@ CREATE TABLE IF NOT EXISTS `fivenet_jobs_qualifications_results` (
 ) ENGINE=InnoDB;
 
 -- Table: fivenet_jobs_qualifications_requests
--- TODO
+CREATE TABLE IF NOT EXISTS `fivenet_jobs_qualifications_requests` (
+  `id` bigint(20) unsigned NOT NULL AUTO_INCREMENT,
+  `created_at` datetime(3) DEFAULT CURRENT_TIMESTAMP(3),
+  `deleted_at` datetime(3) DEFAULT CURRENT_TIMESTAMP(3),
+  `qualification_id` bigint(20) unsigned NOT NULL,
+  `user_id` int(11) NOT NULL,
+  `user_comment` varchar(255) DEFAULT NULL,
+  `approved` tinyint(1) DEFAULT 0,
+  `approved_at` datetime(3) DEFAULT CURRENT_TIMESTAMP(3),
+  `approver_comment` varchar(255) DEFAULT NULL,
+  `approver_id` int(11) NULL DEFAULT NULL,
+  `approver_job` varchar(50) NOT NULL,
+  PRIMARY KEY (`id`),
+  KEY `idx_fivenet_jobs_qualifications_requests_quali_id_user_id` (`qualification_id`, `user_id`),
+  KEY `idx_fivenet_jobs_qualifications_requests_approved` (`approved`),
+  KEY `idx_fivenet_jobs_qualifications_requests_approved_at` (`approved_at`),
+  CONSTRAINT `fk_fivenet_jobs_qualifications_requests_qualification_id` FOREIGN KEY (`qualification_id`) REFERENCES `fivenet_jobs_qualifications` (`id`) ON DELETE CASCADE ON UPDATE CASCADE,
+  CONSTRAINT `fk_fivenet_jobs_qualifications_requests_user_id` FOREIGN KEY (`user_id`) REFERENCES `users` (`id`) ON DELETE CASCADE ON UPDATE CASCADE,
+  CONSTRAINT `fk_fivenet_jobs_qualifications_requests_approver_id` FOREIGN KEY (`approver_id`) REFERENCES `users` (`id`) ON DELETE SET NULL ON UPDATE CASCADE
+) ENGINE=InnoDB;
 
 COMMIT;

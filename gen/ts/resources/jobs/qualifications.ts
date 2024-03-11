@@ -314,17 +314,21 @@ export enum AccessLevel {
      */
     VIEW = 2,
     /**
-     * @generated from protobuf enum value: ACCESS_LEVEL_TAKE = 3;
+     * @generated from protobuf enum value: ACCESS_LEVEL_REQUEST = 3;
      */
-    TAKE = 3,
+    REQUEST = 3,
     /**
-     * @generated from protobuf enum value: ACCESS_LEVEL_GRADE = 4;
+     * @generated from protobuf enum value: ACCESS_LEVEL_TAKE = 4;
      */
-    GRADE = 4,
+    TAKE = 4,
     /**
-     * @generated from protobuf enum value: ACCESS_LEVEL_EDIT = 5;
+     * @generated from protobuf enum value: ACCESS_LEVEL_GRADE = 5;
      */
-    EDIT = 5
+    GRADE = 5,
+    /**
+     * @generated from protobuf enum value: ACCESS_LEVEL_EDIT = 6;
+     */
+    EDIT = 6
 }
 // @generated message type with reflection information, may provide speed optimized methods
 class Qualification$Type extends MessageType<Qualification> {

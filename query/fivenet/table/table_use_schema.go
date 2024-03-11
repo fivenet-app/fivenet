@@ -41,6 +41,7 @@ func UseSchema(schema string) {
 	FivenetJobsQualifications = FivenetJobsQualifications.FromSchema(schema)
 	FivenetJobsQualificationsJobAccess = FivenetJobsQualificationsJobAccess.FromSchema(schema)
 	FivenetJobsQualificationsReqsAccess = FivenetJobsQualificationsReqsAccess.FromSchema(schema)
+	FivenetJobsQualificationsRequests = FivenetJobsQualificationsRequests.FromSchema(schema)
 	FivenetJobsQualificationsResults = FivenetJobsQualificationsResults.FromSchema(schema)
 	FivenetJobsTimeclock = FivenetJobsTimeclock.FromSchema(schema)
 	FivenetJobsUserActivity = FivenetJobsUserActivity.FromSchema(schema)

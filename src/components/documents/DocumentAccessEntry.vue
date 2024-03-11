@@ -157,11 +157,11 @@ onMounted(async () => {
             entriesMinimumRank.value = selectedJob.value.grades;
         }
         selectedMinimumRank.value = entriesMinimumRank.value.find((rank) => rank.grade === props.init.values.minimumGrade);
+    }
 
-        // Make sure to load jobs from completor if empty
-        if (jobs.value.length === 0) {
-            listJobs();
-        }
+    // Make sure to load jobs from completor if empty
+    if (props.init.type === 1 && jobs.value.length === 0) {
+        listJobs();
     }
     selectedAccessRole.value = entriesAccessRoles.find((type) => type.id === props.init.values.accessRole);
 });
