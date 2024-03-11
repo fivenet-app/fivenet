@@ -30,12 +30,11 @@ function addToClipboard(): void {
         <td class="whitespace-nowrap py-2 pl-4 pr-3 text-sm font-medium text-neutral sm:pl-1">
             <span>{{ user.firstname }} {{ user.lastname }}</span>
             <span class="lg:hidden"> ({{ user.dateofbirth }}) </span>
-            <span
-                v-if="user.props?.wanted"
-                class="ml-1 inline-flex items-center rounded-full bg-error-100 px-2.5 py-0.5 text-sm font-medium text-error-700"
-            >
+
+            <span v-if="user.props?.wanted" class="ml-1 rounded-md bg-error-100 px-2 py-0.5 text-sm font-medium text-error-700">
                 {{ $t('common.wanted').toUpperCase() }}
             </span>
+
             <dl class="font-normal lg:hidden">
                 <dt class="sr-only">{{ $t('common.sex') }} - {{ $t('common.job') }}</dt>
                 <dd class="mt-1 truncate text-accent-200">{{ user.sex!.toUpperCase() }} - {{ user.jobLabel }}</dd>

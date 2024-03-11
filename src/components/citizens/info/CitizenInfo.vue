@@ -20,7 +20,7 @@ import type { Perms } from '~~/gen/ts/perms';
 import ProfilePictureImg from '~/components/partials/citizens/ProfilePictureImg.vue';
 
 const props = defineProps<{
-    id: string;
+    id: number;
 }>();
 
 const { $grpc } = useNuxtApp();
@@ -57,7 +57,7 @@ const tabs: { id: string; name: string; icon: DefineComponent; permission: Perms
     },
 ].filter((tab) => can(tab.permission));
 
-const { data: user, pending, refresh, error } = useLazyAsyncData(`citizen-${props.id}`, () => getUser(parseInt(props.id, 10)));
+const { data: user, pending, refresh, error } = useLazyAsyncData(`citizen-${props.id}`, () => getUser(props.id));
 
 async function getUser(userId: number): Promise<User> {
     try {

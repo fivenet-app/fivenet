@@ -63,9 +63,9 @@ watch(offset, async () => refresh());
                             :type="`${$t('common.document', 1)} ${$t('common.relation', 2)}`"
                             :icon="FileDocumentMultipleIcon"
                         />
-                        <div v-else-if="data?.relations">
+                        <template v-else-if="data?.relations">
                             <!-- Relations list (smallest breakpoint only) -->
-                            <div v-if="data?.relations.length > 0" class="text-neutral sm:hidden">
+                            <div class="text-neutral sm:hidden">
                                 <ul role="list" class="mt-2 divide-y divide-gray-600 overflow-hidden rounded-lg sm:hidden">
                                     <li
                                         v-for="relation in data?.relations"
@@ -245,24 +245,19 @@ watch(offset, async () => refresh());
                                                         <td class="whitespace-nowrap px-6 py-4 text-right text-sm">
                                                             <GenericTime :value="relation.createdAt" />
                                                         </td>
-                                                        <td class="hidden whitespace-nowrap px-6 py-4 text-sm md:block">
-                                                            <div class="flex">
-                                                                <NuxtLink
-                                                                    :to="{
-                                                                        name: 'citizens-id',
-                                                                        params: {
-                                                                            id: relation.sourceUserId,
-                                                                        },
-                                                                    }"
-                                                                    class="group inline-flex space-x-2 truncate text-sm"
-                                                                >
-                                                                    {{
-                                                                        relation.sourceUser?.firstname +
-                                                                        ', ' +
-                                                                        relation.sourceUser?.lastname
-                                                                    }}
-                                                                </NuxtLink>
-                                                            </div>
+                                                        <td class="items-center whitespace-nowrap px-6 py-4 text-right text-sm">
+                                                            <NuxtLink
+                                                                :to="{
+                                                                    name: 'citizens-id',
+                                                                    params: {
+                                                                        id: relation.sourceUserId,
+                                                                    },
+                                                                }"
+                                                                class="truncate"
+                                                            >
+                                                                {{ relation.sourceUser?.firstname }}
+                                                                {{ relation.sourceUser?.lastname }}
+                                                            </NuxtLink>
                                                         </td>
                                                     </tr>
                                                 </tbody>
@@ -277,7 +272,7 @@ watch(offset, async () => refresh());
                                     </div>
                                 </div>
                             </div>
-                        </div>
+                        </template>
                     </div>
                 </div>
             </div>

@@ -133,7 +133,6 @@ async function updateAppConfig(values: FormData): Promise<void> {
     if (data.value.config.discord.syncInterval === undefined && values.discordSyncInterval) {
         data.value.config.discord.syncInterval = toDuration(values.discordSyncInterval);
     }
-    console.log(data.value);
 
     try {
         const { response } = await $grpc.getRectorConfigClient().updateAppConfig({
