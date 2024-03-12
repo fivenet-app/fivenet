@@ -6,6 +6,7 @@ import (
 	"os"
 	"testing"
 
+	errorsauth "github.com/galexrt/fivenet/gen/go/proto/services/auth/errors"
 	permsauth "github.com/galexrt/fivenet/gen/go/proto/services/auth/perms"
 	"github.com/galexrt/fivenet/internal/modules"
 	"github.com/galexrt/fivenet/internal/tests/proto"
@@ -74,7 +75,7 @@ func TestFullAuthFlow(t *testing.T) {
 	res, err := client.Login(ctx, loginReq)
 	assert.Error(t, err)
 	assert.Nil(t, res)
-	proto.CompareGRPCError(t, ErrInvalidLogin, err)
+	proto.CompareGRPCError(t, errorsauth.ErrInvalidLogin, err)
 
 	// Login with invalid credentials
 	loginReq.Username = "non-existant-username"
@@ -82,7 +83,7 @@ func TestFullAuthFlow(t *testing.T) {
 	res, err = client.Login(ctx, loginReq)
 	assert.Error(t, err)
 	assert.Nil(t, res)
-	proto.CompareGRPCError(t, ErrInvalidLogin, err)
+	proto.CompareGRPCError(t, errorsauth.ErrInvalidLogin, err)
 
 	// user-3: Login with valid account that has one char
 	loginReq.Username = "user-3"
@@ -136,7 +137,7 @@ func TestFullAuthFlow(t *testing.T) {
 	chooseCharRes, err := client.ChooseCharacter(ctx, chooseCharReq)
 	assert.Error(t, err)
 	assert.Nil(t, chooseCharRes)
-	proto.CompareGRPCError(t, ErrUnableToChooseChar, err)
+	proto.CompareGRPCError(t, errorsauth.ErrUnableToChooseChar, err)
 
 	role, err := srv.ps.GetRoleByJobAndGrade(ctx, "ambulance", 1)
 	assert.NoError(t, err)
@@ -159,7 +160,7 @@ func TestFullAuthFlow(t *testing.T) {
 	chooseCharRes, err = client.ChooseCharacter(ctx, chooseCharReq)
 	assert.Error(t, err)
 	assert.Nil(t, chooseCharRes)
-	proto.CompareGRPCError(t, ErrUnableToChooseChar, err)
+	proto.CompareGRPCError(t, errorsauth.ErrUnableToChooseChar, err)
 
 	// user-1: Choose valid character, now we add a permssion
 	err = srv.ps.UpdateRolePermissions(ctx, role.ID, perms.AddPerm{
