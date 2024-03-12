@@ -310,7 +310,14 @@ func (s *Server) Stream(req *StreamRequest, srv NotificatorService_StreamServer)
 
 		case msg := <-msgCh:
 			// Publish notifications sent directly to user via the message queue
-			msg.Ack()
+			if msg == nil {
+				s.logger.Warn("nil notification message received via message queue", zap.Int32("user_id", currentUserInfo.UserId))
+				return nil
+			}
+
+			if err := msg.Ack(); err != nil {
+				s.logger.Error("failed to ack notification message", zap.Error(err))
+			}
 
 			var dest notifications.Notification
 			if err := proto.Unmarshal(msg.Data(), &dest); err != nil {

@@ -19,9 +19,10 @@ type fivenetJobsQualificationsResultsTable struct {
 	// Columns
 	ID              mysql.ColumnInteger
 	CreatedAt       mysql.ColumnTimestamp
+	DeletedAt       mysql.ColumnTimestamp
 	QualificationID mysql.ColumnInteger
 	UserID          mysql.ColumnInteger
-	Successful      mysql.ColumnBool
+	Status          mysql.ColumnInteger
 	Score           mysql.ColumnInteger
 	Summary         mysql.ColumnString
 	CreatorID       mysql.ColumnInteger
@@ -68,15 +69,16 @@ func newFivenetJobsQualificationsResultsTableImpl(schemaName, tableName, alias s
 	var (
 		IDColumn              = mysql.IntegerColumn("id")
 		CreatedAtColumn       = mysql.TimestampColumn("created_at")
+		DeletedAtColumn       = mysql.TimestampColumn("deleted_at")
 		QualificationIDColumn = mysql.IntegerColumn("qualification_id")
 		UserIDColumn          = mysql.IntegerColumn("user_id")
-		SuccessfulColumn      = mysql.BoolColumn("successful")
+		StatusColumn          = mysql.IntegerColumn("status")
 		ScoreColumn           = mysql.IntegerColumn("score")
 		SummaryColumn         = mysql.StringColumn("summary")
 		CreatorIDColumn       = mysql.IntegerColumn("creator_id")
 		CreatorJobColumn      = mysql.StringColumn("creator_job")
-		allColumns            = mysql.ColumnList{IDColumn, CreatedAtColumn, QualificationIDColumn, UserIDColumn, SuccessfulColumn, ScoreColumn, SummaryColumn, CreatorIDColumn, CreatorJobColumn}
-		mutableColumns        = mysql.ColumnList{CreatedAtColumn, QualificationIDColumn, UserIDColumn, SuccessfulColumn, ScoreColumn, SummaryColumn, CreatorIDColumn, CreatorJobColumn}
+		allColumns            = mysql.ColumnList{IDColumn, CreatedAtColumn, DeletedAtColumn, QualificationIDColumn, UserIDColumn, StatusColumn, ScoreColumn, SummaryColumn, CreatorIDColumn, CreatorJobColumn}
+		mutableColumns        = mysql.ColumnList{CreatedAtColumn, DeletedAtColumn, QualificationIDColumn, UserIDColumn, StatusColumn, ScoreColumn, SummaryColumn, CreatorIDColumn, CreatorJobColumn}
 	)
 
 	return fivenetJobsQualificationsResultsTable{
@@ -85,9 +87,10 @@ func newFivenetJobsQualificationsResultsTableImpl(schemaName, tableName, alias s
 		//Columns
 		ID:              IDColumn,
 		CreatedAt:       CreatedAtColumn,
+		DeletedAt:       DeletedAtColumn,
 		QualificationID: QualificationIDColumn,
 		UserID:          UserIDColumn,
-		Successful:      SuccessfulColumn,
+		Status:          StatusColumn,
 		Score:           ScoreColumn,
 		Summary:         SummaryColumn,
 		CreatorID:       CreatorIDColumn,

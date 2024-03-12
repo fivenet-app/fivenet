@@ -41,9 +41,9 @@ export interface Qualification {
      */
     weight: number;
     /**
-     * @generated from protobuf field: bool open = 7;
+     * @generated from protobuf field: bool closed = 7;
      */
-    open: boolean;
+    closed: boolean;
     /**
      * @sanitize: method=StripTags
      *
@@ -78,6 +78,10 @@ export interface Qualification {
      * @generated from protobuf field: resources.jobs.QualificationAccess access = 14;
      */
     access?: QualificationAccess;
+    /**
+     * @generated from protobuf field: optional resources.jobs.QualificationDiscordSettings discord_settings = 15;
+     */
+    discordSettings?: QualificationDiscordSettings;
 }
 /**
  * @generated from protobuf message resources.jobs.QualificationAccess
@@ -179,9 +183,9 @@ export interface QualificationResult {
      */
     user?: UserShort;
     /**
-     * @generated from protobuf field: bool successful = 7;
+     * @generated from protobuf field: resources.jobs.ResultStatus status = 7;
      */
-    successful: boolean;
+    status: ResultStatus;
     /**
      * @generated from protobuf field: uint32 score = 8;
      */
@@ -247,34 +251,17 @@ export interface QualificationRequest {
     approver?: UserShort;
 }
 /**
- * @generated from protobuf message resources.jobs.QualificationTestQuestion
+ * @generated from protobuf message resources.jobs.QualificationDiscordSettings
  */
-export interface QualificationTestQuestion {
+export interface QualificationDiscordSettings {
     /**
-     * @generated from protobuf field: uint64 qualification_id = 1 [jstype = JS_STRING];
+     * @generated from protobuf field: bool sync_enabled = 1;
      */
-    qualificationId: string;
+    syncEnabled: boolean;
     /**
-     * @generated from protobuf field: string question = 2;
+     * @generated from protobuf field: optional string role_name = 2;
      */
-    question: string; // TODO
-}
-/**
- * @generated from protobuf message resources.jobs.QualificationTestAnswer
- */
-export interface QualificationTestAnswer {
-    /**
-     * @generated from protobuf field: uint64 qualification_id = 1 [jstype = JS_STRING];
-     */
-    qualificationId: string;
-    /**
-     * @generated from protobuf field: optional resources.timestamp.Timestamp created_at = 2;
-     */
-    createdAt?: Timestamp;
-    /**
-     * @generated from protobuf field: int32 user_id = 3;
-     */
-    userId: number; // TODO
+    roleName?: string;
 }
 /**
  * @generated from protobuf enum resources.jobs.AccessLevelUpdateMode
@@ -330,6 +317,27 @@ export enum AccessLevel {
      */
     EDIT = 6
 }
+/**
+ * @generated from protobuf enum resources.jobs.ResultStatus
+ */
+export enum ResultStatus {
+    /**
+     * @generated from protobuf enum value: QUALIFICATION_RESULT_STATUS_UNSPECIFIED = 0;
+     */
+    QUALIFICATION_RESULT_STATUS_UNSPECIFIED = 0,
+    /**
+     * @generated from protobuf enum value: QUALIFICATION_RESULT_STATUS_PENDING = 1;
+     */
+    QUALIFICATION_RESULT_STATUS_PENDING = 1,
+    /**
+     * @generated from protobuf enum value: QUALIFICATION_RESULT_STATUS_FAILED = 2;
+     */
+    QUALIFICATION_RESULT_STATUS_FAILED = 2,
+    /**
+     * @generated from protobuf enum value: QUALIFICATION_RESULT_STATUS_SUCCESSFUL = 3;
+     */
+    QUALIFICATION_RESULT_STATUS_SUCCESSFUL = 3
+}
 // @generated message type with reflection information, may provide speed optimized methods
 class Qualification$Type extends MessageType<Qualification> {
     constructor() {
@@ -340,14 +348,15 @@ class Qualification$Type extends MessageType<Qualification> {
             { no: 4, name: "deleted_at", kind: "message", T: () => Timestamp },
             { no: 5, name: "job", kind: "scalar", T: 9 /*ScalarType.STRING*/, options: { "validate.rules": { string: { maxLen: "20" } } } },
             { no: 6, name: "weight", kind: "scalar", T: 13 /*ScalarType.UINT32*/, options: { "validate.rules": { uint32: { lt: 4294967295 } } } },
-            { no: 7, name: "open", kind: "scalar", T: 8 /*ScalarType.BOOL*/ },
+            { no: 7, name: "closed", kind: "scalar", T: 8 /*ScalarType.BOOL*/ },
             { no: 8, name: "abbreviation", kind: "scalar", T: 9 /*ScalarType.STRING*/, options: { "validate.rules": { string: { maxLen: "20" } } } },
             { no: 9, name: "title", kind: "scalar", T: 9 /*ScalarType.STRING*/, options: { "validate.rules": { string: { minLen: "3", maxLen: "1024" } } } },
             { no: 10, name: "description", kind: "scalar", T: 9 /*ScalarType.STRING*/, options: { "validate.rules": { string: { minLen: "20", maxBytes: "500000" } } } },
             { no: 11, name: "creator_id", kind: "scalar", T: 5 /*ScalarType.INT32*/ },
             { no: 12, name: "creator", kind: "message", T: () => UserShort },
             { no: 13, name: "creator_job", kind: "scalar", T: 9 /*ScalarType.STRING*/, options: { "validate.rules": { string: { maxLen: "20" } } } },
-            { no: 14, name: "access", kind: "message", T: () => QualificationAccess }
+            { no: 14, name: "access", kind: "message", T: () => QualificationAccess },
+            { no: 15, name: "discord_settings", kind: "message", T: () => QualificationDiscordSettings }
         ]);
     }
     create(value?: PartialMessage<Qualification>): Qualification {
@@ -355,7 +364,7 @@ class Qualification$Type extends MessageType<Qualification> {
         message.id = "0";
         message.job = "";
         message.weight = 0;
-        message.open = false;
+        message.closed = false;
         message.abbreviation = "";
         message.title = "";
         message.description = "";
@@ -388,8 +397,8 @@ class Qualification$Type extends MessageType<Qualification> {
                 case /* uint32 weight */ 6:
                     message.weight = reader.uint32();
                     break;
-                case /* bool open */ 7:
-                    message.open = reader.bool();
+                case /* bool closed */ 7:
+                    message.closed = reader.bool();
                     break;
                 case /* string abbreviation */ 8:
                     message.abbreviation = reader.string();
@@ -411,6 +420,9 @@ class Qualification$Type extends MessageType<Qualification> {
                     break;
                 case /* resources.jobs.QualificationAccess access */ 14:
                     message.access = QualificationAccess.internalBinaryRead(reader, reader.uint32(), options, message.access);
+                    break;
+                case /* optional resources.jobs.QualificationDiscordSettings discord_settings */ 15:
+                    message.discordSettings = QualificationDiscordSettings.internalBinaryRead(reader, reader.uint32(), options, message.discordSettings);
                     break;
                 default:
                     let u = options.readUnknownField;
@@ -442,9 +454,9 @@ class Qualification$Type extends MessageType<Qualification> {
         /* uint32 weight = 6; */
         if (message.weight !== 0)
             writer.tag(6, WireType.Varint).uint32(message.weight);
-        /* bool open = 7; */
-        if (message.open !== false)
-            writer.tag(7, WireType.Varint).bool(message.open);
+        /* bool closed = 7; */
+        if (message.closed !== false)
+            writer.tag(7, WireType.Varint).bool(message.closed);
         /* string abbreviation = 8; */
         if (message.abbreviation !== "")
             writer.tag(8, WireType.LengthDelimited).string(message.abbreviation);
@@ -466,6 +478,9 @@ class Qualification$Type extends MessageType<Qualification> {
         /* resources.jobs.QualificationAccess access = 14; */
         if (message.access)
             QualificationAccess.internalBinaryWrite(message.access, writer.tag(14, WireType.LengthDelimited).fork(), options).join();
+        /* optional resources.jobs.QualificationDiscordSettings discord_settings = 15; */
+        if (message.discordSettings)
+            QualificationDiscordSettings.internalBinaryWrite(message.discordSettings, writer.tag(15, WireType.LengthDelimited).fork(), options).join();
         let u = options.writeUnknownFields;
         if (u !== false)
             (u == true ? UnknownFieldHandler.onWrite : u)(this.typeName, message, writer);
@@ -711,7 +726,7 @@ class QualificationResult$Type extends MessageType<QualificationResult> {
             { no: 4, name: "qualification_id", kind: "scalar", T: 4 /*ScalarType.UINT64*/ },
             { no: 5, name: "user_id", kind: "scalar", T: 5 /*ScalarType.INT32*/ },
             { no: 6, name: "user", kind: "message", T: () => UserShort },
-            { no: 7, name: "successful", kind: "scalar", T: 8 /*ScalarType.BOOL*/ },
+            { no: 7, name: "status", kind: "enum", T: () => ["resources.jobs.ResultStatus", ResultStatus] },
             { no: 8, name: "score", kind: "scalar", T: 13 /*ScalarType.UINT32*/, options: { "validate.rules": { uint32: { lt: 1000 } } } },
             { no: 9, name: "summary", kind: "scalar", T: 9 /*ScalarType.STRING*/, options: { "validate.rules": { string: { minLen: "3", maxLen: "512" } } } },
             { no: 10, name: "creator_id", kind: "scalar", T: 5 /*ScalarType.INT32*/ },
@@ -724,7 +739,7 @@ class QualificationResult$Type extends MessageType<QualificationResult> {
         message.id = "0";
         message.qualificationId = "0";
         message.userId = 0;
-        message.successful = false;
+        message.status = 0;
         message.score = 0;
         message.summary = "";
         message.creatorId = 0;
@@ -756,8 +771,8 @@ class QualificationResult$Type extends MessageType<QualificationResult> {
                 case /* resources.users.UserShort user */ 6:
                     message.user = UserShort.internalBinaryRead(reader, reader.uint32(), options, message.user);
                     break;
-                case /* bool successful */ 7:
-                    message.successful = reader.bool();
+                case /* resources.jobs.ResultStatus status */ 7:
+                    message.status = reader.int32();
                     break;
                 case /* uint32 score */ 8:
                     message.score = reader.uint32();
@@ -804,9 +819,9 @@ class QualificationResult$Type extends MessageType<QualificationResult> {
         /* resources.users.UserShort user = 6; */
         if (message.user)
             UserShort.internalBinaryWrite(message.user, writer.tag(6, WireType.LengthDelimited).fork(), options).join();
-        /* bool successful = 7; */
-        if (message.successful !== false)
-            writer.tag(7, WireType.Varint).bool(message.successful);
+        /* resources.jobs.ResultStatus status = 7; */
+        if (message.status !== 0)
+            writer.tag(7, WireType.Varint).int32(message.status);
         /* uint32 score = 8; */
         if (message.score !== 0)
             writer.tag(8, WireType.Varint).uint32(message.score);
@@ -937,31 +952,30 @@ class QualificationRequest$Type extends MessageType<QualificationRequest> {
  */
 export const QualificationRequest = new QualificationRequest$Type();
 // @generated message type with reflection information, may provide speed optimized methods
-class QualificationTestQuestion$Type extends MessageType<QualificationTestQuestion> {
+class QualificationDiscordSettings$Type extends MessageType<QualificationDiscordSettings> {
     constructor() {
-        super("resources.jobs.QualificationTestQuestion", [
-            { no: 1, name: "qualification_id", kind: "scalar", T: 4 /*ScalarType.UINT64*/ },
-            { no: 2, name: "question", kind: "scalar", T: 9 /*ScalarType.STRING*/ }
+        super("resources.jobs.QualificationDiscordSettings", [
+            { no: 1, name: "sync_enabled", kind: "scalar", T: 8 /*ScalarType.BOOL*/ },
+            { no: 2, name: "role_name", kind: "scalar", opt: true, T: 9 /*ScalarType.STRING*/, options: { "validate.rules": { string: { maxLen: "50" } } } }
         ]);
     }
-    create(value?: PartialMessage<QualificationTestQuestion>): QualificationTestQuestion {
+    create(value?: PartialMessage<QualificationDiscordSettings>): QualificationDiscordSettings {
         const message = globalThis.Object.create((this.messagePrototype!));
-        message.qualificationId = "0";
-        message.question = "";
+        message.syncEnabled = false;
         if (value !== undefined)
-            reflectionMergePartial<QualificationTestQuestion>(this, message, value);
+            reflectionMergePartial<QualificationDiscordSettings>(this, message, value);
         return message;
     }
-    internalBinaryRead(reader: IBinaryReader, length: number, options: BinaryReadOptions, target?: QualificationTestQuestion): QualificationTestQuestion {
+    internalBinaryRead(reader: IBinaryReader, length: number, options: BinaryReadOptions, target?: QualificationDiscordSettings): QualificationDiscordSettings {
         let message = target ?? this.create(), end = reader.pos + length;
         while (reader.pos < end) {
             let [fieldNo, wireType] = reader.tag();
             switch (fieldNo) {
-                case /* uint64 qualification_id = 1 [jstype = JS_STRING];*/ 1:
-                    message.qualificationId = reader.uint64().toString();
+                case /* bool sync_enabled */ 1:
+                    message.syncEnabled = reader.bool();
                     break;
-                case /* string question */ 2:
-                    message.question = reader.string();
+                case /* optional string role_name */ 2:
+                    message.roleName = reader.string();
                     break;
                 default:
                     let u = options.readUnknownField;
@@ -974,13 +988,13 @@ class QualificationTestQuestion$Type extends MessageType<QualificationTestQuesti
         }
         return message;
     }
-    internalBinaryWrite(message: QualificationTestQuestion, writer: IBinaryWriter, options: BinaryWriteOptions): IBinaryWriter {
-        /* uint64 qualification_id = 1 [jstype = JS_STRING]; */
-        if (message.qualificationId !== "0")
-            writer.tag(1, WireType.Varint).uint64(message.qualificationId);
-        /* string question = 2; */
-        if (message.question !== "")
-            writer.tag(2, WireType.LengthDelimited).string(message.question);
+    internalBinaryWrite(message: QualificationDiscordSettings, writer: IBinaryWriter, options: BinaryWriteOptions): IBinaryWriter {
+        /* bool sync_enabled = 1; */
+        if (message.syncEnabled !== false)
+            writer.tag(1, WireType.Varint).bool(message.syncEnabled);
+        /* optional string role_name = 2; */
+        if (message.roleName !== undefined)
+            writer.tag(2, WireType.LengthDelimited).string(message.roleName);
         let u = options.writeUnknownFields;
         if (u !== false)
             (u == true ? UnknownFieldHandler.onWrite : u)(this.typeName, message, writer);
@@ -988,68 +1002,6 @@ class QualificationTestQuestion$Type extends MessageType<QualificationTestQuesti
     }
 }
 /**
- * @generated MessageType for protobuf message resources.jobs.QualificationTestQuestion
+ * @generated MessageType for protobuf message resources.jobs.QualificationDiscordSettings
  */
-export const QualificationTestQuestion = new QualificationTestQuestion$Type();
-// @generated message type with reflection information, may provide speed optimized methods
-class QualificationTestAnswer$Type extends MessageType<QualificationTestAnswer> {
-    constructor() {
-        super("resources.jobs.QualificationTestAnswer", [
-            { no: 1, name: "qualification_id", kind: "scalar", T: 4 /*ScalarType.UINT64*/ },
-            { no: 2, name: "created_at", kind: "message", T: () => Timestamp },
-            { no: 3, name: "user_id", kind: "scalar", T: 5 /*ScalarType.INT32*/ }
-        ]);
-    }
-    create(value?: PartialMessage<QualificationTestAnswer>): QualificationTestAnswer {
-        const message = globalThis.Object.create((this.messagePrototype!));
-        message.qualificationId = "0";
-        message.userId = 0;
-        if (value !== undefined)
-            reflectionMergePartial<QualificationTestAnswer>(this, message, value);
-        return message;
-    }
-    internalBinaryRead(reader: IBinaryReader, length: number, options: BinaryReadOptions, target?: QualificationTestAnswer): QualificationTestAnswer {
-        let message = target ?? this.create(), end = reader.pos + length;
-        while (reader.pos < end) {
-            let [fieldNo, wireType] = reader.tag();
-            switch (fieldNo) {
-                case /* uint64 qualification_id = 1 [jstype = JS_STRING];*/ 1:
-                    message.qualificationId = reader.uint64().toString();
-                    break;
-                case /* optional resources.timestamp.Timestamp created_at */ 2:
-                    message.createdAt = Timestamp.internalBinaryRead(reader, reader.uint32(), options, message.createdAt);
-                    break;
-                case /* int32 user_id */ 3:
-                    message.userId = reader.int32();
-                    break;
-                default:
-                    let u = options.readUnknownField;
-                    if (u === "throw")
-                        throw new globalThis.Error(`Unknown field ${fieldNo} (wire type ${wireType}) for ${this.typeName}`);
-                    let d = reader.skip(wireType);
-                    if (u !== false)
-                        (u === true ? UnknownFieldHandler.onRead : u)(this.typeName, message, fieldNo, wireType, d);
-            }
-        }
-        return message;
-    }
-    internalBinaryWrite(message: QualificationTestAnswer, writer: IBinaryWriter, options: BinaryWriteOptions): IBinaryWriter {
-        /* uint64 qualification_id = 1 [jstype = JS_STRING]; */
-        if (message.qualificationId !== "0")
-            writer.tag(1, WireType.Varint).uint64(message.qualificationId);
-        /* optional resources.timestamp.Timestamp created_at = 2; */
-        if (message.createdAt)
-            Timestamp.internalBinaryWrite(message.createdAt, writer.tag(2, WireType.LengthDelimited).fork(), options).join();
-        /* int32 user_id = 3; */
-        if (message.userId !== 0)
-            writer.tag(3, WireType.Varint).int32(message.userId);
-        let u = options.writeUnknownFields;
-        if (u !== false)
-            (u == true ? UnknownFieldHandler.onWrite : u)(this.typeName, message, writer);
-        return writer;
-    }
-}
-/**
- * @generated MessageType for protobuf message resources.jobs.QualificationTestAnswer
- */
-export const QualificationTestAnswer = new QualificationTestAnswer$Type();
+export const QualificationDiscordSettings = new QualificationDiscordSettings$Type();

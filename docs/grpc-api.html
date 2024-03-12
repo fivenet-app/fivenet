@@ -618,6 +618,10 @@
                 </li>
               
                 <li>
+                  <a href="#resources.jobs.QualificationDiscordSettings"><span class="badge">M</span>QualificationDiscordSettings</a>
+                </li>
+              
+                <li>
                   <a href="#resources.jobs.QualificationJobAccess"><span class="badge">M</span>QualificationJobAccess</a>
                 </li>
               
@@ -633,14 +637,6 @@
                   <a href="#resources.jobs.QualificationResult"><span class="badge">M</span>QualificationResult</a>
                 </li>
               
-                <li>
-                  <a href="#resources.jobs.QualificationTestAnswer"><span class="badge">M</span>QualificationTestAnswer</a>
-                </li>
-              
-                <li>
-                  <a href="#resources.jobs.QualificationTestQuestion"><span class="badge">M</span>QualificationTestQuestion</a>
-                </li>
-              
               
                 <li>
                   <a href="#resources.jobs.AccessLevel"><span class="badge">E</span>AccessLevel</a>
@@ -648,6 +644,10 @@
               
                 <li>
                   <a href="#resources.jobs.AccessLevelUpdateMode"><span class="badge">E</span>AccessLevelUpdateMode</a>
+                </li>
+              
+                <li>
+                  <a href="#resources.jobs.ResultStatus"><span class="badge">E</span>ResultStatus</a>
                 </li>
               
               
@@ -1771,6 +1771,22 @@
               
                 <li>
                   <a href="#services.jobs.GetQualificationResponse"><span class="badge">M</span>GetQualificationResponse</a>
+                </li>
+              
+                <li>
+                  <a href="#services.jobs.ListQualificationRequestsRequest"><span class="badge">M</span>ListQualificationRequestsRequest</a>
+                </li>
+              
+                <li>
+                  <a href="#services.jobs.ListQualificationRequestsResponse"><span class="badge">M</span>ListQualificationRequestsResponse</a>
+                </li>
+              
+                <li>
+                  <a href="#services.jobs.ListQualificationResultsRequest"><span class="badge">M</span>ListQualificationResultsRequest</a>
+                </li>
+              
+                <li>
+                  <a href="#services.jobs.ListQualificationResultsResponse"><span class="badge">M</span>ListQualificationResultsResponse</a>
                 </li>
               
                 <li>
@@ -7777,7 +7793,7 @@
                 </tr>
               
                 <tr>
-                  <td>open</td>
+                  <td>closed</td>
                   <td><a href="#bool">bool</a></td>
                   <td></td>
                   <td><p> </p></td>
@@ -7829,6 +7845,13 @@
                   <td>access</td>
                   <td><a href="#resources.jobs.QualificationAccess">QualificationAccess</a></td>
                   <td></td>
+                  <td><p> </p></td>
+                </tr>
+              
+                <tr>
+                  <td>discord_settings</td>
+                  <td><a href="#resources.jobs.QualificationDiscordSettings">QualificationDiscordSettings</a></td>
+                  <td>optional</td>
                   <td><p> </p></td>
                 </tr>
               
@@ -7952,6 +7975,64 @@
             </tbody>
           </table>
 
+          
+
+        
+      
+        <h3 id="resources.jobs.QualificationDiscordSettings">QualificationDiscordSettings</h3>
+        <p></p>
+
+        
+          <table class="field-table">
+            <thead>
+              <tr><td>Field</td><td>Type</td><td>Label</td><td>Description</td></tr>
+            </thead>
+            <tbody>
+              
+                <tr>
+                  <td>sync_enabled</td>
+                  <td><a href="#bool">bool</a></td>
+                  <td></td>
+                  <td><p> </p></td>
+                </tr>
+              
+                <tr>
+                  <td>role_name</td>
+                  <td><a href="#string">string</a></td>
+                  <td>optional</td>
+                  <td><p> </p></td>
+                </tr>
+              
+            </tbody>
+          </table>
+
+          
+            
+            
+            <h4>Validated Fields</h4>
+            <table>
+              <thead>
+                <tr>
+                  <td>Field</td>
+                  <td>Validations</td>
+                </tr>
+              </thead>
+              <tbody>
+              
+                <tr>
+                  <td>role_name</td>
+                  <td>
+                    <ul>
+                    
+                      <li>string.max_len: 50</li>
+                    
+                    </ul>
+                  </td>
+                </tr>
+              
+              </tbody>
+            </table>
+            
           
 
         
@@ -8332,8 +8413,8 @@
                 </tr>
               
                 <tr>
-                  <td>successful</td>
-                  <td><a href="#bool">bool</a></td>
+                  <td>status</td>
+                  <td><a href="#resources.jobs.ResultStatus">ResultStatus</a></td>
                   <td></td>
                   <td><p> </p></td>
                 </tr>
@@ -8431,75 +8512,6 @@
 
         
       
-        <h3 id="resources.jobs.QualificationTestAnswer">QualificationTestAnswer</h3>
-        <p></p>
-
-        
-          <table class="field-table">
-            <thead>
-              <tr><td>Field</td><td>Type</td><td>Label</td><td>Description</td></tr>
-            </thead>
-            <tbody>
-              
-                <tr>
-                  <td>qualification_id</td>
-                  <td><a href="#uint64">uint64</a></td>
-                  <td></td>
-                  <td><p> </p></td>
-                </tr>
-              
-                <tr>
-                  <td>created_at</td>
-                  <td><a href="#resources.timestamp.Timestamp">resources.timestamp.Timestamp</a></td>
-                  <td>optional</td>
-                  <td><p> </p></td>
-                </tr>
-              
-                <tr>
-                  <td>user_id</td>
-                  <td><a href="#int32">int32</a></td>
-                  <td></td>
-                  <td><p>TODO </p></td>
-                </tr>
-              
-            </tbody>
-          </table>
-
-          
-
-        
-      
-        <h3 id="resources.jobs.QualificationTestQuestion">QualificationTestQuestion</h3>
-        <p></p>
-
-        
-          <table class="field-table">
-            <thead>
-              <tr><td>Field</td><td>Type</td><td>Label</td><td>Description</td></tr>
-            </thead>
-            <tbody>
-              
-                <tr>
-                  <td>qualification_id</td>
-                  <td><a href="#uint64">uint64</a></td>
-                  <td></td>
-                  <td><p> </p></td>
-                </tr>
-              
-                <tr>
-                  <td>question</td>
-                  <td><a href="#string">string</a></td>
-                  <td></td>
-                  <td><p>TODO </p></td>
-                </tr>
-              
-            </tbody>
-          </table>
-
-          
-
-        
-      
 
       
         <h3 id="resources.jobs.AccessLevel">AccessLevel</h3>
@@ -8583,6 +8595,41 @@
             
               <tr>
                 <td>ACCESS_LEVEL_UPDATE_MODE_CLEAR</td>
+                <td>3</td>
+                <td><p></p></td>
+              </tr>
+            
+          </tbody>
+        </table>
+      
+        <h3 id="resources.jobs.ResultStatus">ResultStatus</h3>
+        <p></p>
+        <table class="enum-table">
+          <thead>
+            <tr><td>Name</td><td>Number</td><td>Description</td></tr>
+          </thead>
+          <tbody>
+            
+              <tr>
+                <td>QUALIFICATION_RESULT_STATUS_UNSPECIFIED</td>
+                <td>0</td>
+                <td><p></p></td>
+              </tr>
+            
+              <tr>
+                <td>QUALIFICATION_RESULT_STATUS_PENDING</td>
+                <td>1</td>
+                <td><p></p></td>
+              </tr>
+            
+              <tr>
+                <td>QUALIFICATION_RESULT_STATUS_FAILED</td>
+                <td>2</td>
+                <td><p></p></td>
+              </tr>
+            
+              <tr>
+                <td>QUALIFICATION_RESULT_STATUS_SUCCESSFUL</td>
                 <td>3</td>
                 <td><p></p></td>
               </tr>
@@ -19957,8 +20004,8 @@
             <tbody>
               
                 <tr>
-                  <td>qualification</td>
-                  <td><a href="#resources.jobs.Qualification">resources.jobs.Qualification</a></td>
+                  <td>qualification_id</td>
+                  <td><a href="#uint64">uint64</a></td>
                   <td></td>
                   <td><p> </p></td>
                 </tr>
@@ -20114,6 +20161,184 @@
                   <td>qualification</td>
                   <td><a href="#resources.jobs.Qualification">resources.jobs.Qualification</a></td>
                   <td></td>
+                  <td><p> </p></td>
+                </tr>
+              
+            </tbody>
+          </table>
+
+          
+
+        
+      
+        <h3 id="services.jobs.ListQualificationRequestsRequest">ListQualificationRequestsRequest</h3>
+        <p>Requests ===================================================================</p>
+
+        
+          <table class="field-table">
+            <thead>
+              <tr><td>Field</td><td>Type</td><td>Label</td><td>Description</td></tr>
+            </thead>
+            <tbody>
+              
+                <tr>
+                  <td>pagination</td>
+                  <td><a href="#resources.common.database.PaginationRequest">resources.common.database.PaginationRequest</a></td>
+                  <td></td>
+                  <td><p> </p></td>
+                </tr>
+              
+                <tr>
+                  <td>qualification_id</td>
+                  <td><a href="#uint64">uint64</a></td>
+                  <td>optional</td>
+                  <td><p> </p></td>
+                </tr>
+              
+            </tbody>
+          </table>
+
+          
+            
+            
+            <h4>Validated Fields</h4>
+            <table>
+              <thead>
+                <tr>
+                  <td>Field</td>
+                  <td>Validations</td>
+                </tr>
+              </thead>
+              <tbody>
+              
+                <tr>
+                  <td>pagination</td>
+                  <td>
+                    <ul>
+                    
+                      <li>message.required: true</li>
+                    
+                    </ul>
+                  </td>
+                </tr>
+              
+              </tbody>
+            </table>
+            
+          
+
+        
+      
+        <h3 id="services.jobs.ListQualificationRequestsResponse">ListQualificationRequestsResponse</h3>
+        <p></p>
+
+        
+          <table class="field-table">
+            <thead>
+              <tr><td>Field</td><td>Type</td><td>Label</td><td>Description</td></tr>
+            </thead>
+            <tbody>
+              
+                <tr>
+                  <td>pagination</td>
+                  <td><a href="#resources.common.database.PaginationResponse">resources.common.database.PaginationResponse</a></td>
+                  <td></td>
+                  <td><p> </p></td>
+                </tr>
+              
+                <tr>
+                  <td>requests</td>
+                  <td><a href="#resources.jobs.QualificationRequest">resources.jobs.QualificationRequest</a></td>
+                  <td>repeated</td>
+                  <td><p> </p></td>
+                </tr>
+              
+            </tbody>
+          </table>
+
+          
+
+        
+      
+        <h3 id="services.jobs.ListQualificationResultsRequest">ListQualificationResultsRequest</h3>
+        <p></p>
+
+        
+          <table class="field-table">
+            <thead>
+              <tr><td>Field</td><td>Type</td><td>Label</td><td>Description</td></tr>
+            </thead>
+            <tbody>
+              
+                <tr>
+                  <td>pagination</td>
+                  <td><a href="#resources.common.database.PaginationRequest">resources.common.database.PaginationRequest</a></td>
+                  <td></td>
+                  <td><p> </p></td>
+                </tr>
+              
+                <tr>
+                  <td>qualification_id</td>
+                  <td><a href="#uint64">uint64</a></td>
+                  <td></td>
+                  <td><p> </p></td>
+                </tr>
+              
+            </tbody>
+          </table>
+
+          
+            
+            
+            <h4>Validated Fields</h4>
+            <table>
+              <thead>
+                <tr>
+                  <td>Field</td>
+                  <td>Validations</td>
+                </tr>
+              </thead>
+              <tbody>
+              
+                <tr>
+                  <td>pagination</td>
+                  <td>
+                    <ul>
+                    
+                      <li>message.required: true</li>
+                    
+                    </ul>
+                  </td>
+                </tr>
+              
+              </tbody>
+            </table>
+            
+          
+
+        
+      
+        <h3 id="services.jobs.ListQualificationResultsResponse">ListQualificationResultsResponse</h3>
+        <p></p>
+
+        
+          <table class="field-table">
+            <thead>
+              <tr><td>Field</td><td>Type</td><td>Label</td><td>Description</td></tr>
+            </thead>
+            <tbody>
+              
+                <tr>
+                  <td>pagination</td>
+                  <td><a href="#resources.common.database.PaginationResponse">resources.common.database.PaginationResponse</a></td>
+                  <td></td>
+                  <td><p> </p></td>
+                </tr>
+              
+                <tr>
+                  <td>results</td>
+                  <td><a href="#resources.jobs.QualificationResult">resources.jobs.QualificationResult</a></td>
+                  <td>repeated</td>
                   <td><p> </p></td>
                 </tr>
               
@@ -20324,8 +20549,8 @@
             <tbody>
               
                 <tr>
-                  <td>qualification</td>
-                  <td><a href="#resources.jobs.Qualification">resources.jobs.Qualification</a></td>
+                  <td>qualification_id</td>
+                  <td><a href="#uint64">uint64</a></td>
                   <td></td>
                   <td><p> </p></td>
                 </tr>
@@ -20366,6 +20591,13 @@
               </tr>
             
               <tr>
+                <td>ListQualificationResults</td>
+                <td><a href="#services.jobs.ListQualificationResultsRequest">ListQualificationResultsRequest</a></td>
+                <td><a href="#services.jobs.ListQualificationResultsResponse">ListQualificationResultsResponse</a></td>
+                <td><p>@perm</p></td>
+              </tr>
+            
+              <tr>
                 <td>CreateQualification</td>
                 <td><a href="#services.jobs.CreateQualificationRequest">CreateQualificationRequest</a></td>
                 <td><a href="#services.jobs.CreateQualificationResponse">CreateQualificationResponse</a></td>
@@ -20376,13 +20608,20 @@
                 <td>UpdateQualification</td>
                 <td><a href="#services.jobs.UpdateQualificationRequest">UpdateQualificationRequest</a></td>
                 <td><a href="#services.jobs.UpdateQualificationResponse">UpdateQualificationResponse</a></td>
-                <td><p>@perm</p></td>
+                <td><p>@perm: Attrs=Access/StringList:[]string{&#34;Own&#34;, &#34;Lower_Rank&#34;, &#34;Same_Rank&#34;, &#34;Any&#34;}</p></td>
               </tr>
             
               <tr>
                 <td>DeleteQualification</td>
                 <td><a href="#services.jobs.DeleteQualificationRequest">DeleteQualificationRequest</a></td>
                 <td><a href="#services.jobs.DeleteQualificationResponse">DeleteQualificationResponse</a></td>
+                <td><p>@perm: Attrs=Access/StringList:[]string{&#34;Own&#34;, &#34;Lower_Rank&#34;, &#34;Same_Rank&#34;, &#34;Any&#34;}</p></td>
+              </tr>
+            
+              <tr>
+                <td>ListQualificationRequests</td>
+                <td><a href="#services.jobs.ListQualificationRequestsRequest">ListQualificationRequestsRequest</a></td>
+                <td><a href="#services.jobs.ListQualificationRequestsResponse">ListQualificationRequestsResponse</a></td>
                 <td><p>@perm</p></td>
               </tr>
             

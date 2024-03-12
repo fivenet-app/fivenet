@@ -30,25 +30,23 @@ async function listQualifications(): Promise<ListQualificationsResponse> {
 </script>
 
 <template>
-    <div class="py-2 pb-14">
-        <div class="px-1 sm:px-2 lg:px-4">
-            <DataPendingBlock v-if="pending" :message="$t('common.loading', [$t('common.qualifications', 2)])" />
-            <DataErrorBlock
-                v-else-if="error"
-                :title="$t('common.unable_to_load', [$t('common.qualifications', 2)])"
-                :retry="refresh"
-            />
-            <DataNoDataBlock v-else-if="data?.qualifications.length === 0" />
+    <div class="px-1 sm:px-2 lg:px-4">
+        <DataPendingBlock v-if="pending" :message="$t('common.loading', [$t('common.qualifications', 2)])" />
+        <DataErrorBlock
+            v-else-if="error"
+            :title="$t('common.unable_to_load', [$t('common.qualifications', 2)])"
+            :retry="refresh"
+        />
+        <DataNoDataBlock v-else-if="data?.qualifications.length === 0" />
 
-            <template v-else>
-                <ul role="list" class="divide-y divide-gray-100">
-                    <QualificationsListEntry
-                        v-for="training in data?.qualifications"
-                        :key="training.id"
-                        :qualification="training"
-                    />
-                </ul>
-            </template>
-        </div>
+        <template v-else>
+            <ul role="list" class="divide-y divide-gray-100">
+                <QualificationsListEntry
+                    v-for="training in data?.qualifications"
+                    :key="training.id"
+                    :qualification="training"
+                />
+            </ul>
+        </template>
     </div>
 </template>

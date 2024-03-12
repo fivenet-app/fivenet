@@ -1935,6 +1935,23 @@
                 "HIRED": "Hired",
                 "PROMOTED": "Promoted",
                 "DEMOTED": "Demoted"
+            },
+            "qualifications": {
+                "AccessLevel": {
+                    "UNSPECIFIED": "Unspecified",
+                    "BLOCKED": "Blocked",
+                    "VIEW": "View",
+                    "REQUEST": "Request",
+                    "TAKE": "Take",
+                    "GRADE": "Grade",
+                    "EDIT": "Edit"
+                },
+                "ResultStatus": {
+                    "UNSPECIFIED": "Unspecified",
+                    "PENDING": "Pending",
+                    "FAILED": "Failed",
+                    "SUCCESSFUL": "Successful"
+                }
             }
         }
     }

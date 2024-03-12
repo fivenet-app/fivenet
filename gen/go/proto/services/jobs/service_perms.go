@@ -66,11 +66,27 @@ func init() {
 		{
 			Category: permkeys.JobsQualificationsServicePerm,
 			Name:     permkeys.JobsQualificationsServiceDeleteQualificationPerm,
-			Attrs:    []perms.Attr{},
+			Attrs: []perms.Attr{
+				{
+					Key:         permkeys.JobsQualificationsServiceDeleteQualificationAccessPermField,
+					Type:        permissions.StringListAttributeType,
+					ValidValues: []string{"Own", "Lower_Rank", "Same_Rank", "Any"},
+				},
+			},
 		},
 		{
 			Category: permkeys.JobsQualificationsServicePerm,
 			Name:     permkeys.JobsQualificationsServiceGetQualificationPerm,
+			Attrs:    []perms.Attr{},
+		},
+		{
+			Category: permkeys.JobsQualificationsServicePerm,
+			Name:     permkeys.JobsQualificationsServiceListQualificationRequestsPerm,
+			Attrs:    []perms.Attr{},
+		},
+		{
+			Category: permkeys.JobsQualificationsServicePerm,
+			Name:     permkeys.JobsQualificationsServiceListQualificationResultsPerm,
 			Attrs:    []perms.Attr{},
 		},
 		{
@@ -81,7 +97,13 @@ func init() {
 		{
 			Category: permkeys.JobsQualificationsServicePerm,
 			Name:     permkeys.JobsQualificationsServiceUpdateQualificationPerm,
-			Attrs:    []perms.Attr{},
+			Attrs: []perms.Attr{
+				{
+					Key:         permkeys.JobsQualificationsServiceUpdateQualificationAccessPermField,
+					Type:        permissions.StringListAttributeType,
+					ValidValues: []string{"Own", "Lower_Rank", "Same_Rank", "Any"},
+				},
+			},
 		},
 
 		// Service: JobsService

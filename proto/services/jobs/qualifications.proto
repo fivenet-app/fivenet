@@ -26,12 +26,22 @@ message GetQualificationResponse {
   resources.jobs.Qualification qualification = 1;
 }
 
+message ListQualificationResultsRequest {
+  resources.common.database.PaginationRequest pagination = 1 [(validate.rules).message.required = true];
+  uint64 qualification_id = 2 [jstype = JS_STRING];
+}
+
+message ListQualificationResultsResponse {
+  resources.common.database.PaginationResponse pagination = 1;
+  repeated resources.jobs.QualificationResult results = 2;
+}
+
 message CreateQualificationRequest {
   resources.jobs.Qualification qualification = 1;
 }
 
 message CreateQualificationResponse {
-  resources.jobs.Qualification qualification = 1;
+  uint64 qualification_id = 1 [jstype = JS_STRING];
 }
 
 message UpdateQualificationRequest {
@@ -39,7 +49,7 @@ message UpdateQualificationRequest {
 }
 
 message UpdateQualificationResponse {
-  resources.jobs.Qualification qualification = 1;
+  uint64 qualification_id = 1 [jstype = JS_STRING];
 }
 
 message DeleteQualificationRequest {
@@ -65,6 +75,17 @@ message SetQualificationAccessRequest {
 
 message SetQualificationAccessResponse {}
 
+// Requests ===================================================================
+message ListQualificationRequestsRequest {
+  resources.common.database.PaginationRequest pagination = 1 [(validate.rules).message.required = true];
+  optional uint64 qualification_id = 2 [jstype = JS_STRING];
+}
+
+message ListQualificationRequestsResponse {
+  resources.common.database.PaginationResponse pagination = 1;
+  repeated resources.jobs.QualificationRequest requests = 2;
+}
+
 service JobsQualificationsService {
   // @perm
   rpc ListQualifications(ListQualificationsRequest) returns (ListQualificationsResponse);
@@ -72,11 +93,17 @@ service JobsQualificationsService {
   rpc GetQualification(GetQualificationRequest) returns (GetQualificationResponse);
 
   // @perm
+  rpc ListQualificationResults(ListQualificationResultsRequest) returns (ListQualificationResultsResponse);
+
+  // @perm
   rpc CreateQualification(CreateQualificationRequest) returns (CreateQualificationResponse);
-  // @perm
+  // @perm: Attrs=Access/StringList:[]string{"Own", "Lower_Rank", "Same_Rank", "Any"}
   rpc UpdateQualification(UpdateQualificationRequest) returns (UpdateQualificationResponse);
-  // @perm
+  // @perm: Attrs=Access/StringList:[]string{"Own", "Lower_Rank", "Same_Rank", "Any"}
   rpc DeleteQualification(DeleteQualificationRequest) returns (DeleteQualificationResponse);
+
+  // @perm
+  rpc ListQualificationRequests(ListQualificationRequestsRequest) returns (ListQualificationRequestsResponse);
 
   // TODO
 }

@@ -7,8 +7,10 @@ import (
 
 	jobs "github.com/galexrt/fivenet/gen/go/proto/resources/jobs"
 	"github.com/galexrt/fivenet/gen/go/proto/resources/rector"
+	"github.com/galexrt/fivenet/gen/go/proto/resources/users"
 	errorsdocstore "github.com/galexrt/fivenet/gen/go/proto/services/docstore/errors"
 	"github.com/galexrt/fivenet/pkg/grpc/auth"
+	"github.com/galexrt/fivenet/pkg/grpc/auth/userinfo"
 	"github.com/galexrt/fivenet/pkg/grpc/errswrap"
 	"github.com/galexrt/fivenet/query/fivenet/model"
 	"github.com/galexrt/fivenet/query/fivenet/table"
@@ -239,7 +241,7 @@ func (s *Server) compareQualificationAccess(current, in *jobs.QualificationAcces
 }
 
 func (s *Server) getQualificationAccess(ctx context.Context, qualificationId uint64) (*jobs.QualificationAccess, error) {
-	tQJobAccess := table.FivenetJobsQualificationsJobAccess.AS("documentjobaccess")
+	tQJobAccess := table.FivenetJobsQualificationsJobAccess.AS("qualificationjobaccess")
 	jobStmt := tQJobAccess.
 		SELECT(
 			tQJobAccess.ID,
@@ -265,7 +267,7 @@ func (s *Server) getQualificationAccess(ctx context.Context, qualificationId uin
 		}
 	}
 
-	tQReqAccess := table.FivenetJobsQualificationsReqsAccess.AS("documentuseraccess")
+	tQReqAccess := table.FivenetJobsQualificationsReqsAccess.AS("qualificationrequirementsaccess")
 	userStmt := tQReqAccess.
 		SELECT(
 			tQReqAccess.ID,
@@ -481,4 +483,47 @@ func (s *Server) clearQualificationAccess(ctx context.Context, tx qrm.DB, qualif
 	}
 
 	return nil
+}
+
+func (s *Server) checkIfHasAccess(levels []string, userInfo *userinfo.UserInfo, creatorJob string, creator *users.UserShort) bool {
+	if userInfo.SuperUser {
+		return true
+	}
+
+	// If the document creator job is not equal to the creator's current job, normal access checks need to be applied
+	// and not the rank attributes checks
+	if creatorJob != userInfo.Job {
+		return true
+	}
+
+	// If the creator is nil, treat it like a normal doc access check
+	if creator == nil {
+		return true
+	}
+
+	// If no levels set, assume "Own" as default
+	if len(levels) == 0 {
+		return creator.UserId == userInfo.UserId
+	}
+
+	if slices.Contains(levels, "Any") {
+		return true
+	}
+	if slices.Contains(levels, "Lower_Rank") {
+		if creator.JobGrade < userInfo.JobGrade {
+			return true
+		}
+	}
+	if slices.Contains(levels, "Same_Rank") {
+		if creator.JobGrade <= userInfo.JobGrade {
+			return true
+		}
+	}
+	if slices.Contains(levels, "Own") {
+		if creator.UserId == userInfo.UserId {
+			return true
+		}
+	}
+
+	return false
 }

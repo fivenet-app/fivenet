@@ -285,7 +285,7 @@ if (hash.value !== undefined && hash.value !== null) {
                                     "
                                     :to="{
                                         name: 'documents-id-edit',
-                                        params: { id: doc?.id ?? 0 },
+                                        params: { id: doc.id },
                                     }"
                                     type="button"
                                     class="inline-flex items-center gap-x-1.5 rounded-md bg-primary-500 px-3 py-2 text-sm font-semibold text-neutral hover:bg-primary-400"

@@ -22,6 +22,6 @@ const route = useRoute('documents-id-edit');
 
 <template>
     <ContentWrapper>
-        <DocumentEditor :id="route.params.id as string" />
+        <DocumentEditor :id="route.params.id" />
     </ContentWrapper>
 </template>

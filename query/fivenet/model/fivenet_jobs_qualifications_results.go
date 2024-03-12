@@ -14,9 +14,10 @@ import (
 type FivenetJobsQualificationsResults struct {
 	ID              uint64     `sql:"primary_key" json:"id"`
 	CreatedAt       *time.Time `json:"created_at"`
+	DeletedAt       *time.Time `json:"deleted_at"`
 	QualificationID uint64     `json:"qualification_id"`
 	UserID          int32      `json:"user_id"`
-	Successful      *bool      `json:"successful"`
+	Status          *int16     `json:"status"`
 	Score           int32      `json:"score"`
 	Summary         *string    `json:"summary"`
 	CreatorID       *int32     `json:"creator_id"`

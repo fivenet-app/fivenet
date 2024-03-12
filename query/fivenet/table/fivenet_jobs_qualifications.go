@@ -17,18 +17,19 @@ type fivenetJobsQualificationsTable struct {
 	mysql.Table
 
 	// Columns
-	ID           mysql.ColumnInteger
-	CreatedAt    mysql.ColumnTimestamp
-	UpdatedAt    mysql.ColumnTimestamp
-	DeletedAt    mysql.ColumnTimestamp
-	Job          mysql.ColumnString
-	Weight       mysql.ColumnInteger
-	Closed       mysql.ColumnBool
-	Abbreviation mysql.ColumnString
-	Title        mysql.ColumnString
-	Description  mysql.ColumnString
-	CreatorID    mysql.ColumnInteger
-	CreatorJob   mysql.ColumnString
+	ID              mysql.ColumnInteger
+	CreatedAt       mysql.ColumnTimestamp
+	UpdatedAt       mysql.ColumnTimestamp
+	DeletedAt       mysql.ColumnTimestamp
+	Job             mysql.ColumnString
+	Weight          mysql.ColumnInteger
+	Closed          mysql.ColumnBool
+	Abbreviation    mysql.ColumnString
+	Title           mysql.ColumnString
+	Description     mysql.ColumnString
+	CreatorID       mysql.ColumnInteger
+	CreatorJob      mysql.ColumnString
+	DiscordSettings mysql.ColumnString
 
 	AllColumns     mysql.ColumnList
 	MutableColumns mysql.ColumnList
@@ -69,38 +70,40 @@ func newFivenetJobsQualificationsTable(schemaName, tableName, alias string) *Fiv
 
 func newFivenetJobsQualificationsTableImpl(schemaName, tableName, alias string) fivenetJobsQualificationsTable {
 	var (
-		IDColumn           = mysql.IntegerColumn("id")
-		CreatedAtColumn    = mysql.TimestampColumn("created_at")
-		UpdatedAtColumn    = mysql.TimestampColumn("updated_at")
-		DeletedAtColumn    = mysql.TimestampColumn("deleted_at")
-		JobColumn          = mysql.StringColumn("job")
-		WeightColumn       = mysql.IntegerColumn("weight")
-		ClosedColumn       = mysql.BoolColumn("closed")
-		AbbreviationColumn = mysql.StringColumn("abbreviation")
-		TitleColumn        = mysql.StringColumn("title")
-		DescriptionColumn  = mysql.StringColumn("description")
-		CreatorIDColumn    = mysql.IntegerColumn("creator_id")
-		CreatorJobColumn   = mysql.StringColumn("creator_job")
-		allColumns         = mysql.ColumnList{IDColumn, CreatedAtColumn, UpdatedAtColumn, DeletedAtColumn, JobColumn, WeightColumn, ClosedColumn, AbbreviationColumn, TitleColumn, DescriptionColumn, CreatorIDColumn, CreatorJobColumn}
-		mutableColumns     = mysql.ColumnList{CreatedAtColumn, UpdatedAtColumn, DeletedAtColumn, JobColumn, WeightColumn, ClosedColumn, AbbreviationColumn, TitleColumn, DescriptionColumn, CreatorIDColumn, CreatorJobColumn}
+		IDColumn              = mysql.IntegerColumn("id")
+		CreatedAtColumn       = mysql.TimestampColumn("created_at")
+		UpdatedAtColumn       = mysql.TimestampColumn("updated_at")
+		DeletedAtColumn       = mysql.TimestampColumn("deleted_at")
+		JobColumn             = mysql.StringColumn("job")
+		WeightColumn          = mysql.IntegerColumn("weight")
+		ClosedColumn          = mysql.BoolColumn("closed")
+		AbbreviationColumn    = mysql.StringColumn("abbreviation")
+		TitleColumn           = mysql.StringColumn("title")
+		DescriptionColumn     = mysql.StringColumn("description")
+		CreatorIDColumn       = mysql.IntegerColumn("creator_id")
+		CreatorJobColumn      = mysql.StringColumn("creator_job")
+		DiscordSettingsColumn = mysql.StringColumn("discord_settings")
+		allColumns            = mysql.ColumnList{IDColumn, CreatedAtColumn, UpdatedAtColumn, DeletedAtColumn, JobColumn, WeightColumn, ClosedColumn, AbbreviationColumn, TitleColumn, DescriptionColumn, CreatorIDColumn, CreatorJobColumn, DiscordSettingsColumn}
+		mutableColumns        = mysql.ColumnList{CreatedAtColumn, UpdatedAtColumn, DeletedAtColumn, JobColumn, WeightColumn, ClosedColumn, AbbreviationColumn, TitleColumn, DescriptionColumn, CreatorIDColumn, CreatorJobColumn, DiscordSettingsColumn}
 	)
 
 	return fivenetJobsQualificationsTable{
 		Table: mysql.NewTable(schemaName, tableName, alias, allColumns...),
 
 		//Columns
-		ID:           IDColumn,
-		CreatedAt:    CreatedAtColumn,
-		UpdatedAt:    UpdatedAtColumn,
-		DeletedAt:    DeletedAtColumn,
-		Job:          JobColumn,
-		Weight:       WeightColumn,
-		Closed:       ClosedColumn,
-		Abbreviation: AbbreviationColumn,
-		Title:        TitleColumn,
-		Description:  DescriptionColumn,
-		CreatorID:    CreatorIDColumn,
-		CreatorJob:   CreatorJobColumn,
+		ID:              IDColumn,
+		CreatedAt:       CreatedAtColumn,
+		UpdatedAt:       UpdatedAtColumn,
+		DeletedAt:       DeletedAtColumn,
+		Job:             JobColumn,
+		Weight:          WeightColumn,
+		Closed:          ClosedColumn,
+		Abbreviation:    AbbreviationColumn,
+		Title:           TitleColumn,
+		Description:     DescriptionColumn,
+		CreatorID:       CreatorIDColumn,
+		CreatorJob:      CreatorJobColumn,
+		DiscordSettings: DiscordSettingsColumn,
 
 		AllColumns:     allColumns,
 		MutableColumns: mutableColumns,

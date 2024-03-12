@@ -11,8 +11,10 @@ import { UnknownFieldHandler } from "@protobuf-ts/runtime";
 import type { PartialMessage } from "@protobuf-ts/runtime";
 import { reflectionMergePartial } from "@protobuf-ts/runtime";
 import { MessageType } from "@protobuf-ts/runtime";
+import { QualificationRequest } from "../../resources/jobs/qualifications";
 import { AccessLevelUpdateMode } from "../../resources/jobs/qualifications";
 import { QualificationAccess } from "../../resources/jobs/qualifications";
+import { QualificationResult } from "../../resources/jobs/qualifications";
 import { Qualification } from "../../resources/jobs/qualifications";
 import { PaginationResponse } from "../../resources/common/database/database";
 import { PaginationRequest } from "../../resources/common/database/database";
@@ -57,6 +59,32 @@ export interface GetQualificationResponse {
     qualification?: Qualification;
 }
 /**
+ * @generated from protobuf message services.jobs.ListQualificationResultsRequest
+ */
+export interface ListQualificationResultsRequest {
+    /**
+     * @generated from protobuf field: resources.common.database.PaginationRequest pagination = 1;
+     */
+    pagination?: PaginationRequest;
+    /**
+     * @generated from protobuf field: uint64 qualification_id = 2 [jstype = JS_STRING];
+     */
+    qualificationId: string;
+}
+/**
+ * @generated from protobuf message services.jobs.ListQualificationResultsResponse
+ */
+export interface ListQualificationResultsResponse {
+    /**
+     * @generated from protobuf field: resources.common.database.PaginationResponse pagination = 1;
+     */
+    pagination?: PaginationResponse;
+    /**
+     * @generated from protobuf field: repeated resources.jobs.QualificationResult results = 2;
+     */
+    results: QualificationResult[];
+}
+/**
  * @generated from protobuf message services.jobs.CreateQualificationRequest
  */
 export interface CreateQualificationRequest {
@@ -70,9 +98,9 @@ export interface CreateQualificationRequest {
  */
 export interface CreateQualificationResponse {
     /**
-     * @generated from protobuf field: resources.jobs.Qualification qualification = 1;
+     * @generated from protobuf field: uint64 qualification_id = 1 [jstype = JS_STRING];
      */
-    qualification?: Qualification;
+    qualificationId: string;
 }
 /**
  * @generated from protobuf message services.jobs.UpdateQualificationRequest
@@ -88,9 +116,9 @@ export interface UpdateQualificationRequest {
  */
 export interface UpdateQualificationResponse {
     /**
-     * @generated from protobuf field: resources.jobs.Qualification qualification = 1;
+     * @generated from protobuf field: uint64 qualification_id = 1 [jstype = JS_STRING];
      */
-    qualification?: Qualification;
+    qualificationId: string;
 }
 /**
  * @generated from protobuf message services.jobs.DeleteQualificationRequest
@@ -147,6 +175,34 @@ export interface SetQualificationAccessRequest {
  * @generated from protobuf message services.jobs.SetQualificationAccessResponse
  */
 export interface SetQualificationAccessResponse {
+}
+/**
+ * Requests ===================================================================
+ *
+ * @generated from protobuf message services.jobs.ListQualificationRequestsRequest
+ */
+export interface ListQualificationRequestsRequest {
+    /**
+     * @generated from protobuf field: resources.common.database.PaginationRequest pagination = 1;
+     */
+    pagination?: PaginationRequest;
+    /**
+     * @generated from protobuf field: optional uint64 qualification_id = 2 [jstype = JS_STRING];
+     */
+    qualificationId?: string;
+}
+/**
+ * @generated from protobuf message services.jobs.ListQualificationRequestsResponse
+ */
+export interface ListQualificationRequestsResponse {
+    /**
+     * @generated from protobuf field: resources.common.database.PaginationResponse pagination = 1;
+     */
+    pagination?: PaginationResponse;
+    /**
+     * @generated from protobuf field: repeated resources.jobs.QualificationRequest requests = 2;
+     */
+    requests: QualificationRequest[];
 }
 // @generated message type with reflection information, may provide speed optimized methods
 class ListQualificationsRequest$Type extends MessageType<ListQualificationsRequest> {
@@ -342,6 +398,114 @@ class GetQualificationResponse$Type extends MessageType<GetQualificationResponse
  */
 export const GetQualificationResponse = new GetQualificationResponse$Type();
 // @generated message type with reflection information, may provide speed optimized methods
+class ListQualificationResultsRequest$Type extends MessageType<ListQualificationResultsRequest> {
+    constructor() {
+        super("services.jobs.ListQualificationResultsRequest", [
+            { no: 1, name: "pagination", kind: "message", T: () => PaginationRequest, options: { "validate.rules": { message: { required: true } } } },
+            { no: 2, name: "qualification_id", kind: "scalar", T: 4 /*ScalarType.UINT64*/ }
+        ]);
+    }
+    create(value?: PartialMessage<ListQualificationResultsRequest>): ListQualificationResultsRequest {
+        const message = globalThis.Object.create((this.messagePrototype!));
+        message.qualificationId = "0";
+        if (value !== undefined)
+            reflectionMergePartial<ListQualificationResultsRequest>(this, message, value);
+        return message;
+    }
+    internalBinaryRead(reader: IBinaryReader, length: number, options: BinaryReadOptions, target?: ListQualificationResultsRequest): ListQualificationResultsRequest {
+        let message = target ?? this.create(), end = reader.pos + length;
+        while (reader.pos < end) {
+            let [fieldNo, wireType] = reader.tag();
+            switch (fieldNo) {
+                case /* resources.common.database.PaginationRequest pagination */ 1:
+                    message.pagination = PaginationRequest.internalBinaryRead(reader, reader.uint32(), options, message.pagination);
+                    break;
+                case /* uint64 qualification_id = 2 [jstype = JS_STRING];*/ 2:
+                    message.qualificationId = reader.uint64().toString();
+                    break;
+                default:
+                    let u = options.readUnknownField;
+                    if (u === "throw")
+                        throw new globalThis.Error(`Unknown field ${fieldNo} (wire type ${wireType}) for ${this.typeName}`);
+                    let d = reader.skip(wireType);
+                    if (u !== false)
+                        (u === true ? UnknownFieldHandler.onRead : u)(this.typeName, message, fieldNo, wireType, d);
+            }
+        }
+        return message;
+    }
+    internalBinaryWrite(message: ListQualificationResultsRequest, writer: IBinaryWriter, options: BinaryWriteOptions): IBinaryWriter {
+        /* resources.common.database.PaginationRequest pagination = 1; */
+        if (message.pagination)
+            PaginationRequest.internalBinaryWrite(message.pagination, writer.tag(1, WireType.LengthDelimited).fork(), options).join();
+        /* uint64 qualification_id = 2 [jstype = JS_STRING]; */
+        if (message.qualificationId !== "0")
+            writer.tag(2, WireType.Varint).uint64(message.qualificationId);
+        let u = options.writeUnknownFields;
+        if (u !== false)
+            (u == true ? UnknownFieldHandler.onWrite : u)(this.typeName, message, writer);
+        return writer;
+    }
+}
+/**
+ * @generated MessageType for protobuf message services.jobs.ListQualificationResultsRequest
+ */
+export const ListQualificationResultsRequest = new ListQualificationResultsRequest$Type();
+// @generated message type with reflection information, may provide speed optimized methods
+class ListQualificationResultsResponse$Type extends MessageType<ListQualificationResultsResponse> {
+    constructor() {
+        super("services.jobs.ListQualificationResultsResponse", [
+            { no: 1, name: "pagination", kind: "message", T: () => PaginationResponse },
+            { no: 2, name: "results", kind: "message", repeat: 1 /*RepeatType.PACKED*/, T: () => QualificationResult }
+        ]);
+    }
+    create(value?: PartialMessage<ListQualificationResultsResponse>): ListQualificationResultsResponse {
+        const message = globalThis.Object.create((this.messagePrototype!));
+        message.results = [];
+        if (value !== undefined)
+            reflectionMergePartial<ListQualificationResultsResponse>(this, message, value);
+        return message;
+    }
+    internalBinaryRead(reader: IBinaryReader, length: number, options: BinaryReadOptions, target?: ListQualificationResultsResponse): ListQualificationResultsResponse {
+        let message = target ?? this.create(), end = reader.pos + length;
+        while (reader.pos < end) {
+            let [fieldNo, wireType] = reader.tag();
+            switch (fieldNo) {
+                case /* resources.common.database.PaginationResponse pagination */ 1:
+                    message.pagination = PaginationResponse.internalBinaryRead(reader, reader.uint32(), options, message.pagination);
+                    break;
+                case /* repeated resources.jobs.QualificationResult results */ 2:
+                    message.results.push(QualificationResult.internalBinaryRead(reader, reader.uint32(), options));
+                    break;
+                default:
+                    let u = options.readUnknownField;
+                    if (u === "throw")
+                        throw new globalThis.Error(`Unknown field ${fieldNo} (wire type ${wireType}) for ${this.typeName}`);
+                    let d = reader.skip(wireType);
+                    if (u !== false)
+                        (u === true ? UnknownFieldHandler.onRead : u)(this.typeName, message, fieldNo, wireType, d);
+            }
+        }
+        return message;
+    }
+    internalBinaryWrite(message: ListQualificationResultsResponse, writer: IBinaryWriter, options: BinaryWriteOptions): IBinaryWriter {
+        /* resources.common.database.PaginationResponse pagination = 1; */
+        if (message.pagination)
+            PaginationResponse.internalBinaryWrite(message.pagination, writer.tag(1, WireType.LengthDelimited).fork(), options).join();
+        /* repeated resources.jobs.QualificationResult results = 2; */
+        for (let i = 0; i < message.results.length; i++)
+            QualificationResult.internalBinaryWrite(message.results[i], writer.tag(2, WireType.LengthDelimited).fork(), options).join();
+        let u = options.writeUnknownFields;
+        if (u !== false)
+            (u == true ? UnknownFieldHandler.onWrite : u)(this.typeName, message, writer);
+        return writer;
+    }
+}
+/**
+ * @generated MessageType for protobuf message services.jobs.ListQualificationResultsResponse
+ */
+export const ListQualificationResultsResponse = new ListQualificationResultsResponse$Type();
+// @generated message type with reflection information, may provide speed optimized methods
 class CreateQualificationRequest$Type extends MessageType<CreateQualificationRequest> {
     constructor() {
         super("services.jobs.CreateQualificationRequest", [
@@ -391,11 +555,12 @@ export const CreateQualificationRequest = new CreateQualificationRequest$Type();
 class CreateQualificationResponse$Type extends MessageType<CreateQualificationResponse> {
     constructor() {
         super("services.jobs.CreateQualificationResponse", [
-            { no: 1, name: "qualification", kind: "message", T: () => Qualification }
+            { no: 1, name: "qualification_id", kind: "scalar", T: 4 /*ScalarType.UINT64*/ }
         ]);
     }
     create(value?: PartialMessage<CreateQualificationResponse>): CreateQualificationResponse {
         const message = globalThis.Object.create((this.messagePrototype!));
+        message.qualificationId = "0";
         if (value !== undefined)
             reflectionMergePartial<CreateQualificationResponse>(this, message, value);
         return message;
@@ -405,8 +570,8 @@ class CreateQualificationResponse$Type extends MessageType<CreateQualificationRe
         while (reader.pos < end) {
             let [fieldNo, wireType] = reader.tag();
             switch (fieldNo) {
-                case /* resources.jobs.Qualification qualification */ 1:
-                    message.qualification = Qualification.internalBinaryRead(reader, reader.uint32(), options, message.qualification);
+                case /* uint64 qualification_id = 1 [jstype = JS_STRING];*/ 1:
+                    message.qualificationId = reader.uint64().toString();
                     break;
                 default:
                     let u = options.readUnknownField;
@@ -420,9 +585,9 @@ class CreateQualificationResponse$Type extends MessageType<CreateQualificationRe
         return message;
     }
     internalBinaryWrite(message: CreateQualificationResponse, writer: IBinaryWriter, options: BinaryWriteOptions): IBinaryWriter {
-        /* resources.jobs.Qualification qualification = 1; */
-        if (message.qualification)
-            Qualification.internalBinaryWrite(message.qualification, writer.tag(1, WireType.LengthDelimited).fork(), options).join();
+        /* uint64 qualification_id = 1 [jstype = JS_STRING]; */
+        if (message.qualificationId !== "0")
+            writer.tag(1, WireType.Varint).uint64(message.qualificationId);
         let u = options.writeUnknownFields;
         if (u !== false)
             (u == true ? UnknownFieldHandler.onWrite : u)(this.typeName, message, writer);
@@ -483,11 +648,12 @@ export const UpdateQualificationRequest = new UpdateQualificationRequest$Type();
 class UpdateQualificationResponse$Type extends MessageType<UpdateQualificationResponse> {
     constructor() {
         super("services.jobs.UpdateQualificationResponse", [
-            { no: 1, name: "qualification", kind: "message", T: () => Qualification }
+            { no: 1, name: "qualification_id", kind: "scalar", T: 4 /*ScalarType.UINT64*/ }
         ]);
     }
     create(value?: PartialMessage<UpdateQualificationResponse>): UpdateQualificationResponse {
         const message = globalThis.Object.create((this.messagePrototype!));
+        message.qualificationId = "0";
         if (value !== undefined)
             reflectionMergePartial<UpdateQualificationResponse>(this, message, value);
         return message;
@@ -497,8 +663,8 @@ class UpdateQualificationResponse$Type extends MessageType<UpdateQualificationRe
         while (reader.pos < end) {
             let [fieldNo, wireType] = reader.tag();
             switch (fieldNo) {
-                case /* resources.jobs.Qualification qualification */ 1:
-                    message.qualification = Qualification.internalBinaryRead(reader, reader.uint32(), options, message.qualification);
+                case /* uint64 qualification_id = 1 [jstype = JS_STRING];*/ 1:
+                    message.qualificationId = reader.uint64().toString();
                     break;
                 default:
                     let u = options.readUnknownField;
@@ -512,9 +678,9 @@ class UpdateQualificationResponse$Type extends MessageType<UpdateQualificationRe
         return message;
     }
     internalBinaryWrite(message: UpdateQualificationResponse, writer: IBinaryWriter, options: BinaryWriteOptions): IBinaryWriter {
-        /* resources.jobs.Qualification qualification = 1; */
-        if (message.qualification)
-            Qualification.internalBinaryWrite(message.qualification, writer.tag(1, WireType.LengthDelimited).fork(), options).join();
+        /* uint64 qualification_id = 1 [jstype = JS_STRING]; */
+        if (message.qualificationId !== "0")
+            writer.tag(1, WireType.Varint).uint64(message.qualificationId);
         let u = options.writeUnknownFields;
         if (u !== false)
             (u == true ? UnknownFieldHandler.onWrite : u)(this.typeName, message, writer);
@@ -777,13 +943,122 @@ class SetQualificationAccessResponse$Type extends MessageType<SetQualificationAc
  * @generated MessageType for protobuf message services.jobs.SetQualificationAccessResponse
  */
 export const SetQualificationAccessResponse = new SetQualificationAccessResponse$Type();
+// @generated message type with reflection information, may provide speed optimized methods
+class ListQualificationRequestsRequest$Type extends MessageType<ListQualificationRequestsRequest> {
+    constructor() {
+        super("services.jobs.ListQualificationRequestsRequest", [
+            { no: 1, name: "pagination", kind: "message", T: () => PaginationRequest, options: { "validate.rules": { message: { required: true } } } },
+            { no: 2, name: "qualification_id", kind: "scalar", opt: true, T: 4 /*ScalarType.UINT64*/ }
+        ]);
+    }
+    create(value?: PartialMessage<ListQualificationRequestsRequest>): ListQualificationRequestsRequest {
+        const message = globalThis.Object.create((this.messagePrototype!));
+        if (value !== undefined)
+            reflectionMergePartial<ListQualificationRequestsRequest>(this, message, value);
+        return message;
+    }
+    internalBinaryRead(reader: IBinaryReader, length: number, options: BinaryReadOptions, target?: ListQualificationRequestsRequest): ListQualificationRequestsRequest {
+        let message = target ?? this.create(), end = reader.pos + length;
+        while (reader.pos < end) {
+            let [fieldNo, wireType] = reader.tag();
+            switch (fieldNo) {
+                case /* resources.common.database.PaginationRequest pagination */ 1:
+                    message.pagination = PaginationRequest.internalBinaryRead(reader, reader.uint32(), options, message.pagination);
+                    break;
+                case /* optional uint64 qualification_id = 2 [jstype = JS_STRING];*/ 2:
+                    message.qualificationId = reader.uint64().toString();
+                    break;
+                default:
+                    let u = options.readUnknownField;
+                    if (u === "throw")
+                        throw new globalThis.Error(`Unknown field ${fieldNo} (wire type ${wireType}) for ${this.typeName}`);
+                    let d = reader.skip(wireType);
+                    if (u !== false)
+                        (u === true ? UnknownFieldHandler.onRead : u)(this.typeName, message, fieldNo, wireType, d);
+            }
+        }
+        return message;
+    }
+    internalBinaryWrite(message: ListQualificationRequestsRequest, writer: IBinaryWriter, options: BinaryWriteOptions): IBinaryWriter {
+        /* resources.common.database.PaginationRequest pagination = 1; */
+        if (message.pagination)
+            PaginationRequest.internalBinaryWrite(message.pagination, writer.tag(1, WireType.LengthDelimited).fork(), options).join();
+        /* optional uint64 qualification_id = 2 [jstype = JS_STRING]; */
+        if (message.qualificationId !== undefined)
+            writer.tag(2, WireType.Varint).uint64(message.qualificationId);
+        let u = options.writeUnknownFields;
+        if (u !== false)
+            (u == true ? UnknownFieldHandler.onWrite : u)(this.typeName, message, writer);
+        return writer;
+    }
+}
+/**
+ * @generated MessageType for protobuf message services.jobs.ListQualificationRequestsRequest
+ */
+export const ListQualificationRequestsRequest = new ListQualificationRequestsRequest$Type();
+// @generated message type with reflection information, may provide speed optimized methods
+class ListQualificationRequestsResponse$Type extends MessageType<ListQualificationRequestsResponse> {
+    constructor() {
+        super("services.jobs.ListQualificationRequestsResponse", [
+            { no: 1, name: "pagination", kind: "message", T: () => PaginationResponse },
+            { no: 2, name: "requests", kind: "message", repeat: 1 /*RepeatType.PACKED*/, T: () => QualificationRequest }
+        ]);
+    }
+    create(value?: PartialMessage<ListQualificationRequestsResponse>): ListQualificationRequestsResponse {
+        const message = globalThis.Object.create((this.messagePrototype!));
+        message.requests = [];
+        if (value !== undefined)
+            reflectionMergePartial<ListQualificationRequestsResponse>(this, message, value);
+        return message;
+    }
+    internalBinaryRead(reader: IBinaryReader, length: number, options: BinaryReadOptions, target?: ListQualificationRequestsResponse): ListQualificationRequestsResponse {
+        let message = target ?? this.create(), end = reader.pos + length;
+        while (reader.pos < end) {
+            let [fieldNo, wireType] = reader.tag();
+            switch (fieldNo) {
+                case /* resources.common.database.PaginationResponse pagination */ 1:
+                    message.pagination = PaginationResponse.internalBinaryRead(reader, reader.uint32(), options, message.pagination);
+                    break;
+                case /* repeated resources.jobs.QualificationRequest requests */ 2:
+                    message.requests.push(QualificationRequest.internalBinaryRead(reader, reader.uint32(), options));
+                    break;
+                default:
+                    let u = options.readUnknownField;
+                    if (u === "throw")
+                        throw new globalThis.Error(`Unknown field ${fieldNo} (wire type ${wireType}) for ${this.typeName}`);
+                    let d = reader.skip(wireType);
+                    if (u !== false)
+                        (u === true ? UnknownFieldHandler.onRead : u)(this.typeName, message, fieldNo, wireType, d);
+            }
+        }
+        return message;
+    }
+    internalBinaryWrite(message: ListQualificationRequestsResponse, writer: IBinaryWriter, options: BinaryWriteOptions): IBinaryWriter {
+        /* resources.common.database.PaginationResponse pagination = 1; */
+        if (message.pagination)
+            PaginationResponse.internalBinaryWrite(message.pagination, writer.tag(1, WireType.LengthDelimited).fork(), options).join();
+        /* repeated resources.jobs.QualificationRequest requests = 2; */
+        for (let i = 0; i < message.requests.length; i++)
+            QualificationRequest.internalBinaryWrite(message.requests[i], writer.tag(2, WireType.LengthDelimited).fork(), options).join();
+        let u = options.writeUnknownFields;
+        if (u !== false)
+            (u == true ? UnknownFieldHandler.onWrite : u)(this.typeName, message, writer);
+        return writer;
+    }
+}
+/**
+ * @generated MessageType for protobuf message services.jobs.ListQualificationRequestsResponse
+ */
+export const ListQualificationRequestsResponse = new ListQualificationRequestsResponse$Type();
 /**
  * @generated ServiceType for protobuf service services.jobs.JobsQualificationsService
  */
 export const JobsQualificationsService = new ServiceType("services.jobs.JobsQualificationsService", [
     { name: "ListQualifications", options: {}, I: ListQualificationsRequest, O: ListQualificationsResponse },
     { name: "GetQualification", options: {}, I: GetQualificationRequest, O: GetQualificationResponse },
+    { name: "ListQualificationResults", options: {}, I: ListQualificationResultsRequest, O: ListQualificationResultsResponse },
     { name: "CreateQualification", options: {}, I: CreateQualificationRequest, O: CreateQualificationResponse },
     { name: "UpdateQualification", options: {}, I: UpdateQualificationRequest, O: UpdateQualificationResponse },
-    { name: "DeleteQualification", options: {}, I: DeleteQualificationRequest, O: DeleteQualificationResponse }
+    { name: "DeleteQualification", options: {}, I: DeleteQualificationRequest, O: DeleteQualificationResponse },
+    { name: "ListQualificationRequests", options: {}, I: ListQualificationRequestsRequest, O: ListQualificationRequestsResponse }
 ]);

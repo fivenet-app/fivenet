@@ -81,7 +81,7 @@ func (m *Qualification) validate(all bool) error {
 		errors = append(errors, err)
 	}
 
-	// no validation rules for Open
+	// no validation rules for Closed
 
 	if utf8.RuneCountInString(m.GetAbbreviation()) > 20 {
 		err := QualificationValidationError{
@@ -293,6 +293,39 @@ func (m *Qualification) validate(all bool) error {
 			if err := v.Validate(); err != nil {
 				return QualificationValidationError{
 					field:  "Creator",
+					reason: "embedded message failed validation",
+					cause:  err,
+				}
+			}
+		}
+
+	}
+
+	if m.DiscordSettings != nil {
+
+		if all {
+			switch v := interface{}(m.GetDiscordSettings()).(type) {
+			case interface{ ValidateAll() error }:
+				if err := v.ValidateAll(); err != nil {
+					errors = append(errors, QualificationValidationError{
+						field:  "DiscordSettings",
+						reason: "embedded message failed validation",
+						cause:  err,
+					})
+				}
+			case interface{ Validate() error }:
+				if err := v.Validate(); err != nil {
+					errors = append(errors, QualificationValidationError{
+						field:  "DiscordSettings",
+						reason: "embedded message failed validation",
+						cause:  err,
+					})
+				}
+			}
+		} else if v, ok := interface{}(m.GetDiscordSettings()).(interface{ Validate() error }); ok {
+			if err := v.Validate(); err != nil {
+				return QualificationValidationError{
+					field:  "DiscordSettings",
 					reason: "embedded message failed validation",
 					cause:  err,
 				}
@@ -959,7 +992,7 @@ func (m *QualificationResult) validate(all bool) error {
 		}
 	}
 
-	// no validation rules for Successful
+	// no validation rules for Status
 
 	if m.GetScore() >= 1000 {
 		err := QualificationResultValidationError{
@@ -1428,185 +1461,59 @@ var _ interface {
 	ErrorName() string
 } = QualificationRequestValidationError{}
 
-// Validate checks the field values on QualificationTestQuestion with the rules
-// defined in the proto definition for this message. If any rules are
+// Validate checks the field values on QualificationDiscordSettings with the
+// rules defined in the proto definition for this message. If any rules are
 // violated, the first error encountered is returned, or nil if there are no violations.
-func (m *QualificationTestQuestion) Validate() error {
+func (m *QualificationDiscordSettings) Validate() error {
 	return m.validate(false)
 }
 
-// ValidateAll checks the field values on QualificationTestQuestion with the
+// ValidateAll checks the field values on QualificationDiscordSettings with the
 // rules defined in the proto definition for this message. If any rules are
 // violated, the result is a list of violation errors wrapped in
-// QualificationTestQuestionMultiError, or nil if none found.
-func (m *QualificationTestQuestion) ValidateAll() error {
+// QualificationDiscordSettingsMultiError, or nil if none found.
+func (m *QualificationDiscordSettings) ValidateAll() error {
 	return m.validate(true)
 }
 
-func (m *QualificationTestQuestion) validate(all bool) error {
+func (m *QualificationDiscordSettings) validate(all bool) error {
 	if m == nil {
 		return nil
 	}
 
 	var errors []error
 
-	// no validation rules for QualificationId
+	// no validation rules for SyncEnabled
 
-	// no validation rules for Question
+	if m.RoleName != nil {
 
-	if len(errors) > 0 {
-		return QualificationTestQuestionMultiError(errors)
-	}
-
-	return nil
-}
-
-// QualificationTestQuestionMultiError is an error wrapping multiple validation
-// errors returned by QualificationTestQuestion.ValidateAll() if the
-// designated constraints aren't met.
-type QualificationTestQuestionMultiError []error
-
-// Error returns a concatenation of all the error messages it wraps.
-func (m QualificationTestQuestionMultiError) Error() string {
-	var msgs []string
-	for _, err := range m {
-		msgs = append(msgs, err.Error())
-	}
-	return strings.Join(msgs, "; ")
-}
-
-// AllErrors returns a list of validation violation errors.
-func (m QualificationTestQuestionMultiError) AllErrors() []error { return m }
-
-// QualificationTestQuestionValidationError is the validation error returned by
-// QualificationTestQuestion.Validate if the designated constraints aren't met.
-type QualificationTestQuestionValidationError struct {
-	field  string
-	reason string
-	cause  error
-	key    bool
-}
-
-// Field function returns field value.
-func (e QualificationTestQuestionValidationError) Field() string { return e.field }
-
-// Reason function returns reason value.
-func (e QualificationTestQuestionValidationError) Reason() string { return e.reason }
-
-// Cause function returns cause value.
-func (e QualificationTestQuestionValidationError) Cause() error { return e.cause }
-
-// Key function returns key value.
-func (e QualificationTestQuestionValidationError) Key() bool { return e.key }
-
-// ErrorName returns error name.
-func (e QualificationTestQuestionValidationError) ErrorName() string {
-	return "QualificationTestQuestionValidationError"
-}
-
-// Error satisfies the builtin error interface
-func (e QualificationTestQuestionValidationError) Error() string {
-	cause := ""
-	if e.cause != nil {
-		cause = fmt.Sprintf(" | caused by: %v", e.cause)
-	}
-
-	key := ""
-	if e.key {
-		key = "key for "
-	}
-
-	return fmt.Sprintf(
-		"invalid %sQualificationTestQuestion.%s: %s%s",
-		key,
-		e.field,
-		e.reason,
-		cause)
-}
-
-var _ error = QualificationTestQuestionValidationError{}
-
-var _ interface {
-	Field() string
-	Reason() string
-	Key() bool
-	Cause() error
-	ErrorName() string
-} = QualificationTestQuestionValidationError{}
-
-// Validate checks the field values on QualificationTestAnswer with the rules
-// defined in the proto definition for this message. If any rules are
-// violated, the first error encountered is returned, or nil if there are no violations.
-func (m *QualificationTestAnswer) Validate() error {
-	return m.validate(false)
-}
-
-// ValidateAll checks the field values on QualificationTestAnswer with the
-// rules defined in the proto definition for this message. If any rules are
-// violated, the result is a list of violation errors wrapped in
-// QualificationTestAnswerMultiError, or nil if none found.
-func (m *QualificationTestAnswer) ValidateAll() error {
-	return m.validate(true)
-}
-
-func (m *QualificationTestAnswer) validate(all bool) error {
-	if m == nil {
-		return nil
-	}
-
-	var errors []error
-
-	// no validation rules for QualificationId
-
-	// no validation rules for UserId
-
-	if m.CreatedAt != nil {
-
-		if all {
-			switch v := interface{}(m.GetCreatedAt()).(type) {
-			case interface{ ValidateAll() error }:
-				if err := v.ValidateAll(); err != nil {
-					errors = append(errors, QualificationTestAnswerValidationError{
-						field:  "CreatedAt",
-						reason: "embedded message failed validation",
-						cause:  err,
-					})
-				}
-			case interface{ Validate() error }:
-				if err := v.Validate(); err != nil {
-					errors = append(errors, QualificationTestAnswerValidationError{
-						field:  "CreatedAt",
-						reason: "embedded message failed validation",
-						cause:  err,
-					})
-				}
+		if utf8.RuneCountInString(m.GetRoleName()) > 50 {
+			err := QualificationDiscordSettingsValidationError{
+				field:  "RoleName",
+				reason: "value length must be at most 50 runes",
 			}
-		} else if v, ok := interface{}(m.GetCreatedAt()).(interface{ Validate() error }); ok {
-			if err := v.Validate(); err != nil {
-				return QualificationTestAnswerValidationError{
-					field:  "CreatedAt",
-					reason: "embedded message failed validation",
-					cause:  err,
-				}
+			if !all {
+				return err
 			}
+			errors = append(errors, err)
 		}
 
 	}
 
 	if len(errors) > 0 {
-		return QualificationTestAnswerMultiError(errors)
+		return QualificationDiscordSettingsMultiError(errors)
 	}
 
 	return nil
 }
 
-// QualificationTestAnswerMultiError is an error wrapping multiple validation
-// errors returned by QualificationTestAnswer.ValidateAll() if the designated
-// constraints aren't met.
-type QualificationTestAnswerMultiError []error
+// QualificationDiscordSettingsMultiError is an error wrapping multiple
+// validation errors returned by QualificationDiscordSettings.ValidateAll() if
+// the designated constraints aren't met.
+type QualificationDiscordSettingsMultiError []error
 
 // Error returns a concatenation of all the error messages it wraps.
-func (m QualificationTestAnswerMultiError) Error() string {
+func (m QualificationDiscordSettingsMultiError) Error() string {
 	var msgs []string
 	for _, err := range m {
 		msgs = append(msgs, err.Error())
@@ -1615,11 +1522,12 @@ func (m QualificationTestAnswerMultiError) Error() string {
 }
 
 // AllErrors returns a list of validation violation errors.
-func (m QualificationTestAnswerMultiError) AllErrors() []error { return m }
+func (m QualificationDiscordSettingsMultiError) AllErrors() []error { return m }
 
-// QualificationTestAnswerValidationError is the validation error returned by
-// QualificationTestAnswer.Validate if the designated constraints aren't met.
-type QualificationTestAnswerValidationError struct {
+// QualificationDiscordSettingsValidationError is the validation error returned
+// by QualificationDiscordSettings.Validate if the designated constraints
+// aren't met.
+type QualificationDiscordSettingsValidationError struct {
 	field  string
 	reason string
 	cause  error
@@ -1627,24 +1535,24 @@ type QualificationTestAnswerValidationError struct {
 }
 
 // Field function returns field value.
-func (e QualificationTestAnswerValidationError) Field() string { return e.field }
+func (e QualificationDiscordSettingsValidationError) Field() string { return e.field }
 
 // Reason function returns reason value.
-func (e QualificationTestAnswerValidationError) Reason() string { return e.reason }
+func (e QualificationDiscordSettingsValidationError) Reason() string { return e.reason }
 
 // Cause function returns cause value.
-func (e QualificationTestAnswerValidationError) Cause() error { return e.cause }
+func (e QualificationDiscordSettingsValidationError) Cause() error { return e.cause }
 
 // Key function returns key value.
-func (e QualificationTestAnswerValidationError) Key() bool { return e.key }
+func (e QualificationDiscordSettingsValidationError) Key() bool { return e.key }
 
 // ErrorName returns error name.
-func (e QualificationTestAnswerValidationError) ErrorName() string {
-	return "QualificationTestAnswerValidationError"
+func (e QualificationDiscordSettingsValidationError) ErrorName() string {
+	return "QualificationDiscordSettingsValidationError"
 }
 
 // Error satisfies the builtin error interface
-func (e QualificationTestAnswerValidationError) Error() string {
+func (e QualificationDiscordSettingsValidationError) Error() string {
 	cause := ""
 	if e.cause != nil {
 		cause = fmt.Sprintf(" | caused by: %v", e.cause)
@@ -1656,14 +1564,14 @@ func (e QualificationTestAnswerValidationError) Error() string {
 	}
 
 	return fmt.Sprintf(
-		"invalid %sQualificationTestAnswer.%s: %s%s",
+		"invalid %sQualificationDiscordSettings.%s: %s%s",
 		key,
 		e.field,
 		e.reason,
 		cause)
 }
 
-var _ error = QualificationTestAnswerValidationError{}
+var _ error = QualificationDiscordSettingsValidationError{}
 
 var _ interface {
 	Field() string
@@ -1671,4 +1579,4 @@ var _ interface {
 	Key() bool
 	Cause() error
 	ErrorName() string
-} = QualificationTestAnswerValidationError{}
+} = QualificationDiscordSettingsValidationError{}
