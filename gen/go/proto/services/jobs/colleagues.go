@@ -50,10 +50,13 @@ func (s *Server) ListColleagues(ctx context.Context, req *ListColleaguesRequest)
 	}
 
 	if req.Absent != nil && *req.Absent {
-		condition = condition.AND(jet.AND(
-			tJobsUserProps.AbsenceBegin.IS_NOT_NULL(),
-			tJobsUserProps.AbsenceBegin.GT_EQ(jet.CURRENT_DATE()),
-		))
+		condition = condition.AND(
+			jet.AND(
+				tJobsUserProps.AbsenceBegin.IS_NOT_NULL(),
+				tJobsUserProps.AbsenceEnd.IS_NOT_NULL(),
+				tJobsUserProps.AbsenceBegin.LT_EQ(jet.CURRENT_DATE()),
+				tJobsUserProps.AbsenceEnd.GT_EQ(jet.CURRENT_DATE()),
+			))
 	}
 
 	// Get total count of values

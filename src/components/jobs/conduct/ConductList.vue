@@ -245,7 +245,13 @@ onConfirm(async (id) => deleteConductEntry(id));
                                                     class="block w-full rounded-md border-0 bg-base-700 py-1.5 text-neutral placeholder:text-accent-200 focus:ring-2 focus:ring-inset focus:ring-base-300 sm:text-sm sm:leading-6"
                                                     :display-value="
                                                         (cTypes: any) =>
-                                                            cTypes ? (cTypes as ConductType[]).join(', ') : $t('common.na')
+                                                            cTypes
+                                                                ? cTypes
+                                                                      .map((ct: ConductType) =>
+                                                                          $t(`enums.jobs.ConductType.${ConductType[ct ?? 0]}`),
+                                                                      )
+                                                                      .join(', ')
+                                                                : $t('common.na')
                                                     "
                                                     :placeholder="$t('common.type')"
                                                     @change="queryTypes = $event.target.value"

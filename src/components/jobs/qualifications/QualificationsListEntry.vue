@@ -19,7 +19,7 @@ defineProps<{
                     </NuxtLink>
                 </p>
                 <p class="mt-1 flex text-xs leading-5 text-gray-300">
-                    {{ qualification.summary }}
+                    {{ $t('common.summary') }}: {{ qualification.summary ?? $t('common.na') }}
                 </p>
             </div>
         </div>
