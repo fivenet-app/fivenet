@@ -93,6 +93,7 @@ CREATE TABLE
         `closed` tinyint(1) DEFAULT 0,
         `abbreviation` varchar(20) NOT NULL,
         `title` longtext,
+        `summary` varchar(255),
         `description` longtext,
         `creator_id` int(11) NULL DEFAULT NULL,
         `creator_job` varchar(50) NOT NULL,
@@ -123,10 +124,13 @@ CREATE TABLE IF NOT EXISTS `fivenet_jobs_qualifications_reqs_access` (
   `id` bigint(20) unsigned NOT NULL AUTO_INCREMENT,
   `created_at` datetime(3) DEFAULT CURRENT_TIMESTAMP(3),
   `qualification_id` bigint(20) unsigned NOT NULL,
+  `target_qualification_id` bigint(20) unsigned NOT NULL,
   `access` smallint(2) NOT NULL,
   PRIMARY KEY (`id`),
   KEY `idx_fivenet_jobs_qualifications_reqs_access_qualification_id` (`qualification_id`),
-  CONSTRAINT `fk_fivenet_jobs_qualifications_reqs_access_qualification_id` FOREIGN KEY (`qualification_id`) REFERENCES `fivenet_jobs_qualifications` (`id`) ON DELETE CASCADE ON UPDATE CASCADE
+  KEY `idx_fivenet_jobs_qualifications_reqs_access_qualification_ids` (`qualification_id`, `target_qualification_id`),
+  CONSTRAINT `fk_fivenet_jobs_qualifications_reqs_access_quali_id` FOREIGN KEY (`qualification_id`) REFERENCES `fivenet_jobs_qualifications` (`id`) ON DELETE CASCADE ON UPDATE CASCADE,
+  CONSTRAINT `fk_fivenet_jobs_qualifications_reqs_access_target_quali_id` FOREIGN KEY (`target_qualification_id`) REFERENCES `fivenet_jobs_qualifications` (`id`) ON DELETE CASCADE ON UPDATE CASCADE
 ) ENGINE=InnoDB;
 
 -- Table: fivenet_jobs_qualifications_results
@@ -137,7 +141,7 @@ CREATE TABLE IF NOT EXISTS `fivenet_jobs_qualifications_results` (
   `qualification_id` bigint(20) unsigned NOT NULL,
   `user_id` int(11) NOT NULL,
   `status` smallint(2) DEFAULT 0,
-  `score` int(4) NOT NULL,
+  `score` int(4) DEFAULT NULL,
   `summary` varchar(255) DEFAULT NULL,
   `creator_id` int(11) NULL DEFAULT NULL,
   `creator_job` varchar(50) NOT NULL,

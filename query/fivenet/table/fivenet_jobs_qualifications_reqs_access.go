@@ -17,10 +17,11 @@ type fivenetJobsQualificationsReqsAccessTable struct {
 	mysql.Table
 
 	// Columns
-	ID              mysql.ColumnInteger
-	CreatedAt       mysql.ColumnTimestamp
-	QualificationID mysql.ColumnInteger
-	Access          mysql.ColumnInteger
+	ID                    mysql.ColumnInteger
+	CreatedAt             mysql.ColumnTimestamp
+	QualificationID       mysql.ColumnInteger
+	TargetQualificationID mysql.ColumnInteger
+	Access                mysql.ColumnInteger
 
 	AllColumns     mysql.ColumnList
 	MutableColumns mysql.ColumnList
@@ -61,22 +62,24 @@ func newFivenetJobsQualificationsReqsAccessTable(schemaName, tableName, alias st
 
 func newFivenetJobsQualificationsReqsAccessTableImpl(schemaName, tableName, alias string) fivenetJobsQualificationsReqsAccessTable {
 	var (
-		IDColumn              = mysql.IntegerColumn("id")
-		CreatedAtColumn       = mysql.TimestampColumn("created_at")
-		QualificationIDColumn = mysql.IntegerColumn("qualification_id")
-		AccessColumn          = mysql.IntegerColumn("access")
-		allColumns            = mysql.ColumnList{IDColumn, CreatedAtColumn, QualificationIDColumn, AccessColumn}
-		mutableColumns        = mysql.ColumnList{CreatedAtColumn, QualificationIDColumn, AccessColumn}
+		IDColumn                    = mysql.IntegerColumn("id")
+		CreatedAtColumn             = mysql.TimestampColumn("created_at")
+		QualificationIDColumn       = mysql.IntegerColumn("qualification_id")
+		TargetQualificationIDColumn = mysql.IntegerColumn("target_qualification_id")
+		AccessColumn                = mysql.IntegerColumn("access")
+		allColumns                  = mysql.ColumnList{IDColumn, CreatedAtColumn, QualificationIDColumn, TargetQualificationIDColumn, AccessColumn}
+		mutableColumns              = mysql.ColumnList{CreatedAtColumn, QualificationIDColumn, TargetQualificationIDColumn, AccessColumn}
 	)
 
 	return fivenetJobsQualificationsReqsAccessTable{
 		Table: mysql.NewTable(schemaName, tableName, alias, allColumns...),
 
 		//Columns
-		ID:              IDColumn,
-		CreatedAt:       CreatedAtColumn,
-		QualificationID: QualificationIDColumn,
-		Access:          AccessColumn,
+		ID:                    IDColumn,
+		CreatedAt:             CreatedAtColumn,
+		QualificationID:       QualificationIDColumn,
+		TargetQualificationID: TargetQualificationIDColumn,
+		Access:                AccessColumn,
 
 		AllColumns:     allColumns,
 		MutableColumns: mutableColumns,

@@ -41,8 +41,6 @@ func (s *Server) GetQualificationAccess(ctx context.Context, req *GetQualificati
 		s.enricher.EnrichJobInfo(access.Jobs[i])
 	}
 
-	// TODO Handle access.Requirements
-
 	resp := &GetQualificationAccessResponse{
 		Access: access,
 	}
@@ -272,10 +270,17 @@ func (s *Server) getQualificationAccess(ctx context.Context, qualificationId uin
 		SELECT(
 			tQReqAccess.ID,
 			tQReqAccess.QualificationID,
+			tQReqAccess.TargetQualificationID,
 			tQReqAccess.Access,
+			tQuali.ID,
+			tQuali.Title,
+			tQuali.Abbreviation,
 		).
 		FROM(
-			tQReqAccess,
+			tQReqAccess.
+				INNER_JOIN(tQuali,
+					tQuali.ID.EQ(tQReqAccess.TargetQualificationID),
+				),
 		).
 		WHERE(
 			tQReqAccess.QualificationID.EQ(jet.Uint64(qualificationId)),

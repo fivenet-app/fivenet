@@ -13,6 +13,10 @@ func (m *Qualification) Sanitize() error {
 
 	m.Description = htmlsanitizer.Sanitize(m.Description)
 
+	if m.Summary != nil {
+		*m.Summary = htmlsanitizer.StripTags(*m.Summary)
+	}
+
 	m.Title = htmlsanitizer.Sanitize(m.Title)
 
 	return nil

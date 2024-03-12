@@ -57,29 +57,39 @@ export interface Qualification {
      */
     title: string;
     /**
+     * @sanitize: method=StripTags
+     *
+     * @generated from protobuf field: optional string summary = 10;
+     */
+    summary?: string;
+    /**
      * @sanitize
      *
-     * @generated from protobuf field: string description = 10;
+     * @generated from protobuf field: string description = 11;
      */
     description: string;
     /**
-     * @generated from protobuf field: int32 creator_id = 11;
+     * @generated from protobuf field: int32 creator_id = 12;
      */
     creatorId: number;
     /**
-     * @generated from protobuf field: optional resources.users.UserShort creator = 12;
+     * @generated from protobuf field: optional resources.users.UserShort creator = 13;
      */
     creator?: UserShort; // @gotags: alias:"creator"
     /**
-     * @generated from protobuf field: string creator_job = 13;
+     * @generated from protobuf field: string creator_job = 14;
      */
     creatorJob: string;
     /**
-     * @generated from protobuf field: resources.jobs.QualificationAccess access = 14;
+     * @generated from protobuf field: resources.jobs.QualificationAccess access = 15;
      */
     access?: QualificationAccess;
     /**
-     * @generated from protobuf field: optional resources.jobs.QualificationDiscordSettings discord_settings = 15;
+     * @generated from protobuf field: optional resources.jobs.QualificationResult result = 16;
+     */
+    result?: QualificationResult;
+    /**
+     * @generated from protobuf field: optional resources.jobs.QualificationDiscordSettings discord_settings = 17;
      */
     discordSettings?: QualificationDiscordSettings;
 }
@@ -150,7 +160,15 @@ export interface QualificationRequirementsAccess {
      */
     qualificationId: string;
     /**
-     * @generated from protobuf field: resources.jobs.AccessLevel access = 4;
+     * @generated from protobuf field: uint64 target_qualification_id = 4 [jstype = JS_STRING];
+     */
+    targetQualificationId: string;
+    /**
+     * @generated from protobuf field: optional resources.jobs.Qualification target_qualification = 5;
+     */
+    targetQualification?: Qualification;
+    /**
+     * @generated from protobuf field: resources.jobs.AccessLevel access = 6;
      */
     access: AccessLevel;
 }
@@ -187,9 +205,9 @@ export interface QualificationResult {
      */
     status: ResultStatus;
     /**
-     * @generated from protobuf field: uint32 score = 8;
+     * @generated from protobuf field: optional uint32 score = 8;
      */
-    score: number;
+    score?: number;
     /**
      * @sanitize: method=StripTags
      *
@@ -351,12 +369,14 @@ class Qualification$Type extends MessageType<Qualification> {
             { no: 7, name: "closed", kind: "scalar", T: 8 /*ScalarType.BOOL*/ },
             { no: 8, name: "abbreviation", kind: "scalar", T: 9 /*ScalarType.STRING*/, options: { "validate.rules": { string: { maxLen: "20" } } } },
             { no: 9, name: "title", kind: "scalar", T: 9 /*ScalarType.STRING*/, options: { "validate.rules": { string: { minLen: "3", maxLen: "1024" } } } },
-            { no: 10, name: "description", kind: "scalar", T: 9 /*ScalarType.STRING*/, options: { "validate.rules": { string: { minLen: "20", maxBytes: "500000" } } } },
-            { no: 11, name: "creator_id", kind: "scalar", T: 5 /*ScalarType.INT32*/ },
-            { no: 12, name: "creator", kind: "message", T: () => UserShort },
-            { no: 13, name: "creator_job", kind: "scalar", T: 9 /*ScalarType.STRING*/, options: { "validate.rules": { string: { maxLen: "20" } } } },
-            { no: 14, name: "access", kind: "message", T: () => QualificationAccess },
-            { no: 15, name: "discord_settings", kind: "message", T: () => QualificationDiscordSettings }
+            { no: 10, name: "summary", kind: "scalar", opt: true, T: 9 /*ScalarType.STRING*/, options: { "validate.rules": { string: { maxLen: "255" } } } },
+            { no: 11, name: "description", kind: "scalar", T: 9 /*ScalarType.STRING*/, options: { "validate.rules": { string: { minLen: "20", maxBytes: "500000" } } } },
+            { no: 12, name: "creator_id", kind: "scalar", T: 5 /*ScalarType.INT32*/ },
+            { no: 13, name: "creator", kind: "message", T: () => UserShort },
+            { no: 14, name: "creator_job", kind: "scalar", T: 9 /*ScalarType.STRING*/, options: { "validate.rules": { string: { maxLen: "20" } } } },
+            { no: 15, name: "access", kind: "message", T: () => QualificationAccess },
+            { no: 16, name: "result", kind: "message", T: () => QualificationResult },
+            { no: 17, name: "discord_settings", kind: "message", T: () => QualificationDiscordSettings }
         ]);
     }
     create(value?: PartialMessage<Qualification>): Qualification {
@@ -406,22 +426,28 @@ class Qualification$Type extends MessageType<Qualification> {
                 case /* string title */ 9:
                     message.title = reader.string();
                     break;
-                case /* string description */ 10:
+                case /* optional string summary */ 10:
+                    message.summary = reader.string();
+                    break;
+                case /* string description */ 11:
                     message.description = reader.string();
                     break;
-                case /* int32 creator_id */ 11:
+                case /* int32 creator_id */ 12:
                     message.creatorId = reader.int32();
                     break;
-                case /* optional resources.users.UserShort creator */ 12:
+                case /* optional resources.users.UserShort creator */ 13:
                     message.creator = UserShort.internalBinaryRead(reader, reader.uint32(), options, message.creator);
                     break;
-                case /* string creator_job */ 13:
+                case /* string creator_job */ 14:
                     message.creatorJob = reader.string();
                     break;
-                case /* resources.jobs.QualificationAccess access */ 14:
+                case /* resources.jobs.QualificationAccess access */ 15:
                     message.access = QualificationAccess.internalBinaryRead(reader, reader.uint32(), options, message.access);
                     break;
-                case /* optional resources.jobs.QualificationDiscordSettings discord_settings */ 15:
+                case /* optional resources.jobs.QualificationResult result */ 16:
+                    message.result = QualificationResult.internalBinaryRead(reader, reader.uint32(), options, message.result);
+                    break;
+                case /* optional resources.jobs.QualificationDiscordSettings discord_settings */ 17:
                     message.discordSettings = QualificationDiscordSettings.internalBinaryRead(reader, reader.uint32(), options, message.discordSettings);
                     break;
                 default:
@@ -463,24 +489,30 @@ class Qualification$Type extends MessageType<Qualification> {
         /* string title = 9; */
         if (message.title !== "")
             writer.tag(9, WireType.LengthDelimited).string(message.title);
-        /* string description = 10; */
+        /* optional string summary = 10; */
+        if (message.summary !== undefined)
+            writer.tag(10, WireType.LengthDelimited).string(message.summary);
+        /* string description = 11; */
         if (message.description !== "")
-            writer.tag(10, WireType.LengthDelimited).string(message.description);
-        /* int32 creator_id = 11; */
+            writer.tag(11, WireType.LengthDelimited).string(message.description);
+        /* int32 creator_id = 12; */
         if (message.creatorId !== 0)
-            writer.tag(11, WireType.Varint).int32(message.creatorId);
-        /* optional resources.users.UserShort creator = 12; */
+            writer.tag(12, WireType.Varint).int32(message.creatorId);
+        /* optional resources.users.UserShort creator = 13; */
         if (message.creator)
-            UserShort.internalBinaryWrite(message.creator, writer.tag(12, WireType.LengthDelimited).fork(), options).join();
-        /* string creator_job = 13; */
+            UserShort.internalBinaryWrite(message.creator, writer.tag(13, WireType.LengthDelimited).fork(), options).join();
+        /* string creator_job = 14; */
         if (message.creatorJob !== "")
-            writer.tag(13, WireType.LengthDelimited).string(message.creatorJob);
-        /* resources.jobs.QualificationAccess access = 14; */
+            writer.tag(14, WireType.LengthDelimited).string(message.creatorJob);
+        /* resources.jobs.QualificationAccess access = 15; */
         if (message.access)
-            QualificationAccess.internalBinaryWrite(message.access, writer.tag(14, WireType.LengthDelimited).fork(), options).join();
-        /* optional resources.jobs.QualificationDiscordSettings discord_settings = 15; */
+            QualificationAccess.internalBinaryWrite(message.access, writer.tag(15, WireType.LengthDelimited).fork(), options).join();
+        /* optional resources.jobs.QualificationResult result = 16; */
+        if (message.result)
+            QualificationResult.internalBinaryWrite(message.result, writer.tag(16, WireType.LengthDelimited).fork(), options).join();
+        /* optional resources.jobs.QualificationDiscordSettings discord_settings = 17; */
         if (message.discordSettings)
-            QualificationDiscordSettings.internalBinaryWrite(message.discordSettings, writer.tag(15, WireType.LengthDelimited).fork(), options).join();
+            QualificationDiscordSettings.internalBinaryWrite(message.discordSettings, writer.tag(17, WireType.LengthDelimited).fork(), options).join();
         let u = options.writeUnknownFields;
         if (u !== false)
             (u == true ? UnknownFieldHandler.onWrite : u)(this.typeName, message, writer);
@@ -653,13 +685,16 @@ class QualificationRequirementsAccess$Type extends MessageType<QualificationRequ
             { no: 1, name: "id", kind: "scalar", T: 4 /*ScalarType.UINT64*/ },
             { no: 2, name: "created_at", kind: "message", T: () => Timestamp },
             { no: 3, name: "qualification_id", kind: "scalar", T: 4 /*ScalarType.UINT64*/ },
-            { no: 4, name: "access", kind: "enum", T: () => ["resources.jobs.AccessLevel", AccessLevel, "ACCESS_LEVEL_"], options: { "validate.rules": { enum: { definedOnly: true } } } }
+            { no: 4, name: "target_qualification_id", kind: "scalar", T: 4 /*ScalarType.UINT64*/ },
+            { no: 5, name: "target_qualification", kind: "message", T: () => Qualification },
+            { no: 6, name: "access", kind: "enum", T: () => ["resources.jobs.AccessLevel", AccessLevel, "ACCESS_LEVEL_"], options: { "validate.rules": { enum: { definedOnly: true } } } }
         ]);
     }
     create(value?: PartialMessage<QualificationRequirementsAccess>): QualificationRequirementsAccess {
         const message = globalThis.Object.create((this.messagePrototype!));
         message.id = "0";
         message.qualificationId = "0";
+        message.targetQualificationId = "0";
         message.access = 0;
         if (value !== undefined)
             reflectionMergePartial<QualificationRequirementsAccess>(this, message, value);
@@ -679,7 +714,13 @@ class QualificationRequirementsAccess$Type extends MessageType<QualificationRequ
                 case /* uint64 qualification_id = 3 [jstype = JS_STRING];*/ 3:
                     message.qualificationId = reader.uint64().toString();
                     break;
-                case /* resources.jobs.AccessLevel access */ 4:
+                case /* uint64 target_qualification_id = 4 [jstype = JS_STRING];*/ 4:
+                    message.targetQualificationId = reader.uint64().toString();
+                    break;
+                case /* optional resources.jobs.Qualification target_qualification */ 5:
+                    message.targetQualification = Qualification.internalBinaryRead(reader, reader.uint32(), options, message.targetQualification);
+                    break;
+                case /* resources.jobs.AccessLevel access */ 6:
                     message.access = reader.int32();
                     break;
                 default:
@@ -703,9 +744,15 @@ class QualificationRequirementsAccess$Type extends MessageType<QualificationRequ
         /* uint64 qualification_id = 3 [jstype = JS_STRING]; */
         if (message.qualificationId !== "0")
             writer.tag(3, WireType.Varint).uint64(message.qualificationId);
-        /* resources.jobs.AccessLevel access = 4; */
+        /* uint64 target_qualification_id = 4 [jstype = JS_STRING]; */
+        if (message.targetQualificationId !== "0")
+            writer.tag(4, WireType.Varint).uint64(message.targetQualificationId);
+        /* optional resources.jobs.Qualification target_qualification = 5; */
+        if (message.targetQualification)
+            Qualification.internalBinaryWrite(message.targetQualification, writer.tag(5, WireType.LengthDelimited).fork(), options).join();
+        /* resources.jobs.AccessLevel access = 6; */
         if (message.access !== 0)
-            writer.tag(4, WireType.Varint).int32(message.access);
+            writer.tag(6, WireType.Varint).int32(message.access);
         let u = options.writeUnknownFields;
         if (u !== false)
             (u == true ? UnknownFieldHandler.onWrite : u)(this.typeName, message, writer);
@@ -727,7 +774,7 @@ class QualificationResult$Type extends MessageType<QualificationResult> {
             { no: 5, name: "user_id", kind: "scalar", T: 5 /*ScalarType.INT32*/ },
             { no: 6, name: "user", kind: "message", T: () => UserShort },
             { no: 7, name: "status", kind: "enum", T: () => ["resources.jobs.ResultStatus", ResultStatus] },
-            { no: 8, name: "score", kind: "scalar", T: 13 /*ScalarType.UINT32*/, options: { "validate.rules": { uint32: { lt: 1000 } } } },
+            { no: 8, name: "score", kind: "scalar", opt: true, T: 13 /*ScalarType.UINT32*/, options: { "validate.rules": { uint32: { lt: 1000 } } } },
             { no: 9, name: "summary", kind: "scalar", T: 9 /*ScalarType.STRING*/, options: { "validate.rules": { string: { minLen: "3", maxLen: "512" } } } },
             { no: 10, name: "creator_id", kind: "scalar", T: 5 /*ScalarType.INT32*/ },
             { no: 11, name: "creator", kind: "message", T: () => UserShort },
@@ -740,7 +787,6 @@ class QualificationResult$Type extends MessageType<QualificationResult> {
         message.qualificationId = "0";
         message.userId = 0;
         message.status = 0;
-        message.score = 0;
         message.summary = "";
         message.creatorId = 0;
         message.creatorJob = "";
@@ -774,7 +820,7 @@ class QualificationResult$Type extends MessageType<QualificationResult> {
                 case /* resources.jobs.ResultStatus status */ 7:
                     message.status = reader.int32();
                     break;
-                case /* uint32 score */ 8:
+                case /* optional uint32 score */ 8:
                     message.score = reader.uint32();
                     break;
                 case /* string summary */ 9:
@@ -822,8 +868,8 @@ class QualificationResult$Type extends MessageType<QualificationResult> {
         /* resources.jobs.ResultStatus status = 7; */
         if (message.status !== 0)
             writer.tag(7, WireType.Varint).int32(message.status);
-        /* uint32 score = 8; */
-        if (message.score !== 0)
+        /* optional uint32 score = 8; */
+        if (message.score !== undefined)
             writer.tag(8, WireType.Varint).uint32(message.score);
         /* string summary = 9; */
         if (message.summary !== "")

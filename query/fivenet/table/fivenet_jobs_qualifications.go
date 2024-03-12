@@ -26,6 +26,7 @@ type fivenetJobsQualificationsTable struct {
 	Closed          mysql.ColumnBool
 	Abbreviation    mysql.ColumnString
 	Title           mysql.ColumnString
+	Summary         mysql.ColumnString
 	Description     mysql.ColumnString
 	CreatorID       mysql.ColumnInteger
 	CreatorJob      mysql.ColumnString
@@ -79,12 +80,13 @@ func newFivenetJobsQualificationsTableImpl(schemaName, tableName, alias string) 
 		ClosedColumn          = mysql.BoolColumn("closed")
 		AbbreviationColumn    = mysql.StringColumn("abbreviation")
 		TitleColumn           = mysql.StringColumn("title")
+		SummaryColumn         = mysql.StringColumn("summary")
 		DescriptionColumn     = mysql.StringColumn("description")
 		CreatorIDColumn       = mysql.IntegerColumn("creator_id")
 		CreatorJobColumn      = mysql.StringColumn("creator_job")
 		DiscordSettingsColumn = mysql.StringColumn("discord_settings")
-		allColumns            = mysql.ColumnList{IDColumn, CreatedAtColumn, UpdatedAtColumn, DeletedAtColumn, JobColumn, WeightColumn, ClosedColumn, AbbreviationColumn, TitleColumn, DescriptionColumn, CreatorIDColumn, CreatorJobColumn, DiscordSettingsColumn}
-		mutableColumns        = mysql.ColumnList{CreatedAtColumn, UpdatedAtColumn, DeletedAtColumn, JobColumn, WeightColumn, ClosedColumn, AbbreviationColumn, TitleColumn, DescriptionColumn, CreatorIDColumn, CreatorJobColumn, DiscordSettingsColumn}
+		allColumns            = mysql.ColumnList{IDColumn, CreatedAtColumn, UpdatedAtColumn, DeletedAtColumn, JobColumn, WeightColumn, ClosedColumn, AbbreviationColumn, TitleColumn, SummaryColumn, DescriptionColumn, CreatorIDColumn, CreatorJobColumn, DiscordSettingsColumn}
+		mutableColumns        = mysql.ColumnList{CreatedAtColumn, UpdatedAtColumn, DeletedAtColumn, JobColumn, WeightColumn, ClosedColumn, AbbreviationColumn, TitleColumn, SummaryColumn, DescriptionColumn, CreatorIDColumn, CreatorJobColumn, DiscordSettingsColumn}
 	)
 
 	return fivenetJobsQualificationsTable{
@@ -100,6 +102,7 @@ func newFivenetJobsQualificationsTableImpl(schemaName, tableName, alias string) 
 		Closed:          ClosedColumn,
 		Abbreviation:    AbbreviationColumn,
 		Title:           TitleColumn,
+		Summary:         SummaryColumn,
 		Description:     DescriptionColumn,
 		CreatorID:       CreatorIDColumn,
 		CreatorJob:      CreatorJobColumn,

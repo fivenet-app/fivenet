@@ -911,7 +911,8 @@
         "postal_code": "Postal Code",
         "duration": "Duration",
         "inactive_colleagues": "Inactive Colleagues",
-        "qualifications": "Qualification | Qualifications"
+        "qualifications": "Qualification | Qualifications",
+        "score": "Score"
     },
     "notifications": {
         "clipboard": {

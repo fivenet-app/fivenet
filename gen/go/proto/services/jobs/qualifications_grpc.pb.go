@@ -21,7 +21,7 @@ const _ = grpc.SupportPackageIsVersion7
 const (
 	JobsQualificationsService_ListQualifications_FullMethodName        = "/services.jobs.JobsQualificationsService/ListQualifications"
 	JobsQualificationsService_GetQualification_FullMethodName          = "/services.jobs.JobsQualificationsService/GetQualification"
-	JobsQualificationsService_ListQualificationResults_FullMethodName  = "/services.jobs.JobsQualificationsService/ListQualificationResults"
+	JobsQualificationsService_ListQualificationsResults_FullMethodName = "/services.jobs.JobsQualificationsService/ListQualificationsResults"
 	JobsQualificationsService_CreateQualification_FullMethodName       = "/services.jobs.JobsQualificationsService/CreateQualification"
 	JobsQualificationsService_UpdateQualification_FullMethodName       = "/services.jobs.JobsQualificationsService/UpdateQualification"
 	JobsQualificationsService_DeleteQualification_FullMethodName       = "/services.jobs.JobsQualificationsService/DeleteQualification"
@@ -37,7 +37,7 @@ type JobsQualificationsServiceClient interface {
 	// @perm
 	GetQualification(ctx context.Context, in *GetQualificationRequest, opts ...grpc.CallOption) (*GetQualificationResponse, error)
 	// @perm
-	ListQualificationResults(ctx context.Context, in *ListQualificationResultsRequest, opts ...grpc.CallOption) (*ListQualificationResultsResponse, error)
+	ListQualificationsResults(ctx context.Context, in *ListQualificationsResultsRequest, opts ...grpc.CallOption) (*ListQualificationsResultsResponse, error)
 	// @perm
 	CreateQualification(ctx context.Context, in *CreateQualificationRequest, opts ...grpc.CallOption) (*CreateQualificationResponse, error)
 	// @perm: Attrs=Access/StringList:[]string{"Own", "Lower_Rank", "Same_Rank", "Any"}
@@ -74,9 +74,9 @@ func (c *jobsQualificationsServiceClient) GetQualification(ctx context.Context, 
 	return out, nil
 }
 
-func (c *jobsQualificationsServiceClient) ListQualificationResults(ctx context.Context, in *ListQualificationResultsRequest, opts ...grpc.CallOption) (*ListQualificationResultsResponse, error) {
-	out := new(ListQualificationResultsResponse)
-	err := c.cc.Invoke(ctx, JobsQualificationsService_ListQualificationResults_FullMethodName, in, out, opts...)
+func (c *jobsQualificationsServiceClient) ListQualificationsResults(ctx context.Context, in *ListQualificationsResultsRequest, opts ...grpc.CallOption) (*ListQualificationsResultsResponse, error) {
+	out := new(ListQualificationsResultsResponse)
+	err := c.cc.Invoke(ctx, JobsQualificationsService_ListQualificationsResults_FullMethodName, in, out, opts...)
 	if err != nil {
 		return nil, err
 	}
@@ -128,7 +128,7 @@ type JobsQualificationsServiceServer interface {
 	// @perm
 	GetQualification(context.Context, *GetQualificationRequest) (*GetQualificationResponse, error)
 	// @perm
-	ListQualificationResults(context.Context, *ListQualificationResultsRequest) (*ListQualificationResultsResponse, error)
+	ListQualificationsResults(context.Context, *ListQualificationsResultsRequest) (*ListQualificationsResultsResponse, error)
 	// @perm
 	CreateQualification(context.Context, *CreateQualificationRequest) (*CreateQualificationResponse, error)
 	// @perm: Attrs=Access/StringList:[]string{"Own", "Lower_Rank", "Same_Rank", "Any"}
@@ -150,8 +150,8 @@ func (UnimplementedJobsQualificationsServiceServer) ListQualifications(context.C
 func (UnimplementedJobsQualificationsServiceServer) GetQualification(context.Context, *GetQualificationRequest) (*GetQualificationResponse, error) {
 	return nil, status.Errorf(codes.Unimplemented, "method GetQualification not implemented")
 }
-func (UnimplementedJobsQualificationsServiceServer) ListQualificationResults(context.Context, *ListQualificationResultsRequest) (*ListQualificationResultsResponse, error) {
-	return nil, status.Errorf(codes.Unimplemented, "method ListQualificationResults not implemented")
+func (UnimplementedJobsQualificationsServiceServer) ListQualificationsResults(context.Context, *ListQualificationsResultsRequest) (*ListQualificationsResultsResponse, error) {
+	return nil, status.Errorf(codes.Unimplemented, "method ListQualificationsResults not implemented")
 }
 func (UnimplementedJobsQualificationsServiceServer) CreateQualification(context.Context, *CreateQualificationRequest) (*CreateQualificationResponse, error) {
 	return nil, status.Errorf(codes.Unimplemented, "method CreateQualification not implemented")
@@ -215,20 +215,20 @@ func _JobsQualificationsService_GetQualification_Handler(srv interface{}, ctx co
 	return interceptor(ctx, in, info, handler)
 }
 
-func _JobsQualificationsService_ListQualificationResults_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
-	in := new(ListQualificationResultsRequest)
+func _JobsQualificationsService_ListQualificationsResults_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
+	in := new(ListQualificationsResultsRequest)
 	if err := dec(in); err != nil {
 		return nil, err
 	}
 	if interceptor == nil {
-		return srv.(JobsQualificationsServiceServer).ListQualificationResults(ctx, in)
+		return srv.(JobsQualificationsServiceServer).ListQualificationsResults(ctx, in)
 	}
 	info := &grpc.UnaryServerInfo{
 		Server:     srv,
-		FullMethod: JobsQualificationsService_ListQualificationResults_FullMethodName,
+		FullMethod: JobsQualificationsService_ListQualificationsResults_FullMethodName,
 	}
 	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
-		return srv.(JobsQualificationsServiceServer).ListQualificationResults(ctx, req.(*ListQualificationResultsRequest))
+		return srv.(JobsQualificationsServiceServer).ListQualificationsResults(ctx, req.(*ListQualificationsResultsRequest))
 	}
 	return interceptor(ctx, in, info, handler)
 }
@@ -321,8 +321,8 @@ var JobsQualificationsService_ServiceDesc = grpc.ServiceDesc{
 			Handler:    _JobsQualificationsService_GetQualification_Handler,
 		},
 		{
-			MethodName: "ListQualificationResults",
-			Handler:    _JobsQualificationsService_ListQualificationResults_Handler,
+			MethodName: "ListQualificationsResults",
+			Handler:    _JobsQualificationsService_ListQualificationsResults_Handler,
 		},
 		{
 			MethodName: "CreateQualification",

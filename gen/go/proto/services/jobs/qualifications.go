@@ -146,6 +146,7 @@ func (s *Server) CreateQualification(ctx context.Context, req *CreateQualificati
 			tQuali.Closed,
 			tQuali.Abbreviation,
 			tQuali.Title,
+			tQuali.Summary,
 			tQuali.Description,
 			tQuali.CreatorID,
 			tQuali.CreatorJob,
@@ -157,6 +158,7 @@ func (s *Server) CreateQualification(ctx context.Context, req *CreateQualificati
 			req.Qualification.Closed,
 			req.Qualification.Abbreviation,
 			req.Qualification.Title,
+			req.Qualification.Summary,
 			req.Qualification.Description,
 			userInfo.UserId,
 			userInfo.Job,
@@ -255,6 +257,7 @@ func (s *Server) UpdateQualification(ctx context.Context, req *UpdateQualificati
 				tQuali.Closed,
 				tQuali.Abbreviation,
 				tQuali.Title,
+				tQuali.Summary,
 				tQuali.Description,
 				tQuali.DiscordSettings,
 			).
@@ -263,6 +266,7 @@ func (s *Server) UpdateQualification(ctx context.Context, req *UpdateQualificati
 				req.Qualification.Closed,
 				req.Qualification.Abbreviation,
 				req.Qualification.Title,
+				req.Qualification.Summary,
 				req.Qualification.Description,
 				req.Qualification.DiscordSettings,
 			).

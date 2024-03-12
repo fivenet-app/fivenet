@@ -10,7 +10,6 @@ import {
     FileSearchIcon,
     LockIcon,
     LockOpenVariantIcon,
-    NoteCheckIcon,
     PencilIcon,
     TrashCanIcon,
 } from 'mdi-vue3';
@@ -75,22 +74,8 @@ const quali = computed(() => data.value?.qualification);
                                 />
 
                                 <div class="flex space-x-2 self-end">
-                                    <button
-                                        v-if="can('DocStoreService.ToggleDocument')"
-                                        type="button"
-                                        class="inline-flex items-center gap-x-1.5 rounded-md bg-primary-500 px-3 py-2 text-sm font-semibold text-neutral hover:bg-primary-400"
-                                    >
-                                        <template v-if="!quali.closed">
-                                            <LockOpenVariantIcon class="h-5 w-5 text-success-500" aria-hidden="true" />
-                                            {{ $t('common.open', 1) }}
-                                        </template>
-                                        <template v-else>
-                                            <LockIcon class="h-5 w-5 text-error-400" aria-hidden="true" />
-                                            {{ $t('common.close', 1) }}
-                                        </template>
-                                    </button>
                                     <NuxtLink
-                                        v-if="can('DocStoreService.UpdateDocument')"
+                                        v-if="can('JobsQualificationsService.UpdateQualification')"
                                         :to="{
                                             name: 'jobs-qualifications-id-edit',
                                             params: { id: quali.id },
@@ -102,7 +87,7 @@ const quali = computed(() => data.value?.qualification);
                                         {{ $t('common.edit') }}
                                     </NuxtLink>
                                     <button
-                                        v-if="can('DocStoreService.DeleteDocument')"
+                                        v-if="can('JobsQualificationsService.CreateQualification')"
                                         type="button"
                                         class="inline-flex items-center gap-x-1.5 rounded-md bg-primary-500 px-3 py-2 text-sm font-semibold text-neutral hover:bg-primary-400"
                                     >
@@ -132,16 +117,6 @@ const quali = computed(() => data.value?.qualification);
                                     <LockOpenVariantIcon class="h-5 w-5 text-success-500" aria-hidden="true" />
                                     <span class="text-sm font-medium text-success-700">
                                         {{ $t('common.open', 2) }}
-                                    </span>
-                                </div>
-
-                                <div
-                                    v-if="quali.abbreviation"
-                                    class="flex flex-initial flex-row gap-1 rounded-full bg-info-100 px-2 py-1 text-info-500"
-                                >
-                                    <NoteCheckIcon class="w-5 h-auto" aria-hidden="true" />
-                                    <span class="text-sm font-medium text-info-800">
-                                        {{ quali.abbreviation }}
                                     </span>
                                 </div>
                             </div>
@@ -226,32 +201,56 @@ const quali = computed(() => data.value?.qualification);
                                     </DisclosureButton>
                                     <DisclosurePanel class="rounded-b-lg border-2 border-t-0 border-inherit transition-colors">
                                         <div class="mx-4 flex flex-row flex-wrap gap-1 pb-2">
-                                            <template v-if="!quali.access || quali.access?.jobs.length === 0">
-                                                <DataNoDataBlock
-                                                    :icon="FileSearchIcon"
-                                                    :message="$t('common.not_found', [$t('common.access', 2)])"
-                                                />
+                                            <DataNoDataBlock
+                                                v-if="
+                                                    !quali.access ||
+                                                    (quali.access?.jobs.length === 0 && quali.access?.requirements.length === 0)
+                                                "
+                                                :icon="FileSearchIcon"
+                                                :message="$t('common.not_found', [$t('common.access', 2)])"
+                                            />
+
+                                            <template v-else>
+                                                <div
+                                                    v-for="entry in quali.access?.jobs"
+                                                    :key="entry.id"
+                                                    class="flex flex-initial snap-x snap-start items-center gap-1 overflow-x-auto whitespace-nowrap rounded-full bg-info-100 px-2 py-1"
+                                                >
+                                                    <span class="h-2 w-2 rounded-full bg-info-500" aria-hidden="true" />
+                                                    <span class="text-sm font-medium text-info-800"
+                                                        >{{ entry.jobLabel
+                                                        }}<span
+                                                            v-if="entry.minimumGrade > 0"
+                                                            :title="`${entry.jobLabel} - ${$t('common.rank')} ${entry.minimumGrade}`"
+                                                        >
+                                                            ({{ entry.jobGradeLabel }})</span
+                                                        >
+                                                        -
+                                                        {{
+                                                            $t(
+                                                                `enums.jobs.qualifications.AccessLevel.${AccessLevel[entry.access]}`,
+                                                            )
+                                                        }}
+                                                    </span>
+                                                </div>
+
+                                                <div
+                                                    v-for="entry in quali.access?.requirements"
+                                                    :key="entry.id"
+                                                    class="flex flex-initial snap-x snap-start items-center gap-1 overflow-x-auto whitespace-nowrap rounded-full bg-info-100 px-2 py-1"
+                                                >
+                                                    <span class="h-2 w-2 rounded-full bg-info-500" aria-hidden="true" />
+                                                    <span class="text-sm font-medium text-info-800"
+                                                        >{{ entry.targetQualification?.abbreviation }}:
+                                                        {{ entry.targetQualification?.title }} -
+                                                        {{
+                                                            $t(
+                                                                `enums.jobs.qualifications.AccessLevel.${AccessLevel[entry.access]}`,
+                                                            )
+                                                        }}
+                                                    </span>
+                                                </div>
                                             </template>
-                                            <div
-                                                v-for="entry in quali.access?.jobs"
-                                                :key="entry.id"
-                                                class="flex flex-initial snap-x snap-start items-center gap-1 overflow-x-auto whitespace-nowrap rounded-full bg-info-100 px-2 py-1"
-                                            >
-                                                <span class="h-2 w-2 rounded-full bg-info-500" aria-hidden="true" />
-                                                <span class="text-sm font-medium text-info-800"
-                                                    >{{ entry.jobLabel
-                                                    }}<span
-                                                        v-if="entry.minimumGrade > 0"
-                                                        :title="`${entry.jobLabel} - ${$t('common.rank')} ${entry.minimumGrade}`"
-                                                    >
-                                                        ({{ entry.jobGradeLabel }})</span
-                                                    >
-                                                    -
-                                                    {{
-                                                        $t(`enums.jobs.qualifications.AccessLevel.${AccessLevel[entry.access]}`)
-                                                    }}
-                                                </span>
-                                            </div>
                                         </div>
                                     </DisclosurePanel>
                                 </Disclosure>

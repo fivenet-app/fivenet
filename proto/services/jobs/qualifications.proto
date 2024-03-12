@@ -26,14 +26,16 @@ message GetQualificationResponse {
   resources.jobs.Qualification qualification = 1;
 }
 
-message ListQualificationResultsRequest {
+message ListQualificationsResultsRequest {
   resources.common.database.PaginationRequest pagination = 1 [(validate.rules).message.required = true];
-  uint64 qualification_id = 2 [jstype = JS_STRING];
+  // Search params
+  optional uint64 qualification_id = 2 [jstype = JS_STRING];
+  repeated resources.jobs.ResultStatus status = 3;
 }
 
-message ListQualificationResultsResponse {
+message ListQualificationsResultsResponse {
   resources.common.database.PaginationResponse pagination = 1;
-  repeated resources.jobs.QualificationResult results = 2;
+  repeated resources.jobs.Qualification results = 2;
 }
 
 message CreateQualificationRequest {
@@ -93,7 +95,7 @@ service JobsQualificationsService {
   rpc GetQualification(GetQualificationRequest) returns (GetQualificationResponse);
 
   // @perm
-  rpc ListQualificationResults(ListQualificationResultsRequest) returns (ListQualificationResultsResponse);
+  rpc ListQualificationsResults(ListQualificationsResultsRequest) returns (ListQualificationsResultsResponse);
 
   // @perm
   rpc CreateQualification(CreateQualificationRequest) returns (CreateQualificationResponse);

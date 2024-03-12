@@ -12,8 +12,8 @@ import type { UpdateQualificationResponse } from "./qualifications";
 import type { UpdateQualificationRequest } from "./qualifications";
 import type { CreateQualificationResponse } from "./qualifications";
 import type { CreateQualificationRequest } from "./qualifications";
-import type { ListQualificationResultsResponse } from "./qualifications";
-import type { ListQualificationResultsRequest } from "./qualifications";
+import type { ListQualificationsResultsResponse } from "./qualifications";
+import type { ListQualificationsResultsRequest } from "./qualifications";
 import type { GetQualificationResponse } from "./qualifications";
 import type { GetQualificationRequest } from "./qualifications";
 import { stackIntercept } from "@protobuf-ts/runtime-rpc";
@@ -40,9 +40,9 @@ export interface IJobsQualificationsServiceClient {
     /**
      * @perm
      *
-     * @generated from protobuf rpc: ListQualificationResults(services.jobs.ListQualificationResultsRequest) returns (services.jobs.ListQualificationResultsResponse);
+     * @generated from protobuf rpc: ListQualificationsResults(services.jobs.ListQualificationsResultsRequest) returns (services.jobs.ListQualificationsResultsResponse);
      */
-    listQualificationResults(input: ListQualificationResultsRequest, options?: RpcOptions): UnaryCall<ListQualificationResultsRequest, ListQualificationResultsResponse>;
+    listQualificationsResults(input: ListQualificationsResultsRequest, options?: RpcOptions): UnaryCall<ListQualificationsResultsRequest, ListQualificationsResultsResponse>;
     /**
      * @perm
      *
@@ -98,11 +98,11 @@ export class JobsQualificationsServiceClient implements IJobsQualificationsServi
     /**
      * @perm
      *
-     * @generated from protobuf rpc: ListQualificationResults(services.jobs.ListQualificationResultsRequest) returns (services.jobs.ListQualificationResultsResponse);
+     * @generated from protobuf rpc: ListQualificationsResults(services.jobs.ListQualificationsResultsRequest) returns (services.jobs.ListQualificationsResultsResponse);
      */
-    listQualificationResults(input: ListQualificationResultsRequest, options?: RpcOptions): UnaryCall<ListQualificationResultsRequest, ListQualificationResultsResponse> {
+    listQualificationsResults(input: ListQualificationsResultsRequest, options?: RpcOptions): UnaryCall<ListQualificationsResultsRequest, ListQualificationsResultsResponse> {
         const method = this.methods[2], opt = this._transport.mergeOptions(options);
-        return stackIntercept<ListQualificationResultsRequest, ListQualificationResultsResponse>("unary", this._transport, method, opt, input);
+        return stackIntercept<ListQualificationsResultsRequest, ListQualificationsResultsResponse>("unary", this._transport, method, opt, input);
     }
     /**
      * @perm

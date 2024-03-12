@@ -86,12 +86,12 @@ func init() {
 		},
 		{
 			Category: permkeys.JobsQualificationsServicePerm,
-			Name:     permkeys.JobsQualificationsServiceListQualificationResultsPerm,
+			Name:     permkeys.JobsQualificationsServiceListQualificationsPerm,
 			Attrs:    []perms.Attr{},
 		},
 		{
 			Category: permkeys.JobsQualificationsServicePerm,
-			Name:     permkeys.JobsQualificationsServiceListQualificationsPerm,
+			Name:     permkeys.JobsQualificationsServiceListQualificationsResultsPerm,
 			Attrs:    []perms.Attr{},
 		},
 		{

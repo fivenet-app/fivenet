@@ -536,12 +536,12 @@ if (hash.value !== undefined && hash.value !== null) {
                                 </DisclosureButton>
                                 <DisclosurePanel class="rounded-b-lg border-2 border-t-0 border-inherit transition-colors">
                                     <div class="mx-4 flex flex-row flex-wrap gap-1 pb-2">
-                                        <template v-if="!access || (access?.jobs.length === 0 && access?.users.length === 0)">
-                                            <DataNoDataBlock
-                                                :icon="FileSearchIcon"
-                                                :message="$t('common.not_found', [$t('common.access', 2)])"
-                                            />
-                                        </template>
+                                        <DataNoDataBlock
+                                            v-if="!access || (access?.jobs.length === 0 && access?.users.length === 0)"
+                                            :icon="FileSearchIcon"
+                                            :message="$t('common.not_found', [$t('common.access', 2)])"
+                                        />
+
                                         <div
                                             v-for="entry in access?.jobs"
                                             :key="entry.id"

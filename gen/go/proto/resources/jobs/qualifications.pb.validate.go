@@ -268,6 +268,21 @@ func (m *Qualification) validate(all bool) error {
 
 	}
 
+	if m.Summary != nil {
+
+		if utf8.RuneCountInString(m.GetSummary()) > 255 {
+			err := QualificationValidationError{
+				field:  "Summary",
+				reason: "value length must be at most 255 runes",
+			}
+			if !all {
+				return err
+			}
+			errors = append(errors, err)
+		}
+
+	}
+
 	if m.Creator != nil {
 
 		if all {
@@ -293,6 +308,39 @@ func (m *Qualification) validate(all bool) error {
 			if err := v.Validate(); err != nil {
 				return QualificationValidationError{
 					field:  "Creator",
+					reason: "embedded message failed validation",
+					cause:  err,
+				}
+			}
+		}
+
+	}
+
+	if m.Result != nil {
+
+		if all {
+			switch v := interface{}(m.GetResult()).(type) {
+			case interface{ ValidateAll() error }:
+				if err := v.ValidateAll(); err != nil {
+					errors = append(errors, QualificationValidationError{
+						field:  "Result",
+						reason: "embedded message failed validation",
+						cause:  err,
+					})
+				}
+			case interface{ Validate() error }:
+				if err := v.Validate(); err != nil {
+					errors = append(errors, QualificationValidationError{
+						field:  "Result",
+						reason: "embedded message failed validation",
+						cause:  err,
+					})
+				}
+			}
+		} else if v, ok := interface{}(m.GetResult()).(interface{ Validate() error }); ok {
+			if err := v.Validate(); err != nil {
+				return QualificationValidationError{
+					field:  "Result",
 					reason: "embedded message failed validation",
 					cause:  err,
 				}
@@ -810,6 +858,8 @@ func (m *QualificationRequirementsAccess) validate(all bool) error {
 
 	// no validation rules for QualificationId
 
+	// no validation rules for TargetQualificationId
+
 	if _, ok := AccessLevel_name[int32(m.GetAccess())]; !ok {
 		err := QualificationRequirementsAccessValidationError{
 			field:  "Access",
@@ -846,6 +896,39 @@ func (m *QualificationRequirementsAccess) validate(all bool) error {
 			if err := v.Validate(); err != nil {
 				return QualificationRequirementsAccessValidationError{
 					field:  "CreatedAt",
+					reason: "embedded message failed validation",
+					cause:  err,
+				}
+			}
+		}
+
+	}
+
+	if m.TargetQualification != nil {
+
+		if all {
+			switch v := interface{}(m.GetTargetQualification()).(type) {
+			case interface{ ValidateAll() error }:
+				if err := v.ValidateAll(); err != nil {
+					errors = append(errors, QualificationRequirementsAccessValidationError{
+						field:  "TargetQualification",
+						reason: "embedded message failed validation",
+						cause:  err,
+					})
+				}
+			case interface{ Validate() error }:
+				if err := v.Validate(); err != nil {
+					errors = append(errors, QualificationRequirementsAccessValidationError{
+						field:  "TargetQualification",
+						reason: "embedded message failed validation",
+						cause:  err,
+					})
+				}
+			}
+		} else if v, ok := interface{}(m.GetTargetQualification()).(interface{ Validate() error }); ok {
+			if err := v.Validate(); err != nil {
+				return QualificationRequirementsAccessValidationError{
+					field:  "TargetQualification",
 					reason: "embedded message failed validation",
 					cause:  err,
 				}
@@ -994,17 +1077,6 @@ func (m *QualificationResult) validate(all bool) error {
 
 	// no validation rules for Status
 
-	if m.GetScore() >= 1000 {
-		err := QualificationResultValidationError{
-			field:  "Score",
-			reason: "value must be less than 1000",
-		}
-		if !all {
-			return err
-		}
-		errors = append(errors, err)
-	}
-
 	if l := utf8.RuneCountInString(m.GetSummary()); l < 3 || l > 512 {
 		err := QualificationResultValidationError{
 			field:  "Summary",
@@ -1120,6 +1192,21 @@ func (m *QualificationResult) validate(all bool) error {
 					cause:  err,
 				}
 			}
+		}
+
+	}
+
+	if m.Score != nil {
+
+		if m.GetScore() >= 1000 {
+			err := QualificationResultValidationError{
+				field:  "Score",
+				reason: "value must be less than 1000",
+			}
+			if !all {
+				return err
+			}
+			errors = append(errors, err)
 		}
 
 	}

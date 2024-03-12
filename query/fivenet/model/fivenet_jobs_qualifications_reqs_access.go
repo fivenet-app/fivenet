@@ -12,8 +12,9 @@ import (
 )
 
 type FivenetJobsQualificationsReqsAccess struct {
-	ID              uint64     `sql:"primary_key" json:"id"`
-	CreatedAt       *time.Time `json:"created_at"`
-	QualificationID uint64     `json:"qualification_id"`
-	Access          int16      `json:"access"`
+	ID                    uint64     `sql:"primary_key" json:"id"`
+	CreatedAt             *time.Time `json:"created_at"`
+	QualificationID       uint64     `json:"qualification_id"`
+	TargetQualificationID uint64     `json:"target_qualification_id"`
+	Access                int16      `json:"access"`
 }
