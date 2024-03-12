@@ -1935,6 +1935,23 @@
                 "HIRED": "Angestellt",
                 "PROMOTED": "Befördert",
                 "DEMOTED": "Degradiert"
+            },
+            "qualifications": {
+                "AccessLevel": {
+                    "UNSPECIFIED": "Unbestimmt",
+                    "BLOCKED": "Blockiert",
+                    "VIEW": "Ansehen",
+                    "REQUEST": "Anfragen",
+                    "TAKE": "Prüfung absolvieren",
+                    "GRADE": "Benoten",
+                    "EDIT": "Editieren"
+                },
+                "ResultStatus": {
+                    "UNSPECIFIED": "Unbestimmt",
+                    "PENDING": "Ausstehend",
+                    "FAILED": "Misslungen",
+                    "SUCCESSFUL": "Erfolgreich"
+                }
             }
         }
     }
