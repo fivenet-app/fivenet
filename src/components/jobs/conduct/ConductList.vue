@@ -41,7 +41,7 @@ async function listConductEntries(): Promise<ListConductEntriesResponse> {
             pagination: {
                 offset: offset.value,
             },
-            types: [],
+            types: query.value.types,
             userIds,
             showExpired: query.value.showExpired,
         });
