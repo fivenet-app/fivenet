@@ -28,6 +28,17 @@ func (s *Server) ListQualifications(ctx context.Context, req *ListQualifications
 
 	condition := jet.Bool(true)
 
+	if req.Search != nil && *req.Search != "" {
+		*req.Search = strings.TrimSpace(*req.Search)
+		*req.Search = strings.ReplaceAll(*req.Search, "%", "")
+		*req.Search = strings.ReplaceAll(*req.Search, " ", "%")
+		*req.Search = "%" + *req.Search + "%"
+		condition = condition.AND(jet.OR(
+			tQuali.Abbreviation.LIKE(jet.String(*req.Search)),
+			tQuali.Title.LIKE(jet.String(*req.Search)),
+		))
+	}
+
 	countStmt := s.listQualificationsQuery(
 		condition, jet.ProjectionList{jet.COUNT(jet.DISTINCT(tQuali.ID)).AS("datacount.totalcount")}, userInfo)
 

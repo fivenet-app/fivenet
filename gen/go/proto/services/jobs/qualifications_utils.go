@@ -7,7 +7,7 @@ import (
 
 	jobs "github.com/galexrt/fivenet/gen/go/proto/resources/jobs"
 	permscitizenstore "github.com/galexrt/fivenet/gen/go/proto/services/citizenstore/perms"
-	errorsdocstore "github.com/galexrt/fivenet/gen/go/proto/services/docstore/errors"
+	errorsjobs "github.com/galexrt/fivenet/gen/go/proto/services/jobs/errors"
 	"github.com/galexrt/fivenet/pkg/grpc/auth/userinfo"
 	"github.com/galexrt/fivenet/pkg/grpc/errswrap"
 	"github.com/galexrt/fivenet/pkg/perms"
@@ -317,7 +317,7 @@ func (s *Server) getQualification(ctx context.Context, condition jet.BoolExpress
 
 	if err := stmt.QueryContext(ctx, s.db, &quali); err != nil {
 		if !errors.Is(err, qrm.ErrNoRows) {
-			return nil, errswrap.NewError(errorsdocstore.ErrFailedQuery, err)
+			return nil, errswrap.NewError(errorsjobs.ErrFailedQuery, err)
 		}
 	}
 

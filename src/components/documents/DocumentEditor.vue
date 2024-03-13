@@ -1026,6 +1026,7 @@ onBeforeUnmount(() => {
                     </div>
                 </div>
             </div>
+
             <div v-if="canDo.edit" class="bg-neutral">
                 <JoditEditor v-model="content" :config="config" :plugins="plugins" :extra-buttons="extraButtons" />
                 <template v-if="saving">
@@ -1035,6 +1036,7 @@ onBeforeUnmount(() => {
                     </div>
                 </template>
             </div>
+
             <div v-if="canDo.edit" class="flex flex-row">
                 <div class="inline-flex flex-1 rounded-md shadow-sm" role="group">
                     <button
@@ -1071,6 +1073,7 @@ onBeforeUnmount(() => {
                     </button>
                 </div>
             </div>
+
             <div class="my-3">
                 <h2 class="text-neutral">
                     {{ $t('common.access') }}
@@ -1098,6 +1101,7 @@ onBeforeUnmount(() => {
                     <PlusIcon class="h-5 w-5" aria-hidden="true" />
                 </button>
             </div>
+
             <div class="flex pb-14">
                 <button
                     type="submit"
@@ -1112,8 +1116,8 @@ onBeforeUnmount(() => {
                     <template v-if="!canSubmit">
                         <LoadingIcon class="mr-2 h-5 w-5 animate-spin" aria-hidden="true" />
                     </template>
-                    <template v-if="!props.id">
-                        {{ t('common.create') }}
+                    <template v-if="!id">
+                        {{ $t('common.create') }}
                     </template>
                     <template v-else>
                         {{ $t('common.save') }}

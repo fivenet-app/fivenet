@@ -9,13 +9,13 @@ import GenericAlert from '~/components/partials/elements/GenericAlert.vue';
 import { useNotificatorStore } from '~/store/notificator';
 import { getErrorMessage } from '~/utils/errors';
 
-const { $grpc } = useNuxtApp();
-
-const notifications = useNotificatorStore();
-
 const emits = defineEmits<{
     (e: 'toggle'): void;
 }>();
+
+const { $grpc } = useNuxtApp();
+
+const notifications = useNotificatorStore();
 
 const newPassword = ref('');
 

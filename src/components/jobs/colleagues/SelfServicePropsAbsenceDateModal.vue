@@ -105,8 +105,6 @@ function updateAbsenceDateField(): void {
 
 watch(props, () => updateAbsenceDateField());
 
-watch(meta, () => console.log(meta.value, controlledValues.value));
-
 const canSubmit = ref(true);
 const onSubmit = handleSubmit(
     async (values): Promise<void> =>

@@ -101,6 +101,10 @@ func (m *ListQualificationsRequest) validate(all bool) error {
 		}
 	}
 
+	if m.Search != nil {
+		// no validation rules for Search
+	}
+
 	if len(errors) > 0 {
 		return ListQualificationsRequestMultiError(errors)
 	}

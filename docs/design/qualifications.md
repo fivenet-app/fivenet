@@ -12,7 +12,7 @@ title: "Qualifications"
 
 * Qualification: Holds all basic infos about the qualification.
     * Access: Holds the access levels to the qualification.
-    * Requirements: Requirements to be able to take the qualification.
+    * Requirements: Requirements to be able to take the qualification. -> Don't deny the access, but are required to send a request or to take the qualification.
 * Requests: List of user requests to take the test for the qualification.
 * Tests: Test progress of (started) tests from users.
     * Info/Config of the Test: E.g., how many questions need to be right to pass, how much time do they have, etc.

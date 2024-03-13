@@ -24,7 +24,33 @@ func (s *Server) ListQualificationRequests(ctx context.Context, req *ListQualifi
 	condition := tQualiRequests.UserID.EQ(jet.Int32(userInfo.UserId))
 
 	if req.QualificationId != nil {
+		ok, err := s.checkIfUserHasAccessToQuali(ctx, *req.QualificationId, userInfo, jobs.AccessLevel_ACCESS_LEVEL_EDIT)
+		if err != nil {
+			return nil, errswrap.NewError(errorsjobs.ErrFailedQuery, err)
+		}
+		if !ok {
+			return nil, errorsjobs.ErrFailedQuery
+		}
+
 		condition = condition.AND(tQualiRequests.QualificationID.EQ(jet.Uint64(*req.QualificationId)))
+	} else {
+		condition = condition.AND(jet.AND(
+			tQuali.DeletedAt.IS_NULL(),
+			jet.OR(
+				tQuali.CreatorID.EQ(jet.Int32(userInfo.UserId)),
+				jet.OR(
+					jet.AND(
+						tQReqAccess.Access.IS_NOT_NULL(),
+						tQReqAccess.Access.NOT_EQ(jet.Int32(int32(jobs.AccessLevel_ACCESS_LEVEL_BLOCKED))),
+					),
+					jet.AND(
+						tQReqAccess.Access.IS_NULL(),
+						tQJobAccess.Access.IS_NOT_NULL(),
+						tQJobAccess.Access.NOT_EQ(jet.Int32(int32(jobs.AccessLevel_ACCESS_LEVEL_BLOCKED))),
+					),
+				),
+			),
+		))
 	}
 
 	countStmt := tQualiRequests.
@@ -72,6 +98,13 @@ func (s *Server) ListQualificationRequests(ctx context.Context, req *ListQualifi
 			tQualiRequests.
 				LEFT_JOIN(tCreator,
 					tQuali.CreatorID.EQ(tCreator.ID),
+				).
+				LEFT_JOIN(tQReqAccess,
+					tQReqAccess.QualificationID.EQ(tQuali.ID)).
+				LEFT_JOIN(tQJobAccess,
+					tQJobAccess.QualificationID.EQ(tQuali.ID).
+						AND(tQJobAccess.Job.EQ(jet.String(userInfo.Job))).
+						AND(tQJobAccess.MinimumGrade.LT_EQ(jet.Int32(userInfo.JobGrade))),
 				),
 		).
 		WHERE(condition).

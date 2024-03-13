@@ -333,30 +333,43 @@ func (b *Bot) runSync(ctx context.Context) error {
 
 	errs := multierr.Combine()
 
-	// TODO make sure to not run to many syncs at the same time
+	// Run at max 3 syncs at once
+	workChannel := make(chan *Guild, 3)
+
+	// Retrieve guilds via channel
+	b.wg.Add(1)
+	go func() {
+		defer b.wg.Done()
+
+		for guild := range workChannel {
+			b.wg.Add(1)
+			go func(g *Guild) {
+				defer b.wg.Done()
+				logger := b.logger.With(zap.String("job", g.Job), zap.String("discord_guild_id", g.ID))
+
+				if err := g.Run(); err != nil {
+					logger.Error("error during sync", zap.Error(err))
+					errs = multierr.Append(errs, err)
+
+					lastSyncMetric.WithLabelValues(g.Job, "failed").SetToCurrentTime()
+				} else {
+					lastSyncMetric.WithLabelValues(g.Job, "success").SetToCurrentTime()
+				}
+
+				if err := b.setLastSyncInterval(ctx, g.Job); err != nil {
+					logger.Error("error setting job props last sync time", zap.Error(err))
+					errs = multierr.Append(errs, err)
+				}
+			}(guild)
+		}
+	}()
+
 	b.activeGuilds.Range(func(_ string, guild *Guild) bool {
-		b.wg.Add(1)
-		go func() {
-			defer b.wg.Done()
-			logger := b.logger.With(zap.String("job", guild.Job), zap.String("discord_guild_id", guild.ID))
-
-			if err := guild.Run(); err != nil {
-				logger.Error("error during sync", zap.Error(err))
-				errs = multierr.Append(errs, err)
-
-				lastSyncMetric.WithLabelValues(guild.Job, "failed").SetToCurrentTime()
-			} else {
-				lastSyncMetric.WithLabelValues(guild.Job, "success").SetToCurrentTime()
-			}
-
-			if err := b.setLastSyncInterval(ctx, guild.Job); err != nil {
-				logger.Error("error setting job props last sync time", zap.Error(err))
-				errs = multierr.Append(errs, err)
-			}
-		}()
-
+		workChannel <- guild
 		return true
 	})
+
+	close(workChannel)
 
 	b.wg.Wait()
 

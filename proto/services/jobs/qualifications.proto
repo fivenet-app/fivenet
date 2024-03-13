@@ -11,6 +11,7 @@ option go_package = "github.com/galexrt/fivenet/gen/go/proto/services/jobs;jobs"
 message ListQualificationsRequest {
   resources.common.database.PaginationRequest pagination = 1 [(validate.rules).message.required = true];
   // Search params
+  optional string search = 2;
 }
 
 message ListQualificationsResponse {
@@ -116,6 +117,4 @@ service JobsQualificationsService {
 
   // @perm
   rpc ListQualificationRequests(ListQualificationRequestsRequest) returns (ListQualificationRequestsResponse);
-
-  // TODO
 }

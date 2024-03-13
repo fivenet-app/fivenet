@@ -26,7 +26,13 @@ export interface ListQualificationsRequest {
     /**
      * @generated from protobuf field: resources.common.database.PaginationRequest pagination = 1;
      */
-    pagination?: PaginationRequest; // Search params
+    pagination?: PaginationRequest;
+    /**
+     * Search params
+     *
+     * @generated from protobuf field: optional string search = 2;
+     */
+    search?: string;
 }
 /**
  * @generated from protobuf message services.jobs.ListQualificationsResponse
@@ -235,7 +241,8 @@ export interface ListQualificationRequestsResponse {
 class ListQualificationsRequest$Type extends MessageType<ListQualificationsRequest> {
     constructor() {
         super("services.jobs.ListQualificationsRequest", [
-            { no: 1, name: "pagination", kind: "message", T: () => PaginationRequest, options: { "validate.rules": { message: { required: true } } } }
+            { no: 1, name: "pagination", kind: "message", T: () => PaginationRequest, options: { "validate.rules": { message: { required: true } } } },
+            { no: 2, name: "search", kind: "scalar", opt: true, T: 9 /*ScalarType.STRING*/ }
         ]);
     }
     create(value?: PartialMessage<ListQualificationsRequest>): ListQualificationsRequest {
@@ -252,6 +259,9 @@ class ListQualificationsRequest$Type extends MessageType<ListQualificationsReque
                 case /* resources.common.database.PaginationRequest pagination */ 1:
                     message.pagination = PaginationRequest.internalBinaryRead(reader, reader.uint32(), options, message.pagination);
                     break;
+                case /* optional string search */ 2:
+                    message.search = reader.string();
+                    break;
                 default:
                     let u = options.readUnknownField;
                     if (u === "throw")
@@ -267,6 +277,9 @@ class ListQualificationsRequest$Type extends MessageType<ListQualificationsReque
         /* resources.common.database.PaginationRequest pagination = 1; */
         if (message.pagination)
             PaginationRequest.internalBinaryWrite(message.pagination, writer.tag(1, WireType.LengthDelimited).fork(), options).join();
+        /* optional string search = 2; */
+        if (message.search !== undefined)
+            writer.tag(2, WireType.LengthDelimited).string(message.search);
         let u = options.writeUnknownFields;
         if (u !== false)
             (u == true ? UnknownFieldHandler.onWrite : u)(this.typeName, message, writer);

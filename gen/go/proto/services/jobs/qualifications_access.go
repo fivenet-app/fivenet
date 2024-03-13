@@ -8,7 +8,7 @@ import (
 	jobs "github.com/galexrt/fivenet/gen/go/proto/resources/jobs"
 	"github.com/galexrt/fivenet/gen/go/proto/resources/rector"
 	"github.com/galexrt/fivenet/gen/go/proto/resources/users"
-	errorsdocstore "github.com/galexrt/fivenet/gen/go/proto/services/docstore/errors"
+	errorsjobs "github.com/galexrt/fivenet/gen/go/proto/services/jobs/errors"
 	"github.com/galexrt/fivenet/pkg/grpc/auth"
 	"github.com/galexrt/fivenet/pkg/grpc/auth/userinfo"
 	"github.com/galexrt/fivenet/pkg/grpc/errswrap"
@@ -26,15 +26,15 @@ func (s *Server) GetQualificationAccess(ctx context.Context, req *GetQualificati
 	userInfo := auth.MustGetUserInfoFromContext(ctx)
 	ok, err := s.checkIfUserHasAccessToQuali(ctx, req.QualificationId, userInfo, jobs.AccessLevel_ACCESS_LEVEL_VIEW)
 	if err != nil {
-		return nil, errswrap.NewError(errorsdocstore.ErrFailedQuery, err)
+		return nil, errswrap.NewError(errorsjobs.ErrFailedQuery, err)
 	}
 	if !ok {
-		return nil, errorsdocstore.ErrDocAccessViewDenied
+		return nil, errorsjobs.ErrFailedQuery
 	}
 
 	access, err := s.getQualificationAccess(ctx, req.QualificationId)
 	if err != nil {
-		return nil, errswrap.NewError(errorsdocstore.ErrFailedQuery, err)
+		return nil, errswrap.NewError(errorsjobs.ErrFailedQuery, err)
 	}
 
 	for i := 0; i < len(access.Jobs); i++ {
@@ -64,27 +64,27 @@ func (s *Server) SetQualificationAccess(ctx context.Context, req *SetQualificati
 
 	ok, err := s.checkIfUserHasAccessToQuali(ctx, req.QualificationId, userInfo, jobs.AccessLevel_ACCESS_LEVEL_EDIT)
 	if err != nil {
-		return nil, errswrap.NewError(errorsdocstore.ErrFailedQuery, err)
+		return nil, errswrap.NewError(errorsjobs.ErrFailedQuery, err)
 	}
 	if !ok {
-		return nil, errorsdocstore.ErrDocAccessEditDenied
+		return nil, errorsjobs.ErrFailedQuery
 	}
 
 	// Begin transaction
 	tx, err := s.db.BeginTx(ctx, nil)
 	if err != nil {
-		return nil, errswrap.NewError(errorsdocstore.ErrFailedQuery, err)
+		return nil, errswrap.NewError(errorsjobs.ErrFailedQuery, err)
 	}
 	// Defer a rollback in case anything fails
 	defer tx.Rollback()
 
 	if err := s.handleQualificationAccessChanges(ctx, tx, req.Mode, req.QualificationId, req.Access); err != nil {
-		return nil, errswrap.NewError(errorsdocstore.ErrFailedQuery, err)
+		return nil, errswrap.NewError(errorsjobs.ErrFailedQuery, err)
 	}
 
 	// Commit the transaction
 	if err := tx.Commit(); err != nil {
-		return nil, errswrap.NewError(errorsdocstore.ErrFailedQuery, err)
+		return nil, errswrap.NewError(errorsjobs.ErrFailedQuery, err)
 	}
 
 	auditEntry.State = int16(rector.EventType_EVENT_TYPE_UPDATED)
