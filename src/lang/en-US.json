@@ -912,7 +912,8 @@
         "duration": "Duration",
         "inactive_colleagues": "Inactive Colleagues",
         "qualifications": "Qualification | Qualifications",
-        "score": "Score"
+        "score": "Score",
+        "calendar_week": "CW"
     },
     "notifications": {
         "clipboard": {
