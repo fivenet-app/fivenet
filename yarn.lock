@@ -1422,13 +1422,13 @@
   resolved "https://registry.yarnpkg.com/@polka/url/-/url-1.0.0-next.24.tgz#58601079e11784d20f82d0585865bb42305c4df3"
   integrity sha512-2LuNTFBIO0m7kKIQvvPHN6UE63VjpmL9rnEEaOOaiSPbZK+zUOYIzBAWcED+3XYzhYsd/0mD57VdxAEqqV52CQ==
 
-"@protobuf-ts/grpcweb-transport@2.9.3":
-  version "2.9.3"
-  resolved "https://registry.yarnpkg.com/@protobuf-ts/grpcweb-transport/-/grpcweb-transport-2.9.3.tgz#9f6370bfba46bc041fb577855bb72638625be4de"
-  integrity sha512-BP9oThZzrr1WJKJZKJ/o5yiDVaQe/T95Ef9eDZAkBbW6ObSnUAPi0I03xeJF8sjn6gRXabCSfpBbDXlxCefKEw==
+"@protobuf-ts/grpcweb-transport@2.9.4":
+  version "2.9.4"
+  resolved "https://registry.yarnpkg.com/@protobuf-ts/grpcweb-transport/-/grpcweb-transport-2.9.4.tgz#e98d543d2838e95d5cec1a22f23a02de88393401"
+  integrity sha512-6aQgwPTgX6FkqWqmNts3uk8T/C5coJoH7U87zgaZY/Wo2EVa9SId5bXTM8uo4WR+CN8j9W4c9ij1yG13Hc3xUw==
   dependencies:
-    "@protobuf-ts/runtime" "^2.9.3"
-    "@protobuf-ts/runtime-rpc" "^2.9.3"
+    "@protobuf-ts/runtime" "^2.9.4"
+    "@protobuf-ts/runtime-rpc" "^2.9.4"
 
 "@protobuf-ts/plugin-framework@^2.9.3":
   version "2.9.3"
@@ -1461,10 +1461,22 @@
   dependencies:
     "@protobuf-ts/runtime" "^2.9.3"
 
+"@protobuf-ts/runtime-rpc@^2.9.4":
+  version "2.9.4"
+  resolved "https://registry.yarnpkg.com/@protobuf-ts/runtime-rpc/-/runtime-rpc-2.9.4.tgz#d6ab2316c0ba67ce5a08863bb23203a837ff2a3b"
+  integrity sha512-y9L9JgnZxXFqH5vD4d7j9duWvIJ7AShyBRoNKJGhu9Q27qIbchfzli66H9RvrQNIFk5ER7z1Twe059WZGqERcA==
+  dependencies:
+    "@protobuf-ts/runtime" "^2.9.4"
+
 "@protobuf-ts/runtime@^2.9.3":
   version "2.9.3"
   resolved "https://registry.yarnpkg.com/@protobuf-ts/runtime/-/runtime-2.9.3.tgz#b906223debaf42c9bd281e985a9f5652729153a4"
   integrity sha512-nivzCpg/qYD0RX2OmHOahJALb8ndjGmUhNBcTJ0BbXoqKwCSM6vYA+vegzS3rhuaPgbyC7Ec8idlnizzUfIRuw==
+
+"@protobuf-ts/runtime@^2.9.4":
+  version "2.9.4"
+  resolved "https://registry.yarnpkg.com/@protobuf-ts/runtime/-/runtime-2.9.4.tgz#db8a78b1c409e26d258ca39464f4757d804add8f"
+  integrity sha512-vHRFWtJJB/SiogWDF0ypoKfRIZ41Kq+G9cEFj6Qm1eQaAhJ1LDFvgZ7Ja4tb3iLOQhz0PaoPnnOijF1qmEqTxg==
 
 "@raffaelesgarro/vue-use-sound@2.0.4":
   version "2.0.4"
@@ -8544,7 +8556,16 @@ string-replace-loader@^3.1.0:
     loader-utils "^2.0.0"
     schema-utils "^3.0.0"
 
-"string-width-cjs@npm:string-width@^4.2.0", string-width@4.2.3, "string-width@^1.0.2 || 2 || 3 || 4", string-width@^4.1.0, string-width@^4.2.0, string-width@^4.2.3, string-width@^5.0.1, string-width@^5.1.2:
+"string-width-cjs@npm:string-width@^4.2.0":
+  version "4.2.3"
+  resolved "https://registry.yarnpkg.com/string-width/-/string-width-4.2.3.tgz#269c7117d27b05ad2e536830a8ec895ef9c6d010"
+  integrity sha512-wKyQRQpjJ0sIp62ErSZdGsjMJWsap5oRNihHhu6G7JVO/9jIB6UyevL+tXuOqrng8j/cxKTWyWUwvSTriiZz/g==
+  dependencies:
+    emoji-regex "^8.0.0"
+    is-fullwidth-code-point "^3.0.0"
+    strip-ansi "^6.0.1"
+
+string-width@4.2.3, "string-width@^1.0.2 || 2 || 3 || 4", string-width@^4.1.0, string-width@^4.2.0, string-width@^4.2.3, string-width@^5.0.1, string-width@^5.1.2:
   version "4.2.3"
   resolved "https://registry.yarnpkg.com/string-width/-/string-width-4.2.3.tgz#269c7117d27b05ad2e536830a8ec895ef9c6d010"
   integrity sha512-wKyQRQpjJ0sIp62ErSZdGsjMJWsap5oRNihHhu6G7JVO/9jIB6UyevL+tXuOqrng8j/cxKTWyWUwvSTriiZz/g==
@@ -8594,7 +8615,14 @@ string_decoder@~1.1.1:
   dependencies:
     safe-buffer "~5.1.0"
 
-"strip-ansi-cjs@npm:strip-ansi@^6.0.1", strip-ansi@^6.0.0, strip-ansi@^6.0.1:
+"strip-ansi-cjs@npm:strip-ansi@^6.0.1":
+  version "6.0.1"
+  resolved "https://registry.yarnpkg.com/strip-ansi/-/strip-ansi-6.0.1.tgz#9e26c63d30f53443e9489495b2105d37b67a85d9"
+  integrity sha512-Y38VPSHcqkFrCpFnQ9vuSXmquuv5oXOKpGeT6aGrr3o3Gc9AlVa6JBfUSOCnbxGGZF+/0ooI7KrPuUSztUdU5A==
+  dependencies:
+    ansi-regex "^5.0.1"
+
+strip-ansi@^6.0.0, strip-ansi@^6.0.1:
   version "6.0.1"
   resolved "https://registry.yarnpkg.com/strip-ansi/-/strip-ansi-6.0.1.tgz#9e26c63d30f53443e9489495b2105d37b67a85d9"
   integrity sha512-Y38VPSHcqkFrCpFnQ9vuSXmquuv5oXOKpGeT6aGrr3o3Gc9AlVa6JBfUSOCnbxGGZF+/0ooI7KrPuUSztUdU5A==
@@ -9746,8 +9774,16 @@ wide-align@^1.1.2:
   dependencies:
     string-width "^1.0.2 || 2 || 3 || 4"
 
-"wrap-ansi-cjs@npm:wrap-ansi@^7.0.0", wrap-ansi@^7.0.0:
-  name wrap-ansi-cjs
+"wrap-ansi-cjs@npm:wrap-ansi@^7.0.0":
+  version "7.0.0"
+  resolved "https://registry.yarnpkg.com/wrap-ansi/-/wrap-ansi-7.0.0.tgz#67e145cff510a6a6984bdf1152911d69d2eb9e43"
+  integrity sha512-YVGIj2kamLSTxw6NsZjoBxfSwsn0ycdesmc4p+Q21c5zPuZ1pl+NfxVdxPtdHvmNVOQ6XSYG4AUtyt/Fi7D16Q==
+  dependencies:
+    ansi-styles "^4.0.0"
+    string-width "^4.1.0"
+    strip-ansi "^6.0.0"
+
+wrap-ansi@^7.0.0:
   version "7.0.0"
   resolved "https://registry.yarnpkg.com/wrap-ansi/-/wrap-ansi-7.0.0.tgz#67e145cff510a6a6984bdf1152911d69d2eb9e43"
   integrity sha512-YVGIj2kamLSTxw6NsZjoBxfSwsn0ycdesmc4p+Q21c5zPuZ1pl+NfxVdxPtdHvmNVOQ6XSYG4AUtyt/Fi7D16Q==

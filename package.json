@@ -27,7 +27,7 @@
         "@nuxtjs/robots": "3.0.0",
         "@originjs/vite-plugin-commonjs": "1.0.3",
         "@pinia/nuxt": "0.5.1",
-        "@protobuf-ts/grpcweb-transport": "2.9.3",
+        "@protobuf-ts/grpcweb-transport": "2.9.4",
         "@vee-validate/i18n": "4.12.6",
         "@vee-validate/nuxt": "4.12.6",
         "@vee-validate/rules": "4.12.6",
