@@ -129,6 +129,7 @@ func (s *Server) listQualificationsQuery(where jet.BoolExpression, onlyColumns j
 			),
 		).
 		ORDER_BY(
+			tQualiResults.Status.ASC(),
 			tQuali.Weight.ASC(),
 			tQuali.Abbreviation.ASC(),
 		)

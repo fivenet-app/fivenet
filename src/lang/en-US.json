@@ -571,6 +571,9 @@
                 "title": "Self Service",
                 "set_absence_date": "Set Absence Date",
                 "set_profile_picture": "Update Profile Picture"
+            },
+            "qualifications": {
+                "create_new_qualification": "Create New Qualification"
             }
         },
         "bodycheckup": {

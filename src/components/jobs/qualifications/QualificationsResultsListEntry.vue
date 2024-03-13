@@ -1,7 +1,7 @@
 <script lang="ts" setup>
-import { ChevronRightIcon } from 'mdi-vue3';
+import { ChevronRightIcon, ListStatusIcon } from 'mdi-vue3';
 import GenericTime from '~/components/partials/elements/GenericTime.vue';
-import { Qualification } from '~~/gen/ts/resources/jobs/qualifications';
+import { Qualification, ResultStatus } from '~~/gen/ts/resources/jobs/qualifications';
 
 defineProps<{
     qualification: Qualification;
@@ -30,6 +30,20 @@ defineProps<{
         </div>
         <div class="flex shrink-0 items-center gap-x-4">
             <div class="hidden sm:flex sm:flex-col sm:items-end">
+                <div class="flex flex-row gap-1">
+                    <div
+                        v-if="qualification.result?.status"
+                        class="flex flex-initial flex-row gap-1 rounded-full bg-info-100 px-2 py-1"
+                    >
+                        <ListStatusIcon class="h-5 w-5 text-info-400" aria-hidden="true" />
+                        <span class="text-sm font-medium text-info-700">
+                            <span class="font-semibold">{{ $t('common.result') }}:</span>
+                            {{
+                                $t(`enums.jobs.qualifications.ResultStatus.${ResultStatus[qualification.result?.status ?? 0]}`)
+                            }}
+                        </span>
+                    </div>
+                </div>
                 <p v-if="qualification.result?.createdAt" class="mt-1 text-xs leading-5 text-gray-300">
                     {{ $t('common.created_at') }} <GenericTime :value="qualification.result.createdAt" />
                 </p>

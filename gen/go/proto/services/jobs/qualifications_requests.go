@@ -58,7 +58,7 @@ func (s *Server) ListQualificationRequests(ctx context.Context, req *ListQualifi
 		return nil, errswrap.NewError(errorsjobs.ErrFailedQuery, err)
 	}
 
-	pag, limit := req.Pagination.GetResponseWithPageSize(count.TotalCount, 15)
+	pag, limit := req.Pagination.GetResponseWithPageSize(count.TotalCount, QualificationsPageSize)
 	resp := &ListQualificationRequestsResponse{
 		Pagination: pag,
 		Requests:   []*jobs.QualificationRequest{},

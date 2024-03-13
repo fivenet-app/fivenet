@@ -19,6 +19,8 @@ import (
 	"go.opentelemetry.io/otel/trace"
 )
 
+const QualificationsPageSize = 5
+
 var (
 	tQuali = table.FivenetJobsQualifications.AS("qualification")
 )
@@ -47,7 +49,7 @@ func (s *Server) ListQualifications(ctx context.Context, req *ListQualifications
 		return nil, errswrap.NewError(errorsjobs.ErrFailedQuery, err)
 	}
 
-	pag, limit := req.Pagination.GetResponseWithPageSize(count.TotalCount, 15)
+	pag, limit := req.Pagination.GetResponseWithPageSize(count.TotalCount, QualificationsPageSize)
 	resp := &ListQualificationsResponse{
 		Pagination:     pag,
 		Qualifications: []*jobs.Qualification{},

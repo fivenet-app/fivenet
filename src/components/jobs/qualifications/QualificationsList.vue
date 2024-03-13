@@ -43,7 +43,7 @@ async function listQualifications(): Promise<ListQualificationsResponse> {
                         :to="{ name: 'jobs-qualifications-create' }"
                         class="relative inline-flex items-center rounded-md bg-primary-500 px-3 py-2 text-sm font-semibold text-neutral shadow-sm hover:bg-primary-500 focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-primary-600"
                     >
-                        Create new Qualification
+                        {{ $t('components.jobs.qualifications.create_new_qualification') }}
                     </NuxtLink>
                 </div>
             </div>
