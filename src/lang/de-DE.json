@@ -911,7 +911,9 @@
         "postal_code": "Postleitzahl",
         "duration": "Dauer",
         "inactive_colleagues": "Inaktive Kollegen",
-        "qualifications": "Qualifizierung | Qualifizierungen"
+        "qualifications": "Qualifizierung | Qualifizierungen",
+        "score": "Ergebnis",
+        "calendar_week": "KW"
     },
     "notifications": {
         "clipboard": {
