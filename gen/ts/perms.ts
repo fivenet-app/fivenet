@@ -94,6 +94,7 @@ export type Perms =
 	| 'JobsConductService.DeleteConductEntry'
 	| 'JobsConductService.ListConductEntries'
 	| 'JobsConductService.UpdateConductEntry'
+	| 'JobsQualificationsService.CreateOrUpdateQualificationResult'
 	| 'JobsQualificationsService.CreateQualification'
 	| 'JobsQualificationsService.DeleteQualification'
 	| 'JobsQualificationsService.GetQualification'

@@ -1742,6 +1742,14 @@
             <ul>
               
                 <li>
+                  <a href="#services.jobs.CreateOrUpdateQualificationResultRequest"><span class="badge">M</span>CreateOrUpdateQualificationResultRequest</a>
+                </li>
+              
+                <li>
+                  <a href="#services.jobs.CreateOrUpdateQualificationResultResponse"><span class="badge">M</span>CreateOrUpdateQualificationResultResponse</a>
+                </li>
+              
+                <li>
                   <a href="#services.jobs.CreateQualificationRequest"><span class="badge">M</span>CreateQualificationRequest</a>
                 </li>
               
@@ -20008,6 +20016,54 @@
       <p></p>
 
       
+        <h3 id="services.jobs.CreateOrUpdateQualificationResultRequest">CreateOrUpdateQualificationResultRequest</h3>
+        <p></p>
+
+        
+          <table class="field-table">
+            <thead>
+              <tr><td>Field</td><td>Type</td><td>Label</td><td>Description</td></tr>
+            </thead>
+            <tbody>
+              
+                <tr>
+                  <td>result</td>
+                  <td><a href="#resources.jobs.QualificationResult">resources.jobs.QualificationResult</a></td>
+                  <td></td>
+                  <td><p> </p></td>
+                </tr>
+              
+            </tbody>
+          </table>
+
+          
+
+        
+      
+        <h3 id="services.jobs.CreateOrUpdateQualificationResultResponse">CreateOrUpdateQualificationResultResponse</h3>
+        <p></p>
+
+        
+          <table class="field-table">
+            <thead>
+              <tr><td>Field</td><td>Type</td><td>Label</td><td>Description</td></tr>
+            </thead>
+            <tbody>
+              
+                <tr>
+                  <td>result</td>
+                  <td><a href="#resources.jobs.QualificationResult">resources.jobs.QualificationResult</a></td>
+                  <td></td>
+                  <td><p> </p></td>
+                </tr>
+              
+            </tbody>
+          </table>
+
+          
+
+        
+      
         <h3 id="services.jobs.CreateQualificationRequest">CreateQualificationRequest</h3>
         <p></p>
 
@@ -20382,7 +20438,7 @@
         
       
         <h3 id="services.jobs.ListQualificationsResultsRequest">ListQualificationsResultsRequest</h3>
-        <p></p>
+        <p>Results ====================================================================</p>
 
         
           <table class="field-table">
@@ -20637,13 +20693,6 @@
               </tr>
             
               <tr>
-                <td>ListQualificationsResults</td>
-                <td><a href="#services.jobs.ListQualificationsResultsRequest">ListQualificationsResultsRequest</a></td>
-                <td><a href="#services.jobs.ListQualificationsResultsResponse">ListQualificationsResultsResponse</a></td>
-                <td><p>@perm</p></td>
-              </tr>
-            
-              <tr>
                 <td>CreateQualification</td>
                 <td><a href="#services.jobs.CreateQualificationRequest">CreateQualificationRequest</a></td>
                 <td><a href="#services.jobs.CreateQualificationResponse">CreateQualificationResponse</a></td>
@@ -20662,6 +20711,20 @@
                 <td><a href="#services.jobs.DeleteQualificationRequest">DeleteQualificationRequest</a></td>
                 <td><a href="#services.jobs.DeleteQualificationResponse">DeleteQualificationResponse</a></td>
                 <td><p>@perm: Attrs=Access/StringList:[]string{&#34;Own&#34;, &#34;Lower_Rank&#34;, &#34;Same_Rank&#34;, &#34;Any&#34;}</p></td>
+              </tr>
+            
+              <tr>
+                <td>ListQualificationsResults</td>
+                <td><a href="#services.jobs.ListQualificationsResultsRequest">ListQualificationsResultsRequest</a></td>
+                <td><a href="#services.jobs.ListQualificationsResultsResponse">ListQualificationsResultsResponse</a></td>
+                <td><p>@perm</p></td>
+              </tr>
+            
+              <tr>
+                <td>CreateOrUpdateQualificationResult</td>
+                <td><a href="#services.jobs.CreateOrUpdateQualificationResultRequest">CreateOrUpdateQualificationResultRequest</a></td>
+                <td><a href="#services.jobs.CreateOrUpdateQualificationResultResponse">CreateOrUpdateQualificationResultResponse</a></td>
+                <td><p>@perm</p></td>
               </tr>
             
               <tr>

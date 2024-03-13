@@ -121,3 +121,12 @@ func (s *Server) ListQualificationsResults(ctx context.Context, req *ListQualifi
 
 	return resp, nil
 }
+
+func (s *Server) CreateOrUpdateQualificationResult(ctx context.Context, req *CreateOrUpdateQualificationResultRequest) (*CreateOrUpdateQualificationResultResponse, error) {
+
+	// TODO
+
+	resp := &CreateOrUpdateQualificationResultResponse{}
+
+	return resp, nil
+}

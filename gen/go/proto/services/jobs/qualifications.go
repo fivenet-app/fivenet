@@ -277,7 +277,6 @@ func (s *Server) UpdateQualification(ctx context.Context, req *UpdateQualificati
 		if _, err := stmt.ExecContext(ctx, tx); err != nil {
 			return nil, errswrap.NewError(errorsjobs.ErrFailedQuery, err)
 		}
-
 	}
 
 	if err := s.handleQualificationAccessChanges(ctx, tx, jobs.AccessLevelUpdateMode_ACCESS_LEVEL_UPDATE_MODE_UPDATE, req.Qualification.Id, req.Qualification.Access); err != nil {
