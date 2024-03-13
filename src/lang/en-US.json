@@ -913,7 +913,8 @@
         "inactive_colleagues": "Inactive Colleagues",
         "qualifications": "Qualification | Qualifications",
         "score": "Score",
-        "calendar_week": "CW"
+        "calendar_week": "CW",
+        "requirements": "Requirement | Requirements"
     },
     "notifications": {
         "clipboard": {
