@@ -573,7 +573,9 @@
                 "set_profile_picture": "Update Profile Picture"
             },
             "qualifications": {
-                "create_new_qualification": "Create New Qualification"
+                "create_new_qualification": "Create New Qualification",
+                "user_qualifications": "Your Qualifications",
+                "all_qualifications": "All Qualifications"
             }
         },
         "bodycheckup": {

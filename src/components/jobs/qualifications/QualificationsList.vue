@@ -34,7 +34,9 @@ async function listQualifications(): Promise<ListQualificationsResponse> {
         <div class="border-b border-gray-200 bg-base-600 px-4 py-5 sm:p-6">
             <div class="-ml-4 -mt-4 flex flex-wrap items-center justify-between sm:flex-nowrap">
                 <div class="ml-4 mt-4">
-                    <h3 class="text-base font-semibold leading-6 text-gray-200">All Qualifications</h3>
+                    <h3 class="text-base font-semibold leading-6 text-gray-200">
+                        {{ $t('components.jobs.qualifications.all_qualifications') }}
+                    </h3>
                     <p class="mt-1 text-sm text-gray-500"></p>
                 </div>
                 <div class="ml-4 mt-4 flex-shrink-0">
