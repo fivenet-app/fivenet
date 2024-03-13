@@ -20,8 +20,10 @@ defineProps<{
                 </p>
                 <p class="mt-1 flex text-xs leading-5 text-gray-300">
                     <span class="inline-flex gap-1">
-                        <span>{{ $t('common.score') }}: {{ qualification.result?.score }}</span>
-                        <span v-if="qualification.result?.summary"> ({{ qualification.result?.summary }})</span>
+                        <span class="font-semibold">{{ $t('common.score') }}: {{ qualification.result?.score }}</span>
+                        <span v-if="qualification.result?.summary">
+                            ({{ $t('common.summary') }}: {{ qualification.result?.summary }})</span
+                        >
                     </span>
                 </p>
             </div>

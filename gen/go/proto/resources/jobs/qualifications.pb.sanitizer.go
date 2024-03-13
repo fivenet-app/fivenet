@@ -11,10 +11,10 @@ func (m *Qualification) Sanitize() error {
 
 	m.Abbreviation = htmlsanitizer.StripTags(m.Abbreviation)
 
-	m.Description = htmlsanitizer.Sanitize(m.Description)
+	m.Content = htmlsanitizer.Sanitize(m.Content)
 
-	if m.Summary != nil {
-		*m.Summary = htmlsanitizer.StripTags(*m.Summary)
+	if m.Description != nil {
+		*m.Description = htmlsanitizer.StripTags(*m.Description)
 	}
 
 	m.Title = htmlsanitizer.Sanitize(m.Title)
@@ -22,9 +22,31 @@ func (m *Qualification) Sanitize() error {
 	return nil
 }
 
+func (m *QualificationRequest) Sanitize() error {
+
+	if m.Reason != nil {
+		*m.Reason = htmlsanitizer.StripTags(*m.Reason)
+	}
+
+	return nil
+}
+
 func (m *QualificationResult) Sanitize() error {
 
 	m.Summary = htmlsanitizer.StripTags(m.Summary)
+
+	return nil
+}
+
+func (m *QualificationShort) Sanitize() error {
+
+	m.Abbreviation = htmlsanitizer.StripTags(m.Abbreviation)
+
+	if m.Description != nil {
+		*m.Description = htmlsanitizer.StripTags(*m.Description)
+	}
+
+	m.Title = htmlsanitizer.Sanitize(m.Title)
 
 	return nil
 }

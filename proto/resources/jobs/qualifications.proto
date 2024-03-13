@@ -24,18 +24,43 @@ message Qualification {
     max_len: 1024
   }];
   // @sanitize: method=StripTags
-  optional string summary = 10 [(validate.rules).string.max_len = 255];
+  optional string description = 10 [(validate.rules).string.max_len = 512];
   // @sanitize
-  string description = 11 [(validate.rules).string = {
+  string content = 11 [(validate.rules).string = {
     min_len: 20,
-    max_bytes: 500000 // 0.5 Megabytes
+    max_bytes: 750000 // 0.75 Megabytes
   }];
   int32 creator_id = 12;
   optional resources.users.UserShort creator = 13; // @gotags: alias:"creator"
   string creator_job = 14 [(validate.rules).string.max_len = 20];
   QualificationAccess access = 15;
-  optional QualificationResult result = 16;
+  repeated QualificationRequirement requirements = 16;
   optional QualificationDiscordSettings discord_settings = 17;
+  optional QualificationResult result = 18;
+}
+
+message QualificationShort {
+  uint64 id = 1 [jstype = JS_STRING]; // @gotags: sql:"primary_key" alias:"id"
+  optional resources.timestamp.Timestamp created_at = 2;
+  optional resources.timestamp.Timestamp updated_at = 3;
+  optional resources.timestamp.Timestamp deleted_at = 4;
+  string job = 5 [(validate.rules).string.max_len = 20];
+  uint32 weight = 6 [(validate.rules).uint32.lt = 4294967295];
+  bool closed = 7;
+  // @sanitize: method=StripTags
+  string abbreviation = 8 [(validate.rules).string.max_len = 20];
+  // @sanitize
+  string title = 9 [(validate.rules).string = {
+    min_len: 3,
+    max_len: 1024
+  }];
+  // @sanitize: method=StripTags
+  optional string description = 10 [(validate.rules).string.max_len = 512];
+  int32 creator_id = 12;
+  optional resources.users.UserShort creator = 13; // @gotags: alias:"creator"
+  string creator_job = 14 [(validate.rules).string.max_len = 20];
+  repeated QualificationRequirement requirements = 16;
+  optional QualificationResult result = 18;
 }
 
 enum AccessLevelUpdateMode {
@@ -57,11 +82,10 @@ enum AccessLevel {
 
 message QualificationAccess {
   repeated QualificationJobAccess jobs = 1;
-  repeated QualificationRequirementsAccess requirements = 2;
 }
 
 message QualificationJobAccess {
-  uint64 id = 1 [jstype = JS_STRING]; // @gotags: alias:"id"
+  uint64 id = 1 [jstype = JS_STRING]; // @gotags: sql:"primary_key" alias:"id"
   optional resources.timestamp.Timestamp created_at = 2;
   uint64 qualification_id = 4 [jstype = JS_STRING];
   string job = 5 [(validate.rules).string.max_len = 20];
@@ -71,20 +95,24 @@ message QualificationJobAccess {
   AccessLevel access = 9 [(validate.rules).enum.defined_only = true];
 }
 
-message QualificationRequirementsAccess {
-  uint64 id = 1 [jstype = JS_STRING]; // @gotags: alias:"id"
+message QualificationRequirement {
+  uint64 id = 1 [jstype = JS_STRING]; // @gotags: sql:"primary_key" alias:"id"
   optional resources.timestamp.Timestamp created_at = 2;
   uint64 qualification_id = 3 [jstype = JS_STRING];
   uint64 target_qualification_id = 4 [jstype = JS_STRING];
-  optional Qualification target_qualification = 5;
-  AccessLevel access = 6 [(validate.rules).enum.defined_only = true];
+  optional QualificationShort target_qualification = 5;  // @gotags: alias:"targetqualification.*"
+}
+
+message QualificationDiscordSettings {
+  bool sync_enabled = 1;
+  optional string role_name = 2 [(validate.rules).string.max_len = 50];
 }
 
 enum ResultStatus {
-  QUALIFICATION_RESULT_STATUS_UNSPECIFIED = 0;
-  QUALIFICATION_RESULT_STATUS_PENDING = 1;
-  QUALIFICATION_RESULT_STATUS_FAILED = 2;
-  QUALIFICATION_RESULT_STATUS_SUCCESSFUL = 3;
+  RESULT_STATUS_UNSPECIFIED = 0;
+  RESULT_STATUS_PENDING = 1;
+  RESULT_STATUS_FAILED = 2;
+  RESULT_STATUS_SUCCESSFUL = 3;
 }
 
 message QualificationResult {
@@ -108,14 +136,10 @@ message QualificationRequest {
   optional resources.timestamp.Timestamp created_at = 2;
   int32 user_id = 3;
   resources.users.UserShort user = 4;
+  // @sanitize: method=StripTags
   optional string reason = 5 [(validate.rules).string = {max_len: 512}];
   optional bool approved = 6;
   optional resources.timestamp.Timestamp approved_at = 7;
   optional int32 approver_id = 8;
   optional resources.users.UserShort approver = 9;
-}
-
-message QualificationDiscordSettings {
-  bool sync_enabled = 1;
-  optional string role_name = 2 [(validate.rules).string.max_len = 50];
 }

@@ -105,9 +105,9 @@ func (m *Qualification) validate(all bool) error {
 		errors = append(errors, err)
 	}
 
-	if utf8.RuneCountInString(m.GetDescription()) < 20 {
+	if utf8.RuneCountInString(m.GetContent()) < 20 {
 		err := QualificationValidationError{
-			field:  "Description",
+			field:  "Content",
 			reason: "value length must be at least 20 runes",
 		}
 		if !all {
@@ -116,10 +116,10 @@ func (m *Qualification) validate(all bool) error {
 		errors = append(errors, err)
 	}
 
-	if len(m.GetDescription()) > 500000 {
+	if len(m.GetContent()) > 750000 {
 		err := QualificationValidationError{
-			field:  "Description",
-			reason: "value length must be at most 500000 bytes",
+			field:  "Content",
+			reason: "value length must be at most 750000 bytes",
 		}
 		if !all {
 			return err
@@ -167,6 +167,40 @@ func (m *Qualification) validate(all bool) error {
 				cause:  err,
 			}
 		}
+	}
+
+	for idx, item := range m.GetRequirements() {
+		_, _ = idx, item
+
+		if all {
+			switch v := interface{}(item).(type) {
+			case interface{ ValidateAll() error }:
+				if err := v.ValidateAll(); err != nil {
+					errors = append(errors, QualificationValidationError{
+						field:  fmt.Sprintf("Requirements[%v]", idx),
+						reason: "embedded message failed validation",
+						cause:  err,
+					})
+				}
+			case interface{ Validate() error }:
+				if err := v.Validate(); err != nil {
+					errors = append(errors, QualificationValidationError{
+						field:  fmt.Sprintf("Requirements[%v]", idx),
+						reason: "embedded message failed validation",
+						cause:  err,
+					})
+				}
+			}
+		} else if v, ok := interface{}(item).(interface{ Validate() error }); ok {
+			if err := v.Validate(); err != nil {
+				return QualificationValidationError{
+					field:  fmt.Sprintf("Requirements[%v]", idx),
+					reason: "embedded message failed validation",
+					cause:  err,
+				}
+			}
+		}
+
 	}
 
 	if m.CreatedAt != nil {
@@ -268,12 +302,12 @@ func (m *Qualification) validate(all bool) error {
 
 	}
 
-	if m.Summary != nil {
+	if m.Description != nil {
 
-		if utf8.RuneCountInString(m.GetSummary()) > 255 {
+		if utf8.RuneCountInString(m.GetDescription()) > 512 {
 			err := QualificationValidationError{
-				field:  "Summary",
-				reason: "value length must be at most 255 runes",
+				field:  "Description",
+				reason: "value length must be at most 512 runes",
 			}
 			if !all {
 				return err
@@ -316,39 +350,6 @@ func (m *Qualification) validate(all bool) error {
 
 	}
 
-	if m.Result != nil {
-
-		if all {
-			switch v := interface{}(m.GetResult()).(type) {
-			case interface{ ValidateAll() error }:
-				if err := v.ValidateAll(); err != nil {
-					errors = append(errors, QualificationValidationError{
-						field:  "Result",
-						reason: "embedded message failed validation",
-						cause:  err,
-					})
-				}
-			case interface{ Validate() error }:
-				if err := v.Validate(); err != nil {
-					errors = append(errors, QualificationValidationError{
-						field:  "Result",
-						reason: "embedded message failed validation",
-						cause:  err,
-					})
-				}
-			}
-		} else if v, ok := interface{}(m.GetResult()).(interface{ Validate() error }); ok {
-			if err := v.Validate(); err != nil {
-				return QualificationValidationError{
-					field:  "Result",
-					reason: "embedded message failed validation",
-					cause:  err,
-				}
-			}
-		}
-
-	}
-
 	if m.DiscordSettings != nil {
 
 		if all {
@@ -374,6 +375,39 @@ func (m *Qualification) validate(all bool) error {
 			if err := v.Validate(); err != nil {
 				return QualificationValidationError{
 					field:  "DiscordSettings",
+					reason: "embedded message failed validation",
+					cause:  err,
+				}
+			}
+		}
+
+	}
+
+	if m.Result != nil {
+
+		if all {
+			switch v := interface{}(m.GetResult()).(type) {
+			case interface{ ValidateAll() error }:
+				if err := v.ValidateAll(); err != nil {
+					errors = append(errors, QualificationValidationError{
+						field:  "Result",
+						reason: "embedded message failed validation",
+						cause:  err,
+					})
+				}
+			case interface{ Validate() error }:
+				if err := v.Validate(); err != nil {
+					errors = append(errors, QualificationValidationError{
+						field:  "Result",
+						reason: "embedded message failed validation",
+						cause:  err,
+					})
+				}
+			}
+		} else if v, ok := interface{}(m.GetResult()).(interface{ Validate() error }); ok {
+			if err := v.Validate(); err != nil {
+				return QualificationValidationError{
+					field:  "Result",
 					reason: "embedded message failed validation",
 					cause:  err,
 				}
@@ -460,6 +494,389 @@ var _ interface {
 	ErrorName() string
 } = QualificationValidationError{}
 
+// Validate checks the field values on QualificationShort with the rules
+// defined in the proto definition for this message. If any rules are
+// violated, the first error encountered is returned, or nil if there are no violations.
+func (m *QualificationShort) Validate() error {
+	return m.validate(false)
+}
+
+// ValidateAll checks the field values on QualificationShort with the rules
+// defined in the proto definition for this message. If any rules are
+// violated, the result is a list of violation errors wrapped in
+// QualificationShortMultiError, or nil if none found.
+func (m *QualificationShort) ValidateAll() error {
+	return m.validate(true)
+}
+
+func (m *QualificationShort) validate(all bool) error {
+	if m == nil {
+		return nil
+	}
+
+	var errors []error
+
+	// no validation rules for Id
+
+	if utf8.RuneCountInString(m.GetJob()) > 20 {
+		err := QualificationShortValidationError{
+			field:  "Job",
+			reason: "value length must be at most 20 runes",
+		}
+		if !all {
+			return err
+		}
+		errors = append(errors, err)
+	}
+
+	if m.GetWeight() >= 4294967295 {
+		err := QualificationShortValidationError{
+			field:  "Weight",
+			reason: "value must be less than 4294967295",
+		}
+		if !all {
+			return err
+		}
+		errors = append(errors, err)
+	}
+
+	// no validation rules for Closed
+
+	if utf8.RuneCountInString(m.GetAbbreviation()) > 20 {
+		err := QualificationShortValidationError{
+			field:  "Abbreviation",
+			reason: "value length must be at most 20 runes",
+		}
+		if !all {
+			return err
+		}
+		errors = append(errors, err)
+	}
+
+	if l := utf8.RuneCountInString(m.GetTitle()); l < 3 || l > 1024 {
+		err := QualificationShortValidationError{
+			field:  "Title",
+			reason: "value length must be between 3 and 1024 runes, inclusive",
+		}
+		if !all {
+			return err
+		}
+		errors = append(errors, err)
+	}
+
+	for idx, item := range m.GetRequirements() {
+		_, _ = idx, item
+
+		if all {
+			switch v := interface{}(item).(type) {
+			case interface{ ValidateAll() error }:
+				if err := v.ValidateAll(); err != nil {
+					errors = append(errors, QualificationShortValidationError{
+						field:  fmt.Sprintf("Requirements[%v]", idx),
+						reason: "embedded message failed validation",
+						cause:  err,
+					})
+				}
+			case interface{ Validate() error }:
+				if err := v.Validate(); err != nil {
+					errors = append(errors, QualificationShortValidationError{
+						field:  fmt.Sprintf("Requirements[%v]", idx),
+						reason: "embedded message failed validation",
+						cause:  err,
+					})
+				}
+			}
+		} else if v, ok := interface{}(item).(interface{ Validate() error }); ok {
+			if err := v.Validate(); err != nil {
+				return QualificationShortValidationError{
+					field:  fmt.Sprintf("Requirements[%v]", idx),
+					reason: "embedded message failed validation",
+					cause:  err,
+				}
+			}
+		}
+
+	}
+
+	if m.CreatedAt != nil {
+
+		if all {
+			switch v := interface{}(m.GetCreatedAt()).(type) {
+			case interface{ ValidateAll() error }:
+				if err := v.ValidateAll(); err != nil {
+					errors = append(errors, QualificationShortValidationError{
+						field:  "CreatedAt",
+						reason: "embedded message failed validation",
+						cause:  err,
+					})
+				}
+			case interface{ Validate() error }:
+				if err := v.Validate(); err != nil {
+					errors = append(errors, QualificationShortValidationError{
+						field:  "CreatedAt",
+						reason: "embedded message failed validation",
+						cause:  err,
+					})
+				}
+			}
+		} else if v, ok := interface{}(m.GetCreatedAt()).(interface{ Validate() error }); ok {
+			if err := v.Validate(); err != nil {
+				return QualificationShortValidationError{
+					field:  "CreatedAt",
+					reason: "embedded message failed validation",
+					cause:  err,
+				}
+			}
+		}
+
+	}
+
+	if m.UpdatedAt != nil {
+
+		if all {
+			switch v := interface{}(m.GetUpdatedAt()).(type) {
+			case interface{ ValidateAll() error }:
+				if err := v.ValidateAll(); err != nil {
+					errors = append(errors, QualificationShortValidationError{
+						field:  "UpdatedAt",
+						reason: "embedded message failed validation",
+						cause:  err,
+					})
+				}
+			case interface{ Validate() error }:
+				if err := v.Validate(); err != nil {
+					errors = append(errors, QualificationShortValidationError{
+						field:  "UpdatedAt",
+						reason: "embedded message failed validation",
+						cause:  err,
+					})
+				}
+			}
+		} else if v, ok := interface{}(m.GetUpdatedAt()).(interface{ Validate() error }); ok {
+			if err := v.Validate(); err != nil {
+				return QualificationShortValidationError{
+					field:  "UpdatedAt",
+					reason: "embedded message failed validation",
+					cause:  err,
+				}
+			}
+		}
+
+	}
+
+	if m.DeletedAt != nil {
+
+		if all {
+			switch v := interface{}(m.GetDeletedAt()).(type) {
+			case interface{ ValidateAll() error }:
+				if err := v.ValidateAll(); err != nil {
+					errors = append(errors, QualificationShortValidationError{
+						field:  "DeletedAt",
+						reason: "embedded message failed validation",
+						cause:  err,
+					})
+				}
+			case interface{ Validate() error }:
+				if err := v.Validate(); err != nil {
+					errors = append(errors, QualificationShortValidationError{
+						field:  "DeletedAt",
+						reason: "embedded message failed validation",
+						cause:  err,
+					})
+				}
+			}
+		} else if v, ok := interface{}(m.GetDeletedAt()).(interface{ Validate() error }); ok {
+			if err := v.Validate(); err != nil {
+				return QualificationShortValidationError{
+					field:  "DeletedAt",
+					reason: "embedded message failed validation",
+					cause:  err,
+				}
+			}
+		}
+
+	}
+
+	if m.Description != nil {
+
+		if utf8.RuneCountInString(m.GetDescription()) > 512 {
+			err := QualificationShortValidationError{
+				field:  "Description",
+				reason: "value length must be at most 512 runes",
+			}
+			if !all {
+				return err
+			}
+			errors = append(errors, err)
+		}
+
+	}
+
+	if m.CreatorId != nil {
+		// no validation rules for CreatorId
+	}
+
+	if m.Creator != nil {
+
+		if all {
+			switch v := interface{}(m.GetCreator()).(type) {
+			case interface{ ValidateAll() error }:
+				if err := v.ValidateAll(); err != nil {
+					errors = append(errors, QualificationShortValidationError{
+						field:  "Creator",
+						reason: "embedded message failed validation",
+						cause:  err,
+					})
+				}
+			case interface{ Validate() error }:
+				if err := v.Validate(); err != nil {
+					errors = append(errors, QualificationShortValidationError{
+						field:  "Creator",
+						reason: "embedded message failed validation",
+						cause:  err,
+					})
+				}
+			}
+		} else if v, ok := interface{}(m.GetCreator()).(interface{ Validate() error }); ok {
+			if err := v.Validate(); err != nil {
+				return QualificationShortValidationError{
+					field:  "Creator",
+					reason: "embedded message failed validation",
+					cause:  err,
+				}
+			}
+		}
+
+	}
+
+	if m.CreatorJob != nil {
+
+		if utf8.RuneCountInString(m.GetCreatorJob()) > 20 {
+			err := QualificationShortValidationError{
+				field:  "CreatorJob",
+				reason: "value length must be at most 20 runes",
+			}
+			if !all {
+				return err
+			}
+			errors = append(errors, err)
+		}
+
+	}
+
+	if m.Result != nil {
+
+		if all {
+			switch v := interface{}(m.GetResult()).(type) {
+			case interface{ ValidateAll() error }:
+				if err := v.ValidateAll(); err != nil {
+					errors = append(errors, QualificationShortValidationError{
+						field:  "Result",
+						reason: "embedded message failed validation",
+						cause:  err,
+					})
+				}
+			case interface{ Validate() error }:
+				if err := v.Validate(); err != nil {
+					errors = append(errors, QualificationShortValidationError{
+						field:  "Result",
+						reason: "embedded message failed validation",
+						cause:  err,
+					})
+				}
+			}
+		} else if v, ok := interface{}(m.GetResult()).(interface{ Validate() error }); ok {
+			if err := v.Validate(); err != nil {
+				return QualificationShortValidationError{
+					field:  "Result",
+					reason: "embedded message failed validation",
+					cause:  err,
+				}
+			}
+		}
+
+	}
+
+	if len(errors) > 0 {
+		return QualificationShortMultiError(errors)
+	}
+
+	return nil
+}
+
+// QualificationShortMultiError is an error wrapping multiple validation errors
+// returned by QualificationShort.ValidateAll() if the designated constraints
+// aren't met.
+type QualificationShortMultiError []error
+
+// Error returns a concatenation of all the error messages it wraps.
+func (m QualificationShortMultiError) Error() string {
+	var msgs []string
+	for _, err := range m {
+		msgs = append(msgs, err.Error())
+	}
+	return strings.Join(msgs, "; ")
+}
+
+// AllErrors returns a list of validation violation errors.
+func (m QualificationShortMultiError) AllErrors() []error { return m }
+
+// QualificationShortValidationError is the validation error returned by
+// QualificationShort.Validate if the designated constraints aren't met.
+type QualificationShortValidationError struct {
+	field  string
+	reason string
+	cause  error
+	key    bool
+}
+
+// Field function returns field value.
+func (e QualificationShortValidationError) Field() string { return e.field }
+
+// Reason function returns reason value.
+func (e QualificationShortValidationError) Reason() string { return e.reason }
+
+// Cause function returns cause value.
+func (e QualificationShortValidationError) Cause() error { return e.cause }
+
+// Key function returns key value.
+func (e QualificationShortValidationError) Key() bool { return e.key }
+
+// ErrorName returns error name.
+func (e QualificationShortValidationError) ErrorName() string {
+	return "QualificationShortValidationError"
+}
+
+// Error satisfies the builtin error interface
+func (e QualificationShortValidationError) Error() string {
+	cause := ""
+	if e.cause != nil {
+		cause = fmt.Sprintf(" | caused by: %v", e.cause)
+	}
+
+	key := ""
+	if e.key {
+		key = "key for "
+	}
+
+	return fmt.Sprintf(
+		"invalid %sQualificationShort.%s: %s%s",
+		key,
+		e.field,
+		e.reason,
+		cause)
+}
+
+var _ error = QualificationShortValidationError{}
+
+var _ interface {
+	Field() string
+	Reason() string
+	Key() bool
+	Cause() error
+	ErrorName() string
+} = QualificationShortValidationError{}
+
 // Validate checks the field values on QualificationAccess with the rules
 // defined in the proto definition for this message. If any rules are
 // violated, the first error encountered is returned, or nil if there are no violations.
@@ -508,40 +925,6 @@ func (m *QualificationAccess) validate(all bool) error {
 			if err := v.Validate(); err != nil {
 				return QualificationAccessValidationError{
 					field:  fmt.Sprintf("Jobs[%v]", idx),
-					reason: "embedded message failed validation",
-					cause:  err,
-				}
-			}
-		}
-
-	}
-
-	for idx, item := range m.GetRequirements() {
-		_, _ = idx, item
-
-		if all {
-			switch v := interface{}(item).(type) {
-			case interface{ ValidateAll() error }:
-				if err := v.ValidateAll(); err != nil {
-					errors = append(errors, QualificationAccessValidationError{
-						field:  fmt.Sprintf("Requirements[%v]", idx),
-						reason: "embedded message failed validation",
-						cause:  err,
-					})
-				}
-			case interface{ Validate() error }:
-				if err := v.Validate(); err != nil {
-					errors = append(errors, QualificationAccessValidationError{
-						field:  fmt.Sprintf("Requirements[%v]", idx),
-						reason: "embedded message failed validation",
-						cause:  err,
-					})
-				}
-			}
-		} else if v, ok := interface{}(item).(interface{ Validate() error }); ok {
-			if err := v.Validate(); err != nil {
-				return QualificationAccessValidationError{
-					field:  fmt.Sprintf("Requirements[%v]", idx),
 					reason: "embedded message failed validation",
 					cause:  err,
 				}
@@ -832,22 +1215,22 @@ var _ interface {
 	ErrorName() string
 } = QualificationJobAccessValidationError{}
 
-// Validate checks the field values on QualificationRequirementsAccess with the
-// rules defined in the proto definition for this message. If any rules are
+// Validate checks the field values on QualificationRequirement with the rules
+// defined in the proto definition for this message. If any rules are
 // violated, the first error encountered is returned, or nil if there are no violations.
-func (m *QualificationRequirementsAccess) Validate() error {
+func (m *QualificationRequirement) Validate() error {
 	return m.validate(false)
 }
 
-// ValidateAll checks the field values on QualificationRequirementsAccess with
-// the rules defined in the proto definition for this message. If any rules
-// are violated, the result is a list of violation errors wrapped in
-// QualificationRequirementsAccessMultiError, or nil if none found.
-func (m *QualificationRequirementsAccess) ValidateAll() error {
+// ValidateAll checks the field values on QualificationRequirement with the
+// rules defined in the proto definition for this message. If any rules are
+// violated, the result is a list of violation errors wrapped in
+// QualificationRequirementMultiError, or nil if none found.
+func (m *QualificationRequirement) ValidateAll() error {
 	return m.validate(true)
 }
 
-func (m *QualificationRequirementsAccess) validate(all bool) error {
+func (m *QualificationRequirement) validate(all bool) error {
 	if m == nil {
 		return nil
 	}
@@ -860,24 +1243,13 @@ func (m *QualificationRequirementsAccess) validate(all bool) error {
 
 	// no validation rules for TargetQualificationId
 
-	if _, ok := AccessLevel_name[int32(m.GetAccess())]; !ok {
-		err := QualificationRequirementsAccessValidationError{
-			field:  "Access",
-			reason: "value must be one of the defined enum values",
-		}
-		if !all {
-			return err
-		}
-		errors = append(errors, err)
-	}
-
 	if m.CreatedAt != nil {
 
 		if all {
 			switch v := interface{}(m.GetCreatedAt()).(type) {
 			case interface{ ValidateAll() error }:
 				if err := v.ValidateAll(); err != nil {
-					errors = append(errors, QualificationRequirementsAccessValidationError{
+					errors = append(errors, QualificationRequirementValidationError{
 						field:  "CreatedAt",
 						reason: "embedded message failed validation",
 						cause:  err,
@@ -885,7 +1257,7 @@ func (m *QualificationRequirementsAccess) validate(all bool) error {
 				}
 			case interface{ Validate() error }:
 				if err := v.Validate(); err != nil {
-					errors = append(errors, QualificationRequirementsAccessValidationError{
+					errors = append(errors, QualificationRequirementValidationError{
 						field:  "CreatedAt",
 						reason: "embedded message failed validation",
 						cause:  err,
@@ -894,7 +1266,7 @@ func (m *QualificationRequirementsAccess) validate(all bool) error {
 			}
 		} else if v, ok := interface{}(m.GetCreatedAt()).(interface{ Validate() error }); ok {
 			if err := v.Validate(); err != nil {
-				return QualificationRequirementsAccessValidationError{
+				return QualificationRequirementValidationError{
 					field:  "CreatedAt",
 					reason: "embedded message failed validation",
 					cause:  err,
@@ -910,7 +1282,7 @@ func (m *QualificationRequirementsAccess) validate(all bool) error {
 			switch v := interface{}(m.GetTargetQualification()).(type) {
 			case interface{ ValidateAll() error }:
 				if err := v.ValidateAll(); err != nil {
-					errors = append(errors, QualificationRequirementsAccessValidationError{
+					errors = append(errors, QualificationRequirementValidationError{
 						field:  "TargetQualification",
 						reason: "embedded message failed validation",
 						cause:  err,
@@ -918,7 +1290,7 @@ func (m *QualificationRequirementsAccess) validate(all bool) error {
 				}
 			case interface{ Validate() error }:
 				if err := v.Validate(); err != nil {
-					errors = append(errors, QualificationRequirementsAccessValidationError{
+					errors = append(errors, QualificationRequirementValidationError{
 						field:  "TargetQualification",
 						reason: "embedded message failed validation",
 						cause:  err,
@@ -927,7 +1299,7 @@ func (m *QualificationRequirementsAccess) validate(all bool) error {
 			}
 		} else if v, ok := interface{}(m.GetTargetQualification()).(interface{ Validate() error }); ok {
 			if err := v.Validate(); err != nil {
-				return QualificationRequirementsAccessValidationError{
+				return QualificationRequirementValidationError{
 					field:  "TargetQualification",
 					reason: "embedded message failed validation",
 					cause:  err,
@@ -938,19 +1310,19 @@ func (m *QualificationRequirementsAccess) validate(all bool) error {
 	}
 
 	if len(errors) > 0 {
-		return QualificationRequirementsAccessMultiError(errors)
+		return QualificationRequirementMultiError(errors)
 	}
 
 	return nil
 }
 
-// QualificationRequirementsAccessMultiError is an error wrapping multiple
-// validation errors returned by QualificationRequirementsAccess.ValidateAll()
-// if the designated constraints aren't met.
-type QualificationRequirementsAccessMultiError []error
+// QualificationRequirementMultiError is an error wrapping multiple validation
+// errors returned by QualificationRequirement.ValidateAll() if the designated
+// constraints aren't met.
+type QualificationRequirementMultiError []error
 
 // Error returns a concatenation of all the error messages it wraps.
-func (m QualificationRequirementsAccessMultiError) Error() string {
+func (m QualificationRequirementMultiError) Error() string {
 	var msgs []string
 	for _, err := range m {
 		msgs = append(msgs, err.Error())
@@ -959,12 +1331,11 @@ func (m QualificationRequirementsAccessMultiError) Error() string {
 }
 
 // AllErrors returns a list of validation violation errors.
-func (m QualificationRequirementsAccessMultiError) AllErrors() []error { return m }
+func (m QualificationRequirementMultiError) AllErrors() []error { return m }
 
-// QualificationRequirementsAccessValidationError is the validation error
-// returned by QualificationRequirementsAccess.Validate if the designated
-// constraints aren't met.
-type QualificationRequirementsAccessValidationError struct {
+// QualificationRequirementValidationError is the validation error returned by
+// QualificationRequirement.Validate if the designated constraints aren't met.
+type QualificationRequirementValidationError struct {
 	field  string
 	reason string
 	cause  error
@@ -972,24 +1343,24 @@ type QualificationRequirementsAccessValidationError struct {
 }
 
 // Field function returns field value.
-func (e QualificationRequirementsAccessValidationError) Field() string { return e.field }
+func (e QualificationRequirementValidationError) Field() string { return e.field }
 
 // Reason function returns reason value.
-func (e QualificationRequirementsAccessValidationError) Reason() string { return e.reason }
+func (e QualificationRequirementValidationError) Reason() string { return e.reason }
 
 // Cause function returns cause value.
-func (e QualificationRequirementsAccessValidationError) Cause() error { return e.cause }
+func (e QualificationRequirementValidationError) Cause() error { return e.cause }
 
 // Key function returns key value.
-func (e QualificationRequirementsAccessValidationError) Key() bool { return e.key }
+func (e QualificationRequirementValidationError) Key() bool { return e.key }
 
 // ErrorName returns error name.
-func (e QualificationRequirementsAccessValidationError) ErrorName() string {
-	return "QualificationRequirementsAccessValidationError"
+func (e QualificationRequirementValidationError) ErrorName() string {
+	return "QualificationRequirementValidationError"
 }
 
 // Error satisfies the builtin error interface
-func (e QualificationRequirementsAccessValidationError) Error() string {
+func (e QualificationRequirementValidationError) Error() string {
 	cause := ""
 	if e.cause != nil {
 		cause = fmt.Sprintf(" | caused by: %v", e.cause)
@@ -1001,14 +1372,14 @@ func (e QualificationRequirementsAccessValidationError) Error() string {
 	}
 
 	return fmt.Sprintf(
-		"invalid %sQualificationRequirementsAccess.%s: %s%s",
+		"invalid %sQualificationRequirement.%s: %s%s",
 		key,
 		e.field,
 		e.reason,
 		cause)
 }
 
-var _ error = QualificationRequirementsAccessValidationError{}
+var _ error = QualificationRequirementValidationError{}
 
 var _ interface {
 	Field() string
@@ -1016,7 +1387,127 @@ var _ interface {
 	Key() bool
 	Cause() error
 	ErrorName() string
-} = QualificationRequirementsAccessValidationError{}
+} = QualificationRequirementValidationError{}
+
+// Validate checks the field values on QualificationDiscordSettings with the
+// rules defined in the proto definition for this message. If any rules are
+// violated, the first error encountered is returned, or nil if there are no violations.
+func (m *QualificationDiscordSettings) Validate() error {
+	return m.validate(false)
+}
+
+// ValidateAll checks the field values on QualificationDiscordSettings with the
+// rules defined in the proto definition for this message. If any rules are
+// violated, the result is a list of violation errors wrapped in
+// QualificationDiscordSettingsMultiError, or nil if none found.
+func (m *QualificationDiscordSettings) ValidateAll() error {
+	return m.validate(true)
+}
+
+func (m *QualificationDiscordSettings) validate(all bool) error {
+	if m == nil {
+		return nil
+	}
+
+	var errors []error
+
+	// no validation rules for SyncEnabled
+
+	if m.RoleName != nil {
+
+		if utf8.RuneCountInString(m.GetRoleName()) > 50 {
+			err := QualificationDiscordSettingsValidationError{
+				field:  "RoleName",
+				reason: "value length must be at most 50 runes",
+			}
+			if !all {
+				return err
+			}
+			errors = append(errors, err)
+		}
+
+	}
+
+	if len(errors) > 0 {
+		return QualificationDiscordSettingsMultiError(errors)
+	}
+
+	return nil
+}
+
+// QualificationDiscordSettingsMultiError is an error wrapping multiple
+// validation errors returned by QualificationDiscordSettings.ValidateAll() if
+// the designated constraints aren't met.
+type QualificationDiscordSettingsMultiError []error
+
+// Error returns a concatenation of all the error messages it wraps.
+func (m QualificationDiscordSettingsMultiError) Error() string {
+	var msgs []string
+	for _, err := range m {
+		msgs = append(msgs, err.Error())
+	}
+	return strings.Join(msgs, "; ")
+}
+
+// AllErrors returns a list of validation violation errors.
+func (m QualificationDiscordSettingsMultiError) AllErrors() []error { return m }
+
+// QualificationDiscordSettingsValidationError is the validation error returned
+// by QualificationDiscordSettings.Validate if the designated constraints
+// aren't met.
+type QualificationDiscordSettingsValidationError struct {
+	field  string
+	reason string
+	cause  error
+	key    bool
+}
+
+// Field function returns field value.
+func (e QualificationDiscordSettingsValidationError) Field() string { return e.field }
+
+// Reason function returns reason value.
+func (e QualificationDiscordSettingsValidationError) Reason() string { return e.reason }
+
+// Cause function returns cause value.
+func (e QualificationDiscordSettingsValidationError) Cause() error { return e.cause }
+
+// Key function returns key value.
+func (e QualificationDiscordSettingsValidationError) Key() bool { return e.key }
+
+// ErrorName returns error name.
+func (e QualificationDiscordSettingsValidationError) ErrorName() string {
+	return "QualificationDiscordSettingsValidationError"
+}
+
+// Error satisfies the builtin error interface
+func (e QualificationDiscordSettingsValidationError) Error() string {
+	cause := ""
+	if e.cause != nil {
+		cause = fmt.Sprintf(" | caused by: %v", e.cause)
+	}
+
+	key := ""
+	if e.key {
+		key = "key for "
+	}
+
+	return fmt.Sprintf(
+		"invalid %sQualificationDiscordSettings.%s: %s%s",
+		key,
+		e.field,
+		e.reason,
+		cause)
+}
+
+var _ error = QualificationDiscordSettingsValidationError{}
+
+var _ interface {
+	Field() string
+	Reason() string
+	Key() bool
+	Cause() error
+	ErrorName() string
+} = QualificationDiscordSettingsValidationError{}
 
 // Validate checks the field values on QualificationResult with the rules
 // defined in the proto definition for this message. If any rules are
@@ -1547,123 +2038,3 @@ var _ interface {
 	Cause() error
 	ErrorName() string
 } = QualificationRequestValidationError{}
-
-// Validate checks the field values on QualificationDiscordSettings with the
-// rules defined in the proto definition for this message. If any rules are
-// violated, the first error encountered is returned, or nil if there are no violations.
-func (m *QualificationDiscordSettings) Validate() error {
-	return m.validate(false)
-}
-
-// ValidateAll checks the field values on QualificationDiscordSettings with the
-// rules defined in the proto definition for this message. If any rules are
-// violated, the result is a list of violation errors wrapped in
-// QualificationDiscordSettingsMultiError, or nil if none found.
-func (m *QualificationDiscordSettings) ValidateAll() error {
-	return m.validate(true)
-}
-
-func (m *QualificationDiscordSettings) validate(all bool) error {
-	if m == nil {
-		return nil
-	}
-
-	var errors []error
-
-	// no validation rules for SyncEnabled
-
-	if m.RoleName != nil {
-
-		if utf8.RuneCountInString(m.GetRoleName()) > 50 {
-			err := QualificationDiscordSettingsValidationError{
-				field:  "RoleName",
-				reason: "value length must be at most 50 runes",
-			}
-			if !all {
-				return err
-			}
-			errors = append(errors, err)
-		}
-
-	}
-
-	if len(errors) > 0 {
-		return QualificationDiscordSettingsMultiError(errors)
-	}
-
-	return nil
-}
-
-// QualificationDiscordSettingsMultiError is an error wrapping multiple
-// validation errors returned by QualificationDiscordSettings.ValidateAll() if
-// the designated constraints aren't met.
-type QualificationDiscordSettingsMultiError []error
-
-// Error returns a concatenation of all the error messages it wraps.
-func (m QualificationDiscordSettingsMultiError) Error() string {
-	var msgs []string
-	for _, err := range m {
-		msgs = append(msgs, err.Error())
-	}
-	return strings.Join(msgs, "; ")
-}
-
-// AllErrors returns a list of validation violation errors.
-func (m QualificationDiscordSettingsMultiError) AllErrors() []error { return m }
-
-// QualificationDiscordSettingsValidationError is the validation error returned
-// by QualificationDiscordSettings.Validate if the designated constraints
-// aren't met.
-type QualificationDiscordSettingsValidationError struct {
-	field  string
-	reason string
-	cause  error
-	key    bool
-}
-
-// Field function returns field value.
-func (e QualificationDiscordSettingsValidationError) Field() string { return e.field }
-
-// Reason function returns reason value.
-func (e QualificationDiscordSettingsValidationError) Reason() string { return e.reason }
-
-// Cause function returns cause value.
-func (e QualificationDiscordSettingsValidationError) Cause() error { return e.cause }
-
-// Key function returns key value.
-func (e QualificationDiscordSettingsValidationError) Key() bool { return e.key }
-
-// ErrorName returns error name.
-func (e QualificationDiscordSettingsValidationError) ErrorName() string {
-	return "QualificationDiscordSettingsValidationError"
-}
-
-// Error satisfies the builtin error interface
-func (e QualificationDiscordSettingsValidationError) Error() string {
-	cause := ""
-	if e.cause != nil {
-		cause = fmt.Sprintf(" | caused by: %v", e.cause)
-	}
-
-	key := ""
-	if e.key {
-		key = "key for "
-	}
-
-	return fmt.Sprintf(
-		"invalid %sQualificationDiscordSettings.%s: %s%s",
-		key,
-		e.field,
-		e.reason,
-		cause)
-}
-
-var _ error = QualificationDiscordSettingsValidationError{}
-
-var _ interface {
-	Field() string
-	Reason() string
-	Key() bool
-	Cause() error
-	ErrorName() string
-} = QualificationDiscordSettingsValidationError{}

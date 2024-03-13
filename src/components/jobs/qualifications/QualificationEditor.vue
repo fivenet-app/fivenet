@@ -6,10 +6,12 @@ import { useThrottleFn } from '@vueuse/core';
 import { CheckIcon, ChevronDownIcon, LoadingIcon, PlusIcon } from 'mdi-vue3';
 import { defineRule } from 'vee-validate';
 import { useNotificatorStore } from '~/store/notificator';
-import type { AccessLevel, Qualification } from '~~/gen/ts/resources/jobs/qualifications';
+import { AccessLevel, QualificationAccess, type Qualification } from '~~/gen/ts/resources/jobs/qualifications';
 import type { Job, JobGrade } from '~~/gen/ts/resources/users/jobs';
 import type { CreateQualificationResponse, UpdateQualificationResponse } from '~~/gen/ts/services/jobs/qualifications';
 import QualificationAccessEntry from '~/components/jobs/qualifications/QualificationAccessEntry.vue';
+import DocEditor from '~/components/partials/DocEditor.vue';
+import { useAuthStore } from '~/store/auth';
 
 const props = defineProps<{
     id?: string;
@@ -18,6 +20,9 @@ const props = defineProps<{
 const { $grpc } = useNuxtApp();
 
 const notifications = useNotificatorStore();
+
+const authStore = useAuthStore();
+const { activeChar } = storeToRefs(authStore);
 
 const { t } = useI18n();
 
@@ -34,8 +39,8 @@ interface FormData {
     weight: number;
     abbreviation: string;
     title: string;
-    summary: string;
     description: string;
+    content: string;
 }
 
 const openclose = [
@@ -49,6 +54,12 @@ const qualification = ref<{
 }>({
     closed: openclose[0],
     public: false,
+});
+
+const quali = ref<{
+    closed: { id: number; label: string; closed: boolean };
+}>({
+    closed: openclose[0],
 });
 
 const access = ref<
@@ -66,6 +77,74 @@ const access = ref<
         }
     >
 >(new Map());
+const qualiAccess = ref<QualificationAccess>();
+
+onMounted(async () => {
+    if (props.id) {
+        try {
+            const call = $grpc.getJobsQualificationsClient().getQualification({
+                qualificationId: props.id,
+            });
+            const { response } = await call;
+
+            const qualification = response.qualification;
+            qualiAccess.value = response.qualification?.access;
+
+            if (qualification) {
+                setFieldValue('title', qualification.title);
+                if (qualification.description) {
+                    setFieldValue('description', qualification.description);
+                }
+                setFieldValue('content', qualification.content);
+                quali.value.closed = openclose.find((e) => e.closed === qualification.closed) as {
+                    id: number;
+                    label: string;
+                    closed: boolean;
+                };
+            }
+
+            if (response.qualification?.access) {
+                let accessId = 0;
+
+                response.qualification?.access.jobs.forEach((job) => {
+                    const id = accessId.toString();
+                    access.value.set(id, {
+                        id,
+                        type: 1,
+                        values: {
+                            job: job.job,
+                            accessRole: job.access,
+                            minimumGrade: job.minimumGrade,
+                        },
+                    });
+                    accessId++;
+                });
+            }
+        } catch (e) {
+            $grpc.handleError(e as RpcError);
+
+            await navigateTo({ name: 'documents' });
+
+            return;
+        }
+    } else {
+        const accessId = 0;
+        access.value.set(accessId.toString(), {
+            id: accessId.toString(),
+            type: 1,
+            values: {
+                job: activeChar.value?.job,
+                minimumGrade: 1,
+                accessRole: AccessLevel.EDIT,
+            },
+        });
+    }
+
+    setTimeout(() => {
+        setupCheckboxes();
+    }, 25);
+    canEdit.value = true;
+});
 
 async function createQualification(values: FormData): Promise<CreateQualificationResponse> {
     try {
@@ -77,10 +156,11 @@ async function createQualification(values: FormData): Promise<CreateQualificatio
                 closed: false,
                 abbreviation: values.abbreviation,
                 title: values.title,
-                summary: values.summary,
                 description: values.description,
+                content: values.content,
                 creatorId: 0,
                 creatorJob: '',
+                requirements: [],
             },
         });
         const { response } = await call;
@@ -102,10 +182,11 @@ async function updateQualification(values: FormData): Promise<UpdateQualificatio
                 closed: false,
                 abbreviation: values.abbreviation,
                 title: values.title,
-                summary: values.summary,
                 description: values.description,
+                content: values.content,
                 creatorId: 0,
                 creatorJob: '',
+                requirements: [],
             },
         });
         const { response } = await call;
@@ -121,10 +202,13 @@ defineRule('required', required);
 defineRule('min', min);
 defineRule('max', max);
 
-const { handleSubmit, meta } = useForm<FormData>({
+const { handleSubmit, meta, setFieldValue } = useForm<FormData>({
     validationSchema: {
-        registrationToken: { required: true, digits: 6 },
-        password: { required: true, min: 6, max: 70 },
+        weight: {},
+        abbreviation: {},
+        title: {},
+        description: {},
+        content: {},
     },
     validateOnMount: true,
 });
@@ -218,6 +302,35 @@ function updateDocumentAccessEntryAccess(event: { id: string; access: AccessLeve
     accessEntry.values.accessRole = event.access;
     access.value.set(event.id, accessEntry);
 }
+
+function setCheckboxState(target: HTMLInputElement): void {
+    const attr = target.getAttribute('checked');
+    const checked = attr !== null ? Boolean(attr) : false;
+    if (checked) {
+        target.removeAttribute('checked');
+    } else {
+        target.setAttribute('checked', 'true');
+    }
+}
+
+function setupCheckboxes(): void {
+    const checkboxes: NodeListOf<HTMLInputElement> = document.querySelectorAll('.jodit-wysiwyg input[type=checkbox]');
+    checkboxes.forEach(
+        (el) =>
+            (el.onchange = (ev) => {
+                if (ev.target === null) {
+                    return;
+                }
+                setCheckboxState(ev.target as HTMLInputElement);
+            }),
+    );
+}
+
+onBeforeUnmount(() => {
+    // Remove event listeners on unmount
+    const checkboxes: NodeListOf<HTMLInputElement> = document.querySelectorAll('.jodit-wysiwyg input[type=checkbox]');
+    checkboxes.forEach((el) => (el.onchange = null));
+});
 </script>
 
 <template>
@@ -323,6 +436,18 @@ function updateDocumentAccessEntryAccess(event: { id: string; access: AccessLeve
                         </Listbox>
                     </div>
                 </div>
+            </div>
+
+            <div v-if="canDo.edit" class="bg-neutral">
+                <VeeField
+                    v-slot="{ field }"
+                    name="content"
+                    :placeholder="$t('common.content')"
+                    :label="$t('common.content')"
+                    :disabled="!canEdit || !canDo.edit"
+                >
+                    <DocEditor v-bind="field" model-value="" />
+                </VeeField>
             </div>
 
             <div class="my-3">

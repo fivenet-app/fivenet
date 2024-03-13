@@ -630,11 +630,15 @@
                 </li>
               
                 <li>
-                  <a href="#resources.jobs.QualificationRequirementsAccess"><span class="badge">M</span>QualificationRequirementsAccess</a>
+                  <a href="#resources.jobs.QualificationRequirement"><span class="badge">M</span>QualificationRequirement</a>
                 </li>
               
                 <li>
                   <a href="#resources.jobs.QualificationResult"><span class="badge">M</span>QualificationResult</a>
+                </li>
+              
+                <li>
+                  <a href="#resources.jobs.QualificationShort"><span class="badge">M</span>QualificationShort</a>
                 </li>
               
               
@@ -7822,14 +7826,14 @@
                 </tr>
               
                 <tr>
-                  <td>summary</td>
+                  <td>description</td>
                   <td><a href="#string">string</a></td>
                   <td>optional</td>
                   <td><p>@sanitize: method=StripTags </p></td>
                 </tr>
               
                 <tr>
-                  <td>description</td>
+                  <td>content</td>
                   <td><a href="#string">string</a></td>
                   <td></td>
                   <td><p>@sanitize </p></td>
@@ -7864,15 +7868,22 @@
                 </tr>
               
                 <tr>
-                  <td>result</td>
-                  <td><a href="#resources.jobs.QualificationResult">QualificationResult</a></td>
-                  <td>optional</td>
+                  <td>requirements</td>
+                  <td><a href="#resources.jobs.QualificationRequirement">QualificationRequirement</a></td>
+                  <td>repeated</td>
                   <td><p> </p></td>
                 </tr>
               
                 <tr>
                   <td>discord_settings</td>
                   <td><a href="#resources.jobs.QualificationDiscordSettings">QualificationDiscordSettings</a></td>
+                  <td>optional</td>
+                  <td><p> </p></td>
+                </tr>
+              
+                <tr>
+                  <td>result</td>
+                  <td><a href="#resources.jobs.QualificationResult">QualificationResult</a></td>
                   <td>optional</td>
                   <td><p> </p></td>
                 </tr>
@@ -7940,24 +7951,24 @@
                 </tr>
               
                 <tr>
-                  <td>summary</td>
+                  <td>description</td>
                   <td>
                     <ul>
                     
-                      <li>string.max_len: 255</li>
+                      <li>string.max_len: 512</li>
                     
                     </ul>
                   </td>
                 </tr>
               
                 <tr>
-                  <td>description</td>
+                  <td>content</td>
                   <td>
                     <ul>
                     
                       <li>string.min_len: 20</li>
                     
-                      <li>string.max_bytes: 500000</li>
+                      <li>string.max_bytes: 750000</li>
                     
                     </ul>
                   </td>
@@ -7994,13 +8005,6 @@
                 <tr>
                   <td>jobs</td>
                   <td><a href="#resources.jobs.QualificationJobAccess">QualificationJobAccess</a></td>
-                  <td>repeated</td>
-                  <td><p> </p></td>
-                </tr>
-              
-                <tr>
-                  <td>requirements</td>
-                  <td><a href="#resources.jobs.QualificationRequirementsAccess">QualificationRequirementsAccess</a></td>
                   <td>repeated</td>
                   <td><p> </p></td>
                 </tr>
@@ -8084,7 +8088,7 @@
                   <td>id</td>
                   <td><a href="#uint64">uint64</a></td>
                   <td></td>
-                  <td><p>@gotags: alias:&#34;id&#34; </p></td>
+                  <td><p>@gotags: sql:&#34;primary_key&#34; alias:&#34;id&#34; </p></td>
                 </tr>
               
                 <tr>
@@ -8256,7 +8260,7 @@
                   <td>reason</td>
                   <td><a href="#string">string</a></td>
                   <td>optional</td>
-                  <td><p> </p></td>
+                  <td><p>@sanitize: method=StripTags </p></td>
                 </tr>
               
                 <tr>
@@ -8321,7 +8325,7 @@
 
         
       
-        <h3 id="resources.jobs.QualificationRequirementsAccess">QualificationRequirementsAccess</h3>
+        <h3 id="resources.jobs.QualificationRequirement">QualificationRequirement</h3>
         <p></p>
 
         
@@ -8335,7 +8339,7 @@
                   <td>id</td>
                   <td><a href="#uint64">uint64</a></td>
                   <td></td>
-                  <td><p>@gotags: alias:&#34;id&#34; </p></td>
+                  <td><p>@gotags: sql:&#34;primary_key&#34; alias:&#34;id&#34; </p></td>
                 </tr>
               
                 <tr>
@@ -8361,48 +8365,14 @@
               
                 <tr>
                   <td>target_qualification</td>
-                  <td><a href="#resources.jobs.Qualification">Qualification</a></td>
+                  <td><a href="#resources.jobs.QualificationShort">QualificationShort</a></td>
                   <td>optional</td>
-                  <td><p> </p></td>
-                </tr>
-              
-                <tr>
-                  <td>access</td>
-                  <td><a href="#resources.jobs.AccessLevel">AccessLevel</a></td>
-                  <td></td>
-                  <td><p> </p></td>
+                  <td><p>@gotags: alias:&#34;targetqualification.*&#34; </p></td>
                 </tr>
               
             </tbody>
           </table>
 
-          
-            
-            
-            <h4>Validated Fields</h4>
-            <table>
-              <thead>
-                <tr>
-                  <td>Field</td>
-                  <td>Validations</td>
-                </tr>
-              </thead>
-              <tbody>
-              
-                <tr>
-                  <td>access</td>
-                  <td>
-                    <ul>
-                    
-                      <li>enum.defined_only: true</li>
-                    
-                    </ul>
-                  </td>
-                </tr>
-              
-              </tbody>
-            </table>
-            
           
 
         
@@ -8559,6 +8529,212 @@
 
         
       
+        <h3 id="resources.jobs.QualificationShort">QualificationShort</h3>
+        <p></p>
+
+        
+          <table class="field-table">
+            <thead>
+              <tr><td>Field</td><td>Type</td><td>Label</td><td>Description</td></tr>
+            </thead>
+            <tbody>
+              
+                <tr>
+                  <td>id</td>
+                  <td><a href="#uint64">uint64</a></td>
+                  <td></td>
+                  <td><p>@gotags: sql:&#34;primary_key&#34; alias:&#34;id&#34; </p></td>
+                </tr>
+              
+                <tr>
+                  <td>created_at</td>
+                  <td><a href="#resources.timestamp.Timestamp">resources.timestamp.Timestamp</a></td>
+                  <td>optional</td>
+                  <td><p> </p></td>
+                </tr>
+              
+                <tr>
+                  <td>updated_at</td>
+                  <td><a href="#resources.timestamp.Timestamp">resources.timestamp.Timestamp</a></td>
+                  <td>optional</td>
+                  <td><p> </p></td>
+                </tr>
+              
+                <tr>
+                  <td>deleted_at</td>
+                  <td><a href="#resources.timestamp.Timestamp">resources.timestamp.Timestamp</a></td>
+                  <td>optional</td>
+                  <td><p> </p></td>
+                </tr>
+              
+                <tr>
+                  <td>job</td>
+                  <td><a href="#string">string</a></td>
+                  <td></td>
+                  <td><p> </p></td>
+                </tr>
+              
+                <tr>
+                  <td>weight</td>
+                  <td><a href="#uint32">uint32</a></td>
+                  <td></td>
+                  <td><p> </p></td>
+                </tr>
+              
+                <tr>
+                  <td>closed</td>
+                  <td><a href="#bool">bool</a></td>
+                  <td></td>
+                  <td><p> </p></td>
+                </tr>
+              
+                <tr>
+                  <td>abbreviation</td>
+                  <td><a href="#string">string</a></td>
+                  <td></td>
+                  <td><p>@sanitize: method=StripTags </p></td>
+                </tr>
+              
+                <tr>
+                  <td>title</td>
+                  <td><a href="#string">string</a></td>
+                  <td></td>
+                  <td><p>@sanitize </p></td>
+                </tr>
+              
+                <tr>
+                  <td>description</td>
+                  <td><a href="#string">string</a></td>
+                  <td>optional</td>
+                  <td><p>@sanitize: method=StripTags </p></td>
+                </tr>
+              
+                <tr>
+                  <td>creator_id</td>
+                  <td><a href="#int32">int32</a></td>
+                  <td>optional</td>
+                  <td><p> </p></td>
+                </tr>
+              
+                <tr>
+                  <td>creator</td>
+                  <td><a href="#resources.users.UserShort">resources.users.UserShort</a></td>
+                  <td>optional</td>
+                  <td><p>@gotags: alias:&#34;creator&#34; </p></td>
+                </tr>
+              
+                <tr>
+                  <td>creator_job</td>
+                  <td><a href="#string">string</a></td>
+                  <td>optional</td>
+                  <td><p> </p></td>
+                </tr>
+              
+                <tr>
+                  <td>requirements</td>
+                  <td><a href="#resources.jobs.QualificationRequirement">QualificationRequirement</a></td>
+                  <td>repeated</td>
+                  <td><p> </p></td>
+                </tr>
+              
+                <tr>
+                  <td>result</td>
+                  <td><a href="#resources.jobs.QualificationResult">QualificationResult</a></td>
+                  <td>optional</td>
+                  <td><p> </p></td>
+                </tr>
+              
+            </tbody>
+          </table>
+
+          
+            
+            
+            <h4>Validated Fields</h4>
+            <table>
+              <thead>
+                <tr>
+                  <td>Field</td>
+                  <td>Validations</td>
+                </tr>
+              </thead>
+              <tbody>
+              
+                <tr>
+                  <td>job</td>
+                  <td>
+                    <ul>
+                    
+                      <li>string.max_len: 20</li>
+                    
+                    </ul>
+                  </td>
+                </tr>
+              
+                <tr>
+                  <td>weight</td>
+                  <td>
+                    <ul>
+                    
+                      <li>uint32.lt: 4294967295</li>
+                    
+                    </ul>
+                  </td>
+                </tr>
+              
+                <tr>
+                  <td>abbreviation</td>
+                  <td>
+                    <ul>
+                    
+                      <li>string.max_len: 20</li>
+                    
+                    </ul>
+                  </td>
+                </tr>
+              
+                <tr>
+                  <td>title</td>
+                  <td>
+                    <ul>
+                    
+                      <li>string.min_len: 3</li>
+                    
+                      <li>string.max_len: 1024</li>
+                    
+                    </ul>
+                  </td>
+                </tr>
+              
+                <tr>
+                  <td>description</td>
+                  <td>
+                    <ul>
+                    
+                      <li>string.max_len: 512</li>
+                    
+                    </ul>
+                  </td>
+                </tr>
+              
+                <tr>
+                  <td>creator_job</td>
+                  <td>
+                    <ul>
+                    
+                      <li>string.max_len: 20</li>
+                    
+                    </ul>
+                  </td>
+                </tr>
+              
+              </tbody>
+            </table>
+            
+          
+
+        
+      
 
       
         <h3 id="resources.jobs.AccessLevel">AccessLevel</h3>
@@ -8658,25 +8834,25 @@
           <tbody>
             
               <tr>
-                <td>QUALIFICATION_RESULT_STATUS_UNSPECIFIED</td>
+                <td>RESULT_STATUS_UNSPECIFIED</td>
                 <td>0</td>
                 <td><p></p></td>
               </tr>
             
               <tr>
-                <td>QUALIFICATION_RESULT_STATUS_PENDING</td>
+                <td>RESULT_STATUS_PENDING</td>
                 <td>1</td>
                 <td><p></p></td>
               </tr>
             
               <tr>
-                <td>QUALIFICATION_RESULT_STATUS_FAILED</td>
+                <td>RESULT_STATUS_FAILED</td>
                 <td>2</td>
                 <td><p></p></td>
               </tr>
             
               <tr>
-                <td>QUALIFICATION_RESULT_STATUS_SUCCESSFUL</td>
+                <td>RESULT_STATUS_SUCCESSFUL</td>
                 <td>3</td>
                 <td><p></p></td>
               </tr>

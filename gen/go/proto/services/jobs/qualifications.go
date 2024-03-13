@@ -100,7 +100,7 @@ func (s *Server) GetQualification(ctx context.Context, req *GetQualificationRequ
 	}
 
 	resp := &GetQualificationResponse{}
-	resp.Qualification, err = s.getQualification(ctx,
+	resp.Qualification, err = s.getQualification(ctx, req.QualificationId,
 		tQuali.ID.EQ(jet.Uint64(req.QualificationId)), userInfo)
 	if err != nil {
 		return nil, errswrap.NewError(errorsjobs.ErrFailedQuery, err)
@@ -157,8 +157,8 @@ func (s *Server) CreateQualification(ctx context.Context, req *CreateQualificati
 			tQuali.Closed,
 			tQuali.Abbreviation,
 			tQuali.Title,
-			tQuali.Summary,
 			tQuali.Description,
+			tQuali.Content,
 			tQuali.CreatorID,
 			tQuali.CreatorJob,
 			tQuali.DiscordSettings,
@@ -169,8 +169,8 @@ func (s *Server) CreateQualification(ctx context.Context, req *CreateQualificati
 			req.Qualification.Closed,
 			req.Qualification.Abbreviation,
 			req.Qualification.Title,
-			req.Qualification.Summary,
 			req.Qualification.Description,
+			req.Qualification.Content,
 			userInfo.UserId,
 			userInfo.Job,
 			req.Qualification.DiscordSettings,
@@ -231,7 +231,7 @@ func (s *Server) UpdateQualification(ctx context.Context, req *UpdateQualificati
 		}
 	}
 
-	quali, err := s.getQualification(ctx,
+	quali, err := s.getQualification(ctx, req.Qualification.Id,
 		tQuali.ID.EQ(jet.Uint64(req.Qualification.Id)),
 		userInfo)
 	if err != nil {
@@ -258,8 +258,9 @@ func (s *Server) UpdateQualification(ctx context.Context, req *UpdateQualificati
 	}
 
 	if !onlyUpdateAccess {
-		quali.Description = strings.TrimSuffix(quali.Description, "<br>")
-		req.Qualification.Description = strings.TrimSuffix(req.Qualification.Description, "<br>")
+		if req.Qualification.Description != nil {
+			*req.Qualification.Description = strings.TrimSuffix(*req.Qualification.Description, "<br>")
+		}
 
 		tQuali := table.FivenetJobsQualifications
 		stmt := tQuali.
@@ -268,8 +269,8 @@ func (s *Server) UpdateQualification(ctx context.Context, req *UpdateQualificati
 				tQuali.Closed,
 				tQuali.Abbreviation,
 				tQuali.Title,
-				tQuali.Summary,
 				tQuali.Description,
+				tQuali.Content,
 				tQuali.DiscordSettings,
 			).
 			SET(
@@ -277,8 +278,8 @@ func (s *Server) UpdateQualification(ctx context.Context, req *UpdateQualificati
 				req.Qualification.Closed,
 				req.Qualification.Abbreviation,
 				req.Qualification.Title,
-				req.Qualification.Summary,
 				req.Qualification.Description,
+				req.Qualification.Content,
 				req.Qualification.DiscordSettings,
 			).
 			WHERE(
@@ -330,7 +331,8 @@ func (s *Server) DeleteQualification(ctx context.Context, req *DeleteQualificati
 		}
 	}
 
-	doc, err := s.getQualification(ctx, tQuali.ID.EQ(jet.Uint64(req.QualificationId)), userInfo)
+	quali, err := s.getQualification(ctx, req.QualificationId,
+		tQuali.ID.EQ(jet.Uint64(req.QualificationId)), userInfo)
 	if err != nil {
 		return nil, errswrap.NewError(errorsjobs.ErrFailedQuery, err)
 	}
@@ -344,7 +346,7 @@ func (s *Server) DeleteQualification(ctx context.Context, req *DeleteQualificati
 	if fieldsAttr != nil {
 		fields = fieldsAttr.([]string)
 	}
-	if !s.checkIfHasAccess(fields, userInfo, doc.CreatorJob, doc.Creator) {
+	if !s.checkIfHasAccess(fields, userInfo, quali.CreatorJob, quali.Creator) {
 		return nil, errorsjobs.ErrFailedQuery
 	}
 

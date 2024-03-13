@@ -41,7 +41,7 @@ const navigation: { name: string; to: RoutesNamedLocations; permission?: Perms; 
     {
         name: 'pages.jobs.qualifications.title',
         to: { name: 'jobs-qualifications' },
-        permission: 'TODOService.TODOMethod',
+        permission: 'JobsQualificationsService.ListQualifications',
         icon: markRaw(SchoolIcon),
     },
     {

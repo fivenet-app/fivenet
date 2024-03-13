@@ -136,7 +136,7 @@ func (s *Server) compareQualificationAccess(current, in *jobs.QualificationAcces
 	toUpdate = &jobs.QualificationAccess{}
 	toDelete = &jobs.QualificationAccess{}
 
-	if current == nil || (len(current.Jobs) == 0 && len(current.Requirements) == 0) {
+	if current == nil || len(current.Jobs) == 0 {
 		return in, toUpdate, toDelete
 	}
 
@@ -193,48 +193,6 @@ func (s *Server) compareQualificationAccess(current, in *jobs.QualificationAcces
 		}
 	}
 
-	if len(current.Requirements) == 0 {
-		toCreate.Requirements = in.Requirements
-	} else {
-		foundTracker := []int{}
-		for _, cj := range current.Requirements {
-			var found *jobs.QualificationRequirementsAccess
-			var foundIdx int
-			for i, uj := range in.Requirements {
-				if cj.QualificationId != uj.QualificationId {
-					continue
-				}
-				found = uj
-				foundIdx = i
-				break
-			}
-			// No match in incoming job access, needs to be deleted
-			if found == nil {
-				toDelete.Requirements = append(toDelete.Requirements, cj)
-				continue
-			}
-
-			foundTracker = append(foundTracker, foundIdx)
-
-			changed := false
-			if cj.Access != found.Access {
-				cj.Access = found.Access
-				changed = true
-			}
-
-			if changed {
-				toUpdate.Requirements = append(toUpdate.Requirements, cj)
-			}
-		}
-
-		for i, uj := range in.Requirements {
-			idx := slices.Index(foundTracker, i)
-			if idx == -1 {
-				toCreate.Requirements = append(toCreate.Requirements, uj)
-			}
-		}
-	}
-
 	return
 }
 
@@ -265,40 +223,8 @@ func (s *Server) getQualificationAccess(ctx context.Context, qualificationId uin
 		}
 	}
 
-	tQReqAccess := table.FivenetJobsQualificationsReqsAccess.AS("qualificationrequirementsaccess")
-	userStmt := tQReqAccess.
-		SELECT(
-			tQReqAccess.ID,
-			tQReqAccess.QualificationID,
-			tQReqAccess.TargetQualificationID,
-			tQReqAccess.Access,
-			tQuali.ID,
-			tQuali.Title,
-			tQuali.Abbreviation,
-		).
-		FROM(
-			tQReqAccess.
-				INNER_JOIN(tQuali,
-					tQuali.ID.EQ(tQReqAccess.TargetQualificationID),
-				),
-		).
-		WHERE(
-			tQReqAccess.QualificationID.EQ(jet.Uint64(qualificationId)),
-		).
-		ORDER_BY(
-			tQReqAccess.ID.ASC(),
-		)
-
-	var reqsAccess []*jobs.QualificationRequirementsAccess
-	if err := userStmt.QueryContext(ctx, s.db, &reqsAccess); err != nil {
-		if !errors.Is(err, qrm.ErrNoRows) {
-			return nil, err
-		}
-	}
-
 	return &jobs.QualificationAccess{
-		Jobs:         jobAccess,
-		Requirements: reqsAccess,
+		Jobs: jobAccess,
 	}, nil
 }
 
@@ -323,26 +249,6 @@ func (s *Server) createQualificationAccess(ctx context.Context, tx qrm.DB, quali
 					access.Jobs[k].Job,
 					access.Jobs[k].MinimumGrade,
 					access.Jobs[k].Access,
-				)
-
-			if _, err := stmt.ExecContext(ctx, tx); err != nil {
-				return err
-			}
-		}
-	}
-
-	if access.Requirements != nil {
-		for k := 0; k < len(access.Requirements); k++ {
-			// Create document user access
-			tQReqAccess := table.FivenetJobsQualificationsReqsAccess
-			stmt := tQReqAccess.
-				INSERT(
-					tQReqAccess.QualificationID,
-					tQReqAccess.Access,
-				).
-				VALUES(
-					qualificationId,
-					access.Requirements[k].Access,
 				)
 
 			if _, err := stmt.ExecContext(ctx, tx); err != nil {
@@ -386,29 +292,6 @@ func (s *Server) updateQualificationAccess(ctx context.Context, tx qrm.DB, quali
 		}
 	}
 
-	if access.Requirements != nil {
-		for k := 0; k < len(access.Requirements); k++ {
-			// Create document user access
-			tQReqAccess := table.FivenetJobsQualificationsReqsAccess
-			stmt := tQReqAccess.
-				UPDATE(
-					tQReqAccess.QualificationID,
-					tQReqAccess.Access,
-				).
-				SET(
-					qualificationId,
-					access.Requirements[k].Access,
-				).
-				WHERE(
-					tQReqAccess.ID.EQ(jet.Uint64(access.Requirements[k].Id)),
-				)
-
-			if _, err := stmt.ExecContext(ctx, tx); err != nil {
-				return err
-			}
-		}
-	}
-
 	return nil
 }
 
@@ -442,31 +325,6 @@ func (s *Server) deleteQualificationAccess(ctx context.Context, tx qrm.DB, quali
 		}
 	}
 
-	if access.Requirements != nil && len(access.Requirements) > 0 {
-		uaIds := []jet.Expression{}
-		for i := 0; i < len(access.Requirements); i++ {
-			if access.Requirements[i].Id == 0 {
-				continue
-			}
-			uaIds = append(uaIds, jet.Uint64(access.Requirements[i].Id))
-		}
-
-		tQReqAccess := table.FivenetJobsQualificationsReqsAccess
-		userStmt := tQReqAccess.
-			DELETE().
-			WHERE(
-				jet.AND(
-					tQReqAccess.ID.IN(uaIds...),
-					tQReqAccess.QualificationID.EQ(jet.Uint64(qualificationId)),
-				),
-			).
-			LIMIT(25)
-
-		if _, err := userStmt.ExecContext(ctx, tx); err != nil {
-			return err
-		}
-	}
-
 	return nil
 }
 
@@ -476,14 +334,6 @@ func (s *Server) clearQualificationAccess(ctx context.Context, tx qrm.DB, qualif
 		WHERE(tQJobAccess.QualificationID.EQ(jet.Uint64(qualificationId)))
 
 	if _, err := jobStmt.ExecContext(ctx, tx); err != nil {
-		return err
-	}
-
-	userStmt := tQReqAccess.
-		DELETE().
-		WHERE(tQReqAccess.QualificationID.EQ(jet.Uint64(qualificationId)))
-
-	if _, err := userStmt.ExecContext(ctx, tx); err != nil {
 		return err
 	}
 

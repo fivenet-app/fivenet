@@ -13,11 +13,6 @@ import {
 import { RpcError } from '@protobuf-ts/runtime-rpc';
 import { max, min, required } from '@vee-validate/rules';
 import { useThrottleFn, watchDebounced, watchOnce } from '@vueuse/core';
-import 'jodit/es5/jodit.min.css';
-import { Jodit } from 'jodit';
-// @ts-ignore jodit-vue has no (detected) types
-import { JoditEditor } from 'jodit-vue';
-import type { IJodit } from 'jodit/types/types';
 import {
     AccountMultipleIcon,
     CheckIcon,
@@ -34,7 +29,6 @@ import { getDocument, getUser, useClipboardStore } from '~/store/clipboard';
 import { useCompletorStore } from '~/store/completor';
 import { useDocumentEditorStore } from '~/store/documenteditor';
 import { useNotificatorStore } from '~/store/notificator';
-import { useSettingsStore } from '~/store/settings';
 import { AccessLevel, DocumentAccess } from '~~/gen/ts/resources/documents/access';
 import { Category } from '~~/gen/ts/resources/documents/category';
 import {
@@ -51,6 +45,7 @@ import DocumentAccessEntry from '~/components/documents/DocumentAccessEntry.vue'
 import DocumentReferenceManager from '~/components/documents/DocumentReferenceManager.vue';
 import DocumentRelationManager from '~/components/documents/DocumentRelationManager.vue';
 import { checkDocAccess } from '~/components/documents/helpers';
+import DocEditor from '~/components/partials/DocEditor.vue';
 
 const props = defineProps<{
     id?: string;
@@ -66,9 +61,6 @@ const completorStore = useCompletorStore();
 const documentStore = useDocumentEditorStore();
 const notifications = useNotificatorStore();
 
-const settingsStore = useSettingsStore();
-const { documents } = storeToRefs(settingsStore);
-
 const { t } = useI18n();
 
 const route = useRoute();
@@ -80,6 +72,7 @@ const canEdit = ref(false);
 interface FormData {
     title: string;
     state: string;
+    content: string;
     public: boolean;
 }
 
@@ -88,13 +81,10 @@ const openclose = [
     { id: 1, label: t('common.close', 2), closed: true },
 ];
 
-const content = ref('');
 const doc = ref<{
     closed: { id: number; label: string; closed: boolean };
-    public: boolean;
 }>({
     closed: openclose[0],
-    public: false,
 });
 const access = ref<
     Map<
@@ -154,7 +144,7 @@ onMounted(async () => {
             const template = response.template;
             setFieldValue('title', template.contentTitle!);
             setFieldValue('state', template.state!);
-            content.value = template.content.replace(/\s+/g, ' ')!;
+            setFieldValue('content', template.content.replace(/\s+/g, ' '));
             selectedCategory.value = template?.category;
 
             if (template?.contentAccess) {
@@ -209,14 +199,14 @@ onMounted(async () => {
             if (document) {
                 setFieldValue('title', document.title);
                 setFieldValue('state', document.state);
-                content.value = document.content;
+                setFieldValue('content', document.content);
                 doc.value.closed = openclose.find((e) => e.closed === document.closed) as {
                     id: number;
                     label: string;
                     closed: boolean;
                 };
                 selectedCategory.value = document.category;
-                doc.value.public = document.public;
+                setFieldValue('public', document.public);
 
                 const refs = await $grpc.getDocStoreClient().getDocumentReferences(req);
                 currentReferences.value = refs.response.references;
@@ -262,7 +252,7 @@ onMounted(async () => {
         if (documentStore.$state) {
             setFieldValue('title', documentStore.$state.title);
             setFieldValue('state', documentStore.$state.state);
-            content.value = documentStore.$state.content;
+            setFieldValue('content', documentStore.$state.content);
             if (documentStore.$state.closed) {
                 doc.value.closed = documentStore.$state.closed;
             }
@@ -323,7 +313,7 @@ async function saveToStore(values: FormData): Promise<void> {
 
     documentStore.save({
         title: values.title,
-        content: content.value,
+        content: values.content,
         state: values.state,
         closed: doc.value.closed,
         category: selectedCategory.value,
@@ -341,7 +331,38 @@ async function findCategories(): Promise<void> {
 
 const changed = ref(false);
 
-watchOnce(content, () => (changed.value = true));
+defineRule('required', required);
+defineRule('max', max);
+defineRule('min', min);
+
+const { handleSubmit, values, setFieldValue, meta } = useForm<FormData>({
+    validationSchema: {
+        title: { required: true, min: 3, max: 255 },
+        state: { required: false, min: 2, max: 32 },
+    },
+    initialValues: {
+        public: false,
+    },
+    validateOnMount: true,
+});
+
+const canSubmit = ref(true);
+const onSubmit = handleSubmit(async (values): Promise<void> => {
+    let prom: Promise<void>;
+    if (props.id === undefined) {
+        prom = createDocument(values, doc.value.closed.closed);
+    } else {
+        prom = updateDocument(props.id, values, doc.value.closed.closed);
+    }
+
+    await prom.finally(() => setTimeout(() => (canSubmit.value = true), 400));
+});
+const onSubmitThrottle = useThrottleFn(async (e) => {
+    canSubmit.value = false;
+    await onSubmit(e);
+}, 1000);
+
+watchOnce(meta, () => (changed.value = true));
 watchDebounced(
     doc.value,
     async () => {
@@ -355,7 +376,7 @@ watchDebounced(
     },
 );
 watchDebounced(
-    content,
+    meta,
     async () => {
         if (changed.value) {
             saveToStore(values);
@@ -449,15 +470,15 @@ function updateDocumentAccessEntryAccess(event: { id: string; access: AccessLeve
     access.value.set(event.id, accessEntry);
 }
 
-async function createDocument(values: FormData, content: string, closed: boolean): Promise<void> {
+async function createDocument(values: FormData, closed: boolean): Promise<void> {
     // Prepare request
     const req: CreateDocumentRequest = {
         title: values.title,
-        content,
+        content: values.content,
         contentType: DocContentType.HTML,
         closed,
         state: values.state,
-        public: doc.value.public,
+        public: values.public,
         templateId: templateId.value,
     };
     if (selectedCategory.value !== undefined) {
@@ -547,15 +568,15 @@ async function createDocument(values: FormData, content: string, closed: boolean
     }
 }
 
-async function updateDocument(id: string, values: FormData, content: string, closed: boolean): Promise<void> {
+async function updateDocument(id: string, values: FormData, closed: boolean): Promise<void> {
     const req: UpdateDocumentRequest = {
         documentId: id,
         title: values.title,
-        content,
+        content: values.content,
         contentType: DocContentType.HTML,
         closed,
         state: values.state,
-        public: doc.value.public,
+        public: values.public,
     };
     if (selectedCategory.value !== undefined) {
         req.categoryId = selectedCategory.value.id;
@@ -682,155 +703,6 @@ console.info(
     'Relations',
     canDo.value.relations,
 );
-
-defineRule('required', required);
-defineRule('max', max);
-defineRule('min', min);
-
-const { handleSubmit, values, setFieldValue, meta } = useForm<FormData>({
-    validationSchema: {
-        title: { required: true, min: 3, max: 255 },
-        state: { required: false, min: 2, max: 32 },
-    },
-    initialValues: {
-        public: false,
-    },
-    validateOnMount: true,
-});
-
-const canSubmit = ref(true);
-const onSubmit = handleSubmit(async (values): Promise<void> => {
-    let prom: Promise<void>;
-    if (props.id === undefined) {
-        prom = createDocument(values, content.value, doc.value.closed.closed);
-    } else {
-        prom = updateDocument(props.id, values, content.value, doc.value.closed.closed);
-    }
-
-    await prom.finally(() => setTimeout(() => (canSubmit.value = true), 400));
-});
-const onSubmitThrottle = useThrottleFn(async (e) => {
-    canSubmit.value = false;
-    await onSubmit(e);
-}, 1000);
-
-const config = {
-    language: 'de',
-    spellcheck: true,
-    minHeight: 475,
-    editorClassName: 'prose' + (documents.value.editorTheme === 'dark' ? ' prose-neutral' : ' prose-gray'),
-    theme: documents.value.editorTheme,
-
-    readonly: false,
-    defaultActionOnPaste: 'insert_clear_html',
-    disablePlugins: ['about', 'poweredByJodit', 'classSpan', 'file', 'video', 'print'],
-    // Uploader Plugin
-    uploader: {
-        insertImageAsBase64URI: true,
-    },
-    // Clean HTML Plugin
-    cleanHTML: {
-        denyTags: 'script,iframe,form,button,svg',
-        fillEmptyParagraph: false,
-    },
-    nl2brInPlainText: true,
-    // Inline Plugin
-    toolbarInline: true,
-    toolbarInlineForSelection: true,
-    toolbarInlineDisableFor: [],
-    toolbarInlineDisabledButtons: ['source'],
-    popup: {
-        a: Jodit.atom(['link', 'unlink']),
-    },
-    // Link Plugin
-    link: {
-        /**
-         * Template for the link dialog form
-         */
-        formTemplate: (_: Jodit) => `<form><input ref="url_input"><button>Apply</button></form>`,
-        formClassName: 'some-class',
-        /**
-         * Follow link address after dblclick
-         */
-        followOnDblClick: true,
-        /**
-         * Replace inserted youtube/vimeo link to `iframe`
-         */
-        processVideoLink: false,
-        /**
-         * Wrap inserted link
-         */
-        processPastedLink: true,
-        /**
-         * Show `no follow` checkbox in link dialog.
-         */
-        noFollowCheckbox: false,
-        /**
-         * Show `Open in new tab` checkbox in link dialog.
-         */
-        openInNewTabCheckbox: false,
-        /**
-         * Use an input text to ask the classname or a select or not ask
-         */
-        modeClassName: 'input', // 'select'
-        /**
-         * Allow multiple choises (to use with modeClassName="select")
-         */
-        selectMultipleClassName: true,
-        /**
-         * The size of the select (to use with modeClassName="select")
-         */
-        selectSizeClassName: 10,
-        /**
-         * The list of the option for the select (to use with modeClassName="select")
-         */
-        selectOptionsClassName: [],
-    },
-};
-
-const plugins = [
-    {
-        name: 'focus',
-        callback: (editor: IJodit) => {
-            editor.e
-                .on('blur', () => {
-                    focusTablet(false);
-                })
-                .on('focus', () => {
-                    focusTablet(true);
-                });
-        },
-    },
-];
-
-const extraButtons = [
-    '|',
-    {
-        name: 'insertCheckbox',
-        iconURL: '/images/icons/format-list-checkbox.svg',
-        exec: function (editor: IJodit) {
-            const label = document.createElement('label');
-            label.setAttribute('contenteditable', 'false');
-            const empty = document.createElement('span');
-            empty.innerHTML = '&nbsp;';
-
-            const input = document.createElement('input');
-            input.setAttribute('type', 'checkbox');
-            input.setAttribute('checked', 'true');
-            input.onchange = (ev) => {
-                if (ev.target === null) {
-                    return;
-                }
-                setCheckboxState(ev.target as HTMLInputElement);
-            };
-
-            label.appendChild(input);
-            label.appendChild(empty);
-
-            editor.s.insertHTML(label, true);
-        },
-    },
-];
 
 function setCheckboxState(target: HTMLInputElement): void {
     const attr = target.getAttribute('checked');
@@ -1028,7 +900,16 @@ onBeforeUnmount(() => {
             </div>
 
             <div v-if="canDo.edit" class="bg-neutral">
-                <JoditEditor v-model="content" :config="config" :plugins="plugins" :extra-buttons="extraButtons" />
+                <VeeField
+                    v-slot="{ field }"
+                    name="content"
+                    :placeholder="$t('common.document', 1)"
+                    :label="$t('common.document', 1)"
+                    :disabled="!canEdit || !canDo.edit"
+                >
+                    <DocEditor v-bind="field" model-value="" />
+                </VeeField>
+                <VeeErrorMessage name="state" as="p" class="mt-2 text-sm text-error-400" />
                 <template v-if="saving">
                     <div class="flex animate-pulse justify-center">
                         <ContentSaveIcon class="mr-2 h-auto w-4 animate-spin" aria-hidden="true" />

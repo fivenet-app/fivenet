@@ -19,7 +19,7 @@ async function listQualificationsResults(): Promise<ListQualificationsResultsRes
             pagination: {
                 offset: offset.value,
             },
-            status: [ResultStatus.QUALIFICATION_RESULT_STATUS_SUCCESSFUL],
+            status: [ResultStatus.SUCCESSFUL],
         });
         const { response } = await call;
 

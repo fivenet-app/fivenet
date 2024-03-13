@@ -20,9 +20,9 @@ type FivenetJobsQualifications struct {
 	Weight          *uint32    `json:"weight"`
 	Closed          *bool      `json:"closed"`
 	Abbreviation    string     `json:"abbreviation"`
-	Title           *string    `json:"title"`
-	Summary         *string    `json:"summary"`
+	Title           string     `json:"title"`
 	Description     *string    `json:"description"`
+	Content         *string    `json:"content"`
 	CreatorID       *int32     `json:"creator_id"`
 	CreatorJob      string     `json:"creator_job"`
 	DiscordSettings *string    `json:"discord_settings"`

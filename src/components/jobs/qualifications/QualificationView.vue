@@ -3,11 +3,13 @@ import { Disclosure, DisclosureButton, DisclosurePanel } from '@headlessui/vue';
 import { RpcError } from '@protobuf-ts/runtime-rpc';
 import {
     AccountIcon,
+    AsteriskIcon,
     CalendarEditIcon,
     CalendarIcon,
     CalendarRemoveIcon,
     ChevronDownIcon,
     FileSearchIcon,
+    ListStatusIcon,
     LockIcon,
     LockOpenVariantIcon,
     PencilIcon,
@@ -19,7 +21,7 @@ import DataErrorBlock from '~/components/partials/data/DataErrorBlock.vue';
 import DataNoDataBlock from '~/components/partials/data/DataNoDataBlock.vue';
 import DataPendingBlock from '~/components/partials/data/DataPendingBlock.vue';
 import GenericTime from '~/components/partials/elements/GenericTime.vue';
-import { AccessLevel } from '~~/gen/ts/resources/jobs/qualifications';
+import { AccessLevel, ResultStatus } from '~~/gen/ts/resources/jobs/qualifications';
 import type { GetQualificationResponse } from '~~/gen/ts/services/jobs/qualifications';
 
 const props = defineProps<{
@@ -101,6 +103,12 @@ const quali = computed(() => data.value?.qualification);
                                 <h1 class="break-words py-1 pl-0.5 pr-0.5 text-4xl font-bold text-neutral sm:pl-1">
                                     {{ quali.abbreviation }}: {{ quali.title }}
                                 </h1>
+                                <p
+                                    v-if="quali.description"
+                                    class="break-words py-1 pl-0.5 pr-0.5 text-base font-bold text-neutral sm:pl-1"
+                                >
+                                    {{ quali.description }}
+                                </p>
                             </div>
 
                             <div class="mb-2 flex gap-2">
@@ -117,6 +125,21 @@ const quali = computed(() => data.value?.qualification);
                                     <LockOpenVariantIcon class="h-5 w-5 text-success-500" aria-hidden="true" />
                                     <span class="text-sm font-medium text-success-700">
                                         {{ $t('common.open', 2) }}
+                                    </span>
+                                </div>
+
+                                <div
+                                    v-if="quali.result?.status"
+                                    class="flex flex-initial flex-row gap-1 rounded-full bg-info-100 px-2 py-1"
+                                >
+                                    <ListStatusIcon class="h-5 w-5 text-info-400" aria-hidden="true" />
+                                    <span class="text-sm font-medium text-info-700">
+                                        <span class="font-semibold">{{ $t('common.result') }}:</span>
+                                        {{
+                                            $t(
+                                                `enums.jobs.qualifications.ResultStatus.${ResultStatus[quali.result?.status ?? 0]}`,
+                                            )
+                                        }}
                                     </span>
                                 </div>
                             </div>
@@ -170,9 +193,63 @@ const quali = computed(() => data.value?.qualification);
                                     <!-- eslint-disable vue/no-v-html -->
                                     <div
                                         class="prose prose-invert min-w-full rounded-md bg-base-900 px-4 py-4"
-                                        v-html="quali?.description"
+                                        v-html="quali?.content"
                                     ></div>
                                 </div>
+                            </div>
+
+                            <div class="my-2 w-full">
+                                <Disclosure
+                                    v-slot="{ open }"
+                                    as="div"
+                                    class="w-full border-neutral/20 text-neutral hover:border-neutral/70"
+                                    :default-open="true"
+                                >
+                                    <DisclosureButton
+                                        :class="[
+                                            open ? 'rounded-t-lg border-b-0' : 'rounded-lg',
+                                            'flex w-full items-start justify-between border-2 border-inherit p-2 text-left transition-colors',
+                                        ]"
+                                    >
+                                        <span class="inline-flex items-center text-base font-semibold leading-7">
+                                            <AsteriskIcon class="mr-2 w-5 h-auto" aria-hidden="true" />
+                                            {{ $t('common.requirements', 2) }}
+                                        </span>
+                                        <span class="ml-6 flex h-7 items-center">
+                                            <ChevronDownIcon
+                                                :class="[open ? 'upsidedown' : '', 'h-autotransition-transform w-5']"
+                                                aria-hidden="true"
+                                            />
+                                        </span>
+                                    </DisclosureButton>
+                                    <DisclosurePanel class="rounded-b-lg border-2 border-t-0 border-inherit transition-colors">
+                                        <div class="mx-4 flex flex-row flex-wrap gap-1 pb-2">
+                                            <DataNoDataBlock
+                                                v-if="!quali.requirements || quali.requirements.length === 0"
+                                                :icon="FileSearchIcon"
+                                                :message="$t('common.not_found', [$t('common.requirements', 2)])"
+                                            />
+
+                                            <template v-else>
+                                                <div
+                                                    v-for="entry in quali.requirements"
+                                                    :key="entry.id"
+                                                    class="flex flex-initial snap-x snap-start items-center gap-1 overflow-x-auto whitespace-nowrap rounded-full bg-info-100 px-2 py-1"
+                                                >
+                                                    <span class="h-2 w-2 rounded-full bg-info-500" aria-hidden="true" />
+                                                    <span class="text-sm font-medium text-info-800"
+                                                        >{{ entry.targetQualification?.abbreviation }}:
+                                                        {{ entry.targetQualification?.title }}
+                                                    </span>
+                                                </div>
+                                            </template>
+                                        </div>
+                                    </DisclosurePanel>
+                                </Disclosure>
+                            </div>
+                            <div class="w-full">
+                                RESULTS:
+                                {{ jsonStringify(quali.result) }}
                             </div>
 
                             <div class="w-full">
@@ -180,7 +257,6 @@ const quali = computed(() => data.value?.qualification);
                                     v-slot="{ open }"
                                     as="div"
                                     class="w-full border-neutral/20 text-neutral hover:border-neutral/70"
-                                    :default-open="true"
                                 >
                                     <DisclosureButton
                                         :class="[
@@ -202,10 +278,7 @@ const quali = computed(() => data.value?.qualification);
                                     <DisclosurePanel class="rounded-b-lg border-2 border-t-0 border-inherit transition-colors">
                                         <div class="mx-4 flex flex-row flex-wrap gap-1 pb-2">
                                             <DataNoDataBlock
-                                                v-if="
-                                                    !quali.access ||
-                                                    (quali.access?.jobs.length === 0 && quali.access?.requirements.length === 0)
-                                                "
+                                                v-if="!quali.access || quali.access?.jobs.length === 0"
                                                 :icon="FileSearchIcon"
                                                 :message="$t('common.not_found', [$t('common.access', 2)])"
                                             />
@@ -226,23 +299,6 @@ const quali = computed(() => data.value?.qualification);
                                                             ({{ entry.jobGradeLabel }})</span
                                                         >
                                                         -
-                                                        {{
-                                                            $t(
-                                                                `enums.jobs.qualifications.AccessLevel.${AccessLevel[entry.access]}`,
-                                                            )
-                                                        }}
-                                                    </span>
-                                                </div>
-
-                                                <div
-                                                    v-for="entry in quali.access?.requirements"
-                                                    :key="entry.id"
-                                                    class="flex flex-initial snap-x snap-start items-center gap-1 overflow-x-auto whitespace-nowrap rounded-full bg-info-100 px-2 py-1"
-                                                >
-                                                    <span class="h-2 w-2 rounded-full bg-info-500" aria-hidden="true" />
-                                                    <span class="text-sm font-medium text-info-800"
-                                                        >{{ entry.targetQualification?.abbreviation }}:
-                                                        {{ entry.targetQualification?.title }} -
                                                         {{
                                                             $t(
                                                                 `enums.jobs.qualifications.AccessLevel.${AccessLevel[entry.access]}`,

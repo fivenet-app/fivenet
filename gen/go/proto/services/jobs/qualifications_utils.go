@@ -19,7 +19,7 @@ import (
 var (
 	tCreator    = tUser.AS("creator")
 	tQJobAccess = table.FivenetJobsQualificationsJobAccess
-	tQReqAccess = table.FivenetJobsQualificationsReqsAccess
+	tQReqs      = table.FivenetJobsQualificationsRequirements.AS("qualificationrequirement")
 )
 
 func (s *Server) listQualificationsQuery(where jet.BoolExpression, onlyColumns jet.ProjectionList, userInfo *userinfo.UserInfo) jet.SelectStatement {
@@ -30,16 +30,9 @@ func (s *Server) listQualificationsQuery(where jet.BoolExpression, onlyColumns j
 				tQuali.DeletedAt.IS_NULL(),
 				jet.OR(
 					tQuali.CreatorID.EQ(jet.Int32(userInfo.UserId)),
-					jet.OR(
-						jet.AND(
-							tQReqAccess.Access.IS_NOT_NULL(),
-							tQReqAccess.Access.NOT_EQ(jet.Int32(int32(jobs.AccessLevel_ACCESS_LEVEL_BLOCKED))),
-						),
-						jet.AND(
-							tQReqAccess.Access.IS_NULL(),
-							tQJobAccess.Access.IS_NOT_NULL(),
-							tQJobAccess.Access.NOT_EQ(jet.Int32(int32(jobs.AccessLevel_ACCESS_LEVEL_BLOCKED))),
-						),
+					jet.AND(
+						tQJobAccess.Access.IS_NOT_NULL(),
+						tQJobAccess.Access.NOT_EQ(jet.Int32(int32(jobs.AccessLevel_ACCESS_LEVEL_BLOCKED))),
 					),
 				),
 			),
@@ -62,11 +55,12 @@ func (s *Server) listQualificationsQuery(where jet.BoolExpression, onlyColumns j
 			tQuali.CreatedAt,
 			tQuali.UpdatedAt,
 			tQuali.Job,
+			tQuali.Weight,
 			tQuali.Closed,
 			tQuali.Abbreviation,
 			tQuali.Title,
-			tQuali.Summary,
 			tQuali.Description,
+			tQuali.Content,
 			tQuali.CreatorID,
 			tCreator.ID,
 			tCreator.Identifier,
@@ -76,6 +70,11 @@ func (s *Server) listQualificationsQuery(where jet.BoolExpression, onlyColumns j
 			tCreator.Lastname,
 			tCreator.Dateofbirth,
 			tQuali.CreatorJob,
+			tQualiResults.ID,
+			tQualiResults.QualificationID,
+			tQualiResults.Status,
+			tQualiResults.Score,
+			tQualiResults.Summary,
 		}
 
 		if userInfo.SuperUser {
@@ -99,8 +98,6 @@ func (s *Server) listQualificationsQuery(where jet.BoolExpression, onlyColumns j
 	var tables jet.ReadableTable
 	if !userInfo.SuperUser {
 		tables = tQuali.
-			LEFT_JOIN(tQReqAccess,
-				tQReqAccess.QualificationID.EQ(tQuali.ID)).
 			LEFT_JOIN(tQJobAccess,
 				tQJobAccess.QualificationID.EQ(tQuali.ID).
 					AND(tQJobAccess.Job.EQ(jet.String(userInfo.Job))).
@@ -108,11 +105,19 @@ func (s *Server) listQualificationsQuery(where jet.BoolExpression, onlyColumns j
 			).
 			LEFT_JOIN(tCreator,
 				tQuali.CreatorID.EQ(tCreator.ID),
+			).
+			LEFT_JOIN(tQualiResults,
+				tQualiResults.QualificationID.EQ(tQuali.ID).
+					AND(tQualiResults.UserID.EQ(jet.Int32(userInfo.UserId))),
 			)
 	} else {
 		tables = tQuali.
 			LEFT_JOIN(tCreator,
 				tQuali.CreatorID.EQ(tCreator.ID),
+			).
+			LEFT_JOIN(tQualiResults,
+				tQualiResults.QualificationID.EQ(tQuali.ID).
+					AND(tQualiResults.UserID.EQ(jet.Int32(userInfo.UserId))),
 			)
 	}
 
@@ -124,8 +129,8 @@ func (s *Server) listQualificationsQuery(where jet.BoolExpression, onlyColumns j
 			),
 		).
 		ORDER_BY(
-			tQuali.CreatedAt.DESC(),
-			tQuali.UpdatedAt.DESC(),
+			tQuali.Weight.ASC(),
+			tQuali.Abbreviation.ASC(),
 		)
 }
 
@@ -137,16 +142,9 @@ func (s *Server) getQualificationQuery(where jet.BoolExpression, onlyColumns jet
 				tQuali.DeletedAt.IS_NULL(),
 				jet.OR(
 					tQuali.CreatorID.EQ(jet.Int32(userInfo.UserId)),
-					jet.OR(
-						jet.AND(
-							tQReqAccess.Access.IS_NOT_NULL(),
-							tQReqAccess.Access.NOT_EQ(jet.Int32(int32(jobs.AccessLevel_ACCESS_LEVEL_BLOCKED))),
-						),
-						jet.AND(
-							tQReqAccess.Access.IS_NULL(),
-							tQJobAccess.Access.IS_NOT_NULL(),
-							tQJobAccess.Access.NOT_EQ(jet.Int32(int32(jobs.AccessLevel_ACCESS_LEVEL_BLOCKED))),
-						),
+					jet.AND(
+						tQJobAccess.Access.IS_NOT_NULL(),
+						tQJobAccess.Access.NOT_EQ(jet.Int32(int32(jobs.AccessLevel_ACCESS_LEVEL_BLOCKED))),
 					),
 				),
 			),
@@ -169,11 +167,12 @@ func (s *Server) getQualificationQuery(where jet.BoolExpression, onlyColumns jet
 			tQuali.CreatedAt,
 			tQuali.UpdatedAt,
 			tQuali.Job,
+			tQuali.Weight,
 			tQuali.Closed,
 			tQuali.Abbreviation,
 			tQuali.Title,
-			tQuali.Summary,
 			tQuali.Description,
+			tQuali.Content,
 			tQuali.CreatorID,
 			tCreator.ID,
 			tCreator.Identifier,
@@ -183,6 +182,11 @@ func (s *Server) getQualificationQuery(where jet.BoolExpression, onlyColumns jet
 			tCreator.Lastname,
 			tCreator.Dateofbirth,
 			tQuali.CreatorJob,
+			tQualiResults.ID,
+			tQualiResults.QualificationID,
+			tQualiResults.Status,
+			tQualiResults.Score,
+			tQualiResults.Summary,
 		}
 
 		if userInfo.SuperUser {
@@ -206,9 +210,6 @@ func (s *Server) getQualificationQuery(where jet.BoolExpression, onlyColumns jet
 	var tables jet.ReadableTable
 	if !userInfo.SuperUser {
 		tables = tQuali.
-			LEFT_JOIN(tQReqAccess,
-				tQReqAccess.QualificationID.EQ(tQuali.ID),
-			).
 			LEFT_JOIN(tQJobAccess,
 				tQJobAccess.QualificationID.EQ(tQuali.ID).
 					AND(tQJobAccess.Job.EQ(jet.String(userInfo.Job))).
@@ -216,11 +217,19 @@ func (s *Server) getQualificationQuery(where jet.BoolExpression, onlyColumns jet
 			).
 			LEFT_JOIN(tCreator,
 				tQuali.CreatorID.EQ(tCreator.ID),
+			).
+			LEFT_JOIN(tQualiResults,
+				tQualiResults.QualificationID.EQ(tQuali.ID).
+					AND(tQualiResults.UserID.EQ(jet.Int32(userInfo.UserId))),
 			)
 	} else {
 		tables = tQuali.
 			LEFT_JOIN(tCreator,
 				tQuali.CreatorID.EQ(tCreator.ID),
+			).
+			LEFT_JOIN(tQualiResults,
+				tQualiResults.QualificationID.EQ(tQuali.ID).
+					AND(tQualiResults.UserID.EQ(jet.Int32(userInfo.UserId))),
 			)
 	}
 
@@ -235,8 +244,42 @@ func (s *Server) getQualificationQuery(where jet.BoolExpression, onlyColumns jet
 		)
 }
 
-func (s *Server) checkIfUserHasAccessToQuali(ctx context.Context, QualificationID uint64, userInfo *userinfo.UserInfo, access jobs.AccessLevel) (bool, error) {
-	out, err := s.checkIfUserHasAccessToQualiIDs(ctx, userInfo, access, QualificationID)
+func (s *Server) getQualificationRequirements(ctx context.Context, qualificationId uint64) ([]*jobs.QualificationRequirement, error) {
+	tQuali := tQuali.AS("targetqualification")
+
+	stmt := tQReqs.
+		SELECT(
+			tQReqs.ID,
+			tQuali.ID,
+			tQuali.Abbreviation,
+			tQuali.Title,
+			tQReqs.TargetQualificationID,
+			tQualiResults.ID,
+			tQualiResults.QualificationID,
+			tQualiResults.Status,
+			tQualiResults.Score,
+			tQualiResults.Summary,
+		).
+		FROM(tQReqs.
+			INNER_JOIN(tQuali,
+				tQuali.ID.EQ(tQReqs.TargetQualificationID),
+			).
+			LEFT_JOIN(tQualiResults,
+				tQualiResults.QualificationID.EQ(tQReqs.TargetQualificationID),
+			),
+		).
+		WHERE(tQReqs.QualificationID.EQ(jet.Uint64(qualificationId)))
+
+	var dest []*jobs.QualificationRequirement
+	if err := stmt.QueryContext(ctx, s.db, &dest); err != nil {
+		return nil, err
+	}
+
+	return dest, nil
+}
+
+func (s *Server) checkIfUserHasAccessToQuali(ctx context.Context, qualificationID uint64, userInfo *userinfo.UserInfo, access jobs.AccessLevel) (bool, error) {
+	out, err := s.checkIfUserHasAccessToQualiIDs(ctx, userInfo, access, qualificationID)
 	return len(out) > 0, err
 }
 
@@ -267,11 +310,6 @@ func (s *Server) checkIfUserHasAccessToQualiIDs(ctx context.Context, userInfo *u
 			tQuali.CreatorID.EQ(jet.Int32(userInfo.UserId)),
 			tQuali.CreatorJob.EQ(jet.String(userInfo.Job)),
 			jet.AND(
-				tQReqAccess.Access.IS_NOT_NULL(),
-				tQReqAccess.Access.GT_EQ(jet.Int32(int32(access))),
-			),
-			jet.AND(
-				tQReqAccess.Access.IS_NULL(),
 				tQJobAccess.Access.IS_NOT_NULL(),
 				tQJobAccess.Access.GT_EQ(jet.Int32(int32(access))),
 			),
@@ -284,9 +322,6 @@ func (s *Server) checkIfUserHasAccessToQualiIDs(ctx context.Context, userInfo *u
 		).
 		FROM(
 			tQuali.
-				LEFT_JOIN(tQReqAccess,
-					tQReqAccess.QualificationID.EQ(tQuali.ID),
-				).
 				LEFT_JOIN(tQJobAccess,
 					tQJobAccess.QualificationID.EQ(tQuali.ID).
 						AND(tQJobAccess.Job.EQ(jet.String(userInfo.Job))).
@@ -309,17 +344,24 @@ func (s *Server) checkIfUserHasAccessToQualiIDs(ctx context.Context, userInfo *u
 	return dest.IDs, nil
 }
 
-func (s *Server) getQualification(ctx context.Context, condition jet.BoolExpression, userInfo *userinfo.UserInfo) (*jobs.Qualification, error) {
+func (s *Server) getQualification(ctx context.Context, qualificationId uint64, condition jet.BoolExpression, userInfo *userinfo.UserInfo) (*jobs.Qualification, error) {
 	var quali jobs.Qualification
 
-	stmt := s.getQualificationQuery(condition, nil, userInfo).
-		LIMIT(1)
+	stmt := s.getQualificationQuery(condition, nil, userInfo)
 
 	if err := stmt.QueryContext(ctx, s.db, &quali); err != nil {
 		if !errors.Is(err, qrm.ErrNoRows) {
 			return nil, errswrap.NewError(errorsjobs.ErrFailedQuery, err)
 		}
 	}
+
+	reqs, err := s.getQualificationRequirements(ctx, qualificationId)
+	if err != nil {
+		if !errors.Is(err, qrm.ErrNoRows) {
+			return nil, errswrap.NewError(errorsjobs.ErrFailedQuery, err)
+		}
+	}
+	quali.Requirements = reqs
 
 	if quali.Creator != nil {
 		s.enricher.EnrichJobInfo(quali.Creator)

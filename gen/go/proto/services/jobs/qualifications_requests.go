@@ -38,16 +38,9 @@ func (s *Server) ListQualificationRequests(ctx context.Context, req *ListQualifi
 			tQuali.DeletedAt.IS_NULL(),
 			jet.OR(
 				tQuali.CreatorID.EQ(jet.Int32(userInfo.UserId)),
-				jet.OR(
-					jet.AND(
-						tQReqAccess.Access.IS_NOT_NULL(),
-						tQReqAccess.Access.NOT_EQ(jet.Int32(int32(jobs.AccessLevel_ACCESS_LEVEL_BLOCKED))),
-					),
-					jet.AND(
-						tQReqAccess.Access.IS_NULL(),
-						tQJobAccess.Access.IS_NOT_NULL(),
-						tQJobAccess.Access.NOT_EQ(jet.Int32(int32(jobs.AccessLevel_ACCESS_LEVEL_BLOCKED))),
-					),
+				jet.AND(
+					tQJobAccess.Access.IS_NOT_NULL(),
+					tQJobAccess.Access.NOT_EQ(jet.Int32(int32(jobs.AccessLevel_ACCESS_LEVEL_BLOCKED))),
 				),
 			),
 		))
@@ -99,8 +92,6 @@ func (s *Server) ListQualificationRequests(ctx context.Context, req *ListQualifi
 				LEFT_JOIN(tCreator,
 					tQuali.CreatorID.EQ(tCreator.ID),
 				).
-				LEFT_JOIN(tQReqAccess,
-					tQReqAccess.QualificationID.EQ(tQuali.ID)).
 				LEFT_JOIN(tQJobAccess,
 					tQJobAccess.QualificationID.EQ(tQuali.ID).
 						AND(tQJobAccess.Job.EQ(jet.String(userInfo.Job))).

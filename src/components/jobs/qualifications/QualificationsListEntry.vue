@@ -1,7 +1,7 @@
 <script lang="ts" setup>
-import { ChevronRightIcon, LockIcon, LockOpenVariantIcon } from 'mdi-vue3';
+import { ChevronRightIcon, ListStatusIcon, LockIcon, LockOpenVariantIcon } from 'mdi-vue3';
 import GenericTime from '~/components/partials/elements/GenericTime.vue';
-import { Qualification } from '~~/gen/ts/resources/jobs/qualifications';
+import { Qualification, ResultStatus } from '~~/gen/ts/resources/jobs/qualifications';
 
 defineProps<{
     qualification: Qualification;
@@ -18,24 +18,43 @@ defineProps<{
                         {{ qualification.abbreviation }}: {{ qualification.title }}
                     </NuxtLink>
                 </p>
-                <p class="mt-1 flex text-xs leading-5 text-gray-300">
-                    {{ $t('common.summary') }}: {{ qualification.summary ?? $t('common.na') }}
+                <p class="mt-1 flex gap-1 text-xs leading-5 text-gray-300">
+                    <span class="font-semibold">{{ $t('common.description') }}:</span>
+                    {{ qualification.description ?? $t('common.na') }}
                 </p>
             </div>
         </div>
         <div class="flex shrink-0 items-center gap-x-4">
             <div class="hidden sm:flex sm:flex-col sm:items-end">
-                <div v-if="qualification.closed" class="flex flex-initial flex-row gap-1 rounded-full bg-error-100 px-2 py-1">
-                    <LockIcon class="h-5 w-5 text-error-400" aria-hidden="true" />
-                    <span class="text-sm font-medium text-error-700">
-                        {{ $t('common.close', 2) }}
-                    </span>
-                </div>
-                <div v-else class="flex flex-initial flex-row gap-1 rounded-full bg-success-100 px-2 py-1">
-                    <LockOpenVariantIcon class="h-5 w-5 text-success-500" aria-hidden="true" />
-                    <span class="text-sm font-medium text-success-700">
-                        {{ $t('common.open', 2) }}
-                    </span>
+                <div class="flex flex-row gap-1">
+                    <div
+                        v-if="qualification.result?.status"
+                        class="flex flex-initial flex-row gap-1 rounded-full bg-info-100 px-2 py-1"
+                    >
+                        <ListStatusIcon class="h-5 w-5 text-info-400" aria-hidden="true" />
+                        <span class="text-sm font-medium text-info-700">
+                            <span class="font-semibold">{{ $t('common.result') }}:</span>
+                            {{
+                                $t(`enums.jobs.qualifications.ResultStatus.${ResultStatus[qualification.result?.status ?? 0]}`)
+                            }}
+                        </span>
+                    </div>
+
+                    <div
+                        v-if="qualification.closed"
+                        class="flex flex-initial flex-row gap-1 rounded-full bg-error-100 px-2 py-1"
+                    >
+                        <LockIcon class="h-5 w-5 text-error-400" aria-hidden="true" />
+                        <span class="text-sm font-medium text-error-700">
+                            {{ $t('common.close', 2) }}
+                        </span>
+                    </div>
+                    <div v-else class="flex flex-initial flex-row gap-1 rounded-full bg-success-100 px-2 py-1">
+                        <LockOpenVariantIcon class="h-5 w-5 text-success-500" aria-hidden="true" />
+                        <span class="text-sm font-medium text-success-700">
+                            {{ $t('common.open', 2) }}
+                        </span>
+                    </div>
                 </div>
                 <p v-if="qualification.createdAt" class="mt-1 text-xs leading-5 text-gray-300">
                     {{ $t('common.created_at') }} <GenericTime :value="qualification.createdAt" />
