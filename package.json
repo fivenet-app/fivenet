@@ -55,7 +55,7 @@
         "@dargmuesli/nuxt-cookie-control": "7.4.0",
         "@nuxt/devtools": "1.0.8",
         "@nuxtjs/eslint-config-typescript": "12.1.0",
-        "@nuxtjs/i18n": "8.1.1",
+        "@nuxtjs/i18n": "8.2.0",
         "@nuxtjs/tailwindcss": "6.11.4",
         "@pinia-plugin-persistedstate/nuxt": "1.2.0",
         "@protobuf-ts/plugin": "2.9.4",
