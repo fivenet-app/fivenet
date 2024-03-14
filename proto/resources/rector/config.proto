@@ -72,5 +72,5 @@ message Discord {
   }];
   optional string invite_url = 3 [(validate.rules).string.max_len = 255];
 
-  // TODO
+  // TODO add more discord sync base options
 }

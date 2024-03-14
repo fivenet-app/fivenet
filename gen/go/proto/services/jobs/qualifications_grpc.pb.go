@@ -19,14 +19,15 @@ import (
 const _ = grpc.SupportPackageIsVersion7
 
 const (
-	JobsQualificationsService_ListQualifications_FullMethodName                = "/services.jobs.JobsQualificationsService/ListQualifications"
-	JobsQualificationsService_GetQualification_FullMethodName                  = "/services.jobs.JobsQualificationsService/GetQualification"
-	JobsQualificationsService_CreateQualification_FullMethodName               = "/services.jobs.JobsQualificationsService/CreateQualification"
-	JobsQualificationsService_UpdateQualification_FullMethodName               = "/services.jobs.JobsQualificationsService/UpdateQualification"
-	JobsQualificationsService_DeleteQualification_FullMethodName               = "/services.jobs.JobsQualificationsService/DeleteQualification"
-	JobsQualificationsService_ListQualificationsResults_FullMethodName         = "/services.jobs.JobsQualificationsService/ListQualificationsResults"
-	JobsQualificationsService_CreateOrUpdateQualificationResult_FullMethodName = "/services.jobs.JobsQualificationsService/CreateOrUpdateQualificationResult"
-	JobsQualificationsService_ListQualificationRequests_FullMethodName         = "/services.jobs.JobsQualificationsService/ListQualificationRequests"
+	JobsQualificationsService_ListQualifications_FullMethodName                 = "/services.jobs.JobsQualificationsService/ListQualifications"
+	JobsQualificationsService_GetQualification_FullMethodName                   = "/services.jobs.JobsQualificationsService/GetQualification"
+	JobsQualificationsService_CreateQualification_FullMethodName                = "/services.jobs.JobsQualificationsService/CreateQualification"
+	JobsQualificationsService_UpdateQualification_FullMethodName                = "/services.jobs.JobsQualificationsService/UpdateQualification"
+	JobsQualificationsService_DeleteQualification_FullMethodName                = "/services.jobs.JobsQualificationsService/DeleteQualification"
+	JobsQualificationsService_ListQualificationsResults_FullMethodName          = "/services.jobs.JobsQualificationsService/ListQualificationsResults"
+	JobsQualificationsService_CreateOrUpdateQualificationResult_FullMethodName  = "/services.jobs.JobsQualificationsService/CreateOrUpdateQualificationResult"
+	JobsQualificationsService_ListQualificationRequests_FullMethodName          = "/services.jobs.JobsQualificationsService/ListQualificationRequests"
+	JobsQualificationsService_CreateOrUpdateQualificationRequest_FullMethodName = "/services.jobs.JobsQualificationsService/CreateOrUpdateQualificationRequest"
 )
 
 // JobsQualificationsServiceClient is the client API for JobsQualificationsService service.
@@ -49,6 +50,8 @@ type JobsQualificationsServiceClient interface {
 	CreateOrUpdateQualificationResult(ctx context.Context, in *CreateOrUpdateQualificationResultRequest, opts ...grpc.CallOption) (*CreateOrUpdateQualificationResultResponse, error)
 	// @perm
 	ListQualificationRequests(ctx context.Context, in *ListQualificationRequestsRequest, opts ...grpc.CallOption) (*ListQualificationRequestsResponse, error)
+	// @perm
+	CreateOrUpdateQualificationRequest(ctx context.Context, in *CreateOrUpdateQualificationRequestRequest, opts ...grpc.CallOption) (*CreateOrUpdateQualificationRequestResponse, error)
 }
 
 type jobsQualificationsServiceClient struct {
@@ -131,6 +134,15 @@ func (c *jobsQualificationsServiceClient) ListQualificationRequests(ctx context.
 	return out, nil
 }
 
+func (c *jobsQualificationsServiceClient) CreateOrUpdateQualificationRequest(ctx context.Context, in *CreateOrUpdateQualificationRequestRequest, opts ...grpc.CallOption) (*CreateOrUpdateQualificationRequestResponse, error) {
+	out := new(CreateOrUpdateQualificationRequestResponse)
+	err := c.cc.Invoke(ctx, JobsQualificationsService_CreateOrUpdateQualificationRequest_FullMethodName, in, out, opts...)
+	if err != nil {
+		return nil, err
+	}
+	return out, nil
+}
+
 // JobsQualificationsServiceServer is the server API for JobsQualificationsService service.
 // All implementations must embed UnimplementedJobsQualificationsServiceServer
 // for forward compatibility
@@ -151,6 +163,8 @@ type JobsQualificationsServiceServer interface {
 	CreateOrUpdateQualificationResult(context.Context, *CreateOrUpdateQualificationResultRequest) (*CreateOrUpdateQualificationResultResponse, error)
 	// @perm
 	ListQualificationRequests(context.Context, *ListQualificationRequestsRequest) (*ListQualificationRequestsResponse, error)
+	// @perm
+	CreateOrUpdateQualificationRequest(context.Context, *CreateOrUpdateQualificationRequestRequest) (*CreateOrUpdateQualificationRequestResponse, error)
 	mustEmbedUnimplementedJobsQualificationsServiceServer()
 }
 
@@ -181,6 +195,9 @@ func (UnimplementedJobsQualificationsServiceServer) CreateOrUpdateQualificationR
 }
 func (UnimplementedJobsQualificationsServiceServer) ListQualificationRequests(context.Context, *ListQualificationRequestsRequest) (*ListQualificationRequestsResponse, error) {
 	return nil, status.Errorf(codes.Unimplemented, "method ListQualificationRequests not implemented")
+}
+func (UnimplementedJobsQualificationsServiceServer) CreateOrUpdateQualificationRequest(context.Context, *CreateOrUpdateQualificationRequestRequest) (*CreateOrUpdateQualificationRequestResponse, error) {
+	return nil, status.Errorf(codes.Unimplemented, "method CreateOrUpdateQualificationRequest not implemented")
 }
 func (UnimplementedJobsQualificationsServiceServer) mustEmbedUnimplementedJobsQualificationsServiceServer() {
 }
@@ -340,6 +357,24 @@ func _JobsQualificationsService_ListQualificationRequests_Handler(srv interface{
 	return interceptor(ctx, in, info, handler)
 }
 
+func _JobsQualificationsService_CreateOrUpdateQualificationRequest_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
+	in := new(CreateOrUpdateQualificationRequestRequest)
+	if err := dec(in); err != nil {
+		return nil, err
+	}
+	if interceptor == nil {
+		return srv.(JobsQualificationsServiceServer).CreateOrUpdateQualificationRequest(ctx, in)
+	}
+	info := &grpc.UnaryServerInfo{
+		Server:     srv,
+		FullMethod: JobsQualificationsService_CreateOrUpdateQualificationRequest_FullMethodName,
+	}
+	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
+		return srv.(JobsQualificationsServiceServer).CreateOrUpdateQualificationRequest(ctx, req.(*CreateOrUpdateQualificationRequestRequest))
+	}
+	return interceptor(ctx, in, info, handler)
+}
+
 // JobsQualificationsService_ServiceDesc is the grpc.ServiceDesc for JobsQualificationsService service.
 // It's only intended for direct use with grpc.RegisterService,
 // and not to be introspected or modified (even as a copy)
@@ -378,6 +413,10 @@ var JobsQualificationsService_ServiceDesc = grpc.ServiceDesc{
 		{
 			MethodName: "ListQualificationRequests",
 			Handler:    _JobsQualificationsService_ListQualificationRequests_Handler,
+		},
+		{
+			MethodName: "CreateOrUpdateQualificationRequest",
+			Handler:    _JobsQualificationsService_CreateOrUpdateQualificationRequest_Handler,
 		},
 	},
 	Streams:  []grpc.StreamDesc{},

@@ -49,6 +49,23 @@ message DeleteQualificationRequest {
 
 message DeleteQualificationResponse {}
 
+// Access =====================================================================
+message GetQualificationAccessRequest {
+  uint64 qualification_id = 1 [jstype = JS_STRING];
+}
+
+message GetQualificationAccessResponse {
+  resources.jobs.QualificationAccess access = 1 [(validate.rules).message.required = true];
+}
+
+message SetQualificationAccessRequest {
+  uint64 qualification_id = 1 [jstype = JS_STRING];
+  resources.jobs.AccessLevelUpdateMode mode = 2 [(validate.rules).enum.defined_only = true];
+  resources.jobs.QualificationAccess access = 3 [(validate.rules).message.required = true];
+}
+
+message SetQualificationAccessResponse {}
+
 // Results ====================================================================
 message ListQualificationsResultsRequest {
   resources.common.database.PaginationRequest pagination = 1 [(validate.rules).message.required = true];
@@ -70,23 +87,6 @@ message CreateOrUpdateQualificationResultResponse {
   resources.jobs.QualificationResult result = 1;
 }
 
-// Access =====================================================================
-message GetQualificationAccessRequest {
-  uint64 qualification_id = 1 [jstype = JS_STRING];
-}
-
-message GetQualificationAccessResponse {
-  resources.jobs.QualificationAccess access = 1 [(validate.rules).message.required = true];
-}
-
-message SetQualificationAccessRequest {
-  uint64 qualification_id = 1 [jstype = JS_STRING];
-  resources.jobs.AccessLevelUpdateMode mode = 2 [(validate.rules).enum.defined_only = true];
-  resources.jobs.QualificationAccess access = 3 [(validate.rules).message.required = true];
-}
-
-message SetQualificationAccessResponse {}
-
 // Requests ===================================================================
 message ListQualificationRequestsRequest {
   resources.common.database.PaginationRequest pagination = 1 [(validate.rules).message.required = true];
@@ -96,6 +96,14 @@ message ListQualificationRequestsRequest {
 message ListQualificationRequestsResponse {
   resources.common.database.PaginationResponse pagination = 1;
   repeated resources.jobs.QualificationRequest requests = 2;
+}
+
+message CreateOrUpdateQualificationRequestRequest {
+  resources.jobs.QualificationRequest request = 1;
+}
+
+message CreateOrUpdateQualificationRequestResponse {
+  resources.jobs.QualificationRequest request = 1;
 }
 
 service JobsQualificationsService {
@@ -117,4 +125,6 @@ service JobsQualificationsService {
 
   // @perm
   rpc ListQualificationRequests(ListQualificationRequestsRequest) returns (ListQualificationRequestsResponse);
+  // @perm
+  rpc CreateOrUpdateQualificationRequest(CreateOrUpdateQualificationRequestRequest) returns (CreateOrUpdateQualificationRequestResponse);
 }

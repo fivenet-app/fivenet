@@ -132,14 +132,18 @@ message QualificationResult {
 }
 
 message QualificationRequest {
-  uint64 qualification_id = 1 [jstype = JS_STRING];
+  uint64 id = 1 [jstype = JS_STRING];
   optional resources.timestamp.Timestamp created_at = 2;
-  int32 user_id = 3;
-  resources.users.UserShort user = 4;
+  optional resources.timestamp.Timestamp deleted_at = 3;
+  uint64 qualification_id = 4 [jstype = JS_STRING];
+  int32 user_id = 5;
+  resources.users.UserShort user = 6;
   // @sanitize: method=StripTags
-  optional string reason = 5 [(validate.rules).string = {max_len: 512}];
-  optional bool approved = 6;
-  optional resources.timestamp.Timestamp approved_at = 7;
-  optional int32 approver_id = 8;
-  optional resources.users.UserShort approver = 9;
+  optional string user_comment = 7 [(validate.rules).string = {max_len: 512}];
+  optional bool approved = 8;
+  optional resources.timestamp.Timestamp approved_at = 9;
+  optional string approver_comment = 10 [(validate.rules).string = {max_len: 512}];
+  optional int32 approver_id = 11;
+  optional resources.users.UserShort approver = 12;
+  optional string approver_job = 13;
 }

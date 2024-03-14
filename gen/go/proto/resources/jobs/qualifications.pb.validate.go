@@ -564,6 +564,19 @@ func (m *QualificationShort) validate(all bool) error {
 		errors = append(errors, err)
 	}
 
+	// no validation rules for CreatorId
+
+	if utf8.RuneCountInString(m.GetCreatorJob()) > 20 {
+		err := QualificationShortValidationError{
+			field:  "CreatorJob",
+			reason: "value length must be at most 20 runes",
+		}
+		if !all {
+			return err
+		}
+		errors = append(errors, err)
+	}
+
 	for idx, item := range m.GetRequirements() {
 		_, _ = idx, item
 
@@ -712,10 +725,6 @@ func (m *QualificationShort) validate(all bool) error {
 
 	}
 
-	if m.CreatorId != nil {
-		// no validation rules for CreatorId
-	}
-
 	if m.Creator != nil {
 
 		if all {
@@ -745,21 +754,6 @@ func (m *QualificationShort) validate(all bool) error {
 					cause:  err,
 				}
 			}
-		}
-
-	}
-
-	if m.CreatorJob != nil {
-
-		if utf8.RuneCountInString(m.GetCreatorJob()) > 20 {
-			err := QualificationShortValidationError{
-				field:  "CreatorJob",
-				reason: "value length must be at most 20 runes",
-			}
-			if !all {
-				return err
-			}
-			errors = append(errors, err)
 		}
 
 	}
@@ -1804,6 +1798,8 @@ func (m *QualificationRequest) validate(all bool) error {
 
 	var errors []error
 
+	// no validation rules for Id
+
 	// no validation rules for QualificationId
 
 	// no validation rules for UserId
@@ -1870,11 +1866,44 @@ func (m *QualificationRequest) validate(all bool) error {
 
 	}
 
-	if m.Reason != nil {
+	if m.DeletedAt != nil {
 
-		if utf8.RuneCountInString(m.GetReason()) > 512 {
+		if all {
+			switch v := interface{}(m.GetDeletedAt()).(type) {
+			case interface{ ValidateAll() error }:
+				if err := v.ValidateAll(); err != nil {
+					errors = append(errors, QualificationRequestValidationError{
+						field:  "DeletedAt",
+						reason: "embedded message failed validation",
+						cause:  err,
+					})
+				}
+			case interface{ Validate() error }:
+				if err := v.Validate(); err != nil {
+					errors = append(errors, QualificationRequestValidationError{
+						field:  "DeletedAt",
+						reason: "embedded message failed validation",
+						cause:  err,
+					})
+				}
+			}
+		} else if v, ok := interface{}(m.GetDeletedAt()).(interface{ Validate() error }); ok {
+			if err := v.Validate(); err != nil {
+				return QualificationRequestValidationError{
+					field:  "DeletedAt",
+					reason: "embedded message failed validation",
+					cause:  err,
+				}
+			}
+		}
+
+	}
+
+	if m.UserComment != nil {
+
+		if utf8.RuneCountInString(m.GetUserComment()) > 512 {
 			err := QualificationRequestValidationError{
-				field:  "Reason",
+				field:  "UserComment",
 				reason: "value length must be at most 512 runes",
 			}
 			if !all {
@@ -1922,6 +1951,21 @@ func (m *QualificationRequest) validate(all bool) error {
 
 	}
 
+	if m.ApproverComment != nil {
+
+		if utf8.RuneCountInString(m.GetApproverComment()) > 512 {
+			err := QualificationRequestValidationError{
+				field:  "ApproverComment",
+				reason: "value length must be at most 512 runes",
+			}
+			if !all {
+				return err
+			}
+			errors = append(errors, err)
+		}
+
+	}
+
 	if m.ApproverId != nil {
 		// no validation rules for ApproverId
 	}
@@ -1957,6 +2001,10 @@ func (m *QualificationRequest) validate(all bool) error {
 			}
 		}
 
+	}
+
+	if m.ApproverJob != nil {
+		// no validation rules for ApproverJob
 	}
 
 	if len(errors) > 0 {

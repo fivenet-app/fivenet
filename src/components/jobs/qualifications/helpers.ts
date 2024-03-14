@@ -44,8 +44,6 @@ function checkBaseQualificationAccess(
         return true;
     }
 
-    // TODO how to check the requirements
-
     const ja = docAccess.jobs.find(
         (ja) => ja.job === activeChar.job && ja.minimumGrade <= activeChar.jobGrade && level <= ja.access,
     );

@@ -159,7 +159,7 @@ CREATE TABLE IF NOT EXISTS `fivenet_jobs_qualifications_requests` (
   `deleted_at` datetime(3) DEFAULT NULL,
   `qualification_id` bigint(20) unsigned NOT NULL,
   `user_id` int(11) NOT NULL,
-  `user_comment` varchar(255) DEFAULT NULL,
+  `user_comment` varchar(512) DEFAULT NULL,
   `approved` tinyint(1) DEFAULT 0,
   `approved_at` datetime(3) DEFAULT CURRENT_TIMESTAMP(3),
   `approver_comment` varchar(255) DEFAULT NULL,

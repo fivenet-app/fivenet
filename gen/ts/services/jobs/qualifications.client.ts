@@ -4,6 +4,8 @@
 import type { RpcTransport } from "@protobuf-ts/runtime-rpc";
 import type { ServiceInfo } from "@protobuf-ts/runtime-rpc";
 import { JobsQualificationsService } from "./qualifications";
+import type { CreateOrUpdateQualificationRequestResponse } from "./qualifications";
+import type { CreateOrUpdateQualificationRequestRequest } from "./qualifications";
 import type { ListQualificationRequestsResponse } from "./qualifications";
 import type { ListQualificationRequestsRequest } from "./qualifications";
 import type { CreateOrUpdateQualificationResultResponse } from "./qualifications";
@@ -75,6 +77,12 @@ export interface IJobsQualificationsServiceClient {
      * @generated from protobuf rpc: ListQualificationRequests(services.jobs.ListQualificationRequestsRequest) returns (services.jobs.ListQualificationRequestsResponse);
      */
     listQualificationRequests(input: ListQualificationRequestsRequest, options?: RpcOptions): UnaryCall<ListQualificationRequestsRequest, ListQualificationRequestsResponse>;
+    /**
+     * @perm
+     *
+     * @generated from protobuf rpc: CreateOrUpdateQualificationRequest(services.jobs.CreateOrUpdateQualificationRequestRequest) returns (services.jobs.CreateOrUpdateQualificationRequestResponse);
+     */
+    createOrUpdateQualificationRequest(input: CreateOrUpdateQualificationRequestRequest, options?: RpcOptions): UnaryCall<CreateOrUpdateQualificationRequestRequest, CreateOrUpdateQualificationRequestResponse>;
 }
 /**
  * @generated from protobuf service services.jobs.JobsQualificationsService
@@ -156,5 +164,14 @@ export class JobsQualificationsServiceClient implements IJobsQualificationsServi
     listQualificationRequests(input: ListQualificationRequestsRequest, options?: RpcOptions): UnaryCall<ListQualificationRequestsRequest, ListQualificationRequestsResponse> {
         const method = this.methods[7], opt = this._transport.mergeOptions(options);
         return stackIntercept<ListQualificationRequestsRequest, ListQualificationRequestsResponse>("unary", this._transport, method, opt, input);
+    }
+    /**
+     * @perm
+     *
+     * @generated from protobuf rpc: CreateOrUpdateQualificationRequest(services.jobs.CreateOrUpdateQualificationRequestRequest) returns (services.jobs.CreateOrUpdateQualificationRequestResponse);
+     */
+    createOrUpdateQualificationRequest(input: CreateOrUpdateQualificationRequestRequest, options?: RpcOptions): UnaryCall<CreateOrUpdateQualificationRequestRequest, CreateOrUpdateQualificationRequestResponse> {
+        const method = this.methods[8], opt = this._transport.mergeOptions(options);
+        return stackIntercept<CreateOrUpdateQualificationRequestRequest, CreateOrUpdateQualificationRequestResponse>("unary", this._transport, method, opt, input);
     }
 }

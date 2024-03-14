@@ -237,20 +237,59 @@ func (s *Server) CreateOrUpdateQualificationResult(ctx context.Context, req *Cre
 }
 
 func (s *Server) getQualificationResult(ctx context.Context, condition jet.BoolExpression, userInfo *userinfo.UserInfo) (*jobs.QualificationResult, error) {
-	var quali jobs.QualificationResult
+	var result jobs.QualificationResult
 
-	stmt := s.getQualificationQuery(condition, nil, userInfo).
+	stmt := tQualiResults.
+		SELECT(
+			tQualiResults.ID,
+			tQualiResults.CreatedAt,
+			tQualiResults.DeletedAt,
+			tQualiResults.QualificationID,
+			tQualiResults.UserID,
+			tUser.ID,
+			tUser.Identifier,
+			tUser.Job,
+			tUser.JobGrade,
+			tUser.Firstname,
+			tUser.Lastname,
+			tUser.Dateofbirth,
+			tQualiResults.Status,
+			tQualiResults.Score,
+			tQualiResults.Summary,
+			tQualiResults.CreatorID,
+			tQualiResults.CreatorJob,
+			tCreator.ID,
+			tCreator.Identifier,
+			tCreator.Job,
+			tCreator.JobGrade,
+			tCreator.Firstname,
+			tCreator.Lastname,
+			tCreator.Dateofbirth,
+		).
+		FROM(tQualiResults.
+			LEFT_JOIN(tCreator,
+				tCreator.ID.EQ(tQualiResults.UserID),
+			).
+			LEFT_JOIN(tApprover,
+				tApprover.ID.EQ(tQualiResults.CreatorID),
+			),
+		).
+		WHERE(condition).
 		LIMIT(1)
 
-	if err := stmt.QueryContext(ctx, s.db, &quali); err != nil {
+	if err := stmt.QueryContext(ctx, s.db, &result); err != nil {
 		if !errors.Is(err, qrm.ErrNoRows) {
 			return nil, errswrap.NewError(errorsjobs.ErrFailedQuery, err)
 		}
 	}
 
-	if quali.Creator != nil {
-		s.enricher.EnrichJobInfo(quali.Creator)
+	if result.User != nil {
+		s.enricher.EnrichJobInfoSafe(userInfo, result.User)
 	}
 
-	return &quali, nil
+	if result.Creator != nil {
+		s.enricher.EnrichJobInfoSafe(userInfo, result.Creator)
+	}
+
+	return &result, nil
 }

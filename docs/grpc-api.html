@@ -1746,6 +1746,14 @@
             <ul>
               
                 <li>
+                  <a href="#services.jobs.CreateOrUpdateQualificationRequestRequest"><span class="badge">M</span>CreateOrUpdateQualificationRequestRequest</a>
+                </li>
+              
+                <li>
+                  <a href="#services.jobs.CreateOrUpdateQualificationRequestResponse"><span class="badge">M</span>CreateOrUpdateQualificationRequestResponse</a>
+                </li>
+              
+                <li>
                   <a href="#services.jobs.CreateOrUpdateQualificationResultRequest"><span class="badge">M</span>CreateOrUpdateQualificationResultRequest</a>
                 </li>
               
@@ -8229,7 +8237,7 @@
             <tbody>
               
                 <tr>
-                  <td>qualification_id</td>
+                  <td>id</td>
                   <td><a href="#uint64">uint64</a></td>
                   <td></td>
                   <td><p> </p></td>
@@ -8239,6 +8247,20 @@
                   <td>created_at</td>
                   <td><a href="#resources.timestamp.Timestamp">resources.timestamp.Timestamp</a></td>
                   <td>optional</td>
+                  <td><p> </p></td>
+                </tr>
+              
+                <tr>
+                  <td>deleted_at</td>
+                  <td><a href="#resources.timestamp.Timestamp">resources.timestamp.Timestamp</a></td>
+                  <td>optional</td>
+                  <td><p> </p></td>
+                </tr>
+              
+                <tr>
+                  <td>qualification_id</td>
+                  <td><a href="#uint64">uint64</a></td>
+                  <td></td>
                   <td><p> </p></td>
                 </tr>
               
@@ -8257,7 +8279,7 @@
                 </tr>
               
                 <tr>
-                  <td>reason</td>
+                  <td>user_comment</td>
                   <td><a href="#string">string</a></td>
                   <td>optional</td>
                   <td><p>@sanitize: method=StripTags </p></td>
@@ -8278,6 +8300,13 @@
                 </tr>
               
                 <tr>
+                  <td>approver_comment</td>
+                  <td><a href="#string">string</a></td>
+                  <td>optional</td>
+                  <td><p> </p></td>
+                </tr>
+              
+                <tr>
                   <td>approver_id</td>
                   <td><a href="#int32">int32</a></td>
                   <td>optional</td>
@@ -8287,6 +8316,13 @@
                 <tr>
                   <td>approver</td>
                   <td><a href="#resources.users.UserShort">resources.users.UserShort</a></td>
+                  <td>optional</td>
+                  <td><p> </p></td>
+                </tr>
+              
+                <tr>
+                  <td>approver_job</td>
+                  <td><a href="#string">string</a></td>
                   <td>optional</td>
                   <td><p> </p></td>
                 </tr>
@@ -8308,7 +8344,18 @@
               <tbody>
               
                 <tr>
-                  <td>reason</td>
+                  <td>user_comment</td>
+                  <td>
+                    <ul>
+                    
+                      <li>string.max_len: 512</li>
+                    
+                    </ul>
+                  </td>
+                </tr>
+              
+                <tr>
+                  <td>approver_comment</td>
                   <td>
                     <ul>
                     
@@ -8612,7 +8659,7 @@
                 <tr>
                   <td>creator_id</td>
                   <td><a href="#int32">int32</a></td>
-                  <td>optional</td>
+                  <td></td>
                   <td><p> </p></td>
                 </tr>
               
@@ -8626,7 +8673,7 @@
                 <tr>
                   <td>creator_job</td>
                   <td><a href="#string">string</a></td>
-                  <td>optional</td>
+                  <td></td>
                   <td><p> </p></td>
                 </tr>
               
@@ -20192,6 +20239,54 @@
       <p></p>
 
       
+        <h3 id="services.jobs.CreateOrUpdateQualificationRequestRequest">CreateOrUpdateQualificationRequestRequest</h3>
+        <p></p>
+
+        
+          <table class="field-table">
+            <thead>
+              <tr><td>Field</td><td>Type</td><td>Label</td><td>Description</td></tr>
+            </thead>
+            <tbody>
+              
+                <tr>
+                  <td>request</td>
+                  <td><a href="#resources.jobs.QualificationRequest">resources.jobs.QualificationRequest</a></td>
+                  <td></td>
+                  <td><p> </p></td>
+                </tr>
+              
+            </tbody>
+          </table>
+
+          
+
+        
+      
+        <h3 id="services.jobs.CreateOrUpdateQualificationRequestResponse">CreateOrUpdateQualificationRequestResponse</h3>
+        <p></p>
+
+        
+          <table class="field-table">
+            <thead>
+              <tr><td>Field</td><td>Type</td><td>Label</td><td>Description</td></tr>
+            </thead>
+            <tbody>
+              
+                <tr>
+                  <td>request</td>
+                  <td><a href="#resources.jobs.QualificationRequest">resources.jobs.QualificationRequest</a></td>
+                  <td></td>
+                  <td><p> </p></td>
+                </tr>
+              
+            </tbody>
+          </table>
+
+          
+
+        
+      
         <h3 id="services.jobs.CreateOrUpdateQualificationResultRequest">CreateOrUpdateQualificationResultRequest</h3>
         <p></p>
 
@@ -20914,6 +21009,13 @@
                 <td>ListQualificationRequests</td>
                 <td><a href="#services.jobs.ListQualificationRequestsRequest">ListQualificationRequestsRequest</a></td>
                 <td><a href="#services.jobs.ListQualificationRequestsResponse">ListQualificationRequestsResponse</a></td>
+                <td><p>@perm</p></td>
+              </tr>
+            
+              <tr>
+                <td>CreateOrUpdateQualificationRequest</td>
+                <td><a href="#services.jobs.CreateOrUpdateQualificationRequestRequest">CreateOrUpdateQualificationRequestRequest</a></td>
+                <td><a href="#services.jobs.CreateOrUpdateQualificationRequestResponse">CreateOrUpdateQualificationRequestResponse</a></td>
                 <td><p>@perm</p></td>
               </tr>
             

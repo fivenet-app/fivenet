@@ -24,8 +24,8 @@ func (m *Qualification) Sanitize() error {
 
 func (m *QualificationRequest) Sanitize() error {
 
-	if m.Reason != nil {
-		*m.Reason = htmlsanitizer.StripTags(*m.Reason)
+	if m.UserComment != nil {
+		*m.UserComment = htmlsanitizer.StripTags(*m.UserComment)
 	}
 
 	return nil
