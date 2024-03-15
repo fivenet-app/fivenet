@@ -3,10 +3,10 @@ import QualificationsList from '~/components/jobs/qualifications/QualificationsL
 import QualificationsResultsList from '~/components/jobs/qualifications/QualificationsResultsList.vue';
 
 useHead({
-    title: 'pages.jobs.qualifications.title',
+    title: 'pages.qualifications.title',
 });
 definePageMeta({
-    title: 'pages.jobs.qualifications.title',
+    title: 'pages.qualifications.title',
     requiresAuth: true,
     permission: 'QualificationsService.ListQualifications',
 });

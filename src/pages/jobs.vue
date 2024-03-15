@@ -39,7 +39,7 @@ const navigation: { name: string; to: RoutesNamedLocations; permission?: Perms; 
         icon: markRaw(TimelineClockIcon),
     },
     {
-        name: 'pages.jobs.qualifications.title',
+        name: 'pages.qualifications.title',
         to: { name: 'jobs-qualifications' },
         permission: 'QualificationsService.ListQualifications',
         icon: markRaw(SchoolIcon),

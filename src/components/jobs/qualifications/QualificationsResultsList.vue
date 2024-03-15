@@ -40,7 +40,7 @@ watch(offset, async () => refresh());
             <div class="-ml-4 -mt-4 flex flex-wrap items-center justify-between sm:flex-nowrap">
                 <div class="ml-4 mt-4">
                     <h3 class="text-base font-semibold leading-6 text-gray-200">
-                        {{ $t('components.jobs.qualifications.user_qualifications') }}
+                        {{ $t('components.qualifications.user_qualifications') }}
                     </h3>
                     <p class="mt-1 text-sm text-gray-500"></p>
                 </div>

@@ -34,9 +34,7 @@ defineProps<{
                         <ListStatusIcon class="h-5 w-5 text-info-400" aria-hidden="true" />
                         <span class="text-sm font-medium text-info-700">
                             <span class="font-semibold">{{ $t('common.result') }}:</span>
-                            {{
-                                $t(`enums.jobs.qualifications.ResultStatus.${ResultStatus[qualification.result?.status ?? 0]}`)
-                            }}
+                            {{ $t(`enums.qualifications.ResultStatus.${ResultStatus[qualification.result?.status ?? 0]}`) }}
                         </span>
                     </div>
 

@@ -100,12 +100,6 @@
             "timeclock": {
                 "title": "Stempeluhr"
             },
-            "qualifications": {
-                "title": "Qualifikationen",
-                "single": {
-                    "title": "Qualifizierung"
-                }
-            },
             "overview": {
                 "title": "Berufsübersicht"
             }
@@ -118,6 +112,12 @@
             "subtitle": "Ein fataler Fehler ist aufgetreten, bitte versuche es erneut.",
             "error_message": "Fehlermeldung:",
             "copy_error": "Fehlerbericht kopieren"
+        },
+        "qualifications": {
+            "title": "Qualifikationen",
+            "single": {
+                "title": "Qualifizierung"
+            }
         }
     },
     "copyright": "Copyright © {year} Galexrt Alle Rechte vorbehalten.",
@@ -1938,23 +1938,23 @@
                 "HIRED": "Angestellt",
                 "PROMOTED": "Befördert",
                 "DEMOTED": "Degradiert"
+            }
+        },
+        "qualifications": {
+            "AccessLevel": {
+                "UNSPECIFIED": "Unbestimmt",
+                "BLOCKED": "Blockiert",
+                "VIEW": "Ansehen",
+                "REQUEST": "Anfragen",
+                "TAKE": "Prüfung absolvieren",
+                "GRADE": "Benoten",
+                "EDIT": "Editieren"
             },
-            "qualifications": {
-                "AccessLevel": {
-                    "UNSPECIFIED": "Unbestimmt",
-                    "BLOCKED": "Blockiert",
-                    "VIEW": "Ansehen",
-                    "REQUEST": "Anfragen",
-                    "TAKE": "Prüfung absolvieren",
-                    "GRADE": "Benoten",
-                    "EDIT": "Editieren"
-                },
-                "ResultStatus": {
-                    "UNSPECIFIED": "Unbestimmt",
-                    "PENDING": "Ausstehend",
-                    "FAILED": "Misslungen",
-                    "SUCCESSFUL": "Erfolgreich"
-                }
+            "ResultStatus": {
+                "UNSPECIFIED": "Unbestimmt",
+                "PENDING": "Ausstehend",
+                "FAILED": "Misslungen",
+                "SUCCESSFUL": "Erfolgreich"
             }
         }
     }

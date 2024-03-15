@@ -3,10 +3,10 @@ import QualificationEditor from '~/components/jobs/qualifications/QualificationE
 import ContentWrapper from '~/components/partials/ContentWrapper.vue';
 
 useHead({
-    title: 'pages.jobs.qualifications.single.title',
+    title: 'pages.qualifications.single.title',
 });
 definePageMeta({
-    title: 'pages.jobs.qualifications.single.title',
+    title: 'pages.qualifications.single.title',
     requiresAuth: true,
     permission: 'QualificationsService.CreateQualification',
 });

@@ -23,7 +23,7 @@ defineEmits<{
 
 const offset = computed(() => props.pagination?.offset ?? 0n);
 const total = computed(() => props.pagination?.totalCount ?? 0n);
-const pageSize = computed(() => props.pagination?.pageSize ?? 0n);
+const pageSize = computed(() => props.pagination?.pageSize ?? 1n);
 const end = computed(() => props.pagination?.end ?? 0n);
 
 const totalPages = computed(() => bigIntCeil(total.value, pageSize.value));

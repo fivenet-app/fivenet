@@ -62,7 +62,7 @@ const tabs: { id: string; name: string; icon: DefineComponent; permission: Perms
     },
     {
         id: 'qualifications',
-        name: 'pages.jobs.qualifications.title',
+        name: 'pages.qualifications.title',
         to: { name: 'jobs-qualifications' },
         icon: markRaw(SchoolIcon),
         permission: 'QualificationsService.ListQualifications' as Perms,

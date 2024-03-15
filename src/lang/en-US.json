@@ -100,14 +100,14 @@
             "timeclock": {
                 "title": "Time Clock"
             },
-            "qualifications": {
-                "title": "Qualifications",
-                "single": {
-                    "title": "Qualification"
-                }
-            },
             "overview": {
                 "title": "Job Overview"
+            }
+        },
+        "qualifications": {
+            "title": "Qualifications",
+            "single": {
+                "title": "Qualification"
             }
         },
         "vehicles": {
@@ -571,11 +571,6 @@
                 "title": "Self Service",
                 "set_absence_date": "Set Absence Date",
                 "set_profile_picture": "Update Profile Picture"
-            },
-            "qualifications": {
-                "create_new_qualification": "Create New Qualification",
-                "user_qualifications": "Your Qualifications",
-                "all_qualifications": "All Qualifications"
             }
         },
         "bodycheckup": {
@@ -654,6 +649,11 @@
             "licenses": {
                 "subtitle": "List and information about the Licenses of code, libraries and software, used by FiveNet."
             }
+        },
+        "qualifications": {
+            "create_new_qualification": "Create New Qualification",
+            "user_qualifications": "Your Qualifications",
+            "all_qualifications": "All Qualifications"
         }
     },
     "common": {
@@ -1669,6 +1669,71 @@
                 "key": "List inactive colleagues",
                 "description": "List inactive colleagues."
             }
+        },
+        "QualificationsService": {
+            "category": "Qualifications",
+            "CreateOrUpdateQualificationRequest": {
+                "key": "Create or Update Qualification Request",
+                "description": "Create or Update Qualification Request"
+            },
+            "ListQualifications": {
+                "key": "List Qualifications",
+                "description": ""
+            },
+            "GetQualification": {
+                "key": "Get Qualifications",
+                "description": ""
+            },
+            "CreateQualification": {
+                "key": "Create Qualifications",
+                "description": ""
+            },
+            "UpdateQualification": {
+                "key": "Update Qualifications",
+                "description": "",
+                "attrs": {
+                    "Own": "Own",
+                    "Lower_Rank": "Lower Rank",
+                    "Same_Rank": "Same Rank",
+                    "Any": "Any"
+                },
+                "attrs_types": {
+                    "Access": "Access to factions-own qualifications"
+                }
+            },
+            "DeleteQualification": {
+                "key": "Delete Qualifications",
+                "description": "",
+                "attrs": {
+                    "Own": "Own",
+                    "Lower_Rank": "Lower Rank",
+                    "Same_Rank": "Same Rank",
+                    "Any": "Any"
+                },
+                "attrs_types": {
+                    "Access": "Access to factions-own qualifications"
+                }
+            },
+            "ListQualificationsResults": {
+                "key": "List Qualification Results",
+                "description": ""
+            },
+            "CreateOrUpdateQualificationResult": {
+                "key": "Create or Update Qualification Results",
+                "description": ""
+            },
+            "DeleteQualificationResult": {
+                "key": "Delete Qualification Results",
+                "description": ""
+            },
+            "ListQualificationRequests": {
+                "key": "List Qualification Requests",
+                "description": ""
+            },
+            "DeleteQualificationReq": {
+                "key": "Delete Qualification Requests",
+                "description": ""
+            }
         }
     },
     "errors": {
@@ -1943,23 +2008,24 @@
                 "HIRED": "Hired",
                 "PROMOTED": "Promoted",
                 "DEMOTED": "Demoted"
+            }
+        },
+        "qualifications": {
+            "AccessLevel": {
+                "UNSPECIFIED": "Unspecified",
+                "BLOCKED": "Blocked",
+                "VIEW": "View",
+                "REQUEST": "Request",
+                "TAKE": "Take",
+                "GRADE": "Grade",
+                "MANAGE": "Manage",
+                "EDIT": "Edit"
             },
-            "qualifications": {
-                "AccessLevel": {
-                    "UNSPECIFIED": "Unspecified",
-                    "BLOCKED": "Blocked",
-                    "VIEW": "View",
-                    "REQUEST": "Request",
-                    "TAKE": "Take",
-                    "GRADE": "Grade",
-                    "EDIT": "Edit"
-                },
-                "ResultStatus": {
-                    "UNSPECIFIED": "Unspecified",
-                    "PENDING": "Pending",
-                    "FAILED": "Failed",
-                    "SUCCESSFUL": "Successful"
-                }
+            "ResultStatus": {
+                "UNSPECIFIED": "Unspecified",
+                "PENDING": "Pending",
+                "FAILED": "Failed",
+                "SUCCESSFUL": "Successful"
             }
         }
     }

@@ -135,11 +135,7 @@ const quali = computed(() => data.value?.qualification);
                                     <ListStatusIcon class="h-5 w-5 text-info-400" aria-hidden="true" />
                                     <span class="text-sm font-medium text-info-700">
                                         <span class="font-semibold">{{ $t('common.result') }}:</span>
-                                        {{
-                                            $t(
-                                                `enums.jobs.qualifications.ResultStatus.${ResultStatus[quali.result?.status ?? 0]}`,
-                                            )
-                                        }}
+                                        {{ $t(`enums.qualifications.ResultStatus.${ResultStatus[quali.result?.status ?? 0]}`) }}
                                     </span>
                                 </div>
                             </div>
@@ -247,9 +243,51 @@ const quali = computed(() => data.value?.qualification);
                                     </DisclosurePanel>
                                 </Disclosure>
                             </div>
+
                             <div class="w-full">
-                                RESULTS:
-                                {{ jsonStringify(quali.result) }}
+                                <Disclosure
+                                    v-slot="{ open }"
+                                    as="div"
+                                    class="w-full border-neutral/20 text-neutral hover:border-neutral/70"
+                                >
+                                    <DisclosureButton
+                                        :class="[
+                                            open ? 'rounded-t-lg border-b-0' : 'rounded-lg',
+                                            'flex w-full items-start justify-between border-2 border-inherit p-2 text-left transition-colors',
+                                        ]"
+                                    >
+                                        <span class="inline-flex items-center text-base font-semibold leading-7">
+                                            <ListStatusIcon class="mr-2 w-5 h-auto" aria-hidden="true" />
+                                            {{ $t('common.result') }}
+                                        </span>
+                                        <span class="ml-6 flex h-7 items-center">
+                                            <ChevronDownIcon
+                                                :class="[open ? 'upsidedown' : '', 'h-autotransition-transform w-5']"
+                                                aria-hidden="true"
+                                            />
+                                        </span>
+                                    </DisclosureButton>
+                                    <DisclosurePanel class="rounded-b-lg border-2 border-t-0 border-inherit transition-colors">
+                                        <div class="mx-4 flex flex-col gap-1 pb-2">
+                                            <div>
+                                                <span class="font-semibold">{{ $t('common.result') }}:</span>
+                                                {{
+                                                    $t(
+                                                        `enums.qualifications.ResultStatus.${ResultStatus[quali.result?.status ?? 0]}`,
+                                                    )
+                                                }}
+                                            </div>
+                                            <div>
+                                                <span class="font-semibold">{{ $t('common.summary') }}:</span>
+                                                {{ quali.result?.summary }}
+                                            </div>
+                                            <div class="inline-flex gap-1">
+                                                <span class="font-semibold">{{ $t('common.created_by') }}:</span>
+                                                <CitizenInfoPopover :user="quali.result?.creator" />
+                                            </div>
+                                        </div>
+                                    </DisclosurePanel>
+                                </Disclosure>
                             </div>
 
                             <div class="w-full">
@@ -300,9 +338,7 @@ const quali = computed(() => data.value?.qualification);
                                                         >
                                                         -
                                                         {{
-                                                            $t(
-                                                                `enums.jobs.qualifications.AccessLevel.${AccessLevel[entry.access]}`,
-                                                            )
+                                                            $t(`enums.qualifications.AccessLevel.${AccessLevel[entry.access]}`)
                                                         }}
                                                     </span>
                                                 </div>
