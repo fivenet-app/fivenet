@@ -1,6 +1,6 @@
 <script lang="ts" setup>
 import { CalculatorIcon } from 'mdi-vue3';
-import { type SelectedPenalty } from '~/components/penaltycalculator/PenaltyCalculator.vue';
+import { type SelectedPenalty } from '~/components/quickbuttons/penaltycalculator/PenaltyCalculator.vue';
 import { LawBook } from '~~/gen/ts/resources/laws/laws';
 
 const props = defineProps<{

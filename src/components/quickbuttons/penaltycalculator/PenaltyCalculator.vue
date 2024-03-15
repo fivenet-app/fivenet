@@ -4,12 +4,12 @@ import { ChevronDownIcon, GavelIcon } from 'mdi-vue3';
 import DataErrorBlock from '~/components/partials/data/DataErrorBlock.vue';
 import DataNoDataBlock from '~/components/partials/data/DataNoDataBlock.vue';
 import DataPendingBlock from '~/components/partials/data/DataPendingBlock.vue';
-import LawListEntry from '~/components/penaltycalculator/LawListEntry.vue';
-import PenaltyStats from '~/components/penaltycalculator/PenaltyStats.vue';
+import LawListEntry from '~/components/quickbuttons/penaltycalculator/LawListEntry.vue';
+import PenaltyStats from '~/components/quickbuttons/penaltycalculator/PenaltyStats.vue';
 import { useCompletorStore } from '~/store/completor';
 import { useNotificatorStore } from '~/store/notificator';
 import { Law } from '~~/gen/ts/resources/laws/laws';
-import PenaltySummaryTable from '~/components/penaltycalculator/PenaltySummaryTable.vue';
+import PenaltySummaryTable from '~/components/quickbuttons/penaltycalculator/PenaltySummaryTable.vue';
 import GenericDivider from '~/components/partials/elements/GenericDivider.vue';
 
 const completorStore = useCompletorStore();

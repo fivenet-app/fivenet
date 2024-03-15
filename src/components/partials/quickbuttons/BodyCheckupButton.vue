@@ -1,7 +1,7 @@
 <script lang="ts" setup>
 import { HumanIcon } from 'mdi-vue3';
 import GenericModal from '~/components/partials/elements/GenericModal.vue';
-import BodyCheckup from '~/components/bodycheckup/BodyCheckup.vue';
+import BodyCheckup from '~/components/quickbuttons/bodycheckup/BodyCheckup.vue';
 
 const open = ref(false);
 </script>

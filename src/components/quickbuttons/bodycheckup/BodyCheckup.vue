@@ -2,7 +2,7 @@
 import { TrashCanIcon, VectorPointSelectIcon } from 'mdi-vue3';
 import { useNotificatorStore } from '~/store/notificator';
 import DataNoDataBlock from '~/components/partials/data/DataNoDataBlock.vue';
-import BMICalculator from '~/components/bodycheckup/BMICalculator.vue';
+import BMICalculator from '~/components/quickbuttons/bodycheckup/BMICalculator.vue';
 
 const notifications = useNotificatorStore();
 
@@ -152,7 +152,7 @@ function reset(): void {
                                         overflow="visible"
                                         width="130"
                                         height="416"
-                                        xlink:href="/images/components/bodycheckup/human-organs.png"
+                                        xlink:href="/images/components/quickbuttons/bodycheckup/human-organs.png"
                                         transform="matrix(1 0 0 1 150.0002 12.8901)"
                                         @click="addPin"
                                     ></image>
