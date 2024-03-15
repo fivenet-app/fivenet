@@ -312,57 +312,53 @@ export interface QualificationResult {
  */
 export interface QualificationRequest {
     /**
-     * @generated from protobuf field: uint64 id = 1 [jstype = JS_STRING];
-     */
-    id: string;
-    /**
-     * @generated from protobuf field: optional resources.timestamp.Timestamp created_at = 2;
+     * @generated from protobuf field: optional resources.timestamp.Timestamp created_at = 1;
      */
     createdAt?: Timestamp;
     /**
-     * @generated from protobuf field: optional resources.timestamp.Timestamp deleted_at = 3;
+     * @generated from protobuf field: optional resources.timestamp.Timestamp deleted_at = 2;
      */
     deletedAt?: Timestamp;
     /**
-     * @generated from protobuf field: uint64 qualification_id = 4 [jstype = JS_STRING];
+     * @generated from protobuf field: uint64 qualification_id = 3 [jstype = JS_STRING];
      */
     qualificationId: string;
     /**
-     * @generated from protobuf field: int32 user_id = 5;
+     * @generated from protobuf field: int32 user_id = 4;
      */
     userId: number;
     /**
-     * @generated from protobuf field: resources.users.UserShort user = 6;
+     * @generated from protobuf field: resources.users.UserShort user = 5;
      */
     user?: UserShort;
     /**
      * @sanitize: method=StripTags
      *
-     * @generated from protobuf field: optional string user_comment = 7;
+     * @generated from protobuf field: optional string user_comment = 6;
      */
     userComment?: string;
     /**
-     * @generated from protobuf field: optional bool approved = 8;
+     * @generated from protobuf field: optional bool approved = 7;
      */
     approved?: boolean;
     /**
-     * @generated from protobuf field: optional resources.timestamp.Timestamp approved_at = 9;
+     * @generated from protobuf field: optional resources.timestamp.Timestamp approved_at = 8;
      */
     approvedAt?: Timestamp;
     /**
-     * @generated from protobuf field: optional string approver_comment = 10;
+     * @generated from protobuf field: optional string approver_comment = 9;
      */
     approverComment?: string;
     /**
-     * @generated from protobuf field: optional int32 approver_id = 11;
+     * @generated from protobuf field: optional int32 approver_id = 10;
      */
     approverId?: number;
     /**
-     * @generated from protobuf field: optional resources.users.UserShort approver = 12;
+     * @generated from protobuf field: optional resources.users.UserShort approver = 11;
      */
     approver?: UserShort;
     /**
-     * @generated from protobuf field: optional string approver_job = 13;
+     * @generated from protobuf field: optional string approver_job = 12;
      */
     approverJob?: string;
 }
@@ -1185,24 +1181,22 @@ export const QualificationResult = new QualificationResult$Type();
 class QualificationRequest$Type extends MessageType<QualificationRequest> {
     constructor() {
         super("resources.qualifications.QualificationRequest", [
-            { no: 1, name: "id", kind: "scalar", T: 4 /*ScalarType.UINT64*/ },
-            { no: 2, name: "created_at", kind: "message", T: () => Timestamp },
-            { no: 3, name: "deleted_at", kind: "message", T: () => Timestamp },
-            { no: 4, name: "qualification_id", kind: "scalar", T: 4 /*ScalarType.UINT64*/ },
-            { no: 5, name: "user_id", kind: "scalar", T: 5 /*ScalarType.INT32*/ },
-            { no: 6, name: "user", kind: "message", T: () => UserShort },
-            { no: 7, name: "user_comment", kind: "scalar", opt: true, T: 9 /*ScalarType.STRING*/, options: { "validate.rules": { string: { maxLen: "512" } } } },
-            { no: 8, name: "approved", kind: "scalar", opt: true, T: 8 /*ScalarType.BOOL*/ },
-            { no: 9, name: "approved_at", kind: "message", T: () => Timestamp },
-            { no: 10, name: "approver_comment", kind: "scalar", opt: true, T: 9 /*ScalarType.STRING*/, options: { "validate.rules": { string: { maxLen: "512" } } } },
-            { no: 11, name: "approver_id", kind: "scalar", opt: true, T: 5 /*ScalarType.INT32*/ },
-            { no: 12, name: "approver", kind: "message", T: () => UserShort },
-            { no: 13, name: "approver_job", kind: "scalar", opt: true, T: 9 /*ScalarType.STRING*/ }
+            { no: 1, name: "created_at", kind: "message", T: () => Timestamp },
+            { no: 2, name: "deleted_at", kind: "message", T: () => Timestamp },
+            { no: 3, name: "qualification_id", kind: "scalar", T: 4 /*ScalarType.UINT64*/ },
+            { no: 4, name: "user_id", kind: "scalar", T: 5 /*ScalarType.INT32*/ },
+            { no: 5, name: "user", kind: "message", T: () => UserShort },
+            { no: 6, name: "user_comment", kind: "scalar", opt: true, T: 9 /*ScalarType.STRING*/, options: { "validate.rules": { string: { maxLen: "512" } } } },
+            { no: 7, name: "approved", kind: "scalar", opt: true, T: 8 /*ScalarType.BOOL*/ },
+            { no: 8, name: "approved_at", kind: "message", T: () => Timestamp },
+            { no: 9, name: "approver_comment", kind: "scalar", opt: true, T: 9 /*ScalarType.STRING*/, options: { "validate.rules": { string: { maxLen: "512" } } } },
+            { no: 10, name: "approver_id", kind: "scalar", opt: true, T: 5 /*ScalarType.INT32*/ },
+            { no: 11, name: "approver", kind: "message", T: () => UserShort },
+            { no: 12, name: "approver_job", kind: "scalar", opt: true, T: 9 /*ScalarType.STRING*/ }
         ]);
     }
     create(value?: PartialMessage<QualificationRequest>): QualificationRequest {
         const message = globalThis.Object.create((this.messagePrototype!));
-        message.id = "0";
         message.qualificationId = "0";
         message.userId = 0;
         if (value !== undefined)
@@ -1214,43 +1208,40 @@ class QualificationRequest$Type extends MessageType<QualificationRequest> {
         while (reader.pos < end) {
             let [fieldNo, wireType] = reader.tag();
             switch (fieldNo) {
-                case /* uint64 id = 1 [jstype = JS_STRING];*/ 1:
-                    message.id = reader.uint64().toString();
-                    break;
-                case /* optional resources.timestamp.Timestamp created_at */ 2:
+                case /* optional resources.timestamp.Timestamp created_at */ 1:
                     message.createdAt = Timestamp.internalBinaryRead(reader, reader.uint32(), options, message.createdAt);
                     break;
-                case /* optional resources.timestamp.Timestamp deleted_at */ 3:
+                case /* optional resources.timestamp.Timestamp deleted_at */ 2:
                     message.deletedAt = Timestamp.internalBinaryRead(reader, reader.uint32(), options, message.deletedAt);
                     break;
-                case /* uint64 qualification_id = 4 [jstype = JS_STRING];*/ 4:
+                case /* uint64 qualification_id = 3 [jstype = JS_STRING];*/ 3:
                     message.qualificationId = reader.uint64().toString();
                     break;
-                case /* int32 user_id */ 5:
+                case /* int32 user_id */ 4:
                     message.userId = reader.int32();
                     break;
-                case /* resources.users.UserShort user */ 6:
+                case /* resources.users.UserShort user */ 5:
                     message.user = UserShort.internalBinaryRead(reader, reader.uint32(), options, message.user);
                     break;
-                case /* optional string user_comment */ 7:
+                case /* optional string user_comment */ 6:
                     message.userComment = reader.string();
                     break;
-                case /* optional bool approved */ 8:
+                case /* optional bool approved */ 7:
                     message.approved = reader.bool();
                     break;
-                case /* optional resources.timestamp.Timestamp approved_at */ 9:
+                case /* optional resources.timestamp.Timestamp approved_at */ 8:
                     message.approvedAt = Timestamp.internalBinaryRead(reader, reader.uint32(), options, message.approvedAt);
                     break;
-                case /* optional string approver_comment */ 10:
+                case /* optional string approver_comment */ 9:
                     message.approverComment = reader.string();
                     break;
-                case /* optional int32 approver_id */ 11:
+                case /* optional int32 approver_id */ 10:
                     message.approverId = reader.int32();
                     break;
-                case /* optional resources.users.UserShort approver */ 12:
+                case /* optional resources.users.UserShort approver */ 11:
                     message.approver = UserShort.internalBinaryRead(reader, reader.uint32(), options, message.approver);
                     break;
-                case /* optional string approver_job */ 13:
+                case /* optional string approver_job */ 12:
                     message.approverJob = reader.string();
                     break;
                 default:
@@ -1265,45 +1256,42 @@ class QualificationRequest$Type extends MessageType<QualificationRequest> {
         return message;
     }
     internalBinaryWrite(message: QualificationRequest, writer: IBinaryWriter, options: BinaryWriteOptions): IBinaryWriter {
-        /* uint64 id = 1 [jstype = JS_STRING]; */
-        if (message.id !== "0")
-            writer.tag(1, WireType.Varint).uint64(message.id);
-        /* optional resources.timestamp.Timestamp created_at = 2; */
+        /* optional resources.timestamp.Timestamp created_at = 1; */
         if (message.createdAt)
-            Timestamp.internalBinaryWrite(message.createdAt, writer.tag(2, WireType.LengthDelimited).fork(), options).join();
-        /* optional resources.timestamp.Timestamp deleted_at = 3; */
+            Timestamp.internalBinaryWrite(message.createdAt, writer.tag(1, WireType.LengthDelimited).fork(), options).join();
+        /* optional resources.timestamp.Timestamp deleted_at = 2; */
         if (message.deletedAt)
-            Timestamp.internalBinaryWrite(message.deletedAt, writer.tag(3, WireType.LengthDelimited).fork(), options).join();
-        /* uint64 qualification_id = 4 [jstype = JS_STRING]; */
+            Timestamp.internalBinaryWrite(message.deletedAt, writer.tag(2, WireType.LengthDelimited).fork(), options).join();
+        /* uint64 qualification_id = 3 [jstype = JS_STRING]; */
         if (message.qualificationId !== "0")
-            writer.tag(4, WireType.Varint).uint64(message.qualificationId);
-        /* int32 user_id = 5; */
+            writer.tag(3, WireType.Varint).uint64(message.qualificationId);
+        /* int32 user_id = 4; */
         if (message.userId !== 0)
-            writer.tag(5, WireType.Varint).int32(message.userId);
-        /* resources.users.UserShort user = 6; */
+            writer.tag(4, WireType.Varint).int32(message.userId);
+        /* resources.users.UserShort user = 5; */
         if (message.user)
-            UserShort.internalBinaryWrite(message.user, writer.tag(6, WireType.LengthDelimited).fork(), options).join();
-        /* optional string user_comment = 7; */
+            UserShort.internalBinaryWrite(message.user, writer.tag(5, WireType.LengthDelimited).fork(), options).join();
+        /* optional string user_comment = 6; */
         if (message.userComment !== undefined)
-            writer.tag(7, WireType.LengthDelimited).string(message.userComment);
-        /* optional bool approved = 8; */
+            writer.tag(6, WireType.LengthDelimited).string(message.userComment);
+        /* optional bool approved = 7; */
         if (message.approved !== undefined)
-            writer.tag(8, WireType.Varint).bool(message.approved);
-        /* optional resources.timestamp.Timestamp approved_at = 9; */
+            writer.tag(7, WireType.Varint).bool(message.approved);
+        /* optional resources.timestamp.Timestamp approved_at = 8; */
         if (message.approvedAt)
-            Timestamp.internalBinaryWrite(message.approvedAt, writer.tag(9, WireType.LengthDelimited).fork(), options).join();
-        /* optional string approver_comment = 10; */
+            Timestamp.internalBinaryWrite(message.approvedAt, writer.tag(8, WireType.LengthDelimited).fork(), options).join();
+        /* optional string approver_comment = 9; */
         if (message.approverComment !== undefined)
-            writer.tag(10, WireType.LengthDelimited).string(message.approverComment);
-        /* optional int32 approver_id = 11; */
+            writer.tag(9, WireType.LengthDelimited).string(message.approverComment);
+        /* optional int32 approver_id = 10; */
         if (message.approverId !== undefined)
-            writer.tag(11, WireType.Varint).int32(message.approverId);
-        /* optional resources.users.UserShort approver = 12; */
+            writer.tag(10, WireType.Varint).int32(message.approverId);
+        /* optional resources.users.UserShort approver = 11; */
         if (message.approver)
-            UserShort.internalBinaryWrite(message.approver, writer.tag(12, WireType.LengthDelimited).fork(), options).join();
-        /* optional string approver_job = 13; */
+            UserShort.internalBinaryWrite(message.approver, writer.tag(11, WireType.LengthDelimited).fork(), options).join();
+        /* optional string approver_job = 12; */
         if (message.approverJob !== undefined)
-            writer.tag(13, WireType.LengthDelimited).string(message.approverJob);
+            writer.tag(12, WireType.LengthDelimited).string(message.approverJob);
         let u = options.writeUnknownFields;
         if (u !== false)
             (u == true ? UnknownFieldHandler.onWrite : u)(this.typeName, message, writer);

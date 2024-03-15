@@ -242,7 +242,7 @@ onBeforeMount(async () => listJobs());
                                         </Combobox>
                                     </div>
                                     <div class="form-control flex-1">
-                                        <label for="job" class="block text-sm font-medium leading-6 text-neutral">
+                                        <label for="jobGrade" class="block text-sm font-medium leading-6 text-neutral">
                                             {{ $t('common.job_grade') }}
                                         </label>
                                         <Combobox v-model="selectedJobGrade" as="div">

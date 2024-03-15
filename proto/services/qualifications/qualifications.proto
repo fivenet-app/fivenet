@@ -28,7 +28,7 @@ message GetQualificationResponse {
 }
 
 message CreateQualificationRequest {
-  resources.qualifications.Qualification qualification = 1;
+  resources.qualifications.Qualification qualification = 1 [(validate.rules).message.required = true];
 }
 
 message CreateQualificationResponse {
@@ -36,7 +36,7 @@ message CreateQualificationResponse {
 }
 
 message UpdateQualificationRequest {
-  resources.qualifications.Qualification qualification = 1;
+  resources.qualifications.Qualification qualification = 1 [(validate.rules).message.required = true];
 }
 
 message UpdateQualificationResponse {
@@ -80,7 +80,7 @@ message ListQualificationsResultsResponse {
 }
 
 message CreateOrUpdateQualificationResultRequest {
-  resources.qualifications.QualificationResult result = 1;
+  resources.qualifications.QualificationResult result = 1 [(validate.rules).message.required = true];
 }
 
 message CreateOrUpdateQualificationResultResponse {
@@ -105,7 +105,7 @@ message ListQualificationRequestsResponse {
 }
 
 message CreateOrUpdateQualificationRequestRequest {
-  resources.qualifications.QualificationRequest request = 1;
+  resources.qualifications.QualificationRequest request = 1 [(validate.rules).message.required = true];
 }
 
 message CreateOrUpdateQualificationRequestResponse {
@@ -113,7 +113,8 @@ message CreateOrUpdateQualificationRequestResponse {
 }
 
 message DeleteQualificationReqRequest {
-  uint64 request_id = 1 [jstype = JS_STRING];
+  uint64 qualification_id = 1 [jstype = JS_STRING];
+  int32 user_id = 2;
 }
 
 message DeleteQualificationReqResponse {}

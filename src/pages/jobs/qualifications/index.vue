@@ -1,5 +1,6 @@
 <script lang="ts" setup>
 import QualificationsList from '~/components/jobs/qualifications/QualificationsList.vue';
+import QualificationsRequestsList from '~/components/jobs/qualifications/QualificationsRequestsList.vue';
 import QualificationsResultsList from '~/components/jobs/qualifications/QualificationsResultsList.vue';
 
 useHead({
@@ -21,6 +22,8 @@ definePageMeta({
                         <QualificationsList />
 
                         <QualificationsResultsList class="mt-4" />
+
+                        <QualificationsRequestsList class="mt-4" />
                     </div>
                 </div>
             </div>

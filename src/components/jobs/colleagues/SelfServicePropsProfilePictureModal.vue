@@ -131,7 +131,7 @@ const onSubmitThrottle = useThrottleFn(async (e) => {
                             <form @submit.prevent="onSubmitThrottle">
                                 <div class="my-2 space-y-24">
                                     <div class="form-control flex-1">
-                                        <label for="job" class="block text-sm font-medium leading-6 text-neutral">
+                                        <label for="avatar" class="block text-sm font-medium leading-6 text-neutral">
                                             {{ $t('common.avatar') }}
                                         </label>
                                         <VeeField

@@ -274,9 +274,13 @@ export interface CreateOrUpdateQualificationRequestResponse {
  */
 export interface DeleteQualificationReqRequest {
     /**
-     * @generated from protobuf field: uint64 request_id = 1 [jstype = JS_STRING];
+     * @generated from protobuf field: uint64 qualification_id = 1 [jstype = JS_STRING];
      */
-    requestId: string;
+    qualificationId: string;
+    /**
+     * @generated from protobuf field: int32 user_id = 2;
+     */
+    userId: number;
 }
 /**
  * @generated from protobuf message services.qualifications.DeleteQualificationReqResponse
@@ -487,7 +491,7 @@ export const GetQualificationResponse = new GetQualificationResponse$Type();
 class CreateQualificationRequest$Type extends MessageType<CreateQualificationRequest> {
     constructor() {
         super("services.qualifications.CreateQualificationRequest", [
-            { no: 1, name: "qualification", kind: "message", T: () => Qualification }
+            { no: 1, name: "qualification", kind: "message", T: () => Qualification, options: { "validate.rules": { message: { required: true } } } }
         ]);
     }
     create(value?: PartialMessage<CreateQualificationRequest>): CreateQualificationRequest {
@@ -580,7 +584,7 @@ export const CreateQualificationResponse = new CreateQualificationResponse$Type(
 class UpdateQualificationRequest$Type extends MessageType<UpdateQualificationRequest> {
     constructor() {
         super("services.qualifications.UpdateQualificationRequest", [
-            { no: 1, name: "qualification", kind: "message", T: () => Qualification }
+            { no: 1, name: "qualification", kind: "message", T: () => Qualification, options: { "validate.rules": { message: { required: true } } } }
         ]);
     }
     create(value?: PartialMessage<UpdateQualificationRequest>): UpdateQualificationRequest {
@@ -1048,7 +1052,7 @@ export const ListQualificationsResultsResponse = new ListQualificationsResultsRe
 class CreateOrUpdateQualificationResultRequest$Type extends MessageType<CreateOrUpdateQualificationResultRequest> {
     constructor() {
         super("services.qualifications.CreateOrUpdateQualificationResultRequest", [
-            { no: 1, name: "result", kind: "message", T: () => QualificationResult }
+            { no: 1, name: "result", kind: "message", T: () => QualificationResult, options: { "validate.rules": { message: { required: true } } } }
         ]);
     }
     create(value?: PartialMessage<CreateOrUpdateQualificationResultRequest>): CreateOrUpdateQualificationResultRequest {
@@ -1319,7 +1323,7 @@ export const ListQualificationRequestsResponse = new ListQualificationRequestsRe
 class CreateOrUpdateQualificationRequestRequest$Type extends MessageType<CreateOrUpdateQualificationRequestRequest> {
     constructor() {
         super("services.qualifications.CreateOrUpdateQualificationRequestRequest", [
-            { no: 1, name: "request", kind: "message", T: () => QualificationRequest }
+            { no: 1, name: "request", kind: "message", T: () => QualificationRequest, options: { "validate.rules": { message: { required: true } } } }
         ]);
     }
     create(value?: PartialMessage<CreateOrUpdateQualificationRequestRequest>): CreateOrUpdateQualificationRequestRequest {
@@ -1411,12 +1415,14 @@ export const CreateOrUpdateQualificationRequestResponse = new CreateOrUpdateQual
 class DeleteQualificationReqRequest$Type extends MessageType<DeleteQualificationReqRequest> {
     constructor() {
         super("services.qualifications.DeleteQualificationReqRequest", [
-            { no: 1, name: "request_id", kind: "scalar", T: 4 /*ScalarType.UINT64*/ }
+            { no: 1, name: "qualification_id", kind: "scalar", T: 4 /*ScalarType.UINT64*/ },
+            { no: 2, name: "user_id", kind: "scalar", T: 5 /*ScalarType.INT32*/ }
         ]);
     }
     create(value?: PartialMessage<DeleteQualificationReqRequest>): DeleteQualificationReqRequest {
         const message = globalThis.Object.create((this.messagePrototype!));
-        message.requestId = "0";
+        message.qualificationId = "0";
+        message.userId = 0;
         if (value !== undefined)
             reflectionMergePartial<DeleteQualificationReqRequest>(this, message, value);
         return message;
@@ -1426,8 +1432,11 @@ class DeleteQualificationReqRequest$Type extends MessageType<DeleteQualification
         while (reader.pos < end) {
             let [fieldNo, wireType] = reader.tag();
             switch (fieldNo) {
-                case /* uint64 request_id = 1 [jstype = JS_STRING];*/ 1:
-                    message.requestId = reader.uint64().toString();
+                case /* uint64 qualification_id = 1 [jstype = JS_STRING];*/ 1:
+                    message.qualificationId = reader.uint64().toString();
+                    break;
+                case /* int32 user_id */ 2:
+                    message.userId = reader.int32();
                     break;
                 default:
                     let u = options.readUnknownField;
@@ -1441,9 +1450,12 @@ class DeleteQualificationReqRequest$Type extends MessageType<DeleteQualification
         return message;
     }
     internalBinaryWrite(message: DeleteQualificationReqRequest, writer: IBinaryWriter, options: BinaryWriteOptions): IBinaryWriter {
-        /* uint64 request_id = 1 [jstype = JS_STRING]; */
-        if (message.requestId !== "0")
-            writer.tag(1, WireType.Varint).uint64(message.requestId);
+        /* uint64 qualification_id = 1 [jstype = JS_STRING]; */
+        if (message.qualificationId !== "0")
+            writer.tag(1, WireType.Varint).uint64(message.qualificationId);
+        /* int32 user_id = 2; */
+        if (message.userId !== 0)
+            writer.tag(2, WireType.Varint).int32(message.userId);
         let u = options.writeUnknownFields;
         if (u !== false)
             (u == true ? UnknownFieldHandler.onWrite : u)(this.typeName, message, writer);

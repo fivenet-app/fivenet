@@ -607,6 +607,17 @@ func (m *CreateQualificationRequest) validate(all bool) error {
 
 	var errors []error
 
+	if m.GetQualification() == nil {
+		err := CreateQualificationRequestValidationError{
+			field:  "Qualification",
+			reason: "value is required",
+		}
+		if !all {
+			return err
+		}
+		errors = append(errors, err)
+	}
+
 	if all {
 		switch v := interface{}(m.GetQualification()).(type) {
 		case interface{ ValidateAll() error }:
@@ -842,6 +853,17 @@ func (m *UpdateQualificationRequest) validate(all bool) error {
 	}
 
 	var errors []error
+
+	if m.GetQualification() == nil {
+		err := UpdateQualificationRequestValidationError{
+			field:  "Qualification",
+			reason: "value is required",
+		}
+		if !all {
+			return err
+		}
+		errors = append(errors, err)
+	}
 
 	if all {
 		switch v := interface{}(m.GetQualification()).(type) {
@@ -2112,6 +2134,17 @@ func (m *CreateOrUpdateQualificationResultRequest) validate(all bool) error {
 
 	var errors []error
 
+	if m.GetResult() == nil {
+		err := CreateOrUpdateQualificationResultRequestValidationError{
+			field:  "Result",
+			reason: "value is required",
+		}
+		if !all {
+			return err
+		}
+		errors = append(errors, err)
+	}
+
 	if all {
 		switch v := interface{}(m.GetResult()).(type) {
 		case interface{ ValidateAll() error }:
@@ -2911,6 +2944,17 @@ func (m *CreateOrUpdateQualificationRequestRequest) validate(all bool) error {
 
 	var errors []error
 
+	if m.GetRequest() == nil {
+		err := CreateOrUpdateQualificationRequestRequestValidationError{
+			field:  "Request",
+			reason: "value is required",
+		}
+		if !all {
+			return err
+		}
+		errors = append(errors, err)
+	}
+
 	if all {
 		switch v := interface{}(m.GetRequest()).(type) {
 		case interface{ ValidateAll() error }:
@@ -3179,7 +3223,9 @@ func (m *DeleteQualificationReqRequest) validate(all bool) error {
 
 	var errors []error
 
-	// no validation rules for RequestId
+	// no validation rules for QualificationId
+
+	// no validation rules for UserId
 
 	if len(errors) > 0 {
 		return DeleteQualificationReqRequestMultiError(errors)

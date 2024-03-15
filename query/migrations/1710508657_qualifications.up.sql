@@ -73,7 +73,6 @@ CREATE TABLE IF NOT EXISTS `fivenet_qualifications_results` (
 
 -- Table: fivenet_qualifications_requests
 CREATE TABLE IF NOT EXISTS `fivenet_qualifications_requests` (
-  `id` bigint(20) unsigned NOT NULL AUTO_INCREMENT,
   `created_at` datetime(3) DEFAULT CURRENT_TIMESTAMP(3),
   `deleted_at` datetime(3) DEFAULT NULL,
   `qualification_id` bigint(20) unsigned NOT NULL,
@@ -83,9 +82,8 @@ CREATE TABLE IF NOT EXISTS `fivenet_qualifications_requests` (
   `approved_at` datetime(3) DEFAULT CURRENT_TIMESTAMP(3),
   `approver_comment` varchar(255) DEFAULT NULL,
   `approver_id` int(11) NULL DEFAULT NULL,
-  `approver_job` varchar(50) NOT NULL,
-  PRIMARY KEY (`id`),
-  KEY `idx_fivenet_qualifications_requests_quali_id_user_id` (`qualification_id`, `user_id`),
+  `approver_job` varchar(50) DEFAULT NULL,
+  UNIQUE KEY `idx_fivenet_qualifications_requests_quali_id_user_id` (`qualification_id`, `user_id`),
   KEY `idx_fivenet_qualifications_requests_approved` (`approved`),
   KEY `idx_fivenet_qualifications_requests_approved_at` (`approved_at`),
   CONSTRAINT `fk_fivenet_qualifications_requests_qualification_id` FOREIGN KEY (`qualification_id`) REFERENCES `fivenet_qualifications` (`id`) ON DELETE CASCADE ON UPDATE CASCADE,

@@ -1798,8 +1798,6 @@ func (m *QualificationRequest) validate(all bool) error {
 
 	var errors []error
 
-	// no validation rules for Id
-
 	// no validation rules for QualificationId
 
 	// no validation rules for UserId

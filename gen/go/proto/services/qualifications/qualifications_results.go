@@ -67,9 +67,6 @@ func (s *Server) ListQualificationsResults(ctx context.Context, req *ListQualifi
 				INNER_JOIN(tQuali,
 					tQuali.ID.EQ(tQualiResults.QualificationID),
 				).
-				LEFT_JOIN(tCreator,
-					tQuali.CreatorID.EQ(tCreator.ID),
-				).
 				LEFT_JOIN(tQJobAccess,
 					tQJobAccess.QualificationID.EQ(tQuali.ID).
 						AND(tQJobAccess.Job.EQ(jet.String(userInfo.Job))).
@@ -167,6 +164,7 @@ func (s *Server) CreateOrUpdateQualificationResult(ctx context.Context, req *Cre
 		return nil, errorsqualifications.ErrFailedQuery
 	}
 
+	tQualiResults := table.FivenetQualificationsResults
 	if req.Result.Id <= 0 {
 		stmt := tQualiResults.
 			INSERT(
@@ -226,7 +224,7 @@ func (s *Server) CreateOrUpdateQualificationResult(ctx context.Context, req *Cre
 		auditEntry.State = int16(rector.EventType_EVENT_TYPE_UPDATED)
 	}
 
-	result, err := s.getQualificationResult(ctx, tQualiResults.ID.EQ(jet.Uint64(req.Result.Id)), userInfo)
+	result, err := s.getQualificationResult(ctx, req.Result.Id, userInfo)
 	if err != nil {
 		return nil, errswrap.NewError(err, errorsqualifications.ErrFailedQuery)
 	}
@@ -236,7 +234,7 @@ func (s *Server) CreateOrUpdateQualificationResult(ctx context.Context, req *Cre
 	}, nil
 }
 
-func (s *Server) getQualificationResult(ctx context.Context, condition jet.BoolExpression, userInfo *userinfo.UserInfo) (*qualifications.QualificationResult, error) {
+func (s *Server) getQualificationResult(ctx context.Context, resultId uint64, userInfo *userinfo.UserInfo) (*qualifications.QualificationResult, error) {
 	var result qualifications.QualificationResult
 
 	stmt := tQualiResults.
@@ -267,19 +265,19 @@ func (s *Server) getQualificationResult(ctx context.Context, condition jet.BoolE
 			tCreator.Dateofbirth,
 		).
 		FROM(tQualiResults.
-			LEFT_JOIN(tCreator,
-				tCreator.ID.EQ(tQualiResults.UserID),
+			LEFT_JOIN(tUser,
+				tUser.ID.EQ(tQualiResults.UserID),
 			).
-			LEFT_JOIN(tApprover,
-				tApprover.ID.EQ(tQualiResults.CreatorID),
+			LEFT_JOIN(tCreator,
+				tCreator.ID.EQ(tQualiResults.CreatorID),
 			),
 		).
-		WHERE(condition).
+		WHERE(tQualiResults.ID.EQ(jet.Uint64(resultId))).
 		LIMIT(1)
 
 	if err := stmt.QueryContext(ctx, s.db, &result); err != nil {
 		if !errors.Is(err, qrm.ErrNoRows) {
-			return nil, errswrap.NewError(errorsqualifications.ErrFailedQuery, err)
+			return nil, err
 		}
 	}
 
@@ -306,7 +304,7 @@ func (s *Server) DeleteQualificationResult(ctx context.Context, req *DeleteQuali
 	}
 	defer s.aud.Log(auditEntry, req)
 
-	re, err := s.getQualificationResult(ctx, tQualiResults.UserID.EQ(jet.Int32(userInfo.UserId)), userInfo)
+	re, err := s.getQualificationResult(ctx, req.ResultId, userInfo)
 	if err != nil {
 		return nil, errswrap.NewError(errorsqualifications.ErrFailedQuery, err)
 	}

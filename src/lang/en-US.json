@@ -653,7 +653,8 @@
         "qualifications": {
             "create_new_qualification": "Create New Qualification",
             "user_qualifications": "Your Qualifications",
-            "all_qualifications": "All Qualifications"
+            "all_qualifications": "All Qualifications",
+            "user_requests": "Requested Qualifications"
         }
     },
     "common": {

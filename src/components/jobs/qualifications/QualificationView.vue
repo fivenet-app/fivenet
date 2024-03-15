@@ -1,8 +1,10 @@
 <script lang="ts" setup>
 import { Disclosure, DisclosureButton, DisclosurePanel } from '@headlessui/vue';
 import { RpcError } from '@protobuf-ts/runtime-rpc';
+import { useConfirmDialog } from '@vueuse/core';
 import {
     AccountIcon,
+    AccountSchoolIcon,
     AsteriskIcon,
     CalendarEditIcon,
     CalendarIcon,
@@ -22,7 +24,10 @@ import DataNoDataBlock from '~/components/partials/data/DataNoDataBlock.vue';
 import DataPendingBlock from '~/components/partials/data/DataPendingBlock.vue';
 import GenericTime from '~/components/partials/elements/GenericTime.vue';
 import { AccessLevel, ResultStatus } from '~~/gen/ts/resources/qualifications/qualifications';
-import type { GetQualificationResponse } from '~~/gen/ts/services/qualifications/qualifications';
+import type { DeleteQualificationResponse, GetQualificationResponse } from '~~/gen/ts/services/qualifications/qualifications';
+import { checkQualificationAccess } from '~/components/jobs/qualifications/helpers';
+import ConfirmDialog from '~/components/partials/ConfirmDialog.vue';
+import QualificationRequestModal from '~/components/jobs/qualifications/QualificationRequestModal.vue';
 
 const props = defineProps<{
     id: string;
@@ -46,7 +51,26 @@ async function getQualification(qualificationId: string): Promise<GetQualificati
     }
 }
 
+async function deleteQualification(qualificationId: string): Promise<DeleteQualificationResponse> {
+    try {
+        const call = $grpc.getQualificationsClient().deleteQualification({
+            qualificationId,
+        });
+        const { response } = await call;
+
+        return response;
+    } catch (e) {
+        $grpc.handleError(e as RpcError);
+        throw e;
+    }
+}
+
 const quali = computed(() => data.value?.qualification);
+
+const { isRevealed, reveal, confirm, cancel, onConfirm } = useConfirmDialog();
+onConfirm(async (id: string) => deleteQualification(id));
+
+const openRequest = ref(false);
 </script>
 
 <template>
@@ -61,6 +85,10 @@ const quali = computed(() => data.value?.qualification);
             <DataNoDataBlock v-else-if="!quali" />
 
             <div v-else class="rounded-lg bg-base-700">
+                <ConfirmDialog :open="isRevealed" :cancel="cancel" :confirm="() => confirm(quali!.id)" />
+
+                <QualificationRequestModal :qualification-id="quali.id" :open="openRequest" @close="openRequest = false" />
+
                 <div class="h-full px-4 py-6 sm:px-6 lg:px-8">
                     <div>
                         <div>
@@ -76,8 +104,26 @@ const quali = computed(() => data.value?.qualification);
                                 />
 
                                 <div class="flex space-x-2 self-end">
+                                    <button
+                                        v-if="
+                                            can('QualificationsService.CreateOrUpdateQualificationRequest') &&
+                                            quali?.access &&
+                                            checkQualificationAccess(quali.access, quali.creator, AccessLevel.REQUEST)
+                                        "
+                                        type="button"
+                                        class="inline-flex items-center gap-x-1.5 rounded-md bg-primary-500 px-3 py-2 text-sm font-semibold text-neutral hover:bg-primary-400"
+                                        @click="openRequest = true"
+                                    >
+                                        <AccountSchoolIcon class="-ml-0.5 w-5 h-auto" aria-hidden="true" />
+                                        {{ $t('common.request') }}
+                                    </button>
+
                                     <NuxtLink
-                                        v-if="can('QualificationsService.UpdateQualification')"
+                                        v-if="
+                                            can('QualificationsService.UpdateQualification') &&
+                                            quali?.access &&
+                                            checkQualificationAccess(quali.access, quali.creator, AccessLevel.EDIT)
+                                        "
                                         :to="{
                                             name: 'jobs-qualifications-id-edit',
                                             params: { id: quali.id },
@@ -89,9 +135,14 @@ const quali = computed(() => data.value?.qualification);
                                         {{ $t('common.edit') }}
                                     </NuxtLink>
                                     <button
-                                        v-if="can('QualificationsService.CreateQualification')"
+                                        v-if="
+                                            can('QualificationsService.DeleteQualification') &&
+                                            quali?.access &&
+                                            checkQualificationAccess(quali.access, quali.creator, AccessLevel.EDIT)
+                                        "
                                         type="button"
                                         class="inline-flex items-center gap-x-1.5 rounded-md bg-primary-500 px-3 py-2 text-sm font-semibold text-neutral hover:bg-primary-400"
+                                        @click="reveal(quali.id)"
                                     >
                                         <TrashCanIcon class="-ml-0.5 w-5 h-auto" aria-hidden="true" />
                                         {{ $t('common.delete') }}
@@ -194,7 +245,7 @@ const quali = computed(() => data.value?.qualification);
                                 </div>
                             </div>
 
-                            <div class="my-2 w-full">
+                            <div class="mt-2 w-full">
                                 <Disclosure
                                     v-slot="{ open }"
                                     as="div"
@@ -244,7 +295,7 @@ const quali = computed(() => data.value?.qualification);
                                 </Disclosure>
                             </div>
 
-                            <div class="w-full">
+                            <div v-if="quali.result" class="mt-2 w-full">
                                 <Disclosure
                                     v-slot="{ open }"
                                     as="div"
@@ -290,7 +341,7 @@ const quali = computed(() => data.value?.qualification);
                                 </Disclosure>
                             </div>
 
-                            <div class="w-full">
+                            <div class="mt-2 w-full">
                                 <Disclosure
                                     v-slot="{ open }"
                                     as="div"

@@ -67,6 +67,7 @@ watch(offset, async () => refresh());
                     class="w-full"
                     :pagination="data?.pagination"
                     :show-border="false"
+                    :refresh="refresh"
                     @offset-change="offset = $event"
                 />
             </div>

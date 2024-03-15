@@ -361,26 +361,10 @@ onBeforeUnmount(() => {
                 </div>
                 <div class="flex flex-row gap-2">
                     <div class="flex-1">
-                        <label for="category" class="block text-sm font-medium">
-                            {{ $t('common.category') }}
+                        <label for="description" class="block text-sm font-medium">
+                            {{ $t('common.description') }}
                         </label>
                         TODO
-                    </div>
-                    <div class="flex-1">
-                        <label for="state" class="block text-sm font-medium">
-                            {{ $t('common.state') }}
-                        </label>
-                        <VeeField
-                            name="state"
-                            type="text"
-                            class="block w-full rounded-md border-0 bg-base-700 py-1.5 text-neutral placeholder:text-accent-200 focus:ring-2 focus:ring-inset focus:ring-base-300 sm:text-sm sm:leading-6"
-                            :placeholder="`${$t('common.qualifications', 1)} ${$t('common.state')}`"
-                            :label="`${$t('common.qualifications', 1)} ${$t('common.state')}`"
-                            :disabled="!canEdit || !canDo.edit"
-                            @focusin="focusTablet(true)"
-                            @focusout="focusTablet(false)"
-                        />
-                        <VeeErrorMessage name="state" as="p" class="mt-2 text-sm text-error-400" />
                     </div>
                     <div class="flex-1">
                         <label for="closed" class="block text-sm font-medium"> {{ $t('common.close', 2) }}? </label>
@@ -449,7 +433,7 @@ onBeforeUnmount(() => {
                     :label="$t('common.content')"
                     :disabled="!canEdit || !canDo.edit"
                 >
-                    <DocEditor v-bind="field" model-value="" />
+                    <DocEditor v-bind="field" :model-value="field.value" />
                 </VeeField>
             </div>
 

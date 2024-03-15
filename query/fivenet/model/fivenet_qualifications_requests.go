@@ -12,7 +12,6 @@ import (
 )
 
 type FivenetQualificationsRequests struct {
-	ID              uint64     `sql:"primary_key" json:"id"`
 	CreatedAt       *time.Time `json:"created_at"`
 	DeletedAt       *time.Time `json:"deleted_at"`
 	QualificationID uint64     `json:"qualification_id"`
@@ -22,5 +21,5 @@ type FivenetQualificationsRequests struct {
 	ApprovedAt      *time.Time `json:"approved_at"`
 	ApproverComment *string    `json:"approver_comment"`
 	ApproverID      *int32     `json:"approver_id"`
-	ApproverJob     string     `json:"approver_job"`
+	ApproverJob     *string    `json:"approver_job"`
 }

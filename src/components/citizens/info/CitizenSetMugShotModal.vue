@@ -136,7 +136,7 @@ const onSubmitThrottle = useThrottleFn(async (e) => {
                             <form @submit.prevent="onSubmitThrottle">
                                 <div class="my-2 space-y-24">
                                     <div class="form-control flex-1">
-                                        <label for="job" class="block text-sm font-medium leading-6 text-neutral">
+                                        <label for="reason" class="block text-sm font-medium leading-6 text-neutral">
                                             {{ $t('common.reason') }}
                                         </label>
                                         <VeeField
@@ -153,7 +153,7 @@ const onSubmitThrottle = useThrottleFn(async (e) => {
                                 </div>
                                 <div class="my-2 space-y-24">
                                     <div class="form-control flex-1">
-                                        <label for="job" class="block text-sm font-medium leading-6 text-neutral">
+                                        <label for="mugShot" class="block text-sm font-medium leading-6 text-neutral">
                                             {{ $t('common.image') }}
                                         </label>
                                         <VeeField

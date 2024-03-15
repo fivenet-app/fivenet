@@ -17,7 +17,6 @@ type fivenetQualificationsRequestsTable struct {
 	mysql.Table
 
 	// Columns
-	ID              mysql.ColumnInteger
 	CreatedAt       mysql.ColumnTimestamp
 	DeletedAt       mysql.ColumnTimestamp
 	QualificationID mysql.ColumnInteger
@@ -68,7 +67,6 @@ func newFivenetQualificationsRequestsTable(schemaName, tableName, alias string) 
 
 func newFivenetQualificationsRequestsTableImpl(schemaName, tableName, alias string) fivenetQualificationsRequestsTable {
 	var (
-		IDColumn              = mysql.IntegerColumn("id")
 		CreatedAtColumn       = mysql.TimestampColumn("created_at")
 		DeletedAtColumn       = mysql.TimestampColumn("deleted_at")
 		QualificationIDColumn = mysql.IntegerColumn("qualification_id")
@@ -79,7 +77,7 @@ func newFivenetQualificationsRequestsTableImpl(schemaName, tableName, alias stri
 		ApproverCommentColumn = mysql.StringColumn("approver_comment")
 		ApproverIDColumn      = mysql.IntegerColumn("approver_id")
 		ApproverJobColumn     = mysql.StringColumn("approver_job")
-		allColumns            = mysql.ColumnList{IDColumn, CreatedAtColumn, DeletedAtColumn, QualificationIDColumn, UserIDColumn, UserCommentColumn, ApprovedColumn, ApprovedAtColumn, ApproverCommentColumn, ApproverIDColumn, ApproverJobColumn}
+		allColumns            = mysql.ColumnList{CreatedAtColumn, DeletedAtColumn, QualificationIDColumn, UserIDColumn, UserCommentColumn, ApprovedColumn, ApprovedAtColumn, ApproverCommentColumn, ApproverIDColumn, ApproverJobColumn}
 		mutableColumns        = mysql.ColumnList{CreatedAtColumn, DeletedAtColumn, QualificationIDColumn, UserIDColumn, UserCommentColumn, ApprovedColumn, ApprovedAtColumn, ApproverCommentColumn, ApproverIDColumn, ApproverJobColumn}
 	)
 
@@ -87,7 +85,6 @@ func newFivenetQualificationsRequestsTableImpl(schemaName, tableName, alias stri
 		Table: mysql.NewTable(schemaName, tableName, alias, allColumns...),
 
 		//Columns
-		ID:              IDColumn,
 		CreatedAt:       CreatedAtColumn,
 		DeletedAt:       DeletedAtColumn,
 		QualificationID: QualificationIDColumn,
