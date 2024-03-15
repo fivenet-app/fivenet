@@ -211,11 +211,11 @@ func (s *Server) CreateOrUpdateQualificationResult(ctx context.Context, req *Cre
 				tQualiResults.Summary,
 			).
 			SET(
-				tQualiResults.QualificationID.SET(jet.Uint64(req.Result.QualificationId)),
-				tQualiResults.UserID.SET(jet.Int32(req.Result.UserId)),
-				tQualiResults.Status.SET(jet.Int16(int16(req.Result.Status))),
-				tQualiResults.Score.SET(jet.Uint32(*req.Result.Score)),
-				tQualiResults.Summary.SET(jet.String(req.Result.Summary)),
+				req.Result.QualificationId,
+				req.Result.UserId,
+				req.Result.Status,
+				req.Result.Score,
+				req.Result.Summary,
 			).
 			WHERE(tQualiResults.ID.EQ(jet.Uint64(req.Result.Id)))
 
@@ -311,7 +311,7 @@ func (s *Server) DeleteQualificationResult(ctx context.Context, req *DeleteQuali
 		return nil, errswrap.NewError(errorsqualifications.ErrFailedQuery, err)
 	}
 
-	ok, err := s.checkIfUserHasAccessToQuali(ctx, re.QualificationId, userInfo, qualifications.AccessLevel_ACCESS_LEVEL_GRADE)
+	ok, err := s.checkIfUserHasAccessToQuali(ctx, re.QualificationId, userInfo, qualifications.AccessLevel_ACCESS_LEVEL_MANAGE)
 	if err != nil {
 		return nil, errswrap.NewError(errorsqualifications.ErrFailedQuery, err)
 	}
@@ -319,7 +319,20 @@ func (s *Server) DeleteQualificationResult(ctx context.Context, req *DeleteQuali
 		return nil, errorsqualifications.ErrFailedQuery
 	}
 
-	// TODO
+	stmt := tQualiResults.
+		UPDATE(
+			tQualiResults.DeletedAt,
+		).
+		SET(
+			jet.CURRENT_TIMESTAMP(),
+		).
+		WHERE(
+			tQualiResults.ID.EQ(jet.Uint64(re.Id)),
+		)
+
+	if _, err := stmt.ExecContext(ctx, s.db); err != nil {
+		return nil, err
+	}
 
 	auditEntry.State = int16(rector.EventType_EVENT_TYPE_DELETED)
 

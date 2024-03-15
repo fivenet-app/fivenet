@@ -127,13 +127,15 @@ func (s *Server) CreateOrUpdateQualificationRequest(ctx context.Context, req *Cr
 	}
 	defer s.aud.Log(auditEntry, req)
 
-	ok, err := s.checkIfUserHasAccessToQuali(ctx, req.Request.QualificationId, userInfo, qualifications.AccessLevel_ACCESS_LEVEL_GRADE)
+	ok, err := s.checkIfUserHasAccessToQuali(ctx, req.Request.QualificationId, userInfo, qualifications.AccessLevel_ACCESS_LEVEL_REQUEST)
 	if err != nil {
 		return nil, errswrap.NewError(errorsqualifications.ErrFailedQuery, err)
 	}
 	if !ok {
 		return nil, errorsqualifications.ErrFailedQuery
 	}
+
+	// TODO if user has grade access or higher, make sure to set the approver fields, otherwise nil them
 
 	if req.Request.QualificationId <= 0 {
 		stmt := tQualiRequests.
@@ -185,14 +187,14 @@ func (s *Server) CreateOrUpdateQualificationRequest(ctx context.Context, req *Cr
 				tQualiRequests.ApproverJob,
 			).
 			SET(
-				tQualiRequests.QualificationID.SET(jet.Uint64(req.Request.QualificationId)),
-				tQualiRequests.UserID.SET(jet.Int32(req.Request.UserId)),
-				tQualiRequests.UserComment.SET(jet.String(*req.Request.UserComment)),
-				tQualiRequests.Approved.SET(jet.Bool(*req.Request.Approved)),
-				tQualiRequests.ApprovedAt.SET(jet.TimestampT(req.Request.ApprovedAt.AsTime())),
-				tQualiRequests.ApproverComment.SET(jet.String(*req.Request.ApproverComment)),
-				tQualiRequests.ApproverID.SET(jet.Int32(*req.Request.ApproverId)),
-				tQualiRequests.ApproverJob.SET(jet.String(*req.Request.ApproverJob)),
+				req.Request.QualificationId,
+				req.Request.UserId,
+				req.Request.UserComment,
+				req.Request.Approved,
+				req.Request.ApprovedAt.AsTime(),
+				req.Request.ApproverComment,
+				req.Request.ApproverId,
+				req.Request.ApproverJob,
 			).
 			WHERE(jet.AND(
 				tQualiRequests.QualificationID.EQ(jet.Uint64(req.Request.QualificationId)),
@@ -293,7 +295,7 @@ func (s *Server) DeleteQualificationReq(ctx context.Context, req *DeleteQualific
 		return nil, errswrap.NewError(errorsqualifications.ErrFailedQuery, err)
 	}
 
-	ok, err := s.checkIfUserHasAccessToQuali(ctx, re.QualificationId, userInfo, qualifications.AccessLevel_ACCESS_LEVEL_GRADE)
+	ok, err := s.checkIfUserHasAccessToQuali(ctx, re.QualificationId, userInfo, qualifications.AccessLevel_ACCESS_LEVEL_MANAGE)
 	if err != nil {
 		return nil, errswrap.NewError(errorsqualifications.ErrFailedQuery, err)
 	}
@@ -301,7 +303,20 @@ func (s *Server) DeleteQualificationReq(ctx context.Context, req *DeleteQualific
 		return nil, errorsqualifications.ErrFailedQuery
 	}
 
-	// TODO
+	stmt := tQualiRequests.
+		UPDATE(
+			tQualiRequests.DeletedAt,
+		).
+		SET(
+			jet.CURRENT_TIMESTAMP(),
+		).
+		WHERE(
+			tQualiRequests.ID.EQ(jet.Uint64(re.Id)),
+		)
+
+	if _, err := stmt.ExecContext(ctx, s.db); err != nil {
+		return nil, err
+	}
 
 	auditEntry.State = int16(rector.EventType_EVENT_TYPE_DELETED)
 

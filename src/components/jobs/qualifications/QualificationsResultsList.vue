@@ -6,6 +6,7 @@ import DataPendingBlock from '~/components/partials/data/DataPendingBlock.vue';
 import { ResultStatus } from '~~/gen/ts/resources/qualifications/qualifications';
 import type { ListQualificationsResultsResponse } from '~~/gen/ts/services/qualifications/qualifications';
 import QualificationsResultsListEntry from '~/components/jobs/qualifications/QualificationsResultsListEntry.vue';
+import TablePagination from '~/components/partials/elements/TablePagination.vue';
 
 const { $grpc } = useNuxtApp();
 
@@ -29,10 +30,12 @@ async function listQualificationsResults(): Promise<ListQualificationsResultsRes
         throw e;
     }
 }
+
+watch(offset, async () => refresh());
 </script>
 
 <template>
-    <div class="mt-4 overflow-hidden rounded-lg bg-base-700 shadow">
+    <div class="overflow-hidden rounded-lg bg-base-700 shadow">
         <div class="border-b border-gray-200 bg-base-600 px-4 py-5 sm:p-6">
             <div class="-ml-4 -mt-4 flex flex-wrap items-center justify-between sm:flex-nowrap">
                 <div class="ml-4 mt-4">
@@ -57,6 +60,16 @@ async function listQualificationsResults(): Promise<ListQualificationsResultsRes
                     <QualificationsResultsListEntry v-for="result in data?.results" :key="result.id" :qualification="result" />
                 </ul>
             </template>
+        </div>
+        <div class="border-t border-gray-200 bg-base-600 px-4 py-5 sm:p-6">
+            <div class="-ml-4 -mt-4 flex items-center">
+                <TablePagination
+                    class="w-full"
+                    :pagination="data?.pagination"
+                    :show-border="false"
+                    @offset-change="offset = $event"
+                />
+            </div>
         </div>
     </div>
 </template>

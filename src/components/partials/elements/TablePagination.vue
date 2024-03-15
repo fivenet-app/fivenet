@@ -5,10 +5,17 @@ import { Popover, PopoverButton, PopoverPanel } from '@headlessui/vue';
 import { Float } from '@headlessui-float/vue';
 import { PaginationResponse } from '~~/gen/ts/resources/common/database/database';
 
-const props = defineProps<{
-    pagination: undefined | PaginationResponse;
-    refresh?: () => Promise<any>;
-}>();
+const props = withDefaults(
+    defineProps<{
+        pagination: undefined | PaginationResponse;
+        refresh?: () => Promise<any>;
+        showBorder?: boolean;
+    }>(),
+    {
+        refresh: undefined,
+        showBorder: true,
+    },
+);
 
 defineEmits<{
     (e: 'offsetChange', offset: bigint): void;
@@ -78,7 +85,8 @@ const pageNumber = ref(currentPage.value.toString());
 <template>
     <nav
         v-if="pagination !== undefined"
-        class="flex items-center justify-between border-t px-4 py-3 sm:px-6"
+        class="flex items-center justify-between px-4 py-3 sm:px-6"
+        :class="showBorder ? 'border-t' : ''"
         aria-label="Pagination"
     >
         <div v-if="total > -1" class="hidden sm:block">

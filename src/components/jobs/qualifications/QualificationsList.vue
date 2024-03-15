@@ -4,6 +4,7 @@ import QualificationsListEntry from '~/components/jobs/qualifications/Qualificat
 import DataErrorBlock from '~/components/partials/data/DataErrorBlock.vue';
 import DataNoDataBlock from '~/components/partials/data/DataNoDataBlock.vue';
 import DataPendingBlock from '~/components/partials/data/DataPendingBlock.vue';
+import TablePagination from '~/components/partials/elements/TablePagination.vue';
 import type { ListQualificationsResponse } from '~~/gen/ts/services/qualifications/qualifications';
 
 const { $grpc } = useNuxtApp();
@@ -27,6 +28,8 @@ async function listQualifications(): Promise<ListQualificationsResponse> {
         throw e;
     }
 }
+
+watch(offset, async () => refresh());
 </script>
 
 <template>
@@ -68,6 +71,16 @@ async function listQualifications(): Promise<ListQualificationsResponse> {
                     />
                 </ul>
             </template>
+        </div>
+        <div class="border-t border-gray-200 bg-base-600 px-4 py-5 sm:p-6">
+            <div class="-ml-4 -mt-4 flex items-center">
+                <TablePagination
+                    class="w-full"
+                    :pagination="data?.pagination"
+                    :show-border="false"
+                    @offset-change="offset = $event"
+                />
+            </div>
         </div>
     </div>
 </template>
