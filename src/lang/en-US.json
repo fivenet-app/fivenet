@@ -104,12 +104,6 @@
                 "title": "Job Overview"
             }
         },
-        "qualifications": {
-            "title": "Qualifications",
-            "single": {
-                "title": "Qualification"
-            }
-        },
         "vehicles": {
             "title": "Vehicles"
         },
@@ -118,6 +112,12 @@
             "subtitle": "A fatal error occured, please try again in a few seconds.",
             "error_message": "Error message:",
             "copy_error": "Copy Error message"
+        },
+        "qualifications": {
+            "title": "Qualifications",
+            "single": {
+                "title": "Qualification"
+            }
         }
     },
     "copyright": "Copyright © {year} Galexrt All rights reserved.",
@@ -1678,19 +1678,19 @@
             },
             "ListQualifications": {
                 "key": "List Qualifications",
-                "description": ""
+                "description": "List available qualifications"
             },
             "GetQualification": {
                 "key": "Get Qualifications",
-                "description": ""
+                "description": "Retrieve qualification info"
             },
             "CreateQualification": {
                 "key": "Create Qualifications",
-                "description": ""
+                "description": "Create qualifications"
             },
             "UpdateQualification": {
                 "key": "Update Qualifications",
-                "description": "",
+                "description": "Update qualifications",
                 "attrs": {
                     "Own": "Own",
                     "Lower_Rank": "Lower Rank",
@@ -1703,7 +1703,7 @@
             },
             "DeleteQualification": {
                 "key": "Delete Qualifications",
-                "description": "",
+                "description": "Delete qualifications",
                 "attrs": {
                     "Own": "Own",
                     "Lower_Rank": "Lower Rank",
@@ -1716,23 +1716,23 @@
             },
             "ListQualificationsResults": {
                 "key": "List Qualification Results",
-                "description": ""
+                "description": "List qualification results"
             },
             "CreateOrUpdateQualificationResult": {
                 "key": "Create or Update Qualification Results",
-                "description": ""
+                "description": "Create and update qualification results"
             },
             "DeleteQualificationResult": {
                 "key": "Delete Qualification Results",
-                "description": ""
+                "description": "Delete qualification results"
             },
             "ListQualificationRequests": {
                 "key": "List Qualification Requests",
-                "description": ""
+                "description": "List qualification requests"
             },
             "DeleteQualificationReq": {
                 "key": "Delete Qualification Requests",
-                "description": ""
+                "description": "Delete qualification requests"
             }
         }
     },
