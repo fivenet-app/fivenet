@@ -649,6 +649,11 @@
             "licenses": {
                 "subtitle": "Liste und Informationen zu den Lizenzen des in FiveNet verwendeten Code, Bibliotheken und Medien."
             }
+        },
+        "qualifications": {
+            "create_new_qualification": "Erstelle neue Qualifikation",
+            "user_qualifications": "Ihre Qualifikationen",
+            "all_qualifications": "Alle Qualifikationen"
         }
     },
     "common": {
@@ -1664,6 +1669,71 @@
                 "key": "Zeige inaktive Kollegen an",
                 "description": "Zeige inaktive Kollegen nach Tagen an."
             }
+        },
+        "QualificationsService": {
+            "category": "Qualifikationen",
+            "CreateOrUpdateQualificationRequest": {
+                "key": "Create or Update Qualification Request",
+                "description": "Create or Update Qualification Request"
+            },
+            "ListQualifications": {
+                "key": "Auflisten von Qualifikationen",
+                "description": "Auflisten verfügbarer Qualifikationen"
+            },
+            "GetQualification": {
+                "key": "Qualifikation aufrufen",
+                "description": "Retrieve qualification info"
+            },
+            "CreateQualification": {
+                "key": "Qualifikationen erstellen",
+                "description": "Create qualifications"
+            },
+            "UpdateQualification": {
+                "key": "Qualifikation aktualisieren",
+                "description": "Update qualifications",
+                "attrs": {
+                    "Own": "Eigene",
+                    "Lower_Rank": "Niedrigerer Rang",
+                    "Same_Rank": "Gleicher Rang",
+                    "Any": "Egal"
+                },
+                "attrs_types": {
+                    "Access": "Zugriff auf fraktionseigene Qualifikationen"
+                }
+            },
+            "DeleteQualification": {
+                "key": "Qualifikationen löschen",
+                "description": "Delete qualifications",
+                "attrs": {
+                    "Own": "Eigene",
+                    "Lower_Rank": "Niedrigerer Rang",
+                    "Same_Rank": "Gleicher Rang",
+                    "Any": "Egal"
+                },
+                "attrs_types": {
+                    "Access": "Zugriff auf fraktionseigene Qualifikationen"
+                }
+            },
+            "ListQualificationsResults": {
+                "key": "List Qualification Results",
+                "description": "List qualification results"
+            },
+            "CreateOrUpdateQualificationResult": {
+                "key": "Create or Update Qualification Results",
+                "description": "Create and update qualification results"
+            },
+            "DeleteQualificationResult": {
+                "key": "Delete Qualification Results",
+                "description": "Delete qualification results"
+            },
+            "ListQualificationRequests": {
+                "key": "List Qualification Requests",
+                "description": "List qualification requests"
+            },
+            "DeleteQualificationReq": {
+                "key": "Delete Qualification Requests",
+                "description": "Delete qualification requests"
+            }
         }
     },
     "errors": {
@@ -1948,6 +2018,7 @@
                 "REQUEST": "Anfragen",
                 "TAKE": "Prüfung absolvieren",
                 "GRADE": "Benoten",
+                "MANAGE": "Verwalten",
                 "EDIT": "Editieren"
             },
             "ResultStatus": {
