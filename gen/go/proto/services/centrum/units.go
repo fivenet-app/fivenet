@@ -36,7 +36,7 @@ func (s *Server) ListUnits(ctx context.Context, req *ListUnitsRequest) (*ListUni
 		UserJob: userInfo.Job,
 		State:   int16(rector.EventType_EVENT_TYPE_ERRORED),
 	}
-	defer s.auditer.Log(auditEntry, req)
+	defer s.aud.Log(auditEntry, req)
 
 	resp := &ListUnitsResponse{
 		Units: []*centrum.Unit{},
@@ -62,7 +62,7 @@ func (s *Server) CreateOrUpdateUnit(ctx context.Context, req *CreateOrUpdateUnit
 		UserJob: userInfo.Job,
 		State:   int16(rector.EventType_EVENT_TYPE_ERRORED),
 	}
-	defer s.auditer.Log(auditEntry, req)
+	defer s.aud.Log(auditEntry, req)
 
 	req.Unit.Job = userInfo.Job
 
@@ -100,7 +100,7 @@ func (s *Server) DeleteUnit(ctx context.Context, req *DeleteUnitRequest) (*Delet
 		UserJob: userInfo.Job,
 		State:   int16(rector.EventType_EVENT_TYPE_ERRORED),
 	}
-	defer s.auditer.Log(auditEntry, req)
+	defer s.aud.Log(auditEntry, req)
 
 	resp := &DeleteUnitResponse{}
 
@@ -123,7 +123,7 @@ func (s *Server) UpdateUnitStatus(ctx context.Context, req *UpdateUnitStatusRequ
 		UserJob: userInfo.Job,
 		State:   int16(rector.EventType_EVENT_TYPE_ERRORED),
 	}
-	defer s.auditer.Log(auditEntry, req)
+	defer s.aud.Log(auditEntry, req)
 
 	unit, err := s.state.GetUnit(ctx, userInfo.Job, req.UnitId)
 	if err != nil {
@@ -161,7 +161,7 @@ func (s *Server) AssignUnit(ctx context.Context, req *AssignUnitRequest) (*Assig
 		UserJob: userInfo.Job,
 		State:   int16(rector.EventType_EVENT_TYPE_ERRORED),
 	}
-	defer s.auditer.Log(auditEntry, req)
+	defer s.aud.Log(auditEntry, req)
 
 	unit, err := s.state.GetUnit(ctx, userInfo.Job, req.UnitId)
 	if err != nil {

@@ -9,7 +9,7 @@ useHead({
 definePageMeta({
     title: 'pages.documents.edit.title',
     requiresAuth: true,
-    permission: 'JobsQualificationsService.UpdateQualification',
+    permission: 'QualificationsService.UpdateQualification',
     validate: async (route) => {
         route = route as TypedRouteFromName<'jobs-qualifications-id-edit'>;
         // Check if the id is made up of digits

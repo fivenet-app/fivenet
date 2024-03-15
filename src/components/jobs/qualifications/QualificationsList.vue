@@ -4,17 +4,17 @@ import QualificationsListEntry from '~/components/jobs/qualifications/Qualificat
 import DataErrorBlock from '~/components/partials/data/DataErrorBlock.vue';
 import DataNoDataBlock from '~/components/partials/data/DataNoDataBlock.vue';
 import DataPendingBlock from '~/components/partials/data/DataPendingBlock.vue';
-import type { ListQualificationsResponse } from '~~/gen/ts/services/jobs/qualifications';
+import type { ListQualificationsResponse } from '~~/gen/ts/services/qualifications/qualifications';
 
 const { $grpc } = useNuxtApp();
 
 const offset = ref(0n);
 
-const { data, pending, refresh, error } = useLazyAsyncData(`jobs-qualifications-${offset.value}`, () => listQualifications());
+const { data, pending, refresh, error } = useLazyAsyncData(`qualifications-${offset.value}`, () => listQualifications());
 
 async function listQualifications(): Promise<ListQualificationsResponse> {
     try {
-        const call = $grpc.getJobsQualificationsClient().listQualifications({
+        const call = $grpc.getQualificationsClient().listQualifications({
             pagination: {
                 offset: offset.value,
             },
@@ -41,7 +41,7 @@ async function listQualifications(): Promise<ListQualificationsResponse> {
                 </div>
                 <div class="ml-4 mt-4 flex-shrink-0">
                     <NuxtLink
-                        v-if="can('JobsQualificationsService.CreateQualification')"
+                        v-if="can('QualificationsService.CreateQualification')"
                         :to="{ name: 'jobs-qualifications-create' }"
                         class="relative inline-flex items-center rounded-md bg-primary-500 px-3 py-2 text-sm font-semibold text-neutral shadow-sm hover:bg-primary-500 focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-primary-600"
                     >

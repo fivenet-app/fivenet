@@ -30,7 +30,7 @@ func (s *Server) UpdateSettings(ctx context.Context, req *UpdateSettingsRequest)
 		UserJob: userInfo.Job,
 		State:   int16(rector.EventType_EVENT_TYPE_ERRORED),
 	}
-	defer s.auditer.Log(auditEntry, req)
+	defer s.aud.Log(auditEntry, req)
 
 	settings, err := s.state.UpdateSettingsInDB(ctx, userInfo.Job, req.Settings)
 	if err != nil {

@@ -44,6 +44,7 @@ import (
 	pbjobs "github.com/galexrt/fivenet/gen/go/proto/services/jobs"
 	pblivemapper "github.com/galexrt/fivenet/gen/go/proto/services/livemapper"
 	pbnotificator "github.com/galexrt/fivenet/gen/go/proto/services/notificator"
+	pbqualifications "github.com/galexrt/fivenet/gen/go/proto/services/qualifications"
 	pbrector "github.com/galexrt/fivenet/gen/go/proto/services/rector"
 
 	// Modules
@@ -154,10 +155,8 @@ func getFxBaseOpts(startTimeout time.Duration) []fx.Option {
 			userinfo.NewUIRetriever,
 			postals.New,
 			timeclock.New,
-		),
 
-		// HTTP Services
-		fx.Provide(
+			// HTTP Services
 			server.AsService(api.New),
 			server.AsService(oauth2.New),
 			server.AsService(images.New),
@@ -175,6 +174,7 @@ func getFxBaseOpts(startTimeout time.Duration) []fx.Option {
 			grpc.AsService(pbjobs.NewServer),
 			grpc.AsService(pblivemapper.NewServer),
 			grpc.AsService(pbnotificator.NewServer),
+			grpc.AsService(pbqualifications.NewServer),
 			grpc.AsService(pbrector.NewServer),
 		),
 

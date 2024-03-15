@@ -1,0 +1,150 @@
+syntax = "proto3";
+
+package resources.qualifications;
+
+import "resources/timestamp/timestamp.proto";
+import "resources/users/users.proto";
+import "validate/validate.proto";
+
+option go_package = "github.com/galexrt/fivenet/gen/go/proto/resources/qualifications;qualifications";
+
+message Qualification {
+  uint64 id = 1 [jstype = JS_STRING]; // @gotags: sql:"primary_key" alias:"id"
+  optional resources.timestamp.Timestamp created_at = 2;
+  optional resources.timestamp.Timestamp updated_at = 3;
+  optional resources.timestamp.Timestamp deleted_at = 4;
+  string job = 5 [(validate.rules).string.max_len = 20];
+  uint32 weight = 6 [(validate.rules).uint32.lt = 4294967295];
+  bool closed = 7;
+  // @sanitize: method=StripTags
+  string abbreviation = 8 [(validate.rules).string.max_len = 20];
+  // @sanitize
+  string title = 9 [(validate.rules).string = {
+    min_len: 3,
+    max_len: 1024
+  }];
+  // @sanitize: method=StripTags
+  optional string description = 10 [(validate.rules).string.max_len = 512];
+  // @sanitize
+  string content = 11 [(validate.rules).string = {
+    min_len: 20,
+    max_bytes: 750000 // 0.75 Megabytes
+  }];
+  int32 creator_id = 12;
+  optional resources.users.UserShort creator = 13; // @gotags: alias:"creator"
+  string creator_job = 14 [(validate.rules).string.max_len = 20];
+  QualificationAccess access = 15;
+  repeated QualificationRequirement requirements = 16;
+  optional QualificationDiscordSettings discord_settings = 17;
+  optional QualificationResult result = 18;
+}
+
+message QualificationShort {
+  uint64 id = 1 [jstype = JS_STRING]; // @gotags: sql:"primary_key" alias:"id"
+  optional resources.timestamp.Timestamp created_at = 2;
+  optional resources.timestamp.Timestamp updated_at = 3;
+  optional resources.timestamp.Timestamp deleted_at = 4;
+  string job = 5 [(validate.rules).string.max_len = 20];
+  uint32 weight = 6 [(validate.rules).uint32.lt = 4294967295];
+  bool closed = 7;
+  // @sanitize: method=StripTags
+  string abbreviation = 8 [(validate.rules).string.max_len = 20];
+  // @sanitize
+  string title = 9 [(validate.rules).string = {
+    min_len: 3,
+    max_len: 1024
+  }];
+  // @sanitize: method=StripTags
+  optional string description = 10 [(validate.rules).string.max_len = 512];
+  int32 creator_id = 12;
+  optional resources.users.UserShort creator = 13; // @gotags: alias:"creator"
+  string creator_job = 14 [(validate.rules).string.max_len = 20];
+  repeated QualificationRequirement requirements = 16;
+  optional QualificationResult result = 18;
+}
+
+enum AccessLevelUpdateMode {
+  ACCESS_LEVEL_UPDATE_MODE_UNSPECIFIED = 0;
+  ACCESS_LEVEL_UPDATE_MODE_UPDATE = 1;
+  ACCESS_LEVEL_UPDATE_MODE_DELETE = 2;
+  ACCESS_LEVEL_UPDATE_MODE_CLEAR = 3;
+}
+
+enum AccessLevel {
+  ACCESS_LEVEL_UNSPECIFIED = 0;
+  ACCESS_LEVEL_BLOCKED = 1;
+  ACCESS_LEVEL_VIEW = 2;
+  ACCESS_LEVEL_REQUEST = 3;
+  ACCESS_LEVEL_TAKE = 4;
+  ACCESS_LEVEL_GRADE = 5;
+  ACCESS_LEVEL_MANAGE = 6;
+  ACCESS_LEVEL_EDIT = 7;
+}
+
+message QualificationAccess {
+  repeated QualificationJobAccess jobs = 1;
+}
+
+message QualificationJobAccess {
+  uint64 id = 1 [jstype = JS_STRING]; // @gotags: sql:"primary_key" alias:"id"
+  optional resources.timestamp.Timestamp created_at = 2;
+  uint64 qualification_id = 4 [jstype = JS_STRING];
+  string job = 5 [(validate.rules).string.max_len = 20];
+  optional string job_label = 6 [(validate.rules).string.max_len = 50];
+  int32 minimum_grade = 7 [(validate.rules).int32.gt = 0];
+  optional string job_grade_label = 8 [(validate.rules).string.max_len = 50];
+  AccessLevel access = 9 [(validate.rules).enum.defined_only = true];
+}
+
+message QualificationRequirement {
+  uint64 id = 1 [jstype = JS_STRING]; // @gotags: sql:"primary_key" alias:"id"
+  optional resources.timestamp.Timestamp created_at = 2;
+  uint64 qualification_id = 3 [jstype = JS_STRING];
+  uint64 target_qualification_id = 4 [jstype = JS_STRING];
+  optional QualificationShort target_qualification = 5;  // @gotags: alias:"targetqualification.*"
+}
+
+message QualificationDiscordSettings {
+  bool sync_enabled = 1;
+  optional string role_name = 2 [(validate.rules).string.max_len = 50];
+}
+
+enum ResultStatus {
+  RESULT_STATUS_UNSPECIFIED = 0;
+  RESULT_STATUS_PENDING = 1;
+  RESULT_STATUS_FAILED = 2;
+  RESULT_STATUS_SUCCESSFUL = 3;
+}
+
+message QualificationResult {
+  uint64 id = 1 [jstype = JS_STRING];
+  optional resources.timestamp.Timestamp created_at = 2;
+  optional resources.timestamp.Timestamp deleted_at = 3;
+  uint64 qualification_id = 4 [jstype = JS_STRING];
+  int32 user_id = 5;
+  resources.users.UserShort user = 6;
+  ResultStatus status = 7;
+  optional uint32 score = 8 [(validate.rules).uint32.lt = 1000];
+  // @sanitize: method=StripTags
+  string summary = 9 [(validate.rules).string = {min_len: 3, max_len: 512}];
+  int32 creator_id = 10;
+  resources.users.UserShort creator = 11;
+  string creator_job = 12 [(validate.rules).string.max_len = 20];
+}
+
+message QualificationRequest {
+  uint64 id = 1 [jstype = JS_STRING];
+  optional resources.timestamp.Timestamp created_at = 2;
+  optional resources.timestamp.Timestamp deleted_at = 3;
+  uint64 qualification_id = 4 [jstype = JS_STRING];
+  int32 user_id = 5;
+  resources.users.UserShort user = 6;
+  // @sanitize: method=StripTags
+  optional string user_comment = 7 [(validate.rules).string = {max_len: 512}];
+  optional bool approved = 8;
+  optional resources.timestamp.Timestamp approved_at = 9;
+  optional string approver_comment = 10 [(validate.rules).string = {max_len: 512}];
+  optional int32 approver_id = 11;
+  optional resources.users.UserShort approver = 12;
+  optional string approver_job = 13;
+}

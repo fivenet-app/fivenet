@@ -21,8 +21,8 @@ import DataErrorBlock from '~/components/partials/data/DataErrorBlock.vue';
 import DataNoDataBlock from '~/components/partials/data/DataNoDataBlock.vue';
 import DataPendingBlock from '~/components/partials/data/DataPendingBlock.vue';
 import GenericTime from '~/components/partials/elements/GenericTime.vue';
-import { AccessLevel, ResultStatus } from '~~/gen/ts/resources/jobs/qualifications';
-import type { GetQualificationResponse } from '~~/gen/ts/services/jobs/qualifications';
+import { AccessLevel, ResultStatus } from '~~/gen/ts/resources/qualifications/qualifications';
+import type { GetQualificationResponse } from '~~/gen/ts/services/qualifications/qualifications';
 
 const props = defineProps<{
     id: string;
@@ -30,11 +30,11 @@ const props = defineProps<{
 
 const { $grpc } = useNuxtApp();
 
-const { data, pending, refresh, error } = useLazyAsyncData(`jobs-qualification-${props.id}`, () => getQualification(props.id));
+const { data, pending, refresh, error } = useLazyAsyncData(`qualification-${props.id}`, () => getQualification(props.id));
 
 async function getQualification(qualificationId: string): Promise<GetQualificationResponse> {
     try {
-        const call = $grpc.getJobsQualificationsClient().getQualification({
+        const call = $grpc.getQualificationsClient().getQualification({
             qualificationId,
         });
         const { response } = await call;
@@ -77,7 +77,7 @@ const quali = computed(() => data.value?.qualification);
 
                                 <div class="flex space-x-2 self-end">
                                     <NuxtLink
-                                        v-if="can('JobsQualificationsService.UpdateQualification')"
+                                        v-if="can('QualificationsService.UpdateQualification')"
                                         :to="{
                                             name: 'jobs-qualifications-id-edit',
                                             params: { id: quali.id },
@@ -89,7 +89,7 @@ const quali = computed(() => data.value?.qualification);
                                         {{ $t('common.edit') }}
                                     </NuxtLink>
                                     <button
-                                        v-if="can('JobsQualificationsService.CreateQualification')"
+                                        v-if="can('QualificationsService.CreateQualification')"
                                         type="button"
                                         class="inline-flex items-center gap-x-1.5 rounded-md bg-primary-500 px-3 py-2 text-sm font-semibold text-neutral hover:bg-primary-400"
                                     >

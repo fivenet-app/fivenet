@@ -65,7 +65,7 @@ const tabs: { id: string; name: string; icon: DefineComponent; permission: Perms
         name: 'pages.jobs.qualifications.title',
         to: { name: 'jobs-qualifications' },
         icon: markRaw(SchoolIcon),
-        permission: 'JobsQualificationsService.ListQualifications' as Perms,
+        permission: 'QualificationsService.ListQualifications' as Perms,
     },
     {
         id: 'conduct',
@@ -247,7 +247,7 @@ today.setMilliseconds(0);
                         <TabPanel v-if="can('JobsTimeclockService.ListTimeclock')">
                             <TimeclockOverviewBlock :user-id="userId" />
                         </TabPanel>
-                        <TabPanel v-if="can('JobsQualificationsService.ListQualifications')">
+                        <TabPanel v-if="can('QualificationsService.ListQualifications')">
                             <p class="text-xl text-neutral">TODO</p>
                             <!-- TODO show colleague's qualifications -->
                         </TabPanel>

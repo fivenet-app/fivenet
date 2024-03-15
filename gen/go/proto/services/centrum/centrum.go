@@ -41,7 +41,7 @@ type Server struct {
 	tracer  trace.Tracer
 	db      *sql.DB
 	ps      perms.Permissions
-	auditer audit.IAuditer
+	aud     audit.IAuditer
 	js      jetstream.JetStream
 	tracker tracker.ITracker
 	postals postals.Postals
@@ -84,7 +84,7 @@ func NewServer(p Params) (*Server, error) {
 
 		db:      p.DB,
 		ps:      p.Perms,
-		auditer: p.Audit,
+		aud:     p.Audit,
 		js:      p.JS,
 		tracker: p.Tracker,
 		postals: p.Postals,
@@ -329,7 +329,7 @@ func (s *Server) TakeControl(ctx context.Context, req *TakeControlRequest) (*Tak
 		UserJob: userInfo.Job,
 		State:   int16(rector.EventType_EVENT_TYPE_ERRORED),
 	}
-	defer s.auditer.Log(auditEntry, req)
+	defer s.aud.Log(auditEntry, req)
 
 	if err := s.state.DisponentSignOn(ctx, userInfo.Job, userInfo.UserId, req.Signon); err != nil {
 		return nil, err

@@ -231,7 +231,7 @@ func (s *Server) AddDocumentReference(ctx context.Context, req *AddDocumentRefer
 		UserJob: userInfo.Job,
 		State:   int16(rector.EventType_EVENT_TYPE_ERRORED),
 	}
-	defer s.auditer.Log(auditEntry, req)
+	defer s.aud.Log(auditEntry, req)
 
 	if req.Reference.SourceDocumentId == req.Reference.TargetDocumentId {
 		return nil, errorsdocstore.ErrFeedRefSelf
@@ -304,7 +304,7 @@ func (s *Server) RemoveDocumentReference(ctx context.Context, req *RemoveDocumen
 		UserJob: userInfo.Job,
 		State:   int16(rector.EventType_EVENT_TYPE_ERRORED),
 	}
-	defer s.auditer.Log(auditEntry, req)
+	defer s.aud.Log(auditEntry, req)
 
 	var docIDs struct {
 		Source uint64
@@ -363,7 +363,7 @@ func (s *Server) AddDocumentRelation(ctx context.Context, req *AddDocumentRelati
 		UserJob: userInfo.Job,
 		State:   int16(rector.EventType_EVENT_TYPE_ERRORED),
 	}
-	defer s.auditer.Log(auditEntry, req)
+	defer s.aud.Log(auditEntry, req)
 
 	check, err := s.checkIfUserHasAccessToDoc(ctx, req.Relation.DocumentId, userInfo, documents.AccessLevel_ACCESS_LEVEL_EDIT)
 	if err != nil {
@@ -442,7 +442,7 @@ func (s *Server) RemoveDocumentRelation(ctx context.Context, req *RemoveDocument
 		UserJob: userInfo.Job,
 		State:   int16(rector.EventType_EVENT_TYPE_ERRORED),
 	}
-	defer s.auditer.Log(auditEntry, req)
+	defer s.aud.Log(auditEntry, req)
 
 	var docID struct {
 		ID uint64

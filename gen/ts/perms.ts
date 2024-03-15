@@ -17,13 +17,13 @@
 // source: resources/filestore/file.proto
 // source: resources/jobs/colleagues.proto
 // source: resources/jobs/conduct.proto
-// source: resources/jobs/qualifications.proto
 // source: resources/jobs/timeclock.proto
 // source: resources/laws/laws.proto
 // source: resources/livemap/livemap.proto
 // source: resources/livemap/tracker.proto
 // source: resources/notifications/notifications.proto
 // source: resources/permissions/permissions.proto
+// source: resources/qualifications/qualifications.proto
 // source: resources/rector/audit.proto
 // source: resources/rector/config.proto
 // source: resources/timestamp/timestamp.proto
@@ -38,10 +38,10 @@
 // source: services/docstore/docstore.proto
 // source: services/jobs/conduct.proto
 // source: services/jobs/jobs.proto
-// source: services/jobs/qualifications.proto
 // source: services/jobs/timeclock.proto
 // source: services/livemapper/livemap.proto
 // source: services/notificator/notificator.proto
+// source: services/qualifications/qualifications.proto
 // source: services/rector/config.proto
 // source: services/rector/filestore.proto
 // source: services/rector/laws.proto
@@ -94,15 +94,6 @@ export type Perms =
 	| 'JobsConductService.DeleteConductEntry'
 	| 'JobsConductService.ListConductEntries'
 	| 'JobsConductService.UpdateConductEntry'
-	| 'JobsQualificationsService.CreateOrUpdateQualificationRequest'
-	| 'JobsQualificationsService.CreateOrUpdateQualificationResult'
-	| 'JobsQualificationsService.CreateQualification'
-	| 'JobsQualificationsService.DeleteQualification'
-	| 'JobsQualificationsService.GetQualification'
-	| 'JobsQualificationsService.ListQualificationRequests'
-	| 'JobsQualificationsService.ListQualifications'
-	| 'JobsQualificationsService.ListQualificationsResults'
-	| 'JobsQualificationsService.UpdateQualification'
 	| 'JobsService.GetColleague'
 	| 'JobsService.ListColleagueActivity'
 	| 'JobsService.ListColleagues'
@@ -113,6 +104,17 @@ export type Perms =
 	| 'LivemapperService.CreateOrUpdateMarker'
 	| 'LivemapperService.DeleteMarker'
 	| 'LivemapperService.Stream'
+	| 'QualificationsService.CreateOrUpdateQualificationRequest'
+	| 'QualificationsService.CreateOrUpdateQualificationResult'
+	| 'QualificationsService.CreateQualification'
+	| 'QualificationsService.DeleteQualification'
+	| 'QualificationsService.DeleteQualificationReq'
+	| 'QualificationsService.DeleteQualificationResult'
+	| 'QualificationsService.GetQualification'
+	| 'QualificationsService.ListQualificationRequests'
+	| 'QualificationsService.ListQualifications'
+	| 'QualificationsService.ListQualificationsResults'
+	| 'QualificationsService.UpdateQualification'
 	| 'RectorService.CreateRole'
 	| 'RectorService.DeleteRole'
 	| 'RectorService.GetJobProps'

@@ -53,20 +53,20 @@ type Server struct {
 	ps       perms.Permissions
 	cache    *mstlystcdata.Cache
 	enricher *mstlystcdata.UserAwareEnricher
-	auditer  audit.IAuditer
+	aud      audit.IAuditer
 	ui       userinfo.UserInfoRetriever
 	notif    notifi.INotifi
 
 	htmlDiff *htmldiff.Config
 }
 
-func NewServer(db *sql.DB, ps perms.Permissions, cache *mstlystcdata.Cache, enricher *mstlystcdata.UserAwareEnricher, auditer audit.IAuditer, ui userinfo.UserInfoRetriever, notif notifi.INotifi) *Server {
+func NewServer(db *sql.DB, ps perms.Permissions, cache *mstlystcdata.Cache, enricher *mstlystcdata.UserAwareEnricher, aud audit.IAuditer, ui userinfo.UserInfoRetriever, notif notifi.INotifi) *Server {
 	return &Server{
 		db:       db,
 		ps:       ps,
 		cache:    cache,
 		enricher: enricher,
-		auditer:  auditer,
+		aud:      aud,
 		ui:       ui,
 		notif:    notif,
 		htmlDiff: &htmldiff.Config{
@@ -189,7 +189,7 @@ func (s *Server) GetDocument(ctx context.Context, req *GetDocumentRequest) (*Get
 		UserJob: userInfo.Job,
 		State:   int16(rector.EventType_EVENT_TYPE_ERRORED),
 	}
-	defer s.auditer.Log(auditEntry, req)
+	defer s.aud.Log(auditEntry, req)
 
 	check, err := s.checkIfUserHasAccessToDoc(ctx, req.DocumentId, userInfo, documents.AccessLevel_ACCESS_LEVEL_VIEW)
 	if err != nil {
@@ -265,7 +265,7 @@ func (s *Server) CreateDocument(ctx context.Context, req *CreateDocumentRequest)
 		UserJob: userInfo.Job,
 		State:   int16(rector.EventType_EVENT_TYPE_ERRORED),
 	}
-	defer s.auditer.Log(auditEntry, req)
+	defer s.aud.Log(auditEntry, req)
 
 	if req.TemplateId != nil {
 		ok, err := s.checkAccessAgainstTemplate(ctx, *req.TemplateId, req.Access)
@@ -363,7 +363,7 @@ func (s *Server) UpdateDocument(ctx context.Context, req *UpdateDocumentRequest)
 		UserJob: userInfo.Job,
 		State:   int16(rector.EventType_EVENT_TYPE_ERRORED),
 	}
-	defer s.auditer.Log(auditEntry, req)
+	defer s.aud.Log(auditEntry, req)
 
 	check, err := s.checkIfUserHasAccessToDoc(ctx, req.DocumentId, userInfo, documents.AccessLevel_ACCESS_LEVEL_EDIT)
 	if err != nil {
@@ -507,7 +507,7 @@ func (s *Server) DeleteDocument(ctx context.Context, req *DeleteDocumentRequest)
 		UserJob: userInfo.Job,
 		State:   int16(rector.EventType_EVENT_TYPE_ERRORED),
 	}
-	defer s.auditer.Log(auditEntry, req)
+	defer s.aud.Log(auditEntry, req)
 
 	check, err := s.checkIfUserHasAccessToDoc(ctx, req.DocumentId, userInfo, documents.AccessLevel_ACCESS_LEVEL_EDIT)
 	if err != nil {
@@ -578,7 +578,7 @@ func (s *Server) ToggleDocument(ctx context.Context, req *ToggleDocumentRequest)
 		UserJob: userInfo.Job,
 		State:   int16(rector.EventType_EVENT_TYPE_ERRORED),
 	}
-	defer s.auditer.Log(auditEntry, req)
+	defer s.aud.Log(auditEntry, req)
 
 	check, err := s.checkIfUserHasAccessToDoc(ctx, req.DocumentId, userInfo, documents.AccessLevel_ACCESS_LEVEL_STATUS)
 	if err != nil {
@@ -654,7 +654,7 @@ func (s *Server) ChangeDocumentOwner(ctx context.Context, req *ChangeDocumentOwn
 		UserJob: userInfo.Job,
 		State:   int16(rector.EventType_EVENT_TYPE_ERRORED),
 	}
-	defer s.auditer.Log(auditEntry, req)
+	defer s.aud.Log(auditEntry, req)
 
 	check, err := s.checkIfUserHasAccessToDoc(ctx, req.DocumentId, userInfo, documents.AccessLevel_ACCESS_LEVEL_EDIT)
 	if err != nil {

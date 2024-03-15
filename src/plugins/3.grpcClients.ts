@@ -21,10 +21,10 @@ import { DMVServiceClient } from '~~/gen/ts/services/dmv/vehicles.client';
 import { DocStoreServiceClient } from '~~/gen/ts/services/docstore/docstore.client';
 import { JobsConductServiceClient } from '~~/gen/ts/services/jobs/conduct.client';
 import { JobsServiceClient } from '~~/gen/ts/services/jobs/jobs.client';
-import { JobsQualificationsServiceClient } from '~~/gen/ts/services/jobs/qualifications.client';
 import { JobsTimeclockServiceClient } from '~~/gen/ts/services/jobs/timeclock.client';
 import { LivemapperServiceClient } from '~~/gen/ts/services/livemapper/livemap.client';
 import { NotificatorServiceClient } from '~~/gen/ts/services/notificator/notificator.client';
+import { QualificationsServiceClient } from '~~/gen/ts/services/qualifications/qualifications.client';
 import { RectorConfigServiceClient } from '~~/gen/ts/services/rector/config.client';
 import { RectorFilestoreServiceClient } from '~~/gen/ts/services/rector/filestore.client';
 import { RectorLawsServiceClient } from '~~/gen/ts/services/rector/laws.client';
@@ -265,7 +265,8 @@ export class GRPCClients {
         return new JobsTimeclockServiceClient(this.transport);
     }
 
-    getJobsQualificationsClient(): JobsQualificationsServiceClient {
-        return new JobsQualificationsServiceClient(this.transport);
+    // Qualifications
+    getQualificationsClient(): QualificationsServiceClient {
+        return new QualificationsServiceClient(this.transport);
     }
 }

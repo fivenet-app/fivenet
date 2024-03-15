@@ -1,6 +1,6 @@
 import { useAuthStore } from '~/store/auth';
 import type { Perms } from '~~/gen/ts/perms';
-import { AccessLevel, QualificationAccess } from '~~/gen/ts/resources/jobs/qualifications';
+import { AccessLevel, QualificationAccess } from '~~/gen/ts/resources/qualifications/qualifications';
 import { User, UserShort } from '~~/gen/ts/resources/users/users';
 
 export function checkQualificationAccess(

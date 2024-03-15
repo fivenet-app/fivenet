@@ -34,7 +34,7 @@ func (s *Server) ListDispatches(ctx context.Context, req *ListDispatchesRequest)
 		UserJob: userInfo.Job,
 		State:   int16(rector.EventType_EVENT_TYPE_ERRORED),
 	}
-	defer s.auditer.Log(auditEntry, req)
+	defer s.aud.Log(auditEntry, req)
 
 	condition := jet.AND(tDispatch.Job.EQ(jet.String(userInfo.Job)).
 		AND(
@@ -193,7 +193,7 @@ func (s *Server) GetDispatch(ctx context.Context, req *GetDispatchRequest) (*Get
 		UserJob: userInfo.Job,
 		State:   int16(rector.EventType_EVENT_TYPE_ERRORED),
 	}
-	defer s.auditer.Log(auditEntry, req)
+	defer s.aud.Log(auditEntry, req)
 
 	condition := jet.AND(tDispatch.Job.EQ(jet.String(userInfo.Job)).
 		AND(
@@ -297,7 +297,7 @@ func (s *Server) CreateDispatch(ctx context.Context, req *CreateDispatchRequest)
 		UserJob: userInfo.Job,
 		State:   int16(rector.EventType_EVENT_TYPE_ERRORED),
 	}
-	defer s.auditer.Log(auditEntry, req)
+	defer s.aud.Log(auditEntry, req)
 
 	req.Dispatch.Job = userInfo.Job
 	req.Dispatch.CreatorId = &userInfo.UserId
@@ -325,7 +325,7 @@ func (s *Server) UpdateDispatch(ctx context.Context, req *UpdateDispatchRequest)
 		UserJob: userInfo.Job,
 		State:   int16(rector.EventType_EVENT_TYPE_ERRORED),
 	}
-	defer s.auditer.Log(auditEntry, req)
+	defer s.aud.Log(auditEntry, req)
 
 	if _, err := s.state.UpdateDispatch(ctx, userInfo.Job, &userInfo.UserId, req.Dispatch, true); err != nil {
 		return nil, errswrap.NewError(errorscentrum.ErrFailedQuery, err)
@@ -346,7 +346,7 @@ func (s *Server) TakeDispatch(ctx context.Context, req *TakeDispatchRequest) (*T
 		UserJob: userInfo.Job,
 		State:   int16(rector.EventType_EVENT_TYPE_ERRORED),
 	}
-	defer s.auditer.Log(auditEntry, req)
+	defer s.aud.Log(auditEntry, req)
 
 	unitId, ok := s.state.GetUserUnitID(ctx, userInfo.UserId)
 	if !ok {
@@ -372,7 +372,7 @@ func (s *Server) UpdateDispatchStatus(ctx context.Context, req *UpdateDispatchSt
 		UserJob: userInfo.Job,
 		State:   int16(rector.EventType_EVENT_TYPE_ERRORED),
 	}
-	defer s.auditer.Log(auditEntry, req)
+	defer s.aud.Log(auditEntry, req)
 
 	dsp, err := s.state.GetDispatch(ctx, userInfo.Job, req.DispatchId)
 	if err != nil {
@@ -439,7 +439,7 @@ func (s *Server) AssignDispatch(ctx context.Context, req *AssignDispatchRequest)
 		UserJob: userInfo.Job,
 		State:   int16(rector.EventType_EVENT_TYPE_ERRORED),
 	}
-	defer s.auditer.Log(auditEntry, req)
+	defer s.aud.Log(auditEntry, req)
 
 	dsp, err := s.state.GetDispatch(ctx, userInfo.Job, req.DispatchId)
 	if err != nil {
@@ -561,7 +561,7 @@ func (s *Server) DeleteDispatch(ctx context.Context, req *DeleteDispatchRequest)
 		UserJob: userInfo.Job,
 		State:   int16(rector.EventType_EVENT_TYPE_ERRORED),
 	}
-	defer s.auditer.Log(auditEntry, req)
+	defer s.aud.Log(auditEntry, req)
 
 	if err := s.state.DeleteDispatch(ctx, userInfo.Job, req.Id, true); err != nil {
 		return nil, errswrap.NewError(errorscentrum.ErrFailedQuery, err)

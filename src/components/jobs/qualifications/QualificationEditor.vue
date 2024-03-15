@@ -6,9 +6,12 @@ import { useThrottleFn } from '@vueuse/core';
 import { CheckIcon, ChevronDownIcon, LoadingIcon, PlusIcon } from 'mdi-vue3';
 import { defineRule } from 'vee-validate';
 import { useNotificatorStore } from '~/store/notificator';
-import { AccessLevel, QualificationAccess, type Qualification } from '~~/gen/ts/resources/jobs/qualifications';
+import { AccessLevel, QualificationAccess, type Qualification } from '~~/gen/ts/resources/qualifications/qualifications';
 import type { Job, JobGrade } from '~~/gen/ts/resources/users/jobs';
-import type { CreateQualificationResponse, UpdateQualificationResponse } from '~~/gen/ts/services/jobs/qualifications';
+import type {
+    CreateQualificationResponse,
+    UpdateQualificationResponse,
+} from '~~/gen/ts/services/qualifications/qualifications';
 import QualificationAccessEntry from '~/components/jobs/qualifications/QualificationAccessEntry.vue';
 import DocEditor from '~/components/partials/DocEditor.vue';
 import { useAuthStore } from '~/store/auth';
@@ -82,7 +85,7 @@ const qualiAccess = ref<QualificationAccess>();
 onMounted(async () => {
     if (props.id) {
         try {
-            const call = $grpc.getJobsQualificationsClient().getQualification({
+            const call = $grpc.getQualificationsClient().getQualification({
                 qualificationId: props.id,
             });
             const { response } = await call;
@@ -148,7 +151,7 @@ onMounted(async () => {
 
 async function createQualification(values: FormData): Promise<CreateQualificationResponse> {
     try {
-        const call = $grpc.getJobsQualificationsClient().createQualification({
+        const call = $grpc.getQualificationsClient().createQualification({
             qualification: {
                 id: '0',
                 job: '',
@@ -174,7 +177,7 @@ async function createQualification(values: FormData): Promise<CreateQualificatio
 
 async function updateQualification(values: FormData): Promise<UpdateQualificationResponse> {
     try {
-        const call = $grpc.getJobsQualificationsClient().updateQualification({
+        const call = $grpc.getQualificationsClient().updateQualification({
             qualification: {
                 id: '0',
                 job: '',

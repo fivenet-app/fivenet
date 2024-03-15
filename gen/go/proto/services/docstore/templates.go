@@ -215,7 +215,7 @@ func (s *Server) CreateTemplate(ctx context.Context, req *CreateTemplateRequest)
 		UserJob: userInfo.Job,
 		State:   int16(rector.EventType_EVENT_TYPE_ERRORED),
 	}
-	defer s.auditer.Log(auditEntry, req)
+	defer s.aud.Log(auditEntry, req)
 
 	// Begin transaction
 	tx, err := s.db.BeginTx(ctx, nil)
@@ -303,7 +303,7 @@ func (s *Server) UpdateTemplate(ctx context.Context, req *UpdateTemplateRequest)
 		UserJob: userInfo.Job,
 		State:   int16(rector.EventType_EVENT_TYPE_ERRORED),
 	}
-	defer s.auditer.Log(auditEntry, req)
+	defer s.aud.Log(auditEntry, req)
 
 	check, err := s.checkIfUserHasAccessToTemplate(ctx, req.Template.Id, userInfo, documents.AccessLevel_ACCESS_LEVEL_EDIT)
 	if err != nil {
@@ -392,7 +392,7 @@ func (s *Server) DeleteTemplate(ctx context.Context, req *DeleteTemplateRequest)
 		UserJob: userInfo.Job,
 		State:   int16(rector.EventType_EVENT_TYPE_ERRORED),
 	}
-	defer s.auditer.Log(auditEntry, req)
+	defer s.aud.Log(auditEntry, req)
 
 	check, err := s.checkIfUserHasAccessToTemplate(ctx, req.Id, userInfo, documents.AccessLevel_ACCESS_LEVEL_EDIT)
 	if err != nil {

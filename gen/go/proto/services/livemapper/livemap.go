@@ -51,7 +51,7 @@ type Server struct {
 	ps       perms.Permissions
 	enricher *mstlystcdata.Enricher
 	tracker  tracker.ITracker
-	auditer  audit.IAuditer
+	aud      audit.IAuditer
 	appCfg   appconfig.IConfig
 
 	markersCache *xsync.MapOf[string, []*livemap.MarkerMarker]
@@ -93,7 +93,7 @@ func NewServer(p Params) *Server {
 		ps:       p.Perms,
 		enricher: p.Enricher,
 		tracker:  p.Tracker,
-		auditer:  p.Audit,
+		aud:      p.Audit,
 		appCfg:   p.AppConfig,
 
 		markersCache: xsync.NewMapOf[string, []*livemap.MarkerMarker](),

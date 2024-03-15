@@ -133,7 +133,7 @@ func (s *Server) CreateDocumentReq(ctx context.Context, req *CreateDocumentReqRe
 		UserJob: userInfo.Job,
 		State:   int16(rector.EventType_EVENT_TYPE_ERRORED),
 	}
-	defer s.auditer.Log(auditEntry, req)
+	defer s.aud.Log(auditEntry, req)
 
 	ok, err := s.checkIfUserHasAccessToDoc(ctx, req.DocumentId, userInfo, documents.AccessLevel_ACCESS_LEVEL_VIEW)
 	if err != nil {
@@ -251,7 +251,7 @@ func (s *Server) UpdateDocumentReq(ctx context.Context, req *UpdateDocumentReqRe
 		UserJob: userInfo.Job,
 		State:   int16(rector.EventType_EVENT_TYPE_ERRORED),
 	}
-	defer s.auditer.Log(auditEntry, req)
+	defer s.aud.Log(auditEntry, req)
 
 	request, err := s.getDocumentReq(ctx, s.db,
 		tDocRequest.ID.EQ(jet.Uint64(req.RequestId)).
@@ -398,7 +398,7 @@ func (s *Server) DeleteDocumentReq(ctx context.Context, req *DeleteDocumentReqRe
 		UserJob: userInfo.Job,
 		State:   int16(rector.EventType_EVENT_TYPE_ERRORED),
 	}
-	defer s.auditer.Log(auditEntry, req)
+	defer s.aud.Log(auditEntry, req)
 
 	request, err := s.getDocumentReq(ctx, s.db,
 		tDocRequest.ID.EQ(jet.Uint64(req.RequestId)),

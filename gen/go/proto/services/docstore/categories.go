@@ -91,7 +91,7 @@ func (s *Server) CreateCategory(ctx context.Context, req *CreateCategoryRequest)
 		UserJob: userInfo.Job,
 		State:   int16(rector.EventType_EVENT_TYPE_ERRORED),
 	}
-	defer s.auditer.Log(auditEntry, req)
+	defer s.aud.Log(auditEntry, req)
 
 	dCategory := table.FivenetDocumentsCategories
 	stmt := dCategory.
@@ -135,7 +135,7 @@ func (s *Server) UpdateCategory(ctx context.Context, req *UpdateCategoryRequest)
 		UserJob: userInfo.Job,
 		State:   int16(rector.EventType_EVENT_TYPE_ERRORED),
 	}
-	defer s.auditer.Log(auditEntry, req)
+	defer s.aud.Log(auditEntry, req)
 
 	dCategory := table.FivenetDocumentsCategories
 	stmt := dCategory.
@@ -173,7 +173,7 @@ func (s *Server) DeleteCategory(ctx context.Context, req *DeleteCategoryRequest)
 		UserJob: userInfo.Job,
 		State:   int16(rector.EventType_EVENT_TYPE_ERRORED),
 	}
-	defer s.auditer.Log(auditEntry, req)
+	defer s.aud.Log(auditEntry, req)
 
 	ids := make([]jet.Expression, len(req.Ids))
 	for i := 0; i < len(req.Ids); i++ {

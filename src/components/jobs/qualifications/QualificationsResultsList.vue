@@ -3,19 +3,19 @@ import { RpcError } from '@protobuf-ts/runtime-rpc';
 import DataErrorBlock from '~/components/partials/data/DataErrorBlock.vue';
 import DataNoDataBlock from '~/components/partials/data/DataNoDataBlock.vue';
 import DataPendingBlock from '~/components/partials/data/DataPendingBlock.vue';
-import { ResultStatus } from '~~/gen/ts/resources/jobs/qualifications';
-import type { ListQualificationsResultsResponse } from '~~/gen/ts/services/jobs/qualifications';
+import { ResultStatus } from '~~/gen/ts/resources/qualifications/qualifications';
+import type { ListQualificationsResultsResponse } from '~~/gen/ts/services/qualifications/qualifications';
 import QualificationsResultsListEntry from '~/components/jobs/qualifications/QualificationsResultsListEntry.vue';
 
 const { $grpc } = useNuxtApp();
 
 const offset = ref(0n);
 
-const { data, pending, refresh, error } = useLazyAsyncData(`jobs-qualifications-own`, () => listQualificationsResults());
+const { data, pending, refresh, error } = useLazyAsyncData(`qualifications-own`, () => listQualificationsResults());
 
 async function listQualificationsResults(): Promise<ListQualificationsResultsResponse> {
     try {
-        const call = $grpc.getJobsQualificationsClient().listQualificationsResults({
+        const call = $grpc.getQualificationsClient().listQualificationsResults({
             pagination: {
                 offset: offset.value,
             },

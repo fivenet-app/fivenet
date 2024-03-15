@@ -80,7 +80,7 @@ func (s *Server) CreateOrUpdateMarker(ctx context.Context, req *CreateOrUpdateMa
 		UserJob: userInfo.Job,
 		State:   int16(rector.EventType_EVENT_TYPE_ERRORED),
 	}
-	defer s.auditer.Log(auditEntry, req)
+	defer s.aud.Log(auditEntry, req)
 
 	// No marker id set
 	if req.Marker.Info.Id <= 0 {
@@ -210,7 +210,7 @@ func (s *Server) DeleteMarker(ctx context.Context, req *DeleteMarkerRequest) (*D
 		UserJob: userInfo.Job,
 		State:   int16(rector.EventType_EVENT_TYPE_ERRORED),
 	}
-	defer s.auditer.Log(auditEntry, req)
+	defer s.aud.Log(auditEntry, req)
 
 	fieldsAttr, err := s.ps.Attr(userInfo, permslivemapper.LivemapperServicePerm, permslivemapper.LivemapperServiceDeleteMarkerPerm, permslivemapper.LivemapperServiceDeleteMarkerAccessPermField)
 	if err != nil {

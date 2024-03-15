@@ -139,7 +139,7 @@ func (s *Server) PostComment(ctx context.Context, req *PostCommentRequest) (*Pos
 		UserJob: userInfo.Job,
 		State:   int16(rector.EventType_EVENT_TYPE_ERRORED),
 	}
-	defer s.auditer.Log(auditEntry, req)
+	defer s.aud.Log(auditEntry, req)
 
 	trace.SpanFromContext(ctx).SetAttributes(attribute.Int64("fivenet.docstore.id", int64(req.Comment.DocumentId)))
 
@@ -199,7 +199,7 @@ func (s *Server) EditComment(ctx context.Context, req *EditCommentRequest) (*Edi
 		UserJob: userInfo.Job,
 		State:   int16(rector.EventType_EVENT_TYPE_ERRORED),
 	}
-	defer s.auditer.Log(auditEntry, req)
+	defer s.aud.Log(auditEntry, req)
 
 	trace.SpanFromContext(ctx).SetAttributes(attribute.Int64("fivenet.docstore.id", int64(req.Comment.DocumentId)), attribute.Int64("fivenet.docstore.comment_id", int64(req.Comment.Id)))
 
@@ -292,7 +292,7 @@ func (s *Server) DeleteComment(ctx context.Context, req *DeleteCommentRequest) (
 		UserJob: userInfo.Job,
 		State:   int16(rector.EventType_EVENT_TYPE_ERRORED),
 	}
-	defer s.auditer.Log(auditEntry, req)
+	defer s.aud.Log(auditEntry, req)
 
 	trace.SpanFromContext(ctx).SetAttributes(attribute.Int64("fivenet.docstore.comment_id", int64(req.CommentId)))
 

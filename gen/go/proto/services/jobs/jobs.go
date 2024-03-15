@@ -35,7 +35,6 @@ type Server struct {
 	JobsConductServiceServer
 	JobsServiceServer
 	JobsTimeclockServiceServer
-	JobsQualificationsServiceServer
 
 	logger *zap.Logger
 	wg     sync.WaitGroup
@@ -85,7 +84,6 @@ func (s *Server) RegisterServer(srv *grpc.Server) {
 	RegisterJobsConductServiceServer(srv, s)
 	RegisterJobsServiceServer(srv, s)
 	RegisterJobsTimeclockServiceServer(srv, s)
-	RegisterJobsQualificationsServiceServer(srv, s)
 }
 
 func (s *Server) GetMOTD(ctx context.Context, req *GetMOTDRequest) (*GetMOTDResponse, error) {

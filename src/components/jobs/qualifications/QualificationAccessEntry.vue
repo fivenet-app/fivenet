@@ -16,8 +16,8 @@ import { watchDebounced } from '@vueuse/core';
 import { CheckIcon, ChevronDownIcon, CloseIcon } from 'mdi-vue3';
 import { useCompletorStore } from '~/store/completor';
 import { type ArrayElement } from '~/utils/types';
-import { AccessLevel } from '~~/gen/ts/resources/jobs/qualifications';
-import type { Qualification } from '~~/gen/ts/resources/jobs/qualifications';
+import { AccessLevel } from '~~/gen/ts/resources/qualifications/qualifications';
+import type { Qualification } from '~~/gen/ts/resources/qualifications/qualifications';
 import { Job, JobGrade } from '~~/gen/ts/resources/users/jobs';
 
 const { $grpc } = useNuxtApp();
@@ -130,7 +130,7 @@ async function findQualifications(id?: string): Promise<Qualification[]> {
 
     try {
         if (id !== undefined) {
-            const call = $grpc.getJobsQualificationsClient().getQualification({
+            const call = $grpc.getQualificationsClient().getQualification({
                 qualificationId: id,
             });
             const { response } = await call;
@@ -138,7 +138,7 @@ async function findQualifications(id?: string): Promise<Qualification[]> {
             return [response.qualification!];
         }
 
-        const call = $grpc.getJobsQualificationsClient().listQualifications({
+        const call = $grpc.getQualificationsClient().listQualifications({
             pagination: {
                 offset: 0n,
             },

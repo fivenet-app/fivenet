@@ -1,7 +1,7 @@
 <script lang="ts" setup>
 import { ChevronRightIcon, ListStatusIcon, LockIcon, LockOpenVariantIcon } from 'mdi-vue3';
 import GenericTime from '~/components/partials/elements/GenericTime.vue';
-import { Qualification, ResultStatus } from '~~/gen/ts/resources/jobs/qualifications';
+import { Qualification, ResultStatus } from '~~/gen/ts/resources/qualifications/qualifications';
 
 defineProps<{
     qualification: Qualification;
