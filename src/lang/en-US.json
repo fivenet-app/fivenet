@@ -1677,6 +1677,9 @@
         },
         "QualificationsService": {
             "category": "Qualifications",
+            "CreateOrUpdateQualificationRequest": {
+                "description": "Create or Update Qualification Request"
+            },
             "ListQualifications": {
                 "key": "List Qualifications",
                 "description": "List available qualifications"
@@ -1715,6 +1718,10 @@
                     "Access": "Access to factions-own qualifications"
                 }
             },
+            "ListQualificationsResults": {
+                "key": "List Qualification Results",
+                "description": "List qualification results"
+            },
             "CreateOrUpdateQualificationResult": {
                 "key": "Create or Update Qualification Results",
                 "description": "Create and update qualification results"
@@ -1722,6 +1729,10 @@
             "DeleteQualificationResult": {
                 "key": "Delete Qualification Results",
                 "description": "Delete qualification results"
+            },
+            "ListQualificationRequests": {
+                "key": "List Qualification Requests",
+                "description": "List qualification requests"
             },
             "DeleteQualificationReq": {
                 "key": "Delete Qualification Requests",
