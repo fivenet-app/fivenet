@@ -189,6 +189,8 @@ func (s *Server) getQualificationQuery(where jet.BoolExpression, onlyColumns jet
 			tQualiResults.Status,
 			tQualiResults.Score,
 			tQualiResults.Summary,
+			tQualiRequests.ApprovedAt,
+			tQualiRequests.Status,
 		}
 
 		if userInfo.SuperUser {
@@ -223,6 +225,10 @@ func (s *Server) getQualificationQuery(where jet.BoolExpression, onlyColumns jet
 			LEFT_JOIN(tQualiResults,
 				tQualiResults.QualificationID.EQ(tQuali.ID).
 					AND(tQualiResults.UserID.EQ(jet.Int32(userInfo.UserId))),
+			).
+			LEFT_JOIN(tQualiRequests,
+				tQualiRequests.QualificationID.EQ(tQuali.ID).
+					AND(tQualiRequests.UserID.EQ(jet.Int32(userInfo.UserId))),
 			)
 	} else {
 		tables = tQuali.
@@ -232,6 +238,10 @@ func (s *Server) getQualificationQuery(where jet.BoolExpression, onlyColumns jet
 			LEFT_JOIN(tQualiResults,
 				tQualiResults.QualificationID.EQ(tQuali.ID).
 					AND(tQualiResults.UserID.EQ(jet.Int32(userInfo.UserId))),
+			).
+			LEFT_JOIN(tQualiRequests,
+				tQualiRequests.QualificationID.EQ(tQuali.ID).
+					AND(tQualiRequests.UserID.EQ(jet.Int32(userInfo.UserId))),
 			)
 	}
 

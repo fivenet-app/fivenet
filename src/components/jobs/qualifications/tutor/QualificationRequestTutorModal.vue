@@ -6,11 +6,11 @@ import { useThrottleFn } from '@vueuse/core';
 import { CloseIcon, LoadingIcon } from 'mdi-vue3';
 import { defineRule } from 'vee-validate';
 import { useNotificatorStore } from '~/store/notificator';
+import type { QualificationRequest } from '~~/gen/ts/resources/qualifications/qualifications';
 import type { CreateOrUpdateQualificationRequestResponse } from '~~/gen/ts/services/qualifications/qualifications';
 
 const props = defineProps<{
-    qualificationId: string;
-    open: boolean;
+    request?: QualificationRequest;
 }>();
 
 const emits = defineEmits<{
@@ -22,9 +22,7 @@ const { $grpc } = useNuxtApp();
 const notifications = useNotificatorStore();
 
 interface FormData {
-    userComment: string;
-    absenceBegin?: string;
-    absenceEnd?: string;
+    approverComment: string;
 }
 
 async function createOrUpdateQualificationRequest(
@@ -36,7 +34,7 @@ async function createOrUpdateQualificationRequest(
             request: {
                 qualificationId,
                 userId: 0,
-                userComment: values.userComment,
+                approverComment: values.approverComment,
             },
         });
         const { response } = await call;
@@ -62,7 +60,7 @@ defineRule('max', max);
 
 const { handleSubmit, meta } = useForm<FormData>({
     validationSchema: {
-        userComment: { required: true, min: 3, max: 255 },
+        approverComment: { required: true, min: 3, max: 255 },
     },
     validateOnMount: true,
     initialValues: {},
@@ -82,7 +80,7 @@ const onSubmitThrottle = useThrottleFn(async (e) => {
 </script>
 
 <template>
-    <TransitionRoot as="template" :show="open">
+    <TransitionRoot as="template" :show="!!request">
         <Dialog as="div" class="relative z-30" @close="$emit('close')">
             <TransitionChild
                 as="template"
@@ -126,19 +124,19 @@ const onSubmitThrottle = useThrottleFn(async (e) => {
                             <form @submit.prevent="onSubmitThrottle">
                                 <div class="my-2 space-y-24">
                                     <div class="form-control flex-1">
-                                        <label for="userComment" class="block text-sm font-medium leading-6 text-neutral">
+                                        <label for="approverComment" class="block text-sm font-medium leading-6 text-neutral">
                                             {{ $t('common.message') }}
                                         </label>
                                         <VeeField
                                             as="textarea"
-                                            name="userComment"
+                                            name="approverComment"
                                             class="block h-36 w-full rounded-md border-0 bg-base-700 py-1.5 text-neutral placeholder:text-accent-200 focus:ring-2 focus:ring-inset focus:ring-base-300 sm:text-sm sm:leading-6"
                                             :placeholder="$t('common.message')"
                                             :label="$t('common.message')"
                                             @focusin="focusTablet(true)"
                                             @focusout="focusTablet(false)"
                                         />
-                                        <VeeErrorMessage name="userComment" as="p" class="mt-2 text-sm text-error-400" />
+                                        <VeeErrorMessage name="approverComment" as="p" class="mt-2 text-sm text-error-400" />
                                     </div>
                                 </div>
                                 <div class="absolute bottom-0 left-0 flex w-full">

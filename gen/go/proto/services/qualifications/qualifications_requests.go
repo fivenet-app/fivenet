@@ -26,10 +26,12 @@ var (
 func (s *Server) ListQualificationRequests(ctx context.Context, req *ListQualificationRequestsRequest) (*ListQualificationRequestsResponse, error) {
 	userInfo := auth.MustGetUserInfoFromContext(ctx)
 
-	condition := tQualiRequests.UserID.EQ(jet.Int32(userInfo.UserId))
+	tQuali := tQuali.AS("qualificationshort")
+
+	condition := jet.Bool(true)
 
 	if req.QualificationId != nil {
-		ok, err := s.checkIfUserHasAccessToQuali(ctx, *req.QualificationId, userInfo, qualifications.AccessLevel_ACCESS_LEVEL_EDIT)
+		ok, err := s.checkIfUserHasAccessToQuali(ctx, *req.QualificationId, userInfo, qualifications.AccessLevel_ACCESS_LEVEL_GRADE)
 		if err != nil {
 			return nil, errswrap.NewError(errorsqualifications.ErrFailedQuery, err)
 		}
@@ -45,10 +47,22 @@ func (s *Server) ListQualificationRequests(ctx context.Context, req *ListQualifi
 				tQuali.CreatorID.EQ(jet.Int32(userInfo.UserId)),
 				jet.AND(
 					tQJobAccess.Access.IS_NOT_NULL(),
-					tQJobAccess.Access.NOT_EQ(jet.Int32(int32(qualifications.AccessLevel_ACCESS_LEVEL_BLOCKED))),
+					tQJobAccess.Access.GT(jet.Int32(int32(qualifications.AccessLevel_ACCESS_LEVEL_BLOCKED))),
 				),
 			),
 		))
+
+		// TODO
+		condition = condition.AND(tQualiRequests.UserID.EQ(jet.Int32(userInfo.UserId)))
+	}
+
+	if len(req.Status) > 0 {
+		statuses := []jet.Expression{}
+		for i := 0; i < len(req.Status); i++ {
+			statuses = append(statuses, jet.Int16(int16(req.Status[i])))
+		}
+
+		condition = condition.AND(tQualiRequests.Status.IN(statuses...))
 	}
 
 	countStmt := tQualiRequests.
@@ -86,9 +100,18 @@ func (s *Server) ListQualificationRequests(ctx context.Context, req *ListQualifi
 		SELECT(
 			tQualiRequests.CreatedAt,
 			tQualiRequests.QualificationID,
+			tQuali.ID,
+			tQuali.CreatedAt,
+			tQuali.UpdatedAt,
+			tQuali.Job,
+			tQuali.Closed,
+			tQuali.Abbreviation,
+			tQuali.Title,
+			tQuali.Description,
+			tQuali.Content,
 			tQualiRequests.UserID,
 			tQualiRequests.UserComment,
-			tQualiRequests.Approved,
+			tQualiRequests.Status,
 			tQualiRequests.ApprovedAt,
 			tQualiRequests.ApproverComment,
 			tQualiRequests.ApproverID,
@@ -115,6 +138,7 @@ func (s *Server) ListQualificationRequests(ctx context.Context, req *ListQualifi
 						AND(tQJobAccess.MinimumGrade.LT_EQ(jet.Int32(userInfo.JobGrade))),
 				),
 		).
+		GROUP_BY(tQualiRequests.QualificationID, tQualiRequests.UserID).
 		WHERE(condition).
 		OFFSET(req.Pagination.Offset).
 		LIMIT(limit)
@@ -145,17 +169,17 @@ func (s *Server) CreateOrUpdateQualificationRequest(ctx context.Context, req *Cr
 		return nil, errswrap.NewError(errorsqualifications.ErrFailedQuery, err)
 	}
 	// If user can grade a qualification, they are treated as an "approver" of requests
-	if ok {
+	if ok && req.Request.UserId > 0 {
 		stmt := tQualiRequests.
 			UPDATE(
-				tQualiRequests.Approved,
+				tQualiRequests.Status,
 				tQualiRequests.ApprovedAt,
 				tQualiRequests.ApproverComment,
 				tQualiRequests.ApproverID,
 				tQualiRequests.ApproverJob,
 			).
 			SET(
-				req.Request.Approved,
+				req.Request.Status,
 				time.Now(),
 				req.Request.ApproverComment,
 				userInfo.UserId,
@@ -186,11 +210,13 @@ func (s *Server) CreateOrUpdateQualificationRequest(ctx context.Context, req *Cr
 				tQualiRequests.QualificationID,
 				tQualiRequests.UserID,
 				tQualiRequests.UserComment,
+				tQualiRequests.Status,
 			).
 			VALUES(
 				req.Request.QualificationId,
 				userInfo.UserId,
 				req.Request.UserComment,
+				qualifications.RequestStatus_REQUEST_STATUS_PENDING,
 			).
 			ON_DUPLICATE_KEY_UPDATE(
 				tQualiRequests.UserComment.SET(jet.StringExp(jet.Raw("VALUES(`user_comment`)"))),
@@ -214,13 +240,22 @@ func (s *Server) CreateOrUpdateQualificationRequest(ctx context.Context, req *Cr
 }
 
 func (s *Server) getQualificationRequest(ctx context.Context, requestId uint64, userId int32, userInfo *userinfo.UserInfo) (*qualifications.QualificationRequest, error) {
-	var request qualifications.QualificationRequest
+	tQuali := tQuali.AS("qualificationshort")
 
 	stmt := tQualiRequests.
 		SELECT(
 			tQualiRequests.CreatedAt,
 			tQualiRequests.DeletedAt,
 			tQualiRequests.QualificationID,
+			tQuali.ID,
+			tQuali.CreatedAt,
+			tQuali.UpdatedAt,
+			tQuali.Job,
+			tQuali.Closed,
+			tQuali.Abbreviation,
+			tQuali.Title,
+			tQuali.Description,
+			tQuali.Content,
 			tQualiRequests.UserID,
 			tUser.ID,
 			tUser.Identifier,
@@ -230,7 +265,7 @@ func (s *Server) getQualificationRequest(ctx context.Context, requestId uint64, 
 			tUser.Lastname,
 			tUser.Dateofbirth,
 			tQualiRequests.UserComment,
-			tQualiRequests.Approved,
+			tQualiRequests.Status,
 			tQualiRequests.ApprovedAt,
 			tQualiRequests.ApproverComment,
 			tQualiRequests.ApproverID,
@@ -244,6 +279,9 @@ func (s *Server) getQualificationRequest(ctx context.Context, requestId uint64, 
 			tApprover.Dateofbirth,
 		).
 		FROM(tQualiRequests.
+			INNER_JOIN(tQuali,
+				tQuali.ID.EQ(tQualiRequests.QualificationID),
+			).
 			LEFT_JOIN(tUser,
 				tUser.ID.EQ(tQualiRequests.UserID),
 			).
@@ -255,8 +293,10 @@ func (s *Server) getQualificationRequest(ctx context.Context, requestId uint64, 
 			tQualiRequests.QualificationID.EQ(jet.Uint64(requestId)),
 			tQualiRequests.UserID.EQ(jet.Int32(userId)),
 		)).
+		GROUP_BY(tQualiRequests.QualificationID, tQualiRequests.UserID).
 		LIMIT(1)
 
+	var request qualifications.QualificationRequest
 	if err := stmt.QueryContext(ctx, s.db, &request); err != nil {
 		if !errors.Is(err, qrm.ErrNoRows) {
 			return nil, err

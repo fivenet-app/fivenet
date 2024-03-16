@@ -8,19 +8,36 @@ import type { ListQualificationsResultsResponse } from '~~/gen/ts/services/quali
 import QualificationsResultsListEntry from '~/components/jobs/qualifications/QualificationsResultsListEntry.vue';
 import TablePagination from '~/components/partials/elements/TablePagination.vue';
 
+const props = withDefaults(
+    defineProps<{
+        qualificationId?: string;
+        status?: ResultStatus[];
+    }>(),
+    {
+        qualificationId: undefined,
+        status: () => [ResultStatus.SUCCESSFUL],
+    },
+);
+
 const { $grpc } = useNuxtApp();
 
 const offset = ref(0n);
 
-const { data, pending, refresh, error } = useLazyAsyncData(`qualifications-own`, () => listQualificationsResults());
+const { data, pending, refresh, error } = useLazyAsyncData(`qualifications-results-${props.qualificationId}`, () =>
+    listQualificationsResults(props.qualificationId),
+);
 
-async function listQualificationsResults(): Promise<ListQualificationsResultsResponse> {
+async function listQualificationsResults(
+    qualificationId?: string,
+    status?: ResultStatus[],
+): Promise<ListQualificationsResultsResponse> {
     try {
         const call = $grpc.getQualificationsClient().listQualificationsResults({
             pagination: {
                 offset: offset.value,
             },
-            status: [ResultStatus.SUCCESSFUL],
+            qualificationId,
+            status: status ?? [],
         });
         const { response } = await call;
 
@@ -57,7 +74,7 @@ watch(offset, async () => refresh());
 
             <template v-else>
                 <ul role="list" class="divide-y divide-gray-100">
-                    <QualificationsResultsListEntry v-for="result in data?.results" :key="result.id" :qualification="result" />
+                    <QualificationsResultsListEntry v-for="result in data?.results" :key="result.id" :result="result" />
                 </ul>
             </template>
         </div>

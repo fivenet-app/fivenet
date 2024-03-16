@@ -24,7 +24,9 @@ var (
 func (s *Server) ListQualificationsResults(ctx context.Context, req *ListQualificationsResultsRequest) (*ListQualificationsResultsResponse, error) {
 	userInfo := auth.MustGetUserInfoFromContext(ctx)
 
-	condition := tQualiResults.UserID.EQ(jet.Int32(userInfo.UserId))
+	tQuali := tQuali.AS("qualificationshort")
+
+	condition := jet.Bool(true)
 
 	if req.QualificationId != nil {
 		check, err := s.checkIfUserHasAccessToQuali(ctx, *req.QualificationId, userInfo, qualifications.AccessLevel_ACCESS_LEVEL_GRADE)
@@ -43,10 +45,13 @@ func (s *Server) ListQualificationsResults(ctx context.Context, req *ListQualifi
 				tQuali.CreatorID.EQ(jet.Int32(userInfo.UserId)),
 				jet.AND(
 					tQJobAccess.Access.IS_NOT_NULL(),
-					tQJobAccess.Access.NOT_EQ(jet.Int32(int32(qualifications.AccessLevel_ACCESS_LEVEL_BLOCKED))),
+					tQJobAccess.Access.GT(jet.Int32(int32(qualifications.AccessLevel_ACCESS_LEVEL_BLOCKED))),
 				),
 			),
 		))
+
+		// TODO
+		condition = condition.AND(tQualiResults.UserID.EQ(jet.Int32(userInfo.UserId)))
 	}
 
 	if len(req.Status) > 0 {
@@ -83,7 +88,7 @@ func (s *Server) ListQualificationsResults(ctx context.Context, req *ListQualifi
 	pag, limit := req.Pagination.GetResponseWithPageSize(count.TotalCount, QualificationsPageSize)
 	resp := &ListQualificationsResultsResponse{
 		Pagination: pag,
-		Results:    []*qualifications.Qualification{},
+		Results:    []*qualifications.QualificationResult{},
 	}
 	if count.TotalCount <= 0 {
 		return resp, nil
@@ -235,8 +240,6 @@ func (s *Server) CreateOrUpdateQualificationResult(ctx context.Context, req *Cre
 }
 
 func (s *Server) getQualificationResult(ctx context.Context, resultId uint64, userInfo *userinfo.UserInfo) (*qualifications.QualificationResult, error) {
-	var result qualifications.QualificationResult
-
 	stmt := tQualiResults.
 		SELECT(
 			tQualiResults.ID,
@@ -275,6 +278,7 @@ func (s *Server) getQualificationResult(ctx context.Context, resultId uint64, us
 		WHERE(tQualiResults.ID.EQ(jet.Uint64(resultId))).
 		LIMIT(1)
 
+	var result qualifications.QualificationResult
 	if err := stmt.QueryContext(ctx, s.db, &result); err != nil {
 		if !errors.Is(err, qrm.ErrNoRows) {
 			return nil, err

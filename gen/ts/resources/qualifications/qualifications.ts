@@ -96,6 +96,10 @@ export interface Qualification {
      * @generated from protobuf field: optional resources.qualifications.QualificationResult result = 18;
      */
     result?: QualificationResult;
+    /**
+     * @generated from protobuf field: optional resources.qualifications.QualificationRequest request = 19;
+     */
+    request?: QualificationRequest;
 }
 /**
  * @generated from protobuf message resources.qualifications.QualificationShort
@@ -273,37 +277,41 @@ export interface QualificationResult {
      */
     qualificationId: string;
     /**
-     * @generated from protobuf field: int32 user_id = 5;
+     * @generated from protobuf field: optional resources.qualifications.QualificationShort qualification = 5;
+     */
+    qualification?: QualificationShort;
+    /**
+     * @generated from protobuf field: int32 user_id = 6;
      */
     userId: number;
     /**
-     * @generated from protobuf field: resources.users.UserShort user = 6;
+     * @generated from protobuf field: resources.users.UserShort user = 7;
      */
     user?: UserShort;
     /**
-     * @generated from protobuf field: resources.qualifications.ResultStatus status = 7;
+     * @generated from protobuf field: resources.qualifications.ResultStatus status = 8;
      */
     status: ResultStatus;
     /**
-     * @generated from protobuf field: optional uint32 score = 8;
+     * @generated from protobuf field: optional uint32 score = 9;
      */
     score?: number;
     /**
      * @sanitize: method=StripTags
      *
-     * @generated from protobuf field: string summary = 9;
+     * @generated from protobuf field: string summary = 10;
      */
     summary: string;
     /**
-     * @generated from protobuf field: int32 creator_id = 10;
+     * @generated from protobuf field: int32 creator_id = 11;
      */
     creatorId: number;
     /**
-     * @generated from protobuf field: resources.users.UserShort creator = 11;
+     * @generated from protobuf field: resources.users.UserShort creator = 12;
      */
     creator?: UserShort;
     /**
-     * @generated from protobuf field: string creator_job = 12;
+     * @generated from protobuf field: string creator_job = 13;
      */
     creatorJob: string;
 }
@@ -324,43 +332,136 @@ export interface QualificationRequest {
      */
     qualificationId: string;
     /**
-     * @generated from protobuf field: int32 user_id = 4;
+     * @generated from protobuf field: optional resources.qualifications.QualificationShort qualification = 4;
+     */
+    qualification?: QualificationShort;
+    /**
+     * @generated from protobuf field: int32 user_id = 5;
      */
     userId: number;
     /**
-     * @generated from protobuf field: resources.users.UserShort user = 5;
+     * @generated from protobuf field: resources.users.UserShort user = 6;
      */
     user?: UserShort;
     /**
      * @sanitize: method=StripTags
      *
-     * @generated from protobuf field: optional string user_comment = 6;
+     * @generated from protobuf field: optional string user_comment = 7;
      */
     userComment?: string;
     /**
-     * @generated from protobuf field: optional bool approved = 7;
+     * @generated from protobuf field: optional resources.qualifications.RequestStatus status = 8;
      */
-    approved?: boolean;
+    status?: RequestStatus;
     /**
-     * @generated from protobuf field: optional resources.timestamp.Timestamp approved_at = 8;
+     * @generated from protobuf field: optional resources.timestamp.Timestamp approved_at = 9;
      */
     approvedAt?: Timestamp;
     /**
-     * @generated from protobuf field: optional string approver_comment = 9;
+     * @sanitize: method=StripTags
+     *
+     * @generated from protobuf field: optional string approver_comment = 10;
      */
     approverComment?: string;
     /**
-     * @generated from protobuf field: optional int32 approver_id = 10;
+     * @generated from protobuf field: optional int32 approver_id = 11;
      */
     approverId?: number;
     /**
-     * @generated from protobuf field: optional resources.users.UserShort approver = 11;
+     * @generated from protobuf field: optional resources.users.UserShort approver = 12;
      */
     approver?: UserShort;
     /**
-     * @generated from protobuf field: optional string approver_job = 12;
+     * @generated from protobuf field: optional string approver_job = 13;
      */
     approverJob?: string;
+}
+/**
+ * @generated from protobuf message resources.qualifications.QualificationTest
+ */
+export interface QualificationTest {
+}
+/**
+ * @generated from protobuf message resources.qualifications.QualificationTestQuestion
+ */
+export interface QualificationTestQuestion {
+    /**
+     * @generated from protobuf field: uint64 id = 1 [jstype = JS_STRING];
+     */
+    id: string;
+    /**
+     * @generated from protobuf field: uint64 qualification_id = 2 [jstype = JS_STRING];
+     */
+    qualificationId: string;
+    /**
+     * @generated from protobuf field: string question = 3;
+     */
+    question: string;
+    /**
+     * @generated from protobuf field: resources.qualifications.TestQuestionData data = 4;
+     */
+    data?: TestQuestionData;
+}
+/**
+ * @generated from protobuf message resources.qualifications.TestQuestionData
+ */
+export interface TestQuestionData {
+    /**
+     * @generated from protobuf oneof: data
+     */
+    data: {
+        oneofKind: "separator";
+        /**
+         * @generated from protobuf field: bool separator = 1;
+         */
+        separator: boolean;
+    } | {
+        oneofKind: "yesno";
+        /**
+         * @generated from protobuf field: bool yesno = 2;
+         */
+        yesno: boolean;
+    } | {
+        oneofKind: "shortText";
+        /**
+         * @generated from protobuf field: resources.qualifications.TestQuestionDataText short_text = 3;
+         */
+        shortText: TestQuestionDataText;
+    } | {
+        oneofKind: "longText";
+        /**
+         * @generated from protobuf field: resources.qualifications.TestQuestionDataText long_text = 4;
+         */
+        longText: TestQuestionDataText;
+    } | {
+        oneofKind: "multipleChoice";
+        /**
+         * @generated from protobuf field: resources.qualifications.TestQuestionDataMultipleChoice multiple_choice = 5;
+         */
+        multipleChoice: TestQuestionDataMultipleChoice;
+    } | {
+        oneofKind: undefined;
+    };
+}
+/**
+ * @generated from protobuf message resources.qualifications.TestQuestionDataText
+ */
+export interface TestQuestionDataText {
+    /**
+     * @generated from protobuf field: int32 min_length = 1;
+     */
+    minLength: number;
+    /**
+     * @generated from protobuf field: int32 max_length = 2;
+     */
+    maxLength: number;
+}
+/**
+ * TODO
+ *
+ * @generated from protobuf message resources.qualifications.TestQuestionDataMultipleChoice
+ */
+export interface TestQuestionDataMultipleChoice {
 }
 /**
  * @generated from protobuf enum resources.qualifications.AccessLevelUpdateMode
@@ -441,6 +542,27 @@ export enum ResultStatus {
      */
     SUCCESSFUL = 3
 }
+/**
+ * @generated from protobuf enum resources.qualifications.RequestStatus
+ */
+export enum RequestStatus {
+    /**
+     * @generated from protobuf enum value: REQUEST_STATUS_UNSPECIFIED = 0;
+     */
+    UNSPECIFIED = 0,
+    /**
+     * @generated from protobuf enum value: REQUEST_STATUS_PENDING = 1;
+     */
+    PENDING = 1,
+    /**
+     * @generated from protobuf enum value: REQUEST_STATUS_DENIED = 2;
+     */
+    DENIED = 2,
+    /**
+     * @generated from protobuf enum value: REQUEST_STATUS_ACCEPTED = 3;
+     */
+    ACCEPTED = 3
+}
 // @generated message type with reflection information, may provide speed optimized methods
 class Qualification$Type extends MessageType<Qualification> {
     constructor() {
@@ -462,7 +584,8 @@ class Qualification$Type extends MessageType<Qualification> {
             { no: 15, name: "access", kind: "message", T: () => QualificationAccess },
             { no: 16, name: "requirements", kind: "message", repeat: 1 /*RepeatType.PACKED*/, T: () => QualificationRequirement },
             { no: 17, name: "discord_settings", kind: "message", T: () => QualificationDiscordSettings },
-            { no: 18, name: "result", kind: "message", T: () => QualificationResult }
+            { no: 18, name: "result", kind: "message", T: () => QualificationResult },
+            { no: 19, name: "request", kind: "message", T: () => QualificationRequest }
         ]);
     }
     create(value?: PartialMessage<Qualification>): Qualification {
@@ -540,6 +663,9 @@ class Qualification$Type extends MessageType<Qualification> {
                 case /* optional resources.qualifications.QualificationResult result */ 18:
                     message.result = QualificationResult.internalBinaryRead(reader, reader.uint32(), options, message.result);
                     break;
+                case /* optional resources.qualifications.QualificationRequest request */ 19:
+                    message.request = QualificationRequest.internalBinaryRead(reader, reader.uint32(), options, message.request);
+                    break;
                 default:
                     let u = options.readUnknownField;
                     if (u === "throw")
@@ -606,6 +732,9 @@ class Qualification$Type extends MessageType<Qualification> {
         /* optional resources.qualifications.QualificationResult result = 18; */
         if (message.result)
             QualificationResult.internalBinaryWrite(message.result, writer.tag(18, WireType.LengthDelimited).fork(), options).join();
+        /* optional resources.qualifications.QualificationRequest request = 19; */
+        if (message.request)
+            QualificationRequest.internalBinaryWrite(message.request, writer.tag(19, WireType.LengthDelimited).fork(), options).join();
         let u = options.writeUnknownFields;
         if (u !== false)
             (u == true ? UnknownFieldHandler.onWrite : u)(this.typeName, message, writer);
@@ -1055,14 +1184,15 @@ class QualificationResult$Type extends MessageType<QualificationResult> {
             { no: 2, name: "created_at", kind: "message", T: () => Timestamp },
             { no: 3, name: "deleted_at", kind: "message", T: () => Timestamp },
             { no: 4, name: "qualification_id", kind: "scalar", T: 4 /*ScalarType.UINT64*/ },
-            { no: 5, name: "user_id", kind: "scalar", T: 5 /*ScalarType.INT32*/ },
-            { no: 6, name: "user", kind: "message", T: () => UserShort },
-            { no: 7, name: "status", kind: "enum", T: () => ["resources.qualifications.ResultStatus", ResultStatus, "RESULT_STATUS_"] },
-            { no: 8, name: "score", kind: "scalar", opt: true, T: 13 /*ScalarType.UINT32*/, options: { "validate.rules": { uint32: { lt: 1000 } } } },
-            { no: 9, name: "summary", kind: "scalar", T: 9 /*ScalarType.STRING*/, options: { "validate.rules": { string: { minLen: "3", maxLen: "512" } } } },
-            { no: 10, name: "creator_id", kind: "scalar", T: 5 /*ScalarType.INT32*/ },
-            { no: 11, name: "creator", kind: "message", T: () => UserShort },
-            { no: 12, name: "creator_job", kind: "scalar", T: 9 /*ScalarType.STRING*/, options: { "validate.rules": { string: { maxLen: "20" } } } }
+            { no: 5, name: "qualification", kind: "message", T: () => QualificationShort },
+            { no: 6, name: "user_id", kind: "scalar", T: 5 /*ScalarType.INT32*/ },
+            { no: 7, name: "user", kind: "message", T: () => UserShort },
+            { no: 8, name: "status", kind: "enum", T: () => ["resources.qualifications.ResultStatus", ResultStatus, "RESULT_STATUS_"], options: { "validate.rules": { enum: { definedOnly: true } } } },
+            { no: 9, name: "score", kind: "scalar", opt: true, T: 13 /*ScalarType.UINT32*/, options: { "validate.rules": { uint32: { lt: 1000 } } } },
+            { no: 10, name: "summary", kind: "scalar", T: 9 /*ScalarType.STRING*/, options: { "validate.rules": { string: { minLen: "3", maxLen: "512" } } } },
+            { no: 11, name: "creator_id", kind: "scalar", T: 5 /*ScalarType.INT32*/ },
+            { no: 12, name: "creator", kind: "message", T: () => UserShort },
+            { no: 13, name: "creator_job", kind: "scalar", T: 9 /*ScalarType.STRING*/, options: { "validate.rules": { string: { maxLen: "20" } } } }
         ]);
     }
     create(value?: PartialMessage<QualificationResult>): QualificationResult {
@@ -1095,28 +1225,31 @@ class QualificationResult$Type extends MessageType<QualificationResult> {
                 case /* uint64 qualification_id = 4 [jstype = JS_STRING];*/ 4:
                     message.qualificationId = reader.uint64().toString();
                     break;
-                case /* int32 user_id */ 5:
+                case /* optional resources.qualifications.QualificationShort qualification */ 5:
+                    message.qualification = QualificationShort.internalBinaryRead(reader, reader.uint32(), options, message.qualification);
+                    break;
+                case /* int32 user_id */ 6:
                     message.userId = reader.int32();
                     break;
-                case /* resources.users.UserShort user */ 6:
+                case /* resources.users.UserShort user */ 7:
                     message.user = UserShort.internalBinaryRead(reader, reader.uint32(), options, message.user);
                     break;
-                case /* resources.qualifications.ResultStatus status */ 7:
+                case /* resources.qualifications.ResultStatus status */ 8:
                     message.status = reader.int32();
                     break;
-                case /* optional uint32 score */ 8:
+                case /* optional uint32 score */ 9:
                     message.score = reader.uint32();
                     break;
-                case /* string summary */ 9:
+                case /* string summary */ 10:
                     message.summary = reader.string();
                     break;
-                case /* int32 creator_id */ 10:
+                case /* int32 creator_id */ 11:
                     message.creatorId = reader.int32();
                     break;
-                case /* resources.users.UserShort creator */ 11:
+                case /* resources.users.UserShort creator */ 12:
                     message.creator = UserShort.internalBinaryRead(reader, reader.uint32(), options, message.creator);
                     break;
-                case /* string creator_job */ 12:
+                case /* string creator_job */ 13:
                     message.creatorJob = reader.string();
                     break;
                 default:
@@ -1143,30 +1276,33 @@ class QualificationResult$Type extends MessageType<QualificationResult> {
         /* uint64 qualification_id = 4 [jstype = JS_STRING]; */
         if (message.qualificationId !== "0")
             writer.tag(4, WireType.Varint).uint64(message.qualificationId);
-        /* int32 user_id = 5; */
+        /* optional resources.qualifications.QualificationShort qualification = 5; */
+        if (message.qualification)
+            QualificationShort.internalBinaryWrite(message.qualification, writer.tag(5, WireType.LengthDelimited).fork(), options).join();
+        /* int32 user_id = 6; */
         if (message.userId !== 0)
-            writer.tag(5, WireType.Varint).int32(message.userId);
-        /* resources.users.UserShort user = 6; */
+            writer.tag(6, WireType.Varint).int32(message.userId);
+        /* resources.users.UserShort user = 7; */
         if (message.user)
-            UserShort.internalBinaryWrite(message.user, writer.tag(6, WireType.LengthDelimited).fork(), options).join();
-        /* resources.qualifications.ResultStatus status = 7; */
+            UserShort.internalBinaryWrite(message.user, writer.tag(7, WireType.LengthDelimited).fork(), options).join();
+        /* resources.qualifications.ResultStatus status = 8; */
         if (message.status !== 0)
-            writer.tag(7, WireType.Varint).int32(message.status);
-        /* optional uint32 score = 8; */
+            writer.tag(8, WireType.Varint).int32(message.status);
+        /* optional uint32 score = 9; */
         if (message.score !== undefined)
-            writer.tag(8, WireType.Varint).uint32(message.score);
-        /* string summary = 9; */
+            writer.tag(9, WireType.Varint).uint32(message.score);
+        /* string summary = 10; */
         if (message.summary !== "")
-            writer.tag(9, WireType.LengthDelimited).string(message.summary);
-        /* int32 creator_id = 10; */
+            writer.tag(10, WireType.LengthDelimited).string(message.summary);
+        /* int32 creator_id = 11; */
         if (message.creatorId !== 0)
-            writer.tag(10, WireType.Varint).int32(message.creatorId);
-        /* resources.users.UserShort creator = 11; */
+            writer.tag(11, WireType.Varint).int32(message.creatorId);
+        /* resources.users.UserShort creator = 12; */
         if (message.creator)
-            UserShort.internalBinaryWrite(message.creator, writer.tag(11, WireType.LengthDelimited).fork(), options).join();
-        /* string creator_job = 12; */
+            UserShort.internalBinaryWrite(message.creator, writer.tag(12, WireType.LengthDelimited).fork(), options).join();
+        /* string creator_job = 13; */
         if (message.creatorJob !== "")
-            writer.tag(12, WireType.LengthDelimited).string(message.creatorJob);
+            writer.tag(13, WireType.LengthDelimited).string(message.creatorJob);
         let u = options.writeUnknownFields;
         if (u !== false)
             (u == true ? UnknownFieldHandler.onWrite : u)(this.typeName, message, writer);
@@ -1184,15 +1320,16 @@ class QualificationRequest$Type extends MessageType<QualificationRequest> {
             { no: 1, name: "created_at", kind: "message", T: () => Timestamp },
             { no: 2, name: "deleted_at", kind: "message", T: () => Timestamp },
             { no: 3, name: "qualification_id", kind: "scalar", T: 4 /*ScalarType.UINT64*/ },
-            { no: 4, name: "user_id", kind: "scalar", T: 5 /*ScalarType.INT32*/ },
-            { no: 5, name: "user", kind: "message", T: () => UserShort },
-            { no: 6, name: "user_comment", kind: "scalar", opt: true, T: 9 /*ScalarType.STRING*/, options: { "validate.rules": { string: { maxLen: "512" } } } },
-            { no: 7, name: "approved", kind: "scalar", opt: true, T: 8 /*ScalarType.BOOL*/ },
-            { no: 8, name: "approved_at", kind: "message", T: () => Timestamp },
-            { no: 9, name: "approver_comment", kind: "scalar", opt: true, T: 9 /*ScalarType.STRING*/, options: { "validate.rules": { string: { maxLen: "512" } } } },
-            { no: 10, name: "approver_id", kind: "scalar", opt: true, T: 5 /*ScalarType.INT32*/ },
-            { no: 11, name: "approver", kind: "message", T: () => UserShort },
-            { no: 12, name: "approver_job", kind: "scalar", opt: true, T: 9 /*ScalarType.STRING*/ }
+            { no: 4, name: "qualification", kind: "message", T: () => QualificationShort },
+            { no: 5, name: "user_id", kind: "scalar", T: 5 /*ScalarType.INT32*/ },
+            { no: 6, name: "user", kind: "message", T: () => UserShort },
+            { no: 7, name: "user_comment", kind: "scalar", opt: true, T: 9 /*ScalarType.STRING*/, options: { "validate.rules": { string: { maxLen: "512" } } } },
+            { no: 8, name: "status", kind: "enum", opt: true, T: () => ["resources.qualifications.RequestStatus", RequestStatus, "REQUEST_STATUS_"], options: { "validate.rules": { enum: { definedOnly: true } } } },
+            { no: 9, name: "approved_at", kind: "message", T: () => Timestamp },
+            { no: 10, name: "approver_comment", kind: "scalar", opt: true, T: 9 /*ScalarType.STRING*/, options: { "validate.rules": { string: { maxLen: "512" } } } },
+            { no: 11, name: "approver_id", kind: "scalar", opt: true, T: 5 /*ScalarType.INT32*/ },
+            { no: 12, name: "approver", kind: "message", T: () => UserShort },
+            { no: 13, name: "approver_job", kind: "scalar", opt: true, T: 9 /*ScalarType.STRING*/ }
         ]);
     }
     create(value?: PartialMessage<QualificationRequest>): QualificationRequest {
@@ -1217,31 +1354,34 @@ class QualificationRequest$Type extends MessageType<QualificationRequest> {
                 case /* uint64 qualification_id = 3 [jstype = JS_STRING];*/ 3:
                     message.qualificationId = reader.uint64().toString();
                     break;
-                case /* int32 user_id */ 4:
+                case /* optional resources.qualifications.QualificationShort qualification */ 4:
+                    message.qualification = QualificationShort.internalBinaryRead(reader, reader.uint32(), options, message.qualification);
+                    break;
+                case /* int32 user_id */ 5:
                     message.userId = reader.int32();
                     break;
-                case /* resources.users.UserShort user */ 5:
+                case /* resources.users.UserShort user */ 6:
                     message.user = UserShort.internalBinaryRead(reader, reader.uint32(), options, message.user);
                     break;
-                case /* optional string user_comment */ 6:
+                case /* optional string user_comment */ 7:
                     message.userComment = reader.string();
                     break;
-                case /* optional bool approved */ 7:
-                    message.approved = reader.bool();
+                case /* optional resources.qualifications.RequestStatus status */ 8:
+                    message.status = reader.int32();
                     break;
-                case /* optional resources.timestamp.Timestamp approved_at */ 8:
+                case /* optional resources.timestamp.Timestamp approved_at */ 9:
                     message.approvedAt = Timestamp.internalBinaryRead(reader, reader.uint32(), options, message.approvedAt);
                     break;
-                case /* optional string approver_comment */ 9:
+                case /* optional string approver_comment */ 10:
                     message.approverComment = reader.string();
                     break;
-                case /* optional int32 approver_id */ 10:
+                case /* optional int32 approver_id */ 11:
                     message.approverId = reader.int32();
                     break;
-                case /* optional resources.users.UserShort approver */ 11:
+                case /* optional resources.users.UserShort approver */ 12:
                     message.approver = UserShort.internalBinaryRead(reader, reader.uint32(), options, message.approver);
                     break;
-                case /* optional string approver_job */ 12:
+                case /* optional string approver_job */ 13:
                     message.approverJob = reader.string();
                     break;
                 default:
@@ -1265,33 +1405,36 @@ class QualificationRequest$Type extends MessageType<QualificationRequest> {
         /* uint64 qualification_id = 3 [jstype = JS_STRING]; */
         if (message.qualificationId !== "0")
             writer.tag(3, WireType.Varint).uint64(message.qualificationId);
-        /* int32 user_id = 4; */
+        /* optional resources.qualifications.QualificationShort qualification = 4; */
+        if (message.qualification)
+            QualificationShort.internalBinaryWrite(message.qualification, writer.tag(4, WireType.LengthDelimited).fork(), options).join();
+        /* int32 user_id = 5; */
         if (message.userId !== 0)
-            writer.tag(4, WireType.Varint).int32(message.userId);
-        /* resources.users.UserShort user = 5; */
+            writer.tag(5, WireType.Varint).int32(message.userId);
+        /* resources.users.UserShort user = 6; */
         if (message.user)
-            UserShort.internalBinaryWrite(message.user, writer.tag(5, WireType.LengthDelimited).fork(), options).join();
-        /* optional string user_comment = 6; */
+            UserShort.internalBinaryWrite(message.user, writer.tag(6, WireType.LengthDelimited).fork(), options).join();
+        /* optional string user_comment = 7; */
         if (message.userComment !== undefined)
-            writer.tag(6, WireType.LengthDelimited).string(message.userComment);
-        /* optional bool approved = 7; */
-        if (message.approved !== undefined)
-            writer.tag(7, WireType.Varint).bool(message.approved);
-        /* optional resources.timestamp.Timestamp approved_at = 8; */
+            writer.tag(7, WireType.LengthDelimited).string(message.userComment);
+        /* optional resources.qualifications.RequestStatus status = 8; */
+        if (message.status !== undefined)
+            writer.tag(8, WireType.Varint).int32(message.status);
+        /* optional resources.timestamp.Timestamp approved_at = 9; */
         if (message.approvedAt)
-            Timestamp.internalBinaryWrite(message.approvedAt, writer.tag(8, WireType.LengthDelimited).fork(), options).join();
-        /* optional string approver_comment = 9; */
+            Timestamp.internalBinaryWrite(message.approvedAt, writer.tag(9, WireType.LengthDelimited).fork(), options).join();
+        /* optional string approver_comment = 10; */
         if (message.approverComment !== undefined)
-            writer.tag(9, WireType.LengthDelimited).string(message.approverComment);
-        /* optional int32 approver_id = 10; */
+            writer.tag(10, WireType.LengthDelimited).string(message.approverComment);
+        /* optional int32 approver_id = 11; */
         if (message.approverId !== undefined)
-            writer.tag(10, WireType.Varint).int32(message.approverId);
-        /* optional resources.users.UserShort approver = 11; */
+            writer.tag(11, WireType.Varint).int32(message.approverId);
+        /* optional resources.users.UserShort approver = 12; */
         if (message.approver)
-            UserShort.internalBinaryWrite(message.approver, writer.tag(11, WireType.LengthDelimited).fork(), options).join();
-        /* optional string approver_job = 12; */
+            UserShort.internalBinaryWrite(message.approver, writer.tag(12, WireType.LengthDelimited).fork(), options).join();
+        /* optional string approver_job = 13; */
         if (message.approverJob !== undefined)
-            writer.tag(12, WireType.LengthDelimited).string(message.approverJob);
+            writer.tag(13, WireType.LengthDelimited).string(message.approverJob);
         let u = options.writeUnknownFields;
         if (u !== false)
             (u == true ? UnknownFieldHandler.onWrite : u)(this.typeName, message, writer);
@@ -1302,3 +1445,268 @@ class QualificationRequest$Type extends MessageType<QualificationRequest> {
  * @generated MessageType for protobuf message resources.qualifications.QualificationRequest
  */
 export const QualificationRequest = new QualificationRequest$Type();
+// @generated message type with reflection information, may provide speed optimized methods
+class QualificationTest$Type extends MessageType<QualificationTest> {
+    constructor() {
+        super("resources.qualifications.QualificationTest", []);
+    }
+    create(value?: PartialMessage<QualificationTest>): QualificationTest {
+        const message = globalThis.Object.create((this.messagePrototype!));
+        if (value !== undefined)
+            reflectionMergePartial<QualificationTest>(this, message, value);
+        return message;
+    }
+    internalBinaryRead(reader: IBinaryReader, length: number, options: BinaryReadOptions, target?: QualificationTest): QualificationTest {
+        return target ?? this.create();
+    }
+    internalBinaryWrite(message: QualificationTest, writer: IBinaryWriter, options: BinaryWriteOptions): IBinaryWriter {
+        let u = options.writeUnknownFields;
+        if (u !== false)
+            (u == true ? UnknownFieldHandler.onWrite : u)(this.typeName, message, writer);
+        return writer;
+    }
+}
+/**
+ * @generated MessageType for protobuf message resources.qualifications.QualificationTest
+ */
+export const QualificationTest = new QualificationTest$Type();
+// @generated message type with reflection information, may provide speed optimized methods
+class QualificationTestQuestion$Type extends MessageType<QualificationTestQuestion> {
+    constructor() {
+        super("resources.qualifications.QualificationTestQuestion", [
+            { no: 1, name: "id", kind: "scalar", T: 4 /*ScalarType.UINT64*/ },
+            { no: 2, name: "qualification_id", kind: "scalar", T: 4 /*ScalarType.UINT64*/ },
+            { no: 3, name: "question", kind: "scalar", T: 9 /*ScalarType.STRING*/, options: { "validate.rules": { string: { maxLen: "512" } } } },
+            { no: 4, name: "data", kind: "message", T: () => TestQuestionData, options: { "validate.rules": { message: { required: true } } } }
+        ]);
+    }
+    create(value?: PartialMessage<QualificationTestQuestion>): QualificationTestQuestion {
+        const message = globalThis.Object.create((this.messagePrototype!));
+        message.id = "0";
+        message.qualificationId = "0";
+        message.question = "";
+        if (value !== undefined)
+            reflectionMergePartial<QualificationTestQuestion>(this, message, value);
+        return message;
+    }
+    internalBinaryRead(reader: IBinaryReader, length: number, options: BinaryReadOptions, target?: QualificationTestQuestion): QualificationTestQuestion {
+        let message = target ?? this.create(), end = reader.pos + length;
+        while (reader.pos < end) {
+            let [fieldNo, wireType] = reader.tag();
+            switch (fieldNo) {
+                case /* uint64 id = 1 [jstype = JS_STRING];*/ 1:
+                    message.id = reader.uint64().toString();
+                    break;
+                case /* uint64 qualification_id = 2 [jstype = JS_STRING];*/ 2:
+                    message.qualificationId = reader.uint64().toString();
+                    break;
+                case /* string question */ 3:
+                    message.question = reader.string();
+                    break;
+                case /* resources.qualifications.TestQuestionData data */ 4:
+                    message.data = TestQuestionData.internalBinaryRead(reader, reader.uint32(), options, message.data);
+                    break;
+                default:
+                    let u = options.readUnknownField;
+                    if (u === "throw")
+                        throw new globalThis.Error(`Unknown field ${fieldNo} (wire type ${wireType}) for ${this.typeName}`);
+                    let d = reader.skip(wireType);
+                    if (u !== false)
+                        (u === true ? UnknownFieldHandler.onRead : u)(this.typeName, message, fieldNo, wireType, d);
+            }
+        }
+        return message;
+    }
+    internalBinaryWrite(message: QualificationTestQuestion, writer: IBinaryWriter, options: BinaryWriteOptions): IBinaryWriter {
+        /* uint64 id = 1 [jstype = JS_STRING]; */
+        if (message.id !== "0")
+            writer.tag(1, WireType.Varint).uint64(message.id);
+        /* uint64 qualification_id = 2 [jstype = JS_STRING]; */
+        if (message.qualificationId !== "0")
+            writer.tag(2, WireType.Varint).uint64(message.qualificationId);
+        /* string question = 3; */
+        if (message.question !== "")
+            writer.tag(3, WireType.LengthDelimited).string(message.question);
+        /* resources.qualifications.TestQuestionData data = 4; */
+        if (message.data)
+            TestQuestionData.internalBinaryWrite(message.data, writer.tag(4, WireType.LengthDelimited).fork(), options).join();
+        let u = options.writeUnknownFields;
+        if (u !== false)
+            (u == true ? UnknownFieldHandler.onWrite : u)(this.typeName, message, writer);
+        return writer;
+    }
+}
+/**
+ * @generated MessageType for protobuf message resources.qualifications.QualificationTestQuestion
+ */
+export const QualificationTestQuestion = new QualificationTestQuestion$Type();
+// @generated message type with reflection information, may provide speed optimized methods
+class TestQuestionData$Type extends MessageType<TestQuestionData> {
+    constructor() {
+        super("resources.qualifications.TestQuestionData", [
+            { no: 1, name: "separator", kind: "scalar", oneof: "data", T: 8 /*ScalarType.BOOL*/ },
+            { no: 2, name: "yesno", kind: "scalar", oneof: "data", T: 8 /*ScalarType.BOOL*/ },
+            { no: 3, name: "short_text", kind: "message", oneof: "data", T: () => TestQuestionDataText },
+            { no: 4, name: "long_text", kind: "message", oneof: "data", T: () => TestQuestionDataText },
+            { no: 5, name: "multiple_choice", kind: "message", oneof: "data", T: () => TestQuestionDataMultipleChoice }
+        ]);
+    }
+    create(value?: PartialMessage<TestQuestionData>): TestQuestionData {
+        const message = globalThis.Object.create((this.messagePrototype!));
+        message.data = { oneofKind: undefined };
+        if (value !== undefined)
+            reflectionMergePartial<TestQuestionData>(this, message, value);
+        return message;
+    }
+    internalBinaryRead(reader: IBinaryReader, length: number, options: BinaryReadOptions, target?: TestQuestionData): TestQuestionData {
+        let message = target ?? this.create(), end = reader.pos + length;
+        while (reader.pos < end) {
+            let [fieldNo, wireType] = reader.tag();
+            switch (fieldNo) {
+                case /* bool separator */ 1:
+                    message.data = {
+                        oneofKind: "separator",
+                        separator: reader.bool()
+                    };
+                    break;
+                case /* bool yesno */ 2:
+                    message.data = {
+                        oneofKind: "yesno",
+                        yesno: reader.bool()
+                    };
+                    break;
+                case /* resources.qualifications.TestQuestionDataText short_text */ 3:
+                    message.data = {
+                        oneofKind: "shortText",
+                        shortText: TestQuestionDataText.internalBinaryRead(reader, reader.uint32(), options, (message.data as any).shortText)
+                    };
+                    break;
+                case /* resources.qualifications.TestQuestionDataText long_text */ 4:
+                    message.data = {
+                        oneofKind: "longText",
+                        longText: TestQuestionDataText.internalBinaryRead(reader, reader.uint32(), options, (message.data as any).longText)
+                    };
+                    break;
+                case /* resources.qualifications.TestQuestionDataMultipleChoice multiple_choice */ 5:
+                    message.data = {
+                        oneofKind: "multipleChoice",
+                        multipleChoice: TestQuestionDataMultipleChoice.internalBinaryRead(reader, reader.uint32(), options, (message.data as any).multipleChoice)
+                    };
+                    break;
+                default:
+                    let u = options.readUnknownField;
+                    if (u === "throw")
+                        throw new globalThis.Error(`Unknown field ${fieldNo} (wire type ${wireType}) for ${this.typeName}`);
+                    let d = reader.skip(wireType);
+                    if (u !== false)
+                        (u === true ? UnknownFieldHandler.onRead : u)(this.typeName, message, fieldNo, wireType, d);
+            }
+        }
+        return message;
+    }
+    internalBinaryWrite(message: TestQuestionData, writer: IBinaryWriter, options: BinaryWriteOptions): IBinaryWriter {
+        /* bool separator = 1; */
+        if (message.data.oneofKind === "separator")
+            writer.tag(1, WireType.Varint).bool(message.data.separator);
+        /* bool yesno = 2; */
+        if (message.data.oneofKind === "yesno")
+            writer.tag(2, WireType.Varint).bool(message.data.yesno);
+        /* resources.qualifications.TestQuestionDataText short_text = 3; */
+        if (message.data.oneofKind === "shortText")
+            TestQuestionDataText.internalBinaryWrite(message.data.shortText, writer.tag(3, WireType.LengthDelimited).fork(), options).join();
+        /* resources.qualifications.TestQuestionDataText long_text = 4; */
+        if (message.data.oneofKind === "longText")
+            TestQuestionDataText.internalBinaryWrite(message.data.longText, writer.tag(4, WireType.LengthDelimited).fork(), options).join();
+        /* resources.qualifications.TestQuestionDataMultipleChoice multiple_choice = 5; */
+        if (message.data.oneofKind === "multipleChoice")
+            TestQuestionDataMultipleChoice.internalBinaryWrite(message.data.multipleChoice, writer.tag(5, WireType.LengthDelimited).fork(), options).join();
+        let u = options.writeUnknownFields;
+        if (u !== false)
+            (u == true ? UnknownFieldHandler.onWrite : u)(this.typeName, message, writer);
+        return writer;
+    }
+}
+/**
+ * @generated MessageType for protobuf message resources.qualifications.TestQuestionData
+ */
+export const TestQuestionData = new TestQuestionData$Type();
+// @generated message type with reflection information, may provide speed optimized methods
+class TestQuestionDataText$Type extends MessageType<TestQuestionDataText> {
+    constructor() {
+        super("resources.qualifications.TestQuestionDataText", [
+            { no: 1, name: "min_length", kind: "scalar", T: 5 /*ScalarType.INT32*/ },
+            { no: 2, name: "max_length", kind: "scalar", T: 5 /*ScalarType.INT32*/ }
+        ]);
+    }
+    create(value?: PartialMessage<TestQuestionDataText>): TestQuestionDataText {
+        const message = globalThis.Object.create((this.messagePrototype!));
+        message.minLength = 0;
+        message.maxLength = 0;
+        if (value !== undefined)
+            reflectionMergePartial<TestQuestionDataText>(this, message, value);
+        return message;
+    }
+    internalBinaryRead(reader: IBinaryReader, length: number, options: BinaryReadOptions, target?: TestQuestionDataText): TestQuestionDataText {
+        let message = target ?? this.create(), end = reader.pos + length;
+        while (reader.pos < end) {
+            let [fieldNo, wireType] = reader.tag();
+            switch (fieldNo) {
+                case /* int32 min_length */ 1:
+                    message.minLength = reader.int32();
+                    break;
+                case /* int32 max_length */ 2:
+                    message.maxLength = reader.int32();
+                    break;
+                default:
+                    let u = options.readUnknownField;
+                    if (u === "throw")
+                        throw new globalThis.Error(`Unknown field ${fieldNo} (wire type ${wireType}) for ${this.typeName}`);
+                    let d = reader.skip(wireType);
+                    if (u !== false)
+                        (u === true ? UnknownFieldHandler.onRead : u)(this.typeName, message, fieldNo, wireType, d);
+            }
+        }
+        return message;
+    }
+    internalBinaryWrite(message: TestQuestionDataText, writer: IBinaryWriter, options: BinaryWriteOptions): IBinaryWriter {
+        /* int32 min_length = 1; */
+        if (message.minLength !== 0)
+            writer.tag(1, WireType.Varint).int32(message.minLength);
+        /* int32 max_length = 2; */
+        if (message.maxLength !== 0)
+            writer.tag(2, WireType.Varint).int32(message.maxLength);
+        let u = options.writeUnknownFields;
+        if (u !== false)
+            (u == true ? UnknownFieldHandler.onWrite : u)(this.typeName, message, writer);
+        return writer;
+    }
+}
+/**
+ * @generated MessageType for protobuf message resources.qualifications.TestQuestionDataText
+ */
+export const TestQuestionDataText = new TestQuestionDataText$Type();
+// @generated message type with reflection information, may provide speed optimized methods
+class TestQuestionDataMultipleChoice$Type extends MessageType<TestQuestionDataMultipleChoice> {
+    constructor() {
+        super("resources.qualifications.TestQuestionDataMultipleChoice", []);
+    }
+    create(value?: PartialMessage<TestQuestionDataMultipleChoice>): TestQuestionDataMultipleChoice {
+        const message = globalThis.Object.create((this.messagePrototype!));
+        if (value !== undefined)
+            reflectionMergePartial<TestQuestionDataMultipleChoice>(this, message, value);
+        return message;
+    }
+    internalBinaryRead(reader: IBinaryReader, length: number, options: BinaryReadOptions, target?: TestQuestionDataMultipleChoice): TestQuestionDataMultipleChoice {
+        return target ?? this.create();
+    }
+    internalBinaryWrite(message: TestQuestionDataMultipleChoice, writer: IBinaryWriter, options: BinaryWriteOptions): IBinaryWriter {
+        let u = options.writeUnknownFields;
+        if (u !== false)
+            (u == true ? UnknownFieldHandler.onWrite : u)(this.typeName, message, writer);
+        return writer;
+    }
+}
+/**
+ * @generated MessageType for protobuf message resources.qualifications.TestQuestionDataMultipleChoice
+ */
+export const TestQuestionDataMultipleChoice = new TestQuestionDataMultipleChoice$Type();

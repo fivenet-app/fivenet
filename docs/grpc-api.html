@@ -1028,6 +1028,26 @@
                   <a href="#resources.qualifications.QualificationShort"><span class="badge">M</span>QualificationShort</a>
                 </li>
               
+                <li>
+                  <a href="#resources.qualifications.QualificationTest"><span class="badge">M</span>QualificationTest</a>
+                </li>
+              
+                <li>
+                  <a href="#resources.qualifications.QualificationTestQuestion"><span class="badge">M</span>QualificationTestQuestion</a>
+                </li>
+              
+                <li>
+                  <a href="#resources.qualifications.TestQuestionData"><span class="badge">M</span>TestQuestionData</a>
+                </li>
+              
+                <li>
+                  <a href="#resources.qualifications.TestQuestionDataMultipleChoice"><span class="badge">M</span>TestQuestionDataMultipleChoice</a>
+                </li>
+              
+                <li>
+                  <a href="#resources.qualifications.TestQuestionDataText"><span class="badge">M</span>TestQuestionDataText</a>
+                </li>
+              
               
                 <li>
                   <a href="#resources.qualifications.AccessLevel"><span class="badge">E</span>AccessLevel</a>
@@ -1035,6 +1055,10 @@
               
                 <li>
                   <a href="#resources.qualifications.AccessLevelUpdateMode"><span class="badge">E</span>AccessLevelUpdateMode</a>
+                </li>
+              
+                <li>
+                  <a href="#resources.qualifications.RequestStatus"><span class="badge">E</span>RequestStatus</a>
                 </li>
               
                 <li>
@@ -12803,6 +12827,13 @@
                   <td><p> </p></td>
                 </tr>
               
+                <tr>
+                  <td>request</td>
+                  <td><a href="#resources.qualifications.QualificationRequest">QualificationRequest</a></td>
+                  <td>optional</td>
+                  <td><p> </p></td>
+                </tr>
+              
             </tbody>
           </table>
 
@@ -13165,6 +13196,13 @@
                 </tr>
               
                 <tr>
+                  <td>qualification</td>
+                  <td><a href="#resources.qualifications.QualificationShort">QualificationShort</a></td>
+                  <td>optional</td>
+                  <td><p> </p></td>
+                </tr>
+              
+                <tr>
                   <td>user_id</td>
                   <td><a href="#int32">int32</a></td>
                   <td></td>
@@ -13186,8 +13224,8 @@
                 </tr>
               
                 <tr>
-                  <td>approved</td>
-                  <td><a href="#bool">bool</a></td>
+                  <td>status</td>
+                  <td><a href="#resources.qualifications.RequestStatus">RequestStatus</a></td>
                   <td>optional</td>
                   <td><p> </p></td>
                 </tr>
@@ -13203,7 +13241,7 @@
                   <td>approver_comment</td>
                   <td><a href="#string">string</a></td>
                   <td>optional</td>
-                  <td><p> </p></td>
+                  <td><p>@sanitize: method=StripTags </p></td>
                 </tr>
               
                 <tr>
@@ -13249,6 +13287,17 @@
                     <ul>
                     
                       <li>string.max_len: 512</li>
+                    
+                    </ul>
+                  </td>
+                </tr>
+              
+                <tr>
+                  <td>status</td>
+                  <td>
+                    <ul>
+                    
+                      <li>enum.defined_only: true</li>
                     
                     </ul>
                   </td>
@@ -13363,6 +13412,13 @@
                 </tr>
               
                 <tr>
+                  <td>qualification</td>
+                  <td><a href="#resources.qualifications.QualificationShort">QualificationShort</a></td>
+                  <td>optional</td>
+                  <td><p> </p></td>
+                </tr>
+              
+                <tr>
                   <td>user_id</td>
                   <td><a href="#int32">int32</a></td>
                   <td></td>
@@ -13433,6 +13489,17 @@
                 </tr>
               </thead>
               <tbody>
+              
+                <tr>
+                  <td>status</td>
+                  <td>
+                    <ul>
+                    
+                      <li>enum.defined_only: true</li>
+                    
+                    </ul>
+                  </td>
+                </tr>
               
                 <tr>
                   <td>score</td>
@@ -13682,6 +13749,186 @@
 
         
       
+        <h3 id="resources.qualifications.QualificationTest">QualificationTest</h3>
+        <p></p>
+
+        
+
+        
+      
+        <h3 id="resources.qualifications.QualificationTestQuestion">QualificationTestQuestion</h3>
+        <p></p>
+
+        
+          <table class="field-table">
+            <thead>
+              <tr><td>Field</td><td>Type</td><td>Label</td><td>Description</td></tr>
+            </thead>
+            <tbody>
+              
+                <tr>
+                  <td>id</td>
+                  <td><a href="#uint64">uint64</a></td>
+                  <td></td>
+                  <td><p> </p></td>
+                </tr>
+              
+                <tr>
+                  <td>qualification_id</td>
+                  <td><a href="#uint64">uint64</a></td>
+                  <td></td>
+                  <td><p> </p></td>
+                </tr>
+              
+                <tr>
+                  <td>question</td>
+                  <td><a href="#string">string</a></td>
+                  <td></td>
+                  <td><p> </p></td>
+                </tr>
+              
+                <tr>
+                  <td>data</td>
+                  <td><a href="#resources.qualifications.TestQuestionData">TestQuestionData</a></td>
+                  <td></td>
+                  <td><p> </p></td>
+                </tr>
+              
+            </tbody>
+          </table>
+
+          
+            
+            
+            <h4>Validated Fields</h4>
+            <table>
+              <thead>
+                <tr>
+                  <td>Field</td>
+                  <td>Validations</td>
+                </tr>
+              </thead>
+              <tbody>
+              
+                <tr>
+                  <td>question</td>
+                  <td>
+                    <ul>
+                    
+                      <li>string.max_len: 512</li>
+                    
+                    </ul>
+                  </td>
+                </tr>
+              
+                <tr>
+                  <td>data</td>
+                  <td>
+                    <ul>
+                    
+                      <li>message.required: true</li>
+                    
+                    </ul>
+                  </td>
+                </tr>
+              
+              </tbody>
+            </table>
+            
+          
+
+        
+      
+        <h3 id="resources.qualifications.TestQuestionData">TestQuestionData</h3>
+        <p></p>
+
+        
+          <table class="field-table">
+            <thead>
+              <tr><td>Field</td><td>Type</td><td>Label</td><td>Description</td></tr>
+            </thead>
+            <tbody>
+              
+                <tr>
+                  <td>separator</td>
+                  <td><a href="#bool">bool</a></td>
+                  <td></td>
+                  <td><p> </p></td>
+                </tr>
+              
+                <tr>
+                  <td>yesno</td>
+                  <td><a href="#bool">bool</a></td>
+                  <td></td>
+                  <td><p> </p></td>
+                </tr>
+              
+                <tr>
+                  <td>short_text</td>
+                  <td><a href="#resources.qualifications.TestQuestionDataText">TestQuestionDataText</a></td>
+                  <td></td>
+                  <td><p> </p></td>
+                </tr>
+              
+                <tr>
+                  <td>long_text</td>
+                  <td><a href="#resources.qualifications.TestQuestionDataText">TestQuestionDataText</a></td>
+                  <td></td>
+                  <td><p> </p></td>
+                </tr>
+              
+                <tr>
+                  <td>multiple_choice</td>
+                  <td><a href="#resources.qualifications.TestQuestionDataMultipleChoice">TestQuestionDataMultipleChoice</a></td>
+                  <td></td>
+                  <td><p> </p></td>
+                </tr>
+              
+            </tbody>
+          </table>
+
+          
+
+        
+      
+        <h3 id="resources.qualifications.TestQuestionDataMultipleChoice">TestQuestionDataMultipleChoice</h3>
+        <p>TODO</p>
+
+        
+
+        
+      
+        <h3 id="resources.qualifications.TestQuestionDataText">TestQuestionDataText</h3>
+        <p></p>
+
+        
+          <table class="field-table">
+            <thead>
+              <tr><td>Field</td><td>Type</td><td>Label</td><td>Description</td></tr>
+            </thead>
+            <tbody>
+              
+                <tr>
+                  <td>min_length</td>
+                  <td><a href="#int32">int32</a></td>
+                  <td></td>
+                  <td><p> </p></td>
+                </tr>
+              
+                <tr>
+                  <td>max_length</td>
+                  <td><a href="#int32">int32</a></td>
+                  <td></td>
+                  <td><p> </p></td>
+                </tr>
+              
+            </tbody>
+          </table>
+
+          
+
+        
+      
 
       
         <h3 id="resources.qualifications.AccessLevel">AccessLevel</h3>
@@ -13771,6 +14018,41 @@
             
               <tr>
                 <td>ACCESS_LEVEL_UPDATE_MODE_CLEAR</td>
+                <td>3</td>
+                <td><p></p></td>
+              </tr>
+            
+          </tbody>
+        </table>
+      
+        <h3 id="resources.qualifications.RequestStatus">RequestStatus</h3>
+        <p></p>
+        <table class="enum-table">
+          <thead>
+            <tr><td>Name</td><td>Number</td><td>Description</td></tr>
+          </thead>
+          <tbody>
+            
+              <tr>
+                <td>REQUEST_STATUS_UNSPECIFIED</td>
+                <td>0</td>
+                <td><p></p></td>
+              </tr>
+            
+              <tr>
+                <td>REQUEST_STATUS_PENDING</td>
+                <td>1</td>
+                <td><p></p></td>
+              </tr>
+            
+              <tr>
+                <td>REQUEST_STATUS_DENIED</td>
+                <td>2</td>
+                <td><p></p></td>
+              </tr>
+            
+              <tr>
+                <td>REQUEST_STATUS_ACCEPTED</td>
                 <td>3</td>
                 <td><p></p></td>
               </tr>
@@ -24093,6 +24375,13 @@
                   <td>qualification_id</td>
                   <td><a href="#uint64">uint64</a></td>
                   <td>optional</td>
+                  <td><p>Search params </p></td>
+                </tr>
+              
+                <tr>
+                  <td>status</td>
+                  <td><a href="#resources.qualifications.RequestStatus">resources.qualifications.RequestStatus</a></td>
+                  <td>repeated</td>
                   <td><p> </p></td>
                 </tr>
               
@@ -24334,7 +24623,7 @@
               
                 <tr>
                   <td>results</td>
-                  <td><a href="#resources.qualifications.Qualification">resources.qualifications.Qualification</a></td>
+                  <td><a href="#resources.qualifications.QualificationResult">resources.qualifications.QualificationResult</a></td>
                   <td>repeated</td>
                   <td><p> </p></td>
                 </tr>
@@ -24554,10 +24843,31 @@
               </tr>
             
               <tr>
+                <td>ListQualificationRequests</td>
+                <td><a href="#services.qualifications.ListQualificationRequestsRequest">ListQualificationRequestsRequest</a></td>
+                <td><a href="#services.qualifications.ListQualificationRequestsResponse">ListQualificationRequestsResponse</a></td>
+                <td><p>@perm: Name=GetQualification</p></td>
+              </tr>
+            
+              <tr>
+                <td>CreateOrUpdateQualificationRequest</td>
+                <td><a href="#services.qualifications.CreateOrUpdateQualificationRequestRequest">CreateOrUpdateQualificationRequestRequest</a></td>
+                <td><a href="#services.qualifications.CreateOrUpdateQualificationRequestResponse">CreateOrUpdateQualificationRequestResponse</a></td>
+                <td><p>@perm: Name=GetQualification</p></td>
+              </tr>
+            
+              <tr>
+                <td>DeleteQualificationReq</td>
+                <td><a href="#services.qualifications.DeleteQualificationReqRequest">DeleteQualificationReqRequest</a></td>
+                <td><a href="#services.qualifications.DeleteQualificationReqResponse">DeleteQualificationReqResponse</a></td>
+                <td><p>@perm</p></td>
+              </tr>
+            
+              <tr>
                 <td>ListQualificationsResults</td>
                 <td><a href="#services.qualifications.ListQualificationsResultsRequest">ListQualificationsResultsRequest</a></td>
                 <td><a href="#services.qualifications.ListQualificationsResultsResponse">ListQualificationsResultsResponse</a></td>
-                <td><p>@perm</p></td>
+                <td><p>@perm: Name=GetQualification</p></td>
               </tr>
             
               <tr>
@@ -24571,27 +24881,6 @@
                 <td>DeleteQualificationResult</td>
                 <td><a href="#services.qualifications.DeleteQualificationResultRequest">DeleteQualificationResultRequest</a></td>
                 <td><a href="#services.qualifications.DeleteQualificationResultResponse">DeleteQualificationResultResponse</a></td>
-                <td><p>@perm</p></td>
-              </tr>
-            
-              <tr>
-                <td>ListQualificationRequests</td>
-                <td><a href="#services.qualifications.ListQualificationRequestsRequest">ListQualificationRequestsRequest</a></td>
-                <td><a href="#services.qualifications.ListQualificationRequestsResponse">ListQualificationRequestsResponse</a></td>
-                <td><p>@perm</p></td>
-              </tr>
-            
-              <tr>
-                <td>CreateOrUpdateQualificationRequest</td>
-                <td><a href="#services.qualifications.CreateOrUpdateQualificationRequestRequest">CreateOrUpdateQualificationRequestRequest</a></td>
-                <td><a href="#services.qualifications.CreateOrUpdateQualificationRequestResponse">CreateOrUpdateQualificationRequestResponse</a></td>
-                <td><p>@perm</p></td>
-              </tr>
-            
-              <tr>
-                <td>DeleteQualificationReq</td>
-                <td><a href="#services.qualifications.DeleteQualificationReqRequest">DeleteQualificationReqRequest</a></td>
-                <td><a href="#services.qualifications.DeleteQualificationReqResponse">DeleteQualificationReqResponse</a></td>
                 <td><p>@perm</p></td>
               </tr>
             

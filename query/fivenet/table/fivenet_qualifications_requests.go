@@ -22,7 +22,7 @@ type fivenetQualificationsRequestsTable struct {
 	QualificationID mysql.ColumnInteger
 	UserID          mysql.ColumnInteger
 	UserComment     mysql.ColumnString
-	Approved        mysql.ColumnBool
+	Status          mysql.ColumnInteger
 	ApprovedAt      mysql.ColumnTimestamp
 	ApproverComment mysql.ColumnString
 	ApproverID      mysql.ColumnInteger
@@ -72,13 +72,13 @@ func newFivenetQualificationsRequestsTableImpl(schemaName, tableName, alias stri
 		QualificationIDColumn = mysql.IntegerColumn("qualification_id")
 		UserIDColumn          = mysql.IntegerColumn("user_id")
 		UserCommentColumn     = mysql.StringColumn("user_comment")
-		ApprovedColumn        = mysql.BoolColumn("approved")
+		StatusColumn          = mysql.IntegerColumn("status")
 		ApprovedAtColumn      = mysql.TimestampColumn("approved_at")
 		ApproverCommentColumn = mysql.StringColumn("approver_comment")
 		ApproverIDColumn      = mysql.IntegerColumn("approver_id")
 		ApproverJobColumn     = mysql.StringColumn("approver_job")
-		allColumns            = mysql.ColumnList{CreatedAtColumn, DeletedAtColumn, QualificationIDColumn, UserIDColumn, UserCommentColumn, ApprovedColumn, ApprovedAtColumn, ApproverCommentColumn, ApproverIDColumn, ApproverJobColumn}
-		mutableColumns        = mysql.ColumnList{CreatedAtColumn, DeletedAtColumn, QualificationIDColumn, UserIDColumn, UserCommentColumn, ApprovedColumn, ApprovedAtColumn, ApproverCommentColumn, ApproverIDColumn, ApproverJobColumn}
+		allColumns            = mysql.ColumnList{CreatedAtColumn, DeletedAtColumn, QualificationIDColumn, UserIDColumn, UserCommentColumn, StatusColumn, ApprovedAtColumn, ApproverCommentColumn, ApproverIDColumn, ApproverJobColumn}
+		mutableColumns        = mysql.ColumnList{CreatedAtColumn, DeletedAtColumn, QualificationIDColumn, UserIDColumn, UserCommentColumn, StatusColumn, ApprovedAtColumn, ApproverCommentColumn, ApproverIDColumn, ApproverJobColumn}
 	)
 
 	return fivenetQualificationsRequestsTable{
@@ -90,7 +90,7 @@ func newFivenetQualificationsRequestsTableImpl(schemaName, tableName, alias stri
 		QualificationID: QualificationIDColumn,
 		UserID:          UserIDColumn,
 		UserComment:     UserCommentColumn,
-		Approved:        ApprovedColumn,
+		Status:          StatusColumn,
 		ApprovedAt:      ApprovedAtColumn,
 		ApproverComment: ApproverCommentColumn,
 		ApproverID:      ApproverIDColumn,

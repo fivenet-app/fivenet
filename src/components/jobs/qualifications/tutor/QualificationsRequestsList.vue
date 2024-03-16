@@ -7,6 +7,7 @@ import type { ListQualificationRequestsResponse } from '~~/gen/ts/services/quali
 import QualificationsRequestsListEntry from '~/components/jobs/qualifications/QualificationsRequestsListEntry.vue';
 import TablePagination from '~/components/partials/elements/TablePagination.vue';
 import type { RequestStatus } from '~~/gen/ts/resources/qualifications/qualifications';
+import GenericTable from '~/components/partials/elements/GenericTable.vue';
 
 const props = withDefaults(
     defineProps<{
@@ -52,17 +53,7 @@ watch(offset, async () => refresh());
 </script>
 
 <template>
-    <div class="overflow-hidden rounded-lg bg-base-700 shadow">
-        <div class="border-b border-gray-200 bg-base-600 px-4 py-5 sm:p-6">
-            <div class="-ml-4 -mt-4 flex flex-wrap items-center justify-between sm:flex-nowrap">
-                <div class="ml-4 mt-4">
-                    <h3 class="text-base font-semibold leading-6 text-gray-200">
-                        {{ $t('components.qualifications.user_requests') }}
-                    </h3>
-                    <p class="mt-1 text-sm text-gray-500"></p>
-                </div>
-            </div>
-        </div>
+    <div class="overflow-hidden">
         <div class="px-1 sm:px-2 lg:px-4">
             <DataPendingBlock v-if="pending" :message="$t('common.loading', [$t('common.qualifications', 2)])" />
             <DataErrorBlock
@@ -73,17 +64,35 @@ watch(offset, async () => refresh());
             <DataNoDataBlock v-else-if="data?.requests.length === 0" />
 
             <template v-else>
-                <ul role="list" class="divide-y divide-gray-100">
-                    <QualificationsRequestsListEntry
-                        v-for="result in data?.requests"
-                        :key="`${result.qualificationId}-${result.userId}`"
-                        :request="result"
-                    />
-                </ul>
-            </template>
-        </div>
-        <div class="border-t border-gray-200 bg-base-600 px-4 py-5 sm:p-6">
-            <div class="-ml-4 -mt-4 flex items-center">
+                <GenericTable>
+                    <template #thead>
+                        <tr>
+                            <th scope="col" class="whitespace-nowrap px-1 py-1 text-left text-sm font-semibold text-gray-100">
+                                {{ $t('common.qualifications') }}
+                            </th>
+                            <th scope="col" class="whitespace-nowrap px-1 py-1 text-left text-sm font-semibold text-gray-100">
+                                {{ $t('common.comment') }}
+                            </th>
+                            <th scope="col" class="whitespace-nowrap px-1 py-1 text-left text-sm font-semibold text-gray-100">
+                                {{ $t('common.status') }}
+                            </th>
+                            <th scope="col" class="whitespace-nowrap px-1 py-1 text-left text-sm font-semibold text-gray-100">
+                                {{ $t('common.created_at') }}
+                            </th>
+                            <th scope="col" class="whitespace-nowrap px-1 py-1 text-left text-sm font-semibold text-gray-100">
+                                {{ $t('common.action', 2) }}
+                            </th>
+                        </tr>
+                    </template>
+                    <template #tbody>
+                        <QualificationsRequestsListEntry
+                            v-for="result in data?.requests"
+                            :key="`${result.qualificationId}-${result.userId}`"
+                            :request="result"
+                        />
+                    </template>
+                </GenericTable>
+
                 <TablePagination
                     class="w-full"
                     :pagination="data?.pagination"
@@ -91,7 +100,7 @@ watch(offset, async () => refresh());
                     :refresh="refresh"
                     @offset-change="offset = $event"
                 />
-            </div>
+            </template>
         </div>
     </div>
 </template>

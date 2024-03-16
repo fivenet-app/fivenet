@@ -654,7 +654,11 @@
             "create_new_qualification": "Create New Qualification",
             "user_qualifications": "Your Qualifications",
             "all_qualifications": "All Qualifications",
-            "user_requests": "Requested Qualifications"
+            "user_requests": "Requested Qualifications",
+            "take_test": "Take Test",
+            "request_modal": {
+                "title": "Request Qualification"
+            }
         }
     },
     "common": {
@@ -1673,10 +1677,6 @@
         },
         "QualificationsService": {
             "category": "Qualifications",
-            "CreateOrUpdateQualificationRequest": {
-                "key": "Create or Update Qualification Request",
-                "description": "Create or Update Qualification Request"
-            },
             "ListQualifications": {
                 "key": "List Qualifications",
                 "description": "List available qualifications"
@@ -1715,10 +1715,6 @@
                     "Access": "Access to factions-own qualifications"
                 }
             },
-            "ListQualificationsResults": {
-                "key": "List Qualification Results",
-                "description": "List qualification results"
-            },
             "CreateOrUpdateQualificationResult": {
                 "key": "Create or Update Qualification Results",
                 "description": "Create and update qualification results"
@@ -1726,10 +1722,6 @@
             "DeleteQualificationResult": {
                 "key": "Delete Qualification Results",
                 "description": "Delete qualification results"
-            },
-            "ListQualificationRequests": {
-                "key": "List Qualification Requests",
-                "description": "List qualification requests"
             },
             "DeleteQualificationReq": {
                 "key": "Delete Qualification Requests",
@@ -2027,6 +2019,12 @@
                 "PENDING": "Pending",
                 "FAILED": "Failed",
                 "SUCCESSFUL": "Successful"
+            },
+            "RequestStatus": {
+                "UNSPECIFIED": "Unspecified",
+                "PENDING": "Pending",
+                "DENIED": "Denied",
+                "ACCEPTED": "Accepted"
             }
         }
     }

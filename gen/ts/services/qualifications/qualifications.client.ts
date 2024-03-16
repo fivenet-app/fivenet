@@ -4,18 +4,18 @@
 import type { RpcTransport } from "@protobuf-ts/runtime-rpc";
 import type { ServiceInfo } from "@protobuf-ts/runtime-rpc";
 import { QualificationsService } from "./qualifications";
-import type { DeleteQualificationReqResponse } from "./qualifications";
-import type { DeleteQualificationReqRequest } from "./qualifications";
-import type { CreateOrUpdateQualificationRequestResponse } from "./qualifications";
-import type { CreateOrUpdateQualificationRequestRequest } from "./qualifications";
-import type { ListQualificationRequestsResponse } from "./qualifications";
-import type { ListQualificationRequestsRequest } from "./qualifications";
 import type { DeleteQualificationResultResponse } from "./qualifications";
 import type { DeleteQualificationResultRequest } from "./qualifications";
 import type { CreateOrUpdateQualificationResultResponse } from "./qualifications";
 import type { CreateOrUpdateQualificationResultRequest } from "./qualifications";
 import type { ListQualificationsResultsResponse } from "./qualifications";
 import type { ListQualificationsResultsRequest } from "./qualifications";
+import type { DeleteQualificationReqResponse } from "./qualifications";
+import type { DeleteQualificationReqRequest } from "./qualifications";
+import type { CreateOrUpdateQualificationRequestResponse } from "./qualifications";
+import type { CreateOrUpdateQualificationRequestRequest } from "./qualifications";
+import type { ListQualificationRequestsResponse } from "./qualifications";
+import type { ListQualificationRequestsRequest } from "./qualifications";
 import type { DeleteQualificationResponse } from "./qualifications";
 import type { DeleteQualificationRequest } from "./qualifications";
 import type { UpdateQualificationResponse } from "./qualifications";
@@ -64,7 +64,25 @@ export interface IQualificationsServiceClient {
      */
     deleteQualification(input: DeleteQualificationRequest, options?: RpcOptions): UnaryCall<DeleteQualificationRequest, DeleteQualificationResponse>;
     /**
+     * @perm: Name=GetQualification
+     *
+     * @generated from protobuf rpc: ListQualificationRequests(services.qualifications.ListQualificationRequestsRequest) returns (services.qualifications.ListQualificationRequestsResponse);
+     */
+    listQualificationRequests(input: ListQualificationRequestsRequest, options?: RpcOptions): UnaryCall<ListQualificationRequestsRequest, ListQualificationRequestsResponse>;
+    /**
+     * @perm: Name=GetQualification
+     *
+     * @generated from protobuf rpc: CreateOrUpdateQualificationRequest(services.qualifications.CreateOrUpdateQualificationRequestRequest) returns (services.qualifications.CreateOrUpdateQualificationRequestResponse);
+     */
+    createOrUpdateQualificationRequest(input: CreateOrUpdateQualificationRequestRequest, options?: RpcOptions): UnaryCall<CreateOrUpdateQualificationRequestRequest, CreateOrUpdateQualificationRequestResponse>;
+    /**
      * @perm
+     *
+     * @generated from protobuf rpc: DeleteQualificationReq(services.qualifications.DeleteQualificationReqRequest) returns (services.qualifications.DeleteQualificationReqResponse);
+     */
+    deleteQualificationReq(input: DeleteQualificationReqRequest, options?: RpcOptions): UnaryCall<DeleteQualificationReqRequest, DeleteQualificationReqResponse>;
+    /**
+     * @perm: Name=GetQualification
      *
      * @generated from protobuf rpc: ListQualificationsResults(services.qualifications.ListQualificationsResultsRequest) returns (services.qualifications.ListQualificationsResultsResponse);
      */
@@ -81,24 +99,6 @@ export interface IQualificationsServiceClient {
      * @generated from protobuf rpc: DeleteQualificationResult(services.qualifications.DeleteQualificationResultRequest) returns (services.qualifications.DeleteQualificationResultResponse);
      */
     deleteQualificationResult(input: DeleteQualificationResultRequest, options?: RpcOptions): UnaryCall<DeleteQualificationResultRequest, DeleteQualificationResultResponse>;
-    /**
-     * @perm
-     *
-     * @generated from protobuf rpc: ListQualificationRequests(services.qualifications.ListQualificationRequestsRequest) returns (services.qualifications.ListQualificationRequestsResponse);
-     */
-    listQualificationRequests(input: ListQualificationRequestsRequest, options?: RpcOptions): UnaryCall<ListQualificationRequestsRequest, ListQualificationRequestsResponse>;
-    /**
-     * @perm
-     *
-     * @generated from protobuf rpc: CreateOrUpdateQualificationRequest(services.qualifications.CreateOrUpdateQualificationRequestRequest) returns (services.qualifications.CreateOrUpdateQualificationRequestResponse);
-     */
-    createOrUpdateQualificationRequest(input: CreateOrUpdateQualificationRequestRequest, options?: RpcOptions): UnaryCall<CreateOrUpdateQualificationRequestRequest, CreateOrUpdateQualificationRequestResponse>;
-    /**
-     * @perm
-     *
-     * @generated from protobuf rpc: DeleteQualificationReq(services.qualifications.DeleteQualificationReqRequest) returns (services.qualifications.DeleteQualificationReqResponse);
-     */
-    deleteQualificationReq(input: DeleteQualificationReqRequest, options?: RpcOptions): UnaryCall<DeleteQualificationReqRequest, DeleteQualificationReqResponse>;
 }
 /**
  * @generated from protobuf service services.qualifications.QualificationsService
@@ -155,48 +155,21 @@ export class QualificationsServiceClient implements IQualificationsServiceClient
         return stackIntercept<DeleteQualificationRequest, DeleteQualificationResponse>("unary", this._transport, method, opt, input);
     }
     /**
-     * @perm
-     *
-     * @generated from protobuf rpc: ListQualificationsResults(services.qualifications.ListQualificationsResultsRequest) returns (services.qualifications.ListQualificationsResultsResponse);
-     */
-    listQualificationsResults(input: ListQualificationsResultsRequest, options?: RpcOptions): UnaryCall<ListQualificationsResultsRequest, ListQualificationsResultsResponse> {
-        const method = this.methods[5], opt = this._transport.mergeOptions(options);
-        return stackIntercept<ListQualificationsResultsRequest, ListQualificationsResultsResponse>("unary", this._transport, method, opt, input);
-    }
-    /**
-     * @perm
-     *
-     * @generated from protobuf rpc: CreateOrUpdateQualificationResult(services.qualifications.CreateOrUpdateQualificationResultRequest) returns (services.qualifications.CreateOrUpdateQualificationResultResponse);
-     */
-    createOrUpdateQualificationResult(input: CreateOrUpdateQualificationResultRequest, options?: RpcOptions): UnaryCall<CreateOrUpdateQualificationResultRequest, CreateOrUpdateQualificationResultResponse> {
-        const method = this.methods[6], opt = this._transport.mergeOptions(options);
-        return stackIntercept<CreateOrUpdateQualificationResultRequest, CreateOrUpdateQualificationResultResponse>("unary", this._transport, method, opt, input);
-    }
-    /**
-     * @perm
-     *
-     * @generated from protobuf rpc: DeleteQualificationResult(services.qualifications.DeleteQualificationResultRequest) returns (services.qualifications.DeleteQualificationResultResponse);
-     */
-    deleteQualificationResult(input: DeleteQualificationResultRequest, options?: RpcOptions): UnaryCall<DeleteQualificationResultRequest, DeleteQualificationResultResponse> {
-        const method = this.methods[7], opt = this._transport.mergeOptions(options);
-        return stackIntercept<DeleteQualificationResultRequest, DeleteQualificationResultResponse>("unary", this._transport, method, opt, input);
-    }
-    /**
-     * @perm
+     * @perm: Name=GetQualification
      *
      * @generated from protobuf rpc: ListQualificationRequests(services.qualifications.ListQualificationRequestsRequest) returns (services.qualifications.ListQualificationRequestsResponse);
      */
     listQualificationRequests(input: ListQualificationRequestsRequest, options?: RpcOptions): UnaryCall<ListQualificationRequestsRequest, ListQualificationRequestsResponse> {
-        const method = this.methods[8], opt = this._transport.mergeOptions(options);
+        const method = this.methods[5], opt = this._transport.mergeOptions(options);
         return stackIntercept<ListQualificationRequestsRequest, ListQualificationRequestsResponse>("unary", this._transport, method, opt, input);
     }
     /**
-     * @perm
+     * @perm: Name=GetQualification
      *
      * @generated from protobuf rpc: CreateOrUpdateQualificationRequest(services.qualifications.CreateOrUpdateQualificationRequestRequest) returns (services.qualifications.CreateOrUpdateQualificationRequestResponse);
      */
     createOrUpdateQualificationRequest(input: CreateOrUpdateQualificationRequestRequest, options?: RpcOptions): UnaryCall<CreateOrUpdateQualificationRequestRequest, CreateOrUpdateQualificationRequestResponse> {
-        const method = this.methods[9], opt = this._transport.mergeOptions(options);
+        const method = this.methods[6], opt = this._transport.mergeOptions(options);
         return stackIntercept<CreateOrUpdateQualificationRequestRequest, CreateOrUpdateQualificationRequestResponse>("unary", this._transport, method, opt, input);
     }
     /**
@@ -205,7 +178,34 @@ export class QualificationsServiceClient implements IQualificationsServiceClient
      * @generated from protobuf rpc: DeleteQualificationReq(services.qualifications.DeleteQualificationReqRequest) returns (services.qualifications.DeleteQualificationReqResponse);
      */
     deleteQualificationReq(input: DeleteQualificationReqRequest, options?: RpcOptions): UnaryCall<DeleteQualificationReqRequest, DeleteQualificationReqResponse> {
-        const method = this.methods[10], opt = this._transport.mergeOptions(options);
+        const method = this.methods[7], opt = this._transport.mergeOptions(options);
         return stackIntercept<DeleteQualificationReqRequest, DeleteQualificationReqResponse>("unary", this._transport, method, opt, input);
+    }
+    /**
+     * @perm: Name=GetQualification
+     *
+     * @generated from protobuf rpc: ListQualificationsResults(services.qualifications.ListQualificationsResultsRequest) returns (services.qualifications.ListQualificationsResultsResponse);
+     */
+    listQualificationsResults(input: ListQualificationsResultsRequest, options?: RpcOptions): UnaryCall<ListQualificationsResultsRequest, ListQualificationsResultsResponse> {
+        const method = this.methods[8], opt = this._transport.mergeOptions(options);
+        return stackIntercept<ListQualificationsResultsRequest, ListQualificationsResultsResponse>("unary", this._transport, method, opt, input);
+    }
+    /**
+     * @perm
+     *
+     * @generated from protobuf rpc: CreateOrUpdateQualificationResult(services.qualifications.CreateOrUpdateQualificationResultRequest) returns (services.qualifications.CreateOrUpdateQualificationResultResponse);
+     */
+    createOrUpdateQualificationResult(input: CreateOrUpdateQualificationResultRequest, options?: RpcOptions): UnaryCall<CreateOrUpdateQualificationResultRequest, CreateOrUpdateQualificationResultResponse> {
+        const method = this.methods[9], opt = this._transport.mergeOptions(options);
+        return stackIntercept<CreateOrUpdateQualificationResultRequest, CreateOrUpdateQualificationResultResponse>("unary", this._transport, method, opt, input);
+    }
+    /**
+     * @perm
+     *
+     * @generated from protobuf rpc: DeleteQualificationResult(services.qualifications.DeleteQualificationResultRequest) returns (services.qualifications.DeleteQualificationResultResponse);
+     */
+    deleteQualificationResult(input: DeleteQualificationResultRequest, options?: RpcOptions): UnaryCall<DeleteQualificationResultRequest, DeleteQualificationResultResponse> {
+        const method = this.methods[10], opt = this._transport.mergeOptions(options);
+        return stackIntercept<DeleteQualificationResultRequest, DeleteQualificationResultResponse>("unary", this._transport, method, opt, input);
     }
 }

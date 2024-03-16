@@ -15,6 +15,7 @@ import {
     LockIcon,
     LockOpenVariantIcon,
     PencilIcon,
+    TestTubeIcon,
     TrashCanIcon,
 } from 'mdi-vue3';
 import IDCopyBadge from '~/components/partials/IDCopyBadge.vue';
@@ -27,7 +28,8 @@ import { AccessLevel, ResultStatus } from '~~/gen/ts/resources/qualifications/qu
 import type { DeleteQualificationResponse, GetQualificationResponse } from '~~/gen/ts/services/qualifications/qualifications';
 import { checkQualificationAccess } from '~/components/jobs/qualifications/helpers';
 import ConfirmDialog from '~/components/partials/ConfirmDialog.vue';
-import QualificationRequestModal from '~/components/jobs/qualifications/QualificationRequestModal.vue';
+import QualificationRequestUserModal from '~/components/jobs/qualifications/QualificationRequestUserModal.vue';
+import QualificationsRequestsList from '~/components/jobs/qualifications/tutor/QualificationsRequestsList.vue';
 
 const props = defineProps<{
     id: string;
@@ -87,7 +89,7 @@ const openRequest = ref(false);
             <div v-else class="rounded-lg bg-base-700">
                 <ConfirmDialog :open="isRevealed" :cancel="cancel" :confirm="() => confirm(quali!.id)" />
 
-                <QualificationRequestModal :qualification-id="quali.id" :open="openRequest" @close="openRequest = false" />
+                <QualificationRequestUserModal :qualification-id="quali.id" :open="openRequest" @close="openRequest = false" />
 
                 <div class="h-full px-4 py-6 sm:px-6 lg:px-8">
                     <div>
@@ -105,8 +107,16 @@ const openRequest = ref(false);
 
                                 <div class="flex space-x-2 self-end">
                                     <button
-                                        v-if="
-                                            can('QualificationsService.CreateOrUpdateQualificationRequest') &&
+                                        v-if="checkQualificationAccess(quali.access, quali.creator, AccessLevel.TAKE)"
+                                        type="button"
+                                        class="inline-flex items-center gap-x-1.5 rounded-md bg-primary-500 px-3 py-2 text-sm font-semibold text-neutral hover:bg-primary-400"
+                                        @click="openRequest = true"
+                                    >
+                                        <TestTubeIcon class="-ml-0.5 w-5 h-auto" aria-hidden="true" />
+                                        {{ $t('components.qualifications.take_test') }}
+                                    </button>
+                                    <button
+                                        v-else-if="
                                             quali?.access &&
                                             checkQualificationAccess(quali.access, quali.creator, AccessLevel.REQUEST)
                                         "
@@ -117,7 +127,6 @@ const openRequest = ref(false);
                                         <AccountSchoolIcon class="-ml-0.5 w-5 h-auto" aria-hidden="true" />
                                         {{ $t('common.request') }}
                                     </button>
-
                                     <NuxtLink
                                         v-if="
                                             can('QualificationsService.UpdateQualification') &&
@@ -295,7 +304,7 @@ const openRequest = ref(false);
                                 </Disclosure>
                             </div>
 
-                            <div v-if="quali.result" class="mt-2 w-full">
+                            <div v-if="quali.result && quali.result.id !== '0'" class="mt-2 w-full">
                                 <Disclosure
                                     v-slot="{ open }"
                                     as="div"
@@ -394,6 +403,40 @@ const openRequest = ref(false);
                                                     </span>
                                                 </div>
                                             </template>
+                                        </div>
+                                    </DisclosurePanel>
+                                </Disclosure>
+                            </div>
+
+                            <div
+                                v-if="checkQualificationAccess(quali.access, quali.creator, AccessLevel.GRADE)"
+                                class="mt-2 w-full"
+                            >
+                                <Disclosure
+                                    v-slot="{ open }"
+                                    as="div"
+                                    class="w-full border-neutral/20 text-neutral hover:border-neutral/70"
+                                >
+                                    <DisclosureButton
+                                        :class="[
+                                            open ? 'rounded-t-lg border-b-0' : 'rounded-lg',
+                                            'flex w-full items-start justify-between border-2 border-inherit p-2 text-left transition-colors',
+                                        ]"
+                                    >
+                                        <span class="inline-flex items-center text-base font-semibold leading-7">
+                                            <AccountSchoolIcon class="mr-2 w-5 h-auto" aria-hidden="true" />
+                                            {{ $t('common.request', 2) }}
+                                        </span>
+                                        <span class="ml-6 flex h-7 items-center">
+                                            <ChevronDownIcon
+                                                :class="[open ? 'upsidedown' : '', 'h-autotransition-transform w-5']"
+                                                aria-hidden="true"
+                                            />
+                                        </span>
+                                    </DisclosureButton>
+                                    <DisclosurePanel class="rounded-b-lg border-2 border-t-0 border-inherit transition-colors">
+                                        <div class="mx-4 pb-2">
+                                            <QualificationsRequestsList :qualification-id="quali.id" />
                                         </div>
                                     </DisclosurePanel>
                                 </Disclosure>

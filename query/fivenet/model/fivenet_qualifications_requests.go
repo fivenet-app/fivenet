@@ -17,7 +17,7 @@ type FivenetQualificationsRequests struct {
 	QualificationID uint64     `json:"qualification_id"`
 	UserID          int32      `json:"user_id"`
 	UserComment     *string    `json:"user_comment"`
-	Approved        *bool      `json:"approved"`
+	Status          *int16     `json:"status"`
 	ApprovedAt      *time.Time `json:"approved_at"`
 	ApproverComment *string    `json:"approver_comment"`
 	ApproverID      *int32     `json:"approver_id"`

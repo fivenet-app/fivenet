@@ -24,6 +24,10 @@ func (m *Qualification) Sanitize() error {
 
 func (m *QualificationRequest) Sanitize() error {
 
+	if m.ApproverComment != nil {
+		*m.ApproverComment = htmlsanitizer.StripTags(*m.ApproverComment)
+	}
+
 	if m.UserComment != nil {
 		*m.UserComment = htmlsanitizer.StripTags(*m.UserComment)
 	}

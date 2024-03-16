@@ -9,15 +9,22 @@ import (
 	"github.com/galexrt/fivenet/pkg/perms"
 )
 
+var PermsRemap = map[string]string{
+
+	// Service: QualificationsService
+	"QualificationsService/CreateOrUpdateQualificationRequest": "QualificationsService/GetQualification",
+	"QualificationsService/ListQualificationRequests":          "QualificationsService/GetQualification",
+	"QualificationsService/ListQualificationsResults":          "QualificationsService/GetQualification",
+}
+
+func (s *Server) GetPermsRemap() map[string]string {
+	return PermsRemap
+}
+
 func init() {
 	perms.AddPermsToList([]*perms.Perm{
 
 		// Service: QualificationsService
-		{
-			Category: permkeys.QualificationsServicePerm,
-			Name:     permkeys.QualificationsServiceCreateOrUpdateQualificationRequestPerm,
-			Attrs:    []perms.Attr{},
-		},
 		{
 			Category: permkeys.QualificationsServicePerm,
 			Name:     permkeys.QualificationsServiceCreateOrUpdateQualificationResultPerm,
@@ -56,17 +63,7 @@ func init() {
 		},
 		{
 			Category: permkeys.QualificationsServicePerm,
-			Name:     permkeys.QualificationsServiceListQualificationRequestsPerm,
-			Attrs:    []perms.Attr{},
-		},
-		{
-			Category: permkeys.QualificationsServicePerm,
 			Name:     permkeys.QualificationsServiceListQualificationsPerm,
-			Attrs:    []perms.Attr{},
-		},
-		{
-			Category: permkeys.QualificationsServicePerm,
-			Name:     permkeys.QualificationsServiceListQualificationsResultsPerm,
 			Attrs:    []perms.Attr{},
 		},
 		{
