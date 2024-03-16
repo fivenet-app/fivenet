@@ -1955,13 +1955,13 @@
     "@unhead/schema" "1.8.11"
     "@unhead/shared" "1.8.11"
 
-"@unhead/dom@1.8.18":
-  version "1.8.18"
-  resolved "https://registry.yarnpkg.com/@unhead/dom/-/dom-1.8.18.tgz#64958f98134deb216f8e4cc6b714349c9d070f93"
-  integrity sha512-F6ckuW+IAojGCSb++WFQlDeI3/80OALpD6yDcDrhAxZ8ogQatd5gXWjTmSiuV/0M2XIeDq3jwampvq6oomU6Gw==
+"@unhead/dom@1.8.20":
+  version "1.8.20"
+  resolved "https://registry.yarnpkg.com/@unhead/dom/-/dom-1.8.20.tgz#85fde2a198aad074515e88e83c075d1b16676359"
+  integrity sha512-TXRQSVbqBOQc02m3wxgj55m93U8a3WBHV9xJi2zVX/iHEJgeQbZMJ+rV0YJkHy2OHAC0MfjVQA5NDLaVwtromw==
   dependencies:
-    "@unhead/schema" "1.8.18"
-    "@unhead/shared" "1.8.18"
+    "@unhead/schema" "1.8.20"
+    "@unhead/shared" "1.8.20"
 
 "@unhead/schema@1.8.11":
   version "1.8.11"
@@ -1971,10 +1971,10 @@
     hookable "^5.5.3"
     zhead "^2.2.4"
 
-"@unhead/schema@1.8.18":
-  version "1.8.18"
-  resolved "https://registry.yarnpkg.com/@unhead/schema/-/schema-1.8.18.tgz#792bad2fa5fcdd87b5a2c33aa4225a2bdc75d866"
-  integrity sha512-E4oq4juwGJkXPOJlc4Qdp1iVTe79H4TSMWkOB8sSlU44vhvcuZduFYH9CCn29JvtV/640Uaf2QeX4o+wX96LRQ==
+"@unhead/schema@1.8.20":
+  version "1.8.20"
+  resolved "https://registry.yarnpkg.com/@unhead/schema/-/schema-1.8.20.tgz#d3c46cc7d3f059300654356102e3986d09f73457"
+  integrity sha512-n0e5jsKino8JTHc4wpr4l8MXXIrj0muYYAEVa0WSYkIVnMiBr1Ik3l6elhCr4fdSyJ3M2DQQleea/oZCr11XCw==
   dependencies:
     hookable "^5.5.3"
     zhead "^2.2.4"
@@ -1986,12 +1986,12 @@
   dependencies:
     "@unhead/schema" "1.8.11"
 
-"@unhead/shared@1.8.18":
-  version "1.8.18"
-  resolved "https://registry.yarnpkg.com/@unhead/shared/-/shared-1.8.18.tgz#059f1baaf175ab1ce0a5dc6dc80588ffad93b2d7"
-  integrity sha512-2Tw5oyTjMkPn11UoR9AB3kSk2nDVG+7nCS4dZUwdxTMqndUnYyWoGB0EcO2WbK6YpkpulLIlfmiXVzWW4PTrWg==
+"@unhead/shared@1.8.20":
+  version "1.8.20"
+  resolved "https://registry.yarnpkg.com/@unhead/shared/-/shared-1.8.20.tgz#e6314d20b9e281f76e38e93404d2c7fb76c9c518"
+  integrity sha512-J0fdtavcMtXcG0g9jmVW03toqfr8A0G7k+Q6jdpwuUPhWk/vhfZn3aiRV+F8LlU91c/AbGWDv8T1MrtMQbb0Sg==
   dependencies:
-    "@unhead/schema" "1.8.18"
+    "@unhead/schema" "1.8.20"
 
 "@unhead/ssr@^1.8.10":
   version "1.8.11"
@@ -2001,15 +2001,15 @@
     "@unhead/schema" "1.8.11"
     "@unhead/shared" "1.8.11"
 
-"@unhead/vue@1.8.18":
-  version "1.8.18"
-  resolved "https://registry.yarnpkg.com/@unhead/vue/-/vue-1.8.18.tgz#9500cf3ddb3bb915f1d2089feb28735ea1ab05b4"
-  integrity sha512-aKsDCYAiQ27Cjs8nyUHaYNYOQjdhhobMswrelNddekGpk63Y25bRO2NT3DheAOqAAcH4Qdt7JIe5Bu4N1HG5Gg==
+"@unhead/vue@1.8.20":
+  version "1.8.20"
+  resolved "https://registry.yarnpkg.com/@unhead/vue/-/vue-1.8.20.tgz#fa0f49a8cc29b825a4b4e8c3fa3352b0f516caf0"
+  integrity sha512-Lm6cnbX/QGCh+pxGN1Tl6LVXxYs5bLlN8APfI2rQ5kMNRE6Yy7r2eY5wCZ0SfsSRonqJxzVlgMMh8JPEY5d4GQ==
   dependencies:
-    "@unhead/schema" "1.8.18"
-    "@unhead/shared" "1.8.18"
+    "@unhead/schema" "1.8.20"
+    "@unhead/shared" "1.8.20"
     hookable "^5.5.3"
-    unhead "1.8.18"
+    unhead "1.8.20"
 
 "@unhead/vue@^1.8.10":
   version "1.8.11"
@@ -8571,7 +8571,16 @@ string-replace-loader@^3.1.0:
     loader-utils "^2.0.0"
     schema-utils "^3.0.0"
 
-"string-width-cjs@npm:string-width@^4.2.0", string-width@4.2.3, "string-width@^1.0.2 || 2 || 3 || 4", string-width@^4.1.0, string-width@^4.2.0, string-width@^4.2.3, string-width@^5.0.1, string-width@^5.1.2:
+"string-width-cjs@npm:string-width@^4.2.0":
+  version "4.2.3"
+  resolved "https://registry.yarnpkg.com/string-width/-/string-width-4.2.3.tgz#269c7117d27b05ad2e536830a8ec895ef9c6d010"
+  integrity sha512-wKyQRQpjJ0sIp62ErSZdGsjMJWsap5oRNihHhu6G7JVO/9jIB6UyevL+tXuOqrng8j/cxKTWyWUwvSTriiZz/g==
+  dependencies:
+    emoji-regex "^8.0.0"
+    is-fullwidth-code-point "^3.0.0"
+    strip-ansi "^6.0.1"
+
+string-width@4.2.3, "string-width@^1.0.2 || 2 || 3 || 4", string-width@^4.1.0, string-width@^4.2.0, string-width@^4.2.3, string-width@^5.0.1, string-width@^5.1.2:
   version "4.2.3"
   resolved "https://registry.yarnpkg.com/string-width/-/string-width-4.2.3.tgz#269c7117d27b05ad2e536830a8ec895ef9c6d010"
   integrity sha512-wKyQRQpjJ0sIp62ErSZdGsjMJWsap5oRNihHhu6G7JVO/9jIB6UyevL+tXuOqrng8j/cxKTWyWUwvSTriiZz/g==
@@ -8621,7 +8630,14 @@ string_decoder@~1.1.1:
   dependencies:
     safe-buffer "~5.1.0"
 
-"strip-ansi-cjs@npm:strip-ansi@^6.0.1", strip-ansi@^6.0.0, strip-ansi@^6.0.1:
+"strip-ansi-cjs@npm:strip-ansi@^6.0.1":
+  version "6.0.1"
+  resolved "https://registry.yarnpkg.com/strip-ansi/-/strip-ansi-6.0.1.tgz#9e26c63d30f53443e9489495b2105d37b67a85d9"
+  integrity sha512-Y38VPSHcqkFrCpFnQ9vuSXmquuv5oXOKpGeT6aGrr3o3Gc9AlVa6JBfUSOCnbxGGZF+/0ooI7KrPuUSztUdU5A==
+  dependencies:
+    ansi-regex "^5.0.1"
+
+strip-ansi@^6.0.0, strip-ansi@^6.0.1:
   version "6.0.1"
   resolved "https://registry.yarnpkg.com/strip-ansi/-/strip-ansi-6.0.1.tgz#9e26c63d30f53443e9489495b2105d37b67a85d9"
   integrity sha512-Y38VPSHcqkFrCpFnQ9vuSXmquuv5oXOKpGeT6aGrr3o3Gc9AlVa6JBfUSOCnbxGGZF+/0ooI7KrPuUSztUdU5A==
@@ -9193,14 +9209,14 @@ unhead@1.8.11:
     "@unhead/shared" "1.8.11"
     hookable "^5.5.3"
 
-unhead@1.8.18:
-  version "1.8.18"
-  resolved "https://registry.yarnpkg.com/unhead/-/unhead-1.8.18.tgz#0754e53bb3b7861cb724dd4d04370e453b51f39a"
-  integrity sha512-XmCGVev0bwo+jy5qh6PW1vACnPoQvv3MEwqo4w0+49W2ZGPMZYPtIa8GAZiaWgkycrlie1WgZejjJEG9bYVgZw==
+unhead@1.8.20:
+  version "1.8.20"
+  resolved "https://registry.yarnpkg.com/unhead/-/unhead-1.8.20.tgz#f97d699b43e7ca68a2ac7bcb4c88c4595617f46e"
+  integrity sha512-IJOCYact/7Za3M7CeeCWs8Vze53kHvKDUy/EXtkTm/an5StgqOt2uCnS3HrkioIMKdHBpy/qtTc6E3BoGMOq7Q==
   dependencies:
-    "@unhead/dom" "1.8.18"
-    "@unhead/schema" "1.8.18"
-    "@unhead/shared" "1.8.18"
+    "@unhead/dom" "1.8.20"
+    "@unhead/schema" "1.8.20"
+    "@unhead/shared" "1.8.20"
     hookable "^5.5.3"
 
 unicorn-magic@^0.1.0:
@@ -9773,8 +9789,16 @@ wide-align@^1.1.2:
   dependencies:
     string-width "^1.0.2 || 2 || 3 || 4"
 
-"wrap-ansi-cjs@npm:wrap-ansi@^7.0.0", wrap-ansi@^7.0.0:
-  name wrap-ansi-cjs
+"wrap-ansi-cjs@npm:wrap-ansi@^7.0.0":
+  version "7.0.0"
+  resolved "https://registry.yarnpkg.com/wrap-ansi/-/wrap-ansi-7.0.0.tgz#67e145cff510a6a6984bdf1152911d69d2eb9e43"
+  integrity sha512-YVGIj2kamLSTxw6NsZjoBxfSwsn0ycdesmc4p+Q21c5zPuZ1pl+NfxVdxPtdHvmNVOQ6XSYG4AUtyt/Fi7D16Q==
+  dependencies:
+    ansi-styles "^4.0.0"
+    string-width "^4.1.0"
+    strip-ansi "^6.0.0"
+
+wrap-ansi@^7.0.0:
   version "7.0.0"
   resolved "https://registry.yarnpkg.com/wrap-ansi/-/wrap-ansi-7.0.0.tgz#67e145cff510a6a6984bdf1152911d69d2eb9e43"
   integrity sha512-YVGIj2kamLSTxw6NsZjoBxfSwsn0ycdesmc4p+Q21c5zPuZ1pl+NfxVdxPtdHvmNVOQ6XSYG4AUtyt/Fi7D16Q==
