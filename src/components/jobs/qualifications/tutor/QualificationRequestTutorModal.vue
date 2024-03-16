@@ -10,7 +10,7 @@ import type { QualificationRequest } from '~~/gen/ts/resources/qualifications/qu
 import type { CreateOrUpdateQualificationRequestResponse } from '~~/gen/ts/services/qualifications/qualifications';
 
 const props = defineProps<{
-    request?: QualificationRequest;
+    request: QualificationRequest;
 }>();
 
 const emits = defineEmits<{
@@ -27,13 +27,14 @@ interface FormData {
 
 async function createOrUpdateQualificationRequest(
     qualificationId: string,
+    userId: number,
     values: FormData,
 ): Promise<CreateOrUpdateQualificationRequestResponse> {
     try {
         const call = $grpc.getQualificationsClient().createOrUpdateQualificationRequest({
             request: {
                 qualificationId,
-                userId: 0,
+                userId,
                 approverComment: values.approverComment,
             },
         });
@@ -69,7 +70,7 @@ const { handleSubmit, meta } = useForm<FormData>({
 const canSubmit = ref(true);
 const onSubmit = handleSubmit(
     async (values): Promise<any> =>
-        await createOrUpdateQualificationRequest(props.qualificationId, values).finally(() =>
+        await createOrUpdateQualificationRequest(props.request.qualificationId, props.request.userId, values).finally(() =>
             setTimeout(() => (canSubmit.value = true), 400),
         ),
 );

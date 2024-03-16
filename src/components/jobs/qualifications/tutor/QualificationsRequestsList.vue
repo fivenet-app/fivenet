@@ -4,10 +4,11 @@ import DataErrorBlock from '~/components/partials/data/DataErrorBlock.vue';
 import DataNoDataBlock from '~/components/partials/data/DataNoDataBlock.vue';
 import DataPendingBlock from '~/components/partials/data/DataPendingBlock.vue';
 import type { ListQualificationRequestsResponse } from '~~/gen/ts/services/qualifications/qualifications';
-import QualificationsRequestsListEntry from '~/components/jobs/qualifications/QualificationsRequestsListEntry.vue';
+import QualificationsRequestsListEntry from '~/components/jobs/qualifications/tutor/QualificationsRequestsListEntry.vue';
 import TablePagination from '~/components/partials/elements/TablePagination.vue';
-import type { RequestStatus } from '~~/gen/ts/resources/qualifications/qualifications';
+import type { QualificationRequest, RequestStatus } from '~~/gen/ts/resources/qualifications/qualifications';
 import GenericTable from '~/components/partials/elements/GenericTable.vue';
+import QualificationRequestTutorModal from '~/components/jobs/qualifications/tutor/QualificationRequestTutorModal.vue';
 
 const props = withDefaults(
     defineProps<{
@@ -50,6 +51,8 @@ async function listQualificationsRequests(
 }
 
 watch(offset, async () => refresh());
+
+const selectedRequest = ref<undefined | QualificationRequest>();
 </script>
 
 <template>
@@ -64,6 +67,8 @@ watch(offset, async () => refresh());
             <DataNoDataBlock v-else-if="data?.requests.length === 0" />
 
             <template v-else>
+                <QualificationRequestTutorModal v-if="selectedRequest" :request="selectedRequest" />
+
                 <GenericTable>
                     <template #thead>
                         <tr>

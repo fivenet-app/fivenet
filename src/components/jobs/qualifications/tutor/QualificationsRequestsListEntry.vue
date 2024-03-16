@@ -1,5 +1,5 @@
 <script lang="ts" setup>
-import { ChevronRightIcon, ListStatusIcon } from 'mdi-vue3';
+import { CheckBoldIcon, CloseThickIcon } from 'mdi-vue3';
 import GenericTime from '~/components/partials/elements/GenericTime.vue';
 import { QualificationRequest, RequestStatus } from '~~/gen/ts/resources/qualifications/qualifications';
 
@@ -10,45 +10,57 @@ defineProps<{
 defineEmits<{
     (e: 'selected'): void;
 }>();
+
+const canSubmit = ref(false);
 </script>
 
 <template>
-    <li class="relative flex justify-between px-4 py-5">
-        <div class="flex min-w-0 gap-x-4">
-            <div class="min-w-0 flex-auto">
-                <p class="text-sm font-semibold leading-6 text-gray-100">
-                    <NuxtLink :to="{ name: 'jobs-qualifications-id', params: { id: request.qualificationId } }">
-                        {{ request.qualification?.abbreviation }}: {{ request.qualification?.title }}
-                    </NuxtLink>
-                </p>
-                <p class="mt-1 flex text-xs leading-5 text-gray-300">
-                    <span class="inline-flex gap-1">
-                        <span v-if="request.userComment"> ({{ $t('common.summary') }}: {{ request.userComment }})</span>
+    <tr>
+        <td>{{ request.qualification?.abbreviation }}: {{ request.qualification?.title }}</td>
+        <td>
+            <span v-if="request.userComment">{{ request.userComment }}</span>
+        </td>
+        <td>
+            <div class="flex flex-initial flex-row gap-1 rounded-full">
+                <template v-if="request.status !== undefined">
+                    <span class="text-sm font-medium text-info-400">
+                        <span class="font-semibold">{{
+                            $t(`enums.qualifications.RequestStatus.${RequestStatus[request.status]}`)
+                        }}</span>
                     </span>
-                </p>
+                </template>
             </div>
-        </div>
-        <div class="flex shrink-0 items-center gap-x-4">
-            <div class="hidden sm:flex sm:flex-col sm:items-end">
-                <div class="flex flex-row gap-1">
-                    <div class="flex flex-initial flex-row gap-1 rounded-full bg-info-100 px-2 py-1">
-                        <ListStatusIcon class="h-5 w-5 text-info-400" aria-hidden="true" />
-                        <template v-if="request.status !== undefined">
-                            <span class="text-sm font-medium text-info-700">
-                                <span class="font-semibold">{{
-                                    $t(`enums.qualifications.RequestStatus.${RequestStatus[request.status]}`)
-                                }}</span>
-                            </span>
-                        </template>
-                    </div>
-                </div>
-                <p v-if="request.createdAt" class="mt-1 text-xs leading-5 text-gray-300">
-                    {{ $t('common.created_at') }} <GenericTime :value="request.createdAt" />
-                </p>
-            </div>
-            <button type="button" @click="$emit('selected')">
-                <ChevronRightIcon class="h-5 w-5 flex-none text-gray-300" aria-hidden="true" />
+        </td>
+        <td>
+            <p v-if="request.createdAt" class="mt-1 text-sm leading-5 text-gray-300">
+                {{ $t('common.created_at') }} <GenericTime :value="request.createdAt" />
+            </p>
+        </td>
+        <td class="flex items-center gap-2">
+            <button
+                type="button"
+                :disabled="!canSubmit"
+                class="rounded flex flex-1 justify-center px-2 py-2 text-sm font-semibold text-neutral"
+                :class="[
+                    !canSubmit
+                        ? 'disabled bg-base-500 hover:bg-base-400 focus-visible:outline-base-500'
+                        : 'bg-primary-500 hover:bg-primary-400 focus-visible:outline-primary-500',
+                ]"
+            >
+                <CloseThickIcon class="h-5 w-5 text-error-400" aria-hidden="true" />
             </button>
-        </div>
-    </li>
+            <button
+                type="button"
+                :disabled="!canSubmit"
+                class="rounded flex flex-1 justify-center px-2 py-2 text-sm font-semibold text-neutral"
+                :class="[
+                    !canSubmit
+                        ? 'disabled bg-base-500 hover:bg-base-400 focus-visible:outline-base-500'
+                        : 'bg-primary-500 hover:bg-primary-400 focus-visible:outline-primary-500',
+                ]"
+            >
+                <CheckBoldIcon class="h-5 w-5 text-success-400" aria-hidden="true" />
+            </button>
+        </td>
+    </tr>
 </template>

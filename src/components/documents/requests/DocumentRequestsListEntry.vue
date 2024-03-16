@@ -141,7 +141,7 @@ const onSubmitThrottle = useThrottleFn(async (accepted: boolean) => {
                     <button
                         type="button"
                         :disabled="!canSubmit"
-                        class="rounded flex flex-1 justify-center px-3.5 py-2.5 text-sm font-semibold text-neutral"
+                        class="rounded flex flex-1 justify-center px-2.5 py-2.5 text-sm font-semibold text-neutral"
                         :class="[
                             !canSubmit
                                 ? 'disabled bg-base-500 hover:bg-base-400 focus-visible:outline-base-500'
