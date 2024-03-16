@@ -653,7 +653,12 @@
         "qualifications": {
             "create_new_qualification": "Erstelle neue Qualifikation",
             "user_qualifications": "Ihre Qualifikationen",
-            "all_qualifications": "Alle Qualifikationen"
+            "all_qualifications": "Alle Qualifikationen",
+            "user_requests": "Angefragte Qualifikationen",
+            "take_test": "Prüfung ablegen",
+            "request_modal": {
+                "title": "Qualifikation anfragen"
+            }
         }
     },
     "common": {
@@ -1673,8 +1678,7 @@
         "QualificationsService": {
             "category": "Qualifikationen",
             "CreateOrUpdateQualificationRequest": {
-                "key": "Create or Update Qualification Request",
-                "description": "Create or Update Qualification Request"
+                "description": "Erstellen und aktualisieren von Qualifikationsanfragen"
             },
             "ListQualifications": {
                 "key": "Auflisten von Qualifikationen",
@@ -1682,15 +1686,15 @@
             },
             "GetQualification": {
                 "key": "Qualifikation aufrufen",
-                "description": "Retrieve qualification info"
+                "description": "Rufe Qualifikationsinformationen"
             },
             "CreateQualification": {
                 "key": "Qualifikationen erstellen",
-                "description": "Create qualifications"
+                "description": "Erstelle Qualifikationen"
             },
             "UpdateQualification": {
                 "key": "Qualifikation aktualisieren",
-                "description": "Update qualifications",
+                "description": "Aktualisiere Qualifikationen",
                 "attrs": {
                     "Own": "Eigene",
                     "Lower_Rank": "Niedrigerer Rang",
@@ -1703,7 +1707,7 @@
             },
             "DeleteQualification": {
                 "key": "Qualifikationen löschen",
-                "description": "Delete qualifications",
+                "description": "Lösche Qualifikationen",
                 "attrs": {
                     "Own": "Eigene",
                     "Lower_Rank": "Niedrigerer Rang",
@@ -1715,24 +1719,24 @@
                 }
             },
             "ListQualificationsResults": {
-                "key": "List Qualification Results",
-                "description": "List qualification results"
+                "key": "Auflisten von Qualifikationsergebnissen",
+                "description": "Auflisten von Qualifikationsergebnissen"
             },
             "CreateOrUpdateQualificationResult": {
-                "key": "Create or Update Qualification Results",
-                "description": "Create and update qualification results"
+                "key": "Erstellen und aktualisieren von Qualifikationsergebnissen",
+                "description": "Erstellen und aktualisieren von Qualifikationsergebnissen"
             },
             "DeleteQualificationResult": {
-                "key": "Delete Qualification Results",
-                "description": "Delete qualification results"
+                "key": "Löschen von Qualifikationsergebnissen",
+                "description": "Löschen von Qualifikationsergebnissen"
             },
             "ListQualificationRequests": {
-                "key": "List Qualification Requests",
-                "description": "List qualification requests"
+                "key": "Auflisten von Qualifikationsanfragen",
+                "description": "Auflisten von Qualifikationsanfragen"
             },
             "DeleteQualificationReq": {
-                "key": "Delete Qualification Requests",
-                "description": "Delete qualification requests"
+                "key": "Löschen von Qualifikationsanfragen",
+                "description": "Löschen von Qualifikationsanfragen"
             }
         }
     },
@@ -2026,6 +2030,12 @@
                 "PENDING": "Ausstehend",
                 "FAILED": "Misslungen",
                 "SUCCESSFUL": "Erfolgreich"
+            },
+            "RequestStatus": {
+                "UNSPECIFIED": "Unbestimmt",
+                "PENDING": "Ausstehend",
+                "DENIED": "Abgelehnt",
+                "ACCEPTED": "Akzeptiert"
             }
         }
     }
