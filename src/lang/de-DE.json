@@ -929,7 +929,9 @@
         "calendar_week": "KW",
         "requirements": "Anforderung | Anforderungen",
         "read": "Gelesen",
-        "abbreviation": "Abkürzung"
+        "abbreviation": "Abkürzung",
+        "approved": "Genehmigt am",
+        "approver": "Genehmiger"
     },
     "notifications": {
         "clipboard": {
@@ -1292,7 +1294,7 @@
                 }
             },
             "SetUserProps": {
-                "key": "Nutzereigenschaften festlegen",
+                "key": "Bürger-Eigenschaften festlegen",
                 "description": "Bürger-Eigenschaften festlegen (z.B. Fahndungsstatus).",
                 "attrs": {
                     "Wanted": "Gesuchter Status",
