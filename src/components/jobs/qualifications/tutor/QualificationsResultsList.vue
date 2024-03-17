@@ -50,14 +50,6 @@ async function listQualificationsResults(
 }
 
 watch(offset, async () => refresh());
-
-async function deleteQualificationResult(resultId: string): Promise<void> {
-    // Remove result from list
-    const idx = data.value?.results.findIndex((r) => r.id === resultId);
-    if (idx !== undefined && idx > -1) {
-        delete data.value?.results[idx];
-    }
-}
 </script>
 
 <template>
@@ -106,7 +98,7 @@ async function deleteQualificationResult(resultId: string): Promise<void> {
                             v-for="result in data?.results"
                             :key="`${result.qualificationId}-${result.userId}`"
                             :result="result"
-                            @delete="deleteQualificationResult(result.id)"
+                            @delete="refresh()"
                         />
                     </template>
                 </GenericTable>
