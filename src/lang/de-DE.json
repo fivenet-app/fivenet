@@ -930,8 +930,8 @@
         "requirements": "Anforderung | Anforderungen",
         "read": "Gelesen",
         "abbreviation": "Abkürzung",
-        "approved": "Genehmigt am",
-        "approver": "Genehmiger"
+        "approver": "Genehmiger",
+        "approved_at": "Genehmigt am"
     },
     "notifications": {
         "clipboard": {
