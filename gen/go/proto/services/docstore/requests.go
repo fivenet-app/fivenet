@@ -233,7 +233,7 @@ func (s *Server) CreateDocumentReq(ctx context.Context, req *CreateDocumentReqRe
 
 	// If the document has no creator anymore, nothing we can do here
 	if doc.CreatorId != nil {
-		if err := s.notifyUser(ctx, doc, userInfo.UserId, int32(*doc.CreatorId)); err != nil {
+		if err := s.notifyUserAboutRequest(ctx, doc, userInfo.UserId, int32(*doc.CreatorId)); err != nil {
 			return nil, errswrap.NewError(errorsdocstore.ErrFailedQuery, err)
 		}
 	}
@@ -427,7 +427,7 @@ func (s *Server) DeleteDocumentReq(ctx context.Context, req *DeleteDocumentReqRe
 	return &DeleteDocumentReqResponse{}, nil
 }
 
-func (s *Server) notifyUser(ctx context.Context, doc *documents.Document, sourceUserId int32, targetUserId int32) error {
+func (s *Server) notifyUserAboutRequest(ctx context.Context, doc *documents.Document, sourceUserId int32, targetUserId int32) error {
 	userInfo, err := s.ui.GetUserInfoWithoutAccountId(ctx, targetUserId)
 	if err != nil {
 		return err
@@ -437,7 +437,6 @@ func (s *Server) notifyUser(ctx context.Context, doc *documents.Document, source
 		s.enricher.EnrichJobInfoSafe(userInfo, doc.Creator)
 	}
 
-	// TODO retrieve usershort and set in `CausedBy` of `Notification.Data`
 	nType := string(notifi.InfoType)
 	not := &notifications.Notification{
 		UserId: targetUserId,

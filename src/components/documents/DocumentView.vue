@@ -581,7 +581,7 @@ if (hash.value !== undefined && hash.value !== null) {
                                 </DisclosurePanel>
                             </Disclosure>
 
-                            <div class="my-2">
+                            <div id="comments" class="my-2">
                                 <div
                                     class="w-full rounded-lg border-2 border-inherit border-neutral/20 text-neutral transition-colors hover:border-neutral/70"
                                 >

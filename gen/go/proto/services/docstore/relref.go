@@ -422,7 +422,7 @@ func (s *Server) AddDocumentRelation(ctx context.Context, req *AddDocumentRelati
 	auditEntry.State = int16(rector.EventType_EVENT_TYPE_CREATED)
 
 	if req.Relation.Relation == documents.DocRelation_DOC_RELATION_MENTIONED {
-		if err := s.notifyUserMentioned(ctx, uint64(lastId), userInfo.UserId, req.Relation.TargetUserId); err != nil {
+		if err := s.notifyMentionedUser(ctx, uint64(lastId), userInfo.UserId, req.Relation.TargetUserId); err != nil {
 			return nil, errswrap.NewError(errorsdocstore.ErrFailedQuery, err)
 		}
 	}
@@ -624,7 +624,7 @@ func (s *Server) getDocumentRelations(ctx context.Context, userInfo *userinfo.Us
 	return dest, nil
 }
 
-func (s *Server) notifyUserMentioned(ctx context.Context, documentId uint64, sourceUserId int32, targetUserId int32) error {
+func (s *Server) notifyMentionedUser(ctx context.Context, documentId uint64, sourceUserId int32, targetUserId int32) error {
 	userInfo, err := s.ui.GetUserInfoWithoutAccountId(ctx, targetUserId)
 	if err != nil {
 		return err
@@ -635,14 +635,13 @@ func (s *Server) notifyUserMentioned(ctx context.Context, documentId uint64, sou
 		return err
 	}
 	if doc == nil {
-		return err
+		return nil
 	}
 
 	if doc.Creator != nil {
 		s.enricher.EnrichJobInfoSafe(userInfo, doc.Creator)
 	}
 
-	// TODO retrieve usershort and set in `CausedBy` of `Notification.Data`
 	nType := string(notifi.InfoType)
 	not := &notifications.Notification{
 		UserId: targetUserId,
@@ -657,7 +656,7 @@ func (s *Server) notifyUserMentioned(ctx context.Context, documentId uint64, sou
 		Category: notifications.NotificationCategory_NOTIFICATION_CATEGORY_DOCUMENT,
 		Data: &notifications.Data{
 			Link: &notifications.Link{
-				To: fmt.Sprintf("/documents/%d", documentId),
+				To: fmt.Sprintf("/documents/%d", doc.Id),
 			},
 			CausedBy: &users.UserShort{
 				UserId: sourceUserId,

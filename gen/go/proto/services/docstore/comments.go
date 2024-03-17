@@ -2,14 +2,19 @@ package docstore
 
 import (
 	context "context"
+	"fmt"
 
+	"github.com/galexrt/fivenet/gen/go/proto/resources/common"
 	database "github.com/galexrt/fivenet/gen/go/proto/resources/common/database"
 	"github.com/galexrt/fivenet/gen/go/proto/resources/documents"
+	"github.com/galexrt/fivenet/gen/go/proto/resources/notifications"
 	"github.com/galexrt/fivenet/gen/go/proto/resources/rector"
+	"github.com/galexrt/fivenet/gen/go/proto/resources/users"
 	errorsdocstore "github.com/galexrt/fivenet/gen/go/proto/services/docstore/errors"
 	permsdocstore "github.com/galexrt/fivenet/gen/go/proto/services/docstore/perms"
 	"github.com/galexrt/fivenet/pkg/grpc/auth"
 	"github.com/galexrt/fivenet/pkg/grpc/errswrap"
+	"github.com/galexrt/fivenet/pkg/notifi"
 	"github.com/galexrt/fivenet/pkg/perms"
 	"github.com/galexrt/fivenet/query/fivenet/model"
 	"github.com/galexrt/fivenet/query/fivenet/table"
@@ -179,6 +184,10 @@ func (s *Server) PostComment(ctx context.Context, req *PostCommentRequest) (*Pos
 		CreatorId:    &userInfo.UserId,
 		CreatorJob:   userInfo.Job,
 	}); err != nil {
+		return nil, errswrap.NewError(errorsdocstore.ErrFailedQuery, err)
+	}
+
+	if err := s.notifyUsersAboutComment(ctx, req.Comment.DocumentId, userInfo.UserId); err != nil {
 		return nil, errswrap.NewError(errorsdocstore.ErrFailedQuery, err)
 	}
 
@@ -352,4 +361,50 @@ func (s *Server) DeleteComment(ctx context.Context, req *DeleteCommentRequest) (
 	auditEntry.State = int16(rector.EventType_EVENT_TYPE_DELETED)
 
 	return &DeleteCommentResponse{}, nil
+}
+
+func (s *Server) notifyUsersAboutComment(ctx context.Context, documentId uint64, sourceUserId int32) error {
+	userInfo, err := s.ui.GetUserInfoWithoutAccountId(ctx, sourceUserId)
+	if err != nil {
+		return err
+	}
+
+	doc, err := s.getDocument(ctx, tDocument.ID.EQ(jet.Uint64(documentId)), userInfo)
+	if err != nil {
+		return err
+	}
+	if doc == nil || doc.CreatorId == nil {
+		return nil
+	}
+
+	if doc.Creator != nil {
+		s.enricher.EnrichJobInfoSafe(userInfo, doc.Creator)
+	}
+
+	nType := string(notifi.InfoType)
+	not := &notifications.Notification{
+		UserId: *doc.CreatorId,
+		Title: &common.TranslateItem{
+			Key: "notifications.notifi.document_comment_added.title",
+		},
+		Content: &common.TranslateItem{
+			Key:        "notifications.notifi.document_comment_added.content",
+			Parameters: map[string]string{"title": doc.Title},
+		},
+		Type:     &nType,
+		Category: notifications.NotificationCategory_NOTIFICATION_CATEGORY_DOCUMENT,
+		Data: &notifications.Data{
+			Link: &notifications.Link{
+				To: fmt.Sprintf("/documents/%d#comments", doc.Id),
+			},
+			CausedBy: &users.UserShort{
+				UserId: sourceUserId,
+			},
+		},
+	}
+	if err := s.notif.NotifyUser(ctx, not); err != nil {
+		return err
+	}
+
+	return nil
 }

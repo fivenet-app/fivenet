@@ -95,7 +95,12 @@ const openRequest = ref(false);
             <div v-else class="rounded-lg bg-base-700">
                 <ConfirmDialog :open="isRevealed" :cancel="cancel" :confirm="() => confirm(quali!.id)" />
 
-                <QualificationRequestUserModal :qualification-id="quali.id" :open="openRequest" @close="openRequest = false" />
+                <QualificationRequestUserModal
+                    :qualification-id="quali.id"
+                    :open="openRequest"
+                    @close="openRequest = false"
+                    @updated-request="quali.request = $event"
+                />
 
                 <div class="h-full px-4 py-6 sm:px-6 lg:px-8">
                     <div>

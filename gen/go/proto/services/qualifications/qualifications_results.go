@@ -78,7 +78,6 @@ func (s *Server) ListQualificationsResults(ctx context.Context, req *ListQualifi
 						AND(tQJobAccess.MinimumGrade.LT_EQ(jet.Int32(userInfo.JobGrade))),
 				),
 		).
-		GROUP_BY(tQualiResults.ID).
 		WHERE(condition)
 
 	var count database.DataCount

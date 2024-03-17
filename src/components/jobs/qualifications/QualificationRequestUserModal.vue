@@ -6,6 +6,7 @@ import { useThrottleFn } from '@vueuse/core';
 import { CloseIcon, LoadingIcon } from 'mdi-vue3';
 import { defineRule } from 'vee-validate';
 import { useNotificatorStore } from '~/store/notificator';
+import type { QualificationRequest } from '~~/gen/ts/resources/qualifications/qualifications';
 import type { CreateOrUpdateQualificationRequestResponse } from '~~/gen/ts/services/qualifications/qualifications';
 
 const props = defineProps<{
@@ -15,6 +16,7 @@ const props = defineProps<{
 
 const emits = defineEmits<{
     (e: 'close'): void;
+    (e: 'updatedRequest', value?: QualificationRequest): void;
 }>();
 
 const { $grpc } = useNuxtApp();
@@ -45,6 +47,7 @@ async function createOrUpdateQualificationRequest(
             type: 'success',
         });
 
+        emits('updatedRequest', response.request);
         emits('close');
 
         return response;
