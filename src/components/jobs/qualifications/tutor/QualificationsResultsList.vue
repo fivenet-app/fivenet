@@ -3,10 +3,7 @@ import { RpcError } from '@protobuf-ts/runtime-rpc';
 import DataErrorBlock from '~/components/partials/data/DataErrorBlock.vue';
 import DataNoDataBlock from '~/components/partials/data/DataNoDataBlock.vue';
 import DataPendingBlock from '~/components/partials/data/DataPendingBlock.vue';
-import type {
-    DeleteQualificationResultResponse,
-    ListQualificationsResultsResponse,
-} from '~~/gen/ts/services/qualifications/qualifications';
+import type { ListQualificationsResultsResponse } from '~~/gen/ts/services/qualifications/qualifications';
 import QualificationsResultsListEntry from '~/components/jobs/qualifications/tutor/QualificationsResultsListEntry.vue';
 import TablePagination from '~/components/partials/elements/TablePagination.vue';
 import { ResultStatus } from '~~/gen/ts/resources/qualifications/qualifications';
@@ -54,23 +51,11 @@ async function listQualificationsResults(
 
 watch(offset, async () => refresh());
 
-async function deleteQualificationResult(resultId: string): Promise<DeleteQualificationResultResponse> {
-    try {
-        const call = $grpc.getQualificationsClient().deleteQualificationResult({
-            resultId,
-        });
-        const { response } = await call;
-
-        // Remove result from list
-        const idx = data.value?.results.findIndex((r) => r.id === resultId);
-        if (idx !== undefined && idx > -1) {
-            delete data.value?.results[idx];
-        }
-
-        return response;
-    } catch (e) {
-        $grpc.handleError(e as RpcError);
-        throw e;
+async function deleteQualificationResult(resultId: string): Promise<void> {
+    // Remove result from list
+    const idx = data.value?.results.findIndex((r) => r.id === resultId);
+    if (idx !== undefined && idx > -1) {
+        delete data.value?.results[idx];
     }
 }
 </script>

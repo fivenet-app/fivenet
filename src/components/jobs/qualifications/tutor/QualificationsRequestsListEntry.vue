@@ -1,9 +1,13 @@
 <script lang="ts" setup>
-import { CheckBoldIcon, CloseThickIcon, StarIcon } from 'mdi-vue3';
+import { RpcError } from '@protobuf-ts/runtime-rpc';
+import { useConfirmDialog } from '@vueuse/core';
+import { CheckBoldIcon, CloseThickIcon, StarIcon, TrashCanIcon } from 'mdi-vue3';
 import GenericTime from '~/components/partials/elements/GenericTime.vue';
 import { QualificationRequest, RequestStatus } from '~~/gen/ts/resources/qualifications/qualifications';
 import { requestStatusToTextColor } from '~/components/jobs/qualifications/helpers';
 import CitizenInfoPopover from '~/components/partials/citizens/CitizenInfoPopover.vue';
+import ConfirmDialog from '~/components/partials/ConfirmDialog.vue';
+import type { DeleteQualificationReqResponse } from '~~/gen/ts/services/qualifications/qualifications';
 
 withDefaults(
     defineProps<{
@@ -15,14 +19,39 @@ withDefaults(
     },
 );
 
-defineEmits<{
+const emits = defineEmits<{
     (e: 'selectedRequestStatus', status?: RequestStatus): void;
     (e: 'gradeRequest'): void;
+    (e: 'delete'): void;
 }>();
+
+const { $grpc } = useNuxtApp();
+
+async function deleteQualificationRequest(qualificationId: string, userId: number): Promise<DeleteQualificationReqResponse> {
+    try {
+        const call = $grpc.getQualificationsClient().deleteQualificationReq({
+            qualificationId,
+            userId,
+        });
+        const { response } = await call;
+
+        emits('delete');
+
+        return response;
+    } catch (e) {
+        $grpc.handleError(e as RpcError);
+        throw e;
+    }
+}
+
+const { isRevealed, reveal, confirm, cancel, onConfirm } = useConfirmDialog();
+onConfirm(async (request: QualificationRequest) => deleteQualificationRequest(request.qualificationId, request.userId));
 </script>
 
 <template>
     <tr>
+        <ConfirmDialog :open="isRevealed" :cancel="cancel" :confirm="() => confirm(request)" />
+
         <td>
             <CitizenInfoPopover :user="request.user" />
         </td>
@@ -58,44 +87,40 @@ defineEmits<{
                 v-if="request.status !== RequestStatus.DENIED"
                 type="button"
                 :disabled="!canSubmit"
-                class="rounded flex flex-1 justify-center px-2 py-2 text-sm font-semibold text-neutral"
-                :class="[
-                    !canSubmit
-                        ? 'disabled bg-base-500 hover:bg-base-400 focus-visible:outline-base-500'
-                        : 'bg-primary-500 hover:bg-primary-400 focus-visible:outline-primary-500',
-                ]"
+                class="flex-initial"
+                :class="[!canSubmit ? 'disabled text-base-500 hover:text-base-400' : 'text-error-500 hover:text-error-400']"
                 @click="$emit('selectedRequestStatus', RequestStatus.DENIED)"
             >
-                <CloseThickIcon class="h-5 w-5 text-error-400" aria-hidden="true" />
+                <CloseThickIcon class="h-6 w-6" aria-hidden="true" />
             </button>
             <button
                 v-if="request.status !== RequestStatus.ACCEPTED"
                 type="button"
                 :disabled="!canSubmit"
-                class="rounded flex flex-1 justify-center px-2 py-2 text-sm font-semibold text-neutral"
-                :class="[
-                    !canSubmit
-                        ? 'disabled bg-base-500 hover:bg-base-400 focus-visible:outline-base-500'
-                        : 'bg-primary-500 hover:bg-primary-400 focus-visible:outline-primary-500',
-                ]"
+                class="flex-initial"
+                :class="[!canSubmit ? 'disabled text-base-500 hover:text-base-400' : 'text-success-500 hover:text-success-400']"
                 @click="$emit('selectedRequestStatus', RequestStatus.ACCEPTED)"
             >
-                <CheckBoldIcon class="h-5 w-5 text-success-400" aria-hidden="true" />
+                <CheckBoldIcon class="h-6 w-6" aria-hidden="true" />
             </button>
-
             <button
                 v-if="request.status === RequestStatus.ACCEPTED"
                 type="button"
                 :disabled="!canSubmit"
-                class="rounded flex flex-1 justify-center px-2 py-2 text-sm font-semibold text-neutral"
-                :class="[
-                    !canSubmit
-                        ? 'disabled bg-base-500 hover:bg-base-400 focus-visible:outline-base-500'
-                        : 'bg-primary-500 hover:bg-primary-400 focus-visible:outline-primary-500',
-                ]"
+                class="flex-initial"
+                :class="[!canSubmit ? 'disabled text-base-500 hover:text-base-400' : 'text-yellow-500 hover:text-yellow-400']"
                 @click="$emit('gradeRequest')"
             >
-                <StarIcon class="h-5 w-5 text-yellow-400" aria-hidden="true" />
+                <StarIcon class="h-6 w-6" aria-hidden="true" />
+            </button>
+            <button
+                v-if="can('QualificationsService.DeleteQualificationReq')"
+                type="button"
+                :disabled="!canSubmit"
+                class="flex-initial text-primary-400 hover:text-primary-500"
+                @click="reveal()"
+            >
+                <TrashCanIcon class="h-6 w-6" aria-hidden="true" />
             </button>
         </td>
     </tr>

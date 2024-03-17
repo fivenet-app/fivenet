@@ -103,7 +103,7 @@ const pageNumber = ref(currentPage.value.toString());
                 </template>
                 <template #maxPage>
                     <span class="font-medium text-neutral">
-                        {{ totalPages.toString() }}
+                        {{ (totalPages === 0n ? 1n : totalPages).toString() }}
                     </span>
                 </template>
                 <template #size>

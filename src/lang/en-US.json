@@ -930,7 +930,7 @@
         "requirements": "Requirement | Requirements",
         "read": "Read",
         "abbreviation": "Abbreviation",
-        "approved": "Approved at",
+        "approved_at": "Approved at",
         "approver": "Approver"
     },
     "notifications": {

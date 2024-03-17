@@ -28,6 +28,7 @@ const props = defineProps<{
 
 const emits = defineEmits<{
     (e: 'close'): void;
+    (e: 'refresh'): void;
 }>();
 
 const { $grpc } = useNuxtApp();
@@ -66,6 +67,7 @@ async function createOrUpdateQualificationRequest(
             type: 'success',
         });
 
+        emits('refresh');
         emits('close');
 
         return response;

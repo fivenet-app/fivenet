@@ -1,21 +1,48 @@
 <script lang="ts" setup>
+import { RpcError } from '@protobuf-ts/runtime-rpc';
+import { useConfirmDialog } from '@vueuse/core';
 import { TrashCanIcon } from 'mdi-vue3';
 import CitizenInfoPopover from '~/components/partials/citizens/CitizenInfoPopover.vue';
 import GenericTime from '~/components/partials/elements/GenericTime.vue';
 import { QualificationResult, ResultStatus } from '~~/gen/ts/resources/qualifications/qualifications';
 import { resultStatusToTextColor } from '~/components/jobs/qualifications/helpers';
+import ConfirmDialog from '~/components/partials/ConfirmDialog.vue';
+import type { DeleteQualificationResultResponse } from '~~/gen/ts/services/qualifications/qualifications';
 
 defineProps<{
     result: QualificationResult;
 }>();
 
-defineEmits<{
+const emits = defineEmits<{
     (e: 'delete'): void;
 }>();
+
+const { $grpc } = useNuxtApp();
+
+async function deleteQualificationResult(resultId: string): Promise<DeleteQualificationResultResponse> {
+    try {
+        const call = $grpc.getQualificationsClient().deleteQualificationResult({
+            resultId,
+        });
+        const { response } = await call;
+
+        emits('delete');
+
+        return response;
+    } catch (e) {
+        $grpc.handleError(e as RpcError);
+        throw e;
+    }
+}
+
+const { isRevealed, reveal, confirm, cancel, onConfirm } = useConfirmDialog();
+onConfirm(async (resultId: string) => deleteQualificationResult(resultId));
 </script>
 
 <template>
     <tr>
+        <ConfirmDialog :open="isRevealed" :cancel="cancel" :confirm="() => confirm(result.id)" />
+
         <td>
             <CitizenInfoPopover :user="result.user" />
         </td>
@@ -47,7 +74,12 @@ defineEmits<{
             <CitizenInfoPopover :user="result.creator" />
         </td>
         <td class="flex flex-row justify-end">
-            <button type="button" class="flex-initial text-primary-500 hover:text-primary-400" @click="$emit('delete')">
+            <button
+                v-if="can('QualificationsService.DeleteQualificationResult')"
+                type="button"
+                class="flex-initial text-primary-500 hover:text-primary-400"
+                @click="reveal()"
+            >
                 <TrashCanIcon class="h-5 w-5 text-primary-500" aria-hidden="true" />
             </button>
         </td>

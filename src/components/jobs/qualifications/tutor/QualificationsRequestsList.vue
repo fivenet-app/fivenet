@@ -53,6 +53,16 @@ async function listQualificationsRequests(
 
 watch(offset, async () => refresh());
 
+async function deleteQualificationRequest(request: QualificationRequest): Promise<void> {
+    // Remove request from list
+    const idx = data.value?.requests.findIndex(
+        (r) => r.qualificationId === request.qualificationId && r.userId === request.userId,
+    );
+    if (idx !== undefined && idx > -1) {
+        delete data.value?.requests[idx];
+    }
+}
+
 const selectedRequestStatus = ref<undefined | RequestStatus>();
 const selectedRequest = ref<undefined | QualificationRequest>();
 
@@ -79,6 +89,7 @@ const openResultStatus = ref(false);
                     :request="selectedRequest"
                     :status="selectedRequestStatus"
                     @close="selectedRequest = undefined"
+                    @refresh="refresh()"
                 />
 
                 <QualificationResultTutorModal
@@ -90,6 +101,7 @@ const openResultStatus = ref(false);
                         selectedRequest = undefined;
                         openResultStatus = false;
                     "
+                    @refresh="refresh()"
                 />
 
                 <GenericTable>
@@ -131,6 +143,7 @@ const openResultStatus = ref(false);
                                 selectedRequest = request;
                                 openResultStatus = true;
                             "
+                            @delete="deleteQualificationRequest(request)"
                         />
                     </template>
                 </GenericTable>

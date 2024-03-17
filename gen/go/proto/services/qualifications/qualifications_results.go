@@ -264,19 +264,19 @@ func (s *Server) CreateOrUpdateQualificationResult(ctx context.Context, req *Cre
 			return nil, errswrap.NewError(err, errorsqualifications.ErrFailedQuery)
 		}
 
-		// If the result is successful, complete the request status
-		if req.Result.Status == qualifications.ResultStatus_RESULT_STATUS_SUCCESSFUL {
-			if err := s.updateRequestStatus(ctx, req.Result.QualificationId, req.Result.UserId, qualifications.RequestStatus_REQUEST_STATUS_COMPLETED); err != nil {
-				return nil, errswrap.NewError(err, errorsqualifications.ErrFailedQuery)
-			}
-		} else if req.Result.Status == qualifications.ResultStatus_RESULT_STATUS_FAILED {
-			// If failed status, delete the request
-			if err := s.deleteQualificationRequest(ctx, req.Result.QualificationId, req.Result.UserId); err != nil {
-				return nil, errswrap.NewError(err, errorsqualifications.ErrFailedQuery)
-			}
-		}
-
 		auditEntry.State = int16(rector.EventType_EVENT_TYPE_UPDATED)
+	}
+
+	// If the result is successful, complete the request status
+	if req.Result.Status == qualifications.ResultStatus_RESULT_STATUS_SUCCESSFUL {
+		if err := s.updateRequestStatus(ctx, req.Result.QualificationId, req.Result.UserId, qualifications.RequestStatus_REQUEST_STATUS_COMPLETED); err != nil {
+			return nil, errswrap.NewError(err, errorsqualifications.ErrFailedQuery)
+		}
+	} else if req.Result.Status == qualifications.ResultStatus_RESULT_STATUS_FAILED {
+		// If failed status, delete the request
+		if err := s.deleteQualificationRequest(ctx, req.Result.QualificationId, req.Result.UserId); err != nil {
+			return nil, errswrap.NewError(err, errorsqualifications.ErrFailedQuery)
+		}
 	}
 
 	result, err := s.getQualificationResult(ctx, req.Result.Id, userInfo)
