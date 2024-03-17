@@ -12,6 +12,8 @@ const initialReconnectBackoffTime = 2;
 export interface NotificationsState {
     lastId: string;
     notifications: Notification[];
+    notificationsCount: number;
+
     abort: AbortController | undefined;
     reconnecting: boolean;
     reconnectBackoffTime: number;
@@ -22,6 +24,8 @@ export const useNotificatorStore = defineStore('notifications', {
         ({
             lastId: '0',
             notifications: [],
+            notificationsCount: 0,
+
             abort: undefined,
             reconnecting: false,
             reconnectBackoffTime: 0,
@@ -48,6 +52,7 @@ export const useNotificatorStore = defineStore('notifications', {
             callback = undefined,
             onClick = undefined,
             onClickText = undefined,
+            showPopup = true,
         }: NotificationConfig) {
             const id = uuidv4();
             this.notifications.unshift({
@@ -61,6 +66,7 @@ export const useNotificatorStore = defineStore('notifications', {
                 callback,
                 onClick,
                 onClickText,
+                showPopup,
             });
 
             if (autoClose) {
@@ -98,6 +104,8 @@ export const useNotificatorStore = defineStore('notifications', {
                         this.setLastId(resp.lastId);
                     }
 
+                    this.notificationsCount = resp.notificationCount;
+
                     if (resp.data.oneofKind !== undefined) {
                         if (resp.data.oneofKind === 'token') {
                             const tokenUpdate = resp.data.token;
@@ -124,49 +132,48 @@ export const useNotificatorStore = defineStore('notifications', {
                                     type: 'info',
                                 });
                             }
-                        } else if (resp.data.oneofKind === 'notifications') {
-                            resp.data.notifications.notifications.forEach((n) => {
-                                const nType: NotificationType = (n.type as NotificationType) ?? 'info';
+                        } else if (resp.data.oneofKind === 'notification') {
+                            const n = resp.data.notification;
+                            const nType: NotificationType = (n.type as NotificationType) ?? 'info';
 
-                                if (n.title === undefined || n.content === undefined) {
-                                    return;
-                                }
+                            if (n.title === undefined || n.content === undefined) {
+                                return;
+                            }
 
-                                switch (n.category) {
-                                    default: {
-                                        const not: NotificationConfig = {
-                                            title: { key: n.title.key, parameters: n.title.parameters },
-                                            content: {
-                                                key: n.content.key,
-                                                parameters: n.content.parameters,
-                                            },
-                                            type: nType,
-                                            category: n.category,
-                                            data: n.data,
-                                        };
+                            switch (n.category) {
+                                default: {
+                                    const not: NotificationConfig = {
+                                        title: { key: n.title.key, parameters: n.title.parameters },
+                                        content: {
+                                            key: n.content.key,
+                                            parameters: n.content.parameters,
+                                        },
+                                        type: nType,
+                                        category: n.category,
+                                        data: n.data,
+                                    };
 
-                                        if (n.data?.link !== undefined) {
-                                            if (n.data.link.external === true) {
-                                                not.onClick = async () => {
-                                                    navigateTo(n.data!.link!.to, { external: true });
-                                                };
-                                            } else {
-                                                // @ts-ignore route from a notification is a string
-                                                const route = useRouter().resolve(n.data!.link!.to);
+                                    if (n.data?.link !== undefined) {
+                                        if (n.data.link.external === true) {
+                                            not.onClick = async () => {
+                                                navigateTo(n.data!.link!.to, { external: true });
+                                            };
+                                        } else {
+                                            // @ts-ignore route from a notification is a string
+                                            const route = useRouter().resolve(n.data!.link!.to);
 
-                                                not.onClick = async () => {
-                                                    navigateTo(route);
-                                                };
-                                            }
+                                            not.onClick = async () => {
+                                                navigateTo(route);
+                                            };
                                         }
-
-                                        this.dispatchNotification(not);
-                                        break;
                                     }
+
+                                    this.dispatchNotification(not);
+                                    break;
                                 }
-                            });
+                            }
                         } else {
-                            // @ts-ignore this is a catch all "unknown", so okay if it is technically "never" reached till it is
+                            // @ts-ignore this is a catch all "unknown", so okay if it is technically "never" reached till it is..
                             console.warn('Notificator: Unknown data received - Kind: ', resp.data.oneofKind, resp.data);
                         }
                     }
@@ -229,6 +236,12 @@ export const useNotificatorStore = defineStore('notifications', {
                 $grpc.handleError(e as RpcError);
                 throw e;
             }
+
+            if (req.all === true || req.ids.length >= this.notificationsCount) {
+                this.notificationsCount = 0;
+            } else {
+                this.notificationsCount = this.notificationsCount - req.ids.length;
+            }
         },
     },
     getters: {
@@ -236,10 +249,10 @@ export const useNotificatorStore = defineStore('notifications', {
             return BigInt(this.lastId);
         },
         getNotifications(): Notification[] {
-            return [...this.notifications].slice(0, 4);
+            return [...this.notifications.filter((n) => n.showPopup === undefined || n.showPopup === true)].slice(0, 4);
         },
         getNotificationsCount(): number {
-            return this.notifications.length;
+            return this.notificationsCount;
         },
     },
 });

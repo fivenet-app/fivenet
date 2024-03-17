@@ -3,15 +3,19 @@ import { CheckBoldIcon, CloseThickIcon } from 'mdi-vue3';
 import GenericTime from '~/components/partials/elements/GenericTime.vue';
 import { QualificationRequest, RequestStatus } from '~~/gen/ts/resources/qualifications/qualifications';
 
-defineProps<{
-    request: QualificationRequest;
-}>();
+withDefaults(
+    defineProps<{
+        request: QualificationRequest;
+        canSubmit?: boolean;
+    }>(),
+    {
+        canSubmit: true,
+    },
+);
 
 defineEmits<{
-    (e: 'selected'): void;
+    (e: 'selected', status?: RequestStatus): void;
 }>();
-
-const canSubmit = ref(false);
 </script>
 
 <template>
@@ -46,6 +50,7 @@ const canSubmit = ref(false);
                         ? 'disabled bg-base-500 hover:bg-base-400 focus-visible:outline-base-500'
                         : 'bg-primary-500 hover:bg-primary-400 focus-visible:outline-primary-500',
                 ]"
+                @click="$emit('selected', RequestStatus.DENIED)"
             >
                 <CloseThickIcon class="h-5 w-5 text-error-400" aria-hidden="true" />
             </button>
@@ -58,6 +63,7 @@ const canSubmit = ref(false);
                         ? 'disabled bg-base-500 hover:bg-base-400 focus-visible:outline-base-500'
                         : 'bg-primary-500 hover:bg-primary-400 focus-visible:outline-primary-500',
                 ]"
+                @click="$emit('selected', RequestStatus.ACCEPTED)"
             >
                 <CheckBoldIcon class="h-5 w-5 text-success-400" aria-hidden="true" />
             </button>

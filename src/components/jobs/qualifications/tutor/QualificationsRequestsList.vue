@@ -6,7 +6,7 @@ import DataPendingBlock from '~/components/partials/data/DataPendingBlock.vue';
 import type { ListQualificationRequestsResponse } from '~~/gen/ts/services/qualifications/qualifications';
 import QualificationsRequestsListEntry from '~/components/jobs/qualifications/tutor/QualificationsRequestsListEntry.vue';
 import TablePagination from '~/components/partials/elements/TablePagination.vue';
-import type { QualificationRequest, RequestStatus } from '~~/gen/ts/resources/qualifications/qualifications';
+import { RequestStatus, type QualificationRequest } from '~~/gen/ts/resources/qualifications/qualifications';
 import GenericTable from '~/components/partials/elements/GenericTable.vue';
 import QualificationRequestTutorModal from '~/components/jobs/qualifications/tutor/QualificationRequestTutorModal.vue';
 
@@ -52,6 +52,7 @@ async function listQualificationsRequests(
 
 watch(offset, async () => refresh());
 
+const selectedRequestStatus = ref<undefined | RequestStatus>();
 const selectedRequest = ref<undefined | QualificationRequest>();
 </script>
 
@@ -67,7 +68,12 @@ const selectedRequest = ref<undefined | QualificationRequest>();
             <DataNoDataBlock v-else-if="data?.requests.length === 0" />
 
             <template v-else>
-                <QualificationRequestTutorModal v-if="selectedRequest" :request="selectedRequest" />
+                <QualificationRequestTutorModal
+                    v-if="selectedRequest"
+                    :request="selectedRequest"
+                    :status="selectedRequestStatus"
+                    @close="selectedRequest = undefined"
+                />
 
                 <GenericTable>
                     <template #thead>
@@ -91,9 +97,13 @@ const selectedRequest = ref<undefined | QualificationRequest>();
                     </template>
                     <template #tbody>
                         <QualificationsRequestsListEntry
-                            v-for="result in data?.requests"
-                            :key="`${result.qualificationId}-${result.userId}`"
-                            :request="result"
+                            v-for="request in data?.requests"
+                            :key="`${request.qualificationId}-${request.userId}`"
+                            :request="request"
+                            @selected="
+                                selectedRequestStatus = $event;
+                                selectedRequest = request;
+                            "
                         />
                     </template>
                 </GenericTable>

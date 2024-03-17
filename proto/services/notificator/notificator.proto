@@ -40,15 +40,12 @@ message StreamRequest {
 
 message StreamResponse {
   uint64 last_id = 1;
+  int32 notification_count = 2;
   oneof data {
-    StreamNotifications notifications = 2;
-    TokenUpdate token = 3;
+    resources.notifications.Notification notification = 3;
+    TokenUpdate token = 4;
   }
   optional bool restart = 5;
-}
-
-message StreamNotifications {
-  repeated resources.notifications.Notification notifications = 1;
 }
 
 message TokenUpdate {

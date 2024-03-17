@@ -1994,10 +1994,6 @@
                 </li>
               
                 <li>
-                  <a href="#services.notificator.StreamNotifications"><span class="badge">M</span>StreamNotifications</a>
-                </li>
-              
-                <li>
                   <a href="#services.notificator.StreamRequest"><span class="badge">M</span>StreamRequest</a>
                 </li>
               
@@ -22231,30 +22227,6 @@
 
         
       
-        <h3 id="services.notificator.StreamNotifications">StreamNotifications</h3>
-        <p></p>
-
-        
-          <table class="field-table">
-            <thead>
-              <tr><td>Field</td><td>Type</td><td>Label</td><td>Description</td></tr>
-            </thead>
-            <tbody>
-              
-                <tr>
-                  <td>notifications</td>
-                  <td><a href="#resources.notifications.Notification">resources.notifications.Notification</a></td>
-                  <td>repeated</td>
-                  <td><p> </p></td>
-                </tr>
-              
-            </tbody>
-          </table>
-
-          
-
-        
-      
         <h3 id="services.notificator.StreamRequest">StreamRequest</h3>
         <p></p>
 
@@ -22297,8 +22269,15 @@
                 </tr>
               
                 <tr>
-                  <td>notifications</td>
-                  <td><a href="#services.notificator.StreamNotifications">StreamNotifications</a></td>
+                  <td>notification_count</td>
+                  <td><a href="#int32">int32</a></td>
+                  <td></td>
+                  <td><p> </p></td>
+                </tr>
+              
+                <tr>
+                  <td>notification</td>
+                  <td><a href="#resources.notifications.Notification">resources.notifications.Notification</a></td>
                   <td></td>
                   <td><p> </p></td>
                 </tr>

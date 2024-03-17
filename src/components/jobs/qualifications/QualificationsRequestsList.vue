@@ -75,9 +75,9 @@ watch(offset, async () => refresh());
             <template v-else>
                 <ul role="list" class="divide-y divide-gray-100">
                     <QualificationsRequestsListEntry
-                        v-for="result in data?.requests"
-                        :key="`${result.qualificationId}-${result.userId}`"
-                        :request="result"
+                        v-for="request in data?.requests"
+                        :key="`${request.qualificationId}-${request.userId}`"
+                        :request="request"
                     />
                 </ul>
             </template>

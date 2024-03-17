@@ -8,7 +8,7 @@ import (
 	database "github.com/galexrt/fivenet/gen/go/proto/resources/common/database"
 	"github.com/galexrt/fivenet/gen/go/proto/resources/qualifications"
 	"github.com/galexrt/fivenet/gen/go/proto/resources/rector"
-	errorsqualifications "github.com/galexrt/fivenet/gen/go/proto/services/jobs/errors"
+	errorsqualifications "github.com/galexrt/fivenet/gen/go/proto/services/qualifications/errors"
 	permsqualifications "github.com/galexrt/fivenet/gen/go/proto/services/qualifications/perms"
 	"github.com/galexrt/fivenet/pkg/config"
 	"github.com/galexrt/fivenet/pkg/grpc/auth"

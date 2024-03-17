@@ -15,6 +15,7 @@ export interface Notification {
     callback?: () => Promise<any>;
     onClick?: (data?: Data) => Promise<any>;
     onClickText?: TranslateItem;
+    showPopup?: boolean;
 }
 
 export interface NotificationConfig {
@@ -29,4 +30,5 @@ export interface NotificationConfig {
     callback?: () => Promise<any>;
     onClick?: () => Promise<any>;
     onClickText?: TranslateItem;
+    showPopup?: boolean;
 }

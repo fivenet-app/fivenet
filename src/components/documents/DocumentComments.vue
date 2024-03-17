@@ -234,7 +234,7 @@ const onSubmitThrottle = useThrottleFn(async (e) => {
                 v-else
                 class="flow-root rounded-lg rounded-lg bg-base-800 text-neutral shadow-sm shadow-sm ring-1 ring-inset ring-gray-500 focus-within:ring-2 focus-within:ring-primary-600"
             >
-                <ul role="list" class="divide-y divide-gray-200 px-4">
+                <ul role="list" class="divide-y divide-gray-200 px-2">
                     <DocumentCommentEntry
                         v-for="(comment, idx) in data?.comments"
                         :key="comment.id"

@@ -7,7 +7,7 @@ import (
 
 	"github.com/galexrt/fivenet/gen/go/proto/resources/qualifications"
 	permscitizenstore "github.com/galexrt/fivenet/gen/go/proto/services/citizenstore/perms"
-	errorsqualifications "github.com/galexrt/fivenet/gen/go/proto/services/jobs/errors"
+	errorsqualifications "github.com/galexrt/fivenet/gen/go/proto/services/qualifications/errors"
 	"github.com/galexrt/fivenet/pkg/grpc/auth/userinfo"
 	"github.com/galexrt/fivenet/pkg/grpc/errswrap"
 	"github.com/galexrt/fivenet/pkg/perms"
@@ -380,4 +380,47 @@ func (s *Server) getQualification(ctx context.Context, qualificationId uint64, c
 	}
 
 	return &quali, nil
+}
+
+func (s *Server) checkRequirementsMetForQualification(ctx context.Context, qualificationId uint64, userId int32) (bool, error) {
+	stmt := tQReqs.
+		SELECT(
+			tQReqs.TargetQualificationID.AS("qualiid"),
+			tQualiResults.UserID.AS("userid"),
+		).
+		FROM(tQReqs.
+			LEFT_JOIN(tQualiResults,
+				tQualiResults.QualificationID.EQ(tQReqs.TargetQualificationID).
+					AND(tQualiResults.UserID.EQ(jet.Int32(userId))).
+					AND(tQualiResults.Status.EQ(jet.Int16(int16(qualifications.ResultStatus_RESULT_STATUS_SUCCESSFUL)))),
+			),
+		).
+		WHERE(
+			tQReqs.QualificationID.EQ(jet.Uint64(qualificationId)),
+		)
+
+	var dest []*struct {
+		QualiID uint64
+		UserID  int32
+	}
+	if err := stmt.QueryContext(ctx, s.db, &dest); err != nil {
+		if !errors.Is(err, qrm.ErrNoRows) {
+			return false, err
+		}
+	}
+
+	// No requirements on qualification
+	if len(dest) == 0 {
+		return true, nil
+	}
+
+	// Remove all requirements which the user has fullfilled
+	dest = slices.DeleteFunc(dest, func(s *struct {
+		QualiID uint64
+		UserID  int32
+	}) bool {
+		return s.UserID > 0
+	})
+
+	return len(dest) == 0, nil
 }

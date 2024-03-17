@@ -8,7 +8,7 @@ import (
 	database "github.com/galexrt/fivenet/gen/go/proto/resources/common/database"
 	"github.com/galexrt/fivenet/gen/go/proto/resources/qualifications"
 	"github.com/galexrt/fivenet/gen/go/proto/resources/rector"
-	errorsqualifications "github.com/galexrt/fivenet/gen/go/proto/services/jobs/errors"
+	errorsqualifications "github.com/galexrt/fivenet/gen/go/proto/services/qualifications/errors"
 	"github.com/galexrt/fivenet/pkg/grpc/auth"
 	"github.com/galexrt/fivenet/pkg/grpc/auth/userinfo"
 	"github.com/galexrt/fivenet/pkg/grpc/errswrap"
@@ -197,12 +197,21 @@ func (s *Server) CreateOrUpdateQualificationRequest(ctx context.Context, req *Cr
 
 		auditEntry.State = int16(rector.EventType_EVENT_TYPE_UPDATED)
 	} else {
-		ok, err = s.checkIfUserHasAccessToQuali(ctx, req.Request.QualificationId, userInfo, qualifications.AccessLevel_ACCESS_LEVEL_REQUEST)
+		ok, err := s.checkIfUserHasAccessToQuali(ctx, req.Request.QualificationId, userInfo, qualifications.AccessLevel_ACCESS_LEVEL_REQUEST)
 		if err != nil {
 			return nil, errswrap.NewError(errorsqualifications.ErrFailedQuery, err)
 		}
 		if !ok {
 			return nil, errorsqualifications.ErrFailedQuery
+		}
+
+		// Make sure the requirements of the qualification are fullfiled by the user, ErrRequirementsMissing
+		ok, err = s.checkRequirementsMetForQualification(ctx, req.Request.QualificationId, userInfo.UserId)
+		if err != nil {
+			return nil, errswrap.NewError(errorsqualifications.ErrFailedQuery, err)
+		}
+		if !ok {
+			return nil, errorsqualifications.ErrRequirementsMissing
 		}
 
 		tQualiRequests := table.FivenetQualificationsRequests
@@ -290,11 +299,11 @@ func (s *Server) getQualificationRequest(ctx context.Context, requestId uint64, 
 				tApprover.ID.EQ(tQualiRequests.ApproverID),
 			),
 		).
+		GROUP_BY(tQualiRequests.QualificationID, tQualiRequests.UserID).
 		WHERE(jet.AND(
 			tQualiRequests.QualificationID.EQ(jet.Uint64(requestId)),
 			tQualiRequests.UserID.EQ(jet.Int32(userId)),
 		)).
-		GROUP_BY(tQualiRequests.QualificationID, tQualiRequests.UserID).
 		LIMIT(1)
 
 	var request qualifications.QualificationRequest

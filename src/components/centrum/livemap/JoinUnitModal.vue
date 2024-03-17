@@ -98,7 +98,7 @@ const filteredUnits = computed(() =>
                                             </div>
                                         </div>
                                         <div class="flex flex-1 flex-col justify-between">
-                                            <div class="divide-y divide-gray-200 px-4">
+                                            <div class="divide-y divide-gray-200 px-2">
                                                 <div class="mt-1">
                                                     <dl>
                                                         <div class="px-4 py-3 sm:grid sm:grid-cols-3 sm:gap-4 sm:px-0">

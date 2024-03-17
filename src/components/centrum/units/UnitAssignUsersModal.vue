@@ -137,7 +137,7 @@ const onSubmitThrottle = useThrottleFn(async () => {
                                             </div>
                                         </div>
                                         <div class="flex flex-1 flex-col justify-between">
-                                            <div class="divide-y divide-gray-200 px-4 sm:px-6">
+                                            <div class="divide-y divide-gray-200 px-2 sm:px-6">
                                                 <div class="mt-1">
                                                     <div class="my-2 space-y-24">
                                                         <div class="form-control flex-1">

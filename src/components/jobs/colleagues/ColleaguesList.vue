@@ -93,7 +93,7 @@ function updateAbsenceDates(value: { userId: number; absenceBegin?: Timestamp; a
                                     <Switch
                                         v-model="query.absent"
                                         :class="[
-                                            query.absent ? 'bg-error-500' : 'bg-base-700',
+                                            query.absent ? 'bg-primary-600' : 'bg-gray-200',
                                             'relative inline-flex h-6 w-11 flex-shrink-0 cursor-pointer rounded-full border-2 border-transparent transition-colors duration-200 ease-in-out focus:outline-none focus:ring-2 focus:ring-neutral focus:ring-offset-2',
                                         ]"
                                     >

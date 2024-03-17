@@ -131,7 +131,7 @@ function updateReasonField(value: string): void {
                                             </div>
                                         </div>
                                         <div class="flex flex-1 flex-col justify-between">
-                                            <div class="divide-y divide-gray-200 px-4 sm:px-6">
+                                            <div class="divide-y divide-gray-200 px-2 sm:px-6">
                                                 <div class="mt-1">
                                                     <dl class="divide-y divide-neutral/10 border-b border-neutral/10">
                                                         <div class="px-4 py-3 sm:grid sm:grid-cols-3 sm:gap-4 sm:px-0">

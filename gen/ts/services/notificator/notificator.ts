@@ -83,18 +83,22 @@ export interface StreamResponse {
      */
     lastId: bigint;
     /**
+     * @generated from protobuf field: int32 notification_count = 2;
+     */
+    notificationCount: number;
+    /**
      * @generated from protobuf oneof: data
      */
     data: {
-        oneofKind: "notifications";
+        oneofKind: "notification";
         /**
-         * @generated from protobuf field: services.notificator.StreamNotifications notifications = 2;
+         * @generated from protobuf field: resources.notifications.Notification notification = 3;
          */
-        notifications: StreamNotifications;
+        notification: Notification;
     } | {
         oneofKind: "token";
         /**
-         * @generated from protobuf field: services.notificator.TokenUpdate token = 3;
+         * @generated from protobuf field: services.notificator.TokenUpdate token = 4;
          */
         token: TokenUpdate;
     } | {
@@ -104,15 +108,6 @@ export interface StreamResponse {
      * @generated from protobuf field: optional bool restart = 5;
      */
     restart?: boolean;
-}
-/**
- * @generated from protobuf message services.notificator.StreamNotifications
- */
-export interface StreamNotifications {
-    /**
-     * @generated from protobuf field: repeated resources.notifications.Notification notifications = 1;
-     */
-    notifications: Notification[];
 }
 /**
  * @generated from protobuf message services.notificator.TokenUpdate
@@ -407,14 +402,16 @@ class StreamResponse$Type extends MessageType<StreamResponse> {
     constructor() {
         super("services.notificator.StreamResponse", [
             { no: 1, name: "last_id", kind: "scalar", T: 4 /*ScalarType.UINT64*/, L: 0 /*LongType.BIGINT*/ },
-            { no: 2, name: "notifications", kind: "message", oneof: "data", T: () => StreamNotifications },
-            { no: 3, name: "token", kind: "message", oneof: "data", T: () => TokenUpdate },
+            { no: 2, name: "notification_count", kind: "scalar", T: 5 /*ScalarType.INT32*/ },
+            { no: 3, name: "notification", kind: "message", oneof: "data", T: () => Notification },
+            { no: 4, name: "token", kind: "message", oneof: "data", T: () => TokenUpdate },
             { no: 5, name: "restart", kind: "scalar", opt: true, T: 8 /*ScalarType.BOOL*/ }
         ]);
     }
     create(value?: PartialMessage<StreamResponse>): StreamResponse {
         const message = globalThis.Object.create((this.messagePrototype!));
         message.lastId = 0n;
+        message.notificationCount = 0;
         message.data = { oneofKind: undefined };
         if (value !== undefined)
             reflectionMergePartial<StreamResponse>(this, message, value);
@@ -428,13 +425,16 @@ class StreamResponse$Type extends MessageType<StreamResponse> {
                 case /* uint64 last_id */ 1:
                     message.lastId = reader.uint64().toBigInt();
                     break;
-                case /* services.notificator.StreamNotifications notifications */ 2:
+                case /* int32 notification_count */ 2:
+                    message.notificationCount = reader.int32();
+                    break;
+                case /* resources.notifications.Notification notification */ 3:
                     message.data = {
-                        oneofKind: "notifications",
-                        notifications: StreamNotifications.internalBinaryRead(reader, reader.uint32(), options, (message.data as any).notifications)
+                        oneofKind: "notification",
+                        notification: Notification.internalBinaryRead(reader, reader.uint32(), options, (message.data as any).notification)
                     };
                     break;
-                case /* services.notificator.TokenUpdate token */ 3:
+                case /* services.notificator.TokenUpdate token */ 4:
                     message.data = {
                         oneofKind: "token",
                         token: TokenUpdate.internalBinaryRead(reader, reader.uint32(), options, (message.data as any).token)
@@ -458,12 +458,15 @@ class StreamResponse$Type extends MessageType<StreamResponse> {
         /* uint64 last_id = 1; */
         if (message.lastId !== 0n)
             writer.tag(1, WireType.Varint).uint64(message.lastId);
-        /* services.notificator.StreamNotifications notifications = 2; */
-        if (message.data.oneofKind === "notifications")
-            StreamNotifications.internalBinaryWrite(message.data.notifications, writer.tag(2, WireType.LengthDelimited).fork(), options).join();
-        /* services.notificator.TokenUpdate token = 3; */
+        /* int32 notification_count = 2; */
+        if (message.notificationCount !== 0)
+            writer.tag(2, WireType.Varint).int32(message.notificationCount);
+        /* resources.notifications.Notification notification = 3; */
+        if (message.data.oneofKind === "notification")
+            Notification.internalBinaryWrite(message.data.notification, writer.tag(3, WireType.LengthDelimited).fork(), options).join();
+        /* services.notificator.TokenUpdate token = 4; */
         if (message.data.oneofKind === "token")
-            TokenUpdate.internalBinaryWrite(message.data.token, writer.tag(3, WireType.LengthDelimited).fork(), options).join();
+            TokenUpdate.internalBinaryWrite(message.data.token, writer.tag(4, WireType.LengthDelimited).fork(), options).join();
         /* optional bool restart = 5; */
         if (message.restart !== undefined)
             writer.tag(5, WireType.Varint).bool(message.restart);
@@ -477,53 +480,6 @@ class StreamResponse$Type extends MessageType<StreamResponse> {
  * @generated MessageType for protobuf message services.notificator.StreamResponse
  */
 export const StreamResponse = new StreamResponse$Type();
-// @generated message type with reflection information, may provide speed optimized methods
-class StreamNotifications$Type extends MessageType<StreamNotifications> {
-    constructor() {
-        super("services.notificator.StreamNotifications", [
-            { no: 1, name: "notifications", kind: "message", repeat: 1 /*RepeatType.PACKED*/, T: () => Notification }
-        ]);
-    }
-    create(value?: PartialMessage<StreamNotifications>): StreamNotifications {
-        const message = globalThis.Object.create((this.messagePrototype!));
-        message.notifications = [];
-        if (value !== undefined)
-            reflectionMergePartial<StreamNotifications>(this, message, value);
-        return message;
-    }
-    internalBinaryRead(reader: IBinaryReader, length: number, options: BinaryReadOptions, target?: StreamNotifications): StreamNotifications {
-        let message = target ?? this.create(), end = reader.pos + length;
-        while (reader.pos < end) {
-            let [fieldNo, wireType] = reader.tag();
-            switch (fieldNo) {
-                case /* repeated resources.notifications.Notification notifications */ 1:
-                    message.notifications.push(Notification.internalBinaryRead(reader, reader.uint32(), options));
-                    break;
-                default:
-                    let u = options.readUnknownField;
-                    if (u === "throw")
-                        throw new globalThis.Error(`Unknown field ${fieldNo} (wire type ${wireType}) for ${this.typeName}`);
-                    let d = reader.skip(wireType);
-                    if (u !== false)
-                        (u === true ? UnknownFieldHandler.onRead : u)(this.typeName, message, fieldNo, wireType, d);
-            }
-        }
-        return message;
-    }
-    internalBinaryWrite(message: StreamNotifications, writer: IBinaryWriter, options: BinaryWriteOptions): IBinaryWriter {
-        /* repeated resources.notifications.Notification notifications = 1; */
-        for (let i = 0; i < message.notifications.length; i++)
-            Notification.internalBinaryWrite(message.notifications[i], writer.tag(1, WireType.LengthDelimited).fork(), options).join();
-        let u = options.writeUnknownFields;
-        if (u !== false)
-            (u == true ? UnknownFieldHandler.onWrite : u)(this.typeName, message, writer);
-        return writer;
-    }
-}
-/**
- * @generated MessageType for protobuf message services.notificator.StreamNotifications
- */
-export const StreamNotifications = new StreamNotifications$Type();
 // @generated message type with reflection information, may provide speed optimized methods
 class TokenUpdate$Type extends MessageType<TokenUpdate> {
     constructor() {

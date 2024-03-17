@@ -924,7 +924,8 @@
         "qualifications": "Qualification | Qualifications",
         "score": "Score",
         "calendar_week": "CW",
-        "requirements": "Requirement | Requirements"
+        "requirements": "Requirement | Requirements",
+        "read": "Read"
     },
     "notifications": {
         "clipboard": {

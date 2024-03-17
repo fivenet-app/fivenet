@@ -191,34 +191,26 @@ func (s *Server) MarkNotifications(ctx context.Context, req *MarkNotificationsRe
 	}, nil
 }
 
-func (s *Server) getNotifications(ctx context.Context, userId int32, lastId uint64) ([]*notifications.Notification, error) {
-	nots := tNotifications.AS("notification")
-
-	stmt := nots.
+func (s *Server) getNotificationCount(ctx context.Context, userId int32) (int32, error) {
+	stmt := tNotifications.
 		SELECT(
-			nots.ID,
-			nots.Title,
-			nots.Type,
-			nots.Content,
-			nots.Data,
+			jet.COUNT(tNotifications.ID).AS("count"),
 		).
-		FROM(nots).
-		WHERE(
-			jet.AND(
-				nots.UserID.EQ(jet.Int32(userId)),
-				nots.ID.GT(jet.Uint64(lastId)),
-				nots.ReadAt.IS_NULL(),
-			),
-		).
-		ORDER_BY(nots.ID.DESC()).
-		LIMIT(7)
+		FROM(tNotifications).
+		WHERE(jet.AND(
+			tNotifications.UserID.EQ(jet.Int32(userId)),
+			tNotifications.ReadAt.IS_NULL(),
+		)).
+		ORDER_BY(tNotifications.ID.DESC())
 
-	var dest []*notifications.Notification
+	var dest struct {
+		Count int32
+	}
 	if err := stmt.QueryContext(ctx, s.db, &dest); err != nil {
-		return nil, errswrap.NewError(ErrFailedStream, err)
+		return 0, errswrap.NewError(ErrFailedStream, err)
 	}
 
-	return dest, nil
+	return dest.Count, nil
 }
 
 func (s *Server) Stream(req *StreamRequest, srv NotificatorService_StreamServer) error {
@@ -226,10 +218,6 @@ func (s *Server) Stream(req *StreamRequest, srv NotificatorService_StreamServer)
 	if !ok {
 		return ErrFailedStream
 	}
-
-	// Restart stream after x minutes
-	restartTime := time.NewTicker(9 * time.Minute)
-	defer restartTime.Stop()
 
 	// Track changes to user info, so we can send an updated user info to the user
 	currentUserInfo := userInfo.Clone()
@@ -262,57 +250,69 @@ func (s *Server) Stream(req *StreamRequest, srv NotificatorService_StreamServer)
 	}()
 
 	// Update Ticker
-	updateTicker := time.NewTicker(40 * time.Second)
+	updateTicker := time.NewTicker(45 * time.Second)
 	defer updateTicker.Stop()
 
 	// Check user token validity
-	if stop, err := s.checkUser(srv, req, &currentUserInfo); err != nil {
-		return err
-	} else if stop {
-		// End stream if we should "stop"
-		return nil
+	data, stop, err := s.checkUser(srv.Context(), currentUserInfo)
+	if err != nil {
+		return errswrap.NewError(ErrFailedStream, err)
 	}
 
-	// Check if user has any (unsent/unread) notifications
-	if err := s.checkNotifications(srv, req, &currentUserInfo); err != nil {
-		return err
+	notsCount, err := s.getNotificationCount(srv.Context(), userInfo.UserId)
+	if err != nil {
+		return errswrap.NewError(ErrFailedStream, err)
+	}
+
+	if err := srv.Send(&StreamResponse{
+		LastId:            req.LastId,
+		NotificationCount: notsCount,
+		Data:              data,
+		Restart:           &stop,
+	}); err != nil {
+		return errswrap.NewError(ErrFailedStream, err)
 	}
 
 	for {
 		resp := &StreamResponse{
-			LastId: req.LastId,
+			LastId:            req.LastId,
+			NotificationCount: notsCount,
 		}
 
 		select {
 		case <-srv.Context().Done():
 			return nil
 
-		case <-restartTime.C:
-			restart := true
-			resp.Restart = &restart
-			err := srv.Send(resp)
-
-			return err
-
 		case <-updateTicker.C:
-			// Check for new user notifications
-			if err := s.checkNotifications(srv, req, &currentUserInfo); err != nil {
-				return err
+			// Check user token validity
+			data, stop, err := s.checkUser(srv.Context(), currentUserInfo)
+			if err != nil {
+				return errswrap.NewError(ErrFailedStream, err)
+			}
+			if data != nil {
+				resp.Data = data
+
+				if err := srv.Send(resp); err != nil {
+					return errswrap.NewError(ErrFailedStream, err)
+				}
 			}
 
-			// Check user token validity
-			if stop, err := s.checkUser(srv, req, &currentUserInfo); err != nil {
-				return err
-			} else if stop {
+			if stop {
 				// End stream if we should "stop"
 				return nil
+			}
+
+			// Make sure the notification is in sync (again)
+			resp.NotificationCount, err = s.getNotificationCount(srv.Context(), userInfo.UserId)
+			if err != nil {
+				return errswrap.NewError(ErrFailedStream, err)
 			}
 
 		case msg := <-msgCh:
 			// Publish notifications sent directly to user via the message queue
 			if msg == nil {
 				s.logger.Warn("nil notification message received via message queue", zap.Int32("user_id", currentUserInfo.UserId))
-				return nil
+				continue
 			}
 
 			if err := msg.Ack(); err != nil {
@@ -324,11 +324,10 @@ func (s *Server) Stream(req *StreamRequest, srv NotificatorService_StreamServer)
 				return errswrap.NewError(ErrFailedStream, err)
 			}
 
-			resp.Data = &StreamResponse_Notifications{
-				Notifications: &StreamNotifications{
-					Notifications: []*notifications.Notification{&dest},
-				},
+			resp.Data = &StreamResponse_Notification{
+				Notification: &dest,
 			}
+			resp.NotificationCount++
 
 			if err := srv.Send(resp); err != nil {
 				return errswrap.NewError(ErrFailedStream, err)
@@ -337,70 +336,23 @@ func (s *Server) Stream(req *StreamRequest, srv NotificatorService_StreamServer)
 	}
 }
 
-func (s *Server) checkNotifications(srv NotificatorService_StreamServer, req *StreamRequest, userInfo *userinfo.UserInfo) error {
-	resp := &StreamResponse{
-		LastId: req.LastId,
-	}
-
-	notifications, err := s.getNotifications(srv.Context(), userInfo.UserId, req.LastId)
+func (s *Server) checkUser(ctx context.Context, userInfo userinfo.UserInfo) (isStreamResponse_Data, bool, error) {
+	claims, restart, tu, err := s.checkAndUpdateToken(ctx)
 	if err != nil {
-		return ErrFailedStream
-	}
-	// Update last notification id of the user and send notifications
-	if len(notifications) > 0 {
-		req.LastId = notifications[0].Id
-		resp.LastId = notifications[0].Id
-
-		resp.Data = &StreamResponse_Notifications{
-			Notifications: &StreamNotifications{
-				Notifications: notifications,
-			},
-		}
-
-		if err := srv.Send(resp); err != nil {
-			return err
-		}
-
-		// Mark notifications as read
-		all := true
-		if _, err := s.MarkNotifications(srv.Context(), &MarkNotificationsRequest{
-			All: &all,
-		}); err != nil {
-			return err
-		}
+		return nil, false, err
 	}
 
-	return nil
-}
-
-func (s *Server) checkUser(srv NotificatorService_StreamServer, req *StreamRequest, userInfo *userinfo.UserInfo) (bool, error) {
-	claims, restart, tu, err := s.checkAndUpdateToken(srv.Context())
-	if err != nil {
-		return false, ErrFailedStream
-	}
-
-	resp := &StreamResponse{
-		LastId: req.LastId,
-	}
 	if tu != nil && claims.CharID > 0 {
-		if err := s.checkAndUpdateUserInfo(srv.Context(), tu, userInfo); err != nil {
-			return false, ErrFailedStream
+		if err := s.checkAndUpdateUserInfo(ctx, tu, userInfo); err != nil {
+			return nil, false, err
 		}
 
-		resp.Data = &StreamResponse_Token{
+		return &StreamResponse_Token{
 			Token: tu,
-		}
+		}, true, nil
 	}
 
-	if restart {
-		resp.Restart = &restart
-
-		if err := srv.Send(resp); err != nil {
-			return false, ErrFailedStream
-		}
-	}
-
-	return false, nil
+	return nil, restart, nil
 }
 
 func (s *Server) checkAndUpdateToken(ctx context.Context) (*auth.CitizenInfoClaims, bool, *TokenUpdate, error) {
@@ -432,13 +384,14 @@ func (s *Server) checkAndUpdateToken(ctx context.Context) (*auth.CitizenInfoClai
 			NewToken: &newToken,
 			Expires:  timestamp.New(claims.ExpiresAt.Time),
 		}
+
 		return claims, true, tu, nil
 	}
 
 	return claims, false, nil, nil
 }
 
-func (s *Server) checkAndUpdateUserInfo(ctx context.Context, tu *TokenUpdate, currentUserInfo *userinfo.UserInfo) error {
+func (s *Server) checkAndUpdateUserInfo(ctx context.Context, tu *TokenUpdate, currentUserInfo userinfo.UserInfo) error {
 	userInfo, err := s.ui.GetUserInfo(ctx, currentUserInfo.UserId, currentUserInfo.AccountId)
 	if err != nil {
 		return err

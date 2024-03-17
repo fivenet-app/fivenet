@@ -1,13 +1,46 @@
 <script setup lang="ts">
 import { Dialog, DialogPanel, DialogTitle, TransitionChild, TransitionRoot } from '@headlessui/vue';
+import { useTimeoutFn } from '@vueuse/core';
 import { BellOutlineIcon, CloseIcon } from 'mdi-vue3';
 import NotificationsList from '~/components/partials/notification/NotificationsList.vue';
+import { useNotificatorStore } from '~/store/notificator';
+
+const notificatorStore = useNotificatorStore();
+const { getNotificationsCount } = storeToRefs(notificatorStore);
+
+const newNotification = ref(false);
+
+const { start } = useTimeoutFn(() => (newNotification.value = false), 1000, {
+    immediate: false,
+});
+
+const currentCount = ref(0);
+watch(getNotificationsCount, () => {
+    if (getNotificationsCount.value > currentCount.value) {
+        newNotification.value = true;
+        start();
+    }
+
+    currentCount.value = getNotificationsCount.value;
+});
 
 const open = ref(false);
 </script>
 
 <template>
     <div class="relative flex-shrink-0">
+        <span v-if="getNotificationsCount > 0" class="absolute left-0 top-0 -mr-1 -mt-1 flex h-4 w-4">
+            <span
+                class="absolute inline-flex h-full w-full rounded-full bg-error-400 opacity-75"
+                :class="newNotification ? 'animate-ping' : ''"
+            ></span>
+            <span
+                class="relative inline-flex h-4 w-4 rounded-full bg-error-500 flex justify-center items-center items text-xs text-neutral"
+            >
+                <span v-if="getNotificationsCount <= 9">{{ getNotificationsCount }} </span>
+                <span v-else> 9+ </span>
+            </span>
+        </span>
         <button
             class="flex rounded-full bg-base-800 text-sm ring-2 ring-base-600 focus:outline-none focus:ring-2 focus:ring-primary-500 focus:ring-offset-2"
             @click="open = true"
@@ -68,7 +101,7 @@ const open = ref(false);
                                                 </div>
                                             </div>
                                             <div class="flex flex-1 flex-col justify-between">
-                                                <div class="divide-y divide-gray-200 px-4">
+                                                <div class="divide-y divide-gray-200 px-2">
                                                     <div class="mt-1">
                                                         <div class="my-2 space-y-24">
                                                             <div class="form-control flex-1">

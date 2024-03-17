@@ -7,7 +7,7 @@ import (
 	database "github.com/galexrt/fivenet/gen/go/proto/resources/common/database"
 	"github.com/galexrt/fivenet/gen/go/proto/resources/qualifications"
 	"github.com/galexrt/fivenet/gen/go/proto/resources/rector"
-	errorsqualifications "github.com/galexrt/fivenet/gen/go/proto/services/jobs/errors"
+	errorsqualifications "github.com/galexrt/fivenet/gen/go/proto/services/qualifications/errors"
 	"github.com/galexrt/fivenet/pkg/grpc/auth"
 	"github.com/galexrt/fivenet/pkg/grpc/auth/userinfo"
 	"github.com/galexrt/fivenet/pkg/grpc/errswrap"
@@ -78,8 +78,8 @@ func (s *Server) ListQualificationsResults(ctx context.Context, req *ListQualifi
 						AND(tQJobAccess.MinimumGrade.LT_EQ(jet.Int32(userInfo.JobGrade))),
 				),
 		).
-		WHERE(condition).
-		GROUP_BY(tQualiResults.ID)
+		GROUP_BY(tQualiResults.ID).
+		WHERE(condition)
 
 	var count database.DataCount
 	if err := countStmt.QueryContext(ctx, s.db, &count); err != nil {
@@ -137,6 +137,7 @@ func (s *Server) ListQualificationsResults(ctx context.Context, req *ListQualifi
 						AND(tQJobAccess.MinimumGrade.LT_EQ(jet.Int32(userInfo.JobGrade))),
 				),
 		).
+		GROUP_BY(tQualiResults.ID).
 		WHERE(condition).
 		OFFSET(req.Pagination.Offset).
 		LIMIT(limit)
@@ -276,6 +277,7 @@ func (s *Server) getQualificationResult(ctx context.Context, resultId uint64, us
 				tCreator.ID.EQ(tQualiResults.CreatorID),
 			),
 		).
+		GROUP_BY(tQualiResults.ID).
 		WHERE(tQualiResults.ID.EQ(jet.Uint64(resultId))).
 		LIMIT(1)
 

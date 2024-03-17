@@ -6,5 +6,6 @@ import (
 )
 
 var (
-	ErrFailedQuery = status.Error(codes.Internal, "errors.QualificationsService.ErrFailedQuery")
+	ErrFailedQuery         = status.Error(codes.Internal, "errors.QualificationsService.ErrFailedQuery")
+	ErrRequirementsMissing = status.Error(codes.InvalidArgument, "errors.QualificationsService.ErrRequirementsMissing")
 )

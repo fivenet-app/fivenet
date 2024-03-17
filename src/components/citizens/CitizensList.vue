@@ -143,7 +143,7 @@ watchDebounced(query.value, () => refresh(), { debounce: 600, maxWait: 1400 });
                                     <Switch
                                         v-model="query.wanted"
                                         :class="[
-                                            query.wanted ? 'bg-error-500' : 'bg-base-700',
+                                            query.wanted ? 'bg-primary-600' : 'bg-gray-200',
                                             'relative inline-flex h-6 w-11 flex-shrink-0 cursor-pointer rounded-full border-2 border-transparent transition-colors duration-200 ease-in-out focus:outline-none focus:ring-2 focus:ring-neutral focus:ring-offset-2',
                                         ]"
                                     >

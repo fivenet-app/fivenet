@@ -1,8 +1,8 @@
 <script lang="ts" setup>
 import { Switch } from '@headlessui/vue';
 import { RpcError } from '@protobuf-ts/runtime-rpc';
-import { watchDebounced } from '@vueuse/core';
-import { BellIcon, ChevronRightIcon } from 'mdi-vue3';
+import { useTimeoutFn, watchDebounced } from '@vueuse/core';
+import { BellIcon, CheckIcon, LinkVariantIcon } from 'mdi-vue3';
 import DataErrorBlock from '~/components/partials/data/DataErrorBlock.vue';
 import DataNoDataBlock from '~/components/partials/data/DataNoDataBlock.vue';
 import DataPendingBlock from '~/components/partials/data/DataPendingBlock.vue';
@@ -59,8 +59,20 @@ async function markAllRead(): Promise<void> {
     data.value?.notifications.forEach((v) => (v.readAt = now));
 }
 
+async function markRead(...ids: string[]): Promise<void> {
+    await notificator.markNotifications({
+        ids,
+    });
+
+    const now = toTimestamp(new Date());
+    data.value?.notifications.forEach((v) => (v.readAt = now));
+}
+
 watch(offset, async () => refresh());
 watchDebounced(includeRead, async () => refresh(), { debounce: 500, maxWait: 1500 });
+
+const { start: timeoutFn } = useTimeoutFn(() => (canSubmit.value = true), 400, { immediate: false });
+const canSubmit = ref(true);
 </script>
 
 <template>
@@ -74,11 +86,11 @@ watchDebounced(includeRead, async () => refresh(), { debounce: 500, maxWait: 150
                                 <label for="search" class="block text-sm font-medium leading-6 text-neutral"
                                     >{{ $t('components.notifications.include_read') }}
                                 </label>
-                                <div class="relative mt-3 flex items-center">
+                                <div class="relative flex items-center">
                                     <Switch
                                         v-model="includeRead"
                                         :class="[
-                                            includeRead ? 'bg-error-500' : 'bg-base-700',
+                                            includeRead ? 'bg-primary-600' : 'bg-gray-200',
                                             'relative inline-flex h-6 w-11 flex-shrink-0 cursor-pointer rounded-full border-2 border-transparent transition-colors duration-200 ease-in-out focus:outline-none focus:ring-2 focus:ring-neutral focus:ring-offset-2',
                                         ]"
                                     >
@@ -96,14 +108,16 @@ watchDebounced(includeRead, async () => refresh(), { debounce: 500, maxWait: 150
                             <div class="flex-initial">
                                 <button
                                     type="button"
-                                    :disabled="data?.notifications === undefined || data?.notifications.length === 0"
+                                    :disabled="
+                                        !canSubmit || data?.notifications === undefined || data?.notifications.length === 0
+                                    "
                                     class="inline-flex rounded-md px-3 py-2 text-sm font-semibold text-neutral focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-primary-500"
                                     :class="
-                                        data?.notifications === undefined || data?.notifications.length === 0
-                                            ? 'bg-primary-500 hover:bg-primary-400'
-                                            : 'disabled bg-base-500 hover:bg-base-400 focus-visible:outline-base-500'
+                                        !canSubmit || data?.notifications === undefined || data?.notifications.length === 0
+                                            ? 'disabled bg-base-500 hover:bg-base-400 focus-visible:outline-base-500'
+                                            : 'bg-primary-500 hover:bg-primary-400'
                                     "
-                                    @click="markAllRead()"
+                                    @click="markAllRead().finally(timeoutFn)"
                                 >
                                     {{ $t('components.notifications.mark_all_read') }}
                                 </button>
@@ -131,18 +145,18 @@ watchDebounced(includeRead, async () => refresh(), { debounce: 500, maxWait: 150
                                 <li
                                     v-for="not in data?.notifications"
                                     :key="not.id"
-                                    class="relative my-1 flex justify-between gap-x-6 rounded-lg bg-base-800 px-4 py-5 hover:bg-base-700 sm:px-6"
+                                    class="relative my-1 flex justify-between gap-x-6 rounded-lg bg-base-700 px-4 py-5 hover:bg-base-600 sm:px-6"
                                 >
-                                    <div class="flex gap-x-4">
+                                    <div class="flex flex-1 gap-x-4">
                                         <div class="min-w-0 flex-auto">
-                                            <p class="py-2 pl-4 pr-3 text-sm font-medium text-neutral sm:pl-1">
-                                                <span v-if="not.data && not.data.link">
+                                            <p class="py-2 pr-3 text-sm font-medium text-neutral">
+                                                <template v-if="not.data && not.data.link">
                                                     <!-- @vue-ignore the route should be valid... at least in most cases -->
-                                                    <NuxtLink :to="not.data.link.to">
-                                                        <span class="absolute inset-x-0 -top-px bottom-0" />
+                                                    <NuxtLink :to="not.data.link.to" class="inline-flex items-center gap-1">
                                                         {{ $t(not.title!.key, not.title?.parameters ?? {}) }}
+                                                        <LinkVariantIcon class="h-5 w-5" />
                                                     </NuxtLink>
-                                                </span>
+                                                </template>
                                                 <span v-else>
                                                     {{ $t(not.title!.key, not.title?.parameters ?? {}) }}
                                                 </span>
@@ -152,28 +166,48 @@ watchDebounced(includeRead, async () => refresh(), { debounce: 500, maxWait: 150
                                             </p>
                                         </div>
                                     </div>
+
                                     <div class="flex items-center gap-x-4">
                                         <div class="hidden sm:flex sm:flex-col sm:items-end">
-                                            <p class="mt-1 text-xs leading-5 text-gray-500">
+                                            <p class="mt-1 text-xs leading-5 text-gray-300">
                                                 {{ $t('common.received') }}
                                                 <GenericTime :value="not.createdAt" :ago="true" />
                                             </p>
-                                            <div v-if="!not.readAt" class="mt-1 flex items-center gap-x-1.5">
-                                                <div class="flex-none rounded-full bg-success-500/20 p-1">
-                                                    <div class="h-1.5 w-1.5 rounded-full bg-success-500" />
-                                                </div>
-                                                <p class="text-xs leading-5 text-gray-500">
-                                                    {{ $t('components.notifications.unread') }}
-                                                </p>
+                                            <div class="mt-1 flex items-center gap-x-1.5">
+                                                <template v-if="not.readAt">
+                                                    <p class="text-xs leading-5 text-gray-300">
+                                                        {{ $t('common.read') }}
+                                                        <GenericTime :value="not.readAt" :ago="true" />
+                                                    </p>
+                                                </template>
+                                                <template v-else>
+                                                    <div class="flex-none rounded-full bg-error-500/20 p-1">
+                                                        <div class="h-1.5 w-1.5 rounded-full bg-error-500" />
+                                                    </div>
+                                                    <p class="text-xs leading-5 text-gray-300">
+                                                        {{ $t('components.notifications.unread') }}
+                                                    </p>
+                                                </template>
                                             </div>
                                         </div>
-                                        <ChevronRightIcon
-                                            v-if="not.data && not.data.link"
-                                            class="h-5 w-5 flex-none text-gray-400"
-                                            aria-hidden="true"
-                                        />
-                                        <span v-else class="h-5 w-5"></span>
                                     </div>
+
+                                    <button
+                                        v-if="!not.readAt"
+                                        type="button"
+                                        class="-mt-5 -mr-6 -mb-5 flex shrink items-center rounded-r-md px-1 py-1 text-sm font-semibold text-neutral focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-primary-500"
+                                        :class="
+                                            !canSubmit
+                                                ? 'disabled bg-base-500 hover:bg-base-400 focus-visible:outline-base-500'
+                                                : 'bg-primary-500 hover:bg-primary-400'
+                                        "
+                                        :disabled="!canSubmit"
+                                        @click="markRead(not.id).finally(timeoutFn)"
+                                    >
+                                        <span class="sr-only">{{ $t('components.notifications.mark_read') }}</span>
+                                        <CheckIcon class="h-5 w-5 text-gray-300" aria-hidden="true" />
+                                    </button>
+                                    <span v-else class="h-4 w-4"></span>
                                 </li>
                             </ul>
 
