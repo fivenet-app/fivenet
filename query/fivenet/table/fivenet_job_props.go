@@ -28,6 +28,7 @@ type fivenetJobPropsTable struct {
 	DiscordSyncSettings mysql.ColumnString
 	Motd                mysql.ColumnString
 	LogoURL             mysql.ColumnString
+	Settings            mysql.ColumnString
 
 	AllColumns     mysql.ColumnList
 	MutableColumns mysql.ColumnList
@@ -79,8 +80,9 @@ func newFivenetJobPropsTableImpl(schemaName, tableName, alias string) fivenetJob
 		DiscordSyncSettingsColumn = mysql.StringColumn("discord_sync_settings")
 		MotdColumn                = mysql.StringColumn("motd")
 		LogoURLColumn             = mysql.StringColumn("logo_url")
-		allColumns                = mysql.ColumnList{JobColumn, UpdatedAtColumn, ThemeColumn, LivemapMarkerColorColumn, QuickButtonsColumn, RadioFrequencyColumn, DiscordGuildIDColumn, DiscordLastSyncColumn, DiscordSyncSettingsColumn, MotdColumn, LogoURLColumn}
-		mutableColumns            = mysql.ColumnList{JobColumn, UpdatedAtColumn, ThemeColumn, LivemapMarkerColorColumn, QuickButtonsColumn, RadioFrequencyColumn, DiscordGuildIDColumn, DiscordLastSyncColumn, DiscordSyncSettingsColumn, MotdColumn, LogoURLColumn}
+		SettingsColumn            = mysql.StringColumn("settings")
+		allColumns                = mysql.ColumnList{JobColumn, UpdatedAtColumn, ThemeColumn, LivemapMarkerColorColumn, QuickButtonsColumn, RadioFrequencyColumn, DiscordGuildIDColumn, DiscordLastSyncColumn, DiscordSyncSettingsColumn, MotdColumn, LogoURLColumn, SettingsColumn}
+		mutableColumns            = mysql.ColumnList{JobColumn, UpdatedAtColumn, ThemeColumn, LivemapMarkerColorColumn, QuickButtonsColumn, RadioFrequencyColumn, DiscordGuildIDColumn, DiscordLastSyncColumn, DiscordSyncSettingsColumn, MotdColumn, LogoURLColumn, SettingsColumn}
 	)
 
 	return fivenetJobPropsTable{
@@ -98,6 +100,7 @@ func newFivenetJobPropsTableImpl(schemaName, tableName, alias string) fivenetJob
 		DiscordSyncSettings: DiscordSyncSettingsColumn,
 		Motd:                MotdColumn,
 		LogoURL:             LogoURLColumn,
+		Settings:            SettingsColumn,
 
 		AllColumns:     allColumns,
 		MutableColumns: mutableColumns,

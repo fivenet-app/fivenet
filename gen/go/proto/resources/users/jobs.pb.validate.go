@@ -450,6 +450,35 @@ func (m *JobProps) validate(all bool) error {
 		}
 	}
 
+	if all {
+		switch v := interface{}(m.GetSettings()).(type) {
+		case interface{ ValidateAll() error }:
+			if err := v.ValidateAll(); err != nil {
+				errors = append(errors, JobPropsValidationError{
+					field:  "Settings",
+					reason: "embedded message failed validation",
+					cause:  err,
+				})
+			}
+		case interface{ Validate() error }:
+			if err := v.Validate(); err != nil {
+				errors = append(errors, JobPropsValidationError{
+					field:  "Settings",
+					reason: "embedded message failed validation",
+					cause:  err,
+				})
+			}
+		}
+	} else if v, ok := interface{}(m.GetSettings()).(interface{ Validate() error }); ok {
+		if err := v.Validate(); err != nil {
+			return JobPropsValidationError{
+				field:  "Settings",
+				reason: "embedded message failed validation",
+				cause:  err,
+			}
+		}
+	}
+
 	if m.JobLabel != nil {
 
 		if utf8.RuneCountInString(m.GetJobLabel()) > 50 {
@@ -1334,3 +1363,102 @@ var _ interface {
 	Cause() error
 	ErrorName() string
 } = JobsAbsenceSettingsValidationError{}
+
+// Validate checks the field values on JobSettings with the rules defined in
+// the proto definition for this message. If any rules are violated, the first
+// error encountered is returned, or nil if there are no violations.
+func (m *JobSettings) Validate() error {
+	return m.validate(false)
+}
+
+// ValidateAll checks the field values on JobSettings with the rules defined in
+// the proto definition for this message. If any rules are violated, the
+// result is a list of violation errors wrapped in JobSettingsMultiError, or
+// nil if none found.
+func (m *JobSettings) ValidateAll() error {
+	return m.validate(true)
+}
+
+func (m *JobSettings) validate(all bool) error {
+	if m == nil {
+		return nil
+	}
+
+	var errors []error
+
+	if len(errors) > 0 {
+		return JobSettingsMultiError(errors)
+	}
+
+	return nil
+}
+
+// JobSettingsMultiError is an error wrapping multiple validation errors
+// returned by JobSettings.ValidateAll() if the designated constraints aren't met.
+type JobSettingsMultiError []error
+
+// Error returns a concatenation of all the error messages it wraps.
+func (m JobSettingsMultiError) Error() string {
+	var msgs []string
+	for _, err := range m {
+		msgs = append(msgs, err.Error())
+	}
+	return strings.Join(msgs, "; ")
+}
+
+// AllErrors returns a list of validation violation errors.
+func (m JobSettingsMultiError) AllErrors() []error { return m }
+
+// JobSettingsValidationError is the validation error returned by
+// JobSettings.Validate if the designated constraints aren't met.
+type JobSettingsValidationError struct {
+	field  string
+	reason string
+	cause  error
+	key    bool
+}
+
+// Field function returns field value.
+func (e JobSettingsValidationError) Field() string { return e.field }
+
+// Reason function returns reason value.
+func (e JobSettingsValidationError) Reason() string { return e.reason }
+
+// Cause function returns cause value.
+func (e JobSettingsValidationError) Cause() error { return e.cause }
+
+// Key function returns key value.
+func (e JobSettingsValidationError) Key() bool { return e.key }
+
+// ErrorName returns error name.
+func (e JobSettingsValidationError) ErrorName() string { return "JobSettingsValidationError" }
+
+// Error satisfies the builtin error interface
+func (e JobSettingsValidationError) Error() string {
+	cause := ""
+	if e.cause != nil {
+		cause = fmt.Sprintf(" | caused by: %v", e.cause)
+	}
+
+	key := ""
+	if e.key {
+		key = "key for "
+	}
+
+	return fmt.Sprintf(
+		"invalid %sJobSettings.%s: %s%s",
+		key,
+		e.field,
+		e.reason,
+		cause)
+}
+
+var _ error = JobSettingsValidationError{}
+
+var _ interface {
+	Field() string
+	Reason() string
+	Key() bool
+	Cause() error
+	ErrorName() string
+} = JobSettingsValidationError{}

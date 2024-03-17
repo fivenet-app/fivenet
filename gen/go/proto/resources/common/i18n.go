@@ -7,6 +7,7 @@ import (
 	"google.golang.org/protobuf/encoding/protojson"
 )
 
+// Scan implements driver.Valuer for protobuf TranslateItem.
 func (x *TranslateItem) Scan(value any) error {
 	switch t := value.(type) {
 	case string:
@@ -17,7 +18,7 @@ func (x *TranslateItem) Scan(value any) error {
 	return nil
 }
 
-// Scan implements driver.Valuer for protobuf TranslateItem.
+// Value marshals the value into driver.Valuer.
 func (x *TranslateItem) Value() (driver.Value, error) {
 	if x == nil {
 		return nil, nil

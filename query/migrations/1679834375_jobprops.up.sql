@@ -13,6 +13,7 @@ CREATE TABLE IF NOT EXISTS `fivenet_job_props` (
   `discord_sync_settings` longtext DEFAULT NULL,
   `motd` text DEFAULT NULL,
   `logo_url` varchar(128) DEFAULT NULL,
+  `settings` longtext DEFAULT NULL,
   UNIQUE KEY `idx_fivenet_job_props_unique` (`job`),
   KEY `idx_fivenet_job_props_discord_guild_id` (`discord_guild_id`),
   KEY `idx_fivenet_job_props_logo_url` (`logo_url`)

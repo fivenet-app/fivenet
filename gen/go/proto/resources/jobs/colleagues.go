@@ -23,6 +23,7 @@ func (x *Colleague) SetJobGradeLabel(label string) {
 	x.JobGradeLabel = &label
 }
 
+// Scan implements driver.Valuer for protobuf JobsUserActivityData.
 func (x *JobsUserActivityData) Scan(value any) error {
 	switch t := value.(type) {
 	case string:
@@ -33,7 +34,7 @@ func (x *JobsUserActivityData) Scan(value any) error {
 	return nil
 }
 
-// Scan implements driver.Valuer for protobuf JobsUserActivityData.
+// Value marshals the value into driver.Valuer.
 func (x *JobsUserActivityData) Value() (driver.Value, error) {
 	if x == nil {
 		return nil, nil

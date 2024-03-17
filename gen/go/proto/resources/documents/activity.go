@@ -7,6 +7,7 @@ import (
 	"google.golang.org/protobuf/encoding/protojson"
 )
 
+// Scan implements driver.Valuer for protobuf DocActivityData.
 func (x *DocActivityData) Scan(value any) error {
 	switch t := value.(type) {
 	case string:
@@ -17,7 +18,7 @@ func (x *DocActivityData) Scan(value any) error {
 	return nil
 }
 
-// Scan implements driver.Valuer for protobuf DocActivityData.
+// Value marshals the value into driver.Valuer.
 func (x *DocActivityData) Value() (driver.Value, error) {
 	if x == nil {
 		return nil, nil

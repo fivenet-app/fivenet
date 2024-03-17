@@ -92,6 +92,7 @@ func (x *AppConfig) Default() {
 	}
 }
 
+// Scan implements driver.Valuer for protobuf AppConfig.
 func (x *AppConfig) Scan(value any) error {
 	switch t := value.(type) {
 	case string:
@@ -102,7 +103,7 @@ func (x *AppConfig) Scan(value any) error {
 	return nil
 }
 
-// Scan implements driver.Valuer for protobuf AppConfig.
+// Value marshals the value into driver.Valuer.
 func (x *AppConfig) Value() (driver.Value, error) {
 	if x == nil {
 		return nil, nil

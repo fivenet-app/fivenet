@@ -17,6 +17,7 @@ const (
 	DispatchAttributeTooOld    = "too_old"
 )
 
+// Scan implements driver.Valuer for protobuf Attributes.
 func (x *Attributes) Scan(value any) error {
 	switch t := value.(type) {
 	case string:
@@ -27,7 +28,7 @@ func (x *Attributes) Scan(value any) error {
 	return nil
 }
 
-// Scan implements driver.Valuer for protobuf Attributes.
+// Value marshals the value into driver.Valuer.
 func (x *Attributes) Value() (driver.Value, error) {
 	if x == nil {
 		return nil, nil

@@ -117,6 +117,7 @@ func (x *DispatchStatus) Point() orb.Point {
 	return orb.Point{*x.X, *x.Y}
 }
 
+// Scan implements driver.Valuer for protobuf DispatchReferences.
 func (x *DispatchReferences) Scan(value any) error {
 	switch t := value.(type) {
 	case string:
@@ -127,7 +128,7 @@ func (x *DispatchReferences) Scan(value any) error {
 	return nil
 }
 
-// Scan implements driver.Valuer for protobuf DispatchReferences.
+// Value marshals the value into driver.Valuer.
 func (x *DispatchReferences) Value() (driver.Value, error) {
 	if x == nil {
 		return nil, nil

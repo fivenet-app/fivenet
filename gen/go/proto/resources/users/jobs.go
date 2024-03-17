@@ -91,6 +91,7 @@ func (x *JobProps) Default(job string) {
 	}
 }
 
+// Scan implements driver.Valuer for protobuf QuickButtons.
 func (x *QuickButtons) Scan(value any) error {
 	switch t := value.(type) {
 	case string:
@@ -101,7 +102,7 @@ func (x *QuickButtons) Scan(value any) error {
 	return nil
 }
 
-// Scan implements driver.Valuer for protobuf QuickButtons.
+// Value marshals the value into driver.Valuer.
 func (x *QuickButtons) Value() (driver.Value, error) {
 	if x == nil {
 		return nil, nil
@@ -111,6 +112,7 @@ func (x *QuickButtons) Value() (driver.Value, error) {
 	return string(out), err
 }
 
+// Scan implements driver.Valuer for protobuf DiscordSyncSettings.
 func (x *DiscordSyncSettings) Scan(value any) error {
 	switch t := value.(type) {
 	case string:
@@ -121,7 +123,7 @@ func (x *DiscordSyncSettings) Scan(value any) error {
 	return nil
 }
 
-// Scan implements driver.Valuer for protobuf DiscordSyncSettings.
+// Value marshals the value into driver.Valuer.
 func (x *DiscordSyncSettings) Value() (driver.Value, error) {
 	if x == nil {
 		return nil, nil
@@ -133,4 +135,25 @@ func (x *DiscordSyncSettings) Value() (driver.Value, error) {
 
 func (x *DiscordSyncSettings) IsStatusLogEnabled() bool {
 	return x.StatusLog && x.StatusLogSettings != nil && x.StatusLogSettings.ChannelId != nil
+}
+
+// Scan implements driver.Valuer for protobuf JobSettings.
+func (x *JobSettings) Scan(value any) error {
+	switch t := value.(type) {
+	case string:
+		return protojson.Unmarshal([]byte(t), x)
+	case []byte:
+		return protojson.Unmarshal(t, x)
+	}
+	return nil
+}
+
+// Value marshals the value into driver.Valuer.
+func (x *JobSettings) Value() (driver.Value, error) {
+	if x == nil {
+		return nil, nil
+	}
+
+	out, err := protoutils.Marshal(x)
+	return string(out), err
 }

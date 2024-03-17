@@ -35,7 +35,7 @@ func (ts *Timestamp) Scan(value any) error {
 	return nil
 }
 
-// Scan implements driver.Valuer for protobuf Timestamp.
+// Value marshals the value into driver.Valuer.
 func (ts *Timestamp) Value() (driver.Value, error) {
 	if ts == nil {
 		return nil, nil

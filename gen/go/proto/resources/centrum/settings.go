@@ -30,6 +30,7 @@ func (x *UserUnitMapping) Merge(in *UserUnitMapping) *UserUnitMapping {
 	return x
 }
 
+// Scan implements driver.Valuer for protobuf PredefinedStatus.
 func (x *PredefinedStatus) Scan(value any) error {
 	switch t := value.(type) {
 	case string:
@@ -40,7 +41,7 @@ func (x *PredefinedStatus) Scan(value any) error {
 	return nil
 }
 
-// Scan implements driver.Valuer for protobuf PredefinedStatus.
+// Value marshals the value into driver.Valuer.
 func (x *PredefinedStatus) Value() (driver.Value, error) {
 	if x == nil {
 		return nil, nil

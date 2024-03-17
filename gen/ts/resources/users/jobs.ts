@@ -94,6 +94,10 @@ export interface JobProps {
      * @generated from protobuf field: optional resources.filestore.File logo_url = 11;
      */
     logoUrl?: File;
+    /**
+     * @generated from protobuf field: resources.users.JobSettings settings = 12;
+     */
+    settings?: JobSettings;
 }
 /**
  * @generated from protobuf message resources.users.QuickButtons
@@ -183,6 +187,11 @@ export interface JobsAbsenceSettings {
      * @generated from protobuf field: string absence_role = 1;
      */
     absenceRole: string;
+}
+/**
+ * @generated from protobuf message resources.users.JobSettings
+ */
+export interface JobSettings {
 }
 /**
  * @generated from protobuf enum resources.users.UserInfoSyncUnemployedMode
@@ -340,7 +349,8 @@ class JobProps$Type extends MessageType<JobProps> {
             { no: 8, name: "discord_last_sync", kind: "message", T: () => Timestamp },
             { no: 9, name: "discord_sync_settings", kind: "message", T: () => DiscordSyncSettings },
             { no: 10, name: "motd", kind: "scalar", opt: true, T: 9 /*ScalarType.STRING*/, options: { "validate.rules": { string: { maxLen: "1024" } } } },
-            { no: 11, name: "logo_url", kind: "message", T: () => File }
+            { no: 11, name: "logo_url", kind: "message", T: () => File },
+            { no: 12, name: "settings", kind: "message", T: () => JobSettings }
         ]);
     }
     create(value?: PartialMessage<JobProps>): JobProps {
@@ -390,6 +400,9 @@ class JobProps$Type extends MessageType<JobProps> {
                 case /* optional resources.filestore.File logo_url */ 11:
                     message.logoUrl = File.internalBinaryRead(reader, reader.uint32(), options, message.logoUrl);
                     break;
+                case /* resources.users.JobSettings settings */ 12:
+                    message.settings = JobSettings.internalBinaryRead(reader, reader.uint32(), options, message.settings);
+                    break;
                 default:
                     let u = options.readUnknownField;
                     if (u === "throw")
@@ -435,6 +448,9 @@ class JobProps$Type extends MessageType<JobProps> {
         /* optional resources.filestore.File logo_url = 11; */
         if (message.logoUrl)
             File.internalBinaryWrite(message.logoUrl, writer.tag(11, WireType.LengthDelimited).fork(), options).join();
+        /* resources.users.JobSettings settings = 12; */
+        if (message.settings)
+            JobSettings.internalBinaryWrite(message.settings, writer.tag(12, WireType.LengthDelimited).fork(), options).join();
         let u = options.writeUnknownFields;
         if (u !== false)
             (u == true ? UnknownFieldHandler.onWrite : u)(this.typeName, message, writer);
@@ -761,3 +777,28 @@ class JobsAbsenceSettings$Type extends MessageType<JobsAbsenceSettings> {
  * @generated MessageType for protobuf message resources.users.JobsAbsenceSettings
  */
 export const JobsAbsenceSettings = new JobsAbsenceSettings$Type();
+// @generated message type with reflection information, may provide speed optimized methods
+class JobSettings$Type extends MessageType<JobSettings> {
+    constructor() {
+        super("resources.users.JobSettings", []);
+    }
+    create(value?: PartialMessage<JobSettings>): JobSettings {
+        const message = globalThis.Object.create((this.messagePrototype!));
+        if (value !== undefined)
+            reflectionMergePartial<JobSettings>(this, message, value);
+        return message;
+    }
+    internalBinaryRead(reader: IBinaryReader, length: number, options: BinaryReadOptions, target?: JobSettings): JobSettings {
+        return target ?? this.create();
+    }
+    internalBinaryWrite(message: JobSettings, writer: IBinaryWriter, options: BinaryWriteOptions): IBinaryWriter {
+        let u = options.writeUnknownFields;
+        if (u !== false)
+            (u == true ? UnknownFieldHandler.onWrite : u)(this.typeName, message, writer);
+        return writer;
+    }
+}
+/**
+ * @generated MessageType for protobuf message resources.users.JobSettings
+ */
+export const JobSettings = new JobSettings$Type();

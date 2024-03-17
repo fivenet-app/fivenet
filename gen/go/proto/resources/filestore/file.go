@@ -41,6 +41,7 @@ const (
 	JobAssets FilePrefix = "jobassets"
 )
 
+// Scan implements driver.Valuer for protobuf DocumentAccess.
 func (x *File) Scan(value any) error {
 	switch t := value.(type) {
 	case string:
@@ -56,7 +57,7 @@ func (x *File) Scan(value any) error {
 	return nil
 }
 
-// Scan implements driver.Valuer for protobuf DocumentAccess.
+// Value marshals the value into driver.Valuer.
 func (x *File) Value() (driver.Value, error) {
 	if x == nil || x.Url == nil {
 		return nil, nil
