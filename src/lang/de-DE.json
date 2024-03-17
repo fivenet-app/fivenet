@@ -117,6 +117,9 @@
             "title": "Qualifikationen",
             "single": {
                 "title": "Qualifizierung"
+            },
+            "edit": {
+                "title": "Qualifikation bearbeiten"
             }
         }
     },
@@ -381,7 +384,7 @@
                     "employee_role_format": "Mitarbeiter-Rollen-Format (%s wird durch den Job Namen erstetzt)",
                     "grade_role_format": "Rang-Rollen-Format (%grade% wird durch die Rang-Nummer, %grade_label% durch das Rang-Label ersetzt)",
                     "unemployed_enabled": "Verwalte die Rolle für Arbeitslose",
-                    "unemployed_mode": "Modus für das behandeln von Arbeitslosen",
+                    "unemployed_mode": "Modus für das Behandeln von Arbeitslosen",
                     "unemployed_role_name": "Arbeitslosen Rolle"
                 },
                 "status_log": "Statusprotokoll",
