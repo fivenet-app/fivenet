@@ -20,7 +20,7 @@ const props = withDefaults(
 );
 
 const emits = defineEmits<{
-    (e: 'selectedRequestStatus', state: boolean): void;
+    (e: 'selected', state: boolean): void;
     (e: 'goto', loc: Coordinate): void;
 }>();
 
@@ -35,7 +35,7 @@ const checked = ref(false);
 onBeforeMount(() => {
     if (props.preselected === true) {
         checked.value = props.preselected;
-        emits('selectedRequestStatus', true);
+        emits('selected', true);
     }
 });
 
@@ -55,7 +55,7 @@ const open = ref(false);
                     class="h-4 h-5 w-4 w-5 rounded border-gray-300 text-primary-600 focus:ring-primary-600"
                     @change="
                         checked = !checked;
-                        $emit('selectedRequestStatus', checked);
+                        $emit('selected', checked);
                     "
                 />
                 <IDCopyBadge :id="dispatch.id" class="ml-2" prefix="DSP" :action="() => (open = true)" :hide-icon="true" />

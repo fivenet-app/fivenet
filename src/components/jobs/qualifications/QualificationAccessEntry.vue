@@ -106,7 +106,7 @@ if (props.accessRoles === undefined || props.accessRoles.length === 0) {
             .map((e, k) => {
                 return {
                     id: k,
-                    label: t(`enums.docstore.AccessLevel.${e.name}`),
+                    label: t(`enums.qualifications.AccessLevel.${e.name}`),
                     value: e.name,
                 };
             })
@@ -116,7 +116,7 @@ if (props.accessRoles === undefined || props.accessRoles.length === 0) {
     props.accessRoles.forEach((e) => {
         entriesAccessRoles.push({
             id: e,
-            label: t(`enums.docstore.AccessLevel.${AccessLevel[e]}`),
+            label: t(`enums.qualifications.AccessLevel.${AccessLevel[e]}`),
             value: AccessLevel[e],
         });
     });

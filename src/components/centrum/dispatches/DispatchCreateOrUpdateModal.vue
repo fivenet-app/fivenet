@@ -1,7 +1,7 @@
 <script lang="ts" setup>
 import { Dialog, DialogPanel, DialogTitle, TransitionChild, TransitionRoot } from '@headlessui/vue';
 import { RpcError } from '@protobuf-ts/runtime-rpc';
-import { digits, max, min, required } from '@vee-validate/rules';
+import { max, min, required } from '@vee-validate/rules';
 import { useThrottleFn } from '@vueuse/core';
 import { CloseIcon, LoadingIcon } from 'mdi-vue3';
 import { defineRule } from 'vee-validate';
@@ -56,7 +56,6 @@ async function createDispatch(values: FormData): Promise<void> {
 }
 
 defineRule('required', required);
-defineRule('digits', digits);
 defineRule('min', min);
 defineRule('max', max);
 

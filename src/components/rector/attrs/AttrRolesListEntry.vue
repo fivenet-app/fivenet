@@ -7,7 +7,7 @@ defineProps<{
 }>();
 
 defineEmits<{
-    (e: 'selectedRequestStatus', role: Role): void;
+    (e: 'selected', role: Role): void;
 }>();
 </script>
 
@@ -21,7 +21,7 @@ defineEmits<{
                 <button
                     type="button"
                     class="flex-initial text-primary-500 hover:text-primary-400"
-                    @click="$emit('selectedRequestStatus', role)"
+                    @click="$emit('selected', role)"
                 >
                     <EyeIcon class="h-5 w-5 text-primary-500" aria-hidden="true" />
                 </button>

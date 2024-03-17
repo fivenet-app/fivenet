@@ -24,7 +24,7 @@ const props = withDefaults(
 );
 
 defineEmits<{
-    (e: 'selectedRequestStatus'): void;
+    (e: 'selected'): void;
     (e: 'goto', loc: Coordinate): void;
 }>();
 
@@ -70,7 +70,7 @@ const openUnit = ref(false);
         :lat-lng="[marker.info!.y, marker.info!.x]"
         :name="marker.info!.name"
         :z-index-offset="activeChar === null || marker.user?.identifier !== activeChar.identifier ? 20 : 30"
-        @click="$emit('selectedRequestStatus')"
+        @click="$emit('selected')"
     >
         <LIcon :icon-anchor="iconAnchor" :popup-anchor="popupAnchor" :icon-size="[size, size]">
             <div class="flex flex-col items-center uppercase">

@@ -10,7 +10,7 @@ defineProps<{
 }>();
 
 defineEmits<{
-    (e: 'selectedRequestStatus'): void;
+    (e: 'selected'): void;
     (e: 'delete'): void;
 }>();
 
@@ -80,7 +80,7 @@ const openMessage = ref(false);
                     v-if="can('JobsConductService.UpdateConductEntry')"
                     type="button"
                     class="flex-initial text-primary-500 hover:text-primary-400"
-                    @click="$emit('selectedRequestStatus')"
+                    @click="$emit('selected')"
                 >
                     <PencilIcon class="ml-auto mr-2.5 w-5 h-auto" aria-hidden="true" />
                 </button>

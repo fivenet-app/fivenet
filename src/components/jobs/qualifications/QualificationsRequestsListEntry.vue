@@ -9,10 +9,6 @@ defineProps<{
     request: QualificationRequest;
 }>();
 
-defineEmits<{
-    (e: 'selectedRequestStatus'): void;
-}>();
-
 const authStore = useAuthStore();
 const { activeChar } = storeToRefs(authStore);
 </script>
@@ -23,6 +19,7 @@ const { activeChar } = storeToRefs(authStore);
             <div class="min-w-0 flex-auto">
                 <p class="text-sm font-semibold leading-6 text-gray-100">
                     <NuxtLink :to="{ name: 'jobs-qualifications-id', params: { id: request.qualificationId } }">
+                        <span class="absolute inset-x-0 -top-px bottom-0" />
                         {{ request.qualification?.abbreviation }}: {{ request.qualification?.title }}
                     </NuxtLink>
                 </p>
@@ -54,9 +51,7 @@ const { activeChar } = storeToRefs(authStore);
                     {{ $t('common.created_by') }} <CitizenInfoPopover :user="request.user" />
                 </p>
             </div>
-            <button type="button" @click="$emit('selectedRequestStatus')">
-                <ChevronRightIcon class="h-5 w-5 flex-none text-gray-300" aria-hidden="true" />
-            </button>
+            <ChevronRightIcon class="h-5 w-5 flex-none text-gray-300" aria-hidden="true" />
         </div>
     </li>
 </template>

@@ -84,6 +84,8 @@ const onSubmitThrottle = useThrottleFn(async (e) => {
     await onSubmit(e);
     setFieldValue('reset', false);
 }, 1000);
+
+const nuiAvailable = ref(isNUIAvailable());
 </script>
 
 <template>
@@ -134,7 +136,7 @@ const onSubmitThrottle = useThrottleFn(async (e) => {
                                         <label for="avatar" class="block text-sm font-medium leading-6 text-neutral">
                                             {{ $t('common.avatar') }}
                                         </label>
-                                        <template v-if="isNUIAvailable()">
+                                        <template v-if="nuiAvailable">
                                             <p class="text-neutral text-sm">
                                                 {{ $t('system.not_supported_on_tablet.title') }}
                                             </p>
@@ -180,9 +182,9 @@ const onSubmitThrottle = useThrottleFn(async (e) => {
                                     <button
                                         type="button"
                                         class="rounded-bd flex flex-1 justify-center px-3.5 py-2.5 text-sm font-semibold text-neutral"
-                                        :disabled="!meta.valid || !canSubmit || !activeChar?.avatar"
+                                        :disabled="nuiAvailable || !meta.valid || !canSubmit || !activeChar?.avatar"
                                         :class="[
-                                            !meta.valid || !canSubmit || !activeChar?.avatar
+                                            nuiAvailable || !meta.valid || !canSubmit || !activeChar?.avatar
                                                 ? 'disabled bg-base-500 hover:bg-base-400 focus-visible:outline-base-500'
                                                 : 'bg-error-500 hover:bg-error-400 focus-visible:outline-error-500',
                                         ]"
@@ -199,9 +201,9 @@ const onSubmitThrottle = useThrottleFn(async (e) => {
                                     <button
                                         type="submit"
                                         class="rounded-bd flex flex-1 justify-center px-3.5 py-2.5 text-sm font-semibold text-neutral"
-                                        :disabled="!meta.valid || !canSubmit"
+                                        :disabled="nuiAvailable || !meta.valid || !canSubmit"
                                         :class="[
-                                            !meta.valid || !canSubmit
+                                            nuiAvailable || !meta.valid || !canSubmit
                                                 ? 'disabled bg-base-500 hover:bg-base-400 focus-visible:outline-base-500'
                                                 : 'bg-primary-500 hover:bg-primary-400 focus-visible:outline-primary-500',
                                         ]"

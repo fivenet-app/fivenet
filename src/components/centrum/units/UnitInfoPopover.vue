@@ -54,14 +54,14 @@ withDefaults(
                 <span :class="textClass">
                     <template v-if="badge">
                         <span
-                            class="inline-flex items-center justify-center rounded-md bg-gray-400/10 px-2 py-1 text-xs font-medium text-gray-400 ring-1 ring-inset ring-gray-400/20"
+                            class="inline-flex items-center justify-center gap-1 rounded-md bg-gray-400/10 px-2 py-1 text-xs font-medium text-gray-400 ring-1 ring-inset ring-gray-400/20"
                         >
                             <template v-if="!initialsOnly"> {{ unit.name }} ({{ unit.initials }}) </template>
                             <template v-else>
                                 {{ unit.initials }}
                             </template>
                             <template v-if="assignment?.expiresAt">
-                                <TimerIcon class="ml-0.5 h-5 w-5 fill-warn-600" aria-hidden="true" />
+                                <TimerIcon class="h-4 w-4 fill-warn-600" aria-hidden="true" />
                             </template>
                         </span>
                     </template>

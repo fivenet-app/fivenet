@@ -6,10 +6,6 @@ import { QualificationResult, ResultStatus } from '~~/gen/ts/resources/qualifica
 defineProps<{
     result: QualificationResult;
 }>();
-
-defineEmits<{
-    (e: 'selectedRequestStatus'): void;
-}>();
 </script>
 
 <template>

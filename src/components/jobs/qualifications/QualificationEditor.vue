@@ -433,7 +433,7 @@ onBeforeUnmount(() => {
                     :label="$t('common.content')"
                     :disabled="!canEdit || !canDo.edit"
                 >
-                    <DocEditor v-bind="field" :model-value="field.value" />
+                    <DocEditor v-bind="field" :model-value="field.value ?? ''" />
                 </VeeField>
             </div>
 

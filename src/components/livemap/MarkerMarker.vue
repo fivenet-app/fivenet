@@ -17,7 +17,7 @@ const props = withDefaults(
 );
 
 defineEmits<{
-    (e: 'selectedRequestStatus'): void;
+    (e: 'selected'): void;
     (e: 'goto', loc: Coordinate): void;
 }>();
 
@@ -42,7 +42,7 @@ const popupAnchor = ref<PointExpression>([0, (props.size / 2) * -1]);
         v-else-if="marker.data?.data.oneofKind === 'icon'"
         :lat-lng="[marker.info!.y, marker.info!.x]"
         :name="marker.info!.name"
-        @click="$emit('selectedRequestStatus')"
+        @click="$emit('selected')"
     >
         <LIcon :icon-size="[size, size]" :icon-anchor="iconAnchor" :popup-anchor="popupAnchor">
             <component
@@ -59,12 +59,7 @@ const popupAnchor = ref<PointExpression>([0, (props.size / 2) * -1]);
         <MarkerMarkerPopup :marker="marker" @goto="$emit('goto', $event)" />
     </LMarker>
 
-    <LMarker
-        v-else
-        :lat-lng="[marker.info!.y, marker.info!.x]"
-        :name="marker.info!.name"
-        @click="$emit('selectedRequestStatus')"
-    >
+    <LMarker v-else :lat-lng="[marker.info!.y, marker.info!.x]" :name="marker.info!.name" @click="$emit('selected')">
         <LIcon :icon-size="[size, size]" :icon-anchor="iconAnchor" :popup-anchor="popupAnchor">
             <MapMarkerQuestionIcon :fill="marker.info?.color ?? 'currentColor'" class="h-auto w-full" aria-hidden="true" />
         </LIcon>

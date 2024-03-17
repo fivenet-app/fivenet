@@ -907,7 +907,7 @@ onBeforeUnmount(() => {
                     :label="$t('common.document', 1)"
                     :disabled="!canEdit || !canDo.edit"
                 >
-                    <DocEditor v-bind="field" :model-value="field.value" />
+                    <DocEditor v-bind="field" :model-value="field.value ?? ''" />
                 </VeeField>
                 <VeeErrorMessage name="state" as="p" class="mt-2 text-sm text-error-400" />
                 <template v-if="saving">
