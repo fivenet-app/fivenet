@@ -1,5 +1,6 @@
 <script lang="ts" setup>
 import { RpcError } from '@protobuf-ts/runtime-rpc';
+import { AccountSchoolIcon } from 'mdi-vue3';
 import DataErrorBlock from '~/components/partials/data/DataErrorBlock.vue';
 import DataNoDataBlock from '~/components/partials/data/DataNoDataBlock.vue';
 import DataPendingBlock from '~/components/partials/data/DataPendingBlock.vue';
@@ -72,6 +73,7 @@ watch(offset, async () => refresh());
             <DataNoDataBlock
                 v-else-if="data?.requests.length === 0"
                 :message="$t('common.not_found', [$t('common.request', 2)])"
+                :icon="markRaw(AccountSchoolIcon)"
             />
 
             <template v-else>

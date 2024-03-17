@@ -1,5 +1,6 @@
 <script lang="ts" setup>
 import { RpcError } from '@protobuf-ts/runtime-rpc';
+import { SigmaIcon } from 'mdi-vue3';
 import DataErrorBlock from '~/components/partials/data/DataErrorBlock.vue';
 import DataNoDataBlock from '~/components/partials/data/DataNoDataBlock.vue';
 import DataPendingBlock from '~/components/partials/data/DataPendingBlock.vue';
@@ -73,6 +74,7 @@ watch(offset, async () => refresh());
             <DataNoDataBlock
                 v-else-if="data?.results.length === 0"
                 :message="$t('common.not_found', [$t('common.result', 2)])"
+                :icon="markRaw(SigmaIcon)"
             />
 
             <template v-else>

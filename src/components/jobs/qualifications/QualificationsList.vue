@@ -1,5 +1,6 @@
 <script lang="ts" setup>
 import { RpcError } from '@protobuf-ts/runtime-rpc';
+import { SchoolIcon } from 'mdi-vue3';
 import QualificationsListEntry from '~/components/jobs/qualifications/QualificationsListEntry.vue';
 import DataErrorBlock from '~/components/partials/data/DataErrorBlock.vue';
 import DataNoDataBlock from '~/components/partials/data/DataNoDataBlock.vue';
@@ -59,7 +60,11 @@ watch(offset, async () => refresh());
                 :title="$t('common.unable_to_load', [$t('common.qualifications', 2)])"
                 :retry="refresh"
             />
-            <DataNoDataBlock v-else-if="data?.qualifications.length === 0" />
+            <DataNoDataBlock
+                v-else-if="data?.qualifications.length === 0"
+                :message="$t('common.not_found', [$t('common.qualifications', 2)])"
+                :icon="markRaw(SchoolIcon)"
+            />
 
             <template v-else>
                 <ul role="list" class="divide-y divide-gray-100">
