@@ -207,7 +207,9 @@ func (s *Server) getNotificationCount(ctx context.Context, userId int32) (int32,
 		Count int32
 	}
 	if err := stmt.QueryContext(ctx, s.db, &dest); err != nil {
-		return 0, errswrap.NewError(err, ErrFailedStream)
+		if !errors.Is(err, qrm.ErrNoRows) {
+			return 0, errswrap.NewError(err, ErrFailedStream)
+		}
 	}
 
 	return dest.Count, nil

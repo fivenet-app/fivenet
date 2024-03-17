@@ -153,6 +153,8 @@ const onSubmitThrottle = useThrottleFn(async (e) => {
                                 :label="$t('common.comment')"
                                 :placeholder="$t('components.documents.document_comment_entry.edit_comment')"
                                 class="block w-full resize-none border-0 bg-transparent text-gray-50 placeholder:text-gray-400 focus:ring-0 sm:py-1.5 sm:text-sm sm:leading-6"
+                                @focusin="focusTablet(true)"
+                                @focusout="focusTablet(false)"
                             />
 
                             <!-- Spacer element to match the height of the toolbar -->

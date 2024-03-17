@@ -257,7 +257,13 @@ func (s *Server) GetDispatch(ctx context.Context, req *GetDispatchRequest) (*Get
 		LIMIT(1)
 
 	if err := stmt.QueryContext(ctx, s.db, resp.Dispatch); err != nil {
-		return nil, errswrap.NewError(err, errorscentrum.ErrFailedQuery)
+		if !errors.Is(err, qrm.ErrNoRows) {
+			return nil, errswrap.NewError(err, errorscentrum.ErrFailedQuery)
+		}
+	}
+
+	if resp.Dispatch == nil || resp.Dispatch.Id <= 0 {
+		return &GetDispatchResponse{}, nil
 	}
 
 	var err error

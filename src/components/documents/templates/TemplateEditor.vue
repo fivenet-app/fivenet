@@ -686,6 +686,8 @@ onMounted(async () => {
                         name="contentState"
                         :label="$t('common.state')"
                         class="block w-full rounded-md border-0 bg-base-700 py-1.5 text-neutral placeholder:text-accent-200 focus:ring-2 focus:ring-inset focus:ring-base-300 sm:text-sm sm:leading-6"
+                        @focusin="focusTablet(true)"
+                        @focusout="focusTablet(false)"
                     />
                     <VeeErrorMessage name="contentState" as="p" class="mt-2 text-sm text-error-400" />
                     <TemplateSyntaxHint />
@@ -702,6 +704,8 @@ onMounted(async () => {
                         name="content"
                         :label="$t('common.template')"
                         class="block w-full rounded-md border-0 bg-base-700 py-1.5 text-neutral placeholder:text-accent-200 focus:ring-2 focus:ring-inset focus:ring-base-300 sm:text-sm sm:leading-6"
+                        @focusin="focusTablet(true)"
+                        @focusout="focusTablet(false)"
                     />
                     <VeeErrorMessage name="content" as="p" class="mt-2 text-sm text-error-400" />
                     <TemplateSyntaxHint />
