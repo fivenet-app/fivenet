@@ -20,7 +20,7 @@ const props = withDefaults(
 );
 
 const emit = defineEmits<{
-    (e: 'selected', dsp: Dispatch): void;
+    (e: 'selectedRequestStatus', dsp: Dispatch): void;
     (e: 'goto', loc: Coordinate): void;
 }>();
 
@@ -28,7 +28,7 @@ const iconAnchor: PointExpression = [props.size / 2, props.size * 1.65];
 const popupAnchor: PointExpression = [0, -(props.size * 1.7)];
 
 function selected(_: string | number | string) {
-    emit('selected', props.dispatch);
+    emit('selectedRequestStatus', props.dispatch);
 }
 
 const dispatchClasses = computed(() => [

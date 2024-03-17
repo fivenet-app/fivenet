@@ -1,5 +1,5 @@
 <script lang="ts" setup>
-import { CheckBoldIcon, CloseThickIcon } from 'mdi-vue3';
+import { CheckBoldIcon, CloseThickIcon, StarIcon } from 'mdi-vue3';
 import GenericTime from '~/components/partials/elements/GenericTime.vue';
 import { QualificationRequest, RequestStatus } from '~~/gen/ts/resources/qualifications/qualifications';
 
@@ -14,7 +14,8 @@ withDefaults(
 );
 
 defineEmits<{
-    (e: 'selected', status?: RequestStatus): void;
+    (e: 'selectedRequestStatus', status?: RequestStatus): void;
+    (e: 'gradeRequest'): void;
 }>();
 </script>
 
@@ -42,6 +43,7 @@ defineEmits<{
         </td>
         <td class="flex items-center gap-2">
             <button
+                v-if="request.status !== RequestStatus.DENIED"
                 type="button"
                 :disabled="!canSubmit"
                 class="rounded flex flex-1 justify-center px-2 py-2 text-sm font-semibold text-neutral"
@@ -50,11 +52,12 @@ defineEmits<{
                         ? 'disabled bg-base-500 hover:bg-base-400 focus-visible:outline-base-500'
                         : 'bg-primary-500 hover:bg-primary-400 focus-visible:outline-primary-500',
                 ]"
-                @click="$emit('selected', RequestStatus.DENIED)"
+                @click="$emit('selectedRequestStatus', RequestStatus.DENIED)"
             >
                 <CloseThickIcon class="h-5 w-5 text-error-400" aria-hidden="true" />
             </button>
             <button
+                v-if="request.status !== RequestStatus.ACCEPTED"
                 type="button"
                 :disabled="!canSubmit"
                 class="rounded flex flex-1 justify-center px-2 py-2 text-sm font-semibold text-neutral"
@@ -63,9 +66,24 @@ defineEmits<{
                         ? 'disabled bg-base-500 hover:bg-base-400 focus-visible:outline-base-500'
                         : 'bg-primary-500 hover:bg-primary-400 focus-visible:outline-primary-500',
                 ]"
-                @click="$emit('selected', RequestStatus.ACCEPTED)"
+                @click="$emit('selectedRequestStatus', RequestStatus.ACCEPTED)"
             >
                 <CheckBoldIcon class="h-5 w-5 text-success-400" aria-hidden="true" />
+            </button>
+
+            <button
+                v-if="request.status === RequestStatus.ACCEPTED"
+                type="button"
+                :disabled="!canSubmit"
+                class="rounded flex flex-1 justify-center px-2 py-2 text-sm font-semibold text-neutral"
+                :class="[
+                    !canSubmit
+                        ? 'disabled bg-base-500 hover:bg-base-400 focus-visible:outline-base-500'
+                        : 'bg-primary-500 hover:bg-primary-400 focus-visible:outline-primary-500',
+                ]"
+                @click="$emit('gradeRequest')"
+            >
+                <StarIcon class="h-5 w-5 text-yellow-400" aria-hidden="true" />
             </button>
         </td>
     </tr>

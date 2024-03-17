@@ -6,12 +6,12 @@ defineEmits<{
     (e: 'clicked'): void;
 }>();
 
-withDefaults(
+const props = withDefaults(
     defineProps<{
         title: string;
         message?: string | undefined;
         icon?: DefineComponent;
-        type?: string;
+        type?: 'error' | 'info' | 'success';
         callbackMessage?: string;
     }>(),
     {
@@ -21,19 +21,52 @@ withDefaults(
         callbackMessage: undefined,
     },
 );
+
+const bgClass = ref('');
+const textClass = ref('');
+const messageClass = ref('');
+const iconClass = ref('');
+const buttonClass = ref('');
+
+switch (props.type) {
+    case 'error':
+        bgClass.value = 'bg-error-100';
+        textClass.value = 'text-error-800';
+        messageClass.value = 'text-error-700';
+        iconClass.value = 'text-error-400';
+        buttonClass.value = 'bg-error-200 hover:bg-error-400 focus:ring-error-600 focus-visible:outline-error-500';
+        break;
+
+    case 'success':
+        bgClass.value = 'bg-success-100';
+        textClass.value = 'text-success-800';
+        messageClass.value = 'text-success-700';
+        iconClass.value = 'text-success-400';
+        buttonClass.value = 'bg-success-200 hover:bg-success-400 focus:ring-success-600 focus-visible:outline-success-500';
+        break;
+
+    case 'info':
+    default:
+        bgClass.value = 'bg-info-100';
+        textClass.value = 'text-info-800';
+        messageClass.value = 'text-info-700';
+        iconClass.value = 'text-info-400';
+        buttonClass.value = 'bg-info-200 hover:bg-info-400 focus:ring-info-600 focus-visible:outline-info-500';
+        break;
+}
 </script>
 
 <template>
-    <div class="mt-6 rounded-md p-4" :class="`bg-${type}-100`">
+    <div class="mt-6 rounded-md p-4" :class="bgClass">
         <div class="flex">
             <div class="flex-shrink-0">
-                <component :is="icon" class="h-5 w-5" :class="`text-${type}-400`" aria-hidden="true" />
+                <component :is="icon" class="h-5 w-5" :class="iconClass" aria-hidden="true" />
             </div>
             <div class="ml-3">
-                <h3 class="text-sm font-medium" :class="`text-${type}-800`">
+                <h3 class="text-sm font-medium" :class="textClass">
                     {{ title }}
                 </h3>
-                <div v-if="message" class="mt-2 text-sm" :class="`text-${type}-700`">
+                <div v-if="message" class="mt-2 text-sm" :class="messageClass">
                     <p>{{ message }}</p>
                 </div>
                 <div v-if="callbackMessage" class="mt-4">
@@ -41,7 +74,7 @@ withDefaults(
                         <button
                             type="button"
                             class="flex justify-center rounded-md px-2 py-1.5 text-sm font-medium focus:outline-none focus:ring-2 focus:ring-offset-2"
-                            :class="`bg-${type}-200 text-${type}-800 hover:bg-${type}-400 focus:ring-${type}-600 focus-visible:outline-${type}-500`"
+                            :class="[textClass, buttonClass]"
                             @click="$emit('clicked')"
                         >
                             {{ callbackMessage ?? $t('common.retry') }}

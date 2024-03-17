@@ -377,6 +377,11 @@ func (s *Server) notifyUsersAboutComment(ctx context.Context, documentId uint64,
 		return nil
 	}
 
+	// Don't send notifications to self
+	if *doc.CreatorId == sourceUserId {
+		return nil
+	}
+
 	if doc.Creator != nil {
 		s.enricher.EnrichJobInfoSafe(userInfo, doc.Creator)
 	}

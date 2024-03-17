@@ -225,6 +225,7 @@ func (s *Server) Stream(req *StreamRequest, srv NotificatorService_StreamServer)
 	// Setup consumer
 	c, err := s.js.CreateConsumer(srv.Context(), notifi.StreamName, jetstream.ConsumerConfig{
 		FilterSubject: fmt.Sprintf("%s.%s.%d", notifi.BaseSubject, notifi.UserNotification, currentUserInfo.UserId),
+		DeliverPolicy: jetstream.DeliverNewPolicy,
 	})
 	if err != nil {
 		return errswrap.NewError(ErrFailedStream, err)
@@ -265,7 +266,6 @@ func (s *Server) Stream(req *StreamRequest, srv NotificatorService_StreamServer)
 	}
 
 	if err := srv.Send(&StreamResponse{
-		LastId:            req.LastId,
 		NotificationCount: notsCount,
 		Data:              data,
 		Restart:           &stop,
@@ -275,7 +275,6 @@ func (s *Server) Stream(req *StreamRequest, srv NotificatorService_StreamServer)
 
 	for {
 		resp := &StreamResponse{
-			LastId:            req.LastId,
 			NotificationCount: notsCount,
 		}
 

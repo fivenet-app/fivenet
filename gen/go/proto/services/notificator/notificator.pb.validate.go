@@ -593,8 +593,6 @@ func (m *StreamRequest) validate(all bool) error {
 
 	var errors []error
 
-	// no validation rules for LastId
-
 	if len(errors) > 0 {
 		return StreamRequestMultiError(errors)
 	}
@@ -694,8 +692,6 @@ func (m *StreamResponse) validate(all bool) error {
 	}
 
 	var errors []error
-
-	// no validation rules for LastId
 
 	// no validation rules for NotificationCount
 

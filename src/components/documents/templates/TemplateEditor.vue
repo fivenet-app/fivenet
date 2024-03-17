@@ -533,8 +533,9 @@ onMounted(async () => {
                         name="weight"
                         min="0"
                         max="4294967295"
-                        :label="$t('common.weight')"
                         class="block w-full rounded-md border-0 bg-base-700 py-1.5 text-neutral placeholder:text-accent-200 focus:ring-2 focus:ring-inset focus:ring-base-300 sm:text-sm sm:leading-6"
+                        :label="$t('common.weight')"
+                        :placeholder="$t('common.weight')"
                         @focusin="focusTablet(true)"
                         @focusout="focusTablet(false)"
                     />
@@ -549,8 +550,9 @@ onMounted(async () => {
                         as="textarea"
                         rows="1"
                         name="title"
-                        :label="$t('common.title')"
                         class="block w-full rounded-md border-0 bg-base-700 py-1.5 text-neutral placeholder:text-accent-200 focus:ring-2 focus:ring-inset focus:ring-base-300 sm:text-sm sm:leading-6"
+                        :label="$t('common.title')"
+                        :placeholder="$t('common.title')"
                         @focusin="focusTablet(true)"
                         @focusout="focusTablet(false)"
                     />

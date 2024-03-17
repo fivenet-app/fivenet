@@ -118,7 +118,7 @@ const selectedAccessLevel = ref<AccessLevel>(AccessLevel.VIEW);
                         leave-to="opacity-0 translate-y-4 sm:translate-y-0 sm:scale-95"
                     >
                         <DialogPanel
-                            class="relative h-96 w-full transform overflow-hidden rounded-lg bg-base-800 px-4 pb-4 pt-5 text-left text-neutral transition-all sm:my-8 sm:max-w-2xl sm:p-6"
+                            class="relative h-112 w-full transform overflow-hidden rounded-lg bg-base-800 px-4 pb-4 pt-5 text-left text-neutral transition-all sm:my-8 sm:max-w-2xl sm:p-6"
                         >
                             <div class="absolute right-0 top-0 block pr-4 pt-4">
                                 <button
@@ -153,6 +153,9 @@ const selectedAccessLevel = ref<AccessLevel>(AccessLevel.VIEW);
                                 </div>
                                 <div class="my-2">
                                     <div class="form-control flex-1">
+                                        <label for="requestsType" class="block text-sm font-medium leading-6 text-neutral">
+                                            {{ $t('common.access') }}
+                                        </label>
                                         <VeeField
                                             type="text"
                                             name="requestsType"

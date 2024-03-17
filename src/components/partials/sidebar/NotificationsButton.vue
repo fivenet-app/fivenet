@@ -105,7 +105,7 @@ const open = ref(false);
                                                     <div class="mt-1">
                                                         <div class="my-2 space-y-24">
                                                             <div class="form-control flex-1">
-                                                                <NotificationsList :compact="true" />
+                                                                <NotificationsList :compact="true" @clicked="open = false" />
                                                             </div>
                                                         </div>
                                                     </div>

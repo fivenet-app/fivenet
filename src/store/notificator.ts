@@ -10,7 +10,6 @@ import { MarkNotificationsRequest } from '~~/gen/ts/services/notificator/notific
 const initialReconnectBackoffTime = 2;
 
 export interface NotificationsState {
-    lastId: string;
     notifications: Notification[];
     notificationsCount: number;
 
@@ -22,7 +21,6 @@ export interface NotificationsState {
 export const useNotificatorStore = defineStore('notifications', {
     state: () =>
         ({
-            lastId: '0',
             notifications: [],
             notificationsCount: 0,
 
@@ -30,13 +28,8 @@ export const useNotificatorStore = defineStore('notifications', {
             reconnecting: false,
             reconnectBackoffTime: 0,
         }) as NotificationsState,
-    persist: {
-        paths: ['lastId'],
-    },
+    persist: false,
     actions: {
-        setLastId(lastId: bigint): void {
-            this.lastId = lastId.toString();
-        },
         removeNotification(id: string): void {
             this.notifications = this.notifications.filter((notification) => notification.id !== id);
         },
@@ -52,7 +45,6 @@ export const useNotificatorStore = defineStore('notifications', {
             callback = undefined,
             onClick = undefined,
             onClickText = undefined,
-            showPopup = true,
         }: NotificationConfig) {
             const id = uuidv4();
             this.notifications.unshift({
@@ -66,7 +58,6 @@ export const useNotificatorStore = defineStore('notifications', {
                 callback,
                 onClick,
                 onClickText,
-                showPopup,
             });
 
             if (autoClose) {
@@ -81,7 +72,7 @@ export const useNotificatorStore = defineStore('notifications', {
                 return;
             }
 
-            console.debug('Notificator: Stream starting, starting at ID:', this.getLastId);
+            console.debug('Notificator: Starting Data Stream');
 
             this.abort = new AbortController();
             this.reconnecting = false;
@@ -91,19 +82,13 @@ export const useNotificatorStore = defineStore('notifications', {
                 this.abort = new AbortController();
 
                 const call = $grpc.getNotificatorClient().stream(
-                    {
-                        lastId: this.getLastId,
-                    },
+                    {},
                     {
                         abort: this.abort.signal,
                     },
                 );
 
                 for await (const resp of call.responses) {
-                    if (resp.lastId > this.getLastId) {
-                        this.setLastId(resp.lastId);
-                    }
-
                     this.notificationsCount = resp.notificationCount;
 
                     if (resp.data.oneofKind !== undefined) {
@@ -245,11 +230,8 @@ export const useNotificatorStore = defineStore('notifications', {
         },
     },
     getters: {
-        getLastId(): bigint {
-            return BigInt(this.lastId);
-        },
         getNotifications(): Notification[] {
-            return [...this.notifications.filter((n) => n.showPopup === undefined || n.showPopup === true)].slice(0, 4);
+            return this.notifications.slice(0, 4);
         },
         getNotificationsCount(): number {
             return this.notificationsCount;

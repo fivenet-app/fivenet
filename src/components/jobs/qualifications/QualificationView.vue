@@ -16,6 +16,7 @@ import {
     LockOpenVariantIcon,
     MailIcon,
     PencilIcon,
+    SigmaIcon,
     TestTubeIcon,
     TrashCanIcon,
 } from 'mdi-vue3';
@@ -31,6 +32,7 @@ import { checkQualificationAccess } from '~/components/jobs/qualifications/helpe
 import ConfirmDialog from '~/components/partials/ConfirmDialog.vue';
 import QualificationRequestUserModal from '~/components/jobs/qualifications/QualificationRequestUserModal.vue';
 import QualificationsRequestsList from '~/components/jobs/qualifications/tutor/QualificationsRequestsList.vue';
+import QualificationsResultsList from '~/components/jobs/qualifications/QualificationsResultsList.vue';
 
 const props = defineProps<{
     id: string;
@@ -72,6 +74,7 @@ const quali = computed(() => data.value?.qualification);
 const canDo = computed(() => ({
     take: checkQualificationAccess(quali.value?.access, quali.value?.creator, AccessLevel.TAKE),
     request: checkQualificationAccess(quali.value?.access, quali.value?.creator, AccessLevel.REQUEST),
+    grade: checkQualificationAccess(quali.value?.access, quali.value?.creator, AccessLevel.GRADE),
     edit: checkQualificationAccess(quali.value?.access, quali.value?.creator, AccessLevel.EDIT),
 }));
 
@@ -426,10 +429,7 @@ const openRequest = ref(false);
                                 </Disclosure>
                             </div>
 
-                            <div
-                                v-if="checkQualificationAccess(quali.access, quali.creator, AccessLevel.GRADE)"
-                                class="mt-2 w-full"
-                            >
+                            <div v-if="canDo.grade" class="mt-2 w-full">
                                 <Disclosure
                                     v-slot="{ open }"
                                     as="div"
@@ -455,6 +455,37 @@ const openRequest = ref(false);
                                     <DisclosurePanel class="rounded-b-lg border-2 border-t-0 border-inherit transition-colors">
                                         <div class="mx-4 pb-2">
                                             <QualificationsRequestsList :qualification-id="quali.id" />
+                                        </div>
+                                    </DisclosurePanel>
+                                </Disclosure>
+                            </div>
+
+                            <div v-if="canDo.grade" class="mt-2 w-full">
+                                <Disclosure
+                                    v-slot="{ open }"
+                                    as="div"
+                                    class="w-full border-neutral/20 text-neutral hover:border-neutral/70"
+                                >
+                                    <DisclosureButton
+                                        :class="[
+                                            open ? 'rounded-t-lg border-b-0' : 'rounded-lg',
+                                            'flex w-full items-start justify-between border-2 border-inherit p-2 text-left transition-colors',
+                                        ]"
+                                    >
+                                        <span class="inline-flex items-center text-base font-semibold leading-7">
+                                            <SigmaIcon class="mr-2 w-5 h-auto" aria-hidden="true" />
+                                            {{ $t('common.result', 2) }}
+                                        </span>
+                                        <span class="ml-6 flex h-7 items-center">
+                                            <ChevronDownIcon
+                                                :class="[open ? 'upsidedown' : '', 'h-autotransition-transform w-5']"
+                                                aria-hidden="true"
+                                            />
+                                        </span>
+                                    </DisclosureButton>
+                                    <DisclosurePanel class="rounded-b-lg border-2 border-t-0 border-inherit transition-colors">
+                                        <div class="mx-4 pb-2">
+                                            <QualificationsResultsList :qualification-id="quali.id" />
                                         </div>
                                     </DisclosurePanel>
                                 </Disclosure>

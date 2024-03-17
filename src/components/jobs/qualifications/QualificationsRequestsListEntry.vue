@@ -8,7 +8,7 @@ defineProps<{
 }>();
 
 defineEmits<{
-    (e: 'selected'): void;
+    (e: 'selectedRequestStatus'): void;
 }>();
 </script>
 
@@ -46,7 +46,7 @@ defineEmits<{
                     {{ $t('common.created_at') }} <GenericTime :value="request.createdAt" />
                 </p>
             </div>
-            <button type="button" @click="$emit('selected')">
+            <button type="button" @click="$emit('selectedRequestStatus')">
                 <ChevronRightIcon class="h-5 w-5 flex-none text-gray-300" aria-hidden="true" />
             </button>
         </div>

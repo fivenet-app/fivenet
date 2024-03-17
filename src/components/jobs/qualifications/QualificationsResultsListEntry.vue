@@ -8,7 +8,7 @@ defineProps<{
 }>();
 
 defineEmits<{
-    (e: 'selected'): void;
+    (e: 'selectedRequestStatus'): void;
 }>();
 </script>
 

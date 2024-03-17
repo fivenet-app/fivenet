@@ -11,23 +11,20 @@ import {
     TransitionRoot,
 } from '@headlessui/vue';
 import { RpcError } from '@protobuf-ts/runtime-rpc';
-import { max, min, required } from '@vee-validate/rules';
+// eslint-disable-next-line camelcase
+import { max, max_value, min, min_value, numeric, required } from '@vee-validate/rules';
 import { useThrottleFn } from '@vueuse/core';
 import { CheckIcon, ChevronDownIcon, CloseIcon, LoadingIcon } from 'mdi-vue3';
 import { defineRule } from 'vee-validate';
 import { useNotificatorStore } from '~/store/notificator';
-import { RequestStatus, type QualificationRequest } from '~~/gen/ts/resources/qualifications/qualifications';
-import type { CreateOrUpdateQualificationRequestResponse } from '~~/gen/ts/services/qualifications/qualifications';
+import { ResultStatus } from '~~/gen/ts/resources/qualifications/qualifications';
+import type { CreateOrUpdateQualificationResultResponse } from '~~/gen/ts/services/qualifications/qualifications';
 
-const props = withDefaults(
-    defineProps<{
-        request: QualificationRequest;
-        status?: RequestStatus;
-    }>(),
-    {
-        status: RequestStatus.PENDING,
-    },
-);
+const props = defineProps<{
+    open: boolean;
+    qualificationId: string;
+    userId: number;
+}>();
 
 const emits = defineEmits<{
     (e: 'close'): void;
@@ -38,22 +35,27 @@ const { $grpc } = useNuxtApp();
 const notifications = useNotificatorStore();
 
 interface FormData {
-    status: RequestStatus;
-    approverComment: string;
+    status: ResultStatus;
+    score: number;
+    summary: string;
 }
 
 async function createOrUpdateQualificationRequest(
     qualificationId: string,
     userId: number,
     values: FormData,
-): Promise<CreateOrUpdateQualificationRequestResponse> {
+): Promise<CreateOrUpdateQualificationResultResponse> {
     try {
-        const call = $grpc.getQualificationsClient().createOrUpdateQualificationRequest({
-            request: {
+        const call = $grpc.getQualificationsClient().createOrUpdateQualificationResult({
+            result: {
+                id: '0',
                 qualificationId,
                 userId,
                 status: values.status,
-                approverComment: values.approverComment,
+                score: values.score,
+                summary: values.summary,
+                creatorId: 0,
+                creatorJob: '',
             },
         });
         const { response } = await call;
@@ -76,24 +78,27 @@ async function createOrUpdateQualificationRequest(
 defineRule('required', required);
 defineRule('min', min);
 defineRule('max', max);
+defineRule('min_value', min_value);
+defineRule('max_value', max_value);
+defineRule('numeric', numeric);
 
-const { handleSubmit, meta, setFieldValue } = useForm<FormData>({
+const { handleSubmit, meta } = useForm<FormData>({
     validationSchema: {
         status: { required: true },
-        approverComment: { required: true, min: 3, max: 255 },
+        score: { required: true, min_value: 0, max_value: 100, numeric: true },
+        summary: { required: true, min: 3, max: 255 },
     },
     validateOnMount: true,
     initialValues: {
-        status: props.status,
+        status: ResultStatus.PENDING,
+        score: 0,
     },
 });
-
-watch(props, () => setFieldValue('status', props.status ?? RequestStatus.PENDING));
 
 const canSubmit = ref(true);
 const onSubmit = handleSubmit(
     async (values): Promise<any> =>
-        await createOrUpdateQualificationRequest(props.request.qualificationId, props.request.userId, values).finally(() =>
+        await createOrUpdateQualificationRequest(props.qualificationId, props.userId, values).finally(() =>
             setTimeout(() => (canSubmit.value = true), 400),
         ),
 );
@@ -102,11 +107,11 @@ const onSubmitThrottle = useThrottleFn(async (e) => {
     await onSubmit(e);
 }, 1000);
 
-const availableStatus = [RequestStatus.ACCEPTED, RequestStatus.DENIED, RequestStatus.PENDING];
+const availableStatus = [ResultStatus.SUCCESSFUL, ResultStatus.FAILED, ResultStatus.PENDING];
 </script>
 
 <template>
-    <TransitionRoot as="template" :show="!!request">
+    <TransitionRoot as="template" :show="open">
         <Dialog as="div" class="relative z-30" @close="$emit('close')">
             <TransitionChild
                 as="template"
@@ -170,7 +175,7 @@ const availableStatus = [RequestStatus.ACCEPTED, RequestStatus.DENIED, RequestSt
                                                         <span class="block truncate">
                                                             {{
                                                                 $t(
-                                                                    `enums.qualifications.RequestStatus.${RequestStatus[availableStatus.find((t) => t === field.value) ?? 0]}`,
+                                                                    `enums.qualifications.ResultStatus.${ResultStatus[availableStatus.find((t) => t === field.value) ?? 0]}`,
                                                                 )
                                                             }}
                                                         </span>
@@ -210,7 +215,7 @@ const availableStatus = [RequestStatus.ACCEPTED, RequestStatus.DENIED, RequestSt
                                                                     >
                                                                         {{
                                                                             $t(
-                                                                                `enums.qualifications.RequestStatus.${RequestStatus[stat]}`,
+                                                                                `enums.qualifications.ResultStatus.${ResultStatus[stat]}`,
                                                                             )
                                                                         }}
                                                                     </span>
@@ -235,19 +240,37 @@ const availableStatus = [RequestStatus.ACCEPTED, RequestStatus.DENIED, RequestSt
                                     </div>
 
                                     <div class="form-control flex-1">
-                                        <label for="approverComment" class="block text-sm font-medium leading-6 text-neutral">
-                                            {{ $t('common.message') }}
+                                        <label for="score" class="block text-sm font-medium leading-6 text-neutral">
+                                            {{ $t('common.score') }}
                                         </label>
                                         <VeeField
-                                            as="textarea"
-                                            name="approverComment"
-                                            class="block h-36 w-full rounded-md border-0 bg-base-700 py-1.5 text-neutral placeholder:text-accent-200 focus:ring-2 focus:ring-inset focus:ring-base-300 sm:text-sm sm:leading-6"
-                                            :placeholder="$t('common.message')"
-                                            :label="$t('common.message')"
+                                            type="number"
+                                            name="score"
+                                            min="0"
+                                            max="100"
+                                            class="block w-full rounded-md border-0 bg-base-700 py-1.5 text-neutral placeholder:text-accent-200 focus:ring-2 focus:ring-inset focus:ring-base-300 sm:text-sm sm:leading-6"
+                                            :placeholder="$t('common.score')"
+                                            :label="$t('common.score')"
                                             @focusin="focusTablet(true)"
                                             @focusout="focusTablet(false)"
                                         />
-                                        <VeeErrorMessage name="approverComment" as="p" class="mt-2 text-sm text-error-400" />
+                                        <VeeErrorMessage name="score" as="p" class="mt-2 text-sm text-error-400" />
+                                    </div>
+
+                                    <div class="form-control flex-1">
+                                        <label for="summary" class="block text-sm font-medium leading-6 text-neutral">
+                                            {{ $t('common.summary') }}
+                                        </label>
+                                        <VeeField
+                                            as="textarea"
+                                            name="summary"
+                                            class="block h-24 w-full rounded-md border-0 bg-base-700 py-1.5 text-neutral placeholder:text-accent-200 focus:ring-2 focus:ring-inset focus:ring-base-300 sm:text-sm sm:leading-6"
+                                            :placeholder="$t('common.summary')"
+                                            :label="$t('common.summary')"
+                                            @focusin="focusTablet(true)"
+                                            @focusout="focusTablet(false)"
+                                        />
+                                        <VeeErrorMessage name="summary" as="p" class="mt-2 text-sm text-error-400" />
                                     </div>
                                 </div>
                                 <div class="absolute bottom-0 left-0 flex w-full">

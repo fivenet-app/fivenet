@@ -355,6 +355,9 @@ export default <Partial<Config>>{
             maxWidth: {
                 '8xl': '88rem',
             },
+            height: {
+                '112': '28rem',
+            },
             animation: {
                 wiggle: 'wiggle 1s infinite',
             },

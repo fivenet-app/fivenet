@@ -113,7 +113,7 @@ const onSubmitThrottle = useThrottleFn(async (e) => {
                         leave-to="opacity-0 translate-y-4 sm:translate-y-0 sm:scale-95"
                     >
                         <DialogPanel
-                            class="relative h-96 w-full transform overflow-hidden rounded-lg bg-base-800 px-4 pb-4 pt-5 text-left text-neutral transition-all sm:my-8 sm:max-w-2xl sm:p-6"
+                            class="relative h-112 w-full transform overflow-hidden rounded-lg bg-base-800 px-4 pb-4 pt-5 text-left text-neutral transition-all sm:my-8 sm:max-w-2xl sm:p-6"
                         >
                             <div class="absolute right-0 top-0 block pr-4 pt-4">
                                 <button
@@ -134,23 +134,30 @@ const onSubmitThrottle = useThrottleFn(async (e) => {
                                         <label for="avatar" class="block text-sm font-medium leading-6 text-neutral">
                                             {{ $t('common.avatar') }}
                                         </label>
-                                        <VeeField
-                                            v-slot="{ handleChange, handleBlur }"
-                                            name="avatar"
-                                            :placeholder="$t('common.image')"
-                                            :label="$t('common.image')"
-                                            @focusin="focusTablet(true)"
-                                            @focusout="focusTablet(false)"
-                                        >
-                                            <input
-                                                type="file"
-                                                accept="image/jpeg,image/jpg,image/png"
-                                                class="block w-full rounded-md border-0 bg-base-700 py-1.5 text-neutral placeholder:text-accent-200 focus:ring-2 focus:ring-inset focus:ring-base-300 sm:text-sm sm:leading-6"
-                                                @change="handleChange"
-                                                @blur="handleBlur"
-                                            />
-                                        </VeeField>
-                                        <VeeErrorMessage name="avatar" as="p" class="mt-2 text-sm text-error-400" />
+                                        <template v-if="isNUIAvailable()">
+                                            <p class="text-neutral text-sm">
+                                                {{ $t('system.not_supported_on_tablet.title') }}
+                                            </p>
+                                        </template>
+                                        <template v-else>
+                                            <VeeField
+                                                v-slot="{ handleChange, handleBlur }"
+                                                name="avatar"
+                                                :placeholder="$t('common.image')"
+                                                :label="$t('common.image')"
+                                                @focusin="focusTablet(true)"
+                                                @focusout="focusTablet(false)"
+                                            >
+                                                <input
+                                                    type="file"
+                                                    accept="image/jpeg,image/jpg,image/png"
+                                                    class="block w-full rounded-md border-0 bg-base-700 py-1.5 text-neutral placeholder:text-accent-200 focus:ring-2 focus:ring-inset focus:ring-base-300 sm:text-sm sm:leading-6"
+                                                    @change="handleChange"
+                                                    @blur="handleBlur"
+                                                />
+                                            </VeeField>
+                                            <VeeErrorMessage name="avatar" as="p" class="mt-2 text-sm text-error-400" />
+                                        </template>
                                     </div>
                                 </div>
                                 <div class="flex-1 flex items-center">

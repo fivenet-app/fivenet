@@ -34,18 +34,15 @@ message MarkNotificationsResponse {
   uint64 updated = 1;
 }
 
-message StreamRequest {
-  uint64 last_id = 1;
-}
+message StreamRequest {}
 
 message StreamResponse {
-  uint64 last_id = 1;
-  int32 notification_count = 2;
+  int32 notification_count = 1;
+  optional bool restart = 2;
   oneof data {
     resources.notifications.Notification notification = 3;
     TokenUpdate token = 4;
   }
-  optional bool restart = 5;
 }
 
 message TokenUpdate {

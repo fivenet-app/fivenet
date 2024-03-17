@@ -293,23 +293,30 @@ const onSubmitThrottle = useThrottleFn(async (e) => {
                             </template>
                             <template #default>
                                 <div class="flex flex-col">
-                                    <VeeField
-                                        v-slot="{ handleChange, handleBlur }"
-                                        name="jobLogo"
-                                        :placeholder="$t('common.image')"
-                                        :label="$t('common.image')"
-                                        @focusin="focusTablet(true)"
-                                        @focusout="focusTablet(false)"
-                                    >
-                                        <input
-                                            type="file"
-                                            accept="image/jpeg,image/jpg,image/png"
-                                            class="block w-full rounded-md border-0 bg-base-700 py-1.5 text-neutral placeholder:text-accent-200 focus:ring-2 focus:ring-inset focus:ring-base-300 sm:text-sm sm:leading-6"
-                                            @change="handleChange"
-                                            @blur="handleBlur"
-                                        />
-                                    </VeeField>
-                                    <VeeErrorMessage name="jobLogo" as="p" class="text-sm text-error-400" />
+                                    <template v-if="isNUIAvailable()">
+                                        <p class="text-neutral text-sm">
+                                            {{ $t('system.not_supported_on_tablet.title') }}
+                                        </p>
+                                    </template>
+                                    <template v-else>
+                                        <VeeField
+                                            v-slot="{ handleChange, handleBlur }"
+                                            name="jobLogo"
+                                            :placeholder="$t('common.image')"
+                                            :label="$t('common.image')"
+                                            @focusin="focusTablet(true)"
+                                            @focusout="focusTablet(false)"
+                                        >
+                                            <input
+                                                type="file"
+                                                accept="image/jpeg,image/jpg,image/png"
+                                                class="block w-full rounded-md border-0 bg-base-700 py-1.5 text-neutral placeholder:text-accent-200 focus:ring-2 focus:ring-inset focus:ring-base-300 sm:text-sm sm:leading-6"
+                                                @change="handleChange"
+                                                @blur="handleBlur"
+                                            />
+                                        </VeeField>
+                                        <VeeErrorMessage name="jobLogo" as="p" class="text-sm text-error-400" />
+                                    </template>
 
                                     <SquareImg
                                         v-if="jobProps.logoUrl?.url"

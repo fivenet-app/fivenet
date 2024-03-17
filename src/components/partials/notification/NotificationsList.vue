@@ -20,6 +20,10 @@ withDefaults(
     },
 );
 
+defineEmits<{
+    (e: 'clicked'): void;
+}>();
+
 const { $grpc } = useNuxtApp();
 
 const notificator = useNotificatorStore();
@@ -65,7 +69,11 @@ async function markRead(...ids: string[]): Promise<void> {
     });
 
     const now = toTimestamp(new Date());
-    data.value?.notifications.forEach((v) => (v.readAt = now));
+    data.value?.notifications.forEach((v) => {
+        if (ids.includes(v.id)) {
+            v.readAt = now;
+        }
+    });
 }
 
 watch(offset, async () => refresh());
@@ -152,7 +160,11 @@ const canSubmit = ref(true);
                                             <p class="py-2 pr-3 text-sm font-medium text-neutral">
                                                 <template v-if="not.data && not.data.link">
                                                     <!-- @vue-ignore the route should be valid... at least in most cases -->
-                                                    <NuxtLink :to="not.data.link.to" class="inline-flex items-center gap-1">
+                                                    <NuxtLink
+                                                        :to="not.data.link.to"
+                                                        class="inline-flex items-center gap-1"
+                                                        @click="$emit('clicked')"
+                                                    >
                                                         {{ $t(not.title!.key, not.title?.parameters ?? {}) }}
                                                         <LinkVariantIcon class="h-5 w-5" />
                                                     </NuxtLink>
@@ -192,22 +204,24 @@ const canSubmit = ref(true);
                                         </div>
                                     </div>
 
-                                    <button
-                                        v-if="!not.readAt"
-                                        type="button"
-                                        class="-mt-5 -mr-6 -mb-5 flex shrink items-center rounded-r-md px-1 py-1 text-sm font-semibold text-neutral focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-primary-500"
-                                        :class="
-                                            !canSubmit
-                                                ? 'disabled bg-base-500 hover:bg-base-400 focus-visible:outline-base-500'
-                                                : 'bg-primary-500 hover:bg-primary-400'
-                                        "
-                                        :disabled="!canSubmit"
-                                        @click="markRead(not.id).finally(timeoutFn)"
-                                    >
-                                        <span class="sr-only">{{ $t('components.notifications.mark_read') }}</span>
-                                        <CheckIcon class="h-5 w-5 text-gray-300" aria-hidden="true" />
-                                    </button>
-                                    <span v-else class="h-4 w-4"></span>
+                                    <div class="-mt-5 -mr-6 -mb-5 flex">
+                                        <button
+                                            v-if="!not.readAt"
+                                            type="button"
+                                            class="flex shrink items-center rounded-r-md px-1 py-1 text-sm font-semibold text-neutral focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-primary-500"
+                                            :class="
+                                                !canSubmit
+                                                    ? 'disabled bg-base-500 hover:bg-base-400 focus-visible:outline-base-500'
+                                                    : 'bg-primary-500 hover:bg-primary-400'
+                                            "
+                                            :disabled="!canSubmit"
+                                            @click="markRead(not.id).finally(timeoutFn)"
+                                        >
+                                            <span class="sr-only">{{ $t('components.notifications.mark_read') }}</span>
+                                            <CheckIcon class="h-5 w-5 text-gray-300" aria-hidden="true" />
+                                        </button>
+                                        <span v-else class="h-5 w-5"></span>
+                                    </div>
                                 </li>
                             </ul>
 

@@ -13,7 +13,7 @@ withDefaults(
 );
 
 defineEmits<{
-    (e: 'selected', idx: number): void;
+    (e: 'selectedRequestStatus', idx: number): void;
 }>();
 </script>
 
@@ -41,7 +41,7 @@ defineEmits<{
                             <component :is="item.icon" class="h-auto w-7" aria-hidden="true" />
                         </span>
                     </div>
-                    <div class="mt-4" @click="$emit('selected', itemIdx)">
+                    <div class="mt-4" @click="$emit('selectedRequestStatus', itemIdx)">
                         <h3 class="text-base font-semibold leading-6 text-accent-100">
                             <template v-if="item.href !== undefined">
                                 <NuxtLink :to="item.href" class="focus:outline-none">

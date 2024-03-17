@@ -6,9 +6,10 @@ import DataPendingBlock from '~/components/partials/data/DataPendingBlock.vue';
 import type { ListQualificationRequestsResponse } from '~~/gen/ts/services/qualifications/qualifications';
 import QualificationsRequestsListEntry from '~/components/jobs/qualifications/tutor/QualificationsRequestsListEntry.vue';
 import TablePagination from '~/components/partials/elements/TablePagination.vue';
-import { RequestStatus, type QualificationRequest } from '~~/gen/ts/resources/qualifications/qualifications';
+import { RequestStatus, QualificationRequest } from '~~/gen/ts/resources/qualifications/qualifications';
 import GenericTable from '~/components/partials/elements/GenericTable.vue';
 import QualificationRequestTutorModal from '~/components/jobs/qualifications/tutor/QualificationRequestTutorModal.vue';
+import QualificationResultTutorModal from '~/components/jobs/qualifications/tutor/QualificationResultTutorModal.vue';
 
 const props = withDefaults(
     defineProps<{
@@ -54,6 +55,8 @@ watch(offset, async () => refresh());
 
 const selectedRequestStatus = ref<undefined | RequestStatus>();
 const selectedRequest = ref<undefined | QualificationRequest>();
+
+const openResultStatus = ref(false);
 </script>
 
 <template>
@@ -69,10 +72,21 @@ const selectedRequest = ref<undefined | QualificationRequest>();
 
             <template v-else>
                 <QualificationRequestTutorModal
-                    v-if="selectedRequest"
+                    v-if="selectedRequest && !openResultStatus"
                     :request="selectedRequest"
                     :status="selectedRequestStatus"
                     @close="selectedRequest = undefined"
+                />
+
+                <QualificationResultTutorModal
+                    v-if="selectedRequest"
+                    :open="openResultStatus"
+                    :qualification-id="selectedRequest.qualificationId"
+                    :user-id="selectedRequest.userId"
+                    @close="
+                        selectedRequest = undefined;
+                        openResultStatus = false;
+                    "
                 />
 
                 <GenericTable>
@@ -100,9 +114,13 @@ const selectedRequest = ref<undefined | QualificationRequest>();
                             v-for="request in data?.requests"
                             :key="`${request.qualificationId}-${request.userId}`"
                             :request="request"
-                            @selected="
+                            @selected-request-status="
                                 selectedRequestStatus = $event;
                                 selectedRequest = request;
+                            "
+                            @grade-request="
+                                selectedRequest = request;
+                                openResultStatus = true;
                             "
                         />
                     </template>
