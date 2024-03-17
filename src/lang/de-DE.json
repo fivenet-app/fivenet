@@ -1126,6 +1126,10 @@
             "document_request_added": {
                 "title": "Dokument: Anfrage wurde erstellt",
                 "content": "Eine Anfrage an ihr Dokument \"{title}\" wurde erstellt."
+            },
+            "document_comment_added": {
+                "title": "Dokument: Neuer Kommentar",
+                "content": "Ein neuer Kommentar wurde im Dokument \"{title}\" veröffentlicht."
             }
         },
         "templates": {
@@ -1899,6 +1903,9 @@
         "streamer_mode": {
             "title": "Streamer-Modus aktiviert!",
             "description": "Um dies zu sehen, müssen Sie den Streamer-Modus in Ihren Benutzereinstellungen deaktivieren."
+        },
+        "not_supported_on_tablet": {
+            "title": "Diese Funktion ist im Tablet leider nicht verfügbar. Bitte nutze deinen Browser um die Funktion zu nutzen!"
         }
     },
     "enums": {
