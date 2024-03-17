@@ -268,11 +268,11 @@ func (s *Server) CreateDocument(ctx context.Context, req *CreateDocumentRequest)
 	defer s.aud.Log(auditEntry, req)
 
 	if req.TemplateId != nil {
-		ok, err := s.checkAccessAgainstTemplate(ctx, *req.TemplateId, req.Access)
+		check, err := s.checkAccessAgainstTemplate(ctx, *req.TemplateId, req.Access)
 		if err != nil {
 			return nil, errswrap.NewError(err, errorsdocstore.ErrFailedQuery)
 		}
-		if !ok {
+		if !check {
 			return nil, errorsdocstore.ErrDocRequiredAccessTemplate
 		}
 	}
@@ -406,11 +406,11 @@ func (s *Server) UpdateDocument(ctx context.Context, req *UpdateDocumentRequest)
 	}
 
 	if doc.TemplateId != nil {
-		ok, err := s.checkAccessAgainstTemplate(ctx, *doc.TemplateId, req.Access)
+		check, err := s.checkAccessAgainstTemplate(ctx, *doc.TemplateId, req.Access)
 		if err != nil {
 			return nil, errswrap.NewError(err, errorsdocstore.ErrFailedQuery)
 		}
-		if !ok {
+		if !check {
 			return nil, errorsdocstore.ErrDocRequiredAccessTemplate
 		}
 	}

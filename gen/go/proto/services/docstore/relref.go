@@ -631,11 +631,11 @@ func (s *Server) notifyMentionedUser(ctx context.Context, documentId uint64, sou
 	}
 
 	// Make sure target user has access to document
-	ok, err := s.checkIfUserHasAccessToDoc(ctx, documentId, userInfo, documents.AccessLevel_ACCESS_LEVEL_VIEW)
+	check, err := s.checkIfUserHasAccessToDoc(ctx, documentId, userInfo, documents.AccessLevel_ACCESS_LEVEL_VIEW)
 	if err != nil {
 		return err
 	}
-	if !ok {
+	if !check {
 		return nil
 	}
 

@@ -1,6 +1,11 @@
 import { useAuthStore } from '~/store/auth';
 import type { Perms } from '~~/gen/ts/perms';
-import { AccessLevel, QualificationAccess } from '~~/gen/ts/resources/qualifications/qualifications';
+import {
+    AccessLevel,
+    QualificationAccess,
+    RequestStatus,
+    ResultStatus,
+} from '~~/gen/ts/resources/qualifications/qualifications';
 import { User, UserShort } from '~~/gen/ts/resources/users/users';
 
 export function checkQualificationAccess(
@@ -85,4 +90,27 @@ function checkIfCanAccessOwnJobQualification(activeChar: User, creator: UserShor
     }
 
     return false;
+}
+
+export function requestStatusToTextColor(status: RequestStatus): string {
+    switch (status) {
+        case RequestStatus.ACCEPTED:
+        case RequestStatus.COMPLETED:
+            return 'text-success-400';
+        case RequestStatus.DENIED:
+            return 'text-error-400';
+        default:
+            return 'text-info-400';
+    }
+}
+
+export function resultStatusToTextColor(status: ResultStatus): string {
+    switch (status) {
+        case ResultStatus.FAILED:
+            return 'text-error-400';
+        case ResultStatus.SUCCESSFUL:
+            return 'text-success-400';
+        default:
+            return 'text-info-400';
+    }
 }

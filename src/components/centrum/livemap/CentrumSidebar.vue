@@ -597,7 +597,7 @@ async function checkup(): Promise<void> {
                 </transition>
 
                 <!-- "Take Dispatches" Button -->
-                <template v-if="getOwnUnit !== undefined">
+                <template v-if="open && getOwnUnit !== undefined">
                     <span class="fixed bottom-2 right-1/2 z-30 inline-flex">
                         <span>
                             <span v-if="pendingDispatches.length > 0" class="absolute left-0 top-0 -mr-1 -mt-1 flex h-3 w-3">

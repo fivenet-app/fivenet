@@ -37,11 +37,11 @@ func (s *Server) ListDocumentReqs(ctx context.Context, req *ListDocumentReqsRequ
 
 	userInfo := auth.MustGetUserInfoFromContext(ctx)
 
-	ok, err := s.checkIfUserHasAccessToDoc(ctx, req.DocumentId, userInfo, documents.AccessLevel_ACCESS_LEVEL_VIEW)
+	check, err := s.checkIfUserHasAccessToDoc(ctx, req.DocumentId, userInfo, documents.AccessLevel_ACCESS_LEVEL_VIEW)
 	if err != nil {
 		return nil, errswrap.NewError(err, errorsdocstore.ErrFailedQuery)
 	}
-	if !ok {
+	if !check {
 		return nil, errorsdocstore.ErrDocViewDenied
 	}
 
@@ -135,11 +135,11 @@ func (s *Server) CreateDocumentReq(ctx context.Context, req *CreateDocumentReqRe
 	}
 	defer s.aud.Log(auditEntry, req)
 
-	ok, err := s.checkIfUserHasAccessToDoc(ctx, req.DocumentId, userInfo, documents.AccessLevel_ACCESS_LEVEL_VIEW)
+	check, err := s.checkIfUserHasAccessToDoc(ctx, req.DocumentId, userInfo, documents.AccessLevel_ACCESS_LEVEL_VIEW)
 	if err != nil {
 		return nil, errswrap.NewError(err, errorsdocstore.ErrFailedQuery)
 	}
-	if !ok && req.RequestType != documents.DocActivityType_DOC_ACTIVITY_TYPE_REQUESTED_ACCESS {
+	if !check && req.RequestType != documents.DocActivityType_DOC_ACTIVITY_TYPE_REQUESTED_ACCESS {
 		return nil, errorsdocstore.ErrDocViewDenied
 	}
 
@@ -264,11 +264,11 @@ func (s *Server) UpdateDocumentReq(ctx context.Context, req *UpdateDocumentReqRe
 		return nil, errorsdocstore.ErrFailedQuery
 	}
 
-	ok, err := s.checkIfUserHasAccessToDoc(ctx, request.DocumentId, userInfo, documents.AccessLevel_ACCESS_LEVEL_EDIT)
+	check, err := s.checkIfUserHasAccessToDoc(ctx, request.DocumentId, userInfo, documents.AccessLevel_ACCESS_LEVEL_EDIT)
 	if err != nil {
 		return nil, errswrap.NewError(err, errorsdocstore.ErrFailedQuery)
 	}
-	if !ok {
+	if !check {
 		return nil, errorsdocstore.ErrDocViewDenied
 	}
 
@@ -410,11 +410,11 @@ func (s *Server) DeleteDocumentReq(ctx context.Context, req *DeleteDocumentReqRe
 		return nil, errswrap.NewError(err, errorsdocstore.ErrFailedQuery)
 	}
 
-	ok, err := s.checkIfUserHasAccessToDoc(ctx, request.DocumentId, userInfo, documents.AccessLevel_ACCESS_LEVEL_EDIT)
+	check, err := s.checkIfUserHasAccessToDoc(ctx, request.DocumentId, userInfo, documents.AccessLevel_ACCESS_LEVEL_EDIT)
 	if err != nil {
 		return nil, errswrap.NewError(err, errorsdocstore.ErrFailedQuery)
 	}
-	if !ok {
+	if !check {
 		return nil, errorsdocstore.ErrDocViewDenied
 	}
 
@@ -434,11 +434,11 @@ func (s *Server) notifyUserAboutRequest(ctx context.Context, doc *documents.Docu
 	}
 
 	// Make sure target user has access to document
-	ok, err := s.checkIfUserHasAccessToDoc(ctx, doc.Id, userInfo, documents.AccessLevel_ACCESS_LEVEL_VIEW)
+	check, err := s.checkIfUserHasAccessToDoc(ctx, doc.Id, userInfo, documents.AccessLevel_ACCESS_LEVEL_VIEW)
 	if err != nil {
 		return err
 	}
-	if !ok {
+	if !check {
 		return nil
 	}
 

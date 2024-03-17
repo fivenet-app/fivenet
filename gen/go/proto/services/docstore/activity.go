@@ -66,11 +66,11 @@ func (s *Server) ListDocumentActivity(ctx context.Context, req *ListDocumentActi
 
 	userInfo := auth.MustGetUserInfoFromContext(ctx)
 
-	ok, err := s.checkIfUserHasAccessToDoc(ctx, req.DocumentId, userInfo, documents.AccessLevel_ACCESS_LEVEL_VIEW)
+	check, err := s.checkIfUserHasAccessToDoc(ctx, req.DocumentId, userInfo, documents.AccessLevel_ACCESS_LEVEL_VIEW)
 	if err != nil {
 		return nil, errswrap.NewError(err, errorsdocstore.ErrFailedQuery)
 	}
-	if !ok {
+	if !check {
 		return nil, errorsdocstore.ErrDocViewDenied
 	}
 

@@ -39,11 +39,11 @@ func (s *Server) GetComments(ctx context.Context, req *GetCommentsRequest) (*Get
 
 	trace.SpanFromContext(ctx).SetAttributes(attribute.Int64("fivenet.docstore.id", int64(req.DocumentId)))
 
-	ok, err := s.checkIfUserHasAccessToDoc(ctx, req.DocumentId, userInfo, documents.AccessLevel_ACCESS_LEVEL_VIEW)
+	check, err := s.checkIfUserHasAccessToDoc(ctx, req.DocumentId, userInfo, documents.AccessLevel_ACCESS_LEVEL_VIEW)
 	if err != nil {
 		return nil, errswrap.NewError(err, errorsdocstore.ErrFailedQuery)
 	}
-	if !ok {
+	if !check {
 		return nil, errorsdocstore.ErrCommentViewDenied
 	}
 
@@ -415,11 +415,11 @@ func (s *Server) notifyUsersNewComment(ctx context.Context, documentId uint64, s
 			return err
 		}
 
-		ok, err := s.checkIfUserHasAccessToDoc(ctx, doc.Id, userInfo, documents.AccessLevel_ACCESS_LEVEL_VIEW)
+		check, err := s.checkIfUserHasAccessToDoc(ctx, doc.Id, userInfo, documents.AccessLevel_ACCESS_LEVEL_VIEW)
 		if err != nil {
 			return err
 		}
-		if ok {
+		if check {
 			targetUserIds = append(targetUserIds, *doc.CreatorId)
 		}
 	}
@@ -436,11 +436,11 @@ func (s *Server) notifyUsersNewComment(ctx context.Context, documentId uint64, s
 			return err
 		}
 
-		ok, err := s.checkIfUserHasAccessToDoc(ctx, doc.Id, userInfo, documents.AccessLevel_ACCESS_LEVEL_VIEW)
+		check, err := s.checkIfUserHasAccessToDoc(ctx, doc.Id, userInfo, documents.AccessLevel_ACCESS_LEVEL_VIEW)
 		if err != nil {
 			return err
 		}
-		if !ok {
+		if !check {
 			continue
 		}
 

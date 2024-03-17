@@ -27,7 +27,7 @@ const offset = ref(0n);
 
 const { data, pending, refresh, error } = useLazyAsyncData(
     `qualifications-results-${props.qualificationId}-${props.userId}`,
-    () => listQualificationsResults(props.qualificationId, props.userId),
+    () => listQualificationsResults(props.qualificationId, props.userId, props.status),
 );
 
 async function listQualificationsResults(
@@ -68,13 +68,12 @@ watch(offset, async () => refresh());
             </div>
         </div>
         <div class="px-1 sm:px-2 lg:px-4">
-            <DataPendingBlock v-if="pending" :message="$t('common.loading', [$t('common.qualifications', 2)])" />
-            <DataErrorBlock
-                v-else-if="error"
-                :title="$t('common.unable_to_load', [$t('common.qualifications', 2)])"
-                :retry="refresh"
+            <DataPendingBlock v-if="pending" :message="$t('common.loading', [$t('common.result', 2)])" />
+            <DataErrorBlock v-else-if="error" :title="$t('common.unable_to_load', [$t('common.result', 2)])" :retry="refresh" />
+            <DataNoDataBlock
+                v-else-if="data?.results.length === 0"
+                :message="$t('common.not_found', [$t('common.result', 2)])"
             />
-            <DataNoDataBlock v-else-if="data?.results.length === 0" />
 
             <template v-else>
                 <ul role="list" class="divide-y divide-gray-100">

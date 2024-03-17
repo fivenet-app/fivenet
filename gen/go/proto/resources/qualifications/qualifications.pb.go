@@ -898,13 +898,13 @@ type QualificationResult struct {
 	QualificationId uint64               `protobuf:"varint,4,opt,name=qualification_id,json=qualificationId,proto3" json:"qualification_id,omitempty"`
 	Qualification   *QualificationShort  `protobuf:"bytes,5,opt,name=qualification,proto3,oneof" json:"qualification,omitempty"`
 	UserId          int32                `protobuf:"varint,6,opt,name=user_id,json=userId,proto3" json:"user_id,omitempty"`
-	User            *users.UserShort     `protobuf:"bytes,7,opt,name=user,proto3" json:"user,omitempty"`
+	User            *users.UserShort     `protobuf:"bytes,7,opt,name=user,proto3" json:"user,omitempty" alias:"user"` // @gotags: alias:"user"
 	Status          ResultStatus         `protobuf:"varint,8,opt,name=status,proto3,enum=resources.qualifications.ResultStatus" json:"status,omitempty"`
 	Score           *uint32              `protobuf:"varint,9,opt,name=score,proto3,oneof" json:"score,omitempty"`
 	// @sanitize: method=StripTags
 	Summary    string           `protobuf:"bytes,10,opt,name=summary,proto3" json:"summary,omitempty"`
 	CreatorId  int32            `protobuf:"varint,11,opt,name=creator_id,json=creatorId,proto3" json:"creator_id,omitempty"`
-	Creator    *users.UserShort `protobuf:"bytes,12,opt,name=creator,proto3" json:"creator,omitempty"`
+	Creator    *users.UserShort `protobuf:"bytes,12,opt,name=creator,proto3" json:"creator,omitempty" alias:"creator"` // @gotags: alias:"creator"
 	CreatorJob string           `protobuf:"bytes,13,opt,name=creator_job,json=creatorJob,proto3" json:"creator_job,omitempty"`
 }
 
@@ -1041,7 +1041,7 @@ type QualificationRequest struct {
 	QualificationId uint64               `protobuf:"varint,3,opt,name=qualification_id,json=qualificationId,proto3" json:"qualification_id,omitempty"`
 	Qualification   *QualificationShort  `protobuf:"bytes,4,opt,name=qualification,proto3,oneof" json:"qualification,omitempty"`
 	UserId          int32                `protobuf:"varint,5,opt,name=user_id,json=userId,proto3" json:"user_id,omitempty"`
-	User            *users.UserShort     `protobuf:"bytes,6,opt,name=user,proto3" json:"user,omitempty"`
+	User            *users.UserShort     `protobuf:"bytes,6,opt,name=user,proto3" json:"user,omitempty" alias:"user"` // @gotags: alias:"user"
 	// @sanitize: method=StripTags
 	UserComment *string              `protobuf:"bytes,7,opt,name=user_comment,json=userComment,proto3,oneof" json:"user_comment,omitempty"`
 	Status      *RequestStatus       `protobuf:"varint,8,opt,name=status,proto3,enum=resources.qualifications.RequestStatus,oneof" json:"status,omitempty"`
@@ -1049,7 +1049,7 @@ type QualificationRequest struct {
 	// @sanitize: method=StripTags
 	ApproverComment *string          `protobuf:"bytes,10,opt,name=approver_comment,json=approverComment,proto3,oneof" json:"approver_comment,omitempty"`
 	ApproverId      *int32           `protobuf:"varint,11,opt,name=approver_id,json=approverId,proto3,oneof" json:"approver_id,omitempty"`
-	Approver        *users.UserShort `protobuf:"bytes,12,opt,name=approver,proto3,oneof" json:"approver,omitempty"`
+	Approver        *users.UserShort `protobuf:"bytes,12,opt,name=approver,proto3,oneof" json:"approver,omitempty" alias:"approver"` // @gotags: alias:"approver"
 	ApproverJob     *string          `protobuf:"bytes,13,opt,name=approver_job,json=approverJob,proto3,oneof" json:"approver_job,omitempty"`
 }
 

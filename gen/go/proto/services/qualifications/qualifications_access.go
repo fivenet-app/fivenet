@@ -24,11 +24,11 @@ func (s *Server) GetQualificationAccess(ctx context.Context, req *GetQualificati
 	trace.SpanFromContext(ctx).SetAttributes(attribute.Int64("fivenet.qualifications.qualifications.id", int64(req.QualificationId)))
 
 	userInfo := auth.MustGetUserInfoFromContext(ctx)
-	ok, err := s.checkIfUserHasAccessToQuali(ctx, req.QualificationId, userInfo, qualifications.AccessLevel_ACCESS_LEVEL_VIEW)
+	check, err := s.checkIfUserHasAccessToQuali(ctx, req.QualificationId, userInfo, qualifications.AccessLevel_ACCESS_LEVEL_VIEW)
 	if err != nil {
 		return nil, errswrap.NewError(err, errorsqualifications.ErrFailedQuery)
 	}
-	if !ok {
+	if !check {
 		return nil, errorsqualifications.ErrFailedQuery
 	}
 
@@ -62,11 +62,11 @@ func (s *Server) SetQualificationAccess(ctx context.Context, req *SetQualificati
 	}
 	defer s.aud.Log(auditEntry, req)
 
-	ok, err := s.checkIfUserHasAccessToQuali(ctx, req.QualificationId, userInfo, qualifications.AccessLevel_ACCESS_LEVEL_EDIT)
+	check, err := s.checkIfUserHasAccessToQuali(ctx, req.QualificationId, userInfo, qualifications.AccessLevel_ACCESS_LEVEL_EDIT)
 	if err != nil {
 		return nil, errswrap.NewError(err, errorsqualifications.ErrFailedQuery)
 	}
-	if !ok {
+	if !check {
 		return nil, errorsqualifications.ErrFailedQuery
 	}
 

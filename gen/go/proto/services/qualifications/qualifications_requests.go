@@ -28,14 +28,14 @@ func (s *Server) ListQualificationRequests(ctx context.Context, req *ListQualifi
 
 	tQuali := tQuali.AS("qualificationshort")
 
-	condition := jet.Bool(true)
+	condition := tQualiRequests.DeletedAt.IS_NULL()
 
 	if req.QualificationId != nil {
-		ok, err := s.checkIfUserHasAccessToQuali(ctx, *req.QualificationId, userInfo, qualifications.AccessLevel_ACCESS_LEVEL_GRADE)
+		check, err := s.checkIfUserHasAccessToQuali(ctx, *req.QualificationId, userInfo, qualifications.AccessLevel_ACCESS_LEVEL_GRADE)
 		if err != nil {
 			return nil, errswrap.NewError(err, errorsqualifications.ErrFailedQuery)
 		}
-		if !ok {
+		if !check {
 			return nil, errorsqualifications.ErrFailedQuery
 		}
 
@@ -47,13 +47,16 @@ func (s *Server) ListQualificationRequests(ctx context.Context, req *ListQualifi
 				tQuali.CreatorID.EQ(jet.Int32(userInfo.UserId)),
 				jet.AND(
 					tQJobAccess.Access.IS_NOT_NULL(),
-					tQJobAccess.Access.GT(jet.Int32(int32(qualifications.AccessLevel_ACCESS_LEVEL_BLOCKED))),
+					jet.OR(
+						tQJobAccess.Access.GT(jet.Int32(int32(qualifications.AccessLevel_ACCESS_LEVEL_GRADE))),
+						jet.AND(
+							tQJobAccess.Access.GT(jet.Int32(int32(qualifications.AccessLevel_ACCESS_LEVEL_BLOCKED))),
+							tQualiRequests.UserID.EQ(jet.Int32(userInfo.UserId)),
+						),
+					),
 				),
 			),
 		))
-
-		// TODO
-		condition = condition.AND(tQualiRequests.UserID.EQ(jet.Int32(userInfo.UserId)))
 	}
 
 	if len(req.Status) > 0 {
@@ -98,6 +101,8 @@ func (s *Server) ListQualificationRequests(ctx context.Context, req *ListQualifi
 		return resp, nil
 	}
 
+	tUser := tUser.AS("user")
+
 	stmt := tQualiRequests.
 		SELECT(
 			tQualiRequests.CreatedAt,
@@ -112,27 +117,37 @@ func (s *Server) ListQualificationRequests(ctx context.Context, req *ListQualifi
 			tQuali.Description,
 			tQuali.Content,
 			tQualiRequests.UserID,
+			tUser.ID,
+			tUser.Identifier,
+			tUser.Job,
+			tUser.JobGrade,
+			tUser.Firstname,
+			tUser.Lastname,
+			tUser.Dateofbirth,
 			tQualiRequests.UserComment,
 			tQualiRequests.Status,
 			tQualiRequests.ApprovedAt,
 			tQualiRequests.ApproverComment,
 			tQualiRequests.ApproverID,
+			tApprover.ID,
+			tApprover.Identifier,
+			tApprover.Job,
+			tApprover.JobGrade,
+			tApprover.Firstname,
+			tApprover.Lastname,
+			tApprover.Dateofbirth,
 			tQualiRequests.ApproverJob,
-			tCreator.ID,
-			tCreator.Identifier,
-			tCreator.Job,
-			tCreator.JobGrade,
-			tCreator.Firstname,
-			tCreator.Lastname,
-			tCreator.Dateofbirth,
 		).
 		FROM(
 			tQualiRequests.
 				INNER_JOIN(tQuali,
 					tQuali.ID.EQ(tQualiRequests.QualificationID),
 				).
-				LEFT_JOIN(tCreator,
-					tQualiRequests.UserID.EQ(tCreator.ID),
+				LEFT_JOIN(tUser,
+					tQualiRequests.UserID.EQ(tUser.ID),
+				).
+				LEFT_JOIN(tApprover,
+					tQualiRequests.ApproverID.EQ(tApprover.ID),
 				).
 				LEFT_JOIN(tQJobAccess,
 					tQJobAccess.QualificationID.EQ(tQuali.ID).
@@ -151,6 +166,17 @@ func (s *Server) ListQualificationRequests(ctx context.Context, req *ListQualifi
 		}
 	}
 
+	jobInfoFn := s.enricher.EnrichJobInfoSafeFunc(userInfo)
+	for i := 0; i < len(resp.Requests); i++ {
+		if resp.Requests[i].User != nil {
+			jobInfoFn(resp.Requests[i].User)
+		}
+
+		if resp.Requests[i].Approver != nil {
+			jobInfoFn(resp.Requests[i].Approver)
+		}
+	}
+
 	return resp, nil
 }
 
@@ -166,12 +192,12 @@ func (s *Server) CreateOrUpdateQualificationRequest(ctx context.Context, req *Cr
 	}
 	defer s.aud.Log(auditEntry, req)
 
-	ok, err := s.checkIfUserHasAccessToQuali(ctx, req.Request.QualificationId, userInfo, qualifications.AccessLevel_ACCESS_LEVEL_GRADE)
+	check, err := s.checkIfUserHasAccessToQuali(ctx, req.Request.QualificationId, userInfo, qualifications.AccessLevel_ACCESS_LEVEL_GRADE)
 	if err != nil {
 		return nil, errswrap.NewError(err, errorsqualifications.ErrFailedQuery)
 	}
 	// If user can grade a qualification, they are treated as an "approver" of requests
-	if ok && req.Request.UserId > 0 {
+	if check && req.Request.UserId > 0 {
 		stmt := tQualiRequests.
 			UPDATE(
 				tQualiRequests.Status,
@@ -198,20 +224,20 @@ func (s *Server) CreateOrUpdateQualificationRequest(ctx context.Context, req *Cr
 
 		auditEntry.State = int16(rector.EventType_EVENT_TYPE_UPDATED)
 	} else {
-		ok, err := s.checkIfUserHasAccessToQuali(ctx, req.Request.QualificationId, userInfo, qualifications.AccessLevel_ACCESS_LEVEL_REQUEST)
+		check, err := s.checkIfUserHasAccessToQuali(ctx, req.Request.QualificationId, userInfo, qualifications.AccessLevel_ACCESS_LEVEL_REQUEST)
 		if err != nil {
 			return nil, errswrap.NewError(err, errorsqualifications.ErrFailedQuery)
 		}
-		if !ok {
+		if !check {
 			return nil, errorsqualifications.ErrFailedQuery
 		}
 
 		// Make sure the requirements of the qualification are fullfiled by the user, ErrRequirementsMissing
-		ok, err = s.checkRequirementsMetForQualification(ctx, req.Request.QualificationId, userInfo.UserId)
+		check, err = s.checkRequirementsMetForQualification(ctx, req.Request.QualificationId, userInfo.UserId)
 		if err != nil {
 			return nil, errswrap.NewError(err, errorsqualifications.ErrFailedQuery)
 		}
-		if !ok {
+		if !check {
 			return nil, errorsqualifications.ErrRequirementsMissing
 		}
 
@@ -230,6 +256,7 @@ func (s *Server) CreateOrUpdateQualificationRequest(ctx context.Context, req *Cr
 				qualifications.RequestStatus_REQUEST_STATUS_PENDING,
 			).
 			ON_DUPLICATE_KEY_UPDATE(
+				tQualiRequests.DeletedAt.SET(jet.TimestampExp(jet.NULL)),
 				tQualiRequests.UserComment.SET(jet.StringExp(jet.Raw("VALUES(`user_comment`)"))),
 			)
 
@@ -252,6 +279,7 @@ func (s *Server) CreateOrUpdateQualificationRequest(ctx context.Context, req *Cr
 
 func (s *Server) getQualificationRequest(ctx context.Context, requestId uint64, userId int32, userInfo *userinfo.UserInfo) (*qualifications.QualificationRequest, error) {
 	tQuali := tQuali.AS("qualificationshort")
+	tUser := tUser.AS("user")
 
 	stmt := tQualiRequests.
 		SELECT(
@@ -342,11 +370,11 @@ func (s *Server) DeleteQualificationReq(ctx context.Context, req *DeleteQualific
 		return nil, errswrap.NewError(err, errorsqualifications.ErrFailedQuery)
 	}
 
-	ok, err := s.checkIfUserHasAccessToQuali(ctx, re.QualificationId, userInfo, qualifications.AccessLevel_ACCESS_LEVEL_MANAGE)
+	check, err := s.checkIfUserHasAccessToQuali(ctx, re.QualificationId, userInfo, qualifications.AccessLevel_ACCESS_LEVEL_MANAGE)
 	if err != nil {
 		return nil, errswrap.NewError(err, errorsqualifications.ErrFailedQuery)
 	}
-	if !ok {
+	if !check {
 		return nil, errorsqualifications.ErrFailedQuery
 	}
 

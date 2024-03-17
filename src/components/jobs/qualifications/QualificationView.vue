@@ -5,7 +5,6 @@ import { useConfirmDialog } from '@vueuse/core';
 import {
     AccountIcon,
     AccountSchoolIcon,
-    AsteriskIcon,
     CalendarEditIcon,
     CalendarIcon,
     CalendarRemoveIcon,
@@ -32,7 +31,7 @@ import { checkQualificationAccess } from '~/components/jobs/qualifications/helpe
 import ConfirmDialog from '~/components/partials/ConfirmDialog.vue';
 import QualificationRequestUserModal from '~/components/jobs/qualifications/QualificationRequestUserModal.vue';
 import QualificationsRequestsList from '~/components/jobs/qualifications/tutor/QualificationsRequestsList.vue';
-import QualificationsResultsList from '~/components/jobs/qualifications/QualificationsResultsList.vue';
+import QualificationsResultsList from '~/components/jobs/qualifications/tutor/QualificationsResultsList.vue';
 
 const props = defineProps<{
     id: string;
@@ -200,7 +199,7 @@ const openRequest = ref(false);
                                 >
                                     <MailIcon class="h-5 w-5 text-info-400" aria-hidden="true" />
                                     <span class="text-sm font-medium text-info-700">
-                                        <span class="font-semibold">{{ $t('common.request') }}:</span>
+                                        <span c lass="font-semibold">{{ $t('common.request') }}:</span>
                                         {{
                                             $t(
                                                 `enums.qualifications.RequestStatus.${RequestStatus[quali.request?.status ?? 0]}`,
@@ -262,6 +261,51 @@ const openRequest = ref(false);
                                 </div>
                             </div>
 
+                            <div class="mt-2 w-full">
+                                <h3 class="inline-flex items-center text-base font-semibold leading-7 text-neutral">
+                                    {{ $t('common.requirements', 2) }}:
+                                </h3>
+
+                                <div class="flex flex-row flex-wrap gap-1 pb-2">
+                                    <template v-if="!quali.requirements || quali.requirements.length === 0">
+                                        <p class="text-neutral text-base">
+                                            {{ $t('common.not_found', [$t('common.requirements', 2)]) }}
+                                        </p>
+                                    </template>
+
+                                    <template v-else>
+                                        <NuxtLink
+                                            v-for="entry in quali.requirements"
+                                            :key="entry.id"
+                                            :to="{
+                                                name: 'jobs-qualifications-id',
+                                                params: { id: entry.targetQualificationId },
+                                            }"
+                                            class="flex flex-initial snap-x snap-start items-center gap-1 overflow-x-auto whitespace-nowrap rounded-full px-2 py-1"
+                                            :class="
+                                                entry.targetQualification?.result?.status === ResultStatus.SUCCESSFUL
+                                                    ? 'bg-success-100'
+                                                    : 'bg-error-100'
+                                            "
+                                        >
+                                            <span
+                                                class="h-2 w-2 rounded-full"
+                                                :class="
+                                                    entry.targetQualification?.result?.status === ResultStatus.SUCCESSFUL
+                                                        ? 'bg-success-500'
+                                                        : 'bg-error-500'
+                                                "
+                                                aria-hidden="true"
+                                            />
+                                            <span class="text-sm font-medium text-info-800"
+                                                >{{ entry.targetQualification?.abbreviation }}:
+                                                {{ entry.targetQualification?.title }}
+                                            </span>
+                                        </NuxtLink>
+                                    </template>
+                                </div>
+                            </div>
+
                             <div class="my-2">
                                 <h2 class="sr-only">
                                     {{ $t('common.content') }}
@@ -273,56 +317,6 @@ const openRequest = ref(false);
                                         v-html="quali?.content"
                                     ></div>
                                 </div>
-                            </div>
-
-                            <div class="mt-2 w-full">
-                                <Disclosure
-                                    v-slot="{ open }"
-                                    as="div"
-                                    class="w-full border-neutral/20 text-neutral hover:border-neutral/70"
-                                    :default-open="true"
-                                >
-                                    <DisclosureButton
-                                        :class="[
-                                            open ? 'rounded-t-lg border-b-0' : 'rounded-lg',
-                                            'flex w-full items-start justify-between border-2 border-inherit p-2 text-left transition-colors',
-                                        ]"
-                                    >
-                                        <span class="inline-flex items-center text-base font-semibold leading-7">
-                                            <AsteriskIcon class="mr-2 w-5 h-auto" aria-hidden="true" />
-                                            {{ $t('common.requirements', 2) }}
-                                        </span>
-                                        <span class="ml-6 flex h-7 items-center">
-                                            <ChevronDownIcon
-                                                :class="[open ? 'upsidedown' : '', 'h-autotransition-transform w-5']"
-                                                aria-hidden="true"
-                                            />
-                                        </span>
-                                    </DisclosureButton>
-                                    <DisclosurePanel class="rounded-b-lg border-2 border-t-0 border-inherit transition-colors">
-                                        <div class="mx-4 flex flex-row flex-wrap gap-1 pb-2">
-                                            <DataNoDataBlock
-                                                v-if="!quali.requirements || quali.requirements.length === 0"
-                                                :icon="FileSearchIcon"
-                                                :message="$t('common.not_found', [$t('common.requirements', 2)])"
-                                            />
-
-                                            <template v-else>
-                                                <div
-                                                    v-for="entry in quali.requirements"
-                                                    :key="entry.id"
-                                                    class="flex flex-initial snap-x snap-start items-center gap-1 overflow-x-auto whitespace-nowrap rounded-full bg-info-100 px-2 py-1"
-                                                >
-                                                    <span class="h-2 w-2 rounded-full bg-info-500" aria-hidden="true" />
-                                                    <span class="text-sm font-medium text-info-800"
-                                                        >{{ entry.targetQualification?.abbreviation }}:
-                                                        {{ entry.targetQualification?.title }}
-                                                    </span>
-                                                </div>
-                                            </template>
-                                        </div>
-                                    </DisclosurePanel>
-                                </Disclosure>
                             </div>
 
                             <div v-if="quali.result && quali.result.id !== '0'" class="mt-2 w-full">
@@ -434,6 +428,7 @@ const openRequest = ref(false);
                                     v-slot="{ open }"
                                     as="div"
                                     class="w-full border-neutral/20 text-neutral hover:border-neutral/70"
+                                    :default-open="true"
                                 >
                                     <DisclosureButton
                                         :class="[

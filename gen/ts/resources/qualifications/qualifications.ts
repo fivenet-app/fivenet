@@ -287,7 +287,7 @@ export interface QualificationResult {
     /**
      * @generated from protobuf field: resources.users.UserShort user = 7;
      */
-    user?: UserShort;
+    user?: UserShort; // @gotags: alias:"user"
     /**
      * @generated from protobuf field: resources.qualifications.ResultStatus status = 8;
      */
@@ -309,7 +309,7 @@ export interface QualificationResult {
     /**
      * @generated from protobuf field: resources.users.UserShort creator = 12;
      */
-    creator?: UserShort;
+    creator?: UserShort; // @gotags: alias:"creator"
     /**
      * @generated from protobuf field: string creator_job = 13;
      */
@@ -342,7 +342,7 @@ export interface QualificationRequest {
     /**
      * @generated from protobuf field: resources.users.UserShort user = 6;
      */
-    user?: UserShort;
+    user?: UserShort; // @gotags: alias:"user"
     /**
      * @sanitize: method=StripTags
      *
@@ -370,7 +370,7 @@ export interface QualificationRequest {
     /**
      * @generated from protobuf field: optional resources.users.UserShort approver = 12;
      */
-    approver?: UserShort;
+    approver?: UserShort; // @gotags: alias:"approver"
     /**
      * @generated from protobuf field: optional string approver_job = 13;
      */

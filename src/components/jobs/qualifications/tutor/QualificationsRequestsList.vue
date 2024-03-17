@@ -62,13 +62,16 @@ const openResultStatus = ref(false);
 <template>
     <div class="overflow-hidden">
         <div class="px-1 sm:px-2 lg:px-4">
-            <DataPendingBlock v-if="pending" :message="$t('common.loading', [$t('common.qualifications', 2)])" />
+            <DataPendingBlock v-if="pending" :message="$t('common.loading', [$t('common.request', 2)])" />
             <DataErrorBlock
                 v-else-if="error"
-                :title="$t('common.unable_to_load', [$t('common.qualifications', 2)])"
+                :title="$t('common.unable_to_load', [$t('common.request', 2)])"
                 :retry="refresh"
             />
-            <DataNoDataBlock v-else-if="data?.requests.length === 0" />
+            <DataNoDataBlock
+                v-else-if="data?.requests.length === 0"
+                :message="$t('common.not_found', [$t('common.request', 2)])"
+            />
 
             <template v-else>
                 <QualificationRequestTutorModal

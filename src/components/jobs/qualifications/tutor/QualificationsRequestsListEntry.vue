@@ -2,6 +2,7 @@
 import { CheckBoldIcon, CloseThickIcon, StarIcon } from 'mdi-vue3';
 import GenericTime from '~/components/partials/elements/GenericTime.vue';
 import { QualificationRequest, RequestStatus } from '~~/gen/ts/resources/qualifications/qualifications';
+import { requestStatusToTextColor } from '~/components/jobs/qualifications/helpers';
 
 withDefaults(
     defineProps<{
@@ -28,7 +29,7 @@ defineEmits<{
         <td>
             <div class="flex flex-initial flex-row gap-1 rounded-full">
                 <template v-if="request.status !== undefined">
-                    <span class="text-sm font-medium text-info-400">
+                    <span class="text-sm font-medium" :class="requestStatusToTextColor(request.status)">
                         <span class="font-semibold">{{
                             $t(`enums.qualifications.RequestStatus.${RequestStatus[request.status]}`)
                         }}</span>
@@ -38,7 +39,7 @@ defineEmits<{
         </td>
         <td>
             <p v-if="request.createdAt" class="mt-1 text-sm leading-5 text-gray-300">
-                {{ $t('common.created_at') }} <GenericTime :value="request.createdAt" />
+                <GenericTime :value="request.createdAt" />
             </p>
         </td>
         <td class="flex items-center gap-2">
