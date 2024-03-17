@@ -44,8 +44,8 @@ export const useSettingsStore = defineStore('settings', {
             livemap: {
                 markerSize: 22,
                 centerSelectedMarker: false,
-                showUnitNames: false,
-                showUnitStatus: false,
+                showUnitNames: true,
+                showUnitStatus: true,
                 showAllDispatches: false,
                 activeLayers: [],
             },
