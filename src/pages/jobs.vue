@@ -29,7 +29,7 @@ const navigation: { name: string; to: RoutesNamedLocations; permission?: Perms; 
     {
         name: 'common.activity',
         to: { name: 'jobs-activity' },
-        permission: 'JobsService.GetColleague',
+        permission: 'JobsService.ListColleagueActivity',
         icon: markRaw(BulletinBoardIcon),
     },
     {

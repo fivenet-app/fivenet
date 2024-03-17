@@ -11,15 +11,6 @@ import GenericTime from '~/components/partials/elements/GenericTime.vue';
 import { useNotificatorStore } from '~/store/notificator';
 import { GetNotificationsResponse } from '~~/gen/ts/services/notificator/notificator';
 
-withDefaults(
-    defineProps<{
-        compact?: boolean;
-    }>(),
-    {
-        compact: false,
-    },
-);
-
 defineEmits<{
     (e: 'clicked'): void;
 }>();
@@ -31,7 +22,9 @@ const offset = ref(0n);
 
 const includeRead = ref(false);
 
-const { data, pending, refresh, error } = useLazyAsyncData(`notifications-${offset.value}`, () => getNotifications());
+const { data, pending, refresh, error } = useLazyAsyncData(`notifications-${offset.value}-${includeRead.value}`, () =>
+    getNotifications(),
+);
 
 async function getNotifications(): Promise<GetNotificationsResponse> {
     try {
@@ -226,7 +219,6 @@ const canSubmit = ref(true);
                             </ul>
 
                             <TablePagination
-                                v-if="!compact"
                                 class="mt-2"
                                 :pagination="data?.pagination"
                                 :refresh="refresh"

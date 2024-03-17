@@ -73,7 +73,6 @@ const access = ref<
             type: number;
             values: {
                 job?: string;
-                quali?: string;
                 accessRole?: AccessLevel;
                 minimumGrade?: number;
             };
@@ -114,7 +113,7 @@ onMounted(async () => {
                     const id = accessId.toString();
                     access.value.set(id, {
                         id,
-                        type: 1,
+                        type: 0,
                         values: {
                             job: job.job,
                             accessRole: job.access,
@@ -135,7 +134,7 @@ onMounted(async () => {
         const accessId = 0;
         access.value.set(accessId.toString(), {
             id: accessId.toString(),
-            type: 1,
+            type: 0,
             values: {
                 job: activeChar.value?.job,
                 minimumGrade: 1,
@@ -151,23 +150,52 @@ onMounted(async () => {
 });
 
 async function createQualification(values: FormData): Promise<CreateQualificationResponse> {
-    try {
-        const call = $grpc.getQualificationsClient().createQualification({
-            qualification: {
+    const req = {
+        qualification: {
+            id: '0',
+            job: '',
+            weight: 0,
+            closed: false,
+            abbreviation: values.abbreviation,
+            title: values.title,
+            description: values.description,
+            content: values.content,
+            creatorId: 0,
+            creatorJob: '',
+            requirements: [], // TODO
+            access: {
+                jobs: [],
+            } as QualificationAccess,
+        },
+    };
+    access.value.forEach((entry) => {
+        if (entry.values.accessRole === undefined) {
+            return;
+        }
+
+        if (entry.type === 0) {
+            if (!entry.values.job) {
+                return;
+            }
+
+            req.qualification.access.jobs.push({
                 id: '0',
-                job: '',
-                weight: 0,
-                closed: false,
-                abbreviation: values.abbreviation,
-                title: values.title,
-                description: values.description,
-                content: values.content,
-                creatorId: 0,
-                creatorJob: '',
-                requirements: [],
-            },
-        });
+                qualificationId: '0',
+                job: entry.values.job,
+                minimumGrade: entry.values.minimumGrade ? entry.values.minimumGrade : 0,
+                access: entry.values.accessRole,
+            });
+        }
+    });
+
+    try {
+        const call = $grpc.getQualificationsClient().createQualification(req);
         const { response } = await call;
+
+        await navigateTo({
+            name: 'documents-id',
+            params: { id: response.qualificationId },
+        });
 
         return response;
     } catch (e) {
@@ -177,23 +205,53 @@ async function createQualification(values: FormData): Promise<CreateQualificatio
 }
 
 async function updateQualification(values: FormData): Promise<UpdateQualificationResponse> {
-    try {
-        const call = $grpc.getQualificationsClient().updateQualification({
-            qualification: {
+    const req = {
+        qualification: {
+            id: '0',
+            job: '',
+            weight: 0,
+            closed: false,
+            abbreviation: values.abbreviation,
+            title: values.title,
+            description: values.description,
+            content: values.content,
+            creatorId: 0,
+            creatorJob: '',
+            requirements: [], // TODO
+            access: {
+                jobs: [],
+            } as QualificationAccess,
+        },
+    };
+    access.value.forEach((entry) => {
+        if (entry.values.accessRole === undefined) {
+            return;
+        }
+
+        if (entry.type === 0) {
+            if (!entry.values.job) {
+                return;
+            }
+
+            req.qualification.access.jobs.push({
                 id: '0',
-                job: '',
-                weight: 0,
-                closed: false,
-                abbreviation: values.abbreviation,
-                title: values.title,
-                description: values.description,
-                content: values.content,
-                creatorId: 0,
-                creatorJob: '',
-                requirements: [],
-            },
-        });
+                qualificationId: '0',
+                job: entry.values.job,
+                minimumGrade: entry.values.minimumGrade ? entry.values.minimumGrade : 0,
+                access: entry.values.accessRole,
+            });
+        }
+    });
+
+    try {
+        const call = $grpc.getQualificationsClient().updateQualification(req);
+
         const { response } = await call;
+
+        await navigateTo({
+            name: 'documents-id',
+            params: { id: response.qualificationId },
+        });
 
         return response;
     } catch (e) {
@@ -230,10 +288,7 @@ const onSubmitThrottle = useThrottleFn(async (e) => {
     await onSubmit(e);
 }, 1000);
 
-const accessTypes = [
-    { id: 0, name: t('common.qualifications', 2) },
-    { id: 1, name: t('common.job', 2) },
-];
+const accessTypes = [{ id: 0, name: t('common.job', 2) }];
 
 function addDocumentAccessEntry(): void {
     if (access.value.size > maxAccessEntries - 1) {
@@ -251,7 +306,7 @@ function addDocumentAccessEntry(): void {
     const id = access.value.size > 0 ? parseInt([...access.value.keys()]?.pop() ?? '1', 10) + 1 : 0;
     access.value.set(id.toString(), {
         id: id.toString(),
-        type: 1,
+        type: 0,
         values: {},
     });
 }
@@ -278,10 +333,6 @@ function updateDocumentAccessEntryName(event: { id: string; job?: Job; req?: Qua
 
     if (event.job) {
         accessEntry.values.job = event.job.name;
-        accessEntry.values.quali = undefined;
-    } else if (event.req) {
-        accessEntry.values.job = undefined;
-        accessEntry.values.quali = event.req.id;
     }
 
     access.value.set(event.id, accessEntry);

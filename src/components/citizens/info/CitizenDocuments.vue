@@ -51,11 +51,11 @@ watch(offset, async () => refresh());
                     <div class="inline-block min-w-full px-1 align-middle">
                         <DataPendingBlock
                             v-if="pending"
-                            :message="$t('common.loading', [`${$t('common.user', 1)} ${$t('common.document', 2)}`])"
+                            :message="$t('common.loading', [`${$t('common.citizen', 1)} ${$t('common.document', 2)}`])"
                         />
                         <DataErrorBlock
                             v-else-if="error"
-                            :title="$t('common.unable_to_load', [`${$t('common.user', 1)} ${$t('common.document', 2)}`])"
+                            :title="$t('common.unable_to_load', [`${$t('common.citizen', 1)} ${$t('common.document', 2)}`])"
                             :retry="refresh"
                         />
                         <DataNoDataBlock

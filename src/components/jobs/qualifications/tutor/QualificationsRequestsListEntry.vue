@@ -3,6 +3,7 @@ import { CheckBoldIcon, CloseThickIcon, StarIcon } from 'mdi-vue3';
 import GenericTime from '~/components/partials/elements/GenericTime.vue';
 import { QualificationRequest, RequestStatus } from '~~/gen/ts/resources/qualifications/qualifications';
 import { requestStatusToTextColor } from '~/components/jobs/qualifications/helpers';
+import CitizenInfoPopover from '~/components/partials/citizens/CitizenInfoPopover.vue';
 
 withDefaults(
     defineProps<{
@@ -22,7 +23,9 @@ defineEmits<{
 
 <template>
     <tr>
-        <td>{{ request.qualification?.abbreviation }}: {{ request.qualification?.title }}</td>
+        <td>
+            <CitizenInfoPopover :user="request.user" />
+        </td>
         <td>
             <span v-if="request.userComment">{{ request.userComment }}</span>
         </td>
@@ -41,6 +44,14 @@ defineEmits<{
             <p v-if="request.createdAt" class="mt-1 text-sm leading-5 text-gray-300">
                 <GenericTime :value="request.createdAt" />
             </p>
+        </td>
+        <td>
+            <p v-if="request.approvedAt" class="mt-1 text-sm leading-5 text-gray-300">
+                <GenericTime :value="request.approvedAt" />
+            </p>
+        </td>
+        <td>
+            <CitizenInfoPopover v-if="request.approver" :user="request.approver" />
         </td>
         <td class="flex items-center gap-2">
             <button

@@ -153,7 +153,7 @@ const onSubmitThrottle = useThrottleFn(async () => {
                                                                                         ? charsGetDisplayValue(chars)
                                                                                         : $t('common.na')
                                                                             "
-                                                                            :placeholder="$t('common.user', 2)"
+                                                                            :placeholder="$t('common.citizen', 2)"
                                                                             @change="queryCitizens = $event.target.value"
                                                                             @focusin="focusTablet(true)"
                                                                             @focusout="focusTablet(false)"

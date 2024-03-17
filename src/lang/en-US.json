@@ -929,7 +929,9 @@
         "calendar_week": "CW",
         "requirements": "Requirement | Requirements",
         "read": "Read",
-        "abbreviation": "Abbreviation"
+        "abbreviation": "Abbreviation",
+        "approved": "Approved at",
+        "approver": "Approver"
     },
     "notifications": {
         "clipboard": {

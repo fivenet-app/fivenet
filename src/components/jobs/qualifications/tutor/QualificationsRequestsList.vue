@@ -96,7 +96,7 @@ const openResultStatus = ref(false);
                     <template #thead>
                         <tr>
                             <th scope="col" class="whitespace-nowrap px-1 py-1 text-left text-sm font-semibold text-gray-100">
-                                {{ $t('common.qualifications') }}
+                                {{ $t('common.citizen') }}
                             </th>
                             <th scope="col" class="whitespace-nowrap px-1 py-1 text-left text-sm font-semibold text-gray-100">
                                 {{ $t('common.comment') }}
@@ -106,6 +106,12 @@ const openResultStatus = ref(false);
                             </th>
                             <th scope="col" class="whitespace-nowrap px-1 py-1 text-left text-sm font-semibold text-gray-100">
                                 {{ $t('common.created_at') }}
+                            </th>
+                            <th scope="col" class="whitespace-nowrap px-1 py-1 text-left text-sm font-semibold text-gray-100">
+                                {{ $t('common.approved_at') }}
+                            </th>
+                            <th scope="col" class="whitespace-nowrap px-1 py-1 text-left text-sm font-semibold text-gray-100">
+                                {{ $t('common.approver') }}
                             </th>
                             <th scope="col" class="whitespace-nowrap px-1 py-1 text-left text-sm font-semibold text-gray-100">
                                 {{ $t('common.action', 2) }}
@@ -128,15 +134,15 @@ const openResultStatus = ref(false);
                         />
                     </template>
                 </GenericTable>
-
-                <TablePagination
-                    class="w-full"
-                    :pagination="data?.pagination"
-                    :show-border="false"
-                    :refresh="refresh"
-                    @offset-change="offset = $event"
-                />
             </template>
+
+            <TablePagination
+                class="w-full"
+                :pagination="data?.pagination"
+                :show-border="false"
+                :refresh="refresh"
+                @offset-change="offset = $event"
+            />
         </div>
     </div>
 </template>

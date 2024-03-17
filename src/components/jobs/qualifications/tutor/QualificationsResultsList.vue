@@ -94,7 +94,7 @@ async function deleteQualificationResult(resultId: string): Promise<DeleteQualif
                     <template #thead>
                         <tr>
                             <th scope="col" class="whitespace-nowrap px-1 py-1 text-left text-sm font-semibold text-gray-100">
-                                {{ $t('common.user') }}
+                                {{ $t('common.citizen') }}
                             </th>
                             <th scope="col" class="whitespace-nowrap px-1 py-1 text-left text-sm font-semibold text-gray-100">
                                 {{ $t('common.status') }}
@@ -125,15 +125,15 @@ async function deleteQualificationResult(resultId: string): Promise<DeleteQualif
                         />
                     </template>
                 </GenericTable>
-
-                <TablePagination
-                    class="w-full"
-                    :pagination="data?.pagination"
-                    :show-border="false"
-                    :refresh="refresh"
-                    @offset-change="offset = $event"
-                />
             </template>
+
+            <TablePagination
+                class="w-full"
+                :pagination="data?.pagination"
+                :show-border="false"
+                :refresh="refresh"
+                @offset-change="offset = $event"
+            />
         </div>
     </div>
 </template>
