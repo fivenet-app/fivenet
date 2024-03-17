@@ -928,7 +928,8 @@
         "score": "Score",
         "calendar_week": "CW",
         "requirements": "Requirement | Requirements",
-        "read": "Read"
+        "read": "Read",
+        "abbreviation": "Abbreviation"
     },
     "notifications": {
         "clipboard": {

@@ -94,6 +94,7 @@ onMounted(async () => {
             qualiAccess.value = response.qualification?.access;
 
             if (qualification) {
+                setFieldValue('abbreviation', qualification.abbreviation);
                 setFieldValue('title', qualification.title);
                 if (qualification.description) {
                     setFieldValue('description', qualification.description);
@@ -126,7 +127,7 @@ onMounted(async () => {
         } catch (e) {
             $grpc.handleError(e as RpcError);
 
-            await navigateTo({ name: 'documents' });
+            await navigateTo({ name: 'jobs-qualifications' });
 
             return;
         }
@@ -208,10 +209,10 @@ defineRule('max', max);
 const { handleSubmit, meta, setFieldValue } = useForm<FormData>({
     validationSchema: {
         weight: {},
-        abbreviation: {},
-        title: {},
-        description: {},
-        content: {},
+        abbreviation: { required: true, min: 3, max: 20 },
+        title: { required: true, min: 3, max: 1024 },
+        description: { required: true, max: 512 },
+        content: { required: true, min: 20, max: 750000 },
     },
     validateOnMount: true,
 });
@@ -343,30 +344,59 @@ onBeforeUnmount(() => {
                 class="flex flex-col gap-2 rounded-t-lg bg-base-800 px-3 py-4 text-neutral"
                 :class="!canDo.edit ? 'rounded-b-md' : ''"
             >
-                <div>
-                    <label for="title" class="block text-base font-medium">
-                        {{ $t('common.title') }}
-                    </label>
-                    <VeeField
-                        name="title"
-                        type="text"
-                        :placeholder="$t('common.title')"
-                        :label="$t('common.title')"
-                        class="block w-full rounded-md border-0 bg-base-700 py-1.5 text-neutral placeholder:text-accent-200 focus:ring-2 focus:ring-inset focus:ring-base-300 sm:text-3xl sm:leading-6"
-                        :disabled="!canEdit || !canDo.edit"
-                        @focusin="focusTablet(true)"
-                        @focusout="focusTablet(false)"
-                    />
-                    <VeeErrorMessage name="title" as="p" class="mt-2 text-sm text-error-400" />
+                <div class="flex flex-row gap-2">
+                    <div class="flex-0 shrink max-w-48">
+                        <label for="abbreviation" class="block text-base font-medium">
+                            {{ $t('common.abbreviation') }}
+                        </label>
+                        <VeeField
+                            name="abbreviation"
+                            type="text"
+                            :placeholder="$t('common.abbreviation')"
+                            :label="$t('common.abbreviation')"
+                            class="block w-full rounded-md border-0 bg-base-700 py-1.5 text-neutral placeholder:text-accent-200 focus:ring-2 focus:ring-inset focus:ring-base-300 sm:text-3xl sm:leading-6"
+                            :disabled="!canEdit || !canDo.edit"
+                            @focusin="focusTablet(true)"
+                            @focusout="focusTablet(false)"
+                        />
+                        <VeeErrorMessage name="abbreviation" as="p" class="mt-2 text-sm text-error-400" />
+                    </div>
+
+                    <div class="flex-1">
+                        <label for="title" class="block text-base font-medium">
+                            {{ $t('common.title') }}
+                        </label>
+                        <VeeField
+                            name="title"
+                            type="text"
+                            :placeholder="$t('common.title')"
+                            :label="$t('common.title')"
+                            class="block w-full rounded-md border-0 bg-base-700 py-1.5 text-neutral placeholder:text-accent-200 focus:ring-2 focus:ring-inset focus:ring-base-300 sm:text-3xl sm:leading-6"
+                            :disabled="!canEdit || !canDo.edit"
+                            @focusin="focusTablet(true)"
+                            @focusout="focusTablet(false)"
+                        />
+                        <VeeErrorMessage name="title" as="p" class="mt-2 text-sm text-error-400" />
+                    </div>
                 </div>
                 <div class="flex flex-row gap-2">
                     <div class="flex-1">
                         <label for="description" class="block text-sm font-medium">
                             {{ $t('common.description') }}
                         </label>
-                        TODO
+                        <VeeField
+                            name="description"
+                            as="textarea"
+                            :placeholder="$t('common.description')"
+                            :label="$t('common.description')"
+                            class="block w-full h-20 rounded-md border-0 bg-base-700 py-1.5 text-neutral placeholder:text-accent-200 focus:ring-2 focus:ring-inset focus:ring-base-300 sm:leading-6"
+                            :disabled="!canEdit || !canDo.edit"
+                            @focusin="focusTablet(true)"
+                            @focusout="focusTablet(false)"
+                        />
+                        <VeeErrorMessage name="description" as="p" class="mt-2 text-sm text-error-400" />
                     </div>
-                    <div class="flex-1">
+                    <div class="flex-0 min-w-32">
                         <label for="closed" class="block text-sm font-medium"> {{ $t('common.close', 2) }}? </label>
                         <Listbox v-model="qualification.closed" as="div" :disabled="!canEdit || !canDo.edit">
                             <div class="relative">
