@@ -152,3 +152,14 @@ function setCheckboxState(target: HTMLInputElement): void {
 <template>
     <JoditEditor v-model="content" :config="config" :plugins="plugins" :extra-buttons="extraButtons" />
 </template>
+
+<style>
+.jodit-wysiwyg {
+    min-width: 100%;
+
+    * {
+        margin-top: 4px;
+        margin-bottom: 4px;
+    }
+}
+</style>

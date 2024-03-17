@@ -11,8 +11,8 @@ import {
     SwitchLabel,
 } from '@headlessui/vue';
 // eslint-disable-next-line camelcase
-import { max, min, regex, required, url, min_value, max_value, numeric } from '@vee-validate/rules';
-import { useThrottleFn } from '@vueuse/core';
+import { max, min, regex, required, url, min_value, max_value, numeric, size } from '@vee-validate/rules';
+import { useThrottleFn, watchOnce } from '@vueuse/core';
 import { CheckIcon, CloseIcon, LoadingIcon, OfficeBuildingCogIcon, PlusIcon } from 'mdi-vue3';
 import { defineRule } from 'vee-validate';
 import { useSettingsStore } from '~/store/settings';
@@ -34,7 +34,7 @@ const { streamerMode } = storeToRefs(settingsStore);
 
 const notifications = useNotificatorStore();
 
-const { data, pending, refresh, error } = useLazyAsyncData(`rector-jobprops`, () => getAppConfig());
+const { data, pending, refresh, error } = useLazyAsyncData(`rector-appconfig`, () => getAppConfig());
 
 async function getAppConfig(): Promise<GetAppConfigResponse> {
     try {
@@ -160,6 +160,7 @@ defineRule('required', required);
 defineRule('min', min);
 defineRule('max', max);
 defineRule('regex', regex);
+defineRule('size', size);
 defineRule('url', url);
 defineRule('min_value', min_value);
 defineRule('max_value', max_value);
@@ -167,7 +168,7 @@ defineRule('numeric', numeric);
 
 const { handleSubmit, meta, setValues } = useForm<FormData>({
     validationSchema: {
-        permsDefault: { max: 25 },
+        permsDefault: { size: 25 },
 
         websitePrivacyPolicy: { required: false, max: 255, url: 'https://.*' },
         websiteLinksImprint: { required: false, max: 255, url: 'https://.*' },
@@ -224,9 +225,7 @@ function setSettingsValues(): void {
     });
 }
 
-watch(data, () => setSettingsValues());
-
-setSettingsValues();
+watchOnce(data, () => setSettingsValues());
 
 const queryJobsRaw = ref('');
 const queryJobs = computed(() => queryJobsRaw.value.trim());
@@ -612,12 +611,19 @@ const { remove, push, fields } = useFieldArray<Perm>('permsDefault');
                                     name="userTrackerDbRefreshTime"
                                     type="text"
                                     class="flex-1 block w-full rounded-md border-0 bg-base-700 py-1.5 text-neutral placeholder:text-accent-200 focus:ring-2 focus:ring-inset focus:ring-base-300 sm:text-sm sm:leading-6"
+                                    :value="
+                                        parseFloat(
+                                            data.config?.userTracker?.dbRefreshTime?.seconds.toString() +
+                                                '.' +
+                                                (data.config?.userTracker?.dbRefreshTime?.nanos ?? 0) / 1000000,
+                                        ).toString() + 's'
+                                    "
                                     :placeholder="$t('common.duration')"
                                     :label="$t('common.duration')"
                                     @focusin="focusTablet(true)"
                                     @focusout="focusTablet(false)"
                                 />
-                                <VeeErrorMessage name="userTrackerRefreshTime" as="p" class="mt-2 text-sm text-error-400" />
+                                <VeeErrorMessage name="userTrackerDbRefreshTime" as="p" class="mt-2 text-sm text-error-400" />
                             </template>
                         </GenericContainerPanelEntry>
                         <GenericContainerPanelEntry>

@@ -435,6 +435,7 @@ onBeforeUnmount(() => {
                 >
                     <DocEditor v-bind="field" :model-value="field.value ?? ''" />
                 </VeeField>
+                <VeeErrorMessage name="content" as="p" class="mt-2 text-sm text-error-400" />
             </div>
 
             <div class="my-3">

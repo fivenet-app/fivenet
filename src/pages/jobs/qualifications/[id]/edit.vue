@@ -4,10 +4,10 @@ import QualificationEditor from '~/components/jobs/qualifications/QualificationE
 import ContentWrapper from '~/components/partials/ContentWrapper.vue';
 
 useHead({
-    title: 'pages.documents.edit.title',
+    title: 'pages.qualifications.edit.title',
 });
 definePageMeta({
-    title: 'pages.documents.edit.title',
+    title: 'pages.qualifications.edit.title',
     requiresAuth: true,
     permission: 'QualificationsService.UpdateQualification',
     validate: async (route) => {

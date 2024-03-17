@@ -909,7 +909,7 @@ onBeforeUnmount(() => {
                 >
                     <DocEditor v-bind="field" :model-value="field.value ?? ''" />
                 </VeeField>
-                <VeeErrorMessage name="state" as="p" class="mt-2 text-sm text-error-400" />
+                <VeeErrorMessage name="content" as="p" class="mt-2 text-sm text-error-400" />
                 <template v-if="saving">
                     <div class="flex animate-pulse justify-center">
                         <ContentSaveIcon class="mr-2 h-auto w-4 animate-spin" aria-hidden="true" />
@@ -1008,14 +1008,3 @@ onBeforeUnmount(() => {
         </form>
     </div>
 </template>
-
-<style>
-.jodit-wysiwyg {
-    min-width: 100%;
-
-    * {
-        margin-top: 4px;
-        margin-bottom: 4px;
-    }
-}
-</style>
