@@ -433,8 +433,13 @@ func (s *Server) notifyUserAboutRequest(ctx context.Context, doc *documents.Docu
 		return err
 	}
 
-	if doc.Creator != nil {
-		s.enricher.EnrichJobInfoSafe(userInfo, doc.Creator)
+	// Make sure target user has access to document
+	ok, err := s.checkIfUserHasAccessToDoc(ctx, doc.Id, userInfo, documents.AccessLevel_ACCESS_LEVEL_VIEW)
+	if err != nil {
+		return err
+	}
+	if !ok {
+		return nil
 	}
 
 	nType := string(notifi.InfoType)

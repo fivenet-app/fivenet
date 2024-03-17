@@ -630,16 +630,21 @@ func (s *Server) notifyMentionedUser(ctx context.Context, documentId uint64, sou
 		return err
 	}
 
+	// Make sure target user has access to document
+	ok, err := s.checkIfUserHasAccessToDoc(ctx, documentId, userInfo, documents.AccessLevel_ACCESS_LEVEL_VIEW)
+	if err != nil {
+		return err
+	}
+	if !ok {
+		return nil
+	}
+
 	doc, err := s.getDocument(ctx, tDocument.ID.EQ(jet.Uint64(documentId)), userInfo)
 	if err != nil {
 		return err
 	}
 	if doc == nil {
 		return nil
-	}
-
-	if doc.Creator != nil {
-		s.enricher.EnrichJobInfoSafe(userInfo, doc.Creator)
 	}
 
 	nType := string(notifi.InfoType)

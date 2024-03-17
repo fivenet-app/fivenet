@@ -68,7 +68,7 @@ const open = ref(false);
 
                 <div class="fixed inset-0 overflow-hidden">
                     <div class="absolute inset-0 overflow-hidden">
-                        <div class="pointer-events-none fixed inset-y-0 right-0 flex max-w-xl pl-10 sm:pl-16">
+                        <div class="pointer-events-none fixed inset-y-0 right-0 flex max-w-2xl pl-10 sm:pl-16">
                             <TransitionChild
                                 as="template"
                                 enter="transform transition ease-in-out duration-100 sm:duration-200"

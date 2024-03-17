@@ -2,7 +2,9 @@ package docstore
 
 import (
 	context "context"
+	"errors"
 	"fmt"
+	"slices"
 
 	"github.com/galexrt/fivenet/gen/go/proto/resources/common"
 	database "github.com/galexrt/fivenet/gen/go/proto/resources/common/database"
@@ -19,6 +21,7 @@ import (
 	"github.com/galexrt/fivenet/query/fivenet/model"
 	"github.com/galexrt/fivenet/query/fivenet/table"
 	jet "github.com/go-jet/jet/v2/mysql"
+	"github.com/go-jet/jet/v2/qrm"
 	"go.opentelemetry.io/otel/attribute"
 	"go.opentelemetry.io/otel/trace"
 )
@@ -187,7 +190,7 @@ func (s *Server) PostComment(ctx context.Context, req *PostCommentRequest) (*Pos
 		return nil, errswrap.NewError(err, errorsdocstore.ErrFailedQuery)
 	}
 
-	if err := s.notifyUsersAboutComment(ctx, req.Comment.DocumentId, userInfo.UserId); err != nil {
+	if err := s.notifyUsersNewComment(ctx, req.Comment.DocumentId, userInfo.UserId); err != nil {
 		return nil, errswrap.NewError(err, errorsdocstore.ErrFailedQuery)
 	}
 
@@ -363,7 +366,7 @@ func (s *Server) DeleteComment(ctx context.Context, req *DeleteCommentRequest) (
 	return &DeleteCommentResponse{}, nil
 }
 
-func (s *Server) notifyUsersAboutComment(ctx context.Context, documentId uint64, sourceUserId int32) error {
+func (s *Server) notifyUsersNewComment(ctx context.Context, documentId uint64, sourceUserId int32) error {
 	userInfo, err := s.ui.GetUserInfoWithoutAccountId(ctx, sourceUserId)
 	if err != nil {
 		return err
@@ -373,42 +376,98 @@ func (s *Server) notifyUsersAboutComment(ctx context.Context, documentId uint64,
 	if err != nil {
 		return err
 	}
-	if doc == nil || doc.CreatorId == nil {
+	if doc == nil || doc.DeletedAt != nil {
 		return nil
 	}
 
-	// Don't send notifications to self
-	if *doc.CreatorId == sourceUserId {
-		return nil
+	// Get the last 3 commentors to send them a notification
+	stmt := tDComments.
+		SELECT(
+			tDComments.CreatorID,
+		).
+		FROM(
+			tDComments.
+				LEFT_JOIN(tCreator,
+					tDComments.CreatorID.EQ(tCreator.ID),
+				),
+		).
+		WHERE(jet.AND(
+			tDComments.DocumentID.EQ(jet.Uint64(doc.Id)),
+			tDComments.CreatorID.NOT_EQ(jet.Int32(sourceUserId)),
+		)).
+		GROUP_BY(tDComments.CreatorID).
+		ORDER_BY(
+			tDComments.CreatedAt.DESC(),
+		).
+		LIMIT(3)
+
+	var targetUserIds []int32
+	if err := stmt.QueryContext(ctx, s.db, &targetUserIds); err != nil {
+		if !errors.Is(err, qrm.ErrNoRows) {
+			return err
+		}
 	}
 
-	if doc.Creator != nil {
-		s.enricher.EnrichJobInfoSafe(userInfo, doc.Creator)
+	// If we have a document creator, make sure to inform the creator if necessary
+	if doc.CreatorId != nil && sourceUserId != *doc.CreatorId && !slices.Contains(targetUserIds, *doc.CreatorId) {
+		userInfo, err := s.ui.GetUserInfoWithoutAccountId(ctx, sourceUserId)
+		if err != nil {
+			return err
+		}
+
+		ok, err := s.checkIfUserHasAccessToDoc(ctx, doc.Id, userInfo, documents.AccessLevel_ACCESS_LEVEL_VIEW)
+		if err != nil {
+			return err
+		}
+		if ok {
+			targetUserIds = append(targetUserIds, *doc.CreatorId)
+		}
 	}
 
-	nType := string(notifi.InfoType)
-	not := &notifications.Notification{
-		UserId: *doc.CreatorId,
-		Title: &common.TranslateItem{
-			Key: "notifications.notifi.document_comment_added.title",
-		},
-		Content: &common.TranslateItem{
-			Key:        "notifications.notifi.document_comment_added.content",
-			Parameters: map[string]string{"title": doc.Title},
-		},
-		Type:     &nType,
-		Category: notifications.NotificationCategory_NOTIFICATION_CATEGORY_DOCUMENT,
-		Data: &notifications.Data{
-			Link: &notifications.Link{
-				To: fmt.Sprintf("/documents/%d#comments", doc.Id),
+	for _, targetUserId := range targetUserIds {
+		// Don't send notifications to source user
+		if targetUserId == sourceUserId {
+			continue
+		}
+
+		// Make sure user has access to document
+		userInfo, err := s.ui.GetUserInfoWithoutAccountId(ctx, sourceUserId)
+		if err != nil {
+			return err
+		}
+
+		ok, err := s.checkIfUserHasAccessToDoc(ctx, doc.Id, userInfo, documents.AccessLevel_ACCESS_LEVEL_VIEW)
+		if err != nil {
+			return err
+		}
+		if !ok {
+			continue
+		}
+
+		nType := string(notifi.InfoType)
+		not := &notifications.Notification{
+			UserId: targetUserId,
+			Title: &common.TranslateItem{
+				Key: "notifications.notifi.document_comment_added.title",
 			},
-			CausedBy: &users.UserShort{
-				UserId: sourceUserId,
+			Content: &common.TranslateItem{
+				Key:        "notifications.notifi.document_comment_added.content",
+				Parameters: map[string]string{"title": doc.Title},
 			},
-		},
-	}
-	if err := s.notif.NotifyUser(ctx, not); err != nil {
-		return err
+			Type:     &nType,
+			Category: notifications.NotificationCategory_NOTIFICATION_CATEGORY_DOCUMENT,
+			Data: &notifications.Data{
+				Link: &notifications.Link{
+					To: fmt.Sprintf("/documents/%d#comments", doc.Id),
+				},
+				CausedBy: &users.UserShort{
+					UserId: sourceUserId,
+				},
+			},
+		}
+		if err := s.notif.NotifyUser(ctx, not); err != nil {
+			return err
+		}
 	}
 
 	return nil
