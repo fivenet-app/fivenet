@@ -62,8 +62,8 @@ const props = defineProps<{
                 </div>
                 <div class="flex items-center justify-between">
                     <p class="inline-flex gap-1 text-sm text-gray-300">
-                        <span>{{ $t('common.reason') }}:</span>
-                        <span class="font-bold">
+                        <span class="font-semibold">{{ $t('common.reason') }}:</span>
+                        <span>
                             {{ $t(`enums.docstore.DocRelation.${activity.reason.replace('DOC_RELATION_', '')}`) }}
                         </span>
                     </p>
@@ -99,8 +99,8 @@ const props = defineProps<{
                 </div>
                 <div class="flex items-center justify-between">
                     <p class="inline-flex gap-1 text-sm text-gray-300">
-                        <span>{{ $t('common.reason') }}:</span>
-                        <span class="font-semibold">
+                        <span class="font-semibold">{{ $t('common.reason') }}:</span>
+                        <span>
                             {{ activity.reason }}
                         </span>
                     </p>
@@ -131,8 +131,8 @@ const props = defineProps<{
                 </div>
                 <div class="flex items-center justify-between">
                     <p class="inline-flex gap-1 text-sm text-gray-300">
-                        <span>{{ $t('common.reason') }}:</span>
-                        <span class="font-semibold">
+                        <span class="font-semibold">{{ $t('common.reason') }}:</span>
+                        <span>
                             {{ activity.reason }}
                         </span>
                     </p>
@@ -165,8 +165,8 @@ const props = defineProps<{
                 </div>
                 <div class="flex items-center justify-between">
                     <p class="inline-flex gap-1 text-sm text-gray-300">
-                        <span>{{ $t('common.reason') }}:</span>
-                        <span class="font-semibold">
+                        <span class="font-semibold">{{ $t('common.reason') }}:</span>
+                        <span>
                             {{ activity.reason }}
                         </span>
                     </p>
@@ -194,8 +194,8 @@ const props = defineProps<{
                 </div>
                 <div class="flex items-center justify-between">
                     <p class="inline-flex gap-1 text-sm text-gray-300">
-                        <span>{{ $t('common.reason') }}:</span>
-                        <span class="font-semibold">
+                        <span class="font-semibold">{{ $t('common.reason') }}:</span>
+                        <span>
                             {{ activity.reason }}
                         </span>
                     </p>
@@ -231,8 +231,8 @@ const props = defineProps<{
                 </div>
                 <div class="flex items-center justify-between">
                     <p class="inline-flex gap-1 text-sm text-gray-300">
-                        <span>{{ $t('common.reason') }}:</span>
-                        <span class="font-semibold">
+                        <span class="font-semibold">{{ $t('common.reason') }}:</span>
+                        <span>
                             {{ activity.reason }}
                         </span>
                     </p>
@@ -276,8 +276,8 @@ const props = defineProps<{
                 <div class="flex items-center justify-between">
                     <p class="inline-flex gap-1 text-sm text-gray-300">
                         <template v-if="activity.oldValue === '' && activity.newValue !== '0'">
-                            <span>{{ $t('common.reason') }}:</span>
-                            <span class="font-semibold">
+                            <span class="font-semibold">{{ $t('common.reason') }}:</span>
+                            <span>
                                 {{ !activity.reason ? $t('common.na') : activity.reason }}
                             </span>
                         </template>
@@ -329,8 +329,8 @@ const props = defineProps<{
                 </div>
                 <div class="flex items-center justify-between">
                     <p class="inline-flex gap-1 text-sm text-gray-300">
-                        <span>{{ $t('common.reason') }}:</span>
-                        <span class="font-semibold">
+                        <span class="font-semibold">{{ $t('common.reason') }}:</span>
+                        <span>
                             {{ activity.reason }}
                         </span>
                     </p>
@@ -358,8 +358,8 @@ const props = defineProps<{
                 </div>
                 <div class="flex items-center justify-between">
                     <p class="inline-flex gap-1 text-sm text-gray-300">
-                        <span>{{ $t('common.reason') }}:</span>
-                        <span class="font-semibold">
+                        <span class="font-semibold">{{ $t('common.reason') }}:</span>
+                        <span>
                             {{ activity.reason }}
                         </span>
                     </p>
