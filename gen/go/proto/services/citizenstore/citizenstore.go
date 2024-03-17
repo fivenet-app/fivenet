@@ -107,7 +107,7 @@ func (s *Server) ListCitizens(ctx context.Context, req *ListCitizensRequest) (*L
 	// Field Permission Check
 	fieldsAttr, err := s.p.Attr(userInfo, permscitizenstore.CitizenStoreServicePerm, permscitizenstore.CitizenStoreServiceListCitizensPerm, permscitizenstore.CitizenStoreServiceListCitizensFieldsPermField)
 	if err != nil {
-		return nil, errswrap.NewError(errorscitizenstore.ErrFailedQuery, err)
+		return nil, errswrap.NewError(err, errorscitizenstore.ErrFailedQuery)
 	}
 	var fields perms.StringList
 	if fieldsAttr != nil {
@@ -177,7 +177,7 @@ func (s *Server) ListCitizens(ctx context.Context, req *ListCitizensRequest) (*L
 
 	var count database.DataCount
 	if err := countStmt.QueryContext(ctx, s.db, &count); err != nil {
-		return nil, errswrap.NewError(errorscitizenstore.ErrFailedQuery, err)
+		return nil, errswrap.NewError(err, errorscitizenstore.ErrFailedQuery)
 	}
 
 	pag, limit := req.Pagination.GetResponse(count.TotalCount)
@@ -208,7 +208,7 @@ func (s *Server) ListCitizens(ctx context.Context, req *ListCitizensRequest) (*L
 		LIMIT(limit)
 
 	if err := stmt.QueryContext(ctx, s.db, &resp.Users); err != nil {
-		return nil, errswrap.NewError(errorscitizenstore.ErrFailedQuery, err)
+		return nil, errswrap.NewError(err, errorscitizenstore.ErrFailedQuery)
 	}
 
 	resp.Pagination.Update(len(resp.Users))
@@ -263,7 +263,7 @@ func (s *Server) GetUser(ctx context.Context, req *GetUserRequest) (*GetUserResp
 	// Field Permission Check
 	fieldsAttr, err := s.p.Attr(userInfo, permscitizenstore.CitizenStoreServicePerm, permscitizenstore.CitizenStoreServiceListCitizensPerm, permscitizenstore.CitizenStoreServiceListCitizensFieldsPermField)
 	if err != nil {
-		return nil, errswrap.NewError(errorscitizenstore.ErrFailedQuery, err)
+		return nil, errswrap.NewError(err, errorscitizenstore.ErrFailedQuery)
 	}
 	var fields perms.StringList
 	if fieldsAttr != nil {
@@ -307,7 +307,7 @@ func (s *Server) GetUser(ctx context.Context, req *GetUserRequest) (*GetUserResp
 		LIMIT(1)
 
 	if err := stmt.QueryContext(ctx, s.db, resp.User); err != nil {
-		return nil, errswrap.NewError(errorscitizenstore.ErrFailedQuery, err)
+		return nil, errswrap.NewError(err, errorscitizenstore.ErrFailedQuery)
 	}
 
 	if resp.User == nil || resp.User.UserId <= 0 {
@@ -321,7 +321,7 @@ func (s *Server) GetUser(ctx context.Context, req *GetUserRequest) (*GetUserResp
 		// Make sure user has permission to see that grade
 		jobGradesAttr, err := s.p.Attr(userInfo, permscitizenstore.CitizenStoreServicePerm, permscitizenstore.CitizenStoreServiceGetUserPerm, permscitizenstore.CitizenStoreServiceGetUserJobsPermField)
 		if err != nil {
-			return nil, errswrap.NewError(errorscitizenstore.ErrFailedQuery, err)
+			return nil, errswrap.NewError(err, errorscitizenstore.ErrFailedQuery)
 		}
 		var jobGrades perms.JobGradeList
 		if jobGradesAttr != nil {
@@ -377,7 +377,7 @@ func (s *Server) GetUser(ctx context.Context, req *GetUserRequest) (*GetUserResp
 
 		if err := stmt.QueryContext(ctx, s.db, &resp.User.Licenses); err != nil {
 			if !errors.Is(err, qrm.ErrNoRows) {
-				return nil, errswrap.NewError(errorscitizenstore.ErrFailedQuery, err)
+				return nil, errswrap.NewError(err, errorscitizenstore.ErrFailedQuery)
 			}
 		}
 	}
@@ -399,7 +399,7 @@ func (s *Server) ListUserActivity(ctx context.Context, req *ListUserActivityRequ
 	// User can't see their own activities, unless they have "Own" perm attribute, or are a superuser
 	fieldsAttr, err := s.p.Attr(userInfo, permscitizenstore.CitizenStoreServicePerm, permscitizenstore.CitizenStoreServiceListUserActivityPerm, permscitizenstore.CitizenStoreServiceListUserActivityFieldsPermField)
 	if err != nil {
-		return nil, errswrap.NewError(errorscitizenstore.ErrFailedQuery, err)
+		return nil, errswrap.NewError(err, errorscitizenstore.ErrFailedQuery)
 	}
 	var fields perms.StringList
 	if fieldsAttr != nil {
@@ -425,7 +425,7 @@ func (s *Server) ListUserActivity(ctx context.Context, req *ListUserActivityRequ
 
 	var count database.DataCount
 	if err := countStmt.QueryContext(ctx, s.db, &count); err != nil {
-		return nil, errswrap.NewError(errorscitizenstore.ErrFailedQuery, err)
+		return nil, errswrap.NewError(err, errorscitizenstore.ErrFailedQuery)
 	}
 
 	pag, limit := req.Pagination.GetResponseWithPageSize(count.TotalCount, 15)
@@ -478,7 +478,7 @@ func (s *Server) ListUserActivity(ctx context.Context, req *ListUserActivityRequ
 
 	if err := stmt.QueryContext(ctx, s.db, &resp.Activity); err != nil {
 		if !errors.Is(err, qrm.ErrNoRows) {
-			return nil, errswrap.NewError(errorscitizenstore.ErrFailedQuery, err)
+			return nil, errswrap.NewError(err, errorscitizenstore.ErrFailedQuery)
 		}
 	}
 
@@ -519,7 +519,7 @@ func (s *Server) SetUserProps(ctx context.Context, req *SetUserPropsRequest) (*S
 	// Get current user props to be able to compare
 	props, err := s.getUserProps(ctx, req.Props.UserId)
 	if err != nil {
-		return nil, errswrap.NewError(errorscitizenstore.ErrFailedQuery, err)
+		return nil, errswrap.NewError(err, errorscitizenstore.ErrFailedQuery)
 	}
 	if props.Wanted == nil {
 		wanted := false
@@ -549,7 +549,7 @@ func (s *Server) SetUserProps(ctx context.Context, req *SetUserPropsRequest) (*S
 	// Field Permission Check
 	fieldsAttr, err := s.p.Attr(userInfo, permscitizenstore.CitizenStoreServicePerm, permscitizenstore.CitizenStoreServiceSetUserPropsPerm, permscitizenstore.CitizenStoreServiceSetUserPropsFieldsPermField)
 	if err != nil {
-		return nil, errswrap.NewError(errorscitizenstore.ErrFailedQuery, err)
+		return nil, errswrap.NewError(err, errorscitizenstore.ErrFailedQuery)
 	}
 	var fields perms.StringList
 	if fieldsAttr != nil {
@@ -625,17 +625,17 @@ func (s *Server) SetUserProps(ctx context.Context, req *SetUserPropsRequest) (*S
 			}
 
 			if err := req.Props.MugShot.Optimize(ctx); err != nil {
-				return nil, errswrap.NewError(errorscitizenstore.ErrFailedQuery, err)
+				return nil, errswrap.NewError(err, errorscitizenstore.ErrFailedQuery)
 			}
 
 			if err := req.Props.MugShot.Upload(ctx, s.st, filestore.MugShots, storage.FileNameSplitter(req.Props.MugShot.GetHash())); err != nil {
-				return nil, errswrap.NewError(errorscitizenstore.ErrFailedQuery, err)
+				return nil, errswrap.NewError(err, errorscitizenstore.ErrFailedQuery)
 			}
 		} else {
 			// Delete mug shot from store
 			if props.MugShot != nil && props.MugShot.Url != nil {
 				if err := s.st.Delete(ctx, filestore.StripURLPrefix(*props.MugShot.Url)); err != nil {
-					return nil, errswrap.NewError(errorscitizenstore.ErrFailedQuery, err)
+					return nil, errswrap.NewError(err, errorscitizenstore.ErrFailedQuery)
 				}
 			}
 		}
@@ -646,7 +646,7 @@ func (s *Server) SetUserProps(ctx context.Context, req *SetUserPropsRequest) (*S
 	// Begin transaction
 	tx, err := s.db.BeginTx(ctx, nil)
 	if err != nil {
-		return nil, errswrap.NewError(errorscitizenstore.ErrFailedQuery, err)
+		return nil, errswrap.NewError(err, errorscitizenstore.ErrFailedQuery)
 	}
 	// Defer a rollback in case anything fails
 	defer tx.Rollback()
@@ -673,7 +673,7 @@ func (s *Server) SetUserProps(ctx context.Context, req *SetUserPropsRequest) (*S
 		)
 
 	if _, err := stmt.ExecContext(ctx, tx); err != nil {
-		return nil, errswrap.NewError(errorscitizenstore.ErrFailedQuery, err)
+		return nil, errswrap.NewError(err, errorscitizenstore.ErrFailedQuery)
 	}
 
 	// Create user activity entries
@@ -681,21 +681,21 @@ func (s *Server) SetUserProps(ctx context.Context, req *SetUserPropsRequest) (*S
 		if err := s.addUserActivity(ctx, tx,
 			userInfo.UserId, req.Props.UserId, users.UserActivityType_USER_ACTIVITY_TYPE_CHANGED, "UserProps.Wanted",
 			strconv.FormatBool(*props.Wanted), strconv.FormatBool(*req.Props.Wanted), req.Reason); err != nil {
-			return nil, errswrap.NewError(errorscitizenstore.ErrFailedQuery, err)
+			return nil, errswrap.NewError(err, errorscitizenstore.ErrFailedQuery)
 		}
 	}
 	if *req.Props.JobName != *props.JobName || *req.Props.JobGradeNumber != *props.JobGradeNumber {
 		if err := s.addUserActivity(ctx, tx,
 			userInfo.UserId, req.Props.UserId, users.UserActivityType_USER_ACTIVITY_TYPE_CHANGED, "UserProps.Job",
 			fmt.Sprintf("%s|%s", props.Job.Label, props.JobGrade.Label), fmt.Sprintf("%s|%s", req.Props.Job.Label, req.Props.JobGrade.Label), req.Reason); err != nil {
-			return nil, errswrap.NewError(errorscitizenstore.ErrFailedQuery, err)
+			return nil, errswrap.NewError(err, errorscitizenstore.ErrFailedQuery)
 		}
 	}
 	if *req.Props.TrafficInfractionPoints != *props.TrafficInfractionPoints {
 		if err := s.addUserActivity(ctx, tx,
 			userInfo.UserId, req.Props.UserId, users.UserActivityType_USER_ACTIVITY_TYPE_CHANGED, "UserProps.TrafficInfractionPoints",
 			strconv.Itoa(int(*props.TrafficInfractionPoints)), strconv.Itoa(int(*req.Props.TrafficInfractionPoints)), req.Reason); err != nil {
-			return nil, errswrap.NewError(errorscitizenstore.ErrFailedQuery, err)
+			return nil, errswrap.NewError(err, errorscitizenstore.ErrFailedQuery)
 		}
 	}
 	if req.Props.MugShot != nil && (props.MugShot == nil || req.Props.MugShot.Url != props.MugShot.Url) {
@@ -711,13 +711,13 @@ func (s *Server) SetUserProps(ctx context.Context, req *SetUserPropsRequest) (*S
 		if err := s.addUserActivity(ctx, tx,
 			userInfo.UserId, req.Props.UserId, users.UserActivityType_USER_ACTIVITY_TYPE_CHANGED, "UserProps.MugShot",
 			previousUrl, currentUrl, req.Reason); err != nil {
-			return nil, errswrap.NewError(errorscitizenstore.ErrFailedQuery, err)
+			return nil, errswrap.NewError(err, errorscitizenstore.ErrFailedQuery)
 		}
 	}
 
 	// Commit the transaction
 	if err := tx.Commit(); err != nil {
-		return nil, errswrap.NewError(errorscitizenstore.ErrFailedQuery, err)
+		return nil, errswrap.NewError(err, errorscitizenstore.ErrFailedQuery)
 	}
 
 	// Get and return new user props
@@ -725,7 +725,7 @@ func (s *Server) SetUserProps(ctx context.Context, req *SetUserPropsRequest) (*S
 		UserId: req.Props.UserId,
 	})
 	if err != nil {
-		return nil, errswrap.NewError(errorscitizenstore.ErrFailedQuery, err)
+		return nil, errswrap.NewError(err, errorscitizenstore.ErrFailedQuery)
 	}
 
 	resp.Props = user.User.Props
@@ -813,7 +813,7 @@ func (s *Server) SetProfilePicture(ctx context.Context, req *SetProfilePictureRe
 
 	avatarFile, err := s.getUserAvatar(ctx, userInfo.UserId)
 	if err != nil {
-		return nil, errswrap.NewError(errorscitizenstore.ErrFailedQuery, err)
+		return nil, errswrap.NewError(err, errorscitizenstore.ErrFailedQuery)
 	}
 
 	if len(req.Avatar.Data) > 0 {
@@ -826,17 +826,17 @@ func (s *Server) SetProfilePicture(ctx context.Context, req *SetProfilePictureRe
 		}
 
 		if err := req.Avatar.Optimize(ctx); err != nil {
-			return nil, errswrap.NewError(errorscitizenstore.ErrFailedQuery, err)
+			return nil, errswrap.NewError(err, errorscitizenstore.ErrFailedQuery)
 		}
 
 		if err := req.Avatar.Upload(ctx, s.st, filestore.Avatars, storage.FileNameSplitter(req.Avatar.GetHash())); err != nil {
-			return nil, errswrap.NewError(errorscitizenstore.ErrFailedQuery, err)
+			return nil, errswrap.NewError(err, errorscitizenstore.ErrFailedQuery)
 		}
 	} else if req.Avatar.Delete != nil && *req.Avatar.Delete {
 		// Delete mug shot from store
 		if avatarFile != nil && avatarFile.Url != nil {
 			if err := s.st.Delete(ctx, filestore.StripURLPrefix(*avatarFile.Url)); err != nil {
-				return nil, errswrap.NewError(errorscitizenstore.ErrFailedQuery, err)
+				return nil, errswrap.NewError(err, errorscitizenstore.ErrFailedQuery)
 			}
 		}
 	}
@@ -855,7 +855,7 @@ func (s *Server) SetProfilePicture(ctx context.Context, req *SetProfilePictureRe
 		)
 
 	if _, err := stmt.ExecContext(ctx, s.db); err != nil {
-		return nil, errswrap.NewError(errorscitizenstore.ErrFailedQuery, err)
+		return nil, errswrap.NewError(err, errorscitizenstore.ErrFailedQuery)
 	}
 
 	return &SetProfilePictureResponse{

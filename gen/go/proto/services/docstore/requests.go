@@ -39,7 +39,7 @@ func (s *Server) ListDocumentReqs(ctx context.Context, req *ListDocumentReqsRequ
 
 	ok, err := s.checkIfUserHasAccessToDoc(ctx, req.DocumentId, userInfo, documents.AccessLevel_ACCESS_LEVEL_VIEW)
 	if err != nil {
-		return nil, errswrap.NewError(errorsdocstore.ErrFailedQuery, err)
+		return nil, errswrap.NewError(err, errorsdocstore.ErrFailedQuery)
 	}
 	if !ok {
 		return nil, errorsdocstore.ErrDocViewDenied
@@ -59,7 +59,7 @@ func (s *Server) ListDocumentReqs(ctx context.Context, req *ListDocumentReqsRequ
 	var count database.DataCount
 	if err := countStmt.QueryContext(ctx, s.db, &count); err != nil {
 		if !errors.Is(err, qrm.ErrNoRows) {
-			return nil, errswrap.NewError(errorsdocstore.ErrFailedQuery, err)
+			return nil, errswrap.NewError(err, errorsdocstore.ErrFailedQuery)
 		}
 	}
 
@@ -108,7 +108,7 @@ func (s *Server) ListDocumentReqs(ctx context.Context, req *ListDocumentReqsRequ
 		LIMIT(limit)
 
 	if err := stmt.QueryContext(ctx, s.db, &resp.Requests); err != nil {
-		return nil, errswrap.NewError(errorsdocstore.ErrFailedQuery, err)
+		return nil, errswrap.NewError(err, errorsdocstore.ErrFailedQuery)
 	}
 
 	resp.Pagination.Update(len(resp.Requests))
@@ -137,7 +137,7 @@ func (s *Server) CreateDocumentReq(ctx context.Context, req *CreateDocumentReqRe
 
 	ok, err := s.checkIfUserHasAccessToDoc(ctx, req.DocumentId, userInfo, documents.AccessLevel_ACCESS_LEVEL_VIEW)
 	if err != nil {
-		return nil, errswrap.NewError(errorsdocstore.ErrFailedQuery, err)
+		return nil, errswrap.NewError(err, errorsdocstore.ErrFailedQuery)
 	}
 	if !ok && req.RequestType != documents.DocActivityType_DOC_ACTIVITY_TYPE_REQUESTED_ACCESS {
 		return nil, errorsdocstore.ErrDocViewDenied
@@ -145,7 +145,7 @@ func (s *Server) CreateDocumentReq(ctx context.Context, req *CreateDocumentReqRe
 
 	doc, err := s.getDocument(ctx, tDocument.ID.EQ(jet.Uint64(req.DocumentId)), userInfo)
 	if err != nil {
-		return nil, errswrap.NewError(errorsdocstore.ErrFailedQuery, err)
+		return nil, errswrap.NewError(err, errorsdocstore.ErrFailedQuery)
 	}
 	if doc.Id <= 0 {
 		doc.Id = req.DocumentId
@@ -157,7 +157,7 @@ func (s *Server) CreateDocumentReq(ctx context.Context, req *CreateDocumentReqRe
 		),
 	)
 	if err != nil {
-		return nil, errswrap.NewError(errorsdocstore.ErrFailedQuery, err)
+		return nil, errswrap.NewError(err, errorsdocstore.ErrFailedQuery)
 	}
 
 	if request != nil {
@@ -173,7 +173,7 @@ func (s *Server) CreateDocumentReq(ctx context.Context, req *CreateDocumentReqRe
 	// Begin transaction
 	tx, err := s.db.BeginTx(ctx, nil)
 	if err != nil {
-		return nil, errswrap.NewError(errorsdocstore.ErrFailedQuery, err)
+		return nil, errswrap.NewError(err, errorsdocstore.ErrFailedQuery)
 	}
 	// Defer a rollback in case anything fails
 	defer tx.Rollback()
@@ -186,7 +186,7 @@ func (s *Server) CreateDocumentReq(ctx context.Context, req *CreateDocumentReqRe
 		Reason:       req.Reason,
 		Data:         req.Data,
 	}); err != nil {
-		return nil, errswrap.NewError(errorsdocstore.ErrFailedQuery, err)
+		return nil, errswrap.NewError(err, errorsdocstore.ErrFailedQuery)
 	}
 
 	// If no request of that type exists yet, create one, otherwise udpate the existing with the new requestors info
@@ -200,7 +200,7 @@ func (s *Server) CreateDocumentReq(ctx context.Context, req *CreateDocumentReqRe
 			Data:        req.Data,
 		})
 		if err != nil {
-			return nil, errswrap.NewError(errorsdocstore.ErrFailedQuery, err)
+			return nil, errswrap.NewError(err, errorsdocstore.ErrFailedQuery)
 		}
 	} else {
 		accepted := false
@@ -216,13 +216,13 @@ func (s *Server) CreateDocumentReq(ctx context.Context, req *CreateDocumentReqRe
 			Data:        req.Data,
 			Accepted:    &accepted,
 		}); err != nil {
-			return nil, errswrap.NewError(errorsdocstore.ErrFailedQuery, err)
+			return nil, errswrap.NewError(err, errorsdocstore.ErrFailedQuery)
 		}
 	}
 
 	// Commit the transaction
 	if err := tx.Commit(); err != nil {
-		return nil, errswrap.NewError(errorsdocstore.ErrFailedQuery, err)
+		return nil, errswrap.NewError(err, errorsdocstore.ErrFailedQuery)
 	}
 
 	auditEntry.State = int16(rector.EventType_EVENT_TYPE_CREATED)
@@ -234,7 +234,7 @@ func (s *Server) CreateDocumentReq(ctx context.Context, req *CreateDocumentReqRe
 	// If the document has no creator anymore, nothing we can do here
 	if doc.CreatorId != nil {
 		if err := s.notifyUserAboutRequest(ctx, doc, userInfo.UserId, int32(*doc.CreatorId)); err != nil {
-			return nil, errswrap.NewError(errorsdocstore.ErrFailedQuery, err)
+			return nil, errswrap.NewError(err, errorsdocstore.ErrFailedQuery)
 		}
 	}
 
@@ -258,7 +258,7 @@ func (s *Server) UpdateDocumentReq(ctx context.Context, req *UpdateDocumentReqRe
 			AND(tDocRequest.DocumentID.EQ(jet.Uint64(req.DocumentId))),
 	)
 	if err != nil {
-		return nil, errswrap.NewError(errorsdocstore.ErrFailedQuery, err)
+		return nil, errswrap.NewError(err, errorsdocstore.ErrFailedQuery)
 	}
 	if request == nil {
 		return nil, errorsdocstore.ErrFailedQuery
@@ -266,7 +266,7 @@ func (s *Server) UpdateDocumentReq(ctx context.Context, req *UpdateDocumentReqRe
 
 	ok, err := s.checkIfUserHasAccessToDoc(ctx, request.DocumentId, userInfo, documents.AccessLevel_ACCESS_LEVEL_EDIT)
 	if err != nil {
-		return nil, errswrap.NewError(errorsdocstore.ErrFailedQuery, err)
+		return nil, errswrap.NewError(err, errorsdocstore.ErrFailedQuery)
 	}
 	if !ok {
 		return nil, errorsdocstore.ErrDocViewDenied
@@ -274,7 +274,7 @@ func (s *Server) UpdateDocumentReq(ctx context.Context, req *UpdateDocumentReqRe
 
 	doc, err := s.getDocument(ctx, tDocument.ID.EQ(jet.Uint64(req.DocumentId)), userInfo)
 	if err != nil {
-		return nil, errswrap.NewError(errorsdocstore.ErrFailedQuery, err)
+		return nil, errswrap.NewError(err, errorsdocstore.ErrFailedQuery)
 	}
 
 	if (doc.CreatorId != nil && *doc.CreatorId != userInfo.UserId) && !userInfo.SuperUser {
@@ -289,7 +289,7 @@ func (s *Server) UpdateDocumentReq(ctx context.Context, req *UpdateDocumentReqRe
 	// Begin transaction
 	tx, err := s.db.BeginTx(ctx, nil)
 	if err != nil {
-		return nil, errswrap.NewError(errorsdocstore.ErrFailedQuery, err)
+		return nil, errswrap.NewError(err, errorsdocstore.ErrFailedQuery)
 	}
 	// Defer a rollback in case anything fails
 	defer tx.Rollback()
@@ -298,7 +298,7 @@ func (s *Server) UpdateDocumentReq(ctx context.Context, req *UpdateDocumentReqRe
 	request.Accepted = &accepted
 	request.UpdatedAt = timestamp.Now()
 	if err := s.updateDocumentReq(ctx, tx, request.Id, request); err != nil {
-		return nil, errswrap.NewError(errorsdocstore.ErrFailedQuery, err)
+		return nil, errswrap.NewError(err, errorsdocstore.ErrFailedQuery)
 	}
 
 	// Accepted the change
@@ -333,7 +333,7 @@ func (s *Server) UpdateDocumentReq(ctx context.Context, req *UpdateDocumentReqRe
 			activityType = documents.DocActivityType_DOC_ACTIVITY_TYPE_OWNER_CHANGED
 
 			if err := s.updateDocumentOwner(ctx, tx, request.DocumentId, userInfo, request.Creator); err != nil {
-				return nil, errswrap.NewError(errorsdocstore.ErrFailedQuery, err)
+				return nil, errswrap.NewError(err, errorsdocstore.ErrFailedQuery)
 			}
 
 		case documents.DocActivityType_DOC_ACTIVITY_TYPE_REQUESTED_DELETION:
@@ -349,7 +349,7 @@ func (s *Server) UpdateDocumentReq(ctx context.Context, req *UpdateDocumentReqRe
 			activityType = documents.DocActivityType_DOC_ACTIVITY_TYPE_ACCESS_UPDATED
 
 			if request.CreatorId == nil || request.Data == nil || request.Data.GetAccessRequested() == nil {
-				return nil, errswrap.NewError(errorsdocstore.ErrFailedQuery, err)
+				return nil, errswrap.NewError(err, errorsdocstore.ErrFailedQuery)
 			}
 
 			if err := s.createDocumentAccess(ctx, tx, request.DocumentId, &documents.DocumentAccess{
@@ -361,7 +361,7 @@ func (s *Server) UpdateDocumentReq(ctx context.Context, req *UpdateDocumentReqRe
 					},
 				},
 			}); err != nil {
-				return nil, errswrap.NewError(errorsdocstore.ErrFailedQuery, err)
+				return nil, errswrap.NewError(err, errorsdocstore.ErrFailedQuery)
 			}
 		}
 
@@ -372,13 +372,13 @@ func (s *Server) UpdateDocumentReq(ctx context.Context, req *UpdateDocumentReqRe
 			CreatorJob:   userInfo.Job,
 			Reason:       req.Reason,
 		}); err != nil {
-			return nil, errswrap.NewError(errorsdocstore.ErrFailedQuery, err)
+			return nil, errswrap.NewError(err, errorsdocstore.ErrFailedQuery)
 		}
 	}
 
 	// Commit the transaction
 	if err := tx.Commit(); err != nil {
-		return nil, errswrap.NewError(errorsdocstore.ErrFailedQuery, err)
+		return nil, errswrap.NewError(err, errorsdocstore.ErrFailedQuery)
 	}
 
 	auditEntry.State = int16(rector.EventType_EVENT_TYPE_UPDATED)
@@ -404,22 +404,22 @@ func (s *Server) DeleteDocumentReq(ctx context.Context, req *DeleteDocumentReqRe
 		tDocRequest.ID.EQ(jet.Uint64(req.RequestId)),
 	)
 	if err != nil {
-		return nil, errswrap.NewError(errorsdocstore.ErrFailedQuery, err)
+		return nil, errswrap.NewError(err, errorsdocstore.ErrFailedQuery)
 	}
 	if request == nil {
-		return nil, errswrap.NewError(errorsdocstore.ErrFailedQuery, err)
+		return nil, errswrap.NewError(err, errorsdocstore.ErrFailedQuery)
 	}
 
 	ok, err := s.checkIfUserHasAccessToDoc(ctx, request.DocumentId, userInfo, documents.AccessLevel_ACCESS_LEVEL_EDIT)
 	if err != nil {
-		return nil, errswrap.NewError(errorsdocstore.ErrFailedQuery, err)
+		return nil, errswrap.NewError(err, errorsdocstore.ErrFailedQuery)
 	}
 	if !ok {
 		return nil, errorsdocstore.ErrDocViewDenied
 	}
 
 	if err := s.deleteDocumentReq(ctx, s.db, req.RequestId); err != nil {
-		return nil, errswrap.NewError(errorsdocstore.ErrFailedQuery, err)
+		return nil, errswrap.NewError(err, errorsdocstore.ErrFailedQuery)
 	}
 
 	auditEntry.State = int16(rector.EventType_EVENT_TYPE_DELETED)

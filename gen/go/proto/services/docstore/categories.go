@@ -45,7 +45,7 @@ func (s *Server) ListCategories(ctx context.Context, req *ListCategoriesRequest)
 	resp := &ListCategoriesResponse{}
 	if err := stmt.QueryContext(ctx, s.db, &resp.Category); err != nil {
 		if !errors.Is(err, qrm.ErrNoRows) {
-			return nil, errswrap.NewError(errorsdocstore.ErrFailedQuery, err)
+			return nil, errswrap.NewError(err, errorsdocstore.ErrFailedQuery)
 		}
 	}
 
@@ -108,12 +108,12 @@ func (s *Server) CreateCategory(ctx context.Context, req *CreateCategoryRequest)
 
 	res, err := stmt.ExecContext(ctx, s.db)
 	if err != nil {
-		return nil, errswrap.NewError(errorsdocstore.ErrFailedQuery, err)
+		return nil, errswrap.NewError(err, errorsdocstore.ErrFailedQuery)
 	}
 
 	lastId, err := res.LastInsertId()
 	if err != nil {
-		return nil, errswrap.NewError(errorsdocstore.ErrFailedQuery, err)
+		return nil, errswrap.NewError(err, errorsdocstore.ErrFailedQuery)
 	}
 
 	auditEntry.State = int16(rector.EventType_EVENT_TYPE_CREATED)
@@ -155,7 +155,7 @@ func (s *Server) UpdateCategory(ctx context.Context, req *UpdateCategoryRequest)
 		))
 
 	if _, err := stmt.ExecContext(ctx, s.db); err != nil {
-		return nil, errswrap.NewError(errorsdocstore.ErrFailedQuery, err)
+		return nil, errswrap.NewError(err, errorsdocstore.ErrFailedQuery)
 	}
 
 	auditEntry.State = int16(rector.EventType_EVENT_TYPE_UPDATED)
@@ -191,7 +191,7 @@ func (s *Server) DeleteCategory(ctx context.Context, req *DeleteCategoryRequest)
 		)
 
 	if _, err := stmt.ExecContext(ctx, s.db); err != nil {
-		return nil, errswrap.NewError(errorsdocstore.ErrFailedQuery, err)
+		return nil, errswrap.NewError(err, errorsdocstore.ErrFailedQuery)
 	}
 
 	auditEntry.State = int16(rector.EventType_EVENT_TYPE_DELETED)

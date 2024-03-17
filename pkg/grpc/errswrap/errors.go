@@ -31,7 +31,7 @@ func (e *Error) GRPCStatus() *status.Status {
 	return e.s
 }
 
-func NewError(s error, e error) error {
+func NewError(e error, s error) error {
 	if e == nil {
 		return s
 	}

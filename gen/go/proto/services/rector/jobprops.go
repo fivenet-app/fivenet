@@ -49,7 +49,7 @@ func (s *Server) GetJobProps(ctx context.Context, req *GetJobPropsRequest) (*Get
 	}
 	if err := stmt.QueryContext(ctx, s.db, resp.JobProps); err != nil {
 		if !errors.Is(err, qrm.ErrNoRows) {
-			return nil, errswrap.NewError(errorsrector.ErrInvalidRequest, err)
+			return nil, errswrap.NewError(err, errorsrector.ErrInvalidRequest)
 		}
 	}
 
@@ -94,17 +94,17 @@ func (s *Server) SetJobProps(ctx context.Context, req *SetJobPropsRequest) (*Set
 			}
 
 			if err := req.JobProps.LogoUrl.Optimize(ctx); err != nil {
-				return nil, errswrap.NewError(errorsrector.ErrFailedQuery, err)
+				return nil, errswrap.NewError(err, errorsrector.ErrFailedQuery)
 			}
 
 			if err := req.JobProps.LogoUrl.Upload(ctx, s.st, filestore.JobLogos, userInfo.Job); err != nil {
-				return nil, errswrap.NewError(errorsrector.ErrFailedQuery, err)
+				return nil, errswrap.NewError(err, errorsrector.ErrFailedQuery)
 			}
 		} else if req.JobProps.LogoUrl.Delete != nil && *req.JobProps.LogoUrl.Delete {
 			// Delete avatar from store
 			if jobProps.JobProps.LogoUrl != nil && jobProps.JobProps.LogoUrl.Url != nil {
 				if err := s.st.Delete(ctx, filestore.StripURLPrefix(*jobProps.JobProps.LogoUrl.Url)); err != nil {
-					return nil, errswrap.NewError(errorsrector.ErrFailedQuery, err)
+					return nil, errswrap.NewError(err, errorsrector.ErrFailedQuery)
 				}
 			}
 		}
@@ -144,7 +144,7 @@ func (s *Server) SetJobProps(ctx context.Context, req *SetJobPropsRequest) (*Set
 		)
 
 	if _, err := stmt.ExecContext(ctx, s.db); err != nil {
-		return nil, errswrap.NewError(errorsrector.ErrFailedQuery, err)
+		return nil, errswrap.NewError(err, errorsrector.ErrFailedQuery)
 	}
 
 	auditEntry.State = int16(rector.EventType_EVENT_TYPE_UPDATED)

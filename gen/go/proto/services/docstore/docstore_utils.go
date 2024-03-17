@@ -399,7 +399,7 @@ func (s *Server) updateDocumentOwner(ctx context.Context, tx qrm.DB, documentId 
 		)
 
 	if _, err := stmt.ExecContext(ctx, s.db); err != nil {
-		return errswrap.NewError(errorsdocstore.ErrFailedQuery, err)
+		return errswrap.NewError(err, errorsdocstore.ErrFailedQuery)
 	}
 
 	if _, err := s.addDocumentActivity(ctx, tx, &documents.DocActivity{
@@ -416,7 +416,7 @@ func (s *Server) updateDocumentOwner(ctx context.Context, tx qrm.DB, documentId 
 			},
 		},
 	}); err != nil {
-		return errswrap.NewError(errorsdocstore.ErrFailedQuery, err)
+		return errswrap.NewError(err, errorsdocstore.ErrFailedQuery)
 	}
 
 	return nil

@@ -26,7 +26,7 @@ func (s *Server) GetQualificationAccess(ctx context.Context, req *GetQualificati
 	userInfo := auth.MustGetUserInfoFromContext(ctx)
 	ok, err := s.checkIfUserHasAccessToQuali(ctx, req.QualificationId, userInfo, qualifications.AccessLevel_ACCESS_LEVEL_VIEW)
 	if err != nil {
-		return nil, errswrap.NewError(errorsqualifications.ErrFailedQuery, err)
+		return nil, errswrap.NewError(err, errorsqualifications.ErrFailedQuery)
 	}
 	if !ok {
 		return nil, errorsqualifications.ErrFailedQuery
@@ -34,7 +34,7 @@ func (s *Server) GetQualificationAccess(ctx context.Context, req *GetQualificati
 
 	access, err := s.getQualificationAccess(ctx, req.QualificationId)
 	if err != nil {
-		return nil, errswrap.NewError(errorsqualifications.ErrFailedQuery, err)
+		return nil, errswrap.NewError(err, errorsqualifications.ErrFailedQuery)
 	}
 
 	for i := 0; i < len(access.Jobs); i++ {
@@ -64,7 +64,7 @@ func (s *Server) SetQualificationAccess(ctx context.Context, req *SetQualificati
 
 	ok, err := s.checkIfUserHasAccessToQuali(ctx, req.QualificationId, userInfo, qualifications.AccessLevel_ACCESS_LEVEL_EDIT)
 	if err != nil {
-		return nil, errswrap.NewError(errorsqualifications.ErrFailedQuery, err)
+		return nil, errswrap.NewError(err, errorsqualifications.ErrFailedQuery)
 	}
 	if !ok {
 		return nil, errorsqualifications.ErrFailedQuery
@@ -73,18 +73,18 @@ func (s *Server) SetQualificationAccess(ctx context.Context, req *SetQualificati
 	// Begin transaction
 	tx, err := s.db.BeginTx(ctx, nil)
 	if err != nil {
-		return nil, errswrap.NewError(errorsqualifications.ErrFailedQuery, err)
+		return nil, errswrap.NewError(err, errorsqualifications.ErrFailedQuery)
 	}
 	// Defer a rollback in case anything fails
 	defer tx.Rollback()
 
 	if err := s.handleQualificationAccessChanges(ctx, tx, req.Mode, req.QualificationId, req.Access); err != nil {
-		return nil, errswrap.NewError(errorsqualifications.ErrFailedQuery, err)
+		return nil, errswrap.NewError(err, errorsqualifications.ErrFailedQuery)
 	}
 
 	// Commit the transaction
 	if err := tx.Commit(); err != nil {
-		return nil, errswrap.NewError(errorsqualifications.ErrFailedQuery, err)
+		return nil, errswrap.NewError(err, errorsqualifications.ErrFailedQuery)
 	}
 
 	auditEntry.State = int16(rector.EventType_EVENT_TYPE_UPDATED)

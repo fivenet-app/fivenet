@@ -21,7 +21,7 @@ func (s *Server) DeleteOAuth2Connection(ctx context.Context, req *DeleteOAuth2Co
 
 	claims, err := s.tm.ParseWithClaims(token)
 	if err != nil {
-		return nil, errswrap.NewError(ErrGenericAccount, err)
+		return nil, errswrap.NewError(err, ErrGenericAccount)
 	}
 
 	stmt := tOAuth2Accs.
@@ -33,7 +33,7 @@ func (s *Server) DeleteOAuth2Connection(ctx context.Context, req *DeleteOAuth2Co
 		LIMIT(1)
 
 	if _, err := stmt.ExecContext(ctx, s.db); err != nil {
-		return nil, errswrap.NewError(ErrGenericAccount, err)
+		return nil, errswrap.NewError(err, ErrGenericAccount)
 	}
 
 	return &DeleteOAuth2ConnectionResponse{

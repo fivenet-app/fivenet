@@ -36,7 +36,7 @@ func (s *Server) GetDocumentReferences(ctx context.Context, req *GetDocumentRefe
 
 	check, err := s.checkIfUserHasAccessToDoc(ctx, req.DocumentId, userInfo, documents.AccessLevel_ACCESS_LEVEL_VIEW)
 	if err != nil {
-		return nil, errswrap.NewError(errorsdocstore.ErrFailedQuery, err)
+		return nil, errswrap.NewError(err, errorsdocstore.ErrFailedQuery)
 	}
 	if !check && !userInfo.SuperUser {
 		return nil, errorsdocstore.ErrFeedRefsViewDenied
@@ -68,7 +68,7 @@ func (s *Server) GetDocumentReferences(ctx context.Context, req *GetDocumentRefe
 
 	if err := idStmt.QueryContext(ctx, s.db, &docsIds); err != nil {
 		if !errors.Is(err, qrm.ErrNoRows) {
-			return nil, errswrap.NewError(errorsdocstore.ErrFailedQuery, err)
+			return nil, errswrap.NewError(err, errorsdocstore.ErrFailedQuery)
 		}
 	}
 
@@ -88,7 +88,7 @@ func (s *Server) GetDocumentReferences(ctx context.Context, req *GetDocumentRefe
 
 	ids, err := s.checkIfUserHasAccessToDocIDs(ctx, userInfo, documents.AccessLevel_ACCESS_LEVEL_VIEW, docIds...)
 	if err != nil {
-		return nil, errswrap.NewError(errorsdocstore.ErrFailedQuery, err)
+		return nil, errswrap.NewError(err, errorsdocstore.ErrFailedQuery)
 	}
 
 	if len(ids) == 0 {
@@ -175,7 +175,7 @@ func (s *Server) GetDocumentReferences(ctx context.Context, req *GetDocumentRefe
 	var dest []*documents.DocumentReference
 	if err := stmt.QueryContext(ctx, s.db, &dest); err != nil {
 		if !errors.Is(err, qrm.ErrNoRows) {
-			return nil, errswrap.NewError(errorsdocstore.ErrFailedQuery, err)
+			return nil, errswrap.NewError(err, errorsdocstore.ErrFailedQuery)
 		}
 	}
 
@@ -205,7 +205,7 @@ func (s *Server) GetDocumentRelations(ctx context.Context, req *GetDocumentRelat
 
 	check, err := s.checkIfUserHasAccessToDoc(ctx, req.DocumentId, userInfo, documents.AccessLevel_ACCESS_LEVEL_VIEW)
 	if err != nil {
-		return nil, errswrap.NewError(errorsdocstore.ErrFailedQuery, err)
+		return nil, errswrap.NewError(err, errorsdocstore.ErrFailedQuery)
 	}
 	if !check && !userInfo.SuperUser {
 		return nil, errorsdocstore.ErrFeedRelsViewDenied
@@ -213,7 +213,7 @@ func (s *Server) GetDocumentRelations(ctx context.Context, req *GetDocumentRelat
 
 	relations, err := s.getDocumentRelations(ctx, userInfo, req.DocumentId)
 	if err != nil {
-		return nil, errswrap.NewError(errorsdocstore.ErrFailedQuery, err)
+		return nil, errswrap.NewError(err, errorsdocstore.ErrFailedQuery)
 	}
 
 	return &GetDocumentRelationsResponse{
@@ -241,7 +241,7 @@ func (s *Server) AddDocumentReference(ctx context.Context, req *AddDocumentRefer
 	check, err := s.checkIfUserHasAccessToDocs(ctx, userInfo, documents.AccessLevel_ACCESS_LEVEL_EDIT,
 		req.Reference.SourceDocumentId, req.Reference.TargetDocumentId)
 	if err != nil {
-		return nil, errswrap.NewError(errorsdocstore.ErrFailedQuery, err)
+		return nil, errswrap.NewError(err, errorsdocstore.ErrFailedQuery)
 	}
 	if !check && !userInfo.SuperUser {
 		return nil, errorsdocstore.ErrFeedRefAddDenied
@@ -252,7 +252,7 @@ func (s *Server) AddDocumentReference(ctx context.Context, req *AddDocumentRefer
 	// Begin transaction
 	tx, err := s.db.BeginTx(ctx, nil)
 	if err != nil {
-		return nil, errswrap.NewError(errorsdocstore.ErrFailedQuery, err)
+		return nil, errswrap.NewError(err, errorsdocstore.ErrFailedQuery)
 	}
 	// Defer a rollback in case anything fails
 	defer tx.Rollback()
@@ -274,17 +274,17 @@ func (s *Server) AddDocumentReference(ctx context.Context, req *AddDocumentRefer
 
 	result, err := stmt.ExecContext(ctx, s.db)
 	if err != nil {
-		return nil, errswrap.NewError(errorsdocstore.ErrFailedQuery, err)
+		return nil, errswrap.NewError(err, errorsdocstore.ErrFailedQuery)
 	}
 
 	lastId, err := result.LastInsertId()
 	if err != nil {
-		return nil, errswrap.NewError(errorsdocstore.ErrFailedQuery, err)
+		return nil, errswrap.NewError(err, errorsdocstore.ErrFailedQuery)
 	}
 
 	// Commit the transaction
 	if err := tx.Commit(); err != nil {
-		return nil, errswrap.NewError(errorsdocstore.ErrFailedQuery, err)
+		return nil, errswrap.NewError(err, errorsdocstore.ErrFailedQuery)
 	}
 
 	auditEntry.State = int16(rector.EventType_EVENT_TYPE_CREATED)
@@ -322,12 +322,12 @@ func (s *Server) RemoveDocumentReference(ctx context.Context, req *RemoveDocumen
 		LIMIT(1)
 
 	if err := docsStmt.QueryContext(ctx, s.db, &docIDs); err != nil {
-		return nil, errswrap.NewError(errorsdocstore.ErrFailedQuery, err)
+		return nil, errswrap.NewError(err, errorsdocstore.ErrFailedQuery)
 	}
 
 	check, err := s.checkIfUserHasAccessToDocs(ctx, userInfo, documents.AccessLevel_ACCESS_LEVEL_EDIT, docIDs.Source, docIDs.Target)
 	if err != nil {
-		return nil, errswrap.NewError(errorsdocstore.ErrFailedQuery, err)
+		return nil, errswrap.NewError(err, errorsdocstore.ErrFailedQuery)
 	}
 	if !check && !userInfo.SuperUser {
 		return nil, errorsdocstore.ErrFeedRefRemoveDenied
@@ -345,7 +345,7 @@ func (s *Server) RemoveDocumentReference(ctx context.Context, req *RemoveDocumen
 		)
 
 	if _, err := stmt.ExecContext(ctx, s.db); err != nil {
-		return nil, errswrap.NewError(errorsdocstore.ErrFailedQuery, err)
+		return nil, errswrap.NewError(err, errorsdocstore.ErrFailedQuery)
 	}
 
 	auditEntry.State = int16(rector.EventType_EVENT_TYPE_DELETED)
@@ -367,7 +367,7 @@ func (s *Server) AddDocumentRelation(ctx context.Context, req *AddDocumentRelati
 
 	check, err := s.checkIfUserHasAccessToDoc(ctx, req.Relation.DocumentId, userInfo, documents.AccessLevel_ACCESS_LEVEL_EDIT)
 	if err != nil {
-		return nil, errswrap.NewError(errorsdocstore.ErrFailedQuery, err)
+		return nil, errswrap.NewError(err, errorsdocstore.ErrFailedQuery)
 	}
 	if !check && !userInfo.SuperUser {
 		return nil, errorsdocstore.ErrFeedRelAddDenied
@@ -378,7 +378,7 @@ func (s *Server) AddDocumentRelation(ctx context.Context, req *AddDocumentRelati
 	// Begin transaction
 	tx, err := s.db.BeginTx(ctx, nil)
 	if err != nil {
-		return nil, errswrap.NewError(errorsdocstore.ErrFailedQuery, err)
+		return nil, errswrap.NewError(err, errorsdocstore.ErrFailedQuery)
 	}
 	// Defer a rollback in case anything fails
 	defer tx.Rollback()
@@ -400,30 +400,30 @@ func (s *Server) AddDocumentRelation(ctx context.Context, req *AddDocumentRelati
 
 	result, err := stmt.ExecContext(ctx, tx)
 	if err != nil {
-		return nil, errswrap.NewError(errorsdocstore.ErrFailedQuery, err)
+		return nil, errswrap.NewError(err, errorsdocstore.ErrFailedQuery)
 	}
 
 	lastId, err := result.LastInsertId()
 	if err != nil {
-		return nil, errswrap.NewError(errorsdocstore.ErrFailedQuery, err)
+		return nil, errswrap.NewError(err, errorsdocstore.ErrFailedQuery)
 	}
 
 	if err := s.addUserActivity(ctx, tx,
 		userInfo.UserId, req.Relation.TargetUserId, users.UserActivityType_USER_ACTIVITY_TYPE_MENTIONED, "DocStore.Relation", "",
 		strconv.Itoa(int(lastId)), req.Relation.Relation.String()); err != nil {
-		return nil, errswrap.NewError(errorsdocstore.ErrFailedQuery, err)
+		return nil, errswrap.NewError(err, errorsdocstore.ErrFailedQuery)
 	}
 
 	// Commit the transaction
 	if err := tx.Commit(); err != nil {
-		return nil, errswrap.NewError(errorsdocstore.ErrFailedQuery, err)
+		return nil, errswrap.NewError(err, errorsdocstore.ErrFailedQuery)
 	}
 
 	auditEntry.State = int16(rector.EventType_EVENT_TYPE_CREATED)
 
 	if req.Relation.Relation == documents.DocRelation_DOC_RELATION_MENTIONED {
 		if err := s.notifyMentionedUser(ctx, uint64(lastId), userInfo.UserId, req.Relation.TargetUserId); err != nil {
-			return nil, errswrap.NewError(errorsdocstore.ErrFailedQuery, err)
+			return nil, errswrap.NewError(err, errorsdocstore.ErrFailedQuery)
 		}
 	}
 
@@ -458,12 +458,12 @@ func (s *Server) RemoveDocumentRelation(ctx context.Context, req *RemoveDocument
 		LIMIT(1)
 
 	if err := docsStmt.QueryContext(ctx, s.db, &docID); err != nil {
-		return nil, errswrap.NewError(errorsdocstore.ErrFailedQuery, err)
+		return nil, errswrap.NewError(err, errorsdocstore.ErrFailedQuery)
 	}
 
 	check, err := s.checkIfUserHasAccessToDoc(ctx, docID.ID, userInfo, documents.AccessLevel_ACCESS_LEVEL_EDIT)
 	if err != nil {
-		return nil, errswrap.NewError(errorsdocstore.ErrFailedQuery, err)
+		return nil, errswrap.NewError(err, errorsdocstore.ErrFailedQuery)
 	}
 	if !check && !userInfo.SuperUser {
 		return nil, errorsdocstore.ErrFeedRelRemoveDenied
@@ -472,7 +472,7 @@ func (s *Server) RemoveDocumentRelation(ctx context.Context, req *RemoveDocument
 	// Begin transaction
 	tx, err := s.db.BeginTx(ctx, nil)
 	if err != nil {
-		return nil, errswrap.NewError(errorsdocstore.ErrFailedQuery, err)
+		return nil, errswrap.NewError(err, errorsdocstore.ErrFailedQuery)
 	}
 	// Defer a rollback in case anything fails
 	defer tx.Rollback()
@@ -489,23 +489,23 @@ func (s *Server) RemoveDocumentRelation(ctx context.Context, req *RemoveDocument
 		)
 
 	if _, err := stmt.ExecContext(ctx, s.db); err != nil {
-		return nil, errswrap.NewError(errorsdocstore.ErrFailedQuery, err)
+		return nil, errswrap.NewError(err, errorsdocstore.ErrFailedQuery)
 	}
 
 	rel, err := s.getDocumentRelation(ctx, req.Id)
 	if err != nil {
-		return nil, errswrap.NewError(errorsdocstore.ErrFailedQuery, err)
+		return nil, errswrap.NewError(err, errorsdocstore.ErrFailedQuery)
 	}
 
 	if err := s.addUserActivity(ctx, tx,
 		userInfo.UserId, rel.TargetUserId, users.UserActivityType_USER_ACTIVITY_TYPE_MENTIONED, "DocStore.Relation",
 		strconv.Itoa(int(docID.ID)), "", rel.Relation.String()); err != nil {
-		return nil, errswrap.NewError(errorsdocstore.ErrFailedQuery, err)
+		return nil, errswrap.NewError(err, errorsdocstore.ErrFailedQuery)
 	}
 
 	// Commit the transaction
 	if err := tx.Commit(); err != nil {
-		return nil, errswrap.NewError(errorsdocstore.ErrFailedQuery, err)
+		return nil, errswrap.NewError(err, errorsdocstore.ErrFailedQuery)
 	}
 
 	auditEntry.State = int16(rector.EventType_EVENT_TYPE_DELETED)

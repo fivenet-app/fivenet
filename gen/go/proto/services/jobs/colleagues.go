@@ -76,7 +76,7 @@ func (s *Server) ListColleagues(ctx context.Context, req *ListColleaguesRequest)
 	var count database.DataCount
 	if err := countStmt.QueryContext(ctx, s.db, &count); err != nil {
 		if !errors.Is(err, qrm.ErrNoRows) {
-			return nil, errswrap.NewError(errorsjobs.ErrFailedQuery, err)
+			return nil, errswrap.NewError(err, errorsjobs.ErrFailedQuery)
 		}
 	}
 
@@ -124,7 +124,7 @@ func (s *Server) ListColleagues(ctx context.Context, req *ListColleaguesRequest)
 
 	if err := stmt.QueryContext(ctx, s.db, &resp.Colleagues); err != nil {
 		if !errors.Is(err, qrm.ErrNoRows) {
-			return nil, errswrap.NewError(errorsjobs.ErrFailedQuery, err)
+			return nil, errswrap.NewError(err, errorsjobs.ErrFailedQuery)
 		}
 	}
 
@@ -193,7 +193,7 @@ func (s *Server) GetColleague(ctx context.Context, req *GetColleagueRequest) (*G
 	// Field Permission Check
 	fieldsAttr, err := s.ps.Attr(userInfo, permsjobs.JobsServicePerm, permsjobs.JobsServiceGetColleaguePerm, permsjobs.JobsServiceGetColleagueAccessPermField)
 	if err != nil {
-		return nil, errswrap.NewError(errorsjobs.ErrFailedQuery, err)
+		return nil, errswrap.NewError(err, errorsjobs.ErrFailedQuery)
 	}
 	var fields perms.StringList
 	if fieldsAttr != nil {
@@ -202,7 +202,7 @@ func (s *Server) GetColleague(ctx context.Context, req *GetColleagueRequest) (*G
 
 	targetUser, err := s.getColleague(ctx, req.UserId)
 	if err != nil {
-		return nil, errswrap.NewError(errorsjobs.ErrFailedQuery, err)
+		return nil, errswrap.NewError(err, errorsjobs.ErrFailedQuery)
 	}
 
 	if !s.checkIfHasAccessToColleague(fields, userInfo, &users.UserShort{
@@ -215,7 +215,7 @@ func (s *Server) GetColleague(ctx context.Context, req *GetColleagueRequest) (*G
 
 	colleague, err := s.getColleague(ctx, targetUser.UserId)
 	if err != nil {
-		return nil, errswrap.NewError(errorsjobs.ErrFailedQuery, err)
+		return nil, errswrap.NewError(err, errorsjobs.ErrFailedQuery)
 	}
 
 	auditEntry.State = int16(rector.EventType_EVENT_TYPE_VIEWED)
@@ -230,7 +230,7 @@ func (s *Server) GetSelf(ctx context.Context, req *GetSelfRequest) (*GetSelfResp
 
 	colleague, err := s.getColleague(ctx, userInfo.UserId)
 	if err != nil {
-		return nil, errswrap.NewError(errorsjobs.ErrFailedQuery, err)
+		return nil, errswrap.NewError(err, errorsjobs.ErrFailedQuery)
 	}
 
 	return &GetSelfResponse{
@@ -255,7 +255,7 @@ func (s *Server) getJobsUserProps(ctx context.Context, userId int32) (*jobs.Jobs
 	}
 	if err := stmt.QueryContext(ctx, s.db, dest); err != nil {
 		if !errors.Is(err, qrm.ErrNoRows) {
-			return nil, errswrap.NewError(errorsjobs.ErrFailedQuery, err)
+			return nil, errswrap.NewError(err, errorsjobs.ErrFailedQuery)
 		}
 	}
 
@@ -277,7 +277,7 @@ func (s *Server) SetJobsUserProps(ctx context.Context, req *SetJobsUserPropsRequ
 	// Field Permission Check
 	fieldsAttr, err := s.ps.Attr(userInfo, permsjobs.JobsServicePerm, permsjobs.JobsServiceSetJobsUserPropsPerm, permsjobs.JobsServiceSetJobsUserPropsAccessPermField)
 	if err != nil {
-		return nil, errswrap.NewError(errorsjobs.ErrFailedQuery, err)
+		return nil, errswrap.NewError(err, errorsjobs.ErrFailedQuery)
 	}
 	var fields perms.StringList
 	if fieldsAttr != nil {
@@ -286,7 +286,7 @@ func (s *Server) SetJobsUserProps(ctx context.Context, req *SetJobsUserPropsRequ
 
 	targetUser, err := s.getColleague(ctx, req.Props.UserId)
 	if err != nil {
-		return nil, errswrap.NewError(errorsjobs.ErrFailedQuery, err)
+		return nil, errswrap.NewError(err, errorsjobs.ErrFailedQuery)
 	}
 
 	if !s.checkIfHasAccessToColleague(fields, userInfo, &users.UserShort{
@@ -299,7 +299,7 @@ func (s *Server) SetJobsUserProps(ctx context.Context, req *SetJobsUserPropsRequ
 
 	props, err := s.getJobsUserProps(ctx, req.Props.UserId)
 	if err != nil {
-		return nil, errswrap.NewError(errorsjobs.ErrFailedQuery, err)
+		return nil, errswrap.NewError(err, errorsjobs.ErrFailedQuery)
 	}
 
 	absenceBegin := jet.DateExp(jet.NULL)
@@ -324,7 +324,7 @@ func (s *Server) SetJobsUserProps(ctx context.Context, req *SetJobsUserPropsRequ
 	// Begin transaction
 	tx, err := s.db.BeginTx(ctx, nil)
 	if err != nil {
-		return nil, errswrap.NewError(errorsjobs.ErrFailedQuery, err)
+		return nil, errswrap.NewError(err, errorsjobs.ErrFailedQuery)
 	}
 	// Defer a rollback in case anything fails
 	defer tx.Rollback()
@@ -346,7 +346,7 @@ func (s *Server) SetJobsUserProps(ctx context.Context, req *SetJobsUserPropsRequ
 		)
 
 	if _, err := stmt.ExecContext(ctx, tx); err != nil {
-		return nil, errswrap.NewError(errorsjobs.ErrFailedQuery, err)
+		return nil, errswrap.NewError(err, errorsjobs.ErrFailedQuery)
 	}
 
 	// Compare absence dates if any were set
@@ -370,20 +370,20 @@ func (s *Server) SetJobsUserProps(ctx context.Context, req *SetJobsUserPropsRequ
 				},
 			},
 		}); err != nil {
-			return nil, errswrap.NewError(errorsjobs.ErrFailedQuery, err)
+			return nil, errswrap.NewError(err, errorsjobs.ErrFailedQuery)
 		}
 	}
 
 	// Commit the transaction
 	if err := tx.Commit(); err != nil {
-		return nil, errswrap.NewError(errorsjobs.ErrFailedQuery, err)
+		return nil, errswrap.NewError(err, errorsjobs.ErrFailedQuery)
 	}
 
 	auditEntry.State = int16(rector.EventType_EVENT_TYPE_UPDATED)
 
 	props, err = s.getJobsUserProps(ctx, req.Props.UserId)
 	if err != nil {
-		return nil, errswrap.NewError(errorsjobs.ErrFailedQuery, err)
+		return nil, errswrap.NewError(err, errorsjobs.ErrFailedQuery)
 	}
 
 	return &SetJobsUserPropsResponse{
@@ -492,7 +492,7 @@ func (s *Server) ListColleagueActivity(ctx context.Context, req *ListColleagueAc
 	// Access Field Permission Check
 	accessAttr, err := s.ps.Attr(userInfo, permsjobs.JobsServicePerm, permsjobs.JobsServiceGetColleaguePerm, permsjobs.JobsServiceGetColleagueAccessPermField)
 	if err != nil {
-		return nil, errswrap.NewError(errorsjobs.ErrFailedQuery, err)
+		return nil, errswrap.NewError(err, errorsjobs.ErrFailedQuery)
 	}
 	var access perms.StringList
 	if accessAttr != nil {
@@ -523,7 +523,7 @@ func (s *Server) ListColleagueActivity(ctx context.Context, req *ListColleagueAc
 
 		targetUser, err := s.getColleague(ctx, userId)
 		if err != nil {
-			return nil, errswrap.NewError(errorsjobs.ErrFailedQuery, err)
+			return nil, errswrap.NewError(err, errorsjobs.ErrFailedQuery)
 		}
 
 		if !s.checkIfHasAccessToColleague(access, userInfo, &users.UserShort{
@@ -540,7 +540,7 @@ func (s *Server) ListColleagueActivity(ctx context.Context, req *ListColleagueAc
 	// Types Field Permission Check
 	typesAttr, err := s.ps.Attr(userInfo, permsjobs.JobsServicePerm, permsjobs.JobsServiceListColleagueActivityPerm, permsjobs.JobsServiceListColleagueActivityTypesPermField)
 	if err != nil {
-		return nil, errswrap.NewError(errorsjobs.ErrFailedQuery, err)
+		return nil, errswrap.NewError(err, errorsjobs.ErrFailedQuery)
 	}
 	var types perms.StringList
 	if typesAttr != nil {
@@ -602,7 +602,7 @@ func (s *Server) ListColleagueActivity(ctx context.Context, req *ListColleagueAc
 	var count database.DataCount
 	if err := countStmt.QueryContext(ctx, s.db, &count); err != nil {
 		if !errors.Is(err, qrm.ErrNoRows) {
-			return nil, errswrap.NewError(errorsjobs.ErrFailedQuery, err)
+			return nil, errswrap.NewError(err, errorsjobs.ErrFailedQuery)
 		}
 	}
 

@@ -100,6 +100,7 @@ message ListQualificationsResultsRequest {
   // Search params
   optional uint64 qualification_id = 2 [jstype = JS_STRING];
   repeated resources.qualifications.ResultStatus status = 3;
+  optional int32 user_id = 4;
 }
 
 message ListQualificationsResultsResponse {

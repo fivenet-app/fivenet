@@ -24,7 +24,7 @@ import (
 func (s *Manager) UpdateUnitStatus(ctx context.Context, job string, unitId uint64, in *centrum.UnitStatus) (*centrum.UnitStatus, error) {
 	unit, err := s.GetUnit(ctx, job, unitId)
 	if err != nil {
-		return nil, errswrap.NewError(errorscentrum.ErrFailedQuery, err)
+		return nil, errswrap.NewError(err, errorscentrum.ErrFailedQuery)
 	}
 
 	// If the unit status is the same and is a status that shouldn't be duplicated, don't update the status again
@@ -55,7 +55,7 @@ func (s *Manager) UpdateUnitStatus(ctx context.Context, job string, unitId uint6
 		var err error
 		in.User, err = s.resolveUserShortById(ctx, *in.UserId)
 		if err != nil {
-			return nil, errswrap.NewError(errorscentrum.ErrFailedQuery, err)
+			return nil, errswrap.NewError(err, errorscentrum.ErrFailedQuery)
 		}
 
 		if marker, ok := s.tracker.GetUserById(*in.UserId); ok {
@@ -68,7 +68,7 @@ func (s *Manager) UpdateUnitStatus(ctx context.Context, job string, unitId uint6
 		var err error
 		in.Creator, err = s.resolveUserShortById(ctx, *in.CreatorId)
 		if err != nil {
-			return nil, errswrap.NewError(errorscentrum.ErrFailedQuery, err)
+			return nil, errswrap.NewError(err, errorscentrum.ErrFailedQuery)
 		}
 	}
 
@@ -381,12 +381,12 @@ func (s *Manager) CreateUnit(ctx context.Context, job string, unit *centrum.Unit
 
 	result, err := stmt.ExecContext(ctx, tx)
 	if err != nil {
-		return nil, errswrap.NewError(errorscentrum.ErrFailedQuery, err)
+		return nil, errswrap.NewError(err, errorscentrum.ErrFailedQuery)
 	}
 
 	lastId, err := result.LastInsertId()
 	if err != nil {
-		return nil, errswrap.NewError(errorscentrum.ErrFailedQuery, err)
+		return nil, errswrap.NewError(err, errorscentrum.ErrFailedQuery)
 	}
 
 	// A new unit shouldn't have a status, so we make sure it has one
@@ -395,7 +395,7 @@ func (s *Manager) CreateUnit(ctx context.Context, job string, unit *centrum.Unit
 		UnitId:    uint64(lastId),
 		Status:    centrum.StatusUnit_STATUS_UNIT_UNKNOWN,
 	}); err != nil {
-		return nil, errswrap.NewError(errorscentrum.ErrFailedQuery, err)
+		return nil, errswrap.NewError(err, errorscentrum.ErrFailedQuery)
 	}
 
 	// Commit the transaction
@@ -405,14 +405,14 @@ func (s *Manager) CreateUnit(ctx context.Context, job string, unit *centrum.Unit
 
 	// Load new/updated unit from database
 	if err := s.LoadUnitsFromDB(ctx, uint64(lastId)); err != nil {
-		return nil, errswrap.NewError(errorscentrum.ErrFailedQuery, err)
+		return nil, errswrap.NewError(err, errorscentrum.ErrFailedQuery)
 	}
 
 	unit.Id = uint64(lastId)
 
 	data, err := proto.Marshal(unit)
 	if err != nil {
-		return nil, errswrap.NewError(errorscentrum.ErrFailedQuery, err)
+		return nil, errswrap.NewError(err, errorscentrum.ErrFailedQuery)
 	}
 
 	if _, err := s.js.Publish(ctx, eventscentrum.BuildSubject(eventscentrum.TopicUnit, eventscentrum.TypeUnitCreated, job), data); err != nil {
@@ -451,12 +451,12 @@ func (s *Manager) UpdateUnit(ctx context.Context, job string, unit *centrum.Unit
 		))
 
 	if _, err := stmt.ExecContext(ctx, s.db); err != nil {
-		return nil, errswrap.NewError(errorscentrum.ErrFailedQuery, err)
+		return nil, errswrap.NewError(err, errorscentrum.ErrFailedQuery)
 	}
 
 	// Load new/updated unit from database
 	if err := s.LoadUnitsFromDB(ctx, unit.Id); err != nil {
-		return nil, errswrap.NewError(errorscentrum.ErrFailedQuery, err)
+		return nil, errswrap.NewError(err, errorscentrum.ErrFailedQuery)
 	}
 
 	if err := s.State.UpdateUnit(ctx, unit.Job, unit.Id, unit); err != nil {
@@ -465,7 +465,7 @@ func (s *Manager) UpdateUnit(ctx context.Context, job string, unit *centrum.Unit
 
 	data, err := proto.Marshal(unit)
 	if err != nil {
-		return nil, errswrap.NewError(errorscentrum.ErrFailedQuery, err)
+		return nil, errswrap.NewError(err, errorscentrum.ErrFailedQuery)
 	}
 
 	if _, err := s.js.Publish(ctx, eventscentrum.BuildSubject(eventscentrum.TopicUnit, eventscentrum.TypeUnitUpdated, job), data); err != nil {
@@ -569,7 +569,7 @@ func (s *Manager) GetUnitStatus(ctx context.Context, tx qrm.DB, job string, id u
 	var dest centrum.UnitStatus
 	if err := stmt.QueryContext(ctx, tx, &dest); err != nil {
 		if !errors.Is(err, qrm.ErrNoRows) {
-			return nil, errswrap.NewError(errorscentrum.ErrFailedQuery, err)
+			return nil, errswrap.NewError(err, errorscentrum.ErrFailedQuery)
 		} else {
 			return nil, nil
 		}
@@ -578,7 +578,7 @@ func (s *Manager) GetUnitStatus(ctx context.Context, tx qrm.DB, job string, id u
 	if dest.UnitId > 0 && dest.User != nil {
 		unit, err := s.GetUnit(ctx, job, dest.UnitId)
 		if err != nil {
-			return nil, errswrap.NewError(errorscentrum.ErrFailedQuery, err)
+			return nil, errswrap.NewError(err, errorscentrum.ErrFailedQuery)
 		}
 
 		newUnit := proto.Clone(unit)

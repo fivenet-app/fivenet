@@ -43,12 +43,12 @@ func (s *Server) CreateOrUpdateLawBook(ctx context.Context, req *CreateOrUpdateL
 
 		result, err := stmt.ExecContext(ctx, s.db)
 		if err != nil {
-			return nil, errswrap.NewError(errorsrector.ErrFailedQuery, err)
+			return nil, errswrap.NewError(err, errorsrector.ErrFailedQuery)
 		}
 
 		lastId, err := result.LastInsertId()
 		if err != nil {
-			return nil, errswrap.NewError(errorsrector.ErrFailedQuery, err)
+			return nil, errswrap.NewError(err, errorsrector.ErrFailedQuery)
 		}
 
 		req.LawBook.Id = uint64(lastId)
@@ -69,7 +69,7 @@ func (s *Server) CreateOrUpdateLawBook(ctx context.Context, req *CreateOrUpdateL
 			))
 
 		if _, err := stmt.ExecContext(ctx, s.db); err != nil {
-			return nil, errswrap.NewError(errorsrector.ErrFailedQuery, err)
+			return nil, errswrap.NewError(err, errorsrector.ErrFailedQuery)
 		}
 
 		auditEntry.State = int16(rector.EventType_EVENT_TYPE_UPDATED)
@@ -77,7 +77,7 @@ func (s *Server) CreateOrUpdateLawBook(ctx context.Context, req *CreateOrUpdateL
 
 	lawBook, err := s.getLawBook(ctx, req.LawBook.Id)
 	if err != nil {
-		return nil, errswrap.NewError(errorsrector.ErrFailedQuery, err)
+		return nil, errswrap.NewError(err, errorsrector.ErrFailedQuery)
 	}
 
 	s.cache.RefreshLaws(ctx, lawBook.Id)
@@ -101,7 +101,7 @@ func (s *Server) DeleteLawBook(ctx context.Context, req *DeleteLawBookRequest) (
 
 	lawBook, err := s.getLawBook(ctx, req.Id)
 	if err != nil {
-		return nil, errswrap.NewError(errorsrector.ErrFailedQuery, err)
+		return nil, errswrap.NewError(err, errorsrector.ErrFailedQuery)
 	}
 
 	stmt := tLawBooks.
@@ -112,11 +112,11 @@ func (s *Server) DeleteLawBook(ctx context.Context, req *DeleteLawBookRequest) (
 		LIMIT(1)
 
 	if _, err := stmt.ExecContext(ctx, s.db); err != nil {
-		return nil, errswrap.NewError(errorsrector.ErrFailedQuery, err)
+		return nil, errswrap.NewError(err, errorsrector.ErrFailedQuery)
 	}
 
 	if err := s.cache.RefreshLaws(ctx, lawBook.Id); err != nil {
-		return nil, errswrap.NewError(errorsrector.ErrFailedQuery, err)
+		return nil, errswrap.NewError(err, errorsrector.ErrFailedQuery)
 	}
 
 	return &DeleteLawBookResponse{}, nil
@@ -179,12 +179,12 @@ func (s *Server) CreateOrUpdateLaw(ctx context.Context, req *CreateOrUpdateLawRe
 
 		result, err := stmt.ExecContext(ctx, s.db)
 		if err != nil {
-			return nil, errswrap.NewError(errorsrector.ErrFailedQuery, err)
+			return nil, errswrap.NewError(err, errorsrector.ErrFailedQuery)
 		}
 
 		lastId, err := result.LastInsertId()
 		if err != nil {
-			return nil, errswrap.NewError(errorsrector.ErrFailedQuery, err)
+			return nil, errswrap.NewError(err, errorsrector.ErrFailedQuery)
 		}
 
 		req.Law.Id = uint64(lastId)
@@ -213,7 +213,7 @@ func (s *Server) CreateOrUpdateLaw(ctx context.Context, req *CreateOrUpdateLawRe
 			))
 
 		if _, err := stmt.ExecContext(ctx, s.db); err != nil {
-			return nil, errswrap.NewError(errorsrector.ErrFailedQuery, err)
+			return nil, errswrap.NewError(err, errorsrector.ErrFailedQuery)
 		}
 
 		auditEntry.State = int16(rector.EventType_EVENT_TYPE_UPDATED)
@@ -221,11 +221,11 @@ func (s *Server) CreateOrUpdateLaw(ctx context.Context, req *CreateOrUpdateLawRe
 
 	law, err := s.getLaw(ctx, req.Law.Id)
 	if err != nil {
-		return nil, errswrap.NewError(errorsrector.ErrFailedQuery, err)
+		return nil, errswrap.NewError(err, errorsrector.ErrFailedQuery)
 	}
 
 	if err := s.cache.RefreshLaws(ctx, req.Law.LawbookId); err != nil {
-		return nil, errswrap.NewError(errorsrector.ErrFailedQuery, err)
+		return nil, errswrap.NewError(err, errorsrector.ErrFailedQuery)
 	}
 
 	return &CreateOrUpdateLawResponse{
@@ -247,7 +247,7 @@ func (s *Server) DeleteLaw(ctx context.Context, req *DeleteLawRequest) (*DeleteL
 
 	law, err := s.getLaw(ctx, req.Id)
 	if err != nil {
-		return nil, errswrap.NewError(errorsrector.ErrFailedQuery, err)
+		return nil, errswrap.NewError(err, errorsrector.ErrFailedQuery)
 	}
 
 	stmt := tLaws.
@@ -258,7 +258,7 @@ func (s *Server) DeleteLaw(ctx context.Context, req *DeleteLawRequest) (*DeleteL
 		LIMIT(1)
 
 	if _, err := stmt.ExecContext(ctx, s.db); err != nil {
-		return nil, errswrap.NewError(errorsrector.ErrFailedQuery, err)
+		return nil, errswrap.NewError(err, errorsrector.ErrFailedQuery)
 	}
 
 	s.cache.RefreshLaws(ctx, law.LawbookId)

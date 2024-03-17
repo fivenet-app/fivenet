@@ -131,7 +131,7 @@ func (s *Server) CompleteCitizens(ctx context.Context, req *CompleteCitizensRequ
 	var dest []*users.UserShort
 	if err := stmt.QueryContext(ctx, s.db, &dest); err != nil {
 		if !errors.Is(err, qrm.ErrNoRows) {
-			return nil, errswrap.NewError(ErrFailedSearch, err)
+			return nil, errswrap.NewError(err, ErrFailedSearch)
 		}
 	}
 
@@ -171,7 +171,7 @@ func (s *Server) CompleteJobs(ctx context.Context, req *CompleteJobsRequest) (*C
 	var err error
 	resp.Jobs, err = s.data.GetSearcher().SearchJobs(ctx, search, exactMatch)
 	if err != nil {
-		return nil, errswrap.NewError(ErrFailedSearch, err)
+		return nil, errswrap.NewError(err, ErrFailedSearch)
 	}
 
 	return resp, nil
@@ -182,7 +182,7 @@ func (s *Server) CompleteDocumentCategories(ctx context.Context, req *CompleteDo
 
 	jobsAttr, err := s.p.Attr(userInfo, permscompletor.CompletorServicePerm, permscompletor.CompletorServiceCompleteDocumentCategoriesPerm, permscompletor.CompletorServiceCompleteDocumentCategoriesJobsPermField)
 	if err != nil {
-		return nil, errswrap.NewError(ErrFailedSearch, err)
+		return nil, errswrap.NewError(err, ErrFailedSearch)
 	}
 	var jobs perms.StringList
 	if jobsAttr != nil {
@@ -227,7 +227,7 @@ func (s *Server) CompleteDocumentCategories(ctx context.Context, req *CompleteDo
 	resp := &CompleteDocumentCategoriesResponse{}
 	if err := stmt.QueryContext(ctx, s.db, &resp.Categories); err != nil {
 		if !errors.Is(err, qrm.ErrNoRows) {
-			return nil, errswrap.NewError(ErrFailedSearch, err)
+			return nil, errswrap.NewError(err, ErrFailedSearch)
 		}
 	}
 

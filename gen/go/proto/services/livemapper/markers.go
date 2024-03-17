@@ -117,12 +117,12 @@ func (s *Server) CreateOrUpdateMarker(ctx context.Context, req *CreateOrUpdateMa
 
 		res, err := stmt.ExecContext(ctx, s.db)
 		if err != nil {
-			return nil, errswrap.NewError(ErrMarkerFailed, err)
+			return nil, errswrap.NewError(err, ErrMarkerFailed)
 		}
 
 		lastId, err := res.LastInsertId()
 		if err != nil {
-			return nil, errswrap.NewError(ErrMarkerFailed, err)
+			return nil, errswrap.NewError(err, ErrMarkerFailed)
 		}
 
 		req.Marker.Info.Id = uint64(lastId)
@@ -131,7 +131,7 @@ func (s *Server) CreateOrUpdateMarker(ctx context.Context, req *CreateOrUpdateMa
 	} else {
 		fieldsAttr, err := s.ps.Attr(userInfo, permslivemapper.LivemapperServicePerm, permslivemapper.LivemapperServiceCreateOrUpdateMarkerPerm, permslivemapper.LivemapperServiceCreateOrUpdateMarkerAccessPermField)
 		if err != nil {
-			return nil, errswrap.NewError(ErrMarkerFailed, err)
+			return nil, errswrap.NewError(err, ErrMarkerFailed)
 		}
 		var fields perms.StringList
 		if fieldsAttr != nil {
@@ -140,7 +140,7 @@ func (s *Server) CreateOrUpdateMarker(ctx context.Context, req *CreateOrUpdateMa
 
 		marker, err := s.getMarker(ctx, req.Marker.Info.Id)
 		if err != nil {
-			return nil, errswrap.NewError(ErrMarkerFailed, err)
+			return nil, errswrap.NewError(err, ErrMarkerFailed)
 		}
 
 		if !s.checkIfHasAccessToMarker(fields, marker, userInfo) {
@@ -180,7 +180,7 @@ func (s *Server) CreateOrUpdateMarker(ctx context.Context, req *CreateOrUpdateMa
 			))
 
 		if _, err := stmt.ExecContext(ctx, s.db); err != nil {
-			return nil, errswrap.NewError(ErrMarkerFailed, err)
+			return nil, errswrap.NewError(err, ErrMarkerFailed)
 		}
 
 		auditEntry.State = int16(rector.EventType_EVENT_TYPE_UPDATED)
@@ -188,11 +188,11 @@ func (s *Server) CreateOrUpdateMarker(ctx context.Context, req *CreateOrUpdateMa
 
 	marker, err := s.getMarker(ctx, req.Marker.Info.Id)
 	if err != nil {
-		return nil, errswrap.NewError(ErrMarkerFailed, err)
+		return nil, errswrap.NewError(err, ErrMarkerFailed)
 	}
 
 	if err := s.sendUpdateEvent(ctx, MarkerUpdate, marker); err != nil {
-		return nil, errswrap.NewError(ErrMarkerFailed, err)
+		return nil, errswrap.NewError(err, ErrMarkerFailed)
 	}
 
 	return &CreateOrUpdateMarkerResponse{
@@ -214,7 +214,7 @@ func (s *Server) DeleteMarker(ctx context.Context, req *DeleteMarkerRequest) (*D
 
 	fieldsAttr, err := s.ps.Attr(userInfo, permslivemapper.LivemapperServicePerm, permslivemapper.LivemapperServiceDeleteMarkerPerm, permslivemapper.LivemapperServiceDeleteMarkerAccessPermField)
 	if err != nil {
-		return nil, errswrap.NewError(ErrMarkerFailed, err)
+		return nil, errswrap.NewError(err, ErrMarkerFailed)
 	}
 	var fields perms.StringList
 	if fieldsAttr != nil {
@@ -224,7 +224,7 @@ func (s *Server) DeleteMarker(ctx context.Context, req *DeleteMarkerRequest) (*D
 	marker, err := s.getMarker(ctx, req.Id)
 	if err != nil {
 		if !errors.Is(err, qrm.ErrNoRows) {
-			return nil, errswrap.NewError(ErrMarkerFailed, err)
+			return nil, errswrap.NewError(err, ErrMarkerFailed)
 		}
 
 		return &DeleteMarkerResponse{}, nil
@@ -242,11 +242,11 @@ func (s *Server) DeleteMarker(ctx context.Context, req *DeleteMarkerRequest) (*D
 		LIMIT(1)
 
 	if _, err := stmt.ExecContext(ctx, s.db); err != nil {
-		return nil, errswrap.NewError(ErrMarkerFailed, err)
+		return nil, errswrap.NewError(err, ErrMarkerFailed)
 	}
 
 	if err := s.sendUpdateEvent(ctx, MarkerUpdate, marker); err != nil {
-		return nil, errswrap.NewError(ErrMarkerFailed, err)
+		return nil, errswrap.NewError(err, ErrMarkerFailed)
 	}
 
 	return &DeleteMarkerResponse{}, nil

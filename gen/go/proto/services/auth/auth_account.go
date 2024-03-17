@@ -21,18 +21,18 @@ var (
 func (s *Server) GetAccountInfo(ctx context.Context, req *GetAccountInfoRequest) (*GetAccountInfoResponse, error) {
 	token, err := auth.GetTokenFromGRPCContext(ctx)
 	if err != nil {
-		return nil, errswrap.NewError(auth.ErrInvalidToken, err)
+		return nil, errswrap.NewError(err, auth.ErrInvalidToken)
 	}
 
 	claims, err := s.tm.ParseWithClaims(token)
 	if err != nil {
-		return nil, errswrap.NewError(ErrGenericAccount, err)
+		return nil, errswrap.NewError(err, ErrGenericAccount)
 	}
 
 	// Load account
 	acc, err := s.getAccountFromDB(ctx, tAccounts.ID.EQ(jet.Uint64(claims.AccID)))
 	if err != nil && !errors.Is(err, qrm.ErrNoRows) {
-		return nil, errswrap.NewError(ErrGenericAccount, err)
+		return nil, errswrap.NewError(err, ErrGenericAccount)
 	}
 	if acc == nil || acc.ID == 0 {
 		return nil, ErrGenericAccount
@@ -69,7 +69,7 @@ func (s *Server) GetAccountInfo(ctx context.Context, req *GetAccountInfoRequest)
 	oauth2Conns := []*accounts.OAuth2Account{}
 	if err := stmt.QueryContext(ctx, s.db, &oauth2Conns); err != nil {
 		if !errors.Is(err, qrm.ErrNoRows) {
-			return nil, errswrap.NewError(ErrGenericAccount, err)
+			return nil, errswrap.NewError(err, ErrGenericAccount)
 		}
 	}
 

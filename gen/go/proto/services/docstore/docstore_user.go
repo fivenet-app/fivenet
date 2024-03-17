@@ -74,7 +74,7 @@ func (s *Server) ListUserDocuments(ctx context.Context, req *ListUserDocumentsRe
 
 	var count database.DataCount
 	if err := countStmt.QueryContext(ctx, s.db, &count); err != nil {
-		return nil, errswrap.NewError(errorsdocstore.ErrFailedQuery, err)
+		return nil, errswrap.NewError(err, errorsdocstore.ErrFailedQuery)
 	}
 
 	pag, limit := req.Pagination.GetResponseWithPageSize(count.TotalCount, 15)
@@ -115,7 +115,7 @@ func (s *Server) ListUserDocuments(ctx context.Context, req *ListUserDocumentsRe
 	var dbRelIds []uint64
 	if err := idStmt.QueryContext(ctx, s.db, &dbRelIds); err != nil {
 		if !errors.Is(err, qrm.ErrNoRows) {
-			return nil, errswrap.NewError(errorsdocstore.ErrFailedQuery, err)
+			return nil, errswrap.NewError(err, errorsdocstore.ErrFailedQuery)
 		}
 	}
 
@@ -193,7 +193,7 @@ func (s *Server) ListUserDocuments(ctx context.Context, req *ListUserDocumentsRe
 
 	if err := stmt.QueryContext(ctx, s.db, &resp.Relations); err != nil {
 		if !errors.Is(err, qrm.ErrNoRows) {
-			return nil, errswrap.NewError(errorsdocstore.ErrFailedQuery, err)
+			return nil, errswrap.NewError(err, errorsdocstore.ErrFailedQuery)
 		}
 	}
 

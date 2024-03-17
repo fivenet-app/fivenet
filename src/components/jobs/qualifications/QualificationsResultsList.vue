@@ -11,10 +11,12 @@ import TablePagination from '~/components/partials/elements/TablePagination.vue'
 const props = withDefaults(
     defineProps<{
         qualificationId?: string;
+        userId?: number;
         status?: ResultStatus[];
     }>(),
     {
         qualificationId: undefined,
+        userId: undefined,
         status: () => [ResultStatus.SUCCESSFUL],
     },
 );
@@ -23,12 +25,14 @@ const { $grpc } = useNuxtApp();
 
 const offset = ref(0n);
 
-const { data, pending, refresh, error } = useLazyAsyncData(`qualifications-results-${props.qualificationId}`, () =>
-    listQualificationsResults(props.qualificationId),
+const { data, pending, refresh, error } = useLazyAsyncData(
+    `qualifications-results-${props.qualificationId}-${props.userId}`,
+    () => listQualificationsResults(props.qualificationId, props.userId),
 );
 
 async function listQualificationsResults(
     qualificationId?: string,
+    userId?: number,
     status?: ResultStatus[],
 ): Promise<ListQualificationsResultsResponse> {
     try {
@@ -37,6 +41,7 @@ async function listQualificationsResults(
                 offset: offset.value,
             },
             qualificationId,
+            userId,
             status: status ?? [],
         });
         const { response } = await call;
@@ -56,10 +61,9 @@ watch(offset, async () => refresh());
         <div class="border-b border-gray-200 bg-base-600 px-4 py-5 sm:p-6">
             <div class="-ml-4 -mt-4 flex flex-wrap items-center justify-between sm:flex-nowrap">
                 <div class="ml-4 mt-4">
-                    <h3 class="text-base font-semibold leading-6 text-gray-200">
+                    <h3 v-if="!userId" class="text-base font-semibold leading-6 text-gray-200">
                         {{ $t('components.qualifications.user_qualifications') }}
                     </h3>
-                    <p class="mt-1 text-sm text-gray-500"></p>
                 </div>
             </div>
         </div>

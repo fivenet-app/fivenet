@@ -145,7 +145,7 @@ func (s *Server) ListDocuments(ctx context.Context, req *ListDocumentsRequest) (
 
 	var count database.DataCount
 	if err := countStmt.QueryContext(ctx, s.db, &count); err != nil {
-		return nil, errswrap.NewError(errorsdocstore.ErrFailedQuery, err)
+		return nil, errswrap.NewError(err, errorsdocstore.ErrFailedQuery)
 	}
 
 	pag, limit := req.Pagination.GetResponseWithPageSize(count.TotalCount, DocsDefaultPageLimit)
@@ -162,7 +162,7 @@ func (s *Server) ListDocuments(ctx context.Context, req *ListDocumentsRequest) (
 		LIMIT(limit)
 
 	if err := stmt.QueryContext(ctx, s.db, &resp.Documents); err != nil {
-		return nil, errswrap.NewError(errorsdocstore.ErrFailedQuery, err)
+		return nil, errswrap.NewError(err, errorsdocstore.ErrFailedQuery)
 	}
 
 	jobInfoFn := s.enricher.EnrichJobInfoSafeFunc(userInfo)
@@ -193,7 +193,7 @@ func (s *Server) GetDocument(ctx context.Context, req *GetDocumentRequest) (*Get
 
 	check, err := s.checkIfUserHasAccessToDoc(ctx, req.DocumentId, userInfo, documents.AccessLevel_ACCESS_LEVEL_VIEW)
 	if err != nil {
-		return nil, errswrap.NewError(errorsdocstore.ErrNotFoundOrNoPerms, err)
+		return nil, errswrap.NewError(err, errorsdocstore.ErrNotFoundOrNoPerms)
 	}
 	if !check && !userInfo.SuperUser {
 		return nil, errorsdocstore.ErrDocViewDenied
@@ -203,7 +203,7 @@ func (s *Server) GetDocument(ctx context.Context, req *GetDocumentRequest) (*Get
 	resp.Document, err = s.getDocument(ctx,
 		tDocument.ID.EQ(jet.Uint64(req.DocumentId)), userInfo)
 	if err != nil {
-		return nil, errswrap.NewError(errorsdocstore.ErrFailedQuery, err)
+		return nil, errswrap.NewError(err, errorsdocstore.ErrFailedQuery)
 	}
 
 	if resp.Document == nil || resp.Document.Id <= 0 {
@@ -219,11 +219,11 @@ func (s *Server) GetDocument(ctx context.Context, req *GetDocumentRequest) (*Get
 	})
 	if err != nil {
 		if st, ok := status.FromError(err); !ok {
-			return nil, errswrap.NewError(errorsdocstore.ErrFailedQuery, err)
+			return nil, errswrap.NewError(err, errorsdocstore.ErrFailedQuery)
 		} else {
 			// Ignore permission denied as we are simply getting the document
 			if st.Code() != codes.PermissionDenied {
-				return nil, errswrap.NewError(errorsdocstore.ErrFailedQuery, err)
+				return nil, errswrap.NewError(err, errorsdocstore.ErrFailedQuery)
 			}
 		}
 	}
@@ -244,7 +244,7 @@ func (s *Server) getDocument(ctx context.Context, condition jet.BoolExpression, 
 
 	if err := stmt.QueryContext(ctx, s.db, &doc); err != nil {
 		if !errors.Is(err, qrm.ErrNoRows) {
-			return nil, errswrap.NewError(errorsdocstore.ErrFailedQuery, err)
+			return nil, errswrap.NewError(err, errorsdocstore.ErrFailedQuery)
 		}
 	}
 
@@ -270,7 +270,7 @@ func (s *Server) CreateDocument(ctx context.Context, req *CreateDocumentRequest)
 	if req.TemplateId != nil {
 		ok, err := s.checkAccessAgainstTemplate(ctx, *req.TemplateId, req.Access)
 		if err != nil {
-			return nil, errswrap.NewError(errorsdocstore.ErrFailedQuery, err)
+			return nil, errswrap.NewError(err, errorsdocstore.ErrFailedQuery)
 		}
 		if !ok {
 			return nil, errorsdocstore.ErrDocRequiredAccessTemplate
@@ -280,7 +280,7 @@ func (s *Server) CreateDocument(ctx context.Context, req *CreateDocumentRequest)
 	// Begin transaction
 	tx, err := s.db.BeginTx(ctx, nil)
 	if err != nil {
-		return nil, errswrap.NewError(errorsdocstore.ErrFailedQuery, err)
+		return nil, errswrap.NewError(err, errorsdocstore.ErrFailedQuery)
 	}
 	// Defer a rollback in case anything fails
 	defer tx.Rollback()
@@ -318,12 +318,12 @@ func (s *Server) CreateDocument(ctx context.Context, req *CreateDocumentRequest)
 
 	result, err := stmt.ExecContext(ctx, tx)
 	if err != nil {
-		return nil, errswrap.NewError(errorsdocstore.ErrFailedQuery, err)
+		return nil, errswrap.NewError(err, errorsdocstore.ErrFailedQuery)
 	}
 
 	lastId, err := result.LastInsertId()
 	if err != nil {
-		return nil, errswrap.NewError(errorsdocstore.ErrFailedQuery, err)
+		return nil, errswrap.NewError(err, errorsdocstore.ErrFailedQuery)
 	}
 
 	if _, err := s.addDocumentActivity(ctx, tx, &documents.DocActivity{
@@ -332,16 +332,16 @@ func (s *Server) CreateDocument(ctx context.Context, req *CreateDocumentRequest)
 		CreatorId:    &userInfo.UserId,
 		CreatorJob:   userInfo.Job,
 	}); err != nil {
-		return nil, errswrap.NewError(errorsdocstore.ErrFailedQuery, err)
+		return nil, errswrap.NewError(err, errorsdocstore.ErrFailedQuery)
 	}
 
 	if err := s.handleDocumentAccessChanges(ctx, tx, documents.AccessLevelUpdateMode_ACCESS_LEVEL_UPDATE_MODE_UPDATE, uint64(lastId), req.Access); err != nil {
-		return nil, errswrap.NewError(errorsdocstore.ErrFailedQuery, err)
+		return nil, errswrap.NewError(err, errorsdocstore.ErrFailedQuery)
 	}
 
 	// Commit the transaction
 	if err := tx.Commit(); err != nil {
-		return nil, errswrap.NewError(errorsdocstore.ErrFailedQuery, err)
+		return nil, errswrap.NewError(err, errorsdocstore.ErrFailedQuery)
 	}
 
 	auditEntry.State = int16(rector.EventType_EVENT_TYPE_CREATED)
@@ -367,7 +367,7 @@ func (s *Server) UpdateDocument(ctx context.Context, req *UpdateDocumentRequest)
 
 	check, err := s.checkIfUserHasAccessToDoc(ctx, req.DocumentId, userInfo, documents.AccessLevel_ACCESS_LEVEL_EDIT)
 	if err != nil {
-		return nil, errswrap.NewError(errorsdocstore.ErrNotFoundOrNoPerms, err)
+		return nil, errswrap.NewError(err, errorsdocstore.ErrNotFoundOrNoPerms)
 	}
 	var onlyUpdateAccess bool
 	if !check && !userInfo.SuperUser {
@@ -384,7 +384,7 @@ func (s *Server) UpdateDocument(ctx context.Context, req *UpdateDocumentRequest)
 		tDocument.ID.EQ(jet.Uint64(req.DocumentId)),
 		userInfo)
 	if err != nil {
-		return nil, errswrap.NewError(errorsdocstore.ErrFailedQuery, err)
+		return nil, errswrap.NewError(err, errorsdocstore.ErrFailedQuery)
 	}
 
 	// Either the document is closed and the update request isn't re-opening the document
@@ -395,7 +395,7 @@ func (s *Server) UpdateDocument(ctx context.Context, req *UpdateDocumentRequest)
 	// Field Permission Check
 	fieldsAttr, err := s.ps.Attr(userInfo, permsdocstore.DocStoreServicePerm, permsdocstore.DocStoreServiceUpdateDocumentPerm, permsdocstore.DocStoreServiceUpdateDocumentAccessPermField)
 	if err != nil {
-		return nil, errswrap.NewError(errorsdocstore.ErrFailedQuery, err)
+		return nil, errswrap.NewError(err, errorsdocstore.ErrFailedQuery)
 	}
 	var fields perms.StringList
 	if fieldsAttr != nil {
@@ -408,7 +408,7 @@ func (s *Server) UpdateDocument(ctx context.Context, req *UpdateDocumentRequest)
 	if doc.TemplateId != nil {
 		ok, err := s.checkAccessAgainstTemplate(ctx, *doc.TemplateId, req.Access)
 		if err != nil {
-			return nil, errswrap.NewError(errorsdocstore.ErrFailedQuery, err)
+			return nil, errswrap.NewError(err, errorsdocstore.ErrFailedQuery)
 		}
 		if !ok {
 			return nil, errorsdocstore.ErrDocRequiredAccessTemplate
@@ -418,7 +418,7 @@ func (s *Server) UpdateDocument(ctx context.Context, req *UpdateDocumentRequest)
 	// Begin transaction
 	tx, err := s.db.BeginTx(ctx, nil)
 	if err != nil {
-		return nil, errswrap.NewError(errorsdocstore.ErrFailedQuery, err)
+		return nil, errswrap.NewError(err, errorsdocstore.ErrFailedQuery)
 	}
 
 	if !onlyUpdateAccess {
@@ -452,7 +452,7 @@ func (s *Server) UpdateDocument(ctx context.Context, req *UpdateDocumentRequest)
 			)
 
 		if _, err := stmt.ExecContext(ctx, tx); err != nil {
-			return nil, errswrap.NewError(errorsdocstore.ErrFailedQuery, err)
+			return nil, errswrap.NewError(err, errorsdocstore.ErrFailedQuery)
 		}
 
 		diff, err := s.generateDocumentDiff(doc, &documents.Document{
@@ -461,7 +461,7 @@ func (s *Server) UpdateDocument(ctx context.Context, req *UpdateDocumentRequest)
 			State:   req.State,
 		})
 		if err != nil {
-			return nil, errswrap.NewError(errorsdocstore.ErrFailedQuery, err)
+			return nil, errswrap.NewError(err, errorsdocstore.ErrFailedQuery)
 		}
 
 		if _, err := s.addDocumentActivity(ctx, tx, &documents.DocActivity{
@@ -475,17 +475,17 @@ func (s *Server) UpdateDocument(ctx context.Context, req *UpdateDocumentRequest)
 				},
 			},
 		}); err != nil {
-			return nil, errswrap.NewError(errorsdocstore.ErrFailedQuery, err)
+			return nil, errswrap.NewError(err, errorsdocstore.ErrFailedQuery)
 		}
 	}
 
 	if err := s.handleDocumentAccessChanges(ctx, tx, documents.AccessLevelUpdateMode_ACCESS_LEVEL_UPDATE_MODE_UPDATE, req.DocumentId, req.Access); err != nil {
-		return nil, errswrap.NewError(errorsdocstore.ErrFailedQuery, err)
+		return nil, errswrap.NewError(err, errorsdocstore.ErrFailedQuery)
 	}
 
 	// Commit the transaction
 	if err := tx.Commit(); err != nil {
-		return nil, errswrap.NewError(errorsdocstore.ErrFailedQuery, err)
+		return nil, errswrap.NewError(err, errorsdocstore.ErrFailedQuery)
 	}
 
 	auditEntry.State = int16(rector.EventType_EVENT_TYPE_UPDATED)
@@ -511,7 +511,7 @@ func (s *Server) DeleteDocument(ctx context.Context, req *DeleteDocumentRequest)
 
 	check, err := s.checkIfUserHasAccessToDoc(ctx, req.DocumentId, userInfo, documents.AccessLevel_ACCESS_LEVEL_EDIT)
 	if err != nil {
-		return nil, errswrap.NewError(errorsdocstore.ErrNotFoundOrNoPerms, err)
+		return nil, errswrap.NewError(err, errorsdocstore.ErrNotFoundOrNoPerms)
 	}
 	if !check && !userInfo.SuperUser {
 		if !userInfo.SuperUser {
@@ -521,13 +521,13 @@ func (s *Server) DeleteDocument(ctx context.Context, req *DeleteDocumentRequest)
 
 	doc, err := s.getDocument(ctx, tDocument.ID.EQ(jet.Uint64(req.DocumentId)), userInfo)
 	if err != nil {
-		return nil, errswrap.NewError(errorsdocstore.ErrFailedQuery, err)
+		return nil, errswrap.NewError(err, errorsdocstore.ErrFailedQuery)
 	}
 
 	// Field Permission Check
 	fieldsAttr, err := s.ps.Attr(userInfo, permsdocstore.DocStoreServicePerm, permsdocstore.DocStoreServiceDeleteDocumentPerm, permsdocstore.DocStoreServiceDeleteDocumentAccessPermField)
 	if err != nil {
-		return nil, errswrap.NewError(errorsdocstore.ErrFailedQuery, err)
+		return nil, errswrap.NewError(err, errorsdocstore.ErrFailedQuery)
 	}
 	var fields perms.StringList
 	if fieldsAttr != nil {
@@ -549,7 +549,7 @@ func (s *Server) DeleteDocument(ctx context.Context, req *DeleteDocumentRequest)
 		)
 
 	if _, err := stmt.ExecContext(ctx, s.db); err != nil {
-		return nil, errswrap.NewError(errorsdocstore.ErrFailedQuery, err)
+		return nil, errswrap.NewError(err, errorsdocstore.ErrFailedQuery)
 	}
 
 	if _, err := s.addDocumentActivity(ctx, s.db, &documents.DocActivity{
@@ -558,7 +558,7 @@ func (s *Server) DeleteDocument(ctx context.Context, req *DeleteDocumentRequest)
 		CreatorId:    &userInfo.UserId,
 		CreatorJob:   userInfo.Job,
 	}); err != nil {
-		return nil, errswrap.NewError(errorsdocstore.ErrFailedQuery, err)
+		return nil, errswrap.NewError(err, errorsdocstore.ErrFailedQuery)
 	}
 
 	auditEntry.State = int16(rector.EventType_EVENT_TYPE_DELETED)
@@ -582,7 +582,7 @@ func (s *Server) ToggleDocument(ctx context.Context, req *ToggleDocumentRequest)
 
 	check, err := s.checkIfUserHasAccessToDoc(ctx, req.DocumentId, userInfo, documents.AccessLevel_ACCESS_LEVEL_STATUS)
 	if err != nil {
-		return nil, errswrap.NewError(errorsdocstore.ErrNotFoundOrNoPerms, err)
+		return nil, errswrap.NewError(err, errorsdocstore.ErrNotFoundOrNoPerms)
 	}
 	if !check && !userInfo.SuperUser {
 		if !userInfo.SuperUser {
@@ -592,13 +592,13 @@ func (s *Server) ToggleDocument(ctx context.Context, req *ToggleDocumentRequest)
 
 	doc, err := s.getDocument(ctx, tDocument.ID.EQ(jet.Uint64(req.DocumentId)), userInfo)
 	if err != nil {
-		return nil, errswrap.NewError(errorsdocstore.ErrFailedQuery, err)
+		return nil, errswrap.NewError(err, errorsdocstore.ErrFailedQuery)
 	}
 
 	// Field Permission Check
 	fieldsAttr, err := s.ps.Attr(userInfo, permsdocstore.DocStoreServicePerm, permsdocstore.DocStoreServiceToggleDocumentPerm, permsdocstore.DocStoreServiceToggleDocumentAccessPermField)
 	if err != nil {
-		return nil, errswrap.NewError(errorsdocstore.ErrFailedQuery, err)
+		return nil, errswrap.NewError(err, errorsdocstore.ErrFailedQuery)
 	}
 	var fields perms.StringList
 	if fieldsAttr != nil {
@@ -625,7 +625,7 @@ func (s *Server) ToggleDocument(ctx context.Context, req *ToggleDocumentRequest)
 		)
 
 	if _, err := stmt.ExecContext(ctx, s.db); err != nil {
-		return nil, errswrap.NewError(errorsdocstore.ErrFailedQuery, err)
+		return nil, errswrap.NewError(err, errorsdocstore.ErrFailedQuery)
 	}
 
 	if _, err := s.addDocumentActivity(ctx, s.db, &documents.DocActivity{
@@ -634,7 +634,7 @@ func (s *Server) ToggleDocument(ctx context.Context, req *ToggleDocumentRequest)
 		CreatorId:    &userInfo.UserId,
 		CreatorJob:   userInfo.Job,
 	}); err != nil {
-		return nil, errswrap.NewError(errorsdocstore.ErrFailedQuery, err)
+		return nil, errswrap.NewError(err, errorsdocstore.ErrFailedQuery)
 	}
 
 	auditEntry.State = int16(rector.EventType_EVENT_TYPE_UPDATED)
@@ -658,7 +658,7 @@ func (s *Server) ChangeDocumentOwner(ctx context.Context, req *ChangeDocumentOwn
 
 	check, err := s.checkIfUserHasAccessToDoc(ctx, req.DocumentId, userInfo, documents.AccessLevel_ACCESS_LEVEL_EDIT)
 	if err != nil {
-		return nil, errswrap.NewError(errorsdocstore.ErrNotFoundOrNoPerms, err)
+		return nil, errswrap.NewError(err, errorsdocstore.ErrNotFoundOrNoPerms)
 	}
 	if !check && !userInfo.SuperUser {
 		return nil, errorsdocstore.ErrDocOwnerFailed
@@ -666,7 +666,7 @@ func (s *Server) ChangeDocumentOwner(ctx context.Context, req *ChangeDocumentOwn
 
 	doc, err := s.getDocument(ctx, tDocument.ID.EQ(jet.Uint64(req.DocumentId)), userInfo)
 	if err != nil {
-		return nil, errswrap.NewError(errorsdocstore.ErrFailedQuery, err)
+		return nil, errswrap.NewError(err, errorsdocstore.ErrFailedQuery)
 	}
 
 	// Document must be created by the same job
@@ -682,7 +682,7 @@ func (s *Server) ChangeDocumentOwner(ctx context.Context, req *ChangeDocumentOwn
 	// Field Permission Check
 	fieldsAttr, err := s.ps.Attr(userInfo, permsdocstore.DocStoreServicePerm, permsdocstore.DocStoreServiceChangeDocumentOwnerPerm, permsdocstore.DocStoreServiceChangeDocumentOwnerAccessPermField)
 	if err != nil {
-		return nil, errswrap.NewError(errorsdocstore.ErrFailedQuery, err)
+		return nil, errswrap.NewError(err, errorsdocstore.ErrFailedQuery)
 	}
 	var fields perms.StringList
 	if fieldsAttr != nil {
@@ -707,7 +707,7 @@ func (s *Server) ChangeDocumentOwner(ctx context.Context, req *ChangeDocumentOwn
 
 	var newOwner users.UserShort
 	if err := stmtGetUser.QueryContext(ctx, s.db, &newOwner); err != nil {
-		return nil, errswrap.NewError(errorsdocstore.ErrFailedQuery, err)
+		return nil, errswrap.NewError(err, errorsdocstore.ErrFailedQuery)
 	}
 
 	if newOwner.UserId <= 0 {
@@ -729,7 +729,7 @@ func (s *Server) ChangeDocumentOwner(ctx context.Context, req *ChangeDocumentOwn
 	// Begin transaction
 	tx, err := s.db.BeginTx(ctx, nil)
 	if err != nil {
-		return nil, errswrap.NewError(errorsdocstore.ErrFailedQuery, err)
+		return nil, errswrap.NewError(err, errorsdocstore.ErrFailedQuery)
 	}
 	// Defer a rollback in case anything fails
 	defer tx.Rollback()
@@ -740,7 +740,7 @@ func (s *Server) ChangeDocumentOwner(ctx context.Context, req *ChangeDocumentOwn
 
 	// Commit the transaction
 	if err := tx.Commit(); err != nil {
-		return nil, errswrap.NewError(errorsdocstore.ErrFailedQuery, err)
+		return nil, errswrap.NewError(err, errorsdocstore.ErrFailedQuery)
 	}
 
 	auditEntry.State = int16(rector.EventType_EVENT_TYPE_UPDATED)

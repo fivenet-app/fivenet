@@ -36,19 +36,19 @@ func (s *Manager) UpdateSettingsInDB(ctx context.Context, job string, settings *
 		)
 
 	if _, err := stmt.ExecContext(ctx, s.db); err != nil {
-		return nil, errswrap.NewError(errorscentrum.ErrFailedQuery, err)
+		return nil, errswrap.NewError(err, errorscentrum.ErrFailedQuery)
 	}
 
 	// Load settings from database so they are updated in the "cache"
 	if err := s.LoadSettingsFromDB(ctx, job); err != nil {
-		return nil, errswrap.NewError(errorscentrum.ErrFailedQuery, err)
+		return nil, errswrap.NewError(err, errorscentrum.ErrFailedQuery)
 	}
 
 	set := s.GetSettings(ctx, job)
 
 	data, err := proto.Marshal(set)
 	if err != nil {
-		return nil, errswrap.NewError(errorscentrum.ErrFailedQuery, err)
+		return nil, errswrap.NewError(err, errorscentrum.ErrFailedQuery)
 	}
 
 	if _, err := s.js.Publish(ctx, eventscentrum.BuildSubject(eventscentrum.TopicGeneral, eventscentrum.TypeGeneralSettings, job), data); err != nil {

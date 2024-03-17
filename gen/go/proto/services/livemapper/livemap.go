@@ -146,11 +146,11 @@ func (s *Server) Stream(req *StreamRequest, srv LivemapperService_StreamServer) 
 	s.logger.Debug("starting livemap stream", zap.Int32("user_id", userInfo.UserId))
 	markerJobsAttr, err := s.ps.Attr(userInfo, permslivemapper.LivemapperServicePerm, permslivemapper.LivemapperServiceStreamPerm, permslivemapper.LivemapperServiceStreamMarkersPermField)
 	if err != nil {
-		return errswrap.NewError(ErrStreamFailed, err)
+		return errswrap.NewError(err, ErrStreamFailed)
 	}
 	userJobsAttr, err := s.ps.Attr(userInfo, permslivemapper.LivemapperServicePerm, permslivemapper.LivemapperServiceStreamPerm, permslivemapper.LivemapperServiceStreamPlayersPermField)
 	if err != nil {
-		return errswrap.NewError(ErrStreamFailed, err)
+		return errswrap.NewError(err, ErrStreamFailed)
 	}
 
 	var markersJobs []string
@@ -244,7 +244,7 @@ func (s *Server) Stream(req *StreamRequest, srv LivemapperService_StreamServer) 
 func (s *Server) sendChunkedUserMarkers(srv LivemapperService_StreamServer, usersJobs map[string]int32, userInfo *userinfo.UserInfo) (bool, error) {
 	userMarkers, _, err := s.getUserLocations(usersJobs, userInfo)
 	if err != nil {
-		return true, errswrap.NewError(ErrStreamFailed, err)
+		return true, errswrap.NewError(err, ErrStreamFailed)
 	}
 
 	// Less than chunk size or no markers, quick return here
@@ -310,7 +310,7 @@ func (s *Server) sendChunkedUserMarkers(srv LivemapperService_StreamServer, user
 func (s *Server) sendMarkerMarkers(srv LivemapperService_StreamServer, jobs []string) (bool, error) {
 	markers, err := s.getMarkerMarkers(jobs)
 	if err != nil {
-		return true, errswrap.NewError(ErrStreamFailed, err)
+		return true, errswrap.NewError(err, ErrStreamFailed)
 	}
 
 	// Send current markers

@@ -31,7 +31,7 @@ func (s *Server) ListConductEntries(ctx context.Context, req *ListConductEntries
 	// Field Permission Check
 	fieldsAttr, err := s.ps.Attr(userInfo, permsjobs.JobsConductServicePerm, permsjobs.JobsConductServiceListConductEntriesPerm, permsjobs.JobsConductServiceListConductEntriesAccessPermField)
 	if err != nil {
-		return nil, errswrap.NewError(errorsjobs.ErrFailedQuery, err)
+		return nil, errswrap.NewError(err, errorsjobs.ErrFailedQuery)
 	}
 	var fields perms.StringList
 	if fieldsAttr != nil {
@@ -43,7 +43,7 @@ func (s *Server) ListConductEntries(ctx context.Context, req *ListConductEntries
 	} else if len(fields) == 0 || slices.Contains(fields, "Own") {
 		condition = condition.AND(tConduct.CreatorID.EQ(jet.Int32(userInfo.UserId)))
 	} else {
-		return nil, errswrap.NewError(errorsjobs.ErrFailedQuery, err)
+		return nil, errswrap.NewError(err, errorsjobs.ErrFailedQuery)
 	}
 
 	if len(req.Types) > 0 {
@@ -82,7 +82,7 @@ func (s *Server) ListConductEntries(ctx context.Context, req *ListConductEntries
 
 	var count database.DataCount
 	if err := countStmt.QueryContext(ctx, s.db, &count); err != nil {
-		return nil, errswrap.NewError(errorsjobs.ErrFailedQuery, err)
+		return nil, errswrap.NewError(err, errorsjobs.ErrFailedQuery)
 	}
 
 	pag, limit := req.Pagination.GetResponse(count.TotalCount)
@@ -149,7 +149,7 @@ func (s *Server) ListConductEntries(ctx context.Context, req *ListConductEntries
 
 	if err := stmt.QueryContext(ctx, s.db, &resp.Entries); err != nil {
 		if !errors.Is(err, qrm.ErrNoRows) {
-			return nil, errswrap.NewError(errorsjobs.ErrFailedQuery, err)
+			return nil, errswrap.NewError(err, errorsjobs.ErrFailedQuery)
 		}
 	}
 
@@ -208,17 +208,17 @@ func (s *Server) CreateConductEntry(ctx context.Context, req *CreateConductEntry
 
 	res, err := stmt.ExecContext(ctx, s.db)
 	if err != nil {
-		return nil, errswrap.NewError(errorsjobs.ErrFailedQuery, err)
+		return nil, errswrap.NewError(err, errorsjobs.ErrFailedQuery)
 	}
 
 	lastId, err := res.LastInsertId()
 	if err != nil {
-		return nil, errswrap.NewError(errorsjobs.ErrFailedQuery, err)
+		return nil, errswrap.NewError(err, errorsjobs.ErrFailedQuery)
 	}
 
 	entry, err := s.getConductEntry(ctx, uint64(lastId))
 	if err != nil {
-		return nil, errswrap.NewError(errorsjobs.ErrFailedQuery, err)
+		return nil, errswrap.NewError(err, errorsjobs.ErrFailedQuery)
 	}
 
 	auditEntry.State = int16(rector.EventType_EVENT_TYPE_CREATED)
@@ -242,7 +242,7 @@ func (s *Server) UpdateConductEntry(ctx context.Context, req *UpdateConductEntry
 
 	entry, err := s.getConductEntry(ctx, req.Entry.Id)
 	if err != nil {
-		return nil, errswrap.NewError(errorsjobs.ErrFailedQuery, err)
+		return nil, errswrap.NewError(err, errorsjobs.ErrFailedQuery)
 	}
 
 	proto.Merge(entry, req.Entry)
@@ -270,12 +270,12 @@ func (s *Server) UpdateConductEntry(ctx context.Context, req *UpdateConductEntry
 		))
 
 	if _, err := stmt.ExecContext(ctx, s.db); err != nil {
-		return nil, errswrap.NewError(errorsjobs.ErrFailedQuery, err)
+		return nil, errswrap.NewError(err, errorsjobs.ErrFailedQuery)
 	}
 
 	entry, err = s.getConductEntry(ctx, entry.Id)
 	if err != nil {
-		return nil, errswrap.NewError(errorsjobs.ErrFailedQuery, err)
+		return nil, errswrap.NewError(err, errorsjobs.ErrFailedQuery)
 	}
 
 	auditEntry.State = int16(rector.EventType_EVENT_TYPE_UPDATED)
@@ -305,7 +305,7 @@ func (s *Server) DeleteConductEntry(ctx context.Context, req *DeleteConductEntry
 		))
 
 	if _, err := stmt.ExecContext(ctx, s.db); err != nil {
-		return nil, errswrap.NewError(errorsjobs.ErrFailedQuery, err)
+		return nil, errswrap.NewError(err, errorsjobs.ErrFailedQuery)
 	}
 
 	auditEntry.State = int16(rector.EventType_EVENT_TYPE_DELETED)

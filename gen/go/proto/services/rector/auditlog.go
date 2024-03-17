@@ -80,7 +80,7 @@ func (s *Server) ViewAuditLog(ctx context.Context, req *ViewAuditLogRequest) (*V
 
 	var count database.DataCount
 	if err := countStmt.QueryContext(ctx, s.db, &count); err != nil {
-		return nil, errswrap.NewError(errorsrector.ErrFailedQuery, err)
+		return nil, errswrap.NewError(err, errorsrector.ErrFailedQuery)
 	}
 
 	pag, limit := req.Pagination.GetResponseWithPageSize(count.TotalCount, AuditLogPageSize)
@@ -123,7 +123,7 @@ func (s *Server) ViewAuditLog(ctx context.Context, req *ViewAuditLogRequest) (*V
 		LIMIT(limit)
 
 	if err := stmt.QueryContext(ctx, s.db, &resp.Logs); err != nil {
-		return nil, errswrap.NewError(errorsrector.ErrFailedQuery, err)
+		return nil, errswrap.NewError(err, errorsrector.ErrFailedQuery)
 	}
 
 	resp.Pagination.Update(len(resp.Logs))

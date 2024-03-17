@@ -31,7 +31,7 @@ func (s *Server) ListTimeclock(ctx context.Context, req *ListTimeclockRequest) (
 	// Field Permission Check
 	fieldsAttr, err := s.ps.Attr(userInfo, permsjobs.JobsTimeclockServicePerm, permsjobs.JobsTimeclockServiceListTimeclockPerm, permsjobs.JobsTimeclockServiceListTimeclockAccessPermField)
 	if err != nil {
-		return nil, errswrap.NewError(errorsjobs.ErrFailedQuery, err)
+		return nil, errswrap.NewError(err, errorsjobs.ErrFailedQuery)
 	}
 	var fields perms.StringList
 	if fieldsAttr != nil {
@@ -75,7 +75,7 @@ func (s *Server) ListTimeclock(ctx context.Context, req *ListTimeclockRequest) (
 
 	var count database.DataCount
 	if err := countStmt.QueryContext(ctx, s.db, &count); err != nil {
-		return nil, errswrap.NewError(errorsjobs.ErrFailedQuery, err)
+		return nil, errswrap.NewError(err, errorsjobs.ErrFailedQuery)
 	}
 
 	pag, limit := req.Pagination.GetResponseWithPageSize(count.TotalCount, 25)
@@ -85,12 +85,12 @@ func (s *Server) ListTimeclock(ctx context.Context, req *ListTimeclockRequest) (
 
 	resp.Stats, err = s.getTimeclockStats(ctx, statsCondition)
 	if err != nil {
-		return nil, errswrap.NewError(errorsjobs.ErrFailedQuery, err)
+		return nil, errswrap.NewError(err, errorsjobs.ErrFailedQuery)
 	}
 
 	resp.Weekly, err = s.getTimeclockWeeklyStats(ctx, statsCondition)
 	if err != nil {
-		return nil, errswrap.NewError(errorsjobs.ErrFailedQuery, err)
+		return nil, errswrap.NewError(err, errorsjobs.ErrFailedQuery)
 	}
 
 	if count.TotalCount <= 0 {
@@ -134,7 +134,7 @@ func (s *Server) ListTimeclock(ctx context.Context, req *ListTimeclockRequest) (
 
 	if err := stmt.QueryContext(ctx, s.db, &resp.Entries); err != nil {
 		if !errors.Is(err, qrm.ErrNoRows) {
-			return nil, errswrap.NewError(errorsjobs.ErrFailedQuery, err)
+			return nil, errswrap.NewError(err, errorsjobs.ErrFailedQuery)
 		}
 	}
 
@@ -157,7 +157,7 @@ func (s *Server) GetTimeclockStats(ctx context.Context, req *GetTimeclockStatsRe
 		// Field Permission Check
 		fieldsAttr, err := s.ps.Attr(userInfo, permsjobs.JobsTimeclockServicePerm, permsjobs.JobsTimeclockServiceListTimeclockPerm, permsjobs.JobsTimeclockServiceListTimeclockAccessPermField)
 		if err != nil {
-			return nil, errswrap.NewError(errorsjobs.ErrFailedQuery, err)
+			return nil, errswrap.NewError(err, errorsjobs.ErrFailedQuery)
 		}
 		var fields perms.StringList
 		if fieldsAttr != nil {
@@ -173,12 +173,12 @@ func (s *Server) GetTimeclockStats(ctx context.Context, req *GetTimeclockStatsRe
 
 	stats, err := s.getTimeclockStats(ctx, condition)
 	if err != nil {
-		return nil, errswrap.NewError(errorsjobs.ErrFailedQuery, err)
+		return nil, errswrap.NewError(err, errorsjobs.ErrFailedQuery)
 	}
 
 	weekly, err := s.getTimeclockWeeklyStats(ctx, condition)
 	if err != nil {
-		return nil, errswrap.NewError(errorsjobs.ErrFailedQuery, err)
+		return nil, errswrap.NewError(err, errorsjobs.ErrFailedQuery)
 	}
 
 	return &GetTimeclockStatsResponse{
@@ -236,7 +236,7 @@ func (s *Server) ListInactiveEmployees(ctx context.Context, req *ListInactiveEmp
 	var count database.DataCount
 	if err := countStmt.QueryContext(ctx, s.db, &count); err != nil {
 		if !errors.Is(err, qrm.ErrNoRows) {
-			return nil, errswrap.NewError(errorsjobs.ErrFailedQuery, err)
+			return nil, errswrap.NewError(err, errorsjobs.ErrFailedQuery)
 		}
 	}
 
@@ -286,7 +286,7 @@ func (s *Server) ListInactiveEmployees(ctx context.Context, req *ListInactiveEmp
 
 	if err := stmt.QueryContext(ctx, s.db, &resp.Colleagues); err != nil {
 		if !errors.Is(err, qrm.ErrNoRows) {
-			return nil, errswrap.NewError(errorsjobs.ErrFailedQuery, err)
+			return nil, errswrap.NewError(err, errorsjobs.ErrFailedQuery)
 		}
 	}
 

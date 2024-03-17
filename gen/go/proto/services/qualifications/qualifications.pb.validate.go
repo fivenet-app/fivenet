@@ -2668,6 +2668,10 @@ func (m *ListQualificationsResultsRequest) validate(all bool) error {
 		// no validation rules for QualificationId
 	}
 
+	if m.UserId != nil {
+		// no validation rules for UserId
+	}
+
 	if len(errors) > 0 {
 		return ListQualificationsResultsRequestMultiError(errors)
 	}

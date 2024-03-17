@@ -112,7 +112,7 @@ func (s *Server) ListVehicles(ctx context.Context, req *ListVehiclesRequest) (*L
 
 	var count database.DataCount
 	if err := countStmt.QueryContext(ctx, s.db, &count); err != nil {
-		return nil, errswrap.NewError(errorsdmv.ErrFailedQuery, err)
+		return nil, errswrap.NewError(err, errorsdmv.ErrFailedQuery)
 	}
 
 	pag, limit := req.Pagination.GetResponseWithPageSize(count.TotalCount, 15)
@@ -163,7 +163,7 @@ func (s *Server) ListVehicles(ctx context.Context, req *ListVehiclesRequest) (*L
 	// Field Permission Check
 	fieldsAttr, err := s.ps.Attr(userInfo, permscitizenstore.CitizenStoreServicePerm, permscitizenstore.CitizenStoreServiceListCitizensPerm, permscitizenstore.CitizenStoreServiceListCitizensFieldsPermField)
 	if err != nil {
-		return nil, errswrap.NewError(errorsdmv.ErrFailedQuery, err)
+		return nil, errswrap.NewError(err, errorsdmv.ErrFailedQuery)
 	}
 	var fields perms.StringList
 	if fieldsAttr != nil {
@@ -191,7 +191,7 @@ func (s *Server) ListVehicles(ctx context.Context, req *ListVehiclesRequest) (*L
 		LIMIT(limit)
 
 	if err := stmt.QueryContext(ctx, s.db, &resp.Vehicles); err != nil {
-		return nil, errswrap.NewError(errorsdmv.ErrFailedQuery, err)
+		return nil, errswrap.NewError(err, errorsdmv.ErrFailedQuery)
 	}
 
 	resp.Pagination.Update(len(resp.Vehicles))

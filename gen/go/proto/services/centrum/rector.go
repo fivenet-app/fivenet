@@ -34,7 +34,7 @@ func (s *Server) UpdateSettings(ctx context.Context, req *UpdateSettingsRequest)
 
 	settings, err := s.state.UpdateSettingsInDB(ctx, userInfo.Job, req.Settings)
 	if err != nil {
-		return nil, errswrap.NewError(errorscentrum.ErrFailedQuery, err)
+		return nil, errswrap.NewError(err, errorscentrum.ErrFailedQuery)
 	}
 
 	auditEntry.State = int16(rector.EventType_EVENT_TYPE_UPDATED)

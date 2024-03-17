@@ -82,7 +82,7 @@ func (s *Server) ListQualificationsResults(ctx context.Context, req *ListQualifi
 
 	var count database.DataCount
 	if err := countStmt.QueryContext(ctx, s.db, &count); err != nil {
-		return nil, errswrap.NewError(errorsqualifications.ErrFailedQuery, err)
+		return nil, errswrap.NewError(err, errorsqualifications.ErrFailedQuery)
 	}
 
 	pag, limit := req.Pagination.GetResponseWithPageSize(count.TotalCount, QualificationsPageSize)
@@ -164,7 +164,7 @@ func (s *Server) CreateOrUpdateQualificationResult(ctx context.Context, req *Cre
 
 	ok, err := s.checkIfUserHasAccessToQuali(ctx, req.Result.QualificationId, userInfo, qualifications.AccessLevel_ACCESS_LEVEL_GRADE)
 	if err != nil {
-		return nil, errswrap.NewError(errorsqualifications.ErrFailedQuery, err)
+		return nil, errswrap.NewError(err, errorsqualifications.ErrFailedQuery)
 	}
 	if !ok {
 		return nil, errorsqualifications.ErrFailedQuery
@@ -206,6 +206,13 @@ func (s *Server) CreateOrUpdateQualificationResult(ctx context.Context, req *Cre
 
 		auditEntry.State = int16(rector.EventType_EVENT_TYPE_CREATED)
 	} else {
+		result, err := s.getQualificationResult(ctx, req.Result.Id, userInfo)
+		if err != nil {
+			return nil, errswrap.NewError(err, errorsqualifications.ErrFailedQuery)
+		}
+
+		req.Result.UserId = result.UserId
+
 		stmt := tQualiResults.
 			UPDATE(
 				tQualiResults.QualificationID,
@@ -225,6 +232,18 @@ func (s *Server) CreateOrUpdateQualificationResult(ctx context.Context, req *Cre
 
 		if _, err := stmt.ExecContext(ctx, s.db); err != nil {
 			return nil, errswrap.NewError(err, errorsqualifications.ErrFailedQuery)
+		}
+
+		// If the result is successful, complete the request status
+		if req.Result.Status == qualifications.ResultStatus_RESULT_STATUS_SUCCESSFUL {
+			if err := s.updateRequestStatus(ctx, req.Result.QualificationId, req.Result.UserId, qualifications.RequestStatus_REQUEST_STATUS_COMPLETED); err != nil {
+				return nil, errswrap.NewError(err, errorsqualifications.ErrFailedQuery)
+			}
+		} else if req.Result.Status == qualifications.ResultStatus_RESULT_STATUS_FAILED {
+			// If failed status, delete the request
+			if err := s.deleteQualificationRequest(ctx, req.Result.QualificationId, req.Result.UserId); err != nil {
+				return nil, errswrap.NewError(err, errorsqualifications.ErrFailedQuery)
+			}
 		}
 
 		auditEntry.State = int16(rector.EventType_EVENT_TYPE_UPDATED)
@@ -312,12 +331,12 @@ func (s *Server) DeleteQualificationResult(ctx context.Context, req *DeleteQuali
 
 	re, err := s.getQualificationResult(ctx, req.ResultId, userInfo)
 	if err != nil {
-		return nil, errswrap.NewError(errorsqualifications.ErrFailedQuery, err)
+		return nil, errswrap.NewError(err, errorsqualifications.ErrFailedQuery)
 	}
 
 	ok, err := s.checkIfUserHasAccessToQuali(ctx, re.QualificationId, userInfo, qualifications.AccessLevel_ACCESS_LEVEL_MANAGE)
 	if err != nil {
-		return nil, errswrap.NewError(errorsqualifications.ErrFailedQuery, err)
+		return nil, errswrap.NewError(err, errorsqualifications.ErrFailedQuery)
 	}
 	if !ok {
 		return nil, errorsqualifications.ErrFailedQuery

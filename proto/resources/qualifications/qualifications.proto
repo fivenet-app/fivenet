@@ -139,6 +139,7 @@ enum RequestStatus {
   REQUEST_STATUS_PENDING = 1;
   REQUEST_STATUS_DENIED = 2;
   REQUEST_STATUS_ACCEPTED = 3;
+  REQUEST_STATUS_COMPLETED = 4;
 }
 
 message QualificationRequest {

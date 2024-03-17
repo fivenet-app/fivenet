@@ -34,7 +34,7 @@ func (s *Manager) UpdateDispatchStatus(ctx context.Context, job string, dspId ui
 	dsp, err := s.GetDispatch(ctx, job, dspId)
 	if err != nil {
 		if !errors.Is(err, jetstream.ErrKeyNotFound) {
-			return nil, errswrap.NewError(errorscentrum.ErrFailedQuery, err)
+			return nil, errswrap.NewError(err, errorscentrum.ErrFailedQuery)
 		}
 	}
 
@@ -63,7 +63,7 @@ func (s *Manager) UpdateDispatchStatus(ctx context.Context, job string, dspId ui
 		var err error
 		in.User, err = s.resolveUserShortById(ctx, *in.UserId)
 		if err != nil {
-			return nil, errswrap.NewError(errorscentrum.ErrFailedQuery, err)
+			return nil, errswrap.NewError(err, errorscentrum.ErrFailedQuery)
 		}
 
 		if marker, ok := s.tracker.GetUserById(*in.UserId); ok {
@@ -102,12 +102,12 @@ func (s *Manager) UpdateDispatchStatus(ctx context.Context, job string, dspId ui
 
 	res, err := stmt.ExecContext(ctx, s.db)
 	if err != nil {
-		return nil, errswrap.NewError(errorscentrum.ErrFailedQuery, err)
+		return nil, errswrap.NewError(err, errorscentrum.ErrFailedQuery)
 	}
 
 	lastId, err := res.LastInsertId()
 	if err != nil {
-		return nil, errswrap.NewError(errorscentrum.ErrFailedQuery, err)
+		return nil, errswrap.NewError(err, errorscentrum.ErrFailedQuery)
 	}
 	in.Id = uint64(lastId)
 
@@ -117,7 +117,7 @@ func (s *Manager) UpdateDispatchStatus(ctx context.Context, job string, dspId ui
 
 	data, err := proto.Marshal(in)
 	if err != nil {
-		return nil, errswrap.NewError(errorscentrum.ErrFailedQuery, err)
+		return nil, errswrap.NewError(err, errorscentrum.ErrFailedQuery)
 	}
 
 	if _, err := s.js.Publish(ctx, eventscentrum.BuildSubject(eventscentrum.TopicDispatch, eventscentrum.TypeDispatchStatus, job), data); err != nil {
@@ -423,7 +423,7 @@ func (s *Manager) CreateDispatch(ctx context.Context, dsp *centrum.Dispatch) (*c
 		var err error
 		dsp.Creator, err = s.ResolveUserById(ctx, *dsp.CreatorId)
 		if err != nil {
-			return nil, errswrap.NewError(errorscentrum.ErrFailedQuery, err)
+			return nil, errswrap.NewError(err, errorscentrum.ErrFailedQuery)
 		}
 	}
 
@@ -676,7 +676,7 @@ func (s *Manager) GetDispatchStatus(ctx context.Context, tx qrm.DB, job string, 
 	var dest centrum.DispatchStatus
 	if err := stmt.QueryContext(ctx, tx, &dest); err != nil {
 		if !errors.Is(err, qrm.ErrNoRows) {
-			return nil, errswrap.NewError(errorscentrum.ErrFailedQuery, err)
+			return nil, errswrap.NewError(err, errorscentrum.ErrFailedQuery)
 		} else {
 			return nil, nil
 		}
@@ -685,7 +685,7 @@ func (s *Manager) GetDispatchStatus(ctx context.Context, tx qrm.DB, job string, 
 	if dest.UnitId != nil && *dest.UnitId > 0 && dest.User != nil {
 		unit, err := s.GetUnit(ctx, job, *dest.UnitId)
 		if err != nil {
-			return nil, errswrap.NewError(errorscentrum.ErrFailedQuery, err)
+			return nil, errswrap.NewError(err, errorscentrum.ErrFailedQuery)
 		}
 
 		newUnit := proto.Clone(unit)
@@ -811,7 +811,7 @@ func (s *Manager) TakeDispatch(ctx context.Context, job string, userId int32, un
 							Y:         y,
 							Postal:    postal,
 						}); err != nil {
-							return nil, false, errswrap.NewError(errorscentrum.ErrFailedQuery, err)
+							return nil, false, errswrap.NewError(err, errorscentrum.ErrFailedQuery)
 						}
 					}
 				}
@@ -835,7 +835,7 @@ func (s *Manager) TakeDispatch(ctx context.Context, job string, userId int32, un
 				Y:          y,
 				Postal:     postal,
 			}, true); err != nil {
-				return nil, false, errswrap.NewError(errorscentrum.ErrFailedQuery, err)
+				return nil, false, errswrap.NewError(err, errorscentrum.ErrFailedQuery)
 			}
 
 			return dsp, true, nil

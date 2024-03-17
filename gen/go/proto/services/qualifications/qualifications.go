@@ -93,7 +93,7 @@ func (s *Server) ListQualifications(ctx context.Context, req *ListQualifications
 
 	var count database.DataCount
 	if err := countStmt.QueryContext(ctx, s.db, &count); err != nil {
-		return nil, errswrap.NewError(errorsqualifications.ErrFailedQuery, err)
+		return nil, errswrap.NewError(err, errorsqualifications.ErrFailedQuery)
 	}
 
 	pag, limit := req.Pagination.GetResponseWithPageSize(count.TotalCount, QualificationsPageSize)
@@ -111,7 +111,7 @@ func (s *Server) ListQualifications(ctx context.Context, req *ListQualifications
 		LIMIT(limit)
 
 	if err := stmt.QueryContext(ctx, s.db, &resp.Qualifications); err != nil {
-		return nil, errswrap.NewError(errorsqualifications.ErrFailedQuery, err)
+		return nil, errswrap.NewError(err, errorsqualifications.ErrFailedQuery)
 	}
 
 	jobInfoFn := s.enricher.EnrichJobInfoSafeFunc(userInfo)
@@ -142,7 +142,7 @@ func (s *Server) GetQualification(ctx context.Context, req *GetQualificationRequ
 
 	check, err := s.checkIfUserHasAccessToQuali(ctx, req.QualificationId, userInfo, qualifications.AccessLevel_ACCESS_LEVEL_VIEW)
 	if err != nil {
-		return nil, errswrap.NewError(errorsqualifications.ErrFailedQuery, err)
+		return nil, errswrap.NewError(err, errorsqualifications.ErrFailedQuery)
 	}
 	if !check && !userInfo.SuperUser {
 		return nil, errorsqualifications.ErrFailedQuery
@@ -152,7 +152,7 @@ func (s *Server) GetQualification(ctx context.Context, req *GetQualificationRequ
 	resp.Qualification, err = s.getQualification(ctx, req.QualificationId,
 		tQuali.ID.EQ(jet.Uint64(req.QualificationId)), userInfo)
 	if err != nil {
-		return nil, errswrap.NewError(errorsqualifications.ErrFailedQuery, err)
+		return nil, errswrap.NewError(err, errorsqualifications.ErrFailedQuery)
 	}
 
 	if resp.Qualification == nil || resp.Qualification.Id <= 0 {
@@ -167,7 +167,7 @@ func (s *Server) GetQualification(ctx context.Context, req *GetQualificationRequ
 		QualificationId: req.QualificationId,
 	})
 	if err != nil {
-		return nil, errswrap.NewError(errorsqualifications.ErrFailedQuery, err)
+		return nil, errswrap.NewError(err, errorsqualifications.ErrFailedQuery)
 	}
 	if qualiAccess.Access != nil {
 		resp.Qualification.Access = qualiAccess.Access
@@ -193,7 +193,7 @@ func (s *Server) CreateQualification(ctx context.Context, req *CreateQualificati
 	// Begin transaction
 	tx, err := s.db.BeginTx(ctx, nil)
 	if err != nil {
-		return nil, errswrap.NewError(errorsqualifications.ErrFailedQuery, err)
+		return nil, errswrap.NewError(err, errorsqualifications.ErrFailedQuery)
 	}
 	// Defer a rollback in case anything fails
 	defer tx.Rollback()
@@ -227,21 +227,21 @@ func (s *Server) CreateQualification(ctx context.Context, req *CreateQualificati
 
 	result, err := stmt.ExecContext(ctx, tx)
 	if err != nil {
-		return nil, errswrap.NewError(errorsqualifications.ErrFailedQuery, err)
+		return nil, errswrap.NewError(err, errorsqualifications.ErrFailedQuery)
 	}
 
 	lastId, err := result.LastInsertId()
 	if err != nil {
-		return nil, errswrap.NewError(errorsqualifications.ErrFailedQuery, err)
+		return nil, errswrap.NewError(err, errorsqualifications.ErrFailedQuery)
 	}
 
 	if err := s.handleQualificationAccessChanges(ctx, tx, qualifications.AccessLevelUpdateMode_ACCESS_LEVEL_UPDATE_MODE_UPDATE, uint64(lastId), req.Qualification.Access); err != nil {
-		return nil, errswrap.NewError(errorsqualifications.ErrFailedQuery, err)
+		return nil, errswrap.NewError(err, errorsqualifications.ErrFailedQuery)
 	}
 
 	// Commit the transaction
 	if err := tx.Commit(); err != nil {
-		return nil, errswrap.NewError(errorsqualifications.ErrFailedQuery, err)
+		return nil, errswrap.NewError(err, errorsqualifications.ErrFailedQuery)
 	}
 
 	auditEntry.State = int16(rector.EventType_EVENT_TYPE_CREATED)
@@ -267,7 +267,7 @@ func (s *Server) UpdateQualification(ctx context.Context, req *UpdateQualificati
 
 	check, err := s.checkIfUserHasAccessToQuali(ctx, req.Qualification.Id, userInfo, qualifications.AccessLevel_ACCESS_LEVEL_EDIT)
 	if err != nil {
-		return nil, errswrap.NewError(errorsqualifications.ErrFailedQuery, err)
+		return nil, errswrap.NewError(err, errorsqualifications.ErrFailedQuery)
 	}
 	var onlyUpdateAccess bool
 	if !check && !userInfo.SuperUser {
@@ -284,13 +284,13 @@ func (s *Server) UpdateQualification(ctx context.Context, req *UpdateQualificati
 		tQuali.ID.EQ(jet.Uint64(req.Qualification.Id)),
 		userInfo)
 	if err != nil {
-		return nil, errswrap.NewError(errorsqualifications.ErrFailedQuery, err)
+		return nil, errswrap.NewError(err, errorsqualifications.ErrFailedQuery)
 	}
 
 	// Field Permission Check
 	fieldsAttr, err := s.ps.Attr(userInfo, permsqualifications.QualificationsServicePerm, permsqualifications.QualificationsServiceUpdateQualificationPerm, permsqualifications.QualificationsServiceUpdateQualificationAccessPermField)
 	if err != nil {
-		return nil, errswrap.NewError(errorsqualifications.ErrFailedQuery, err)
+		return nil, errswrap.NewError(err, errorsqualifications.ErrFailedQuery)
 	}
 	var fields perms.StringList
 	if fieldsAttr != nil {
@@ -303,7 +303,7 @@ func (s *Server) UpdateQualification(ctx context.Context, req *UpdateQualificati
 	// Begin transaction
 	tx, err := s.db.BeginTx(ctx, nil)
 	if err != nil {
-		return nil, errswrap.NewError(errorsqualifications.ErrFailedQuery, err)
+		return nil, errswrap.NewError(err, errorsqualifications.ErrFailedQuery)
 	}
 
 	if !onlyUpdateAccess {
@@ -336,17 +336,17 @@ func (s *Server) UpdateQualification(ctx context.Context, req *UpdateQualificati
 			)
 
 		if _, err := stmt.ExecContext(ctx, tx); err != nil {
-			return nil, errswrap.NewError(errorsqualifications.ErrFailedQuery, err)
+			return nil, errswrap.NewError(err, errorsqualifications.ErrFailedQuery)
 		}
 	}
 
 	if err := s.handleQualificationAccessChanges(ctx, tx, qualifications.AccessLevelUpdateMode_ACCESS_LEVEL_UPDATE_MODE_UPDATE, req.Qualification.Id, req.Qualification.Access); err != nil {
-		return nil, errswrap.NewError(errorsqualifications.ErrFailedQuery, err)
+		return nil, errswrap.NewError(err, errorsqualifications.ErrFailedQuery)
 	}
 
 	// Commit the transaction
 	if err := tx.Commit(); err != nil {
-		return nil, errswrap.NewError(errorsqualifications.ErrFailedQuery, err)
+		return nil, errswrap.NewError(err, errorsqualifications.ErrFailedQuery)
 	}
 
 	auditEntry.State = int16(rector.EventType_EVENT_TYPE_UPDATED)
@@ -372,7 +372,7 @@ func (s *Server) DeleteQualification(ctx context.Context, req *DeleteQualificati
 
 	check, err := s.checkIfUserHasAccessToQuali(ctx, req.QualificationId, userInfo, qualifications.AccessLevel_ACCESS_LEVEL_EDIT)
 	if err != nil {
-		return nil, errswrap.NewError(errorsqualifications.ErrFailedQuery, err)
+		return nil, errswrap.NewError(err, errorsqualifications.ErrFailedQuery)
 	}
 	if !check && !userInfo.SuperUser {
 		if !userInfo.SuperUser {
@@ -383,13 +383,13 @@ func (s *Server) DeleteQualification(ctx context.Context, req *DeleteQualificati
 	quali, err := s.getQualification(ctx, req.QualificationId,
 		tQuali.ID.EQ(jet.Uint64(req.QualificationId)), userInfo)
 	if err != nil {
-		return nil, errswrap.NewError(errorsqualifications.ErrFailedQuery, err)
+		return nil, errswrap.NewError(err, errorsqualifications.ErrFailedQuery)
 	}
 
 	// Field Permission Check
 	fieldsAttr, err := s.ps.Attr(userInfo, permsqualifications.QualificationsServicePerm, permsqualifications.QualificationsServiceDeleteQualificationPerm, permsqualifications.QualificationsServiceDeleteQualificationAccessPermField)
 	if err != nil {
-		return nil, errswrap.NewError(errorsqualifications.ErrFailedQuery, err)
+		return nil, errswrap.NewError(err, errorsqualifications.ErrFailedQuery)
 	}
 	var fields perms.StringList
 	if fieldsAttr != nil {
@@ -411,7 +411,7 @@ func (s *Server) DeleteQualification(ctx context.Context, req *DeleteQualificati
 		)
 
 	if _, err := stmt.ExecContext(ctx, s.db); err != nil {
-		return nil, errswrap.NewError(errorsqualifications.ErrFailedQuery, err)
+		return nil, errswrap.NewError(err, errorsqualifications.ErrFailedQuery)
 	}
 
 	auditEntry.State = int16(rector.EventType_EVENT_TYPE_DELETED)

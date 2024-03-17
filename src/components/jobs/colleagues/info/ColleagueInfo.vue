@@ -248,8 +248,7 @@ today.setMilliseconds(0);
                             <TimeclockOverviewBlock :user-id="userId" />
                         </TabPanel>
                         <TabPanel v-if="can('QualificationsService.ListQualifications')">
-                            <p class="text-xl text-neutral">TODO</p>
-                            <!-- TODO show colleague's qualifications -->
+                            <JobsQualificationsResultsList class="mt-4" :user-id="userId" />
                         </TabPanel>
                         <TabPanel v-if="can('JobsConductService.ListConductEntries')">
                             <ConductList :user-id="userId" :hide-user-search="true" />

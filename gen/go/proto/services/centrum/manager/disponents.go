@@ -40,7 +40,7 @@ func (s *Manager) DisponentSignOn(ctx context.Context, job string, userId int32,
 
 		if _, err := stmt.ExecContext(ctx, s.db); err != nil {
 			if !dbutils.IsDuplicateError(err) {
-				return errswrap.NewError(errorscentrum.ErrFailedQuery, err)
+				return errswrap.NewError(err, errorscentrum.ErrFailedQuery)
 			}
 		}
 	} else {
@@ -53,13 +53,13 @@ func (s *Manager) DisponentSignOn(ctx context.Context, job string, userId int32,
 			LIMIT(1)
 
 		if _, err := stmt.ExecContext(ctx, s.db); err != nil {
-			return errswrap.NewError(errorscentrum.ErrFailedQuery, err)
+			return errswrap.NewError(err, errorscentrum.ErrFailedQuery)
 		}
 	}
 
 	// Load updated disponents into state
 	if err := s.LoadDisponentsFromDB(ctx, job); err != nil {
-		return errswrap.NewError(errorscentrum.ErrFailedQuery, err)
+		return errswrap.NewError(err, errorscentrum.ErrFailedQuery)
 	}
 
 	disponents, err := s.GetDisponents(ctx, job)
@@ -73,7 +73,7 @@ func (s *Manager) DisponentSignOn(ctx context.Context, job string, userId int32,
 	}
 	data, err := proto.Marshal(change)
 	if err != nil {
-		return errswrap.NewError(errorscentrum.ErrFailedQuery, err)
+		return errswrap.NewError(err, errorscentrum.ErrFailedQuery)
 	}
 
 	if _, err := s.js.Publish(ctx, eventscentrum.BuildSubject(eventscentrum.TopicGeneral, eventscentrum.TypeGeneralDisponents, job), data); err != nil {

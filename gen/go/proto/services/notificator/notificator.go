@@ -108,7 +108,7 @@ func (s *Server) GetNotifications(ctx context.Context, req *GetNotificationsRequ
 
 	var count database.DataCount
 	if err := countStmt.QueryContext(ctx, s.db, &count); err != nil {
-		return nil, errswrap.NewError(ErrFailedRequest, err)
+		return nil, errswrap.NewError(err, ErrFailedRequest)
 	}
 
 	pag, limit := req.Pagination.GetResponse(count.TotalCount)
@@ -140,7 +140,7 @@ func (s *Server) GetNotifications(ctx context.Context, req *GetNotificationsRequ
 
 	if err := stmt.QueryContext(ctx, s.db, &resp.Notifications); err != nil {
 		if !errors.Is(err, qrm.ErrNoRows) {
-			return nil, errswrap.NewError(ErrFailedRequest, err)
+			return nil, errswrap.NewError(err, ErrFailedRequest)
 		}
 	}
 
@@ -178,12 +178,12 @@ func (s *Server) MarkNotifications(ctx context.Context, req *MarkNotificationsRe
 
 	res, err := stmt.ExecContext(ctx, s.db)
 	if err != nil {
-		return nil, errswrap.NewError(ErrFailedRequest, err)
+		return nil, errswrap.NewError(err, ErrFailedRequest)
 	}
 
 	rows, err := res.RowsAffected()
 	if err != nil {
-		return nil, errswrap.NewError(ErrFailedRequest, err)
+		return nil, errswrap.NewError(err, ErrFailedRequest)
 	}
 
 	return &MarkNotificationsResponse{
@@ -207,7 +207,7 @@ func (s *Server) getNotificationCount(ctx context.Context, userId int32) (int32,
 		Count int32
 	}
 	if err := stmt.QueryContext(ctx, s.db, &dest); err != nil {
-		return 0, errswrap.NewError(ErrFailedStream, err)
+		return 0, errswrap.NewError(err, ErrFailedStream)
 	}
 
 	return dest.Count, nil
@@ -228,12 +228,12 @@ func (s *Server) Stream(req *StreamRequest, srv NotificatorService_StreamServer)
 		DeliverPolicy: jetstream.DeliverNewPolicy,
 	})
 	if err != nil {
-		return errswrap.NewError(ErrFailedStream, err)
+		return errswrap.NewError(err, ErrFailedStream)
 	}
 
 	cons, err := c.Messages()
 	if err != nil {
-		return errswrap.NewError(ErrFailedStream, err)
+		return errswrap.NewError(err, ErrFailedStream)
 	}
 	defer cons.Stop()
 
@@ -257,12 +257,12 @@ func (s *Server) Stream(req *StreamRequest, srv NotificatorService_StreamServer)
 	// Check user token validity
 	data, stop, err := s.checkUser(srv.Context(), currentUserInfo)
 	if err != nil {
-		return errswrap.NewError(ErrFailedStream, err)
+		return errswrap.NewError(err, ErrFailedStream)
 	}
 
 	notsCount, err := s.getNotificationCount(srv.Context(), userInfo.UserId)
 	if err != nil {
-		return errswrap.NewError(ErrFailedStream, err)
+		return errswrap.NewError(err, ErrFailedStream)
 	}
 
 	if err := srv.Send(&StreamResponse{
@@ -270,7 +270,7 @@ func (s *Server) Stream(req *StreamRequest, srv NotificatorService_StreamServer)
 		Data:              data,
 		Restart:           &stop,
 	}); err != nil {
-		return errswrap.NewError(ErrFailedStream, err)
+		return errswrap.NewError(err, ErrFailedStream)
 	}
 
 	for {
@@ -286,13 +286,13 @@ func (s *Server) Stream(req *StreamRequest, srv NotificatorService_StreamServer)
 			// Check user token validity
 			data, stop, err := s.checkUser(srv.Context(), currentUserInfo)
 			if err != nil {
-				return errswrap.NewError(ErrFailedStream, err)
+				return errswrap.NewError(err, ErrFailedStream)
 			}
 			if data != nil {
 				resp.Data = data
 
 				if err := srv.Send(resp); err != nil {
-					return errswrap.NewError(ErrFailedStream, err)
+					return errswrap.NewError(err, ErrFailedStream)
 				}
 			}
 
@@ -304,14 +304,14 @@ func (s *Server) Stream(req *StreamRequest, srv NotificatorService_StreamServer)
 			// Make sure the notification is in sync (again)
 			resp.NotificationCount, err = s.getNotificationCount(srv.Context(), userInfo.UserId)
 			if err != nil {
-				return errswrap.NewError(ErrFailedStream, err)
+				return errswrap.NewError(err, ErrFailedStream)
 			}
 
 		case msg := <-msgCh:
 			// Publish notifications sent directly to user via the message queue
 			if msg == nil {
 				s.logger.Warn("nil notification message received via message queue", zap.Int32("user_id", currentUserInfo.UserId))
-				continue
+				return nil
 			}
 
 			if err := msg.Ack(); err != nil {
@@ -320,7 +320,7 @@ func (s *Server) Stream(req *StreamRequest, srv NotificatorService_StreamServer)
 
 			var dest notifications.Notification
 			if err := proto.Unmarshal(msg.Data(), &dest); err != nil {
-				return errswrap.NewError(ErrFailedStream, err)
+				return errswrap.NewError(err, ErrFailedStream)
 			}
 
 			resp.Data = &StreamResponse_Notification{
@@ -329,7 +329,7 @@ func (s *Server) Stream(req *StreamRequest, srv NotificatorService_StreamServer)
 			resp.NotificationCount++
 
 			if err := srv.Send(resp); err != nil {
-				return errswrap.NewError(ErrFailedStream, err)
+				return errswrap.NewError(err, ErrFailedStream)
 			}
 		}
 	}

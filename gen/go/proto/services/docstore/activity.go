@@ -68,7 +68,7 @@ func (s *Server) ListDocumentActivity(ctx context.Context, req *ListDocumentActi
 
 	ok, err := s.checkIfUserHasAccessToDoc(ctx, req.DocumentId, userInfo, documents.AccessLevel_ACCESS_LEVEL_VIEW)
 	if err != nil {
-		return nil, errswrap.NewError(errorsdocstore.ErrFailedQuery, err)
+		return nil, errswrap.NewError(err, errorsdocstore.ErrFailedQuery)
 	}
 	if !ok {
 		return nil, errorsdocstore.ErrDocViewDenied
@@ -97,7 +97,7 @@ func (s *Server) ListDocumentActivity(ctx context.Context, req *ListDocumentActi
 	var count database.DataCount
 	if err := countStmt.QueryContext(ctx, s.db, &count); err != nil {
 		if !errors.Is(err, qrm.ErrNoRows) {
-			return nil, errswrap.NewError(errorsdocstore.ErrFailedQuery, err)
+			return nil, errswrap.NewError(err, errorsdocstore.ErrFailedQuery)
 		}
 	}
 
@@ -143,7 +143,7 @@ func (s *Server) ListDocumentActivity(ctx context.Context, req *ListDocumentActi
 		LIMIT(limit)
 
 	if err := stmt.QueryContext(ctx, s.db, &resp.Activity); err != nil {
-		return nil, errswrap.NewError(errorsdocstore.ErrFailedQuery, err)
+		return nil, errswrap.NewError(err, errorsdocstore.ErrFailedQuery)
 	}
 
 	resp.Pagination.Update(len(resp.Activity))

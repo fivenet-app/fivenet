@@ -334,7 +334,7 @@ func (s *Server) checkIfUserHasAccessToQualiIDs(ctx context.Context, userInfo *u
 		).
 		FROM(
 			tQuali.
-				LEFT_JOIN(tQJobAccess,
+				INNER_JOIN(tQJobAccess,
 					tQJobAccess.QualificationID.EQ(tQuali.ID).
 						AND(tQJobAccess.Job.EQ(jet.String(userInfo.Job))).
 						AND(tQJobAccess.MinimumGrade.LT_EQ(jet.Int32(userInfo.JobGrade))),
@@ -363,14 +363,18 @@ func (s *Server) getQualification(ctx context.Context, qualificationId uint64, c
 
 	if err := stmt.QueryContext(ctx, s.db, &quali); err != nil {
 		if !errors.Is(err, qrm.ErrNoRows) {
-			return nil, errswrap.NewError(errorsqualifications.ErrFailedQuery, err)
+			return nil, errswrap.NewError(err, errorsqualifications.ErrFailedQuery)
 		}
+	}
+
+	if quali.Id == 0 {
+		return nil, nil
 	}
 
 	reqs, err := s.getQualificationRequirements(ctx, qualificationId)
 	if err != nil {
 		if !errors.Is(err, qrm.ErrNoRows) {
-			return nil, errswrap.NewError(errorsqualifications.ErrFailedQuery, err)
+			return nil, errswrap.NewError(err, errorsqualifications.ErrFailedQuery)
 		}
 	}
 	quali.Requirements = reqs

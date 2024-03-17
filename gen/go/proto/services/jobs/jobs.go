@@ -100,7 +100,7 @@ func (s *Server) GetMOTD(ctx context.Context, req *GetMOTDRequest) (*GetMOTDResp
 	resp := &GetMOTDResponse{}
 	if err := stmt.QueryContext(ctx, s.db, resp); err != nil {
 		if !errors.Is(err, qrm.ErrNoRows) {
-			return nil, errswrap.NewError(errorsjobs.ErrFailedQuery, err)
+			return nil, errswrap.NewError(err, errorsjobs.ErrFailedQuery)
 		}
 	}
 
@@ -133,7 +133,7 @@ func (s *Server) SetMOTD(ctx context.Context, req *SetMOTDRequest) (*SetMOTDResp
 		)
 
 	if _, err := stmt.ExecContext(ctx, s.db); err != nil {
-		return nil, errswrap.NewError(errorsjobs.ErrFailedQuery, err)
+		return nil, errswrap.NewError(err, errorsjobs.ErrFailedQuery)
 	}
 
 	return &SetMOTDResponse{

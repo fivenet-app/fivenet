@@ -160,7 +160,7 @@ func (s *Server) Login(ctx context.Context, req *LoginRequest) (*LoginResponse, 
 		tAccounts.Password.IS_NOT_NULL(),
 	))
 	if err != nil {
-		return nil, errswrap.NewError(errorsauth.ErrInvalidLogin, err)
+		return nil, errswrap.NewError(err, errorsauth.ErrInvalidLogin)
 	}
 
 	// No password set
@@ -170,12 +170,12 @@ func (s *Server) Login(ctx context.Context, req *LoginRequest) (*LoginResponse, 
 
 	// Password check logic
 	if err := bcrypt.CompareHashAndPassword([]byte(*account.Password), []byte(req.Password)); err != nil {
-		return nil, errswrap.NewError(errorsauth.ErrInvalidLogin, err)
+		return nil, errswrap.NewError(err, errorsauth.ErrInvalidLogin)
 	}
 
 	token, claims, err := s.createTokenFromAccountAndChar(account, nil)
 	if err != nil {
-		return nil, errswrap.NewError(errorsauth.ErrGenericLogin, err)
+		return nil, errswrap.NewError(err, errorsauth.ErrGenericLogin)
 	}
 
 	return &LoginResponse{
@@ -199,7 +199,7 @@ func (s *Server) CreateAccount(ctx context.Context, req *CreateAccountRequest) (
 	acc, err := s.getAccountFromDB(ctx, tAccounts.RegToken.EQ(jet.String(req.RegToken)))
 	if err != nil {
 		s.logger.Error("failed to get account from database by registration token", zap.Error(err), zap.String("reg_token", req.RegToken))
-		return nil, errswrap.NewError(errorsauth.ErrAccountCreateFailed, err)
+		return nil, errswrap.NewError(err, errorsauth.ErrAccountCreateFailed)
 	}
 
 	if acc.Username != nil || acc.Password != nil {
@@ -210,7 +210,7 @@ func (s *Server) CreateAccount(ctx context.Context, req *CreateAccountRequest) (
 
 	hashedPassword, err := bcrypt.GenerateFromPassword([]byte(req.Password), 14)
 	if err != nil {
-		return nil, errswrap.NewError(errorsauth.ErrAccountCreateFailed, err)
+		return nil, errswrap.NewError(err, errorsauth.ErrAccountCreateFailed)
 	}
 
 	stmt := tAccounts.
@@ -233,11 +233,11 @@ func (s *Server) CreateAccount(ctx context.Context, req *CreateAccountRequest) (
 
 	if _, err := stmt.ExecContext(ctx, s.db); err != nil {
 		if dbutils.IsDuplicateError(err) {
-			return nil, errswrap.NewError(errorsauth.ErrAccountDuplicate, err)
+			return nil, errswrap.NewError(err, errorsauth.ErrAccountDuplicate)
 		}
 
 		s.logger.Error("failed to update account in database during account creation", zap.Error(err))
-		return nil, errswrap.NewError(errorsauth.ErrAccountCreateFailed, err)
+		return nil, errswrap.NewError(err, errorsauth.ErrAccountCreateFailed)
 	}
 
 	return &CreateAccountResponse{
@@ -248,39 +248,39 @@ func (s *Server) CreateAccount(ctx context.Context, req *CreateAccountRequest) (
 func (s *Server) ChangePassword(ctx context.Context, req *ChangePasswordRequest) (*ChangePasswordResponse, error) {
 	token, err := auth.GetTokenFromGRPCContext(ctx)
 	if err != nil {
-		return nil, errswrap.NewError(auth.ErrInvalidToken, err)
+		return nil, errswrap.NewError(err, auth.ErrInvalidToken)
 	}
 
 	claims, err := s.tm.ParseWithClaims(token)
 	if err != nil {
-		return nil, errswrap.NewError(errorsauth.ErrChangePassword, err)
+		return nil, errswrap.NewError(err, errorsauth.ErrChangePassword)
 	}
 
 	acc, err := s.getAccountFromDB(ctx, tAccounts.ID.EQ(jet.Uint64(claims.AccID)))
 	if err != nil {
-		return nil, errswrap.NewError(errorsauth.ErrChangePassword, err)
+		return nil, errswrap.NewError(err, errorsauth.ErrChangePassword)
 	}
 
 	// No password set
 	if acc.Password == nil {
-		return nil, errswrap.NewError(errorsauth.ErrNoAccount, err)
+		return nil, errswrap.NewError(err, errorsauth.ErrNoAccount)
 	}
 
 	// Password check logic
 	if err := bcrypt.CompareHashAndPassword([]byte(*acc.Password), []byte(req.Current)); err != nil {
-		return nil, errswrap.NewError(errorsauth.ErrChangePassword, err)
+		return nil, errswrap.NewError(err, errorsauth.ErrChangePassword)
 	}
 
 	hashedPassword, err := bcrypt.GenerateFromPassword([]byte(req.New), 14)
 	if err != nil {
-		return nil, errswrap.NewError(errorsauth.ErrAccountCreateFailed, err)
+		return nil, errswrap.NewError(err, errorsauth.ErrAccountCreateFailed)
 	}
 
 	var char *users.User
 	if claims.CharID > 0 {
 		char, _, _, err = s.getCharacter(ctx, claims.CharID)
 		if err != nil {
-			return nil, errswrap.NewError(errorsauth.ErrChangePassword, err)
+			return nil, errswrap.NewError(err, errorsauth.ErrChangePassword)
 		}
 	}
 
@@ -299,12 +299,12 @@ func (s *Server) ChangePassword(ctx context.Context, req *ChangePasswordRequest)
 		)
 
 	if _, err := stmt.ExecContext(ctx, s.db); err != nil {
-		return nil, errswrap.NewError(errorsauth.ErrUpdateAccount, err)
+		return nil, errswrap.NewError(err, errorsauth.ErrUpdateAccount)
 	}
 
 	newToken, newClaims, err := s.createTokenFromAccountAndChar(acc, char)
 	if err != nil {
-		return nil, errswrap.NewError(errorsauth.ErrChangePassword, err)
+		return nil, errswrap.NewError(err, errorsauth.ErrChangePassword)
 	}
 
 	return &ChangePasswordResponse{
@@ -316,22 +316,22 @@ func (s *Server) ChangePassword(ctx context.Context, req *ChangePasswordRequest)
 func (s *Server) ChangeUsername(ctx context.Context, req *ChangeUsernameRequest) (*ChangeUsernameResponse, error) {
 	token, err := auth.GetTokenFromGRPCContext(ctx)
 	if err != nil {
-		return nil, errswrap.NewError(auth.ErrInvalidToken, err)
+		return nil, errswrap.NewError(err, auth.ErrInvalidToken)
 	}
 
 	claims, err := s.tm.ParseWithClaims(token)
 	if err != nil {
-		return nil, errswrap.NewError(errorsauth.ErrChangeUsername, err)
+		return nil, errswrap.NewError(err, errorsauth.ErrChangeUsername)
 	}
 
 	acc, err := s.getAccountFromDB(ctx, tAccounts.ID.EQ(jet.Uint64(claims.AccID)))
 	if err != nil {
-		return nil, errswrap.NewError(errorsauth.ErrChangeUsername, err)
+		return nil, errswrap.NewError(err, errorsauth.ErrChangeUsername)
 	}
 
 	// No username nor password set on account, fail
 	if acc.Username == nil || acc.Password == nil {
-		return nil, errswrap.NewError(errorsauth.ErrNoAccount, err)
+		return nil, errswrap.NewError(err, errorsauth.ErrNoAccount)
 	}
 
 	// Make sure current username matches the sent current username
@@ -352,7 +352,7 @@ func (s *Server) ChangeUsername(ctx context.Context, req *ChangeUsernameRequest)
 	newAcc, err := s.getAccountFromDB(ctx, tAccounts.Username.EQ(jet.String(username)))
 	if err != nil && !errors.Is(err, qrm.ErrNoRows) {
 		// Other database error
-		return nil, errswrap.NewError(errorsauth.ErrBadUsername, err)
+		return nil, errswrap.NewError(err, errorsauth.ErrBadUsername)
 	}
 	// An account with the requested username was found, fail
 	if newAcc != nil {
@@ -373,7 +373,7 @@ func (s *Server) ChangeUsername(ctx context.Context, req *ChangeUsernameRequest)
 		)
 
 	if _, err := stmt.ExecContext(ctx, s.db); err != nil {
-		return nil, errswrap.NewError(errorsauth.ErrUpdateAccount, err)
+		return nil, errswrap.NewError(err, errorsauth.ErrUpdateAccount)
 	}
 
 	return resp, nil
@@ -386,7 +386,7 @@ func (s *Server) ForgotPassword(ctx context.Context, req *ForgotPasswordRequest)
 		tAccounts.Password.IS_NULL(),
 	))
 	if err != nil {
-		return nil, errswrap.NewError(errorsauth.ErrForgotPassword, err)
+		return nil, errswrap.NewError(err, errorsauth.ErrForgotPassword)
 	}
 
 	// We expect the account to not have a password for a "forgot password" request via token
@@ -396,7 +396,7 @@ func (s *Server) ForgotPassword(ctx context.Context, req *ForgotPasswordRequest)
 
 	hashedPassword, err := bcrypt.GenerateFromPassword([]byte(req.New), 14)
 	if err != nil {
-		return nil, errswrap.NewError(errorsauth.ErrForgotPassword, err)
+		return nil, errswrap.NewError(err, errorsauth.ErrForgotPassword)
 	}
 
 	pass := string(hashedPassword)
@@ -416,7 +416,7 @@ func (s *Server) ForgotPassword(ctx context.Context, req *ForgotPasswordRequest)
 		)
 
 	if _, err := stmt.ExecContext(ctx, s.db); err != nil {
-		return nil, errswrap.NewError(errorsauth.ErrForgotPassword, err)
+		return nil, errswrap.NewError(err, errorsauth.ErrForgotPassword)
 	}
 
 	return &ForgotPasswordResponse{}, nil
@@ -425,18 +425,18 @@ func (s *Server) ForgotPassword(ctx context.Context, req *ForgotPasswordRequest)
 func (s *Server) GetCharacters(ctx context.Context, req *GetCharactersRequest) (*GetCharactersResponse, error) {
 	token, err := auth.GetTokenFromGRPCContext(ctx)
 	if err != nil {
-		return nil, errswrap.NewError(auth.ErrInvalidToken, err)
+		return nil, errswrap.NewError(err, auth.ErrInvalidToken)
 	}
 
 	claims, err := s.tm.ParseWithClaims(token)
 	if err != nil {
-		return nil, errswrap.NewError(errorsauth.ErrGenericLogin, err)
+		return nil, errswrap.NewError(err, errorsauth.ErrGenericLogin)
 	}
 
 	// Load account to make sure it (still) exists
 	acc, err := s.getAccountFromDB(ctx, tAccounts.ID.EQ(jet.Uint64(claims.AccID)))
 	if err != nil {
-		return nil, errswrap.NewError(errorsauth.ErrGenericLogin, err)
+		return nil, errswrap.NewError(err, errorsauth.ErrGenericLogin)
 	}
 	if acc.ID == 0 {
 		return nil, errorsauth.ErrGenericLogin
@@ -486,10 +486,10 @@ func (s *Server) GetCharacters(ctx context.Context, req *GetCharactersRequest) (
 	resp := &GetCharactersResponse{}
 	if err := stmt.QueryContext(ctx, s.db, &resp.Chars); err != nil {
 		if errors.Is(err, qrm.ErrNoRows) {
-			return nil, errswrap.NewError(errorsauth.ErrNoCharFound, err)
+			return nil, errswrap.NewError(err, errorsauth.ErrNoCharFound)
 		}
 
-		return nil, errswrap.NewError(errorsauth.ErrGenericLogin, err)
+		return nil, errswrap.NewError(err, errorsauth.ErrGenericLogin)
 	}
 
 	return resp, nil
@@ -573,7 +573,7 @@ func (s *Server) ChooseCharacter(ctx context.Context, req *ChooseCharacterReques
 
 	char, jProps, userGroup, err := s.getCharacter(ctx, req.CharId)
 	if err != nil {
-		return nil, errswrap.NewError(errorsauth.ErrNoCharFound, err)
+		return nil, errswrap.NewError(err, errorsauth.ErrNoCharFound)
 	}
 
 	// Make sure the user isn't sending us a different char ID than their own
@@ -584,19 +584,19 @@ func (s *Server) ChooseCharacter(ctx context.Context, req *ChooseCharacterReques
 	// Load account data for token creation
 	account, err := s.getAccountFromDB(ctx, tAccounts.ID.EQ(jet.Uint64(claims.AccID)))
 	if err != nil {
-		return nil, errswrap.NewError(errorsauth.ErrNoCharFound, err)
+		return nil, errswrap.NewError(err, errorsauth.ErrNoCharFound)
 	}
 
 	// Reset override jobs when choosing a character
 	if account.OverrideJob != nil {
 		if err := s.ui.SetUserInfo(ctx, claims.AccID, "", 0); err != nil {
-			return nil, errswrap.NewError(errorsauth.ErrGenericLogin, err)
+			return nil, errswrap.NewError(err, errorsauth.ErrGenericLogin)
 		}
 	}
 
 	newToken, newClaims, err := s.createTokenFromAccountAndChar(account, char)
 	if err != nil {
-		return nil, errswrap.NewError(errorsauth.ErrGenericLogin, err)
+		return nil, errswrap.NewError(err, errorsauth.ErrGenericLogin)
 	}
 
 	// Load permissions of user
@@ -606,7 +606,7 @@ func (s *Server) ChooseCharacter(ctx context.Context, req *ChooseCharacterReques
 		JobGrade: char.JobGrade,
 	})
 	if err != nil {
-		return nil, errswrap.NewError(errorsauth.ErrUnableToChooseChar, err)
+		return nil, errswrap.NewError(err, errorsauth.ErrUnableToChooseChar)
 	}
 	ps := userPs.GuardNames()
 
@@ -616,7 +616,7 @@ func (s *Server) ChooseCharacter(ctx context.Context, req *ChooseCharacterReques
 
 	attrs, err := s.ps.FlattenRoleAttributes(char.Job, char.JobGrade)
 	if err != nil {
-		return nil, errswrap.NewError(errorsauth.ErrGenericLogin, err)
+		return nil, errswrap.NewError(err, errorsauth.ErrGenericLogin)
 	}
 	ps = append(ps, attrs...)
 
@@ -651,19 +651,19 @@ func (s *Server) SetJob(ctx context.Context, req *SetJobRequest) (*SetJobRespons
 
 	claims, err := s.tm.ParseWithClaims(token)
 	if err != nil {
-		return nil, errswrap.NewError(auth.ErrInvalidToken, err)
+		return nil, errswrap.NewError(err, auth.ErrInvalidToken)
 	}
 
 	userInfo := auth.MustGetUserInfoFromContext(ctx)
 
 	char, _, _, err := s.getCharacter(ctx, claims.CharID)
 	if err != nil {
-		return nil, errswrap.NewError(errorsauth.ErrNoCharFound, err)
+		return nil, errswrap.NewError(err, errorsauth.ErrNoCharFound)
 	}
 
 	job, jobGrade, jProps, err := s.getJobWithProps(ctx, req.Job)
 	if err != nil {
-		return nil, errswrap.NewError(errorsauth.ErrGenericLogin, err)
+		return nil, errswrap.NewError(err, errorsauth.ErrGenericLogin)
 	}
 
 	char.Job = job.Name
@@ -671,7 +671,7 @@ func (s *Server) SetJob(ctx context.Context, req *SetJobRequest) (*SetJobRespons
 	s.enricher.EnrichJobInfo(char)
 
 	if err := s.ui.SetUserInfo(ctx, claims.AccID, char.Job, char.JobGrade); err != nil {
-		return nil, errswrap.NewError(errorsauth.ErrGenericLogin, err)
+		return nil, errswrap.NewError(err, errorsauth.ErrGenericLogin)
 	}
 
 	userInfo.OrigJob = char.Job
@@ -682,12 +682,12 @@ func (s *Server) SetJob(ctx context.Context, req *SetJobRequest) (*SetJobRespons
 	// Load account data for token creation
 	account, err := s.getAccountFromDB(ctx, tAccounts.Username.EQ(jet.String(claims.Username)))
 	if err != nil {
-		return nil, errswrap.NewError(errorsauth.ErrGenericLogin, err)
+		return nil, errswrap.NewError(err, errorsauth.ErrGenericLogin)
 	}
 
 	newToken, newClaims, err := s.createTokenFromAccountAndChar(account, char)
 	if err != nil {
-		return nil, errswrap.NewError(errorsauth.ErrGenericLogin, err)
+		return nil, errswrap.NewError(err, errorsauth.ErrGenericLogin)
 	}
 
 	return &SetJobResponse{
