@@ -108,6 +108,7 @@ func (s *Server) AuthFuncOverride(ctx context.Context, fullMethod string) (conte
 	if fullMethod == "/services.auth.AuthService/SetJob" {
 		return s.auth.GRPCAuthFunc(ctx, fullMethod)
 	}
+
 	return s.auth.GRPCAuthFuncWithoutUserInfo(ctx, fullMethod)
 }
 

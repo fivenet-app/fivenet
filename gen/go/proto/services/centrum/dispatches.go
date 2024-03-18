@@ -13,10 +13,13 @@ import (
 	errorscentrum "github.com/galexrt/fivenet/gen/go/proto/services/centrum/errors"
 	"github.com/galexrt/fivenet/pkg/grpc/auth"
 	"github.com/galexrt/fivenet/pkg/grpc/errswrap"
+	"github.com/galexrt/fivenet/pkg/utils"
 	"github.com/galexrt/fivenet/query/fivenet/model"
 	"github.com/galexrt/fivenet/query/fivenet/table"
 	jet "github.com/go-jet/jet/v2/mysql"
 	"github.com/go-jet/jet/v2/qrm"
+	"go.opentelemetry.io/otel/attribute"
+	"go.opentelemetry.io/otel/trace"
 )
 
 var (
@@ -184,6 +187,8 @@ func (s *Server) ListDispatches(ctx context.Context, req *ListDispatchesRequest)
 }
 
 func (s *Server) GetDispatch(ctx context.Context, req *GetDispatchRequest) (*GetDispatchResponse, error) {
+	trace.SpanFromContext(ctx).SetAttributes(attribute.Int64("fivenet.centrum.dispatch_id", int64(req.Id)))
+
 	userInfo := auth.MustGetUserInfoFromContext(ctx)
 
 	auditEntry := &model.FivenetAuditLog{
@@ -322,6 +327,8 @@ func (s *Server) CreateDispatch(ctx context.Context, req *CreateDispatchRequest)
 }
 
 func (s *Server) UpdateDispatch(ctx context.Context, req *UpdateDispatchRequest) (*UpdateDispatchResponse, error) {
+	trace.SpanFromContext(ctx).SetAttributes(attribute.Int64("fivenet.centrum.dispatch_id", int64(req.Dispatch.Id)))
+
 	userInfo := auth.MustGetUserInfoFromContext(ctx)
 
 	auditEntry := &model.FivenetAuditLog{
@@ -343,6 +350,8 @@ func (s *Server) UpdateDispatch(ctx context.Context, req *UpdateDispatchRequest)
 }
 
 func (s *Server) TakeDispatch(ctx context.Context, req *TakeDispatchRequest) (*TakeDispatchResponse, error) {
+	trace.SpanFromContext(ctx).SetAttributes(attribute.Int64Slice("fivenet.centrum.dispatch_ids", utils.SliceUint64ToInt64(req.DispatchIds)))
+
 	userInfo := auth.MustGetUserInfoFromContext(ctx)
 
 	auditEntry := &model.FivenetAuditLog{
@@ -436,6 +445,10 @@ func (s *Server) UpdateDispatchStatus(ctx context.Context, req *UpdateDispatchSt
 }
 
 func (s *Server) AssignDispatch(ctx context.Context, req *AssignDispatchRequest) (*AssignDispatchResponse, error) {
+	trace.SpanFromContext(ctx).SetAttributes(attribute.Int64("fivenet.centrum.dispatch_id", int64(req.DispatchId)))
+	trace.SpanFromContext(ctx).SetAttributes(attribute.Int64Slice("fivenet.centrum.units.to_add", utils.SliceUint64ToInt64(req.ToAdd)))
+	trace.SpanFromContext(ctx).SetAttributes(attribute.Int64Slice("fivenet.centrum.units.to_remove", utils.SliceUint64ToInt64(req.ToRemove)))
+
 	userInfo := auth.MustGetUserInfoFromContext(ctx)
 
 	auditEntry := &model.FivenetAuditLog{

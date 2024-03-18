@@ -127,7 +127,7 @@ func (s *Server) ListQualifications(ctx context.Context, req *ListQualifications
 }
 
 func (s *Server) GetQualification(ctx context.Context, req *GetQualificationRequest) (*GetQualificationResponse, error) {
-	trace.SpanFromContext(ctx).SetAttributes(attribute.Int64("fivenet.qualifications.qualifications.id", int64(req.QualificationId)))
+	trace.SpanFromContext(ctx).SetAttributes(attribute.Int64("fivenet.qualifications.id", int64(req.QualificationId)))
 
 	userInfo := auth.MustGetUserInfoFromContext(ctx)
 
@@ -252,7 +252,7 @@ func (s *Server) CreateQualification(ctx context.Context, req *CreateQualificati
 }
 
 func (s *Server) UpdateQualification(ctx context.Context, req *UpdateQualificationRequest) (*UpdateQualificationResponse, error) {
-	trace.SpanFromContext(ctx).SetAttributes(attribute.Int64("fivenet.qualifications.qualifications.id", int64(req.Qualification.Id)))
+	trace.SpanFromContext(ctx).SetAttributes(attribute.Int64("fivenet.qualifications.id", int64(req.Qualification.Id)))
 
 	userInfo := auth.MustGetUserInfoFromContext(ctx)
 
@@ -357,7 +357,7 @@ func (s *Server) UpdateQualification(ctx context.Context, req *UpdateQualificati
 }
 
 func (s *Server) DeleteQualification(ctx context.Context, req *DeleteQualificationRequest) (*DeleteQualificationResponse, error) {
-	trace.SpanFromContext(ctx).SetAttributes(attribute.Int64("fivenet.qualifications.qualifications.id", int64(req.QualificationId)))
+	trace.SpanFromContext(ctx).SetAttributes(attribute.Int64("fivenet.qualifications.id", int64(req.QualificationId)))
 
 	userInfo := auth.MustGetUserInfoFromContext(ctx)
 

@@ -12,10 +12,13 @@ import (
 	"github.com/galexrt/fivenet/pkg/grpc/auth"
 	"github.com/galexrt/fivenet/pkg/grpc/errswrap"
 	"github.com/galexrt/fivenet/pkg/perms"
+	"github.com/galexrt/fivenet/pkg/utils"
 	timeutils "github.com/galexrt/fivenet/pkg/utils/time"
 	"github.com/galexrt/fivenet/query/fivenet/table"
 	jet "github.com/go-jet/jet/v2/mysql"
 	"github.com/go-jet/jet/v2/qrm"
+	"go.opentelemetry.io/otel/attribute"
+	"go.opentelemetry.io/otel/trace"
 )
 
 var (
@@ -23,6 +26,8 @@ var (
 )
 
 func (s *Server) ListTimeclock(ctx context.Context, req *ListTimeclockRequest) (*ListTimeclockResponse, error) {
+	trace.SpanFromContext(ctx).SetAttributes(attribute.IntSlice("fivenet.jobs.timeclock.user_ids", utils.SliceInt32ToInt(req.UserIds)))
+
 	userInfo := auth.MustGetUserInfoFromContext(ctx)
 
 	condition := jet.AND(tTimeClock.Job.EQ(jet.String(userInfo.Job)))

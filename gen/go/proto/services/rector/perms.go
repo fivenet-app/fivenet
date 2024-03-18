@@ -15,6 +15,8 @@ import (
 	"github.com/galexrt/fivenet/pkg/perms/collections"
 	"github.com/galexrt/fivenet/query/fivenet/model"
 	"github.com/go-jet/jet/v2/qrm"
+	"go.opentelemetry.io/otel/attribute"
+	"go.opentelemetry.io/otel/trace"
 )
 
 var (
@@ -206,6 +208,9 @@ func (s *Server) GetRole(ctx context.Context, req *GetRoleRequest) (*GetRoleResp
 }
 
 func (s *Server) CreateRole(ctx context.Context, req *CreateRoleRequest) (*CreateRoleResponse, error) {
+	trace.SpanFromContext(ctx).SetAttributes(attribute.String("fivenet.rector.job", req.Job))
+	trace.SpanFromContext(ctx).SetAttributes(attribute.Int("fivenet.rector.Grade", int(req.Grade)))
+
 	userInfo := auth.MustGetUserInfoFromContext(ctx)
 
 	auditEntry := &model.FivenetAuditLog{
@@ -256,6 +261,8 @@ func (s *Server) CreateRole(ctx context.Context, req *CreateRoleRequest) (*Creat
 }
 
 func (s *Server) DeleteRole(ctx context.Context, req *DeleteRoleRequest) (*DeleteRoleResponse, error) {
+	trace.SpanFromContext(ctx).SetAttributes(attribute.Int64("fivenet.rector.role_id", int64(req.Id)))
+
 	userInfo := auth.MustGetUserInfoFromContext(ctx)
 
 	auditEntry := &model.FivenetAuditLog{
@@ -300,6 +307,8 @@ func (s *Server) DeleteRole(ctx context.Context, req *DeleteRoleRequest) (*Delet
 }
 
 func (s *Server) UpdateRolePerms(ctx context.Context, req *UpdateRolePermsRequest) (*UpdateRolePermsResponse, error) {
+	trace.SpanFromContext(ctx).SetAttributes(attribute.Int64("fivenet.rector.role_id", int64(req.Id)))
+
 	userInfo := auth.MustGetUserInfoFromContext(ctx)
 
 	auditEntry := &model.FivenetAuditLog{
@@ -393,6 +402,8 @@ func (s *Server) handleAttributeUpdate(ctx context.Context, userInfo *userinfo.U
 }
 
 func (s *Server) GetPermissions(ctx context.Context, req *GetPermissionsRequest) (*GetPermissionsResponse, error) {
+	trace.SpanFromContext(ctx).SetAttributes(attribute.Int64("fivenet.rector.role_id", int64(req.RoleId)))
+
 	userInfo := auth.MustGetUserInfoFromContext(ctx)
 
 	perms, err := s.ps.GetAllPermissions(ctx)
@@ -429,6 +440,8 @@ func (s *Server) GetPermissions(ctx context.Context, req *GetPermissionsRequest)
 }
 
 func (s *Server) UpdateRoleLimits(ctx context.Context, req *UpdateRoleLimitsRequest) (*UpdateRoleLimitsResponse, error) {
+	trace.SpanFromContext(ctx).SetAttributes(attribute.Int64("fivenet.rector.role_id", int64(req.RoleId)))
+
 	role, err := s.ps.GetRole(ctx, req.RoleId)
 	if err != nil {
 		return nil, errswrap.NewError(err, errorsrector.ErrInvalidRequest)

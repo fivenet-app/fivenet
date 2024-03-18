@@ -7,6 +7,8 @@ import (
 	"github.com/galexrt/fivenet/pkg/grpc/errswrap"
 	"github.com/galexrt/fivenet/query/fivenet/table"
 	jet "github.com/go-jet/jet/v2/mysql"
+	"go.opentelemetry.io/otel/attribute"
+	"go.opentelemetry.io/otel/trace"
 )
 
 var (
@@ -14,6 +16,8 @@ var (
 )
 
 func (s *Server) DeleteOAuth2Connection(ctx context.Context, req *DeleteOAuth2ConnectionRequest) (*DeleteOAuth2ConnectionResponse, error) {
+	trace.SpanFromContext(ctx).SetAttributes(attribute.String("fivenet.auth.oauth2_provider", req.Provider))
+
 	token, err := auth.GetTokenFromGRPCContext(ctx)
 	if err != nil {
 		return nil, auth.ErrInvalidToken

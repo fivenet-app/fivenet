@@ -16,10 +16,13 @@ import (
 	"github.com/galexrt/fivenet/pkg/grpc/auth/userinfo"
 	"github.com/galexrt/fivenet/pkg/grpc/errswrap"
 	"github.com/galexrt/fivenet/pkg/perms"
+	"github.com/galexrt/fivenet/pkg/utils"
 	"github.com/galexrt/fivenet/query/fivenet/model"
 	"github.com/galexrt/fivenet/query/fivenet/table"
 	jet "github.com/go-jet/jet/v2/mysql"
 	"github.com/go-jet/jet/v2/qrm"
+	"go.opentelemetry.io/otel/attribute"
+	"go.opentelemetry.io/otel/trace"
 )
 
 var (
@@ -179,6 +182,8 @@ func (s *Server) getColleague(ctx context.Context, userId int32) (*jobs.Colleagu
 }
 
 func (s *Server) GetColleague(ctx context.Context, req *GetColleagueRequest) (*GetColleagueResponse, error) {
+	trace.SpanFromContext(ctx).SetAttributes(attribute.Int64("fivenet.jobs.colleague.id", int64(req.UserId)))
+
 	userInfo := auth.MustGetUserInfoFromContext(ctx)
 
 	auditEntry := &model.FivenetAuditLog{
@@ -263,6 +268,8 @@ func (s *Server) getJobsUserProps(ctx context.Context, userId int32) (*jobs.Jobs
 }
 
 func (s *Server) SetJobsUserProps(ctx context.Context, req *SetJobsUserPropsRequest) (*SetJobsUserPropsResponse, error) {
+	trace.SpanFromContext(ctx).SetAttributes(attribute.Int64("fivenet.jobs.colleague.id", int64(req.Props.UserId)))
+
 	userInfo := auth.MustGetUserInfoFromContext(ctx)
 
 	auditEntry := &model.FivenetAuditLog{
@@ -487,6 +494,8 @@ func (s *Server) getConditionForColleagueAccess(actTable *table.FivenetJobsUserA
 }
 
 func (s *Server) ListColleagueActivity(ctx context.Context, req *ListColleagueActivityRequest) (*ListColleagueActivityResponse, error) {
+	trace.SpanFromContext(ctx).SetAttributes(attribute.IntSlice("fivenet.jobs.colleagues.user_ids", utils.SliceInt32ToInt(req.UserIds)))
+
 	userInfo := auth.MustGetUserInfoFromContext(ctx)
 
 	// Access Field Permission Check
@@ -500,14 +509,14 @@ func (s *Server) ListColleagueActivity(ctx context.Context, req *ListColleagueAc
 	}
 
 	tJobsUserActivity := tJobsUserActivity.AS("jobsuseractivity")
-	tUTarget := tUser.AS("target_user")
-	tUSource := tUser.AS("source_user")
+	tTargetUser := tUser.AS("target_user")
+	tSourceUser := tUser.AS("source_user")
 
 	condition := tJobsUserActivity.Job.EQ(jet.String(userInfo.Job))
 
 	// If no user IDs given or more than 2, show all the user has access to
 	if len(req.UserIds) == 0 || len(req.UserIds) >= 2 {
-		condition = condition.AND(s.getConditionForColleagueAccess(tJobsUserActivity, tUTarget, access, userInfo))
+		condition = condition.AND(s.getConditionForColleagueAccess(tJobsUserActivity, tTargetUser, access, userInfo))
 
 		if len(req.UserIds) >= 2 {
 			// More than 2 user ids
@@ -516,7 +525,7 @@ func (s *Server) ListColleagueActivity(ctx context.Context, req *ListColleagueAc
 				userIds[i] = jet.Int32(req.UserIds[i])
 			}
 
-			condition = condition.AND(tUTarget.ID.IN(userIds...))
+			condition = condition.AND(tTargetUser.ID.IN(userIds...))
 		}
 	} else {
 		userId := req.UserIds[0]
@@ -593,8 +602,8 @@ func (s *Server) ListColleagueActivity(ctx context.Context, req *ListColleagueAc
 		).
 		FROM(
 			tJobsUserActivity.
-				INNER_JOIN(tUTarget,
-					tUTarget.ID.EQ(tJobsUserActivity.TargetUserID),
+				INNER_JOIN(tTargetUser,
+					tTargetUser.ID.EQ(tJobsUserActivity.TargetUserID),
 				),
 		).
 		WHERE(condition)
@@ -622,26 +631,26 @@ func (s *Server) ListColleagueActivity(ctx context.Context, req *ListColleagueAc
 			tJobsUserActivity.ActivityType,
 			tJobsUserActivity.Reason,
 			tJobsUserActivity.Data,
-			tUTarget.ID,
-			tUTarget.Identifier,
-			tUTarget.Job,
-			tUTarget.JobGrade,
-			tUTarget.Firstname,
-			tUTarget.Lastname,
-			tUSource.ID,
-			tUSource.Identifier,
-			tUSource.Job,
-			tUSource.JobGrade,
-			tUSource.Firstname,
-			tUSource.Lastname,
+			tTargetUser.ID,
+			tTargetUser.Identifier,
+			tTargetUser.Job,
+			tTargetUser.JobGrade,
+			tTargetUser.Firstname,
+			tTargetUser.Lastname,
+			tSourceUser.ID,
+			tSourceUser.Identifier,
+			tSourceUser.Job,
+			tSourceUser.JobGrade,
+			tSourceUser.Firstname,
+			tSourceUser.Lastname,
 		).
 		FROM(
 			tJobsUserActivity.
-				INNER_JOIN(tUTarget,
-					tUTarget.ID.EQ(tJobsUserActivity.TargetUserID),
+				INNER_JOIN(tTargetUser,
+					tTargetUser.ID.EQ(tJobsUserActivity.TargetUserID),
 				).
-				LEFT_JOIN(tUSource,
-					tUSource.ID.EQ(tJobsUserActivity.SourceUserID),
+				LEFT_JOIN(tSourceUser,
+					tSourceUser.ID.EQ(tJobsUserActivity.SourceUserID),
 				),
 		).
 		WHERE(condition).

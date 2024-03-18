@@ -21,7 +21,7 @@ import (
 )
 
 func (s *Server) GetQualificationAccess(ctx context.Context, req *GetQualificationAccessRequest) (*GetQualificationAccessResponse, error) {
-	trace.SpanFromContext(ctx).SetAttributes(attribute.Int64("fivenet.qualifications.qualifications.id", int64(req.QualificationId)))
+	trace.SpanFromContext(ctx).SetAttributes(attribute.Int64("fivenet.qualifications.id", int64(req.QualificationId)))
 
 	userInfo := auth.MustGetUserInfoFromContext(ctx)
 	check, err := s.checkIfUserHasAccessToQuali(ctx, req.QualificationId, userInfo, qualifications.AccessLevel_ACCESS_LEVEL_VIEW)
@@ -49,7 +49,7 @@ func (s *Server) GetQualificationAccess(ctx context.Context, req *GetQualificati
 }
 
 func (s *Server) SetQualificationAccess(ctx context.Context, req *SetQualificationAccessRequest) (*SetQualificationAccessResponse, error) {
-	trace.SpanFromContext(ctx).SetAttributes(attribute.Int64("fivenet.qualifications.qualifications.id", int64(req.QualificationId)))
+	trace.SpanFromContext(ctx).SetAttributes(attribute.Int64("fivenet.qualifications.id", int64(req.QualificationId)))
 
 	userInfo := auth.MustGetUserInfoFromContext(ctx)
 

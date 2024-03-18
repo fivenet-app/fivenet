@@ -14,6 +14,8 @@ import (
 	"github.com/galexrt/fivenet/query/fivenet/model"
 	"github.com/galexrt/fivenet/query/fivenet/table"
 	jet "github.com/go-jet/jet/v2/mysql"
+	"go.opentelemetry.io/otel/attribute"
+	"go.opentelemetry.io/otel/trace"
 )
 
 const listFilesPageSize = 50
@@ -23,6 +25,10 @@ var (
 )
 
 func (s *Server) ListFiles(ctx context.Context, req *ListFilesRequest) (*ListFilesResponse, error) {
+	if req.Path != nil {
+		trace.SpanFromContext(ctx).SetAttributes(attribute.String("fivenet.filestore.path", *req.Path))
+	}
+
 	userInfo := auth.MustGetUserInfoFromContext(ctx)
 
 	if req.Pagination.Offset <= 0 {
@@ -70,6 +76,9 @@ func (s *Server) ListFiles(ctx context.Context, req *ListFilesRequest) (*ListFil
 }
 
 func (s *Server) UploadFile(ctx context.Context, req *UploadFileRequest) (*UploadFileResponse, error) {
+	trace.SpanFromContext(ctx).SetAttributes(attribute.String("fivenet.filestore.prefix", req.Prefix))
+	trace.SpanFromContext(ctx).SetAttributes(attribute.String("fivenet.filestore.name", req.Name))
+
 	userInfo := auth.MustGetUserInfoFromContext(ctx)
 
 	auditEntry := &model.FivenetAuditLog{
@@ -106,6 +115,8 @@ func (s *Server) UploadFile(ctx context.Context, req *UploadFileRequest) (*Uploa
 }
 
 func (s *Server) DeleteFile(ctx context.Context, req *DeleteFileRequest) (*DeleteFileResponse, error) {
+	trace.SpanFromContext(ctx).SetAttributes(attribute.String("fivenet.filestore.path", req.Path))
+
 	userInfo := auth.MustGetUserInfoFromContext(ctx)
 
 	auditEntry := &model.FivenetAuditLog{

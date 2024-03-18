@@ -16,6 +16,8 @@ import (
 	"github.com/galexrt/fivenet/query/fivenet/table"
 	jet "github.com/go-jet/jet/v2/mysql"
 	"github.com/go-jet/jet/v2/qrm"
+	"go.opentelemetry.io/otel/attribute"
+	"go.opentelemetry.io/otel/trace"
 	"google.golang.org/protobuf/proto"
 )
 
@@ -229,6 +231,8 @@ func (s *Server) CreateConductEntry(ctx context.Context, req *CreateConductEntry
 }
 
 func (s *Server) UpdateConductEntry(ctx context.Context, req *UpdateConductEntryRequest) (*UpdateConductEntryResponse, error) {
+	trace.SpanFromContext(ctx).SetAttributes(attribute.Int64("fivenet.jobs.conduct.id", int64(req.Entry.Id)))
+
 	userInfo := auth.MustGetUserInfoFromContext(ctx)
 
 	auditEntry := &model.FivenetAuditLog{
@@ -286,6 +290,8 @@ func (s *Server) UpdateConductEntry(ctx context.Context, req *UpdateConductEntry
 }
 
 func (s *Server) DeleteConductEntry(ctx context.Context, req *DeleteConductEntryRequest) (*DeleteConductEntryResponse, error) {
+	trace.SpanFromContext(ctx).SetAttributes(attribute.Int64("fivenet.jobs.conduct.id", int64(req.Id)))
+
 	userInfo := auth.MustGetUserInfoFromContext(ctx)
 
 	auditEntry := &model.FivenetAuditLog{

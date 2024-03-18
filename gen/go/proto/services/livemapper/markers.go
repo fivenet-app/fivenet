@@ -16,6 +16,8 @@ import (
 	"github.com/galexrt/fivenet/query/fivenet/table"
 	jet "github.com/go-jet/jet/v2/mysql"
 	"github.com/go-jet/jet/v2/qrm"
+	"go.opentelemetry.io/otel/attribute"
+	"go.opentelemetry.io/otel/trace"
 	codes "google.golang.org/grpc/codes"
 	"google.golang.org/grpc/status"
 )
@@ -71,6 +73,10 @@ func (s *Server) checkIfHasAccessToMarker(levels []string, marker *livemap.Marke
 }
 
 func (s *Server) CreateOrUpdateMarker(ctx context.Context, req *CreateOrUpdateMarkerRequest) (*CreateOrUpdateMarkerResponse, error) {
+	if req.Marker != nil && req.Marker.Info != nil && req.Marker.Info.Id < 1 {
+		trace.SpanFromContext(ctx).SetAttributes(attribute.Int64("fivenet.livemapper.marker.id", int64(req.Marker.Info.Id)))
+	}
+
 	userInfo := auth.MustGetUserInfoFromContext(ctx)
 
 	auditEntry := &model.FivenetAuditLog{
@@ -201,6 +207,8 @@ func (s *Server) CreateOrUpdateMarker(ctx context.Context, req *CreateOrUpdateMa
 }
 
 func (s *Server) DeleteMarker(ctx context.Context, req *DeleteMarkerRequest) (*DeleteMarkerResponse, error) {
+	trace.SpanFromContext(ctx).SetAttributes(attribute.Int64("fivenet.livemapper.marker.id", int64(req.Id)))
+
 	userInfo := auth.MustGetUserInfoFromContext(ctx)
 
 	auditEntry := &model.FivenetAuditLog{
