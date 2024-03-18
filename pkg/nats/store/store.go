@@ -78,22 +78,24 @@ func NewWithLocks[T any, U protoMessage[T]](ctx context.Context, logger *zap.Log
 
 func New[T any, U protoMessage[T]](ctx context.Context, logger *zap.Logger, js jetstream.JetStream, bucket string, opts ...Option[T, U]) (*Store[T, U], error) {
 	lBucket := fmt.Sprintf("%s_locks", bucket)
+
 	lkv, err := js.CreateOrUpdateKeyValue(ctx, jetstream.KeyValueConfig{
 		Bucket:      lBucket,
 		Description: natsutils.Description,
 		History:     3,
 		Storage:     jetstream.MemoryStorage,
-		TTL:         3 * locks.LockTimeout,
+		TTL:         6 * locks.LockTimeout,
 	})
 	if err != nil {
 		return nil, err
 	}
-	l, err := locks.New(logger, lkv, lBucket, 6*locks.LockTimeout)
+
+	l, err := locks.New(logger, lkv, lBucket, 5*locks.LockTimeout)
 	if err != nil {
 		return nil, err
 	}
 
-	return NewWithLocks[T, U](ctx, logger, js, bucket, l, opts...)
+	return NewWithLocks(ctx, logger, js, bucket, l, opts...)
 }
 
 // Put upload the message to kv and local

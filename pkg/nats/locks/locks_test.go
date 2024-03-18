@@ -39,7 +39,7 @@ func getNatsClient(t *testing.T, bucket string) *Locks {
 		Bucket:  bucket,
 		History: 3,
 		Storage: jetstream.MemoryStorage,
-		TTL:     3 * LockTimeout,
+		TTL:     4 * LockTimeout,
 	})
 	require.NoError(t, err)
 
