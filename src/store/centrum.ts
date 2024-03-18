@@ -616,7 +616,7 @@ export const useCentrumStore = defineStore('centrum', {
             this.reconnecting = true;
 
             // Reset back off time when over 10 seconds
-            if (this.reconnectBackoffTime > 10) {
+            if (this.reconnectBackoffTime > 7) {
                 this.reconnectBackoffTime = initialReconnectBackoffTime;
             } else {
                 this.reconnectBackoffTime += initialReconnectBackoffTime;

@@ -6,7 +6,7 @@ import type { GetMOTDResponse, SetMOTDResponse } from '~~/gen/ts/services/jobs/j
 
 const { $grpc } = useNuxtApp();
 
-const { data } = useLazyAsyncData('jobs-motd', () => getMOTD());
+const { data, refresh } = useLazyAsyncData('jobs-motd', () => getMOTD());
 
 async function getMOTD(): Promise<GetMOTDResponse> {
     try {
@@ -52,6 +52,12 @@ const onSubmitThrottle = useThrottleFn(async (e: string) => {
 const canEdit = can('JobsService.SetMOTD');
 
 const editing = ref(false);
+
+watch(editing, () => {
+    if (!editing.value) {
+        refresh();
+    }
+});
 </script>
 
 <template>
@@ -105,6 +111,8 @@ const editing = ref(false);
                     rows="2"
                     name="content"
                     class="flex-1 w-full rounded-md border-0 bg-base-700 py-1.5 text-neutral placeholder:text-accent-200 focus:ring-2 focus:ring-inset border-2 border-base-200 focus:ring-base-300 sm:text-sm sm:leading-6"
+                    @focusin="focusTablet(true)"
+                    @focusout="focusTablet(false)"
                 ></textarea>
             </template>
         </div>

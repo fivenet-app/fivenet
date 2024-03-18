@@ -17,6 +17,7 @@ import SettingsButton from '~/components/livemap/controls/SettingsButton.vue';
 import DispatchCreateOrUpdateModal from '~/components/centrum/dispatches/DispatchCreateOrUpdateModal.vue';
 import MapTempMarker from '~/components/livemap/MapTempMarker.vue';
 import ReconnectingPopup from '~/components/livemap/ReconnectingPopup.vue';
+import { useCentrumStore } from '~/store/centrum';
 
 defineProps<{
     showUnitNames?: boolean;
@@ -35,6 +36,9 @@ const { livemap } = storeToRefs(settingsStore);
 const livemapStore = useLivemapStore();
 const { error, abort, reconnecting, initiated, location, showLocationMarker } = storeToRefs(livemapStore);
 const { startStream } = livemapStore;
+
+const centrumStore = useCentrumStore();
+const { reconnecting: reconnectingCentrum } = storeToRefs(centrumStore);
 
 interface ContextmenuItem {
     text: string;
@@ -115,6 +119,7 @@ function removeActiveLayer(name: string): void {
 }
 
 const reconnectingDebounced = useDebounce(reconnecting, 500);
+const reconnectionCentrumDebounced = useDebounce(reconnectingCentrum, 500);
 </script>
 
 <template>
@@ -173,7 +178,7 @@ const reconnectingDebounced = useDebounce(reconnecting, 500);
             </template>
 
             <template #afterMap>
-                <ReconnectingPopup v-if="reconnectingDebounced" />
+                <ReconnectingPopup v-if="reconnectingDebounced || reconnectionCentrumDebounced" />
 
                 <slot name="afterMap" />
             </template>
