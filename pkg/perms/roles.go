@@ -206,12 +206,26 @@ func (p *Perms) CreateRole(ctx context.Context, job string, grade int32) (*model
 
 	p.roleIDToJobMap.Store(role.ID, role.Job)
 
+	if err := p.publishMessage(ctx, RoleCreatedSubject, RoleIDEvent{
+		RoleID: role.ID,
+	}); err != nil {
+		return nil, err
+	}
+
 	return role, nil
 }
 
 func (p *Perms) DeleteRole(ctx context.Context, id uint64) error {
 	role, err := p.GetRole(ctx, id)
 	if err != nil {
+		return err
+	}
+
+	p.deleteRole(role)
+
+	if err := p.publishMessage(ctx, RoleDeletedSubject, RoleIDEvent{
+		RoleID: role.ID,
+	}); err != nil {
 		return err
 	}
 
@@ -225,14 +239,16 @@ func (p *Perms) DeleteRole(ctx context.Context, id uint64) error {
 		return err
 	}
 
-	p.permsRoleMap.Delete(id)
+	return nil
+}
+
+func (p *Perms) deleteRole(role *model.FivenetRoles) {
+	p.permsRoleMap.Delete(role.ID)
 
 	grades, _ := p.permsJobsRoleMap.LoadOrCompute(role.Job, xsync.NewMapOf[int32, uint64])
 	grades.Delete(role.Grade)
 
 	p.roleIDToJobMap.Delete(role.ID)
-
-	return nil
 }
 
 func (p *Perms) GetRoleByJobAndGrade(ctx context.Context, job string, grade int32) (*model.FivenetRoles, error) {
@@ -340,7 +356,7 @@ func (p *Perms) UpdateRolePermissions(ctx context.Context, roleId uint64, perms 
 		roleCache.Store(v.PermissionID, v.Val)
 	}
 
-	if err := p.publishMessage(ctx, RolePermUpdateSubject, RolePermUpdateEvent{
+	if err := p.publishMessage(ctx, RolePermUpdateSubject, RoleIDEvent{
 		RoleID: roleId,
 	}); err != nil {
 		return err
@@ -373,7 +389,7 @@ func (p *Perms) RemovePermissionsFromRole(ctx context.Context, roleId uint64, pe
 		}
 	}
 
-	if err := p.publishMessage(ctx, RolePermUpdateSubject, RolePermUpdateEvent{
+	if err := p.publishMessage(ctx, RolePermUpdateSubject, RoleIDEvent{
 		RoleID: roleId,
 	}); err != nil {
 		return err

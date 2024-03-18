@@ -576,7 +576,7 @@ func (p *Perms) addOrUpdateAttributesToRole(ctx context.Context, roleId uint64, 
 		p.updateRoleAttributeInMap(roleId, a.PermissionID, a.ID, a.Key, a.Type, attrs[i].Value)
 	}
 
-	if err := p.publishMessage(ctx, RoleAttrUpdateSubject, RoleAttrUpdateEvent{
+	if err := p.publishMessage(ctx, RoleAttrUpdateSubject, RoleIDEvent{
 		RoleID: roleId,
 	}); err != nil {
 		return err
@@ -605,7 +605,7 @@ func (p *Perms) RemoveAttributesFromRole(ctx context.Context, roleId uint64, att
 	for i := 0; i < len(attrs); i++ {
 		p.removeRoleAttributeFromMap(roleId, attrs[i].AttrId)
 
-		if err := p.publishMessage(ctx, RoleAttrUpdateSubject, RoleAttrUpdateEvent{
+		if err := p.publishMessage(ctx, RoleAttrUpdateSubject, RoleIDEvent{
 			RoleID: roleId,
 		}); err != nil {
 			return err

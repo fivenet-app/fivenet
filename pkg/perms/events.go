@@ -15,16 +15,14 @@ import (
 const (
 	BaseSubject events.Subject = "perms"
 
+	RoleCreatedSubject    events.Type = "roleperm.create"
 	RolePermUpdateSubject events.Type = "roleperm.update"
+	RoleDeletedSubject    events.Type = "roleperm.delete"
 	RoleAttrUpdateSubject events.Type = "roleattr.update"
 	JobAttrUpdateSubject  events.Type = "jobattr.update"
 )
 
-type RolePermUpdateEvent struct {
-	RoleID uint64
-}
-
-type RoleAttrUpdateEvent struct {
+type RoleIDEvent struct {
 	RoleID uint64
 }
 
@@ -73,29 +71,56 @@ func (p *Perms) handleMessageFunc(ctx context.Context) jetstream.MessageHandler 
 		p.logger.Debug("received event message", zap.String("subject", msg.Subject()))
 
 		switch events.Type(strings.TrimPrefix(msg.Subject(), string(BaseSubject)+".")) {
+		case RoleCreatedSubject:
+			fallthrough
 		case RolePermUpdateSubject:
-			event := &RolePermUpdateEvent{}
+			event := &RoleIDEvent{}
 			if err := json.Unmarshal(msg.Data(), event); err != nil {
 				p.logger.Error("failed to unmarshal message event data", zap.Error(err))
+				return
+			}
+
+			if err := p.loadRoles(ctx, event.RoleID); err != nil {
+				p.logger.Error("failed to load role for role data load", zap.Error(err))
 				return
 			}
 
 			if err := p.loadRolePermissions(ctx, event.RoleID); err != nil {
-				p.logger.Error("failed to update role permissions", zap.Error(err))
+				p.logger.Error("failed to load updated role permissions", zap.Error(err))
 				return
 			}
 
 		case RoleAttrUpdateSubject:
-			event := &RoleAttrUpdateEvent{}
+			event := &RoleIDEvent{}
 			if err := json.Unmarshal(msg.Data(), event); err != nil {
 				p.logger.Error("failed to unmarshal message event data", zap.Error(err))
 				return
 			}
 
-			if err := p.loadRoleAttributes(ctx, event.RoleID); err != nil {
-				p.logger.Error("failed to update role permissions", zap.Error(err))
+			if err := p.loadRoles(ctx, event.RoleID); err != nil {
+				p.logger.Error("failed to load role for role data load", zap.Error(err))
 				return
 			}
+
+			if err := p.loadRoleAttributes(ctx, event.RoleID); err != nil {
+				p.logger.Error("failed to load updated role permissions", zap.Error(err))
+				return
+			}
+
+		case RoleDeletedSubject:
+			event := &RoleIDEvent{}
+			if err := json.Unmarshal(msg.Data(), event); err != nil {
+				p.logger.Error("failed to unmarshal message event data", zap.Error(err))
+				return
+			}
+
+			role, err := p.GetRole(ctx, event.RoleID)
+			if err != nil {
+				p.logger.Error("failed to deleted role message event data", zap.Error(err))
+				return
+			}
+			// Remove role from local state
+			p.deleteRole(role)
 
 		case JobAttrUpdateSubject:
 			event := &JobAttrUpdateEvent{}

@@ -244,7 +244,7 @@ func (p *Perms) load(ctx context.Context) error {
 		return err
 	}
 
-	if err := p.loadRoleIDs(ctx); err != nil {
+	if err := p.loadRoles(ctx, 0); err != nil {
 		return err
 	}
 
@@ -323,7 +323,7 @@ func (p *Perms) loadAttributes(ctx context.Context) error {
 	return nil
 }
 
-func (p *Perms) loadRoleIDs(ctx context.Context) error {
+func (p *Perms) loadRoles(ctx context.Context, id uint64) error {
 	stmt := tRoles.
 		SELECT(
 			tRoles.ID.AS("id"),
@@ -331,6 +331,11 @@ func (p *Perms) loadRoleIDs(ctx context.Context) error {
 			tRoles.Grade.AS("grade"),
 		).
 		FROM(tRoles)
+
+	if id != 0 {
+		stmt = stmt.
+			WHERE(tRoles.ID.EQ(jet.Uint64(id)))
+	}
 
 	var dest []struct {
 		ID    uint64
