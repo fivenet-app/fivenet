@@ -3,6 +3,7 @@ package manager
 import (
 	"context"
 	"database/sql"
+	"fmt"
 	"sync"
 	"time"
 
@@ -206,7 +207,7 @@ func (s *Housekeeper) handleDispatchAssignmentExpiration(ctx context.Context) er
 		s.logger.Debug("handling dispatch assignment expiration", zap.String("job", job), zap.Int("expired_assignments", len(dsps)))
 		for dispatchId, units := range dsps {
 			if err := s.UpdateDispatchAssignments(ctx, job, nil, dispatchId, nil, units, time.Time{}); err != nil {
-				return err
+				return fmt.Errorf("failed to update dispatch %d assignments. %w", dispatchId, err)
 			}
 		}
 	}
