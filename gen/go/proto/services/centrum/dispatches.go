@@ -369,7 +369,7 @@ func (s *Server) TakeDispatch(ctx context.Context, req *TakeDispatchRequest) (*T
 	}
 
 	if err := s.state.TakeDispatch(ctx, userInfo.Job, userInfo.UserId, unitId, req.Resp, req.DispatchIds); err != nil {
-		return nil, errswrap.NewError(err, errorscentrum.ErrFailedQuery)
+		return nil, err
 	}
 
 	auditEntry.State = int16(rector.EventType_EVENT_TYPE_UPDATED)

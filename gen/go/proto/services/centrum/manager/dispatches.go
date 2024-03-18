@@ -696,12 +696,17 @@ func (s *Manager) GetDispatchStatus(ctx context.Context, tx qrm.DB, job string, 
 }
 
 func (s *Manager) TakeDispatch(ctx context.Context, job string, userId int32, unitId uint64, resp centrum.TakeDispatchResp, dispatchIds []uint64) error {
+	settings := s.GetSettings(ctx, job)
+	// If the dispatch center is in central command mode, units can't self assign dispatches
+	if settings.Mode == centrum.CentrumMode_CENTRUM_MODE_CENTRAL_COMMAND {
+		return errorscentrum.ErrModeForbidsAction
+	}
+
 	unit, err := s.GetUnit(ctx, job, unitId)
 	if err != nil {
 		return errorscentrum.ErrFailedQuery
 	}
 
-	settings := s.GetSettings(ctx, job)
 	var x, y *float64
 	var postal *string
 	if marker, ok := s.tracker.GetUserById(userId); ok {
@@ -754,15 +759,6 @@ func (s *Manager) TakeDispatch(ctx context.Context, job string, userId int32, un
 
 		key := state.JobIdKey(job, dspId)
 		if err := store.ComputeUpdate(ctx, key, true, func(key string, dsp *centrum.Dispatch) (*centrum.Dispatch, bool, error) {
-			// If the dispatch center is in central command mode, units can't self assign dispatches
-			if settings.Mode == centrum.CentrumMode_CENTRUM_MODE_CENTRAL_COMMAND {
-				if !slices.ContainsFunc(dsp.Units, func(in *centrum.DispatchAssignment) bool {
-					return in.UnitId == unitId
-				}) {
-					return nil, false, errorscentrum.ErrModeForbidsAction
-				}
-			}
-
 			// If dispatch is completed, disallow to accept the dispatch
 			if dsp.Status != nil && centrumutils.IsStatusDispatchComplete(dsp.Status.Status) {
 				return nil, false, errorscentrum.ErrDispatchAlreadyCompleted
@@ -811,7 +807,7 @@ func (s *Manager) TakeDispatch(ctx context.Context, job string, userId int32, un
 							Y:         y,
 							Postal:    postal,
 						}); err != nil {
-							return nil, false, errswrap.NewError(err, errorscentrum.ErrFailedQuery)
+							return nil, false, err
 						}
 					}
 				}
@@ -835,26 +831,29 @@ func (s *Manager) TakeDispatch(ctx context.Context, job string, userId int32, un
 				Y:          y,
 				Postal:     postal,
 			}, true); err != nil {
-				return nil, false, errswrap.NewError(err, errorscentrum.ErrFailedQuery)
+				return nil, false, err
 			}
 
 			return dsp, true, nil
 		}); err != nil {
-			return err
+			// Ignore errors that are "okay" to encounter
+			if !errors.Is(err, errorscentrum.ErrDispatchAlreadyCompleted) {
+				return errswrap.NewError(err, errorscentrum.ErrFailedQuery)
+			}
 		}
 
 		dsp, err := s.GetDispatch(ctx, job, dspId)
 		if err != nil {
-			return err
+			return errswrap.NewError(err, errorscentrum.ErrFailedQuery)
 		}
 
 		data, err := proto.Marshal(dsp)
 		if err != nil {
-			return err
+			return errswrap.NewError(err, errorscentrum.ErrFailedQuery)
 		}
 
 		if _, err := s.js.Publish(ctx, eventscentrum.BuildSubject(eventscentrum.TopicDispatch, eventscentrum.TypeDispatchUpdated, job), data); err != nil {
-			return err
+			return errswrap.NewError(err, errorscentrum.ErrFailedQuery)
 		}
 	}
 
