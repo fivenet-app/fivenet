@@ -47,6 +47,10 @@ func setupSanitizer() {
 
 	// Style
 	sanitizer.AllowAttrs("style").OnElements("span", "p", "img")
+	// Image centering
+	sanitizer.AllowStyles("display").OnElements("span", "p", "img")
+	sanitizer.AllowStyles("margin-left").OnElements("span", "p", "img")
+	sanitizer.AllowStyles("margin-right").OnElements("span", "p", "img")
 	// Allow the 'color' property with valid RGB(A) hex values only (on any element allowed a 'style' attribute)
 	sanitizer.AllowStyles("color").Matching(colorRegex).Globally()
 	sanitizer.AllowStyles("text-align").Globally()
@@ -54,7 +58,7 @@ func setupSanitizer() {
 	sanitizer.AllowStyles("font-size").Globally()
 	sanitizer.AllowStyles("line-height").Globally()
 	// Allow the 'text-decoration' property to be set to 'underline', 'line-through' or 'none'
-	// on 'span' elements only
+	// on 'span' and 'p' elements only
 	sanitizer.AllowStyles("text-decoration").MatchingEnum("underline", "line-through", "none").OnElements("span", "p")
 
 	// Links
@@ -71,12 +75,11 @@ func setupSanitizer() {
 	// For linking elements we will add rel="nofollow" if it does not already exist
 	// This applies to "a" "area" "link"
 	sanitizer.RequireNoFollowOnLinks(true)
-	// CUSTOM END
 
 	sanitizer.AllowAttrs("cite").OnElements("blockquote", "q")
 	sanitizer.AllowAttrs("href").OnElements("a", "area")
 	sanitizer.AllowAttrs("src").OnElements("img")
-	sanitizer.AllowElements("hr", "sup", "sub", "h1", "h2", "h3", "h4", "h5", "code", "em")
+	sanitizer.AllowElements("hr", "sup", "sub", "h1", "h2", "h3", "h4", "h5", "code", "em", "pre")
 	sanitizer.AllowTables()
 	sanitizer.AllowLists()
 
