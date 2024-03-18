@@ -9,6 +9,7 @@ import (
 	errorsdocstore "github.com/galexrt/fivenet/gen/go/proto/services/docstore/errors"
 	"github.com/galexrt/fivenet/pkg/grpc/auth"
 	"github.com/galexrt/fivenet/pkg/grpc/errswrap"
+	"github.com/galexrt/fivenet/pkg/utils"
 	"github.com/galexrt/fivenet/query/fivenet/model"
 	"github.com/galexrt/fivenet/query/fivenet/table"
 	jet "github.com/go-jet/jet/v2/mysql"
@@ -164,6 +165,8 @@ func (s *Server) UpdateCategory(ctx context.Context, req *UpdateCategoryRequest)
 }
 
 func (s *Server) DeleteCategory(ctx context.Context, req *DeleteCategoryRequest) (*DeleteCategoryResponse, error) {
+	trace.SpanFromContext(ctx).SetAttributes(attribute.Int64Slice("fivenet.docstore.category_ids", utils.SliceUint64ToInt64(req.Ids)))
+
 	userInfo := auth.MustGetUserInfoFromContext(ctx)
 
 	auditEntry := &model.FivenetAuditLog{

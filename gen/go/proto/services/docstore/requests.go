@@ -124,6 +124,8 @@ func (s *Server) ListDocumentReqs(ctx context.Context, req *ListDocumentReqsRequ
 }
 
 func (s *Server) CreateDocumentReq(ctx context.Context, req *CreateDocumentReqRequest) (*CreateDocumentReqResponse, error) {
+	trace.SpanFromContext(ctx).SetAttributes(attribute.Int64("fivenet.docstore.id", int64(req.DocumentId)))
+
 	userInfo := auth.MustGetUserInfoFromContext(ctx)
 
 	auditEntry := &model.FivenetAuditLog{
@@ -242,6 +244,9 @@ func (s *Server) CreateDocumentReq(ctx context.Context, req *CreateDocumentReqRe
 }
 
 func (s *Server) UpdateDocumentReq(ctx context.Context, req *UpdateDocumentReqRequest) (*UpdateDocumentReqResponse, error) {
+	trace.SpanFromContext(ctx).SetAttributes(attribute.Int64("fivenet.docstore.id", int64(req.DocumentId)))
+	trace.SpanFromContext(ctx).SetAttributes(attribute.Int64("fivenet.docstore.request_id", int64(req.RequestId)))
+
 	userInfo := auth.MustGetUserInfoFromContext(ctx)
 
 	auditEntry := &model.FivenetAuditLog{
@@ -389,6 +394,8 @@ func (s *Server) UpdateDocumentReq(ctx context.Context, req *UpdateDocumentReqRe
 }
 
 func (s *Server) DeleteDocumentReq(ctx context.Context, req *DeleteDocumentReqRequest) (*DeleteDocumentReqResponse, error) {
+	trace.SpanFromContext(ctx).SetAttributes(attribute.Int64("fivenet.docstore.request_id", int64(req.RequestId)))
+
 	userInfo := auth.MustGetUserInfoFromContext(ctx)
 
 	auditEntry := &model.FivenetAuditLog{

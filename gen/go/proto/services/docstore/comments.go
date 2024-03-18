@@ -35,9 +35,9 @@ var (
 )
 
 func (s *Server) GetComments(ctx context.Context, req *GetCommentsRequest) (*GetCommentsResponse, error) {
-	userInfo := auth.MustGetUserInfoFromContext(ctx)
-
 	trace.SpanFromContext(ctx).SetAttributes(attribute.Int64("fivenet.docstore.id", int64(req.DocumentId)))
+
+	userInfo := auth.MustGetUserInfoFromContext(ctx)
 
 	check, err := s.checkIfUserHasAccessToDoc(ctx, req.DocumentId, userInfo, documents.AccessLevel_ACCESS_LEVEL_VIEW)
 	if err != nil {
@@ -138,6 +138,8 @@ func (s *Server) GetComments(ctx context.Context, req *GetCommentsRequest) (*Get
 }
 
 func (s *Server) PostComment(ctx context.Context, req *PostCommentRequest) (*PostCommentResponse, error) {
+	trace.SpanFromContext(ctx).SetAttributes(attribute.Int64("fivenet.docstore.id", int64(req.Comment.DocumentId)))
+
 	userInfo := auth.MustGetUserInfoFromContext(ctx)
 
 	auditEntry := &model.FivenetAuditLog{
@@ -148,8 +150,6 @@ func (s *Server) PostComment(ctx context.Context, req *PostCommentRequest) (*Pos
 		State:   int16(rector.EventType_EVENT_TYPE_ERRORED),
 	}
 	defer s.aud.Log(auditEntry, req)
-
-	trace.SpanFromContext(ctx).SetAttributes(attribute.Int64("fivenet.docstore.id", int64(req.Comment.DocumentId)))
 
 	check, err := s.checkIfUserHasAccessToDoc(ctx, req.Comment.DocumentId, userInfo, documents.AccessLevel_ACCESS_LEVEL_COMMENT)
 	if err != nil {
@@ -202,6 +202,9 @@ func (s *Server) PostComment(ctx context.Context, req *PostCommentRequest) (*Pos
 }
 
 func (s *Server) EditComment(ctx context.Context, req *EditCommentRequest) (*EditCommentResponse, error) {
+	trace.SpanFromContext(ctx).SetAttributes(attribute.Int64("fivenet.docstore.id", int64(req.Comment.DocumentId)))
+	trace.SpanFromContext(ctx).SetAttributes(attribute.Int64("fivenet.docstore.comment_id", int64(req.Comment.Id)))
+
 	userInfo := auth.MustGetUserInfoFromContext(ctx)
 
 	auditEntry := &model.FivenetAuditLog{
@@ -212,8 +215,6 @@ func (s *Server) EditComment(ctx context.Context, req *EditCommentRequest) (*Edi
 		State:   int16(rector.EventType_EVENT_TYPE_ERRORED),
 	}
 	defer s.aud.Log(auditEntry, req)
-
-	trace.SpanFromContext(ctx).SetAttributes(attribute.Int64("fivenet.docstore.id", int64(req.Comment.DocumentId)), attribute.Int64("fivenet.docstore.comment_id", int64(req.Comment.Id)))
 
 	check, err := s.checkIfUserHasAccessToDoc(ctx, req.Comment.DocumentId, userInfo, documents.AccessLevel_ACCESS_LEVEL_COMMENT)
 	if err != nil {
@@ -295,6 +296,8 @@ func (s *Server) getComment(ctx context.Context, id uint64) (*documents.Comment,
 }
 
 func (s *Server) DeleteComment(ctx context.Context, req *DeleteCommentRequest) (*DeleteCommentResponse, error) {
+	trace.SpanFromContext(ctx).SetAttributes(attribute.Int64("fivenet.docstore.comment_id", int64(req.CommentId)))
+
 	userInfo := auth.MustGetUserInfoFromContext(ctx)
 
 	auditEntry := &model.FivenetAuditLog{
@@ -305,8 +308,6 @@ func (s *Server) DeleteComment(ctx context.Context, req *DeleteCommentRequest) (
 		State:   int16(rector.EventType_EVENT_TYPE_ERRORED),
 	}
 	defer s.aud.Log(auditEntry, req)
-
-	trace.SpanFromContext(ctx).SetAttributes(attribute.Int64("fivenet.docstore.comment_id", int64(req.CommentId)))
 
 	comment, err := s.getComment(ctx, req.CommentId)
 	if err != nil {
