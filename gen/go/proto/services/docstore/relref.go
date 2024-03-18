@@ -16,6 +16,7 @@ import (
 	"github.com/galexrt/fivenet/pkg/grpc/auth/userinfo"
 	"github.com/galexrt/fivenet/pkg/grpc/errswrap"
 	"github.com/galexrt/fivenet/pkg/notifi"
+	"github.com/galexrt/fivenet/pkg/utils/dbutils"
 	"github.com/galexrt/fivenet/query/fivenet/model"
 	"github.com/galexrt/fivenet/query/fivenet/table"
 	jet "github.com/go-jet/jet/v2/mysql"
@@ -222,6 +223,9 @@ func (s *Server) GetDocumentRelations(ctx context.Context, req *GetDocumentRelat
 }
 
 func (s *Server) AddDocumentReference(ctx context.Context, req *AddDocumentReferenceRequest) (*AddDocumentReferenceResponse, error) {
+	trace.SpanFromContext(ctx).SetAttributes(attribute.Int64("fivenet.docstore.source_document_id", int64(req.Reference.SourceDocumentId)))
+	trace.SpanFromContext(ctx).SetAttributes(attribute.Int64("fivenet.docstore.target_document_id", int64(req.Reference.TargetDocumentId)))
+
 	userInfo := auth.MustGetUserInfoFromContext(ctx)
 
 	auditEntry := &model.FivenetAuditLog{
@@ -295,6 +299,8 @@ func (s *Server) AddDocumentReference(ctx context.Context, req *AddDocumentRefer
 }
 
 func (s *Server) RemoveDocumentReference(ctx context.Context, req *RemoveDocumentReferenceRequest) (*RemoveDocumentReferenceResponse, error) {
+	trace.SpanFromContext(ctx).SetAttributes(attribute.Int64("fivenet.docstore.reference_id", int64(req.Id)))
+
 	userInfo := auth.MustGetUserInfoFromContext(ctx)
 
 	auditEntry := &model.FivenetAuditLog{
@@ -354,6 +360,10 @@ func (s *Server) RemoveDocumentReference(ctx context.Context, req *RemoveDocumen
 }
 
 func (s *Server) AddDocumentRelation(ctx context.Context, req *AddDocumentRelationRequest) (*AddDocumentRelationResponse, error) {
+	trace.SpanFromContext(ctx).SetAttributes(attribute.Int64("fivenet.docstore.id", int64(req.Relation.DocumentId)))
+	trace.SpanFromContext(ctx).SetAttributes(attribute.Int("fivenet.docstore.source_user_id", int(req.Relation.SourceUserId)))
+	trace.SpanFromContext(ctx).SetAttributes(attribute.Int("fivenet.docstore.target_user_id", int(req.Relation.TargetUserId)))
+
 	userInfo := auth.MustGetUserInfoFromContext(ctx)
 
 	auditEntry := &model.FivenetAuditLog{
@@ -383,13 +393,13 @@ func (s *Server) AddDocumentRelation(ctx context.Context, req *AddDocumentRelati
 	// Defer a rollback in case anything fails
 	defer tx.Rollback()
 
-	docRel := table.FivenetDocumentsRelations
-	stmt := docRel.
+	tDocRel := table.FivenetDocumentsRelations
+	stmt := tDocRel.
 		INSERT(
-			docRel.DocumentID,
-			docRel.SourceUserID,
-			docRel.Relation,
-			docRel.TargetUserID,
+			tDocRel.DocumentID,
+			tDocRel.SourceUserID,
+			tDocRel.Relation,
+			tDocRel.TargetUserID,
 		).
 		VALUES(
 			req.Relation.DocumentId,
@@ -398,20 +408,52 @@ func (s *Server) AddDocumentRelation(ctx context.Context, req *AddDocumentRelati
 			req.Relation.TargetUserId,
 		)
 
+	var lastId int64
+
 	result, err := stmt.ExecContext(ctx, tx)
 	if err != nil {
-		return nil, errswrap.NewError(err, errorsdocstore.ErrFailedQuery)
-	}
+		if !dbutils.IsDuplicateError(err) {
+			return nil, errswrap.NewError(err, errorsdocstore.ErrFailedQuery)
+		}
 
-	lastId, err := result.LastInsertId()
-	if err != nil {
-		return nil, errswrap.NewError(err, errorsdocstore.ErrFailedQuery)
-	}
+		stmt := tDocRel.
+			SELECT(
+				tDocRel.ID.AS("id"),
+			).
+			FROM(tDocRel).
+			WHERE(jet.AND(
+				tDocRel.DocumentID.EQ(jet.Uint64(req.Relation.DocumentId)),
+				tDocRel.Relation.EQ(jet.Int16(int16(req.Relation.Relation))),
+				tDocRel.TargetUserID.EQ(jet.Int32(req.Relation.TargetUserId)),
+			)).
+			LIMIT(1)
 
-	if err := s.addUserActivity(ctx, tx,
-		userInfo.UserId, req.Relation.TargetUserId, users.UserActivityType_USER_ACTIVITY_TYPE_MENTIONED, "DocStore.Relation", "",
-		strconv.Itoa(int(lastId)), req.Relation.Relation.String()); err != nil {
-		return nil, errswrap.NewError(err, errorsdocstore.ErrFailedQuery)
+		var dest struct {
+			ID int64
+		}
+		if err := stmt.QueryContext(ctx, tx, &dest); err != nil {
+			return nil, errswrap.NewError(err, errorsdocstore.ErrFailedQuery)
+		}
+
+		lastId = dest.ID
+	} else {
+		lastId, err = result.LastInsertId()
+		if err != nil {
+			return nil, errswrap.NewError(err, errorsdocstore.ErrFailedQuery)
+		}
+
+		// Only mention users when the relation has been created and not been "duplicated"
+		if err := s.addUserActivity(ctx, tx,
+			userInfo.UserId, req.Relation.TargetUserId, users.UserActivityType_USER_ACTIVITY_TYPE_MENTIONED, "DocStore.Relation", "",
+			strconv.Itoa(int(lastId)), req.Relation.Relation.String()); err != nil {
+			return nil, errswrap.NewError(err, errorsdocstore.ErrFailedQuery)
+		}
+
+		if req.Relation.Relation == documents.DocRelation_DOC_RELATION_MENTIONED {
+			if err := s.notifyMentionedUser(ctx, uint64(lastId), userInfo.UserId, req.Relation.TargetUserId); err != nil {
+				return nil, errswrap.NewError(err, errorsdocstore.ErrFailedQuery)
+			}
+		}
 	}
 
 	// Commit the transaction
@@ -421,18 +463,14 @@ func (s *Server) AddDocumentRelation(ctx context.Context, req *AddDocumentRelati
 
 	auditEntry.State = int16(rector.EventType_EVENT_TYPE_CREATED)
 
-	if req.Relation.Relation == documents.DocRelation_DOC_RELATION_MENTIONED {
-		if err := s.notifyMentionedUser(ctx, uint64(lastId), userInfo.UserId, req.Relation.TargetUserId); err != nil {
-			return nil, errswrap.NewError(err, errorsdocstore.ErrFailedQuery)
-		}
-	}
-
 	return &AddDocumentRelationResponse{
 		Id: uint64(lastId),
 	}, nil
 }
 
 func (s *Server) RemoveDocumentRelation(ctx context.Context, req *RemoveDocumentRelationRequest) (*RemoveDocumentRelationResponse, error) {
+	trace.SpanFromContext(ctx).SetAttributes(attribute.Int64("fivenet.docstore.id", int64(req.Id)))
+
 	userInfo := auth.MustGetUserInfoFromContext(ctx)
 
 	auditEntry := &model.FivenetAuditLog{
