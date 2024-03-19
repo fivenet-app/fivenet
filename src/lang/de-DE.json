@@ -931,7 +931,8 @@
         "read": "Gelesen",
         "abbreviation": "Abkürzung",
         "approver": "Genehmiger",
-        "approved_at": "Genehmigt am"
+        "approved_at": "Genehmigt am",
+        "superuser": "SuperUser"
     },
     "notifications": {
         "clipboard": {
@@ -1022,12 +1023,6 @@
             "not_found": {
                 "title": "Nicht gefunden",
                 "content": "Inhalt nicht gefunden."
-            }
-        },
-        "superuser_menu": {
-            "setsuperusermode": {
-                "title": "Job gewechselt",
-                "content": "Dein Job ist nun {job}."
             }
         },
         "rector": {
@@ -1252,6 +1247,12 @@
                     "title": "Dokumentenanfrage aktualisiert!",
                     "content": "Die Dokumentenanfrage wurde erfolgreich aktualisiert."
                 }
+            }
+        },
+        "superuser_menu": {
+            "setsuperusermode": {
+                "title": "SuperUser Modus",
+                "content": "SuperUser Modus gewechselt (current job: {job})."
             }
         }
     },
