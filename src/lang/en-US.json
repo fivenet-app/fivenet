@@ -1025,12 +1025,6 @@
                 "content": "Content not found."
             }
         },
-        "superuser_menu": {
-            "setsuperusermode": {
-                "title": "SuperUser Mode",
-                "content": "SuperUser Mode changed (current job: {job})."
-            }
-        },
         "rector": {
             "role_created": {
                 "title": "Role: Created",
@@ -1253,6 +1247,12 @@
                     "title": "Document Request updated!",
                     "content": "The document request has been successfully updated."
                 }
+            }
+        },
+        "superuser_menu": {
+            "setsuperusermode": {
+                "title": "SuperUser Mode",
+                "content": "SuperUser Mode changed (current job: {job})."
             }
         }
     },
