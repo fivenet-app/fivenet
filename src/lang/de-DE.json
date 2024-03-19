@@ -596,6 +596,9 @@
             },
             "documenteditor": {
                 "content": "Sie können in den Konto-Einstellungen einen dunklen Modus für den Editor aktivieren."
+            },
+            "rector_roles_list": {
+                "content": "Die Berechtigungen werden von den unteren auf die oberen Ränge vererbt. Wenn Rang 1 Dokumente einsehen kann, können alle Ränge einschließlich Rang 1 dies ebenfalls tun. Wird Rang 4 die Einsichtnahme in Dokumente verweigert, können die Ränge 4 und höher keine Dokumente einsehen."
             }
         },
         "notifications": {
