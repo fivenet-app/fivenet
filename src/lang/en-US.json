@@ -596,6 +596,9 @@
             },
             "documenteditor": {
                 "content": "You can enable a dark mode for the document editor."
+            },
+            "rector_roles_list": {
+                "content": "Permissions are inherited from low to high rank. If rank 1 can view documents, all ranks above rank 1 can do so too. If rank 4 is denied to view documents, rank 4 and higher can not view documents."
             }
         },
         "notifications": {

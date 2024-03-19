@@ -4,19 +4,19 @@ import { useCounter } from '@vueuse/core';
 import { type RoutesNamedLocations } from '@typed-router';
 import GenericBadge from '~/components/partials/elements/GenericBadge.vue';
 
-type Hint = { key: string; keyboard?: boolean; link?: RoutesNamedLocations };
+type Hint = { id: string; keyboard?: boolean; link?: RoutesNamedLocations };
 
 const hints = shuffle([
     {
-        key: 'commandpalette',
+        id: 'commandpalette',
         keyboard: true,
     },
     {
-        key: 'startpage',
+        id: 'startpage',
         link: { name: 'settings' },
     },
     {
-        key: 'documenteditor',
+        id: 'documenteditor',
         link: { name: 'settings' },
     },
 ] as Hint[]);
@@ -59,9 +59,9 @@ function nextHint(): void {
                 <p class="inline-flex items-center gap-2 text-sm leading-6 text-white">
                     <InformationSlabCircleIcon class="h-7 w-7" aria-hidden="true" />
                     <strong class="mx-1 shrink-0 font-semibold">{{ $t('components.hints.start_text') }}</strong>
-                    <span class="grow">{{ $t(`components.hints.${hint.key}.content`) }} </span>
+                    <span class="grow">{{ $t(`components.hints.${hint.id}.content`) }} </span>
                     <GenericBadge v-if="hint.keyboard" class="ml-1 text-black" color="gray">
-                        <kbd class="font-sans">{{ $t(`components.hints.${hint.key}.keyboard`) }}</kbd>
+                        <kbd class="font-sans">{{ $t(`components.hints.${hint.id}.keyboard`) }}</kbd>
                     </GenericBadge>
                     <NuxtLink v-else-if="hint.link" :to="hint.link" class="ml-1 text-accent-200 underline">
                         {{ $t('components.hints.click_me') }}

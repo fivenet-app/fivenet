@@ -90,88 +90,92 @@ const selectedRole = ref<Role | undefined>();
         <div class="px-1 sm:px-2 lg:px-4">
             <div class="flex flex-col lg:flex-row">
                 <div class="mt-2 flow-root basis-1/3">
-                    <div v-if="can('RectorService.CreateRole')" class="sm:flex sm:items-center">
-                        <div class="sm:flex-auto">
-                            <form @submit.prevent="createRole()">
-                                <div class="mx-auto flex flex-row gap-4">
-                                    <div class="form-control flex-1">
-                                        <label for="grade" class="block text-sm font-medium leading-6 text-neutral">
-                                            {{ $t('common.job_grade') }}
-                                        </label>
-                                        <Combobox
-                                            v-model="selectedJobGrade"
-                                            as="div"
-                                            class="relative mt-2 flex w-full items-center"
-                                            nullable
-                                        >
-                                            <div class="relative w-full">
-                                                <ComboboxButton as="div" class="w-full">
-                                                    <ComboboxInput
-                                                        autocomplete="off"
-                                                        class="block w-full rounded-md border-0 bg-base-700 py-1.5 text-neutral placeholder:text-accent-200 focus:ring-2 focus:ring-inset focus:ring-base-300 sm:text-sm sm:leading-6"
-                                                        :display-value="
-                                                            (grade: any) => (grade ? `${grade?.label} (${grade?.grade})` : '')
-                                                        "
-                                                        @change="queryJobGradeRaw = $event.target.value"
-                                                        @focusin="focusTablet(true)"
-                                                        @focusout="focusTablet(false)"
-                                                    />
-                                                </ComboboxButton>
+                    <template v-if="can('RectorService.CreateRole')">
+                        <SingleHint id="rector_roles_list" />
+                        <div class="sm:flex sm:items-center">
+                            <div class="sm:flex-auto">
+                                <form @submit.prevent="createRole()">
+                                    <div class="mx-auto flex flex-row gap-4">
+                                        <div class="form-control flex-1">
+                                            <label for="grade" class="block text-sm font-medium leading-6 text-neutral">
+                                                {{ $t('common.job_grade') }}
+                                            </label>
+                                            <Combobox
+                                                v-model="selectedJobGrade"
+                                                as="div"
+                                                class="relative mt-2 flex w-full items-center"
+                                                nullable
+                                            >
+                                                <div class="relative w-full">
+                                                    <ComboboxButton as="div" class="w-full">
+                                                        <ComboboxInput
+                                                            autocomplete="off"
+                                                            class="block w-full rounded-md border-0 bg-base-700 py-1.5 text-neutral placeholder:text-accent-200 focus:ring-2 focus:ring-inset focus:ring-base-300 sm:text-sm sm:leading-6"
+                                                            :display-value="
+                                                                (grade: any) =>
+                                                                    grade ? `${grade?.label} (${grade?.grade})` : ''
+                                                            "
+                                                            @change="queryJobGradeRaw = $event.target.value"
+                                                            @focusin="focusTablet(true)"
+                                                            @focusout="focusTablet(false)"
+                                                        />
+                                                    </ComboboxButton>
 
-                                                <ComboboxOptions
-                                                    class="absolute z-10 mt-1 max-h-44 w-full overflow-auto rounded-md bg-base-700 py-1 text-base sm:text-sm"
-                                                >
-                                                    <ComboboxOption
-                                                        v-for="grade in availableJobGrades.filter((g) =>
-                                                            g.label.toLowerCase().includes(queryJobGrade),
-                                                        )"
-                                                        v-slot="{ active, selected }"
-                                                        :key="grade.grade"
-                                                        :value="grade"
+                                                    <ComboboxOptions
+                                                        class="absolute z-10 mt-1 max-h-44 w-full overflow-auto rounded-md bg-base-700 py-1 text-base sm:text-sm"
                                                     >
-                                                        <li
-                                                            :class="[
-                                                                'relative cursor-default select-none py-2 pl-8 pr-4 text-neutral',
-                                                                active ? 'bg-primary-500' : '',
-                                                            ]"
+                                                        <ComboboxOption
+                                                            v-for="grade in availableJobGrades.filter((g) =>
+                                                                g.label.toLowerCase().includes(queryJobGrade),
+                                                            )"
+                                                            v-slot="{ active, selected }"
+                                                            :key="grade.grade"
+                                                            :value="grade"
                                                         >
-                                                            <span :class="['block truncate', selected && 'font-semibold']">
-                                                                {{ grade.label }} ({{ grade.grade }})
-                                                            </span>
-
-                                                            <span
-                                                                v-if="selected"
+                                                            <li
                                                                 :class="[
-                                                                    active ? 'text-neutral' : 'text-primary-500',
-                                                                    'absolute inset-y-0 left-0 flex items-center pl-1.5',
+                                                                    'relative cursor-default select-none py-2 pl-8 pr-4 text-neutral',
+                                                                    active ? 'bg-primary-500' : '',
                                                                 ]"
                                                             >
-                                                                <CheckIcon class="h-5 w-5" aria-hidden="true" />
-                                                            </span>
-                                                        </li>
-                                                    </ComboboxOption>
-                                                </ComboboxOptions>
-                                            </div>
-                                        </Combobox>
+                                                                <span :class="['block truncate', selected && 'font-semibold']">
+                                                                    {{ grade.label }} ({{ grade.grade }})
+                                                                </span>
+
+                                                                <span
+                                                                    v-if="selected"
+                                                                    :class="[
+                                                                        active ? 'text-neutral' : 'text-primary-500',
+                                                                        'absolute inset-y-0 left-0 flex items-center pl-1.5',
+                                                                    ]"
+                                                                >
+                                                                    <CheckIcon class="h-5 w-5" aria-hidden="true" />
+                                                                </span>
+                                                            </li>
+                                                        </ComboboxOption>
+                                                    </ComboboxOptions>
+                                                </div>
+                                            </Combobox>
+                                        </div>
+                                        <div class="form-control flex flex-initial flex-col justify-end">
+                                            <button
+                                                type="submit"
+                                                class="inline-flex rounded-md px-3 py-2 text-sm font-semibold text-neutral focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2"
+                                                :disabled="selectedJobGrade === null || selectedJobGrade!.grade <= 0"
+                                                :class="[
+                                                    selectedJobGrade === null || selectedJobGrade!.grade <= 0
+                                                        ? 'disabled bg-base-500 hover:bg-base-400 focus-visible:outline-base-500'
+                                                        : 'bg-primary-500 hover:bg-primary-400 focus-visible:outline-primary-500',
+                                                ]"
+                                            >
+                                                {{ $t('common.create') }}
+                                            </button>
+                                        </div>
                                     </div>
-                                    <div class="form-control flex flex-initial flex-col justify-end">
-                                        <button
-                                            type="submit"
-                                            class="inline-flex rounded-md px-3 py-2 text-sm font-semibold text-neutral focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2"
-                                            :disabled="selectedJobGrade === null || selectedJobGrade!.grade <= 0"
-                                            :class="[
-                                                selectedJobGrade === null || selectedJobGrade!.grade <= 0
-                                                    ? 'disabled bg-base-500 hover:bg-base-400 focus-visible:outline-base-500'
-                                                    : 'bg-primary-500 hover:bg-primary-400 focus-visible:outline-primary-500',
-                                            ]"
-                                        >
-                                            {{ $t('common.create') }}
-                                        </button>
-                                    </div>
-                                </div>
-                            </form>
+                                </form>
+                            </div>
                         </div>
-                    </div>
+                    </template>
                     <div class="-my-2 mx-0 overflow-x-auto">
                         <div class="inline-block min-w-full px-1 py-2 align-middle">
                             <DataPendingBlock v-if="pending" :message="$t('common.loading', [$t('common.role', 2)])" />
