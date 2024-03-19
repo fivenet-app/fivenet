@@ -21,6 +21,13 @@ import (
 
 var ErrNotFound = errors.New("store: not found")
 
+var metricDataMapCount = promauto.NewCounterVec(prometheus.CounterOpts{
+	Namespace: admin.MetricsNamespace,
+	Subsystem: "nats_store",
+	Name:      "datamap_count",
+	Help:      "Count of data map entries.",
+}, []string{"bucket"})
+
 type protoMessage[T any] interface {
 	*T
 	proto.Message
@@ -30,6 +37,7 @@ type protoMessage[T any] interface {
 
 type Store[T any, U protoMessage[T]] struct {
 	logger *zap.Logger
+	bucket string
 	kv     jetstream.KeyValue
 	l      *locks.Locks
 
@@ -39,8 +47,6 @@ type Store[T any, U protoMessage[T]] struct {
 	OnUpdate   OnUpdateFn[T, U]
 	OnDelete   OnDeleteFn[T, U]
 	OnNotFound OnNotFoundFn[T, U]
-
-	metricDataMapCount prometheus.Counter
 }
 
 type Option[T any, U protoMessage[T]] func(s *Store[T, U]) error
@@ -67,21 +73,12 @@ func NewWithLocks[T any, U protoMessage[T]](ctx context.Context, logger *zap.Log
 
 	s := &Store[T, U]{
 		logger: logger.Named("store").With(zap.String("bucket", bucket)),
+		bucket: bucket,
 		kv:     kv,
 		l:      l,
 
 		mu:   xsync.NewMapOf[string, *sync.Mutex](),
 		data: xsync.NewMapOf[string, U](),
-
-		metricDataMapCount: promauto.NewCounter(prometheus.CounterOpts{
-			Namespace: admin.MetricsNamespace,
-			Subsystem: "nats_store",
-			Name:      "datamap_count",
-			Help:      "Count of data map entries.",
-			ConstLabels: prometheus.Labels{
-				"bucket": bucket,
-			},
-		}),
 	}
 
 	for _, opt := range opts {
@@ -427,7 +424,7 @@ func (s *Store[T, U]) Start(ctx context.Context) error {
 				return
 
 			case <-time.After(15 * time.Second):
-				s.metricDataMapCount.Add(float64(s.data.Size()))
+				metricDataMapCount.WithLabelValues(s.bucket).Add(float64(s.data.Size()))
 			}
 		}
 	}()
