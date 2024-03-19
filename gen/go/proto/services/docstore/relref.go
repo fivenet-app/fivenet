@@ -410,8 +410,6 @@ func (s *Server) AddDocumentRelation(ctx context.Context, req *AddDocumentRelati
 
 	var lastId int64
 
-	notifyRelatedUser := false
-
 	result, err := stmt.ExecContext(ctx, tx)
 	if err != nil {
 		if !dbutils.IsDuplicateError(err) {
@@ -451,18 +449,16 @@ func (s *Server) AddDocumentRelation(ctx context.Context, req *AddDocumentRelati
 			return nil, errswrap.NewError(err, errorsdocstore.ErrFailedQuery)
 		}
 
-		notifyRelatedUser = true
+		if req.Relation.Relation == documents.DocRelation_DOC_RELATION_MENTIONED {
+			if err := s.notifyMentionedUser(ctx, req.Relation.DocumentId, userInfo.UserId, req.Relation.TargetUserId); err != nil {
+				return nil, errswrap.NewError(err, errorsdocstore.ErrFailedQuery)
+			}
+		}
 	}
 
 	// Commit the transaction
 	if err := tx.Commit(); err != nil {
 		return nil, errswrap.NewError(err, errorsdocstore.ErrFailedQuery)
-	}
-
-	if notifyRelatedUser && req.Relation.Relation == documents.DocRelation_DOC_RELATION_MENTIONED {
-		if err := s.notifyMentionedUser(ctx, uint64(lastId), userInfo.UserId, req.Relation.TargetUserId); err != nil {
-			return nil, errswrap.NewError(err, errorsdocstore.ErrFailedQuery)
-		}
 	}
 
 	auditEntry.State = int16(rector.EventType_EVENT_TYPE_CREATED)
