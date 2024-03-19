@@ -91,7 +91,6 @@ const selectedRole = ref<Role | undefined>();
             <div class="flex flex-col lg:flex-row">
                 <div class="mt-2 flow-root basis-1/3">
                     <template v-if="can('RectorService.CreateRole')">
-                        <SingleHint id="rector_roles_list" />
                         <div class="sm:flex sm:items-center">
                             <div class="sm:flex-auto">
                                 <form @submit.prevent="createRole()">
@@ -209,6 +208,8 @@ const selectedRole = ref<Role | undefined>();
                                     />
                                 </template>
                             </GenericTable>
+
+                            <SingleHint id="rector_roles_list" />
                         </div>
                     </div>
                 </div>
