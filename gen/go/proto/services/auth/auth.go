@@ -7,7 +7,6 @@ import (
 	"slices"
 	"strings"
 
-	"github.com/galexrt/fivenet/gen/go/proto/resources/common"
 	"github.com/galexrt/fivenet/gen/go/proto/resources/rector"
 	"github.com/galexrt/fivenet/gen/go/proto/resources/timestamp"
 	users "github.com/galexrt/fivenet/gen/go/proto/resources/users"
@@ -53,9 +52,10 @@ type Server struct {
 	ui       userinfo.UserInfoRetriever
 	appCfg   appconfig.IConfig
 
-	superuserGroups []string
 	oauth2Providers []*config.OAuth2Provider
 	customDB        config.CustomDB
+	superuserGroups []string
+	superuserUsers  []string
 }
 
 type Params struct {
@@ -88,6 +88,7 @@ func NewServer(p Params) *Server {
 		oauth2Providers: p.Config.OAuth2.Providers,
 		customDB:        p.Config.Database.Custom,
 		superuserGroups: p.Config.Auth.SuperuserGroups,
+		superuserUsers:  p.Config.Auth.SuperuserUsers,
 	}
 }
 
@@ -105,7 +106,7 @@ func (s *Server) AuthFuncOverride(ctx context.Context, fullMethod string) (conte
 		return ctx, nil
 	}
 
-	if fullMethod == "/services.auth.AuthService/SetJob" {
+	if fullMethod == "/services.auth.AuthService/SetSuperUserMode" {
 		return s.auth.GRPCAuthFunc(ctx, fullMethod)
 	}
 
@@ -136,6 +137,7 @@ func (s *Server) getAccountFromDB(ctx context.Context, condition jet.BoolExpress
 			tAccounts.RegToken,
 			tAccounts.OverrideJob,
 			tAccounts.OverrideJobGrade,
+			tAccounts.Superuser,
 		).
 		FROM(tAccounts).
 		WHERE(
@@ -588,11 +590,21 @@ func (s *Server) ChooseCharacter(ctx context.Context, req *ChooseCharacterReques
 		return nil, errswrap.NewError(err, errorsauth.ErrNoCharFound)
 	}
 
-	// Reset override jobs when choosing a character
-	if account.OverrideJob != nil {
-		if err := s.ui.SetUserInfo(ctx, claims.AccID, "", 0); err != nil {
+	isSuperUser := slices.Contains(s.superuserGroups, userGroup) || slices.Contains(s.superuserUsers, claims.Subject)
+
+	// Reset override jobs when person is not a superuser but has an override set..
+	if !isSuperUser &&
+		((account.Superuser != nil && *account.Superuser) ||
+			account.OverrideJob != nil) {
+		account.OverrideJob = nil
+		account.OverrideJobGrade = nil
+
+		if err := s.ui.SetUserInfo(ctx, claims.AccID, false, account.OverrideJob, account.OverrideJobGrade); err != nil {
 			return nil, errswrap.NewError(err, errorsauth.ErrGenericLogin)
 		}
+
+		not := false
+		account.Superuser = &not
 	}
 
 	newToken, newClaims, err := s.createTokenFromAccountAndChar(account, char)
@@ -609,10 +621,14 @@ func (s *Server) ChooseCharacter(ctx context.Context, req *ChooseCharacterReques
 	if err != nil {
 		return nil, errswrap.NewError(err, errorsauth.ErrUnableToChooseChar)
 	}
-	ps := userPs.GuardNames()
 
-	if slices.Contains(s.superuserGroups, userGroup) {
-		ps = append(ps, common.SuperuserPermission)
+	ps := userPs.GuardNames()
+	if isSuperUser {
+		ps = append(ps, auth.PermCanBeSuperKey)
+
+		if account.Superuser != nil && *account.Superuser {
+			ps = append(ps, auth.PermSuperUserKey)
+		}
 	}
 
 	attrs, err := s.ps.FlattenRoleAttributes(char.Job, char.JobGrade)
@@ -644,7 +660,7 @@ func (s *Server) ChooseCharacter(ctx context.Context, req *ChooseCharacterReques
 	}, nil
 }
 
-func (s *Server) SetJob(ctx context.Context, req *SetJobRequest) (*SetJobResponse, error) {
+func (s *Server) SetSuperUserMode(ctx context.Context, req *SetSuperUserModeRequest) (*SetSuperUserModeResponse, error) {
 	token, err := auth.GetTokenFromGRPCContext(ctx)
 	if err != nil {
 		return nil, auth.ErrInvalidToken
@@ -657,28 +673,54 @@ func (s *Server) SetJob(ctx context.Context, req *SetJobRequest) (*SetJobRespons
 
 	userInfo := auth.MustGetUserInfoFromContext(ctx)
 
+	if !userInfo.CanBeSuper {
+		return nil, errswrap.NewError(err, errorsauth.ErrNoCharFound)
+	}
+
 	char, _, _, err := s.getCharacter(ctx, claims.CharID)
 	if err != nil {
 		return nil, errswrap.NewError(err, errorsauth.ErrNoCharFound)
 	}
 
-	job, jobGrade, jProps, err := s.getJobWithProps(ctx, req.Job)
-	if err != nil {
+	var jobProps *users.JobProps
+
+	// Reset override job when switching off superuser mode
+	if !req.Superuser {
+		userInfo.Job = char.Job
+		userInfo.JobGrade = char.JobGrade
+
+		userInfo.OverrideJob = nil
+		userInfo.OverrideJobGrade = nil
+
+		// Send original char job props to user
+		_, _, jProps, err := s.getJobWithProps(ctx, char.Job)
+		if err != nil {
+			return nil, errswrap.NewError(err, errorsauth.ErrGenericLogin)
+		}
+		jobProps = jProps
+	} else if req.Job != nil {
+		// Only set job if requested
+		job, jobGrade, jProps, err := s.getJobWithProps(ctx, *req.Job)
+		if err != nil {
+			return nil, errswrap.NewError(err, errorsauth.ErrGenericLogin)
+		}
+		jobProps = jProps
+
+		userInfo.Job = job.Name
+		userInfo.JobGrade = jobGrade
+		userInfo.OverrideJob = &job.Name
+		userInfo.OverrideJobGrade = &jobGrade
+
+		char.Job = job.Name
+		char.JobGrade = jobGrade
+		s.enricher.EnrichJobInfo(char)
+	}
+
+	if err := s.ui.SetUserInfo(ctx, claims.AccID, req.Superuser, userInfo.OverrideJob, userInfo.OverrideJobGrade); err != nil {
 		return nil, errswrap.NewError(err, errorsauth.ErrGenericLogin)
 	}
 
-	char.Job = job.Name
-	char.JobGrade = jobGrade
-	s.enricher.EnrichJobInfo(char)
-
-	if err := s.ui.SetUserInfo(ctx, claims.AccID, char.Job, char.JobGrade); err != nil {
-		return nil, errswrap.NewError(err, errorsauth.ErrGenericLogin)
-	}
-
-	userInfo.OrigJob = char.Job
-	userInfo.OrigJobGrade = char.JobGrade
-	userInfo.Job = job.Name
-	userInfo.JobGrade = jobGrade
+	userInfo.SuperUser = req.Superuser
 
 	// Load account data for token creation
 	account, err := s.getAccountFromDB(ctx, tAccounts.Username.EQ(jet.String(claims.Username)))
@@ -691,10 +733,10 @@ func (s *Server) SetJob(ctx context.Context, req *SetJobRequest) (*SetJobRespons
 		return nil, errswrap.NewError(err, errorsauth.ErrGenericLogin)
 	}
 
-	return &SetJobResponse{
+	return &SetSuperUserModeResponse{
 		Token:    newToken,
 		Expires:  timestamp.New(newClaims.ExpiresAt.Time),
-		JobProps: jProps,
+		JobProps: jobProps,
 		Char:     char,
 	}, nil
 }

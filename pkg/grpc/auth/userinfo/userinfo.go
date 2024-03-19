@@ -12,16 +12,18 @@ var (
 type UserInfo struct {
 	Enabled   bool
 	AccountId uint64
-	UserId    int32
 	License   string
 
-	Group     string
-	SuperUser bool
+	UserId   int32
+	Job      string
+	JobGrade int32
 
-	Job          string
-	JobGrade     int32
-	OrigJob      string
-	OrigJobGrade int32
+	Group      string
+	CanBeSuper bool
+	SuperUser  bool
+
+	OverrideJob      *string
+	OverrideJobGrade *int32
 }
 
 func (u *UserInfo) Equal(in *UserInfo) bool {
@@ -36,14 +38,17 @@ func (u *UserInfo) Clone() UserInfo {
 	return UserInfo{
 		Enabled:   u.Enabled,
 		AccountId: u.AccountId,
-		UserId:    u.UserId,
+		License:   u.License,
 
-		Group:     u.Group,
-		SuperUser: u.SuperUser,
+		Group:      u.Group,
+		CanBeSuper: u.CanBeSuper,
+		SuperUser:  u.SuperUser,
 
-		Job:          u.Job,
-		JobGrade:     u.JobGrade,
-		OrigJob:      u.OrigJob,
-		OrigJobGrade: u.OrigJobGrade,
+		UserId:   u.UserId,
+		Job:      u.Job,
+		JobGrade: u.JobGrade,
+
+		OverrideJob:      u.OverrideJob,
+		OverrideJobGrade: u.OverrideJobGrade,
 	}
 }

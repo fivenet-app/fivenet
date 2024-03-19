@@ -31,6 +31,6 @@ func (ui *MockUserInfoRetriever) GetUserInfoWithoutAccountId(ctx context.Context
 	return nil, fmt.Errorf("no user info found")
 }
 
-func (ui *MockUserInfoRetriever) SetUserInfo(ctx context.Context, accountId uint64, job string, jobGrade int32) error {
+func (ui *MockUserInfoRetriever) SetUserInfo(ctx context.Context, accountId uint64, superuser bool, job *string, jobGrade *int32) error {
 	return nil
 }

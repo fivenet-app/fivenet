@@ -27,6 +27,7 @@ type fivenetAccountsTable struct {
 	RegToken         mysql.ColumnString
 	OverrideJob      mysql.ColumnString
 	OverrideJobGrade mysql.ColumnInteger
+	Superuser        mysql.ColumnBool
 
 	AllColumns     mysql.ColumnList
 	MutableColumns mysql.ColumnList
@@ -77,8 +78,9 @@ func newFivenetAccountsTableImpl(schemaName, tableName, alias string) fivenetAcc
 		RegTokenColumn         = mysql.StringColumn("reg_token")
 		OverrideJobColumn      = mysql.StringColumn("override_job")
 		OverrideJobGradeColumn = mysql.IntegerColumn("override_job_grade")
-		allColumns             = mysql.ColumnList{IDColumn, CreatedAtColumn, UpdatedAtColumn, EnabledColumn, UsernameColumn, PasswordColumn, LicenseColumn, RegTokenColumn, OverrideJobColumn, OverrideJobGradeColumn}
-		mutableColumns         = mysql.ColumnList{CreatedAtColumn, UpdatedAtColumn, EnabledColumn, UsernameColumn, PasswordColumn, LicenseColumn, RegTokenColumn, OverrideJobColumn, OverrideJobGradeColumn}
+		SuperuserColumn        = mysql.BoolColumn("superuser")
+		allColumns             = mysql.ColumnList{IDColumn, CreatedAtColumn, UpdatedAtColumn, EnabledColumn, UsernameColumn, PasswordColumn, LicenseColumn, RegTokenColumn, OverrideJobColumn, OverrideJobGradeColumn, SuperuserColumn}
+		mutableColumns         = mysql.ColumnList{CreatedAtColumn, UpdatedAtColumn, EnabledColumn, UsernameColumn, PasswordColumn, LicenseColumn, RegTokenColumn, OverrideJobColumn, OverrideJobGradeColumn, SuperuserColumn}
 	)
 
 	return fivenetAccountsTable{
@@ -95,6 +97,7 @@ func newFivenetAccountsTableImpl(schemaName, tableName, alias string) fivenetAcc
 		RegToken:         RegTokenColumn,
 		OverrideJob:      OverrideJobColumn,
 		OverrideJobGrade: OverrideJobGradeColumn,
+		Superuser:        SuperuserColumn,
 
 		AllColumns:     allColumns,
 		MutableColumns: mutableColumns,

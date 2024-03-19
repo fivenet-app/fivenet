@@ -21,7 +21,7 @@ var (
 type UserInfoRetriever interface {
 	GetUserInfo(ctx context.Context, userId int32, accountId uint64) (*UserInfo, error)
 	GetUserInfoWithoutAccountId(ctx context.Context, userId int32) (*UserInfo, error)
-	SetUserInfo(ctx context.Context, accountId uint64, job string, jobGrade int32) error
+	SetUserInfo(ctx context.Context, accountId uint64, superuser bool, job *string, jobGrade *int32) error
 }
 
 type UIRetriever struct {
@@ -88,8 +88,9 @@ func (ui *UIRetriever) GetUserInfo(ctx context.Context, userId int32, accountId 
 			tFivenetAccounts.ID.AS("userinfo.acc_id"),
 			tFivenetAccounts.Enabled.AS("userinfo.enabled"),
 			tFivenetAccounts.License.AS("userinfo.license"),
-			tFivenetAccounts.OverrideJob.AS("userinfo.orig_job"),
-			tFivenetAccounts.OverrideJobGrade.AS("userinfo.orig_job_grade"),
+			tFivenetAccounts.OverrideJob.AS("userinfo.override_job"),
+			tFivenetAccounts.OverrideJobGrade.AS("userinfo.override_job_grade"),
+			tFivenetAccounts.Superuser.AS("userinfo.superuser"),
 		).
 		FROM(
 			tUsers,
@@ -112,10 +113,11 @@ func (ui *UIRetriever) GetUserInfo(ctx context.Context, userId int32, accountId 
 
 	// Check if user is superuser
 	if slices.Contains(ui.superuserGroups, dest.Group) || slices.Contains(ui.superuserUsers, dest.License) {
-		dest.SuperUser = true
-		if dest.OrigJob != "" {
-			dest.Job = dest.OrigJob
-			dest.JobGrade = dest.OrigJobGrade
+		dest.CanBeSuper = true
+
+		if dest.OverrideJob != nil && *dest.OverrideJob != "" {
+			dest.Job = *dest.OverrideJob
+			dest.JobGrade = *dest.OverrideJobGrade
 		}
 	}
 
@@ -146,28 +148,23 @@ func (ui *UIRetriever) GetUserInfoWithoutAccountId(ctx context.Context, userId i
 
 	// Check if user is superuser
 	if slices.Contains(ui.superuserGroups, dest.Group) {
-		dest.SuperUser = true
+		dest.CanBeSuper = true
 	}
 
 	return dest, nil
 }
 
-func (ui *UIRetriever) SetUserInfo(ctx context.Context, accountId uint64, job string, jobGrade int32) error {
-	jobVal := jet.NULL
-	jobGradeVal := jet.NULL
-	if job != "" && jobGrade > 0 {
-		jobVal = jet.String(job)
-		jobGradeVal = jet.Int32(jobGrade)
-	}
-
+func (ui *UIRetriever) SetUserInfo(ctx context.Context, accountId uint64, superuser bool, job *string, jobGrade *int32) error {
 	stmt := tFivenetAccounts.
 		UPDATE(
+			tFivenetAccounts.Superuser,
 			tFivenetAccounts.OverrideJob,
 			tFivenetAccounts.OverrideJobGrade,
 		).
 		SET(
-			tFivenetAccounts.OverrideJob.SET(jet.StringExp(jobVal)),
-			tFivenetAccounts.OverrideJobGrade.SET(jet.IntExp(jobGradeVal)),
+			superuser,
+			job,
+			jobGrade,
 		).
 		WHERE(
 			tFivenetAccounts.ID.EQ(jet.Uint64(accountId)),

@@ -306,7 +306,7 @@ const openRequest = ref(false);
                                 </div>
                             </div>
 
-                            <div class="my-2">
+                            <div v-if="!!quali?.content" class="my-2">
                                 <h2 class="sr-only">
                                     {{ $t('common.content') }}
                                 </h2>

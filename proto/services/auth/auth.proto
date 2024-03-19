@@ -133,16 +133,15 @@ message DeleteOAuth2ConnectionResponse {
   bool success = 1;
 }
 
-message SetJobRequest {
-  int32 char_id = 1 [(validate.rules).int32.gt = 0];
-  string job = 2 [(validate.rules).string.max_len = 20];
-  int32 job_grade = 3 [(validate.rules).int32.gt = 0];
+message SetSuperUserModeRequest {
+  bool superuser = 1;
+  optional string job = 2 [(validate.rules).string.max_len = 20];
 }
 
-message SetJobResponse {
+message SetSuperUserModeResponse {
   string token = 1;
   resources.timestamp.Timestamp expires = 2;
-  resources.users.JobProps job_props = 3;
+  optional resources.users.JobProps job_props = 3;
   resources.users.User char = 4;
 }
 
@@ -163,5 +162,5 @@ service AuthService {
 
   rpc DeleteOAuth2Connection(DeleteOAuth2ConnectionRequest) returns (DeleteOAuth2ConnectionResponse);
 
-  rpc SetJob(SetJobRequest) returns (SetJobResponse);
+  rpc SetSuperUserMode(SetSuperUserModeRequest) returns (SetSuperUserModeResponse);
 }

@@ -295,9 +295,6 @@ onMounted(async () => {
         });
     });
 
-    setTimeout(() => {
-        setupCheckboxes();
-    }, 25);
     canEdit.value = true;
 
     findCategories();
@@ -703,35 +700,6 @@ console.info(
     'Relations',
     canDo.value.relations,
 );
-
-function setCheckboxState(target: HTMLInputElement): void {
-    const attr = target.getAttribute('checked');
-    const checked = attr !== null ? Boolean(attr) : false;
-    if (checked) {
-        target.removeAttribute('checked');
-    } else {
-        target.setAttribute('checked', 'true');
-    }
-}
-
-function setupCheckboxes(): void {
-    const checkboxes: NodeListOf<HTMLInputElement> = document.querySelectorAll('.jodit-wysiwyg input[type=checkbox]');
-    checkboxes.forEach(
-        (el) =>
-            (el.onchange = (ev) => {
-                if (ev.target === null) {
-                    return;
-                }
-                setCheckboxState(ev.target as HTMLInputElement);
-            }),
-    );
-}
-
-onBeforeUnmount(() => {
-    // Remove event listeners on unmount
-    const checkboxes: NodeListOf<HTMLInputElement> = document.querySelectorAll('.jodit-wysiwyg input[type=checkbox]');
-    checkboxes.forEach((el) => (el.onchange = null));
-});
 </script>
 
 <template>

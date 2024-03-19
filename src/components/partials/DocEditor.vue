@@ -1,5 +1,5 @@
 <script lang="ts" setup>
-import { useVModel } from '@vueuse/core';
+import { useTimeoutFn, useVModel, watchOnce } from '@vueuse/core';
 import 'jodit/es5/jodit.min.css';
 import { Jodit } from 'jodit';
 // @ts-ignore jodit-vue has no (detected) types
@@ -147,10 +147,35 @@ function setCheckboxState(target: HTMLInputElement): void {
         target.setAttribute('checked', 'true');
     }
 }
+
+function setupCheckboxes(): void {
+    const checkboxes: NodeListOf<HTMLInputElement> = document.querySelectorAll('.jodit-wysiwyg input[type=checkbox]');
+    checkboxes.forEach(
+        (el) =>
+            (el.onchange = (ev) => {
+                if (ev.target === null) {
+                    return;
+                }
+                setCheckboxState(ev.target as HTMLInputElement);
+            }),
+    );
+}
+
+watchOnce(props, () => {
+    if (props.modelValue !== '') {
+        useTimeoutFn(setupCheckboxes, 50);
+    }
+});
+
+onBeforeUnmount(() => {
+    // Remove event listeners on unmount
+    const checkboxes: NodeListOf<HTMLInputElement> = document.querySelectorAll('.jodit-wysiwyg input[type=checkbox]');
+    checkboxes.forEach((el) => (el.onchange = null));
+});
 </script>
 
 <template>
-    <JoditEditor v-model="content" :config="config" :plugins="plugins" :extra-buttons="extraButtons" />
+    <JoditEditor ref="editorRef" v-model="content" :config="config" :plugins="plugins" :extra-buttons="extraButtons" />
 </template>
 
 <style>

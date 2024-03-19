@@ -48,6 +48,7 @@
 // source: services/rector/rector.proto
 
 export type Perms =
+    | 'CanBeSuper'
     | 'SuperUser'
     | 'TODOService.TODOMethod'
 	| 'AuthService.ChooseCharacter'

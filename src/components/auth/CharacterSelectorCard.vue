@@ -1,5 +1,5 @@
 <script lang="ts" setup>
-import { useThrottleFn } from '@vueuse/core';
+import { useThrottleFn, useTimeoutFn } from '@vueuse/core';
 import { LoadingIcon } from 'mdi-vue3';
 import CharSexBadge from '~/components/partials/citizens/CharSexBadge.vue';
 import { useAuthStore } from '~/store/auth';
@@ -19,7 +19,7 @@ const props = defineProps<{
 const canSubmit = ref(true);
 const onSubmitThrottle = useThrottleFn(async (_) => {
     canSubmit.value = false;
-    await chooseCharacter(props.char.userId).finally(() => setTimeout(() => (canSubmit.value = true), 400));
+    await chooseCharacter(props.char.userId).finally(() => useTimeoutFn(() => (canSubmit.value = true), 400));
 }, 1000);
 </script>
 

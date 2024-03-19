@@ -22,7 +22,7 @@ import { type DefineComponent } from 'vue';
 import { type RoutesNamedLocations } from '@typed-router';
 import QuickButtons from '~/components/partials/quickbuttons/QuickButtons.vue';
 import FiveNetLogo from '~/components/partials/logos/FiveNetLogo.vue';
-import JobSwitcherMenu from '~/components/partials/sidebar/JobSwitcherMenu.vue';
+import SuperUserMenu from '~/components/partials/sidebar/SuperUserMenu.vue';
 import LanguageSwitcherMenu from '~/components/partials/sidebar/LanguageSwitcherMenu.vue';
 import NotificationsButton from '~/components/partials/sidebar/NotificationsButton.vue';
 import { useAuthStore } from '~/store/auth';
@@ -529,14 +529,16 @@ watch(router.currentRoute, () => updateActiveItem());
                             </nav>
                         </div>
                         <div class="ml-2 flex items-center space-x-3 sm:ml-2 sm:space-x-4">
-                            <JobSwitcherMenu v-if="can('SuperUser') && activeChar" />
-                            <div v-if="activeChar" class="hidden text-center text-sm font-medium text-accent-200 sm:block">
-                                <span class="line-clamp-3">
-                                    <span class="line-clamp-2">{{ activeChar.firstname }} {{ activeChar.lastname }}</span>
-                                    ({{ activeChar.jobLabel }})
-                                </span>
-                            </div>
-                            <NotificationsButton v-if="activeChar" />
+                            <template v-if="activeChar">
+                                <SuperUserMenu v-if="can('CanBeSuper') || can('SuperUser')" />
+                                <div v-if="activeChar" class="hidden text-center text-sm font-medium text-accent-200 sm:block">
+                                    <span class="line-clamp-3">
+                                        <span class="line-clamp-2">{{ activeChar.firstname }} {{ activeChar.lastname }}</span>
+                                        ({{ activeChar.jobLabel }})
+                                    </span>
+                                </div>
+                                <NotificationsButton />
+                            </template>
                             <LanguageSwitcherMenu />
 
                             <!-- Account dropdown -->

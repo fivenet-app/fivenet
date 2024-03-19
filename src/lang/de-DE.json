@@ -1024,8 +1024,8 @@
                 "content": "Inhalt nicht gefunden."
             }
         },
-        "job_switcher": {
-            "setjob": {
+        "superuser_menu": {
+            "setsuperusermode": {
                 "title": "Job gewechselt",
                 "content": "Dein Job ist nun {job}."
             }

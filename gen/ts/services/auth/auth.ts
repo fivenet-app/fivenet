@@ -238,26 +238,22 @@ export interface DeleteOAuth2ConnectionResponse {
     success: boolean;
 }
 /**
- * @generated from protobuf message services.auth.SetJobRequest
+ * @generated from protobuf message services.auth.SetSuperUserModeRequest
  */
-export interface SetJobRequest {
+export interface SetSuperUserModeRequest {
     /**
-     * @generated from protobuf field: int32 char_id = 1;
+     * @generated from protobuf field: bool superuser = 1;
      */
-    charId: number;
+    superuser: boolean;
     /**
-     * @generated from protobuf field: string job = 2;
+     * @generated from protobuf field: optional string job = 2;
      */
-    job: string;
-    /**
-     * @generated from protobuf field: int32 job_grade = 3;
-     */
-    jobGrade: number;
+    job?: string;
 }
 /**
- * @generated from protobuf message services.auth.SetJobResponse
+ * @generated from protobuf message services.auth.SetSuperUserModeResponse
  */
-export interface SetJobResponse {
+export interface SetSuperUserModeResponse {
     /**
      * @generated from protobuf field: string token = 1;
      */
@@ -267,7 +263,7 @@ export interface SetJobResponse {
      */
     expires?: Timestamp;
     /**
-     * @generated from protobuf field: resources.users.JobProps job_props = 3;
+     * @generated from protobuf field: optional resources.users.JobProps job_props = 3;
      */
     jobProps?: JobProps;
     /**
@@ -1220,36 +1216,30 @@ class DeleteOAuth2ConnectionResponse$Type extends MessageType<DeleteOAuth2Connec
  */
 export const DeleteOAuth2ConnectionResponse = new DeleteOAuth2ConnectionResponse$Type();
 // @generated message type with reflection information, may provide speed optimized methods
-class SetJobRequest$Type extends MessageType<SetJobRequest> {
+class SetSuperUserModeRequest$Type extends MessageType<SetSuperUserModeRequest> {
     constructor() {
-        super("services.auth.SetJobRequest", [
-            { no: 1, name: "char_id", kind: "scalar", T: 5 /*ScalarType.INT32*/, options: { "validate.rules": { int32: { gt: 0 } } } },
-            { no: 2, name: "job", kind: "scalar", T: 9 /*ScalarType.STRING*/, options: { "validate.rules": { string: { maxLen: "20" } } } },
-            { no: 3, name: "job_grade", kind: "scalar", T: 5 /*ScalarType.INT32*/, options: { "validate.rules": { int32: { gt: 0 } } } }
+        super("services.auth.SetSuperUserModeRequest", [
+            { no: 1, name: "superuser", kind: "scalar", T: 8 /*ScalarType.BOOL*/ },
+            { no: 2, name: "job", kind: "scalar", opt: true, T: 9 /*ScalarType.STRING*/, options: { "validate.rules": { string: { maxLen: "20" } } } }
         ]);
     }
-    create(value?: PartialMessage<SetJobRequest>): SetJobRequest {
+    create(value?: PartialMessage<SetSuperUserModeRequest>): SetSuperUserModeRequest {
         const message = globalThis.Object.create((this.messagePrototype!));
-        message.charId = 0;
-        message.job = "";
-        message.jobGrade = 0;
+        message.superuser = false;
         if (value !== undefined)
-            reflectionMergePartial<SetJobRequest>(this, message, value);
+            reflectionMergePartial<SetSuperUserModeRequest>(this, message, value);
         return message;
     }
-    internalBinaryRead(reader: IBinaryReader, length: number, options: BinaryReadOptions, target?: SetJobRequest): SetJobRequest {
+    internalBinaryRead(reader: IBinaryReader, length: number, options: BinaryReadOptions, target?: SetSuperUserModeRequest): SetSuperUserModeRequest {
         let message = target ?? this.create(), end = reader.pos + length;
         while (reader.pos < end) {
             let [fieldNo, wireType] = reader.tag();
             switch (fieldNo) {
-                case /* int32 char_id */ 1:
-                    message.charId = reader.int32();
+                case /* bool superuser */ 1:
+                    message.superuser = reader.bool();
                     break;
-                case /* string job */ 2:
+                case /* optional string job */ 2:
                     message.job = reader.string();
-                    break;
-                case /* int32 job_grade */ 3:
-                    message.jobGrade = reader.int32();
                     break;
                 default:
                     let u = options.readUnknownField;
@@ -1262,16 +1252,13 @@ class SetJobRequest$Type extends MessageType<SetJobRequest> {
         }
         return message;
     }
-    internalBinaryWrite(message: SetJobRequest, writer: IBinaryWriter, options: BinaryWriteOptions): IBinaryWriter {
-        /* int32 char_id = 1; */
-        if (message.charId !== 0)
-            writer.tag(1, WireType.Varint).int32(message.charId);
-        /* string job = 2; */
-        if (message.job !== "")
+    internalBinaryWrite(message: SetSuperUserModeRequest, writer: IBinaryWriter, options: BinaryWriteOptions): IBinaryWriter {
+        /* bool superuser = 1; */
+        if (message.superuser !== false)
+            writer.tag(1, WireType.Varint).bool(message.superuser);
+        /* optional string job = 2; */
+        if (message.job !== undefined)
             writer.tag(2, WireType.LengthDelimited).string(message.job);
-        /* int32 job_grade = 3; */
-        if (message.jobGrade !== 0)
-            writer.tag(3, WireType.Varint).int32(message.jobGrade);
         let u = options.writeUnknownFields;
         if (u !== false)
             (u == true ? UnknownFieldHandler.onWrite : u)(this.typeName, message, writer);
@@ -1279,27 +1266,27 @@ class SetJobRequest$Type extends MessageType<SetJobRequest> {
     }
 }
 /**
- * @generated MessageType for protobuf message services.auth.SetJobRequest
+ * @generated MessageType for protobuf message services.auth.SetSuperUserModeRequest
  */
-export const SetJobRequest = new SetJobRequest$Type();
+export const SetSuperUserModeRequest = new SetSuperUserModeRequest$Type();
 // @generated message type with reflection information, may provide speed optimized methods
-class SetJobResponse$Type extends MessageType<SetJobResponse> {
+class SetSuperUserModeResponse$Type extends MessageType<SetSuperUserModeResponse> {
     constructor() {
-        super("services.auth.SetJobResponse", [
+        super("services.auth.SetSuperUserModeResponse", [
             { no: 1, name: "token", kind: "scalar", T: 9 /*ScalarType.STRING*/ },
             { no: 2, name: "expires", kind: "message", T: () => Timestamp },
             { no: 3, name: "job_props", kind: "message", T: () => JobProps },
             { no: 4, name: "char", kind: "message", T: () => User }
         ]);
     }
-    create(value?: PartialMessage<SetJobResponse>): SetJobResponse {
+    create(value?: PartialMessage<SetSuperUserModeResponse>): SetSuperUserModeResponse {
         const message = globalThis.Object.create((this.messagePrototype!));
         message.token = "";
         if (value !== undefined)
-            reflectionMergePartial<SetJobResponse>(this, message, value);
+            reflectionMergePartial<SetSuperUserModeResponse>(this, message, value);
         return message;
     }
-    internalBinaryRead(reader: IBinaryReader, length: number, options: BinaryReadOptions, target?: SetJobResponse): SetJobResponse {
+    internalBinaryRead(reader: IBinaryReader, length: number, options: BinaryReadOptions, target?: SetSuperUserModeResponse): SetSuperUserModeResponse {
         let message = target ?? this.create(), end = reader.pos + length;
         while (reader.pos < end) {
             let [fieldNo, wireType] = reader.tag();
@@ -1310,7 +1297,7 @@ class SetJobResponse$Type extends MessageType<SetJobResponse> {
                 case /* resources.timestamp.Timestamp expires */ 2:
                     message.expires = Timestamp.internalBinaryRead(reader, reader.uint32(), options, message.expires);
                     break;
-                case /* resources.users.JobProps job_props */ 3:
+                case /* optional resources.users.JobProps job_props */ 3:
                     message.jobProps = JobProps.internalBinaryRead(reader, reader.uint32(), options, message.jobProps);
                     break;
                 case /* resources.users.User char */ 4:
@@ -1327,14 +1314,14 @@ class SetJobResponse$Type extends MessageType<SetJobResponse> {
         }
         return message;
     }
-    internalBinaryWrite(message: SetJobResponse, writer: IBinaryWriter, options: BinaryWriteOptions): IBinaryWriter {
+    internalBinaryWrite(message: SetSuperUserModeResponse, writer: IBinaryWriter, options: BinaryWriteOptions): IBinaryWriter {
         /* string token = 1; */
         if (message.token !== "")
             writer.tag(1, WireType.LengthDelimited).string(message.token);
         /* resources.timestamp.Timestamp expires = 2; */
         if (message.expires)
             Timestamp.internalBinaryWrite(message.expires, writer.tag(2, WireType.LengthDelimited).fork(), options).join();
-        /* resources.users.JobProps job_props = 3; */
+        /* optional resources.users.JobProps job_props = 3; */
         if (message.jobProps)
             JobProps.internalBinaryWrite(message.jobProps, writer.tag(3, WireType.LengthDelimited).fork(), options).join();
         /* resources.users.User char = 4; */
@@ -1347,9 +1334,9 @@ class SetJobResponse$Type extends MessageType<SetJobResponse> {
     }
 }
 /**
- * @generated MessageType for protobuf message services.auth.SetJobResponse
+ * @generated MessageType for protobuf message services.auth.SetSuperUserModeResponse
  */
-export const SetJobResponse = new SetJobResponse$Type();
+export const SetSuperUserModeResponse = new SetSuperUserModeResponse$Type();
 /**
  * @generated ServiceType for protobuf service services.auth.AuthService
  */
@@ -1364,5 +1351,5 @@ export const AuthService = new ServiceType("services.auth.AuthService", [
     { name: "ChooseCharacter", options: {}, I: ChooseCharacterRequest, O: ChooseCharacterResponse },
     { name: "GetAccountInfo", options: {}, I: GetAccountInfoRequest, O: GetAccountInfoResponse },
     { name: "DeleteOAuth2Connection", options: {}, I: DeleteOAuth2ConnectionRequest, O: DeleteOAuth2ConnectionResponse },
-    { name: "SetJob", options: {}, I: SetJobRequest, O: SetJobResponse }
+    { name: "SetSuperUserMode", options: {}, I: SetSuperUserModeRequest, O: SetSuperUserModeResponse }
 ]);

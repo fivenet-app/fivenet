@@ -4,8 +4,8 @@
 import type { RpcTransport } from "@protobuf-ts/runtime-rpc";
 import type { ServiceInfo } from "@protobuf-ts/runtime-rpc";
 import { AuthService } from "./auth";
-import type { SetJobResponse } from "./auth";
-import type { SetJobRequest } from "./auth";
+import type { SetSuperUserModeResponse } from "./auth";
+import type { SetSuperUserModeRequest } from "./auth";
 import type { DeleteOAuth2ConnectionResponse } from "./auth";
 import type { DeleteOAuth2ConnectionRequest } from "./auth";
 import type { GetAccountInfoResponse } from "./auth";
@@ -76,9 +76,9 @@ export interface IAuthServiceClient {
      */
     deleteOAuth2Connection(input: DeleteOAuth2ConnectionRequest, options?: RpcOptions): UnaryCall<DeleteOAuth2ConnectionRequest, DeleteOAuth2ConnectionResponse>;
     /**
-     * @generated from protobuf rpc: SetJob(services.auth.SetJobRequest) returns (services.auth.SetJobResponse);
+     * @generated from protobuf rpc: SetSuperUserMode(services.auth.SetSuperUserModeRequest) returns (services.auth.SetSuperUserModeResponse);
      */
-    setJob(input: SetJobRequest, options?: RpcOptions): UnaryCall<SetJobRequest, SetJobResponse>;
+    setSuperUserMode(input: SetSuperUserModeRequest, options?: RpcOptions): UnaryCall<SetSuperUserModeRequest, SetSuperUserModeResponse>;
 }
 /**
  * @generated from protobuf service services.auth.AuthService
@@ -162,10 +162,10 @@ export class AuthServiceClient implements IAuthServiceClient, ServiceInfo {
         return stackIntercept<DeleteOAuth2ConnectionRequest, DeleteOAuth2ConnectionResponse>("unary", this._transport, method, opt, input);
     }
     /**
-     * @generated from protobuf rpc: SetJob(services.auth.SetJobRequest) returns (services.auth.SetJobResponse);
+     * @generated from protobuf rpc: SetSuperUserMode(services.auth.SetSuperUserModeRequest) returns (services.auth.SetSuperUserModeResponse);
      */
-    setJob(input: SetJobRequest, options?: RpcOptions): UnaryCall<SetJobRequest, SetJobResponse> {
+    setSuperUserMode(input: SetSuperUserModeRequest, options?: RpcOptions): UnaryCall<SetSuperUserModeRequest, SetSuperUserModeResponse> {
         const method = this.methods[10], opt = this._transport.mergeOptions(options);
-        return stackIntercept<SetJobRequest, SetJobResponse>("unary", this._transport, method, opt, input);
+        return stackIntercept<SetSuperUserModeRequest, SetSuperUserModeResponse>("unary", this._transport, method, opt, input);
     }
 }

@@ -931,7 +931,8 @@
         "read": "Read",
         "abbreviation": "Abbreviation",
         "approver": "Approver",
-        "approved_at": "Approved at"
+        "approved_at": "Approved at",
+        "superuser": "SuperUser"
     },
     "notifications": {
         "clipboard": {
@@ -1024,10 +1025,10 @@
                 "content": "Content not found."
             }
         },
-        "job_switcher": {
-            "setjob": {
-                "title": "Job switched",
-                "content": "Your job has been set to {job}."
+        "superuser_menu": {
+            "setsuperusermode": {
+                "title": "SuperUser Mode",
+                "content": "SuperUser Mode changed (current job: {job})."
             }
         },
         "rector": {

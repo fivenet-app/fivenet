@@ -19,8 +19,13 @@ const (
 )
 
 const (
-	PermSuperUser = "SuperUser"
-	PermAny       = "Any"
+	PermCanBeSuper    = "CanBeSuper"
+	PermCanBeSuperKey = "canbesuper"
+
+	PermSuperUser    = "SuperUser"
+	PermSuperUserKey = "superuser"
+
+	PermAny = "Any"
 )
 
 type userInfoCtxMarker struct{}

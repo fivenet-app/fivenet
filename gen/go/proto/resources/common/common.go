@@ -2,10 +2,6 @@ package common
 
 import "github.com/galexrt/fivenet/gen/go/proto/resources/documents"
 
-const (
-	SuperuserPermission = "superuser"
-)
-
 type IJobInfo interface {
 	GetJob() string
 	SetJob(string)

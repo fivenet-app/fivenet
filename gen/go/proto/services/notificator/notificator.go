@@ -7,7 +7,6 @@ import (
 	"fmt"
 	"time"
 
-	"github.com/galexrt/fivenet/gen/go/proto/resources/common"
 	"github.com/galexrt/fivenet/gen/go/proto/resources/common/database"
 	"github.com/galexrt/fivenet/gen/go/proto/resources/notifications"
 	timestamp "github.com/galexrt/fivenet/gen/go/proto/resources/timestamp"
@@ -427,7 +426,7 @@ func (s *Server) checkAndUpdateUserInfo(ctx context.Context, tu *TokenUpdate, cu
 	tu.Permissions = ps.GuardNames()
 
 	if userInfo.SuperUser {
-		tu.Permissions = append(tu.Permissions, common.SuperuserPermission)
+		tu.Permissions = append(tu.Permissions, auth.PermSuperUserKey)
 	}
 
 	attrs, err := s.p.FlattenRoleAttributes(userInfo.Job, userInfo.JobGrade)

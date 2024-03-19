@@ -1,7 +1,7 @@
 <script lang="ts" setup>
 import { Disclosure, DisclosureButton, DisclosurePanel } from '@headlessui/vue';
 import { RpcError } from '@protobuf-ts/runtime-rpc';
-import { useConfirmDialog, watchOnce } from '@vueuse/core';
+import { useConfirmDialog, useTimeoutFn, watchOnce } from '@vueuse/core';
 import { useRouteHash } from '@vueuse/router';
 import {
     AccountIcon,
@@ -163,19 +163,20 @@ function addToClipboard(): void {
     });
 }
 
+const contentRef = ref<HTMLDivElement | null>(null);
 function disableCheckboxes(): void {
-    const checkboxes: NodeListOf<HTMLInputElement> = document.querySelectorAll('.prose input[type=checkbox]');
+    if (contentRef.value === null) {
+        return;
+    }
+
+    const checkboxes: NodeListOf<HTMLInputElement> = contentRef.value.querySelectorAll('input[type=checkbox]');
     checkboxes.forEach((el) => {
         el.setAttribute('disabled', 'disabled');
         el.onchange = (ev) => ev.preventDefault();
     });
 }
 
-watchOnce(doc, () =>
-    setTimeout(() => {
-        disableCheckboxes();
-    }, 50),
-);
+watchOnce(doc, () => useTimeoutFn(disableCheckboxes, 50));
 
 const {
     isRevealed: isRevealedChangeOwner,
@@ -442,6 +443,7 @@ if (hash.value !== undefined && hash.value !== null) {
                             <div class="break-words rounded-lg bg-base-800 text-neutral">
                                 <!-- eslint-disable vue/no-v-html -->
                                 <div
+                                    ref="contentRef"
                                     class="prose prose-invert min-w-full rounded-md bg-base-900 px-4 py-4"
                                     v-html="doc.content"
                                 ></div>

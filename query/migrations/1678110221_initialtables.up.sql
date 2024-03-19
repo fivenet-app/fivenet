@@ -12,6 +12,7 @@ CREATE TABLE IF NOT EXISTS `fivenet_accounts` (
   `reg_token` char(6) DEFAULT NULL,
   `override_job` varchar(50) DEFAULT NULL,
   `override_job_grade` int(11) DEFAULT NULL,
+  `superuser` tinyint(1) DEFAULT 0,
   PRIMARY KEY (`id`),
   UNIQUE KEY `idx_fivenet_accounts_username` (`username`),
   UNIQUE KEY `idx_fivenet_accounts_license` (`license`),

@@ -29,7 +29,7 @@ const (
 	AuthService_ChooseCharacter_FullMethodName        = "/services.auth.AuthService/ChooseCharacter"
 	AuthService_GetAccountInfo_FullMethodName         = "/services.auth.AuthService/GetAccountInfo"
 	AuthService_DeleteOAuth2Connection_FullMethodName = "/services.auth.AuthService/DeleteOAuth2Connection"
-	AuthService_SetJob_FullMethodName                 = "/services.auth.AuthService/SetJob"
+	AuthService_SetSuperUserMode_FullMethodName       = "/services.auth.AuthService/SetSuperUserMode"
 )
 
 // AuthServiceClient is the client API for AuthService service.
@@ -47,7 +47,7 @@ type AuthServiceClient interface {
 	ChooseCharacter(ctx context.Context, in *ChooseCharacterRequest, opts ...grpc.CallOption) (*ChooseCharacterResponse, error)
 	GetAccountInfo(ctx context.Context, in *GetAccountInfoRequest, opts ...grpc.CallOption) (*GetAccountInfoResponse, error)
 	DeleteOAuth2Connection(ctx context.Context, in *DeleteOAuth2ConnectionRequest, opts ...grpc.CallOption) (*DeleteOAuth2ConnectionResponse, error)
-	SetJob(ctx context.Context, in *SetJobRequest, opts ...grpc.CallOption) (*SetJobResponse, error)
+	SetSuperUserMode(ctx context.Context, in *SetSuperUserModeRequest, opts ...grpc.CallOption) (*SetSuperUserModeResponse, error)
 }
 
 type authServiceClient struct {
@@ -148,9 +148,9 @@ func (c *authServiceClient) DeleteOAuth2Connection(ctx context.Context, in *Dele
 	return out, nil
 }
 
-func (c *authServiceClient) SetJob(ctx context.Context, in *SetJobRequest, opts ...grpc.CallOption) (*SetJobResponse, error) {
-	out := new(SetJobResponse)
-	err := c.cc.Invoke(ctx, AuthService_SetJob_FullMethodName, in, out, opts...)
+func (c *authServiceClient) SetSuperUserMode(ctx context.Context, in *SetSuperUserModeRequest, opts ...grpc.CallOption) (*SetSuperUserModeResponse, error) {
+	out := new(SetSuperUserModeResponse)
+	err := c.cc.Invoke(ctx, AuthService_SetSuperUserMode_FullMethodName, in, out, opts...)
 	if err != nil {
 		return nil, err
 	}
@@ -172,7 +172,7 @@ type AuthServiceServer interface {
 	ChooseCharacter(context.Context, *ChooseCharacterRequest) (*ChooseCharacterResponse, error)
 	GetAccountInfo(context.Context, *GetAccountInfoRequest) (*GetAccountInfoResponse, error)
 	DeleteOAuth2Connection(context.Context, *DeleteOAuth2ConnectionRequest) (*DeleteOAuth2ConnectionResponse, error)
-	SetJob(context.Context, *SetJobRequest) (*SetJobResponse, error)
+	SetSuperUserMode(context.Context, *SetSuperUserModeRequest) (*SetSuperUserModeResponse, error)
 	mustEmbedUnimplementedAuthServiceServer()
 }
 
@@ -210,8 +210,8 @@ func (UnimplementedAuthServiceServer) GetAccountInfo(context.Context, *GetAccoun
 func (UnimplementedAuthServiceServer) DeleteOAuth2Connection(context.Context, *DeleteOAuth2ConnectionRequest) (*DeleteOAuth2ConnectionResponse, error) {
 	return nil, status.Errorf(codes.Unimplemented, "method DeleteOAuth2Connection not implemented")
 }
-func (UnimplementedAuthServiceServer) SetJob(context.Context, *SetJobRequest) (*SetJobResponse, error) {
-	return nil, status.Errorf(codes.Unimplemented, "method SetJob not implemented")
+func (UnimplementedAuthServiceServer) SetSuperUserMode(context.Context, *SetSuperUserModeRequest) (*SetSuperUserModeResponse, error) {
+	return nil, status.Errorf(codes.Unimplemented, "method SetSuperUserMode not implemented")
 }
 func (UnimplementedAuthServiceServer) mustEmbedUnimplementedAuthServiceServer() {}
 
@@ -406,20 +406,20 @@ func _AuthService_DeleteOAuth2Connection_Handler(srv interface{}, ctx context.Co
 	return interceptor(ctx, in, info, handler)
 }
 
-func _AuthService_SetJob_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
-	in := new(SetJobRequest)
+func _AuthService_SetSuperUserMode_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
+	in := new(SetSuperUserModeRequest)
 	if err := dec(in); err != nil {
 		return nil, err
 	}
 	if interceptor == nil {
-		return srv.(AuthServiceServer).SetJob(ctx, in)
+		return srv.(AuthServiceServer).SetSuperUserMode(ctx, in)
 	}
 	info := &grpc.UnaryServerInfo{
 		Server:     srv,
-		FullMethod: AuthService_SetJob_FullMethodName,
+		FullMethod: AuthService_SetSuperUserMode_FullMethodName,
 	}
 	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
-		return srv.(AuthServiceServer).SetJob(ctx, req.(*SetJobRequest))
+		return srv.(AuthServiceServer).SetSuperUserMode(ctx, req.(*SetSuperUserModeRequest))
 	}
 	return interceptor(ctx, in, info, handler)
 }
@@ -472,8 +472,8 @@ var AuthService_ServiceDesc = grpc.ServiceDesc{
 			Handler:    _AuthService_DeleteOAuth2Connection_Handler,
 		},
 		{
-			MethodName: "SetJob",
-			Handler:    _AuthService_SetJob_Handler,
+			MethodName: "SetSuperUserMode",
+			Handler:    _AuthService_SetSuperUserMode_Handler,
 		},
 	},
 	Streams:  []grpc.StreamDesc{},
