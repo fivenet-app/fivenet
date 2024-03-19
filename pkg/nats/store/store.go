@@ -6,10 +6,14 @@ import (
 	"fmt"
 	"strings"
 	"sync"
+	"time"
 
 	natsutils "github.com/galexrt/fivenet/pkg/nats"
 	"github.com/galexrt/fivenet/pkg/nats/locks"
+	"github.com/galexrt/fivenet/pkg/server/admin"
 	"github.com/nats-io/nats.go/jetstream"
+	"github.com/prometheus/client_golang/prometheus"
+	"github.com/prometheus/client_golang/prometheus/promauto"
 	"github.com/puzpuzpuz/xsync/v3"
 	"go.uber.org/zap"
 	"google.golang.org/protobuf/proto"
@@ -35,6 +39,8 @@ type Store[T any, U protoMessage[T]] struct {
 	OnUpdate   OnUpdateFn[T, U]
 	OnDelete   OnDeleteFn[T, U]
 	OnNotFound OnNotFoundFn[T, U]
+
+	metricDataMapCount prometheus.Counter
 }
 
 type Option[T any, U protoMessage[T]] func(s *Store[T, U]) error
@@ -53,6 +59,7 @@ func NewWithLocks[T any, U protoMessage[T]](ctx context.Context, logger *zap.Log
 		Description: natsutils.Description,
 		History:     3,
 		Storage:     jetstream.MemoryStorage,
+		Replicas:    2,
 	})
 	if err != nil {
 		return nil, err
@@ -65,6 +72,16 @@ func NewWithLocks[T any, U protoMessage[T]](ctx context.Context, logger *zap.Log
 
 		mu:   xsync.NewMapOf[string, *sync.Mutex](),
 		data: xsync.NewMapOf[string, U](),
+
+		metricDataMapCount: promauto.NewCounter(prometheus.CounterOpts{
+			Namespace: admin.MetricsNamespace,
+			Subsystem: "nats_store",
+			Name:      "datamap_count",
+			Help:      "Count of data map entries.",
+			ConstLabels: prometheus.Labels{
+				"bucket": bucket,
+			},
+		}),
 	}
 
 	for _, opt := range opts {
@@ -85,6 +102,7 @@ func New[T any, U protoMessage[T]](ctx context.Context, logger *zap.Logger, js j
 		History:     3,
 		Storage:     jetstream.MemoryStorage,
 		TTL:         6 * locks.LockTimeout,
+		Replicas:    1,
 	})
 	if err != nil {
 		return nil, err
@@ -398,6 +416,18 @@ func (s *Store[T, U]) Start(ctx context.Context) error {
 						}
 					}()
 				}
+			}
+		}
+	}()
+
+	go func() {
+		for {
+			select {
+			case <-ctx.Done():
+				return
+
+			case <-time.After(15 * time.Second):
+				s.metricDataMapCount.Add(float64(s.data.Size()))
 			}
 		}
 	}()

@@ -7,7 +7,7 @@ import (
 )
 
 var (
-	metricsDispatchLastID = promauto.NewGaugeVec(prometheus.GaugeOpts{
+	metricDispatchLastID = promauto.NewGaugeVec(prometheus.GaugeOpts{
 		Namespace: admin.MetricsNamespace,
 		Subsystem: "centrum",
 		Name:      "dispatch_last_id",

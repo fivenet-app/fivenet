@@ -27,6 +27,7 @@ func (c *Config) registerSubscriptions(ctx context.Context) error {
 		Discard:     jetstream.DiscardOld,
 		MaxAge:      10 * time.Second,
 		Storage:     jetstream.MemoryStorage,
+		Replicas:    2,
 	}
 
 	if _, err := c.js.CreateOrUpdateStream(ctx, cfg); err != nil {

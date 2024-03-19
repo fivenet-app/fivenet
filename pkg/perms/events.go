@@ -39,6 +39,7 @@ func (p *Perms) registerSubscriptions(ctx context.Context, c context.Context) er
 		Discard:     jetstream.DiscardOld,
 		MaxAge:      15 * time.Second,
 		Storage:     jetstream.MemoryStorage,
+		Replicas:    2,
 	}
 
 	if _, err := p.js.CreateOrUpdateStream(ctx, cfg); err != nil {

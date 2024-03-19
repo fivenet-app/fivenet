@@ -27,6 +27,8 @@ func registerStreams(ctx context.Context, js jetstream.JetStream) error {
 		Subjects:    []string{fmt.Sprintf("%s.>", BaseSubject)},
 		Discard:     jetstream.DiscardOld,
 		MaxAge:      2 * time.Minute,
+		Storage:     jetstream.MemoryStorage,
+		Replicas:    2,
 	}
 	if _, err := js.CreateOrUpdateStream(ctx, cfg); err != nil {
 		return err

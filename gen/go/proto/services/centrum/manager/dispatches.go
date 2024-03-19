@@ -503,7 +503,7 @@ func (s *Manager) CreateDispatch(ctx context.Context, dsp *centrum.Dispatch) (*c
 		return nil, err
 	}
 
-	metricsDispatchLastID.WithLabelValues(dsp.Job).Set(float64(lastId))
+	metricDispatchLastID.WithLabelValues(dsp.Job).Set(float64(lastId))
 
 	// Hide user info when dispatch is anonymous
 	if dsp.Anon {

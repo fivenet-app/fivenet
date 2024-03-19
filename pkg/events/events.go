@@ -18,7 +18,7 @@ import (
 const DefaultDefaultAsyncPubAckInflight = 256
 
 var (
-	natsAsyncPendingMetric = promauto.NewGauge(prometheus.GaugeOpts{
+	metricNATSAsyncPending = promauto.NewGauge(prometheus.GaugeOpts{
 		Namespace: admin.MetricsNamespace,
 		Subsystem: "nats",
 		Name:      "jetstream_async_pending_count",
@@ -72,7 +72,7 @@ func New(p Params) (res Result, err error) {
 					return
 
 				case <-time.After(5 * time.Second):
-					natsAsyncPendingMetric.Set(float64(res.JS.PublishAsyncPending()))
+					metricNATSAsyncPending.Set(float64(res.JS.PublishAsyncPending()))
 				}
 			}
 		}()
