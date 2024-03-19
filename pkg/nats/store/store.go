@@ -21,7 +21,7 @@ import (
 
 var ErrNotFound = errors.New("store: not found")
 
-var metricDataMapCount = promauto.NewCounterVec(prometheus.CounterOpts{
+var metricDataMapCount = promauto.NewGaugeVec(prometheus.GaugeOpts{
 	Namespace: admin.MetricsNamespace,
 	Subsystem: "nats_store",
 	Name:      "datamap_count",
@@ -424,7 +424,7 @@ func (s *Store[T, U]) Start(ctx context.Context) error {
 				return
 
 			case <-time.After(15 * time.Second):
-				metricDataMapCount.WithLabelValues(s.bucket).Add(float64(s.data.Size()))
+				metricDataMapCount.WithLabelValues(s.bucket).Set(float64(s.data.Size()))
 			}
 		}
 	}()
