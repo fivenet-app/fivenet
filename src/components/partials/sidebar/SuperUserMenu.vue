@@ -60,7 +60,7 @@ async function setSuperUserMode(): Promise<void> {
         notifications.dispatchNotification({
             title: { key: 'notifications.superuser_menu.setsuperusermode.title', parameters: {} },
             content: {
-                key: 'notifications.superuser_menu.setsuperusermode.title',
+                key: 'notifications.superuser_menu.setsuperusermode.content',
                 parameters: { job: selectedJob.value?.label ?? activeChar.value?.jobLabel ?? 'N/A' },
             },
             type: 'info',
@@ -102,7 +102,7 @@ watch(selectedJob, () => setSuperUserMode());
                     ]"
                 />
             </Switch>
-            <SwitchLabel as="span" class="ml-3 text-xs">
+            <SwitchLabel as="span" class="ml-1 text-xs">
                 <span class="font-medium text-gray-300">{{ $t('common.superuser') }}</span>
             </SwitchLabel>
         </SwitchGroup>
@@ -124,7 +124,7 @@ watch(selectedJob, () => setSuperUserMode());
 
                 <ComboboxOptions
                     v-if="filteredJobs.length > 0"
-                    class="absolute z-40 mt-1 max-h-44 w-full overflow-auto rounded-md bg-base-700 py-1 text-base sm:text-sm"
+                    class="absolute z-40 mt-1 max-h-44 w-full overflow-auto rounded-md bg-base-700 py-1 text-base text-xs"
                 >
                     <ComboboxOption v-for="job in filteredJobs" :key="job.name" v-slot="{ active, selected }" :value="job">
                         <li
