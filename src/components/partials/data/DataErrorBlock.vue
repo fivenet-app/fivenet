@@ -1,4 +1,5 @@
 <script lang="ts" setup>
+import { useTimeoutFn } from '@vueuse/core';
 import { CancelIcon, CloseCircleIcon, RefreshIcon } from 'mdi-vue3';
 
 defineProps<{
@@ -10,20 +11,7 @@ defineProps<{
 
 const disabled = ref(true);
 
-const timeout = ref<NodeJS.Timeout | undefined>();
-onMounted(
-    () =>
-        (timeout.value = setTimeout(() => {
-            timeout.value = undefined;
-            disabled.value = false;
-        }, 1250)),
-);
-onBeforeUnmount(() => {
-    if (timeout.value) {
-        clearTimeout(timeout.value);
-        timeout.value = undefined;
-    }
-});
+const { isPending } = useTimeoutFn(() => (disabled.value = false), 1250);
 </script>
 
 <template>
@@ -55,7 +43,7 @@ onBeforeUnmount(() => {
                             @click="retry()"
                         >
                             {{ retryMessage ?? $t('common.retry') }}
-                            <RefreshIcon v-if="timeout === undefined" class="ml-2 h-5 w-5" aria-hidden="true" />
+                            <RefreshIcon v-if="isPending" class="ml-2 h-5 w-5" aria-hidden="true" />
                             <CancelIcon v-else class="ml-2 h-5 w-5" aria-hidden="true" />
                         </button>
                     </div>

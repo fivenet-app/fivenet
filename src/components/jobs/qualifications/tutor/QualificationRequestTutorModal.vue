@@ -12,7 +12,7 @@ import {
 } from '@headlessui/vue';
 import { RpcError } from '@protobuf-ts/runtime-rpc';
 import { max, min, required } from '@vee-validate/rules';
-import { useThrottleFn } from '@vueuse/core';
+import { useThrottleFn, useTimeoutFn } from '@vueuse/core';
 import { CheckIcon, ChevronDownIcon, CloseIcon, LoadingIcon } from 'mdi-vue3';
 import { defineRule } from 'vee-validate';
 import { useNotificatorStore } from '~/store/notificator';
@@ -96,7 +96,7 @@ const canSubmit = ref(true);
 const onSubmit = handleSubmit(
     async (values): Promise<any> =>
         await createOrUpdateQualificationRequest(props.request.qualificationId, props.request.userId, values).finally(() =>
-            setTimeout(() => (canSubmit.value = true), 400),
+            useTimeoutFn(() => (canSubmit.value = true), 400),
         ),
 );
 const onSubmitThrottle = useThrottleFn(async (e) => {

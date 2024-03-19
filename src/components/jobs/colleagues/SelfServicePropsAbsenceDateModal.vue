@@ -2,7 +2,7 @@
 import { Dialog, DialogPanel, DialogTitle, TransitionChild, TransitionRoot } from '@headlessui/vue';
 import { RpcError } from '@protobuf-ts/runtime-rpc';
 import { max, min, required } from '@vee-validate/rules';
-import { useThrottleFn } from '@vueuse/core';
+import { useThrottleFn, useTimeoutFn } from '@vueuse/core';
 import { CloseIcon, LoadingIcon } from 'mdi-vue3';
 import { defineRule } from 'vee-validate';
 import { useNotificatorStore } from '~/store/notificator';
@@ -108,7 +108,7 @@ watch(props, () => updateAbsenceDateField());
 const canSubmit = ref(true);
 const onSubmit = handleSubmit(
     async (values): Promise<void> =>
-        await setAbsenceDate(values).finally(() => setTimeout(() => (canSubmit.value = true), 400)),
+        await setAbsenceDate(values).finally(() => useTimeoutFn(() => (canSubmit.value = true), 400)),
 );
 const onSubmitThrottle = useThrottleFn(async (e) => {
     canSubmit.value = false;

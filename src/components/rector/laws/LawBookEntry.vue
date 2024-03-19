@@ -1,7 +1,7 @@
 <script lang="ts" setup>
 import { RpcError } from '@protobuf-ts/runtime-rpc';
 import { max, min, required } from '@vee-validate/rules';
-import { useConfirmDialog, useThrottleFn } from '@vueuse/core';
+import { useConfirmDialog, useThrottleFn, useTimeoutFn } from '@vueuse/core';
 import { CancelIcon, ContentSaveIcon, PencilIcon, TrashCanIcon } from 'mdi-vue3';
 import { defineRule } from 'vee-validate';
 import ConfirmDialog from '~/components/partials/ConfirmDialog.vue';
@@ -91,7 +91,7 @@ setValues({
 const canSubmit = ref(true);
 const onSubmit = handleSubmit(
     async (values): Promise<LawBook> =>
-        await saveLawBook(props.modelValue.id, values).finally(() => setTimeout(() => (canSubmit.value = true), 400)),
+        await saveLawBook(props.modelValue.id, values).finally(() => useTimeoutFn(() => (canSubmit.value = true), 400)),
 );
 const onSubmitThrottle = useThrottleFn(async (e) => {
     canSubmit.value = false;

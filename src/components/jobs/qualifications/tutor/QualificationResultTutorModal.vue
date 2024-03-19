@@ -13,7 +13,7 @@ import {
 import { RpcError } from '@protobuf-ts/runtime-rpc';
 // eslint-disable-next-line camelcase
 import { max, max_value, min, min_value, numeric, required } from '@vee-validate/rules';
-import { useThrottleFn } from '@vueuse/core';
+import { useThrottleFn, useTimeoutFn } from '@vueuse/core';
 import { CheckIcon, ChevronDownIcon, CloseIcon, LoadingIcon } from 'mdi-vue3';
 import { defineRule } from 'vee-validate';
 import { useNotificatorStore } from '~/store/notificator';
@@ -101,7 +101,7 @@ const canSubmit = ref(true);
 const onSubmit = handleSubmit(
     async (values): Promise<any> =>
         await createOrUpdateQualificationRequest(props.qualificationId, props.userId, values).finally(() =>
-            setTimeout(() => (canSubmit.value = true), 400),
+            useTimeoutFn(() => (canSubmit.value = true), 400),
         ),
 );
 const onSubmitThrottle = useThrottleFn(async (e) => {

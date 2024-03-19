@@ -1,4 +1,6 @@
 <script lang="ts" setup>
+import { useTimeoutFn, type Stoppable, useIntervalFn } from '@vueuse/core';
+
 const props = withDefaults(
     defineProps<{
         throttle?: number;
@@ -20,22 +22,29 @@ const data = reactive({
 });
 
 // Local variables
-let _timer: undefined | number | NodeJS.Timeout;
-let _throttle: undefined | number | NodeJS.Timeout;
+const _timer = useIntervalFn(
+    () => {
+        increase(_cut);
+    },
+    100,
+    {
+        immediate: false,
+    },
+);
+let _throttle: undefined | Stoppable;
 const _cut = 10000 / Math.floor(props.duration);
 
 // Functions
 function clear() {
-    _timer && clearInterval(_timer);
-    _throttle && clearTimeout(_throttle);
-    _timer = undefined;
+    _timer.isActive && _timer.pause();
+    _throttle?.isPending && _throttle.stop();
 }
 function start() {
     clear();
     data.progress = 0;
 
     if (props.throttle) {
-        _throttle = setTimeout(startTimer, props.throttle);
+        _throttle = useTimeoutFn(startTimer, props.throttle);
     } else {
         startTimer();
     }
@@ -49,22 +58,20 @@ function finish() {
 }
 function hide() {
     clear();
-    setTimeout(() => {
+    useTimeoutFn(() => {
         data.isLoading = false;
-        setTimeout(() => {
+        useTimeoutFn(() => {
             data.progress = 0;
         }, 550);
     }, 500);
 }
 function startTimer() {
     data.isLoading = true;
-    _timer = setInterval(() => {
-        increase(_cut);
-    }, 100);
+    _timer.resume();
 }
 function delayedFinish() {
     data.progress = 65;
-    setTimeout(() => {
+    useTimeoutFn(() => {
         finish();
     }, 500);
 }
@@ -80,7 +87,7 @@ nuxt.hook('data:loading:finish', delayedFinish);
 nuxt.hook('data:loading:finish_error', () => {
     data.canSucceed = false;
     delayedFinish();
-    setTimeout(() => {
+    useTimeoutFn(() => {
         data.canSucceed = true;
     }, 1250);
 });

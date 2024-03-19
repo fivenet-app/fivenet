@@ -1,5 +1,5 @@
 <script lang="ts" setup>
-import { useTimeoutFn, useVModel, watchOnce } from '@vueuse/core';
+import { useTimeoutFn, useVModel } from '@vueuse/core';
 import 'jodit/es5/jodit.min.css';
 import { Jodit } from 'jodit';
 // @ts-ignore jodit-vue has no (detected) types
@@ -161,11 +161,17 @@ function setupCheckboxes(): void {
     );
 }
 
-watchOnce(props, () => {
-    if (props.modelValue !== '') {
-        useTimeoutFn(setupCheckboxes, 50);
-    }
-});
+watch(
+    props,
+    () => {
+        if (props.modelValue !== '') {
+            useTimeoutFn(setupCheckboxes, 50);
+        }
+    },
+    {
+        once: true,
+    },
+);
 
 onBeforeUnmount(() => {
     // Remove event listeners on unmount

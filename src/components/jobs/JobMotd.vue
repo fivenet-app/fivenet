@@ -1,6 +1,6 @@
 <script lang="ts" setup>
 import { RpcError } from '@protobuf-ts/runtime-rpc';
-import { useThrottleFn } from '@vueuse/core';
+import { useThrottleFn, useTimeoutFn } from '@vueuse/core';
 import { CancelIcon, ContentSaveIcon, LoadingIcon, PencilIcon } from 'mdi-vue3';
 import type { GetMOTDResponse, SetMOTDResponse } from '~~/gen/ts/services/jobs/jobs';
 
@@ -36,7 +36,7 @@ async function setMOTD(motd: string): Promise<SetMOTDResponse> {
 
 const canSubmit = ref(true);
 const onSubmit = async (e: string): Promise<SetMOTDResponse> => {
-    const response = await setMOTD(e).finally(() => setTimeout(() => (canSubmit.value = true), 400));
+    const response = await setMOTD(e).finally(() => useTimeoutFn(() => (canSubmit.value = true), 400));
 
     if (data.value !== null) {
         data.value.motd = response.motd;

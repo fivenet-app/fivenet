@@ -2,7 +2,7 @@
 import { Combobox, ComboboxButton, ComboboxInput, ComboboxOption, ComboboxOptions } from '@headlessui/vue';
 import { RpcError } from '@protobuf-ts/runtime-rpc';
 import { max, min, numeric, required } from '@vee-validate/rules';
-import { useThrottleFn, watchDebounced } from '@vueuse/core';
+import { useThrottleFn, useTimeoutFn, watchDebounced } from '@vueuse/core';
 import { CheckIcon, LoadingIcon, PlusIcon } from 'mdi-vue3';
 import { defineRule } from 'vee-validate';
 import DocumentAccessEntry from '~/components/documents/DocumentAccessEntry.vue';
@@ -65,7 +65,7 @@ const { handleSubmit, setValues, meta } = useForm<FormData>({
 const canSubmit = ref(true);
 const onSubmit = handleSubmit(
     async (values): Promise<void> =>
-        await createOrUpdateTemplate(values, props.templateId).finally(() => setTimeout(() => (canSubmit.value = true), 400)),
+        await createOrUpdateTemplate(values, props.templateId).finally(() => useTimeoutFn(() => (canSubmit.value = true), 400)),
 );
 const onSubmitThrottle = useThrottleFn(async (e) => {
     canSubmit.value = false;

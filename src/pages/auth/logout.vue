@@ -1,4 +1,5 @@
 <script lang="ts" setup>
+import { useTimeoutFn } from '@vueuse/core';
 import { useAuthStore } from '~/store/auth';
 import HeroPage from '~/components/partials/HeroPage.vue';
 
@@ -16,7 +17,7 @@ const authStore = useAuthStore();
 const { doLogout } = authStore;
 
 function redirect(): void {
-    setTimeout(async () => {
+    useTimeoutFn(async () => {
         const route = useRoute();
         if (route.name === 'auth-logout') {
             await navigateTo({ name: 'index' });

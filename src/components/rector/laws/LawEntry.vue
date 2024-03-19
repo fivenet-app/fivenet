@@ -2,7 +2,7 @@
 import { RpcError } from '@protobuf-ts/runtime-rpc';
 // eslint-disable-next-line camelcase
 import { max, max_value, min, min_value, required } from '@vee-validate/rules';
-import { useConfirmDialog, useThrottleFn } from '@vueuse/core';
+import { useConfirmDialog, useThrottleFn, useTimeoutFn } from '@vueuse/core';
 import { CancelIcon, ContentSaveIcon, PencilIcon, TrashCanIcon } from 'mdi-vue3';
 import { defineRule } from 'vee-validate';
 import ConfirmDialog from '~/components/partials/ConfirmDialog.vue';
@@ -100,7 +100,9 @@ setValues({
 const canSubmit = ref(true);
 const onSubmit = handleSubmit(
     async (values): Promise<void> =>
-        await saveLaw(props.law.lawbookId, props.law.id, values).finally(() => setTimeout(() => (canSubmit.value = true), 400)),
+        await saveLaw(props.law.lawbookId, props.law.id, values).finally(() =>
+            useTimeoutFn(() => (canSubmit.value = true), 400),
+        ),
 );
 const onSubmitThrottle = useThrottleFn(async (e) => {
     canSubmit.value = false;

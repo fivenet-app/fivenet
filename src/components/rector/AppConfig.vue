@@ -12,7 +12,7 @@ import {
 } from '@headlessui/vue';
 // eslint-disable-next-line camelcase
 import { max, min, regex, required, url, min_value, max_value, numeric, size } from '@vee-validate/rules';
-import { useThrottleFn, watchOnce } from '@vueuse/core';
+import { useThrottleFn, useTimeoutFn, watchOnce } from '@vueuse/core';
 import { CheckIcon, CloseIcon, LoadingIcon, OfficeBuildingCogIcon, PlusIcon } from 'mdi-vue3';
 import { defineRule } from 'vee-validate';
 import { useSettingsStore } from '~/store/settings';
@@ -233,7 +233,7 @@ const queryJobs = computed(() => queryJobsRaw.value.trim());
 const canSubmit = ref(true);
 const onSubmit = handleSubmit(
     async (values): Promise<void> =>
-        await updateAppConfig(values).finally(() => setTimeout(() => (canSubmit.value = true), 400)),
+        await updateAppConfig(values).finally(() => useTimeoutFn(() => (canSubmit.value = true), 400)),
 );
 const onSubmitThrottle = useThrottleFn(async (e) => {
     canSubmit.value = false;

@@ -13,7 +13,7 @@ import {
 } from '@headlessui/vue';
 import { RpcError } from '@protobuf-ts/runtime-rpc';
 import { digits, max, min, required } from '@vee-validate/rules';
-import { useThrottleFn, watchDebounced } from '@vueuse/core';
+import { useThrottleFn, useTimeoutFn, watchDebounced } from '@vueuse/core';
 import { CheckIcon, CloseIcon, LoadingIcon } from 'mdi-vue3';
 import { defineRule } from 'vee-validate';
 import { useJobsStore } from '~/store/jobs';
@@ -147,7 +147,7 @@ const canSubmit = ref(true);
 const onSubmit = handleSubmit(
     async (values): Promise<void> =>
         await conductCreateOrUpdateEntry(values, props.entry?.id).finally(() =>
-            setTimeout(() => (canSubmit.value = true), 400),
+            useTimeoutFn(() => (canSubmit.value = true), 400),
         ),
 );
 const onSubmitThrottle = useThrottleFn(async (e) => {

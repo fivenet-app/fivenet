@@ -1,7 +1,7 @@
 <script lang="ts" setup>
 import { LControl, LControlLayers, LMap, LTileLayer } from '@vue-leaflet/vue-leaflet';
 import { useRouteHash } from '@vueuse/router';
-import { useDebounceFn, useResizeObserver, watchDebounced } from '@vueuse/core';
+import { useDebounceFn, useResizeObserver, useTimeoutFn, watchDebounced } from '@vueuse/core';
 import L, { extend, latLngBounds, CRS, LatLng, Projection, Transformation, type PointExpression } from 'leaflet';
 import 'leaflet/dist/leaflet.css';
 import 'leaflet-contextmenu';
@@ -215,7 +215,7 @@ async function onMapReady($event: any): Promise<void> {
         isMoving.value = false;
     });
 
-    setTimeout(async () => {
+    useTimeoutFn(async () => {
         $loading.finish();
     }, 500);
 

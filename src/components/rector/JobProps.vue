@@ -2,7 +2,7 @@
 import { Switch, SwitchGroup, SwitchLabel, Listbox, ListboxButton, ListboxOption, ListboxOptions } from '@headlessui/vue';
 import { RpcError } from '@protobuf-ts/runtime-rpc';
 import { mimes, size } from '@vee-validate/rules';
-import { useThrottleFn } from '@vueuse/core';
+import { useThrottleFn, useTimeoutFn } from '@vueuse/core';
 import { vMaska } from 'maska';
 import { CheckIcon, ChevronDownIcon, LoadingIcon, TuneIcon } from 'mdi-vue3';
 import ColorInput from 'vue-color-input/dist/color-input.esm';
@@ -90,7 +90,7 @@ const { handleSubmit, meta } = useForm<FormData>({
 
 const canSubmit = ref(true);
 const onSubmit = handleSubmit(
-    async (values): Promise<void> => await setJobProps(values).finally(() => setTimeout(() => (canSubmit.value = true), 400)),
+    async (values): Promise<void> => await setJobProps(values).finally(() => useTimeoutFn(() => (canSubmit.value = true), 400)),
 );
 const onSubmitThrottle = useThrottleFn(async (e) => {
     canSubmit.value = false;

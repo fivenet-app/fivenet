@@ -1,7 +1,7 @@
 <script setup lang="ts">
 import { RpcError } from '@protobuf-ts/runtime-rpc';
 import { max, min, required } from '@vee-validate/rules';
-import { useElementVisibility, useThrottleFn, watchOnce } from '@vueuse/core';
+import { useElementVisibility, useThrottleFn, useTimeoutFn, watchOnce } from '@vueuse/core';
 import { CommentTextMultipleIcon, LoadingIcon } from 'mdi-vue3';
 import { defineRule } from 'vee-validate';
 import DataNoDataBlock from '~/components/partials/data/DataNoDataBlock.vue';
@@ -148,7 +148,7 @@ const { handleSubmit, meta, resetForm } = useForm<FormData>({
 const canSubmit = ref(true);
 const onSubmit = handleSubmit(
     async (values): Promise<void> =>
-        await addComment(props.documentId, values).finally(() => setTimeout(() => (canSubmit.value = true), 400)),
+        await addComment(props.documentId, values).finally(() => useTimeoutFn(() => (canSubmit.value = true), 400)),
 );
 const onSubmitThrottle = useThrottleFn(async (e) => {
     canSubmit.value = false;

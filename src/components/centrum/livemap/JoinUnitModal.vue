@@ -1,7 +1,7 @@
 <script lang="ts" setup>
 import { Dialog, DialogPanel, DialogTitle, TransitionChild, TransitionRoot } from '@headlessui/vue';
 import { RpcError } from '@protobuf-ts/runtime-rpc';
-import { useThrottleFn } from '@vueuse/core';
+import { useThrottleFn, useTimeoutFn } from '@vueuse/core';
 import { CloseIcon, LoadingIcon } from 'mdi-vue3';
 import { useCentrumStore } from '~/store/centrum';
 import { Unit } from '~~/gen/ts/resources/centrum/units';
@@ -44,7 +44,7 @@ async function joinOrLeaveUnit(unitId?: string): Promise<void> {
 const canSubmit = ref(true);
 const onSubmitThrottle = useThrottleFn(async (unitID?: string) => {
     canSubmit.value = false;
-    await joinOrLeaveUnit(unitID).finally(() => setTimeout(() => (canSubmit.value = true), 400));
+    await joinOrLeaveUnit(unitID).finally(() => useTimeoutFn(() => (canSubmit.value = true), 400));
 }, 1000);
 
 const queryUnit = ref('');

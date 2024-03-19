@@ -1,6 +1,6 @@
 <script lang="ts" setup>
 import { RpcError } from '@protobuf-ts/runtime-rpc';
-import { useThrottleFn } from '@vueuse/core';
+import { useThrottleFn, useTimeoutFn } from '@vueuse/core';
 import { LoadingIcon, LocationEnterIcon, LocationExitIcon } from 'mdi-vue3';
 import { useCentrumStore } from '~/store/centrum';
 import { CentrumMode } from '~~/gen/ts/resources/centrum/settings';
@@ -26,7 +26,7 @@ async function takeControl(signon: boolean): Promise<void> {
 const canSubmit = ref(true);
 const onSubmitThrottle = useThrottleFn(async (e: boolean) => {
     canSubmit.value = false;
-    await takeControl(e).finally(() => setTimeout(() => (canSubmit.value = true), 850));
+    await takeControl(e).finally(() => useTimeoutFn(() => (canSubmit.value = true), 850));
 }, 1000);
 
 const disponentsNames = computed(() => disponents.value.map((u) => `${u.firstname} ${u.lastname}`));

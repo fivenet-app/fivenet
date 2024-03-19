@@ -165,13 +165,13 @@ watch(open, async () => {
 const canSubmitUnitStatus = ref(true);
 const onSubmitUnitStatusThrottle = useThrottleFn(async (unitId: string, status?: StatusUnit) => {
     canSubmitUnitStatus.value = false;
-    await updateUtStatus(unitId, status).finally(() => setTimeout(() => (canSubmitUnitStatus.value = true), 300));
+    await updateUtStatus(unitId, status).finally(() => useTimeoutFn(() => (canSubmitUnitStatus.value = true), 300));
 }, 1000);
 
 const canSubmitDispatchStatus = ref(true);
 const onSubmitDispatchStatusThrottle = useThrottleFn(async (dispatchId?: string, status?: StatusDispatch) => {
     canSubmitDispatchStatus.value = false;
-    await updateDspStatus(dispatchId, status).finally(() => setTimeout(() => (canSubmitDispatchStatus.value = true), 300));
+    await updateDspStatus(dispatchId, status).finally(() => useTimeoutFn(() => (canSubmitDispatchStatus.value = true), 300));
 }, 1000);
 
 const ownUnitStatus = computed(() => unitStatusToBGColor(getOwnUnit.value?.status?.status));

@@ -2,7 +2,7 @@
 import { Listbox, ListboxButton, ListboxOption, ListboxOptions } from '@headlessui/vue';
 import { RpcError } from '@protobuf-ts/runtime-rpc';
 import { max, min, required } from '@vee-validate/rules';
-import { useThrottleFn } from '@vueuse/core';
+import { useThrottleFn, useTimeoutFn } from '@vueuse/core';
 import { CheckIcon, ChevronDownIcon, LoadingIcon, PlusIcon } from 'mdi-vue3';
 import { defineRule } from 'vee-validate';
 import { useNotificatorStore } from '~/store/notificator';
@@ -275,9 +275,9 @@ const { handleSubmit, meta, setFieldValue } = useForm<FormData>({
 const canSubmit = ref(true);
 const onSubmit = handleSubmit(async (values): Promise<any> => {
     if (props.id === undefined) {
-        await createQualification(values).finally(() => setTimeout(() => (canSubmit.value = true), 400));
+        await createQualification(values).finally(() => useTimeoutFn(() => (canSubmit.value = true), 400));
     } else {
-        await updateQualification(values).finally(() => setTimeout(() => (canSubmit.value = true), 400));
+        await updateQualification(values).finally(() => useTimeoutFn(() => (canSubmit.value = true), 400));
     }
 });
 const onSubmitThrottle = useThrottleFn(async (e) => {

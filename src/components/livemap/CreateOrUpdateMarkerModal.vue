@@ -14,7 +14,7 @@ import {
 import { RpcError } from '@protobuf-ts/runtime-rpc';
 // eslint-disable-next-line camelcase
 import { digits, max, max_value, min, min_value, required } from '@vee-validate/rules';
-import { useThrottleFn } from '@vueuse/core';
+import { useThrottleFn, useTimeoutFn } from '@vueuse/core';
 import { CheckIcon, ChevronDownIcon, CloseIcon, HelpIcon, LoadingIcon } from 'mdi-vue3';
 import { defineRule } from 'vee-validate';
 import type { DefineComponent } from 'vue';
@@ -154,7 +154,8 @@ watch(props, () => setMarker());
 
 const canSubmit = ref(true);
 const onSubmit = handleSubmit(
-    async (values): Promise<void> => await createMarker(values).finally(() => setTimeout(() => (canSubmit.value = true), 400)),
+    async (values): Promise<void> =>
+        await createMarker(values).finally(() => useTimeoutFn(() => (canSubmit.value = true), 400)),
 );
 const onSubmitThrottle = useThrottleFn(async (e) => {
     canSubmit.value = false;

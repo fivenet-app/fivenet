@@ -12,7 +12,7 @@ import {
     TransitionRoot,
 } from '@headlessui/vue';
 import { RpcError } from '@protobuf-ts/runtime-rpc';
-import { useThrottleFn, watchDebounced } from '@vueuse/core';
+import { useThrottleFn, useTimeoutFn, watchDebounced } from '@vueuse/core';
 import { CheckIcon, CloseIcon, LoadingIcon } from 'mdi-vue3';
 import CitizenInfoPopover from '~/components/partials/citizens/CitizenInfoPopover.vue';
 import { useCompletorStore } from '~/store/completor';
@@ -93,7 +93,7 @@ const canSubmit = ref(true);
 
 const onSubmitThrottle = useThrottleFn(async () => {
     canSubmit.value = false;
-    await assignUnit().finally(() => setTimeout(() => (canSubmit.value = true), 400));
+    await assignUnit().finally(() => useTimeoutFn(() => (canSubmit.value = true), 400));
 }, 1000);
 </script>
 

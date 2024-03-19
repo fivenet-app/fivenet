@@ -1,7 +1,7 @@
 <script lang="ts" setup>
 import { Dialog, DialogPanel, DialogTitle, TransitionChild, TransitionRoot } from '@headlessui/vue';
 import { RpcError } from '@protobuf-ts/runtime-rpc';
-import { computedAsync, useThrottleFn } from '@vueuse/core';
+import { computedAsync, useThrottleFn, useTimeoutFn } from '@vueuse/core';
 import { CancelIcon, CheckIcon, CheckboxBlankOutlineIcon, CloseIcon, LoadingIcon } from 'mdi-vue3';
 import { statusOrder, unitStatusToBGColor } from '~/components/centrum/helpers';
 import IDCopyBadge from '~/components/partials/IDCopyBadge.vue';
@@ -102,7 +102,7 @@ const canSubmit = ref(true);
 
 const onSubmitThrottle = useThrottleFn(async () => {
     canSubmit.value = false;
-    await assignDispatch().finally(() => setTimeout(() => (canSubmit.value = true), 400));
+    await assignDispatch().finally(() => useTimeoutFn(() => (canSubmit.value = true), 400));
 }, 1000);
 </script>
 

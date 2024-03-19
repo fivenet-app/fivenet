@@ -1,7 +1,7 @@
 <script lang="ts" setup>
 import { RpcError } from '@protobuf-ts/runtime-rpc';
 import { Menu, MenuButton, MenuItem, MenuItems } from '@headlessui/vue';
-import { useConfirmDialog, useThrottleFn } from '@vueuse/core';
+import { useConfirmDialog, useThrottleFn, useTimeoutFn } from '@vueuse/core';
 import { CheckBoldIcon, CloseThickIcon, MenuIcon, TrashCanIcon } from 'mdi-vue3';
 import { DocActivityType } from '~~/gen/ts/resources/documents/activity';
 import GenericTime from '~/components/partials/elements/GenericTime.vue';
@@ -79,8 +79,8 @@ onConfirm(async (id) => deleteDocumentReq(id));
 const canSubmit = ref(true);
 const onSubmitThrottle = useThrottleFn(async (accepted: boolean) => {
     canSubmit.value = false;
-    await updateDocumentReq(props.request.documentId, props.request.id, accepted!).finally(() =>
-        setTimeout(() => (canSubmit.value = true), 400),
+    await updateDocumentReq(props.request.documentId, props.request.id, accepted).finally(() =>
+        useTimeoutFn(() => (canSubmit.value = true), 400),
     );
 }, 1000);
 </script>

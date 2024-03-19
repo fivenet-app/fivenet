@@ -14,7 +14,7 @@ import {
 } from '@headlessui/vue';
 import { max, min, required } from '@vee-validate/rules';
 import { defineRule } from 'vee-validate';
-import { useThrottleFn } from '@vueuse/core';
+import { useThrottleFn, useTimeoutFn } from '@vueuse/core';
 import { AccessLevel } from '~~/gen/ts/resources/documents/access';
 import { DocActivityType } from '~~/gen/ts/resources/documents/activity';
 import { useNotificatorStore } from '~/store/notificator';
@@ -80,7 +80,7 @@ const { handleSubmit, meta } = useForm<FormData>({
 const canSubmit = ref(true);
 const onSubmit = handleSubmit(
     async (values): Promise<void> =>
-        await createDocumentRequest(values).finally(() => setTimeout(() => (canSubmit.value = true), 400)),
+        await createDocumentRequest(values).finally(() => useTimeoutFn(() => (canSubmit.value = true), 400)),
 );
 const onSubmitThrottle = useThrottleFn(async (e) => {
     canSubmit.value = false;

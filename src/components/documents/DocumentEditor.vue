@@ -12,7 +12,7 @@ import {
 } from '@headlessui/vue';
 import { RpcError } from '@protobuf-ts/runtime-rpc';
 import { max, min, required } from '@vee-validate/rules';
-import { useThrottleFn, watchDebounced, watchOnce } from '@vueuse/core';
+import { useThrottleFn, useTimeoutFn, watchDebounced, watchOnce } from '@vueuse/core';
 import {
     AccountMultipleIcon,
     CheckIcon,
@@ -315,7 +315,8 @@ async function saveToStore(values: FormData): Promise<void> {
         closed: doc.value.closed,
         category: selectedCategory.value,
     });
-    setTimeout(() => {
+
+    useTimeoutFn(() => {
         saving.value = false;
     }, 1250);
 }
@@ -352,7 +353,7 @@ const onSubmit = handleSubmit(async (values): Promise<void> => {
         prom = updateDocument(props.id, values, doc.value.closed.closed);
     }
 
-    await prom.finally(() => setTimeout(() => (canSubmit.value = true), 400));
+    await prom.finally(() => useTimeoutFn(() => (canSubmit.value = true), 400));
 });
 const onSubmitThrottle = useThrottleFn(async (e) => {
     canSubmit.value = false;

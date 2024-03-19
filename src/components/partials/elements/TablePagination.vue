@@ -1,5 +1,5 @@
 <script lang="ts" setup>
-import { useThrottleFn } from '@vueuse/core';
+import { useThrottleFn, useTimeoutFn } from '@vueuse/core';
 import { RefreshIcon } from 'mdi-vue3';
 import { Popover, PopoverButton, PopoverPanel } from '@headlessui/vue';
 import { Float } from '@headlessui-float/vue';
@@ -76,7 +76,7 @@ const onSubmitThrottle = useThrottleFn(async () => {
     }
 
     canSubmit.value = false;
-    await props.refresh().finally(() => setTimeout(() => (canSubmit.value = true), 400));
+    await props.refresh().finally(() => useTimeoutFn(() => (canSubmit.value = true), 400));
 }, 1000);
 
 const pageNumber = ref(currentPage.value.toString());

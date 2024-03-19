@@ -1,7 +1,7 @@
 <script lang="ts" setup>
 // eslint-disable-next-line camelcase
 import { alpha_dash, max, min, required } from '@vee-validate/rules';
-import { useThrottleFn } from '@vueuse/core';
+import { useThrottleFn, useTimeoutFn } from '@vueuse/core';
 import { LoadingIcon } from 'mdi-vue3';
 import { defineRule } from 'vee-validate';
 import GenericAlert from '~/components/partials/elements/GenericAlert.vue';
@@ -43,7 +43,7 @@ const { handleSubmit, meta } = useForm<FormData>({
 const canSubmit = ref(true);
 const onSubmit = handleSubmit(
     async (values): Promise<void> =>
-        await doLogin(values.username, values.password).finally(() => setTimeout(() => (canSubmit.value = true), 400)),
+        await doLogin(values.username, values.password).finally(() => useTimeoutFn(() => (canSubmit.value = true), 400)),
 );
 const onSubmitThrottle = useThrottleFn(async (e) => {
     canSubmit.value = false;

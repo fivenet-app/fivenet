@@ -1,4 +1,5 @@
 <script lang="ts" setup>
+import { useTimeoutFn } from '@vueuse/core';
 import { Pane, Splitpanes } from 'splitpanes';
 import 'splitpanes/dist/splitpanes.css';
 import DispatchList from '~/components/centrum/dispatches/DispatchList.vue';
@@ -21,7 +22,7 @@ const { startStream, stopStream } = centrumStore;
 const livemapStore = useLivemapStore();
 const { location } = storeToRefs(livemapStore);
 
-onBeforeMount(async () => setTimeout(async () => startStream(true), 250));
+onBeforeMount(async () => useTimeoutFn(async () => startStream(true), 250));
 
 onBeforeUnmount(async () => {
     stopStream();

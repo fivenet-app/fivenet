@@ -3,7 +3,7 @@ import { Dialog, DialogPanel, DialogTitle, TransitionChild, TransitionRoot } fro
 import { RpcError } from '@protobuf-ts/runtime-rpc';
 // eslint-disable-next-line camelcase
 import { alpha_dash, max, min, required } from '@vee-validate/rules';
-import { useThrottleFn } from '@vueuse/core';
+import { useThrottleFn, useTimeoutFn } from '@vueuse/core';
 import { AccountEditIcon, CloseIcon, LoadingIcon } from 'mdi-vue3';
 import { defineRule } from 'vee-validate';
 import { useAuthStore } from '~/store/auth';
@@ -43,7 +43,7 @@ async function changeUsername(values: FormData): Promise<void> {
             type: 'success',
         });
 
-        setTimeout(async () => {
+        useTimeoutFn(async () => {
             await navigateTo({ name: 'auth-logout' });
             clearAuthInfo();
         }, 1500);
@@ -69,7 +69,7 @@ const { handleSubmit, meta } = useForm<FormData>({
 const canSubmit = ref(true);
 const onSubmit = handleSubmit(
     async (values): Promise<void> =>
-        await changeUsername(values).finally(() => setTimeout(() => (canSubmit.value = true), 400)),
+        await changeUsername(values).finally(() => useTimeoutFn(() => (canSubmit.value = true), 400)),
 );
 const onSubmitThrottle = useThrottleFn(async (e) => {
     canSubmit.value = false;

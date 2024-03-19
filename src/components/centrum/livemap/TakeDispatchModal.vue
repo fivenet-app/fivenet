@@ -1,7 +1,7 @@
 <script lang="ts" setup>
 import { Dialog, DialogPanel, DialogTitle, TransitionChild, TransitionRoot } from '@headlessui/vue';
 import { RpcError } from '@protobuf-ts/runtime-rpc';
-import { computedAsync, useDebounceFn, useThrottleFn } from '@vueuse/core';
+import { computedAsync, useDebounceFn, useThrottleFn, useTimeoutFn } from '@vueuse/core';
 import { useSound } from '@raffaelesgarro/vue-use-sound';
 import { CarEmergencyIcon, CloseIcon, LoadingIcon } from 'mdi-vue3';
 import DataNoDataBlock from '~/components/partials/data/DataNoDataBlock.vue';
@@ -113,7 +113,7 @@ const filteredDispatches = computedAsync(async () => {
 const canSubmit = ref(true);
 const onSubmitThrottle = useThrottleFn(async (resp: TakeDispatchResp) => {
     canSubmit.value = false;
-    await takeDispatches(resp).finally(() => setTimeout(() => (canSubmit.value = true), 400));
+    await takeDispatches(resp).finally(() => useTimeoutFn(() => (canSubmit.value = true), 400));
 }, 1000);
 </script>
 
