@@ -85,7 +85,7 @@ type Perms struct {
 
 	tracer trace.Tracer
 
-	js     events.JSWrapper
+	js     *events.JSWrapper
 	jsCons jetstream.ConsumeContext
 
 	permsMap *xsync.MapOf[uint64, *cachePerm]
@@ -123,7 +123,7 @@ type Params struct {
 	Logger    *zap.Logger
 	DB        *sql.DB
 	TP        *tracesdk.TracerProvider
-	JS        events.JSWrapper
+	JS        *events.JSWrapper
 	AppConfig appconfig.IConfig
 }
 

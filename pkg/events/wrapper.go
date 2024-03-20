@@ -30,7 +30,7 @@ func (j *JSWrapper) CreateOrUpdateStream(ctx context.Context, cfg jetstream.Stre
 	}
 
 	if !strings.HasPrefix(cfg.Description, DescriptionPrefix) {
-		cfg.Description = cfg.Description + cfg.Description
+		cfg.Description = DescriptionPrefix + cfg.Description
 	}
 
 	return j.JetStream.CreateOrUpdateStream(ctx, cfg)
@@ -42,7 +42,7 @@ func (j *JSWrapper) CreateOrUpdateKeyValue(ctx context.Context, cfg jetstream.Ke
 	}
 
 	if !strings.HasPrefix(cfg.Description, DescriptionPrefix) {
-		cfg.Description = cfg.Description + cfg.Description
+		cfg.Description = DescriptionPrefix + cfg.Description
 	}
 
 	return j.JetStream.CreateOrUpdateKeyValue(ctx, cfg)

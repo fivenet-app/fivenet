@@ -39,7 +39,7 @@ type Manager struct {
 	tracer trace.Tracer
 
 	bots *xsync.MapOf[string, *Bot]
-	js   events.JSWrapper
+	js   *events.JSWrapper
 
 	state   *manager.Manager
 	tracker tracker.ITracker
@@ -53,7 +53,7 @@ type Params struct {
 	Logger  *zap.Logger
 	TP      *tracesdk.TracerProvider
 	State   *manager.Manager
-	JS      events.JSWrapper
+	JS      *events.JSWrapper
 	Tracker tracker.ITracker
 }
 

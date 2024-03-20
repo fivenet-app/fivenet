@@ -22,7 +22,7 @@ var StateModule = fx.Module("centrum_state", fx.Provide(
 ))
 
 type State struct {
-	js events.JSWrapper
+	js *events.JSWrapper
 
 	logger *zap.Logger
 
@@ -43,7 +43,7 @@ type Params struct {
 	LC fx.Lifecycle
 
 	Logger    *zap.Logger
-	JS        events.JSWrapper
+	JS        *events.JSWrapper
 	AppConfig appconfig.IConfig
 }
 

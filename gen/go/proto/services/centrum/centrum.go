@@ -43,7 +43,7 @@ type Server struct {
 	db      *sql.DB
 	ps      perms.Permissions
 	aud     audit.IAuditer
-	js      events.JSWrapper
+	js      *events.JSWrapper
 	tracker tracker.ITracker
 	postals postals.Postals
 	appCfg  appconfig.IConfig
@@ -64,7 +64,7 @@ type Params struct {
 	DB        *sql.DB
 	Perms     perms.Permissions
 	Audit     audit.IAuditer
-	JS        events.JSWrapper
+	JS        *events.JSWrapper
 	Config    *config.Config
 	AppConfig appconfig.IConfig
 	Tracker   tracker.ITracker

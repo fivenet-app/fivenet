@@ -18,7 +18,7 @@ const (
 	UsersUpdate events.Type = "users_update"
 )
 
-func registerStreams(ctx context.Context, js events.JSWrapper) error {
+func registerStreams(ctx context.Context, js *events.JSWrapper) error {
 	cfg := jetstream.StreamConfig{
 		Name:        StreamName,
 		Description: "User Tracker Events",

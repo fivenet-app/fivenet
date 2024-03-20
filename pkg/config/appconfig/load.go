@@ -44,7 +44,7 @@ type Config struct {
 
 	logger *zap.Logger
 	db     *sql.DB
-	js     events.JSWrapper
+	js     *events.JSWrapper
 
 	jsCons jetstream.ConsumeContext
 
@@ -59,7 +59,7 @@ type Params struct {
 	LC fx.Lifecycle
 
 	Logger *zap.Logger
-	JS     events.JSWrapper
+	JS     *events.JSWrapper
 	DB     *sql.DB
 }
 

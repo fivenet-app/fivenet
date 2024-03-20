@@ -8,6 +8,7 @@ import (
 	"github.com/galexrt/fivenet/pkg/config"
 	"github.com/galexrt/fivenet/pkg/config/appconfig"
 	"github.com/galexrt/fivenet/pkg/coords/postals"
+	"github.com/galexrt/fivenet/pkg/events"
 	"github.com/galexrt/fivenet/pkg/grpc/auth"
 	"github.com/galexrt/fivenet/pkg/grpc/auth/userinfo"
 	"github.com/galexrt/fivenet/pkg/htmlsanitizer"
@@ -15,7 +16,6 @@ import (
 	"github.com/galexrt/fivenet/pkg/perms"
 	"github.com/galexrt/fivenet/pkg/server/audit"
 	"github.com/microcosm-cc/bluemonday"
-	"github.com/nats-io/nats.go/jetstream"
 	"go.uber.org/fx"
 )
 
@@ -68,9 +68,15 @@ func TestDBClient() (*sql.DB, error) {
 	return db, err
 }
 
-func TestJetStreamClient() (jetstream.JetStream, error) {
+func TestJetStreamClient() (*events.JSWrapper, error) {
 	js, err := servers.TestNATSServer.GetJS()
-	return js, err
+	if err != nil {
+		return nil, err
+	}
+
+	return &events.JSWrapper{
+		JetStream: js,
+	}, nil
 }
 
 func TestUserInfoRetriever() userinfo.UserInfoRetriever {

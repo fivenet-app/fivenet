@@ -59,7 +59,7 @@ func mutexCompute() *sync.Mutex {
 	return &sync.Mutex{}
 }
 
-func NewWithLocks[T any, U protoMessage[T]](ctx context.Context, logger *zap.Logger, js events.JSWrapper, bucket string, l *locks.Locks, opts ...Option[T, U]) (*Store[T, U], error) {
+func NewWithLocks[T any, U protoMessage[T]](ctx context.Context, logger *zap.Logger, js *events.JSWrapper, bucket string, l *locks.Locks, opts ...Option[T, U]) (*Store[T, U], error) {
 	storeKV, err := js.CreateOrUpdateKeyValue(ctx, jetstream.KeyValueConfig{
 		Bucket:      bucket,
 		Description: fmt.Sprintf("%s Store", bucket),
@@ -90,7 +90,7 @@ func NewWithLocks[T any, U protoMessage[T]](ctx context.Context, logger *zap.Log
 	return s, nil
 }
 
-func New[T any, U protoMessage[T]](ctx context.Context, logger *zap.Logger, js events.JSWrapper, bucket string, opts ...Option[T, U]) (*Store[T, U], error) {
+func New[T any, U protoMessage[T]](ctx context.Context, logger *zap.Logger, js *events.JSWrapper, bucket string, opts ...Option[T, U]) (*Store[T, U], error) {
 	lockBucket := fmt.Sprintf("%s_locks", bucket)
 
 	locksKV, err := js.CreateOrUpdateKeyValue(ctx, jetstream.KeyValueConfig{

@@ -44,7 +44,7 @@ func BuildSubject(topic events.Topic, tType events.Type, job string) string {
 	return fmt.Sprintf("%s.%s.%s.%s", BaseSubject, job, topic, tType)
 }
 
-func RegisterStream(ctx context.Context, js events.JSWrapper) (jetstream.StreamConfig, error) {
+func RegisterStream(ctx context.Context, js *events.JSWrapper) (jetstream.StreamConfig, error) {
 	cfg := jetstream.StreamConfig{
 		Name:        "CENTRUM",
 		Description: "Centrum Events",

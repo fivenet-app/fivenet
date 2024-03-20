@@ -35,7 +35,7 @@ type Tracker struct {
 	ITracker
 
 	logger *zap.Logger
-	js     events.JSWrapper
+	js     *events.JSWrapper
 
 	jsCons jetstream.ConsumeContext
 
@@ -51,7 +51,7 @@ type Params struct {
 	LC fx.Lifecycle
 
 	Logger *zap.Logger
-	JS     events.JSWrapper
+	JS     *events.JSWrapper
 }
 
 func New(p Params) (ITracker, error) {

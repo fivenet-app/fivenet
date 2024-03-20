@@ -27,7 +27,7 @@ type Manager struct {
 
 	tracer   trace.Tracer
 	db       *sql.DB
-	js       events.JSWrapper
+	js       *events.JSWrapper
 	enricher *mstlystcdata.Enricher
 	tracker  tracker.ITracker
 	postals  postals.Postals
@@ -45,7 +45,7 @@ type Params struct {
 	Logger    *zap.Logger
 	TP        *tracesdk.TracerProvider
 	DB        *sql.DB
-	JS        events.JSWrapper
+	JS        *events.JSWrapper
 	Enricher  *mstlystcdata.Enricher
 	Postals   postals.Postals
 	Tracker   tracker.ITracker

@@ -51,7 +51,7 @@ type Server struct {
 	p        perms.Permissions
 	tm       *auth.TokenMgr
 	ui       userinfo.UserInfoRetriever
-	js       events.JSWrapper
+	js       *events.JSWrapper
 	enricher *mstlystcdata.Enricher
 }
 
@@ -65,7 +65,7 @@ type Params struct {
 	Perms    perms.Permissions
 	TM       *auth.TokenMgr
 	UI       userinfo.UserInfoRetriever
-	JS       events.JSWrapper
+	JS       *events.JSWrapper
 	Enricher *mstlystcdata.Enricher
 }
 

@@ -33,7 +33,7 @@ type INotifi interface {
 type Notifi struct {
 	logger *zap.Logger
 	db     *sql.DB
-	js     events.JSWrapper
+	js     *events.JSWrapper
 }
 
 type Params struct {
@@ -42,7 +42,7 @@ type Params struct {
 	LC     fx.Lifecycle
 	Logger *zap.Logger
 	DB     *sql.DB
-	JS     events.JSWrapper
+	JS     *events.JSWrapper
 }
 
 func New(p Params) INotifi {

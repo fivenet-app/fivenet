@@ -30,7 +30,7 @@ import (
 type Manager struct {
 	logger   *zap.Logger
 	tracer   trace.Tracer
-	js       events.JSWrapper
+	js       *events.JSWrapper
 	db       *sql.DB
 	enricher *mstlystcdata.Enricher
 	postals  postals.Postals
@@ -46,7 +46,7 @@ type ManagerParams struct {
 	LC fx.Lifecycle
 
 	Logger    *zap.Logger
-	JS        events.JSWrapper
+	JS        *events.JSWrapper
 	TP        *tracesdk.TracerProvider
 	DB        *sql.DB
 	Enricher  *mstlystcdata.Enricher
