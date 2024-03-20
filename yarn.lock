@@ -928,19 +928,19 @@
   resolved "https://registry.yarnpkg.com/@nuxt/devalue/-/devalue-2.0.2.tgz#5749f04df13bda4c863338d8dabaf370f45ef7c7"
   integrity sha512-GBzP8zOc7CGWyFQS6dv1lQz8VVpz5C2yRszbXufwG/9zhStTIH50EtD87NmWbTMwXDvZLNg8GIpb1UFdH93JCA==
 
-"@nuxt/devtools-kit@1.1.0":
-  version "1.1.0"
-  resolved "https://registry.yarnpkg.com/@nuxt/devtools-kit/-/devtools-kit-1.1.0.tgz#da04c2f6cf2a6b931cee76c5a25917260ebfe94c"
-  integrity sha512-Mf198/nwoM6VaAuAA9TPB6gt0Ic9DiDjBGCuVDiUBVFEr253y30474bKU8+P3JQa0LYYkzzBLJVKDSd8wb4fZg==
+"@nuxt/devtools-kit@1.1.1":
+  version "1.1.1"
+  resolved "https://registry.yarnpkg.com/@nuxt/devtools-kit/-/devtools-kit-1.1.1.tgz#5dc1782d190a5daeb95f73d24ecafc22bdf002eb"
+  integrity sha512-xxZvBpVfB1G8SN1o1OdH9D3/+cgBMguO/cgMWy4vybx1n2XCAmSr7XRfnvFmf888MW+BwqlJRTUQYXXbccNvOA==
   dependencies:
     "@nuxt/kit" "^3.11.1"
     "@nuxt/schema" "^3.11.1"
     execa "^7.2.0"
 
-"@nuxt/devtools-wizard@1.1.0":
-  version "1.1.0"
-  resolved "https://registry.yarnpkg.com/@nuxt/devtools-wizard/-/devtools-wizard-1.1.0.tgz#39033a373f5baf3c65526fc697f2492d4fdec7c1"
-  integrity sha512-2sPIny6q9vs1Pc781q99JPlR+nj4/oOcojWEULdnLh6M8Z+C3HtMSyDhN3X/acGakchxj0nS6DahapMvsO3UUg==
+"@nuxt/devtools-wizard@1.1.1":
+  version "1.1.1"
+  resolved "https://registry.yarnpkg.com/@nuxt/devtools-wizard/-/devtools-wizard-1.1.1.tgz#2a65e25f913aeaaad5888623267672cdbe026607"
+  integrity sha512-l03CemzPROMR/wrzICfa77YTDp1PlScAS3zwLBgLIptRHgMD3xQCmgkOPA4tZ5kdWLwC8qwOWDCz5YGUSaPvkA==
   dependencies:
     consola "^3.2.3"
     diff "^5.2.0"
@@ -953,18 +953,18 @@
     rc9 "^2.1.1"
     semver "^7.6.0"
 
-"@nuxt/devtools@1.1.0", "@nuxt/devtools@^1.0.8":
-  version "1.1.0"
-  resolved "https://registry.yarnpkg.com/@nuxt/devtools/-/devtools-1.1.0.tgz#edc2bcbee316f433432350530bfa565002b9e4cd"
-  integrity sha512-55oopcCMA8TLcVXUEEPX5gWwtQeOV3ux0XdYL0ougXtsgeBf4Jr5cO/VxI5pC7kPYojJmxy/cxbVVgTDVd4TfA==
+"@nuxt/devtools@1.1.1", "@nuxt/devtools@^1.0.8":
+  version "1.1.1"
+  resolved "https://registry.yarnpkg.com/@nuxt/devtools/-/devtools-1.1.1.tgz#4da3e0d59f343d223ade8f25baf7f27786515105"
+  integrity sha512-mg8+3cClmMf5Yt3IGdZVUqybjFUZx8C3fGGPHdQO0mnkh+pBMPfb/kifbSY+z7fZmqP+axE3bM/PkqVgUWarDw==
   dependencies:
     "@antfu/utils" "^0.7.7"
-    "@nuxt/devtools-kit" "1.1.0"
-    "@nuxt/devtools-wizard" "1.1.0"
+    "@nuxt/devtools-kit" "1.1.1"
+    "@nuxt/devtools-wizard" "1.1.1"
     "@nuxt/kit" "^3.11.1"
-    "@vue/devtools-applet" "^7.0.19"
-    "@vue/devtools-core" "^7.0.19"
-    "@vue/devtools-kit" "^7.0.19"
+    "@vue/devtools-applet" "^7.0.20"
+    "@vue/devtools-core" "^7.0.20"
+    "@vue/devtools-kit" "^7.0.20"
     birpc "^0.2.17"
     consola "^3.2.3"
     cronstrue "^2.48.0"
@@ -2048,7 +2048,7 @@
   resolved "https://registry.yarnpkg.com/@vue/devtools-api/-/devtools-api-6.6.1.tgz#7c14346383751d9f6ad4bea0963245b30220ef83"
   integrity sha512-LgPscpE3Vs0x96PzSSB4IGVSZXZBZHpfxs+ZA1d+VEPwHdOXowy/Y2CsvCAIFrf+ssVU1pD1jidj505EpUnfbA==
 
-"@vue/devtools-applet@^7.0.19":
+"@vue/devtools-applet@^7.0.20":
   version "7.0.20"
   resolved "https://registry.yarnpkg.com/@vue/devtools-applet/-/devtools-applet-7.0.20.tgz#077d76badf92c8081b58308efde089f87787a6f7"
   integrity sha512-q48RtnhFmC0kd4N+3Edfctv6oL2neN6crUapBydSr6szjR87dQJygTEYKlpyx0SHmVLVwq4mcgFuf1ftAKjd/w==
@@ -2061,7 +2061,7 @@
     splitpanes "^3.1.5"
     vue-virtual-scroller "2.0.0-beta.8"
 
-"@vue/devtools-core@^7.0.19", "@vue/devtools-core@^7.0.20":
+"@vue/devtools-core@^7.0.20":
   version "7.0.20"
   resolved "https://registry.yarnpkg.com/@vue/devtools-core/-/devtools-core-7.0.20.tgz#90bc7500233e1606cc3165186b8df44601517ddc"
   integrity sha512-JefAn0ljTUPtoEJ47PjEfcLQb9BVt3OH1R6aD8qZ7bNYwZH+xystXpVJ3pW+1iDnOXjfpLgc3bsHUZoxlfobpw==
@@ -2073,7 +2073,7 @@
     pathe "^1.1.2"
     vite-hot-client "^0.2.3"
 
-"@vue/devtools-kit@^7.0.19", "@vue/devtools-kit@^7.0.20":
+"@vue/devtools-kit@^7.0.20":
   version "7.0.20"
   resolved "https://registry.yarnpkg.com/@vue/devtools-kit/-/devtools-kit-7.0.20.tgz#e8502bd275004654100a29e2b98ef0e0c904bd0d"
   integrity sha512-FgFuPuqrhQ51rR/sVi52FnGgrxJ3X1bvNra/SkBzPhxJVhfyL5w2YUJZI1FgCvtLAyPSomJNdvlG415ZbJsr6w==
@@ -2448,14 +2448,15 @@ array-buffer-byte-length@^1.0.1:
     is-array-buffer "^3.0.4"
 
 array-includes@^3.1.7:
-  version "3.1.7"
-  resolved "https://registry.yarnpkg.com/array-includes/-/array-includes-3.1.7.tgz#8cd2e01b26f7a3086cbc87271593fe921c62abda"
-  integrity sha512-dlcsNBIiWhPkHdOEEKnehA+RNUWDc4UqFtnIXU4uuYDPtA4LDkr7qip2p0VvFAEXNDr0yWZ9PJyIRiGjRLQzwQ==
+  version "3.1.8"
+  resolved "https://registry.yarnpkg.com/array-includes/-/array-includes-3.1.8.tgz#5e370cbe172fdd5dd6530c1d4aadda25281ba97d"
+  integrity sha512-itaWrbYbqpGXkGhZPGUulwnhVf5Hpy1xiCFsGqyIGglbBxmG5vSjxQen3/WGOjPpNEv1RtBLKxbmVXm8HpJStQ==
   dependencies:
-    call-bind "^1.0.2"
-    define-properties "^1.2.0"
-    es-abstract "^1.22.1"
-    get-intrinsic "^1.2.1"
+    call-bind "^1.0.7"
+    define-properties "^1.2.1"
+    es-abstract "^1.23.2"
+    es-object-atoms "^1.0.0"
+    get-intrinsic "^1.2.4"
     is-string "^1.0.7"
 
 array-union@^2.1.0:
@@ -3721,9 +3722,9 @@ ee-first@1.1.1:
   integrity sha512-WMwm9LhRUo+WUaRN+vRuETqG89IgZphVSNkdFgeb6sS/E4OrDIN7t48CAewSHXc6C8lefD8KKfr5vY61brQlow==
 
 electron-to-chromium@^1.4.668:
-  version "1.4.711"
-  resolved "https://registry.yarnpkg.com/electron-to-chromium/-/electron-to-chromium-1.4.711.tgz#f9fd04007878cc27ac327d5c6ce300f8b516f635"
-  integrity sha512-hRg81qzvUEibX2lDxnFlVCHACa+LtrCPIsWAxo161LDYIB3jauf57RGsMZV9mvGwE98yGH06icj3zBEoOkxd/w==
+  version "1.4.712"
+  resolved "https://registry.yarnpkg.com/electron-to-chromium/-/electron-to-chromium-1.4.712.tgz#2117ea2f4f95e8e0ec96c33dd345134ac00e57ed"
+  integrity sha512-ncfPC8UnGIyGFrPE03J5Xn6yTZ6R+clkcZbuG1PJbjAaZBFS4Kn3UKfzu8eilzru6SfC8TPsHuwv0p0eYVu+ww==
 
 emoji-regex@^8.0.0:
   version "8.0.0"
@@ -7473,10 +7474,10 @@ postcss-discard-overridden@^6.0.2:
   resolved "https://registry.yarnpkg.com/postcss-discard-overridden/-/postcss-discard-overridden-6.0.2.tgz#4e9f9c62ecd2df46e8fdb44dc17e189776572e2d"
   integrity sha512-j87xzI4LUggC5zND7KdjsI25APtyMuynXZSujByMaav2roV6OZX+8AaCUcZSWqckZpjAjRyFDdpqybgjFO0HJQ==
 
-postcss-import@16.0.1:
-  version "16.0.1"
-  resolved "https://registry.yarnpkg.com/postcss-import/-/postcss-import-16.0.1.tgz#c2e0478c5af8cb39ab3964c35d8fee8e70c362b8"
-  integrity sha512-i2Pci0310NaLHr/5JUFSw1j/8hf1CzwMY13g6ZDxgOavmRHQi2ba3PmUHoihO+sjaum+KmCNzskNsw7JDrg03g==
+postcss-import@16.1.0:
+  version "16.1.0"
+  resolved "https://registry.yarnpkg.com/postcss-import/-/postcss-import-16.1.0.tgz#258732175518129667fe1e2e2a05b19b5654b96a"
+  integrity sha512-7hsAZ4xGXl4MW+OKEWCnF6T5jqBw80/EE9aXg1r2yyn1RsVEU8EtKXbijEODa+rg7iih4bKf7vlvTGYR4CnPNg==
   dependencies:
     postcss-value-parser "^4.0.0"
     read-cache "^1.0.0"
@@ -9125,10 +9126,10 @@ typed-array-length@^1.0.5:
     is-typed-array "^1.1.13"
     possible-typed-array-names "^1.0.0"
 
-typescript@5.4.2:
-  version "5.4.2"
-  resolved "https://registry.yarnpkg.com/typescript/-/typescript-5.4.2.tgz#0ae9cebcfae970718474fe0da2c090cad6577372"
-  integrity sha512-+2/g0Fds1ERlP6JsakQQDXjZdZMM+rqpamFZJEKh4kwTIn3iDkgKtby0CeNd5ATNZ4Ry1ax15TMx0W2V+miizQ==
+typescript@5.4.3:
+  version "5.4.3"
+  resolved "https://registry.yarnpkg.com/typescript/-/typescript-5.4.3.tgz#5c6fedd4c87bee01cd7a528a30145521f8e0feff"
+  integrity sha512-KrPd3PKaCLr78MalgiwJnA25Nm8HAmdwN3mYUYZgG/wizIo9EainNVQI9/yDavtVFRN2h3k8uf3GLHuhDMgEHg==
 
 typescript@^3.9:
   version "3.9.10"

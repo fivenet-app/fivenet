@@ -12,6 +12,7 @@ import (
 	"github.com/prometheus/client_golang/prometheus"
 	"github.com/prometheus/client_golang/prometheus/promauto"
 	"go.uber.org/fx"
+	"go.uber.org/zap"
 )
 
 // Default `defaultAsyncPubAckInflight` is `4000` (`nats.go`)
@@ -35,7 +36,10 @@ type Type string
 type Params struct {
 	fx.In
 
-	LC     fx.Lifecycle
+	LC         fx.Lifecycle
+	Shutdowner fx.Shutdowner
+
+	Logger *zap.Logger
 	Config *config.Config
 }
 
@@ -43,22 +47,38 @@ type Result struct {
 	fx.Out
 
 	JS *JSWrapper
-	J  jetstream.JetStream
 }
 
 func New(p Params) (res Result, err error) {
 	// Connect to NATS
-	nc, err := nats.Connect(p.Config.NATS.URL, nats.Name("FiveNet"))
+	nc, err := nats.Connect(p.Config.NATS.URL,
+		nats.Name("FiveNet"),
+		nats.DisconnectErrHandler(func(nc *nats.Conn, err error) {
+			p.Logger.Error("nats: disconnected", zap.Error(err))
+		}),
+		nats.ReconnectHandler(func(nc *nats.Conn) {
+			p.Logger.Info("nats: reconnected")
+		}),
+		nats.ClosedHandler(func(nc *nats.Conn) {
+			if err := nc.LastError(); err != nil {
+				p.Logger.Error("nats: connection closed", zap.Error(err))
+
+				if err := p.Shutdowner.Shutdown(fx.ExitCode(1)); err != nil {
+					p.Logger.Fatal("failed to shutdown app after nats connection close", zap.Error(err))
+				}
+			}
+		}),
+	)
 	if err != nil {
 		return res, err
 	}
 
-	res.J, err = jetstream.New(nc, jetstream.WithPublishAsyncMaxPending(DefaultDefaultAsyncPubAckInflight))
+	js, err := jetstream.New(nc, jetstream.WithPublishAsyncMaxPending(DefaultDefaultAsyncPubAckInflight))
 	if err != nil {
 		return res, err
 	}
 
-	res.JS = NewJSWrapper(res.J, p.Config.NATS)
+	res.JS = NewJSWrapper(js, p.Config.NATS)
 
 	wg := sync.WaitGroup{}
 	ctx, cancel := context.WithCancel(context.Background())
