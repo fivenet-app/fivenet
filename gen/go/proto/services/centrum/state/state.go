@@ -8,6 +8,7 @@ import (
 	centrumutils "github.com/galexrt/fivenet/gen/go/proto/services/centrum/utils"
 	"github.com/galexrt/fivenet/pkg/config/appconfig"
 	"github.com/galexrt/fivenet/pkg/coords"
+	"github.com/galexrt/fivenet/pkg/events"
 	"github.com/galexrt/fivenet/pkg/nats/store"
 	"github.com/nats-io/nats.go/jetstream"
 	"github.com/paulmach/orb"
@@ -21,7 +22,7 @@ var StateModule = fx.Module("centrum_state", fx.Provide(
 ))
 
 type State struct {
-	js jetstream.JetStream
+	js events.JSWrapper
 
 	logger *zap.Logger
 
@@ -42,7 +43,7 @@ type Params struct {
 	LC fx.Lifecycle
 
 	Logger    *zap.Logger
-	JS        jetstream.JetStream
+	JS        events.JSWrapper
 	AppConfig appconfig.IConfig
 }
 

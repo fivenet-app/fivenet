@@ -47,7 +47,7 @@ type Server struct {
 
 	tracer   trace.Tracer
 	db       *sql.DB
-	js       jetstream.JetStream
+	js       events.JSWrapper
 	ps       perms.Permissions
 	enricher *mstlystcdata.Enricher
 	tracker  tracker.ITracker
@@ -67,7 +67,7 @@ type Params struct {
 	Logger    *zap.Logger
 	TP        *tracesdk.TracerProvider
 	DB        *sql.DB
-	JS        jetstream.JetStream
+	JS        events.JSWrapper
 	Perms     perms.Permissions
 	Enricher  *mstlystcdata.Enricher
 	Config    *config.Config

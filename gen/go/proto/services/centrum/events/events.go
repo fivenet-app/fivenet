@@ -7,7 +7,6 @@ import (
 	"time"
 
 	"github.com/galexrt/fivenet/pkg/events"
-	natsutils "github.com/galexrt/fivenet/pkg/nats"
 	"github.com/nats-io/nats.go/jetstream"
 )
 
@@ -45,10 +44,10 @@ func BuildSubject(topic events.Topic, tType events.Type, job string) string {
 	return fmt.Sprintf("%s.%s.%s.%s", BaseSubject, job, topic, tType)
 }
 
-func RegisterStream(ctx context.Context, js jetstream.JetStream) (jetstream.StreamConfig, error) {
+func RegisterStream(ctx context.Context, js events.JSWrapper) (jetstream.StreamConfig, error) {
 	cfg := jetstream.StreamConfig{
 		Name:        "CENTRUM",
-		Description: natsutils.Description,
+		Description: "Centrum Events",
 		Retention:   jetstream.InterestPolicy,
 		Subjects:    []string{fmt.Sprintf("%s.>", BaseSubject)},
 		Discard:     jetstream.DiscardOld,

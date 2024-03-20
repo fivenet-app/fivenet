@@ -4,6 +4,7 @@ import (
 	"context"
 
 	"github.com/galexrt/fivenet/gen/go/proto/resources/livemap"
+	"github.com/galexrt/fivenet/pkg/events"
 	"github.com/galexrt/fivenet/pkg/nats/store"
 	"github.com/galexrt/fivenet/pkg/utils/broker"
 	"github.com/galexrt/fivenet/query/fivenet/table"
@@ -34,7 +35,7 @@ type Tracker struct {
 	ITracker
 
 	logger *zap.Logger
-	js     jetstream.JetStream
+	js     events.JSWrapper
 
 	jsCons jetstream.ConsumeContext
 
@@ -50,7 +51,7 @@ type Params struct {
 	LC fx.Lifecycle
 
 	Logger *zap.Logger
-	JS     jetstream.JetStream
+	JS     events.JSWrapper
 }
 
 func New(p Params) (ITracker, error) {

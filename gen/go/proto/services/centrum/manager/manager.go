@@ -7,6 +7,7 @@ import (
 	"github.com/galexrt/fivenet/gen/go/proto/services/centrum/state"
 	"github.com/galexrt/fivenet/pkg/config/appconfig"
 	"github.com/galexrt/fivenet/pkg/coords/postals"
+	"github.com/galexrt/fivenet/pkg/events"
 	"github.com/galexrt/fivenet/pkg/mstlystcdata"
 	"github.com/galexrt/fivenet/pkg/tracker"
 	"github.com/nats-io/nats.go/jetstream"
@@ -26,7 +27,7 @@ type Manager struct {
 
 	tracer   trace.Tracer
 	db       *sql.DB
-	js       jetstream.JetStream
+	js       events.JSWrapper
 	enricher *mstlystcdata.Enricher
 	tracker  tracker.ITracker
 	postals  postals.Postals
@@ -44,7 +45,7 @@ type Params struct {
 	Logger    *zap.Logger
 	TP        *tracesdk.TracerProvider
 	DB        *sql.DB
-	JS        jetstream.JetStream
+	JS        events.JSWrapper
 	Enricher  *mstlystcdata.Enricher
 	Postals   postals.Postals
 	Tracker   tracker.ITracker

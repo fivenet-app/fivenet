@@ -12,6 +12,7 @@ import (
 	"github.com/Code-Hex/go-generics-cache/policy/lru"
 	"github.com/galexrt/fivenet/gen/go/proto/resources/permissions"
 	"github.com/galexrt/fivenet/pkg/config/appconfig"
+	"github.com/galexrt/fivenet/pkg/events"
 	"github.com/galexrt/fivenet/pkg/grpc/auth/userinfo"
 	"github.com/galexrt/fivenet/pkg/perms/collections"
 	"github.com/galexrt/fivenet/query/fivenet/model"
@@ -84,7 +85,7 @@ type Perms struct {
 
 	tracer trace.Tracer
 
-	js     jetstream.JetStream
+	js     events.JSWrapper
 	jsCons jetstream.ConsumeContext
 
 	permsMap *xsync.MapOf[uint64, *cachePerm]
@@ -122,7 +123,7 @@ type Params struct {
 	Logger    *zap.Logger
 	DB        *sql.DB
 	TP        *tracesdk.TracerProvider
-	JS        jetstream.JetStream
+	JS        events.JSWrapper
 	AppConfig appconfig.IConfig
 }
 

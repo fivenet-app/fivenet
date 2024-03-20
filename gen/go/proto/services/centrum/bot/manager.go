@@ -6,9 +6,9 @@ import (
 	"time"
 
 	"github.com/galexrt/fivenet/gen/go/proto/services/centrum/manager"
+	"github.com/galexrt/fivenet/pkg/events"
 	"github.com/galexrt/fivenet/pkg/server/admin"
 	"github.com/galexrt/fivenet/pkg/tracker"
-	"github.com/nats-io/nats.go/jetstream"
 	"github.com/prometheus/client_golang/prometheus"
 	"github.com/prometheus/client_golang/prometheus/promauto"
 	"github.com/puzpuzpuz/xsync/v3"
@@ -39,7 +39,7 @@ type Manager struct {
 	tracer trace.Tracer
 
 	bots *xsync.MapOf[string, *Bot]
-	js   jetstream.JetStream
+	js   events.JSWrapper
 
 	state   *manager.Manager
 	tracker tracker.ITracker
@@ -53,7 +53,7 @@ type Params struct {
 	Logger  *zap.Logger
 	TP      *tracesdk.TracerProvider
 	State   *manager.Manager
-	JS      jetstream.JetStream
+	JS      events.JSWrapper
 	Tracker tracker.ITracker
 }
 

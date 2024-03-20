@@ -6,7 +6,6 @@ import (
 	"time"
 
 	"github.com/galexrt/fivenet/pkg/events"
-	natsutils "github.com/galexrt/fivenet/pkg/nats"
 	"github.com/nats-io/nats.go/jetstream"
 )
 
@@ -21,7 +20,7 @@ const (
 func (n *Notifi) registerEvents(ctx context.Context) error {
 	cfg := jetstream.StreamConfig{
 		Name:        StreamName,
-		Description: natsutils.Description,
+		Description: "User Notifications events",
 		Retention:   jetstream.InterestPolicy,
 		Subjects:    []string{fmt.Sprintf("%s.>", BaseSubject)},
 		Discard:     jetstream.DiscardOld,

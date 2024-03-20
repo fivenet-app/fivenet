@@ -36,6 +36,7 @@ database:
         filterEmptyName: false
 nats:
   url: "nats://localhost:4222"
+  replicas: 1
 jwt:
   secret: "your_generated_jwt_secret"
 storage:

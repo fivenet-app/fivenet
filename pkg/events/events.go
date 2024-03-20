@@ -42,7 +42,8 @@ type Params struct {
 type Result struct {
 	fx.Out
 
-	JS jetstream.JetStream
+	JS *JSWrapper
+	J  jetstream.JetStream
 }
 
 func New(p Params) (res Result, err error) {
@@ -52,10 +53,12 @@ func New(p Params) (res Result, err error) {
 		return res, err
 	}
 
-	res.JS, err = jetstream.New(nc, jetstream.WithPublishAsyncMaxPending(DefaultDefaultAsyncPubAckInflight))
+	res.J, err = jetstream.New(nc, jetstream.WithPublishAsyncMaxPending(DefaultDefaultAsyncPubAckInflight))
 	if err != nil {
 		return res, err
 	}
+
+	res.JS = NewJSWrapper(res.J, p.Config.NATS)
 
 	wg := sync.WaitGroup{}
 	ctx, cancel := context.WithCancel(context.Background())

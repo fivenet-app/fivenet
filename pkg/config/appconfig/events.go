@@ -7,7 +7,6 @@ import (
 	"time"
 
 	"github.com/galexrt/fivenet/pkg/events"
-	natsutils "github.com/galexrt/fivenet/pkg/nats"
 	"github.com/nats-io/nats.go/jetstream"
 	"go.uber.org/zap"
 )
@@ -21,7 +20,7 @@ const (
 func (c *Config) registerSubscriptions(ctx context.Context) error {
 	cfg := jetstream.StreamConfig{
 		Name:        "APPCONFIG",
-		Description: natsutils.Description,
+		Description: "AppConfig update events",
 		Retention:   jetstream.InterestPolicy,
 		Subjects:    []string{fmt.Sprintf("%s.>", BaseSubject)},
 		Discard:     jetstream.DiscardOld,

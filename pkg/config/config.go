@@ -78,7 +78,8 @@ type CustomDB struct {
 }
 
 type NATS struct {
-	URL string `default:"nats://localhost:4222" yaml:"url"`
+	URL      string `default:"nats://localhost:4222" yaml:"url"`
+	Replicas int    `default:"1" yaml:"replicas"`
 }
 
 type JWT struct {

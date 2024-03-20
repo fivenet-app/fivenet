@@ -11,6 +11,7 @@ import (
 	"github.com/galexrt/fivenet/gen/go/proto/resources/notifications"
 	timestamp "github.com/galexrt/fivenet/gen/go/proto/resources/timestamp"
 	"github.com/galexrt/fivenet/gen/go/proto/resources/users"
+	"github.com/galexrt/fivenet/pkg/events"
 	"github.com/galexrt/fivenet/pkg/grpc/auth"
 	"github.com/galexrt/fivenet/pkg/grpc/auth/userinfo"
 	"github.com/galexrt/fivenet/pkg/grpc/errswrap"
@@ -50,7 +51,7 @@ type Server struct {
 	p        perms.Permissions
 	tm       *auth.TokenMgr
 	ui       userinfo.UserInfoRetriever
-	js       jetstream.JetStream
+	js       events.JSWrapper
 	enricher *mstlystcdata.Enricher
 }
 
@@ -64,7 +65,7 @@ type Params struct {
 	Perms    perms.Permissions
 	TM       *auth.TokenMgr
 	UI       userinfo.UserInfoRetriever
-	JS       jetstream.JetStream
+	JS       events.JSWrapper
 	Enricher *mstlystcdata.Enricher
 }
 

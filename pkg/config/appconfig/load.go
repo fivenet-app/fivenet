@@ -8,6 +8,7 @@ import (
 	"sync/atomic"
 
 	"github.com/galexrt/fivenet/gen/go/proto/resources/rector"
+	"github.com/galexrt/fivenet/pkg/events"
 	"github.com/galexrt/fivenet/pkg/utils/broker"
 	"github.com/galexrt/fivenet/query/fivenet/table"
 	"github.com/go-jet/jet/v2/qrm"
@@ -43,7 +44,7 @@ type Config struct {
 
 	logger *zap.Logger
 	db     *sql.DB
-	js     jetstream.JetStream
+	js     events.JSWrapper
 
 	jsCons jetstream.ConsumeContext
 
@@ -58,7 +59,7 @@ type Params struct {
 	LC fx.Lifecycle
 
 	Logger *zap.Logger
-	JS     jetstream.JetStream
+	JS     events.JSWrapper
 	DB     *sql.DB
 }
 

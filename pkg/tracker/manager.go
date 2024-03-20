@@ -13,6 +13,7 @@ import (
 	"github.com/galexrt/fivenet/pkg/config"
 	"github.com/galexrt/fivenet/pkg/config/appconfig"
 	"github.com/galexrt/fivenet/pkg/coords/postals"
+	"github.com/galexrt/fivenet/pkg/events"
 	"github.com/galexrt/fivenet/pkg/mstlystcdata"
 	"github.com/galexrt/fivenet/pkg/nats/store"
 	"github.com/gin-gonic/gin"
@@ -29,7 +30,7 @@ import (
 type Manager struct {
 	logger   *zap.Logger
 	tracer   trace.Tracer
-	js       jetstream.JetStream
+	js       events.JSWrapper
 	db       *sql.DB
 	enricher *mstlystcdata.Enricher
 	postals  postals.Postals
@@ -45,7 +46,7 @@ type ManagerParams struct {
 	LC fx.Lifecycle
 
 	Logger    *zap.Logger
-	JS        jetstream.JetStream
+	JS        events.JSWrapper
 	TP        *tracesdk.TracerProvider
 	DB        *sql.DB
 	Enricher  *mstlystcdata.Enricher

@@ -16,6 +16,7 @@ import (
 	"github.com/galexrt/fivenet/pkg/config"
 	"github.com/galexrt/fivenet/pkg/config/appconfig"
 	"github.com/galexrt/fivenet/pkg/coords/postals"
+	"github.com/galexrt/fivenet/pkg/events"
 	"github.com/galexrt/fivenet/pkg/grpc/auth"
 	"github.com/galexrt/fivenet/pkg/perms"
 	"github.com/galexrt/fivenet/pkg/server/audit"
@@ -42,7 +43,7 @@ type Server struct {
 	db      *sql.DB
 	ps      perms.Permissions
 	aud     audit.IAuditer
-	js      jetstream.JetStream
+	js      events.JSWrapper
 	tracker tracker.ITracker
 	postals postals.Postals
 	appCfg  appconfig.IConfig
@@ -63,7 +64,7 @@ type Params struct {
 	DB        *sql.DB
 	Perms     perms.Permissions
 	Audit     audit.IAuditer
-	JS        jetstream.JetStream
+	JS        events.JSWrapper
 	Config    *config.Config
 	AppConfig appconfig.IConfig
 	Tracker   tracker.ITracker

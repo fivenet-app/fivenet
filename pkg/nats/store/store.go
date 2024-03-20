@@ -8,7 +8,7 @@ import (
 	"sync"
 	"time"
 
-	natsutils "github.com/galexrt/fivenet/pkg/nats"
+	"github.com/galexrt/fivenet/pkg/events"
 	"github.com/galexrt/fivenet/pkg/nats/locks"
 	"github.com/galexrt/fivenet/pkg/server/admin"
 	"github.com/nats-io/nats.go/jetstream"
@@ -59,11 +59,11 @@ func mutexCompute() *sync.Mutex {
 	return &sync.Mutex{}
 }
 
-func NewWithLocks[T any, U protoMessage[T]](ctx context.Context, logger *zap.Logger, js jetstream.JetStream, bucket string, l *locks.Locks, opts ...Option[T, U]) (*Store[T, U], error) {
-	kv, err := js.CreateOrUpdateKeyValue(ctx, jetstream.KeyValueConfig{
+func NewWithLocks[T any, U protoMessage[T]](ctx context.Context, logger *zap.Logger, js events.JSWrapper, bucket string, l *locks.Locks, opts ...Option[T, U]) (*Store[T, U], error) {
+	storeKV, err := js.CreateOrUpdateKeyValue(ctx, jetstream.KeyValueConfig{
 		Bucket:      bucket,
-		Description: natsutils.Description,
-		History:     3,
+		Description: fmt.Sprintf("%s Store", bucket),
+		History:     1,
 		Storage:     jetstream.MemoryStorage,
 		Replicas:    2,
 	})
@@ -74,7 +74,7 @@ func NewWithLocks[T any, U protoMessage[T]](ctx context.Context, logger *zap.Log
 	s := &Store[T, U]{
 		logger: logger.Named("store").With(zap.String("bucket", bucket)),
 		bucket: bucket,
-		kv:     kv,
+		kv:     storeKV,
 		l:      l,
 
 		mu:   xsync.NewMapOf[string, *sync.Mutex](),
@@ -90,12 +90,12 @@ func NewWithLocks[T any, U protoMessage[T]](ctx context.Context, logger *zap.Log
 	return s, nil
 }
 
-func New[T any, U protoMessage[T]](ctx context.Context, logger *zap.Logger, js jetstream.JetStream, bucket string, opts ...Option[T, U]) (*Store[T, U], error) {
-	lBucket := fmt.Sprintf("%s_locks", bucket)
+func New[T any, U protoMessage[T]](ctx context.Context, logger *zap.Logger, js events.JSWrapper, bucket string, opts ...Option[T, U]) (*Store[T, U], error) {
+	lockBucket := fmt.Sprintf("%s_locks", bucket)
 
-	lkv, err := js.CreateOrUpdateKeyValue(ctx, jetstream.KeyValueConfig{
-		Bucket:      lBucket,
-		Description: natsutils.Description,
+	locksKV, err := js.CreateOrUpdateKeyValue(ctx, jetstream.KeyValueConfig{
+		Bucket:      lockBucket,
+		Description: fmt.Sprintf("%s Store Locks", bucket),
 		History:     3,
 		Storage:     jetstream.MemoryStorage,
 		TTL:         6 * locks.LockTimeout,
@@ -105,7 +105,7 @@ func New[T any, U protoMessage[T]](ctx context.Context, logger *zap.Logger, js j
 		return nil, err
 	}
 
-	l, err := locks.New(logger, lkv, lBucket, 5*locks.LockTimeout)
+	l, err := locks.New(logger, locksKV, lockBucket, 5*locks.LockTimeout)
 	if err != nil {
 		return nil, err
 	}
@@ -313,13 +313,12 @@ func (s *Store[T, U]) Delete(ctx context.Context, key string) error {
 		defer s.l.Unlock(ctx, key)
 	}
 
-	s.mu.Delete(key)
-
-	if err := s.kv.Delete(ctx, key); err != nil {
+	if err := s.kv.Purge(ctx, key); err != nil {
 		return err
 	}
 
 	s.data.Delete(key)
+	s.mu.Delete(key)
 
 	return nil
 }

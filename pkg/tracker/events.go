@@ -6,7 +6,6 @@ import (
 	"time"
 
 	"github.com/galexrt/fivenet/pkg/events"
-	natsutils "github.com/galexrt/fivenet/pkg/nats"
 	"github.com/nats-io/nats.go/jetstream"
 	"google.golang.org/protobuf/proto"
 )
@@ -19,10 +18,10 @@ const (
 	UsersUpdate events.Type = "users_update"
 )
 
-func registerStreams(ctx context.Context, js jetstream.JetStream) error {
+func registerStreams(ctx context.Context, js events.JSWrapper) error {
 	cfg := jetstream.StreamConfig{
 		Name:        StreamName,
-		Description: natsutils.Description,
+		Description: "User Tracker Events",
 		Retention:   jetstream.InterestPolicy,
 		Subjects:    []string{fmt.Sprintf("%s.>", BaseSubject)},
 		Discard:     jetstream.DiscardOld,
