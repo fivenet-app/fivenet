@@ -39,6 +39,7 @@ message StreamRequest {}
 message StreamResponse {
   int32 notification_count = 1;
   optional bool restart = 2;
+
   oneof data {
     resources.notifications.Notification notification = 3;
     TokenUpdate token = 4;

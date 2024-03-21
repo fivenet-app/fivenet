@@ -179,14 +179,13 @@ message TakeDispatchRequest {
 message TakeDispatchResponse {}
 
 message LatestState {
-  resources.centrum.Settings settings = 1;
-  repeated resources.users.UserShort disponents = 2;
-  bool is_disponent = 3;
-  resources.centrum.Unit own_unit = 4;
+  resources.timestamp.Timestamp server_time = 1;
+  resources.centrum.Settings settings = 2;
+  repeated resources.users.UserShort disponents = 3;
+  optional uint64 own_unit_id = 4 [jstype = JS_STRING];
   // Send the current units and dispatches
   repeated resources.centrum.Unit units = 5;
   repeated resources.centrum.Dispatch dispatches = 6;
-  resources.timestamp.Timestamp server_time = 7;
 }
 
 message StreamRequest {}
@@ -208,8 +207,6 @@ message StreamResponse {
     resources.centrum.Dispatch dispatch_updated = 10;
     resources.centrum.DispatchStatus dispatch_status = 11;
   }
-
-  optional bool restart = 12;
 }
 
 service CentrumService {

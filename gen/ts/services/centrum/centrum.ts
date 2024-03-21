@@ -12,8 +12,8 @@ import type { PartialMessage } from "@protobuf-ts/runtime";
 import { reflectionMergePartial } from "@protobuf-ts/runtime";
 import { MessageType } from "@protobuf-ts/runtime";
 import { Disponents } from "../../resources/centrum/general";
-import { Timestamp } from "../../resources/timestamp/timestamp";
 import { UserShort } from "../../resources/users/users";
+import { Timestamp } from "../../resources/timestamp/timestamp";
 import { TakeDispatchResp } from "../../resources/centrum/dispatches";
 import { DispatchStatus } from "../../resources/centrum/dispatches";
 import { Dispatch } from "../../resources/centrum/dispatches";
@@ -435,21 +435,21 @@ export interface TakeDispatchResponse {
  */
 export interface LatestState {
     /**
-     * @generated from protobuf field: resources.centrum.Settings settings = 1;
+     * @generated from protobuf field: resources.timestamp.Timestamp server_time = 1;
+     */
+    serverTime?: Timestamp;
+    /**
+     * @generated from protobuf field: resources.centrum.Settings settings = 2;
      */
     settings?: Settings;
     /**
-     * @generated from protobuf field: repeated resources.users.UserShort disponents = 2;
+     * @generated from protobuf field: repeated resources.users.UserShort disponents = 3;
      */
     disponents: UserShort[];
     /**
-     * @generated from protobuf field: bool is_disponent = 3;
+     * @generated from protobuf field: optional uint64 own_unit_id = 4 [jstype = JS_STRING];
      */
-    isDisponent: boolean;
-    /**
-     * @generated from protobuf field: resources.centrum.Unit own_unit = 4;
-     */
-    ownUnit?: Unit;
+    ownUnitId?: string;
     /**
      * Send the current units and dispatches
      *
@@ -460,10 +460,6 @@ export interface LatestState {
      * @generated from protobuf field: repeated resources.centrum.Dispatch dispatches = 6;
      */
     dispatches: Dispatch[];
-    /**
-     * @generated from protobuf field: resources.timestamp.Timestamp server_time = 7;
-     */
-    serverTime?: Timestamp;
 }
 /**
  * @generated from protobuf message services.centrum.StreamRequest
@@ -546,10 +542,6 @@ export interface StreamResponse {
     } | {
         oneofKind: undefined;
     };
-    /**
-     * @generated from protobuf field: optional bool restart = 12;
-     */
-    restart?: boolean;
 }
 // @generated message type with reflection information, may provide speed optimized methods
 class ListDispatchActivityRequest$Type extends MessageType<ListDispatchActivityRequest> {
@@ -2345,19 +2337,17 @@ export const TakeDispatchResponse = new TakeDispatchResponse$Type();
 class LatestState$Type extends MessageType<LatestState> {
     constructor() {
         super("services.centrum.LatestState", [
-            { no: 1, name: "settings", kind: "message", T: () => Settings },
-            { no: 2, name: "disponents", kind: "message", repeat: 1 /*RepeatType.PACKED*/, T: () => UserShort },
-            { no: 3, name: "is_disponent", kind: "scalar", T: 8 /*ScalarType.BOOL*/ },
-            { no: 4, name: "own_unit", kind: "message", T: () => Unit },
+            { no: 1, name: "server_time", kind: "message", T: () => Timestamp },
+            { no: 2, name: "settings", kind: "message", T: () => Settings },
+            { no: 3, name: "disponents", kind: "message", repeat: 1 /*RepeatType.PACKED*/, T: () => UserShort },
+            { no: 4, name: "own_unit_id", kind: "scalar", opt: true, T: 4 /*ScalarType.UINT64*/ },
             { no: 5, name: "units", kind: "message", repeat: 1 /*RepeatType.PACKED*/, T: () => Unit },
-            { no: 6, name: "dispatches", kind: "message", repeat: 1 /*RepeatType.PACKED*/, T: () => Dispatch },
-            { no: 7, name: "server_time", kind: "message", T: () => Timestamp }
+            { no: 6, name: "dispatches", kind: "message", repeat: 1 /*RepeatType.PACKED*/, T: () => Dispatch }
         ]);
     }
     create(value?: PartialMessage<LatestState>): LatestState {
         const message = globalThis.Object.create((this.messagePrototype!));
         message.disponents = [];
-        message.isDisponent = false;
         message.units = [];
         message.dispatches = [];
         if (value !== undefined)
@@ -2369,26 +2359,23 @@ class LatestState$Type extends MessageType<LatestState> {
         while (reader.pos < end) {
             let [fieldNo, wireType] = reader.tag();
             switch (fieldNo) {
-                case /* resources.centrum.Settings settings */ 1:
+                case /* resources.timestamp.Timestamp server_time */ 1:
+                    message.serverTime = Timestamp.internalBinaryRead(reader, reader.uint32(), options, message.serverTime);
+                    break;
+                case /* resources.centrum.Settings settings */ 2:
                     message.settings = Settings.internalBinaryRead(reader, reader.uint32(), options, message.settings);
                     break;
-                case /* repeated resources.users.UserShort disponents */ 2:
+                case /* repeated resources.users.UserShort disponents */ 3:
                     message.disponents.push(UserShort.internalBinaryRead(reader, reader.uint32(), options));
                     break;
-                case /* bool is_disponent */ 3:
-                    message.isDisponent = reader.bool();
-                    break;
-                case /* resources.centrum.Unit own_unit */ 4:
-                    message.ownUnit = Unit.internalBinaryRead(reader, reader.uint32(), options, message.ownUnit);
+                case /* optional uint64 own_unit_id = 4 [jstype = JS_STRING];*/ 4:
+                    message.ownUnitId = reader.uint64().toString();
                     break;
                 case /* repeated resources.centrum.Unit units */ 5:
                     message.units.push(Unit.internalBinaryRead(reader, reader.uint32(), options));
                     break;
                 case /* repeated resources.centrum.Dispatch dispatches */ 6:
                     message.dispatches.push(Dispatch.internalBinaryRead(reader, reader.uint32(), options));
-                    break;
-                case /* resources.timestamp.Timestamp server_time */ 7:
-                    message.serverTime = Timestamp.internalBinaryRead(reader, reader.uint32(), options, message.serverTime);
                     break;
                 default:
                     let u = options.readUnknownField;
@@ -2402,27 +2389,24 @@ class LatestState$Type extends MessageType<LatestState> {
         return message;
     }
     internalBinaryWrite(message: LatestState, writer: IBinaryWriter, options: BinaryWriteOptions): IBinaryWriter {
-        /* resources.centrum.Settings settings = 1; */
+        /* resources.timestamp.Timestamp server_time = 1; */
+        if (message.serverTime)
+            Timestamp.internalBinaryWrite(message.serverTime, writer.tag(1, WireType.LengthDelimited).fork(), options).join();
+        /* resources.centrum.Settings settings = 2; */
         if (message.settings)
-            Settings.internalBinaryWrite(message.settings, writer.tag(1, WireType.LengthDelimited).fork(), options).join();
-        /* repeated resources.users.UserShort disponents = 2; */
+            Settings.internalBinaryWrite(message.settings, writer.tag(2, WireType.LengthDelimited).fork(), options).join();
+        /* repeated resources.users.UserShort disponents = 3; */
         for (let i = 0; i < message.disponents.length; i++)
-            UserShort.internalBinaryWrite(message.disponents[i], writer.tag(2, WireType.LengthDelimited).fork(), options).join();
-        /* bool is_disponent = 3; */
-        if (message.isDisponent !== false)
-            writer.tag(3, WireType.Varint).bool(message.isDisponent);
-        /* resources.centrum.Unit own_unit = 4; */
-        if (message.ownUnit)
-            Unit.internalBinaryWrite(message.ownUnit, writer.tag(4, WireType.LengthDelimited).fork(), options).join();
+            UserShort.internalBinaryWrite(message.disponents[i], writer.tag(3, WireType.LengthDelimited).fork(), options).join();
+        /* optional uint64 own_unit_id = 4 [jstype = JS_STRING]; */
+        if (message.ownUnitId !== undefined)
+            writer.tag(4, WireType.Varint).uint64(message.ownUnitId);
         /* repeated resources.centrum.Unit units = 5; */
         for (let i = 0; i < message.units.length; i++)
             Unit.internalBinaryWrite(message.units[i], writer.tag(5, WireType.LengthDelimited).fork(), options).join();
         /* repeated resources.centrum.Dispatch dispatches = 6; */
         for (let i = 0; i < message.dispatches.length; i++)
             Dispatch.internalBinaryWrite(message.dispatches[i], writer.tag(6, WireType.LengthDelimited).fork(), options).join();
-        /* resources.timestamp.Timestamp server_time = 7; */
-        if (message.serverTime)
-            Timestamp.internalBinaryWrite(message.serverTime, writer.tag(7, WireType.LengthDelimited).fork(), options).join();
         let u = options.writeUnknownFields;
         if (u !== false)
             (u == true ? UnknownFieldHandler.onWrite : u)(this.typeName, message, writer);
@@ -2472,8 +2456,7 @@ class StreamResponse$Type extends MessageType<StreamResponse> {
             { no: 8, name: "dispatch_created", kind: "message", oneof: "change", T: () => Dispatch },
             { no: 9, name: "dispatch_deleted", kind: "message", oneof: "change", T: () => Dispatch },
             { no: 10, name: "dispatch_updated", kind: "message", oneof: "change", T: () => Dispatch },
-            { no: 11, name: "dispatch_status", kind: "message", oneof: "change", T: () => DispatchStatus },
-            { no: 12, name: "restart", kind: "scalar", opt: true, T: 8 /*ScalarType.BOOL*/ }
+            { no: 11, name: "dispatch_status", kind: "message", oneof: "change", T: () => DispatchStatus }
         ]);
     }
     create(value?: PartialMessage<StreamResponse>): StreamResponse {
@@ -2554,9 +2537,6 @@ class StreamResponse$Type extends MessageType<StreamResponse> {
                         dispatchStatus: DispatchStatus.internalBinaryRead(reader, reader.uint32(), options, (message.change as any).dispatchStatus)
                     };
                     break;
-                case /* optional bool restart */ 12:
-                    message.restart = reader.bool();
-                    break;
                 default:
                     let u = options.readUnknownField;
                     if (u === "throw")
@@ -2602,9 +2582,6 @@ class StreamResponse$Type extends MessageType<StreamResponse> {
         /* resources.centrum.DispatchStatus dispatch_status = 11; */
         if (message.change.oneofKind === "dispatchStatus")
             DispatchStatus.internalBinaryWrite(message.change.dispatchStatus, writer.tag(11, WireType.LengthDelimited).fork(), options).join();
-        /* optional bool restart = 12; */
-        if (message.restart !== undefined)
-            writer.tag(12, WireType.Varint).bool(message.restart);
         let u = options.writeUnknownFields;
         if (u !== false)
             (u == true ? UnknownFieldHandler.onWrite : u)(this.typeName, message, writer);

@@ -256,7 +256,7 @@ func (s *Server) Stream(req *StreamRequest, srv NotificatorService_StreamServer)
 	updateTicker := time.NewTicker(45 * time.Second)
 	defer updateTicker.Stop()
 
-	// Check user token validity
+	// Check user token validity and update if necessary
 	data, stop, err := s.checkUser(srv.Context(), currentUserInfo)
 	if err != nil {
 		return errswrap.NewError(err, ErrFailedStream)

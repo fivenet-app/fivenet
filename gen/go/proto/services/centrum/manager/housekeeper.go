@@ -791,15 +791,15 @@ func (s *Housekeeper) watchUserChanges() {
 				}
 
 				for _, userInfo := range event.Removed {
-					s.handleRemoveUserFromDisponents(ctx, userInfo.Info.Job, userInfo.UserId)
-					s.handleRemoveUserFromUnit(ctx, userInfo.Info.Job, userInfo.UserId)
+					s.handleRemovedUserDisponents(ctx, userInfo.Info.Job, userInfo.UserId)
+					s.handleRemovedUserUnit(ctx, userInfo.Info.Job, userInfo.UserId)
 				}
 			}()
 		}
 	}
 }
 
-func (s *Housekeeper) handleRemoveUserFromDisponents(ctx context.Context, job string, userId int32) {
+func (s *Housekeeper) handleRemovedUserDisponents(ctx context.Context, job string, userId int32) {
 	if s.CheckIfUserIsDisponent(ctx, job, userId) {
 		if err := s.DisponentSignOn(ctx, job, userId, false); err != nil {
 			s.logger.Error("failed to remove user from disponents", zap.Error(err))
@@ -808,7 +808,7 @@ func (s *Housekeeper) handleRemoveUserFromDisponents(ctx context.Context, job st
 	}
 }
 
-func (s *Housekeeper) handleRemoveUserFromUnit(ctx context.Context, job string, userId int32) bool {
+func (s *Housekeeper) handleRemovedUserUnit(ctx context.Context, job string, userId int32) bool {
 	unitId, ok := s.GetUserUnitID(ctx, userId)
 	if !ok {
 		// Nothing to do

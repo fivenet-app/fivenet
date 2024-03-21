@@ -4808,6 +4808,35 @@ func (m *LatestState) validate(all bool) error {
 	var errors []error
 
 	if all {
+		switch v := interface{}(m.GetServerTime()).(type) {
+		case interface{ ValidateAll() error }:
+			if err := v.ValidateAll(); err != nil {
+				errors = append(errors, LatestStateValidationError{
+					field:  "ServerTime",
+					reason: "embedded message failed validation",
+					cause:  err,
+				})
+			}
+		case interface{ Validate() error }:
+			if err := v.Validate(); err != nil {
+				errors = append(errors, LatestStateValidationError{
+					field:  "ServerTime",
+					reason: "embedded message failed validation",
+					cause:  err,
+				})
+			}
+		}
+	} else if v, ok := interface{}(m.GetServerTime()).(interface{ Validate() error }); ok {
+		if err := v.Validate(); err != nil {
+			return LatestStateValidationError{
+				field:  "ServerTime",
+				reason: "embedded message failed validation",
+				cause:  err,
+			}
+		}
+	}
+
+	if all {
 		switch v := interface{}(m.GetSettings()).(type) {
 		case interface{ ValidateAll() error }:
 			if err := v.ValidateAll(); err != nil {
@@ -4868,37 +4897,6 @@ func (m *LatestState) validate(all bool) error {
 			}
 		}
 
-	}
-
-	// no validation rules for IsDisponent
-
-	if all {
-		switch v := interface{}(m.GetOwnUnit()).(type) {
-		case interface{ ValidateAll() error }:
-			if err := v.ValidateAll(); err != nil {
-				errors = append(errors, LatestStateValidationError{
-					field:  "OwnUnit",
-					reason: "embedded message failed validation",
-					cause:  err,
-				})
-			}
-		case interface{ Validate() error }:
-			if err := v.Validate(); err != nil {
-				errors = append(errors, LatestStateValidationError{
-					field:  "OwnUnit",
-					reason: "embedded message failed validation",
-					cause:  err,
-				})
-			}
-		}
-	} else if v, ok := interface{}(m.GetOwnUnit()).(interface{ Validate() error }); ok {
-		if err := v.Validate(); err != nil {
-			return LatestStateValidationError{
-				field:  "OwnUnit",
-				reason: "embedded message failed validation",
-				cause:  err,
-			}
-		}
 	}
 
 	for idx, item := range m.GetUnits() {
@@ -4969,33 +4967,8 @@ func (m *LatestState) validate(all bool) error {
 
 	}
 
-	if all {
-		switch v := interface{}(m.GetServerTime()).(type) {
-		case interface{ ValidateAll() error }:
-			if err := v.ValidateAll(); err != nil {
-				errors = append(errors, LatestStateValidationError{
-					field:  "ServerTime",
-					reason: "embedded message failed validation",
-					cause:  err,
-				})
-			}
-		case interface{ Validate() error }:
-			if err := v.Validate(); err != nil {
-				errors = append(errors, LatestStateValidationError{
-					field:  "ServerTime",
-					reason: "embedded message failed validation",
-					cause:  err,
-				})
-			}
-		}
-	} else if v, ok := interface{}(m.GetServerTime()).(interface{ Validate() error }); ok {
-		if err := v.Validate(); err != nil {
-			return LatestStateValidationError{
-				field:  "ServerTime",
-				reason: "embedded message failed validation",
-				cause:  err,
-			}
-		}
+	if m.OwnUnitId != nil {
+		// no validation rules for OwnUnitId
 	}
 
 	if len(errors) > 0 {
@@ -5651,10 +5624,6 @@ func (m *StreamResponse) validate(all bool) error {
 
 	default:
 		_ = v // ensures v is used
-	}
-
-	if m.Restart != nil {
-		// no validation rules for Restart
 	}
 
 	if len(errors) > 0 {
