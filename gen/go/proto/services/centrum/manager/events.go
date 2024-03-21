@@ -42,6 +42,12 @@ func (s *Manager) watchTopicGeneralFunc(ctx context.Context) jetstream.MessageHa
 		}
 
 		job, _, tType := eventscentrum.SplitSubject(msg.Subject())
+		if job == "" || tType == "" {
+			if err := msg.TermWithReason("invalid centrum general subject"); err != nil {
+				s.logger.Error("invalid centrum general subject", zap.String("subject", msg.Subject()), zap.Error(err))
+			}
+			return
+		}
 
 		meta, err := msg.Metadata()
 		if err != nil {

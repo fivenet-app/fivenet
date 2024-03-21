@@ -12,8 +12,4 @@ var (
 	tDispatch        = table.FivenetCentrumDispatches.AS("dispatch")
 	tDispatchStatus  = table.FivenetCentrumDispatchesStatus.AS("dispatchstatus")
 	tDispatchUnit    = table.FivenetCentrumDispatchesAsgmts.AS("dispatchassignment")
-
-	// Converter
-	tGksPhoneJMsg     = table.GksphoneJobMessage
-	tGksPhoneSettings = table.GksphoneSettings
 )

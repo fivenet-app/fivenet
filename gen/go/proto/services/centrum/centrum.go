@@ -176,11 +176,18 @@ func (s *Server) handleAppConfigUpdate(ctx context.Context, cfg *appconfig.Cfg) 
 
 func (s *Server) watchForChanges(msg jetstream.Msg) {
 	startTime := time.Now()
+
 	if err := msg.Ack(); err != nil {
 		s.logger.Error("failed to ack message", zap.Error(err))
 	}
 
 	job, topic, tType := eventscentrum.SplitSubject(msg.Subject())
+	if job == "" || topic == "" || tType == "" {
+		if err := msg.TermWithReason("invalid centrum subject"); err != nil {
+			s.logger.Error("invalid centrum subject", zap.String("subject", msg.Subject()), zap.Error(err))
+		}
+		return
+	}
 
 	broker, ok := s.getJobBroker(job)
 	if !ok {
