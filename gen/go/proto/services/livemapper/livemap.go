@@ -83,7 +83,6 @@ type brokerEvent struct {
 func NewServer(p Params) *Server {
 	ctx, cancel := context.WithCancel(context.Background())
 
-	broker := broker.New[*brokerEvent]()
 	s := &Server{
 		logger: p.Logger,
 
@@ -98,11 +97,12 @@ func NewServer(p Params) *Server {
 
 		markersCache: xsync.NewMapOf[string, []*livemap.MarkerMarker](),
 
-		broker: broker,
+		broker: broker.New[*brokerEvent](),
 	}
 
+	brokerCtx, brokerCancel := context.WithCancel(context.Background())
 	p.LC.Append(fx.StartHook(func(c context.Context) error {
-		go broker.Start(ctx)
+		go s.broker.Start(brokerCtx)
 
 		if err := s.registerEvents(c, ctx); err != nil {
 			return err
@@ -118,6 +118,9 @@ func NewServer(p Params) *Server {
 		cancel()
 
 		s.jsCons.Stop()
+
+		s.broker.Stop()
+		brokerCancel()
 
 		return nil
 	}))

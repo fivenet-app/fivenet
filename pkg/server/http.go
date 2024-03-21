@@ -3,6 +3,7 @@ package server
 import (
 	"context"
 	"database/sql"
+	"io"
 	"net"
 	"net/http"
 	"strings"
@@ -14,7 +15,6 @@ import (
 	"github.com/gin-contrib/sessions/cookie"
 	"github.com/gin-contrib/static"
 	ginzap "github.com/gin-contrib/zap"
-	"github.com/gin-gonic/contrib/gzip"
 	"github.com/gin-gonic/gin"
 	"go.opentelemetry.io/contrib/instrumentation/github.com/gin-gonic/gin/otelgin"
 	tracesdk "go.opentelemetry.io/otel/sdk/trace"
@@ -140,9 +140,6 @@ func NewEngine(p EngineParams) *gin.Engine {
 	})
 	e.Use(sessions.SessionsMany([]string{"fivenet_oauth2_state"}, sessStore))
 
-	// GZIP
-	e.Use(gzip.Gzip(gzip.DefaultCompression))
-
 	// Tracing
 	e.Use(otelgin.Middleware("fivenet", otelgin.WithTracerProvider(p.TP)))
 	e.Use(InjectToHeaders(p.TP))
@@ -156,8 +153,23 @@ func NewEngine(p EngineParams) *gin.Engine {
 	}
 
 	// Setup nuxt generated files serving
-	fs := static.LocalFile(".output/public/", false)
-	fileServer := http.StripPrefix("/", http.FileServer(fs))
+	frontendFS := static.LocalFile(".output/public/", true)
+	fileServer := http.FileServer(frontendFS)
+
+	// Register output dir for assets and other static files
+	e.Use(static.Serve("/", frontendFS))
+
+	// Setup not found handler
+	notFoundPage := []byte("404 page not found")
+	notFoundPageFile, err := frontendFS.Open("404.html")
+	if err != nil {
+		p.Logger.Error("failed to open 404.html file, falling back to 404 text page", zap.Error(err))
+	} else {
+		notFoundPage, err = io.ReadAll(notFoundPageFile)
+		if err != nil {
+			p.Logger.Error("failed to read 404.html file contents", zap.Error(err))
+		}
+	}
 
 	e.NoRoute(func(c *gin.Context) {
 		requestPath := c.Request.URL.Path
@@ -165,6 +177,7 @@ func NewEngine(p EngineParams) *gin.Engine {
 			return
 		}
 
+		// If the target is a directory (e.g., `/livemap`), load root `index.html``
 		if strings.HasSuffix(requestPath, "/") || !strings.Contains(requestPath, ".") {
 			c.Request.URL.Path = "/"
 			fileServer.ServeHTTP(c.Writer, c.Request)
@@ -172,12 +185,14 @@ func NewEngine(p EngineParams) *gin.Engine {
 			return
 		}
 
-		fileServer.ServeHTTP(c.Writer, c.Request)
+		// Check if file exists
+		if frontendFS.Exists("/", c.Request.URL.Path) {
+			fileServer.ServeHTTP(c.Writer, c.Request)
+		} else {
+			c.Data(http.StatusNotFound, "text/html; charset=utf-8", notFoundPage)
+		}
 		c.Abort()
 	})
-
-	// Register output dir for assets and other static files
-	e.Use(static.Serve("/", fs))
 
 	return e
 }

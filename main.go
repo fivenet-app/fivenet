@@ -2,6 +2,7 @@ package main
 
 import (
 	"os"
+	"runtime"
 	"time"
 
 	"github.com/alecthomas/kong"
@@ -184,6 +185,10 @@ func getFxBaseOpts(startTimeout time.Duration) []fx.Option {
 }
 
 func main() {
+	// https://github.com/DataDog/go-profiler-notes/blob/main/block.md#overhead
+	// Thanks, to the authors of this document!
+	runtime.SetBlockProfileRate(20000)
+
 	ctx := kong.Parse(&cli)
 
 	// Cli flag overrides env var

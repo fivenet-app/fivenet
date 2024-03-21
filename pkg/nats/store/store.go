@@ -373,7 +373,7 @@ func (s *Store[T, U]) Start(ctx context.Context) error {
 		for {
 			select {
 			case <-ctx.Done():
-				if err := watcher.Stop(); err != nil {
+				if err := watcher.Stop(); err != nil && !errors.Is(err, jetstream.ErrConsumerNotFound) {
 					s.logger.Error("error while stopping watcher", zap.Error(err))
 				}
 				return

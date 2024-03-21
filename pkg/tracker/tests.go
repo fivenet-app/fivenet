@@ -25,26 +25,28 @@ type TestParams struct {
 }
 
 func NewForTests(p TestParams) ITracker {
-	broker := broker.New[*livemap.UsersUpdateEvent]()
+	t := &TestTracker{
+		usersCache: xsync.NewMapOf[string, *xsync.MapOf[int32, *livemap.UserMarker]](),
+		usersIDs:   xsync.NewMapOf[int32, *livemap.UserMarker](),
 
+		broker: broker.New[*livemap.UsersUpdateEvent](),
+	}
+
+	brokerCtx, brokerCancel := context.WithCancel(context.Background())
 	p.LC.Append(fx.StartHook(func(ctx context.Context) error {
-		go broker.Start(context.Background())
+		go t.broker.Start(brokerCtx)
 
 		return nil
 	}))
 
 	p.LC.Append(fx.StopHook(func(ctx context.Context) error {
-		broker.Stop()
+		t.broker.Stop()
+		brokerCancel()
 
 		return nil
 	}))
 
-	return &TestTracker{
-		usersCache: xsync.NewMapOf[string, *xsync.MapOf[int32, *livemap.UserMarker]](),
-		usersIDs:   xsync.NewMapOf[int32, *livemap.UserMarker](),
-
-		broker: broker,
-	}
+	return t
 }
 
 func (s *TestTracker) GetUsersByJob(job string) (*xsync.MapOf[int32, *livemap.UserMarker], bool) {

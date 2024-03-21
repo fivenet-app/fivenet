@@ -54,7 +54,9 @@ func New(p Params) (res Result, err error) {
 	nc, err := nats.Connect(p.Config.NATS.URL,
 		nats.Name("FiveNet"),
 		nats.DisconnectErrHandler(func(nc *nats.Conn, err error) {
-			p.Logger.Error("nats: disconnected", zap.Error(err))
+			if !nc.IsClosed() {
+				p.Logger.Error("nats: disconnected", zap.Error(err))
+			}
 		}),
 		nats.ReconnectHandler(func(nc *nats.Conn) {
 			p.Logger.Info("nats: reconnected")

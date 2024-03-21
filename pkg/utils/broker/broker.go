@@ -33,12 +33,15 @@ func (b *Broker[T]) Start(ctx context.Context) {
 				close(msgCh)
 			}
 			return
+
 		case msgCh := <-b.subCh:
 			subs[msgCh] = struct{}{}
 			b.subs.Add(1)
+
 		case msgCh := <-b.unsubCh:
 			delete(subs, msgCh)
 			b.subs.Add(-1)
+
 		case msg := <-b.publishCh:
 			for msgCh := range subs {
 				// msgCh is buffered, use non-blocking send to protect the broker:
@@ -47,6 +50,7 @@ func (b *Broker[T]) Start(ctx context.Context) {
 				default:
 				}
 			}
+
 		case <-ctx.Done():
 			b.Stop()
 			return
@@ -59,7 +63,7 @@ func (b *Broker[T]) Stop() {
 }
 
 func (b *Broker[T]) Subscribe() chan T {
-	msgCh := make(chan T, 5)
+	msgCh := make(chan T, 7)
 	b.subCh <- msgCh
 	return msgCh
 }

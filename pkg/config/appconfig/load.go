@@ -64,8 +64,6 @@ type Params struct {
 }
 
 func New(p Params) (IConfig, error) {
-	ctx, cancel := context.WithCancel(context.Background())
-
 	cfg := &Config{
 		logger: p.Logger,
 		db:     p.DB,
@@ -76,8 +74,9 @@ func New(p Params) (IConfig, error) {
 		broker: broker.New[*Cfg](),
 	}
 
+	brokerCtx, brokerCancel := context.WithCancel(context.Background())
 	p.LC.Append(fx.StartHook(func(c context.Context) error {
-		go cfg.broker.Start(ctx)
+		go cfg.broker.Start(brokerCtx)
 
 		if _, err := cfg.updateConfigFromDB(c); err != nil {
 			return err
@@ -87,9 +86,10 @@ func New(p Params) (IConfig, error) {
 	}))
 
 	p.LC.Append(fx.StopHook(func(ctx context.Context) error {
-		cancel()
-
 		cfg.jsCons.Stop()
+
+		cfg.broker.Stop()
+		brokerCancel()
 
 		return nil
 	}))

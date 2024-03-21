@@ -16,7 +16,6 @@ require (
 	github.com/gin-contrib/sessions v0.0.5
 	github.com/gin-contrib/static v1.1.0
 	github.com/gin-contrib/zap v1.1.0
-	github.com/gin-gonic/contrib v0.0.0-20221130124618-7e01895a63f2
 	github.com/gin-gonic/gin v1.9.1
 	github.com/go-jet/jet/v2 v2.11.0
 	github.com/go-sql-driver/mysql v1.8.0
