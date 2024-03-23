@@ -100,9 +100,8 @@ func NewServer(p Params) *Server {
 		broker: broker.New[*brokerEvent](),
 	}
 
-	brokerCtx, brokerCancel := context.WithCancel(context.Background())
 	p.LC.Append(fx.StartHook(func(c context.Context) error {
-		go s.broker.Start(brokerCtx)
+		go s.broker.Start(ctx)
 
 		if err := s.registerEvents(c, ctx); err != nil {
 			return err
@@ -118,9 +117,6 @@ func NewServer(p Params) *Server {
 		cancel()
 
 		s.jsCons.Stop()
-
-		s.broker.Stop()
-		brokerCancel()
 
 		return nil
 	}))

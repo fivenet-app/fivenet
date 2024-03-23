@@ -38,16 +38,15 @@ func NewTest(p TestParams) (IConfig, error) {
 
 	cfg.Set(c)
 
-	brokerCtx, brokerCancel := context.WithCancel(context.Background())
-	p.LC.Append(fx.StartHook(func(ctx context.Context) error {
-		go cfg.broker.Start(brokerCtx)
+	ctx, cancel := context.WithCancel(context.Background())
+	p.LC.Append(fx.StartHook(func(_ context.Context) error {
+		go cfg.broker.Start(ctx)
 
 		return nil
 	}))
 
 	p.LC.Append(fx.StartHook(func(ctx context.Context) error {
-		cfg.broker.Stop()
-		brokerCancel()
+		cancel()
 
 		return nil
 	}))

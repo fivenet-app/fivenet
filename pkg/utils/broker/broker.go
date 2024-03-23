@@ -9,7 +9,6 @@ import (
 
 type Broker[T any] struct {
 	subs      atomic.Int64
-	stopCh    chan struct{}
 	publishCh chan T
 	subCh     chan chan T
 	unsubCh   chan chan T
@@ -17,7 +16,6 @@ type Broker[T any] struct {
 
 func New[T any]() *Broker[T] {
 	return &Broker[T]{
-		stopCh:    make(chan struct{}),
 		publishCh: make(chan T, 1),
 		subCh:     make(chan chan T, 1),
 		unsubCh:   make(chan chan T, 1),
@@ -28,7 +26,7 @@ func (b *Broker[T]) Start(ctx context.Context) {
 	subs := map[chan T]struct{}{}
 	for {
 		select {
-		case <-b.stopCh:
+		case <-ctx.Done():
 			for msgCh := range subs {
 				close(msgCh)
 			}
@@ -50,16 +48,8 @@ func (b *Broker[T]) Start(ctx context.Context) {
 				default:
 				}
 			}
-
-		case <-ctx.Done():
-			b.Stop()
-			return
 		}
 	}
-}
-
-func (b *Broker[T]) Stop() {
-	close(b.stopCh)
 }
 
 func (b *Broker[T]) Subscribe() chan T {

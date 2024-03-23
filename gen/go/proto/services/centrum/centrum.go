@@ -92,9 +92,8 @@ func NewServer(p Params) (*Server, error) {
 		state: p.Manager,
 	}
 
-	brokerCtx, brokerCancel := context.WithCancel(context.Background())
 	p.LC.Append(fx.StartHook(func(c context.Context) error {
-		s.handleAppConfigUpdate(brokerCtx, p.AppConfig.Get())
+		s.handleAppConfigUpdate(ctx, p.AppConfig.Get())
 
 		if err := s.registerSubscriptions(c); err != nil {
 			return fmt.Errorf("failed to subscribe to events: %w", err)
@@ -110,7 +109,7 @@ func NewServer(p Params) (*Server, error) {
 					return
 
 				case cfg := <-configUpdateCh:
-					s.handleAppConfigUpdate(brokerCtx, cfg)
+					s.handleAppConfigUpdate(ctx, cfg)
 				}
 			}
 		}()
@@ -124,11 +123,6 @@ func NewServer(p Params) (*Server, error) {
 		s.wg.Wait()
 
 		s.jsCons.Stop()
-
-		for _, broker := range s.brokers {
-			broker.Stop()
-		}
-		brokerCancel()
 
 		return nil
 	}))

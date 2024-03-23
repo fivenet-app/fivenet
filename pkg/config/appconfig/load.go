@@ -74,9 +74,9 @@ func New(p Params) (IConfig, error) {
 		broker: broker.New[*Cfg](),
 	}
 
-	brokerCtx, brokerCancel := context.WithCancel(context.Background())
+	ctx, cancel := context.WithCancel(context.Background())
 	p.LC.Append(fx.StartHook(func(c context.Context) error {
-		go cfg.broker.Start(brokerCtx)
+		go cfg.broker.Start(ctx)
 
 		if _, err := cfg.updateConfigFromDB(c); err != nil {
 			return err
@@ -88,8 +88,7 @@ func New(p Params) (IConfig, error) {
 	p.LC.Append(fx.StopHook(func(ctx context.Context) error {
 		cfg.jsCons.Stop()
 
-		cfg.broker.Stop()
-		brokerCancel()
+		cancel()
 
 		return nil
 	}))

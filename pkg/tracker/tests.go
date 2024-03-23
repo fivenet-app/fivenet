@@ -40,7 +40,6 @@ func NewForTests(p TestParams) ITracker {
 	}))
 
 	p.LC.Append(fx.StopHook(func(ctx context.Context) error {
-		t.broker.Stop()
 		brokerCancel()
 
 		return nil

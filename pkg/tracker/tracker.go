@@ -66,13 +66,12 @@ func New(p Params) (ITracker, error) {
 		broker: broker.New[*livemap.UsersUpdateEvent](),
 	}
 
-	brokerCtx, brokerCancel := context.WithCancel(context.Background())
 	p.LC.Append(fx.StartHook(func(c context.Context) error {
 		if err := registerStreams(c, p.JS); err != nil {
 			return err
 		}
 
-		go t.broker.Start(brokerCtx)
+		go t.broker.Start(ctx)
 
 		userIDs, err := store.NewWithLocks[livemap.UserMarker, *livemap.UserMarker](ctx, p.Logger, p.JS, "tracker", nil,
 			func(s *store.Store[livemap.UserMarker, *livemap.UserMarker]) error {
@@ -124,9 +123,6 @@ func New(p Params) (ITracker, error) {
 		cancel()
 
 		t.jsCons.Stop()
-
-		t.broker.Stop()
-		brokerCancel()
 
 		return nil
 	}))
