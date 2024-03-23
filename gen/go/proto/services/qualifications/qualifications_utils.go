@@ -61,7 +61,6 @@ func (s *Server) listQualificationsQuery(where jet.BoolExpression, onlyColumns j
 			tQuali.Abbreviation,
 			tQuali.Title,
 			tQuali.Description,
-			tQuali.Content,
 			tQuali.CreatorID,
 			tCreator.ID,
 			tCreator.Identifier,

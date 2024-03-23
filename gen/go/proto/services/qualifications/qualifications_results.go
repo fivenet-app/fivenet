@@ -140,7 +140,6 @@ func (s *Server) ListQualificationsResults(ctx context.Context, req *ListQualifi
 			tQuali.Abbreviation,
 			tQuali.Title,
 			tQuali.Description,
-			tQuali.Content,
 			tQuali.CreatorJob,
 			tQuali.CreatorID,
 		).
