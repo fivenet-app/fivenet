@@ -109,6 +109,7 @@ func (s *Server) getJobBroker(job string) (*broker.Broker[*StreamResponse], bool
 }
 
 func (s *Server) stream(srv CentrumService_StreamServer, job string, userId int32) error {
+	s.logger.Debug("getting centrum job broker", zap.String("job", job), zap.Int32("user_id", userId))
 	broker, ok := s.getJobBroker(job)
 	if !ok {
 		s.logger.Warn("no job broker found", zap.String("job", job), zap.Int32("user_id", userId))
@@ -116,8 +117,10 @@ func (s *Server) stream(srv CentrumService_StreamServer, job string, userId int3
 		return nil
 	}
 
+	s.logger.Debug("subscribing to centrum job broker", zap.String("job", job), zap.Int32("user_id", userId))
 	stream := broker.Subscribe()
 	defer broker.Unsubscribe(stream)
+	s.logger.Debug("starting broker watch", zap.String("job", job), zap.Int32("user_id", userId))
 
 	// Watch for events from message queue
 	for {
