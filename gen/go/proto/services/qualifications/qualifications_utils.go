@@ -30,7 +30,10 @@ func (s *Server) listQualificationsQuery(where jet.BoolExpression, onlyColumns j
 			jet.AND(
 				tQuali.DeletedAt.IS_NULL(),
 				jet.OR(
-					tQuali.CreatorID.EQ(jet.Int32(userInfo.UserId)),
+					jet.AND(
+						tQuali.CreatorID.EQ(jet.Int32(userInfo.UserId)),
+						tQuali.CreatorJob.EQ(jet.String(userInfo.Job)),
+					),
 					jet.AND(
 						tQJobAccess.Access.IS_NOT_NULL(),
 						tQJobAccess.Access.NOT_EQ(jet.Int32(int32(qualifications.AccessLevel_ACCESS_LEVEL_BLOCKED))),
@@ -318,8 +321,10 @@ func (s *Server) checkIfUserHasAccessToQualiIDs(ctx context.Context, userInfo *u
 		tQuali.ID.IN(ids...),
 		tQuali.DeletedAt.IS_NULL(),
 		jet.OR(
-			tQuali.CreatorID.EQ(jet.Int32(userInfo.UserId)),
-			tQuali.CreatorJob.EQ(jet.String(userInfo.Job)),
+			jet.AND(
+				tQuali.CreatorID.EQ(jet.Int32(userInfo.UserId)),
+				tQuali.CreatorJob.EQ(jet.String(userInfo.Job)),
+			),
 			jet.AND(
 				tQJobAccess.Access.IS_NOT_NULL(),
 				tQJobAccess.Access.GT_EQ(jet.Int32(int32(access))),
@@ -333,7 +338,7 @@ func (s *Server) checkIfUserHasAccessToQualiIDs(ctx context.Context, userInfo *u
 		).
 		FROM(
 			tQuali.
-				INNER_JOIN(tQJobAccess,
+				LEFT_JOIN(tQJobAccess,
 					tQJobAccess.QualificationID.EQ(tQuali.ID).
 						AND(tQJobAccess.Job.EQ(jet.String(userInfo.Job))).
 						AND(tQJobAccess.MinimumGrade.LT_EQ(jet.Int32(userInfo.JobGrade))),

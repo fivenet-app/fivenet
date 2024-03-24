@@ -164,11 +164,13 @@ func (s *Server) PostComment(ctx context.Context, req *PostCommentRequest) (*Pos
 			tDComments.DocumentID,
 			tDComments.Comment,
 			tDComments.CreatorID,
+			tDComments.CreatorJob,
 		).
 		VALUES(
 			req.Comment.DocumentId,
 			req.Comment.Comment,
 			userInfo.UserId,
+			userInfo.Job,
 		)
 
 	result, err := stmt.ExecContext(ctx, s.db)
@@ -271,20 +273,21 @@ func (s *Server) EditComment(ctx context.Context, req *EditCommentRequest) (*Edi
 func (s *Server) getComment(ctx context.Context, id uint64) (*documents.Comment, error) {
 	comment := &documents.Comment{}
 
-	dComments := tDComments.AS("comment")
-	stmt := dComments.
+	tDComments := tDComments.AS("comment")
+	stmt := tDComments.
 		SELECT(
-			dComments.ID,
-			dComments.CreatedAt,
-			dComments.UpdatedAt,
-			dComments.Comment,
-			dComments.CreatorID,
+			tDComments.ID,
+			tDComments.CreatedAt,
+			tDComments.UpdatedAt,
+			tDComments.Comment,
+			tDComments.CreatorID,
+			tDComments.CreatorJob,
 		).
 		FROM(
-			dComments,
+			tDComments,
 		).
 		WHERE(
-			dComments.ID.EQ(jet.Uint64(id)),
+			tDComments.ID.EQ(jet.Uint64(id)),
 		).
 		LIMIT(1)
 
@@ -313,6 +316,9 @@ func (s *Server) DeleteComment(ctx context.Context, req *DeleteCommentRequest) (
 	if err != nil {
 		return nil, errswrap.NewError(err, errorsdocstore.ErrFailedQuery)
 	}
+	if comment.CreatorJob == "" {
+		comment.CreatorJob = userInfo.Job
+	}
 
 	check, err := s.checkIfUserHasAccessToDoc(ctx, comment.DocumentId, userInfo, documents.AccessLevel_ACCESS_LEVEL_COMMENT)
 	if err != nil {
@@ -331,7 +337,7 @@ func (s *Server) DeleteComment(ctx context.Context, req *DeleteCommentRequest) (
 	if fieldsAttr != nil {
 		fields = fieldsAttr.([]string)
 	}
-	if !s.checkIfHasAccess(fields, userInfo, comment.Creator.Job, comment.Creator) {
+	if !s.checkIfHasAccess(fields, userInfo, comment.CreatorJob, comment.Creator) {
 		return nil, errorsdocstore.ErrCommentDeleteDenied
 	}
 

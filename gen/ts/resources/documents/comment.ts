@@ -50,6 +50,10 @@ export interface Comment {
      * @generated from protobuf field: optional resources.users.UserShort creator = 8;
      */
     creator?: UserShort; // @gotags: alias:"creator"
+    /**
+     * @generated from protobuf field: string creator_job = 9;
+     */
+    creatorJob: string;
 }
 // @generated message type with reflection information, may provide speed optimized methods
 class Comment$Type extends MessageType<Comment> {
@@ -62,7 +66,8 @@ class Comment$Type extends MessageType<Comment> {
             { no: 5, name: "document_id", kind: "scalar", T: 4 /*ScalarType.UINT64*/ },
             { no: 6, name: "comment", kind: "scalar", T: 9 /*ScalarType.STRING*/, options: { "validate.rules": { string: { minLen: "3", maxBytes: "2048" } } } },
             { no: 7, name: "creator_id", kind: "scalar", opt: true, T: 5 /*ScalarType.INT32*/ },
-            { no: 8, name: "creator", kind: "message", T: () => UserShort }
+            { no: 8, name: "creator", kind: "message", T: () => UserShort },
+            { no: 9, name: "creator_job", kind: "scalar", T: 9 /*ScalarType.STRING*/, options: { "validate.rules": { string: { maxLen: "20" } } } }
         ]);
     }
     create(value?: PartialMessage<Comment>): Comment {
@@ -70,6 +75,7 @@ class Comment$Type extends MessageType<Comment> {
         message.id = "0";
         message.documentId = "0";
         message.comment = "";
+        message.creatorJob = "";
         if (value !== undefined)
             reflectionMergePartial<Comment>(this, message, value);
         return message;
@@ -102,6 +108,9 @@ class Comment$Type extends MessageType<Comment> {
                     break;
                 case /* optional resources.users.UserShort creator */ 8:
                     message.creator = UserShort.internalBinaryRead(reader, reader.uint32(), options, message.creator);
+                    break;
+                case /* string creator_job */ 9:
+                    message.creatorJob = reader.string();
                     break;
                 default:
                     let u = options.readUnknownField;
@@ -139,6 +148,9 @@ class Comment$Type extends MessageType<Comment> {
         /* optional resources.users.UserShort creator = 8; */
         if (message.creator)
             UserShort.internalBinaryWrite(message.creator, writer.tag(8, WireType.LengthDelimited).fork(), options).join();
+        /* string creator_job = 9; */
+        if (message.creatorJob !== "")
+            writer.tag(9, WireType.LengthDelimited).string(message.creatorJob);
         let u = options.writeUnknownFields;
         if (u !== false)
             (u == true ? UnknownFieldHandler.onWrite : u)(this.typeName, message, writer);

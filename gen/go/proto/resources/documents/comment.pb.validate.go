@@ -82,6 +82,17 @@ func (m *Comment) validate(all bool) error {
 		errors = append(errors, err)
 	}
 
+	if utf8.RuneCountInString(m.GetCreatorJob()) > 20 {
+		err := CommentValidationError{
+			field:  "CreatorJob",
+			reason: "value length must be at most 20 runes",
+		}
+		if !all {
+			return err
+		}
+		errors = append(errors, err)
+	}
+
 	if m.CreatedAt != nil {
 
 		if all {

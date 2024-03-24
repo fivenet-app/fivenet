@@ -92,6 +92,7 @@ CREATE TABLE IF NOT EXISTS `fivenet_documents_comments` (
   `document_id` bigint(20) unsigned NOT NULL,
   `comment` longtext,
   `creator_id` int(11) NOT NULL,
+  `creator_job` varchar(50) NOT NULL,
   PRIMARY KEY (`id`),
   KEY `idx_fivenet_documents_comments_document_id` (`document_id`),
   KEY `idx_fivenet_documents_comments_creator_id` (`creator_id`),

@@ -21,4 +21,5 @@ message Comment {
   }];
   optional int32 creator_id = 7;
   optional resources.users.UserShort creator = 8; // @gotags: alias:"creator"
+  string creator_job = 9 [(validate.rules).string.max_len = 20];
 }

@@ -24,6 +24,7 @@ type fivenetDocumentsCommentsTable struct {
 	DocumentID mysql.ColumnInteger
 	Comment    mysql.ColumnString
 	CreatorID  mysql.ColumnInteger
+	CreatorJob mysql.ColumnString
 
 	AllColumns     mysql.ColumnList
 	MutableColumns mysql.ColumnList
@@ -71,8 +72,9 @@ func newFivenetDocumentsCommentsTableImpl(schemaName, tableName, alias string) f
 		DocumentIDColumn = mysql.IntegerColumn("document_id")
 		CommentColumn    = mysql.StringColumn("comment")
 		CreatorIDColumn  = mysql.IntegerColumn("creator_id")
-		allColumns       = mysql.ColumnList{IDColumn, CreatedAtColumn, UpdatedAtColumn, DeletedAtColumn, DocumentIDColumn, CommentColumn, CreatorIDColumn}
-		mutableColumns   = mysql.ColumnList{CreatedAtColumn, UpdatedAtColumn, DeletedAtColumn, DocumentIDColumn, CommentColumn, CreatorIDColumn}
+		CreatorJobColumn = mysql.StringColumn("creator_job")
+		allColumns       = mysql.ColumnList{IDColumn, CreatedAtColumn, UpdatedAtColumn, DeletedAtColumn, DocumentIDColumn, CommentColumn, CreatorIDColumn, CreatorJobColumn}
+		mutableColumns   = mysql.ColumnList{CreatedAtColumn, UpdatedAtColumn, DeletedAtColumn, DocumentIDColumn, CommentColumn, CreatorIDColumn, CreatorJobColumn}
 	)
 
 	return fivenetDocumentsCommentsTable{
@@ -86,6 +88,7 @@ func newFivenetDocumentsCommentsTableImpl(schemaName, tableName, alias string) f
 		DocumentID: DocumentIDColumn,
 		Comment:    CommentColumn,
 		CreatorID:  CreatorIDColumn,
+		CreatorJob: CreatorJobColumn,
 
 		AllColumns:     allColumns,
 		MutableColumns: mutableColumns,

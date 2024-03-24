@@ -51,7 +51,10 @@ func (s *Server) ListQualificationsResults(ctx context.Context, req *ListQualifi
 		condition = condition.AND(jet.AND(
 			tQuali.DeletedAt.IS_NULL(),
 			jet.OR(
-				tQuali.CreatorID.EQ(jet.Int32(userInfo.UserId)),
+				jet.AND(
+					tQuali.CreatorID.EQ(jet.Int32(userInfo.UserId)),
+					tQuali.CreatorJob.EQ(jet.String(userInfo.Job)),
+				),
 				jet.AND(
 					tQJobAccess.Access.IS_NOT_NULL(),
 					jet.OR(

@@ -19,4 +19,5 @@ type FivenetDocumentsComments struct {
 	DocumentID uint64     `json:"document_id"`
 	Comment    *string    `json:"comment"`
 	CreatorID  int32      `json:"creator_id"`
+	CreatorJob string     `json:"creator_job"`
 }
