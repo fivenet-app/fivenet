@@ -363,6 +363,7 @@ async function createOrUpdateTemplate(values: FormData, templateId?: string): Pr
             contentAccess: reqAccess,
             jobAccess: jobAccesses,
             category: selectedCategory.value,
+            creatorJob: '',
         },
     };
 

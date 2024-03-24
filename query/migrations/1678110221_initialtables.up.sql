@@ -46,14 +46,12 @@ CREATE TABLE IF NOT EXISTS `fivenet_documents_templates` (
   `state` varchar(24) NOT NULL,
   `access` longtext DEFAULT NULL,
   `schema` longtext DEFAULT NULL,
-  `creator_id` int(11) DEFAULT NULL,
   `creator_job` varchar(50) NOT NULL,
   PRIMARY KEY (`id`),
   KEY `idx_fivenet_documents_templates_deleted_at` (`deleted_at`),
   KEY `idx_fivenet_documents_templates_weight` (`weight`),
   KEY `idx_fivenet_documents_templates_category_id` (`category_id`),
-  CONSTRAINT `fk_fivenet_documents_templates_categories` FOREIGN KEY (`category_id`) REFERENCES `fivenet_documents_categories` (`id`) ON DELETE SET NULL ON UPDATE SET NULL,
-  CONSTRAINT `fk_fivenet_documents_templates_creator_id` FOREIGN KEY (`creator_id`) REFERENCES `users` (`id`) ON DELETE SET NULL ON UPDATE SET NULL
+  CONSTRAINT `fk_fivenet_documents_templates_categories` FOREIGN KEY (`category_id`) REFERENCES `fivenet_documents_categories` (`id`) ON DELETE SET NULL ON UPDATE SET NULL
 ) ENGINE=InnoDB;
 
 -- Table: fivenet_documents

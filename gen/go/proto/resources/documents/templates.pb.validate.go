@@ -205,6 +205,17 @@ func (m *Template) validate(all bool) error {
 		}
 	}
 
+	if utf8.RuneCountInString(m.GetCreatorJob()) > 20 {
+		err := TemplateValidationError{
+			field:  "CreatorJob",
+			reason: "value length must be at most 20 runes",
+		}
+		if !all {
+			return err
+		}
+		errors = append(errors, err)
+	}
+
 	if len(m.GetJobAccess()) > 20 {
 		err := TemplateValidationError{
 			field:  "JobAccess",
@@ -345,49 +356,12 @@ func (m *Template) validate(all bool) error {
 
 	}
 
-	if m.CreatorId != nil {
-		// no validation rules for CreatorId
-	}
+	if m.CreatorJobLabel != nil {
 
-	if m.Creator != nil {
-
-		if all {
-			switch v := interface{}(m.GetCreator()).(type) {
-			case interface{ ValidateAll() error }:
-				if err := v.ValidateAll(); err != nil {
-					errors = append(errors, TemplateValidationError{
-						field:  "Creator",
-						reason: "embedded message failed validation",
-						cause:  err,
-					})
-				}
-			case interface{ Validate() error }:
-				if err := v.Validate(); err != nil {
-					errors = append(errors, TemplateValidationError{
-						field:  "Creator",
-						reason: "embedded message failed validation",
-						cause:  err,
-					})
-				}
-			}
-		} else if v, ok := interface{}(m.GetCreator()).(interface{ Validate() error }); ok {
-			if err := v.Validate(); err != nil {
-				return TemplateValidationError{
-					field:  "Creator",
-					reason: "embedded message failed validation",
-					cause:  err,
-				}
-			}
-		}
-
-	}
-
-	if m.CreatorJob != nil {
-
-		if utf8.RuneCountInString(m.GetCreatorJob()) > 20 {
+		if utf8.RuneCountInString(m.GetCreatorJobLabel()) > 50 {
 			err := TemplateValidationError{
-				field:  "CreatorJob",
-				reason: "value length must be at most 20 runes",
+				field:  "CreatorJobLabel",
+				reason: "value length must be at most 50 runes",
 			}
 			if !all {
 				return err
@@ -589,9 +563,9 @@ func (m *TemplateShort) validate(all bool) error {
 		}
 	}
 
-	if utf8.RuneCountInString(m.GetJob()) > 20 {
+	if utf8.RuneCountInString(m.GetCreatorJob()) > 20 {
 		err := TemplateShortValidationError{
-			field:  "Job",
+			field:  "CreatorJob",
 			reason: "value length must be at most 20 runes",
 		}
 		if !all {
@@ -666,39 +640,17 @@ func (m *TemplateShort) validate(all bool) error {
 
 	}
 
-	if m.CreatorId != nil {
-		// no validation rules for CreatorId
-	}
+	if m.CreatorJobLabel != nil {
 
-	if m.Creator != nil {
-
-		if all {
-			switch v := interface{}(m.GetCreator()).(type) {
-			case interface{ ValidateAll() error }:
-				if err := v.ValidateAll(); err != nil {
-					errors = append(errors, TemplateShortValidationError{
-						field:  "Creator",
-						reason: "embedded message failed validation",
-						cause:  err,
-					})
-				}
-			case interface{ Validate() error }:
-				if err := v.Validate(); err != nil {
-					errors = append(errors, TemplateShortValidationError{
-						field:  "Creator",
-						reason: "embedded message failed validation",
-						cause:  err,
-					})
-				}
+		if utf8.RuneCountInString(m.GetCreatorJobLabel()) > 50 {
+			err := TemplateShortValidationError{
+				field:  "CreatorJobLabel",
+				reason: "value length must be at most 50 runes",
 			}
-		} else if v, ok := interface{}(m.GetCreator()).(interface{ Validate() error }); ok {
-			if err := v.Validate(); err != nil {
-				return TemplateShortValidationError{
-					field:  "Creator",
-					reason: "embedded message failed validation",
-					cause:  err,
-				}
+			if !all {
+				return err
 			}
+			errors = append(errors, err)
 		}
 
 	}

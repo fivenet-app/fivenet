@@ -12,10 +12,10 @@ import { reflectionMergePartial } from "@protobuf-ts/runtime";
 import { MessageType } from "@protobuf-ts/runtime";
 import { AccessLevel } from "./access";
 import { Vehicle } from "../vehicles/vehicles";
+import { UserShort } from "../users/users";
 import { DocumentShort } from "./documents";
 import { User } from "../users/users";
 import { DocumentAccess } from "./access";
-import { UserShort } from "../users/users";
 import { Category } from "./category";
 import { Timestamp } from "../timestamp/timestamp";
 /**
@@ -71,23 +71,19 @@ export interface Template {
      */
     schema?: TemplateSchema; // @gotags: alias:"schema"
     /**
-     * @generated from protobuf field: optional int32 creator_id = 12;
+     * @generated from protobuf field: string creator_job = 12;
      */
-    creatorId?: number; // @gotags: alias:"creator_id"
+    creatorJob: string;
     /**
-     * @generated from protobuf field: optional resources.users.UserShort creator = 13;
+     * @generated from protobuf field: optional string creator_job_label = 13;
      */
-    creator?: UserShort;
+    creatorJobLabel?: string;
     /**
-     * @generated from protobuf field: optional string creator_job = 14;
-     */
-    creatorJob?: string;
-    /**
-     * @generated from protobuf field: repeated resources.documents.TemplateJobAccess job_access = 15;
+     * @generated from protobuf field: repeated resources.documents.TemplateJobAccess job_access = 14;
      */
     jobAccess: TemplateJobAccess[];
     /**
-     * @generated from protobuf field: resources.documents.DocumentAccess content_access = 16;
+     * @generated from protobuf field: resources.documents.DocumentAccess content_access = 15;
      */
     contentAccess?: DocumentAccess; // @gotags: alias:"access"
 }
@@ -132,17 +128,13 @@ export interface TemplateShort {
      */
     schema?: TemplateSchema; // @gotags: alias:"schema"
     /**
-     * @generated from protobuf field: optional int32 creator_id = 9;
+     * @generated from protobuf field: string creator_job = 9;
      */
-    creatorId?: number; // @gotags: alias:"creator_id"
+    creatorJob: string;
     /**
-     * @generated from protobuf field: optional resources.users.UserShort creator = 10;
+     * @generated from protobuf field: optional string creator_job_label = 10;
      */
-    creator?: UserShort;
-    /**
-     * @generated from protobuf field: string job = 11;
-     */
-    job: string; // @gotags: alias:"job"
+    creatorJobLabel?: string;
 }
 /**
  * @generated from protobuf message resources.documents.TemplateSchema
@@ -260,11 +252,10 @@ class Template$Type extends MessageType<Template> {
             { no: 9, name: "content", kind: "scalar", T: 9 /*ScalarType.STRING*/, options: { "validate.rules": { string: { minLen: "0", maxBytes: "1500000" } } } },
             { no: 10, name: "state", kind: "scalar", T: 9 /*ScalarType.STRING*/, options: { "validate.rules": { string: { maxLen: "32" } } } },
             { no: 11, name: "schema", kind: "message", T: () => TemplateSchema },
-            { no: 12, name: "creator_id", kind: "scalar", opt: true, T: 5 /*ScalarType.INT32*/ },
-            { no: 13, name: "creator", kind: "message", T: () => UserShort },
-            { no: 14, name: "creator_job", kind: "scalar", opt: true, T: 9 /*ScalarType.STRING*/, options: { "validate.rules": { string: { maxLen: "20" } } } },
-            { no: 15, name: "job_access", kind: "message", repeat: 1 /*RepeatType.PACKED*/, T: () => TemplateJobAccess, options: { "validate.rules": { repeated: { maxItems: "20" } } } },
-            { no: 16, name: "content_access", kind: "message", T: () => DocumentAccess }
+            { no: 12, name: "creator_job", kind: "scalar", T: 9 /*ScalarType.STRING*/, options: { "validate.rules": { string: { maxLen: "20" } } } },
+            { no: 13, name: "creator_job_label", kind: "scalar", opt: true, T: 9 /*ScalarType.STRING*/, options: { "validate.rules": { string: { maxLen: "50" } } } },
+            { no: 14, name: "job_access", kind: "message", repeat: 1 /*RepeatType.PACKED*/, T: () => TemplateJobAccess, options: { "validate.rules": { repeated: { maxItems: "20" } } } },
+            { no: 15, name: "content_access", kind: "message", T: () => DocumentAccess }
         ]);
     }
     create(value?: PartialMessage<Template>): Template {
@@ -276,6 +267,7 @@ class Template$Type extends MessageType<Template> {
         message.contentTitle = "";
         message.content = "";
         message.state = "";
+        message.creatorJob = "";
         message.jobAccess = [];
         if (value !== undefined)
             reflectionMergePartial<Template>(this, message, value);
@@ -319,19 +311,16 @@ class Template$Type extends MessageType<Template> {
                 case /* resources.documents.TemplateSchema schema */ 11:
                     message.schema = TemplateSchema.internalBinaryRead(reader, reader.uint32(), options, message.schema);
                     break;
-                case /* optional int32 creator_id */ 12:
-                    message.creatorId = reader.int32();
-                    break;
-                case /* optional resources.users.UserShort creator */ 13:
-                    message.creator = UserShort.internalBinaryRead(reader, reader.uint32(), options, message.creator);
-                    break;
-                case /* optional string creator_job */ 14:
+                case /* string creator_job */ 12:
                     message.creatorJob = reader.string();
                     break;
-                case /* repeated resources.documents.TemplateJobAccess job_access */ 15:
+                case /* optional string creator_job_label */ 13:
+                    message.creatorJobLabel = reader.string();
+                    break;
+                case /* repeated resources.documents.TemplateJobAccess job_access */ 14:
                     message.jobAccess.push(TemplateJobAccess.internalBinaryRead(reader, reader.uint32(), options));
                     break;
-                case /* resources.documents.DocumentAccess content_access */ 16:
+                case /* resources.documents.DocumentAccess content_access */ 15:
                     message.contentAccess = DocumentAccess.internalBinaryRead(reader, reader.uint32(), options, message.contentAccess);
                     break;
                 default:
@@ -379,21 +368,18 @@ class Template$Type extends MessageType<Template> {
         /* resources.documents.TemplateSchema schema = 11; */
         if (message.schema)
             TemplateSchema.internalBinaryWrite(message.schema, writer.tag(11, WireType.LengthDelimited).fork(), options).join();
-        /* optional int32 creator_id = 12; */
-        if (message.creatorId !== undefined)
-            writer.tag(12, WireType.Varint).int32(message.creatorId);
-        /* optional resources.users.UserShort creator = 13; */
-        if (message.creator)
-            UserShort.internalBinaryWrite(message.creator, writer.tag(13, WireType.LengthDelimited).fork(), options).join();
-        /* optional string creator_job = 14; */
-        if (message.creatorJob !== undefined)
-            writer.tag(14, WireType.LengthDelimited).string(message.creatorJob);
-        /* repeated resources.documents.TemplateJobAccess job_access = 15; */
+        /* string creator_job = 12; */
+        if (message.creatorJob !== "")
+            writer.tag(12, WireType.LengthDelimited).string(message.creatorJob);
+        /* optional string creator_job_label = 13; */
+        if (message.creatorJobLabel !== undefined)
+            writer.tag(13, WireType.LengthDelimited).string(message.creatorJobLabel);
+        /* repeated resources.documents.TemplateJobAccess job_access = 14; */
         for (let i = 0; i < message.jobAccess.length; i++)
-            TemplateJobAccess.internalBinaryWrite(message.jobAccess[i], writer.tag(15, WireType.LengthDelimited).fork(), options).join();
-        /* resources.documents.DocumentAccess content_access = 16; */
+            TemplateJobAccess.internalBinaryWrite(message.jobAccess[i], writer.tag(14, WireType.LengthDelimited).fork(), options).join();
+        /* resources.documents.DocumentAccess content_access = 15; */
         if (message.contentAccess)
-            DocumentAccess.internalBinaryWrite(message.contentAccess, writer.tag(16, WireType.LengthDelimited).fork(), options).join();
+            DocumentAccess.internalBinaryWrite(message.contentAccess, writer.tag(15, WireType.LengthDelimited).fork(), options).join();
         let u = options.writeUnknownFields;
         if (u !== false)
             (u == true ? UnknownFieldHandler.onWrite : u)(this.typeName, message, writer);
@@ -416,9 +402,8 @@ class TemplateShort$Type extends MessageType<TemplateShort> {
             { no: 6, name: "title", kind: "scalar", T: 9 /*ScalarType.STRING*/, options: { "validate.rules": { string: { minLen: "3" } } } },
             { no: 7, name: "description", kind: "scalar", T: 9 /*ScalarType.STRING*/, options: { "validate.rules": { string: { maxLen: "255" } } } },
             { no: 8, name: "schema", kind: "message", T: () => TemplateSchema },
-            { no: 9, name: "creator_id", kind: "scalar", opt: true, T: 5 /*ScalarType.INT32*/ },
-            { no: 10, name: "creator", kind: "message", T: () => UserShort },
-            { no: 11, name: "job", kind: "scalar", T: 9 /*ScalarType.STRING*/, options: { "validate.rules": { string: { maxLen: "20" } } } }
+            { no: 9, name: "creator_job", kind: "scalar", T: 9 /*ScalarType.STRING*/, options: { "validate.rules": { string: { maxLen: "20" } } } },
+            { no: 10, name: "creator_job_label", kind: "scalar", opt: true, T: 9 /*ScalarType.STRING*/, options: { "validate.rules": { string: { maxLen: "50" } } } }
         ]);
     }
     create(value?: PartialMessage<TemplateShort>): TemplateShort {
@@ -427,7 +412,7 @@ class TemplateShort$Type extends MessageType<TemplateShort> {
         message.weight = 0;
         message.title = "";
         message.description = "";
-        message.job = "";
+        message.creatorJob = "";
         if (value !== undefined)
             reflectionMergePartial<TemplateShort>(this, message, value);
         return message;
@@ -461,14 +446,11 @@ class TemplateShort$Type extends MessageType<TemplateShort> {
                 case /* resources.documents.TemplateSchema schema */ 8:
                     message.schema = TemplateSchema.internalBinaryRead(reader, reader.uint32(), options, message.schema);
                     break;
-                case /* optional int32 creator_id */ 9:
-                    message.creatorId = reader.int32();
+                case /* string creator_job */ 9:
+                    message.creatorJob = reader.string();
                     break;
-                case /* optional resources.users.UserShort creator */ 10:
-                    message.creator = UserShort.internalBinaryRead(reader, reader.uint32(), options, message.creator);
-                    break;
-                case /* string job */ 11:
-                    message.job = reader.string();
+                case /* optional string creator_job_label */ 10:
+                    message.creatorJobLabel = reader.string();
                     break;
                 default:
                     let u = options.readUnknownField;
@@ -506,15 +488,12 @@ class TemplateShort$Type extends MessageType<TemplateShort> {
         /* resources.documents.TemplateSchema schema = 8; */
         if (message.schema)
             TemplateSchema.internalBinaryWrite(message.schema, writer.tag(8, WireType.LengthDelimited).fork(), options).join();
-        /* optional int32 creator_id = 9; */
-        if (message.creatorId !== undefined)
-            writer.tag(9, WireType.Varint).int32(message.creatorId);
-        /* optional resources.users.UserShort creator = 10; */
-        if (message.creator)
-            UserShort.internalBinaryWrite(message.creator, writer.tag(10, WireType.LengthDelimited).fork(), options).join();
-        /* string job = 11; */
-        if (message.job !== "")
-            writer.tag(11, WireType.LengthDelimited).string(message.job);
+        /* string creator_job = 9; */
+        if (message.creatorJob !== "")
+            writer.tag(9, WireType.LengthDelimited).string(message.creatorJob);
+        /* optional string creator_job_label = 10; */
+        if (message.creatorJobLabel !== undefined)
+            writer.tag(10, WireType.LengthDelimited).string(message.creatorJobLabel);
         let u = options.writeUnknownFields;
         if (u !== false)
             (u == true ? UnknownFieldHandler.onWrite : u)(this.typeName, message, writer);

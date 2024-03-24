@@ -27,3 +27,19 @@ func (x *TemplateSchema) Value() (driver.Value, error) {
 	out, err := protoutils.Marshal(x)
 	return string(out), err
 }
+
+func (x *Template) GetJob() string {
+	return x.CreatorJob
+}
+
+func (x *Template) SetJobLabel(label string) {
+	x.CreatorJobLabel = &label
+}
+
+func (x *TemplateShort) GetJob() string {
+	return x.CreatorJob
+}
+
+func (x *TemplateShort) SetJobLabel(label string) {
+	x.CreatorJobLabel = &label
+}

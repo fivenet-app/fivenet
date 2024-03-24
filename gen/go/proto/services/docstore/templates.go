@@ -40,7 +40,6 @@ func (s *Server) ListTemplates(ctx context.Context, req *ListTemplatesRequest) (
 			tDTemplates.Title,
 			tDTemplates.Description,
 			tDTemplates.Schema,
-			tDTemplates.CreatorID,
 			tDTemplates.CreatorJob,
 		).
 		FROM(
@@ -68,6 +67,10 @@ func (s *Server) ListTemplates(ctx context.Context, req *ListTemplatesRequest) (
 		if !errors.Is(err, qrm.ErrNoRows) {
 			return nil, errswrap.NewError(err, errorsdocstore.ErrFailedQuery)
 		}
+	}
+
+	for i := 0; i < len(resp.Templates); i++ {
+		s.enricher.EnrichJobName(resp.Templates[i])
 	}
 
 	return resp, nil
@@ -110,6 +113,8 @@ func (s *Server) GetTemplate(ctx context.Context, req *GetTemplateRequest) (*Get
 		resp.Rendered = true
 	}
 
+	s.enricher.EnrichJobName(resp.Template)
+
 	return resp, nil
 }
 
@@ -132,7 +137,6 @@ func (s *Server) getTemplate(ctx context.Context, templateId uint64) (*documents
 			tDTemplates.State,
 			tDTemplates.Access,
 			tDTemplates.Schema,
-			tDTemplates.CreatorID,
 			tDTemplates.CreatorJob,
 		).
 		FROM(
@@ -248,7 +252,6 @@ func (s *Server) CreateTemplate(ctx context.Context, req *CreateTemplateRequest)
 			tDTemplates.State,
 			tDTemplates.Access,
 			tDTemplates.Schema,
-			tDTemplates.CreatorID,
 			tDTemplates.CreatorJob,
 		).
 		VALUES(
@@ -261,7 +264,6 @@ func (s *Server) CreateTemplate(ctx context.Context, req *CreateTemplateRequest)
 			req.Template.State,
 			req.Template.ContentAccess,
 			req.Template.Schema,
-			userInfo.UserId,
 			userInfo.Job,
 		)
 
@@ -275,7 +277,7 @@ func (s *Server) CreateTemplate(ctx context.Context, req *CreateTemplateRequest)
 		return nil, errswrap.NewError(err, errorsdocstore.ErrFailedQuery)
 	}
 
-	if err := s.handleTemplateAccessChanges(ctx, tx, uint64(lastId), req.Template.JobAccess); err != nil {
+	if err := s.handleTemplateAccessChanges(ctx, tx, uint64(lastId), userInfo.Job, req.Template.JobAccess); err != nil {
 		return nil, errswrap.NewError(err, errorsdocstore.ErrFailedQuery)
 	}
 
@@ -364,7 +366,7 @@ func (s *Server) UpdateTemplate(ctx context.Context, req *UpdateTemplateRequest)
 		return nil, errswrap.NewError(err, errorsdocstore.ErrFailedQuery)
 	}
 
-	if err := s.handleTemplateAccessChanges(ctx, tx, req.Template.Id, req.Template.JobAccess); err != nil {
+	if err := s.handleTemplateAccessChanges(ctx, tx, req.Template.Id, userInfo.Job, req.Template.JobAccess); err != nil {
 		return nil, errswrap.NewError(err, errorsdocstore.ErrFailedQuery)
 	}
 
@@ -405,13 +407,13 @@ func (s *Server) DeleteTemplate(ctx context.Context, req *DeleteTemplateRequest)
 	}
 
 	if !check && !userInfo.SuperUser {
-		if dTmpl.CreatorJob == nil {
+		if dTmpl.CreatorJob == "" {
 			return nil, errorsdocstore.ErrTemplateNoPerms
 		}
 
 		// Make sure the highest job grade can delete the template
 		grade := s.cache.GetHighestJobGrade(userInfo.Job)
-		if grade == nil || (userInfo.Job == *dTmpl.CreatorJob && grade.Grade != userInfo.JobGrade) {
+		if grade == nil || (userInfo.Job == dTmpl.CreatorJob && grade.Grade != userInfo.JobGrade) {
 			return nil, errorsdocstore.ErrTemplateNoPerms
 		}
 	}

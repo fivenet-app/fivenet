@@ -3,6 +3,7 @@ package docstore
 import (
 	context "context"
 	"errors"
+	"fmt"
 	"slices"
 
 	"github.com/galexrt/fivenet/gen/go/proto/resources/documents"
@@ -12,11 +13,32 @@ import (
 	"github.com/go-jet/jet/v2/qrm"
 )
 
-func (s *Server) handleTemplateAccessChanges(ctx context.Context, tx qrm.DB, templateId uint64, access []*documents.TemplateJobAccess) error {
+func (s *Server) handleTemplateAccessChanges(ctx context.Context, tx qrm.DB, templateId uint64, job string, access []*documents.TemplateJobAccess) error {
 	// Get existing job and user accesses from database
 	current, err := s.getTemplateJobAccess(ctx, templateId)
 	if err != nil {
 		return err
+	}
+
+	// Make sure template always has at least the highest job's grade as its access
+	if len(access) == 0 {
+		job := s.enricher.GetJobByName(job)
+		if job == nil {
+			return fmt.Errorf("failed to get user job for template access")
+		}
+
+		if len(job.Grades) == 0 || job.Grades[len(job.Grades)-1] == nil {
+			return fmt.Errorf("failed to get highest grade for job for template access")
+		}
+
+		grade := job.Grades[len(job.Grades)-1]
+
+		access = append(access, &documents.TemplateJobAccess{
+			TemplateId:   templateId,
+			Job:          job.Name,
+			MinimumGrade: grade.Grade,
+			Access:       documents.AccessLevel_ACCESS_LEVEL_EDIT,
+		})
 	}
 
 	toCreate, toUpdate, toDelete := s.compareTemplateJobAccess(current, access)
@@ -251,12 +273,9 @@ func (s *Server) checkIfUserHasAccessToTemplateIDs(ctx context.Context, userInfo
 	condition := jet.AND(
 		tDTemplates.ID.IN(ids...),
 		tDTemplates.DeletedAt.IS_NULL(),
-		jet.OR(
-			tDTemplates.CreatorID.EQ(jet.Int32(userInfo.UserId)),
-			jet.AND(
-				tDTemplatesJobAccess.Access.IS_NOT_NULL(),
-				tDTemplatesJobAccess.Access.GT_EQ(jet.Int32(int32(access))),
-			),
+		jet.AND(
+			tDTemplatesJobAccess.Access.IS_NOT_NULL(),
+			tDTemplatesJobAccess.Access.GT_EQ(jet.Int32(int32(access))),
 		),
 	)
 

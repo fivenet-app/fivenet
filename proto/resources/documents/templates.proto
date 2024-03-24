@@ -32,11 +32,10 @@ message Template {
   }]; // @gotags: alias:"content"
   string state = 10 [(validate.rules).string.max_len = 32]; // @gotags: alias:"state"
   resources.documents.TemplateSchema schema = 11; // @gotags: alias:"schema"
-  optional int32 creator_id = 12; // @gotags: alias:"creator_id"
-  optional resources.users.UserShort creator = 13;
-  optional string creator_job = 14 [(validate.rules).string.max_len = 20];
-  repeated TemplateJobAccess job_access = 15 [(validate.rules).repeated.max_items = 20];
-  resources.documents.DocumentAccess content_access = 16; // @gotags: alias:"access"
+  string creator_job = 12 [(validate.rules).string.max_len = 20];
+  optional string creator_job_label = 13 [(validate.rules).string.max_len = 50];
+  repeated TemplateJobAccess job_access = 14 [(validate.rules).repeated.max_items = 20];
+  resources.documents.DocumentAccess content_access = 15; // @gotags: alias:"access"
 }
 
 message TemplateShort {
@@ -50,9 +49,8 @@ message TemplateShort {
   // @sanitize
   string description = 7 [(validate.rules).string.max_len = 255];
   resources.documents.TemplateSchema schema = 8; // @gotags: alias:"schema"
-  optional int32 creator_id = 9; // @gotags: alias:"creator_id"
-  optional resources.users.UserShort creator = 10;
-  string job = 11 [(validate.rules).string.max_len = 20]; // @gotags: alias:"job"
+  string creator_job = 9 [(validate.rules).string.max_len = 20];
+  optional string creator_job_label = 10 [(validate.rules).string.max_len = 50];
 }
 
 message TemplateSchema {
