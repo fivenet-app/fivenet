@@ -7,7 +7,7 @@ import (
 	"errors"
 	"fmt"
 	"io"
-	"path"
+	"path/filepath"
 	"time"
 )
 
@@ -108,5 +108,5 @@ func FileNameSplitter(fileName string) string {
 
 	chars := fileName
 	part1 := chars[0:1]
-	return path.Join(part1, fileName)
+	return filepath.Join(part1, fileName)
 }

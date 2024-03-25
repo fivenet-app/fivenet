@@ -5,7 +5,6 @@ import (
 	"errors"
 	"io"
 	"os"
-	"path"
 	"path/filepath"
 	"strings"
 	"syscall"
@@ -39,7 +38,7 @@ func NewFilesystem(lc fx.Lifecycle, cfg *config.Config) (IStorage, error) {
 }
 
 func (s *Filesystem) WithPrefix(prefix string) (IStorage, error) {
-	if err := os.MkdirAll(path.Join(s.basePath, prefix), 0770); err != nil {
+	if err := os.MkdirAll(filepath.Join(s.basePath, prefix), 0770); err != nil {
 		return nil, err
 	}
 
@@ -50,7 +49,7 @@ func (s *Filesystem) WithPrefix(prefix string) (IStorage, error) {
 }
 
 func (s *Filesystem) Get(ctx context.Context, filePath string) (IObject, IObjectInfo, error) {
-	filePath = path.Join(s.basePath, s.prefix, filePath)
+	filePath = filepath.Join(s.basePath, s.prefix, filepath.Clean(filePath))
 
 	stat, err := os.Stat(filePath)
 	if os.IsNotExist(err) {
@@ -73,7 +72,7 @@ func (s *Filesystem) Get(ctx context.Context, filePath string) (IObject, IObject
 }
 
 func (s *Filesystem) Stat(ctx context.Context, filePath string) (IObjectInfo, error) {
-	filePath = path.Join(s.basePath, s.prefix, filePath)
+	filePath = filepath.Join(s.basePath, s.prefix, filepath.Clean(filePath))
 
 	stat, err := os.Stat(filePath)
 	if os.IsNotExist(err) {
@@ -86,7 +85,8 @@ func (s *Filesystem) Stat(ctx context.Context, filePath string) (IObjectInfo, er
 }
 
 func (s *Filesystem) Put(ctx context.Context, filePathIn string, reader io.Reader, size int64, contentType string) (string, error) {
-	filePath := path.Join(s.basePath, s.prefix, filePathIn)
+	filePathIn = filepath.Clean(filePathIn)
+	filePath := filepath.Join(s.basePath, s.prefix, filePathIn)
 
 	dir := filepath.Dir(filePath)
 	if _, err := os.Stat(dir); err != nil {
@@ -109,11 +109,11 @@ func (s *Filesystem) Put(ctx context.Context, filePathIn string, reader io.Reade
 		return "", err
 	}
 
-	return path.Join(s.prefix, filePathIn), nil
+	return filepath.Join(s.prefix, filePathIn), nil
 }
 
 func (s *Filesystem) Delete(ctx context.Context, filePath string) error {
-	filePath = path.Join(s.basePath, s.prefix, filePath)
+	filePath = filepath.Join(s.basePath, s.prefix, filepath.Clean(filePath))
 
 	if err := os.Remove(filePath); err != nil {
 		e, ok := err.(*os.PathError)
@@ -126,7 +126,7 @@ func (s *Filesystem) Delete(ctx context.Context, filePath string) error {
 }
 
 func (s *Filesystem) List(ctx context.Context, filePath string, offset int, pageSize int) ([]*FileInfo, error) {
-	filePath = path.Join(s.basePath, s.prefix, filePath)
+	filePath = filepath.Join(s.basePath, s.prefix, filePath)
 
 	entries, err := os.ReadDir(filePath)
 	if err != nil {
