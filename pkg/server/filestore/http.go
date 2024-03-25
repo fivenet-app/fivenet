@@ -36,39 +36,39 @@ func (s *FilestoreHTTP) RegisterHTTP(e *gin.Engine) {
 		Public:               true,
 		Private:              false,
 		ProxyRevalidate:      true,
-		MaxAge:               cachecontrol.Duration(48 * time.Hour),
+		MaxAge:               cachecontrol.Duration(5 * 24 * time.Hour),
 		SMaxAge:              nil,
 		Immutable:            false,
-		StaleWhileRevalidate: cachecontrol.Duration(1 * time.Hour),
-		StaleIfError:         cachecontrol.Duration(1 * time.Hour),
+		StaleWhileRevalidate: cachecontrol.Duration(1 * 24 * time.Hour),
+		StaleIfError:         cachecontrol.Duration(1 * 24 * time.Hour),
 	}))
 
-	{
-		g.GET("/:prefix/*fileName", func(c *gin.Context) {
-			prefix := c.Param("prefix")
-			prefix = filepath.Clean(prefix)
-			fileName := c.Param("fileName")
-			fileName = filepath.Clean(fileName)
-			if prefix == "" || fileName == "" {
-				c.AbortWithError(http.StatusBadRequest, fmt.Errorf("invalid file requested"))
-				return
-			}
+	g.GET("/:prefix/*fileName", s.GET)
+}
 
-			object, objInfo, err := s.st.Get(c, path.Join(prefix, fileName))
-			if err != nil {
-				if errors.Is(err, storage.ErrNotFound) {
-					c.AbortWithStatus(http.StatusNotFound)
-					return
-				}
-
-				c.AbortWithError(http.StatusBadRequest, fmt.Errorf("failed to retrieve file from store. %w", err))
-				return
-			}
-			defer object.Close()
-
-			mimeType := filetype.GetType(objInfo.GetExtension())
-
-			c.DataFromReader(200, objInfo.GetSize(), mimeType.MIME.Value, object, nil)
-		})
+func (s *FilestoreHTTP) GET(c *gin.Context) {
+	prefix := c.Param("prefix")
+	prefix = filepath.Clean(prefix)
+	fileName := c.Param("fileName")
+	fileName = filepath.Clean(fileName)
+	if prefix == "" || fileName == "" {
+		c.AbortWithError(http.StatusBadRequest, fmt.Errorf("invalid file requested"))
+		return
 	}
+
+	object, objInfo, err := s.st.Get(c, path.Join(prefix, fileName))
+	if err != nil {
+		if errors.Is(err, storage.ErrNotFound) {
+			c.AbortWithStatus(http.StatusNotFound)
+			return
+		}
+
+		c.AbortWithError(http.StatusBadRequest, fmt.Errorf("failed to retrieve file from store. %w", err))
+		return
+	}
+	defer object.Close()
+
+	mimeType := filetype.GetType(objInfo.GetExtension())
+
+	c.DataFromReader(200, objInfo.GetSize(), mimeType.MIME.Value, object, nil)
 }
