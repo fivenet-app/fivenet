@@ -35,6 +35,7 @@ async function editComment(documentId: string, commentId: string, values: FormDa
         id: commentId,
         documentId,
         comment: values.comment,
+        creatorJob: '',
     };
 
     try {

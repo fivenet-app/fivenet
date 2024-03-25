@@ -81,6 +81,7 @@ async function addComment(documentId: string, values: FormData): Promise<void> {
         id: '0',
         documentId,
         comment: values.comment,
+        creatorJob: '',
     };
 
     try {
