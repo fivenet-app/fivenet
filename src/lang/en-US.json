@@ -935,7 +935,8 @@
         "abbreviation": "Abbreviation",
         "approver": "Approver",
         "approved_at": "Approved at",
-        "superuser": "SuperUser"
+        "superuser": "SuperUser",
+        "restore": "Restore"
     },
     "notifications": {
         "clipboard": {
