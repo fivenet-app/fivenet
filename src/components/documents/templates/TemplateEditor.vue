@@ -17,6 +17,7 @@ import { CreateTemplateRequest, UpdateTemplateRequest } from '~~/gen/ts/services
 import TemplateSchemaEditor, { type SchemaEditorValue } from '~/components/documents/templates/TemplateSchemaEditor.vue';
 import type { ObjectSpecsValue } from '~/components/documents/templates/types';
 import TemplateSyntaxHint from '~/components/documents/templates/partials/TemplateSyntaxHint.vue';
+import type { Template } from '~~/gen/ts/resources/documents/templates';
 
 const props = defineProps<{
     templateId?: string;
@@ -384,7 +385,10 @@ async function createOrUpdateTemplate(values: FormData, templateId?: string): Pr
             });
         } else {
             const call = $grpc.getDocStoreClient().updateTemplate(req);
-            await call;
+            const { response } = await call;
+            if (response.template) {
+                setValuesFromTemplate(response.template);
+            }
 
             notifications.dispatchNotification({
                 title: { key: 'notifications.templates.updated.title', parameters: {} },
@@ -411,6 +415,82 @@ async function findCategories(): Promise<void> {
     entriesCategories.value = await completorStore.completeDocumentCategories(queryCategories.value);
 }
 
+function setValuesFromTemplate(tpl: Template): void {
+    setValues({
+        weight: tpl.weight,
+        title: tpl.title,
+        description: tpl.description,
+        contentTitle: tpl.contentTitle,
+        content: tpl.content,
+        contentState: tpl.state,
+    });
+    if (tpl.category !== undefined) {
+        selectedCategory.value = tpl.category;
+    }
+
+    const tplAccess = tpl.jobAccess;
+    if (tplAccess !== undefined) {
+        let accessId = 0;
+
+        tplAccess.forEach((job) => {
+            const id = accessId.toString();
+            access.value.set(id, {
+                id,
+                type: 1,
+                values: {
+                    job: job.job,
+                    minimumGrade: job.minimumGrade,
+                    accessRole: job.access,
+                },
+            });
+            accessId++;
+        });
+    }
+
+    const ctAccess = tpl.contentAccess;
+    if (ctAccess !== undefined) {
+        let accessId = 0n;
+
+        ctAccess.users.forEach((access) => {
+            const id = accessId.toString();
+            contentAccess.value.set(id, {
+                id,
+                type: 0,
+                values: { char: access.userId, accessRole: access.access },
+                required: access.required,
+            });
+            accessId++;
+        });
+
+        ctAccess.jobs.forEach((access) => {
+            const id = accessId.toString();
+            contentAccess.value.set(id, {
+                id,
+                type: 1,
+                values: {
+                    job: access.job,
+                    accessRole: access.access,
+                    minimumGrade: access.minimumGrade,
+                },
+                required: access.required,
+            });
+            accessId++;
+        });
+    }
+
+    schema.value.users.req = tpl.schema?.requirements?.users?.required ?? false;
+    schema.value.users.min = tpl.schema?.requirements?.users?.min ?? 0;
+    schema.value.users.max = tpl.schema?.requirements?.users?.max ?? 0;
+
+    schema.value.documents.req = tpl.schema?.requirements?.documents?.required ?? false;
+    schema.value.documents.min = tpl.schema?.requirements?.documents?.min ?? 0;
+    schema.value.documents.max = tpl.schema?.requirements?.documents?.max ?? 0;
+
+    schema.value.vehicles.req = tpl.schema?.requirements?.vehicles?.required ?? false;
+    schema.value.vehicles.min = tpl.schema?.requirements?.vehicles?.min ?? 0;
+    schema.value.vehicles.max = tpl.schema?.requirements?.vehicles?.max ?? 0;
+}
+
 onMounted(async () => {
     if (props.templateId) {
         try {
@@ -425,79 +505,7 @@ onMounted(async () => {
                 return;
             }
 
-            setValues({
-                weight: tpl.weight,
-                title: tpl.title,
-                description: tpl.description,
-                contentTitle: tpl.contentTitle,
-                content: tpl.content,
-                contentState: tpl.state,
-            });
-            if (tpl.category !== undefined) {
-                selectedCategory.value = tpl.category;
-            }
-
-            const tplAccess = tpl.jobAccess;
-            if (tplAccess !== undefined) {
-                let accessId = 0;
-
-                tplAccess.forEach((job) => {
-                    const id = accessId.toString();
-                    access.value.set(id, {
-                        id,
-                        type: 1,
-                        values: {
-                            job: job.job,
-                            minimumGrade: job.minimumGrade,
-                            accessRole: job.access,
-                        },
-                    });
-                    accessId++;
-                });
-            }
-
-            const ctAccess = tpl.contentAccess;
-            if (ctAccess !== undefined) {
-                let accessId = 0n;
-
-                ctAccess.users.forEach((access) => {
-                    const id = accessId.toString();
-                    contentAccess.value.set(id, {
-                        id,
-                        type: 0,
-                        values: { char: access.userId, accessRole: access.access },
-                        required: access.required,
-                    });
-                    accessId++;
-                });
-
-                ctAccess.jobs.forEach((access) => {
-                    const id = accessId.toString();
-                    contentAccess.value.set(id, {
-                        id,
-                        type: 1,
-                        values: {
-                            job: access.job,
-                            accessRole: access.access,
-                            minimumGrade: access.minimumGrade,
-                        },
-                        required: access.required,
-                    });
-                    accessId++;
-                });
-            }
-
-            schema.value.users.req = tpl.schema?.requirements?.users?.required ?? false;
-            schema.value.users.min = tpl.schema?.requirements?.users?.min ?? 0;
-            schema.value.users.max = tpl.schema?.requirements?.users?.max ?? 0;
-
-            schema.value.documents.req = tpl.schema?.requirements?.documents?.required ?? false;
-            schema.value.documents.min = tpl.schema?.requirements?.documents?.min ?? 0;
-            schema.value.documents.max = tpl.schema?.requirements?.documents?.max ?? 0;
-
-            schema.value.vehicles.req = tpl.schema?.requirements?.vehicles?.required ?? false;
-            schema.value.vehicles.min = tpl.schema?.requirements?.vehicles?.min ?? 0;
-            schema.value.vehicles.max = tpl.schema?.requirements?.vehicles?.max ?? 0;
+            setValuesFromTemplate(tpl);
         } catch (e) {
             $grpc.handleError(e as RpcError);
         }

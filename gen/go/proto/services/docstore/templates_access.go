@@ -20,8 +20,10 @@ func (s *Server) handleTemplateAccessChanges(ctx context.Context, tx qrm.DB, tem
 		return err
 	}
 
-	// Make sure template always has at least the highest job's grade as its access
-	if len(access) == 0 {
+	// Make sure the template has at least someone able to edit the template, if not add the job's highest grade with edit access
+	if len(access) == 0 || !slices.ContainsFunc(access, func(in *documents.TemplateJobAccess) bool {
+		return in.Access == documents.AccessLevel_ACCESS_LEVEL_EDIT
+	}) {
 		job := s.enricher.GetJobByName(job)
 		if job == nil {
 			return fmt.Errorf("failed to get user job for template access")

@@ -110,9 +110,9 @@ export interface UpdateTemplateRequest {
  */
 export interface UpdateTemplateResponse {
     /**
-     * @generated from protobuf field: uint64 id = 1 [jstype = JS_STRING];
+     * @generated from protobuf field: resources.documents.Template template = 1;
      */
-    id: string;
+    template?: Template;
 }
 /**
  * @generated from protobuf message services.docstore.DeleteTemplateRequest
@@ -1162,12 +1162,11 @@ export const UpdateTemplateRequest = new UpdateTemplateRequest$Type();
 class UpdateTemplateResponse$Type extends MessageType<UpdateTemplateResponse> {
     constructor() {
         super("services.docstore.UpdateTemplateResponse", [
-            { no: 1, name: "id", kind: "scalar", T: 4 /*ScalarType.UINT64*/ }
+            { no: 1, name: "template", kind: "message", T: () => Template, options: { "validate.rules": { message: { required: true } } } }
         ]);
     }
     create(value?: PartialMessage<UpdateTemplateResponse>): UpdateTemplateResponse {
         const message = globalThis.Object.create((this.messagePrototype!));
-        message.id = "0";
         if (value !== undefined)
             reflectionMergePartial<UpdateTemplateResponse>(this, message, value);
         return message;
@@ -1177,8 +1176,8 @@ class UpdateTemplateResponse$Type extends MessageType<UpdateTemplateResponse> {
         while (reader.pos < end) {
             let [fieldNo, wireType] = reader.tag();
             switch (fieldNo) {
-                case /* uint64 id = 1 [jstype = JS_STRING];*/ 1:
-                    message.id = reader.uint64().toString();
+                case /* resources.documents.Template template */ 1:
+                    message.template = Template.internalBinaryRead(reader, reader.uint32(), options, message.template);
                     break;
                 default:
                     let u = options.readUnknownField;
@@ -1192,9 +1191,9 @@ class UpdateTemplateResponse$Type extends MessageType<UpdateTemplateResponse> {
         return message;
     }
     internalBinaryWrite(message: UpdateTemplateResponse, writer: IBinaryWriter, options: BinaryWriteOptions): IBinaryWriter {
-        /* uint64 id = 1 [jstype = JS_STRING]; */
-        if (message.id !== "0")
-            writer.tag(1, WireType.Varint).uint64(message.id);
+        /* resources.documents.Template template = 1; */
+        if (message.template)
+            Template.internalBinaryWrite(message.template, writer.tag(1, WireType.LengthDelimited).fork(), options).join();
         let u = options.writeUnknownFields;
         if (u !== false)
             (u == true ? UnknownFieldHandler.onWrite : u)(this.typeName, message, writer);

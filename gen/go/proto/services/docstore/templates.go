@@ -375,10 +375,15 @@ func (s *Server) UpdateTemplate(ctx context.Context, req *UpdateTemplateRequest)
 		return nil, errswrap.NewError(err, errorsdocstore.ErrFailedQuery)
 	}
 
+	tmpl, err := s.getTemplate(ctx, req.Template.Id)
+	if err != nil {
+		return nil, errswrap.NewError(err, errorsdocstore.ErrFailedQuery)
+	}
+
 	auditEntry.State = int16(rector.EventType_EVENT_TYPE_UPDATED)
 
 	return &UpdateTemplateResponse{
-		Id: req.Template.Id,
+		Template: tmpl,
 	}, nil
 }
 
