@@ -234,20 +234,18 @@ const onSubmitThrottle = useThrottleFn(async (e) => {
                 :focus="focusComment"
             />
             <div
-                v-else
                 class="flow-root rounded-lg rounded-lg bg-base-800 text-neutral shadow-sm shadow-sm ring-1 ring-inset ring-gray-500 focus-within:ring-2 focus-within:ring-primary-600"
             >
-                <ul role="list" class="divide-y divide-gray-200 px-2">
+                <ul v-if="data && data.comments && data.comments.length > 0" role="list" class="divide-y divide-gray-200 px-2">
                     <DocumentCommentEntry
                         v-for="(comment, idx) in data?.comments"
                         :key="comment.id"
-                        v-model:comment="data.comments[idx]"
+                        v-model:comment="data!.comments[idx]"
                         @deleted="removeComment($event)"
                     />
                 </ul>
 
                 <TablePagination
-                    v-if="data !== null && data?.comments.length > 0"
                     class="mt-2"
                     :pagination="data?.pagination"
                     :refresh="refresh"

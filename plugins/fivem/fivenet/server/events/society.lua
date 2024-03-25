@@ -32,8 +32,8 @@ AddEventHandler('esx_society:fired', function(xPlayer, xTarget)
 	local tIdentifier = ESX.GetPlayerInfo(xTarget, "identifier")
 	if not tIdentifier then return end
 
-	local job = ESX.GetPlayerInfo(xTarget, "job")
+	local job = ESX.GetPlayerInfo(xPlayer, "job")
 	if not job then return end
 
-	addJobsUserActivity(job.name, sIdentifier, tIdentifier, 1, nil, "{}")
+	addJobsUserActivity(job.name, sIdentifier, tIdentifier, 2, nil, "{}")
 end)

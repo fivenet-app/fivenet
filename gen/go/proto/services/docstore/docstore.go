@@ -537,12 +537,17 @@ func (s *Server) DeleteDocument(ctx context.Context, req *DeleteDocumentRequest)
 		return nil, errorsdocstore.ErrDocDeleteDenied
 	}
 
+	deletedAtTime := jet.CURRENT_TIMESTAMP()
+	if doc.DeletedAt != nil && userInfo.SuperUser {
+		deletedAtTime = jet.TimestampExp(jet.NULL)
+	}
+
 	stmt := tDocument.
 		UPDATE(
 			tDocument.DeletedAt,
 		).
 		SET(
-			tDocument.DeletedAt.SET(jet.CURRENT_TIMESTAMP()),
+			tDocument.DeletedAt.SET(deletedAtTime),
 		).
 		WHERE(
 			tDocument.ID.EQ(jet.Uint64(req.DocumentId)),

@@ -21,6 +21,7 @@ import {
     LockOpenVariantIcon,
     NoteCheckIcon,
     PencilIcon,
+    RestoreIcon,
     ShapeIcon,
     TrashCanIcon,
 } from 'mdi-vue3';
@@ -332,8 +333,14 @@ if (hash.value !== undefined && hash.value !== null) {
                                     class="inline-flex items-center gap-x-1.5 rounded-md bg-primary-500 px-3 py-2 text-sm font-semibold text-neutral hover:bg-primary-400"
                                     @click="revealDelete(documentId)"
                                 >
-                                    <TrashCanIcon class="-ml-0.5 w-5 h-auto" aria-hidden="true" />
-                                    {{ $t('common.delete') }}
+                                    <template v-if="!doc.deletedAt">
+                                        <TrashCanIcon class="-ml-0.5 w-5 h-auto" aria-hidden="true" />
+                                        {{ $t('common.delete') }}
+                                    </template>
+                                    <template v-else>
+                                        <RestoreIcon class="-ml-0.5 w-5 h-auto" aria-hidden="true" />
+                                        {{ $t('common.restore') }}
+                                    </template>
                                 </button>
                             </div>
                         </div>
