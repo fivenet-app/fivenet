@@ -12,7 +12,8 @@ import (
 )
 
 var (
-	ErrNotFound = errors.New("file not found")
+	ErrNotFound    = errors.New("file not found")
+	ErrInvalidPath = errors.New("invalid file path")
 )
 
 type IStorage interface {

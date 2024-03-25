@@ -11,6 +11,7 @@ import (
 	"time"
 
 	"github.com/galexrt/fivenet/pkg/config"
+	"github.com/galexrt/fivenet/pkg/utils"
 	"github.com/h2non/filetype"
 	"github.com/minio/minio-go/v7"
 	"github.com/minio/minio-go/v7/pkg/credentials"
@@ -69,8 +70,13 @@ func (s *S3) WithPrefix(prefix string) (IStorage, error) {
 	}, nil
 }
 
-func (s *S3) Get(ctx context.Context, filePath string) (IObject, IObjectInfo, error) {
+func (s *S3) Get(ctx context.Context, filePathIn string) (IObject, IObjectInfo, error) {
+	filePath, ok := utils.CleanFilePath(filePathIn)
+	if !ok {
+		return nil, nil, ErrInvalidPath
+	}
 	filePath = path.Join(s.prefix, filePath)
+
 	object, err := s.s3.GetObject(ctx, s.bucketName, filePath, minio.GetObjectOptions{})
 	if err != nil {
 		if minio.ToErrorResponse(err).Code == "NoSuchKey" {
@@ -99,7 +105,11 @@ func (s *S3) Get(ctx context.Context, filePath string) (IObject, IObjectInfo, er
 	}, nil
 }
 
-func (s *S3) Stat(ctx context.Context, filePath string) (IObjectInfo, error) {
+func (s *S3) Stat(ctx context.Context, filePathIn string) (IObjectInfo, error) {
+	filePath, ok := utils.CleanFilePath(filePathIn)
+	if !ok {
+		return nil, ErrInvalidPath
+	}
 	filePath = path.Join(s.prefix, filePath)
 
 	info, err := s.s3.StatObject(ctx, s.bucketName, filePath, minio.GetObjectOptions{})
@@ -115,11 +125,15 @@ func (s *S3) Stat(ctx context.Context, filePath string) (IObjectInfo, error) {
 }
 
 // Put the file path must end with a file extension (e.g., `jpg`, `png`)
-func (s *S3) Put(ctx context.Context, filePath string, reader io.Reader, size int64, contentType string) (string, error) {
-	return s.PutWithTTL(ctx, filePath, reader, size, contentType, time.Time{})
+func (s *S3) Put(ctx context.Context, filePathIn string, reader io.Reader, size int64, contentType string) (string, error) {
+	return s.PutWithTTL(ctx, filePathIn, reader, size, contentType, time.Time{})
 }
 
-func (s *S3) PutWithTTL(ctx context.Context, filePath string, reader io.Reader, size int64, contentType string, ttl time.Time) (string, error) {
+func (s *S3) PutWithTTL(ctx context.Context, filePathIn string, reader io.Reader, size int64, contentType string, ttl time.Time) (string, error) {
+	filePath, ok := utils.CleanFilePath(filePathIn)
+	if !ok {
+		return "", ErrInvalidPath
+	}
 	filePath = path.Join(s.prefix, filePath)
 
 	uploadInfo, err := s.s3.PutObject(ctx, s.bucketName, filePath, reader, size, minio.PutObjectOptions{
@@ -133,7 +147,11 @@ func (s *S3) PutWithTTL(ctx context.Context, filePath string, reader io.Reader, 
 	return uploadInfo.Key, nil
 }
 
-func (s *S3) Delete(ctx context.Context, filePath string) error {
+func (s *S3) Delete(ctx context.Context, filePathIn string) error {
+	filePath, ok := utils.CleanFilePath(filePathIn)
+	if !ok {
+		return ErrInvalidPath
+	}
 	filePath = path.Join(s.prefix, filePath)
 
 	if err := s.s3.RemoveObject(ctx, s.bucketName, filePath, minio.RemoveObjectOptions{}); err != nil {
@@ -143,7 +161,11 @@ func (s *S3) Delete(ctx context.Context, filePath string) error {
 	return nil
 }
 
-func (s *S3) List(ctx context.Context, filePath string, offset int, pageSize int) ([]*FileInfo, error) {
+func (s *S3) List(ctx context.Context, filePathIn string, offset int, pageSize int) ([]*FileInfo, error) {
+	filePath, ok := utils.CleanFilePath(filePathIn)
+	if !ok {
+		return nil, ErrInvalidPath
+	}
 	filePath = path.Join(s.prefix, filePath)
 	if filePath == "." {
 		filePath = ""

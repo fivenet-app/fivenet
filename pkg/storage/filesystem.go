@@ -10,6 +10,7 @@ import (
 	"syscall"
 
 	"github.com/galexrt/fivenet/pkg/config"
+	"github.com/galexrt/fivenet/pkg/utils"
 	"github.com/h2non/filetype"
 	"go.uber.org/fx"
 )
@@ -48,8 +49,12 @@ func (s *Filesystem) WithPrefix(prefix string) (IStorage, error) {
 	}, nil
 }
 
-func (s *Filesystem) Get(ctx context.Context, filePath string) (IObject, IObjectInfo, error) {
-	filePath = filepath.Join(s.basePath, s.prefix, filepath.Clean(filePath))
+func (s *Filesystem) Get(ctx context.Context, filePathIn string) (IObject, IObjectInfo, error) {
+	filePath, ok := utils.CleanFilePath(filePathIn)
+	if !ok {
+		return nil, nil, ErrInvalidPath
+	}
+	filePath = filepath.Join(s.basePath, s.prefix, filePath)
 
 	stat, err := os.Stat(filePath)
 	if os.IsNotExist(err) {
@@ -71,8 +76,12 @@ func (s *Filesystem) Get(ctx context.Context, filePath string) (IObject, IObject
 	}, nil
 }
 
-func (s *Filesystem) Stat(ctx context.Context, filePath string) (IObjectInfo, error) {
-	filePath = filepath.Join(s.basePath, s.prefix, filepath.Clean(filePath))
+func (s *Filesystem) Stat(ctx context.Context, filePathIn string) (IObjectInfo, error) {
+	filePath, ok := utils.CleanFilePath(filePathIn)
+	if !ok {
+		return nil, ErrInvalidPath
+	}
+	filePath = filepath.Join(s.basePath, s.prefix, filePath)
 
 	stat, err := os.Stat(filePath)
 	if os.IsNotExist(err) {
@@ -85,8 +94,11 @@ func (s *Filesystem) Stat(ctx context.Context, filePath string) (IObjectInfo, er
 }
 
 func (s *Filesystem) Put(ctx context.Context, filePathIn string, reader io.Reader, size int64, contentType string) (string, error) {
-	filePathIn = filepath.Clean(filePathIn)
-	filePath := filepath.Join(s.basePath, s.prefix, filePathIn)
+	filePath, ok := utils.CleanFilePath(filePathIn)
+	if !ok {
+		return "", ErrInvalidPath
+	}
+	filePath = filepath.Join(s.basePath, s.prefix, filePath)
 
 	dir := filepath.Dir(filePath)
 	if _, err := os.Stat(dir); err != nil {
@@ -112,10 +124,14 @@ func (s *Filesystem) Put(ctx context.Context, filePathIn string, reader io.Reade
 	return filepath.Join(s.prefix, filePathIn), nil
 }
 
-func (s *Filesystem) Delete(ctx context.Context, filePath string) error {
-	filePath = filepath.Join(s.basePath, s.prefix, filepath.Clean(filePath))
+func (s *Filesystem) Delete(ctx context.Context, filePathIn string) error {
+	filePath, ok := utils.CleanFilePath(filePathIn)
+	if !ok {
+		return ErrInvalidPath
+	}
+	filePathIn = filepath.Join(s.basePath, s.prefix, filePath)
 
-	if err := os.Remove(filePath); err != nil {
+	if err := os.Remove(filePathIn); err != nil {
 		e, ok := err.(*os.PathError)
 		if ok && e.Err != syscall.ENOENT {
 			return err
@@ -125,7 +141,11 @@ func (s *Filesystem) Delete(ctx context.Context, filePath string) error {
 	return nil
 }
 
-func (s *Filesystem) List(ctx context.Context, filePath string, offset int, pageSize int) ([]*FileInfo, error) {
+func (s *Filesystem) List(ctx context.Context, filePathIn string, offset int, pageSize int) ([]*FileInfo, error) {
+	filePath, ok := utils.CleanFilePath(filePathIn)
+	if !ok {
+		return nil, ErrInvalidPath
+	}
 	filePath = filepath.Join(s.basePath, s.prefix, filePath)
 
 	entries, err := os.ReadDir(filePath)

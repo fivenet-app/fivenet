@@ -49,12 +49,12 @@ func (s *FilestoreHTTP) RegisterHTTP(e *gin.Engine) {
 			prefix = filepath.Clean(prefix)
 			fileName := c.Param("fileName")
 			fileName = filepath.Clean(fileName)
-			if fileName == "" {
+			if prefix == "" || fileName == "" {
 				c.AbortWithError(http.StatusBadRequest, fmt.Errorf("invalid file requested"))
 				return
 			}
 
-			object, info, err := s.st.Get(c, path.Join(prefix, fileName))
+			object, objInfo, err := s.st.Get(c, path.Join(prefix, fileName))
 			if err != nil {
 				if errors.Is(err, storage.ErrNotFound) {
 					c.AbortWithStatus(http.StatusNotFound)
@@ -66,9 +66,9 @@ func (s *FilestoreHTTP) RegisterHTTP(e *gin.Engine) {
 			}
 			defer object.Close()
 
-			mimeType := filetype.GetType(info.GetExtension())
+			mimeType := filetype.GetType(objInfo.GetExtension())
 
-			c.DataFromReader(200, info.GetSize(), mimeType.MIME.Value, object, nil)
+			c.DataFromReader(200, objInfo.GetSize(), mimeType.MIME.Value, object, nil)
 		})
 	}
 }
