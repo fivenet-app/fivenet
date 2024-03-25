@@ -43,7 +43,29 @@ func (s *FilestoreHTTP) RegisterHTTP(e *gin.Engine) {
 		StaleIfError:         cachecontrol.Duration(1 * 24 * time.Hour),
 	}))
 
+	g.HEAD("/:prefix/*fileName", s.HEAD)
 	g.GET("/:prefix/*fileName", s.GET)
+}
+
+func (s *FilestoreHTTP) HEAD(c *gin.Context) {
+	prefix := c.Param("prefix")
+	prefix = filepath.Clean(prefix)
+	fileName := c.Param("fileName")
+	fileName = filepath.Clean(fileName)
+	if prefix == "" || fileName == "" {
+		c.AbortWithError(http.StatusBadRequest, fmt.Errorf("invalid file requested"))
+		return
+	}
+
+	if _, err := s.st.Stat(c, path.Join(prefix, fileName)); err != nil {
+		if errors.Is(err, storage.ErrNotFound) {
+			c.AbortWithStatus(http.StatusNotFound)
+			return
+		}
+
+		c.AbortWithStatus(http.StatusBadRequest)
+		return
+	}
 }
 
 func (s *FilestoreHTTP) GET(c *gin.Context) {
