@@ -18,7 +18,7 @@ const emit = defineEmits<{
     (e: 'deleted', id: string): void;
     (e: 'update:modelValue', book: LawBook): void;
     (e: 'update:laws', laws: Law[]): void;
-    (e: 'update:law', law: Law): void;
+    (e: 'update:law', update: { id: string; law: Law }): void;
 }>();
 
 const { $grpc } = useNuxtApp();

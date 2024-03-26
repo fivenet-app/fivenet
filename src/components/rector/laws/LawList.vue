@@ -34,18 +34,18 @@ function addLawBook(): void {
     lastNewId.value--;
 }
 
-function updateLaw(law: Law): void {
-    const book = lawBooks.value?.find((b) => b.id === law.lawbookId);
+function updateLaw(event: { id: string; law: Law }): void {
+    const book = lawBooks.value?.find((b) => b.id === event.law.lawbookId);
     if (book === undefined) {
         return;
     }
 
-    const idx = book?.laws.findIndex((l) => l.id === law.id);
+    const idx = book?.laws.findIndex((l) => l.id === event.law.id || l.id === event.id);
     if (idx === -1) {
         return;
     }
 
-    book.laws[idx] = law;
+    book.laws[idx] = event.law;
 }
 </script>
 

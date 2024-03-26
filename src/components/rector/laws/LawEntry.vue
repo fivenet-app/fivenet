@@ -13,9 +13,9 @@ const props = defineProps<{
     startInEdit?: boolean;
 }>();
 
-const emit = defineEmits<{
+const emits = defineEmits<{
     (e: 'deleted', id: string): void;
-    (e: 'update:law', law: Law): void;
+    (e: 'update:law', update: { id: string; law: Law }): void;
 }>();
 
 const { $grpc } = useNuxtApp();
@@ -23,7 +23,7 @@ const { $grpc } = useNuxtApp();
 async function deleteLaw(id: string): Promise<void> {
     const i = parseInt(id, 10);
     if (i < 0) {
-        emit('deleted', id);
+        emits('deleted', id);
         return;
     }
 
@@ -33,7 +33,7 @@ async function deleteLaw(id: string): Promise<void> {
         });
         await call;
 
-        emit('deleted', id);
+        emits('deleted', id);
     } catch (e) {
         $grpc.handleError(e as RpcError);
         throw e;
@@ -52,7 +52,7 @@ async function saveLaw(lawBookId: string, id: string, values: FormData): Promise
     try {
         const call = $grpc.getRectorLawsClient().createOrUpdateLaw({
             law: {
-                id: parseInt(id, 10) < 0 ? '0' : id,
+                id: parseInt(id) < 0 ? '0' : id,
                 lawbookId: lawBookId,
                 name: values.name,
                 description: values.description,
@@ -63,7 +63,7 @@ async function saveLaw(lawBookId: string, id: string, values: FormData): Promise
         });
         const { response } = await call;
 
-        emit('update:law', response.law!);
+        emits('update:law', { id, law: response.law! });
 
         editing.value = false;
     } catch (e) {

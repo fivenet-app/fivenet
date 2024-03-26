@@ -441,6 +441,8 @@ func (s *Server) handleQualificationRequirementsChanges(ctx context.Context, tx 
 
 	toCreate, toDelete := s.compareQualificationRequirements(current, reqs)
 
+	tQReqs := table.FivenetQualificationsRequirements
+
 	for _, req := range toDelete {
 		stmt := tQReqs.
 			DELETE().

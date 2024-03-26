@@ -248,7 +248,7 @@ async function updateQualification(values: FormData): Promise<UpdateQualificatio
         const { response } = await call;
 
         await navigateTo({
-            name: 'documents-id',
+            name: 'jobs-qualifications-id',
             params: { id: response.qualificationId },
         });
 
