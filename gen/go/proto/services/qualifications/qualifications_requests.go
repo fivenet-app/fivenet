@@ -275,7 +275,7 @@ func (s *Server) CreateOrUpdateQualificationRequest(ctx context.Context, req *Cr
 		auditEntry.State = int16(rector.EventType_EVENT_TYPE_CREATED)
 	}
 
-	request, err := s.getQualificationRequest(ctx, req.Request.QualificationId, req.Request.UserId, userInfo)
+	request, err := s.getQualificationRequest(ctx, req.Request.QualificationId, userInfo.UserId, userInfo)
 	if err != nil {
 		return nil, errswrap.NewError(err, errorsqualifications.ErrFailedQuery)
 	}
@@ -285,7 +285,7 @@ func (s *Server) CreateOrUpdateQualificationRequest(ctx context.Context, req *Cr
 	}, nil
 }
 
-func (s *Server) getQualificationRequest(ctx context.Context, requestId uint64, userId int32, userInfo *userinfo.UserInfo) (*qualifications.QualificationRequest, error) {
+func (s *Server) getQualificationRequest(ctx context.Context, qualificationId uint64, userId int32, userInfo *userinfo.UserInfo) (*qualifications.QualificationRequest, error) {
 	tQuali := tQuali.AS("qualificationshort")
 	tUser := tUser.AS("user")
 
@@ -337,7 +337,7 @@ func (s *Server) getQualificationRequest(ctx context.Context, requestId uint64, 
 		).
 		GROUP_BY(tQualiRequests.QualificationID, tQualiRequests.UserID).
 		WHERE(jet.AND(
-			tQualiRequests.QualificationID.EQ(jet.Uint64(requestId)),
+			tQualiRequests.QualificationID.EQ(jet.Uint64(qualificationId)),
 			tQualiRequests.UserID.EQ(jet.Int32(userId)),
 		)).
 		LIMIT(1)

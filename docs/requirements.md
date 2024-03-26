@@ -5,8 +5,9 @@ title: "Requirements"
 ## Must have
 
 * MySQL or MariaDB database aka the "gameserver database", the database the FiveM server is using.
-* NATS message queue server or cluster (prefered).
-* Storage space: Either local or S3 bucket storage.
+* NATS message queue server or cluster (prefered), with JetStream enabled.
+* Storage space: Either local filesystem or S3 bucket storage.
+* Leaflet tiles: Generated using `gdal2tiles-leaflet` or similar. The map source image is expected to be `16384x16384` in resolution.
 
 ## Optional
 
