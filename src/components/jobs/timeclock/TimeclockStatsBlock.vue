@@ -41,6 +41,7 @@ async function updateStats(): Promise<void> {
     if (!props.stats) {
         return;
     }
+    console.log(props.stats);
 
     statsData.value.sum.value = parseFloat(((Math.round(props.stats.spentTimeSum * 100) / 100) * 60 * 60).toPrecision(2));
     statsData.value.avg.value = parseFloat(((Math.round(props.stats.spentTimeAvg * 100) / 100) * 60 * 60).toPrecision(2));
@@ -94,7 +95,12 @@ const axis = ref<ChartAxis>({
                                     <AlertCircleIcon class="h-5 w-5" aria-hidden="true" />
                                 </template>
                                 <template v-else>
-                                    {{ fromSecondsToFormattedDuration(stat.value, { seconds: false }) }}
+                                    {{
+                                        fromSecondsToFormattedDuration(stat.value, {
+                                            seconds: false,
+                                            emptyText: $t('common.none'),
+                                        })
+                                    }}
                                 </template>
                             </p>
                         </GenericContainer>

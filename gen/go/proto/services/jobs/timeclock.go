@@ -3,6 +3,7 @@ package jobs
 import (
 	"context"
 	"errors"
+	"fmt"
 	"slices"
 
 	database "github.com/galexrt/fivenet/gen/go/proto/resources/common/database"
@@ -201,8 +202,14 @@ func (s *Server) ListInactiveEmployees(ctx context.Context, req *ListInactiveEmp
 		tTimeClock.Job.EQ(jet.String(userInfo.Job)),
 		tUser.Job.EQ(jet.String(userInfo.Job)),
 		jet.OR(
-			tJobsUserProps.AbsenceBegin.IS_NULL(),
-			tJobsUserProps.AbsenceBegin.GT_EQ(
+			jet.AND(
+				tJobsUserProps.AbsenceBegin.IS_NULL(),
+				tJobsUserProps.AbsenceEnd.IS_NULL(),
+			),
+			tJobsUserProps.AbsenceBegin.LT_EQ(
+				jet.DateExp(jet.CURRENT_DATE().SUB(jet.INTERVAL(req.Days, jet.DAY))),
+			),
+			tJobsUserProps.AbsenceEnd.LT_EQ(
 				jet.DateExp(jet.CURRENT_DATE().SUB(jet.INTERVAL(req.Days, jet.DAY))),
 			),
 		),
@@ -288,6 +295,8 @@ func (s *Server) ListInactiveEmployees(ctx context.Context, req *ListInactiveEmp
 		GROUP_BY(tTimeClock.UserID).
 		OFFSET(req.Pagination.Offset).
 		LIMIT(limit)
+
+	fmt.Println(stmt.DebugSql())
 
 	if err := stmt.QueryContext(ctx, s.db, &resp.Colleagues); err != nil {
 		if !errors.Is(err, qrm.ErrNoRows) {

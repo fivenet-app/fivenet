@@ -177,13 +177,9 @@ watch(offset, async () => refresh());
                                     />
                                 </template>
                             </GenericTable>
-
-                            <TablePagination
-                                :pagination="data?.pagination"
-                                :refresh="refresh"
-                                @offset-change="offset = $event"
-                            />
                         </template>
+
+                        <TablePagination :pagination="data?.pagination" :refresh="refresh" @offset-change="offset = $event" />
                     </div>
                 </div>
             </div>
