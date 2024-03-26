@@ -149,7 +149,7 @@ $(document).ready(function () {
                 break;
 
             case 'fixTablet':
-                console.log('Attempting to fix tablet...');
+                console.info('Attempting to fix tablet...');
 
                 fadeOut('#tokenmgmt');
                 fadeOut('#pwreset');
@@ -159,7 +159,7 @@ $(document).ready(function () {
                 $('#tablet-frame').attr('src', `${item.webUrl}/api/clear-site-data`);
 
                 setTimeout(() => {
-                    console.log('Reloading FiveNet on tablet after fix ...');
+                    console.info('Reloading FiveNet on tablet after fix ...');
 
                     refreshTablet();
                 }, 3000);
