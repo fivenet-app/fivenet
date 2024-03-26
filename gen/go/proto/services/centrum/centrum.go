@@ -14,6 +14,7 @@ import (
 	"github.com/galexrt/fivenet/pkg/config/appconfig"
 	"github.com/galexrt/fivenet/pkg/coords/postals"
 	"github.com/galexrt/fivenet/pkg/events"
+	"github.com/galexrt/fivenet/pkg/nats"
 	"github.com/galexrt/fivenet/pkg/perms"
 	"github.com/galexrt/fivenet/pkg/server/audit"
 	"github.com/galexrt/fivenet/pkg/tracker"
@@ -148,7 +149,7 @@ func (s *Server) registerSubscriptions(ctx context.Context) error {
 		return err
 	}
 
-	s.jsCons, err = consumer.Consume(s.watchForChanges)
+	s.jsCons, err = consumer.Consume(s.watchForChanges, nats.ConsumeErrHandler(s.logger))
 	if err != nil {
 		return err
 	}

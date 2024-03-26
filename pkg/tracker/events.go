@@ -6,6 +6,7 @@ import (
 	"time"
 
 	"github.com/galexrt/fivenet/pkg/events"
+	"github.com/galexrt/fivenet/pkg/nats"
 	"github.com/nats-io/nats.go/jetstream"
 	"google.golang.org/protobuf/proto"
 )
@@ -58,7 +59,7 @@ func (s *Tracker) registerSubscriptions(ctx context.Context) error {
 		return err
 	}
 
-	cons, err := consumer.Consume(s.watchForChanges)
+	cons, err := consumer.Consume(s.watchForChanges, nats.ConsumeErrHandler(s.logger))
 	if err != nil {
 		return err
 	}

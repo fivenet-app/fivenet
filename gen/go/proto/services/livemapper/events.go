@@ -7,6 +7,7 @@ import (
 	"time"
 
 	"github.com/galexrt/fivenet/pkg/events"
+	"github.com/galexrt/fivenet/pkg/nats"
 	"github.com/nats-io/nats.go/jetstream"
 	"go.uber.org/zap"
 	"google.golang.org/protobuf/proto"
@@ -41,7 +42,7 @@ func (s *Server) registerEvents(ctx context.Context, c context.Context) error {
 		return err
 	}
 
-	cons, err := consumer.Consume(s.watchForEventsFunc(c))
+	cons, err := consumer.Consume(s.watchForEventsFunc(c), nats.ConsumeErrHandler(s.logger))
 	if err != nil {
 		return err
 	}

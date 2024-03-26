@@ -6,6 +6,7 @@ import (
 
 	"github.com/galexrt/fivenet/gen/go/proto/resources/centrum"
 	eventscentrum "github.com/galexrt/fivenet/gen/go/proto/services/centrum/events"
+	"github.com/galexrt/fivenet/pkg/nats"
 	"github.com/nats-io/nats.go/jetstream"
 	"go.uber.org/zap"
 	"google.golang.org/protobuf/proto"
@@ -25,7 +26,7 @@ func (s *Manager) registerSubscriptions(ctx context.Context, c context.Context) 
 		return err
 	}
 
-	cons, err := consumer.Consume(s.watchTopicGeneralFunc(c))
+	cons, err := consumer.Consume(s.watchTopicGeneralFunc(c), nats.ConsumeErrHandler(s.logger))
 	if err != nil {
 		s.logger.Error("failed to subscribe to centrum general topic", zap.Error(err))
 		return err

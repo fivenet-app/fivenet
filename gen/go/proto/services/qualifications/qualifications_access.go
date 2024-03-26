@@ -93,16 +93,17 @@ func (s *Server) SetQualificationAccess(ctx context.Context, req *SetQualificati
 }
 
 func (s *Server) handleQualificationAccessChanges(ctx context.Context, tx qrm.DB, mode qualifications.AccessLevelUpdateMode, qualificationId uint64, access *qualifications.QualificationAccess) error {
-	// Get existing job and user accesses from database
-	current, err := s.getQualificationAccess(ctx, qualificationId)
-	if err != nil {
-		return err
-	}
 
 	switch mode {
 	case qualifications.AccessLevelUpdateMode_ACCESS_LEVEL_UPDATE_MODE_UNSPECIFIED:
 		fallthrough
 	case qualifications.AccessLevelUpdateMode_ACCESS_LEVEL_UPDATE_MODE_UPDATE:
+		// Get existing job and user accesses from database
+		current, err := s.getQualificationAccess(ctx, qualificationId)
+		if err != nil {
+			return err
+		}
+
 		toCreate, toUpdate, toDelete := s.compareQualificationAccess(current, access)
 
 		if err := s.createQualificationAccess(ctx, tx, qualificationId, toCreate); err != nil {
@@ -310,17 +311,15 @@ func (s *Server) deleteQualificationAccess(ctx context.Context, tx qrm.DB, quali
 		}
 
 		tQJobAccess := table.FivenetQualificationsJobAccess
-		jobStmt := tQJobAccess.
+		stmt := tQJobAccess.
 			DELETE().
-			WHERE(
-				jet.AND(
-					tQJobAccess.ID.IN(jobIds...),
-					tQJobAccess.QualificationID.EQ(jet.Uint64(qualificationId)),
-				),
-			).
+			WHERE(jet.AND(
+				tQJobAccess.ID.IN(jobIds...),
+				tQJobAccess.QualificationID.EQ(jet.Uint64(qualificationId)),
+			)).
 			LIMIT(25)
 
-		if _, err := jobStmt.ExecContext(ctx, tx); err != nil {
+		if _, err := stmt.ExecContext(ctx, tx); err != nil {
 			return err
 		}
 	}

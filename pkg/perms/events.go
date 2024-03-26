@@ -7,6 +7,7 @@ import (
 	"time"
 
 	"github.com/galexrt/fivenet/pkg/events"
+	"github.com/galexrt/fivenet/pkg/nats"
 	"github.com/nats-io/nats.go/jetstream"
 	"go.uber.org/zap"
 )
@@ -53,7 +54,7 @@ func (p *Perms) registerSubscriptions(ctx context.Context, c context.Context) er
 		return err
 	}
 
-	cons, err := consumer.Consume(p.handleMessageFunc(c))
+	cons, err := consumer.Consume(p.handleMessageFunc(c), nats.ConsumeErrHandler(p.logger))
 	if err != nil {
 		return err
 	}

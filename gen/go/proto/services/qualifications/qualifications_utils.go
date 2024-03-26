@@ -432,3 +432,83 @@ func (s *Server) checkRequirementsMetForQualification(ctx context.Context, quali
 
 	return len(dest) == 0, nil
 }
+
+func (s *Server) handleQualificationRequirementsChanges(ctx context.Context, tx qrm.DB, qualificationId uint64, reqs []*qualifications.QualificationRequirement) error {
+	current, err := s.getQualificationRequirements(ctx, qualificationId)
+	if err != nil {
+		return err
+	}
+
+	toCreate, toDelete := s.compareQualificationRequirements(current, reqs)
+
+	for _, req := range toDelete {
+		stmt := tQReqs.
+			DELETE().
+			WHERE(jet.AND(
+				tQReqs.ID.EQ(jet.Uint64(req.Id)),
+			)).
+			LIMIT(1)
+
+		if _, err := stmt.ExecContext(ctx, tx); err != nil {
+			return err
+		}
+	}
+
+	for _, req := range toCreate {
+		stmt := tQReqs.
+			INSERT(
+				tQReqs.QualificationID,
+				tQReqs.TargetQualificationID,
+			).
+			VALUES(
+				qualificationId,
+				req.TargetQualificationId,
+			)
+
+		if _, err := stmt.ExecContext(ctx, tx); err != nil {
+			return err
+		}
+	}
+
+	return nil
+}
+
+func (s *Server) compareQualificationRequirements(current, in []*qualifications.QualificationRequirement) (toCreate []*qualifications.QualificationRequirement, toDelete []*qualifications.QualificationRequirement) {
+	if current == nil {
+		return in, toDelete
+	}
+
+	if len(current) == 0 {
+		toCreate = in
+	} else {
+		foundTracker := []int{}
+		for _, cq := range current {
+			var found *qualifications.QualificationRequirement
+			var foundIdx int
+			for i, qj := range in {
+				if cq.TargetQualificationId != qj.TargetQualificationId {
+					continue
+				}
+				found = qj
+				foundIdx = i
+				break
+			}
+			// No match in incoming requirement, needs to be deleted
+			if found == nil {
+				toDelete = append(toDelete, cq)
+				continue
+			}
+
+			foundTracker = append(foundTracker, foundIdx)
+		}
+
+		for i, uj := range in {
+			idx := slices.Index(foundTracker, i)
+			if idx == -1 {
+				toCreate = append(toCreate, uj)
+			}
+		}
+	}
+
+	return
+}

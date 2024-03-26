@@ -6,13 +6,20 @@ import { useThrottleFn, useTimeoutFn } from '@vueuse/core';
 import { CheckIcon, ChevronDownIcon, LoadingIcon, PlusIcon } from 'mdi-vue3';
 import { defineRule } from 'vee-validate';
 import { useNotificatorStore } from '~/store/notificator';
-import { AccessLevel, QualificationAccess, type Qualification } from '~~/gen/ts/resources/qualifications/qualifications';
+import {
+    AccessLevel,
+    QualificationAccess,
+    type Qualification,
+    QualificationRequirement,
+    QualificationShort,
+} from '~~/gen/ts/resources/qualifications/qualifications';
 import type { Job, JobGrade } from '~~/gen/ts/resources/users/jobs';
 import type {
     CreateQualificationResponse,
     UpdateQualificationResponse,
 } from '~~/gen/ts/services/qualifications/qualifications';
 import QualificationAccessEntry from '~/components/jobs/qualifications/QualificationAccessEntry.vue';
+import QualificationRequirementEntry from '~/components/jobs/qualifications/QualificationRequirementEntry.vue';
 import DocEditor from '~/components/partials/DocEditor.vue';
 import { useAuthStore } from '~/store/auth';
 
@@ -51,18 +58,12 @@ const openclose = [
     { id: 1, label: t('common.close', 2), closed: true },
 ];
 
-const qualification = ref<{
-    closed: { id: number; label: string; closed: boolean };
-    public: boolean;
-}>({
-    closed: openclose[0],
-    public: false,
-});
-
 const quali = ref<{
     closed: { id: number; label: string; closed: boolean };
+    requirements: QualificationRequirement[];
 }>({
     closed: openclose[0],
+    requirements: [],
 });
 
 const access = ref<
@@ -104,6 +105,7 @@ onMounted(async () => {
                     label: string;
                     closed: boolean;
                 };
+                quali.value.requirements = qualification.requirements;
             }
 
             if (response.qualification?.access) {
@@ -152,14 +154,14 @@ async function createQualification(values: FormData): Promise<CreateQualificatio
             id: '0',
             job: '',
             weight: 0,
-            closed: false,
+            closed: quali.value.closed.closed,
             abbreviation: values.abbreviation,
             title: values.title,
             description: values.description,
             content: values.content,
             creatorId: 0,
             creatorJob: '',
-            requirements: [], // TODO
+            requirements: quali.value.requirements,
             access: {
                 jobs: [],
             } as QualificationAccess,
@@ -190,7 +192,7 @@ async function createQualification(values: FormData): Promise<CreateQualificatio
         const { response } = await call;
 
         await navigateTo({
-            name: 'documents-id',
+            name: 'jobs-qualifications-id',
             params: { id: response.qualificationId },
         });
 
@@ -204,17 +206,17 @@ async function createQualification(values: FormData): Promise<CreateQualificatio
 async function updateQualification(values: FormData): Promise<UpdateQualificationResponse> {
     const req = {
         qualification: {
-            id: '0',
+            id: props.id!,
             job: '',
             weight: 0,
-            closed: false,
+            closed: quali.value.closed.closed,
             abbreviation: values.abbreviation,
             title: values.title,
             description: values.description,
             content: values.content,
             creatorId: 0,
             creatorJob: '',
-            requirements: [], // TODO
+            requirements: quali.value.requirements,
             access: {
                 jobs: [],
             } as QualificationAccess,
@@ -287,7 +289,7 @@ const onSubmitThrottle = useThrottleFn(async (e) => {
 
 const accessTypes = [{ id: 0, name: t('common.job', 2) }];
 
-function addDocumentAccessEntry(): void {
+function addQualificationAccessEntry(): void {
     if (access.value.size > maxAccessEntries - 1) {
         notifications.dispatchNotification({
             title: { key: 'notifications.max_access_entry.title', parameters: {} },
@@ -308,11 +310,11 @@ function addDocumentAccessEntry(): void {
     });
 }
 
-function removeDocumentAccessEntry(event: { id: string }): void {
+function removeQualificationAccessEntry(event: { id: string }): void {
     access.value.delete(event.id);
 }
 
-function updateDocumentAccessEntryType(event: { id: string; type: number }): void {
+function updateQualificationAccessEntryType(event: { id: string; type: number }): void {
     const accessEntry = access.value.get(event.id);
     if (!accessEntry) {
         return;
@@ -322,7 +324,7 @@ function updateDocumentAccessEntryType(event: { id: string; type: number }): voi
     access.value.set(event.id, accessEntry);
 }
 
-function updateDocumentAccessEntryName(event: { id: string; job?: Job; req?: Qualification }): void {
+function updateQualificationAccessEntryName(event: { id: string; job?: Job; req?: Qualification }): void {
     const accessEntry = access.value.get(event.id);
     if (!accessEntry) {
         return;
@@ -335,7 +337,7 @@ function updateDocumentAccessEntryName(event: { id: string; job?: Job; req?: Qua
     access.value.set(event.id, accessEntry);
 }
 
-function updateDocumentAccessEntryRank(event: { id: string; rank: JobGrade }): void {
+function updateQualificationAccessEntryRank(event: { id: string; rank: JobGrade }): void {
     const accessEntry = access.value.get(event.id);
     if (!accessEntry) {
         return;
@@ -345,7 +347,7 @@ function updateDocumentAccessEntryRank(event: { id: string; rank: JobGrade }): v
     access.value.set(event.id, accessEntry);
 }
 
-function updateDocumentAccessEntryAccess(event: { id: string; access: AccessLevel }): void {
+function updateQualificationAccessEntryAccess(event: { id: string; access: AccessLevel }): void {
     const accessEntry = access.value.get(event.id);
     if (!accessEntry) {
         return;
@@ -353,6 +355,15 @@ function updateDocumentAccessEntryAccess(event: { id: string; access: AccessLeve
 
     accessEntry.values.accessRole = event.access;
     access.value.set(event.id, accessEntry);
+}
+
+function updateQualificationRequirement(idx: number, qualification?: QualificationShort): void {
+    if (!qualification) {
+        return;
+    }
+
+    quali.value.requirements[idx].targetQualificationId = qualification.id;
+    // TODO
 }
 </script>
 
@@ -417,13 +428,13 @@ function updateDocumentAccessEntryAccess(event: { id: string; access: AccessLeve
                     </div>
                     <div class="flex-0 min-w-32">
                         <label for="closed" class="block text-sm font-medium"> {{ $t('common.close', 2) }}? </label>
-                        <Listbox v-model="qualification.closed" as="div" :disabled="!canEdit || !canDo.edit">
+                        <Listbox v-model="quali.closed" as="div" :disabled="!canEdit || !canDo.edit">
                             <div class="relative">
                                 <ListboxButton
                                     class="block w-full rounded-md border-0 bg-base-700 py-1.5 pl-3 text-left text-neutral placeholder:text-accent-200 focus:ring-2 focus:ring-inset focus:ring-base-300 sm:text-sm sm:leading-6"
                                 >
                                     <span class="block truncate">
-                                        {{ openclose.find((e) => e.closed === qualification.closed.closed)?.label }}</span
+                                        {{ openclose.find((e) => e.closed === quali.closed.closed)?.label }}</span
                                     >
                                     <span class="pointer-events-none absolute inset-y-0 right-0 flex items-center pr-2">
                                         <ChevronDownIcon class="h-5 w-5 text-gray-400" aria-hidden="true" />
@@ -497,11 +508,11 @@ function updateDocumentAccessEntryAccess(event: { id: string; access: AccessLeve
                     :init="entry"
                     :access-types="accessTypes"
                     :read-only="!canDo.access"
-                    @type-change="updateDocumentAccessEntryType($event)"
-                    @name-change="updateDocumentAccessEntryName($event)"
-                    @rank-change="updateDocumentAccessEntryRank($event)"
-                    @access-change="updateDocumentAccessEntryAccess($event)"
-                    @delete-request="removeDocumentAccessEntry($event)"
+                    @type-change="updateQualificationAccessEntryType($event)"
+                    @name-change="updateQualificationAccessEntryName($event)"
+                    @rank-change="updateQualificationAccessEntryRank($event)"
+                    @access-change="updateQualificationAccessEntryAccess($event)"
+                    @delete-request="removeQualificationAccessEntry($event)"
                 />
                 <button
                     type="button"
@@ -509,7 +520,35 @@ function updateDocumentAccessEntryAccess(event: { id: string; access: AccessLeve
                     class="rounded-full bg-primary-500 p-2 text-neutral hover:bg-primary-400 focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-primary-500"
                     data-te-toggle="tooltip"
                     :title="$t('components.documents.document_editor.add_permission')"
-                    @click="addDocumentAccessEntry()"
+                    @click="addQualificationAccessEntry()"
+                >
+                    <PlusIcon class="h-5 w-5" aria-hidden="true" />
+                </button>
+            </div>
+
+            <div class="my-3">
+                <h2 class="text-neutral">
+                    {{ $t('common.requirements') }}
+                </h2>
+
+                <QualificationRequirementEntry
+                    v-for="(requirement, idx) in quali.requirements"
+                    :key="requirement.id"
+                    :requirement="requirement"
+                    @update-qualification="updateQualificationRequirement(idx, $event)"
+                    @remove="quali.requirements.splice(idx, 1)"
+                />
+
+                <button
+                    type="button"
+                    class="mt-2 rounded-full p-1.5 text-neutral focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2"
+                    :disabled="!canSubmit"
+                    :class="
+                        !canSubmit
+                            ? 'disabled bg-base-500 hover:bg-base-400 focus-visible:outline-base-500'
+                            : 'bg-primary-500 hover:bg-primary-400 focus-visible:outline-primary-500'
+                    "
+                    @click="quali.requirements.push({ id: '0', qualificationId: '0', targetQualificationId: '0' })"
                 >
                     <PlusIcon class="h-5 w-5" aria-hidden="true" />
                 </button>

@@ -46,7 +46,7 @@ CREATE TABLE IF NOT EXISTS `fivenet_qualifications_requirements` (
   `target_qualification_id` bigint(20) unsigned NOT NULL,
   PRIMARY KEY (`id`),
   KEY `idx_fivenet_qualifications_requirements_qualification_id` (`qualification_id`),
-  KEY `idx_fivenet_qualifications_requirements_qualification_ids` (`qualification_id`, `target_qualification_id`),
+  UNIQUE KEY `idx_fivenet_qualifications_requirements_qualification_ids` (`qualification_id`, `target_qualification_id`),
   CONSTRAINT `fk_fivenet_qualifications_requirements_quali_id` FOREIGN KEY (`qualification_id`) REFERENCES `fivenet_qualifications` (`id`) ON DELETE CASCADE ON UPDATE CASCADE,
   CONSTRAINT `fk_fivenet_qualifications_requirements_target_quali_id` FOREIGN KEY (`target_qualification_id`) REFERENCES `fivenet_qualifications` (`id`) ON DELETE CASCADE ON UPDATE CASCADE
 ) ENGINE=InnoDB;
