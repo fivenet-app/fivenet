@@ -1,7 +1,7 @@
 <script lang="ts" setup>
 import { RpcError } from '@protobuf-ts/runtime-rpc';
 // eslint-disable-next-line camelcase
-import { max, max_value, min, min_value, required } from '@vee-validate/rules';
+import { max, max_value, min, min_value, numeric, required } from '@vee-validate/rules';
 import { useConfirmDialog, useThrottleFn, useTimeoutFn } from '@vueuse/core';
 import { CancelIcon, ContentSaveIcon, PencilIcon, TrashCanIcon } from 'mdi-vue3';
 import { defineRule } from 'vee-validate';
@@ -77,14 +77,15 @@ defineRule('max', max);
 defineRule('max_value', max_value);
 defineRule('min', min);
 defineRule('min_value', min_value);
+defineRule('numeric', numeric);
 
 const { handleSubmit, setValues } = useForm<FormData>({
     validationSchema: {
         name: { required: true, min: 3, max: 128 },
         description: { required: true, min: 6, max: 500 },
-        fine: { required: false, min_value: 0, max_value: 999_999_999 },
-        detentionTime: { required: false, min_value: 0, max_value: 999_999_999 },
-        stvoPoints: { required: false, min_value: 0, max_value: 999_999_999 },
+        fine: { required: false, numeric: true, min_value: 0, max_value: 999_999_999 },
+        detentionTime: { required: false, numeric: true, min_value: 0, max_value: 999_999_999 },
+        stvoPoints: { required: false, numeric: true, min_value: 0, max_value: 999_999_999 },
     },
     validateOnMount: true,
 });
@@ -201,7 +202,7 @@ const editing = ref(props.startInEdit);
         <td class="whitespace-nowrap px-1 py-1 text-left text-accent-200">
             <VeeField
                 name="stvoPoints"
-                type="text"
+                type="number"
                 :placeholder="$t('common.traffic_infraction_points')"
                 :label="$t('common.traffic_infraction_points')"
                 class="block w-full rounded-md border-0 bg-base-700 py-1.5 text-neutral placeholder:text-accent-200 focus:ring-2 focus:ring-inset focus:ring-base-300 sm:text-sm sm:leading-6"
