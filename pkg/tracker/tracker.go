@@ -122,7 +122,10 @@ func New(p Params) (ITracker, error) {
 	p.LC.Append(fx.StopHook(func(_ context.Context) error {
 		cancel()
 
-		t.jsCons.Stop()
+		if t.jsCons != nil {
+			t.jsCons.Stop()
+			t.jsCons = nil
+		}
 
 		return nil
 	}))

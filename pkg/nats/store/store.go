@@ -65,7 +65,6 @@ func NewWithLocks[T any, U protoMessage[T]](ctx context.Context, logger *zap.Log
 		Description: fmt.Sprintf("%s Store", bucket),
 		History:     1,
 		Storage:     jetstream.MemoryStorage,
-		Replicas:    2,
 	})
 	if err != nil {
 		return nil, err
@@ -99,7 +98,6 @@ func New[T any, U protoMessage[T]](ctx context.Context, logger *zap.Logger, js *
 		History:     3,
 		Storage:     jetstream.MemoryStorage,
 		TTL:         6 * locks.LockTimeout,
-		Replicas:    1,
 	})
 	if err != nil {
 		return nil, err

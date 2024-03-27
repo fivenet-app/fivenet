@@ -26,12 +26,17 @@ func (s *Manager) registerSubscriptions(ctx context.Context, c context.Context) 
 		return err
 	}
 
-	cons, err := consumer.Consume(s.watchTopicGeneralFunc(c), nats.ConsumeErrHandler(s.logger))
+	if s.jsCons != nil {
+		s.jsCons.Stop()
+		s.jsCons = nil
+	}
+
+	s.jsCons, err = consumer.Consume(s.watchTopicGeneralFunc(c),
+		nats.ConsumeErrHandlerWithRestart(c, s.logger, s.registerSubscriptions))
 	if err != nil {
 		s.logger.Error("failed to subscribe to centrum general topic", zap.Error(err))
 		return err
 	}
-	s.jsCons = cons
 
 	return nil
 }

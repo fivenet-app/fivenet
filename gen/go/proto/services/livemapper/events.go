@@ -28,7 +28,6 @@ func (s *Server) registerEvents(ctx context.Context, c context.Context) error {
 		Discard:     jetstream.DiscardOld,
 		MaxAge:      2 * time.Minute,
 		Storage:     jetstream.MemoryStorage,
-		Replicas:    2,
 	}
 	if _, err := s.js.CreateOrUpdateStream(ctx, cfg); err != nil {
 		return err
@@ -42,11 +41,14 @@ func (s *Server) registerEvents(ctx context.Context, c context.Context) error {
 		return err
 	}
 
-	cons, err := consumer.Consume(s.watchForEventsFunc(c), nats.ConsumeErrHandler(s.logger))
+	if s.jsCons != nil {
+		s.jsCons.Stop()
+	}
+
+	s.jsCons, err = consumer.Consume(s.watchForEventsFunc(c), nats.ConsumeErrHandlerWithRestart(c, s.logger, s.registerEvents))
 	if err != nil {
 		return err
 	}
-	s.jsCons = cons
 
 	return nil
 }

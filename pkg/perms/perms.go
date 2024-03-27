@@ -199,7 +199,10 @@ func New(p Params) (Permissions, error) {
 
 		ps.wg.Wait()
 
-		ps.jsCons.Stop()
+		if ps.jsCons != nil {
+			ps.jsCons.Stop()
+			ps.jsCons = nil
+		}
 
 		return nil
 	}))

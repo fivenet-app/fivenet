@@ -39,7 +39,6 @@ func (p *Perms) registerSubscriptions(ctx context.Context, c context.Context) er
 		Discard:     jetstream.DiscardOld,
 		MaxAge:      15 * time.Second,
 		Storage:     jetstream.MemoryStorage,
-		Replicas:    2,
 	}
 
 	if _, err := p.js.CreateOrUpdateStream(ctx, cfg); err != nil {
@@ -54,11 +53,15 @@ func (p *Perms) registerSubscriptions(ctx context.Context, c context.Context) er
 		return err
 	}
 
-	cons, err := consumer.Consume(p.handleMessageFunc(c), nats.ConsumeErrHandler(p.logger))
+	if p.jsCons != nil {
+		p.jsCons.Stop()
+		p.jsCons = nil
+	}
+
+	p.jsCons, err = consumer.Consume(p.handleMessageFunc(c), nats.ConsumeErrHandlerWithRestart(c, p.logger, p.registerSubscriptions))
 	if err != nil {
 		return err
 	}
-	p.jsCons = cons
 
 	return nil
 }

@@ -27,7 +27,6 @@ func (c *Config) registerSubscriptions(ctx context.Context) error {
 		Discard:     jetstream.DiscardOld,
 		MaxAge:      10 * time.Second,
 		Storage:     jetstream.MemoryStorage,
-		Replicas:    2,
 	}
 
 	if _, err := c.js.CreateOrUpdateStream(ctx, cfg); err != nil {
@@ -42,11 +41,19 @@ func (c *Config) registerSubscriptions(ctx context.Context) error {
 		return err
 	}
 
-	cons, err := consumer.Consume(c.handleMessageFunc(ctx), nats.ConsumeErrHandler(c.logger))
+	if c.jsCons != nil {
+		c.jsCons.Stop()
+		c.jsCons = nil
+	}
+
+	c.jsCons, err = consumer.Consume(c.handleMessageFunc(ctx),
+		nats.ConsumeErrHandlerWithRestart(context.Background(), c.logger,
+			func(_ context.Context, ctx context.Context) error {
+				return c.registerSubscriptions(ctx)
+			}))
 	if err != nil {
 		return err
 	}
-	c.jsCons = cons
 
 	return nil
 }

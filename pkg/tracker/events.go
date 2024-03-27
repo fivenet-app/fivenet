@@ -28,7 +28,6 @@ func registerStreams(ctx context.Context, js *events.JSWrapper) error {
 		Discard:     jetstream.DiscardOld,
 		MaxAge:      2 * time.Minute,
 		Storage:     jetstream.MemoryStorage,
-		Replicas:    2,
 	}
 	if _, err := js.CreateOrUpdateStream(ctx, cfg); err != nil {
 		return err
@@ -59,11 +58,19 @@ func (s *Tracker) registerSubscriptions(ctx context.Context) error {
 		return err
 	}
 
-	cons, err := consumer.Consume(s.watchForChanges, nats.ConsumeErrHandler(s.logger))
+	if s.jsCons != nil {
+		s.jsCons.Stop()
+		s.jsCons = nil
+	}
+
+	s.jsCons, err = consumer.Consume(s.watchForChanges,
+		nats.ConsumeErrHandlerWithRestart(context.Background(), s.logger,
+			func(_ context.Context, ctx context.Context) error {
+				return s.registerSubscriptions(ctx)
+			}))
 	if err != nil {
 		return err
 	}
-	s.jsCons = cons
 
 	return nil
 }

@@ -123,7 +123,10 @@ func NewServer(p Params) (*Server, error) {
 
 		s.wg.Wait()
 
-		s.jsCons.Stop()
+		if s.jsCons != nil {
+			s.jsCons.Stop()
+			s.jsCons = nil
+		}
 
 		return nil
 	}))
@@ -149,7 +152,16 @@ func (s *Server) registerSubscriptions(ctx context.Context) error {
 		return err
 	}
 
-	s.jsCons, err = consumer.Consume(s.watchForChanges, nats.ConsumeErrHandler(s.logger))
+	if s.jsCons != nil {
+		s.jsCons.Stop()
+		s.jsCons = nil
+	}
+
+	s.jsCons, err = consumer.Consume(s.watchForChanges,
+		nats.ConsumeErrHandlerWithRestart(context.Background(), s.logger,
+			func(ctx context.Context, c context.Context) error {
+				return s.registerSubscriptions(c)
+			}))
 	if err != nil {
 		return err
 	}

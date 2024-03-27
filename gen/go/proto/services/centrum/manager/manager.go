@@ -87,7 +87,10 @@ func New(p Params) *Manager {
 	p.LC.Append(fx.StopHook(func(_ context.Context) error {
 		cancel()
 
-		s.jsCons.Stop()
+		if s.jsCons != nil {
+			s.jsCons.Stop()
+			s.jsCons = nil
+		}
 
 		return nil
 	}))

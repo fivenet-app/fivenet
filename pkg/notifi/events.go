@@ -25,7 +25,6 @@ func (n *Notifi) registerEvents(ctx context.Context) error {
 		Subjects:    []string{fmt.Sprintf("%s.>", BaseSubject)},
 		Discard:     jetstream.DiscardOld,
 		MaxAge:      30 * time.Minute,
-		Replicas:    2,
 	}
 	if _, err := n.js.CreateOrUpdateStream(ctx, cfg); err != nil {
 		return err

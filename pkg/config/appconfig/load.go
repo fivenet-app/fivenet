@@ -86,9 +86,12 @@ func New(p Params) (IConfig, error) {
 	}))
 
 	p.LC.Append(fx.StopHook(func(ctx context.Context) error {
-		cfg.jsCons.Stop()
-
 		cancel()
+
+		if cfg.jsCons != nil {
+			cfg.jsCons.Stop()
+			cfg.jsCons = nil
+		}
 
 		return nil
 	}))
