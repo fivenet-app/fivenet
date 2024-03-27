@@ -1656,10 +1656,10 @@
   dependencies:
     mini-svg-data-uri "^1.2.3"
 
-"@tailwindcss/typography@0.5.10":
-  version "0.5.10"
-  resolved "https://registry.yarnpkg.com/@tailwindcss/typography/-/typography-0.5.10.tgz#2abde4c6d5c797ab49cf47610830a301de4c1e0a"
-  integrity sha512-Pe8BuPJQJd3FfRnm6H0ulKIGoMEQS+Vq01R6M5aCrFB/ccR/shT+0kXLjouGC1gFLm9hopTFN+DMP0pfwRWzPw==
+"@tailwindcss/typography@0.5.11":
+  version "0.5.11"
+  resolved "https://registry.yarnpkg.com/@tailwindcss/typography/-/typography-0.5.11.tgz#408ed44d6eec7703a8543a0e78f65b05619ca162"
+  integrity sha512-ahOULqBQGCdSqL3vMNjH1R5cU2gxTh059fJIKF2enHXE8c/s3yKGDSKZ1+4poCr7BZRREJS8n5cCFmwsW4Ok3A==
   dependencies:
     lodash.castarray "^4.4.0"
     lodash.isplainobject "^4.0.6"
@@ -1883,10 +1883,26 @@
     "@unhead/schema" "1.9.1"
     "@unhead/shared" "1.9.1"
 
+"@unhead/dom@1.9.2":
+  version "1.9.2"
+  resolved "https://registry.yarnpkg.com/@unhead/dom/-/dom-1.9.2.tgz#c41ee51dea2ad928e286adbca4b6c652e4a7c5f6"
+  integrity sha512-yREmUAfYJsPV9qR3G85MkdH+FdvsHf8AIJRm7FgQidrPxFr8tCICdID3+jXULz3oq8pFye1tAyHlBHXeq3SIpA==
+  dependencies:
+    "@unhead/schema" "1.9.2"
+    "@unhead/shared" "1.9.2"
+
 "@unhead/schema@1.9.1":
   version "1.9.1"
   resolved "https://registry.yarnpkg.com/@unhead/schema/-/schema-1.9.1.tgz#7eed5ead3ff8d95e1f7c75edb0dd7c1dde0c80b3"
   integrity sha512-wCJKNx4l837NEVMWP3MnUfkgsnMyuXwYs7+5VvbYzAWbnZSvQt/K10xDV0N7ft9RSlPfgukVVG+gtARm1kGVHQ==
+  dependencies:
+    hookable "^5.5.3"
+    zhead "^2.2.4"
+
+"@unhead/schema@1.9.2":
+  version "1.9.2"
+  resolved "https://registry.yarnpkg.com/@unhead/schema/-/schema-1.9.2.tgz#73ae94161382aa457a6f33e9cdfd2adeb289ebcf"
+  integrity sha512-NRCAcuWtD2WCL8u3qR1yn41JpDB+ExjBnSLAuJseOD9+XJjQBqPRgx/bhxZ3Dx6vrrCnCF+SvKr+W1pa+3mWdA==
   dependencies:
     hookable "^5.5.3"
     zhead "^2.2.4"
@@ -1898,6 +1914,13 @@
   dependencies:
     "@unhead/schema" "1.9.1"
 
+"@unhead/shared@1.9.2":
+  version "1.9.2"
+  resolved "https://registry.yarnpkg.com/@unhead/shared/-/shared-1.9.2.tgz#4dc9c7c607d4d15f753ef5f1020ad0a663730d94"
+  integrity sha512-jXQ4vK9wXf66hflOSBUXQKVsOLJrYVSOknDH+9PTwz5CIgJv/Y/o/NkRCJjyf5W7qFf605Te28lbTeLumT+BeQ==
+  dependencies:
+    "@unhead/schema" "1.9.2"
+
 "@unhead/ssr@^1.8.20":
   version "1.9.1"
   resolved "https://registry.yarnpkg.com/@unhead/ssr/-/ssr-1.9.1.tgz#4b81bf3f3a798f7a695d4d01a6041a1e33a19701"
@@ -1906,7 +1929,17 @@
     "@unhead/schema" "1.9.1"
     "@unhead/shared" "1.9.1"
 
-"@unhead/vue@1.9.1", "@unhead/vue@^1.8.20":
+"@unhead/vue@1.9.2":
+  version "1.9.2"
+  resolved "https://registry.yarnpkg.com/@unhead/vue/-/vue-1.9.2.tgz#b6b275cc3ff9e88cdc6a072775e6447bc1e9afb3"
+  integrity sha512-wp0eOyb7tu2isSt1IiDGm194W/8DVL3cXZd8uvhVlhS9yPL3TzwrSNbvwx95fhfrGuXFraoLjp4SpZ2BCszFsg==
+  dependencies:
+    "@unhead/schema" "1.9.2"
+    "@unhead/shared" "1.9.2"
+    hookable "^5.5.3"
+    unhead "1.9.2"
+
+"@unhead/vue@^1.8.20":
   version "1.9.1"
   resolved "https://registry.yarnpkg.com/@unhead/vue/-/vue-1.9.1.tgz#3b5d220989df849f0e763a8304249a87b5a8ba8b"
   integrity sha512-clSKIkwtw26Lx5tR7ecJ/zvyFJkghvJU+jt2liQ4XYQb/Qaveh8L7gqsI1RKUuKaXAjlo2Z4Jpp1v9nHxA0heg==
@@ -8920,7 +8953,35 @@ tailwindcss-themer@^4.0.0:
     lodash.merge "^4.6.2"
     lodash.mergewith "^4.6.2"
 
-tailwindcss@3.4.1, tailwindcss@~3.4.1:
+tailwindcss@3.4.2:
+  version "3.4.2"
+  resolved "https://registry.yarnpkg.com/tailwindcss/-/tailwindcss-3.4.2.tgz#c983ea21ec1e561ede9a2fe98aadb840bee89fda"
+  integrity sha512-1kIzVecynNKMhhX8mPTOwTkkVHupUTMbEvk4n1ByxdM8sQTJ8fE41Y4TdORG6GmiVXHhfZ/++0hiIFJFwfadsA==
+  dependencies:
+    "@alloc/quick-lru" "^5.2.0"
+    arg "^5.0.2"
+    chokidar "^3.5.3"
+    didyoumean "^1.2.2"
+    dlv "^1.1.3"
+    fast-glob "^3.3.0"
+    glob-parent "^6.0.2"
+    is-glob "^4.0.3"
+    jiti "^1.21.0"
+    lilconfig "^2.1.0"
+    micromatch "^4.0.5"
+    normalize-path "^3.0.0"
+    object-hash "^3.0.0"
+    picocolors "^1.0.0"
+    postcss "^8.4.23"
+    postcss-import "^15.1.0"
+    postcss-js "^4.0.1"
+    postcss-load-config "^4.0.1"
+    postcss-nested "^6.0.1"
+    postcss-selector-parser "^6.0.11"
+    resolve "^1.22.2"
+    sucrase "^3.32.0"
+
+tailwindcss@~3.4.1:
   version "3.4.1"
   resolved "https://registry.yarnpkg.com/tailwindcss/-/tailwindcss-3.4.1.tgz#f512ca5d1dd4c9503c7d3d28a968f1ad8f5c839d"
   integrity sha512-qAYmXRfk3ENzuPBakNK0SRrUDipP8NQnEY6772uDhflcQz5EhRdD7JNZxyrFHVQNCwULPBn6FNPp9brpO7ctcA==
@@ -9321,6 +9382,16 @@ unhead@1.9.1:
     "@unhead/dom" "1.9.1"
     "@unhead/schema" "1.9.1"
     "@unhead/shared" "1.9.1"
+    hookable "^5.5.3"
+
+unhead@1.9.2:
+  version "1.9.2"
+  resolved "https://registry.yarnpkg.com/unhead/-/unhead-1.9.2.tgz#7613ddb51cdcdfbd9cdd66b65fe9be2b912de475"
+  integrity sha512-CveP8bjL8gUJnZ1NqcMU1roe+VuM14wr0cJfNek/LCSI2i968mHDD5tbDXNcMSAVOhffKj6WkTngTUKNOZxA7g==
+  dependencies:
+    "@unhead/dom" "1.9.2"
+    "@unhead/schema" "1.9.2"
+    "@unhead/shared" "1.9.2"
     hookable "^5.5.3"
 
 unicorn-magic@^0.1.0:
