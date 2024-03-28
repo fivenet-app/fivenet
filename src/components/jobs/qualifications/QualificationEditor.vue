@@ -302,7 +302,7 @@ function addQualificationAccessEntry(): void {
         return;
     }
 
-    const id = access.value.size > 0 ? parseInt([...access.value.keys()]?.pop() ?? '1', 10) + 1 : 0;
+    const id = access.value.size > 0 ? parseInt([...access.value.keys()]?.pop() ?? '1') + 1 : 0;
     access.value.set(id.toString(), {
         id: id.toString(),
         type: 0,

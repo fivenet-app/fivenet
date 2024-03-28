@@ -67,7 +67,7 @@ function addToClipboard(): void {
             class="whitespace-nowrap px-1 py-1 text-left text-sm text-error-500"
         >
             <template v-if="(user.props?.openFines ?? 0n) > 0n">
-                {{ $n(parseInt((user?.props?.openFines ?? 0n).toString(), 10), 'currency') }}
+                {{ $n(parseInt((user?.props?.openFines ?? 0n).toString()), 'currency') }}
             </template>
         </td>
         <td class="whitespace-nowrap px-1 py-1 text-left text-sm text-accent-200 hidden md:table-cell">{{ user.height }}cm</td>

@@ -106,7 +106,7 @@ async function listDocuments(): Promise<DocumentShort[]> {
 
 function addReference(doc: DocumentShort, reference: DocReference): void {
     const keys = Array.from(props.modelValue.keys());
-    const key = !keys.length ? '1' : (parseInt(keys[keys.length - 1]) + 1, 10).toString();
+    const key = !keys.length ? '1' : (parseInt(keys[keys.length - 1]) + 1).toString();
 
     props.modelValue.set(key, {
         id: key,

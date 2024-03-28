@@ -153,7 +153,7 @@ const onSubmitThrottle = useThrottleFn(async (e) => {
                                             {{ $t('common.traffic_infraction_points') }}
                                         </label>
                                         <VeeField
-                                            type="number"
+                                            type="text"
                                             name="trafficPoints"
                                             min="0"
                                             max="9999999"

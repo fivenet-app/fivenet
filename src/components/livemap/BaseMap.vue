@@ -163,7 +163,7 @@ function parseHash(hash: string): { latlng: L.LatLng; zoom: number } | undefined
         return;
     }
 
-    const zoom = parseInt(args[0], 10);
+    const zoom = parseInt(args[0]);
     const lat = parseFloat(args[1]);
     const lng = parseFloat(args[2]);
 

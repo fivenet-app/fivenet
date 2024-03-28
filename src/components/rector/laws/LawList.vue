@@ -84,7 +84,7 @@ function updateLaw(event: { id: string; law: Law }): void {
                                         <LawBookEntry
                                             v-model="lawBooks[idx]"
                                             v-model:laws="lawBooks[idx].laws"
-                                            :start-in-edit="parseInt(book.id, 10) < 0"
+                                            :start-in-edit="parseInt(book.id) < 0"
                                             @update:law="updateLaw($event)"
                                             @deleted="deletedLawBook($event)"
                                         />

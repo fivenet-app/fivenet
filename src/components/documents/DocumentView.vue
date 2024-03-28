@@ -395,7 +395,7 @@ if (hash.value !== undefined && hash.value !== null) {
                                 <span class="text-sm font-medium text-base-700">
                                     {{
                                         commentCount !== undefined
-                                            ? $t('common.comments', parseInt(commentCount.toString(), 10))
+                                            ? $t('common.comments', parseInt(commentCount.toString()))
                                             : '? ' + $t('common.comment', 2)
                                     }}
                                 </span>

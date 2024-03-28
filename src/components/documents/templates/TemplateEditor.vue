@@ -17,7 +17,6 @@ import { CreateTemplateRequest, UpdateTemplateRequest } from '~~/gen/ts/services
 import TemplateSchemaEditor, { type SchemaEditorValue } from '~/components/documents/templates/TemplateSchemaEditor.vue';
 import type { ObjectSpecsValue } from '~/components/documents/templates/types';
 import type { Template } from '~~/gen/ts/resources/documents/templates';
-import GenericDivider from '~/components/partials/elements/GenericDivider.vue';
 import SingleHint from '~/components/SingleHint.vue';
 import GenericContainer from '~/components/partials/elements/GenericContainer.vue';
 
@@ -121,7 +120,7 @@ function addDocumentAccessEntry(): void {
         return;
     }
 
-    const id = access.value.size > 0 ? parseInt([...access.value.keys()].pop() ?? '0', 10) + 1 : 0;
+    const id = access.value.size > 0 ? parseInt([...access.value.keys()].pop() ?? '0') + 1 : 0;
     access.value.set(id.toString(), {
         id: id.toString(),
         type: 1,
@@ -208,7 +207,7 @@ function addContentDocumentAccessEntry(): void {
         return;
     }
 
-    const id = contentAccess.value.size > 0 ? parseInt([...contentAccess.value.keys()].pop() ?? '0', 10) + 1 : 0;
+    const id = contentAccess.value.size > 0 ? parseInt([...contentAccess.value.keys()].pop() ?? '0') + 1 : 0;
     contentAccess.value.set(id.toString(), {
         id: id.toString(),
         type: 1,
@@ -354,7 +353,7 @@ async function createOrUpdateTemplate(values: FormData, templateId?: string): Pr
     const req: CreateTemplateRequest | UpdateTemplateRequest = {
         template: {
             id: templateId ?? '0',
-            weight: values.weight as number,
+            weight: values.weight,
             title: values.title,
             description: values.description,
             contentTitle: values.contentTitle,

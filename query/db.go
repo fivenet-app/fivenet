@@ -7,6 +7,7 @@ import (
 	"errors"
 
 	"github.com/XSAM/otelsql"
+	"github.com/galexrt/fivenet/pkg/config"
 	_ "github.com/go-sql-driver/mysql"
 	"github.com/golang-migrate/migrate/v4"
 	"github.com/golang-migrate/migrate/v4/database/mysql"
@@ -22,6 +23,14 @@ var (
 	//go:embed migrations/*.sql
 	migrationsFS embed.FS
 )
+
+type Params struct {
+	fx.In
+
+	LC     fx.Lifecycle
+	Logger *zap.Logger
+	Config *config.Config
+}
 
 func SetupDB(p Params) (*sql.DB, error) {
 	if err := MigrateDB(p.Logger, p.Config.Database.DSN); err != nil {
@@ -41,10 +50,9 @@ func SetupDB(p Params) (*sql.DB, error) {
 		return nil, err
 	}
 
-	err = otelsql.RegisterDBStatsMetrics(db, otelsql.WithAttributes(
+	if err := otelsql.RegisterDBStatsMetrics(db, otelsql.WithAttributes(
 		semconv.DBSystemMySQL,
-	))
-	if err != nil {
+	)); err != nil {
 		return nil, err
 	}
 
