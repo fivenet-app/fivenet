@@ -117,8 +117,9 @@ fivenet:
     mode: "release"
     tracing:
       enabled: false
-      # Jaeger Tracing endpoint (should have the right API path in the URL `/api/traces`)
-      url: ""
+      type: "stdout"
+      # OTLP Tracing endpoint URL
+      url: "https://localhost:4318"
       environment: "live"
       ratio: 0.1
     http:

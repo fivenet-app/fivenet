@@ -209,7 +209,7 @@ const selectedRole = ref<Role | undefined>();
                                 </template>
                             </GenericTable>
 
-                            <SingleHint id="rector_roles_list" />
+                            <SingleHint hint-id="rector_roles_list" />
                         </div>
                     </div>
                 </div>

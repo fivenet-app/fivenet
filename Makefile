@@ -176,7 +176,7 @@ gen-tiles: gdal2tiles-leaflet
 	JPEGMEM=2048M \
 		$(BUILD_DIR)gdal2tiles-leaflet/gdal2tiles.py \
 		-l -p raster -z 1-7 -w none \
-		./maps/GTAV_POSTAL_16384x16384.jpg ./src/public/images/livemap/tiles/postal
+		./internal/maps/GTAV_POSTAL_16384x16384.jpg ./src/public/images/livemap/tiles/postal
 
 .PHONY: optimize-tiles
 optimize-tiles:

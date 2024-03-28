@@ -30,11 +30,20 @@ type Config struct {
 	Discord Discord `yaml:"discord"`
 }
 
+type TracingExporter string
+
+const (
+	TracingExporter_StdoutTrace   TracingExporter = "stdout"
+	TracingExporter_OTLPTraceGRPC TracingExporter = "otlptracegrpc"
+	TracingExporter_OTLPTraceHTTP TracingExporter = "otlptracehttp"
+)
+
 type Tracing struct {
-	Enabled     bool    `default:"false" yaml:"enabled"`
-	URL         string  `yaml:"url"`
-	Environment string  `default:"dev" yaml:"environment"`
-	Ratio       float64 `default:"0.1" yaml:"ratio"`
+	Enabled     bool            `default:"false" yaml:"enabled"`
+	Type        TracingExporter `default:"stdout" yaml:"type"`
+	URL         string          `yaml:"url"`
+	Environment string          `default:"dev" yaml:"environment"`
+	Ratio       float64         `default:"0.1" yaml:"ratio"`
 }
 
 type HTTP struct {

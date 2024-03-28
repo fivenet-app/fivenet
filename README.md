@@ -88,45 +88,18 @@ For the roadmap [click here](https://github.com/users/galexrt/projects/2/views/1
 
 ## Development
 
-### Required Tools
+Please see [development documentation](docs/development.md).
 
-* Golang 1.21 or higher
-    * The assumption is that your `PATH` contains `$GOPATH/bin`.
-* `yarn`
-* [`protoc`](https://grpc.io/docs/protoc-installation/)
-    * Depending on your OS, Deb-based `libprotobuf-dev`, Fedora: `protobuf-dev`
-* `protoc-gen-go` (might be available via your OSes package manager):
-    * `go install google.golang.org/protobuf/cmd/protoc-gen-go@v1.28`
-    * `go install google.golang.org/grpc/cmd/protoc-gen-go-grpc@v1.2`
-* `protoc-gen-js`: Run `yarn`, without any args, in the root of the repository to install this and other dependencies.
-* `protoc-gen-grpc-web`: Download and install the latest release from https://github.com/grpc/grpc-web/releases
-* `protoc-gen-validate`: Download and install the latest release from https://github.com/bufbuild/protoc-gen-validate/releases
-* `protoc-go-inject-tag`: Run `go install github.com/favadi/protoc-go-inject-tag@latest`.
-* `protoc-gen-doc`: Run `go install github.com/pseudomuto/protoc-gen-doc/cmd/protoc-gen-doc@latest`.
-* `go-licenses`: Run `go install github.com/google/go-licenses@latest`.
+## Security
 
-### Codium/ VSCode Users
-
-Make sure to disable the built-in Typescript plugin.
-
-> 1. In your project workspace, bring up the command palette with Ctrl + Shift + P (macOS: Cmd + Shift + P).
-> 2. Type built and select "Extensions: Show Built-in Extensions".
-> 3. Type typescript in the extension search box (do not remove @builtin prefix).
-> 4. Click the little gear icon of "TypeScript and JavaScript Language Features", and select "Disable (Workspace)".
-> 5. Reload the workspace. Takeover mode will be enabled when you open a Vue or TS file.
-
-Copied from and for more information on "why you should do this", see: https://vuejs.org/guide/typescript/overview.html#volar-takeover-mode
-
-### GRPC Web Debugging in your Browser
-
-You must use this forked version: [Github jrapoport/grpc-web-devtools](https://github.com/jrapoport/grpc-web-devtools).
+If you find a vulnerability or a potential vulnerability in FiveNet, please see the [security release process](SECURITY.md).
 
 ## Credits
 
-* Leaflet Livemap Code: Based upon [NelsonMinar's Map Viewer Gist](https://gist.github.com/NelsonMinar/6600524) and VPC's CopNet/ MedicNet livemap code, and a lot of Leaflet CRS related Stackoverflow posts.
+* Leaflet Livemap Code CRS: Based upon [NelsonMinar's Map Viewer Gist](https://gist.github.com/NelsonMinar/6600524) and VPC's CopNet/ MedicNet livemap code, and a lot of Leaflet CRS related Stackoverflow posts.
 
 ## License
 
-Code licensed under Apache 2.0 license, see [LICENSE](/LICENSE).
+Code licensed under Apache 2.0 license, see [LICENSE](LICENSE).
 
-Licenses of used libraries, code and media can be found in the [`src/public/licenses/` folder](/src/public/licenses/).
+Licenses of used libraries, code and media can be found in the [`src/public/licenses/` folder](src/public/licenses/).

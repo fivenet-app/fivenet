@@ -326,9 +326,6 @@
                 },
                 "templates_modal": {
                     "no_template": "Ohne Vorlage"
-                },
-                "partials": {
-                    "template_hint": "Sie können Golang HTML Templating im oberen Feld benutzen. Klicken Sie hier, um mehr zu erfahren."
                 }
             },
             "activity_list": {
@@ -599,6 +596,9 @@
             },
             "rector_roles_list": {
                 "content": "Die Berechtigungen werden von den unteren auf die oberen Ränge vererbt. Wenn Rang 1 Dokumente einsehen kann, können alle Ränge einschließlich Rang 1 dies ebenfalls tun. Wird Rang 4 die Einsichtnahme in Dokumente verweigert, können die Ränge 4 und höher keine Dokumente einsehen."
+            },
+            "template_editor_templating": {
+                "content": "Sie können Golang HTML Templating im oberen Feld benutzen. Für kopierbereite-Ausschnitte und Tricks folgen Sie dem Link."
             }
         },
         "notifications": {

@@ -16,8 +16,10 @@ import { Job, JobGrade } from '~~/gen/ts/resources/users/jobs';
 import { CreateTemplateRequest, UpdateTemplateRequest } from '~~/gen/ts/services/docstore/docstore';
 import TemplateSchemaEditor, { type SchemaEditorValue } from '~/components/documents/templates/TemplateSchemaEditor.vue';
 import type { ObjectSpecsValue } from '~/components/documents/templates/types';
-import TemplateSyntaxHint from '~/components/documents/templates/partials/TemplateSyntaxHint.vue';
 import type { Template } from '~~/gen/ts/resources/documents/templates';
+import GenericDivider from '~/components/partials/elements/GenericDivider.vue';
+import SingleHint from '~/components/SingleHint.vue';
+import GenericContainer from '~/components/partials/elements/GenericContainer.vue';
 
 const props = defineProps<{
     templateId?: string;
@@ -532,220 +534,232 @@ onMounted(async () => {
 <template>
     <div class="m-2 text-neutral">
         <form @submit.prevent="onSubmitThrottle">
-            <div>
-                <label for="content" class="block text-sm font-medium leading-6 text-gray-100">
-                    {{ $t('common.template', 2) }} {{ $t('common.weight') }}
-                </label>
-                <div class="mt-2">
-                    <VeeField
-                        type="number"
-                        name="weight"
-                        min="0"
-                        max="4294967295"
-                        class="block w-full rounded-md border-0 bg-base-700 py-1.5 text-neutral placeholder:text-accent-200 focus:ring-2 focus:ring-inset focus:ring-base-300 sm:text-sm sm:leading-6"
-                        :label="$t('common.weight')"
-                        :placeholder="$t('common.weight')"
-                        @focusin="focusTablet(true)"
-                        @focusout="focusTablet(false)"
-                    />
-                </div>
-            </div>
-            <div>
-                <label for="title" class="mt-2 block text-sm font-medium">
-                    {{ $t('common.template') }} {{ $t('common.title') }}
-                </label>
+            <GenericContainer class="bg-base-800">
                 <div>
-                    <VeeField
-                        as="textarea"
-                        rows="1"
-                        name="title"
-                        class="block w-full rounded-md border-0 bg-base-700 py-1.5 text-neutral placeholder:text-accent-200 focus:ring-2 focus:ring-inset focus:ring-base-300 sm:text-sm sm:leading-6"
-                        :label="$t('common.title')"
-                        :placeholder="$t('common.title')"
-                        @focusin="focusTablet(true)"
-                        @focusout="focusTablet(false)"
-                    />
-                    <VeeErrorMessage name="title" as="p" class="mt-2 text-sm text-error-400" />
+                    <label for="content" class="block text-sm font-medium leading-6 text-gray-100">
+                        {{ $t('common.template', 2) }} {{ $t('common.weight') }}
+                    </label>
+                    <div class="mt-2">
+                        <VeeField
+                            type="number"
+                            name="weight"
+                            min="0"
+                            max="4294967295"
+                            class="block w-full rounded-md border-0 bg-base-700 py-1.5 text-neutral placeholder:text-accent-200 focus:ring-2 focus:ring-inset focus:ring-base-300 sm:text-sm sm:leading-6"
+                            :label="$t('common.weight')"
+                            :placeholder="$t('common.weight')"
+                            @focusin="focusTablet(true)"
+                            @focusout="focusTablet(false)"
+                        />
+                    </div>
                 </div>
-            </div>
-            <div>
-                <label for="description" class="mt-2 block text-sm font-medium">
-                    {{ $t('common.template') }} {{ $t('common.description') }}
-                </label>
                 <div>
-                    <VeeField
-                        as="textarea"
-                        rows="4"
-                        name="description"
-                        :label="$t('common.description')"
-                        class="block w-full rounded-md border-0 bg-base-700 py-1.5 text-neutral placeholder:text-accent-200 focus:ring-2 focus:ring-inset focus:ring-base-300 sm:text-sm sm:leading-6"
-                        @focusin="focusTablet(true)"
-                        @focusout="focusTablet(false)"
-                    />
-                    <VeeErrorMessage name="description" as="p" class="mt-2 text-sm text-error-400" />
+                    <label for="title" class="mt-2 block text-sm font-medium">
+                        {{ $t('common.template') }} {{ $t('common.title') }}
+                    </label>
+                    <div>
+                        <VeeField
+                            as="textarea"
+                            rows="1"
+                            name="title"
+                            class="block w-full rounded-md border-0 bg-base-700 py-1.5 text-neutral placeholder:text-accent-200 focus:ring-2 focus:ring-inset focus:ring-base-300 sm:text-sm sm:leading-6"
+                            :label="$t('common.title')"
+                            :placeholder="$t('common.title')"
+                            @focusin="focusTablet(true)"
+                            @focusout="focusTablet(false)"
+                        />
+                        <VeeErrorMessage name="title" as="p" class="mt-2 text-sm text-error-400" />
+                    </div>
                 </div>
+                <div>
+                    <label for="description" class="mt-2 block text-sm font-medium">
+                        {{ $t('common.template') }} {{ $t('common.description') }}
+                    </label>
+                    <div>
+                        <VeeField
+                            as="textarea"
+                            rows="4"
+                            name="description"
+                            :label="$t('common.description')"
+                            class="block w-full rounded-md border-0 bg-base-700 py-1.5 text-neutral placeholder:text-accent-200 focus:ring-2 focus:ring-inset focus:ring-base-300 sm:text-sm sm:leading-6"
+                            @focusin="focusTablet(true)"
+                            @focusout="focusTablet(false)"
+                        />
+                        <VeeErrorMessage name="description" as="p" class="mt-2 text-sm text-error-400" />
+                    </div>
+                </div>
+                <div>
+                    <div class="my-3">
+                        <h2 class="text-sm text-neutral">{{ $t('common.template') }} {{ $t('common.access') }}</h2>
+                        <DocumentAccessEntry
+                            v-for="entry in access.values()"
+                            :key="entry.id"
+                            :init="entry"
+                            :access-types="accessTypes"
+                            :access-roles="[AccessLevel.VIEW, AccessLevel.EDIT]"
+                            @type-change="updateDocumentAccessEntryType($event)"
+                            @name-change="updateDocumentAccessEntryName($event)"
+                            @rank-change="updateDocumentAccessEntryRank($event)"
+                            @access-change="updateDocumentAccessEntryAccess($event)"
+                            @delete-request="removeDocumentAccessEntry($event)"
+                        />
+                        <button
+                            type="button"
+                            class="rounded-full bg-primary-500 p-2 text-neutral hover:bg-primary-400 focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-primary-500"
+                            data-te-toggle="tooltip"
+                            :title="$t('components.documents.document_editor.add_permission')"
+                            @click="addDocumentAccessEntry()"
+                        >
+                            <PlusIcon class="h-5 w-5" aria-hidden="true" />
+                        </button>
+                    </div>
+                </div>
+            </GenericContainer>
+
+            <div class="mt-2 flex flex-col sm:flex-row">
+                <SingleHint
+                    class="min-w-full"
+                    hint-id="template_editor_templating"
+                    to="https://github.com/galexrt/fivenet/blob/main/docs/features/documents_templates.md"
+                    :external="true"
+                    link-target="_blank"
+                />
             </div>
-            <div>
+
+            <GenericContainer class="bg-base-800">
+                <div>
+                    <label for="contentTitle" class="mt-2 block text-sm font-medium">
+                        {{ $t('common.content') }} {{ $t('common.title') }}
+                    </label>
+                    <div>
+                        <VeeField
+                            as="textarea"
+                            rows="2"
+                            name="contentTitle"
+                            :label="$t('common.title')"
+                            class="block w-full rounded-md border-0 bg-base-700 py-1.5 text-neutral placeholder:text-accent-200 focus:ring-2 focus:ring-inset focus:ring-base-300 sm:text-sm sm:leading-6"
+                            @focusin="focusTablet(true)"
+                            @focusout="focusTablet(false)"
+                        />
+                        <VeeErrorMessage name="contentTitle" as="p" class="mt-2 text-sm text-error-400" />
+                    </div>
+                </div>
+                <div>
+                    <label for="contentCategory" class="mt-2 block text-sm font-medium">
+                        {{ $t('common.category') }}
+                    </label>
+                    <div>
+                        <Combobox v-model="selectedCategory" as="div" nullable>
+                            <div class="relative">
+                                <ComboboxButton as="div">
+                                    <ComboboxInput
+                                        autocomplete="off"
+                                        class="block w-full rounded-md border-0 bg-base-700 py-1.5 text-neutral placeholder:text-accent-200 focus:ring-2 focus:ring-inset focus:ring-base-300 sm:text-sm sm:leading-6"
+                                        :display-value="(category: any) => category?.name"
+                                        @change="queryCategories = $event.target.value"
+                                        @focusin="focusTablet(true)"
+                                        @focusout="focusTablet(false)"
+                                    />
+                                </ComboboxButton>
+
+                                <ComboboxOptions
+                                    v-if="entriesCategories.length > 0"
+                                    class="absolute z-10 mt-1 max-h-44 w-full overflow-auto rounded-md bg-base-700 py-1 text-base sm:text-sm"
+                                >
+                                    <ComboboxOption
+                                        v-for="category in entriesCategories"
+                                        v-slot="{ active, selected }"
+                                        :key="category.id"
+                                        :value="category"
+                                        as="category"
+                                    >
+                                        <li
+                                            :class="[
+                                                'relative cursor-default select-none py-2 pl-8 pr-4 text-neutral',
+                                                active ? 'bg-primary-500' : '',
+                                            ]"
+                                        >
+                                            <span :class="['block truncate', selected && 'font-semibold']">
+                                                {{ category.name }}
+                                            </span>
+
+                                            <span
+                                                v-if="selected"
+                                                :class="[
+                                                    active ? 'text-neutral' : 'text-primary-500',
+                                                    'absolute inset-y-0 left-0 flex items-center pl-1.5',
+                                                ]"
+                                            >
+                                                <CheckIcon class="h-5 w-5" aria-hidden="true" />
+                                            </span>
+                                        </li>
+                                    </ComboboxOption>
+                                </ComboboxOptions>
+                            </div>
+                        </Combobox>
+                    </div>
+                </div>
+                <div>
+                    <label for="contentState" class="mt-2 block text-sm font-medium">
+                        {{ $t('common.content') }} {{ $t('common.state') }}
+                    </label>
+                    <div>
+                        <VeeField
+                            as="textarea"
+                            rows="2"
+                            name="contentState"
+                            :label="$t('common.state')"
+                            class="block w-full rounded-md border-0 bg-base-700 py-1.5 text-neutral placeholder:text-accent-200 focus:ring-2 focus:ring-inset focus:ring-base-300 sm:text-sm sm:leading-6"
+                            @focusin="focusTablet(true)"
+                            @focusout="focusTablet(false)"
+                        />
+                        <VeeErrorMessage name="contentState" as="p" class="mt-2 text-sm text-error-400" />
+                    </div>
+                </div>
+                <div>
+                    <label for="content" class="mt-2 block text-sm font-medium">
+                        {{ $t('common.content') }} {{ $t('common.template') }}
+                    </label>
+                    <div>
+                        <VeeField
+                            as="textarea"
+                            rows="6"
+                            name="content"
+                            :label="$t('common.template')"
+                            class="block w-full rounded-md border-0 bg-base-700 py-1.5 text-neutral placeholder:text-accent-200 focus:ring-2 focus:ring-inset focus:ring-base-300 sm:text-sm sm:leading-6"
+                            @focusin="focusTablet(true)"
+                            @focusout="focusTablet(false)"
+                        />
+                        <VeeErrorMessage name="content" as="p" class="mt-2 text-sm text-error-400" />
+                    </div>
+                </div>
+                <TemplateSchemaEditor v-model="schema" class="mt-2" />
                 <div class="my-3">
-                    <h2 class="text-neutral">{{ $t('common.template') }} {{ $t('common.access') }}</h2>
+                    <h2 class="text-sm text-neutral">{{ $t('common.content') }} {{ $t('common.access') }}</h2>
                     <DocumentAccessEntry
-                        v-for="entry in access.values()"
+                        v-for="entry in contentAccess.values()"
                         :key="entry.id"
                         :init="entry"
-                        :access-types="accessTypes"
-                        :access-roles="[AccessLevel.VIEW, AccessLevel.EDIT]"
-                        @type-change="updateDocumentAccessEntryType($event)"
-                        @name-change="updateDocumentAccessEntryName($event)"
-                        @rank-change="updateDocumentAccessEntryRank($event)"
-                        @access-change="updateDocumentAccessEntryAccess($event)"
-                        @delete-request="removeDocumentAccessEntry($event)"
+                        :access-types="contentAccessTypes"
+                        :show-required="true"
+                        @type-change="updateContentDocumentAccessEntryType($event)"
+                        @name-change="updateContentDocumentAccessEntryName($event)"
+                        @rank-change="updateContentDocumentAccessEntryRank($event)"
+                        @access-change="updateContentDocumentAccessEntryAccess($event)"
+                        @delete-request="removeContentDocumentAccessEntry($event)"
+                        @required-change="updateContentDocumentAccessEntryRequired($event)"
                     />
                     <button
                         type="button"
                         class="rounded-full bg-primary-500 p-2 text-neutral hover:bg-primary-400 focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-primary-500"
                         data-te-toggle="tooltip"
                         :title="$t('components.documents.document_editor.add_permission')"
-                        @click="addDocumentAccessEntry()"
+                        @click="addContentDocumentAccessEntry()"
                     >
                         <PlusIcon class="h-5 w-5" aria-hidden="true" />
                     </button>
                 </div>
-            </div>
-            <div>
-                <label for="contentTitle" class="mt-2 block text-sm font-medium">
-                    {{ $t('common.content') }} {{ $t('common.title') }}
-                </label>
-                <div>
-                    <VeeField
-                        as="textarea"
-                        rows="2"
-                        name="contentTitle"
-                        :label="$t('common.title')"
-                        class="block w-full rounded-md border-0 bg-base-700 py-1.5 text-neutral placeholder:text-accent-200 focus:ring-2 focus:ring-inset focus:ring-base-300 sm:text-sm sm:leading-6"
-                        @focusin="focusTablet(true)"
-                        @focusout="focusTablet(false)"
-                    />
-                    <VeeErrorMessage name="contentTitle" as="p" class="mt-2 text-sm text-error-400" />
-                    <TemplateSyntaxHint />
-                </div>
-            </div>
-            <div>
-                <label for="contentCategory" class="mt-2 block text-sm font-medium">
-                    {{ $t('common.category') }}
-                </label>
-                <div>
-                    <Combobox v-model="selectedCategory" as="div" nullable>
-                        <div class="relative">
-                            <ComboboxButton as="div">
-                                <ComboboxInput
-                                    autocomplete="off"
-                                    class="block w-full rounded-md border-0 bg-base-700 py-1.5 text-neutral placeholder:text-accent-200 focus:ring-2 focus:ring-inset focus:ring-base-300 sm:text-sm sm:leading-6"
-                                    :display-value="(category: any) => category?.name"
-                                    @change="queryCategories = $event.target.value"
-                                    @focusin="focusTablet(true)"
-                                    @focusout="focusTablet(false)"
-                                />
-                            </ComboboxButton>
-
-                            <ComboboxOptions
-                                v-if="entriesCategories.length > 0"
-                                class="absolute z-10 mt-1 max-h-44 w-full overflow-auto rounded-md bg-base-700 py-1 text-base sm:text-sm"
-                            >
-                                <ComboboxOption
-                                    v-for="category in entriesCategories"
-                                    v-slot="{ active, selected }"
-                                    :key="category.id"
-                                    :value="category"
-                                    as="category"
-                                >
-                                    <li
-                                        :class="[
-                                            'relative cursor-default select-none py-2 pl-8 pr-4 text-neutral',
-                                            active ? 'bg-primary-500' : '',
-                                        ]"
-                                    >
-                                        <span :class="['block truncate', selected && 'font-semibold']">
-                                            {{ category.name }}
-                                        </span>
-
-                                        <span
-                                            v-if="selected"
-                                            :class="[
-                                                active ? 'text-neutral' : 'text-primary-500',
-                                                'absolute inset-y-0 left-0 flex items-center pl-1.5',
-                                            ]"
-                                        >
-                                            <CheckIcon class="h-5 w-5" aria-hidden="true" />
-                                        </span>
-                                    </li>
-                                </ComboboxOption>
-                            </ComboboxOptions>
-                        </div>
-                    </Combobox>
-                </div>
-            </div>
-            <div>
-                <label for="contentState" class="mt-2 block text-sm font-medium">
-                    {{ $t('common.content') }} {{ $t('common.state') }}
-                </label>
-                <div>
-                    <VeeField
-                        as="textarea"
-                        rows="2"
-                        name="contentState"
-                        :label="$t('common.state')"
-                        class="block w-full rounded-md border-0 bg-base-700 py-1.5 text-neutral placeholder:text-accent-200 focus:ring-2 focus:ring-inset focus:ring-base-300 sm:text-sm sm:leading-6"
-                        @focusin="focusTablet(true)"
-                        @focusout="focusTablet(false)"
-                    />
-                    <VeeErrorMessage name="contentState" as="p" class="mt-2 text-sm text-error-400" />
-                    <TemplateSyntaxHint />
-                </div>
-            </div>
-            <div>
-                <label for="content" class="mt-2 block text-sm font-medium">
-                    {{ $t('common.content') }} {{ $t('common.template') }}
-                </label>
-                <div>
-                    <VeeField
-                        as="textarea"
-                        rows="6"
-                        name="content"
-                        :label="$t('common.template')"
-                        class="block w-full rounded-md border-0 bg-base-700 py-1.5 text-neutral placeholder:text-accent-200 focus:ring-2 focus:ring-inset focus:ring-base-300 sm:text-sm sm:leading-6"
-                        @focusin="focusTablet(true)"
-                        @focusout="focusTablet(false)"
-                    />
-                    <VeeErrorMessage name="content" as="p" class="mt-2 text-sm text-error-400" />
-                    <TemplateSyntaxHint />
-                </div>
-            </div>
-            <TemplateSchemaEditor v-model="schema" class="mt-2" />
-            <div class="my-3">
-                <h2 class="text-neutral">{{ $t('common.content') }} {{ $t('common.access') }}</h2>
-                <DocumentAccessEntry
-                    v-for="entry in contentAccess.values()"
-                    :key="entry.id"
-                    :init="entry"
-                    :access-types="contentAccessTypes"
-                    :show-required="true"
-                    @type-change="updateContentDocumentAccessEntryType($event)"
-                    @name-change="updateContentDocumentAccessEntryName($event)"
-                    @rank-change="updateContentDocumentAccessEntryRank($event)"
-                    @access-change="updateContentDocumentAccessEntryAccess($event)"
-                    @delete-request="removeContentDocumentAccessEntry($event)"
-                    @required-change="updateContentDocumentAccessEntryRequired($event)"
-                />
-                <button
-                    type="button"
-                    class="rounded-full bg-primary-500 p-2 text-neutral hover:bg-primary-400 focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-primary-500"
-                    data-te-toggle="tooltip"
-                    :title="$t('components.documents.document_editor.add_permission')"
-                    @click="addContentDocumentAccessEntry()"
-                >
-                    <PlusIcon class="h-5 w-5" aria-hidden="true" />
-                </button>
-            </div>
+            </GenericContainer>
             <div>
                 <button
                     type="submit"

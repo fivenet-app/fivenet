@@ -7,7 +7,8 @@ import (
 
 	"github.com/galexrt/fivenet/pkg/config"
 	"go.opentelemetry.io/otel/attribute"
-	"go.opentelemetry.io/otel/exporters/jaeger"
+	"go.opentelemetry.io/otel/exporters/otlp/otlptrace/otlptracegrpc"
+	"go.opentelemetry.io/otel/exporters/otlp/otlptrace/otlptracehttp"
 	"go.opentelemetry.io/otel/exporters/stdout/stdouttrace"
 	"go.opentelemetry.io/otel/sdk/resource"
 	tracesdk "go.opentelemetry.io/otel/sdk/trace"
@@ -27,29 +28,34 @@ type TracingParams struct {
 	Config *config.Config
 }
 
-// tracerProvider returns an OpenTelemetry TracerProvider configured to use
-// the Jaeger exporter that will send spans to the provided url. The returned
-// TracerProvider will also use a Resource configured with all the information
-// about the application.
+// NewTracerProvider returns an OpenTelemetry TracerProvider configured to use
+// the configured exporter type that will send spans to the provided url. The
+// returned TracerProvider will also use a Resource configured with all the
+// information about the application.
 func NewTracerProvider(p TracingParams) (*tracesdk.TracerProvider, error) {
 	if !p.Config.Tracing.Enabled {
 		return tracesdk.NewTracerProvider(), nil
 	}
 
+	ctx := context.Background()
+
 	var exporter tracesdk.SpanExporter
 	var err error
-	// If URL is set, setup jaeger trace exporter
-	if p.Config.Tracing.URL != "" {
-		// Create the Jaeger exporter
-		exporter, err = jaeger.New(jaeger.WithCollectorEndpoint(jaeger.WithEndpoint(p.Config.Tracing.URL)))
-		if err != nil {
-			return nil, err
-		}
-	} else {
+	switch p.Config.Tracing.Type {
+	case config.TracingExporter_OTLPTraceGRPC:
+		exporter, err = otlptracegrpc.New(ctx, otlptracegrpc.WithEndpointURL(p.Config.Tracing.URL))
+
+	case config.TracingExporter_OTLPTraceHTTP:
+		exporter, err = otlptracehttp.New(ctx, otlptracehttp.WithEndpointURL(p.Config.Tracing.URL))
+
+	case config.TracingExporter_StdoutTrace:
+		fallthrough
+	default:
 		exporter, err = stdouttrace.New(stdouttrace.WithPrettyPrint())
-		if err != nil {
-			return nil, err
-		}
+	}
+
+	if err != nil {
+		return nil, fmt.Errorf("failed to setup tracing provider. %w", err)
 	}
 
 	tp := tracesdk.NewTracerProvider(
@@ -65,7 +71,7 @@ func NewTracerProvider(p TracingParams) (*tracesdk.TracerProvider, error) {
 	)
 
 	p.LC.Append(fx.StopHook(func(ctx context.Context) error {
-		ctx, cancel := context.WithTimeout(ctx, 3*time.Second)
+		ctx, cancel := context.WithTimeout(ctx, 5*time.Second)
 		defer cancel()
 
 		if err := tp.Shutdown(ctx); err != nil {
