@@ -1162,7 +1162,7 @@ export const UpdateTemplateRequest = new UpdateTemplateRequest$Type();
 class UpdateTemplateResponse$Type extends MessageType<UpdateTemplateResponse> {
     constructor() {
         super("services.docstore.UpdateTemplateResponse", [
-            { no: 1, name: "template", kind: "message", T: () => Template, options: { "validate.rules": { message: { required: true } } } }
+            { no: 1, name: "template", kind: "message", T: () => Template }
         ]);
     }
     create(value?: PartialMessage<UpdateTemplateResponse>): UpdateTemplateResponse {

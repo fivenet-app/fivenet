@@ -961,17 +961,6 @@ func (m *UpdateTemplateResponse) validate(all bool) error {
 
 	var errors []error
 
-	if m.GetTemplate() == nil {
-		err := UpdateTemplateResponseValidationError{
-			field:  "Template",
-			reason: "value is required",
-		}
-		if !all {
-			return err
-		}
-		errors = append(errors, err)
-	}
-
 	if all {
 		switch v := interface{}(m.GetTemplate()).(type) {
 		case interface{ ValidateAll() error }:

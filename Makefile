@@ -25,10 +25,10 @@ protoc-gen-validate: build_dir
 	cd $(BUILD_DIR) && ln -sfn validate-$(VALIDATE_VERSION)/ validate
 
 protoc-gen-customizer:
-	$(GO) build -o ./cmd/protoc-gen-customizer ./cmd/protoc-gen-customizer
+	$(GO) build -o ./internal/cmd/protoc-gen-customizer ./internal/cmd/protoc-gen-customizer
 
 protoc-gen-fronthelper:
-	$(GO) build -o ./cmd/protoc-gen-fronthelper ./cmd/protoc-gen-fronthelper
+	$(GO) build -o ./internal/cmd/protoc-gen-fronthelper ./internal/cmd/protoc-gen-fronthelper
 
 gdal2tiles-leaflet: build_dir
 	if test ! -d $(BUILD_DIR)gdal2tiles-leaflet/; then \
@@ -114,7 +114,7 @@ gen-sql:
 
 .PHONY: gen-proto
 gen-proto: protoc-gen-validate protoc-gen-customizer protoc-gen-fronthelper
-	PATH="$$PATH:./cmd/protoc-gen-customizer/" \
+	PATH="$$PATH:./internal/cmd/protoc-gen-customizer/" \
 	npx protoc \
 		--proto_path=./$(BUILD_DIR)validate-$(VALIDATE_VERSION) \
 		--proto_path=./proto \
@@ -135,7 +135,7 @@ gen-proto: protoc-gen-validate protoc-gen-customizer protoc-gen-fronthelper
 		-exec protoc-go-inject-tag \
 			-input={} \;
 
-	PATH="$$PATH:./cmd/protoc-gen-fronthelper/" \
+	PATH="$$PATH:./internal/cmd/protoc-gen-fronthelper/" \
 	npx protoc \
 		--proto_path=./$(BUILD_DIR)validate-$(VALIDATE_VERSION) \
 		--proto_path=./proto \

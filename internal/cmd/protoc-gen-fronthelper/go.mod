@@ -1,4 +1,4 @@
-module github.com/galexrt/fivenet/cmd/protoc-gen-customizer
+module github.com/galexrt/fivenet/internal/cmd/protoc-gen-fronthelper
 
 go 1.21
 
