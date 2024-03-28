@@ -97,7 +97,7 @@ const axis = ref<ChartAxis>({
                                     {{
                                         fromSecondsToFormattedDuration(stat.value, {
                                             seconds: false,
-                                            emptyText: $t('common.none'),
+                                            emptyText: 'common.none',
                                         })
                                     }}
                                 </template>
