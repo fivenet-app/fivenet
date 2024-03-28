@@ -96,6 +96,7 @@ if (isNUIAvailable.value) {
 const open = ref(false);
 
 watch(updateAvailable, () => (open.value = true));
+
 /* eslint vue/no-multiple-template-root: "off" */
 </script>
 

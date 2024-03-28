@@ -139,7 +139,12 @@ const open = ref(false);
         <main>
             <div class="mx-auto max-w-7xl py-4 sm:px-6 lg:px-8">
                 <NuxtLayout name="blank">
-                    <NuxtPage />
+                    <NuxtPage
+                        :transition="{
+                            name: 'page',
+                            mode: 'out-in',
+                        }"
+                    />
                 </NuxtLayout>
             </div>
         </main>
