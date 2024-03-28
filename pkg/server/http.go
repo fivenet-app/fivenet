@@ -141,7 +141,10 @@ func NewEngine(p EngineParams) *gin.Engine {
 	e.Use(sessions.SessionsMany([]string{"fivenet_oauth2_state"}, sessStore))
 
 	// Tracing
-	e.Use(otelgin.Middleware("fivenet", otelgin.WithTracerProvider(p.TP)))
+	e.Use(otelgin.Middleware("fivenet", otelgin.WithTracerProvider(p.TP), otelgin.WithFilter(func(r *http.Request) bool {
+		// Skip `/images/*` requests
+		return !strings.HasPrefix(r.URL.Path, "/images/")
+	})))
 	e.Use(InjectToHeaders(p.TP))
 
 	for _, service := range p.Services {

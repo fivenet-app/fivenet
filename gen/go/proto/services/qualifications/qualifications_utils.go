@@ -297,11 +297,6 @@ func (s *Server) checkIfUserHasAccessToQuali(ctx context.Context, qualificationI
 	return len(out) > 0, err
 }
 
-func (s *Server) checkIfUserHasAccessToQualis(ctx context.Context, userInfo *userinfo.UserInfo, access qualifications.AccessLevel, qualificationIDs ...uint64) (bool, error) {
-	out, err := s.checkIfUserHasAccessToQualiIDs(ctx, userInfo, access, qualificationIDs...)
-	return len(out) == len(qualificationIDs), err
-}
-
 func (s *Server) checkIfUserHasAccessToQualiIDs(ctx context.Context, userInfo *userinfo.UserInfo, access qualifications.AccessLevel, qualificationIDs ...uint64) ([]uint64, error) {
 	if len(qualificationIDs) == 0 {
 		return qualificationIDs, nil

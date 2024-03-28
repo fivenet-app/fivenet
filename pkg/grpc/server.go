@@ -102,10 +102,11 @@ func NewServer(p ServerParams) (ServerResult, error) {
 	// Setup GRPC tracing
 	otel.SetTracerProvider(p.TP)
 	otel.SetTextMapPropagator(propagation.NewCompositeTextMapPropagator(propagation.TraceContext{}, propagation.Baggage{}))
+	otelgrpcHandler := otelgrpc.NewServerHandler()
 
 	srv := grpc.NewServer(
+		grpc.StatsHandler(otelgrpcHandler),
 		grpc.ChainUnaryInterceptor(
-			otelgrpc.UnaryServerInterceptor(),
 			srvMetrics.UnaryServerInterceptor(grpcprom.WithExemplarFromContext(exemplarFromContext)),
 			logging.UnaryServerInterceptor(InterceptorLogger(p.Logger),
 				logging.WithFieldsFromContext(extraLogFields),
@@ -121,7 +122,6 @@ func NewServer(p ServerParams) (ServerResult, error) {
 			),
 		),
 		grpc.ChainStreamInterceptor(
-			otelgrpc.StreamServerInterceptor(),
 			srvMetrics.StreamServerInterceptor(grpcprom.WithExemplarFromContext(exemplarFromContext)),
 			logging.StreamServerInterceptor(InterceptorLogger(p.Logger),
 				logging.WithFieldsFromContext(extraLogFields),

@@ -69,7 +69,7 @@ func NewTracerProvider(p TracingParams) (*tracesdk.TracerProvider, error) {
 	case config.TracingExporter_StdoutTrace:
 		fallthrough
 	default:
-		exporter, err = stdouttrace.New(stdouttrace.WithPrettyPrint())
+		exporter, err = stdouttrace.New()
 	}
 
 	if err != nil {
