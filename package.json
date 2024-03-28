@@ -53,7 +53,7 @@
     },
     "devDependencies": {
         "@dargmuesli/nuxt-cookie-control": "8.0.0",
-        "@nuxt/devtools": "1.1.4",
+        "@nuxt/devtools": "1.1.5",
         "@nuxtjs/eslint-config-typescript": "12.1.0",
         "@nuxtjs/i18n": "8.2.0",
         "@nuxtjs/tailwindcss": "6.11.4",
