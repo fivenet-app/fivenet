@@ -43,10 +43,28 @@ func NewTracerProvider(p TracingParams) (*tracesdk.TracerProvider, error) {
 	var err error
 	switch p.Config.Tracing.Type {
 	case config.TracingExporter_OTLPTraceGRPC:
-		exporter, err = otlptracegrpc.New(ctx, otlptracegrpc.WithEndpointURL(p.Config.Tracing.URL))
+		opts := []otlptracegrpc.Option{
+			otlptracegrpc.WithEndpointURL(p.Config.Tracing.URL),
+			otlptracegrpc.WithTimeout(p.Config.Tracing.Timeout),
+		}
+
+		if p.Config.Tracing.Insecure {
+			opts = append(opts, otlptracegrpc.WithInsecure())
+		}
+
+		exporter, err = otlptracegrpc.New(ctx, opts...)
 
 	case config.TracingExporter_OTLPTraceHTTP:
-		exporter, err = otlptracehttp.New(ctx, otlptracehttp.WithEndpointURL(p.Config.Tracing.URL))
+		opts := []otlptracehttp.Option{
+			otlptracehttp.WithEndpointURL(p.Config.Tracing.URL),
+			otlptracehttp.WithTimeout(p.Config.Tracing.Timeout),
+		}
+
+		if p.Config.Tracing.Insecure {
+			opts = append(opts, otlptracehttp.WithInsecure())
+		}
+
+		exporter, err = otlptracehttp.New(ctx, opts...)
 
 	case config.TracingExporter_StdoutTrace:
 		fallthrough

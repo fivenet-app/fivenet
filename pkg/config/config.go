@@ -42,6 +42,8 @@ type Tracing struct {
 	Enabled     bool            `default:"false" yaml:"enabled"`
 	Type        TracingExporter `default:"stdout" yaml:"type"`
 	URL         string          `yaml:"url"`
+	Insecure    bool            `yaml:"insecure"`
+	Timeout     time.Duration   `default:"10s" yaml:"timeout"`
 	Environment string          `default:"dev" yaml:"environment"`
 	Ratio       float64         `default:"0.1" yaml:"ratio"`
 }

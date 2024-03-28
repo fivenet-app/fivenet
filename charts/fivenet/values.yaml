@@ -119,7 +119,9 @@ fivenet:
       enabled: false
       type: "stdout"
       # OTLP Tracing endpoint URL
-      url: "https://localhost:4318"
+      url: "https://localhost:4317"
+      insecure: false
+      timeout: 10s
       environment: "live"
       ratio: 0.1
     http:

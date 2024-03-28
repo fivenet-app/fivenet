@@ -3,9 +3,12 @@ logLevel: "DEBUG"
 mode: "release"
 tracing:
   enabled: false
+  # Can be "stdout", "otlptracegrpc", "otlptracehttp"
   type: "stdout"
-  # Jaeger Tracing endpoint (should have the right API path in the URL `/api/traces`)
-  url: ""
+  # OTLP Tracing endpoint URL
+  url: "https://localhost:4317"
+  insecure: false
+  timeout: 10s
   environment: "dev"
   ratio: 0.1
 http:
