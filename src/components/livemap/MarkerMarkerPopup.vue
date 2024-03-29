@@ -1,5 +1,4 @@
 <script lang="ts" setup>
-import { RpcError } from '@protobuf-ts/runtime-rpc';
 import { LPopup } from '@vue-leaflet/vue-leaflet';
 import { MapMarkerIcon, TrashCanIcon } from 'mdi-vue3';
 import { useConfirmDialog } from '@vueuse/core';

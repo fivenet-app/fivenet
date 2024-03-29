@@ -1,6 +1,5 @@
 <script lang="ts" setup>
 import { Disclosure, DisclosureButton, DisclosurePanel } from '@headlessui/vue';
-import { RpcError } from '@protobuf-ts/runtime-rpc';
 import { useConfirmDialog, useTimeoutFn, watchOnce } from '@vueuse/core';
 import { useRouteHash } from '@vueuse/router';
 import {

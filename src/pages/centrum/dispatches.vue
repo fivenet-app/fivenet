@@ -1,5 +1,4 @@
 <script lang="ts" setup>
-import { RpcError } from '@protobuf-ts/runtime-rpc';
 import { watchDebounced } from '@vueuse/core';
 import { Pane, Splitpanes } from 'splitpanes';
 import DispatchList from '~/components/centrum/dispatches/DispatchList.vue';

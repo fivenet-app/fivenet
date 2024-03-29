@@ -9,7 +9,6 @@ import {
     SwitchGroup,
     SwitchLabel,
 } from '@headlessui/vue';
-import { RpcError } from '@protobuf-ts/runtime-rpc';
 import { CheckIcon } from 'mdi-vue3';
 import { useAuthStore } from '~/store/auth';
 import { useCompletorStore } from '~/store/completor';

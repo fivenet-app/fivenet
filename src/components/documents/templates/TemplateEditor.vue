@@ -1,6 +1,5 @@
 <script lang="ts" setup>
 import { Combobox, ComboboxButton, ComboboxInput, ComboboxOption, ComboboxOptions } from '@headlessui/vue';
-import { RpcError } from '@protobuf-ts/runtime-rpc';
 import { max, min, numeric, required } from '@vee-validate/rules';
 import { useThrottleFn, useTimeoutFn, watchDebounced } from '@vueuse/core';
 import { CheckIcon, LoadingIcon, PlusIcon } from 'mdi-vue3';

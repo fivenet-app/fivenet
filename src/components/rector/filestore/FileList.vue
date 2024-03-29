@@ -1,5 +1,4 @@
 <script lang="ts" setup>
-import { RpcError } from '@protobuf-ts/runtime-rpc';
 import { FileMultipleIcon } from 'mdi-vue3';
 import GenericContainerPanel from '~/components/partials/elements/GenericContainerPanel.vue';
 import DataErrorBlock from '~/components/partials/data/DataErrorBlock.vue';

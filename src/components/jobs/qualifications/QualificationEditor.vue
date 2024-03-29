@@ -1,6 +1,5 @@
 <script lang="ts" setup>
 import { Listbox, ListboxButton, ListboxOption, ListboxOptions } from '@headlessui/vue';
-import { RpcError } from '@protobuf-ts/runtime-rpc';
 import { max, min, required } from '@vee-validate/rules';
 import { useThrottleFn, useTimeoutFn } from '@vueuse/core';
 import { CheckIcon, ChevronDownIcon, LoadingIcon, PlusIcon } from 'mdi-vue3';

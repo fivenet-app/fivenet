@@ -1,4 +1,3 @@
-import { RpcError } from '@protobuf-ts/runtime-rpc';
 import { defineStore, type StoreDefinition } from 'pinia';
 import { type Coordinate } from '~/composables/livemap';
 import { MarkerInfo, MarkerMarker, UserMarker } from '~~/gen/ts/resources/livemap/livemap';

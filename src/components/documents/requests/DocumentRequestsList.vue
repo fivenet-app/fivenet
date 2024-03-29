@@ -1,5 +1,4 @@
 <script lang="ts" setup>
-import { RpcError } from '@protobuf-ts/runtime-rpc';
 import { FrequentlyAskedQuestionsIcon } from 'mdi-vue3';
 import type { ListDocumentReqsResponse } from '~~/gen/ts/services/docstore/docstore';
 import DataErrorBlock from '~/components/partials/data/DataErrorBlock.vue';

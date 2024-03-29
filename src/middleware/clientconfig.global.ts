@@ -1,5 +1,5 @@
 import { type NavigationGuard, type RouteLocationNormalized } from 'vue-router';
-import { useConfigStore } from '~/store/config';
+import { useSettingsStore } from '~/store/settings';
 
 export default defineNuxtRouteMiddleware(
     (to: RouteLocationNormalized, from: RouteLocationNormalized): ReturnType<NavigationGuard> => {
@@ -7,14 +7,13 @@ export default defineNuxtRouteMiddleware(
 
         if (route.query?.nui !== undefined) {
             const nuiQuery = route.query.nui as string;
-            const configStore = useConfigStore();
-            const { setNuiDetails } = configStore;
 
+            const settings = useSettingsStore();
             if (nuiQuery.toLowerCase() !== 'false') {
-                setNuiDetails(true, nuiQuery);
-                console.info('Enabled NUI integration! Resource Name:', configStore.nuiResourceName);
+                settings.setNuiDetails(true, nuiQuery);
+                console.info('Enabled NUI integration! Resource Name:', settings.nuiResourceName);
             } else {
-                setNuiDetails(false, undefined);
+                settings.setNuiDetails(false, undefined);
                 console.info('Disabled NUI integration!');
             }
         } else {

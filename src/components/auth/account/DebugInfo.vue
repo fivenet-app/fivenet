@@ -5,12 +5,9 @@ import GenericContainerPanelEntry from '~/components/partials/elements/GenericCo
 import GenericTime from '~/components/partials/elements/GenericTime.vue';
 import { useAuthStore } from '~/store/auth';
 import { useClipboardStore } from '~/store/clipboard';
-import { useConfigStore } from '~/store/config';
 import { useSettingsStore } from '~/store/settings';
 
 const clipboardStore = useClipboardStore();
-
-const config = useConfigStore();
 
 const settings = useSettingsStore();
 
@@ -73,8 +70,8 @@ async function resetLocalStorage(): Promise<void> {
                         {{ $t('components.debug_info.nui_info') }}
                     </template>
                     <template #default>
-                        {{ config.nuiEnabled ? $t('common.enabled') : $t('common.disabled') }}:
-                        {{ config.nuiResourceName ?? $t('common.na') }}
+                        {{ settings.nuiEnabled ? $t('common.enabled') : $t('common.disabled') }}:
+                        {{ settings.nuiResourceName ?? $t('common.na') }}
                     </template>
                 </GenericContainerPanelEntry>
                 <GenericContainerPanelEntry>

@@ -1,6 +1,5 @@
 <script lang="ts" setup>
 import { Tab, TabGroup, TabList, TabPanel, TabPanels } from '@headlessui/vue';
-import { RpcError } from '@protobuf-ts/runtime-rpc';
 import { BulletinBoardIcon, CloseIcon, IslandIcon, ListStatusIcon, MenuIcon, SchoolIcon, TimelineClockIcon } from 'mdi-vue3';
 import type { DefineComponent } from 'vue';
 import ProfilePictureImg from '~/components/partials/citizens/ProfilePictureImg.vue';

@@ -1,4 +1,3 @@
-import { RpcError } from '@protobuf-ts/runtime-rpc';
 import { defineStore, type StoreDefinition } from 'pinia';
 import { parseQuery } from 'vue-router';
 import { useClipboardStore } from '~/store/clipboard';

@@ -1,5 +1,4 @@
 <script lang="ts" setup>
-import { RpcError } from '@protobuf-ts/runtime-rpc';
 import { useIntervalFn } from '@vueuse/core';
 import { ListUnitActivityResponse } from '~~/gen/ts/services/centrum/centrum';
 import UnitFeedItem from '~/components/centrum/units/UnitFeedItem.vue';

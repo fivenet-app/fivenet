@@ -1,5 +1,4 @@
 <script lang="ts" setup>
-import { RpcError } from '@protobuf-ts/runtime-rpc';
 import { useConfirmDialog } from '@vueuse/core';
 import { CheckBoldIcon, CloseThickIcon, StarIcon, TrashCanIcon } from 'mdi-vue3';
 import GenericTime from '~/components/partials/elements/GenericTime.vue';

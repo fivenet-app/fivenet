@@ -6,7 +6,6 @@ import { UpdateIcon } from 'mdi-vue3';
 import { configure } from 'vee-validate';
 import ConfirmDialog from '~/components/partials/ConfirmDialog.vue';
 import { useClipboardStore } from '~/store/clipboard';
-import { useConfigStore } from '~/store/config';
 import { useDocumentEditorStore } from '~/store/documenteditor';
 import { JOB_THEME_KEY, useSettingsStore } from '~/store/settings';
 import { useAuthStore } from '~/store/auth';
@@ -16,11 +15,8 @@ const { t, locale, finalizePendingLocaleChange } = useI18n();
 const authStore = useAuthStore();
 const { jobProps } = storeToRefs(authStore);
 
-const configStore = useConfigStore();
-const { isNUIAvailable, updateAvailable } = storeToRefs(configStore);
-
 const settings = useSettingsStore();
-const { theme } = storeToRefs(settings);
+const { theme, isNUIAvailable, updateAvailable } = storeToRefs(settings);
 
 const route = useRoute();
 
@@ -45,6 +41,7 @@ useHead({
 });
 useSeoMeta({
     ogImage: '/images/open-graph-image.png',
+    applicationName: 'FiveNet',
 });
 
 if (__APP_VERSION__ !== settings.version) {

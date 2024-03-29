@@ -1,5 +1,4 @@
 <script lang="ts" setup>
-import { RpcError } from '@protobuf-ts/runtime-rpc';
 import { useConfirmDialog } from '@vueuse/core';
 import { MapMarkerIcon, TrashCanIcon } from 'mdi-vue3';
 import { type MarkerMarker, MarkerType } from '~~/gen/ts/resources/livemap/livemap';

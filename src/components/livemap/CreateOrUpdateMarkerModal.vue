@@ -11,7 +11,6 @@ import {
     TransitionChild,
     TransitionRoot,
 } from '@headlessui/vue';
-import { RpcError } from '@protobuf-ts/runtime-rpc';
 // eslint-disable-next-line camelcase
 import { digits, max, max_value, min, min_value, required } from '@vee-validate/rules';
 import { useThrottleFn, useTimeoutFn } from '@vueuse/core';

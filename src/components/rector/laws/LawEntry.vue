@@ -1,5 +1,4 @@
 <script lang="ts" setup>
-import { RpcError } from '@protobuf-ts/runtime-rpc';
 // eslint-disable-next-line camelcase
 import { integer, max, max_value, min, min_value, required } from '@vee-validate/rules';
 import { useConfirmDialog, useThrottleFn, useTimeoutFn } from '@vueuse/core';

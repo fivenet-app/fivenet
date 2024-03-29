@@ -1,5 +1,4 @@
 <script lang="ts" setup>
-import { RpcError } from '@protobuf-ts/runtime-rpc';
 import { Tab, TabGroup, TabList, TabPanel, TabPanels } from '@headlessui/vue';
 import { AccountIcon, BulletinBoardIcon, CarIcon, CloseIcon, FileDocumentMultipleIcon, MenuIcon } from 'mdi-vue3';
 import type { DefineComponent } from 'vue';

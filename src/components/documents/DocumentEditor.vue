@@ -10,7 +10,6 @@ import {
     ListboxOption,
     ListboxOptions,
 } from '@headlessui/vue';
-import { RpcError } from '@protobuf-ts/runtime-rpc';
 import { max, min, required } from '@vee-validate/rules';
 import { useThrottleFn, useTimeoutFn, watchDebounced, watchOnce } from '@vueuse/core';
 import {

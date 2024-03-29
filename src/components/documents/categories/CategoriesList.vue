@@ -1,5 +1,4 @@
 <script lang="ts" setup>
-import { RpcError } from '@protobuf-ts/runtime-rpc';
 import { TagIcon } from 'mdi-vue3';
 import CardsList from '~/components/partials/CardsList.vue';
 import DataErrorBlock from '~/components/partials/data/DataErrorBlock.vue';

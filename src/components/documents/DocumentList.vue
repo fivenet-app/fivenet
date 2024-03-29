@@ -13,7 +13,6 @@ import {
     ListboxOption,
     ListboxOptions,
 } from '@headlessui/vue';
-import { RpcError } from '@protobuf-ts/runtime-rpc';
 import { useRouteHash } from '@vueuse/router';
 import { watchDebounced } from '@vueuse/shared';
 import { CheckIcon, ChevronDownIcon } from 'mdi-vue3';

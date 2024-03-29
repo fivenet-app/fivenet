@@ -1,6 +1,5 @@
 <script lang="ts" setup>
 import { Combobox, ComboboxButton, ComboboxInput, ComboboxOption, ComboboxOptions } from '@headlessui/vue';
-import { RpcError } from '@protobuf-ts/runtime-rpc';
 import { watchOnce } from '@vueuse/core';
 import { CheckIcon, SelectIcon } from 'mdi-vue3';
 import DataErrorBlock from '~/components/partials/data/DataErrorBlock.vue';

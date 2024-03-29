@@ -1,5 +1,4 @@
 <script lang="ts" setup>
-import { RpcError } from '@protobuf-ts/runtime-rpc';
 import { Menu, MenuButton, MenuItem, MenuItems } from '@headlessui/vue';
 import { useConfirmDialog, useThrottleFn, useTimeoutFn } from '@vueuse/core';
 import { CheckBoldIcon, CloseThickIcon, MenuIcon, TrashCanIcon } from 'mdi-vue3';

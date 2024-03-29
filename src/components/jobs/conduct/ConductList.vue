@@ -1,6 +1,5 @@
 <script lang="ts" setup>
 import { Combobox, ComboboxButton, ComboboxInput, ComboboxOption, ComboboxOptions, Switch } from '@headlessui/vue';
-import { RpcError } from '@protobuf-ts/runtime-rpc';
 import { useConfirmDialog, watchDebounced } from '@vueuse/core';
 import { CheckIcon } from 'mdi-vue3';
 import ConfirmDialog from '~/components/partials/ConfirmDialog.vue';
@@ -12,7 +11,6 @@ import { ConductEntry, ConductType } from '~~/gen/ts/resources/jobs/conduct';
 import { User } from '~~/gen/ts/resources/users/users';
 import ConductCreateOrUpdateModal from '~/components/jobs/conduct/ConductCreateOrUpdateModal.vue';
 import ConductListEntry from '~/components/jobs/conduct/ConductListEntry.vue';
-import { useJobsStore } from '~/store/jobs';
 import type { ListConductEntriesResponse } from '~~/gen/ts/services/jobs/conduct';
 import GenericTable from '~/components/partials/elements/GenericTable.vue';
 
@@ -80,17 +78,23 @@ function focusSearch(): void {
 watch(offset, async () => refresh());
 watchDebounced(query.value, () => refresh(), { debounce: 600, maxWait: 1400 });
 
-const jobsStore = useJobsStore();
 const { data: colleagues, refresh: refreshColleagues } = useLazyAsyncData(
     `jobs-colleagues-0-${queryTargets.value}`,
-    () =>
-        jobsStore.listColleagues({
-            pagination: { offset: 0n },
-            searchName: queryTargets.value,
-            userId: props.userId,
-        }),
-    {
-        immediate: false,
+    async () => {
+        try {
+            const call = $grpc.getJobsClient().listColleagues({
+                pagination: {
+                    offset: 0n,
+                },
+                searchName: queryTargets.value,
+            });
+            const { response } = await call;
+
+            return response;
+        } catch (e) {
+            $grpc.handleError(e as RpcError);
+            throw e;
+        }
     },
 );
 

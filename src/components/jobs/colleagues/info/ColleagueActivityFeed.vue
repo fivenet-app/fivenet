@@ -1,6 +1,5 @@
 <script lang="ts" setup>
 import { Combobox, ComboboxButton, ComboboxInput, ComboboxOption, ComboboxOptions } from '@headlessui/vue';
-import { RpcError } from '@protobuf-ts/runtime-rpc';
 import { watchDebounced } from '@vueuse/core';
 import { BulletinBoardIcon, CheckIcon } from 'mdi-vue3';
 import DataErrorBlock from '~/components/partials/data/DataErrorBlock.vue';
@@ -9,7 +8,6 @@ import DataPendingBlock from '~/components/partials/data/DataPendingBlock.vue';
 import TablePagination from '~/components/partials/elements/TablePagination.vue';
 import ColleagueActivityFeedEntry from '~/components/jobs/colleagues/info/ColleagueActivityFeedEntry.vue';
 import type { ListColleagueActivityResponse } from '~~/gen/ts/services/jobs/jobs';
-import { useJobsStore } from '~/store/jobs';
 import type { Colleague } from '~~/gen/ts/resources/jobs/colleagues';
 
 const props = withDefaults(
@@ -53,25 +51,33 @@ async function listColleagueActivity(userIds: number[]): Promise<ListColleagueAc
 
 watch(offset, () => refresh());
 
-const queryColleagueNameRaw = ref('');
-const queryColleagueName = computed(() => queryColleagueNameRaw.value.trim().toLowerCase());
+const queryColleagueNameRaw = ref<string>('');
+const queryColleagueName = computed(() => queryColleagueNameRaw.value.trim());
 
-const jobsStore = useJobsStore();
-const { data: colleagues, refresh: refreshJobs } = useLazyAsyncData(
+const { data: colleagues, refresh: refreshColleagues } = useLazyAsyncData(
     `jobs-colleagues-${offset.value}-${queryColleagueName.value}`,
-    () =>
-        jobsStore.listColleagues({
-            pagination: {
-                offset: offset.value,
-            },
-            searchName: queryColleagueName.value,
-        }),
+    async () => {
+        try {
+            const call = $grpc.getJobsClient().listColleagues({
+                pagination: {
+                    offset: offset.value,
+                },
+                searchName: queryColleagueName.value,
+            });
+            const { response } = await call;
+
+            return response;
+        } catch (e) {
+            $grpc.handleError(e as RpcError);
+            throw e;
+        }
+    },
 );
 
 watchDebounced(
     queryColleagueName,
     async () => {
-        await refreshJobs();
+        await refreshColleagues();
         if (props.userId === undefined && selectedUsers.value) {
             colleagues.value?.colleagues.unshift(...selectedUsers.value);
         }

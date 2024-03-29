@@ -1,4 +1,3 @@
-import { RpcError } from '@protobuf-ts/runtime-rpc';
 import { defineStore, type StoreDefinition } from 'pinia';
 import { Category } from '~~/gen/ts/resources/documents/category';
 import { LawBook } from '~~/gen/ts/resources/laws/laws';

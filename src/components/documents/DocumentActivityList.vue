@@ -1,5 +1,4 @@
 <script lang="ts" setup>
-import { RpcError } from '@protobuf-ts/runtime-rpc';
 import { TicketIcon } from 'mdi-vue3';
 import type { ListDocumentActivityResponse } from '~~/gen/ts/services/docstore/docstore';
 import DataErrorBlock from '~/components/partials/data/DataErrorBlock.vue';

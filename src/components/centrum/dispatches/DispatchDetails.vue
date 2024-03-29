@@ -1,6 +1,5 @@
 <script lang="ts" setup>
 import { Dialog, DialogPanel, DialogTitle, TransitionChild, TransitionRoot } from '@headlessui/vue';
-import { RpcError } from '@protobuf-ts/runtime-rpc';
 import { useConfirmDialog } from '@vueuse/core';
 import { AccountGroupIcon, CloseIcon, MapMarkerIcon, PencilIcon, PlusIcon, TrashCanIcon } from 'mdi-vue3';
 import DispatchAssignModal from '~/components/centrum/dispatches//DispatchAssignModal.vue';

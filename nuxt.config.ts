@@ -30,6 +30,19 @@ export default defineNuxtConfig({
             },
         },
     },
+    imports: {
+        presets: [
+            {
+                from: '@protobuf-ts/runtime-rpc',
+                imports: [
+                    {
+                        name: 'RpcError',
+                        type: true,
+                    },
+                ],
+            },
+        ],
+    },
     sourcemap: {
         client: true,
     },

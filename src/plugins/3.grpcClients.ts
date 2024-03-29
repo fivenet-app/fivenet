@@ -1,6 +1,5 @@
 import { GrpcWebFetchTransport } from '@protobuf-ts/grpcweb-transport';
 import {
-    RpcError,
     ServerStreamingCall,
     UnaryCall,
     type MethodInfo,

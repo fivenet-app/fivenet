@@ -1,4 +1,3 @@
-import { RpcError } from '@protobuf-ts/runtime-rpc';
 import { defineStore, type StoreDefinition } from 'pinia';
 import { v4 as uuidv4 } from 'uuid';
 import { type Notification, type NotificationConfig, type NotificationType } from '~/composables/notifications/notifications';

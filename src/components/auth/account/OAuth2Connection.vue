@@ -1,5 +1,4 @@
 <script lang="ts" setup>
-import { RpcError } from '@protobuf-ts/runtime-rpc';
 import { useConfirmDialog } from '@vueuse/core';
 import { CloseCircleIcon } from 'mdi-vue3';
 import GenericContainerPanelEntry from '~/components/partials/elements/GenericContainerPanelEntry.vue';

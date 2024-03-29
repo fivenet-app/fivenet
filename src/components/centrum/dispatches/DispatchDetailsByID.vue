@@ -1,5 +1,4 @@
 <script lang="ts" setup>
-import { RpcError } from '@protobuf-ts/runtime-rpc';
 import type { GetDispatchResponse } from '~~/gen/ts/services/centrum/centrum';
 import DispatchDetails from '~/components/centrum/dispatches/DispatchDetails.vue';
 

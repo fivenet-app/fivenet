@@ -1,5 +1,4 @@
 <script lang="ts" setup>
-import { RpcError } from '@protobuf-ts/runtime-rpc';
 import { min, numeric, required } from '@vee-validate/rules';
 import { watchDebounced } from '@vueuse/core';
 import { ArrowLeftIcon } from 'mdi-vue3';

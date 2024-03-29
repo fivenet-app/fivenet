@@ -1,5 +1,4 @@
 <script lang="ts" setup>
-import { RpcError } from '@protobuf-ts/runtime-rpc';
 import type { GetTimeclockStatsResponse } from '~~/gen/ts/services/jobs/timeclock';
 import TimeclockStatsBlock from '~/components/jobs/timeclock/TimeclockStatsBlock.vue';
 

@@ -1,5 +1,4 @@
 <script lang="ts" setup>
-import { RpcError } from '@protobuf-ts/runtime-rpc';
 import { useThrottleFn, useTimeoutFn } from '@vueuse/core';
 import { LoadingIcon, LocationEnterIcon, LocationExitIcon } from 'mdi-vue3';
 import { useCentrumStore } from '~/store/centrum';

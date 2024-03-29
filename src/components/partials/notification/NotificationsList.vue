@@ -1,6 +1,5 @@
 <script lang="ts" setup>
 import { Switch } from '@headlessui/vue';
-import { RpcError } from '@protobuf-ts/runtime-rpc';
 import { useTimeoutFn, watchDebounced } from '@vueuse/core';
 import { BellIcon, CheckIcon, LinkVariantIcon } from 'mdi-vue3';
 import DataErrorBlock from '~/components/partials/data/DataErrorBlock.vue';

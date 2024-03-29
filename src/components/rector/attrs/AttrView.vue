@@ -1,6 +1,5 @@
 <script lang="ts" setup>
 import { Disclosure, DisclosureButton, DisclosurePanel } from '@headlessui/vue';
-import { RpcError } from '@protobuf-ts/runtime-rpc';
 import { useConfirmDialog } from '@vueuse/core';
 import { CheckIcon, ChevronDownIcon, CloseIcon, TrashCanIcon } from 'mdi-vue3';
 import ConfirmDialog from '~/components/partials/ConfirmDialog.vue';

@@ -1,5 +1,4 @@
 <script lang="ts" setup>
-import { RpcError } from '@protobuf-ts/runtime-rpc';
 import { CameraIcon, IslandIcon } from 'mdi-vue3';
 import GenericContainer from '~/components/partials/elements/GenericContainer.vue';
 import SelfServicePropsAbsenceDateModal from '~/components/jobs/colleagues/SelfServicePropsAbsenceDateModal.vue';

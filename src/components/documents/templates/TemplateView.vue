@@ -1,5 +1,4 @@
 <script lang="ts" setup>
-import { RpcError } from '@protobuf-ts/runtime-rpc';
 import { useConfirmDialog } from '@vueuse/core';
 import DocumentAccessEntry from '~/components/documents/DocumentAccessEntry.vue';
 import TemplatePreviewModal from '~/components/documents/templates/TemplatePreviewModal.vue';

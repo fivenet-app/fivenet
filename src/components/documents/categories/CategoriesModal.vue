@@ -1,6 +1,5 @@
 <script lang="ts" setup>
 import { Dialog, DialogPanel, DialogTitle, TransitionChild, TransitionRoot } from '@headlessui/vue';
-import { RpcError } from '@protobuf-ts/runtime-rpc';
 import { max, min, required } from '@vee-validate/rules';
 import { useThrottleFn, useTimeoutFn } from '@vueuse/core';
 import { CloseIcon, LoadingIcon, TagIcon } from 'mdi-vue3';

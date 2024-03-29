@@ -1,13 +1,13 @@
 import { type TypedRouteFromName } from '@typed-router';
-import { useConfigStore } from '~/store/config';
+import { useSettingsStore } from '~/store/settings';
 
 // Checking for `GetParentResourceName` existance doesn't work (anymore) in FiveM NUI iframes
 export function isNUIAvailable(): boolean {
-    return useConfigStore().isNUIAvailable;
+    return useSettingsStore().isNUIAvailable;
 }
 
 function getParentResourceName(): string {
-    return useConfigStore().nuiResourceName ?? 'fivenet';
+    return useSettingsStore().nuiResourceName ?? 'fivenet';
 }
 
 export async function fetchNUI<T = any, V = any>(event: string, data: T): Promise<V> {

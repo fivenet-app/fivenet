@@ -1,6 +1,5 @@
 <script lang="ts" setup>
 import { Switch, SwitchGroup, SwitchLabel, Listbox, ListboxButton, ListboxOption, ListboxOptions } from '@headlessui/vue';
-import { RpcError } from '@protobuf-ts/runtime-rpc';
 import { mimes, size } from '@vee-validate/rules';
 import { useThrottleFn, useTimeoutFn } from '@vueuse/core';
 import { vMaska } from 'maska';

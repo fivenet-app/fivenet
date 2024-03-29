@@ -1,5 +1,4 @@
 <script lang="ts" setup>
-import { RpcError } from '@protobuf-ts/runtime-rpc';
 import { ArrowExpandIcon, ChevronRightIcon, FileDocumentMultipleIcon, LockIcon, LockOpenVariantIcon } from 'mdi-vue3';
 import { ref } from 'vue';
 import DataErrorBlock from '~/components/partials/data/DataErrorBlock.vue';

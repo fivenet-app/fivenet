@@ -6,10 +6,11 @@ import DataNoDataBlock from '~/components/partials/data/DataNoDataBlock.vue';
 import DataPendingBlock from '~/components/partials/data/DataPendingBlock.vue';
 import TablePagination from '~/components/partials/elements/TablePagination.vue';
 import ColleaguesListEntry from '~/components/jobs/colleagues/ColleaguesListEntry.vue';
-import { useJobsStore } from '~/store/jobs';
 import type { Perms } from '~~/gen/ts/perms';
 import type { Timestamp } from '~~/gen/ts/resources/timestamp/timestamp';
 import GenericTable from '~/components/partials/elements/GenericTable.vue';
+
+const { $grpc } = useNuxtApp();
 
 const query = ref<{
     name: string;
@@ -20,16 +21,23 @@ const query = ref<{
 });
 const offset = ref(0n);
 
-const jobsStore = useJobsStore();
-const { data, pending, refresh, error } = useLazyAsyncData(`jobs-colleagues-${offset.value}-${query.value.name}`, () =>
-    jobsStore.listColleagues({
-        pagination: {
-            offset: offset.value,
-        },
-        searchName: query.value.name,
-        absent: query.value.absent,
-    }),
-);
+const { data, pending, refresh, error } = useLazyAsyncData(`jobs-colleagues-${offset.value}-${query.value.name}`, async () => {
+    try {
+        const call = $grpc.getJobsClient().listColleagues({
+            pagination: {
+                offset: offset.value,
+            },
+            searchName: query.value.name,
+            absent: query.value.absent,
+        });
+        const { response } = await call;
+
+        return response;
+    } catch (e) {
+        $grpc.handleError(e as RpcError);
+        throw e;
+    }
+});
 
 const searchInput = ref<HTMLInputElement | null>(null);
 function focusSearch(): void {

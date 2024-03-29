@@ -1,4 +1,3 @@
-import { RpcError } from '@protobuf-ts/runtime-rpc';
 import { defineStore, type StoreDefinition } from 'pinia';
 import { statusOrder } from '~/components/centrum/helpers';
 import { useAuthStore } from '~/store/auth';

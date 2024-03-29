@@ -13,7 +13,10 @@ export const availableThemes = [
 
 export interface SettingsState {
     version: string;
+    updateAvailable: false | string;
     locale: string;
+    nuiEnabled: boolean;
+    nuiResourceName: string | undefined;
     livemap: {
         markerSize: number;
         centerSelectedMarker: boolean;
@@ -40,7 +43,11 @@ export const useSettingsStore = defineStore('settings', {
     state: () =>
         ({
             version: __APP_VERSION__ as string,
+            updateAvailable: false,
             locale: 'de',
+            nuiEnabled: false,
+            nuiResourceName: undefined,
+
             livemap: {
                 markerSize: 22,
                 centerSelectedMarker: false,
@@ -62,13 +69,39 @@ export const useSettingsStore = defineStore('settings', {
                 desktop: false,
             },
         }) as SettingsState,
-    persist: true,
+    persist: {
+        paths: [
+            'version',
+            'locale',
+            'nuiEnabled',
+            'nuiResourceName',
+            'livemap',
+            'documents',
+            'startpage',
+            'theme',
+            'audio',
+            'streamerMode',
+            'featureGates',
+        ],
+    },
     actions: {
         setVersion(version: string): void {
             this.version = version;
         },
+        async setUpdateAvailable(version: string): Promise<void> {
+            this.updateAvailable = version;
+        },
+        setNuiDetails(enabled: boolean, resourceName: string | undefined): void {
+            this.nuiEnabled = enabled;
+            this.nuiResourceName = resourceName;
+        },
         setLocale(locale: string): void {
             this.locale = locale;
+        },
+    },
+    getters: {
+        isNUIAvailable(state): boolean {
+            return state.nuiEnabled ?? false;
         },
     },
 });

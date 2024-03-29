@@ -1,5 +1,4 @@
 <script lang="ts" setup>
-import { RpcError } from '@protobuf-ts/runtime-rpc';
 import { useConfirmDialog } from '@vueuse/core';
 import { EyeIcon, TrashCanIcon } from 'mdi-vue3';
 import ConfirmDialog from '~/components/partials/ConfirmDialog.vue';

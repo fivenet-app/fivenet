@@ -6,7 +6,7 @@ import { LoadingIcon } from 'mdi-vue3';
 import { defineRule } from 'vee-validate';
 import GenericAlert from '~/components/partials/elements/GenericAlert.vue';
 import { useAuthStore } from '~/store/auth';
-import { useConfigStore } from '~/store/config';
+import { useSettingsStore } from '~/store/settings';
 
 defineEmits<{
     (e: 'toggle'): void;
@@ -18,7 +18,7 @@ const authStore = useAuthStore();
 const { loginError } = storeToRefs(authStore);
 const { doLogin } = authStore;
 
-const configStore = useConfigStore();
+const configStore = useSettingsStore();
 const { isNUIAvailable } = storeToRefs(configStore);
 
 const { cookiesEnabledIds } = useCookieControl();

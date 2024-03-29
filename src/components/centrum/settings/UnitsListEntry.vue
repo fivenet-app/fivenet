@@ -1,5 +1,4 @@
 <script lang="ts" setup>
-import { RpcError } from '@protobuf-ts/runtime-rpc';
 import { useConfirmDialog } from '@vueuse/core';
 import { PencilIcon, TrashCanIcon } from 'mdi-vue3';
 import ColorInput from 'vue-color-input/dist/color-input.esm';

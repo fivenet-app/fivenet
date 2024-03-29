@@ -1,4 +1,3 @@
-import { useConfigStore } from '~/store/config';
 import { useSettingsStore } from '~/store/settings';
 
 export default defineNuxtPlugin(() => {
@@ -20,7 +19,7 @@ export default defineNuxtPlugin(() => {
         }
 
         if (__APP_VERSION__ !== version) {
-            useConfigStore().setUpdateAvailable(version as string);
+            settings.setUpdateAvailable(version as string);
         }
     });
 });

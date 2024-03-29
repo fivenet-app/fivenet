@@ -11,12 +11,10 @@ import {
     TransitionChild,
     TransitionRoot,
 } from '@headlessui/vue';
-import { RpcError } from '@protobuf-ts/runtime-rpc';
 import { digits, max, min, required } from '@vee-validate/rules';
 import { useThrottleFn, useTimeoutFn, watchDebounced } from '@vueuse/core';
 import { CheckIcon, CloseIcon, LoadingIcon } from 'mdi-vue3';
 import { defineRule } from 'vee-validate';
-import { useJobsStore } from '~/store/jobs';
 import { ConductEntry, ConductType } from '~~/gen/ts/resources/jobs/conduct';
 import { UserShort } from '~~/gen/ts/resources/users/users';
 
@@ -76,18 +74,27 @@ async function conductCreateOrUpdateEntry(values: FormData, id?: string): Promis
     }
 }
 
-const queryTargets = ref<string>('');
+const queryTargetsRaw = ref<string>('');
+const queryTargets = computed(() => queryTargetsRaw.value.trim());
+const { data, refresh } = useLazyAsyncData(`jobs-colleagues-0-${queryTargets.value}`, async () => {
+    try {
+        const call = $grpc.getJobsClient().listColleagues({
+            pagination: {
+                offset: 0n,
+            },
+            searchName: queryTargets.value,
+            userId: props.userId,
+        });
+        const { response } = await call;
 
-const jobsStore = useJobsStore();
-const { data, refresh } = useLazyAsyncData(`jobs-colleagues-0-${queryTargets.value}`, () =>
-    jobsStore.listColleagues({
-        pagination: { offset: 0n },
-        searchName: queryTargets.value,
-        userId: props.userId,
-    }),
-);
+        return response;
+    } catch (e) {
+        $grpc.handleError(e as RpcError);
+        throw e;
+    }
+});
 
-watchDebounced(queryTargets, async () => refresh(), {
+watchDebounced(queryTargetsRaw, async () => refresh(), {
     debounce: 600,
     maxWait: 1400,
 });
@@ -286,7 +293,9 @@ const onSubmitThrottle = useThrottleFn(async (e) => {
                                                                                     "
                                                                                     :placeholder="$t('common.target')"
                                                                                     :label="$t('common.target')"
-                                                                                    @change="queryTargets = $event.target.value"
+                                                                                    @change="
+                                                                                        queryTargetsRaw = $event.target.value
+                                                                                    "
                                                                                     @focusin="focusTablet(true)"
                                                                                     @focusout="focusTablet(false)"
                                                                                 />
