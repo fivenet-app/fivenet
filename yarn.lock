@@ -372,10 +372,10 @@
   resolved "https://registry.yarnpkg.com/@csstools/utilities/-/utilities-1.0.0.tgz#42f3c213f2fb929324d465684ab9f46a0febd4bb"
   integrity sha512-tAgvZQe/t2mlvpNosA4+CkMiZ2azISW5WPAcdSalZlEjQvUfghHxfQcrCiK/7/CrfAWVxyM88kGFYO82heIGDg==
 
-"@dargmuesli/nuxt-cookie-control@8.0.0":
-  version "8.0.0"
-  resolved "https://registry.yarnpkg.com/@dargmuesli/nuxt-cookie-control/-/nuxt-cookie-control-8.0.0.tgz#0ef903a84b93081ab872f4e9827caff2ced0c507"
-  integrity sha512-InfnGDJ+kmrhUJB18DnjzXsCUTjQ8Dj7A06KN8xxAuxwPMH45+guAgX96k7sxaIvWw55wiPchpy4D27RM9nkBw==
+"@dargmuesli/nuxt-cookie-control@8.1.0":
+  version "8.1.0"
+  resolved "https://registry.yarnpkg.com/@dargmuesli/nuxt-cookie-control/-/nuxt-cookie-control-8.1.0.tgz#84208717375a22418b70039918231520b1e3cafb"
+  integrity sha512-uRVe9WvvUfFWOWvtANS/7gPK0CA+FrZQ35CeMdRgJAICrgvDRVskm9bp9ti3FHvszuQuRgX0VwVzE9doRQQzbw==
   dependencies:
     "@nuxt/kit" "^3.8.0"
     css-vars-ponyfill "^2.4.8"
@@ -1883,13 +1883,13 @@
     "@unhead/schema" "1.9.1"
     "@unhead/shared" "1.9.1"
 
-"@unhead/dom@1.9.2":
-  version "1.9.2"
-  resolved "https://registry.yarnpkg.com/@unhead/dom/-/dom-1.9.2.tgz#c41ee51dea2ad928e286adbca4b6c652e4a7c5f6"
-  integrity sha512-yREmUAfYJsPV9qR3G85MkdH+FdvsHf8AIJRm7FgQidrPxFr8tCICdID3+jXULz3oq8pFye1tAyHlBHXeq3SIpA==
+"@unhead/dom@1.9.3":
+  version "1.9.3"
+  resolved "https://registry.yarnpkg.com/@unhead/dom/-/dom-1.9.3.tgz#9d4d5bca80be3289df428c9c731a193aa2be24f3"
+  integrity sha512-l7KO6zv8T/yKpWOtcKww3k6RLENEiwiapoiPwtKlwWBFJekSjgM1+1AVu58yWqadFYHGP0/XhMwxKrOaOL+Vkw==
   dependencies:
-    "@unhead/schema" "1.9.2"
-    "@unhead/shared" "1.9.2"
+    "@unhead/schema" "1.9.3"
+    "@unhead/shared" "1.9.3"
 
 "@unhead/schema@1.9.1":
   version "1.9.1"
@@ -1899,10 +1899,10 @@
     hookable "^5.5.3"
     zhead "^2.2.4"
 
-"@unhead/schema@1.9.2":
-  version "1.9.2"
-  resolved "https://registry.yarnpkg.com/@unhead/schema/-/schema-1.9.2.tgz#73ae94161382aa457a6f33e9cdfd2adeb289ebcf"
-  integrity sha512-NRCAcuWtD2WCL8u3qR1yn41JpDB+ExjBnSLAuJseOD9+XJjQBqPRgx/bhxZ3Dx6vrrCnCF+SvKr+W1pa+3mWdA==
+"@unhead/schema@1.9.3":
+  version "1.9.3"
+  resolved "https://registry.yarnpkg.com/@unhead/schema/-/schema-1.9.3.tgz#b462e742b22ddbda6697f857241a0f7d87fb636b"
+  integrity sha512-emFHDYxn6u5SVwSRXMpYBCYKBua+GCjUwTLLdUupInthW3UraSUuXakmv06wDvejE8pTrBOPrGWescIYmwm69A==
   dependencies:
     hookable "^5.5.3"
     zhead "^2.2.4"
@@ -1914,12 +1914,12 @@
   dependencies:
     "@unhead/schema" "1.9.1"
 
-"@unhead/shared@1.9.2":
-  version "1.9.2"
-  resolved "https://registry.yarnpkg.com/@unhead/shared/-/shared-1.9.2.tgz#4dc9c7c607d4d15f753ef5f1020ad0a663730d94"
-  integrity sha512-jXQ4vK9wXf66hflOSBUXQKVsOLJrYVSOknDH+9PTwz5CIgJv/Y/o/NkRCJjyf5W7qFf605Te28lbTeLumT+BeQ==
+"@unhead/shared@1.9.3":
+  version "1.9.3"
+  resolved "https://registry.yarnpkg.com/@unhead/shared/-/shared-1.9.3.tgz#e871f9cea17228771fd895026a43750af8527e04"
+  integrity sha512-9wJ+wNmAVDCsCFKE3YHMwNkmFqKzCqQfp53ABJHQFOvY336s4nMWtiMNMjxF4aY4pJk8Qpwd8dRlgpLlyH0KZg==
   dependencies:
-    "@unhead/schema" "1.9.2"
+    "@unhead/schema" "1.9.3"
 
 "@unhead/ssr@^1.8.20":
   version "1.9.1"
@@ -1929,15 +1929,15 @@
     "@unhead/schema" "1.9.1"
     "@unhead/shared" "1.9.1"
 
-"@unhead/vue@1.9.2":
-  version "1.9.2"
-  resolved "https://registry.yarnpkg.com/@unhead/vue/-/vue-1.9.2.tgz#b6b275cc3ff9e88cdc6a072775e6447bc1e9afb3"
-  integrity sha512-wp0eOyb7tu2isSt1IiDGm194W/8DVL3cXZd8uvhVlhS9yPL3TzwrSNbvwx95fhfrGuXFraoLjp4SpZ2BCszFsg==
+"@unhead/vue@1.9.3":
+  version "1.9.3"
+  resolved "https://registry.yarnpkg.com/@unhead/vue/-/vue-1.9.3.tgz#809a8616f0bbae3941dbd441c52f288d654e75d1"
+  integrity sha512-DrTOTUOvKZlL7nVhsu9gCNXiGv/ErqHqSOrbNGqahlnOFJgJQD+9VVr904K/u75ISg00ksAzKfFPN15FgMovMw==
   dependencies:
-    "@unhead/schema" "1.9.2"
-    "@unhead/shared" "1.9.2"
+    "@unhead/schema" "1.9.3"
+    "@unhead/shared" "1.9.3"
     hookable "^5.5.3"
-    unhead "1.9.2"
+    unhead "1.9.3"
 
 "@unhead/vue@^1.8.20":
   version "1.9.1"
@@ -9384,14 +9384,14 @@ unhead@1.9.1:
     "@unhead/shared" "1.9.1"
     hookable "^5.5.3"
 
-unhead@1.9.2:
-  version "1.9.2"
-  resolved "https://registry.yarnpkg.com/unhead/-/unhead-1.9.2.tgz#7613ddb51cdcdfbd9cdd66b65fe9be2b912de475"
-  integrity sha512-CveP8bjL8gUJnZ1NqcMU1roe+VuM14wr0cJfNek/LCSI2i968mHDD5tbDXNcMSAVOhffKj6WkTngTUKNOZxA7g==
+unhead@1.9.3:
+  version "1.9.3"
+  resolved "https://registry.yarnpkg.com/unhead/-/unhead-1.9.3.tgz#9c9d7a69aecd0f6c1becbf98114d9ba18fdf720a"
+  integrity sha512-nV6d4ALJph73hCJT1tAd4z30Q2Gv8vNUvK0netM/EetL2scdggf9brcX3OyPqWhZbnFIOE+AouH2oE1KPznkcw==
   dependencies:
-    "@unhead/dom" "1.9.2"
-    "@unhead/schema" "1.9.2"
-    "@unhead/shared" "1.9.2"
+    "@unhead/dom" "1.9.3"
+    "@unhead/schema" "1.9.3"
+    "@unhead/shared" "1.9.3"
     hookable "^5.5.3"
 
 unicorn-magic@^0.1.0:
