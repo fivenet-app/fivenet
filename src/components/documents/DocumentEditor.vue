@@ -869,7 +869,7 @@ console.info(
                 </div>
             </div>
 
-            <div v-if="canDo.edit" class="bg-neutral">
+            <div v-if="canDo.edit" class="bg-base-800">
                 <VeeField
                     v-slot="{ field }"
                     name="content"
@@ -880,10 +880,11 @@ console.info(
                     <DocEditor v-bind="field" :model-value="field.value ?? ''" />
                 </VeeField>
                 <VeeErrorMessage name="content" as="p" class="mt-2 text-sm text-error-400" />
+
                 <template v-if="saving">
-                    <div class="flex animate-pulse justify-center">
+                    <div class="flex animate-pulse justify-center text-neutral">
                         <ContentSaveIcon class="mr-2 h-auto w-4 animate-spin" aria-hidden="true" />
-                        {{ $t('common.save', 2) }}...
+                        <span>{{ $t('common.save', 2) }}...</span>
                     </div>
                 </template>
             </div>
