@@ -7,6 +7,7 @@ import ConfirmDialog from '~/components/partials/ConfirmDialog.vue';
 import DataErrorBlock from '~/components/partials/data/DataErrorBlock.vue';
 import DataNoDataBlock from '~/components/partials/data/DataNoDataBlock.vue';
 import DataPendingBlock from '~/components/partials/data/DataPendingBlock.vue';
+import { useCompletorStore } from '~/store/completor';
 import { useNotificatorStore } from '~/store/notificator';
 import { AccessLevel } from '~~/gen/ts/resources/documents/access';
 import { Template, TemplateRequirements } from '~~/gen/ts/resources/documents/templates';
@@ -160,6 +161,10 @@ watch(template, () => {
     }
 });
 
+const completorStore = useCompletorStore();
+
+const { data: jobs } = useLazyAsyncData('completor-jobs', () => completorStore.listJobs());
+
 const openPreview = ref(false);
 
 const { isRevealed, reveal, confirm, cancel, onConfirm } = useConfirmDialog();
@@ -242,6 +247,7 @@ onConfirm(async (id) => deleteTemplate(id));
                                 :init="entry"
                                 :access-types="templateAccessTypes"
                                 :read-only="true"
+                                :jobs="jobs"
                             />
                         </div>
                     </div>
@@ -336,6 +342,7 @@ onConfirm(async (id) => deleteTemplate(id));
                                 :access-types="contentAccessTypes"
                                 :read-only="true"
                                 :show-required="true"
+                                :jobs="jobs"
                             />
                         </div>
                     </div>

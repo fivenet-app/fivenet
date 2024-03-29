@@ -677,6 +677,8 @@ async function updateDocument(id: string, values: FormData, closed: boolean): Pr
     }
 }
 
+const { data: jobs } = useAsyncData('completor-jobs', () => completorStore.listJobs());
+
 const canDo = computed(() => ({
     edit:
         props.id === undefined
@@ -933,6 +935,7 @@ console.info(
                     :init="entry"
                     :access-types="accessTypes"
                     :read-only="!canDo.access || entry.required === true"
+                    :jobs="jobs"
                     @type-change="updateDocumentAccessEntryType($event)"
                     @name-change="updateDocumentAccessEntryName($event)"
                     @rank-change="updateDocumentAccessEntryRank($event)"

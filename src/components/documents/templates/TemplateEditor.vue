@@ -527,6 +527,8 @@ onMounted(async () => {
 
     findCategories();
 });
+
+const { data: jobs } = useLazyAsyncData('completor-jobs', () => completorStore.listJobs());
 </script>
 
 <template>
@@ -595,6 +597,7 @@ onMounted(async () => {
                             :init="entry"
                             :access-types="accessTypes"
                             :access-roles="[AccessLevel.VIEW, AccessLevel.EDIT]"
+                            :jobs="jobs"
                             @type-change="updateDocumentAccessEntryType($event)"
                             @name-change="updateDocumentAccessEntryName($event)"
                             @rank-change="updateDocumentAccessEntryRank($event)"
@@ -740,6 +743,7 @@ onMounted(async () => {
                         :init="entry"
                         :access-types="contentAccessTypes"
                         :show-required="true"
+                        :jobs="jobs"
                         @type-change="updateContentDocumentAccessEntryType($event)"
                         @name-change="updateContentDocumentAccessEntryName($event)"
                         @rank-change="updateContentDocumentAccessEntryRank($event)"

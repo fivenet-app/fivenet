@@ -12,7 +12,6 @@ import {
 } from '@headlessui/vue';
 import { listEnumValues } from '@protobuf-ts/runtime';
 import { CheckIcon, ChevronDownIcon, CloseIcon } from 'mdi-vue3';
-import { useCompletorStore } from '~/store/completor';
 import { type ArrayElement } from '~/utils/types';
 import { AccessLevel } from '~~/gen/ts/resources/qualifications/qualifications';
 import { Job, JobGrade } from '~~/gen/ts/resources/users/jobs';
@@ -33,6 +32,7 @@ const props = withDefaults(
         };
         accessTypes: AccessType[];
         accessRoles?: undefined | AccessLevel[];
+        jobs: Job[] | null;
     }>(),
     {
         readOnly: false,
@@ -54,10 +54,6 @@ const emit = defineEmits<{
     (e: 'deleteRequest', payload: { id: string }): void;
 }>();
 
-const completorStore = useCompletorStore();
-const { jobs } = storeToRefs(completorStore);
-const { listJobs } = completorStore;
-
 const { t } = useI18n();
 
 const selectedAccessType = ref<AccessType>({
@@ -68,7 +64,7 @@ const selectedAccessType = ref<AccessType>({
 const queryJobRaw = ref('');
 const queryJob = computed(() => queryJobRaw.value.toLowerCase());
 const filteredJobs = computed(() =>
-    jobs.value.filter((j) => j.name.toLowerCase().includes(queryJob.value) || j.label.toLowerCase().includes(queryJob.value)),
+    props.jobs?.filter((j) => j.name.toLowerCase().includes(queryJob.value) || j.label.toLowerCase().includes(queryJob.value)),
 );
 const selectedJob = ref<Job>();
 
@@ -114,31 +110,26 @@ if (props.accessRoles === undefined || props.accessRoles.length === 0) {
 const queryAccessRole = ref('');
 const selectedAccessRole = ref<ArrayElement<typeof entriesAccessRoles>>();
 
-onMounted(async () => {
+async function setFromProps(): Promise<void> {
+    if (props.init.type === 0 && props.init.values.job !== undefined && props.init.values.minimumGrade !== undefined) {
+        selectedJob.value = props.jobs?.find((j) => j.name === props.init.values.job);
+        if (selectedJob.value) {
+            entriesMinimumRank.value = selectedJob.value.grades;
+            selectedMinimumRank.value = entriesMinimumRank.value.find((rank) => rank.grade === props.init.values.minimumGrade);
+        }
+    }
+
+    selectedAccessRole.value = entriesAccessRoles.find((type) => type.id === props.init.values.accessRole);
+
     const passedType = props.accessTypes.find((e) => e.id === props.init.type);
     if (passedType) {
         selectedAccessType.value = passedType;
     }
+}
 
-    if (
-        props.init.type === 0 &&
-        props.init.values.job !== undefined &&
-        props.init.values.minimumGrade !== undefined &&
-        props.init.values.accessRole !== undefined
-    ) {
-        selectedJob.value = await completorStore.getJobByName(props.init.values.job);
-        if (selectedJob.value) {
-            entriesMinimumRank.value = selectedJob.value.grades;
-        }
-        selectedMinimumRank.value = entriesMinimumRank.value.find((rank) => rank.grade === props.init.values.minimumGrade);
-    }
+onMounted(async () => setFromProps());
 
-    // Make sure to load jobs from completor if empty
-    if (props.init.type === 0 && jobs.value.length === 0) {
-        listJobs();
-    }
-    selectedAccessRole.value = entriesAccessRoles.find((type) => type.id === props.init.values.accessRole);
-});
+watch(props, () => setFromProps());
 
 watch(selectedAccessType, async () => {
     emit('typeChange', {
@@ -270,7 +261,6 @@ watch(selectedAccessRole, () => {
                         </ComboboxButton>
 
                         <ComboboxOptions
-                            v-if="filteredJobs.length > 0"
                             class="absolute z-10 mt-1 max-h-44 w-full overflow-auto rounded-md bg-base-700 py-1 text-base sm:text-sm"
                         >
                             <ComboboxOption
@@ -320,7 +310,6 @@ watch(selectedAccessRole, () => {
                         </ComboboxButton>
 
                         <ComboboxOptions
-                            v-if="filteredJobRanks.length > 0"
                             class="absolute z-10 mt-1 max-h-44 w-full overflow-auto rounded-md bg-base-700 py-1 text-base sm:text-sm"
                         >
                             <ComboboxOption
@@ -372,7 +361,6 @@ watch(selectedAccessRole, () => {
                     </ComboboxButton>
 
                     <ComboboxOptions
-                        v-if="entriesAccessRoles.length > 0"
                         class="absolute z-10 mt-1 max-h-44 w-full overflow-auto rounded-md bg-base-700 py-1 text-base sm:text-sm"
                     >
                         <ComboboxOption

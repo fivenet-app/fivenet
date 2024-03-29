@@ -21,6 +21,7 @@ import QualificationAccessEntry from '~/components/jobs/qualifications/Qualifica
 import QualificationRequirementEntry from '~/components/jobs/qualifications/QualificationRequirementEntry.vue';
 import DocEditor from '~/components/partials/DocEditor.vue';
 import { useAuthStore } from '~/store/auth';
+import { useCompletorStore } from '~/store/completor';
 
 const props = defineProps<{
     id?: string;
@@ -32,6 +33,8 @@ const notifications = useNotificatorStore();
 
 const authStore = useAuthStore();
 const { activeChar } = storeToRefs(authStore);
+
+const completorStore = useCompletorStore();
 
 const { t } = useI18n();
 
@@ -362,8 +365,9 @@ function updateQualificationRequirement(idx: number, qualification?: Qualificati
     }
 
     quali.value.requirements[idx].targetQualificationId = qualification.id;
-    // TODO
 }
+
+const { data: jobs } = useAsyncData('completor-jobs', () => completorStore.listJobs());
 </script>
 
 <template>
@@ -507,6 +511,7 @@ function updateQualificationRequirement(idx: number, qualification?: Qualificati
                     :init="entry"
                     :access-types="accessTypes"
                     :read-only="!canDo.access"
+                    :jobs="jobs"
                     @type-change="updateQualificationAccessEntryType($event)"
                     @name-change="updateQualificationAccessEntryName($event)"
                     @rank-change="updateQualificationAccessEntryRank($event)"

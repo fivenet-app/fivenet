@@ -29,15 +29,16 @@ const props = withDefaults(
             id: string;
             type: number;
             values: {
-                job?: string;
                 char?: number;
-                accessRole?: AccessLevel;
+                job?: string;
                 minimumGrade?: number;
+                accessRole?: AccessLevel;
             };
             required?: boolean;
         };
         accessTypes: AccessType[];
         accessRoles?: undefined | AccessLevel[];
+        jobs: Job[] | null;
     }>(),
     {
         readOnly: false,
@@ -63,11 +64,9 @@ const emit = defineEmits<{
     (e: 'requiredChange', payload: { id: string; required?: boolean }): void;
 }>();
 
-const completorStore = useCompletorStore();
-const { jobs } = storeToRefs(completorStore);
-const { listJobs } = completorStore;
-
 const { t } = useI18n();
+
+const completorStore = useCompletorStore();
 
 const required = ref<boolean | undefined>(props.init.required);
 const selectedAccessType = ref<AccessType>({
@@ -81,10 +80,13 @@ const selectedChar = ref<undefined | UserShort>(undefined);
 
 const queryJobRaw = ref('');
 const queryJob = computed(() => queryJobRaw.value.toLowerCase());
-const filteredJobs = computed(() =>
-    jobs.value.filter((j) => j.name.toLowerCase().includes(queryJob.value) || j.label.toLowerCase().includes(queryJob.value)),
+const filteredJobs = computed(
+    () =>
+        props.jobs?.filter(
+            (j) => j.name.toLowerCase().includes(queryJob.value) || j.label.toLowerCase().includes(queryJob.value),
+        ) ?? [],
 );
-const selectedJob = ref<Job>();
+const selectedJob = ref<undefined | Job>();
 
 const queryMinimumRankRaw = ref('');
 const queryMinimumRank = computed(() => queryMinimumRankRaw.value.toLowerCase());
@@ -96,7 +98,7 @@ const filteredJobRanks = computed(() =>
             j.label.toLowerCase().includes(queryMinimumRank.value),
     ),
 );
-const selectedMinimumRank = ref<JobGrade | undefined>(undefined);
+const selectedMinimumRank = ref<undefined | JobGrade>(undefined);
 
 const entriesAccessRoles: {
     id: AccessLevel;
@@ -137,34 +139,29 @@ async function findChars(userId?: number): Promise<UserShort[]> {
     });
 }
 
-onMounted(async () => {
+async function setFromProps(): Promise<void> {
+    if (props.init.type === 0 && props.init.values.char !== undefined) {
+        const users = await findChars(props.init.values.char);
+        selectedChar.value = users.find((char) => char.userId === props.init.values.char);
+    } else if (props.init.type === 1 && props.init.values.job !== undefined && props.init.values.minimumGrade !== undefined) {
+        selectedJob.value = props.jobs?.find((j) => j.name === props.init.values.job);
+        if (selectedJob.value) {
+            entriesMinimumRank.value = selectedJob.value.grades;
+            selectedMinimumRank.value = entriesMinimumRank.value.find((rank) => rank.grade === props.init.values.minimumGrade);
+        }
+    }
+
+    selectedAccessRole.value = entriesAccessRoles.find((type) => type.id === props.init.values.accessRole);
+
     const passedType = props.accessTypes.find((e) => e.id === props.init.type);
     if (passedType) {
         selectedAccessType.value = passedType;
     }
+}
 
-    if (props.init.type === 0 && props.init.values.char !== undefined && props.init.values.accessRole !== undefined) {
-        const users = await findChars(props.init.values.char);
-        selectedChar.value = users.find((char) => char.userId === props.init.values.char);
-    } else if (
-        props.init.type === 1 &&
-        props.init.values.job !== undefined &&
-        props.init.values.minimumGrade !== undefined &&
-        props.init.values.accessRole !== undefined
-    ) {
-        selectedJob.value = await completorStore.getJobByName(props.init.values.job);
-        if (selectedJob.value) {
-            entriesMinimumRank.value = selectedJob.value.grades;
-        }
-        selectedMinimumRank.value = entriesMinimumRank.value.find((rank) => rank.grade === props.init.values.minimumGrade);
-    }
+onMounted(() => setFromProps());
 
-    // Make sure to load jobs from completor if empty
-    if (props.init.type === 1 && jobs.value.length === 0) {
-        listJobs();
-    }
-    selectedAccessRole.value = entriesAccessRoles.find((type) => type.id === props.init.values.accessRole);
-});
+watch(props, () => setFromProps());
 
 watchDebounced(queryChar, async () => (entriesChars.value = await findChars()), {
     debounce: 600,
@@ -316,7 +313,7 @@ watch(selectedAccessRole, () => {
                 </div>
             </Listbox>
         </div>
-        <div v-if="selectedAccessType?.id === 0" class="flex grow">
+        <div v-if="selectedAccessType.id === 0" class="flex grow">
             <div class="mr-2 flex-1">
                 <Combobox v-model="selectedChar" as="div" :disabled="readOnly">
                     <div class="relative">
@@ -324,7 +321,10 @@ watch(selectedAccessRole, () => {
                             <ComboboxInput
                                 autocomplete="off"
                                 class="block w-full rounded-md border-0 bg-base-700 py-1.5 text-neutral placeholder:text-accent-200 focus:ring-2 focus:ring-inset focus:ring-base-300 sm:text-sm sm:leading-6"
-                                :display-value="(char: any) => `${char?.firstname} ${char?.lastname} (${char?.dateofbirth})`"
+                                :display-value="
+                                    (char: any) =>
+                                        char ? `${char?.firstname} ${char?.lastname} (${char?.dateofbirth})` : $t('common.na')
+                                "
                                 :class="readOnly ? 'disabled' : ''"
                                 @change="queryCharRaw = $event.target.value"
                                 @focusin="focusTablet(true)"
@@ -333,7 +333,6 @@ watch(selectedAccessRole, () => {
                         </ComboboxButton>
 
                         <ComboboxOptions
-                            v-if="entriesChars && entriesChars.length > 0"
                             class="absolute z-10 mt-1 max-h-44 w-full overflow-auto rounded-md bg-base-700 py-1 text-base sm:text-sm"
                         >
                             <ComboboxOption
@@ -377,7 +376,7 @@ watch(selectedAccessRole, () => {
                             <ComboboxInput
                                 autocomplete="off"
                                 class="block w-full rounded-md border-0 bg-base-700 py-1.5 text-neutral placeholder:text-accent-200 focus:ring-2 focus:ring-inset focus:ring-base-300 sm:text-sm sm:leading-6"
-                                :display-value="(job: any) => job?.label"
+                                :display-value="(job: any) => job?.label ?? $t('common.na')"
                                 :class="readOnly ? 'disabled' : ''"
                                 @change="queryJobRaw = $event.target.value"
                                 @focusin="focusTablet(true)"
@@ -386,7 +385,6 @@ watch(selectedAccessRole, () => {
                         </ComboboxButton>
 
                         <ComboboxOptions
-                            v-if="filteredJobs.length > 0"
                             class="absolute z-10 mt-1 max-h-44 w-full overflow-auto rounded-md bg-base-700 py-1 text-base sm:text-sm"
                         >
                             <ComboboxOption
@@ -428,7 +426,7 @@ watch(selectedAccessRole, () => {
                                 autocomplete="off"
                                 class="block w-full rounded-md border-0 bg-base-700 py-1.5 text-neutral placeholder:text-accent-200 focus:ring-2 focus:ring-inset focus:ring-base-300 sm:text-sm sm:leading-6"
                                 :class="readOnly ? 'disabled' : ''"
-                                :display-value="(rank: any) => rank?.label"
+                                :display-value="(rank: any) => rank?.label ?? $t('common.na')"
                                 @change="queryMinimumRankRaw = $event.target.value"
                                 @focusin="focusTablet(true)"
                                 @focusout="focusTablet(false)"
@@ -436,7 +434,6 @@ watch(selectedAccessRole, () => {
                         </ComboboxButton>
 
                         <ComboboxOptions
-                            v-if="filteredJobRanks.length > 0"
                             class="absolute z-10 mt-1 max-h-44 w-full overflow-auto rounded-md bg-base-700 py-1 text-base sm:text-sm"
                         >
                             <ComboboxOption
@@ -488,7 +485,6 @@ watch(selectedAccessRole, () => {
                     </ComboboxButton>
 
                     <ComboboxOptions
-                        v-if="entriesAccessRoles.length > 0"
                         class="absolute z-10 mt-1 max-h-44 w-full overflow-auto rounded-md bg-base-700 py-1 text-base sm:text-sm"
                     >
                         <ComboboxOption
