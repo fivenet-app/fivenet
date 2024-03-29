@@ -2,7 +2,7 @@
 import { Disclosure, DisclosureButton, DisclosurePanel } from '@headlessui/vue';
 import { ChevronDownIcon } from 'mdi-vue3';
 import PageFooter from '~/components/partials/PageFooter.vue';
-import LicenseFileHolder from '~/components/partials/LicenseFileHolder.vue';
+import ExternalFileHolder from '~/components/partials/ExternalFileHolder.vue';
 
 useHead({
     title: 'common.licenses',
@@ -66,7 +66,7 @@ const licenses = [
                                 </dt>
                                 <DisclosurePanel as="dd" class="mt-2 pr-12">
                                     <p class="max-w-full">
-                                        <LicenseFileHolder v-if="open" :path="license.path" />
+                                        <ExternalFileHolder v-if="open" :path="license.path" />
                                     </p>
                                 </DisclosurePanel>
                             </Disclosure>

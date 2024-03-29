@@ -1,7 +1,7 @@
 import svgLoader from 'vite-svg-loader';
 import { STRATEGIES } from 'vue-i18n-routing';
 
-const commit: string = process.env.COMMIT_REF || 'COMMIT_REF';
+const appVersion: string = process.env.COMMIT_REF || 'COMMIT_REF';
 
 // https://nuxt.com/docs/api/configuration/nuxt-config
 export default defineNuxtConfig({
@@ -97,7 +97,7 @@ export default defineNuxtConfig({
     },
     vite: {
         define: {
-            __APP_VERSION__: `"${commit}"`,
+            __APP_VERSION__: `"${appVersion}"`,
         },
         build: {
             commonjsOptions: {
@@ -196,11 +196,8 @@ export default defineNuxtConfig({
         },
     },
     update: {
-        version: commit,
-        checkInterval: 90,
+        version: appVersion,
+        checkInterval: 110,
         path: '/api/version',
-    },
-    experimental: {
-        emitRouteChunkError: 'automatic',
     },
 });
