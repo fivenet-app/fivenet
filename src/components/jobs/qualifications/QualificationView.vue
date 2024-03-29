@@ -125,7 +125,7 @@ const openRequest = ref(false);
                                             class="inline-flex items-center gap-x-1.5 rounded-md bg-primary-500 px-3 py-2 text-sm font-semibold text-neutral hover:bg-primary-400"
                                             @click="openRequest = true"
                                         >
-                                            <TestTubeIcon class="-ml-0.5 w-5 h-auto" aria-hidden="true" />
+                                            <TestTubeIcon class="-ml-0.5 h-auto w-5" aria-hidden="true" />
                                             {{ $t('components.qualifications.take_test') }}
                                         </button>
                                         <button
@@ -135,7 +135,7 @@ const openRequest = ref(false);
                                             :disabled="quali.request?.status === RequestStatus.PENDING"
                                             @click="openRequest = true"
                                         >
-                                            <AccountSchoolIcon class="-ml-0.5 w-5 h-auto" aria-hidden="true" />
+                                            <AccountSchoolIcon class="-ml-0.5 h-auto w-5" aria-hidden="true" />
                                             {{ $t('common.request') }}
                                         </button>
                                     </template>
@@ -148,7 +148,7 @@ const openRequest = ref(false);
                                         type="button"
                                         class="inline-flex items-center gap-x-1.5 rounded-md bg-primary-500 px-3 py-2 text-sm font-semibold text-neutral hover:bg-primary-400"
                                     >
-                                        <PencilIcon class="-ml-0.5 w-5 h-auto" aria-hidden="true" />
+                                        <PencilIcon class="-ml-0.5 h-auto w-5" aria-hidden="true" />
                                         {{ $t('common.edit') }}
                                     </NuxtLink>
                                     <button
@@ -157,19 +157,19 @@ const openRequest = ref(false);
                                         class="inline-flex items-center gap-x-1.5 rounded-md bg-primary-500 px-3 py-2 text-sm font-semibold text-neutral hover:bg-primary-400"
                                         @click="reveal(quali.id)"
                                     >
-                                        <TrashCanIcon class="-ml-0.5 w-5 h-auto" aria-hidden="true" />
+                                        <TrashCanIcon class="-ml-0.5 h-auto w-5" aria-hidden="true" />
                                         {{ $t('common.delete') }}
                                     </button>
                                 </div>
                             </div>
 
                             <div class="my-4">
-                                <h1 class="break-words py-1 pl-0.5 pr-0.5 text-4xl font-bold text-neutral sm:pl-1">
+                                <h1 class="break-words px-0.5 py-1 text-4xl font-bold text-neutral sm:pl-1">
                                     {{ quali.abbreviation }}: {{ quali.title }}
                                 </h1>
                                 <p
                                     v-if="quali.description"
-                                    class="break-words py-1 pl-0.5 pr-0.5 text-base font-bold text-neutral sm:pl-1"
+                                    class="break-words px-0.5 py-1 text-base font-bold text-neutral sm:pl-1"
                                 >
                                     {{ quali.description }}
                                 </p>
@@ -180,13 +180,13 @@ const openRequest = ref(false);
                                     v-if="quali.closed"
                                     class="flex flex-initial flex-row gap-1 rounded-full bg-error-100 px-2 py-1"
                                 >
-                                    <LockIcon class="h-5 w-5 text-error-400" aria-hidden="true" />
+                                    <LockIcon class="size-5 text-error-400" aria-hidden="true" />
                                     <span class="text-sm font-medium text-error-700">
                                         {{ $t('common.close', 2) }}
                                     </span>
                                 </div>
                                 <div v-else class="flex flex-initial flex-row gap-1 rounded-full bg-success-100 px-2 py-1">
-                                    <LockOpenVariantIcon class="h-5 w-5 text-success-500" aria-hidden="true" />
+                                    <LockOpenVariantIcon class="size-5 text-success-500" aria-hidden="true" />
                                     <span class="text-sm font-medium text-success-700">
                                         {{ $t('common.open', 2) }}
                                     </span>
@@ -196,7 +196,7 @@ const openRequest = ref(false);
                                     v-if="quali.request?.status"
                                     class="flex flex-initial flex-row gap-1 rounded-full bg-info-100 px-2 py-1"
                                 >
-                                    <MailIcon class="h-5 w-5 text-info-400" aria-hidden="true" />
+                                    <MailIcon class="size-5 text-info-400" aria-hidden="true" />
                                     <span class="text-sm font-medium text-info-700">
                                         <span c lass="font-semibold">{{ $t('common.request') }}:</span>
                                         {{
@@ -211,7 +211,7 @@ const openRequest = ref(false);
                                     v-if="quali.result?.status"
                                     class="flex flex-initial flex-row gap-1 rounded-full bg-info-100 px-2 py-1"
                                 >
-                                    <ListStatusIcon class="h-5 w-5 text-info-400" aria-hidden="true" />
+                                    <ListStatusIcon class="size-5 text-info-400" aria-hidden="true" />
                                     <span class="text-sm font-medium text-info-700">
                                         <span class="font-semibold">{{ $t('common.result') }}:</span>
                                         {{ $t(`enums.qualifications.ResultStatus.${ResultStatus[quali.result?.status ?? 0]}`) }}
@@ -221,7 +221,7 @@ const openRequest = ref(false);
 
                             <div class="flex snap-x flex-row flex-wrap gap-2 overflow-x-auto pb-3 sm:pb-0">
                                 <div class="flex flex-initial flex-row gap-1 rounded-full bg-base-100 px-2 py-1 text-base-500">
-                                    <AccountIcon class="w-5 h-auto" aria-hidden="true" />
+                                    <AccountIcon class="h-auto w-5" aria-hidden="true" />
                                     <span class="inline-flex items-center text-sm font-medium text-base-700">
                                         {{ $t('common.created_by') }}
                                         <CitizenInfoPopover
@@ -232,7 +232,7 @@ const openRequest = ref(false);
                                 </div>
 
                                 <div class="flex flex-initial flex-row gap-1 rounded-full bg-base-100 px-2 py-1 text-base-500">
-                                    <CalendarIcon class="w-5 h-auto" aria-hidden="true" />
+                                    <CalendarIcon class="h-auto w-5" aria-hidden="true" />
                                     <span class="text-sm font-medium text-base-700">
                                         {{ $t('common.created_at') }}
                                         <GenericTime :value="quali?.createdAt" type="long" />
@@ -242,7 +242,7 @@ const openRequest = ref(false);
                                     v-if="quali?.updatedAt"
                                     class="flex flex-initial flex-row gap-1 rounded-full bg-base-100 px-2 py-1 text-base-500"
                                 >
-                                    <CalendarEditIcon class="w-5 h-auto" aria-hidden="true" />
+                                    <CalendarEditIcon class="h-auto w-5" aria-hidden="true" />
                                     <span class="text-sm font-medium text-base-700">
                                         {{ $t('common.updated_at') }}
                                         <GenericTime :value="quali?.updatedAt" type="long" />
@@ -252,7 +252,7 @@ const openRequest = ref(false);
                                     v-if="quali?.deletedAt"
                                     class="flex flex-initial flex-row gap-1 rounded-full bg-base-100 px-2 py-1 text-base-500"
                                 >
-                                    <CalendarRemoveIcon class="w-5 h-auto" aria-hidden="true" />
+                                    <CalendarRemoveIcon class="h-auto w-5" aria-hidden="true" />
                                     <span class="text-sm font-medium text-base-700">
                                         {{ $t('common.deleted') }}
                                         <GenericTime :value="quali?.deletedAt" type="long" />
@@ -267,7 +267,7 @@ const openRequest = ref(false);
 
                                 <div class="flex flex-row flex-wrap gap-1 pb-2">
                                     <template v-if="!quali.requirements || quali.requirements.length === 0">
-                                        <p class="text-neutral text-base">
+                                        <p class="text-base text-neutral">
                                             {{ $t('common.not_found', [$t('common.requirements', 2)]) }}
                                         </p>
                                     </template>
@@ -288,7 +288,7 @@ const openRequest = ref(false);
                                             "
                                         >
                                             <span
-                                                class="h-2 w-2 rounded-full"
+                                                class="size-2 rounded-full"
                                                 :class="
                                                     entry.targetQualification?.result?.status === ResultStatus.SUCCESSFUL
                                                         ? 'bg-success-500'
@@ -312,7 +312,7 @@ const openRequest = ref(false);
                                 <div class="break-words rounded-lg bg-base-800 text-neutral">
                                     <!-- eslint-disable vue/no-v-html -->
                                     <div
-                                        class="prose prose-invert min-w-full rounded-md bg-base-900 px-4 py-4"
+                                        class="prose prose-invert min-w-full rounded-md bg-base-900 p-4"
                                         v-html="quali?.content"
                                     ></div>
                                 </div>
@@ -331,12 +331,12 @@ const openRequest = ref(false);
                                         ]"
                                     >
                                         <span class="inline-flex items-center text-base font-semibold leading-7">
-                                            <ListStatusIcon class="mr-2 w-5 h-auto" aria-hidden="true" />
+                                            <ListStatusIcon class="mr-2 h-auto w-5" aria-hidden="true" />
                                             {{ $t('common.result') }}
                                         </span>
                                         <span class="ml-6 flex h-7 items-center">
                                             <ChevronDownIcon
-                                                :class="[open ? 'upsidedown' : '', 'h-autotransition-transform w-5']"
+                                                :class="[open ? 'upsidedown' : '', 'h-auto w-5 transition-transform']"
                                                 aria-hidden="true"
                                             />
                                         </span>
@@ -377,12 +377,12 @@ const openRequest = ref(false);
                                         ]"
                                     >
                                         <span class="inline-flex items-center text-base font-semibold leading-7">
-                                            <LockIcon class="mr-2 w-5 h-auto" aria-hidden="true" />
+                                            <LockIcon class="mr-2 h-auto w-5" aria-hidden="true" />
                                             {{ $t('common.access') }}
                                         </span>
                                         <span class="ml-6 flex h-7 items-center">
                                             <ChevronDownIcon
-                                                :class="[open ? 'upsidedown' : '', 'h-autotransition-transform w-5']"
+                                                :class="[open ? 'upsidedown' : '', 'h-auto w-5 transition-transform']"
                                                 aria-hidden="true"
                                             />
                                         </span>
@@ -401,7 +401,7 @@ const openRequest = ref(false);
                                                     :key="entry.id"
                                                     class="flex flex-initial snap-x snap-start items-center gap-1 overflow-x-auto whitespace-nowrap rounded-full bg-info-100 px-2 py-1"
                                                 >
-                                                    <span class="h-2 w-2 rounded-full bg-info-500" aria-hidden="true" />
+                                                    <span class="size-2 rounded-full bg-info-500" aria-hidden="true" />
                                                     <span class="text-sm font-medium text-info-800"
                                                         >{{ entry.jobLabel
                                                         }}<span
@@ -436,12 +436,12 @@ const openRequest = ref(false);
                                         ]"
                                     >
                                         <span class="inline-flex items-center text-base font-semibold leading-7">
-                                            <AccountSchoolIcon class="mr-2 w-5 h-auto" aria-hidden="true" />
+                                            <AccountSchoolIcon class="mr-2 h-auto w-5" aria-hidden="true" />
                                             {{ $t('common.request', 2) }}
                                         </span>
                                         <span class="ml-6 flex h-7 items-center">
                                             <ChevronDownIcon
-                                                :class="[open ? 'upsidedown' : '', 'h-autotransition-transform w-5']"
+                                                :class="[open ? 'upsidedown' : '', 'h-auto w-5 transition-transform']"
                                                 aria-hidden="true"
                                             />
                                         </span>
@@ -467,12 +467,12 @@ const openRequest = ref(false);
                                         ]"
                                     >
                                         <span class="inline-flex items-center text-base font-semibold leading-7">
-                                            <SigmaIcon class="mr-2 w-5 h-auto" aria-hidden="true" />
+                                            <SigmaIcon class="mr-2 h-auto w-5" aria-hidden="true" />
                                             {{ $t('common.result', 2) }}
                                         </span>
                                         <span class="ml-6 flex h-7 items-center">
                                             <ChevronDownIcon
-                                                :class="[open ? 'upsidedown' : '', 'h-autotransition-transform w-5']"
+                                                :class="[open ? 'upsidedown' : '', 'h-auto w-5 transition-transform']"
                                                 aria-hidden="true"
                                             />
                                         </span>

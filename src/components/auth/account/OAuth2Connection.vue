@@ -48,23 +48,38 @@ onConfirm(async (provider) => disconnectOAuth2Connection(provider));
                 <img
                     :src="account.avatar"
                     alt="Avatar"
-                    class="h-10 w-10 rounded-full bg-base-800 fill-base-300 text-base-300 ring-2 ring-neutral hover:fill-base-100 hover:text-base-100 hover:transition-colors"
+                    class="size-10 rounded-full bg-base-800 fill-base-300 text-base-300 ring-2 ring-neutral hover:fill-base-100 hover:text-base-100 hover:transition-colors"
                 />
+
                 <span class="text-left" :title="`ID: ${account.externalId}`">
                     {{ account.username }}
                 </span>
 
-                <button
-                    type="button"
-                    class="inline-flex items-center gap-1 rounded-md bg-error-600 px-2 py-2 text-sm font-semibold text-neutral hover:bg-error-700"
-                    @click="reveal(provider)"
-                >
-                    <CloseCircleIcon class="h-5 w-5" aria-hidden="true" />
-                    <span>{{ $t('common.disconnect') }}</span>
-                </button>
+                <template v-if="isNUIAvailable()">
+                    <p class="ml-4 text-end text-sm text-neutral">
+                        {{ $t('system.not_supported_on_tablet.title') }}
+                    </p>
+                </template>
+                <template v-else>
+                    <button
+                        type="button"
+                        class="inline-flex items-center gap-1 rounded-md bg-error-600 p-2 text-sm font-semibold text-neutral hover:bg-error-700"
+                        @click="reveal(provider)"
+                    >
+                        <CloseCircleIcon class="size-5" aria-hidden="true" />
+                        <span>{{ $t('common.disconnect') }}</span>
+                    </button>
+                </template>
             </div>
             <div v-else>
-                <OAuth2ConnectButton :provider="provider" />
+                <template v-if="isNUIAvailable()">
+                    <p class="ml-4 text-end text-sm text-neutral">
+                        {{ $t('system.not_supported_on_tablet.title') }}
+                    </p>
+                </template>
+                <template v-else>
+                    <OAuth2ConnectButton :provider="provider" />
+                </template>
             </div>
         </template>
     </GenericContainerPanelEntry>

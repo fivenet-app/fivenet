@@ -102,12 +102,10 @@ const mugShotModal = ref(false);
                             <div class="flex-1 xl:flex">
                                 <div class="xl:flex-1">
                                     <div class="divide-y divide-base-200">
-                                        <div class="px-4 py-5 sm:px-0 sm:py-0">
+                                        <div class="px-4 py-5 sm:p-0">
                                             <dl class="space-y-4 sm:space-y-0 sm:divide-y sm:divide-base-200">
                                                 <div class="sm:flex sm:px-5 sm:py-4">
-                                                    <dt
-                                                        class="text-sm font-medium text-neutral sm:w-40 sm:flex-shrink-0 lg:w-48"
-                                                    >
+                                                    <dt class="text-sm font-medium text-neutral sm:w-40 sm:shrink-0 lg:w-48">
                                                         {{ $t('common.date_of_birth') }}
                                                     </dt>
                                                     <dd class="mt-1 text-sm text-base-300 sm:col-span-2 sm:ml-6 sm:mt-0">
@@ -115,9 +113,7 @@ const mugShotModal = ref(false);
                                                     </dd>
                                                 </div>
                                                 <div class="sm:flex sm:px-5 sm:py-4">
-                                                    <dt
-                                                        class="text-sm font-medium text-neutral sm:w-40 sm:flex-shrink-0 lg:w-48"
-                                                    >
+                                                    <dt class="text-sm font-medium text-neutral sm:w-40 sm:shrink-0 lg:w-48">
                                                         {{ $t('common.sex') }}
                                                     </dt>
                                                     <dd
@@ -128,9 +124,7 @@ const mugShotModal = ref(false);
                                                     </dd>
                                                 </div>
                                                 <div class="sm:flex sm:px-5 sm:py-4">
-                                                    <dt
-                                                        class="text-sm font-medium text-neutral sm:w-40 sm:flex-shrink-0 lg:w-48"
-                                                    >
+                                                    <dt class="text-sm font-medium text-neutral sm:w-40 sm:shrink-0 lg:w-48">
                                                         {{ $t('common.height') }}
                                                     </dt>
                                                     <dd class="mt-1 text-sm text-base-300 sm:col-span-2 sm:ml-6 sm:mt-0">
@@ -141,9 +135,7 @@ const mugShotModal = ref(false);
                                                     v-if="attr('CitizenStoreService.ListCitizens', 'Fields', 'PhoneNumber')"
                                                     class="sm:flex sm:px-5 sm:py-4"
                                                 >
-                                                    <dt
-                                                        class="text-sm font-medium text-neutral sm:w-40 sm:flex-shrink-0 lg:w-48"
-                                                    >
+                                                    <dt class="text-sm font-medium text-neutral sm:w-40 sm:shrink-0 lg:w-48">
                                                         {{ $t('common.phone_number') }}
                                                     </dt>
                                                     <dd class="mt-1 text-sm text-base-300 sm:col-span-2 sm:ml-6 sm:mt-0">
@@ -151,9 +143,7 @@ const mugShotModal = ref(false);
                                                     </dd>
                                                 </div>
                                                 <div v-if="user.visum" class="sm:flex sm:px-5 sm:py-4">
-                                                    <dt
-                                                        class="text-sm font-medium text-neutral sm:w-40 sm:flex-shrink-0 lg:w-48"
-                                                    >
+                                                    <dt class="text-sm font-medium text-neutral sm:w-40 sm:shrink-0 lg:w-48">
                                                         {{ $t('common.visum') }}
                                                     </dt>
                                                     <dd class="mt-1 text-sm text-blue-400 sm:col-span-2 sm:ml-6 sm:mt-0">
@@ -170,9 +160,7 @@ const mugShotModal = ref(false);
                                                     "
                                                     class="sm:flex sm:px-5 sm:py-4"
                                                 >
-                                                    <dt
-                                                        class="text-sm font-medium text-neutral sm:w-40 sm:flex-shrink-0 lg:w-48"
-                                                    >
+                                                    <dt class="text-sm font-medium text-neutral sm:w-40 sm:shrink-0 lg:w-48">
                                                         {{ $t('common.blood_type') }}
                                                     </dt>
                                                     <dd class="mt-1 text-sm text-base-300 sm:col-span-2 sm:ml-6 sm:mt-0">
@@ -189,9 +177,7 @@ const mugShotModal = ref(false);
                                                     "
                                                     class="sm:flex sm:px-5 sm:py-4"
                                                 >
-                                                    <dt
-                                                        class="text-sm font-medium text-neutral sm:w-40 sm:flex-shrink-0 lg:w-48"
-                                                    >
+                                                    <dt class="text-sm font-medium text-neutral sm:w-40 sm:shrink-0 lg:w-48">
                                                         {{ $t('common.traffic_infraction_points', 2) }}
                                                     </dt>
                                                     <dd
@@ -215,9 +201,7 @@ const mugShotModal = ref(false);
                                                     "
                                                     class="sm:flex sm:px-5 sm:py-4"
                                                 >
-                                                    <dt
-                                                        class="text-sm font-medium text-neutral sm:w-40 sm:flex-shrink-0 lg:w-48"
-                                                    >
+                                                    <dt class="text-sm font-medium text-neutral sm:w-40 sm:shrink-0 lg:w-48">
                                                         {{ $t('common.fine') }}
                                                     </dt>
                                                     <dd class="mt-1 text-sm text-base-300 sm:col-span-2 sm:ml-6 sm:mt-0">
@@ -238,12 +222,10 @@ const mugShotModal = ref(false);
                                                     v-if="attr('CitizenStoreService.ListCitizens', 'Fields', 'Licenses')"
                                                     class="sm:flex sm:px-5 sm:py-4"
                                                 >
-                                                    <dt
-                                                        class="text-sm font-medium text-neutral sm:w-40 sm:flex-shrink-0 lg:w-48"
-                                                    >
+                                                    <dt class="text-sm font-medium text-neutral sm:w-40 sm:shrink-0 lg:w-48">
                                                         {{ $t('common.license', 2) }}
                                                     </dt>
-                                                    <dd class="w-full mt-1 text-sm text-base-300 sm:col-span-2 sm:ml-6 sm:mt-0">
+                                                    <dd class="mt-1 w-full text-sm text-base-300 sm:col-span-2 sm:ml-6 sm:mt-0">
                                                         <span v-if="user?.licenses.length === 0">
                                                             {{ $t('common.no_licenses') }}
                                                         </span>
@@ -258,10 +240,7 @@ const mugShotModal = ref(false);
                                                                 class="flex items-center justify-between py-3 pl-3 pr-4 text-sm"
                                                             >
                                                                 <div class="flex flex-1 items-center">
-                                                                    <LicenseIcon
-                                                                        class="h-5 w-5 flex-shrink-0"
-                                                                        aria-hidden="true"
-                                                                    />
+                                                                    <LicenseIcon class="size-5 shrink-0" aria-hidden="true" />
                                                                     <span
                                                                         class="ml-2 flex-1 truncate"
                                                                         :title="`${license.type.toUpperCase()}`"
@@ -282,15 +261,15 @@ const mugShotModal = ref(false);
                                 <div v-if="attr('CitizenStoreService.SetUserProps', 'Fields', 'Wanted')" class="flex-initial">
                                     <button
                                         type="button"
-                                        class="inline-flex w-full flex-shrink-0 items-center justify-center rounded-md bg-error-500 px-3 py-2 text-sm font-semibold text-neutral transition-colors hover:bg-error-400 focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-primary-500 sm:flex-1"
+                                        class="inline-flex w-full shrink-0 items-center justify-center rounded-md bg-error-500 px-3 py-2 text-sm font-semibold text-neutral transition-colors hover:bg-error-400 focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-primary-500 sm:flex-1"
                                         @click="setWantedModal = true"
                                     >
                                         <AccountAlertIcon
                                             v-if="user.props?.wanted"
-                                            class="w-5 h-auto mr-1.5"
+                                            class="mr-1.5 h-auto w-5"
                                             aria-hidden="true"
                                         />
-                                        <AccountCancelIcon v-else class="w-5 h-auto mr-1.5" aria-hidden="true" />
+                                        <AccountCancelIcon v-else class="mr-1.5 h-auto w-5" aria-hidden="true" />
                                         {{
                                             user.props?.wanted
                                                 ? $t('components.citizens.citizen_info_profile.revoke_wanted')
@@ -301,10 +280,10 @@ const mugShotModal = ref(false);
                                 <div v-if="attr('CitizenStoreService.SetUserProps', 'Fields', 'Job')" class="flex-initial">
                                     <button
                                         type="button"
-                                        class="inline-flex w-full flex-shrink-0 items-center justify-center rounded-md bg-secondary-500 px-3 py-2 text-sm font-semibold text-neutral transition-colors hover:bg-secondary-400 focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-secondary-500 sm:flex-1"
+                                        class="inline-flex w-full shrink-0 items-center justify-center rounded-md bg-secondary-500 px-3 py-2 text-sm font-semibold text-neutral transition-colors hover:bg-secondary-400 focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-secondary-500 sm:flex-1"
                                         @click="setJobModal = true"
                                     >
-                                        <BriefcaseIcon class="w-5 h-auto mr-1.5" aria-hidden="true" />
+                                        <BriefcaseIcon class="mr-1.5 h-auto w-5" aria-hidden="true" />
                                         {{ $t('components.citizens.citizen_info_profile.set_job') }}
                                     </button>
                                 </div>
@@ -314,40 +293,40 @@ const mugShotModal = ref(false);
                                 >
                                     <button
                                         type="button"
-                                        class="inline-flex w-full flex-shrink-0 items-center justify-center rounded-md bg-secondary-500 px-3 py-2 text-sm font-semibold text-neutral transition-colors hover:bg-secondary-400 focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-secondary-500 sm:flex-1"
+                                        class="inline-flex w-full shrink-0 items-center justify-center rounded-md bg-secondary-500 px-3 py-2 text-sm font-semibold text-neutral transition-colors hover:bg-secondary-400 focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-secondary-500 sm:flex-1"
                                         @click="trafficPointsModal = true"
                                     >
-                                        <CounterIcon class="w-5 h-auto mr-1.5" aria-hidden="true" />
+                                        <CounterIcon class="mr-1.5 h-auto w-5" aria-hidden="true" />
                                         {{ $t('components.citizens.citizen_info_profile.set_traffic_points') }}
                                     </button>
                                 </div>
                                 <div v-if="attr('CitizenStoreService.SetUserProps', 'Fields', 'MugShot')" class="flex-initial">
                                     <button
                                         type="button"
-                                        class="inline-flex w-full flex-shrink-0 items-center justify-center rounded-md bg-secondary-500 px-3 py-2 text-sm font-semibold text-neutral transition-colors hover:bg-secondary-400 focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-secondary-500 sm:flex-1"
+                                        class="inline-flex w-full shrink-0 items-center justify-center rounded-md bg-secondary-500 px-3 py-2 text-sm font-semibold text-neutral transition-colors hover:bg-secondary-400 focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-secondary-500 sm:flex-1"
                                         @click="mugShotModal = true"
                                     >
-                                        <CameraIcon class="w-5 h-auto mr-1.5" aria-hidden="true" />
+                                        <CameraIcon class="mr-1.5 h-auto w-5" aria-hidden="true" />
                                         {{ $t('components.citizens.citizen_info_profile.set_mug_shot') }}
                                     </button>
                                 </div>
                                 <div v-if="can('DocStoreService.CreateDocument')" class="flex-initial">
                                     <button
                                         type="button"
-                                        class="inline-flex w-full flex-shrink-0 items-center justify-center rounded-md bg-base-700 px-3 py-2 text-sm font-semibold text-neutral transition-colors hover:bg-base-600 focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-primary-500 sm:flex-1"
+                                        class="inline-flex w-full shrink-0 items-center justify-center rounded-md bg-base-700 px-3 py-2 text-sm font-semibold text-neutral transition-colors hover:bg-base-600 focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-primary-500 sm:flex-1"
                                         @click="openTemplates()"
                                     >
-                                        <FileDocumentPlusIcon class="w-5 h-auto mr-1.5" aria-hidden="true" />
+                                        <FileDocumentPlusIcon class="mr-1.5 h-auto w-5" aria-hidden="true" />
                                         {{ $t('components.citizens.citizen_info_profile.create_new_document') }}
                                     </button>
                                 </div>
                                 <div class="flex-initial">
                                     <button
                                         type="button"
-                                        class="inline-flex w-full flex-shrink-0 items-center justify-center rounded-md bg-base-700 px-3 py-2 text-sm font-semibold text-neutral transition-colors hover:bg-base-600 focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-primary-500 sm:flex-1"
+                                        class="inline-flex w-full shrink-0 items-center justify-center rounded-md bg-base-700 px-3 py-2 text-sm font-semibold text-neutral transition-colors hover:bg-base-600 focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-primary-500 sm:flex-1"
                                         @click="copyLinkToClipboard()"
                                     >
-                                        <LinkIcon class="w-5 h-auto mr-1.5" aria-hidden="true" />
+                                        <LinkIcon class="mr-1.5 h-auto w-5" aria-hidden="true" />
                                         {{ $t('components.citizens.citizen_info_profile.copy_profile_link') }}
                                     </button>
                                 </div>

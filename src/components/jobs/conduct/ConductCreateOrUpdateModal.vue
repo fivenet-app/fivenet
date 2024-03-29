@@ -202,7 +202,7 @@ const onSubmitThrottle = useThrottleFn(async (e) => {
                                                         @click="$emit('close')"
                                                     >
                                                         <span class="sr-only">{{ $t('common.close') }}</span>
-                                                        <CloseIcon class="h-5 w-5" aria-hidden="true" />
+                                                        <CloseIcon class="size-5" aria-hidden="true" />
                                                     </button>
                                                 </div>
                                             </div>
@@ -337,7 +337,7 @@ const onSubmitThrottle = useThrottleFn(async (e) => {
                                                                                             ]"
                                                                                         >
                                                                                             <CheckIcon
-                                                                                                class="h-5 w-5"
+                                                                                                class="size-5"
                                                                                                 aria-hidden="true"
                                                                                             />
                                                                                         </span>
@@ -415,7 +415,7 @@ const onSubmitThrottle = useThrottleFn(async (e) => {
                                             </div>
                                         </div>
                                     </div>
-                                    <div class="flex flex-shrink-0 justify-end px-4 py-4">
+                                    <div class="flex shrink-0 justify-end p-4">
                                         <span class="isolate inline-flex w-full rounded-md pr-4 shadow-sm">
                                             <button
                                                 type="submit"
@@ -428,7 +428,7 @@ const onSubmitThrottle = useThrottleFn(async (e) => {
                                                 ]"
                                             >
                                                 <template v-if="!canSubmit">
-                                                    <LoadingIcon class="mr-2 h-5 w-5 animate-spin" aria-hidden="true" />
+                                                    <LoadingIcon class="mr-2 size-5 animate-spin" aria-hidden="true" />
                                                 </template>
                                                 {{ entry?.id === undefined ? $t('common.create') : $t('common.update') }}
                                             </button>

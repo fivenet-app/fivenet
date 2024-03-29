@@ -30,52 +30,28 @@ const { markersMarkers } = storeToRefs(livemapStore);
                     <GenericTable>
                         <template #thead>
                             <tr>
-                                <th
-                                    scope="col"
-                                    class="whitespace-nowrap px-1 py-1 text-left text-sm font-semibold text-gray-100"
-                                >
+                                <th scope="col" class="whitespace-nowrap p-1 text-left text-sm font-semibold text-gray-100">
                                     {{ $t('common.action', 2) }}
                                 </th>
-                                <th
-                                    scope="col"
-                                    class="whitespace-nowrap px-1 py-1 text-left text-sm font-semibold text-gray-100"
-                                >
+                                <th scope="col" class="whitespace-nowrap p-1 text-left text-sm font-semibold text-gray-100">
                                     {{ $t('common.created_at') }}
                                 </th>
-                                <th
-                                    scope="col"
-                                    class="whitespace-nowrap px-1 py-1 text-left text-sm font-semibold text-gray-100"
-                                >
+                                <th scope="col" class="whitespace-nowrap p-1 text-left text-sm font-semibold text-gray-100">
                                     {{ $t('common.expires_at') }}
                                 </th>
-                                <th
-                                    scope="col"
-                                    class="whitespace-nowrap px-1 py-1 text-left text-sm font-semibold text-gray-100"
-                                >
+                                <th scope="col" class="whitespace-nowrap p-1 text-left text-sm font-semibold text-gray-100">
                                     {{ $t('common.name') }}
                                 </th>
-                                <th
-                                    scope="col"
-                                    class="whitespace-nowrap px-1 py-1 text-left text-sm font-semibold text-gray-100"
-                                >
+                                <th scope="col" class="whitespace-nowrap p-1 text-left text-sm font-semibold text-gray-100">
                                     {{ $t('common.type') }}
                                 </th>
-                                <th
-                                    scope="col"
-                                    class="whitespace-nowrap px-1 py-1 text-left text-sm font-semibold text-gray-100"
-                                >
+                                <th scope="col" class="whitespace-nowrap p-1 text-left text-sm font-semibold text-gray-100">
                                     {{ $t('common.description') }}
                                 </th>
-                                <th
-                                    scope="col"
-                                    class="whitespace-nowrap px-1 py-1 text-left text-sm font-semibold text-gray-100"
-                                >
+                                <th scope="col" class="whitespace-nowrap p-1 text-left text-sm font-semibold text-gray-100">
                                     {{ $t('common.citizen') }}
                                 </th>
-                                <th
-                                    scope="col"
-                                    class="whitespace-nowrap px-1 py-1 text-left text-sm font-semibold text-gray-100"
-                                >
+                                <th scope="col" class="whitespace-nowrap p-1 text-left text-sm font-semibold text-gray-100">
                                     {{ $t('common.job') }}
                                 </th>
                             </tr>

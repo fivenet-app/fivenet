@@ -198,7 +198,7 @@ const onSubmitThrottle = useThrottleFn(async (e) => {
                                                         @click="$emit('close')"
                                                     >
                                                         <span class="sr-only">{{ $t('common.close') }}</span>
-                                                        <CloseIcon class="h-5 w-5" aria-hidden="true" />
+                                                        <CloseIcon class="size-5" aria-hidden="true" />
                                                     </button>
                                                 </div>
                                             </div>
@@ -435,21 +435,21 @@ const onSubmitThrottle = useThrottleFn(async (e) => {
                                                                                 />
 
                                                                                 <span
-                                                                                    class="pointer-events-none absolute inset-y-0 right-0 flex pt-4 pr-2"
+                                                                                    class="pointer-events-none absolute inset-y-0 right-0 flex pr-2 pt-4"
                                                                                 >
                                                                                     <ChevronDownIcon
-                                                                                        class="h-5 w-5 text-gray-400"
+                                                                                        class="size-5 text-gray-400"
                                                                                         aria-hidden="true"
                                                                                     />
                                                                                 </span>
 
                                                                                 <span
-                                                                                    class="mt-1 block inline-flex items-center truncate"
+                                                                                    class="mt-1 inline-flex items-center truncate"
                                                                                 >
                                                                                     <component
                                                                                         :is="selectedIcon"
                                                                                         v-if="selectedIcon"
-                                                                                        class="mr-1 h-5 w-5"
+                                                                                        class="mr-1 size-5"
                                                                                         :style="{ color: color }"
                                                                                         aria-hidden="true"
                                                                                     />
@@ -491,12 +491,12 @@ const onSubmitThrottle = useThrottleFn(async (e) => {
                                                                                                     selected
                                                                                                         ? 'font-semibold'
                                                                                                         : 'font-normal',
-                                                                                                    'block inline-flex items-center truncate',
+                                                                                                    'inline-flex items-center truncate',
                                                                                                 ]"
                                                                                             >
                                                                                                 <component
                                                                                                     :is="icon"
-                                                                                                    class="mr-1 h-5 w-5"
+                                                                                                    class="mr-1 size-5"
                                                                                                     aria-hidden="true"
                                                                                                 />
                                                                                                 {{
@@ -517,7 +517,7 @@ const onSubmitThrottle = useThrottleFn(async (e) => {
                                                                                                 ]"
                                                                                             >
                                                                                                 <CheckIcon
-                                                                                                    class="h-5 w-5"
+                                                                                                    class="size-5"
                                                                                                     aria-hidden="true"
                                                                                                 />
                                                                                             </span>
@@ -540,7 +540,7 @@ const onSubmitThrottle = useThrottleFn(async (e) => {
                                             </div>
                                         </div>
                                     </div>
-                                    <div class="flex flex-shrink-0 justify-end px-4 py-4">
+                                    <div class="flex shrink-0 justify-end p-4">
                                         <span class="isolate inline-flex w-full rounded-md pr-4 shadow-sm">
                                             <button
                                                 type="submit"
@@ -553,7 +553,7 @@ const onSubmitThrottle = useThrottleFn(async (e) => {
                                                 ]"
                                             >
                                                 <template v-if="!canSubmit">
-                                                    <LoadingIcon class="mr-2 h-5 w-5 animate-spin" aria-hidden="true" />
+                                                    <LoadingIcon class="mr-2 size-5 animate-spin" aria-hidden="true" />
                                                 </template>
                                                 {{ $t('common.create') }}
                                             </button>

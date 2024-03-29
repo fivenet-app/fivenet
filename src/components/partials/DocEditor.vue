@@ -113,7 +113,7 @@ const extraButtons = [
     '|',
     {
         name: 'insertCheckbox',
-        iconURL: '/images/icons/format-list-checkbox.svg',
+        iconURL: '/images/partials/doceditor/format-list-checkbox.svg',
         exec: function (editor: IJodit) {
             const label = document.createElement('label');
             label.setAttribute('contenteditable', 'false');

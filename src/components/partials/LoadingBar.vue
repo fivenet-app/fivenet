@@ -95,6 +95,7 @@ nuxt.hook('data:loading:finish_error', () => {
 onBeforeUnmount(() => clear);
 </script>
 
+<!-- eslint-disable tailwindcss/no-custom-classname -->
 <template>
     <div
         :class="['nuxt-loading-indicator', data.canSucceed ? '' : 'nuxt-loading-indicator-failed']"

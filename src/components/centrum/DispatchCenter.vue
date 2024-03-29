@@ -38,7 +38,7 @@ function goto(e: Coordinate) {
 </script>
 
 <template>
-    <div class="relative h-full w-full">
+    <div class="relative size-full">
         <div
             v-if="error !== undefined || (abort === undefined && !reconnecting)"
             class="absolute inset-0 z-30 flex items-center justify-center bg-gray-600/70"
@@ -53,7 +53,7 @@ function goto(e: Coordinate) {
                 :message="$t('components.centrum.dispatch_center.starting_datastream')"
             />
         </div>
-        <Splitpanes v-else class="h-full w-full">
+        <Splitpanes v-else class="size-full">
             <Pane min-size="25">
                 <Splitpanes horizontal>
                     <Pane min-size="80" size="90">

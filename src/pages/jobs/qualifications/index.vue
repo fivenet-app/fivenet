@@ -17,14 +17,12 @@ definePageMeta({
     <div>
         <div class="py-2 pb-14">
             <div class="px-1 sm:px-2 lg:px-4">
-                <div class="grid-col-2 grid gap-2">
-                    <div class="sm:flex-auto">
-                        <QualificationsList />
+                <div class="grid gap-2 md:grid-cols-2">
+                    <QualificationsList />
 
-                        <QualificationsResultsList class="mt-4" />
+                    <QualificationsResultsList />
 
-                        <QualificationsRequestsList class="mt-4" />
-                    </div>
+                    <QualificationsRequestsList />
                 </div>
             </div>
         </div>

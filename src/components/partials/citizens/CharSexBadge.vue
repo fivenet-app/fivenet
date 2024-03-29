@@ -11,13 +11,13 @@ defineProps<{
         v-if="sex === 'f'"
         class="inline-flex items-center rounded-full bg-pink-200 px-2 py-0.5 text-sm font-medium text-pink-600"
     >
-        <GenderFemaleIcon class="h-5 w-5" aria-hidden="true" />
+        <GenderFemaleIcon class="size-5" aria-hidden="true" />
     </span>
 
     <span
         v-else-if="sex === 'm'"
         class="inline-flex items-center rounded-full bg-blue-200 px-2 py-0.5 text-sm font-medium text-blue-600"
     >
-        <GenderMaleIcon class="h-5 w-5" aria-hidden="true" />
+        <GenderMaleIcon class="size-5" aria-hidden="true" />
     </span>
 </template>

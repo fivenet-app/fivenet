@@ -128,30 +128,30 @@ const editing = ref(props.startInEdit);
     <tr v-if="!editing">
         <td class="flex flex-row py-2 pl-4 pr-3 text-sm font-medium text-neutral sm:pl-1">
             <button type="button" class="pl-2" :title="$t('common.edit')" @click="editing = true">
-                <PencilIcon class="h-5 w-5" aria-hidden="true" />
+                <PencilIcon class="size-5" aria-hidden="true" />
             </button>
             <button type="button" class="pl-2" :title="$t('common.delete')" @click="reveal()">
-                <TrashCanIcon class="h-5 w-5" aria-hidden="true" />
+                <TrashCanIcon class="size-5" aria-hidden="true" />
             </button>
         </td>
         <td class="py-2 pl-4 pr-3 text-sm font-medium text-neutral sm:pl-1">
             {{ law.name }}
         </td>
-        <td class="whitespace-nowrap px-1 py-1 text-left text-accent-200">${{ law.fine }}</td>
-        <td class="whitespace-nowrap px-1 py-1 text-left text-accent-200">
+        <td class="whitespace-nowrap p-1 text-left text-accent-200">${{ law.fine }}</td>
+        <td class="whitespace-nowrap p-1 text-left text-accent-200">
             {{ law.detentionTime }}
         </td>
-        <td class="whitespace-nowrap px-1 py-1 text-left text-accent-200">
+        <td class="whitespace-nowrap p-1 text-left text-accent-200">
             {{ law.stvoPoints }}
         </td>
-        <td class="px-1 py-1 text-left text-sm font-medium text-accent-200">
+        <td class="p-1 text-left text-sm font-medium text-accent-200">
             {{ law.description }}
         </td>
     </tr>
     <tr v-else>
         <td class="py-2 pl-4 pr-3 text-sm font-medium text-neutral sm:pl-1">
             <button type="button" :title="$t('common.save')" @click="onSubmitThrottle">
-                <ContentSaveIcon class="h-5 w-5" aria-hidden="true" />
+                <ContentSaveIcon class="size-5" aria-hidden="true" />
             </button>
             <button
                 type="button"
@@ -161,7 +161,7 @@ const editing = ref(props.startInEdit);
                     parseInt(law.id) < 0 && $emit('deleted', law.id);
                 "
             >
-                <CancelIcon class="h-5 w-5" aria-hidden="true" />
+                <CancelIcon class="size-5" aria-hidden="true" />
             </button>
         </td>
         <td class="py-2 pl-4 pr-3 text-sm font-medium text-neutral sm:pl-1">
@@ -176,7 +176,7 @@ const editing = ref(props.startInEdit);
             />
             <VeeErrorMessage name="name" as="p" class="mt-2 text-sm text-error-400" />
         </td>
-        <td class="whitespace-nowrap px-1 py-1 text-left text-accent-200">
+        <td class="whitespace-nowrap p-1 text-left text-accent-200">
             <VeeField
                 name="fine"
                 type="text"
@@ -186,7 +186,7 @@ const editing = ref(props.startInEdit);
             />
             <VeeErrorMessage name="fine" as="p" class="mt-2 text-sm text-error-400" />
         </td>
-        <td class="whitespace-nowrap px-1 py-1 text-left text-accent-200">
+        <td class="whitespace-nowrap p-1 text-left text-accent-200">
             <VeeField
                 name="detentionTime"
                 type="text"
@@ -198,7 +198,7 @@ const editing = ref(props.startInEdit);
             />
             <VeeErrorMessage name="detentionTime" as="p" class="mt-2 text-sm text-error-400" />
         </td>
-        <td class="whitespace-nowrap px-1 py-1 text-left text-accent-200">
+        <td class="whitespace-nowrap p-1 text-left text-accent-200">
             <VeeField
                 name="stvoPoints"
                 type="text"
@@ -210,7 +210,7 @@ const editing = ref(props.startInEdit);
             />
             <VeeErrorMessage name="stvoPoints" as="p" class="mt-2 text-sm text-error-400" />
         </td>
-        <td class="px-1 py-1 text-left text-accent-200">
+        <td class="p-1 text-left text-accent-200">
             <VeeField
                 name="description"
                 type="text"

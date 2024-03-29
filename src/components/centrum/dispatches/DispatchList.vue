@@ -64,7 +64,7 @@ const grouped = computedAsync(async () => {
                         :title="$t('common.dispatches')"
                         class="ml-2"
                     >
-                        <ArchiveIcon class="h-5 w-5" aria-hidden="true" />
+                        <ArchiveIcon class="size-5" aria-hidden="true" />
                     </NuxtLink>
                 </h2>
                 <h2 v-if="dispatches === undefined" class="text-base font-semibold text-gray-100">
@@ -79,58 +79,31 @@ const grouped = computedAsync(async () => {
                     <GenericTable :double-header="false">
                         <template #thead>
                             <tr>
-                                <th
-                                    scope="col"
-                                    class="whitespace-nowrap px-1 py-1 text-left text-sm font-semibold text-gray-100"
-                                >
+                                <th scope="col" class="whitespace-nowrap p-1 text-left text-sm font-semibold text-gray-100">
                                     {{ $t('common.action', 2) }}
                                 </th>
-                                <th
-                                    scope="col"
-                                    class="whitespace-nowrap px-1 py-1 text-left text-sm font-semibold text-gray-100"
-                                >
+                                <th scope="col" class="whitespace-nowrap p-1 text-left text-sm font-semibold text-gray-100">
                                     {{ $t('common.id') }}
                                 </th>
-                                <th
-                                    scope="col"
-                                    class="whitespace-nowrap px-1 py-1 text-left text-sm font-semibold text-gray-100"
-                                >
+                                <th scope="col" class="whitespace-nowrap p-1 text-left text-sm font-semibold text-gray-100">
                                     {{ $t('common.created_at') }}
                                 </th>
-                                <th
-                                    scope="col"
-                                    class="whitespace-nowrap px-1 py-1 text-left text-sm font-semibold text-gray-100"
-                                >
+                                <th scope="col" class="whitespace-nowrap p-1 text-left text-sm font-semibold text-gray-100">
                                     {{ $t('common.status') }}
                                 </th>
-                                <th
-                                    scope="col"
-                                    class="whitespace-nowrap px-1 py-1 text-left text-sm font-semibold text-gray-100"
-                                >
+                                <th scope="col" class="whitespace-nowrap p-1 text-left text-sm font-semibold text-gray-100">
                                     {{ $t('common.postal') }}
                                 </th>
-                                <th
-                                    scope="col"
-                                    class="whitespace-nowrap px-1 py-1 text-left text-sm font-semibold text-gray-100"
-                                >
+                                <th scope="col" class="whitespace-nowrap p-1 text-left text-sm font-semibold text-gray-100">
                                     {{ $t('common.units') }}
                                 </th>
-                                <th
-                                    scope="col"
-                                    class="whitespace-nowrap px-1 py-1 text-left text-sm font-semibold text-gray-100"
-                                >
+                                <th scope="col" class="whitespace-nowrap p-1 text-left text-sm font-semibold text-gray-100">
                                     {{ $t('common.citizen') }}
                                 </th>
-                                <th
-                                    scope="col"
-                                    class="whitespace-nowrap px-1 py-1 text-left text-sm font-semibold text-gray-100"
-                                >
+                                <th scope="col" class="whitespace-nowrap p-1 text-left text-sm font-semibold text-gray-100">
                                     {{ $t('common.attributes', 2) }}
                                 </th>
-                                <th
-                                    scope="col"
-                                    class="whitespace-nowrap px-1 py-1 text-left text-sm font-semibold text-gray-100"
-                                >
+                                <th scope="col" class="whitespace-nowrap p-1 text-left text-sm font-semibold text-gray-100">
                                     {{ $t('common.message') }}
                                 </th>
                             </tr>
@@ -138,7 +111,7 @@ const grouped = computedAsync(async () => {
                         <template #tbody>
                             <template v-for="(group, idx) in grouped" :key="group.key">
                                 <tr v-if="alwaysShowDay || idx !== 0">
-                                    <td class="whitespace-nowrap px-1 py-1 text-sm text-gray-300" colspan="5">
+                                    <td class="whitespace-nowrap p-1 text-sm text-gray-300" colspan="5">
                                         <GenericTime :value="group.date" type="date" />
                                     </td>
                                 </tr>

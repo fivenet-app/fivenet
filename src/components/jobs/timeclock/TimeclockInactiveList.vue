@@ -84,7 +84,7 @@ watch(offset, async () => refresh());
                     :to="{ name: 'jobs-timeclock' }"
                     class="inline-flex rounded-md bg-primary-500 px-3 py-2 text-sm font-semibold text-neutral hover:bg-primary-400 focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-primary-500"
                 >
-                    <ArrowLeftIcon class="h-5 w-5 mr-1" />
+                    <ArrowLeftIcon class="mr-1 size-5" />
                     {{ $t('common.timeclock') }}
                 </NuxtLink>
             </div>
@@ -94,7 +94,7 @@ watch(offset, async () => refresh());
                 <div class="sm:flex-auto">
                     <form @submit.prevent="refresh()">
                         <div class="mx-auto flex flex-row gap-4">
-                            <div class="form-control flex-1">
+                            <div class="flex-1">
                                 <label for="days" class="block text-sm font-medium leading-6 text-neutral">
                                     {{ $t('common.time_ago.day', 2) }}
                                 </label>
@@ -149,7 +149,7 @@ watch(offset, async () => refresh());
                                         </th>
                                         <th
                                             scope="col"
-                                            class="px-2 py-3.5 text-left text-sm font-semibold text-neutral hidden lg:table-cell"
+                                            class="hidden px-2 py-3.5 text-left text-sm font-semibold text-neutral lg:table-cell"
                                         >
                                             {{ $t('common.rank', 1) }}
                                         </th>

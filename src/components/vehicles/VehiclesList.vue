@@ -127,7 +127,7 @@ watch(selectedChar, () => {
                 <div class="sm:flex-auto">
                     <form @submit.prevent="refresh()">
                         <div class="mx-auto flex flex-row gap-4">
-                            <div class="form-control flex-1">
+                            <div class="flex-1">
                                 <label for="search" class="block text-sm font-medium leading-6 text-neutral">
                                     {{ $t('common.license_plate') }}
                                 </label>
@@ -143,7 +143,7 @@ watch(selectedChar, () => {
                                     />
                                 </div>
                             </div>
-                            <div v-if="!hideModell" class="form-control flex-1">
+                            <div v-if="!hideModell" class="flex-1">
                                 <label for="model" class="block text-sm font-medium leading-6 text-neutral">
                                     {{ $t('common.model') }}
                                 </label>
@@ -159,7 +159,7 @@ watch(selectedChar, () => {
                                     />
                                 </div>
                             </div>
-                            <div v-if="!userId" class="form-control flex-1">
+                            <div v-if="!userId" class="flex-1">
                                 <label for="owner" class="block text-sm font-medium leading-6 text-neutral">
                                     {{ $t('common.owner') }}
                                 </label>
@@ -213,7 +213,7 @@ watch(selectedChar, () => {
                                                                 'absolute inset-y-0 left-0 flex items-center pl-1.5',
                                                             ]"
                                                         >
-                                                            <CheckIcon class="h-5 w-5" aria-hidden="true" />
+                                                            <CheckIcon class="size-5" aria-hidden="true" />
                                                         </span>
                                                     </li>
                                                 </ComboboxOption>
@@ -254,13 +254,13 @@ watch(selectedChar, () => {
                                         <th
                                             v-if="!hideModell"
                                             scope="col"
-                                            class="px-2 py-3.5 text-left text-sm font-semibold text-neutral hidden sm:table-cell"
+                                            class="hidden px-2 py-3.5 text-left text-sm font-semibold text-neutral sm:table-cell"
                                         >
                                             {{ $t('common.model') }}
                                         </th>
                                         <th
                                             scope="col"
-                                            class="px-2 py-3.5 text-left text-sm font-semibold text-neutral hidden lg:table-cell"
+                                            class="hidden px-2 py-3.5 text-left text-sm font-semibold text-neutral lg:table-cell"
                                         >
                                             {{ $t('common.type') }}
                                         </th>

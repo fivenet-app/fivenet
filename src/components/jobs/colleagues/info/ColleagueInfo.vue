@@ -111,7 +111,7 @@ today.setMilliseconds(0);
             />
 
             <div class="mb-6">
-                <div class="flex gap-4 my-4 px-4">
+                <div class="my-4 flex gap-4 px-4">
                     <ProfilePictureImg
                         :url="colleague.colleague.avatar?.url"
                         :name="`${colleague.colleague.firstname} ${colleague.colleague.lastname}`"
@@ -121,7 +121,7 @@ today.setMilliseconds(0);
                     />
                     <div class="w-full">
                         <div class="flex snap-x flex-row flex-wrap justify-between gap-2 overflow-x-auto">
-                            <h1 class="flex-1 break-words py-1 pl-0.5 pr-0.5 text-4xl font-bold text-neutral sm:pl-1">
+                            <h1 class="flex-1 break-words px-0.5 py-1 text-4xl font-bold text-neutral sm:pl-1">
                                 {{ colleague.colleague.firstname }} {{ colleague.colleague.lastname }}
                             </h1>
 
@@ -131,10 +131,10 @@ today.setMilliseconds(0);
                                     checkIfCanAccessColleague(activeChar!, colleague.colleague, 'JobsService.SetJobsUserProps')
                                 "
                                 type="button"
-                                class="place-self-end inline-flex items-center gap-x-1.5 rounded-md bg-primary-500 px-3 py-2 text-sm font-semibold text-neutral hover:bg-primary-400"
+                                class="inline-flex items-center gap-x-1.5 place-self-end rounded-md bg-primary-500 px-3 py-2 text-sm font-semibold text-neutral hover:bg-primary-400"
                                 @click="absenceDateModal = true"
                             >
-                                <IslandIcon class="w-5 h-auto" aria-hidden="true" />
+                                <IslandIcon class="h-auto w-5" aria-hidden="true" />
                                 {{ $t('components.jobs.self_service.set_absence_date') }}
                             </button>
                         </div>
@@ -151,9 +151,9 @@ today.setMilliseconds(0);
                                     colleague.colleague.props?.absenceEnd &&
                                     toDate(colleague.colleague.props?.absenceEnd).getTime() >= today.getTime()
                                 "
-                                class="inline-flex gap-1 items-center rounded-full bg-base-100 px-2.5 py-0.5 text-sm font-medium text-base-800"
+                                class="inline-flex items-center gap-1 rounded-full bg-base-100 px-2.5 py-0.5 text-sm font-medium text-base-800"
                             >
-                                <IslandIcon class="h-5 w-5" aria-hidden="true" />
+                                <IslandIcon class="size-5" aria-hidden="true" />
                                 <GenericTime :value="colleague.colleague.props?.absenceBegin" type="date" />
                                 <span>{{ $t('common.to') }}</span>
                                 <GenericTime :value="colleague.colleague.props?.absenceEnd" type="date" />
@@ -170,16 +170,16 @@ today.setMilliseconds(0);
                                     <!-- Mobile menu button -->
                                     <button
                                         type="button"
-                                        class="relative inline-flex items-center justify-center rounded-md bg-base-500 p-2 text-accent-200 hover:bg-base-400 hover:bg-opacity-75 hover:text-neutral focus:outline-none focus:ring-2 focus:ring-neutral focus:ring-offset-2 focus:ring-offset-base-600"
+                                        class="relative inline-flex items-center justify-center rounded-md bg-base-500 p-2 text-accent-200 hover:bg-base-400/75 hover:text-neutral focus:outline-none focus:ring-2 focus:ring-neutral focus:ring-offset-2 focus:ring-offset-base-600"
                                         @click="open = !open"
                                     >
                                         <span class="absolute -inset-0.5" />
                                         <span class="sr-only">{{ $t('components.partials.sidebar.open_navigation') }}</span>
-                                        <MenuIcon v-if="!open" class="block h-5 w-5" aria-hidden="true" />
-                                        <CloseIcon v-else class="block h-5 w-5" aria-hidden="true" />
+                                        <MenuIcon v-if="!open" class="block size-5" aria-hidden="true" />
+                                        <CloseIcon v-else class="block size-5" aria-hidden="true" />
                                     </button>
                                 </div>
-                                <div class="md:block hidden">
+                                <div class="hidden md:block">
                                     <div class="flex items-baseline space-x-2">
                                         <template v-for="(tab, index) in tabs" :key="tab.id">
                                             <span class="flex-1">
@@ -197,7 +197,7 @@ today.setMilliseconds(0);
                                                         :is="tab.icon"
                                                         :class="[
                                                             selectedTab === index ? '' : 'group-hover:text-base-300',
-                                                            'h-5 w-5',
+                                                            'size-5',
                                                         ]"
                                                         aria-hidden="true"
                                                     />
@@ -211,18 +211,18 @@ today.setMilliseconds(0);
                                 </div>
                             </div>
                         </div>
-                        <div class="-ml-3 -mr-3 md:hidden" :class="open ? 'block' : 'hidden'">
+                        <div class="-mx-3 md:hidden" :class="open ? 'block' : 'hidden'">
                             <div class="space-y-1 px-2 pb-3 pt-2 sm:px-3">
                                 <template v-for="(tab, index) in tabs" :key="tab.id">
                                     <button
                                         type="button"
-                                        class="group flex w-full shrink-0 items-center items-center gap-2 rounded-md p-2 text-sm font-medium text-accent-100 hover:bg-accent-100/10 hover:text-neutral hover:transition-all"
+                                        class="group flex w-full shrink-0 items-center gap-2 rounded-md p-2 text-sm font-medium text-accent-100 hover:bg-accent-100/10 hover:text-neutral hover:transition-all"
                                         :class="selectedTab === index ? 'bg-accent-100/20 font-bold text-primary-300' : ''"
                                         @click="selectedTab = index"
                                     >
                                         <component
                                             :is="tab.icon"
-                                            :class="[selectedTab === index ? '' : 'group-hover:text-base-300', 'h-5 w-5']"
+                                            :class="[selectedTab === index ? '' : 'group-hover:text-base-300', 'size-5']"
                                             aria-hidden="true"
                                         />
                                         <span>

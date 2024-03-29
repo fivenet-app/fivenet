@@ -66,9 +66,7 @@ const openStatus = ref(false);
             @close="openStatus = false"
         />
 
-        <td
-            class="relative items-center justify-start whitespace-nowrap py-1 pl-0 pr-0 text-left text-sm font-medium sm:pr-0.5"
-        >
+        <td class="relative items-center justify-start whitespace-nowrap px-0 py-1 text-left text-sm font-medium sm:pr-0.5">
             <button
                 v-if="!hideActions"
                 type="button"
@@ -76,7 +74,7 @@ const openStatus = ref(false);
                 :title="$t('common.assign')"
                 @click="openAssign = true"
             >
-                <AccountMultiplePlusIcon class="ml-auto mr-1.5 w-5 h-auto" aria-hidden="true" />
+                <AccountMultiplePlusIcon class="ml-auto mr-1.5 h-auto w-5" aria-hidden="true" />
             </button>
             <button
                 type="button"
@@ -84,7 +82,7 @@ const openStatus = ref(false);
                 :title="$t('common.go_to_location')"
                 @click="$emit('goto', { x: dispatch.x, y: dispatch.y })"
             >
-                <MapMarkerIcon class="ml-auto mr-1.5 w-5 h-auto" aria-hidden="true" />
+                <MapMarkerIcon class="ml-auto mr-1.5 h-auto w-5" aria-hidden="true" />
             </button>
             <button
                 v-if="!hideActions"
@@ -93,7 +91,7 @@ const openStatus = ref(false);
                 :title="$t('common.status')"
                 @click="openStatus = true"
             >
-                <CloseOctagonIcon class="ml-auto mr-1.5 w-5 h-auto" aria-hidden="true" />
+                <CloseOctagonIcon class="ml-auto mr-1.5 h-auto w-5" aria-hidden="true" />
             </button>
             <button
                 type="button"
@@ -101,26 +99,26 @@ const openStatus = ref(false);
                 :title="$t('common.detail', 2)"
                 @click="openDetails = true"
             >
-                <DotsVerticalIcon class="ml-auto mr-1.5 w-5 h-auto" aria-hidden="true" />
+                <DotsVerticalIcon class="ml-auto mr-1.5 h-auto w-5" aria-hidden="true" />
             </button>
         </td>
-        <td class="whitespace-nowrap px-1 py-1 text-sm text-gray-300">
+        <td class="whitespace-nowrap p-1 text-sm text-gray-300">
             {{ dispatch.id }}
         </td>
-        <td class="whitespace-nowrap px-1 py-1 text-sm text-gray-300">
+        <td class="whitespace-nowrap p-1 text-sm text-gray-300">
             <GenericTime :value="dispatch.createdAt" type="compact" />
         </td>
-        <td class="whitespace-nowrap px-1 py-1 text-sm text-gray-100" :class="dispatchBackground">
+        <td class="whitespace-nowrap p-1 text-sm text-gray-100" :class="dispatchBackground">
             <span :class="dispatchAnimated">
                 {{ $t(`enums.centrum.StatusDispatch.${StatusDispatch[props.dispatch.status?.status ?? 0]}`) }}
             </span>
         </td>
-        <td class="whitespace-nowrap px-1 py-1 text-sm text-gray-300">
+        <td class="whitespace-nowrap p-1 text-sm text-gray-300">
             {{ dispatch.postal ?? $t('common.na') }}
         </td>
-        <td class="whitespace-nowrap px-1 py-1 text-sm text-gray-300">
+        <td class="whitespace-nowrap p-1 text-sm text-gray-300">
             <span v-if="dispatch.units.length === 0" class="italic">{{ $t('enums.centrum.StatusDispatch.UNASSIGNED') }}</span>
-            <span v-else class="grid grid-flow-row sm:grid-flow-col auto-rows-auto gap-1">
+            <span v-else class="grid grid-flow-row auto-rows-auto gap-1 sm:grid-flow-col">
                 <UnitInfoPopover
                     v-for="unit in dispatch.units"
                     :key="unit.unitId"
@@ -131,7 +129,7 @@ const openStatus = ref(false);
                 />
             </span>
         </td>
-        <td class="whitespace-nowrap px-1 py-1 text-sm text-gray-300">
+        <td class="whitespace-nowrap p-1 text-sm text-gray-300">
             <span v-if="dispatch.anon">
                 {{ $t('common.anon') }}
             </span>
@@ -142,10 +140,10 @@ const openStatus = ref(false);
                 {{ $t('common.unknown') }}
             </span>
         </td>
-        <td class="whitespace-nowrap px-1 py-1 text-sm text-gray-300">
+        <td class="whitespace-nowrap p-1 text-sm text-gray-300">
             <DispatchAttributes :attributes="dispatch.attributes" />
         </td>
-        <td class="inline-flex min-w-36 items-center px-1 py-1 text-sm text-gray-300">
+        <td class="inline-flex min-w-36 items-center p-1 text-sm text-gray-300">
             <p class="line-clamp-2 hover:line-clamp-6">
                 {{ dispatch.message }}
             </p>

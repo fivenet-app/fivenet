@@ -75,13 +75,13 @@ const open = ref(false);
                             <!-- Mobile menu button -->
                             <button
                                 type="button"
-                                class="relative inline-flex items-center justify-center rounded-md bg-base-500 p-2 text-accent-200 hover:bg-base-400 hover:bg-opacity-75 hover:text-neutral focus:outline-none focus:ring-2 focus:ring-neutral focus:ring-offset-2 focus:ring-offset-base-600"
+                                class="relative inline-flex items-center justify-center rounded-md bg-base-500 p-2 text-accent-200 hover:bg-base-400/75 hover:text-neutral focus:outline-none focus:ring-2 focus:ring-neutral focus:ring-offset-2 focus:ring-offset-base-600"
                                 @click="open = !open"
                             >
                                 <span class="absolute -inset-0.5" />
                                 <span class="sr-only">{{ $t('components.partials.sidebar.open_navigation') }}</span>
-                                <MenuIcon v-if="!open" class="block h-5 w-5" aria-hidden="true" />
-                                <CloseIcon v-else class="block h-5 w-5" aria-hidden="true" />
+                                <MenuIcon v-if="!open" class="block size-5" aria-hidden="true" />
+                                <CloseIcon v-else class="block size-5" aria-hidden="true" />
                             </button>
                         </div>
                         <div class="hidden md:block">
@@ -98,7 +98,7 @@ const open = ref(false);
                                         >
                                             <component
                                                 :is="item.icon"
-                                                class="h-5 w-5"
+                                                class="size-5"
                                                 :class="active ? '' : 'group-hover:text-base-300'"
                                                 aria-hidden="true"
                                             />
@@ -126,7 +126,7 @@ const open = ref(false);
                         >
                             <component
                                 :is="item.icon"
-                                :class="[active ? '' : 'group-hover:text-base-300', 'h-5 w-5']"
+                                :class="[active ? '' : 'group-hover:text-base-300', 'size-5']"
                                 aria-hidden="true"
                             />
                             {{ $t(item.name) }}

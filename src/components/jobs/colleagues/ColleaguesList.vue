@@ -75,7 +75,7 @@ function updateAbsenceDates(value: { userId: number; absenceBegin?: Timestamp; a
                 <div class="sm:flex-auto">
                     <form @submit.prevent="refresh()">
                         <div class="mx-auto flex flex-row gap-4">
-                            <div class="form-control flex-1">
+                            <div class="flex-1">
                                 <label for="searchName" class="block text-sm font-medium leading-6 text-neutral">
                                     {{ $t('common.search') }}
                                     {{ $t('common.colleague', 1) }}
@@ -93,7 +93,7 @@ function updateAbsenceDates(value: { userId: number; absenceBegin?: Timestamp; a
                                     />
                                 </div>
                             </div>
-                            <div class="form-control flex-initial">
+                            <div class="flex-initial">
                                 <label for="search" class="block text-sm font-medium leading-6 text-neutral">
                                     {{ $t('common.absent') }}
                                 </label>
@@ -102,7 +102,7 @@ function updateAbsenceDates(value: { userId: number; absenceBegin?: Timestamp; a
                                         v-model="query.absent"
                                         :class="[
                                             query.absent ? 'bg-primary-600' : 'bg-gray-200',
-                                            'relative inline-flex h-6 w-11 flex-shrink-0 cursor-pointer rounded-full border-2 border-transparent transition-colors duration-200 ease-in-out focus:outline-none focus:ring-2 focus:ring-neutral focus:ring-offset-2',
+                                            'relative inline-flex h-6 w-11 shrink-0 cursor-pointer rounded-full border-2 border-transparent transition-colors duration-200 ease-in-out focus:outline-none focus:ring-2 focus:ring-neutral focus:ring-offset-2',
                                         ]"
                                     >
                                         <span class="sr-only">
@@ -112,7 +112,7 @@ function updateAbsenceDates(value: { userId: number; absenceBegin?: Timestamp; a
                                             aria-hidden="true"
                                             :class="[
                                                 query.absent ? 'translate-x-5' : 'translate-x-0',
-                                                'pointer-events-none inline-block h-5 w-5 transform rounded-full bg-neutral ring-0 transition duration-200 ease-in-out',
+                                                'pointer-events-none inline-block size-5 rounded-full bg-neutral ring-0 transition duration-200 ease-in-out',
                                             ]"
                                         />
                                     </Switch>
@@ -152,7 +152,7 @@ function updateAbsenceDates(value: { userId: number; absenceBegin?: Timestamp; a
                                         </th>
                                         <th
                                             scope="col"
-                                            class="px-2 py-3.5 text-left text-sm font-semibold text-neutral hidden lg:table-cell"
+                                            class="hidden px-2 py-3.5 text-left text-sm font-semibold text-neutral lg:table-cell"
                                         >
                                             {{ $t('common.rank', 1) }}
                                         </th>

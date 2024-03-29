@@ -784,7 +784,7 @@ console.info(
                                                     'absolute inset-y-0 left-0 flex items-center pl-1.5',
                                                 ]"
                                             >
-                                                <CheckIcon class="h-5 w-5" aria-hidden="true" />
+                                                <CheckIcon class="size-5" aria-hidden="true" />
                                             </span>
                                         </li>
                                     </ComboboxOption>
@@ -819,7 +819,7 @@ console.info(
                                         {{ openclose.find((e) => e.closed === doc.closed.closed)?.label }}</span
                                     >
                                     <span class="pointer-events-none absolute inset-y-0 right-0 flex items-center pr-2">
-                                        <ChevronDownIcon class="h-5 w-5 text-gray-400" aria-hidden="true" />
+                                        <ChevronDownIcon class="size-5 text-gray-400" aria-hidden="true" />
                                     </span>
                                 </ListboxButton>
 
@@ -855,7 +855,7 @@ console.info(
                                                         'absolute inset-y-0 left-0 flex items-center pl-1.5',
                                                     ]"
                                                 >
-                                                    <CheckIcon class="h-5 w-5" aria-hidden="true" />
+                                                    <CheckIcon class="size-5" aria-hidden="true" />
                                                 </span>
                                             </li>
                                         </ListboxOption>
@@ -898,7 +898,7 @@ console.info(
                     >
                         <div class="flex justify-center">
                             <AccountMultipleIcon
-                                class="-ml-0.5 mr-2 h-5 w-5 text-base-300 transition-colors group-hover:text-accent-200"
+                                class="-ml-0.5 mr-2 size-5 text-base-300 transition-colors group-hover:text-accent-200"
                                 aria-hidden="true"
                             />
                             {{ $t('common.citizen', 1) }} {{ $t('common.relation', 2) }}
@@ -914,7 +914,7 @@ console.info(
                     >
                         <div class="flex justify-center">
                             <FileDocumentIcon
-                                class="-ml-0.5 mr-2 h-5 w-5 text-base-300 transition-colors group-hover:text-accent-200"
+                                class="-ml-0.5 mr-2 size-5 text-base-300 transition-colors group-hover:text-accent-200"
                                 aria-hidden="true"
                             />
                             {{ $t('common.document', 1) }} {{ $t('common.reference', 2) }}
@@ -947,7 +947,7 @@ console.info(
                     :title="$t('components.documents.document_editor.add_permission')"
                     @click="addDocumentAccessEntry()"
                 >
-                    <PlusIcon class="h-5 w-5" aria-hidden="true" />
+                    <PlusIcon class="size-5" aria-hidden="true" />
                 </button>
             </div>
 
@@ -963,7 +963,7 @@ console.info(
                     ]"
                 >
                     <template v-if="!canSubmit">
-                        <LoadingIcon class="mr-2 h-5 w-5 animate-spin" aria-hidden="true" />
+                        <LoadingIcon class="mr-2 size-5 animate-spin" aria-hidden="true" />
                     </template>
                     <template v-if="!id">
                         {{ $t('common.create') }}

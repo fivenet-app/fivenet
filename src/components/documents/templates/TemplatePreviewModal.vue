@@ -58,7 +58,7 @@ async function getTemplate(): Promise<Template> {
                 leave-from="opacity-100"
                 leave-to="opacity-0"
             >
-                <div class="fixed inset-0 bg-base-900 bg-opacity-75 transition-opacity" />
+                <div class="fixed inset-0 bg-base-900/75 transition-opacity" />
             </TransitionChild>
 
             <div class="fixed inset-0 z-30 overflow-y-auto">
@@ -74,7 +74,7 @@ async function getTemplate(): Promise<Template> {
                     >
                         <div>
                             <DialogPanel
-                                class="relative w-full transform overflow-hidden rounded-lg bg-base-800 px-4 pb-4 pt-5 text-left text-neutral transition-all sm:my-8 sm:w-screen sm:min-w-min sm:p-6"
+                                class="relative w-full overflow-hidden rounded-lg bg-base-800 px-4 pb-4 pt-5 text-left text-neutral transition-all sm:my-8 sm:w-screen sm:min-w-min sm:p-6"
                             >
                                 <div class="absolute right-0 top-0 block pr-4 pt-4">
                                     <button
@@ -83,7 +83,7 @@ async function getTemplate(): Promise<Template> {
                                         @click="$emit('close')"
                                     >
                                         <span class="sr-only">{{ $t('common.close') }}</span>
-                                        <CloseIcon class="h-5 w-5" aria-hidden="true" />
+                                        <CloseIcon class="size-5" aria-hidden="true" />
                                     </button>
                                 </div>
                                 <div>

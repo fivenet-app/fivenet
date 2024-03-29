@@ -90,7 +90,7 @@ onConfirm(async (request: QualificationRequest) => deleteQualificationRequest(re
                 :class="[!canSubmit ? 'disabled text-base-500 hover:text-base-400' : 'text-error-500 hover:text-error-400']"
                 @click="$emit('selectedRequestStatus', RequestStatus.DENIED)"
             >
-                <CloseThickIcon class="h-6 w-6" aria-hidden="true" />
+                <CloseThickIcon class="size-6" aria-hidden="true" />
             </button>
             <button
                 v-if="request.status !== RequestStatus.ACCEPTED"
@@ -100,7 +100,7 @@ onConfirm(async (request: QualificationRequest) => deleteQualificationRequest(re
                 :class="[!canSubmit ? 'disabled text-base-500 hover:text-base-400' : 'text-success-500 hover:text-success-400']"
                 @click="$emit('selectedRequestStatus', RequestStatus.ACCEPTED)"
             >
-                <CheckBoldIcon class="h-6 w-6" aria-hidden="true" />
+                <CheckBoldIcon class="size-6" aria-hidden="true" />
             </button>
             <button
                 v-if="request.status === RequestStatus.ACCEPTED"
@@ -110,7 +110,7 @@ onConfirm(async (request: QualificationRequest) => deleteQualificationRequest(re
                 :class="[!canSubmit ? 'disabled text-base-500 hover:text-base-400' : 'text-yellow-500 hover:text-yellow-400']"
                 @click="$emit('gradeRequest')"
             >
-                <StarIcon class="h-6 w-6" aria-hidden="true" />
+                <StarIcon class="size-6" aria-hidden="true" />
             </button>
             <button
                 v-if="can('QualificationsService.DeleteQualificationReq')"
@@ -119,7 +119,7 @@ onConfirm(async (request: QualificationRequest) => deleteQualificationRequest(re
                 class="flex-initial text-primary-400 hover:text-primary-500"
                 @click="reveal()"
             >
-                <TrashCanIcon class="h-6 w-6" aria-hidden="true" />
+                <TrashCanIcon class="size-6" aria-hidden="true" />
             </button>
         </td>
     </tr>

@@ -57,13 +57,13 @@ today.setMilliseconds(0);
                 </dd>
             </dl>
         </td>
-        <td class="whitespace-nowrap px-1 py-1 text-left text-accent-200 hidden lg:table-cell">
+        <td class="hidden whitespace-nowrap p-1 text-left text-accent-200 lg:table-cell">
             {{ colleague.jobGradeLabel }}<span v-if="colleague.jobGrade > 0"> ({{ colleague.jobGrade }})</span>
         </td>
         <td class="whitespace-nowrap py-2 pl-4 pr-3 text-base font-medium text-neutral sm:pl-1">
             <dl
                 v-if="colleague.props?.absenceEnd && toDate(colleague.props?.absenceEnd).getTime() >= today.getTime()"
-                class="font-normal hidden sm:block"
+                class="hidden font-normal sm:block"
             >
                 <dd class="truncate text-accent-200">
                     {{ $t('common.from') }}:
@@ -74,14 +74,14 @@ today.setMilliseconds(0);
                 </dd>
             </dl>
         </td>
-        <td class="whitespace-nowrap px-1 py-1 text-left text-accent-200">
+        <td class="whitespace-nowrap p-1 text-left text-accent-200">
             <PhoneNumberBlock :number="colleague.phoneNumber" />
         </td>
-        <td class="whitespace-nowrap px-1 py-1 text-left text-accent-200">
+        <td class="whitespace-nowrap p-1 text-left text-accent-200">
             {{ colleague.dateofbirth }}
         </td>
-        <td class="whitespace-nowrap px-1 py-1 text-left text-accent-200">
-            <div class="flex flex-col md:flex-row justify-end">
+        <td class="whitespace-nowrap p-1 text-left text-accent-200">
+            <div class="flex flex-col justify-end md:flex-row">
                 <button
                     v-if="
                         can('JobsService.SetJobsUserProps') &&
@@ -91,7 +91,7 @@ today.setMilliseconds(0);
                     class="flex-initial text-primary-500 hover:text-primary-400"
                     @click="absenceDateModal = true"
                 >
-                    <IslandIcon class="mr-2.5 w-5 h-auto" aria-hidden="true" />
+                    <IslandIcon class="mr-2.5 h-auto w-5" aria-hidden="true" />
                 </button>
 
                 <NuxtLink
@@ -105,7 +105,7 @@ today.setMilliseconds(0);
                     }"
                     class="flex-initial text-primary-500 hover:text-primary-400"
                 >
-                    <EyeIcon class="mr-2.5 w-5 h-auto" aria-hidden="true" />
+                    <EyeIcon class="mr-2.5 h-auto w-5" aria-hidden="true" />
                 </NuxtLink>
             </div>
         </td>

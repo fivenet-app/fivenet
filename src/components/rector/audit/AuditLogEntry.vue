@@ -80,7 +80,7 @@ ${jsonStringify(jsonParse(props.log.data!), 2)}
                 class="flex-initial text-primary-500 hover:text-primary-400"
                 :title="$t('components.clipboard.clipboard_button.add')"
             >
-                <ClipboardPlusIcon class="ml-auto mr-2.5 w-5 h-auto" aria-hidden="true" @click="addToClipboard" />
+                <ClipboardPlusIcon class="ml-auto mr-2.5 h-auto w-5" aria-hidden="true" @click="addToClipboard" />
             </button>
         </td>
     </tr>

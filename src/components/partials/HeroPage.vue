@@ -5,7 +5,7 @@ import PageFooter from '~/components/partials/PageFooter.vue';
 </script>
 
 <template>
-    <div class="h-full flex flex-col">
+    <div class="flex h-full flex-col">
         <ContentHeroFull>
             <ContentCenterWrapper class="mx-auto max-w-2xl text-center">
                 <div class="px-5 sm:px-0">

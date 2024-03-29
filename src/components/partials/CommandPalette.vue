@@ -308,7 +308,7 @@ async function onSelect(item: any): Promise<any> {
                 leave-from="opacity-100"
                 leave-to="opacity-0"
             >
-                <div class="fixed inset-0 bg-primary-900 bg-opacity-25 transition-opacity" />
+                <div class="fixed inset-0 bg-primary-900/25 transition-opacity" />
             </TransitionChild>
 
             <div class="fixed inset-0 z-30 overflow-y-auto p-4 sm:p-6 md:p-20">
@@ -322,12 +322,12 @@ async function onSelect(item: any): Promise<any> {
                     leave-to="opacity-0 scale-95"
                 >
                     <DialogPanel
-                        class="mx-auto max-w-3xl transform overflow-hidden rounded-xl bg-primary-900 shadow-2xl ring-1 ring-black ring-opacity-5 transition-all"
+                        class="mx-auto max-w-3xl overflow-hidden rounded-xl bg-primary-900 shadow-2xl ring-1 ring-black/5 transition-all"
                     >
                         <Combobox @update:model-value="onSelect">
                             <div class="relative">
                                 <MagnifyIcon
-                                    class="pointer-events-none absolute left-4 top-3.5 h-5 w-5 text-gray-300"
+                                    class="pointer-events-none absolute left-4 top-3.5 size-5 text-gray-300"
                                     aria-hidden="true"
                                 />
                                 <ComboboxInput
@@ -344,7 +344,7 @@ async function onSelect(item: any): Promise<any> {
                                 v-if="rawQuery === ''"
                                 class="border-t border-gray-100 px-6 py-14 text-center text-sm sm:px-14"
                             >
-                                <GlobeModelIcon class="mx-auto h-5 w-5 text-gray-300" aria-hidden="true" />
+                                <GlobeModelIcon class="mx-auto size-5 text-gray-300" aria-hidden="true" />
                                 <p class="mt-4 font-semibold text-gray-200">
                                     {{ $t('commandpalette.input.title') }}
                                 </p>
@@ -427,10 +427,7 @@ async function onSelect(item: any): Promise<any> {
                                                     <component
                                                         :is="item.icon"
                                                         v-if="item.icon"
-                                                        :class="[
-                                                            'h-5 w-5 flex-none',
-                                                            active ? 'text-neutral' : 'text-gray-300',
-                                                        ]"
+                                                        :class="['size-5 flex-none', active ? 'text-neutral' : 'text-gray-300']"
                                                         aria-hidden="true"
                                                     />
                                                     <span class="ml-3 flex-auto truncate">{{ item.name }}</span>
@@ -446,7 +443,7 @@ async function onSelect(item: any): Promise<any> {
                                 v-if="(rawQuery.startsWith('@') || rawQuery.startsWith('#')) && loading"
                                 class="border-t border-gray-100 px-6 py-14 text-center text-sm sm:px-14"
                             >
-                                <RefreshIcon class="mx-auto h-5 w-5 animate-spin text-gray-300" aria-hidden="true" />
+                                <RefreshIcon class="mx-auto size-5 animate-spin text-gray-300" aria-hidden="true" />
                                 <p class="mt-4 font-semibold text-gray-200">
                                     {{ $t('common.loading', [$t('common.result', 2)]) }}
                                 </p>
@@ -460,7 +457,7 @@ async function onSelect(item: any): Promise<any> {
                                 "
                                 class="border-t border-gray-100 px-6 py-14 text-center text-sm sm:px-14"
                             >
-                                <GlobeModelIcon class="mx-auto h-5 w-5 text-gray-300" aria-hidden="true" />
+                                <GlobeModelIcon class="mx-auto size-5 text-gray-300" aria-hidden="true" />
                                 <p class="mt-4 font-semibold text-gray-200">
                                     {{ $t('commandpalette.empty.title') }}
                                 </p>
@@ -476,7 +473,7 @@ async function onSelect(item: any): Promise<any> {
                                 <template #key1>
                                     <kbd
                                         :class="[
-                                            'mx-1 flex h-5 w-5 items-center justify-center rounded border bg-neutral font-semibold sm:mx-2',
+                                            'mx-1 flex size-5 items-center justify-center rounded border bg-neutral font-semibold sm:mx-2',
                                             rawQuery.startsWith('@')
                                                 ? 'border-primary-600 text-primary-600'
                                                 : 'border-gray-400 text-gray-900',
@@ -487,7 +484,7 @@ async function onSelect(item: any): Promise<any> {
                                 <template #key2>
                                     <kbd
                                         :class="[
-                                            'mx-1 flex h-5 w-5 items-center justify-center rounded border bg-neutral font-semibold sm:mx-2',
+                                            'mx-1 flex size-5 items-center justify-center rounded border bg-neutral font-semibold sm:mx-2',
                                             rawQuery.startsWith('#')
                                                 ? 'border-primary-600 text-primary-600'
                                                 : 'border-gray-400 text-gray-900',

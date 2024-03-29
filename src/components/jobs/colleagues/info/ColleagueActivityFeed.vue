@@ -110,12 +110,12 @@ function charsGetDisplayValue(chars: Colleague[]): string {
         <div class="px-1 sm:px-2 lg:px-4">
             <div
                 v-if="userId === undefined && accessAttrs.some((a) => colleagueSearchAttrs.includes(a))"
-                class="sm:flex sm:items-center mb-4"
+                class="mb-4 sm:flex sm:items-center"
             >
                 <div class="sm:flex-auto">
                     <form @submit.prevent="refresh()">
                         <div class="mx-auto flex flex-row gap-4">
-                            <div class="form-control flex-1">
+                            <div class="flex-1">
                                 <label for="searchName" class="block text-sm font-medium leading-6 text-neutral">
                                     {{ $t('common.search') }}
                                     {{ $t('common.colleague', 1) }}
@@ -167,7 +167,7 @@ function charsGetDisplayValue(chars: Colleague[]): string {
                                                                 'absolute inset-y-0 left-0 flex items-center pl-1.5',
                                                             ]"
                                                         >
-                                                            <CheckIcon class="h-5 w-5" aria-hidden="true" />
+                                                            <CheckIcon class="size-5" aria-hidden="true" />
                                                         </span>
                                                     </li>
                                                 </ComboboxOption>

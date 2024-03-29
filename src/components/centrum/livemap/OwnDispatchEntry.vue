@@ -27,7 +27,7 @@ const openDetails = ref(false);
                 :value="dispatch.id"
                 name="active"
                 type="radio"
-                class="h-4 w-4 border-gray-300 text-primary-600 focus:ring-primary-600"
+                class="size-4 border-gray-300 text-primary-600 focus:ring-primary-600"
                 :checked="selectedDispatch === dispatch.id"
                 @change="$emit('update:selectedDispatch', dispatch.id)"
             />
@@ -37,7 +37,7 @@ const openDetails = ref(false);
                 class="inline-flex items-center text-primary-400 hover:text-primary-600"
                 @click="$emit('goto', { x: dispatch.x, y: dispatch.y })"
             >
-                <MapMarkerIcon class="h-5 w-5" aria-hidden="true" />
+                <MapMarkerIcon class="size-5" aria-hidden="true" />
             </button>
         </div>
         <button
@@ -45,22 +45,22 @@ const openDetails = ref(false);
             class="group my-0.5 flex w-full max-w-full flex-col items-center rounded-md bg-error-700 p-2 text-xs font-medium text-neutral hover:bg-primary-100/10 hover:text-neutral hover:transition-all"
             @click="openDetails = true"
         >
-            <span class="mb-0.5 flex w-full place-content-between items-center flex-col sm:flex-row sm:gap-1">
-                <span class="inline-flex items-center md:gap-1 font-bold">
-                    <CarEmergencyIcon class="hidden md:block h-3 w-auto" aria-hidden="true" />
+            <span class="mb-0.5 flex w-full flex-col place-content-between items-center sm:flex-row sm:gap-1">
+                <span class="inline-flex items-center font-bold md:gap-1">
+                    <CarEmergencyIcon class="hidden h-3 w-auto md:block" aria-hidden="true" />
                     DSP-{{ dispatch.id }}
                 </span>
                 <span>
                     <span class="font-semibold">{{ $t('common.postal') }}:</span> <span>{{ dispatch.postal }}</span>
                 </span>
             </span>
-            <span class="mb-0.5 flex place-content-between items-center flex-col sm:flex-row sm:gap-1">
+            <span class="mb-0.5 flex flex-col place-content-between items-center sm:flex-row sm:gap-1">
                 <span class="font-semibold">{{ $t('common.status') }}:</span>
-                <span class="break-words line-clamp-2" :class="dispatchStatusToBGColor(dispatch.status?.status)">{{
+                <span class="line-clamp-2 break-words" :class="dispatchStatusToBGColor(dispatch.status?.status)">{{
                     $t(`enums.centrum.StatusDispatch.${StatusDispatch[dispatch.status?.status ?? 0]}`)
                 }}</span>
             </span>
-            <span class="inline-flex flex-col sm:flex-row sm:gap-1 line-clamp-2">
+            <span class="line-clamp-2 inline-flex flex-col sm:flex-row sm:gap-1">
                 <span class="font-semibold">{{ $t('common.sent_by') }}:</span>
                 <span>
                     <template v-if="dispatch.anon">

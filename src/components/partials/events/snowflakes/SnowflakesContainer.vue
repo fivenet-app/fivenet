@@ -1,3 +1,4 @@
+<!-- eslint-disable tailwindcss/no-custom-classname -->
 <template>
     <div class="snowflakes" aria-hidden="true">
         <div class="snowflake">

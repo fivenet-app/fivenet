@@ -62,7 +62,7 @@ withDefaults(
             </PopoverButton>
 
             <PopoverPanel
-                class="absolute z-5 w-72 min-w-fit max-w-[18rem] rounded-lg border border-gray-600 bg-gray-800 text-sm text-gray-400 shadow-sm transition-opacity"
+                class="absolute z-5 w-72 min-w-fit max-w-72 rounded-lg border border-gray-600 bg-gray-800 text-sm text-gray-400 shadow-sm transition-opacity"
             >
                 <div class="inline-flex p-3">
                     <div>
@@ -75,7 +75,7 @@ withDefaults(
                                 :to="{ name: 'citizens-id', params: { id: user.userId ?? 0 } }"
                                 class="inline-flex items-center text-primary-500 hover:text-primary-400"
                             >
-                                <AccountIcon class="h-5 w-5" aria-hidden="true" />
+                                <AccountIcon class="size-5" aria-hidden="true" />
                                 <span class="ml-1">{{ $t('common.profile') }}</span>
                             </NuxtLink>
                             <PhoneNumberBlock

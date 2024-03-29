@@ -276,14 +276,14 @@ const { remove, push, fields } = useFieldArray<Perm>('permsDefault');
                                         v-model="data.config!.auth!.signupEnabled"
                                         :class="[
                                             data.config!.auth!.signupEnabled ? 'bg-primary-600' : 'bg-gray-200',
-                                            'relative inline-flex h-6 w-11 flex-shrink-0 cursor-pointer rounded-full border-2 border-transparent transition-colors duration-200 ease-in-out focus:outline-none focus:ring-2 focus:ring-primary-600 focus:ring-offset-2',
+                                            'relative inline-flex h-6 w-11 shrink-0 cursor-pointer rounded-full border-2 border-transparent transition-colors duration-200 ease-in-out focus:outline-none focus:ring-2 focus:ring-primary-600 focus:ring-offset-2',
                                         ]"
                                     >
                                         <span
                                             aria-hidden="true"
                                             :class="[
                                                 data.config!.auth!.signupEnabled ? 'translate-x-5' : 'translate-x-0',
-                                                'pointer-events-none inline-block h-5 w-5 transform rounded-full bg-white shadow ring-0 transition duration-200 ease-in-out',
+                                                'pointer-events-none inline-block size-5 rounded-full bg-white shadow ring-0 transition duration-200 ease-in-out',
                                             ]"
                                         />
                                     </Switch>
@@ -310,7 +310,7 @@ const { remove, push, fields } = useFieldArray<Perm>('permsDefault');
                             <template #title>{{ $t('components.rector.app_config.perms.default_perms') }}</template>
                             <template #default>
                                 <div class="flex flex-col gap-1">
-                                    <div v-for="(field, idx) in fields" :key="field.key" class="flex gap-1 items-center">
+                                    <div v-for="(field, idx) in fields" :key="field.key" class="flex items-center gap-1">
                                         <div class="flex-1">
                                             <VeeField
                                                 :name="`permsDefault[${idx}].category`"
@@ -332,7 +332,7 @@ const { remove, push, fields } = useFieldArray<Perm>('permsDefault');
                                             <VeeField
                                                 :name="`permsDefault[${idx}].name`"
                                                 type="text"
-                                                class="flex-1 block w-full rounded-md border-0 bg-base-700 py-1.5 text-neutral placeholder:text-accent-200 focus:ring-2 focus:ring-inset focus:ring-base-300 sm:text-sm sm:leading-6"
+                                                class="block w-full flex-1 rounded-md border-0 bg-base-700 py-1.5 text-neutral placeholder:text-accent-200 focus:ring-2 focus:ring-inset focus:ring-base-300 sm:text-sm sm:leading-6"
                                                 :placeholder="$t('common.name')"
                                                 :label="$t('common.name')"
                                                 :rules="required"
@@ -351,7 +351,7 @@ const { remove, push, fields } = useFieldArray<Perm>('permsDefault');
                                             class="rounded-full bg-primary-500 p-1.5 text-neutral hover:bg-primary-400 focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-primary-500"
                                             @click="remove(idx)"
                                         >
-                                            <CloseIcon class="h-5 w-5" aria-hidden="true" />
+                                            <CloseIcon class="size-5" aria-hidden="true" />
                                         </button>
                                     </div>
                                 </div>
@@ -366,7 +366,7 @@ const { remove, push, fields } = useFieldArray<Perm>('permsDefault');
                                     "
                                     @click="push({ category: '', name: '' })"
                                 >
-                                    <PlusIcon class="h-5 w-5" aria-hidden="true" />
+                                    <PlusIcon class="size-5" aria-hidden="true" />
                                 </button>
                             </template>
                         </GenericContainerPanelEntry>
@@ -379,7 +379,7 @@ const { remove, push, fields } = useFieldArray<Perm>('permsDefault');
                         <GenericContainerPanelEntry>
                             <template #title>{{ $t('components.rector.app_config.website.links.title') }}</template>
                             <template #default>
-                                <div class="flex-1 form-control">
+                                <div class="flex-1">
                                     <label for="websiteLinksPrivacyPolicy">
                                         {{ $t('common.privacy_policy') }}
                                     </label>
@@ -400,7 +400,7 @@ const { remove, push, fields } = useFieldArray<Perm>('permsDefault');
                                         class="mt-2 text-sm text-error-400"
                                     />
                                 </div>
-                                <div class="flex-1 form-control">
+                                <div class="flex-1">
                                     <label for="websiteLinksImprint">
                                         {{ $t('common.imprint') }}
                                     </label>
@@ -428,7 +428,7 @@ const { remove, push, fields } = useFieldArray<Perm>('permsDefault');
                         <GenericContainerPanelEntry>
                             <template #title>{{ $t('components.rector.app_config.job_info.unemployed_job') }}</template>
                             <template #default>
-                                <div class="flex-1 form-control">
+                                <div class="flex-1">
                                     <label for="jobInfoUnemployedName"> {{ $t('common.job') }} {{ $t('common.name') }} </label>
                                     <VeeField
                                         type="text"
@@ -443,7 +443,7 @@ const { remove, push, fields } = useFieldArray<Perm>('permsDefault');
                                     />
                                     <VeeErrorMessage name="jobInfoUnemployedName" as="p" class="mt-2 text-sm text-error-400" />
                                 </div>
-                                <div class="flex-1 form-control">
+                                <div class="flex-1">
                                     <label for="jobInfoUnemployedGrade">
                                         {{ $t('common.rank') }}
                                     </label>
@@ -510,7 +510,7 @@ const { remove, push, fields } = useFieldArray<Perm>('permsDefault');
                                                             'absolute inset-y-0 left-0 flex items-center pl-1.5',
                                                         ]"
                                                     >
-                                                        <CheckIcon class="h-5 w-5" aria-hidden="true" />
+                                                        <CheckIcon class="size-5" aria-hidden="true" />
                                                     </span>
                                                 </li>
                                             </ComboboxOption>
@@ -566,7 +566,7 @@ const { remove, push, fields } = useFieldArray<Perm>('permsDefault');
                                                             'absolute inset-y-0 left-0 flex items-center pl-1.5',
                                                         ]"
                                                     >
-                                                        <CheckIcon class="h-5 w-5" aria-hidden="true" />
+                                                        <CheckIcon class="size-5" aria-hidden="true" />
                                                     </span>
                                                 </li>
                                             </ComboboxOption>
@@ -587,7 +587,7 @@ const { remove, push, fields } = useFieldArray<Perm>('permsDefault');
                                 <VeeField
                                     name="userTrackerRefreshTime"
                                     type="text"
-                                    class="flex-1 block w-full rounded-md border-0 bg-base-700 py-1.5 text-neutral placeholder:text-accent-200 focus:ring-2 focus:ring-inset focus:ring-base-300 sm:text-sm sm:leading-6"
+                                    class="block w-full flex-1 rounded-md border-0 bg-base-700 py-1.5 text-neutral placeholder:text-accent-200 focus:ring-2 focus:ring-inset focus:ring-base-300 sm:text-sm sm:leading-6"
                                     :value="
                                         parseFloat(
                                             data.config?.userTracker?.refreshTime?.seconds.toString() +
@@ -609,7 +609,7 @@ const { remove, push, fields } = useFieldArray<Perm>('permsDefault');
                                 <VeeField
                                     name="userTrackerDbRefreshTime"
                                     type="text"
-                                    class="flex-1 block w-full rounded-md border-0 bg-base-700 py-1.5 text-neutral placeholder:text-accent-200 focus:ring-2 focus:ring-inset focus:ring-base-300 sm:text-sm sm:leading-6"
+                                    class="block w-full flex-1 rounded-md border-0 bg-base-700 py-1.5 text-neutral placeholder:text-accent-200 focus:ring-2 focus:ring-inset focus:ring-base-300 sm:text-sm sm:leading-6"
                                     :value="
                                         parseFloat(
                                             data.config?.userTracker?.dbRefreshTime?.seconds.toString() +
@@ -672,7 +672,7 @@ const { remove, push, fields } = useFieldArray<Perm>('permsDefault');
                                                             'absolute inset-y-0 left-0 flex items-center pl-1.5',
                                                         ]"
                                                     >
-                                                        <CheckIcon class="h-5 w-5" aria-hidden="true" />
+                                                        <CheckIcon class="size-5" aria-hidden="true" />
                                                     </span>
                                                 </li>
                                             </ComboboxOption>
@@ -695,14 +695,14 @@ const { remove, push, fields } = useFieldArray<Perm>('permsDefault');
                                         v-model="data.config!.discord!.enabled"
                                         :class="[
                                             data.config!.discord!.enabled ? 'bg-primary-600' : 'bg-gray-200',
-                                            'relative inline-flex h-6 w-11 flex-shrink-0 cursor-pointer rounded-full border-2 border-transparent transition-colors duration-200 ease-in-out focus:outline-none focus:ring-2 focus:ring-primary-600 focus:ring-offset-2',
+                                            'relative inline-flex h-6 w-11 shrink-0 cursor-pointer rounded-full border-2 border-transparent transition-colors duration-200 ease-in-out focus:outline-none focus:ring-2 focus:ring-primary-600 focus:ring-offset-2',
                                         ]"
                                     >
                                         <span
                                             aria-hidden="true"
                                             :class="[
                                                 data.config!.discord!.enabled ? 'translate-x-5' : 'translate-x-0',
-                                                'pointer-events-none inline-block h-5 w-5 transform rounded-full bg-white shadow ring-0 transition duration-200 ease-in-out',
+                                                'pointer-events-none inline-block size-5 rounded-full bg-white shadow ring-0 transition duration-200 ease-in-out',
                                             ]"
                                         />
                                     </Switch>
@@ -725,7 +725,7 @@ const { remove, push, fields } = useFieldArray<Perm>('permsDefault');
                                 <VeeField
                                     name="discordSyncInterval"
                                     type="text"
-                                    class="flex-1 block w-full rounded-md border-0 bg-base-700 py-1.5 text-neutral placeholder:text-accent-200 focus:ring-2 focus:ring-inset focus:ring-base-300 sm:text-sm sm:leading-6"
+                                    class="block w-full flex-1 rounded-md border-0 bg-base-700 py-1.5 text-neutral placeholder:text-accent-200 focus:ring-2 focus:ring-inset focus:ring-base-300 sm:text-sm sm:leading-6"
                                     :value="
                                         parseFloat(
                                             data.config?.discord?.syncInterval?.seconds.toString() +
@@ -744,7 +744,7 @@ const { remove, push, fields } = useFieldArray<Perm>('permsDefault');
                         <GenericContainerPanelEntry>
                             <template #title>{{ $t('components.rector.app_config.discord.bot_invite_url') }}</template>
                             <template #default>
-                                <div class="flex-1 form-control">
+                                <div class="flex-1">
                                     <VeeField
                                         type="url"
                                         name="discordBotInviteUrl"
@@ -781,7 +781,7 @@ const { remove, push, fields } = useFieldArray<Perm>('permsDefault');
                                     @click="onSubmitThrottle"
                                 >
                                     <template v-if="!canSubmit">
-                                        <LoadingIcon class="mr-2 h-5 w-5 animate-spin" aria-hidden="true" />
+                                        <LoadingIcon class="mr-2 size-5 animate-spin" aria-hidden="true" />
                                     </template>
                                     {{ $t('common.save', 1) }}
                                 </button>

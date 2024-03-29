@@ -9,10 +9,10 @@ const open = ref(false);
 <template>
     <button
         type="button"
-        class="flex h-12 w-12 items-center justify-center rounded-full bg-accent-500 text-neutral shadow-float hover:bg-accent-400"
+        class="flex size-12 items-center justify-center rounded-full bg-accent-500 text-neutral shadow-float hover:bg-accent-400"
         @click="open = true"
     >
-        <HumanIcon class="w-10 h-auto" aria-hidden="true" />
+        <HumanIcon class="h-auto w-10" aria-hidden="true" />
     </button>
 
     <GenericModal :open="open" :unmount="false" @close="open = false">

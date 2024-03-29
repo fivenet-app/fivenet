@@ -58,10 +58,10 @@ const altText = computed(() => (props.altText !== undefined ? props.altText : t(
             </PopoverButton>
 
             <PopoverPanel
-                class="absolute z-5 w-96 min-w-fit max-w-[18rem] rounded-lg border border-gray-600 bg-gray-800 text-sm text-gray-400 shadow-sm transition-opacity"
+                class="absolute z-5 w-96 min-w-fit max-w-72 rounded-lg border border-gray-600 bg-gray-800 text-sm text-gray-400 shadow-sm transition-opacity"
             >
                 <div class="p-3">
-                    <img class="rounded-md w-96 max-w-full" :src="url" :alt="altText" />
+                    <img class="w-96 max-w-full rounded-md" :src="url" :alt="altText" />
                 </div>
             </PopoverPanel>
         </Float>

@@ -91,7 +91,7 @@ const filteredUnits = computed(() =>
                                                         @click="$emit('close')"
                                                     >
                                                         <span class="sr-only">{{ $t('common.close') }}</span>
-                                                        <CloseIcon class="h-5 w-5" aria-hidden="true" />
+                                                        <CloseIcon class="size-5" aria-hidden="true" />
                                                     </button>
                                                 </div>
                                             </div>
@@ -124,7 +124,7 @@ const filteredUnits = computed(() =>
                                                         </div>
                                                     </dl>
                                                     <div class="my-2 space-y-24">
-                                                        <div class="form-control flex-1">
+                                                        <div class="flex-1">
                                                             <div class="grid grid-cols-2 gap-2">
                                                                 <button
                                                                     v-for="unit in filteredUnits"
@@ -165,7 +165,7 @@ const filteredUnits = computed(() =>
                                             </div>
                                         </div>
                                     </div>
-                                    <div class="flex flex-shrink-0 justify-end px-4 py-4">
+                                    <div class="flex shrink-0 justify-end p-4">
                                         <span class="isolate inline-flex w-full rounded-md pr-4 shadow-sm">
                                             <button
                                                 v-if="ownUnitId !== undefined"
@@ -180,7 +180,7 @@ const filteredUnits = computed(() =>
                                                 @click="onSubmitThrottle()"
                                             >
                                                 <template v-if="!canSubmit">
-                                                    <LoadingIcon class="mr-2 h-5 w-5 animate-spin" aria-hidden="true" />
+                                                    <LoadingIcon class="mr-2 size-5 animate-spin" aria-hidden="true" />
                                                 </template>
                                                 {{ $t('common.leave') }}
                                             </button>

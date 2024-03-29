@@ -62,7 +62,7 @@ const profilePictureModal = ref(false);
 
         <h3 class="text-lg font-semibold">{{ $t('components.jobs.self_service.title') }}</h3>
 
-        <div class="flex flex-col md:flex-row items-center flex-initial gap-1">
+        <div class="flex flex-initial flex-col items-center gap-1 md:flex-row">
             <button
                 v-if="
                     colleagueSelf?.colleague &&
@@ -70,7 +70,7 @@ const profilePictureModal = ref(false);
                     checkIfCanAccessColleague(activeChar!, colleagueSelf.colleague, 'JobsService.SetJobsUserProps')
                 "
                 type="button"
-                class="w-full inline-flex rounded-md bg-primary-500 px-3 py-2 text-sm font-semibold text-neutral hover:bg-primary-400 focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-primary-500"
+                class="inline-flex w-full rounded-md bg-primary-500 px-3 py-2 text-sm font-semibold text-neutral hover:bg-primary-400 focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-primary-500"
                 @click="absenceDateModal = true"
             >
                 <IslandIcon class="mr-2 h-5 w-auto" aria-hidden="true" />
@@ -78,7 +78,7 @@ const profilePictureModal = ref(false);
             </button>
             <button
                 type="button"
-                class="w-full inline-flex rounded-md bg-primary-500 px-3 py-2 text-sm font-semibold text-neutral hover:bg-primary-400 focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-primary-500"
+                class="inline-flex w-full rounded-md bg-primary-500 px-3 py-2 text-sm font-semibold text-neutral hover:bg-primary-400 focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-primary-500"
                 @click="profilePictureModal = true"
             >
                 <CameraIcon class="mr-2 h-5 w-auto" aria-hidden="true" />

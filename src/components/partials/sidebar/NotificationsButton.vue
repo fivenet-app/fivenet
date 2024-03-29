@@ -28,14 +28,14 @@ const open = ref(false);
 </script>
 
 <template>
-    <div class="relative flex-shrink-0">
-        <span v-if="getNotificationsCount > 0" class="absolute left-0 top-0 -mr-1 -mt-1 flex h-4 w-4">
+    <div class="relative shrink-0">
+        <span v-if="getNotificationsCount > 0" class="absolute left-0 top-0 -mr-1 -mt-1 flex size-4">
             <span
-                class="absolute inline-flex h-full w-full rounded-full bg-error-400 opacity-75"
+                class="absolute inline-flex size-full rounded-full bg-error-400 opacity-75"
                 :class="newNotification ? 'animate-ping' : ''"
             ></span>
             <span
-                class="relative inline-flex h-4 w-4 rounded-full bg-error-500 flex justify-center items-center items text-xs text-neutral"
+                class="relative inline-flex size-4 items-center justify-center rounded-full bg-error-500 text-xs text-neutral"
             >
                 <span v-if="getNotificationsCount <= 9">{{ getNotificationsCount }} </span>
                 <span v-else> 9+ </span>
@@ -47,7 +47,7 @@ const open = ref(false);
         >
             <span class="sr-only">{{ $t('common.notification', 2) }}</span>
             <BellOutlineIcon
-                class="h-10 w-10 rounded-full bg-base-800 p-1 text-base-300 hover:text-base-100 hover:transition-colors"
+                class="size-10 rounded-full bg-base-800 p-1 text-base-300 hover:text-base-100 hover:transition-colors"
                 aria-hidden="true"
             />
         </button>
@@ -63,7 +63,7 @@ const open = ref(false);
                     leave-from="opacity-100"
                     leave-to="opacity-0"
                 >
-                    <div class="fixed inset-0 bg-gray-500 bg-opacity-75 transition-opacity" />
+                    <div class="fixed inset-0 bg-gray-500/75 transition-opacity" />
                 </TransitionChild>
 
                 <div class="fixed inset-0 overflow-hidden">
@@ -95,7 +95,7 @@ const open = ref(false);
                                                             @click="open = false"
                                                         >
                                                             <span class="sr-only">{{ $t('common.close') }}</span>
-                                                            <CloseIcon class="h-5 w-5" aria-hidden="true" />
+                                                            <CloseIcon class="size-5" aria-hidden="true" />
                                                         </button>
                                                     </div>
                                                 </div>
@@ -104,7 +104,7 @@ const open = ref(false);
                                                 <div class="divide-y divide-gray-200 px-2">
                                                     <div class="mt-1">
                                                         <div class="my-2 space-y-24">
-                                                            <div class="form-control flex-1">
+                                                            <div class="flex-1">
                                                                 <NotificationsList @clicked="open = false" />
                                                             </div>
                                                         </div>
@@ -112,7 +112,7 @@ const open = ref(false);
                                                 </div>
                                             </div>
                                         </div>
-                                        <div class="flex flex-shrink-0 justify-end px-4 py-4">
+                                        <div class="flex shrink-0 justify-end p-4">
                                             <span class="isolate inline-flex w-full rounded-md pr-4 shadow-sm">
                                                 <button
                                                     type="button"

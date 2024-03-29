@@ -80,8 +80,8 @@ onBeforeUnmount(() => {
 </script>
 
 <template>
-    <div class="relative h-full w-full">
-        <Splitpanes class="h-full w-full">
+    <div class="relative size-full">
+        <Splitpanes class="size-full">
             <Pane min-size="25">
                 <BaseMap :map-options="{ zoomControl: false }">
                     <template #default>
@@ -97,7 +97,7 @@ onBeforeUnmount(() => {
                                 <div class="sm:flex-auto">
                                     <form @submit.prevent="refresh()">
                                         <div class="mx-auto flex flex-row gap-4">
-                                            <div class="form-control flex-1">
+                                            <div class="flex-1">
                                                 <label for="search" class="block text-sm font-medium leading-6 text-neutral">
                                                     {{ $t('common.postal') }}
                                                 </label>
@@ -113,7 +113,7 @@ onBeforeUnmount(() => {
                                                     />
                                                 </div>
                                             </div>
-                                            <div class="form-control flex-1">
+                                            <div class="flex-1">
                                                 <label for="model" class="block text-sm font-medium leading-6 text-neutral">
                                                     {{ $t('common.id') }}
                                                 </label>

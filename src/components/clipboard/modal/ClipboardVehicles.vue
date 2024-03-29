@@ -122,7 +122,7 @@ watch(props, (newVal) => {
                 <th scope="col" class="relative py-3.5 pl-3 pr-4 sm:pr-0">
                     <span class="sr-only">{{ $t('common.action', 2) }}</span>
                     <button v-if="selected.length > 0" type="button" @click="removeAll()">
-                        <TrashCanIcon class="mx-auto h-5 w-5 text-neutral" aria-hidden="true" />
+                        <TrashCanIcon class="mx-auto size-5 text-neutral" aria-hidden="true" />
                     </button>
                 </th>
             </tr>
@@ -155,7 +155,7 @@ watch(props, (newVal) => {
                             :checked="selected.includes(item)"
                             :value="item"
                             type="checkbox"
-                            class="h-4 w-4 rounded border-gray-300 text-primary-600 focus:ring-primary-600"
+                            class="size-4 rounded border-gray-300 text-primary-600 focus:ring-primary-600"
                         />
                     </template>
                 </td>
@@ -170,7 +170,7 @@ watch(props, (newVal) => {
                 </td>
                 <td class="relative whitespace-nowrap py-4 pl-3 pr-4 text-right text-sm font-medium sm:pr-0">
                     <button type="button" @click="remove(item, true)">
-                        <TrashCanIcon class="mx-auto h-5 w-5 text-neutral" aria-hidden="true" />
+                        <TrashCanIcon class="mx-auto size-5 text-neutral" aria-hidden="true" />
                     </button>
                 </td>
             </tr>

@@ -76,10 +76,10 @@ const playerMarkersFiltered = computedAsync(async () =>
     </LLayerGroup>
 
     <LControl v-if="showUserFilter" position="bottomleft">
-        <div class="form-control flex flex-col gap-2">
+        <div class="flex flex-col gap-2">
             <input
                 v-model="playerQueryRaw"
-                class="w-full max-w-[11rem] rounded-md border-2 border-black/20 bg-clip-padding p-0.5 px-1"
+                class="w-full max-w-44 rounded-md border-2 border-black/20 bg-clip-padding p-0.5 px-1"
                 type="text"
                 name="searchPlayer"
                 :placeholder="`${$t('common.employee', 1)} ${$t('common.filter')}`"

@@ -175,7 +175,7 @@ onConfirm(async (id) => deleteConductEntry(id));
                 <div class="sm:flex-auto">
                     <form @submit.prevent="">
                         <div class="mx-auto flex flex-row gap-4">
-                            <div v-if="hideUserSearch !== true" class="form-control flex-1">
+                            <div v-if="hideUserSearch !== true" class="flex-1">
                                 <label for="searchName" class="block text-sm font-medium leading-6 text-neutral">
                                     {{ $t('common.search') }}
                                     {{ $t('common.target') }}
@@ -226,7 +226,7 @@ onConfirm(async (id) => deleteConductEntry(id));
                                                                 'absolute inset-y-0 left-0 flex items-center pl-1.5',
                                                             ]"
                                                         >
-                                                            <CheckIcon class="h-5 w-5" aria-hidden="true" />
+                                                            <CheckIcon class="size-5" aria-hidden="true" />
                                                         </span>
                                                     </li>
                                                 </ComboboxOption>
@@ -235,7 +235,7 @@ onConfirm(async (id) => deleteConductEntry(id));
                                     </Combobox>
                                 </div>
                             </div>
-                            <div class="form-control flex-1">
+                            <div class="flex-1">
                                 <label for="types" class="block text-sm font-medium leading-6 text-neutral">
                                     {{ $t('common.search') }}
                                     {{ $t('common.type') }}
@@ -291,7 +291,7 @@ onConfirm(async (id) => deleteConductEntry(id));
                                                                 'absolute inset-y-0 left-0 flex items-center pl-1.5',
                                                             ]"
                                                         >
-                                                            <CheckIcon class="h-5 w-5" aria-hidden="true" />
+                                                            <CheckIcon class="size-5" aria-hidden="true" />
                                                         </span>
                                                     </li>
                                                 </ComboboxOption>
@@ -300,7 +300,7 @@ onConfirm(async (id) => deleteConductEntry(id));
                                     </Combobox>
                                 </div>
                             </div>
-                            <div class="form-control flex-initial">
+                            <div class="flex-initial">
                                 <label for="show_expired" class="block text-sm font-medium leading-6 text-neutral">
                                     {{ $t('components.jobs.conduct.List.show_expired') }}
                                 </label>
@@ -309,7 +309,7 @@ onConfirm(async (id) => deleteConductEntry(id));
                                         v-model="query.showExpired"
                                         :class="[
                                             query.showExpired ? 'bg-info-600' : 'bg-base-700',
-                                            'relative inline-flex h-6 w-11 flex-shrink-0 cursor-pointer rounded-full border-2 border-transparent transition-colors duration-200 ease-in-out focus:outline-none focus:ring-2 focus:ring-neutral focus:ring-offset-2',
+                                            'relative inline-flex h-6 w-11 shrink-0 cursor-pointer rounded-full border-2 border-transparent transition-colors duration-200 ease-in-out focus:outline-none focus:ring-2 focus:ring-neutral focus:ring-offset-2',
                                         ]"
                                     >
                                         <span class="sr-only">
@@ -319,18 +319,18 @@ onConfirm(async (id) => deleteConductEntry(id));
                                             aria-hidden="true"
                                             :class="[
                                                 query.showExpired ? 'translate-x-5' : 'translate-x-0',
-                                                'pointer-events-none inline-block h-5 w-5 transform rounded-full bg-neutral ring-0 transition duration-200 ease-in-out',
+                                                'pointer-events-none inline-block size-5 rounded-full bg-neutral ring-0 transition duration-200 ease-in-out',
                                             ]"
                                         />
                                     </Switch>
                                 </div>
                             </div>
-                            <div class="form-control flex-initial">
+                            <div class="flex-initial">
                                 <label for="create" class="block text-sm font-medium leading-6 text-neutral">
                                     {{ $t('common.create') }}
                                 </label>
                                 <div class="relative mt-3 flex items-center">
-                                    <div v-if="can('JobsConductService.CreateConductEntry')" class="form-control flex-initial">
+                                    <div v-if="can('JobsConductService.CreateConductEntry')" class="flex-initial">
                                         <button
                                             type="button"
                                             class="inline-flex rounded-md bg-primary-500 px-3 py-2 text-sm font-semibold text-neutral hover:bg-primary-400 focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-primary-500"
@@ -374,7 +374,7 @@ onConfirm(async (id) => deleteConductEntry(id));
                                         </th>
                                         <th
                                             scope="col"
-                                            class="px-2 py-3.5 text-left text-sm font-semibold text-neutral hidden lg:table-cell"
+                                            class="hidden px-2 py-3.5 text-left text-sm font-semibold text-neutral lg:table-cell"
                                         >
                                             {{ $t('common.expires_at') }}
                                         </th>
@@ -390,7 +390,7 @@ onConfirm(async (id) => deleteConductEntry(id));
                                         </th>
                                         <th
                                             scope="col"
-                                            class="px-2 py-3.5 text-left text-sm font-semibold text-neutral hidden lg:table-cell"
+                                            class="hidden px-2 py-3.5 text-left text-sm font-semibold text-neutral lg:table-cell"
                                         >
                                             {{ $t('common.creator') }}
                                         </th>

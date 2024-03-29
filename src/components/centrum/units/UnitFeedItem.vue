@@ -36,8 +36,8 @@ defineEmits<{
             <div class="w-px bg-gray-200" />
         </div>
         <template v-if="item.status === StatusUnit.USER_ADDED">
-            <div class="relative flex h-5 w-5 flex-none items-center justify-center rounded-lg bg-gray-300">
-                <AccountPlusIcon class="h-5 w-5 text-primary-600" aria-hidden="true" />
+            <div class="relative flex size-5 flex-none items-center justify-center rounded-lg bg-gray-300">
+                <AccountPlusIcon class="size-5 text-primary-600" aria-hidden="true" />
             </div>
             <p class="inline-flex flex-auto flex-row justify-between py-0.5 text-xs leading-5 text-gray-200">
                 <span class="inline-flex items-center gap-1">
@@ -54,7 +54,7 @@ defineEmits<{
 
                 <span class="inline-flex items-center">
                     <button v-if="item.x && item.y" type="button" @click="$emit('goto', { x: item.x, y: item.y })">
-                        <MapMarkerIcon class="h-5 w-5 text-primary-400 hover:text-primary-600" aria-hidden="true" />
+                        <MapMarkerIcon class="size-5 text-primary-400 hover:text-primary-600" aria-hidden="true" />
                     </button>
                     <CitizenInfoPopover v-if="item.user" text-class="font-medium text-gray-400 pl-1" :user="item.user" />
                 </span>
@@ -64,8 +64,8 @@ defineEmits<{
             </span>
         </template>
         <template v-else-if="item.status === StatusUnit.USER_REMOVED">
-            <div class="relative flex h-5 w-5 flex-none items-center justify-center rounded-lg bg-gray-300">
-                <AccountRemoveIcon class="h-5 w-5 text-primary-600" aria-hidden="true" />
+            <div class="relative flex size-5 flex-none items-center justify-center rounded-lg bg-gray-300">
+                <AccountRemoveIcon class="size-5 text-primary-600" aria-hidden="true" />
             </div>
             <p class="inline-flex flex-auto flex-row justify-between py-0.5 text-xs leading-5 text-gray-200">
                 <span class="inline-flex items-center gap-1">
@@ -82,7 +82,7 @@ defineEmits<{
 
                 <span class="inline-flex items-center">
                     <button v-if="item.x && item.y" type="button" @click="$emit('goto', { x: item.x, y: item.y })">
-                        <MapMarkerIcon class="h-5 w-5 text-primary-400 hover:text-primary-600" aria-hidden="true" />
+                        <MapMarkerIcon class="size-5 text-primary-400 hover:text-primary-600" aria-hidden="true" />
                     </button>
                     <CitizenInfoPopover v-if="item.user" text-class="font-medium text-gray-400 pl-1" :user="item.user" />
                 </span>
@@ -92,8 +92,8 @@ defineEmits<{
             </span>
         </template>
         <template v-else-if="item.status === StatusUnit.UNAVAILABLE">
-            <div class="relative flex h-5 w-5 flex-none items-center justify-center rounded-lg bg-gray-300">
-                <StopIcon class="h-5 w-5 text-primary-600" aria-hidden="true" />
+            <div class="relative flex size-5 flex-none items-center justify-center rounded-lg bg-gray-300">
+                <StopIcon class="size-5 text-primary-600" aria-hidden="true" />
             </div>
             <p class="inline-flex flex-auto flex-row justify-between py-0.5 text-xs leading-5 text-gray-200">
                 <span class="inline-flex items-center gap-1">
@@ -110,7 +110,7 @@ defineEmits<{
 
                 <span class="inline-flex items-center">
                     <button v-if="item.x && item.y" type="button" @click="$emit('goto', { x: item.x, y: item.y })">
-                        <MapMarkerIcon class="h-5 w-5 text-primary-400 hover:text-primary-600" aria-hidden="true" />
+                        <MapMarkerIcon class="size-5 text-primary-400 hover:text-primary-600" aria-hidden="true" />
                     </button>
                     <CitizenInfoPopover v-if="item.user" text-class="font-medium text-gray-400 pl-1" :user="item.user" />
                 </span>
@@ -120,8 +120,8 @@ defineEmits<{
             </span>
         </template>
         <template v-else-if="item.status === StatusUnit.AVAILABLE">
-            <div class="relative flex h-5 w-5 flex-none items-center justify-center rounded-lg bg-gray-300">
-                <PlayIcon class="h-5 w-5 text-primary-600" aria-hidden="true" />
+            <div class="relative flex size-5 flex-none items-center justify-center rounded-lg bg-gray-300">
+                <PlayIcon class="size-5 text-primary-600" aria-hidden="true" />
             </div>
             <p class="inline-flex flex-auto flex-row justify-between py-0.5 text-xs leading-5 text-gray-200">
                 <span class="inline-flex items-center gap-1">
@@ -138,7 +138,7 @@ defineEmits<{
 
                 <span class="inline-flex items-center">
                     <button v-if="item.x && item.y" type="button" @click="$emit('goto', { x: item.x, y: item.y })">
-                        <MapMarkerIcon class="h-5 w-5 text-primary-400 hover:text-primary-600" aria-hidden="true" />
+                        <MapMarkerIcon class="size-5 text-primary-400 hover:text-primary-600" aria-hidden="true" />
                     </button>
                     <CitizenInfoPopover v-if="item.user" text-class="font-medium text-gray-400 pl-1" :user="item.user" />
                 </span>
@@ -148,8 +148,8 @@ defineEmits<{
             </span>
         </template>
         <template v-else-if="item.status === StatusUnit.ON_BREAK">
-            <div class="relative flex h-5 w-5 flex-none items-center justify-center rounded-lg bg-gray-300">
-                <CoffeeIcon class="h-5 w-5 text-primary-600" aria-hidden="true" />
+            <div class="relative flex size-5 flex-none items-center justify-center rounded-lg bg-gray-300">
+                <CoffeeIcon class="size-5 text-primary-600" aria-hidden="true" />
             </div>
             <p class="inline-flex flex-auto flex-row justify-between py-0.5 text-xs leading-5 text-gray-200">
                 <span class="inline-flex items-center gap-1">
@@ -166,7 +166,7 @@ defineEmits<{
 
                 <span class="inline-flex items-center">
                     <button v-if="item.x && item.y" type="button" @click="$emit('goto', { x: item.x, y: item.y })">
-                        <MapMarkerIcon class="h-5 w-5 text-primary-400 hover:text-primary-600" aria-hidden="true" />
+                        <MapMarkerIcon class="size-5 text-primary-400 hover:text-primary-600" aria-hidden="true" />
                     </button>
                     <CitizenInfoPopover v-if="item.user" text-class="font-medium text-gray-400 pl-1" :user="item.user" />
                 </span>
@@ -176,8 +176,8 @@ defineEmits<{
             </span>
         </template>
         <template v-else-if="item.status === StatusUnit.BUSY">
-            <div class="relative flex h-5 w-5 flex-none items-center justify-center rounded-lg bg-gray-300">
-                <BriefcaseIcon class="h-5 w-5 text-primary-600" aria-hidden="true" />
+            <div class="relative flex size-5 flex-none items-center justify-center rounded-lg bg-gray-300">
+                <BriefcaseIcon class="size-5 text-primary-600" aria-hidden="true" />
             </div>
             <p class="inline-flex flex-auto flex-row justify-between py-0.5 text-xs leading-5 text-gray-200">
                 <span class="inline-flex items-center gap-1">
@@ -194,7 +194,7 @@ defineEmits<{
 
                 <span class="inline-flex items-center">
                     <button v-if="item.x && item.y" type="button" @click="$emit('goto', { x: item.x, y: item.y })">
-                        <MapMarkerIcon class="h-5 w-5 text-primary-400 hover:text-primary-600" aria-hidden="true" />
+                        <MapMarkerIcon class="size-5 text-primary-400 hover:text-primary-600" aria-hidden="true" />
                     </button>
                     <CitizenInfoPopover v-if="item.user" text-class="font-medium text-gray-400 pl-1" :user="item.user" />
                 </span>
@@ -204,8 +204,8 @@ defineEmits<{
             </span>
         </template>
         <template v-else>
-            <div class="relative flex h-5 w-5 flex-none items-center justify-center rounded-lg bg-gray-300">
-                <HelpIcon class="h-5 w-5 text-primary-600" aria-hidden="true" />
+            <div class="relative flex size-5 flex-none items-center justify-center rounded-lg bg-gray-300">
+                <HelpIcon class="size-5 text-primary-600" aria-hidden="true" />
             </div>
             <p class="inline-flex flex-auto flex-row justify-between py-0.5 text-xs leading-5 text-gray-200">
                 <span class="inline-flex items-center gap-1">
@@ -222,7 +222,7 @@ defineEmits<{
 
                 <span class="inline-flex items-center">
                     <button v-if="item.x && item.y" type="button" @click="$emit('goto', { x: item.x, y: item.y })">
-                        <MapMarkerIcon class="h-5 w-5 text-primary-400 hover:text-primary-600" aria-hidden="true" />
+                        <MapMarkerIcon class="size-5 text-primary-400 hover:text-primary-600" aria-hidden="true" />
                     </button>
                     <CitizenInfoPopover v-if="item.user" text-class="font-medium text-gray-400 pl-1" :user="item.user" />
                 </span>

@@ -27,7 +27,7 @@ const { livemap } = storeToRefs(settingsStore);
                 leave-from="opacity-100"
                 leave-to="opacity-0"
             >
-                <div class="fixed inset-0 bg-gray-500 bg-opacity-75 transition-opacity" />
+                <div class="fixed inset-0 bg-gray-500/75 transition-opacity" />
             </TransitionChild>
 
             <div class="fixed inset-0 z-30 overflow-y-auto">
@@ -42,7 +42,7 @@ const { livemap } = storeToRefs(settingsStore);
                         leave-to="opacity-0 translate-y-4 sm:translate-y-0 sm:scale-95"
                     >
                         <DialogPanel
-                            class="relative w-full transform overflow-hidden rounded-lg bg-base-800 px-4 pb-4 pt-5 text-left shadow-xl transition-all sm:my-8 sm:max-w-lg sm:p-6"
+                            class="relative w-full overflow-hidden rounded-lg bg-base-800 px-4 pb-4 pt-5 text-left shadow-xl transition-all sm:my-8 sm:max-w-lg sm:p-6"
                         >
                             <div class="absolute right-0 top-0 block pr-4 pt-4">
                                 <button
@@ -51,12 +51,12 @@ const { livemap } = storeToRefs(settingsStore);
                                     @click="$emit('close')"
                                 >
                                     <span class="sr-only">{{ $t('common.close') }}</span>
-                                    <CloseIcon class="h-5 w-5" aria-hidden="true" />
+                                    <CloseIcon class="size-5" aria-hidden="true" />
                                 </button>
                             </div>
                             <div>
-                                <div class="mx-auto flex h-12 w-12 items-center justify-center rounded-full bg-success-100">
-                                    <CogIcon class="h-5 w-5 text-success-600" aria-hidden="true" />
+                                <div class="mx-auto flex size-12 items-center justify-center rounded-full bg-success-100">
+                                    <CogIcon class="size-5 text-success-600" aria-hidden="true" />
                                 </div>
                                 <div class="mt-3 text-center sm:mt-5">
                                     <DialogTitle as="h3" class="text-base font-semibold leading-6 text-neutral">
@@ -64,7 +64,7 @@ const { livemap } = storeToRefs(settingsStore);
                                     </DialogTitle>
                                     <div class="mt-2">
                                         <div class="text-sm text-gray-100">
-                                            <div class="form-control flex-1">
+                                            <div class="flex-1">
                                                 <label
                                                     for="centerSelectedMarker"
                                                     class="block text-sm font-medium leading-6 text-neutral"
@@ -75,19 +75,19 @@ const { livemap } = storeToRefs(settingsStore);
                                                     v-model="livemap.centerSelectedMarker"
                                                     :class="[
                                                         livemap.centerSelectedMarker ? 'bg-primary-600' : 'bg-gray-200',
-                                                        'relative my-2 inline-flex h-6 w-11 flex-shrink-0 cursor-pointer rounded-full border-2 border-transparent transition-colors duration-200 ease-in-out focus:outline-none focus:ring-2 focus:ring-primary-600 focus:ring-offset-2',
+                                                        'relative my-2 inline-flex h-6 w-11 shrink-0 cursor-pointer rounded-full border-2 border-transparent transition-colors duration-200 ease-in-out focus:outline-none focus:ring-2 focus:ring-primary-600 focus:ring-offset-2',
                                                     ]"
                                                 >
                                                     <span
                                                         aria-hidden="true"
                                                         :class="[
                                                             livemap.centerSelectedMarker ? 'translate-x-5' : 'translate-x-0',
-                                                            'pointer-events-none inline-block h-5 w-5 transform rounded-full bg-white shadow ring-0 transition duration-200 ease-in-out',
+                                                            'pointer-events-none inline-block size-5 rounded-full bg-white shadow ring-0 transition duration-200 ease-in-out',
                                                         ]"
                                                     />
                                                 </Switch>
                                             </div>
-                                            <div class="form-control flex-1">
+                                            <div class="flex-1">
                                                 <label
                                                     for="livemapMarkerSize"
                                                     class="block text-sm font-medium leading-6 text-neutral"
@@ -97,7 +97,7 @@ const { livemap } = storeToRefs(settingsStore);
                                                 <input
                                                     name="livemapMarkerSize"
                                                     type="range"
-                                                    class="my-2 my-auto h-1.5 w-full cursor-grab rounded-full"
+                                                    class="my-auto h-1.5 w-full cursor-grab rounded-full"
                                                     min="14"
                                                     max="30"
                                                     step="2"
@@ -108,7 +108,7 @@ const { livemap } = storeToRefs(settingsStore);
                                                 />
                                                 <span class="text-sm text-gray-300">{{ livemap.markerSize }}</span>
                                             </div>
-                                            <div class="form-control flex-1 items-center">
+                                            <div class="flex-1 items-center">
                                                 <label
                                                     for="showUnitNames"
                                                     class="block text-sm font-medium leading-6 text-neutral"
@@ -119,19 +119,19 @@ const { livemap } = storeToRefs(settingsStore);
                                                     v-model="livemap.showUnitNames"
                                                     :class="[
                                                         livemap.showUnitNames ? 'bg-primary-600' : 'bg-gray-200',
-                                                        'relative my-2 inline-flex h-6 w-11 flex-shrink-0 cursor-pointer rounded-full border-2 border-transparent transition-colors duration-200 ease-in-out focus:outline-none focus:ring-2 focus:ring-primary-600 focus:ring-offset-2',
+                                                        'relative my-2 inline-flex h-6 w-11 shrink-0 cursor-pointer rounded-full border-2 border-transparent transition-colors duration-200 ease-in-out focus:outline-none focus:ring-2 focus:ring-primary-600 focus:ring-offset-2',
                                                     ]"
                                                 >
                                                     <span
                                                         aria-hidden="true"
                                                         :class="[
                                                             livemap.showUnitNames ? 'translate-x-5' : 'translate-x-0',
-                                                            'pointer-events-none inline-block h-5 w-5 transform rounded-full bg-white shadow ring-0 transition duration-200 ease-in-out',
+                                                            'pointer-events-none inline-block size-5 rounded-full bg-white shadow ring-0 transition duration-200 ease-in-out',
                                                         ]"
                                                     />
                                                 </Switch>
                                             </div>
-                                            <div class="form-control flex-1 items-center">
+                                            <div class="flex-1 items-center">
                                                 <label
                                                     for="showUnitStatus"
                                                     class="block text-sm font-medium leading-6 text-neutral"
@@ -142,19 +142,19 @@ const { livemap } = storeToRefs(settingsStore);
                                                     v-model="livemap.showUnitStatus"
                                                     :class="[
                                                         livemap.showUnitStatus ? 'bg-primary-600' : 'bg-gray-200',
-                                                        'relative my-2 inline-flex h-6 w-11 flex-shrink-0 cursor-pointer rounded-full border-2 border-transparent transition-colors duration-200 ease-in-out focus:outline-none focus:ring-2 focus:ring-primary-600 focus:ring-offset-2',
+                                                        'relative my-2 inline-flex h-6 w-11 shrink-0 cursor-pointer rounded-full border-2 border-transparent transition-colors duration-200 ease-in-out focus:outline-none focus:ring-2 focus:ring-primary-600 focus:ring-offset-2',
                                                     ]"
                                                 >
                                                     <span
                                                         aria-hidden="true"
                                                         :class="[
                                                             livemap.showUnitStatus ? 'translate-x-5' : 'translate-x-0',
-                                                            'pointer-events-none inline-block h-5 w-5 transform rounded-full bg-white shadow ring-0 transition duration-200 ease-in-out',
+                                                            'pointer-events-none inline-block size-5 rounded-full bg-white shadow ring-0 transition duration-200 ease-in-out',
                                                         ]"
                                                     />
                                                 </Switch>
                                             </div>
-                                            <div class="form-control flex-1 items-center">
+                                            <div class="flex-1 items-center">
                                                 <label
                                                     for="showAllDispatches"
                                                     class="block text-sm font-medium leading-6 text-neutral"
@@ -165,14 +165,14 @@ const { livemap } = storeToRefs(settingsStore);
                                                     v-model="livemap.showAllDispatches"
                                                     :class="[
                                                         livemap.showAllDispatches ? 'bg-primary-600' : 'bg-gray-200',
-                                                        'relative my-2 inline-flex h-6 w-11 flex-shrink-0 cursor-pointer rounded-full border-2 border-transparent transition-colors duration-200 ease-in-out focus:outline-none focus:ring-2 focus:ring-primary-600 focus:ring-offset-2',
+                                                        'relative my-2 inline-flex h-6 w-11 shrink-0 cursor-pointer rounded-full border-2 border-transparent transition-colors duration-200 ease-in-out focus:outline-none focus:ring-2 focus:ring-primary-600 focus:ring-offset-2',
                                                     ]"
                                                 >
                                                     <span
                                                         aria-hidden="true"
                                                         :class="[
                                                             livemap.showAllDispatches ? 'translate-x-5' : 'translate-x-0',
-                                                            'pointer-events-none inline-block h-5 w-5 transform rounded-full bg-white shadow ring-0 transition duration-200 ease-in-out',
+                                                            'pointer-events-none inline-block size-5 rounded-full bg-white shadow ring-0 transition duration-200 ease-in-out',
                                                         ]"
                                                     />
                                                 </Switch>

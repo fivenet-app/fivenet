@@ -51,7 +51,7 @@ async function openCategory(idx: number): Promise<void> {
             <div v-if="can('DocStoreService.CreateCategory')" class="sm:flex sm:items-center">
                 <div class="sm:flex-auto">
                     <div class="mx-auto flex flex-row gap-4">
-                        <div class="form-control flex-1">
+                        <div class="flex-1">
                             <div class="relative mt-2 flex items-center">
                                 <button
                                     type="button"

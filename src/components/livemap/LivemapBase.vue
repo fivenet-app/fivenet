@@ -123,7 +123,7 @@ const reconnectionCentrumDebounced = useDebounce(reconnectingCentrum, 500);
 </script>
 
 <template>
-    <div class="relative z-0 h-full w-full">
+    <div class="relative z-0 size-full">
         <DispatchCreateOrUpdateModal
             v-if="can('CentrumService.CreateDispatch')"
             :open="openCreateDispatch"
@@ -153,7 +153,7 @@ const reconnectionCentrumDebounced = useDebounce(reconnectingCentrum, 500);
         >
             <template #default>
                 <LControl position="bottomright">
-                    <div class="form-control flex flex-col gap-2">
+                    <div class="flex flex-col gap-2">
                         <SettingsButton />
                     </div>
                 </LControl>

@@ -118,7 +118,11 @@ export const useAuthStore = defineStore('auth', {
                 throw e;
             }
         },
-        async chooseCharacter(charId: number): Promise<void> {
+        async chooseCharacter(charId?: number): Promise<void> {
+            if (charId === undefined) {
+                charId = this.lastCharID;
+            }
+
             const { $grpc } = useNuxtApp();
             try {
                 if (this.lastCharID !== charId) {

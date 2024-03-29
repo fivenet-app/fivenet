@@ -27,7 +27,7 @@ const onSubmitThrottle = useThrottleFn(async (_) => {
     <div :key="char.userId" class="flex flex-col content-end rounded-lg bg-base-800 shadow-float">
         <div>
             <div class="flex">
-                <div class="mt-4 mx-auto flex flex-row items-center gap-3">
+                <div class="mx-auto mt-4 flex flex-row items-center gap-3">
                     <ProfilePictureImg :url="char.avatar?.url" :name="`${char.firstname} ${char.lastname}`" :no-blur="true" />
 
                     <h2 class="text-center text-2xl font-medium text-neutral">{{ char.firstname }} {{ char.lastname }}</h2>
@@ -35,7 +35,7 @@ const onSubmitThrottle = useThrottleFn(async (_) => {
             </div>
         </div>
         <div class="flex flex-1 flex-col p-4">
-            <dl class="flex flex-grow flex-col justify-between text-center">
+            <dl class="flex grow flex-col justify-between text-center">
                 <dd class="mb-2 inline-flex items-center justify-center gap-1">
                     <CharSexBadge :sex="char.sex!" />
                     <span
@@ -63,7 +63,7 @@ const onSubmitThrottle = useThrottleFn(async (_) => {
                     <dt class="text-sm font-medium text-neutral">
                         {{ $t('common.playtime') }}
                     </dt>
-                    <dd class="text-sm text-gray-300 truncate">
+                    <dd class="truncate text-sm text-gray-300">
                         {{ fromSecondsToFormattedDuration(char.playtime!) }}
                     </dd>
                 </template>
@@ -79,7 +79,7 @@ const onSubmitThrottle = useThrottleFn(async (_) => {
                         @click="onSubmitThrottle(char.userId)"
                     >
                         <template v-if="!canSubmit">
-                            <LoadingIcon class="mr-2 h-5 w-5 animate-spin" aria-hidden="true" />
+                            <LoadingIcon class="mr-2 size-5 animate-spin" aria-hidden="true" />
                         </template>
                         {{ $t('common.choose') }}
                     </button>

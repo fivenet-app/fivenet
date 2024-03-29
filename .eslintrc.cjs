@@ -9,7 +9,12 @@ module.exports = {
     parserOptions: {
         parser: '@typescript-eslint/parser',
     },
-    extends: ['@nuxtjs/eslint-config-typescript', 'plugin:vue/vue3-recommended', 'plugin:prettier/recommended'],
+    extends: [
+        '@nuxt/eslint-config',
+        'plugin:vue/vue3-recommended',
+        'plugin:prettier/recommended',
+        'plugin:tailwindcss/recommended',
+    ],
     plugins: [],
     rules: {
         'no-console': 0,
@@ -17,5 +22,13 @@ module.exports = {
         // vee-validate requires v-bind for custom fields
         'vue/no-deprecated-v-bind-sync': 0,
         'no-restricted-syntax': ['error', 'IfStatement > ExpressionStatement > AssignmentExpression'],
+        '@typescript-eslint/no-unused-vars': [
+            'warn', // or "error"
+            {
+                argsIgnorePattern: '^_',
+                varsIgnorePattern: '^_',
+                caughtErrorsIgnorePattern: '^_',
+            },
+        ],
     },
 };

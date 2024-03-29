@@ -214,7 +214,7 @@ function updateDates(): void {
                     class="ml-auto inline-flex rounded-md bg-primary-500 px-3 py-2 text-sm font-semibold text-neutral hover:bg-primary-400 focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-primary-500"
                 >
                     {{ $t('common.inactive_colleagues') }}
-                    <ArrowRightIcon class="h-5 w-5 ml-1" />
+                    <ArrowRightIcon class="ml-1 size-5" />
                 </NuxtLink>
             </div>
         </div>
@@ -223,7 +223,7 @@ function updateDates(): void {
                 <div class="sm:flex-auto">
                     <form @submit.prevent="refresh()">
                         <div class="mx-auto flex flex-row gap-4">
-                            <div v-if="canAccessAll" class="form-control flex-1">
+                            <div v-if="canAccessAll" class="flex-1">
                                 <label for="searchName" class="block text-sm font-medium leading-6 text-neutral">
                                     {{ $t('common.search') }}
                                     {{ $t('common.colleague', 1) }}
@@ -273,7 +273,7 @@ function updateDates(): void {
                                                                 'absolute inset-y-0 left-0 flex items-center pl-1.5',
                                                             ]"
                                                         >
-                                                            <CheckIcon class="h-5 w-5" aria-hidden="true" />
+                                                            <CheckIcon class="size-5" aria-hidden="true" />
                                                         </span>
                                                     </li>
                                                 </ComboboxOption>
@@ -282,7 +282,7 @@ function updateDates(): void {
                                     </Combobox>
                                 </div>
                             </div>
-                            <div class="form-control flex-1">
+                            <div class="flex-1">
                                 <label for="search" class="block text-sm font-medium leading-6 text-neutral">
                                     <template v-if="query.perDay"> {{ $t('common.date') }}: </template>
                                     <template v-else>
@@ -302,7 +302,7 @@ function updateDates(): void {
                                     />
                                 </div>
                             </div>
-                            <div v-if="!query.perDay" class="form-control flex-1">
+                            <div v-if="!query.perDay" class="flex-1">
                                 <label for="search" class="block text-sm font-medium leading-6 text-neutral">
                                     {{ $t('common.time_range') }}:
                                     {{ $t('common.to') }}
@@ -321,7 +321,7 @@ function updateDates(): void {
                             </div>
                         </div>
                         <div v-if="query.perDay" class="mx-auto flex flex-row gap-4 pt-2">
-                            <div class="form-control flex-1">
+                            <div class="flex-1">
                                 <button
                                     type="button"
                                     :disabled="futureDay > today"
@@ -333,31 +333,31 @@ function updateDates(): void {
                                     ]"
                                     @click="dayForward()"
                                 >
-                                    <ChevronLeftIcon class="h-5 w-5" aria-hidden="true" />
+                                    <ChevronLeftIcon class="size-5" aria-hidden="true" />
                                     {{ $t('common.forward') }} - {{ $d(futureDay, 'date') }}
                                 </button>
                             </div>
-                            <div class="form-control flex-initial">
+                            <div class="flex-initial">
                                 <button
                                     type="button"
                                     disabled
-                                    class="disabled relative flex flex-col w-full cursor-pointer place-content-end items-center items-center rounded-md bg-base-500 px-3 py-2 text-sm font-semibold text-neutral hover:bg-base-400 focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-base-500"
+                                    class="disabled relative flex w-full cursor-pointer flex-col place-content-end items-center rounded-md bg-base-500 px-3 py-2 text-sm font-semibold text-neutral hover:bg-base-400 focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-base-500"
                                 >
-                                    <span class="inline-flex gap-1 flex-row items-center">
-                                        <CalendarIcon class="h-5 w-5" aria-hidden="true" />
+                                    <span class="inline-flex flex-row items-center gap-1">
+                                        <CalendarIcon class="size-5" aria-hidden="true" />
                                         {{ $d(currentDay, 'date') }}
                                     </span>
                                     <span>{{ $t('common.calendar_week') }}: {{ getWeekNumber(currentDay) }}</span>
                                 </button>
                             </div>
-                            <div class="form-control flex-1">
+                            <div class="flex-1">
                                 <button
                                     type="button"
                                     class="relative inline-flex w-full cursor-pointer place-content-end items-center rounded-md bg-primary-500 px-3 py-2 text-sm font-semibold text-neutral hover:bg-primary-400 focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-primary-500"
                                     @click="dayBackwards()"
                                 >
                                     {{ $d(previousDay, 'date') }} - {{ $t('common.previous') }}
-                                    <ChevronRightIcon class="h-5 w-5" aria-hidden="true" />
+                                    <ChevronRightIcon class="size-5" aria-hidden="true" />
                                 </button>
                             </div>
                         </div>

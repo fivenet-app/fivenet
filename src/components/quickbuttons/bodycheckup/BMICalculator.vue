@@ -76,7 +76,7 @@ onBeforeMount(() => bmiCalculate());
                     </div>
                 </div>
             </div>
-            <p class="ablock text-sm font-medium leading-6 text-neutral">
+            <p class="block text-sm font-medium leading-6 text-neutral">
                 BMI: <span class="font-semibold">{{ bmi.toFixed(1) }}</span>
             </p>
         </div>

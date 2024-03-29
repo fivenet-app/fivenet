@@ -31,20 +31,20 @@ function addToClipboard(): void {
 
 <template>
     <tr :key="vehicle.plate" class="transition-colors even:bg-base-800 hover:bg-neutral/5">
-        <td class="max-w-[4rem] whitespace-nowrap py-2 pl-4 pr-3 text-sm font-medium text-neutral sm:pl-1">
+        <td class="max-w-16 whitespace-nowrap py-2 pl-4 pr-3 text-sm font-medium text-neutral sm:pl-1">
             <LicensePlate :plate="vehicle.plate" class="mr-2" />
             <dl v-if="vehicle.model" class="font-normal sm:hidden">
                 <dt class="sr-only">{{ $t('common.model') }}</dt>
                 <dd class="mt-1 truncate text-accent-200">{{ vehicle.model }}</dd>
             </dl>
         </td>
-        <td v-if="vehicle.model" class="whitespace-nowrap px-1 py-1 text-left text-accent-200 hidden sm:table-cell">
+        <td v-if="vehicle.model" class="hidden whitespace-nowrap p-1 text-left text-accent-200 sm:table-cell">
             {{ vehicle.model }}
         </td>
-        <td class="whitespace-nowrap px-1 py-1 text-left text-accent-200 hidden lg:table-cell">
+        <td class="hidden whitespace-nowrap p-1 text-left text-accent-200 lg:table-cell">
             {{ toTitleCase(vehicle.type) }}
         </td>
-        <td v-if="!hideOwner" class="whitespace-nowrap px-1 py-1 text-left text-accent-200">
+        <td v-if="!hideOwner" class="whitespace-nowrap p-1 text-left text-accent-200">
             <CitizenInfoPopover :user="vehicle.owner" />
         </td>
         <td
@@ -53,7 +53,7 @@ function addToClipboard(): void {
         >
             <div class="flex flex-row justify-end">
                 <button v-if="!hideCopy" class="flex-initial text-primary-500 hover:text-primary-400" @click="addToClipboard()">
-                    <ClipboardPlusIcon class="ml-auto mr-2.5 w-5 h-auto" aria-hidden="true" />
+                    <ClipboardPlusIcon class="ml-auto mr-2.5 h-auto w-5" aria-hidden="true" />
                 </button>
                 <NuxtLink
                     v-if="!hideCitizenLink && can('CitizenStoreService.ListCitizens')"
@@ -63,7 +63,7 @@ function addToClipboard(): void {
                     }"
                     class="flex-initial text-primary-500 hover:text-primary-400"
                 >
-                    <AccountEyeIcon class="ml-auto mr-2.5 w-5 h-auto" aria-hidden="true" />
+                    <AccountEyeIcon class="ml-auto mr-2.5 h-auto w-5" aria-hidden="true" />
                 </NuxtLink>
             </div>
         </td>

@@ -30,7 +30,7 @@ defineProps<{
             <div class="hidden sm:flex sm:flex-col sm:items-end">
                 <div class="flex flex-row gap-1">
                     <div v-if="result.status" class="flex flex-initial flex-row gap-1 rounded-full bg-info-100 px-2 py-1">
-                        <ListStatusIcon class="h-5 w-5 text-info-400" aria-hidden="true" />
+                        <ListStatusIcon class="size-5 text-info-400" aria-hidden="true" />
                         <span class="text-sm font-medium text-info-700">
                             <span class="font-semibold">{{ $t('common.result') }}:</span>
                             {{ $t(`enums.qualifications.ResultStatus.${ResultStatus[result.status ?? 0]}`) }}
@@ -41,7 +41,7 @@ defineProps<{
                     {{ $t('common.created_at') }} <GenericTime :value="result.createdAt" />
                 </p>
             </div>
-            <ChevronRightIcon class="h-5 w-5 flex-none text-gray-300" aria-hidden="true" />
+            <ChevronRightIcon class="size-5 flex-none text-gray-300" aria-hidden="true" />
         </div>
     </li>
 </template>

@@ -20,7 +20,7 @@ function getNameForLawBookId(id: string): string | undefined {
         disabled
         class="relative block w-full rounded-lg border-2 border-dashed border-gray-300 p-12 text-center hover:border-gray-400 focus:outline-none focus:ring-2 focus:ring-primary-500 focus:ring-offset-2"
     >
-        <CalculatorIcon class="mx-auto h-12 w-12 text-neutral" aria-hidden="true" />
+        <CalculatorIcon class="mx-auto size-12 text-neutral" aria-hidden="true" />
         <span class="mt-2 block text-sm font-semibold text-gray-300">
             {{ $t('common.none_selected', [`${$t('common.crime')}`]) }}
         </span>
@@ -53,19 +53,17 @@ function getNameForLawBookId(id: string): string | undefined {
                 <td class="py-2 pl-4 pr-3 text-sm font-medium text-neutral sm:pl-1">
                     {{ getNameForLawBookId(p.law.lawbookId) }} - {{ p.law.name }}
                 </td>
-                <td class="whitespace-nowrap px-1 py-1 text-left text-accent-200">
-                    ${{ p.law.fine ? p.law.fine * p.count : 0 }}
-                </td>
-                <td class="whitespace-nowrap px-1 py-1 text-left text-accent-200">
+                <td class="whitespace-nowrap p-1 text-left text-accent-200">${{ p.law.fine ? p.law.fine * p.count : 0 }}</td>
+                <td class="whitespace-nowrap p-1 text-left text-accent-200">
                     {{ p.law.detentionTime ? p.law.detentionTime * p.count : 0 }}
                 </td>
-                <td class="whitespace-nowrap px-1 py-1 text-left text-accent-200">
+                <td class="whitespace-nowrap p-1 text-left text-accent-200">
                     {{ p.law.stvoPoints ? p.law.stvoPoints * p.count : 0 }}
                 </td>
-                <td class="break-all px-1 py-1 text-left text-sm text-accent-200">
+                <td class="break-all p-1 text-left text-sm text-accent-200">
                     {{ p.law.description }}
                 </td>
-                <td class="w-20 min-w-20 px-1 py-1 text-left text-accent-200">
+                <td class="w-20 min-w-20 p-1 text-left text-accent-200">
                     {{ p.count }}
                 </td>
             </tr>

@@ -24,7 +24,7 @@ async function selected(t: TemplateShort): Promise<void> {
                 <div v-if="'DocStoreService.CreateTemplate'" class="sm:flex sm:items-center">
                     <div class="sm:flex-auto">
                         <div class="flex flex-row items-center gap-2 sm:mx-auto">
-                            <div v-if="can('DocStoreService.CreateTemplate')" class="form-control flex-1">
+                            <div v-if="can('DocStoreService.CreateTemplate')" class="flex-1">
                                 <NuxtLink
                                     :to="{ name: 'documents-templates-create' }"
                                     class="inline-flex w-full justify-center rounded-md bg-primary-500 px-3 py-2 text-sm font-semibold text-neutral hover:bg-primary-400 focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-primary-500"

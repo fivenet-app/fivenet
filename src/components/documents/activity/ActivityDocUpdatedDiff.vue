@@ -12,12 +12,12 @@ defineProps<{
             <p class="text-base font-semibold">
                 {{ $t('common.title') }} {{ $t('components.documents.activity_list.difference') }}:
             </p>
-            <div class="mb-2 mt-2 break-words rounded-lg bg-base-800 text-neutral">
+            <div class="my-2 break-words rounded-lg bg-base-800 text-neutral">
                 <span v-if="update.titleDiff?.length === 0">
                     {{ $t('common.na') }}
                 </span>
                 <!-- eslint-disable vue/no-v-html -->
-                <div v-else class="px-4 py-4" v-html="update.titleDiff"></div>
+                <div v-else class="p-4" v-html="update.titleDiff"></div>
             </div>
         </div>
 
@@ -25,12 +25,12 @@ defineProps<{
             <p class="text-base font-semibold">
                 {{ $t('common.content') }} {{ $t('components.documents.activity_list.difference') }}:
             </p>
-            <div class="mb-2 mt-2 break-words rounded-lg bg-base-800 text-neutral">
+            <div class="my-2 break-words rounded-lg bg-base-800 text-neutral">
                 <span v-if="update.contentDiff?.length === 0">
                     {{ $t('common.na') }}
                 </span>
                 <!-- eslint-disable vue/no-v-html -->
-                <div v-else class="px-4 py-4" v-html="update.contentDiff"></div>
+                <div v-else class="p-4" v-html="update.contentDiff"></div>
             </div>
         </div>
 
@@ -38,12 +38,12 @@ defineProps<{
             <p class="text-base font-semibold">
                 {{ $t('common.state') }} {{ $t('components.documents.activity_list.difference') }}:
             </p>
-            <div class="mb-2 mt-2 break-words rounded-lg bg-base-800 text-neutral">
+            <div class="my-2 break-words rounded-lg bg-base-800 text-neutral">
                 <span v-if="update.stateDiff?.length === 0">
                     {{ $t('common.na') }}
                 </span>
                 <!-- eslint-disable vue/no-v-html -->
-                <div v-else class="px-4 py-4" v-html="update.stateDiff"></div>
+                <div v-else class="p-4" v-html="update.stateDiff"></div>
             </div>
         </div>
 

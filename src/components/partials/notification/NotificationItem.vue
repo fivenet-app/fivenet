@@ -34,7 +34,7 @@ if (props.notification.callback !== undefined) {
         >
             <div class="p-4">
                 <div class="flex items-start">
-                    <div v-if="notification.type" class="my-auto w-8 flex-shrink-0">
+                    <div v-if="notification.type" class="my-auto w-8 shrink-0">
                         <CheckCircleIcon v-if="notification.type === 'success'" class="text-success-400" aria-hidden="true" />
                         <InformationIcon v-else-if="notification.type === 'info'" class="text-info-400" aria-hidden="true" />
                         <AlertCircleIcon v-else-if="notification.type === 'warning'" class="text-warn-400" aria-hidden="true" />
@@ -60,14 +60,14 @@ if (props.notification.callback !== undefined) {
                             }}
                         </button>
                     </div>
-                    <div class="ml-4 flex flex-shrink-0">
+                    <div class="ml-4 flex shrink-0">
                         <button
                             type="button"
                             class="inline-flex text-neutral hover:text-base-300 focus:outline-none focus:ring-2 focus:ring-primary-500 focus:ring-offset-2"
                             @click="() => closeNotification(notification.id)"
                         >
                             <span class="sr-only">{{ $t('common.close') }}</span>
-                            <CloseIcon class="h-5 w-5" aria-hidden="true" />
+                            <CloseIcon class="size-5" aria-hidden="true" />
                         </button>
                     </div>
                 </div>

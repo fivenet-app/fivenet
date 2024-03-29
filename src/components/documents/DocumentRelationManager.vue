@@ -132,7 +132,7 @@ function removeRelation(id: string): void {
                 leave-from="opacity-100"
                 leave-to="opacity-0"
             >
-                <div class="fixed inset-0 bg-base-900 bg-opacity-75 transition-opacity" />
+                <div class="fixed inset-0 bg-base-900/75 transition-opacity" />
             </TransitionChild>
 
             <div class="fixed inset-0 z-30 overflow-y-auto">
@@ -147,7 +147,7 @@ function removeRelation(id: string): void {
                         leave-to="opacity-0 translate-y-4 sm:translate-y-0 sm:scale-95"
                     >
                         <DialogPanel
-                            class="relative my-auto w-full transform overflow-hidden rounded-lg bg-base-800 px-4 pb-4 pt-5 text-left text-neutral transition-all sm:my-8 sm:max-w-6xl sm:p-6"
+                            class="relative my-auto w-full overflow-hidden rounded-lg bg-base-800 px-4 pb-4 pt-5 text-left text-neutral transition-all sm:my-8 sm:max-w-6xl sm:p-6"
                         >
                             <div class="absolute right-0 top-0 hidden pr-4 pt-4 sm:block">
                                 <button
@@ -156,7 +156,7 @@ function removeRelation(id: string): void {
                                     @click="emit('close')"
                                 >
                                     <span class="sr-only">{{ $t('common.close') }}</span>
-                                    <CloseIcon class="h-5 w-5" aria-hidden="true" />
+                                    <CloseIcon class="size-5" aria-hidden="true" />
                                 </button>
                             </div>
                             <DialogTitle as="h3" class="text-base font-semibold leading-6">
@@ -171,7 +171,7 @@ function removeRelation(id: string): void {
                                                 selected
                                                     ? 'border-primary-500 text-primary-500'
                                                     : 'border-transparent text-base-300 hover:border-base-300 hover:text-accent-200',
-                                                'text-m group inline-flex w-full items-center justify-center border-b-2 px-1 py-4 font-medium transition-colors',
+                                                'group inline-flex w-full items-center justify-center border-b-2 px-1 py-4 text-sm font-medium transition-colors',
                                             ]"
                                             :aria-current="selected ? 'page' : undefined"
                                         >
@@ -179,7 +179,7 @@ function removeRelation(id: string): void {
                                                 :is="tab.icon"
                                                 :class="[
                                                     selected ? 'text-primary-500' : 'text-base-300 group-hover:text-accent-200',
-                                                    '-ml-0.5 mr-2 h-5 w-5 transition-colors',
+                                                    '-ml-0.5 mr-2 size-5 transition-colors',
                                                 ]"
                                                 aria-hidden="true"
                                             />
@@ -263,7 +263,7 @@ function removeRelation(id: string): void {
                                                                                     "
                                                                                 >
                                                                                     <OpenInNewIcon
-                                                                                        class="w-5 h-auto text-primary-500 hover:text-primary-300"
+                                                                                        class="h-auto w-5 text-primary-500 hover:text-primary-300"
                                                                                         aria-hidden="true"
                                                                                     />
                                                                                 </NuxtLink>
@@ -280,7 +280,7 @@ function removeRelation(id: string): void {
                                                                                     @click="removeRelation(relation.id!)"
                                                                                 >
                                                                                     <AccountMinusIcon
-                                                                                        class="w-5 h-auto text-error-400 hover:text-error-200"
+                                                                                        class="h-auto w-5 text-error-400 hover:text-error-200"
                                                                                         aria-hidden="true"
                                                                                     />
                                                                                 </button>
@@ -365,7 +365,7 @@ function removeRelation(id: string): void {
                                                                                     "
                                                                                 >
                                                                                     <AtIcon
-                                                                                        class="w-5 h-auto text-success-500 hover:text-success-300"
+                                                                                        class="h-auto w-5 text-success-500 hover:text-success-300"
                                                                                         aria-hidden="true"
                                                                                     />
                                                                                 </button>
@@ -387,7 +387,7 @@ function removeRelation(id: string): void {
                                                                                     "
                                                                                 >
                                                                                     <TargetIcon
-                                                                                        class="w-5 h-auto text-warn-400 hover:text-warn-200"
+                                                                                        class="h-auto w-5 text-warn-400 hover:text-warn-200"
                                                                                         aria-hidden="true"
                                                                                     />
                                                                                 </button>
@@ -409,7 +409,7 @@ function removeRelation(id: string): void {
                                                                                     "
                                                                                 >
                                                                                     <SourceCommitStartIcon
-                                                                                        class="w-5 h-auto text-error-400 hover:text-error-200"
+                                                                                        class="h-auto w-5 text-error-400 hover:text-error-200"
                                                                                         aria-hidden="true"
                                                                                     />
                                                                                 </button>
@@ -509,7 +509,7 @@ function removeRelation(id: string): void {
                                                                                     "
                                                                                 >
                                                                                     <AtIcon
-                                                                                        class="w-5 h-auto text-success-500 hover:text-success-300"
+                                                                                        class="h-auto w-5 text-success-500 hover:text-success-300"
                                                                                         aria-hidden="true"
                                                                                     />
                                                                                 </button>
@@ -528,7 +528,7 @@ function removeRelation(id: string): void {
                                                                                     "
                                                                                 >
                                                                                     <TargetIcon
-                                                                                        class="w-5 h-auto text-warn-400 hover:text-warn-200"
+                                                                                        class="h-auto w-5 text-warn-400 hover:text-warn-200"
                                                                                         aria-hidden="true"
                                                                                     />
                                                                                 </button>
@@ -547,7 +547,7 @@ function removeRelation(id: string): void {
                                                                                     "
                                                                                 >
                                                                                     <SourceCommitStartIcon
-                                                                                        class="w-5 h-auto text-error-400 hover:text-error-200"
+                                                                                        class="h-auto w-5 text-error-400 hover:text-error-200"
                                                                                         aria-hidden="true"
                                                                                     />
                                                                                 </button>

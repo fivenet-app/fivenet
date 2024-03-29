@@ -69,14 +69,11 @@ watch(offset, async () => refresh());
                                     <li
                                         v-for="relation in data?.relations"
                                         :key="relation.id"
-                                        class="block bg-base-800 px-4 py-4 hover:bg-base-700"
+                                        class="block bg-base-800 p-4 hover:bg-base-700"
                                     >
                                         <span class="flex items-center space-x-4">
                                             <span class="flex flex-1 space-x-2 truncate">
-                                                <ArrowExpandIcon
-                                                    class="h-5 w-5 flex-shrink-0 text-gray-400"
-                                                    aria-hidden="true"
-                                                />
+                                                <ArrowExpandIcon class="size-5 shrink-0 text-gray-400" aria-hidden="true" />
                                                 <span class="flex flex-col truncate text-sm">
                                                     <span>
                                                         <NuxtLink
@@ -99,7 +96,7 @@ watch(offset, async () => refresh());
                                                             v-if="relation.document?.closed"
                                                             class="flex flex-initial flex-row gap-1 rounded-full bg-error-100 px-2 py-1"
                                                         >
-                                                            <LockIcon class="h-5 w-5 text-error-400" aria-hidden="true" />
+                                                            <LockIcon class="size-5 text-error-400" aria-hidden="true" />
                                                             <span class="text-sm font-medium text-error-700">
                                                                 {{ $t('common.close', 2) }}
                                                             </span>
@@ -109,7 +106,7 @@ watch(offset, async () => refresh());
                                                             class="flex flex-initial flex-row gap-1 rounded-full bg-success-100 px-2 py-1"
                                                         >
                                                             <LockOpenVariantIcon
-                                                                class="h-5 w-5 text-success-500"
+                                                                class="size-5 text-success-500"
                                                                 aria-hidden="true"
                                                             />
                                                             <span class="text-sm font-medium text-success-700">
@@ -144,10 +141,7 @@ watch(offset, async () => refresh());
                                                     <GenericTime :value="relation.createdAt" :ago="true" />
                                                 </span>
                                             </span>
-                                            <ChevronRightIcon
-                                                class="h-5 w-5 flex-shrink-0 text-accent-200"
-                                                aria-hidden="true"
-                                            />
+                                            <ChevronRightIcon class="size-5 shrink-0 text-accent-200" aria-hidden="true" />
                                         </span>
                                     </li>
                                 </ul>
@@ -212,7 +206,7 @@ watch(offset, async () => refresh());
                                                                 v-if="relation.document?.closed"
                                                                 class="flex flex-initial flex-row gap-1 rounded-full bg-error-100 px-2 py-1"
                                                             >
-                                                                <LockIcon class="h-5 w-5 text-error-400" aria-hidden="true" />
+                                                                <LockIcon class="size-5 text-error-400" aria-hidden="true" />
                                                                 <span class="text-sm font-medium text-error-700">
                                                                     {{ $t('common.close', 2) }}
                                                                 </span>
@@ -222,7 +216,7 @@ watch(offset, async () => refresh());
                                                                 class="flex flex-initial flex-row gap-1 rounded-full bg-success-100 px-2 py-1"
                                                             >
                                                                 <LockOpenVariantIcon
-                                                                    class="h-5 w-5 text-success-500"
+                                                                    class="size-5 text-success-500"
                                                                     aria-hidden="true"
                                                                 />
                                                                 <span class="text-sm font-medium text-success-700">

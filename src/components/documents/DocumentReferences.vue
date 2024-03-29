@@ -61,11 +61,11 @@ async function getDocumentReferences(): Promise<DocumentReference[]> {
                                 name: 'documents-id',
                                 params: { id: reference.targetDocumentId },
                             }"
-                            class="block bg-base-800 px-4 py-4 hover:bg-base-700"
+                            class="block bg-base-800 p-4 hover:bg-base-700"
                         >
                             <span class="flex items-center space-x-4">
                                 <span class="flex flex-1 space-x-2 truncate">
-                                    <ArrowCollapseIcon class="h-5 w-5 flex-shrink-0 text-accent-200" aria-hidden="true" />
+                                    <ArrowCollapseIcon class="size-5 shrink-0 text-accent-200" aria-hidden="true" />
                                     <span class="flex flex-col truncate text-sm">
                                         <span>
                                             {{ reference.targetDocument?.title

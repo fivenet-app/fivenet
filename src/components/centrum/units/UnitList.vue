@@ -60,7 +60,7 @@ const grouped = computedAsync(async () => {
                         :title="$t('common.units')"
                         class="ml-2"
                     >
-                        <CogIcon class="h-5 w-5" aria-hidden="true" />
+                        <CogIcon class="size-5" aria-hidden="true" />
                     </NuxtLink>
                 </h2>
             </div>

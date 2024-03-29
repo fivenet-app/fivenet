@@ -82,12 +82,12 @@ const openUnit = ref(false);
                 >
                     {{ unit?.initials }}
                 </span>
-                <MapMarkerIcon class="h-full w-full" :style="{ color: getMarkerColor() }" aria-hidden="true" />
+                <MapMarkerIcon class="size-full" :style="{ color: getMarkerColor() }" aria-hidden="true" />
             </div>
             <div v-if="showUnitStatus && unit" class="pointer-events-none uppercase">
-                <span class="absolute right-0 top-0 -mr-2 -mt-1.5 flex h-3 w-3">
+                <span class="absolute right-0 top-0 -mr-2 -mt-1.5 flex size-3">
                     <span
-                        class="relative inset-0 inline-flex h-3 w-3 rounded-full border-2 border-black/20"
+                        class="relative inset-0 inline-flex size-3 rounded-full border-2 border-black/20"
                         :class="unitStatusColor"
                     ></span>
                 </span>
@@ -104,7 +104,7 @@ const openUnit = ref(false);
                     :to="{ name: 'citizens-id', params: { id: marker.user?.userId ?? 0 } }"
                     class="inline-flex items-center text-primary-500 hover:text-primary-400"
                 >
-                    <AccountIcon class="h-5 w-5" aria-hidden="true" />
+                    <AccountIcon class="size-5" aria-hidden="true" />
                     <span class="ml-1">{{ $t('common.profile') }}</span>
                 </NuxtLink>
                 <PhoneNumberBlock
@@ -120,7 +120,7 @@ const openUnit = ref(false);
                     class="inline-flex items-center text-primary-500 hover:text-primary-400"
                     @click="openUnit = true"
                 >
-                    <GroupIcon class="h-4 w-4" aria-hidden="true" />
+                    <GroupIcon class="size-4" aria-hidden="true" />
                     <span class="ml-1">
                         {{ $t('common.unit') }}
                     </span>

@@ -228,7 +228,7 @@ onBeforeMount(async () => {
                     {{ $t(`perms.${attribute.category}.${attribute.name}.attrs_types.${attribute.key}`) }}
                 </span>
                 <span class="ml-6 flex h-7 items-center">
-                    <ChevronDownIcon :class="[open ? 'upsidedown' : '', 'h-5 w-5 transition-transform']" aria-hidden="true" />
+                    <ChevronDownIcon :class="[open ? 'upsidedown' : '', 'size-5 transition-transform']" aria-hidden="true" />
                 </span>
             </DisclosureButton>
             <DisclosurePanel class="-mt-2 rounded-b-lg border-2 border-t-0 border-inherit px-4 pb-2 transition-colors">
@@ -255,7 +255,7 @@ onBeforeMount(async () => {
                                     :name="value"
                                     type="checkbox"
                                     :checked="!!currentValue.validValues.stringList.strings.find((v) => v === value)"
-                                    class="my-auto h-4 w-4 rounded border-base-300 text-primary-500 focus:ring-primary-500"
+                                    class="my-auto size-4 rounded border-base-300 text-primary-500 focus:ring-primary-500"
                                     @click="toggleStringListValue(value)"
                                 />
                                 <span class="ml-1">{{
@@ -291,7 +291,7 @@ onBeforeMount(async () => {
                                     :name="job.name"
                                     type="checkbox"
                                     :checked="!!currentValue.validValues.jobList?.strings.find((v) => v === job.name)"
-                                    class="my-auto h-4 w-4 rounded border-base-300 text-primary-500 focus:ring-primary-500"
+                                    class="my-auto size-4 rounded border-base-300 text-primary-500 focus:ring-primary-500"
                                     @click="toggleJobListValue(job.name)"
                                 />
                                 <span class="ml-1">{{ job.label }}</span>
@@ -325,7 +325,7 @@ onBeforeMount(async () => {
                                     :name="job.name"
                                     type="checkbox"
                                     :checked="!!currentValue.validValues?.jobGradeList.jobs[job.name]"
-                                    class="my-auto h-4 w-4 rounded border-base-300 text-primary-500 focus:ring-primary-500"
+                                    class="my-auto size-4 rounded border-base-300 text-primary-500 focus:ring-primary-500"
                                     @change="toggleJobGradeValue(job, ($event.target as any).checked)"
                                 />
                                 <span class="my-auto flex-1">{{ job.label }}</span>
@@ -342,7 +342,7 @@ onBeforeMount(async () => {
                                         >
                                             <span class="block truncate">{{ jobGrades.get(job.name)?.label }}</span>
                                             <span class="pointer-events-none absolute inset-y-0 right-0 flex items-center pr-2">
-                                                <ChevronDownIcon class="h-5 w-5 text-gray-400" aria-hidden="true" />
+                                                <ChevronDownIcon class="size-5 text-gray-400" aria-hidden="true" />
                                             </span>
                                         </ListboxButton>
 
@@ -388,7 +388,7 @@ onBeforeMount(async () => {
                                                                 'absolute inset-y-0 left-0 flex items-center pl-1.5',
                                                             ]"
                                                         >
-                                                            <CheckIcon class="h-5 w-5" aria-hidden="true" />
+                                                            <CheckIcon class="size-5" aria-hidden="true" />
                                                         </span>
                                                     </li>
                                                 </ListboxOption>

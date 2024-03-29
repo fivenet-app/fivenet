@@ -126,7 +126,7 @@ watch(
                     ]"
                 >
                     <template v-if="!canSubmit">
-                        <LoadingIcon class="mr-2 h-5 w-5 animate-spin" aria-hidden="true" />
+                        <LoadingIcon class="mr-2 size-5 animate-spin" aria-hidden="true" />
                     </template>
                     {{ $t('common.login') }}
                 </button>

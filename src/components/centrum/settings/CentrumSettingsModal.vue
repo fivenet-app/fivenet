@@ -131,7 +131,7 @@ const { remove: dspRemove, push: dspPush, fields: dspFields } = useFieldArray<st
                 leave-from="opacity-100"
                 leave-to="opacity-0"
             >
-                <div class="fixed inset-0 bg-gray-500 bg-opacity-75 transition-opacity" />
+                <div class="fixed inset-0 bg-gray-500/75 transition-opacity" />
             </TransitionChild>
 
             <div class="fixed inset-0 z-30 overflow-y-auto">
@@ -146,7 +146,7 @@ const { remove: dspRemove, push: dspPush, fields: dspFields } = useFieldArray<st
                         leave-to="opacity-0 translate-y-4 sm:translate-y-0 sm:scale-95"
                     >
                         <DialogPanel
-                            class="relative w-full transform overflow-hidden rounded-lg bg-base-800 px-4 pb-4 pt-5 text-left shadow-xl transition-all sm:my-8 sm:max-w-lg sm:p-6"
+                            class="relative w-full overflow-hidden rounded-lg bg-base-800 px-4 pb-4 pt-5 text-left shadow-xl transition-all sm:my-8 sm:max-w-lg sm:p-6"
                         >
                             <div class="absolute right-0 top-0 block pr-4 pt-4">
                                 <button
@@ -155,13 +155,13 @@ const { remove: dspRemove, push: dspPush, fields: dspFields } = useFieldArray<st
                                     @click="$emit('close')"
                                 >
                                     <span class="sr-only">{{ $t('common.close') }}</span>
-                                    <CloseIcon class="h-5 w-5" aria-hidden="true" />
+                                    <CloseIcon class="size-5" aria-hidden="true" />
                                 </button>
                             </div>
                             <form @submit.prevent="onSubmitThrottle">
                                 <div>
-                                    <div class="mx-auto flex h-12 w-12 items-center justify-center rounded-full bg-success-100">
-                                        <GroupIcon class="h-5 w-5 text-success-600" aria-hidden="true" />
+                                    <div class="mx-auto flex size-12 items-center justify-center rounded-full bg-success-100">
+                                        <GroupIcon class="size-5 text-success-600" aria-hidden="true" />
                                     </div>
                                     <div class="mt-3 text-center sm:mt-5">
                                         <DialogTitle as="h3" class="text-base font-semibold leading-6 text-neutral">
@@ -169,7 +169,7 @@ const { remove: dspRemove, push: dspPush, fields: dspFields } = useFieldArray<st
                                         </DialogTitle>
                                         <div class="mt-2">
                                             <div class="text-sm text-gray-100">
-                                                <div class="form-control flex-1">
+                                                <div class="flex-1">
                                                     <label
                                                         for="enabled"
                                                         class="block text-sm font-medium leading-6 text-neutral"
@@ -179,7 +179,7 @@ const { remove: dspRemove, push: dspPush, fields: dspFields } = useFieldArray<st
                                                     <VeeField
                                                         name="enabled"
                                                         type="checkbox"
-                                                        class="h-4 h-5 w-4 w-5 rounded border-gray-300 text-primary-600 focus:ring-primary-600"
+                                                        class="size-5 rounded border-gray-300 text-primary-600 focus:ring-primary-600"
                                                         :placeholder="$t('common.enabled')"
                                                         :label="$t('common.enabled')"
                                                         :value="true"
@@ -191,7 +191,7 @@ const { remove: dspRemove, push: dspPush, fields: dspFields } = useFieldArray<st
                                                         class="mt-2 text-sm text-error-400"
                                                     />
                                                 </div>
-                                                <div class="form-control flex-1">
+                                                <div class="flex-1">
                                                     <label for="mode" class="block text-sm font-medium leading-6 text-neutral">
                                                         {{ $t('common.mode') }}
                                                     </label>
@@ -226,7 +226,7 @@ const { remove: dspRemove, push: dspPush, fields: dspFields } = useFieldArray<st
                                                     </VeeField>
                                                     <VeeErrorMessage name="mode" as="p" class="mt-2 text-sm text-error-400" />
                                                 </div>
-                                                <div class="form-control flex-1">
+                                                <div class="flex-1">
                                                     <label
                                                         for="fallbackMode"
                                                         class="block text-sm font-medium leading-6 text-neutral"
@@ -271,7 +271,7 @@ const { remove: dspRemove, push: dspPush, fields: dspFields } = useFieldArray<st
                                                     />
                                                 </div>
                                                 <!-- Predefined Unit Status Reason -->
-                                                <div class="form-control flex-1">
+                                                <div class="flex-1">
                                                     <label
                                                         for="unitStatus"
                                                         class="block text-sm font-medium leading-6 text-neutral"
@@ -282,12 +282,12 @@ const { remove: dspRemove, push: dspPush, fields: dspFields } = useFieldArray<st
                                                         <div
                                                             v-for="(field, idx) in usFields"
                                                             :key="field.key"
-                                                            class="flex gap-1 items-center"
+                                                            class="flex items-center gap-1"
                                                         >
                                                             <VeeField
                                                                 :name="`unitStatus[${idx}]`"
                                                                 type="text"
-                                                                class="flex-1 block w-full rounded-md border-0 bg-base-700 py-1.5 text-neutral placeholder:text-accent-200 focus:ring-2 focus:ring-inset focus:ring-base-300 sm:text-sm sm:leading-6"
+                                                                class="block w-full flex-1 rounded-md border-0 bg-base-700 py-1.5 text-neutral placeholder:text-accent-200 focus:ring-2 focus:ring-inset focus:ring-base-300 sm:text-sm sm:leading-6"
                                                                 :placeholder="$t('common.reason')"
                                                                 :label="$t('common.reason')"
                                                                 @focusin="focusTablet(true)"
@@ -299,7 +299,7 @@ const { remove: dspRemove, push: dspPush, fields: dspFields } = useFieldArray<st
                                                                 class="rounded-full bg-primary-500 p-1.5 text-neutral hover:bg-primary-400 focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-primary-500"
                                                                 @click="usRemove(idx)"
                                                             >
-                                                                <CloseIcon class="h-5 w-5" aria-hidden="true" />
+                                                                <CloseIcon class="size-5" aria-hidden="true" />
                                                             </button>
                                                         </div>
                                                     </div>
@@ -314,11 +314,11 @@ const { remove: dspRemove, push: dspPush, fields: dspFields } = useFieldArray<st
                                                         "
                                                         @click="usPush('')"
                                                     >
-                                                        <PlusIcon class="h-5 w-5" aria-hidden="true" />
+                                                        <PlusIcon class="size-5" aria-hidden="true" />
                                                     </button>
                                                 </div>
                                                 <!-- Predefined Dispatch Status Reason -->
-                                                <div class="form-control flex-1">
+                                                <div class="flex-1">
                                                     <label
                                                         for="dispatchStatus"
                                                         class="block text-sm font-medium leading-6 text-neutral"
@@ -329,12 +329,12 @@ const { remove: dspRemove, push: dspPush, fields: dspFields } = useFieldArray<st
                                                         <div
                                                             v-for="(field, idx) in dspFields"
                                                             :key="field.key"
-                                                            class="flex gap-1 items-center"
+                                                            class="flex items-center gap-1"
                                                         >
                                                             <VeeField
                                                                 :name="`dispatchStatus[${idx}]`"
                                                                 type="text"
-                                                                class="flex-1 block w-full rounded-md border-0 bg-base-700 py-1.5 text-neutral placeholder:text-accent-200 focus:ring-2 focus:ring-inset focus:ring-base-300 sm:text-sm sm:leading-6"
+                                                                class="block w-full flex-1 rounded-md border-0 bg-base-700 py-1.5 text-neutral placeholder:text-accent-200 focus:ring-2 focus:ring-inset focus:ring-base-300 sm:text-sm sm:leading-6"
                                                                 :placeholder="$t('common.reason')"
                                                                 :label="$t('common.reason')"
                                                                 @focusin="focusTablet(true)"
@@ -346,7 +346,7 @@ const { remove: dspRemove, push: dspPush, fields: dspFields } = useFieldArray<st
                                                                 class="rounded-full bg-primary-500 p-1.5 text-neutral hover:bg-primary-400 focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-primary-500"
                                                                 @click="dspRemove(idx)"
                                                             >
-                                                                <CloseIcon class="h-5 w-5" aria-hidden="true" />
+                                                                <CloseIcon class="size-5" aria-hidden="true" />
                                                             </button>
                                                         </div>
                                                     </div>
@@ -361,7 +361,7 @@ const { remove: dspRemove, push: dspPush, fields: dspFields } = useFieldArray<st
                                                         "
                                                         @click="dspPush('')"
                                                     >
-                                                        <PlusIcon class="h-5 w-5" aria-hidden="true" />
+                                                        <PlusIcon class="size-5" aria-hidden="true" />
                                                     </button>
                                                 </div>
                                             </div>
@@ -381,7 +381,7 @@ const { remove: dspRemove, push: dspPush, fields: dspFields } = useFieldArray<st
                                         ]"
                                     >
                                         <template v-if="!canSubmit">
-                                            <LoadingIcon class="mr-2 h-5 w-5 animate-spin" aria-hidden="true" />
+                                            <LoadingIcon class="mr-2 size-5 animate-spin" aria-hidden="true" />
                                         </template>
                                         {{ $t('common.update') }}
                                     </button>

@@ -127,7 +127,7 @@ watchDebounced(queryCitizens, async () => await findChars(), {
                 <div class="sm:flex-auto">
                     <form @submit.prevent="refresh()">
                         <div class="mx-auto flex flex-row gap-4">
-                            <div class="form-control flex-1">
+                            <div class="flex-1">
                                 <label for="from" class="block text-sm font-medium leading-6 text-neutral">
                                     {{ $t('common.time_range') }}: {{ $t('common.from') }}
                                 </label>
@@ -143,7 +143,7 @@ watchDebounced(queryCitizens, async () => await findChars(), {
                                     />
                                 </div>
                             </div>
-                            <div class="form-control flex-1">
+                            <div class="flex-1">
                                 <label for="to" class="block text-sm font-medium leading-6 text-neutral">
                                     {{ $t('common.time_range') }}: {{ $t('common.to') }}
                                 </label>
@@ -159,7 +159,7 @@ watchDebounced(queryCitizens, async () => await findChars(), {
                                     />
                                 </div>
                             </div>
-                            <div class="form-control flex-1">
+                            <div class="flex-1">
                                 <label for="users" class="block text-sm font-medium leading-6 text-neutral">
                                     {{ $t('common.user', 2) }}
                                 </label>
@@ -210,7 +210,7 @@ watchDebounced(queryCitizens, async () => await findChars(), {
                                                                 'absolute inset-y-0 left-0 flex items-center pl-1.5',
                                                             ]"
                                                         >
-                                                            <CheckIcon class="h-5 w-5" aria-hidden="true" />
+                                                            <CheckIcon class="size-5" aria-hidden="true" />
                                                         </span>
                                                     </li>
                                                 </ComboboxOption>
@@ -219,7 +219,7 @@ watchDebounced(queryCitizens, async () => await findChars(), {
                                     </Combobox>
                                 </div>
                             </div>
-                            <div class="form-control flex-1">
+                            <div class="flex-1">
                                 <label for="service" class="block text-sm font-medium leading-6 text-neutral">
                                     {{ $t('common.service') }}
                                 </label>
@@ -235,7 +235,7 @@ watchDebounced(queryCitizens, async () => await findChars(), {
                                     />
                                 </div>
                             </div>
-                            <div class="form-control flex-1">
+                            <div class="flex-1">
                                 <label for="method" class="block text-sm font-medium leading-6 text-neutral">
                                     {{ $t('common.method') }}
                                 </label>
@@ -251,7 +251,7 @@ watchDebounced(queryCitizens, async () => await findChars(), {
                                     />
                                 </div>
                             </div>
-                            <div class="form-control flex-1">
+                            <div class="flex-1">
                                 <label for="data" class="block text-sm font-medium leading-6 text-neutral">
                                     {{ $t('common.data') }}
                                 </label>

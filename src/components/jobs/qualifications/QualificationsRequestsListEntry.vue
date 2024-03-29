@@ -34,7 +34,7 @@ const { activeChar } = storeToRefs(authStore);
             <div class="hidden sm:flex sm:flex-col sm:items-end">
                 <div class="flex flex-row gap-1">
                     <div class="flex flex-initial flex-row gap-1 rounded-full bg-info-100 px-2 py-1">
-                        <ListStatusIcon class="h-5 w-5 text-info-400" aria-hidden="true" />
+                        <ListStatusIcon class="size-5 text-info-400" aria-hidden="true" />
                         <template v-if="request.status !== undefined">
                             <span class="text-sm font-medium text-info-700">
                                 <span class="font-semibold">{{
@@ -47,11 +47,11 @@ const { activeChar } = storeToRefs(authStore);
                 <p v-if="request.createdAt" class="mt-1 text-xs leading-5 text-gray-300">
                     {{ $t('common.created_at') }} <GenericTime :value="request.createdAt" />
                 </p>
-                <p v-if="request.userId !== activeChar?.userId" class="inline-flex gap-1 mt-1 text-xs leading-5 text-gray-300">
+                <p v-if="request.userId !== activeChar?.userId" class="mt-1 inline-flex gap-1 text-xs leading-5 text-gray-300">
                     {{ $t('common.created_by') }} <CitizenInfoPopover :user="request.user" />
                 </p>
             </div>
-            <ChevronRightIcon class="h-5 w-5 flex-none text-gray-300" aria-hidden="true" />
+            <ChevronRightIcon class="size-5 flex-none text-gray-300" aria-hidden="true" />
         </div>
     </li>
 </template>

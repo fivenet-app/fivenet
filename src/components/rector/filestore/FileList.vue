@@ -98,34 +98,19 @@ const uploadFileDialog = ref(false);
                     <GenericTable :double-header="false">
                         <template #thead>
                             <tr>
-                                <th
-                                    scope="col"
-                                    class="whitespace-nowrap px-1 py-1 text-left text-sm font-semibold text-gray-100"
-                                >
+                                <th scope="col" class="whitespace-nowrap p-1 text-left text-sm font-semibold text-gray-100">
                                     {{ $t('common.action', 2) }}
                                 </th>
-                                <th
-                                    scope="col"
-                                    class="whitespace-nowrap px-1 py-1 text-left text-sm font-semibold text-gray-100"
-                                >
+                                <th scope="col" class="whitespace-nowrap p-1 text-left text-sm font-semibold text-gray-100">
                                     {{ $t('common.name') }}
                                 </th>
-                                <th
-                                    scope="col"
-                                    class="whitespace-nowrap px-1 py-1 text-left text-sm font-semibold text-gray-100"
-                                >
+                                <th scope="col" class="whitespace-nowrap p-1 text-left text-sm font-semibold text-gray-100">
                                     {{ $t('common.file_size') }}
                                 </th>
-                                <th
-                                    scope="col"
-                                    class="whitespace-nowrap px-1 py-1 text-left text-sm font-semibold text-gray-100"
-                                >
+                                <th scope="col" class="whitespace-nowrap p-1 text-left text-sm font-semibold text-gray-100">
                                     {{ $t('common.updated_at') }}
                                 </th>
-                                <th
-                                    scope="col"
-                                    class="whitespace-nowrap px-1 py-1 text-left text-sm font-semibold text-gray-100"
-                                >
+                                <th scope="col" class="whitespace-nowrap p-1 text-left text-sm font-semibold text-gray-100">
                                     {{ $t('common.type') }}
                                 </th>
                             </tr>

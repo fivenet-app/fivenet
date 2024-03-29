@@ -79,7 +79,7 @@ onConfirm(async (resultId: string) => deleteQualificationResult(resultId));
                 class="flex-initial text-primary-500 hover:text-primary-400"
                 @click="reveal()"
             >
-                <TrashCanIcon class="h-5 w-5 text-primary-500" aria-hidden="true" />
+                <TrashCanIcon class="size-5 text-primary-500" aria-hidden="true" />
             </button>
         </td>
     </tr>

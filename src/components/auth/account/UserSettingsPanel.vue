@@ -75,7 +75,7 @@ const themes = [
                                     {{ themes.find((t) => t.key === settings.theme)?.name }}
                                 </span>
                                 <span class="pointer-events-none absolute inset-y-0 right-0 flex items-center pr-2">
-                                    <ChevronDownIcon class="h-5 w-5 text-gray-400" aria-hidden="true" />
+                                    <ChevronDownIcon class="size-5 text-gray-400" aria-hidden="true" />
                                 </span>
                             </ListboxButton>
 
@@ -111,7 +111,7 @@ const themes = [
                                                     'absolute inset-y-0 left-0 flex items-center pl-1.5',
                                                 ]"
                                             >
-                                                <CheckIcon class="h-5 w-5" aria-hidden="true" />
+                                                <CheckIcon class="size-5" aria-hidden="true" />
                                             </span>
                                         </li>
                                     </ListboxOption>
@@ -157,14 +157,14 @@ const themes = [
                             v-model="darkModeActive"
                             :class="[
                                 documents.editorTheme === 'dark' ? 'bg-primary-600' : 'bg-gray-200',
-                                'relative inline-flex h-6 w-11 flex-shrink-0 cursor-pointer rounded-full border-2 border-transparent transition-colors duration-200 ease-in-out focus:outline-none focus:ring-2 focus:ring-primary-600 focus:ring-offset-2',
+                                'relative inline-flex h-6 w-11 shrink-0 cursor-pointer rounded-full border-2 border-transparent transition-colors duration-200 ease-in-out focus:outline-none focus:ring-2 focus:ring-primary-600 focus:ring-offset-2',
                             ]"
                         >
                             <span
                                 aria-hidden="true"
                                 :class="[
                                     documents.editorTheme === 'dark' ? 'translate-x-5' : 'translate-x-0',
-                                    'pointer-events-none inline-block h-5 w-5 transform rounded-full bg-white shadow ring-0 transition duration-200 ease-in-out',
+                                    'pointer-events-none inline-block size-5 rounded-full bg-white shadow ring-0 transition duration-200 ease-in-out',
                                 ]"
                             />
                         </Switch>
@@ -186,14 +186,14 @@ const themes = [
                             v-model="streamerMode"
                             :class="[
                                 streamerMode ? 'bg-primary-600' : 'bg-gray-200',
-                                'relative inline-flex h-6 w-11 flex-shrink-0 cursor-pointer rounded-full border-2 border-transparent transition-colors duration-200 ease-in-out focus:outline-none focus:ring-2 focus:ring-primary-600 focus:ring-offset-2',
+                                'relative inline-flex h-6 w-11 shrink-0 cursor-pointer rounded-full border-2 border-transparent transition-colors duration-200 ease-in-out focus:outline-none focus:ring-2 focus:ring-primary-600 focus:ring-offset-2',
                             ]"
                         >
                             <span
                                 aria-hidden="true"
                                 :class="[
                                     streamerMode ? 'translate-x-5' : 'translate-x-0',
-                                    'pointer-events-none inline-block h-5 w-5 transform rounded-full bg-white shadow ring-0 transition duration-200 ease-in-out',
+                                    'pointer-events-none inline-block size-5 rounded-full bg-white shadow ring-0 transition duration-200 ease-in-out',
                                 ]"
                             />
                         </Switch>
@@ -221,7 +221,7 @@ const themes = [
                     {{ $t('common.notification', 2) }}
                 </template>
                 <template #default>
-                    <label for="minmax-range" class="block mb-2 text-sm font-medium text-gray-900 dark:text-white">
+                    <label for="minmax-range" class="mb-2 block text-sm font-medium text-gray-900 dark:text-white">
                         {{ $t('common.volume') }}:
                         {{ audio.notificationsVolume <= 0 ? 0 : (audio.notificationsVolume * 100).toFixed(0) }}%
                     </label>
@@ -231,7 +231,7 @@ const themes = [
                         step="0.01"
                         min="0"
                         max="1"
-                        class="w-full h-2 bg-gray-200 rounded-lg appearance-none cursor-pointer dark:bg-gray-700"
+                        class="h-2 w-full cursor-pointer appearance-none rounded-lg bg-gray-200 dark:bg-gray-700"
                     />
                 </template>
             </GenericContainerPanelEntry>

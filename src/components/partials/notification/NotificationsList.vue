@@ -82,7 +82,7 @@ const canSubmit = ref(true);
                 <div class="sm:flex-auto">
                     <form @submit.prevent="refresh()">
                         <div class="flex flex-row items-center gap-2 sm:mx-auto">
-                            <div class="form-control flex-1">
+                            <div class="flex-1">
                                 <label for="search" class="block text-sm font-medium leading-6 text-neutral"
                                     >{{ $t('components.notifications.include_read') }}
                                 </label>
@@ -91,7 +91,7 @@ const canSubmit = ref(true);
                                         v-model="includeRead"
                                         :class="[
                                             includeRead ? 'bg-primary-600' : 'bg-gray-200',
-                                            'relative inline-flex h-6 w-11 flex-shrink-0 cursor-pointer rounded-full border-2 border-transparent transition-colors duration-200 ease-in-out focus:outline-none focus:ring-2 focus:ring-neutral focus:ring-offset-2',
+                                            'relative inline-flex h-6 w-11 shrink-0 cursor-pointer rounded-full border-2 border-transparent transition-colors duration-200 ease-in-out focus:outline-none focus:ring-2 focus:ring-neutral focus:ring-offset-2',
                                         ]"
                                     >
                                         <span class="sr-only">{{ $t('components.notifications.include_read') }}</span>
@@ -99,7 +99,7 @@ const canSubmit = ref(true);
                                             aria-hidden="true"
                                             :class="[
                                                 includeRead ? 'translate-x-5' : 'translate-x-0',
-                                                'pointer-events-none inline-block h-5 w-5 transform rounded-full bg-neutral ring-0 transition duration-200 ease-in-out',
+                                                'pointer-events-none inline-block size-5 rounded-full bg-neutral ring-0 transition duration-200 ease-in-out',
                                             ]"
                                         />
                                     </Switch>
@@ -158,7 +158,7 @@ const canSubmit = ref(true);
                                                         @click="$emit('clicked')"
                                                     >
                                                         {{ $t(not.title!.key, not.title?.parameters ?? {}) }}
-                                                        <LinkVariantIcon class="h-5 w-5" />
+                                                        <LinkVariantIcon class="size-5" />
                                                     </NuxtLink>
                                                 </template>
                                                 <span v-else>
@@ -186,7 +186,7 @@ const canSubmit = ref(true);
                                                 </template>
                                                 <template v-else>
                                                     <div class="flex-none rounded-full bg-error-500/20 p-1">
-                                                        <div class="h-1.5 w-1.5 rounded-full bg-error-500" />
+                                                        <div class="size-1.5 rounded-full bg-error-500" />
                                                     </div>
                                                     <p class="text-xs leading-5 text-gray-300">
                                                         {{ $t('components.notifications.unread') }}
@@ -196,11 +196,11 @@ const canSubmit = ref(true);
                                         </div>
                                     </div>
 
-                                    <div class="-mt-5 -mr-6 -mb-5 flex">
+                                    <div class="-my-5 -mr-6 flex">
                                         <button
                                             v-if="!not.readAt"
                                             type="button"
-                                            class="flex shrink items-center rounded-r-md px-1 py-1 text-sm font-semibold text-neutral focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-primary-500"
+                                            class="flex shrink items-center rounded-r-md p-1 text-sm font-semibold text-neutral focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-primary-500"
                                             :class="
                                                 !canSubmit
                                                     ? 'disabled bg-base-500 hover:bg-base-400 focus-visible:outline-base-500'
@@ -210,9 +210,9 @@ const canSubmit = ref(true);
                                             @click="markRead(not.id).finally(timeoutFn)"
                                         >
                                             <span class="sr-only">{{ $t('components.notifications.mark_read') }}</span>
-                                            <CheckIcon class="h-5 w-5 text-gray-300" aria-hidden="true" />
+                                            <CheckIcon class="size-5 text-gray-300" aria-hidden="true" />
                                         </button>
-                                        <span v-else class="h-5 w-5"></span>
+                                        <span v-else class="size-5"></span>
                                     </div>
                                 </li>
                             </ul>

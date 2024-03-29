@@ -30,7 +30,7 @@ defineEmits<{
                     type="checkbox"
                     name="users"
                     data-te-toggle="tooltip"
-                    class="h-8 w-8 rounded-md border-0 bg-base-700 text-primary-600 transition-colors hover:bg-base-600 hover:text-primary-500 focus:ring-2 focus:ring-inset focus:ring-base-300"
+                    class="size-8 rounded-md border-0 bg-base-700 text-primary-600 transition-colors hover:bg-base-600 hover:text-primary-500 focus:ring-2 focus:ring-inset focus:ring-base-300"
                 />
                 <div class="flex flex-row">
                     <span
@@ -82,7 +82,7 @@ defineEmits<{
                     type="checkbox"
                     name="documents"
                     data-te-toggle="tooltip"
-                    class="h-8 w-8 rounded-md border-0 bg-base-700 text-primary-600 transition-colors hover:bg-base-600 hover:text-primary-500 focus:ring-2 focus:ring-inset focus:ring-base-300"
+                    class="size-8 rounded-md border-0 bg-base-700 text-primary-600 transition-colors hover:bg-base-600 hover:text-primary-500 focus:ring-2 focus:ring-inset focus:ring-base-300"
                 />
                 <div class="flex flex-row">
                     <span
@@ -134,7 +134,7 @@ defineEmits<{
                     type="checkbox"
                     name="vehicles"
                     data-te-toggle="tooltip"
-                    class="h-8 w-8 rounded-md border-0 bg-base-700 text-primary-600 transition-colors hover:bg-base-600 hover:text-primary-500 focus:ring-2 focus:ring-inset focus:ring-base-300"
+                    class="size-8 rounded-md border-0 bg-base-700 text-primary-600 transition-colors hover:bg-base-600 hover:text-primary-500 focus:ring-2 focus:ring-inset focus:ring-base-300"
                 />
                 <div class="flex flex-row">
                     <span

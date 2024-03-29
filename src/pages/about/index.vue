@@ -43,7 +43,7 @@ const faqs = [
     <div class="flex h-full flex-col justify-between">
         <div>
             <div class="hero relative isolate bg-primary-900 px-6 py-12 sm:py-16 lg:px-8">
-                <div class="hero-overlay absolute left-0 top-0 z-[-1] h-full w-full"></div>
+                <div class="hero-overlay absolute left-0 top-0 z-[-1] size-full"></div>
                 <div class="mx-auto max-w-2xl text-center">
                     <h2 class="text-4xl font-bold tracking-tight text-neutral sm:text-6xl">
                         {{ $t('common.about') }}
@@ -92,7 +92,7 @@ const faqs = [
                             <div class="max-w-xl text-base leading-7 text-gray-100 lg:max-w-lg">
                                 <ul role="list" class="mt-8 space-y-8 text-gray-300">
                                     <li class="flex gap-x-3">
-                                        <MagnifyIcon class="mt-1 h-5 w-5 flex-none text-primary-300" aria-hidden="true" />
+                                        <MagnifyIcon class="mt-1 size-5 flex-none text-primary-300" aria-hidden="true" />
                                         <span>
                                             <strong class="font-semibold text-gray-200">{{
                                                 $t('components.about.introduction.feature_one.title')
@@ -101,7 +101,7 @@ const faqs = [
                                         </span>
                                     </li>
                                     <li class="flex gap-x-3">
-                                        <LockIcon class="mt-1 h-5 w-5 flex-none text-primary-300" aria-hidden="true" />
+                                        <LockIcon class="mt-1 size-5 flex-none text-primary-300" aria-hidden="true" />
                                         <span>
                                             <strong class="font-semibold text-gray-200">{{
                                                 $t('components.about.introduction.feature_two.title')
@@ -110,7 +110,7 @@ const faqs = [
                                         </span>
                                     </li>
                                     <li class="flex gap-x-3">
-                                        <MapIcon class="mt-1 h-5 w-5 flex-none text-primary-300" aria-hidden="true" />
+                                        <MapIcon class="mt-1 size-5 flex-none text-primary-300" aria-hidden="true" />
                                         <span>
                                             <strong class="font-semibold text-gray-200">{{
                                                 $t('components.about.introduction.feature_three.title')
@@ -137,7 +137,7 @@ const faqs = [
                                         <span class="text-base font-semibold leading-7">{{ faq.question }}</span>
                                         <span class="ml-6 flex h-7 items-center">
                                             <ChevronDownIcon
-                                                :class="[open ? 'upsidedown' : '', 'h-5 w-5 transition-transform']"
+                                                :class="[open ? 'upsidedown' : '', 'size-5 transition-transform']"
                                                 aria-hidden="true"
                                             />
                                         </span>
@@ -167,7 +167,7 @@ const faqs = [
                                 :external="true"
                                 class="inline-flex items-center gap-x-2 rounded-md bg-neutral/10 px-3.5 py-2.5 text-sm font-semibold text-neutral shadow-sm hover:bg-secondary-500 focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-secondary-600"
                             >
-                                <DiscordLogo class="-ml-0.5 h-5 w-5" aria-hidden="true" />
+                                <DiscordLogo class="-ml-0.5 size-5" aria-hidden="true" />
                                 <span>
                                     {{ $t('components.about.join_discord') }}
                                 </span>
@@ -187,7 +187,7 @@ const faqs = [
                                 :to="{ name: 'about-licenses' }"
                                 class="inline-flex items-center gap-x-2 rounded-md bg-neutral/10 px-3.5 py-2.5 text-sm font-semibold text-neutral shadow-sm hover:bg-secondary-500 focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-secondary-600"
                             >
-                                <LicenseIcon class="-ml-0.5 h-5 w-5" aria-hidden="true" />
+                                <LicenseIcon class="-ml-0.5 size-5" aria-hidden="true" />
                                 <span>
                                     {{ $t('components.about.licenses_list') }}
                                 </span>

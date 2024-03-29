@@ -32,7 +32,7 @@ defineEmits<{
                 leave-to="opacity-0"
                 :unmount="unmount"
             >
-                <div class="fixed inset-0 bg-base-900 bg-opacity-75 transition-opacity" />
+                <div class="fixed inset-0 bg-base-900/75 transition-opacity" />
             </TransitionChild>
 
             <TransitionChild
@@ -48,7 +48,7 @@ defineEmits<{
                 <div class="fixed inset-0 z-30 overflow-y-auto">
                     <div class="flex min-h-full items-end justify-center p-4 text-center sm:items-center sm:p-0">
                         <DialogPanel
-                            class="relative w-full transform overflow-hidden rounded-lg bg-base-800 px-4 pb-4 pt-5 text-left text-neutral transition-all sm:my-8 sm:max-w-6xl sm:p-6"
+                            class="relative w-full overflow-hidden rounded-lg bg-base-800 px-4 pb-4 pt-5 text-left text-neutral transition-all sm:my-8 sm:max-w-6xl sm:p-6"
                             :class="dialogClass"
                         >
                             <div class="absolute right-0 top-0 block pr-4 pt-4">
@@ -58,7 +58,7 @@ defineEmits<{
                                     @click="$emit('close')"
                                 >
                                     <span class="sr-only">{{ $t('common.close') }}</span>
-                                    <CloseIcon class="h-5 w-5" aria-hidden="true" />
+                                    <CloseIcon class="size-5" aria-hidden="true" />
                                 </button>
                             </div>
                             <div>

@@ -40,29 +40,29 @@ onConfirm(async (path) => deleteFile(path));
     <tr :key="file.name">
         <ConfirmDialog :open="isRevealed" :cancel="cancel" :confirm="() => confirm(file.name)" />
 
-        <td class="whitespace-nowrap px-1 py-1 text-left text-sm text-accent-200 inline-flex items-center">
+        <td class="inline-flex items-center whitespace-nowrap p-1 text-left text-sm text-accent-200">
             <NuxtLink
                 :external="true"
                 target="_blank"
                 :to="`/api/filestore/${file.name}`"
                 class="text-primary-400 hover:text-primary-600"
             >
-                <EyeIcon class="ml-auto mr-1.5 w-5 h-auto" aria-hidden="true" />
+                <EyeIcon class="ml-auto mr-1.5 h-auto w-5" aria-hidden="true" />
             </NuxtLink>
             <button type="button" class="text-primary-400 hover:text-primary-600" @click="reveal(file.name)">
-                <TrashCanIcon class="w-5 h-5" aria-hidden="true" />
+                <TrashCanIcon class="size-5" aria-hidden="true" />
             </button>
         </td>
         <td class="whitespace-nowrap py-2 pl-4 pr-3 text-sm font-medium text-neutral sm:pl-1">
             {{ file.name }}
         </td>
-        <td class="whitespace-nowrap px-1 py-1 text-left text-sm text-accent-200">
+        <td class="whitespace-nowrap p-1 text-left text-sm text-accent-200">
             {{ formatBytesBigInt(file.size) }}
         </td>
-        <td class="whitespace-nowrap px-1 py-1 text-left text-sm text-accent-200">
+        <td class="whitespace-nowrap p-1 text-left text-sm text-accent-200">
             <GenericTime :value="toDate(file.lastModified)" />
         </td>
-        <td class="whitespace-nowrap px-1 py-1 text-left text-sm text-accent-200">
+        <td class="whitespace-nowrap p-1 text-left text-sm text-accent-200">
             {{ file.contentType }}
         </td>
     </tr>

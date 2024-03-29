@@ -94,7 +94,7 @@ const selectedRole = ref<Role | undefined>();
                             <div class="sm:flex-auto">
                                 <form @submit.prevent="createRole()">
                                     <div class="mx-auto flex flex-row gap-4">
-                                        <div class="form-control flex-1">
+                                        <div class="flex-1">
                                             <label for="grade" class="block text-sm font-medium leading-6 text-neutral">
                                                 {{ $t('common.job_grade') }}
                                             </label>
@@ -147,7 +147,7 @@ const selectedRole = ref<Role | undefined>();
                                                                         'absolute inset-y-0 left-0 flex items-center pl-1.5',
                                                                     ]"
                                                                 >
-                                                                    <CheckIcon class="h-5 w-5" aria-hidden="true" />
+                                                                    <CheckIcon class="size-5" aria-hidden="true" />
                                                                 </span>
                                                             </li>
                                                         </ComboboxOption>
@@ -155,7 +155,7 @@ const selectedRole = ref<Role | undefined>();
                                                 </div>
                                             </Combobox>
                                         </div>
-                                        <div class="form-control flex flex-initial flex-col justify-end">
+                                        <div class="flex flex-initial flex-col justify-end">
                                             <button
                                                 type="submit"
                                                 class="inline-flex rounded-md px-3 py-2 text-sm font-semibold text-neutral focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2"

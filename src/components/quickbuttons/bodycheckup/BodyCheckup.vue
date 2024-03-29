@@ -206,12 +206,12 @@ function reset(): void {
                                             @focusout="focusTablet(false)"
                                         />
                                         <span class="ml-1" @click="removePin(idx)">
-                                            <TrashCanIcon class="h-5 w-5" aria-hidden="true" />
+                                            <TrashCanIcon class="size-5" aria-hidden="true" />
                                         </span>
                                     </li>
                                 </ol>
                             </div>
-                            <div class="mb-4 flex items-center flex-initial gap-1">
+                            <div class="mb-4 flex flex-initial items-center gap-1">
                                 <button
                                     type="button"
                                     class="w-full rounded-md bg-info-700 px-3.5 py-2.5 text-sm font-semibold text-neutral hover:bg-info-600"

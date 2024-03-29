@@ -17,10 +17,10 @@ withDefaults(
 
 <template>
     <div class="flex space-x-3">
-        <div class="my-auto flex h-10 w-10 items-center justify-center rounded-full">
+        <div class="my-auto flex size-10 items-center justify-center rounded-full">
             <component
                 :is="jobsUserActivityTypeIcon(activity.activityType)"
-                :class="[jobsUserActivityTypeBGColor(activity.activityType), 'h-full w-full']"
+                :class="[jobsUserActivityTypeBGColor(activity.activityType), 'size-full']"
                 aria-hidden="true"
             />
         </div>

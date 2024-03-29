@@ -23,7 +23,7 @@ const props = defineProps<{
                 :class="layout === 'horizontal' ? 'flex-row' : 'flex-col'"
             >
                 <span class="inline-flex items-center">
-                    <InformationSlabCircleIcon class="h-7 w-7" aria-hidden="true" />
+                    <InformationSlabCircleIcon class="size-7" aria-hidden="true" />
                     <strong class="mx-1 shrink-0 font-semibold">{{ $t('components.hints.start_text') }}</strong>
                 </span>
                 <span class="grow">{{ $t(`components.hints.${hintId}.content`) }} </span>

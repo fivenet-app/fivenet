@@ -190,14 +190,14 @@ watch(router.currentRoute, () => updateActiveItem());
 <template>
     <div class="h-dscreen flex">
         <!-- Sidebar -->
-        <div class="hidden w-28 overflow-y-auto defaultTheme:bg-accent-600 bg-secondary-600 md:block">
-            <div class="flex h-full w-full flex-col items-center py-6">
-                <div class="flex flex-shrink-0 items-center">
+        <div class="hidden w-28 overflow-y-auto bg-secondary-600 defaultTheme:bg-accent-600 md:block">
+            <div class="flex size-full flex-col items-center py-6">
+                <div class="flex shrink-0 items-center">
                     <NuxtLink :to="{ name: accessToken ? 'overview' : 'index' }" aria-current-value="page">
                         <FiveNetLogo class="h-12 w-auto" />
                     </NuxtLink>
                 </div>
-                <div class="mt-6 w-full flex-grow space-y-1 px-2 text-center">
+                <div class="mt-6 w-full grow space-y-1 px-2 text-center">
                     <template v-if="!accessToken && !activeChar">
                         <NuxtLink
                             :to="{ name: 'index' }"
@@ -317,7 +317,7 @@ watch(router.currentRoute, () => updateActiveItem());
                     leave-from="opacity-100"
                     leave-to="opacity-0"
                 >
-                    <div class="fixed inset-0 bg-base-900/10 bg-opacity-75" />
+                    <div class="fixed inset-0 bg-base-900/75" />
                 </TransitionChild>
 
                 <div class="fixed inset-0 z-30 flex">
@@ -331,7 +331,7 @@ watch(router.currentRoute, () => updateActiveItem());
                         leave-to="-translate-x-full"
                     >
                         <DialogPanel
-                            class="relative flex w-full max-w-xs flex-1 flex-col defaultTheme:bg-accent-600 bg-secondary-600 pb-4 pt-5"
+                            class="relative flex w-full max-w-xs flex-1 flex-col bg-secondary-600 pb-4 pt-5 defaultTheme:bg-accent-600"
                         >
                             <TransitionChild
                                 as="template"
@@ -345,7 +345,7 @@ watch(router.currentRoute, () => updateActiveItem());
                                 <div class="absolute -right-3 top-1 -mr-14 p-1">
                                     <button
                                         type="button"
-                                        class="flex h-12 w-12 items-center justify-center rounded-full ring-2 ring-neutral focus:outline-none"
+                                        class="flex size-12 items-center justify-center rounded-full ring-2 ring-neutral focus:outline-none"
                                         @click="mobileMenuOpen = false"
                                     >
                                         <CloseIcon class="h-auto w-6 text-neutral" aria-hidden="true" />
@@ -353,10 +353,10 @@ watch(router.currentRoute, () => updateActiveItem());
                                     </button>
                                 </div>
                             </TransitionChild>
-                            <div class="flex flex-shrink-0 items-center px-4">
-                                <FiveNetLogo class="mx-auto h-16 w-16" />
+                            <div class="flex shrink-0 items-center px-4">
+                                <FiveNetLogo class="mx-auto size-16" />
                             </div>
-                            <div class="mt-5 h-0 flex-grow overflow-y-auto px-2">
+                            <div class="mt-5 h-0 grow overflow-y-auto px-2">
                                 <nav class="flex h-full flex-col">
                                     <div class="space-y-1">
                                         <template v-if="!accessToken && !activeChar">
@@ -468,7 +468,7 @@ watch(router.currentRoute, () => updateActiveItem());
                             </div>
                         </DialogPanel>
                     </TransitionChild>
-                    <div class="w-14 flex-shrink-0" aria-hidden="true"></div>
+                    <div class="w-14 shrink-0" aria-hidden="true"></div>
                 </div>
             </Dialog>
         </TransitionRoot>
@@ -476,7 +476,7 @@ watch(router.currentRoute, () => updateActiveItem());
         <!-- Content area -->
         <div class="flex flex-1 flex-col overflow-hidden">
             <header class="w-full">
-                <div class="relative z-30 flex h-16 flex-shrink-0 bg-base-800">
+                <div class="relative z-30 flex h-16 shrink-0 bg-base-800">
                     <button
                         type="button"
                         class="px-4 text-neutral focus:outline-none focus:ring-2 focus:ring-inset focus:ring-primary-500 md:hidden"
@@ -497,7 +497,7 @@ watch(router.currentRoute, () => updateActiveItem());
                                                 }"
                                                 class="text-base-400 hover:text-neutral hover:transition-colors"
                                             >
-                                                <HomeIcon class="h-5 w-5 flex-shrink-0" aria-hidden="true" />
+                                                <HomeIcon class="size-5 shrink-0" aria-hidden="true" />
                                                 <span class="sr-only">{{ $t('common.home') }}</span>
                                             </NuxtLink>
                                         </div>
@@ -505,10 +505,7 @@ watch(router.currentRoute, () => updateActiveItem());
                                     <template v-for="(page, key) in breadcrumbs" :key="key">
                                         <li v-if="key !== 0 && page.to !== undefined">
                                             <div class="flex items-center">
-                                                <ChevronRightIcon
-                                                    class="h-5 w-5 flex-shrink-0 text-base-300"
-                                                    aria-hidden="true"
-                                                />
+                                                <ChevronRightIcon class="size-5 shrink-0 text-base-300" aria-hidden="true" />
                                                 <!-- @vue-ignore the route should be valid, as we construct it based on our pages -->
                                                 <NuxtLink
                                                     :to="page.to"
@@ -516,7 +513,7 @@ watch(router.currentRoute, () => updateActiveItem());
                                                         key === breadcrumbs.length - 1
                                                             ? 'font-bold text-accent-200'
                                                             : 'font-medium text-base-300',
-                                                        'ml-2 max-w-[5rem] truncate text-sm hover:text-neutral hover:transition-colors sm:ml-4 lg:max-w-full',
+                                                        'ml-2 max-w-20 truncate text-sm hover:text-neutral hover:transition-colors sm:ml-4 lg:max-w-full',
                                                     ]"
                                                     :aria-current="key === breadcrumbs.length - 1 ? 'page' : undefined"
                                                 >
@@ -542,7 +539,7 @@ watch(router.currentRoute, () => updateActiveItem());
                             <LanguageSwitcherMenu />
 
                             <!-- Account dropdown -->
-                            <Menu as="div" class="relative flex-shrink-0">
+                            <Menu as="div" class="relative shrink-0">
                                 <MenuButton
                                     class="flex rounded-full bg-base-800 text-sm ring-2 ring-base-600 focus:outline-none focus:ring-2 focus:ring-primary-500 focus:ring-offset-2"
                                 >
@@ -571,7 +568,7 @@ watch(router.currentRoute, () => updateActiveItem());
                                     leave-to-class="transform scale-95 opacity-0"
                                 >
                                     <MenuItems
-                                        class="absolute right-0 z-30 mt-2 w-48 origin-top-right rounded-md bg-base-800 py-1 shadow-float ring-1 ring-base-100 ring-opacity-5 focus:outline-none"
+                                        class="absolute right-0 z-30 mt-2 w-48 origin-top-right rounded-md bg-base-800 py-1 shadow-float ring-1 ring-base-100/5 focus:outline-none"
                                     >
                                         <MenuItem
                                             v-for="item in userNavigation.filter(

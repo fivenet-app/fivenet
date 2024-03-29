@@ -90,14 +90,14 @@ watch(selectedJob, () => setSuperUserMode());
                 v-model="superuser"
                 :class="[
                     superuser ? 'bg-primary-600' : 'bg-gray-200',
-                    'relative inline-flex h-4 w-9 flex-shrink-0 cursor-pointer rounded-full border-2 border-transparent transition-colors duration-200 ease-in-out focus:outline-none focus:ring-2 focus:ring-primary-600 focus:ring-offset-2',
+                    'relative inline-flex h-4 w-9 shrink-0 cursor-pointer rounded-full border-2 border-transparent transition-colors duration-200 ease-in-out focus:outline-none focus:ring-2 focus:ring-primary-600 focus:ring-offset-2',
                 ]"
             >
                 <span
                     aria-hidden="true"
                     :class="[
                         superuser ? 'translate-x-5' : 'translate-x-0',
-                        'pointer-events-none inline-block h-3 w-3 transform rounded-full bg-white shadow ring-0 transition duration-200 ease-in-out',
+                        'pointer-events-none inline-block size-3 rounded-full bg-white shadow ring-0 transition duration-200 ease-in-out',
                     ]"
                 />
             </Switch>
@@ -107,11 +107,11 @@ watch(selectedJob, () => setSuperUserMode());
         </SwitchGroup>
 
         <Combobox v-if="isSuperuser" v-model="selectedJob" as="div" nullable>
-            <div class="mt-1 relative">
+            <div class="relative mt-1">
                 <ComboboxButton as="div">
                     <ComboboxInput
                         autocomplete="off"
-                        class="hidden md:block text-xs w-full rounded-md border-0 bg-base-700 py-1.5 text-neutral placeholder:text-accent-200 focus:ring-2 focus:ring-inset focus:ring-base-300"
+                        class="hidden w-full rounded-md border-0 bg-base-700 py-1.5 text-xs text-neutral placeholder:text-accent-200 focus:ring-2 focus:ring-inset focus:ring-base-300 md:block"
                         :display-value="(job: any) => (job ? job?.label : '')"
                         :placeholder="`${$t('common.select')} ${$t('common.job')}`"
                         @click="listJobs"
@@ -123,7 +123,7 @@ watch(selectedJob, () => setSuperUserMode());
 
                 <ComboboxOptions
                     v-if="filteredJobs.length > 0"
-                    class="absolute z-40 mt-1 max-h-44 w-full overflow-auto rounded-md bg-base-700 py-1 text-base text-xs"
+                    class="absolute z-40 mt-1 max-h-44 w-full overflow-auto rounded-md bg-base-700 py-1 text-xs"
                 >
                     <ComboboxOption v-for="job in filteredJobs" :key="job.name" v-slot="{ active, selected }" :value="job">
                         <li
@@ -143,7 +143,7 @@ watch(selectedJob, () => setSuperUserMode());
                                     'absolute inset-y-0 left-0 flex items-center pl-1.5',
                                 ]"
                             >
-                                <CheckIcon class="h-5 w-5" aria-hidden="true" />
+                                <CheckIcon class="size-5" aria-hidden="true" />
                             </span>
                         </li>
                     </ComboboxOption>

@@ -36,7 +36,7 @@ defineEmits<{
                 leave-from="opacity-100"
                 leave-to="opacity-0"
             >
-                <div class="fixed inset-0 bg-gray-500 bg-opacity-75 transition-opacity" />
+                <div class="fixed inset-0 bg-gray-500/75 transition-opacity" />
             </TransitionChild>
 
             <div class="fixed inset-0 z-30 overflow-y-auto">
@@ -51,7 +51,7 @@ defineEmits<{
                         leave-to="opacity-0 translate-y-4 sm:translate-y-0 sm:scale-95"
                     >
                         <DialogPanel
-                            class="relative w-full transform overflow-hidden rounded-lg bg-base-800 px-4 pb-4 pt-5 text-left shadow-xl transition-all sm:my-8 sm:max-w-lg sm:p-6"
+                            class="relative w-full overflow-hidden rounded-lg bg-base-800 px-4 pb-4 pt-5 text-left shadow-xl transition-all sm:my-8 sm:max-w-lg sm:p-6"
                         >
                             <div class="absolute right-0 top-0 hidden pr-4 pt-4 sm:block">
                                 <button
@@ -63,14 +63,14 @@ defineEmits<{
                                     "
                                 >
                                     <span class="sr-only">{{ $t('common.close') }}</span>
-                                    <CloseIcon class="h-5 w-5" aria-hidden="true" />
+                                    <CloseIcon class="size-5" aria-hidden="true" />
                                 </button>
                             </div>
                             <div class="sm:flex sm:items-start">
                                 <div
-                                    class="mx-auto flex h-12 w-12 flex-shrink-0 items-center justify-center rounded-full bg-error-100 sm:mx-0 sm:h-10 sm:w-10"
+                                    class="mx-auto flex size-12 shrink-0 items-center justify-center rounded-full bg-error-100 sm:mx-0 sm:size-10"
                                 >
-                                    <component :is="icon" class="h-5 w-5 text-error-600" aria-hidden="true" />
+                                    <component :is="icon" class="size-5 text-error-600" aria-hidden="true" />
                                 </div>
                                 <div class="mt-3 text-center sm:ml-4 sm:mt-0 sm:text-left">
                                     <DialogTitle as="h3" class="text-base font-semibold leading-6 text-gray-100">

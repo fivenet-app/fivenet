@@ -54,10 +54,10 @@ function nextHint(): void {
                 class="pointer-events-auto flex items-center justify-between gap-x-6 bg-primary-900 px-6 py-2.5 sm:rounded-xl sm:border-2 sm:border-neutral/20 sm:py-3 sm:pl-4 sm:pr-3.5"
             >
                 <button type="button" class="text-white" @click="previousHint()">
-                    <ArrowLeftBoldCircleIcon class="h-7 w-7" aria-hidden="true" />
+                    <ArrowLeftBoldCircleIcon class="size-7" aria-hidden="true" />
                 </button>
                 <p class="inline-flex items-center gap-2 text-sm leading-6 text-white">
-                    <InformationSlabCircleIcon class="h-7 w-7" aria-hidden="true" />
+                    <InformationSlabCircleIcon class="size-7" aria-hidden="true" />
                     <strong class="mx-1 shrink-0 font-semibold">{{ $t('components.hints.start_text') }}</strong>
                     <span class="grow">{{ $t(`components.hints.${hint.id}.content`) }} </span>
                     <GenericBadge v-if="hint.keyboard" class="ml-1 text-black" color="gray">
@@ -68,7 +68,7 @@ function nextHint(): void {
                     </NuxtLink>
                 </p>
                 <button type="button" class="text-white" @click="nextHint()">
-                    <ArrowRightBoldCircleIcon class="h-7 w-7" aria-hidden="true" />
+                    <ArrowRightBoldCircleIcon class="size-7" aria-hidden="true" />
                 </button>
             </div>
         </div>

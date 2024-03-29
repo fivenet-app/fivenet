@@ -43,7 +43,7 @@ const open = ref(false);
 </script>
 
 <template>
-    <div class="px-4 py-3 sm:grid sm:grid-cols-3 sm:gap-2 sm:px-0 flex">
+    <div class="flex px-4 py-3 sm:grid sm:grid-cols-3 sm:gap-2 sm:px-0">
         <DispatchDetails :open="open" :dispatch="dispatch" @close="open = false" @goto="$emit('goto', $event)" />
 
         <dt class="flex-initial text-sm font-medium leading-6 text-neutral">
@@ -52,7 +52,7 @@ const open = ref(false);
                     type="checkbox"
                     name="selected"
                     :checked="checked"
-                    class="h-4 h-5 w-4 w-5 rounded border-gray-300 text-primary-600 focus:ring-primary-600"
+                    class="size-5 rounded border-gray-300 text-primary-600 focus:ring-primary-600"
                     @change="
                         checked = !checked;
                         $emit('selected', checked);
@@ -74,7 +74,7 @@ const open = ref(false);
                 }}</span>
             </div>
         </dt>
-        <dd class="flex-1 mt-1 text-sm leading-6 text-gray-300 sm:col-span-2 sm:mt-0">
+        <dd class="mt-1 flex-1 text-sm leading-6 text-gray-300 sm:col-span-2 sm:mt-0">
             <ul role="list" class="divide-y divide-base-200 rounded-md border border-base-200">
                 <li class="flex items-center py-3 pl-3 pr-4 text-sm">
                     <span class="font-medium">{{ $t('common.sent_by') }}:</span>
@@ -102,7 +102,7 @@ const open = ref(false);
                         class="inline-flex items-center text-primary-400 hover:text-primary-600"
                         @click="$emit('goto', { x: dispatch.x, y: dispatch.y })"
                     >
-                        <MapMarkerIcon class="h-5 w-5" aria-hidden="true" />
+                        <MapMarkerIcon class="size-5" aria-hidden="true" />
                         <span class="ml-1">
                             {{ $t('common.go_to_location') }}
                         </span>
@@ -122,7 +122,7 @@ const open = ref(false);
                 </li>
                 <li class="flex items-center justify-between py-3 pl-3 pr-4 text-sm">
                     <div class="flex flex-1 items-center">
-                        <AccountIcon class="mr-1 h-5 w-5 flex-shrink-0" aria-hidden="true" />
+                        <AccountIcon class="mr-1 size-5 shrink-0" aria-hidden="true" />
                         <span class="mr-1 font-medium">{{ $t('common.units', 2) }}:</span>
                         <span v-if="dispatch.units.length === 0">{{ $t('common.member', 0) }}</span>
                         <span v-else class="ml-2 grid flex-1 grid-cols-2 gap-1 truncate">

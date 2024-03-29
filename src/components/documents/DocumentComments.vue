@@ -195,7 +195,7 @@ const onSubmitThrottle = useThrottleFn(async (e) => {
 
                             <div class="absolute inset-x-0 bottom-0 flex justify-between py-2 pl-3 pr-2">
                                 <div class="flex items-center space-x-5"></div>
-                                <div class="flex-shrink-0">
+                                <div class="shrink-0">
                                     <button
                                         type="submit"
                                         class="flex justify-center rounded-md px-3 py-2 text-sm font-semibold text-neutral shadow-sm focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2"
@@ -207,7 +207,7 @@ const onSubmitThrottle = useThrottleFn(async (e) => {
                                         ]"
                                     >
                                         <template v-if="!canSubmit">
-                                            <LoadingIcon class="mr-2 h-5 w-5 animate-spin" aria-hidden="true" />
+                                            <LoadingIcon class="mr-2 size-5 animate-spin" aria-hidden="true" />
                                         </template>
                                         {{ $t('common.post') }}
                                     </button>
@@ -233,7 +233,7 @@ const onSubmitThrottle = useThrottleFn(async (e) => {
                 :focus="focusComment"
             />
             <div
-                class="flow-root rounded-lg rounded-lg bg-base-800 text-neutral shadow-sm shadow-sm ring-1 ring-inset ring-gray-500 focus-within:ring-2 focus-within:ring-primary-600"
+                class="flow-root rounded-lg bg-base-800 text-neutral shadow-sm ring-1 ring-inset ring-gray-500 focus-within:ring-2 focus-within:ring-primary-600"
             >
                 <ul v-if="data && data.comments && data.comments.length > 0" role="list" class="divide-y divide-gray-200 px-2">
                     <DocumentCommentEntry

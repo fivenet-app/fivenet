@@ -208,7 +208,7 @@ watch(selectedAccessRole, () => {
                     >
                         <span class="block truncate">{{ selectedAccessType?.name }}</span>
                         <span class="pointer-events-none absolute inset-y-0 right-0 flex items-center pr-2">
-                            <ChevronDownIcon class="h-5 w-5 text-gray-400" aria-hidden="true" />
+                            <ChevronDownIcon class="size-5 text-gray-400" aria-hidden="true" />
                         </span>
                     </ListboxButton>
 
@@ -244,7 +244,7 @@ watch(selectedAccessRole, () => {
                                             'absolute inset-y-0 left-0 flex items-center pl-1.5',
                                         ]"
                                     >
-                                        <CheckIcon class="h-5 w-5" aria-hidden="true" />
+                                        <CheckIcon class="size-5" aria-hidden="true" />
                                     </span>
                                 </li>
                             </ListboxOption>
@@ -253,7 +253,7 @@ watch(selectedAccessRole, () => {
                 </div>
             </Listbox>
         </div>
-        <div v-if="selectedAccessType?.id === 0" class="flex flex-grow">
+        <div v-if="selectedAccessType?.id === 0" class="flex grow">
             <div class="mr-2 flex-1">
                 <Combobox v-model="selectedJob" as="div" :disabled="readOnly">
                     <div class="relative">
@@ -296,7 +296,7 @@ watch(selectedAccessRole, () => {
                                             'absolute inset-y-0 left-0 flex items-center pl-1.5',
                                         ]"
                                     >
-                                        <CheckIcon class="h-5 w-5" aria-hidden="true" />
+                                        <CheckIcon class="size-5" aria-hidden="true" />
                                     </span>
                                 </li>
                             </ComboboxOption>
@@ -347,7 +347,7 @@ watch(selectedAccessRole, () => {
                                             'absolute inset-y-0 left-0 flex items-center pl-1.5',
                                         ]"
                                     >
-                                        <CheckIcon class="h-5 w-5" aria-hidden="true" />
+                                        <CheckIcon class="size-5" aria-hidden="true" />
                                     </span>
                                 </li>
                             </ComboboxOption>
@@ -356,7 +356,7 @@ watch(selectedAccessRole, () => {
                 </Combobox>
             </div>
         </div>
-        <div class="flex-inital mr-2 w-60">
+        <div class="mr-2 w-60 flex-initial">
             <Combobox v-model="selectedAccessRole" as="div" :disabled="readOnly">
                 <div class="relative">
                     <ComboboxButton as="div">
@@ -399,7 +399,7 @@ watch(selectedAccessRole, () => {
                                         'absolute inset-y-0 left-0 flex items-center pl-1.5',
                                     ]"
                                 >
-                                    <CheckIcon class="h-5 w-5" aria-hidden="true" />
+                                    <CheckIcon class="size-5" aria-hidden="true" />
                                 </span>
                             </li>
                         </ComboboxOption>
@@ -413,7 +413,7 @@ watch(selectedAccessRole, () => {
                 class="rounded-full bg-primary-500 p-1.5 text-neutral hover:bg-primary-400 focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-primary-500"
                 @click="$emit('deleteRequest', { id: props.init.id })"
             >
-                <CloseIcon class="h-5 w-5" aria-hidden="true" />
+                <CloseIcon class="size-5" aria-hidden="true" />
             </button>
         </div>
     </div>

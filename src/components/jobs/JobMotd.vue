@@ -62,7 +62,7 @@ watch(editing, () => {
 <template>
     <div v-if="data !== null" class="w-full flex-col">
         <div class="flex items-center">
-            <h4 v-if="data.motd.length > 0 || canEdit" class="flex-1 mt-2 text-base font-semibold leading-6 text-neutral">
+            <h4 v-if="data.motd.length > 0 || canEdit" class="mt-2 flex-1 text-base font-semibold leading-6 text-neutral">
                 {{ $t('common.motd') }}
             </h4>
 
@@ -73,7 +73,7 @@ watch(editing, () => {
                     class="text-primary-500 hover:text-primary-400"
                     @click="editing = !editing"
                 >
-                    <PencilIcon class="h-5 w-5" aria-hidden="true" />
+                    <PencilIcon class="size-5" aria-hidden="true" />
                 </button>
                 <div v-else class="flex flex-row gap-1">
                     <button
@@ -84,13 +84,13 @@ watch(editing, () => {
                             editing = !editing;
                         "
                     >
-                        <ContentSaveIcon class="h-5 w-5" aria-hidden="true" />
+                        <ContentSaveIcon class="size-5" aria-hidden="true" />
                         <template v-if="!canSubmit">
-                            <LoadingIcon class="mr-2 h-5 w-5 animate-spin" aria-hidden="true" />
+                            <LoadingIcon class="mr-2 size-5 animate-spin" aria-hidden="true" />
                         </template>
                     </button>
                     <button type="button" class="text-primary-500 hover:text-primary-400" @click="editing = !editing">
-                        <CancelIcon class="h-5 w-5" aria-hidden="true" />
+                        <CancelIcon class="size-5" aria-hidden="true" />
                     </button>
                 </div>
             </template>
@@ -98,7 +98,7 @@ watch(editing, () => {
 
         <div class="flex">
             <template v-if="!editing">
-                <div class="flex-1 w-full">
+                <div class="w-full flex-1">
                     <p class="prose prose-invert">
                         {{ data.motd }}
                     </p>
@@ -109,7 +109,7 @@ watch(editing, () => {
                     v-model="data.motd"
                     rows="2"
                     name="content"
-                    class="flex-1 w-full rounded-md border-0 bg-base-700 py-1.5 text-neutral placeholder:text-accent-200 focus:ring-2 focus:ring-inset border-2 border-base-200 focus:ring-base-300 sm:text-sm sm:leading-6"
+                    class="w-full flex-1 rounded-md border-2 border-base-200 bg-base-700 py-1.5 text-neutral placeholder:text-accent-200 focus:ring-2 focus:ring-inset focus:ring-base-300 sm:text-sm sm:leading-6"
                     @focusin="focusTablet(true)"
                     @focusout="focusTablet(false)"
                 ></textarea>

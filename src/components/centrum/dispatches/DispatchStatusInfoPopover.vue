@@ -44,9 +44,9 @@ const open = ref(false);
                 </PopoverButton>
 
                 <PopoverPanel
-                    class="absolute z-5 w-72 min-w-fit max-w-[18rem] rounded-lg border border-gray-600 bg-gray-800 text-sm text-gray-400 shadow-sm transition-opacity"
+                    class="absolute z-5 w-72 min-w-fit max-w-72 rounded-lg border border-gray-600 bg-gray-800 text-sm text-gray-400 shadow-sm transition-opacity"
                 >
-                    <div class="inline-flex p-3 gap-2">
+                    <div class="inline-flex gap-2 p-3">
                         <div class="mb-2 flex items-center gap-2">
                             <button
                                 type="button"
@@ -54,7 +54,7 @@ const open = ref(false);
                                 class="inline-flex items-center text-primary-500 hover:text-primary-400"
                                 @click="open = true"
                             >
-                                <CarEmergencyIcon class="h-5 w-5" aria-hidden="true" />
+                                <CarEmergencyIcon class="size-5" aria-hidden="true" />
                                 <span class="ml-1">{{ $t('common.detail', 2) }}</span>
                             </button>
                         </div>

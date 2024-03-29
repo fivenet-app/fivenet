@@ -23,7 +23,7 @@ defineEmits<{
                     class="flex-initial text-primary-500 hover:text-primary-400"
                     @click="$emit('selected', role)"
                 >
-                    <EyeIcon class="h-5 w-5 text-primary-500" aria-hidden="true" />
+                    <EyeIcon class="size-5 text-primary-500" aria-hidden="true" />
                 </button>
             </div>
         </td>

@@ -148,7 +148,7 @@ const onSubmitThrottle = useThrottleFn(async (e) => {
                                                 {{ availableThemes.find((t) => t.key === jobProps?.theme)?.name }}
                                             </span>
                                             <span class="pointer-events-none absolute inset-y-0 right-0 flex items-center pr-2">
-                                                <ChevronDownIcon class="h-5 w-5 text-gray-400" aria-hidden="true" />
+                                                <ChevronDownIcon class="size-5 text-gray-400" aria-hidden="true" />
                                             </span>
                                         </ListboxButton>
 
@@ -189,7 +189,7 @@ const onSubmitThrottle = useThrottleFn(async (e) => {
                                                                 'absolute inset-y-0 left-0 flex items-center pl-1.5',
                                                             ]"
                                                         >
-                                                            <CheckIcon class="h-5 w-5" aria-hidden="true" />
+                                                            <CheckIcon class="size-5" aria-hidden="true" />
                                                         </span>
                                                     </li>
                                                 </ListboxOption>
@@ -239,7 +239,7 @@ const onSubmitThrottle = useThrottleFn(async (e) => {
                                                 v-model="jobProps.quickButtons.penaltyCalculator"
                                                 :class="[
                                                     jobProps.quickButtons.penaltyCalculator ? 'bg-primary-600' : 'bg-gray-200',
-                                                    'relative inline-flex h-6 w-11 flex-shrink-0 cursor-pointer rounded-full border-2 border-transparent transition-colors duration-200 ease-in-out focus:outline-none focus:ring-2 focus:ring-primary-600 focus:ring-offset-2',
+                                                    'relative inline-flex h-6 w-11 shrink-0 cursor-pointer rounded-full border-2 border-transparent transition-colors duration-200 ease-in-out focus:outline-none focus:ring-2 focus:ring-primary-600 focus:ring-offset-2',
                                                 ]"
                                             >
                                                 <span
@@ -248,7 +248,7 @@ const onSubmitThrottle = useThrottleFn(async (e) => {
                                                         jobProps.quickButtons.penaltyCalculator
                                                             ? 'translate-x-5'
                                                             : 'translate-x-0',
-                                                        'pointer-events-none inline-block h-5 w-5 transform rounded-full bg-white shadow ring-0 transition duration-200 ease-in-out',
+                                                        'pointer-events-none inline-block size-5 rounded-full bg-white shadow ring-0 transition duration-200 ease-in-out',
                                                     ]"
                                                 />
                                             </Switch>
@@ -265,14 +265,14 @@ const onSubmitThrottle = useThrottleFn(async (e) => {
                                                 v-model="jobProps.quickButtons.bodyCheckup"
                                                 :class="[
                                                     jobProps.quickButtons.bodyCheckup ? 'bg-primary-600' : 'bg-gray-200',
-                                                    'relative inline-flex h-6 w-11 flex-shrink-0 cursor-pointer rounded-full border-2 border-transparent transition-colors duration-200 ease-in-out focus:outline-none focus:ring-2 focus:ring-primary-600 focus:ring-offset-2',
+                                                    'relative inline-flex h-6 w-11 shrink-0 cursor-pointer rounded-full border-2 border-transparent transition-colors duration-200 ease-in-out focus:outline-none focus:ring-2 focus:ring-primary-600 focus:ring-offset-2',
                                                 ]"
                                             >
                                                 <span
                                                     aria-hidden="true"
                                                     :class="[
                                                         jobProps.quickButtons.bodyCheckup ? 'translate-x-5' : 'translate-x-0',
-                                                        'pointer-events-none inline-block h-5 w-5 transform rounded-full bg-white shadow ring-0 transition duration-200 ease-in-out',
+                                                        'pointer-events-none inline-block size-5 rounded-full bg-white shadow ring-0 transition duration-200 ease-in-out',
                                                     ]"
                                                 />
                                             </Switch>
@@ -293,7 +293,7 @@ const onSubmitThrottle = useThrottleFn(async (e) => {
                             <template #default>
                                 <div class="flex flex-col">
                                     <template v-if="isNUIAvailable()">
-                                        <p class="text-neutral text-sm">
+                                        <p class="text-sm text-neutral">
                                             {{ $t('system.not_supported_on_tablet.title') }}
                                         </p>
                                     </template>
@@ -343,7 +343,7 @@ const onSubmitThrottle = useThrottleFn(async (e) => {
                                     @click="onSubmitThrottle"
                                 >
                                     <template v-if="!canSubmit">
-                                        <LoadingIcon class="mr-2 h-5 w-5 animate-spin" aria-hidden="true" />
+                                        <LoadingIcon class="mr-2 size-5 animate-spin" aria-hidden="true" />
                                     </template>
                                     {{ $t('common.save', 1) }}
                                 </button>
@@ -380,11 +380,11 @@ const onSubmitThrottle = useThrottleFn(async (e) => {
                                     v-if="appConfig.discord.botInviteURL !== undefined"
                                     :to="appConfig.discord.botInviteURL"
                                     :external="true"
-                                    class="mt-2 flex w-full justify-center rounded-md bg-primary-500 px-3 py-2 text-sm font-semibold text-neutral transition-colors hover:bg-primary-400 focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-base-300 focus-visible:outline-primary-500"
+                                    class="mt-2 flex w-full justify-center rounded-md bg-primary-500 px-3 py-2 text-sm font-semibold text-neutral transition-colors hover:bg-primary-400 focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-primary-500"
                                 >
                                     {{ $t('components.rector.job_props.invite_bot') }}
                                 </NuxtLink>
-                                <p v-if="jobProps.discordLastSync" class="mt-2 text-base text-xs">
+                                <p v-if="jobProps.discordLastSync" class="mt-2 text-xs text-neutral">
                                     {{ $t('components.rector.job_props.last_sync') }}:
                                     <GenericTime :value="jobProps.discordLastSync" />
                                 </p>
@@ -396,19 +396,19 @@ const onSubmitThrottle = useThrottleFn(async (e) => {
                                 {{ $t('components.rector.job_props.status_log') }}
                             </template>
                             <template #default>
-                                <SwitchGroup as="div" class="flex items-center mb-1">
+                                <SwitchGroup as="div" class="mb-1 flex items-center">
                                     <Switch
                                         v-model="jobProps.discordSyncSettings.statusLog"
                                         :class="[
                                             jobProps.discordSyncSettings.statusLog ? 'bg-primary-600' : 'bg-gray-200',
-                                            'relative inline-flex h-6 w-11 flex-shrink-0 cursor-pointer rounded-full border-2 border-transparent transition-colors duration-200 ease-in-out focus:outline-none focus:ring-2 focus:ring-primary-600 focus:ring-offset-2',
+                                            'relative inline-flex h-6 w-11 shrink-0 cursor-pointer rounded-full border-2 border-transparent transition-colors duration-200 ease-in-out focus:outline-none focus:ring-2 focus:ring-primary-600 focus:ring-offset-2',
                                         ]"
                                     >
                                         <span
                                             aria-hidden="true"
                                             :class="[
                                                 jobProps.discordSyncSettings.statusLog ? 'translate-x-5' : 'translate-x-0',
-                                                'pointer-events-none inline-block h-5 w-5 transform rounded-full bg-white shadow ring-0 transition duration-200 ease-in-out',
+                                                'pointer-events-none inline-block size-5 rounded-full bg-white shadow ring-0 transition duration-200 ease-in-out',
                                             ]"
                                         />
                                     </Switch>
@@ -444,19 +444,19 @@ const onSubmitThrottle = useThrottleFn(async (e) => {
                                 {{ $t('components.rector.job_props.user_info_sync') }}
                             </template>
                             <template #default>
-                                <SwitchGroup as="div" class="flex items-center mb-1">
+                                <SwitchGroup as="div" class="mb-1 flex items-center">
                                     <Switch
                                         v-model="jobProps.discordSyncSettings.userInfoSync"
                                         :class="[
                                             jobProps.discordSyncSettings.userInfoSync ? 'bg-primary-600' : 'bg-gray-200',
-                                            'relative inline-flex h-6 w-11 flex-shrink-0 cursor-pointer rounded-full border-2 border-transparent transition-colors duration-200 ease-in-out focus:outline-none focus:ring-2 focus:ring-primary-600 focus:ring-offset-2',
+                                            'relative inline-flex h-6 w-11 shrink-0 cursor-pointer rounded-full border-2 border-transparent transition-colors duration-200 ease-in-out focus:outline-none focus:ring-2 focus:ring-primary-600 focus:ring-offset-2',
                                         ]"
                                     >
                                         <span
                                             aria-hidden="true"
                                             :class="[
                                                 jobProps.discordSyncSettings.userInfoSync ? 'translate-x-5' : 'translate-x-0',
-                                                'pointer-events-none inline-block h-5 w-5 transform rounded-full bg-white shadow ring-0 transition duration-200 ease-in-out',
+                                                'pointer-events-none inline-block size-5 rounded-full bg-white shadow ring-0 transition duration-200 ease-in-out',
                                             ]"
                                         />
                                     </Switch>
@@ -487,7 +487,7 @@ const onSubmitThrottle = useThrottleFn(async (e) => {
                                     <SwitchGroup
                                         v-if="jobProps.discordSyncSettings.userInfoSyncSettings !== undefined"
                                         as="div"
-                                        class="flex items-center mt-2 mb-1"
+                                        class="mb-1 mt-2 flex items-center"
                                     >
                                         <Switch
                                             v-model="jobProps.discordSyncSettings.userInfoSyncSettings.employeeRoleEnabled"
@@ -495,7 +495,7 @@ const onSubmitThrottle = useThrottleFn(async (e) => {
                                                 jobProps.discordSyncSettings.userInfoSyncSettings.employeeRoleEnabled
                                                     ? 'bg-primary-600'
                                                     : 'bg-gray-200',
-                                                'relative inline-flex h-6 w-11 flex-shrink-0 cursor-pointer rounded-full border-2 border-transparent transition-colors duration-200 ease-in-out focus:outline-none focus:ring-2 focus:ring-primary-600 focus:ring-offset-2',
+                                                'relative inline-flex h-6 w-11 shrink-0 cursor-pointer rounded-full border-2 border-transparent transition-colors duration-200 ease-in-out focus:outline-none focus:ring-2 focus:ring-primary-600 focus:ring-offset-2',
                                             ]"
                                         >
                                             <span
@@ -504,7 +504,7 @@ const onSubmitThrottle = useThrottleFn(async (e) => {
                                                     jobProps.discordSyncSettings.userInfoSyncSettings.employeeRoleEnabled
                                                         ? 'translate-x-5'
                                                         : 'translate-x-0',
-                                                    'pointer-events-none inline-block h-5 w-5 transform rounded-full bg-white shadow ring-0 transition duration-200 ease-in-out',
+                                                    'pointer-events-none inline-block size-5 rounded-full bg-white shadow ring-0 transition duration-200 ease-in-out',
                                                 ]"
                                             />
                                         </Switch>
@@ -539,14 +539,14 @@ const onSubmitThrottle = useThrottleFn(async (e) => {
                                     </div>
 
                                     <template v-if="jobProps.discordSyncSettings.userInfoSyncSettings !== undefined">
-                                        <SwitchGroup as="div" class="flex items-center mt-2 mb-1">
+                                        <SwitchGroup as="div" class="mb-1 mt-2 flex items-center">
                                             <Switch
                                                 v-model="jobProps.discordSyncSettings.userInfoSyncSettings.unemployedEnabled"
                                                 :class="[
                                                     jobProps.discordSyncSettings.userInfoSyncSettings.unemployedEnabled
                                                         ? 'bg-primary-600'
                                                         : 'bg-gray-200',
-                                                    'relative inline-flex h-6 w-11 flex-shrink-0 cursor-pointer rounded-full border-2 border-transparent transition-colors duration-200 ease-in-out focus:outline-none focus:ring-2 focus:ring-primary-600 focus:ring-offset-2',
+                                                    'relative inline-flex h-6 w-11 shrink-0 cursor-pointer rounded-full border-2 border-transparent transition-colors duration-200 ease-in-out focus:outline-none focus:ring-2 focus:ring-primary-600 focus:ring-offset-2',
                                                 ]"
                                             >
                                                 <span
@@ -555,7 +555,7 @@ const onSubmitThrottle = useThrottleFn(async (e) => {
                                                         jobProps.discordSyncSettings.userInfoSyncSettings.unemployedEnabled
                                                             ? 'translate-x-5'
                                                             : 'translate-x-0',
-                                                        'pointer-events-none inline-block h-5 w-5 transform rounded-full bg-white shadow ring-0 transition duration-200 ease-in-out',
+                                                        'pointer-events-none inline-block size-5 rounded-full bg-white shadow ring-0 transition duration-200 ease-in-out',
                                                     ]"
                                                 />
                                             </Switch>
@@ -595,7 +595,7 @@ const onSubmitThrottle = useThrottleFn(async (e) => {
                                                                 class="pointer-events-none absolute inset-y-0 right-0 flex items-center pr-2"
                                                             >
                                                                 <ChevronDownIcon
-                                                                    class="h-5 w-5 text-gray-400"
+                                                                    class="size-5 text-gray-400"
                                                                     aria-hidden="true"
                                                                 />
                                                             </span>
@@ -641,7 +641,7 @@ const onSubmitThrottle = useThrottleFn(async (e) => {
                                                                                 'absolute inset-y-0 left-0 flex items-center pl-1.5',
                                                                             ]"
                                                                         >
-                                                                            <CheckIcon class="h-5 w-5" aria-hidden="true" />
+                                                                            <CheckIcon class="size-5" aria-hidden="true" />
                                                                         </span>
                                                                     </li>
                                                                 </ListboxOption>
@@ -683,12 +683,12 @@ const onSubmitThrottle = useThrottleFn(async (e) => {
                                             </div>
                                         </template>
 
-                                        <SwitchGroup as="div" class="flex items-center mt-2 mb-1">
+                                        <SwitchGroup as="div" class="mb-1 mt-2 flex items-center">
                                             <Switch
                                                 v-model="jobProps.discordSyncSettings.jobsAbsence"
                                                 :class="[
                                                     jobProps.discordSyncSettings.jobsAbsence ? 'bg-primary-600' : 'bg-gray-200',
-                                                    'relative inline-flex h-6 w-11 flex-shrink-0 cursor-pointer rounded-full border-2 border-transparent transition-colors duration-200 ease-in-out focus:outline-none focus:ring-2 focus:ring-primary-600 focus:ring-offset-2',
+                                                    'relative inline-flex h-6 w-11 shrink-0 cursor-pointer rounded-full border-2 border-transparent transition-colors duration-200 ease-in-out focus:outline-none focus:ring-2 focus:ring-primary-600 focus:ring-offset-2',
                                                 ]"
                                             >
                                                 <span
@@ -697,7 +697,7 @@ const onSubmitThrottle = useThrottleFn(async (e) => {
                                                         jobProps.discordSyncSettings.jobsAbsence
                                                             ? 'translate-x-5'
                                                             : 'translate-x-0',
-                                                        'pointer-events-none inline-block h-5 w-5 transform rounded-full bg-white shadow ring-0 transition duration-200 ease-in-out',
+                                                        'pointer-events-none inline-block size-5 rounded-full bg-white shadow ring-0 transition duration-200 ease-in-out',
                                                     ]"
                                                 />
                                             </Switch>
@@ -759,7 +759,7 @@ const onSubmitThrottle = useThrottleFn(async (e) => {
                                     @click="onSubmitThrottle"
                                 >
                                     <template v-if="!canSubmit">
-                                        <LoadingIcon class="mr-2 h-5 w-5 animate-spin" aria-hidden="true" />
+                                        <LoadingIcon class="mr-2 size-5 animate-spin" aria-hidden="true" />
                                     </template>
                                     {{ $t('common.save', 1) }}
                                 </button>

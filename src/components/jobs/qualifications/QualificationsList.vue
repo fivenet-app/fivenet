@@ -41,7 +41,7 @@ watch(offset, async () => refresh());
                         {{ $t('components.qualifications.all_qualifications') }}
                     </h3>
                 </div>
-                <div class="ml-4 mt-4 flex-shrink-0">
+                <div class="ml-4 mt-4 shrink-0">
                     <NuxtLink
                         v-if="can('QualificationsService.CreateQualification')"
                         :to="{ name: 'jobs-qualifications-create' }"

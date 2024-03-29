@@ -126,7 +126,7 @@ const pageNumber = ref(currentPage.value.toString());
                 "
                 @click="onSubmitThrottle()"
             >
-                <RefreshIcon class="h-5 w-5" :class="!canSubmit ? 'animate-spin' : ''" aria-hidden="true" />
+                <RefreshIcon class="size-5" :class="!canSubmit ? 'animate-spin' : ''" aria-hidden="true" />
             </button>
 
             <nav class="isolate inline-flex -space-x-px rounded-md shadow-sm" aria-label="Pagination">

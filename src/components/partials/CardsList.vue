@@ -20,7 +20,7 @@ defineEmits<{
 <template>
     <div class="sm:px-2">
         <div
-            class="w-full divide-y-4 divide-accent-900 overflow-hidden rounded-lg bg-primary-900 sm:grid sm:gap-1 sm:divide-y-0 border-4 border-primary-900"
+            class="w-full divide-y-4 divide-accent-900 overflow-hidden rounded-lg border-4 border-primary-900 bg-primary-900 sm:grid sm:gap-1 sm:divide-y-0"
             :class="[items.length === 1 ? '' : 'sm:max-w-6xl sm:grid-cols-2']"
         >
             <template v-for="(item, itemIdx) in items">
@@ -28,7 +28,7 @@ defineEmits<{
                     v-if="item.permission === undefined || can(item.permission)"
                     :key="item.title"
                     :class="[
-                        itemIdx === 0 ? 'rounded-tl-lg rounded-tr-lg sm:rounded-tr-none' : '',
+                        itemIdx === 0 ? 'rounded-t-lg sm:rounded-tr-none' : '',
                         itemIdx === 1 ? 'sm:rounded-tr-lg' : '',
                         itemIdx === items.length - 2 && itemIdx % 2 === 1 ? 'sm:rounded-br-lg' : '',
                         itemIdx === items.length - 1 && itemIdx % 2 === 0 ? 'rounded-br-lg' : '',
@@ -65,7 +65,7 @@ defineEmits<{
                         class="pointer-events-none absolute right-6 top-6 text-base-300 group-hover:text-accent-200"
                         aria-hidden="true"
                     >
-                        <ChevronRightIcon class="h-5 w-5" aria-hidden="true" />
+                        <ChevronRightIcon class="size-5" aria-hidden="true" />
                     </span>
                 </div>
             </template>

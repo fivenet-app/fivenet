@@ -134,10 +134,10 @@ const editing = ref(props.startInEdit);
     <div class="my-2">
         <div v-if="!editing" class="flex items-center gap-x-2 text-neutral">
             <button type="button" :title="$t('common.edit')" @click="editing = true">
-                <PencilIcon class="h-5 w-5" aria-hidden="true" />
+                <PencilIcon class="size-5" aria-hidden="true" />
             </button>
             <button type="button" :title="$t('common.delete')" @click="reveal()">
-                <TrashCanIcon class="h-5 w-5" aria-hidden="true" />
+                <TrashCanIcon class="size-5" aria-hidden="true" />
             </button>
             <h2 class="text-xl">{{ modelValue.name }}</h2>
             <p v-if="modelValue.description" class="pl-2">- {{ $t('common.description') }}: {{ modelValue.description }}</p>
@@ -151,7 +151,7 @@ const editing = ref(props.startInEdit);
         </div>
         <form v-else class="flex w-full flex-row items-start gap-x-4 text-neutral" @submit.prevent="onSubmitThrottle">
             <button type="submit" :title="$t('common.save')">
-                <ContentSaveIcon class="h-5 w-5" aria-hidden="true" />
+                <ContentSaveIcon class="size-5" aria-hidden="true" />
             </button>
             <button
                 type="button"
@@ -161,7 +161,7 @@ const editing = ref(props.startInEdit);
                     parseInt(modelValue.id) < 0 && $emit('deleted', modelValue.id);
                 "
             >
-                <CancelIcon class="h-5 w-5" aria-hidden="true" />
+                <CancelIcon class="size-5" aria-hidden="true" />
             </button>
 
             <div class="flex-initial">

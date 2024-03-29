@@ -99,7 +99,7 @@ const nuiAvailable = ref(isNUIAvailable());
                 leave-from="opacity-100"
                 leave-to="opacity-0"
             >
-                <div class="fixed inset-0 bg-base-900 bg-opacity-75 transition-opacity" />
+                <div class="fixed inset-0 bg-base-900/75 transition-opacity" />
             </TransitionChild>
 
             <div class="fixed inset-0 z-30 overflow-y-auto">
@@ -114,7 +114,7 @@ const nuiAvailable = ref(isNUIAvailable());
                         leave-to="opacity-0 translate-y-4 sm:translate-y-0 sm:scale-95"
                     >
                         <DialogPanel
-                            class="relative h-112 w-full transform overflow-hidden rounded-lg bg-base-800 px-4 pb-4 pt-5 text-left text-neutral transition-all sm:my-8 sm:max-w-2xl sm:p-6"
+                            class="relative h-112 w-full overflow-hidden rounded-lg bg-base-800 px-4 pb-4 pt-5 text-left text-neutral transition-all sm:my-8 sm:max-w-2xl sm:p-6"
                         >
                             <div class="absolute right-0 top-0 block pr-4 pt-4">
                                 <button
@@ -123,7 +123,7 @@ const nuiAvailable = ref(isNUIAvailable());
                                     @click="$emit('close')"
                                 >
                                     <span class="sr-only">{{ $t('common.close') }}</span>
-                                    <CloseIcon class="h-5 w-5" aria-hidden="true" />
+                                    <CloseIcon class="size-5" aria-hidden="true" />
                                 </button>
                             </div>
                             <DialogTitle as="h3" class="text-base font-semibold leading-6">
@@ -131,12 +131,12 @@ const nuiAvailable = ref(isNUIAvailable());
                             </DialogTitle>
                             <form @submit.prevent="onSubmitThrottle">
                                 <div class="my-2 space-y-24">
-                                    <div class="form-control flex-1">
+                                    <div class="flex-1">
                                         <label for="avatar" class="block text-sm font-medium leading-6 text-neutral">
                                             {{ $t('common.avatar') }}
                                         </label>
                                         <template v-if="nuiAvailable">
-                                            <p class="text-neutral text-sm">
+                                            <p class="text-sm text-neutral">
                                                 {{ $t('system.not_supported_on_tablet.title') }}
                                             </p>
                                         </template>
@@ -161,9 +161,9 @@ const nuiAvailable = ref(isNUIAvailable());
                                         </template>
                                     </div>
                                 </div>
-                                <div class="flex-1 flex items-center">
+                                <div class="flex flex-1 items-center">
                                     <ProfilePictureImg
-                                        class="mx-auto my-auto"
+                                        class="m-auto"
                                         :url="activeChar?.avatar?.url"
                                         :name="`${activeChar?.firstname} ${activeChar?.lastname}`"
                                         size="huge"
@@ -173,14 +173,14 @@ const nuiAvailable = ref(isNUIAvailable());
                                 <div class="absolute bottom-0 left-0 flex w-full">
                                     <button
                                         type="button"
-                                        class="rounded-bd flex-1 bg-neutral text-gray-900 hover:bg-gray-200 px-3.5 py-2.5 text-sm font-semibold"
+                                        class="flex-1 rounded-md bg-neutral px-3.5 py-2.5 text-sm font-semibold text-gray-900 hover:bg-gray-200"
                                         @click="$emit('close')"
                                     >
                                         {{ $t('common.close', 1) }}
                                     </button>
                                     <button
                                         type="button"
-                                        class="rounded-bd flex flex-1 justify-center px-3.5 py-2.5 text-sm font-semibold text-neutral"
+                                        class="flex flex-1 justify-center rounded-md px-3.5 py-2.5 text-sm font-semibold text-neutral"
                                         :disabled="nuiAvailable || !meta.valid || !canSubmit || !activeChar?.avatar"
                                         :class="[
                                             nuiAvailable || !meta.valid || !canSubmit || !activeChar?.avatar
@@ -193,13 +193,13 @@ const nuiAvailable = ref(isNUIAvailable());
                                         "
                                     >
                                         <template v-if="!canSubmit">
-                                            <LoadingIcon class="mr-2 h-5 w-5 animate-spin" aria-hidden="true" />
+                                            <LoadingIcon class="mr-2 size-5 animate-spin" aria-hidden="true" />
                                         </template>
                                         {{ $t('common.reset') }}
                                     </button>
                                     <button
                                         type="submit"
-                                        class="rounded-bd flex flex-1 justify-center px-3.5 py-2.5 text-sm font-semibold text-neutral"
+                                        class="flex flex-1 justify-center rounded-md px-3.5 py-2.5 text-sm font-semibold text-neutral"
                                         :disabled="nuiAvailable || !meta.valid || !canSubmit"
                                         :class="[
                                             nuiAvailable || !meta.valid || !canSubmit
@@ -208,7 +208,7 @@ const nuiAvailable = ref(isNUIAvailable());
                                         ]"
                                     >
                                         <template v-if="!canSubmit">
-                                            <LoadingIcon class="mr-2 h-5 w-5 animate-spin" aria-hidden="true" />
+                                            <LoadingIcon class="mr-2 size-5 animate-spin" aria-hidden="true" />
                                         </template>
                                         {{ $t('common.save') }}
                                     </button>

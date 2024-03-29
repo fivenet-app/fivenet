@@ -114,7 +114,7 @@ const open = ref(false);
         <template v-else>
             <ClipboardButton />
             <div class="mb-14">
-                <div class="flex gap-4 my-4 px-4">
+                <div class="my-4 flex gap-4 px-4">
                     <ProfilePictureImg
                         :url="user.props?.mugShot?.url"
                         :name="`${user.firstname} ${user.lastname}`"
@@ -125,7 +125,7 @@ const open = ref(false);
                     />
                     <div class="w-full">
                         <div class="flex snap-x flex-row flex-wrap justify-between gap-2 overflow-x-auto">
-                            <h1 class="flex-1 break-words py-1 pl-0.5 pr-0.5 text-4xl font-bold text-neutral sm:pl-1">
+                            <h1 class="flex-1 break-words px-0.5 py-1 text-4xl font-bold text-neutral sm:pl-1">
                                 {{ user?.firstname }} {{ user?.lastname }}
                             </h1>
                             <IDCopyBadge
@@ -159,16 +159,16 @@ const open = ref(false);
                                     <!-- Mobile menu button -->
                                     <button
                                         type="button"
-                                        class="relative inline-flex items-center justify-center rounded-md bg-base-500 p-2 text-accent-200 hover:bg-base-400 hover:bg-opacity-75 hover:text-neutral focus:outline-none focus:ring-2 focus:ring-neutral focus:ring-offset-2 focus:ring-offset-base-600"
+                                        class="relative inline-flex items-center justify-center rounded-md bg-base-500 p-2 text-accent-200 hover:bg-base-400/75 hover:text-neutral focus:outline-none focus:ring-2 focus:ring-neutral focus:ring-offset-2 focus:ring-offset-base-600"
                                         @click="open = !open"
                                     >
                                         <span class="absolute -inset-0.5" />
                                         <span class="sr-only">{{ $t('components.partials.sidebar.open_navigation') }}</span>
-                                        <MenuIcon v-if="!open" class="block h-5 w-5" aria-hidden="true" />
-                                        <CloseIcon v-else class="block h-5 w-5" aria-hidden="true" />
+                                        <MenuIcon v-if="!open" class="block size-5" aria-hidden="true" />
+                                        <CloseIcon v-else class="block size-5" aria-hidden="true" />
                                     </button>
                                 </div>
-                                <div class="md:block hidden">
+                                <div class="hidden md:block">
                                     <div class="flex items-baseline space-x-2">
                                         <template v-for="(tab, index) in tabs" :key="tab.id">
                                             <span class="flex-1">
@@ -186,7 +186,7 @@ const open = ref(false);
                                                         :is="tab.icon"
                                                         :class="[
                                                             selectedTab === index ? '' : 'group-hover:text-base-300',
-                                                            'h-5 w-5',
+                                                            'size-5',
                                                         ]"
                                                         aria-hidden="true"
                                                     />
@@ -200,18 +200,18 @@ const open = ref(false);
                                 </div>
                             </div>
                         </div>
-                        <div class="-ml-3 -mr-3 md:hidden" :class="open ? 'block' : 'hidden'">
+                        <div class="-mx-3 md:hidden" :class="open ? 'block' : 'hidden'">
                             <div class="space-y-1 px-2 pb-3 pt-2 sm:px-3">
                                 <template v-for="(tab, index) in tabs" :key="tab.id">
                                     <button
                                         type="button"
-                                        class="group flex w-full shrink-0 items-center items-center gap-2 rounded-md p-2 text-sm font-medium text-accent-100 hover:bg-accent-100/10 hover:text-neutral hover:transition-all"
+                                        class="group flex w-full shrink-0 items-center gap-2 rounded-md p-2 text-sm font-medium text-accent-100 hover:bg-accent-100/10 hover:text-neutral hover:transition-all"
                                         :class="selectedTab === index ? 'bg-accent-100/20 font-bold text-primary-300' : ''"
                                         @click="selectedTab = index"
                                     >
                                         <component
                                             :is="tab.icon"
-                                            :class="[selectedTab === index ? '' : 'group-hover:text-base-300', 'h-5 w-5']"
+                                            :class="[selectedTab === index ? '' : 'group-hover:text-base-300', 'size-5']"
                                             aria-hidden="true"
                                         />
                                         <span>

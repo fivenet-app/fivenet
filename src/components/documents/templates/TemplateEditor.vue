@@ -608,7 +608,7 @@ onMounted(async () => {
                             :title="$t('components.documents.document_editor.add_permission')"
                             @click="addDocumentAccessEntry()"
                         >
-                            <PlusIcon class="h-5 w-5" aria-hidden="true" />
+                            <PlusIcon class="size-5" aria-hidden="true" />
                         </button>
                     </div>
                 </div>
@@ -688,7 +688,7 @@ onMounted(async () => {
                                                     'absolute inset-y-0 left-0 flex items-center pl-1.5',
                                                 ]"
                                             >
-                                                <CheckIcon class="h-5 w-5" aria-hidden="true" />
+                                                <CheckIcon class="size-5" aria-hidden="true" />
                                             </span>
                                         </li>
                                     </ComboboxOption>
@@ -754,7 +754,7 @@ onMounted(async () => {
                         :title="$t('components.documents.document_editor.add_permission')"
                         @click="addContentDocumentAccessEntry()"
                     >
-                        <PlusIcon class="h-5 w-5" aria-hidden="true" />
+                        <PlusIcon class="size-5" aria-hidden="true" />
                     </button>
                 </div>
             </GenericContainer>
@@ -770,7 +770,7 @@ onMounted(async () => {
                     ]"
                 >
                     <template v-if="!canSubmit">
-                        <LoadingIcon class="mr-2 h-5 w-5 animate-spin" aria-hidden="true" />
+                        <LoadingIcon class="mr-2 size-5 animate-spin" aria-hidden="true" />
                     </template>
                     {{ templateId ? $t('common.save') : $t('common.create') }}
                 </button>

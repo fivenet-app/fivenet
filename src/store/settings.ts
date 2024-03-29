@@ -14,7 +14,7 @@ export const availableThemes = [
 export interface SettingsState {
     version: string;
     updateAvailable: false | string;
-    locale: string;
+    locale: string | null;
     nuiEnabled: boolean;
     nuiResourceName: string | undefined;
     livemap: {
@@ -44,7 +44,7 @@ export const useSettingsStore = defineStore('settings', {
         ({
             version: __APP_VERSION__ as string,
             updateAvailable: false,
-            locale: 'de',
+            locale: null,
             nuiEnabled: false,
             nuiResourceName: undefined,
 

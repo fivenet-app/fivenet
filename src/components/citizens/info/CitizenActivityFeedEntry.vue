@@ -29,9 +29,9 @@ const props = defineProps<{
 <template>
     <template v-if="activity.key === 'DocStore.Relation'">
         <div class="flex space-x-3">
-            <div class="my-auto flex h-10 w-10 items-center justify-center rounded-full">
-                <FileAccountIcon v-if="activity.newValue !== ''" class="text-info-600 h-full w-full" aria-hidden="true" />
-                <FileAccountOutlineIcon v-else class="text-base-600 h-full w-full" aria-hidden="true" />
+            <div class="my-auto flex size-10 items-center justify-center rounded-full">
+                <FileAccountIcon v-if="activity.newValue !== ''" class="size-full text-info-600" aria-hidden="true" />
+                <FileAccountOutlineIcon v-else class="size-full text-base-600" aria-hidden="true" />
             </div>
             <div class="flex-1 space-y-1">
                 <div class="flex items-center justify-between">
@@ -77,9 +77,9 @@ const props = defineProps<{
     </template>
     <template v-else-if="activity.key === 'UserProps.Wanted'">
         <div class="flex space-x-3">
-            <div class="my-auto flex h-10 w-10 items-center justify-center rounded-full">
-                <BellAlertIcon v-if="activity.newValue === 'true'" class="text-error-400 h-full w-full" aria-hidden="true" />
-                <BellSleepIcon v-else class="text-success-400 h-full w-full" aria-hidden="true" />
+            <div class="my-auto flex size-10 items-center justify-center rounded-full">
+                <BellAlertIcon v-if="activity.newValue === 'true'" class="size-full text-error-400" aria-hidden="true" />
+                <BellSleepIcon v-else class="size-full text-success-400" aria-hidden="true" />
             </div>
             <div class="flex-1 space-y-1">
                 <div class="flex items-center justify-between">
@@ -114,8 +114,8 @@ const props = defineProps<{
     </template>
     <template v-else-if="activity.key === 'UserProps.Job'">
         <div class="flex space-x-3">
-            <div class="my-auto flex h-10 w-10 items-center justify-center rounded-full">
-                <BriefcaseIcon class="text-secondary-400 h-full w-full" aria-hidden="true" />
+            <div class="my-auto flex size-10 items-center justify-center rounded-full">
+                <BriefcaseIcon class="size-full text-secondary-400" aria-hidden="true" />
             </div>
             <div class="flex-1 space-y-1">
                 <div class="flex items-center justify-between">
@@ -146,8 +146,8 @@ const props = defineProps<{
     </template>
     <template v-else-if="activity.key === 'UserProps.TrafficInfractionPoints'">
         <div class="flex space-x-3">
-            <div class="my-auto flex h-10 w-10 items-center justify-center rounded-full">
-                <TrafficConeIcon class="text-secondary-400 h-full w-full" aria-hidden="true" />
+            <div class="my-auto flex size-10 items-center justify-center rounded-full">
+                <TrafficConeIcon class="size-full text-secondary-400" aria-hidden="true" />
             </div>
             <div class="flex-1 space-y-1">
                 <div class="flex items-center justify-between">
@@ -180,8 +180,8 @@ const props = defineProps<{
     </template>
     <template v-else-if="activity.key === 'UserProps.MugShot'">
         <div class="flex space-x-3">
-            <div class="my-auto flex h-10 w-10 items-center justify-center rounded-full">
-                <CameraAccountIcon class="text-secondary-400 h-full w-full" aria-hidden="true" />
+            <div class="my-auto flex size-10 items-center justify-center rounded-full">
+                <CameraAccountIcon class="size-full text-secondary-400" aria-hidden="true" />
             </div>
             <div class="flex-1 space-y-1">
                 <div class="flex items-center justify-between">
@@ -209,9 +209,9 @@ const props = defineProps<{
     </template>
     <template v-else-if="activity.key === 'Plugin.Licenses'">
         <div class="flex space-x-3">
-            <div class="my-auto flex h-10 w-10 items-center justify-center rounded-full">
+            <div class="my-auto flex size-10 items-center justify-center rounded-full">
                 <LicenseIcon
-                    class="h-full w-full"
+                    class="size-full"
                     :class="activity.newValue !== '' ? 'text-info-600' : 'text-warn-600'"
                     aria-hidden="true"
                 />
@@ -246,14 +246,14 @@ const props = defineProps<{
     </template>
     <template v-else-if="activity.key === 'Plugin.Jail'">
         <div class="flex space-x-3">
-            <div class="my-auto flex h-10 w-10 items-center justify-center rounded-full text-neutral">
+            <div class="my-auto flex size-10 items-center justify-center rounded-full text-neutral">
                 <HandcuffsIcon
                     v-if="activity.oldValue === '' && activity.newValue !== '0'"
-                    class="h-full w-full"
+                    class="size-full"
                     aria-hidden="true"
                 />
-                <DoorOpenIcon v-else-if="activity.newValue === '0'" class="h-full w-full" aria-hidden="true" />
-                <RunFastIcon v-else class="h-full w-full" aria-hidden="true" />
+                <DoorOpenIcon v-else-if="activity.newValue === '0'" class="size-full" aria-hidden="true" />
+                <RunFastIcon v-else class="size-full" aria-hidden="true" />
             </div>
             <div class="flex-1 space-y-1">
                 <div class="flex items-center justify-between">
@@ -292,18 +292,14 @@ const props = defineProps<{
     </template>
     <template v-else-if="activity.key === 'Plugin.Billing.Fines'">
         <div class="flex space-x-3">
-            <div class="my-auto flex h-10 w-10 items-center justify-center rounded-full">
-                <ReceiptTextCheckIcon
-                    v-if="activity.newValue === '0'"
-                    class="text-success-400 h-full w-full"
-                    aria-hidden="true"
-                />
+            <div class="my-auto flex size-10 items-center justify-center rounded-full">
+                <ReceiptTextCheckIcon v-if="activity.newValue === '0'" class="size-full text-success-400" aria-hidden="true" />
                 <ReceiptTextRemoveIcon
                     v-else-if="activity.newValue === activity.oldValue"
-                    class="text-secondary-400 h-full w-full"
+                    class="size-full text-secondary-400"
                     aria-hidden="true"
                 />
-                <ReceiptTextPlusIcon v-else class="text-info-400 h-full w-full" aria-hidden="true" />
+                <ReceiptTextPlusIcon v-else class="size-full text-info-400" aria-hidden="true" />
             </div>
             <div class="flex-1 space-y-1">
                 <div class="flex items-center justify-between">
@@ -344,8 +340,8 @@ const props = defineProps<{
     </template>
     <template v-else>
         <div class="flex space-x-3">
-            <div class="my-auto flex h-10 w-10 items-center justify-center rounded-full">
-                <HelpCircleIcon class="text-neutral h-full w-full" aria-hidden="true" />
+            <div class="my-auto flex size-10 items-center justify-center rounded-full">
+                <HelpCircleIcon class="size-full text-neutral" aria-hidden="true" />
             </div>
             <div class="flex-1 space-y-1">
                 <div class="flex items-center justify-between">

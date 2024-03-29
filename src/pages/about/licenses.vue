@@ -37,7 +37,7 @@ const licenses = [
     <div class="flex h-full flex-col justify-between">
         <div>
             <div class="hero relative isolate bg-primary-900 px-6 py-24 sm:py-32 lg:px-8">
-                <div class="hero-overlay absolute left-0 top-0 z-[-1] h-full w-full"></div>
+                <div class="hero-overlay absolute left-0 top-0 z-[-1] size-full"></div>
                 <div class="mx-auto max-w-2xl text-center">
                     <h2 class="text-4xl font-bold tracking-tight text-neutral sm:text-6xl">
                         {{ $t('common.licenses') }}
@@ -52,13 +52,13 @@ const licenses = [
                 <div class="mx-auto max-w-7xl px-6 py-24 sm:py-32 lg:px-8 lg:py-20">
                     <div class="mx-auto max-w-7xl divide-y divide-neutral/10">
                         <dl class="mt-10 space-y-6 divide-y divide-neutral/10">
-                            <Disclosure v-for="license in licenses" as="div" class="pt-6" v-slot="{ open }">
+                            <Disclosure v-for="license in licenses" :key="license.path" v-slot="{ open }" as="div" class="pt-6">
                                 <dt>
                                     <DisclosureButton class="flex w-full items-start justify-between text-left text-neutral">
                                         <span class="text-base font-semibold leading-7">{{ license.title }}</span>
                                         <span class="ml-6 flex h-7 items-center">
                                             <ChevronDownIcon
-                                                :class="[open ? 'upsidedown' : '', 'h-5 w-5 transition-transform']"
+                                                :class="[open ? 'upsidedown' : '', 'size-5 transition-transform']"
                                                 aria-hidden="true"
                                             />
                                         </span>

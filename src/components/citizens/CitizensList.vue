@@ -96,7 +96,7 @@ watchDebounced(query.value, () => refresh(), { debounce: 600, maxWait: 1400 });
                         "
                     >
                         <div class="mx-auto flex flex-row gap-4">
-                            <div class="form-control flex-1">
+                            <div class="flex-1">
                                 <label for="searchName" class="block text-sm font-medium leading-6 text-neutral">
                                     {{ $t('common.search') }}
                                     {{ $t('common.citizen', 1) }}
@@ -112,7 +112,7 @@ watchDebounced(query.value, () => refresh(), { debounce: 600, maxWait: 1400 });
                                     />
                                 </div>
                             </div>
-                            <div class="form-control flex-1">
+                            <div class="flex-1">
                                 <label for="dateofbirth" class="block text-sm font-medium leading-6 text-neutral">
                                     {{ $t('common.search') }}
                                     {{ $t('common.date_of_birth') }}
@@ -133,7 +133,7 @@ watchDebounced(query.value, () => refresh(), { debounce: 600, maxWait: 1400 });
                             </div>
                             <div
                                 v-if="attr('CitizenStoreService.ListCitizens', 'Fields', 'UserProps.Wanted')"
-                                class="form-control flex-initial"
+                                class="flex-initial"
                             >
                                 <label for="search" class="block text-sm font-medium leading-6 text-neutral">
                                     {{ $t('components.citizens.citizens_list.only_wanted') }}
@@ -143,7 +143,7 @@ watchDebounced(query.value, () => refresh(), { debounce: 600, maxWait: 1400 });
                                         v-model="query.wanted"
                                         :class="[
                                             query.wanted ? 'bg-primary-600' : 'bg-gray-200',
-                                            'relative inline-flex h-6 w-11 flex-shrink-0 cursor-pointer rounded-full border-2 border-transparent transition-colors duration-200 ease-in-out focus:outline-none focus:ring-2 focus:ring-neutral focus:ring-offset-2',
+                                            'relative inline-flex h-6 w-11 shrink-0 cursor-pointer rounded-full border-2 border-transparent transition-colors duration-200 ease-in-out focus:outline-none focus:ring-2 focus:ring-neutral focus:ring-offset-2',
                                         ]"
                                     >
                                         <span class="sr-only">
@@ -153,7 +153,7 @@ watchDebounced(query.value, () => refresh(), { debounce: 600, maxWait: 1400 });
                                             aria-hidden="true"
                                             :class="[
                                                 query.wanted ? 'translate-x-5' : 'translate-x-0',
-                                                'pointer-events-none inline-block h-5 w-5 transform rounded-full bg-neutral ring-0 transition duration-200 ease-in-out',
+                                                'pointer-events-none inline-block size-5 rounded-full bg-neutral ring-0 transition duration-200 ease-in-out',
                                             ]"
                                         />
                                     </Switch>
@@ -165,7 +165,7 @@ watchDebounced(query.value, () => refresh(), { debounce: 600, maxWait: 1400 });
                                 <span class="leading-7 text-accent-200">{{ $t('common.advanced_search') }}</span>
                                 <span class="ml-6 flex h-7 items-center">
                                     <ChevronDownIcon
-                                        :class="[open ? 'upsidedown' : '', 'h-5 w-5 transition-transform']"
+                                        :class="[open ? 'upsidedown' : '', 'size-5 transition-transform']"
                                         aria-hidden="true"
                                     />
                                 </span>
@@ -174,7 +174,7 @@ watchDebounced(query.value, () => refresh(), { debounce: 600, maxWait: 1400 });
                                 <div class="flex flex-row gap-2">
                                     <div
                                         v-if="attr('CitizenStoreService.ListCitizens', 'Fields', 'PhoneNumber')"
-                                        class="form-control flex-1"
+                                        class="flex-1"
                                     >
                                         <label for="searchPhone" class="block text-sm font-medium leading-6 text-neutral">
                                             {{ $t('common.search') }}
@@ -192,7 +192,7 @@ watchDebounced(query.value, () => refresh(), { debounce: 600, maxWait: 1400 });
                                             />
                                         </div>
                                     </div>
-                                    <div class="form-control flex-1">
+                                    <div class="flex-1">
                                         <label
                                             for="trafficInfractionPoints"
                                             class="block text-sm font-medium leading-6 text-neutral"
@@ -214,7 +214,7 @@ watchDebounced(query.value, () => refresh(), { debounce: 600, maxWait: 1400 });
                                     </div>
                                     <div
                                         v-if="attr('CitizenStoreService.ListCitizens', 'Fields', 'UserProps.OpenFines')"
-                                        class="form-control flex-initial"
+                                        class="flex-initial"
                                     >
                                         <label for="search" class="block text-sm font-medium leading-6 text-neutral">
                                             {{ $t('components.citizens.citizens_list.open_fine') }}
@@ -263,13 +263,13 @@ watchDebounced(query.value, () => refresh(), { debounce: 600, maxWait: 1400 });
                                         </th>
                                         <th
                                             scope="col"
-                                            class="px-2 py-3.5 text-left text-sm font-semibold text-neutral hidden lg:table-cell"
+                                            class="hidden px-2 py-3.5 text-left text-sm font-semibold text-neutral lg:table-cell"
                                         >
                                             {{ $t('common.job', 1) }}
                                         </th>
                                         <th
                                             scope="col"
-                                            class="px-2 py-3.5 text-left text-sm font-semibold text-neutral hidden lg:table-cell"
+                                            class="hidden px-2 py-3.5 text-left text-sm font-semibold text-neutral lg:table-cell"
                                         >
                                             {{ $t('common.sex') }}
                                         </th>
@@ -282,7 +282,7 @@ watchDebounced(query.value, () => refresh(), { debounce: 600, maxWait: 1400 });
                                         </th>
                                         <th
                                             scope="col"
-                                            class="px-2 py-3.5 text-left text-sm font-semibold text-neutral hidden lg:table-cell"
+                                            class="hidden px-2 py-3.5 text-left text-sm font-semibold text-neutral lg:table-cell"
                                         >
                                             {{ $t('common.date_of_birth') }}
                                         </th>
@@ -308,7 +308,7 @@ watchDebounced(query.value, () => refresh(), { debounce: 600, maxWait: 1400 });
                                         </th>
                                         <th
                                             scope="col"
-                                            class="px-2 py-3.5 text-left text-sm font-semibold text-neutral hidden md:table-cell"
+                                            class="hidden px-2 py-3.5 text-left text-sm font-semibold text-neutral md:table-cell"
                                         >
                                             {{ $t('common.height') }}
                                         </th>

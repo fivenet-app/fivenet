@@ -121,7 +121,7 @@ watch(selectedQualification, () => emits('update-qualification', selectedQualifi
                                     'absolute inset-y-0 left-0 flex items-center pl-1.5',
                                 ]"
                             >
-                                <CheckIcon class="h-5 w-5" aria-hidden="true" />
+                                <CheckIcon class="size-5" aria-hidden="true" />
                             </span>
                         </li>
                     </ComboboxOption>
@@ -134,7 +134,7 @@ watch(selectedQualification, () => emits('update-qualification', selectedQualifi
             class="ml-2 rounded-full bg-primary-500 p-1.5 text-neutral hover:bg-primary-400 focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-primary-500"
             @click="$emit('remove')"
         >
-            <CloseIcon class="h-5 w-5" aria-hidden="true" />
+            <CloseIcon class="size-5" aria-hidden="true" />
         </button>
     </div>
 </template>

@@ -1,5 +1,5 @@
 /** @type {import("prettier").Config} */
-const config = {
+module.exports = {
     useTabs: false,
     tabWidth: 4,
     semi: true,
@@ -8,5 +8,3 @@ const config = {
     plugins: ['prettier-plugin-tailwindcss', 'prettier-plugin-organize-imports'],
     tailwindConfig: './tailwind.config.ts',
 };
-
-export default config;

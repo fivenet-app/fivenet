@@ -374,7 +374,7 @@ function updateQualificationRequirement(idx: number, qualification?: Qualificati
                 :class="!canDo.edit ? 'rounded-b-md' : ''"
             >
                 <div class="flex flex-row gap-2">
-                    <div class="flex-0 shrink max-w-48">
+                    <div class="max-w-48 shrink">
                         <label for="abbreviation" class="block text-base font-medium">
                             {{ $t('common.abbreviation') }}
                         </label>
@@ -418,14 +418,14 @@ function updateQualificationRequirement(idx: number, qualification?: Qualificati
                             as="textarea"
                             :placeholder="$t('common.description')"
                             :label="$t('common.description')"
-                            class="block w-full h-20 rounded-md border-0 bg-base-700 py-1.5 text-neutral placeholder:text-accent-200 focus:ring-2 focus:ring-inset focus:ring-base-300 sm:leading-6"
+                            class="block h-20 w-full rounded-md border-0 bg-base-700 py-1.5 text-neutral placeholder:text-accent-200 focus:ring-2 focus:ring-inset focus:ring-base-300 sm:leading-6"
                             :disabled="!canEdit || !canDo.edit"
                             @focusin="focusTablet(true)"
                             @focusout="focusTablet(false)"
                         />
                         <VeeErrorMessage name="description" as="p" class="mt-2 text-sm text-error-400" />
                     </div>
-                    <div class="flex-0 min-w-32">
+                    <div class="min-w-32">
                         <label for="closed" class="block text-sm font-medium"> {{ $t('common.close', 2) }}? </label>
                         <Listbox v-model="quali.closed" as="div" :disabled="!canEdit || !canDo.edit">
                             <div class="relative">
@@ -436,7 +436,7 @@ function updateQualificationRequirement(idx: number, qualification?: Qualificati
                                         {{ openclose.find((e) => e.closed === quali.closed.closed)?.label }}</span
                                     >
                                     <span class="pointer-events-none absolute inset-y-0 right-0 flex items-center pr-2">
-                                        <ChevronDownIcon class="h-5 w-5 text-gray-400" aria-hidden="true" />
+                                        <ChevronDownIcon class="size-5 text-gray-400" aria-hidden="true" />
                                     </span>
                                 </ListboxButton>
 
@@ -472,7 +472,7 @@ function updateQualificationRequirement(idx: number, qualification?: Qualificati
                                                         'absolute inset-y-0 left-0 flex items-center pl-1.5',
                                                     ]"
                                                 >
-                                                    <CheckIcon class="h-5 w-5" aria-hidden="true" />
+                                                    <CheckIcon class="size-5" aria-hidden="true" />
                                                 </span>
                                             </li>
                                         </ListboxOption>
@@ -521,7 +521,7 @@ function updateQualificationRequirement(idx: number, qualification?: Qualificati
                     :title="$t('components.documents.document_editor.add_permission')"
                     @click="addQualificationAccessEntry()"
                 >
-                    <PlusIcon class="h-5 w-5" aria-hidden="true" />
+                    <PlusIcon class="size-5" aria-hidden="true" />
                 </button>
             </div>
 
@@ -549,7 +549,7 @@ function updateQualificationRequirement(idx: number, qualification?: Qualificati
                     "
                     @click="quali.requirements.push({ id: '0', qualificationId: '0', targetQualificationId: '0' })"
                 >
-                    <PlusIcon class="h-5 w-5" aria-hidden="true" />
+                    <PlusIcon class="size-5" aria-hidden="true" />
                 </button>
             </div>
 
@@ -565,7 +565,7 @@ function updateQualificationRequirement(idx: number, qualification?: Qualificati
                     ]"
                 >
                     <template v-if="!canSubmit">
-                        <LoadingIcon class="mr-2 h-5 w-5 animate-spin" aria-hidden="true" />
+                        <LoadingIcon class="mr-2 size-5 animate-spin" aria-hidden="true" />
                     </template>
                     <template v-if="!id">
                         {{ $t('common.create') }}

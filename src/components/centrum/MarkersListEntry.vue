@@ -43,16 +43,14 @@ onConfirm(async (id) => deleteMarker(id));
     <ConfirmDialog :open="isRevealed" :cancel="cancel" :confirm="() => confirm(marker.info!.id)" />
 
     <tr :key="marker.info!.id" class="transition-colors even:bg-base-800 hover:bg-neutral/5">
-        <td
-            class="relative items-center justify-start whitespace-nowrap py-1 pl-0 pr-0 text-left text-sm font-medium sm:pr-0.5"
-        >
+        <td class="relative items-center justify-start whitespace-nowrap px-0 py-1 text-left text-sm font-medium sm:pr-0.5">
             <button
                 type="button"
                 class="text-primary-400 hover:text-primary-600"
                 :title="$t('common.go_to_location')"
                 @click="$emit('goto', { x: marker.info!.x, y: marker.info!.y })"
             >
-                <MapMarkerIcon class="ml-auto mr-1.5 w-5 h-auto" aria-hidden="true" />
+                <MapMarkerIcon class="ml-auto mr-1.5 h-auto w-5" aria-hidden="true" />
             </button>
             <button
                 v-if="can('LivemapperService.DeleteMarker')"
@@ -61,31 +59,31 @@ onConfirm(async (id) => deleteMarker(id));
                 class="inline-flex flex-row items-center text-primary-400 hover:text-primary-600"
                 @click="reveal(marker.info!.id)"
             >
-                <TrashCanIcon class="h-5 w-5" aria-hidden="true" />
+                <TrashCanIcon class="size-5" aria-hidden="true" />
                 <span class="sr-only">{{ $t('common.delete') }}</span>
             </button>
         </td>
-        <td class="whitespace-nowrap px-1 py-1 text-sm text-gray-300">
+        <td class="whitespace-nowrap p-1 text-sm text-gray-300">
             <GenericTime :value="marker.info!.createdAt" type="short" />
         </td>
-        <td class="whitespace-nowrap px-1 py-1 text-sm text-gray-300">
+        <td class="whitespace-nowrap p-1 text-sm text-gray-300">
             <GenericTime v-if="marker.expiresAt" :value="marker.expiresAt" type="short" />
             <span v-else>
                 {{ $t('common.na') }}
             </span>
         </td>
-        <td class="whitespace-nowrap px-1 py-1 text-sm text-gray-300">
+        <td class="whitespace-nowrap p-1 text-sm text-gray-300">
             {{ marker.info!.name }}
         </td>
-        <td class="whitespace-nowrap px-1 py-1 text-sm text-gray-100">
+        <td class="whitespace-nowrap p-1 text-sm text-gray-100">
             {{ $t(`enums.livemap.MarkerType.${MarkerType[marker.type]}`) }}
         </td>
-        <td class="whitespace-nowrap px-1 py-1 text-sm text-gray-300">
+        <td class="whitespace-nowrap p-1 text-sm text-gray-300">
             <p class="max-h-14 overflow-y-scroll break-words">
                 {{ marker.info?.description ?? $t('common.na') }}
             </p>
         </td>
-        <td class="whitespace-nowrap px-1 py-1 text-sm text-gray-300">
+        <td class="whitespace-nowrap p-1 text-sm text-gray-300">
             <span v-if="marker.creator">
                 <CitizenInfoPopover :user="marker.creator" />
             </span>
@@ -93,7 +91,7 @@ onConfirm(async (id) => deleteMarker(id));
                 {{ $t('common.unknown') }}
             </span>
         </td>
-        <td class="whitespace-nowrap px-1 py-1 text-sm text-gray-300">
+        <td class="whitespace-nowrap p-1 text-sm text-gray-300">
             {{ marker.creator?.jobLabel ?? $t('common.na') }}
         </td>
     </tr>

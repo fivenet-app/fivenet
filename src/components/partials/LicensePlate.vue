@@ -12,6 +12,7 @@ const props = withDefaults(
         state: 'Los Santos',
         stateShort: 'LS',
         plate: 'UNKNOWN',
+        year: '2018',
     },
 );
 
@@ -29,7 +30,7 @@ const year =
 
 <template>
     <div
-        class="flex min-w-[6.85rem] min-w-fit max-w-[12rem] flex-col items-center justify-center rounded-lg border-2 bg-[blue]"
+        class="flex min-w-fit max-w-48 flex-col items-center justify-center rounded-lg border-2 bg-[blue]"
         :style="{ backgroundColor }"
     >
         <div class="grid w-full grid-cols-2 justify-items-center rounded-t-lg bg-error-600">

@@ -319,10 +319,10 @@ async function checkup(): Promise<void> {
                     class="inset-0 inline-flex items-center justify-center rounded-md border-2 border-black/20 bg-neutral bg-clip-padding text-black hover:bg-[#f4f4f4] focus:outline-none"
                     @click="open = !open"
                 >
-                    <ToggleSwitchIcon v-if="open" class="h-5 w-5" aria-hidden="true" />
+                    <ToggleSwitchIcon v-if="open" class="size-5" aria-hidden="true" />
                     <span v-else class="inline-flex items-center justify-center">
                         <ToggleSwitchOffIcon
-                            class="h-5 w-5"
+                            class="size-5"
                             :class="getOwnUnit === undefined ? 'animate-pulse' : ''"
                             aria-hidden="true"
                         />
@@ -335,7 +335,7 @@ async function checkup(): Promise<void> {
         </template>
 
         <template v-if="canStream" #afterMap>
-            <div class="lg:w-50 lg:inset-y-0 lg:flex lg:flex-col">
+            <div class="lg:inset-y-0 lg:flex lg:flex-col">
                 <!-- Dispatch -->
                 <TakeDispatchModal
                     v-if="getOwnUnit !== undefined"
@@ -364,7 +364,7 @@ async function checkup(): Promise<void> {
                         class="flex h-full grow gap-y-5 overflow-y-auto overflow-x-hidden bg-base-600 py-0.5"
                         :class="open || getOwnUnit !== undefined ? 'px-4' : ''"
                     >
-                        <nav class="flex flex-1 flex-col min-w-48 max-w-48 md:min-w-64 md:max-w-64">
+                        <nav class="flex min-w-48 max-w-48 flex-1 flex-col md:min-w-64 md:max-w-64">
                             <ul role="list" class="flex flex-1 flex-col gap-y-2 divide-y divide-base-400">
                                 <li class="-mx-2 -mb-1">
                                     <DisponentsModal :open="openDisponents" @close="openDisponents = false" />
@@ -382,13 +382,13 @@ async function checkup(): Promise<void> {
                                         @click="openDisponents = true"
                                     >
                                         <template v-if="getCurrentMode !== CentrumMode.AUTO_ROUND_ROBIN">
-                                            <MonitorIcon class="mr-1 h-5 w-5" aria-hidden="true" />
+                                            <MonitorIcon class="mr-1 size-5" aria-hidden="true" />
                                             <span class="truncate">
                                                 {{ $t('common.disponent', disponents.length) }}
                                             </span>
                                         </template>
                                         <template v-else>
-                                            <RobotIcon class="mr-1 h-5 w-5" aria-hidden="true" />
+                                            <RobotIcon class="mr-1 size-5" aria-hidden="true" />
                                             <span class="truncate">
                                                 {{ $t('enums.centrum.CentrumMode.AUTO_ROUND_ROBIN') }}
                                             </span>
@@ -405,7 +405,7 @@ async function checkup(): Promise<void> {
                                                     :class="ownUnitStatus"
                                                     @click="openUnitDetails = true"
                                                 >
-                                                    <InformationOutlineIcon class="h-5 w-5" aria-hidden="true" />
+                                                    <InformationOutlineIcon class="size-5" aria-hidden="true" />
                                                     <span class="mt-1 truncate">
                                                         <span class="font-semibold">{{ getOwnUnit.initials }}:</span>
                                                         {{ getOwnUnit.name }}</span
@@ -431,11 +431,11 @@ async function checkup(): Promise<void> {
                                             </template>
                                             <button
                                                 type="button"
-                                                class="group my-0.5 flex flex w-full w-full flex-col flex-col items-center items-center rounded-md bg-info-700 p-1.5 text-xs font-medium text-neutral hover:bg-primary-100/10 hover:text-neutral hover:transition-all"
+                                                class="group my-0.5 flex w-full flex-col items-center rounded-md bg-info-700 p-1.5 text-xs font-medium text-neutral hover:bg-primary-100/10 hover:text-neutral hover:transition-all"
                                                 @click="joinUnitOpen = true"
                                             >
                                                 <template v-if="getOwnUnit === undefined">
-                                                    <InformationOutlineIcon class="h-5 w-5" aria-hidden="true" />
+                                                    <InformationOutlineIcon class="size-5" aria-hidden="true" />
                                                     <span class="mt-1 truncate">{{ $t('common.no_own_unit') }}</span>
                                                 </template>
                                                 <template v-else>
@@ -454,7 +454,7 @@ async function checkup(): Promise<void> {
                                                 {{ $t('common.unit') }}
                                                 <LoadingIcon
                                                     v-if="!canSubmitUnitStatus"
-                                                    class="ml-1 h-4 w-4 animate-spin"
+                                                    class="ml-1 size-4 animate-spin"
                                                     aria-hidden="true"
                                                 />
                                             </div>
@@ -469,7 +469,7 @@ async function checkup(): Promise<void> {
                                                         v-for="item in unitStatuses"
                                                         :key="item.name"
                                                         type="button"
-                                                        class="bg-primary group my-0.5 flex w-full flex-col items-center rounded-md p-1.5 text-xs font-medium text-neutral hover:bg-primary-100/10 hover:text-neutral hover:transition-all"
+                                                        class="group my-0.5 flex w-full flex-col items-center rounded-md p-1.5 text-xs font-medium text-neutral hover:bg-primary-100/10 hover:text-neutral hover:transition-all"
                                                         :disabled="!canSubmitUnitStatus"
                                                         :class="[
                                                             !canSubmitUnitStatus ? 'disabled' : '',
@@ -480,7 +480,7 @@ async function checkup(): Promise<void> {
                                                     >
                                                         <component
                                                             :is="item.icon ?? HoopHouseIcon"
-                                                            class="h-5 w-5 shrink-0 text-base-100 group-hover:text-neutral"
+                                                            class="size-5 shrink-0 text-base-100 group-hover:text-neutral"
                                                             aria-hidden="true"
                                                         />
                                                         <span class="mt-1">
@@ -510,7 +510,7 @@ async function checkup(): Promise<void> {
                                                 {{ $t('common.dispatch') }} {{ $t('common.status') }}
                                                 <LoadingIcon
                                                     v-if="!canSubmitDispatchStatus"
-                                                    class="ml-1 h-4 w-4 animate-spin"
+                                                    class="ml-1 size-4 animate-spin"
                                                     aria-hidden="true"
                                                 />
                                             </div>
@@ -522,7 +522,7 @@ async function checkup(): Promise<void> {
                                                         )"
                                                         :key="item.name"
                                                         type="button"
-                                                        class="bg-primary group my-0.5 flex w-full flex-col items-center rounded-md p-1.5 text-xs font-medium text-neutral hover:bg-primary-100/10 hover:text-neutral hover:transition-all"
+                                                        class="group my-0.5 flex w-full flex-col items-center rounded-md p-1.5 text-xs font-medium text-neutral hover:bg-primary-100/10 hover:text-neutral hover:transition-all"
                                                         :disabled="!canSubmitDispatchStatus"
                                                         :class="[
                                                             !canSubmitDispatchStatus ? 'disabled' : '',
@@ -533,7 +533,7 @@ async function checkup(): Promise<void> {
                                                     >
                                                         <component
                                                             :is="item.icon ?? HoopHouseIcon"
-                                                            class="h-5 w-5 shrink-0 text-base-100 group-hover:text-neutral"
+                                                            class="size-5 shrink-0 text-base-100 group-hover:text-neutral"
                                                             aria-hidden="true"
                                                         />
                                                         <span class="mt-1">
@@ -569,7 +569,7 @@ async function checkup(): Promise<void> {
                                                     type="button"
                                                     class="group my-0.5 flex w-full flex-col items-center rounded-md bg-primary-100/10 p-1.5 text-xs font-medium text-neutral hover:text-neutral hover:transition-all"
                                                 >
-                                                    <CarEmergencyIcon class="h-5 w-5" aria-hidden="true" />
+                                                    <CarEmergencyIcon class="size-5" aria-hidden="true" />
                                                     <span class="mt-1 truncate">{{ $t('common.no_assigned_dispatches') }}</span>
                                                 </button>
                                             </li>
@@ -599,28 +599,28 @@ async function checkup(): Promise<void> {
                 <template v-if="open && getOwnUnit !== undefined">
                     <span class="fixed bottom-2 right-1/2 z-30 inline-flex">
                         <span>
-                            <span v-if="pendingDispatches.length > 0" class="absolute left-0 top-0 -mr-1 -mt-1 flex h-3 w-3">
+                            <span v-if="pendingDispatches.length > 0" class="absolute left-0 top-0 -mr-1 -mt-1 flex size-3">
                                 <span
-                                    class="absolute inline-flex h-full w-full animate-ping rounded-full bg-error-400 opacity-75"
+                                    class="absolute inline-flex size-full animate-ping rounded-full bg-error-400 opacity-75"
                                 ></span>
-                                <span class="relative inline-flex h-3 w-3 rounded-full bg-error-500"></span>
+                                <span class="relative inline-flex size-3 rounded-full bg-error-500"></span>
                             </span>
                             <button
                                 type="button"
-                                class="flex h-12 w-12 items-center justify-center bg-accent-500 text-neutral hover:bg-accent-400"
+                                class="flex size-12 items-center justify-center bg-accent-500 text-neutral hover:bg-accent-400"
                                 :class="getOwnUnit.homePostal !== undefined ? 'rounded-l-full' : 'rounded-full'"
                                 @click="openTakeDispatch = true"
                             >
-                                <CarEmergencyIcon class="w-10 h-auto" aria-hidden="true" />
+                                <CarEmergencyIcon class="h-auto w-10" aria-hidden="true" />
                             </button>
                         </span>
                         <button
                             v-if="getOwnUnit.homePostal !== undefined"
                             type="button"
-                            class="flex h-12 w-12 items-center justify-center rounded-r-full bg-accent-500 text-neutral hover:bg-accent-400"
+                            class="flex size-12 items-center justify-center rounded-r-full bg-accent-500 text-neutral hover:bg-accent-400"
                             @click="setWaypointPLZ(getOwnUnit.homePostal)"
                         >
-                            <HomeFloorBIcon class="w-10 h-auto" aria-hidden="true" />
+                            <HomeFloorBIcon class="h-auto w-10" aria-hidden="true" />
                         </button>
                     </span>
                 </template>

@@ -96,8 +96,8 @@ function getDocAtivityIcon(activityType: DocActivityType): DefineComponent {
 <template>
     <div class="p-1">
         <div v-if="!disclosureNeeded(entry.activityType)" class="flex space-x-3">
-            <div class="my-auto flex h-10 w-10 items-center justify-center rounded-full">
-                <component :is="getDocAtivityIcon(entry.activityType)" class="h-7 w-7" aria-hidden="true" />
+            <div class="my-auto flex size-10 items-center justify-center rounded-full">
+                <component :is="getDocAtivityIcon(entry.activityType)" class="size-7" aria-hidden="true" />
             </div>
             <div class="flex-1 space-y-1">
                 <div class="flex items-center justify-between">
@@ -130,8 +130,8 @@ function getDocAtivityIcon(activityType: DocActivityType): DefineComponent {
         <Disclosure v-else v-slot="{ open }" as="div">
             <DisclosureButton class="flex w-full items-start justify-between text-left transition">
                 <div class="flex w-full space-x-3">
-                    <div class="my-auto flex h-10 w-10 items-center justify-center rounded-full">
-                        <component :is="getDocAtivityIcon(entry.activityType)" class="h-7 w-7" aria-hidden="true" />
+                    <div class="my-auto flex size-10 items-center justify-center rounded-full">
+                        <component :is="getDocAtivityIcon(entry.activityType)" class="size-7" aria-hidden="true" />
                     </div>
                     <div class="flex-1 space-y-1">
                         <div class="flex items-center justify-between">
@@ -141,7 +141,7 @@ function getDocAtivityIcon(activityType: DocActivityType): DefineComponent {
                                 </span>
                                 <span class="ml-6 flex h-7 items-center">
                                     <ChevronDownIcon
-                                        :class="[open ? 'upsidedown' : '', 'h-5 w-5 transition-transform']"
+                                        :class="[open ? 'upsidedown' : '', 'size-5 transition-transform']"
                                         aria-hidden="true"
                                     />
                                 </span>
@@ -157,7 +157,7 @@ function getDocAtivityIcon(activityType: DocActivityType): DefineComponent {
                     </div>
                 </div>
             </DisclosureButton>
-            <DisclosurePanel class="px-4 pb-2 pt-2">
+            <DisclosurePanel class="px-4 py-2">
                 <template v-if="entry.activityType === DocActivityType.UPDATED">
                     <ActivityDocUpdatedDiff
                         v-if="entry.data?.data.oneofKind === 'updated'"

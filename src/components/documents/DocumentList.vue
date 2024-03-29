@@ -170,7 +170,7 @@ const templatesOpen = ref(false);
                             {{ $t('common.search') }}
                         </label>
                         <div class="flex flex-row items-center gap-2 sm:mx-auto">
-                            <div class="form-control flex-1">
+                            <div class="flex-1">
                                 <input
                                     ref="searchInput"
                                     v-model="query.title"
@@ -182,7 +182,7 @@ const templatesOpen = ref(false);
                                     @focusout="focusTablet(false)"
                                 />
                             </div>
-                            <div v-if="can('DocStoreService.CreateDocument')" class="form-control flex-initial">
+                            <div v-if="can('DocStoreService.CreateDocument')" class="flex-initial">
                                 <button
                                     type="button"
                                     class="inline-flex rounded-md bg-primary-500 px-3 py-2 text-sm font-semibold text-neutral hover:bg-primary-400 focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-primary-500"
@@ -214,14 +214,14 @@ const templatesOpen = ref(false);
                                 <span class="leading-7 text-accent-200">{{ $t('common.advanced_search') }}</span>
                                 <span class="ml-6 flex h-7 items-center">
                                     <ChevronDownIcon
-                                        :class="[open ? 'upsidedown' : '', 'h-5 w-5 transition-transform']"
+                                        :class="[open ? 'upsidedown' : '', 'size-5 transition-transform']"
                                         aria-hidden="true"
                                     />
                                 </span>
                             </DisclosureButton>
                             <DisclosurePanel class="mt-2 pr-4">
                                 <div class="flex flex-row flex-wrap gap-2">
-                                    <div class="form-control flex-1">
+                                    <div class="flex-1">
                                         <label for="search" class="block text-sm font-medium leading-6 text-neutral">
                                             {{ $t('common.document') }} {{ $t('common.id') }}
                                         </label>
@@ -237,7 +237,7 @@ const templatesOpen = ref(false);
                                             />
                                         </div>
                                     </div>
-                                    <div class="form-control flex-1">
+                                    <div class="flex-1">
                                         <label for="search" class="block text-sm font-medium leading-6 text-neutral">
                                             {{ $t('common.category', 1) }}
                                         </label>
@@ -283,7 +283,7 @@ const templatesOpen = ref(false);
                                                                     'absolute inset-y-0 left-0 flex items-center pl-1.5',
                                                                 ]"
                                                             >
-                                                                <CheckIcon class="h-5 w-5" aria-hidden="true" />
+                                                                <CheckIcon class="size-5" aria-hidden="true" />
                                                             </span>
                                                         </li>
                                                     </ComboboxOption>
@@ -291,7 +291,7 @@ const templatesOpen = ref(false);
                                             </div>
                                         </Combobox>
                                     </div>
-                                    <div class="form-control flex-1">
+                                    <div class="flex-1">
                                         <label for="search" class="block text-sm font-medium leading-6 text-neutral">
                                             {{ $t('common.creator') }}
                                         </label>
@@ -342,7 +342,7 @@ const templatesOpen = ref(false);
                                                                     'absolute inset-y-0 left-0 flex items-center pl-1.5',
                                                                 ]"
                                                             >
-                                                                <CheckIcon class="h-5 w-5" aria-hidden="true" />
+                                                                <CheckIcon class="size-5" aria-hidden="true" />
                                                             </span>
                                                         </li>
                                                     </ComboboxOption>
@@ -352,7 +352,7 @@ const templatesOpen = ref(false);
                                     </div>
                                 </div>
                                 <div class="flex flex-row flex-wrap gap-2">
-                                    <div class="form-control flex-1">
+                                    <div class="flex-1">
                                         <label for="search" class="block text-sm font-medium leading-6 text-neutral">
                                             {{ $t('common.close', 2) }}?
                                         </label>
@@ -367,7 +367,7 @@ const templatesOpen = ref(false);
                                                     <span
                                                         class="pointer-events-none absolute inset-y-0 right-0 flex items-center pr-2"
                                                     >
-                                                        <ChevronDownIcon class="h-5 w-5 text-gray-400" aria-hidden="true" />
+                                                        <ChevronDownIcon class="size-5 text-gray-400" aria-hidden="true" />
                                                     </span>
                                                 </ListboxButton>
 
@@ -407,7 +407,7 @@ const templatesOpen = ref(false);
                                                                         'absolute inset-y-0 left-0 flex items-center pl-1.5',
                                                                     ]"
                                                                 >
-                                                                    <CheckIcon class="h-5 w-5" aria-hidden="true" />
+                                                                    <CheckIcon class="size-5" aria-hidden="true" />
                                                                 </span>
                                                             </li>
                                                         </ListboxOption>
@@ -416,7 +416,7 @@ const templatesOpen = ref(false);
                                             </div>
                                         </Listbox>
                                     </div>
-                                    <div class="form-control flex-1">
+                                    <div class="flex-1">
                                         <label for="search" class="block text-sm font-medium leading-6 text-neutral">
                                             {{ $t('common.time_range') }}: {{ $t('common.from') }}
                                         </label>
@@ -430,7 +430,7 @@ const templatesOpen = ref(false);
                                             />
                                         </div>
                                     </div>
-                                    <div class="form-control flex-1">
+                                    <div class="flex-1">
                                         <label for="search" class="block text-sm font-medium leading-6 text-neutral"
                                             >{{ $t('common.time_range') }}:
                                             {{ $t('common.to') }}

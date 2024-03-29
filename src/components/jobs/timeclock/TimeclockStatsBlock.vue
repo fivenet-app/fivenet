@@ -79,7 +79,7 @@ const axis = ref<ChartAxis>({
                 {{ $t('common.timeclock') }}
             </h2>
             <div class="flex flex-col gap-4 lg:flex-row">
-                <div class="flex-0">
+                <div>
                     <h3 class="mb-2 ml-0.5 text-lg font-bold text-neutral">
                         {{ $t('components.jobs.timeclock.StatsBlock.7_days') }}
                     </h3>
@@ -88,10 +88,10 @@ const axis = ref<ChartAxis>({
                             <p class="text-sm font-medium leading-6 text-gray-300">{{ $t(stat.name) }}</p>
                             <p class="mt-2 flex w-full items-center gap-x-2 text-2xl font-semibold tracking-tight text-neutral">
                                 <template v-if="stat.value === undefined">
-                                    <LoadingIcon class="h-5 w-5 animate-spin" aria-hidden="true" />
+                                    <LoadingIcon class="size-5 animate-spin" aria-hidden="true" />
                                 </template>
                                 <template v-else-if="failed">
-                                    <AlertCircleIcon class="h-5 w-5" aria-hidden="true" />
+                                    <AlertCircleIcon class="size-5" aria-hidden="true" />
                                 </template>
                                 <template v-else>
                                     {{
@@ -113,7 +113,7 @@ const axis = ref<ChartAxis>({
 
                     <DataErrorBlock v-if="failed" :retry="async () => $emit('refresh')" />
                     <DataNoDataBlock v-else-if="weekly === undefined" />
-                    <Responsive v-else class="w-ful">
+                    <Responsive v-else class="w-full">
                         <template #main="{ width }">
                             <!-- @vue-ignore our own data format works fine.. but the package type is "off" -->
                             <Chart

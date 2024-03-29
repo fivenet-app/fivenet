@@ -51,7 +51,7 @@ onConfirm(async (id) => deleteMarker(id));
                 class="inline-flex items-center text-primary-500 hover:text-primary-400"
                 @click="$emit('goto', { x: marker.info?.x, y: marker.info?.y })"
             >
-                <MapMarkerIcon class="h-5 w-5" aria-hidden="true" />
+                <MapMarkerIcon class="size-5" aria-hidden="true" />
                 <span class="ml-1">{{ $t('common.go_to_location') }}</span>
             </button>
             <button
@@ -61,7 +61,7 @@ onConfirm(async (id) => deleteMarker(id));
                 class="inline-flex items-center text-primary-500 hover:text-primary-400"
                 @click="reveal(marker.info!.id)"
             >
-                <TrashCanIcon class="h-5 w-5" aria-hidden="true" />
+                <TrashCanIcon class="size-5" aria-hidden="true" />
                 <span class="ml-1">{{ $t('common.delete') }}</span>
             </button>
         </div>

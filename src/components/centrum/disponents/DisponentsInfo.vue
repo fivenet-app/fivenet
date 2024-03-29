@@ -51,9 +51,9 @@ const open = ref(false);
                                 class="flex items-center justify-center rounded-full bg-success-500 text-neutral hover:bg-success-400"
                                 @click="onSubmitThrottle(true)"
                             >
-                                <LocationEnterIcon v-if="canSubmit" class="h-7 w-7" aria-hidden="true" />
+                                <LocationEnterIcon v-if="canSubmit" class="size-7" aria-hidden="true" />
                                 <template v-else>
-                                    <LoadingIcon class="mr-2 h-7 w-7 animate-spin" aria-hidden="true" />
+                                    <LoadingIcon class="mr-2 size-7 animate-spin" aria-hidden="true" />
                                 </template>
                                 <span class="px-1">{{ $t('common.join') }}</span>
                             </button>
@@ -63,9 +63,9 @@ const open = ref(false);
                                 class="flex items-center justify-center rounded-full bg-primary-500 text-neutral hover:bg-primary-400"
                                 @click="onSubmitThrottle(false)"
                             >
-                                <LocationExitIcon v-if="canSubmit" class="h-7 w-7" aria-hidden="true" />
+                                <LocationExitIcon v-if="canSubmit" class="size-7" aria-hidden="true" />
                                 <template v-else>
-                                    <LoadingIcon class="mr-2 h-7 w-7 animate-spin" aria-hidden="true" />
+                                    <LoadingIcon class="mr-2 size-7 animate-spin" aria-hidden="true" />
                                 </template>
                                 <span class="px-1">{{ $t('common.leave') }}</span>
                             </button>

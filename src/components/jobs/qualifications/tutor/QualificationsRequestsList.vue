@@ -98,25 +98,25 @@ const openResultStatus = ref(false);
                 <GenericTable>
                     <template #thead>
                         <tr>
-                            <th scope="col" class="whitespace-nowrap px-1 py-1 text-left text-sm font-semibold text-gray-100">
+                            <th scope="col" class="whitespace-nowrap p-1 text-left text-sm font-semibold text-gray-100">
                                 {{ $t('common.citizen') }}
                             </th>
-                            <th scope="col" class="whitespace-nowrap px-1 py-1 text-left text-sm font-semibold text-gray-100">
+                            <th scope="col" class="whitespace-nowrap p-1 text-left text-sm font-semibold text-gray-100">
                                 {{ $t('common.comment') }}
                             </th>
-                            <th scope="col" class="whitespace-nowrap px-1 py-1 text-left text-sm font-semibold text-gray-100">
+                            <th scope="col" class="whitespace-nowrap p-1 text-left text-sm font-semibold text-gray-100">
                                 {{ $t('common.status') }}
                             </th>
-                            <th scope="col" class="whitespace-nowrap px-1 py-1 text-left text-sm font-semibold text-gray-100">
+                            <th scope="col" class="whitespace-nowrap p-1 text-left text-sm font-semibold text-gray-100">
                                 {{ $t('common.created_at') }}
                             </th>
-                            <th scope="col" class="whitespace-nowrap px-1 py-1 text-left text-sm font-semibold text-gray-100">
+                            <th scope="col" class="whitespace-nowrap p-1 text-left text-sm font-semibold text-gray-100">
                                 {{ $t('common.approved_at') }}
                             </th>
-                            <th scope="col" class="whitespace-nowrap px-1 py-1 text-left text-sm font-semibold text-gray-100">
+                            <th scope="col" class="whitespace-nowrap p-1 text-left text-sm font-semibold text-gray-100">
                                 {{ $t('common.approver') }}
                             </th>
-                            <th scope="col" class="whitespace-nowrap px-1 py-1 text-left text-sm font-semibold text-gray-100">
+                            <th scope="col" class="whitespace-nowrap p-1 text-left text-sm font-semibold text-gray-100">
                                 {{ $t('common.action', 2) }}
                             </th>
                         </tr>

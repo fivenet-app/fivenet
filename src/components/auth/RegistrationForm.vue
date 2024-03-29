@@ -151,7 +151,7 @@ const onSubmitThrottle = useThrottleFn(async (e) => {
                 ]"
             >
                 <template v-if="!canSubmit">
-                    <LoadingIcon class="mr-2 h-5 w-5 animate-spin" aria-hidden="true" />
+                    <LoadingIcon class="mr-2 size-5 animate-spin" aria-hidden="true" />
                 </template>
                 {{ $t('components.auth.registration_form.submit_button') }}
             </button>

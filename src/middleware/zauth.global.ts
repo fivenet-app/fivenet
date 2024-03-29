@@ -1,7 +1,6 @@
 import { type RouteLocationNormalized } from 'vue-router';
 import { useAuthStore } from '~/store/auth';
 import { useNotificatorStore } from '~/store/notificator';
-import { toDate } from '~/utils/time';
 
 export default defineNuxtRouteMiddleware(async (to: RouteLocationNormalized, _: RouteLocationNormalized) => {
     const authStore = useAuthStore();
@@ -23,7 +22,14 @@ export default defineNuxtRouteMiddleware(async (to: RouteLocationNormalized, _: 
         if (activeChar.value === null) {
             // If we don't have an active char, but a last char ID set, try to choose it and immidiately continue
             if (lastCharID.value > 0) {
-                await chooseCharacter();
+                const { setActiveChar, setPermissions, setJobProps } = authStore;
+                try {
+                    await authStore.chooseCharacter(authStore.lastCharID);
+                } catch (e) {
+                    setActiveChar(null);
+                    setPermissions([]);
+                    setJobProps(undefined);
+                }
             }
 
             if (activeChar.value === null) {
@@ -71,27 +77,3 @@ export default defineNuxtRouteMiddleware(async (to: RouteLocationNormalized, _: 
         query: { redirect },
     });
 });
-
-async function chooseCharacter(): Promise<any> {
-    const authStore = useAuthStore();
-    const { setAccessToken, setActiveChar, setPermissions, setJobProps } = authStore;
-    const { lastCharID } = storeToRefs(authStore);
-
-    const { $grpc } = useNuxtApp();
-
-    try {
-        const call = $grpc.getAuthClient().chooseCharacter({
-            charId: lastCharID.value,
-        });
-        const { response } = await call;
-
-        setAccessToken(response.token, toDate(response.expires) as null | Date);
-        setActiveChar(response.char!);
-        setPermissions(response.permissions);
-        setJobProps(response.jobProps);
-    } catch (e) {
-        setActiveChar(null);
-        setPermissions([]);
-        setJobProps(undefined);
-    }
-}

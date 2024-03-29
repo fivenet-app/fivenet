@@ -124,7 +124,7 @@ function updateReasonField(value: string): void {
                                                         @click="$emit('close')"
                                                     >
                                                         <span class="sr-only">{{ $t('common.close') }}</span>
-                                                        <CloseIcon class="h-5 w-5" aria-hidden="true" />
+                                                        <CloseIcon class="size-5" aria-hidden="true" />
                                                     </button>
                                                 </div>
                                             </div>
@@ -157,7 +157,7 @@ function updateReasonField(value: string): void {
                                                                         v-for="(item, idx) in dispatchStatuses"
                                                                         :key="item.name"
                                                                         type="button"
-                                                                        class="bg-primary group my-0.5 flex w-full flex-col items-center rounded-md p-1.5 text-xs font-medium text-neutral hover:bg-primary-100/10 hover:text-neutral hover:transition-all"
+                                                                        class="group my-0.5 flex w-full flex-col items-center rounded-md p-1.5 text-xs font-medium text-neutral hover:bg-primary-100/10 hover:text-neutral hover:transition-all"
                                                                         :class="[
                                                                             idx >= dispatchStatuses.length - 1
                                                                                 ? 'col-span-2'
@@ -177,7 +177,7 @@ function updateReasonField(value: string): void {
                                                                     >
                                                                         <component
                                                                             :is="item.icon ?? HoopHouseIcon"
-                                                                            class="h-5 w-5 shrink-0 text-base-100 group-hover:text-neutral"
+                                                                            class="size-5 shrink-0 text-base-100 group-hover:text-neutral"
                                                                             aria-hidden="true"
                                                                         />
                                                                         <span class="mt-1">
@@ -304,7 +304,7 @@ function updateReasonField(value: string): void {
                                             </div>
                                         </div>
                                     </div>
-                                    <div class="flex flex-shrink-0 justify-end px-4 py-4">
+                                    <div class="flex shrink-0 justify-end p-4">
                                         <span class="isolate inline-flex w-full rounded-md pr-4 shadow-sm">
                                             <button
                                                 type="submit"
@@ -317,7 +317,7 @@ function updateReasonField(value: string): void {
                                                 ]"
                                             >
                                                 <template v-if="!canSubmit">
-                                                    <LoadingIcon class="mr-2 h-5 w-5 animate-spin" aria-hidden="true" />
+                                                    <LoadingIcon class="mr-2 size-5 animate-spin" aria-hidden="true" />
                                                 </template>
                                                 {{ $t('common.update') }}
                                             </button>

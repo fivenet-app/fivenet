@@ -102,7 +102,7 @@ const selectedAccessLevel = ref<AccessLevel>(AccessLevel.VIEW);
                 leave-from="opacity-100"
                 leave-to="opacity-0"
             >
-                <div class="fixed inset-0 bg-base-900 bg-opacity-75 transition-opacity" />
+                <div class="fixed inset-0 bg-base-900/75 transition-opacity" />
             </TransitionChild>
 
             <div class="fixed inset-0 z-30 overflow-y-auto">
@@ -117,7 +117,7 @@ const selectedAccessLevel = ref<AccessLevel>(AccessLevel.VIEW);
                         leave-to="opacity-0 translate-y-4 sm:translate-y-0 sm:scale-95"
                     >
                         <DialogPanel
-                            class="relative h-112 w-full transform overflow-hidden rounded-lg bg-base-800 px-4 pb-4 pt-5 text-left text-neutral transition-all sm:my-8 sm:max-w-2xl sm:p-6"
+                            class="relative h-112 w-full overflow-hidden rounded-lg bg-base-800 px-4 pb-4 pt-5 text-left text-neutral transition-all sm:my-8 sm:max-w-2xl sm:p-6"
                         >
                             <div class="absolute right-0 top-0 block pr-4 pt-4">
                                 <button
@@ -126,7 +126,7 @@ const selectedAccessLevel = ref<AccessLevel>(AccessLevel.VIEW);
                                     @click="$emit('close')"
                                 >
                                     <span class="sr-only">{{ $t('common.close') }}</span>
-                                    <CloseIcon class="h-5 w-5" aria-hidden="true" />
+                                    <CloseIcon class="size-5" aria-hidden="true" />
                                 </button>
                             </div>
                             <DialogTitle as="h3" class="text-base font-semibold leading-6">
@@ -134,7 +134,7 @@ const selectedAccessLevel = ref<AccessLevel>(AccessLevel.VIEW);
                             </DialogTitle>
                             <form @submit.prevent="onSubmitThrottle">
                                 <div class="my-2 space-y-24">
-                                    <div class="form-control flex-1">
+                                    <div class="flex-1">
                                         <label for="reason" class="block text-sm font-medium leading-6 text-neutral">
                                             {{ $t('common.reason') }}
                                         </label>
@@ -151,7 +151,7 @@ const selectedAccessLevel = ref<AccessLevel>(AccessLevel.VIEW);
                                     </div>
                                 </div>
                                 <div class="my-2">
-                                    <div class="form-control flex-1">
+                                    <div class="flex-1">
                                         <label for="requestsType" class="block text-sm font-medium leading-6 text-neutral">
                                             {{ $t('common.access') }}
                                         </label>
@@ -179,7 +179,7 @@ const selectedAccessLevel = ref<AccessLevel>(AccessLevel.VIEW);
                                                         <span
                                                             class="pointer-events-none absolute inset-y-0 right-0 flex items-center pr-2"
                                                         >
-                                                            <ChevronDownIcon class="h-5 w-5 text-gray-400" aria-hidden="true" />
+                                                            <ChevronDownIcon class="size-5 text-gray-400" aria-hidden="true" />
                                                         </span>
                                                     </ListboxButton>
 
@@ -225,7 +225,7 @@ const selectedAccessLevel = ref<AccessLevel>(AccessLevel.VIEW);
                                                                             'absolute inset-y-0 left-0 flex items-center pl-1.5',
                                                                         ]"
                                                                     >
-                                                                        <CheckIcon class="h-5 w-5" aria-hidden="true" />
+                                                                        <CheckIcon class="size-5" aria-hidden="true" />
                                                                     </span>
                                                                 </li>
                                                             </ListboxOption>
@@ -240,14 +240,14 @@ const selectedAccessLevel = ref<AccessLevel>(AccessLevel.VIEW);
                                 <div class="absolute bottom-0 left-0 flex w-full">
                                     <button
                                         type="button"
-                                        class="rounded-bd flex-1 bg-neutral text-gray-900 hover:bg-gray-200 px-3.5 py-2.5 text-sm font-semibold"
+                                        class="flex-1 rounded-md bg-neutral px-3.5 py-2.5 text-sm font-semibold text-gray-900 hover:bg-gray-200"
                                         @click="$emit('close')"
                                     >
                                         {{ $t('common.close', 1) }}
                                     </button>
                                     <button
                                         type="submit"
-                                        class="rounded-bd flex flex-1 justify-center px-3.5 py-2.5 text-sm font-semibold text-neutral"
+                                        class="flex flex-1 justify-center rounded-md px-3.5 py-2.5 text-sm font-semibold text-neutral"
                                         :disabled="!meta.valid || !canSubmit"
                                         :class="[
                                             !meta.valid || !canSubmit
@@ -256,7 +256,7 @@ const selectedAccessLevel = ref<AccessLevel>(AccessLevel.VIEW);
                                         ]"
                                     >
                                         <template v-if="!canSubmit">
-                                            <LoadingIcon class="mr-2 h-5 w-5 animate-spin" aria-hidden="true" />
+                                            <LoadingIcon class="mr-2 size-5 animate-spin" aria-hidden="true" />
                                         </template>
                                         {{ $t('common.request', 2) }}
                                     </button>

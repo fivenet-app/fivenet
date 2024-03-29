@@ -218,7 +218,7 @@ watch(props, () => {
                                         </span>
                                         <span class="ml-6 flex h-7 items-center">
                                             <ChevronDownIcon
-                                                :class="[open ? 'upsidedown' : '', 'h-5 w-5 transition-transform']"
+                                                :class="[open ? 'upsidedown' : '', 'size-5 transition-transform']"
                                                 aria-hidden="true"
                                             />
                                         </span>

@@ -106,8 +106,8 @@ const openStatus = ref(false);
                                                     class="inline-flex items-center text-base font-semibold leading-6 text-neutral"
                                                 >
                                                     {{ $t('common.dispatch') }}:
-                                                    <IDCopyBadge :id="dispatch.id" class="ml-2 mr-2" prefix="DSP" />
-                                                    <p class="max-w-[20rem] truncate" :title="dispatch.message">
+                                                    <IDCopyBadge :id="dispatch.id" class="mx-2" prefix="DSP" />
+                                                    <p class="max-w-80 truncate" :title="dispatch.message">
                                                         {{ dispatch.message }}
                                                     </p>
                                                     <button
@@ -117,7 +117,7 @@ const openStatus = ref(false);
                                                         :title="$t('common.delete')"
                                                         @click="reveal()"
                                                     >
-                                                        <TrashCanIcon class="h-5 w-5" aria-hidden="true" />
+                                                        <TrashCanIcon class="size-5" aria-hidden="true" />
                                                     </button>
                                                 </DialogTitle>
                                                 <div class="ml-3 flex h-7 items-center">
@@ -127,7 +127,7 @@ const openStatus = ref(false);
                                                         @click="$emit('close')"
                                                     >
                                                         <span class="sr-only">{{ $t('common.close') }}</span>
-                                                        <CloseIcon class="h-5 w-5" aria-hidden="true" />
+                                                        <CloseIcon class="size-5" aria-hidden="true" />
                                                     </button>
                                                 </div>
                                             </div>
@@ -182,7 +182,7 @@ const openStatus = ref(false);
                                                                     class="inline-flex items-center text-primary-400 hover:text-primary-600"
                                                                     @click="$emit('goto', { x: dispatch.x, y: dispatch.y })"
                                                                 >
-                                                                    <MapMarkerIcon class="mr-1 h-5 w-5" aria-hidden="true" />
+                                                                    <MapMarkerIcon class="mr-1 size-5" aria-hidden="true" />
                                                                     {{ $t('common.go_to_location') }}
                                                                 </button>
                                                                 <span v-else>{{ $t('common.no_location') }}</span>
@@ -243,7 +243,7 @@ const openStatus = ref(false);
                                                                                 >
                                                                                     <template #before>
                                                                                         <AccountGroupIcon
-                                                                                            class="mr-1 h-5 w-5 flex-shrink-0"
+                                                                                            class="mr-1 size-5 shrink-0"
                                                                                             aria-hidden="true"
                                                                                         />
                                                                                     </template>
@@ -285,7 +285,7 @@ const openStatus = ref(false);
                                                                         class="flex flex-row items-center rounded bg-neutral/10 px-2 py-1 text-xs font-semibold text-neutral shadow-sm hover:bg-neutral/20"
                                                                         @click="openAssign = true"
                                                                     >
-                                                                        <PencilIcon class="h-5 w-5" aria-hidden="true" />
+                                                                        <PencilIcon class="size-5" aria-hidden="true" />
                                                                         <span class="ml-0.5 truncate">
                                                                             {{ $t('common.assign') }}
                                                                         </span>
@@ -296,7 +296,7 @@ const openStatus = ref(false);
                                                                         class="ml-2 flex flex-row items-center rounded bg-neutral/10 px-2 py-1 text-xs font-semibold text-neutral shadow-sm hover:bg-neutral/20"
                                                                         @click="selfAssign(dispatch.id)"
                                                                     >
-                                                                        <PlusIcon class="h-5 w-5" aria-hidden="true" />
+                                                                        <PlusIcon class="size-5" aria-hidden="true" />
                                                                         <span class="ml-0.5 truncate">{{
                                                                             $t('common.self_assign')
                                                                         }}</span>
@@ -340,7 +340,7 @@ const openStatus = ref(false);
                                                                         })
                                                                     "
                                                                 >
-                                                                    <MapMarkerIcon class="mr-1 h-5 w-5" aria-hidden="true" />
+                                                                    <MapMarkerIcon class="mr-1 size-5" aria-hidden="true" />
                                                                     {{ $t('common.go_to_location') }}
                                                                 </button>
                                                                 <span v-else>{{ $t('common.no_location') }}</span>
@@ -406,7 +406,7 @@ const openStatus = ref(false);
                                             </div>
                                         </div>
                                     </div>
-                                    <div class="flex flex-shrink-0 justify-end px-4 py-4">
+                                    <div class="flex shrink-0 justify-end p-4">
                                         <button
                                             type="button"
                                             class="w-full rounded-md bg-neutral px-3 py-2 text-sm font-semibold text-gray-900 shadow-sm ring-1 ring-inset ring-gray-300 hover:bg-gray-200"

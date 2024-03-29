@@ -127,7 +127,7 @@ const onSubmitThrottle = useThrottleFn(async (accepted: boolean) => {
                     <button
                         type="button"
                         :disabled="!canSubmit"
-                        class="rounded flex flex-1 justify-center px-3.5 py-2.5 text-sm font-semibold text-neutral"
+                        class="flex flex-1 justify-center rounded px-3.5 py-2.5 text-sm font-semibold text-neutral"
                         :class="[
                             !canSubmit
                                 ? 'disabled bg-base-500 hover:bg-base-400 focus-visible:outline-base-500'
@@ -135,12 +135,12 @@ const onSubmitThrottle = useThrottleFn(async (accepted: boolean) => {
                         ]"
                         @click="onSubmitThrottle(true)"
                     >
-                        <CheckBoldIcon class="h-5 w-5 text-success-400" aria-hidden="true" />
+                        <CheckBoldIcon class="size-5 text-success-400" aria-hidden="true" />
                     </button>
                     <button
                         type="button"
                         :disabled="!canSubmit"
-                        class="rounded flex flex-1 justify-center px-2.5 py-2.5 text-sm font-semibold text-neutral"
+                        class="flex flex-1 justify-center rounded p-2.5 text-sm font-semibold text-neutral"
                         :class="[
                             !canSubmit
                                 ? 'disabled bg-base-500 hover:bg-base-400 focus-visible:outline-base-500'
@@ -148,14 +148,14 @@ const onSubmitThrottle = useThrottleFn(async (accepted: boolean) => {
                         ]"
                         @click="onSubmitThrottle(false)"
                     >
-                        <CloseThickIcon class="h-5 w-5 text-error-400" aria-hidden="true" />
+                        <CloseThickIcon class="size-5 text-error-400" aria-hidden="true" />
                     </button>
                 </template>
 
                 <Menu v-if="canDelete" as="div" class="relative flex-none">
                     <MenuButton class="block text-gray-300 hover:text-gray-100">
                         <span class="sr-only">{{ $t('common.open') }}</span>
-                        <MenuIcon class="h-5 w-5" aria-hidden="true" />
+                        <MenuIcon class="size-5" aria-hidden="true" />
                     </MenuButton>
                     <transition
                         enter-active-class="transition ease-out duration-100"
@@ -166,7 +166,7 @@ const onSubmitThrottle = useThrottleFn(async (accepted: boolean) => {
                         leave-to-class="transform opacity-0 scale-95"
                     >
                         <MenuItems
-                            class="absolute right-0 z-30 mt-2 w-28 origin-top-right rounded-md bg-base-800 py-1 shadow-float ring-1 ring-base-100 ring-opacity-5 focus:outline-none"
+                            class="absolute right-0 z-30 mt-2 w-28 origin-top-right rounded-md bg-base-800 py-1 shadow-float ring-1 ring-base-100/5 focus:outline-none"
                         >
                             <MenuItem v-slot="{ close }">
                                 <button
@@ -183,7 +183,7 @@ const onSubmitThrottle = useThrottleFn(async (accepted: boolean) => {
                                         reveal();
                                     "
                                 >
-                                    <TrashCanIcon class="h-5 w-5" aria-hidden="true" />
+                                    <TrashCanIcon class="size-5" aria-hidden="true" />
                                     {{ $t('common.delete') }}
                                 </button>
                             </MenuItem>

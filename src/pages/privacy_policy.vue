@@ -28,7 +28,7 @@ if (links.privacyPolicy === undefined) {
                 {{ $t('common.redirecting_to', [$t('common.privacy_policy')]) }}
             </h1>
             <h2 class="mt-4 inline-flex items-center text-4xl text-neutral">
-                <LoadingIcon class="w-20 h-20 animate-spin" aria-hidden="true" />
+                <LoadingIcon class="size-20 animate-spin" aria-hidden="true" />
             </h2>
         </template>
     </HeroPage>

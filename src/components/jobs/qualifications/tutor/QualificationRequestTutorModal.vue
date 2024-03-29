@@ -118,7 +118,7 @@ const availableStatus = [RequestStatus.ACCEPTED, RequestStatus.DENIED, RequestSt
                 leave-from="opacity-100"
                 leave-to="opacity-0"
             >
-                <div class="fixed inset-0 bg-base-900 bg-opacity-75 transition-opacity" />
+                <div class="fixed inset-0 bg-base-900/75 transition-opacity" />
             </TransitionChild>
 
             <div class="fixed inset-0 z-30 overflow-y-auto">
@@ -133,7 +133,7 @@ const availableStatus = [RequestStatus.ACCEPTED, RequestStatus.DENIED, RequestSt
                         leave-to="opacity-0 translate-y-4 sm:translate-y-0 sm:scale-95"
                     >
                         <DialogPanel
-                            class="relative h-112 w-full transform overflow-hidden rounded-lg bg-base-800 px-4 pb-4 pt-5 text-left text-neutral transition-all sm:my-8 sm:max-w-2xl sm:p-6"
+                            class="relative h-112 w-full overflow-hidden rounded-lg bg-base-800 px-4 pb-4 pt-5 text-left text-neutral transition-all sm:my-8 sm:max-w-2xl sm:p-6"
                         >
                             <div class="absolute right-0 top-0 block pr-4 pt-4">
                                 <button
@@ -142,7 +142,7 @@ const availableStatus = [RequestStatus.ACCEPTED, RequestStatus.DENIED, RequestSt
                                     @click="$emit('close')"
                                 >
                                     <span class="sr-only">{{ $t('common.close') }}</span>
-                                    <CloseIcon class="h-5 w-5" aria-hidden="true" />
+                                    <CloseIcon class="size-5" aria-hidden="true" />
                                 </button>
                             </div>
                             <DialogTitle as="h3" class="text-base font-semibold leading-6">
@@ -150,7 +150,7 @@ const availableStatus = [RequestStatus.ACCEPTED, RequestStatus.DENIED, RequestSt
                             </DialogTitle>
                             <form @submit.prevent="onSubmitThrottle">
                                 <div class="my-2">
-                                    <div class="form-control flex-1">
+                                    <div class="flex-1">
                                         <label for="status" class="block text-sm font-medium leading-6 text-neutral">
                                             {{ $t('common.status') }}
                                         </label>
@@ -178,7 +178,7 @@ const availableStatus = [RequestStatus.ACCEPTED, RequestStatus.DENIED, RequestSt
                                                         <span
                                                             class="pointer-events-none absolute inset-y-0 right-0 flex items-center pr-2"
                                                         >
-                                                            <ChevronDownIcon class="h-5 w-5 text-gray-400" aria-hidden="true" />
+                                                            <ChevronDownIcon class="size-5 text-gray-400" aria-hidden="true" />
                                                         </span>
                                                     </ListboxButton>
 
@@ -223,7 +223,7 @@ const availableStatus = [RequestStatus.ACCEPTED, RequestStatus.DENIED, RequestSt
                                                                             'absolute inset-y-0 left-0 flex items-center pl-1.5',
                                                                         ]"
                                                                     >
-                                                                        <CheckIcon class="h-5 w-5" aria-hidden="true" />
+                                                                        <CheckIcon class="size-5" aria-hidden="true" />
                                                                     </span>
                                                                 </li>
                                                             </ListboxOption>
@@ -235,7 +235,7 @@ const availableStatus = [RequestStatus.ACCEPTED, RequestStatus.DENIED, RequestSt
                                         <VeeErrorMessage name="status" as="p" class="mt-2 text-sm text-error-400" />
                                     </div>
 
-                                    <div class="form-control flex-1">
+                                    <div class="flex-1">
                                         <label for="approverComment" class="block text-sm font-medium leading-6 text-neutral">
                                             {{ $t('common.message') }}
                                         </label>
@@ -254,14 +254,14 @@ const availableStatus = [RequestStatus.ACCEPTED, RequestStatus.DENIED, RequestSt
                                 <div class="absolute bottom-0 left-0 flex w-full">
                                     <button
                                         type="button"
-                                        class="rounded-bd flex-1 bg-neutral text-gray-900 hover:bg-gray-200 px-3.5 py-2.5 text-sm font-semibold"
+                                        class="flex-1 rounded-md bg-neutral px-3.5 py-2.5 text-sm font-semibold text-gray-900 hover:bg-gray-200"
                                         @click="$emit('close')"
                                     >
                                         {{ $t('common.close', 1) }}
                                     </button>
                                     <button
                                         type="submit"
-                                        class="rounded-bd flex flex-1 justify-center px-3.5 py-2.5 text-sm font-semibold text-neutral"
+                                        class="flex flex-1 justify-center rounded-md px-3.5 py-2.5 text-sm font-semibold text-neutral"
                                         :disabled="!meta.valid || !canSubmit"
                                         :class="[
                                             !meta.valid || !canSubmit
@@ -270,7 +270,7 @@ const availableStatus = [RequestStatus.ACCEPTED, RequestStatus.DENIED, RequestSt
                                         ]"
                                     >
                                         <template v-if="!canSubmit">
-                                            <LoadingIcon class="mr-2 h-5 w-5 animate-spin" aria-hidden="true" />
+                                            <LoadingIcon class="mr-2 size-5 animate-spin" aria-hidden="true" />
                                         </template>
                                         {{ $t('common.submit') }}
                                     </button>

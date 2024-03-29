@@ -59,7 +59,7 @@ const openStatus = ref(false);
                                                         @click="$emit('close')"
                                                     >
                                                         <span class="sr-only">{{ $t('common.close') }}</span>
-                                                        <CloseIcon class="h-5 w-5" aria-hidden="true" />
+                                                        <CloseIcon class="size-5" aria-hidden="true" />
                                                     </button>
                                                 </div>
                                             </div>
@@ -169,7 +169,7 @@ const openStatus = ref(false);
                                                                         $emit('goto', { x: unit.status?.x, y: unit.status?.y })
                                                                     "
                                                                 >
-                                                                    <MapMarkerIcon class="mr-1 h-5 w-5" aria-hidden="true" />
+                                                                    <MapMarkerIcon class="mr-1 size-5" aria-hidden="true" />
                                                                     {{ $t('common.go_to_location') }}
                                                                 </button>
                                                                 <span v-else>{{ $t('common.no_location') }}</span>
@@ -231,7 +231,7 @@ const openStatus = ref(false);
                                                                                 >
                                                                                     <template #before>
                                                                                         <AccountIcon
-                                                                                            class="mr-1 h-5 w-5 flex-shrink-0 text-base-300"
+                                                                                            class="mr-1 size-5 shrink-0 text-base-300"
                                                                                             aria-hidden="true"
                                                                                         />
                                                                                     </template>
@@ -254,7 +254,7 @@ const openStatus = ref(false);
                                                                         class="flex flex-row items-center rounded bg-neutral/10 px-2 py-1 text-xs font-semibold text-neutral shadow-sm hover:bg-neutral/20"
                                                                         @click="openAssign = true"
                                                                     >
-                                                                        <PencilIcon class="h-5 w-5" aria-hidden="true" />
+                                                                        <PencilIcon class="size-5" aria-hidden="true" />
                                                                         <span class="ml-0.5 truncate">
                                                                             {{ $t('common.assign') }}
                                                                         </span>
@@ -269,7 +269,7 @@ const openStatus = ref(false);
                                             </div>
                                         </div>
                                     </div>
-                                    <div class="flex flex-shrink-0 justify-end px-4 py-4">
+                                    <div class="flex shrink-0 justify-end p-4">
                                         <button
                                             type="button"
                                             class="w-full rounded-md bg-neutral px-3 py-2 text-sm font-semibold text-gray-900 shadow-sm ring-1 ring-inset ring-gray-300 hover:bg-gray-200"

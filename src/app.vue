@@ -59,7 +59,11 @@ configure({
 });
 
 // Set user setting locale on load of app
-locale.value = settings.locale;
+if (settings.locale !== null) {
+    locale.value = settings.locale;
+} else {
+    settings.locale = locale.value;
+}
 setLocaleGlobally(locale.value);
 
 async function setLocaleGlobally(locale: string): Promise<void> {

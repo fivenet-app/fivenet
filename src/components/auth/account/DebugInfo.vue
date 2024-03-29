@@ -115,7 +115,7 @@ async function resetLocalStorage(): Promise<void> {
                                 :key="perm"
                                 class="flex items-center justify-between py-4 pl-4 pr-5 text-sm leading-6"
                             >
-                                <KeyIcon class="h-5 w-5 flex-shrink-0 text-gray-400" aria-hidden="true" />
+                                <KeyIcon class="size-5 shrink-0 text-gray-400" aria-hidden="true" />
                                 <div class="ml-4 flex min-w-0 flex-1 gap-2">
                                     <span class="truncate font-medium">
                                         {{ perm }}
