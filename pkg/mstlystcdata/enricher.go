@@ -36,13 +36,13 @@ func (e *Enricher) EnrichJobInfo(usr common.IJobInfo) {
 	if ok {
 		usr.SetJobLabel(job.Label)
 
-		jg := usr.GetJobGrade() - 1
-		if jg < 0 {
-			jg = 0
+		gradeIndex := usr.GetJobGrade() - 1
+		if gradeIndex < 0 {
+			gradeIndex = 0
 		}
 
-		if len(job.Grades) >= int(jg) {
-			usr.SetJobGradeLabel(job.Grades[jg].Label)
+		if len(job.Grades) > int(gradeIndex) {
+			usr.SetJobGradeLabel(job.Grades[gradeIndex].Label)
 		} else {
 			jg := strconv.Itoa(int(usr.GetJobGrade()))
 			usr.SetJobGradeLabel(jg)
