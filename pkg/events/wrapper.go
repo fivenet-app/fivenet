@@ -2,10 +2,14 @@ package events
 
 import (
 	"context"
+	"fmt"
 	"strings"
+	"time"
 
 	"github.com/galexrt/fivenet/pkg/config"
 	"github.com/nats-io/nats.go/jetstream"
+	"go.uber.org/fx"
+	"go.uber.org/zap"
 )
 
 const DescriptionPrefix = "FiveNet: "
@@ -14,13 +18,15 @@ const DescriptionPrefix = "FiveNet: "
 type JSWrapper struct {
 	jetstream.JetStream
 
-	cfg config.NATS
+	cfg        config.NATS
+	shutdowner fx.Shutdowner
 }
 
-func NewJSWrapper(js jetstream.JetStream, cfg config.NATS) *JSWrapper {
+func NewJSWrapper(js jetstream.JetStream, cfg config.NATS, shutdowner fx.Shutdowner) *JSWrapper {
 	return &JSWrapper{
-		JetStream: js,
-		cfg:       cfg,
+		JetStream:  js,
+		cfg:        cfg,
+		shutdowner: shutdowner,
 	}
 }
 
@@ -46,4 +52,56 @@ func (j *JSWrapper) CreateOrUpdateKeyValue(ctx context.Context, cfg jetstream.Ke
 	}
 
 	return j.JetStream.CreateOrUpdateKeyValue(ctx, cfg)
+}
+
+const (
+	MaxRestartRetries         = 5
+	InitialRestartBackoffTime = 150 * time.Millisecond
+)
+
+func (j *JSWrapper) ConsumeErrHandler(logger *zap.Logger) jetstream.PullConsumeOpt {
+	return jetstream.ConsumeErrHandler(func(consumeCtx jetstream.ConsumeContext, err error) {
+		if err != nil {
+			logger.Error("error during jetstream consume", zap.Error(err))
+		}
+	})
+}
+
+type ConsumeErrRestartFn func(ctx context.Context, c context.Context) error
+
+func (j *JSWrapper) ConsumeErrHandlerWithRestart(c context.Context, logger *zap.Logger, restartFn ConsumeErrRestartFn) jetstream.PullConsumeOpt {
+	return jetstream.ConsumeErrHandler(func(consumeCtx jetstream.ConsumeContext, err error) {
+		if err != nil {
+			logger.Error("error during jetstream consume, trying to restart...", zap.Error(err))
+
+			sleep := InitialRestartBackoffTime
+			var restartErr error
+			for try := 0; try < MaxRestartRetries; try++ {
+				ctx, cancel := context.WithTimeout(context.Background(), 10*time.Second)
+				defer cancel()
+
+				// Pass in a timeout context and the outer "passed in" context
+				if restartErr = restartFn(ctx, c); restartErr != nil {
+					logger.Error(fmt.Sprintf("failed to restart jetstream consume, try %d of %d ...", try+1, MaxRestartRetries), zap.Error(restartErr))
+
+					if try < MaxRestartRetries {
+						time.Sleep(sleep)
+						sleep *= 2
+					}
+					continue
+				} else {
+					logger.Info(fmt.Sprintf("successfully restarted jetstream consume (try %d of %d)", try+1, MaxRestartRetries))
+					break
+				}
+			}
+
+			if restartErr != nil {
+				logger.Error(fmt.Sprintf("failed to restart jetstream consume after %d tries, attempting app shutdown", MaxRestartRetries), zap.Error(restartErr))
+
+				if err := j.shutdowner.Shutdown(fx.ExitCode(1)); err != nil {
+					logger.Fatal("failed to shutdown app via shutdowner", zap.Error(err))
+				}
+			}
+		}
+	})
 }

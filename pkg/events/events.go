@@ -80,7 +80,7 @@ func New(p Params) (res Result, err error) {
 		return res, err
 	}
 
-	res.JS = NewJSWrapper(js, p.Config.NATS)
+	res.JS = NewJSWrapper(js, p.Config.NATS, p.Shutdowner)
 
 	wg := sync.WaitGroup{}
 	ctx, cancel := context.WithCancel(context.Background())

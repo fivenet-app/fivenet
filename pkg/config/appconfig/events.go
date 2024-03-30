@@ -7,7 +7,6 @@ import (
 	"time"
 
 	"github.com/galexrt/fivenet/pkg/events"
-	"github.com/galexrt/fivenet/pkg/nats"
 	"github.com/nats-io/nats.go/jetstream"
 	"go.uber.org/zap"
 )
@@ -47,7 +46,7 @@ func (c *Config) registerSubscriptions(ctx context.Context) error {
 	}
 
 	c.jsCons, err = consumer.Consume(c.handleMessageFunc(ctx),
-		nats.ConsumeErrHandlerWithRestart(context.Background(), c.logger,
+		c.js.ConsumeErrHandlerWithRestart(context.Background(), c.logger,
 			func(_ context.Context, ctx context.Context) error {
 				return c.registerSubscriptions(ctx)
 			}))
