@@ -58,7 +58,7 @@ async function doCall(): Promise<void> {
                 class="mr-1 inline-flex flex-initial items-center text-primary-500 hover:text-primary-400"
                 @click="doCall"
             >
-                <PhoneIcon class="h-auto" :class="width" aria-hidden="true" />
+                <PhoneIcon class="hidden h-auto sm:block" :class="width" aria-hidden="true" />
                 <span v-if="showLabel" class="ml-1">{{ $t('common.call') }}</span>
             </button>
 

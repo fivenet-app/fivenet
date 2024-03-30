@@ -9,7 +9,7 @@ import { useAuthStore } from '~/store/auth';
 import { checkIfCanAccessColleague } from '~/components/jobs/colleagues/helpers';
 import type { Timestamp } from '~~/gen/ts/resources/timestamp/timestamp';
 
-defineProps<{
+const props = defineProps<{
     colleague: Colleague;
 }>();
 
@@ -27,6 +27,8 @@ today.setHours(0);
 today.setMinutes(0);
 today.setSeconds(0);
 today.setMilliseconds(0);
+
+const showAbsence = props.colleague.props?.absenceEnd && toDate(props.colleague.props?.absenceEnd).getTime() >= today.getTime();
 </script>
 
 <template>
@@ -60,11 +62,8 @@ today.setMilliseconds(0);
         <td class="hidden whitespace-nowrap p-1 text-left text-accent-200 lg:table-cell">
             {{ colleague.jobGradeLabel }}<span v-if="colleague.jobGrade > 0"> ({{ colleague.jobGrade }})</span>
         </td>
-        <td class="whitespace-nowrap py-2 pl-4 pr-3 text-base font-medium text-neutral sm:pl-1">
-            <dl
-                v-if="colleague.props?.absenceEnd && toDate(colleague.props?.absenceEnd).getTime() >= today.getTime()"
-                class="hidden font-normal sm:block"
-            >
+        <td class="hidden whitespace-nowrap py-2 pl-4 pr-3 text-base font-medium text-neutral sm:block sm:pl-1">
+            <dl v-if="showAbsence" class="font-normal">
                 <dd class="truncate text-accent-200">
                     {{ $t('common.from') }}:
                     <GenericTime :value="colleague.props?.absenceBegin" type="date" />
@@ -79,6 +78,15 @@ today.setMilliseconds(0);
         </td>
         <td class="whitespace-nowrap p-1 text-left text-accent-200">
             {{ colleague.dateofbirth }}
+            <dl v-if="showAbsence" class="block font-normal sm:hidden">
+                <dd class="truncate text-accent-200">
+                    {{ $t('common.from') }}:
+                    <GenericTime :value="colleague.props?.absenceBegin" type="date" />
+                </dd>
+                <dd class="truncate text-accent-200">
+                    {{ $t('common.to') }}: <GenericTime :value="colleague.props?.absenceEnd" type="date" />
+                </dd>
+            </dl>
         </td>
         <td class="whitespace-nowrap p-1 text-left text-accent-200">
             <div class="flex flex-col justify-end md:flex-row">

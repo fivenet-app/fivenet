@@ -75,7 +75,7 @@ func (e *Enricher) EnrichCategory(doc common.ICategory) {
 		job := NotAvailablePlaceholder
 		doc.SetCategory(&documents.Category{
 			Id:   0,
-			Name: "N/A",
+			Name: NotAvailablePlaceholder,
 			Job:  &job,
 		})
 	} else {

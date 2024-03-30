@@ -156,7 +156,10 @@ function updateAbsenceDates(value: { userId: number; absenceBegin?: Timestamp; a
                                         >
                                             {{ $t('common.rank', 1) }}
                                         </th>
-                                        <th scope="col" class="px-2 py-3.5 text-left text-sm font-semibold text-neutral">
+                                        <th
+                                            scope="col"
+                                            class="hidden px-2 py-3.5 text-left text-sm font-semibold text-neutral sm:block"
+                                        >
                                             {{ $t('common.absence_date') }}
                                         </th>
                                         <th scope="col" class="px-2 py-3.5 text-left text-sm font-semibold text-neutral">
