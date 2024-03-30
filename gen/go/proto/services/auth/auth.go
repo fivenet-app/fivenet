@@ -574,6 +574,12 @@ func (s *Server) ChooseCharacter(ctx context.Context, req *ChooseCharacterReques
 		return nil, auth.ErrInvalidToken
 	}
 
+	// Load account data for token creation
+	account, err := s.getAccountFromDB(ctx, tAccounts.ID.EQ(jet.Uint64(claims.AccID)))
+	if err != nil {
+		return nil, errswrap.NewError(err, errorsauth.ErrNoCharFound)
+	}
+
 	char, jProps, userGroup, err := s.getCharacter(ctx, req.CharId)
 	if err != nil {
 		return nil, errswrap.NewError(err, errorsauth.ErrNoCharFound)
@@ -582,12 +588,6 @@ func (s *Server) ChooseCharacter(ctx context.Context, req *ChooseCharacterReques
 	// Make sure the user isn't sending us a different char ID than their own
 	if !strings.HasSuffix(char.Identifier, ":"+claims.Subject) {
 		return nil, errorsauth.ErrUnableToChooseChar
-	}
-
-	// Load account data for token creation
-	account, err := s.getAccountFromDB(ctx, tAccounts.ID.EQ(jet.Uint64(claims.AccID)))
-	if err != nil {
-		return nil, errswrap.NewError(err, errorsauth.ErrNoCharFound)
 	}
 
 	isSuperUser := slices.Contains(s.superuserGroups, userGroup) || slices.Contains(s.superuserUsers, claims.Subject)
@@ -605,6 +605,17 @@ func (s *Server) ChooseCharacter(ctx context.Context, req *ChooseCharacterReques
 
 		not := false
 		account.Superuser = &not
+	} else if isSuperUser &&
+		(account.Superuser != nil && *account.Superuser) && account.OverrideJob != nil && account.OverrideJobGrade != nil {
+		char.Job = *account.OverrideJob
+		char.JobGrade = *account.OverrideJobGrade
+
+		s.enricher.EnrichJobInfo(char)
+
+		_, _, jProps, err = s.getJobWithProps(ctx, char.Job)
+		if err != nil {
+			return nil, errswrap.NewError(err, errorsauth.ErrGenericLogin)
+		}
 	}
 
 	newToken, newClaims, err := s.createTokenFromAccountAndChar(account, char)

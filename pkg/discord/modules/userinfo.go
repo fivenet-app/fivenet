@@ -269,7 +269,7 @@ func (g *UserInfo) createJobRoles(roles []*discordgo.Role) error {
 	}
 
 	if g.employeeRoleEnabled {
-		employeeRoleName := fmt.Sprintf(g.employeeRoleFormat, job.Label)
+		employeeRoleName := strings.ReplaceAll(g.employeeRoleFormat, "%s", job.Label)
 		if !slices.ContainsFunc(roles, func(in *discordgo.Role) bool {
 			if in.Name == employeeRoleName {
 				g.employeeRole = in
