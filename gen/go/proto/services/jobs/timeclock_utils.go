@@ -3,7 +3,6 @@ package jobs
 import (
 	"context"
 	"errors"
-	"slices"
 
 	"github.com/galexrt/fivenet/gen/go/proto/resources/jobs"
 	jet "github.com/go-jet/jet/v2/mysql"
@@ -48,7 +47,7 @@ func (s *Server) getTimeclockWeeklyStats(ctx context.Context, condition jet.Bool
 			jet.RawString("WEEK(timeclock_entry.`date`)"),
 		).
 		ORDER_BY(
-			jet.RawString("`timeclock_weekly_stats.date` DESC"),
+			jet.RawString("`timeclock_weekly_stats.date` ASC"),
 		).
 		LIMIT(12)
 
@@ -58,7 +57,6 @@ func (s *Server) getTimeclockWeeklyStats(ctx context.Context, condition jet.Bool
 			return nil, err
 		}
 	}
-	slices.Reverse(dest)
 
 	return dest, nil
 }
