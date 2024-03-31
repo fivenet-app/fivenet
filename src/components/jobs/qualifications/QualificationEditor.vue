@@ -1,5 +1,16 @@
 <script lang="ts" setup>
-import { Listbox, ListboxButton, ListboxOption, ListboxOptions } from '@headlessui/vue';
+import {
+    Disclosure,
+    DisclosureButton,
+    DisclosurePanel,
+    Listbox,
+    ListboxButton,
+    ListboxOption,
+    ListboxOptions,
+    Switch,
+    SwitchGroup,
+    SwitchLabel,
+} from '@headlessui/vue';
 import { max, min, required } from '@vee-validate/rules';
 import { useThrottleFn, useTimeoutFn } from '@vueuse/core';
 import { CheckIcon, ChevronDownIcon, LoadingIcon, PlusIcon } from 'mdi-vue3';
@@ -22,6 +33,7 @@ import QualificationRequirementEntry from '~/components/jobs/qualifications/Qual
 import DocEditor from '~/components/partials/DocEditor.vue';
 import { useAuthStore } from '~/store/auth';
 import { useCompletorStore } from '~/store/completor';
+import DiscordLogo from '~/components/partials/logos/DiscordLogo.vue';
 
 const props = defineProps<{
     id?: string;
@@ -53,6 +65,8 @@ interface FormData {
     title: string;
     description: string;
     content: string;
+    discordSettingsSyncEnabled: boolean;
+    discordSettingsRoleName?: string;
 }
 
 const openclose = [
@@ -108,6 +122,8 @@ onMounted(async () => {
                     closed: boolean;
                 };
                 quali.value.requirements = qualification.requirements;
+                setFieldValue('discordSettingsSyncEnabled', qualification.discordSettings?.syncEnabled ?? false);
+                setFieldValue('discordSettingsRoleName', qualification.discordSettings?.roleName);
             }
 
             if (response.qualification?.access) {
@@ -167,6 +183,10 @@ async function createQualification(values: FormData): Promise<CreateQualificatio
             access: {
                 jobs: [],
             } as QualificationAccess,
+            discordSettings: {
+                syncEnabled: values.discordSettingsSyncEnabled,
+                roleName: values.discordSettingsRoleName,
+            },
         },
     };
     access.value.forEach((entry) => {
@@ -222,6 +242,10 @@ async function updateQualification(values: FormData): Promise<UpdateQualificatio
             access: {
                 jobs: [],
             } as QualificationAccess,
+            discordSettings: {
+                syncEnabled: values.discordSettingsSyncEnabled,
+                roleName: values.discordSettingsRoleName,
+            },
         },
     };
     access.value.forEach((entry) => {
@@ -236,7 +260,7 @@ async function updateQualification(values: FormData): Promise<UpdateQualificatio
 
             req.qualification.access.jobs.push({
                 id: '0',
-                qualificationId: '0',
+                qualificationId: props.id!,
                 job: entry.values.job,
                 minimumGrade: entry.values.minimumGrade ? entry.values.minimumGrade : 0,
                 access: entry.values.accessRole,
@@ -272,6 +296,8 @@ const { handleSubmit, meta, setFieldValue } = useForm<FormData>({
         title: { required: true, min: 3, max: 1024 },
         description: { required: true, max: 512 },
         content: { required: true, min: 20, max: 750000 },
+        discordSettingsSyncEnabled: {},
+        discordSettingsRoleName: { required: false, min: 3, max: 50 },
     },
     validateOnMount: true,
 });
@@ -364,6 +390,7 @@ function updateQualificationRequirement(idx: number, qualification?: Qualificati
         return;
     }
 
+    quali.value.requirements[idx].qualificationId = props.id ?? '0';
     quali.value.requirements[idx].targetQualificationId = qualification.id;
 }
 
@@ -556,6 +583,77 @@ const { data: jobs } = useAsyncData('completor-jobs', () => completorStore.listJ
                 >
                     <PlusIcon class="size-5" aria-hidden="true" />
                 </button>
+            </div>
+
+            <div class="my-3">
+                <h2 class="text-neutral">
+                    {{ $t('common.discord') }}
+                </h2>
+
+                <Disclosure v-slot="{ open }" as="div" class="border-neutral/20 text-neutral hover:border-neutral/70">
+                    <DisclosureButton
+                        :class="[
+                            open ? 'rounded-t-lg border-b-0' : 'rounded-lg',
+                            'flex w-full items-start justify-between border-2 border-inherit p-2 text-left transition-colors',
+                        ]"
+                    >
+                        <span class="inline-flex items-center text-base font-semibold leading-7 text-neutral">
+                            <DiscordLogo class="mr-2 h-auto w-5" aria-hidden="true" />
+                            {{ $t('common.discord') }}
+                        </span>
+                        <span class="ml-6 flex h-7 items-center">
+                            <ChevronDownIcon
+                                :class="[open ? 'upsidedown' : '', 'h-auto w-5 transition-transform']"
+                                aria-hidden="true"
+                            />
+                        </span>
+                    </DisclosureButton>
+                    <DisclosurePanel class="rounded-b-lg border-2 border-t-0 border-inherit transition-colors">
+                        <div class="mx-4 pb-2">
+                            <VeeField v-slot="{ field, handleInput }" name="discordSettingsSyncEnabled">
+                                <SwitchGroup as="div" class="flex items-center">
+                                    <Switch
+                                        :class="[
+                                            field.value ? 'bg-primary-600' : 'bg-gray-200',
+                                            'relative inline-flex h-6 w-11 shrink-0 cursor-pointer rounded-full border-2 border-transparent transition-colors duration-200 ease-in-out focus:outline-none focus:ring-2 focus:ring-neutral focus:ring-offset-2',
+                                        ]"
+                                        :disabled="!canEdit || !canDo.edit"
+                                        @update:model-value="handleInput($event)"
+                                    >
+                                        <span class="sr-only">
+                                            {{ $t('common.absent') }}
+                                        </span>
+                                        <span
+                                            aria-hidden="true"
+                                            :class="[
+                                                field.value ? 'translate-x-5' : 'translate-x-0',
+                                                'pointer-events-none inline-block size-5 rounded-full bg-neutral ring-0 transition duration-200 ease-in-out',
+                                            ]"
+                                        />
+                                    </Switch>
+                                    <SwitchLabel as="span" class="ml-3 text-sm">
+                                        <span class="font-medium text-gray-300">{{ $t('common.enabled') }}</span>
+                                    </SwitchLabel>
+                                </SwitchGroup>
+                            </VeeField>
+
+                            <label for="discordSettingsRoleName" class="block text-base font-medium">
+                                {{ $t('common.role') }}
+                            </label>
+                            <VeeField
+                                name="discordSettingsRoleName"
+                                type="text"
+                                :placeholder="$t('common.role')"
+                                :label="$t('common.role')"
+                                class="block w-full rounded-md border-0 bg-base-700 py-1.5 text-neutral placeholder:text-accent-200 focus:ring-2 focus:ring-inset focus:ring-base-300 sm:text-sm sm:leading-6"
+                                :disabled="!canEdit || !canDo.edit"
+                                @focusin="focusTablet(true)"
+                                @focusout="focusTablet(false)"
+                            />
+                            <VeeErrorMessage name="discordSettingsRoleName" as="p" class="mt-2 text-sm text-error-400" />
+                        </div>
+                    </DisclosurePanel>
+                </Disclosure>
             </div>
 
             <div class="flex pb-14">

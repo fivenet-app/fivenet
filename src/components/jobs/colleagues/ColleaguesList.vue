@@ -94,7 +94,7 @@ function updateAbsenceDates(value: { userId: number; absenceBegin?: Timestamp; a
                                 </div>
                             </div>
                             <div class="flex-initial">
-                                <label for="search" class="block text-sm font-medium leading-6 text-neutral">
+                                <label for="absent" class="block text-sm font-medium leading-6 text-neutral">
                                     {{ $t('common.absent') }}
                                 </label>
                                 <div class="relative mt-3 flex items-center">
