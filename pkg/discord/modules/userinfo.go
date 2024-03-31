@@ -90,22 +90,15 @@ func (g *UserInfo) Run(settings *pbusers.DiscordSyncSettings) ([]*discordgo.Mess
 		return nil, err
 	}
 
-	if err := g.createJobRoles(guildRoles); err != nil {
+	logs, err := g.createJobRoles(guildRoles, settings.UserInfoSyncSettings.UnemployedEnabled)
+	if err != nil {
 		return nil, err
 	}
 
-	if settings.UserInfoSyncSettings.UnemployedEnabled {
-		if err := g.createUnemployedRole(guildRoles); err != nil {
-			return nil, err
-		}
-	}
-
-	return g.syncUserInfo()
+	return g.syncUserInfo(logs)
 }
 
-func (g *UserInfo) syncUserInfo() ([]*discordgo.MessageEmbed, error) {
-	logs := []*discordgo.MessageEmbed{}
-
+func (g *UserInfo) syncUserInfo(logs []*discordgo.MessageEmbed) ([]*discordgo.MessageEmbed, error) {
 	stmt := tOauth2Accs.
 		SELECT(
 			tOauth2Accs.AccountID.AS("userrolemapping.account_id"),
@@ -153,7 +146,7 @@ func (g *UserInfo) syncUserInfo() ([]*discordgo.MessageEmbed, error) {
 					// Add log about user not being on discord
 					logs = append(logs, &discordgo.MessageEmbed{
 						Type:        discordgo.EmbedTypeRich,
-						Title:       fmt.Sprintf("Employee not found on Discord: %s, %s", user.Firstname, user.Lastname),
+						Title:       fmt.Sprintf("UserInfo: Employee not found on Discord: %s, %s", user.Firstname, user.Lastname),
 						Description: fmt.Sprintf("Discord ID: %s, Rank: %d", user.ExternalID, user.JobGrade),
 						Author:      embeds.EmbedAuthor,
 						Color:       embeds.ColorWarn,
@@ -232,11 +225,13 @@ func (g *UserInfo) setUserNickname(member *discordgo.Member, firstname string, l
 	return nil
 }
 
-func (g *UserInfo) createJobRoles(roles []*discordgo.Role) error {
+func (g *UserInfo) createJobRoles(roles []*discordgo.Role, unemployedRoleEnabled bool) ([]*discordgo.MessageEmbed, error) {
+	logs := []*discordgo.MessageEmbed{}
+
 	job := g.enricher.GetJobByName(g.job)
 	if job == nil {
 		g.logger.Error("unknown job for discord guild, skipping")
-		return nil
+		return logs, nil
 	}
 
 	for i := len(job.Grades) - 1; i >= 0; i-- {
@@ -262,8 +257,17 @@ func (g *UserInfo) createJobRoles(roles []*discordgo.Role) error {
 			Name: name,
 		})
 		if err != nil {
-			return fmt.Errorf("failed to create job grade role %s (Grade: %s): %w", name, grade, err)
+			return logs, fmt.Errorf("failed to create job grade role %s (Grade: %s): %w", name, grade, err)
 		}
+
+		// Add log about user not being on discord
+		logs = append(logs, &discordgo.MessageEmbed{
+			Type:        discordgo.EmbedTypeRich,
+			Title:       fmt.Sprintf("UserInfo: Role %s created", role.Name),
+			Description: fmt.Sprintf("Role %s created (%s)", role.Name, role.ID),
+			Author:      embeds.EmbedAuthor,
+			Color:       embeds.ColorInfo,
+		})
 
 		g.jobRoles[grade.Grade] = role
 	}
@@ -281,8 +285,17 @@ func (g *UserInfo) createJobRoles(roles []*discordgo.Role) error {
 				Name: employeeRoleName,
 			})
 			if err != nil {
-				return fmt.Errorf("failed to create employee role %s: %w", job.Label, err)
+				return logs, fmt.Errorf("failed to create employee role %s: %w", job.Label, err)
 			}
+
+			// Add log about user not being on discord
+			logs = append(logs, &discordgo.MessageEmbed{
+				Type:        discordgo.EmbedTypeRich,
+				Title:       fmt.Sprintf("UserInfo: Role %s created", role.Name),
+				Description: fmt.Sprintf("Role %s created (%s)", role.Name, role.ID),
+				Author:      embeds.EmbedAuthor,
+				Color:       embeds.ColorInfo,
+			})
 
 			g.employeeRole = role
 		}
@@ -302,8 +315,17 @@ func (g *UserInfo) createJobRoles(roles []*discordgo.Role) error {
 				Name: g.jobsAbsenceRoleName,
 			})
 			if err != nil {
-				return fmt.Errorf("failed to create jobs absence role %s: %w", job.Label, err)
+				return logs, fmt.Errorf("failed to create jobs absence role %s: %w", job.Label, err)
 			}
+
+			// Add log about user not being on discord
+			logs = append(logs, &discordgo.MessageEmbed{
+				Type:        discordgo.EmbedTypeRich,
+				Title:       fmt.Sprintf("UserInfo: Role %s created", role.Name),
+				Description: fmt.Sprintf("Role %s created (%s)", role.Name, role.ID),
+				Author:      embeds.EmbedAuthor,
+				Color:       embeds.ColorInfo,
+			})
 
 			g.jobsAbsenceRole = role
 		}
@@ -311,9 +333,15 @@ func (g *UserInfo) createJobRoles(roles []*discordgo.Role) error {
 		g.jobsAbsenceRole = nil
 	}
 
+	if unemployedRoleEnabled {
+		if err := g.createUnemployedRole(roles); err != nil {
+			return nil, err
+		}
+	}
+
 	g.logger.Debug("created job employee and rank roles")
 
-	return nil
+	return logs, nil
 }
 
 func (g *UserInfo) createUnemployedRole(roles []*discordgo.Role) error {

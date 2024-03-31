@@ -11,6 +11,6 @@ var EmbedAuthor = &discordgo.MessageEmbedAuthor{
 const (
 	ColorInfo    = 5627360
 	ColorWarn    = 16166445
-	ColorFailure = 14100024
+	ColorError   = 14100024
 	ColorSuccess = 2346603
 )

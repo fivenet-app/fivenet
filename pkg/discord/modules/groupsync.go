@@ -11,6 +11,7 @@ import (
 	"github.com/bwmarrin/discordgo"
 	"github.com/galexrt/fivenet/gen/go/proto/resources/users"
 	"github.com/galexrt/fivenet/pkg/config"
+	"github.com/galexrt/fivenet/pkg/discord/embeds"
 	jet "github.com/go-jet/jet/v2/mysql"
 	"github.com/go-jet/jet/v2/qrm"
 	"go.uber.org/zap"
@@ -39,17 +40,29 @@ func NewGroupSync(base *BaseModule) (Module, error) {
 }
 
 func (g *GroupSync) Run(settings *users.DiscordSyncSettings) ([]*discordgo.MessageEmbed, error) {
-	if err := g.createGroupRoles(); err != nil {
-		return nil, err
-	}
+	logs := []*discordgo.MessageEmbed{}
 
-	return nil, g.syncGroups()
+	ls, err := g.createGroupRoles()
+	if err != nil {
+		return logs, err
+	}
+	logs = append(logs, ls...)
+
+	ls, err = g.syncGroups()
+	if err != nil {
+		return logs, err
+	}
+	logs = append(logs, ls...)
+
+	return logs, nil
 }
 
-func (g *GroupSync) createGroupRoles() error {
+func (g *GroupSync) createGroupRoles() ([]*discordgo.MessageEmbed, error) {
+	logs := []*discordgo.MessageEmbed{}
+
 	guildRoles, err := g.discord.GuildRoles(g.guild.ID)
 	if err != nil {
-		return err
+		return logs, err
 	}
 
 	dcRoles := map[string]config.DiscordGroupRole{}
@@ -89,7 +102,7 @@ func (g *GroupSync) createGroupRoles() error {
 				Color:       &colorDec,
 			})
 			if err != nil {
-				return fmt.Errorf("failed to edit role %s permissions: %w", g.roles[dcRole.RoleName].ID, err)
+				return logs, fmt.Errorf("failed to edit role %s permissions: %w", g.roles[dcRole.RoleName].ID, err)
 			}
 
 			g.roles[dcRole.RoleName] = role
@@ -106,15 +119,24 @@ func (g *GroupSync) createGroupRoles() error {
 			Permissions: dcRole.Permissions,
 		})
 		if err != nil {
-			return fmt.Errorf("failed to create role %s (%s): %w", dcRole.RoleName, dcRole.RoleName, err)
+			return logs, fmt.Errorf("failed to create role %s (%s): %w", dcRole.RoleName, dcRole.RoleName, err)
 		}
+
+		// Add log about user not being on discord
+		logs = append(logs, &discordgo.MessageEmbed{
+			Type:        discordgo.EmbedTypeRich,
+			Title:       fmt.Sprintf("Group Sync: Role %s created", role.Name),
+			Description: fmt.Sprintf("Role %s created (%s)", role.Name, role.ID),
+			Author:      embeds.EmbedAuthor,
+			Color:       embeds.ColorInfo,
+		})
 
 		g.roles[dcRole.RoleName] = role
 	}
 
 	g.logger.Debug("created or updated group roles")
 
-	return nil
+	return logs, nil
 }
 
 type GroupSyncUser struct {
@@ -124,7 +146,9 @@ type GroupSyncUser struct {
 	SameJob    bool
 }
 
-func (g *GroupSync) syncGroups() error {
+func (g *GroupSync) syncGroups() ([]*discordgo.MessageEmbed, error) {
+	logs := []*discordgo.MessageEmbed{}
+
 	serverGroups := []jet.Expression{}
 	for sGroup := range g.groupsToSync {
 		serverGroups = append(serverGroups, jet.String(sGroup))
@@ -152,7 +176,7 @@ func (g *GroupSync) syncGroups() error {
 
 	var dest []*GroupSyncUser
 	if err := stmt.QueryContext(g.ctx, g.db, &dest); err != nil {
-		return err
+		return logs, err
 	}
 
 	for _, user := range dest {
@@ -187,13 +211,15 @@ func (g *GroupSync) syncGroups() error {
 			continue
 		}
 
-		if err := g.setUserGroups(member, user.Group); err != nil {
+		ls, err := g.setUserGroups(member, user.Group)
+		if err != nil {
 			g.logger.Error("failed to set user groups", zap.Error(err))
 			continue
 		}
+		logs = append(logs, ls...)
 	}
 
-	return g.cleanupUserGroupMembers(dest)
+	return g.cleanupUserGroupMembers(logs, dest)
 }
 
 func (g *GroupSync) checkIfUserHasCharInJob(identifier string, job string) (bool, error) {
@@ -217,30 +243,39 @@ func (g *GroupSync) checkIfUserHasCharInJob(identifier string, job string) (bool
 	return len(dest) > 0, nil
 }
 
-func (g *GroupSync) setUserGroups(member *discordgo.Member, group string) error {
+func (g *GroupSync) setUserGroups(member *discordgo.Member, group string) ([]*discordgo.MessageEmbed, error) {
 	dcRole, ok := g.groupsToSync[group]
 	if !ok {
-		return fmt.Errorf("no discord role mapping found for server group %s", group)
+		return nil, fmt.Errorf("no discord role mapping found for server group %s", group)
 	}
 
 	role, ok := g.roles[dcRole.RoleName]
 	if !ok {
-		return fmt.Errorf("no discord role found for server group %s", group)
+		return nil, fmt.Errorf("no discord role found for server group %s", group)
 	}
 
 	if !slices.Contains(member.Roles, role.ID) {
 		if err := g.discord.GuildMemberRoleAdd(g.guild.ID, member.User.ID, role.ID); err != nil {
-			return fmt.Errorf("failed to add member to %s (%s) role: %w", role.Name, role.ID, err)
+			return nil, fmt.Errorf("failed to add member to %s (%s) role: %w", role.Name, role.ID, err)
 		}
+
+		// Add log about user being added to synced role
+		return []*discordgo.MessageEmbed{{
+			Type:        discordgo.EmbedTypeRich,
+			Title:       fmt.Sprintf("Group Sync: Added %s (%q) member", member.User.ID, member.User.Username),
+			Description: fmt.Sprintf("Added %s (%q) to %s role", member.User.ID, member.User.Username, role.Name),
+			Author:      embeds.EmbedAuthor,
+			Color:       embeds.ColorInfo,
+		}}, nil
 	}
 
-	return nil
+	return nil, nil
 }
 
-func (g *GroupSync) cleanupUserGroupMembers(users []*GroupSyncUser) error {
+func (g *GroupSync) cleanupUserGroupMembers(logs []*discordgo.MessageEmbed, users []*GroupSyncUser) ([]*discordgo.MessageEmbed, error) {
 	guild, err := g.discord.State.Guild(g.guild.ID)
 	if err != nil {
-		return err
+		return logs, err
 	}
 
 	for i := 0; i < len(guild.Members); i++ {
@@ -259,10 +294,19 @@ func (g *GroupSync) cleanupUserGroupMembers(users []*GroupSyncUser) error {
 			}
 
 			if err := g.discord.GuildMemberRoleRemove(g.guild.ID, user.ID, role.ID); err != nil {
-				return fmt.Errorf("failed to remove member from role %s (%s): %w", role.Name, role.ID, err)
+				return logs, fmt.Errorf("failed to remove member from role %s (%s): %w", role.Name, role.ID, err)
 			}
+
+			// Add log about user being removed from synced role
+			logs = append(logs, &discordgo.MessageEmbed{
+				Type:        discordgo.EmbedTypeRich,
+				Title:       fmt.Sprintf("Group Sync: Removed %s (%q) member", user.ID, user.Username),
+				Description: fmt.Sprintf("Removed %s (%q) from %s role", user.ID, user.Username, role.Name),
+				Author:      embeds.EmbedAuthor,
+				Color:       embeds.ColorInfo,
+			})
 		}
 	}
 
-	return nil
+	return logs, nil
 }

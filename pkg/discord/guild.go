@@ -168,6 +168,8 @@ func (g *Guild) sendStartStatusLog(channelId string) error {
 	return nil
 }
 
+const discordLogsEmbedChunkSize = 5
+
 func (g *Guild) sendStatusLog(channelId string, logs []*discordgo.MessageEmbed) error {
 	if len(logs) == 0 {
 		return nil
@@ -178,8 +180,17 @@ func (g *Guild) sendStatusLog(channelId string, logs []*discordgo.MessageEmbed) 
 		return err
 	}
 
-	if _, err := g.bot.discord.ChannelMessageSendEmbeds(channel.ID, logs); err != nil {
-		return err
+	// Split logs embeds into chunks
+	for i := 0; i < len(logs); i += discordLogsEmbedChunkSize {
+		end := i + discordLogsEmbedChunkSize
+
+		if end > len(logs) {
+			end = len(logs)
+		}
+
+		if _, err := g.bot.discord.ChannelMessageSendEmbeds(channel.ID, logs[i:end]); err != nil {
+			return err
+		}
 	}
 
 	return nil
@@ -198,7 +209,7 @@ func (g *Guild) sendEndStatusLog(channelId string, duration time.Duration, errs 
 			Title:       "Errors during sync",
 			Description: fmt.Sprintf("Following errors occured during sync:\n```\n%v\n```", errs),
 			Author:      embeds.EmbedAuthor,
-			Color:       embeds.ColorFailure,
+			Color:       embeds.ColorError,
 		})
 	}
 
