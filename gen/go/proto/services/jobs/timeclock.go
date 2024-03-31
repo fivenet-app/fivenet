@@ -64,12 +64,12 @@ func (s *Server) ListTimeclock(ctx context.Context, req *ListTimeclockRequest) (
 
 	if req.From != nil {
 		condition = condition.AND(tTimeClock.Date.LT_EQ(
-			jet.TimestampT(timeutils.TruncateToDay(req.From.AsTime())),
+			jet.DateT(timeutils.TruncateToDay(req.From.AsTime())),
 		))
 	}
 	if req.To != nil {
 		condition = condition.AND(tTimeClock.Date.GT_EQ(
-			jet.TimestampT(timeutils.TruncateToDay(req.To.AsTime())),
+			jet.DateT(timeutils.TruncateToDay(req.To.AsTime())),
 		))
 	}
 
@@ -220,7 +220,7 @@ func (s *Server) ListInactiveEmployees(ctx context.Context, req *ListInactiveEmp
 				FROM(tTimeClock).
 				WHERE(jet.AND(
 					tTimeClock.Job.EQ(jet.String(userInfo.Job)),
-					tTimeClock.Date.GT_EQ(jet.CURRENT_DATE().SUB(jet.INTERVAL(req.Days, jet.DAY))),
+					tTimeClock.Date.GT_EQ(jet.DateExp(jet.CURRENT_DATE().SUB(jet.INTERVAL(req.Days, jet.DAY)))),
 				)).
 				GROUP_BY(tTimeClock.UserID),
 		),

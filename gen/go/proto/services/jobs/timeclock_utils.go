@@ -21,7 +21,7 @@ func (s *Server) getTimeclockStats(ctx context.Context, condition jet.BoolExpres
 		FROM(tTimeClock).
 		WHERE(jet.AND(
 			condition,
-			tTimeClock.Date.BETWEEN(jet.CURRENT_DATE().SUB(jet.INTERVAL(7, jet.DAY)), jet.CURRENT_TIMESTAMP()),
+			tTimeClock.Date.BETWEEN(jet.DateExp(jet.CURRENT_DATE().SUB(jet.INTERVAL(7, jet.DAY))), jet.CURRENT_DATE()),
 		))
 
 	var dest jobs.TimeclockStats
@@ -35,7 +35,7 @@ func (s *Server) getTimeclockStats(ctx context.Context, condition jet.BoolExpres
 func (s *Server) getTimeclockWeeklyStats(ctx context.Context, condition jet.BoolExpression) ([]*jobs.TimeclockWeeklyStats, error) {
 	stmt := tTimeClock.
 		SELECT(
-			jet.RawString("CONCAT(YEAR(timeclock_entry.`date`), ' - ', WEEK(timeclock_entry.`date`)) AS `timeclock_weekly_stats.date`"),
+			jet.CONCAT(jet.RawString("YEAR(timeclock_entry.`date`)"), jet.RawString(" - "), jet.RawString("WEEK(timeclock_entry.`date`)")).AS("timeclock_weekly_stats.date"),
 			jet.SUM(tTimeClock.SpentTime).AS("timeclock_weekly_stats.sum"),
 			jet.AVG(tTimeClock.SpentTime).AS("timeclock_weekly_stats.avg"),
 			jet.MAX(tTimeClock.SpentTime).AS("timeclock_weekly_stats.max"),

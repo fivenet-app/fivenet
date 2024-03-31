@@ -8,10 +8,16 @@ Config.TrackingJobs = {  -- Those jobs will be tracked
 	["ambulance"] = true,
 	["doj"] = true,
 	["police"] = true,
-    -- TODO use a better way to "track" on duty time for "non livemap" jobs that just need time clock..
 }
 Config.TrackingItem = "radio" -- Players without this item will be updated as 'hidden', set false otherwise
 Config.TrackingInterval = 3000 -- Interval in ms until positions will be updated
+
+Config.TimeclockJobs = { -- These jobs will be timeclocked tracked
+	["ambulance"] = true,
+	["doj"] = true,
+    ["police"] = true,
+    -- Can also be other jobs that are onDuty enabled
+}
 
 Config.Events = {}
 Config.Events.BillingJobs = { -- Jobs bills that will cause an user activity to be created for the billing cycle events

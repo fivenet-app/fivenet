@@ -25,7 +25,7 @@ CREATE TABLE
     IF NOT EXISTS `fivenet_jobs_timeclock` (
         `job` varchar(20) NOT NULL,
         `user_id` int(11) NOT NULL,
-        `date` datetime(3) DEFAULT CURRENT_TIMESTAMP(3) NOT NULL,
+        `date` date DEFAULT (CURRENT_DATE) NOT NULL,
         `start_time` datetime(3) DEFAULT CURRENT_TIMESTAMP(3),
         `end_time` datetime(3) DEFAULT NULL,
         `spent_time` decimal(10,2) DEFAULT 0.0,

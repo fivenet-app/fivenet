@@ -19,7 +19,7 @@ type fivenetJobsTimeclockTable struct {
 	// Columns
 	Job       mysql.ColumnString
 	UserID    mysql.ColumnInteger
-	Date      mysql.ColumnTimestamp
+	Date      mysql.ColumnDate
 	StartTime mysql.ColumnTimestamp
 	EndTime   mysql.ColumnTimestamp
 	SpentTime mysql.ColumnFloat
@@ -65,7 +65,7 @@ func newFivenetJobsTimeclockTableImpl(schemaName, tableName, alias string) fiven
 	var (
 		JobColumn       = mysql.StringColumn("job")
 		UserIDColumn    = mysql.IntegerColumn("user_id")
-		DateColumn      = mysql.TimestampColumn("date")
+		DateColumn      = mysql.DateColumn("date")
 		StartTimeColumn = mysql.TimestampColumn("start_time")
 		EndTimeColumn   = mysql.TimestampColumn("end_time")
 		SpentTimeColumn = mysql.FloatColumn("spent_time")
