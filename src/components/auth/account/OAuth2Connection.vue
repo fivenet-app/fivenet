@@ -55,21 +55,14 @@ onConfirm(async (provider) => disconnectOAuth2Connection(provider));
                     {{ account.username }}
                 </span>
 
-                <template v-if="isNUIAvailable()">
-                    <p class="ml-4 text-end text-sm text-neutral">
-                        {{ $t('system.not_supported_on_tablet.title') }}
-                    </p>
-                </template>
-                <template v-else>
-                    <button
-                        type="button"
-                        class="inline-flex items-center gap-1 rounded-md bg-error-600 p-2 text-sm font-semibold text-neutral hover:bg-error-700"
-                        @click="reveal(provider)"
-                    >
-                        <CloseCircleIcon class="size-5" aria-hidden="true" />
-                        <span>{{ $t('common.disconnect') }}</span>
-                    </button>
-                </template>
+                <button
+                    type="button"
+                    class="inline-flex items-center gap-1 rounded-md bg-error-600 p-2 text-sm font-semibold text-neutral hover:bg-error-700"
+                    @click="reveal(provider)"
+                >
+                    <CloseCircleIcon class="size-5" aria-hidden="true" />
+                    <span>{{ $t('common.disconnect') }}</span>
+                </button>
             </div>
             <div v-else>
                 <template v-if="isNUIAvailable()">

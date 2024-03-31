@@ -37,6 +37,7 @@ import { useAuthStore } from '~/store/auth';
 import LivemapBase from '~/components/livemap/LivemapBase.vue';
 import { setWaypointPLZ } from '~/composables/nui';
 import { useSettingsStore } from '~/store/settings';
+import DispatchStatusBreakdown from '../partials/DispatchStatusBreakdown.vue';
 
 defineEmits<{
     (e: 'goto', loc: Coordinate): void;
@@ -292,7 +293,6 @@ async function checkup(): Promise<void> {
         return;
     }
 
-    const notifications = useNotificatorStore();
     notifications.dispatchNotification({
         title: { key: 'notifications.centrum.unitUpdated.checkup.title', parameters: {} },
         content: { key: 'notifications.centrum.unitUpdated.checkup.content', parameters: {} },
@@ -586,7 +586,7 @@ async function checkup(): Promise<void> {
                                         <div
                                             class="mb-0.5 mt-1 divide-y border-t border-base-400 text-center text-xs leading-4 text-neutral"
                                         >
-                                            {{ $t('components.centrum.livemap.total_dispatches') }}: {{ dispatches.size }}
+                                            <DispatchStatusBreakdown />
                                         </div>
                                     </li>
                                 </template>

@@ -6,6 +6,7 @@ import DispatchListEntry from '~/components/centrum/dispatches/DispatchListEntry
 import { Dispatch } from '~~/gen/ts/resources/centrum/dispatches';
 import GenericTime from '~/components/partials/elements/GenericTime.vue';
 import GenericTable from '~/components/partials/elements/GenericTable.vue';
+import DispatchStatusBreakdown from '../partials/DispatchStatusBreakdown.vue';
 
 const props = withDefaults(
     defineProps<{
@@ -67,10 +68,7 @@ const grouped = computedAsync(async () => {
                         <ArchiveIcon class="size-5" aria-hidden="true" />
                     </NuxtLink>
                 </h2>
-                <h2 v-if="dispatches === undefined" class="text-base font-semibold text-gray-100">
-                    {{ $t('components.centrum.livemap.total_dispatches') }}:
-                    {{ getSortedDispatches.length }}
-                </h2>
+                <DispatchStatusBreakdown v-if="dispatches === undefined" class="text-base font-semibold text-gray-100" />
             </div>
         </div>
         <div class="mt-0.5 flow-root">
