@@ -35,7 +35,7 @@ func (s *Server) getTimeclockStats(ctx context.Context, condition jet.BoolExpres
 func (s *Server) getTimeclockWeeklyStats(ctx context.Context, condition jet.BoolExpression) ([]*jobs.TimeclockWeeklyStats, error) {
 	stmt := tTimeClock.
 		SELECT(
-			jet.CONCAT(jet.RawString("YEAR(timeclock_entry.`date`)"), jet.RawString(" - "), jet.RawString("WEEK(timeclock_entry.`date`)")).AS("timeclock_weekly_stats.date"),
+			jet.CONCAT(jet.RawString("YEAR(timeclock_entry.`date`)"), jet.RawString("' - '"), jet.RawString("WEEK(timeclock_entry.`date`)")).AS("timeclock_weekly_stats.date"),
 			jet.SUM(tTimeClock.SpentTime).AS("timeclock_weekly_stats.sum"),
 			jet.AVG(tTimeClock.SpentTime).AS("timeclock_weekly_stats.avg"),
 			jet.MAX(tTimeClock.SpentTime).AS("timeclock_weekly_stats.max"),
