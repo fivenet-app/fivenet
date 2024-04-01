@@ -31,6 +31,7 @@ function getProviderConnection(provider: string): undefined | OAuth2Account {
                 :key="provider.name"
                 :provider="provider"
                 :account="getProviderConnection(provider.name)"
+                @disconnected="$emit('disconnected', $event)"
             />
         </template>
     </GenericContainerPanel>
