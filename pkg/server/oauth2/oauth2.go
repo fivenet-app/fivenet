@@ -13,6 +13,7 @@ import (
 	"github.com/galexrt/fivenet/pkg/grpc/auth"
 	"github.com/galexrt/fivenet/pkg/server/oauth2/providers"
 	"github.com/galexrt/fivenet/pkg/utils"
+	"github.com/galexrt/fivenet/pkg/utils/dbutils"
 	"github.com/galexrt/fivenet/query/fivenet/model"
 	"github.com/galexrt/fivenet/query/fivenet/table"
 	"github.com/gin-contrib/sessions"
@@ -124,9 +125,11 @@ func (o *OAuth2) GetProvider(c *gin.Context) (providers.IProvider, error) {
 const (
 	AccountInfoRedirBase string = "/auth/account-info"
 	LoginRedirBase       string = "/auth/login"
+
+	ReasonInternalError string = "internal_error"
 )
 
-func (o *OAuth2) handleRedirect(c *gin.Context, err error, connectOnly bool, success bool, reason string) {
+func (o *OAuth2) handleRedirect(c *gin.Context, connectOnly bool, success bool, reason string) {
 	if !success {
 		redirURL := ""
 		if connectOnly {
@@ -162,7 +165,7 @@ func (o *OAuth2) Login(c *gin.Context) {
 		connectOnly, err = strconv.ParseBool(connectOnlyVal)
 		if err != nil {
 			o.logger.Error("failed to parse connect only var", zap.Error(err))
-			o.handleRedirect(c, err, false, false, "invalid_request")
+			o.handleRedirect(c, false, false, "invalid_request")
 			return
 		}
 	}
@@ -174,7 +177,8 @@ func (o *OAuth2) Login(c *gin.Context) {
 
 	state, err := utils.GenerateRandomString(64)
 	if err != nil {
-		o.handleRedirect(c, err, connectOnly, false, "internal_error")
+		o.logger.Error("failed to generate random string", zap.Error(err))
+		o.handleRedirect(c, connectOnly, false, ReasonInternalError)
 		return
 	}
 
@@ -185,7 +189,7 @@ func (o *OAuth2) Login(c *gin.Context) {
 	provider, err := o.GetProvider(c)
 	if err != nil {
 		o.logger.Error("failed to get provider", zap.Error(err))
-		o.handleRedirect(c, err, connectOnly, false, "invalid_provider")
+		o.handleRedirect(c, connectOnly, false, "invalid_provider")
 		return
 	}
 
@@ -197,7 +201,7 @@ func (o *OAuth2) Callback(c *gin.Context) {
 	sess := sessions.DefaultMany(c, "fivenet_oauth2_state")
 	sessState := sess.Get("state")
 	if sessState == nil {
-		o.handleRedirect(c, nil, false, false, "invalid_state")
+		o.handleRedirect(c, false, false, "invalid_state")
 		return
 	}
 
@@ -221,21 +225,21 @@ func (o *OAuth2) Callback(c *gin.Context) {
 	sess.Save()
 
 	if c.Request.FormValue("state") != state {
-		o.handleRedirect(c, nil, connectOnly, false, "invalid_state")
+		o.handleRedirect(c, connectOnly, false, "invalid_state")
 		return
 	}
 
 	provider, err := o.GetProvider(c)
 	if err != nil {
 		o.logger.Error("failed to get provider", zap.Error(err))
-		o.handleRedirect(c, nil, connectOnly, false, "invalid_provider")
+		o.handleRedirect(c, connectOnly, false, "invalid_provider")
 		return
 	}
 
 	userInfo, err := provider.GetUserInfo(c, c.Request.FormValue("code"))
 	if err != nil {
 		o.logger.Error("failed to get userinfo from provider", zap.Error(err))
-		o.handleRedirect(c, err, connectOnly, false, "provider_failed")
+		o.handleRedirect(c, connectOnly, false, "provider_failed")
 		return
 	}
 
@@ -247,11 +251,16 @@ func (o *OAuth2) Callback(c *gin.Context) {
 		}
 
 		if err := o.storeUserInfo(c, claims.AccID, provider.GetName(), userInfo); err != nil {
-			o.handleRedirect(c, err, connectOnly, false, "internal_error")
+			o.logger.Error("failed to store user info", zap.Error(err))
+			if !dbutils.IsDuplicateError(err) {
+				o.handleRedirect(c, connectOnly, false, ReasonInternalError)
+			} else {
+				o.handleRedirect(c, connectOnly, false, "already_in_use")
+			}
 			return
 		}
 
-		o.handleRedirect(c, nil, connectOnly, true, "")
+		o.handleRedirect(c, connectOnly, true, "")
 		return
 	}
 
@@ -259,7 +268,7 @@ func (o *OAuth2) Callback(c *gin.Context) {
 	account, err := o.getUserInfo(c, provider.GetName(), userInfo)
 	if err != nil {
 		o.logger.Error("failed to store userinfo in database", zap.Error(err))
-		o.handleRedirect(c, err, connectOnly, false, "internal_error")
+		o.handleRedirect(c, connectOnly, false, ReasonInternalError)
 		return
 	}
 
@@ -267,14 +276,16 @@ func (o *OAuth2) Callback(c *gin.Context) {
 		c.Redirect(http.StatusTemporaryRedirect, LoginRedirBase+"?oauth2Login=failed&reason=unconnected")
 		return
 	} else if account.ID == 0 {
-		o.handleRedirect(c, nil, connectOnly, true, "internal_error")
+		o.logger.Error("invalid account id from userinfo", zap.Error(err))
+		o.handleRedirect(c, connectOnly, true, ReasonInternalError)
 		return
 	}
 
 	claims := auth.BuildTokenClaimsFromAccount(account, nil)
 	newToken, err := o.tm.NewWithClaims(claims)
 	if err != nil {
-		o.handleRedirect(c, err, connectOnly, true, "internal_error")
+		o.logger.Error("failed to token from account", zap.Error(err))
+		o.handleRedirect(c, connectOnly, true, ReasonInternalError)
 		return
 	}
 

@@ -67,8 +67,8 @@ const counts = computedAsync(() => {
     <Popover>
         <Float
             portal
-            auto-placement
-            :offset="40"
+            placement="left-start"
+            :offset="30"
             enter="transition duration-150 ease-out"
             enter-from="scale-95 opacity-0"
             enter-to="scale-100 opacity-100"
