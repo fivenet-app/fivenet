@@ -116,7 +116,7 @@ const open = ref(false);
                                             <span class="isolate inline-flex w-full rounded-md pr-4 shadow-sm">
                                                 <button
                                                     type="button"
-                                                    class="relative inline-flex w-full items-center rounded-l-md bg-primary-500 px-3.5 py-2.5 text-sm font-semibold text-neutral hover:bg-primary-400 focus-visible:outline-primary-500"
+                                                    class="relative inline-flex w-full items-center rounded-l-md bg-primary-500 px-3.5 py-2.5 text-sm font-semibold text-neutral hover:bg-primary-400"
                                                     @click="
                                                         open = false;
                                                         navigateTo({ name: 'notifications' });

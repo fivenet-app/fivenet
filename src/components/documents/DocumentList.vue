@@ -185,7 +185,7 @@ const templatesOpen = ref(false);
                             <div v-if="can('DocStoreService.CreateDocument')" class="flex-initial">
                                 <button
                                     type="button"
-                                    class="inline-flex rounded-md bg-primary-500 px-3 py-2 text-sm font-semibold text-neutral hover:bg-primary-400 focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-primary-500"
+                                    class="inline-flex rounded-md bg-primary-500 px-3 py-2 text-sm font-semibold text-neutral hover:bg-primary-400 focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2"
                                     @click="templatesOpen = true"
                                 >
                                     {{ $t('common.create') }}
@@ -194,7 +194,7 @@ const templatesOpen = ref(false);
                             <div v-if="can('CompletorService.CompleteDocumentCategories')" class="flex-initial">
                                 <NuxtLink
                                     :to="{ name: 'documents-categories' }"
-                                    class="inline-flex rounded-md bg-primary-500 px-3 py-2 text-sm font-semibold text-neutral hover:bg-primary-400 focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-primary-500"
+                                    class="inline-flex rounded-md bg-primary-500 px-3 py-2 text-sm font-semibold text-neutral hover:bg-primary-400 focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2"
                                 >
                                     {{ $t('common.category', 2) }}
                                 </NuxtLink>
@@ -202,7 +202,7 @@ const templatesOpen = ref(false);
                             <div v-if="can('DocStoreService.ListTemplates')" class="flex-initial">
                                 <NuxtLink
                                     :to="{ name: 'documents-templates' }"
-                                    class="inline-flex rounded-md bg-primary-500 px-3 py-2 text-sm font-semibold text-neutral hover:bg-primary-400 focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-primary-500"
+                                    class="inline-flex rounded-md bg-primary-500 px-3 py-2 text-sm font-semibold text-neutral hover:bg-primary-400 focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2"
                                 >
                                     {{ $t('common.template', 2) }}
                                 </NuxtLink>

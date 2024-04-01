@@ -13,7 +13,11 @@ definePageMeta({
 </script>
 
 <template>
-    <div>
-        <FileList />
-    </div>
+    <UDashboardPage>
+        <UDashboardPanel grow>
+            <UDashboardNavbar :title="$t('pages.rector.filestore.title')"> </UDashboardNavbar>
+
+            <FileList />
+        </UDashboardPanel>
+    </UDashboardPage>
 </template>

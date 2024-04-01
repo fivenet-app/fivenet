@@ -9,6 +9,7 @@ import { useClipboardStore } from '~/store/clipboard';
 import { useDocumentEditorStore } from '~/store/documenteditor';
 import { JOB_THEME_KEY, useSettingsStore } from '~/store/settings';
 import { useAuthStore } from '~/store/auth';
+import LoadingBar from '~/components/partials/LoadingBar.vue';
 
 const { t, locale, finalizePendingLocaleChange } = useI18n();
 
@@ -22,15 +23,24 @@ const route = useRoute();
 
 const { locale: cookieLocale } = useCookieControl();
 
+const colorMode = useColorMode();
+
+const color = computed(() => (colorMode.value === 'dark' ? '#111827' : 'white'));
+
 useHead({
+    meta: [
+        { charset: 'utf-8' },
+        { name: 'viewport', content: 'width=device-width, initial-scale=1' },
+        { key: 'theme-color', name: 'theme-color', content: color },
+    ],
     htmlAttrs: {
         class: () =>
             (theme.value === JOB_THEME_KEY ? jobProps.value?.theme ?? 'defaultTheme' : theme.value) +
-            ' scrollbar-thin scrollbar-thumb-sky-700 scrollbar-track-sky-300',
+            ' h-full scrollbar-thin scrollbar-thumb-sky-700 scrollbar-track-sky-300',
         lang: 'en',
     },
     bodyAttrs: {
-        class: 'bg-body-color h-full',
+        class: 'h-full',
     },
     titleTemplate: (title?: string) => {
         if (title?.includes('.')) {
@@ -40,8 +50,9 @@ useHead({
     },
 });
 useSeoMeta({
-    ogImage: '/images/open-graph-image.png',
     applicationName: 'FiveNet',
+    ogImage: '/images/social-card.png',
+    twitterImage: '/images/social-card.png',
 });
 
 if (__APP_VERSION__ !== settings.version) {
@@ -102,29 +113,36 @@ watch(updateAvailable, () => (open.value = true));
 </script>
 
 <template>
-    <NuxtLayout>
-        <NuxtPage
-            :transition="{
-                name: 'page',
-                mode: 'out-in',
-                onBeforeEnter,
-            }"
+    <div>
+        <LoadingBar />
+
+        <NuxtLayout>
+            <NuxtPage
+                :transition="{
+                    name: 'page',
+                    mode: 'out-in',
+                    onBeforeEnter,
+                }"
+            />
+        </NuxtLayout>
+
+        <UNotifications />
+        <UModals />
+
+        <CookieControl
+            v-if="!isNUIAvailable && route.meta.showCookieOptions !== undefined && route.meta.showCookieOptions"
+            :locale="cookieLocale"
         />
-    </NuxtLayout>
 
-    <CookieControl
-        v-if="!isNUIAvailable && route.meta.showCookieOptions !== undefined && route.meta.showCookieOptions"
-        :locale="cookieLocale"
-    />
-
-    <ConfirmDialog
-        v-if="updateAvailable !== false"
-        :open="open"
-        :cancel="() => (open = false)"
-        :confirm="() => reloadNuxtApp({ persistState: false, force: true })"
-        :title="$t('system.update_available.title', { version: updateAvailable })"
-        :description="$t('system.update_available.content')"
-        :icon="markRaw(UpdateIcon)"
-        @close="open = false"
-    />
+        <ConfirmDialog
+            v-if="updateAvailable !== false"
+            :open="open"
+            :cancel="() => (open = false)"
+            :confirm="() => reloadNuxtApp({ persistState: false, force: true })"
+            :title="$t('system.update_available.title', { version: updateAvailable })"
+            :description="$t('system.update_available.content')"
+            :icon="markRaw(UpdateIcon)"
+            @close="open = false"
+        />
+    </div>
 </template>

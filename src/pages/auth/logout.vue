@@ -1,7 +1,7 @@
 <script lang="ts" setup>
 import { useTimeoutFn } from '@vueuse/core';
 import { useAuthStore } from '~/store/auth';
-import HeroPage from '~/components/partials/HeroPage.vue';
+import PageFooter from '~/components/partials/PageFooter.vue';
 
 useHead({
     title: 'common.logout',
@@ -35,14 +35,22 @@ onMounted(async () => {
 </script>
 
 <template>
-    <HeroPage>
-        <template #default>
-            <h2 class="text-4xl font-bold tracking-tight text-neutral sm:text-6xl">
-                {{ $t('components.auth.logout.header') }}
-            </h2>
-            <p class="mt-6 text-lg leading-8 text-gray-300">
-                {{ $t('components.auth.logout.subtitle') }}
-            </p>
-        </template>
-    </HeroPage>
+    <div class="flex size-full flex-col">
+        <div class="hero w-full flex-1">
+            <UContainer class="h-full bg-black/50">
+                <UPage>
+                    <ULandingHero
+                        :title="$t('components.auth.logout.header')"
+                        :description="$t('components.auth.logout.subtitle')"
+                    >
+                        <template #headline>
+                            <FiveNetLogo class="mx-auto h-36 w-auto" />
+                        </template>
+                    </ULandingHero>
+                </UPage>
+            </UContainer>
+        </div>
+
+        <PageFooter />
+    </div>
 </template>

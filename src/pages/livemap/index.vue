@@ -13,5 +13,11 @@ definePageMeta({
 </script>
 
 <template>
-    <LivemapHolder />
+    <UDashboardPage>
+        <UDashboardPanel grow>
+            <UDashboardNavbar :title="$t('common.livemap')"> </UDashboardNavbar>
+
+            <LivemapHolder class="h-dscreen w-full" />
+        </UDashboardPanel>
+    </UDashboardPage>
 </template>

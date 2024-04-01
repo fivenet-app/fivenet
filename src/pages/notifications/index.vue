@@ -1,5 +1,4 @@
 <script lang="ts" setup>
-import ContentWrapper from '~/components/partials/ContentWrapper.vue';
 import NotificationsList from '~/components/partials/notification/NotificationsList.vue';
 
 useHead({
@@ -13,7 +12,11 @@ definePageMeta({
 </script>
 
 <template>
-    <ContentWrapper>
-        <NotificationsList />
-    </ContentWrapper>
+    <UDashboardPage>
+        <UDashboardPanel grow>
+            <UDashboardNavbar :title="$t('components.notifications.title')"> </UDashboardNavbar>
+
+            <NotificationsList />
+        </UDashboardPanel>
+    </UDashboardPage>
 </template>

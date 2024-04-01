@@ -117,12 +117,12 @@ const pageNumber = ref(currentPage.value.toString());
             <button
                 v-if="refresh !== undefined"
                 type="button"
-                class="relative ml-3 inline-flex cursor-pointer items-center rounded-md bg-primary-500 px-3 py-2 text-sm font-semibold text-neutral hover:bg-primary-400 focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-primary-500"
+                class="relative ml-3 inline-flex cursor-pointer items-center rounded-md bg-primary-500 px-3 py-2 text-sm font-semibold text-neutral hover:bg-primary-400 focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2"
                 :disabled="!canSubmit"
                 :class="
                     !canSubmit
                         ? 'disabled bg-base-500 hover:bg-base-400 focus-visible:outline-base-500'
-                        : 'bg-primary-500 hover:bg-primary-400 focus-visible:outline-primary-500'
+                        : 'bg-primary-500 hover:bg-primary-400'
                 "
                 @click="onSubmitThrottle()"
             >
@@ -137,7 +137,7 @@ const pageNumber = ref(currentPage.value.toString());
                         :class="[
                             offset <= 0n
                                 ? 'disabled bg-base-500 hover:bg-base-400 focus-visible:outline-base-500'
-                                : 'bg-primary-500 hover:bg-primary-400 focus-visible:outline-primary-500',
+                                : 'bg-primary-500 hover:bg-primary-400',
                             'relative ml-3 inline-flex cursor-pointer items-center rounded-l-md px-3 py-2 text-sm font-semibold text-neutral focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2',
                         ]"
                         @click="$emit('offsetChange', calculateOffset(parseInt((currentPage - 1n).toString())))"
@@ -157,7 +157,7 @@ const pageNumber = ref(currentPage.value.toString());
 
                     <button
                         type="button"
-                        class="relative inline-flex items-center bg-primary-500 px-4 py-2 text-sm font-semibold text-neutral underline hover:bg-primary-400 focus-visible:outline-primary-500"
+                        class="relative inline-flex items-center bg-primary-500 px-4 py-2 text-sm font-semibold text-neutral underline hover:bg-primary-400"
                         disabled
                     >
                         {{ currentPage }}
@@ -228,7 +228,7 @@ const pageNumber = ref(currentPage.value.toString());
                         :class="[
                             total - end <= 0n
                                 ? 'disabled bg-base-500 hover:bg-base-400 focus-visible:outline-base-500'
-                                : 'bg-primary-500 hover:bg-primary-400 focus-visible:outline-primary-500',
+                                : 'bg-primary-500 hover:bg-primary-400',
                             'relative ml-3 inline-flex cursor-pointer items-center rounded-r-md px-3 py-2 text-sm font-semibold text-neutral focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2',
                         ]"
                         @click="$emit('offsetChange', end)"
@@ -243,7 +243,7 @@ const pageNumber = ref(currentPage.value.toString());
                         :class="[
                             offset <= 0n
                                 ? 'disabled bg-base-500 hover:bg-base-400 focus-visible:outline-base-500'
-                                : 'bg-primary-500 hover:bg-primary-400 focus-visible:outline-primary-500',
+                                : 'bg-primary-500 hover:bg-primary-400',
                             'relative ml-3 inline-flex cursor-pointer items-center rounded-l-md px-3 py-2 text-sm font-semibold text-neutral focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2',
                         ]"
                         @click="$emit('offsetChange', offset - pageSize < 0n ? 0n : offset - pageSize)"
@@ -256,7 +256,7 @@ const pageNumber = ref(currentPage.value.toString());
                         :class="[
                             end < pageSize
                                 ? 'disabled bg-base-500 hover:bg-base-400 focus-visible:outline-base-500'
-                                : 'bg-primary-500 hover:bg-primary-400 focus-visible:outline-primary-500',
+                                : 'bg-primary-500 hover:bg-primary-400',
                             'relative ml-3 inline-flex cursor-pointer items-center rounded-r-md px-3 py-2 text-sm font-semibold text-neutral focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2',
                         ]"
                         @click="$emit('offsetChange', offset + pageSize)"

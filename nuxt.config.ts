@@ -8,11 +8,12 @@ export default defineNuxtConfig({
     srcDir: 'src/',
     telemetry: false,
     ssr: false,
+    extends: ['@nuxt/ui-pro'],
     // @ts-ignore ts2589 one of the modules probably has a typing issue
     modules: [
-        '@nuxt/devtools',
         'nuxt-typed-router',
         '@nuxtjs/robots',
+        '@nuxt/ui',
         '@nuxtjs/tailwindcss',
         '@nuxtjs/i18n',
         '@pinia/nuxt',
@@ -20,7 +21,42 @@ export default defineNuxtConfig({
         '@vee-validate/nuxt',
         '@dargmuesli/nuxt-cookie-control',
         'nuxt-update',
+        '@vueuse/nuxt',
     ],
+    ui: {
+        icons: ['heroicons', 'simple-icons', 'mdi'],
+        safelistColors: ['primary', 'red', 'orange', 'green', 'error', 'warn', 'info', 'success'],
+    },
+    app: {
+        head: {
+            charset: 'utf-8',
+            viewport: 'width=device-width, initial-scale=1',
+            link: [{ rel: 'icon', type: 'image/png', href: '/images/logo.png' }],
+            htmlAttrs: {
+                class: 'h-full',
+            },
+            bodyAttrs: {
+                class: 'h-full',
+            },
+        },
+        pageTransition: { name: 'page', mode: 'out-in' },
+    },
+    css: [
+        // DM Sans font (all weights)
+        '@fontsource/dm-sans/100.css',
+        '@fontsource/dm-sans/200.css',
+        '@fontsource/dm-sans/300.css',
+        '@fontsource/dm-sans/400.css',
+        '@fontsource/dm-sans/500.css',
+        '@fontsource/dm-sans/600.css',
+        '@fontsource/dm-sans/700.css',
+        '@fontsource/dm-sans/800.css',
+        '@fontsource/dm-sans/900.css',
+    ],
+    tailwindcss: {
+        exposeConfig: true,
+        configPath: './tailwind.config.ts',
+    },
     typescript: {
         typeCheck: false,
         strict: true,
@@ -51,61 +87,6 @@ export default defineNuxtConfig({
         vscode: {},
         timeline: {
             enabled: true,
-        },
-    },
-    robots: {
-        rules: {
-            UserAgent: '*',
-            Disallow: '/',
-            Allow: ['/$', '/index.html'],
-        },
-    },
-    piniaPersistedstate: {
-        storage: 'localStorage',
-        debug: false,
-    },
-    i18n: {
-        vueI18n: './i18n.config.ts',
-        strategy: STRATEGIES.NO_PREFIX,
-        detectBrowserLanguage: false,
-        skipSettingLocaleOnNavigate: true,
-        locales: [
-            {
-                name: 'English',
-                code: 'en',
-                iso: 'en',
-                file: 'en-US.json',
-            },
-            {
-                name: 'German',
-                code: 'de',
-                iso: 'de',
-                file: 'de-DE.json',
-            },
-        ],
-        debug: false,
-        lazy: true,
-        langDir: './lang',
-        defaultLocale: 'de',
-        defaultDirection: 'ltr',
-        baseUrl: '',
-        trailingSlash: false,
-        types: 'composition',
-        compilation: {
-            strictMessage: false,
-            jit: true,
-        },
-        parallelPlugin: true,
-    },
-    veeValidate: {
-        // disable or enable auto imports
-        autoImports: true,
-        // Use different names for components
-        componentNames: {
-            Form: 'VeeForm',
-            Field: 'VeeField',
-            FieldArray: 'VeeFieldArray',
-            ErrorMessage: 'VeeErrorMessage',
         },
     },
     vite: {
@@ -143,40 +124,60 @@ export default defineNuxtConfig({
         },
         plugins: [svgLoader()],
     },
-    css: [
-        // Inter font (all weights)
-        '@fontsource/inter/100.css',
-        '@fontsource/inter/200.css',
-        '@fontsource/inter/300.css',
-        '@fontsource/inter/400.css',
-        '@fontsource/inter/500.css',
-        '@fontsource/inter/600.css',
-        '@fontsource/inter/700.css',
-        '@fontsource/inter/800.css',
-        '@fontsource/inter/900.css',
-    ],
-    postcss: {
-        plugins: {
-            'postcss-import': {},
-            'tailwindcss/nesting': 'postcss-nesting',
-            tailwindcss: {},
-            autoprefixer: {},
-            ...(process.env.NODE_ENV === 'production' ? { cssnano: {} } : {}),
+    robots: {
+        rules: {
+            UserAgent: '*',
+            Disallow: '/',
+            Allow: ['/$', '/index.html'],
         },
     },
-    app: {
-        head: {
-            charset: 'utf-8',
-            viewport: 'width=device-width, initial-scale=1',
-            link: [{ rel: 'icon', type: 'image/png', href: '/images/logo.png' }],
-            htmlAttrs: {
-                class: 'h-full',
+    i18n: {
+        vueI18n: './i18n.config.ts',
+        strategy: STRATEGIES.NO_PREFIX,
+        detectBrowserLanguage: false,
+        skipSettingLocaleOnNavigate: true,
+        locales: [
+            {
+                name: 'English',
+                code: 'en',
+                iso: 'en',
+                file: 'en-US.json',
             },
-            bodyAttrs: {
-                class: 'h-full',
+            {
+                name: 'German',
+                code: 'de',
+                iso: 'de',
+                file: 'de-DE.json',
             },
+        ],
+        debug: false,
+        lazy: true,
+        langDir: './lang',
+        defaultLocale: 'de',
+        defaultDirection: 'ltr',
+        baseUrl: '',
+        trailingSlash: false,
+        types: 'composition',
+        compilation: {
+            strictMessage: false,
+            jit: true,
         },
-        pageTransition: { name: 'page', mode: 'out-in' },
+        parallelPlugin: true,
+    },
+    piniaPersistedstate: {
+        storage: 'localStorage',
+        debug: false,
+    },
+    veeValidate: {
+        // disable or enable auto imports
+        autoImports: true,
+        // Use different names for components
+        componentNames: {
+            Form: 'VeeForm',
+            Field: 'VeeField',
+            FieldArray: 'VeeFieldArray',
+            ErrorMessage: 'VeeErrorMessage',
+        },
     },
     cookieControl: {
         barPosition: 'bottom-full',

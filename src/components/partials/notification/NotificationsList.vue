@@ -111,7 +111,7 @@ const canSubmit = ref(true);
                                     :disabled="
                                         !canSubmit || data?.notifications === undefined || data?.notifications.length === 0
                                     "
-                                    class="inline-flex rounded-md px-3 py-2 text-sm font-semibold text-neutral focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-primary-500"
+                                    class="inline-flex rounded-md px-3 py-2 text-sm font-semibold text-neutral focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2"
                                     :class="
                                         !canSubmit || data?.notifications === undefined || data?.notifications.length === 0
                                             ? 'disabled bg-base-500 hover:bg-base-400 focus-visible:outline-base-500'
@@ -200,7 +200,7 @@ const canSubmit = ref(true);
                                         <button
                                             v-if="!not.readAt"
                                             type="button"
-                                            class="flex shrink items-center rounded-r-md p-1 text-sm font-semibold text-neutral focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-primary-500"
+                                            class="flex shrink items-center rounded-r-md p-1 text-sm font-semibold text-neutral focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2"
                                             :class="
                                                 !canSubmit
                                                     ? 'disabled bg-base-500 hover:bg-base-400 focus-visible:outline-base-500'

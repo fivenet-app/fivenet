@@ -13,5 +13,11 @@ definePageMeta({
 </script>
 
 <template>
-    <AttrRolesList :all="true" />
+    <UDashboardPage>
+        <UDashboardPanel grow>
+            <UDashboardNavbar :title="$t('pages.rector.limiter.title')"> </UDashboardNavbar>
+
+            <AttrRolesList :all="true" />
+        </UDashboardPanel>
+    </UDashboardPage>
 </template>

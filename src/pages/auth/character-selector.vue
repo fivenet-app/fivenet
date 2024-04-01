@@ -1,6 +1,5 @@
 <script lang="ts" setup>
 import CharacterSelector from '~/components/auth/CharacterSelector.vue';
-import ContentCenterWrapper from '~/components/partials/ContentCenterWrapper.vue';
 import { useAuthStore } from '~/store/auth';
 import { useDocumentEditorStore } from '~/store/documenteditor';
 
@@ -28,7 +27,9 @@ onMounted(async () => {
 </script>
 
 <template>
-    <ContentCenterWrapper>
-        <CharacterSelector />
-    </ContentCenterWrapper>
+    <main class="flex size-full">
+        <div class="my-auto py-2 max-sm:w-full sm:mx-auto lg:mx-auto">
+            <CharacterSelector />
+        </div>
+    </main>
 </template>

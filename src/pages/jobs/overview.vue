@@ -68,7 +68,7 @@ const showRadioFrequency = ref(false);
                                 <button
                                     v-if="isNUIAvailable()"
                                     type="button"
-                                    class="mt-1 w-full rounded-md bg-primary-500 px-2 py-1 text-xs font-semibold text-neutral hover:bg-primary-400 focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-primary-500"
+                                    class="mt-1 w-full rounded-md bg-primary-500 px-2 py-1 text-xs font-semibold text-neutral hover:bg-primary-400 focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2"
                                     @click="setRadioFrequency(jobProps.radioFrequency)"
                                 >
                                     {{ $t('common.connect') }}

@@ -8,50 +8,31 @@
         -webkit-appearance: none;
         margin: 0;
     }
+
+    em {
+        font-style: italic;
+    }
 }
 
-:root {
-    font-family: Inter, system-ui, Avenir, Helvetica, Arial, sans-serif;
-    line-height: 1.5;
-    font-weight: 400;
+@layer utilities {
+    .upsidedown {
+        transform: rotate(180deg) !important;
+    }
 
-    font-synthesis: none;
-    text-rendering: optimizeLegibility;
-    -webkit-font-smoothing: antialiased;
-    -moz-osx-font-smoothing: grayscale;
-    -webkit-text-size-adjust: 100%;
+    .disabled {
+        cursor: not-allowed;
+    }
+
+    .remove-arrow::-webkit-inner-spin-button,
+    .remove-arrow::-webkit-outer-spin-button {
+        -webkit-appearance: none;
+        margin: 0;
+    }
+    .remove-arrow {
+        -moz-appearance: textfield;
+    }
 }
 
-html,
-body {
-    height: 100%;
-}
-
-[hidden] {
-    display: none !important;
-}
-
-.h-dscreen {
+/*.h-dscreen {
     height: 100dvh;
-}
-
-.upsidedown {
-    transform: rotate(180deg) !important;
-}
-
-.disabled {
-    cursor: not-allowed;
-}
-
-em {
-    font-style: italic;
-}
-
-.remove-arrow::-webkit-inner-spin-button,
-.remove-arrow::-webkit-outer-spin-button {
-    -webkit-appearance: none;
-    margin: 0;
-}
-.remove-arrow {
-    -moz-appearance: textfield;
-}
+}*/

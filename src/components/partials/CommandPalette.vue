@@ -25,7 +25,6 @@ import {
     RefreshIcon,
 } from 'mdi-vue3';
 import { type DefineComponent } from 'vue';
-import '~/assets/css/command-palette.scss';
 import { toggleTablet } from '~/composables/nui';
 import { DocumentShort } from '~~/gen/ts/resources/documents/documents';
 import { UserShort } from '~~/gen/ts/resources/users/users';

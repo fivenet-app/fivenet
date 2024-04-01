@@ -92,7 +92,11 @@ const features = [
 </script>
 
 <template>
-    <ContentCenterWrapper>
-        <CardsList :items="features" />
-    </ContentCenterWrapper>
+    <UDashboardPage>
+        <UDashboardPanel grow>
+            <UDashboardNavbar :title="$t('common.control_panel')"> </UDashboardNavbar>
+
+            <CardsList :items="features" />
+        </UDashboardPanel>
+    </UDashboardPage>
 </template>

@@ -80,85 +80,101 @@ onBeforeUnmount(() => {
 </script>
 
 <template>
-    <div class="relative size-full">
-        <Splitpanes class="size-full">
-            <Pane min-size="25">
-                <BaseMap :map-options="{ zoomControl: false }">
-                    <template #default>
-                        <MapTempMarker />
-                    </template>
-                </BaseMap>
-            </Pane>
-            <Pane size="65">
-                <div class="py-2 pb-14">
-                    <div class="px-1 sm:px-2 lg:px-4">
-                        <div class="flex max-h-full flex-col overflow-y-auto">
-                            <div class="border-b-2 border-neutral/20 pb-2 sm:flex sm:items-center">
-                                <div class="sm:flex-auto">
-                                    <form @submit.prevent="refresh()">
-                                        <div class="mx-auto flex flex-row gap-4">
-                                            <div class="flex-1">
-                                                <label for="search" class="block text-sm font-medium leading-6 text-neutral">
-                                                    {{ $t('common.postal') }}
-                                                </label>
-                                                <div class="relative mt-2 flex items-center">
-                                                    <input
-                                                        ref="searchInput"
-                                                        v-model="query.postal"
-                                                        type="text"
-                                                        :placeholder="$t('common.postal')"
-                                                        class="block w-full rounded-md border-0 bg-base-700 py-1.5 pr-14 text-neutral placeholder:text-accent-200 focus:ring-2 focus:ring-inset focus:ring-base-300 sm:text-sm sm:leading-6"
-                                                        @focusin="focusTablet(true)"
-                                                        @focusout="focusTablet(false)"
-                                                    />
+    <UDashboardPage>
+        <UDashboardPanel grow>
+            <UDashboardNavbar :title="$t('common.dispatches')"> </UDashboardNavbar>
+
+            <div class="relative size-full">
+                <Splitpanes class="size-full">
+                    <Pane min-size="25">
+                        <BaseMap :map-options="{ zoomControl: false }">
+                            <template #default>
+                                <MapTempMarker />
+                            </template>
+                        </BaseMap>
+                    </Pane>
+                    <Pane size="65">
+                        <div class="py-2 pb-14">
+                            <div class="px-1 sm:px-2 lg:px-4">
+                                <div class="flex max-h-full flex-col overflow-y-auto">
+                                    <div class="border-b-2 border-neutral/20 pb-2 sm:flex sm:items-center">
+                                        <div class="sm:flex-auto">
+                                            <form @submit.prevent="refresh()">
+                                                <div class="mx-auto flex flex-row gap-4">
+                                                    <div class="flex-1">
+                                                        <label
+                                                            for="search"
+                                                            class="block text-sm font-medium leading-6 text-neutral"
+                                                        >
+                                                            {{ $t('common.postal') }}
+                                                        </label>
+                                                        <div class="relative mt-2 flex items-center">
+                                                            <input
+                                                                ref="searchInput"
+                                                                v-model="query.postal"
+                                                                type="text"
+                                                                :placeholder="$t('common.postal')"
+                                                                class="block w-full rounded-md border-0 bg-base-700 py-1.5 pr-14 text-neutral placeholder:text-accent-200 focus:ring-2 focus:ring-inset focus:ring-base-300 sm:text-sm sm:leading-6"
+                                                                @focusin="focusTablet(true)"
+                                                                @focusout="focusTablet(false)"
+                                                            />
+                                                        </div>
+                                                    </div>
+                                                    <div class="flex-1">
+                                                        <label
+                                                            for="model"
+                                                            class="block text-sm font-medium leading-6 text-neutral"
+                                                        >
+                                                            {{ $t('common.id') }}
+                                                        </label>
+                                                        <div class="relative mt-2 flex items-center">
+                                                            <input
+                                                                v-model="query.id"
+                                                                type="text"
+                                                                name="model"
+                                                                min="1"
+                                                                max="99999999999"
+                                                                :placeholder="$t('common.id')"
+                                                                class="block w-full rounded-md border-0 bg-base-700 py-1.5 pr-14 text-neutral placeholder:text-accent-200 focus:ring-2 focus:ring-inset focus:ring-base-300 sm:text-sm sm:leading-6"
+                                                                @focusin="focusTablet(true)"
+                                                                @focusout="focusTablet(false)"
+                                                            />
+                                                        </div>
+                                                    </div>
                                                 </div>
-                                            </div>
-                                            <div class="flex-1">
-                                                <label for="model" class="block text-sm font-medium leading-6 text-neutral">
-                                                    {{ $t('common.id') }}
-                                                </label>
-                                                <div class="relative mt-2 flex items-center">
-                                                    <input
-                                                        v-model="query.id"
-                                                        type="text"
-                                                        name="model"
-                                                        min="1"
-                                                        max="99999999999"
-                                                        :placeholder="$t('common.id')"
-                                                        class="block w-full rounded-md border-0 bg-base-700 py-1.5 pr-14 text-neutral placeholder:text-accent-200 focus:ring-2 focus:ring-inset focus:ring-base-300 sm:text-sm sm:leading-6"
-                                                        @focusin="focusTablet(true)"
-                                                        @focusout="focusTablet(false)"
-                                                    />
-                                                </div>
-                                            </div>
+                                            </form>
                                         </div>
-                                    </form>
+                                    </div>
                                 </div>
                             </div>
+
+                            <DataPendingBlock v-if="pending" :message="$t('common.loading', [$t('common.dispatches')])" />
+                            <DataErrorBlock
+                                v-else-if="error"
+                                :title="$t('common.unable_to_load', [$t('common.dispatches')])"
+                                :retry="refresh"
+                            />
+                            <DataNoDataBlock v-else-if="data?.dispatches.length === 0" :type="$t('common.dispatches')" />
+
+                            <template v-else>
+                                <DispatchList
+                                    :show-button="false"
+                                    :hide-actions="true"
+                                    :always-show-day="true"
+                                    :dispatches="data?.dispatches"
+                                    @goto="location = $event"
+                                />
+
+                                <TablePagination
+                                    :pagination="data?.pagination"
+                                    :refresh="refresh"
+                                    @offset-change="offset = $event"
+                                />
+                            </template>
                         </div>
-                    </div>
-
-                    <DataPendingBlock v-if="pending" :message="$t('common.loading', [$t('common.dispatches')])" />
-                    <DataErrorBlock
-                        v-else-if="error"
-                        :title="$t('common.unable_to_load', [$t('common.dispatches')])"
-                        :retry="refresh"
-                    />
-                    <DataNoDataBlock v-else-if="data?.dispatches.length === 0" :type="$t('common.dispatches')" />
-
-                    <template v-else>
-                        <DispatchList
-                            :show-button="false"
-                            :hide-actions="true"
-                            :always-show-day="true"
-                            :dispatches="data?.dispatches"
-                            @goto="location = $event"
-                        />
-
-                        <TablePagination :pagination="data?.pagination" :refresh="refresh" @offset-change="offset = $event" />
-                    </template>
-                </div>
-            </Pane>
-        </Splitpanes>
-    </div>
+                    </Pane>
+                </Splitpanes>
+            </div>
+        </UDashboardPanel>
+    </UDashboardPage>
 </template>

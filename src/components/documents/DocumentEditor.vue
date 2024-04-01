@@ -895,7 +895,7 @@ console.info(
                         v-if="canDo.relations"
                         type="button"
                         :disabled="!canEdit || !canDo.edit"
-                        class="inline-flex w-full justify-center rounded-bl-md bg-primary-500 px-3.5 py-2.5 text-sm font-semibold text-neutral hover:bg-primary-400 focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-primary-500"
+                        class="inline-flex w-full justify-center rounded-bl-md bg-primary-500 px-3.5 py-2.5 text-sm font-semibold text-neutral hover:bg-primary-400 focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2"
                         :class="canDo.references ? '' : 'rounded-br-md'"
                         @click="relationManagerShow = true"
                     >
@@ -911,7 +911,7 @@ console.info(
                         v-if="canDo.references"
                         type="button"
                         :disabled="!canEdit || !canDo.edit"
-                        class="inline-flex w-full justify-center rounded-br-md bg-primary-500 px-3.5 py-2.5 text-sm font-semibold text-neutral hover:bg-primary-400 focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-primary-500"
+                        class="inline-flex w-full justify-center rounded-br-md bg-primary-500 px-3.5 py-2.5 text-sm font-semibold text-neutral hover:bg-primary-400 focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2"
                         :class="canDo.relations ? '' : 'rounded-bl-md'"
                         @click="referenceManagerShow = true"
                     >
@@ -946,7 +946,7 @@ console.info(
                 <button
                     type="button"
                     :disabled="!canEdit || !canDo.access"
-                    class="rounded-full bg-primary-500 p-2 text-neutral hover:bg-primary-400 focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-primary-500"
+                    class="rounded-full bg-primary-500 p-2 text-neutral hover:bg-primary-400 focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2"
                     data-te-toggle="tooltip"
                     :title="$t('components.documents.document_editor.add_permission')"
                     @click="addDocumentAccessEntry()"
@@ -963,7 +963,7 @@ console.info(
                     :class="[
                         !canEdit || !meta.valid || !canSubmit
                             ? 'disabled bg-base-500 hover:bg-base-400 focus-visible:outline-base-500'
-                            : 'bg-primary-500 hover:bg-primary-400 focus-visible:outline-primary-500',
+                            : 'bg-primary-500 hover:bg-primary-400',
                     ]"
                 >
                     <template v-if="!canSubmit">

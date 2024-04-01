@@ -13,7 +13,11 @@ definePageMeta({
 </script>
 
 <template>
-    <div>
-        <AuditLog />
-    </div>
+    <UDashboardPage>
+        <UDashboardPanel grow>
+            <UDashboardNavbar :title="$t('common.audit_log')"> </UDashboardNavbar>
+
+            <AuditLog />
+        </UDashboardPanel>
+    </UDashboardPage>
 </template>

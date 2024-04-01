@@ -13,5 +13,11 @@ definePageMeta({
 </script>
 
 <template>
-    <DispatchCenter />
+    <UDashboardPage>
+        <UDashboardPanel grow>
+            <UDashboardNavbar :title="$t('common.dispatch_center')"> </UDashboardNavbar>
+
+            <DispatchCenter />
+        </UDashboardPanel>
+    </UDashboardPage>
 </template>

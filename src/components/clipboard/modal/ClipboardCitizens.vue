@@ -135,7 +135,7 @@ watch(props, async (newVal) => {
                             :class="
                                 selected.includes(item)
                                     ? 'bg-accent-500 hover:bg-accent-400 focus-visible:outline-accent-500'
-                                    : 'bg-primary-500 hover:bg-primary-400 focus-visible:outline-primary-500'
+                                    : 'bg-primary-500 hover:bg-primary-400'
                             "
                             @click="select(item)"
                         >

@@ -1,20 +1,18 @@
 <script lang="ts" setup>
 import { type NavigationFailure } from 'vue-router';
 import type { TypedRouteFromName } from '@typed-router';
-import ContentCenterWrapper from '~/components/partials/ContentCenterWrapper.vue';
-import PageFooter from '~/components/partials/PageFooter.vue';
-import ContentHeroFull from '~/components/partials/ContentHeroFull.vue';
 import { useAuthStore } from '~/store/auth';
 import { useNotificatorStore } from '~/store/notificator';
 import ForgotPasswordForm from '~/components/auth/ForgotPasswordForm.vue';
 import LoginForm from '~/components/auth/LoginForm.vue';
-import FormWrapper from '~/components/auth/FormWrapper.vue';
+import FiveNetLogo from '~/components/partials/logos/FiveNetLogo.vue';
 
 useHead({
     title: 'components.auth.login.title',
 });
 definePageMeta({
     title: 'components.auth.login.title',
+    layout: 'auth',
     requiresAuth: false,
     showCookieOptions: true,
 });
@@ -68,17 +66,10 @@ watch(accessToken, async (): Promise<NavigationFailure | TypedRouteFromName<'aut
 </script>
 
 <template>
-    <div class="flex h-full flex-col justify-between">
-        <ContentHeroFull>
-            <ContentCenterWrapper>
-                <FormWrapper>
-                    <template #default>
-                        <component :is="showLogin ? LoginForm : ForgotPasswordForm" @toggle="showLogin = !showLogin" />
-                    </template>
-                </FormWrapper>
-            </ContentCenterWrapper>
-        </ContentHeroFull>
+    <UCard class="max-w-sm w-full bg-white/75 dark:bg-white/5 backdrop-blur">
+        <FiveNetLogo class="mx-auto mb-2 h-auto w-20" />
 
-        <PageFooter />
-    </div>
+        <LoginForm v-if="showLogin" @toggle="showLogin = !showLogin" />
+        <ForgotPasswordForm v-else @toggle="showLogin = !showLogin" />
+    </UCard>
 </template>

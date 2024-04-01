@@ -1,7 +1,6 @@
 <script lang="ts" setup>
 import { type TypedRouteFromName } from '@typed-router';
 import CitizenInfo from '~/components/citizens/info/CitizenInfo.vue';
-import ContentWrapper from '~/components/partials/ContentWrapper.vue';
 
 useHead({
     title: 'pages.citizens.id.title',
@@ -21,7 +20,11 @@ const route = useRoute('citizens-id');
 </script>
 
 <template>
-    <ContentWrapper>
-        <CitizenInfo :id="parseInt(route.params.id)" />
-    </ContentWrapper>
+    <UDashboardPage>
+        <UDashboardPanel grow>
+            <UDashboardNavbar :title="$t('pages.citizens.id.title')"> </UDashboardNavbar>
+
+            <CitizenInfo :id="parseInt(route.params.id)" />
+        </UDashboardPanel>
+    </UDashboardPage>
 </template>

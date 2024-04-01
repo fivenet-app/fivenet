@@ -1,6 +1,5 @@
 <script lang="ts" setup>
 import UserSettingsPanel from '~/components/auth/account/UserSettingsPanel.vue';
-import ContentWrapper from '~/components/partials/ContentWrapper.vue';
 
 useHead({
     title: 'components.auth.settings_panel.title',
@@ -15,9 +14,11 @@ definePageMeta({
 </script>
 
 <template>
-    <ContentWrapper>
-        <div class="mx-auto max-w-5xl py-2">
+    <UDashboardPage>
+        <UDashboardPanel grow>
+            <UDashboardNavbar :title="$t('components.auth.settings_panel.title')"> </UDashboardNavbar>
+
             <UserSettingsPanel />
-        </div>
-    </ContentWrapper>
+        </UDashboardPanel>
+    </UDashboardPage>
 </template>

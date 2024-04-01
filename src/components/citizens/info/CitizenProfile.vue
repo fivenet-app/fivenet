@@ -261,7 +261,7 @@ const mugShotModal = ref(false);
                                 <div v-if="attr('CitizenStoreService.SetUserProps', 'Fields', 'Wanted')" class="flex-initial">
                                     <button
                                         type="button"
-                                        class="inline-flex w-full shrink-0 items-center justify-center rounded-md bg-error-500 px-3 py-2 text-sm font-semibold text-neutral transition-colors hover:bg-error-400 focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-primary-500 sm:flex-1"
+                                        class="inline-flex w-full shrink-0 items-center justify-center rounded-md bg-error-500 px-3 py-2 text-sm font-semibold text-neutral transition-colors hover:bg-error-400 focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 sm:flex-1"
                                         @click="setWantedModal = true"
                                     >
                                         <AccountAlertIcon
@@ -313,7 +313,7 @@ const mugShotModal = ref(false);
                                 <div v-if="can('DocStoreService.CreateDocument')" class="flex-initial">
                                     <button
                                         type="button"
-                                        class="inline-flex w-full shrink-0 items-center justify-center rounded-md bg-base-700 px-3 py-2 text-sm font-semibold text-neutral transition-colors hover:bg-base-600 focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-primary-500 sm:flex-1"
+                                        class="inline-flex w-full shrink-0 items-center justify-center rounded-md bg-base-700 px-3 py-2 text-sm font-semibold text-neutral transition-colors hover:bg-base-600 focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 sm:flex-1"
                                         @click="openTemplates()"
                                     >
                                         <FileDocumentPlusIcon class="mr-1.5 h-auto w-5" aria-hidden="true" />
@@ -323,7 +323,7 @@ const mugShotModal = ref(false);
                                 <div class="flex-initial">
                                     <button
                                         type="button"
-                                        class="inline-flex w-full shrink-0 items-center justify-center rounded-md bg-base-700 px-3 py-2 text-sm font-semibold text-neutral transition-colors hover:bg-base-600 focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-primary-500 sm:flex-1"
+                                        class="inline-flex w-full shrink-0 items-center justify-center rounded-md bg-base-700 px-3 py-2 text-sm font-semibold text-neutral transition-colors hover:bg-base-600 focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 sm:flex-1"
                                         @click="copyLinkToClipboard()"
                                     >
                                         <LinkIcon class="mr-1.5 h-auto w-5" aria-hidden="true" />

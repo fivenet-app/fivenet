@@ -348,7 +348,7 @@ const { remove, push, fields } = useFieldArray<Perm>('permsDefault');
 
                                         <button
                                             type="button"
-                                            class="rounded-full bg-primary-500 p-1.5 text-neutral hover:bg-primary-400 focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-primary-500"
+                                            class="rounded-full bg-primary-500 p-1.5 text-neutral hover:bg-primary-400 focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2"
                                             @click="remove(idx)"
                                         >
                                             <CloseIcon class="size-5" aria-hidden="true" />
@@ -362,7 +362,7 @@ const { remove, push, fields } = useFieldArray<Perm>('permsDefault');
                                     :class="
                                         !canSubmit
                                             ? 'disabled bg-base-500 hover:bg-base-400 focus-visible:outline-base-500'
-                                            : 'bg-primary-500 hover:bg-primary-400 focus-visible:outline-primary-500'
+                                            : 'bg-primary-500 hover:bg-primary-400'
                                     "
                                     @click="push({ category: '', name: '' })"
                                 >
@@ -775,7 +775,7 @@ const { remove, push, fields } = useFieldArray<Perm>('permsDefault');
                                     :class="[
                                         !canSubmit || !meta.valid
                                             ? 'disabled bg-base-500 hover:bg-base-400 focus-visible:outline-base-500'
-                                            : 'bg-primary-500 hover:bg-primary-400 focus-visible:outline-primary-500',
+                                            : 'bg-primary-500 hover:bg-primary-400',
                                     ]"
                                     :disabled="!canSubmit || !meta.valid"
                                     @click="onSubmitThrottle"

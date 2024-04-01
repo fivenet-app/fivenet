@@ -1,9 +1,8 @@
 <!-- eslint-disable vue/multi-word-component-names -->
 <script setup lang="ts">
-import ContentCenterWrapper from '~/components/partials/ContentCenterWrapper.vue';
-import ContentHeroFull from '~/components/partials/ContentHeroFull.vue';
 import LoadingBar from '~/components/partials/LoadingBar.vue';
 import FiveNetLogo from '~/components/partials/logos/FiveNetLogo.vue';
+import '~/assets/css/herofull-pattern.css';
 
 useHead({
     title: 'Error occured - FiveNet',
@@ -65,84 +64,89 @@ onBeforeMount(() => {
 <template>
     <div class="h-dscreen">
         <LoadingBar />
-        <ContentHeroFull>
-            <ContentCenterWrapper class="mx-auto max-w-3xl text-center">
-                <FiveNetLogo class="mx-auto mb-2 h-auto w-36" />
 
-                <h1 class="text-5xl font-bold text-neutral">
-                    {{ $t ? $t('pages.error.title') : 'Error occured' }}
-                </h1>
-                <h2 class="text-xl text-neutral">
-                    {{ $t ? $t('pages.error.subtitle') : 'A fatal error occured, please try again in a few seconds.' }}
-                </h2>
-                <div class="mb-4 py-2 text-neutral">
-                    <p class="py-2 font-semibold">
-                        {{ $t ? $t('pages.error.error_message') : 'Error message:' }}
-                    </p>
-                    <span v-if="error">
-                        <!-- @vue-ignore -->
-                        <pre
-                            v-if="error.statusMessage"
-                            v-text="
-                                // @ts-ignore
-                                error.statusMessage
-                            "
-                        />
-                        <!-- @vue-ignore -->
-                        <pre
-                            v-else-if="
-                                // @ts-ignore
-                                error.message
-                            "
-                            v-text="
-                                // @ts-ignore
-                                error.message
-                            "
-                        />
-                        <pre v-else>Unable to get error message</pre>
-                    </span>
-                    <span v-else>
-                        <pre>Unknown error</pre>
-                    </span>
-                </div>
+        <div class="hero h-full bg-base-900">
+            <div class="hero-overlay h-full">
+                <main class="flex size-full mx-auto max-w-3xl text-center">
+                    <div class="my-auto py-2 max-sm:w-full sm:mx-auto lg:mx-auto">
+                        <FiveNetLogo class="mx-auto mb-2 h-auto w-36" />
 
-                <div class="flex justify-center">
-                    <button
-                        :disabled="buttonDisabled"
-                        class="w-60 rounded-md px-3.5 py-2.5 text-sm font-semibold text-neutral focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2"
-                        :class="[
-                            buttonDisabled
-                                ? 'disabled bg-base-500 hover:bg-base-400 focus-visible:outline-base-500'
-                                : 'bg-primary-500 hover:bg-primary-400 focus-visible:outline-primary-500',
-                        ]"
-                        @click="handleError()"
-                    >
-                        {{ $t('common.home') }}
-                    </button>
+                        <h1 class="text-5xl font-bold text-neutral">
+                            {{ $t ? $t('pages.error.title') : 'Error occured' }}
+                        </h1>
+                        <h2 class="text-xl text-neutral">
+                            {{ $t ? $t('pages.error.subtitle') : 'A fatal error occured, please try again in a few seconds.' }}
+                        </h2>
+                        <div class="mb-4 py-2 text-neutral">
+                            <p class="py-2 font-semibold">
+                                {{ $t ? $t('pages.error.error_message') : 'Error message:' }}
+                            </p>
+                            <span v-if="error">
+                                <!-- @vue-ignore -->
+                                <pre
+                                    v-if="error.statusMessage"
+                                    v-text="
+                                        // @ts-ignore
+                                        error.statusMessage
+                                    "
+                                />
+                                <!-- @vue-ignore -->
+                                <pre
+                                    v-else-if="
+                                        // @ts-ignore
+                                        error.message
+                                    "
+                                    v-text="
+                                        // @ts-ignore
+                                        error.message
+                                    "
+                                />
+                                <pre v-else>Unable to get error message</pre>
+                            </span>
+                            <span v-else>
+                                <pre>Unknown error</pre>
+                            </span>
+                        </div>
 
-                    <button
-                        :disabled="buttonDisabled"
-                        class="w-60 rounded-md px-3.5 py-2.5 text-sm font-semibold text-neutral focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 sm:ml-4"
-                        :class="[
-                            buttonDisabled
-                                ? 'disabled bg-base-500 hover:bg-base-400 focus-visible:outline-base-500'
-                                : 'bg-secondary-500 hover:bg-secondary-400 focus-visible:outline-secondary-500',
-                        ]"
-                        @click="handleError(useRoute().fullPath)"
-                    >
-                        {{ $t('common.retry') }}
-                    </button>
+                        <div class="flex justify-center">
+                            <button
+                                :disabled="buttonDisabled"
+                                class="w-60 rounded-md px-3.5 py-2.5 text-sm font-semibold text-neutral focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2"
+                                :class="[
+                                    buttonDisabled
+                                        ? 'disabled bg-base-500 hover:bg-base-400 focus-visible:outline-base-500'
+                                        : 'bg-primary-500 hover:bg-primary-400',
+                                ]"
+                                @click="handleError()"
+                            >
+                                {{ $t('common.home') }}
+                            </button>
 
-                    <!-- @vue-ignore -->
-                    <button
-                        v-if="error && (error.statusMessage || error.message)"
-                        class="w-60 rounded-md bg-base-600 px-3.5 py-2.5 text-sm font-semibold text-neutral hover:bg-base-400 focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-base-500 sm:ml-4"
-                        @click="copyError"
-                    >
-                        {{ $t ? $t('pages.error.copy_error') : 'Copy Error message' }}
-                    </button>
-                </div>
-            </ContentCenterWrapper>
-        </ContentHeroFull>
+                            <button
+                                :disabled="buttonDisabled"
+                                class="w-60 rounded-md px-3.5 py-2.5 text-sm font-semibold text-neutral focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 sm:ml-4"
+                                :class="[
+                                    buttonDisabled
+                                        ? 'disabled bg-base-500 hover:bg-base-400 focus-visible:outline-base-500'
+                                        : 'bg-secondary-500 hover:bg-secondary-400 focus-visible:outline-secondary-500',
+                                ]"
+                                @click="handleError(useRoute().fullPath)"
+                            >
+                                {{ $t('common.retry') }}
+                            </button>
+
+                            <!-- @vue-ignore -->
+                            <button
+                                v-if="error && (error.statusMessage || error.message)"
+                                class="w-60 rounded-md bg-base-600 px-3.5 py-2.5 text-sm font-semibold text-neutral hover:bg-base-400 focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-base-500 sm:ml-4"
+                                @click="copyError"
+                            >
+                                {{ $t ? $t('pages.error.copy_error') : 'Copy Error message' }}
+                            </button>
+                        </div>
+                    </div>
+                </main>
+            </div>
+        </div>
     </div>
 </template>

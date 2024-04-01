@@ -9,6 +9,7 @@ import { User } from '~~/gen/ts/resources/users/users';
 export interface AuthState {
     accessToken: null | string;
     accessTokenExpiration: null | Date;
+    username: null | string;
     lastCharID: number;
     activeChar: null | User;
     loggingIn: boolean;
@@ -18,26 +19,28 @@ export interface AuthState {
 }
 
 export const useAuthStore = defineStore('auth', {
-    state: () => ({
-        // Persisted to Local Storage
-        accessToken: null as null | string,
-        accessTokenExpiration: null as null | Date,
-        lastCharID: 0 as number,
-        // Temporary
-        activeChar: null as null | User,
-        loggingIn: false as boolean,
-        loginError: null as null | string,
-        permissions: [] as string[],
-        jobProps: {
-            job: '',
-            theme: 'defaultTheme',
-            radioFrequency: undefined,
-            quickButtons: {},
-            logoUrl: undefined,
-        } as null | JobProps,
-    }),
+    state: () =>
+        ({
+            // Persisted to Local Storage
+            accessToken: null,
+            accessTokenExpiration: null,
+            lastCharID: 0,
+            username: null,
+            // Temporary
+            activeChar: null,
+            loggingIn: false,
+            loginError: null,
+            permissions: [],
+            jobProps: {
+                job: '',
+                theme: 'defaultTheme',
+                radioFrequency: undefined,
+                quickButtons: {},
+                logoUrl: undefined,
+            } as JobProps,
+        }) as AuthState,
     persist: {
-        paths: ['accessToken', 'accessTokenExpiration', 'lastCharID'],
+        paths: ['accessToken', 'accessTokenExpiration', 'lastCharID', 'username'],
     },
     actions: {
         loginStart(): void {
@@ -90,6 +93,7 @@ export const useAuthStore = defineStore('auth', {
 
                 this.loginStop(null);
                 this.setAccessToken(response.token, toDate(response.expires));
+                this.username = username;
             } catch (e) {
                 this.loginStop((e as RpcError).message);
                 this.setAccessToken(null, null);

@@ -13,7 +13,11 @@ definePageMeta({
 </script>
 
 <template>
-    <div class="w-full">
-        <UnitsList />
-    </div>
+    <UDashboardPage>
+        <UDashboardPanel grow>
+            <UDashboardNavbar :title="$t('common.units')"> </UDashboardNavbar>
+
+            <UnitsList />
+        </UDashboardPanel>
+    </UDashboardPage>
 </template>

@@ -211,7 +211,7 @@ function updateDates(): void {
             <div class="sm:flex sm:items-center">
                 <NuxtLink
                     :to="{ name: 'jobs-timeclock-inactive' }"
-                    class="ml-auto inline-flex rounded-md bg-primary-500 px-3 py-2 text-sm font-semibold text-neutral hover:bg-primary-400 focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-primary-500"
+                    class="ml-auto inline-flex rounded-md bg-primary-500 px-3 py-2 text-sm font-semibold text-neutral hover:bg-primary-400 focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2"
                 >
                     {{ $t('common.inactive_colleagues') }}
                     <ArrowRightIcon class="ml-1 size-5" />
@@ -328,7 +328,7 @@ function updateDates(): void {
                                     :class="[
                                         futureDay > today
                                             ? 'disabled bg-base-500 hover:bg-base-400 focus-visible:outline-base-500'
-                                            : 'bg-primary-500 hover:bg-primary-400 focus-visible:outline-primary-500',
+                                            : 'bg-primary-500 hover:bg-primary-400',
                                         'relative inline-flex w-full cursor-pointer place-content-start items-center rounded-md px-3 py-2 text-sm font-semibold text-neutral focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2',
                                     ]"
                                     @click="dayForward()"
@@ -353,7 +353,7 @@ function updateDates(): void {
                             <div class="flex-1">
                                 <button
                                     type="button"
-                                    class="relative inline-flex w-full cursor-pointer place-content-end items-center rounded-md bg-primary-500 px-3 py-2 text-sm font-semibold text-neutral hover:bg-primary-400 focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-primary-500"
+                                    class="relative inline-flex w-full cursor-pointer place-content-end items-center rounded-md bg-primary-500 px-3 py-2 text-sm font-semibold text-neutral hover:bg-primary-400 focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2"
                                     @click="dayBackwards()"
                                 >
                                     {{ $d(previousDay, 'date') }} - {{ $t('common.previous') }}

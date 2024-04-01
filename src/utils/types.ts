@@ -1,6 +1,4 @@
 import { type RoutesNamedLocations } from '@typed-router';
-// eslint-disable-next-line
-import { type DefineComponent } from 'vue';
 import type { Perms } from '~~/gen/ts/perms';
 
 export type ArrayElement<ArrayType extends readonly unknown[]> = ArrayType extends readonly (infer ElementType)[]
@@ -14,7 +12,7 @@ export type CardElement = {
     description?: string;
     href?: RoutesNamedLocations;
     permission?: Perms;
-    icon?: DefineComponent;
+    icon?: string;
     iconForeground?: string;
     iconBackground?: string;
 };

@@ -13,7 +13,11 @@ definePageMeta({
 </script>
 
 <template>
-    <div>
-        <AppConfig />
-    </div>
+    <UDashboardPage>
+        <UDashboardPanel grow>
+            <UDashboardNavbar :title="$t('pages.rector.settings.title')"> </UDashboardNavbar>
+
+            <AppConfig />
+        </UDashboardPanel>
+    </UDashboardPage>
 </template>

@@ -1,6 +1,6 @@
 <script lang="ts" setup>
 import ClipboardButton from '~/components/clipboard/ClipboardButton.vue';
-import List from '~/components/vehicles/VehiclesList.vue';
+import VehiclesList from '~/components/vehicles/VehiclesList.vue';
 
 useHead({
     title: 'pages.vehicles.title',
@@ -13,8 +13,12 @@ definePageMeta({
 </script>
 
 <template>
-    <div class="w-full">
-        <List />
-        <ClipboardButton />
-    </div>
+    <UDashboardPage>
+        <UDashboardPanel grow>
+            <UDashboardNavbar :title="$t('pages.vehicles.title')"> </UDashboardNavbar>
+
+            <VehiclesList />
+            <ClipboardButton />
+        </UDashboardPanel>
+    </UDashboardPage>
 </template>

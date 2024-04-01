@@ -158,7 +158,7 @@ onBeforeMount(async () => await listJobs());
                                             :class="[
                                                 selectedJob === null
                                                     ? 'disabled bg-base-500 hover:bg-base-400 focus-visible:outline-base-500'
-                                                    : 'bg-primary-500 hover:bg-primary-400 focus-visible:outline-primary-500',
+                                                    : 'bg-primary-500 hover:bg-primary-400',
                                             ]"
                                         >
                                             {{ $t('common.create') }}

@@ -296,7 +296,7 @@ const { remove: dspRemove, push: dspPush, fields: dspFields } = useFieldArray<st
 
                                                             <button
                                                                 type="button"
-                                                                class="rounded-full bg-primary-500 p-1.5 text-neutral hover:bg-primary-400 focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-primary-500"
+                                                                class="rounded-full bg-primary-500 p-1.5 text-neutral hover:bg-primary-400 focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2"
                                                                 @click="usRemove(idx)"
                                                             >
                                                                 <CloseIcon class="size-5" aria-hidden="true" />
@@ -310,7 +310,7 @@ const { remove: dspRemove, push: dspPush, fields: dspFields } = useFieldArray<st
                                                         :class="
                                                             !canSubmit || usFields.length >= 4
                                                                 ? 'disabled bg-base-500 hover:bg-base-400 focus-visible:outline-base-500'
-                                                                : 'bg-primary-500 hover:bg-primary-400 focus-visible:outline-primary-500'
+                                                                : 'bg-primary-500 hover:bg-primary-400'
                                                         "
                                                         @click="usPush('')"
                                                     >
@@ -343,7 +343,7 @@ const { remove: dspRemove, push: dspPush, fields: dspFields } = useFieldArray<st
 
                                                             <button
                                                                 type="button"
-                                                                class="rounded-full bg-primary-500 p-1.5 text-neutral hover:bg-primary-400 focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-primary-500"
+                                                                class="rounded-full bg-primary-500 p-1.5 text-neutral hover:bg-primary-400 focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2"
                                                                 @click="dspRemove(idx)"
                                                             >
                                                                 <CloseIcon class="size-5" aria-hidden="true" />
@@ -357,7 +357,7 @@ const { remove: dspRemove, push: dspPush, fields: dspFields } = useFieldArray<st
                                                         :class="
                                                             !canSubmit || dspFields.length >= 4
                                                                 ? 'disabled bg-base-500 hover:bg-base-400 focus-visible:outline-base-500'
-                                                                : 'bg-primary-500 hover:bg-primary-400 focus-visible:outline-primary-500'
+                                                                : 'bg-primary-500 hover:bg-primary-400'
                                                         "
                                                         @click="dspPush('')"
                                                     >
@@ -377,7 +377,7 @@ const { remove: dspRemove, push: dspPush, fields: dspFields } = useFieldArray<st
                                         :class="[
                                             !meta.valid || !canSubmit
                                                 ? 'disabled bg-base-500 hover:bg-base-400 focus-visible:outline-base-500'
-                                                : 'bg-primary-500 hover:bg-primary-400 focus-visible:outline-primary-500',
+                                                : 'bg-primary-500 hover:bg-primary-400',
                                         ]"
                                     >
                                         <template v-if="!canSubmit">

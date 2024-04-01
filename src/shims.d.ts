@@ -25,26 +25,26 @@ declare module 'vue-router' {
     }
 }
 
-type ProviderConfig = {
+export type ProviderConfig = {
     name: string;
     label: string;
 };
 
-type LoginConfig = {
+export type LoginConfig = {
     signupEnabled: boolean;
     providers: ProviderConfig[];
 };
 
-type DiscordConfig = {
+export type DiscordConfig = {
     botInviteURL?: string;
 };
 
-type Links = {
+export type Links = {
     imprint?: string;
     privacyPolicy?: string;
 };
 
-type FeatureGates = {};
+export type FeatureGates = {};
 
 export type AppConfig = {
     version: string;

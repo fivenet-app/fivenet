@@ -12,6 +12,8 @@ import { UserShort } from '~~/gen/ts/resources/users/users';
 import { ListVehiclesResponse } from '~~/gen/ts/services/dmv/vehicles';
 import VehiclesListEntry from '~/components/vehicles/VehiclesListEntry.vue';
 import GenericTable from '~/components/partials/elements/GenericTable.vue';
+import CitizenInfoPopover from '../partials/citizens/CitizenInfoPopover.vue';
+import LicensePlate from '../partials/LicensePlate.vue';
 
 const { $grpc } = useNuxtApp();
 
@@ -122,6 +124,29 @@ watch(selectedChar, () => {
 
 <template>
     <div class="py-2 pb-14">
+        <UTable :loading="pending" :rows="data?.vehicles">
+            <template #plate-header>
+                {{ $t('common.plate') }}
+            </template>
+            <template #type-header>
+                {{ $t('common.type') }}
+            </template>
+            <template #model-header>
+                {{ $t('common.model') }}
+            </template>
+            <template #owner-header>
+                {{ $t('common.owner') }}
+            </template>
+
+            <template #plate-data="{ row }">
+                <LicensePlate :plate="row.plate" class="mr-2" />
+            </template>
+            <template #owner-data="{ row }">
+                <CitizenInfoPopover :user="row.owner" />
+            </template>
+        </UTable>
+
+        <!--
         <div class="px-1 sm:px-2 lg:px-4">
             <div class="border-b-2 border-neutral/20 pb-2 sm:flex sm:items-center">
                 <div class="sm:flex-auto">
@@ -236,12 +261,13 @@ watch(selectedChar, () => {
                             :retry="refresh"
                         />
                         <DataNoDataBlock
-                            v-else-if="data?.vehicles.length === 0"
+                            v-else-if="data?.vehicles === null || data?.vehicles.length === 0"
                             :icon="CarSearchIcon"
                             :focus="focusSearch"
                             :type="$t('common.vehicle', 2)"
                         />
                         <template v-else>
+                            <UTable :rows="data?.vehicles" />
                             <GenericTable>
                                 <template #thead>
                                     <tr>
@@ -302,5 +328,6 @@ watch(selectedChar, () => {
                 </div>
             </div>
         </div>
+        -->
     </div>
 </template>

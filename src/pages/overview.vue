@@ -1,8 +1,6 @@
 <script lang="ts" setup>
-import { AccountMultipleIcon, BriefcaseIcon, CarEmergencyIcon, CarIcon, FileDocumentMultipleIcon, MapIcon } from 'mdi-vue3';
 import FiveNetHints from '~/components/FiveNetHints.vue';
 import CardsList from '~/components/partials/CardsList.vue';
-import ContentCenterWrapper from '~/components/partials/ContentCenterWrapper.vue';
 import { type CardElements } from '~/utils/types';
 
 useHead({
@@ -21,7 +19,7 @@ const features = [
         description: t('pages.overview.features.citizens'),
         href: { name: 'citizens' },
         permission: 'CitizenStoreService.ListCitizens',
-        icon: markRaw(AccountMultipleIcon),
+        icon: 'i-mdi-account-multiple-outline',
         iconForeground: 'text-purple-900',
         iconBackground: 'bg-purple-100',
     },
@@ -30,7 +28,7 @@ const features = [
         description: t('pages.overview.features.vehicles'),
         href: { name: 'vehicles' },
         permission: 'DMVService.ListVehicles',
-        icon: markRaw(CarIcon),
+        icon: 'i-mdi-car-outline',
         iconForeground: 'text-zinc-900',
         iconBackground: 'bg-zinc-100',
     },
@@ -39,7 +37,7 @@ const features = [
         description: t('pages.overview.features.documents'),
         href: { name: 'documents' },
         permission: 'DocStoreService.ListDocuments',
-        icon: markRaw(FileDocumentMultipleIcon),
+        icon: 'i-mdi-file-document-box-multiple-outline',
         iconForeground: 'text-sky-900',
         iconBackground: 'bg-sky-100',
     },
@@ -48,7 +46,7 @@ const features = [
         description: t('pages.overview.features.jobs'),
         href: { name: 'jobs-overview' },
         permission: 'JobsService.ListColleagues',
-        icon: markRaw(BriefcaseIcon),
+        icon: 'i-mdi-briefcase-outline',
         iconForeground: 'text-warn-900',
         iconBackground: 'bg-warn-100',
     },
@@ -57,7 +55,7 @@ const features = [
         description: t('pages.overview.features.livemap'),
         href: { name: 'livemap' },
         permission: 'LivemapperService.Stream',
-        icon: markRaw(MapIcon),
+        icon: 'i-mdi-map-outline',
         iconForeground: 'text-teal-900',
         iconBackground: 'bg-teal-100',
     },
@@ -66,7 +64,7 @@ const features = [
         description: t('pages.overview.features.centrum'),
         href: { name: 'centrum' },
         permission: 'CentrumService.TakeControl',
-        icon: markRaw(CarEmergencyIcon),
+        icon: 'i-mdi-car-emergency',
         iconForeground: 'text-error-900',
         iconBackground: 'bg-error-100',
     },
@@ -74,8 +72,12 @@ const features = [
 </script>
 
 <template>
-    <ContentCenterWrapper>
-        <CardsList :items="features" />
-        <FiveNetHints />
-    </ContentCenterWrapper>
+    <UDashboardPage>
+        <UDashboardPanel grow>
+            <UDashboardNavbar :title="$t('common.overview')"> </UDashboardNavbar>
+
+            <CardsList class="mt-2" :items="features" />
+            <FiveNetHints />
+        </UDashboardPanel>
+    </UDashboardPage>
 </template>

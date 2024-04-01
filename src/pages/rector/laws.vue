@@ -13,7 +13,11 @@ definePageMeta({
 </script>
 
 <template>
-    <div>
-        <LawList />
-    </div>
+    <UDashboardPage>
+        <UDashboardPanel grow>
+            <UDashboardNavbar :title="$t('pages.rector.laws.title')"> </UDashboardNavbar>
+
+            <LawList />
+        </UDashboardPanel>
+    </UDashboardPage>
 </template>

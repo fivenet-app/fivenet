@@ -1,13 +1,12 @@
 <script lang="ts" setup>
 import { useTimeoutFn } from '@vueuse/core';
-import { LoadingIcon } from 'mdi-vue3';
-import HeroPage from '~/components/partials/HeroPage.vue';
 
 useHead({
     title: 'common.privacy_policy',
 });
 definePageMeta({
     title: 'common.privacy_policy',
+    layout: 'landing',
     requiresAuth: false,
     showCookieOptions: true,
 });
@@ -22,14 +21,12 @@ if (links.privacyPolicy === undefined) {
 </script>
 
 <template>
-    <HeroPage>
-        <template #default>
-            <h1 class="text-5xl font-bold tracking-tight text-neutral sm:text-6xl">
-                {{ $t('common.redirecting_to', [$t('common.privacy_policy')]) }}
-            </h1>
-            <h2 class="mt-4 inline-flex items-center text-4xl text-neutral">
-                <LoadingIcon class="size-20 animate-spin" aria-hidden="true" />
-            </h2>
-        </template>
-    </HeroPage>
+    <div class="hero flex flex-col">
+        <div class="w-full flex-1 bg-black/50">
+            <ULandingHero
+                :title="$t('common.redirecting_to', [$t('common.privacy_policy')])"
+                :links="[{ label: $t('common.privacy_policy'), icon: 'i-mdi-link-variant', size: 'lg', to: links.imprint }]"
+            />
+        </div>
+    </div>
 </template>
