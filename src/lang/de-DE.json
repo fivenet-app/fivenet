@@ -936,7 +936,8 @@
         "approver": "Genehmiger",
         "approved_at": "Genehmigt am",
         "superuser": "SuperUser",
-        "restore": "Wiederherstellen"
+        "restore": "Wiederherstellen",
+        "mark": "Markieren"
     },
     "notifications": {
         "clipboard": {

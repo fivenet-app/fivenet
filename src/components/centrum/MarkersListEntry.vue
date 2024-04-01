@@ -47,7 +47,7 @@ onConfirm(async (id) => deleteMarker(id));
             <button
                 type="button"
                 class="text-primary-400 hover:text-primary-600"
-                :title="$t('common.go_to_location')"
+                :title="$t('common.mark')"
                 @click="$emit('goto', { x: marker.info!.x, y: marker.info!.y })"
             >
                 <MapMarkerIcon class="ml-auto mr-1.5 h-auto w-5" aria-hidden="true" />

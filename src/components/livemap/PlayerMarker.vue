@@ -99,6 +99,15 @@ const openUnit = ref(false);
                 v-if="can('CitizenStoreService.ListCitizens') || marker.user?.phoneNumber || hasUnit"
                 class="mb-1 flex items-center gap-2"
             >
+                <button
+                    v-if="marker.info?.x && marker.info?.y"
+                    type="button"
+                    class="inline-flex items-center text-primary-500 hover:text-primary-400"
+                    @click="$emit('goto', { x: marker.info?.x, y: marker.info?.y })"
+                >
+                    <MapMarkerIcon class="size-5" aria-hidden="true" />
+                    <span class="ml-1">{{ $t('common.mark') }}</span>
+                </button>
                 <NuxtLink
                     v-if="can('CitizenStoreService.ListCitizens')"
                     :to="{ name: 'citizens-id', params: { id: marker.user?.userId ?? 0 } }"

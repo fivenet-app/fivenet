@@ -936,7 +936,8 @@
         "approver": "Approver",
         "approved_at": "Approved at",
         "superuser": "SuperUser",
-        "restore": "Restore"
+        "restore": "Restore",
+        "mark": "Mark"
     },
     "notifications": {
         "clipboard": {
