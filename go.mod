@@ -8,7 +8,7 @@ require (
 	github.com/XSAM/otelsql v0.29.0
 	github.com/alecthomas/kong v0.9.0
 	github.com/blevesearch/bleve/v2 v2.4.0
-	github.com/bwmarrin/discordgo v0.27.1
+	github.com/bwmarrin/discordgo v0.28.1
 	github.com/creasty/defaults v1.7.0
 	github.com/documize/html-diff v0.0.0-20160503140253-f61c192c7796
 	github.com/envoyproxy/protoc-gen-validate v1.0.4
