@@ -111,9 +111,9 @@ const accessTypes = [{ id: 1, name: t('common.job', 2) }];
 
 function addDocumentAccessEntry(): void {
     if (access.value.size > maxAccessEntries - 1) {
-        notifications.dispatchNotification({
+        notifications.add({
             title: { key: 'notifications.max_access_entry.title', parameters: {} },
-            content: { key: 'notifications.max_access_entry.content', parameters: { max: maxAccessEntries.toString() } },
+            description: { key: 'notifications.max_access_entry.content', parameters: { max: maxAccessEntries.toString() } },
             type: 'error',
         });
         return;
@@ -198,9 +198,9 @@ const contentAccessTypes = [
 
 function addContentDocumentAccessEntry(): void {
     if (contentAccess.value.size > maxAccessEntries - 1) {
-        notifications.dispatchNotification({
+        notifications.add({
             title: { key: 'notifications.max_access_entry.title', parameters: {} },
-            content: { key: 'notifications.max_access_entry.content', parameters: { max: maxAccessEntries.toString() } },
+            description: { key: 'notifications.max_access_entry.content', parameters: { max: maxAccessEntries.toString() } },
             type: 'error',
         });
         return;
@@ -373,9 +373,9 @@ async function createOrUpdateTemplate(values: FormData, templateId?: string): Pr
             const call = $grpc.getDocStoreClient().createTemplate(req);
             const { response } = await call;
 
-            notifications.dispatchNotification({
+            notifications.add({
                 title: { key: 'notifications.templates.created.title', parameters: {} },
-                content: { key: 'notifications.templates.created.title', parameters: {} },
+                description: { key: 'notifications.templates.created.title', parameters: {} },
                 type: 'success',
             });
 
@@ -390,9 +390,9 @@ async function createOrUpdateTemplate(values: FormData, templateId?: string): Pr
                 setValuesFromTemplate(response.template);
             }
 
-            notifications.dispatchNotification({
+            notifications.add({
                 title: { key: 'notifications.templates.updated.title', parameters: {} },
-                content: { key: 'notifications.templates.updated.content', parameters: {} },
+                description: { key: 'notifications.templates.updated.content', parameters: {} },
                 type: 'success',
             });
         }

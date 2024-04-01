@@ -1,3 +1,4 @@
+import type { NotificationColor } from '#ui/types';
 import type { NotificationType } from '~/composables/notifications/notifications';
 
 export function notificationTypeToIcon(t?: NotificationType): string {
@@ -11,5 +12,19 @@ export function notificationTypeToIcon(t?: NotificationType): string {
         case 'info':
         default:
             return 'i-mdi-information';
+    }
+}
+
+export function notificationTypeToColor(t?: NotificationType): NotificationColor {
+    switch (t) {
+        case 'success':
+            return 'green';
+        case 'warning':
+            return 'amber';
+        case 'error':
+            return 'red';
+        case 'info':
+        default:
+            return 'blue';
     }
 }

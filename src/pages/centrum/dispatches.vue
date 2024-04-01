@@ -107,7 +107,7 @@ onBeforeUnmount(() => {
                                                     >
                                                         {{ $t('common.postal') }}
                                                     </label>
-                                                    <div class="relative mt-2 flex items-center">
+                                                    <div class="relative mt-2">
                                                         <input
                                                             ref="searchInput"
                                                             v-model="query.postal"
@@ -123,7 +123,7 @@ onBeforeUnmount(() => {
                                                     <label for="model" class="block text-sm font-medium leading-6 text-neutral">
                                                         {{ $t('common.id') }}
                                                     </label>
-                                                    <div class="relative mt-2 flex items-center">
+                                                    <div class="relative mt-2">
                                                         <input
                                                             v-model="query.id"
                                                             type="text"

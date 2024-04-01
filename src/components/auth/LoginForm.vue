@@ -4,7 +4,6 @@ import { alpha_dash, max, min, required } from '@vee-validate/rules';
 import { useThrottleFn, useTimeoutFn } from '@vueuse/core';
 import { LoadingIcon } from 'mdi-vue3';
 import { defineRule } from 'vee-validate';
-import GenericAlert from '~/components/partials/elements/GenericAlert.vue';
 import { useAuthStore } from '~/store/auth';
 import { useSettingsStore } from '~/store/settings';
 
@@ -160,10 +159,11 @@ watch(
             </template>
         </div>
 
-        <GenericAlert
+        <UAlert
             v-if="loginError"
             :title="$t('components.auth.login.login_error')"
             :message="loginError.startsWith('errors.') ? $t(loginError) : loginError"
+            color="red"
         />
 
         <div class="mt-6">

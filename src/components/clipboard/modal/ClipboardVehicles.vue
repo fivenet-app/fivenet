@@ -60,10 +60,10 @@ async function remove(item: ClipboardVehicle, notify: boolean): Promise<void> {
 
     clipboardStore.removeVehicle(item.plate);
     if (notify) {
-        notifications.dispatchNotification({
+        notifications.add({
             title: { key: 'notifications.clipboard.vehicle_removed.title', parameters: {} },
-            content: { key: 'notifications.clipboard.vehicle_removed.content', parameters: {} },
-            duration: 3250,
+            description: { key: 'notifications.clipboard.vehicle_removed.content', parameters: {} },
+            timeout: 3250,
             type: 'info',
         });
     }
@@ -77,10 +77,10 @@ async function removeAll(): Promise<void> {
     }
 
     emit('statisfied', false);
-    notifications.dispatchNotification({
+    notifications.add({
         title: { key: 'notifications.clipboard.vehicles_removed.title', parameters: {} },
-        content: { key: 'notifications.clipboard.vehicles_removed.content', parameters: {} },
-        duration: 3250,
+        description: { key: 'notifications.clipboard.vehicles_removed.content', parameters: {} },
+        timeout: 3250,
         type: 'info',
     });
 }

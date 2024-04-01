@@ -1,5 +1,4 @@
 <script lang="ts" setup>
-import { Switch } from '@headlessui/vue';
 import { watchDebounced } from '@vueuse/core';
 import DataErrorBlock from '~/components/partials/data/DataErrorBlock.vue';
 import DataNoDataBlock from '~/components/partials/data/DataNoDataBlock.vue';
@@ -80,14 +79,14 @@ function updateAbsenceDates(value: { userId: number; absenceBegin?: Timestamp; a
                                     {{ $t('common.search') }}
                                     {{ $t('common.colleague', 1) }}
                                 </label>
-                                <div class="relative mt-2 flex items-center">
-                                    <input
+                                <div class="relative mt-2">
+                                    <UInput
                                         ref="searchInput"
                                         v-model="query.name"
                                         type="text"
                                         name="searchName"
                                         :placeholder="$t('common.name')"
-                                        class="block w-full rounded-md border-0 bg-base-700 py-1.5 pr-14 text-neutral placeholder:text-accent-200 focus:ring-2 focus:ring-inset focus:ring-base-300 sm:text-sm sm:leading-6"
+                                        block
                                         @focusin="focusTablet(true)"
                                         @focusout="focusTablet(false)"
                                     />
@@ -98,24 +97,11 @@ function updateAbsenceDates(value: { userId: number; absenceBegin?: Timestamp; a
                                     {{ $t('common.absent') }}
                                 </label>
                                 <div class="relative mt-3 flex items-center">
-                                    <Switch
-                                        v-model="query.absent"
-                                        :class="[
-                                            query.absent ? 'bg-primary-600' : 'bg-gray-200',
-                                            'relative inline-flex h-6 w-11 shrink-0 cursor-pointer rounded-full border-2 border-transparent transition-colors duration-200 ease-in-out focus:outline-none focus:ring-2 focus:ring-neutral focus:ring-offset-2',
-                                        ]"
-                                    >
+                                    <UToggle v-model="query.absent">
                                         <span class="sr-only">
                                             {{ $t('common.absent') }}
                                         </span>
-                                        <span
-                                            aria-hidden="true"
-                                            :class="[
-                                                query.absent ? 'translate-x-5' : 'translate-x-0',
-                                                'pointer-events-none inline-block size-5 rounded-full bg-neutral-50 ring-0 transition duration-200 ease-in-out',
-                                            ]"
-                                        />
-                                    </Switch>
+                                    </UToggle>
                                 </div>
                             </div>
                         </div>

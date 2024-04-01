@@ -52,9 +52,8 @@ async function openCategory(idx: number): Promise<void> {
                 <div class="sm:flex-auto">
                     <div class="mx-auto flex flex-row gap-4">
                         <div class="flex-1">
-                            <div class="relative mt-2 flex items-center">
-                                <button
-                                    type="button"
+                            <div class="relative mt-2">
+                                <UButton
                                     class="inline-flex w-full justify-center rounded-md bg-primary-500 px-3 py-2 text-sm font-semibold text-neutral hover:bg-primary-400 focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2"
                                     @click="
                                         selectedCategory = undefined;
@@ -62,7 +61,7 @@ async function openCategory(idx: number): Promise<void> {
                                     "
                                 >
                                     {{ $t('components.documents.categories.modal.create_category') }}
-                                </button>
+                                </UButton>
                             </div>
                         </div>
                     </div>

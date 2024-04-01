@@ -34,9 +34,9 @@ onMounted(async () => {
         console.info('Login: Got access token via query param (oauth2 login)');
         setAccessToken(query.t as string, BigInt(query.exp as string));
 
-        notifications.dispatchNotification({
+        notifications.add({
             title: { key: 'notifications.auth.oauth2_login.success.title', parameters: {} },
-            content: { key: 'notifications.auth.oauth2_login.success.content', parameters: {} },
+            description: { key: 'notifications.auth.oauth2_login.success.content', parameters: {} },
             type: 'info',
         });
 
@@ -45,9 +45,9 @@ onMounted(async () => {
         // `oauth2Login` can be `failed` (with `reason`)
         const reason = query.reason ?? 'N/A';
 
-        notifications.dispatchNotification({
+        notifications.add({
             title: { key: 'notifications.auth.oauth2_login.failed.title', parameters: {} },
-            content: { key: 'notifications.auth.oauth2_login.failed.content', parameters: { msg: reason.toString() } },
+            description: { key: 'notifications.auth.oauth2_login.failed.content', parameters: { msg: reason.toString() } },
             type: 'error',
         });
     }

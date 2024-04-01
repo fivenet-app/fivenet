@@ -131,9 +131,9 @@ ${t('common.crime', selectedPenalties.value.length)}:
         });
     }
 
-    notifications.dispatchNotification({
+    notifications.add({
         title: { key: 'notifications.penaltycalculator.title', parameters: {} },
-        content: { key: 'notifications.penaltycalculator.content', parameters: {} },
+        description: { key: 'notifications.penaltycalculator.content', parameters: {} },
         type: 'info',
     });
 

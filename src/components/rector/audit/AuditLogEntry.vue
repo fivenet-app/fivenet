@@ -38,9 +38,9 @@ ${jsonStringify(jsonParse(props.log.data!), 2)}
 `;
     }
 
-    notifications.dispatchNotification({
+    notifications.add({
         title: { key: 'notifications.rector.audit_log.title', parameters: {} },
-        content: { key: 'notifications.rector.audit_log.content', parameters: {} },
+        description: { key: 'notifications.rector.audit_log.content', parameters: {} },
         type: 'info',
     });
 

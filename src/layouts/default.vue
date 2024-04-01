@@ -1,7 +1,6 @@
 <script lang="ts" setup>
 import type { DashboardSidebarLink } from '@nuxt/ui-pro/types';
 import TopLogoDropdown from '~/components/TopLogoDropdown.vue';
-import CommandPalette from '~/components/partials/CommandPalette.vue';
 import NotificationProvider from '~/components/partials/notification/NotificationProvider.vue';
 import QuickButtons from '~/components/partials/quickbuttons/QuickButtons.vue';
 import { useAuthStore } from '~/store/auth';
@@ -115,7 +114,7 @@ const footerLinks = [
 const groups = [
     {
         key: 'links',
-        label: 'Go to',
+        label: t('commandpalette.groups.shortcuts.goto'),
         commands: links.map((link) => ({ ...link, shortcuts: link.tooltip?.shortcuts })),
     },
 ];
@@ -132,7 +131,7 @@ const colors = computed(() => defaultColors.value.map((color) => ({ ...color, ac
 
 <template>
     <UDashboardLayout>
-        <UDashboardPanel :width="250" :resizable="{ min: 200, max: 300 }" collapsible>
+        <UDashboardPanel :width="225" :resizable="{ min: 175, max: 275 }" collapsible>
             <UDashboardNavbar class="!border-transparent" :ui="{ left: 'flex-1' }">
                 <template #left>
                     <TopLogoDropdown />
@@ -166,8 +165,6 @@ const colors = computed(() => defaultColors.value.map((color) => ({ ...color, ac
             </UDashboardSidebar>
         </UDashboardPanel>
 
-        <NotificationProvider />
-
         <!-- Events -->
         <LazyPartialsEventsSnowflakesContainer v-if="showSnowflakes" />
 
@@ -182,10 +179,10 @@ const colors = computed(() => defaultColors.value.map((color) => ({ ...color, ac
         <!-- ~/components/NotificationsSlideover.vue -->
         <NotificationsSlideover />
 
-        <CommandPalette v-if="activeChar" />
+        <NotificationProvider />
 
         <ClientOnly>
-            <LazyUDashboardSearch :groups="groups" />
+            <LazyUDashboardSearch v-if="activeChar" :groups="groups" />
         </ClientOnly>
     </UDashboardLayout>
 </template>

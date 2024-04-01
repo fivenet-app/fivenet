@@ -397,9 +397,9 @@ const accessTypes = [
 
 function addDocumentAccessEntry(): void {
     if (access.value.size > maxAccessEntries - 1) {
-        notifications.dispatchNotification({
+        notifications.add({
             title: { key: 'notifications.max_access_entry.title', parameters: {} },
-            content: {
+            description: {
                 key: 'notifications.max_access_entry.content',
                 parameters: { max: maxAccessEntries.toString() },
             } as TranslateItem,
@@ -547,9 +547,9 @@ async function createDocument(values: FormData, closed: boolean): Promise<void> 
         }
         await Promise.all(promises);
 
-        notifications.dispatchNotification({
+        notifications.add({
             title: { key: 'notifications.document_created.title', parameters: {} },
-            content: { key: 'notifications.document_created.content', parameters: {} },
+            description: { key: 'notifications.document_created.content', parameters: {} },
             type: 'success',
         });
         clipboardStore.clear();
@@ -659,9 +659,9 @@ async function updateDocument(id: string, values: FormData, closed: boolean): Pr
             });
         }
 
-        notifications.dispatchNotification({
+        notifications.add({
             title: { key: 'notifications.document_updated.title', parameters: {} },
-            content: { key: 'notifications.document_updated.content', parameters: {} },
+            description: { key: 'notifications.document_updated.content', parameters: {} },
             type: 'success',
         });
         clipboardStore.clear();

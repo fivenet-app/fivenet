@@ -120,7 +120,7 @@ function charsGetDisplayValue(chars: Colleague[]): string {
                                     {{ $t('common.search') }}
                                     {{ $t('common.colleague', 1) }}
                                 </label>
-                                <div class="relative mt-2 flex items-center">
+                                <div class="relative mt-2">
                                     <Combobox v-model="selectedUsers" as="div" class="mt-2 w-full" multiple nullable>
                                         <div class="relative">
                                             <ComboboxButton as="div">

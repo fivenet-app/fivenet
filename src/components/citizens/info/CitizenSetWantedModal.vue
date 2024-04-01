@@ -40,9 +40,9 @@ async function setWantedState(values: FormData): Promise<void> {
 
         emit('update:wantedStatus', response.props?.wanted ?? false);
 
-        notifications.dispatchNotification({
+        notifications.add({
             title: { key: 'notifications.action_successfull.title', parameters: {} },
-            content: { key: 'notifications.action_successfull.content', parameters: {} },
+            description: { key: 'notifications.action_successfull.content', parameters: {} },
             type: 'success',
         });
 

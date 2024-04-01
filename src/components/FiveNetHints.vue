@@ -2,7 +2,6 @@
 import { ArrowLeftBoldCircleIcon, ArrowRightBoldCircleIcon, InformationSlabCircleIcon } from 'mdi-vue3';
 import { useCounter } from '@vueuse/core';
 import { type RoutesNamedLocations } from '@typed-router';
-import GenericBadge from '~/components/partials/elements/GenericBadge.vue';
 
 type Hint = { id: string; keyboard?: boolean; link?: RoutesNamedLocations };
 
@@ -60,9 +59,9 @@ function nextHint(): void {
                     <InformationSlabCircleIcon class="size-7" aria-hidden="true" />
                     <strong class="mx-1 shrink-0 font-semibold">{{ $t('components.hints.start_text') }}</strong>
                     <span class="grow">{{ $t(`components.hints.${hint.id}.content`) }} </span>
-                    <GenericBadge v-if="hint.keyboard" class="ml-1 text-black" color="gray">
-                        <kbd class="font-sans">{{ $t(`components.hints.${hint.id}.keyboard`) }}</kbd>
-                    </GenericBadge>
+                    <UKbd v-if="hint.keyboard" size="md" class="ml-1">
+                        {{ $t(`components.hints.${hint.id}.keyboard`) }}
+                    </UKbd>
                     <NuxtLink v-else-if="hint.link" :to="hint.link" class="ml-1 text-accent-200 underline">
                         {{ $t('components.hints.click_me') }}
                     </NuxtLink>

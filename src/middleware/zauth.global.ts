@@ -52,9 +52,9 @@ export default defineNuxtRouteMiddleware(async (to: RouteLocationNormalized, _: 
             // User has permission
             return true;
         } else {
-            useNotificatorStore().dispatchNotification({
+            useNotificatorStore().add({
                 title: { key: 'notifications.auth.no_permission.title', parameters: {} },
-                content: {
+                description: {
                     key: 'notifications.auth.no_permission.content',
                     parameters: { path: to.name ? toTitleCase(to.name?.toString()) : to.path },
                 },

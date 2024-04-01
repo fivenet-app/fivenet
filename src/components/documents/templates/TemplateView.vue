@@ -54,9 +54,9 @@ async function deleteTemplate(id: string): Promise<void> {
     try {
         await $grpc.getDocStoreClient().deleteTemplate({ id });
 
-        notifications.dispatchNotification({
+        notifications.add({
             title: { key: 'notifications.templates.deleted.title', parameters: {} },
-            content: { key: 'notifications.templates.deleted.content', parameters: {} },
+            description: { key: 'notifications.templates.deleted.content', parameters: {} },
             type: 'success',
         });
 

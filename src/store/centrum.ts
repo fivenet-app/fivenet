@@ -316,9 +316,9 @@ export const useCentrumStore = defineStore('centrum', {
             if (idx === -1) {
                 this.pendingDispatches.push(id);
 
-                useNotificatorStore().dispatchNotification({
+                useNotificatorStore().add({
                     title: { key: 'notifications.centrum.store.assigned_dispatch.title', parameters: {} },
-                    content: { key: 'notifications.centrum.store.assigned_dispatch.content', parameters: {} },
+                    description: { key: 'notifications.centrum.store.assigned_dispatch.content', parameters: {} },
                     type: 'info',
                 });
             }
@@ -446,9 +446,9 @@ export const useCentrumStore = defineStore('centrum', {
                             this.setOwnUnit(resp.change.unitUpdated.id);
 
                             // User has been newly added to unit
-                            notifications.dispatchNotification({
+                            notifications.add({
                                 title: { key: 'notifications.centrum.unitUpdated.joined.title', parameters: {} },
-                                content: { key: 'notifications.centrum.unitUpdated.joined.content', parameters: {} },
+                                description: { key: 'notifications.centrum.unitUpdated.joined.content', parameters: {} },
                                 type: 'success',
                             });
 
@@ -458,9 +458,9 @@ export const useCentrumStore = defineStore('centrum', {
                                 continue;
                             }
 
-                            notifications.dispatchNotification({
+                            notifications.add({
                                 title: { key: 'notifications.centrum.unitUpdated.removed.title', parameters: {} },
-                                content: { key: 'notifications.centrum.unitUpdated.removed.content', parameters: {} },
+                                description: { key: 'notifications.centrum.unitUpdated.removed.content', parameters: {} },
                                 type: 'warning',
                             });
 
@@ -495,9 +495,9 @@ export const useCentrumStore = defineStore('centrum', {
                             this.setOwnUnit(resp.change.unitStatus.unitId);
 
                             // User has been newly added to unit
-                            notifications.dispatchNotification({
+                            notifications.add({
                                 title: { key: 'notifications.centrum.unitUpdated.joined.title', parameters: {} },
-                                content: { key: 'notifications.centrum.unitUpdated.joined.content', parameters: {} },
+                                description: { key: 'notifications.centrum.unitUpdated.joined.content', parameters: {} },
                                 type: 'success',
                             });
 
@@ -507,9 +507,9 @@ export const useCentrumStore = defineStore('centrum', {
                                 continue;
                             }
 
-                            notifications.dispatchNotification({
+                            notifications.add({
                                 title: { key: 'notifications.centrum.unitUpdated.removed.title', parameters: {} },
-                                content: { key: 'notifications.centrum.unitUpdated.removed.content', parameters: {} },
+                                description: { key: 'notifications.centrum.unitUpdated.removed.content', parameters: {} },
                                 type: 'warning',
                             });
 

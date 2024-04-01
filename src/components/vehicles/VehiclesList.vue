@@ -35,9 +35,9 @@ const query = ref<{ plate: string; model?: string; user_id?: number }>({
 });
 
 const page = ref(1);
-const offset = computed(() => (data.value?.pagination?.pageSize ? data.value?.pagination?.pageSize * page.value : 0));
+const offset = computed(() => (vehicles.value?.pagination?.pageSize ? vehicles.value?.pagination?.pageSize * page.value : 0));
 
-const { data, pending, refresh } = useLazyAsyncData(`vehicles-${page.value}`, () => listVehicles());
+const { data: vehicles, pending: loading, refresh } = useLazyAsyncData(`vehicles-${page.value}`, () => listVehicles());
 
 const hideModell = ref(false);
 
@@ -94,10 +94,10 @@ const notifications = useNotificatorStore();
 function addToClipboard(vehicle: Vehicle): void {
     clipboardStore.addVehicle(vehicle);
 
-    notifications.dispatchNotification({
+    notifications.add({
         title: { key: 'notifications.clipboard.vehicle_added.title', parameters: {} },
-        content: { key: 'notifications.clipboard.vehicle_added.content', parameters: {} },
-        duration: 3250,
+        description: { key: 'notifications.clipboard.vehicle_added.content', parameters: {} },
+        timeout: 3250,
         type: 'info',
     });
 }
@@ -139,7 +139,7 @@ const columns = [
                             <label for="search" class="block text-sm font-medium leading-6 text-neutral">
                                 {{ $t('common.license_plate') }}
                             </label>
-                            <div class="relative mt-2 flex items-center">
+                            <div class="relative mt-2">
                                 <UInput
                                     v-model="query.plate"
                                     type="text"
@@ -154,7 +154,7 @@ const columns = [
                             <label for="model" class="block text-sm font-medium leading-6 text-neutral">
                                 {{ $t('common.model') }}
                             </label>
-                            <div class="relative mt-2 flex items-center">
+                            <div class="relative mt-2">
                                 <UInput
                                     v-model="query.model"
                                     type="text"
@@ -210,12 +210,12 @@ const columns = [
         </UDashboardToolbar>
 
         <UTable
-            :loading="pending"
+            :loading="loading"
             :columns="columns"
-            :rows="data?.vehicles"
+            :rows="vehicles?.vehicles"
             :empty-state="{ icon: 'i-mdi-car', label: $t('common.not_found', [$t('common.vehicle', 2)]) }"
-            :page-count="(data?.pagination?.totalCount ?? 0) / (data?.pagination?.pageSize ?? 1)"
-            :total="data?.pagination?.totalCount"
+            :page-count="(vehicles?.pagination?.totalCount ?? 0) / (vehicles?.pagination?.pageSize ?? 1)"
+            :total="vehicles?.pagination?.totalCount"
         >
             <template #plate-data="{ row }">
                 <LicensePlate :plate="row.plate" class="mr-2" />
@@ -252,8 +252,8 @@ const columns = [
         <div class="flex justify-end px-3 py-3.5 border-t border-gray-200 dark:border-gray-700">
             <UPagination
                 v-model="page"
-                :page-count="parseInt(data?.pagination?.pageSize.toString() ?? '0')"
-                :total="parseInt(data?.pagination?.totalCount.toString() ?? '0')"
+                :page-count="parseInt(vehicles?.pagination?.pageSize.toString() ?? '0')"
+                :total="parseInt(vehicles?.pagination?.totalCount.toString() ?? '0')"
             />
         </div>
     </div>

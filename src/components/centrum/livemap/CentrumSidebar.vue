@@ -73,9 +73,9 @@ async function updateDispatchStatus(dispatchId: string, status: StatusDispatch):
         const call = $grpc.getCentrumClient().updateDispatchStatus({ dispatchId, status });
         await call;
 
-        notifications.dispatchNotification({
+        notifications.add({
             title: { key: 'notifications.centrum.sidebar.dispatch_status_updated.title', parameters: {} },
-            content: { key: 'notifications.centrum.sidebar.dispatch_status_updated.content', parameters: {} },
+            description: { key: 'notifications.centrum.sidebar.dispatch_status_updated.content', parameters: {} },
             type: 'success',
         });
     } catch (e) {
@@ -86,9 +86,9 @@ async function updateDispatchStatus(dispatchId: string, status: StatusDispatch):
 
 async function updateDspStatus(dispatchId?: string, status?: StatusDispatch): Promise<void> {
     if (!dispatchId) {
-        notifications.dispatchNotification({
+        notifications.add({
             title: { key: 'notifications.centrum.sidebar.no_dispatch_selected.title', parameters: {} },
-            content: { key: 'notifications.centrum.sidebar.no_dispatch_selected.content', parameters: {} },
+            description: { key: 'notifications.centrum.sidebar.no_dispatch_selected.content', parameters: {} },
             type: 'error',
         });
         return;
@@ -110,9 +110,9 @@ async function updateUnitStatus(id: string, status: StatusUnit): Promise<void> {
         });
         await call;
 
-        notifications.dispatchNotification({
+        notifications.add({
             title: { key: 'notifications.centrum.sidebar.unit_status_updated.title', parameters: {} },
-            content: { key: 'notifications.centrum.sidebar.unit_status_updated.content', parameters: {} },
+            description: { key: 'notifications.centrum.sidebar.unit_status_updated.content', parameters: {} },
             type: 'success',
         });
     } catch (e) {
@@ -290,11 +290,11 @@ async function checkup(): Promise<void> {
         return;
     }
 
-    notifications.dispatchNotification({
+    notifications.add({
         title: { key: 'notifications.centrum.unitUpdated.checkup.title', parameters: {} },
-        content: { key: 'notifications.centrum.unitUpdated.checkup.content', parameters: {} },
+        description: { key: 'notifications.centrum.unitUpdated.checkup.content', parameters: {} },
         type: 'info',
-        duration: 15000,
+        timeout: 15000,
         callback: () => attentionDebouncedPlay(),
     });
 

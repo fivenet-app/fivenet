@@ -1,6 +1,4 @@
 <script lang="ts" setup>
-import { Switch } from '@headlessui/vue';
-import { useTimeoutFn, watchDebounced } from '@vueuse/core';
 import { BellIcon, CheckIcon, LinkVariantIcon } from 'mdi-vue3';
 import DataErrorBlock from '~/components/partials/data/DataErrorBlock.vue';
 import DataNoDataBlock from '~/components/partials/data/DataNoDataBlock.vue';
@@ -85,22 +83,9 @@ const canSubmit = ref(true);
                             >{{ $t('components.notifications.include_read') }}
                         </label>
                         <div class="relative flex items-center">
-                            <Switch
-                                v-model="includeRead"
-                                :class="[
-                                    includeRead ? 'bg-primary-600' : 'bg-gray-200',
-                                    'relative inline-flex h-6 w-11 shrink-0 cursor-pointer rounded-full border-2 border-transparent transition-colors duration-200 ease-in-out focus:outline-none focus:ring-2 focus:ring-neutral focus:ring-offset-2',
-                                ]"
-                            >
+                            <UToggle v-model="includeRead">
                                 <span class="sr-only">{{ $t('components.notifications.include_read') }}</span>
-                                <span
-                                    aria-hidden="true"
-                                    :class="[
-                                        includeRead ? 'translate-x-5' : 'translate-x-0',
-                                        'pointer-events-none inline-block size-5 rounded-full bg-neutral-50 ring-0 transition duration-200 ease-in-out',
-                                    ]"
-                                />
-                            </Switch>
+                            </UToggle>
                         </div>
                     </div>
                     <div class="flex-initial">

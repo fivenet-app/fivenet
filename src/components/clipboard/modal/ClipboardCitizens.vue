@@ -62,10 +62,10 @@ async function remove(item: ClipboardUser, notify: boolean): Promise<void> {
 
     clipboardStore.removeUser(item.userId!);
     if (notify) {
-        notifications.dispatchNotification({
+        notifications.add({
             title: { key: 'notifications.clipboard.citizen_removed.title', parameters: {} },
-            content: { key: 'notifications.clipboard.citizen_removed.content', parameters: {} },
-            duration: 3250,
+            description: { key: 'notifications.clipboard.citizen_removed.content', parameters: {} },
+            timeout: 3250,
             type: 'info',
         });
     }
@@ -79,10 +79,10 @@ async function removeAll(): Promise<void> {
     }
 
     emit('statisfied', false);
-    notifications.dispatchNotification({
+    notifications.add({
         title: { key: 'notifications.clipboard.citizens_removed.title', parameters: {} },
-        content: { key: 'notifications.clipboard.citizens_removed.content', parameters: {} },
-        duration: 3250,
+        description: { key: 'notifications.clipboard.citizens_removed.content', parameters: {} },
+        timeout: 3250,
         type: 'info',
     });
 }

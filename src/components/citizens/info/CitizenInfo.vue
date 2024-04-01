@@ -80,10 +80,10 @@ function addToClipboard(): void {
 
     clipboardStore.addUser(user.value);
 
-    notifications.dispatchNotification({
+    notifications.add({
         title: { key: 'notifications.clipboard.citizen_add.title', parameters: {} },
-        content: { key: 'notifications.clipboard.citizen_add.content', parameters: {} },
-        duration: 3250,
+        description: { key: 'notifications.clipboard.citizen_add.content', parameters: {} },
+        timeout: 3250,
         type: 'info',
     });
 }

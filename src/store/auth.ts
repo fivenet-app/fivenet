@@ -110,9 +110,9 @@ export const useAuthStore = defineStore('auth', {
             } catch (e) {
                 $grpc.handleError(e as RpcError);
 
-                useNotificatorStore().dispatchNotification({
+                useNotificatorStore().add({
                     title: { key: 'notifications.auth.error_logout.title', parameters: {} },
-                    content: {
+                    description: {
                         key: 'notifications.auth.error_logout.content',
                         parameters: { msg: (e as RpcError).message },
                     },

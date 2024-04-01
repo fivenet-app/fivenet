@@ -96,7 +96,7 @@ export class GRPCClients {
             id: '',
             type: 'error',
             title: { key: 'notifications.grpc_errors.internal.title', parameters: {} },
-            content: { key: err.message ?? 'Unknown error', parameters: {} },
+            description: { key: err.message ?? 'Unknown error', parameters: {} },
         } as Notification;
 
         let traceId = 'UNKNOWN';
@@ -112,7 +112,7 @@ export class GRPCClients {
 
                 case 'unavailable':
                     notification.title = { key: 'notifications.grpc_errors.unavailable.title', parameters: {} };
-                    notification.content = { key: 'notifications.grpc_errors.unavailable.content', parameters: {} };
+                    notification.description = { key: 'notifications.grpc_errors.unavailable.content', parameters: {} };
                     break;
 
                 case 'unauthenticated':
@@ -120,7 +120,7 @@ export class GRPCClients {
 
                     notification.type = 'warning';
                     notification.title = { key: 'notifications.grpc_errors.unauthenticated.title', parameters: {} };
-                    notification.content = { key: 'notifications.grpc_errors.unauthenticated.content', parameters: {} };
+                    notification.description = { key: 'notifications.grpc_errors.unauthenticated.content', parameters: {} };
 
                     // Only update the redirect query param if it isn't already set
                     navigateTo({
@@ -141,7 +141,7 @@ export class GRPCClients {
 
                 default:
                     notification.title = { key: 'notifications.grpc_errors.default.title', parameters: {} };
-                    notification.content = {
+                    notification.description = {
                         key: 'notifications.grpc_errors.default.content',
                         parameters: { msg: err.message, code: err.code.valueOf() },
                     };
@@ -164,16 +164,16 @@ export class GRPCClients {
             const errSplits = err.message.split(';');
             if (errSplits.length > 1) {
                 notification.title = { key: errSplits[0], parameters: {} };
-                notification.content = { key: errSplits[1], parameters: {} };
+                notification.description = { key: errSplits[1], parameters: {} };
             } else {
-                notification.content = { key: err.message, parameters: {} };
+                notification.description = { key: err.message, parameters: {} };
             }
         }
 
-        notifications.dispatchNotification({
+        notifications.add({
             type: notification.type,
             title: notification.title,
-            content: notification.content,
+            description: notification.description,
             onClick: notification.onClick,
             onClickText: { key: 'pages.error.copy_error', parameters: {} },
         });

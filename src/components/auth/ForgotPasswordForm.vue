@@ -4,7 +4,6 @@ import { useThrottleFn, useTimeoutFn } from '@vueuse/core';
 import { LoadingIcon } from 'mdi-vue3';
 import { defineRule } from 'vee-validate';
 import PasswordStrengthMeter from '~/components/auth/PasswordStrengthMeter.vue';
-import GenericAlert from '~/components/partials/elements/GenericAlert.vue';
 import { useNotificatorStore } from '~/store/notificator';
 import { getErrorMessage } from '~/utils/errors';
 
@@ -30,9 +29,9 @@ async function forgotPassword(values: FormData): Promise<void> {
             new: values.password,
         });
 
-        notifications.dispatchNotification({
+        notifications.add({
             title: { key: 'notifications.auth.forgot_password.title', parameters: {} },
-            content: { key: 'notifications.auth.forgot_password.content', parameters: {} },
+            description: { key: 'notifications.auth.forgot_password.content', parameters: {} },
             type: 'success',
         });
 
@@ -152,10 +151,11 @@ const onSubmitThrottle = useThrottleFn(async (e) => {
             </button>
         </div>
 
-        <GenericAlert
+        <UAlert
             v-if="accountError"
             :title="$t('components.auth.forgot_password.create_error')"
             :message="getErrorMessage(accountError)"
+            color="red"
         />
     </div>
 </template>

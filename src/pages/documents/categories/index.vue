@@ -1,6 +1,5 @@
 <script lang="ts" setup>
 import CategoriesList from '~/components/documents/categories/CategoriesList.vue';
-import ContentWrapper from '~/components/partials/ContentWrapper.vue';
 
 useHead({
     title: 'pages.documents.categories.title',
@@ -13,7 +12,11 @@ definePageMeta({
 </script>
 
 <template>
-    <ContentWrapper>
-        <CategoriesList />
-    </ContentWrapper>
+    <UDashboardPage>
+        <UDashboardPanel grow>
+            <UDashboardNavbar :title="$t('pages.documents.categories.title')"> </UDashboardNavbar>
+
+            <CategoriesList />
+        </UDashboardPanel>
+    </UDashboardPage>
 </template>

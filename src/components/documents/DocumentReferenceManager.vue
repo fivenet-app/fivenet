@@ -80,8 +80,8 @@ async function listDocuments(): Promise<DocumentShort[]> {
     try {
         const call = $grpc.getDocStoreClient().listDocuments({
             pagination: {
-                offset: 0n,
-                pageSize: 8n,
+                offset: 0,
+                pageSize: 8,
             },
             orderBy: [],
             search: queryDoc.value,

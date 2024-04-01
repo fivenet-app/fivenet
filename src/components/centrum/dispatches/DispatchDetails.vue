@@ -37,9 +37,9 @@ const notifications = useNotificatorStore();
 
 async function selfAssign(id: string): Promise<void> {
     if (ownUnitId.value === undefined) {
-        notifications.dispatchNotification({
+        notifications.add({
             title: { key: 'notifications.centrum.unitUpdated.not_in_unit.title' },
-            content: { key: 'notifications.centrum.unitUpdated.not_in_unit.content' },
+            description: { key: 'notifications.centrum.unitUpdated.not_in_unit.content' },
             type: 'error',
         });
 

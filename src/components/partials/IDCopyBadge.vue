@@ -18,10 +18,10 @@ function copyDocumentIDToClipboard(): void {
     copyToClipboardWrapper(props.prefix + '-' + props.id);
 
     if (props.title && props.content) {
-        notifications.dispatchNotification({
+        notifications.add({
             title: props.title,
-            content: props.content,
-            duration: 3250,
+            description: props.content,
+            timeout: 3250,
             type: 'info',
         });
     }

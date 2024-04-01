@@ -1,5 +1,5 @@
 <script lang="ts" setup>
-import { Dialog, DialogPanel, DialogTitle, Switch, TransitionChild, TransitionRoot } from '@headlessui/vue';
+import { Dialog, DialogPanel, DialogTitle, TransitionChild, TransitionRoot } from '@headlessui/vue';
 import { CloseIcon, CogIcon } from 'mdi-vue3';
 import { useSettingsStore } from '~/store/settings';
 
@@ -71,21 +71,11 @@ const { livemap } = storeToRefs(settingsStore);
                                                 >
                                                     {{ $t('components.livemap.center_selected_marker') }}
                                                 </label>
-                                                <Switch
-                                                    v-model="livemap.centerSelectedMarker"
-                                                    :class="[
-                                                        livemap.centerSelectedMarker ? 'bg-primary-600' : 'bg-gray-200',
-                                                        'relative my-2 inline-flex h-6 w-11 shrink-0 cursor-pointer rounded-full border-2 border-transparent transition-colors duration-200 ease-in-out focus:outline-none focus:ring-2 focus:ring-primary-600 focus:ring-offset-2',
-                                                    ]"
-                                                >
-                                                    <span
-                                                        aria-hidden="true"
-                                                        :class="[
-                                                            livemap.centerSelectedMarker ? 'translate-x-5' : 'translate-x-0',
-                                                            'pointer-events-none inline-block size-5 rounded-full bg-white shadow ring-0 transition duration-200 ease-in-out',
-                                                        ]"
-                                                    />
-                                                </Switch>
+                                                <UToggle v-model="livemap.centerSelectedMarker">
+                                                    <span class="sr-only">{{
+                                                        $t('components.livemap.center_selected_marker')
+                                                    }}</span>
+                                                </UToggle>
                                             </div>
                                             <div class="flex-1">
                                                 <label
@@ -94,7 +84,7 @@ const { livemap } = storeToRefs(settingsStore);
                                                 >
                                                     {{ $t('components.livemap.settings.marker_size') }}
                                                 </label>
-                                                <input
+                                                <UInput
                                                     name="livemapMarkerSize"
                                                     type="range"
                                                     class="my-auto h-1.5 w-full cursor-grab rounded-full"
@@ -115,21 +105,9 @@ const { livemap } = storeToRefs(settingsStore);
                                                 >
                                                     {{ $t('components.livemap.show_unit_names') }}
                                                 </label>
-                                                <Switch
-                                                    v-model="livemap.showUnitNames"
-                                                    :class="[
-                                                        livemap.showUnitNames ? 'bg-primary-600' : 'bg-gray-200',
-                                                        'relative my-2 inline-flex h-6 w-11 shrink-0 cursor-pointer rounded-full border-2 border-transparent transition-colors duration-200 ease-in-out focus:outline-none focus:ring-2 focus:ring-primary-600 focus:ring-offset-2',
-                                                    ]"
-                                                >
-                                                    <span
-                                                        aria-hidden="true"
-                                                        :class="[
-                                                            livemap.showUnitNames ? 'translate-x-5' : 'translate-x-0',
-                                                            'pointer-events-none inline-block size-5 rounded-full bg-white shadow ring-0 transition duration-200 ease-in-out',
-                                                        ]"
-                                                    />
-                                                </Switch>
+                                                <UToggle v-model="livemap.showUnitNames">
+                                                    <span class="sr-only">{{ $t('components.livemap.show_unit_names') }}</span>
+                                                </UToggle>
                                             </div>
                                             <div class="flex-1 items-center">
                                                 <label
@@ -138,21 +116,9 @@ const { livemap } = storeToRefs(settingsStore);
                                                 >
                                                     {{ $t('components.livemap.show_unit_status') }}
                                                 </label>
-                                                <Switch
-                                                    v-model="livemap.showUnitStatus"
-                                                    :class="[
-                                                        livemap.showUnitStatus ? 'bg-primary-600' : 'bg-gray-200',
-                                                        'relative my-2 inline-flex h-6 w-11 shrink-0 cursor-pointer rounded-full border-2 border-transparent transition-colors duration-200 ease-in-out focus:outline-none focus:ring-2 focus:ring-primary-600 focus:ring-offset-2',
-                                                    ]"
-                                                >
-                                                    <span
-                                                        aria-hidden="true"
-                                                        :class="[
-                                                            livemap.showUnitStatus ? 'translate-x-5' : 'translate-x-0',
-                                                            'pointer-events-none inline-block size-5 rounded-full bg-white shadow ring-0 transition duration-200 ease-in-out',
-                                                        ]"
-                                                    />
-                                                </Switch>
+                                                <UToggle v-model="livemap.showUnitStatus">
+                                                    <span class="sr-only">{{ $t('components.livemap.show_unit_status') }}</span>
+                                                </UToggle>
                                             </div>
                                             <div class="flex-1 items-center">
                                                 <label
@@ -161,21 +127,11 @@ const { livemap } = storeToRefs(settingsStore);
                                                 >
                                                     {{ $t('components.livemap.show_all_dispatches') }}
                                                 </label>
-                                                <Switch
-                                                    v-model="livemap.showAllDispatches"
-                                                    :class="[
-                                                        livemap.showAllDispatches ? 'bg-primary-600' : 'bg-gray-200',
-                                                        'relative my-2 inline-flex h-6 w-11 shrink-0 cursor-pointer rounded-full border-2 border-transparent transition-colors duration-200 ease-in-out focus:outline-none focus:ring-2 focus:ring-primary-600 focus:ring-offset-2',
-                                                    ]"
-                                                >
-                                                    <span
-                                                        aria-hidden="true"
-                                                        :class="[
-                                                            livemap.showAllDispatches ? 'translate-x-5' : 'translate-x-0',
-                                                            'pointer-events-none inline-block size-5 rounded-full bg-white shadow ring-0 transition duration-200 ease-in-out',
-                                                        ]"
-                                                    />
-                                                </Switch>
+                                                <UToggle v-model="livemap.showAllDispatches">
+                                                    <span class="sr-only">{{
+                                                        $t('components.livemap.show_all_dispatches')
+                                                    }}</span>
+                                                </UToggle>
                                             </div>
                                         </div>
                                     </div>

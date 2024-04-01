@@ -3,22 +3,22 @@ Heavily customized version of https://github.com/lucasvallejo1992/vue-notificati
 **Examples**:
 
 ```typescript
-dispatchNotification({
+add({
     title: 'Success!',
     content: 'Your action was successfully submitted',
     type: 'success',
 });
-dispatchNotification({
+add({
     title: 'Info!',
     content: 'Your action was successfully submitted',
     type: 'info',
 });
-dispatchNotification({
+add({
     title: 'Warning!',
     content: 'Your action was successfully submitted',
     type: 'warning',
 });
-dispatchNotification({
+add({
     title: 'Error!',
     content: 'Your action was successfully submitted',
     type: 'error',

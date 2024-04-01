@@ -31,9 +31,9 @@ async function loadPostals(): Promise<void> {
         const response = await fetch('/data/postals.json');
         postals.value.push(...((await response.json()) as Postal[]));
     } catch (_) {
-        notifications.dispatchNotification({
+        notifications.add({
             title: { key: 'notifications.livemap.failed_loading_postals.title', parameters: {} },
-            content: { key: 'notifications.livemap.failed_loading_postals.content', parameters: {} },
+            description: { key: 'notifications.livemap.failed_loading_postals.content', parameters: {} },
             type: 'error',
         });
         postalsLoaded = false;

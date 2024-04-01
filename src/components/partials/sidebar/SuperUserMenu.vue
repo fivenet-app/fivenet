@@ -1,14 +1,5 @@
 <script lang="ts" setup>
-import {
-    Combobox,
-    ComboboxButton,
-    ComboboxInput,
-    ComboboxOption,
-    ComboboxOptions,
-    Switch,
-    SwitchGroup,
-    SwitchLabel,
-} from '@headlessui/vue';
+import { Combobox, ComboboxButton, ComboboxInput, ComboboxOption, ComboboxOptions } from '@headlessui/vue';
 import { CheckIcon } from 'mdi-vue3';
 import { useAuthStore } from '~/store/auth';
 import { useCompletorStore } from '~/store/completor';
@@ -56,9 +47,9 @@ async function setSuperUserMode(): Promise<void> {
         setActiveChar(response.char!);
         setJobProps(response.jobProps);
 
-        notifications.dispatchNotification({
+        notifications.add({
             title: { key: 'notifications.superuser_menu.setsuperusermode.title', parameters: {} },
-            content: {
+            description: {
                 key: 'notifications.superuser_menu.setsuperusermode.content',
                 parameters: { job: selectedJob.value?.label ?? activeChar.value?.jobLabel ?? 'N/A' },
             },
@@ -85,26 +76,14 @@ watch(selectedJob, () => setSuperUserMode());
 
 <template>
     <div class="flex flex-col items-center">
-        <SwitchGroup as="div" class="flex items-center">
-            <Switch
-                v-model="superuser"
-                :class="[
-                    superuser ? 'bg-primary-600' : 'bg-gray-200',
-                    'relative inline-flex h-4 w-9 shrink-0 cursor-pointer rounded-full border-2 border-transparent transition-colors duration-200 ease-in-out focus:outline-none focus:ring-2 focus:ring-primary-600 focus:ring-offset-2',
-                ]"
-            >
-                <span
-                    aria-hidden="true"
-                    :class="[
-                        superuser ? 'translate-x-5' : 'translate-x-0',
-                        'pointer-events-none inline-block size-3 rounded-full bg-white shadow ring-0 transition duration-200 ease-in-out',
-                    ]"
-                />
-            </Switch>
-            <SwitchLabel as="span" class="ml-1 text-xs">
-                <span class="font-medium text-gray-300">{{ $t('common.superuser') }}</span>
-            </SwitchLabel>
-        </SwitchGroup>
+        <div as="div" class="flex items-center">
+            <UToggle v-model="superuser">
+                <span class="sr-only">
+                    {{ $t('common.superuser') }}
+                </span>
+            </UToggle>
+            <span class="font-medium text-gray-300">{{ $t('common.superuser') }}</span>
+        </div>
 
         <Combobox v-if="isSuperuser" v-model="selectedJob" as="div" nullable>
             <div class="relative mt-1">

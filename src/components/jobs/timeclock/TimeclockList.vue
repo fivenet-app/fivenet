@@ -132,7 +132,7 @@ const { data: colleagues, refresh: refreshColleagues } = useLazyAsyncData(
         try {
             const call = $grpc.getJobsClient().listColleagues({
                 pagination: {
-                    offset: 0n,
+                    offset: 0,
                 },
                 searchName: queryTargets.value,
             });
@@ -228,7 +228,7 @@ function updateDates(): void {
                                     {{ $t('common.search') }}
                                     {{ $t('common.colleague', 1) }}
                                 </label>
-                                <div class="relative mt-2 flex items-center">
+                                <div class="relative mt-2">
                                     <Combobox v-model="query.user_ids" as="div" class="w-full" multiple nullable>
                                         <div class="relative">
                                             <ComboboxButton as="div">
@@ -290,7 +290,7 @@ function updateDates(): void {
                                         {{ $t('common.from') }}
                                     </template>
                                 </label>
-                                <div class="relative mt-2 flex items-center">
+                                <div class="relative mt-2">
                                     <input
                                         v-model="query.from"
                                         type="date"
@@ -307,7 +307,7 @@ function updateDates(): void {
                                     {{ $t('common.time_range') }}:
                                     {{ $t('common.to') }}
                                 </label>
-                                <div class="relative mt-2 flex items-center">
+                                <div class="relative mt-2">
                                     <input
                                         v-model="query.to"
                                         type="date"

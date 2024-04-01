@@ -1,5 +1,5 @@
 <script lang="ts" setup>
-import { Switch, SwitchGroup, SwitchLabel, Listbox, ListboxButton, ListboxOption, ListboxOptions } from '@headlessui/vue';
+import { Listbox, ListboxButton, ListboxOption, ListboxOptions } from '@headlessui/vue';
 import { mimes, size } from '@vee-validate/rules';
 import { useThrottleFn, useTimeoutFn } from '@vueuse/core';
 import { vMaska } from 'maska';
@@ -61,9 +61,9 @@ async function setJobProps(values: FormData): Promise<void> {
             jobProps: jobProps.value,
         });
 
-        notifications.dispatchNotification({
+        notifications.add({
             title: { key: 'notifications.rector.job_props.title', parameters: {} },
-            content: { key: 'notifications.rector.job_props.content', parameters: {} },
+            description: { key: 'notifications.rector.job_props.content', parameters: {} },
             type: 'success',
         });
 
@@ -234,14 +234,8 @@ const onSubmitThrottle = useThrottleFn(async (e) => {
                             <template #default>
                                 <fieldset class="flex flex-col gap-2">
                                     <div class="space-y-4">
-                                        <SwitchGroup as="div" class="flex items-center">
-                                            <Switch
-                                                v-model="jobProps.quickButtons.penaltyCalculator"
-                                                :class="[
-                                                    jobProps.quickButtons.penaltyCalculator ? 'bg-primary-600' : 'bg-gray-200',
-                                                    'relative inline-flex h-6 w-11 shrink-0 cursor-pointer rounded-full border-2 border-transparent transition-colors duration-200 ease-in-out focus:outline-none focus:ring-2 focus:ring-primary-600 focus:ring-offset-2',
-                                                ]"
-                                            >
+                                        <div class="flex items-center">
+                                            <UToggle v-model="jobProps.quickButtons.penaltyCalculator">
                                                 <span
                                                     aria-hidden="true"
                                                     :class="[
@@ -251,23 +245,15 @@ const onSubmitThrottle = useThrottleFn(async (e) => {
                                                         'pointer-events-none inline-block size-5 rounded-full bg-white shadow ring-0 transition duration-200 ease-in-out',
                                                     ]"
                                                 />
-                                            </Switch>
-                                            <SwitchLabel as="span" class="ml-3 text-sm">
-                                                <span class="font-medium text-gray-300">{{
-                                                    $t('components.penaltycalculator.title')
-                                                }}</span>
-                                            </SwitchLabel>
-                                        </SwitchGroup>
+                                            </UToggle>
+                                            <span class="ml-3 text-sm font-medium text-gray-300">{{
+                                                $t('components.penaltycalculator.title')
+                                            }}</span>
+                                        </div>
                                     </div>
                                     <div class="space-y-5">
-                                        <SwitchGroup as="div" class="flex items-center">
-                                            <Switch
-                                                v-model="jobProps.quickButtons.bodyCheckup"
-                                                :class="[
-                                                    jobProps.quickButtons.bodyCheckup ? 'bg-primary-600' : 'bg-gray-200',
-                                                    'relative inline-flex h-6 w-11 shrink-0 cursor-pointer rounded-full border-2 border-transparent transition-colors duration-200 ease-in-out focus:outline-none focus:ring-2 focus:ring-primary-600 focus:ring-offset-2',
-                                                ]"
-                                            >
+                                        <div class="flex items-center">
+                                            <UToggle v-model="jobProps.quickButtons.bodyCheckup">
                                                 <span
                                                     aria-hidden="true"
                                                     :class="[
@@ -275,13 +261,11 @@ const onSubmitThrottle = useThrottleFn(async (e) => {
                                                         'pointer-events-none inline-block size-5 rounded-full bg-white shadow ring-0 transition duration-200 ease-in-out',
                                                     ]"
                                                 />
-                                            </Switch>
-                                            <SwitchLabel as="span" class="ml-3 text-sm">
-                                                <span class="font-medium text-gray-300">{{
-                                                    $t('components.bodycheckup.title')
-                                                }}</span>
-                                            </SwitchLabel>
-                                        </SwitchGroup>
+                                            </UToggle>
+                                            <span class="ml-3 text-sm font-medium text-gray-300">{{
+                                                $t('components.bodycheckup.title')
+                                            }}</span>
+                                        </div>
                                     </div>
                                 </fieldset>
                             </template>
@@ -396,14 +380,8 @@ const onSubmitThrottle = useThrottleFn(async (e) => {
                                 {{ $t('components.rector.job_props.status_log') }}
                             </template>
                             <template #default>
-                                <SwitchGroup as="div" class="mb-1 flex items-center">
-                                    <Switch
-                                        v-model="jobProps.discordSyncSettings.statusLog"
-                                        :class="[
-                                            jobProps.discordSyncSettings.statusLog ? 'bg-primary-600' : 'bg-gray-200',
-                                            'relative inline-flex h-6 w-11 shrink-0 cursor-pointer rounded-full border-2 border-transparent transition-colors duration-200 ease-in-out focus:outline-none focus:ring-2 focus:ring-primary-600 focus:ring-offset-2',
-                                        ]"
-                                    >
+                                <div class="mb-1 flex items-center">
+                                    <UToggle v-model="jobProps.discordSyncSettings.statusLog">
                                         <span
                                             aria-hidden="true"
                                             :class="[
@@ -411,11 +389,9 @@ const onSubmitThrottle = useThrottleFn(async (e) => {
                                                 'pointer-events-none inline-block size-5 rounded-full bg-white shadow ring-0 transition duration-200 ease-in-out',
                                             ]"
                                         />
-                                    </Switch>
-                                    <SwitchLabel as="span" class="ml-3 text-sm">
-                                        <span class="font-medium text-gray-300">{{ $t('common.enabled') }}</span>
-                                    </SwitchLabel>
-                                </SwitchGroup>
+                                    </UToggle>
+                                    <span class="ml-3 text-sm font-medium text-gray-300">{{ $t('common.enabled') }}</span>
+                                </div>
 
                                 <template v-if="jobProps.discordSyncSettings.statusLog">
                                     <label for="statusLogSettingsChannelId">
@@ -444,26 +420,12 @@ const onSubmitThrottle = useThrottleFn(async (e) => {
                                 {{ $t('components.rector.job_props.user_info_sync') }}
                             </template>
                             <template #default>
-                                <SwitchGroup as="div" class="mb-1 flex items-center">
-                                    <Switch
-                                        v-model="jobProps.discordSyncSettings.userInfoSync"
-                                        :class="[
-                                            jobProps.discordSyncSettings.userInfoSync ? 'bg-primary-600' : 'bg-gray-200',
-                                            'relative inline-flex h-6 w-11 shrink-0 cursor-pointer rounded-full border-2 border-transparent transition-colors duration-200 ease-in-out focus:outline-none focus:ring-2 focus:ring-primary-600 focus:ring-offset-2',
-                                        ]"
-                                    >
-                                        <span
-                                            aria-hidden="true"
-                                            :class="[
-                                                jobProps.discordSyncSettings.userInfoSync ? 'translate-x-5' : 'translate-x-0',
-                                                'pointer-events-none inline-block size-5 rounded-full bg-white shadow ring-0 transition duration-200 ease-in-out',
-                                            ]"
-                                        />
-                                    </Switch>
-                                    <SwitchLabel as="span" class="ml-3 text-sm">
-                                        <span class="font-medium text-gray-300">{{ $t('common.enabled') }}</span>
-                                    </SwitchLabel>
-                                </SwitchGroup>
+                                <div class="mb-1 flex items-center">
+                                    <UToggle v-model="jobProps.discordSyncSettings.userInfoSync">
+                                        <span class="sr-only">{{ $t('components.rector.job_props.user_info_sync') }}</span>
+                                    </UToggle>
+                                    <span class="ml-3 text-sm font-medium text-gray-300">{{ $t('common.enabled') }}</span>
+                                </div>
 
                                 <template v-if="jobProps.discordSyncSettings.userInfoSync">
                                     <label for="gradeRoleFormat">
@@ -484,36 +446,21 @@ const onSubmitThrottle = useThrottleFn(async (e) => {
                                     />
 
                                     <!-- UserInfo Sync Settings -->
-                                    <SwitchGroup
+                                    <div
                                         v-if="jobProps.discordSyncSettings.userInfoSyncSettings !== undefined"
-                                        as="div"
                                         class="mb-1 mt-2 flex items-center"
                                     >
-                                        <Switch
+                                        <UToggle
                                             v-model="jobProps.discordSyncSettings.userInfoSyncSettings.employeeRoleEnabled"
-                                            :class="[
-                                                jobProps.discordSyncSettings.userInfoSyncSettings.employeeRoleEnabled
-                                                    ? 'bg-primary-600'
-                                                    : 'bg-gray-200',
-                                                'relative inline-flex h-6 w-11 shrink-0 cursor-pointer rounded-full border-2 border-transparent transition-colors duration-200 ease-in-out focus:outline-none focus:ring-2 focus:ring-primary-600 focus:ring-offset-2',
-                                            ]"
                                         >
-                                            <span
-                                                aria-hidden="true"
-                                                :class="[
-                                                    jobProps.discordSyncSettings.userInfoSyncSettings.employeeRoleEnabled
-                                                        ? 'translate-x-5'
-                                                        : 'translate-x-0',
-                                                    'pointer-events-none inline-block size-5 rounded-full bg-white shadow ring-0 transition duration-200 ease-in-out',
-                                                ]"
-                                            />
-                                        </Switch>
-                                        <SwitchLabel as="span" class="ml-3 text-sm">
-                                            <span class="font-medium text-gray-300">{{
+                                            <span class="sr-only">{{
                                                 $t('components.rector.job_props.user_info_sync_settings.employee_role_enabled')
                                             }}</span>
-                                        </SwitchLabel>
-                                    </SwitchGroup>
+                                        </UToggle>
+                                        <span class="ml-3 text-sm font-medium text-gray-300">{{
+                                            $t('components.rector.job_props.user_info_sync_settings.employee_role_enabled')
+                                        }}</span>
+                                    </div>
 
                                     <div v-if="jobProps.discordSyncSettings.userInfoSyncSettings?.employeeRoleEnabled">
                                         <label for="employeeRoleFormat">
@@ -539,32 +486,18 @@ const onSubmitThrottle = useThrottleFn(async (e) => {
                                     </div>
 
                                     <template v-if="jobProps.discordSyncSettings.userInfoSyncSettings !== undefined">
-                                        <SwitchGroup as="div" class="mb-1 mt-2 flex items-center">
-                                            <Switch
+                                        <div class="mb-1 mt-2 flex items-center">
+                                            <UToggle
                                                 v-model="jobProps.discordSyncSettings.userInfoSyncSettings.unemployedEnabled"
-                                                :class="[
-                                                    jobProps.discordSyncSettings.userInfoSyncSettings.unemployedEnabled
-                                                        ? 'bg-primary-600'
-                                                        : 'bg-gray-200',
-                                                    'relative inline-flex h-6 w-11 shrink-0 cursor-pointer rounded-full border-2 border-transparent transition-colors duration-200 ease-in-out focus:outline-none focus:ring-2 focus:ring-primary-600 focus:ring-offset-2',
-                                                ]"
                                             >
-                                                <span
-                                                    aria-hidden="true"
-                                                    :class="[
-                                                        jobProps.discordSyncSettings.userInfoSyncSettings.unemployedEnabled
-                                                            ? 'translate-x-5'
-                                                            : 'translate-x-0',
-                                                        'pointer-events-none inline-block size-5 rounded-full bg-white shadow ring-0 transition duration-200 ease-in-out',
-                                                    ]"
-                                                />
-                                            </Switch>
-                                            <SwitchLabel as="span" class="ml-3 text-sm">
-                                                <span class="font-medium text-gray-300">{{
+                                                <span class="sr-only">{{
                                                     $t('components.rector.job_props.user_info_sync_settings.unemployed_enabled')
                                                 }}</span>
-                                            </SwitchLabel>
-                                        </SwitchGroup>
+                                            </UToggle>
+                                            <span class="ml-3 text-sm font-medium text-gray-300">{{
+                                                $t('components.rector.job_props.user_info_sync_settings.unemployed_enabled')
+                                            }}</span>
+                                        </div>
                                         <template v-if="jobProps.discordSyncSettings.userInfoSyncSettings.unemployedEnabled">
                                             <div>
                                                 <label for="unemployedMode">
@@ -683,32 +616,20 @@ const onSubmitThrottle = useThrottleFn(async (e) => {
                                             </div>
                                         </template>
 
-                                        <SwitchGroup as="div" class="mb-1 mt-2 flex items-center">
-                                            <Switch
-                                                v-model="jobProps.discordSyncSettings.jobsAbsence"
-                                                :class="[
-                                                    jobProps.discordSyncSettings.jobsAbsence ? 'bg-primary-600' : 'bg-gray-200',
-                                                    'relative inline-flex h-6 w-11 shrink-0 cursor-pointer rounded-full border-2 border-transparent transition-colors duration-200 ease-in-out focus:outline-none focus:ring-2 focus:ring-primary-600 focus:ring-offset-2',
-                                                ]"
-                                            >
-                                                <span
-                                                    aria-hidden="true"
-                                                    :class="[
-                                                        jobProps.discordSyncSettings.jobsAbsence
-                                                            ? 'translate-x-5'
-                                                            : 'translate-x-0',
-                                                        'pointer-events-none inline-block size-5 rounded-full bg-white shadow ring-0 transition duration-200 ease-in-out',
-                                                    ]"
-                                                />
-                                            </Switch>
-                                            <SwitchLabel as="span" class="ml-3 text-sm">
-                                                <span class="font-medium text-gray-300">{{
+                                        <div class="mb-1 mt-2 flex items-center">
+                                            <UToggle v-model="jobProps.discordSyncSettings.jobsAbsence">
+                                                <span class="sr-only">{{
                                                     $t(
                                                         'components.rector.job_props.jobs_absence_settings.jobs_absence_role_enabled',
                                                     )
                                                 }}</span>
-                                            </SwitchLabel>
-                                        </SwitchGroup>
+                                            </UToggle>
+                                            <span class="ml-3 text-sm font-medium text-gray-300">{{
+                                                $t(
+                                                    'components.rector.job_props.jobs_absence_settings.jobs_absence_role_enabled',
+                                                )
+                                            }}</span>
+                                        </div>
 
                                         <template v-if="jobProps.discordSyncSettings.jobsAbsence">
                                             <div>

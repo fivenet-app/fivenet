@@ -181,16 +181,6 @@ const templatesOpen = ref(false);
                             </div>
                         </div>
                     </div>
-                    <div v-if="can('CompletorService.CompleteDocumentCategories')" class="flex-initial">
-                        <UButton :to="{ name: 'documents-categories' }">
-                            {{ $t('common.category', 2) }}
-                        </UButton>
-                    </div>
-                    <div v-if="can('DocStoreService.ListTemplates')" class="flex-initial">
-                        <UButton :to="{ name: 'documents-templates' }">
-                            {{ $t('common.template', 2) }}
-                        </UButton>
-                    </div>
                 </div>
 
                 <Disclosure v-slot="{ open }" as="div" class="pt-2">
@@ -209,7 +199,7 @@ const templatesOpen = ref(false);
                                 <label for="search" class="block text-sm font-medium leading-6 text-neutral">
                                     {{ $t('common.document') }} {{ $t('common.id') }}
                                 </label>
-                                <div class="relative mt-2 flex items-center">
+                                <div class="relative mt-2">
                                     <input
                                         v-model="query.id"
                                         type="text"
@@ -399,7 +389,7 @@ const templatesOpen = ref(false);
                                 <label for="search" class="block text-sm font-medium leading-6 text-neutral">
                                     {{ $t('common.time_range') }}: {{ $t('common.from') }}
                                 </label>
-                                <div class="relative mt-2 flex items-center">
+                                <div class="relative mt-2">
                                     <input
                                         v-model="query.from"
                                         type="datetime-local"
@@ -414,7 +404,7 @@ const templatesOpen = ref(false);
                                     >{{ $t('common.time_range') }}:
                                     {{ $t('common.to') }}
                                 </label>
-                                <div class="relative mt-2 flex items-center">
+                                <div class="relative mt-2">
                                     <input
                                         v-model="query.to"
                                         type="datetime-local"

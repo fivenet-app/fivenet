@@ -52,9 +52,9 @@ async function createDocumentRequest(values: FormData): Promise<void> {
         });
         await call;
 
-        notifications.dispatchNotification({
+        notifications.add({
             title: { key: 'notifications.docstore.requests.created.title' },
-            content: { key: 'notifications.docstore.requests.created.content' },
+            description: { key: 'notifications.docstore.requests.created.content' },
             type: 'success',
         });
 

@@ -52,10 +52,10 @@ function openTemplates(): void {
 function copyLinkToClipboard(): void {
     copyToClipboardWrapper(w.location.href);
 
-    notifications.dispatchNotification({
+    notifications.add({
         title: { key: 'notifications.clipboard.link_copied.title', parameters: {} },
-        content: { key: 'notifications.clipboard.link_copied.content', parameters: {} },
-        duration: 3250,
+        description: { key: 'notifications.clipboard.link_copied.content', parameters: {} },
+        timeout: 3250,
         type: 'info',
     });
 }

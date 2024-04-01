@@ -1,5 +1,5 @@
 <script lang="ts" setup>
-import { Combobox, ComboboxButton, ComboboxInput, ComboboxOption, ComboboxOptions, Switch } from '@headlessui/vue';
+import { Combobox, ComboboxButton, ComboboxInput, ComboboxOption, ComboboxOptions } from '@headlessui/vue';
 import { useConfirmDialog, watchDebounced } from '@vueuse/core';
 import { CheckIcon } from 'mdi-vue3';
 import ConfirmDialog from '~/components/partials/ConfirmDialog.vue';
@@ -84,7 +84,7 @@ const { data: colleagues, refresh: refreshColleagues } = useLazyAsyncData(
         try {
             const call = $grpc.getJobsClient().listColleagues({
                 pagination: {
-                    offset: 0n,
+                    offset: 0,
                 },
                 searchName: queryTargets.value,
             });
@@ -180,7 +180,7 @@ onConfirm(async (id) => deleteConductEntry(id));
                                     {{ $t('common.search') }}
                                     {{ $t('common.target') }}
                                 </label>
-                                <div class="relative mt-2 flex items-center">
+                                <div class="relative mt-2">
                                     <Combobox v-model="query.user_ids" as="div" class="mt-2 w-full" multiple nullable>
                                         <div class="relative">
                                             <ComboboxButton as="div">
@@ -240,7 +240,7 @@ onConfirm(async (id) => deleteConductEntry(id));
                                     {{ $t('common.search') }}
                                     {{ $t('common.type') }}
                                 </label>
-                                <div class="relative mt-2 flex items-center">
+                                <div class="relative mt-2">
                                     <Combobox v-model="query.types" as="div" class="mt-2 w-full" multiple nullable>
                                         <div class="relative">
                                             <ComboboxButton as="div">
@@ -305,24 +305,11 @@ onConfirm(async (id) => deleteConductEntry(id));
                                     {{ $t('components.jobs.conduct.List.show_expired') }}
                                 </label>
                                 <div class="relative mt-3 flex items-center">
-                                    <Switch
-                                        v-model="query.showExpired"
-                                        :class="[
-                                            query.showExpired ? 'bg-info-600' : 'bg-base-700',
-                                            'relative inline-flex h-6 w-11 shrink-0 cursor-pointer rounded-full border-2 border-transparent transition-colors duration-200 ease-in-out focus:outline-none focus:ring-2 focus:ring-neutral focus:ring-offset-2',
-                                        ]"
-                                    >
+                                    <UToggle v-model="query.showExpired">
                                         <span class="sr-only">
                                             {{ $t('components.jobs.conduct.List.show_expired') }}
                                         </span>
-                                        <span
-                                            aria-hidden="true"
-                                            :class="[
-                                                query.showExpired ? 'translate-x-5' : 'translate-x-0',
-                                                'pointer-events-none inline-block size-5 rounded-full bg-neutral-50 ring-0 transition duration-200 ease-in-out',
-                                            ]"
-                                        />
-                                    </Switch>
+                                    </UToggle>
                                 </div>
                             </div>
                             <div class="flex-initial">

@@ -7,9 +7,6 @@ import {
     ListboxButton,
     ListboxOption,
     ListboxOptions,
-    Switch,
-    SwitchGroup,
-    SwitchLabel,
 } from '@headlessui/vue';
 import { max, min, required } from '@vee-validate/rules';
 import { useThrottleFn, useTimeoutFn } from '@vueuse/core';
@@ -319,9 +316,9 @@ const accessTypes = [{ id: 0, name: t('common.job', 2) }];
 
 function addQualificationAccessEntry(): void {
     if (access.value.size > maxAccessEntries - 1) {
-        notifications.dispatchNotification({
+        notifications.add({
             title: { key: 'notifications.max_access_entry.title', parameters: {} },
-            content: {
+            description: {
                 key: 'notifications.max_access_entry.content',
                 parameters: { max: maxAccessEntries.toString() },
             } as TranslateItem,
@@ -610,31 +607,15 @@ const { data: jobs } = useAsyncData('completor-jobs', () => completorStore.listJ
                     </DisclosureButton>
                     <DisclosurePanel class="rounded-b-lg border-2 border-t-0 border-inherit transition-colors">
                         <div class="mx-4 pb-2">
-                            <VeeField v-slot="{ field, handleInput }" name="discordSettingsSyncEnabled">
-                                <SwitchGroup as="div" class="flex items-center">
-                                    <Switch
-                                        :class="[
-                                            field.value ? 'bg-primary-600' : 'bg-gray-200',
-                                            'relative inline-flex h-6 w-11 shrink-0 cursor-pointer rounded-full border-2 border-transparent transition-colors duration-200 ease-in-out focus:outline-none focus:ring-2 focus:ring-neutral focus:ring-offset-2',
-                                        ]"
-                                        :disabled="!canEdit || !canDo.edit"
-                                        @update:model-value="handleInput($event)"
-                                    >
+                            <VeeField v-slot="{ handleInput }" name="discordSettingsSyncEnabled">
+                                <div class="flex items-center">
+                                    <UToggle :disabled="!canEdit || !canDo.edit" @update:model-value="handleInput($event)">
                                         <span class="sr-only">
-                                            {{ $t('common.absent') }}
+                                            {{ $t('common.enabled') }}
                                         </span>
-                                        <span
-                                            aria-hidden="true"
-                                            :class="[
-                                                field.value ? 'translate-x-5' : 'translate-x-0',
-                                                'pointer-events-none inline-block size-5 rounded-full bg-neutral-50 ring-0 transition duration-200 ease-in-out',
-                                            ]"
-                                        />
-                                    </Switch>
-                                    <SwitchLabel as="span" class="ml-3 text-sm">
-                                        <span class="font-medium text-gray-300">{{ $t('common.enabled') }}</span>
-                                    </SwitchLabel>
-                                </SwitchGroup>
+                                    </UToggle>
+                                    <span class="ml-3 text-sm font-medium text-gray-300">{{ $t('common.enabled') }}</span>
+                                </div>
                             </VeeField>
 
                             <label for="discordSettingsRoleName" class="block text-base font-medium">

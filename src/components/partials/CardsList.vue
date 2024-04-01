@@ -22,10 +22,9 @@ defineEmits<{
             <UPageCard
                 v-for="(module, index) in items.filter((i) => i.permission === undefined || can(i.permission))"
                 :key="index"
-                :href="module.to"
+                :to="module.to"
                 :title="module.title"
                 :description="module.description"
-                :to="module.to"
                 :icon="!showIcon ? undefined : module.icon"
                 @click="$emit('selected', index)"
             >

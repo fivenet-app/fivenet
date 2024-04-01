@@ -30,7 +30,7 @@ const props = withDefaults(
 );
 
 const emit = defineEmits<{
-    (e: 'counted', count: bigint): void;
+    (e: 'counted', count: number): void;
     (e: 'newComment'): void;
     (e: 'deletedComment'): void;
 }>();
@@ -50,7 +50,7 @@ async function getComments(): Promise<GetCommentsResponse> {
         const call = $grpc.getDocStoreClient().getComments({
             pagination: {
                 offset: offset.value,
-                pageSize: 5n,
+                pageSize: 5,
             },
             documentId: props.documentId,
         });

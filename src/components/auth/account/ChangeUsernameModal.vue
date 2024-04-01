@@ -36,9 +36,9 @@ async function changeUsername(values: FormData): Promise<void> {
         });
         await call;
 
-        notifications.dispatchNotification({
+        notifications.add({
             title: { key: 'notifications.auth.change_username.title', parameters: {} },
-            content: { key: 'notifications.auth.change_username.content', parameters: {} },
+            description: { key: 'notifications.auth.change_username.content', parameters: {} },
             type: 'success',
         });
 

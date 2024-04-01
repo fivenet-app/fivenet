@@ -86,9 +86,9 @@ async function setJobProp(values: FormData): Promise<void> {
 
         emit('update:job', { job: selectedJob.value, grade: selectedJobGrade.value ?? { grade: 1, label: '' } });
 
-        notifications.dispatchNotification({
+        notifications.add({
             title: { key: 'notifications.action_successfull.title', parameters: {} },
-            content: { key: 'notifications.action_successfull.content', parameters: {} },
+            description: { key: 'notifications.action_successfull.content', parameters: {} },
             type: 'success',
         });
 

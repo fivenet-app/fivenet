@@ -40,9 +40,9 @@ async function updateDocumentReq(documentId: string, requestId: string, accepted
             }
         }
 
-        notifications.dispatchNotification({
+        notifications.add({
             title: { key: 'notifications.docstore.requests.updated.title' },
-            content: { key: 'notifications.docstore.requests.updated.content' },
+            description: { key: 'notifications.docstore.requests.updated.content' },
             type: 'success',
         });
     } catch (e) {
@@ -58,9 +58,9 @@ async function deleteDocumentReq(id: string): Promise<void> {
         });
         await call;
 
-        notifications.dispatchNotification({
+        notifications.add({
             title: { key: 'notifications.docstore.requests.deleted.title' },
-            content: { key: 'notifications.docstore.requests.deleted.content' },
+            description: { key: 'notifications.docstore.requests.deleted.content' },
             type: 'success',
         });
 

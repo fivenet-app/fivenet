@@ -57,9 +57,9 @@ async function deleteRole(id: string): Promise<void> {
     try {
         await $grpc.getRectorClient().deleteRole({ id });
 
-        notifications.dispatchNotification({
+        notifications.add({
             title: { key: 'notifications.rector.role_deleted.title', parameters: {} },
-            content: { key: 'notifications.rector.role_deleted.content', parameters: {} },
+            description: { key: 'notifications.rector.role_deleted.content', parameters: {} },
             type: 'success',
         });
 
@@ -186,9 +186,9 @@ async function updatePermissions(): Promise<void> {
             attrs,
         });
 
-        notifications.dispatchNotification({
+        notifications.add({
             title: { key: 'notifications.rector.role_updated.title', parameters: {} },
-            content: { key: 'notifications.rector.role_updated.content', parameters: {} },
+            description: { key: 'notifications.rector.role_updated.content', parameters: {} },
             type: 'success',
         });
 

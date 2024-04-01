@@ -59,7 +59,7 @@ const props = defineProps<{
 }>();
 
 const access = ref<undefined | DocumentAccess>(undefined);
-const commentCount = ref<bigint | undefined>();
+const commentCount = ref<number | undefined>();
 
 const {
     data: doc,
@@ -90,9 +90,9 @@ async function deleteDocument(id: string): Promise<void> {
             documentId: id,
         });
 
-        notifications.dispatchNotification({
+        notifications.add({
             title: { key: 'notifications.document_deleted.title', parameters: {} },
-            content: { key: 'notifications.document_deleted.content', parameters: {} },
+            description: { key: 'notifications.document_deleted.content', parameters: {} },
             type: 'success',
         });
 
@@ -113,15 +113,15 @@ async function toggleDocument(id: string, closed: boolean): Promise<void> {
         doc.value!.closed = closed;
 
         if (!closed) {
-            notifications.dispatchNotification({
+            notifications.add({
                 title: { key: `notifications.document_toggled.open.title`, parameters: {} },
-                content: { key: `notifications.document_toggled.open.content`, parameters: {} },
+                description: { key: `notifications.document_toggled.open.content`, parameters: {} },
                 type: 'success',
             });
         } else {
-            notifications.dispatchNotification({
+            notifications.add({
                 title: { key: `notifications.document_toggled.closed.title`, parameters: {} },
-                content: { key: `notifications.document_toggled.closed.content`, parameters: {} },
+                description: { key: `notifications.document_toggled.closed.content`, parameters: {} },
                 type: 'success',
             });
         }
@@ -137,9 +137,9 @@ async function changeDocumentOwner(id: string): Promise<void> {
             documentId: id,
         });
 
-        notifications.dispatchNotification({
+        notifications.add({
             title: { key: 'notifications.document_take_ownership.title', parameters: {} },
-            content: { key: 'notifications.document_take_ownership.content', parameters: {} },
+            description: { key: 'notifications.document_take_ownership.content', parameters: {} },
             type: 'success',
         });
 
@@ -155,10 +155,10 @@ function addToClipboard(): void {
         clipboardStore.addDocument(doc.value);
     }
 
-    notifications.dispatchNotification({
+    notifications.add({
         title: { key: 'notifications.clipboard.document_added.title', parameters: {} },
-        content: { key: 'notifications.clipboard.document_added.content', parameters: {} },
-        duration: 3250,
+        description: { key: 'notifications.clipboard.document_added.content', parameters: {} },
+        timeout: 3250,
         type: 'info',
     });
 }
@@ -394,7 +394,7 @@ if (hash.value !== undefined && hash.value !== null) {
                                 <span class="text-sm font-medium text-base-700">
                                     {{
                                         commentCount !== undefined
-                                            ? $t('common.comments', parseInt(commentCount.toString()))
+                                            ? $t('common.comments', commentCount)
                                             : '? ' + $t('common.comment', 2)
                                     }}
                                 </span>

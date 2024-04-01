@@ -49,9 +49,9 @@ async function setProfilePicture(values: FormData): Promise<void> {
             activeChar.value.avatar = response.avatar;
         }
 
-        notifications.dispatchNotification({
+        notifications.add({
             title: { key: 'notifications.action_successfull.title', parameters: {} },
-            content: { key: 'notifications.action_successfull.content', parameters: {} },
+            description: { key: 'notifications.action_successfull.content', parameters: {} },
             type: 'success',
         });
 

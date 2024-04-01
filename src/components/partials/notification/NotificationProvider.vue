@@ -1,14 +1,16 @@
 <script lang="ts" setup>
 import { useAuthStore } from '~/store/auth';
 import { useNotificatorStore } from '~/store/notificator';
-import { notificationTypeToIcon } from './helpers';
+import { notificationTypeToIcon, notificationTypeToColor } from '~/components/partials/notification/helpers';
+
+const { t } = useI18n();
 
 const authStore = useAuthStore();
 const { accessToken, activeChar } = storeToRefs(authStore);
 
-const notifications = useNotificatorStore();
-const { getNotifications } = storeToRefs(notifications);
-const { startStream, stopStream } = notifications;
+const notificatorStore = useNotificatorStore();
+const { notifications } = storeToRefs(notificatorStore);
+const { startStream, stopStream } = notificatorStore;
 
 async function toggleStream(): Promise<void> {
     // Only stream notifications when a user is logged in and has a character selected
@@ -16,7 +18,7 @@ async function toggleStream(): Promise<void> {
         return startStream();
     } else {
         await stopStream();
-        notifications.$reset();
+        notificatorStore.$reset();
     }
 }
 
@@ -26,18 +28,39 @@ watch(activeChar, async () => toggleStream());
 onBeforeMount(async () => toggleStream());
 
 onBeforeUnmount(async () => stopStream());
-</script>
 
+const toast = useToast();
+
+watchArray(
+    notifications,
+    (_, _0, added) => {
+        added.forEach((notification) => {
+            toast.add({
+                id: notification.id,
+                title: t(notification.title.key, notification.title.parameters ?? {}),
+                description: t(notification.description.key, notification.description.parameters ?? {}),
+                icon: notificationTypeToIcon(notification.type),
+                color: notificationTypeToColor(notification.type),
+                timeout: notification.timeout ?? 3500,
+                actions: notification.onClick
+                    ? [
+                          {
+                              label: notification.onClickText
+                                  ? t(notification.onClickText.key, notification.onClickText.parameters ?? {})
+                                  : t('common.click_here'),
+                              click: notification.onClick,
+                          },
+                      ]
+                    : [],
+                callback: () => {
+                    if (notification.id) notificatorStore.remove(notification.id);
+                },
+            });
+        });
+    },
+    { deep: true },
+);
+</script>
 <template>
-    <div class="hidden">
-        <UNotification
-            v-for="notification in getNotifications.filter((n) => n.position === undefined || n.position === 'top-right')"
-            :id="notification.id"
-            :key="notification.id"
-            :title="$t(notification.title.key, notification.title.parameters ?? {})"
-            :description="$t(notification.content.key, notification.content.parameters ?? {})"
-            :icon="notificationTypeToIcon(notification.type)"
-            :timeout="3500"
-        />
-    </div>
+    <div></div>
 </template>

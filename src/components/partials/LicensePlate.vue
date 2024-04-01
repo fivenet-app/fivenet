@@ -30,15 +30,15 @@ const year =
 
 <template>
     <div
-        class="flex min-w-fit max-w-48 flex-col items-center justify-center rounded-lg border-2 bg-[blue]"
+        class="flex min-w-20 max-w-48 flex-col items-center justify-center rounded-lg border-2 bg-blue"
         :style="{ backgroundColor }"
     >
         <div class="grid w-full grid-cols-2 justify-items-center rounded-t-lg bg-error-600">
-            <div class="hidden select-none text-xs text-warn-400 md:block">{{ state }}</div>
-            <div class="select-none text-xs text-warn-400 md:hidden">{{ stateShort }}</div>
-            <div class="select-none text-xs">{{ year }}</div>
+            <div class="hidden select-none text-xs text-yellow-300 md:block">{{ state }}</div>
+            <div class="select-none text-xs text-yellow-300 md:hidden">{{ stateShort }}</div>
+            <div class="select-none text-xs text-white">{{ year }}</div>
         </div>
-        <div class="text-base" :class="isColourBright(inverseColor) ? 'text-black' : 'text-neutral'">
+        <div class="text-base" :class="isColourBright(inverseColor) ? 'text-black' : 'text-white'">
             {{ plate }}
         </div>
     </div>

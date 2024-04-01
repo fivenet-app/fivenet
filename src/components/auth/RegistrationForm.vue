@@ -5,7 +5,6 @@ import { useThrottleFn, useTimeoutFn } from '@vueuse/core';
 import { LoadingIcon } from 'mdi-vue3';
 import { defineRule } from 'vee-validate';
 import PasswordStrengthMeter from '~/components/auth/PasswordStrengthMeter.vue';
-import GenericAlert from '~/components/partials/elements/GenericAlert.vue';
 import { useNotificatorStore } from '~/store/notificator';
 
 const { $grpc } = useNuxtApp();
@@ -29,9 +28,9 @@ async function createAccount(values: FormData): Promise<void> {
             password: values.password,
         });
 
-        notifications.dispatchNotification({
+        notifications.add({
             title: { key: 'notifications.auth.account_created.title', parameters: {} },
-            content: { key: 'notifications.auth.account_created.content', parameters: {} },
+            description: { key: 'notifications.auth.account_created.content', parameters: {} },
             type: 'success',
         });
 
@@ -168,10 +167,11 @@ const onSubmitThrottle = useThrottleFn(async (e) => {
             </NuxtLink>
         </div>
 
-        <GenericAlert
+        <UAlert
             v-if="accountError"
             :title="$t('components.auth.registration_form.create_error')"
             :message="accountError.startsWith('errors.') ? $t(accountError) : accountError"
+            color="red"
         />
     </div>
 </template>

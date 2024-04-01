@@ -1,6 +1,5 @@
 <script lang="ts" setup>
 import TemplateEditor from '~/components/documents/templates/TemplateEditor.vue';
-import ContentWrapper from '~/components/partials/ContentWrapper.vue';
 
 useHead({
     title: 'pages.documents.templates.create_template',
@@ -13,7 +12,11 @@ definePageMeta({
 </script>
 
 <template>
-    <ContentWrapper>
-        <TemplateEditor />
-    </ContentWrapper>
+    <UDashboardPage>
+        <UDashboardPanel grow>
+            <UDashboardNavbar :title="$t('pages.documents.templates.create_template')"> </UDashboardNavbar>
+
+            <TemplateEditor />
+        </UDashboardPanel>
+    </UDashboardPage>
 </template>

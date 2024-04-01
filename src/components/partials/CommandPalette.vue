@@ -106,83 +106,6 @@ const items = [
             }
         },
     },
-    // Pages
-    {
-        id: -9,
-        name: t('common.overview'),
-        action: () => {
-            navigateTo({ name: 'overview' });
-            open.value = false;
-        },
-        icon: markRaw(HomeIcon),
-        category: 'pages',
-    },
-    {
-        id: -10,
-        name: t('common.citizen'),
-        action: () => {
-            navigateTo({ name: 'citizens' });
-            open.value = false;
-        },
-        permission: 'CitizenStoreService.ListCitizens',
-        icon: markRaw(AccountMultipleIcon),
-        category: 'pages',
-    },
-    {
-        id: -11,
-        name: t('common.vehicle'),
-        action: () => {
-            navigateTo({ name: 'vehicles' });
-            open.value = false;
-        },
-        permission: 'DMVService.ListVehicles',
-        icon: markRaw(CarIcon),
-        category: 'pages',
-    },
-    {
-        id: -12,
-        name: t('common.document'),
-        action: () => {
-            navigateTo({ name: 'documents' });
-            open.value = false;
-        },
-        permission: 'DocStoreService.ListDocuments',
-        icon: markRaw(FileDocumentMultipleIcon),
-        category: 'pages',
-    },
-    {
-        id: -13,
-        name: t('common.job'),
-        action: () => {
-            navigateTo({ name: 'jobs-overview' });
-            open.value = false;
-        },
-        permission: 'JobsService.ListColleagues',
-        icon: markRaw(BriefcaseIcon),
-        category: 'pages',
-    },
-    {
-        id: -14,
-        name: t('common.livemap'),
-        action: () => {
-            navigateTo({ name: 'livemap' });
-            open.value = false;
-        },
-        permission: 'LivemapperService.Stream',
-        icon: markRaw(MapIcon),
-        category: 'pages',
-    },
-    {
-        id: -15,
-        name: t('common.control_panel'),
-        action: () => {
-            navigateTo({ name: 'rector' });
-            open.value = false;
-        },
-        permission: 'RectorService.GetRoles',
-        icon: markRaw(CogIcon),
-        category: 'pages',
-    },
 ] as Item[];
 
 const filteredItems = computed<Item[]>(() =>
@@ -204,8 +127,8 @@ async function listCitizens(): Promise<void> {
     try {
         const call = $grpc.getCitizenStoreClient().listCitizens({
             pagination: {
-                offset: 0n,
-                pageSize: 7n,
+                offset: 0,
+                pageSize: 7,
             },
             searchName: query.value,
         });
@@ -226,8 +149,8 @@ async function listDocuments(): Promise<void> {
     try {
         const call = $grpc.getDocStoreClient().listDocuments({
             pagination: {
-                offset: 0n,
-                pageSize: 7n,
+                offset: 0,
+                pageSize: 7,
             },
             orderBy: [],
             search: query.value,

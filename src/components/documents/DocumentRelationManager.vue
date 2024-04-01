@@ -83,7 +83,7 @@ async function listCitizens(): Promise<User[]> {
     try {
         const call = $grpc.getCitizenStoreClient().listCitizens({
             pagination: {
-                offset: 0n,
+                offset: 0,
             },
             searchName: queryCitizens.value,
         });

@@ -55,9 +55,9 @@ async function copyToClipboard(): Promise<void> {
         text += (idx + 1).toString() + '. ' + p.description + '\n';
     });
 
-    notifications.dispatchNotification({
+    notifications.add({
         title: { key: 'notifications.bodycheckup.title', parameters: {} },
-        content: { key: 'notifications.bodycheckup.content', parameters: {} },
+        description: { key: 'notifications.bodycheckup.content', parameters: {} },
         type: 'info',
     });
 

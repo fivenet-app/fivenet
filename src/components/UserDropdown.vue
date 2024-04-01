@@ -20,8 +20,13 @@ const items = computed(() => [
     ],
     [
         {
+            label: t('components.auth.account_info.title'),
+            icon: 'i-mdi-account-cog-outline',
+            to: '/auth/account-info',
+        },
+        {
             label: t('common.setting', 2),
-            icon: 'i-heroicons-cog-8-tooth',
+            icon: 'i-mdi-cog-outline',
             to: '/settings',
         },
         {
@@ -31,26 +36,6 @@ const items = computed(() => [
             click: () => {
                 isDashboardSearchModalOpen.value = true;
             },
-        },
-        {
-            label: 'Help',
-            icon: 'i-heroicons-question-mark-circle',
-            shortcuts: ['?'],
-            click: () => (isHelpSlideoverOpen.value = true),
-        },
-    ],
-    [
-        {
-            label: 'Documentation',
-            icon: 'i-heroicons-book-open',
-            to: 'https://ui.nuxt.com/pro/getting-started',
-            target: '_blank',
-        },
-        {
-            label: 'GitHub repository',
-            icon: 'i-simple-icons-github',
-            to: 'https://github.com/nuxt-ui-pro/dashboard',
-            target: '_blank',
         },
     ],
     [

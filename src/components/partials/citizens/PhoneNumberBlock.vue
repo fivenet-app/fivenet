@@ -31,13 +31,13 @@ async function doCall(): Promise<void> {
     if (isNUIAvailable()) {
         return phoneCallNumber(props.number);
     } else {
-        notifications.dispatchNotification({
+        notifications.add({
             type: 'info',
             title: {
                 key: 'notifications.components.partials.users.PhoneNumber.copied.title',
                 parameters: {},
             },
-            content: {
+            description: {
                 key: 'notifications.components.partials.users.PhoneNumber.copied.content',
                 parameters: {},
             },

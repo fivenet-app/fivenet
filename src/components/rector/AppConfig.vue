@@ -1,14 +1,5 @@
 <script lang="ts" setup>
-import {
-    Combobox,
-    ComboboxButton,
-    ComboboxInput,
-    ComboboxOption,
-    ComboboxOptions,
-    Switch,
-    SwitchGroup,
-    SwitchLabel,
-} from '@headlessui/vue';
+import { Combobox, ComboboxButton, ComboboxInput, ComboboxOption, ComboboxOptions } from '@headlessui/vue';
 // eslint-disable-next-line camelcase
 import { max, min, regex, required, url, min_value, max_value, numeric, size } from '@vee-validate/rules';
 import { useThrottleFn, useTimeoutFn, watchOnce } from '@vueuse/core';
@@ -138,9 +129,9 @@ async function updateAppConfig(values: FormData): Promise<void> {
             config: data.value.config,
         });
 
-        notifications.dispatchNotification({
+        notifications.add({
             title: { key: 'notifications.rector.app_config.title', parameters: {} },
-            content: { key: 'notifications.rector.app_config.content', parameters: {} },
+            description: { key: 'notifications.rector.app_config.content', parameters: {} },
             type: 'success',
         });
 
@@ -271,33 +262,21 @@ const { remove, push, fields } = useFieldArray<Perm>('permsDefault');
                         <GenericContainerPanelEntry>
                             <template #title>{{ $t('components.rector.app_config.auth.sign_up') }}</template>
                             <template #default>
-                                <SwitchGroup as="div" class="flex items-center">
-                                    <Switch
-                                        v-model="data.config!.auth!.signupEnabled"
-                                        :class="[
-                                            data.config!.auth!.signupEnabled ? 'bg-primary-600' : 'bg-gray-200',
-                                            'relative inline-flex h-6 w-11 shrink-0 cursor-pointer rounded-full border-2 border-transparent transition-colors duration-200 ease-in-out focus:outline-none focus:ring-2 focus:ring-primary-600 focus:ring-offset-2',
-                                        ]"
-                                    >
-                                        <span
-                                            aria-hidden="true"
-                                            :class="[
-                                                data.config!.auth!.signupEnabled ? 'translate-x-5' : 'translate-x-0',
-                                                'pointer-events-none inline-block size-5 rounded-full bg-white shadow ring-0 transition duration-200 ease-in-out',
-                                            ]"
-                                        />
-                                    </Switch>
-                                    <SwitchLabel as="span" class="ml-3 text-sm">
-                                        <span class="font-medium text-gray-300">
-                                            <template v-if="data.config!.auth!.signupEnabled">
-                                                {{ $t('common.enabled') }}
-                                            </template>
-                                            <template v-else>
-                                                {{ $t('common.disabled') }}
-                                            </template>
+                                <div class="flex items-center">
+                                    <UToggle v-model="data.config!.auth!.signupEnabled">
+                                        <span class="sr-only">
+                                            {{ $t('components.rector.app_config.auth.sign_up') }}
                                         </span>
-                                    </SwitchLabel>
-                                </SwitchGroup>
+                                    </UToggle>
+                                    <span class="ml-3 text-sm font-medium text-gray-300">
+                                        <template v-if="data.config!.auth!.signupEnabled">
+                                            {{ $t('common.enabled') }}
+                                        </template>
+                                        <template v-else>
+                                            {{ $t('common.disabled') }}
+                                        </template>
+                                    </span>
+                                </div>
                             </template>
                         </GenericContainerPanelEntry>
                     </template>
@@ -690,33 +669,21 @@ const { remove, push, fields } = useFieldArray<Perm>('permsDefault');
                         <GenericContainerPanelEntry>
                             <template #title>{{ $t('common.enabled') }}</template>
                             <template #default>
-                                <SwitchGroup as="div" class="flex items-center">
-                                    <Switch
-                                        v-model="data.config!.discord!.enabled"
-                                        :class="[
-                                            data.config!.discord!.enabled ? 'bg-primary-600' : 'bg-gray-200',
-                                            'relative inline-flex h-6 w-11 shrink-0 cursor-pointer rounded-full border-2 border-transparent transition-colors duration-200 ease-in-out focus:outline-none focus:ring-2 focus:ring-primary-600 focus:ring-offset-2',
-                                        ]"
-                                    >
-                                        <span
-                                            aria-hidden="true"
-                                            :class="[
-                                                data.config!.discord!.enabled ? 'translate-x-5' : 'translate-x-0',
-                                                'pointer-events-none inline-block size-5 rounded-full bg-white shadow ring-0 transition duration-200 ease-in-out',
-                                            ]"
-                                        />
-                                    </Switch>
-                                    <SwitchLabel as="span" class="ml-3 text-sm">
-                                        <span class="font-medium text-gray-300">
-                                            <template v-if="data.config!.discord!.enabled">
-                                                {{ $t('common.enabled') }}
-                                            </template>
-                                            <template v-else>
-                                                {{ $t('common.disabled') }}
-                                            </template>
+                                <div class="flex items-center">
+                                    <UToggle v-model="data.config!.discord!.enabled">
+                                        <span class="sr-only">
+                                            {{ $t('common.enabled') }}
                                         </span>
-                                    </SwitchLabel>
-                                </SwitchGroup>
+                                    </UToggle>
+                                    <span class="ml-3 text-sm font-medium text-gray-300">
+                                        <template v-if="data.config!.discord!.enabled">
+                                            {{ $t('common.enabled') }}
+                                        </template>
+                                        <template v-else>
+                                            {{ $t('common.disabled') }}
+                                        </template>
+                                    </span>
+                                </div>
                             </template>
                         </GenericContainerPanelEntry>
                         <GenericContainerPanelEntry>

@@ -1,8 +1,7 @@
 import { defineStore, type StoreDefinition } from 'pinia';
 import { v4 as uuidv4 } from 'uuid';
-import { type Notification, type NotificationConfig, type NotificationType } from '~/composables/notifications/notifications';
+import { type Notification, type NotificationType } from '~/composables/notifications/notifications';
 import { useAuthStore } from '~/store/auth';
-import { NotificationCategory } from '~~/gen/ts/resources/notifications/notifications';
 import { MarkNotificationsRequest } from '~~/gen/ts/services/notificator/notificator';
 
 // In seconds
@@ -29,41 +28,17 @@ export const useNotificatorStore = defineStore('notifications', {
         }) as NotificationsState,
     persist: false,
     actions: {
-        removeNotification(id: string): void {
+        remove(id: string): void {
             this.notifications = this.notifications.filter((notification) => notification.id !== id);
         },
-        dispatchNotification({
-            title,
-            content,
-            type,
-            autoClose = true,
-            duration = 4500,
-            category = NotificationCategory.GENERAL,
-            data = undefined,
-            position = 'top-right',
-            callback = undefined,
-            onClick = undefined,
-            onClickText = undefined,
-        }: NotificationConfig) {
-            const id = uuidv4();
-            this.notifications.unshift({
-                id,
-                title,
-                content,
-                type,
-                category,
-                data,
-                position,
-                callback,
-                onClick,
-                onClickText,
-            });
+        add(notification: Notification): void {
+            notification.id = uuidv4();
 
-            if (autoClose) {
-                setTimeout(() => {
-                    this.removeNotification(id);
-                }, duration);
+            if (notification.timeout === undefined) {
+                notification.timeout = 3500;
             }
+
+            this.notifications.push(notification);
         },
 
         async startStream(): Promise<void> {
@@ -110,9 +85,9 @@ export const useNotificatorStore = defineStore('notifications', {
 
                                 authStore.setAccessToken(tokenUpdate.newToken, toDate(tokenUpdate.expires) as null | Date);
 
-                                this.dispatchNotification({
+                                this.add({
                                     title: { key: 'notifications.renewed_token.title', parameters: {} },
-                                    content: { key: 'notifications.renewed_token.content', parameters: {} },
+                                    description: { key: 'notifications.renewed_token.content', parameters: {} },
                                     type: 'info',
                                 });
                             }
@@ -121,14 +96,14 @@ export const useNotificatorStore = defineStore('notifications', {
                             const nType: NotificationType = (n.type as NotificationType) ?? 'info';
 
                             if (n.title === undefined || n.content === undefined) {
-                                return;
+                                continue;
                             }
 
                             switch (n.category) {
                                 default: {
-                                    const not: NotificationConfig = {
+                                    const not: Notification = {
                                         title: { key: n.title.key, parameters: n.title.parameters },
-                                        content: {
+                                        description: {
                                             key: n.content.key,
                                             parameters: n.content.parameters,
                                         },
@@ -152,7 +127,7 @@ export const useNotificatorStore = defineStore('notifications', {
                                         }
                                     }
 
-                                    this.dispatchNotification(not);
+                                    this.add(not);
                                     break;
                                 }
                             }
@@ -229,9 +204,6 @@ export const useNotificatorStore = defineStore('notifications', {
         },
     },
     getters: {
-        getNotifications(): Notification[] {
-            return this.notifications.slice(0, 4);
-        },
         getNotificationsCount(): number {
             return this.notificationsCount;
         },

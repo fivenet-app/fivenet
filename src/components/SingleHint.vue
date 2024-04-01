@@ -1,7 +1,6 @@
 <script lang="ts" setup generic="T extends RoutesNamesList, P extends string, E extends boolean = false">
 import { InformationSlabCircleIcon } from 'mdi-vue3';
 import type { NuxtRoute, RoutesNamesList } from '@typed-router';
-import GenericBadge from '~/components/partials/elements/GenericBadge.vue';
 
 const props = defineProps<{
     hintId: string;
@@ -27,9 +26,9 @@ const props = defineProps<{
                     <strong class="mx-1 shrink-0 font-semibold">{{ $t('components.hints.start_text') }}</strong>
                 </span>
                 <span class="grow">{{ $t(`components.hints.${hintId}.content`) }} </span>
-                <GenericBadge v-if="keyboard" class="ml-1 text-black" color="gray">
-                    <kbd class="font-sans">{{ $t(`components.hints.${hintId}.keyboard`) }}</kbd>
-                </GenericBadge>
+                <UKbd v-if="keyboard" class="ml-1">
+                    {{ $t(`components.hints.${hintId}.keyboard`) }}
+                </UKbd>
                 <NuxtLink
                     v-else-if="props.to"
                     :to="props.to"

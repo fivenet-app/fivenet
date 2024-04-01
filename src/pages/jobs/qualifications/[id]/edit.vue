@@ -1,7 +1,6 @@
 <script lang="ts" setup>
 import { type TypedRouteFromName } from '@typed-router';
 import QualificationEditor from '~/components/jobs/qualifications/QualificationEditor.vue';
-import ContentWrapper from '~/components/partials/ContentWrapper.vue';
 
 useHead({
     title: 'pages.qualifications.edit.title',
@@ -21,7 +20,11 @@ const route = useRoute('jobs-qualifications-id-edit');
 </script>
 
 <template>
-    <ContentWrapper>
-        <QualificationEditor :id="route.params.id" />
-    </ContentWrapper>
+    <UDashboardPage>
+        <UDashboardPanel grow>
+            <UDashboardNavbar :title="$t('pages.qualifications.edit.title')"> </UDashboardNavbar>
+
+            <QualificationEditor :id="route.params.id" />
+        </UDashboardPanel>
+    </UDashboardPage>
 </template>

@@ -48,9 +48,9 @@ async function setTrafficPoints(values: FormData): Promise<void> {
 
         emit('update:trafficInfractionPoints', response.props?.trafficInfractionPoints ?? 0);
 
-        notifications.dispatchNotification({
+        notifications.add({
             title: { key: 'notifications.action_successfull.title', parameters: {} },
-            content: { key: 'notifications.action_successfull.content', parameters: {} },
+            description: { key: 'notifications.action_successfull.content', parameters: {} },
             type: 'success',
         });
 

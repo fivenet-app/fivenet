@@ -31,7 +31,7 @@ async function listQualifications(): Promise<ListQualificationsResponse> {
     try {
         const call = $grpc.getQualificationsClient().listQualifications({
             pagination: {
-                offset: 0n,
+                offset: 0,
             },
             search: queryQualification.value,
         });

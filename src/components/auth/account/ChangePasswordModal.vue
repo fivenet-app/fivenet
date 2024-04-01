@@ -40,9 +40,9 @@ async function changePassword(values: FormData): Promise<void> {
 
         setAccessToken(response.token, toDate(response.expires) as null | Date);
 
-        notifications.dispatchNotification({
+        notifications.add({
             title: { key: 'notifications.auth.changed_password.title', parameters: {} },
-            content: { key: 'notifications.auth.changed_password.content', parameters: {} },
+            description: { key: 'notifications.auth.changed_password.content', parameters: {} },
             type: 'success',
         });
 

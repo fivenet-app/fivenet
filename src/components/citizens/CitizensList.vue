@@ -1,5 +1,5 @@
 <script lang="ts" setup>
-import { Disclosure, DisclosureButton, DisclosurePanel, Switch } from '@headlessui/vue';
+import { Disclosure, DisclosureButton, DisclosurePanel } from '@headlessui/vue';
 import { watchDebounced } from '@vueuse/core';
 import { vMaska } from 'maska';
 import { ChevronDownIcon, ClipboardPlusIcon, EyeIcon } from 'mdi-vue3';
@@ -82,10 +82,10 @@ const notifications = useNotificatorStore();
 function addToClipboard(user: User): void {
     clipboardStore.addUser(user);
 
-    notifications.dispatchNotification({
+    notifications.add({
         title: { key: 'notifications.clipboard.citizen_add.title', parameters: {} },
-        content: { key: 'notifications.clipboard.citizen_add.content', parameters: {} },
-        duration: 3250,
+        description: { key: 'notifications.clipboard.citizen_add.content', parameters: {} },
+        timeout: 3250,
         type: 'info',
     });
 }
@@ -145,7 +145,7 @@ const columns = [
                                 {{ $t('common.search') }}
                                 {{ $t('common.citizen', 1) }}
                             </label>
-                            <div class="relative mt-2 flex items-center">
+                            <div class="relative mt-2">
                                 <GenericInput
                                     ref="searchInput"
                                     v-model="query.name"
@@ -161,7 +161,7 @@ const columns = [
                                 {{ $t('common.search') }}
                                 {{ $t('common.date_of_birth') }}
                             </label>
-                            <div class="relative mt-2 flex items-center">
+                            <div class="relative mt-2">
                                 <UInput
                                     v-model="query.dateofbirth"
                                     v-maska
@@ -180,24 +180,11 @@ const columns = [
                                 {{ $t('components.citizens.citizens_list.only_wanted') }}
                             </label>
                             <div class="relative mt-3 flex items-center">
-                                <Switch
-                                    v-model="query.wanted"
-                                    :class="[
-                                        query.wanted ? 'bg-primary-600' : 'bg-gray-200',
-                                        'relative inline-flex h-6 w-11 shrink-0 cursor-pointer rounded-full border-2 border-transparent transition-colors duration-200 ease-in-out focus:outline-none focus:ring-2 focus:ring-neutral focus:ring-offset-2',
-                                    ]"
-                                >
+                                <UToggle v-model="query.wanted">
                                     <span class="sr-only">
                                         {{ $t('components.citizens.citizens_list.only_wanted') }}
                                     </span>
-                                    <span
-                                        aria-hidden="true"
-                                        :class="[
-                                            query.wanted ? 'translate-x-5' : 'translate-x-0',
-                                            'pointer-events-none inline-block size-5 rounded-full bg-neutral-50 ring-0 transition duration-200 ease-in-out',
-                                        ]"
-                                    />
-                                </Switch>
+                                </UToggle>
                             </div>
                         </div>
                     </div>
@@ -218,7 +205,7 @@ const columns = [
                                         {{ $t('common.search') }}
                                         {{ $t('common.phone_number') }}
                                     </label>
-                                    <div class="relative mt-2 flex items-center">
+                                    <div class="relative mt-2">
                                         <UInput
                                             v-model="query.phoneNumber"
                                             type="tel"
@@ -238,7 +225,7 @@ const columns = [
                                         {{ $t('common.search') }}
                                         {{ $t('common.traffic_infraction_points', 2) }}
                                     </label>
-                                    <div class="relative mt-2 flex items-center">
+                                    <div class="relative mt-2">
                                         <UInput
                                             v-model="query.trafficInfractionPoints"
                                             type="number"
@@ -254,7 +241,7 @@ const columns = [
                                     <label for="search" class="block text-sm font-medium leading-6 text-neutral">
                                         {{ $t('components.citizens.citizens_list.open_fine') }}
                                     </label>
-                                    <div class="relative mt-2 flex items-center">
+                                    <div class="relative mt-2">
                                         <UInput
                                             v-model="query.fines"
                                             type="number"

@@ -17,6 +17,13 @@ definePageMeta({
         <UDashboardPanel grow>
             <UDashboardNavbar :title="$t('pages.documents.title')">
                 <template #right>
+                    <UButton v-if="can('CompletorService.CompleteDocumentCategories')" :to="{ name: 'documents-categories' }">
+                        {{ $t('common.category', 2) }}
+                    </UButton>
+                    <UButton v-if="can('DocStoreService.ListTemplates')" :to="{ name: 'documents-templates' }">
+                        {{ $t('common.template', 2) }}
+                    </UButton>
+
                     <UButton :label="$t('common.create')" trailing-icon="i-mdi-plus" color="gray" to="/documents/create" />
                 </template>
             </UDashboardNavbar>

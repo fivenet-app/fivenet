@@ -1,6 +1,5 @@
 <script lang="ts" setup>
 import AccountInfo from '~/components/auth/account/AccountInfo.vue';
-import ContentWrapper from '~/components/partials/ContentWrapper.vue';
 import { useNotificatorStore } from '~/store/notificator';
 
 useHead({
@@ -21,17 +20,17 @@ const route = useRoute();
 const query = route.query;
 if (query.oauth2Connect) {
     if (query.oauth2Connect === 'success') {
-        notifications.dispatchNotification({
+        notifications.add({
             title: { key: 'notifications.auth.oauth2_connect.success.title', parameters: {} },
-            content: { key: 'notifications.auth.oauth2_connect.success.content', parameters: {} },
+            description: { key: 'notifications.auth.oauth2_connect.success.content', parameters: {} },
             type: 'info',
         });
     } else if (query.oauth2Connect === 'failed') {
         const reason = query.reason ?? 'N/A';
 
-        notifications.dispatchNotification({
+        notifications.add({
             title: { key: 'notifications.auth.oauth2_connect.failed.title', parameters: {} },
-            content: { key: 'notifications.auth.oauth2_connect.failed.content', parameters: { msg: reason.toString() } },
+            description: { key: 'notifications.auth.oauth2_connect.failed.content', parameters: { msg: reason.toString() } },
             type: 'error',
         });
     }
@@ -39,7 +38,11 @@ if (query.oauth2Connect) {
 </script>
 
 <template>
-    <ContentWrapper>
-        <AccountInfo />
-    </ContentWrapper>
+    <UDashboardPage>
+        <UDashboardPanel grow>
+            <UDashboardNavbar :title="$t('components.auth.account_info.title')"> </UDashboardNavbar>
+
+            <AccountInfo />
+        </UDashboardPanel>
+    </UDashboardPage>
 </template>

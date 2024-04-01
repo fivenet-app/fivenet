@@ -3,7 +3,6 @@ import { localize, setLocale as veeValidateSetLocale } from '@vee-validate/i18n'
 import de from '@vee-validate/i18n/dist/locale/de.json';
 import en from '@vee-validate/i18n/dist/locale/en.json';
 import { configure } from 'vee-validate';
-import ConfirmDialog from '~/components/partials/ConfirmDialog.vue';
 import { useClipboardStore } from '~/store/clipboard';
 import { useDocumentEditorStore } from '~/store/documenteditor';
 import { JOB_THEME_KEY, useSettingsStore } from '~/store/settings';
@@ -102,10 +101,26 @@ if (isNUIAvailable.value) {
     onBeforeUnmount(async () => window.removeEventListener('message', onNUIMessage));
 }
 
-// Open update available confirm dialog
-const open = ref(false);
+const toast = useToast();
 
-watch(updateAvailable, () => (open.value = true));
+watch(updateAvailable, () => {
+    if (!updateAvailable.value) {
+        return;
+    }
+
+    toast.add({
+        title: t('system.update_available.title', { version: updateAvailable }),
+        description: t('system.update_available.content'),
+        actions: [
+            {
+                label: t('common.refresh'),
+                click: () => reloadNuxtApp({ persistState: false, force: true }),
+            },
+        ],
+        icon: 'i-mdi-update',
+        color: 'amber',
+    });
+});
 
 /* eslint vue/no-multiple-template-root: "off" */
 </script>
@@ -130,17 +145,6 @@ watch(updateAvailable, () => (open.value = true));
         <CookieControl
             v-if="!isNUIAvailable && route.meta.showCookieOptions !== undefined && route.meta.showCookieOptions"
             :locale="cookieLocale"
-        />
-
-        <ConfirmDialog
-            v-if="updateAvailable !== false"
-            :open="open"
-            :cancel="() => (open = false)"
-            :confirm="() => reloadNuxtApp({ persistState: false, force: true })"
-            :title="$t('system.update_available.title', { version: updateAvailable })"
-            :description="$t('system.update_available.content')"
-            icon="i-mdi-update"
-            @close="open = false"
         />
     </div>
 </template>

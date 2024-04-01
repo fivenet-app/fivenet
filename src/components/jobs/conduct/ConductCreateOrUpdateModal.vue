@@ -80,7 +80,7 @@ const { data, refresh } = useLazyAsyncData(`jobs-colleagues-0-${queryTargets.val
     try {
         const call = $grpc.getJobsClient().listColleagues({
             pagination: {
-                offset: 0n,
+                offset: 0,
             },
             searchName: queryTargets.value,
             userId: props.userId,
