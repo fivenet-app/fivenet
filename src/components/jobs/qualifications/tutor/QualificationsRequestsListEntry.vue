@@ -82,45 +82,41 @@ onConfirm(async (request: QualificationRequest) => deleteQualificationRequest(re
             <CitizenInfoPopover v-if="request.approver" :user="request.approver" />
         </td>
         <td class="flex items-center gap-2">
-            <button
+            <UButton
                 v-if="request.status !== RequestStatus.DENIED"
-                type="button"
                 :disabled="!canSubmit"
                 class="flex-initial"
                 :class="[!canSubmit ? 'disabled text-base-500 hover:text-base-400' : 'text-error-500 hover:text-error-400']"
                 @click="$emit('selectedRequestStatus', RequestStatus.DENIED)"
             >
                 <CloseThickIcon class="size-6" aria-hidden="true" />
-            </button>
-            <button
+            </UButton>
+            <UButton
                 v-if="request.status !== RequestStatus.ACCEPTED"
-                type="button"
                 :disabled="!canSubmit"
                 class="flex-initial"
                 :class="[!canSubmit ? 'disabled text-base-500 hover:text-base-400' : 'text-success-500 hover:text-success-400']"
                 @click="$emit('selectedRequestStatus', RequestStatus.ACCEPTED)"
             >
                 <CheckBoldIcon class="size-6" aria-hidden="true" />
-            </button>
-            <button
+            </UButton>
+            <UButton
                 v-if="request.status === RequestStatus.ACCEPTED"
-                type="button"
                 :disabled="!canSubmit"
                 class="flex-initial"
                 :class="[!canSubmit ? 'disabled text-base-500 hover:text-base-400' : 'text-yellow-500 hover:text-yellow-400']"
                 @click="$emit('gradeRequest')"
             >
                 <StarIcon class="size-6" aria-hidden="true" />
-            </button>
-            <button
+            </UButton>
+            <UButton
                 v-if="can('QualificationsService.DeleteQualificationReq')"
-                type="button"
                 :disabled="!canSubmit"
                 class="flex-initial text-primary-400 hover:text-primary-500"
                 @click="reveal()"
             >
                 <TrashCanIcon class="size-6" aria-hidden="true" />
-            </button>
+            </UButton>
         </td>
     </tr>
 </template>

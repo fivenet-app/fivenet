@@ -28,8 +28,7 @@ const openDisponents = ref(false);
                 <template #right>
                     <DisponentsModal :open="openDisponents" @close="openDisponents = false" />
 
-                    <button
-                        type="button"
+                    <UButton
                         class="group mt-0.5 flex w-full flex-row items-center justify-center rounded-md p-1 text-xs font-medium text-neutral hover:bg-primary-100/10 hover:text-neutral hover:transition-all"
                         :class="
                             getCurrentMode === CentrumMode.AUTO_ROUND_ROBIN
@@ -52,7 +51,7 @@ const openDisponents = ref(false);
                                 {{ $t('enums.centrum.CentrumMode.AUTO_ROUND_ROBIN') }}
                             </span>
                         </template>
-                    </button>
+                    </UButton>
                 </template>
             </UDashboardNavbar>
 

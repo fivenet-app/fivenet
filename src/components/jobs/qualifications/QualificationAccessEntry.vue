@@ -182,7 +182,7 @@ watch(selectedAccessRole, () => {
 <template>
     <div class="my-2 flex flex-row items-center">
         <div class="mr-2 w-60 flex-initial">
-            <input
+            <UInput
                 v-if="accessTypes.length === 1"
                 type="text"
                 disabled
@@ -396,13 +396,12 @@ watch(selectedAccessRole, () => {
             </Combobox>
         </div>
         <div v-if="!readOnly" class="flex-initial">
-            <button
-                type="button"
+            <UButton
                 class="rounded-full bg-primary-500 p-1.5 text-neutral hover:bg-primary-400 focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2"
                 @click="$emit('deleteRequest', { id: props.init.id })"
             >
                 <CloseIcon class="size-5" aria-hidden="true" />
-            </button>
+            </UButton>
         </div>
     </div>
 </template>

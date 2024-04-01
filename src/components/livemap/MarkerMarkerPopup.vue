@@ -45,25 +45,23 @@ onConfirm(async (id) => deleteMarker(id));
 
     <LPopup :options="{ closeButton: true }">
         <div class="mb-1 flex items-center gap-2">
-            <button
+            <UButton
                 v-if="marker.info?.x && marker.info?.y"
-                type="button"
                 class="inline-flex items-center text-primary-500 hover:text-primary-400"
                 @click="$emit('goto', { x: marker.info?.x, y: marker.info?.y })"
             >
                 <MapMarkerIcon class="size-5" aria-hidden="true" />
                 <span class="ml-1">{{ $t('common.mark') }}</span>
-            </button>
-            <button
+            </UButton>
+            <UButton
                 v-if="can('LivemapperService.DeleteMarker')"
-                type="button"
                 :title="$t('common.delete')"
                 class="inline-flex items-center text-primary-500 hover:text-primary-400"
                 @click="reveal(marker.info!.id)"
             >
                 <TrashCanIcon class="size-5" aria-hidden="true" />
                 <span class="ml-1">{{ $t('common.delete') }}</span>
-            </button>
+            </UButton>
         </div>
         <span class="font-semibold"> {{ $t('common.marker') }}: {{ marker.info?.name }} </span>
         <ul role="list" class="flex flex-col">

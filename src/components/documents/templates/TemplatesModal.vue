@@ -167,14 +167,13 @@ async function clipboardDialog(): Promise<void> {
                                 class="relative w-full overflow-hidden rounded-lg bg-base-800 px-4 pb-4 pt-5 text-left text-neutral transition-all sm:my-8 sm:min-w-full sm:max-w-7xl sm:p-6"
                             >
                                 <div class="absolute right-0 top-0 block pr-4 pt-4">
-                                    <button
-                                        type="button"
-                                        class="rounded-md bg-neutral-50 text-gray-400 hover:text-gray-500 focus:outline-none focus:ring-2 focus:ring-primary-500 focus:ring-offset-2"
+                                    <UButton
+                                        class="rounded-md bg-neutral-50 text-gray-400 hover:text-gray-500 focus:ring-2 focus:ring-primary-500 focus:ring-offset-2"
                                         @click="$emit('close')"
                                     >
                                         <span class="sr-only">{{ $t('common.close') }}</span>
                                         <CloseIcon class="size-5" aria-hidden="true" />
-                                    </button>
+                                    </UButton>
                                 </div>
                                 <div v-if="steps.selectTemplate">
                                     <div>
@@ -191,7 +190,6 @@ async function clipboardDialog(): Promise<void> {
                                                     :to="{
                                                         name: 'documents-create',
                                                     }"
-                                                    type="button"
                                                     class="w-full rounded-md bg-base-500 px-3.5 py-2.5 text-sm font-semibold text-neutral hover:bg-base-400"
                                                 >
                                                     {{ $t('components.documents.templates.templates_modal.no_template') }}
@@ -203,13 +201,12 @@ async function clipboardDialog(): Promise<void> {
                                         </div>
                                     </div>
                                     <div class="mt-5 gap-2 sm:mt-4 sm:flex">
-                                        <button
-                                            type="button"
+                                        <UButton
                                             class="flex-1 rounded-md bg-base-500 px-3.5 py-2.5 text-sm font-semibold text-neutral hover:bg-base-400"
                                             @click="closeDialog"
                                         >
                                             {{ $t('common.close', 1) }}
-                                        </button>
+                                        </UButton>
                                     </div>
                                 </div>
                                 <div v-else-if="template !== undefined && reqs !== undefined && steps.selectClipboard">
@@ -267,15 +264,13 @@ async function clipboardDialog(): Promise<void> {
                                         </div>
                                     </div>
                                     <div class="mt-5 sm:mt-6 sm:grid sm:grid-flow-row-dense sm:gap-3">
-                                        <button
-                                            type="button"
+                                        <UButton
                                             class="mt-3 inline-flex w-full justify-center rounded-md bg-neutral-50 px-3 py-2 text-sm font-semibold text-gray-900 shadow-sm ring-1 ring-inset ring-gray-300 hover:bg-gray-200 sm:col-start-1 sm:mt-0"
                                             @click="goBackDialog"
                                         >
                                             {{ $t('common.go_back') }}
-                                        </button>
-                                        <button
-                                            type="button"
+                                        </UButton>
+                                        <UButton
                                             class="inline-flex w-full justify-center rounded-md px-3 py-2 text-sm font-semibold text-neutral shadow-sm focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 sm:col-start-2"
                                             :disabled="!readyToCreate"
                                             :class="[
@@ -286,7 +281,7 @@ async function clipboardDialog(): Promise<void> {
                                             @click="clipboardDialog()"
                                         >
                                             {{ $t('common.create') }}
-                                        </button>
+                                        </UButton>
                                     </div>
                                 </div>
                             </DialogPanel>

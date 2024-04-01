@@ -121,9 +121,9 @@ watch(props, (newVal) => {
                 </th>
                 <th scope="col" class="relative py-3.5 pl-3 pr-4 sm:pr-0">
                     <span class="sr-only">{{ $t('common.action', 2) }}</span>
-                    <button v-if="selected.length > 0" type="button" @click="removeAll()">
+                    <UButton v-if="selected.length > 0" @click="removeAll()">
                         <TrashCanIcon class="mx-auto size-5 text-neutral" aria-hidden="true" />
-                    </button>
+                    </UButton>
                 </th>
             </tr>
         </thead>
@@ -131,7 +131,7 @@ watch(props, (newVal) => {
             <tr v-for="item in vehicles" :key="item.plate">
                 <td v-if="showSelect" class="whitespace-nowrap py-4 pl-4 pr-3 text-sm font-medium text-neutral sm:pl-1">
                     <template v-if="specs && specs.max && specs.max === 1">
-                        <button
+                        <UButton
                             class="inline-flex w-full justify-center rounded-md px-3 py-2 text-sm font-semibold text-neutral shadow-sm focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 sm:col-start-2"
                             :class="
                                 selected.includes(item)
@@ -145,10 +145,10 @@ watch(props, (newVal) => {
                                     ? $t('common.select', 1).toUpperCase()
                                     : $t('common.select', 2).toUpperCase()
                             }}
-                        </button>
+                        </UButton>
                     </template>
                     <template v-else>
-                        <input
+                        <UInput
                             :key="item.plate"
                             v-model="selected"
                             name="selected"
@@ -169,9 +169,9 @@ watch(props, (newVal) => {
                     {{ item.owner.firstname }} {{ item.owner.lastname }}
                 </td>
                 <td class="relative whitespace-nowrap py-4 pl-3 pr-4 text-right text-sm font-medium sm:pr-0">
-                    <button type="button" @click="remove(item, true)">
+                    <UButton @click="remove(item, true)">
                         <TrashCanIcon class="mx-auto size-5 text-neutral" aria-hidden="true" />
-                    </button>
+                    </UButton>
                 </td>
             </tr>
         </tbody>

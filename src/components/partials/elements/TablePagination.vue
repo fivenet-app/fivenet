@@ -114,9 +114,8 @@ const pageNumber = ref(currentPage.value.toString());
             </I18nT>
         </div>
         <div class="flex flex-1 justify-between sm:justify-end">
-            <button
+            <UButton
                 v-if="refresh !== undefined"
-                type="button"
                 class="relative ml-3 inline-flex cursor-pointer items-center rounded-md bg-primary-500 px-3 py-2 text-sm font-semibold text-neutral hover:bg-primary-400 focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2"
                 :disabled="!canSubmit"
                 :class="
@@ -127,13 +126,12 @@ const pageNumber = ref(currentPage.value.toString());
                 @click="onSubmitThrottle()"
             >
                 <RefreshIcon class="size-5" :class="!canSubmit ? 'animate-spin' : ''" aria-hidden="true" />
-            </button>
+            </UButton>
 
             <nav class="isolate inline-flex -space-x-px rounded-md shadow-sm" aria-label="Pagination">
                 <template v-if="total > -1">
-                    <button
+                    <UButton
                         :disabled="offset <= 0n"
-                        type="button"
                         :class="[
                             offset <= 0n
                                 ? 'disabled bg-base-500 hover:bg-base-400 focus-visible:outline-base-500'
@@ -143,35 +141,32 @@ const pageNumber = ref(currentPage.value.toString());
                         @click="$emit('offsetChange', calculateOffset(currentPage - 1))"
                     >
                         {{ $t('common.previous') }}
-                    </button>
+                    </UButton>
 
-                    <button
+                    <UButton
                         v-for="page in beforePages"
                         :key="page"
-                        type="button"
                         class="relative inline-flex items-center bg-secondary-500 px-4 py-2 text-sm font-semibold text-neutral hover:bg-base-400 focus:z-20 focus:outline-offset-0"
                         @click="$emit('offsetChange', calculateOffset(page))"
                     >
                         {{ page }}
-                    </button>
+                    </UButton>
 
-                    <button
-                        type="button"
+                    <UButton
                         class="relative inline-flex items-center bg-primary-500 px-4 py-2 text-sm font-semibold text-neutral underline hover:bg-primary-400"
                         disabled
                     >
                         {{ currentPage }}
-                    </button>
+                    </UButton>
 
-                    <button
+                    <UButton
                         v-for="page in afterPages"
                         :key="page"
-                        type="button"
                         class="relative inline-flex items-center bg-secondary-500 px-4 py-2 text-sm font-semibold text-neutral hover:bg-base-400 focus:z-20 focus:outline-offset-0"
                         @click="$emit('offsetChange', calculateOffset(page))"
                     >
                         {{ page }}
-                    </button>
+                    </UButton>
 
                     <Popover v-if="totalPages > 1n" class="relative">
                         <Float
@@ -198,7 +193,7 @@ const pageNumber = ref(currentPage.value.toString());
                             >
                                 <div class="p-3">
                                     <form @submit.prevent="$emit('offsetChange', calculateOffset(parseInt(pageNumber)))">
-                                        <input
+                                        <UInput
                                             v-model="pageNumber"
                                             type="number"
                                             min="1"
@@ -213,18 +208,16 @@ const pageNumber = ref(currentPage.value.toString());
                         </Float>
                     </Popover>
 
-                    <button
+                    <UButton
                         v-if="currentPage <= totalPages - 1"
-                        type="button"
                         class="relative inline-flex items-center bg-secondary-500 px-4 py-2 text-sm font-semibold text-neutral hover:bg-base-400 focus:z-20 focus:outline-offset-0"
                         @click="$emit('offsetChange', calculateOffset(totalPages))"
                     >
                         {{ totalPages }}
-                    </button>
+                    </UButton>
 
-                    <button
+                    <UButton
                         :disabled="total - end <= 0n"
-                        type="button"
                         :class="[
                             total - end <= 0n
                                 ? 'disabled bg-base-500 hover:bg-base-400 focus-visible:outline-base-500'
@@ -234,11 +227,10 @@ const pageNumber = ref(currentPage.value.toString());
                         @click="$emit('offsetChange', end)"
                     >
                         {{ $t('common.next') }}
-                    </button>
+                    </UButton>
                 </template>
                 <template v-else>
-                    <button
-                        type="button"
+                    <UButton
                         :disabled="offset <= 0n"
                         :class="[
                             offset <= 0n
@@ -249,9 +241,8 @@ const pageNumber = ref(currentPage.value.toString());
                         @click="$emit('offsetChange', offset - pageSize < 0 ? 0 : offset - pageSize)"
                     >
                         {{ $t('common.previous') }}
-                    </button>
-                    <button
-                        type="button"
+                    </UButton>
+                    <UButton
                         :disabled="end < pageSize"
                         :class="[
                             end < pageSize
@@ -262,7 +253,7 @@ const pageNumber = ref(currentPage.value.toString());
                         @click="$emit('offsetChange', offset + pageSize)"
                     >
                         {{ $t('common.next') }}
-                    </button>
+                    </UButton>
                 </template>
             </nav>
         </div>

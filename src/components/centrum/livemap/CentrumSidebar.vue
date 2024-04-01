@@ -311,23 +311,16 @@ async function checkup(): Promise<void> {
             />
 
             <LControl position="bottomright">
-                <button
-                    type="button"
-                    class="inset-0 inline-flex items-center justify-center rounded-md border-2 border-black/20 bg-neutral-50 bg-clip-padding text-black hover:bg-[#f4f4f4] focus:outline-none"
+                <UButton
+                    class="inset-0 inline-flex items-center justify-center rounded-md border-2 border-black/20 bg-clip-padding text-black hover:bg-[#f4f4f4]"
+                    size="2xs"
+                    :icon="open ? 'i-mdi-toggle-switch' : 'i-mdi-toggle-switch-off'"
                     @click="open = !open"
                 >
-                    <ToggleSwitchIcon v-if="open" class="size-5" aria-hidden="true" />
-                    <span v-else class="inline-flex items-center justify-center">
-                        <ToggleSwitchOffIcon
-                            class="size-5"
-                            :class="getOwnUnit === undefined ? 'animate-pulse' : ''"
-                            aria-hidden="true"
-                        />
-                        <span class="pr-0.5">
-                            {{ $t('common.units') }}
-                        </span>
+                    <span v-if="!open" class="inline-flex items-center justify-center">
+                        {{ $t('common.units') }}
                     </span>
-                </button>
+                </UButton>
             </LControl>
         </template>
 
@@ -367,8 +360,7 @@ async function checkup(): Promise<void> {
                                     <ul role="list" class="-mx-2 mt-1 space-y-0.5">
                                         <li>
                                             <template v-if="getOwnUnit !== undefined">
-                                                <button
-                                                    type="button"
+                                                <UButton
                                                     class="group flex w-full flex-col items-center rounded-md p-1.5 text-xs font-medium text-neutral hover:bg-primary-100/10 hover:text-neutral hover:transition-all"
                                                     :class="ownUnitStatus"
                                                     @click="openUnitDetails = true"
@@ -388,7 +380,7 @@ async function checkup(): Promise<void> {
                                                             )
                                                         }}
                                                     </span>
-                                                </button>
+                                                </UButton>
 
                                                 <UnitDetails
                                                     :unit="getOwnUnit"
@@ -397,8 +389,7 @@ async function checkup(): Promise<void> {
                                                     @goto="$emit('goto', $event)"
                                                 />
                                             </template>
-                                            <button
-                                                type="button"
+                                            <UButton
                                                 class="group my-0.5 flex w-full flex-col items-center rounded-md bg-info-700 p-1.5 text-xs font-medium text-neutral hover:bg-primary-100/10 hover:text-neutral hover:transition-all"
                                                 @click="joinUnitOpen = true"
                                             >
@@ -409,7 +400,7 @@ async function checkup(): Promise<void> {
                                                 <template v-else>
                                                     <span class="truncate">{{ $t('common.leave_unit') }}</span>
                                                 </template>
-                                            </button>
+                                            </UButton>
 
                                             <JoinUnitModal :open="joinUnitOpen" @close="joinUnitOpen = false" />
                                         </li>
@@ -433,10 +424,9 @@ async function checkup(): Promise<void> {
                                             />
                                             <li>
                                                 <div class="grid grid-cols-2 gap-0.5">
-                                                    <button
+                                                    <UButton
                                                         v-for="item in unitStatuses"
                                                         :key="item.name"
-                                                        type="button"
                                                         class="group my-0.5 flex w-full flex-col items-center rounded-md p-1.5 text-xs font-medium text-neutral hover:bg-primary-100/10 hover:text-neutral hover:transition-all"
                                                         :disabled="!canSubmitUnitStatus"
                                                         :class="[
@@ -460,14 +450,13 @@ async function checkup(): Promise<void> {
                                                                     : $t(item.name)
                                                             }}
                                                         </span>
-                                                    </button>
-                                                    <button
-                                                        type="button"
+                                                    </UButton>
+                                                    <UButton
                                                         class="group col-span-2 my-0.5 flex w-full flex-col items-center rounded-md bg-base-800 p-1.5 text-xs font-medium text-neutral hover:bg-primary-100/10 hover:text-neutral hover:transition-all"
                                                         @click="updateUtStatus(getOwnUnit.id)"
                                                     >
                                                         {{ $t('components.centrum.update_unit_status.title') }}
-                                                    </button>
+                                                    </UButton>
                                                 </div>
                                             </li>
                                         </ul>
@@ -484,12 +473,11 @@ async function checkup(): Promise<void> {
                                             </div>
                                             <li>
                                                 <div class="grid grid-cols-2 gap-0.5">
-                                                    <button
+                                                    <UButton
                                                         v-for="item in dispatchStatuses.filter(
                                                             (s) => s.status !== StatusDispatch.CANCELLED,
                                                         )"
                                                         :key="item.name"
-                                                        type="button"
                                                         class="group my-0.5 flex w-full flex-col items-center rounded-md p-1.5 text-xs font-medium text-neutral hover:bg-primary-100/10 hover:text-neutral hover:transition-all"
                                                         :disabled="!canSubmitDispatchStatus"
                                                         :class="[
@@ -515,14 +503,13 @@ async function checkup(): Promise<void> {
                                                                     : $t(item.name)
                                                             }}
                                                         </span>
-                                                    </button>
-                                                    <button
-                                                        type="button"
+                                                    </UButton>
+                                                    <UButton
                                                         class="group col-span-2 my-0.5 flex w-full flex-col items-center rounded-md bg-base-800 p-1.5 text-xs font-medium text-neutral hover:bg-primary-100/10 hover:text-neutral hover:transition-all"
                                                         @click="updateDspStatus(selectedDispatch)"
                                                     >
                                                         {{ $t('components.centrum.update_dispatch_status.title') }}
-                                                    </button>
+                                                    </UButton>
                                                 </div>
                                             </li>
                                         </ul>
@@ -533,13 +520,12 @@ async function checkup(): Promise<void> {
                                         </div>
                                         <ul role="list" class="-mx-2 mt-1 space-y-0.5">
                                             <li v-if="getSortedOwnDispatches.length === 0">
-                                                <button
-                                                    type="button"
+                                                <UButton
                                                     class="group my-0.5 flex w-full flex-col items-center rounded-md bg-primary-100/10 p-1.5 text-xs font-medium text-neutral hover:text-neutral hover:transition-all"
                                                 >
                                                     <CarEmergencyIcon class="size-5" aria-hidden="true" />
                                                     <span class="mt-1 truncate">{{ $t('common.no_assigned_dispatches') }}</span>
-                                                </button>
+                                                </UButton>
                                             </li>
                                             <template v-else>
                                                 <OwnDispatchEntry
@@ -573,23 +559,21 @@ async function checkup(): Promise<void> {
                                 ></span>
                                 <span class="relative inline-flex size-3 rounded-full bg-error-500"></span>
                             </span>
-                            <button
-                                type="button"
+                            <UButton
                                 class="flex size-12 items-center justify-center bg-accent-500 text-neutral hover:bg-accent-400"
                                 :class="getOwnUnit.homePostal !== undefined ? 'rounded-l-full' : 'rounded-full'"
                                 @click="openTakeDispatch = true"
                             >
                                 <CarEmergencyIcon class="h-auto w-10" aria-hidden="true" />
-                            </button>
+                            </UButton>
                         </span>
-                        <button
+                        <UButton
                             v-if="getOwnUnit.homePostal !== undefined"
-                            type="button"
                             class="flex size-12 items-center justify-center rounded-r-full bg-accent-500 text-neutral hover:bg-accent-400"
                             @click="setWaypointPLZ(getOwnUnit.homePostal)"
                         >
                             <HomeFloorBIcon class="h-auto w-10" aria-hidden="true" />
-                        </button>
+                        </UButton>
                     </span>
                 </template>
             </div>

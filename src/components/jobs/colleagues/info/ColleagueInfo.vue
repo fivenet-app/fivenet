@@ -125,18 +125,17 @@ today.setMilliseconds(0);
                                 {{ colleague.colleague.firstname }} {{ colleague.colleague.lastname }}
                             </h1>
 
-                            <button
+                            <UButton
                                 v-if="
                                     can('JobsService.SetJobsUserProps') &&
                                     checkIfCanAccessColleague(activeChar!, colleague.colleague, 'JobsService.SetJobsUserProps')
                                 "
-                                type="button"
                                 class="inline-flex items-center gap-x-1.5 place-self-end rounded-md bg-primary-500 px-3 py-2 text-sm font-semibold text-neutral hover:bg-primary-400"
                                 @click="absenceDateModal = true"
                             >
                                 <IslandIcon class="h-auto w-5" aria-hidden="true" />
                                 {{ $t('components.jobs.self_service.set_absence_date') }}
-                            </button>
+                            </UButton>
                         </div>
                         <div class="my-2 flex flex-row items-center gap-2">
                             <span class="rounded-full bg-base-100 px-2.5 py-0.5 text-sm font-medium text-base-800">
@@ -168,23 +167,21 @@ today.setMilliseconds(0);
                             <div class="flex items-center md:overflow-x-auto">
                                 <div class="-ml-2 flex md:hidden">
                                     <!-- Mobile menu button -->
-                                    <button
-                                        type="button"
-                                        class="relative inline-flex items-center justify-center rounded-md bg-base-500 p-2 text-accent-200 hover:bg-base-400/75 hover:text-neutral focus:outline-none focus:ring-2 focus:ring-neutral focus:ring-offset-2 focus:ring-offset-base-600"
+                                    <UButton
+                                        class="relative inline-flex items-center justify-center rounded-md bg-base-500 p-2 text-accent-200 hover:bg-base-400/75 hover:text-neutral focus:ring-2 focus:ring-neutral focus:ring-offset-2 focus:ring-offset-base-600"
                                         @click="open = !open"
                                     >
                                         <span class="absolute -inset-0.5" />
                                         <span class="sr-only">{{ $t('components.partials.sidebar.open_navigation') }}</span>
                                         <MenuIcon v-if="!open" class="block size-5" aria-hidden="true" />
                                         <CloseIcon v-else class="block size-5" aria-hidden="true" />
-                                    </button>
+                                    </UButton>
                                 </div>
                                 <div class="hidden md:block">
                                     <div class="flex items-baseline space-x-2">
                                         <template v-for="(tab, index) in tabs" :key="tab.id">
                                             <span class="flex-1">
-                                                <button
-                                                    type="button"
+                                                <UButton
                                                     class="group flex shrink-0 items-center gap-2 rounded-md p-3 text-sm font-medium text-accent-100 hover:bg-accent-100/10 hover:text-neutral hover:transition-all"
                                                     :class="
                                                         selectedTab === index
@@ -204,7 +201,7 @@ today.setMilliseconds(0);
                                                     <span>
                                                         {{ $t(tab.name) }}
                                                     </span>
-                                                </button>
+                                                </UButton>
                                             </span>
                                         </template>
                                     </div>
@@ -214,8 +211,7 @@ today.setMilliseconds(0);
                         <div class="-mx-3 md:hidden" :class="open ? 'block' : 'hidden'">
                             <div class="space-y-1 px-2 pb-3 pt-2 sm:px-3">
                                 <template v-for="(tab, index) in tabs" :key="tab.id">
-                                    <button
-                                        type="button"
+                                    <UButton
                                         class="group flex w-full shrink-0 items-center gap-2 rounded-md p-2 text-sm font-medium text-accent-100 hover:bg-accent-100/10 hover:text-neutral hover:transition-all"
                                         :class="selectedTab === index ? 'bg-accent-100/20 font-bold text-primary-300' : ''"
                                         @click="selectedTab = index"
@@ -228,7 +224,7 @@ today.setMilliseconds(0);
                                         <span>
                                             {{ $t(tab.name) }}
                                         </span>
-                                    </button>
+                                    </UButton>
                                 </template>
                             </div>
                         </div>

@@ -196,14 +196,13 @@ const onSubmitThrottle = useThrottleFn(async (e) => {
                                                     }}
                                                 </DialogTitle>
                                                 <div class="ml-3 flex h-7 items-center">
-                                                    <button
-                                                        type="button"
-                                                        class="rounded-md bg-gray-100 text-gray-500 hover:text-gray-400 focus:outline-none focus:ring-2 focus:ring-neutral"
+                                                    <UButton
+                                                        class="rounded-md bg-gray-100 text-gray-500 hover:text-gray-400 focus:ring-2 focus:ring-neutral"
                                                         @click="$emit('close')"
                                                     >
                                                         <span class="sr-only">{{ $t('common.close') }}</span>
                                                         <CloseIcon class="size-5" aria-hidden="true" />
-                                                    </button>
+                                                    </UButton>
                                                 </div>
                                             </div>
                                         </div>
@@ -417,7 +416,7 @@ const onSubmitThrottle = useThrottleFn(async (e) => {
                                     </div>
                                     <div class="flex shrink-0 justify-end p-4">
                                         <span class="isolate inline-flex w-full rounded-md pr-4 shadow-sm">
-                                            <button
+                                            <UButton
                                                 type="submit"
                                                 class="relative flex w-full items-center rounded-l-md px-3.5 py-2.5 text-sm font-semibold text-neutral"
                                                 :disabled="!meta.valid || !canSubmit"
@@ -431,14 +430,13 @@ const onSubmitThrottle = useThrottleFn(async (e) => {
                                                     <LoadingIcon class="mr-2 size-5 animate-spin" aria-hidden="true" />
                                                 </template>
                                                 {{ entry?.id === undefined ? $t('common.create') : $t('common.update') }}
-                                            </button>
-                                            <button
-                                                type="button"
+                                            </UButton>
+                                            <UButton
                                                 class="relative -ml-px inline-flex w-full items-center rounded-r-md bg-neutral-50 px-3 py-2 text-sm font-semibold text-gray-900 ring-1 ring-inset ring-gray-300 hover:bg-gray-200 hover:text-gray-900"
                                                 @click="$emit('close')"
                                             >
                                                 {{ $t('common.close', 1) }}
-                                            </button>
+                                            </UButton>
                                         </span>
                                     </div>
                                 </form>

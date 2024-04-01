@@ -891,9 +891,8 @@ console.info(
 
             <div v-if="canDo.edit" class="flex flex-row">
                 <div class="inline-flex flex-1 rounded-md shadow-sm" role="group">
-                    <button
+                    <UButton
                         v-if="canDo.relations"
-                        type="button"
                         :disabled="!canEdit || !canDo.edit"
                         class="inline-flex w-full justify-center rounded-bl-md bg-primary-500 px-3.5 py-2.5 text-sm font-semibold text-neutral hover:bg-primary-400 focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2"
                         :class="canDo.references ? '' : 'rounded-br-md'"
@@ -906,10 +905,9 @@ console.info(
                             />
                             {{ $t('common.citizen', 1) }} {{ $t('common.relation', 2) }}
                         </div>
-                    </button>
-                    <button
+                    </UButton>
+                    <UButton
                         v-if="canDo.references"
-                        type="button"
                         :disabled="!canEdit || !canDo.edit"
                         class="inline-flex w-full justify-center rounded-br-md bg-primary-500 px-3.5 py-2.5 text-sm font-semibold text-neutral hover:bg-primary-400 focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2"
                         :class="canDo.relations ? '' : 'rounded-bl-md'"
@@ -922,7 +920,7 @@ console.info(
                             />
                             {{ $t('common.document', 1) }} {{ $t('common.reference', 2) }}
                         </div>
-                    </button>
+                    </UButton>
                 </div>
             </div>
 
@@ -943,8 +941,7 @@ console.info(
                     @access-change="updateDocumentAccessEntryAccess($event)"
                     @delete-request="removeDocumentAccessEntry($event)"
                 />
-                <button
-                    type="button"
+                <UButton
                     :disabled="!canEdit || !canDo.access"
                     class="rounded-full bg-primary-500 p-2 text-neutral hover:bg-primary-400 focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2"
                     data-te-toggle="tooltip"
@@ -952,11 +949,11 @@ console.info(
                     @click="addDocumentAccessEntry()"
                 >
                     <PlusIcon class="size-5" aria-hidden="true" />
-                </button>
+                </UButton>
             </div>
 
             <div class="flex pb-14">
-                <button
+                <UButton
                     type="submit"
                     :disabled="!meta.valid || !canEdit || !canSubmit"
                     class="flex w-full justify-center rounded-md px-3.5 py-2.5 text-sm font-semibold text-neutral"
@@ -975,7 +972,7 @@ console.info(
                     <template v-else>
                         {{ $t('common.save') }}
                     </template>
-                </button>
+                </UButton>
             </div>
         </form>
     </div>

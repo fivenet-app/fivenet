@@ -196,7 +196,7 @@ const onSubmitThrottle = useThrottleFn(async (e) => {
                             <div class="absolute inset-x-0 bottom-0 flex justify-between py-2 pl-3 pr-2">
                                 <div class="flex items-center space-x-5"></div>
                                 <div class="shrink-0">
-                                    <button
+                                    <UButton
                                         type="submit"
                                         class="flex justify-center rounded-md px-3 py-2 text-sm font-semibold text-neutral shadow-sm focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2"
                                         :disabled="!meta.valid || !canSubmit"
@@ -210,7 +210,7 @@ const onSubmitThrottle = useThrottleFn(async (e) => {
                                             <LoadingIcon class="mr-2 size-5 animate-spin" aria-hidden="true" />
                                         </template>
                                         {{ $t('common.post') }}
-                                    </button>
+                                    </UButton>
                                 </div>
                             </div>
                         </form>

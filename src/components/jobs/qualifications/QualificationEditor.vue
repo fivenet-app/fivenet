@@ -542,8 +542,7 @@ const { data: jobs } = useAsyncData('completor-jobs', () => completorStore.listJ
                     @access-change="updateQualificationAccessEntryAccess($event)"
                     @delete-request="removeQualificationAccessEntry($event)"
                 />
-                <button
-                    type="button"
+                <UButton
                     :disabled="!canEdit || !canDo.access"
                     class="rounded-full bg-primary-500 p-2 text-neutral hover:bg-primary-400 focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2"
                     data-te-toggle="tooltip"
@@ -551,7 +550,7 @@ const { data: jobs } = useAsyncData('completor-jobs', () => completorStore.listJ
                     @click="addQualificationAccessEntry()"
                 >
                     <PlusIcon class="size-5" aria-hidden="true" />
-                </button>
+                </UButton>
             </div>
 
             <div class="my-3">
@@ -567,8 +566,7 @@ const { data: jobs } = useAsyncData('completor-jobs', () => completorStore.listJ
                     @remove="quali.requirements.splice(idx, 1)"
                 />
 
-                <button
-                    type="button"
+                <UButton
                     class="mt-2 rounded-full p-1.5 text-neutral focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2"
                     :disabled="!canSubmit"
                     :class="
@@ -579,7 +577,7 @@ const { data: jobs } = useAsyncData('completor-jobs', () => completorStore.listJ
                     @click="quali.requirements.push({ id: '0', qualificationId: '0', targetQualificationId: '0' })"
                 >
                     <PlusIcon class="size-5" aria-hidden="true" />
-                </button>
+                </UButton>
             </div>
 
             <div class="my-3">
@@ -638,7 +636,7 @@ const { data: jobs } = useAsyncData('completor-jobs', () => completorStore.listJ
             </div>
 
             <div class="flex pb-14">
-                <button
+                <UButton
                     type="submit"
                     :disabled="!meta.valid || !canEdit || !canSubmit"
                     class="flex w-full justify-center rounded-md px-3.5 py-2.5 text-sm font-semibold text-neutral"
@@ -657,7 +655,7 @@ const { data: jobs } = useAsyncData('completor-jobs', () => completorStore.listJ
                     <template v-else>
                         {{ $t('common.save') }}
                     </template>
-                </button>
+                </UButton>
             </div>
         </form>
     </div>

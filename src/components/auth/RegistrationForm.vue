@@ -140,7 +140,7 @@ const onSubmitThrottle = useThrottleFn(async (e) => {
             </div>
 
             <div>
-                <button
+                <UButton
                     type="submit"
                     class="flex w-full justify-center rounded-md px-3 py-2 text-sm font-semibold text-neutral transition-colors focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2"
                     :disabled="!meta.valid || !canSubmit"
@@ -154,7 +154,7 @@ const onSubmitThrottle = useThrottleFn(async (e) => {
                         <LoadingIcon class="mr-2 size-5 animate-spin" aria-hidden="true" />
                     </template>
                     {{ $t('components.auth.registration_form.submit_button') }}
-                </button>
+                </UButton>
             </div>
         </form>
 

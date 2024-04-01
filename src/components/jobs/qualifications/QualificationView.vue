@@ -119,25 +119,23 @@ const openRequest = ref(false);
 
                                 <div class="flex space-x-2 self-end">
                                     <template v-if="!canDo.edit">
-                                        <button
+                                        <UButton
                                             v-if="canDo.take"
-                                            type="button"
                                             class="inline-flex items-center gap-x-1.5 rounded-md bg-primary-500 px-3 py-2 text-sm font-semibold text-neutral hover:bg-primary-400"
                                             @click="openRequest = true"
                                         >
                                             <TestTubeIcon class="-ml-0.5 h-auto w-5" aria-hidden="true" />
                                             {{ $t('components.qualifications.take_test') }}
-                                        </button>
-                                        <button
+                                        </UButton>
+                                        <UButton
                                             v-else-if="canDo.request"
-                                            type="button"
                                             class="inline-flex items-center gap-x-1.5 rounded-md bg-primary-500 px-3 py-2 text-sm font-semibold text-neutral hover:bg-primary-400"
                                             :disabled="quali.request?.status === RequestStatus.PENDING"
                                             @click="openRequest = true"
                                         >
                                             <AccountSchoolIcon class="-ml-0.5 h-auto w-5" aria-hidden="true" />
                                             {{ $t('common.request') }}
-                                        </button>
+                                        </UButton>
                                     </template>
                                     <NuxtLink
                                         v-if="can('QualificationsService.UpdateQualification') && canDo.edit"
@@ -145,21 +143,19 @@ const openRequest = ref(false);
                                             name: 'jobs-qualifications-id-edit',
                                             params: { id: quali.id },
                                         }"
-                                        type="button"
                                         class="inline-flex items-center gap-x-1.5 rounded-md bg-primary-500 px-3 py-2 text-sm font-semibold text-neutral hover:bg-primary-400"
                                     >
                                         <PencilIcon class="-ml-0.5 h-auto w-5" aria-hidden="true" />
                                         {{ $t('common.edit') }}
                                     </NuxtLink>
-                                    <button
+                                    <UButton
                                         v-if="can('QualificationsService.DeleteQualification') && canDo.edit"
-                                        type="button"
                                         class="inline-flex items-center gap-x-1.5 rounded-md bg-primary-500 px-3 py-2 text-sm font-semibold text-neutral hover:bg-primary-400"
                                         @click="reveal(quali.id)"
                                     >
                                         <TrashCanIcon class="-ml-0.5 h-auto w-5" aria-hidden="true" />
                                         {{ $t('common.delete') }}
-                                    </button>
+                                    </UButton>
                                 </div>
                             </div>
 

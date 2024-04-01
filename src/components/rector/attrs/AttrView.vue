@@ -251,14 +251,13 @@ onConfirm(async (id) => deleteRole(id));
             <template v-else>
                 <h2 class="text-3xl text-neutral" :title="`ID: ${role.id}`">
                     {{ role?.jobLabel! }}
-                    <button v-if="can('RectorService.DeleteRole')" type="button" class="ml-1" @click="reveal()">
+                    <UButton v-if="can('RectorService.DeleteRole')" class="ml-1" @click="reveal()">
                         <TrashCanIcon class="mx-auto size-5 text-neutral" aria-hidden="true" />
-                    </button>
+                    </UButton>
                 </h2>
                 <UDivider :label="$t('common.permission', 2)" />
                 <div class="flex flex-col gap-4 py-2">
-                    <button
-                        type="button"
+                    <UButton
                         :disabled="!changed"
                         class="inline-flex justify-center rounded-md px-3 py-2 text-center font-semibold text-neutral transition-colors focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2"
                         :class="
@@ -269,7 +268,7 @@ onConfirm(async (id) => deleteRole(id));
                         @click="updatePermissions()"
                     >
                         {{ $t('common.save', 1) }}
-                    </button>
+                    </UButton>
 
                     <Disclosure
                         v-for="category in permCategories"
@@ -313,20 +312,20 @@ onConfirm(async (id) => deleteRole(id));
                                             </span>
                                         </div>
                                         <div class="my-auto flex max-h-8 flex-initial flex-row">
-                                            <button
+                                            <UButton
                                                 :data-active="permStates.has(perm.id) ? permStates.get(perm.id) : false"
                                                 class="rounded-l-lg bg-success-600/50 p-1 text-base-300 transition-colors data-[active=true]:bg-success-600 data-[active=true]:text-neutral hover:bg-success-600/70"
                                                 @click="updatePermissionState(perm.id, true)"
                                             >
                                                 <CheckIcon class="size-5" aria-hidden="true" />
-                                            </button>
-                                            <button
+                                            </UButton>
+                                            <UButton
                                                 :data-active="permStates.get(perm.id) === undefined || !permStates.get(perm.id)"
                                                 class="rounded-r-lg bg-error-600/50 p-1 text-base-300 transition-colors data-[active=true]:bg-error-600 data-[active=true]:text-neutral hover:bg-error-600/70"
                                                 @click="updatePermissionState(perm.id, false)"
                                             >
                                                 <CloseIcon class="size-5" aria-hidden="true" />
-                                            </button>
+                                            </UButton>
                                         </div>
                                     </div>
                                     <AttrViewAttr

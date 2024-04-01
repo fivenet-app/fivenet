@@ -48,15 +48,14 @@ const open = ref(false);
                 >
                     <div class="inline-flex gap-2 p-3">
                         <div class="mb-2 flex items-center gap-2">
-                            <button
-                                type="button"
+                            <UButton
                                 :title="$t('common.detail', 2)"
                                 class="inline-flex items-center text-primary-500 hover:text-primary-400"
                                 @click="open = true"
                             >
                                 <CarEmergencyIcon class="size-5" aria-hidden="true" />
                                 <span class="ml-1">{{ $t('common.detail', 2) }}</span>
-                            </button>
+                            </UButton>
                         </div>
                         <div>
                             <p class="text-base font-semibold leading-none text-gray-900 dark:text-neutral">

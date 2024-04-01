@@ -53,14 +53,13 @@ const openStatus = ref(false);
                                                     {{ unit.name }}
                                                 </DialogTitle>
                                                 <div class="ml-3 flex h-7 items-center">
-                                                    <button
-                                                        type="button"
-                                                        class="rounded-md bg-gray-100 text-gray-500 hover:text-gray-300 focus:outline-none focus:ring-2 focus:ring-neutral"
+                                                    <UButton
+                                                        class="rounded-md bg-gray-100 text-gray-500 hover:text-gray-300 focus:ring-2 focus:ring-neutral"
                                                         @click="$emit('close')"
                                                     >
                                                         <span class="sr-only">{{ $t('common.close') }}</span>
                                                         <CloseIcon class="size-5" aria-hidden="true" />
-                                                    </button>
+                                                    </UButton>
                                                 </div>
                                             </div>
                                         </div>
@@ -114,8 +113,7 @@ const openStatus = ref(false);
                                                                     @close="openStatus = false"
                                                                 />
 
-                                                                <button
-                                                                    type="button"
+                                                                <UButton
                                                                     class="rounded px-2 py-1 text-sm font-semibold text-neutral shadow-sm hover:bg-neutral/20"
                                                                     :class="unitStatusColors"
                                                                     @click="openStatus = true"
@@ -127,7 +125,7 @@ const openStatus = ref(false);
                                                                             }`,
                                                                         )
                                                                     }}
-                                                                </button>
+                                                                </UButton>
                                                             </dd>
                                                         </div>
                                                         <div class="px-4 py-3 sm:grid sm:grid-cols-3 sm:gap-4 sm:px-0">
@@ -161,9 +159,8 @@ const openStatus = ref(false);
                                                                     {{ $t('common.postal') }}:
                                                                     {{ unit.status?.postal ?? $t('common.na') }}
                                                                 </span>
-                                                                <button
+                                                                <UButton
                                                                     v-if="unit.status?.x && unit.status?.y"
-                                                                    type="button"
                                                                     class="inline-flex items-center text-primary-400 hover:text-primary-600"
                                                                     @click="
                                                                         $emit('goto', { x: unit.status?.x, y: unit.status?.y })
@@ -171,7 +168,7 @@ const openStatus = ref(false);
                                                                 >
                                                                     <MapMarkerIcon class="mr-1 size-5" aria-hidden="true" />
                                                                     {{ $t('common.go_to_location') }}
-                                                                </button>
+                                                                </UButton>
                                                                 <span v-else>{{ $t('common.no_location') }}</span>
                                                             </dd>
                                                         </div>
@@ -248,9 +245,8 @@ const openStatus = ref(false);
                                                                 />
 
                                                                 <span class="isolate mt-2 inline-flex rounded-md shadow-sm">
-                                                                    <button
+                                                                    <UButton
                                                                         v-if="can('CentrumService.TakeControl')"
-                                                                        type="button"
                                                                         class="flex flex-row items-center rounded bg-neutral/10 px-2 py-1 text-xs font-semibold text-neutral shadow-sm hover:bg-neutral/20"
                                                                         @click="openAssign = true"
                                                                     >
@@ -258,7 +254,7 @@ const openStatus = ref(false);
                                                                         <span class="ml-0.5 truncate">
                                                                             {{ $t('common.assign') }}
                                                                         </span>
-                                                                    </button>
+                                                                    </UButton>
                                                                 </span>
                                                             </dd>
                                                         </div>
@@ -270,13 +266,12 @@ const openStatus = ref(false);
                                         </div>
                                     </div>
                                     <div class="flex shrink-0 justify-end p-4">
-                                        <button
-                                            type="button"
+                                        <UButton
                                             class="w-full rounded-md bg-neutral-50 px-3 py-2 text-sm font-semibold text-gray-900 shadow-sm ring-1 ring-inset ring-gray-300 hover:bg-gray-200"
                                             @click="$emit('close')"
                                         >
                                             {{ $t('common.close') }}
-                                        </button>
+                                        </UButton>
                                     </div>
                                 </form>
                             </DialogPanel>

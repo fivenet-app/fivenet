@@ -302,13 +302,9 @@ const columns = [
             <template #height-data="{ row }"> {{ row.height }}cm </template>
             <template #actions-data="{ row }">
                 <div v-if="can('CitizenStoreService.GetUser')" class="flex flex-col justify-end gap-1 md:flex-row">
-                    <button
-                        type="button"
-                        class="flex-initial text-primary-500 hover:text-primary-400"
-                        @click="addToClipboard(row)"
-                    >
+                    <span class="flex-initial text-primary-500 hover:text-primary-400" @click="addToClipboard(row)">
                         <ClipboardPlusIcon class="ml-auto mr-2.5 h-auto w-5" aria-hidden="true" />
-                    </button>
+                    </span>
 
                     <NuxtLink
                         :to="{

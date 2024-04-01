@@ -604,15 +604,14 @@ const { data: jobs } = useLazyAsyncData('completor-jobs', () => completorStore.l
                             @access-change="updateDocumentAccessEntryAccess($event)"
                             @delete-request="removeDocumentAccessEntry($event)"
                         />
-                        <button
-                            type="button"
+                        <UButton
                             class="rounded-full bg-primary-500 p-2 text-neutral hover:bg-primary-400 focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2"
                             data-te-toggle="tooltip"
                             :title="$t('components.documents.document_editor.add_permission')"
                             @click="addDocumentAccessEntry()"
                         >
                             <PlusIcon class="size-5" aria-hidden="true" />
-                        </button>
+                        </UButton>
                     </div>
                 </div>
             </GenericContainer>
@@ -751,19 +750,18 @@ const { data: jobs } = useLazyAsyncData('completor-jobs', () => completorStore.l
                         @delete-request="removeContentDocumentAccessEntry($event)"
                         @required-change="updateContentDocumentAccessEntryRequired($event)"
                     />
-                    <button
-                        type="button"
+                    <UButton
                         class="rounded-full bg-primary-500 p-2 text-neutral hover:bg-primary-400 focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2"
                         data-te-toggle="tooltip"
                         :title="$t('components.documents.document_editor.add_permission')"
                         @click="addContentDocumentAccessEntry()"
                     >
                         <PlusIcon class="size-5" aria-hidden="true" />
-                    </button>
+                    </UButton>
                 </div>
             </GenericContainer>
             <div>
-                <button
+                <UButton
                     type="submit"
                     class="mt-4 flex w-full justify-center rounded-md px-3 py-2 text-sm font-semibold text-neutral transition-colors focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2"
                     :disabled="!meta.valid || !canSubmit"
@@ -777,7 +775,7 @@ const { data: jobs } = useLazyAsyncData('completor-jobs', () => completorStore.l
                         <LoadingIcon class="mr-2 size-5 animate-spin" aria-hidden="true" />
                     </template>
                     {{ templateId ? $t('common.save') : $t('common.create') }}
-                </button>
+                </UButton>
             </div>
         </form>
     </div>

@@ -73,7 +73,7 @@ defineProps<{
                             {{ doc.title }}
                         </span>
                     </h2>
-                    <div v-if="doc.deletedAt" type="button" class="flex flex-1 flex-row items-center justify-center font-bold">
+                    <div v-if="doc.deletedAt" class="flex flex-1 flex-row items-center justify-center font-bold">
                         <TrashCanIcon class="mr-1.5 size-5 shrink-0 text-base-300" aria-hidden="true" />
                         {{ $t('common.deleted') }}
                     </div>

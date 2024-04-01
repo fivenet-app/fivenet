@@ -57,7 +57,7 @@ const zIndexOffset = computed(() => {
         <LIcon :icon-anchor="iconAnchor" :popup-anchor="popupAnchor" :icon-size="[size, size]">
             <div class="flex flex-col items-center uppercase">
                 <span
-                    class="inset-0 whitespace-nowrap rounded-md border-2 border-black/20 bg-neutral-50 bg-clip-padding text-black hover:bg-[#f4f4f4] focus:outline-none"
+                    class="inset-0 whitespace-nowrap rounded-md border-2 border-black/20 bg-neutral-50 bg-clip-padding text-black hover:bg-[#f4f4f4]"
                 >
                     DSP-{{ dispatch.id }}
                 </span>
@@ -68,15 +68,14 @@ const zIndexOffset = computed(() => {
         <LPopup :options="{ closeButton: true }">
             <div class="mb-1 flex items-center gap-2">
                 <IDCopyBadge :id="dispatch.id" prefix="DSP" :action="selected" />
-                <button
-                    type="button"
+                <UButton
                     :title="$t('common.detail', 2)"
                     class="inline-flex items-center text-primary-500 hover:text-primary-400"
                     @click="selected(dispatch.id)"
                 >
                     <CarEmergencyIcon class="size-5" aria-hidden="true" />
                     <span class="ml-1">{{ $t('common.detail', 2) }}</span>
-                </button>
+                </UButton>
             </div>
 
             <ul role="list" class="flex flex-col">

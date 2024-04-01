@@ -251,7 +251,7 @@ if (hash.value !== undefined && hash.value !== null) {
                             />
 
                             <div class="flex space-x-2 self-end">
-                                <button
+                                <UButton
                                     v-if="
                                         can('DocStoreService.ToggleDocument') &&
                                         checkDocAccess(
@@ -261,7 +261,6 @@ if (hash.value !== undefined && hash.value !== null) {
                                             'DocStoreService.ToggleDocument',
                                         )
                                     "
-                                    type="button"
                                     class="inline-flex items-center gap-x-1.5 rounded-md bg-primary-500 px-3 py-2 text-sm font-semibold text-neutral hover:bg-primary-400"
                                     @click="toggleDocument(documentId, !doc?.closed)"
                                 >
@@ -273,7 +272,7 @@ if (hash.value !== undefined && hash.value !== null) {
                                         <LockIcon class="size-5 text-error-400" aria-hidden="true" />
                                         {{ $t('common.close', 1) }}
                                     </template>
-                                </button>
+                                </UButton>
                                 <NuxtLink
                                     v-if="
                                         can('DocStoreService.UpdateDocument') &&
@@ -288,22 +287,20 @@ if (hash.value !== undefined && hash.value !== null) {
                                         name: 'documents-id-edit',
                                         params: { id: doc.id },
                                     }"
-                                    type="button"
                                     class="inline-flex items-center gap-x-1.5 rounded-md bg-primary-500 px-3 py-2 text-sm font-semibold text-neutral hover:bg-primary-400"
                                 >
                                     <PencilIcon class="-ml-0.5 h-auto w-5" aria-hidden="true" />
                                     {{ $t('common.edit') }}
                                 </NuxtLink>
-                                <button
+                                <UButton
                                     v-if="can('DocStoreService.ListDocumentReqs')"
-                                    type="button"
                                     class="inline-flex items-center gap-x-1.5 rounded-md bg-primary-500 px-3 py-2 text-sm font-semibold text-neutral hover:bg-primary-400"
                                     @click="openRequests = true"
                                 >
                                     <FrequentlyAskedQuestionsIcon class="-ml-0.5 h-auto w-5" aria-hidden="true" />
                                     {{ $t('common.request', 2) }}
-                                </button>
-                                <button
+                                </UButton>
+                                <UButton
                                     v-if="
                                         (doc?.creatorJob === activeChar?.job || isSuperuser) &&
                                         can('DocStoreService.ChangeDocumentOwner') &&
@@ -314,7 +311,6 @@ if (hash.value !== undefined && hash.value !== null) {
                                             'DocStoreService.ChangeDocumentOwner',
                                         )
                                     "
-                                    type="button"
                                     class="inline-flex items-center gap-x-1.5 rounded-md bg-primary-500 px-3 py-2 text-sm font-semibold text-neutral hover:bg-primary-400"
                                     :class="doc?.creatorId === activeChar?.userId ? 'disabled' : ''"
                                     :disabled="doc?.creatorId === activeChar?.userId"
@@ -322,13 +318,12 @@ if (hash.value !== undefined && hash.value !== null) {
                                 >
                                     <CreationIcon class="-ml-0.5 h-auto w-5" aria-hidden="true" />
                                     {{ $t('components.documents.document_view.take_ownership') }}
-                                </button>
-                                <button
+                                </UButton>
+                                <UButton
                                     v-if="
                                         can('DocStoreService.DeleteDocument') &&
                                         checkDocAccess(access, doc.creator, AccessLevel.EDIT, 'DocStoreService.DeleteDocument')
                                     "
-                                    type="button"
                                     class="inline-flex items-center gap-x-1.5 rounded-md bg-primary-500 px-3 py-2 text-sm font-semibold text-neutral hover:bg-primary-400"
                                     @click="revealDelete(documentId)"
                                 >
@@ -340,7 +335,7 @@ if (hash.value !== undefined && hash.value !== null) {
                                         <RestoreIcon class="-ml-0.5 h-auto w-5" aria-hidden="true" />
                                         {{ $t('common.restore') }}
                                     </template>
-                                </button>
+                                </UButton>
                             </div>
                         </div>
 

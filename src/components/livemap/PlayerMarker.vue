@@ -76,7 +76,7 @@ const openUnit = ref(false);
             <div class="flex flex-col items-center uppercase">
                 <span
                     v-if="showUnitNames && unit"
-                    class="inset-0 whitespace-nowrap rounded-md border-2 border-black/20 bg-clip-padding focus:outline-none"
+                    class="inset-0 whitespace-nowrap rounded-md border-2 border-black/20 bg-clip-padding"
                     :class="isColourBright(unitInverseColor) ? 'text-black' : 'text-neutral'"
                     :style="{ backgroundColor: unit?.color ?? '#8d81f2' }"
                 >
@@ -99,15 +99,14 @@ const openUnit = ref(false);
                 v-if="can('CitizenStoreService.ListCitizens') || marker.user?.phoneNumber || hasUnit"
                 class="mb-1 flex items-center gap-2"
             >
-                <button
+                <UButton
                     v-if="marker.info?.x && marker.info?.y"
-                    type="button"
                     class="inline-flex items-center text-primary-500 hover:text-primary-400"
                     @click="$emit('goto', { x: marker.info?.x, y: marker.info?.y })"
                 >
                     <MapMarkerIcon class="size-5" aria-hidden="true" />
                     <span class="ml-1">{{ $t('common.mark') }}</span>
-                </button>
+                </UButton>
                 <NuxtLink
                     v-if="can('CitizenStoreService.ListCitizens')"
                     :to="{ name: 'citizens-id', params: { id: marker.user?.userId ?? 0 } }"
@@ -123,9 +122,8 @@ const openUnit = ref(false);
                     :show-label="true"
                     width="w-4"
                 />
-                <button
+                <UButton
                     v-if="hasUnit"
-                    type="button"
                     class="inline-flex items-center text-primary-500 hover:text-primary-400"
                     @click="openUnit = true"
                 >
@@ -133,7 +131,7 @@ const openUnit = ref(false);
                     <span class="ml-1">
                         {{ $t('common.unit') }}
                     </span>
-                </button>
+                </UButton>
             </div>
             <span class="font-semibold">{{ $t('common.employee', 2) }} {{ marker.user?.jobLabel }} </span>
             <ul role="list" class="flex flex-col">

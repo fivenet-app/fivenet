@@ -55,14 +55,13 @@ onConfirm(async (provider) => disconnectOAuth2Connection(provider));
                     {{ account.username }}
                 </span>
 
-                <button
-                    type="button"
+                <UButton
                     class="inline-flex items-center gap-1 rounded-md bg-error-600 p-2 text-sm font-semibold text-neutral hover:bg-error-700"
                     @click="reveal(provider)"
                 >
                     <CloseCircleIcon class="size-5" aria-hidden="true" />
                     <span>{{ $t('common.disconnect') }}</span>
-                </button>
+                </UButton>
             </div>
             <div v-else>
                 <template v-if="isNUIAvailable()">

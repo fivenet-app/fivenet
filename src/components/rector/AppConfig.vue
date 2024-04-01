@@ -325,17 +325,15 @@ const { remove, push, fields } = useFieldArray<Perm>('permsDefault');
                                             />
                                         </div>
 
-                                        <button
-                                            type="button"
+                                        <UButton
                                             class="rounded-full bg-primary-500 p-1.5 text-neutral hover:bg-primary-400 focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2"
                                             @click="remove(idx)"
                                         >
                                             <CloseIcon class="size-5" aria-hidden="true" />
-                                        </button>
+                                        </UButton>
                                     </div>
                                 </div>
-                                <button
-                                    type="button"
+                                <UButton
                                     class="mt-2 rounded-full p-1.5 text-neutral focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2"
                                     :disabled="!canSubmit"
                                     :class="
@@ -346,7 +344,7 @@ const { remove, push, fields } = useFieldArray<Perm>('permsDefault');
                                     @click="push({ category: '', name: '' })"
                                 >
                                     <PlusIcon class="size-5" aria-hidden="true" />
-                                </button>
+                                </UButton>
                             </template>
                         </GenericContainerPanelEntry>
                     </template>
@@ -736,8 +734,7 @@ const { remove, push, fields } = useFieldArray<Perm>('permsDefault');
                         <!-- Save button -->
                         <GenericContainerPanelEntry v-if="can('RectorService.SetJobProps')">
                             <template #default>
-                                <button
-                                    type="button"
+                                <UButton
                                     class="flex w-full justify-center rounded-md px-3 py-2 text-sm font-semibold text-neutral transition-colors focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2"
                                     :class="[
                                         !canSubmit || !meta.valid
@@ -751,7 +748,7 @@ const { remove, push, fields } = useFieldArray<Perm>('permsDefault');
                                         <LoadingIcon class="mr-2 size-5 animate-spin" aria-hidden="true" />
                                     </template>
                                     {{ $t('common.save', 1) }}
-                                </button>
+                                </UButton>
                             </template>
                         </GenericContainerPanelEntry>
                     </template>

@@ -90,17 +90,16 @@ const showAbsence = props.colleague.props?.absenceEnd && toDate(props.colleague.
         </td>
         <td class="whitespace-nowrap p-1 text-left text-accent-200">
             <div class="flex flex-col justify-end md:flex-row">
-                <button
+                <span
                     v-if="
                         can('JobsService.SetJobsUserProps') &&
                         checkIfCanAccessColleague(activeChar!, colleague, 'JobsService.SetJobsUserProps')
                     "
-                    type="button"
                     class="flex-initial text-primary-500 hover:text-primary-400"
                     @click="absenceDateModal = true"
                 >
                     <IslandIcon class="mr-2.5 h-auto w-5" aria-hidden="true" />
-                </button>
+                </span>
 
                 <NuxtLink
                     v-if="

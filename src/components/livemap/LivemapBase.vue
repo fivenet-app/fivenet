@@ -153,9 +153,7 @@ const reconnectionCentrumDebounced = useDebounce(reconnectingCentrum, 500);
         >
             <template #default>
                 <LControl position="bottomright">
-                    <div class="flex flex-col gap-2">
-                        <SettingsButton />
-                    </div>
+                    <SettingsButton />
                 </LControl>
 
                 <template v-if="can('LivemapperService.Stream')">

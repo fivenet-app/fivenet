@@ -38,7 +38,7 @@ const open = ref(false);
         <DisponentsModal :open="open" @close="open = false" />
 
         <p class="text-sm text-neutral">
-            <button
+            <UButton
                 class="inline-flex items-center rounded-md px-2 py-1 text-xs font-medium ring-1 ring-inset"
                 :class="
                     disponents.length === 0
@@ -49,40 +49,34 @@ const open = ref(false);
                 @click="open = true"
             >
                 {{ $t('common.disponent', disponents.length) }}
-            </button>
+            </UButton>
         </p>
 
-        <p class="text-sm text-neutral">
-            <span
-                class="inline-flex items-center rounded-md bg-gray-400/10 px-2 py-1 text-xs font-medium text-gray-400 ring-1 ring-inset ring-gray-400/20"
-            >
-                {{ $t(`enums.centrum.CentrumMode.${CentrumMode[getCurrentMode ?? 0]}`) }}
-            </span>
-        </p>
+        <UBadge color="gray">
+            {{ $t(`enums.centrum.CentrumMode.${CentrumMode[getCurrentMode ?? 0]}`) }}
+        </UBadge>
 
-        <button
+        <UButton
             v-if="!isDisponent"
-            type="button"
-            class="inline-flex items-center justify-center rounded-full bg-success-500 text-neutral hover:bg-success-400"
+            class="inline-flex items-center justify-center rounded-full"
+            icon="i-mdi-location-enter"
             @click="onSubmitThrottle(true)"
         >
-            <LocationEnterIcon v-if="canSubmit" class="size-7" aria-hidden="true" />
-            <template v-else>
-                <LoadingIcon class="mr-2 size-7 animate-spin" aria-hidden="true" />
+            <template v-if="!canSubmit">
+                <LoadingIcon class="mr-2 size-5 animate-spin" aria-hidden="true" />
             </template>
             <span class="px-1">{{ $t('common.join') }}</span>
-        </button>
-        <button
+        </UButton>
+        <UButton
             v-else
-            type="button"
-            class="inline-flex items-center justify-center rounded-full bg-primary-500 text-neutral hover:bg-primary-400"
+            class="inline-flex items-center justify-center rounded-full"
+            icon="i-mdi-location-exit"
             @click="onSubmitThrottle(false)"
         >
-            <LocationExitIcon v-if="canSubmit" class="size-7" aria-hidden="true" />
-            <template v-else>
-                <LoadingIcon class="mr-2 size-7 animate-spin" aria-hidden="true" />
+            <template v-if="!canSubmit">
+                <LoadingIcon class="mr-2 size-5 animate-spin" aria-hidden="true" />
             </template>
             <span class="px-1">{{ $t('common.leave') }}</span>
-        </button>
+        </UButton>
     </div>
 </template>

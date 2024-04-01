@@ -127,12 +127,12 @@ const editing = ref(props.startInEdit);
 
     <tr v-if="!editing">
         <td class="flex flex-row py-2 pl-4 pr-3 text-sm font-medium text-neutral sm:pl-1">
-            <button type="button" class="pl-2" :title="$t('common.edit')" @click="editing = true">
+            <UButton class="pl-2" :title="$t('common.edit')" @click="editing = true">
                 <PencilIcon class="size-5" aria-hidden="true" />
-            </button>
-            <button type="button" class="pl-2" :title="$t('common.delete')" @click="reveal()">
+            </UButton>
+            <UButton class="pl-2" :title="$t('common.delete')" @click="reveal()">
                 <TrashCanIcon class="size-5" aria-hidden="true" />
-            </button>
+            </UButton>
         </td>
         <td class="py-2 pl-4 pr-3 text-sm font-medium text-neutral sm:pl-1">
             {{ law.name }}
@@ -150,11 +150,10 @@ const editing = ref(props.startInEdit);
     </tr>
     <tr v-else>
         <td class="py-2 pl-4 pr-3 text-sm font-medium text-neutral sm:pl-1">
-            <button type="button" :title="$t('common.save')" @click="onSubmitThrottle">
+            <UButton :title="$t('common.save')" @click="onSubmitThrottle">
                 <ContentSaveIcon class="size-5" aria-hidden="true" />
-            </button>
-            <button
-                type="button"
+            </UButton>
+            <UButton
                 :title="$t('common.cancel')"
                 @click="
                     editing = false;
@@ -162,7 +161,7 @@ const editing = ref(props.startInEdit);
                 "
             >
                 <CancelIcon class="size-5" aria-hidden="true" />
-            </button>
+            </UButton>
         </td>
         <td class="py-2 pl-4 pr-3 text-sm font-medium text-neutral sm:pl-1">
             <VeeField

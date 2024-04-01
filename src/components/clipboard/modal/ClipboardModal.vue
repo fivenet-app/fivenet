@@ -63,20 +63,18 @@ defineEmits<{
                             </div>
                             <div class="mt-5 gap-2 sm:mt-4 sm:flex">
                                 <span class="isolate inline-flex w-full rounded-md pr-4 shadow-sm">
-                                    <button
-                                        type="button"
+                                    <UButton
                                         class="relative inline-flex w-full items-center rounded-l-md bg-base-500 px-3.5 py-2.5 text-sm font-semibold text-neutral hover:bg-base-400"
                                         @click="$emit('close')"
                                     >
                                         {{ $t('common.close', 1) }}
-                                    </button>
-                                    <button
-                                        type="button"
+                                    </UButton>
+                                    <UButton
                                         class="relative -ml-px inline-flex w-full items-center rounded-r-md bg-error-500 px-3.5 py-2.5 text-sm font-semibold text-neutral hover:bg-error-400"
                                         @click="clipboardStore.clear()"
                                     >
                                         {{ $t('components.clipboard.clipboard_modal.clear') }}
-                                    </button>
+                                    </UButton>
                                 </span>
                             </div>
                         </DialogPanel>

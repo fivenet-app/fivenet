@@ -177,7 +177,7 @@ watch(props, () => {
 
                 <div v-else class="divide-y divide-neutral/10">
                     <div class="mt-5">
-                        <input
+                        <UInput
                             v-model="rawQuery"
                             type="text"
                             name="search"
@@ -296,20 +296,18 @@ watch(props, () => {
         </div>
         <div class="mt-2 flow-root">
             <div class="flex items-center gap-1">
-                <button
-                    type="button"
+                <UButton
                     class="flex-1 rounded-md bg-info-700 px-3.5 py-2.5 text-sm font-semibold text-neutral hover:bg-info-600"
                     @click="copyToClipboard()"
                 >
                     {{ $t('common.copy') }}
-                </button>
-                <button
-                    type="button"
+                </UButton>
+                <UButton
                     class="rounded-md bg-error-700 px-3.5 py-2.5 text-sm font-semibold text-neutral hover:bg-error-600"
                     @click="reset()"
                 >
                     {{ $t('common.reset') }}
-                </button>
+                </UButton>
             </div>
         </div>
     </div>

@@ -114,7 +114,7 @@ watch(
             </div>
 
             <div>
-                <button
+                <UButton
                     type="submit"
                     class="flex w-full justify-center rounded-md px-3 py-2 text-sm font-semibold text-neutral transition-colors focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2"
                     :disabled="!meta.valid || !canSubmit"
@@ -128,7 +128,7 @@ watch(
                         <LoadingIcon class="mr-2 size-5 animate-spin" aria-hidden="true" />
                     </template>
                     {{ $t('common.login') }}
-                </button>
+                </UButton>
             </div>
         </form>
 
@@ -138,14 +138,13 @@ watch(
                     {{ $t('components.auth.login.social_login_disabled') }}
                 </p>
                 <div v-for="provider in appConfig.login.providers" :key="provider.name">
-                    <button
+                    <UButton
                         v-if="!socialLoginEnabled"
-                        type="button"
                         class="flex w-full justify-center rounded-md bg-primary-500 px-3 py-2 text-sm font-semibold text-neutral transition-colors hover:bg-primary-400 focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-base-300"
                         :class="!socialLoginEnabled ? 'disabled' : ''"
                     >
                         {{ provider.label }} {{ $t('common.login') }}
-                    </button>
+                    </UButton>
                     <NuxtLink
                         v-else
                         :external="true"
@@ -167,18 +166,16 @@ watch(
         />
 
         <div class="mt-6">
-            <button
-                type="button"
+            <UButton
                 class="flex w-full justify-center rounded-md bg-secondary-600 px-3 py-2 text-sm font-semibold text-neutral transition-colors hover:bg-secondary-500 focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-base-300"
                 @click="$emit('toggle')"
             >
                 {{ $t('components.auth.login.forgot_password') }}
-            </button>
+            </UButton>
         </div>
         <div v-if="appConfig.login.signupEnabled" class="mt-6">
             <NuxtLink
                 :to="{ name: 'auth-registration' }"
-                type="button"
                 class="flex w-full justify-center rounded-md bg-secondary-600 px-3 py-2 text-sm font-semibold text-neutral transition-colors hover:bg-secondary-500 focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-base-300"
             >
                 {{ $t('components.auth.login.register_account') }}

@@ -156,7 +156,7 @@ const selectedRole = ref<Role | undefined>();
                                             </Combobox>
                                         </div>
                                         <div class="flex flex-initial flex-col justify-end">
-                                            <button
+                                            <UButton
                                                 type="submit"
                                                 class="inline-flex rounded-md px-3 py-2 text-sm font-semibold text-neutral focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2"
                                                 :disabled="selectedJobGrade === null || selectedJobGrade!.grade <= 0"
@@ -167,7 +167,7 @@ const selectedRole = ref<Role | undefined>();
                                                 ]"
                                             >
                                                 {{ $t('common.create') }}
-                                            </button>
+                                            </UButton>
                                         </div>
                                     </div>
                                 </form>

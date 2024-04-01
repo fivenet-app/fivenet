@@ -129,12 +129,11 @@ watch(selectedQualification, () => emits('update-qualification', selectedQualifi
             </div>
         </Combobox>
 
-        <button
-            type="button"
+        <UButton
             class="ml-2 rounded-full bg-primary-500 p-1.5 text-neutral hover:bg-primary-400 focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2"
             @click="$emit('remove')"
         >
             <CloseIcon class="size-5" aria-hidden="true" />
-        </button>
+        </UButton>
     </div>
 </template>

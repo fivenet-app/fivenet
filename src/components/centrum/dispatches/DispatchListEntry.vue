@@ -67,40 +67,36 @@ const openStatus = ref(false);
         />
 
         <td class="relative items-center justify-start whitespace-nowrap px-0 py-1 text-left text-sm font-medium sm:pr-0.5">
-            <button
+            <UButton
                 v-if="!hideActions"
-                type="button"
                 class="text-primary-400 hover:text-primary-600"
                 :title="$t('common.assign')"
                 @click="openAssign = true"
             >
                 <AccountMultiplePlusIcon class="ml-auto mr-1.5 h-auto w-5" aria-hidden="true" />
-            </button>
-            <button
-                type="button"
+            </UButton>
+            <UButton
                 class="text-primary-400 hover:text-primary-600"
                 :title="$t('common.go_to_location')"
                 @click="$emit('goto', { x: dispatch.x, y: dispatch.y })"
             >
                 <MapMarkerIcon class="ml-auto mr-1.5 h-auto w-5" aria-hidden="true" />
-            </button>
-            <button
+            </UButton>
+            <UButton
                 v-if="!hideActions"
-                type="button"
                 class="text-primary-400 hover:text-primary-600"
                 :title="$t('common.status')"
                 @click="openStatus = true"
             >
                 <CloseOctagonIcon class="ml-auto mr-1.5 h-auto w-5" aria-hidden="true" />
-            </button>
-            <button
-                type="button"
+            </UButton>
+            <UButton
                 class="text-primary-400 hover:text-primary-600"
                 :title="$t('common.detail', 2)"
                 @click="openDetails = true"
             >
                 <DotsVerticalIcon class="ml-auto mr-1.5 h-auto w-5" aria-hidden="true" />
-            </button>
+            </UButton>
         </td>
         <td class="whitespace-nowrap p-1 text-sm text-gray-300">
             {{ dispatch.id }}

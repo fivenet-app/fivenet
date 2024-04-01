@@ -142,14 +142,13 @@ const onSubmitThrottle = useThrottleFn(async (resp: TakeDispatchResp) => {
                                                     {{ $t('components.centrum.take_dispatch.title') }}
                                                 </DialogTitle>
                                                 <div class="ml-3 flex h-7 items-center">
-                                                    <button
-                                                        type="button"
-                                                        class="rounded-md bg-gray-100 text-gray-500 hover:text-gray-400 focus:outline-none focus:ring-2 focus:ring-neutral"
+                                                    <UButton
+                                                        class="rounded-md bg-gray-100 text-gray-500 hover:text-gray-400 focus:ring-2 focus:ring-neutral"
                                                         @click="$emit('close')"
                                                     >
                                                         <span class="sr-only">{{ $t('common.close') }}</span>
                                                         <CloseIcon class="size-5" aria-hidden="true" />
-                                                    </button>
+                                                    </UButton>
                                                 </div>
                                             </div>
                                             <div class="mt-1">
@@ -179,7 +178,7 @@ const onSubmitThrottle = useThrottleFn(async (resp: TakeDispatchResp) => {
                                                                         class="mt-1 text-sm leading-6 text-gray-300 sm:col-span-2 sm:mt-0"
                                                                     >
                                                                         <div class="relative flex items-center">
-                                                                            <input
+                                                                            <UInput
                                                                                 v-model="queryDispatches"
                                                                                 type="text"
                                                                                 name="search"
@@ -226,8 +225,7 @@ const onSubmitThrottle = useThrottleFn(async (resp: TakeDispatchResp) => {
                                     </div>
                                     <div class="flex shrink-0 justify-end p-4">
                                         <span class="isolate inline-flex w-full rounded-md pr-4 shadow-sm">
-                                            <button
-                                                type="button"
+                                            <UButton
                                                 class="relative inline-flex w-full items-center rounded-l-md bg-success-500 px-3 py-2 text-sm font-semibold text-neutral ring-1 ring-inset ring-success-300 hover:bg-success-100 hover:text-neutral"
                                                 :disabled="!canTakeDispatch || !canSubmit"
                                                 :class="!canTakeDispatch ? 'disabled' : ''"
@@ -237,9 +235,8 @@ const onSubmitThrottle = useThrottleFn(async (resp: TakeDispatchResp) => {
                                                     <LoadingIcon class="mr-2 size-5 animate-spin" aria-hidden="true" />
                                                 </template>
                                                 {{ $t('common.accept') }}
-                                            </button>
-                                            <button
-                                                type="button"
+                                            </UButton>
+                                            <UButton
                                                 class="relative -ml-px inline-flex w-full items-center bg-error-500 px-3 py-2 text-sm font-semibold text-neutral ring-1 ring-inset ring-error-300 hover:bg-error-100"
                                                 :disabled="!canTakeDispatch || !canSubmit"
                                                 :class="!canTakeDispatch ? 'disabled' : ''"
@@ -249,14 +246,13 @@ const onSubmitThrottle = useThrottleFn(async (resp: TakeDispatchResp) => {
                                                     <LoadingIcon class="mr-2 size-5 animate-spin" aria-hidden="true" />
                                                 </template>
                                                 {{ $t('common.decline') }}
-                                            </button>
-                                            <button
-                                                type="button"
+                                            </UButton>
+                                            <UButton
                                                 class="relative -ml-px inline-flex w-full items-center rounded-r-md bg-neutral-50 px-3 py-2 text-sm font-semibold text-gray-900 ring-1 ring-inset ring-gray-300 hover:bg-gray-200 hover:text-gray-900"
                                                 @click="$emit('close')"
                                             >
                                                 {{ $t('common.close') }}
-                                            </button>
+                                            </UButton>
                                         </span>
                                     </div>
                                 </form>

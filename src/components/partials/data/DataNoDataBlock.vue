@@ -26,10 +26,9 @@ function click() {
 
 <template>
     <div class="w-full">
-        <button
-            type="button"
+        <UButton
             :disabled="!focus"
-            class="relative block w-full rounded-lg border-2 border-dashed border-base-300 p-8 text-center hover:border-base-400 focus:outline-none focus:ring-2 focus:ring-neutral focus:ring-offset-2"
+            class="relative block w-full rounded-lg border-2 border-dashed border-base-300 p-8 text-center hover:border-base-400 focus:ring-2 focus:ring-neutral focus:ring-offset-2"
             @click="click()"
         >
             <component :is="icon" class="mx-auto size-12 text-neutral" aria-hidden="true" />
@@ -41,6 +40,6 @@ function click() {
                     {{ $t('common.not_found', [type ?? $t('common.data')]) }}
                 </span>
             </span>
-        </button>
+        </UButton>
     </div>
 </template>

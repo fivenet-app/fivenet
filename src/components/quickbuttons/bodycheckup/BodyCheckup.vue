@@ -186,10 +186,9 @@ function reset(): void {
                 <ol v-else>
                     <li v-for="(pin, idx) in pins" :key="idx" class="my-2 inline-flex w-full items-center">
                         <span class="text-base" :class="pin.selected ? 'underline' : ''"> {{ idx + 1 }}. </span>
-                        <input
+                        <UInput
                             v-model="pin.description"
                             type="text"
-                            class="ml-1.5 block w-full grow rounded-md border-0 bg-base-700 py-1.5 text-neutral placeholder:text-accent-200 focus:ring-2 focus:ring-inset focus:ring-base-300 sm:text-sm sm:leading-6"
                             @focusin="
                                 focusTablet(true);
                                 selectPin(pin);
@@ -202,22 +201,15 @@ function reset(): void {
                     </li>
                 </ol>
             </div>
-            <div class="mb-4 flex flex-initial items-center gap-1">
-                <button
-                    type="button"
-                    class="w-full rounded-md bg-info-700 px-3.5 py-2.5 text-sm font-semibold text-neutral hover:bg-info-600"
-                    @click="copyToClipboard()"
-                >
+            <UButtonGroup class="mb-2">
+                <UButton block @click="copyToClipboard()">
                     {{ $t('common.copy') }}
-                </button>
-                <button
-                    type="button"
-                    class="rounded-md bg-error-700 px-3.5 py-2.5 text-sm font-semibold text-neutral hover:bg-error-600"
-                    @click="reset()"
-                >
+                </UButton>
+                <UButton color="red" @click="reset()">
                     {{ $t('common.reset') }}
-                </button>
-            </div>
+                </UButton>
+            </UButtonGroup>
+
             <BMICalculator />
         </div>
     </div>

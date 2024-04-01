@@ -73,14 +73,13 @@ onConfirm(async (resultId: string) => deleteQualificationResult(resultId));
             <CitizenInfoPopover :user="result.creator" />
         </td>
         <td class="flex flex-row justify-end">
-            <button
+            <UButton
                 v-if="can('QualificationsService.DeleteQualificationResult')"
-                type="button"
                 class="flex-initial text-primary-500 hover:text-primary-400"
                 @click="reveal()"
             >
                 <TrashCanIcon class="size-5 text-primary-500" aria-hidden="true" />
-            </button>
+            </UButton>
         </td>
     </tr>
 </template>

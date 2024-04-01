@@ -104,13 +104,12 @@ async function removeOAuth2Connection(provider: string): Promise<void> {
                                 {{ $t('components.auth.account_info.change_username') }}
                             </template>
                             <template #default>
-                                <button
-                                    type="button"
+                                <UButton
                                     class="rounded-md bg-primary-500 px-3.5 py-2.5 text-sm font-semibold text-neutral hover:bg-primary-400"
                                     @click="changeUsernameModal = true"
                                 >
                                     {{ $t('components.auth.account_info.change_username_button') }}
-                                </button>
+                                </UButton>
                             </template>
                         </GenericContainerPanelEntry>
                         <GenericContainerPanelEntry>
@@ -118,13 +117,12 @@ async function removeOAuth2Connection(provider: string): Promise<void> {
                                 {{ $t('components.auth.account_info.change_password') }}
                             </template>
                             <template #default>
-                                <button
-                                    type="button"
+                                <UButton
                                     class="rounded-md bg-primary-500 px-3.5 py-2.5 text-sm font-semibold text-neutral hover:bg-primary-400"
                                     @click="changePasswordModal = true"
                                 >
                                     {{ $t('components.auth.account_info.change_password_button') }}
-                                </button>
+                                </UButton>
                             </template>
                         </GenericContainerPanelEntry>
                     </template>

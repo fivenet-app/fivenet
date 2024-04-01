@@ -200,7 +200,7 @@ const templatesOpen = ref(false);
                                     {{ $t('common.document') }} {{ $t('common.id') }}
                                 </label>
                                 <div class="relative mt-2">
-                                    <input
+                                    <UInput
                                         v-model="query.id"
                                         type="text"
                                         name="search"
@@ -390,7 +390,7 @@ const templatesOpen = ref(false);
                                     {{ $t('common.time_range') }}: {{ $t('common.from') }}
                                 </label>
                                 <div class="relative mt-2">
-                                    <input
+                                    <UInput
                                         v-model="query.from"
                                         type="datetime-local"
                                         name="search"
@@ -405,7 +405,7 @@ const templatesOpen = ref(false);
                                     {{ $t('common.to') }}
                                 </label>
                                 <div class="relative mt-2">
-                                    <input
+                                    <UInput
                                         v-model="query.to"
                                         type="datetime-local"
                                         name="search"

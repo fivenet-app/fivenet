@@ -85,14 +85,13 @@ const filteredUnits = computed(() =>
                                                     {{ $t('common.leave_unit') }}
                                                 </DialogTitle>
                                                 <div class="ml-3 flex h-7 items-center">
-                                                    <button
-                                                        type="button"
-                                                        class="rounded-md bg-gray-100 text-gray-500 hover:text-gray-400 focus:outline-none focus:ring-2 focus:ring-neutral"
+                                                    <UButton
+                                                        class="rounded-md bg-gray-100 text-gray-500 hover:text-gray-400 focus:ring-2 focus:ring-neutral"
                                                         @click="$emit('close')"
                                                     >
                                                         <span class="sr-only">{{ $t('common.close') }}</span>
                                                         <CloseIcon class="size-5" aria-hidden="true" />
-                                                    </button>
+                                                    </UButton>
                                                 </div>
                                             </div>
                                         </div>
@@ -126,10 +125,9 @@ const filteredUnits = computed(() =>
                                                     <div class="my-2 space-y-24">
                                                         <div class="flex-1">
                                                             <div class="grid grid-cols-2 gap-2">
-                                                                <button
+                                                                <UButton
                                                                     v-for="unit in filteredUnits"
                                                                     :key="unit.name"
-                                                                    type="button"
                                                                     :disabled="!canSubmit"
                                                                     class="group flex w-full flex-col items-center rounded-md p-1.5 text-xs font-medium text-neutral hover:text-neutral hover:transition-all"
                                                                     :class="[
@@ -157,7 +155,7 @@ const filteredUnits = computed(() =>
                                                                         >
                                                                         {{ unit.description }}
                                                                     </span>
-                                                                </button>
+                                                                </UButton>
                                                             </div>
                                                         </div>
                                                     </div>
@@ -167,9 +165,8 @@ const filteredUnits = computed(() =>
                                     </div>
                                     <div class="flex shrink-0 justify-end p-4">
                                         <span class="isolate inline-flex w-full rounded-md pr-4 shadow-sm">
-                                            <button
+                                            <UButton
                                                 v-if="ownUnitId !== undefined"
-                                                type="button"
                                                 :disabled="!canSubmit"
                                                 class="relative inline-flex w-full items-center rounded-l-md px-3.5 py-2.5 text-sm font-semibold text-neutral"
                                                 :class="[
@@ -183,15 +180,14 @@ const filteredUnits = computed(() =>
                                                     <LoadingIcon class="mr-2 size-5 animate-spin" aria-hidden="true" />
                                                 </template>
                                                 {{ $t('common.leave') }}
-                                            </button>
-                                            <button
-                                                type="button"
+                                            </UButton>
+                                            <UButton
                                                 class="relative inline-flex w-full items-center bg-neutral-50 px-3 py-2 text-sm font-semibold text-gray-900 ring-1 ring-inset ring-gray-300 hover:bg-gray-200 hover:text-gray-900"
                                                 :class="ownUnitId !== undefined ? '-ml-px rounded-r-md' : 'rounded-md'"
                                                 @click="$emit('close')"
                                             >
                                                 {{ $t('common.close', 1) }}
-                                            </button>
+                                            </UButton>
                                         </span>
                                     </div>
                                 </form>

@@ -41,7 +41,7 @@ async function switchLanguage(lang: Language): Promise<void> {
     <Menu as="div" class="relative shrink-0">
         <div>
             <MenuButton
-                class="flex rounded-full bg-base-800 text-sm ring-2 ring-base-600 focus:outline-none focus:ring-2 focus:ring-primary-500 focus:ring-offset-2"
+                class="flex rounded-full bg-base-800 text-sm ring-2 ring-base-600 focus:ring-2 focus:ring-primary-500 focus:ring-offset-2"
             >
                 <span class="sr-only">{{ $t('components.partials.sidebar_language_switcher.open_switcher') }}</span>
                 <TranslateIcon
@@ -59,10 +59,10 @@ async function switchLanguage(lang: Language): Promise<void> {
             leave-to-class="transform scale-95 opacity-0"
         >
             <MenuItems
-                class="absolute right-0 z-40 mt-2 w-48 origin-top-right rounded-md bg-base-800 py-1 shadow-float ring-1 ring-base-100/5 focus:outline-none"
+                class="absolute right-0 z-40 mt-2 w-48 origin-top-right rounded-md bg-base-800 py-1 shadow-float ring-1 ring-base-100/5"
             >
                 <MenuItem v-for="item in languages" :key="item.iso" v-slot="{ active }">
-                    <button
+                    <UButton
                         :class="[
                             active ? 'bg-primary-500' : '',
                             'flex w-full flex-row px-4 py-2 text-sm text-neutral hover:transition-colors',
@@ -70,7 +70,7 @@ async function switchLanguage(lang: Language): Promise<void> {
                         @click="switchLanguage(item)"
                     >
                         {{ item.name }}
-                    </button>
+                    </UButton>
                 </MenuItem>
             </MenuItems>
         </transition>

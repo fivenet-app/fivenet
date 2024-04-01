@@ -35,8 +35,7 @@ const selectedDispatch = ref<string | undefined>();
                     }}
                 </span>
 
-                <button
-                    type="button"
+                <UButton
                     @click="
                         selectedDispatch = reference.targetDispatchId;
                         $emit('selectedDispatch', reference.targetDispatchId);
@@ -44,7 +43,7 @@ const selectedDispatch = ref<string | undefined>();
                 >
                     <span class="sr-only">{{ $t('common.open') }}</span>
                     <LinkVariantIcon class="ml-1 size-5" aria-hidden="true" />
-                </button>
+                </UButton>
             </span>
         </div>
     </template>

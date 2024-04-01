@@ -291,7 +291,7 @@ function updateDates(): void {
                                     </template>
                                 </label>
                                 <div class="relative mt-2">
-                                    <input
+                                    <UInput
                                         v-model="query.from"
                                         type="date"
                                         name="search"
@@ -308,7 +308,7 @@ function updateDates(): void {
                                     {{ $t('common.to') }}
                                 </label>
                                 <div class="relative mt-2">
-                                    <input
+                                    <UInput
                                         v-model="query.to"
                                         type="date"
                                         name="search"
@@ -322,8 +322,7 @@ function updateDates(): void {
                         </div>
                         <div v-if="query.perDay" class="mx-auto flex flex-row gap-4 pt-2">
                             <div class="flex-1">
-                                <button
-                                    type="button"
+                                <UButton
                                     :disabled="futureDay > today"
                                     :class="[
                                         futureDay > today
@@ -335,11 +334,10 @@ function updateDates(): void {
                                 >
                                     <ChevronLeftIcon class="size-5" aria-hidden="true" />
                                     {{ $t('common.forward') }} - {{ $d(futureDay, 'date') }}
-                                </button>
+                                </UButton>
                             </div>
                             <div class="flex-initial">
-                                <button
-                                    type="button"
+                                <UButton
                                     disabled
                                     class="disabled relative flex w-full cursor-pointer flex-col place-content-end items-center rounded-md bg-base-500 px-3 py-2 text-sm font-semibold text-neutral hover:bg-base-400 focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-base-500"
                                 >
@@ -348,17 +346,16 @@ function updateDates(): void {
                                         {{ $d(currentDay, 'date') }}
                                     </span>
                                     <span>{{ $t('common.calendar_week') }}: {{ getWeekNumber(currentDay) }}</span>
-                                </button>
+                                </UButton>
                             </div>
                             <div class="flex-1">
-                                <button
-                                    type="button"
+                                <UButton
                                     class="relative inline-flex w-full cursor-pointer place-content-end items-center rounded-md bg-primary-500 px-3 py-2 text-sm font-semibold text-neutral hover:bg-primary-400 focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2"
                                     @click="dayBackwards()"
                                 >
                                     {{ $d(previousDay, 'date') }} - {{ $t('common.previous') }}
                                     <ChevronRightIcon class="size-5" aria-hidden="true" />
-                                </button>
+                                </UButton>
                             </div>
                         </div>
                     </form>

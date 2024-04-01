@@ -342,14 +342,13 @@ watch(router.currentRoute, () => updateActiveItem());
                                 leave-to="opacity-0"
                             >
                                 <div class="absolute -right-3 top-1 -mr-14 p-1">
-                                    <button
-                                        type="button"
-                                        class="flex size-12 items-center justify-center rounded-full ring-2 ring-neutral focus:outline-none"
+                                    <UButton
+                                        class="flex size-12 items-center justify-center rounded-full ring-2 ring-neutral"
                                         @click="mobileMenuOpen = false"
                                     >
                                         <CloseIcon class="h-auto w-6 text-neutral" aria-hidden="true" />
                                         <span class="sr-only">{{ $t('components.partials.sidebar.close_sidebar') }}</span>
-                                    </button>
+                                    </UButton>
                                 </div>
                             </TransitionChild>
                             <div class="flex shrink-0 items-center px-4">
@@ -476,14 +475,13 @@ watch(router.currentRoute, () => updateActiveItem());
         <div class="flex flex-1 flex-col overflow-hidden">
             <header class="w-full">
                 <div class="relative z-30 flex h-16 shrink-0 bg-base-800">
-                    <button
-                        type="button"
-                        class="px-4 text-neutral focus:outline-none focus:ring-2 focus:ring-inset focus:ring-primary-500 md:hidden"
+                    <UButton
+                        class="px-4 text-neutral focus:ring-2 focus:ring-inset focus:ring-primary-500 md:hidden"
                         @click="mobileMenuOpen = true"
                     >
                         <span class="sr-only">{{ $t('components.partials.sidebar.open_sidebar') }}</span>
                         <MenuIcon class="h-auto w-6" aria-hidden="true" />
-                    </button>
+                    </UButton>
                     <div class="flex flex-1 justify-between px-2 sm:px-6">
                         <div class="flex flex-1">
                             <nav class="flex" aria-label="Breadcrumb">
@@ -539,7 +537,7 @@ watch(router.currentRoute, () => updateActiveItem());
                             <!-- Account dropdown -->
                             <Menu as="div" class="relative shrink-0">
                                 <MenuButton
-                                    class="flex rounded-full bg-base-800 text-sm ring-2 ring-base-600 focus:outline-none focus:ring-2 focus:ring-primary-500 focus:ring-offset-2"
+                                    class="flex rounded-full bg-base-800 text-sm ring-2 ring-base-600 focus:ring-2 focus:ring-primary-500 focus:ring-offset-2"
                                 >
                                     <span class="sr-only">
                                         {{ $t('components.partials.sidebar.open_usermenu') }}
@@ -566,7 +564,7 @@ watch(router.currentRoute, () => updateActiveItem());
                                     leave-to-class="transform scale-95 opacity-0"
                                 >
                                     <MenuItems
-                                        class="absolute right-0 z-30 mt-2 w-48 origin-top-right rounded-md bg-base-800 py-1 shadow-float ring-1 ring-base-100/5 focus:outline-none"
+                                        class="absolute right-0 z-30 mt-2 w-48 origin-top-right rounded-md bg-base-800 py-1 shadow-float ring-1 ring-base-100/5"
                                     >
                                         <MenuItem
                                             v-for="item in userNavigation.filter(

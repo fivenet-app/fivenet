@@ -54,13 +54,12 @@ function updateLaw(event: { id: string; law: Law }): void {
         <div class="px-1 sm:px-2 lg:px-4">
             <div class="sm:flex sm:items-center">
                 <div class="w-full sm:flex-auto">
-                    <button
-                        type="button"
+                    <UButton
                         class="w-full rounded-md bg-primary-500 px-3 py-2 text-sm font-semibold text-neutral hover:bg-primary-400 focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2"
                         @click="addLawBook"
                     >
                         {{ $t('pages.rector.laws.add_new_law_book') }}
-                    </button>
+                    </UButton>
                 </div>
             </div>
             <div class="mt-2 flow-root">

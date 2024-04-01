@@ -23,7 +23,7 @@ const openDetails = ref(false);
         <DispatchDetails :dispatch="dispatch" :open="openDetails" @close="openDetails = false" @goto="$emit('goto', $event)" />
 
         <div class="mr-1.5 flex flex-col items-center gap-2">
-            <input
+            <UInput
                 :value="dispatch.id"
                 name="active"
                 type="radio"
@@ -32,16 +32,14 @@ const openDetails = ref(false);
                 @change="$emit('update:selectedDispatch', dispatch.id)"
             />
 
-            <button
-                type="button"
+            <UButton
                 class="inline-flex items-center text-primary-400 hover:text-primary-600"
                 @click="$emit('goto', { x: dispatch.x, y: dispatch.y })"
             >
                 <MapMarkerIcon class="size-5" aria-hidden="true" />
-            </button>
+            </UButton>
         </div>
-        <button
-            type="button"
+        <UButton
             class="group my-0.5 flex w-full max-w-full flex-col items-center rounded-md bg-error-700 p-2 text-xs font-medium text-neutral hover:bg-primary-100/10 hover:text-neutral hover:transition-all"
             @click="openDetails = true"
         >
@@ -78,6 +76,6 @@ const openDetails = ref(false);
                 <span class="font-semibold">{{ $t('common.sent_at') }}:</span>
                 <GenericTime :value="dispatch.createdAt" type="compact" />
             </span>
-        </button>
+        </UButton>
     </li>
 </template>

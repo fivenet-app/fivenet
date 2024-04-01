@@ -71,15 +71,14 @@ switch (props.type) {
                 </div>
                 <div v-if="callbackMessage" class="mt-4">
                     <div class="-mx-2 -my-1.5 flex">
-                        <button
-                            type="button"
-                            class="flex justify-center rounded-md px-2 py-1.5 text-sm font-medium focus:outline-none focus:ring-2 focus:ring-offset-2"
+                        <UButton
+                            class="flex justify-center rounded-md px-2 py-1.5 text-sm font-medium focus:ring-2 focus:ring-offset-2"
                             :class="[textClass, buttonClass]"
                             @click="$emit('clicked')"
                         >
                             {{ callbackMessage ?? $t('common.retry') }}
                             <GestureTapIcon class="ml-2 size-5" aria-hidden="true" />
-                        </button>
+                        </UButton>
                     </div>
                 </div>
             </div>

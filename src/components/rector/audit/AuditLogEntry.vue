@@ -76,12 +76,12 @@ ${jsonStringify(jsonParse(props.log.data!), 2)}
             </span>
         </td>
         <td class="break-all py-2 pl-3 pr-4 text-right text-sm font-medium sm:pr-0">
-            <button
+            <span
                 class="flex-initial text-primary-500 hover:text-primary-400"
                 :title="$t('components.clipboard.clipboard_button.add')"
             >
                 <ClipboardPlusIcon class="ml-auto mr-2.5 h-auto w-5" aria-hidden="true" @click="addToClipboard" />
-            </button>
+            </span>
         </td>
     </tr>
 </template>

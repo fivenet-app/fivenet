@@ -31,9 +31,8 @@ const { isPending } = useTimeoutFn(() => (disabled.value = false), 1250);
                 </div>
                 <div v-if="retry" class="mt-4">
                     <div class="-mx-2 -my-1.5 flex">
-                        <button
-                            type="button"
-                            class="flex justify-center rounded-md px-2 py-1.5 text-sm font-medium focus:outline-none focus:ring-2 focus:ring-error-600 focus:ring-offset-2 focus-visible:outline-error-500"
+                        <UButton
+                            class="flex justify-center rounded-md px-2 py-1.5 text-sm font-medium focus:ring-2 focus:ring-error-600 focus:ring-offset-2 focus-visible:outline-error-500"
                             :disabled="disabled"
                             :class="[
                                 disabled
@@ -45,7 +44,7 @@ const { isPending } = useTimeoutFn(() => (disabled.value = false), 1250);
                             {{ retryMessage ?? $t('common.retry') }}
                             <RefreshIcon v-if="isPending" class="ml-2 size-5" aria-hidden="true" />
                             <CancelIcon v-else class="ml-2 size-5" aria-hidden="true" />
-                        </button>
+                        </UButton>
                     </div>
                 </div>
             </div>

@@ -124,8 +124,7 @@ const onSubmitThrottle = useThrottleFn(async (accepted: boolean) => {
             </div>
             <div class="flex items-center gap-2">
                 <template v-if="canUpdate && request.accepted === undefined">
-                    <button
-                        type="button"
+                    <UButton
                         :disabled="!canSubmit"
                         class="flex flex-1 justify-center rounded px-3.5 py-2.5 text-sm font-semibold text-neutral"
                         :class="[
@@ -136,9 +135,8 @@ const onSubmitThrottle = useThrottleFn(async (accepted: boolean) => {
                         @click="onSubmitThrottle(true)"
                     >
                         <CheckBoldIcon class="size-5 text-success-400" aria-hidden="true" />
-                    </button>
-                    <button
-                        type="button"
+                    </UButton>
+                    <UButton
                         :disabled="!canSubmit"
                         class="flex flex-1 justify-center rounded p-2.5 text-sm font-semibold text-neutral"
                         :class="[
@@ -149,7 +147,7 @@ const onSubmitThrottle = useThrottleFn(async (accepted: boolean) => {
                         @click="onSubmitThrottle(false)"
                     >
                         <CloseThickIcon class="size-5 text-error-400" aria-hidden="true" />
-                    </button>
+                    </UButton>
                 </template>
 
                 <Menu v-if="canDelete" as="div" class="relative flex-none">
@@ -166,11 +164,10 @@ const onSubmitThrottle = useThrottleFn(async (accepted: boolean) => {
                         leave-to-class="transform opacity-0 scale-95"
                     >
                         <MenuItems
-                            class="absolute right-0 z-30 mt-2 w-28 origin-top-right rounded-md bg-base-800 py-1 shadow-float ring-1 ring-base-100/5 focus:outline-none"
+                            class="absolute right-0 z-30 mt-2 w-28 origin-top-right rounded-md bg-base-800 py-1 shadow-float ring-1 ring-base-100/5"
                         >
                             <MenuItem v-slot="{ close }">
-                                <button
-                                    type="button"
+                                <UButton
                                     class="inline-flex items-center px-4 py-2 text-sm text-neutral hover:transition-colors"
                                     :disabled="!canSubmit"
                                     :class="[
@@ -185,7 +182,7 @@ const onSubmitThrottle = useThrottleFn(async (accepted: boolean) => {
                                 >
                                     <TrashCanIcon class="size-5" aria-hidden="true" />
                                     {{ $t('common.delete') }}
-                                </button>
+                                </UButton>
                             </MenuItem>
                         </MenuItems>
                     </transition>

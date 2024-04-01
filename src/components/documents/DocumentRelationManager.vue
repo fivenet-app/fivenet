@@ -150,14 +150,13 @@ function removeRelation(id: string): void {
                             class="relative my-auto w-full overflow-hidden rounded-lg bg-base-800 px-4 pb-4 pt-5 text-left text-neutral transition-all sm:my-8 sm:max-w-6xl sm:p-6"
                         >
                             <div class="absolute right-0 top-0 hidden pr-4 pt-4 sm:block">
-                                <button
-                                    type="button"
-                                    class="rounded-md transition-colors hover:text-base-300 focus:outline-none focus:ring-2 focus:ring-primary-500 focus:ring-offset-2"
+                                <UButton
+                                    class="rounded-md transition-colors hover:text-base-300 focus:ring-2 focus:ring-primary-500 focus:ring-offset-2"
                                     @click="emit('close')"
                                 >
                                     <span class="sr-only">{{ $t('common.close') }}</span>
                                     <CloseIcon class="size-5" aria-hidden="true" />
-                                </button>
+                                </UButton>
                             </div>
                             <DialogTitle as="h3" class="text-base font-semibold leading-6">
                                 {{ $t('common.citizen', 1) }}
@@ -166,7 +165,7 @@ function removeRelation(id: string): void {
                             <TabGroup>
                                 <TabList class="mb-4 flex flex-row">
                                     <Tab v-for="tab in tabs" :key="tab.name" v-slot="{ selected }" class="w-full flex-initial">
-                                        <button
+                                        <UButton
                                             :class="[
                                                 selected
                                                     ? 'border-primary-500 text-primary-500'
@@ -184,7 +183,7 @@ function removeRelation(id: string): void {
                                                 aria-hidden="true"
                                             />
                                             <span>{{ tab.name }}</span>
-                                        </button>
+                                        </UButton>
                                     </Tab>
                                 </TabList>
                                 <TabPanels>
@@ -269,7 +268,7 @@ function removeRelation(id: string): void {
                                                                                 </NuxtLink>
                                                                             </div>
                                                                             <div class="flex">
-                                                                                <button
+                                                                                <UButton
                                                                                     role="button"
                                                                                     data-te-toggle="tooltip"
                                                                                     :title="
@@ -283,7 +282,7 @@ function removeRelation(id: string): void {
                                                                                         class="h-auto w-5 text-error-400 hover:text-error-200"
                                                                                         aria-hidden="true"
                                                                                     />
-                                                                                </button>
+                                                                                </UButton>
                                                                             </div>
                                                                         </div>
                                                                     </td>
@@ -349,7 +348,7 @@ function removeRelation(id: string): void {
                                                                     <td class="whitespace-nowrap px-3 py-4 text-sm">
                                                                         <div class="flex flex-row gap-2">
                                                                             <div class="flex">
-                                                                                <button
+                                                                                <UButton
                                                                                     role="button"
                                                                                     data-te-toggle="tooltip"
                                                                                     :title="
@@ -368,10 +367,10 @@ function removeRelation(id: string): void {
                                                                                         class="h-auto w-5 text-success-500 hover:text-success-300"
                                                                                         aria-hidden="true"
                                                                                     />
-                                                                                </button>
+                                                                                </UButton>
                                                                             </div>
                                                                             <div class="flex">
-                                                                                <button
+                                                                                <UButton
                                                                                     role="button"
                                                                                     data-te-toggle="tooltip"
                                                                                     :title="
@@ -390,10 +389,10 @@ function removeRelation(id: string): void {
                                                                                         class="h-auto w-5 text-warn-400 hover:text-warn-200"
                                                                                         aria-hidden="true"
                                                                                     />
-                                                                                </button>
+                                                                                </UButton>
                                                                             </div>
                                                                             <div class="flex">
-                                                                                <button
+                                                                                <UButton
                                                                                     role="button"
                                                                                     data-te-toggle="tooltip"
                                                                                     :title="
@@ -412,7 +411,7 @@ function removeRelation(id: string): void {
                                                                                         class="h-auto w-5 text-error-400 hover:text-error-200"
                                                                                         aria-hidden="true"
                                                                                     />
-                                                                                </button>
+                                                                                </UButton>
                                                                             </div>
                                                                         </div>
                                                                     </td>
@@ -426,7 +425,7 @@ function removeRelation(id: string): void {
                                         <TabPanel class="w-full">
                                             <div>
                                                 <label for="name" class="sr-only">Name</label>
-                                                <input
+                                                <UInput
                                                     v-model="queryCitizens"
                                                     type="text"
                                                     name="name"
@@ -496,7 +495,7 @@ function removeRelation(id: string): void {
                                                                     <td class="whitespace-nowrap px-3 py-4 text-sm">
                                                                         <div class="flex flex-row gap-2">
                                                                             <div class="flex">
-                                                                                <button
+                                                                                <UButton
                                                                                     role="button"
                                                                                     data-te-toggle="tooltip"
                                                                                     :title="
@@ -512,10 +511,10 @@ function removeRelation(id: string): void {
                                                                                         class="h-auto w-5 text-success-500 hover:text-success-300"
                                                                                         aria-hidden="true"
                                                                                     />
-                                                                                </button>
+                                                                                </UButton>
                                                                             </div>
                                                                             <div class="flex">
-                                                                                <button
+                                                                                <UButton
                                                                                     role="button"
                                                                                     data-te-toggle="tooltip"
                                                                                     :title="
@@ -531,10 +530,10 @@ function removeRelation(id: string): void {
                                                                                         class="h-auto w-5 text-warn-400 hover:text-warn-200"
                                                                                         aria-hidden="true"
                                                                                     />
-                                                                                </button>
+                                                                                </UButton>
                                                                             </div>
                                                                             <div class="flex">
-                                                                                <button
+                                                                                <UButton
                                                                                     role="button"
                                                                                     data-te-toggle="tooltip"
                                                                                     :title="
@@ -550,7 +549,7 @@ function removeRelation(id: string): void {
                                                                                         class="h-auto w-5 text-error-400 hover:text-error-200"
                                                                                         aria-hidden="true"
                                                                                     />
-                                                                                </button>
+                                                                                </UButton>
                                                                             </div>
                                                                         </div>
                                                                     </td>
@@ -565,13 +564,12 @@ function removeRelation(id: string): void {
                                 </TabPanels>
                             </TabGroup>
                             <div class="mt-5 gap-2 sm:mt-4 sm:flex sm:flex-row-reverse">
-                                <button
-                                    type="button"
+                                <UButton
                                     class="rounded-md bg-base-500 px-3.5 py-2.5 text-sm font-semibold text-neutral hover:bg-base-400"
                                     @click="emit('close')"
                                 >
                                     {{ $t('common.close') }}
-                                </button>
+                                </UButton>
                             </div>
                         </DialogPanel>
                     </TransitionChild>

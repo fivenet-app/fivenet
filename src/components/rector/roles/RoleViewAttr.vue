@@ -250,7 +250,7 @@ onBeforeMount(async () => {
                                 :key="value"
                                 class="flex flex-initial flex-row flex-nowrap"
                             >
-                                <input
+                                <UInput
                                     :id="value"
                                     :name="value"
                                     type="checkbox"
@@ -286,7 +286,7 @@ onBeforeMount(async () => {
                                 :key="job.name"
                                 class="flex flex-initial flex-row flex-nowrap"
                             >
-                                <input
+                                <UInput
                                     :id="job.name"
                                     :name="job.name"
                                     type="checkbox"
@@ -320,7 +320,7 @@ onBeforeMount(async () => {
                                 :key="job.name"
                                 class="flex flex-initial flex-row flex-nowrap gap-2"
                             >
-                                <input
+                                <UInput
                                     :id="job.name"
                                     :name="job.name"
                                     type="checkbox"

@@ -44,24 +44,22 @@ onConfirm(async (id) => deleteMarker(id));
 
     <tr :key="marker.info!.id" class="transition-colors even:bg-base-800 hover:bg-neutral/5">
         <td class="relative items-center justify-start whitespace-nowrap px-0 py-1 text-left text-sm font-medium sm:pr-0.5">
-            <button
-                type="button"
+            <UButton
                 class="text-primary-400 hover:text-primary-600"
                 :title="$t('common.mark')"
                 @click="$emit('goto', { x: marker.info!.x, y: marker.info!.y })"
             >
                 <MapMarkerIcon class="ml-auto mr-1.5 h-auto w-5" aria-hidden="true" />
-            </button>
-            <button
+            </UButton>
+            <UButton
                 v-if="can('LivemapperService.DeleteMarker')"
-                type="button"
                 :title="$t('common.delete')"
                 class="inline-flex flex-row items-center text-primary-400 hover:text-primary-600"
                 @click="reveal(marker.info!.id)"
             >
                 <TrashCanIcon class="size-5" aria-hidden="true" />
                 <span class="sr-only">{{ $t('common.delete') }}</span>
-            </button>
+            </UButton>
         </td>
         <td class="whitespace-nowrap p-1 text-sm text-gray-300">
             <GenericTime :value="marker.info!.createdAt" type="short" />

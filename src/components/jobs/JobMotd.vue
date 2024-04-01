@@ -67,17 +67,11 @@ watch(editing, () => {
             </h4>
 
             <template v-if="canEdit">
-                <button
-                    v-if="!editing"
-                    type="button"
-                    class="text-primary-500 hover:text-primary-400"
-                    @click="editing = !editing"
-                >
+                <UButton v-if="!editing" class="text-primary-500 hover:text-primary-400" @click="editing = !editing">
                     <PencilIcon class="size-5" aria-hidden="true" />
-                </button>
+                </UButton>
                 <div v-else class="flex flex-row gap-1">
-                    <button
-                        type="button"
+                    <UButton
                         class="inline-flex flex-row text-primary-500 hover:text-primary-400"
                         @click="
                             onSubmitThrottle(data?.motd ?? '');
@@ -88,10 +82,10 @@ watch(editing, () => {
                         <template v-if="!canSubmit">
                             <LoadingIcon class="mr-2 size-5 animate-spin" aria-hidden="true" />
                         </template>
-                    </button>
-                    <button type="button" class="text-primary-500 hover:text-primary-400" @click="editing = !editing">
+                    </UButton>
+                    <UButton class="text-primary-500 hover:text-primary-400" @click="editing = !editing">
                         <CancelIcon class="size-5" aria-hidden="true" />
-                    </button>
+                    </UButton>
                 </div>
             </template>
         </div>

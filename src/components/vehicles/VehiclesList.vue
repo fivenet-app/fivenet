@@ -228,13 +228,13 @@ const columns = [
             </template>
             <template #actions-data="{ row }">
                 <div class="flex flex-row justify-end">
-                    <button
+                    <span
                         v-if="!hideCopy"
                         class="flex-initial text-primary-500 hover:text-primary-400"
                         @click="addToClipboard(row)"
                     >
                         <ClipboardPlusIcon class="ml-auto mr-2.5 h-auto w-5" aria-hidden="true" />
-                    </button>
+                    </span>
                     <NuxtLink
                         v-if="!hideCitizenLink && can('CitizenStoreService.ListCitizens')"
                         :to="{

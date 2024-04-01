@@ -77,14 +77,13 @@ async function getTemplate(): Promise<Template> {
                                 class="relative w-full overflow-hidden rounded-lg bg-base-800 px-4 pb-4 pt-5 text-left text-neutral transition-all sm:my-8 sm:w-screen sm:min-w-min sm:p-6"
                             >
                                 <div class="absolute right-0 top-0 block pr-4 pt-4">
-                                    <button
-                                        type="button"
-                                        class="rounded-md bg-neutral-50 text-gray-400 hover:text-gray-500 focus:outline-none focus:ring-2 focus:ring-primary-500 focus:ring-offset-2"
+                                    <UButton
+                                        class="rounded-md bg-neutral-50 text-gray-400 hover:text-gray-500 focus:ring-2 focus:ring-primary-500 focus:ring-offset-2"
                                         @click="$emit('close')"
                                     >
                                         <span class="sr-only">{{ $t('common.close') }}</span>
                                         <CloseIcon class="size-5" aria-hidden="true" />
-                                    </button>
+                                    </UButton>
                                 </div>
                                 <div>
                                     <div class="mt-3 text-center sm:mt-5">
@@ -143,13 +142,12 @@ async function getTemplate(): Promise<Template> {
                                     </div>
                                 </div>
                                 <div class="mt-5 gap-2 sm:mt-4 sm:flex">
-                                    <button
-                                        type="button"
+                                    <UButton
                                         class="flex-1 rounded-md bg-base-500 px-3.5 py-2.5 text-sm font-semibold text-neutral hover:bg-base-400"
                                         @click="$emit('close')"
                                     >
                                         {{ $t('common.close', 1) }}
-                                    </button>
+                                    </UButton>
                                 </div>
                             </DialogPanel>
                         </div>

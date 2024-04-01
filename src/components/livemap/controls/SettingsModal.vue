@@ -45,14 +45,13 @@ const { livemap } = storeToRefs(settingsStore);
                             class="relative w-full overflow-hidden rounded-lg bg-base-800 px-4 pb-4 pt-5 text-left shadow-xl transition-all sm:my-8 sm:max-w-lg sm:p-6"
                         >
                             <div class="absolute right-0 top-0 block pr-4 pt-4">
-                                <button
-                                    type="button"
-                                    class="rounded-md bg-neutral-50 text-gray-400 hover:text-gray-500 focus:outline-none focus:ring-2 focus:ring-primary-500 focus:ring-offset-2"
+                                <UButton
+                                    class="rounded-md bg-neutral-50 text-gray-400 hover:text-gray-500 focus:ring-2 focus:ring-primary-500 focus:ring-offset-2"
                                     @click="$emit('close')"
                                 >
                                     <span class="sr-only">{{ $t('common.close') }}</span>
                                     <CloseIcon class="size-5" aria-hidden="true" />
-                                </button>
+                                </UButton>
                             </div>
                             <div>
                                 <div class="mx-auto flex size-12 items-center justify-center rounded-full bg-success-100">
@@ -84,13 +83,12 @@ const { livemap } = storeToRefs(settingsStore);
                                                 >
                                                     {{ $t('components.livemap.settings.marker_size') }}
                                                 </label>
-                                                <UInput
+                                                <URange
                                                     name="livemapMarkerSize"
-                                                    type="range"
                                                     class="my-auto h-1.5 w-full cursor-grab rounded-full"
-                                                    min="14"
-                                                    max="30"
-                                                    step="2"
+                                                    :min="14"
+                                                    :max="30"
+                                                    :step="2"
                                                     :value="livemap.markerSize"
                                                     @change="
                                                         livemap.markerSize = parseInt(($event.target as HTMLInputElement).value)
@@ -138,13 +136,12 @@ const { livemap } = storeToRefs(settingsStore);
                                 </div>
                             </div>
                             <div class="mt-5 sm:mt-6">
-                                <button
-                                    type="button"
+                                <UButton
                                     class="mt-3 inline-flex w-full justify-center rounded-md bg-neutral-50 px-3 py-2 text-sm font-semibold text-gray-900 shadow-sm ring-1 ring-inset ring-gray-300 hover:bg-gray-200 sm:col-start-1 sm:mt-0"
                                     @click="$emit('close')"
                                 >
                                     {{ $t('common.close') }}
-                                </button>
+                                </UButton>
                             </div>
                         </DialogPanel>
                     </TransitionChild>

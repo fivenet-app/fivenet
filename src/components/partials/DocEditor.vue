@@ -53,7 +53,7 @@ const config = {
         /**
          * Template for the link dialog form
          */
-        formTemplate: (_: Jodit) => `<form><input ref="url_input"><button>Apply</button></form>`,
+        formTemplate: (_: Jodit) => `<form><input ref="url_input"><UButton>Apply</UButton></form>`,
         formClassName: 'some-class',
         /**
          * Follow link address after dblclick

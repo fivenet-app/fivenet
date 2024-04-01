@@ -79,29 +79,17 @@ async function resetLocalStorage(): Promise<void> {
                         {{ $t('components.debug_info.debug_functions') }}
                     </template>
                     <template #default>
-                        <div class="isolate inline-flex rounded-md shadow-sm">
-                            <button
-                                type="button"
-                                class="inline-flex w-full items-center rounded-md bg-base-500 px-3.5 py-2.5 text-sm font-semibold text-neutral hover:bg-base-400"
-                                @click="clipboardStore.clear()"
-                            >
+                        <UButtonGroup class="flex w-full break-words">
+                            <UButton @click="clipboardStore.clear()">
                                 {{ $t('components.debug_info.reset_clipboard') }}
-                            </button>
-                            <button
-                                type="button"
-                                class="ml-2 inline-flex w-full items-center rounded-md bg-base-500 px-3.5 py-2.5 text-sm font-semibold text-neutral hover:bg-base-400"
-                                @click="resetLocalStorage()"
-                            >
+                            </UButton>
+                            <UButton color="white" @click="resetLocalStorage()">
                                 {{ $t('components.debug_info.reset_local_storage') }}
-                            </button>
-                            <NuxtLink
-                                :external="true"
-                                to="/api/clear-site-data"
-                                class="ml-2 inline-flex w-full items-center rounded-md bg-error-800 px-3.5 py-2.5 text-center text-sm font-semibold text-neutral hover:bg-error-600"
-                            >
+                            </UButton>
+                            <UButton color="red" :external="true" to="/api/clear-site-data">
                                 {{ $t('components.debug_info.factory_reset') }}
-                            </NuxtLink>
-                        </div>
+                            </UButton>
+                        </UButtonGroup>
                     </template>
                 </GenericContainerPanelEntry>
                 <GenericContainerPanelEntry v-if="permissions.length > 0">

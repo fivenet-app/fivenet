@@ -25,7 +25,7 @@ defineEmits<{
                 {{ $t('common.citizen', 2) }}
             </label>
             <div class="relative flex items-center gap-1">
-                <input
+                <UInput
                     v-model="modelValue.users.req"
                     type="checkbox"
                     name="users"
@@ -41,7 +41,7 @@ defineEmits<{
                     >
                         {{ $t('common.min') }}
                     </span>
-                    <input
+                    <UInput
                         v-model="modelValue.users.min"
                         :disabled="!modelValue.users.req"
                         type="number"
@@ -59,7 +59,7 @@ defineEmits<{
                     >
                         {{ $t('common.max') }}
                     </span>
-                    <input
+                    <UInput
                         v-model="modelValue.users.max"
                         type="number"
                         min="0"
@@ -77,7 +77,7 @@ defineEmits<{
                 {{ $t('common.document', 2) }}
             </label>
             <div class="relative flex items-center gap-1">
-                <input
+                <UInput
                     v-model="modelValue.documents.req"
                     type="checkbox"
                     name="documents"
@@ -93,7 +93,7 @@ defineEmits<{
                     >
                         {{ $t('common.min') }}
                     </span>
-                    <input
+                    <UInput
                         v-model="modelValue.documents.min"
                         :disabled="!modelValue.documents.req"
                         type="number"
@@ -111,7 +111,7 @@ defineEmits<{
                     >
                         {{ $t('common.max') }}
                     </span>
-                    <input
+                    <UInput
                         v-model="modelValue.documents.max"
                         type="number"
                         min="0"
@@ -129,7 +129,7 @@ defineEmits<{
                 {{ $t('common.vehicle', 2) }}
             </label>
             <div class="relative flex items-center gap-1">
-                <input
+                <UInput
                     v-model="modelValue.vehicles.req"
                     type="checkbox"
                     name="vehicles"
@@ -145,7 +145,7 @@ defineEmits<{
                     >
                         {{ $t('common.min') }}
                     </span>
-                    <input
+                    <UInput
                         v-model="modelValue.vehicles.min"
                         :disabled="!modelValue.vehicles.req"
                         type="number"
@@ -163,7 +163,7 @@ defineEmits<{
                     >
                         {{ $t('common.max') }}
                     </span>
-                    <input
+                    <UInput
                         v-model="modelValue.vehicles.max"
                         type="number"
                         min="0"

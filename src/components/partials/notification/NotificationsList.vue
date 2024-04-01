@@ -89,8 +89,7 @@ const canSubmit = ref(true);
                         </div>
                     </div>
                     <div class="flex-initial">
-                        <button
-                            type="button"
+                        <UButton
                             :disabled="!canSubmit || data?.notifications === undefined || data?.notifications.length === 0"
                             class="inline-flex rounded-md px-3 py-2 text-sm font-semibold text-neutral focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2"
                             :class="
@@ -101,7 +100,7 @@ const canSubmit = ref(true);
                             @click="markAllRead().finally(timeoutFn)"
                         >
                             {{ $t('components.notifications.mark_all_read') }}
-                        </button>
+                        </UButton>
                     </div>
                 </div>
             </form>
@@ -178,9 +177,8 @@ const canSubmit = ref(true);
                             </div>
 
                             <div class="-my-5 -mr-6 flex">
-                                <button
+                                <UButton
                                     v-if="!not.readAt"
-                                    type="button"
                                     class="flex shrink items-center rounded-r-md p-1 text-sm font-semibold text-neutral focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2"
                                     :class="
                                         !canSubmit
@@ -192,7 +190,7 @@ const canSubmit = ref(true);
                                 >
                                     <span class="sr-only">{{ $t('components.notifications.mark_read') }}</span>
                                     <CheckIcon class="size-5 text-gray-300" aria-hidden="true" />
-                                </button>
+                                </UButton>
                                 <span v-else class="size-5"></span>
                             </div>
                         </li>

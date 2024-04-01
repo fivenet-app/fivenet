@@ -132,7 +132,7 @@ watchDebounced(queryCitizens, async () => await findChars(), {
                                     {{ $t('common.time_range') }}: {{ $t('common.from') }}
                                 </label>
                                 <div class="relative mt-2">
-                                    <input
+                                    <UInput
                                         v-model="query.from"
                                         type="datetime-local"
                                         name="from"
@@ -148,7 +148,7 @@ watchDebounced(queryCitizens, async () => await findChars(), {
                                     {{ $t('common.time_range') }}: {{ $t('common.to') }}
                                 </label>
                                 <div class="relative mt-2">
-                                    <input
+                                    <UInput
                                         v-model="query.to"
                                         type="datetime-local"
                                         name="to"
@@ -224,7 +224,7 @@ watchDebounced(queryCitizens, async () => await findChars(), {
                                     {{ $t('common.service') }}
                                 </label>
                                 <div class="relative mt-2">
-                                    <input
+                                    <UInput
                                         v-model="query.service"
                                         type="text"
                                         name="service"
@@ -240,7 +240,7 @@ watchDebounced(queryCitizens, async () => await findChars(), {
                                     {{ $t('common.method') }}
                                 </label>
                                 <div class="relative mt-2">
-                                    <input
+                                    <UInput
                                         v-model="query.method"
                                         type="text"
                                         name="method"
@@ -256,7 +256,7 @@ watchDebounced(queryCitizens, async () => await findChars(), {
                                     {{ $t('common.data') }}
                                 </label>
                                 <div class="relative mt-2">
-                                    <input
+                                    <UInput
                                         ref="searchInput"
                                         v-model="query.search"
                                         type="text"

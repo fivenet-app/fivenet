@@ -133,28 +133,26 @@ const editing = ref(props.startInEdit);
 
     <div class="my-2">
         <div v-if="!editing" class="flex items-center gap-x-2 text-neutral">
-            <button type="button" :title="$t('common.edit')" @click="editing = true">
+            <UButton :title="$t('common.edit')" @click="editing = true">
                 <PencilIcon class="size-5" aria-hidden="true" />
-            </button>
-            <button type="button" :title="$t('common.delete')" @click="reveal()">
+            </UButton>
+            <UButton :title="$t('common.delete')" @click="reveal()">
                 <TrashCanIcon class="size-5" aria-hidden="true" />
-            </button>
+            </UButton>
             <h2 class="text-xl">{{ modelValue.name }}</h2>
             <p v-if="modelValue.description" class="pl-2">- {{ $t('common.description') }}: {{ modelValue.description }}</p>
-            <button
-                type="button"
+            <UButton
                 class="ml-auto rounded-md bg-primary-500 px-3 py-2 text-sm font-semibold text-neutral hover:bg-primary-400 focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2"
                 @click="addLaw"
             >
                 {{ $t('pages.rector.laws.add_new_law') }}
-            </button>
+            </UButton>
         </div>
         <form v-else class="flex w-full flex-row items-start gap-x-4 text-neutral" @submit.prevent="onSubmitThrottle">
-            <button type="submit" :title="$t('common.save')">
+            <UButton type="submit" :title="$t('common.save')">
                 <ContentSaveIcon class="size-5" aria-hidden="true" />
-            </button>
-            <button
-                type="button"
+            </UButton>
+            <UButton
                 :title="$t('common.cancel')"
                 @click="
                     editing = false;
@@ -162,7 +160,7 @@ const editing = ref(props.startInEdit);
                 "
             >
                 <CancelIcon class="size-5" aria-hidden="true" />
-            </button>
+            </UButton>
 
             <div class="flex-initial">
                 <label for="name">

@@ -48,7 +48,7 @@ const open = ref(false);
 
         <dt class="flex-initial text-sm font-medium leading-6 text-neutral">
             <div class="flex h-6 items-center">
-                <input
+                <UInput
                     type="checkbox"
                     name="selected"
                     :checked="checked"
@@ -97,8 +97,7 @@ const open = ref(false);
                         <span class="font-medium">{{ $t('common.postal') }}:</span>
                         {{ dispatch.postal ?? $t('common.na') }}
                     </span>
-                    <button
-                        type="button"
+                    <UButton
                         class="inline-flex items-center text-primary-400 hover:text-primary-600"
                         @click="$emit('goto', { x: dispatch.x, y: dispatch.y })"
                     >
@@ -106,7 +105,7 @@ const open = ref(false);
                         <span class="ml-1">
                             {{ $t('common.go_to_location') }}
                         </span>
-                    </button>
+                    </UButton>
                 </li>
                 <li class="flex items-center py-3 pl-3 pr-4 text-sm">
                     <span class="font-medium">{{ $t('common.status') }}:</span>

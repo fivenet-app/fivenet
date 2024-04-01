@@ -212,7 +212,7 @@ const onSubmitThrottle = useThrottleFn(async (e) => {
                                 {{ $t('common.radio_frequency') }}
                             </template>
                             <template #default>
-                                <input
+                                <UInput
                                     v-model="jobProps.radioFrequency"
                                     v-maska
                                     data-maska="0.9"
@@ -290,7 +290,7 @@ const onSubmitThrottle = useThrottleFn(async (e) => {
                                             @focusin="focusTablet(true)"
                                             @focusout="focusTablet(false)"
                                         >
-                                            <input
+                                            <UInput
                                                 type="file"
                                                 accept="image/jpeg,image/jpg,image/png"
                                                 class="block w-full rounded-md border-0 bg-base-700 py-1.5 text-neutral placeholder:text-accent-200 focus:ring-2 focus:ring-inset focus:ring-base-300 sm:text-sm sm:leading-6"
@@ -315,8 +315,7 @@ const onSubmitThrottle = useThrottleFn(async (e) => {
                         <!-- Save button -->
                         <GenericContainerPanelEntry v-if="can('RectorService.SetJobProps')">
                             <template #default>
-                                <button
-                                    type="button"
+                                <UButton
                                     class="flex w-full justify-center rounded-md px-3 py-2 text-sm font-semibold text-neutral transition-colors focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2"
                                     :class="[
                                         !canSubmit || !meta.valid
@@ -330,7 +329,7 @@ const onSubmitThrottle = useThrottleFn(async (e) => {
                                         <LoadingIcon class="mr-2 size-5 animate-spin" aria-hidden="true" />
                                     </template>
                                     {{ $t('common.save', 1) }}
-                                </button>
+                                </UButton>
                             </template>
                         </GenericContainerPanelEntry>
                     </template>
@@ -348,7 +347,7 @@ const onSubmitThrottle = useThrottleFn(async (e) => {
                                 {{ $t('components.rector.job_props.discord_guild_id') }}
                             </template>
                             <template #default>
-                                <input
+                                <UInput
                                     v-model="jobProps.discordGuildId"
                                     type="text"
                                     class="block w-full rounded-md border-0 bg-base-700 py-1.5 text-neutral placeholder:text-accent-200 focus:ring-2 focus:ring-inset focus:ring-base-300 sm:text-sm sm:leading-6"
@@ -397,7 +396,7 @@ const onSubmitThrottle = useThrottleFn(async (e) => {
                                     <label for="statusLogSettingsChannelId">
                                         {{ $t('components.rector.job_props.status_log_settings.channel_id') }}:
                                     </label>
-                                    <input
+                                    <UInput
                                         v-model="jobProps.discordSyncSettings.statusLogSettings!.channelId"
                                         type="text"
                                         name="statusLogSettingsChannelId"
@@ -431,7 +430,7 @@ const onSubmitThrottle = useThrottleFn(async (e) => {
                                     <label for="gradeRoleFormat">
                                         {{ $t('components.rector.job_props.user_info_sync_settings.grade_role_format') }}:
                                     </label>
-                                    <input
+                                    <UInput
                                         v-model="jobProps.discordSyncSettings.userInfoSyncSettings!.gradeRoleFormat"
                                         type="text"
                                         name="gradeRoleFormat"
@@ -468,7 +467,7 @@ const onSubmitThrottle = useThrottleFn(async (e) => {
                                                 $t('components.rector.job_props.user_info_sync_settings.employee_role_format')
                                             }}:
                                         </label>
-                                        <input
+                                        <UInput
                                             v-model="jobProps.discordSyncSettings.userInfoSyncSettings!.employeeRoleFormat"
                                             type="text"
                                             name="employeeRoleFormat"
@@ -592,7 +591,7 @@ const onSubmitThrottle = useThrottleFn(async (e) => {
                                                         )
                                                     }}:
                                                 </label>
-                                                <input
+                                                <UInput
                                                     v-model="
                                                         jobProps.discordSyncSettings.userInfoSyncSettings!.unemployedRoleName
                                                     "
@@ -640,7 +639,7 @@ const onSubmitThrottle = useThrottleFn(async (e) => {
                                                         )
                                                     }}:
                                                 </label>
-                                                <input
+                                                <UInput
                                                     v-model="jobProps.discordSyncSettings.jobsAbsenceSettings!.absenceRole"
                                                     type="text"
                                                     name="jobsAbsenceRole"
@@ -668,8 +667,7 @@ const onSubmitThrottle = useThrottleFn(async (e) => {
                         <!-- Save button -->
                         <GenericContainerPanelEntry v-if="can('RectorService.SetJobProps')">
                             <template #default>
-                                <button
-                                    type="button"
+                                <UButton
                                     class="flex w-full justify-center rounded-md px-3 py-2 text-sm font-semibold text-neutral transition-colors focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2"
                                     :class="[
                                         !canSubmit || !meta.valid
@@ -683,7 +681,7 @@ const onSubmitThrottle = useThrottleFn(async (e) => {
                                         <LoadingIcon class="mr-2 size-5 animate-spin" aria-hidden="true" />
                                     </template>
                                     {{ $t('common.save', 1) }}
-                                </button>
+                                </UButton>
                             </template>
                         </GenericContainerPanelEntry>
                     </template>

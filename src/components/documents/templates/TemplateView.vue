@@ -190,22 +190,21 @@ onConfirm(async (id) => deleteTemplate(id));
                     >
                         {{ $t('common.edit') }}
                     </NuxtLink>
-                    <button
+                    <UButton
                         v-if="can('DocStoreService.CreateTemplate')"
-                        type="button"
                         class="ml-4 flex w-full justify-center rounded-md bg-accent-600 px-3 py-2 text-sm font-semibold text-neutral transition-colors hover:bg-accent-500 focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-base-300"
                         @click="openPreview = true"
                     >
                         {{ $t('common.preview') }}
-                    </button>
-                    <button
+                    </UButton>
+                    <UButton
                         v-if="can('DocStoreService.DeleteTemplate')"
                         type="submit"
                         class="ml-4 flex w-full justify-center rounded-md bg-error-600 px-3 py-2 text-sm font-semibold text-neutral transition-colors hover:bg-error-500 focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-base-300"
                         @click="reveal()"
                     >
                         {{ $t('common.delete') }}
-                    </button>
+                    </UButton>
                 </div>
             </div>
             <div class="sm:flex sm:items-center">
@@ -225,7 +224,7 @@ onConfirm(async (id) => deleteTemplate(id));
                             {{ $t('common.template', 2) }} {{ $t('common.weight') }}
                         </h3>
                         <div class="my-2">
-                            <input
+                            <UInput
                                 type="text"
                                 name="weight"
                                 class="block w-full rounded-md border-0 bg-base-700 py-1.5 text-neutral placeholder:text-accent-200 focus:ring-2 focus:ring-inset focus:ring-base-300 sm:text-sm sm:leading-6"
@@ -272,7 +271,7 @@ onConfirm(async (id) => deleteTemplate(id));
                             {{ $t('common.content') }} {{ $t('common.state') }}
                         </h3>
                         <div class="my-2">
-                            <input
+                            <UInput
                                 type="text"
                                 name="state"
                                 class="block w-full whitespace-pre-wrap rounded-md border-0 bg-base-700 py-1.5 text-neutral placeholder:text-accent-200 focus:ring-2 focus:ring-inset focus:ring-base-300 sm:text-sm sm:leading-6"

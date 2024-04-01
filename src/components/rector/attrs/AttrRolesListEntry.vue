@@ -18,13 +18,9 @@ defineEmits<{
         </td>
         <td class="whitespace-nowrap py-2 pl-3 pr-2 text-right text-sm font-medium">
             <div class="flex flex-row justify-end">
-                <button
-                    type="button"
-                    class="flex-initial text-primary-500 hover:text-primary-400"
-                    @click="$emit('selected', role)"
-                >
+                <UButton class="flex-initial text-primary-500 hover:text-primary-400" @click="$emit('selected', role)">
                     <EyeIcon class="size-5 text-primary-500" aria-hidden="true" />
-                </button>
+                </UButton>
             </div>
         </td>
     </tr>

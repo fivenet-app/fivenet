@@ -132,14 +132,13 @@ const onSubmitThrottle = useThrottleFn(async () => {
                                                     <IDCopyBadge :id="dispatch.id" class="ml-2" prefix="DSP" />
                                                 </DialogTitle>
                                                 <div class="ml-3 flex h-7 items-center">
-                                                    <button
-                                                        type="button"
-                                                        class="rounded-md bg-gray-100 text-gray-500 hover:text-gray-400 focus:outline-none focus:ring-2 focus:ring-neutral"
+                                                    <UButton
+                                                        class="rounded-md bg-gray-100 text-gray-500 hover:text-gray-400 focus:ring-2 focus:ring-neutral"
                                                         @click="$emit('close')"
                                                     >
                                                         <span class="sr-only">{{ $t('common.close') }}</span>
                                                         <CloseIcon class="size-5" aria-hidden="true" />
-                                                    </button>
+                                                    </UButton>
                                                 </div>
                                             </div>
                                         </div>
@@ -159,10 +158,9 @@ const onSubmitThrottle = useThrottleFn(async () => {
                                                                     }}
                                                                 </p>
                                                                 <div class="grid grid-cols-2 gap-2 lg:grid-cols-3">
-                                                                    <button
+                                                                    <UButton
                                                                         v-for="unit in group.units"
                                                                         :key="unit.name"
-                                                                        type="button"
                                                                         :disabled="unit.users.length === 0"
                                                                         class="inline-flex flex-row items-center gap-x-1 rounded-md p-1.5 text-sm font-medium text-neutral hover:bg-primary-100/10 hover:transition-all"
                                                                         :class="[
@@ -202,7 +200,7 @@ const onSubmitThrottle = useThrottleFn(async () => {
                                                                                 </span>
                                                                             </span>
                                                                         </div>
-                                                                    </button>
+                                                                    </UButton>
                                                                 </div>
                                                             </template>
                                                         </div>
@@ -213,8 +211,7 @@ const onSubmitThrottle = useThrottleFn(async () => {
                                     </div>
                                     <div class="flex shrink-0 justify-end p-4">
                                         <span class="isolate inline-flex w-full rounded-md pr-4 shadow-sm">
-                                            <button
-                                                type="button"
+                                            <UButton
                                                 class="relative inline-flex w-full items-center rounded-l-md px-3.5 py-2.5 text-sm font-semibold text-neutral"
                                                 :disabled="!canSubmit"
                                                 :class="[
@@ -228,14 +225,13 @@ const onSubmitThrottle = useThrottleFn(async () => {
                                                     <LoadingIcon class="mr-2 size-5 animate-spin" aria-hidden="true" />
                                                 </template>
                                                 {{ $t('common.update') }}
-                                            </button>
-                                            <button
-                                                type="button"
+                                            </UButton>
+                                            <UButton
                                                 class="relative -ml-px inline-flex w-full items-center rounded-r-md bg-neutral-50 px-3 py-2 text-sm font-semibold text-gray-900 ring-1 ring-inset ring-gray-300 hover:bg-gray-200 hover:text-gray-900"
                                                 @click="$emit('close')"
                                             >
                                                 {{ $t('common.close', 1) }}
-                                            </button>
+                                            </UButton>
                                         </span>
                                     </div>
                                 </form>

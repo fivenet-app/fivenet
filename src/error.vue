@@ -95,7 +95,7 @@ onBeforeMount(() => {
                         </div>
 
                         <div class="flex justify-center">
-                            <button
+                            <UButton
                                 :disabled="buttonDisabled"
                                 class="w-60 rounded-md px-3.5 py-2.5 text-sm font-semibold text-neutral focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2"
                                 :class="[
@@ -106,9 +106,9 @@ onBeforeMount(() => {
                                 @click="handleError()"
                             >
                                 {{ $t('common.home') }}
-                            </button>
+                            </UButton>
 
-                            <button
+                            <UButton
                                 :disabled="buttonDisabled"
                                 class="w-60 rounded-md px-3.5 py-2.5 text-sm font-semibold text-neutral focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 sm:ml-4"
                                 :class="[
@@ -119,16 +119,16 @@ onBeforeMount(() => {
                                 @click="handleError(useRoute().fullPath)"
                             >
                                 {{ $t('common.retry') }}
-                            </button>
+                            </UButton>
 
                             <!-- @vue-ignore -->
-                            <button
+                            <UButton
                                 v-if="error && (error.statusMessage || error.message)"
                                 class="w-60 rounded-md bg-background px-3.5 py-2.5 text-sm font-semibold text-neutral hover:bg-base-400 focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-base-500 sm:ml-4"
                                 @click="copyError"
                             >
                                 {{ $t ? $t('pages.error.copy_error') : 'Copy Error message' }}
-                            </button>
+                            </UButton>
                         </div>
                     </div>
                 </main>

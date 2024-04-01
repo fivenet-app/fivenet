@@ -14,17 +14,16 @@ function getNameForLawBookId(id: string): string | undefined {
 </script>
 
 <template>
-    <button
+    <UButton
         v-if="selectedLaws.length === 0"
-        type="button"
         disabled
-        class="relative block w-full rounded-lg border-2 border-dashed border-gray-300 p-12 text-center hover:border-gray-400 focus:outline-none focus:ring-2 focus:ring-primary-500 focus:ring-offset-2"
+        class="relative block w-full rounded-lg border-2 border-dashed border-gray-300 p-12 text-center hover:border-gray-400 focus:ring-2 focus:ring-primary-500 focus:ring-offset-2"
     >
         <CalculatorIcon class="mx-auto size-12 text-neutral" aria-hidden="true" />
         <span class="mt-2 block text-sm font-semibold text-gray-300">
             {{ $t('common.none_selected', [`${$t('common.crime')}`]) }}
         </span>
-    </button>
+    </UButton>
     <table v-else class="min-w-full divide-y divide-base-600">
         <thead>
             <tr>

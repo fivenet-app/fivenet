@@ -123,7 +123,7 @@ const onSubmitThrottle = useThrottleFn(async (e) => {
             </div>
 
             <div>
-                <button
+                <UButton
                     type="submit"
                     class="flex w-full justify-center rounded-md px-3 py-2 text-sm font-semibold text-neutral transition-colors focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2"
                     :disabled="!meta.valid || !canSubmit"
@@ -137,18 +137,17 @@ const onSubmitThrottle = useThrottleFn(async (e) => {
                         <LoadingIcon class="mr-2 size-5 animate-spin" aria-hidden="true" />
                     </template>
                     {{ $t('components.auth.forgot_password.submit_button') }}
-                </button>
+                </UButton>
             </div>
         </form>
 
         <div class="mt-6">
-            <button
-                type="button"
+            <UButton
                 class="flex w-full justify-center rounded-md bg-secondary-600 px-3 py-2 text-sm font-semibold text-neutral transition-colors hover:bg-secondary-500 focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-base-300"
                 @click="$emit('toggle')"
             >
                 {{ $t('components.auth.forgot_password.back_to_login_button') }}
-            </button>
+            </UButton>
         </div>
 
         <UAlert
