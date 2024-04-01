@@ -35,7 +35,7 @@ const emit = defineEmits<{
     (e: 'deletedComment'): void;
 }>();
 
-const offset = ref(0n);
+const offset = ref(0);
 
 const { data, pending, refresh, error } = useLazyAsyncData(
     `document-${props.documentId}-comments-${offset}`,

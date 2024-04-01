@@ -26,7 +26,7 @@ const query = ref<{ types: ConductType[]; showExpired?: boolean; user_ids?: User
     user_ids: [],
     showExpired: false,
 });
-const offset = ref(0n);
+const offset = ref(0);
 
 const { data, pending, refresh, error } = useLazyAsyncData(`jobs-conduct-${offset}`, () => listConductEntries());
 
@@ -319,7 +319,7 @@ onConfirm(async (id) => deleteConductEntry(id));
                                             aria-hidden="true"
                                             :class="[
                                                 query.showExpired ? 'translate-x-5' : 'translate-x-0',
-                                                'pointer-events-none inline-block size-5 rounded-full bg-neutral ring-0 transition duration-200 ease-in-out',
+                                                'pointer-events-none inline-block size-5 rounded-full bg-neutral-50 ring-0 transition duration-200 ease-in-out',
                                             ]"
                                         />
                                     </Switch>

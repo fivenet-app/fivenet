@@ -45,7 +45,7 @@ async function switchLanguage(lang: Language): Promise<void> {
             >
                 <span class="sr-only">{{ $t('components.partials.sidebar_language_switcher.open_switcher') }}</span>
                 <TranslateIcon
-                    class="size-10 rounded-full bg-base-800 p-1 text-base-300 hover:text-base-100 hover:transition-colors"
+                    class="size-10 rounded-full bg-base-800 p-1 text-base-300 hover:text-neutral hover:transition-colors"
                     aria-hidden="true"
                 />
             </MenuButton>

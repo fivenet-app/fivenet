@@ -107,7 +107,7 @@ const onSubmitThrottle = useThrottleFn(async (e) => {
                             <div class="absolute right-0 top-0 block pr-4 pt-4">
                                 <button
                                     type="button"
-                                    class="rounded-md bg-neutral text-gray-400 hover:text-gray-500 focus:outline-none focus:ring-2 focus:ring-primary-500 focus:ring-offset-2"
+                                    class="rounded-md bg-neutral-50 text-gray-400 hover:text-gray-500 focus:outline-none focus:ring-2 focus:ring-primary-500 focus:ring-offset-2"
                                     @click="$emit('close')"
                                 >
                                     <span class="sr-only">{{ $t('common.close') }}</span>
@@ -142,7 +142,7 @@ const onSubmitThrottle = useThrottleFn(async (e) => {
                                 <div class="absolute bottom-0 left-0 flex w-full">
                                     <button
                                         type="button"
-                                        class="flex-1 rounded-md bg-neutral px-3.5 py-2.5 text-sm font-semibold text-gray-900 hover:bg-gray-200"
+                                        class="flex-1 rounded-md bg-neutral-50 px-3.5 py-2.5 text-sm font-semibold text-gray-900 hover:bg-gray-200"
                                         @click="$emit('close')"
                                     >
                                         {{ $t('common.close', 1) }}

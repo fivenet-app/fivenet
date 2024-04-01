@@ -18,28 +18,28 @@ const props = withDefaults(
 );
 
 defineEmits<{
-    (e: 'offsetChange', offset: bigint): void;
+    (e: 'offsetChange', offset: number): void;
 }>();
 
-const offset = computed(() => props.pagination?.offset ?? 0n);
-const total = computed(() => props.pagination?.totalCount ?? 0n);
-const pageSize = computed(() => props.pagination?.pageSize ?? 1n);
-const end = computed(() => props.pagination?.end ?? 0n);
+const offset = computed(() => props.pagination?.offset ?? 0);
+const total = computed(() => props.pagination?.totalCount ?? 0);
+const pageSize = computed(() => props.pagination?.pageSize ?? 1);
+const end = computed(() => props.pagination?.end ?? 0);
 
-const totalPages = computed(() => bigIntCeil(total.value, pageSize.value));
-const currentPage = computed(() => offset.value / pageSize.value + 1n);
+const totalPages = computed(() => Math.ceil(total.value / pageSize.value));
+const currentPage = computed(() => offset.value / pageSize.value + 1);
 
-function calculateOffset(pageCount: number): bigint {
-    const pageC = BigInt(pageCount ?? 1);
+function calculateOffset(pageCount?: number): number {
+    const pageC = pageCount ?? 1;
     if (pageC > totalPages.value) {
-        return (totalPages.value - 1n) * pageSize.value;
+        return (totalPages.value - 1) * pageSize.value;
     } else if (pageC < 1) {
-        return 0n;
+        return 0;
     }
 
-    const o = pageSize.value * (pageC - 1n);
+    const o = pageSize.value * (pageC - 1);
     if (o < 0) {
-        return 0n;
+        return 0;
     }
     return o;
 }
@@ -62,7 +62,7 @@ const afterPages = computed(() => {
 
     if (currentPage.value >= totalPages.value) {
         return [];
-    } else if (currentPage.value >= totalPages.value - 1n) {
+    } else if (currentPage.value >= totalPages.value - 1) {
         return [parseInt(totalPages.value.toString())];
     }
 
@@ -103,7 +103,7 @@ const pageNumber = ref(currentPage.value.toString());
                 </template>
                 <template #maxPage>
                     <span class="font-medium text-neutral">
-                        {{ (totalPages === 0n ? 1n : totalPages).toString() }}
+                        {{ totalPages === 0 ? 1 : totalPages }}
                     </span>
                 </template>
                 <template #size>
@@ -140,7 +140,7 @@ const pageNumber = ref(currentPage.value.toString());
                                 : 'bg-primary-500 hover:bg-primary-400',
                             'relative ml-3 inline-flex cursor-pointer items-center rounded-l-md px-3 py-2 text-sm font-semibold text-neutral focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2',
                         ]"
-                        @click="$emit('offsetChange', calculateOffset(parseInt((currentPage - 1n).toString())))"
+                        @click="$emit('offsetChange', calculateOffset(currentPage - 1))"
                     >
                         {{ $t('common.previous') }}
                     </button>
@@ -214,10 +214,10 @@ const pageNumber = ref(currentPage.value.toString());
                     </Popover>
 
                     <button
-                        v-if="currentPage <= totalPages - 1n"
+                        v-if="currentPage <= totalPages - 1"
                         type="button"
                         class="relative inline-flex items-center bg-secondary-500 px-4 py-2 text-sm font-semibold text-neutral hover:bg-base-400 focus:z-20 focus:outline-offset-0"
-                        @click="$emit('offsetChange', calculateOffset(parseInt(totalPages.toString())))"
+                        @click="$emit('offsetChange', calculateOffset(totalPages))"
                     >
                         {{ totalPages }}
                     </button>
@@ -246,7 +246,7 @@ const pageNumber = ref(currentPage.value.toString());
                                 : 'bg-primary-500 hover:bg-primary-400',
                             'relative ml-3 inline-flex cursor-pointer items-center rounded-l-md px-3 py-2 text-sm font-semibold text-neutral focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2',
                         ]"
-                        @click="$emit('offsetChange', offset - pageSize < 0n ? 0n : offset - pageSize)"
+                        @click="$emit('offsetChange', offset - pageSize < 0 ? 0 : offset - pageSize)"
                     >
                         {{ $t('common.previous') }}
                     </button>

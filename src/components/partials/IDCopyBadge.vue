@@ -39,10 +39,10 @@ function click(): void {
 <template>
     <button
         type="button"
-        class="inline-flex flex-initial flex-row items-center gap-1 rounded-full bg-base-500 px-2 py-1 text-base-100"
+        class="inline-flex flex-initial flex-row items-center gap-1 rounded-full bg-gray-600 px-2 py-1 text-neutral"
         @click.prevent="click"
     >
         <FingerprintIcon v-if="hideIcon === undefined || !hideIcon" class="h-auto w-5" aria-hidden="true" />
-        <span class="break-keep text-sm font-medium text-base-100">{{ prefix }}-{{ id }}</span>
+        <span class="break-keep text-sm font-medium text-neutral">{{ prefix }}-{{ id }}</span>
     </button>
 </template>

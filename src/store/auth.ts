@@ -77,6 +77,7 @@ export const useAuthStore = defineStore('auth', {
             this.setActiveChar(null);
             this.setPermissions([]);
             this.setJobProps(undefined);
+            this.username = null;
         },
 
         // GRPC Calls

@@ -3,14 +3,14 @@ import { Combobox, ComboboxButton, ComboboxInput, ComboboxOption, ComboboxOption
 import { watchDebounced } from '@vueuse/core';
 import { CheckIcon } from 'mdi-vue3';
 import DataErrorBlock from '~/components/partials/data/DataErrorBlock.vue';
-import DataNoDataBlock from '~/components/partials/data/DataNoDataBlock.vue';
-import DataPendingBlock from '~/components/partials/data/DataPendingBlock.vue';
-import TablePagination from '~/components/partials/elements/TablePagination.vue';
 import { useCompletorStore } from '~/store/completor';
 import { UserShort } from '~~/gen/ts/resources/users/users';
 import { ViewAuditLogRequest, ViewAuditLogResponse } from '~~/gen/ts/services/rector/rector';
-import AuditLogEntry from '~/components/rector/audit/AuditLogEntry.vue';
-import GenericTable from '~/components/partials/elements/GenericTable.vue';
+import CitizenInfoPopover from '~/components/partials/citizens/CitizenInfoPopover.vue';
+import GenericTime from '~/components/partials/elements/GenericTime.vue';
+import { EventType } from '~~/gen/ts/resources/rector/audit';
+import VueJsonPretty from 'vue-json-pretty';
+import 'vue-json-pretty/lib/styles.css';
 
 const { $grpc } = useNuxtApp();
 
@@ -29,7 +29,7 @@ const query = ref<{
     service: '',
     search: '',
 });
-const offset = ref(0n);
+const offset = ref(0);
 
 async function viewAuditLog(): Promise<ViewAuditLogResponse> {
     const req: ViewAuditLogRequest = {
@@ -275,61 +275,60 @@ watchDebounced(queryCitizens, async () => await findChars(), {
             <div class="mt-2 flow-root">
                 <div class="-my-2 mx-0 overflow-x-auto">
                     <div class="inline-block min-w-full px-1 py-2 align-middle">
-                        <DataPendingBlock v-if="pending" :message="$t('common.loading', [$t('common.audit_log', 2)])" />
                         <DataErrorBlock
-                            v-else-if="error"
+                            v-if="error"
                             :title="$t('common.unable_to_load', [$t('common.audit_log', 2)])"
                             :retry="refresh"
                         />
-                        <DataNoDataBlock
-                            v-else-if="data?.logs.length === 0"
-                            :type="$t('common.audit_log', 2)"
-                            :focus="focusSearch"
-                        />
 
                         <template v-else>
-                            <GenericTable>
-                                <template #thead>
-                                    <tr>
-                                        <th
-                                            scope="col"
-                                            class="py-3.5 pl-4 pr-3 text-left text-sm font-semibold text-neutral sm:pl-1"
-                                        >
-                                            {{ $t('common.id') }}
-                                        </th>
-                                        <th scope="col" class="px-2 py-3.5 text-left text-sm font-semibold text-neutral">
-                                            {{ $t('common.time') }}
-                                        </th>
-                                        <th scope="col" class="px-2 py-3.5 text-left text-sm font-semibold text-neutral">
-                                            {{ $t('common.user', 1) }}
-                                        </th>
-                                        <th scope="col" class="px-2 py-3.5 text-left text-sm font-semibold text-neutral">
-                                            {{ $t('common.service') }}/{{ $t('common.method') }}
-                                        </th>
-                                        <th scope="col" class="px-2 py-3.5 text-left text-sm font-semibold text-neutral">
-                                            {{ $t('common.state') }}
-                                        </th>
-                                        <th scope="col" class="px-2 py-3.5 text-left text-sm font-semibold text-neutral">
-                                            {{ $t('common.data') }}
-                                        </th>
-                                        <th
-                                            scope="col"
-                                            class="relative py-3.5 pl-3 pr-4 text-right text-sm font-semibold text-neutral sm:pr-0"
-                                        >
-                                            {{ $t('common.action', 2) }}
-                                        </th>
-                                    </tr>
+                            <UTable :loading="pending" :rows="data?.logs">
+                                <template #id-header>
+                                    {{ $t('common.id') }}
                                 </template>
-                                <template #tbody>
-                                    <AuditLogEntry v-for="log in data?.logs" :key="log.id" :log="log" />
+                                <template #createdAt-header>
+                                    {{ $t('common.time') }}
                                 </template>
-                            </GenericTable>
+                                <template #user-header>
+                                    {{ $t('common.user', 1) }}
+                                </template>
+                                <template #service-header> {{ $t('common.service') }}</template>
+                                <template #method-header>{{ $t('common.method') }}</template>
+                                <template #state-header>
+                                    {{ $t('common.state') }}
+                                </template>
+                                <template #data-header>
+                                    {{ $t('common.data') }}
+                                </template>
+                                <template #actions-header>
+                                    {{ $t('common.action', 2) }}
+                                </template>
 
-                            <TablePagination
-                                :pagination="data?.pagination"
-                                :refresh="refresh"
-                                @offset-change="offset = $event"
-                            />
+                                <template #id-data="{ row }">
+                                    {{ row.id }}
+                                </template>
+                                <template #createdAt-data="{ row }">
+                                    <GenericTime :value="row.createdAt" type="long" />
+                                </template>
+                                <template #user-data="{ row }">
+                                    <CitizenInfoPopover :user="row.user" />
+                                </template>
+                                <template #state-data="{ row }">
+                                    {{ EventType[row.state] }}
+                                </template>
+                                <template #data-data="{ row }">
+                                    <span v-if="!row.data">N/A</span>
+                                    <span v-else>
+                                        <VueJsonPretty
+                                            :data="jsonParse(row.data!)"
+                                            :show-icon="true"
+                                            :show-length="true"
+                                            :virtual="true"
+                                            :height="160"
+                                        />
+                                    </span>
+                                </template>
+                            </UTable>
                         </template>
                     </div>
                 </div>

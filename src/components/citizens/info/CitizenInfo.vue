@@ -1,7 +1,4 @@
 <script lang="ts" setup>
-import { Tab, TabGroup, TabList, TabPanel, TabPanels } from '@headlessui/vue';
-import { AccountIcon, BulletinBoardIcon, CarIcon, CloseIcon, FileDocumentMultipleIcon, MenuIcon } from 'mdi-vue3';
-import type { DefineComponent } from 'vue';
 import AddToButton from '~/components/clipboard/AddToButton.vue';
 import { useClipboardStore } from '~/store/clipboard';
 import { useNotificatorStore } from '~/store/notificator';
@@ -29,29 +26,29 @@ const notifications = useNotificatorStore();
 
 const { t } = useI18n();
 
-const tabs: { id: string; name: string; icon: DefineComponent; permission: Perms }[] = [
+const tabs: { slot: string; label: string; icon: string; permission: Perms }[] = [
     {
-        id: 'profile',
-        name: t('common.profile'),
-        icon: markRaw(AccountIcon),
+        slot: 'profile',
+        label: t('common.profile'),
+        icon: 'i-mdi-account',
         permission: 'CitizenStoreService.ListCitizens' as Perms,
     },
     {
-        id: 'vehicles',
-        name: t('common.vehicle', 2),
-        icon: markRaw(CarIcon),
+        slot: 'vehicles',
+        label: t('common.vehicle', 2),
+        icon: 'i-mdi-car',
         permission: 'DMVService.ListVehicles' as Perms,
     },
     {
-        id: 'documents',
-        name: t('common.document', 2),
-        icon: markRaw(FileDocumentMultipleIcon),
+        slot: 'documents',
+        label: t('common.document', 2),
+        icon: 'i-mdi-file-document-multiple',
         permission: 'DocStoreService.ListUserDocuments' as Perms,
     },
     {
-        id: 'activity',
-        name: t('common.activity'),
-        icon: markRaw(BulletinBoardIcon),
+        slot: 'activity',
+        label: t('common.activity'),
+        icon: 'i-mdi-bulletin-board',
         permission: 'CitizenStoreService.ListUserActivity' as Perms,
     },
 ].filter((tab) => can(tab.permission));
@@ -90,18 +87,10 @@ function addToClipboard(): void {
         type: 'info',
     });
 }
-
-const selectedTab = ref(0);
-
-function changeTab(index: number) {
-    selectedTab.value = index;
-}
-
-const open = ref(false);
 </script>
 
 <template>
-    <div class="m-2">
+    <div class="mx-2">
         <DataPendingBlock v-if="pending" :message="$t('common.loading', [$t('common.citizen', 1)])" />
         <DataErrorBlock
             v-else-if="error"
@@ -112,7 +101,6 @@ const open = ref(false);
         <DataNoDataBlock v-else-if="user === null" />
 
         <template v-else>
-            <ClipboardButton />
             <div class="mb-14">
                 <div class="my-4 flex gap-4 px-4">
                     <ProfilePictureImg
@@ -136,125 +124,61 @@ const open = ref(false);
                                 class="min-h-9 place-self-end"
                             />
                         </div>
-                        <div class="my-2 flex flex-row items-center gap-2">
-                            <span class="rounded-full bg-base-100 px-2.5 py-0.5 text-sm font-medium text-base-800">
+                        <div class="inline-flex gap-2">
+                            <UBadge>
                                 {{ user.jobLabel }}
-                                <span v-if="user.jobGrade > 0"> ({{ $t('common.rank') }}: {{ user.jobGradeLabel }})</span>
-                            </span>
-                            <span
-                                v-if="user.props?.wanted"
-                                class="inline-flex items-center rounded-full bg-error-100 px-2.5 py-0.5 text-sm font-medium text-error-700"
-                            >
+                                <template v-if="user.jobGrade > 0">
+                                    ({{ $t('common.rank') }}: {{ user.jobGradeLabel }})</template
+                                >
+                            </UBadge>
+                            <UBadge v-if="user.props?.wanted" color="red">
                                 {{ $t('common.wanted').toUpperCase() }}
-                            </span>
+                            </UBadge>
                         </div>
                     </div>
                 </div>
 
-                <nav class="bg-base-700 lg:rounded-lg">
-                    <div class="mx-auto ml-2 max-w-7xl px-4 sm:px-6 lg:px-8">
-                        <div class="flex h-16 items-center justify-between">
-                            <div class="flex items-center md:overflow-x-auto">
-                                <div class="-ml-2 flex md:hidden">
-                                    <!-- Mobile menu button -->
-                                    <button
-                                        type="button"
-                                        class="relative inline-flex items-center justify-center rounded-md bg-base-500 p-2 text-accent-200 hover:bg-base-400/75 hover:text-neutral focus:outline-none focus:ring-2 focus:ring-neutral focus:ring-offset-2 focus:ring-offset-base-600"
-                                        @click="open = !open"
-                                    >
-                                        <span class="absolute -inset-0.5" />
-                                        <span class="sr-only">{{ $t('components.partials.sidebar.open_navigation') }}</span>
-                                        <MenuIcon v-if="!open" class="block size-5" aria-hidden="true" />
-                                        <CloseIcon v-else class="block size-5" aria-hidden="true" />
-                                    </button>
-                                </div>
-                                <div class="hidden md:block">
-                                    <div class="flex items-baseline space-x-2">
-                                        <template v-for="(tab, index) in tabs" :key="tab.id">
-                                            <span class="flex-1">
-                                                <button
-                                                    type="button"
-                                                    class="group flex shrink-0 items-center gap-2 rounded-md p-3 text-sm font-medium text-accent-100 hover:bg-accent-100/10 hover:text-neutral hover:transition-all"
-                                                    :class="
-                                                        selectedTab === index
-                                                            ? 'bg-accent-100/20 font-bold text-primary-300'
-                                                            : ''
-                                                    "
-                                                    @click="selectedTab = index"
-                                                >
-                                                    <component
-                                                        :is="tab.icon"
-                                                        :class="[
-                                                            selectedTab === index ? '' : 'group-hover:text-base-300',
-                                                            'size-5',
-                                                        ]"
-                                                        aria-hidden="true"
-                                                    />
-                                                    <span>
-                                                        {{ tab.name }}
-                                                    </span>
-                                                </button>
-                                            </span>
-                                        </template>
-                                    </div>
-                                </div>
-                            </div>
-                        </div>
-                        <div class="-mx-3 md:hidden" :class="open ? 'block' : 'hidden'">
-                            <div class="space-y-1 px-2 pb-3 pt-2 sm:px-3">
-                                <template v-for="(tab, index) in tabs" :key="tab.id">
-                                    <button
-                                        type="button"
-                                        class="group flex w-full shrink-0 items-center gap-2 rounded-md p-2 text-sm font-medium text-accent-100 hover:bg-accent-100/10 hover:text-neutral hover:transition-all"
-                                        :class="selectedTab === index ? 'bg-accent-100/20 font-bold text-primary-300' : ''"
-                                        @click="selectedTab = index"
-                                    >
-                                        <component
-                                            :is="tab.icon"
-                                            :class="[selectedTab === index ? '' : 'group-hover:text-base-300', 'size-5']"
-                                            aria-hidden="true"
-                                        />
-                                        <span>
-                                            {{ tab.name }}
-                                        </span>
-                                    </button>
-                                </template>
-                            </div>
-                        </div>
-                    </div>
-                </nav>
+                <UTabs :items="tabs" class="w-full" :unmount="true">
+                    <template #default="{ item, selected }">
+                        <div class="flex items-center gap-2 relative truncate">
+                            <UIcon :name="item.icon" class="w-4 h-4 flex-shrink-0" />
 
-                <TabGroup :selected-index="selectedTab" @change="changeTab">
-                    <TabList class="hidden">
-                        <Tab v-for="tab in tabs" :key="tab.id"></Tab>
-                    </TabList>
-                    <TabPanels class="mt-2 bg-transparent">
-                        <TabPanel>
-                            <CitizenProfile
-                                :user="user"
-                                @update:wanted-status="user.props!.wanted = $event"
-                                @update:job="
-                                    user.job = $event.job.name;
-                                    user.jobLabel = $event.job.label;
-                                    user.jobGrade = $event.grade.grade;
-                                    user.jobGradeLabel = $event.grade.label;
-                                "
-                                @update:traffic-infraction-points="user.props!.trafficInfractionPoints = $event"
-                                @update:mug-shot="user.props!.mugShot = $event"
+                            <span class="truncate">{{ item.label }}</span>
+
+                            <span
+                                v-if="selected"
+                                class="absolute -right-4 w-2 h-2 rounded-full bg-primary-500 dark:bg-primary-400"
                             />
-                        </TabPanel>
-                        <TabPanel v-if="can('DMVService.ListVehicles')">
-                            <CitizenVehicles :user-id="user.userId" />
-                        </TabPanel>
-                        <TabPanel v-if="can('DocStoreService.ListUserDocuments')">
-                            <CitizenDocuments :user-id="user.userId" />
-                        </TabPanel>
-                        <TabPanel v-if="can('CitizenStoreService.ListUserActivity')">
-                            <CitizenActivityFeed :user-id="user.userId" />
-                        </TabPanel>
-                    </TabPanels>
-                </TabGroup>
+                        </div>
+                    </template>
+
+                    <template #profile>
+                        <CitizenProfile
+                            :user="user"
+                            @update:wanted-status="user.props!.wanted = $event"
+                            @update:job="
+                                user.job = $event.job.name;
+                                user.jobLabel = $event.job.label;
+                                user.jobGrade = $event.grade.grade;
+                                user.jobGradeLabel = $event.grade.label;
+                            "
+                            @update:traffic-infraction-points="user.props!.trafficInfractionPoints = $event"
+                            @update:mug-shot="user.props!.mugShot = $event"
+                        />
+                    </template>
+                    <template #vehicles v-if="can('DMVService.ListVehicles')">
+                        <CitizenVehicles :user-id="user.userId" />
+                    </template>
+                    <template #documents v-if="can('DocStoreService.ListUserDocuments')">
+                        <CitizenDocuments :user-id="user.userId" />
+                    </template>
+                    <template #activity v-if="can('CitizenStoreService.ListUserActivity')">
+                        <CitizenActivityFeed :user-id="user.userId" />
+                    </template>
+                </UTabs>
             </div>
+
+            <ClipboardButton />
         </template>
     </div>
 

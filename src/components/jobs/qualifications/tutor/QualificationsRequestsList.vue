@@ -24,7 +24,7 @@ const props = withDefaults(
 
 const { $grpc } = useNuxtApp();
 
-const offset = ref(0n);
+const offset = ref(0);
 
 const { data, pending, refresh, error } = useLazyAsyncData(`qualifications-requests-${props.qualificationId}`, () =>
     listQualificationsRequests(props.qualificationId),

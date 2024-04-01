@@ -19,7 +19,7 @@ const query = ref<{
     name: '',
     absent: false,
 });
-const offset = ref(0n);
+const offset = ref(0);
 
 const { data, pending, refresh, error } = useLazyAsyncData(`jobs-colleagues-${offset.value}-${query.value.name}`, async () => {
     try {
@@ -112,7 +112,7 @@ function updateAbsenceDates(value: { userId: number; absenceBegin?: Timestamp; a
                                             aria-hidden="true"
                                             :class="[
                                                 query.absent ? 'translate-x-5' : 'translate-x-0',
-                                                'pointer-events-none inline-block size-5 rounded-full bg-neutral ring-0 transition duration-200 ease-in-out',
+                                                'pointer-events-none inline-block size-5 rounded-full bg-neutral-50 ring-0 transition duration-200 ease-in-out',
                                             ]"
                                         />
                                     </Switch>

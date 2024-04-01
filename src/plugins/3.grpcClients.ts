@@ -92,9 +92,6 @@ export class GRPCClients {
     async handleError(err: RpcError): Promise<boolean> {
         const notifications = useNotificatorStore();
 
-        const { $loading } = useNuxtApp();
-        $loading.errored();
-
         const notification = {
             id: '',
             type: 'error',

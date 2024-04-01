@@ -102,7 +102,7 @@ async function getDocumentReferences(): Promise<DocumentReference[]> {
                     <div class="flex flex-col">
                         <div class="min-w-full overflow-hidden overflow-x-auto align-middle sm:rounded-lg">
                             <table
-                                class="min-w-full divide-y divide-base-600 border-2 border-gray-600 bg-base-600 text-neutral"
+                                class="min-w-full divide-y divide-base-600 border-2 border-gray-600 bg-background text-neutral"
                             >
                                 <thead>
                                     <tr>

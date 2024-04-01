@@ -24,7 +24,6 @@ import QuickButtons from '~/components/partials/quickbuttons/QuickButtons.vue';
 import FiveNetLogo from '~/components/partials/logos/FiveNetLogo.vue';
 import SuperUserMenu from '~/components/partials/sidebar/SuperUserMenu.vue';
 import LanguageSwitcherMenu from '~/components/partials/sidebar/LanguageSwitcherMenu.vue';
-import NotificationsButton from '~/components/partials/sidebar/NotificationsButton.vue';
 import { useAuthStore } from '~/store/auth';
 import type { Perms } from '~~/gen/ts/perms';
 import ProfilePictureImg from '~/components/partials/citizens/ProfilePictureImg.vue';
@@ -534,7 +533,6 @@ watch(router.currentRoute, () => updateActiveItem());
                                         ({{ activeChar.jobLabel }})
                                     </span>
                                 </div>
-                                <NotificationsButton />
                             </template>
                             <LanguageSwitcherMenu />
 
@@ -548,7 +546,7 @@ watch(router.currentRoute, () => updateActiveItem());
                                     </span>
                                     <AccountIcon
                                         v-if="!activeChar?.avatar?.url"
-                                        class="h-10 w-auto rounded-full bg-base-800 fill-base-300 text-base-300 hover:fill-base-100 hover:text-base-100 hover:transition-colors"
+                                        class="h-10 w-auto rounded-full bg-base-800 fill-base-300 text-base-300 hover:fill-base-100 hover:text-neutral hover:transition-colors"
                                     />
                                     <ProfilePictureImg
                                         v-else

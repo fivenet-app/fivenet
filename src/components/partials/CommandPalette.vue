@@ -472,7 +472,7 @@ async function onSelect(item: any): Promise<any> {
                                 <template #key1>
                                     <kbd
                                         :class="[
-                                            'mx-1 flex size-5 items-center justify-center rounded border bg-neutral font-semibold sm:mx-2',
+                                            'mx-1 flex size-5 items-center justify-center rounded border bg-neutral-50 font-semibold sm:mx-2',
                                             rawQuery.startsWith('@')
                                                 ? 'border-primary-600 text-primary-600'
                                                 : 'border-gray-400 text-gray-900',
@@ -483,7 +483,7 @@ async function onSelect(item: any): Promise<any> {
                                 <template #key2>
                                     <kbd
                                         :class="[
-                                            'mx-1 flex size-5 items-center justify-center rounded border bg-neutral font-semibold sm:mx-2',
+                                            'mx-1 flex size-5 items-center justify-center rounded border bg-neutral-50 font-semibold sm:mx-2',
                                             rawQuery.startsWith('#')
                                                 ? 'border-primary-600 text-primary-600'
                                                 : 'border-gray-400 text-gray-900',

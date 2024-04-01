@@ -105,7 +105,7 @@ async function getDocumentRelations(): Promise<DocumentRelation[]> {
                 <div>
                     <div class="flex flex-col">
                         <div class="w-full overflow-hidden overflow-x-auto align-middle">
-                            <table class="w-full divide-y divide-base-400 bg-base-600 text-neutral">
+                            <table class="w-full divide-y divide-base-400 bg-background text-neutral">
                                 <thead>
                                     <tr>
                                         <th v-if="showDocument" class="px-6 py-3 text-left text-sm font-semibold" scope="col">

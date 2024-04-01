@@ -48,7 +48,7 @@ onConfirm(async (provider) => disconnectOAuth2Connection(provider));
                 <img
                     :src="account.avatar"
                     alt="Avatar"
-                    class="size-10 rounded-full bg-base-800 fill-base-300 text-base-300 ring-2 ring-neutral hover:fill-base-100 hover:text-base-100 hover:transition-colors"
+                    class="size-10 rounded-full bg-base-800 fill-base-300 text-base-300 ring-2 ring-neutral hover:fill-base-100 hover:text-neutral hover:transition-colors"
                 />
 
                 <span class="text-left" :title="`ID: ${account.externalId}`">

@@ -8,13 +8,10 @@ import {
     HoopHouseIcon,
     InformationOutlineIcon,
     LoadingIcon,
-    MonitorIcon,
-    RobotIcon,
     ToggleSwitchIcon,
     ToggleSwitchOffIcon,
 } from 'mdi-vue3';
 import DispatchStatusUpdateModal from '~/components/centrum/dispatches/DispatchStatusUpdateModal.vue';
-import DisponentsModal from '~/components/centrum/disponents/DisponentsModal.vue';
 import {
     dispatchStatusToBGColor,
     dispatchStatuses,
@@ -316,7 +313,7 @@ async function checkup(): Promise<void> {
             <LControl position="bottomright">
                 <button
                     type="button"
-                    class="inset-0 inline-flex items-center justify-center rounded-md border-2 border-black/20 bg-neutral bg-clip-padding text-black hover:bg-[#f4f4f4] focus:outline-none"
+                    class="inset-0 inline-flex items-center justify-center rounded-md border-2 border-black/20 bg-neutral-50 bg-clip-padding text-black hover:bg-[#f4f4f4] focus:outline-none"
                     @click="open = !open"
                 >
                     <ToggleSwitchIcon v-if="open" class="size-5" aria-hidden="true" />
@@ -361,40 +358,11 @@ async function checkup(): Promise<void> {
                 >
                     <div
                         v-if="open"
-                        class="flex h-full grow gap-y-5 overflow-y-auto overflow-x-hidden bg-base-600 py-0.5"
+                        class="flex h-full grow gap-y-5 overflow-y-auto overflow-x-hidden bg-background py-0.5"
                         :class="open || getOwnUnit !== undefined ? 'px-4' : ''"
                     >
                         <nav class="flex min-w-48 max-w-48 flex-1 flex-col md:min-w-64 md:max-w-64">
                             <ul role="list" class="flex flex-1 flex-col gap-y-2 divide-y divide-base-400">
-                                <li class="-mx-2 -mb-1">
-                                    <DisponentsModal :open="openDisponents" @close="openDisponents = false" />
-
-                                    <button
-                                        type="button"
-                                        class="group mt-0.5 flex w-full flex-row items-center justify-center rounded-md p-1 text-xs font-medium text-neutral hover:bg-primary-100/10 hover:text-neutral hover:transition-all"
-                                        :class="
-                                            getCurrentMode === CentrumMode.AUTO_ROUND_ROBIN
-                                                ? 'bg-info-400/10 text-info-500 ring-info-400/20'
-                                                : disponents.length === 0
-                                                  ? 'bg-warn-400/10 text-warn-500 ring-warn-400/20'
-                                                  : 'bg-success-500/10 text-success-400 ring-success-500/20'
-                                        "
-                                        @click="openDisponents = true"
-                                    >
-                                        <template v-if="getCurrentMode !== CentrumMode.AUTO_ROUND_ROBIN">
-                                            <MonitorIcon class="mr-1 size-5" aria-hidden="true" />
-                                            <span class="truncate">
-                                                {{ $t('common.disponent', disponents.length) }}
-                                            </span>
-                                        </template>
-                                        <template v-else>
-                                            <RobotIcon class="mr-1 size-5" aria-hidden="true" />
-                                            <span class="truncate">
-                                                {{ $t('enums.centrum.CentrumMode.AUTO_ROUND_ROBIN') }}
-                                            </span>
-                                        </template>
-                                    </button>
-                                </li>
                                 <li>
                                     <ul role="list" class="-mx-2 mt-1 space-y-0.5">
                                         <li>
@@ -450,7 +418,7 @@ async function checkup(): Promise<void> {
                                 <template v-if="getOwnUnit !== undefined">
                                     <li>
                                         <ul role="list" class="-mx-2 space-y-0.5">
-                                            <div class="inline-flex items-center text-xs font-semibold leading-6 text-base-100">
+                                            <div class="inline-flex items-center text-xs font-semibold leading-6 text-neutral">
                                                 {{ $t('common.unit') }}
                                                 <LoadingIcon
                                                     v-if="!canSubmitUnitStatus"
@@ -480,7 +448,7 @@ async function checkup(): Promise<void> {
                                                     >
                                                         <component
                                                             :is="item.icon ?? HoopHouseIcon"
-                                                            class="size-5 shrink-0 text-base-100 group-hover:text-neutral"
+                                                            class="size-5 shrink-0 text-neutral group-hover:text-neutral"
                                                             aria-hidden="true"
                                                         />
                                                         <span class="mt-1">
@@ -506,7 +474,7 @@ async function checkup(): Promise<void> {
                                     </li>
                                     <li>
                                         <ul role="list" class="-mx-2 space-y-0.5">
-                                            <div class="inline-flex items-center text-xs font-semibold leading-6 text-base-100">
+                                            <div class="inline-flex items-center text-xs font-semibold leading-6 text-neutral">
                                                 {{ $t('common.dispatch') }} {{ $t('common.status') }}
                                                 <LoadingIcon
                                                     v-if="!canSubmitDispatchStatus"
@@ -533,7 +501,7 @@ async function checkup(): Promise<void> {
                                                     >
                                                         <component
                                                             :is="item.icon ?? HoopHouseIcon"
-                                                            class="size-5 shrink-0 text-base-100 group-hover:text-neutral"
+                                                            class="size-5 shrink-0 text-neutral group-hover:text-neutral"
                                                             aria-hidden="true"
                                                         />
                                                         <span class="mt-1">
@@ -560,7 +528,7 @@ async function checkup(): Promise<void> {
                                         </ul>
                                     </li>
                                     <li>
-                                        <div class="text-xs font-semibold leading-6 text-base-100">
+                                        <div class="text-xs font-semibold leading-6 text-neutral">
                                             {{ $t('common.your_dispatches') }}
                                         </div>
                                         <ul role="list" class="-mx-2 mt-1 space-y-0.5">

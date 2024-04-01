@@ -8,6 +8,7 @@ useHead({
 });
 definePageMeta({
     title: 'components.auth.character_selector.title',
+    layout: 'auth',
     requiresAuth: true,
     authOnlyToken: true,
     showQuickButtons: false,
@@ -27,9 +28,7 @@ onMounted(async () => {
 </script>
 
 <template>
-    <main class="flex size-full">
-        <div class="my-auto py-2 max-sm:w-full sm:mx-auto lg:mx-auto">
-            <CharacterSelector />
-        </div>
-    </main>
+    <UCard class="w-full">
+        <CharacterSelector />
+    </UCard>
 </template>

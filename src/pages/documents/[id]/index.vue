@@ -2,7 +2,6 @@
 import { type TypedRouteFromName } from '@typed-router';
 import ClipboardButton from '~/components/clipboard/ClipboardButton.vue';
 import DocumentView from '~/components/documents/DocumentView.vue';
-import ContentWrapper from '~/components/partials/ContentWrapper.vue';
 
 useHead({
     title: 'pages.documents.id.title',
@@ -22,9 +21,12 @@ const route = useRoute('documents-id');
 </script>
 
 <template>
-    <ContentWrapper>
-        <DocumentView :document-id="route.params.id as string" />
+    <UDashboardPage>
+        <UDashboardPanel grow>
+            <UDashboardNavbar :title="$t('pages.documents.id.title')"></UDashboardNavbar>
+            <DocumentView :document-id="route.params.id as string" />
 
-        <ClipboardButton />
-    </ContentWrapper>
+            <ClipboardButton />
+        </UDashboardPanel>
+    </UDashboardPage>
 </template>

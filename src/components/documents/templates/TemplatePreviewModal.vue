@@ -79,7 +79,7 @@ async function getTemplate(): Promise<Template> {
                                 <div class="absolute right-0 top-0 block pr-4 pt-4">
                                     <button
                                         type="button"
-                                        class="rounded-md bg-neutral text-gray-400 hover:text-gray-500 focus:outline-none focus:ring-2 focus:ring-primary-500 focus:ring-offset-2"
+                                        class="rounded-md bg-neutral-50 text-gray-400 hover:text-gray-500 focus:outline-none focus:ring-2 focus:ring-primary-500 focus:ring-offset-2"
                                         @click="$emit('close')"
                                     >
                                         <span class="sr-only">{{ $t('common.close') }}</span>

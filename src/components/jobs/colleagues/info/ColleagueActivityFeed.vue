@@ -28,7 +28,7 @@ const selectedUsersIds = computed(() =>
     props.userId !== undefined ? [props.userId] : selectedUsers.value.map((u) => u.userId),
 );
 
-const offset = ref(0n);
+const offset = ref(0);
 const { data, pending, refresh, error } = useLazyAsyncData(
     `jobs-colleague-${selectedUsersIds.value.join(',')}-${offset.value}`,
     () => listColleagueActivity(selectedUsersIds.value),

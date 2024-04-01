@@ -37,13 +37,22 @@ watch(chars, async () => {
     <DataPendingBlock v-if="pending" :message="$t('common.loading', [`${$t('common.your')} ${$t('common.character', 2)}`])" />
     <DataErrorBlock v-else-if="error" :title="$t('common.not_found', [$t('common.character', 2)])" :retry="refresh" />
     <template v-else>
-        <div class="grid grid-flow-row auto-rows-max gap-8 md:mx-4 md:grid-flow-col">
-            <CharacterSelectorCard
-                v-for="char in chars"
-                :key="char.userId"
-                :char="char"
-                class="mx-auto w-[30rem] min-w-[30rem] max-w-[30rem] flex-auto"
-            />
-        </div>
+        <UCarousel
+            v-slot="{ item }"
+            class="backdrop-blur"
+            :items="chars"
+            arrows
+            :prev-button="{
+                color: 'gray',
+                icon: 'i-mdi-arrow-left',
+            }"
+            :next-button="{
+                color: 'gray',
+                icon: 'i-mdi-arrow-right',
+            }"
+            :ui="{ item: 'basis-full sm:basis-1/4', container: 'rounded-lg' }"
+        >
+            <CharacterSelectorCard :key="item.userId" :char="item" />
+        </UCarousel>
     </template>
 </template>

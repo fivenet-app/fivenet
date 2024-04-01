@@ -13,7 +13,7 @@ const props = defineProps<{
 
 const { $grpc } = useNuxtApp();
 
-const offset = ref(0n);
+const offset = ref(0);
 
 const { data, pending, refresh, error } = useLazyAsyncData(`document-${props.documentId}-${offset.value}`, () =>
     listDocumentActivity(),

@@ -10,7 +10,7 @@ export type ValueOf<T> = T[keyof T];
 export type CardElement = {
     title: string;
     description?: string;
-    href?: RoutesNamedLocations;
+    to?: RoutesNamedLocations;
     permission?: Perms;
     icon?: string;
     iconForeground?: string;

@@ -6,7 +6,6 @@ import ConfirmDialog from '~/components/partials/ConfirmDialog.vue';
 import DataErrorBlock from '~/components/partials/data/DataErrorBlock.vue';
 import DataNoDataBlock from '~/components/partials/data/DataNoDataBlock.vue';
 import DataPendingBlock from '~/components/partials/data/DataPendingBlock.vue';
-import GenericDivider from '~/components/partials/elements/GenericDivider.vue';
 import RoleViewAttr from '~/components/rector/roles/RoleViewAttr.vue';
 import { useNotificatorStore } from '~/store/notificator';
 import { AttributeValues, Permission, Role, RoleAttribute } from '~~/gen/ts/resources/permissions/permissions';
@@ -254,7 +253,7 @@ onConfirm(async (id) => deleteRole(id));
                         <TrashCanIcon class="mx-auto size-5 text-neutral" aria-hidden="true" />
                     </button>
                 </h2>
-                <GenericDivider :label="$t('common.permission', 2)" />
+                <UDivider :label="$t('common.permission', 2)" />
                 <div class="flex flex-col gap-4 py-2">
                     <button
                         type="button"
@@ -321,7 +320,7 @@ onConfirm(async (id) => deleteRole(id));
                                             </button>
                                             <button
                                                 :data-active="!permStates.has(perm.id) || permStates.get(perm.id) === undefined"
-                                                class="bg-base-700 p-1 text-base-300 transition-colors data-[active=true]:bg-base-500 data-[active=true]:text-neutral hover:bg-base-600"
+                                                class="bg-base-700 p-1 text-base-300 transition-colors data-[active=true]:bg-base-500 data-[active=true]:text-neutral hover:bg-background"
                                                 @click="updatePermissionState(perm.id, undefined)"
                                             >
                                                 <MinusIcon class="size-5" aria-hidden="true" />

@@ -21,19 +21,23 @@ const { accessToken } = storeToRefs(authStore);
             <ULandingHero
                 :title="$t('pages.notfound.page_not_found')"
                 :description="$t('pages.notfound.fun_error')"
-                :links="
+                :links="[
+                    {
+                        label: $t('common.back'),
+                        trailingIcon: 'i-mdi-arrow-back',
+                        size: 'lg',
+                        color: 'gray',
+                        click: () => useRouter().back(),
+                    },
                     accessToken
-                        ? [
-                              {
-                                  label: $t('common.overview'),
-                                  trailingIcon: 'i-mdi-account-plus',
-                                  color: 'gray',
-                                  size: 'lg',
-                                  to: '/overview',
-                              },
-                          ]
-                        : [{ label: $t('common.home'), icon: 'i-mdi-login', size: 'lg', to: '/' }]
-                "
+                        ? {
+                              label: $t('common.overview'),
+                              trailingIcon: 'i-mdi-home',
+                              size: 'lg',
+                              to: '/overview',
+                          }
+                        : { label: $t('common.home'), icon: 'i-mdi-home', size: 'lg', to: '/' },
+                ]"
             >
                 <template #headline>
                     <UBadge color="gray" variant="solid" size="lg">{{ $t('pages.notfound.error') }}</UBadge>

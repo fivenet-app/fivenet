@@ -57,7 +57,7 @@ const zIndexOffset = computed(() => {
         <LIcon :icon-anchor="iconAnchor" :popup-anchor="popupAnchor" :icon-size="[size, size]">
             <div class="flex flex-col items-center uppercase">
                 <span
-                    class="inset-0 whitespace-nowrap rounded-md border-2 border-black/20 bg-neutral bg-clip-padding text-black hover:bg-[#f4f4f4] focus:outline-none"
+                    class="inset-0 whitespace-nowrap rounded-md border-2 border-black/20 bg-neutral-50 bg-clip-padding text-black hover:bg-[#f4f4f4] focus:outline-none"
                 >
                     DSP-{{ dispatch.id }}
                 </span>

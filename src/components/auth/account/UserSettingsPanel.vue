@@ -225,7 +225,7 @@ const themes = [
                         {{ $t('common.volume') }}:
                         {{ audio.notificationsVolume <= 0 ? 0 : (audio.notificationsVolume * 100).toFixed(0) }}%
                     </label>
-                    <input
+                    <UInput
                         v-model="audio.notificationsVolume"
                         type="range"
                         step="0.01"

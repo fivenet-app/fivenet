@@ -70,34 +70,25 @@ function reset(): void {
 </script>
 
 <template>
-    <div class="py-2">
-        <div class="px-2 sm:px-6 lg:px-8">
-            <div class="relative">
-                <h3 class="text-2xl font-semibold leading-6">
-                    {{ $t('components.bodycheckup.title') }}
-                </h3>
-            </div>
-            <div class="pb-4 sm:flex sm:items-center">
-                <div class="sm:flex-auto">
-                    <div class="grid w-full grid-cols-1 gap-4 sm:grid-cols-2">
-                        <div>
-                            <svg
-                                ref="svgRef"
-                                version="1.1"
-                                xmlns="http://www.w3.org/2000/svg"
-                                xmlns:xlink="http://www.w3.org/1999/xlink"
-                                x="0px"
-                                y="0px"
-                                width="420px"
-                                height="780px"
-                                viewBox="0 0 420 780"
-                                enable-background="new 0 0 420 780"
-                                xml:space="preserve"
-                            >
-                                <g>
-                                    <path
-                                        fill="#FFDEC7"
-                                        d="M375.86,438.039c-4.383-1.051-14.305-5.084-17.721-7.705c-3.414-2.625-9.121-5.25-10.98-10.928
+    <div class="grid w-full grid-cols-1 gap-4 sm:grid-cols-2">
+        <div>
+            <svg
+                ref="svgRef"
+                version="1.1"
+                xmlns="http://www.w3.org/2000/svg"
+                xmlns:xlink="http://www.w3.org/1999/xlink"
+                x="0px"
+                y="0px"
+                width="420px"
+                height="780px"
+                viewBox="0 0 420 780"
+                enable-background="new 0 0 420 780"
+                xml:space="preserve"
+            >
+                <g>
+                    <path
+                        fill="#FFDEC7"
+                        d="M375.86,438.039c-4.383-1.051-14.305-5.084-17.721-7.705c-3.414-2.625-9.121-5.25-10.98-10.928
 		c-8.719-26.635-6.174-42.584-12.33-80.583c-3.279-20.259-10.594-38.978-12.291-49.546c-5.002-31.152,0.314-68.261-9.955-100.304
 		c-8.758-27.333-23.908-41.438-41.4-44.698c-20.547-3.037-37.541-14.717-39.795-21.196c0.059-1.203,0.465-5.679,0.793-9.207
 		c4.123-3.525,6.537-7.708,7.357-11.811c1.736-8.662,4.16-12.907,4.16-12.907s3.189,1.093,4.959-1.936
@@ -145,93 +136,89 @@ function reset(): void {
 		c1.781-0.631,5.916,9.975,7.957,13.139c2.039,3.168,4.254,11.822,9.34,10.611c5.078-1.205-0.363-8.984-1.717-12.424
 		c-1.352-3.432-4.809-11.201-6.031-14.295c-1.215-3.094-2.164-5.498-3.52-8.936c-1.35-3.434-2.494-7.354,1.014-9.525
 		c3.51-2.174,7.818-0.303,12.412,0.27s10.975-0.35,12.566-3.357C385.108,440.35,380.246,439.092,375.86,438.039z"
-                                        @click="addPin"
-                                    />
+                        @click="addPin"
+                    />
 
-                                    <image
-                                        overflow="visible"
-                                        width="130"
-                                        height="416"
-                                        xlink:href="/images/components/quickbuttons/bodycheckup/human-organs.png"
-                                        transform="matrix(1 0 0 1 150.0002 12.8901)"
-                                        @click="addPin"
-                                    ></image>
+                    <image
+                        overflow="visible"
+                        width="130"
+                        height="416"
+                        xlink:href="/images/components/quickbuttons/bodycheckup/human-organs.png"
+                        transform="matrix(1 0 0 1 150.0002 12.8901)"
+                        @click="addPin"
+                    ></image>
 
-                                    <template v-for="(pin, idx) in pins" :key="idx">
-                                        <circle
-                                            :cx="pin.x"
-                                            :cy="pin.y"
-                                            r="12"
-                                            :class="pin.selected ? 'animate-pulse' : ''"
-                                            :data-x="pin.x - 50"
-                                            :data-y="pin.y - 50"
-                                            @click="selectPin(pin)"
-                                        />
-                                        <text
-                                            :x="pin.x"
-                                            :y="pin.y"
-                                            text-anchor="middle"
-                                            stroke="#ffffff"
-                                            stroke-width="1.5px"
-                                            dy=".3em"
-                                            @click="selectPin(pin)"
-                                        >
-                                            {{ idx + 1 }}
-                                        </text>
-                                    </template>
-                                </g>
-                            </svg>
-                        </div>
-                        <div class="flex flex-col">
-                            <div class="grow">
-                                <h3 class="text-xl font-semibold leading-6">
-                                    {{ $t('common.summary') }}
-                                </h3>
-                                <DataNoDataBlock
-                                    v-if="pins.length === 0"
-                                    :message="$t('components.bodycheckup.no_points')"
-                                    :icon="VectorPointSelectIcon"
-                                />
-                                <ol v-else>
-                                    <li v-for="(pin, idx) in pins" :key="idx" class="my-2 inline-flex w-full items-center">
-                                        <span class="text-base" :class="pin.selected ? 'underline' : ''"> {{ idx + 1 }}. </span>
-                                        <input
-                                            v-model="pin.description"
-                                            type="text"
-                                            class="ml-1.5 block w-full grow rounded-md border-0 bg-base-700 py-1.5 text-neutral placeholder:text-accent-200 focus:ring-2 focus:ring-inset focus:ring-base-300 sm:text-sm sm:leading-6"
-                                            @focusin="
-                                                focusTablet(true);
-                                                selectPin(pin);
-                                            "
-                                            @focusout="focusTablet(false)"
-                                        />
-                                        <span class="ml-1" @click="removePin(idx)">
-                                            <TrashCanIcon class="size-5" aria-hidden="true" />
-                                        </span>
-                                    </li>
-                                </ol>
-                            </div>
-                            <div class="mb-4 flex flex-initial items-center gap-1">
-                                <button
-                                    type="button"
-                                    class="w-full rounded-md bg-info-700 px-3.5 py-2.5 text-sm font-semibold text-neutral hover:bg-info-600"
-                                    @click="copyToClipboard()"
-                                >
-                                    {{ $t('common.copy') }}
-                                </button>
-                                <button
-                                    type="button"
-                                    class="rounded-md bg-error-700 px-3.5 py-2.5 text-sm font-semibold text-neutral hover:bg-error-600"
-                                    @click="reset()"
-                                >
-                                    {{ $t('common.reset') }}
-                                </button>
-                            </div>
-                            <BMICalculator />
-                        </div>
-                    </div>
-                </div>
+                    <template v-for="(pin, idx) in pins" :key="idx">
+                        <circle
+                            :cx="pin.x"
+                            :cy="pin.y"
+                            r="12"
+                            :class="pin.selected ? 'animate-pulse' : ''"
+                            :data-x="pin.x - 50"
+                            :data-y="pin.y - 50"
+                            @click="selectPin(pin)"
+                        />
+                        <text
+                            :x="pin.x"
+                            :y="pin.y"
+                            text-anchor="middle"
+                            stroke="#ffffff"
+                            stroke-width="1.5px"
+                            dy=".3em"
+                            @click="selectPin(pin)"
+                        >
+                            {{ idx + 1 }}
+                        </text>
+                    </template>
+                </g>
+            </svg>
+        </div>
+        <div class="flex flex-col">
+            <div class="grow">
+                <h3 class="text-xl font-semibold leading-6">
+                    {{ $t('common.summary') }}
+                </h3>
+                <DataNoDataBlock
+                    v-if="pins.length === 0"
+                    :message="$t('components.bodycheckup.no_points')"
+                    :icon="VectorPointSelectIcon"
+                />
+                <ol v-else>
+                    <li v-for="(pin, idx) in pins" :key="idx" class="my-2 inline-flex w-full items-center">
+                        <span class="text-base" :class="pin.selected ? 'underline' : ''"> {{ idx + 1 }}. </span>
+                        <input
+                            v-model="pin.description"
+                            type="text"
+                            class="ml-1.5 block w-full grow rounded-md border-0 bg-base-700 py-1.5 text-neutral placeholder:text-accent-200 focus:ring-2 focus:ring-inset focus:ring-base-300 sm:text-sm sm:leading-6"
+                            @focusin="
+                                focusTablet(true);
+                                selectPin(pin);
+                            "
+                            @focusout="focusTablet(false)"
+                        />
+                        <span class="ml-1" @click="removePin(idx)">
+                            <TrashCanIcon class="size-5" aria-hidden="true" />
+                        </span>
+                    </li>
+                </ol>
             </div>
+            <div class="mb-4 flex flex-initial items-center gap-1">
+                <button
+                    type="button"
+                    class="w-full rounded-md bg-info-700 px-3.5 py-2.5 text-sm font-semibold text-neutral hover:bg-info-600"
+                    @click="copyToClipboard()"
+                >
+                    {{ $t('common.copy') }}
+                </button>
+                <button
+                    type="button"
+                    class="rounded-md bg-error-700 px-3.5 py-2.5 text-sm font-semibold text-neutral hover:bg-error-600"
+                    @click="reset()"
+                >
+                    {{ $t('common.reset') }}
+                </button>
+            </div>
+            <BMICalculator />
         </div>
     </div>
 </template>

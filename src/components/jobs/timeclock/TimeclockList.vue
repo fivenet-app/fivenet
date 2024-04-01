@@ -36,7 +36,7 @@ const query = ref<{
     to: canAccessAll ? dateToDateString(previousDay.value) : undefined,
     perDay: canAccessAll,
 });
-const offset = ref(0n);
+const offset = ref(0);
 
 const { data, pending, refresh, error } = useLazyAsyncData(
     `jobs-timeclock-${query.value.from}-${query.value.to}-${query.value.perDay}-${query.value.user_ids?.map((u) => u.userId)}-${offset.value}`,

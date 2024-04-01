@@ -17,7 +17,7 @@ const { $grpc } = useNuxtApp();
 const settingsStore = useSettingsStore();
 const { streamerMode } = storeToRefs(settingsStore);
 
-const offset = ref(0n);
+const offset = ref(0);
 const prefix = ref('');
 
 const { data, pending, refresh, error } = useLazyAsyncData('chars', () => listFiles(prefix.value));

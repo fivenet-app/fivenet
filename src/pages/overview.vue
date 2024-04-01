@@ -17,7 +17,7 @@ const features = [
     {
         title: `${t('common.citizen', 2)} ${t('common.search')}`,
         description: t('pages.overview.features.citizens'),
-        href: { name: 'citizens' },
+        to: { name: 'citizens' },
         permission: 'CitizenStoreService.ListCitizens',
         icon: 'i-mdi-account-multiple-outline',
         iconForeground: 'text-purple-900',
@@ -26,7 +26,7 @@ const features = [
     {
         title: t('common.vehicle', 2),
         description: t('pages.overview.features.vehicles'),
-        href: { name: 'vehicles' },
+        to: { name: 'vehicles' },
         permission: 'DMVService.ListVehicles',
         icon: 'i-mdi-car-outline',
         iconForeground: 'text-zinc-900',
@@ -35,7 +35,7 @@ const features = [
     {
         title: t('common.document', 2),
         description: t('pages.overview.features.documents'),
-        href: { name: 'documents' },
+        to: { name: 'documents' },
         permission: 'DocStoreService.ListDocuments',
         icon: 'i-mdi-file-document-box-multiple-outline',
         iconForeground: 'text-sky-900',
@@ -44,7 +44,7 @@ const features = [
     {
         title: t('common.job', 2),
         description: t('pages.overview.features.jobs'),
-        href: { name: 'jobs-overview' },
+        to: { name: 'jobs-overview' },
         permission: 'JobsService.ListColleagues',
         icon: 'i-mdi-briefcase-outline',
         iconForeground: 'text-warn-900',
@@ -53,7 +53,7 @@ const features = [
     {
         title: t('common.livemap'),
         description: t('pages.overview.features.livemap'),
-        href: { name: 'livemap' },
+        to: { name: 'livemap' },
         permission: 'LivemapperService.Stream',
         icon: 'i-mdi-map-outline',
         iconForeground: 'text-teal-900',
@@ -62,7 +62,7 @@ const features = [
     {
         title: t('common.dispatch_center'),
         description: t('pages.overview.features.centrum'),
-        href: { name: 'centrum' },
+        to: { name: 'centrum' },
         permission: 'CentrumService.TakeControl',
         icon: 'i-mdi-car-emergency',
         iconForeground: 'text-error-900',

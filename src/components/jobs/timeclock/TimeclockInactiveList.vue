@@ -19,7 +19,7 @@ const query = ref<{
 }>({
     days: 14,
 });
-const offset = ref(0n);
+const offset = ref(0);
 
 const { data, pending, refresh, error } = useLazyAsyncData(`jobs-timeclock-inactive-${offset.value}-${query.value.days}`, () =>
     listInactiveEmployees(),

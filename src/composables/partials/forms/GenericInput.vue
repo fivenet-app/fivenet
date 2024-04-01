@@ -15,5 +15,5 @@ const data = useVModel(props, 'modelValue', emit);
 </script>
 
 <template>
-    <input v-model="data" @focusin="focusTablet(true)" @focusout="focusTablet(false)" />
+    <UInput v-model="data" @focusin="focusTablet(true)" @focusout="focusTablet(false)" />
 </template>

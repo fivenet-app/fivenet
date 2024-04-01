@@ -55,8 +55,13 @@ const items = computed(() => [
     ],
     [
         {
-            label: 'Sign out',
-            icon: 'i-heroicons-arrow-left-on-rectangle',
+            label: t('components.partials.sidebar.change_character'),
+            icon: 'i-mdi-account-switch',
+            to: '/auth/character-selector',
+        },
+        {
+            label: t('common.sign_out'),
+            icon: 'i-mdi-logout',
             to: '/auth/logout',
         },
     ],
@@ -76,7 +81,7 @@ const items = computed(() => [
                 color="gray"
                 variant="ghost"
                 class="w-full"
-                :label="`${activeChar?.firstname} ${activeChar?.lastname}`"
+                :label="activeChar ? `${activeChar?.firstname} ${activeChar?.lastname}` : username"
                 :class="[open && 'bg-gray-50 dark:bg-gray-800']"
             >
                 <template #leading>

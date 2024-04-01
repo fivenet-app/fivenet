@@ -13,7 +13,6 @@ import {
     ListboxOption,
     ListboxOptions,
 } from '@headlessui/vue';
-import { useRouteHash } from '@vueuse/router';
 import { watchDebounced } from '@vueuse/shared';
 import { CheckIcon, ChevronDownIcon } from 'mdi-vue3';
 import DataErrorBlock from '~/components/partials/data/DataErrorBlock.vue';
@@ -52,12 +51,7 @@ const query = ref<{
 }>({
     title: '',
 });
-const offset = ref(0n);
-
-const hash = useRouteHash();
-if (hash.value !== undefined && hash.value !== null) {
-    query.value = unmarshalHashToObject(hash.value as string);
-}
+const offset = ref(0);
 
 const queryClosed = ref<OpenClose>(openclose[0]);
 
@@ -67,10 +61,7 @@ const queryCategories = ref<string>('');
 const entriesCitizens = ref<UserShort[]>([]);
 const queryCitizens = ref<string>('');
 
-const { data, pending, refresh, error } = useLazyAsyncData(`documents-${offset.value}`, () => {
-    hash.value = marshalObjectToHash(query.value);
-    return listDocuments();
-});
+const { data, pending, refresh, error } = useLazyAsyncData(`documents-${offset.value}`, () => listDocuments());
 
 async function listDocuments(): Promise<ListDocumentsResponse> {
     const req: ListDocumentsRequest = {
@@ -161,324 +152,311 @@ const templatesOpen = ref(false);
 <template>
     <TemplatesModal :open="templatesOpen" @close="templatesOpen = false" />
 
-    <div class="py-2 pb-14">
-        <div class="px-1 sm:px-2 lg:px-4">
-            <div class="border-b-2 border-neutral/20 pb-2 sm:flex sm:items-center">
-                <div class="sm:flex-auto">
-                    <form @submit.prevent="refresh()">
+    <UDashboardToolbar>
+        <template #default>
+            <form class="w-full" @submit.prevent="refresh()">
+                <div class="w-full flex flex-row gap-2">
+                    <div class="flex-1">
                         <label for="search" class="mb-2 block text-sm font-medium leading-6 text-neutral">
                             {{ $t('common.search') }}
                         </label>
                         <div class="flex flex-row items-center gap-2 sm:mx-auto">
                             <div class="flex-1">
-                                <input
+                                <UInput
                                     ref="searchInput"
                                     v-model="query.title"
                                     type="text"
                                     name="search"
                                     :placeholder="$t('common.title')"
-                                    class="block w-full rounded-md border-0 bg-base-700 py-1.5 pr-14 text-neutral placeholder:text-accent-200 focus:ring-2 focus:ring-inset focus:ring-base-300 sm:text-sm sm:leading-6"
+                                    class="hidden lg:block"
+                                    block
                                     @focusin="focusTablet(true)"
                                     @focusout="focusTablet(false)"
-                                />
-                            </div>
-                            <div v-if="can('DocStoreService.CreateDocument')" class="flex-initial">
-                                <button
-                                    type="button"
-                                    class="inline-flex rounded-md bg-primary-500 px-3 py-2 text-sm font-semibold text-neutral hover:bg-primary-400 focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2"
-                                    @click="templatesOpen = true"
+                                    @keydown.esc="$event.target.blur()"
                                 >
-                                    {{ $t('common.create') }}
-                                </button>
-                            </div>
-                            <div v-if="can('CompletorService.CompleteDocumentCategories')" class="flex-initial">
-                                <NuxtLink
-                                    :to="{ name: 'documents-categories' }"
-                                    class="inline-flex rounded-md bg-primary-500 px-3 py-2 text-sm font-semibold text-neutral hover:bg-primary-400 focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2"
-                                >
-                                    {{ $t('common.category', 2) }}
-                                </NuxtLink>
-                            </div>
-                            <div v-if="can('DocStoreService.ListTemplates')" class="flex-initial">
-                                <NuxtLink
-                                    :to="{ name: 'documents-templates' }"
-                                    class="inline-flex rounded-md bg-primary-500 px-3 py-2 text-sm font-semibold text-neutral hover:bg-primary-400 focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2"
-                                >
-                                    {{ $t('common.template', 2) }}
-                                </NuxtLink>
+                                    <template #trailing>
+                                        <UKbd value="/" />
+                                    </template>
+                                </UInput>
                             </div>
                         </div>
+                    </div>
+                    <div v-if="can('CompletorService.CompleteDocumentCategories')" class="flex-initial">
+                        <UButton :to="{ name: 'documents-categories' }">
+                            {{ $t('common.category', 2) }}
+                        </UButton>
+                    </div>
+                    <div v-if="can('DocStoreService.ListTemplates')" class="flex-initial">
+                        <UButton :to="{ name: 'documents-templates' }">
+                            {{ $t('common.template', 2) }}
+                        </UButton>
+                    </div>
+                </div>
 
-                        <Disclosure v-slot="{ open }" as="div" class="pt-2">
-                            <DisclosureButton class="flex w-full items-start justify-between text-left text-sm text-neutral">
-                                <span class="leading-7 text-accent-200">{{ $t('common.advanced_search') }}</span>
-                                <span class="ml-6 flex h-7 items-center">
-                                    <ChevronDownIcon
-                                        :class="[open ? 'upsidedown' : '', 'size-5 transition-transform']"
-                                        aria-hidden="true"
+                <Disclosure v-slot="{ open }" as="div" class="pt-2">
+                    <DisclosureButton class="flex w-full items-start justify-between text-left text-sm text-neutral">
+                        <span class="leading-7 text-accent-200">{{ $t('common.advanced_search') }}</span>
+                        <span class="ml-6 flex h-7 items-center">
+                            <ChevronDownIcon
+                                :class="[open ? 'upsidedown' : '', 'size-5 transition-transform']"
+                                aria-hidden="true"
+                            />
+                        </span>
+                    </DisclosureButton>
+                    <DisclosurePanel class="mt-2 pr-4">
+                        <div class="flex flex-row flex-wrap gap-2">
+                            <div class="flex-1">
+                                <label for="search" class="block text-sm font-medium leading-6 text-neutral">
+                                    {{ $t('common.document') }} {{ $t('common.id') }}
+                                </label>
+                                <div class="relative mt-2 flex items-center">
+                                    <input
+                                        v-model="query.id"
+                                        type="text"
+                                        name="search"
+                                        placeholder="DOC-..."
+                                        class="block w-full rounded-md border-0 bg-base-700 py-1.5 pr-14 text-neutral placeholder:text-accent-200 focus:ring-2 focus:ring-inset focus:ring-base-300 sm:text-sm sm:leading-6"
+                                        @focusin="focusTablet(true)"
+                                        @focusout="focusTablet(false)"
                                     />
-                                </span>
-                            </DisclosureButton>
-                            <DisclosurePanel class="mt-2 pr-4">
-                                <div class="flex flex-row flex-wrap gap-2">
-                                    <div class="flex-1">
-                                        <label for="search" class="block text-sm font-medium leading-6 text-neutral">
-                                            {{ $t('common.document') }} {{ $t('common.id') }}
-                                        </label>
-                                        <div class="relative mt-2 flex items-center">
-                                            <input
-                                                v-model="query.id"
-                                                type="text"
-                                                name="search"
-                                                placeholder="DOC-..."
-                                                class="block w-full rounded-md border-0 bg-base-700 py-1.5 pr-14 text-neutral placeholder:text-accent-200 focus:ring-2 focus:ring-inset focus:ring-base-300 sm:text-sm sm:leading-6"
+                                </div>
+                            </div>
+                            <div class="flex-1">
+                                <label for="search" class="block text-sm font-medium leading-6 text-neutral">
+                                    {{ $t('common.category', 1) }}
+                                </label>
+                                <Combobox v-model="query.category" as="div" class="mt-2" nullable>
+                                    <div class="relative">
+                                        <ComboboxButton as="div">
+                                            <ComboboxInput
+                                                autocomplete="off"
+                                                class="block w-full rounded-md border-0 bg-base-700 py-1.5 text-neutral placeholder:text-accent-200 focus:ring-2 focus:ring-inset focus:ring-base-300 sm:text-sm sm:leading-6"
+                                                :display-value="(category: any) => category?.name"
+                                                :placeholder="$t('common.category', 1)"
+                                                @change="queryCategories = $event.target.value"
                                                 @focusin="focusTablet(true)"
                                                 @focusout="focusTablet(false)"
                                             />
-                                        </div>
-                                    </div>
-                                    <div class="flex-1">
-                                        <label for="search" class="block text-sm font-medium leading-6 text-neutral">
-                                            {{ $t('common.category', 1) }}
-                                        </label>
-                                        <Combobox v-model="query.category" as="div" class="mt-2" nullable>
-                                            <div class="relative">
-                                                <ComboboxButton as="div">
-                                                    <ComboboxInput
-                                                        autocomplete="off"
-                                                        class="block w-full rounded-md border-0 bg-base-700 py-1.5 text-neutral placeholder:text-accent-200 focus:ring-2 focus:ring-inset focus:ring-base-300 sm:text-sm sm:leading-6"
-                                                        :display-value="(category: any) => category?.name"
-                                                        :placeholder="$t('common.category', 1)"
-                                                        @change="queryCategories = $event.target.value"
-                                                        @focusin="focusTablet(true)"
-                                                        @focusout="focusTablet(false)"
-                                                    />
-                                                </ComboboxButton>
+                                        </ComboboxButton>
 
-                                                <ComboboxOptions
-                                                    v-if="entriesCategories.length > 0"
-                                                    class="absolute z-10 mt-1 max-h-44 w-full overflow-auto rounded-md bg-base-700 py-1 text-base sm:text-sm"
+                                        <ComboboxOptions
+                                            v-if="entriesCategories.length > 0"
+                                            class="absolute z-10 mt-1 max-h-44 w-full overflow-auto rounded-md bg-base-700 py-1 text-base sm:text-sm"
+                                        >
+                                            <ComboboxOption
+                                                v-for="category in entriesCategories"
+                                                :key="category.id"
+                                                v-slot="{ active, selected }"
+                                                :value="category"
+                                                as="category"
+                                            >
+                                                <li
+                                                    :class="[
+                                                        'relative cursor-default select-none py-2 pl-8 pr-4 text-neutral',
+                                                        active ? 'bg-primary-500' : '',
+                                                    ]"
                                                 >
-                                                    <ComboboxOption
-                                                        v-for="category in entriesCategories"
-                                                        :key="category.id"
-                                                        v-slot="{ active, selected }"
-                                                        :value="category"
-                                                        as="category"
-                                                    >
-                                                        <li
-                                                            :class="[
-                                                                'relative cursor-default select-none py-2 pl-8 pr-4 text-neutral',
-                                                                active ? 'bg-primary-500' : '',
-                                                            ]"
-                                                        >
-                                                            <span :class="['block truncate', selected && 'font-semibold']">
-                                                                {{ category.name }}
-                                                            </span>
-
-                                                            <span
-                                                                v-if="selected"
-                                                                :class="[
-                                                                    active ? 'text-neutral' : 'text-primary-500',
-                                                                    'absolute inset-y-0 left-0 flex items-center pl-1.5',
-                                                                ]"
-                                                            >
-                                                                <CheckIcon class="size-5" aria-hidden="true" />
-                                                            </span>
-                                                        </li>
-                                                    </ComboboxOption>
-                                                </ComboboxOptions>
-                                            </div>
-                                        </Combobox>
-                                    </div>
-                                    <div class="flex-1">
-                                        <label for="search" class="block text-sm font-medium leading-6 text-neutral">
-                                            {{ $t('common.creator') }}
-                                        </label>
-                                        <Combobox v-model="query.character" as="div" class="mt-2" nullable>
-                                            <div class="relative">
-                                                <ComboboxButton as="div">
-                                                    <ComboboxInput
-                                                        autocomplete="off"
-                                                        class="block w-full rounded-md border-0 bg-base-700 py-1.5 text-neutral placeholder:text-accent-200 focus:ring-2 focus:ring-inset focus:ring-base-300 sm:text-sm sm:leading-6"
-                                                        :display-value="
-                                                            (char: any) =>
-                                                                `${char?.firstname} ${char?.lastname} (${char?.dateofbirth})`
-                                                        "
-                                                        :placeholder="$t('common.creator')"
-                                                        @change="queryCitizens = $event.target.value"
-                                                        @focusin="focusTablet(true)"
-                                                        @focusout="focusTablet(false)"
-                                                    />
-                                                </ComboboxButton>
-
-                                                <ComboboxOptions
-                                                    v-if="entriesCitizens.length > 0"
-                                                    class="absolute z-10 mt-1 max-h-44 w-full overflow-auto rounded-md bg-base-700 py-1 text-base sm:text-sm"
-                                                >
-                                                    <ComboboxOption
-                                                        v-for="char in entriesCitizens"
-                                                        :key="char.identifier"
-                                                        v-slot="{ active, selected }"
-                                                        :value="char"
-                                                        as="char"
-                                                    >
-                                                        <li
-                                                            :class="[
-                                                                'relative cursor-default select-none py-2 pl-8 pr-4 text-neutral',
-                                                                active ? 'bg-primary-500' : '',
-                                                            ]"
-                                                        >
-                                                            <span :class="['block truncate', selected && 'font-semibold']">
-                                                                {{ char.firstname }} {{ char.lastname }} ({{
-                                                                    char?.dateofbirth
-                                                                }})
-                                                            </span>
-
-                                                            <span
-                                                                v-if="selected"
-                                                                :class="[
-                                                                    active ? 'text-neutral' : 'text-primary-500',
-                                                                    'absolute inset-y-0 left-0 flex items-center pl-1.5',
-                                                                ]"
-                                                            >
-                                                                <CheckIcon class="size-5" aria-hidden="true" />
-                                                            </span>
-                                                        </li>
-                                                    </ComboboxOption>
-                                                </ComboboxOptions>
-                                            </div>
-                                        </Combobox>
-                                    </div>
-                                </div>
-                                <div class="flex flex-row flex-wrap gap-2">
-                                    <div class="flex-1">
-                                        <label for="search" class="block text-sm font-medium leading-6 text-neutral">
-                                            {{ $t('common.close', 2) }}?
-                                        </label>
-                                        <Listbox v-model="queryClosed" as="div" class="mt-2">
-                                            <div class="relative">
-                                                <ListboxButton
-                                                    class="block w-full rounded-md border-0 bg-base-700 py-1.5 pl-3 text-left text-neutral placeholder:text-accent-200 focus:ring-2 focus:ring-inset focus:ring-base-300 sm:text-sm sm:leading-6"
-                                                >
-                                                    <span class="block truncate">
-                                                        {{ queryClosed?.label }}
+                                                    <span :class="['block truncate', selected && 'font-semibold']">
+                                                        {{ category.name }}
                                                     </span>
+
                                                     <span
-                                                        class="pointer-events-none absolute inset-y-0 right-0 flex items-center pr-2"
+                                                        v-if="selected"
+                                                        :class="[
+                                                            active ? 'text-neutral' : 'text-primary-500',
+                                                            'absolute inset-y-0 left-0 flex items-center pl-1.5',
+                                                        ]"
                                                     >
-                                                        <ChevronDownIcon class="size-5 text-gray-400" aria-hidden="true" />
+                                                        <CheckIcon class="size-5" aria-hidden="true" />
                                                     </span>
-                                                </ListboxButton>
+                                                </li>
+                                            </ComboboxOption>
+                                        </ComboboxOptions>
+                                    </div>
+                                </Combobox>
+                            </div>
+                            <div class="flex-1">
+                                <label for="search" class="block text-sm font-medium leading-6 text-neutral">
+                                    {{ $t('common.creator') }}
+                                </label>
+                                <Combobox v-model="query.character" as="div" class="mt-2" nullable>
+                                    <div class="relative">
+                                        <ComboboxButton as="div">
+                                            <ComboboxInput
+                                                autocomplete="off"
+                                                class="block w-full rounded-md border-0 bg-base-700 py-1.5 text-neutral placeholder:text-accent-200 focus:ring-2 focus:ring-inset focus:ring-base-300 sm:text-sm sm:leading-6"
+                                                :display-value="
+                                                    (char: any) => `${char?.firstname} ${char?.lastname} (${char?.dateofbirth})`
+                                                "
+                                                :placeholder="$t('common.creator')"
+                                                @change="queryCitizens = $event.target.value"
+                                                @focusin="focusTablet(true)"
+                                                @focusout="focusTablet(false)"
+                                            />
+                                        </ComboboxButton>
 
-                                                <transition
-                                                    leave-active-class="transition duration-100 ease-in"
-                                                    leave-from-class="opacity-100"
-                                                    leave-to-class="opacity-0"
+                                        <ComboboxOptions
+                                            v-if="entriesCitizens.length > 0"
+                                            class="absolute z-10 mt-1 max-h-44 w-full overflow-auto rounded-md bg-base-700 py-1 text-base sm:text-sm"
+                                        >
+                                            <ComboboxOption
+                                                v-for="char in entriesCitizens"
+                                                :key="char.identifier"
+                                                v-slot="{ active, selected }"
+                                                :value="char"
+                                                as="char"
+                                            >
+                                                <li
+                                                    :class="[
+                                                        'relative cursor-default select-none py-2 pl-8 pr-4 text-neutral',
+                                                        active ? 'bg-primary-500' : '',
+                                                    ]"
                                                 >
-                                                    <ListboxOptions
-                                                        class="absolute z-10 mt-1 max-h-44 w-full overflow-auto rounded-md bg-base-700 py-1 text-base sm:text-sm"
+                                                    <span :class="['block truncate', selected && 'font-semibold']">
+                                                        {{ char.firstname }} {{ char.lastname }} ({{ char?.dateofbirth }})
+                                                    </span>
+
+                                                    <span
+                                                        v-if="selected"
+                                                        :class="[
+                                                            active ? 'text-neutral' : 'text-primary-500',
+                                                            'absolute inset-y-0 left-0 flex items-center pl-1.5',
+                                                        ]"
                                                     >
-                                                        <ListboxOption
-                                                            v-for="st in openclose"
-                                                            v-slot="{ active, selected }"
-                                                            :key="st.id"
-                                                            as="template"
-                                                            :value="st"
+                                                        <CheckIcon class="size-5" aria-hidden="true" />
+                                                    </span>
+                                                </li>
+                                            </ComboboxOption>
+                                        </ComboboxOptions>
+                                    </div>
+                                </Combobox>
+                            </div>
+                        </div>
+                        <div class="flex flex-row flex-wrap gap-2">
+                            <div class="flex-1">
+                                <label for="search" class="block text-sm font-medium leading-6 text-neutral">
+                                    {{ $t('common.close', 2) }}?
+                                </label>
+                                <Listbox v-model="queryClosed" as="div" class="mt-2">
+                                    <div class="relative">
+                                        <ListboxButton
+                                            class="block w-full rounded-md border-0 bg-base-700 py-1.5 pl-3 text-left text-neutral placeholder:text-accent-200 focus:ring-2 focus:ring-inset focus:ring-base-300 sm:text-sm sm:leading-6"
+                                        >
+                                            <span class="block truncate">
+                                                {{ queryClosed?.label }}
+                                            </span>
+                                            <span class="pointer-events-none absolute inset-y-0 right-0 flex items-center pr-2">
+                                                <ChevronDownIcon class="size-5 text-gray-400" aria-hidden="true" />
+                                            </span>
+                                        </ListboxButton>
+
+                                        <transition
+                                            leave-active-class="transition duration-100 ease-in"
+                                            leave-from-class="opacity-100"
+                                            leave-to-class="opacity-0"
+                                        >
+                                            <ListboxOptions
+                                                class="absolute z-10 mt-1 max-h-44 w-full overflow-auto rounded-md bg-base-700 py-1 text-base sm:text-sm"
+                                            >
+                                                <ListboxOption
+                                                    v-for="st in openclose"
+                                                    v-slot="{ active, selected }"
+                                                    :key="st.id"
+                                                    as="template"
+                                                    :value="st"
+                                                >
+                                                    <li
+                                                        :class="[
+                                                            active ? 'bg-primary-500' : '',
+                                                            'relative cursor-default select-none py-2 pl-8 pr-4 text-neutral',
+                                                        ]"
+                                                    >
+                                                        <span
+                                                            :class="[
+                                                                selected ? 'font-semibold' : 'font-normal',
+                                                                'block truncate',
+                                                            ]"
+                                                            >{{ st.label }}</span
                                                         >
-                                                            <li
-                                                                :class="[
-                                                                    active ? 'bg-primary-500' : '',
-                                                                    'relative cursor-default select-none py-2 pl-8 pr-4 text-neutral',
-                                                                ]"
-                                                            >
-                                                                <span
-                                                                    :class="[
-                                                                        selected ? 'font-semibold' : 'font-normal',
-                                                                        'block truncate',
-                                                                    ]"
-                                                                    >{{ st.label }}</span
-                                                                >
 
-                                                                <span
-                                                                    v-if="selected"
-                                                                    :class="[
-                                                                        active ? 'text-neutral' : 'text-primary-500',
-                                                                        'absolute inset-y-0 left-0 flex items-center pl-1.5',
-                                                                    ]"
-                                                                >
-                                                                    <CheckIcon class="size-5" aria-hidden="true" />
-                                                                </span>
-                                                            </li>
-                                                        </ListboxOption>
-                                                    </ListboxOptions>
-                                                </transition>
-                                            </div>
-                                        </Listbox>
+                                                        <span
+                                                            v-if="selected"
+                                                            :class="[
+                                                                active ? 'text-neutral' : 'text-primary-500',
+                                                                'absolute inset-y-0 left-0 flex items-center pl-1.5',
+                                                            ]"
+                                                        >
+                                                            <CheckIcon class="size-5" aria-hidden="true" />
+                                                        </span>
+                                                    </li>
+                                                </ListboxOption>
+                                            </ListboxOptions>
+                                        </transition>
                                     </div>
-                                    <div class="flex-1">
-                                        <label for="search" class="block text-sm font-medium leading-6 text-neutral">
-                                            {{ $t('common.time_range') }}: {{ $t('common.from') }}
-                                        </label>
-                                        <div class="relative mt-2 flex items-center">
-                                            <input
-                                                v-model="query.from"
-                                                type="datetime-local"
-                                                name="search"
-                                                :placeholder="`${$t('common.time_range')} ${$t('common.from')}`"
-                                                class="block w-full rounded-md border-0 bg-base-700 py-1.5 pr-14 text-neutral placeholder:text-accent-200 focus:ring-2 focus:ring-inset focus:ring-base-300 sm:text-sm sm:leading-6"
-                                            />
-                                        </div>
-                                    </div>
-                                    <div class="flex-1">
-                                        <label for="search" class="block text-sm font-medium leading-6 text-neutral"
-                                            >{{ $t('common.time_range') }}:
-                                            {{ $t('common.to') }}
-                                        </label>
-                                        <div class="relative mt-2 flex items-center">
-                                            <input
-                                                v-model="query.to"
-                                                type="datetime-local"
-                                                name="search"
-                                                :placeholder="`${$t('common.time_range')} ${$t('common.to')}`"
-                                                class="block w-full rounded-md border-0 bg-base-700 py-1.5 pr-14 text-neutral placeholder:text-accent-200 focus:ring-2 focus:ring-inset focus:ring-base-300 sm:text-sm sm:leading-6"
-                                            />
-                                        </div>
-                                    </div>
+                                </Listbox>
+                            </div>
+                            <div class="flex-1">
+                                <label for="search" class="block text-sm font-medium leading-6 text-neutral">
+                                    {{ $t('common.time_range') }}: {{ $t('common.from') }}
+                                </label>
+                                <div class="relative mt-2 flex items-center">
+                                    <input
+                                        v-model="query.from"
+                                        type="datetime-local"
+                                        name="search"
+                                        :placeholder="`${$t('common.time_range')} ${$t('common.from')}`"
+                                        class="block w-full rounded-md border-0 bg-base-700 py-1.5 pr-14 text-neutral placeholder:text-accent-200 focus:ring-2 focus:ring-inset focus:ring-base-300 sm:text-sm sm:leading-6"
+                                    />
                                 </div>
-                            </DisclosurePanel>
-                        </Disclosure>
-                    </form>
-                </div>
-            </div>
-            <div class="mt-2 flow-root">
-                <div class="-my-2 mx-0 overflow-x-auto">
-                    <div class="inline-block w-full max-w-full px-1 py-2 align-middle">
-                        <DataPendingBlock v-if="pending" :message="$t('common.loading', [$t('common.document', 2)])" />
-                        <DataErrorBlock
-                            v-else-if="error"
-                            :title="$t('common.unable_to_load', [$t('common.document', 2)])"
-                            :retry="refresh"
-                        />
-                        <DataNoDataBlock
-                            v-else-if="data?.documents.length === 0"
-                            :type="$t('common.document', 2)"
-                            :focus="focusSearch"
-                        />
-                        <template v-else>
-                            <ul role="list" class="flex flex-col">
-                                <DocumentListEntry v-for="doc in data?.documents" :key="doc.id" :doc="doc" />
-                            </ul>
+                            </div>
+                            <div class="flex-1">
+                                <label for="search" class="block text-sm font-medium leading-6 text-neutral"
+                                    >{{ $t('common.time_range') }}:
+                                    {{ $t('common.to') }}
+                                </label>
+                                <div class="relative mt-2 flex items-center">
+                                    <input
+                                        v-model="query.to"
+                                        type="datetime-local"
+                                        name="search"
+                                        :placeholder="`${$t('common.time_range')} ${$t('common.to')}`"
+                                        class="block w-full rounded-md border-0 bg-base-700 py-1.5 pr-14 text-neutral placeholder:text-accent-200 focus:ring-2 focus:ring-inset focus:ring-base-300 sm:text-sm sm:leading-6"
+                                    />
+                                </div>
+                            </div>
+                        </div>
+                    </DisclosurePanel>
+                </Disclosure>
+            </form>
+        </template>
+    </UDashboardToolbar>
 
-                            <TablePagination
-                                class="mt-2"
-                                :pagination="data?.pagination"
-                                :refresh="refresh"
-                                @offset-change="offset = $event"
-                            />
-                        </template>
-                    </div>
-                </div>
+    <div class="mt-2 flow-root">
+        <div class="-my-2 mx-0 overflow-x-auto">
+            <div class="inline-block w-full max-w-full px-1 py-2 align-middle">
+                <DataPendingBlock v-if="pending" :message="$t('common.loading', [$t('common.document', 2)])" />
+                <DataErrorBlock
+                    v-else-if="error"
+                    :title="$t('common.unable_to_load', [$t('common.document', 2)])"
+                    :retry="refresh"
+                />
+                <DataNoDataBlock
+                    v-else-if="data?.documents.length === 0"
+                    :type="$t('common.document', 2)"
+                    :focus="focusSearch"
+                />
+                <template v-else>
+                    <ul role="list" class="flex flex-col">
+                        <DocumentListEntry v-for="doc in data?.documents" :key="doc.id" :doc="doc" />
+                    </ul>
+
+                    <TablePagination
+                        class="mt-2"
+                        :pagination="data?.pagination"
+                        :refresh="refresh"
+                        @offset-change="offset = $event"
+                    />
+                </template>
             </div>
         </div>
     </div>

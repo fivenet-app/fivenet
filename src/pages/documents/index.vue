@@ -15,30 +15,11 @@ definePageMeta({
 <template>
     <UDashboardPage>
         <UDashboardPanel grow>
-            <UDashboardNavbar title="Documents">
+            <UDashboardNavbar :title="$t('pages.documents.title')">
                 <template #right>
-                    <UInput
-                        ref="input"
-                        icon="i-heroicons-funnel"
-                        autocomplete="off"
-                        placeholder="Filter users..."
-                        class="hidden lg:block"
-                        @keydown.esc="$event.target.blur()"
-                    >
-                        <template #trailing>
-                            <UKbd value="/" />
-                        </template>
-                    </UInput>
-
-                    <UButton label="New user" trailing-icon="i-heroicons-plus" color="gray" />
+                    <UButton :label="$t('common.create')" trailing-icon="i-mdi-plus" color="gray" to="/documents/create" />
                 </template>
             </UDashboardNavbar>
-
-            <UDashboardToolbar>
-                <template #left> </template>
-
-                <template #right> </template>
-            </UDashboardToolbar>
 
             <DocumentList />
             <ClipboardButton />

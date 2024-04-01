@@ -1,7 +1,7 @@
 <script lang="ts" setup>
 import { useAuthStore } from '~/store/auth';
 import { useNotificatorStore } from '~/store/notificator';
-import NotificationItem from '~/components/partials/notification/NotificationItem.vue';
+import { notificationTypeToIcon } from './helpers';
 
 const authStore = useAuthStore();
 const { accessToken, activeChar } = storeToRefs(authStore);
@@ -29,17 +29,15 @@ onBeforeUnmount(async () => stopStream());
 </script>
 
 <template>
-    <!-- Global notification live region, render this permanently at the end of the document -->
-    <div aria-live="assertive" class="pointer-events-none fixed inset-0 z-50 flex items-end px-4 py-16">
-        <div class="flex w-full flex-col items-center space-y-4">
-            <NotificationItem
-                v-for="(notification, idx) in getNotifications.filter(
-                    (n) => n.position === undefined || n.position === 'top-right',
-                )"
-                :key="notification.id"
-                :notification="notification"
-                :class="idx > 0 ? 'mb-6' : ''"
-            />
-        </div>
+    <div class="hidden">
+        <UNotification
+            v-for="notification in getNotifications.filter((n) => n.position === undefined || n.position === 'top-right')"
+            :id="notification.id"
+            :key="notification.id"
+            :title="$t(notification.title.key, notification.title.parameters ?? {})"
+            :description="$t(notification.content.key, notification.content.parameters ?? {})"
+            :icon="notificationTypeToIcon(notification.type)"
+            :timeout="3500"
+        />
     </div>
 </template>

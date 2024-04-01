@@ -627,7 +627,7 @@ const { data: jobs } = useAsyncData('completor-jobs', () => completorStore.listJ
                                             aria-hidden="true"
                                             :class="[
                                                 field.value ? 'translate-x-5' : 'translate-x-0',
-                                                'pointer-events-none inline-block size-5 rounded-full bg-neutral ring-0 transition duration-200 ease-in-out',
+                                                'pointer-events-none inline-block size-5 rounded-full bg-neutral-50 ring-0 transition duration-200 ease-in-out',
                                             ]"
                                         />
                                     </Switch>

@@ -9,7 +9,7 @@ import type { ListQualificationsResponse } from '~~/gen/ts/services/qualificatio
 
 const { $grpc } = useNuxtApp();
 
-const offset = ref(0n);
+const offset = ref(0);
 
 const { data, pending, refresh, error } = useLazyAsyncData(`qualifications-${offset.value}`, () => listQualifications());
 
@@ -34,7 +34,7 @@ watch(offset, async () => refresh());
 
 <template>
     <div class="overflow-hidden rounded-lg bg-base-700 shadow">
-        <div class="border-b border-gray-200 bg-base-600 px-4 py-5 sm:p-6">
+        <div class="border-b border-gray-200 bg-background px-4 py-5 sm:p-6">
             <div class="-ml-4 -mt-4 flex flex-wrap items-center justify-between sm:flex-nowrap">
                 <div class="ml-4 mt-4">
                     <h3 class="text-base font-semibold leading-6 text-gray-200">
@@ -75,7 +75,7 @@ watch(offset, async () => refresh());
                 </ul>
             </template>
         </div>
-        <div class="border-t border-gray-200 bg-base-600 px-4 py-5 sm:p-6">
+        <div class="border-t border-gray-200 bg-background px-4 py-5 sm:p-6">
             <div class="-ml-4 -mt-4 flex items-center">
                 <TablePagination
                     class="w-full"

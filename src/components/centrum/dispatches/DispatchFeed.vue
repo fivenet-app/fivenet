@@ -13,7 +13,7 @@ defineEmits<{
 
 const { $grpc } = useNuxtApp();
 
-const offset = ref(0n);
+const offset = ref(0);
 
 const { data, refresh } = useLazyAsyncData(`centrum-dispatch-${props.dispatchId ?? '0'}-activity-${offset.value}`, () =>
     listDispatchActivity(),

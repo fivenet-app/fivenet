@@ -7,15 +7,14 @@ const open = ref(false);
 </script>
 
 <template>
-    <button
-        type="button"
+    <UButton
         class="flex size-12 items-center justify-center rounded-full bg-accent-500 text-neutral shadow-float hover:bg-accent-400"
         @click="open = true"
     >
         <CalculatorIcon class="h-auto w-10" aria-hidden="true" />
-    </button>
+    </UButton>
 
-    <GenericModal :open="open" :unmount="false" @close="open = false">
+    <GenericModal :open="open" :unmount="false" :title="$t('components.penaltycalculator.title')" @close="open = false">
         <PenaltyCalculator :load-laws="open" />
     </GenericModal>
 </template>

@@ -259,11 +259,7 @@ const mugShotModal = ref(false);
 
                             <div class="flex shrink-0 flex-col gap-2 px-2 py-4 pr-0 lg:w-96">
                                 <div v-if="attr('CitizenStoreService.SetUserProps', 'Fields', 'Wanted')" class="flex-initial">
-                                    <button
-                                        type="button"
-                                        class="inline-flex w-full shrink-0 items-center justify-center rounded-md bg-error-500 px-3 py-2 text-sm font-semibold text-neutral transition-colors hover:bg-error-400 focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 sm:flex-1"
-                                        @click="setWantedModal = true"
-                                    >
+                                    <UButton color="red" block @click="setWantedModal = true">
                                         <AccountAlertIcon
                                             v-if="user.props?.wanted"
                                             class="mr-1.5 h-auto w-5"
@@ -275,60 +271,35 @@ const mugShotModal = ref(false);
                                                 ? $t('components.citizens.citizen_info_profile.revoke_wanted')
                                                 : $t('components.citizens.citizen_info_profile.set_wanted')
                                         }}
-                                    </button>
+                                    </UButton>
                                 </div>
                                 <div v-if="attr('CitizenStoreService.SetUserProps', 'Fields', 'Job')" class="flex-initial">
-                                    <button
-                                        type="button"
-                                        class="inline-flex w-full shrink-0 items-center justify-center rounded-md bg-secondary-500 px-3 py-2 text-sm font-semibold text-neutral transition-colors hover:bg-secondary-400 focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-secondary-500 sm:flex-1"
-                                        @click="setJobModal = true"
-                                    >
-                                        <BriefcaseIcon class="mr-1.5 h-auto w-5" aria-hidden="true" />
+                                    <UButton block icon="i-mdi-briefcase" @click="setJobModal = true">
                                         {{ $t('components.citizens.citizen_info_profile.set_job') }}
-                                    </button>
+                                    </UButton>
                                 </div>
                                 <div
                                     v-if="attr('CitizenStoreService.SetUserProps', 'Fields', 'TrafficInfractionPoints')"
                                     class="flex-initial"
                                 >
-                                    <button
-                                        type="button"
-                                        class="inline-flex w-full shrink-0 items-center justify-center rounded-md bg-secondary-500 px-3 py-2 text-sm font-semibold text-neutral transition-colors hover:bg-secondary-400 focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-secondary-500 sm:flex-1"
-                                        @click="trafficPointsModal = true"
-                                    >
-                                        <CounterIcon class="mr-1.5 h-auto w-5" aria-hidden="true" />
+                                    <UButton block icon="i-mdi-counter" @click="trafficPointsModal = true">
                                         {{ $t('components.citizens.citizen_info_profile.set_traffic_points') }}
-                                    </button>
+                                    </UButton>
                                 </div>
                                 <div v-if="attr('CitizenStoreService.SetUserProps', 'Fields', 'MugShot')" class="flex-initial">
-                                    <button
-                                        type="button"
-                                        class="inline-flex w-full shrink-0 items-center justify-center rounded-md bg-secondary-500 px-3 py-2 text-sm font-semibold text-neutral transition-colors hover:bg-secondary-400 focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-secondary-500 sm:flex-1"
-                                        @click="mugShotModal = true"
-                                    >
-                                        <CameraIcon class="mr-1.5 h-auto w-5" aria-hidden="true" />
+                                    <UButton block icon="i-mdi-camera" @click="mugShotModal = true">
                                         {{ $t('components.citizens.citizen_info_profile.set_mug_shot') }}
-                                    </button>
+                                    </UButton>
                                 </div>
                                 <div v-if="can('DocStoreService.CreateDocument')" class="flex-initial">
-                                    <button
-                                        type="button"
-                                        class="inline-flex w-full shrink-0 items-center justify-center rounded-md bg-base-700 px-3 py-2 text-sm font-semibold text-neutral transition-colors hover:bg-base-600 focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 sm:flex-1"
-                                        @click="openTemplates()"
-                                    >
-                                        <FileDocumentPlusIcon class="mr-1.5 h-auto w-5" aria-hidden="true" />
+                                    <UButton block icon="i-mdi-file-document-plus" @click="openTemplates()">
                                         {{ $t('components.citizens.citizen_info_profile.create_new_document') }}
-                                    </button>
+                                    </UButton>
                                 </div>
                                 <div class="flex-initial">
-                                    <button
-                                        type="button"
-                                        class="inline-flex w-full shrink-0 items-center justify-center rounded-md bg-base-700 px-3 py-2 text-sm font-semibold text-neutral transition-colors hover:bg-base-600 focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 sm:flex-1"
-                                        @click="copyLinkToClipboard()"
-                                    >
-                                        <LinkIcon class="mr-1.5 h-auto w-5" aria-hidden="true" />
+                                    <UButton block icon="i-mdi-link" @click="copyLinkToClipboard()">
                                         {{ $t('components.citizens.citizen_info_profile.copy_profile_link') }}
-                                    </button>
+                                    </UButton>
                                 </div>
                             </div>
                         </div>

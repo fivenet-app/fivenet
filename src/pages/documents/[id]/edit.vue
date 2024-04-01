@@ -1,7 +1,6 @@
 <script lang="ts" setup>
 import { type TypedRouteFromName } from '@typed-router';
 import DocumentEditor from '~/components/documents/DocumentEditor.vue';
-import ContentWrapper from '~/components/partials/ContentWrapper.vue';
 
 useHead({
     title: 'pages.documents.edit.title',
@@ -21,7 +20,11 @@ const route = useRoute('documents-id-edit');
 </script>
 
 <template>
-    <ContentWrapper>
-        <DocumentEditor :id="route.params.id" />
-    </ContentWrapper>
+    <UDashboardPage>
+        <UDashboardPanel grow>
+            <UDashboardNavbar :title="$t('pages.documents.edit.title')"></UDashboardNavbar>
+
+            <DocumentEditor :id="route.params.id" />
+        </UDashboardPanel>
+    </UDashboardPage>
 </template>

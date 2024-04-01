@@ -13,7 +13,7 @@ const props = defineProps<{
     userId: number;
 }>();
 
-const offset = ref(0n);
+const offset = ref(0);
 
 const { data, pending, refresh, error } = useLazyAsyncData(`citizeninfo-activity-${props.userId}-${offset.value}`, () =>
     listUserActivity(),

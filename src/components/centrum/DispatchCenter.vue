@@ -3,7 +3,6 @@ import { useTimeoutFn } from '@vueuse/core';
 import { Pane, Splitpanes } from 'splitpanes';
 import 'splitpanes/dist/splitpanes.css';
 import DispatchList from '~/components/centrum/dispatches/DispatchList.vue';
-import DisponentsInfo from '~/components/centrum/disponents/DisponentsInfo.vue';
 import UnitList from '~/components/centrum/units/UnitList.vue';
 import LivemapBase from '~/components/livemap/LivemapBase.vue';
 import DataErrorBlock from '~/components/partials/data/DataErrorBlock.vue';
@@ -53,10 +52,10 @@ function goto(e: Coordinate) {
                 :message="$t('components.centrum.dispatch_center.starting_datastream')"
             />
         </div>
-        <Splitpanes v-else class="size-full">
+        <Splitpanes v-else>
             <Pane min-size="25">
                 <Splitpanes horizontal>
-                    <Pane min-size="80" size="90">
+                    <Pane size="100">
                         <LivemapBase :show-unit-names="true" :show-unit-status="true" @goto="goto($event)">
                             <template #default>
                                 <DispatchesLayer
@@ -66,9 +65,6 @@ function goto(e: Coordinate) {
                                 />
                             </template>
                         </LivemapBase>
-                    </Pane>
-                    <Pane min-size="8" size="10">
-                        <DisponentsInfo />
                     </Pane>
                 </Splitpanes>
             </Pane>

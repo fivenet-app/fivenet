@@ -1,5 +1,6 @@
 <script lang="ts" setup>
 import DispatchCenter from '~/components/centrum/DispatchCenter.vue';
+import DisponentsInfo from '~/components/centrum/disponents/DisponentsInfo.vue';
 
 useHead({
     title: 'common.dispatch_center',
@@ -13,11 +14,15 @@ definePageMeta({
 </script>
 
 <template>
-    <UDashboardPage>
+    <UDashboardPage class="size-full">
         <UDashboardPanel grow>
-            <UDashboardNavbar :title="$t('common.dispatch_center')"> </UDashboardNavbar>
+            <UDashboardNavbar :title="$t('common.dispatch_center')">
+                <template #right>
+                    <DisponentsInfo />
+                </template>
+            </UDashboardNavbar>
 
-            <DispatchCenter />
+            <DispatchCenter class="min-h-[calc(100vh-var(--header-height))]" />
         </UDashboardPanel>
     </UDashboardPage>
 </template>

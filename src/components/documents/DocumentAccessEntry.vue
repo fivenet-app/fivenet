@@ -246,7 +246,7 @@ watch(selectedAccessRole, () => {
                 type="checkbox"
                 name="required"
                 data-te-toggle="tooltip"
-                class="size-8 rounded-md border-0 bg-base-700 text-primary-600 transition-colors hover:bg-base-600 hover:text-primary-500 focus:ring-2 focus:ring-inset focus:ring-base-300"
+                class="size-8 rounded-md border-0 bg-base-700 text-primary-600 transition-colors hover:bg-background hover:text-primary-500 focus:ring-2 focus:ring-inset focus:ring-base-300"
                 :class="readOnly ? 'disabled' : ''"
             />
         </div>

@@ -2,14 +2,12 @@
 import { localize, setLocale as veeValidateSetLocale } from '@vee-validate/i18n';
 import de from '@vee-validate/i18n/dist/locale/de.json';
 import en from '@vee-validate/i18n/dist/locale/en.json';
-import { UpdateIcon } from 'mdi-vue3';
 import { configure } from 'vee-validate';
 import ConfirmDialog from '~/components/partials/ConfirmDialog.vue';
 import { useClipboardStore } from '~/store/clipboard';
 import { useDocumentEditorStore } from '~/store/documenteditor';
 import { JOB_THEME_KEY, useSettingsStore } from '~/store/settings';
 import { useAuthStore } from '~/store/auth';
-import LoadingBar from '~/components/partials/LoadingBar.vue';
 
 const { t, locale, finalizePendingLocaleChange } = useI18n();
 
@@ -114,7 +112,7 @@ watch(updateAvailable, () => (open.value = true));
 
 <template>
     <div>
-        <LoadingBar />
+        <NuxtLoadingIndicator />
 
         <NuxtLayout>
             <NuxtPage
@@ -141,7 +139,7 @@ watch(updateAvailable, () => (open.value = true));
             :confirm="() => reloadNuxtApp({ persistState: false, force: true })"
             :title="$t('system.update_available.title', { version: updateAvailable })"
             :description="$t('system.update_available.content')"
-            :icon="markRaw(UpdateIcon)"
+            icon="i-mdi-update"
             @close="open = false"
         />
     </div>

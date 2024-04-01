@@ -8,6 +8,7 @@ useHead({
 });
 definePageMeta({
     title: 'common.logout',
+    layout: 'auth',
     requiresAuth: true,
     authOnlyToken: true,
     showCookieOptions: true,

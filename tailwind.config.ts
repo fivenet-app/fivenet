@@ -21,7 +21,7 @@ export default <Partial<Config>>{
     theme: {
         extend: {
             colors: {
-                /*base: {
+                base: {
                     100: '#e2e3e6',
                     200: '#c4c6cd',
                     300: '#a7aab4',
@@ -32,7 +32,7 @@ export default <Partial<Config>>{
                     800: '#2b2d34',
                     900: '#16171a',
                 },
-                primary: {
+                /*primary: {
                     100: '#e3dffc',
                     200: '#c6c0f9',
                     300: '#aaa0f5',
