@@ -41,7 +41,7 @@ const showAbsence = props.colleague.props?.absenceEnd && toDate(props.colleague.
             @update:absence-dates="$emit('update:absenceDates', $event)"
         />
 
-        <td class="whitespace-nowrap py-2 pl-4 pr-3 text-base font-medium text-neutral sm:pl-1">
+        <td class="whitespace-nowrap py-2 pl-4 pr-3 text-base font-medium sm:pl-1">
             <ProfilePictureImg
                 :url="colleague.avatar?.url"
                 :name="`${colleague.firstname} ${colleague.lastname}`"
@@ -50,7 +50,7 @@ const showAbsence = props.colleague.props?.absenceEnd && toDate(props.colleague.
                 :enable-popup="true"
             />
         </td>
-        <td class="whitespace-nowrap py-2 pl-4 pr-3 text-base font-medium text-neutral sm:pl-1">
+        <td class="whitespace-nowrap py-2 pl-4 pr-3 text-base font-medium sm:pl-1">
             {{ colleague.firstname }} {{ colleague.lastname }}
             <dl class="font-normal lg:hidden">
                 <dt class="sr-only">{{ $t('common.job_grade') }}</dt>
@@ -62,7 +62,7 @@ const showAbsence = props.colleague.props?.absenceEnd && toDate(props.colleague.
         <td class="hidden whitespace-nowrap p-1 text-left text-accent-200 lg:table-cell">
             {{ colleague.jobGradeLabel }}<span v-if="colleague.jobGrade > 0"> ({{ colleague.jobGrade }})</span>
         </td>
-        <td class="hidden whitespace-nowrap py-2 pl-4 pr-3 text-base font-medium text-neutral sm:block sm:pl-1">
+        <td class="hidden whitespace-nowrap py-2 pl-4 pr-3 text-base font-medium sm:block sm:pl-1">
             <dl v-if="showAbsence" class="font-normal">
                 <dd class="truncate text-accent-200">
                     {{ $t('common.from') }}:
@@ -90,30 +90,29 @@ const showAbsence = props.colleague.props?.absenceEnd && toDate(props.colleague.
         </td>
         <td class="whitespace-nowrap p-1 text-left text-accent-200">
             <div class="flex flex-col justify-end md:flex-row">
-                <span
+                <UButton
                     v-if="
                         can('JobsService.SetJobsUserProps') &&
                         checkIfCanAccessColleague(activeChar!, colleague, 'JobsService.SetJobsUserProps')
                     "
+                    variant="link"
+                    icon="i-mdi-island"
                     class="flex-initial text-primary-500 hover:text-primary-400"
                     @click="absenceDateModal = true"
-                >
-                    <IslandIcon class="mr-2.5 h-auto w-5" aria-hidden="true" />
-                </span>
+                />
 
-                <NuxtLink
+                <UButton
                     v-if="
                         can('JobsService.GetColleague') &&
                         checkIfCanAccessColleague(activeChar!, colleague, 'JobsService.GetColleague')
                     "
+                    variant="link"
+                    icon="i-mdi-eye"
                     :to="{
                         name: 'jobs-colleagues-id',
                         params: { id: colleague.userId ?? 0 },
                     }"
-                    class="flex-initial text-primary-500 hover:text-primary-400"
-                >
-                    <EyeIcon class="mr-2.5 h-auto w-5" aria-hidden="true" />
-                </NuxtLink>
+                />
             </div>
         </td>
     </tr>

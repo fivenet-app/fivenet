@@ -5,7 +5,6 @@ import { BulletinBoardIcon, CheckIcon } from 'mdi-vue3';
 import DataErrorBlock from '~/components/partials/data/DataErrorBlock.vue';
 import DataNoDataBlock from '~/components/partials/data/DataNoDataBlock.vue';
 import DataPendingBlock from '~/components/partials/data/DataPendingBlock.vue';
-import TablePagination from '~/components/partials/elements/TablePagination.vue';
 import ColleagueActivityFeedEntry from '~/components/jobs/colleagues/info/ColleagueActivityFeedEntry.vue';
 import type { ListColleagueActivityResponse } from '~~/gen/ts/services/jobs/jobs';
 import type { Colleague } from '~~/gen/ts/resources/jobs/colleagues';
@@ -28,9 +27,11 @@ const selectedUsersIds = computed(() =>
     props.userId !== undefined ? [props.userId] : selectedUsers.value.map((u) => u.userId),
 );
 
-const offset = ref(0);
+const page = ref(1);
+const offset = computed(() => (data.value?.pagination?.pageSize ? data.value?.pagination?.pageSize * page.value : 0));
+
 const { data, pending, refresh, error } = useLazyAsyncData(
-    `jobs-colleague-${selectedUsersIds.value.join(',')}-${offset.value}`,
+    `jobs-colleague-${selectedUsersIds.value.join(',')}-${page.value}`,
     () => listColleagueActivity(selectedUsersIds.value),
 );
 
@@ -116,7 +117,7 @@ function charsGetDisplayValue(chars: Colleague[]): string {
                     <form @submit.prevent="refresh()">
                         <div class="mx-auto flex flex-row gap-4">
                             <div class="flex-1">
-                                <label for="searchName" class="block text-sm font-medium leading-6 text-neutral">
+                                <label for="searchName" class="block text-sm font-medium leading-6">
                                     {{ $t('common.search') }}
                                     {{ $t('common.colleague', 1) }}
                                 </label>
@@ -126,7 +127,7 @@ function charsGetDisplayValue(chars: Colleague[]): string {
                                             <ComboboxButton as="div">
                                                 <ComboboxInput
                                                     autocomplete="off"
-                                                    class="block w-full rounded-md border-0 bg-base-700 py-1.5 text-neutral placeholder:text-accent-200 focus:ring-2 focus:ring-inset focus:ring-base-300 sm:text-sm sm:leading-6"
+                                                    class="block w-full rounded-md border-0 bg-base-700 py-1.5 placeholder:text-accent-200 focus:ring-2 focus:ring-inset focus:ring-base-300 sm:text-sm sm:leading-6"
                                                     :display-value="
                                                         (chars: any) => (chars ? charsGetDisplayValue(chars) : $t('common.na'))
                                                     "
@@ -150,7 +151,7 @@ function charsGetDisplayValue(chars: Colleague[]): string {
                                                 >
                                                     <li
                                                         :class="[
-                                                            'relative cursor-default select-none py-2 pl-8 pr-4 text-neutral',
+                                                            'relative cursor-default select-none py-2 pl-8 pr-4',
                                                             active ? 'bg-primary-500' : '',
                                                         ]"
                                                     >
@@ -167,7 +168,7 @@ function charsGetDisplayValue(chars: Colleague[]): string {
                                                                 'absolute inset-y-0 left-0 flex items-center pl-1.5',
                                                             ]"
                                                         >
-                                                            <CheckIcon class="size-5" aria-hidden="true" />
+                                                            <CheckIcon class="size-5" />
                                                         </span>
                                                     </li>
                                                 </ComboboxOption>
@@ -204,11 +205,13 @@ function charsGetDisplayValue(chars: Colleague[]): string {
                                 </li>
                             </ul>
 
-                            <TablePagination
-                                :pagination="data?.pagination"
-                                :refresh="refresh"
-                                @offset-change="offset = $event"
-                            />
+                            <div class="flex justify-end px-3 py-3.5 border-t border-gray-200 dark:border-gray-700">
+                                <UPagination
+                                    v-model="page"
+                                    :page-count="data?.pagination?.pageSize ?? 0"
+                                    :total="data?.pagination?.totalCount ?? 0"
+                                />
+                            </div>
                         </div>
                     </div>
                 </div>

@@ -103,7 +103,7 @@ const onSubmitThrottle = useThrottleFn(async (e) => {
                                     <div class="h-0 flex-1 overflow-y-auto">
                                         <div class="bg-primary-700 px-4 py-6 sm:px-6">
                                             <div class="flex items-center justify-between">
-                                                <DialogTitle class="text-base font-semibold leading-6 text-neutral">
+                                                <DialogTitle class="text-base font-semibold leading-6">
                                                     {{ $t('components.centrum.create_dispatch.title') }}
                                                 </DialogTitle>
                                                 <div class="ml-3 flex h-7 items-center">
@@ -112,7 +112,7 @@ const onSubmitThrottle = useThrottleFn(async (e) => {
                                                         @click="$emit('close')"
                                                     >
                                                         <span class="sr-only">{{ $t('common.close') }}</span>
-                                                        <CloseIcon class="size-5" aria-hidden="true" />
+                                                        <CloseIcon class="size-5" />
                                                     </UButton>
                                                 </div>
                                             </div>
@@ -127,10 +127,10 @@ const onSubmitThrottle = useThrottleFn(async (e) => {
                                                 <div class="mt-1">
                                                     <dl class="divide-y divide-neutral/10 border-b border-neutral/10">
                                                         <div class="px-4 py-3 sm:grid sm:grid-cols-3 sm:gap-4 sm:px-0">
-                                                            <dt class="text-sm font-medium leading-6 text-neutral">
+                                                            <dt class="text-sm font-medium leading-6">
                                                                 <label
                                                                     for="message"
-                                                                    class="block text-sm font-medium leading-6 text-neutral"
+                                                                    class="block text-sm font-medium leading-6"
                                                                 >
                                                                     {{ $t('common.message') }}
                                                                 </label>
@@ -141,7 +141,7 @@ const onSubmitThrottle = useThrottleFn(async (e) => {
                                                                 <VeeField
                                                                     type="text"
                                                                     name="message"
-                                                                    class="block w-full rounded-md border-0 bg-base-700 py-1.5 text-neutral placeholder:text-accent-200 focus:ring-2 focus:ring-inset focus:ring-base-300 sm:text-sm sm:leading-6"
+                                                                    class="block w-full rounded-md border-0 bg-base-700 py-1.5 placeholder:text-accent-200 focus:ring-2 focus:ring-inset focus:ring-base-300 sm:text-sm sm:leading-6"
                                                                     :placeholder="$t('common.message')"
                                                                     :label="$t('common.message')"
                                                                     @focusin="focusTablet(true)"
@@ -155,10 +155,10 @@ const onSubmitThrottle = useThrottleFn(async (e) => {
                                                             </dd>
                                                         </div>
                                                         <div class="px-4 py-3 sm:grid sm:grid-cols-3 sm:gap-4 sm:px-0">
-                                                            <dt class="text-sm font-medium leading-6 text-neutral">
+                                                            <dt class="text-sm font-medium leading-6">
                                                                 <label
                                                                     for="description"
-                                                                    class="block text-sm font-medium leading-6 text-neutral"
+                                                                    class="block text-sm font-medium leading-6"
                                                                 >
                                                                     {{ $t('common.description') }}
                                                                 </label>
@@ -169,7 +169,7 @@ const onSubmitThrottle = useThrottleFn(async (e) => {
                                                                 <VeeField
                                                                     type="text"
                                                                     name="description"
-                                                                    class="block w-full rounded-md border-0 bg-base-700 py-1.5 text-neutral placeholder:text-accent-200 focus:ring-2 focus:ring-inset focus:ring-base-300 sm:text-sm sm:leading-6"
+                                                                    class="block w-full rounded-md border-0 bg-base-700 py-1.5 placeholder:text-accent-200 focus:ring-2 focus:ring-inset focus:ring-base-300 sm:text-sm sm:leading-6"
                                                                     :placeholder="$t('common.description')"
                                                                     :label="$t('common.description')"
                                                                     @focusin="focusTablet(true)"
@@ -183,11 +183,8 @@ const onSubmitThrottle = useThrottleFn(async (e) => {
                                                             </dd>
                                                         </div>
                                                         <div class="px-4 py-3 sm:grid sm:grid-cols-3 sm:gap-4 sm:px-0">
-                                                            <dt class="text-sm font-medium leading-6 text-neutral">
-                                                                <label
-                                                                    for="anon"
-                                                                    class="block text-sm font-medium leading-6 text-neutral"
-                                                                >
+                                                            <dt class="text-sm font-medium leading-6">
+                                                                <label for="anon" class="block text-sm font-medium leading-6">
                                                                     {{ $t('common.anon') }}
                                                                 </label>
                                                             </dt>
@@ -220,16 +217,11 @@ const onSubmitThrottle = useThrottleFn(async (e) => {
                                         <span class="isolate inline-flex w-full rounded-md pr-4 shadow-sm">
                                             <UButton
                                                 type="submit"
-                                                class="relative inline-flex w-full items-center rounded-l-md px-3.5 py-2.5 text-sm font-semibold text-neutral"
+                                                class="relative inline-flex w-full items-center rounded-l-md px-3.5 py-2.5 text-sm font-semibold"
                                                 :disabled="!meta.valid || !canSubmit"
-                                                :class="[
-                                                    !meta.valid || !canSubmit
-                                                        ? 'disabled bg-base-500 hover:bg-base-400 focus-visible:outline-base-500'
-                                                        : 'bg-primary-500 hover:bg-primary-400',
-                                                ]"
                                             >
                                                 <template v-if="!canSubmit">
-                                                    <LoadingIcon class="mr-2 size-5 animate-spin" aria-hidden="true" />
+                                                    <LoadingIcon class="mr-2 size-5 animate-spin" />
                                                 </template>
                                                 {{ $t('common.create') }}
                                             </UButton>

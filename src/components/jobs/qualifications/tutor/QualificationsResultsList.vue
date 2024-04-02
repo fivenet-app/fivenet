@@ -5,7 +5,6 @@ import DataNoDataBlock from '~/components/partials/data/DataNoDataBlock.vue';
 import DataPendingBlock from '~/components/partials/data/DataPendingBlock.vue';
 import type { ListQualificationsResultsResponse } from '~~/gen/ts/services/qualifications/qualifications';
 import QualificationsResultsListEntry from '~/components/jobs/qualifications/tutor/QualificationsResultsListEntry.vue';
-import TablePagination from '~/components/partials/elements/TablePagination.vue';
 import { ResultStatus } from '~~/gen/ts/resources/qualifications/qualifications';
 import GenericTable from '~/components/partials/elements/GenericTable.vue';
 
@@ -22,10 +21,12 @@ const props = withDefaults(
 
 const { $grpc } = useNuxtApp();
 
-const offset = ref(0);
+const page = ref(1);
+const offset = computed(() => (data.value?.pagination?.pageSize ? data.value?.pagination?.pageSize * page.value : 0));
 
-const { data, pending, refresh, error } = useLazyAsyncData(`qualifications-results-${props.qualificationId}`, () =>
-    listQualificationsResults(props.qualificationId, props.status),
+const { data, pending, refresh, error } = useLazyAsyncData(
+    `qualifications-results-${page.value}-${props.qualificationId}`,
+    () => listQualificationsResults(props.qualificationId, props.status),
 );
 
 async function listQualificationsResults(
@@ -105,13 +106,13 @@ watch(offset, async () => refresh());
                 </GenericTable>
             </template>
 
-            <TablePagination
-                class="w-full"
-                :pagination="data?.pagination"
-                :show-border="false"
-                :refresh="refresh"
-                @offset-change="offset = $event"
-            />
+            <div class="flex justify-end px-3 py-3.5 border-t border-gray-200 dark:border-gray-700">
+                <UPagination
+                    v-model="page"
+                    :page-count="data?.pagination?.pageSize ?? 0"
+                    :total="data?.pagination?.totalCount ?? 0"
+                />
+            </div>
         </div>
     </div>
 </template>

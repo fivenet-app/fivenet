@@ -118,7 +118,7 @@ const onSubmitThrottle = useThrottleFn(async () => {
                                     <div class="h-0 flex-1 overflow-y-auto">
                                         <div class="bg-primary-700 px-4 py-6 sm:px-6">
                                             <div class="flex items-center justify-between">
-                                                <DialogTitle class="text-base font-semibold leading-6 text-neutral">
+                                                <DialogTitle class="text-base font-semibold leading-6">
                                                     {{ $t('components.centrum.assign_unit.title') }}: {{ unit.name }} ({{
                                                         unit.initials
                                                     }})
@@ -129,7 +129,7 @@ const onSubmitThrottle = useThrottleFn(async () => {
                                                         @click="$emit('close')"
                                                     >
                                                         <span class="sr-only">{{ $t('common.close') }}</span>
-                                                        <CloseIcon class="size-5" aria-hidden="true" />
+                                                        <CloseIcon class="size-5" />
                                                     </UButton>
                                                 </div>
                                             </div>
@@ -144,7 +144,7 @@ const onSubmitThrottle = useThrottleFn(async () => {
                                                                     <ComboboxButton as="div">
                                                                         <ComboboxInput
                                                                             autocomplete="off"
-                                                                            class="block w-full rounded-md border-0 bg-base-700 py-1.5 text-neutral placeholder:text-accent-200 focus:ring-2 focus:ring-inset focus:ring-base-300 sm:text-sm sm:leading-6"
+                                                                            class="block w-full rounded-md border-0 bg-base-700 py-1.5 placeholder:text-accent-200 focus:ring-2 focus:ring-inset focus:ring-base-300 sm:text-sm sm:leading-6"
                                                                             :display-value="
                                                                                 (chars: any) =>
                                                                                     chars
@@ -171,7 +171,7 @@ const onSubmitThrottle = useThrottleFn(async () => {
                                                                         >
                                                                             <li
                                                                                 :class="[
-                                                                                    'relative cursor-default select-none py-2 pl-8 pr-4 text-neutral',
+                                                                                    'relative cursor-default select-none py-2 pl-8 pr-4',
                                                                                     active ? 'bg-primary-500' : '',
                                                                                 ]"
                                                                             >
@@ -194,10 +194,7 @@ const onSubmitThrottle = useThrottleFn(async () => {
                                                                                         'absolute inset-y-0 left-0 flex items-center pl-1.5',
                                                                                     ]"
                                                                                 >
-                                                                                    <CheckIcon
-                                                                                        class="size-5"
-                                                                                        aria-hidden="true"
-                                                                                    />
+                                                                                    <CheckIcon class="size-5" />
                                                                                 </span>
                                                                             </li>
                                                                         </ComboboxOption>
@@ -228,7 +225,7 @@ const onSubmitThrottle = useThrottleFn(async () => {
                                     <div class="flex shrink-0 justify-end p-4">
                                         <span class="isolate inline-flex w-full rounded-md pr-4 shadow-sm">
                                             <UButton
-                                                class="relative inline-flex w-full items-center rounded-l-md px-3.5 py-2.5 text-sm font-semibold text-neutral"
+                                                class="relative inline-flex w-full items-center rounded-l-md px-3.5 py-2.5 text-sm font-semibold"
                                                 :disabled="!canSubmit"
                                                 :class="[
                                                     !canSubmit
@@ -238,7 +235,7 @@ const onSubmitThrottle = useThrottleFn(async () => {
                                                 @click="onSubmitThrottle"
                                             >
                                                 <template v-if="!canSubmit">
-                                                    <LoadingIcon class="mr-2 size-5 animate-spin" aria-hidden="true" />
+                                                    <LoadingIcon class="mr-2 size-5 animate-spin" />
                                                 </template>
                                                 {{ $t('common.update') }}
                                             </UButton>

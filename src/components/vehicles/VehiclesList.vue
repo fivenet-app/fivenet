@@ -4,7 +4,6 @@ import { useCompletorStore } from '~/store/completor';
 import { ListVehiclesResponse } from '~~/gen/ts/services/dmv/vehicles';
 import CitizenInfoPopover from '../partials/citizens/CitizenInfoPopover.vue';
 import LicensePlate from '../partials/LicensePlate.vue';
-import { AccountEyeIcon, ClipboardPlusIcon } from 'mdi-vue3';
 import type { Vehicle } from '~~/gen/ts/resources/vehicles/vehicles';
 import { useClipboardStore } from '~/store/clipboard';
 import { useNotificatorStore } from '~/store/notificator';
@@ -35,9 +34,9 @@ const query = ref<{ plate: string; model?: string; user_id?: number }>({
 });
 
 const page = ref(1);
-const offset = computed(() => (vehicles.value?.pagination?.pageSize ? vehicles.value?.pagination?.pageSize * page.value : 0));
+const offset = computed(() => (data.value?.pagination?.pageSize ? data.value?.pagination?.pageSize * page.value : 0));
 
-const { data: vehicles, pending: loading, refresh } = useLazyAsyncData(`vehicles-${page.value}`, () => listVehicles());
+const { data: data, pending: loading, refresh } = useLazyAsyncData(`vehicles-${page.value}`, () => listVehicles());
 
 const hideModell = ref(false);
 
@@ -136,7 +135,7 @@ const columns = [
                 <form class="w-full" @submit.prevent="refresh()">
                     <div class="flex flex-row gap-2">
                         <div class="flex-1">
-                            <label for="search" class="block text-sm font-medium leading-6 text-neutral">
+                            <label for="search" class="block text-sm font-medium leading-6">
                                 {{ $t('common.license_plate') }}
                             </label>
                             <div class="relative mt-2">
@@ -151,7 +150,7 @@ const columns = [
                             </div>
                         </div>
                         <div v-if="!hideModell" class="flex-1">
-                            <label for="model" class="block text-sm font-medium leading-6 text-neutral">
+                            <label for="model" class="block text-sm font-medium leading-6">
                                 {{ $t('common.model') }}
                             </label>
                             <div class="relative mt-2">
@@ -168,7 +167,7 @@ const columns = [
                         </div>
 
                         <div v-if="!userId" class="flex-1">
-                            <label for="owner" class="block text-sm font-medium leading-6 text-neutral">
+                            <label for="owner" class="block text-sm font-medium leading-6">
                                 {{ $t('common.owner') }}
                             </label>
                             <div class="relative mt-2 items-center">
@@ -212,10 +211,10 @@ const columns = [
         <UTable
             :loading="loading"
             :columns="columns"
-            :rows="vehicles?.vehicles"
+            :rows="data?.vehicles"
             :empty-state="{ icon: 'i-mdi-car', label: $t('common.not_found', [$t('common.vehicle', 2)]) }"
-            :page-count="(vehicles?.pagination?.totalCount ?? 0) / (vehicles?.pagination?.pageSize ?? 1)"
-            :total="vehicles?.pagination?.totalCount"
+            :page-count="(data?.pagination?.totalCount ?? 0) / (data?.pagination?.pageSize ?? 1)"
+            :total="data?.pagination?.totalCount"
         >
             <template #plate-data="{ row }">
                 <LicensePlate :plate="row.plate" class="mr-2" />
@@ -228,23 +227,16 @@ const columns = [
             </template>
             <template #actions-data="{ row }">
                 <div class="flex flex-row justify-end">
-                    <span
-                        v-if="!hideCopy"
-                        class="flex-initial text-primary-500 hover:text-primary-400"
-                        @click="addToClipboard(row)"
-                    >
-                        <ClipboardPlusIcon class="ml-auto mr-2.5 h-auto w-5" aria-hidden="true" />
-                    </span>
-                    <NuxtLink
+                    <UButton v-if="!hideCopy" variant="link" icon="i-mdi-clipboard-plus" @click="addToClipboard(row)" />
+                    <UButton
                         v-if="!hideCitizenLink && can('CitizenStoreService.ListCitizens')"
+                        variant="link"
+                        icon="i-mdi-account-eye"
                         :to="{
                             name: 'citizens-id',
                             params: { id: row.owner?.userId ?? 0 },
                         }"
-                        class="flex-initial text-primary-500 hover:text-primary-400"
-                    >
-                        <AccountEyeIcon class="ml-auto mr-2.5 h-auto w-5" aria-hidden="true" />
-                    </NuxtLink>
+                    />
                 </div>
             </template>
         </UTable>
@@ -252,8 +244,8 @@ const columns = [
         <div class="flex justify-end px-3 py-3.5 border-t border-gray-200 dark:border-gray-700">
             <UPagination
                 v-model="page"
-                :page-count="parseInt(vehicles?.pagination?.pageSize.toString() ?? '0')"
-                :total="parseInt(vehicles?.pagination?.totalCount.toString() ?? '0')"
+                :page-count="data?.pagination?.pageSize ?? 0"
+                :total="data?.pagination?.totalCount ?? 0"
             />
         </div>
     </div>

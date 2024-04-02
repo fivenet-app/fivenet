@@ -11,7 +11,7 @@ withDefaults(
 </script>
 
 <template>
-    <UIcon
+    <UButton
         :title="title"
         icon="i-mdi-clipboard-plus"
         :ui="{ rounded: 'rounded-full' }"

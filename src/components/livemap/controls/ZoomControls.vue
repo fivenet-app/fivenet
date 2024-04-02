@@ -14,7 +14,7 @@ const { zoom } = storeToRefs(livemapStore);
                 class="inset-0 inline-flex items-center justify-center rounded-md border-2 border-black/20 bg-clip-padding p-1.5 hover:bg-[#f4f4f4]"
                 @click="if (zoom + 1 <= 7) zoom++;"
             >
-                <PlusThickIcon class="size-5" aria-hidden="true" />
+                <PlusThickIcon class="size-5" />
             </UButton>
 
             <UButton
@@ -27,7 +27,7 @@ const { zoom } = storeToRefs(livemapStore);
                 class="inset-0 inline-flex items-center justify-center rounded-md border-2 border-black/20 bg-clip-padding p-1.5 hover:bg-[#f4f4f4]"
                 @click="if (zoom - 1 >= 1) zoom--;"
             >
-                <MinusThickIcon class="size-5" aria-hidden="true" />
+                <MinusThickIcon class="size-5" />
             </UButton>
         </div>
     </LControl>

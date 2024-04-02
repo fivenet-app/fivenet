@@ -16,10 +16,12 @@ definePageMeta({
 const authStore = useAuthStore();
 const { accessToken } = storeToRefs(authStore);
 
+const router = useRouter();
+
 onBeforeMount(async () => {
     if (accessToken.value) {
         // @ts-ignore the route should be valid, as we test it against a valid URL list
-        const target = useRouter().resolve(useSettingsStore().startpage ?? '/overview');
+        const target = router.resolve(useSettingsStore().startpage ?? '/overview');
         return navigateTo(target);
     }
 });

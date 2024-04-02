@@ -1,4 +1,3 @@
-<!-- eslint-disable tailwindcss/no-custom-classname -->
 <script setup lang="ts">
 import PageFooter from '~/components/partials/PageFooter.vue';
 
@@ -9,6 +8,7 @@ useHead({
 });
 </script>
 
+<!-- eslint-disable tailwindcss/no-custom-classname -->
 <template>
     <div class="h-screen">
         <div class="overlay flex h-full flex-col items-center justify-center">

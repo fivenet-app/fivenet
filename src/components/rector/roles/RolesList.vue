@@ -95,7 +95,7 @@ const selectedRole = ref<Role | undefined>();
                                 <form @submit.prevent="createRole()">
                                     <div class="mx-auto flex flex-row gap-4">
                                         <div class="flex-1">
-                                            <label for="grade" class="block text-sm font-medium leading-6 text-neutral">
+                                            <label for="grade" class="block text-sm font-medium leading-6">
                                                 {{ $t('common.job_grade') }}
                                             </label>
                                             <Combobox
@@ -108,7 +108,7 @@ const selectedRole = ref<Role | undefined>();
                                                     <ComboboxButton as="div" class="w-full">
                                                         <ComboboxInput
                                                             autocomplete="off"
-                                                            class="block w-full rounded-md border-0 bg-base-700 py-1.5 text-neutral placeholder:text-accent-200 focus:ring-2 focus:ring-inset focus:ring-base-300 sm:text-sm sm:leading-6"
+                                                            class="block w-full rounded-md border-0 bg-base-700 py-1.5 placeholder:text-accent-200 focus:ring-2 focus:ring-inset focus:ring-base-300 sm:text-sm sm:leading-6"
                                                             :display-value="
                                                                 (grade: any) =>
                                                                     grade ? `${grade?.label} (${grade?.grade})` : ''
@@ -132,7 +132,7 @@ const selectedRole = ref<Role | undefined>();
                                                         >
                                                             <li
                                                                 :class="[
-                                                                    'relative cursor-default select-none py-2 pl-8 pr-4 text-neutral',
+                                                                    'relative cursor-default select-none py-2 pl-8 pr-4',
                                                                     active ? 'bg-primary-500' : '',
                                                                 ]"
                                                             >
@@ -147,7 +147,7 @@ const selectedRole = ref<Role | undefined>();
                                                                         'absolute inset-y-0 left-0 flex items-center pl-1.5',
                                                                     ]"
                                                                 >
-                                                                    <CheckIcon class="size-5" aria-hidden="true" />
+                                                                    <CheckIcon class="size-5" />
                                                                 </span>
                                                             </li>
                                                         </ComboboxOption>
@@ -158,7 +158,7 @@ const selectedRole = ref<Role | undefined>();
                                         <div class="flex flex-initial flex-col justify-end">
                                             <UButton
                                                 type="submit"
-                                                class="inline-flex rounded-md px-3 py-2 text-sm font-semibold text-neutral focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2"
+                                                class="inline-flex rounded-md px-3 py-2 text-sm font-semibold focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2"
                                                 :disabled="selectedJobGrade === null || selectedJobGrade!.grade <= 0"
                                                 :class="[
                                                     selectedJobGrade === null || selectedJobGrade!.grade <= 0
@@ -186,12 +186,12 @@ const selectedRole = ref<Role | undefined>();
                             <GenericTable v-else>
                                 <template #thead>
                                     <tr>
-                                        <th scope="col" class="px-2 py-3.5 text-left text-sm font-semibold text-neutral">
+                                        <th scope="col" class="px-2 py-3.5 text-left text-sm font-semibold">
                                             {{ $t('common.name') }}
                                         </th>
                                         <th
                                             scope="col"
-                                            class="relative py-3.5 pl-3 pr-4 text-right text-sm font-semibold text-neutral sm:pr-0"
+                                            class="relative py-3.5 pl-3 pr-4 text-right text-sm font-semibold sm:pr-0"
                                         >
                                             {{ $t('common.action', 2) }}
                                         </th>

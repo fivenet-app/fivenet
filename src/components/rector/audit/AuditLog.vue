@@ -29,7 +29,11 @@ const query = ref<{
     service: '',
     search: '',
 });
-const offset = ref(0);
+
+const page = ref(1);
+const offset = computed(() => (data.value?.pagination?.pageSize ? data.value?.pagination?.pageSize * page.value : 0));
+
+const { data, pending, refresh, error } = useLazyAsyncData(`rector-audit-${page.value}`, () => viewAuditLog());
 
 async function viewAuditLog(): Promise<ViewAuditLogResponse> {
     const req: ViewAuditLogRequest = {
@@ -73,8 +77,6 @@ async function viewAuditLog(): Promise<ViewAuditLogResponse> {
         throw e;
     }
 }
-
-const { data, pending, refresh, error } = useLazyAsyncData(`rector-audit-${offset}`, () => viewAuditLog());
 
 const entriesCitizens = ref<UserShort[]>([]);
 const queryCitizens = ref('');
@@ -128,7 +130,7 @@ watchDebounced(queryCitizens, async () => await findChars(), {
                     <form @submit.prevent="refresh()">
                         <div class="mx-auto flex flex-row gap-4">
                             <div class="flex-1">
-                                <label for="from" class="block text-sm font-medium leading-6 text-neutral">
+                                <label for="from" class="block text-sm font-medium leading-6">
                                     {{ $t('common.time_range') }}: {{ $t('common.from') }}
                                 </label>
                                 <div class="relative mt-2">
@@ -137,14 +139,14 @@ watchDebounced(queryCitizens, async () => await findChars(), {
                                         type="datetime-local"
                                         name="from"
                                         :placeholder="`${$t('common.time_range')} ${$t('common.from')}`"
-                                        class="block w-full rounded-md border-0 bg-base-700 py-1.5 pr-14 text-neutral placeholder:text-accent-200 focus:ring-2 focus:ring-inset focus:ring-base-300 sm:text-sm sm:leading-6"
+                                        class="block w-full rounded-md border-0 bg-base-700 py-1.5 pr-14 placeholder:text-accent-200 focus:ring-2 focus:ring-inset focus:ring-base-300 sm:text-sm sm:leading-6"
                                         @focusin="focusTablet(true)"
                                         @focusout="focusTablet(false)"
                                     />
                                 </div>
                             </div>
                             <div class="flex-1">
-                                <label for="to" class="block text-sm font-medium leading-6 text-neutral">
+                                <label for="to" class="block text-sm font-medium leading-6">
                                     {{ $t('common.time_range') }}: {{ $t('common.to') }}
                                 </label>
                                 <div class="relative mt-2">
@@ -153,14 +155,14 @@ watchDebounced(queryCitizens, async () => await findChars(), {
                                         type="datetime-local"
                                         name="to"
                                         :placeholder="`${$t('common.time_range')} ${$t('common.to')}`"
-                                        class="block w-full rounded-md border-0 bg-base-700 py-1.5 pr-14 text-neutral placeholder:text-accent-200 focus:ring-2 focus:ring-inset focus:ring-base-300 sm:text-sm sm:leading-6"
+                                        class="block w-full rounded-md border-0 bg-base-700 py-1.5 pr-14 placeholder:text-accent-200 focus:ring-2 focus:ring-inset focus:ring-base-300 sm:text-sm sm:leading-6"
                                         @focusin="focusTablet(true)"
                                         @focusout="focusTablet(false)"
                                     />
                                 </div>
                             </div>
                             <div class="flex-1">
-                                <label for="users" class="block text-sm font-medium leading-6 text-neutral">
+                                <label for="users" class="block text-sm font-medium leading-6">
                                     {{ $t('common.user', 2) }}
                                 </label>
                                 <div class="relative mt-2 items-center">
@@ -169,7 +171,7 @@ watchDebounced(queryCitizens, async () => await findChars(), {
                                             <ComboboxButton as="div">
                                                 <ComboboxInput
                                                     autocomplete="off"
-                                                    class="block w-full rounded-md border-0 bg-base-700 py-1.5 text-neutral placeholder:text-accent-200 focus:ring-2 focus:ring-inset focus:ring-base-300 sm:text-sm sm:leading-6"
+                                                    class="block w-full rounded-md border-0 bg-base-700 py-1.5 placeholder:text-accent-200 focus:ring-2 focus:ring-inset focus:ring-base-300 sm:text-sm sm:leading-6"
                                                     :display-value="
                                                         (chars: any) => (chars ? charsGetDisplayValue(chars) : $t('common.na'))
                                                     "
@@ -193,7 +195,7 @@ watchDebounced(queryCitizens, async () => await findChars(), {
                                                 >
                                                     <li
                                                         :class="[
-                                                            'relative cursor-default select-none py-2 pl-8 pr-4 text-neutral',
+                                                            'relative cursor-default select-none py-2 pl-8 pr-4',
                                                             active ? 'bg-primary-500' : '',
                                                         ]"
                                                     >
@@ -210,7 +212,7 @@ watchDebounced(queryCitizens, async () => await findChars(), {
                                                                 'absolute inset-y-0 left-0 flex items-center pl-1.5',
                                                             ]"
                                                         >
-                                                            <CheckIcon class="size-5" aria-hidden="true" />
+                                                            <CheckIcon class="size-5" />
                                                         </span>
                                                     </li>
                                                 </ComboboxOption>
@@ -220,7 +222,7 @@ watchDebounced(queryCitizens, async () => await findChars(), {
                                 </div>
                             </div>
                             <div class="flex-1">
-                                <label for="service" class="block text-sm font-medium leading-6 text-neutral">
+                                <label for="service" class="block text-sm font-medium leading-6">
                                     {{ $t('common.service') }}
                                 </label>
                                 <div class="relative mt-2">
@@ -229,14 +231,14 @@ watchDebounced(queryCitizens, async () => await findChars(), {
                                         type="text"
                                         name="service"
                                         :placeholder="$t('common.service')"
-                                        class="block w-full rounded-md border-0 bg-base-700 py-1.5 pr-14 text-neutral placeholder:text-accent-200 focus:ring-2 focus:ring-inset focus:ring-base-300 sm:text-sm sm:leading-6"
+                                        class="block w-full rounded-md border-0 bg-base-700 py-1.5 pr-14 placeholder:text-accent-200 focus:ring-2 focus:ring-inset focus:ring-base-300 sm:text-sm sm:leading-6"
                                         @focusin="focusTablet(true)"
                                         @focusout="focusTablet(false)"
                                     />
                                 </div>
                             </div>
                             <div class="flex-1">
-                                <label for="method" class="block text-sm font-medium leading-6 text-neutral">
+                                <label for="method" class="block text-sm font-medium leading-6">
                                     {{ $t('common.method') }}
                                 </label>
                                 <div class="relative mt-2">
@@ -245,14 +247,14 @@ watchDebounced(queryCitizens, async () => await findChars(), {
                                         type="text"
                                         name="method"
                                         :placeholder="$t('common.method')"
-                                        class="block w-full rounded-md border-0 bg-base-700 py-1.5 pr-14 text-neutral placeholder:text-accent-200 focus:ring-2 focus:ring-inset focus:ring-base-300 sm:text-sm sm:leading-6"
+                                        class="block w-full rounded-md border-0 bg-base-700 py-1.5 pr-14 placeholder:text-accent-200 focus:ring-2 focus:ring-inset focus:ring-base-300 sm:text-sm sm:leading-6"
                                         @focusin="focusTablet(true)"
                                         @focusout="focusTablet(false)"
                                     />
                                 </div>
                             </div>
                             <div class="flex-1">
-                                <label for="data" class="block text-sm font-medium leading-6 text-neutral">
+                                <label for="data" class="block text-sm font-medium leading-6">
                                     {{ $t('common.data') }}
                                 </label>
                                 <div class="relative mt-2">
@@ -262,7 +264,7 @@ watchDebounced(queryCitizens, async () => await findChars(), {
                                         type="text"
                                         name="data"
                                         :placeholder="$t('common.search')"
-                                        class="block w-full rounded-md border-0 bg-base-700 py-1.5 pr-14 text-neutral placeholder:text-accent-200 focus:ring-2 focus:ring-inset focus:ring-base-300 sm:text-sm sm:leading-6"
+                                        class="block w-full rounded-md border-0 bg-base-700 py-1.5 pr-14 placeholder:text-accent-200 focus:ring-2 focus:ring-inset focus:ring-base-300 sm:text-sm sm:leading-6"
                                         @focusin="focusTablet(true)"
                                         @focusout="focusTablet(false)"
                                     />
@@ -281,55 +283,61 @@ watchDebounced(queryCitizens, async () => await findChars(), {
                             :retry="refresh"
                         />
 
-                        <template v-else>
-                            <UTable :loading="pending" :rows="data?.logs">
-                                <template #id-header>
-                                    {{ $t('common.id') }}
-                                </template>
-                                <template #createdAt-header>
-                                    {{ $t('common.time') }}
-                                </template>
-                                <template #user-header>
-                                    {{ $t('common.user', 1) }}
-                                </template>
-                                <template #service-header> {{ $t('common.service') }}</template>
-                                <template #method-header>{{ $t('common.method') }}</template>
-                                <template #state-header>
-                                    {{ $t('common.state') }}
-                                </template>
-                                <template #data-header>
-                                    {{ $t('common.data') }}
-                                </template>
-                                <template #actions-header>
-                                    {{ $t('common.action', 2) }}
-                                </template>
+                        <UTable v-else :loading="pending" :rows="data?.logs">
+                            <template #id-header>
+                                {{ $t('common.id') }}
+                            </template>
+                            <template #createdAt-header>
+                                {{ $t('common.time') }}
+                            </template>
+                            <template #user-header>
+                                {{ $t('common.user', 1) }}
+                            </template>
+                            <template #service-header> {{ $t('common.service') }}</template>
+                            <template #method-header>{{ $t('common.method') }}</template>
+                            <template #state-header>
+                                {{ $t('common.state') }}
+                            </template>
+                            <template #data-header>
+                                {{ $t('common.data') }}
+                            </template>
+                            <template #actions-header>
+                                {{ $t('common.action', 2) }}
+                            </template>
 
-                                <template #id-data="{ row }">
-                                    {{ row.id }}
-                                </template>
-                                <template #createdAt-data="{ row }">
-                                    <GenericTime :value="row.createdAt" type="long" />
-                                </template>
-                                <template #user-data="{ row }">
-                                    <CitizenInfoPopover :user="row.user" />
-                                </template>
-                                <template #state-data="{ row }">
-                                    {{ EventType[row.state] }}
-                                </template>
-                                <template #data-data="{ row }">
-                                    <span v-if="!row.data">N/A</span>
-                                    <span v-else>
-                                        <VueJsonPretty
-                                            :data="jsonParse(row.data!)"
-                                            :show-icon="true"
-                                            :show-length="true"
-                                            :virtual="true"
-                                            :height="160"
-                                        />
-                                    </span>
-                                </template>
-                            </UTable>
-                        </template>
+                            <template #id-data="{ row }">
+                                {{ row.id }}
+                            </template>
+                            <template #createdAt-data="{ row }">
+                                <GenericTime :value="row.createdAt" type="long" />
+                            </template>
+                            <template #user-data="{ row }">
+                                <CitizenInfoPopover :user="row.user" />
+                            </template>
+                            <template #state-data="{ row }">
+                                {{ EventType[row.state] }}
+                            </template>
+                            <template #data-data="{ row }">
+                                <span v-if="!row.data">N/A</span>
+                                <span v-else>
+                                    <VueJsonPretty
+                                        :data="jsonParse(row.data!)"
+                                        :show-icon="true"
+                                        :show-length="true"
+                                        :virtual="true"
+                                        :height="160"
+                                    />
+                                </span>
+                            </template>
+                        </UTable>
+
+                        <div class="flex justify-end px-3 py-3.5 border-t border-gray-200 dark:border-gray-700">
+                            <UPagination
+                                v-model="page"
+                                :page-count="data?.pagination?.pageSize ?? 0"
+                                :total="data?.pagination?.totalCount ?? 0"
+                            />
+                        </div>
                     </div>
                 </div>
             </div>

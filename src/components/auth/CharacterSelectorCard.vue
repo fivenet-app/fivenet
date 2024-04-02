@@ -1,6 +1,5 @@
 <script lang="ts" setup>
 import { useThrottleFn, useTimeoutFn } from '@vueuse/core';
-import { LoadingIcon } from 'mdi-vue3';
 import CharSexBadge from '~/components/partials/citizens/CharSexBadge.vue';
 import { useAuthStore } from '~/store/auth';
 import { fromSecondsToFormattedDuration } from '~/utils/time';
@@ -24,13 +23,13 @@ const onSubmitThrottle = useThrottleFn(async (_) => {
 </script>
 
 <template>
-    <UCard :key="char.userId" class="flex w-full min-w-md max-w-md flex-col mx-4 rounded-lg bg-base-800">
+    <UCard :key="char.userId" class="min-w-[28rem] mx-4 flex w-full max-w-md flex-col rounded-lg bg-base-800">
         <template #header>
             <div class="flex">
                 <div class="mx-auto flex flex-row items-center gap-2">
                     <ProfilePictureImg :url="char.avatar?.url" :name="`${char.firstname} ${char.lastname}`" :no-blur="true" />
 
-                    <h2 class="text-center text-2xl font-medium text-neutral">{{ char.firstname }} {{ char.lastname }}</h2>
+                    <h2 class="text-center text-2xl font-medium">{{ char.firstname }} {{ char.lastname }}</h2>
                 </div>
             </div>
         </template>
@@ -49,18 +48,18 @@ const onSubmitThrottle = useThrottleFn(async (_) => {
                     {{ $t('common.last_used') }}
                 </span>
             </dd>
-            <dt class="text-sm font-medium text-neutral">
+            <dt class="text-sm font-medium">
                 {{ $t('common.date_of_birth') }}
             </dt>
             <dd class="text-sm text-gray-300">{{ char.dateofbirth }}</dd>
-            <dt class="text-sm font-medium text-neutral">{{ $t('common.height') }}</dt>
+            <dt class="text-sm font-medium">{{ $t('common.height') }}</dt>
             <dd class="text-sm text-gray-300">{{ char.height }}cm</dd>
             <template v-if="char.visum">
-                <dt class="text-sm font-medium text-neutral">{{ $t('common.visum') }}</dt>
+                <dt class="text-sm font-medium">{{ $t('common.visum') }}</dt>
                 <dd class="text-sm text-gray-300">{{ char.visum }}</dd>
             </template>
             <template v-if="char.playtime">
-                <dt class="text-sm font-medium text-neutral">
+                <dt class="text-sm font-medium">
                     {{ $t('common.playtime') }}
                 </dt>
                 <dd class="truncate text-sm text-gray-300">
@@ -70,10 +69,13 @@ const onSubmitThrottle = useThrottleFn(async (_) => {
         </dl>
 
         <template #footer>
-            <UButton block class="inline-flex items-center" :disabled="!canSubmit" @click="onSubmitThrottle(char.userId)">
-                <template v-if="!canSubmit">
-                    <LoadingIcon class="mr-2 size-5 animate-spin" aria-hidden="true" />
-                </template>
+            <UButton
+                block
+                class="inline-flex items-center"
+                :disabled="!canSubmit"
+                :loading="!canSubmit"
+                @click="onSubmitThrottle(char.userId)"
+            >
                 {{ $t('common.choose') }}
             </UButton>
         </template>

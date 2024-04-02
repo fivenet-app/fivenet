@@ -16,7 +16,7 @@ const count = ref(props.count);
 
 <template>
     <tr class="transition-colors even:bg-base-800 hover:bg-neutral/5">
-        <td class="py-2 pl-4 pr-3 text-sm font-medium text-neutral sm:pl-1">
+        <td class="py-2 pl-4 pr-3 text-sm font-medium sm:pl-1">
             {{ law.name }}
         </td>
         <td class="whitespace-nowrap p-1 text-left text-accent-200">${{ law.fine }}</td>

@@ -1,21 +1,12 @@
 <script lang="ts" setup>
-import { Dialog, DialogPanel, DialogTitle, TransitionChild, TransitionRoot } from '@headlessui/vue';
 import { mimes, required, size } from '@vee-validate/rules';
 import { useThrottleFn, useTimeoutFn } from '@vueuse/core';
-import { CloseIcon, LoadingIcon } from 'mdi-vue3';
+import { LoadingIcon } from 'mdi-vue3';
 import { defineRule } from 'vee-validate';
 import ProfilePictureImg from '~/components/partials/citizens/ProfilePictureImg.vue';
 import { useAuthStore } from '~/store/auth';
 import { useNotificatorStore } from '~/store/notificator';
 import type { SetProfilePictureRequest } from '~~/gen/ts/services/citizenstore/citizenstore';
-
-defineProps<{
-    open: boolean;
-}>();
-
-const emit = defineEmits<{
-    (e: 'close'): void;
-}>();
 
 const { $grpc } = useNuxtApp();
 
@@ -23,6 +14,8 @@ const authStore = useAuthStore();
 const { activeChar } = storeToRefs(authStore);
 
 const notifications = useNotificatorStore();
+
+const modal = useModal();
 
 interface FormData {
     avatar?: Blob;
@@ -55,7 +48,7 @@ async function setProfilePicture(values: FormData): Promise<void> {
             type: 'success',
         });
 
-        emit('close');
+        modal.close();
     } catch (e) {
         $grpc.handleError(e as RpcError);
         throw e;
@@ -88,133 +81,109 @@ const nuiAvailable = ref(isNUIAvailable());
 </script>
 
 <template>
-    <TransitionRoot as="template" :show="open">
-        <Dialog as="div" class="relative z-30" @close="$emit('close')">
-            <TransitionChild
-                as="template"
-                enter="ease-out duration-300"
-                enter-from="opacity-0"
-                enter-to="opacity-100"
-                leave="ease-in duration-200"
-                leave-from="opacity-100"
-                leave-to="opacity-0"
-            >
-                <div class="fixed inset-0 bg-base-900/75 transition-opacity" />
-            </TransitionChild>
+    <UModal :ui="{ width: 'w-full sm:max-w-5xl' }">
+        <UCard :ui="{ ring: '', divide: 'divide-y divide-gray-100 dark:divide-gray-800' }">
+            <template #header>
+                <div class="flex items-center justify-between">
+                    <h3 class="text-2xl font-semibold leading-6">
+                        {{ $t('components.jobs.self_service.set_profile_picture') }}
+                    </h3>
 
-            <div class="fixed inset-0 z-30 overflow-y-auto">
-                <div class="flex min-h-full items-end justify-center p-4 text-center sm:items-center sm:p-0">
-                    <TransitionChild
-                        as="template"
-                        enter="ease-out duration-300"
-                        enter-from="opacity-0 translate-y-4 sm:translate-y-0 sm:scale-95"
-                        enter-to="opacity-100 translate-y-0 sm:scale-100"
-                        leave="ease-in duration-200"
-                        leave-from="opacity-100 translate-y-0 sm:scale-100"
-                        leave-to="opacity-0 translate-y-4 sm:translate-y-0 sm:scale-95"
-                    >
-                        <DialogPanel
-                            class="relative h-112 w-full overflow-hidden rounded-lg bg-base-800 px-4 pb-4 pt-5 text-left text-neutral transition-all sm:my-8 sm:max-w-2xl sm:p-6"
-                        >
-                            <div class="absolute right-0 top-0 block pr-4 pt-4">
-                                <UButton
-                                    class="rounded-md bg-neutral-50 text-gray-400 hover:text-gray-500 focus:ring-2 focus:ring-primary-500 focus:ring-offset-2"
-                                    @click="$emit('close')"
-                                >
-                                    <span class="sr-only">{{ $t('common.close') }}</span>
-                                    <CloseIcon class="size-5" aria-hidden="true" />
-                                </UButton>
-                            </div>
-                            <DialogTitle as="h3" class="text-base font-semibold leading-6">
-                                {{ $t('components.jobs.self_service.set_profile_picture') }}
-                            </DialogTitle>
-                            <form @submit.prevent="onSubmitThrottle">
-                                <div class="my-2 space-y-24">
-                                    <div class="flex-1">
-                                        <label for="avatar" class="block text-sm font-medium leading-6 text-neutral">
-                                            {{ $t('common.avatar') }}
-                                        </label>
-                                        <template v-if="nuiAvailable">
-                                            <p class="text-sm text-neutral">
-                                                {{ $t('system.not_supported_on_tablet.title') }}
-                                            </p>
-                                        </template>
-                                        <template v-else>
-                                            <VeeField
-                                                v-slot="{ handleChange, handleBlur }"
-                                                name="avatar"
-                                                :placeholder="$t('common.image')"
-                                                :label="$t('common.image')"
-                                                @focusin="focusTablet(true)"
-                                                @focusout="focusTablet(false)"
-                                            >
-                                                <UInput
-                                                    type="file"
-                                                    accept="image/jpeg,image/jpg,image/png"
-                                                    class="block w-full rounded-md border-0 bg-base-700 py-1.5 text-neutral placeholder:text-accent-200 focus:ring-2 focus:ring-inset focus:ring-base-300 sm:text-sm sm:leading-6"
-                                                    @change="handleChange"
-                                                    @blur="handleBlur"
-                                                />
-                                            </VeeField>
-                                            <VeeErrorMessage name="avatar" as="p" class="mt-2 text-sm text-error-400" />
-                                        </template>
-                                    </div>
-                                </div>
-                                <div class="flex flex-1 items-center">
-                                    <ProfilePictureImg
-                                        class="m-auto"
-                                        :url="activeChar?.avatar?.url"
-                                        :name="`${activeChar?.firstname} ${activeChar?.lastname}`"
-                                        size="huge"
-                                        :no-blur="true"
-                                    />
-                                </div>
-                                <div class="absolute bottom-0 left-0 flex w-full">
-                                    <UButton
-                                        class="flex-1 rounded-md bg-neutral-50 px-3.5 py-2.5 text-sm font-semibold text-gray-900 hover:bg-gray-200"
-                                        @click="$emit('close')"
-                                    >
-                                        {{ $t('common.close', 1) }}
-                                    </UButton>
-                                    <UButton
-                                        class="flex flex-1 justify-center rounded-md px-3.5 py-2.5 text-sm font-semibold text-neutral"
-                                        :disabled="nuiAvailable || !meta.valid || !canSubmit || !activeChar?.avatar"
-                                        :class="[
-                                            nuiAvailable || !meta.valid || !canSubmit || !activeChar?.avatar
-                                                ? 'disabled bg-base-500 hover:bg-base-400 focus-visible:outline-base-500'
-                                                : 'bg-error-500 hover:bg-error-400 focus-visible:outline-error-500',
-                                        ]"
-                                        @click="
-                                            setFieldValue('reset', true);
-                                            onSubmitThrottle($event);
-                                        "
-                                    >
-                                        <template v-if="!canSubmit">
-                                            <LoadingIcon class="mr-2 size-5 animate-spin" aria-hidden="true" />
-                                        </template>
-                                        {{ $t('common.reset') }}
-                                    </UButton>
-                                    <UButton
-                                        type="submit"
-                                        class="flex flex-1 justify-center rounded-md px-3.5 py-2.5 text-sm font-semibold text-neutral"
-                                        :disabled="nuiAvailable || !meta.valid || !canSubmit"
-                                        :class="[
-                                            nuiAvailable || !meta.valid || !canSubmit
-                                                ? 'disabled bg-base-500 hover:bg-base-400 focus-visible:outline-base-500'
-                                                : 'bg-primary-500 hover:bg-primary-400',
-                                        ]"
-                                    >
-                                        <template v-if="!canSubmit">
-                                            <LoadingIcon class="mr-2 size-5 animate-spin" aria-hidden="true" />
-                                        </template>
-                                        {{ $t('common.save') }}
-                                    </UButton>
-                                </div>
-                            </form>
-                        </DialogPanel>
-                    </TransitionChild>
+                    <UButton
+                        color="gray"
+                        variant="ghost"
+                        icon="i-heroicons-x-mark-20-solid"
+                        class="-my-1"
+                        @click="modal.close()"
+                    />
                 </div>
+            </template>
+
+            <div>
+                <form @submit.prevent="onSubmitThrottle">
+                    <div class="my-2 space-y-24">
+                        <div class="flex-1">
+                            <label for="avatar" class="block text-sm font-medium leading-6">
+                                {{ $t('common.avatar') }}
+                            </label>
+                            <template v-if="nuiAvailable">
+                                <p class="text-sm">
+                                    {{ $t('system.not_supported_on_tablet.title') }}
+                                </p>
+                            </template>
+                            <template v-else>
+                                <VeeField
+                                    v-slot="{ handleChange, handleBlur }"
+                                    name="avatar"
+                                    :placeholder="$t('common.image')"
+                                    :label="$t('common.image')"
+                                    @focusin="focusTablet(true)"
+                                    @focusout="focusTablet(false)"
+                                >
+                                    <UInput
+                                        type="file"
+                                        accept="image/jpeg,image/jpg,image/png"
+                                        @change="handleChange"
+                                        @blur="handleBlur"
+                                    />
+                                </VeeField>
+                                <VeeErrorMessage name="avatar" as="p" class="mt-2 text-sm text-error-400" />
+                            </template>
+                        </div>
+                    </div>
+                    <div class="flex flex-1 items-center">
+                        <ProfilePictureImg
+                            class="m-auto"
+                            :url="activeChar?.avatar?.url"
+                            :name="`${activeChar?.firstname} ${activeChar?.lastname}`"
+                            size="huge"
+                            :no-blur="true"
+                        />
+                    </div>
+                </form>
             </div>
-        </Dialog>
-    </TransitionRoot>
+
+            <div class="mt-5 gap-2 sm:mt-4 sm:flex">
+                <UButton
+                    class="flex-1 rounded-md bg-neutral-50 px-3.5 py-2.5 text-sm font-semibold text-gray-900 hover:bg-gray-200"
+                    @click="modal.close()"
+                >
+                    {{ $t('common.close', 1) }}
+                </UButton>
+                <UButton
+                    class="flex flex-1 justify-center rounded-md px-3.5 py-2.5 text-sm font-semibold"
+                    :disabled="nuiAvailable || !meta.valid || !canSubmit || !activeChar?.avatar"
+                    :class="[
+                        nuiAvailable || !meta.valid || !canSubmit || !activeChar?.avatar
+                            ? 'disabled bg-base-500 hover:bg-base-400 focus-visible:outline-base-500'
+                            : 'bg-error-500 hover:bg-error-400 focus-visible:outline-error-500',
+                    ]"
+                    @click="
+                        setFieldValue('reset', true);
+                        onSubmitThrottle($event);
+                    "
+                >
+                    <template v-if="!canSubmit">
+                        <LoadingIcon class="mr-2 size-5 animate-spin" />
+                    </template>
+                    {{ $t('common.reset') }}
+                </UButton>
+                <UButton
+                    type="submit"
+                    class="flex flex-1 justify-center rounded-md px-3.5 py-2.5 text-sm font-semibold"
+                    :disabled="nuiAvailable || !meta.valid || !canSubmit"
+                    :class="[
+                        nuiAvailable || !meta.valid || !canSubmit
+                            ? 'disabled bg-base-500 hover:bg-base-400 focus-visible:outline-base-500'
+                            : 'bg-primary-500 hover:bg-primary-400',
+                    ]"
+                >
+                    <template v-if="!canSubmit">
+                        <LoadingIcon class="mr-2 size-5 animate-spin" />
+                    </template>
+                    {{ $t('common.save') }}
+                </UButton>
+            </div>
+        </UCard>
+    </UModal>
 </template>

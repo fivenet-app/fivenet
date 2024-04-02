@@ -18,40 +18,40 @@ const tabs: { label: string; to: RoutesNamedLocations; permission?: Perms; icon:
     {
         label: t('common.overview'),
         to: { name: 'jobs-overview' },
-        permission: 'JobsService.ListColleagues',
+        permission: 'JobsService.ListColleagues' as Perms,
         icon: 'i-mdi-briefcase',
     },
     {
         label: t('pages.jobs.colleagues.title'),
         to: { name: 'jobs-colleagues' },
-        permission: 'JobsService.ListColleagues',
+        permission: 'JobsService.ListColleagues' as Perms,
         icon: 'i-mdi-account-group',
     },
     {
         label: t('common.activity'),
         to: { name: 'jobs-activity' },
-        permission: 'JobsService.ListColleagueActivity',
+        permission: 'JobsService.ListColleagueActivity' as Perms,
         icon: 'i-mdi-bulletin-board',
     },
     {
         label: t('pages.jobs.timeclock.title'),
         to: { name: 'jobs-timeclock' },
-        permission: 'JobsTimeclockService.ListTimeclock',
+        permission: 'JobsTimeclockService.ListTimeclock' as Perms,
         icon: 'i-mdi-timeline-clock',
     },
     {
         label: t('pages.qualifications.title'),
         to: { name: 'jobs-qualifications' },
-        permission: 'QualificationsService.ListQualifications',
+        permission: 'QualificationsService.ListQualifications' as Perms,
         icon: 'i-mdi-school',
     },
     {
         label: t('pages.jobs.conduct.title'),
         to: { name: 'jobs-conduct' },
-        permission: 'JobsConductService.ListConductEntries',
+        permission: 'JobsConductService.ListConductEntries' as Perms,
         icon: 'i-mdi-list-status',
     },
-];
+].filter((t) => t.permission === undefined || can(t.permission));
 
 function onChange(index: number) {
     const item = tabs[index];

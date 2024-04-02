@@ -2,7 +2,7 @@
 import { Disclosure, DisclosureButton, DisclosurePanel } from '@headlessui/vue';
 import { watchDebounced } from '@vueuse/core';
 import { vMaska } from 'maska';
-import { ChevronDownIcon, ClipboardPlusIcon, EyeIcon } from 'mdi-vue3';
+import { ChevronDownIcon } from 'mdi-vue3';
 import DataErrorBlock from '~/components/partials/data/DataErrorBlock.vue';
 import { attr } from '~/composables/can';
 import GenericInput from '~/composables/partials/forms/GenericInput.vue';
@@ -50,7 +50,7 @@ async function listCitizens(): Promise<ListCitizensResponse> {
             req.trafficInfractionPoints = query.value.trafficInfractionPoints ?? 0;
         }
         if (query.value.fines) {
-            req.openFines = BigInt(query.value.fines?.toString() ?? '0');
+            req.openFines = BigInt(query.value.fines?.toString());
         }
         if (query.value.dateofbirth) {
             req.dateofbirth = query.value.dateofbirth;
@@ -63,13 +63,6 @@ async function listCitizens(): Promise<ListCitizensResponse> {
     } catch (e) {
         $grpc.handleError(e as RpcError);
         throw e;
-    }
-}
-
-const searchInput = ref<HTMLInputElement | null>(null);
-function focusSearch(): void {
-    if (searchInput.value) {
-        searchInput.value.focus();
     }
 }
 
@@ -141,13 +134,12 @@ const columns = [
                 <form class="w-full" @submit.prevent="refresh()">
                     <div class="w-full flex flex-row gap-2">
                         <div>
-                            <label for="searchName" class="block text-sm font-medium leading-6 text-neutral">
+                            <label for="searchName" class="block text-sm font-medium leading-6">
                                 {{ $t('common.search') }}
                                 {{ $t('common.citizen', 1) }}
                             </label>
                             <div class="relative mt-2">
                                 <GenericInput
-                                    ref="searchInput"
                                     v-model="query.name"
                                     type="text"
                                     name="searchName"
@@ -157,7 +149,7 @@ const columns = [
                             </div>
                         </div>
                         <div>
-                            <label for="dateofbirth" class="block text-sm font-medium leading-6 text-neutral">
+                            <label for="dateofbirth" class="block text-sm font-medium leading-6">
                                 {{ $t('common.search') }}
                                 {{ $t('common.date_of_birth') }}
                             </label>
@@ -176,7 +168,7 @@ const columns = [
                             </div>
                         </div>
                         <div v-if="attr('CitizenStoreService.ListCitizens', 'Fields', 'UserProps.Wanted')" class="flex-initial">
-                            <label for="search" class="block text-sm font-medium leading-6 text-neutral">
+                            <label for="search" class="block text-sm font-medium leading-6">
                                 {{ $t('components.citizens.citizens_list.only_wanted') }}
                             </label>
                             <div class="relative mt-3 flex items-center">
@@ -189,19 +181,16 @@ const columns = [
                         </div>
                     </div>
                     <Disclosure v-slot="{ open }" as="div" class="pt-2">
-                        <DisclosureButton class="flex w-full items-start justify-between text-left text-sm text-neutral">
+                        <DisclosureButton class="flex w-full items-start justify-between text-left text-sm">
                             <span class="leading-7 text-accent-200">{{ $t('common.advanced_search') }}</span>
                             <span class="ml-6 flex h-7 items-center">
-                                <ChevronDownIcon
-                                    :class="[open ? 'upsidedown' : '', 'size-5 transition-transform']"
-                                    aria-hidden="true"
-                                />
+                                <ChevronDownIcon :class="[open ? 'upsidedown' : '', 'size-5 transition-transform']" />
                             </span>
                         </DisclosureButton>
                         <DisclosurePanel class="mt-2 pr-4">
                             <div class="flex flex-row gap-2">
                                 <div v-if="attr('CitizenStoreService.ListCitizens', 'Fields', 'PhoneNumber')">
-                                    <label for="searchPhone" class="block text-sm font-medium leading-6 text-neutral">
+                                    <label for="searchPhone" class="block text-sm font-medium leading-6">
                                         {{ $t('common.search') }}
                                         {{ $t('common.phone_number') }}
                                     </label>
@@ -218,10 +207,7 @@ const columns = [
                                     </div>
                                 </div>
                                 <div>
-                                    <label
-                                        for="trafficInfractionPoints"
-                                        class="block text-sm font-medium leading-6 text-neutral"
-                                    >
+                                    <label for="trafficInfractionPoints" class="block text-sm font-medium leading-6">
                                         {{ $t('common.search') }}
                                         {{ $t('common.traffic_infraction_points', 2) }}
                                     </label>
@@ -238,7 +224,7 @@ const columns = [
                                     </div>
                                 </div>
                                 <div v-if="attr('CitizenStoreService.ListCitizens', 'Fields', 'UserProps.OpenFines')">
-                                    <label for="search" class="block text-sm font-medium leading-6 text-neutral">
+                                    <label for="search" class="block text-sm font-medium leading-6">
                                         {{ $t('components.citizens.citizens_list.open_fine') }}
                                     </label>
                                     <div class="relative mt-2">
@@ -265,7 +251,7 @@ const columns = [
             :loading="pending"
             :columns="columns"
             :rows="data?.users"
-            :empty-state="{ icon: 'i-mdi-car', label: $t('common.not_found', [$t('common.citizen', 2)]) }"
+            :empty-state="{ icon: 'i-mdi-accounts', label: $t('common.not_found', [$t('common.citizen', 2)]) }"
             :page-count="(data?.pagination?.totalCount ?? 0) / (data?.pagination?.pageSize ?? 1)"
             :total="data?.pagination?.totalCount"
         >
@@ -302,19 +288,16 @@ const columns = [
             <template #height-data="{ row }"> {{ row.height }}cm </template>
             <template #actions-data="{ row }">
                 <div v-if="can('CitizenStoreService.GetUser')" class="flex flex-col justify-end gap-1 md:flex-row">
-                    <span class="flex-initial text-primary-500 hover:text-primary-400" @click="addToClipboard(row)">
-                        <ClipboardPlusIcon class="ml-auto mr-2.5 h-auto w-5" aria-hidden="true" />
-                    </span>
+                    <UButton variant="link" icon="i-mdi-clipboard-plus" @click="addToClipboard(row)" />
 
-                    <NuxtLink
+                    <UButton
+                        variant="link"
+                        icon="i-mdi-eye"
                         :to="{
                             name: 'citizens-id',
                             params: { id: row.userId ?? 0 },
                         }"
-                        class="flex-initial text-primary-500 hover:text-primary-400"
-                    >
-                        <EyeIcon class="ml-auto mr-2.5 h-auto w-5" aria-hidden="true" />
-                    </NuxtLink>
+                    />
                 </div>
             </template>
         </UTable>
@@ -322,8 +305,8 @@ const columns = [
         <div class="flex justify-end px-3 py-3.5 border-t border-gray-200 dark:border-gray-700">
             <UPagination
                 v-model="page"
-                :page-count="parseInt(data?.pagination?.pageSize.toString() ?? '0')"
-                :total="parseInt(data?.pagination?.totalCount.toString() ?? '0')"
+                :page-count="data?.pagination?.pageSize ?? 0"
+                :total="data?.pagination?.totalCount ?? 0"
             />
         </div>
     </div>

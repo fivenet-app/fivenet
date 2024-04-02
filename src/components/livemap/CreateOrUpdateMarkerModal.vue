@@ -187,7 +187,7 @@ const onSubmitThrottle = useThrottleFn(async (e) => {
                                     <div class="h-0 flex-1 overflow-y-auto">
                                         <div class="bg-primary-700 px-4 py-6 sm:px-6">
                                             <div class="flex items-center justify-between">
-                                                <DialogTitle class="text-base font-semibold leading-6 text-neutral">
+                                                <DialogTitle class="text-base font-semibold leading-6">
                                                     {{ $t('components.livemap.create_marker.title') }}
                                                 </DialogTitle>
 
@@ -197,7 +197,7 @@ const onSubmitThrottle = useThrottleFn(async (e) => {
                                                         @click="$emit('close')"
                                                     >
                                                         <span class="sr-only">{{ $t('common.close') }}</span>
-                                                        <CloseIcon class="size-5" aria-hidden="true" />
+                                                        <CloseIcon class="size-5" />
                                                     </UButton>
                                                 </div>
                                             </div>
@@ -212,11 +212,8 @@ const onSubmitThrottle = useThrottleFn(async (e) => {
                                                 <div class="mt-1">
                                                     <dl class="divide-y divide-neutral/10 border-b border-neutral/10">
                                                         <div class="px-4 py-3 sm:grid sm:grid-cols-3 sm:gap-4 sm:px-0">
-                                                            <dt class="text-sm font-medium leading-6 text-neutral">
-                                                                <label
-                                                                    for="name"
-                                                                    class="block text-sm font-medium leading-6 text-neutral"
-                                                                >
+                                                            <dt class="text-sm font-medium leading-6">
+                                                                <label for="name" class="block text-sm font-medium leading-6">
                                                                     {{ $t('common.name') }}
                                                                 </label>
                                                             </dt>
@@ -226,7 +223,7 @@ const onSubmitThrottle = useThrottleFn(async (e) => {
                                                                 <VeeField
                                                                     type="text"
                                                                     name="name"
-                                                                    class="block w-full rounded-md border-0 bg-base-700 py-1.5 text-neutral placeholder:text-accent-200 focus:ring-2 focus:ring-inset focus:ring-base-300 sm:text-sm sm:leading-6"
+                                                                    class="block w-full rounded-md border-0 bg-base-700 py-1.5 placeholder:text-accent-200 focus:ring-2 focus:ring-inset focus:ring-base-300 sm:text-sm sm:leading-6"
                                                                     :placeholder="$t('common.name')"
                                                                     :label="$t('common.name')"
                                                                     @focusin="focusTablet(true)"
@@ -240,10 +237,10 @@ const onSubmitThrottle = useThrottleFn(async (e) => {
                                                             </dd>
                                                         </div>
                                                         <div class="px-4 py-3 sm:grid sm:grid-cols-3 sm:gap-4 sm:px-0">
-                                                            <dt class="text-sm font-medium leading-6 text-neutral">
+                                                            <dt class="text-sm font-medium leading-6">
                                                                 <label
                                                                     for="description"
-                                                                    class="block text-sm font-medium leading-6 text-neutral"
+                                                                    class="block text-sm font-medium leading-6"
                                                                 >
                                                                     {{ $t('common.description') }}
                                                                 </label>
@@ -254,7 +251,7 @@ const onSubmitThrottle = useThrottleFn(async (e) => {
                                                                 <VeeField
                                                                     type="text"
                                                                     name="description"
-                                                                    class="block w-full rounded-md border-0 bg-base-700 py-1.5 text-neutral placeholder:text-accent-200 focus:ring-2 focus:ring-inset focus:ring-base-300 sm:text-sm sm:leading-6"
+                                                                    class="block w-full rounded-md border-0 bg-base-700 py-1.5 placeholder:text-accent-200 focus:ring-2 focus:ring-inset focus:ring-base-300 sm:text-sm sm:leading-6"
                                                                     :placeholder="$t('common.description')"
                                                                     :label="$t('common.description')"
                                                                     @focusin="focusTablet(true)"
@@ -268,10 +265,10 @@ const onSubmitThrottle = useThrottleFn(async (e) => {
                                                             </dd>
                                                         </div>
                                                         <div class="px-4 py-3 sm:grid sm:grid-cols-3 sm:gap-4 sm:px-0">
-                                                            <dt class="text-sm font-medium leading-6 text-neutral">
+                                                            <dt class="text-sm font-medium leading-6">
                                                                 <label
                                                                     for="expiresAt"
-                                                                    class="block text-sm font-medium leading-6 text-neutral"
+                                                                    class="block text-sm font-medium leading-6"
                                                                 >
                                                                     {{ $t('common.expires_at') }}
                                                                 </label>
@@ -282,7 +279,7 @@ const onSubmitThrottle = useThrottleFn(async (e) => {
                                                                 <VeeField
                                                                     type="datetime-local"
                                                                     name="expiresAt"
-                                                                    class="block w-full rounded-md border-0 bg-base-700 py-1.5 text-neutral placeholder:text-accent-200 focus:ring-2 focus:ring-inset focus:ring-base-300 sm:text-sm sm:leading-6"
+                                                                    class="block w-full rounded-md border-0 bg-base-700 py-1.5 placeholder:text-accent-200 focus:ring-2 focus:ring-inset focus:ring-base-300 sm:text-sm sm:leading-6"
                                                                     :placeholder="$t('common.expires_at')"
                                                                     :label="$t('common.expires_at')"
                                                                     @focusin="focusTablet(true)"
@@ -297,11 +294,8 @@ const onSubmitThrottle = useThrottleFn(async (e) => {
                                                         </div>
 
                                                         <div class="px-4 py-3 sm:grid sm:grid-cols-3 sm:gap-4 sm:px-0">
-                                                            <dt class="text-sm font-medium leading-6 text-neutral">
-                                                                <label
-                                                                    for="color"
-                                                                    class="block text-sm font-medium leading-6 text-neutral"
-                                                                >
+                                                            <dt class="text-sm font-medium leading-6">
+                                                                <label for="color" class="block text-sm font-medium leading-6">
                                                                     {{ $t('common.color') }}
                                                                 </label>
                                                             </dt>
@@ -317,10 +311,10 @@ const onSubmitThrottle = useThrottleFn(async (e) => {
                                                             </dd>
                                                         </div>
                                                         <div class="px-4 py-3 sm:grid sm:grid-cols-3 sm:gap-4 sm:px-0">
-                                                            <dt class="text-sm font-medium leading-6 text-neutral">
+                                                            <dt class="text-sm font-medium leading-6">
                                                                 <label
                                                                     for="markerType"
-                                                                    class="block text-sm font-medium leading-6 text-neutral"
+                                                                    class="block text-sm font-medium leading-6"
                                                                 >
                                                                     {{ $t('common.marker') }}
                                                                 </label>
@@ -337,7 +331,7 @@ const onSubmitThrottle = useThrottleFn(async (e) => {
                                                                 >
                                                                     <select
                                                                         v-bind="field"
-                                                                        class="block w-full rounded-md border-0 bg-base-700 py-1.5 text-neutral placeholder:text-accent-200 focus:ring-2 focus:ring-inset focus:ring-base-300 sm:text-sm sm:leading-6"
+                                                                        class="block w-full rounded-md border-0 bg-base-700 py-1.5 placeholder:text-accent-200 focus:ring-2 focus:ring-inset focus:ring-base-300 sm:text-sm sm:leading-6"
                                                                         @focusin="focusTablet(true)"
                                                                         @focusout="focusTablet(false)"
                                                                     >
@@ -370,10 +364,10 @@ const onSubmitThrottle = useThrottleFn(async (e) => {
                                                             v-if="values.markerType === MarkerType.CIRCLE"
                                                             class="px-4 py-3 sm:grid sm:grid-cols-3 sm:gap-4 sm:px-0"
                                                         >
-                                                            <dt class="text-sm font-medium leading-6 text-neutral">
+                                                            <dt class="text-sm font-medium leading-6">
                                                                 <label
                                                                     for="circleRadius"
-                                                                    class="block text-sm font-medium leading-6 text-neutral"
+                                                                    class="block text-sm font-medium leading-6"
                                                                 >
                                                                     {{ $t('common.radius') }}
                                                                 </label>
@@ -386,7 +380,7 @@ const onSubmitThrottle = useThrottleFn(async (e) => {
                                                                     name="circleRadius"
                                                                     min="5"
                                                                     max="250"
-                                                                    class="block w-full rounded-md border-0 bg-base-700 py-1.5 text-neutral placeholder:text-accent-200 focus:ring-2 focus:ring-inset focus:ring-base-300 sm:text-sm sm:leading-6"
+                                                                    class="block w-full rounded-md border-0 bg-base-700 py-1.5 placeholder:text-accent-200 focus:ring-2 focus:ring-inset focus:ring-base-300 sm:text-sm sm:leading-6"
                                                                     :placeholder="$t('common.radius')"
                                                                     :label="$t('common.radius')"
                                                                 />
@@ -401,11 +395,8 @@ const onSubmitThrottle = useThrottleFn(async (e) => {
                                                             v-else-if="values.markerType === MarkerType.ICON"
                                                             class="px-4 py-3 sm:grid sm:grid-cols-3 sm:gap-4 sm:px-0"
                                                         >
-                                                            <dt class="text-sm font-medium leading-6 text-neutral">
-                                                                <label
-                                                                    for="icon"
-                                                                    class="block text-sm font-medium leading-6 text-neutral"
-                                                                >
+                                                            <dt class="text-sm font-medium leading-6">
+                                                                <label for="icon" class="block text-sm font-medium leading-6">
                                                                     {{ $t('common.icon') }}
                                                                 </label>
                                                             </dt>
@@ -422,11 +413,11 @@ const onSubmitThrottle = useThrottleFn(async (e) => {
                                                                         <div class="relative">
                                                                             <ComboboxButton
                                                                                 as="div"
-                                                                                class="block w-full rounded-md border-0 bg-base-700 py-1.5 pl-3 text-left text-neutral placeholder:text-accent-200 focus:ring-2 focus:ring-inset focus:ring-base-300 sm:text-sm sm:leading-6"
+                                                                                class="block w-full rounded-md border-0 bg-base-700 py-1.5 pl-3 text-left placeholder:text-accent-200 focus:ring-2 focus:ring-inset focus:ring-base-300 sm:text-sm sm:leading-6"
                                                                             >
                                                                                 <ComboboxInput
                                                                                     autocomplete="off"
-                                                                                    class="block w-full rounded-md border-0 bg-base-700 py-1.5 text-neutral placeholder:text-accent-200 focus:ring-2 focus:ring-inset focus:ring-base-300 sm:text-sm sm:leading-6"
+                                                                                    class="block w-full rounded-md border-0 bg-base-700 py-1.5 placeholder:text-accent-200 focus:ring-2 focus:ring-inset focus:ring-base-300 sm:text-sm sm:leading-6"
                                                                                     :placeholder="$t('common.icon')"
                                                                                     @change="queryIcon = $event.target.value"
                                                                                     @focusin="focusTablet(true)"
@@ -438,7 +429,6 @@ const onSubmitThrottle = useThrottleFn(async (e) => {
                                                                                 >
                                                                                     <ChevronDownIcon
                                                                                         class="size-5 text-gray-400"
-                                                                                        aria-hidden="true"
                                                                                     />
                                                                                 </span>
 
@@ -450,7 +440,6 @@ const onSubmitThrottle = useThrottleFn(async (e) => {
                                                                                         v-if="selectedIcon"
                                                                                         class="mr-1 size-5"
                                                                                         :style="{ color: color }"
-                                                                                        aria-hidden="true"
                                                                                     />
                                                                                     {{
                                                                                         (selectedIcon.name ?? 'N/A').replace(
@@ -482,7 +471,7 @@ const onSubmitThrottle = useThrottleFn(async (e) => {
                                                                                         <li
                                                                                             :class="[
                                                                                                 active ? 'bg-primary-500' : '',
-                                                                                                'relative cursor-default select-none py-2 pl-8 pr-4 text-neutral',
+                                                                                                'relative cursor-default select-none py-2 pl-8 pr-4',
                                                                                             ]"
                                                                                         >
                                                                                             <span
@@ -496,7 +485,6 @@ const onSubmitThrottle = useThrottleFn(async (e) => {
                                                                                                 <component
                                                                                                     :is="icon"
                                                                                                     class="mr-1 size-5"
-                                                                                                    aria-hidden="true"
                                                                                                 />
                                                                                                 {{
                                                                                                     icon?.name?.replace(
@@ -515,10 +503,7 @@ const onSubmitThrottle = useThrottleFn(async (e) => {
                                                                                                     'absolute inset-y-0 left-0 flex items-center pl-1.5',
                                                                                                 ]"
                                                                                             >
-                                                                                                <CheckIcon
-                                                                                                    class="size-5"
-                                                                                                    aria-hidden="true"
-                                                                                                />
+                                                                                                <CheckIcon class="size-5" />
                                                                                             </span>
                                                                                         </li>
                                                                                     </ComboboxOption>
@@ -543,16 +528,11 @@ const onSubmitThrottle = useThrottleFn(async (e) => {
                                         <span class="isolate inline-flex w-full rounded-md pr-4 shadow-sm">
                                             <UButton
                                                 type="submit"
-                                                class="relative flex w-full rounded-l-md px-3.5 py-2.5 text-sm font-semibold text-neutral"
+                                                class="relative flex w-full rounded-l-md px-3.5 py-2.5 text-sm font-semibold"
                                                 :disabled="!meta.valid || !canSubmit"
-                                                :class="[
-                                                    !meta.valid || !canSubmit
-                                                        ? 'disabled bg-base-500 hover:bg-base-400 focus-visible:outline-base-500'
-                                                        : 'bg-primary-500 hover:bg-primary-400',
-                                                ]"
                                             >
                                                 <template v-if="!canSubmit">
-                                                    <LoadingIcon class="mr-2 size-5 animate-spin" aria-hidden="true" />
+                                                    <LoadingIcon class="mr-2 size-5 animate-spin" />
                                                 </template>
                                                 {{ $t('common.create') }}
                                             </UButton>

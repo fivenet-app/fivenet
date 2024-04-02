@@ -60,7 +60,7 @@ const grouped = computedAsync(async () => {
                         :title="$t('common.units')"
                         class="ml-2"
                     >
-                        <CogIcon class="size-5" aria-hidden="true" />
+                        <CogIcon class="size-5" />
                     </NuxtLink>
                 </h2>
             </div>
@@ -69,7 +69,7 @@ const grouped = computedAsync(async () => {
             <div class="-mx-2 sm:-mx-6 lg:-mx-8">
                 <div class="inline-block min-w-full py-2 align-middle sm:px-2 lg:px-2">
                     <template v-for="group in grouped" :key="group.key">
-                        <p class="-mb-1.5 text-sm text-neutral">
+                        <p class="-mb-1.5 text-sm">
                             {{ $t(`enums.centrum.StatusUnit.${StatusUnit[group.status]}`) }}
                         </p>
                         <ul role="list" class="mt-3 grid grid-cols-1 gap-4 sm:grid-cols-2 sm:gap-1.5 lg:grid-cols-3">

@@ -97,11 +97,11 @@ function getDocAtivityIcon(activityType: DocActivityType): DefineComponent {
     <div class="p-1">
         <div v-if="!disclosureNeeded(entry.activityType)" class="flex space-x-3">
             <div class="my-auto flex size-10 items-center justify-center rounded-full">
-                <component :is="getDocAtivityIcon(entry.activityType)" class="size-7" aria-hidden="true" />
+                <component :is="getDocAtivityIcon(entry.activityType)" class="size-7" />
             </div>
             <div class="flex-1 space-y-1">
                 <div class="flex items-center justify-between">
-                    <h3 class="inline-flex items-center gap-2 text-sm font-medium text-neutral">
+                    <h3 class="inline-flex items-center gap-2 text-sm font-medium">
                         <span class="font-bold">
                             {{ $t(`enums.docstore.DocActivityType.${DocActivityType[entry.activityType]}`) }}
                         </span>
@@ -131,19 +131,16 @@ function getDocAtivityIcon(activityType: DocActivityType): DefineComponent {
             <DisclosureButton class="flex w-full items-start justify-between text-left transition">
                 <div class="flex w-full space-x-3">
                     <div class="my-auto flex size-10 items-center justify-center rounded-full">
-                        <component :is="getDocAtivityIcon(entry.activityType)" class="size-7" aria-hidden="true" />
+                        <component :is="getDocAtivityIcon(entry.activityType)" class="size-7" />
                     </div>
                     <div class="flex-1 space-y-1">
                         <div class="flex items-center justify-between">
-                            <h3 class="inline-flex items-center text-sm font-medium text-neutral">
+                            <h3 class="inline-flex items-center text-sm font-medium">
                                 <span class="font-bold">
                                     {{ $t(`enums.docstore.DocActivityType.${DocActivityType[entry.activityType]}`) }}
                                 </span>
                                 <span class="ml-6 flex h-7 items-center">
-                                    <ChevronDownIcon
-                                        :class="[open ? 'upsidedown' : '', 'size-5 transition-transform']"
-                                        aria-hidden="true"
-                                    />
+                                    <ChevronDownIcon :class="[open ? 'upsidedown' : '', 'size-5 transition-transform']" />
                                 </span>
                             </h3>
                             <p class="text-sm text-gray-400">

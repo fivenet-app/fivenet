@@ -36,16 +36,16 @@ const openDetails = ref(false);
                 class="inline-flex items-center text-primary-400 hover:text-primary-600"
                 @click="$emit('goto', { x: dispatch.x, y: dispatch.y })"
             >
-                <MapMarkerIcon class="size-5" aria-hidden="true" />
+                <MapMarkerIcon class="size-5" />
             </UButton>
         </div>
         <UButton
-            class="group my-0.5 flex w-full max-w-full flex-col items-center rounded-md bg-error-700 p-2 text-xs font-medium text-neutral hover:bg-primary-100/10 hover:text-neutral hover:transition-all"
+            class="group my-0.5 flex w-full max-w-full flex-col items-center rounded-md bg-error-700 p-2 text-xs font-medium hover:bg-primary-100/10 hover:transition-all"
             @click="openDetails = true"
         >
             <span class="mb-0.5 flex w-full flex-col place-content-between items-center sm:flex-row sm:gap-1">
                 <span class="inline-flex items-center font-bold md:gap-1">
-                    <CarEmergencyIcon class="hidden h-3 w-auto md:block" aria-hidden="true" />
+                    <CarEmergencyIcon class="hidden h-3 w-auto md:block" />
                     DSP-{{ dispatch.id }}
                 </span>
                 <span>

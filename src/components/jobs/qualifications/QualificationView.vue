@@ -121,19 +121,19 @@ const openRequest = ref(false);
                                     <template v-if="!canDo.edit">
                                         <UButton
                                             v-if="canDo.take"
-                                            class="inline-flex items-center gap-x-1.5 rounded-md bg-primary-500 px-3 py-2 text-sm font-semibold text-neutral hover:bg-primary-400"
+                                            class="inline-flex items-center gap-x-1.5 rounded-md bg-primary-500 px-3 py-2 text-sm font-semibold hover:bg-primary-400"
                                             @click="openRequest = true"
                                         >
-                                            <TestTubeIcon class="-ml-0.5 h-auto w-5" aria-hidden="true" />
+                                            <TestTubeIcon class="-ml-0.5 h-auto w-5" />
                                             {{ $t('components.qualifications.take_test') }}
                                         </UButton>
                                         <UButton
                                             v-else-if="canDo.request"
-                                            class="inline-flex items-center gap-x-1.5 rounded-md bg-primary-500 px-3 py-2 text-sm font-semibold text-neutral hover:bg-primary-400"
+                                            class="inline-flex items-center gap-x-1.5 rounded-md bg-primary-500 px-3 py-2 text-sm font-semibold hover:bg-primary-400"
                                             :disabled="quali.request?.status === RequestStatus.PENDING"
                                             @click="openRequest = true"
                                         >
-                                            <AccountSchoolIcon class="-ml-0.5 h-auto w-5" aria-hidden="true" />
+                                            <AccountSchoolIcon class="-ml-0.5 h-auto w-5" />
                                             {{ $t('common.request') }}
                                         </UButton>
                                     </template>
@@ -143,30 +143,27 @@ const openRequest = ref(false);
                                             name: 'jobs-qualifications-id-edit',
                                             params: { id: quali.id },
                                         }"
-                                        class="inline-flex items-center gap-x-1.5 rounded-md bg-primary-500 px-3 py-2 text-sm font-semibold text-neutral hover:bg-primary-400"
+                                        class="inline-flex items-center gap-x-1.5 rounded-md bg-primary-500 px-3 py-2 text-sm font-semibold hover:bg-primary-400"
                                     >
-                                        <PencilIcon class="-ml-0.5 h-auto w-5" aria-hidden="true" />
+                                        <PencilIcon class="-ml-0.5 h-auto w-5" />
                                         {{ $t('common.edit') }}
                                     </NuxtLink>
                                     <UButton
                                         v-if="can('QualificationsService.DeleteQualification') && canDo.edit"
-                                        class="inline-flex items-center gap-x-1.5 rounded-md bg-primary-500 px-3 py-2 text-sm font-semibold text-neutral hover:bg-primary-400"
+                                        class="inline-flex items-center gap-x-1.5 rounded-md bg-primary-500 px-3 py-2 text-sm font-semibold hover:bg-primary-400"
                                         @click="reveal(quali.id)"
                                     >
-                                        <TrashCanIcon class="-ml-0.5 h-auto w-5" aria-hidden="true" />
+                                        <TrashCanIcon class="-ml-0.5 h-auto w-5" />
                                         {{ $t('common.delete') }}
                                     </UButton>
                                 </div>
                             </div>
 
                             <div class="my-4">
-                                <h1 class="break-words px-0.5 py-1 text-4xl font-bold text-neutral sm:pl-1">
+                                <h1 class="break-words px-0.5 py-1 text-4xl font-bold sm:pl-1">
                                     {{ quali.abbreviation }}: {{ quali.title }}
                                 </h1>
-                                <p
-                                    v-if="quali.description"
-                                    class="break-words px-0.5 py-1 text-base font-bold text-neutral sm:pl-1"
-                                >
+                                <p v-if="quali.description" class="break-words px-0.5 py-1 text-base font-bold sm:pl-1">
                                     {{ quali.description }}
                                 </p>
                             </div>
@@ -176,13 +173,13 @@ const openRequest = ref(false);
                                     v-if="quali.closed"
                                     class="flex flex-initial flex-row gap-1 rounded-full bg-error-100 px-2 py-1"
                                 >
-                                    <LockIcon class="size-5 text-error-400" aria-hidden="true" />
+                                    <LockIcon class="size-5 text-error-400" />
                                     <span class="text-sm font-medium text-error-700">
                                         {{ $t('common.close', 2) }}
                                     </span>
                                 </div>
                                 <div v-else class="flex flex-initial flex-row gap-1 rounded-full bg-success-100 px-2 py-1">
-                                    <LockOpenVariantIcon class="size-5 text-success-500" aria-hidden="true" />
+                                    <LockOpenVariantIcon class="size-5 text-success-500" />
                                     <span class="text-sm font-medium text-success-700">
                                         {{ $t('common.open', 2) }}
                                     </span>
@@ -192,7 +189,7 @@ const openRequest = ref(false);
                                     v-if="quali.request?.status"
                                     class="flex flex-initial flex-row gap-1 rounded-full bg-info-100 px-2 py-1"
                                 >
-                                    <MailIcon class="size-5 text-info-400" aria-hidden="true" />
+                                    <MailIcon class="size-5 text-info-400" />
                                     <span class="text-sm font-medium text-info-700">
                                         <span c lass="font-semibold">{{ $t('common.request') }}:</span>
                                         {{
@@ -207,7 +204,7 @@ const openRequest = ref(false);
                                     v-if="quali.result?.status"
                                     class="flex flex-initial flex-row gap-1 rounded-full bg-info-100 px-2 py-1"
                                 >
-                                    <ListStatusIcon class="size-5 text-info-400" aria-hidden="true" />
+                                    <ListStatusIcon class="size-5 text-info-400" />
                                     <span class="text-sm font-medium text-info-700">
                                         <span class="font-semibold">{{ $t('common.result') }}:</span>
                                         {{ $t(`enums.qualifications.ResultStatus.${ResultStatus[quali.result?.status ?? 0]}`) }}
@@ -217,7 +214,7 @@ const openRequest = ref(false);
 
                             <div class="flex snap-x flex-row flex-wrap gap-2 overflow-x-auto pb-3 sm:pb-0">
                                 <div class="flex flex-initial flex-row gap-1 rounded-full bg-base-100 px-2 py-1 text-base-500">
-                                    <AccountIcon class="h-auto w-5" aria-hidden="true" />
+                                    <AccountIcon class="h-auto w-5" />
                                     <span class="inline-flex items-center text-sm font-medium text-base-700">
                                         {{ $t('common.created_by') }}
                                         <CitizenInfoPopover
@@ -228,7 +225,7 @@ const openRequest = ref(false);
                                 </div>
 
                                 <div class="flex flex-initial flex-row gap-1 rounded-full bg-base-100 px-2 py-1 text-base-500">
-                                    <CalendarIcon class="h-auto w-5" aria-hidden="true" />
+                                    <CalendarIcon class="h-auto w-5" />
                                     <span class="text-sm font-medium text-base-700">
                                         {{ $t('common.created_at') }}
                                         <GenericTime :value="quali?.createdAt" type="long" />
@@ -238,7 +235,7 @@ const openRequest = ref(false);
                                     v-if="quali?.updatedAt"
                                     class="flex flex-initial flex-row gap-1 rounded-full bg-base-100 px-2 py-1 text-base-500"
                                 >
-                                    <CalendarEditIcon class="h-auto w-5" aria-hidden="true" />
+                                    <CalendarEditIcon class="h-auto w-5" />
                                     <span class="text-sm font-medium text-base-700">
                                         {{ $t('common.updated_at') }}
                                         <GenericTime :value="quali?.updatedAt" type="long" />
@@ -248,7 +245,7 @@ const openRequest = ref(false);
                                     v-if="quali?.deletedAt"
                                     class="flex flex-initial flex-row gap-1 rounded-full bg-base-100 px-2 py-1 text-base-500"
                                 >
-                                    <CalendarRemoveIcon class="h-auto w-5" aria-hidden="true" />
+                                    <CalendarRemoveIcon class="h-auto w-5" />
                                     <span class="text-sm font-medium text-base-700">
                                         {{ $t('common.deleted') }}
                                         <GenericTime :value="quali?.deletedAt" type="long" />
@@ -257,13 +254,13 @@ const openRequest = ref(false);
                             </div>
 
                             <div class="mt-2 w-full">
-                                <h3 class="inline-flex items-center text-base font-semibold leading-7 text-neutral">
+                                <h3 class="inline-flex items-center text-base font-semibold leading-7">
                                     {{ $t('common.requirements', 2) }}:
                                 </h3>
 
                                 <div class="flex flex-row flex-wrap gap-1 pb-2">
                                     <template v-if="!quali.requirements || quali.requirements.length === 0">
-                                        <p class="text-base text-neutral">
+                                        <p class="text-base">
                                             {{ $t('common.not_found', [$t('common.requirements', 2)]) }}
                                         </p>
                                     </template>
@@ -290,7 +287,6 @@ const openRequest = ref(false);
                                                         ? 'bg-success-500'
                                                         : 'bg-error-500'
                                                 "
-                                                aria-hidden="true"
                                             />
                                             <span class="text-sm font-medium text-info-800"
                                                 >{{ entry.targetQualification?.abbreviation }}:
@@ -305,7 +301,7 @@ const openRequest = ref(false);
                                 <h2 class="sr-only">
                                     {{ $t('common.content') }}
                                 </h2>
-                                <div class="break-words rounded-lg bg-base-800 text-neutral">
+                                <div class="break-words rounded-lg bg-base-800">
                                     <!-- eslint-disable vue/no-v-html -->
                                     <div
                                         class="prose prose-invert min-w-full rounded-md bg-base-900 p-4"
@@ -315,11 +311,7 @@ const openRequest = ref(false);
                             </div>
 
                             <div v-if="quali.result && quali.result.id !== '0'" class="mt-2 w-full">
-                                <Disclosure
-                                    v-slot="{ open }"
-                                    as="div"
-                                    class="w-full border-neutral/20 text-neutral hover:border-neutral/70"
-                                >
+                                <Disclosure v-slot="{ open }" as="div" class="w-full border-neutral/20 hover:border-neutral/70">
                                     <DisclosureButton
                                         :class="[
                                             open ? 'rounded-t-lg border-b-0' : 'rounded-lg',
@@ -327,13 +319,12 @@ const openRequest = ref(false);
                                         ]"
                                     >
                                         <span class="inline-flex items-center text-base font-semibold leading-7">
-                                            <ListStatusIcon class="mr-2 h-auto w-5" aria-hidden="true" />
+                                            <ListStatusIcon class="mr-2 h-auto w-5" />
                                             {{ $t('common.result') }}
                                         </span>
                                         <span class="ml-6 flex h-7 items-center">
                                             <ChevronDownIcon
                                                 :class="[open ? 'upsidedown' : '', 'h-auto w-5 transition-transform']"
-                                                aria-hidden="true"
                                             />
                                         </span>
                                     </DisclosureButton>
@@ -361,11 +352,7 @@ const openRequest = ref(false);
                             </div>
 
                             <div class="mt-2 w-full">
-                                <Disclosure
-                                    v-slot="{ open }"
-                                    as="div"
-                                    class="w-full border-neutral/20 text-neutral hover:border-neutral/70"
-                                >
+                                <Disclosure v-slot="{ open }" as="div" class="w-full border-neutral/20 hover:border-neutral/70">
                                     <DisclosureButton
                                         :class="[
                                             open ? 'rounded-t-lg border-b-0' : 'rounded-lg',
@@ -373,13 +360,12 @@ const openRequest = ref(false);
                                         ]"
                                     >
                                         <span class="inline-flex items-center text-base font-semibold leading-7">
-                                            <LockIcon class="mr-2 h-auto w-5" aria-hidden="true" />
+                                            <LockIcon class="mr-2 h-auto w-5" />
                                             {{ $t('common.access') }}
                                         </span>
                                         <span class="ml-6 flex h-7 items-center">
                                             <ChevronDownIcon
                                                 :class="[open ? 'upsidedown' : '', 'h-auto w-5 transition-transform']"
-                                                aria-hidden="true"
                                             />
                                         </span>
                                     </DisclosureButton>
@@ -397,7 +383,7 @@ const openRequest = ref(false);
                                                     :key="entry.id"
                                                     class="flex flex-initial snap-x snap-start items-center gap-1 overflow-x-auto whitespace-nowrap rounded-full bg-info-100 px-2 py-1"
                                                 >
-                                                    <span class="size-2 rounded-full bg-info-500" aria-hidden="true" />
+                                                    <span class="size-2 rounded-full bg-info-500" />
                                                     <span class="text-sm font-medium text-info-800"
                                                         >{{ entry.jobLabel
                                                         }}<span
@@ -422,7 +408,7 @@ const openRequest = ref(false);
                                 <Disclosure
                                     v-slot="{ open }"
                                     as="div"
-                                    class="w-full border-neutral/20 text-neutral hover:border-neutral/70"
+                                    class="w-full border-neutral/20 hover:border-neutral/70"
                                     :default-open="true"
                                 >
                                     <DisclosureButton
@@ -432,13 +418,12 @@ const openRequest = ref(false);
                                         ]"
                                     >
                                         <span class="inline-flex items-center text-base font-semibold leading-7">
-                                            <AccountSchoolIcon class="mr-2 h-auto w-5" aria-hidden="true" />
+                                            <AccountSchoolIcon class="mr-2 h-auto w-5" />
                                             {{ $t('common.request', 2) }}
                                         </span>
                                         <span class="ml-6 flex h-7 items-center">
                                             <ChevronDownIcon
                                                 :class="[open ? 'upsidedown' : '', 'h-auto w-5 transition-transform']"
-                                                aria-hidden="true"
                                             />
                                         </span>
                                     </DisclosureButton>
@@ -451,11 +436,7 @@ const openRequest = ref(false);
                             </div>
 
                             <div v-if="canDo.grade" class="mt-2 w-full">
-                                <Disclosure
-                                    v-slot="{ open }"
-                                    as="div"
-                                    class="w-full border-neutral/20 text-neutral hover:border-neutral/70"
-                                >
+                                <Disclosure v-slot="{ open }" as="div" class="w-full border-neutral/20 hover:border-neutral/70">
                                     <DisclosureButton
                                         :class="[
                                             open ? 'rounded-t-lg border-b-0' : 'rounded-lg',
@@ -463,13 +444,12 @@ const openRequest = ref(false);
                                         ]"
                                     >
                                         <span class="inline-flex items-center text-base font-semibold leading-7">
-                                            <SigmaIcon class="mr-2 h-auto w-5" aria-hidden="true" />
+                                            <SigmaIcon class="mr-2 h-auto w-5" />
                                             {{ $t('common.result', 2) }}
                                         </span>
                                         <span class="ml-6 flex h-7 items-center">
                                             <ChevronDownIcon
                                                 :class="[open ? 'upsidedown' : '', 'h-auto w-5 transition-transform']"
-                                                aria-hidden="true"
                                             />
                                         </span>
                                     </DisclosureButton>

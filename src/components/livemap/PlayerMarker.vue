@@ -1,7 +1,7 @@
 <script lang="ts" setup>
 import { LIcon, LMarker, LPopup } from '@vue-leaflet/vue-leaflet';
 import { type PointExpression } from 'leaflet';
-import { AccountIcon, GroupIcon, MapMarkerIcon } from 'mdi-vue3';
+import { MapMarkerIcon } from 'mdi-vue3';
 import UnitDetails from '~/components//centrum/units/UnitDetails.vue';
 import PhoneNumberBlock from '~/components/partials/citizens/PhoneNumberBlock.vue';
 import { unitStatusToBGColor } from '~/components/centrum/helpers';
@@ -82,7 +82,7 @@ const openUnit = ref(false);
                 >
                     {{ unit?.initials }}
                 </span>
-                <MapMarkerIcon class="size-full" :style="{ color: getMarkerColor() }" aria-hidden="true" />
+                <MapMarkerIcon class="size-full" :style="{ color: getMarkerColor() }" />
             </div>
             <div v-if="showUnitStatus && unit" class="pointer-events-none uppercase">
                 <span class="absolute right-0 top-0 -mr-2 -mt-1.5 flex size-3">
@@ -97,24 +97,24 @@ const openUnit = ref(false);
         <LPopup :options="{ closeButton: true }">
             <div
                 v-if="can('CitizenStoreService.ListCitizens') || marker.user?.phoneNumber || hasUnit"
-                class="mb-1 flex items-center gap-2"
+                class="mb-1 flex items-center"
             >
                 <UButton
                     v-if="marker.info?.x && marker.info?.y"
-                    class="inline-flex items-center text-primary-500 hover:text-primary-400"
+                    variant="link"
+                    icon="i-mdi-map-marker"
                     @click="$emit('goto', { x: marker.info?.x, y: marker.info?.y })"
                 >
-                    <MapMarkerIcon class="size-5" aria-hidden="true" />
-                    <span class="ml-1">{{ $t('common.mark') }}</span>
+                    {{ $t('common.mark') }}
                 </UButton>
-                <NuxtLink
+                <UButton
                     v-if="can('CitizenStoreService.ListCitizens')"
+                    variant="link"
+                    icon="i-mdi-account"
                     :to="{ name: 'citizens-id', params: { id: marker.user?.userId ?? 0 } }"
-                    class="inline-flex items-center text-primary-500 hover:text-primary-400"
                 >
-                    <AccountIcon class="size-5" aria-hidden="true" />
-                    <span class="ml-1">{{ $t('common.profile') }}</span>
-                </NuxtLink>
+                    {{ $t('common.profile') }}
+                </UButton>
                 <PhoneNumberBlock
                     v-if="marker.user?.phoneNumber"
                     :number="marker.user?.phoneNumber"
@@ -122,15 +122,8 @@ const openUnit = ref(false);
                     :show-label="true"
                     width="w-4"
                 />
-                <UButton
-                    v-if="hasUnit"
-                    class="inline-flex items-center text-primary-500 hover:text-primary-400"
-                    @click="openUnit = true"
-                >
-                    <GroupIcon class="size-4" aria-hidden="true" />
-                    <span class="ml-1">
-                        {{ $t('common.unit') }}
-                    </span>
+                <UButton v-if="hasUnit" variant="link" icon="i-mdi-group" @click="openUnit = true">
+                    {{ $t('common.unit') }}
                 </UButton>
             </div>
             <span class="font-semibold">{{ $t('common.employee', 2) }} {{ marker.user?.jobLabel }} </span>

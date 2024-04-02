@@ -52,7 +52,6 @@ const popupAnchor = ref<PointExpression>([0, (props.size / 2) * -1]);
                 "
                 class="h-auto w-full"
                 :style="{ color: marker.info?.color ?? 'currentColor' }"
-                aria-hidden="true"
             />
         </LIcon>
 
@@ -61,7 +60,7 @@ const popupAnchor = ref<PointExpression>([0, (props.size / 2) * -1]);
 
     <LMarker v-else :lat-lng="[marker.info!.y, marker.info!.x]" :name="marker.info!.name" @click="$emit('selected')">
         <LIcon :icon-size="[size, size]" :icon-anchor="iconAnchor" :popup-anchor="popupAnchor">
-            <MapMarkerQuestionIcon :fill="marker.info?.color ?? 'currentColor'" class="h-auto w-full" aria-hidden="true" />
+            <MapMarkerQuestionIcon :fill="marker.info?.color ?? 'currentColor'" class="h-auto w-full" />
         </LIcon>
 
         <MarkerMarkerPopup :marker="marker" @goto="$emit('goto', $event)" />

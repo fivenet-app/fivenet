@@ -7,7 +7,6 @@ import MapTempMarker from '~/components/livemap/MapTempMarker.vue';
 import DataErrorBlock from '~/components/partials/data/DataErrorBlock.vue';
 import DataNoDataBlock from '~/components/partials/data/DataNoDataBlock.vue';
 import DataPendingBlock from '~/components/partials/data/DataPendingBlock.vue';
-import TablePagination from '~/components/partials/elements/TablePagination.vue';
 import { useLivemapStore } from '~/store/livemap';
 import type { ListDispatchesRequest, ListDispatchesResponse } from '~~/gen/ts/services/centrum/centrum';
 
@@ -30,9 +29,11 @@ const query = ref<{ postal?: string; id: string }>({
     postal: '',
     id: '',
 });
-const offset = ref(0);
 
-const { data, pending, refresh, error } = useLazyAsyncData(`centrum-dispatches-${offset.value}`, () => listDispatches());
+const page = ref(1);
+const offset = computed(() => (data.value?.pagination?.pageSize ? data.value?.pagination?.pageSize * page.value : 0));
+
+const { data, pending, refresh, error } = useLazyAsyncData(`centrum-dispatches-${page.value}`, () => listDispatches());
 
 async function listDispatches(): Promise<ListDispatchesResponse> {
     try {
@@ -101,10 +102,7 @@ onBeforeUnmount(() => {
                                         <form @submit.prevent="refresh()">
                                             <div class="mx-auto flex flex-row gap-4">
                                                 <div class="flex-1">
-                                                    <label
-                                                        for="search"
-                                                        class="block text-sm font-medium leading-6 text-neutral"
-                                                    >
+                                                    <label for="search" class="block text-sm font-medium leading-6">
                                                         {{ $t('common.postal') }}
                                                     </label>
                                                     <div class="relative mt-2">
@@ -113,14 +111,14 @@ onBeforeUnmount(() => {
                                                             v-model="query.postal"
                                                             type="text"
                                                             :placeholder="$t('common.postal')"
-                                                            class="block w-full rounded-md border-0 bg-base-700 py-1.5 pr-14 text-neutral placeholder:text-accent-200 focus:ring-2 focus:ring-inset focus:ring-base-300 sm:text-sm sm:leading-6"
+                                                            class="block w-full rounded-md border-0 bg-base-700 py-1.5 pr-14 placeholder:text-accent-200 focus:ring-2 focus:ring-inset focus:ring-base-300 sm:text-sm sm:leading-6"
                                                             @focusin="focusTablet(true)"
                                                             @focusout="focusTablet(false)"
                                                         />
                                                     </div>
                                                 </div>
                                                 <div class="flex-1">
-                                                    <label for="model" class="block text-sm font-medium leading-6 text-neutral">
+                                                    <label for="model" class="block text-sm font-medium leading-6">
                                                         {{ $t('common.id') }}
                                                     </label>
                                                     <div class="relative mt-2">
@@ -131,7 +129,7 @@ onBeforeUnmount(() => {
                                                             min="1"
                                                             max="99999999999"
                                                             :placeholder="$t('common.id')"
-                                                            class="block w-full rounded-md border-0 bg-base-700 py-1.5 pr-14 text-neutral placeholder:text-accent-200 focus:ring-2 focus:ring-inset focus:ring-base-300 sm:text-sm sm:leading-6"
+                                                            class="block w-full rounded-md border-0 bg-base-700 py-1.5 pr-14 placeholder:text-accent-200 focus:ring-2 focus:ring-inset focus:ring-base-300 sm:text-sm sm:leading-6"
                                                             @focusin="focusTablet(true)"
                                                             @focusout="focusTablet(false)"
                                                         />
@@ -160,13 +158,15 @@ onBeforeUnmount(() => {
                                 :dispatches="data?.dispatches"
                                 @goto="location = $event"
                             />
-
-                            <TablePagination
-                                :pagination="data?.pagination"
-                                :refresh="refresh"
-                                @offset-change="offset = $event"
-                            />
                         </template>
+
+                        <div class="flex justify-end px-3 py-3.5 border-t border-gray-200 dark:border-gray-700">
+                            <UPagination
+                                v-model="page"
+                                :page-count="data?.pagination?.pageSize ?? 0"
+                                :total="data?.pagination?.totalCount ?? 0"
+                            />
+                        </div>
                     </div>
                 </Pane>
             </Splitpanes>

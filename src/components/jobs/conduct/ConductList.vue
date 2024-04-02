@@ -6,7 +6,6 @@ import ConfirmDialog from '~/components/partials/ConfirmDialog.vue';
 import DataErrorBlock from '~/components/partials/data/DataErrorBlock.vue';
 import DataNoDataBlock from '~/components/partials/data/DataNoDataBlock.vue';
 import DataPendingBlock from '~/components/partials/data/DataPendingBlock.vue';
-import TablePagination from '~/components/partials/elements/TablePagination.vue';
 import { ConductEntry, ConductType } from '~~/gen/ts/resources/jobs/conduct';
 import { User } from '~~/gen/ts/resources/users/users';
 import ConductCreateOrUpdateModal from '~/components/jobs/conduct/ConductCreateOrUpdateModal.vue';
@@ -26,9 +25,11 @@ const query = ref<{ types: ConductType[]; showExpired?: boolean; user_ids?: User
     user_ids: [],
     showExpired: false,
 });
-const offset = ref(0);
 
-const { data, pending, refresh, error } = useLazyAsyncData(`jobs-conduct-${offset}`, () => listConductEntries());
+const page = ref(1);
+const offset = computed(() => (data.value?.pagination?.pageSize ? data.value?.pagination?.pageSize * page.value : 0));
+
+const { data, pending, refresh, error } = useLazyAsyncData(`jobs-conduct-${page.value}`, () => listConductEntries());
 
 async function listConductEntries(): Promise<ListConductEntriesResponse> {
     const userIds = props.userId
@@ -176,7 +177,7 @@ onConfirm(async (id) => deleteConductEntry(id));
                     <form @submit.prevent="">
                         <div class="mx-auto flex flex-row gap-4">
                             <div v-if="hideUserSearch !== true" class="flex-1">
-                                <label for="searchName" class="block text-sm font-medium leading-6 text-neutral">
+                                <label for="searchName" class="block text-sm font-medium leading-6">
                                     {{ $t('common.search') }}
                                     {{ $t('common.target') }}
                                 </label>
@@ -187,7 +188,7 @@ onConfirm(async (id) => deleteConductEntry(id));
                                                 <ComboboxInput
                                                     ref="searchInput"
                                                     autocomplete="off"
-                                                    class="block w-full rounded-md border-0 bg-base-700 py-1.5 text-neutral placeholder:text-accent-200 focus:ring-2 focus:ring-inset focus:ring-base-300 sm:text-sm sm:leading-6"
+                                                    class="block w-full rounded-md border-0 bg-base-700 py-1.5 placeholder:text-accent-200 focus:ring-2 focus:ring-inset focus:ring-base-300 sm:text-sm sm:leading-6"
                                                     :display-value="
                                                         (chars: any) => (chars ? charsGetDisplayValue(chars) : $t('common.na'))
                                                     "
@@ -211,7 +212,7 @@ onConfirm(async (id) => deleteConductEntry(id));
                                                 >
                                                     <li
                                                         :class="[
-                                                            'relative cursor-default select-none py-2 pl-8 pr-4 text-neutral',
+                                                            'relative cursor-default select-none py-2 pl-8 pr-4',
                                                             active ? 'bg-primary-500' : '',
                                                         ]"
                                                     >
@@ -226,7 +227,7 @@ onConfirm(async (id) => deleteConductEntry(id));
                                                                 'absolute inset-y-0 left-0 flex items-center pl-1.5',
                                                             ]"
                                                         >
-                                                            <CheckIcon class="size-5" aria-hidden="true" />
+                                                            <CheckIcon class="size-5" />
                                                         </span>
                                                     </li>
                                                 </ComboboxOption>
@@ -236,7 +237,7 @@ onConfirm(async (id) => deleteConductEntry(id));
                                 </div>
                             </div>
                             <div class="flex-1">
-                                <label for="types" class="block text-sm font-medium leading-6 text-neutral">
+                                <label for="types" class="block text-sm font-medium leading-6">
                                     {{ $t('common.search') }}
                                     {{ $t('common.type') }}
                                 </label>
@@ -246,7 +247,7 @@ onConfirm(async (id) => deleteConductEntry(id));
                                             <ComboboxButton as="div">
                                                 <ComboboxInput
                                                     autocomplete="off"
-                                                    class="block w-full rounded-md border-0 bg-base-700 py-1.5 text-neutral placeholder:text-accent-200 focus:ring-2 focus:ring-inset focus:ring-base-300 sm:text-sm sm:leading-6"
+                                                    class="block w-full rounded-md border-0 bg-base-700 py-1.5 placeholder:text-accent-200 focus:ring-2 focus:ring-inset focus:ring-base-300 sm:text-sm sm:leading-6"
                                                     :display-value="
                                                         (cTypes: any) =>
                                                             cTypes
@@ -276,7 +277,7 @@ onConfirm(async (id) => deleteConductEntry(id));
                                                 >
                                                     <li
                                                         :class="[
-                                                            'relative cursor-default select-none py-2 pl-8 pr-4 text-neutral',
+                                                            'relative cursor-default select-none py-2 pl-8 pr-4',
                                                             active ? 'bg-primary-500' : '',
                                                         ]"
                                                     >
@@ -291,7 +292,7 @@ onConfirm(async (id) => deleteConductEntry(id));
                                                                 'absolute inset-y-0 left-0 flex items-center pl-1.5',
                                                             ]"
                                                         >
-                                                            <CheckIcon class="size-5" aria-hidden="true" />
+                                                            <CheckIcon class="size-5" />
                                                         </span>
                                                     </li>
                                                 </ComboboxOption>
@@ -301,7 +302,7 @@ onConfirm(async (id) => deleteConductEntry(id));
                                 </div>
                             </div>
                             <div class="flex-initial">
-                                <label for="show_expired" class="block text-sm font-medium leading-6 text-neutral">
+                                <label for="show_expired" class="block text-sm font-medium leading-6">
                                     {{ $t('components.jobs.conduct.List.show_expired') }}
                                 </label>
                                 <div class="relative mt-3 flex items-center">
@@ -313,13 +314,13 @@ onConfirm(async (id) => deleteConductEntry(id));
                                 </div>
                             </div>
                             <div class="flex-initial">
-                                <label for="create" class="block text-sm font-medium leading-6 text-neutral">
+                                <label for="create" class="block text-sm font-medium leading-6">
                                     {{ $t('common.create') }}
                                 </label>
                                 <div class="relative mt-3 flex items-center">
                                     <div v-if="can('JobsConductService.CreateConductEntry')" class="flex-initial">
                                         <UButton
-                                            class="inline-flex rounded-md bg-primary-500 px-3 py-2 text-sm font-semibold text-neutral hover:bg-primary-400 focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2"
+                                            class="inline-flex rounded-md bg-primary-500 px-3 py-2 text-sm font-semibold hover:bg-primary-400 focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2"
                                             @click="
                                                 selectedEntry = undefined;
                                                 open = true;
@@ -352,37 +353,34 @@ onConfirm(async (id) => deleteConductEntry(id));
                             <GenericTable>
                                 <template #thead>
                                     <tr>
-                                        <th
-                                            scope="col"
-                                            class="py-3.5 pl-4 pr-3 text-left text-sm font-semibold text-neutral sm:pl-1"
-                                        >
+                                        <th scope="col" class="py-3.5 pl-4 pr-3 text-left text-sm font-semibold sm:pl-1">
                                             {{ $t('common.created_at') }}
                                         </th>
                                         <th
                                             scope="col"
-                                            class="hidden px-2 py-3.5 text-left text-sm font-semibold text-neutral lg:table-cell"
+                                            class="hidden px-2 py-3.5 text-left text-sm font-semibold lg:table-cell"
                                         >
                                             {{ $t('common.expires_at') }}
                                         </th>
-                                        <th scope="col" class="px-2 py-3.5 text-left text-sm font-semibold text-neutral">
+                                        <th scope="col" class="px-2 py-3.5 text-left text-sm font-semibold">
                                             {{ $t('common.type') }}
                                         </th>
-                                        <th scope="col" class="px-2 py-3.5 text-left text-sm font-semibold text-neutral">
+                                        <th scope="col" class="px-2 py-3.5 text-left text-sm font-semibold">
                                             {{ $t('common.description') }}
                                         </th>
-                                        <th scope="col" class="px-2 py-3.5 text-left text-sm font-semibold text-neutral">
+                                        <th scope="col" class="px-2 py-3.5 text-left text-sm font-semibold">
                                             {{ $t('common.target') }}
                                             <span class="lg:hidden">/{{ $t('common.creator') }}</span>
                                         </th>
                                         <th
                                             scope="col"
-                                            class="hidden px-2 py-3.5 text-left text-sm font-semibold text-neutral lg:table-cell"
+                                            class="hidden px-2 py-3.5 text-left text-sm font-semibold lg:table-cell"
                                         >
                                             {{ $t('common.creator') }}
                                         </th>
                                         <th
                                             scope="col"
-                                            class="relative py-3.5 pl-3 pr-4 text-right text-sm font-semibold text-neutral sm:pr-0"
+                                            class="relative py-3.5 pl-3 pr-4 text-right text-sm font-semibold sm:pr-0"
                                         >
                                             {{ $t('common.action', 2) }}
                                         </th>
@@ -404,13 +402,15 @@ onConfirm(async (id) => deleteConductEntry(id));
                                     />
                                 </template>
                             </GenericTable>
-
-                            <TablePagination
-                                :pagination="data?.pagination"
-                                :refresh="refresh"
-                                @offset-change="offset = $event"
-                            />
                         </template>
+
+                        <div class="flex justify-end px-3 py-3.5 border-t border-gray-200 dark:border-gray-700">
+                            <UPagination
+                                v-model="page"
+                                :page-count="data?.pagination?.pageSize ?? 0"
+                                :total="data?.pagination?.totalCount ?? 0"
+                            />
+                        </div>
                     </div>
                 </div>
             </div>

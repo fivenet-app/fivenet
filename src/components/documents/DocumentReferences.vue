@@ -65,7 +65,7 @@ async function getDocumentReferences(): Promise<DocumentReference[]> {
                         >
                             <span class="flex items-center space-x-4">
                                 <span class="flex flex-1 space-x-2 truncate">
-                                    <ArrowCollapseIcon class="size-5 shrink-0 text-accent-200" aria-hidden="true" />
+                                    <ArrowCollapseIcon class="size-5 shrink-0 text-accent-200" />
                                     <span class="flex flex-col truncate text-sm">
                                         <span>
                                             {{ reference.targetDocument?.title
@@ -101,9 +101,7 @@ async function getDocumentReferences(): Promise<DocumentReference[]> {
                 <div>
                     <div class="flex flex-col">
                         <div class="min-w-full overflow-hidden overflow-x-auto align-middle sm:rounded-lg">
-                            <table
-                                class="min-w-full divide-y divide-base-600 border-2 border-gray-600 bg-background text-neutral"
-                            >
+                            <table class="min-w-full divide-y divide-base-600 border-2 border-gray-600 bg-background">
                                 <thead>
                                     <tr>
                                         <th class="px-6 py-3 text-left text-sm font-semibold" scope="col">
@@ -127,7 +125,7 @@ async function getDocumentReferences(): Promise<DocumentReference[]> {
                                         </th>
                                     </tr>
                                 </thead>
-                                <tbody class="divide-y divide-gray-600 bg-base-700 text-neutral">
+                                <tbody class="divide-y divide-gray-600 bg-base-700">
                                     <tr v-for="reference in references" :key="reference.id">
                                         <td class="px-6 py-4 text-sm">
                                             <div class="flex">

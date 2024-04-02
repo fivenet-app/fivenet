@@ -261,19 +261,18 @@ if (hash.value !== undefined && hash.value !== null) {
                                             'DocStoreService.ToggleDocument',
                                         )
                                     "
-                                    class="inline-flex items-center gap-x-1.5 rounded-md bg-primary-500 px-3 py-2 text-sm font-semibold text-neutral hover:bg-primary-400"
                                     @click="toggleDocument(documentId, !doc?.closed)"
                                 >
                                     <template v-if="doc?.closed">
-                                        <LockOpenVariantIcon class="size-5 text-success-500" aria-hidden="true" />
+                                        <LockOpenVariantIcon class="size-5 text-success-500" />
                                         {{ $t('common.open', 1) }}
                                     </template>
                                     <template v-else>
-                                        <LockIcon class="size-5 text-error-400" aria-hidden="true" />
+                                        <LockIcon class="size-5 text-error-400" />
                                         {{ $t('common.close', 1) }}
                                     </template>
                                 </UButton>
-                                <NuxtLink
+                                <UButton
                                     v-if="
                                         can('DocStoreService.UpdateDocument') &&
                                         checkDocAccess(
@@ -287,17 +286,15 @@ if (hash.value !== undefined && hash.value !== null) {
                                         name: 'documents-id-edit',
                                         params: { id: doc.id },
                                     }"
-                                    class="inline-flex items-center gap-x-1.5 rounded-md bg-primary-500 px-3 py-2 text-sm font-semibold text-neutral hover:bg-primary-400"
+                                    icon="i-mdi-pencil"
                                 >
-                                    <PencilIcon class="-ml-0.5 h-auto w-5" aria-hidden="true" />
                                     {{ $t('common.edit') }}
-                                </NuxtLink>
+                                </UButton>
                                 <UButton
                                     v-if="can('DocStoreService.ListDocumentReqs')"
-                                    class="inline-flex items-center gap-x-1.5 rounded-md bg-primary-500 px-3 py-2 text-sm font-semibold text-neutral hover:bg-primary-400"
+                                    icon="i-mdi-frequently-asked-questions"
                                     @click="openRequests = true"
                                 >
-                                    <FrequentlyAskedQuestionsIcon class="-ml-0.5 h-auto w-5" aria-hidden="true" />
                                     {{ $t('common.request', 2) }}
                                 </UButton>
                                 <UButton
@@ -311,12 +308,11 @@ if (hash.value !== undefined && hash.value !== null) {
                                             'DocStoreService.ChangeDocumentOwner',
                                         )
                                     "
-                                    class="inline-flex items-center gap-x-1.5 rounded-md bg-primary-500 px-3 py-2 text-sm font-semibold text-neutral hover:bg-primary-400"
                                     :class="doc?.creatorId === activeChar?.userId ? 'disabled' : ''"
                                     :disabled="doc?.creatorId === activeChar?.userId"
+                                    icon="i-mdi-creation"
                                     @click="revealChangeOwner(documentId)"
                                 >
-                                    <CreationIcon class="-ml-0.5 h-auto w-5" aria-hidden="true" />
                                     {{ $t('components.documents.document_view.take_ownership') }}
                                 </UButton>
                                 <UButton
@@ -324,15 +320,13 @@ if (hash.value !== undefined && hash.value !== null) {
                                         can('DocStoreService.DeleteDocument') &&
                                         checkDocAccess(access, doc.creator, AccessLevel.EDIT, 'DocStoreService.DeleteDocument')
                                     "
-                                    class="inline-flex items-center gap-x-1.5 rounded-md bg-primary-500 px-3 py-2 text-sm font-semibold text-neutral hover:bg-primary-400"
+                                    :icon="!doc.deletedAt ? 'i-mdi-trash-can' : 'i-mdi-restore'"
                                     @click="revealDelete(documentId)"
                                 >
                                     <template v-if="!doc.deletedAt">
-                                        <TrashCanIcon class="-ml-0.5 h-auto w-5" aria-hidden="true" />
                                         {{ $t('common.delete') }}
                                     </template>
                                     <template v-else>
-                                        <RestoreIcon class="-ml-0.5 h-auto w-5" aria-hidden="true" />
                                         {{ $t('common.restore') }}
                                     </template>
                                 </UButton>
@@ -340,7 +334,7 @@ if (hash.value !== undefined && hash.value !== null) {
                         </div>
 
                         <div class="my-4">
-                            <h1 class="break-words px-0.5 py-1 text-4xl font-bold text-neutral sm:pl-1">
+                            <h1 class="break-words px-0.5 py-1 text-4xl font-bold sm:pl-1">
                                 {{ doc?.title }}
                             </h1>
                         </div>
@@ -350,7 +344,7 @@ if (hash.value !== undefined && hash.value !== null) {
                                 v-if="doc.category"
                                 class="flex flex-initial flex-row gap-1 rounded-full bg-primary-100 px-2 py-1 text-primary-500"
                             >
-                                <ShapeIcon class="h-auto w-5" aria-hidden="true" />
+                                <ShapeIcon class="h-auto w-5" />
                                 <span
                                     class="inline-flex items-center text-sm font-medium text-primary-800"
                                     :title="doc.category.description ?? $t('common.na')"
@@ -363,13 +357,13 @@ if (hash.value !== undefined && hash.value !== null) {
                                 v-if="doc?.closed"
                                 class="flex flex-initial flex-row gap-1 rounded-full bg-error-100 px-2 py-1"
                             >
-                                <LockIcon class="size-5 text-error-400" aria-hidden="true" />
+                                <LockIcon class="size-5 text-error-400" />
                                 <span class="text-sm font-medium text-error-700">
                                     {{ $t('common.close', 2) }}
                                 </span>
                             </div>
                             <div v-else class="flex flex-initial flex-row gap-1 rounded-full bg-success-100 px-2 py-1">
-                                <LockOpenVariantIcon class="size-5 text-success-500" aria-hidden="true" />
+                                <LockOpenVariantIcon class="size-5 text-success-500" />
                                 <span class="text-sm font-medium text-success-700">
                                     {{ $t('common.open', 2) }}
                                 </span>
@@ -379,13 +373,13 @@ if (hash.value !== undefined && hash.value !== null) {
                                 v-if="doc?.state"
                                 class="flex flex-initial flex-row gap-1 rounded-full bg-info-100 px-2 py-1 text-info-500"
                             >
-                                <NoteCheckIcon class="h-auto w-5" aria-hidden="true" />
+                                <NoteCheckIcon class="h-auto w-5" />
                                 <span class="text-sm font-medium text-info-800">
                                     {{ doc?.state }}
                                 </span>
                             </div>
                             <div class="flex flex-initial flex-row gap-1 rounded-full bg-base-100 px-2 py-1 text-base-500">
-                                <CommentTextMultipleIcon class="h-auto w-5" aria-hidden="true" />
+                                <CommentTextMultipleIcon class="h-auto w-5" />
                                 <span class="text-sm font-medium text-base-700">
                                     {{
                                         commentCount !== undefined
@@ -398,7 +392,7 @@ if (hash.value !== undefined && hash.value !== null) {
 
                         <div class="flex snap-x flex-row flex-wrap gap-2 overflow-x-auto pb-3 sm:pb-0">
                             <div class="flex flex-initial flex-row gap-1 rounded-full bg-base-100 px-2 py-1 text-base-500">
-                                <AccountIcon class="h-auto w-5" aria-hidden="true" />
+                                <AccountIcon class="h-auto w-5" />
                                 <span class="inline-flex items-center text-sm font-medium text-base-700">
                                     {{ $t('common.created_by') }}
                                     <CitizenInfoPopover
@@ -409,7 +403,7 @@ if (hash.value !== undefined && hash.value !== null) {
                             </div>
 
                             <div class="flex flex-initial flex-row gap-1 rounded-full bg-base-100 px-2 py-1 text-base-500">
-                                <CalendarIcon class="h-auto w-5" aria-hidden="true" />
+                                <CalendarIcon class="h-auto w-5" />
                                 <span class="text-sm font-medium text-base-700">
                                     {{ $t('common.created_at') }}
                                     <GenericTime :value="doc.createdAt" type="long" />
@@ -419,7 +413,7 @@ if (hash.value !== undefined && hash.value !== null) {
                                 v-if="doc.updatedAt"
                                 class="flex flex-initial flex-row gap-1 rounded-full bg-base-100 px-2 py-1 text-base-500"
                             >
-                                <CalendarEditIcon class="h-auto w-5" aria-hidden="true" />
+                                <CalendarEditIcon class="h-auto w-5" />
                                 <span class="text-sm font-medium text-base-700">
                                     {{ $t('common.updated_at') }}
                                     <GenericTime :value="doc.updatedAt" type="long" />
@@ -429,7 +423,7 @@ if (hash.value !== undefined && hash.value !== null) {
                                 v-if="doc.deletedAt"
                                 class="flex flex-initial flex-row gap-1 rounded-full bg-base-100 px-2 py-1 text-base-500"
                             >
-                                <CalendarRemoveIcon class="h-auto w-5" aria-hidden="true" />
+                                <CalendarRemoveIcon class="h-auto w-5" />
                                 <span class="text-sm font-medium text-base-700">
                                     {{ $t('common.deleted') }}
                                     <GenericTime :value="doc.deletedAt" type="long" />
@@ -441,7 +435,7 @@ if (hash.value !== undefined && hash.value !== null) {
                             <h2 class="sr-only">
                                 {{ $t('common.content') }}
                             </h2>
-                            <div class="break-words rounded-lg bg-base-800 text-neutral">
+                            <div class="break-words rounded-lg bg-base-800">
                                 <!-- eslint-disable vue/no-v-html -->
                                 <div
                                     ref="contentRef"
@@ -452,11 +446,7 @@ if (hash.value !== undefined && hash.value !== null) {
                         </div>
 
                         <div class="my-2">
-                            <Disclosure
-                                v-slot="{ open }"
-                                as="div"
-                                class="border-neutral/20 text-neutral hover:border-neutral/70"
-                            >
+                            <Disclosure v-slot="{ open }" as="div" class="border-neutral/20 hover:border-neutral/70">
                                 <DisclosureButton
                                     :class="[
                                         open ? 'rounded-t-lg border-b-0' : 'rounded-lg',
@@ -464,13 +454,12 @@ if (hash.value !== undefined && hash.value !== null) {
                                     ]"
                                 >
                                     <span class="inline-flex items-center text-base font-semibold leading-7">
-                                        <AccountMultipleIcon class="mr-2 h-auto w-5" aria-hidden="true" />
+                                        <AccountMultipleIcon class="mr-2 h-auto w-5" />
                                         {{ $t('common.relation', 2) }}
                                     </span>
                                     <span class="ml-6 flex h-7 items-center">
                                         <ChevronDownIcon
                                             :class="[open ? 'upsidedown' : '', 'h-auto w-5 transition-transform']"
-                                            aria-hidden="true"
                                         />
                                     </span>
                                 </DisclosureButton>
@@ -483,11 +472,7 @@ if (hash.value !== undefined && hash.value !== null) {
                         </div>
 
                         <div class="my-2">
-                            <Disclosure
-                                v-slot="{ open }"
-                                as="div"
-                                class="border-neutral/20 text-neutral hover:border-neutral/70"
-                            >
+                            <Disclosure v-slot="{ open }" as="div" class="border-neutral/20 hover:border-neutral/70">
                                 <DisclosureButton
                                     :class="[
                                         open ? 'rounded-t-lg border-b-0' : 'rounded-lg',
@@ -495,13 +480,12 @@ if (hash.value !== undefined && hash.value !== null) {
                                     ]"
                                 >
                                     <span class="inline-flex items-center text-base font-semibold leading-7">
-                                        <FileDocumentIcon class="mr-2 h-auto w-5" aria-hidden="true" />
+                                        <FileDocumentIcon class="mr-2 h-auto w-5" />
                                         {{ $t('common.reference', 2) }}
                                     </span>
                                     <span class="ml-6 flex h-7 items-center">
                                         <ChevronDownIcon
                                             :class="[open ? 'upsidedown' : '', 'h-auto w-5 transition-transform']"
-                                            aria-hidden="true"
                                         />
                                     </span>
                                 </DisclosureButton>
@@ -517,7 +501,7 @@ if (hash.value !== undefined && hash.value !== null) {
                             <Disclosure
                                 v-slot="{ open }"
                                 as="div"
-                                class="w-full border-neutral/20 text-neutral hover:border-neutral/70"
+                                class="w-full border-neutral/20 hover:border-neutral/70"
                                 :default-open="true"
                             >
                                 <DisclosureButton
@@ -527,13 +511,12 @@ if (hash.value !== undefined && hash.value !== null) {
                                     ]"
                                 >
                                     <span class="inline-flex items-center text-base font-semibold leading-7">
-                                        <LockIcon class="mr-2 h-auto w-5" aria-hidden="true" />
+                                        <LockIcon class="mr-2 h-auto w-5" />
                                         {{ $t('common.access') }}
                                     </span>
                                     <span class="ml-6 flex h-7 items-center">
                                         <ChevronDownIcon
                                             :class="[open ? 'upsidedown' : '', 'h-auto w-5 transition-transform']"
-                                            aria-hidden="true"
                                         />
                                     </span>
                                 </DisclosureButton>
@@ -550,7 +533,7 @@ if (hash.value !== undefined && hash.value !== null) {
                                             :key="entry.id"
                                             class="flex flex-initial snap-x snap-start items-center gap-1 overflow-x-auto whitespace-nowrap rounded-full bg-info-100 px-2 py-1"
                                         >
-                                            <span class="size-2 rounded-full bg-info-500" aria-hidden="true" />
+                                            <span class="size-2 rounded-full bg-info-500" />
                                             <span class="text-sm font-medium text-info-800"
                                                 >{{ entry.jobLabel
                                                 }}<span
@@ -570,7 +553,7 @@ if (hash.value !== undefined && hash.value !== null) {
                                             :key="entry.id"
                                             class="flex flex-initial snap-start flex-row items-center gap-1 whitespace-nowrap rounded-full bg-secondary-100 px-2 py-1"
                                         >
-                                            <span class="size-2 rounded-full bg-secondary-400" aria-hidden="true" />
+                                            <span class="size-2 rounded-full bg-secondary-400" />
                                             <span
                                                 class="text-sm font-medium text-secondary-700"
                                                 :title="`${$t('common.id')} ${entry.userId}`"
@@ -586,12 +569,10 @@ if (hash.value !== undefined && hash.value !== null) {
 
                             <div id="comments" class="my-2">
                                 <div
-                                    class="w-full rounded-lg border-2 border-neutral/20 text-neutral transition-colors hover:border-neutral/70"
+                                    class="w-full rounded-lg border-2 border-neutral/20 transition-colors hover:border-neutral/70"
                                 >
-                                    <h2
-                                        class="inline-flex items-center p-2 text-left text-lg font-semibold text-neutral transition-colors"
-                                    >
-                                        <CommentIcon class="mr-2 h-auto w-5" aria-hidden="true" />
+                                    <h2 class="inline-flex items-center p-2 text-left text-lg font-semibold transition-colors">
+                                        <CommentIcon class="mr-2 h-auto w-5" />
                                         {{ $t('common.comment', 2) }}
                                     </h2>
 
@@ -616,11 +597,7 @@ if (hash.value !== undefined && hash.value !== null) {
                             "
                             class="my-2"
                         >
-                            <Disclosure
-                                v-slot="{ open }"
-                                as="div"
-                                class="border-neutral/20 text-neutral hover:border-neutral/70"
-                            >
+                            <Disclosure v-slot="{ open }" as="div" class="border-neutral/20 hover:border-neutral/70">
                                 <DisclosureButton
                                     :class="[
                                         open ? 'rounded-t-lg border-b-0' : 'rounded-lg',
@@ -628,14 +605,11 @@ if (hash.value !== undefined && hash.value !== null) {
                                     ]"
                                 >
                                     <span class="inline-flex items-center text-base font-semibold leading-7">
-                                        <CommentQuoteIcon class="mr-2 h-auto w-5" aria-hidden="true" />
+                                        <CommentQuoteIcon class="mr-2 h-auto w-5" />
                                         {{ $t('common.activity') }}
                                     </span>
                                     <span class="ml-6 flex h-7 items-center">
-                                        <ChevronDownIcon
-                                            :class="[open ? 'upsidedown' : '', 'size-5 transition-transform']"
-                                            aria-hidden="true"
-                                        />
+                                        <ChevronDownIcon :class="[open ? 'upsidedown' : '', 'size-5 transition-transform']" />
                                     </span>
                                 </DisclosureButton>
                                 <DisclosurePanel class="rounded-b-lg border-2 border-t-0 border-inherit transition-colors">

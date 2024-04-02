@@ -1,5 +1,4 @@
 <script lang="ts" setup>
-import { KeyIcon } from 'mdi-vue3';
 import GenericContainerPanel from '~/components/partials/elements/GenericContainerPanel.vue';
 import GenericContainerPanelEntry from '~/components/partials/elements/GenericContainerPanelEntry.vue';
 import GenericTime from '~/components/partials/elements/GenericTime.vue';
@@ -103,7 +102,7 @@ async function resetLocalStorage(): Promise<void> {
                                 :key="perm"
                                 class="flex items-center justify-between py-4 pl-4 pr-5 text-sm leading-6"
                             >
-                                <KeyIcon class="size-5 shrink-0 text-gray-400" aria-hidden="true" />
+                                <UIcon name="i-mdi-key" class="size-5 shrink-0 text-gray-400" />
                                 <div class="ml-4 flex min-w-0 flex-1 gap-2">
                                     <span class="truncate font-medium">
                                         {{ perm }}

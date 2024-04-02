@@ -721,7 +721,7 @@ console.info(
             />
 
             <div
-                class="flex flex-col gap-2 rounded-t-lg bg-base-800 px-3 py-4 text-neutral"
+                class="flex flex-col gap-2 rounded-t-lg bg-base-800 px-3 py-4"
                 :class="!(canDo.edit && canDo.relations && canDo.references) ? 'rounded-b-md' : ''"
             >
                 <div>
@@ -733,7 +733,7 @@ console.info(
                         type="text"
                         :placeholder="$t('common.title')"
                         :label="$t('common.title')"
-                        class="block w-full rounded-md border-0 bg-base-700 py-1.5 text-neutral placeholder:text-accent-200 focus:ring-2 focus:ring-inset focus:ring-base-300 sm:text-3xl sm:leading-6"
+                        class="block w-full rounded-md border-0 bg-base-700 py-1.5 placeholder:text-accent-200 focus:ring-2 focus:ring-inset focus:ring-base-300 sm:text-3xl sm:leading-6"
                         :disabled="!canEdit || !canDo.edit"
                         @focusin="focusTablet(true)"
                         @focusout="focusTablet(false)"
@@ -750,7 +750,7 @@ console.info(
                                 <ComboboxButton as="div">
                                     <ComboboxInput
                                         autocomplete="off"
-                                        class="block w-full rounded-md border-0 bg-base-700 py-1.5 text-neutral placeholder:text-accent-200 focus:ring-2 focus:ring-inset focus:ring-base-300 sm:text-sm sm:leading-6"
+                                        class="block w-full rounded-md border-0 bg-base-700 py-1.5 placeholder:text-accent-200 focus:ring-2 focus:ring-inset focus:ring-base-300 sm:text-sm sm:leading-6"
                                         :display-value="(category: any) => category?.name"
                                         @change="queryCategories = $event.target.value"
                                         @focusin="focusTablet(true)"
@@ -771,7 +771,7 @@ console.info(
                                     >
                                         <li
                                             :class="[
-                                                'relative cursor-default select-none py-2 pl-8 pr-4 text-neutral',
+                                                'relative cursor-default select-none py-2 pl-8 pr-4',
                                                 active ? 'bg-primary-500' : '',
                                             ]"
                                         >
@@ -786,7 +786,7 @@ console.info(
                                                     'absolute inset-y-0 left-0 flex items-center pl-1.5',
                                                 ]"
                                             >
-                                                <CheckIcon class="size-5" aria-hidden="true" />
+                                                <CheckIcon class="size-5" />
                                             </span>
                                         </li>
                                     </ComboboxOption>
@@ -801,7 +801,7 @@ console.info(
                         <VeeField
                             name="state"
                             type="text"
-                            class="block w-full rounded-md border-0 bg-base-700 py-1.5 text-neutral placeholder:text-accent-200 focus:ring-2 focus:ring-inset focus:ring-base-300 sm:text-sm sm:leading-6"
+                            class="block w-full rounded-md border-0 bg-base-700 py-1.5 placeholder:text-accent-200 focus:ring-2 focus:ring-inset focus:ring-base-300 sm:text-sm sm:leading-6"
                             :placeholder="`${$t('common.document', 1)} ${$t('common.state')}`"
                             :label="`${$t('common.document', 1)} ${$t('common.state')}`"
                             :disabled="!canEdit || !canDo.edit"
@@ -815,13 +815,13 @@ console.info(
                         <Listbox v-model="doc.closed" as="div" :disabled="!canEdit || !canDo.edit">
                             <div class="relative">
                                 <ListboxButton
-                                    class="block w-full rounded-md border-0 bg-base-700 py-1.5 pl-3 text-left text-neutral placeholder:text-accent-200 focus:ring-2 focus:ring-inset focus:ring-base-300 sm:text-sm sm:leading-6"
+                                    class="block w-full rounded-md border-0 bg-base-700 py-1.5 pl-3 text-left placeholder:text-accent-200 focus:ring-2 focus:ring-inset focus:ring-base-300 sm:text-sm sm:leading-6"
                                 >
                                     <span class="block truncate">
                                         {{ openclose.find((e) => e.closed === doc.closed.closed)?.label }}</span
                                     >
                                     <span class="pointer-events-none absolute inset-y-0 right-0 flex items-center pr-2">
-                                        <ChevronDownIcon class="size-5 text-gray-400" aria-hidden="true" />
+                                        <ChevronDownIcon class="size-5 text-gray-400" />
                                     </span>
                                 </ListboxButton>
 
@@ -843,7 +843,7 @@ console.info(
                                             <li
                                                 :class="[
                                                     active ? 'bg-primary-500' : '',
-                                                    'relative cursor-default select-none py-2 pl-8 pr-4 text-neutral',
+                                                    'relative cursor-default select-none py-2 pl-8 pr-4',
                                                 ]"
                                             >
                                                 <span :class="[selected ? 'font-semibold' : 'font-normal', 'block truncate']">{{
@@ -857,7 +857,7 @@ console.info(
                                                         'absolute inset-y-0 left-0 flex items-center pl-1.5',
                                                     ]"
                                                 >
-                                                    <CheckIcon class="size-5" aria-hidden="true" />
+                                                    <CheckIcon class="size-5" />
                                                 </span>
                                             </li>
                                         </ListboxOption>
@@ -882,50 +882,36 @@ console.info(
                 <VeeErrorMessage name="content" as="p" class="mt-2 text-sm text-error-400" />
 
                 <template v-if="saving">
-                    <div class="flex animate-pulse justify-center text-neutral">
-                        <ContentSaveIcon class="mr-2 h-auto w-4 animate-spin" aria-hidden="true" />
+                    <div class="flex animate-pulse justify-center">
+                        <ContentSaveIcon class="mr-2 h-auto w-4 animate-spin" />
                         <span>{{ $t('common.save', 2) }}...</span>
                     </div>
                 </template>
             </div>
 
-            <div v-if="canDo.edit" class="flex flex-row">
-                <div class="inline-flex flex-1 rounded-md shadow-sm" role="group">
-                    <UButton
-                        v-if="canDo.relations"
-                        :disabled="!canEdit || !canDo.edit"
-                        class="inline-flex w-full justify-center rounded-bl-md bg-primary-500 px-3.5 py-2.5 text-sm font-semibold text-neutral hover:bg-primary-400 focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2"
-                        :class="canDo.references ? '' : 'rounded-br-md'"
-                        @click="relationManagerShow = true"
-                    >
-                        <div class="flex justify-center">
-                            <AccountMultipleIcon
-                                class="-ml-0.5 mr-2 size-5 text-base-300 transition-colors group-hover:text-accent-200"
-                                aria-hidden="true"
-                            />
-                            {{ $t('common.citizen', 1) }} {{ $t('common.relation', 2) }}
-                        </div>
-                    </UButton>
-                    <UButton
-                        v-if="canDo.references"
-                        :disabled="!canEdit || !canDo.edit"
-                        class="inline-flex w-full justify-center rounded-br-md bg-primary-500 px-3.5 py-2.5 text-sm font-semibold text-neutral hover:bg-primary-400 focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2"
-                        :class="canDo.relations ? '' : 'rounded-bl-md'"
-                        @click="referenceManagerShow = true"
-                    >
-                        <div class="flex justify-center">
-                            <FileDocumentIcon
-                                class="-ml-0.5 mr-2 size-5 text-base-300 transition-colors group-hover:text-accent-200"
-                                aria-hidden="true"
-                            />
-                            {{ $t('common.document', 1) }} {{ $t('common.reference', 2) }}
-                        </div>
-                    </UButton>
-                </div>
-            </div>
+            <UButtonGroup v-if="canDo.edit" class="my-2 w-full">
+                <UButton
+                    v-if="canDo.relations"
+                    class="flex-1"
+                    :disabled="!canEdit || !canDo.edit"
+                    icon="i-mdi-account-multiple"
+                    @click="relationManagerShow = true"
+                >
+                    {{ $t('common.citizen', 1) }} {{ $t('common.relation', 2) }}
+                </UButton>
+                <UButton
+                    v-if="canDo.references"
+                    class="flex-1"
+                    :disabled="!canEdit || !canDo.edit"
+                    icon="i-mdi-file-document"
+                    @click="referenceManagerShow = true"
+                >
+                    {{ $t('common.document', 1) }} {{ $t('common.reference', 2) }}
+                </UButton>
+            </UButtonGroup>
 
-            <div class="my-3">
-                <h2 class="text-neutral">
+            <div class="my-2">
+                <h2>
                     {{ $t('common.access') }}
                 </h2>
                 <DocumentAccessEntry
@@ -943,28 +929,24 @@ console.info(
                 />
                 <UButton
                     :disabled="!canEdit || !canDo.access"
-                    class="rounded-full bg-primary-500 p-2 text-neutral hover:bg-primary-400 focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2"
+                    class="rounded-full bg-primary-500 p-2 hover:bg-primary-400 focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2"
                     data-te-toggle="tooltip"
                     :title="$t('components.documents.document_editor.add_permission')"
                     @click="addDocumentAccessEntry()"
                 >
-                    <PlusIcon class="size-5" aria-hidden="true" />
+                    <PlusIcon class="size-5" />
                 </UButton>
             </div>
 
             <div class="flex pb-14">
                 <UButton
                     type="submit"
+                    block
                     :disabled="!meta.valid || !canEdit || !canSubmit"
-                    class="flex w-full justify-center rounded-md px-3.5 py-2.5 text-sm font-semibold text-neutral"
-                    :class="[
-                        !canEdit || !meta.valid || !canSubmit
-                            ? 'disabled bg-base-500 hover:bg-base-400 focus-visible:outline-base-500'
-                            : 'bg-primary-500 hover:bg-primary-400',
-                    ]"
+                    :class="[(!canEdit || !meta.valid || !canSubmit) && 'disabled']"
                 >
                     <template v-if="!canSubmit">
-                        <LoadingIcon class="mr-2 size-5 animate-spin" aria-hidden="true" />
+                        <LoadingIcon class="mr-2 size-5 animate-spin" />
                     </template>
                     <template v-if="!id">
                         {{ $t('common.create') }}

@@ -154,7 +154,7 @@ function removeReference(id: string): void {
                         leave-to="opacity-0 translate-y-4 sm:translate-y-0 sm:scale-95"
                     >
                         <DialogPanel
-                            class="relative my-auto w-full overflow-hidden rounded-lg bg-base-800 px-4 pb-4 pt-5 text-left text-neutral transition-all sm:my-8 sm:max-w-6xl sm:p-6"
+                            class="relative my-auto w-full overflow-hidden rounded-lg bg-base-800 px-4 pb-4 pt-5 text-left transition-all sm:my-8 sm:max-w-6xl sm:p-6"
                         >
                             <div class="absolute right-0 top-0 hidden pr-4 pt-4 sm:block">
                                 <UButton
@@ -164,7 +164,7 @@ function removeReference(id: string): void {
                                     <span class="sr-only">
                                         {{ $t('common.close', 1) }}
                                     </span>
-                                    <CloseIcon class="size-5" aria-hidden="true" />
+                                    <CloseIcon class="size-5" />
                                 </UButton>
                             </div>
                             <DialogTitle as="h3" class="text-base font-semibold leading-6">
@@ -189,7 +189,6 @@ function removeReference(id: string): void {
                                                     selected ? 'text-primary-500' : 'text-base-300 group-hover:text-accent-200',
                                                     '-ml-0.5 mr-2 size-5 transition-colors',
                                                 ]"
-                                                aria-hidden="true"
                                             />
                                             <span>{{ tab.name }}</span>
                                         </UButton>
@@ -201,7 +200,7 @@ function removeReference(id: string): void {
                                             <div class="flow-root">
                                                 <div class="-my-2 mx-0 overflow-x-auto">
                                                     <div class="inline-block min-w-full py-2 align-middle">
-                                                        <table class="min-w-full divide-y divide-base-200 text-neutral">
+                                                        <table class="min-w-full divide-y divide-base-200">
                                                             <thead>
                                                                 <tr>
                                                                     <th
@@ -283,7 +282,6 @@ function removeReference(id: string): void {
                                                                                 >
                                                                                     <OpenInNewIcon
                                                                                         class="h-auto w-5 text-primary-500 hover:text-primary-300"
-                                                                                        aria-hidden="true"
                                                                                     />
                                                                                 </NuxtLink>
                                                                             </div>
@@ -300,7 +298,6 @@ function removeReference(id: string): void {
                                                                                 >
                                                                                     <FileDocumentMinusIcon
                                                                                         class="h-auto w-5 text-error-400 hover:text-error-200"
-                                                                                        aria-hidden="true"
                                                                                     />
                                                                                 </UButton>
                                                                             </div>
@@ -405,7 +402,6 @@ function removeReference(id: string): void {
                                                                                 >
                                                                                     <LinkIcon
                                                                                         class="h-auto w-5 text-info-500 hover:text-info-300"
-                                                                                        aria-hidden="true"
                                                                                     />
                                                                                 </UButton>
                                                                                 <UButton
@@ -425,7 +421,6 @@ function removeReference(id: string): void {
                                                                                 >
                                                                                     <CheckIcon
                                                                                         class="h-auto w-5 text-success-500 hover:text-success-300"
-                                                                                        aria-hidden="true"
                                                                                     />
                                                                                 </UButton>
                                                                                 <UButton
@@ -445,7 +440,6 @@ function removeReference(id: string): void {
                                                                                 >
                                                                                     <CloseBoxIcon
                                                                                         class="h-auto w-5 text-error-500 hover:text-error-300"
-                                                                                        aria-hidden="true"
                                                                                     />
                                                                                 </UButton>
                                                                                 <UButton
@@ -465,7 +459,6 @@ function removeReference(id: string): void {
                                                                                 >
                                                                                     <LockClockIcon
                                                                                         class="h-auto w-5 text-warn-500 hover:text-warn-300"
-                                                                                        aria-hidden="true"
                                                                                     />
                                                                                 </UButton>
                                                                             </div>
@@ -487,7 +480,7 @@ function removeReference(id: string): void {
                                                     v-model="queryDoc"
                                                     type="text"
                                                     name="title"
-                                                    class="block w-full rounded-md border-0 bg-base-700 py-1.5 text-neutral placeholder:text-accent-200 focus:ring-2 focus:ring-inset focus:ring-base-300 sm:text-sm sm:leading-6"
+                                                    class="block w-full rounded-md border-0 bg-base-700 py-1.5 placeholder:text-accent-200 focus:ring-2 focus:ring-inset focus:ring-base-300 sm:text-sm sm:leading-6"
                                                     :placeholder="`${$t('common.document', 1)} ${$t('common.title')}`"
                                                     @focusin="focusTablet(true)"
                                                     @focusout="focusTablet(false)"
@@ -585,7 +578,6 @@ function removeReference(id: string): void {
                                                                                 >
                                                                                     <LinkIcon
                                                                                         class="h-auto w-5 text-info-500 hover:text-info-300"
-                                                                                        aria-hidden="true"
                                                                                     />
                                                                                 </UButton>
                                                                                 <UButton
@@ -605,7 +597,6 @@ function removeReference(id: string): void {
                                                                                 >
                                                                                     <CheckIcon
                                                                                         class="h-auto w-5 text-success-500 hover:text-success-300"
-                                                                                        aria-hidden="true"
                                                                                     />
                                                                                 </UButton>
                                                                                 <UButton
@@ -625,7 +616,6 @@ function removeReference(id: string): void {
                                                                                 >
                                                                                     <CloseBoxIcon
                                                                                         class="h-auto w-5 text-error-500 hover:text-error-300"
-                                                                                        aria-hidden="true"
                                                                                     />
                                                                                 </UButton>
                                                                                 <UButton
@@ -645,7 +635,6 @@ function removeReference(id: string): void {
                                                                                 >
                                                                                     <LockClockIcon
                                                                                         class="h-auto w-5 text-warn-500 hover:text-warn-300"
-                                                                                        aria-hidden="true"
                                                                                     />
                                                                                 </UButton>
                                                                             </div>
@@ -663,7 +652,7 @@ function removeReference(id: string): void {
                             </TabGroup>
                             <div class="mt-5 gap-2 sm:mt-4 sm:flex sm:flex-row-reverse">
                                 <UButton
-                                    class="rounded-md bg-base-500 px-3.5 py-2.5 text-sm font-semibold text-neutral hover:bg-base-400"
+                                    class="rounded-md bg-base-500 px-3.5 py-2.5 text-sm font-semibold hover:bg-base-400"
                                     @click="emit('close')"
                                 >
                                     {{ $t('common.close', 1) }}

@@ -105,7 +105,7 @@ async function removeOAuth2Connection(provider: string): Promise<void> {
                             </template>
                             <template #default>
                                 <UButton
-                                    class="rounded-md bg-primary-500 px-3.5 py-2.5 text-sm font-semibold text-neutral hover:bg-primary-400"
+                                    class="rounded-md bg-primary-500 px-3.5 py-2.5 text-sm font-semibold hover:bg-primary-400"
                                     @click="changeUsernameModal = true"
                                 >
                                     {{ $t('components.auth.account_info.change_username_button') }}
@@ -118,7 +118,7 @@ async function removeOAuth2Connection(provider: string): Promise<void> {
                             </template>
                             <template #default>
                                 <UButton
-                                    class="rounded-md bg-primary-500 px-3.5 py-2.5 text-sm font-semibold text-neutral hover:bg-primary-400"
+                                    class="rounded-md bg-primary-500 px-3.5 py-2.5 text-sm font-semibold hover:bg-primary-400"
                                     @click="changePasswordModal = true"
                                 >
                                     {{ $t('components.auth.account_info.change_password_button') }}

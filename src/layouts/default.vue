@@ -15,6 +15,8 @@ const showSnowflakes = now.getMonth() + 1 === 12 && now.getDate() >= 21 && now.g
 
 const { t } = useI18n();
 
+const { $grpc } = useNuxtApp();
+
 const route = useRoute();
 
 const appConfig = useAppConfig();
@@ -104,18 +106,176 @@ const links = [
 ] as (DashboardSidebarLink & { permission?: Perms | Perms[] })[];
 
 const footerLinks = [
-    {
+    /*{
         label: 'Help & Support',
         icon: 'i-heroicons-question-mark-circle',
         click: () => (isHelpSlideoverOpen.value = true),
+    },*/
+    {
+        label: t('common.about'),
+        icon: 'i-mdi-question-mark-circle-outline',
+        to: '/about',
     },
 ];
 
 const groups = [
     {
         key: 'links',
-        label: t('commandpalette.groups.shortcuts.goto'),
+        label: t('common.goto'),
         commands: links.map((link) => ({ ...link, shortcuts: link.tooltip?.shortcuts })),
+    },
+    {
+        key: 'ids',
+        label: t('common.id', 2),
+        commands: [
+            {
+                id: 'cit',
+                prefix: 'CIT-',
+                icon: 'i-mdi-account-multiple-outline',
+            },
+            {
+                id: 'doc',
+                prefix: 'DOC-',
+                icon: 'i-mdi-file-document-box-multiple-outline',
+            },
+        ],
+        search: async (q?: string) => {
+            const defaultCommands = [
+                {
+                    id: 'id-doc',
+                    label: `DOC-...`,
+                },
+                {
+                    id: 'id-citizen',
+                    label: `CIT-...`,
+                },
+            ];
+
+            if (!q || (!q.startsWith('CIT') && !q.startsWith('DOC'))) {
+                console.log(q);
+                if (q && (q.startsWith('@') || q.startsWith('#'))) {
+                    return [];
+                }
+
+                return defaultCommands.filter((c) => !q || c.label.includes(q));
+            }
+
+            const prefix = q.substring(0, q.indexOf('-')).toUpperCase();
+            const id = q.substring(q.indexOf('-') + 1).trim();
+            console.log(prefix, id, id.length > 0 && isNumber(id));
+            if (id.length > 0 && isNumber(id)) {
+                if (prefix === 'CIT') {
+                    return [
+                        {
+                            id: 'id-citizen',
+                            label: `CIT-${id}`,
+                            to: `/citizens/${id}`,
+                        },
+                    ];
+                } else if (prefix === 'DOC') {
+                    return [
+                        {
+                            id: 'id-doc',
+                            label: `DOC-${id}`,
+                            to: `/documents/${id}`,
+                        },
+                    ];
+                }
+            }
+
+            return defaultCommands;
+        },
+    },
+    {
+        key: 'search',
+        label: t('common.search'),
+        commands: [
+            {
+                id: 'cit',
+                label: t('common.citizen', 2),
+                prefix: '@',
+                icon: 'i-mdi-account-multiple-outline',
+            },
+            {
+                id: 'doc',
+                label: t('common.document', 2),
+                prefix: '#',
+                icon: 'i-mdi-file-document-box-multiple-outline',
+            },
+        ],
+        search: async (q?: string) => {
+            if (!q || (!q.startsWith('@') && !q.startsWith('#'))) {
+                return [
+                    {
+                        id: 'cit',
+                        label: t('common.citizen', 2),
+                        prefix: '@',
+                        icon: 'i-mdi-account-multiple-outline',
+                    },
+                    {
+                        id: 'doc',
+                        label: t('common.document', 2),
+                        prefix: '#',
+                        icon: 'i-mdi-file-document-box-multiple-outline',
+                    },
+                ].filter((c) => !q || c.label.includes(q));
+            }
+
+            const searchType = q[0];
+            const query = q.substring(1).trim();
+            switch (searchType) {
+                case '#': {
+                    try {
+                        const call = $grpc.getDocStoreClient().listDocuments({
+                            pagination: {
+                                offset: 0,
+                                pageSize: 10,
+                            },
+                            orderBy: [],
+                            search: query,
+                            categoryIds: [],
+                            creatorIds: [],
+                            documentIds: [],
+                        });
+                        const { response } = await call;
+
+                        return response.documents.map((d) => ({
+                            id: d.id,
+                            label: d.title,
+                            suffix: d.state,
+                            to: `/documents/${d.id}`,
+                        }));
+                    } catch (e) {
+                        $grpc.handleError(e as RpcError);
+                        throw e;
+                    }
+                }
+
+                case '@':
+                default: {
+                    try {
+                        const call = $grpc.getCitizenStoreClient().listCitizens({
+                            pagination: {
+                                offset: 0,
+                                pageSize: 10,
+                            },
+                            searchName: query,
+                        });
+                        const { response } = await call;
+
+                        return response.users.map((u) => ({
+                            id: u.userId,
+                            label: `${u.firstname} ${u.lastname}`,
+                            suffix: u.dateofbirth,
+                            to: `/citizens/${u.userId}`,
+                        }));
+                    } catch (e) {
+                        $grpc.handleError(e as RpcError);
+                        throw e;
+                    }
+                }
+            }
+        },
     },
 ];
 
@@ -168,7 +328,7 @@ const colors = computed(() => defaultColors.value.map((color) => ({ ...color, ac
         <!-- Events -->
         <LazyPartialsEventsSnowflakesContainer v-if="showSnowflakes" />
 
-        <div class="w-full overflow-y-auto">
+        <div class="w-full max-w-full overflow-y-auto">
             <slot />
 
             <QuickButtons v-if="activeChar && (route.meta.showQuickButtons === undefined || route.meta.showQuickButtons)" />
@@ -182,7 +342,16 @@ const colors = computed(() => defaultColors.value.map((color) => ({ ...color, ac
         <NotificationProvider />
 
         <ClientOnly>
-            <LazyUDashboardSearch v-if="activeChar" :groups="groups" />
+            <LazyUDashboardSearch
+                v-if="activeChar"
+                :groups="groups"
+                :empty-state="{
+                    icon: 'i-mdi-globe-model',
+                    label: t('commandpalette.empty.title'),
+                    queryLabel: t('commandpalette.empty.title'),
+                }"
+                :placeholder="`${$t('common.search')}... (${$t('commandpalette.footer', { key1: '#', key2: '@' })})`"
+            />
         </ClientOnly>
     </UDashboardLayout>
 </template>

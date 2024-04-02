@@ -126,15 +126,15 @@ const editing = ref(props.startInEdit);
     />
 
     <tr v-if="!editing">
-        <td class="flex flex-row py-2 pl-4 pr-3 text-sm font-medium text-neutral sm:pl-1">
+        <td class="flex flex-row py-2 pl-4 pr-3 text-sm font-medium sm:pl-1">
             <UButton class="pl-2" :title="$t('common.edit')" @click="editing = true">
-                <PencilIcon class="size-5" aria-hidden="true" />
+                <PencilIcon class="size-5" />
             </UButton>
             <UButton class="pl-2" :title="$t('common.delete')" @click="reveal()">
-                <TrashCanIcon class="size-5" aria-hidden="true" />
+                <TrashCanIcon class="size-5" />
             </UButton>
         </td>
-        <td class="py-2 pl-4 pr-3 text-sm font-medium text-neutral sm:pl-1">
+        <td class="py-2 pl-4 pr-3 text-sm font-medium sm:pl-1">
             {{ law.name }}
         </td>
         <td class="whitespace-nowrap p-1 text-left text-accent-200">${{ law.fine }}</td>
@@ -149,9 +149,9 @@ const editing = ref(props.startInEdit);
         </td>
     </tr>
     <tr v-else>
-        <td class="py-2 pl-4 pr-3 text-sm font-medium text-neutral sm:pl-1">
+        <td class="py-2 pl-4 pr-3 text-sm font-medium sm:pl-1">
             <UButton :title="$t('common.save')" @click="onSubmitThrottle">
-                <ContentSaveIcon class="size-5" aria-hidden="true" />
+                <ContentSaveIcon class="size-5" />
             </UButton>
             <UButton
                 :title="$t('common.cancel')"
@@ -160,16 +160,16 @@ const editing = ref(props.startInEdit);
                     parseInt(law.id) < 0 && $emit('deleted', law.id);
                 "
             >
-                <CancelIcon class="size-5" aria-hidden="true" />
+                <CancelIcon class="size-5" />
             </UButton>
         </td>
-        <td class="py-2 pl-4 pr-3 text-sm font-medium text-neutral sm:pl-1">
+        <td class="py-2 pl-4 pr-3 text-sm font-medium sm:pl-1">
             <VeeField
                 name="name"
                 type="text"
                 :placeholder="$t('common.crime')"
                 :label="$t('common.crime')"
-                class="block w-full rounded-md border-0 bg-base-700 py-1.5 text-neutral placeholder:text-accent-200 focus:ring-2 focus:ring-inset focus:ring-base-300 sm:text-sm sm:leading-6"
+                class="block w-full rounded-md border-0 bg-base-700 py-1.5 placeholder:text-accent-200 focus:ring-2 focus:ring-inset focus:ring-base-300 sm:text-sm sm:leading-6"
                 @focusin="focusTablet(true)"
                 @focusout="focusTablet(false)"
             />
@@ -181,7 +181,7 @@ const editing = ref(props.startInEdit);
                 type="text"
                 :placeholder="$t('common.fine')"
                 :label="$t('common.fine')"
-                class="block w-full rounded-md border-0 bg-base-700 py-1.5 text-neutral placeholder:text-accent-200 focus:ring-2 focus:ring-inset focus:ring-base-300 sm:text-sm sm:leading-6"
+                class="block w-full rounded-md border-0 bg-base-700 py-1.5 placeholder:text-accent-200 focus:ring-2 focus:ring-inset focus:ring-base-300 sm:text-sm sm:leading-6"
             />
             <VeeErrorMessage name="fine" as="p" class="mt-2 text-sm text-error-400" />
         </td>
@@ -191,7 +191,7 @@ const editing = ref(props.startInEdit);
                 type="text"
                 :placeholder="$t('common.detention_time')"
                 :label="$t('common.detention_time')"
-                class="block w-full rounded-md border-0 bg-base-700 py-1.5 text-neutral placeholder:text-accent-200 focus:ring-2 focus:ring-inset focus:ring-base-300 sm:text-sm sm:leading-6"
+                class="block w-full rounded-md border-0 bg-base-700 py-1.5 placeholder:text-accent-200 focus:ring-2 focus:ring-inset focus:ring-base-300 sm:text-sm sm:leading-6"
                 @focusin="focusTablet(true)"
                 @focusout="focusTablet(false)"
             />
@@ -203,7 +203,7 @@ const editing = ref(props.startInEdit);
                 type="text"
                 :placeholder="$t('common.traffic_infraction_points')"
                 :label="$t('common.traffic_infraction_points')"
-                class="block w-full rounded-md border-0 bg-base-700 py-1.5 text-neutral placeholder:text-accent-200 focus:ring-2 focus:ring-inset focus:ring-base-300 sm:text-sm sm:leading-6"
+                class="block w-full rounded-md border-0 bg-base-700 py-1.5 placeholder:text-accent-200 focus:ring-2 focus:ring-inset focus:ring-base-300 sm:text-sm sm:leading-6"
                 @focusin="focusTablet(true)"
                 @focusout="focusTablet(false)"
             />
@@ -215,7 +215,7 @@ const editing = ref(props.startInEdit);
                 type="text"
                 :placeholder="$t('common.description')"
                 :label="$t('common.description')"
-                class="block w-full rounded-md border-0 bg-base-700 py-1.5 text-neutral placeholder:text-accent-200 focus:ring-2 focus:ring-inset focus:ring-base-300 sm:text-sm sm:leading-6"
+                class="block w-full rounded-md border-0 bg-base-700 py-1.5 placeholder:text-accent-200 focus:ring-2 focus:ring-inset focus:ring-base-300 sm:text-sm sm:leading-6"
                 @focusin="focusTablet(true)"
                 @focusout="focusTablet(false)"
             />

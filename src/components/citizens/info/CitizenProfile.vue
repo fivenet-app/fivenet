@@ -1,15 +1,5 @@
 <script lang="ts" setup>
-import {
-    AccountAlertIcon,
-    AccountCancelIcon,
-    BriefcaseIcon,
-    CameraIcon,
-    CounterIcon,
-    FileDocumentPlusIcon,
-    LicenseIcon,
-    LinkIcon,
-} from 'mdi-vue3';
-import { ref } from 'vue';
+import { AccountAlertIcon, AccountCancelIcon, LicenseIcon } from 'mdi-vue3';
 import CharSexBadge from '~/components/partials/citizens/CharSexBadge.vue';
 import CitizenSetJobModal from '~/components/citizens/info/CitizenSetJobModal.vue';
 import TemplatesModal from '~/components/documents/templates/TemplatesModal.vue';
@@ -105,7 +95,7 @@ const mugShotModal = ref(false);
                                         <div class="px-4 py-5 sm:p-0">
                                             <dl class="space-y-4 sm:space-y-0 sm:divide-y sm:divide-base-200">
                                                 <div class="sm:flex sm:px-5 sm:py-4">
-                                                    <dt class="text-sm font-medium text-neutral sm:w-40 sm:shrink-0 lg:w-48">
+                                                    <dt class="text-sm font-medium sm:w-40 sm:shrink-0 lg:w-48">
                                                         {{ $t('common.date_of_birth') }}
                                                     </dt>
                                                     <dd class="mt-1 text-sm text-base-300 sm:col-span-2 sm:ml-6 sm:mt-0">
@@ -113,7 +103,7 @@ const mugShotModal = ref(false);
                                                     </dd>
                                                 </div>
                                                 <div class="sm:flex sm:px-5 sm:py-4">
-                                                    <dt class="text-sm font-medium text-neutral sm:w-40 sm:shrink-0 lg:w-48">
+                                                    <dt class="text-sm font-medium sm:w-40 sm:shrink-0 lg:w-48">
                                                         {{ $t('common.sex') }}
                                                     </dt>
                                                     <dd
@@ -124,7 +114,7 @@ const mugShotModal = ref(false);
                                                     </dd>
                                                 </div>
                                                 <div class="sm:flex sm:px-5 sm:py-4">
-                                                    <dt class="text-sm font-medium text-neutral sm:w-40 sm:shrink-0 lg:w-48">
+                                                    <dt class="text-sm font-medium sm:w-40 sm:shrink-0 lg:w-48">
                                                         {{ $t('common.height') }}
                                                     </dt>
                                                     <dd class="mt-1 text-sm text-base-300 sm:col-span-2 sm:ml-6 sm:mt-0">
@@ -135,7 +125,7 @@ const mugShotModal = ref(false);
                                                     v-if="attr('CitizenStoreService.ListCitizens', 'Fields', 'PhoneNumber')"
                                                     class="sm:flex sm:px-5 sm:py-4"
                                                 >
-                                                    <dt class="text-sm font-medium text-neutral sm:w-40 sm:shrink-0 lg:w-48">
+                                                    <dt class="text-sm font-medium sm:w-40 sm:shrink-0 lg:w-48">
                                                         {{ $t('common.phone_number') }}
                                                     </dt>
                                                     <dd class="mt-1 text-sm text-base-300 sm:col-span-2 sm:ml-6 sm:mt-0">
@@ -143,7 +133,7 @@ const mugShotModal = ref(false);
                                                     </dd>
                                                 </div>
                                                 <div v-if="user.visum" class="sm:flex sm:px-5 sm:py-4">
-                                                    <dt class="text-sm font-medium text-neutral sm:w-40 sm:shrink-0 lg:w-48">
+                                                    <dt class="text-sm font-medium sm:w-40 sm:shrink-0 lg:w-48">
                                                         {{ $t('common.visum') }}
                                                     </dt>
                                                     <dd class="mt-1 text-sm text-blue-400 sm:col-span-2 sm:ml-6 sm:mt-0">
@@ -160,7 +150,7 @@ const mugShotModal = ref(false);
                                                     "
                                                     class="sm:flex sm:px-5 sm:py-4"
                                                 >
-                                                    <dt class="text-sm font-medium text-neutral sm:w-40 sm:shrink-0 lg:w-48">
+                                                    <dt class="text-sm font-medium sm:w-40 sm:shrink-0 lg:w-48">
                                                         {{ $t('common.blood_type') }}
                                                     </dt>
                                                     <dd class="mt-1 text-sm text-base-300 sm:col-span-2 sm:ml-6 sm:mt-0">
@@ -177,7 +167,7 @@ const mugShotModal = ref(false);
                                                     "
                                                     class="sm:flex sm:px-5 sm:py-4"
                                                 >
-                                                    <dt class="text-sm font-medium text-neutral sm:w-40 sm:shrink-0 lg:w-48">
+                                                    <dt class="text-sm font-medium sm:w-40 sm:shrink-0 lg:w-48">
                                                         {{ $t('common.traffic_infraction_points', 2) }}
                                                     </dt>
                                                     <dd
@@ -201,7 +191,7 @@ const mugShotModal = ref(false);
                                                     "
                                                     class="sm:flex sm:px-5 sm:py-4"
                                                 >
-                                                    <dt class="text-sm font-medium text-neutral sm:w-40 sm:shrink-0 lg:w-48">
+                                                    <dt class="text-sm font-medium sm:w-40 sm:shrink-0 lg:w-48">
                                                         {{ $t('common.fine') }}
                                                     </dt>
                                                     <dd class="mt-1 text-sm text-base-300 sm:col-span-2 sm:ml-6 sm:mt-0">
@@ -222,7 +212,7 @@ const mugShotModal = ref(false);
                                                     v-if="attr('CitizenStoreService.ListCitizens', 'Fields', 'Licenses')"
                                                     class="sm:flex sm:px-5 sm:py-4"
                                                 >
-                                                    <dt class="text-sm font-medium text-neutral sm:w-40 sm:shrink-0 lg:w-48">
+                                                    <dt class="text-sm font-medium sm:w-40 sm:shrink-0 lg:w-48">
                                                         {{ $t('common.license', 2) }}
                                                     </dt>
                                                     <dd class="mt-1 w-full text-sm text-base-300 sm:col-span-2 sm:ml-6 sm:mt-0">
@@ -240,7 +230,7 @@ const mugShotModal = ref(false);
                                                                 class="flex items-center justify-between py-3 pl-3 pr-4 text-sm"
                                                             >
                                                                 <div class="flex flex-1 items-center">
-                                                                    <LicenseIcon class="size-5 shrink-0" aria-hidden="true" />
+                                                                    <LicenseIcon class="size-5 shrink-0" />
                                                                     <span
                                                                         class="ml-2 flex-1 truncate"
                                                                         :title="`${license.type.toUpperCase()}`"
@@ -260,12 +250,8 @@ const mugShotModal = ref(false);
                             <div class="flex shrink-0 flex-col gap-2 px-2 py-4 pr-0 lg:w-96">
                                 <div v-if="attr('CitizenStoreService.SetUserProps', 'Fields', 'Wanted')" class="flex-initial">
                                     <UButton color="red" block @click="setWantedModal = true">
-                                        <AccountAlertIcon
-                                            v-if="user.props?.wanted"
-                                            class="mr-1.5 h-auto w-5"
-                                            aria-hidden="true"
-                                        />
-                                        <AccountCancelIcon v-else class="mr-1.5 h-auto w-5" aria-hidden="true" />
+                                        <AccountAlertIcon v-if="user.props?.wanted" class="mr-1.5 h-auto w-5" />
+                                        <AccountCancelIcon v-else class="mr-1.5 h-auto w-5" />
                                         {{
                                             user.props?.wanted
                                                 ? $t('components.citizens.citizen_info_profile.revoke_wanted')

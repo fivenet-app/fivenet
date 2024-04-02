@@ -31,7 +31,7 @@ defineProps<{
                         v-if="qualification.result?.status"
                         class="flex flex-initial flex-row gap-1 rounded-full bg-info-100 px-2 py-1"
                     >
-                        <ListStatusIcon class="size-5 text-info-400" aria-hidden="true" />
+                        <ListStatusIcon class="size-5 text-info-400" />
                         <span class="text-sm font-medium text-info-700">
                             <span class="font-semibold">{{ $t('common.result') }}:</span>
                             {{ $t(`enums.qualifications.ResultStatus.${ResultStatus[qualification.result?.status ?? 0]}`) }}
@@ -42,13 +42,13 @@ defineProps<{
                         v-if="qualification.closed"
                         class="flex flex-initial flex-row gap-1 rounded-full bg-error-100 px-2 py-1"
                     >
-                        <LockIcon class="size-5 text-error-400" aria-hidden="true" />
+                        <LockIcon class="size-5 text-error-400" />
                         <span class="text-sm font-medium text-error-700">
                             {{ $t('common.close', 2) }}
                         </span>
                     </div>
                     <div v-else class="flex flex-initial flex-row gap-1 rounded-full bg-success-100 px-2 py-1">
-                        <LockOpenVariantIcon class="size-5 text-success-500" aria-hidden="true" />
+                        <LockOpenVariantIcon class="size-5 text-success-500" />
                         <span class="text-sm font-medium text-success-700">
                             {{ $t('common.open', 2) }}
                         </span>
@@ -58,7 +58,7 @@ defineProps<{
                     {{ $t('common.created_at') }} <GenericTime :value="qualification.createdAt" />
                 </p>
             </div>
-            <ChevronRightIcon class="size-5 flex-none text-gray-300" aria-hidden="true" />
+            <ChevronRightIcon class="size-5 flex-none text-gray-300" />
         </div>
     </li>
 </template>

@@ -2,7 +2,6 @@
 // eslint-disable-next-line camelcase
 import { alpha_dash, max, min, required } from '@vee-validate/rules';
 import { useThrottleFn, useTimeoutFn } from '@vueuse/core';
-import { LoadingIcon } from 'mdi-vue3';
 import { defineRule } from 'vee-validate';
 import { useAuthStore } from '~/store/auth';
 import { useSettingsStore } from '~/store/settings';
@@ -71,7 +70,7 @@ watch(
 
 <template>
     <div>
-        <h2 class="pb-4 text-center text-3xl text-neutral">
+        <h2 class="pb-4 text-center text-3xl">
             {{ $t('components.auth.login.title') }}
         </h2>
 
@@ -87,7 +86,7 @@ watch(
                         autocomplete="username"
                         :placeholder="$t('common.username')"
                         :label="$t('common.username')"
-                        class="block w-full rounded-md border-0 bg-base-700 py-1.5 text-neutral placeholder:text-accent-200 focus:ring-2 focus:ring-inset focus:ring-base-300 sm:text-sm sm:leading-6"
+                        class="block w-full rounded-md border-0 bg-base-700 py-1.5 placeholder:text-accent-200 focus:ring-2 focus:ring-inset focus:ring-base-300 sm:text-sm sm:leading-6"
                         @focusin="focusTablet(true)"
                         @focusout="focusTablet(false)"
                     />
@@ -105,7 +104,7 @@ watch(
                         autocomplete="current-password"
                         :placeholder="$t('common.password')"
                         :label="$t('common.password')"
-                        class="block w-full rounded-md border-0 bg-base-700 py-1.5 text-neutral placeholder:text-accent-200 focus:ring-2 focus:ring-inset focus:ring-base-300 sm:text-sm sm:leading-6"
+                        class="block w-full rounded-md border-0 bg-base-700 py-1.5 placeholder:text-accent-200 focus:ring-2 focus:ring-inset focus:ring-base-300 sm:text-sm sm:leading-6"
                         @focusin="focusTablet(true)"
                         @focusout="focusTablet(false)"
                     />
@@ -114,19 +113,7 @@ watch(
             </div>
 
             <div>
-                <UButton
-                    type="submit"
-                    class="flex w-full justify-center rounded-md px-3 py-2 text-sm font-semibold text-neutral transition-colors focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2"
-                    :disabled="!meta.valid || !canSubmit"
-                    :class="[
-                        !meta.valid || !canSubmit
-                            ? 'disabled bg-base-500 hover:bg-base-400 focus-visible:outline-base-500'
-                            : 'bg-primary-500 hover:bg-primary-400',
-                    ]"
-                >
-                    <template v-if="!canSubmit">
-                        <LoadingIcon class="mr-2 size-5 animate-spin" aria-hidden="true" />
-                    </template>
+                <UButton type="submit" block :disabled="!meta.valid || !canSubmit" :loading="!canSubmit">
                     {{ $t('common.login') }}
                 </UButton>
             </div>
@@ -138,22 +125,18 @@ watch(
                     {{ $t('components.auth.login.social_login_disabled') }}
                 </p>
                 <div v-for="provider in appConfig.login.providers" :key="provider.name">
+                    <UButton v-if="!socialLoginEnabled" block :disabled="!socialLoginEnabled">
+                        {{ provider.label }} {{ $t('common.login') }}
+                    </UButton>
                     <UButton
-                        v-if="!socialLoginEnabled"
-                        class="flex w-full justify-center rounded-md bg-primary-500 px-3 py-2 text-sm font-semibold text-neutral transition-colors hover:bg-primary-400 focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-base-300"
-                        :class="!socialLoginEnabled ? 'disabled' : ''"
+                        v-else
+                        block
+                        :external="true"
+                        :to="`/api/oauth2/login/${provider.name}`"
+                        :disabled="!socialLoginEnabled"
                     >
                         {{ provider.label }} {{ $t('common.login') }}
                     </UButton>
-                    <NuxtLink
-                        v-else
-                        :external="true"
-                        :to="`/api/oauth2/login/${provider.name}`"
-                        class="flex w-full justify-center rounded-md bg-primary-500 px-3 py-2 text-sm font-semibold text-neutral transition-colors hover:bg-primary-400 focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-base-300"
-                        :class="!socialLoginEnabled ? 'disabled' : ''"
-                    >
-                        {{ provider.label }} {{ $t('common.login') }}
-                    </NuxtLink>
                 </div>
             </template>
         </div>
@@ -166,20 +149,14 @@ watch(
         />
 
         <div class="mt-6">
-            <UButton
-                class="flex w-full justify-center rounded-md bg-secondary-600 px-3 py-2 text-sm font-semibold text-neutral transition-colors hover:bg-secondary-500 focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-base-300"
-                @click="$emit('toggle')"
-            >
+            <UButton block @click="$emit('toggle')">
                 {{ $t('components.auth.login.forgot_password') }}
             </UButton>
         </div>
         <div v-if="appConfig.login.signupEnabled" class="mt-6">
-            <NuxtLink
-                :to="{ name: 'auth-registration' }"
-                class="flex w-full justify-center rounded-md bg-secondary-600 px-3 py-2 text-sm font-semibold text-neutral transition-colors hover:bg-secondary-500 focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-base-300"
-            >
+            <UButton block :to="{ name: 'auth-registration' }">
                 {{ $t('components.auth.login.register_account') }}
-            </NuxtLink>
+            </UButton>
         </div>
     </div>
 </template>

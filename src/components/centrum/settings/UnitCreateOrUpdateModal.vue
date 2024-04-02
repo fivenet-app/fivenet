@@ -155,16 +155,16 @@ onBeforeMount(async () => updateUnitInForm());
                                     @click="$emit('close')"
                                 >
                                     <span class="sr-only">{{ $t('common.close') }}</span>
-                                    <CloseIcon class="size-5" aria-hidden="true" />
+                                    <CloseIcon class="size-5" />
                                 </UButton>
                             </div>
                             <form @submit.prevent="onSubmitThrottle">
                                 <div>
                                     <div class="mx-auto flex size-12 items-center justify-center rounded-full bg-success-100">
-                                        <GroupIcon class="size-5 text-success-600" aria-hidden="true" />
+                                        <GroupIcon class="size-5 text-success-600" />
                                     </div>
                                     <div class="mt-3 text-center sm:mt-5">
-                                        <DialogTitle as="h3" class="text-base font-semibold leading-6 text-neutral">
+                                        <DialogTitle as="h3" class="text-base font-semibold leading-6">
                                             <span v-if="unit && unit?.id">
                                                 {{ $t('components.centrum.units.update_unit') }}
                                             </span>
@@ -175,13 +175,13 @@ onBeforeMount(async () => updateUnitInForm());
                                         <div class="mt-2">
                                             <div class="text-sm text-gray-100">
                                                 <div class="flex-1">
-                                                    <label for="name" class="block text-sm font-medium leading-6 text-neutral">
+                                                    <label for="name" class="block text-sm font-medium leading-6">
                                                         {{ $t('common.name') }}
                                                     </label>
                                                     <VeeField
                                                         name="name"
                                                         type="text"
-                                                        class="block w-full rounded-md border-0 bg-base-700 py-1.5 text-neutral placeholder:text-accent-200 focus:ring-2 focus:ring-inset focus:ring-base-300 sm:text-sm sm:leading-6"
+                                                        class="block w-full rounded-md border-0 bg-base-700 py-1.5 placeholder:text-accent-200 focus:ring-2 focus:ring-inset focus:ring-base-300 sm:text-sm sm:leading-6"
                                                         :placeholder="$t('common.name')"
                                                         :label="$t('common.name')"
                                                         @focusin="focusTablet(true)"
@@ -190,16 +190,13 @@ onBeforeMount(async () => updateUnitInForm());
                                                     <VeeErrorMessage name="name" as="p" class="mt-2 text-sm text-error-400" />
                                                 </div>
                                                 <div class="flex-1">
-                                                    <label
-                                                        for="initials"
-                                                        class="block text-sm font-medium leading-6 text-neutral"
-                                                    >
+                                                    <label for="initials" class="block text-sm font-medium leading-6">
                                                         {{ $t('common.initials') }}
                                                     </label>
                                                     <VeeField
                                                         name="initials"
                                                         type="text"
-                                                        class="block w-full rounded-md border-0 bg-base-700 py-1.5 text-neutral placeholder:text-accent-200 focus:ring-2 focus:ring-inset focus:ring-base-300 sm:text-sm sm:leading-6"
+                                                        class="block w-full rounded-md border-0 bg-base-700 py-1.5 placeholder:text-accent-200 focus:ring-2 focus:ring-inset focus:ring-base-300 sm:text-sm sm:leading-6"
                                                         :placeholder="$t('common.initials')"
                                                         :label="$t('common.initials')"
                                                         @focusin="focusTablet(true)"
@@ -212,16 +209,13 @@ onBeforeMount(async () => updateUnitInForm());
                                                     />
                                                 </div>
                                                 <div class="flex-1">
-                                                    <label
-                                                        for="description"
-                                                        class="block text-sm font-medium leading-6 text-neutral"
-                                                    >
+                                                    <label for="description" class="block text-sm font-medium leading-6">
                                                         {{ $t('common.description') }}
                                                     </label>
                                                     <VeeField
                                                         name="description"
                                                         type="text"
-                                                        class="block w-full rounded-md border-0 bg-base-700 py-1.5 text-neutral placeholder:text-accent-200 focus:ring-2 focus:ring-inset focus:ring-base-300 sm:text-sm sm:leading-6"
+                                                        class="block w-full rounded-md border-0 bg-base-700 py-1.5 placeholder:text-accent-200 focus:ring-2 focus:ring-inset focus:ring-base-300 sm:text-sm sm:leading-6"
                                                         :placeholder="$t('common.description')"
                                                         :label="$t('common.description')"
                                                         @focusin="focusTablet(true)"
@@ -234,16 +228,13 @@ onBeforeMount(async () => updateUnitInForm());
                                                     />
                                                 </div>
                                                 <div class="flex-1">
-                                                    <label
-                                                        for="attributes"
-                                                        class="block text-sm font-medium leading-6 text-neutral"
-                                                    >
+                                                    <label for="attributes" class="block text-sm font-medium leading-6">
                                                         {{ $t('common.attributes', 2) }}
                                                     </label>
                                                     <VeeField
                                                         name="attributes"
                                                         type="text"
-                                                        class="block w-full rounded-md border-0 bg-base-700 py-1.5 text-neutral placeholder:text-accent-200 focus:ring-2 focus:ring-inset focus:ring-base-300 sm:text-sm sm:leading-6"
+                                                        class="block w-full rounded-md border-0 bg-base-700 py-1.5 placeholder:text-accent-200 focus:ring-2 focus:ring-inset focus:ring-base-300 sm:text-sm sm:leading-6"
                                                         :placeholder="$t('common.attributes', 2)"
                                                         :label="$t('common.attributes', 2)"
                                                         @focusin="focusTablet(true)"
@@ -252,7 +243,7 @@ onBeforeMount(async () => updateUnitInForm());
                                                         <Listbox v-model="selectedAttributes" as="div" nullable multiple>
                                                             <div class="relative">
                                                                 <ListboxButton
-                                                                    class="block w-full rounded-md border-0 bg-base-700 py-1.5 pl-3 text-left text-neutral placeholder:text-accent-200 focus:ring-2 focus:ring-inset focus:ring-base-300 sm:text-sm sm:leading-6"
+                                                                    class="block w-full rounded-md border-0 bg-base-700 py-1.5 pl-3 text-left placeholder:text-accent-200 focus:ring-2 focus:ring-inset focus:ring-base-300 sm:text-sm sm:leading-6"
                                                                 >
                                                                     <span class="block truncate">
                                                                         <template v-if="selectedAttributes.length > 0">
@@ -275,10 +266,7 @@ onBeforeMount(async () => updateUnitInForm());
                                                                     <span
                                                                         class="pointer-events-none absolute inset-y-0 right-0 flex items-center pr-2"
                                                                     >
-                                                                        <ChevronDownIcon
-                                                                            class="size-5 text-gray-400"
-                                                                            aria-hidden="true"
-                                                                        />
+                                                                        <ChevronDownIcon class="size-5 text-gray-400" />
                                                                     </span>
                                                                 </ListboxButton>
 
@@ -300,7 +288,7 @@ onBeforeMount(async () => updateUnitInForm());
                                                                             <li
                                                                                 :class="[
                                                                                     active ? 'bg-primary-500' : '',
-                                                                                    'relative cursor-default select-none py-2 pl-8 pr-4 text-neutral',
+                                                                                    'relative cursor-default select-none py-2 pl-8 pr-4',
                                                                                 ]"
                                                                             >
                                                                                 <span
@@ -327,10 +315,7 @@ onBeforeMount(async () => updateUnitInForm());
                                                                                         'absolute inset-y-0 left-0 flex items-center pl-1.5',
                                                                                     ]"
                                                                                 >
-                                                                                    <CheckIcon
-                                                                                        class="size-5"
-                                                                                        aria-hidden="true"
-                                                                                    />
+                                                                                    <CheckIcon class="size-5" />
                                                                                 </span>
                                                                             </li>
                                                                         </ListboxOption>
@@ -346,7 +331,7 @@ onBeforeMount(async () => updateUnitInForm());
                                                     />
                                                 </div>
                                                 <div class="flex-1">
-                                                    <label for="color" class="block text-sm font-medium leading-6 text-neutral">
+                                                    <label for="color" class="block text-sm font-medium leading-6">
                                                         {{ $t('common.color') }}
                                                     </label>
                                                     <ColorInput
@@ -358,16 +343,13 @@ onBeforeMount(async () => updateUnitInForm());
                                                     />
                                                 </div>
                                                 <div class="flex-1">
-                                                    <label
-                                                        for="homePostal"
-                                                        class="block text-sm font-medium leading-6 text-neutral"
-                                                    >
+                                                    <label for="homePostal" class="block text-sm font-medium leading-6">
                                                         {{ `${$t('common.department')} ${$t('common.postal_code')}` }}
                                                     </label>
                                                     <VeeField
                                                         name="homePostal"
                                                         type="text"
-                                                        class="block w-full rounded-md border-0 bg-base-700 py-1.5 text-neutral placeholder:text-accent-200 focus:ring-2 focus:ring-inset focus:ring-base-300 sm:text-sm sm:leading-6"
+                                                        class="block w-full rounded-md border-0 bg-base-700 py-1.5 placeholder:text-accent-200 focus:ring-2 focus:ring-inset focus:ring-base-300 sm:text-sm sm:leading-6"
                                                         :placeholder="`${$t('common.department')} ${$t('common.postal_code')}`"
                                                         :label="`${$t('common.department')} ${$t('common.postal_code')}`"
                                                         @focusin="focusTablet(true)"
@@ -386,16 +368,11 @@ onBeforeMount(async () => updateUnitInForm());
                                 <div class="mt-5 sm:mt-6 sm:grid sm:grid-flow-row-dense sm:grid-cols-2 sm:gap-3">
                                     <UButton
                                         type="submit"
-                                        class="inline-flex w-full justify-center rounded-md px-3 py-2 text-sm font-semibold text-neutral shadow-sm focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 sm:col-start-2"
+                                        class="inline-flex w-full justify-center rounded-md px-3 py-2 text-sm font-semibold shadow-sm focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 sm:col-start-2"
                                         :disabled="!meta.valid || !canSubmit"
-                                        :class="[
-                                            !meta.valid || !canSubmit
-                                                ? 'disabled bg-base-500 hover:bg-base-400 focus-visible:outline-base-500'
-                                                : 'bg-primary-500 hover:bg-primary-400',
-                                        ]"
                                     >
                                         <template v-if="!canSubmit">
-                                            <LoadingIcon class="mr-2 size-5 animate-spin" aria-hidden="true" />
+                                            <LoadingIcon class="mr-2 size-5 animate-spin" />
                                         </template>
                                         <span v-if="unit && unit?.id">
                                             {{ $t('components.centrum.units.update_unit') }}

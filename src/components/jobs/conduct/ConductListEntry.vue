@@ -19,7 +19,7 @@ const openMessage = ref(false);
 
 <template>
     <tr class="transition-colors even:bg-base-800 hover:bg-neutral/5">
-        <td class="whitespace-nowrap py-2 pl-4 pr-3 text-base font-medium text-neutral sm:pl-1">
+        <td class="whitespace-nowrap py-2 pl-4 pr-3 text-base font-medium sm:pl-1">
             <GenericTime :value="conduct.createdAt" />
             <dl class="font-normal lg:hidden">
                 <dt class="sr-only">{{ $t('common.expires_at') }}</dt>
@@ -55,7 +55,7 @@ const openMessage = ref(false);
             </p>
             <UButton
                 v-if="conduct.message.length > 175"
-                class="flex justify-center rounded-md bg-accent-500 p-1 text-sm font-semibold text-neutral transition-colors hover:bg-accent-400 focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-accent-500"
+                class="flex justify-center rounded-md p-1 text-sm font-semibold transition-colors focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-accent-500"
                 @click="openMessage = !openMessage"
             >
                 {{ openMessage ? $t('common.read_less') : $t('common.read_more') }}
@@ -80,7 +80,7 @@ const openMessage = ref(false);
                     class="flex-initial text-primary-500 hover:text-primary-400"
                     @click="$emit('selected')"
                 >
-                    <PencilIcon class="ml-auto mr-2.5 h-auto w-5" aria-hidden="true" />
+                    <PencilIcon class="ml-auto mr-2.5 h-auto w-5" />
                 </UButton>
 
                 <UButton
@@ -88,7 +88,7 @@ const openMessage = ref(false);
                     class="flex-initial text-primary-500 hover:text-primary-400"
                     @click="$emit('delete')"
                 >
-                    <TrashCanIcon class="ml-auto mr-2.5 h-auto w-5" aria-hidden="true" />
+                    <TrashCanIcon class="ml-auto mr-2.5 h-auto w-5" />
                 </UButton>
             </div>
         </td>

@@ -246,7 +246,6 @@ watch(selectedAccessRole, () => {
                 type="checkbox"
                 name="required"
                 data-te-toggle="tooltip"
-                class="size-8 rounded-md border-0 bg-base-700 text-primary-600 transition-colors hover:bg-background hover:text-primary-500 focus:ring-2 focus:ring-inset focus:ring-base-300"
                 :class="readOnly ? 'disabled' : ''"
             />
         </div>
@@ -256,19 +255,19 @@ watch(selectedAccessRole, () => {
                 type="text"
                 disabled
                 :value="accessTypes[0].name"
-                class="block w-full rounded-md border-0 bg-base-700 py-1.5 pl-3 text-left text-neutral placeholder:text-accent-200 focus:ring-2 focus:ring-inset focus:ring-base-300 sm:text-sm sm:leading-6"
+                class="block w-full rounded-md border-0 bg-base-700 py-1.5 pl-3 text-left placeholder:text-accent-200 focus:ring-2 focus:ring-inset focus:ring-base-300 sm:text-sm sm:leading-6"
                 @focusin="focusTablet(true)"
                 @focusout="focusTablet(false)"
             />
             <Listbox v-else v-model="selectedAccessType" as="div" :disabled="readOnly">
                 <div class="relative">
                     <ListboxButton
-                        class="block w-full rounded-md border-0 bg-base-700 py-1.5 pl-3 text-left text-neutral placeholder:text-accent-200 focus:ring-2 focus:ring-inset focus:ring-base-300 sm:text-sm sm:leading-6"
+                        class="block w-full rounded-md border-0 bg-base-700 py-1.5 pl-3 text-left placeholder:text-accent-200 focus:ring-2 focus:ring-inset focus:ring-base-300 sm:text-sm sm:leading-6"
                         :class="readOnly ? 'disabled' : ''"
                     >
                         <span class="block truncate">{{ selectedAccessType?.name }}</span>
                         <span class="pointer-events-none absolute inset-y-0 right-0 flex items-center pr-2">
-                            <ChevronDownIcon class="size-5 text-gray-400" aria-hidden="true" />
+                            <ChevronDownIcon class="size-5 text-gray-400" />
                         </span>
                     </ListboxButton>
 
@@ -290,7 +289,7 @@ watch(selectedAccessRole, () => {
                                 <li
                                     :class="[
                                         active ? 'bg-primary-500' : '',
-                                        'relative cursor-default select-none py-2 pl-8 pr-4 text-neutral',
+                                        'relative cursor-default select-none py-2 pl-8 pr-4',
                                     ]"
                                 >
                                     <span :class="[selected ? 'font-semibold' : 'font-normal', 'block truncate']">{{
@@ -304,7 +303,7 @@ watch(selectedAccessRole, () => {
                                             'absolute inset-y-0 left-0 flex items-center pl-1.5',
                                         ]"
                                     >
-                                        <CheckIcon class="size-5" aria-hidden="true" />
+                                        <CheckIcon class="size-5" />
                                     </span>
                                 </li>
                             </ListboxOption>
@@ -320,7 +319,7 @@ watch(selectedAccessRole, () => {
                         <ComboboxButton as="div">
                             <ComboboxInput
                                 autocomplete="off"
-                                class="block w-full rounded-md border-0 bg-base-700 py-1.5 text-neutral placeholder:text-accent-200 focus:ring-2 focus:ring-inset focus:ring-base-300 sm:text-sm sm:leading-6"
+                                class="block w-full rounded-md border-0 bg-base-700 py-1.5 placeholder:text-accent-200 focus:ring-2 focus:ring-inset focus:ring-base-300 sm:text-sm sm:leading-6"
                                 :display-value="
                                     (char: any) =>
                                         char ? `${char?.firstname} ${char?.lastname} (${char?.dateofbirth})` : $t('common.na')
@@ -344,7 +343,7 @@ watch(selectedAccessRole, () => {
                             >
                                 <li
                                     :class="[
-                                        'relative cursor-default select-none py-2 pl-8 pr-4 text-neutral',
+                                        'relative cursor-default select-none py-2 pl-8 pr-4',
                                         active ? 'bg-primary-500' : '',
                                     ]"
                                 >
@@ -359,7 +358,7 @@ watch(selectedAccessRole, () => {
                                             'absolute inset-y-0 left-0 flex items-center pl-1.5',
                                         ]"
                                     >
-                                        <CheckIcon class="size-5" aria-hidden="true" />
+                                        <CheckIcon class="size-5" />
                                     </span>
                                 </li>
                             </ComboboxOption>
@@ -375,7 +374,7 @@ watch(selectedAccessRole, () => {
                         <ComboboxButton as="div">
                             <ComboboxInput
                                 autocomplete="off"
-                                class="block w-full rounded-md border-0 bg-base-700 py-1.5 text-neutral placeholder:text-accent-200 focus:ring-2 focus:ring-inset focus:ring-base-300 sm:text-sm sm:leading-6"
+                                class="block w-full rounded-md border-0 bg-base-700 py-1.5 placeholder:text-accent-200 focus:ring-2 focus:ring-inset focus:ring-base-300 sm:text-sm sm:leading-6"
                                 :display-value="(job: any) => job?.label ?? $t('common.na')"
                                 :class="readOnly ? 'disabled' : ''"
                                 @change="queryJobRaw = $event.target.value"
@@ -395,7 +394,7 @@ watch(selectedAccessRole, () => {
                             >
                                 <li
                                     :class="[
-                                        'relative cursor-default select-none py-2 pl-8 pr-4 text-neutral',
+                                        'relative cursor-default select-none py-2 pl-8 pr-4',
                                         active ? 'bg-primary-500' : '',
                                     ]"
                                 >
@@ -410,7 +409,7 @@ watch(selectedAccessRole, () => {
                                             'absolute inset-y-0 left-0 flex items-center pl-1.5',
                                         ]"
                                     >
-                                        <CheckIcon class="size-5" aria-hidden="true" />
+                                        <CheckIcon class="size-5" />
                                     </span>
                                 </li>
                             </ComboboxOption>
@@ -424,7 +423,7 @@ watch(selectedAccessRole, () => {
                         <ComboboxButton as="div">
                             <ComboboxInput
                                 autocomplete="off"
-                                class="block w-full rounded-md border-0 bg-base-700 py-1.5 text-neutral placeholder:text-accent-200 focus:ring-2 focus:ring-inset focus:ring-base-300 sm:text-sm sm:leading-6"
+                                class="block w-full rounded-md border-0 bg-base-700 py-1.5 placeholder:text-accent-200 focus:ring-2 focus:ring-inset focus:ring-base-300 sm:text-sm sm:leading-6"
                                 :class="readOnly ? 'disabled' : ''"
                                 :display-value="(rank: any) => rank?.label ?? $t('common.na')"
                                 @change="queryMinimumRankRaw = $event.target.value"
@@ -445,7 +444,7 @@ watch(selectedAccessRole, () => {
                             >
                                 <li
                                     :class="[
-                                        'relative cursor-default select-none py-2 pl-8 pr-4 text-neutral',
+                                        'relative cursor-default select-none py-2 pl-8 pr-4',
                                         active ? 'bg-primary-500' : '',
                                     ]"
                                 >
@@ -460,7 +459,7 @@ watch(selectedAccessRole, () => {
                                             'absolute inset-y-0 left-0 flex items-center pl-1.5',
                                         ]"
                                     >
-                                        <CheckIcon class="size-5" aria-hidden="true" />
+                                        <CheckIcon class="size-5" />
                                     </span>
                                 </li>
                             </ComboboxOption>
@@ -475,7 +474,7 @@ watch(selectedAccessRole, () => {
                     <ComboboxButton as="div">
                         <ComboboxInput
                             autocomplete="off"
-                            class="block w-full rounded-md border-0 bg-base-700 py-1.5 text-neutral placeholder:text-accent-200 focus:ring-2 focus:ring-inset focus:ring-base-300 sm:text-sm sm:leading-6"
+                            class="block w-full rounded-md border-0 bg-base-700 py-1.5 placeholder:text-accent-200 focus:ring-2 focus:ring-inset focus:ring-base-300 sm:text-sm sm:leading-6"
                             :class="readOnly ? 'disabled' : ''"
                             :display-value="(role: any) => role.label"
                             @change="queryAccessRole = $event.target.value"
@@ -494,12 +493,7 @@ watch(selectedAccessRole, () => {
                             :value="role"
                             as="accessRole"
                         >
-                            <li
-                                :class="[
-                                    'relative cursor-default select-none py-2 pl-8 pr-4 text-neutral',
-                                    active ? 'bg-primary-500' : '',
-                                ]"
-                            >
+                            <li :class="['relative cursor-default select-none py-2 pl-8 pr-4', active ? 'bg-primary-500' : '']">
                                 <span :class="['block truncate', selected && 'font-semibold']">
                                     {{ role.label }}
                                 </span>
@@ -511,7 +505,7 @@ watch(selectedAccessRole, () => {
                                         'absolute inset-y-0 left-0 flex items-center pl-1.5',
                                     ]"
                                 >
-                                    <CheckIcon class="size-5" aria-hidden="true" />
+                                    <CheckIcon class="size-5" />
                                 </span>
                             </li>
                         </ComboboxOption>
@@ -521,10 +515,10 @@ watch(selectedAccessRole, () => {
         </div>
         <div v-if="!readOnly" class="flex-initial">
             <UButton
-                class="rounded-full bg-primary-500 p-1.5 text-neutral hover:bg-primary-400 focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2"
+                class="rounded-full bg-primary-500 p-1.5 hover:bg-primary-400 focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2"
                 @click="$emit('deleteRequest', { id: props.init.id })"
             >
-                <CloseIcon class="size-5" aria-hidden="true" />
+                <CloseIcon class="size-5" />
             </UButton>
         </div>
     </div>

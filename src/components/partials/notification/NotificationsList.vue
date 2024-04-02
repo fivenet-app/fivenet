@@ -3,7 +3,7 @@ import { BellIcon, CheckIcon, LinkVariantIcon } from 'mdi-vue3';
 import DataErrorBlock from '~/components/partials/data/DataErrorBlock.vue';
 import DataNoDataBlock from '~/components/partials/data/DataNoDataBlock.vue';
 import DataPendingBlock from '~/components/partials/data/DataPendingBlock.vue';
-import TablePagination from '~/components/partials/elements/TablePagination.vue';
+
 import GenericTime from '~/components/partials/elements/GenericTime.vue';
 import { useNotificatorStore } from '~/store/notificator';
 import { GetNotificationsResponse } from '~~/gen/ts/services/notificator/notificator';
@@ -15,11 +15,13 @@ defineEmits<{
 const { $grpc } = useNuxtApp();
 
 const notificator = useNotificatorStore();
-const offset = ref(0);
 
 const includeRead = ref(false);
 
-const { data, pending, refresh, error } = useLazyAsyncData(`notifications-${offset.value}-${includeRead.value}`, () =>
+const page = ref(1);
+const offset = computed(() => (data.value?.pagination?.pageSize ? data.value?.pagination?.pageSize * page.value : 0));
+
+const { data, pending, refresh, error } = useLazyAsyncData(`notifications-${page.value}-${includeRead.value}`, () =>
     getNotifications(),
 );
 
@@ -79,7 +81,7 @@ const canSubmit = ref(true);
             <form @submit.prevent="refresh()">
                 <div class="flex flex-row items-center gap-2 sm:mx-auto">
                     <div class="flex-1">
-                        <label for="search" class="block text-sm font-medium leading-6 text-neutral"
+                        <label for="search" class="block text-sm font-medium leading-6"
                             >{{ $t('components.notifications.include_read') }}
                         </label>
                         <div class="relative flex items-center">
@@ -91,7 +93,7 @@ const canSubmit = ref(true);
                     <div class="flex-initial">
                         <UButton
                             :disabled="!canSubmit || data?.notifications === undefined || data?.notifications.length === 0"
-                            class="inline-flex rounded-md px-3 py-2 text-sm font-semibold text-neutral focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2"
+                            class="inline-flex rounded-md px-3 py-2 text-sm font-semibold focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2"
                             :class="
                                 !canSubmit || data?.notifications === undefined || data?.notifications.length === 0
                                     ? 'disabled bg-base-500 hover:bg-base-400 focus-visible:outline-base-500'
@@ -129,7 +131,7 @@ const canSubmit = ref(true);
                         >
                             <div class="flex flex-1 gap-x-4">
                                 <div class="min-w-0 flex-auto">
-                                    <p class="py-2 pr-3 text-sm font-medium text-neutral">
+                                    <p class="py-2 pr-3 text-sm font-medium">
                                         <template v-if="not.data && not.data.link">
                                             <!-- @vue-ignore the route should be valid... at least in most cases -->
                                             <NuxtLink
@@ -179,7 +181,7 @@ const canSubmit = ref(true);
                             <div class="-my-5 -mr-6 flex">
                                 <UButton
                                     v-if="!not.readAt"
-                                    class="flex shrink items-center rounded-r-md p-1 text-sm font-semibold text-neutral focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2"
+                                    class="flex shrink items-center rounded-r-md p-1 text-sm font-semibold focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2"
                                     :class="
                                         !canSubmit
                                             ? 'disabled bg-base-500 hover:bg-base-400 focus-visible:outline-base-500'
@@ -189,20 +191,21 @@ const canSubmit = ref(true);
                                     @click="markRead(not.id).finally(timeoutFn)"
                                 >
                                     <span class="sr-only">{{ $t('components.notifications.mark_read') }}</span>
-                                    <CheckIcon class="size-5 text-gray-300" aria-hidden="true" />
+                                    <CheckIcon class="size-5 text-gray-300" />
                                 </UButton>
                                 <span v-else class="size-5"></span>
                             </div>
                         </li>
                     </ul>
-
-                    <TablePagination
-                        class="mt-2"
-                        :pagination="data?.pagination"
-                        :refresh="refresh"
-                        @offset-change="offset = $event"
-                    />
                 </template>
+
+                <div class="flex justify-end px-3 py-3.5 border-t border-gray-200 dark:border-gray-700">
+                    <UPagination
+                        v-model="page"
+                        :page-count="data?.pagination?.pageSize ?? 0"
+                        :total="data?.pagination?.totalCount ?? 0"
+                    />
+                </div>
             </div>
         </div>
     </div>

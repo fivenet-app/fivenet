@@ -117,7 +117,7 @@ function updateReasonField(value: string): void {
                                     <div class="h-0 flex-1 overflow-y-auto">
                                         <div class="bg-primary-700 px-4 py-6 sm:px-6">
                                             <div class="flex items-center justify-between">
-                                                <DialogTitle class="text-base font-semibold leading-6 text-neutral">
+                                                <DialogTitle class="text-base font-semibold leading-6">
                                                     {{ $t('components.centrum.update_unit_status.title') }}: {{ unit.name }} ({{
                                                         unit.initials
                                                     }})
@@ -128,7 +128,7 @@ function updateReasonField(value: string): void {
                                                         @click="$emit('close')"
                                                     >
                                                         <span class="sr-only">{{ $t('common.close') }}</span>
-                                                        <CloseIcon class="size-5" aria-hidden="true" />
+                                                        <CloseIcon class="size-5" />
                                                     </UButton>
                                                 </div>
                                             </div>
@@ -138,11 +138,8 @@ function updateReasonField(value: string): void {
                                                 <div class="mt-1">
                                                     <dl class="divide-y divide-neutral/10 border-b border-neutral/10">
                                                         <div class="px-4 py-3 sm:grid sm:grid-cols-3 sm:gap-4 sm:px-0">
-                                                            <dt class="text-sm font-medium leading-6 text-neutral">
-                                                                <label
-                                                                    for="status"
-                                                                    class="block text-sm font-medium leading-6 text-neutral"
-                                                                >
+                                                            <dt class="text-sm font-medium leading-6">
+                                                                <label for="status" class="block text-sm font-medium leading-6">
                                                                     {{ $t('common.status') }}
                                                                 </label>
                                                             </dt>
@@ -160,7 +157,7 @@ function updateReasonField(value: string): void {
                                                                     <UButton
                                                                         v-for="item in unitStatuses"
                                                                         :key="item.name"
-                                                                        class="group my-0.5 flex w-full flex-col items-center rounded-md p-1.5 text-xs font-medium text-neutral hover:bg-primary-100/10 hover:text-neutral hover:transition-all"
+                                                                        class="group my-0.5 flex w-full flex-col items-center rounded-md p-1.5 text-xs font-medium hover:bg-primary-100/10 hover:transition-all"
                                                                         :class="[
                                                                             item.class,
                                                                             field.value == item.status
@@ -177,8 +174,7 @@ function updateReasonField(value: string): void {
                                                                     >
                                                                         <component
                                                                             :is="item.icon ?? HoopHouseIcon"
-                                                                            class="size-5 shrink-0 text-neutral group-hover:text-neutral"
-                                                                            aria-hidden="true"
+                                                                            class="size-5 shrink-0 group-"
                                                                         />
                                                                         <span class="mt-1">
                                                                             {{
@@ -201,11 +197,8 @@ function updateReasonField(value: string): void {
                                                             </dd>
                                                         </div>
                                                         <div class="px-4 py-3 sm:grid sm:grid-cols-3 sm:gap-4 sm:px-0">
-                                                            <dt class="text-sm font-medium leading-6 text-neutral">
-                                                                <label
-                                                                    for="code"
-                                                                    class="block text-sm font-medium leading-6 text-neutral"
-                                                                >
+                                                            <dt class="text-sm font-medium leading-6">
+                                                                <label for="code" class="block text-sm font-medium leading-6">
                                                                     {{ $t('common.code') }}
                                                                 </label>
                                                             </dt>
@@ -215,7 +208,7 @@ function updateReasonField(value: string): void {
                                                                 <VeeField
                                                                     type="text"
                                                                     name="code"
-                                                                    class="block w-full rounded-md border-0 bg-base-700 py-1.5 text-neutral placeholder:text-accent-200 focus:ring-2 focus:ring-inset focus:ring-base-300 sm:text-sm sm:leading-6"
+                                                                    class="block w-full rounded-md border-0 bg-base-700 py-1.5 placeholder:text-accent-200 focus:ring-2 focus:ring-inset focus:ring-base-300 sm:text-sm sm:leading-6"
                                                                     :placeholder="$t('common.code')"
                                                                     :label="$t('common.code')"
                                                                     @focusin="focusTablet(true)"
@@ -229,11 +222,8 @@ function updateReasonField(value: string): void {
                                                             </dd>
                                                         </div>
                                                         <div class="px-4 py-3 sm:grid sm:grid-cols-3 sm:gap-4 sm:px-0">
-                                                            <dt class="text-sm font-medium leading-6 text-neutral">
-                                                                <label
-                                                                    for="reason"
-                                                                    class="block text-sm font-medium leading-6 text-neutral"
-                                                                >
+                                                            <dt class="text-sm font-medium leading-6">
+                                                                <label for="reason" class="block text-sm font-medium leading-6">
                                                                     {{ $t('common.reason') }}
                                                                 </label>
                                                             </dt>
@@ -243,7 +233,7 @@ function updateReasonField(value: string): void {
                                                                 <VeeField
                                                                     type="text"
                                                                     name="reason"
-                                                                    class="block w-full rounded-md border-0 bg-base-700 py-1.5 text-neutral placeholder:text-accent-200 focus:ring-2 focus:ring-inset focus:ring-base-300 sm:text-sm sm:leading-6"
+                                                                    class="block w-full rounded-md border-0 bg-base-700 py-1.5 placeholder:text-accent-200 focus:ring-2 focus:ring-inset focus:ring-base-300 sm:text-sm sm:leading-6"
                                                                     :placeholder="$t('common.reason')"
                                                                     :label="$t('common.reason')"
                                                                     @focusin="focusTablet(true)"
@@ -263,10 +253,10 @@ function updateReasonField(value: string): void {
                                                             "
                                                             class="px-4 py-3 sm:grid sm:grid-cols-3 sm:gap-4 sm:px-0"
                                                         >
-                                                            <dt class="text-sm font-medium leading-6 text-neutral">
+                                                            <dt class="text-sm font-medium leading-6">
                                                                 <label
                                                                     for="unitStatus"
-                                                                    class="block text-sm font-medium leading-6 text-neutral"
+                                                                    class="block text-sm font-medium leading-6"
                                                                 >
                                                                     {{ $t('common.predefined', 2) }}
                                                                     {{ $t('common.reason', 2) }}
@@ -276,7 +266,7 @@ function updateReasonField(value: string): void {
                                                                 class="mt-1 text-sm leading-6 text-gray-300 sm:col-span-2 sm:mt-0"
                                                             >
                                                                 <select
-                                                                    class="block w-full rounded-md border-0 bg-base-700 py-1.5 text-neutral placeholder:text-accent-200 focus:ring-2 focus:ring-inset focus:ring-base-300 sm:text-sm sm:leading-6"
+                                                                    class="block w-full rounded-md border-0 bg-base-700 py-1.5 placeholder:text-accent-200 focus:ring-2 focus:ring-inset focus:ring-base-300 sm:text-sm sm:leading-6"
                                                                     @focusin="focusTablet(true)"
                                                                     @focusout="focusTablet(false)"
                                                                     @change="
@@ -306,16 +296,11 @@ function updateReasonField(value: string): void {
                                         <span class="isolate inline-flex w-full rounded-md pr-4 shadow-sm">
                                             <UButton
                                                 type="submit"
-                                                class="inline-flex w-full items-center rounded-l-md px-3 py-2 text-sm font-semibold text-neutral shadow-sm focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 sm:col-start-2"
+                                                class="inline-flex w-full items-center rounded-l-md px-3 py-2 text-sm font-semibold shadow-sm focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 sm:col-start-2"
                                                 :disabled="!meta.valid || !canSubmit"
-                                                :class="[
-                                                    !meta.valid || !canSubmit
-                                                        ? 'disabled bg-base-500 hover:bg-base-400 focus-visible:outline-base-500'
-                                                        : 'bg-primary-500 hover:bg-primary-400',
-                                                ]"
                                             >
                                                 <template v-if="!canSubmit">
-                                                    <LoadingIcon class="mr-2 size-5 animate-spin" aria-hidden="true" />
+                                                    <LoadingIcon class="mr-2 size-5 animate-spin" />
                                                 </template>
                                                 {{ $t('common.update') }}
                                             </UButton>

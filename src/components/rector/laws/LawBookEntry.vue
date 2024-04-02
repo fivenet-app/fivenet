@@ -132,25 +132,25 @@ const editing = ref(props.startInEdit);
     <ConfirmDialog :open="isRevealed" :cancel="cancel" :confirm="() => confirm(modelValue.id)" />
 
     <div class="my-2">
-        <div v-if="!editing" class="flex items-center gap-x-2 text-neutral">
+        <div v-if="!editing" class="flex items-center gap-x-2">
             <UButton :title="$t('common.edit')" @click="editing = true">
-                <PencilIcon class="size-5" aria-hidden="true" />
+                <PencilIcon class="size-5" />
             </UButton>
             <UButton :title="$t('common.delete')" @click="reveal()">
-                <TrashCanIcon class="size-5" aria-hidden="true" />
+                <TrashCanIcon class="size-5" />
             </UButton>
             <h2 class="text-xl">{{ modelValue.name }}</h2>
             <p v-if="modelValue.description" class="pl-2">- {{ $t('common.description') }}: {{ modelValue.description }}</p>
             <UButton
-                class="ml-auto rounded-md bg-primary-500 px-3 py-2 text-sm font-semibold text-neutral hover:bg-primary-400 focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2"
+                class="ml-auto rounded-md bg-primary-500 px-3 py-2 text-sm font-semibold hover:bg-primary-400 focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2"
                 @click="addLaw"
             >
                 {{ $t('pages.rector.laws.add_new_law') }}
             </UButton>
         </div>
-        <form v-else class="flex w-full flex-row items-start gap-x-4 text-neutral" @submit.prevent="onSubmitThrottle">
+        <form v-else class="flex w-full flex-row items-start gap-x-4" @submit.prevent="onSubmitThrottle">
             <UButton type="submit" :title="$t('common.save')">
-                <ContentSaveIcon class="size-5" aria-hidden="true" />
+                <ContentSaveIcon class="size-5" />
             </UButton>
             <UButton
                 :title="$t('common.cancel')"
@@ -159,7 +159,7 @@ const editing = ref(props.startInEdit);
                     parseInt(modelValue.id) < 0 && $emit('deleted', modelValue.id);
                 "
             >
-                <CancelIcon class="size-5" aria-hidden="true" />
+                <CancelIcon class="size-5" />
             </UButton>
 
             <div class="flex-initial">
@@ -171,7 +171,7 @@ const editing = ref(props.startInEdit);
                     type="text"
                     :placeholder="$t('common.law_book')"
                     :label="$t('common.law_book')"
-                    class="block w-full rounded-md border-0 bg-base-700 py-1.5 text-neutral placeholder:text-accent-200 focus:ring-2 focus:ring-inset focus:ring-base-300 sm:text-sm sm:leading-6"
+                    class="block w-full rounded-md border-0 bg-base-700 py-1.5 placeholder:text-accent-200 focus:ring-2 focus:ring-inset focus:ring-base-300 sm:text-sm sm:leading-6"
                     @focusin="focusTablet(true)"
                     @focusout="focusTablet(false)"
                 />
@@ -186,7 +186,7 @@ const editing = ref(props.startInEdit);
                     type="text"
                     :placeholder="$t('common.description')"
                     :label="$t('common.description')"
-                    class="block w-full rounded-md border-0 bg-base-700 py-1.5 text-neutral placeholder:text-accent-200 focus:ring-2 focus:ring-inset focus:ring-base-300 sm:text-sm sm:leading-6"
+                    class="block w-full rounded-md border-0 bg-base-700 py-1.5 placeholder:text-accent-200 focus:ring-2 focus:ring-inset focus:ring-base-300 sm:text-sm sm:leading-6"
                     @focusin="focusTablet(true)"
                     @focusout="focusTablet(false)"
                 />
@@ -196,22 +196,22 @@ const editing = ref(props.startInEdit);
         <table class="min-w-full divide-y divide-base-600">
             <thead>
                 <tr>
-                    <th scope="col" class="py-3.5 pl-4 pr-3 text-left text-sm font-semibold text-neutral sm:pl-1">
+                    <th scope="col" class="py-3.5 pl-4 pr-3 text-left text-sm font-semibold sm:pl-1">
                         {{ $t('common.action', 2) }}
                     </th>
-                    <th scope="col" class="py-3.5 pl-4 pr-3 text-left text-sm font-semibold text-neutral sm:pl-1">
+                    <th scope="col" class="py-3.5 pl-4 pr-3 text-left text-sm font-semibold sm:pl-1">
                         {{ $t('common.crime') }}
                     </th>
-                    <th scope="col" class="px-2 py-3.5 text-left text-sm font-semibold text-neutral">
+                    <th scope="col" class="px-2 py-3.5 text-left text-sm font-semibold">
                         {{ $t('common.fine') }}
                     </th>
-                    <th scope="col" class="px-2 py-3.5 text-left text-sm font-semibold text-neutral">
+                    <th scope="col" class="px-2 py-3.5 text-left text-sm font-semibold">
                         {{ $t('common.detention_time') }}
                     </th>
-                    <th scope="col" class="px-2 py-3.5 text-left text-sm font-semibold text-neutral">
+                    <th scope="col" class="px-2 py-3.5 text-left text-sm font-semibold">
                         {{ $t('common.traffic_infraction_points', 2) }}
                     </th>
-                    <th scope="col" class="px-2 py-3.5 text-left text-sm font-semibold text-neutral">
+                    <th scope="col" class="px-2 py-3.5 text-left text-sm font-semibold">
                         {{ $t('common.description') }}
                     </th>
                 </tr>

@@ -38,10 +38,10 @@ function click(): void {
 
 <template>
     <UButton
-        class="inline-flex flex-initial flex-row items-center gap-1 rounded-full bg-gray-600 px-2 py-1 text-neutral"
+        class="inline-flex flex-initial flex-row items-center gap-1 rounded-full bg-gray-600 px-2 py-1"
         @click.prevent="click"
     >
-        <FingerprintIcon v-if="hideIcon === undefined || !hideIcon" class="h-auto w-5" aria-hidden="true" />
-        <span class="break-keep text-sm font-medium text-neutral">{{ prefix }}-{{ id }}</span>
+        <FingerprintIcon v-if="hideIcon === undefined || !hideIcon" class="h-auto w-5" />
+        <span class="break-keep text-sm font-medium">{{ prefix }}-{{ id }}</span>
     </UButton>
 </template>

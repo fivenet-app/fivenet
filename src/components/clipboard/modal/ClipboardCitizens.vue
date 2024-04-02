@@ -109,34 +109,30 @@ watch(props, async (newVal) => {
     <table v-else class="min-w-full divide-y divide-gray-700">
         <thead>
             <tr>
-                <th v-if="showSelect" scope="col" class="py-3.5 pl-4 pr-3 text-left text-sm font-semibold text-neutral sm:pl-1">
+                <th v-if="showSelect" scope="col" class="py-3.5 pl-4 pr-3 text-left text-sm font-semibold sm:pl-1">
                     {{ $t('common.select', 1) }}
                 </th>
-                <th scope="col" class="py-3.5 pl-4 pr-3 text-left text-sm font-semibold text-neutral sm:pl-1">
+                <th scope="col" class="py-3.5 pl-4 pr-3 text-left text-sm font-semibold sm:pl-1">
                     {{ $t('common.name') }}
                 </th>
-                <th scope="col" class="px-3 py-3.5 text-left text-sm font-semibold text-neutral">
+                <th scope="col" class="px-3 py-3.5 text-left text-sm font-semibold">
                     {{ $t('common.job', 1) }}
                 </th>
                 <th scope="col" class="relative py-3.5 pl-3 pr-4 sm:pr-0">
                     {{ $t('common.action', 2) }}
                     <UButton v-if="selected.length > 0" @click="removeAll()">
-                        <TrashCanIcon class="mx-auto size-5 text-neutral" aria-hidden="true" />
+                        <TrashCanIcon class="mx-auto size-5" />
                     </UButton>
                 </th>
             </tr>
         </thead>
         <tbody class="divide-y divide-gray-800">
             <tr v-for="item in users" :key="item.userId">
-                <td v-if="showSelect" class="whitespace-nowrap py-4 pl-4 pr-3 text-sm font-medium text-neutral sm:pl-1">
+                <td v-if="showSelect" class="whitespace-nowrap py-4 pl-4 pr-3 text-sm font-medium sm:pl-1">
                     <template v-if="specs && specs.max === 1">
                         <UButton
-                            class="inline-flex w-full justify-center rounded-md px-3 py-2 text-sm font-semibold text-neutral shadow-sm focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 sm:col-start-2"
-                            :class="
-                                selected.includes(item)
-                                    ? 'bg-accent-500 hover:bg-accent-400 focus-visible:outline-accent-500'
-                                    : 'bg-primary-500 hover:bg-primary-400'
-                            "
+                            class="inline-flex w-full justify-center rounded-md px-3 py-2 text-sm font-semibold shadow-sm focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 sm:col-start-2"
+                            :class="selected.includes(item) ? '' : 'bg-primary-500 hover:bg-primary-400'"
                             @click="select(item)"
                         >
                             {{
@@ -159,7 +155,7 @@ watch(props, async (newVal) => {
                         />
                     </template>
                 </td>
-                <td class="whitespace-nowrap py-4 pl-4 pr-3 text-sm font-medium text-neutral sm:pl-1">
+                <td class="whitespace-nowrap py-4 pl-4 pr-3 text-sm font-medium sm:pl-1">
                     {{ item.firstname }} {{ item.lastname }}
                 </td>
                 <td class="whitespace-nowrap px-3 py-4 text-sm text-gray-300">
@@ -167,7 +163,7 @@ watch(props, async (newVal) => {
                 </td>
                 <td class="relative whitespace-nowrap py-4 pl-3 pr-4 text-right text-sm font-medium sm:pr-0">
                     <UButton @click="remove(item, true)">
-                        <TrashCanIcon class="mx-auto size-5 text-neutral" aria-hidden="true" />
+                        <TrashCanIcon class="mx-auto size-5" />
                     </UButton>
                 </td>
             </tr>

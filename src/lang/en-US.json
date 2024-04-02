@@ -1890,6 +1890,28 @@
             "ErrFailedQuery": "Failed to get job data!"
         }
     },
+<<<<<<< HEAD
+=======
+    "commandpalette": {
+        "input": {
+            "title": "Type a command or search...",
+            "content": "Quickly access citizens, documents and more."
+        },
+        "empty": {
+            "title": "No results found.",
+            "content": "We couldn't find anything with that term. Please try again."
+        },
+        "groups": {
+            "shortcuts": {
+                "label": "Shortcuts"
+            },
+            "pages": {
+                "label": "Pages"
+            }
+        },
+        "footer": "Type {key1} for citizens, {key2} for documents search."
+    },
+>>>>>>> 80b65e43 (feat: continue rework to use nuxt ui)
     "system": {
         "update_available": {
             "title": "New FiveNet version available ({version})!",

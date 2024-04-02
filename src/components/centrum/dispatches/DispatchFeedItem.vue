@@ -48,20 +48,23 @@ defineEmits<{
         </div>
         <template v-if="item.status === StatusDispatch.NEW">
             <div class="relative flex size-5 flex-none items-center justify-center rounded-lg bg-gray-300">
-                <NewBoxIcon class="size-5 text-primary-600" aria-hidden="true" />
+                <NewBoxIcon class="size-5 text-primary-600" />
             </div>
             <p class="inline-flex flex-auto flex-row justify-between py-0.5 text-xs leading-5 text-gray-200">
                 <span class="inline-flex items-center gap-1">
                     {{ $t('components.centrum.dispatches.feed.item.NEW') }}
 
-                    <DispatchStatusInfoPopover v-if="showId" text-class="font-medium text-gray-400 pl-1" :status="item" />
+                    <DispatchStatusInfoPopover v-if="showId" :status="item" />
                 </span>
 
                 <span class="inline-flex items-center">
-                    <UButton v-if="item.x && item.y" @click="$emit('goto', { x: item.x, y: item.y })">
-                        <MapMarkerIcon class="size-5 text-primary-400 hover:text-primary-600" aria-hidden="true" />
-                    </UButton>
-                    <CitizenInfoPopover v-if="item.user" text-class="font-medium text-gray-400 pl-1" :user="item.user" />
+                    <UButton
+                        v-if="item.x && item.y"
+                        variant="link"
+                        icon="i-mdi-map-marker"
+                        @click="$emit('goto', { x: item.x, y: item.y })"
+                    />
+                    <CitizenInfoPopover v-if="item.user" :user="item.user" />
                 </span>
             </p>
             <span class="flex-none py-0.5 text-xs leading-5 text-gray-200">
@@ -70,27 +73,24 @@ defineEmits<{
         </template>
         <template v-else-if="item.status === StatusDispatch.UNASSIGNED">
             <div class="relative flex size-5 flex-none items-center justify-center rounded-lg bg-gray-300">
-                <AccountAlertIcon class="size-5 text-primary-600" aria-hidden="true" />
+                <AccountAlertIcon class="size-5 text-primary-600" />
             </div>
             <p class="inline-flex flex-auto flex-row justify-between py-0.5 text-xs leading-5 text-gray-200">
                 <span class="inline-flex items-center gap-1">
                     {{ $t('components.centrum.dispatches.feed.item.UNASSIGNED') }}
 
-                    <DispatchStatusInfoPopover v-if="showId" text-class="font-medium text-gray-400 pl-1" :status="item" />
-                    <UnitInfoPopover
-                        v-if="item.unit && item.unitId"
-                        text-class="font-medium text-gray-400 pl-1"
-                        :unit="item.unit"
-                        :initials-only="true"
-                        :badge="true"
-                    />
+                    <DispatchStatusInfoPopover v-if="showId" :status="item" />
+                    <UnitInfoPopover v-if="item.unit && item.unitId" :unit="item.unit" :initials-only="true" :badge="true" />
                 </span>
 
                 <span class="inline-flex items-center">
-                    <UButton v-if="item.x && item.y" @click="$emit('goto', { x: item.x, y: item.y })">
-                        <MapMarkerIcon class="size-5 text-primary-400 hover:text-primary-600" aria-hidden="true" />
-                    </UButton>
-                    <CitizenInfoPopover v-if="item.user" text-class="font-medium text-gray-400 pl-1" :user="item.user" />
+                    <UButton
+                        v-if="item.x && item.y"
+                        variant="link"
+                        icon="i-mdi-map-marker"
+                        @click="$emit('goto', { x: item.x, y: item.y })"
+                    />
+                    <CitizenInfoPopover v-if="item.user" :user="item.user" />
                 </span>
             </p>
             <span class="flex-none py-0.5 text-xs leading-5 text-gray-200">
@@ -99,27 +99,24 @@ defineEmits<{
         </template>
         <template v-else-if="item.status === StatusDispatch.UNIT_ASSIGNED">
             <div class="relative flex size-5 flex-none items-center justify-center rounded-lg bg-gray-300">
-                <AccountPlusIcon class="size-5 text-primary-600" aria-hidden="true" />
+                <AccountPlusIcon class="size-5 text-primary-600" />
             </div>
             <p class="inline-flex flex-auto flex-row justify-between py-0.5 text-xs leading-5 text-gray-200">
                 <span class="inline-flex items-center gap-1">
                     {{ $t('components.centrum.dispatches.feed.item.UNIT_ASSIGNED') }}
 
-                    <DispatchStatusInfoPopover v-if="showId" text-class="font-medium text-gray-400 pl-1" :status="item" />
-                    <UnitInfoPopover
-                        v-if="item.unit && item.unitId"
-                        text-class="font-medium text-gray-400 pl-1"
-                        :unit="item.unit"
-                        :initials-only="true"
-                        :badge="true"
-                    />
+                    <DispatchStatusInfoPopover v-if="showId" :status="item" />
+                    <UnitInfoPopover v-if="item.unit && item.unitId" :unit="item.unit" :initials-only="true" :badge="true" />
                 </span>
 
                 <span class="inline-flex items-center">
-                    <UButton v-if="item.x && item.y" @click="$emit('goto', { x: item.x, y: item.y })">
-                        <MapMarkerIcon class="size-5 text-primary-400 hover:text-primary-600" aria-hidden="true" />
-                    </UButton>
-                    <CitizenInfoPopover v-if="item.user" text-class="font-medium text-gray-400 pl-1" :user="item.user" />
+                    <UButton
+                        v-if="item.x && item.y"
+                        variant="link"
+                        icon="i-mdi-map-marker"
+                        @click="$emit('goto', { x: item.x, y: item.y })"
+                    />
+                    <CitizenInfoPopover v-if="item.user" :user="item.user" />
                 </span>
             </p>
             <span class="flex-none py-0.5 text-xs leading-5 text-gray-200">
@@ -128,27 +125,24 @@ defineEmits<{
         </template>
         <template v-else-if="item.status === StatusDispatch.UNIT_UNASSIGNED">
             <div class="relative flex size-5 flex-none items-center justify-center rounded-lg bg-gray-300">
-                <AccountRemoveIcon class="size-5 text-primary-600" aria-hidden="true" />
+                <AccountRemoveIcon class="size-5 text-primary-600" />
             </div>
             <p class="inline-flex flex-auto flex-row justify-between py-0.5 text-xs leading-5 text-gray-200">
                 <span class="inline-flex items-center gap-1">
                     {{ $t('components.centrum.dispatches.feed.item.UNIT_UNASSIGNED') }}
 
-                    <DispatchStatusInfoPopover v-if="showId" text-class="font-medium text-gray-400 pl-1" :status="item" />
-                    <UnitInfoPopover
-                        v-if="item.unit && item.unitId"
-                        text-class="font-medium text-gray-400 pl-1"
-                        :unit="item.unit"
-                        :initials-only="true"
-                        :badge="true"
-                    />
+                    <DispatchStatusInfoPopover v-if="showId" :status="item" />
+                    <UnitInfoPopover v-if="item.unit && item.unitId" :unit="item.unit" :initials-only="true" :badge="true" />
                 </span>
 
                 <span class="inline-flex items-center">
-                    <UButton v-if="item.x && item.y" @click="$emit('goto', { x: item.x, y: item.y })">
-                        <MapMarkerIcon class="size-5 text-primary-400 hover:text-primary-600" aria-hidden="true" />
-                    </UButton>
-                    <CitizenInfoPopover v-if="item.user" text-class="font-medium text-gray-400 pl-1" :user="item.user" />
+                    <UButton
+                        v-if="item.x && item.y"
+                        variant="link"
+                        icon="i-mdi-map-marker"
+                        @click="$emit('goto', { x: item.x, y: item.y })"
+                    />
+                    <CitizenInfoPopover v-if="item.user" :user="item.user" />
                 </span>
             </p>
             <span class="flex-none py-0.5 text-xs leading-5 text-gray-200">
@@ -157,27 +151,24 @@ defineEmits<{
         </template>
         <template v-else-if="item.status === StatusDispatch.UNIT_ACCEPTED">
             <div class="relative flex size-5 flex-none items-center justify-center rounded-lg bg-gray-300">
-                <AccountCheckIcon class="size-5 text-primary-600" aria-hidden="true" />
+                <AccountCheckIcon class="size-5 text-primary-600" />
             </div>
             <p class="inline-flex flex-auto flex-row justify-between py-0.5 text-xs leading-5 text-gray-200">
                 <span class="inline-flex items-center gap-1">
                     {{ $t('components.centrum.dispatches.feed.item.UNIT_ACCEPTED') }}
 
-                    <DispatchStatusInfoPopover v-if="showId" text-class="font-medium text-gray-400 pl-1" :status="item" />
-                    <UnitInfoPopover
-                        v-if="item.unit && item.unitId"
-                        text-class="font-medium text-gray-400 pl-1"
-                        :unit="item.unit"
-                        :initials-only="true"
-                        :badge="true"
-                    />
+                    <DispatchStatusInfoPopover v-if="showId" :status="item" />
+                    <UnitInfoPopover v-if="item.unit && item.unitId" :unit="item.unit" :initials-only="true" :badge="true" />
                 </span>
 
                 <span class="inline-flex items-center">
-                    <UButton v-if="item.x && item.y" @click="$emit('goto', { x: item.x, y: item.y })">
-                        <MapMarkerIcon class="size-5 text-primary-400 hover:text-primary-600" aria-hidden="true" />
-                    </UButton>
-                    <CitizenInfoPopover v-if="item.user" text-class="font-medium text-gray-400 pl-1" :user="item.user" />
+                    <UButton
+                        v-if="item.x && item.y"
+                        variant="link"
+                        icon="i-mdi-map-marker"
+                        @click="$emit('goto', { x: item.x, y: item.y })"
+                    />
+                    <CitizenInfoPopover v-if="item.user" :user="item.user" />
                 </span>
             </p>
             <span class="flex-none py-0.5 text-xs leading-5 text-gray-200">
@@ -186,27 +177,24 @@ defineEmits<{
         </template>
         <template v-else-if="item.status === StatusDispatch.UNIT_DECLINED">
             <div class="relative flex size-5 flex-none items-center justify-center rounded-lg bg-gray-300">
-                <AccountCancelIcon class="size-5 text-primary-600" aria-hidden="true" />
+                <AccountCancelIcon class="size-5 text-primary-600" />
             </div>
             <p class="inline-flex flex-auto flex-row justify-between py-0.5 text-xs leading-5 text-gray-200">
                 <span class="inline-flex items-center gap-1">
                     {{ $t('components.centrum.dispatches.feed.item.UNIT_DECLINED') }}
 
-                    <DispatchStatusInfoPopover v-if="showId" text-class="font-medium text-gray-400 pl-1" :status="item" />
-                    <UnitInfoPopover
-                        v-if="item.unit && item.unitId"
-                        text-class="font-medium text-gray-400 pl-1"
-                        :unit="item.unit"
-                        :initials-only="true"
-                        :badge="true"
-                    />
+                    <DispatchStatusInfoPopover v-if="showId" :status="item" />
+                    <UnitInfoPopover v-if="item.unit && item.unitId" :unit="item.unit" :initials-only="true" :badge="true" />
                 </span>
 
                 <span class="inline-flex items-center">
-                    <UButton v-if="item.x && item.y" @click="$emit('goto', { x: item.x, y: item.y })">
-                        <MapMarkerIcon class="size-5 text-primary-400 hover:text-primary-600" aria-hidden="true" />
-                    </UButton>
-                    <CitizenInfoPopover v-if="item.user" text-class="font-medium text-gray-400 pl-1" :user="item.user" />
+                    <UButton
+                        v-if="item.x && item.y"
+                        variant="link"
+                        icon="i-mdi-map-marker"
+                        @click="$emit('goto', { x: item.x, y: item.y })"
+                    />
+                    <CitizenInfoPopover v-if="item.user" :user="item.user" />
                 </span>
             </p>
             <span class="flex-none py-0.5 text-xs leading-5 text-gray-200">
@@ -215,27 +203,24 @@ defineEmits<{
         </template>
         <template v-else-if="item.status === StatusDispatch.EN_ROUTE">
             <div class="relative flex size-5 flex-none items-center justify-center rounded-lg bg-gray-300">
-                <CarIcon class="size-5 text-primary-600" aria-hidden="true" />
+                <CarIcon class="size-5 text-primary-600" />
             </div>
             <p class="inline-flex flex-auto flex-row justify-between py-0.5 text-xs leading-5 text-gray-200">
                 <span class="inline-flex items-center gap-1">
                     {{ $t('components.centrum.dispatches.feed.item.EN_ROUTE') }}
 
-                    <DispatchStatusInfoPopover v-if="showId" text-class="font-medium text-gray-400 pl-1" :status="item" />
-                    <UnitInfoPopover
-                        v-if="item.unit && item.unitId"
-                        text-class="font-medium text-gray-400 pl-1"
-                        :unit="item.unit"
-                        :initials-only="true"
-                        :badge="true"
-                    />
+                    <DispatchStatusInfoPopover v-if="showId" :status="item" />
+                    <UnitInfoPopover v-if="item.unit && item.unitId" :unit="item.unit" :initials-only="true" :badge="true" />
                 </span>
 
                 <span class="inline-flex items-center">
-                    <UButton v-if="item.x && item.y" @click="$emit('goto', { x: item.x, y: item.y })">
-                        <MapMarkerIcon class="size-5 text-primary-400 hover:text-primary-600" aria-hidden="true" />
-                    </UButton>
-                    <CitizenInfoPopover v-if="item.user" text-class="font-medium text-gray-400 pl-1" :user="item.user" />
+                    <UButton
+                        v-if="item.x && item.y"
+                        variant="link"
+                        icon="i-mdi-map-marker"
+                        @click="$emit('goto', { x: item.x, y: item.y })"
+                    />
+                    <CitizenInfoPopover v-if="item.user" :user="item.user" />
                 </span>
             </p>
             <span class="flex-none py-0.5 text-xs leading-5 text-gray-200">
@@ -244,26 +229,23 @@ defineEmits<{
         </template>
         <template v-else-if="item.status === StatusDispatch.ON_SCENE">
             <div class="relative flex size-5 flex-none items-center justify-center rounded-lg bg-gray-300">
-                <MapMarkerIcon class="size-5 text-primary-600" aria-hidden="true" />
+                <MapMarkerIcon class="size-5 text-primary-600" />
             </div>
             <p class="inline-flex flex-auto flex-row justify-between py-0.5 text-xs leading-5 text-gray-200">
                 <span class="inline-flex items-center gap-1">
                     {{ $t('components.centrum.dispatches.feed.item.ON_SCENE') }}
-                    <DispatchStatusInfoPopover v-if="showId" text-class="font-medium text-gray-400 pl-1" :status="item" />
-                    <UnitInfoPopover
-                        v-if="item.unit && item.unitId"
-                        text-class="font-medium text-gray-400 pl-1"
-                        :unit="item.unit"
-                        :initials-only="true"
-                        :badge="true"
-                    />
+                    <DispatchStatusInfoPopover v-if="showId" :status="item" />
+                    <UnitInfoPopover v-if="item.unit && item.unitId" :unit="item.unit" :initials-only="true" :badge="true" />
                 </span>
 
                 <span class="inline-flex items-center">
-                    <UButton v-if="item.x && item.y" @click="$emit('goto', { x: item.x, y: item.y })">
-                        <MapMarkerIcon class="size-5 text-primary-400 hover:text-primary-600" aria-hidden="true" />
-                    </UButton>
-                    <CitizenInfoPopover v-if="item.user" text-class="font-medium text-gray-400 pl-1" :user="item.user" />
+                    <UButton
+                        v-if="item.x && item.y"
+                        variant="link"
+                        icon="i-mdi-map-marker"
+                        @click="$emit('goto', { x: item.x, y: item.y })"
+                    />
+                    <CitizenInfoPopover v-if="item.user" :user="item.user" />
                 </span>
             </p>
             <span class="flex-none py-0.5 text-xs leading-5 text-gray-200">
@@ -272,27 +254,24 @@ defineEmits<{
         </template>
         <template v-else-if="item.status === StatusDispatch.NEED_ASSISTANCE">
             <div class="relative flex size-5 flex-none items-center justify-center rounded-lg bg-gray-300">
-                <HelpIcon class="size-5 text-primary-600" aria-hidden="true" />
+                <HelpIcon class="size-5 text-primary-600" />
             </div>
             <p class="inline-flex flex-auto flex-row justify-between py-0.5 text-xs leading-5 text-gray-200">
                 <span class="inline-flex items-center gap-1">
                     {{ $t('components.centrum.dispatches.feed.item.NEED_ASSISTANCE') }}
 
-                    <DispatchStatusInfoPopover v-if="showId" text-class="font-medium text-gray-400 pl-1" :status="item" />
-                    <UnitInfoPopover
-                        v-if="item.unit && item.unitId"
-                        text-class="font-medium text-gray-400 pl-1"
-                        :unit="item.unit"
-                        :initials-only="true"
-                        :badge="true"
-                    />
+                    <DispatchStatusInfoPopover v-if="showId" :status="item" />
+                    <UnitInfoPopover v-if="item.unit && item.unitId" :unit="item.unit" :initials-only="true" :badge="true" />
                 </span>
 
                 <span class="inline-flex items-center">
-                    <UButton v-if="item.x && item.y" @click="$emit('goto', { x: item.x, y: item.y })">
-                        <MapMarkerIcon class="size-5 text-primary-400 hover:text-primary-600" aria-hidden="true" />
-                    </UButton>
-                    <CitizenInfoPopover v-if="item.user" text-class="font-medium text-gray-400 pl-1" :user="item.user" />
+                    <UButton
+                        v-if="item.x && item.y"
+                        variant="link"
+                        icon="i-mdi-map-marker"
+                        @click="$emit('goto', { x: item.x, y: item.y })"
+                    />
+                    <CitizenInfoPopover v-if="item.user" :user="item.user" />
                 </span>
             </p>
             <span class="flex-none py-0.5 text-xs leading-5 text-gray-200">
@@ -301,27 +280,24 @@ defineEmits<{
         </template>
         <template v-else-if="item.status === StatusDispatch.COMPLETED">
             <div class="relative flex size-5 flex-none items-center justify-center rounded-lg bg-gray-300">
-                <CheckIcon class="size-5 text-primary-600" aria-hidden="true" />
+                <CheckIcon class="size-5 text-primary-600" />
             </div>
             <p class="inline-flex flex-auto flex-row justify-between py-0.5 text-xs leading-5 text-gray-200">
                 <span class="inline-flex items-center gap-1">
                     {{ $t('components.centrum.dispatches.feed.item.COMPLETED') }}
 
-                    <DispatchStatusInfoPopover v-if="showId" text-class="font-medium text-gray-400 pl-1" :status="item" />
-                    <UnitInfoPopover
-                        v-if="item.unit && item.unitId"
-                        text-class="font-medium text-gray-400 pl-1"
-                        :unit="item.unit"
-                        :initials-only="true"
-                        :badge="true"
-                    />
+                    <DispatchStatusInfoPopover v-if="showId" :status="item" />
+                    <UnitInfoPopover v-if="item.unit && item.unitId" :unit="item.unit" :initials-only="true" :badge="true" />
                 </span>
 
                 <span class="inline-flex items-center">
-                    <UButton v-if="item.x && item.y" @click="$emit('goto', { x: item.x, y: item.y })">
-                        <MapMarkerIcon class="size-5 text-primary-400 hover:text-primary-600" aria-hidden="true" />
-                    </UButton>
-                    <CitizenInfoPopover v-if="item.user" text-class="font-medium text-gray-400 pl-1" :user="item.user" />
+                    <UButton
+                        v-if="item.x && item.y"
+                        variant="link"
+                        icon="i-mdi-map-marker"
+                        @click="$emit('goto', { x: item.x, y: item.y })"
+                    />
+                    <CitizenInfoPopover v-if="item.user" :user="item.user" />
                 </span>
             </p>
             <span class="flex-none py-0.5 text-xs leading-5 text-gray-200">
@@ -330,27 +306,24 @@ defineEmits<{
         </template>
         <template v-else-if="item.status === StatusDispatch.CANCELLED">
             <div class="relative flex size-5 flex-none items-center justify-center rounded-lg bg-gray-300">
-                <CancelIcon class="size-5 text-primary-600" aria-hidden="true" />
+                <CancelIcon class="size-5 text-primary-600" />
             </div>
             <p class="inline-flex flex-auto flex-row justify-between py-0.5 text-xs leading-5 text-gray-200">
                 <span class="inline-flex items-center gap-1">
                     {{ $t('components.centrum.dispatches.feed.item.CANCELLED') }}
 
-                    <DispatchStatusInfoPopover v-if="showId" text-class="font-medium text-gray-400 pl-1" :status="item" />
-                    <UnitInfoPopover
-                        v-if="item.unit && item.unitId"
-                        text-class="font-medium text-gray-400 pl-1"
-                        :unit="item.unit"
-                        :initials-only="true"
-                        :badge="true"
-                    />
+                    <DispatchStatusInfoPopover v-if="showId" :status="item" />
+                    <UnitInfoPopover v-if="item.unit && item.unitId" :unit="item.unit" :initials-only="true" :badge="true" />
                 </span>
 
                 <span class="inline-flex items-center">
-                    <UButton v-if="item.x && item.y" @click="$emit('goto', { x: item.x, y: item.y })">
-                        <MapMarkerIcon class="size-5 text-primary-400 hover:text-primary-600" aria-hidden="true" />
-                    </UButton>
-                    <CitizenInfoPopover v-if="item.user" text-class="font-medium text-gray-400 pl-1" :user="item.user" />
+                    <UButton
+                        v-if="item.x && item.y"
+                        variant="link"
+                        icon="i-mdi-map-marker"
+                        @click="$emit('goto', { x: item.x, y: item.y })"
+                    />
+                    <CitizenInfoPopover v-if="item.user" :user="item.user" />
                 </span>
             </p>
             <span class="flex-none py-0.5 text-xs leading-5 text-gray-200">
@@ -359,27 +332,24 @@ defineEmits<{
         </template>
         <template v-else-if="item.status === StatusDispatch.ARCHIVED">
             <div class="relative flex size-5 flex-none items-center justify-center rounded-lg bg-gray-300">
-                <ArchiveIcon class="size-5 text-primary-600" aria-hidden="true" />
+                <ArchiveIcon class="size-5 text-primary-600" />
             </div>
             <p class="inline-flex flex-auto flex-row justify-between py-0.5 text-xs leading-5 text-gray-200">
                 <span class="inline-flex items-center gap-1">
                     {{ $t('components.centrum.dispatches.feed.item.ARCHIVED') }}
 
-                    <DispatchStatusInfoPopover v-if="showId" text-class="font-medium text-gray-400 pl-1" :status="item" />
-                    <UnitInfoPopover
-                        v-if="item.unit && item.unitId"
-                        text-class="font-medium text-gray-400 pl-1"
-                        :unit="item.unit"
-                        :initials-only="true"
-                        :badge="true"
-                    />
+                    <DispatchStatusInfoPopover v-if="showId" :status="item" />
+                    <UnitInfoPopover v-if="item.unit && item.unitId" :unit="item.unit" :initials-only="true" :badge="true" />
                 </span>
 
                 <span class="inline-flex items-center">
-                    <UButton v-if="item.x && item.y" @click="$emit('goto', { x: item.x, y: item.y })">
-                        <MapMarkerIcon class="size-5 text-primary-400 hover:text-primary-600" aria-hidden="true" />
-                    </UButton>
-                    <CitizenInfoPopover v-if="item.user" text-class="font-medium text-gray-400 pl-1" :user="item.user" />
+                    <UButton
+                        v-if="item.x && item.y"
+                        variant="link"
+                        icon="i-mdi-map-marker"
+                        @click="$emit('goto', { x: item.x, y: item.y })"
+                    />
+                    <CitizenInfoPopover v-if="item.user" :user="item.user" />
                 </span>
             </p>
             <span class="flex-none py-0.5 text-xs leading-5 text-gray-200">
@@ -388,27 +358,24 @@ defineEmits<{
         </template>
         <template v-else>
             <div class="relative flex size-5 flex-none items-center justify-center rounded-lg bg-gray-300">
-                <NewBoxIcon class="size-5 text-primary-600" aria-hidden="true" />
+                <NewBoxIcon class="size-5 text-primary-600" />
             </div>
             <p class="inline-flex flex-auto flex-row justify-between py-0.5 text-xs leading-5 text-gray-200">
                 <span class="inline-flex items-center gap-1">
                     {{ $t('components.centrum.dispatches.feed.item.UNSPECIFIED') }}
 
-                    <DispatchStatusInfoPopover v-if="showId" text-class="font-medium text-gray-400 pl-1" :status="item" />
-                    <UnitInfoPopover
-                        v-if="item.unit && item.unitId"
-                        text-class="font-medium text-gray-400 pl-1"
-                        :unit="item.unit"
-                        :initials-only="true"
-                        :badge="true"
-                    />
+                    <DispatchStatusInfoPopover v-if="showId" :status="item" />
+                    <UnitInfoPopover v-if="item.unit && item.unitId" :unit="item.unit" :initials-only="true" :badge="true" />
                 </span>
 
                 <span class="inline-flex items-center">
-                    <UButton v-if="item.x && item.y" @click="$emit('goto', { x: item.x, y: item.y })">
-                        <MapMarkerIcon class="size-5 text-primary-400 hover:text-primary-600" aria-hidden="true" />
-                    </UButton>
-                    <CitizenInfoPopover v-if="item.user" text-class="font-medium text-gray-400 pl-1" :user="item.user" />
+                    <UButton
+                        v-if="item.x && item.y"
+                        variant="link"
+                        icon="i-mdi-map-marker"
+                        @click="$emit('goto', { x: item.x, y: item.y })"
+                    />
+                    <CitizenInfoPopover v-if="item.user" :user="item.user" />
                 </span>
             </p>
             <span class="flex-none py-0.5 text-xs leading-5 text-gray-200">

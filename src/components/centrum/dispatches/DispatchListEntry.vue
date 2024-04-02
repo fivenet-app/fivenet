@@ -66,37 +66,35 @@ const openStatus = ref(false);
             @close="openStatus = false"
         />
 
-        <td class="relative items-center justify-start whitespace-nowrap px-0 py-1 text-left text-sm font-medium sm:pr-0.5">
-            <UButton
-                v-if="!hideActions"
-                class="text-primary-400 hover:text-primary-600"
-                :title="$t('common.assign')"
-                @click="openAssign = true"
-            >
-                <AccountMultiplePlusIcon class="ml-auto mr-1.5 h-auto w-5" aria-hidden="true" />
-            </UButton>
-            <UButton
-                class="text-primary-400 hover:text-primary-600"
-                :title="$t('common.go_to_location')"
-                @click="$emit('goto', { x: dispatch.x, y: dispatch.y })"
-            >
-                <MapMarkerIcon class="ml-auto mr-1.5 h-auto w-5" aria-hidden="true" />
-            </UButton>
-            <UButton
-                v-if="!hideActions"
-                class="text-primary-400 hover:text-primary-600"
-                :title="$t('common.status')"
-                @click="openStatus = true"
-            >
-                <CloseOctagonIcon class="ml-auto mr-1.5 h-auto w-5" aria-hidden="true" />
-            </UButton>
-            <UButton
-                class="text-primary-400 hover:text-primary-600"
-                :title="$t('common.detail', 2)"
-                @click="openDetails = true"
-            >
-                <DotsVerticalIcon class="ml-auto mr-1.5 h-auto w-5" aria-hidden="true" />
-            </UButton>
+        <td class="relative justify-start whitespace-nowrap px-0 py-1 text-left text-sm font-medium">
+            <UButtonGroup>
+                <UButton
+                    v-if="!hideActions"
+                    variant="link"
+                    icon="i-mdi-account-multiple-plus"
+                    :title="$t('common.assign')"
+                    @click="openAssign = true"
+                />
+                <UButton
+                    variant="link"
+                    icon="i-mdi-map-marker"
+                    :title="$t('common.go_to_location')"
+                    @click="$emit('goto', { x: dispatch.x, y: dispatch.y })"
+                />
+                <UButton
+                    v-if="!hideActions"
+                    variant="link"
+                    icon="i-mdi-close-octagon"
+                    :title="$t('common.status')"
+                    @click="openStatus = true"
+                />
+                <UButton
+                    variant="link"
+                    icon="i-mdi-dots-vertical"
+                    :title="$t('common.detail', 2)"
+                    @click="openDetails = true"
+                />
+            </UButtonGroup>
         </td>
         <td class="whitespace-nowrap p-1 text-sm text-gray-300">
             {{ dispatch.id }}
@@ -130,7 +128,7 @@ const openStatus = ref(false);
                 {{ $t('common.anon') }}
             </span>
             <span v-else-if="dispatch.creator">
-                <CitizenInfoPopover :user="dispatch.creator" />
+                <CitizenInfoPopover :user="dispatch.creator" :trailing="false" />
             </span>
             <span v-else>
                 {{ $t('common.unknown') }}

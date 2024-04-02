@@ -47,13 +47,13 @@ onConfirm(async (path) => deleteFile(path));
                 :to="`/api/filestore/${file.name}`"
                 class="text-primary-400 hover:text-primary-600"
             >
-                <EyeIcon class="ml-auto mr-1.5 h-auto w-5" aria-hidden="true" />
+                <EyeIcon class="ml-auto mr-1.5 h-auto w-5" />
             </NuxtLink>
             <UButton class="text-primary-400 hover:text-primary-600" @click="reveal(file.name)">
-                <TrashCanIcon class="size-5" aria-hidden="true" />
+                <TrashCanIcon class="size-5" />
             </UButton>
         </td>
-        <td class="whitespace-nowrap py-2 pl-4 pr-3 text-sm font-medium text-neutral sm:pl-1">
+        <td class="whitespace-nowrap py-2 pl-4 pr-3 text-sm font-medium sm:pl-1">
             {{ file.name }}
         </td>
         <td class="whitespace-nowrap p-1 text-left text-sm text-accent-200">

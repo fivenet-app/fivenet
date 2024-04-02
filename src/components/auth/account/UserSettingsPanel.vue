@@ -69,13 +69,13 @@ const themes = [
                     <Listbox v-model="settings.theme" as="div">
                         <div class="relative">
                             <ListboxButton
-                                class="block w-full rounded-md border-0 bg-base-700 py-1.5 pl-3 text-left text-neutral placeholder:text-accent-200 focus:ring-2 focus:ring-inset focus:ring-base-300 sm:text-sm sm:leading-6"
+                                class="block w-full rounded-md border-0 bg-base-700 py-1.5 pl-3 text-left placeholder:text-accent-200 focus:ring-2 focus:ring-inset focus:ring-base-300 sm:text-sm sm:leading-6"
                             >
                                 <span class="block truncate">
                                     {{ themes.find((t) => t.key === settings.theme)?.name }}
                                 </span>
                                 <span class="pointer-events-none absolute inset-y-0 right-0 flex items-center pr-2">
-                                    <ChevronDownIcon class="size-5 text-gray-400" aria-hidden="true" />
+                                    <ChevronDownIcon class="size-5 text-gray-400" />
                                 </span>
                             </ListboxButton>
 
@@ -97,7 +97,7 @@ const themes = [
                                         <li
                                             :class="[
                                                 active ? 'bg-primary-500' : '',
-                                                'relative cursor-default select-none py-2 pl-8 pr-4 text-neutral',
+                                                'relative cursor-default select-none py-2 pl-8 pr-4',
                                             ]"
                                         >
                                             <span :class="[selected ? 'font-semibold' : 'font-normal', 'block truncate']">
@@ -111,7 +111,7 @@ const themes = [
                                                     'absolute inset-y-0 left-0 flex items-center pl-1.5',
                                                 ]"
                                             >
-                                                <CheckIcon class="size-5" aria-hidden="true" />
+                                                <CheckIcon class="size-5" />
                                             </span>
                                         </li>
                                     </ListboxOption>
@@ -129,7 +129,7 @@ const themes = [
                     <select
                         v-if="activeChar"
                         v-model="selectedHomepage"
-                        class="block w-full rounded-md border-0 bg-base-700 py-1.5 text-neutral placeholder:text-accent-200 focus:ring-2 focus:ring-inset focus:ring-base-300 sm:text-sm sm:leading-6"
+                        class="block w-full rounded-md border-0 bg-base-700 py-1.5 placeholder:text-accent-200 focus:ring-2 focus:ring-inset focus:ring-base-300 sm:text-sm sm:leading-6"
                         @focusin="focusTablet(true)"
                         @focusout="focusTablet(false)"
                     >
@@ -142,7 +142,7 @@ const themes = [
                             {{ $t(page.name ?? 'common.page') }}
                         </option>
                     </select>
-                    <p v-else class="text-neutral">
+                    <p v-else>
                         {{ $t('components.auth.settings_panel.set_startpage.no_char_selected') }}
                     </p>
                 </template>

@@ -1,6 +1,5 @@
 <script lang="ts" setup>
 import { LPopup } from '@vue-leaflet/vue-leaflet';
-import { MapMarkerIcon, TrashCanIcon } from 'mdi-vue3';
 import { useConfirmDialog } from '@vueuse/core';
 import { type MarkerMarker } from '~~/gen/ts/resources/livemap/livemap';
 import ConfirmDialog from '~/components/partials/ConfirmDialog.vue';
@@ -47,20 +46,20 @@ onConfirm(async (id) => deleteMarker(id));
         <div class="mb-1 flex items-center gap-2">
             <UButton
                 v-if="marker.info?.x && marker.info?.y"
-                class="inline-flex items-center text-primary-500 hover:text-primary-400"
+                variant="link"
+                icon="i-mdi-map-marker"
                 @click="$emit('goto', { x: marker.info?.x, y: marker.info?.y })"
             >
-                <MapMarkerIcon class="size-5" aria-hidden="true" />
-                <span class="ml-1">{{ $t('common.mark') }}</span>
+                {{ $t('common.mark') }}
             </UButton>
             <UButton
                 v-if="can('LivemapperService.DeleteMarker')"
                 :title="$t('common.delete')"
-                class="inline-flex items-center text-primary-500 hover:text-primary-400"
+                variant="link"
+                icon="i-mdi-trash-can"
                 @click="reveal(marker.info!.id)"
             >
-                <TrashCanIcon class="size-5" aria-hidden="true" />
-                <span class="ml-1">{{ $t('common.delete') }}</span>
+                {{ $t('common.delete') }}
             </UButton>
         </div>
         <span class="font-semibold"> {{ $t('common.marker') }}: {{ marker.info?.name }} </span>

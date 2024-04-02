@@ -37,7 +37,7 @@ const open = ref(false);
     <div class="flex w-full items-center justify-items-center gap-2">
         <DisponentsModal :open="open" @close="open = false" />
 
-        <p class="text-sm text-neutral">
+        <p class="text-sm">
             <UButton
                 class="inline-flex items-center rounded-md px-2 py-1 text-xs font-medium ring-1 ring-inset"
                 :class="
@@ -63,7 +63,7 @@ const open = ref(false);
             @click="onSubmitThrottle(true)"
         >
             <template v-if="!canSubmit">
-                <LoadingIcon class="mr-2 size-5 animate-spin" aria-hidden="true" />
+                <LoadingIcon class="mr-2 size-5 animate-spin" />
             </template>
             <span class="px-1">{{ $t('common.join') }}</span>
         </UButton>
@@ -74,7 +74,7 @@ const open = ref(false);
             @click="onSubmitThrottle(false)"
         >
             <template v-if="!canSubmit">
-                <LoadingIcon class="mr-2 size-5 animate-spin" aria-hidden="true" />
+                <LoadingIcon class="mr-2 size-5 animate-spin" />
             </template>
             <span class="px-1">{{ $t('common.leave') }}</span>
         </UButton>

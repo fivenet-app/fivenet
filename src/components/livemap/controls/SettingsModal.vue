@@ -50,24 +50,21 @@ const { livemap } = storeToRefs(settingsStore);
                                     @click="$emit('close')"
                                 >
                                     <span class="sr-only">{{ $t('common.close') }}</span>
-                                    <CloseIcon class="size-5" aria-hidden="true" />
+                                    <CloseIcon class="size-5" />
                                 </UButton>
                             </div>
                             <div>
                                 <div class="mx-auto flex size-12 items-center justify-center rounded-full bg-success-100">
-                                    <CogIcon class="size-5 text-success-600" aria-hidden="true" />
+                                    <CogIcon class="size-5 text-success-600" />
                                 </div>
                                 <div class="mt-3 text-center sm:mt-5">
-                                    <DialogTitle as="h3" class="text-base font-semibold leading-6 text-neutral">
+                                    <DialogTitle as="h3" class="text-base font-semibold leading-6">
                                         {{ $t('common.setting', 2) }}
                                     </DialogTitle>
                                     <div class="mt-2">
                                         <div class="text-sm text-gray-100">
                                             <div class="flex-1">
-                                                <label
-                                                    for="centerSelectedMarker"
-                                                    class="block text-sm font-medium leading-6 text-neutral"
-                                                >
+                                                <label for="centerSelectedMarker" class="block text-sm font-medium leading-6">
                                                     {{ $t('components.livemap.center_selected_marker') }}
                                                 </label>
                                                 <UToggle v-model="livemap.centerSelectedMarker">
@@ -77,10 +74,7 @@ const { livemap } = storeToRefs(settingsStore);
                                                 </UToggle>
                                             </div>
                                             <div class="flex-1">
-                                                <label
-                                                    for="livemapMarkerSize"
-                                                    class="block text-sm font-medium leading-6 text-neutral"
-                                                >
+                                                <label for="livemapMarkerSize" class="block text-sm font-medium leading-6">
                                                     {{ $t('components.livemap.settings.marker_size') }}
                                                 </label>
                                                 <URange
@@ -97,10 +91,7 @@ const { livemap } = storeToRefs(settingsStore);
                                                 <span class="text-sm text-gray-300">{{ livemap.markerSize }}</span>
                                             </div>
                                             <div class="flex-1 items-center">
-                                                <label
-                                                    for="showUnitNames"
-                                                    class="block text-sm font-medium leading-6 text-neutral"
-                                                >
+                                                <label for="showUnitNames" class="block text-sm font-medium leading-6">
                                                     {{ $t('components.livemap.show_unit_names') }}
                                                 </label>
                                                 <UToggle v-model="livemap.showUnitNames">
@@ -108,10 +99,7 @@ const { livemap } = storeToRefs(settingsStore);
                                                 </UToggle>
                                             </div>
                                             <div class="flex-1 items-center">
-                                                <label
-                                                    for="showUnitStatus"
-                                                    class="block text-sm font-medium leading-6 text-neutral"
-                                                >
+                                                <label for="showUnitStatus" class="block text-sm font-medium leading-6">
                                                     {{ $t('components.livemap.show_unit_status') }}
                                                 </label>
                                                 <UToggle v-model="livemap.showUnitStatus">
@@ -119,10 +107,7 @@ const { livemap } = storeToRefs(settingsStore);
                                                 </UToggle>
                                             </div>
                                             <div class="flex-1 items-center">
-                                                <label
-                                                    for="showAllDispatches"
-                                                    class="block text-sm font-medium leading-6 text-neutral"
-                                                >
+                                                <label for="showAllDispatches" class="block text-sm font-medium leading-6">
                                                     {{ $t('components.livemap.show_all_dispatches') }}
                                                 </label>
                                                 <UToggle v-model="livemap.showAllDispatches">

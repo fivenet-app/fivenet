@@ -30,12 +30,12 @@ const props = defineProps<{
     <template v-if="activity.key === 'DocStore.Relation'">
         <div class="flex space-x-3">
             <div class="my-auto flex size-10 items-center justify-center rounded-full">
-                <FileAccountIcon v-if="activity.newValue !== ''" class="size-full text-info-600" aria-hidden="true" />
-                <FileAccountOutlineIcon v-else class="size-full text-base-600" aria-hidden="true" />
+                <FileAccountIcon v-if="activity.newValue !== ''" class="size-full text-info-600" />
+                <FileAccountOutlineIcon v-else class="size-full text-base-600" />
             </div>
             <div class="flex-1 space-y-1">
                 <div class="flex items-center justify-between">
-                    <h3 class="inline-flex items-center gap-1 text-sm font-medium text-neutral">
+                    <h3 class="inline-flex items-center gap-1 text-sm font-medium">
                         <span
                             ><template v-if="activity.newValue !== ''">
                                 {{ $t('components.citizens.citizen_info_activity_feed_entry.document_relation.added') }}
@@ -78,12 +78,12 @@ const props = defineProps<{
     <template v-else-if="activity.key === 'UserProps.Wanted'">
         <div class="flex space-x-3">
             <div class="my-auto flex size-10 items-center justify-center rounded-full">
-                <BellAlertIcon v-if="activity.newValue === 'true'" class="size-full text-error-400" aria-hidden="true" />
-                <BellSleepIcon v-else class="size-full text-success-400" aria-hidden="true" />
+                <BellAlertIcon v-if="activity.newValue === 'true'" class="size-full text-error-400" />
+                <BellSleepIcon v-else class="size-full text-success-400" />
             </div>
             <div class="flex-1 space-y-1">
                 <div class="flex items-center justify-between">
-                    <h3 class="text-sm font-medium text-neutral">
+                    <h3 class="text-sm font-medium">
                         {{ $t('components.citizens.citizen_info_activity_feed_entry.bool_set_citizen') }}
                         <span class="font-semibold">
                             {{
@@ -115,11 +115,11 @@ const props = defineProps<{
     <template v-else-if="activity.key === 'UserProps.Job'">
         <div class="flex space-x-3">
             <div class="my-auto flex size-10 items-center justify-center rounded-full">
-                <BriefcaseIcon class="size-full text-secondary-400" aria-hidden="true" />
+                <BriefcaseIcon class="size-full text-secondary-400" />
             </div>
             <div class="flex-1 space-y-1">
                 <div class="flex items-center justify-between">
-                    <h3 class="text-sm font-medium text-neutral">
+                    <h3 class="text-sm font-medium">
                         {{ $t('components.citizens.citizen_info_activity_feed_entry.userprops_job_set') }}
                         <span class="font-semibold">
                             {{ activity.newValue }}
@@ -147,11 +147,11 @@ const props = defineProps<{
     <template v-else-if="activity.key === 'UserProps.TrafficInfractionPoints'">
         <div class="flex space-x-3">
             <div class="my-auto flex size-10 items-center justify-center rounded-full">
-                <TrafficConeIcon class="size-full text-secondary-400" aria-hidden="true" />
+                <TrafficConeIcon class="size-full text-secondary-400" />
             </div>
             <div class="flex-1 space-y-1">
                 <div class="flex items-center justify-between">
-                    <h3 class="text-sm font-medium text-neutral">
+                    <h3 class="text-sm font-medium">
                         {{ $t('components.citizens.citizen_info_activity_feed_entry.traffic_infraction_points.action_text') }}
                         <span>
                             <span class="font-semibold">{{ activity.oldValue }}</span>
@@ -181,11 +181,11 @@ const props = defineProps<{
     <template v-else-if="activity.key === 'UserProps.MugShot'">
         <div class="flex space-x-3">
             <div class="my-auto flex size-10 items-center justify-center rounded-full">
-                <CameraAccountIcon class="size-full text-secondary-400" aria-hidden="true" />
+                <CameraAccountIcon class="size-full text-secondary-400" />
             </div>
             <div class="flex-1 space-y-1">
                 <div class="flex items-center justify-between">
-                    <h3 class="text-sm font-medium text-neutral">
+                    <h3 class="text-sm font-medium">
                         {{ $t('components.citizens.citizen_info_activity_feed_entry.userprops_mug_shot_set') }}
                     </h3>
                     <p class="text-sm text-gray-400">
@@ -210,15 +210,11 @@ const props = defineProps<{
     <template v-else-if="activity.key === 'Plugin.Licenses'">
         <div class="flex space-x-3">
             <div class="my-auto flex size-10 items-center justify-center rounded-full">
-                <LicenseIcon
-                    class="size-full"
-                    :class="activity.newValue !== '' ? 'text-info-600' : 'text-warn-600'"
-                    aria-hidden="true"
-                />
+                <LicenseIcon class="size-full" :class="activity.newValue !== '' ? 'text-info-600' : 'text-warn-600'" />
             </div>
             <div class="flex-1 space-y-1">
                 <div class="flex items-center justify-between">
-                    <h3 class="text-sm font-medium text-neutral">
+                    <h3 class="text-sm font-medium">
                         {{
                             activity.newValue !== ''
                                 ? $t('components.citizens.citizen_info_activity_feed_entry.plugin_license.added')
@@ -246,18 +242,14 @@ const props = defineProps<{
     </template>
     <template v-else-if="activity.key === 'Plugin.Jail'">
         <div class="flex space-x-3">
-            <div class="my-auto flex size-10 items-center justify-center rounded-full text-neutral">
-                <HandcuffsIcon
-                    v-if="activity.oldValue === '' && activity.newValue !== '0'"
-                    class="size-full"
-                    aria-hidden="true"
-                />
-                <DoorOpenIcon v-else-if="activity.newValue === '0'" class="size-full" aria-hidden="true" />
-                <RunFastIcon v-else class="size-full" aria-hidden="true" />
+            <div class="my-auto flex size-10 items-center justify-center rounded-full">
+                <HandcuffsIcon v-if="activity.oldValue === '' && activity.newValue !== '0'" class="size-full" />
+                <DoorOpenIcon v-else-if="activity.newValue === '0'" class="size-full" />
+                <RunFastIcon v-else class="size-full" />
             </div>
             <div class="flex-1 space-y-1">
                 <div class="flex items-center justify-between">
-                    <h3 class="text-sm font-medium text-neutral">
+                    <h3 class="text-sm font-medium">
                         <template v-if="activity.oldValue === '' && activity.newValue !== '0'">
                             {{ $t('components.citizens.citizen_info_activity_feed_entry.plugin_jail.jailed') }}
                             {{ fromSecondsToFormattedDuration(parseInt(props.activity.newValue)) }}
@@ -293,17 +285,16 @@ const props = defineProps<{
     <template v-else-if="activity.key === 'Plugin.Billing.Fines'">
         <div class="flex space-x-3">
             <div class="my-auto flex size-10 items-center justify-center rounded-full">
-                <ReceiptTextCheckIcon v-if="activity.newValue === '0'" class="size-full text-success-400" aria-hidden="true" />
+                <ReceiptTextCheckIcon v-if="activity.newValue === '0'" class="size-full text-success-400" />
                 <ReceiptTextRemoveIcon
                     v-else-if="activity.newValue === activity.oldValue"
                     class="size-full text-secondary-400"
-                    aria-hidden="true"
                 />
-                <ReceiptTextPlusIcon v-else class="size-full text-info-400" aria-hidden="true" />
+                <ReceiptTextPlusIcon v-else class="size-full text-info-400" />
             </div>
             <div class="flex-1 space-y-1">
                 <div class="flex items-center justify-between">
-                    <h3 class="text-sm font-medium text-neutral">
+                    <h3 class="text-sm font-medium">
                         <template v-if="activity.newValue === '0'">
                             {{ $t('components.citizens.citizen_info_activity_feed_entry.plugin_billing_fines.paid') }}
                         </template>
@@ -341,11 +332,11 @@ const props = defineProps<{
     <template v-else>
         <div class="flex space-x-3">
             <div class="my-auto flex size-10 items-center justify-center rounded-full">
-                <HelpCircleIcon class="size-full text-neutral" aria-hidden="true" />
+                <HelpCircleIcon class="size-full" />
             </div>
             <div class="flex-1 space-y-1">
                 <div class="flex items-center justify-between">
-                    <h3 class="text-sm font-medium text-neutral">
+                    <h3 class="text-sm font-medium">
                         {{ `${props.activity.oldValue} -> ${props.activity.newValue}` }}
                     </h3>
                     <p class="text-sm text-gray-400">

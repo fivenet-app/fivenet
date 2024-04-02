@@ -4,7 +4,6 @@ import { useElementVisibility, useThrottleFn, useTimeoutFn, watchOnce } from '@v
 import { CommentTextMultipleIcon, LoadingIcon } from 'mdi-vue3';
 import { defineRule } from 'vee-validate';
 import DataNoDataBlock from '~/components/partials/data/DataNoDataBlock.vue';
-import TablePagination from '~/components/partials/elements/TablePagination.vue';
 import { useAuthStore } from '~/store/auth';
 import { type Comment } from '~~/gen/ts/resources/documents/comment';
 import { GetCommentsResponse } from '~~/gen/ts/services/docstore/docstore';
@@ -35,10 +34,11 @@ const emit = defineEmits<{
     (e: 'deletedComment'): void;
 }>();
 
-const offset = ref(0);
+const page = ref(1);
+const offset = computed(() => (data.value?.pagination?.pageSize ? data.value?.pagination?.pageSize * page.value : 0));
 
 const { data, pending, refresh, error } = useLazyAsyncData(
-    `document-${props.documentId}-comments-${offset}`,
+    `document-${props.documentId}-comments-${page.value}`,
     () => getComments(),
     {
         immediate: false,
@@ -182,7 +182,7 @@ const onSubmitThrottle = useThrottleFn(async (e) => {
                                 />
 
                                 <!-- Spacer element to match the height of the toolbar -->
-                                <div class="py-2" aria-hidden="true">
+                                <div class="py-2">
                                     <!-- Matches height of button in toolbar (1px border + 36px content height) -->
                                     <div class="py-px">
                                         <div class="h-9" />
@@ -198,16 +198,11 @@ const onSubmitThrottle = useThrottleFn(async (e) => {
                                 <div class="shrink-0">
                                     <UButton
                                         type="submit"
-                                        class="flex justify-center rounded-md px-3 py-2 text-sm font-semibold text-neutral shadow-sm focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2"
+                                        class="flex justify-center rounded-md px-3 py-2 text-sm font-semibold shadow-sm focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2"
                                         :disabled="!meta.valid || !canSubmit"
-                                        :class="[
-                                            !meta.valid || !canSubmit
-                                                ? 'disabled bg-base-500 hover:bg-base-400 focus-visible:outline-base-500'
-                                                : 'bg-primary-500 hover:bg-primary-400',
-                                        ]"
                                     >
                                         <template v-if="!canSubmit">
-                                            <LoadingIcon class="mr-2 size-5 animate-spin" aria-hidden="true" />
+                                            <LoadingIcon class="mr-2 size-5 animate-spin" />
                                         </template>
                                         {{ $t('common.post') }}
                                     </UButton>
@@ -233,7 +228,7 @@ const onSubmitThrottle = useThrottleFn(async (e) => {
                 :focus="focusComment"
             />
             <div
-                class="flow-root rounded-lg bg-base-800 text-neutral shadow-sm ring-1 ring-inset ring-gray-500 focus-within:ring-2 focus-within:ring-primary-600"
+                class="flow-root rounded-lg bg-base-800 shadow-sm ring-1 ring-inset ring-gray-500 focus-within:ring-2 focus-within:ring-primary-600"
             >
                 <ul v-if="data && data.comments && data.comments.length > 0" role="list" class="divide-y divide-gray-200 px-2">
                     <DocumentCommentEntry
@@ -244,12 +239,13 @@ const onSubmitThrottle = useThrottleFn(async (e) => {
                     />
                 </ul>
 
-                <TablePagination
-                    class="mt-2"
-                    :pagination="data?.pagination"
-                    :refresh="refresh"
-                    @offset-change="offset = $event"
-                />
+                <div class="flex justify-end px-3 py-3.5 border-t border-gray-200 dark:border-gray-700">
+                    <UPagination
+                        v-model="page"
+                        :page-count="data?.pagination?.pageSize ?? 0"
+                        :total="data?.pagination?.totalCount ?? 0"
+                    />
+                </div>
             </div>
         </div>
     </div>

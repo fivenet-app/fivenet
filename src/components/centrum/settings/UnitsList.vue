@@ -42,14 +42,14 @@ const openSettings = ref(false);
                         <div class="grid flex-initial grid-cols-2 gap-4">
                             <UButton
                                 v-if="can('CentrumService.CreateOrUpdateUnit')"
-                                class="inline-flex rounded-md bg-primary-500 px-3 py-2 text-sm font-semibold text-neutral hover:bg-primary-400 focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2"
+                                class="inline-flex rounded-md bg-primary-500 px-3 py-2 text-sm font-semibold hover:bg-primary-400 focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2"
                                 @click="open = true"
                             >
                                 {{ $t('components.centrum.units.create_unit') }}
                             </UButton>
                             <UButton
                                 v-if="can('CentrumService.Stream')"
-                                class="inline-flex rounded-md bg-primary-500 px-3 py-2 text-sm font-semibold text-neutral hover:bg-primary-400 focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2"
+                                class="inline-flex rounded-md bg-primary-500 px-3 py-2 text-sm font-semibold hover:bg-primary-400 focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2"
                                 @click="openSettings = true"
                             >
                                 {{ $t('common.setting', 2) }}
@@ -70,27 +70,27 @@ const openSettings = ref(false);
                             <GenericTable>
                                 <template #thead>
                                     <tr>
-                                        <th scope="col" class="px-2 py-3.5 text-left text-sm font-semibold text-neutral">
+                                        <th scope="col" class="px-2 py-3.5 text-left text-sm font-semibold">
                                             {{ $t('common.name') }}
                                         </th>
-                                        <th scope="col" class="px-2 py-3.5 text-left text-sm font-semibold text-neutral">
+                                        <th scope="col" class="px-2 py-3.5 text-left text-sm font-semibold">
                                             {{ $t('common.initials') }}
                                         </th>
-                                        <th scope="col" class="px-2 py-3.5 text-left text-sm font-semibold text-neutral">
+                                        <th scope="col" class="px-2 py-3.5 text-left text-sm font-semibold">
                                             {{ $t('common.description') }}
                                         </th>
-                                        <th scope="col" class="px-2 py-3.5 text-left text-sm font-semibold text-neutral">
+                                        <th scope="col" class="px-2 py-3.5 text-left text-sm font-semibold">
                                             {{ $t('common.attributes', 2) }}
                                         </th>
-                                        <th scope="col" class="px-2 py-3.5 text-left text-sm font-semibold text-neutral">
+                                        <th scope="col" class="px-2 py-3.5 text-left text-sm font-semibold">
                                             {{ $t('common.color') }}
                                         </th>
-                                        <th scope="col" class="px-2 py-3.5 text-left text-sm font-semibold text-neutral">
+                                        <th scope="col" class="px-2 py-3.5 text-left text-sm font-semibold">
                                             {{ $t('common.department_postal') }}
                                         </th>
                                         <th
                                             scope="col"
-                                            class="relative py-3.5 pl-3 pr-4 text-right text-sm font-semibold text-neutral sm:pr-0"
+                                            class="relative py-3.5 pl-3 pr-4 text-right text-sm font-semibold sm:pr-0"
                                         >
                                             {{ $t('common.action', 2) }}
                                         </th>

@@ -117,16 +117,16 @@ const onSubmitThrottle = useThrottleFn(async (e) => {
                     <div class="flex flex-1 items-center text-accent-200">
                         <GenericTime class="ml-2 text-sm" :value="comment.createdAt" />
                     </div>
-                    <div v-if="comment.deletedAt" class="flex flex-1 flex-row items-center justify-center text-neutral">
-                        <TrashCanIcon class="mr-1.5 size-5 shrink-0" aria-hidden="true" />
+                    <div v-if="comment.deletedAt" class="flex flex-1 flex-row items-center justify-center">
+                        <TrashCanIcon class="mr-1.5 size-5 shrink-0" />
                         {{ $t('common.deleted') }}
                     </div>
                     <div v-if="comment.creatorId === activeChar?.userId || permissions.includes('superuser')">
                         <UButton v-if="can('DocStoreService.PostComment')" @click="editing = true">
-                            <PencilIcon class="ml-auto mr-2.5 h-auto w-5" aria-hidden="true" />
+                            <PencilIcon class="ml-auto mr-2.5 h-auto w-5" />
                         </UButton>
                         <UButton v-if="can('DocStoreService.DeleteComment')" @click="reveal()">
-                            <TrashCanIcon class="ml-auto mr-2.5 h-auto w-5" aria-hidden="true" />
+                            <TrashCanIcon class="ml-auto mr-2.5 h-auto w-5" />
                         </UButton>
                     </div>
                 </div>
@@ -158,7 +158,7 @@ const onSubmitThrottle = useThrottleFn(async (e) => {
                             />
 
                             <!-- Spacer element to match the height of the toolbar -->
-                            <div class="py-2" aria-hidden="true">
+                            <div class="py-2">
                                 <!-- Matches height of button in toolbar (1px border + 36px content height) -->
                                 <div class="py-px">
                                     <div class="h-9" />
@@ -174,16 +174,11 @@ const onSubmitThrottle = useThrottleFn(async (e) => {
                             <div class="shrink-0">
                                 <UButton
                                     type="submit"
-                                    class="flex justify-center rounded-md px-3 py-2 text-sm font-semibold text-neutral shadow-sm focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2"
+                                    class="flex justify-center rounded-md px-3 py-2 text-sm font-semibold shadow-sm focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2"
                                     :disabled="!meta.valid || !canSubmit"
-                                    :class="[
-                                        !meta.valid || !canSubmit
-                                            ? 'disabled bg-base-500 hover:bg-base-400 focus-visible:outline-base-500'
-                                            : 'bg-primary-500 hover:bg-primary-400',
-                                    ]"
                                 >
                                     <template v-if="!canSubmit">
-                                        <LoadingIcon class="mr-2 size-5 animate-spin" aria-hidden="true" />
+                                        <LoadingIcon class="mr-2 size-5 animate-spin" />
                                     </template>
                                     {{ $t('common.edit') }}
                                 </UButton>

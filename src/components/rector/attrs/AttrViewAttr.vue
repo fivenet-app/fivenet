@@ -171,7 +171,7 @@ onBeforeMount(async () => {
         <Disclosure
             v-slot="{ open }"
             as="div"
-            :class="[disabled ? 'border-neutral/10 text-base-300' : 'border-neutral/20 text-neutral hover:border-neutral/70']"
+            :class="[disabled ? 'border-neutral/10 text-base-300' : 'border-neutral/20 hover:border-neutral/70']"
         >
             <DisclosureButton
                 :disabled="disabled"
@@ -186,7 +186,7 @@ onBeforeMount(async () => {
                     {{ $t(`perms.${attribute.category}.${attribute.name}.attrs_types.${attribute.key}`) }}
                 </span>
                 <span class="ml-6 flex h-7 items-center">
-                    <ChevronDownIcon :class="[open ? 'upsidedown' : '', 'size-5 transition-transform']" aria-hidden="true" />
+                    <ChevronDownIcon :class="[open ? 'upsidedown' : '', 'size-5 transition-transform']" />
                 </span>
             </DisclosureButton>
             <DisclosurePanel class="-mt-2 rounded-b-lg border-2 border-t-0 border-inherit px-4 pb-2 transition-colors">
@@ -266,11 +266,11 @@ onBeforeMount(async () => {
                             >
                                 <div class="relative">
                                     <ListboxButton
-                                        class="block w-full rounded-md border-0 bg-base-700 py-1.5 pl-3 text-left text-neutral placeholder:text-accent-200 focus:ring-2 focus:ring-inset focus:ring-base-300 disabled:cursor-not-allowed disabled:bg-base-800 disabled:text-neutral/50 sm:text-sm sm:leading-6"
+                                        class="block w-full rounded-md border-0 bg-base-700 py-1.5 pl-3 text-left placeholder:text-accent-200 focus:ring-2 focus:ring-inset focus:ring-base-300 disabled:cursor-not-allowed disabled:bg-base-800 disabled:text-neutral/50 sm:text-sm sm:leading-6"
                                     >
                                         <span class="block truncate">{{ jobGrades.get(job.name)?.label }}</span>
                                         <span class="pointer-events-none absolute inset-y-0 right-0 flex items-center pr-2">
-                                            <ChevronDownIcon class="size-5 text-gray-400" aria-hidden="true" />
+                                            <ChevronDownIcon class="size-5 text-gray-400" />
                                         </span>
                                     </ListboxButton>
 
@@ -292,7 +292,7 @@ onBeforeMount(async () => {
                                                 <li
                                                     :class="[
                                                         active ? 'bg-primary-500' : '',
-                                                        'relative cursor-default select-none py-2 pl-8 pr-4 text-neutral',
+                                                        'relative cursor-default select-none py-2 pl-8 pr-4',
                                                     ]"
                                                 >
                                                     <span
@@ -308,7 +308,7 @@ onBeforeMount(async () => {
                                                             'absolute inset-y-0 left-0 flex items-center pl-1.5',
                                                         ]"
                                                     >
-                                                        <CheckIcon class="size-5" aria-hidden="true" />
+                                                        <CheckIcon class="size-5" />
                                                     </span>
                                                 </li>
                                             </ListboxOption>

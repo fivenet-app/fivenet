@@ -2,8 +2,6 @@
 import { Disclosure, DisclosureButton, DisclosurePanel } from '@headlessui/vue';
 import { ChevronDownIcon, LicenseIcon, LockIcon, MagnifyIcon, MapIcon } from 'mdi-vue3';
 import '~/assets/css/herofull-pattern.css';
-import PageFooter from '~/components/partials/PageFooter.vue';
-import DiscordLogo from '~/components/partials/logos/DiscordLogo.vue';
 
 const { t } = useI18n();
 
@@ -41,14 +39,14 @@ const faqs = [
 </script>
 
 <template>
-    <UDashboardPage>
-        <UDashboardPanel grow>
+    <UPage>
+        <UDashboardPanel>
             <div class="flex flex-col justify-between">
                 <div>
                     <div class="hero relative isolate bg-primary-900 px-6 py-12 sm:py-16 lg:px-8">
                         <div class="hero-overlay absolute left-0 top-0 z-[-1] size-full"></div>
                         <div class="mx-auto max-w-2xl text-center">
-                            <h2 class="text-4xl font-bold tracking-tight text-neutral sm:text-6xl">
+                            <h2 class="text-4xl font-bold tracking-tight sm:text-6xl">
                                 {{ $t('common.about') }}
                             </h2>
                             <p class="mt-6 text-lg leading-8 text-gray-300">
@@ -95,10 +93,7 @@ const faqs = [
                                     <div class="max-w-xl text-base leading-7 text-gray-100 lg:max-w-lg">
                                         <ul role="list" class="mt-8 space-y-8 text-gray-300">
                                             <li class="flex gap-x-3">
-                                                <MagnifyIcon
-                                                    class="mt-1 size-5 flex-none text-primary-300"
-                                                    aria-hidden="true"
-                                                />
+                                                <MagnifyIcon class="mt-1 size-5 flex-none text-primary-300" />
                                                 <span>
                                                     <strong class="font-semibold text-gray-200">{{
                                                         $t('components.about.introduction.feature_one.title')
@@ -107,7 +102,7 @@ const faqs = [
                                                 </span>
                                             </li>
                                             <li class="flex gap-x-3">
-                                                <LockIcon class="mt-1 size-5 flex-none text-primary-300" aria-hidden="true" />
+                                                <LockIcon class="mt-1 size-5 flex-none text-primary-300" />
                                                 <span>
                                                     <strong class="font-semibold text-gray-200">{{
                                                         $t('components.about.introduction.feature_two.title')
@@ -116,7 +111,7 @@ const faqs = [
                                                 </span>
                                             </li>
                                             <li class="flex gap-x-3">
-                                                <MapIcon class="mt-1 size-5 flex-none text-primary-300" aria-hidden="true" />
+                                                <MapIcon class="mt-1 size-5 flex-none text-primary-300" />
                                                 <span>
                                                     <strong class="font-semibold text-gray-200">{{
                                                         $t('components.about.introduction.feature_three.title')
@@ -133,20 +128,17 @@ const faqs = [
                     <div class="bg-primary-900">
                         <div class="mx-auto max-w-7xl px-6 py-12 sm:py-16 lg:px-8 lg:py-10">
                             <div class="mx-auto max-w-4xl divide-y divide-neutral/10">
-                                <h2 class="text-2xl font-bold leading-10 tracking-tight text-neutral">
+                                <h2 class="text-2xl font-bold leading-10 tracking-tight">
                                     {{ $t('components.about.faq.title') }}
                                 </h2>
                                 <dl class="mt-10 space-y-6 divide-y divide-neutral/10">
                                     <Disclosure v-for="faq in faqs" :key="faq.question" v-slot="{ open }" as="div" class="pt-6">
                                         <dt>
-                                            <DisclosureButton
-                                                class="flex w-full items-start justify-between text-left text-neutral"
-                                            >
+                                            <DisclosureButton class="flex w-full items-start justify-between text-left">
                                                 <span class="text-base font-semibold leading-7">{{ faq.question }}</span>
                                                 <span class="ml-6 flex h-7 items-center">
                                                     <ChevronDownIcon
                                                         :class="[open ? 'upsidedown' : '', 'size-5 transition-transform']"
-                                                        aria-hidden="true"
                                                     />
                                                 </span>
                                             </DisclosureButton>
@@ -163,7 +155,7 @@ const faqs = [
                     <div class="relative bg-primary-900">
                         <div class="mx-auto max-w-7xl px-6 py-12 sm:py-16 lg:px-8 lg:py-10">
                             <div class="mx-auto max-w-4xl">
-                                <p class="mt-2 text-3xl font-bold tracking-tight text-neutral sm:text-4xl">
+                                <p class="mt-2 text-3xl font-bold tracking-tight sm:text-4xl">
                                     {{ $t('components.about.questions_or_issues.title') }}
                                 </p>
                                 <p class="mt-6 text-base leading-7 text-gray-300">
@@ -173,9 +165,9 @@ const faqs = [
                                     <NuxtLink
                                         :to="discordLink"
                                         :external="true"
-                                        class="inline-flex items-center gap-x-2 rounded-md bg-neutral/10 px-3.5 py-2.5 text-sm font-semibold text-neutral shadow-sm hover:bg-secondary-500 focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-secondary-600"
+                                        class="inline-flex items-center gap-x-2 rounded-md bg-neutral/10 px-3.5 py-2.5 text-sm font-semibold shadow-sm focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-secondary-600"
                                     >
-                                        <DiscordLogo class="-ml-0.5 size-5" aria-hidden="true" />
+                                        <UIcon name="i-simple-icons-discord" class="size-5" color="#5865f2" />
                                         <span>
                                             {{ $t('components.about.join_discord') }}
                                         </span>
@@ -187,15 +179,15 @@ const faqs = [
                     <div class="relative bg-primary-900">
                         <div class="mx-auto max-w-7xl px-6 py-12 sm:py-16 lg:px-8 lg:py-10">
                             <div class="mx-auto max-w-4xl">
-                                <p class="mt-2 text-3xl font-bold tracking-tight text-neutral sm:text-4xl">
+                                <p class="mt-2 text-3xl font-bold tracking-tight sm:text-4xl">
                                     {{ $t('common.licenses') }}
                                 </p>
                                 <div class="mt-8">
                                     <NuxtLink
                                         :to="{ name: 'about-licenses' }"
-                                        class="inline-flex items-center gap-x-2 rounded-md bg-neutral/10 px-3.5 py-2.5 text-sm font-semibold text-neutral shadow-sm hover:bg-secondary-500 focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-secondary-600"
+                                        class="inline-flex items-center gap-x-2 rounded-md bg-neutral/10 px-3.5 py-2.5 text-sm font-semibold shadow-sm focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-secondary-600"
                                     >
-                                        <LicenseIcon class="-ml-0.5 size-5" aria-hidden="true" />
+                                        <LicenseIcon class="-ml-0.5 size-5" />
                                         <span>
                                             {{ $t('components.about.licenses_list') }}
                                         </span>
@@ -205,8 +197,7 @@ const faqs = [
                         </div>
                     </div>
                 </div>
-                <PageFooter />
             </div>
         </UDashboardPanel>
-    </UDashboardPage>
+    </UPage>
 </template>

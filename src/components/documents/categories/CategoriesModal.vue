@@ -153,16 +153,16 @@ const onSubmitThrottle = useThrottleFn(async (e) => {
                                     @click="$emit('close')"
                                 >
                                     <span class="sr-only">{{ $t('common.close') }}</span>
-                                    <CloseIcon class="size-5" aria-hidden="true" />
+                                    <CloseIcon class="size-5" />
                                 </UButton>
                             </div>
                             <form @submit.prevent="onSubmitThrottle">
                                 <div>
                                     <div class="mx-auto flex size-12 items-center justify-center rounded-full bg-primary-100">
-                                        <TagIcon class="size-5 text-primary-600" aria-hidden="true" />
+                                        <TagIcon class="size-5 text-primary-600" />
                                     </div>
                                     <div class="mt-3 text-center sm:mt-5">
-                                        <DialogTitle as="h3" class="text-base font-semibold leading-6 text-neutral">
+                                        <DialogTitle as="h3" class="text-base font-semibold leading-6">
                                             <template v-if="category">
                                                 {{ $t('components.documents.categories.modal.update_category') }}:
                                                 {{ category?.name }}
@@ -174,7 +174,7 @@ const onSubmitThrottle = useThrottleFn(async (e) => {
                                         <div class="mt-2">
                                             <div class="text-sm text-gray-100">
                                                 <div class="flex-1">
-                                                    <label for="name" class="block text-sm font-medium leading-6 text-neutral">
+                                                    <label for="name" class="block text-sm font-medium leading-6">
                                                         {{ $t('common.category', 1) }}
                                                     </label>
                                                     <VeeField
@@ -183,17 +183,14 @@ const onSubmitThrottle = useThrottleFn(async (e) => {
                                                         :placeholder="$t('common.category', 1)"
                                                         :label="$t('common.category', 1)"
                                                         :value="category?.name"
-                                                        class="block w-full rounded-md border-0 bg-base-700 py-1.5 pr-14 text-neutral placeholder:text-accent-200 focus:ring-2 focus:ring-inset focus:ring-base-300 sm:text-sm sm:leading-6"
+                                                        class="block w-full rounded-md border-0 bg-base-700 py-1.5 pr-14 placeholder:text-accent-200 focus:ring-2 focus:ring-inset focus:ring-base-300 sm:text-sm sm:leading-6"
                                                         @focusin="focusTablet(true)"
                                                         @focusout="focusTablet(false)"
                                                     />
                                                     <VeeErrorMessage name="name" as="p" class="mt-2 text-sm text-error-400" />
                                                 </div>
                                                 <div class="flex-1">
-                                                    <label
-                                                        for="description"
-                                                        class="block text-sm font-medium leading-6 text-neutral"
-                                                    >
+                                                    <label for="description" class="block text-sm font-medium leading-6">
                                                         {{ $t('common.description') }}
                                                     </label>
                                                     <VeeField
@@ -202,7 +199,7 @@ const onSubmitThrottle = useThrottleFn(async (e) => {
                                                         :placeholder="$t('common.description')"
                                                         :label="$t('common.description')"
                                                         :value="category?.description"
-                                                        class="block w-full rounded-md border-0 bg-base-700 py-1.5 pr-14 text-neutral placeholder:text-accent-200 focus:ring-2 focus:ring-inset focus:ring-base-300 sm:text-sm sm:leading-6"
+                                                        class="block w-full rounded-md border-0 bg-base-700 py-1.5 pr-14 placeholder:text-accent-200 focus:ring-2 focus:ring-inset focus:ring-base-300 sm:text-sm sm:leading-6"
                                                         @focusin="focusTablet(true)"
                                                         @focusout="focusTablet(false)"
                                                     />
@@ -219,7 +216,7 @@ const onSubmitThrottle = useThrottleFn(async (e) => {
                                 <div class="mt-5 sm:mt-6 sm:flex sm:gap-3">
                                     <UButton
                                         v-if="category !== undefined && can('DocStoreService.DeleteCategory')"
-                                        class="flex w-full justify-center rounded-md px-3 py-2 text-sm font-semibold text-neutral shadow-sm focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2"
+                                        class="flex w-full justify-center rounded-md px-3 py-2 text-sm font-semibold shadow-sm focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2"
                                         :disabled="!meta.valid || !canSubmit"
                                         :class="[
                                             !meta.valid || !canSubmit
@@ -229,22 +226,17 @@ const onSubmitThrottle = useThrottleFn(async (e) => {
                                         @click="deleteCategory()"
                                     >
                                         <template v-if="!canSubmit">
-                                            <LoadingIcon class="mr-2 size-5 animate-spin" aria-hidden="true" />
+                                            <LoadingIcon class="mr-2 size-5 animate-spin" />
                                         </template>
                                         {{ $t('common.delete') }}
                                     </UButton>
                                     <UButton
                                         type="submit"
-                                        class="flex w-full justify-center rounded-md px-3 py-2 text-sm font-semibold text-neutral shadow-sm focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2"
+                                        class="flex w-full justify-center rounded-md px-3 py-2 text-sm font-semibold shadow-sm focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2"
                                         :disabled="!meta.valid || !canSubmit"
-                                        :class="[
-                                            !meta.valid || !canSubmit
-                                                ? 'disabled bg-base-500 hover:bg-base-400 focus-visible:outline-base-500'
-                                                : 'bg-primary-500 hover:bg-primary-400',
-                                        ]"
                                     >
                                         <template v-if="!canSubmit">
-                                            <LoadingIcon class="mr-2 size-5 animate-spin" aria-hidden="true" />
+                                            <LoadingIcon class="mr-2 size-5 animate-spin" />
                                         </template>
                                         {{ category === undefined ? $t('common.create') : $t('common.update') }}
                                     </UButton>

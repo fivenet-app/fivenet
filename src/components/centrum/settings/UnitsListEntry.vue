@@ -50,16 +50,16 @@ const open = ref(false);
     />
 
     <tr class="transition-colors even:bg-base-800 hover:bg-neutral/5">
-        <td class="whitespace-nowrap py-2 pl-4 pr-3 text-sm font-medium text-neutral sm:pl-1">
+        <td class="whitespace-nowrap py-2 pl-4 pr-3 text-sm font-medium sm:pl-1">
             {{ unit.name }}
         </td>
-        <td class="whitespace-nowrap py-2 pl-4 pr-3 text-sm font-medium text-neutral sm:pl-1">
+        <td class="whitespace-nowrap py-2 pl-4 pr-3 text-sm font-medium sm:pl-1">
             {{ unit.initials }}
         </td>
-        <td class="whitespace-nowrap py-2 pl-4 pr-3 text-sm font-medium text-neutral sm:pl-1">
+        <td class="whitespace-nowrap py-2 pl-4 pr-3 text-sm font-medium sm:pl-1">
             {{ unit.description }}
         </td>
-        <td class="whitespace-nowrap py-2 pl-4 pr-3 text-sm font-medium text-neutral sm:pl-1">
+        <td class="whitespace-nowrap py-2 pl-4 pr-3 text-sm font-medium sm:pl-1">
             <template v-if="unit.attributes !== undefined && unit.attributes?.list.length > 0">
                 <span
                     v-for="attribute in unit.attributes?.list"
@@ -73,10 +73,10 @@ const open = ref(false);
                 {{ $t('common.none', [$t('common.attributes', 2)]) }}
             </template>
         </td>
-        <td class="whitespace-nowrap py-2 pl-4 pr-3 text-sm font-medium text-neutral sm:pl-1">
+        <td class="whitespace-nowrap py-2 pl-4 pr-3 text-sm font-medium sm:pl-1">
             <ColorInput v-model="color" disabled format="hex" class="h-6" />
         </td>
-        <td class="whitespace-nowrap py-2 pl-4 pr-3 text-sm font-medium text-neutral sm:pl-1">
+        <td class="whitespace-nowrap py-2 pl-4 pr-3 text-sm font-medium sm:pl-1">
             {{ unit.homePostal ?? $t('common.na') }}
         </td>
         <td class="whitespace-nowrap py-2 pl-3 pr-4 text-right text-sm font-medium sm:pr-0">
@@ -86,14 +86,14 @@ const open = ref(false);
                     class="flex-initial text-primary-500 hover:text-primary-400"
                     @click="open = true"
                 >
-                    <PencilIcon class="size-5" aria-hidden="true" />
+                    <PencilIcon class="size-5" />
                 </UButton>
                 <UButton
                     v-if="can('CentrumService.DeleteUnit')"
                     class="flex-initial text-primary-500 hover:text-primary-400"
                     @click="reveal(unit.id)"
                 >
-                    <TrashCanIcon class="size-5" aria-hidden="true" />
+                    <TrashCanIcon class="size-5" />
                 </UButton>
             </div>
         </td>

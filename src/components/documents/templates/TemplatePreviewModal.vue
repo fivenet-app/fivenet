@@ -74,7 +74,7 @@ async function getTemplate(): Promise<Template> {
                     >
                         <div>
                             <DialogPanel
-                                class="relative w-full overflow-hidden rounded-lg bg-base-800 px-4 pb-4 pt-5 text-left text-neutral transition-all sm:my-8 sm:w-screen sm:min-w-min sm:p-6"
+                                class="relative w-full overflow-hidden rounded-lg bg-base-800 px-4 pb-4 pt-5 text-left transition-all sm:my-8 sm:w-screen sm:min-w-min sm:p-6"
                             >
                                 <div class="absolute right-0 top-0 block pr-4 pt-4">
                                     <UButton
@@ -82,7 +82,7 @@ async function getTemplate(): Promise<Template> {
                                         @click="$emit('close')"
                                     >
                                         <span class="sr-only">{{ $t('common.close') }}</span>
-                                        <CloseIcon class="size-5" aria-hidden="true" />
+                                        <CloseIcon class="size-5" />
                                     </UButton>
                                 </div>
                                 <div>
@@ -109,30 +109,30 @@ async function getTemplate(): Promise<Template> {
 
                                                 <template v-else>
                                                     <div>
-                                                        <label class="mb-2 block text-sm font-medium leading-6 text-neutral">
+                                                        <label class="mb-2 block text-sm font-medium leading-6">
                                                             {{ $t('common.title') }}
                                                         </label>
                                                         <h1
-                                                            class="mt-4 break-words rounded-lg bg-base-800 p-2 text-2xl font-bold text-neutral"
+                                                            class="mt-4 break-words rounded-lg bg-base-800 p-2 text-2xl font-bold"
                                                         >
                                                             {{ template?.title }}
                                                         </h1>
                                                     </div>
                                                     <div>
-                                                        <label class="mb-2 block text-sm font-medium leading-6 text-neutral">
+                                                        <label class="mb-2 block text-sm font-medium leading-6">
                                                             {{ $t('common.state') }}
                                                         </label>
                                                         <p
-                                                            class="mt-4 break-words rounded-lg bg-base-800 p-2 text-base font-bold text-neutral"
+                                                            class="mt-4 break-words rounded-lg bg-base-800 p-2 text-base font-bold"
                                                         >
                                                             {{ template?.state }}
                                                         </p>
                                                     </div>
 
-                                                    <label class="mb-2 block text-sm font-medium leading-6 text-neutral">
+                                                    <label class="mb-2 block text-sm font-medium leading-6">
                                                         {{ $t('common.content') }}
                                                     </label>
-                                                    <div class="mt-4 break-words rounded-lg bg-base-800 p-2 text-neutral">
+                                                    <div class="mt-4 break-words rounded-lg bg-base-800 p-2">
                                                         <!-- eslint-disable-next-line vue/no-v-html -->
                                                         <p v-html="template?.content"></p>
                                                     </div>
@@ -143,7 +143,7 @@ async function getTemplate(): Promise<Template> {
                                 </div>
                                 <div class="mt-5 gap-2 sm:mt-4 sm:flex">
                                     <UButton
-                                        class="flex-1 rounded-md bg-base-500 px-3.5 py-2.5 text-sm font-semibold text-neutral hover:bg-base-400"
+                                        class="flex-1 rounded-md bg-base-500 px-3.5 py-2.5 text-sm font-semibold hover:bg-base-400"
                                         @click="$emit('close')"
                                     >
                                         {{ $t('common.close', 1) }}

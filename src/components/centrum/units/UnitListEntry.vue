@@ -31,14 +31,14 @@ const open = ref(false);
         </div>
         <div class="flex flex-1 items-center justify-between truncate border border-gray-200">
             <div class="flex-1 px-1 py-2 text-sm">
-                <span class="font-medium text-neutral">{{ unit.name }}</span>
+                <span class="font-medium">{{ unit.name }}</span>
                 <p :class="unit.users.length === 0 ? 'text-gray-400' : 'text-gray-300'">
                     {{ $t('common.member', unit.users.length) }}
                 </p>
             </div>
         </div>
         <div
-            class="flex w-20 shrink-0 items-center justify-center rounded-r-md border-y border-r text-center text-sm font-medium text-neutral"
+            class="flex w-20 shrink-0 items-center justify-center rounded-r-md border-y border-r text-center text-sm font-medium"
             :class="unitStatusToBGColor(unit.status?.status)"
         >
             {{ $t(`enums.centrum.StatusUnit.${StatusUnit[unit.status?.status ?? 0]}`) }}

@@ -351,26 +351,27 @@ async function checkup(): Promise<void> {
                 >
                     <div
                         v-if="open"
-                        class="flex h-full grow gap-y-5 overflow-y-auto overflow-x-hidden bg-background py-0.5"
-                        :class="open || getOwnUnit !== undefined ? 'px-4' : ''"
+                        class="bg-background flex h-full grow gap-y-5 overflow-y-auto overflow-x-hidden py-0.5"
+                        :class="open || getOwnUnit !== undefined ? 'px-2' : ''"
                     >
                         <nav class="flex min-w-48 max-w-48 flex-1 flex-col md:min-w-64 md:max-w-64">
                             <ul role="list" class="flex flex-1 flex-col gap-y-2 divide-y divide-base-400">
                                 <li>
-                                    <ul role="list" class="-mx-2 mt-1 space-y-0.5">
+                                    <ul role="list" class="-mx-1 mt-1 space-y-0.5">
                                         <li>
                                             <template v-if="getOwnUnit !== undefined">
                                                 <UButton
-                                                    class="group flex w-full flex-col items-center rounded-md p-1.5 text-xs font-medium text-neutral hover:bg-primary-100/10 hover:text-neutral hover:transition-all"
+                                                    icon="i-mdi-information-outline"
+                                                    block
+                                                    class="flex flex-col"
                                                     :class="ownUnitStatus"
                                                     @click="openUnitDetails = true"
                                                 >
-                                                    <InformationOutlineIcon class="size-5" aria-hidden="true" />
-                                                    <span class="mt-1 truncate">
+                                                    <span class="truncate">
                                                         <span class="font-semibold">{{ getOwnUnit.initials }}:</span>
                                                         {{ getOwnUnit.name }}</span
                                                     >
-                                                    <span class="mt-1 truncate">
+                                                    <span class="truncate text-sm">
                                                         <span class="font-semibold">{{ $t('common.status') }}:</span>
                                                         {{
                                                             $t(
@@ -390,11 +391,11 @@ async function checkup(): Promise<void> {
                                                 />
                                             </template>
                                             <UButton
-                                                class="group my-0.5 flex w-full flex-col items-center rounded-md bg-info-700 p-1.5 text-xs font-medium text-neutral hover:bg-primary-100/10 hover:text-neutral hover:transition-all"
+                                                class="group my-0.5 flex w-full flex-col items-center rounded-md bg-info-700 p-1.5 text-xs font-medium hover:bg-primary-100/10 hover:transition-all"
                                                 @click="joinUnitOpen = true"
                                             >
                                                 <template v-if="getOwnUnit === undefined">
-                                                    <InformationOutlineIcon class="size-5" aria-hidden="true" />
+                                                    <InformationOutlineIcon class="size-5" />
                                                     <span class="mt-1 truncate">{{ $t('common.no_own_unit') }}</span>
                                                 </template>
                                                 <template v-else>
@@ -408,14 +409,10 @@ async function checkup(): Promise<void> {
                                 </li>
                                 <template v-if="getOwnUnit !== undefined">
                                     <li>
-                                        <ul role="list" class="-mx-2 space-y-0.5">
-                                            <div class="inline-flex items-center text-xs font-semibold leading-6 text-neutral">
+                                        <ul role="list" class="-mx-1 space-y-0.5">
+                                            <div class="inline-flex items-center text-xs font-semibold leading-6">
                                                 {{ $t('common.unit') }}
-                                                <LoadingIcon
-                                                    v-if="!canSubmitUnitStatus"
-                                                    class="ml-1 size-4 animate-spin"
-                                                    aria-hidden="true"
-                                                />
+                                                <LoadingIcon v-if="!canSubmitUnitStatus" class="ml-1 size-4 animate-spin" />
                                             </div>
                                             <UnitStatusUpdateModal
                                                 :unit="getOwnUnit"
@@ -427,20 +424,14 @@ async function checkup(): Promise<void> {
                                                     <UButton
                                                         v-for="item in unitStatuses"
                                                         :key="item.name"
-                                                        class="group my-0.5 flex w-full flex-col items-center rounded-md p-1.5 text-xs font-medium text-neutral hover:bg-primary-100/10 hover:text-neutral hover:transition-all"
                                                         :disabled="!canSubmitUnitStatus"
+                                                        :icon="item.icon"
                                                         :class="[
                                                             !canSubmitUnitStatus ? 'disabled' : '',
-                                                            item.status ? unitStatusToBGColor(item.status) : item.class,
-                                                            item.class,
+                                                            item.status && unitStatusToBGColor(item.status),
                                                         ]"
                                                         @click="onSubmitUnitStatusThrottle(getOwnUnit.id!, item.status)"
                                                     >
-                                                        <component
-                                                            :is="item.icon ?? HoopHouseIcon"
-                                                            class="size-5 shrink-0 text-neutral group-hover:text-neutral"
-                                                            aria-hidden="true"
-                                                        />
                                                         <span class="mt-1">
                                                             {{
                                                                 item.status
@@ -452,7 +443,7 @@ async function checkup(): Promise<void> {
                                                         </span>
                                                     </UButton>
                                                     <UButton
-                                                        class="group col-span-2 my-0.5 flex w-full flex-col items-center rounded-md bg-base-800 p-1.5 text-xs font-medium text-neutral hover:bg-primary-100/10 hover:text-neutral hover:transition-all"
+                                                        class="group col-span-2 my-0.5 flex w-full flex-col items-center rounded-md bg-base-800 p-1.5 text-xs font-medium hover:bg-primary-100/10 hover:transition-all"
                                                         @click="updateUtStatus(getOwnUnit.id)"
                                                     >
                                                         {{ $t('components.centrum.update_unit_status.title') }}
@@ -462,14 +453,10 @@ async function checkup(): Promise<void> {
                                         </ul>
                                     </li>
                                     <li>
-                                        <ul role="list" class="-mx-2 space-y-0.5">
-                                            <div class="inline-flex items-center text-xs font-semibold leading-6 text-neutral">
+                                        <ul role="list" class="-mx-1 space-y-0.5">
+                                            <div class="inline-flex items-center text-xs font-semibold leading-6">
                                                 {{ $t('common.dispatch') }} {{ $t('common.status') }}
-                                                <LoadingIcon
-                                                    v-if="!canSubmitDispatchStatus"
-                                                    class="ml-1 size-4 animate-spin"
-                                                    aria-hidden="true"
-                                                />
+                                                <LoadingIcon v-if="!canSubmitDispatchStatus" class="ml-1 size-4 animate-spin" />
                                             </div>
                                             <li>
                                                 <div class="grid grid-cols-2 gap-0.5">
@@ -478,20 +465,14 @@ async function checkup(): Promise<void> {
                                                             (s) => s.status !== StatusDispatch.CANCELLED,
                                                         )"
                                                         :key="item.name"
-                                                        class="group my-0.5 flex w-full flex-col items-center rounded-md p-1.5 text-xs font-medium text-neutral hover:bg-primary-100/10 hover:text-neutral hover:transition-all"
                                                         :disabled="!canSubmitDispatchStatus"
+                                                        :icon="item.icon"
                                                         :class="[
                                                             !canSubmitDispatchStatus ? 'disabled' : '',
-                                                            item.status ? dispatchStatusToBGColor(item.status) : item.class,
-                                                            item.class,
+                                                            item.status && dispatchStatusToBGColor(item.status),
                                                         ]"
                                                         @click="onSubmitDispatchStatusThrottle(selectedDispatch, item.status)"
                                                     >
-                                                        <component
-                                                            :is="item.icon ?? HoopHouseIcon"
-                                                            class="size-5 shrink-0 text-neutral group-hover:text-neutral"
-                                                            aria-hidden="true"
-                                                        />
                                                         <span class="mt-1">
                                                             {{
                                                                 item.status
@@ -505,7 +486,7 @@ async function checkup(): Promise<void> {
                                                         </span>
                                                     </UButton>
                                                     <UButton
-                                                        class="group col-span-2 my-0.5 flex w-full flex-col items-center rounded-md bg-base-800 p-1.5 text-xs font-medium text-neutral hover:bg-primary-100/10 hover:text-neutral hover:transition-all"
+                                                        class="group col-span-2 my-0.5 flex w-full flex-col items-center rounded-md bg-base-800 p-1.5 text-xs font-medium hover:bg-primary-100/10 hover:transition-all"
                                                         @click="updateDspStatus(selectedDispatch)"
                                                     >
                                                         {{ $t('components.centrum.update_dispatch_status.title') }}
@@ -515,16 +496,13 @@ async function checkup(): Promise<void> {
                                         </ul>
                                     </li>
                                     <li>
-                                        <div class="text-xs font-semibold leading-6 text-neutral">
+                                        <div class="text-xs font-semibold leading-6">
                                             {{ $t('common.your_dispatches') }}
                                         </div>
-                                        <ul role="list" class="-mx-2 mt-1 space-y-0.5">
+                                        <ul role="list" class="-mx-1 mt-1 space-y-0.5">
                                             <li v-if="getSortedOwnDispatches.length === 0">
-                                                <UButton
-                                                    class="group my-0.5 flex w-full flex-col items-center rounded-md bg-primary-100/10 p-1.5 text-xs font-medium text-neutral hover:text-neutral hover:transition-all"
-                                                >
-                                                    <CarEmergencyIcon class="size-5" aria-hidden="true" />
-                                                    <span class="mt-1 truncate">{{ $t('common.no_assigned_dispatches') }}</span>
+                                                <UButton color="gray" icon="i-mdi-car-emergency" block>
+                                                    {{ $t('common.no_assigned_dispatches') }}
                                                 </UButton>
                                             </li>
                                             <template v-else>
@@ -537,10 +515,8 @@ async function checkup(): Promise<void> {
                                                 />
                                             </template>
                                         </ul>
-                                        <div
-                                            class="mb-0.5 mt-1 divide-y border-t border-base-400 text-center text-xs leading-4 text-neutral"
-                                        >
-                                            <DispatchStatusBreakdown />
+                                        <div class="flex w-full mb-0.5 mt-1">
+                                            <DispatchStatusBreakdown class="mx-auto" />
                                         </div>
                                     </li>
                                 </template>
@@ -560,19 +536,19 @@ async function checkup(): Promise<void> {
                                 <span class="relative inline-flex size-3 rounded-full bg-error-500"></span>
                             </span>
                             <UButton
-                                class="flex size-12 items-center justify-center bg-accent-500 text-neutral hover:bg-accent-400"
+                                class="flex size-12 items-center justify-center"
                                 :class="getOwnUnit.homePostal !== undefined ? 'rounded-l-full' : 'rounded-full'"
                                 @click="openTakeDispatch = true"
                             >
-                                <CarEmergencyIcon class="h-auto w-10" aria-hidden="true" />
+                                <CarEmergencyIcon class="h-auto w-10" />
                             </UButton>
                         </span>
                         <UButton
                             v-if="getOwnUnit.homePostal !== undefined"
-                            class="flex size-12 items-center justify-center rounded-r-full bg-accent-500 text-neutral hover:bg-accent-400"
+                            class="flex size-12 items-center justify-center rounded-r-full"
                             @click="setWaypointPLZ(getOwnUnit.homePostal)"
                         >
-                            <HomeFloorBIcon class="h-auto w-10" aria-hidden="true" />
+                            <HomeFloorBIcon class="h-auto w-10" />
                         </UButton>
                     </span>
                 </template>

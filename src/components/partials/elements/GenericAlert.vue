@@ -60,7 +60,7 @@ switch (props.type) {
     <div class="mt-6 rounded-md p-4" :class="bgClass">
         <div class="flex">
             <div class="shrink-0">
-                <component :is="icon" class="size-5" :class="iconClass" aria-hidden="true" />
+                <component :is="icon" class="size-5" :class="iconClass" />
             </div>
             <div class="ml-3">
                 <h3 class="text-sm font-medium" :class="textClass">
@@ -77,7 +77,7 @@ switch (props.type) {
                             @click="$emit('clicked')"
                         >
                             {{ callbackMessage ?? $t('common.retry') }}
-                            <GestureTapIcon class="ml-2 size-5" aria-hidden="true" />
+                            <GestureTapIcon class="ml-2 size-5" />
                         </UButton>
                     </div>
                 </div>

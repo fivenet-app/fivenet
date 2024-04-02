@@ -52,14 +52,10 @@ async function doCall(): Promise<void> {
     <div class="inline-flex items-center">
         <span v-if="number === undefined">N/A</span>
         <template v-else>
-            <span
-                v-if="showIcon === undefined || showIcon"
-                class="mr-1 inline-flex flex-initial items-center text-primary-500 hover:text-primary-400"
-                @click="doCall"
-            >
-                <PhoneIcon class="hidden h-auto sm:block" :class="width" aria-hidden="true" />
-                <span v-if="showLabel" class="ml-1">{{ $t('common.call') }}</span>
-            </span>
+            <UButton v-if="showIcon === undefined || showIcon" variant="link" icon="i-mdi-phone" @click="doCall">
+                <span class="sr-only">{{ $t('common.call') }}</span>
+                <span v-if="showLabel">{{ $t('common.call') }}</span>
+            </UButton>
 
             <span v-if="hideNumber === undefined || !hideNumber" :class="streamerMode ? 'blur' : ''">
                 <span v-for="(part, idx) in (number ?? '').match(/.{1,3}/g)" :key="idx" class="mr-1">{{ part }}</span>

@@ -4,7 +4,6 @@ import type { ListDocumentActivityResponse } from '~~/gen/ts/services/docstore/d
 import DataErrorBlock from '~/components/partials/data/DataErrorBlock.vue';
 import DataNoDataBlock from '~/components/partials/data/DataNoDataBlock.vue';
 import DataPendingBlock from '~/components/partials/data/DataPendingBlock.vue';
-import TablePagination from '~/components/partials/elements/TablePagination.vue';
 import DocumentActivityListEntry from '~/components/documents/DocumentActivityListEntry.vue';
 
 const props = defineProps<{
@@ -13,9 +12,10 @@ const props = defineProps<{
 
 const { $grpc } = useNuxtApp();
 
-const offset = ref(0);
+const page = ref(1);
+const offset = computed(() => (data.value?.pagination?.pageSize ? data.value?.pagination?.pageSize * page.value : 0));
 
-const { data, pending, refresh, error } = useLazyAsyncData(`document-${props.documentId}-${offset.value}`, () =>
+const { data, pending, refresh, error } = useLazyAsyncData(`document-${props.documentId}-${page.value}`, () =>
     listDocumentActivity(),
 );
 
@@ -54,8 +54,14 @@ watch(offset, async () => refresh());
             <div class="mb-1 sm:divide-y sm:divide-base-400">
                 <DocumentActivityListEntry v-for="item in data.activity" :key="item.id" :entry="item" />
             </div>
-
-            <TablePagination :pagination="data?.pagination" :refresh="refresh" @offset-change="offset = $event" />
         </template>
+
+        <div class="flex justify-end px-3 py-3.5 border-t border-gray-200 dark:border-gray-700">
+            <UPagination
+                v-model="page"
+                :page-count="data?.pagination?.pageSize ?? 0"
+                :total="data?.pagination?.totalCount ?? 0"
+            />
+        </div>
     </div>
 </template>

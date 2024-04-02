@@ -1,6 +1,5 @@
 <script lang="ts" setup>
 import { useConfirmDialog } from '@vueuse/core';
-import { CloseCircleIcon } from 'mdi-vue3';
 import GenericContainerPanelEntry from '~/components/partials/elements/GenericContainerPanelEntry.vue';
 import type { OAuth2Account, OAuth2Provider } from '~~/gen/ts/resources/accounts/oauth2';
 import OAuth2ConnectButton from '~/components/auth/account/OAuth2ConnectButton.vue';
@@ -39,33 +38,29 @@ onConfirm(async (provider) => disconnectOAuth2Connection(provider));
 
     <GenericContainerPanelEntry>
         <template #title>
-            <NuxtLink :external="true" :to="provider.homepage" target="_blank">
+            <UButton variant="link" :external="true" :to="provider.homepage" target="_blank">
                 {{ provider.label }}
-            </NuxtLink>
+            </UButton>
         </template>
         <template #default>
             <div v-if="account !== undefined" class="flex items-center justify-between">
                 <img
                     :src="account.avatar"
                     alt="Avatar"
-                    class="size-10 rounded-full bg-base-800 fill-base-300 text-base-300 ring-2 ring-neutral hover:fill-base-100 hover:text-neutral hover:transition-colors"
+                    class="size-10 rounded-full bg-base-800 fill-base-300 ring-2 hover:transition-colors"
                 />
 
                 <span class="text-left" :title="`ID: ${account.externalId}`">
                     {{ account.username }}
                 </span>
 
-                <UButton
-                    class="inline-flex items-center gap-1 rounded-md bg-error-600 p-2 text-sm font-semibold text-neutral hover:bg-error-700"
-                    @click="reveal(provider)"
-                >
-                    <CloseCircleIcon class="size-5" aria-hidden="true" />
-                    <span>{{ $t('common.disconnect') }}</span>
+                <UButton icon="i-mdi-close-circle" color="red" @click="reveal(provider)">
+                    {{ $t('common.disconnect') }}
                 </UButton>
             </div>
             <div v-else>
                 <template v-if="isNUIAvailable()">
-                    <p class="ml-4 text-end text-sm text-neutral">
+                    <p class="ml-4 text-end text-sm">
                         {{ $t('system.not_supported_on_tablet.title') }}
                     </p>
                 </template>

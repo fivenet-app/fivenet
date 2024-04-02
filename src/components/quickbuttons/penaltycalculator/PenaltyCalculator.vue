@@ -182,7 +182,7 @@ watch(props, () => {
                             type="text"
                             name="search"
                             :placeholder="$t('common.filter')"
-                            class="block w-full rounded-md border-0 bg-base-700 py-1.5 pr-14 text-neutral placeholder:text-accent-200 focus:ring-2 focus:ring-inset focus:ring-base-300 sm:text-sm sm:leading-6"
+                            class="block w-full rounded-md border-0 bg-base-700 py-1.5 pr-14 placeholder:text-accent-200 focus:ring-2 focus:ring-inset focus:ring-base-300 sm:text-sm sm:leading-6"
                             @focusin="focusTablet(true)"
                             @focusout="focusTablet(false)"
                         />
@@ -197,7 +197,7 @@ watch(props, () => {
                             :default-open="query.length > 0"
                         >
                             <dt>
-                                <DisclosureButton class="flex w-full items-start justify-between text-left text-neutral">
+                                <DisclosureButton class="flex w-full items-start justify-between text-left">
                                     <span class="text-base font-semibold leading-7">
                                         {{ lawBook.name }}
                                         <span v-if="lawBook.description">
@@ -205,10 +205,7 @@ watch(props, () => {
                                         </span>
                                     </span>
                                     <span class="ml-6 flex h-7 items-center">
-                                        <ChevronDownIcon
-                                            :class="[open ? 'upsidedown' : '', 'size-5 transition-transform']"
-                                            aria-hidden="true"
-                                        />
+                                        <ChevronDownIcon :class="[open ? 'upsidedown' : '', 'size-5 transition-transform']" />
                                     </span>
                                 </DisclosureButton>
                             </dt>
@@ -221,37 +218,25 @@ watch(props, () => {
                                                     <tr>
                                                         <th
                                                             scope="col"
-                                                            class="py-3.5 pl-4 pr-3 text-left text-sm font-semibold text-neutral sm:pl-1"
+                                                            class="py-3.5 pl-4 pr-3 text-left text-sm font-semibold sm:pl-1"
                                                         >
                                                             {{ $t('common.crime') }}
                                                         </th>
-                                                        <th
-                                                            scope="col"
-                                                            class="px-2 py-3.5 text-left text-sm font-semibold text-neutral"
-                                                        >
+                                                        <th scope="col" class="px-2 py-3.5 text-left text-sm font-semibold">
                                                             {{ $t('common.fine') }}
                                                         </th>
-                                                        <th
-                                                            scope="col"
-                                                            class="px-2 py-3.5 text-left text-sm font-semibold text-neutral"
-                                                        >
+                                                        <th scope="col" class="px-2 py-3.5 text-left text-sm font-semibold">
                                                             {{ $t('common.detention_time') }}
                                                         </th>
-                                                        <th
-                                                            scope="col"
-                                                            class="px-2 py-3.5 text-left text-sm font-semibold text-neutral"
-                                                        >
+                                                        <th scope="col" class="px-2 py-3.5 text-left text-sm font-semibold">
                                                             {{ $t('common.traffic_infraction_points', 2) }}
                                                         </th>
-                                                        <th
-                                                            scope="col"
-                                                            class="px-2 py-3.5 text-left text-sm font-semibold text-neutral"
-                                                        >
+                                                        <th scope="col" class="px-2 py-3.5 text-left text-sm font-semibold">
                                                             {{ $t('common.description') }}
                                                         </th>
                                                         <th
                                                             scope="col"
-                                                            class="relative py-3.5 pl-3 pr-4 text-right text-sm font-semibold text-neutral sm:pr-0"
+                                                            class="relative py-3.5 pl-3 pr-4 text-right text-sm font-semibold sm:pr-0"
                                                         >
                                                             {{ $t('common.count') }}
                                                         </th>
@@ -280,7 +265,7 @@ watch(props, () => {
         <div class="mt-2 flow-root">
             <div class="overflow-x-auto sm:-mx-6 lg:-mx-8">
                 <div class="inline-block min-w-full py-2 align-middle sm:px-6 lg:px-8">
-                    <div class="text-xl text-neutral">
+                    <div class="text-xl">
                         <PenaltyStats :summary="summary" />
 
                         <div class="mt-4">
@@ -295,20 +280,14 @@ watch(props, () => {
             </div>
         </div>
         <div class="mt-2 flow-root">
-            <div class="flex items-center gap-1">
-                <UButton
-                    class="flex-1 rounded-md bg-info-700 px-3.5 py-2.5 text-sm font-semibold text-neutral hover:bg-info-600"
-                    @click="copyToClipboard()"
-                >
+            <UButtonGroup class="w-full">
+                <UButton class="flex-1" @click="copyToClipboard()">
                     {{ $t('common.copy') }}
                 </UButton>
-                <UButton
-                    class="rounded-md bg-error-700 px-3.5 py-2.5 text-sm font-semibold text-neutral hover:bg-error-600"
-                    @click="reset()"
-                >
+                <UButton color="red" @click="reset()">
                     {{ $t('common.reset') }}
                 </UButton>
-            </div>
+            </UButtonGroup>
         </div>
     </div>
 </template>

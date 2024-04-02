@@ -8,7 +8,7 @@ import { RefreshIcon } from 'mdi-vue3';
             class="inset-0 inline-flex items-center justify-center rounded-md border-2 border-black/20 bg-neutral-50 bg-clip-padding p-1.5 text-primary-500 hover:bg-[#f4f4f4]"
         >
             <div class="flex items-center gap-1">
-                <RefreshIcon class="size-6 animate-spin" aria-hidden="true" />
+                <RefreshIcon class="size-6 animate-spin" />
                 {{ $t('components.livemap.restarting_datastream') }}
             </div>
         </div>

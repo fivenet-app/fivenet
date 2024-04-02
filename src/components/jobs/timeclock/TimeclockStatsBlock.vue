@@ -75,23 +75,23 @@ const axis = ref<ChartAxis>({
 <template>
     <div class="mx-auto max-w-7xl">
         <GenericContainer>
-            <h2 v-if="!hideHeader" class="text-2xl font-semibold text-neutral">
+            <h2 v-if="!hideHeader" class="text-2xl font-semibold">
                 {{ $t('common.timeclock') }}
             </h2>
             <div class="flex flex-col gap-4 lg:flex-row">
                 <div>
-                    <h3 class="mb-2 ml-0.5 text-lg font-bold text-neutral">
+                    <h3 class="mb-2 ml-0.5 text-lg font-bold">
                         {{ $t('components.jobs.timeclock.StatsBlock.7_days') }}
                     </h3>
                     <div class="grid grid-cols-1 gap-2">
                         <GenericContainer v-for="stat in statsData" :key="stat.name" class="bg-primary-900">
                             <p class="text-sm font-medium leading-6 text-gray-300">{{ $t(stat.name) }}</p>
-                            <p class="mt-2 flex w-full items-center gap-x-2 text-2xl font-semibold tracking-tight text-neutral">
+                            <p class="mt-2 flex w-full items-center gap-x-2 text-2xl font-semibold tracking-tight">
                                 <template v-if="stat.value === undefined">
-                                    <LoadingIcon class="size-5 animate-spin" aria-hidden="true" />
+                                    <LoadingIcon class="size-5 animate-spin" />
                                 </template>
                                 <template v-else-if="failed">
-                                    <AlertCircleIcon class="size-5" aria-hidden="true" />
+                                    <AlertCircleIcon class="size-5" />
                                 </template>
                                 <template v-else>
                                     {{
@@ -107,7 +107,7 @@ const axis = ref<ChartAxis>({
                 </div>
 
                 <div class="w-full flex-1">
-                    <h3 class="mb-2 text-lg font-bold text-neutral">
+                    <h3 class="mb-2 text-lg font-bold">
                         {{ $t('components.jobs.timeclock.StatsBlock.weekly') }}
                     </h3>
 
@@ -122,7 +122,6 @@ const axis = ref<ChartAxis>({
                                 :margin="margin"
                                 direction="horizontal"
                                 :axis="axis"
-                                class="text-neutral"
                             >
                                 <template #layers>
                                     <Grid stroke-dasharray="2,2" />

@@ -41,10 +41,10 @@ const showRadioFrequency = ref(false);
                                     />
 
                                     <div>
-                                        <h1 class="text-3xl font-semibold leading-6 text-neutral">
+                                        <h1 class="text-3xl font-semibold leading-6">
                                             {{ activeChar?.jobLabel }}
                                         </h1>
-                                        <h2 class="mt-2 text-xl font-semibold leading-6 text-neutral">
+                                        <h2 class="mt-2 text-xl font-semibold leading-6">
                                             {{ $t('common.rank') }}: {{ activeChar?.jobGradeLabel }}
                                         </h2>
                                     </div>
@@ -53,12 +53,12 @@ const showRadioFrequency = ref(false);
                                 <JobMotd />
                             </GenericContainer>
 
-                            <GenericContainer v-if="jobProps?.radioFrequency" class="text-neutral">
+                            <GenericContainer v-if="jobProps?.radioFrequency">
                                 <h3 class="text-lg font-semibold">
                                     {{ $t('common.radio_frequency') }}
                                 </h3>
                                 <p class="flex items-center text-center text-lg font-bold">
-                                    <RadioHandheldIcon class="h-auto w-6" aria-hidden="true" />
+                                    <RadioHandheldIcon class="h-auto w-6" />
                                     <span
                                         :class="showRadioFrequency ? '' : 'blur'"
                                         @click="showRadioFrequency = !showRadioFrequency"
@@ -67,7 +67,7 @@ const showRadioFrequency = ref(false);
                                 </p>
                                 <UButton
                                     v-if="isNUIAvailable()"
-                                    class="mt-1 w-full rounded-md bg-primary-500 px-2 py-1 text-xs font-semibold text-neutral hover:bg-primary-400 focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2"
+                                    class="mt-1 w-full rounded-md bg-primary-500 px-2 py-1 text-xs font-semibold hover:bg-primary-400 focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2"
                                     @click="setRadioFrequency(jobProps.radioFrequency)"
                                 >
                                     {{ $t('common.connect') }}

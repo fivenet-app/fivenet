@@ -77,7 +77,8 @@ const features = [
             <UDashboardNavbar :title="$t('common.overview')"> </UDashboardNavbar>
 
             <CardsList class="mt-2" :items="features" />
-            <FiveNetHints />
+
+            <FiveNetHints class="m-2" />
         </UDashboardPanel>
     </UDashboardPage>
 </template>

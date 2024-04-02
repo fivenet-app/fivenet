@@ -249,17 +249,17 @@ onConfirm(async (id) => deleteRole(id));
             <DataErrorBlock v-else-if="error" :title="$t('common.unable_to_load', [$t('common.role', 2)])" :retry="refresh" />
             <DataNoDataBlock v-else-if="role === null" :type="$t('common.role', 2)" />
             <template v-else>
-                <h2 class="text-3xl text-neutral" :title="`ID: ${role.id}`">
+                <h2 class="text-3xl" :title="`ID: ${role.id}`">
                     {{ role?.jobLabel! }}
                     <UButton v-if="can('RectorService.DeleteRole')" class="ml-1" @click="reveal()">
-                        <TrashCanIcon class="mx-auto size-5 text-neutral" aria-hidden="true" />
+                        <TrashCanIcon class="mx-auto size-5" />
                     </UButton>
                 </h2>
                 <UDivider :label="$t('common.permission', 2)" />
                 <div class="flex flex-col gap-4 py-2">
                     <UButton
                         :disabled="!changed"
-                        class="inline-flex justify-center rounded-md px-3 py-2 text-center font-semibold text-neutral transition-colors focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2"
+                        class="inline-flex justify-center rounded-md px-3 py-2 text-center font-semibold transition-colors focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2"
                         :class="
                             !changed
                                 ? 'disabled bg-base-500 hover:bg-base-400 focus-visible:outline-base-500'
@@ -275,7 +275,7 @@ onConfirm(async (id) => deleteRole(id));
                         :key="category"
                         v-slot="{ open }"
                         as="div"
-                        class="border-neutral/20 text-neutral hover:border-neutral/70"
+                        class="border-neutral/20 hover:border-neutral/70"
                     >
                         <DisclosureButton
                             :class="[
@@ -287,10 +287,7 @@ onConfirm(async (id) => deleteRole(id));
                                 {{ $t(`perms.${category}.category`) }}
                             </span>
                             <span class="ml-6 flex h-7 items-center">
-                                <ChevronDownIcon
-                                    :class="[open ? 'upsidedown' : '', 'size-5 transition-transform']"
-                                    aria-hidden="true"
-                                />
+                                <ChevronDownIcon :class="[open ? 'upsidedown' : '', 'size-5 transition-transform']" />
                             </span>
                         </DisclosureButton>
                         <DisclosurePanel
@@ -317,14 +314,14 @@ onConfirm(async (id) => deleteRole(id));
                                                 class="rounded-l-lg bg-success-600/50 p-1 text-base-300 transition-colors data-[active=true]:bg-success-600 data-[active=true]:text-neutral hover:bg-success-600/70"
                                                 @click="updatePermissionState(perm.id, true)"
                                             >
-                                                <CheckIcon class="size-5" aria-hidden="true" />
+                                                <CheckIcon class="size-5" />
                                             </UButton>
                                             <UButton
                                                 :data-active="permStates.get(perm.id) === undefined || !permStates.get(perm.id)"
                                                 class="rounded-r-lg bg-error-600/50 p-1 text-base-300 transition-colors data-[active=true]:bg-error-600 data-[active=true]:text-neutral hover:bg-error-600/70"
                                                 @click="updatePermissionState(perm.id, false)"
                                             >
-                                                <CloseIcon class="size-5" aria-hidden="true" />
+                                                <CloseIcon class="size-5" />
                                             </UButton>
                                         </div>
                                     </div>

@@ -2,7 +2,6 @@
 // eslint-disable-next-line camelcase
 import { alpha_dash, digits, max, min, required } from '@vee-validate/rules';
 import { useThrottleFn, useTimeoutFn } from '@vueuse/core';
-import { LoadingIcon } from 'mdi-vue3';
 import { defineRule } from 'vee-validate';
 import PasswordStrengthMeter from '~/components/auth/PasswordStrengthMeter.vue';
 import { useNotificatorStore } from '~/store/notificator';
@@ -70,11 +69,11 @@ const onSubmitThrottle = useThrottleFn(async (e) => {
 
 <template>
     <div>
-        <h2 class="pb-4 text-center text-3xl text-neutral">
+        <h2 class="pb-4 text-center text-3xl">
             {{ $t('components.auth.registration_form.title') }}
         </h2>
 
-        <p class="pb-4 text-sm text-neutral">
+        <p class="pb-4 text-sm">
             {{ $t('components.auth.registration_form.subtitle') }}
         </p>
 
@@ -93,7 +92,7 @@ const onSubmitThrottle = useThrottleFn(async (e) => {
                         autocomplete="registrationToken"
                         :placeholder="$t('components.auth.registration_form.registration_token')"
                         :label="$t('components.auth.registration_form.registration_token')"
-                        class="block w-full rounded-md border-0 bg-base-700 py-1.5 text-neutral placeholder:text-accent-200 focus:ring-2 focus:ring-inset focus:ring-base-300 sm:text-lg sm:leading-6"
+                        class="block w-full rounded-md border-0 bg-base-700 py-1.5 placeholder:text-accent-200 focus:ring-2 focus:ring-inset focus:ring-base-300 sm:text-lg sm:leading-6"
                         @focusin="focusTablet(true)"
                         @focusout="focusTablet(false)"
                     />
@@ -111,7 +110,7 @@ const onSubmitThrottle = useThrottleFn(async (e) => {
                         autocomplete="username"
                         :placeholder="$t('common.username')"
                         :label="$t('common.username')"
-                        class="block w-full rounded-md border-0 bg-base-700 py-1.5 text-neutral placeholder:text-accent-200 focus:ring-2 focus:ring-inset focus:ring-base-300 sm:text-sm sm:leading-6"
+                        class="block w-full rounded-md border-0 bg-base-700 py-1.5 placeholder:text-accent-200 focus:ring-2 focus:ring-inset focus:ring-base-300 sm:text-sm sm:leading-6"
                         @focusin="focusTablet(true)"
                         @focusout="focusTablet(false)"
                     />
@@ -130,7 +129,7 @@ const onSubmitThrottle = useThrottleFn(async (e) => {
                         autocomplete="current-password"
                         :placeholder="$t('common.password')"
                         :label="$t('common.password')"
-                        class="block w-full rounded-md border-0 bg-base-700 py-1.5 text-neutral placeholder:text-accent-200 focus:ring-2 focus:ring-inset focus:ring-base-300 sm:text-sm sm:leading-6"
+                        class="block w-full rounded-md border-0 bg-base-700 py-1.5 placeholder:text-accent-200 focus:ring-2 focus:ring-inset focus:ring-base-300 sm:text-sm sm:leading-6"
                         @focusin="focusTablet(true)"
                         @focusout="focusTablet(false)"
                     />
@@ -140,31 +139,16 @@ const onSubmitThrottle = useThrottleFn(async (e) => {
             </div>
 
             <div>
-                <UButton
-                    type="submit"
-                    class="flex w-full justify-center rounded-md px-3 py-2 text-sm font-semibold text-neutral transition-colors focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2"
-                    :disabled="!meta.valid || !canSubmit"
-                    :class="[
-                        !meta.valid || !canSubmit
-                            ? 'disabled bg-base-500 hover:bg-base-400 focus-visible:outline-base-500'
-                            : 'bg-primary-500 hover:bg-primary-400',
-                    ]"
-                >
-                    <template v-if="!canSubmit">
-                        <LoadingIcon class="mr-2 size-5 animate-spin" aria-hidden="true" />
-                    </template>
+                <UButton type="submit" block :disabled="!meta.valid || !canSubmit" :loading="!canSubmit">
                     {{ $t('components.auth.registration_form.submit_button') }}
                 </UButton>
             </div>
         </form>
 
         <div class="mt-6">
-            <NuxtLink
-                :to="{ name: 'auth-login' }"
-                class="flex w-full justify-center rounded-md bg-secondary-600 px-3 py-2 text-sm font-semibold text-neutral transition-colors hover:bg-secondary-500 focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-base-300"
-            >
+            <UButton :to="{ name: 'auth-login' }" block>
                 {{ $t('components.auth.registration_form.back_to_login_button') }}
-            </NuxtLink>
+            </UButton>
         </div>
 
         <UAlert

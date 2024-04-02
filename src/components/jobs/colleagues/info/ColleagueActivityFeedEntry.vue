@@ -21,12 +21,11 @@ withDefaults(
             <component
                 :is="jobsUserActivityTypeIcon(activity.activityType)"
                 :class="[jobsUserActivityTypeBGColor(activity.activityType), 'size-full']"
-                aria-hidden="true"
             />
         </div>
         <div class="flex-1 space-y-1">
             <div class="flex items-center justify-between">
-                <h3 class="text-sm font-medium text-neutral">
+                <h3 class="text-sm font-medium">
                     {{ $t(`enums.jobs.JobsUserActivityType.${JobsUserActivityType[activity.activityType]}`) }}
                     <template v-if="activity.data?.data.oneofKind !== undefined">
                         {{ ' - ' }}
@@ -57,15 +56,15 @@ withDefaults(
                         </div>
                     </template>
                     <template v-if="showTargetUser">
-                        <div class="inline-flex text-sm text-gray-300">
+                        <div class="inline-flex items-center text-sm text-gray-300">
                             <span class="font-semibold">{{ $t('common.colleague') }}:</span>
-                            <CitizenInfoPopover class="ml-1" text-class="underline" :user="activity.targetUser" />
+                            <CitizenInfoPopover text-class="underline" :user="activity.targetUser" />
                         </div>
                     </template>
                 </p>
-                <p class="inline-flex text-sm text-gray-300">
+                <p class="inline-flex items-center text-sm text-gray-300">
                     {{ $t('common.created_by') }}
-                    <CitizenInfoPopover class="ml-1" text-class="underline" :user="activity.sourceUser" />
+                    <CitizenInfoPopover text-class="underline" :user="activity.sourceUser" />
                 </p>
             </div>
         </div>

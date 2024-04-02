@@ -61,20 +61,15 @@ const zIndexOffset = computed(() => {
                 >
                     DSP-{{ dispatch.id }}
                 </span>
-                <BellIcon class="size-full" :class="dispatchClasses" aria-hidden="true" />
+                <BellIcon class="size-full" :class="dispatchClasses" />
             </div>
         </LIcon>
 
         <LPopup :options="{ closeButton: true }">
             <div class="mb-1 flex items-center gap-2">
                 <IDCopyBadge :id="dispatch.id" prefix="DSP" :action="selected" />
-                <UButton
-                    :title="$t('common.detail', 2)"
-                    class="inline-flex items-center text-primary-500 hover:text-primary-400"
-                    @click="selected(dispatch.id)"
-                >
-                    <CarEmergencyIcon class="size-5" aria-hidden="true" />
-                    <span class="ml-1">{{ $t('common.detail', 2) }}</span>
+                <UButton :title="$t('common.detail', 2)" icon="i-mdi-car-emergency" @click="selected(dispatch.id)">
+                    {{ $t('common.detail', 2) }}
                 </UButton>
             </div>
 

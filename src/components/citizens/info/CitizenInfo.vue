@@ -113,7 +113,7 @@ function addToClipboard(): void {
                     />
                     <div class="w-full">
                         <div class="flex snap-x flex-row flex-wrap justify-between gap-2 overflow-x-auto">
-                            <h1 class="flex-1 break-words px-0.5 py-1 text-4xl font-bold text-neutral sm:pl-1">
+                            <h1 class="flex-1 break-words px-0.5 py-1 text-4xl font-bold sm:pl-1">
                                 {{ user?.firstname }} {{ user?.lastname }}
                             </h1>
                             <IDCopyBadge

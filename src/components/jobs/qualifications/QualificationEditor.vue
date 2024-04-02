@@ -30,7 +30,6 @@ import QualificationRequirementEntry from '~/components/jobs/qualifications/Qual
 import DocEditor from '~/components/partials/DocEditor.vue';
 import { useAuthStore } from '~/store/auth';
 import { useCompletorStore } from '~/store/completor';
-import DiscordLogo from '~/components/partials/logos/DiscordLogo.vue';
 
 const props = defineProps<{
     id?: string;
@@ -397,10 +396,7 @@ const { data: jobs } = useAsyncData('completor-jobs', () => completorStore.listJ
 <template>
     <div class="m-2">
         <form @submit.prevent="onSubmitThrottle">
-            <div
-                class="flex flex-col gap-2 rounded-t-lg bg-base-800 px-3 py-4 text-neutral"
-                :class="!canDo.edit ? 'rounded-b-md' : ''"
-            >
+            <div class="flex flex-col gap-2 rounded-t-lg bg-base-800 px-3 py-4" :class="!canDo.edit ? 'rounded-b-md' : ''">
                 <div class="flex flex-row gap-2">
                     <div class="max-w-48 shrink">
                         <label for="abbreviation" class="block text-base font-medium">
@@ -411,7 +407,7 @@ const { data: jobs } = useAsyncData('completor-jobs', () => completorStore.listJ
                             type="text"
                             :placeholder="$t('common.abbreviation')"
                             :label="$t('common.abbreviation')"
-                            class="block w-full rounded-md border-0 bg-base-700 py-1.5 text-neutral placeholder:text-accent-200 focus:ring-2 focus:ring-inset focus:ring-base-300 sm:text-3xl sm:leading-6"
+                            class="block w-full rounded-md border-0 bg-base-700 py-1.5 placeholder:text-accent-200 focus:ring-2 focus:ring-inset focus:ring-base-300 sm:text-3xl sm:leading-6"
                             :disabled="!canEdit || !canDo.edit"
                             @focusin="focusTablet(true)"
                             @focusout="focusTablet(false)"
@@ -428,7 +424,7 @@ const { data: jobs } = useAsyncData('completor-jobs', () => completorStore.listJ
                             type="text"
                             :placeholder="$t('common.title')"
                             :label="$t('common.title')"
-                            class="block w-full rounded-md border-0 bg-base-700 py-1.5 text-neutral placeholder:text-accent-200 focus:ring-2 focus:ring-inset focus:ring-base-300 sm:text-3xl sm:leading-6"
+                            class="block w-full rounded-md border-0 bg-base-700 py-1.5 placeholder:text-accent-200 focus:ring-2 focus:ring-inset focus:ring-base-300 sm:text-3xl sm:leading-6"
                             :disabled="!canEdit || !canDo.edit"
                             @focusin="focusTablet(true)"
                             @focusout="focusTablet(false)"
@@ -446,7 +442,7 @@ const { data: jobs } = useAsyncData('completor-jobs', () => completorStore.listJ
                             as="textarea"
                             :placeholder="$t('common.description')"
                             :label="$t('common.description')"
-                            class="block h-20 w-full rounded-md border-0 bg-base-700 py-1.5 text-neutral placeholder:text-accent-200 focus:ring-2 focus:ring-inset focus:ring-base-300 sm:leading-6"
+                            class="block h-20 w-full rounded-md border-0 bg-base-700 py-1.5 placeholder:text-accent-200 focus:ring-2 focus:ring-inset focus:ring-base-300 sm:leading-6"
                             :disabled="!canEdit || !canDo.edit"
                             @focusin="focusTablet(true)"
                             @focusout="focusTablet(false)"
@@ -458,13 +454,13 @@ const { data: jobs } = useAsyncData('completor-jobs', () => completorStore.listJ
                         <Listbox v-model="quali.closed" as="div" :disabled="!canEdit || !canDo.edit">
                             <div class="relative">
                                 <ListboxButton
-                                    class="block w-full rounded-md border-0 bg-base-700 py-1.5 pl-3 text-left text-neutral placeholder:text-accent-200 focus:ring-2 focus:ring-inset focus:ring-base-300 sm:text-sm sm:leading-6"
+                                    class="block w-full rounded-md border-0 bg-base-700 py-1.5 pl-3 text-left placeholder:text-accent-200 focus:ring-2 focus:ring-inset focus:ring-base-300 sm:text-sm sm:leading-6"
                                 >
                                     <span class="block truncate">
                                         {{ openclose.find((e) => e.closed === quali.closed.closed)?.label }}</span
                                     >
                                     <span class="pointer-events-none absolute inset-y-0 right-0 flex items-center pr-2">
-                                        <ChevronDownIcon class="size-5 text-gray-400" aria-hidden="true" />
+                                        <ChevronDownIcon class="size-5 text-gray-400" />
                                     </span>
                                 </ListboxButton>
 
@@ -486,7 +482,7 @@ const { data: jobs } = useAsyncData('completor-jobs', () => completorStore.listJ
                                             <li
                                                 :class="[
                                                     active ? 'bg-primary-500' : '',
-                                                    'relative cursor-default select-none py-2 pl-8 pr-4 text-neutral',
+                                                    'relative cursor-default select-none py-2 pl-8 pr-4',
                                                 ]"
                                             >
                                                 <span :class="[selected ? 'font-semibold' : 'font-normal', 'block truncate']">{{
@@ -500,7 +496,7 @@ const { data: jobs } = useAsyncData('completor-jobs', () => completorStore.listJ
                                                         'absolute inset-y-0 left-0 flex items-center pl-1.5',
                                                     ]"
                                                 >
-                                                    <CheckIcon class="size-5" aria-hidden="true" />
+                                                    <CheckIcon class="size-5" />
                                                 </span>
                                             </li>
                                         </ListboxOption>
@@ -526,7 +522,7 @@ const { data: jobs } = useAsyncData('completor-jobs', () => completorStore.listJ
             </div>
 
             <div class="my-3">
-                <h2 class="text-neutral">
+                <h2>
                     {{ $t('common.access') }}
                 </h2>
                 <QualificationAccessEntry
@@ -544,17 +540,17 @@ const { data: jobs } = useAsyncData('completor-jobs', () => completorStore.listJ
                 />
                 <UButton
                     :disabled="!canEdit || !canDo.access"
-                    class="rounded-full bg-primary-500 p-2 text-neutral hover:bg-primary-400 focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2"
+                    class="rounded-full bg-primary-500 p-2 hover:bg-primary-400 focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2"
                     data-te-toggle="tooltip"
                     :title="$t('components.documents.document_editor.add_permission')"
                     @click="addQualificationAccessEntry()"
                 >
-                    <PlusIcon class="size-5" aria-hidden="true" />
+                    <PlusIcon class="size-5" />
                 </UButton>
             </div>
 
             <div class="my-3">
-                <h2 class="text-neutral">
+                <h2>
                     {{ $t('common.requirements') }}
                 </h2>
 
@@ -567,7 +563,7 @@ const { data: jobs } = useAsyncData('completor-jobs', () => completorStore.listJ
                 />
 
                 <UButton
-                    class="mt-2 rounded-full p-1.5 text-neutral focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2"
+                    class="mt-2 rounded-full p-1.5 focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2"
                     :disabled="!canSubmit"
                     :class="
                         !canSubmit
@@ -576,31 +572,27 @@ const { data: jobs } = useAsyncData('completor-jobs', () => completorStore.listJ
                     "
                     @click="quali.requirements.push({ id: '0', qualificationId: '0', targetQualificationId: '0' })"
                 >
-                    <PlusIcon class="size-5" aria-hidden="true" />
+                    <PlusIcon class="size-5" />
                 </UButton>
             </div>
 
             <div class="my-3">
-                <h2 class="text-neutral">
+                <h2>
                     {{ $t('common.discord') }}
                 </h2>
 
-                <Disclosure v-slot="{ open }" as="div" class="border-neutral/20 text-neutral hover:border-neutral/70">
+                <Disclosure v-slot="{ open }" as="div" class="border-neutral/20 hover:border-neutral/70">
                     <DisclosureButton
                         :class="[
                             open ? 'rounded-t-lg border-b-0' : 'rounded-lg',
                             'flex w-full items-start justify-between border-2 border-inherit p-2 text-left transition-colors',
                         ]"
                     >
-                        <span class="inline-flex items-center text-base font-semibold leading-7 text-neutral">
-                            <DiscordLogo class="mr-2 h-auto w-5" aria-hidden="true" />
+                        <span class="inline-flex items-center text-base font-semibold leading-7">
                             {{ $t('common.discord') }}
                         </span>
                         <span class="ml-6 flex h-7 items-center">
-                            <ChevronDownIcon
-                                :class="[open ? 'upsidedown' : '', 'h-auto w-5 transition-transform']"
-                                aria-hidden="true"
-                            />
+                            <ChevronDownIcon :class="[open ? 'upsidedown' : '', 'h-auto w-5 transition-transform']" />
                         </span>
                     </DisclosureButton>
                     <DisclosurePanel class="rounded-b-lg border-2 border-t-0 border-inherit transition-colors">
@@ -624,7 +616,7 @@ const { data: jobs } = useAsyncData('completor-jobs', () => completorStore.listJ
                                 type="text"
                                 :placeholder="$t('common.role')"
                                 :label="$t('common.role')"
-                                class="block w-full rounded-md border-0 bg-base-700 py-1.5 text-neutral placeholder:text-accent-200 focus:ring-2 focus:ring-inset focus:ring-base-300 sm:text-sm sm:leading-6"
+                                class="block w-full rounded-md border-0 bg-base-700 py-1.5 placeholder:text-accent-200 focus:ring-2 focus:ring-inset focus:ring-base-300 sm:text-sm sm:leading-6"
                                 :disabled="!canEdit || !canDo.edit"
                                 @focusin="focusTablet(true)"
                                 @focusout="focusTablet(false)"
@@ -639,7 +631,7 @@ const { data: jobs } = useAsyncData('completor-jobs', () => completorStore.listJ
                 <UButton
                     type="submit"
                     :disabled="!meta.valid || !canEdit || !canSubmit"
-                    class="flex w-full justify-center rounded-md px-3.5 py-2.5 text-sm font-semibold text-neutral"
+                    class="flex w-full justify-center rounded-md px-3.5 py-2.5 text-sm font-semibold"
                     :class="[
                         !canEdit || !meta.valid || !canSubmit
                             ? 'disabled bg-base-500 hover:bg-base-400 focus-visible:outline-base-500'
@@ -647,7 +639,7 @@ const { data: jobs } = useAsyncData('completor-jobs', () => completorStore.listJ
                     ]"
                 >
                     <template v-if="!canSubmit">
-                        <LoadingIcon class="mr-2 size-5 animate-spin" aria-hidden="true" />
+                        <LoadingIcon class="mr-2 size-5 animate-spin" />
                     </template>
                     <template v-if="!id">
                         {{ $t('common.create') }}

@@ -294,7 +294,7 @@ const { remove, push, fields } = useFieldArray<Perm>('permsDefault');
                                             <VeeField
                                                 :name="`permsDefault[${idx}].category`"
                                                 type="text"
-                                                class="block w-full rounded-md border-0 bg-base-700 py-1.5 text-neutral placeholder:text-accent-200 focus:ring-2 focus:ring-inset focus:ring-base-300 sm:text-sm sm:leading-6"
+                                                class="block w-full rounded-md border-0 bg-base-700 py-1.5 placeholder:text-accent-200 focus:ring-2 focus:ring-inset focus:ring-base-300 sm:text-sm sm:leading-6"
                                                 :placeholder="$t('common.category')"
                                                 :label="$t('common.category')"
                                                 :rules="required"
@@ -311,7 +311,7 @@ const { remove, push, fields } = useFieldArray<Perm>('permsDefault');
                                             <VeeField
                                                 :name="`permsDefault[${idx}].name`"
                                                 type="text"
-                                                class="block w-full flex-1 rounded-md border-0 bg-base-700 py-1.5 text-neutral placeholder:text-accent-200 focus:ring-2 focus:ring-inset focus:ring-base-300 sm:text-sm sm:leading-6"
+                                                class="block w-full flex-1 rounded-md border-0 bg-base-700 py-1.5 placeholder:text-accent-200 focus:ring-2 focus:ring-inset focus:ring-base-300 sm:text-sm sm:leading-6"
                                                 :placeholder="$t('common.name')"
                                                 :label="$t('common.name')"
                                                 :rules="required"
@@ -326,15 +326,15 @@ const { remove, push, fields } = useFieldArray<Perm>('permsDefault');
                                         </div>
 
                                         <UButton
-                                            class="rounded-full bg-primary-500 p-1.5 text-neutral hover:bg-primary-400 focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2"
+                                            class="rounded-full bg-primary-500 p-1.5 hover:bg-primary-400 focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2"
                                             @click="remove(idx)"
                                         >
-                                            <CloseIcon class="size-5" aria-hidden="true" />
+                                            <CloseIcon class="size-5" />
                                         </UButton>
                                     </div>
                                 </div>
                                 <UButton
-                                    class="mt-2 rounded-full p-1.5 text-neutral focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2"
+                                    class="mt-2 rounded-full p-1.5 focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2"
                                     :disabled="!canSubmit"
                                     :class="
                                         !canSubmit
@@ -343,7 +343,7 @@ const { remove, push, fields } = useFieldArray<Perm>('permsDefault');
                                     "
                                     @click="push({ category: '', name: '' })"
                                 >
-                                    <PlusIcon class="size-5" aria-hidden="true" />
+                                    <PlusIcon class="size-5" />
                                 </UButton>
                             </template>
                         </GenericContainerPanelEntry>
@@ -363,7 +363,7 @@ const { remove, push, fields } = useFieldArray<Perm>('permsDefault');
                                     <VeeField
                                         type="text"
                                         name="websiteLinksPrivacyPolicy"
-                                        class="block w-full rounded-md border-0 bg-base-700 py-1.5 text-neutral placeholder:text-accent-200 focus:ring-2 focus:ring-inset focus:ring-base-300 sm:text-sm sm:leading-6"
+                                        class="block w-full rounded-md border-0 bg-base-700 py-1.5 placeholder:text-accent-200 focus:ring-2 focus:ring-inset focus:ring-base-300 sm:text-sm sm:leading-6"
                                         :value="data.config!.website!.links!.privacyPolicy"
                                         :placeholder="$t('common.privacy_policy')"
                                         :label="$t('common.privacy_policy')"
@@ -384,7 +384,7 @@ const { remove, push, fields } = useFieldArray<Perm>('permsDefault');
                                     <VeeField
                                         type="text"
                                         name="websiteLinksImprint"
-                                        class="block w-full rounded-md border-0 bg-base-700 py-1.5 text-neutral placeholder:text-accent-200 focus:ring-2 focus:ring-inset focus:ring-base-300 sm:text-sm sm:leading-6"
+                                        class="block w-full rounded-md border-0 bg-base-700 py-1.5 placeholder:text-accent-200 focus:ring-2 focus:ring-inset focus:ring-base-300 sm:text-sm sm:leading-6"
                                         :placeholder="$t('common.imprint')"
                                         :label="$t('common.imprint')"
                                         :value="data.config!.website!.links!.imprint"
@@ -410,7 +410,7 @@ const { remove, push, fields } = useFieldArray<Perm>('permsDefault');
                                     <VeeField
                                         type="text"
                                         name="jobInfoUnemployedName"
-                                        class="block w-full rounded-md border-0 bg-base-700 py-1.5 text-neutral placeholder:text-accent-200 focus:ring-2 focus:ring-inset focus:ring-base-300 sm:text-sm sm:leading-6"
+                                        class="block w-full rounded-md border-0 bg-base-700 py-1.5 placeholder:text-accent-200 focus:ring-2 focus:ring-inset focus:ring-base-300 sm:text-sm sm:leading-6"
                                         :value="data.config!.jobInfo!.unemployedJob!.name"
                                         :placeholder="$t('common.job')"
                                         :label="$t('common.job')"
@@ -430,7 +430,7 @@ const { remove, push, fields } = useFieldArray<Perm>('permsDefault');
                                         max="99"
                                         :value="data.config!.jobInfo!.unemployedJob!.grade"
                                         name="jobInfoUnemployedGrade"
-                                        class="block w-full rounded-md border-0 bg-base-700 py-1.5 text-neutral placeholder:text-accent-200 focus:ring-2 focus:ring-inset focus:ring-base-300 sm:text-sm sm:leading-6"
+                                        class="block w-full rounded-md border-0 bg-base-700 py-1.5 placeholder:text-accent-200 focus:ring-2 focus:ring-inset focus:ring-base-300 sm:text-sm sm:leading-6"
                                         :placeholder="$t('common.rank')"
                                         :label="$t('common.rank')"
                                         @focusin="focusTablet(true)"
@@ -448,7 +448,7 @@ const { remove, push, fields } = useFieldArray<Perm>('permsDefault');
                                         <ComboboxButton as="div">
                                             <ComboboxInput
                                                 autocomplete="off"
-                                                class="block w-full rounded-md border-0 bg-base-700 py-1.5 text-neutral placeholder:text-accent-200 focus:ring-2 focus:ring-inset focus:ring-base-300 sm:text-sm sm:leading-6"
+                                                class="block w-full rounded-md border-0 bg-base-700 py-1.5 placeholder:text-accent-200 focus:ring-2 focus:ring-inset focus:ring-base-300 sm:text-sm sm:leading-6"
                                                 :display-value="(js: any) => (js ? js.join(', ') : $t('common.na'))"
                                                 :placeholder="$t('common.job', 2)"
                                                 @change="queryJobsRaw = $event.target.value"
@@ -472,7 +472,7 @@ const { remove, push, fields } = useFieldArray<Perm>('permsDefault');
                                             >
                                                 <li
                                                     :class="[
-                                                        'relative cursor-default select-none py-2 pl-8 pr-4 text-neutral',
+                                                        'relative cursor-default select-none py-2 pl-8 pr-4',
                                                         active ? 'bg-primary-500' : '',
                                                     ]"
                                                 >
@@ -487,7 +487,7 @@ const { remove, push, fields } = useFieldArray<Perm>('permsDefault');
                                                             'absolute inset-y-0 left-0 flex items-center pl-1.5',
                                                         ]"
                                                     >
-                                                        <CheckIcon class="size-5" aria-hidden="true" />
+                                                        <CheckIcon class="size-5" />
                                                     </span>
                                                 </li>
                                             </ComboboxOption>
@@ -504,7 +504,7 @@ const { remove, push, fields } = useFieldArray<Perm>('permsDefault');
                                         <ComboboxButton as="div">
                                             <ComboboxInput
                                                 autocomplete="off"
-                                                class="block w-full rounded-md border-0 bg-base-700 py-1.5 text-neutral placeholder:text-accent-200 focus:ring-2 focus:ring-inset focus:ring-base-300 sm:text-sm sm:leading-6"
+                                                class="block w-full rounded-md border-0 bg-base-700 py-1.5 placeholder:text-accent-200 focus:ring-2 focus:ring-inset focus:ring-base-300 sm:text-sm sm:leading-6"
                                                 :display-value="(js: any) => (js ? js.join(', ') : $t('common.na'))"
                                                 :placeholder="$t('common.job', 2)"
                                                 @change="queryJobsRaw = $event.target.value"
@@ -528,7 +528,7 @@ const { remove, push, fields } = useFieldArray<Perm>('permsDefault');
                                             >
                                                 <li
                                                     :class="[
-                                                        'relative cursor-default select-none py-2 pl-8 pr-4 text-neutral',
+                                                        'relative cursor-default select-none py-2 pl-8 pr-4',
                                                         active ? 'bg-primary-500' : '',
                                                     ]"
                                                 >
@@ -543,7 +543,7 @@ const { remove, push, fields } = useFieldArray<Perm>('permsDefault');
                                                             'absolute inset-y-0 left-0 flex items-center pl-1.5',
                                                         ]"
                                                     >
-                                                        <CheckIcon class="size-5" aria-hidden="true" />
+                                                        <CheckIcon class="size-5" />
                                                     </span>
                                                 </li>
                                             </ComboboxOption>
@@ -564,7 +564,7 @@ const { remove, push, fields } = useFieldArray<Perm>('permsDefault');
                                 <VeeField
                                     name="userTrackerRefreshTime"
                                     type="text"
-                                    class="block w-full flex-1 rounded-md border-0 bg-base-700 py-1.5 text-neutral placeholder:text-accent-200 focus:ring-2 focus:ring-inset focus:ring-base-300 sm:text-sm sm:leading-6"
+                                    class="block w-full flex-1 rounded-md border-0 bg-base-700 py-1.5 placeholder:text-accent-200 focus:ring-2 focus:ring-inset focus:ring-base-300 sm:text-sm sm:leading-6"
                                     :value="
                                         parseFloat(
                                             data.config?.userTracker?.refreshTime?.seconds.toString() +
@@ -586,7 +586,7 @@ const { remove, push, fields } = useFieldArray<Perm>('permsDefault');
                                 <VeeField
                                     name="userTrackerDbRefreshTime"
                                     type="text"
-                                    class="block w-full flex-1 rounded-md border-0 bg-base-700 py-1.5 text-neutral placeholder:text-accent-200 focus:ring-2 focus:ring-inset focus:ring-base-300 sm:text-sm sm:leading-6"
+                                    class="block w-full flex-1 rounded-md border-0 bg-base-700 py-1.5 placeholder:text-accent-200 focus:ring-2 focus:ring-inset focus:ring-base-300 sm:text-sm sm:leading-6"
                                     :value="
                                         parseFloat(
                                             data.config?.userTracker?.dbRefreshTime?.seconds.toString() +
@@ -610,7 +610,7 @@ const { remove, push, fields } = useFieldArray<Perm>('permsDefault');
                                         <ComboboxButton as="div">
                                             <ComboboxInput
                                                 autocomplete="off"
-                                                class="block w-full rounded-md border-0 bg-base-700 py-1.5 text-neutral placeholder:text-accent-200 focus:ring-2 focus:ring-inset focus:ring-base-300 sm:text-sm sm:leading-6"
+                                                class="block w-full rounded-md border-0 bg-base-700 py-1.5 placeholder:text-accent-200 focus:ring-2 focus:ring-inset focus:ring-base-300 sm:text-sm sm:leading-6"
                                                 :display-value="(js: any) => (js ? js.join(', ') : $t('common.na'))"
                                                 :placeholder="$t('common.job', 2)"
                                                 @change="queryJobsRaw = $event.target.value"
@@ -634,7 +634,7 @@ const { remove, push, fields } = useFieldArray<Perm>('permsDefault');
                                             >
                                                 <li
                                                     :class="[
-                                                        'relative cursor-default select-none py-2 pl-8 pr-4 text-neutral',
+                                                        'relative cursor-default select-none py-2 pl-8 pr-4',
                                                         active ? 'bg-primary-500' : '',
                                                     ]"
                                                 >
@@ -649,7 +649,7 @@ const { remove, push, fields } = useFieldArray<Perm>('permsDefault');
                                                             'absolute inset-y-0 left-0 flex items-center pl-1.5',
                                                         ]"
                                                     >
-                                                        <CheckIcon class="size-5" aria-hidden="true" />
+                                                        <CheckIcon class="size-5" />
                                                     </span>
                                                 </li>
                                             </ComboboxOption>
@@ -690,7 +690,7 @@ const { remove, push, fields } = useFieldArray<Perm>('permsDefault');
                                 <VeeField
                                     name="discordSyncInterval"
                                     type="text"
-                                    class="block w-full flex-1 rounded-md border-0 bg-base-700 py-1.5 text-neutral placeholder:text-accent-200 focus:ring-2 focus:ring-inset focus:ring-base-300 sm:text-sm sm:leading-6"
+                                    class="block w-full flex-1 rounded-md border-0 bg-base-700 py-1.5 placeholder:text-accent-200 focus:ring-2 focus:ring-inset focus:ring-base-300 sm:text-sm sm:leading-6"
                                     :value="
                                         parseFloat(
                                             data.config?.discord?.syncInterval?.seconds.toString() +
@@ -714,7 +714,7 @@ const { remove, push, fields } = useFieldArray<Perm>('permsDefault');
                                         type="url"
                                         name="discordBotInviteUrl"
                                         :value="data.config!.discord!.inviteUrl"
-                                        class="block w-full rounded-md border-0 bg-base-700 py-1.5 text-neutral placeholder:text-accent-200 focus:ring-2 focus:ring-inset focus:ring-base-300 sm:text-sm sm:leading-6"
+                                        class="block w-full rounded-md border-0 bg-base-700 py-1.5 placeholder:text-accent-200 focus:ring-2 focus:ring-inset focus:ring-base-300 sm:text-sm sm:leading-6"
                                         :placeholder="$t('components.rector.app_config.discord.bot_invite_url')"
                                         :label="$t('components.rector.app_config.discord.bot_invite_url')"
                                         @focusin="focusTablet(true)"
@@ -735,7 +735,7 @@ const { remove, push, fields } = useFieldArray<Perm>('permsDefault');
                         <GenericContainerPanelEntry v-if="can('RectorService.SetJobProps')">
                             <template #default>
                                 <UButton
-                                    class="flex w-full justify-center rounded-md px-3 py-2 text-sm font-semibold text-neutral transition-colors focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2"
+                                    class="flex w-full justify-center rounded-md px-3 py-2 text-sm font-semibold transition-colors focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2"
                                     :class="[
                                         !canSubmit || !meta.valid
                                             ? 'disabled bg-base-500 hover:bg-base-400 focus-visible:outline-base-500'
@@ -745,7 +745,7 @@ const { remove, push, fields } = useFieldArray<Perm>('permsDefault');
                                     @click="onSubmitThrottle"
                                 >
                                     <template v-if="!canSubmit">
-                                        <LoadingIcon class="mr-2 size-5 animate-spin" aria-hidden="true" />
+                                        <LoadingIcon class="mr-2 size-5 animate-spin" />
                                     </template>
                                     {{ $t('common.save', 1) }}
                                 </UButton>

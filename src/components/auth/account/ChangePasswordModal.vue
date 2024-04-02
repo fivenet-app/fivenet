@@ -103,7 +103,7 @@ const onSubmitThrottle = useThrottleFn(async (e) => {
                         leave-to="opacity-0 translate-y-4 sm:translate-y-0 sm:scale-95"
                     >
                         <DialogPanel
-                            class="relative w-full overflow-hidden rounded-lg bg-base-800 px-4 pb-4 pt-5 text-left text-neutral transition-all sm:my-8 sm:max-w-lg sm:p-6"
+                            class="relative w-full overflow-hidden rounded-lg bg-base-800 px-4 pb-4 pt-5 text-left transition-all sm:my-8 sm:max-w-lg sm:p-6"
                         >
                             <div class="absolute right-0 top-0 block pr-4 pt-4">
                                 <UButton
@@ -111,12 +111,12 @@ const onSubmitThrottle = useThrottleFn(async (e) => {
                                     @click="$emit('close')"
                                 >
                                     <span class="sr-only">{{ $t('common.close') }}</span>
-                                    <CloseIcon class="size-5" aria-hidden="true" />
+                                    <CloseIcon class="size-5" />
                                 </UButton>
                             </div>
                             <div>
                                 <div class="mx-auto flex size-12 items-center justify-center rounded-full bg-base-700">
-                                    <AccountKeyIcon class="size-5 text-primary-500" aria-hidden="true" />
+                                    <AccountKeyIcon class="size-5 text-primary-500" />
                                 </div>
                                 <div class="mt-3 text-center sm:mt-5">
                                     <DialogTitle as="h3" class="text-base font-semibold leading-6">
@@ -137,7 +137,7 @@ const onSubmitThrottle = useThrottleFn(async (e) => {
                                                             $t('components.auth.change_password_modal.current_password')
                                                         "
                                                         :label="$t('components.auth.change_password_modal.current_password')"
-                                                        class="block w-full rounded-md border-0 bg-base-700 py-1.5 text-neutral placeholder:text-accent-200 focus:ring-2 focus:ring-inset focus:ring-base-300 sm:text-sm sm:leading-6"
+                                                        class="block w-full rounded-md border-0 bg-base-700 py-1.5 placeholder:text-accent-200 focus:ring-2 focus:ring-inset focus:ring-base-300 sm:text-sm sm:leading-6"
                                                     />
                                                     <VeeErrorMessage
                                                         name="currentPassword"
@@ -158,7 +158,7 @@ const onSubmitThrottle = useThrottleFn(async (e) => {
                                                         autocomplete="new-password"
                                                         :placeholder="$t('components.auth.change_password_modal.new_password')"
                                                         :label="$t('components.auth.change_password_modal.new_password')"
-                                                        class="block w-full rounded-md border-0 bg-base-700 py-1.5 text-neutral placeholder:text-accent-200 focus:ring-2 focus:ring-inset focus:ring-base-300 sm:text-sm sm:leading-6"
+                                                        class="block w-full rounded-md border-0 bg-base-700 py-1.5 placeholder:text-accent-200 focus:ring-2 focus:ring-inset focus:ring-base-300 sm:text-sm sm:leading-6"
                                                     />
                                                     <PasswordStrengthMeter :input="newPassword" class="mt-2" />
                                                     <VeeErrorMessage
@@ -172,16 +172,11 @@ const onSubmitThrottle = useThrottleFn(async (e) => {
                                             <div>
                                                 <UButton
                                                     type="submit"
-                                                    class="flex w-full justify-center rounded-md px-3 py-2 text-sm font-semibold text-neutral transition-colors focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2"
+                                                    class="flex w-full justify-center rounded-md px-3 py-2 text-sm font-semibold transition-colors focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2"
                                                     :disabled="!meta.valid || !canSubmit"
-                                                    :class="[
-                                                        !meta.valid || !canSubmit
-                                                            ? 'disabled bg-base-500 hover:bg-base-400 focus-visible:outline-base-500'
-                                                            : 'bg-primary-500 hover:bg-primary-400',
-                                                    ]"
                                                 >
                                                     <template v-if="!canSubmit">
-                                                        <LoadingIcon class="mr-2 size-5 animate-spin" aria-hidden="true" />
+                                                        <LoadingIcon class="mr-2 size-5 animate-spin" />
                                                     </template>
                                                     {{ $t('components.auth.change_password_modal.change_password') }}
                                                 </UButton>
@@ -192,7 +187,7 @@ const onSubmitThrottle = useThrottleFn(async (e) => {
                             </div>
                             <div class="mt-5 gap-2 sm:mt-4 sm:flex">
                                 <UButton
-                                    class="flex-1 rounded-md bg-base-500 px-3.5 py-2.5 text-sm font-semibold text-neutral hover:bg-base-400"
+                                    class="flex-1 rounded-md bg-base-500 px-3.5 py-2.5 text-sm font-semibold hover:bg-base-400"
                                     @click="$emit('close')"
                                 >
                                     {{ $t('common.close', 1) }}

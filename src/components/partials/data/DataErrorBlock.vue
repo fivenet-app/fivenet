@@ -18,7 +18,7 @@ const { isPending } = useTimeoutFn(() => (disabled.value = false), 1250);
     <div class="mx-auto max-w-md rounded-md bg-error-100 p-4">
         <div class="flex">
             <div class="shrink-0">
-                <CloseCircleIcon class="size-5 text-error-400" aria-hidden="true" />
+                <CloseCircleIcon class="size-5 text-error-400" />
             </div>
             <div class="ml-3">
                 <h3 class="text-sm font-medium text-error-800">
@@ -42,8 +42,8 @@ const { isPending } = useTimeoutFn(() => (disabled.value = false), 1250);
                             @click="retry()"
                         >
                             {{ retryMessage ?? $t('common.retry') }}
-                            <RefreshIcon v-if="isPending" class="ml-2 size-5" aria-hidden="true" />
-                            <CancelIcon v-else class="ml-2 size-5" aria-hidden="true" />
+                            <RefreshIcon v-if="isPending" class="ml-2 size-5" />
+                            <CancelIcon v-else class="ml-2 size-5" />
                         </UButton>
                     </div>
                 </div>

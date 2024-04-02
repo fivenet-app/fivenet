@@ -5,7 +5,6 @@ import DataNoDataBlock from '~/components/partials/data/DataNoDataBlock.vue';
 import DataPendingBlock from '~/components/partials/data/DataPendingBlock.vue';
 import type { ListQualificationRequestsResponse } from '~~/gen/ts/services/qualifications/qualifications';
 import QualificationsRequestsListEntry from '~/components/jobs/qualifications/tutor/QualificationsRequestsListEntry.vue';
-import TablePagination from '~/components/partials/elements/TablePagination.vue';
 import { RequestStatus, QualificationRequest } from '~~/gen/ts/resources/qualifications/qualifications';
 import GenericTable from '~/components/partials/elements/GenericTable.vue';
 import QualificationRequestTutorModal from '~/components/jobs/qualifications/tutor/QualificationRequestTutorModal.vue';
@@ -24,10 +23,12 @@ const props = withDefaults(
 
 const { $grpc } = useNuxtApp();
 
-const offset = ref(0);
+const page = ref(1);
+const offset = computed(() => (data.value?.pagination?.pageSize ? data.value?.pagination?.pageSize * page.value : 0));
 
-const { data, pending, refresh, error } = useLazyAsyncData(`qualifications-requests-${props.qualificationId}`, () =>
-    listQualificationsRequests(props.qualificationId),
+const { data, pending, refresh, error } = useLazyAsyncData(
+    `qualifications-requests-${page.value}-${props.qualificationId}`,
+    () => listQualificationsRequests(props.qualificationId),
 );
 
 async function listQualificationsRequests(
@@ -140,13 +141,13 @@ const openResultStatus = ref(false);
                 </GenericTable>
             </template>
 
-            <TablePagination
-                class="w-full"
-                :pagination="data?.pagination"
-                :show-border="false"
-                :refresh="refresh"
-                @offset-change="offset = $event"
-            />
+            <div class="flex justify-end px-3 py-3.5 border-t border-gray-200 dark:border-gray-700">
+                <UPagination
+                    v-model="page"
+                    :page-count="data?.pagination?.pageSize ?? 0"
+                    :total="data?.pagination?.totalCount ?? 0"
+                />
+            </div>
         </div>
     </div>
 </template>

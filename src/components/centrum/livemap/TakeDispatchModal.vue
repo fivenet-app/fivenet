@@ -138,7 +138,7 @@ const onSubmitThrottle = useThrottleFn(async (resp: TakeDispatchResp) => {
                                     <div class="h-0 flex-1 overflow-y-auto">
                                         <div class="bg-primary-700 px-4 py-6 sm:px-6">
                                             <div class="flex items-center justify-between">
-                                                <DialogTitle class="text-base font-semibold leading-6 text-neutral">
+                                                <DialogTitle class="text-base font-semibold leading-6">
                                                     {{ $t('components.centrum.take_dispatch.title') }}
                                                 </DialogTitle>
                                                 <div class="ml-3 flex h-7 items-center">
@@ -147,7 +147,7 @@ const onSubmitThrottle = useThrottleFn(async (resp: TakeDispatchResp) => {
                                                         @click="$emit('close')"
                                                     >
                                                         <span class="sr-only">{{ $t('common.close') }}</span>
-                                                        <CloseIcon class="size-5" aria-hidden="true" />
+                                                        <CloseIcon class="size-5" />
                                                     </UButton>
                                                 </div>
                                             </div>
@@ -169,7 +169,7 @@ const onSubmitThrottle = useThrottleFn(async (resp: TakeDispatchResp) => {
                                                             />
                                                             <template v-else>
                                                                 <div class="px-4 py-3 sm:grid sm:grid-cols-3 sm:gap-4 sm:px-0">
-                                                                    <dt class="text-sm font-medium leading-6 text-neutral">
+                                                                    <dt class="text-sm font-medium leading-6">
                                                                         <div class="flex h-6 items-center">
                                                                             {{ $t('common.search') }}
                                                                         </div>
@@ -183,7 +183,7 @@ const onSubmitThrottle = useThrottleFn(async (resp: TakeDispatchResp) => {
                                                                                 type="text"
                                                                                 name="search"
                                                                                 :placeholder="$t('common.search')"
-                                                                                class="block w-full rounded-md border-0 bg-base-700 py-1.5 pr-14 text-neutral placeholder:text-accent-200 focus:ring-2 focus:ring-inset focus:ring-base-300 sm:text-sm sm:leading-6"
+                                                                                class="block w-full rounded-md border-0 bg-base-700 py-1.5 pr-14 placeholder:text-accent-200 focus:ring-2 focus:ring-inset focus:ring-base-300 sm:text-sm sm:leading-6"
                                                                                 @focusin="focusTablet(true)"
                                                                                 @focusout="focusTablet(false)"
                                                                             />
@@ -226,24 +226,24 @@ const onSubmitThrottle = useThrottleFn(async (resp: TakeDispatchResp) => {
                                     <div class="flex shrink-0 justify-end p-4">
                                         <span class="isolate inline-flex w-full rounded-md pr-4 shadow-sm">
                                             <UButton
-                                                class="relative inline-flex w-full items-center rounded-l-md bg-success-500 px-3 py-2 text-sm font-semibold text-neutral ring-1 ring-inset ring-success-300 hover:bg-success-100 hover:text-neutral"
+                                                class="relative inline-flex w-full items-center rounded-l-md bg-success-500 px-3 py-2 text-sm font-semibold ring-1 ring-inset ring-success-300 hover:bg-success-100"
                                                 :disabled="!canTakeDispatch || !canSubmit"
                                                 :class="!canTakeDispatch ? 'disabled' : ''"
                                                 @click="onSubmitThrottle(TakeDispatchResp.ACCEPTED)"
                                             >
                                                 <template v-if="!canSubmit">
-                                                    <LoadingIcon class="mr-2 size-5 animate-spin" aria-hidden="true" />
+                                                    <LoadingIcon class="mr-2 size-5 animate-spin" />
                                                 </template>
                                                 {{ $t('common.accept') }}
                                             </UButton>
                                             <UButton
-                                                class="relative -ml-px inline-flex w-full items-center bg-error-500 px-3 py-2 text-sm font-semibold text-neutral ring-1 ring-inset ring-error-300 hover:bg-error-100"
+                                                class="relative -ml-px inline-flex w-full items-center bg-error-500 px-3 py-2 text-sm font-semibold ring-1 ring-inset ring-error-300 hover:bg-error-100"
                                                 :disabled="!canTakeDispatch || !canSubmit"
                                                 :class="!canTakeDispatch ? 'disabled' : ''"
                                                 @click="onSubmitThrottle(TakeDispatchResp.DECLINED)"
                                             >
                                                 <template v-if="!canSubmit">
-                                                    <LoadingIcon class="mr-2 size-5 animate-spin" aria-hidden="true" />
+                                                    <LoadingIcon class="mr-2 size-5 animate-spin" />
                                                 </template>
                                                 {{ $t('common.decline') }}
                                             </UButton>

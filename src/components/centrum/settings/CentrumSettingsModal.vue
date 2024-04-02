@@ -154,25 +154,22 @@ const { remove: dspRemove, push: dspPush, fields: dspFields } = useFieldArray<st
                                     @click="$emit('close')"
                                 >
                                     <span class="sr-only">{{ $t('common.close') }}</span>
-                                    <CloseIcon class="size-5" aria-hidden="true" />
+                                    <CloseIcon class="size-5" />
                                 </UButton>
                             </div>
                             <form @submit.prevent="onSubmitThrottle">
                                 <div>
                                     <div class="mx-auto flex size-12 items-center justify-center rounded-full bg-success-100">
-                                        <GroupIcon class="size-5 text-success-600" aria-hidden="true" />
+                                        <GroupIcon class="size-5 text-success-600" />
                                     </div>
                                     <div class="mt-3 text-center sm:mt-5">
-                                        <DialogTitle as="h3" class="text-base font-semibold leading-6 text-neutral">
+                                        <DialogTitle as="h3" class="text-base font-semibold leading-6">
                                             {{ $t('components.centrum.units.update_settings') }}
                                         </DialogTitle>
                                         <div class="mt-2">
                                             <div class="text-sm text-gray-100">
                                                 <div class="flex-1">
-                                                    <label
-                                                        for="enabled"
-                                                        class="block text-sm font-medium leading-6 text-neutral"
-                                                    >
+                                                    <label for="enabled" class="block text-sm font-medium leading-6">
                                                         {{ $t('common.enabled') }}
                                                     </label>
                                                     <VeeField
@@ -191,7 +188,7 @@ const { remove: dspRemove, push: dspPush, fields: dspFields } = useFieldArray<st
                                                     />
                                                 </div>
                                                 <div class="flex-1">
-                                                    <label for="mode" class="block text-sm font-medium leading-6 text-neutral">
+                                                    <label for="mode" class="block text-sm font-medium leading-6">
                                                         {{ $t('common.mode') }}
                                                     </label>
                                                     <VeeField
@@ -203,7 +200,7 @@ const { remove: dspRemove, push: dspPush, fields: dspFields } = useFieldArray<st
                                                     >
                                                         <select
                                                             v-bind="field"
-                                                            class="block w-full rounded-md border-0 bg-base-700 py-1.5 text-neutral placeholder:text-accent-200 focus:ring-2 focus:ring-inset focus:ring-base-300 sm:text-sm sm:leading-6"
+                                                            class="block w-full rounded-md border-0 bg-base-700 py-1.5 placeholder:text-accent-200 focus:ring-2 focus:ring-inset focus:ring-base-300 sm:text-sm sm:leading-6"
                                                             @focusin="focusTablet(true)"
                                                             @focusout="focusTablet(false)"
                                                         >
@@ -226,10 +223,7 @@ const { remove: dspRemove, push: dspPush, fields: dspFields } = useFieldArray<st
                                                     <VeeErrorMessage name="mode" as="p" class="mt-2 text-sm text-error-400" />
                                                 </div>
                                                 <div class="flex-1">
-                                                    <label
-                                                        for="fallbackMode"
-                                                        class="block text-sm font-medium leading-6 text-neutral"
-                                                    >
+                                                    <label for="fallbackMode" class="block text-sm font-medium leading-6">
                                                         {{ $t('common.fallback_mode') }}
                                                     </label>
                                                     <VeeField
@@ -241,7 +235,7 @@ const { remove: dspRemove, push: dspPush, fields: dspFields } = useFieldArray<st
                                                     >
                                                         <select
                                                             v-bind="field"
-                                                            class="block w-full rounded-md border-0 bg-base-700 py-1.5 text-neutral placeholder:text-accent-200 focus:ring-2 focus:ring-inset focus:ring-base-300 sm:text-sm sm:leading-6"
+                                                            class="block w-full rounded-md border-0 bg-base-700 py-1.5 placeholder:text-accent-200 focus:ring-2 focus:ring-inset focus:ring-base-300 sm:text-sm sm:leading-6"
                                                             @focusin="focusTablet(true)"
                                                             @focusout="focusTablet(false)"
                                                         >
@@ -271,10 +265,7 @@ const { remove: dspRemove, push: dspPush, fields: dspFields } = useFieldArray<st
                                                 </div>
                                                 <!-- Predefined Unit Status Reason -->
                                                 <div class="flex-1">
-                                                    <label
-                                                        for="unitStatus"
-                                                        class="block text-sm font-medium leading-6 text-neutral"
-                                                    >
+                                                    <label for="unitStatus" class="block text-sm font-medium leading-6">
                                                         {{ `${$t('common.units')} ${$t('common.status')}` }}
                                                     </label>
                                                     <div class="flex flex-col gap-1">
@@ -286,7 +277,7 @@ const { remove: dspRemove, push: dspPush, fields: dspFields } = useFieldArray<st
                                                             <VeeField
                                                                 :name="`unitStatus[${idx}]`"
                                                                 type="text"
-                                                                class="block w-full flex-1 rounded-md border-0 bg-base-700 py-1.5 text-neutral placeholder:text-accent-200 focus:ring-2 focus:ring-inset focus:ring-base-300 sm:text-sm sm:leading-6"
+                                                                class="block w-full flex-1 rounded-md border-0 bg-base-700 py-1.5 placeholder:text-accent-200 focus:ring-2 focus:ring-inset focus:ring-base-300 sm:text-sm sm:leading-6"
                                                                 :placeholder="$t('common.reason')"
                                                                 :label="$t('common.reason')"
                                                                 @focusin="focusTablet(true)"
@@ -294,15 +285,15 @@ const { remove: dspRemove, push: dspPush, fields: dspFields } = useFieldArray<st
                                                             />
 
                                                             <UButton
-                                                                class="rounded-full bg-primary-500 p-1.5 text-neutral hover:bg-primary-400 focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2"
+                                                                class="rounded-full bg-primary-500 p-1.5 hover:bg-primary-400 focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2"
                                                                 @click="usRemove(idx)"
                                                             >
-                                                                <CloseIcon class="size-5" aria-hidden="true" />
+                                                                <CloseIcon class="size-5" />
                                                             </UButton>
                                                         </div>
                                                     </div>
                                                     <UButton
-                                                        class="mt-2 rounded-full p-1.5 text-neutral focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2"
+                                                        class="mt-2 rounded-full p-1.5 focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2"
                                                         :disabled="!canSubmit || usFields.length >= 4"
                                                         :class="
                                                             !canSubmit || usFields.length >= 4
@@ -311,15 +302,12 @@ const { remove: dspRemove, push: dspPush, fields: dspFields } = useFieldArray<st
                                                         "
                                                         @click="usPush('')"
                                                     >
-                                                        <PlusIcon class="size-5" aria-hidden="true" />
+                                                        <PlusIcon class="size-5" />
                                                     </UButton>
                                                 </div>
                                                 <!-- Predefined Dispatch Status Reason -->
                                                 <div class="flex-1">
-                                                    <label
-                                                        for="dispatchStatus"
-                                                        class="block text-sm font-medium leading-6 text-neutral"
-                                                    >
+                                                    <label for="dispatchStatus" class="block text-sm font-medium leading-6">
                                                         {{ `${$t('common.dispatches')} ${$t('common.status')}` }}
                                                     </label>
                                                     <div class="flex flex-col gap-1">
@@ -331,7 +319,7 @@ const { remove: dspRemove, push: dspPush, fields: dspFields } = useFieldArray<st
                                                             <VeeField
                                                                 :name="`dispatchStatus[${idx}]`"
                                                                 type="text"
-                                                                class="block w-full flex-1 rounded-md border-0 bg-base-700 py-1.5 text-neutral placeholder:text-accent-200 focus:ring-2 focus:ring-inset focus:ring-base-300 sm:text-sm sm:leading-6"
+                                                                class="block w-full flex-1 rounded-md border-0 bg-base-700 py-1.5 placeholder:text-accent-200 focus:ring-2 focus:ring-inset focus:ring-base-300 sm:text-sm sm:leading-6"
                                                                 :placeholder="$t('common.reason')"
                                                                 :label="$t('common.reason')"
                                                                 @focusin="focusTablet(true)"
@@ -339,15 +327,15 @@ const { remove: dspRemove, push: dspPush, fields: dspFields } = useFieldArray<st
                                                             />
 
                                                             <UButton
-                                                                class="rounded-full bg-primary-500 p-1.5 text-neutral hover:bg-primary-400 focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2"
+                                                                class="rounded-full bg-primary-500 p-1.5 hover:bg-primary-400 focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2"
                                                                 @click="dspRemove(idx)"
                                                             >
-                                                                <CloseIcon class="size-5" aria-hidden="true" />
+                                                                <CloseIcon class="size-5" />
                                                             </UButton>
                                                         </div>
                                                     </div>
                                                     <UButton
-                                                        class="mt-2 rounded-full p-1.5 text-neutral focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2"
+                                                        class="mt-2 rounded-full p-1.5 focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2"
                                                         :disabled="!canSubmit || dspFields.length >= 4"
                                                         :class="
                                                             !canSubmit || dspFields.length >= 4
@@ -356,7 +344,7 @@ const { remove: dspRemove, push: dspPush, fields: dspFields } = useFieldArray<st
                                                         "
                                                         @click="dspPush('')"
                                                     >
-                                                        <PlusIcon class="size-5" aria-hidden="true" />
+                                                        <PlusIcon class="size-5" />
                                                     </UButton>
                                                 </div>
                                             </div>
@@ -367,16 +355,11 @@ const { remove: dspRemove, push: dspPush, fields: dspFields } = useFieldArray<st
                                     <UButton
                                         v-if="can('CentrumService.UpdateSettings')"
                                         type="submit"
-                                        class="flex w-full items-center rounded-md px-3 py-2 text-sm font-semibold text-neutral shadow-sm focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 sm:col-start-2"
+                                        class="flex w-full items-center rounded-md px-3 py-2 text-sm font-semibold shadow-sm focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 sm:col-start-2"
                                         :disabled="!meta.valid || !canSubmit"
-                                        :class="[
-                                            !meta.valid || !canSubmit
-                                                ? 'disabled bg-base-500 hover:bg-base-400 focus-visible:outline-base-500'
-                                                : 'bg-primary-500 hover:bg-primary-400',
-                                        ]"
                                     >
                                         <template v-if="!canSubmit">
-                                            <LoadingIcon class="mr-2 size-5 animate-spin" aria-hidden="true" />
+                                            <LoadingIcon class="mr-2 size-5 animate-spin" />
                                         </template>
                                         {{ $t('common.update') }}
                                     </UButton>

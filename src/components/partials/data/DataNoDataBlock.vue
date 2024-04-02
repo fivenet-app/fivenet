@@ -31,7 +31,7 @@ function click() {
             class="relative block w-full rounded-lg border-2 border-dashed border-base-300 p-8 text-center hover:border-base-400 focus:ring-2 focus:ring-neutral focus:ring-offset-2"
             @click="click()"
         >
-            <component :is="icon" class="mx-auto size-12 text-neutral" aria-hidden="true" />
+            <component :is="icon" class="mx-auto size-12" />
             <span class="mt-2 block text-sm font-semibold text-gray-300">
                 <span v-if="message">
                     {{ message }}

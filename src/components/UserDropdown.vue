@@ -1,14 +1,14 @@
 <script setup lang="ts">
 import { useAuthStore } from '~/store/auth';
+import SuperUserJobSelection from '~/components/partials/SuperUserJobSelection.vue';
 
-const { isHelpSlideoverOpen } = useDashboard();
 const { isDashboardSearchModalOpen } = useUIState();
 const { metaSymbol } = useShortcuts();
 
 const { t } = useI18n();
 
 const authStore = useAuthStore();
-const { activeChar, username } = storeToRefs(authStore);
+const { activeChar, username, isSuperuser } = storeToRefs(authStore);
 
 const items = computed(() => [
     [
@@ -37,7 +37,22 @@ const items = computed(() => [
                 isDashboardSearchModalOpen.value = true;
             },
         },
-    ],
+        can('CanBeSuper') || can('SuperUser')
+            ? {
+                  label: t('common.superuser') + ': ' + isSuperuser.value,
+                  icon: 'i-mdi-square-root',
+                  click: () => authStore.setSuperUserMode(!isSuperuser.value),
+              }
+            : undefined,
+        can('SuperUser')
+            ? {
+                  slot: 'job',
+                  label: 'Select Job',
+                  icon: 'i-mdi-briefcase',
+                  disabled: true,
+              }
+            : undefined,
+    ].filter((i) => i !== undefined),
     [
         {
             label: t('components.partials.sidebar.change_character'),
@@ -84,6 +99,10 @@ const items = computed(() => [
                 <p>Signed in as</p>
                 <p class="truncate font-medium text-gray-900 dark:text-white">{{ username }}</p>
             </div>
+        </template>
+
+        <template v-if="can('SuperUser')" #job>
+            <SuperUserJobSelection />
         </template>
     </UDropdown>
 </template>

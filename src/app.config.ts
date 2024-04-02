@@ -21,5 +21,18 @@ export default defineAppConfig({
                 openDelay: 500,
             },
         },
+        button: {
+            default: {
+                loadingIcon: 'i-mdi-loading',
+            },
+        },
+        icons: {
+            dynamic: true,
+        },
+        table: {
+            td: {
+                padding: 'px-2 py-2',
+            },
+        },
     },
 });

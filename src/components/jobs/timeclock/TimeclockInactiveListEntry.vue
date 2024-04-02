@@ -21,7 +21,7 @@ defineEmits<{
 
 <template>
     <tr :key="colleague.userId" class="transition-colors even:bg-base-800 hover:bg-neutral/5">
-        <td class="whitespace-nowrap py-2 pl-4 pr-3 text-base font-medium text-neutral sm:pl-1">
+        <td class="whitespace-nowrap py-2 pl-4 pr-3 text-base font-medium sm:pl-1">
             <ProfilePictureImg
                 :url="colleague.avatar?.url"
                 :name="`${colleague.firstname} ${colleague.lastname}`"
@@ -30,7 +30,7 @@ defineEmits<{
                 :enable-popup="true"
             />
         </td>
-        <td class="whitespace-nowrap py-2 pl-4 pr-3 text-base font-medium text-neutral sm:pl-1">
+        <td class="whitespace-nowrap py-2 pl-4 pr-3 text-base font-medium sm:pl-1">
             {{ colleague.firstname }} {{ colleague.lastname }}
             <dl class="font-normal lg:hidden">
                 <dt class="sr-only">{{ $t('common.job_grade') }}</dt>
@@ -61,7 +61,7 @@ defineEmits<{
                     }"
                     class="flex-initial text-primary-500 hover:text-primary-400"
                 >
-                    <EyeIcon class="mr-2.5 h-auto w-5" aria-hidden="true" />
+                    <EyeIcon class="mr-2.5 h-auto w-5" />
                 </NuxtLink>
             </div>
         </td>

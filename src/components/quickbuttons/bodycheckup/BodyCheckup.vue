@@ -174,7 +174,7 @@ function reset(): void {
             </svg>
         </div>
         <div class="flex flex-col">
-            <div class="grow">
+            <div class="flex-1">
                 <h3 class="text-xl font-semibold leading-6">
                     {{ $t('common.summary') }}
                 </h3>
@@ -196,21 +196,24 @@ function reset(): void {
                             @focusout="focusTablet(false)"
                         />
                         <span class="ml-1" @click="removePin(idx)">
-                            <TrashCanIcon class="size-5" aria-hidden="true" />
+                            <TrashCanIcon class="size-5" />
                         </span>
                     </li>
                 </ol>
             </div>
-            <UButtonGroup class="mb-2">
-                <UButton block @click="copyToClipboard()">
-                    {{ $t('common.copy') }}
-                </UButton>
-                <UButton color="red" @click="reset()">
-                    {{ $t('common.reset') }}
-                </UButton>
-            </UButtonGroup>
 
-            <BMICalculator />
+            <div class="mt-2 flow-root">
+                <UButtonGroup class="mb-2 w-full">
+                    <UButton class="flex-1" @click="copyToClipboard()">
+                        {{ $t('common.copy') }}
+                    </UButton>
+                    <UButton color="red" @click="reset()">
+                        {{ $t('common.reset') }}
+                    </UButton>
+                </UButtonGroup>
+
+                <BMICalculator />
+            </div>
         </div>
     </div>
 </template>

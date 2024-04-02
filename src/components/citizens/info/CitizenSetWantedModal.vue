@@ -102,7 +102,7 @@ const onSubmitThrottle = useThrottleFn(async (e) => {
                         leave-to="opacity-0 translate-y-4 sm:translate-y-0 sm:scale-95"
                     >
                         <DialogPanel
-                            class="relative h-112 w-full overflow-hidden rounded-lg bg-base-800 px-4 pb-4 pt-5 text-left text-neutral transition-all sm:my-8 sm:max-w-2xl sm:p-6"
+                            class="relative h-112 w-full overflow-hidden rounded-lg bg-base-800 px-4 pb-4 pt-5 text-left transition-all sm:my-8 sm:max-w-2xl sm:p-6"
                         >
                             <div class="absolute right-0 top-0 block pr-4 pt-4">
                                 <UButton
@@ -110,7 +110,7 @@ const onSubmitThrottle = useThrottleFn(async (e) => {
                                     @click="$emit('close')"
                                 >
                                     <span class="sr-only">{{ $t('common.close') }}</span>
-                                    <CloseIcon class="size-5" aria-hidden="true" />
+                                    <CloseIcon class="size-5" />
                                 </UButton>
                             </div>
                             <DialogTitle as="h3" class="text-base font-semibold leading-6">
@@ -123,13 +123,13 @@ const onSubmitThrottle = useThrottleFn(async (e) => {
                             <form @submit.prevent="onSubmitThrottle">
                                 <div class="my-2 space-y-24">
                                     <div class="flex-1">
-                                        <label for="job" class="block text-sm font-medium leading-6 text-neutral">
+                                        <label for="job" class="block text-sm font-medium leading-6">
                                             {{ $t('common.reason') }}
                                         </label>
                                         <VeeField
                                             type="text"
                                             name="reason"
-                                            class="block w-full rounded-md border-0 bg-base-700 py-1.5 text-neutral placeholder:text-accent-200 focus:ring-2 focus:ring-inset focus:ring-base-300 sm:text-sm sm:leading-6"
+                                            class="block w-full rounded-md border-0 bg-base-700 py-1.5 placeholder:text-accent-200 focus:ring-2 focus:ring-inset focus:ring-base-300 sm:text-sm sm:leading-6"
                                             :placeholder="$t('common.reason')"
                                             :label="$t('common.reason')"
                                             @focusin="focusTablet(true)"
@@ -147,16 +147,11 @@ const onSubmitThrottle = useThrottleFn(async (e) => {
                                     </UButton>
                                     <UButton
                                         type="submit"
-                                        class="flex flex-1 justify-center rounded-md px-3.5 py-2.5 text-sm font-semibold text-neutral"
+                                        class="flex flex-1 justify-center rounded-md px-3.5 py-2.5 text-sm font-semibold"
                                         :disabled="!meta.valid || !canSubmit"
-                                        :class="[
-                                            !meta.valid || !canSubmit
-                                                ? 'disabled bg-base-500 hover:bg-base-400 focus-visible:outline-base-500'
-                                                : 'bg-primary-500 hover:bg-primary-400',
-                                        ]"
                                     >
                                         <template v-if="!canSubmit">
-                                            <LoadingIcon class="mr-2 size-5 animate-spin" aria-hidden="true" />
+                                            <LoadingIcon class="mr-2 size-5 animate-spin" />
                                         </template>
                                         {{ $t('common.save') }}
                                     </UButton>

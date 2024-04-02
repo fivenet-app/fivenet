@@ -20,7 +20,7 @@ const links = [
         <template #logo> <FiveNetLogo class="h-10 w-auto" /> </template>
 
         <template #right>
-            <UButton :label="$t('components.auth.login.title')" color="gray" to="/auth/login" />
+            <UButton :label="$t('components.auth.login.title')" icon="i-mdi-login" color="gray" to="/auth/login" />
             <UButton
                 :label="$t('components.auth.registration_form.title')"
                 icon="i-mdi-account-plus"

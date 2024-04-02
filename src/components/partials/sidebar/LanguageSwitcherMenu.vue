@@ -44,10 +44,7 @@ async function switchLanguage(lang: Language): Promise<void> {
                 class="flex rounded-full bg-base-800 text-sm ring-2 ring-base-600 focus:ring-2 focus:ring-primary-500 focus:ring-offset-2"
             >
                 <span class="sr-only">{{ $t('components.partials.sidebar_language_switcher.open_switcher') }}</span>
-                <TranslateIcon
-                    class="size-10 rounded-full bg-base-800 p-1 text-base-300 hover:text-neutral hover:transition-colors"
-                    aria-hidden="true"
-                />
+                <TranslateIcon class="size-10 rounded-full bg-base-800 p-1 text-base-300 hover:transition-colors" />
             </MenuButton>
         </div>
         <transition
@@ -65,7 +62,7 @@ async function switchLanguage(lang: Language): Promise<void> {
                     <UButton
                         :class="[
                             active ? 'bg-primary-500' : '',
-                            'flex w-full flex-row px-4 py-2 text-sm text-neutral hover:transition-colors',
+                            'flex w-full flex-row px-4 py-2 text-sm hover:transition-colors',
                         ]"
                         @click="switchLanguage(item)"
                     >

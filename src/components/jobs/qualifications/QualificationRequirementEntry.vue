@@ -86,7 +86,7 @@ watch(selectedQualification, () => emits('update-qualification', selectedQualifi
                 <ComboboxButton as="div">
                     <ComboboxInput
                         autocomplete="off"
-                        class="block w-full rounded-md border-0 bg-base-700 py-1.5 text-neutral placeholder:text-accent-200 focus:ring-2 focus:ring-inset focus:ring-base-300 sm:text-sm sm:leading-6"
+                        class="block w-full rounded-md border-0 bg-base-700 py-1.5 placeholder:text-accent-200 focus:ring-2 focus:ring-inset focus:ring-base-300 sm:text-sm sm:leading-6"
                         :display-value="(qualification: any) => `${qualification?.abbreviation}: ${qualification?.title}`"
                         :class="readOnly ? 'disabled' : ''"
                         @change="queryQualificationRaw = $event.target.value"
@@ -104,12 +104,7 @@ watch(selectedQualification, () => emits('update-qualification', selectedQualifi
                         v-slot="{ active, selected }"
                         :value="qualification"
                     >
-                        <li
-                            :class="[
-                                'relative cursor-default select-none py-2 pl-8 pr-4 text-neutral',
-                                active ? 'bg-primary-500' : '',
-                            ]"
-                        >
+                        <li :class="['relative cursor-default select-none py-2 pl-8 pr-4', active ? 'bg-primary-500' : '']">
                             <span :class="['block truncate', selected && 'font-semibold']">
                                 {{ qualification.abbreviation }}: {{ qualification.title }}
                             </span>
@@ -121,7 +116,7 @@ watch(selectedQualification, () => emits('update-qualification', selectedQualifi
                                     'absolute inset-y-0 left-0 flex items-center pl-1.5',
                                 ]"
                             >
-                                <CheckIcon class="size-5" aria-hidden="true" />
+                                <CheckIcon class="size-5" />
                             </span>
                         </li>
                     </ComboboxOption>
@@ -130,10 +125,10 @@ watch(selectedQualification, () => emits('update-qualification', selectedQualifi
         </Combobox>
 
         <UButton
-            class="ml-2 rounded-full bg-primary-500 p-1.5 text-neutral hover:bg-primary-400 focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2"
+            class="ml-2 rounded-full bg-primary-500 p-1.5 hover:bg-primary-400 focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2"
             @click="$emit('remove')"
         >
-            <CloseIcon class="size-5" aria-hidden="true" />
+            <CloseIcon class="size-5" />
         </UButton>
     </div>
 </template>

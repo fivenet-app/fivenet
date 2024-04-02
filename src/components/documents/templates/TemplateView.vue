@@ -186,13 +186,13 @@ onConfirm(async (id) => deleteTemplate(id));
                     <NuxtLink
                         v-if="can('DocStoreService.CreateTemplate')"
                         :to="{ name: 'documents-templates-edit-id', params: { id: templateId.toString() } }"
-                        class="flex w-full justify-center rounded-md bg-primary-500 px-3 py-2 text-sm font-semibold text-neutral transition-colors hover:bg-primary-400 focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-base-300"
+                        class="flex w-full justify-center rounded-md bg-primary-500 px-3 py-2 text-sm font-semibold transition-colors hover:bg-primary-400 focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-base-300"
                     >
                         {{ $t('common.edit') }}
                     </NuxtLink>
                     <UButton
                         v-if="can('DocStoreService.CreateTemplate')"
-                        class="ml-4 flex w-full justify-center rounded-md bg-accent-600 px-3 py-2 text-sm font-semibold text-neutral transition-colors hover:bg-accent-500 focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-base-300"
+                        class="ml-4 flex w-full justify-center rounded-md bg-accent-600 px-3 py-2 text-sm font-semibold transition-colors focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-base-300"
                         @click="openPreview = true"
                     >
                         {{ $t('common.preview') }}
@@ -200,7 +200,7 @@ onConfirm(async (id) => deleteTemplate(id));
                     <UButton
                         v-if="can('DocStoreService.DeleteTemplate')"
                         type="submit"
-                        class="ml-4 flex w-full justify-center rounded-md bg-error-600 px-3 py-2 text-sm font-semibold text-neutral transition-colors hover:bg-error-500 focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-base-300"
+                        class="ml-4 flex w-full justify-center rounded-md bg-error-600 px-3 py-2 text-sm font-semibold transition-colors hover:bg-error-500 focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-base-300"
                         @click="reveal()"
                     >
                         {{ $t('common.delete') }}
@@ -209,10 +209,10 @@ onConfirm(async (id) => deleteTemplate(id));
             </div>
             <div class="sm:flex sm:items-center">
                 <div>
-                    <h2 class="text-2xl text-neutral">
+                    <h2 class="text-2xl">
                         {{ template.title }}
                     </h2>
-                    <p class="text-base text-neutral">
+                    <p class="text-base">
                         <span class="font-semibold">{{ $t('common.description') }}:</span> {{ template.description }}
                     </p>
                 </div>
@@ -227,7 +227,7 @@ onConfirm(async (id) => deleteTemplate(id));
                             <UInput
                                 type="text"
                                 name="weight"
-                                class="block w-full rounded-md border-0 bg-base-700 py-1.5 text-neutral placeholder:text-accent-200 focus:ring-2 focus:ring-inset focus:ring-base-300 sm:text-sm sm:leading-6"
+                                class="block w-full rounded-md border-0 bg-base-700 py-1.5 placeholder:text-accent-200 focus:ring-2 focus:ring-inset focus:ring-base-300 sm:text-sm sm:leading-6"
                                 disabled
                                 :value="template.weight"
                                 @focusin="focusTablet(true)"
@@ -258,7 +258,7 @@ onConfirm(async (id) => deleteTemplate(id));
                             <textarea
                                 rows="4"
                                 name="contentTitle"
-                                class="block w-full whitespace-pre-wrap rounded-md border-0 bg-base-700 py-1.5 text-neutral placeholder:text-accent-200 focus:ring-2 focus:ring-inset focus:ring-base-300 sm:text-sm sm:leading-6"
+                                class="block w-full whitespace-pre-wrap rounded-md border-0 bg-base-700 py-1.5 placeholder:text-accent-200 focus:ring-2 focus:ring-inset focus:ring-base-300 sm:text-sm sm:leading-6"
                                 disabled
                                 :value="template.contentTitle"
                                 @focusin="focusTablet(true)"
@@ -274,7 +274,7 @@ onConfirm(async (id) => deleteTemplate(id));
                             <UInput
                                 type="text"
                                 name="state"
-                                class="block w-full whitespace-pre-wrap rounded-md border-0 bg-base-700 py-1.5 text-neutral placeholder:text-accent-200 focus:ring-2 focus:ring-inset focus:ring-base-300 sm:text-sm sm:leading-6"
+                                class="block w-full whitespace-pre-wrap rounded-md border-0 bg-base-700 py-1.5 placeholder:text-accent-200 focus:ring-2 focus:ring-inset focus:ring-base-300 sm:text-sm sm:leading-6"
                                 disabled
                                 :value="template.state"
                                 @focusin="focusTablet(true)"
@@ -301,7 +301,7 @@ onConfirm(async (id) => deleteTemplate(id));
                             <textarea
                                 rows="4"
                                 name="content"
-                                class="block w-full rounded-md border-0 bg-base-700 py-1.5 text-neutral placeholder:text-accent-200 focus:ring-2 focus:ring-inset focus:ring-base-300 sm:text-sm sm:leading-6"
+                                class="block w-full rounded-md border-0 bg-base-700 py-1.5 placeholder:text-accent-200 focus:ring-2 focus:ring-inset focus:ring-base-300 sm:text-sm sm:leading-6"
                                 disabled
                                 :value="template.content"
                                 @focusin="focusTablet(true)"

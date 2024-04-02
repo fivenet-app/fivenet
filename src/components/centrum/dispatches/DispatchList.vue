@@ -65,7 +65,7 @@ const grouped = computedAsync(async () => {
                         :title="$t('common.dispatches')"
                         class="ml-2"
                     >
-                        <ArchiveIcon class="size-5" aria-hidden="true" />
+                        <ArchiveIcon class="size-5" />
                     </NuxtLink>
                 </h2>
                 <DispatchStatusBreakdown v-if="dispatches === undefined" class="text-base font-semibold text-gray-100" />

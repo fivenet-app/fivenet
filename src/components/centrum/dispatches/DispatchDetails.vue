@@ -102,9 +102,7 @@ const openStatus = ref(false);
                                     <div class="h-0 flex-1 overflow-y-auto">
                                         <div class="bg-primary-700 px-4 py-6 sm:px-6">
                                             <div class="flex items-center justify-between">
-                                                <DialogTitle
-                                                    class="inline-flex items-center text-base font-semibold leading-6 text-neutral"
-                                                >
+                                                <DialogTitle class="inline-flex items-center text-base font-semibold leading-6">
                                                     {{ $t('common.dispatch') }}:
                                                     <IDCopyBadge :id="dispatch.id" class="mx-2" prefix="DSP" />
                                                     <p class="max-w-80 truncate" :title="dispatch.message">
@@ -112,11 +110,11 @@ const openStatus = ref(false);
                                                     </p>
                                                     <UButton
                                                         v-if="can('CentrumService.DeleteDispatch')"
-                                                        class="ml-1 flex-initial text-neutral hover:text-gray-300"
+                                                        class="ml-1 flex-initial hover:text-gray-300"
                                                         :title="$t('common.delete')"
                                                         @click="reveal()"
                                                     >
-                                                        <TrashCanIcon class="size-5" aria-hidden="true" />
+                                                        <TrashCanIcon class="size-5" />
                                                     </UButton>
                                                 </DialogTitle>
                                                 <div class="ml-3 flex h-7 items-center">
@@ -125,7 +123,7 @@ const openStatus = ref(false);
                                                         @click="$emit('close')"
                                                     >
                                                         <span class="sr-only">{{ $t('common.close') }}</span>
-                                                        <CloseIcon class="size-5" aria-hidden="true" />
+                                                        <CloseIcon class="size-5" />
                                                     </UButton>
                                                 </div>
                                             </div>
@@ -135,7 +133,7 @@ const openStatus = ref(false);
                                                 <div class="mt-1">
                                                     <dl class="divide-y divide-neutral/10">
                                                         <div class="px-4 py-3 sm:grid sm:grid-cols-3 sm:gap-4 sm:px-0">
-                                                            <dt class="text-sm font-medium leading-6 text-neutral">
+                                                            <dt class="text-sm font-medium leading-6">
                                                                 {{ $t('common.created_at') }}
                                                             </dt>
                                                             <dd
@@ -145,7 +143,7 @@ const openStatus = ref(false);
                                                             </dd>
                                                         </div>
                                                         <div class="px-4 py-3 sm:grid sm:grid-cols-3 sm:gap-4 sm:px-0">
-                                                            <dt class="text-sm font-medium leading-6 text-neutral">
+                                                            <dt class="text-sm font-medium leading-6">
                                                                 {{ $t('common.sent_by') }}
                                                             </dt>
                                                             <dd
@@ -164,7 +162,7 @@ const openStatus = ref(false);
                                                             </dd>
                                                         </div>
                                                         <div class="px-4 py-3 sm:grid sm:grid-cols-3 sm:gap-4 sm:px-0">
-                                                            <dt class="text-sm font-medium leading-6 text-neutral">
+                                                            <dt class="text-sm font-medium leading-6">
                                                                 {{ $t('common.location') }}
                                                             </dt>
                                                             <dd
@@ -179,14 +177,14 @@ const openStatus = ref(false);
                                                                     class="inline-flex items-center text-primary-400 hover:text-primary-600"
                                                                     @click="$emit('goto', { x: dispatch.x, y: dispatch.y })"
                                                                 >
-                                                                    <MapMarkerIcon class="mr-1 size-5" aria-hidden="true" />
+                                                                    <MapMarkerIcon class="mr-1 size-5" />
                                                                     {{ $t('common.go_to_location') }}
                                                                 </UButton>
                                                                 <span v-else>{{ $t('common.no_location') }}</span>
                                                             </dd>
                                                         </div>
                                                         <div class="px-4 py-3 sm:grid sm:grid-cols-3 sm:gap-4 sm:px-0">
-                                                            <dt class="text-sm font-medium leading-6 text-neutral">
+                                                            <dt class="text-sm font-medium leading-6">
                                                                 {{ $t('common.description') }}
                                                             </dt>
                                                             <dd class="mt-2 text-sm text-gray-300 sm:col-span-2 sm:mt-0">
@@ -196,7 +194,7 @@ const openStatus = ref(false);
                                                             </dd>
                                                         </div>
                                                         <div class="px-4 py-3 sm:grid sm:grid-cols-3 sm:gap-4 sm:px-0">
-                                                            <dt class="text-sm font-medium leading-6 text-neutral">
+                                                            <dt class="text-sm font-medium leading-6">
                                                                 {{ $t('common.attributes', 2) }}
                                                             </dt>
                                                             <dd class="mt-2 text-sm text-gray-300 sm:col-span-2 sm:mt-0">
@@ -204,7 +202,7 @@ const openStatus = ref(false);
                                                             </dd>
                                                         </div>
                                                         <div class="px-4 py-3 sm:grid sm:grid-cols-3 sm:gap-4 sm:px-0">
-                                                            <dt class="text-sm font-medium leading-6 text-neutral">
+                                                            <dt class="text-sm font-medium leading-6">
                                                                 {{ $t('common.reference', 2) }}
                                                             </dt>
                                                             <dd class="mt-2 text-sm text-gray-300 sm:col-span-2 sm:mt-0">
@@ -212,7 +210,7 @@ const openStatus = ref(false);
                                                             </dd>
                                                         </div>
                                                         <div class="px-4 py-3 sm:grid sm:grid-cols-3 sm:gap-4 sm:px-0">
-                                                            <dt class="text-sm font-medium leading-6 text-neutral">
+                                                            <dt class="text-sm font-medium leading-6">
                                                                 {{ $t('common.units') }}
                                                             </dt>
                                                             <dd
@@ -241,7 +239,6 @@ const openStatus = ref(false);
                                                                                     <template #before>
                                                                                         <AccountGroupIcon
                                                                                             class="mr-1 size-5 shrink-0"
-                                                                                            aria-hidden="true"
                                                                                         />
                                                                                     </template>
                                                                                 </UnitInfoPopover>
@@ -278,20 +275,20 @@ const openStatus = ref(false);
                                                                 <span class="isolate mt-2 inline-flex rounded-md shadow-sm">
                                                                     <UButton
                                                                         v-if="canDo('TakeControl')"
-                                                                        class="flex flex-row items-center rounded bg-neutral/10 px-2 py-1 text-xs font-semibold text-neutral shadow-sm hover:bg-neutral/20"
+                                                                        class="flex flex-row items-center rounded bg-neutral/10 px-2 py-1 text-xs font-semibold shadow-sm hover:bg-neutral/20"
                                                                         @click="openAssign = true"
                                                                     >
-                                                                        <PencilIcon class="size-5" aria-hidden="true" />
+                                                                        <PencilIcon class="size-5" />
                                                                         <span class="ml-0.5 truncate">
                                                                             {{ $t('common.assign') }}
                                                                         </span>
                                                                     </UButton>
                                                                     <UButton
                                                                         v-if="canDo('TakeDispatch')"
-                                                                        class="ml-2 flex flex-row items-center rounded bg-neutral/10 px-2 py-1 text-xs font-semibold text-neutral shadow-sm hover:bg-neutral/20"
+                                                                        class="ml-2 flex flex-row items-center rounded bg-neutral/10 px-2 py-1 text-xs font-semibold shadow-sm hover:bg-neutral/20"
                                                                         @click="selfAssign(dispatch.id)"
                                                                     >
-                                                                        <PlusIcon class="size-5" aria-hidden="true" />
+                                                                        <PlusIcon class="size-5" />
                                                                         <span class="ml-0.5 truncate">{{
                                                                             $t('common.self_assign')
                                                                         }}</span>
@@ -304,7 +301,7 @@ const openStatus = ref(false);
                                                 <div class="mt-1">
                                                     <dl class="divide-y divide-neutral/10">
                                                         <div class="px-4 py-3 sm:grid sm:grid-cols-3 sm:gap-4 sm:px-0">
-                                                            <dt class="text-sm font-medium leading-6 text-neutral">
+                                                            <dt class="text-sm font-medium leading-6">
                                                                 {{ $t('common.last_update') }}
                                                             </dt>
                                                             <dd
@@ -314,7 +311,7 @@ const openStatus = ref(false);
                                                             </dd>
                                                         </div>
                                                         <div class="px-4 py-3 sm:grid sm:grid-cols-3 sm:gap-4 sm:px-0">
-                                                            <dt class="text-sm font-medium leading-6 text-neutral">
+                                                            <dt class="text-sm font-medium leading-6">
                                                                 {{ $t('common.location') }}
                                                             </dt>
                                                             <dd
@@ -334,14 +331,14 @@ const openStatus = ref(false);
                                                                         })
                                                                     "
                                                                 >
-                                                                    <MapMarkerIcon class="mr-1 size-5" aria-hidden="true" />
+                                                                    <MapMarkerIcon class="mr-1 size-5" />
                                                                     {{ $t('common.go_to_location') }}
                                                                 </UButton>
                                                                 <span v-else>{{ $t('common.no_location') }}</span>
                                                             </dd>
                                                         </div>
                                                         <div class="px-4 py-3 sm:grid sm:grid-cols-3 sm:gap-4 sm:px-0">
-                                                            <dt class="text-sm font-medium leading-6 text-neutral">
+                                                            <dt class="text-sm font-medium leading-6">
                                                                 {{ $t('common.status') }}
                                                             </dt>
                                                             <dd
@@ -355,7 +352,7 @@ const openStatus = ref(false);
                                                                 />
 
                                                                 <UButton
-                                                                    class="rounded px-2 py-1 text-sm font-semibold text-neutral shadow-sm hover:bg-neutral/20"
+                                                                    class="rounded px-2 py-1 text-sm font-semibold shadow-sm hover:bg-neutral/20"
                                                                     :class="dispatchStatusColors"
                                                                     @click="openStatus = true"
                                                                 >
@@ -373,7 +370,7 @@ const openStatus = ref(false);
                                                             </dd>
                                                         </div>
                                                         <div class="px-4 py-3 sm:grid sm:grid-cols-3 sm:gap-4 sm:px-0">
-                                                            <dt class="text-sm font-medium leading-6 text-neutral">
+                                                            <dt class="text-sm font-medium leading-6">
                                                                 {{ $t('common.code') }}
                                                             </dt>
                                                             <dd
@@ -383,7 +380,7 @@ const openStatus = ref(false);
                                                             </dd>
                                                         </div>
                                                         <div class="px-4 py-3 sm:grid sm:grid-cols-3 sm:gap-4 sm:px-0">
-                                                            <dt class="text-sm font-medium leading-6 text-neutral">
+                                                            <dt class="text-sm font-medium leading-6">
                                                                 {{ $t('common.reason') }}
                                                             </dt>
                                                             <dd

@@ -44,11 +44,11 @@ defineEmits<{
                         leave-to="opacity-0 translate-y-4 sm:translate-y-0 sm:scale-95"
                     >
                         <DialogPanel
-                            class="relative w-full overflow-hidden rounded-lg bg-base-800 px-4 pb-4 pt-5 text-left text-neutral transition-all sm:my-8 sm:max-w-6xl sm:p-6"
+                            class="relative w-full overflow-hidden rounded-lg bg-base-800 px-4 pb-4 pt-5 text-left transition-all sm:my-8 sm:max-w-6xl sm:p-6"
                         >
                             <div>
                                 <div class="mx-auto flex size-12 items-center justify-center rounded-full bg-base-700">
-                                    <ClipboardListIcon class="size-5 text-primary-500" aria-hidden="true" />
+                                    <ClipboardListIcon class="size-5 text-primary-500" />
                                 </div>
                                 <div class="mt-3 text-center sm:mt-5">
                                     <DialogTitle as="h3" class="text-base font-semibold leading-6">
@@ -64,13 +64,13 @@ defineEmits<{
                             <div class="mt-5 gap-2 sm:mt-4 sm:flex">
                                 <span class="isolate inline-flex w-full rounded-md pr-4 shadow-sm">
                                     <UButton
-                                        class="relative inline-flex w-full items-center rounded-l-md bg-base-500 px-3.5 py-2.5 text-sm font-semibold text-neutral hover:bg-base-400"
+                                        class="relative inline-flex w-full items-center rounded-l-md bg-base-500 px-3.5 py-2.5 text-sm font-semibold hover:bg-base-400"
                                         @click="$emit('close')"
                                     >
                                         {{ $t('common.close', 1) }}
                                     </UButton>
                                     <UButton
-                                        class="relative -ml-px inline-flex w-full items-center rounded-r-md bg-error-500 px-3.5 py-2.5 text-sm font-semibold text-neutral hover:bg-error-400"
+                                        class="relative -ml-px inline-flex w-full items-center rounded-r-md bg-error-500 px-3.5 py-2.5 text-sm font-semibold hover:bg-error-400"
                                         @click="clipboardStore.clear()"
                                     >
                                         {{ $t('components.clipboard.clipboard_modal.clear') }}

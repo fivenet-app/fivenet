@@ -3,8 +3,9 @@ import { parseQuery } from 'vue-router';
 import { useClipboardStore } from '~/store/clipboard';
 import { useNotificatorStore } from '~/store/notificator';
 import { useSettingsStore } from '~/store/settings';
-import { type JobProps } from '~~/gen/ts/resources/users/jobs';
+import { Job, type JobProps } from '~~/gen/ts/resources/users/jobs';
 import { User } from '~~/gen/ts/resources/users/users';
+import type { SetSuperUserModeRequest } from '~~/gen/ts/services/auth/auth';
 
 export interface AuthState {
     accessToken: null | string;
@@ -159,6 +160,45 @@ export const useAuthStore = defineStore('auth', {
                     const target = useRouter().resolve(useSettingsStore().startpage ?? '/overview');
                     await navigateTo(target);
                 }
+            } catch (e) {
+                $grpc.handleError(e as RpcError);
+                throw e;
+            }
+        },
+        async setSuperUserMode(superuser: boolean, job?: Job): Promise<void> {
+            const { $grpc } = useNuxtApp();
+            try {
+                const req = {
+                    superuser: superuser,
+                } as SetSuperUserModeRequest;
+
+                if (job) {
+                    req.job = job!.name;
+                }
+
+                const call = $grpc.getAuthClient().setSuperUserMode(req);
+                const { response } = await call;
+
+                if (superuser) {
+                    this.permissions.push('superuser');
+                } else {
+                    this.permissions = this.permissions.filter((p) => p !== 'superuser');
+                }
+
+                this.setAccessToken(response.token, toDate(response.expires));
+                this.setActiveChar(response.char!);
+                this.setJobProps(response.jobProps);
+
+                useNotificatorStore().add({
+                    title: { key: 'notifications.superuser_menu.setsuperusermode.title', parameters: {} },
+                    description: {
+                        key: 'notifications.superuser_menu.setsuperusermode.content',
+                        parameters: { job: job?.label ?? this.activeChar?.jobLabel ?? 'N/A' },
+                    },
+                    type: 'info',
+                });
+
+                await navigateTo({ name: 'overview' });
             } catch (e) {
                 $grpc.handleError(e as RpcError);
                 throw e;

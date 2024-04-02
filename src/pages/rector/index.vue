@@ -1,13 +1,4 @@
 <script lang="ts" setup>
-import {
-    AccountGroupIcon,
-    CarSpeedLimiterIcon,
-    FileMultipleIcon,
-    MathLogIcon,
-    OfficeBuildingCogIcon,
-    ScaleBalanceIcon,
-    TuneIcon,
-} from 'mdi-vue3';
 import CardsList from '~/components/partials/CardsList.vue';
 import { type CardElements } from '~/utils/types';
 

@@ -57,13 +57,13 @@ onBeforeMount(() => {
                     <div class="my-auto py-2 max-sm:w-full sm:mx-auto lg:mx-auto">
                         <FiveNetLogo class="mx-auto mb-2 h-auto w-36" />
 
-                        <h1 class="text-5xl font-bold text-neutral">
+                        <h1 class="text-5xl font-bold">
                             {{ $t ? $t('pages.error.title') : 'Error occured' }}
                         </h1>
-                        <h2 class="text-xl text-neutral">
+                        <h2 class="text-xl">
                             {{ $t ? $t('pages.error.subtitle') : 'A fatal error occured, please try again in a few seconds.' }}
                         </h2>
-                        <div class="mb-4 py-2 text-neutral">
+                        <div class="mb-4 py-2">
                             <p class="py-2 font-semibold">
                                 {{ $t ? $t('pages.error.error_message') : 'Error message:' }}
                             </p>
@@ -97,7 +97,7 @@ onBeforeMount(() => {
                         <div class="flex justify-center">
                             <UButton
                                 :disabled="buttonDisabled"
-                                class="w-60 rounded-md px-3.5 py-2.5 text-sm font-semibold text-neutral focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2"
+                                class="w-60 rounded-md px-3.5 py-2.5 text-sm font-semibold focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2"
                                 :class="[
                                     buttonDisabled
                                         ? 'disabled bg-base-500 hover:bg-base-400 focus-visible:outline-base-500'
@@ -110,7 +110,7 @@ onBeforeMount(() => {
 
                             <UButton
                                 :disabled="buttonDisabled"
-                                class="w-60 rounded-md px-3.5 py-2.5 text-sm font-semibold text-neutral focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 sm:ml-4"
+                                class="w-60 rounded-md px-3.5 py-2.5 text-sm font-semibold focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 sm:ml-4"
                                 :class="[
                                     buttonDisabled
                                         ? 'disabled bg-base-500 hover:bg-base-400 focus-visible:outline-base-500'
@@ -124,7 +124,7 @@ onBeforeMount(() => {
                             <!-- @vue-ignore -->
                             <UButton
                                 v-if="error && (error.statusMessage || error.message)"
-                                class="w-60 rounded-md bg-background px-3.5 py-2.5 text-sm font-semibold text-neutral hover:bg-base-400 focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-base-500 sm:ml-4"
+                                class="w-60 rounded-md bg-background px-3.5 py-2.5 text-sm font-semibold hover:bg-base-400 focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-base-500 sm:ml-4"
                                 @click="copyError"
                             >
                                 {{ $t ? $t('pages.error.copy_error') : 'Copy Error message' }}

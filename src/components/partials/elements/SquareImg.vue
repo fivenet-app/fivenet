@@ -38,7 +38,7 @@ function toggleBlur(): void {
         class="flex items-center justify-center bg-gray-500 ring-2 ring-base-600"
         :class="[size, rounded ? 'rounded-full' : 'rounded-md']"
     >
-        <span v-if="!url" class="font-medium leading-none text-white">
+        <span v-if="!url" class="select-none font-medium leading-none text-white">
             <slot name="initials" />
         </span>
         <img

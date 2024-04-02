@@ -1,14 +1,3 @@
-import {
-    CalendarCheckIcon,
-    CalendarRemoveIcon,
-    CancelIcon,
-    CarBackIcon,
-    CheckBoldIcon,
-    CoffeeIcon,
-    HelpCircleIcon,
-    MarkerCheckIcon,
-} from 'mdi-vue3';
-import { type DefineComponent } from 'vue';
 import { StatusDispatch } from '~~/gen/ts/resources/centrum/dispatches';
 import { StatusUnit, Unit } from '~~/gen/ts/resources/centrum/units';
 
@@ -20,23 +9,23 @@ export function dispatchStatusToFillColor(status: StatusDispatch | undefined): s
         case StatusDispatch.NEW:
         case StatusDispatch.UNASSIGNED:
         case StatusDispatch.UNIT_DECLINED:
-            return 'fill-error-600';
+            return '!fill-error-600';
         case StatusDispatch.EN_ROUTE:
-            return 'fill-info-500';
+            return '!fill-info-500';
         case StatusDispatch.ON_SCENE:
-            return 'fill-info-700';
+            return '!fill-info-700';
         case StatusDispatch.NEED_ASSISTANCE:
-            return 'fill-warn-600';
+            return '!fill-warn-600';
         case StatusDispatch.COMPLETED:
-            return 'fill-success-600';
+            return '!fill-success-600';
         case StatusDispatch.CANCELLED:
-            return 'fill-success-800';
+            return '!fill-success-800';
         case StatusDispatch.ARCHIVED:
-            return 'fill-base-600';
+            return '!fill-base-600';
         case StatusDispatch.UNIT_ACCEPTED:
-            return 'fill-info-600';
+            return '!fill-info-600';
         default:
-            return 'fill-info-500';
+            return '!fill-info-500';
     }
 }
 
@@ -46,23 +35,23 @@ export function dispatchStatusToBGColor(status: StatusDispatch | undefined): str
         case StatusDispatch.NEW:
         case StatusDispatch.UNASSIGNED:
         case StatusDispatch.UNIT_DECLINED:
-            return 'bg-error-600';
+            return '!bg-error-600';
         case StatusDispatch.EN_ROUTE:
-            return 'bg-info-500';
+            return '!bg-info-500';
         case StatusDispatch.ON_SCENE:
-            return 'bg-info-700';
+            return '!bg-info-700';
         case StatusDispatch.NEED_ASSISTANCE:
-            return 'bg-warn-600';
+            return '!bg-warn-600';
         case StatusDispatch.COMPLETED:
-            return 'bg-success-600';
+            return '!bg-success-600';
         case StatusDispatch.CANCELLED:
-            return 'bg-success-800';
+            return '!bg-success-800';
         case StatusDispatch.ARCHIVED:
-            return 'bg-background';
+            return '!bg-background';
         case StatusDispatch.UNIT_ACCEPTED:
-            return 'bg-info-600';
+            return '!bg-info-600';
         default:
-            return 'bg-info-500';
+            return '!bg-info-500';
     }
 }
 
@@ -81,16 +70,16 @@ export function unitStatusToBGColor(status: StatusUnit | undefined): string {
         case StatusUnit.ON_BREAK:
         case StatusUnit.USER_ADDED:
         case StatusUnit.USER_REMOVED:
-            return 'bg-info-500';
+            return '!bg-info-500';
         case StatusUnit.AVAILABLE:
-            return 'bg-success-600';
+            return '!bg-success-600';
         case StatusUnit.BUSY:
-            return 'bg-warn-600';
+            return '!bg-warn-600';
         case StatusUnit.UNSPECIFIED:
         case StatusUnit.UNKNOWN:
         case StatusUnit.UNAVAILABLE:
         default:
-            return 'bg-error-600';
+            return '!bg-error-600';
     }
 }
 
@@ -106,30 +95,28 @@ export const statusOrder = [
 ];
 
 export const unitStatuses: {
-    icon: DefineComponent;
+    icon: string;
     name: string;
     action?: Function;
-    class?: string;
     status?: StatusUnit;
 }[] = [
-    { icon: markRaw(CancelIcon), name: 'Unavailable', status: StatusUnit.UNAVAILABLE },
-    { icon: markRaw(CalendarCheckIcon), name: 'Available', status: StatusUnit.AVAILABLE },
-    { icon: markRaw(CoffeeIcon), name: 'On Break', status: StatusUnit.ON_BREAK },
-    { icon: markRaw(CalendarRemoveIcon), name: 'Busy', status: StatusUnit.BUSY },
+    { icon: 'i-mdi-cancel', name: 'Unavailable', status: StatusUnit.UNAVAILABLE },
+    { icon: 'i-mdi-calendar-check', name: 'Available', status: StatusUnit.AVAILABLE },
+    { icon: 'i-mdi-coffee', name: 'On Break', status: StatusUnit.ON_BREAK },
+    { icon: 'i-mdi-calendar-remove', name: 'Busy', status: StatusUnit.BUSY },
 ];
 
 export const dispatchStatuses: {
-    icon: DefineComponent;
+    icon: string;
     name: string;
     action?: Function;
-    class?: string;
     status?: StatusDispatch;
 }[] = [
-    { icon: markRaw(CarBackIcon), name: 'En Route', status: StatusDispatch.EN_ROUTE },
-    { icon: markRaw(MarkerCheckIcon), name: 'On Scene', status: StatusDispatch.ON_SCENE },
-    { icon: markRaw(HelpCircleIcon), name: 'Need Assistance', status: StatusDispatch.NEED_ASSISTANCE },
-    { icon: markRaw(CheckBoldIcon), name: 'Completed', status: StatusDispatch.COMPLETED },
-    { icon: markRaw(CancelIcon), name: 'Cancelled', status: StatusDispatch.CANCELLED },
+    { icon: 'i-mdi-car-back', name: 'En Route', status: StatusDispatch.EN_ROUTE },
+    { icon: 'i-mdi-marker-check', name: 'On Scene', status: StatusDispatch.ON_SCENE },
+    { icon: 'i-mdi-help-circle', name: 'Need Assistance', status: StatusDispatch.NEED_ASSISTANCE },
+    { icon: 'i-mdi-check-bold', name: 'Completed', status: StatusDispatch.COMPLETED },
+    { icon: 'i-mdi-cancel', name: 'Cancelled', status: StatusDispatch.CANCELLED },
 ];
 
 export function isStatusDispatchCompleted(status: StatusDispatch): boolean {

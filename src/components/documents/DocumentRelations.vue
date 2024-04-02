@@ -60,7 +60,7 @@ async function getDocumentRelations(): Promise<DocumentRelation[]> {
                     <li v-for="relation in relations" :key="relation.id" class="block bg-base-800 p-4 hover:bg-base-700">
                         <span class="flex items-center space-x-4">
                             <span class="flex flex-1 space-x-2 truncate">
-                                <ArrowCollapseIcon class="size-5 shrink-0 text-gray-400" aria-hidden="true" />
+                                <ArrowCollapseIcon class="size-5 shrink-0 text-gray-400" />
                                 <span class="flex flex-col truncate text-sm">
                                     <span v-if="showDocument">
                                         <NuxtLink
@@ -105,7 +105,7 @@ async function getDocumentRelations(): Promise<DocumentRelation[]> {
                 <div>
                     <div class="flex flex-col">
                         <div class="w-full overflow-hidden overflow-x-auto align-middle">
-                            <table class="w-full divide-y divide-base-400 bg-background text-neutral">
+                            <table class="w-full divide-y divide-base-400 bg-background">
                                 <thead>
                                     <tr>
                                         <th v-if="showDocument" class="px-6 py-3 text-left text-sm font-semibold" scope="col">
@@ -129,7 +129,7 @@ async function getDocumentRelations(): Promise<DocumentRelation[]> {
                                         </th>
                                     </tr>
                                 </thead>
-                                <tbody class="divide-y divide-gray-600 bg-base-700 text-neutral">
+                                <tbody class="divide-y divide-gray-600 bg-base-700">
                                     <tr v-for="relation in relations" :key="relation.id">
                                         <td v-if="showDocument" class="px-6 py-4 text-sm">
                                             <NuxtLink

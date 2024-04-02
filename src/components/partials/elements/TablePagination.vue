@@ -2,7 +2,6 @@
 import { useThrottleFn, useTimeoutFn } from '@vueuse/core';
 import { RefreshIcon } from 'mdi-vue3';
 import { Popover, PopoverButton, PopoverPanel } from '@headlessui/vue';
-import { Float } from '@headlessui-float/vue';
 import { PaginationResponse } from '~~/gen/ts/resources/common/database/database';
 
 const props = withDefaults(
@@ -92,22 +91,22 @@ const pageNumber = ref(currentPage.value.toString());
         <div v-if="total > -1" class="hidden sm:block">
             <I18nT keypath="components.partials.table_pagination.page_count" tag="p" class="text-sm text-gray-300">
                 <template #current>
-                    <span class="font-medium text-neutral">
+                    <span class="font-medium">
                         {{ currentPage.toString() }}
                     </span>
                 </template>
                 <template #total>
-                    <span class="font-medium text-neutral">
+                    <span class="font-medium">
                         {{ total.toString() }}
                     </span>
                 </template>
                 <template #maxPage>
-                    <span class="font-medium text-neutral">
+                    <span class="font-medium">
                         {{ totalPages === 0 ? 1 : totalPages }}
                     </span>
                 </template>
                 <template #size>
-                    <span class="font-medium text-neutral">
+                    <span class="font-medium">
                         {{ pageSize.toString() }}
                     </span>
                 </template>
@@ -116,7 +115,7 @@ const pageNumber = ref(currentPage.value.toString());
         <div class="flex flex-1 justify-between sm:justify-end">
             <UButton
                 v-if="refresh !== undefined"
-                class="relative ml-3 inline-flex cursor-pointer items-center rounded-md bg-primary-500 px-3 py-2 text-sm font-semibold text-neutral hover:bg-primary-400 focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2"
+                class="relative ml-3 inline-flex cursor-pointer items-center rounded-md bg-primary-500 px-3 py-2 text-sm font-semibold hover:bg-primary-400 focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2"
                 :disabled="!canSubmit"
                 :class="
                     !canSubmit
@@ -125,7 +124,7 @@ const pageNumber = ref(currentPage.value.toString());
                 "
                 @click="onSubmitThrottle()"
             >
-                <RefreshIcon class="size-5" :class="!canSubmit ? 'animate-spin' : ''" aria-hidden="true" />
+                <RefreshIcon class="size-5" :class="!canSubmit ? 'animate-spin' : ''" />
             </UButton>
 
             <nav class="isolate inline-flex -space-x-px rounded-md shadow-sm" aria-label="Pagination">
@@ -136,7 +135,7 @@ const pageNumber = ref(currentPage.value.toString());
                             offset <= 0n
                                 ? 'disabled bg-base-500 hover:bg-base-400 focus-visible:outline-base-500'
                                 : 'bg-primary-500 hover:bg-primary-400',
-                            'relative ml-3 inline-flex cursor-pointer items-center rounded-l-md px-3 py-2 text-sm font-semibold text-neutral focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2',
+                            'relative ml-3 inline-flex cursor-pointer items-center rounded-l-md px-3 py-2 text-sm font-semibold focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2',
                         ]"
                         @click="$emit('offsetChange', calculateOffset(currentPage - 1))"
                     >
@@ -146,14 +145,14 @@ const pageNumber = ref(currentPage.value.toString());
                     <UButton
                         v-for="page in beforePages"
                         :key="page"
-                        class="relative inline-flex items-center bg-secondary-500 px-4 py-2 text-sm font-semibold text-neutral hover:bg-base-400 focus:z-20 focus:outline-offset-0"
+                        class="relative inline-flex items-center bg-secondary-500 px-4 py-2 text-sm font-semibold hover:bg-base-400 focus:z-20 focus:outline-offset-0"
                         @click="$emit('offsetChange', calculateOffset(page))"
                     >
                         {{ page }}
                     </UButton>
 
                     <UButton
-                        class="relative inline-flex items-center bg-primary-500 px-4 py-2 text-sm font-semibold text-neutral underline hover:bg-primary-400"
+                        class="relative inline-flex items-center bg-primary-500 px-4 py-2 text-sm font-semibold underline hover:bg-primary-400"
                         disabled
                     >
                         {{ currentPage }}
@@ -162,55 +161,43 @@ const pageNumber = ref(currentPage.value.toString());
                     <UButton
                         v-for="page in afterPages"
                         :key="page"
-                        class="relative inline-flex items-center bg-secondary-500 px-4 py-2 text-sm font-semibold text-neutral hover:bg-base-400 focus:z-20 focus:outline-offset-0"
+                        class="relative inline-flex items-center bg-secondary-500 px-4 py-2 text-sm font-semibold hover:bg-base-400 focus:z-20 focus:outline-offset-0"
                         @click="$emit('offsetChange', calculateOffset(page))"
                     >
                         {{ page }}
                     </UButton>
 
                     <Popover v-if="totalPages > 1n" class="relative">
-                        <Float
-                            portal
-                            placement="top-start"
-                            :offset="12"
-                            enter="transition duration-150 ease-out"
-                            enter-from="scale-95 opacity-0"
-                            enter-to="scale-100 opacity-100"
-                            leave="transition duration-100 ease-in"
-                            leave-from="scale-100 opacity-100"
-                            leave-to="scale-95 opacity-0"
+                        <PopoverButton
+                            class="relative inline-flex items-center bg-secondary-500 px-4 py-2 text-sm font-semibold hover:bg-base-400 focus:z-20 focus:outline-offset-0"
+                            @click="pageNumber = ''"
                         >
-                            <PopoverButton
-                                class="relative inline-flex items-center bg-secondary-500 px-4 py-2 text-sm font-semibold text-neutral hover:bg-base-400 focus:z-20 focus:outline-offset-0"
-                                @click="pageNumber = ''"
-                            >
-                                ...
-                            </PopoverButton>
+                            ...
+                        </PopoverButton>
 
-                            <PopoverPanel
-                                focus
-                                class="absolute z-5 w-24 min-w-fit max-w-24 rounded-lg border border-gray-600 bg-gray-800 text-sm text-gray-400 shadow-sm transition-opacity"
-                            >
-                                <div class="p-3">
-                                    <form @submit.prevent="$emit('offsetChange', calculateOffset(parseInt(pageNumber)))">
-                                        <UInput
-                                            v-model="pageNumber"
-                                            type="number"
-                                            min="1"
-                                            :max="parseInt(totalPages.toString())"
-                                            class="remove-arrow block w-full rounded-md border-0 bg-base-700 py-1.5 text-neutral placeholder:text-accent-200 focus:ring-2 focus:ring-inset focus:ring-base-300 sm:text-sm sm:leading-6"
-                                            name="page_number"
-                                            :placeholder="$t('common.page')"
-                                        />
-                                    </form>
-                                </div>
-                            </PopoverPanel>
-                        </Float>
+                        <PopoverPanel
+                            focus
+                            class="absolute z-5 w-24 min-w-fit max-w-24 rounded-lg border border-gray-600 bg-gray-800 text-sm text-gray-400 shadow-sm transition-opacity"
+                        >
+                            <div class="p-3">
+                                <form @submit.prevent="$emit('offsetChange', calculateOffset(parseInt(pageNumber)))">
+                                    <UInput
+                                        v-model="pageNumber"
+                                        type="number"
+                                        min="1"
+                                        :max="parseInt(totalPages.toString())"
+                                        class="remove-arrow block w-full rounded-md border-0 bg-base-700 py-1.5 placeholder:text-accent-200 focus:ring-2 focus:ring-inset focus:ring-base-300 sm:text-sm sm:leading-6"
+                                        name="page_number"
+                                        :placeholder="$t('common.page')"
+                                    />
+                                </form>
+                            </div>
+                        </PopoverPanel>
                     </Popover>
 
                     <UButton
                         v-if="currentPage <= totalPages - 1"
-                        class="relative inline-flex items-center bg-secondary-500 px-4 py-2 text-sm font-semibold text-neutral hover:bg-base-400 focus:z-20 focus:outline-offset-0"
+                        class="relative inline-flex items-center bg-secondary-500 px-4 py-2 text-sm font-semibold hover:bg-base-400 focus:z-20 focus:outline-offset-0"
                         @click="$emit('offsetChange', calculateOffset(totalPages))"
                     >
                         {{ totalPages }}
@@ -222,7 +209,7 @@ const pageNumber = ref(currentPage.value.toString());
                             total - end <= 0n
                                 ? 'disabled bg-base-500 hover:bg-base-400 focus-visible:outline-base-500'
                                 : 'bg-primary-500 hover:bg-primary-400',
-                            'relative ml-3 inline-flex cursor-pointer items-center rounded-r-md px-3 py-2 text-sm font-semibold text-neutral focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2',
+                            'relative ml-3 inline-flex cursor-pointer items-center rounded-r-md px-3 py-2 text-sm font-semibold focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2',
                         ]"
                         @click="$emit('offsetChange', end)"
                     >
@@ -236,7 +223,7 @@ const pageNumber = ref(currentPage.value.toString());
                             offset <= 0n
                                 ? 'disabled bg-base-500 hover:bg-base-400 focus-visible:outline-base-500'
                                 : 'bg-primary-500 hover:bg-primary-400',
-                            'relative ml-3 inline-flex cursor-pointer items-center rounded-l-md px-3 py-2 text-sm font-semibold text-neutral focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2',
+                            'relative ml-3 inline-flex cursor-pointer items-center rounded-l-md px-3 py-2 text-sm font-semibold focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2',
                         ]"
                         @click="$emit('offsetChange', offset - pageSize < 0 ? 0 : offset - pageSize)"
                     >
@@ -248,7 +235,7 @@ const pageNumber = ref(currentPage.value.toString());
                             end < pageSize
                                 ? 'disabled bg-base-500 hover:bg-base-400 focus-visible:outline-base-500'
                                 : 'bg-primary-500 hover:bg-primary-400',
-                            'relative ml-3 inline-flex cursor-pointer items-center rounded-r-md px-3 py-2 text-sm font-semibold text-neutral focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2',
+                            'relative ml-3 inline-flex cursor-pointer items-center rounded-r-md px-3 py-2 text-sm font-semibold focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2',
                         ]"
                         @click="$emit('offsetChange', offset + pageSize)"
                     >

@@ -28,7 +28,7 @@ onBeforeMount(() => bmiCalculate());
         </h3>
         <div>
             <div>
-                <label for="height" class="block text-sm font-medium leading-6 text-neutral">
+                <label for="height" class="block text-sm font-medium leading-6">
                     {{ $t('components.bodycheckup.height') }}
                 </label>
                 <div>
@@ -52,7 +52,7 @@ onBeforeMount(() => bmiCalculate());
             </div>
 
             <div>
-                <label for="mass" class="block text-sm font-medium leading-6 text-neutral">
+                <label for="mass" class="block text-sm font-medium leading-6">
                     {{ $t('components.bodycheckup.mass') }}
                 </label>
                 <div>
@@ -74,7 +74,7 @@ onBeforeMount(() => bmiCalculate());
                     </div>
                 </div>
             </div>
-            <p class="block text-sm font-medium leading-6 text-neutral">
+            <p class="block text-sm font-medium leading-6">
                 BMI: <span class="font-semibold">{{ bmi.toFixed(1) }}</span>
             </p>
         </div>

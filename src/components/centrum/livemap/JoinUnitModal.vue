@@ -81,7 +81,7 @@ const filteredUnits = computed(() =>
                                     <div class="h-0 flex-1 overflow-y-auto">
                                         <div class="bg-primary-700 px-4 py-6 sm:px-6">
                                             <div class="flex items-center justify-between">
-                                                <DialogTitle class="text-base font-semibold leading-6 text-neutral">
+                                                <DialogTitle class="text-base font-semibold leading-6">
                                                     {{ $t('common.leave_unit') }}
                                                 </DialogTitle>
                                                 <div class="ml-3 flex h-7 items-center">
@@ -90,7 +90,7 @@ const filteredUnits = computed(() =>
                                                         @click="$emit('close')"
                                                     >
                                                         <span class="sr-only">{{ $t('common.close') }}</span>
-                                                        <CloseIcon class="size-5" aria-hidden="true" />
+                                                        <CloseIcon class="size-5" />
                                                     </UButton>
                                                 </div>
                                             </div>
@@ -100,7 +100,7 @@ const filteredUnits = computed(() =>
                                                 <div class="mt-1">
                                                     <dl>
                                                         <div class="px-4 py-3 sm:grid sm:grid-cols-3 sm:gap-4 sm:px-0">
-                                                            <dt class="text-sm font-medium leading-6 text-neutral">
+                                                            <dt class="text-sm font-medium leading-6">
                                                                 <div class="flex h-6 items-center">
                                                                     {{ $t('common.search') }}
                                                                 </div>
@@ -114,7 +114,7 @@ const filteredUnits = computed(() =>
                                                                         type="text"
                                                                         name="search"
                                                                         :placeholder="$t('common.search')"
-                                                                        class="block w-full rounded-md border-0 bg-base-700 py-1.5 pr-14 text-neutral placeholder:text-accent-200 focus:ring-2 focus:ring-inset focus:ring-base-300 sm:text-sm sm:leading-6"
+                                                                        class="block w-full rounded-md border-0 bg-base-700 py-1.5 pr-14 placeholder:text-accent-200 focus:ring-2 focus:ring-inset focus:ring-base-300 sm:text-sm sm:leading-6"
                                                                         @focusin="focusTablet(true)"
                                                                         @focusout="focusTablet(false)"
                                                                     />
@@ -129,7 +129,7 @@ const filteredUnits = computed(() =>
                                                                     v-for="unit in filteredUnits"
                                                                     :key="unit.name"
                                                                     :disabled="!canSubmit"
-                                                                    class="group flex w-full flex-col items-center rounded-md p-1.5 text-xs font-medium text-neutral hover:text-neutral hover:transition-all"
+                                                                    class="group flex w-full flex-col items-center rounded-md p-1.5 text-xs font-medium hover:transition-all"
                                                                     :class="[
                                                                         !canSubmit
                                                                             ? 'disabled bg-base-500 hover:bg-base-400 focus-visible:outline-base-500'
@@ -168,7 +168,7 @@ const filteredUnits = computed(() =>
                                             <UButton
                                                 v-if="ownUnitId !== undefined"
                                                 :disabled="!canSubmit"
-                                                class="relative inline-flex w-full items-center rounded-l-md px-3.5 py-2.5 text-sm font-semibold text-neutral"
+                                                class="relative inline-flex w-full items-center rounded-l-md px-3.5 py-2.5 text-sm font-semibold"
                                                 :class="[
                                                     !canSubmit
                                                         ? 'disabled bg-base-500 hover:bg-base-400 focus-visible:outline-base-500'
@@ -177,7 +177,7 @@ const filteredUnits = computed(() =>
                                                 @click="onSubmitThrottle()"
                                             >
                                                 <template v-if="!canSubmit">
-                                                    <LoadingIcon class="mr-2 size-5 animate-spin" aria-hidden="true" />
+                                                    <LoadingIcon class="mr-2 size-5 animate-spin" />
                                                 </template>
                                                 {{ $t('common.leave') }}
                                             </UButton>

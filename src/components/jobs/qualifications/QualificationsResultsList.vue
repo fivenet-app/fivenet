@@ -6,7 +6,6 @@ import DataPendingBlock from '~/components/partials/data/DataPendingBlock.vue';
 import { ResultStatus } from '~~/gen/ts/resources/qualifications/qualifications';
 import type { ListQualificationsResultsResponse } from '~~/gen/ts/services/qualifications/qualifications';
 import QualificationsResultsListEntry from '~/components/jobs/qualifications/QualificationsResultsListEntry.vue';
-import TablePagination from '~/components/partials/elements/TablePagination.vue';
 
 const props = withDefaults(
     defineProps<{
@@ -23,10 +22,11 @@ const props = withDefaults(
 
 const { $grpc } = useNuxtApp();
 
-const offset = ref(0);
+const page = ref(1);
+const offset = computed(() => (data.value?.pagination?.pageSize ? data.value?.pagination?.pageSize * page.value : 0));
 
 const { data, pending, refresh, error } = useLazyAsyncData(
-    `qualifications-results-${props.qualificationId}-${props.userId}`,
+    `qualifications-results-${page.value}-${props.qualificationId}-${props.userId}`,
     () => listQualificationsResults(props.qualificationId, props.userId, props.status),
 );
 
@@ -84,13 +84,13 @@ watch(offset, async () => refresh());
         </div>
         <div class="border-t border-gray-200 bg-background px-4 py-5 sm:p-6">
             <div class="-ml-4 -mt-4 flex items-center">
-                <TablePagination
-                    class="w-full"
-                    :pagination="data?.pagination"
-                    :show-border="false"
-                    :refresh="refresh"
-                    @offset-change="offset = $event"
-                />
+                <div class="flex justify-end px-3 py-3.5 border-t border-gray-200 dark:border-gray-700">
+                    <UPagination
+                        v-model="page"
+                        :page-count="data?.pagination?.pageSize ?? 0"
+                        :total="data?.pagination?.totalCount ?? 0"
+                    />
+                </div>
             </div>
         </div>
     </div>

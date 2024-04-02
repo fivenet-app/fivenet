@@ -6,7 +6,6 @@ import { defineRule } from 'vee-validate';
 import DataErrorBlock from '~/components/partials/data/DataErrorBlock.vue';
 import DataNoDataBlock from '~/components/partials/data/DataNoDataBlock.vue';
 import DataPendingBlock from '~/components/partials/data/DataPendingBlock.vue';
-import TablePagination from '~/components/partials/elements/TablePagination.vue';
 import TimeclockInactiveListEntry from '~/components/jobs/timeclock/TimeclockInactiveListEntry.vue';
 import type { Perms } from '~~/gen/ts/perms';
 import GenericTable from '~/components/partials/elements/GenericTable.vue';
@@ -19,9 +18,11 @@ const query = ref<{
 }>({
     days: 14,
 });
-const offset = ref(0);
 
-const { data, pending, refresh, error } = useLazyAsyncData(`jobs-timeclock-inactive-${offset.value}-${query.value.days}`, () =>
+const page = ref(1);
+const offset = computed(() => (data.value?.pagination?.pageSize ? data.value?.pagination?.pageSize * page.value : 0));
+
+const { data, pending, refresh, error } = useLazyAsyncData(`jobs-timeclock-inactive-${page.value}-${query.value.days}`, () =>
     listInactiveEmployees(),
 );
 
@@ -82,7 +83,7 @@ watch(offset, async () => refresh());
             <div class="sm:flex sm:items-center">
                 <NuxtLink
                     :to="{ name: 'jobs-timeclock' }"
-                    class="inline-flex rounded-md bg-primary-500 px-3 py-2 text-sm font-semibold text-neutral hover:bg-primary-400 focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2"
+                    class="inline-flex rounded-md bg-primary-500 px-3 py-2 text-sm font-semibold hover:bg-primary-400 focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2"
                 >
                     <ArrowLeftIcon class="mr-1 size-5" />
                     {{ $t('common.timeclock') }}
@@ -95,7 +96,7 @@ watch(offset, async () => refresh());
                     <form @submit.prevent="refresh()">
                         <div class="mx-auto flex flex-row gap-4">
                             <div class="flex-1">
-                                <label for="days" class="block text-sm font-medium leading-6 text-neutral">
+                                <label for="days" class="block text-sm font-medium leading-6">
                                     {{ $t('common.time_ago.day', 2) }}
                                 </label>
                                 <div class="relative mt-2">
@@ -106,7 +107,7 @@ watch(offset, async () => refresh());
                                         type="number"
                                         min="3"
                                         max="31"
-                                        class="block w-full rounded-md border-0 bg-base-700 py-1.5 text-neutral placeholder:text-accent-200 focus:ring-2 focus:ring-inset focus:ring-base-300 sm:text-sm sm:leading-6"
+                                        class="block w-full rounded-md border-0 bg-base-700 py-1.5 placeholder:text-accent-200 focus:ring-2 focus:ring-inset focus:ring-base-300 sm:text-sm sm:leading-6"
                                         :label="$t('common.time_ago.day', 2)"
                                         :placeholder="$t('common.time_ago.day', 2)"
                                         @focusin="focusTablet(true)"
@@ -137,32 +138,26 @@ watch(offset, async () => refresh());
                             <GenericTable>
                                 <template #thead>
                                     <tr>
-                                        <th
-                                            scope="col"
-                                            class="py-3.5 pl-4 pr-3 text-left text-sm font-semibold text-neutral sm:pl-1"
-                                        ></th>
-                                        <th
-                                            scope="col"
-                                            class="py-3.5 pl-4 pr-3 text-left text-sm font-semibold text-neutral sm:pl-1"
-                                        >
+                                        <th scope="col" class="py-3.5 pl-4 pr-3 text-left text-sm font-semibold sm:pl-1"></th>
+                                        <th scope="col" class="py-3.5 pl-4 pr-3 text-left text-sm font-semibold sm:pl-1">
                                             {{ $t('common.name') }}
                                         </th>
                                         <th
                                             scope="col"
-                                            class="hidden px-2 py-3.5 text-left text-sm font-semibold text-neutral lg:table-cell"
+                                            class="hidden px-2 py-3.5 text-left text-sm font-semibold lg:table-cell"
                                         >
                                             {{ $t('common.rank', 1) }}
                                         </th>
-                                        <th scope="col" class="px-2 py-3.5 text-left text-sm font-semibold text-neutral">
+                                        <th scope="col" class="px-2 py-3.5 text-left text-sm font-semibold">
                                             {{ $t('common.phone_number') }}
                                         </th>
-                                        <th scope="col" class="px-2 py-3.5 text-left text-sm font-semibold text-neutral">
+                                        <th scope="col" class="px-2 py-3.5 text-left text-sm font-semibold">
                                             {{ $t('common.date_of_birth') }}
                                         </th>
                                         <th
                                             v-if="can(['JobsService.GetColleague'] as Perms[])"
                                             scope="col"
-                                            class="relative py-3.5 pl-3 pr-4 text-right text-sm font-semibold text-neutral sm:pr-0"
+                                            class="relative py-3.5 pl-3 pr-4 text-right text-sm font-semibold sm:pr-0"
                                         >
                                             {{ $t('common.action', 2) }}
                                         </th>
@@ -178,7 +173,13 @@ watch(offset, async () => refresh());
                             </GenericTable>
                         </template>
 
-                        <TablePagination :pagination="data?.pagination" :refresh="refresh" @offset-change="offset = $event" />
+                        <div class="flex justify-end px-3 py-3.5 border-t border-gray-200 dark:border-gray-700">
+                            <UPagination
+                                v-model="page"
+                                :page-count="data?.pagination?.pageSize ?? 0"
+                                :total="data?.pagination?.totalCount ?? 0"
+                            />
+                        </div>
                     </div>
                 </div>
             </div>

@@ -18,7 +18,6 @@ import { CheckIcon, ChevronDownIcon } from 'mdi-vue3';
 import DataErrorBlock from '~/components/partials/data/DataErrorBlock.vue';
 import DataNoDataBlock from '~/components/partials/data/DataNoDataBlock.vue';
 import DataPendingBlock from '~/components/partials/data/DataPendingBlock.vue';
-import TablePagination from '~/components/partials/elements/TablePagination.vue';
 import { useCompletorStore } from '~/store/completor';
 import * as googleProtobufTimestamp from '~~/gen/ts/google/protobuf/timestamp';
 import { Category } from '~~/gen/ts/resources/documents/category';
@@ -42,26 +41,23 @@ const openclose: OpenClose[] = [
 
 const query = ref<{
     id?: string;
-    title: string;
+    title?: string;
     character?: UserShort;
     from?: string;
     to?: string;
     closed?: boolean;
     category?: Category;
-}>({
-    title: '',
-});
-const offset = ref(0);
+}>({});
 
 const queryClosed = ref<OpenClose>(openclose[0]);
-
-const entriesCategories = ref<Category[]>([]);
-const queryCategories = ref<string>('');
 
 const entriesCitizens = ref<UserShort[]>([]);
 const queryCitizens = ref<string>('');
 
-const { data, pending, refresh, error } = useLazyAsyncData(`documents-${offset.value}`, () => listDocuments());
+const page = ref(1);
+const offset = computed(() => (data.value?.pagination?.pageSize ? data.value?.pagination?.pageSize * page.value : 0));
+
+const { data, pending, refresh, error } = useLazyAsyncData(`documents-${page.value}`, () => listDocuments());
 
 async function listDocuments(): Promise<ListDocumentsResponse> {
     const req: ListDocumentsRequest = {
@@ -111,24 +107,8 @@ async function listDocuments(): Promise<ListDocumentsResponse> {
     }
 }
 
-const searchInput = ref<HTMLInputElement | null>(null);
-function focusSearch(): void {
-    if (searchInput.value) {
-        searchInput.value.focus();
-    }
-}
-
 watch(offset, async () => refresh());
 watchDebounced(query.value, async () => refresh(), { debounce: 600, maxWait: 1400 });
-
-async function findCategories(): Promise<void> {
-    entriesCategories.value = await completorStore.completeDocumentCategories(queryCategories.value);
-}
-
-watchDebounced(queryCategories, async () => findCategories(), {
-    debounce: 600,
-    maxWait: 1400,
-});
 
 watchDebounced(
     queryCitizens,
@@ -144,8 +124,6 @@ watchDebounced(
 
 watch(queryClosed, () => (query.value.closed = queryClosed.value.closed));
 
-onMounted(async () => findCategories());
-
 const templatesOpen = ref(false);
 </script>
 
@@ -155,15 +133,14 @@ const templatesOpen = ref(false);
     <UDashboardToolbar>
         <template #default>
             <form class="w-full" @submit.prevent="refresh()">
-                <div class="w-full flex flex-row gap-2">
+                <div class="flex w-full flex-row gap-2">
                     <div class="flex-1">
-                        <label for="search" class="mb-2 block text-sm font-medium leading-6 text-neutral">
+                        <label for="search" class="mb-2 block text-sm font-medium leading-6">
                             {{ $t('common.search') }}
                         </label>
                         <div class="flex flex-row items-center gap-2 sm:mx-auto">
                             <div class="flex-1">
                                 <UInput
-                                    ref="searchInput"
                                     v-model="query.title"
                                     type="text"
                                     name="search"
@@ -184,19 +161,16 @@ const templatesOpen = ref(false);
                 </div>
 
                 <Disclosure v-slot="{ open }" as="div" class="pt-2">
-                    <DisclosureButton class="flex w-full items-start justify-between text-left text-sm text-neutral">
-                        <span class="leading-7 text-accent-200">{{ $t('common.advanced_search') }}</span>
+                    <DisclosureButton class="flex w-full items-start justify-between text-left text-sm">
+                        <span class="leading-7">{{ $t('common.advanced_search') }}</span>
                         <span class="ml-6 flex h-7 items-center">
-                            <ChevronDownIcon
-                                :class="[open ? 'upsidedown' : '', 'size-5 transition-transform']"
-                                aria-hidden="true"
-                            />
+                            <ChevronDownIcon :class="[open ? 'upsidedown' : '', 'size-5 transition-transform']" />
                         </span>
                     </DisclosureButton>
                     <DisclosurePanel class="mt-2 pr-4">
                         <div class="flex flex-row flex-wrap gap-2">
                             <div class="flex-1">
-                                <label for="search" class="block text-sm font-medium leading-6 text-neutral">
+                                <label for="search" class="block text-sm font-medium leading-6">
                                     {{ $t('common.document') }} {{ $t('common.id') }}
                                 </label>
                                 <div class="relative mt-2">
@@ -205,76 +179,36 @@ const templatesOpen = ref(false);
                                         type="text"
                                         name="search"
                                         placeholder="DOC-..."
-                                        class="block w-full rounded-md border-0 bg-base-700 py-1.5 pr-14 text-neutral placeholder:text-accent-200 focus:ring-2 focus:ring-inset focus:ring-base-300 sm:text-sm sm:leading-6"
+                                        block
                                         @focusin="focusTablet(true)"
                                         @focusout="focusTablet(false)"
                                     />
                                 </div>
                             </div>
                             <div class="flex-1">
-                                <label for="search" class="block text-sm font-medium leading-6 text-neutral">
-                                    {{ $t('common.category', 1) }}
-                                </label>
-                                <Combobox v-model="query.category" as="div" class="mt-2" nullable>
-                                    <div class="relative">
-                                        <ComboboxButton as="div">
-                                            <ComboboxInput
-                                                autocomplete="off"
-                                                class="block w-full rounded-md border-0 bg-base-700 py-1.5 text-neutral placeholder:text-accent-200 focus:ring-2 focus:ring-inset focus:ring-base-300 sm:text-sm sm:leading-6"
-                                                :display-value="(category: any) => category?.name"
-                                                :placeholder="$t('common.category', 1)"
-                                                @change="queryCategories = $event.target.value"
-                                                @focusin="focusTablet(true)"
-                                                @focusout="focusTablet(false)"
-                                            />
-                                        </ComboboxButton>
-
-                                        <ComboboxOptions
-                                            v-if="entriesCategories.length > 0"
-                                            class="absolute z-10 mt-1 max-h-44 w-full overflow-auto rounded-md bg-base-700 py-1 text-base sm:text-sm"
-                                        >
-                                            <ComboboxOption
-                                                v-for="category in entriesCategories"
-                                                :key="category.id"
-                                                v-slot="{ active, selected }"
-                                                :value="category"
-                                                as="category"
-                                            >
-                                                <li
-                                                    :class="[
-                                                        'relative cursor-default select-none py-2 pl-8 pr-4 text-neutral',
-                                                        active ? 'bg-primary-500' : '',
-                                                    ]"
-                                                >
-                                                    <span :class="['block truncate', selected && 'font-semibold']">
-                                                        {{ category.name }}
-                                                    </span>
-
-                                                    <span
-                                                        v-if="selected"
-                                                        :class="[
-                                                            active ? 'text-neutral' : 'text-primary-500',
-                                                            'absolute inset-y-0 left-0 flex items-center pl-1.5',
-                                                        ]"
-                                                    >
-                                                        <CheckIcon class="size-5" aria-hidden="true" />
-                                                    </span>
-                                                </li>
-                                            </ComboboxOption>
-                                        </ComboboxOptions>
-                                    </div>
-                                </Combobox>
+                                <UFormGroup :label="$t('common.category', 1)">
+                                    <UInputMenu
+                                        v-model="query.category"
+                                        option-attribute="name"
+                                        :search-attributes="['name']"
+                                        block
+                                        nullable
+                                        :search="completorStore.completeDocumentCategories"
+                                        @focusin="focusTablet(true)"
+                                        @focusout="focusTablet(false)"
+                                    />
+                                </UFormGroup>
                             </div>
                             <div class="flex-1">
-                                <label for="search" class="block text-sm font-medium leading-6 text-neutral">
+                                <label for="search" class="block text-sm font-medium leading-6">
                                     {{ $t('common.creator') }}
                                 </label>
-                                <Combobox v-model="query.character" as="div" class="mt-2" nullable>
+                                <Combobox v-model="query.character" as="div" nullable>
                                     <div class="relative">
                                         <ComboboxButton as="div">
                                             <ComboboxInput
                                                 autocomplete="off"
-                                                class="block w-full rounded-md border-0 bg-base-700 py-1.5 text-neutral placeholder:text-accent-200 focus:ring-2 focus:ring-inset focus:ring-base-300 sm:text-sm sm:leading-6"
+                                                class="block w-full rounded-md border-0 bg-base-700 py-1.5 placeholder:text-accent-200 focus:ring-2 focus:ring-inset focus:ring-base-300 sm:text-sm sm:leading-6"
                                                 :display-value="
                                                     (char: any) => `${char?.firstname} ${char?.lastname} (${char?.dateofbirth})`
                                                 "
@@ -298,7 +232,7 @@ const templatesOpen = ref(false);
                                             >
                                                 <li
                                                     :class="[
-                                                        'relative cursor-default select-none py-2 pl-8 pr-4 text-neutral',
+                                                        'relative cursor-default select-none py-2 pl-8 pr-4',
                                                         active ? 'bg-primary-500' : '',
                                                     ]"
                                                 >
@@ -313,7 +247,7 @@ const templatesOpen = ref(false);
                                                             'absolute inset-y-0 left-0 flex items-center pl-1.5',
                                                         ]"
                                                     >
-                                                        <CheckIcon class="size-5" aria-hidden="true" />
+                                                        <CheckIcon class="size-5" />
                                                     </span>
                                                 </li>
                                             </ComboboxOption>
@@ -324,19 +258,19 @@ const templatesOpen = ref(false);
                         </div>
                         <div class="flex flex-row flex-wrap gap-2">
                             <div class="flex-1">
-                                <label for="search" class="block text-sm font-medium leading-6 text-neutral">
+                                <label for="search" class="block text-sm font-medium leading-6">
                                     {{ $t('common.close', 2) }}?
                                 </label>
-                                <Listbox v-model="queryClosed" as="div" class="mt-2">
+                                <Listbox v-model="queryClosed" as="div">
                                     <div class="relative">
                                         <ListboxButton
-                                            class="block w-full rounded-md border-0 bg-base-700 py-1.5 pl-3 text-left text-neutral placeholder:text-accent-200 focus:ring-2 focus:ring-inset focus:ring-base-300 sm:text-sm sm:leading-6"
+                                            class="block w-full rounded-md border-0 bg-base-700 py-1.5 pl-3 text-left placeholder:text-accent-200 focus:ring-2 focus:ring-inset focus:ring-base-300 sm:text-sm sm:leading-6"
                                         >
                                             <span class="block truncate">
                                                 {{ queryClosed?.label }}
                                             </span>
                                             <span class="pointer-events-none absolute inset-y-0 right-0 flex items-center pr-2">
-                                                <ChevronDownIcon class="size-5 text-gray-400" aria-hidden="true" />
+                                                <ChevronDownIcon class="size-5 text-gray-400" />
                                             </span>
                                         </ListboxButton>
 
@@ -358,7 +292,7 @@ const templatesOpen = ref(false);
                                                     <li
                                                         :class="[
                                                             active ? 'bg-primary-500' : '',
-                                                            'relative cursor-default select-none py-2 pl-8 pr-4 text-neutral',
+                                                            'relative cursor-default select-none py-2 pl-8 pr-4',
                                                         ]"
                                                     >
                                                         <span
@@ -376,7 +310,7 @@ const templatesOpen = ref(false);
                                                                 'absolute inset-y-0 left-0 flex items-center pl-1.5',
                                                             ]"
                                                         >
-                                                            <CheckIcon class="size-5" aria-hidden="true" />
+                                                            <CheckIcon class="size-5" />
                                                         </span>
                                                     </li>
                                                 </ListboxOption>
@@ -386,7 +320,7 @@ const templatesOpen = ref(false);
                                 </Listbox>
                             </div>
                             <div class="flex-1">
-                                <label for="search" class="block text-sm font-medium leading-6 text-neutral">
+                                <label for="search" class="block text-sm font-medium leading-6">
                                     {{ $t('common.time_range') }}: {{ $t('common.from') }}
                                 </label>
                                 <div class="relative mt-2">
@@ -395,12 +329,12 @@ const templatesOpen = ref(false);
                                         type="datetime-local"
                                         name="search"
                                         :placeholder="`${$t('common.time_range')} ${$t('common.from')}`"
-                                        class="block w-full rounded-md border-0 bg-base-700 py-1.5 pr-14 text-neutral placeholder:text-accent-200 focus:ring-2 focus:ring-inset focus:ring-base-300 sm:text-sm sm:leading-6"
+                                        block
                                     />
                                 </div>
                             </div>
                             <div class="flex-1">
-                                <label for="search" class="block text-sm font-medium leading-6 text-neutral"
+                                <label for="search" class="block text-sm font-medium leading-6"
                                     >{{ $t('common.time_range') }}:
                                     {{ $t('common.to') }}
                                 </label>
@@ -410,7 +344,7 @@ const templatesOpen = ref(false);
                                         type="datetime-local"
                                         name="search"
                                         :placeholder="`${$t('common.time_range')} ${$t('common.to')}`"
-                                        class="block w-full rounded-md border-0 bg-base-700 py-1.5 pr-14 text-neutral placeholder:text-accent-200 focus:ring-2 focus:ring-inset focus:ring-base-300 sm:text-sm sm:leading-6"
+                                        block
                                     />
                                 </div>
                             </div>
@@ -430,23 +364,20 @@ const templatesOpen = ref(false);
                     :title="$t('common.unable_to_load', [$t('common.document', 2)])"
                     :retry="refresh"
                 />
-                <DataNoDataBlock
-                    v-else-if="data?.documents.length === 0"
-                    :type="$t('common.document', 2)"
-                    :focus="focusSearch"
-                />
+                <DataNoDataBlock v-else-if="data?.documents.length === 0" :type="$t('common.document', 2)" />
                 <template v-else>
                     <ul role="list" class="flex flex-col">
                         <DocumentListEntry v-for="doc in data?.documents" :key="doc.id" :doc="doc" />
                     </ul>
-
-                    <TablePagination
-                        class="mt-2"
-                        :pagination="data?.pagination"
-                        :refresh="refresh"
-                        @offset-change="offset = $event"
-                    />
                 </template>
+
+                <div class="flex justify-end px-3 py-3.5 border-t border-gray-200 dark:border-gray-700">
+                    <UPagination
+                        v-model="page"
+                        :page-count="data?.pagination?.pageSize ?? 0"
+                        :total="data?.pagination?.totalCount ?? 0"
+                    />
+                </div>
             </div>
         </div>
     </div>

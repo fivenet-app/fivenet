@@ -21,7 +21,7 @@ defineEmits<{
 <template>
     <div class="flex flex-row flex-wrap gap-3">
         <div class="flex-1">
-            <label for="users" class="block text-sm font-medium leading-6 text-neutral">
+            <label for="users" class="block text-sm font-medium leading-6">
                 {{ $t('common.citizen', 2) }}
             </label>
             <div class="relative flex items-center gap-1">
@@ -48,14 +48,14 @@ defineEmits<{
                         min="0"
                         oninput="validity.valid||(value='');"
                         name="users"
-                        class="block w-full rounded-r-md border-0 bg-base-700 py-1.5 text-neutral transition-colors placeholder:text-accent-200 focus:ring-2 focus:ring-inset focus:ring-base-300 disabled:text-base-400 sm:text-sm sm:leading-6"
+                        class="block w-full rounded-r-md border-0 bg-base-700 py-1.5 transition-colors placeholder:text-accent-200 focus:ring-2 focus:ring-inset focus:ring-base-300 disabled:text-base-400 sm:text-sm sm:leading-6"
                         @focusin="focusTablet(true)"
                         @focusout="focusTablet(false)"
                     />
                 </div>
                 <div class="flex flex-row">
                     <span
-                        class="inline-flex h-9 items-center rounded-l-md border-0 bg-base-800 px-3 text-neutral transition-colors sm:text-sm"
+                        class="inline-flex h-9 items-center rounded-l-md border-0 bg-base-800 px-3 transition-colors sm:text-sm"
                     >
                         {{ $t('common.max') }}
                     </span>
@@ -65,7 +65,7 @@ defineEmits<{
                         min="0"
                         oninput="validity.valid||(value='');"
                         name="users"
-                        class="block w-full rounded-r-md border-0 bg-base-700 py-1.5 text-neutral transition-colors placeholder:text-accent-200 focus:ring-2 focus:ring-inset focus:ring-base-300 disabled:text-base-400 sm:text-sm sm:leading-6"
+                        class="block w-full rounded-r-md border-0 bg-base-700 py-1.5 transition-colors placeholder:text-accent-200 focus:ring-2 focus:ring-inset focus:ring-base-300 disabled:text-base-400 sm:text-sm sm:leading-6"
                         @focusin="focusTablet(true)"
                         @focusout="focusTablet(false)"
                     />
@@ -73,7 +73,7 @@ defineEmits<{
             </div>
         </div>
         <div class="flex-1">
-            <label for="documents" class="block text-sm font-medium leading-6 text-neutral">
+            <label for="documents" class="block text-sm font-medium leading-6">
                 {{ $t('common.document', 2) }}
             </label>
             <div class="relative flex items-center gap-1">
@@ -100,14 +100,14 @@ defineEmits<{
                         min="0"
                         oninput="validity.valid||(value='');"
                         name="documents"
-                        class="block w-full rounded-r-md border-0 bg-base-700 py-1.5 text-neutral transition-colors placeholder:text-accent-200 focus:ring-2 focus:ring-inset focus:ring-base-300 disabled:text-base-400 sm:text-sm sm:leading-6"
+                        class="block w-full rounded-r-md border-0 bg-base-700 py-1.5 transition-colors placeholder:text-accent-200 focus:ring-2 focus:ring-inset focus:ring-base-300 disabled:text-base-400 sm:text-sm sm:leading-6"
                         @focusin="focusTablet(true)"
                         @focusout="focusTablet(false)"
                     />
                 </div>
                 <div class="flex flex-row">
                     <span
-                        class="inline-flex h-9 items-center rounded-l-md border-0 bg-base-800 px-3 text-neutral transition-colors sm:text-sm"
+                        class="inline-flex h-9 items-center rounded-l-md border-0 bg-base-800 px-3 transition-colors sm:text-sm"
                     >
                         {{ $t('common.max') }}
                     </span>
@@ -117,7 +117,7 @@ defineEmits<{
                         min="0"
                         oninput="validity.valid||(value='');"
                         name="documents"
-                        class="block w-full rounded-r-md border-0 bg-base-700 py-1.5 text-neutral transition-colors placeholder:text-accent-200 focus:ring-2 focus:ring-inset focus:ring-base-300 disabled:text-base-400 sm:text-sm sm:leading-6"
+                        class="block w-full rounded-r-md border-0 bg-base-700 py-1.5 transition-colors placeholder:text-accent-200 focus:ring-2 focus:ring-inset focus:ring-base-300 disabled:text-base-400 sm:text-sm sm:leading-6"
                         @focusin="focusTablet(true)"
                         @focusout="focusTablet(false)"
                     />
@@ -125,7 +125,7 @@ defineEmits<{
             </div>
         </div>
         <div class="flex-1">
-            <label for="vehicles" class="block text-sm font-medium leading-6 text-neutral">
+            <label for="vehicles" class="block text-sm font-medium leading-6">
                 {{ $t('common.vehicle', 2) }}
             </label>
             <div class="relative flex items-center gap-1">
@@ -152,14 +152,14 @@ defineEmits<{
                         min="0"
                         oninput="validity.valid||(value='');"
                         name="vehicles"
-                        class="block w-full rounded-r-md border-0 bg-base-700 py-1.5 text-neutral transition-colors placeholder:text-accent-200 focus:ring-2 focus:ring-inset focus:ring-base-300 disabled:text-base-400 sm:text-sm sm:leading-6"
+                        class="block w-full rounded-r-md border-0 bg-base-700 py-1.5 transition-colors placeholder:text-accent-200 focus:ring-2 focus:ring-inset focus:ring-base-300 disabled:text-base-400 sm:text-sm sm:leading-6"
                         @focusin="focusTablet(true)"
                         @focusout="focusTablet(false)"
                     />
                 </div>
                 <div class="flex flex-row">
                     <span
-                        class="inline-flex h-9 items-center rounded-l-md border-0 bg-base-800 px-3 text-neutral transition-colors sm:text-sm"
+                        class="inline-flex h-9 items-center rounded-l-md border-0 bg-base-800 px-3 transition-colors sm:text-sm"
                     >
                         {{ $t('common.max') }}
                     </span>
@@ -169,7 +169,7 @@ defineEmits<{
                         min="0"
                         oninput="validity.valid||(value='');"
                         name="vehicles"
-                        class="block w-full rounded-r-md border-0 bg-base-700 py-1.5 text-neutral transition-colors placeholder:text-accent-200 focus:ring-2 focus:ring-inset focus:ring-base-300 disabled:text-base-400 sm:text-sm sm:leading-6"
+                        class="block w-full rounded-r-md border-0 bg-base-700 py-1.5 transition-colors placeholder:text-accent-200 focus:ring-2 focus:ring-inset focus:ring-base-300 disabled:text-base-400 sm:text-sm sm:leading-6"
                         @focusin="focusTablet(true)"
                         @focusout="focusTablet(false)"
                     />

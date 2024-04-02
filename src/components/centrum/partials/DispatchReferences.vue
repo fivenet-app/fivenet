@@ -42,7 +42,7 @@ const selectedDispatch = ref<string | undefined>();
                     "
                 >
                     <span class="sr-only">{{ $t('common.open') }}</span>
-                    <LinkVariantIcon class="ml-1 size-5" aria-hidden="true" />
+                    <LinkVariantIcon class="ml-1 size-5" />
                 </UButton>
             </span>
         </div>

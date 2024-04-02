@@ -4,7 +4,6 @@ import GenericContainerPanel from '~/components/partials/elements/GenericContain
 import DataErrorBlock from '~/components/partials/data/DataErrorBlock.vue';
 import DataNoDataBlock from '~/components/partials/data/DataNoDataBlock.vue';
 import DataPendingBlock from '~/components/partials/data/DataPendingBlock.vue';
-import TablePagination from '~/components/partials/elements/TablePagination.vue';
 import { useSettingsStore } from '~/store/settings';
 import type { ListFilesResponse } from '~~/gen/ts/services/rector/filestore';
 import FileListEntry from '~/components/rector/filestore/FileListEntry.vue';
@@ -17,8 +16,10 @@ const { $grpc } = useNuxtApp();
 const settingsStore = useSettingsStore();
 const { streamerMode } = storeToRefs(settingsStore);
 
-const offset = ref(0);
 const prefix = ref('');
+
+const page = ref(1);
+const offset = computed(() => (data.value?.pagination?.pageSize ? data.value?.pagination?.pageSize * page.value : 0));
 
 const { data, pending, refresh, error } = useLazyAsyncData('chars', () => listFiles(prefix.value));
 
@@ -77,7 +78,7 @@ const uploadFileDialog = ref(false);
                 <div class="sm:flex sm:items-center">
                     <div class="w-full sm:flex-auto">
                         <UButton
-                            class="w-full rounded-md bg-primary-500 px-3 py-2 text-sm font-semibold text-neutral hover:bg-primary-400 focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2"
+                            class="w-full rounded-md bg-primary-500 px-3 py-2 text-sm font-semibold hover:bg-primary-400 focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2"
                             @click="uploadFileDialog = true"
                         >
                             {{ $t('common.upload') }}
@@ -124,7 +125,13 @@ const uploadFileDialog = ref(false);
                         </template>
                     </GenericTable>
 
-                    <TablePagination :pagination="data.pagination" :refresh="refresh" @offset-change="offset = $event" />
+                    <div class="flex justify-end px-3 py-3.5 border-t border-gray-200 dark:border-gray-700">
+                        <UPagination
+                            v-model="page"
+                            :page-count="data?.pagination?.pageSize ?? 0"
+                            :total="data?.pagination?.totalCount ?? 0"
+                        />
+                    </div>
                 </template>
             </template>
         </div>

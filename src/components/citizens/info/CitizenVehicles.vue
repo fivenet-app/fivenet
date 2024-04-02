@@ -1,5 +1,5 @@
 <script lang="ts" setup>
-import List from '~/components/vehicles/VehiclesList.vue';
+import VehiclesList from '~/components/vehicles/VehiclesList.vue';
 
 defineProps<{
     userId: number;
@@ -7,5 +7,5 @@ defineProps<{
 </script>
 
 <template>
-    <List :user-id="userId" :hide-owner="true" :hide-citizen-link="true" />
+    <VehiclesList :user-id="userId" :hide-owner="true" :hide-citizen-link="true" />
 </template>

@@ -142,13 +142,13 @@ const onSubmitThrottle = useThrottleFn(async (e) => {
                                 <Listbox v-model="jobProps.theme" as="div">
                                     <div class="relative">
                                         <ListboxButton
-                                            class="block w-full rounded-md border-0 bg-base-700 py-1.5 pl-3 text-left text-neutral placeholder:text-accent-200 focus:ring-2 focus:ring-inset focus:ring-base-300 sm:text-sm sm:leading-6"
+                                            class="block w-full rounded-md border-0 bg-base-700 py-1.5 pl-3 text-left placeholder:text-accent-200 focus:ring-2 focus:ring-inset focus:ring-base-300 sm:text-sm sm:leading-6"
                                         >
                                             <span class="block truncate">
                                                 {{ availableThemes.find((t) => t.key === jobProps?.theme)?.name }}
                                             </span>
                                             <span class="pointer-events-none absolute inset-y-0 right-0 flex items-center pr-2">
-                                                <ChevronDownIcon class="size-5 text-gray-400" aria-hidden="true" />
+                                                <ChevronDownIcon class="size-5 text-gray-400" />
                                             </span>
                                         </ListboxButton>
 
@@ -170,7 +170,7 @@ const onSubmitThrottle = useThrottleFn(async (e) => {
                                                     <li
                                                         :class="[
                                                             active ? 'bg-primary-500' : '',
-                                                            'relative cursor-default select-none py-2 pl-8 pr-4 text-neutral',
+                                                            'relative cursor-default select-none py-2 pl-8 pr-4',
                                                         ]"
                                                     >
                                                         <span
@@ -189,7 +189,7 @@ const onSubmitThrottle = useThrottleFn(async (e) => {
                                                                 'absolute inset-y-0 left-0 flex items-center pl-1.5',
                                                             ]"
                                                         >
-                                                            <CheckIcon class="size-5" aria-hidden="true" />
+                                                            <CheckIcon class="size-5" />
                                                         </span>
                                                     </li>
                                                 </ListboxOption>
@@ -218,7 +218,7 @@ const onSubmitThrottle = useThrottleFn(async (e) => {
                                     data-maska="0.9"
                                     data-maska-tokens="0:\d:multiple|9:\d:multiple"
                                     type="text"
-                                    class="block w-full rounded-md border-0 bg-base-700 py-1.5 text-neutral placeholder:text-accent-200 focus:ring-2 focus:ring-inset focus:ring-base-300 sm:text-sm sm:leading-6"
+                                    class="block w-full rounded-md border-0 bg-base-700 py-1.5 placeholder:text-accent-200 focus:ring-2 focus:ring-inset focus:ring-base-300 sm:text-sm sm:leading-6"
                                     :placeholder="$t('common.radio_frequency')"
                                     :label="$t('common.radio_frequency')"
                                     maxlength="24"
@@ -237,7 +237,6 @@ const onSubmitThrottle = useThrottleFn(async (e) => {
                                         <div class="flex items-center">
                                             <UToggle v-model="jobProps.quickButtons.penaltyCalculator">
                                                 <span
-                                                    aria-hidden="true"
                                                     :class="[
                                                         jobProps.quickButtons.penaltyCalculator
                                                             ? 'translate-x-5'
@@ -255,7 +254,6 @@ const onSubmitThrottle = useThrottleFn(async (e) => {
                                         <div class="flex items-center">
                                             <UToggle v-model="jobProps.quickButtons.bodyCheckup">
                                                 <span
-                                                    aria-hidden="true"
                                                     :class="[
                                                         jobProps.quickButtons.bodyCheckup ? 'translate-x-5' : 'translate-x-0',
                                                         'pointer-events-none inline-block size-5 rounded-full bg-white shadow ring-0 transition duration-200 ease-in-out',
@@ -277,7 +275,7 @@ const onSubmitThrottle = useThrottleFn(async (e) => {
                             <template #default>
                                 <div class="flex flex-col">
                                     <template v-if="isNUIAvailable()">
-                                        <p class="text-sm text-neutral">
+                                        <p class="text-sm">
                                             {{ $t('system.not_supported_on_tablet.title') }}
                                         </p>
                                     </template>
@@ -293,7 +291,7 @@ const onSubmitThrottle = useThrottleFn(async (e) => {
                                             <UInput
                                                 type="file"
                                                 accept="image/jpeg,image/jpg,image/png"
-                                                class="block w-full rounded-md border-0 bg-base-700 py-1.5 text-neutral placeholder:text-accent-200 focus:ring-2 focus:ring-inset focus:ring-base-300 sm:text-sm sm:leading-6"
+                                                class="block w-full rounded-md border-0 bg-base-700 py-1.5 placeholder:text-accent-200 focus:ring-2 focus:ring-inset focus:ring-base-300 sm:text-sm sm:leading-6"
                                                 @change="handleChange"
                                                 @blur="handleBlur"
                                             />
@@ -316,7 +314,7 @@ const onSubmitThrottle = useThrottleFn(async (e) => {
                         <GenericContainerPanelEntry v-if="can('RectorService.SetJobProps')">
                             <template #default>
                                 <UButton
-                                    class="flex w-full justify-center rounded-md px-3 py-2 text-sm font-semibold text-neutral transition-colors focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2"
+                                    class="flex w-full justify-center rounded-md px-3 py-2 text-sm font-semibold transition-colors focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2"
                                     :class="[
                                         !canSubmit || !meta.valid
                                             ? 'disabled bg-base-500 hover:bg-base-400 focus-visible:outline-base-500'
@@ -326,7 +324,7 @@ const onSubmitThrottle = useThrottleFn(async (e) => {
                                     @click="onSubmitThrottle"
                                 >
                                     <template v-if="!canSubmit">
-                                        <LoadingIcon class="mr-2 size-5 animate-spin" aria-hidden="true" />
+                                        <LoadingIcon class="mr-2 size-5 animate-spin" />
                                     </template>
                                     {{ $t('common.save', 1) }}
                                 </UButton>
@@ -350,7 +348,7 @@ const onSubmitThrottle = useThrottleFn(async (e) => {
                                 <UInput
                                     v-model="jobProps.discordGuildId"
                                     type="text"
-                                    class="block w-full rounded-md border-0 bg-base-700 py-1.5 text-neutral placeholder:text-accent-200 focus:ring-2 focus:ring-inset focus:ring-base-300 sm:text-sm sm:leading-6"
+                                    class="block w-full rounded-md border-0 bg-base-700 py-1.5 placeholder:text-accent-200 focus:ring-2 focus:ring-inset focus:ring-base-300 sm:text-sm sm:leading-6"
                                     :class="appConfig.discord.botInviteURL === undefined ? 'disabled' : ''"
                                     :disabled="appConfig.discord.botInviteURL === undefined"
                                     :placeholder="$t('components.rector.job_props.discord_guild_id')"
@@ -363,11 +361,11 @@ const onSubmitThrottle = useThrottleFn(async (e) => {
                                     v-if="appConfig.discord.botInviteURL !== undefined"
                                     :to="appConfig.discord.botInviteURL"
                                     :external="true"
-                                    class="mt-2 flex w-full justify-center rounded-md bg-primary-500 px-3 py-2 text-sm font-semibold text-neutral transition-colors hover:bg-primary-400 focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2"
+                                    class="mt-2 flex w-full justify-center rounded-md bg-primary-500 px-3 py-2 text-sm font-semibold transition-colors hover:bg-primary-400 focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2"
                                 >
                                     {{ $t('components.rector.job_props.invite_bot') }}
                                 </NuxtLink>
-                                <p v-if="jobProps.discordLastSync" class="mt-2 text-xs text-neutral">
+                                <p v-if="jobProps.discordLastSync" class="mt-2 text-xs">
                                     {{ $t('components.rector.job_props.last_sync') }}:
                                     <GenericTime :value="jobProps.discordLastSync" />
                                 </p>
@@ -382,7 +380,6 @@ const onSubmitThrottle = useThrottleFn(async (e) => {
                                 <div class="mb-1 flex items-center">
                                     <UToggle v-model="jobProps.discordSyncSettings.statusLog">
                                         <span
-                                            aria-hidden="true"
                                             :class="[
                                                 jobProps.discordSyncSettings.statusLog ? 'translate-x-5' : 'translate-x-0',
                                                 'pointer-events-none inline-block size-5 rounded-full bg-white shadow ring-0 transition duration-200 ease-in-out',
@@ -401,7 +398,7 @@ const onSubmitThrottle = useThrottleFn(async (e) => {
                                         type="text"
                                         name="statusLogSettingsChannelId"
                                         :disabled="!jobProps.discordSyncSettings.statusLog"
-                                        class="block w-full rounded-md border-0 bg-base-700 py-1.5 text-neutral placeholder:text-accent-200 focus:ring-2 focus:ring-inset focus:ring-base-300 sm:text-sm sm:leading-6"
+                                        class="block w-full rounded-md border-0 bg-base-700 py-1.5 placeholder:text-accent-200 focus:ring-2 focus:ring-inset focus:ring-base-300 sm:text-sm sm:leading-6"
                                         :class="!jobProps.discordSyncSettings.statusLog ? 'disabled' : ''"
                                         :placeholder="$t('components.rector.job_props.status_log_settings.channel_id')"
                                         :label="$t('components.rector.job_props.status_log_settings.channel_id')"
@@ -434,7 +431,7 @@ const onSubmitThrottle = useThrottleFn(async (e) => {
                                         v-model="jobProps.discordSyncSettings.userInfoSyncSettings!.gradeRoleFormat"
                                         type="text"
                                         name="gradeRoleFormat"
-                                        class="block w-full rounded-md border-0 bg-base-700 py-1.5 text-neutral placeholder:text-accent-200 focus:ring-2 focus:ring-inset focus:ring-base-300 sm:text-sm sm:leading-6"
+                                        class="block w-full rounded-md border-0 bg-base-700 py-1.5 placeholder:text-accent-200 focus:ring-2 focus:ring-inset focus:ring-base-300 sm:text-sm sm:leading-6"
                                         :placeholder="
                                             $t('components.rector.job_props.user_info_sync_settings.grade_role_format')
                                         "
@@ -471,7 +468,7 @@ const onSubmitThrottle = useThrottleFn(async (e) => {
                                             v-model="jobProps.discordSyncSettings.userInfoSyncSettings!.employeeRoleFormat"
                                             type="text"
                                             name="employeeRoleFormat"
-                                            class="block w-full rounded-md border-0 bg-base-700 py-1.5 text-neutral placeholder:text-accent-200 focus:ring-2 focus:ring-inset focus:ring-base-300 sm:text-sm sm:leading-6"
+                                            class="block w-full rounded-md border-0 bg-base-700 py-1.5 placeholder:text-accent-200 focus:ring-2 focus:ring-inset focus:ring-base-300 sm:text-sm sm:leading-6"
                                             :placeholder="
                                                 $t('components.rector.job_props.user_info_sync_settings.employee_role_format')
                                             "
@@ -513,7 +510,7 @@ const onSubmitThrottle = useThrottleFn(async (e) => {
                                                 >
                                                     <div class="relative">
                                                         <ListboxButton
-                                                            class="block w-full rounded-md border-0 bg-base-700 py-1.5 pl-3 text-left text-neutral placeholder:text-accent-200 focus:ring-2 focus:ring-inset focus:ring-base-300 sm:text-sm sm:leading-6"
+                                                            class="block w-full rounded-md border-0 bg-base-700 py-1.5 pl-3 text-left placeholder:text-accent-200 focus:ring-2 focus:ring-inset focus:ring-base-300 sm:text-sm sm:leading-6"
                                                         >
                                                             <span class="block truncate">
                                                                 {{
@@ -526,10 +523,7 @@ const onSubmitThrottle = useThrottleFn(async (e) => {
                                                             <span
                                                                 class="pointer-events-none absolute inset-y-0 right-0 flex items-center pr-2"
                                                             >
-                                                                <ChevronDownIcon
-                                                                    class="size-5 text-gray-400"
-                                                                    aria-hidden="true"
-                                                                />
+                                                                <ChevronDownIcon class="size-5 text-gray-400" />
                                                             </span>
                                                         </ListboxButton>
 
@@ -554,7 +548,7 @@ const onSubmitThrottle = useThrottleFn(async (e) => {
                                                                     <li
                                                                         :class="[
                                                                             active ? 'bg-primary-500' : '',
-                                                                            'relative cursor-default select-none py-2 pl-8 pr-4 text-neutral',
+                                                                            'relative cursor-default select-none py-2 pl-8 pr-4',
                                                                         ]"
                                                                     >
                                                                         <span
@@ -573,7 +567,7 @@ const onSubmitThrottle = useThrottleFn(async (e) => {
                                                                                 'absolute inset-y-0 left-0 flex items-center pl-1.5',
                                                                             ]"
                                                                         >
-                                                                            <CheckIcon class="size-5" aria-hidden="true" />
+                                                                            <CheckIcon class="size-5" />
                                                                         </span>
                                                                     </li>
                                                                 </ListboxOption>
@@ -597,7 +591,7 @@ const onSubmitThrottle = useThrottleFn(async (e) => {
                                                     "
                                                     type="text"
                                                     name="unemployedRoleName"
-                                                    class="block w-full rounded-md border-0 bg-base-700 py-1.5 text-neutral placeholder:text-accent-200 focus:ring-2 focus:ring-inset focus:ring-base-300 sm:text-sm sm:leading-6"
+                                                    class="block w-full rounded-md border-0 bg-base-700 py-1.5 placeholder:text-accent-200 focus:ring-2 focus:ring-inset focus:ring-base-300 sm:text-sm sm:leading-6"
                                                     :placeholder="
                                                         $t(
                                                             'components.rector.job_props.user_info_sync_settings.unemployed_role_name',
@@ -643,7 +637,7 @@ const onSubmitThrottle = useThrottleFn(async (e) => {
                                                     v-model="jobProps.discordSyncSettings.jobsAbsenceSettings!.absenceRole"
                                                     type="text"
                                                     name="jobsAbsenceRole"
-                                                    class="block w-full rounded-md border-0 bg-base-700 py-1.5 text-neutral placeholder:text-accent-200 focus:ring-2 focus:ring-inset focus:ring-base-300 sm:text-sm sm:leading-6"
+                                                    class="block w-full rounded-md border-0 bg-base-700 py-1.5 placeholder:text-accent-200 focus:ring-2 focus:ring-inset focus:ring-base-300 sm:text-sm sm:leading-6"
                                                     :placeholder="
                                                         $t(
                                                             'components.rector.job_props.jobs_absence_settings.jobs_absence_role_name',
@@ -668,7 +662,7 @@ const onSubmitThrottle = useThrottleFn(async (e) => {
                         <GenericContainerPanelEntry v-if="can('RectorService.SetJobProps')">
                             <template #default>
                                 <UButton
-                                    class="flex w-full justify-center rounded-md px-3 py-2 text-sm font-semibold text-neutral transition-colors focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2"
+                                    class="flex w-full justify-center rounded-md px-3 py-2 text-sm font-semibold transition-colors focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2"
                                     :class="[
                                         !canSubmit || !meta.valid
                                             ? 'disabled bg-base-500 hover:bg-base-400 focus-visible:outline-base-500'
@@ -678,7 +672,7 @@ const onSubmitThrottle = useThrottleFn(async (e) => {
                                     @click="onSubmitThrottle"
                                 >
                                     <template v-if="!canSubmit">
-                                        <LoadingIcon class="mr-2 size-5 animate-spin" aria-hidden="true" />
+                                        <LoadingIcon class="mr-2 size-5 animate-spin" />
                                     </template>
                                     {{ $t('common.save', 1) }}
                                 </UButton>

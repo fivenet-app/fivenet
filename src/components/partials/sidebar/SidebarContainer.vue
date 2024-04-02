@@ -22,7 +22,6 @@ import { type DefineComponent } from 'vue';
 import { type RoutesNamedLocations } from '@typed-router';
 import QuickButtons from '~/components/partials/quickbuttons/QuickButtons.vue';
 import FiveNetLogo from '~/components/partials/logos/FiveNetLogo.vue';
-import SuperUserMenu from '~/components/partials/sidebar/SuperUserMenu.vue';
 import LanguageSwitcherMenu from '~/components/partials/sidebar/LanguageSwitcherMenu.vue';
 import { useAuthStore } from '~/store/auth';
 import type { Perms } from '~~/gen/ts/perms';
@@ -189,7 +188,7 @@ watch(router.currentRoute, () => updateActiveItem());
 <template>
     <div class="h-dscreen flex">
         <!-- Sidebar -->
-        <div class="hidden w-28 overflow-y-auto bg-secondary-600 defaultTheme:bg-accent-600 md:block">
+        <div class="hidden w-28 overflow-y-auto defaultTheme:bg-accent-600 md:block">
             <div class="flex size-full flex-col items-center py-6">
                 <div class="flex shrink-0 items-center">
                     <NuxtLink :to="{ name: accessToken ? 'overview' : 'index' }" aria-current-value="page">
@@ -200,54 +199,54 @@ watch(router.currentRoute, () => updateActiveItem());
                     <template v-if="!accessToken && !activeChar">
                         <NuxtLink
                             :to="{ name: 'index' }"
-                            active-class="bg-accent-100/20 text-neutral font-bold"
-                            class="group my-2 flex w-full flex-col items-center rounded-md p-3 text-xs font-medium text-accent-100 hover:bg-accent-100/10 hover:text-neutral hover:transition-all"
+                            active-class="bg-accent-100/20 font-bold"
+                            class="group my-2 flex w-full flex-col items-center rounded-md p-3 text-xs font-medium text-accent-100 hover:bg-accent-100/10 hover:transition-all"
                             exact-active-class="text-accent-200"
                             aria-current-value="page"
                         >
-                            <HomeIcon class="h-auto w-6" aria-hidden="true" />
+                            <HomeIcon class="h-auto w-6" />
                             <span class="mt-2">{{ $t('common.home') }}</span>
                         </NuxtLink>
                         <NuxtLink
                             :to="{ name: 'auth-login' }"
-                            active-class="bg-accent-100/20 text-neutral font-bold"
-                            class="group my-2 flex w-full flex-col items-center rounded-md p-3 text-xs font-medium text-accent-100 hover:bg-accent-100/10 hover:text-neutral hover:transition-all"
+                            active-class="bg-accent-100/20 font-bold"
+                            class="group my-2 flex w-full flex-col items-center rounded-md p-3 text-xs font-medium text-accent-100 hover:bg-accent-100/10 hover:transition-all"
                             exact-active-class="text-accent-200"
                             aria-current-value="page"
                         >
-                            <LoginIcon class="h-auto w-6" aria-hidden="true" />
+                            <LoginIcon class="h-auto w-6" />
                             <span class="mt-2">{{ $t('components.auth.login.title') }}</span>
                         </NuxtLink>
                         <NuxtLink
                             :to="{ name: 'auth-registration' }"
-                            active-class="bg-accent-100/20 text-neutral font-bold"
-                            class="group my-2 flex w-full flex-col items-center rounded-md p-3 text-xs font-medium text-accent-100 hover:bg-accent-100/10 hover:text-neutral hover:transition-all"
+                            active-class="bg-accent-100/20 font-bold"
+                            class="group my-2 flex w-full flex-col items-center rounded-md p-3 text-xs font-medium text-accent-100 hover:bg-accent-100/10 hover:transition-all"
                             exact-active-class="text-accent-200"
                             aria-current-value="page"
                         >
-                            <AccountPlusIcon class="h-auto w-6" aria-hidden="true" />
+                            <AccountPlusIcon class="h-auto w-6" />
                             <span class="mt-2">{{ $t('components.auth.registration_form.title') }}</span>
                         </NuxtLink>
                     </template>
                     <template v-if="accessToken && !activeChar">
                         <NuxtLink
                             :to="{ name: 'index' }"
-                            active-class="bg-accent-100/20 text-neutral font-bold"
-                            class="group my-2 flex w-full flex-col items-center rounded-md p-3 text-xs font-medium text-accent-100 hover:bg-accent-100/10 hover:text-neutral hover:transition-all"
+                            active-class="bg-accent-100/20 font-bold"
+                            class="group my-2 flex w-full flex-col items-center rounded-md p-3 text-xs font-medium text-accent-100 hover:bg-accent-100/10 hover:transition-all"
                             exact-active-class="text-accent-200"
                             aria-current-value="page"
                         >
-                            <HomeIcon class="h-auto w-6" aria-hidden="true" />
+                            <HomeIcon class="h-auto w-6" />
                             <span class="mt-2">{{ $t('common.home') }}</span>
                         </NuxtLink>
                         <NuxtLink
                             :to="{ name: 'auth-character-selector' }"
-                            active-class="bg-accent-100/20 text-neutral font-bold"
-                            class="group my-2 flex w-full flex-col items-center rounded-md p-3 text-xs font-medium text-accent-100 hover:bg-accent-100/10 hover:text-neutral hover:transition-all"
+                            active-class="bg-accent-100/20 font-bold"
+                            class="group my-2 flex w-full flex-col items-center rounded-md p-3 text-xs font-medium text-accent-100 hover:bg-accent-100/10 hover:transition-all"
                             exact-active-class="text-accent-200"
                             aria-current-value="page"
                         >
-                            <UnfoldMoreHorizontalIcon class="h-auto w-6" aria-hidden="true" />
+                            <UnfoldMoreHorizontalIcon class="h-auto w-6" />
                             <span class="mt-2">{{ $t('components.auth.character_selector.title') }}</span>
                         </NuxtLink>
                     </template>
@@ -260,19 +259,15 @@ watch(router.currentRoute, () => updateActiveItem());
                             :to="item.to"
                             :class="[
                                 item.current
-                                    ? 'bg-accent-100/20 font-bold text-neutral'
-                                    : 'font-medium text-accent-100 hover:bg-accent-100/10 hover:text-neutral',
+                                    ? 'bg-accent-100/20 font-bold'
+                                    : 'font-medium text-accent-100 hover:bg-accent-100/10 ',
                                 'group my-2 flex w-full flex-col items-center rounded-md p-3 text-xs hover:transition-all',
                             ]"
                             :aria-current="item.current ? 'page' : undefined"
                         >
                             <component
                                 :is="item.icon"
-                                :class="[
-                                    item.current ? 'text-neutral' : 'text-accent-100 group-hover:text-neutral',
-                                    'h-auto w-6',
-                                ]"
-                                aria-hidden="true"
+                                :class="[item.current ? 'text-neutral' : 'text-accent-100 group-', 'h-auto w-6']"
                             />
                             <span class="mt-2">{{ $t(item.name) }}</span>
                         </NuxtLink>
@@ -286,17 +281,14 @@ watch(router.currentRoute, () => updateActiveItem());
                         :key="item.name"
                         :to="item.to"
                         :class="[
-                            item.current
-                                ? 'bg-accent-100/20 font-bold text-neutral'
-                                : 'font-medium text-accent-100 hover:bg-accent-100/10 hover:text-neutral',
+                            item.current ? 'bg-accent-100/20 font-bold' : 'font-medium text-accent-100 hover:bg-accent-100/10 ',
                             'group my-2 flex w-full flex-col items-center rounded-md p-3 text-xs hover:transition-all',
                         ]"
                         :aria-current="item.current ? 'page' : undefined"
                     >
                         <component
                             :is="item.icon"
-                            :class="[item.current ? 'text-neutral' : 'text-accent-100 group-hover:text-neutral', 'h-auto w-6']"
-                            aria-hidden="true"
+                            :class="[item.current ? 'text-neutral' : 'text-accent-100 group-', 'h-auto w-6']"
                         />
                         <span class="mt-2">{{ $t(item.name) }}</span>
                     </NuxtLink>
@@ -329,9 +321,7 @@ watch(router.currentRoute, () => updateActiveItem());
                         leave-from="translate-x-0"
                         leave-to="-translate-x-full"
                     >
-                        <DialogPanel
-                            class="relative flex w-full max-w-xs flex-1 flex-col bg-secondary-600 pb-4 pt-5 defaultTheme:bg-accent-600"
-                        >
+                        <DialogPanel class="relative flex w-full max-w-xs flex-1 flex-col pb-4 pt-5 defaultTheme:bg-accent-600">
                             <TransitionChild
                                 as="template"
                                 enter="ease-in-out duration-300"
@@ -346,7 +336,7 @@ watch(router.currentRoute, () => updateActiveItem());
                                         class="flex size-12 items-center justify-center rounded-full ring-2 ring-neutral"
                                         @click="mobileMenuOpen = false"
                                     >
-                                        <CloseIcon class="h-auto w-6 text-neutral" aria-hidden="true" />
+                                        <CloseIcon class="h-auto w-6" />
                                         <span class="sr-only">{{ $t('components.partials.sidebar.close_sidebar') }}</span>
                                     </UButton>
                                 </div>
@@ -360,44 +350,35 @@ watch(router.currentRoute, () => updateActiveItem());
                                         <template v-if="!accessToken && !activeChar">
                                             <NuxtLink
                                                 :to="{ name: 'index' }"
-                                                active-class="bg-accent-100/20 text-neutral font-bold"
-                                                class="group flex items-center rounded-md px-3 py-2 text-sm font-medium text-accent-100 hover:bg-accent-100/10 hover:text-neutral"
+                                                active-class="bg-accent-100/20 font-bold"
+                                                class="group flex items-center rounded-md px-3 py-2 text-sm font-medium text-accent-100 hover:bg-accent-100/10"
                                                 exact-active-class="text-accent-200"
                                                 aria-current-value="page"
                                                 @click="mobileMenuOpen = false"
                                             >
-                                                <HomeIcon
-                                                    class="mr-3 h-auto w-6 text-accent-100 group-hover:text-neutral"
-                                                    aria-hidden="true"
-                                                />
+                                                <HomeIcon class="mr-3 h-auto w-6 text-accent-100 group-" />
                                                 <span>{{ $t('common.home') }}</span>
                                             </NuxtLink>
                                             <NuxtLink
                                                 :to="{ name: 'auth-login' }"
-                                                active-class="bg-accent-100/20 text-neutral font-bold"
-                                                class="group flex items-center rounded-md px-3 py-2 text-sm font-medium text-accent-100 hover:bg-accent-100/10 hover:text-neutral"
+                                                active-class="bg-accent-100/20 font-bold"
+                                                class="group flex items-center rounded-md px-3 py-2 text-sm font-medium text-accent-100 hover:bg-accent-100/10"
                                                 exact-active-class="text-accent-200"
                                                 aria-current-value="page"
                                                 @click="mobileMenuOpen = false"
                                             >
-                                                <LoginIcon
-                                                    class="mr-3 h-auto w-6 text-accent-100 group-hover:text-neutral"
-                                                    aria-hidden="true"
-                                                />
+                                                <LoginIcon class="mr-3 h-auto w-6 text-accent-100 group-" />
                                                 <span>{{ $t('components.auth.login.title') }}</span>
                                             </NuxtLink>
                                             <NuxtLink
                                                 :to="{ name: 'auth-registration' }"
-                                                active-class="bg-accent-100/20 text-neutral font-bold"
-                                                class="group flex items-center rounded-md px-3 py-2 text-sm font-medium text-accent-100 hover:bg-accent-100/10 hover:text-neutral"
+                                                active-class="bg-accent-100/20 font-bold"
+                                                class="group flex items-center rounded-md px-3 py-2 text-sm font-medium text-accent-100 hover:bg-accent-100/10"
                                                 exact-active-class="text-accent-200"
                                                 aria-current-value="page"
                                                 @click="mobileMenuOpen = false"
                                             >
-                                                <AccountPlusIcon
-                                                    class="mr-3 h-auto w-6 text-accent-100 group-hover:text-neutral"
-                                                    aria-hidden="true"
-                                                />
+                                                <AccountPlusIcon class="mr-3 h-auto w-6 text-accent-100 group-" />
                                                 <span>{{ $t('components.auth.registration_form.title') }}</span>
                                             </NuxtLink>
                                         </template>
@@ -411,8 +392,8 @@ watch(router.currentRoute, () => updateActiveItem());
                                             :to="item.to"
                                             :class="[
                                                 item.current
-                                                    ? 'bg-accent-100/20 font-bold text-neutral'
-                                                    : 'font-medium text-accent-100 hover:bg-accent-100/10 hover:text-neutral',
+                                                    ? 'bg-accent-100/20 font-bold'
+                                                    : 'font-medium text-accent-100 hover:bg-accent-100/10 ',
                                                 'group flex items-center rounded-md px-3 py-2 text-sm',
                                             ]"
                                             :aria-current="item.current ? 'page' : undefined"
@@ -421,10 +402,9 @@ watch(router.currentRoute, () => updateActiveItem());
                                             <component
                                                 :is="item.icon"
                                                 :class="[
-                                                    item.current ? 'text-neutral' : 'text-accent-100 group-hover:text-neutral',
+                                                    item.current ? 'text-neutral' : 'text-accent-100 group-',
                                                     'mr-3 h-auto w-6',
                                                 ]"
-                                                aria-hidden="true"
                                             />
                                             <span>{{ $t(item.name, 2) }}</span>
                                         </NuxtLink>
@@ -444,8 +424,8 @@ watch(router.currentRoute, () => updateActiveItem());
                                             :to="item.to"
                                             :class="[
                                                 item.current
-                                                    ? 'bg-accent-100/20 font-bold text-neutral'
-                                                    : 'font-medium text-accent-100 hover:bg-accent-100/10 hover:text-neutral',
+                                                    ? 'bg-accent-100/20 font-bold'
+                                                    : 'font-medium text-accent-100 hover:bg-accent-100/10 ',
                                                 'group flex items-center rounded-md px-3 py-2 text-sm',
                                             ]"
                                             :aria-current="item.current ? 'page' : undefined"
@@ -454,10 +434,9 @@ watch(router.currentRoute, () => updateActiveItem());
                                             <component
                                                 :is="item.icon"
                                                 :class="[
-                                                    item.current ? 'text-neutral' : 'text-accent-100 group-hover:text-neutral',
+                                                    item.current ? 'text-neutral' : 'text-accent-100 group-',
                                                     'mr-3 h-auto w-6',
                                                 ]"
-                                                aria-hidden="true"
                                             />
                                             <span>{{ $t(item.name, 2) }}</span>
                                         </NuxtLink>
@@ -466,7 +445,7 @@ watch(router.currentRoute, () => updateActiveItem());
                             </div>
                         </DialogPanel>
                     </TransitionChild>
-                    <div class="w-14 shrink-0" aria-hidden="true"></div>
+                    <div class="w-14 shrink-0"></div>
                 </div>
             </Dialog>
         </TransitionRoot>
@@ -476,11 +455,11 @@ watch(router.currentRoute, () => updateActiveItem());
             <header class="w-full">
                 <div class="relative z-30 flex h-16 shrink-0 bg-base-800">
                     <UButton
-                        class="px-4 text-neutral focus:ring-2 focus:ring-inset focus:ring-primary-500 md:hidden"
+                        class="px-4 focus:ring-2 focus:ring-inset focus:ring-primary-500 md:hidden"
                         @click="mobileMenuOpen = true"
                     >
                         <span class="sr-only">{{ $t('components.partials.sidebar.open_sidebar') }}</span>
-                        <MenuIcon class="h-auto w-6" aria-hidden="true" />
+                        <MenuIcon class="h-auto w-6" />
                     </UButton>
                     <div class="flex flex-1 justify-between px-2 sm:px-6">
                         <div class="flex flex-1">
@@ -492,9 +471,9 @@ watch(router.currentRoute, () => updateActiveItem());
                                                 :to="{
                                                     name: accessToken ? 'overview' : 'index',
                                                 }"
-                                                class="text-base-400 hover:text-neutral hover:transition-colors"
+                                                class="text-base-400 hover:transition-colors"
                                             >
-                                                <HomeIcon class="size-5 shrink-0" aria-hidden="true" />
+                                                <HomeIcon class="size-5 shrink-0" />
                                                 <span class="sr-only">{{ $t('common.home') }}</span>
                                             </NuxtLink>
                                         </div>
@@ -502,7 +481,7 @@ watch(router.currentRoute, () => updateActiveItem());
                                     <template v-for="(page, key) in breadcrumbs" :key="key">
                                         <li v-if="key !== 0 && page.to !== undefined">
                                             <div class="flex items-center">
-                                                <ChevronRightIcon class="size-5 shrink-0 text-base-300" aria-hidden="true" />
+                                                <ChevronRightIcon class="size-5 shrink-0 text-base-300" />
                                                 <!-- @vue-ignore the route should be valid, as we construct it based on our pages -->
                                                 <NuxtLink
                                                     :to="page.to"
@@ -510,7 +489,7 @@ watch(router.currentRoute, () => updateActiveItem());
                                                         key === breadcrumbs.length - 1
                                                             ? 'font-bold text-accent-200'
                                                             : 'font-medium text-base-300',
-                                                        'ml-2 max-w-20 truncate text-sm hover:text-neutral hover:transition-colors sm:ml-4 lg:max-w-full',
+                                                        'ml-2 max-w-20 truncate text-sm  hover:transition-colors sm:ml-4 lg:max-w-full',
                                                     ]"
                                                     :aria-current="key === breadcrumbs.length - 1 ? 'page' : undefined"
                                                 >
@@ -524,7 +503,6 @@ watch(router.currentRoute, () => updateActiveItem());
                         </div>
                         <div class="ml-2 flex items-center space-x-3 sm:ml-2 sm:space-x-4">
                             <template v-if="activeChar">
-                                <SuperUserMenu v-if="can('CanBeSuper') || can('SuperUser')" />
                                 <div v-if="activeChar" class="hidden text-center text-sm font-medium text-accent-200 sm:block">
                                     <span class="line-clamp-3">
                                         <span class="line-clamp-2">{{ activeChar.firstname }} {{ activeChar.lastname }}</span>
@@ -544,7 +522,7 @@ watch(router.currentRoute, () => updateActiveItem());
                                     </span>
                                     <AccountIcon
                                         v-if="!activeChar?.avatar?.url"
-                                        class="h-10 w-auto rounded-full bg-base-800 fill-base-300 text-base-300 hover:fill-base-100 hover:text-neutral hover:transition-colors"
+                                        class="h-10 w-auto rounded-full bg-base-800 fill-base-300 text-base-300 hover:fill-base-100 hover:transition-colors"
                                     />
                                     <ProfilePictureImg
                                         v-else
@@ -575,7 +553,7 @@ watch(router.currentRoute, () => updateActiveItem());
                                         >
                                             <NuxtLink
                                                 :to="item.to"
-                                                class="block px-4 py-2 text-sm text-neutral hover:transition-colors"
+                                                class="block px-4 py-2 text-sm hover:transition-colors"
                                                 active-class="bg-primary-500"
                                                 @mouseup="close"
                                             >

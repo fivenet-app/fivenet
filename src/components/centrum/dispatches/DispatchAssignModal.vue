@@ -127,7 +127,7 @@ const onSubmitThrottle = useThrottleFn(async () => {
                                     <div class="h-0 flex-1 overflow-y-auto">
                                         <div class="bg-primary-700 px-4 py-6 sm:px-6">
                                             <div class="flex items-center justify-between">
-                                                <DialogTitle class="inline-flex text-base font-semibold leading-6 text-neutral">
+                                                <DialogTitle class="inline-flex text-base font-semibold leading-6">
                                                     {{ $t('components.centrum.assign_dispatch.title') }}:
                                                     <IDCopyBadge :id="dispatch.id" class="ml-2" prefix="DSP" />
                                                 </DialogTitle>
@@ -137,7 +137,7 @@ const onSubmitThrottle = useThrottleFn(async () => {
                                                         @click="$emit('close')"
                                                     >
                                                         <span class="sr-only">{{ $t('common.close') }}</span>
-                                                        <CloseIcon class="size-5" aria-hidden="true" />
+                                                        <CloseIcon class="size-5" />
                                                     </UButton>
                                                 </div>
                                             </div>
@@ -148,7 +148,7 @@ const onSubmitThrottle = useThrottleFn(async () => {
                                                     <div class="my-2 space-y-24">
                                                         <div class="flex-1">
                                                             <template v-for="group in grouped" :key="group.key">
-                                                                <p class="text-sm text-neutral">
+                                                                <p class="text-sm">
                                                                     {{
                                                                         $t(
                                                                             `enums.centrum.StatusUnit.${
@@ -162,7 +162,7 @@ const onSubmitThrottle = useThrottleFn(async () => {
                                                                         v-for="unit in group.units"
                                                                         :key="unit.name"
                                                                         :disabled="unit.users.length === 0"
-                                                                        class="inline-flex flex-row items-center gap-x-1 rounded-md p-1.5 text-sm font-medium text-neutral hover:bg-primary-100/10 hover:transition-all"
+                                                                        class="inline-flex flex-row items-center gap-x-1 rounded-md p-1.5 text-sm font-medium hover:bg-primary-100/10 hover:transition-all"
                                                                         :class="[
                                                                             unitStatusToBGColor(unit.status?.status),
                                                                             unit.users.length === 0
@@ -183,7 +183,7 @@ const onSubmitThrottle = useThrottleFn(async () => {
                                                                             v-else-if="unit.users.length > 0"
                                                                             class="size-5"
                                                                         />
-                                                                        <CancelIcon v-else class="size-5" aria-hidden="true" />
+                                                                        <CancelIcon v-else class="size-5" />
 
                                                                         <div
                                                                             class="ml-0.5 flex w-full flex-col place-items-start"
@@ -212,7 +212,7 @@ const onSubmitThrottle = useThrottleFn(async () => {
                                     <div class="flex shrink-0 justify-end p-4">
                                         <span class="isolate inline-flex w-full rounded-md pr-4 shadow-sm">
                                             <UButton
-                                                class="relative inline-flex w-full items-center rounded-l-md px-3.5 py-2.5 text-sm font-semibold text-neutral"
+                                                class="relative inline-flex w-full items-center rounded-l-md px-3.5 py-2.5 text-sm font-semibold"
                                                 :disabled="!canSubmit"
                                                 :class="[
                                                     !canSubmit
@@ -222,7 +222,7 @@ const onSubmitThrottle = useThrottleFn(async () => {
                                                 @click="onSubmitThrottle"
                                             >
                                                 <template v-if="!canSubmit">
-                                                    <LoadingIcon class="mr-2 size-5 animate-spin" aria-hidden="true" />
+                                                    <LoadingIcon class="mr-2 size-5 animate-spin" />
                                                 </template>
                                                 {{ $t('common.update') }}
                                             </UButton>

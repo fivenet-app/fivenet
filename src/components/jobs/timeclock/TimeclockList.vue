@@ -5,7 +5,6 @@ import { ArrowRightIcon, CalendarIcon, CheckIcon, ChevronLeftIcon, ChevronRightI
 import DataErrorBlock from '~/components/partials/data/DataErrorBlock.vue';
 import DataNoDataBlock from '~/components/partials/data/DataNoDataBlock.vue';
 import DataPendingBlock from '~/components/partials/data/DataPendingBlock.vue';
-import TablePagination from '~/components/partials/elements/TablePagination.vue';
 import * as googleProtobufTimestamp from '~~/gen/ts/google/protobuf/timestamp';
 import { TimeclockEntry } from '~~/gen/ts/resources/jobs/timeclock';
 import { User } from '~~/gen/ts/resources/users/users';
@@ -36,10 +35,12 @@ const query = ref<{
     to: canAccessAll ? dateToDateString(previousDay.value) : undefined,
     perDay: canAccessAll,
 });
-const offset = ref(0);
+
+const page = ref(1);
+const offset = computed(() => (data.value?.pagination?.pageSize ? data.value?.pagination?.pageSize * page.value : 0));
 
 const { data, pending, refresh, error } = useLazyAsyncData(
-    `jobs-timeclock-${query.value.from}-${query.value.to}-${query.value.perDay}-${query.value.user_ids?.map((u) => u.userId)}-${offset.value}`,
+    `jobs-timeclock-${query.value.from}-${query.value.to}-${query.value.perDay}-${query.value.user_ids?.map((u) => u.userId)}-${page.value}`,
     () => listTimeclockEntries(),
 );
 
@@ -211,7 +212,7 @@ function updateDates(): void {
             <div class="sm:flex sm:items-center">
                 <NuxtLink
                     :to="{ name: 'jobs-timeclock-inactive' }"
-                    class="ml-auto inline-flex rounded-md bg-primary-500 px-3 py-2 text-sm font-semibold text-neutral hover:bg-primary-400 focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2"
+                    class="ml-auto inline-flex rounded-md bg-primary-500 px-3 py-2 text-sm font-semibold hover:bg-primary-400 focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2"
                 >
                     {{ $t('common.inactive_colleagues') }}
                     <ArrowRightIcon class="ml-1 size-5" />
@@ -224,7 +225,7 @@ function updateDates(): void {
                     <form @submit.prevent="refresh()">
                         <div class="mx-auto flex flex-row gap-4">
                             <div v-if="canAccessAll" class="flex-1">
-                                <label for="searchName" class="block text-sm font-medium leading-6 text-neutral">
+                                <label for="searchName" class="block text-sm font-medium leading-6">
                                     {{ $t('common.search') }}
                                     {{ $t('common.colleague', 1) }}
                                 </label>
@@ -234,7 +235,7 @@ function updateDates(): void {
                                             <ComboboxButton as="div">
                                                 <ComboboxInput
                                                     autocomplete="off"
-                                                    class="block w-full rounded-md border-0 bg-base-700 py-1.5 text-neutral placeholder:text-accent-200 focus:ring-2 focus:ring-inset focus:ring-base-300 sm:text-sm sm:leading-6"
+                                                    class="block w-full rounded-md border-0 bg-base-700 py-1.5 placeholder:text-accent-200 focus:ring-2 focus:ring-inset focus:ring-base-300 sm:text-sm sm:leading-6"
                                                     :display-value="
                                                         (chars: any) => (chars ? charsGetDisplayValue(chars) : $t('common.na'))
                                                     "
@@ -258,7 +259,7 @@ function updateDates(): void {
                                                 >
                                                     <li
                                                         :class="[
-                                                            'relative cursor-default select-none py-2 pl-8 pr-4 text-neutral',
+                                                            'relative cursor-default select-none py-2 pl-8 pr-4',
                                                             active ? 'bg-primary-500' : '',
                                                         ]"
                                                     >
@@ -273,7 +274,7 @@ function updateDates(): void {
                                                                 'absolute inset-y-0 left-0 flex items-center pl-1.5',
                                                             ]"
                                                         >
-                                                            <CheckIcon class="size-5" aria-hidden="true" />
+                                                            <CheckIcon class="size-5" />
                                                         </span>
                                                     </li>
                                                 </ComboboxOption>
@@ -283,7 +284,7 @@ function updateDates(): void {
                                 </div>
                             </div>
                             <div class="flex-1">
-                                <label for="search" class="block text-sm font-medium leading-6 text-neutral">
+                                <label for="search" class="block text-sm font-medium leading-6">
                                     <template v-if="query.perDay"> {{ $t('common.date') }}: </template>
                                     <template v-else>
                                         {{ $t('common.time_range') }}:
@@ -296,14 +297,14 @@ function updateDates(): void {
                                         type="date"
                                         name="search"
                                         :placeholder="`${$t('common.time_range')} ${$t('common.from')}`"
-                                        class="block w-full rounded-md border-0 bg-base-700 py-1.5 pr-14 text-neutral placeholder:text-accent-200 focus:ring-2 focus:ring-inset focus:ring-base-300 sm:text-sm sm:leading-6"
+                                        class="block w-full rounded-md border-0 bg-base-700 py-1.5 pr-14 placeholder:text-accent-200 focus:ring-2 focus:ring-inset focus:ring-base-300 sm:text-sm sm:leading-6"
                                         @focusin="focusTablet(true)"
                                         @focusout="focusTablet(false)"
                                     />
                                 </div>
                             </div>
                             <div v-if="!query.perDay" class="flex-1">
-                                <label for="search" class="block text-sm font-medium leading-6 text-neutral">
+                                <label for="search" class="block text-sm font-medium leading-6">
                                     {{ $t('common.time_range') }}:
                                     {{ $t('common.to') }}
                                 </label>
@@ -313,7 +314,7 @@ function updateDates(): void {
                                         type="date"
                                         name="search"
                                         :placeholder="`${$t('common.time_range')} ${$t('common.to')}`"
-                                        class="block w-full rounded-md border-0 bg-base-700 py-1.5 pr-14 text-neutral placeholder:text-accent-200 focus:ring-2 focus:ring-inset focus:ring-base-300 sm:text-sm sm:leading-6"
+                                        class="block w-full rounded-md border-0 bg-base-700 py-1.5 pr-14 placeholder:text-accent-200 focus:ring-2 focus:ring-inset focus:ring-base-300 sm:text-sm sm:leading-6"
                                         @focusin="focusTablet(true)"
                                         @focusout="focusTablet(false)"
                                     />
@@ -328,21 +329,21 @@ function updateDates(): void {
                                         futureDay > today
                                             ? 'disabled bg-base-500 hover:bg-base-400 focus-visible:outline-base-500'
                                             : 'bg-primary-500 hover:bg-primary-400',
-                                        'relative inline-flex w-full cursor-pointer place-content-start items-center rounded-md px-3 py-2 text-sm font-semibold text-neutral focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2',
+                                        'relative inline-flex w-full cursor-pointer place-content-start items-center rounded-md px-3 py-2 text-sm font-semibold focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2',
                                     ]"
                                     @click="dayForward()"
                                 >
-                                    <ChevronLeftIcon class="size-5" aria-hidden="true" />
+                                    <ChevronLeftIcon class="size-5" />
                                     {{ $t('common.forward') }} - {{ $d(futureDay, 'date') }}
                                 </UButton>
                             </div>
                             <div class="flex-initial">
                                 <UButton
                                     disabled
-                                    class="disabled relative flex w-full cursor-pointer flex-col place-content-end items-center rounded-md bg-base-500 px-3 py-2 text-sm font-semibold text-neutral hover:bg-base-400 focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-base-500"
+                                    class="disabled relative flex w-full cursor-pointer flex-col place-content-end items-center rounded-md bg-base-500 px-3 py-2 text-sm font-semibold hover:bg-base-400 focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-base-500"
                                 >
                                     <span class="inline-flex flex-row items-center gap-1">
-                                        <CalendarIcon class="size-5" aria-hidden="true" />
+                                        <CalendarIcon class="size-5" />
                                         {{ $d(currentDay, 'date') }}
                                     </span>
                                     <span>{{ $t('common.calendar_week') }}: {{ getWeekNumber(currentDay) }}</span>
@@ -350,11 +351,11 @@ function updateDates(): void {
                             </div>
                             <div class="flex-1">
                                 <UButton
-                                    class="relative inline-flex w-full cursor-pointer place-content-end items-center rounded-md bg-primary-500 px-3 py-2 text-sm font-semibold text-neutral hover:bg-primary-400 focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2"
+                                    class="relative inline-flex w-full cursor-pointer place-content-end items-center rounded-md bg-primary-500 px-3 py-2 text-sm font-semibold hover:bg-primary-400 focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2"
                                     @click="dayBackwards()"
                                 >
                                     {{ $d(previousDay, 'date') }} - {{ $t('common.previous') }}
-                                    <ChevronRightIcon class="size-5" aria-hidden="true" />
+                                    <ChevronRightIcon class="size-5" />
                                 </UButton>
                             </div>
                         </div>
@@ -382,7 +383,7 @@ function updateDates(): void {
                                         <th
                                             v-if="!query.perDay"
                                             scope="col"
-                                            class="py-3.5 pl-4 pr-3 text-left text-sm font-semibold text-neutral sm:pl-1"
+                                            class="py-3.5 pl-4 pr-3 text-left text-sm font-semibold sm:pl-1"
                                         >
                                             {{ $t('common.date') }}
                                         </th>
@@ -393,11 +394,11 @@ function updateDates(): void {
                                                 query.user_ids?.length >= 1
                                             "
                                             scope="col"
-                                            class="px-2 py-3.5 text-left text-sm font-semibold text-neutral"
+                                            class="px-2 py-3.5 text-left text-sm font-semibold"
                                         >
                                             {{ $t('common.name') }}
                                         </th>
-                                        <th scope="col" class="px-2 py-3.5 text-left text-sm font-semibold text-neutral">
+                                        <th scope="col" class="px-2 py-3.5 text-left text-sm font-semibold">
                                             {{ $t('common.time') }}
                                         </th>
                                     </tr>
@@ -414,13 +415,15 @@ function updateDates(): void {
                                     </template>
                                 </template>
                             </GenericTable>
-
-                            <TablePagination
-                                :pagination="data?.pagination"
-                                :refresh="refresh"
-                                @offset-change="offset = $event"
-                            />
                         </template>
+
+                        <div class="flex justify-end px-3 py-3.5 border-t border-gray-200 dark:border-gray-700">
+                            <UPagination
+                                v-model="page"
+                                :page-count="data?.pagination?.pageSize ?? 0"
+                                :total="data?.pagination?.totalCount ?? 0"
+                            />
+                        </div>
                     </div>
                 </div>
             </div>

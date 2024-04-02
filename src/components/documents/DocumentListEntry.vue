@@ -41,15 +41,15 @@ defineProps<{
                         {{ doc.state }}
                     </p>
                     <div class="flex flex-1 flex-row items-center justify-end">
-                        <div v-if="doc?.closed" class="flex flex-initial flex-row gap-1 rounded-full bg-error-100 px-2 py-1">
-                            <LockIcon class="size-5 text-error-400" aria-hidden="true" />
-                            <span class="text-sm font-medium text-error-700">
+                        <div v-if="doc?.closed" class="inline-flex flex-initial gap-1">
+                            <LockIcon class="size-5 text-error-400" />
+                            <span class="text-sm font-medium text-error-400">
                                 {{ $t('common.close', 2) }}
                             </span>
                         </div>
-                        <div v-else class="flex flex-initial flex-row gap-1 rounded-full bg-success-100 px-2 py-1">
-                            <LockOpenVariantIcon class="size-5 text-success-500" aria-hidden="true" />
-                            <span class="text-sm font-medium text-success-700">
+                        <div v-else class="inline-flex flex-initial gap-1">
+                            <LockOpenVariantIcon class="size-5 text-success-400" />
+                            <span class="text-sm font-medium text-success-400">
                                 {{ $t('common.open', 2) }}
                             </span>
                         </div>
@@ -57,7 +57,7 @@ defineProps<{
                 </div>
 
                 <div class="flex flex-row gap-2 truncate text-accent-200">
-                    <h2 class="inline-flex items-center gap-1 truncate text-xl font-medium text-neutral">
+                    <h2 class="inline-flex items-center gap-1 truncate text-xl font-medium">
                         <span
                             v-if="doc.category"
                             class="flex flex-initial flex-row gap-1 break-words rounded-full bg-primary-100 px-2 py-1 text-primary-500"
@@ -74,11 +74,11 @@ defineProps<{
                         </span>
                     </h2>
                     <div v-if="doc.deletedAt" class="flex flex-1 flex-row items-center justify-center font-bold">
-                        <TrashCanIcon class="mr-1.5 size-5 shrink-0 text-base-300" aria-hidden="true" />
+                        <TrashCanIcon class="mr-1.5 size-5 shrink-0 text-base-300" />
                         {{ $t('common.deleted') }}
                     </div>
                     <div v-if="doc.updatedAt" class="flex flex-1 flex-row items-center justify-end">
-                        <UpdateIcon class="mr-1.5 size-5 shrink-0 text-base-300" aria-hidden="true" />
+                        <UpdateIcon class="mr-1.5 size-5 shrink-0 text-base-300" />
                         <p>
                             {{ $t('common.updated') }}
                             <GenericTime :value="doc.updatedAt" :ago="true" />
@@ -88,18 +88,14 @@ defineProps<{
 
                 <div class="flex flex-row gap-2 text-accent-200">
                     <div class="flex flex-1 flex-row items-center justify-start">
-                        <CitizenInfoPopover :user="doc.creator">
-                            <template #before>
-                                <AccountIcon class="mr-1.5 size-5 shrink-0 text-base-300" aria-hidden="true" />
-                            </template>
-                        </CitizenInfoPopover>
+                        <CitizenInfoPopover :user="doc.creator" />
                     </div>
                     <div class="flex flex-1 flex-row items-center justify-center">
-                        <BriefcaseIcon class="mr-1.5 size-5 shrink-0 text-base-300" aria-hidden="true" />
+                        <BriefcaseIcon class="mr-1.5 size-5 shrink-0 text-base-300" />
                         {{ doc.creator?.jobLabel }}
                     </div>
                     <div class="flex flex-1 flex-row items-center justify-end">
-                        <CalendarIcon class="mr-1.5 size-5 shrink-0 text-base-300" aria-hidden="true" />
+                        <CalendarIcon class="mr-1.5 size-5 shrink-0 text-base-300" />
                         <p>
                             {{ $t('common.created_at') }}
                             <GenericTime :value="doc.createdAt" />
