@@ -578,13 +578,6 @@
         "hints": {
             "start_text": "Wussten Sie schon...?",
             "click_me": "Klicke hier.",
-<<<<<<< HEAD
-=======
-            "command_palette": {
-                "content": "FiveNet hat eine Befehlspalette für Power-User! Sie können diese mit folgenden Tastenkombination öffnen:",
-                "keyboard": "STRG+K"
-            },
->>>>>>> d59bdc1a (fix: continue nuxt ui design rework)
             "startpage": {
                 "content": "Die Startseite von FiveNet können Sie in Ihren Kontoinformationen festlegen."
             },
@@ -1897,29 +1890,6 @@
             "ErrFailedQuery": "Fehler beim laden der Berufsdaten!"
         }
     },
-<<<<<<< HEAD
-=======
-    "command_palette": {
-        "input": {
-            "title": "Geben Sie einen Befehl ein oder suchen Sie nach Befehlen...",
-            "content": "Schneller Zugriff auf Bürger, Dokumente und mehr."
-        },
-        "empty": {
-            "title": "Keine Ergebnisse gefunden.",
-            "content": "Es konnte nichts gefunden werden. Versuchen Sie es erneut."
-        },
-        "groups": {
-            "shortcuts": {
-                "label": "Abkürzungen",
-                "goto": "Gehe zu {key}: {prefix}"
-            },
-            "pages": {
-                "label": "Seiten"
-            }
-        },
-        "footer": "Tippe {key1} für Bürger,- {key2} für Dokumenten-Suche."
-    },
->>>>>>> d59bdc1a (fix: continue nuxt ui design rework)
     "system": {
         "update_available": {
             "title": "Neue FiveNet Version verfügbar ({version})!",

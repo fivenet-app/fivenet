@@ -21,16 +21,16 @@ const links = [
 
 const categories = computed(() => [
     {
-        title: t('command_palette.categories.general'),
+        title: t('commandpalette.categories.general'),
         items: [
-            { shortcuts: [metaSymbol.value, 'K'], name: t('common.command_palette') },
+            { shortcuts: [metaSymbol.value, 'K'], name: t('common.commandpalette') },
             { shortcuts: ['N'], name: t('common.notification', 2) },
             { shortcuts: ['?'], name: t('common.help') },
             { shortcuts: ['/'], name: t('common.search') },
         ],
     },
     {
-        title: t('command_palette.categories.navigation'),
+        title: t('commandpalette.categories.navigation'),
         items: [
             { shortcuts: ['G', 'H'], name: t('common.goto_item', [t('common.home')]) },
             { shortcuts: ['G', 'C'], name: t('common.goto_item', [t('common.citizen', 2)]) },

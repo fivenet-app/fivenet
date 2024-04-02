@@ -347,10 +347,10 @@ const colors = computed(() => defaultColors.value.map((color) => ({ ...color, ac
                 :groups="groups"
                 :empty-state="{
                     icon: 'i-mdi-globe-model',
-                    label: t('command_palette.empty.title'),
-                    queryLabel: t('command_palette.empty.title'),
+                    label: t('commandpalette.empty.title'),
+                    queryLabel: t('commandpalette.empty.title'),
                 }"
-                :placeholder="`${$t('common.search')}... (${$t('command_palette.footer', { key1: '#', key2: '@' })})`"
+                :placeholder="`${$t('common.search')}... (${$t('commandpalette.footer', { key1: '#', key2: '@' })})`"
             />
         </ClientOnly>
     </UDashboardLayout>

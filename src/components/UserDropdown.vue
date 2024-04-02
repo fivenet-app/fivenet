@@ -30,7 +30,7 @@ const items = computed(() => [
             to: '/settings',
         },
         {
-            label: t('common.command_palette'),
+            label: t('common.commandpalette'),
             icon: 'i-heroicons-command-line',
             shortcuts: [metaSymbol.value, 'K'],
             click: () => {
