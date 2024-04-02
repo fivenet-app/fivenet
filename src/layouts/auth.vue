@@ -10,8 +10,8 @@ useHead({
 
 <!-- eslint-disable tailwindcss/no-custom-classname -->
 <template>
-    <div class="h-screen">
-        <div class="overlay flex h-full flex-col items-center justify-center">
+    <div class="hero h-screen">
+        <div class="flex h-full flex-col items-center justify-center">
             <div class="gradient" />
 
             <UButton icon="i-mdi-home" :label="$t('common.home')" to="/" color="black" class="absolute top-4" />
@@ -37,11 +37,6 @@ useHead({
     }
 }
 
-.overlay {
-    background-size: 100px 100px;
-    background-image: linear-gradient(to right, rgb(var(--color-gray-200)) 0.5px, transparent 0.5px),
-        linear-gradient(to bottom, rgb(var(--color-gray-200)) 0.5px, transparent 0.5px);
-}
 .dark {
     .overlay {
         background-image: linear-gradient(to right, rgb(var(--color-gray-900)) 0.5px, transparent 0.5px),
