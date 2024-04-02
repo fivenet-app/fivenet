@@ -10,7 +10,6 @@ const { dispatches } = storeToRefs(centrumStore);
 const counts = computedAsync(() => {
     const count = {
         unassigned: 0,
-        assigned: 0,
         enRoute: 0,
         onScene: 0,
         needAssistance: 0,
@@ -29,15 +28,12 @@ const counts = computedAsync(() => {
                 if (dsp.units.length <= 0) {
                     count.unassigned++;
                 } else {
-                    count.assigned++;
+                    count.enRoute++;
                 }
                 break;
 
             case StatusDispatch.UNIT_ASSIGNED:
             case StatusDispatch.UNIT_ACCEPTED:
-                count.assigned++;
-                break;
-
             case StatusDispatch.EN_ROUTE:
                 count.enRoute++;
                 break;
@@ -71,37 +67,31 @@ const counts = computedAsync(() => {
             <div class="p-4">
                 <ul class="text-nowrap text-sm font-normal">
                     <li>
-                        <span :class="dispatchStatusToBGColor(StatusDispatch.NEW)"
+                        <span class="text-black" :class="dispatchStatusToBGColor(StatusDispatch.NEW)"
                             >{{ $t('enums.centrum.StatusDispatch.UNASSIGNED') }}:</span
                         >
                         {{ counts.unassigned }}
                     </li>
                     <li>
-                        <span :class="dispatchStatusToBGColor(StatusDispatch.UNIT_ASSIGNED)">{{
-                            $t('enums.centrum.StatusDispatch.UNIT_ASSIGNED')
-                        }}</span
-                        >: {{ counts.assigned }}
-                    </li>
-                    <li>
-                        <span :class="dispatchStatusToBGColor(StatusDispatch.EN_ROUTE)">{{
+                        <span class="text-black" :class="dispatchStatusToBGColor(StatusDispatch.EN_ROUTE)">{{
                             $t('enums.centrum.StatusDispatch.EN_ROUTE')
                         }}</span
                         >: {{ counts.enRoute }}
                     </li>
                     <li>
-                        <span :class="dispatchStatusToBGColor(StatusDispatch.ON_SCENE)">{{
+                        <span class="text-black" :class="dispatchStatusToBGColor(StatusDispatch.ON_SCENE)">{{
                             $t('enums.centrum.StatusDispatch.ON_SCENE')
                         }}</span
                         >: {{ counts.onScene }}
                     </li>
                     <li>
-                        <span :class="dispatchStatusToBGColor(StatusDispatch.NEED_ASSISTANCE)">{{
+                        <span class="text-black" :class="dispatchStatusToBGColor(StatusDispatch.NEED_ASSISTANCE)">{{
                             $t('enums.centrum.StatusDispatch.NEED_ASSISTANCE')
                         }}</span
                         >: {{ counts.needAssistance }}
                     </li>
                     <li>
-                        <span :class="dispatchStatusToBGColor(StatusDispatch.COMPLETED)"
+                        <span class="text-black" :class="dispatchStatusToBGColor(StatusDispatch.COMPLETED)"
                             >{{ $t('enums.centrum.StatusDispatch.COMPLETED') }}:</span
                         >
                         {{ counts.completed }}

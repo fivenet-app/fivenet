@@ -2,15 +2,7 @@
 import { LControl } from '@vue-leaflet/vue-leaflet';
 import { useDebounceFn, useIntervalFn, useThrottleFn, useTimeoutFn, watchDebounced } from '@vueuse/core';
 import { useSound } from '@raffaelesgarro/vue-use-sound';
-import {
-    CarEmergencyIcon,
-    HomeFloorBIcon,
-    HoopHouseIcon,
-    InformationOutlineIcon,
-    LoadingIcon,
-    ToggleSwitchIcon,
-    ToggleSwitchOffIcon,
-} from 'mdi-vue3';
+import { CarEmergencyIcon, HomeFloorBIcon, InformationOutlineIcon, LoadingIcon } from 'mdi-vue3';
 import DispatchStatusUpdateModal from '~/components/centrum/dispatches/DispatchStatusUpdateModal.vue';
 import {
     dispatchStatusToBGColor,
@@ -46,7 +38,7 @@ const authStore = useAuthStore();
 const { jobProps } = storeToRefs(authStore);
 
 const centrumStore = useCentrumStore();
-const { getCurrentMode, getOwnUnit, dispatches, getSortedOwnDispatches, pendingDispatches, disponents, timeCorrection } =
+const { getCurrentMode, getOwnUnit, dispatches, getSortedOwnDispatches, pendingDispatches, timeCorrection } =
     storeToRefs(centrumStore);
 const { startStream, stopStream } = centrumStore;
 
@@ -357,7 +349,7 @@ async function checkup(): Promise<void> {
                         <nav class="flex min-w-48 max-w-48 flex-1 flex-col md:min-w-64 md:max-w-64">
                             <ul role="list" class="flex flex-1 flex-col gap-y-2 divide-y divide-base-400">
                                 <li>
-                                    <ul role="list" class="-mx-1 mt-1 space-y-0.5">
+                                    <ul role="list" class="-mx-1 space-y-0.5">
                                         <li>
                                             <template v-if="getOwnUnit !== undefined">
                                                 <UButton
@@ -391,7 +383,10 @@ async function checkup(): Promise<void> {
                                                 />
                                             </template>
                                             <UButton
-                                                class="group my-0.5 flex w-full flex-col items-center rounded-md bg-info-700 p-1.5 text-xs font-medium hover:bg-primary-100/10 hover:transition-all"
+                                                variant="soft"
+                                                color="primary"
+                                                size="xs"
+                                                block
                                                 @click="joinUnitOpen = true"
                                             >
                                                 <template v-if="getOwnUnit === undefined">
@@ -443,7 +438,11 @@ async function checkup(): Promise<void> {
                                                         </span>
                                                     </UButton>
                                                     <UButton
-                                                        class="group col-span-2 my-0.5 flex w-full flex-col items-center rounded-md bg-base-800 p-1.5 text-xs font-medium hover:bg-primary-100/10 hover:transition-all"
+                                                        variant="soft"
+                                                        color="primary"
+                                                        size="xs"
+                                                        block
+                                                        class="col-span-2"
                                                         @click="updateUtStatus(getOwnUnit.id)"
                                                     >
                                                         {{ $t('components.centrum.update_unit_status.title') }}
@@ -486,7 +485,11 @@ async function checkup(): Promise<void> {
                                                         </span>
                                                     </UButton>
                                                     <UButton
-                                                        class="group col-span-2 my-0.5 flex w-full flex-col items-center rounded-md bg-base-800 p-1.5 text-xs font-medium hover:bg-primary-100/10 hover:transition-all"
+                                                        variant="soft"
+                                                        color="primary"
+                                                        size="xs"
+                                                        block
+                                                        class="col-span-2"
                                                         @click="updateDspStatus(selectedDispatch)"
                                                     >
                                                         {{ $t('components.centrum.update_dispatch_status.title') }}
@@ -501,7 +504,7 @@ async function checkup(): Promise<void> {
                                         </div>
                                         <ul role="list" class="-mx-1 mt-1 space-y-0.5">
                                             <li v-if="getSortedOwnDispatches.length === 0">
-                                                <UButton color="gray" icon="i-mdi-car-emergency" block>
+                                                <UButton variant="soft" color="white" icon="i-mdi-car-emergency" block>
                                                     {{ $t('common.no_assigned_dispatches') }}
                                                 </UButton>
                                             </li>

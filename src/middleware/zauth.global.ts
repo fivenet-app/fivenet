@@ -16,6 +16,7 @@ export default defineNuxtRouteMiddleware(async (to: RouteLocationNormalized, _: 
         return true;
     }
 
+    const redirect = to.query.redirect ?? to.fullPath;
     // Check if user has access token
     if (accessToken.value !== null) {
         // If the user has an acitve char, check for perms otherwise, redirect to char selector
@@ -29,12 +30,15 @@ export default defineNuxtRouteMiddleware(async (to: RouteLocationNormalized, _: 
                     setActiveChar(null);
                     setPermissions([]);
                     setJobProps(undefined);
+                    return navigateTo({
+                        name: 'auth-character-selector',
+                        query: { redirect },
+                    });
                 }
             }
 
             if (activeChar.value === null) {
                 // Only update the redirect query param if it isn't set already
-                const redirect = to.query.redirect ?? to.fullPath;
                 return navigateTo({
                     name: 'auth-character-selector',
                     query: { redirect },
@@ -70,7 +74,6 @@ export default defineNuxtRouteMiddleware(async (to: RouteLocationNormalized, _: 
     }
 
     // Only update the redirect query param if it isn't set already
-    const redirect = to.query.redirect ?? to.fullPath;
     return navigateTo({
         name: 'auth-login',
         // save the location we were at to come back later

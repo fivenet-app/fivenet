@@ -33,16 +33,20 @@ onBeforeMount(async () => {
             <ULandingHero
                 :title="$t('pages.index.welcome')"
                 :description="$t('pages.index.subtext')"
-                :links="[
-                    { label: $t('components.auth.login.title'), icon: 'i-mdi-login', size: 'lg', to: '/auth/login' },
-                    {
-                        label: $t('components.auth.registration_form.title'),
-                        trailingIcon: 'i-mdi-account-plus',
-                        color: 'gray',
-                        size: 'lg',
-                        to: '/auth/registration',
-                    },
-                ]"
+                :links="
+                    !accessToken
+                        ? [
+                              { label: $t('components.auth.login.title'), icon: 'i-mdi-login', size: 'lg', to: '/auth/login' },
+                              {
+                                  label: $t('components.auth.registration_form.title'),
+                                  trailingIcon: 'i-mdi-account-plus',
+                                  color: 'gray',
+                                  size: 'lg',
+                                  to: '/auth/registration',
+                              },
+                          ]
+                        : [{ label: $t('common.overview'), icon: 'i-mdi-home', size: 'lg', to: '/overview' }]
+                "
             >
                 <template #headline>
                     <FiveNetLogo class="mx-auto h-36 w-auto" />
