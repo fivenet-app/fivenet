@@ -8,7 +8,6 @@ definePageMeta({
     title: 'pages.rector.settings.title',
     requiresAuth: true,
     permission: 'SuperUser',
-    showQuickButtons: false,
 });
 </script>
 

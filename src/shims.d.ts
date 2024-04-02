@@ -7,7 +7,6 @@ declare module '#app' {
         requiresAuth?: boolean;
         permission?: Perms | Perms[];
         authOnlyToken?: boolean;
-        showQuickButtons?: boolean;
         showCookieOptions?: boolean;
         breadcrumbTitle?: string;
     }
@@ -19,7 +18,6 @@ declare module 'vue-router' {
         requiresAuth?: boolean;
         permission?: Perms | Perms[];
         authOnlyToken?: boolean;
-        showQuickButtons?: boolean;
         showCookieOptions?: boolean;
         breadcrumbTitle?: string;
     }

@@ -9,7 +9,6 @@ definePageMeta({
     title: 'common.dispatch_center',
     requiresAuth: true,
     permission: 'CentrumService.TakeControl',
-    showQuickButtons: false,
 });
 </script>
 

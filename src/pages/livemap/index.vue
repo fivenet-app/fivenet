@@ -12,7 +12,6 @@ definePageMeta({
     title: 'common.livemap',
     requiresAuth: true,
     permission: 'LivemapperService.Stream',
-    showQuickButtons: false,
 });
 
 const centrumStore = useCentrumStore();

@@ -8,7 +8,6 @@ definePageMeta({
     title: 'common.audit_log',
     requiresAuth: true,
     permission: 'RectorService.ViewAuditLog',
-    showQuickButtons: false,
 });
 </script>
 

@@ -11,7 +11,6 @@ definePageMeta({
     layout: 'auth',
     requiresAuth: true,
     authOnlyToken: true,
-    showQuickButtons: false,
 });
 
 const authStore = useAuthStore();

@@ -8,7 +8,6 @@ definePageMeta({
     title: 'components.rector.job_props.job_properties',
     requiresAuth: true,
     permission: 'RectorService.GetJobProps',
-    showQuickButtons: false,
 });
 </script>
 

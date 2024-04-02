@@ -11,7 +11,6 @@ definePageMeta({
     title: 'common.control_panel',
     requiresAuth: true,
     permission: 'RectorService.GetRoles',
-    showQuickButtons: false,
 });
 
 const features = [

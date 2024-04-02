@@ -20,7 +20,6 @@ import {
 } from 'mdi-vue3';
 import { type DefineComponent } from 'vue';
 import { type RoutesNamedLocations } from '@typed-router';
-import QuickButtons from '~/components/partials/quickbuttons/QuickButtons.vue';
 import FiveNetLogo from '~/components/partials/logos/FiveNetLogo.vue';
 import LanguageSwitcherMenu from '~/components/partials/sidebar/LanguageSwitcherMenu.vue';
 import { useAuthStore } from '~/store/auth';
@@ -31,7 +30,6 @@ const authStore = useAuthStore();
 const { accessToken, activeChar } = storeToRefs(authStore);
 
 const router = useRouter();
-const route = useRoute();
 
 const sidebarNavigation = ref<
     {
@@ -571,10 +569,6 @@ watch(router.currentRoute, () => updateActiveItem());
             <main class="h-full overflow-y-auto">
                 <section aria-labelledby="primary-heading" class="h-full min-w-0 lg:order-last">
                     <slot />
-
-                    <QuickButtons
-                        v-if="activeChar && (route.meta.showQuickButtons === undefined || route.meta.showQuickButtons)"
-                    />
                 </section>
             </main>
         </div>

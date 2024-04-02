@@ -8,7 +8,7 @@ definePageMeta({
     title: 'components.auth.settings_panel.title',
     requiresAuth: true,
     authOnlyToken: true,
-    showQuickButtons: false,
+
     showCookieOptions: true,
 });
 </script>

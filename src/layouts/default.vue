@@ -2,12 +2,13 @@
 import type { DashboardSidebarLink } from '@nuxt/ui-pro/types';
 import TopLogoDropdown from '~/components/TopLogoDropdown.vue';
 import NotificationProvider from '~/components/partials/notification/NotificationProvider.vue';
-import QuickButtons from '~/components/partials/quickbuttons/QuickButtons.vue';
+import BodyCheckupModal from '~/components/quickbuttons/bodycheckup/BodyCheckupModal.vue';
+import PenaltyCalculatorModal from '~/components/quickbuttons/penaltycalculator/PenaltyCalculatorModal.vue';
 import { useAuthStore } from '~/store/auth';
 import type { Perms } from '~~/gen/ts/perms';
 
 const authStore = useAuthStore();
-const { activeChar } = storeToRefs(authStore);
+const { activeChar, jobProps } = storeToRefs(authStore);
 
 // Use client date to show any event overlays
 const now = new Date();
@@ -16,8 +17,6 @@ const showSnowflakes = now.getMonth() + 1 === 12 && now.getDate() >= 21 && now.g
 const { t } = useI18n();
 
 const { $grpc } = useNuxtApp();
-
-const route = useRoute();
 
 const appConfig = useAppConfig();
 const { isHelpSlideoverOpen } = useDashboard();
@@ -287,6 +286,27 @@ const defaultColors = ref(
     })),
 );
 const colors = computed(() => defaultColors.value.map((color) => ({ ...color, active: appConfig.ui.primary === color.label })));
+
+const modal = useModal();
+
+const quickAccessButtons = computed(() =>
+    [
+        jobProps.value?.quickButtons?.penaltyCalculator
+            ? {
+                  label: t('components.penaltycalculator.title'),
+                  icon: 'i-mdi-calculator',
+                  click: () => modal.open(PenaltyCalculatorModal, {}),
+              }
+            : undefined,
+        jobProps.value?.quickButtons?.bodyCheckup
+            ? {
+                  label: t('components.bodycheckup.title'),
+                  icon: 'i-mdi-human',
+                  click: () => modal.open(BodyCheckupModal, {}),
+              }
+            : undefined,
+    ].filter((c) => c !== undefined),
+);
 </script>
 
 <template>
@@ -304,6 +324,13 @@ const colors = computed(() => defaultColors.value.map((color) => ({ ...color, ac
                 </template>
 
                 <UDashboardSidebarLinks :links="links.filter((l) => l.permission === undefined || can(l.permission))" />
+
+                <UDivider />
+
+                <UDashboardSidebarLinks
+                    v-if="quickAccessButtons.length > 0"
+                    :links="[{ label: t('components.rector.job_props.quick_buttons'), children: quickAccessButtons }]"
+                />
 
                 <UDivider />
 
@@ -330,8 +357,6 @@ const colors = computed(() => defaultColors.value.map((color) => ({ ...color, ac
 
         <div class="w-full max-w-full overflow-y-auto">
             <slot />
-
-            <QuickButtons v-if="activeChar && (route.meta.showQuickButtons === undefined || route.meta.showQuickButtons)" />
         </div>
 
         <!-- ~/components/HelpSlideover.vue -->

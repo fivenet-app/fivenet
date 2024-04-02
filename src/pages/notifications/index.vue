@@ -7,7 +7,6 @@ useHead({
 definePageMeta({
     title: 'components.notifications.title',
     requiresAuth: true,
-    showQuickButtons: false,
 });
 </script>
 

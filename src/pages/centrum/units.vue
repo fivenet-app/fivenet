@@ -8,7 +8,6 @@ definePageMeta({
     title: 'common.units',
     requiresAuth: true,
     permission: 'CentrumService.CreateOrUpdateUnit',
-    showQuickButtons: false,
 });
 </script>
 
