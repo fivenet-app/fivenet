@@ -596,7 +596,7 @@
             "template_editor_templating": {
                 "content": "You can use Golang HTML templating in the above field. For template snippets follow the link."
             },
-            "command_palette": {
+            "commandpalette": {
                 "content": "FiveNet has a command palette for power users, you can open it using:",
                 "keyboard": "CTRL+K"
             }
@@ -938,11 +938,11 @@
         "superuser": "SuperUser",
         "restore": "Restore",
         "mark": "Mark",
-        "command_palette": "Command Palette",
         "goto": "Go to",
         "goto_item": "Go to {0}",
         "help": "Help",
-        "shortcuts": "Shortcuts"
+        "shortcuts": "Shortcuts",
+        "commandpalette": "Command Palette"
     },
     "notifications": {
         "clipboard": {
@@ -2044,7 +2044,7 @@
             }
         }
     },
-    "command_palette": {
+    "commandpalette": {
         "empty": {
             "title": "No results found.",
             "content": "We couldn't find anything with that term. Please try again."
