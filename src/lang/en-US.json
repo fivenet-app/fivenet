@@ -584,10 +584,6 @@
         "hints": {
             "start_text": "Did you know...?",
             "click_me": "Click here.",
-            "commandpalette": {
-                "content": "FiveNet has a command palette for power users, you can open it using:",
-                "keyboard": "CTRL+K"
-            },
             "startpage": {
                 "content": "You can set the start page FiveNet opens up on in your Account information."
             },
@@ -599,6 +595,10 @@
             },
             "template_editor_templating": {
                 "content": "You can use Golang HTML templating in the above field. For template snippets follow the link."
+            },
+            "command_palette": {
+                "content": "FiveNet has a command palette for power users, you can open it using:",
+                "keyboard": "CTRL+K"
             }
         },
         "notifications": {
@@ -759,7 +759,7 @@
         "from": "From",
         "to": "To",
         "audit_log": "Audit Log | Audit Logs",
-        "id": "ID",
+        "id": "ID | IDs",
         "time": "Time",
         "service": "Service",
         "copy": "Copy",
@@ -937,7 +937,12 @@
         "approved_at": "Approved at",
         "superuser": "SuperUser",
         "restore": "Restore",
-        "mark": "Mark"
+        "mark": "Mark",
+        "command_palette": "Command Palette",
+        "goto": "Go to",
+        "goto_item": "Go to {0}",
+        "help": "Help",
+        "shortcuts": "Shortcuts"
     },
     "notifications": {
         "clipboard": {
@@ -1887,26 +1892,6 @@
             "ErrFailedQuery": "Failed to get job data!"
         }
     },
-    "commandpalette": {
-        "input": {
-            "title": "Type a command or search...",
-            "content": "Quickly access citizens, documents and more."
-        },
-        "empty": {
-            "title": "No results found.",
-            "content": "We couldn't find anything with that term. Please try again."
-        },
-        "groups": {
-            "shortcuts": {
-                "label": "Shortcuts",
-                "goto": "Go to {key}: {prefix}"
-            },
-            "pages": {
-                "label": "Pages"
-            }
-        },
-        "footer": "Type {key1} for citizens, {key2} for documents search."
-    },
     "system": {
         "update_available": {
             "title": "New FiveNet version available ({version})!",
@@ -2058,5 +2043,16 @@
                 "ACCEPTED": "Accepted"
             }
         }
+    },
+    "command_palette": {
+        "empty": {
+            "title": "No results found.",
+            "content": "We couldn't find anything with that term. Please try again."
+        },
+        "categories": {
+            "general": "General",
+            "navigation": "Navigation"
+        },
+        "footer": "Type {key1} for citizens, {key2} for documents search."
     }
 }
