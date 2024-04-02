@@ -1,6 +1,6 @@
 import { defineStore, type StoreDefinition } from 'pinia';
 import { v4 as uuidv4 } from 'uuid';
-import { type Notification, type NotificationType } from '~/composables/notifications/notifications';
+import { type Notification, type NotificationType } from '~/composables/notifications';
 import { useAuthStore } from '~/store/auth';
 import { MarkNotificationsRequest } from '~~/gen/ts/services/notificator/notificator';
 

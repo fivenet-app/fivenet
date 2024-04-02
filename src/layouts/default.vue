@@ -106,14 +106,14 @@ const links = [
 ] as (DashboardSidebarLink & { permission?: Perms | Perms[] })[];
 
 const footerLinks = [
-    /*{
-        label: 'Help & Support',
+    {
+        label: t('common.help'),
         icon: 'i-heroicons-question-mark-circle',
         click: () => (isHelpSlideoverOpen.value = true),
-    },*/
+    },
     {
         label: t('common.about'),
-        icon: 'i-mdi-question-mark-circle-outline',
+        icon: 'i-mdi-about-circle-outline',
         to: '/about',
     },
 ];
@@ -347,10 +347,10 @@ const colors = computed(() => defaultColors.value.map((color) => ({ ...color, ac
                 :groups="groups"
                 :empty-state="{
                     icon: 'i-mdi-globe-model',
-                    label: t('commandpalette.empty.title'),
-                    queryLabel: t('commandpalette.empty.title'),
+                    label: t('command_palette.empty.title'),
+                    queryLabel: t('command_palette.empty.title'),
                 }"
-                :placeholder="`${$t('common.search')}... (${$t('commandpalette.footer', { key1: '#', key2: '@' })})`"
+                :placeholder="`${$t('common.search')}... (${$t('command_palette.footer', { key1: '#', key2: '@' })})`"
             />
         </ClientOnly>
     </UDashboardLayout>

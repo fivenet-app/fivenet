@@ -6,7 +6,7 @@ type Hint = { id: string; keyboard?: boolean; link?: RoutesNamedLocations };
 
 const hints = shuffle([
     {
-        id: 'commandpalette',
+        id: 'command_palette',
         keyboard: true,
     },
     {

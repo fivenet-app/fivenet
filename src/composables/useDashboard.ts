@@ -8,9 +8,13 @@ const _useDashboard = () => {
 
     defineShortcuts({
         'g-h': () => router.push('/'),
-        'g-i': () => router.push('/about'),
-        'g-u': () => router.push('/livemap'),
-        'g-s': () => router.push('/settings'),
+        'g-c': () => router.push('/citizens'),
+        'g-v': () => router.push('/vehicles'),
+        'g-d': () => router.push('/documents'),
+        'g-j': () => router.push('/jobs'),
+        'g-m': () => router.push('/livemap'),
+        'g-w': () => router.push('/centrum'),
+        'g-p': () => router.push('/rector'),
         '?': () => (isHelpSlideoverOpen.value = true),
         n: () => (isNotificationsSlideoverOpen.value = true),
     });

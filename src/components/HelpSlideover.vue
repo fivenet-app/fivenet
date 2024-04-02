@@ -2,12 +2,14 @@
 const { isHelpSlideoverOpen } = useDashboard();
 const { metaSymbol } = useShortcuts();
 
+const { t } = useI18n();
+
 const shortcuts = ref(false);
 const query = ref('');
 
 const links = [
     {
-        label: 'Shortcuts',
+        label: t('common.shortcuts'),
         icon: 'i-heroicons-key',
         trailingIcon: 'i-heroicons-arrow-right-20-solid',
         color: 'gray',
@@ -15,38 +17,29 @@ const links = [
             shortcuts.value = true;
         },
     },
-    {
-        label: 'GitHub repository',
-        icon: 'i-simple-icons-github',
-        to: 'https://github.com/nuxt-ui-pro/dashboard',
-        target: '_blank',
-    },
 ];
 
 const categories = computed(() => [
     {
-        title: 'General',
+        title: t('command_palette.categories.general'),
         items: [
-            { shortcuts: [metaSymbol.value, 'K'], name: 'Command menu' },
-            { shortcuts: ['N'], name: 'Notifications' },
-            { shortcuts: ['?'], name: 'Help & Support' },
-            { shortcuts: ['/'], name: 'Search' },
+            { shortcuts: [metaSymbol.value, 'K'], name: t('common.command_palette') },
+            { shortcuts: ['N'], name: t('common.notification', 2) },
+            { shortcuts: ['?'], name: t('common.help') },
+            { shortcuts: ['/'], name: t('common.search') },
         ],
     },
     {
-        title: 'Navigation',
+        title: t('command_palette.categories.navigation'),
         items: [
-            { shortcuts: ['G', 'H'], name: 'Go to Home' },
-            { shortcuts: ['G', 'I'], name: 'Go to Inbox' },
-            { shortcuts: ['G', 'U'], name: 'Go to Users' },
-            { shortcuts: ['G', 'S'], name: 'Go to Settings' },
-        ],
-    },
-    {
-        title: 'Inbox',
-        items: [
-            { shortcuts: ['↑'], name: 'Prev notification' },
-            { shortcuts: ['↓'], name: 'Next notification' },
+            { shortcuts: ['G', 'H'], name: t('common.goto_item', [t('common.home')]) },
+            { shortcuts: ['G', 'C'], name: t('common.goto_item', [t('common.citizen', 2)]) },
+            { shortcuts: ['G', 'V'], name: t('common.goto_item', [t('common.vehicle', 2)]) },
+            { shortcuts: ['G', 'D'], name: t('common.goto_item', [t('common.document', 2)]) },
+            { shortcuts: ['G', 'J'], name: t('common.goto_item', [t('common.job')]) },
+            { shortcuts: ['G', 'M'], name: t('common.goto_item', [t('common.livemap')]) },
+            { shortcuts: ['G', 'W'], name: t('common.goto_item', [t('common.dispatch_center')]) },
+            { shortcuts: ['G', 'P'], name: t('common.goto_item', [t('common.control_panel')]) },
         ],
     },
 ]);
@@ -100,7 +93,7 @@ const filteredCategories = computed(() => {
             </div>
         </div>
         <div v-else class="flex flex-col gap-y-3">
-            <UButton v-for="(link, index) in links" :key="index" color="white" v-bind="link" />
+            <UButton v-for="(link, index) in links" :key="index" v-bind="link" />
         </div>
     </UDashboardSlideover>
 </template>

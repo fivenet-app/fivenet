@@ -1,5 +1,5 @@
 import type { NotificationColor } from '#ui/types';
-import type { NotificationType } from '~/composables/notifications/notifications';
+import type { NotificationType } from '~/composables/notifications';
 
 export function notificationTypeToIcon(t?: NotificationType): string {
     switch (t) {

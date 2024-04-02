@@ -1,11 +1,5 @@
 <script setup lang="ts">
 import PageFooter from '~/components/partials/PageFooter.vue';
-
-useHead({
-    bodyAttrs: {
-        class: 'dark:bg-gray-950',
-    },
-});
 </script>
 
 <!-- eslint-disable tailwindcss/no-custom-classname -->
