@@ -584,10 +584,6 @@
         "hints": {
             "start_text": "Wussten Sie schon...?",
             "click_me": "Klicke hier.",
-            "commandpalette": {
-                "content": "FiveNet hat eine Befehlspalette für Power-User! Sie können diese mit folgenden Tastenkombination öffnen:",
-                "keyboard": "STRG+K"
-            },
             "startpage": {
                 "content": "Die Startseite von FiveNet können Sie in Ihren Kontoinformationen festlegen."
             },
@@ -599,6 +595,10 @@
             },
             "template_editor_templating": {
                 "content": "Sie können Golang HTML Templating im oberen Feld benutzen. Für kopierbereite-Ausschnitte und Tricks folgen Sie dem Link."
+            },
+            "command_palette": {
+                "content": "FiveNet hat eine Befehlspalette für Power-User! Sie können diese mit folgenden Tastenkombination öffnen:",
+                "keyboard": "STRG+K"
             }
         },
         "notifications": {
@@ -937,7 +937,12 @@
         "approved_at": "Genehmigt am",
         "superuser": "SuperUser",
         "restore": "Wiederherstellen",
-        "mark": "Markieren"
+        "mark": "Markieren",
+        "command_palette": "Befehlspalette",
+        "goto": "Gehe zu",
+        "goto_item": "Gehe zu {0}",
+        "help": "Hilfe",
+        "shortcuts": "Abkürzungen"
     },
     "notifications": {
         "clipboard": {
@@ -1887,26 +1892,6 @@
             "ErrFailedQuery": "Fehler beim laden der Berufsdaten!"
         }
     },
-    "commandpalette": {
-        "input": {
-            "title": "Geben Sie einen Befehl ein oder suchen Sie nach Befehlen...",
-            "content": "Schneller Zugriff auf Bürger, Dokumente und mehr."
-        },
-        "empty": {
-            "title": "Keine Ergebnisse gefunden.",
-            "content": "Es konnte nichts gefunden werden. Versuchen Sie es erneut."
-        },
-        "groups": {
-            "shortcuts": {
-                "label": "Abkürzungen",
-                "goto": "Gehe zu {key}: {prefix}"
-            },
-            "pages": {
-                "label": "Seiten"
-            }
-        },
-        "footer": "Tippe {key1} für Bürger,- {key2} für Dokumenten-Suche."
-    },
     "system": {
         "update_available": {
             "title": "Neue FiveNet Version verfügbar ({version})!",
@@ -2058,5 +2043,16 @@
                 "ACCEPTED": "Akzeptiert"
             }
         }
+    },
+    "command_palette": {
+        "empty": {
+            "title": "Keine Ergebnisse gefunden.",
+            "content": "Wir konnten keine Ergebnisse zu Ihrer Anfrage finden. Bitte versuchen Sie es erneut."
+        },
+        "categories": {
+            "general": "Allgemein",
+            "navigation": "Navigation"
+        },
+        "footer": "Tippe {key1} für Bürger,- {key2} für Dokumenten-Suche."
     }
 }
