@@ -2,6 +2,7 @@
 import { useTimeoutFn } from '@vueuse/core';
 import { useAuthStore } from '~/store/auth';
 import PageFooter from '~/components/partials/PageFooter.vue';
+import FiveNetLogo from '~/components/partials/logos/FiveNetLogo.vue';
 
 useHead({
     title: 'common.logout',
@@ -17,20 +18,16 @@ definePageMeta({
 const authStore = useAuthStore();
 const { doLogout } = authStore;
 
-function redirect(): void {
-    useTimeoutFn(async () => {
-        const route = useRoute();
-        if (route.name === 'auth-logout') {
-            await navigateTo({ name: 'index' });
-        }
-    }, 1500);
-}
-
 onMounted(async () => {
     try {
         await doLogout();
     } finally {
-        redirect();
+        useTimeoutFn(async () => {
+            const route = useRoute();
+            if (route.name === 'auth-logout') {
+                navigateTo({ name: 'index' });
+            }
+        }, 1500);
     }
 });
 </script>

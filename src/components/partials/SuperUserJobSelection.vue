@@ -16,7 +16,6 @@ const selectedJob = ref<undefined | Job>(jobs.value.find((j) => j.name === activ
 watchOnce(jobs, () => (selectedJob.value = jobs.value.find((j) => j.name === activeChar.value?.job)));
 
 watch(selectedJob, () => {
-    console.log(selectedJob.value);
     if (activeChar.value?.job === selectedJob.value?.name) {
         return;
     }

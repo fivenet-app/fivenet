@@ -123,13 +123,7 @@ const onSubmitThrottle = useThrottleFn(async (e) => {
                         {{ $t('components.jobs.self_service.set_absence_date') }}
                     </h3>
 
-                    <UButton
-                        color="gray"
-                        variant="ghost"
-                        icon="i-heroicons-x-mark-20-solid"
-                        class="-my-1"
-                        @click="modal.close()"
-                    />
+                    <UButton color="gray" variant="ghost" icon="i-mdi-window-close" class="-my-1" @click="modal.close()" />
                 </div>
             </template>
 

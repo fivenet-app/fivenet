@@ -20,25 +20,20 @@ defineEmits<{
 
 <template>
     <UModal
+        :unmount="unmount"
         :model-value="open"
         :class="dialogClass"
         :ui="{ width: 'w-full sm:max-w-5xl' }"
         @update:model-value="$emit('close')"
     >
-        <UCard :ui="{ ring: '', divide: 'divide-y divide-gray-100 dark:divide-gray-800' }" :unmount="unmount">
+        <UCard :ui="{ ring: '', divide: 'divide-y divide-gray-100 dark:divide-gray-800' }">
             <template v-if="title" #header>
                 <div class="flex items-center justify-between">
                     <h3 class="text-2xl font-semibold leading-6">
                         {{ title }}
                     </h3>
 
-                    <UButton
-                        color="gray"
-                        variant="ghost"
-                        icon="i-heroicons-x-mark-20-solid"
-                        class="-my-1"
-                        @click="$emit('close')"
-                    />
+                    <UButton color="gray" variant="ghost" icon="i-mdi-window-close" class="-my-1" @click="$emit('close')" />
                 </div>
             </template>
 

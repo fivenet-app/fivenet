@@ -23,6 +23,7 @@
     "dependencies": {
         "@fontsource/dm-sans": "5.0.20",
         "@headlessui/vue": "1.7.19",
+        "@iconify-json/flagpack": "^1.1.14",
         "@iconify-json/heroicons": "^1.1.20",
         "@iconify-json/mdi": "^1.1.64",
         "@iconify-json/simple-icons": "^1.1.97",

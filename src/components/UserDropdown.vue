@@ -1,6 +1,7 @@
 <script setup lang="ts">
 import { useAuthStore } from '~/store/auth';
 import SuperUserJobSelection from '~/components/partials/SuperUserJobSelection.vue';
+import LanguageSwitcherModal from './partials/LanguageSwitcherModal.vue';
 
 const { isDashboardSearchModalOpen } = useUIState();
 const { metaSymbol } = useShortcuts();
@@ -9,6 +10,8 @@ const { t } = useI18n();
 
 const authStore = useAuthStore();
 const { activeChar, username, isSuperuser } = storeToRefs(authStore);
+
+const modal = useModal();
 
 const items = computed(() => [
     [
@@ -31,7 +34,7 @@ const items = computed(() => [
         },
         {
             label: t('common.commandpalette'),
-            icon: 'i-heroicons-command-line',
+            icon: 'i-mdi-terminal',
             shortcuts: [metaSymbol.value, 'K'],
             click: () => {
                 isDashboardSearchModalOpen.value = true;
@@ -52,6 +55,12 @@ const items = computed(() => [
                   disabled: true,
               }
             : undefined,
+        {
+            label: t('common.language'),
+            icon: 'i-mdi-translate',
+            color: 'gray',
+            click: () => modal.open(LanguageSwitcherModal, {}),
+        },
     ].filter((i) => i !== undefined),
     [
         {

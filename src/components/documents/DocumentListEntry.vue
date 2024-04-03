@@ -14,7 +14,7 @@ defineProps<{
     <li
         :key="doc.id"
         :class="[
-            doc.deletedAt ? 'bg-warn-800 hover:bg-warn-700' : 'bg-base-800 hover:bg-base-700',
+            doc.deletedAt ? 'bg-warn-800 hover:bg-warn-700' : 'bg-base-900 hover:bg-base-800',
             'my-1 flex-initial rounded-lg',
         ]"
     >

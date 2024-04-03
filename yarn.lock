@@ -615,6 +615,13 @@
   resolved "https://registry.yarnpkg.com/@humanwhocodes/object-schema/-/object-schema-2.0.2.tgz#d9fae00a2d5cb40f92cfe64b47ad749fbc38f917"
   integrity sha512-6EwiSjwWYP7pTckG6I5eyFANjPhmPjUX9JRLUSfNPC7FX7zK9gyZAfUEaECL6ALTpGX5AjnBq3C9XmVWPitNpw==
 
+"@iconify-json/flagpack@^1.1.14":
+  version "1.1.14"
+  resolved "https://registry.yarnpkg.com/@iconify-json/flagpack/-/flagpack-1.1.14.tgz#61fbbad6f93f1868bf3a2061e0ac8bd99d44e10a"
+  integrity sha512-XtjvjcrNvQgP5FRWBYlaZ32TR4CpNVYFM8wGBtfBw9V7dmw9G0rZU+GcP61+7ZReghEqOby48B/dVPK/81oG0A==
+  dependencies:
+    "@iconify/types" "*"
+
 "@iconify-json/heroicons@^1.1.20":
   version "1.1.20"
   resolved "https://registry.yarnpkg.com/@iconify-json/heroicons/-/heroicons-1.1.20.tgz#e2c536224bd0ff922e824579cdab40a18b0477da"

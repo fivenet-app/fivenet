@@ -1,6 +1,4 @@
 <script lang="ts" setup>
-import GenericContainerPanel from '~/components/partials/elements/GenericContainerPanel.vue';
-import GenericContainerPanelEntry from '~/components/partials/elements/GenericContainerPanelEntry.vue';
 import GenericTime from '~/components/partials/elements/GenericTime.vue';
 import { useAuthStore } from '~/store/auth';
 import { useClipboardStore } from '~/store/clipboard';
@@ -24,79 +22,93 @@ async function resetLocalStorage(): Promise<void> {
 </script>
 
 <template>
-    <div class="mx-auto max-w-5xl py-2">
-        <GenericContainerPanel>
-            <template #title>
-                {{ $t('components.debug_info.title') }}
-            </template>
-            <template #description>
-                {{ $t('components.debug_info.subtitle') }}
-            </template>
-            <template #default>
-                <GenericContainerPanelEntry>
-                    <template #title>
-                        {{ $t('components.debug_info.version') }}
-                    </template>
-                    <template #default>
-                        {{ settings.version }}
-                    </template>
-                </GenericContainerPanelEntry>
-                <GenericContainerPanelEntry v-if="activeChar">
-                    <template #title>
-                        {{ $t('components.debug_info.active_char_id') }}
-                    </template>
-                    <template #default>
-                        {{ activeChar.userId }}
-                    </template>
-                </GenericContainerPanelEntry>
-                <GenericContainerPanelEntry v-if="activeChar">
-                    <template #title>
-                        {{ $t('common.job') }}
-                    </template>
-                    <template #default> {{ activeChar.job }} ({{ $t('common.rank') }}: {{ activeChar.jobGrade }}) </template>
-                </GenericContainerPanelEntry>
-                <GenericContainerPanelEntry v-if="getAccessTokenExpiration">
-                    <template #title>
-                        {{ $t('components.debug_info.access_token_expiration') }}
-                    </template>
-                    <template #default>
-                        <GenericTime :value="getAccessTokenExpiration" :ago="true" />
-                        (<GenericTime :value="getAccessTokenExpiration" type="long" />)
-                    </template>
-                </GenericContainerPanelEntry>
-                <GenericContainerPanelEntry>
-                    <template #title>
-                        {{ $t('components.debug_info.nui_info') }}
-                    </template>
-                    <template #default>
-                        {{ settings.nuiEnabled ? $t('common.enabled') : $t('common.disabled') }}:
-                        {{ settings.nuiResourceName ?? $t('common.na') }}
-                    </template>
-                </GenericContainerPanelEntry>
-                <GenericContainerPanelEntry>
-                    <template #title>
-                        {{ $t('components.debug_info.debug_functions') }}
-                    </template>
-                    <template #default>
-                        <UButtonGroup class="flex w-full break-words">
-                            <UButton @click="clipboardStore.clear()">
-                                {{ $t('components.debug_info.reset_clipboard') }}
-                            </UButton>
-                            <UButton color="white" @click="resetLocalStorage()">
-                                {{ $t('components.debug_info.reset_local_storage') }}
-                            </UButton>
-                            <UButton color="red" :external="true" to="/api/clear-site-data">
-                                {{ $t('components.debug_info.factory_reset') }}
-                            </UButton>
-                        </UButtonGroup>
-                    </template>
-                </GenericContainerPanelEntry>
-                <GenericContainerPanelEntry v-if="permissions.length > 0">
-                    <template #title>
-                        {{ $t('components.debug_info.perms') }}
-                    </template>
-                    <template #default>
-                        <ul role="list" class="divide-y divide-gray-100 rounded-md border border-gray-200">
+    <UDashboardPanelContent class="pb-24">
+        <UDashboardSection :title="$t('components.debug_info.title')" :description="$t('components.debug_info.subtitle')">
+            <UFormGroup
+                name="version"
+                :label="$t('components.debug_info.version')"
+                class="grid grid-cols-2 gap-2 items-center"
+                :ui="{ container: '' }"
+            >
+                {{ settings.version }}
+            </UFormGroup>
+
+            <UFormGroup
+                v-if="activeChar"
+                name="activeCharId"
+                :label="$t('components.debug_info.active_char_id')"
+                class="grid grid-cols-2 gap-2 items-center"
+                :ui="{ container: '' }"
+            >
+                {{ activeChar.userId }}
+            </UFormGroup>
+
+            <UFormGroup
+                v-if="activeChar"
+                name="activeCharJob"
+                :label="$t('common.job')"
+                class="grid grid-cols-2 gap-2 items-center"
+                :ui="{ container: '' }"
+            >
+                {{ activeChar.job }} ({{ $t('common.rank') }}: {{ activeChar.jobGrade }})
+            </UFormGroup>
+
+            <UFormGroup
+                v-if="getAccessTokenExpiration"
+                name="accessTokenExpiration"
+                :label="$t('components.debug_info.access_token_expiration')"
+                class="grid grid-cols-2 gap-2 items-center"
+                :ui="{ container: '' }"
+            >
+                <GenericTime :value="getAccessTokenExpiration" :ago="true" />
+                (<GenericTime :value="getAccessTokenExpiration" type="long" />)
+            </UFormGroup>
+
+            <UFormGroup
+                name="nuiInfo"
+                :label="$t('components.debug_info.nui_info')"
+                class="grid grid-cols-2 gap-2 items-center"
+                :ui="{ container: '' }"
+            >
+                {{ settings.nuiEnabled ? $t('common.enabled') : $t('common.disabled') }}:
+                {{ settings.nuiResourceName ?? $t('common.na') }}
+            </UFormGroup>
+
+            <UFormGroup
+                name="debugFunctions"
+                :label="$t('components.debug_info.debug_functions')"
+                class="grid grid-cols-2 gap-2 items-center"
+                :ui="{ container: '' }"
+            >
+                <UButtonGroup class="flex w-full break-words" orientation="vertical">
+                    <UButton @click="clipboardStore.clear()">
+                        {{ $t('components.debug_info.reset_clipboard') }}
+                    </UButton>
+                    <UButton color="gray" @click="resetLocalStorage()">
+                        {{ $t('components.debug_info.reset_local_storage') }}
+                    </UButton>
+                    <UButton color="red" :external="true" to="/api/clear-site-data">
+                        {{ $t('components.debug_info.factory_reset') }}
+                    </UButton>
+                </UButtonGroup>
+            </UFormGroup>
+
+            <UFormGroup
+                name="permissions"
+                :label="$t('components.debug_info.perms')"
+                class="grid grid-cols-2 gap-2 items-center"
+                :ui="{ container: '' }"
+            >
+                <UAccordion
+                    variant="solid"
+                    :items="[{ label: $t('components.debug_info.perms'), slot: 'perms', icon: 'i-mdi-key' }]"
+                    :ui="{ wrapper: 'flex flex-col w-full' }"
+                >
+                    <template #perms>
+                        <p v-if="!activeChar">
+                            {{ $t('components.debug_info.no_char_selected') }}
+                        </p>
+                        <ul v-else role="list" class="divide-y divide-gray-100">
                             <li
                                 v-for="perm in permissions"
                                 :key="perm"
@@ -111,8 +123,10 @@ async function resetLocalStorage(): Promise<void> {
                             </li>
                         </ul>
                     </template>
-                </GenericContainerPanelEntry>
-            </template>
-        </GenericContainerPanel>
-    </div>
+                </UAccordion>
+            </UFormGroup>
+        </UDashboardSection>
+
+        <UDivider class="mb-4" />
+    </UDashboardPanelContent>
 </template>

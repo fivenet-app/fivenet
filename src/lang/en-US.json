@@ -250,7 +250,7 @@
                 "change_character": "Change Character"
             },
             "data_error_block": {
-                "default_title": "Unable to load your data!",
+                "default_title": "Unable to load data!",
                 "default_message": "Please try again in a moment."
             },
             "sidebar_notifications": "Go to Notifications",
@@ -604,7 +604,7 @@
         },
         "about": {
             "introduction": {
-                "pre_title": "More time for GTA V RolePlay.",
+                "pre_title": "More time for FiveM RolePlay.",
                 "title": "A better workflow",
                 "content": "Easily search for citizens and vehicles. With the document access system it is easy to create and securely share documents with your colleagues. A Map that shows last few dispatches and your colleagues locations.",
                 "feature_one": {

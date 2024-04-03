@@ -44,7 +44,7 @@ async function removeOAuth2Connection(provider: string): Promise<void> {
 </script>
 
 <template>
-    <div class="mx-auto max-w-5xl py-2">
+    <div>
         <template v-if="streamerMode">
             <GenericContainerPanel>
                 <template #title>

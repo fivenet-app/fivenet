@@ -1,6 +1,7 @@
 <script setup lang="ts">
 import { useAuthStore } from '~/store/auth';
 import FiveNetLogo from '../partials/logos/FiveNetLogo.vue';
+import LanguageSwitcherModal from '../partials/LanguageSwitcherModal.vue';
 
 const { t } = useI18n();
 
@@ -17,6 +18,8 @@ const links = [
         to: '/about',
     },
 ];
+
+const modal = useModal();
 </script>
 
 <template>
@@ -24,6 +27,13 @@ const links = [
         <template #logo> <FiveNetLogo class="h-10 w-auto" /> </template>
 
         <template #right>
+            <UButton
+                :label="$t('common.language')"
+                icon="i-mdi-translate"
+                color="gray"
+                @click="modal.open(LanguageSwitcherModal, {})"
+            />
+
             <template v-if="!accessToken">
                 <UButton :label="$t('components.auth.login.title')" icon="i-mdi-login" color="gray" to="/auth/login" />
                 <UButton

@@ -7,6 +7,7 @@ import { useClipboardStore } from '~/store/clipboard';
 import { useDocumentEditorStore } from '~/store/documenteditor';
 import { JOB_THEME_KEY, useSettingsStore } from '~/store/settings';
 import { useAuthStore } from '~/store/auth';
+import NotificationProvider from '~/components/partials/notification/NotificationProvider.vue';
 
 const { t, locale, finalizePendingLocaleChange } = useI18n();
 
@@ -121,8 +122,6 @@ watch(updateAvailable, () => {
         color: 'amber',
     });
 });
-
-/* eslint vue/no-multiple-template-root: "off" */
 </script>
 
 <template>
@@ -141,6 +140,8 @@ watch(updateAvailable, () => {
 
         <UNotifications />
         <UModals />
+
+        <NotificationProvider />
 
         <CookieControl
             v-if="!isNUIAvailable && route.meta.showCookieOptions !== undefined && route.meta.showCookieOptions"

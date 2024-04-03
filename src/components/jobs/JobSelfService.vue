@@ -1,9 +1,7 @@
 <script lang="ts" setup>
-import { CameraIcon, IslandIcon } from 'mdi-vue3';
 import GenericContainer from '~/components/partials/elements/GenericContainer.vue';
 import SelfServicePropsAbsenceDateModal from '~/components/jobs/colleagues/SelfServicePropsAbsenceDateModal.vue';
 import SelfServicePropsProfilePictureModal from '~/components/jobs/colleagues/SelfServicePropsProfilePictureModal.vue';
-import type { Timestamp } from '~~/gen/ts/resources/timestamp/timestamp';
 import { checkIfCanAccessColleague } from '~/components/jobs/colleagues/helpers';
 import { useAuthStore } from '~/store/auth';
 

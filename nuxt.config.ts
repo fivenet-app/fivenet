@@ -24,7 +24,7 @@ export default defineNuxtConfig({
         '@vueuse/nuxt',
     ],
     ui: {
-        icons: ['heroicons', 'simple-icons', 'mdi'],
+        icons: ['heroicons', 'simple-icons', 'mdi', 'flagpack'],
         safelistColors: ['primary', 'red', 'orange', 'green', 'error', 'warn', 'info', 'success'],
     },
     app: {
@@ -142,12 +142,14 @@ export default defineNuxtConfig({
                 code: 'en',
                 iso: 'en',
                 file: 'en-US.json',
+                icon: 'i-flagpack-gb-ukm',
             },
             {
                 name: 'German',
                 code: 'de',
                 iso: 'de',
                 file: 'de-DE.json',
+                icon: 'i-flagpack-de',
             },
         ],
         debug: false,

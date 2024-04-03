@@ -53,6 +53,7 @@ watchArray(
                       ]
                     : [],
                 callback: () => {
+                    if (notification.callback) notification.callback();
                     if (notification.id) notificatorStore.remove(notification.id);
                 },
             });

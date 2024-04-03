@@ -12,15 +12,7 @@ import {
 } from '@headlessui/vue';
 import { max, min, required } from '@vee-validate/rules';
 import { useThrottleFn, useTimeoutFn, watchDebounced, watchOnce } from '@vueuse/core';
-import {
-    AccountMultipleIcon,
-    CheckIcon,
-    ChevronDownIcon,
-    ContentSaveIcon,
-    FileDocumentIcon,
-    LoadingIcon,
-    PlusIcon,
-} from 'mdi-vue3';
+import { CheckIcon, ChevronDownIcon, ContentSaveIcon, LoadingIcon, PlusIcon } from 'mdi-vue3';
 import { defineRule } from 'vee-validate';
 import { type TranslateItem } from '~/composables/i18n';
 import { useAuthStore } from '~/store/auth';

@@ -10,7 +10,7 @@ const query = ref('');
 const links = [
     {
         label: t('common.shortcuts'),
-        icon: 'i-heroicons-key',
+        icon: 'i-mdi-key',
         trailingIcon: 'i-heroicons-arrow-right-20-solid',
         color: 'gray',
         onClick: () => {

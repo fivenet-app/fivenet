@@ -1,7 +1,6 @@
 <script lang="ts" setup>
 import type { DashboardSidebarLink } from '@nuxt/ui-pro/types';
 import TopLogoDropdown from '~/components/TopLogoDropdown.vue';
-import NotificationProvider from '~/components/partials/notification/NotificationProvider.vue';
 import BodyCheckupModal from '~/components/quickbuttons/bodycheckup/BodyCheckupModal.vue';
 import PenaltyCalculatorModal from '~/components/quickbuttons/penaltycalculator/PenaltyCalculatorModal.vue';
 import { useAuthStore } from '~/store/auth';
@@ -21,7 +20,7 @@ const { $grpc } = useNuxtApp();
 const appConfig = useAppConfig();
 const { isHelpSlideoverOpen } = useDashboard();
 
-const links = [
+const links = computed<(DashboardSidebarLink & { permission?: Perms | Perms[] })[]>(() => [
     {
         label: t('common.overview'),
         icon: 'i-mdi-home-outline',
@@ -40,7 +39,7 @@ const links = [
             text: t('common.citizen'),
             shortcuts: ['G', 'C'],
         },
-        permission: 'CitizenStoreService.ListCitizens',
+        permission: 'CitizenStoreService.ListCitizens' as Perms,
     },
     {
         label: t('common.vehicle'),
@@ -50,7 +49,7 @@ const links = [
             text: t('common.vehicle'),
             shortcuts: ['G', 'V'],
         },
-        permission: 'DMVService.ListVehicles',
+        permission: 'DMVService.ListVehicles' as Perms,
     },
     {
         label: t('common.document'),
@@ -60,7 +59,7 @@ const links = [
             text: t('common.document'),
             shortcuts: ['G', 'D'],
         },
-        permission: 'DocStoreService.ListDocuments',
+        permission: 'DocStoreService.ListDocuments' as Perms,
     },
     {
         label: t('common.job'),
@@ -70,7 +69,7 @@ const links = [
             text: t('common.job'),
             shortcuts: ['G', 'J'],
         },
-        permission: 'JobsService.ListColleagues',
+        permission: 'JobsService.ListColleagues' as Perms,
     },
     {
         label: t('common.livemap'),
@@ -80,7 +79,7 @@ const links = [
             text: t('common.livemap'),
             shortcuts: ['G', 'M'],
         },
-        permission: 'LivemapperService.Stream',
+        permission: 'LivemapperService.Stream' as Perms,
     },
     {
         label: t('common.dispatch_center'),
@@ -90,7 +89,7 @@ const links = [
             text: t('common.dispatch_center'),
             shortcuts: ['G', 'W'],
         },
-        permission: 'CentrumService.TakeControl',
+        permission: 'CentrumService.TakeControl' as Perms,
     },
     {
         label: t('common.control_panel'),
@@ -100,9 +99,9 @@ const links = [
             text: t('common.control_panel'),
             shortcuts: ['G', 'P'],
         },
-        permission: 'RectorService.GetJobProps',
+        permission: 'RectorService.GetJobProps' as Perms,
     },
-] as (DashboardSidebarLink & { permission?: Perms | Perms[] })[];
+]);
 
 const footerLinks = [
     {
@@ -121,7 +120,7 @@ const groups = [
     {
         key: 'links',
         label: t('common.goto'),
-        commands: links.map((link) => ({ ...link, shortcuts: link.tooltip?.shortcuts })),
+        commands: links.value.map((link) => ({ ...link, shortcuts: link.tooltip?.shortcuts })),
     },
     {
         key: 'ids',
@@ -151,7 +150,6 @@ const groups = [
             ];
 
             if (!q || (!q.startsWith('CIT') && !q.startsWith('DOC'))) {
-                console.log(q);
                 if (q && (q.startsWith('@') || q.startsWith('#'))) {
                     return [];
                 }
@@ -161,7 +159,6 @@ const groups = [
 
             const prefix = q.substring(0, q.indexOf('-')).toUpperCase();
             const id = q.substring(q.indexOf('-') + 1).trim();
-            console.log(prefix, id, id.length > 0 && isNumber(id));
             if (id.length > 0 && isNumber(id)) {
                 if (prefix === 'CIT') {
                     return [
@@ -289,23 +286,24 @@ const colors = computed(() => defaultColors.value.map((color) => ({ ...color, ac
 
 const modal = useModal();
 
-const quickAccessButtons = computed(() =>
-    [
-        jobProps.value?.quickButtons?.penaltyCalculator
-            ? {
-                  label: t('components.penaltycalculator.title'),
-                  icon: 'i-mdi-calculator',
-                  click: () => modal.open(PenaltyCalculatorModal, {}),
-              }
-            : undefined,
-        jobProps.value?.quickButtons?.bodyCheckup
-            ? {
-                  label: t('components.bodycheckup.title'),
-                  icon: 'i-mdi-human',
-                  click: () => modal.open(BodyCheckupModal, {}),
-              }
-            : undefined,
-    ].filter((c) => c !== undefined),
+const quickAccessButtons = computed<DashboardSidebarLink[]>(
+    () =>
+        [
+            jobProps.value?.quickButtons?.penaltyCalculator
+                ? {
+                      label: t('components.penaltycalculator.title'),
+                      icon: 'i-mdi-calculator',
+                      click: () => modal.open(PenaltyCalculatorModal, {}),
+                  }
+                : undefined,
+            jobProps.value?.quickButtons?.bodyCheckup
+                ? {
+                      label: t('components.bodycheckup.title'),
+                      icon: 'i-mdi-human',
+                      click: () => modal.open(BodyCheckupModal, {}),
+                  }
+                : undefined,
+        ].filter((c) => c !== undefined) as DashboardSidebarLink[],
 );
 </script>
 
@@ -325,12 +323,13 @@ const quickAccessButtons = computed(() =>
 
                 <UDashboardSidebarLinks :links="links.filter((l) => l.permission === undefined || can(l.permission))" />
 
-                <UDivider />
+                <template v-if="quickAccessButtons.length > 0">
+                    <UDivider />
 
-                <UDashboardSidebarLinks
-                    v-if="quickAccessButtons.length > 0"
-                    :links="[{ label: t('components.rector.job_props.quick_buttons'), children: quickAccessButtons }]"
-                />
+                    <UDashboardSidebarLinks
+                        :links="[{ label: t('components.rector.job_props.quick_buttons'), children: quickAccessButtons }]"
+                    />
+                </template>
 
                 <UDivider />
 
@@ -363,8 +362,6 @@ const quickAccessButtons = computed(() =>
         <HelpSlideover />
         <!-- ~/components/NotificationsSlideover.vue -->
         <NotificationsSlideover />
-
-        <NotificationProvider />
 
         <ClientOnly>
             <LazyUDashboardSearch
