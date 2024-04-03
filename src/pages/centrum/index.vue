@@ -21,7 +21,9 @@ definePageMeta({
                 </template>
             </UDashboardNavbar>
 
-            <DispatchCenter class="min-h-[calc(100vh-var(--header-height))]" />
+            <UMain>
+                <DispatchCenter />
+            </UMain>
         </UDashboardPanel>
     </UDashboardPage>
 </template>

@@ -15,14 +15,6 @@ const notifications = useNotificatorStore();
 const authStore = useAuthStore();
 const { setAccessToken } = authStore;
 
-defineProps<{
-    open: boolean;
-}>();
-
-defineEmits<{
-    (e: 'close'): void;
-}>();
-
 const newPassword = ref('');
 
 interface FormData {
@@ -77,7 +69,7 @@ const onSubmitThrottle = useThrottleFn(async (e) => {
 </script>
 
 <template>
-    <TransitionRoot as="template" :show="open">
+    <TransitionRoot as="template">
         <Dialog as="div" class="relative z-30" @close="$emit('close')">
             <TransitionChild
                 as="template"

@@ -1,5 +1,5 @@
 <script lang="ts" setup>
-import CitizenInfoPopover from '~/components/partials/citizens/CitizenInfoPopover.vue';
+import PhoneNumberBlock from '~/components/partials/citizens/PhoneNumberBlock.vue';
 import DataNoDataBlock from '~/components/partials/data/DataNoDataBlock.vue';
 import { useCentrumStore } from '~/store/centrum';
 import { CentrumMode } from '~~/gen/ts/resources/centrum/settings';
@@ -23,15 +23,14 @@ const { disponents, getCurrentMode } = storeToRefs(centrumStore);
                 <div class="flex items-center justify-between">
                     <h3 class="text-2xl font-semibold leading-6">
                         {{ $t('common.disponents', 2) }}
+                        <UBadge color="gray">
+                            {{ $t('common.mode') }}: {{ $t(`enums.centrum.CentrumMode.${CentrumMode[getCurrentMode ?? 0]}`) }}
+                        </UBadge>
                     </h3>
 
                     <UButton color="gray" variant="ghost" icon="i-mdi-window-close" class="-my-1" @click="$emit('close')" />
                 </div>
             </template>
-
-            <UBadge color="gray">
-                {{ $t('common.mode') }}: {{ $t(`enums.centrum.CentrumMode.${CentrumMode[getCurrentMode ?? 0]}`) }}
-            </UBadge>
 
             <DataNoDataBlock
                 v-if="disponents && disponents.length === 0"
@@ -39,14 +38,11 @@ const { disponents, getCurrentMode } = storeToRefs(centrumStore);
                 :type="$t('common.disponents', 2)"
                 class="mt-5"
             />
-            <div v-else class="grid grid-cols-3 gap-4">
-                <CitizenInfoPopover
-                    v-for="disponent in disponents"
-                    :key="disponent.userId"
-                    text-class="text-neutral bg-primary-500 hover:bg-primary-100/10  font-medium hover:transition-all group flex w-full flex-col items-center rounded-md p-2 text-xs my-0.5"
-                    :user="disponent"
-                />
-            </div>
+            <UPageGrid v-else>
+                <UPageCard v-for="disponent in disponents" :key="disponent.userId" :title="disponent.firstname">
+                    <PhoneNumberBlock :number="disponent.phoneNumber" />
+                </UPageCard>
+            </UPageGrid>
         </UCard>
     </UModal>
 </template>

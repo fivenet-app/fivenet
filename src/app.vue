@@ -5,17 +5,13 @@ import en from '@vee-validate/i18n/dist/locale/en.json';
 import { configure } from 'vee-validate';
 import { useClipboardStore } from '~/store/clipboard';
 import { useDocumentEditorStore } from '~/store/documenteditor';
-import { JOB_THEME_KEY, useSettingsStore } from '~/store/settings';
-import { useAuthStore } from '~/store/auth';
+import { useSettingsStore } from '~/store/settings';
 import NotificationProvider from '~/components/partials/notification/NotificationProvider.vue';
 
 const { t, locale, finalizePendingLocaleChange } = useI18n();
 
-const authStore = useAuthStore();
-const { jobProps } = storeToRefs(authStore);
-
 const settings = useSettingsStore();
-const { theme, isNUIAvailable, updateAvailable } = storeToRefs(settings);
+const { isNUIAvailable, updateAvailable, design } = storeToRefs(settings);
 
 const route = useRoute();
 
@@ -32,9 +28,7 @@ useHead({
         { key: 'theme-color', name: 'theme-color', content: color },
     ],
     htmlAttrs: {
-        class: () =>
-            (theme.value === JOB_THEME_KEY ? jobProps.value?.theme ?? 'defaultTheme' : theme.value) +
-            ' h-full scrollbar-thin scrollbar-thumb-sky-700 scrollbar-track-sky-300',
+        class: 'h-full scrollbar-thin scrollbar-thumb-sky-700 scrollbar-track-sky-300',
         lang: 'en',
     },
     bodyAttrs: {

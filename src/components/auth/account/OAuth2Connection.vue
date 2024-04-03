@@ -44,15 +44,17 @@ onConfirm(async (provider) => disconnectOAuth2Connection(provider));
         </template>
         <template #default>
             <div v-if="account !== undefined" class="flex items-center justify-between">
-                <img
-                    :src="account.avatar"
-                    alt="Avatar"
-                    class="size-10 rounded-full bg-base-800 fill-base-300 ring-2 hover:transition-colors"
-                />
+                <div class="inline-flex items-center gap-4">
+                    <img
+                        :src="account.avatar"
+                        alt="Avatar"
+                        class="size-10 rounded-full bg-base-800 fill-base-300 ring-2 hover:transition-colors"
+                    />
 
-                <span class="text-left" :title="`ID: ${account.externalId}`">
-                    {{ account.username }}
-                </span>
+                    <span class="text-left" :title="`ID: ${account.externalId}`">
+                        {{ account.username }}
+                    </span>
+                </div>
 
                 <UButton icon="i-mdi-close-circle" color="red" @click="reveal(provider)">
                     {{ $t('common.disconnect') }}

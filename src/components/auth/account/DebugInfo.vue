@@ -84,7 +84,7 @@ async function resetLocalStorage(): Promise<void> {
                     <UButton @click="clipboardStore.clear()">
                         {{ $t('components.debug_info.reset_clipboard') }}
                     </UButton>
-                    <UButton color="gray" @click="resetLocalStorage()">
+                    <UButton @click="resetLocalStorage()">
                         {{ $t('components.debug_info.reset_local_storage') }}
                     </UButton>
                     <UButton color="red" :external="true" to="/api/clear-site-data">

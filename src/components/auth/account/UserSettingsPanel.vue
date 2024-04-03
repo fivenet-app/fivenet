@@ -1,6 +1,5 @@
 <script lang="ts" setup>
 import type { RoutePathSchema } from '@typed-router';
-import type { FormError, FormSubmitEvent } from '#ui/types';
 import { useAuthStore } from '~/store/auth';
 import { useSettingsStore } from '~/store/settings';
 import type { Perms } from '~~/gen/ts/perms';
@@ -11,7 +10,7 @@ const authStore = useAuthStore();
 const { activeChar } = storeToRefs(authStore);
 
 const settings = useSettingsStore();
-const { startpage, documents, streamerMode, audio } = storeToRefs(settings);
+const { startpage, design, streamerMode, audio } = storeToRefs(settings);
 
 const homepages: { name: string; path: RoutePathSchema; permission?: Perms }[] = [
     { name: t('common.overview'), path: '/overview' },
@@ -30,15 +29,21 @@ onBeforeMount(async () => {
     selectedHomepage.value = homepages.find((h) => h.path === startpage.value);
 });
 
-const darkModeActive = ref(documents.value.editorTheme === 'dark');
+const darkModeActive = ref(design.value.docEditorTheme === 'dark');
 
 watch(darkModeActive, async () => {
     if (darkModeActive.value) {
-        documents.value.editorTheme = 'dark';
+        design.value.docEditorTheme = 'dark';
     } else {
-        documents.value.editorTheme = 'default';
+        design.value.docEditorTheme = 'default';
     }
 });
+
+const colors = ['green', 'teal', 'cyan', 'sky', 'blue', 'indigo', 'violet'];
+
+const appConfig = useAppConfig();
+
+watch(design, () => (appConfig.ui.primary = design.value.ui.primary));
 </script>
 
 <template>
@@ -48,13 +53,29 @@ watch(darkModeActive, async () => {
                 <UColorModeSelect color="gray" />
             </template>
 
+            <UFormGroup name="primaryColor" :label="$t('common.color')" class="grid grid-cols-2 gap-2 items-center">
+                <USelectMenu v-model="design.ui.primary" :options="colors" disabled>
+                    <template #label>
+                        <span
+                            class="h-2 w-2 rounded-full"
+                            :class="`bg-${design.ui.primary}-500 dark:bg-${design.ui.primary}-400`"
+                        />
+                        <span class="truncate">{{ design.ui.primary }}</span>
+                    </template>
+                    <template #option="{ option }">
+                        <span class="h-2 w-2 rounded-full" :class="`bg-${option}-500 dark:bg-${option}-400`" />
+                        <span class="truncate">{{ option }}</span>
+                    </template>
+                </USelectMenu>
+            </UFormGroup>
+
             <UFormGroup
                 name="darkModeActive"
                 :label="$t('components.auth.settings_panel.editor_theme.title')"
                 class="grid grid-cols-2 gap-2 items-center"
                 :ui="{ container: 'justify-self-end' }"
             >
-                <UToggle v-model="darkModeActive" size="md">
+                <UToggle v-model="darkModeActive">
                     <span class="sr-only">{{ $t('components.auth.settings_panel.editor_theme.title') }}</span>
                 </UToggle>
             </UFormGroup>
@@ -75,7 +96,7 @@ watch(darkModeActive, async () => {
 
         <UDivider class="mb-4" />
 
-        <UDashboardSection :title="$t('components.auth.settings_panel.subtitle')">
+        <UDashboardSection :title="$t('components.auth.settings_panel.title')">
             <UFormGroup
                 name="selectedHomepage"
                 :label="$t('components.auth.settings_panel.set_startpage.title')"

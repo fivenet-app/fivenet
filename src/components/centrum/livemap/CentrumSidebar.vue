@@ -58,8 +58,6 @@ const openTakeDispatch = ref(false);
 const openUnitDetails = ref(false);
 const openUnitStatus = ref(false);
 
-const openDisponents = ref(false);
-
 async function updateDispatchStatus(dispatchId: string, status: StatusDispatch): Promise<void> {
     try {
         const call = $grpc.getCentrumClient().updateDispatchStatus({ dispatchId, status });

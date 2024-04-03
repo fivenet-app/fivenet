@@ -3,7 +3,7 @@ import { Listbox, ListboxButton, ListboxOption, ListboxOptions } from '@headless
 import { mimes, size } from '@vee-validate/rules';
 import { useThrottleFn, useTimeoutFn } from '@vueuse/core';
 import { vMaska } from 'maska';
-import { CheckIcon, ChevronDownIcon, LoadingIcon, TuneIcon } from 'mdi-vue3';
+import { CheckIcon, ChevronDownIcon, LoadingIcon } from 'mdi-vue3';
 import ColorInput from 'vue-color-input/dist/color-input.esm';
 import { defineRule } from 'vee-validate';
 import DataErrorBlock from '~/components/partials/data/DataErrorBlock.vue';
@@ -12,7 +12,7 @@ import DataPendingBlock from '~/components/partials/data/DataPendingBlock.vue';
 import GenericTime from '~/components/partials/elements/GenericTime.vue';
 import { useAuthStore } from '~/store/auth';
 import { useNotificatorStore } from '~/store/notificator';
-import { availableThemes, useSettingsStore } from '~/store/settings';
+import { useSettingsStore } from '~/store/settings';
 import { JobProps, UserInfoSyncUnemployedMode } from '~~/gen/ts/resources/users/jobs';
 import GenericContainerPanel from '~/components/partials/elements/GenericContainerPanel.vue';
 import GenericContainerPanelEntry from '~/components/partials/elements/GenericContainerPanelEntry.vue';
@@ -139,64 +139,7 @@ const onSubmitThrottle = useThrottleFn(async (e) => {
                                 {{ $t('common.theme') }}
                             </template>
                             <template #default>
-                                <Listbox v-model="jobProps.theme" as="div">
-                                    <div class="relative">
-                                        <ListboxButton
-                                            class="block w-full rounded-md border-0 bg-base-700 py-1.5 pl-3 text-left placeholder:text-accent-200 focus:ring-2 focus:ring-inset focus:ring-base-300 sm:text-sm sm:leading-6"
-                                        >
-                                            <span class="block truncate">
-                                                {{ availableThemes.find((t) => t.key === jobProps?.theme)?.name }}
-                                            </span>
-                                            <span class="pointer-events-none absolute inset-y-0 right-0 flex items-center pr-2">
-                                                <ChevronDownIcon class="size-5 text-gray-400" />
-                                            </span>
-                                        </ListboxButton>
-
-                                        <transition
-                                            leave-active-class="transition duration-100 ease-in"
-                                            leave-from-class="opacity-100"
-                                            leave-to-class="opacity-0"
-                                        >
-                                            <ListboxOptions
-                                                class="absolute z-10 mt-1 max-h-44 w-full overflow-auto rounded-md bg-base-700 py-1 text-base sm:text-sm"
-                                            >
-                                                <ListboxOption
-                                                    v-for="theme in availableThemes"
-                                                    :key="theme.key"
-                                                    v-slot="{ active, selected }"
-                                                    as="template"
-                                                    :value="theme.key"
-                                                >
-                                                    <li
-                                                        :class="[
-                                                            active ? 'bg-primary-500' : '',
-                                                            'relative cursor-default select-none py-2 pl-8 pr-4',
-                                                        ]"
-                                                    >
-                                                        <span
-                                                            :class="[
-                                                                selected ? 'font-semibold' : 'font-normal',
-                                                                'block truncate',
-                                                            ]"
-                                                        >
-                                                            {{ theme.name }}
-                                                        </span>
-
-                                                        <span
-                                                            v-if="selected"
-                                                            :class="[
-                                                                active ? 'text-neutral' : 'text-primary-500',
-                                                                'absolute inset-y-0 left-0 flex items-center pl-1.5',
-                                                            ]"
-                                                        >
-                                                            <CheckIcon class="size-5" />
-                                                        </span>
-                                                    </li>
-                                                </ListboxOption>
-                                            </ListboxOptions>
-                                        </transition>
-                                    </div>
-                                </Listbox>
+                                {{ jobProps.theme }}
                             </template>
                         </GenericContainerPanelEntry>
                         <GenericContainerPanelEntry>

@@ -18,14 +18,14 @@ const emit = defineEmits<{
 const content = useVModel(props, 'modelValue', emit);
 
 const settingsStore = useSettingsStore();
-const { documents } = storeToRefs(settingsStore);
+const { design: theme } = storeToRefs(settingsStore);
 
 const config = {
     language: 'de',
     spellcheck: true,
     minHeight: 475,
-    editorClassName: 'prose' + (documents.value.editorTheme === 'dark' ? ' prose-neutral' : ' prose-gray'),
-    theme: documents.value.editorTheme,
+    editorClassName: 'prose' + (theme.value.docEditorTheme === 'dark' ? ' prose-neutral' : ' prose-gray'),
+    theme: theme.value.docEditorTheme,
 
     readonly: false,
     defaultActionOnPaste: 'insert_clear_html',

@@ -168,7 +168,7 @@
                 "subtitle": "Um ein Konto zu erstellen, treten Sie dem FiveM-Server bei und geben Sie den Befehl /fivenet ein."
             },
             "settings_panel": {
-                "title": "Einstellungen",
+                "title": "Eigene FiveNet-Einstellungen",
                 "subtitle": "Eigene FiveNet-Einstellungen.",
                 "set_startpage": {
                     "title": "Startseite nach Charakterauswahl",

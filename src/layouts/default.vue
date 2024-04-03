@@ -17,7 +17,6 @@ const { t } = useI18n();
 
 const { $grpc } = useNuxtApp();
 
-const appConfig = useAppConfig();
 const { isHelpSlideoverOpen } = useDashboard();
 
 const links = computed<(DashboardSidebarLink & { permission?: Perms | Perms[] })[]>(() => [
@@ -70,6 +69,17 @@ const links = computed<(DashboardSidebarLink & { permission?: Perms | Perms[] })
             shortcuts: ['G', 'J'],
         },
         permission: 'JobsService.ListColleagues' as Perms,
+        defaultOpen: false,
+        children: [
+            {
+                label: t('common.overview'),
+                to: '/jobs/overview',
+            },
+            {
+                label: t('common.colleague', 2),
+                to: '/jobs/colleagues',
+            },
+        ],
     },
     {
         label: t('common.livemap'),
@@ -275,15 +285,6 @@ const groups = [
     },
 ];
 
-const defaultColors = ref(
-    ['green', 'teal', 'cyan', 'sky', 'blue', 'indigo', 'violet'].map((color) => ({
-        label: color,
-        chip: color,
-        click: () => (appConfig.ui.primary = color),
-    })),
-);
-const colors = computed(() => defaultColors.value.map((color) => ({ ...color, active: appConfig.ui.primary === color.label })));
-
 const modal = useModal();
 
 const quickAccessButtons = computed<DashboardSidebarLink[]>(
@@ -330,13 +331,6 @@ const quickAccessButtons = computed<DashboardSidebarLink[]>(
                         :links="[{ label: t('components.rector.job_props.quick_buttons'), children: quickAccessButtons }]"
                     />
                 </template>
-
-                <UDivider />
-
-                <UDashboardSidebarLinks
-                    :links="[{ label: 'Colors', draggable: true, children: colors }]"
-                    @update:links="(colors) => (defaultColors = colors)"
-                />
 
                 <div class="flex-1" />
 

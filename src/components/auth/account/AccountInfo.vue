@@ -8,7 +8,6 @@ import ChangeUsernameModal from '~/components/auth/account/ChangeUsernameModal.v
 import DebugInfo from '~/components/auth/account/DebugInfo.vue';
 import OAuth2Connections from '~/components/auth/account/OAuth2Connections.vue';
 import GenericContainerPanel from '~/components/partials/elements/GenericContainerPanel.vue';
-import GenericContainerPanelEntry from '~/components/partials/elements/GenericContainerPanelEntry.vue';
 import { useSettingsStore } from '~/store/settings';
 
 const { $grpc } = useNuxtApp();
@@ -29,9 +28,6 @@ async function getAccountInfo(): Promise<GetAccountInfoResponse> {
     }
 }
 
-const changePasswordModal = ref(false);
-const changeUsernameModal = ref(false);
-
 async function removeOAuth2Connection(provider: string): Promise<void> {
     const idx = account.value?.oauth2Connections.findIndex((v) => v.providerName === provider);
     if (idx !== undefined && idx > -1) {
@@ -40,24 +36,21 @@ async function removeOAuth2Connection(provider: string): Promise<void> {
         await refresh();
     }
 }
+
+const modal = useModal();
 </script>
 
 <template>
     <div>
         <template v-if="streamerMode">
-            <GenericContainerPanel>
-                <template #title>
-                    {{ $t('system.streamer_mode.title') }}
-                </template>
-                <template #description>
-                    {{ $t('system.streamer_mode.description') }}
-                </template>
-            </GenericContainerPanel>
+            <UDashboardPanelContent class="pb-2">
+                <UDashboardSection
+                    :title="$t('system.streamer_mode.title')"
+                    :description="$t('system.streamer_mode.description')"
+                />
+            </UDashboardPanelContent>
         </template>
         <template v-else>
-            <ChangeUsernameModal :open="changeUsernameModal" @close="changeUsernameModal = false" />
-            <ChangePasswordModal :open="changePasswordModal" @close="changePasswordModal = false" />
-
             <DataPendingBlock
                 v-if="pending"
                 :message="$t('common.loading', [`${$t('common.account')} ${$t('common.info')}`])"
@@ -74,58 +67,58 @@ async function removeOAuth2Connection(provider: string): Promise<void> {
             />
 
             <template v-else>
-                <GenericContainerPanel>
-                    <template #title>
-                        {{ $t('components.auth.account_info.title') }}
-                    </template>
-                    <template #description>
-                        {{ $t('components.auth.account_info.subtitle') }}
-                    </template>
-                    <template #default>
-                        <GenericContainerPanelEntry>
-                            <template #title>
-                                {{ $t('common.username') }}
-                            </template>
-                            <template #default>
-                                {{ account.account?.username }}
-                            </template>
-                        </GenericContainerPanelEntry>
-                        <GenericContainerPanelEntry>
-                            <template #title>
-                                {{ $t('components.auth.account_info.license') }}
-                            </template>
-                            <template #default>
-                                {{ account.account?.license }}
-                            </template>
-                        </GenericContainerPanelEntry>
-                        <GenericContainerPanelEntry>
-                            <template #title>
-                                {{ $t('components.auth.account_info.change_username') }}
-                            </template>
-                            <template #default>
-                                <UButton
-                                    class="rounded-md bg-primary-500 px-3.5 py-2.5 text-sm font-semibold hover:bg-primary-400"
-                                    @click="changeUsernameModal = true"
-                                >
-                                    {{ $t('components.auth.account_info.change_username_button') }}
-                                </UButton>
-                            </template>
-                        </GenericContainerPanelEntry>
-                        <GenericContainerPanelEntry>
-                            <template #title>
-                                {{ $t('components.auth.account_info.change_password') }}
-                            </template>
-                            <template #default>
-                                <UButton
-                                    class="rounded-md bg-primary-500 px-3.5 py-2.5 text-sm font-semibold hover:bg-primary-400"
-                                    @click="changePasswordModal = true"
-                                >
-                                    {{ $t('components.auth.account_info.change_password_button') }}
-                                </UButton>
-                            </template>
-                        </GenericContainerPanelEntry>
-                    </template>
-                </GenericContainerPanel>
+                <UDashboardPanelContent class="pb-2">
+                    <UDashboardSection
+                        :title="$t('components.auth.account_info.title')"
+                        :description="$t('components.auth.account_info.subtitle')"
+                    >
+                        <UFormGroup
+                            name="version"
+                            :label="$t('common.username')"
+                            class="grid grid-cols-2 gap-2 items-center"
+                            :ui="{ container: '' }"
+                        >
+                            {{ account.account?.username }}
+                        </UFormGroup>
+
+                        <UFormGroup
+                            name="version"
+                            :label="$t('components.auth.account_info.license')"
+                            class="grid grid-cols-2 gap-2 items-center"
+                            :ui="{ container: '' }"
+                        >
+                            {{ account.account?.license }}
+                        </UFormGroup>
+
+                        <UFormGroup
+                            name="version"
+                            :label="$t('components.auth.account_info.change_username')"
+                            class="grid grid-cols-2 gap-2 items-center"
+                            :ui="{ container: '' }"
+                        >
+                            <UButton
+                                class="rounded-md bg-primary-500 px-3.5 py-2.5 text-sm font-semibold hover:bg-primary-400"
+                                @click="modal.open(ChangeUsernameModal, {})"
+                            >
+                                {{ $t('components.auth.account_info.change_username_button') }}
+                            </UButton>
+                        </UFormGroup>
+
+                        <UFormGroup
+                            name="version"
+                            :label="$t('components.auth.account_info.change_password')"
+                            class="grid grid-cols-2 gap-2 items-center"
+                            :ui="{ container: '' }"
+                        >
+                            <UButton
+                                class="rounded-md bg-primary-500 px-3.5 py-2.5 text-sm font-semibold hover:bg-primary-400"
+                                @click="modal.open(ChangePasswordModal, {})"
+                            >
+                                {{ $t('components.auth.account_info.change_password_button') }}
+                            </UButton>
+                        </UFormGroup>
+                    </UDashboardSection>
+                </UDashboardPanelContent>
 
                 <OAuth2Connections
                     :providers="account.oauth2Providers"

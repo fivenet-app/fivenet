@@ -95,7 +95,7 @@ today.setMilliseconds(0);
                         <div class="my-2 flex flex-row items-center gap-2">
                             <UBadge>
                                 {{ colleague.colleague.jobLabel }}
-                                <span v-if="colleague.colleague.jobGrade > 0">
+                                <span v-if="colleague.colleague.jobGrade > 0" class="ml-1">
                                     ({{ $t('common.rank') }}: {{ colleague.colleague.jobGradeLabel }})</span
                                 >
                             </UBadge>

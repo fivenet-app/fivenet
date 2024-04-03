@@ -1,5 +1,4 @@
 <script lang="ts" setup>
-import { MonitorIcon, RobotIcon } from 'mdi-vue3';
 import DisponentsModal from '~/components/centrum/disponents/DisponentsModal.vue';
 import LivemapHolder from '~/components/livemap/LivemapHolder.vue';
 import { useCentrumStore } from '~/store/centrum';
@@ -28,27 +27,22 @@ const openDisponents = ref(false);
                     <DisponentsModal :open="openDisponents" @close="openDisponents = false" />
 
                     <UButton
-                        class="group mt-0.5 flex w-full flex-row items-center justify-center rounded-md p-1 text-xs font-medium hover:bg-primary-100/10 hover:transition-all"
-                        :class="
+                        :icon="getCurrentMode !== CentrumMode.AUTO_ROUND_ROBIN ? 'i-mdi-monitor' : 'i-mdi-robot'"
+                        :color="
                             getCurrentMode === CentrumMode.AUTO_ROUND_ROBIN
-                                ? 'bg-info-400/10 text-info-500 ring-info-400/20'
+                                ? 'primary'
                                 : disponents.length === 0
-                                  ? 'bg-warn-400/10 text-warn-500 ring-warn-400/20'
-                                  : 'bg-success-500/10 text-success-400 ring-success-500/20'
+                                  ? 'amber'
+                                  : 'green'
                         "
+                        truncate
                         @click="openDisponents = true"
                     >
                         <template v-if="getCurrentMode !== CentrumMode.AUTO_ROUND_ROBIN">
-                            <MonitorIcon class="mr-1 size-5" />
-                            <span class="truncate">
-                                {{ $t('common.disponent', disponents.length) }}
-                            </span>
+                            {{ $t('common.disponent', disponents.length) }}
                         </template>
                         <template v-else>
-                            <RobotIcon class="mr-1 size-5" />
-                            <span class="truncate">
-                                {{ $t('enums.centrum.CentrumMode.AUTO_ROUND_ROBIN') }}
-                            </span>
+                            {{ $t('enums.centrum.CentrumMode.AUTO_ROUND_ROBIN') }}
                         </template>
                     </UButton>
                 </template>

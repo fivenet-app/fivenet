@@ -1,16 +1,5 @@
 import { defineStore, type StoreDefinition } from 'pinia';
 
-export const JOB_THEME_KEY = '__job_theme__';
-
-export const availableThemes = [
-    { name: 'Default', key: 'defaultTheme' },
-    { name: 'Baddie Orange', key: 'themeBaddieOrange' },
-    { name: 'Baddie Pink', key: 'themeBaddiePink' },
-    { name: 'Baddie Yellow', key: 'themeBaddieYellow' },
-    { name: 'Da Medic', key: 'themeDaMedic' },
-    { name: 'Purple', key: 'themePurple' },
-];
-
 export interface SettingsState {
     version: string;
     updateAvailable: false | string;
@@ -25,11 +14,13 @@ export interface SettingsState {
         showAllDispatches: boolean;
         activeLayers: string[];
     };
-    documents: {
-        editorTheme: 'default' | 'dark';
-    };
     startpage: string;
-    theme: string;
+    design: {
+        docEditorTheme: 'default' | 'dark';
+        ui: {
+            primary: string;
+        };
+    };
     audio: {
         notificationsVolume: number;
     };
@@ -56,11 +47,13 @@ export const useSettingsStore = defineStore('settings', {
                 showAllDispatches: false,
                 activeLayers: [],
             },
-            documents: {
-                editorTheme: 'default',
-            },
             startpage: '/overview',
-            theme: JOB_THEME_KEY,
+            design: {
+                docEditorTheme: 'default',
+                ui: {
+                    primary: 'sky',
+                },
+            },
             audio: {
                 notificationsVolume: 0.15,
             },
