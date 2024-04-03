@@ -247,18 +247,11 @@
         },
         "partials": {
             "sidebar": {
-                "change_character": "Change Character",
-                "open_sidebar": "Open Sidebar",
-                "close_sidebar": "Close Sidebar",
-                "open_usermenu": "Open user menu",
-                "open_navigation": "Open navigation"
+                "change_character": "Change Character"
             },
             "data_error_block": {
                 "default_title": "Unable to load your data!",
                 "default_message": "Please try again in a moment."
-            },
-            "sidebar_language_switcher": {
-                "open_switcher": "Open language menu"
             },
             "sidebar_notifications": "Go to Notifications",
             "confirm_dialog": {
@@ -453,7 +446,8 @@
             "reset_local_storage": "Reset Local Storage",
             "factory_reset": "Factory Reset FiveNet App",
             "version": "Version",
-            "nui_info": "NUI Info"
+            "nui_info": "NUI Info",
+            "no_char_selected": "No char active, please choose a character and check again."
         },
         "penaltycalculator": {
             "title": "Penalty Calculator"
@@ -665,6 +659,9 @@
             "request_modal": {
                 "title": "Request Qualification"
             }
+        },
+        "language_switcher": {
+            "title": "Switch language"
         }
     },
     "common": {
@@ -753,7 +750,7 @@
         "latitude": "Latitude",
         "longitude": "Longitude",
         "filter": "Filter",
-        "postal": "ZIP",
+        "postal": "ZIP | ZIPs",
         "retry": "Retry",
         "time_range": "Time Range",
         "from": "From",
@@ -924,7 +921,7 @@
         "redirecting_to": "You are being redirect to {0} ...",
         "absent": "Absent",
         "upload": "Upload",
-        "postal_code": "Postal Code",
+        "postal_code": "Postal Code | Postal Codes",
         "duration": "Duration",
         "inactive_colleagues": "Inactive Colleagues",
         "qualifications": "Qualification | Qualifications",
@@ -942,7 +939,8 @@
         "goto_item": "Go to {0}",
         "help": "Help",
         "shortcuts": "Shortcuts",
-        "commandpalette": "Command Palette"
+        "commandpalette": "Command Palette",
+        "language": "Language | Languages"
     },
     "notifications": {
         "clipboard": {
