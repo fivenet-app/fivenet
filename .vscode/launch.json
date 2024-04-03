@@ -25,7 +25,7 @@
             "mode": "auto",
             "program": "${workspaceFolder}",
             "cwd": "${workspaceFolder}",
-            "args": ["server"],
+            "args": ["server","--serve-frontend"],
             "buildFlags": "-race -a -installsuffix cgo",
             "env": {
                 "CGO_ENABLED": "1",

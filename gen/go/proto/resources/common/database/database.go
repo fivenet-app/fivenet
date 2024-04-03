@@ -35,7 +35,7 @@ func (p *PaginationRequest) GetResponseWithPageSize(totalCount int64, maxPageSiz
 }
 
 func ensureOffsetInRage(offset int64, pageSize int64, totalCount int64) int64 {
-	if totalCount != 0 && offset > totalCount {
+	if totalCount != 0 && offset > totalCount && totalCount != NoTotalCount {
 		// Set offset to "last" page
 		offset = totalCount - pageSize
 	}

@@ -941,7 +941,8 @@
         "shortcuts": "Shortcuts",
         "commandpalette": "Command Palette",
         "language": "Language | Languages",
-        "query_not_found": "not found."
+        "query_not_found": "not found.",
+        "file": "File | Files"
     },
     "notifications": {
         "clipboard": {
