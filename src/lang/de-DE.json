@@ -247,18 +247,11 @@
         },
         "partials": {
             "sidebar": {
-                "change_character": "Charakter wechseln",
-                "open_sidebar": "Seitenleiste öffnen",
-                "close_sidebar": "Seitenleiste schließen",
-                "open_usermenu": "Konto-Menü öffnen",
-                "open_navigation": "Navigation öffnen"
+                "change_character": "Charakter wechseln"
             },
             "data_error_block": {
                 "default_title": "Ihre Daten konnten nicht geladen werden!",
                 "default_message": "Bitte versuche es gleich noch einmal."
-            },
-            "sidebar_language_switcher": {
-                "open_switcher": "Öffne das Sprachmenü"
             },
             "sidebar_notifications": "Zu Benachrichtigungen gehen",
             "confirm_dialog": {
@@ -453,7 +446,8 @@
             "reset_local_storage": "Lokalen Browser-Speicher zurücksetzen",
             "factory_reset": "FiveNet App auf Standard zurücksetzen",
             "version": "Version",
-            "nui_info": "NUI-Info"
+            "nui_info": "NUI-Info",
+            "no_char_selected": "Kein Charakter ausgewählt, bitte wählen Sie einen Charakter aus und probieren Sie es erneut."
         },
         "penaltycalculator": {
             "title": "Strafenrechner"
@@ -665,6 +659,9 @@
             "request_modal": {
                 "title": "Qualifikation anfragen"
             }
+        },
+        "language_switcher": {
+            "title": "Sprache wechseln"
         }
     },
     "common": {
@@ -753,7 +750,7 @@
         "latitude": "Breitengrad",
         "longitude": "Längengrad",
         "filter": "Filter",
-        "postal": "PLZ",
+        "postal": "PLZ | PLZs",
         "retry": "Erneut versuchen",
         "time_range": "Zeitspanne",
         "from": "Von",
@@ -924,7 +921,7 @@
         "redirecting_to": "Sie werden weitergeleitet zu {0}...",
         "absent": "Abwesend",
         "upload": "Hochladen",
-        "postal_code": "Postleitzahl",
+        "postal_code": "Postleitzahl | Postleitzahlen",
         "duration": "Dauer",
         "inactive_colleagues": "Inaktive Kollegen",
         "qualifications": "Qualifizierung | Qualifizierungen",
@@ -942,7 +939,8 @@
         "goto_item": "Gehe zu {0}",
         "help": "Hilfe",
         "shortcuts": "Abkürzungen",
-        "commandpalette": "Befehlspalette"
+        "commandpalette": "Befehlspalette",
+        "language": "Sprache | Sprachen"
     },
     "notifications": {
         "clipboard": {
