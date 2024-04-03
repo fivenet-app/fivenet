@@ -9,7 +9,7 @@
             </p>
         </div>
         <div class="border-t border-base-400 px-4 py-5 sm:p-0">
-            <dl class="sm:divide-y sm:divide-base-400">
+            <dl class="divide-y divide-gray-200 dark:divide-gray-700">
                 <slot />
             </dl>
         </div>

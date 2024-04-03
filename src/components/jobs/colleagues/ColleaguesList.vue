@@ -225,7 +225,7 @@ const modal = useModal();
                                     variant="link"
                                     icon="i-mdi-eye"
                                     :to="{
-                                        name: 'jobs-colleagues-id',
+                                        name: 'jobs-colleagues-id-actvitiy',
                                         params: { id: colleague.userId ?? 0 },
                                     }"
                                 />

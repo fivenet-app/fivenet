@@ -4168,9 +4168,9 @@ Apache-2.0 License - License URL: https://github.com/blevesearch/zapx/blob/v16.0
    limitations under the License.
 -----
 
-The following software may be included in this product: github.com/bwmarrin/discordgo (Version: v0.27.1). This software contains the following license and notice below:
+The following software may be included in this product: github.com/bwmarrin/discordgo (Version: v0.28.1). This software contains the following license and notice below:
 
-BSD-3-Clause License - License URL: https://github.com/bwmarrin/discordgo/blob/v0.27.1/LICENSE
+BSD-3-Clause License - License URL: https://github.com/bwmarrin/discordgo/blob/v0.28.1/LICENSE
 
 Copyright (c) 2015, Bruce Marriner
 All rights reserved.

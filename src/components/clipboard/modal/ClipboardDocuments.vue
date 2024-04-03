@@ -101,7 +101,7 @@ watch(props, async (newVal) => {
     <h3 class="py-1 font-medium">{{ $t('common.document', 2) }}</h3>
     <DataNoDataBlock
         v-if="documents?.length === 0"
-        :icon="FileDocumentMultipleIcon"
+        icon="i-mdi-file-document-multiple"
         :message="$t('components.clipboard.clipboard_modal.no_data', [$t('common.document', 2)])"
     />
     <table v-else class="min-w-full divide-y divide-gray-700">

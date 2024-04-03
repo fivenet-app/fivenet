@@ -92,7 +92,7 @@ const uploadFileDialog = ref(false);
                     :title="$t('common.unable_to_load', [`${$t('common.data', 1)} ${$t('common.prop')}`])"
                     :retry="refresh"
                 />
-                <DataNoDataBlock v-else-if="data === null" :icon="FileMultipleIcon" :type="$t('common.data', 1)" />
+                <DataNoDataBlock v-else-if="data === null" icon="i-mdi-file-multiple" :type="$t('common.data', 1)" />
 
                 <template v-else>
                     <GenericTable :double-header="false">

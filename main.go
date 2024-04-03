@@ -56,14 +56,31 @@ import (
 
 type Context struct{}
 
-type ServerCmd struct{}
+type FrontendCmd struct{}
+
+func (c *FrontendCmd) Run(ctx *Context) error {
+	fxOpts := getFxBaseOpts(cli.StartTimeout)
+	fxOpts = append(fxOpts,
+		fx.Invoke(func(server.HTTPServer) {}),
+	)
+
+	app := fx.New(fxOpts...)
+	app.Run()
+
+	return nil
+}
+
+type ServerCmd struct {
+	ServeFrontend bool `help:"Serve HTTP Frontend."`
+}
 
 func (c *ServerCmd) Run(ctx *Context) error {
 	fxOpts := getFxBaseOpts(cli.StartTimeout)
-	fxOpts = append(fxOpts,
-		fx.Invoke(func(*grpcserver.Server) {}),
-		fx.Invoke(func(server.HTTPServer) {}),
-	)
+	fxOpts = append(fxOpts, fx.Invoke(func(*grpcserver.Server) {}))
+
+	if c.ServeFrontend {
+		fxOpts = append(fxOpts, fx.Invoke(func(server.HTTPServer) {}))
+	}
 
 	app := fx.New(fxOpts...)
 	app.Run()
@@ -108,8 +125,9 @@ var cli struct {
 	Config       string        `help:"Alternative config file (env var: FIVENET_CONFIG_FILE)"`
 	StartTimeout time.Duration `help:"App start timeout duration"`
 
-	Server ServerCmd `cmd:"" help:"Run FiveNet server."`
-	Worker WorkerCmd `cmd:"" help:"Run FiveNet worker."`
+	Frontend FrontendCmd `cmd:"" help:"Run FiveNet frontend."`
+	Server   ServerCmd   `cmd:"" help:"Run FiveNet server."`
+	Worker   WorkerCmd   `cmd:"" help:"Run FiveNet worker."`
 }
 
 func getFxBaseOpts(startTimeout time.Duration) []fx.Option {
@@ -176,8 +194,8 @@ func getFxBaseOpts(startTimeout time.Duration) []fx.Option {
 			grpc.AsService(pbrector.NewServer),
 		),
 
-		fx.Invoke(func(admin.AdminServer) {}),
 		fx.Invoke(func(*bluemonday.Policy) {}),
+		fx.Invoke(func(admin.AdminServer) {}),
 	}
 }
 

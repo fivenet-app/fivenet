@@ -1,6 +1,6 @@
 <script lang="ts" setup>
 import { Combobox, ComboboxButton, ComboboxInput, ComboboxOption, ComboboxOptions } from '@headlessui/vue';
-import { CheckIcon, SelectIcon } from 'mdi-vue3';
+import { CheckIcon } from 'mdi-vue3';
 import AttrView from '~/components/rector/attrs/AttrView.vue';
 import DataErrorBlock from '~/components/partials/data/DataErrorBlock.vue';
 import DataNoDataBlock from '~/components/partials/data/DataNoDataBlock.vue';
@@ -9,7 +9,6 @@ import { useCompletorStore } from '~/store/completor';
 import { useNotificatorStore } from '~/store/notificator';
 import { Role } from '~~/gen/ts/resources/permissions/permissions';
 import { Job } from '~~/gen/ts/resources/users/jobs';
-import AttrRolesListEntry from '~/components/rector/attrs/AttrRolesListEntry.vue';
 import GenericTable from '~/components/partials/elements/GenericTable.vue';
 
 const { $grpc } = useNuxtApp();
@@ -192,13 +191,19 @@ onBeforeMount(async () => await listJobs());
                                     </tr>
                                 </template>
                                 <template #tbody>
-                                    <AttrRolesListEntry
-                                        v-for="role in sortedRoles"
-                                        :key="role.id"
-                                        :role="role"
-                                        :class="selectedRole?.id === role.id ? 'bg-base-800' : ''"
-                                        @selected="selectedRole = role"
-                                    />
+                                    <tr v-for="role in sortedRoles" :key="role.id" class="even:bg-base-800">
+                                        <td
+                                            class="whitespace-nowrap py-2 pl-2 pr-3 text-sm font-medium"
+                                            :title="`ID: ${role.id}`"
+                                        >
+                                            {{ role.jobLabel }} ({{ role.job }})
+                                        </td>
+                                        <td class="whitespace-nowrap py-2 pl-3 pr-2 text-right text-sm font-medium">
+                                            <div class="flex flex-row justify-end">
+                                                <UButton variant="link" icon="i-mdi-eye" @click="selectedRole = role" />
+                                            </div>
+                                        </td>
+                                    </tr>
                                 </template>
                             </GenericTable>
                         </div>
@@ -209,7 +214,7 @@ onBeforeMount(async () => await listJobs());
                         <AttrView :role-id="selectedRole.id" @deleted="refresh()" />
                     </template>
                     <template v-else>
-                        <DataNoDataBlock :icon="SelectIcon" :message="$t('common.none_selected', [$t('common.job', 2)])" />
+                        <DataNoDataBlock icon="i-mdi-select" :message="$t('common.none_selected', [$t('common.job', 2)])" />
                     </template>
                 </div>
             </div>

@@ -56,7 +56,7 @@ const canDelete =
         <DataErrorBlock v-else-if="error" :title="$t('common.unable_to_load', [$t('common.request', 2)])" :retry="refresh" />
         <DataNoDataBlock
             v-else-if="requests === null || requests.requests.length === 0"
-            :icon="FrequentlyAskedQuestionsIcon"
+            icon="i-mdi-frequently-asked-questions"
             :message="$t('common.not_found', [$t('common.request', 2)])"
         />
 

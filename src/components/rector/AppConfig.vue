@@ -3,7 +3,7 @@ import { Combobox, ComboboxButton, ComboboxInput, ComboboxOption, ComboboxOption
 // eslint-disable-next-line camelcase
 import { max, min, regex, required, url, min_value, max_value, numeric, size } from '@vee-validate/rules';
 import { useThrottleFn, useTimeoutFn, watchOnce } from '@vueuse/core';
-import { CheckIcon, CloseIcon, LoadingIcon, OfficeBuildingCogIcon, PlusIcon } from 'mdi-vue3';
+import { CheckIcon, CloseIcon, LoadingIcon, PlusIcon } from 'mdi-vue3';
 import { defineRule } from 'vee-validate';
 import { useSettingsStore } from '~/store/settings';
 import GenericContainerPanel from '~/components/partials/elements/GenericContainerPanel.vue';
@@ -252,7 +252,7 @@ const { remove, push, fields } = useFieldArray<Perm>('permsDefault');
                 :title="$t('common.unable_to_load', [$t('common.setting', 2)])"
                 :retry="refresh"
             />
-            <DataNoDataBlock v-else-if="data === null" :icon="OfficeBuildingCogIcon" :type="$t('common.setting', 2)" />
+            <DataNoDataBlock v-else-if="data === null" icon="i-mdi-office-building-cog" :type="$t('common.setting', 2)" />
 
             <template v-else>
                 <GenericContainerPanel>

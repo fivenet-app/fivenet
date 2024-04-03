@@ -1,5 +1,4 @@
 <script lang="ts" setup>
-import { AccountIcon } from 'mdi-vue3';
 import DataErrorBlock from '~/components/partials/data/DataErrorBlock.vue';
 import DataNoDataBlock from '~/components/partials/data/DataNoDataBlock.vue';
 import DataPendingBlock from '~/components/partials/data/DataPendingBlock.vue';
@@ -71,7 +70,7 @@ async function removeOAuth2Connection(provider: string): Promise<void> {
             <DataNoDataBlock
                 v-else-if="account === null"
                 :type="`${$t('common.account')} ${$t('common.data')}`"
-                :icon="AccountIcon"
+                icon="i-mdi-account"
             />
 
             <template v-else>

@@ -120,7 +120,7 @@ const canSubmit = ref(true);
                 <DataNoDataBlock
                     v-else-if="data?.notifications.length === 0"
                     :type="$t('common.notification', 2)"
-                    :icon="BellIcon"
+                    icon="i-mdi-bell"
                 />
                 <template v-else>
                     <ul class="flex flex-col">

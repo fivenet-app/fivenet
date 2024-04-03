@@ -53,7 +53,7 @@ watch(offset, async () => refresh());
         <DataNoDataBlock
             v-else-if="data === null || data?.activity.length === 0"
             :type="`${$t('common.document', 1)} ${$t('common.relation', 2)}`"
-            :icon="BulletinBoardIcon"
+            icon="i-mdi-bulletin-board"
         />
         <ul v-else role="list" class="divide-y divide-gray-200">
             <li v-for="activity in data?.activity" :key="activity.id" class="py-4">

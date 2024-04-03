@@ -20,22 +20,22 @@ const repoLink = 'https://github.com/galexrt/fivenet';
 
 const faqs = [
     {
-        question: t('components.about.faq.one.question'),
-        answer: t('components.about.faq.one.answer'),
+        label: t('components.about.faq.one.question'),
+        description: t('components.about.faq.one.answer'),
     },
     {
-        question: t('components.about.faq.two.question'),
-        answer: t('components.about.faq.two.answer'),
+        label: t('components.about.faq.two.question'),
+        description: t('components.about.faq.two.answer'),
     },
     {
-        question: t('components.about.faq.three.question'),
-        answer: t('components.about.faq.three.answer', { repoLink }),
+        label: t('components.about.faq.three.question'),
+        description: t('components.about.faq.three.answer', { repoLink }),
     },
     {
-        question: t('components.about.faq.four.question'),
-        answer: t('components.about.faq.four.answer', { discordLink, repoLink }),
+        label: t('components.about.faq.four.question'),
+        description: t('components.about.faq.four.answer', { discordLink, repoLink }),
     },
-] as { question: string; answer: string }[];
+] as { label: string; description: string }[];
 </script>
 
 <template>
@@ -43,7 +43,7 @@ const faqs = [
         <UDashboardPanel>
             <div class="flex flex-col justify-between">
                 <div>
-                    <div class="hero relative isolate bg-primary-900 px-6 py-12 sm:py-16 lg:px-8">
+                    <div class="hero relative isolate bg-primary-900 px-6 py-20 lg:px-8">
                         <div class="hero-overlay absolute left-0 top-0 z-[-1] size-full"></div>
                         <div class="mx-auto max-w-2xl text-center">
                             <h2 class="text-4xl font-bold tracking-tight sm:text-6xl">
@@ -81,7 +81,7 @@ const faqs = [
                                 class="-ml-12 -mt-12 p-12 lg:sticky lg:top-4 lg:col-start-2 lg:row-span-2 lg:row-start-1 lg:overflow-hidden"
                             >
                                 <img
-                                    class="w-[48rem] max-w-none rounded-xl bg-primary-900 shadow-xl ring-1 ring-gray-400/10 sm:w-[57rem]"
+                                    class="bg-primary-900 w-[48rem] max-w-none rounded-xl shadow-xl ring-1 ring-gray-400/10 sm:w-[57rem]"
                                     src="/images/screenshots/overview.png"
                                     alt="FiveNet Overview - Screenshot"
                                 />
@@ -125,73 +125,58 @@ const faqs = [
                             </div>
                         </div>
                     </div>
-                    <div class="bg-primary-900">
-                        <div class="mx-auto max-w-7xl px-6 py-12 sm:py-16 lg:px-8 lg:py-10">
-                            <div class="mx-auto max-w-4xl divide-y divide-neutral/10">
-                                <h2 class="text-2xl font-bold leading-10 tracking-tight">
+
+                    <div class="relative">
+                        <div class="mx-auto max-w-7xl px-6 py-8">
+                            <div class="mx-auto max-w-4xl">
+                                <h2 class="mt-2 text-3xl font-bold tracking-tight sm:text-4xl">
                                     {{ $t('components.about.faq.title') }}
                                 </h2>
-                                <dl class="mt-10 space-y-6 divide-y divide-neutral/10">
-                                    <Disclosure v-for="faq in faqs" :key="faq.question" v-slot="{ open }" as="div" class="pt-6">
-                                        <dt>
-                                            <DisclosureButton class="flex w-full items-start justify-between text-left">
-                                                <span class="text-base font-semibold leading-7">{{ faq.question }}</span>
-                                                <span class="ml-6 flex h-7 items-center">
-                                                    <ChevronDownIcon
-                                                        :class="[open ? 'upsidedown' : '', 'size-5 transition-transform']"
-                                                    />
-                                                </span>
-                                            </DisclosureButton>
-                                        </dt>
-                                        <DisclosurePanel as="dd" class="mt-2 pr-12">
-                                            <!-- eslint-disable-next-line vue/no-v-html -->
+                                <dl class="mt-4">
+                                    <UAccordion :items="faqs" multiple>
+                                        <template #item="{ item: faq }">
                                             <p class="text-base leading-7 text-gray-300" v-html="faq.answer"></p>
-                                        </DisclosurePanel>
-                                    </Disclosure>
+                                        </template>
+                                    </UAccordion>
                                 </dl>
                             </div>
                         </div>
                     </div>
-                    <div class="relative bg-primary-900">
-                        <div class="mx-auto max-w-7xl px-6 py-12 sm:py-16 lg:px-8 lg:py-10">
+
+                    <div class="relative">
+                        <div class="mx-auto max-w-7xl px-6 py-8">
                             <div class="mx-auto max-w-4xl">
-                                <p class="mt-2 text-3xl font-bold tracking-tight sm:text-4xl">
+                                <h2 class="mt-2 text-3xl font-bold tracking-tight sm:text-4xl">
                                     {{ $t('components.about.questions_or_issues.title') }}
-                                </p>
+                                </h2>
                                 <p class="mt-6 text-base leading-7 text-gray-300">
                                     {{ $t('components.about.questions_or_issues.content') }}
                                 </p>
                                 <div class="mt-8">
-                                    <NuxtLink
+                                    <UButton
                                         :to="discordLink"
                                         :external="true"
-                                        class="inline-flex items-center gap-x-2 rounded-md bg-neutral/10 px-3.5 py-2.5 text-sm font-semibold shadow-sm focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-secondary-600"
+                                        variant="link"
+                                        block
+                                        icon="i-simple-icons-discord"
+                                        class="text-[#5865f2]"
                                     >
-                                        <UIcon name="i-simple-icons-discord" class="size-5" color="#5865f2" />
-                                        <span>
-                                            {{ $t('components.about.join_discord') }}
-                                        </span>
-                                    </NuxtLink>
+                                        {{ $t('components.about.join_discord') }}
+                                    </UButton>
                                 </div>
                             </div>
                         </div>
                     </div>
-                    <div class="relative bg-primary-900">
+                    <div class="relative">
                         <div class="mx-auto max-w-7xl px-6 py-12 sm:py-16 lg:px-8 lg:py-10">
                             <div class="mx-auto max-w-4xl">
                                 <p class="mt-2 text-3xl font-bold tracking-tight sm:text-4xl">
                                     {{ $t('common.licenses') }}
                                 </p>
                                 <div class="mt-8">
-                                    <NuxtLink
-                                        :to="{ name: 'about-licenses' }"
-                                        class="inline-flex items-center gap-x-2 rounded-md bg-neutral/10 px-3.5 py-2.5 text-sm font-semibold shadow-sm focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-secondary-600"
-                                    >
-                                        <LicenseIcon class="-ml-0.5 size-5" />
-                                        <span>
-                                            {{ $t('components.about.licenses_list') }}
-                                        </span>
-                                    </NuxtLink>
+                                    <UButton variant="link" block icon="i-mdi-license" :to="{ name: 'about-licenses' }">
+                                        {{ $t('components.about.licenses_list') }}
+                                    </UButton>
                                 </div>
                             </div>
                         </div>

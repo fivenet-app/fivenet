@@ -121,7 +121,7 @@ const onSubmitThrottle = useThrottleFn(async (e) => {
             />
             <DataNoDataBlock
                 v-else-if="jobProps === null"
-                :icon="TuneIcon"
+                icon="i-mdi-tune"
                 :type="`${$t('common.job', 1)} ${$t('common.prop')}`"
             />
 

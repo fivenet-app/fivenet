@@ -195,7 +195,7 @@ function charsGetDisplayValue(chars: Colleague[]): string {
                         />
                         <DataNoDataBlock
                             v-else-if="data?.activity.length === 0"
-                            :icon="markRaw(BulletinBoardIcon)"
+                            icon="i-mdi-bulletin-board"
                             :type="`${$t('common.colleague', 1)} ${$t('common.activity')}`"
                         />
                         <div v-else>

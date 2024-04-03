@@ -107,7 +107,6 @@ function addToClipboard(): void {
                         :url="user.props?.mugShot?.url"
                         :name="`${user.firstname} ${user.lastname}`"
                         size="xl"
-                        :rounded="false"
                         :enable-popup="true"
                         :alt-text="$t('common.mug_shot')"
                     />

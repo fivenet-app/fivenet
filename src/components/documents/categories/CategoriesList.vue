@@ -78,7 +78,7 @@ async function openCategory(idx: number): Promise<void> {
                         />
                         <DataNoDataBlock
                             v-else-if="categories && categories.length === 0"
-                            :icon="TagIcon"
+                            icon="i-mdi-tag"
                             :type="$t('common.category', 2)"
                         />
                         <div v-else class="flex justify-center">

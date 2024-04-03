@@ -1,7 +1,4 @@
 <script lang="ts" setup>
-import { CloseCircleIcon, GestureTapIcon } from 'mdi-vue3';
-import { type DefineComponent } from 'vue';
-
 defineEmits<{
     (e: 'clicked'): void;
 }>();
@@ -10,13 +7,13 @@ const props = withDefaults(
     defineProps<{
         title: string;
         message?: string | undefined;
-        icon?: DefineComponent;
+        icon?: string;
         type?: 'error' | 'info' | 'success';
         callbackMessage?: string;
     }>(),
     {
         message: undefined,
-        icon: markRaw(CloseCircleIcon),
+        icon: 'i-mdi-close-circle',
         type: 'error',
         callbackMessage: undefined,
     },
@@ -77,7 +74,7 @@ switch (props.type) {
                             @click="$emit('clicked')"
                         >
                             {{ callbackMessage ?? $t('common.retry') }}
-                            <GestureTapIcon class="ml-2 size-5" />
+                            <UIcon name="i-mdi-gesture-tap" class="ml-2 size-5" />
                         </UButton>
                     </div>
                 </div>

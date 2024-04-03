@@ -45,10 +45,10 @@ const popupAnchor = ref<PointExpression>([0, (props.size / 2) * -1]);
         @click="$emit('selected')"
     >
         <LIcon :icon-size="[size, size]" :icon-anchor="iconAnchor" :popup-anchor="popupAnchor">
-            <component
-                :is="
-                    markerIcons.find((i) => marker.data?.data.oneofKind === 'icon' && i.name === marker.data?.data.icon.icon) ??
-                    MapMarkerQuestionIcon
+            <UIcon
+                :name="
+                    markerIcons.find((i) => marker.data?.data.oneofKind === 'icon' && i === marker.data?.data.icon.icon) ??
+                    'i-mdi-map-marker-question'
                 "
                 class="h-auto w-full"
                 :style="{ color: marker.info?.color ?? 'currentColor' }"

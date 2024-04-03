@@ -26,7 +26,6 @@ defineEmits<{
                 :url="colleague.avatar?.url"
                 :name="`${colleague.firstname} ${colleague.lastname}`"
                 size="sm"
-                :rounded="false"
                 :enable-popup="true"
             />
         </td>

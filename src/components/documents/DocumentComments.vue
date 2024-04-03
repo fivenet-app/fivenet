@@ -224,7 +224,7 @@ const onSubmitThrottle = useThrottleFn(async (e) => {
             <DataNoDataBlock
                 v-if="!data || !data.comments || data?.comments.length === 0"
                 :message="$t('components.documents.document_comments.no_comments')"
-                :icon="CommentTextMultipleIcon"
+                icon="i-mdi-comment-text-multiple"
                 :focus="focusComment"
             />
             <div

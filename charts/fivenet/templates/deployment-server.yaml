@@ -3,13 +3,13 @@ kind: Deployment
 metadata:
   name: {{ include "fivenet.fullname" . }}
   labels:
-    {{- include "fivenet.labels" . | nindent 4 }}
+    {{- include "fivenet.labels" . | nindent 4 }}-server
 spec:
-  replicas: {{ .Values.frontend.replicaCount }}
-  revisionHistoryLimit: {{ .Values.frontend.revisionHistoryLimit }}
+  replicas: {{ .Values.server.replicaCount }}
+  revisionHistoryLimit: {{ .Values.server.revisionHistoryLimit }}
   selector:
     matchLabels:
-      app.kubernetes.io/component: frontend
+      app.kubernetes.io/component: server
       {{- include "fivenet.selectorLabels" . | nindent 6 }}
   template:
     metadata:
@@ -19,7 +19,7 @@ spec:
         {{- toYaml . | nindent 8 }}
       {{- end }}
       labels:
-        app.kubernetes.io/component: frontend
+        app.kubernetes.io/component: server
         {{- include "fivenet.selectorLabels" . | nindent 8 }}
     spec:
       {{- with .Values.imagePullSecrets }}
@@ -36,29 +36,35 @@ spec:
       containers:
         - name: fivenet
           args:
-            - frontend
+            - server
+            {{- if .Values.server.serveFrontend }}
+            - --serve-frontend
+            {{- end }}
           securityContext:
             {{- toYaml .Values.securityContext | nindent 12 }}
-          image: "{{ .Values.frontend.image.repository }}:{{ .Values.frontend.image.tag | default .Chart.AppVersion }}"
-          imagePullPolicy: {{ .Values.frontend.image.pullPolicy }}
+          image: "{{ .Values.server.image.repository }}:{{ .Values.server.image.tag | default .Chart.AppVersion }}"
+          imagePullPolicy: {{ .Values.server.image.pullPolicy }}
           env:
-            {{- toYaml .Values.frontend.additionalEnv | nindent 12 }}
+            {{- toYaml .Values.server.additionalEnv | nindent 12 }}
           ports:
             - name: http
               containerPort: 8080
               protocol: TCP
+            - name: grpc
+              containerPort: 9090
+              protocol: TCP
             - name: metrics
               containerPort: 7070
               protocol: TCP
-          {{- with .Values.frontend.livenessProbe }}
+          {{- with .Values.server.livenessProbe }}
           livenessProbe:
             {{- toYaml . | nindent 12 }}
           {{- end }}
-          {{- with .Values.frontend.readinessProbe }}
+          {{- with .Values.server.readinessProbe }}
           readinessProbe:
             {{- toYaml . | nindent 12 }}
           {{- end }}
-          {{- with .Values.frontend.startupProbe }}
+          {{- with .Values.server.startupProbe }}
           startupProbe:
             {{- toYaml . | nindent 12 }}
           {{- end }}
@@ -67,7 +73,7 @@ spec:
               mountPath: /config
               readOnly: true
           resources:
-            {{- toYaml .Values.frontend.resources | nindent 12 }}
+            {{- toYaml .Values.server.resources | nindent 12 }}
       {{- with .Values.nodeSelector }}
       nodeSelector:
         {{- toYaml . | nindent 8 }}

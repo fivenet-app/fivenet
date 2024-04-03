@@ -181,7 +181,7 @@ function reset(): void {
                 <DataNoDataBlock
                     v-if="pins.length === 0"
                     :message="$t('components.bodycheckup.no_points')"
-                    :icon="VectorPointSelectIcon"
+                    icon="i-mdi-vector-point-select"
                 />
                 <ol v-else>
                     <li v-for="(pin, idx) in pins" :key="idx" class="my-2 inline-flex w-full items-center">

@@ -8,7 +8,6 @@ import {
     CalendarIcon,
     CalendarRemoveIcon,
     ChevronDownIcon,
-    FileSearchIcon,
     ListStatusIcon,
     LockIcon,
     LockOpenVariantIcon,
@@ -373,7 +372,7 @@ const openRequest = ref(false);
                                         <div class="mx-4 flex flex-row flex-wrap gap-1 pb-2">
                                             <DataNoDataBlock
                                                 v-if="!quali.access || quali.access?.jobs.length === 0"
-                                                :icon="FileSearchIcon"
+                                                icon="i-mdi-file-search"
                                                 :message="$t('common.not_found', [$t('common.access', 2)])"
                                             />
 

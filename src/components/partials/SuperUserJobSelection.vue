@@ -36,5 +36,10 @@ watch(selectedJob, () => {
         :search="
             async (q?: string) => (await listJobs()).filter((j) => q === undefined || j.name.includes(q) || j.label.includes(q))
         "
-    />
+    >
+        <template #option-empty="{ query: search }">
+            <q>{{ search }}</q> {{ $t('common.query_not_found') }}
+        </template>
+        <template #empty> {{ $t('common.not_found', [$t('common.job', 2)]) }} </template>
+    </UInputMenu>
 </template>

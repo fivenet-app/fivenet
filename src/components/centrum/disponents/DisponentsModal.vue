@@ -1,5 +1,4 @@
 <script lang="ts" setup>
-import { MonitorIcon } from 'mdi-vue3';
 import CitizenInfoPopover from '~/components/partials/citizens/CitizenInfoPopover.vue';
 import DataNoDataBlock from '~/components/partials/data/DataNoDataBlock.vue';
 import { useCentrumStore } from '~/store/centrum';
@@ -36,7 +35,7 @@ const { disponents, getCurrentMode } = storeToRefs(centrumStore);
 
             <DataNoDataBlock
                 v-if="disponents && disponents.length === 0"
-                :icon="MonitorIcon"
+                icon="i-mdi-monitor"
                 :type="$t('common.disponents', 2)"
                 class="mt-5"
             />

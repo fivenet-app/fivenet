@@ -12,20 +12,7 @@ import {
     TransitionRoot,
 } from '@headlessui/vue';
 import { watchDebounced } from '@vueuse/core';
-import {
-    CheckIcon,
-    ClipboardListIcon,
-    CloseBoxIcon,
-    CloseIcon,
-    FileDocumentMinusIcon,
-    FileDocumentMultipleIcon,
-    FileDocumentPlusIcon,
-    FileSearchIcon,
-    LinkIcon,
-    LockClockIcon,
-    OpenInNewIcon,
-} from 'mdi-vue3';
-import { type DefineComponent } from 'vue';
+import { CheckIcon, CloseBoxIcon, CloseIcon, FileDocumentMinusIcon, LinkIcon, LockClockIcon, OpenInNewIcon } from 'mdi-vue3';
 import CitizenInfoPopover from '~/components/partials/citizens/CitizenInfoPopover.vue';
 import DataNoDataBlock from '~/components/partials/data/DataNoDataBlock.vue';
 import GenericTime from '~/components/partials/elements/GenericTime.vue';
@@ -50,15 +37,15 @@ const emit = defineEmits<{
     (e: 'update:modelValue', payload: Map<string, DocumentReference>): void;
 }>();
 
-const tabs = ref<{ name: string; icon: DefineComponent }[]>([
+const tabs = ref<{ name: string; icon: string }[]>([
     {
         name: t('components.documents.document_managers.view_current'),
-        icon: markRaw(FileSearchIcon),
+        icon: 'i-mdi-file-search',
     },
-    { name: t('common.clipboard'), icon: markRaw(ClipboardListIcon) },
+    { name: t('common.clipboard'), icon: 'i-mdi-clipboard-list' },
     {
         name: t('components.documents.document_managers.add_new'),
-        icon: markRaw(FileDocumentPlusIcon),
+        icon: 'i-mdi-file-document-plus',
     },
 ]);
 
@@ -317,7 +304,7 @@ function removeReference(id: string): void {
                                                         <DataNoDataBlock
                                                             v-if="clipboardStore.$state.documents.length === 0"
                                                             :type="$t('common.reference', 2)"
-                                                            :icon="FileDocumentMultipleIcon"
+                                                            icon="i-mdi-file-document-multiple"
                                                         />
                                                         <table v-else class="min-w-full divide-y divide-base-200">
                                                             <thead>

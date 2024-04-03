@@ -62,7 +62,7 @@ watch(offset, async () => refresh());
             <DataNoDataBlock
                 v-else-if="data?.qualifications.length === 0"
                 :message="$t('common.not_found', [$t('common.qualifications', 2)])"
-                :icon="markRaw(SchoolIcon)"
+                icon="i-mdi-school"
             />
 
             <template v-else>

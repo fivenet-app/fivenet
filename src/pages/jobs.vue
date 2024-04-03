@@ -14,50 +14,49 @@ definePageMeta({
 
 const { t } = useI18n();
 
-const tabs: { label: string; to: RoutesNamedLocations; permission?: Perms; icon: string }[] = [
+const links = [
     {
         label: t('common.overview'),
         to: { name: 'jobs-overview' },
-        permission: 'JobsService.ListColleagues' as Perms,
         icon: 'i-mdi-briefcase',
+        permission: 'JobsService.ListColleagues' as Perms,
     },
     {
         label: t('pages.jobs.colleagues.title'),
         to: { name: 'jobs-colleagues' },
-        permission: 'JobsService.ListColleagues' as Perms,
         icon: 'i-mdi-account-group',
+        permission: 'JobsService.ListColleagues' as Perms,
     },
     {
         label: t('common.activity'),
         to: { name: 'jobs-activity' },
-        permission: 'JobsService.ListColleagueActivity' as Perms,
         icon: 'i-mdi-bulletin-board',
+        permission: 'JobsService.ListColleagueActivity' as Perms,
     },
     {
         label: t('pages.jobs.timeclock.title'),
         to: { name: 'jobs-timeclock' },
-        permission: 'JobsTimeclockService.ListTimeclock' as Perms,
         icon: 'i-mdi-timeline-clock',
+        permission: 'JobsTimeclockService.ListTimeclock' as Perms,
     },
     {
         label: t('pages.qualifications.title'),
         to: { name: 'jobs-qualifications' },
-        permission: 'QualificationsService.ListQualifications' as Perms,
         icon: 'i-mdi-school',
+        permission: 'QualificationsService.ListQualifications' as Perms,
     },
     {
         label: t('pages.jobs.conduct.title'),
         to: { name: 'jobs-conduct' },
-        permission: 'JobsConductService.ListConductEntries' as Perms,
         icon: 'i-mdi-list-status',
+        permission: 'JobsConductService.ListConductEntries' as Perms,
     },
-].filter((t) => t.permission === undefined || can(t.permission));
-
-function onChange(index: number) {
-    const item = tabs[index];
-
-    navigateTo(item.to);
-}
+].filter((t) => t.permission === undefined || can(t.permission)) as {
+    label: string;
+    to: RoutesNamedLocations;
+    icon: string;
+    permission?: Perms;
+}[];
 </script>
 
 <template>
@@ -65,33 +64,16 @@ function onChange(index: number) {
         <UDashboardPanel grow>
             <UDashboardNavbar :title="$t('pages.jobs.title')"> </UDashboardNavbar>
 
-            <UTabs :items="tabs" class="w-full" @change="onChange">
-                <template #default="{ item, selected }">
-                    <div class="flex items-center gap-2 relative truncate">
-                        <UIcon :name="item.icon" class="w-4 h-4 flex-shrink-0" />
+            <UHorizontalNavigation :links="links" class="border-b border-gray-200 dark:border-gray-800" />
 
-                        <span class="truncate">{{ item.label }}</span>
-
-                        <span
-                            v-if="selected"
-                            class="absolute -right-4 w-2 h-2 rounded-full bg-primary-500 dark:bg-primary-400"
-                        />
-                    </div>
-                </template>
-            </UTabs>
-
-            <main>
-                <div class="mx-auto max-w-7xl py-4 sm:px-6 lg:px-8">
-                    <NuxtLayout name="blank">
-                        <NuxtPage
-                            :transition="{
-                                name: 'page',
-                                mode: 'out-in',
-                            }"
-                        />
-                    </NuxtLayout>
-                </div>
-            </main>
+            <NuxtLayout name="blank">
+                <NuxtPage
+                    :transition="{
+                        name: 'page',
+                        mode: 'out-in',
+                    }"
+                />
+            </NuxtLayout>
         </UDashboardPanel>
     </UDashboardPage>
 </template>

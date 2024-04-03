@@ -46,7 +46,6 @@ const showAbsence = props.colleague.props?.absenceEnd && toDate(props.colleague.
                 :url="colleague.avatar?.url"
                 :name="`${colleague.firstname} ${colleague.lastname}`"
                 size="sm"
-                :rounded="false"
                 :enable-popup="true"
             />
         </td>

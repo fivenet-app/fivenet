@@ -164,7 +164,7 @@ const onSubmitThrottle = useThrottleFn(async (resp: TakeDispatchResp) => {
                                                         <template v-if="getCurrentMode === CentrumMode.SIMPLIFIED">
                                                             <DataNoDataBlock
                                                                 v-if="dispatches.size === 0"
-                                                                :icon="CarEmergencyIcon"
+                                                                icon="i-mdi-car-emergency"
                                                                 :type="$t('common.dispatch', 2)"
                                                             />
                                                             <template v-else>
@@ -205,7 +205,7 @@ const onSubmitThrottle = useThrottleFn(async (resp: TakeDispatchResp) => {
                                                         <template v-else>
                                                             <DataNoDataBlock
                                                                 v-if="pendingDispatches.length === 0"
-                                                                :icon="CarEmergencyIcon"
+                                                                icon="i-mdi-car-emergency"
                                                                 :type="$t('common.dispatch', 2)"
                                                             />
                                                             <template v-else>

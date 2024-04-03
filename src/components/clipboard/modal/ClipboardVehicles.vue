@@ -101,7 +101,7 @@ watch(props, (newVal) => {
     <h3 class="pb-1 pt-2 font-medium">{{ $t('common.vehicle', 2) }}</h3>
     <DataNoDataBlock
         v-if="vehicles?.length === 0"
-        :icon="CarIcon"
+        icon="i-mdi-car"
         :message="$t('components.clipboard.clipboard_modal.no_data', [$t('common.vehicle', 2)])"
     />
     <table v-else class="min-w-full divide-y divide-gray-700">

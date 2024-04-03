@@ -55,61 +55,13 @@ ingress:
           servicePort: grpc
         - path: /
           pathType: Prefix
+          #service: frontend
   tls: []
   #  - secretName: chart-example-tls
   #    hosts:
   #      - chart-example.local
 
 fivenet:
-  replicaCount: 1
-  revisionHistoryLimit: 1
-  image:
-    repository: docker.io/galexrt/fivenet
-    pullPolicy: IfNotPresent
-    # Overrides the image tag whose default is the chart appVersion.
-    tag: ""
-  resources: {}
-    # We usually recommend not to specify default resources and to leave this as a conscious
-    # choice for the user. This also increases chances charts run on environments with little
-    # resources, such as Minikube. If you do want to specify resources, uncomment the following
-    # lines, adjust them as necessary, and remove the curly braces after 'resources:'.
-    # limits:
-    #   cpu: 100m
-    #   memory: 128Mi
-    # requests:
-    #   cpu: 100m
-    #   memory: 128Mi
-  livenessProbe:
-    httpGet:
-      path: /readiness
-      port: metrics
-    failureThreshold: 3
-    initialDelaySeconds: 25
-    periodSeconds: 10
-  readinessProbe: null
-  startupProbe:
-    httpGet:
-      path: /readiness
-      port: metrics
-    failureThreshold: 30
-    initialDelaySeconds: 20
-    periodSeconds: 10
-  additionalEnv: []
-  serviceMonitor:
-    # -- Specifies whether a prometheus-operator ServiceMonitor should be created
-    enabled: false
-    # -- Additional Labels for the ServiceMonitor object
-    additionalLabels: {}
-    #namespace: "monitoring"
-    namespaceSelector:
-    # Default: scrape .Release.Namespace only
-    # To scrape all, use the following:
-    #  matchNames:
-    #    - monitoring
-    #   any: true
-    # -- (duration) Interval at which metrics should be scraped
-    scrapeInterval: 30s
-    # honorLabels: true
   # -- FiveNet config
   config:
     logLevel: "INFO"
@@ -236,6 +188,109 @@ fivenet:
           #  color: "#9B59B6"
       commands:
         enabled: true
+
+frontend:
+  replicaCount: 1
+  revisionHistoryLimit: 1
+  image:
+    repository: docker.io/galexrt/fivenet
+    pullPolicy: IfNotPresent
+    # Overrides the image tag whose default is the chart appVersion.
+    tag: ""
+  resources: {}
+    # We usually recommend not to specify default resources and to leave this as a conscious
+    # choice for the user. This also increases chances charts run on environments with little
+    # resources, such as Minikube. If you do want to specify resources, uncomment the following
+    # lines, adjust them as necessary, and remove the curly braces after 'resources:'.
+    # limits:
+    #   cpu: 100m
+    #   memory: 128Mi
+    # requests:
+    #   cpu: 100m
+    #   memory: 128Mi
+  livenessProbe:
+    httpGet:
+      path: /readiness
+      port: metrics
+    failureThreshold: 3
+    initialDelaySeconds: 25
+    periodSeconds: 10
+  readinessProbe: null
+  startupProbe:
+    httpGet:
+      path: /readiness
+      port: metrics
+    failureThreshold: 30
+    initialDelaySeconds: 20
+    periodSeconds: 10
+  additionalEnv: []
+  serviceMonitor:
+    # -- Specifies whether a prometheus-operator ServiceMonitor should be created
+    enabled: false
+    # -- Additional Labels for the ServiceMonitor object
+    additionalLabels: {}
+    #namespace: "monitoring"
+    namespaceSelector:
+    # Default: scrape .Release.Namespace only
+    # To scrape all, use the following:
+    #  matchNames:
+    #    - monitoring
+    #   any: true
+    # -- (duration) Interval at which metrics should be scraped
+    scrapeInterval: 30s
+    # honorLabels: true
+
+server:
+  serveFrontend: false
+  replicaCount: 1
+  revisionHistoryLimit: 1
+  image:
+    repository: docker.io/galexrt/fivenet
+    pullPolicy: IfNotPresent
+    # Overrides the image tag whose default is the chart appVersion.
+    tag: ""
+  resources: {}
+    # We usually recommend not to specify default resources and to leave this as a conscious
+    # choice for the user. This also increases chances charts run on environments with little
+    # resources, such as Minikube. If you do want to specify resources, uncomment the following
+    # lines, adjust them as necessary, and remove the curly braces after 'resources:'.
+    # limits:
+    #   cpu: 100m
+    #   memory: 128Mi
+    # requests:
+    #   cpu: 100m
+    #   memory: 128Mi
+  livenessProbe:
+    httpGet:
+      path: /readiness
+      port: metrics
+    failureThreshold: 3
+    initialDelaySeconds: 25
+    periodSeconds: 10
+  readinessProbe: null
+  startupProbe:
+    httpGet:
+      path: /readiness
+      port: metrics
+    failureThreshold: 30
+    initialDelaySeconds: 20
+    periodSeconds: 10
+  additionalEnv: []
+  serviceMonitor:
+    # -- Specifies whether a prometheus-operator ServiceMonitor should be created
+    enabled: false
+    # -- Additional Labels for the ServiceMonitor object
+    additionalLabels: {}
+    #namespace: "monitoring"
+    namespaceSelector:
+    # Default: scrape .Release.Namespace only
+    # To scrape all, use the following:
+    #  matchNames:
+    #    - monitoring
+    #   any: true
+    # -- (duration) Interval at which metrics should be scraped
+    scrapeInterval: 30s
+    # honorLabels: true
 
 # -- FiveNet Worker deployment config
 worker:
@@ -472,7 +527,7 @@ envoy:
                 - endpoint:
                     address:
                       socket_address:
-                        address: '{{ include "fivenet.fullname" . }}'
+                        address: '{{ include "fivenet.fullname" . }}-server'
                         port_value: 9090
 
 # -- NATS server/cluster config values: https://artifacthub.io/packages/helm/nats/nats#values

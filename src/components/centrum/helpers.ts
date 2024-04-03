@@ -9,23 +9,23 @@ export function dispatchStatusToFillColor(status: StatusDispatch | undefined): s
         case StatusDispatch.NEW:
         case StatusDispatch.UNASSIGNED:
         case StatusDispatch.UNIT_DECLINED:
-            return '!fill-error-600';
+            return '!text-error-600';
         case StatusDispatch.EN_ROUTE:
-            return '!fill-info-500';
+            return '!text-info-500';
         case StatusDispatch.ON_SCENE:
-            return '!fill-info-700';
+            return '!text-info-700';
         case StatusDispatch.NEED_ASSISTANCE:
-            return '!fill-warn-600';
+            return '!text-warn-600';
         case StatusDispatch.COMPLETED:
-            return '!fill-success-600';
+            return '!text-success-600';
         case StatusDispatch.CANCELLED:
-            return '!fill-success-800';
+            return '!text-success-800';
         case StatusDispatch.ARCHIVED:
-            return '!fill-base-600';
+            return '!text-base-600';
         case StatusDispatch.UNIT_ACCEPTED:
-            return '!fill-info-600';
+            return '!text-info-600';
         default:
-            return '!fill-info-500';
+            return '!text-info-500';
     }
 }
 

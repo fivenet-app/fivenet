@@ -222,7 +222,7 @@ if (hash.value !== undefined && hash.value !== null) {
         </template>
         <DataNoDataBlock
             v-else-if="doc === null"
-            :icon="FileSearchIcon"
+            icon="i-mdi-file-search"
             :message="$t('common.not_found', [$t('common.document', 2)])"
         />
 
@@ -524,7 +524,7 @@ if (hash.value !== undefined && hash.value !== null) {
                                     <div class="mx-4 flex flex-row flex-wrap gap-1 pb-2">
                                         <DataNoDataBlock
                                             v-if="!access || (access?.jobs.length === 0 && access?.users.length === 0)"
-                                            :icon="FileSearchIcon"
+                                            icon="i-mdi-file-search"
                                             :message="$t('common.not_found', [$t('common.access', 2)])"
                                         />
 

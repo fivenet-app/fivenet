@@ -82,5 +82,10 @@ watchDebounced(postalQuery, () => findPostal(), {
         @click="loadPostals"
         @focusin="focusTablet(true)"
         @focusout="focusTablet(false)"
-    />
+    >
+        <template #option-empty="{ query: search }">
+            <q>{{ search }}</q> {{ $t('common.query_not_found') }}
+        </template>
+        <template #empty> {{ $t('common.not_found', [$t('common.postal', 2)]) }} </template>
+    </UInputMenu>
 </template>

@@ -11,20 +11,7 @@ import {
     TransitionChild,
     TransitionRoot,
 } from '@headlessui/vue';
-import { watchDebounced } from '@vueuse/core';
-import {
-    AccountMinusIcon,
-    AccountMultipleIcon,
-    AccountSearchIcon,
-    AtIcon,
-    ClipboardListIcon,
-    CloseIcon,
-    OpenInNewIcon,
-    SourceCommitStartIcon,
-    TargetIcon,
-    ViewListOutlineIcon,
-} from 'mdi-vue3';
-import { type DefineComponent } from 'vue';
+import { AccountMinusIcon, AtIcon, CloseIcon, OpenInNewIcon, SourceCommitStartIcon, TargetIcon } from 'mdi-vue3';
 import CitizenInfoPopover from '~/components/partials/citizens/CitizenInfoPopover.vue';
 import DataNoDataBlock from '~/components/partials/data/DataNoDataBlock.vue';
 import { useAuthStore } from '~/store/auth';
@@ -53,15 +40,15 @@ const emit = defineEmits<{
     (e: 'update:modelValue', payload: Map<string, DocumentRelation>): void;
 }>();
 
-const tabs = ref<{ name: string; icon: DefineComponent }[]>([
+const tabs = ref<{ name: string; icon: string }[]>([
     {
         name: t('components.documents.document_managers.view_current'),
-        icon: markRaw(ViewListOutlineIcon),
+        icon: 'i-mdi-view-list-outline',
     },
-    { name: t('common.clipboard'), icon: markRaw(ClipboardListIcon) },
+    { name: t('common.clipboard'), icon: 'i-mdi-clipboard-list' },
     {
         name: t('components.documents.document_managers.add_new'),
-        icon: markRaw(AccountSearchIcon),
+        icon: 'i-mdi-account-search',
     },
 ]);
 
@@ -297,7 +284,7 @@ function removeRelation(id: string): void {
                                                         <DataNoDataBlock
                                                             v-if="clipboardStore.$state.users.length === 0"
                                                             :type="$t('common.citizen', 2)"
-                                                            :icon="AccountMultipleIcon"
+                                                            icon="i-mdi-account-ultiple"
                                                         />
                                                         <table v-else class="min-w-full divide-y divide-base-200">
                                                             <thead>

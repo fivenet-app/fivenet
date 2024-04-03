@@ -18,9 +18,10 @@ withDefaults(
 <template>
     <div class="flex space-x-3">
         <div class="my-auto flex size-10 items-center justify-center rounded-full">
-            <component
-                :is="jobsUserActivityTypeIcon(activity.activityType)"
+            <UIcon
+                :name="jobsUserActivityTypeIcon(activity.activityType)"
                 :class="[jobsUserActivityTypeBGColor(activity.activityType), 'size-full']"
+                :inline="true"
             />
         </div>
         <div class="flex-1 space-y-1">

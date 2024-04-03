@@ -1,5 +1,4 @@
 <script lang="ts" setup>
-import { GavelIcon } from 'mdi-vue3';
 import DataErrorBlock from '~/components/partials/data/DataErrorBlock.vue';
 import DataNoDataBlock from '~/components/partials/data/DataNoDataBlock.vue';
 import DataPendingBlock from '~/components/partials/data/DataPendingBlock.vue';
@@ -73,7 +72,7 @@ function updateLaw(event: { id: string; law: Law }): void {
                         />
                         <DataNoDataBlock
                             v-else-if="lawBooks === null || lawBooks.length === 0"
-                            :icon="GavelIcon"
+                            icon="i-mdi-gavel"
                             :type="$t('common.law', 2)"
                         />
                         <template v-else>

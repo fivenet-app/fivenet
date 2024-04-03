@@ -74,23 +74,21 @@ const openMessage = ref(false);
             <CitizenInfoPopover :user="conduct.creator" />
         </td>
         <td class="whitespace-nowrap py-2 pl-3 pr-4 text-base font-medium sm:pr-0">
-            <div class="flex flex-col justify-end gap-1 md:flex-row">
+            <UButtonGroup class="flex">
                 <UButton
                     v-if="can('JobsConductService.UpdateConductEntry')"
-                    class="flex-initial text-primary-500 hover:text-primary-400"
+                    variant="link"
+                    icon="i-mdi-pencil"
                     @click="$emit('selected')"
-                >
-                    <PencilIcon class="ml-auto mr-2.5 h-auto w-5" />
-                </UButton>
+                />
 
                 <UButton
                     v-if="can('JobsConductService.DeleteConductEntry')"
-                    class="flex-initial text-primary-500 hover:text-primary-400"
+                    variant="link"
+                    icon="i-mdi-trash-can"
                     @click="$emit('delete')"
-                >
-                    <TrashCanIcon class="ml-auto mr-2.5 h-auto w-5" />
-                </UButton>
-            </div>
+                />
+            </UButtonGroup>
         </td>
     </tr>
 </template>

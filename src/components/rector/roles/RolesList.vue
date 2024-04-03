@@ -1,7 +1,7 @@
 <script lang="ts" setup>
 import { Combobox, ComboboxButton, ComboboxInput, ComboboxOption, ComboboxOptions } from '@headlessui/vue';
 import { watchOnce } from '@vueuse/core';
-import { CheckIcon, SelectIcon } from 'mdi-vue3';
+import { CheckIcon } from 'mdi-vue3';
 import DataErrorBlock from '~/components/partials/data/DataErrorBlock.vue';
 import DataNoDataBlock from '~/components/partials/data/DataNoDataBlock.vue';
 import DataPendingBlock from '~/components/partials/data/DataPendingBlock.vue';
@@ -11,7 +11,6 @@ import { useNotificatorStore } from '~/store/notificator';
 import { Role } from '~~/gen/ts/resources/permissions/permissions';
 import { Job, JobGrade } from '~~/gen/ts/resources/users/jobs';
 import RoleView from '~/components/rector/roles/RoleView.vue';
-import RolesListEntry from '~/components/rector/roles/RolesListEntry.vue';
 import GenericTable from '~/components/partials/elements/GenericTable.vue';
 
 const { $grpc } = useNuxtApp();
@@ -198,13 +197,19 @@ const selectedRole = ref<Role | undefined>();
                                     </tr>
                                 </template>
                                 <template #tbody>
-                                    <RolesListEntry
-                                        v-for="role in sortedRoles"
-                                        :key="role.id"
-                                        :class="selectedRole?.id === role.id ? 'bg-base-800' : ''"
-                                        :role="role"
-                                        @selected="selectedRole = role"
-                                    />
+                                    <tr v-for="role in sortedRoles" :key="role.id" class="even:bg-base-800">
+                                        <td
+                                            class="whitespace-nowrap py-2 pl-2 pr-3 text-sm font-medium"
+                                            :title="`ID: ${role.id}`"
+                                        >
+                                            {{ role.jobLabel }} - {{ role.jobGradeLabel }} ({{ role.grade }})
+                                        </td>
+                                        <td class="whitespace-nowrap py-2 pl-3 pr-2 text-right text-sm font-medium">
+                                            <div class="flex flex-row justify-end">
+                                                <UButton variant="link" icon="i-mdi-eye" @click="selectedRole = role" />
+                                            </div>
+                                        </td>
+                                    </tr>
                                 </template>
                             </GenericTable>
 
@@ -223,7 +228,7 @@ const selectedRole = ref<Role | undefined>();
                         />
                     </template>
                     <template v-else>
-                        <DataNoDataBlock :icon="SelectIcon" :message="$t('common.none_selected', [$t('common.role')])" />
+                        <DataNoDataBlock icon="i-mdi-select" :message="$t('common.none_selected', [$t('common.role')])" />
                     </template>
                 </div>
             </div>

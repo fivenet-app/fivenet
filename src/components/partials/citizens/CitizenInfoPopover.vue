@@ -33,7 +33,7 @@ withDefaults(
     <template v-else-if="noPopover">
         <span class="inline-flex items-center">
             <slot name="before" />
-            <UButton variant="link" :padding="false" :to="{ name: 'citizens-id', params: { id: user.userId ?? 0 } }">
+            <UButton variant="link" :padded="false" :to="{ name: 'citizens-id', params: { id: user.userId ?? 0 } }">
                 {{ user.firstname }} {{ user.lastname }}
             </UButton>
             <span v-if="user.phoneNumber">
@@ -45,7 +45,7 @@ withDefaults(
     <UPopover v-else>
         <UButton
             variant="link"
-            :padding="false"
+            :padded="false"
             class="inline-flex items-center"
             :class="buttonClass"
             :trailing-icon="trailing ? 'i-heroicons-chevron-down-20-solid' : ''"

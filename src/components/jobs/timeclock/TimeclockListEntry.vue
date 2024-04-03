@@ -29,7 +29,6 @@ const spentTime = parseFloat(((Math.round(props.entry.spentTime * 100) / 100) * 
                 :url="entry.user?.avatar?.url"
                 :name="`${entry.user?.firstname} ${entry.user?.lastname}`"
                 size="sm"
-                :rounded="false"
             />
             <CitizenInfoPopover :user="entry.user" />
         </td>

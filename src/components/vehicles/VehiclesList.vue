@@ -38,7 +38,7 @@ const offset = computed(() => (data.value?.pagination?.pageSize ? data.value?.pa
 
 const { data: data, pending: loading, refresh } = useLazyAsyncData(`vehicles-${page.value}`, () => listVehicles());
 
-const hideModell = ref(false);
+const hideVehicleModell = ref(false);
 
 async function listVehicles(): Promise<ListVehiclesResponse> {
     try {
@@ -55,9 +55,9 @@ async function listVehicles(): Promise<ListVehiclesResponse> {
 
         if (response.vehicles.length > 0) {
             if (response.vehicles[0].model === undefined) {
-                hideModell.value = true;
+                hideVehicleModell.value = true;
             } else {
-                hideModell.value = false;
+                hideVehicleModell.value = false;
             }
         }
 
@@ -149,7 +149,7 @@ const columns = [
                                 />
                             </div>
                         </div>
-                        <div v-if="!hideModell" class="flex-1">
+                        <div v-if="!hideVehicleModell" class="flex-1">
                             <label for="model" class="block text-sm font-medium leading-6">
                                 {{ $t('common.model') }}
                             </label>
@@ -200,6 +200,10 @@ const columns = [
                                     <template #option="{ option: user }">
                                         {{ `${user?.firstname} ${user?.lastname} (${user?.dateofbirth})` }}
                                     </template>
+                                    <template #option-empty="{ query: search }">
+                                        <q>{{ search }}</q> {{ $t('common.query_not_found') }}
+                                    </template>
+                                    <template #empty> {{ $t('common.not_found', [$t('common.owner', 2)]) }} </template>
                                 </UInputMenu>
                             </div>
                         </div>

@@ -46,12 +46,12 @@ watch(offset, async () => refresh());
         <DataErrorBlock v-else-if="error" :title="$t('common.unable_to_load', [$t('common.document', 2)])" :retry="refresh" />
         <DataNoDataBlock
             v-else-if="data === null || data.activity.length === 0"
-            :icon="TicketIcon"
+            icon="i-mdi-ticket"
             :message="$t('common.not_found', [$t('common.activity')])"
         />
 
         <template v-else>
-            <div class="mb-1 sm:divide-y sm:divide-base-400">
+            <div class="mb-1 divide-y divide-gray-200 dark:divide-gray-700">
                 <DocumentActivityListEntry v-for="item in data.activity" :key="item.id" :entry="item" />
             </div>
         </template>

@@ -1,6 +1,6 @@
 <script lang="ts" setup>
 import { Disclosure, DisclosureButton, DisclosurePanel } from '@headlessui/vue';
-import { ChevronDownIcon, GavelIcon } from 'mdi-vue3';
+import { ChevronDownIcon } from 'mdi-vue3';
 import DataErrorBlock from '~/components/partials/data/DataErrorBlock.vue';
 import DataNoDataBlock from '~/components/partials/data/DataNoDataBlock.vue';
 import DataPendingBlock from '~/components/partials/data/DataPendingBlock.vue';
@@ -170,7 +170,7 @@ watch(props, () => {
                 />
                 <DataNoDataBlock
                     v-else-if="lawBooks && lawBooks.length === 0"
-                    :icon="GavelIcon"
+                    icon="i-mdi-gavel"
                     :type="`${$t('common.citizen', 1)} ${$t('common.activity')}`"
                     class="mt-5"
                 />

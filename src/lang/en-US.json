@@ -940,7 +940,8 @@
         "help": "Help",
         "shortcuts": "Shortcuts",
         "commandpalette": "Command Palette",
-        "language": "Language | Languages"
+        "language": "Language | Languages",
+        "query_not_found": "not found."
     },
     "notifications": {
         "clipboard": {

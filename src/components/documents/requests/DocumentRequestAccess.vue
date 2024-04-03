@@ -1,5 +1,4 @@
 <script lang="ts" setup>
-import { LockQuestionIcon } from 'mdi-vue3';
 import GenericAlert from '~/components/partials/elements/GenericAlert.vue';
 import DocumentRequestAccessModal from '~/components/documents/requests/DocumentRequestAccessModal.vue';
 
@@ -21,7 +20,7 @@ const open = ref(false);
             type="info"
             :title="$t('components.documents.document_request_access.title')"
             :message="$t('components.documents.document_request_access.message')"
-            :icon="markRaw(LockQuestionIcon)"
+            icon="i-mdi-lock-question"
             :callback-message="$t('components.documents.document_request_access.callback_message')"
             @clicked="open = true"
         />

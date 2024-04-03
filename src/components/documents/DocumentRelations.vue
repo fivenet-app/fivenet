@@ -50,7 +50,7 @@ async function getDocumentRelations(): Promise<DocumentRelation[]> {
         <DataNoDataBlock
             v-if="!relations || relations.length === 0"
             :type="`${$t('common.document', 1)} ${$t('common.relation', 2)}`"
-            :icon="AccountMultipleIcon"
+            icon="i-mdi-account-multiple"
         />
 
         <template v-else>

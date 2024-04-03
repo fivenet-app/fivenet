@@ -14,9 +14,8 @@ import {
 // eslint-disable-next-line camelcase
 import { digits, max, max_value, min, min_value, required } from '@vee-validate/rules';
 import { useThrottleFn, useTimeoutFn } from '@vueuse/core';
-import { CheckIcon, ChevronDownIcon, CloseIcon, HelpIcon, LoadingIcon } from 'mdi-vue3';
+import { CheckIcon, ChevronDownIcon, CloseIcon, LoadingIcon } from 'mdi-vue3';
 import { defineRule } from 'vee-validate';
-import type { DefineComponent } from 'vue';
 import ColorInput from 'vue-color-input/dist/color-input.esm';
 import { useLivemapStore } from '~/store/livemap';
 import { type MarkerMarker, MarkerType } from '~~/gen/ts/resources/livemap/livemap';
@@ -47,7 +46,7 @@ interface FormData {
 
 const color = ref('#ee4b2b');
 const queryIcon = ref<string>('');
-const selectedIcon = shallowRef<DefineComponent>(HelpIcon);
+const selectedIcon = ref<string>('i-mdi-help');
 
 async function createMarker(values: FormData): Promise<void> {
     const expiresAt = values.expiresAt && values.expiresAt !== '' ? toTimestamp(fromString(values.expiresAt)) : undefined;
@@ -83,7 +82,7 @@ async function createMarker(values: FormData): Promise<void> {
                 data: {
                     oneofKind: 'icon',
                     icon: {
-                        icon: selectedIcon.value.name ?? '',
+                        icon: selectedIcon.value,
                     },
                 },
             };
@@ -435,14 +434,14 @@ const onSubmitThrottle = useThrottleFn(async (e) => {
                                                                                 <span
                                                                                     class="mt-1 inline-flex items-center truncate"
                                                                                 >
-                                                                                    <component
-                                                                                        :is="selectedIcon"
+                                                                                    <UIcon
                                                                                         v-if="selectedIcon"
+                                                                                        :name="selectedIcon"
                                                                                         class="mr-1 size-5"
                                                                                         :style="{ color: color }"
                                                                                     />
                                                                                     {{
-                                                                                        (selectedIcon.name ?? 'N/A').replace(
+                                                                                        (selectedIcon ?? 'N/A').replace(
                                                                                             'Icon',
                                                                                             '',
                                                                                         )
@@ -460,11 +459,10 @@ const onSubmitThrottle = useThrottleFn(async (e) => {
                                                                                 >
                                                                                     <ComboboxOption
                                                                                         v-for="icon in markerIcons.filter(
-                                                                                            (icon) =>
-                                                                                                icon?.name?.includes(queryIcon),
+                                                                                            (icon) => icon.includes(queryIcon),
                                                                                         )"
                                                                                         v-slot="{ active, selected }"
-                                                                                        :key="icon.name"
+                                                                                        :key="icon"
                                                                                         as="template"
                                                                                         :value="icon"
                                                                                     >
@@ -482,16 +480,11 @@ const onSubmitThrottle = useThrottleFn(async (e) => {
                                                                                                     'inline-flex items-center truncate',
                                                                                                 ]"
                                                                                             >
-                                                                                                <component
-                                                                                                    :is="icon"
+                                                                                                <UIcon
+                                                                                                    :name="icon"
                                                                                                     class="mr-1 size-5"
                                                                                                 />
-                                                                                                {{
-                                                                                                    icon?.name?.replace(
-                                                                                                        'Icon',
-                                                                                                        '',
-                                                                                                    )
-                                                                                                }}
+                                                                                                {{ icon.replace('i-mdi-', '') }}
                                                                                             </span>
 
                                                                                             <span
