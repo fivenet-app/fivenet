@@ -1,33 +1,23 @@
 <script lang="ts" setup>
-import {
-    Dialog,
-    DialogPanel,
-    DialogTitle,
-    Listbox,
-    ListboxButton,
-    ListboxOption,
-    ListboxOptions,
-    TransitionChild,
-    TransitionRoot,
-} from '@headlessui/vue';
+import { Listbox, ListboxButton, ListboxOption, ListboxOptions } from '@headlessui/vue';
 import { max, min, required } from '@vee-validate/rules';
-import { CheckIcon, ChevronDownIcon, CloseIcon, GroupIcon, LoadingIcon } from 'mdi-vue3';
+import { CheckIcon, ChevronDownIcon } from 'mdi-vue3';
 import { defineRule } from 'vee-validate';
 import ColorInput from 'vue-color-input/dist/color-input.esm';
 import { Unit } from '~~/gen/ts/resources/centrum/units';
 
 const props = defineProps<{
-    open: boolean;
     unit?: Unit;
 }>();
 
 const emit = defineEmits<{
-    (e: 'close'): void;
     (e: 'created', unit: Unit): void;
     (e: 'updated', unit: Unit): void;
 }>();
 
 const { $grpc } = useNuxtApp();
+
+const { isOpen } = useModal();
 
 interface FormData {
     name: string;
@@ -41,8 +31,6 @@ interface FormData {
 const availableAttributes: string[] = ['static', 'no_dispatch_auto_assign'];
 const selectedAttributes = ref<string[]>([]);
 
-const color = ref('#000000');
-
 async function createOrUpdateUnit(values: FormData): Promise<void> {
     try {
         const call = $grpc.getCentrumClient().createOrUpdateUnit({
@@ -51,7 +39,7 @@ async function createOrUpdateUnit(values: FormData): Promise<void> {
                 job: '',
                 name: values.name,
                 initials: values.initials,
-                color: color.value,
+                color: values.color,
                 description: values.description,
                 attributes: {
                     list: selectedAttributes.value,
@@ -68,7 +56,7 @@ async function createOrUpdateUnit(values: FormData): Promise<void> {
             emit('updated', response.unit!);
         }
 
-        emit('close');
+        isOpen.value = false;
     } catch (e) {
         $grpc.handleError(e as RpcError);
         throw e;
@@ -105,10 +93,9 @@ async function updateUnitInForm(): Promise<void> {
             name: props.unit.name,
             initials: props.unit.initials,
             description: props.unit.description,
+            color: props.unit.color,
             homePostal: props.unit.homePostal,
         });
-
-        color.value = props.unit.color;
 
         selectedAttributes.value = props.unit.attributes?.list ?? [];
     }
@@ -120,278 +107,209 @@ onBeforeMount(async () => updateUnitInForm());
 </script>
 
 <template>
-    <TransitionRoot as="template" :show="open">
-        <Dialog as="div" class="relative z-30" @close="$emit('close')">
-            <TransitionChild
-                as="template"
-                enter="ease-out duration-300"
-                enter-from="opacity-0"
-                enter-to="opacity-100"
-                leave="ease-in duration-200"
-                leave-from="opacity-100"
-                leave-to="opacity-0"
-            >
-                <div class="fixed inset-0 bg-gray-500/75 transition-opacity" />
-            </TransitionChild>
+    <UModal :ui="{ width: 'w-full sm:max-w-5xl' }">
+        <UCard :ui="{ ring: '', divide: 'divide-y divide-gray-100 dark:divide-gray-800' }">
+            <template #header>
+                <div class="flex items-center justify-between">
+                    <h3 class="text-2xl font-semibold leading-6">
+                        <template v-if="unit && unit?.id">
+                            {{ $t('components.centrum.units.update_unit') }}
+                        </template>
+                        <template v-else>
+                            {{ $t('components.centrum.units.create_unit') }}
+                        </template>
+                    </h3>
 
-            <div class="fixed inset-0 z-30 overflow-y-auto">
-                <div class="flex min-h-full items-end justify-center p-4 text-center sm:items-center sm:p-0">
-                    <TransitionChild
-                        as="template"
-                        enter="ease-out duration-300"
-                        enter-from="opacity-0 translate-y-4 sm:translate-y-0 sm:scale-95"
-                        enter-to="opacity-100 translate-y-0 sm:scale-100"
-                        leave="ease-in duration-200"
-                        leave-from="opacity-100 translate-y-0 sm:scale-100"
-                        leave-to="opacity-0 translate-y-4 sm:translate-y-0 sm:scale-95"
-                    >
-                        <DialogPanel
-                            class="relative w-full overflow-hidden rounded-lg bg-base-800 px-4 pb-4 pt-5 text-left shadow-xl transition-all sm:my-8 sm:max-w-lg sm:p-6"
-                        >
-                            <div class="absolute right-0 top-0 block pr-4 pt-4">
-                                <UButton
-                                    class="rounded-md bg-neutral-50 text-gray-400 hover:text-gray-500 focus:ring-2 focus:ring-primary-500 focus:ring-offset-2"
-                                    @click="$emit('close')"
-                                >
-                                    <span class="sr-only">{{ $t('common.close') }}</span>
-                                    <CloseIcon class="size-5" />
-                                </UButton>
-                            </div>
-                            <form @submit.prevent="onSubmitThrottle">
-                                <div>
-                                    <div class="mx-auto flex size-12 items-center justify-center rounded-full bg-success-100">
-                                        <GroupIcon class="size-5 text-success-600" />
-                                    </div>
-                                    <div class="mt-3 text-center sm:mt-5">
-                                        <DialogTitle as="h3" class="text-base font-semibold leading-6">
-                                            <span v-if="unit && unit?.id">
-                                                {{ $t('components.centrum.units.update_unit') }}
-                                            </span>
-                                            <span v-else>
-                                                {{ $t('components.centrum.units.create_unit') }}
-                                            </span>
-                                        </DialogTitle>
-                                        <div>
-                                            <div class="text-sm text-gray-100">
-                                                <div class="flex-1">
-                                                    <label for="name" class="block text-sm font-medium leading-6">
-                                                        {{ $t('common.name') }}
-                                                    </label>
-                                                    <VeeField
-                                                        name="name"
-                                                        type="text"
-                                                        class="block w-full rounded-md border-0 bg-base-700 py-1.5 placeholder:text-accent-200 focus:ring-2 focus:ring-inset focus:ring-base-300 sm:text-sm sm:leading-6"
-                                                        :placeholder="$t('common.name')"
-                                                        :label="$t('common.name')"
-                                                        @focusin="focusTablet(true)"
-                                                        @focusout="focusTablet(false)"
-                                                    />
-                                                    <VeeErrorMessage name="name" as="p" class="mt-2 text-sm text-error-400" />
-                                                </div>
-                                                <div class="flex-1">
-                                                    <label for="initials" class="block text-sm font-medium leading-6">
-                                                        {{ $t('common.initials') }}
-                                                    </label>
-                                                    <VeeField
-                                                        name="initials"
-                                                        type="text"
-                                                        class="block w-full rounded-md border-0 bg-base-700 py-1.5 placeholder:text-accent-200 focus:ring-2 focus:ring-inset focus:ring-base-300 sm:text-sm sm:leading-6"
-                                                        :placeholder="$t('common.initials')"
-                                                        :label="$t('common.initials')"
-                                                        @focusin="focusTablet(true)"
-                                                        @focusout="focusTablet(false)"
-                                                    />
-                                                    <VeeErrorMessage
-                                                        name="initials"
-                                                        as="p"
-                                                        class="mt-2 text-sm text-error-400"
-                                                    />
-                                                </div>
-                                                <div class="flex-1">
-                                                    <label for="description" class="block text-sm font-medium leading-6">
-                                                        {{ $t('common.description') }}
-                                                    </label>
-                                                    <VeeField
-                                                        name="description"
-                                                        type="text"
-                                                        class="block w-full rounded-md border-0 bg-base-700 py-1.5 placeholder:text-accent-200 focus:ring-2 focus:ring-inset focus:ring-base-300 sm:text-sm sm:leading-6"
-                                                        :placeholder="$t('common.description')"
-                                                        :label="$t('common.description')"
-                                                        @focusin="focusTablet(true)"
-                                                        @focusout="focusTablet(false)"
-                                                    />
-                                                    <VeeErrorMessage
-                                                        name="description"
-                                                        as="p"
-                                                        class="mt-2 text-sm text-error-400"
-                                                    />
-                                                </div>
-                                                <div class="flex-1">
-                                                    <label for="attributes" class="block text-sm font-medium leading-6">
-                                                        {{ $t('common.attributes', 2) }}
-                                                    </label>
-                                                    <VeeField
-                                                        name="attributes"
-                                                        type="text"
-                                                        class="block w-full rounded-md border-0 bg-base-700 py-1.5 placeholder:text-accent-200 focus:ring-2 focus:ring-inset focus:ring-base-300 sm:text-sm sm:leading-6"
-                                                        :placeholder="$t('common.attributes', 2)"
-                                                        :label="$t('common.attributes', 2)"
-                                                        @focusin="focusTablet(true)"
-                                                        @focusout="focusTablet(false)"
-                                                    >
-                                                        <Listbox v-model="selectedAttributes" as="div" nullable multiple>
-                                                            <div class="relative">
-                                                                <ListboxButton
-                                                                    class="block w-full rounded-md border-0 bg-base-700 py-1.5 pl-3 text-left placeholder:text-accent-200 focus:ring-2 focus:ring-inset focus:ring-base-300 sm:text-sm sm:leading-6"
-                                                                >
-                                                                    <span class="block truncate">
-                                                                        <template v-if="selectedAttributes.length > 0">
-                                                                            <span
-                                                                                v-for="attr in selectedAttributes"
-                                                                                :key="attr"
-                                                                                class="mr-1"
-                                                                            >
-                                                                                {{
-                                                                                    $t(
-                                                                                        `components.centrum.units.attributes.${attr}`,
-                                                                                    )
-                                                                                }}
-                                                                            </span>
-                                                                        </template>
-                                                                        <template v-else>
-                                                                            {{ $t('common.none_selected') }}
-                                                                        </template>
-                                                                    </span>
-                                                                    <span
-                                                                        class="pointer-events-none absolute inset-y-0 right-0 flex items-center pr-2"
-                                                                    >
-                                                                        <ChevronDownIcon class="size-5 text-gray-400" />
-                                                                    </span>
-                                                                </ListboxButton>
-
-                                                                <transition
-                                                                    leave-active-class="transition duration-100 ease-in"
-                                                                    leave-from-class="opacity-100"
-                                                                    leave-to-class="opacity-0"
-                                                                >
-                                                                    <ListboxOptions
-                                                                        class="absolute z-10 mt-1 max-h-44 w-full overflow-auto rounded-md bg-base-700 py-1 text-base sm:text-sm"
-                                                                    >
-                                                                        <ListboxOption
-                                                                            v-for="attr in availableAttributes"
-                                                                            :key="attr"
-                                                                            v-slot="{ active, selected }"
-                                                                            as="template"
-                                                                            :value="attr"
-                                                                        >
-                                                                            <li
-                                                                                :class="[
-                                                                                    active ? 'bg-primary-500' : '',
-                                                                                    'relative cursor-default select-none py-2 pl-8 pr-4',
-                                                                                ]"
-                                                                            >
-                                                                                <span
-                                                                                    :class="[
-                                                                                        selected
-                                                                                            ? 'font-semibold'
-                                                                                            : 'font-normal',
-                                                                                        'block truncate',
-                                                                                    ]"
-                                                                                >
-                                                                                    {{
-                                                                                        $t(
-                                                                                            `components.centrum.units.attributes.${attr}`,
-                                                                                        )
-                                                                                    }}
-                                                                                </span>
-
-                                                                                <span
-                                                                                    v-if="selected"
-                                                                                    :class="[
-                                                                                        active
-                                                                                            ? 'text-neutral'
-                                                                                            : 'text-primary-500',
-                                                                                        'absolute inset-y-0 left-0 flex items-center pl-1.5',
-                                                                                    ]"
-                                                                                >
-                                                                                    <CheckIcon class="size-5" />
-                                                                                </span>
-                                                                            </li>
-                                                                        </ListboxOption>
-                                                                    </ListboxOptions>
-                                                                </transition>
-                                                            </div>
-                                                        </Listbox>
-                                                    </VeeField>
-                                                    <VeeErrorMessage
-                                                        name="attributes"
-                                                        as="p"
-                                                        class="mt-2 text-sm text-error-400"
-                                                    />
-                                                </div>
-                                                <div class="flex-1">
-                                                    <label for="color" class="block text-sm font-medium leading-6">
-                                                        {{ $t('common.color') }}
-                                                    </label>
-                                                    <ColorInput
-                                                        v-model="color"
-                                                        disable-alpha
-                                                        format="hex"
-                                                        position="top"
-                                                        @change="setFieldValue('color', $event)"
-                                                    />
-                                                </div>
-                                                <div class="flex-1">
-                                                    <label for="homePostal" class="block text-sm font-medium leading-6">
-                                                        {{ `${$t('common.department')} ${$t('common.postal_code')}` }}
-                                                    </label>
-                                                    <VeeField
-                                                        name="homePostal"
-                                                        type="text"
-                                                        class="block w-full rounded-md border-0 bg-base-700 py-1.5 placeholder:text-accent-200 focus:ring-2 focus:ring-inset focus:ring-base-300 sm:text-sm sm:leading-6"
-                                                        :placeholder="`${$t('common.department')} ${$t('common.postal_code')}`"
-                                                        :label="`${$t('common.department')} ${$t('common.postal_code')}`"
-                                                        @focusin="focusTablet(true)"
-                                                        @focusout="focusTablet(false)"
-                                                    />
-                                                    <VeeErrorMessage
-                                                        name="homePostal"
-                                                        as="p"
-                                                        class="mt-2 text-sm text-error-400"
-                                                    />
-                                                </div>
-                                            </div>
-                                        </div>
-                                    </div>
-                                </div>
-                                <div class="mt-5 sm:mt-6 sm:grid sm:grid-flow-row-dense sm:grid-cols-2 sm:gap-3">
-                                    <UButton
-                                        type="submit"
-                                        class="inline-flex w-full justify-center rounded-md px-3 py-2 text-sm font-semibold shadow-sm focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 sm:col-start-2"
-                                        :disabled="!meta.valid || !canSubmit"
-                                    >
-                                        <template v-if="!canSubmit">
-                                            <LoadingIcon class="mr-2 size-5 animate-spin" />
-                                        </template>
-                                        <span v-if="unit && unit?.id">
-                                            {{ $t('components.centrum.units.update_unit') }}
-                                        </span>
-                                        <span v-else>
-                                            {{ $t('components.centrum.units.create_unit') }}
-                                        </span>
-                                    </UButton>
-                                    <UButton
-                                        class="mt-3 inline-flex w-full justify-center rounded-md bg-neutral-50 px-3 py-2 text-sm font-semibold text-gray-900 shadow-sm ring-1 ring-inset ring-gray-300 hover:bg-gray-200 sm:col-start-1 sm:mt-0"
-                                        @click="$emit('close')"
-                                    >
-                                        {{ $t('common.cancel') }}
-                                    </UButton>
-                                </div>
-                            </form>
-                        </DialogPanel>
-                    </TransitionChild>
+                    <UButton color="gray" variant="ghost" icon="i-mdi-window-close" class="-my-1" @click="isOpen = false" />
                 </div>
+            </template>
+
+            <div>
+                <UForm :state="{}" @submit.prevent="onSubmitThrottle">
+                    <div class="text-center">
+                        <div>
+                            <div class="text-sm text-gray-100">
+                                <div class="flex-1">
+                                    <label for="name" class="block text-sm font-medium leading-6">
+                                        {{ $t('common.name') }}
+                                    </label>
+                                    <VeeField
+                                        name="name"
+                                        type="text"
+                                        class="block w-full rounded-md border-0 bg-base-700 py-1.5 placeholder:text-accent-200 focus:ring-2 focus:ring-inset focus:ring-base-300 sm:text-sm sm:leading-6"
+                                        :placeholder="$t('common.name')"
+                                        :label="$t('common.name')"
+                                        @focusin="focusTablet(true)"
+                                        @focusout="focusTablet(false)"
+                                    />
+                                    <VeeErrorMessage name="name" as="p" class="mt-2 text-sm text-error-400" />
+                                </div>
+                                <div class="flex-1">
+                                    <label for="initials" class="block text-sm font-medium leading-6">
+                                        {{ $t('common.initials') }}
+                                    </label>
+                                    <VeeField
+                                        name="initials"
+                                        type="text"
+                                        class="block w-full rounded-md border-0 bg-base-700 py-1.5 placeholder:text-accent-200 focus:ring-2 focus:ring-inset focus:ring-base-300 sm:text-sm sm:leading-6"
+                                        :placeholder="$t('common.initials')"
+                                        :label="$t('common.initials')"
+                                        @focusin="focusTablet(true)"
+                                        @focusout="focusTablet(false)"
+                                    />
+                                    <VeeErrorMessage name="initials" as="p" class="mt-2 text-sm text-error-400" />
+                                </div>
+                                <div class="flex-1">
+                                    <label for="description" class="block text-sm font-medium leading-6">
+                                        {{ $t('common.description') }}
+                                    </label>
+                                    <VeeField
+                                        name="description"
+                                        type="text"
+                                        class="block w-full rounded-md border-0 bg-base-700 py-1.5 placeholder:text-accent-200 focus:ring-2 focus:ring-inset focus:ring-base-300 sm:text-sm sm:leading-6"
+                                        :placeholder="$t('common.description')"
+                                        :label="$t('common.description')"
+                                        @focusin="focusTablet(true)"
+                                        @focusout="focusTablet(false)"
+                                    />
+                                    <VeeErrorMessage name="description" as="p" class="mt-2 text-sm text-error-400" />
+                                </div>
+                                <div class="flex-1">
+                                    <label for="attributes" class="block text-sm font-medium leading-6">
+                                        {{ $t('common.attributes', 2) }}
+                                    </label>
+                                    <VeeField
+                                        name="attributes"
+                                        type="text"
+                                        class="block w-full rounded-md border-0 bg-base-700 py-1.5 placeholder:text-accent-200 focus:ring-2 focus:ring-inset focus:ring-base-300 sm:text-sm sm:leading-6"
+                                        :placeholder="$t('common.attributes', 2)"
+                                        :label="$t('common.attributes', 2)"
+                                        @focusin="focusTablet(true)"
+                                        @focusout="focusTablet(false)"
+                                    >
+                                        <Listbox v-model="selectedAttributes" as="div" nullable multiple>
+                                            <div class="relative">
+                                                <ListboxButton
+                                                    class="block w-full rounded-md border-0 bg-base-700 py-1.5 pl-3 text-left placeholder:text-accent-200 focus:ring-2 focus:ring-inset focus:ring-base-300 sm:text-sm sm:leading-6"
+                                                >
+                                                    <span class="block truncate">
+                                                        <template v-if="selectedAttributes.length > 0">
+                                                            <span v-for="attr in selectedAttributes" :key="attr" class="mr-1">
+                                                                {{ $t(`components.centrum.units.attributes.${attr}`) }}
+                                                            </span>
+                                                        </template>
+                                                        <template v-else>
+                                                            {{ $t('common.none_selected') }}
+                                                        </template>
+                                                    </span>
+                                                    <span
+                                                        class="pointer-events-none absolute inset-y-0 right-0 flex items-center pr-2"
+                                                    >
+                                                        <ChevronDownIcon class="size-5 text-gray-400" />
+                                                    </span>
+                                                </ListboxButton>
+
+                                                <transition
+                                                    leave-active-class="transition duration-100 ease-in"
+                                                    leave-from-class="opacity-100"
+                                                    leave-to-class="opacity-0"
+                                                >
+                                                    <ListboxOptions
+                                                        class="absolute z-10 mt-1 max-h-44 w-full overflow-auto rounded-md bg-base-700 py-1 text-base sm:text-sm"
+                                                    >
+                                                        <ListboxOption
+                                                            v-for="attr in availableAttributes"
+                                                            :key="attr"
+                                                            v-slot="{ active, selected }"
+                                                            as="template"
+                                                            :value="attr"
+                                                        >
+                                                            <li
+                                                                :class="[
+                                                                    active ? 'bg-primary-500' : '',
+                                                                    'relative cursor-default select-none py-2 pl-8 pr-4',
+                                                                ]"
+                                                            >
+                                                                <span
+                                                                    :class="[
+                                                                        selected ? 'font-semibold' : 'font-normal',
+                                                                        'block truncate',
+                                                                    ]"
+                                                                >
+                                                                    {{ $t(`components.centrum.units.attributes.${attr}`) }}
+                                                                </span>
+
+                                                                <span
+                                                                    v-if="selected"
+                                                                    :class="[
+                                                                        active ? 'text-neutral' : 'text-primary-500',
+                                                                        'absolute inset-y-0 left-0 flex items-center pl-1.5',
+                                                                    ]"
+                                                                >
+                                                                    <CheckIcon class="size-5" />
+                                                                </span>
+                                                            </li>
+                                                        </ListboxOption>
+                                                    </ListboxOptions>
+                                                </transition>
+                                            </div>
+                                        </Listbox>
+                                    </VeeField>
+                                    <VeeErrorMessage name="attributes" as="p" class="mt-2 text-sm text-error-400" />
+                                </div>
+                                <div class="flex-1">
+                                    <label for="color" class="block text-sm font-medium leading-6">
+                                        {{ $t('common.color') }}
+                                    </label>
+                                    <ColorInput
+                                        :model-value="unit?.color ?? '#000000'"
+                                        disable-alpha
+                                        format="hex"
+                                        position="top"
+                                        @change="setFieldValue('color', $event)"
+                                    />
+                                </div>
+                                <div class="flex-1">
+                                    <label for="homePostal" class="block text-sm font-medium leading-6">
+                                        {{ `${$t('common.department')} ${$t('common.postal_code')}` }}
+                                    </label>
+                                    <VeeField
+                                        name="homePostal"
+                                        type="text"
+                                        class="block w-full rounded-md border-0 bg-base-700 py-1.5 placeholder:text-accent-200 focus:ring-2 focus:ring-inset focus:ring-base-300 sm:text-sm sm:leading-6"
+                                        :placeholder="`${$t('common.department')} ${$t('common.postal_code')}`"
+                                        :label="`${$t('common.department')} ${$t('common.postal_code')}`"
+                                        @focusin="focusTablet(true)"
+                                        @focusout="focusTablet(false)"
+                                    />
+                                    <VeeErrorMessage name="homePostal" as="p" class="mt-2 text-sm text-error-400" />
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </UForm>
             </div>
-        </Dialog>
-    </TransitionRoot>
+
+            <template #footer>
+                <div class="gap-2 sm:flex">
+                    <UButton class="flex-1" @click="isOpen = false">
+                        {{ $t('common.close', 1) }}
+                    </UButton>
+                    <UButton
+                        class="flex-1"
+                        :loading="!canSubmit"
+                        :disabled="!meta.valid || !canSubmit"
+                        @click="onSubmitThrottle"
+                    >
+                        <template v-if="unit && unit?.id">
+                            {{ $t('components.centrum.units.update_unit') }}
+                        </template>
+                        <template v-else>
+                            {{ $t('components.centrum.units.create_unit') }}
+                        </template>
+                    </UButton>
+                </div>
+            </template>
+        </UCard>
+    </UModal>
 </template>

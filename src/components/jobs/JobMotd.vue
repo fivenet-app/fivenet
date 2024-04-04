@@ -61,7 +61,7 @@ watch(editing, () => {
 <template>
     <div v-if="data !== null" class="w-full flex-col">
         <div class="flex items-center">
-            <h4 v-if="data.motd.length > 0 || canEdit" class="mt-2 flex-1 text-base font-semibold leading-6">
+            <h4 v-if="data.motd.length > 0 || canEdit" class="flex-1 text-base font-semibold leading-6">
                 {{ $t('common.motd') }}
             </h4>
 

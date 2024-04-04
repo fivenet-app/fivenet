@@ -14,8 +14,6 @@ definePageMeta({
 <template>
     <UDashboardPage>
         <UDashboardPanel grow>
-            <UDashboardNavbar :title="$t('common.units')"> </UDashboardNavbar>
-
             <UnitsList />
         </UDashboardPanel>
     </UDashboardPage>

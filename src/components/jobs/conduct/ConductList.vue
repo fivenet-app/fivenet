@@ -1,47 +1,51 @@
 <script lang="ts" setup>
-import { Combobox, ComboboxButton, ComboboxInput, ComboboxOption, ComboboxOptions } from '@headlessui/vue';
-import { useConfirmDialog } from '@vueuse/core';
-import { CheckIcon } from 'mdi-vue3';
-import ConfirmDialog from '~/components/partials/ConfirmDialog.vue';
 import DataErrorBlock from '~/components/partials/data/DataErrorBlock.vue';
-import DataNoDataBlock from '~/components/partials/data/DataNoDataBlock.vue';
-import DataPendingBlock from '~/components/partials/data/DataPendingBlock.vue';
 import { ConductEntry, ConductType } from '~~/gen/ts/resources/jobs/conduct';
 import { User } from '~~/gen/ts/resources/users/users';
 import ConductCreateOrUpdateModal from '~/components/jobs/conduct/ConductCreateOrUpdateModal.vue';
-import ConductListEntry from '~/components/jobs/conduct/ConductListEntry.vue';
 import type { ListConductEntriesResponse } from '~~/gen/ts/services/jobs/conduct';
-import GenericTable from '~/components/partials/elements/GenericTable.vue';
+import ConfirmModal from '~/components/partials/ConfirmModal.vue';
+import { useCompletorStore } from '~/store/completor';
+import { conductTypesToBGColor, conductTypesToRingColor, conductTypesToTextColor } from './helpers';
+import GenericTime from '~/components/partials/elements/GenericTime.vue';
+import CitizenInfoPopover from '~/components/partials/citizens/CitizenInfoPopover.vue';
 
 const props = defineProps<{
     userId?: number;
     hideUserSearch?: boolean;
 }>();
 
+const { t } = useI18n();
+
 const { $grpc } = useNuxtApp();
 
-const query = ref<{ types: ConductType[]; showExpired?: boolean; user_ids?: User[] }>({
+type CType = { status: ConductType };
+
+const completorStore = useCompletorStore();
+
+const modal = useModal();
+
+const query = ref<{ types: CType[]; showExpired?: boolean; user?: User }>({
     types: [],
-    user_ids: [],
     showExpired: false,
 });
+
+const usersLoading = ref(false);
 
 const page = ref(1);
 const offset = computed(() => (data.value?.pagination?.pageSize ? data.value?.pagination?.pageSize * page.value : 0));
 
-const { data, pending, refresh, error } = useLazyAsyncData(`jobs-conduct-${page.value}`, () => listConductEntries());
+const { data, pending: loading, refresh, error } = useLazyAsyncData(`jobs-conduct-${page.value}`, () => listConductEntries());
 
 async function listConductEntries(): Promise<ListConductEntriesResponse> {
-    const userIds = props.userId
-        ? [props.userId]
-        : query.value.user_ids?.map((u) => (typeof u === 'number' ? u : u.userId)) ?? [];
+    const userIds = props.userId ? [props.userId] : query.value.user ? [query.value.user.userId] : [];
     try {
         const call = $grpc.getJobsConductClient().listConductEntries({
             pagination: {
                 offset: offset.value,
             },
-            types: query.value.types,
-            userIds,
+            types: query.value.types.map((t) => t.status),
+            userIds: userIds,
             showExpired: query.value.showExpired,
         });
         const { response } = await call;
@@ -65,39 +69,8 @@ async function deleteConductEntry(id: string): Promise<void> {
     }
 }
 
-const queryTypes = ref('');
-
-const queryTargets = ref<string>('');
-
 watch(offset, async () => refresh());
 watchDebounced(query.value, () => refresh(), { debounce: 600, maxWait: 1400 });
-
-const { data: colleagues, refresh: refreshColleagues } = useLazyAsyncData(
-    `jobs-colleagues-0-${queryTargets.value}`,
-    async () => {
-        try {
-            const call = $grpc.getJobsClient().listColleagues({
-                pagination: {
-                    offset: 0,
-                },
-                searchName: queryTargets.value,
-            });
-            const { response } = await call;
-
-            return response;
-        } catch (e) {
-            $grpc.handleError(e as RpcError);
-            throw e;
-        }
-    },
-);
-
-function charsGetDisplayValue(chars: User[]): string {
-    const cs: string[] = [];
-    chars.forEach((c) => cs.push(`${c?.firstname} ${c?.lastname} (${c?.dateofbirth})`));
-
-    return cs.join(', ');
-}
 
 function updateEntryInPlace(entry: ConductEntry): void {
     if (data.value === null) {
@@ -111,21 +84,7 @@ function updateEntryInPlace(entry: ConductEntry): void {
     }
 }
 
-watchDebounced(
-    queryTargets,
-    async () => {
-        await refreshColleagues();
-        if (!props.hideUserSearch && query.value.user_ids) {
-            colleagues.value?.colleagues.unshift(...query.value.user_ids);
-        }
-    },
-    {
-        debounce: 600,
-        maxWait: 1400,
-    },
-);
-
-const cTypes = ref<{ status: ConductType; selected?: boolean }[]>([
+const cTypes = ref<CType[]>([
     { status: ConductType.NOTE },
     { status: ConductType.NEUTRAL },
     { status: ConductType.POSITIVE },
@@ -134,36 +93,40 @@ const cTypes = ref<{ status: ConductType; selected?: boolean }[]>([
     { status: ConductType.SUSPENSION },
 ]);
 
-onMounted(async () => {
-    await refreshColleagues();
-});
-
-const open = ref(false);
-const selectedEntry = ref<ConductEntry | undefined>();
-
-const { isRevealed, reveal, confirm, cancel, onConfirm } = useConfirmDialog();
-
-onConfirm(async (id) => deleteConductEntry(id));
+const columns = [
+    {
+        key: 'createdAt',
+        label: t('common.created_at'),
+    },
+    {
+        key: 'expiresAt',
+        label: t('common.expires_at'),
+    },
+    {
+        key: 'type',
+        label: t('common.type'),
+    },
+    {
+        key: 'message',
+        label: t('common.message'),
+    },
+    {
+        key: 'target',
+        label: t('common.target'),
+    },
+    {
+        key: 'creator',
+        label: t('common.creator'),
+    },
+    {
+        key: 'actions',
+        label: t('common.action', 2),
+    },
+];
 </script>
 
 <template>
     <div class="py-2 pb-14">
-        <ConfirmDialog
-            v-if="selectedEntry !== undefined"
-            :open="isRevealed"
-            :cancel="cancel"
-            :confirm="() => confirm(selectedEntry!.id)"
-        />
-
-        <ConductCreateOrUpdateModal
-            :open="open"
-            :entry="selectedEntry"
-            :user-id="userId"
-            @close="open = false"
-            @created="data?.entries.unshift($event)"
-            @update="updateEntryInPlace($event)"
-        />
-
         <div class="px-1 sm:px-2 lg:px-4">
             <div class="sm:flex sm:items-center">
                 <div class="sm:flex-auto">
@@ -175,57 +138,41 @@ onConfirm(async (id) => deleteConductEntry(id));
                                     {{ $t('common.target') }}
                                 </label>
                                 <div class="relative mt-2">
-                                    <Combobox v-model="query.user_ids" as="div" class="mt-2 w-full" multiple nullable>
-                                        <div class="relative">
-                                            <ComboboxButton as="div">
-                                                <ComboboxInput
-                                                    autocomplete="off"
-                                                    class="block w-full rounded-md border-0 bg-base-700 py-1.5 placeholder:text-accent-200 focus:ring-2 focus:ring-inset focus:ring-base-300 sm:text-sm sm:leading-6"
-                                                    :display-value="
-                                                        (chars: any) => (chars ? charsGetDisplayValue(chars) : $t('common.na'))
-                                                    "
-                                                    :placeholder="$t('common.target')"
-                                                    @change="queryTargets = $event.target.value"
-                                                    @focusin="focusTablet(true)"
-                                                    @focusout="focusTablet(false)"
-                                                />
-                                            </ComboboxButton>
-
-                                            <ComboboxOptions
-                                                v-if="colleagues?.colleagues !== undefined && colleagues?.colleagues.length > 0"
-                                                class="absolute z-10 mt-1 max-h-44 w-full overflow-auto rounded-md bg-base-700 py-1 text-base sm:text-sm"
-                                            >
-                                                <ComboboxOption
-                                                    v-for="char in colleagues.colleagues"
-                                                    :key="char.identifier"
-                                                    v-slot="{ active, selected }"
-                                                    :value="char"
-                                                    as="char"
-                                                >
-                                                    <li
-                                                        :class="[
-                                                            'relative cursor-default select-none py-2 pl-8 pr-4',
-                                                            active ? 'bg-primary-500' : '',
-                                                        ]"
-                                                    >
-                                                        <span :class="['block truncate', selected && 'font-semibold']">
-                                                            {{ char.firstname }} {{ char.lastname }} ({{ char?.dateofbirth }})
-                                                        </span>
-
-                                                        <span
-                                                            v-if="selected"
-                                                            :class="[
-                                                                active ? 'text-neutral' : 'text-primary-500',
-                                                                'absolute inset-y-0 left-0 flex items-center pl-1.5',
-                                                            ]"
-                                                        >
-                                                            <CheckIcon class="size-5" />
-                                                        </span>
-                                                    </li>
-                                                </ComboboxOption>
-                                            </ComboboxOptions>
-                                        </div>
-                                    </Combobox>
+                                    <UInputMenu
+                                        v-model="query.user"
+                                        :nullable="true"
+                                        :search="
+                                            async (query: string) => {
+                                                usersLoading = true;
+                                                return await completorStore
+                                                    .listColleagues({
+                                                        pagination: { offset: 0 },
+                                                        searchName: query,
+                                                    })
+                                                    .finally(() => (usersLoading = false));
+                                            }
+                                        "
+                                        :loading="usersLoading"
+                                        :search-attributes="['firstname', 'lastname']"
+                                        block
+                                        :placeholder="
+                                            query.user
+                                                ? `${query.user?.firstname} ${query.user?.lastname} (${query.user?.dateofbirth})`
+                                                : $t('common.target')
+                                        "
+                                        trailing
+                                        by="userId"
+                                    >
+                                        <template #option="{ option: user }">
+                                            {{ `${user?.firstname} ${user?.lastname} (${user?.dateofbirth})` }}
+                                        </template>
+                                        <template #option-empty="{ query: search }">
+                                            <q>{{ search }}</q> {{ $t('common.query_not_found') }}
+                                        </template>
+                                        <template #empty>
+                                            {{ $t('common.not_found', [$t('common.creator', 2)]) }}
+                                        </template>
+                                    </UInputMenu>
                                 </div>
                             </div>
                             <div class="flex-1">
@@ -234,63 +181,31 @@ onConfirm(async (id) => deleteConductEntry(id));
                                     {{ $t('common.type') }}
                                 </label>
                                 <div class="relative mt-2">
-                                    <Combobox v-model="query.types" as="div" class="mt-2 w-full" multiple nullable>
-                                        <div class="relative">
-                                            <ComboboxButton as="div">
-                                                <ComboboxInput
-                                                    autocomplete="off"
-                                                    class="block w-full rounded-md border-0 bg-base-700 py-1.5 placeholder:text-accent-200 focus:ring-2 focus:ring-inset focus:ring-base-300 sm:text-sm sm:leading-6"
-                                                    :display-value="
-                                                        (cTypes: any) =>
-                                                            cTypes
-                                                                ? cTypes
-                                                                      .map((ct: ConductType) =>
-                                                                          $t(`enums.jobs.ConductType.${ConductType[ct ?? 0]}`),
-                                                                      )
-                                                                      .join(', ')
-                                                                : $t('common.na')
-                                                    "
-                                                    :placeholder="$t('common.type')"
-                                                    @change="queryTypes = $event.target.value"
-                                                    @focusin="focusTablet(true)"
-                                                    @focusout="focusTablet(false)"
-                                                />
-                                            </ComboboxButton>
-
-                                            <ComboboxOptions
-                                                class="absolute z-10 mt-1 max-h-44 w-full overflow-auto rounded-md bg-base-700 py-1 text-base sm:text-sm"
-                                            >
-                                                <ComboboxOption
-                                                    v-for="cType in cTypes"
-                                                    :key="cType.status"
-                                                    v-slot="{ active, selected }"
-                                                    :value="cType.status"
-                                                    as="char"
-                                                >
-                                                    <li
-                                                        :class="[
-                                                            'relative cursor-default select-none py-2 pl-8 pr-4',
-                                                            active ? 'bg-primary-500' : '',
-                                                        ]"
-                                                    >
-                                                        <span :class="['block truncate', selected && 'font-semibold']">
-                                                            {{ $t(`enums.jobs.ConductType.${ConductType[cType.status]}`) }}
-                                                        </span>
-
-                                                        <span
-                                                            v-if="selected"
-                                                            :class="[
-                                                                active ? 'text-neutral' : 'text-primary-500',
-                                                                'absolute inset-y-0 left-0 flex items-center pl-1.5',
-                                                            ]"
-                                                        >
-                                                            <CheckIcon class="size-5" />
-                                                        </span>
-                                                    </li>
-                                                </ComboboxOption>
-                                            </ComboboxOptions>
-                                        </div>
-                                    </Combobox>
+                                    <USelectMenu
+                                        v-model="query.types"
+                                        multiple
+                                        nullable
+                                        :options="cTypes"
+                                        :placeholder="
+                                            query.types
+                                                ? query.types
+                                                      .map((ct: CType) =>
+                                                          $t(`enums.jobs.ConductType.${ConductType[ct.status ?? 0]}`),
+                                                      )
+                                                      .join(', ')
+                                                : $t('common.na')
+                                        "
+                                    >
+                                        <template #option="{ option: cType }">
+                                            <span :class="conductTypesToBGColor(cType.status)">
+                                                {{ $t(`enums.jobs.ConductType.${ConductType[cType.status]}`) }}
+                                            </span>
+                                        </template>
+                                        <template #option-empty="{ query: search }">
+                                            <q>{{ search }}</q> {{ $t('common.query_not_found') }}
+                                        </template>
+                                        <template #empty> {{ $t('common.not_found', [$t('common.type', 2)]) }} </template>
+                                    </USelectMenu>
                                 </div>
                             </div>
                             <div class="flex-initial">
@@ -311,13 +226,7 @@ onConfirm(async (id) => deleteConductEntry(id));
                                 </label>
                                 <div class="relative mt-3 flex items-center">
                                     <div v-if="can('JobsConductService.CreateConductEntry')" class="flex-initial">
-                                        <UButton
-                                            class="inline-flex rounded-md bg-primary-500 px-3 py-2 text-sm font-semibold hover:bg-primary-400 focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2"
-                                            @click="
-                                                selectedEntry = undefined;
-                                                open = true;
-                                            "
-                                        >
+                                        <UButton @click="modal.open(ConductCreateOrUpdateModal, {})">
                                             {{ $t('common.create') }}
                                         </UButton>
                                     </div>
@@ -330,70 +239,98 @@ onConfirm(async (id) => deleteConductEntry(id));
             <div class="mt-2 flow-root">
                 <div class="-my-2 mx-0 overflow-x-auto">
                     <div class="inline-block min-w-full px-1 py-2 align-middle">
-                        <DataPendingBlock v-if="pending" :message="$t('common.loading', [$t('common.conduct_register')])" />
                         <DataErrorBlock
-                            v-else-if="error"
+                            v-if="error"
                             :title="$t('common.unable_to_load', [$t('common.conduct_register')])"
                             :retry="refresh"
                         />
-                        <DataNoDataBlock
-                            v-else-if="data?.entries.length === 0"
-                            :message="$t('components.citizens.citizens_list.no_citizens')"
-                        />
-                        <template v-else>
-                            <GenericTable>
-                                <template #thead>
-                                    <tr>
-                                        <th scope="col" class="py-3.5 pl-4 pr-3 text-left text-sm font-semibold sm:pl-1">
-                                            {{ $t('common.created_at') }}
-                                        </th>
-                                        <th
-                                            scope="col"
-                                            class="hidden px-2 py-3.5 text-left text-sm font-semibold lg:table-cell"
-                                        >
-                                            {{ $t('common.expires_at') }}
-                                        </th>
-                                        <th scope="col" class="px-2 py-3.5 text-left text-sm font-semibold">
-                                            {{ $t('common.type') }}
-                                        </th>
-                                        <th scope="col" class="px-2 py-3.5 text-left text-sm font-semibold">
-                                            {{ $t('common.description') }}
-                                        </th>
-                                        <th scope="col" class="px-2 py-3.5 text-left text-sm font-semibold">
-                                            {{ $t('common.target') }}
-                                            <span class="lg:hidden">/{{ $t('common.creator') }}</span>
-                                        </th>
-                                        <th
-                                            scope="col"
-                                            class="hidden px-2 py-3.5 text-left text-sm font-semibold lg:table-cell"
-                                        >
-                                            {{ $t('common.creator') }}
-                                        </th>
-                                        <th
-                                            scope="col"
-                                            class="relative py-3.5 pl-3 pr-4 text-right text-sm font-semibold sm:pr-0"
-                                        >
-                                            {{ $t('common.action', 2) }}
-                                        </th>
-                                    </tr>
-                                </template>
-                                <template #tbody>
-                                    <ConductListEntry
-                                        v-for="conduct in data?.entries"
-                                        :key="conduct.id"
-                                        :conduct="conduct"
-                                        @selected="
-                                            selectedEntry = conduct;
-                                            open = true;
-                                        "
-                                        @delete="
-                                            selectedEntry = conduct;
-                                            reveal();
+                        <UTable
+                            v-else
+                            :loading="loading"
+                            :columns="columns"
+                            :rows="data?.entries"
+                            :empty-state="{ icon: 'i-mdi-car', label: $t('common.not_found', [$t('common.entry', 2)]) }"
+                        >
+                            <template #createdAt-data="{ row: conduct }">
+                                <GenericTime :value="conduct.createdAt" />
+                                <dl class="font-normal lg:hidden">
+                                    <dt class="sr-only">{{ $t('common.expires_at') }}</dt>
+                                    <dd class="mt-1 truncate">
+                                        <GenericTime
+                                            v-if="conduct.expiresAt"
+                                            class="font-semibold"
+                                            :value="conduct.expiresAt"
+                                        />
+                                        <span v-else>
+                                            {{ $t('components.jobs.conduct.List.no_expiration') }}
+                                        </span>
+                                    </dd>
+                                </dl>
+                            </template>
+                            <template #expiresAt-data="{ row: conduct }">
+                                <GenericTime v-if="conduct.expiresAt" class="font-semibold" :value="conduct.expiresAt" />
+                                <span v-else>
+                                    {{ $t('components.jobs.conduct.List.no_expiration') }}
+                                </span>
+                            </template>
+                            <template #type-data="{ row: conduct }">
+                                <div
+                                    class="rounded-md px-2 py-1 text-base font-medium ring-1 ring-inset"
+                                    :class="[
+                                        conductTypesToBGColor(conduct.type),
+                                        conductTypesToRingColor(conduct.type),
+                                        conductTypesToTextColor(conduct.type),
+                                    ]"
+                                >
+                                    {{ $t(`enums.jobs.ConductType.${ConductType[conduct.type ?? (0 as number)]}`) }}
+                                </div>
+                            </template>
+                            <template #message-data="{ row: conduct }">
+                                <p class="line-clamp-2 w-full max-w-sm whitespace-normal break-all hover:line-clamp-6">
+                                    {{ conduct.message }}
+                                </p>
+                            </template>
+                            <template #target-data="{ row: conduct }">
+                                <CitizenInfoPopover :user="conduct.targetUser" />
+                                <dl class="font-normal lg:hidden">
+                                    <dt class="sr-only">{{ $t('common.creator') }}</dt>
+                                    <dd class="mt-1 truncate">
+                                        <CitizenInfoPopover :user="conduct.creator" />
+                                    </dd>
+                                </dl>
+                            </template>
+                            <template #creator-data="{ row: conduct }">
+                                <CitizenInfoPopover :user="conduct.creator" />
+                            </template>
+                            <template #actions-data="{ row: conduct }">
+                                <UButtonGroup class="flex">
+                                    <UButton
+                                        v-if="can('JobsConductService.UpdateConductEntry')"
+                                        variant="link"
+                                        icon="i-mdi-pencil"
+                                        @click="
+                                            modal.open(ConductCreateOrUpdateModal, {
+                                                entry: conduct,
+                                                userId: userId,
+                                                onCreated: data?.entries.unshift,
+                                                onUpdate: updateEntryInPlace,
+                                            })
                                         "
                                     />
-                                </template>
-                            </GenericTable>
-                        </template>
+
+                                    <UButton
+                                        v-if="can('JobsConductService.DeleteConductEntry')"
+                                        variant="link"
+                                        icon="i-mdi-trash-can"
+                                        @click="
+                                            modal.open(ConfirmModal, {
+                                                confirm: async () => deleteConductEntry(conduct.id),
+                                            })
+                                        "
+                                    />
+                                </UButtonGroup>
+                            </template>
+                        </UTable>
 
                         <div class="flex justify-end px-3 py-3.5 border-t border-gray-200 dark:border-gray-700">
                             <UPagination

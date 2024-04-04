@@ -1,35 +1,27 @@
 <script lang="ts" setup>
-import {
-    Combobox,
-    ComboboxButton,
-    ComboboxInput,
-    ComboboxOption,
-    ComboboxOptions,
-    Dialog,
-    DialogPanel,
-    DialogTitle,
-    TransitionChild,
-    TransitionRoot,
-} from '@headlessui/vue';
 import { digits, max, min, required } from '@vee-validate/rules';
-import { CheckIcon, CloseIcon, LoadingIcon } from 'mdi-vue3';
 import { defineRule } from 'vee-validate';
+import { useCompletorStore } from '~/store/completor';
 import { ConductEntry, ConductType } from '~~/gen/ts/resources/jobs/conduct';
 import { UserShort } from '~~/gen/ts/resources/users/users';
 
 const props = defineProps<{
-    open: boolean;
     entry?: ConductEntry;
     userId?: number;
 }>();
 
 const emit = defineEmits<{
-    (e: 'close'): void;
     (e: 'created', entry: ConductEntry): void;
     (e: 'update', entry: ConductEntry): void;
 }>();
 
+const { isOpen } = useModal();
+
 const { $grpc } = useNuxtApp();
+
+const completorStore = useCompletorStore();
+
+const usersLoading = ref(false);
 
 interface FormData {
     targetUser?: number;
@@ -66,37 +58,12 @@ async function conductCreateOrUpdateEntry(values: FormData, id?: string): Promis
             emit('update', response.entry!);
         }
 
-        emit('close');
+        isOpen.value = false;
     } catch (e) {
         $grpc.handleError(e as RpcError);
         throw e;
     }
 }
-
-const queryTargetsRaw = ref<string>('');
-const queryTargets = computed(() => queryTargetsRaw.value.trim());
-const { data, refresh } = useLazyAsyncData(`jobs-colleagues-0-${queryTargets.value}`, async () => {
-    try {
-        const call = $grpc.getJobsClient().listColleagues({
-            pagination: {
-                offset: 0,
-            },
-            searchName: queryTargets.value,
-            userId: props.userId,
-        });
-        const { response } = await call;
-
-        return response;
-    } catch (e) {
-        $grpc.handleError(e as RpcError);
-        throw e;
-    }
-});
-
-watchDebounced(queryTargetsRaw, async () => refresh(), {
-    debounce: 600,
-    maxWait: 1400,
-});
 
 const cTypes = ref<{ status: ConductType; selected?: boolean }[]>([
     { status: ConductType.NOTE },
@@ -134,7 +101,7 @@ const { handleSubmit, meta, setValues, setFieldValue, resetForm } = useForm<Form
     validateOnMount: true,
 });
 
-watch(props, () => {
+function setFormFromProps(): void {
     resetForm();
 
     if (props.entry) {
@@ -147,7 +114,11 @@ watch(props, () => {
         message: props.entry?.message,
         expiresAt: props.entry?.expiresAt ? toDatetimeLocal(toDate(props.entry?.expiresAt)) : undefined,
     });
-});
+}
+
+watch(props, () => setFormFromProps());
+
+onMounted(() => setFormFromProps());
 
 const canSubmit = ref(true);
 const onSubmit = handleSubmit(
@@ -163,276 +134,170 @@ const onSubmitThrottle = useThrottleFn(async (e) => {
 </script>
 
 <template>
-    <TransitionRoot as="template" :show="open">
-        <Dialog as="div" class="relative z-30" @close="$emit('close')">
-            <div class="fixed inset-0" />
+    <UModal :ui="{ width: 'w-full sm:max-w-5xl' }">
+        <UCard :ui="{ ring: '', divide: 'divide-y divide-gray-100 dark:divide-gray-800' }">
+            <template #header>
+                <div class="flex items-center justify-between">
+                    <h3 class="text-2xl font-semibold leading-6">
+                        {{
+                            entry === undefined
+                                ? $t('components.jobs.conduct.CreateOrUpdateModal.create.title')
+                                : $t('components.jobs.conduct.CreateOrUpdateModal.update.title')
+                        }}
+                    </h3>
 
-            <div class="fixed inset-0 overflow-hidden">
-                <div class="absolute inset-0 overflow-hidden">
-                    <div class="pointer-events-none fixed inset-y-0 right-0 flex max-w-6xl pl-10 sm:pl-16">
-                        <TransitionChild
-                            as="template"
-                            enter="transform transition ease-in-out duration-100 sm:duration-200"
-                            enter-from="translate-x-full"
-                            enter-to="translate-x-0"
-                            leave="transform transition ease-in-out duration-100 sm:duration-200"
-                            leave-from="translate-x-0"
-                            leave-to="translate-x-full"
-                        >
-                            <DialogPanel class="pointer-events-auto w-screen max-w-6xl">
-                                <form
-                                    class="flex h-full flex-col divide-y divide-gray-200 bg-primary-900 shadow-xl"
-                                    @submit.prevent="onSubmitThrottle"
-                                >
-                                    <div class="h-0 flex-1 overflow-y-auto">
-                                        <div class="bg-primary-700 px-4 py-6 sm:px-6">
-                                            <div class="flex items-center justify-between">
-                                                <DialogTitle class="text-base font-semibold leading-6">
-                                                    {{
-                                                        entry === undefined
-                                                            ? $t('components.jobs.conduct.CreateOrUpdateModal.create.title')
-                                                            : $t('components.jobs.conduct.CreateOrUpdateModal.update.title')
-                                                    }}
-                                                </DialogTitle>
-                                                <div class="ml-3 flex h-7 items-center">
-                                                    <UButton
-                                                        class="rounded-md bg-gray-100 text-gray-500 hover:text-gray-400 focus:ring-2 focus:ring-neutral"
-                                                        @click="$emit('close')"
-                                                    >
-                                                        <span class="sr-only">{{ $t('common.close') }}</span>
-                                                        <CloseIcon class="size-5" />
-                                                    </UButton>
-                                                </div>
-                                            </div>
-                                        </div>
-                                        <div class="flex flex-1 flex-col justify-between">
-                                            <div class="divide-y divide-gray-200 px-2 sm:px-6">
-                                                <div class="mt-1">
-                                                    <dl class="divide-y divide-neutral/10 border-b border-neutral/10">
-                                                        <div class="px-4 py-3 sm:grid sm:grid-cols-3 sm:gap-4 sm:px-0">
-                                                            <dt class="text-sm font-medium leading-6">
-                                                                <label for="type" class="block text-sm font-medium leading-6">
-                                                                    {{ $t('common.type') }}
-                                                                </label>
-                                                            </dt>
-                                                            <dd
-                                                                class="mt-1 text-sm leading-6 text-gray-300 sm:col-span-2 sm:mt-0"
-                                                            >
-                                                                <VeeField
-                                                                    v-slot="{ field }"
-                                                                    as="div"
-                                                                    name="type"
-                                                                    :placeholder="$t('common.type')"
-                                                                    :label="$t('common.type')"
-                                                                >
-                                                                    <select
-                                                                        v-bind="field"
-                                                                        class="block w-full rounded-md border-0 bg-base-700 py-1.5 placeholder:text-accent-200 focus:ring-2 focus:ring-inset focus:ring-base-300 sm:text-sm sm:leading-6"
-                                                                        @focusin="focusTablet(true)"
-                                                                        @focusout="focusTablet(false)"
-                                                                    >
-                                                                        <option
-                                                                            v-for="mtype in cTypes"
-                                                                            :key="mtype.status"
-                                                                            :selected="mtype.selected"
-                                                                            :value="mtype.status"
-                                                                        >
-                                                                            {{
-                                                                                $t(
-                                                                                    `enums.jobs.ConductType.${
-                                                                                        ConductType[
-                                                                                            mtype.status ?? (0 as number)
-                                                                                        ]
-                                                                                    }`,
-                                                                                )
-                                                                            }}
-                                                                        </option>
-                                                                    </select>
-                                                                </VeeField>
-                                                                <VeeErrorMessage
-                                                                    name="type"
-                                                                    as="p"
-                                                                    class="mt-2 text-sm text-error-400"
-                                                                />
-                                                            </dd>
-                                                        </div>
-                                                        <div class="px-4 py-3 sm:grid sm:grid-cols-3 sm:gap-4 sm:px-0">
-                                                            <dt class="text-sm font-medium leading-6">
-                                                                <label
-                                                                    for="targetUser"
-                                                                    class="block text-sm font-medium leading-6"
-                                                                >
-                                                                    {{ $t('common.target') }}
-                                                                </label>
-                                                            </dt>
-                                                            <dd
-                                                                class="mt-1 text-sm leading-6 text-gray-300 sm:col-span-2 sm:mt-0"
-                                                            >
-                                                                <VeeField
-                                                                    as="div"
-                                                                    name="targetUser"
-                                                                    :placeholder="$t('common.target')"
-                                                                    :label="$t('common.target')"
-                                                                >
-                                                                    <Combobox v-model="targetUser" as="div" class="mt-2 w-full">
-                                                                        <div class="relative">
-                                                                            <ComboboxButton as="div">
-                                                                                <ComboboxInput
-                                                                                    autocomplete="off"
-                                                                                    class="block w-full rounded-md border-0 bg-base-700 py-1.5 placeholder:text-accent-200 focus:ring-2 focus:ring-inset focus:ring-base-300 sm:text-sm sm:leading-6"
-                                                                                    :display-value="
-                                                                                        (char: any) =>
-                                                                                            char
-                                                                                                ? `${char.firstname} ${char.lastname}`
-                                                                                                : $t('common.na')
-                                                                                    "
-                                                                                    :placeholder="$t('common.target')"
-                                                                                    :label="$t('common.target')"
-                                                                                    @change="
-                                                                                        queryTargetsRaw = $event.target.value
-                                                                                    "
-                                                                                    @focusin="focusTablet(true)"
-                                                                                    @focusout="focusTablet(false)"
-                                                                                />
-                                                                            </ComboboxButton>
-
-                                                                            <ComboboxOptions
-                                                                                class="absolute z-10 mt-1 max-h-44 w-full overflow-auto rounded-md bg-base-700 py-1 text-base sm:text-sm"
-                                                                            >
-                                                                                <ComboboxOption
-                                                                                    v-for="colleague in data?.colleagues"
-                                                                                    :key="colleague.identifier"
-                                                                                    v-slot="{ active, selected }"
-                                                                                    :value="colleague"
-                                                                                    as="char"
-                                                                                >
-                                                                                    <li
-                                                                                        :class="[
-                                                                                            'relative cursor-default select-none py-2 pl-8 pr-4',
-                                                                                            active ? 'bg-primary-500' : '',
-                                                                                        ]"
-                                                                                    >
-                                                                                        <span
-                                                                                            :class="[
-                                                                                                'block truncate',
-                                                                                                selected && 'font-semibold',
-                                                                                            ]"
-                                                                                        >
-                                                                                            {{ colleague.firstname }}
-                                                                                            {{ colleague.lastname }}
-                                                                                        </span>
-
-                                                                                        <span
-                                                                                            v-if="selected"
-                                                                                            :class="[
-                                                                                                active
-                                                                                                    ? 'text-neutral'
-                                                                                                    : 'text-primary-500',
-                                                                                                'absolute inset-y-0 left-0 flex items-center pl-1.5',
-                                                                                            ]"
-                                                                                        >
-                                                                                            <CheckIcon class="size-5" />
-                                                                                        </span>
-                                                                                    </li>
-                                                                                </ComboboxOption>
-                                                                            </ComboboxOptions>
-                                                                        </div>
-                                                                    </Combobox>
-                                                                </VeeField>
-                                                                <VeeErrorMessage
-                                                                    name="targetUser"
-                                                                    as="p"
-                                                                    class="mt-2 text-sm text-error-400"
-                                                                />
-                                                            </dd>
-                                                        </div>
-                                                        <div class="px-4 py-3 sm:grid sm:grid-cols-3 sm:gap-4 sm:px-0">
-                                                            <dt class="text-sm font-medium leading-6">
-                                                                <label
-                                                                    for="message"
-                                                                    class="block text-sm font-medium leading-6"
-                                                                >
-                                                                    {{ $t('common.message') }}
-                                                                </label>
-                                                            </dt>
-                                                            <dd
-                                                                class="mt-1 text-sm leading-6 text-gray-300 sm:col-span-2 sm:mt-0"
-                                                            >
-                                                                <VeeField
-                                                                    as="textarea"
-                                                                    name="message"
-                                                                    class="block h-36 w-full rounded-md border-0 bg-base-700 py-1.5 placeholder:text-accent-200 focus:ring-2 focus:ring-inset focus:ring-base-300 sm:text-sm sm:leading-6"
-                                                                    :placeholder="$t('common.message')"
-                                                                    :label="$t('common.message')"
-                                                                    @focusin="focusTablet(true)"
-                                                                    @focusout="focusTablet(false)"
-                                                                />
-                                                                <VeeErrorMessage
-                                                                    name="message"
-                                                                    as="p"
-                                                                    class="mt-2 text-sm text-error-400"
-                                                                />
-                                                            </dd>
-                                                        </div>
-                                                        <div class="px-4 py-3 sm:grid sm:grid-cols-3 sm:gap-4 sm:px-0">
-                                                            <dt class="text-sm font-medium leading-6">
-                                                                <label
-                                                                    for="expiresAt"
-                                                                    class="block text-sm font-medium leading-6"
-                                                                >
-                                                                    {{ $t('common.expires_at') }}?
-                                                                </label>
-                                                            </dt>
-                                                            <dd
-                                                                class="mt-1 text-sm leading-6 text-gray-300 sm:col-span-2 sm:mt-0"
-                                                            >
-                                                                <VeeField
-                                                                    type="datetime-local"
-                                                                    name="expiresAt"
-                                                                    class="block w-full rounded-md border-0 bg-base-700 py-1.5 placeholder:text-accent-200 focus:ring-2 focus:ring-inset focus:ring-base-300 sm:text-sm sm:leading-6"
-                                                                    :placeholder="$t('common.expires_at')"
-                                                                    :label="$t('common.expires_at')"
-                                                                    @focusin="focusTablet(true)"
-                                                                    @focusout="focusTablet(false)"
-                                                                />
-                                                                <VeeErrorMessage
-                                                                    name="expiresAt"
-                                                                    as="p"
-                                                                    class="mt-2 text-sm text-error-400"
-                                                                />
-                                                            </dd>
-                                                        </div>
-                                                    </dl>
-                                                </div>
-                                            </div>
-                                        </div>
-                                    </div>
-                                    <div class="flex shrink-0 justify-end p-4">
-                                        <span class="isolate inline-flex w-full rounded-md pr-4 shadow-sm">
-                                            <UButton
-                                                type="submit"
-                                                class="relative flex w-full items-center rounded-l-md px-3.5 py-2.5 text-sm font-semibold"
-                                                :disabled="!meta.valid || !canSubmit"
-                                            >
-                                                <template v-if="!canSubmit">
-                                                    <LoadingIcon class="mr-2 size-5 animate-spin" />
-                                                </template>
-                                                {{ entry?.id === undefined ? $t('common.create') : $t('common.update') }}
-                                            </UButton>
-                                            <UButton
-                                                class="relative -ml-px inline-flex w-full items-center rounded-r-md bg-neutral-50 px-3 py-2 text-sm font-semibold text-gray-900 ring-1 ring-inset ring-gray-300 hover:bg-gray-200 hover:text-gray-900"
-                                                @click="$emit('close')"
-                                            >
-                                                {{ $t('common.close', 1) }}
-                                            </UButton>
-                                        </span>
-                                    </div>
-                                </form>
-                            </DialogPanel>
-                        </TransitionChild>
-                    </div>
+                    <UButton color="gray" variant="ghost" icon="i-mdi-window-close" class="-my-1" @click="isOpen = false" />
                 </div>
+            </template>
+
+            <div>
+                <UForm :state="{}">
+                    <div class="flex flex-1 flex-col justify-between">
+                        <div class="divide-y divide-gray-200 px-2 sm:px-6">
+                            <div class="mt-1">
+                                <dl class="divide-y divide-neutral/10 border-b border-neutral/10">
+                                    <div class="px-4 py-3 sm:grid sm:grid-cols-3 sm:gap-4 sm:px-0">
+                                        <dt class="text-sm font-medium leading-6">
+                                            <label for="type" class="block text-sm font-medium leading-6">
+                                                {{ $t('common.type') }}
+                                            </label>
+                                        </dt>
+                                        <dd class="mt-1 text-sm leading-6 text-gray-300 sm:col-span-2 sm:mt-0">
+                                            <VeeField
+                                                v-slot="{ field }"
+                                                as="div"
+                                                name="type"
+                                                :placeholder="$t('common.type')"
+                                                :label="$t('common.type')"
+                                            >
+                                                <select
+                                                    v-bind="field"
+                                                    class="block w-full rounded-md border-0 bg-base-700 py-1.5 placeholder:text-accent-200 focus:ring-2 focus:ring-inset focus:ring-base-300 sm:text-sm sm:leading-6"
+                                                    @focusin="focusTablet(true)"
+                                                    @focusout="focusTablet(false)"
+                                                >
+                                                    <option
+                                                        v-for="mtype in cTypes"
+                                                        :key="mtype.status"
+                                                        :selected="mtype.selected"
+                                                        :value="mtype.status"
+                                                    >
+                                                        {{
+                                                            $t(
+                                                                `enums.jobs.ConductType.${
+                                                                    ConductType[mtype.status ?? (0 as number)]
+                                                                }`,
+                                                            )
+                                                        }}
+                                                    </option>
+                                                </select>
+                                            </VeeField>
+                                            <VeeErrorMessage name="type" as="p" class="mt-2 text-sm text-error-400" />
+                                        </dd>
+                                    </div>
+                                    <div class="px-4 py-3 sm:grid sm:grid-cols-3 sm:gap-4 sm:px-0">
+                                        <dt class="text-sm font-medium leading-6">
+                                            <label for="targetUser" class="block text-sm font-medium leading-6">
+                                                {{ $t('common.target') }}
+                                            </label>
+                                        </dt>
+                                        <dd class="mt-1 text-sm leading-6 text-gray-300 sm:col-span-2 sm:mt-0">
+                                            <UInputMenu
+                                                v-model="targetUser"
+                                                :search="
+                                                    async (query: string) => {
+                                                        usersLoading = true;
+                                                        return await completorStore
+                                                            .listColleagues({
+                                                                pagination: { offset: 0 },
+                                                                searchName: query,
+                                                            })
+                                                            .finally(() => (usersLoading = false));
+                                                    }
+                                                "
+                                                :loading="usersLoading"
+                                                :search-attributes="['firstname', 'lastname']"
+                                                block
+                                                :placeholder="
+                                                    targetUser
+                                                        ? `${targetUser?.firstname} ${targetUser?.lastname} (${targetUser?.dateofbirth})`
+                                                        : $t('common.target')
+                                                "
+                                                trailing
+                                                by="userId"
+                                            >
+                                                <template #option="{ option: user }">
+                                                    {{ `${user?.firstname} ${user?.lastname} (${user?.dateofbirth})` }}
+                                                </template>
+                                                <template #option-empty="{ query: search }">
+                                                    <q>{{ search }}</q> {{ $t('common.query_not_found') }}
+                                                </template>
+                                                <template #empty>
+                                                    {{ $t('common.not_found', [$t('common.creator', 2)]) }}
+                                                </template>
+                                            </UInputMenu>
+                                        </dd>
+                                    </div>
+                                    <div class="px-4 py-3 sm:grid sm:grid-cols-3 sm:gap-4 sm:px-0">
+                                        <dt class="text-sm font-medium leading-6">
+                                            <label for="message" class="block text-sm font-medium leading-6">
+                                                {{ $t('common.message') }}
+                                            </label>
+                                        </dt>
+                                        <dd class="mt-1 text-sm leading-6 text-gray-300 sm:col-span-2 sm:mt-0">
+                                            <VeeField
+                                                as="textarea"
+                                                name="message"
+                                                class="block h-36 w-full rounded-md border-0 bg-base-700 py-1.5 placeholder:text-accent-200 focus:ring-2 focus:ring-inset focus:ring-base-300 sm:text-sm sm:leading-6"
+                                                :placeholder="$t('common.message')"
+                                                :label="$t('common.message')"
+                                                @focusin="focusTablet(true)"
+                                                @focusout="focusTablet(false)"
+                                            />
+                                            <VeeErrorMessage name="message" as="p" class="mt-2 text-sm text-error-400" />
+                                        </dd>
+                                    </div>
+                                    <div class="px-4 py-3 sm:grid sm:grid-cols-3 sm:gap-4 sm:px-0">
+                                        <dt class="text-sm font-medium leading-6">
+                                            <label for="expiresAt" class="block text-sm font-medium leading-6">
+                                                {{ $t('common.expires_at') }}?
+                                            </label>
+                                        </dt>
+                                        <dd class="mt-1 text-sm leading-6 text-gray-300 sm:col-span-2 sm:mt-0">
+                                            <VeeField
+                                                type="datetime-local"
+                                                name="expiresAt"
+                                                class="block w-full rounded-md border-0 bg-base-700 py-1.5 placeholder:text-accent-200 focus:ring-2 focus:ring-inset focus:ring-base-300 sm:text-sm sm:leading-6"
+                                                :placeholder="$t('common.expires_at')"
+                                                :label="$t('common.expires_at')"
+                                                @focusin="focusTablet(true)"
+                                                @focusout="focusTablet(false)"
+                                            />
+                                            <VeeErrorMessage name="expiresAt" as="p" class="mt-2 text-sm text-error-400" />
+                                        </dd>
+                                    </div>
+                                </dl>
+                            </div>
+                        </div>
+                    </div>
+                </UForm>
             </div>
-        </Dialog>
-    </TransitionRoot>
+
+            <template #footer>
+                <div class="gap-2 sm:flex">
+                    <UButton class="flex-1" @click="isOpen = false">
+                        {{ $t('common.close', 1) }}
+                    </UButton>
+                    <UButton
+                        class="flex-1"
+                        :disabled="!meta.valid || !canSubmit"
+                        :loading="!canSubmit"
+                        @click="onSubmitThrottle"
+                    >
+                        {{ entry?.id === undefined ? $t('common.create') : $t('common.update') }}
+                    </UButton>
+                </div>
+            </template>
+        </UCard>
+    </UModal>
 </template>

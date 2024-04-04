@@ -114,140 +114,132 @@ const modal = useModal();
     <div class="py-2 pb-4">
         <div class="px-1 sm:px-2 lg:px-4">
             <div class="sm:flex sm:items-center">
-                <div class="sm:flex-auto">
-                    <form @submit.prevent="refresh()">
-                        <div class="mx-auto flex flex-row gap-4">
-                            <div class="flex-1">
-                                <label for="searchName" class="block text-sm font-medium leading-6">
-                                    {{ $t('common.search') }}
-                                    {{ $t('common.colleague', 1) }}
-                                </label>
-                                <div class="relative mt-2">
-                                    <UInput
-                                        v-model="query.name"
-                                        type="text"
-                                        name="searchName"
-                                        :placeholder="$t('common.name')"
-                                        block
-                                        @focusin="focusTablet(true)"
-                                        @focusout="focusTablet(false)"
-                                    />
-                                </div>
-                            </div>
-                            <div class="flex-initial">
-                                <label for="absent" class="block text-sm font-medium leading-6">
-                                    {{ $t('common.absent') }}
-                                </label>
-                                <div class="relative mt-3 flex items-center">
-                                    <UToggle v-model="query.absent">
-                                        <span class="sr-only">
-                                            {{ $t('common.absent') }}
-                                        </span>
-                                    </UToggle>
-                                </div>
+                <UForm :state="{}" @submit.prevent="refresh()">
+                    <div class="mx-auto flex flex-row gap-4">
+                        <div class="flex-1">
+                            <label for="searchName" class="block text-sm font-medium leading-6">
+                                {{ $t('common.search') }}
+                                {{ $t('common.colleague', 1) }}
+                            </label>
+                            <div class="relative mt-2">
+                                <UInput
+                                    v-model="query.name"
+                                    type="text"
+                                    name="searchName"
+                                    :placeholder="$t('common.name')"
+                                    block
+                                    @focusin="focusTablet(true)"
+                                    @focusout="focusTablet(false)"
+                                />
                             </div>
                         </div>
-                    </form>
-                </div>
-            </div>
-            <div class="mt-2 flow-root">
-                <div class="-my-2 mx-0 overflow-x-auto">
-                    <div class="inline-block min-w-full px-1 py-2 align-middle">
-                        <DataErrorBlock
-                            v-if="error"
-                            :title="$t('common.unable_to_load', [$t('common.colleague', 2)])"
-                            :retry="refresh"
-                        />
-                        <UTable
-                            v-else
-                            :loading="loading"
-                            :columns="columns"
-                            :rows="data?.colleagues"
-                            :empty-state="{ icon: 'i-mdi-car', label: $t('common.not_found', [$t('common.vehicle', 2)]) }"
-                        >
-                            <template #name-data="{ row: colleague }">
-                                <div class="inline-flex items-center">
-                                    <ProfilePictureImg
-                                        :url="colleague.props?.mugShot?.url"
-                                        :name="`${colleague.firstname} ${colleague.lastname}`"
-                                        size="sm"
-                                        :enable-popup="true"
-                                        :alt-text="$t('common.mug_shot')"
-                                        class="mr-2"
-                                    />
-                                    <span>{{ colleague.firstname }} {{ colleague.lastname }}</span>
-                                </div>
-
-                                <dl class="font-normal lg:hidden">
-                                    <dt class="sr-only">{{ $t('common.job_grade') }}</dt>
-                                    <dd class="mt-1 truncate">
-                                        {{ colleague.jobGradeLabel
-                                        }}<span v-if="colleague.jobGrade > 0"> ({{ colleague.jobGrade }})</span>
-                                    </dd>
-                                </dl>
-                            </template>
-                            <template #rank-data="{ row: colleague }">
-                                {{ colleague.jobGradeLabel
-                                }}<span v-if="colleague.jobGrade > 0"> ({{ colleague.jobGrade }})</span>
-                            </template>
-                            <template #absence-data="{ row: colleague }">
-                                <dl
-                                    v-if="
-                                        colleague.props?.absenceEnd &&
-                                        toDate(colleague.props?.absenceEnd).getTime() >= today.getTime()
-                                    "
-                                    class="font-normal"
-                                >
-                                    <dd class="truncate">
-                                        {{ $t('common.from') }}:
-                                        <GenericTime :value="colleague.props?.absenceBegin" type="date" />
-                                    </dd>
-                                    <dd class="truncate">
-                                        {{ $t('common.to') }}: <GenericTime :value="colleague.props?.absenceEnd" type="date" />
-                                    </dd>
-                                </dl>
-                            </template>
-                            <template #phone-data="{ row: colleague }">
-                                <PhoneNumberBlock :number="colleague.phoneNumber" />
-                            </template>
-                            <template #actions-data="{ row: colleague }">
-                                <UButton
-                                    v-if="
-                                        can('JobsService.SetJobsUserProps') &&
-                                        checkIfCanAccessColleague(activeChar!, colleague, 'JobsService.SetJobsUserProps')
-                                    "
-                                    variant="link"
-                                    icon="i-mdi-island"
-                                    @click="
-                                        modal.open(SelfServicePropsAbsenceDateModal, {
-                                            userId: colleague.userId,
-                                        })
-                                    "
-                                />
-
-                                <UButton
-                                    v-if="
-                                        can('JobsService.GetColleague') &&
-                                        checkIfCanAccessColleague(activeChar!, colleague, 'JobsService.GetColleague')
-                                    "
-                                    variant="link"
-                                    icon="i-mdi-eye"
-                                    :to="{
-                                        name: 'jobs-colleagues-id-actvitiy',
-                                        params: { id: colleague.userId ?? 0 },
-                                    }"
-                                />
-                            </template>
-                        </UTable>
-
-                        <div class="flex justify-end px-3 py-3.5 border-t border-gray-200 dark:border-gray-700">
-                            <UPagination
-                                v-model="page"
-                                :page-count="data?.pagination?.pageSize ?? 0"
-                                :total="data?.pagination?.totalCount ?? 0"
-                            />
+                        <div class="flex-initial">
+                            <label for="absent" class="block text-sm font-medium leading-6">
+                                {{ $t('common.absent') }}
+                            </label>
+                            <div class="relative mt-3 flex items-center">
+                                <UToggle v-model="query.absent">
+                                    <span class="sr-only">
+                                        {{ $t('common.absent') }}
+                                    </span>
+                                </UToggle>
+                            </div>
                         </div>
                     </div>
+                </UForm>
+            </div>
+            <div class="inline-block min-w-full px-1 py-2 align-middle">
+                <DataErrorBlock
+                    v-if="error"
+                    :title="$t('common.unable_to_load', [$t('common.colleague', 2)])"
+                    :retry="refresh"
+                />
+                <UTable
+                    v-else
+                    :loading="loading"
+                    :columns="columns"
+                    :rows="data?.colleagues"
+                    :empty-state="{ icon: 'i-mdi-car', label: $t('common.not_found', [$t('common.vehicle', 2)]) }"
+                >
+                    <template #name-data="{ row: colleague }">
+                        <div class="inline-flex items-center">
+                            <ProfilePictureImg
+                                :url="colleague.props?.mugShot?.url"
+                                :name="`${colleague.firstname} ${colleague.lastname}`"
+                                size="sm"
+                                :enable-popup="true"
+                                :alt-text="$t('common.mug_shot')"
+                                class="mr-2"
+                            />
+                            <span>{{ colleague.firstname }} {{ colleague.lastname }}</span>
+                        </div>
+
+                        <dl class="font-normal lg:hidden">
+                            <dt class="sr-only">{{ $t('common.job_grade') }}</dt>
+                            <dd class="mt-1 truncate">
+                                {{ colleague.jobGradeLabel
+                                }}<span v-if="colleague.jobGrade > 0"> ({{ colleague.jobGrade }})</span>
+                            </dd>
+                        </dl>
+                    </template>
+                    <template #rank-data="{ row: colleague }">
+                        {{ colleague.jobGradeLabel }}<span v-if="colleague.jobGrade > 0"> ({{ colleague.jobGrade }})</span>
+                    </template>
+                    <template #absence-data="{ row: colleague }">
+                        <dl
+                            v-if="
+                                colleague.props?.absenceEnd && toDate(colleague.props?.absenceEnd).getTime() >= today.getTime()
+                            "
+                            class="font-normal"
+                        >
+                            <dd class="truncate">
+                                {{ $t('common.from') }}:
+                                <GenericTime :value="colleague.props?.absenceBegin" type="date" />
+                            </dd>
+                            <dd class="truncate">
+                                {{ $t('common.to') }}: <GenericTime :value="colleague.props?.absenceEnd" type="date" />
+                            </dd>
+                        </dl>
+                    </template>
+                    <template #phone-data="{ row: colleague }">
+                        <PhoneNumberBlock :number="colleague.phoneNumber" />
+                    </template>
+                    <template #actions-data="{ row: colleague }">
+                        <UButton
+                            v-if="
+                                can('JobsService.SetJobsUserProps') &&
+                                checkIfCanAccessColleague(activeChar!, colleague, 'JobsService.SetJobsUserProps')
+                            "
+                            variant="link"
+                            icon="i-mdi-island"
+                            @click="
+                                modal.open(SelfServicePropsAbsenceDateModal, {
+                                    userId: colleague.userId,
+                                })
+                            "
+                        />
+
+                        <UButton
+                            v-if="
+                                can('JobsService.GetColleague') &&
+                                checkIfCanAccessColleague(activeChar!, colleague, 'JobsService.GetColleague')
+                            "
+                            variant="link"
+                            icon="i-mdi-eye"
+                            :to="{
+                                name: 'jobs-colleagues-id-actvitiy',
+                                params: { id: colleague.userId ?? 0 },
+                            }"
+                        />
+                    </template>
+                </UTable>
+
+                <div class="flex justify-end px-3 py-3.5 border-t border-gray-200 dark:border-gray-700">
+                    <UPagination
+                        v-model="page"
+                        :page-count="data?.pagination?.pageSize ?? 0"
+                        :total="data?.pagination?.totalCount ?? 0"
+                    />
                 </div>
             </div>
         </div>

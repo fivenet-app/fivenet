@@ -935,7 +935,8 @@
         "commandpalette": "Command Palette",
         "language": "Language | Languages",
         "query_not_found": "not found.",
-        "file": "File | Files"
+        "file": "File | Files",
+        "entry": "Entry | Entries"
     },
     "notifications": {
         "clipboard": {

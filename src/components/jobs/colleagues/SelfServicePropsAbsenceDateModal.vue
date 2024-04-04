@@ -182,24 +182,16 @@ const onSubmitThrottle = useThrottleFn(async (e) => {
                 </form>
             </div>
 
-            <div class="mt-5 gap-2 sm:mt-4 sm:flex">
-                <UButton
-                    class="flex-1 rounded-md bg-neutral-50 px-3.5 py-2.5 text-sm font-semibold text-gray-900 hover:bg-gray-200"
-                    @click="isOpen = false"
-                >
-                    {{ $t('common.close', 1) }}
-                </UButton>
-                <UButton
-                    type="submit"
-                    class="flex flex-1 justify-center rounded-md px-3.5 py-2.5 text-sm font-semibold"
-                    :disabled="!meta.valid || !canSubmit"
-                >
-                    <template v-if="!canSubmit">
-                        <LoadingIcon class="mr-2 size-5 animate-spin" />
-                    </template>
-                    {{ $t('common.save') }}
-                </UButton>
-            </div>
+            <template #footer>
+                <div class="gap-2 sm:flex">
+                    <UButton class="flex-1" @click="isOpen = false">
+                        {{ $t('common.close', 1) }}
+                    </UButton>
+                    <UButton type="submit" class="flex-1" :disabled="!meta.valid || !canSubmit" :loading="!canSubmit">
+                        {{ $t('common.save') }}
+                    </UButton>
+                </div>
+            </template>
         </UCard>
     </UModal>
 </template>
