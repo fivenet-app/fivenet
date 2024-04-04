@@ -1,5 +1,4 @@
 <script lang="ts" setup>
-import { useIntervalFn } from '@vueuse/core';
 import { ListDispatchActivityResponse } from '~~/gen/ts/services/centrum/centrum';
 import DispatchFeedItem from '~/components/centrum/dispatches/DispatchFeedItem.vue';
 

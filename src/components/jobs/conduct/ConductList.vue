@@ -1,6 +1,6 @@
 <script lang="ts" setup>
 import { Combobox, ComboboxButton, ComboboxInput, ComboboxOption, ComboboxOptions } from '@headlessui/vue';
-import { useConfirmDialog, watchDebounced } from '@vueuse/core';
+import { useConfirmDialog } from '@vueuse/core';
 import { CheckIcon } from 'mdi-vue3';
 import ConfirmDialog from '~/components/partials/ConfirmDialog.vue';
 import DataErrorBlock from '~/components/partials/data/DataErrorBlock.vue';
@@ -68,13 +68,6 @@ async function deleteConductEntry(id: string): Promise<void> {
 const queryTypes = ref('');
 
 const queryTargets = ref<string>('');
-
-const searchInput = ref<HTMLInputElement | null>(null);
-function focusSearch(): void {
-    if (searchInput.value) {
-        searchInput.value.focus();
-    }
-}
 
 watch(offset, async () => refresh());
 watchDebounced(query.value, () => refresh(), { debounce: 600, maxWait: 1400 });
@@ -186,7 +179,6 @@ onConfirm(async (id) => deleteConductEntry(id));
                                         <div class="relative">
                                             <ComboboxButton as="div">
                                                 <ComboboxInput
-                                                    ref="searchInput"
                                                     autocomplete="off"
                                                     class="block w-full rounded-md border-0 bg-base-700 py-1.5 placeholder:text-accent-200 focus:ring-2 focus:ring-inset focus:ring-base-300 sm:text-sm sm:leading-6"
                                                     :display-value="
@@ -346,7 +338,6 @@ onConfirm(async (id) => deleteConductEntry(id));
                         />
                         <DataNoDataBlock
                             v-else-if="data?.entries.length === 0"
-                            :focus="focusSearch"
                             :message="$t('components.citizens.citizens_list.no_citizens')"
                         />
                         <template v-else>

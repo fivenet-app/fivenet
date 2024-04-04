@@ -1,6 +1,5 @@
 <script lang="ts" setup>
 import { LControl, LLayerGroup } from '@vue-leaflet/vue-leaflet';
-import { computedAsync, useTimeoutFn } from '@vueuse/core';
 import { useLivemapStore } from '~/store/livemap';
 import { useSettingsStore } from '~/store/settings';
 import { UserMarker } from '~~/gen/ts/resources/livemap/livemap';

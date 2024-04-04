@@ -1,10 +1,9 @@
 <script lang="ts" setup>
 // eslint-disable-next-line camelcase
 import { integer, max, max_value, min, min_value, required } from '@vee-validate/rules';
-import { useConfirmDialog, useThrottleFn, useTimeoutFn } from '@vueuse/core';
-import { CancelIcon, ContentSaveIcon, PencilIcon, TrashCanIcon } from 'mdi-vue3';
+import { CancelIcon, ContentSaveIcon } from 'mdi-vue3';
 import { defineRule } from 'vee-validate';
-import ConfirmDialog from '~/components/partials/ConfirmDialog.vue';
+import ConfirmModal from '~/components/partials/ConfirmModal.vue';
 import { Law } from '~~/gen/ts/resources/laws/laws';
 
 const props = defineProps<{
@@ -109,30 +108,27 @@ const onSubmitThrottle = useThrottleFn(async (e) => {
     await onSubmit(e);
 }, 1000);
 
-const { isRevealed, reveal, confirm, cancel, onConfirm } = useConfirmDialog();
-
-onConfirm(async (id) => deleteLaw(id));
+const modal = useModal();
 
 const editing = ref(props.startInEdit);
 </script>
 
 <template>
-    <ConfirmDialog
-        :open="isRevealed"
-        :title="$t('components.partials.confirm_dialog.title')"
-        :description="$t('components.partials.confirm_dialog.description')"
-        :cancel="cancel"
-        :confirm="() => confirm(law.id)"
-    />
-
     <tr v-if="!editing">
         <td class="flex flex-row py-2 pl-4 pr-3 text-sm font-medium sm:pl-1">
-            <UButton class="pl-2" :title="$t('common.edit')" @click="editing = true">
-                <PencilIcon class="size-5" />
-            </UButton>
-            <UButton class="pl-2" :title="$t('common.delete')" @click="reveal()">
-                <TrashCanIcon class="size-5" />
-            </UButton>
+            <UButtonGroup>
+                <UButton variant="link" icon="i-mdi-pencil" :title="$t('common.edit')" @click="editing = true" />
+                <UButton
+                    variant="link"
+                    icon="i-mdi-trash-can"
+                    :title="$t('common.delete')"
+                    @click="
+                        modal.open(ConfirmModal, {
+                            confirm: async () => deleteLaw(law.id),
+                        })
+                    "
+                />
+            </UButtonGroup>
         </td>
         <td class="py-2 pl-4 pr-3 text-sm font-medium sm:pl-1">
             {{ law.name }}
@@ -150,18 +146,18 @@ const editing = ref(props.startInEdit);
     </tr>
     <tr v-else>
         <td class="py-2 pl-4 pr-3 text-sm font-medium sm:pl-1">
-            <UButton :title="$t('common.save')" @click="onSubmitThrottle">
-                <ContentSaveIcon class="size-5" />
-            </UButton>
-            <UButton
-                :title="$t('common.cancel')"
-                @click="
-                    editing = false;
-                    parseInt(law.id) < 0 && $emit('deleted', law.id);
-                "
-            >
-                <CancelIcon class="size-5" />
-            </UButton>
+            <UButtonGroup>
+                <UButton variant="link" icon="i-mdi-content-save" :title="$t('common.save')" @click="onSubmitThrottle" />
+                <UButton
+                    variant="link"
+                    icon="i-mdi-cancel"
+                    :title="$t('common.cancel')"
+                    @click="
+                        editing = false;
+                        parseInt(law.id) < 0 && $emit('deleted', law.id);
+                    "
+                />
+            </UButtonGroup>
         </td>
         <td class="py-2 pl-4 pr-3 text-sm font-medium sm:pl-1">
             <VeeField

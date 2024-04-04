@@ -1,8 +1,5 @@
 <script lang="ts" setup>
-import { Disclosure, DisclosureButton, DisclosurePanel } from '@headlessui/vue';
-import { watchDebounced } from '@vueuse/core';
 import { vMaska } from 'maska';
-import { ChevronDownIcon } from 'mdi-vue3';
 import DataErrorBlock from '~/components/partials/data/DataErrorBlock.vue';
 import { attr } from '~/composables/can';
 import GenericInput from '~/composables/partials/forms/GenericInput.vue';
@@ -172,7 +169,7 @@ const columns = [
 
                     <UAccordion
                         class="mt-2"
-                        color="primary"
+                        color="white"
                         variant="soft"
                         size="sm"
                         :items="[{ label: $t('common.advanced_search'), slot: 'search' }]"
@@ -239,26 +236,24 @@ const columns = [
             :columns="columns"
             :rows="data?.users"
             :empty-state="{ icon: 'i-mdi-accounts', label: $t('common.not_found', [$t('common.citizen', 2)]) }"
-            :page-count="(data?.pagination?.totalCount ?? 0) / (data?.pagination?.pageSize ?? 1)"
-            :total="data?.pagination?.totalCount"
         >
-            <template #name-data="{ row }">
+            <template #name-data="{ row: citizen }">
                 <div class="inline-flex items-center">
                     <ProfilePictureImg
-                        :url="row.props?.mugShot?.url"
-                        :name="`${row.firstname} ${row.lastname}`"
+                        :url="citizen.props?.mugShot?.url"
+                        :name="`${citizen.firstname} ${citizen.lastname}`"
                         size="sm"
                         :enable-popup="true"
                         :alt-text="$t('common.mug_shot')"
                         class="mr-2"
                     />
 
-                    <span>{{ row.firstname }} {{ row.lastname }}</span>
-                    <span class="lg:hidden"> ({{ row.dateofbirth }}) </span>
+                    <span>{{ citizen.firstname }} {{ citizen.lastname }}</span>
+                    <span class="lg:hidden"> ({{ citizen.dateofbirth }}) </span>
                 </div>
 
                 <span
-                    v-if="row.props?.wanted"
+                    v-if="citizen.props?.wanted"
                     class="ml-1 rounded-md bg-error-100 px-2 py-0.5 text-sm font-medium text-error-700"
                 >
                     {{ $t('common.wanted').toUpperCase() }}
@@ -266,34 +261,34 @@ const columns = [
 
                 <dl class="font-normal lg:hidden">
                     <dt class="sr-only">{{ $t('common.sex') }} - {{ $t('common.job') }}</dt>
-                    <dd class="mt-1 truncate text-accent-200">{{ row.sex!.toUpperCase() }} - {{ row.jobLabel }}</dd>
+                    <dd class="mt-1 truncate">{{ citizen.sex!.toUpperCase() }} - {{ citizen.jobLabel }}</dd>
                 </dl>
             </template>
-            <template #jobLabel-data="{ row }">
-                {{ row.jobLabel }}
+            <template #jobLabel-data="{ row: citizen }">
+                {{ citizen.jobLabel }}
             </template>
-            <template #sex-data="{ row }">
-                {{ row.sex!.toUpperCase() }}
+            <template #sex-data="{ row: citizen }">
+                {{ citizen.sex!.toUpperCase() }}
             </template>
-            <template #phoneNumber-data="{ row }">
-                <PhoneNumberBlock :number="row.phoneNumber" />
+            <template #phoneNumber-data="{ row: citizen }">
+                <PhoneNumberBlock :number="citizen.phoneNumber" />
             </template>
-            <template #openFines-data="{ row }">
-                <template v-if="(row.props?.openFines ?? 0n) > 0n">
-                    {{ $n(parseInt((row?.props?.openFines ?? 0n).toString()), 'currency') }}
+            <template #openFines-data="{ row: citizen }">
+                <template v-if="(citizen.props?.openFines ?? 0n) > 0n">
+                    {{ $n(parseInt((citizen?.props?.openFines ?? 0n).toString()), 'currency') }}
                 </template>
             </template>
-            <template #height-data="{ row }"> {{ row.height }}cm </template>
-            <template #actions-data="{ row }">
+            <template #height-data="{ row: citizen }"> {{ citizen.height }}cm </template>
+            <template #actions-data="{ row: citizen }">
                 <div v-if="can('CitizenStoreService.GetUser')" class="flex flex-col justify-end gap-1 md:flex-row">
-                    <UButton variant="link" icon="i-mdi-clipboard-plus" @click="addToClipboard(row)" />
+                    <UButton variant="link" icon="i-mdi-clipboard-plus" @click="addToClipboard(citizen)" />
 
                     <UButton
                         variant="link"
                         icon="i-mdi-eye"
                         :to="{
                             name: 'citizens-id',
-                            params: { id: row.userId ?? 0 },
+                            params: { id: citizen.userId ?? 0 },
                         }"
                     />
                 </div>

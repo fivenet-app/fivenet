@@ -12,7 +12,7 @@ definePageMeta({
     permission: 'JobsService.GetColleague',
     redirect: { name: 'jobs-colleagues-id-activity' },
     validate: async (route) => {
-        route = route as TypedRouteFromName<'jobs-colleagues-id'>;
+        route = route as TypedRouteFromName<'jobs-colleagues-id-actvitiy'>;
         // Check if the id is made up of digits
         return /^\d+$/.test(route.params.id);
     },
@@ -20,7 +20,7 @@ definePageMeta({
 
 const { t } = useI18n();
 
-const route = useRoute('jobs-colleagues-id');
+const route = useRoute('jobs-colleagues-id-actvitiy');
 
 const links = [
     {

@@ -1,5 +1,4 @@
 <script lang="ts" setup>
-import { watchDebounced } from '@vueuse/core';
 import DataErrorBlock from '~/components/partials/data/DataErrorBlock.vue';
 import { checkIfCanAccessColleague } from '~/components/jobs/colleagues/helpers';
 import type { Perms } from '~~/gen/ts/perms';
@@ -8,6 +7,7 @@ import GenericTime from '~/components/partials/elements/GenericTime.vue';
 import PhoneNumberBlock from '~/components/partials/citizens/PhoneNumberBlock.vue';
 import { useAuthStore } from '~/store/auth';
 import SelfServicePropsAbsenceDateModal from './SelfServicePropsAbsenceDateModal.vue';
+import ProfilePictureImg from '~/components/partials/citizens/ProfilePictureImg.vue';
 
 const { $grpc } = useNuxtApp();
 
@@ -124,7 +124,6 @@ const modal = useModal();
                                 </label>
                                 <div class="relative mt-2">
                                     <UInput
-                                        ref="searchInput"
                                         v-model="query.name"
                                         type="text"
                                         name="searchName"
@@ -165,11 +164,20 @@ const modal = useModal();
                             :columns="columns"
                             :rows="data?.colleagues"
                             :empty-state="{ icon: 'i-mdi-car', label: $t('common.not_found', [$t('common.vehicle', 2)]) }"
-                            :page-count="(data?.pagination?.totalCount ?? 0) / (data?.pagination?.pageSize ?? 1)"
-                            :total="data?.pagination?.totalCount"
                         >
                             <template #name-data="{ row: colleague }">
-                                {{ colleague.firstname }} {{ colleague.lastname }}
+                                <div class="inline-flex items-center">
+                                    <ProfilePictureImg
+                                        :url="colleague.props?.mugShot?.url"
+                                        :name="`${colleague.firstname} ${colleague.lastname}`"
+                                        size="sm"
+                                        :enable-popup="true"
+                                        :alt-text="$t('common.mug_shot')"
+                                        class="mr-2"
+                                    />
+                                    <span>{{ colleague.firstname }} {{ colleague.lastname }}</span>
+                                </div>
+
                                 <dl class="font-normal lg:hidden">
                                     <dt class="sr-only">{{ $t('common.job_grade') }}</dt>
                                     <dd class="mt-1 truncate">
@@ -190,11 +198,11 @@ const modal = useModal();
                                     "
                                     class="font-normal"
                                 >
-                                    <dd class="truncate text-accent-200">
+                                    <dd class="truncate">
                                         {{ $t('common.from') }}:
                                         <GenericTime :value="colleague.props?.absenceBegin" type="date" />
                                     </dd>
-                                    <dd class="truncate text-accent-200">
+                                    <dd class="truncate">
                                         {{ $t('common.to') }}: <GenericTime :value="colleague.props?.absenceEnd" type="date" />
                                     </dd>
                                 </dl>

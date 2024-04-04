@@ -1,14 +1,73 @@
 <script lang="ts" setup>
 import { useLivemapStore } from '~/store/livemap';
-import MarkersListEntry from '~/components/centrum/MarkersListEntry.vue';
-import GenericTable from '~/components/partials/elements/GenericTable.vue';
+import GenericTime from '../partials/elements/GenericTime.vue';
+import CitizenInfoPopover from '../partials/citizens/CitizenInfoPopover.vue';
+import { MarkerType } from '~~/gen/ts/resources/livemap/livemap';
+import ConfirmModal from '~/components/partials/ConfirmModal.vue';
 
 defineEmits<{
     (e: 'goto', loc: Coordinate): void;
 }>();
 
+const { t } = useI18n();
+
+const { $grpc } = useNuxtApp();
+
 const livemapStore = useLivemapStore();
+const { deleteMarkerMarker } = livemapStore;
 const { markersMarkers } = storeToRefs(livemapStore);
+
+async function deleteMarker(id: string): Promise<void> {
+    try {
+        const call = $grpc.getLivemapperClient().deleteMarker({
+            id,
+        });
+        await call;
+
+        deleteMarkerMarker(id);
+    } catch (e) {
+        $grpc.handleError(e as RpcError);
+        throw e;
+    }
+}
+
+const modal = useModal();
+
+const columns = [
+    {
+        key: 'actions',
+        label: t('common.action', 2),
+        sortable: false,
+    },
+    {
+        key: 'createdAt',
+        label: t('common.created'),
+    },
+    {
+        key: 'expiresAt',
+        label: t('common.expires_at'),
+    },
+    {
+        key: 'name',
+        label: t('common.name'),
+    },
+    {
+        key: 'type',
+        label: t('common.type'),
+    },
+    {
+        key: 'description',
+        label: t('common.description'),
+    },
+    {
+        key: 'creator',
+        label: t('common.creator'),
+    },
+    {
+        key: 'job',
+        label: t('common.job'),
+    },
+];
 </script>
 
 <template>
@@ -27,44 +86,72 @@ const { markersMarkers } = storeToRefs(livemapStore);
         <div class="mt-0.5 flow-root">
             <div class="-mx-2 sm:-mx-6 lg:-mx-8">
                 <div class="inline-block min-w-full py-2 align-middle sm:px-2 lg:px-2">
-                    <GenericTable>
-                        <template #thead>
-                            <tr>
-                                <th scope="col" class="whitespace-nowrap p-1 text-left text-sm font-semibold text-gray-100">
-                                    {{ $t('common.action', 2) }}
-                                </th>
-                                <th scope="col" class="whitespace-nowrap p-1 text-left text-sm font-semibold text-gray-100">
-                                    {{ $t('common.created_at') }}
-                                </th>
-                                <th scope="col" class="whitespace-nowrap p-1 text-left text-sm font-semibold text-gray-100">
-                                    {{ $t('common.expires_at') }}
-                                </th>
-                                <th scope="col" class="whitespace-nowrap p-1 text-left text-sm font-semibold text-gray-100">
-                                    {{ $t('common.name') }}
-                                </th>
-                                <th scope="col" class="whitespace-nowrap p-1 text-left text-sm font-semibold text-gray-100">
-                                    {{ $t('common.type') }}
-                                </th>
-                                <th scope="col" class="whitespace-nowrap p-1 text-left text-sm font-semibold text-gray-100">
-                                    {{ $t('common.description') }}
-                                </th>
-                                <th scope="col" class="whitespace-nowrap p-1 text-left text-sm font-semibold text-gray-100">
-                                    {{ $t('common.citizen') }}
-                                </th>
-                                <th scope="col" class="whitespace-nowrap p-1 text-left text-sm font-semibold text-gray-100">
-                                    {{ $t('common.job') }}
-                                </th>
-                            </tr>
+                    <UTable
+                        :columns="columns"
+                        :rows="Array.from(markersMarkers.values())"
+                        :empty-state="{
+                            icon: 'i-mdi-map-marker',
+                            label: $t('common.not_found', [$t('common.dispatch', 2)]),
+                        }"
+                        :ui="{ th: { padding: 'px-0.5 py-0.5' }, td: { padding: 'px-1 py-0.5' } }"
+                    >
+                        <template #actions-data="{ row: marker }">
+                            <UButtonGroup>
+                                <UButton
+                                    variant="link"
+                                    icon="i-mdi-map-marker"
+                                    :title="$t('common.mark')"
+                                    @click="$emit('goto', { x: marker.info!.x, y: marker.info!.y })"
+                                >
+                                    <span class="sr-only">{{ $t('common.mark') }}</span>
+                                </UButton>
+                                <UButton
+                                    v-if="can('LivemapperService.DeleteMarker')"
+                                    :title="$t('common.delete')"
+                                    variant="link"
+                                    icon="i-mdi-trash-can"
+                                    @click="
+                                        modal.open(ConfirmModal, {
+                                            confirm: async () => deleteMarker(marker.info!.id),
+                                        })
+                                    "
+                                >
+                                    <span class="sr-only">{{ $t('common.delete') }}</span>
+                                </UButton>
+                            </UButtonGroup>
                         </template>
-                        <template #tbody>
-                            <MarkersListEntry
-                                v-for="[key, marker] in markersMarkers"
-                                :key="key"
-                                :marker="marker"
-                                @goto="$emit('goto', $event)"
-                            />
+                        <template #createdAt-data="{ row: marker }">
+                            <GenericTime :value="marker.info?.createdAt" type="compact" />
                         </template>
-                    </GenericTable>
+                        <template #expiresAt-data="{ row: marker }">
+                            <GenericTime v-if="marker.expiresAt" :value="marker.expiresAt" type="compact" />
+                            <span v-else>
+                                {{ $t('common.na') }}
+                            </span>
+                        </template>
+                        <template #name-data="{ row: marker }">
+                            {{ marker.info!.name }}
+                        </template>
+                        <template #type-data="{ row: marker }">
+                            {{ $t(`enums.livemap.MarkerType.${MarkerType[marker.type]}`) }}
+                        </template>
+                        <template #description-data="{ row: marker }">
+                            <p class="max-h-14 overflow-y-scroll break-words">
+                                {{ marker.info?.description ?? $t('common.na') }}
+                            </p>
+                        </template>
+                        <template #creator-data="{ row: marker }">
+                            <span v-if="marker.creator">
+                                <CitizenInfoPopover :user="marker.creator" :trailing="false" />
+                            </span>
+                            <span v-else>
+                                {{ $t('common.unknown') }}
+                            </span>
+                        </template>
+                        <template #job-data="{ row: marker }">
+                            {{ marker.creator?.jobLabel ?? $t('common.na') }}
+                        </template>
+                    </UTable>
                 </div>
             </div>
         </div>

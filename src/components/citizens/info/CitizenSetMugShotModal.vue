@@ -1,7 +1,6 @@
 <script lang="ts" setup>
 import { Dialog, DialogPanel, DialogTitle, TransitionChild, TransitionRoot } from '@headlessui/vue';
 import { max, min, required, mimes, size } from '@vee-validate/rules';
-import { useThrottleFn, useTimeoutFn } from '@vueuse/core';
 import { CloseIcon, LoadingIcon } from 'mdi-vue3';
 import { defineRule } from 'vee-validate';
 import SquareImg from '~/components/partials/elements/SquareImg.vue';

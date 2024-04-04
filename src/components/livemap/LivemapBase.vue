@@ -1,7 +1,6 @@
 <script lang="ts" setup>
 import { LControl } from '@vue-leaflet/vue-leaflet';
 import { type LeafletMouseEvent } from 'leaflet';
-import { useDebounce } from '@vueuse/core';
 import DataErrorBlock from '~/components/partials/data/DataErrorBlock.vue';
 import DataPendingBlock from '~/components/partials/data/DataPendingBlock.vue';
 import { isNUIAvailable, setWaypoint } from '~/composables/nui';

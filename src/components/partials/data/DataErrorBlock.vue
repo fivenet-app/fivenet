@@ -1,5 +1,4 @@
 <script lang="ts" setup>
-import { useTimeoutFn } from '@vueuse/core';
 import { CancelIcon, CloseCircleIcon, RefreshIcon } from 'mdi-vue3';
 
 defineProps<{

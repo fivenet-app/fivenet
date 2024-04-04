@@ -11,8 +11,7 @@ import {
     ListboxOptions,
 } from '@headlessui/vue';
 import { listEnumValues } from '@protobuf-ts/runtime';
-import { watchDebounced } from '@vueuse/core';
-import { CheckIcon, ChevronDownIcon, CloseIcon } from 'mdi-vue3';
+import { CheckIcon, ChevronDownIcon } from 'mdi-vue3';
 import { useCompletorStore } from '~/store/completor';
 import { type ArrayElement } from '~/utils/types';
 import { AccessLevel } from '~~/gen/ts/resources/documents/access';
@@ -515,11 +514,10 @@ watch(selectedAccessRole, () => {
         </div>
         <div v-if="!readOnly" class="flex-initial">
             <UButton
-                class="rounded-full bg-primary-500 p-1.5 hover:bg-primary-400 focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2"
+                :ui="{ rounded: 'rounded-full' }"
+                icon="i-mdi-close"
                 @click="$emit('deleteRequest', { id: props.init.id })"
-            >
-                <CloseIcon class="size-5" />
-            </UButton>
+            />
         </div>
     </div>
 </template>

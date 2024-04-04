@@ -1,6 +1,5 @@
 <script lang="ts" setup>
 import { mimes, required, size } from '@vee-validate/rules';
-import { useThrottleFn, useTimeoutFn } from '@vueuse/core';
 import { LoadingIcon } from 'mdi-vue3';
 import { defineRule } from 'vee-validate';
 import ProfilePictureImg from '~/components/partials/citizens/ProfilePictureImg.vue';
@@ -15,7 +14,7 @@ const { activeChar } = storeToRefs(authStore);
 
 const notifications = useNotificatorStore();
 
-const modal = useModal();
+const { isOpen } = useModal();
 
 interface FormData {
     avatar?: Blob;
@@ -48,7 +47,7 @@ async function setProfilePicture(values: FormData): Promise<void> {
             type: 'success',
         });
 
-        modal.close();
+        isOpen.value = false;
     } catch (e) {
         $grpc.handleError(e as RpcError);
         throw e;
@@ -94,7 +93,7 @@ const nuiAvailable = ref(isNUIAvailable());
                         variant="ghost"
                         icon="i-heroicons-x-mark-20-solid"
                         class="-my-1"
-                        @click="modal.close()"
+                        @click="isOpen = false"
                     />
                 </div>
             </template>
@@ -146,18 +145,14 @@ const nuiAvailable = ref(isNUIAvailable());
             <div class="mt-5 gap-2 sm:mt-4 sm:flex">
                 <UButton
                     class="flex-1 rounded-md bg-neutral-50 px-3.5 py-2.5 text-sm font-semibold text-gray-900 hover:bg-gray-200"
-                    @click="modal.close()"
+                    @click="isOpen = false"
                 >
                     {{ $t('common.close', 1) }}
                 </UButton>
                 <UButton
                     class="flex flex-1 justify-center rounded-md px-3.5 py-2.5 text-sm font-semibold"
                     :disabled="nuiAvailable || !meta.valid || !canSubmit || !activeChar?.avatar"
-                    :class="[
-                        nuiAvailable || !meta.valid || !canSubmit || !activeChar?.avatar
-                            ? 'disabled bg-base-500 hover:bg-base-400 focus-visible:outline-base-500'
-                            : 'bg-error-500 hover:bg-error-400 focus-visible:outline-error-500',
-                    ]"
+                    :loading="!canSubmit"
                     @click="
                         setFieldValue('reset', true);
                         onSubmitThrottle($event);
@@ -172,15 +167,8 @@ const nuiAvailable = ref(isNUIAvailable());
                     type="submit"
                     class="flex flex-1 justify-center rounded-md px-3.5 py-2.5 text-sm font-semibold"
                     :disabled="nuiAvailable || !meta.valid || !canSubmit"
-                    :class="[
-                        nuiAvailable || !meta.valid || !canSubmit
-                            ? 'disabled bg-base-500 hover:bg-base-400 focus-visible:outline-base-500'
-                            : 'bg-primary-500 hover:bg-primary-400',
-                    ]"
+                    :loading="!canSubmit"
                 >
-                    <template v-if="!canSubmit">
-                        <LoadingIcon class="mr-2 size-5 animate-spin" />
-                    </template>
                     {{ $t('common.save') }}
                 </UButton>
             </div>

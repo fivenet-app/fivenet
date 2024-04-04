@@ -23,7 +23,6 @@ const route = useRoute('documents-id');
 <template>
     <UDashboardPage>
         <UDashboardPanel grow>
-            <UDashboardNavbar :title="$t('pages.documents.id.title')"></UDashboardNavbar>
             <DocumentView :document-id="route.params.id as string" />
 
             <ClipboardButton />

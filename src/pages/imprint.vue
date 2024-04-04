@@ -1,6 +1,4 @@
 <script lang="ts" setup>
-import { useTimeoutFn } from '@vueuse/core';
-
 useHead({
     title: 'common.imprint',
 });

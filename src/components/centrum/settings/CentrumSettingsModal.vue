@@ -1,7 +1,6 @@
 <script lang="ts" setup>
 import { Dialog, DialogPanel, DialogTitle, TransitionChild, TransitionRoot } from '@headlessui/vue';
 import { max, min, required } from '@vee-validate/rules';
-import { useThrottleFn, useTimeoutFn } from '@vueuse/core';
 import { CloseIcon, GroupIcon, LoadingIcon, PlusIcon } from 'mdi-vue3';
 import { defineRule } from 'vee-validate';
 import { CentrumMode, Settings } from '~~/gen/ts/resources/centrum/settings';
@@ -166,7 +165,7 @@ const { remove: dspRemove, push: dspPush, fields: dspFields } = useFieldArray<st
                                         <DialogTitle as="h3" class="text-base font-semibold leading-6">
                                             {{ $t('components.centrum.units.update_settings') }}
                                         </DialogTitle>
-                                        <div class="mt-2">
+                                        <div>
                                             <div class="text-sm text-gray-100">
                                                 <div class="flex-1">
                                                     <label for="enabled" class="block text-sm font-medium leading-6">

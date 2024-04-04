@@ -1,5 +1,4 @@
 <script lang="ts" setup>
-import { useTimeoutFn } from '@vueuse/core';
 import { Pane, Splitpanes } from 'splitpanes';
 import 'splitpanes/dist/splitpanes.css';
 import DispatchList from '~/components/centrum/dispatches/DispatchList.vue';

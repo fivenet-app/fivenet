@@ -1,6 +1,5 @@
 <script lang="ts" setup>
 import { LControl, LLayerGroup } from '@vue-leaflet/vue-leaflet';
-import { computedAsync } from '@vueuse/core';
 import DispatchDetails from '~/components/centrum/dispatches/DispatchDetails.vue';
 import DispatchMarker from '~/components/centrum/livemap/DispatchMarker.vue';
 import { useCentrumStore } from '~/store/centrum';

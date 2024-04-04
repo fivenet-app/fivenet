@@ -11,7 +11,6 @@ import {
     TransitionChild,
     TransitionRoot,
 } from '@headlessui/vue';
-import { useThrottleFn, useTimeoutFn, watchDebounced } from '@vueuse/core';
 import { CheckIcon, CloseIcon, LoadingIcon } from 'mdi-vue3';
 import CitizenInfoPopover from '~/components/partials/citizens/CitizenInfoPopover.vue';
 import { useCompletorStore } from '~/store/completor';

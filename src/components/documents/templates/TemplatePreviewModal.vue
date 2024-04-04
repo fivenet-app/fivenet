@@ -91,7 +91,7 @@ async function getTemplate(): Promise<Template> {
                                             {{ $t('common.document', 1) }}
                                             {{ $t('common.preview') }}
                                         </DialogTitle>
-                                        <div class="mt-2">
+                                        <div>
                                             <div class="pt-4">
                                                 <DataPendingBlock
                                                     v-if="pending"

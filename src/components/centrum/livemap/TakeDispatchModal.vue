@@ -1,8 +1,7 @@
 <script lang="ts" setup>
 import { Dialog, DialogPanel, DialogTitle, TransitionChild, TransitionRoot } from '@headlessui/vue';
-import { computedAsync, useDebounceFn, useThrottleFn, useTimeoutFn } from '@vueuse/core';
 import { useSound } from '@raffaelesgarro/vue-use-sound';
-import { CarEmergencyIcon, CloseIcon, LoadingIcon } from 'mdi-vue3';
+import { CloseIcon } from 'mdi-vue3';
 import DataNoDataBlock from '~/components/partials/data/DataNoDataBlock.vue';
 import { useCentrumStore } from '~/store/centrum';
 import { Dispatch, StatusDispatch, TakeDispatchResp } from '~~/gen/ts/resources/centrum/dispatches';
@@ -228,23 +227,17 @@ const onSubmitThrottle = useThrottleFn(async (resp: TakeDispatchResp) => {
                                             <UButton
                                                 class="relative inline-flex w-full items-center rounded-l-md bg-success-500 px-3 py-2 text-sm font-semibold ring-1 ring-inset ring-success-300 hover:bg-success-100"
                                                 :disabled="!canTakeDispatch || !canSubmit"
-                                                :class="!canTakeDispatch ? 'disabled' : ''"
+                                                :loading="!canSubmit"
                                                 @click="onSubmitThrottle(TakeDispatchResp.ACCEPTED)"
                                             >
-                                                <template v-if="!canSubmit">
-                                                    <LoadingIcon class="mr-2 size-5 animate-spin" />
-                                                </template>
                                                 {{ $t('common.accept') }}
                                             </UButton>
                                             <UButton
                                                 class="relative -ml-px inline-flex w-full items-center bg-error-500 px-3 py-2 text-sm font-semibold ring-1 ring-inset ring-error-300 hover:bg-error-100"
                                                 :disabled="!canTakeDispatch || !canSubmit"
-                                                :class="!canTakeDispatch ? 'disabled' : ''"
+                                                :loading="!canSubmit"
                                                 @click="onSubmitThrottle(TakeDispatchResp.DECLINED)"
                                             >
-                                                <template v-if="!canSubmit">
-                                                    <LoadingIcon class="mr-2 size-5 animate-spin" />
-                                                </template>
                                                 {{ $t('common.decline') }}
                                             </UButton>
                                             <UButton

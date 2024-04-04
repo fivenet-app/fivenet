@@ -4,20 +4,14 @@ import DataNoDataBlock from '~/components/partials/data/DataNoDataBlock.vue';
 import { useCentrumStore } from '~/store/centrum';
 import { CentrumMode } from '~~/gen/ts/resources/centrum/settings';
 
-defineProps<{
-    open: boolean;
-}>();
-
-defineEmits<{
-    (e: 'close'): void;
-}>();
+const { isOpen } = useModal();
 
 const centrumStore = useCentrumStore();
 const { disponents, getCurrentMode } = storeToRefs(centrumStore);
 </script>
 
 <template>
-    <UModal :model-value="open" :ui="{ width: '!max-w-2xl' }" @update:model-value="$emit('close')">
+    <UModal :ui="{ width: '!max-w-2xl' }">
         <UCard :ui="{ ring: '', divide: 'divide-y divide-gray-100 dark:divide-gray-800' }">
             <template #header>
                 <div class="flex items-center justify-between">
@@ -28,7 +22,7 @@ const { disponents, getCurrentMode } = storeToRefs(centrumStore);
                         </UBadge>
                     </h3>
 
-                    <UButton color="gray" variant="ghost" icon="i-mdi-window-close" class="-my-1" @click="$emit('close')" />
+                    <UButton color="gray" variant="ghost" icon="i-mdi-window-close" class="-my-1" @click="isOpen = false" />
                 </div>
             </template>
 

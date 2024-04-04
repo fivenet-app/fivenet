@@ -1,6 +1,6 @@
 <script lang="ts" setup>
 import { Menu, MenuButton, MenuItem, MenuItems } from '@headlessui/vue';
-import { useConfirmDialog, useThrottleFn, useTimeoutFn } from '@vueuse/core';
+import { useConfirmDialog } from '@vueuse/core';
 import { CheckBoldIcon, CloseThickIcon, MenuIcon, TrashCanIcon } from 'mdi-vue3';
 import { DocActivityType } from '~~/gen/ts/resources/documents/activity';
 import GenericTime from '~/components/partials/elements/GenericTime.vue';

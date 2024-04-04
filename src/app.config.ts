@@ -31,7 +31,12 @@ export default defineAppConfig({
         },
         table: {
             td: {
-                padding: 'px-2 py-2',
+                padding: 'px-1.5 py-1.5',
+            },
+        },
+        selectMenu: {
+            default: {
+                selectedIcon: 'i-mdi-check',
             },
         },
     },

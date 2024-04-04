@@ -2,12 +2,9 @@
 import { Combobox, ComboboxButton, ComboboxInput, ComboboxOption, ComboboxOptions } from '@headlessui/vue';
 // eslint-disable-next-line camelcase
 import { max, min, regex, required, url, min_value, max_value, numeric, size } from '@vee-validate/rules';
-import { useThrottleFn, useTimeoutFn, watchOnce } from '@vueuse/core';
-import { CheckIcon, CloseIcon, LoadingIcon, PlusIcon } from 'mdi-vue3';
+import { CheckIcon } from 'mdi-vue3';
 import { defineRule } from 'vee-validate';
 import { useSettingsStore } from '~/store/settings';
-import GenericContainerPanel from '~/components/partials/elements/GenericContainerPanel.vue';
-import GenericContainerPanelEntry from '~/components/partials/elements/GenericContainerPanelEntry.vue';
 import DataErrorBlock from '~/components/partials/data/DataErrorBlock.vue';
 import DataNoDataBlock from '~/components/partials/data/DataNoDataBlock.vue';
 import DataPendingBlock from '~/components/partials/data/DataPendingBlock.vue';
@@ -234,16 +231,14 @@ const { remove, push, fields } = useFieldArray<Perm>('permsDefault');
 </script>
 
 <template>
-    <div class="mx-auto max-w-5xl py-2">
+    <div>
         <template v-if="streamerMode">
-            <GenericContainerPanel>
-                <template #title>
-                    {{ $t('system.streamer_mode.title') }}
-                </template>
-                <template #description>
-                    {{ $t('system.streamer_mode.description') }}
-                </template>
-            </GenericContainerPanel>
+            <UDashboardPanelContent class="pb-2">
+                <UDashboardSection
+                    :title="$t('system.streamer_mode.title')"
+                    :description="$t('system.streamer_mode.description')"
+                />
+            </UDashboardPanelContent>
         </template>
         <template v-else>
             <DataPendingBlock v-if="pending" :message="$t('common.loading', [$t('common.setting', 2)])" />
@@ -255,504 +250,487 @@ const { remove, push, fields } = useFieldArray<Perm>('permsDefault');
             <DataNoDataBlock v-else-if="data === null" icon="i-mdi-office-building-cog" :type="$t('common.setting', 2)" />
 
             <template v-else>
-                <GenericContainerPanel>
-                    <template #title>{{ $t('components.rector.app_config.auth.title') }}</template>
-                    <template #description>{{ $t('components.rector.app_config.auth.description') }}</template>
-                    <template #default>
-                        <GenericContainerPanelEntry>
-                            <template #title>{{ $t('components.rector.app_config.auth.sign_up') }}</template>
-                            <template #default>
-                                <div class="flex items-center">
-                                    <UToggle v-model="data.config!.auth!.signupEnabled">
-                                        <span class="sr-only">
-                                            {{ $t('components.rector.app_config.auth.sign_up') }}
-                                        </span>
-                                    </UToggle>
-                                    <span class="ml-3 text-sm font-medium text-gray-300">
-                                        <template v-if="data.config!.auth!.signupEnabled">
-                                            {{ $t('common.enabled') }}
-                                        </template>
-                                        <template v-else>
-                                            {{ $t('common.disabled') }}
-                                        </template>
-                                    </span>
-                                </div>
-                            </template>
-                        </GenericContainerPanelEntry>
+                <UDashboardNavbar :title="$t('pages.rector.settings.title')">
+                    <template #right>
+                        <UButton
+                            class="flex w-full justify-center rounded-md px-3 py-2 text-sm font-semibold transition-colors focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2"
+                            :disabled="!canSubmit || !meta.valid"
+                            :loading="!canSubmit"
+                            @click="onSubmitThrottle"
+                        >
+                            {{ $t('common.save', 1) }}
+                        </UButton>
                     </template>
-                </GenericContainerPanel>
-                <GenericContainerPanel>
-                    <template #title>{{ $t('components.rector.app_config.perms.title') }}</template>
-                    <template #description>{{ $t('components.rector.app_config.perms.description') }}</template>
-                    <template #default>
-                        <GenericContainerPanelEntry>
-                            <template #title>{{ $t('components.rector.app_config.perms.default_perms') }}</template>
-                            <template #default>
-                                <div class="flex flex-col gap-1">
-                                    <div v-for="(field, idx) in fields" :key="field.key" class="flex items-center gap-1">
-                                        <div class="flex-1">
-                                            <VeeField
-                                                :name="`permsDefault[${idx}].category`"
-                                                type="text"
-                                                class="block w-full rounded-md border-0 bg-base-700 py-1.5 placeholder:text-accent-200 focus:ring-2 focus:ring-inset focus:ring-base-300 sm:text-sm sm:leading-6"
-                                                :placeholder="$t('common.category')"
-                                                :label="$t('common.category')"
-                                                :rules="required"
-                                                @focusin="focusTablet(true)"
-                                                @focusout="focusTablet(false)"
-                                            />
-                                            <VeeErrorMessage
-                                                :name="`permsDefault[${idx}].category`"
-                                                as="p"
-                                                class="mt-2 text-sm text-error-400"
-                                            />
-                                        </div>
-                                        <div class="flex-1">
-                                            <VeeField
-                                                :name="`permsDefault[${idx}].name`"
-                                                type="text"
-                                                class="block w-full flex-1 rounded-md border-0 bg-base-700 py-1.5 placeholder:text-accent-200 focus:ring-2 focus:ring-inset focus:ring-base-300 sm:text-sm sm:leading-6"
-                                                :placeholder="$t('common.name')"
-                                                :label="$t('common.name')"
-                                                :rules="required"
-                                                @focusin="focusTablet(true)"
-                                                @focusout="focusTablet(false)"
-                                            />
-                                            <VeeErrorMessage
-                                                :name="`permsDefault[${idx}].name`"
-                                                as="p"
-                                                class="mt-2 text-sm text-error-400"
-                                            />
-                                        </div>
+                </UDashboardNavbar>
 
-                                        <UButton
-                                            class="rounded-full bg-primary-500 p-1.5 hover:bg-primary-400 focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2"
-                                            @click="remove(idx)"
-                                        >
-                                            <CloseIcon class="size-5" />
-                                        </UButton>
+                <UDashboardPanelContent class="pb-2">
+                    <UDashboardSection
+                        :title="$t('components.rector.app_config.auth.title')"
+                        :description="$t('components.rector.app_config.auth.description')"
+                    >
+                        <UFormGroup
+                            name="authSignupEnabled"
+                            :label="$t('components.rector.app_config.auth.sign_up')"
+                            class="grid grid-cols-2 gap-2 items-center"
+                            :ui="{ container: '' }"
+                        >
+                            <UToggle v-model="data.config!.auth!.signupEnabled">
+                                <span class="sr-only">
+                                    {{ $t('components.rector.app_config.auth.sign_up') }}
+                                </span>
+                            </UToggle>
+                        </UFormGroup>
+                    </UDashboardSection>
+
+                    <UDashboardSection
+                        :title="$t('components.rector.app_config.perms.title')"
+                        :description="$t('components.rector.app_config.perms.description')"
+                    >
+                        <UFormGroup
+                            name="permsDefaultPerms"
+                            :label="$t('components.rector.app_config.perms.default_perms')"
+                            class="grid grid-cols-2 gap-2 items-center"
+                            :ui="{ container: '' }"
+                        >
+                            <div class="flex flex-col gap-1">
+                                <div v-for="(field, idx) in fields" :key="field.key" class="flex items-center gap-1">
+                                    <div class="flex-1">
+                                        <VeeField
+                                            :name="`permsDefault[${idx}].category`"
+                                            type="text"
+                                            class="block w-full rounded-md border-0 bg-base-700 py-1.5 placeholder:text-accent-200 focus:ring-2 focus:ring-inset focus:ring-base-300 sm:text-sm sm:leading-6"
+                                            :placeholder="$t('common.category')"
+                                            :label="$t('common.category')"
+                                            :rules="required"
+                                            @focusin="focusTablet(true)"
+                                            @focusout="focusTablet(false)"
+                                        />
+                                        <VeeErrorMessage
+                                            :name="`permsDefault[${idx}].category`"
+                                            as="p"
+                                            class="mt-2 text-sm text-error-400"
+                                        />
                                     </div>
-                                </div>
-                                <UButton
-                                    class="mt-2 rounded-full p-1.5 focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2"
-                                    :disabled="!canSubmit"
-                                    :class="
-                                        !canSubmit
-                                            ? 'disabled bg-base-500 hover:bg-base-400 focus-visible:outline-base-500'
-                                            : 'bg-primary-500 hover:bg-primary-400'
-                                    "
-                                    @click="push({ category: '', name: '' })"
-                                >
-                                    <PlusIcon class="size-5" />
-                                </UButton>
-                            </template>
-                        </GenericContainerPanelEntry>
-                    </template>
-                </GenericContainerPanel>
-                <GenericContainerPanel>
-                    <template #title>{{ $t('components.rector.app_config.website.title') }}</template>
-                    <template #description>{{ $t('components.rector.app_config.website.description') }}</template>
-                    <template #default>
-                        <GenericContainerPanelEntry>
-                            <template #title>{{ $t('components.rector.app_config.website.links.title') }}</template>
-                            <template #default>
-                                <div class="flex-1">
-                                    <label for="websiteLinksPrivacyPolicy">
-                                        {{ $t('common.privacy_policy') }}
-                                    </label>
-                                    <VeeField
-                                        type="text"
-                                        name="websiteLinksPrivacyPolicy"
-                                        class="block w-full rounded-md border-0 bg-base-700 py-1.5 placeholder:text-accent-200 focus:ring-2 focus:ring-inset focus:ring-base-300 sm:text-sm sm:leading-6"
-                                        :value="data.config!.website!.links!.privacyPolicy"
-                                        :placeholder="$t('common.privacy_policy')"
-                                        :label="$t('common.privacy_policy')"
-                                        maxlength="128"
-                                        @focusin="focusTablet(true)"
-                                        @focusout="focusTablet(false)"
-                                    />
-                                    <VeeErrorMessage
-                                        name="websiteLinksPrivacyPolicy"
-                                        as="p"
-                                        class="mt-2 text-sm text-error-400"
-                                    />
-                                </div>
-                                <div class="flex-1">
-                                    <label for="websiteLinksImprint">
-                                        {{ $t('common.imprint') }}
-                                    </label>
-                                    <VeeField
-                                        type="text"
-                                        name="websiteLinksImprint"
-                                        class="block w-full rounded-md border-0 bg-base-700 py-1.5 placeholder:text-accent-200 focus:ring-2 focus:ring-inset focus:ring-base-300 sm:text-sm sm:leading-6"
-                                        :placeholder="$t('common.imprint')"
-                                        :label="$t('common.imprint')"
-                                        :value="data.config!.website!.links!.imprint"
-                                        maxlength="128"
-                                        @focusin="focusTablet(true)"
-                                        @focusout="focusTablet(false)"
-                                    />
-                                    <VeeErrorMessage name="websiteLinksImprint" as="p" class="mt-2 text-sm text-error-400" />
-                                </div>
-                            </template>
-                        </GenericContainerPanelEntry>
-                    </template>
-                </GenericContainerPanel>
-                <GenericContainerPanel>
-                    <template #title>{{ $t('components.rector.app_config.job_info.title') }}</template>
-                    <template #description>{{ $t('components.rector.app_config.job_info.description') }}</template>
-                    <template #default>
-                        <GenericContainerPanelEntry>
-                            <template #title>{{ $t('components.rector.app_config.job_info.unemployed_job') }}</template>
-                            <template #default>
-                                <div class="flex-1">
-                                    <label for="jobInfoUnemployedName"> {{ $t('common.job') }} {{ $t('common.name') }} </label>
-                                    <VeeField
-                                        type="text"
-                                        name="jobInfoUnemployedName"
-                                        class="block w-full rounded-md border-0 bg-base-700 py-1.5 placeholder:text-accent-200 focus:ring-2 focus:ring-inset focus:ring-base-300 sm:text-sm sm:leading-6"
-                                        :value="data.config!.jobInfo!.unemployedJob!.name"
-                                        :placeholder="$t('common.job')"
-                                        :label="$t('common.job')"
-                                        maxlength="128"
-                                        @focusin="focusTablet(true)"
-                                        @focusout="focusTablet(false)"
-                                    />
-                                    <VeeErrorMessage name="jobInfoUnemployedName" as="p" class="mt-2 text-sm text-error-400" />
-                                </div>
-                                <div class="flex-1">
-                                    <label for="jobInfoUnemployedGrade">
-                                        {{ $t('common.rank') }}
-                                    </label>
-                                    <VeeField
-                                        type="number"
-                                        min="1"
-                                        max="99"
-                                        :value="data.config!.jobInfo!.unemployedJob!.grade"
-                                        name="jobInfoUnemployedGrade"
-                                        class="block w-full rounded-md border-0 bg-base-700 py-1.5 placeholder:text-accent-200 focus:ring-2 focus:ring-inset focus:ring-base-300 sm:text-sm sm:leading-6"
-                                        :placeholder="$t('common.rank')"
-                                        :label="$t('common.rank')"
-                                        @focusin="focusTablet(true)"
-                                        @focusout="focusTablet(false)"
-                                    />
-                                    <VeeErrorMessage name="jobInfoUnemployedGrade" as="p" class="mt-2 text-sm text-error-400" />
-                                </div>
-                            </template>
-                        </GenericContainerPanelEntry>
-                        <GenericContainerPanelEntry>
-                            <template #title>{{ $t('components.rector.app_config.job_info.public_jobs') }}</template>
-                            <template #default>
-                                <Combobox v-model="data.config!.jobInfo!.publicJobs" as="div" multiple nullable>
-                                    <div class="relative">
-                                        <ComboboxButton as="div">
-                                            <ComboboxInput
-                                                autocomplete="off"
-                                                class="block w-full rounded-md border-0 bg-base-700 py-1.5 placeholder:text-accent-200 focus:ring-2 focus:ring-inset focus:ring-base-300 sm:text-sm sm:leading-6"
-                                                :display-value="(js: any) => (js ? js.join(', ') : $t('common.na'))"
-                                                :placeholder="$t('common.job', 2)"
-                                                @change="queryJobsRaw = $event.target.value"
-                                                @focusin="focusTablet(true)"
-                                                @focusout="focusTablet(false)"
-                                            />
-                                        </ComboboxButton>
-
-                                        <ComboboxOptions
-                                            v-if="jobs !== null && jobs.length > 0"
-                                            class="absolute z-30 mt-1 max-h-44 w-full overflow-auto rounded-md bg-base-700 py-1 text-base sm:text-sm"
-                                        >
-                                            <ComboboxOption
-                                                v-for="job in jobs.filter(
-                                                    (j) => j.label.includes(queryJobs) || j.name.includes(queryJobs),
-                                                )"
-                                                v-slot="{ active, selected }"
-                                                :key="job.name"
-                                                :value="job.name"
-                                                as="template"
-                                            >
-                                                <li
-                                                    :class="[
-                                                        'relative cursor-default select-none py-2 pl-8 pr-4',
-                                                        active ? 'bg-primary-500' : '',
-                                                    ]"
-                                                >
-                                                    <span :class="['block truncate', selected && 'font-semibold']">
-                                                        {{ job.name }}
-                                                    </span>
-
-                                                    <span
-                                                        v-if="selected"
-                                                        :class="[
-                                                            active ? 'text-neutral' : 'text-primary-500',
-                                                            'absolute inset-y-0 left-0 flex items-center pl-1.5',
-                                                        ]"
-                                                    >
-                                                        <CheckIcon class="size-5" />
-                                                    </span>
-                                                </li>
-                                            </ComboboxOption>
-                                        </ComboboxOptions>
+                                    <div class="flex-1">
+                                        <VeeField
+                                            :name="`permsDefault[${idx}].name`"
+                                            type="text"
+                                            class="block w-full flex-1 rounded-md border-0 bg-base-700 py-1.5 placeholder:text-accent-200 focus:ring-2 focus:ring-inset focus:ring-base-300 sm:text-sm sm:leading-6"
+                                            :placeholder="$t('common.name')"
+                                            :label="$t('common.name')"
+                                            :rules="required"
+                                            @focusin="focusTablet(true)"
+                                            @focusout="focusTablet(false)"
+                                        />
+                                        <VeeErrorMessage
+                                            :name="`permsDefault[${idx}].name`"
+                                            as="p"
+                                            class="mt-2 text-sm text-error-400"
+                                        />
                                     </div>
-                                </Combobox>
-                            </template>
-                        </GenericContainerPanelEntry>
-                        <GenericContainerPanelEntry>
-                            <template #title>{{ $t('components.rector.app_config.job_info.hidden_jobs') }}</template>
-                            <template #default>
-                                <Combobox v-model="data.config!.jobInfo!.hiddenJobs" as="div" multiple nullable>
-                                    <div class="relative">
-                                        <ComboboxButton as="div">
-                                            <ComboboxInput
-                                                autocomplete="off"
-                                                class="block w-full rounded-md border-0 bg-base-700 py-1.5 placeholder:text-accent-200 focus:ring-2 focus:ring-inset focus:ring-base-300 sm:text-sm sm:leading-6"
-                                                :display-value="(js: any) => (js ? js.join(', ') : $t('common.na'))"
-                                                :placeholder="$t('common.job', 2)"
-                                                @change="queryJobsRaw = $event.target.value"
-                                                @focusin="focusTablet(true)"
-                                                @focusout="focusTablet(false)"
-                                            />
-                                        </ComboboxButton>
 
-                                        <ComboboxOptions
-                                            v-if="jobs !== null && jobs.length > 0"
-                                            class="absolute z-30 mt-1 max-h-44 w-full overflow-auto rounded-md bg-base-700 py-1 text-base sm:text-sm"
-                                        >
-                                            <ComboboxOption
-                                                v-for="job in jobs.filter(
-                                                    (j) => j.label.includes(queryJobs) || j.name.includes(queryJobs),
-                                                )"
-                                                v-slot="{ active, selected }"
-                                                :key="job.name"
-                                                :value="job.name"
-                                                as="template"
-                                            >
-                                                <li
-                                                    :class="[
-                                                        'relative cursor-default select-none py-2 pl-8 pr-4',
-                                                        active ? 'bg-primary-500' : '',
-                                                    ]"
-                                                >
-                                                    <span :class="['block truncate', selected && 'font-semibold']">
-                                                        {{ job.name }}
-                                                    </span>
+                                    <UButton :ui="{ rounded: 'rounded-full' }" icon="i-mdi-close" @click="remove(idx)" />
+                                </div>
+                            </div>
 
-                                                    <span
-                                                        v-if="selected"
-                                                        :class="[
-                                                            active ? 'text-neutral' : 'text-primary-500',
-                                                            'absolute inset-y-0 left-0 flex items-center pl-1.5',
-                                                        ]"
-                                                    >
-                                                        <CheckIcon class="size-5" />
-                                                    </span>
-                                                </li>
-                                            </ComboboxOption>
-                                        </ComboboxOptions>
-                                    </div>
-                                </Combobox>
-                            </template>
-                        </GenericContainerPanelEntry>
-                    </template>
-                </GenericContainerPanel>
-                <GenericContainerPanel>
-                    <template #title>{{ $t('components.rector.app_config.user_tracker.title') }}</template>
-                    <template #description>{{ $t('components.rector.app_config.user_tracker.description') }}</template>
-                    <template #default>
-                        <GenericContainerPanelEntry>
-                            <template #title>{{ $t('components.rector.app_config.user_tracker.refresh_time') }}</template>
-                            <template #default>
+                            <UButton
+                                class="mt-2"
+                                :ui="{ rounded: 'rounded-full' }"
+                                :disabled="!canSubmit"
+                                icon="i-mdi-plus"
+                                @click="push({ category: '', name: '' })"
+                            >
+                            </UButton>
+                        </UFormGroup>
+                    </UDashboardSection>
+
+                    <UDashboardSection
+                        :title="$t('components.rector.app_config.website.title')"
+                        :description="$t('components.rector.app_config.website.description')"
+                    >
+                        <UFormGroup
+                            name="websiteLinks"
+                            :label="$t('components.rector.app_config.website.links.title')"
+                            class="grid grid-cols-2 gap-2 items-center"
+                            :ui="{ container: '' }"
+                        >
+                            <div class="flex-1">
+                                <label for="websiteLinksPrivacyPolicy">
+                                    {{ $t('common.privacy_policy') }}
+                                </label>
                                 <VeeField
-                                    name="userTrackerRefreshTime"
                                     type="text"
-                                    class="block w-full flex-1 rounded-md border-0 bg-base-700 py-1.5 placeholder:text-accent-200 focus:ring-2 focus:ring-inset focus:ring-base-300 sm:text-sm sm:leading-6"
-                                    :value="
-                                        parseFloat(
-                                            data.config?.userTracker?.refreshTime?.seconds.toString() +
-                                                '.' +
-                                                (data.config?.userTracker?.refreshTime?.nanos ?? 0) / 1000000,
-                                        ).toString() + 's'
-                                    "
-                                    :placeholder="$t('common.duration')"
-                                    :label="$t('common.duration')"
+                                    name="websiteLinksPrivacyPolicy"
+                                    class="block w-full rounded-md border-0 bg-base-700 py-1.5 placeholder:text-accent-200 focus:ring-2 focus:ring-inset focus:ring-base-300 sm:text-sm sm:leading-6"
+                                    :value="data.config!.website!.links!.privacyPolicy"
+                                    :placeholder="$t('common.privacy_policy')"
+                                    :label="$t('common.privacy_policy')"
+                                    maxlength="128"
                                     @focusin="focusTablet(true)"
                                     @focusout="focusTablet(false)"
                                 />
-                                <VeeErrorMessage name="userTrackerRefreshTime" as="p" class="mt-2 text-sm text-error-400" />
-                            </template>
-                        </GenericContainerPanelEntry>
-                        <GenericContainerPanelEntry>
-                            <template #title>{{ $t('components.rector.app_config.user_tracker.db_refresh_time') }}</template>
-                            <template #default>
+                                <VeeErrorMessage name="websiteLinksPrivacyPolicy" as="p" class="mt-2 text-sm text-error-400" />
+                            </div>
+                            <div class="flex-1">
+                                <label for="websiteLinksImprint">
+                                    {{ $t('common.imprint') }}
+                                </label>
                                 <VeeField
-                                    name="userTrackerDbRefreshTime"
                                     type="text"
-                                    class="block w-full flex-1 rounded-md border-0 bg-base-700 py-1.5 placeholder:text-accent-200 focus:ring-2 focus:ring-inset focus:ring-base-300 sm:text-sm sm:leading-6"
-                                    :value="
-                                        parseFloat(
-                                            data.config?.userTracker?.dbRefreshTime?.seconds.toString() +
-                                                '.' +
-                                                (data.config?.userTracker?.dbRefreshTime?.nanos ?? 0) / 1000000,
-                                        ).toString() + 's'
-                                    "
-                                    :placeholder="$t('common.duration')"
-                                    :label="$t('common.duration')"
+                                    name="websiteLinksImprint"
+                                    class="block w-full rounded-md border-0 bg-base-700 py-1.5 placeholder:text-accent-200 focus:ring-2 focus:ring-inset focus:ring-base-300 sm:text-sm sm:leading-6"
+                                    :placeholder="$t('common.imprint')"
+                                    :label="$t('common.imprint')"
+                                    :value="data.config!.website!.links!.imprint"
+                                    maxlength="128"
                                     @focusin="focusTablet(true)"
                                     @focusout="focusTablet(false)"
                                 />
-                                <VeeErrorMessage name="userTrackerDbRefreshTime" as="p" class="mt-2 text-sm text-error-400" />
-                            </template>
-                        </GenericContainerPanelEntry>
-                        <GenericContainerPanelEntry>
-                            <template #title>{{ $t('components.rector.app_config.user_tracker.livemap_jobs') }}</template>
-                            <template #default>
-                                <Combobox v-model="data.config!.userTracker!.livemapJobs" as="div" multiple nullable>
-                                    <div class="relative">
-                                        <ComboboxButton as="div">
-                                            <ComboboxInput
-                                                autocomplete="off"
-                                                class="block w-full rounded-md border-0 bg-base-700 py-1.5 placeholder:text-accent-200 focus:ring-2 focus:ring-inset focus:ring-base-300 sm:text-sm sm:leading-6"
-                                                :display-value="(js: any) => (js ? js.join(', ') : $t('common.na'))"
-                                                :placeholder="$t('common.job', 2)"
-                                                @change="queryJobsRaw = $event.target.value"
-                                                @focusin="focusTablet(true)"
-                                                @focusout="focusTablet(false)"
-                                            />
-                                        </ComboboxButton>
+                                <VeeErrorMessage name="websiteLinksImprint" as="p" class="mt-2 text-sm text-error-400" />
+                            </div>
+                        </UFormGroup>
+                    </UDashboardSection>
 
-                                        <ComboboxOptions
-                                            v-if="jobs !== null && jobs.length > 0"
-                                            class="absolute z-30 mt-1 max-h-44 w-full overflow-auto rounded-md bg-base-700 py-1 text-base sm:text-sm"
+                    <UDashboardSection
+                        :title="$t('components.rector.app_config.job_info.title')"
+                        :description="$t('components.rector.app_config.job_info.description')"
+                    >
+                        <UFormGroup
+                            name="jobInfoUnmployedJob"
+                            :label="$t('components.rector.app_config.job_info.unemployed_job')"
+                            class="grid grid-cols-2 gap-2 items-center"
+                            :ui="{ container: '' }"
+                        >
+                            <div class="flex-1">
+                                <label for="jobInfoUnemployedName"> {{ $t('common.job') }} {{ $t('common.name') }} </label>
+                                <VeeField
+                                    type="text"
+                                    name="jobInfoUnemployedName"
+                                    class="block w-full rounded-md border-0 bg-base-700 py-1.5 placeholder:text-accent-200 focus:ring-2 focus:ring-inset focus:ring-base-300 sm:text-sm sm:leading-6"
+                                    :value="data.config!.jobInfo!.unemployedJob!.name"
+                                    :placeholder="$t('common.job')"
+                                    :label="$t('common.job')"
+                                    maxlength="128"
+                                    @focusin="focusTablet(true)"
+                                    @focusout="focusTablet(false)"
+                                />
+                                <VeeErrorMessage name="jobInfoUnemployedName" as="p" class="mt-2 text-sm text-error-400" />
+                            </div>
+                            <div class="flex-1">
+                                <label for="jobInfoUnemployedGrade">
+                                    {{ $t('common.rank') }}
+                                </label>
+                                <VeeField
+                                    type="number"
+                                    min="1"
+                                    max="99"
+                                    :value="data.config!.jobInfo!.unemployedJob!.grade"
+                                    name="jobInfoUnemployedGrade"
+                                    class="block w-full rounded-md border-0 bg-base-700 py-1.5 placeholder:text-accent-200 focus:ring-2 focus:ring-inset focus:ring-base-300 sm:text-sm sm:leading-6"
+                                    :placeholder="$t('common.rank')"
+                                    :label="$t('common.rank')"
+                                    @focusin="focusTablet(true)"
+                                    @focusout="focusTablet(false)"
+                                />
+                                <VeeErrorMessage name="jobInfoUnemployedGrade" as="p" class="mt-2 text-sm text-error-400" />
+                            </div>
+                        </UFormGroup>
+
+                        <UFormGroup
+                            name="jobInfoPublicJobs"
+                            :label="$t('components.rector.app_config.job_info.public_jobs')"
+                            class="grid grid-cols-2 gap-2 items-center"
+                            :ui="{ container: '' }"
+                        >
+                            <Combobox v-model="data.config!.jobInfo!.publicJobs" as="div" multiple nullable>
+                                <div class="relative">
+                                    <ComboboxButton as="div">
+                                        <ComboboxInput
+                                            autocomplete="off"
+                                            class="block w-full rounded-md border-0 bg-base-700 py-1.5 placeholder:text-accent-200 focus:ring-2 focus:ring-inset focus:ring-base-300 sm:text-sm sm:leading-6"
+                                            :display-value="(js: any) => (js ? js.join(', ') : $t('common.na'))"
+                                            :placeholder="$t('common.job', 2)"
+                                            @change="queryJobsRaw = $event.target.value"
+                                            @focusin="focusTablet(true)"
+                                            @focusout="focusTablet(false)"
+                                        />
+                                    </ComboboxButton>
+
+                                    <ComboboxOptions
+                                        v-if="jobs !== null && jobs.length > 0"
+                                        class="absolute z-30 mt-1 max-h-44 w-full overflow-auto rounded-md bg-base-700 py-1 text-base sm:text-sm"
+                                    >
+                                        <ComboboxOption
+                                            v-for="job in jobs.filter(
+                                                (j) => j.label.includes(queryJobs) || j.name.includes(queryJobs),
+                                            )"
+                                            v-slot="{ active, selected }"
+                                            :key="job.name"
+                                            :value="job.name"
+                                            as="template"
                                         >
-                                            <ComboboxOption
-                                                v-for="job in jobs.filter(
-                                                    (j) => j.label.includes(queryJobs) || j.name.includes(queryJobs),
-                                                )"
-                                                v-slot="{ active, selected }"
-                                                :key="job.name"
-                                                :value="job.name"
-                                                as="template"
+                                            <li
+                                                :class="[
+                                                    'relative cursor-default select-none py-2 pl-8 pr-4',
+                                                    active ? 'bg-primary-500' : '',
+                                                ]"
                                             >
-                                                <li
+                                                <span :class="['block truncate', selected && 'font-semibold']">
+                                                    {{ job.name }}
+                                                </span>
+
+                                                <span
+                                                    v-if="selected"
                                                     :class="[
-                                                        'relative cursor-default select-none py-2 pl-8 pr-4',
-                                                        active ? 'bg-primary-500' : '',
+                                                        active ? 'text-neutral' : 'text-primary-500',
+                                                        'absolute inset-y-0 left-0 flex items-center pl-1.5',
                                                     ]"
                                                 >
-                                                    <span :class="['block truncate', selected && 'font-semibold']">
-                                                        {{ job.name }}
-                                                    </span>
-
-                                                    <span
-                                                        v-if="selected"
-                                                        :class="[
-                                                            active ? 'text-neutral' : 'text-primary-500',
-                                                            'absolute inset-y-0 left-0 flex items-center pl-1.5',
-                                                        ]"
-                                                    >
-                                                        <CheckIcon class="size-5" />
-                                                    </span>
-                                                </li>
-                                            </ComboboxOption>
-                                        </ComboboxOptions>
-                                    </div>
-                                </Combobox>
-                            </template>
-                        </GenericContainerPanelEntry>
-                    </template>
-                </GenericContainerPanel>
-                <GenericContainerPanel>
-                    <template #title>{{ $t('common.discord') }}</template>
-                    <template #description>{{ $t('components.rector.app_config.discord.description') }}</template>
-                    <template #default>
-                        <GenericContainerPanelEntry>
-                            <template #title>{{ $t('common.enabled') }}</template>
-                            <template #default>
-                                <div class="flex items-center">
-                                    <UToggle v-model="data.config!.discord!.enabled">
-                                        <span class="sr-only">
-                                            {{ $t('common.enabled') }}
-                                        </span>
-                                    </UToggle>
-                                    <span class="ml-3 text-sm font-medium text-gray-300">
-                                        <template v-if="data.config!.discord!.enabled">
-                                            {{ $t('common.enabled') }}
-                                        </template>
-                                        <template v-else>
-                                            {{ $t('common.disabled') }}
-                                        </template>
-                                    </span>
+                                                    <CheckIcon class="size-5" />
+                                                </span>
+                                            </li>
+                                        </ComboboxOption>
+                                    </ComboboxOptions>
                                 </div>
-                            </template>
-                        </GenericContainerPanelEntry>
-                        <GenericContainerPanelEntry>
-                            <template #title>{{ $t('components.rector.app_config.discord.sync_interval') }}</template>
-                            <template #default>
-                                <VeeField
-                                    name="discordSyncInterval"
-                                    type="text"
-                                    class="block w-full flex-1 rounded-md border-0 bg-base-700 py-1.5 placeholder:text-accent-200 focus:ring-2 focus:ring-inset focus:ring-base-300 sm:text-sm sm:leading-6"
-                                    :value="
-                                        parseFloat(
-                                            data.config?.discord?.syncInterval?.seconds.toString() +
-                                                '.' +
-                                                (data.config?.discord?.syncInterval?.nanos ?? 0) / 1000000,
-                                        ).toString() + 's'
-                                    "
-                                    :placeholder="$t('common.duration')"
-                                    :label="$t('common.duration')"
-                                    @focusin="focusTablet(true)"
-                                    @focusout="focusTablet(false)"
-                                />
-                                <VeeErrorMessage name="discordSyncInterval" as="p" class="mt-2 text-sm text-error-400" />
-                            </template>
-                        </GenericContainerPanelEntry>
-                        <GenericContainerPanelEntry>
-                            <template #title>{{ $t('components.rector.app_config.discord.bot_invite_url') }}</template>
-                            <template #default>
-                                <div class="flex-1">
-                                    <VeeField
-                                        type="url"
-                                        name="discordBotInviteUrl"
-                                        :value="data.config!.discord!.inviteUrl"
-                                        class="block w-full rounded-md border-0 bg-base-700 py-1.5 placeholder:text-accent-200 focus:ring-2 focus:ring-inset focus:ring-base-300 sm:text-sm sm:leading-6"
-                                        :placeholder="$t('components.rector.app_config.discord.bot_invite_url')"
-                                        :label="$t('components.rector.app_config.discord.bot_invite_url')"
-                                        @focusin="focusTablet(true)"
-                                        @focusout="focusTablet(false)"
-                                    />
-                                    <VeeErrorMessage name="discordBotInviteUrl" as="p" class="mt-2 text-sm text-error-400" />
-                                </div>
-                            </template>
-                        </GenericContainerPanelEntry>
-                    </template>
-                </GenericContainerPanel>
+                            </Combobox>
+                        </UFormGroup>
 
-                <GenericContainerPanel>
-                    <template #title>{{ $t('common.save', 1) }}</template>
-                    <template #description>{{ $t('components.rector.app_config.save.description') }}</template>
-                    <template #default>
-                        <!-- Save button -->
-                        <GenericContainerPanelEntry v-if="can('RectorService.SetJobProps')">
-                            <template #default>
-                                <UButton
-                                    class="flex w-full justify-center rounded-md px-3 py-2 text-sm font-semibold transition-colors focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2"
-                                    :class="[
-                                        !canSubmit || !meta.valid
-                                            ? 'disabled bg-base-500 hover:bg-base-400 focus-visible:outline-base-500'
-                                            : 'bg-primary-500 hover:bg-primary-400',
-                                    ]"
-                                    :disabled="!canSubmit || !meta.valid"
-                                    @click="onSubmitThrottle"
-                                >
-                                    <template v-if="!canSubmit">
-                                        <LoadingIcon class="mr-2 size-5 animate-spin" />
-                                    </template>
-                                    {{ $t('common.save', 1) }}
-                                </UButton>
-                            </template>
-                        </GenericContainerPanelEntry>
-                    </template>
-                </GenericContainerPanel>
+                        <UFormGroup
+                            name="jobInfoHiddenJobs"
+                            :label="$t('components.rector.app_config.job_info.hidden_jobs')"
+                            class="grid grid-cols-2 gap-2 items-center"
+                            :ui="{ container: '' }"
+                        >
+                            <Combobox v-model="data.config!.jobInfo!.hiddenJobs" as="div" multiple nullable>
+                                <div class="relative">
+                                    <ComboboxButton as="div">
+                                        <ComboboxInput
+                                            autocomplete="off"
+                                            class="block w-full rounded-md border-0 bg-base-700 py-1.5 placeholder:text-accent-200 focus:ring-2 focus:ring-inset focus:ring-base-300 sm:text-sm sm:leading-6"
+                                            :display-value="(js: any) => (js ? js.join(', ') : $t('common.na'))"
+                                            :placeholder="$t('common.job', 2)"
+                                            @change="queryJobsRaw = $event.target.value"
+                                            @focusin="focusTablet(true)"
+                                            @focusout="focusTablet(false)"
+                                        />
+                                    </ComboboxButton>
+
+                                    <ComboboxOptions
+                                        v-if="jobs !== null && jobs.length > 0"
+                                        class="absolute z-30 mt-1 max-h-44 w-full overflow-auto rounded-md bg-base-700 py-1 text-base sm:text-sm"
+                                    >
+                                        <ComboboxOption
+                                            v-for="job in jobs.filter(
+                                                (j) => j.label.includes(queryJobs) || j.name.includes(queryJobs),
+                                            )"
+                                            v-slot="{ active, selected }"
+                                            :key="job.name"
+                                            :value="job.name"
+                                            as="template"
+                                        >
+                                            <li
+                                                :class="[
+                                                    'relative cursor-default select-none py-2 pl-8 pr-4',
+                                                    active ? 'bg-primary-500' : '',
+                                                ]"
+                                            >
+                                                <span :class="['block truncate', selected && 'font-semibold']">
+                                                    {{ job.name }}
+                                                </span>
+
+                                                <span
+                                                    v-if="selected"
+                                                    :class="[
+                                                        active ? 'text-neutral' : 'text-primary-500',
+                                                        'absolute inset-y-0 left-0 flex items-center pl-1.5',
+                                                    ]"
+                                                >
+                                                    <CheckIcon class="size-5" />
+                                                </span>
+                                            </li>
+                                        </ComboboxOption>
+                                    </ComboboxOptions>
+                                </div>
+                            </Combobox>
+                        </UFormGroup>
+                    </UDashboardSection>
+
+                    <UDashboardSection
+                        :title="$t('components.rector.app_config.user_tracker.title')"
+                        :description="$t('components.rector.app_config.user_tracker.description')"
+                    >
+                        <UFormGroup
+                            name="userTrackerRefreshTime"
+                            :label="$t('components.rector.app_config.user_tracker.refresh_time')"
+                            class="grid grid-cols-2 gap-2 items-center"
+                            :ui="{ container: '' }"
+                        >
+                            <VeeField
+                                name="userTrackerRefreshTime"
+                                type="text"
+                                class="block w-full flex-1 rounded-md border-0 bg-base-700 py-1.5 placeholder:text-accent-200 focus:ring-2 focus:ring-inset focus:ring-base-300 sm:text-sm sm:leading-6"
+                                :value="
+                                    parseFloat(
+                                        data.config?.userTracker?.refreshTime?.seconds.toString() +
+                                            '.' +
+                                            (data.config?.userTracker?.refreshTime?.nanos ?? 0) / 1000000,
+                                    ).toString() + 's'
+                                "
+                                :placeholder="$t('common.duration')"
+                                :label="$t('common.duration')"
+                                @focusin="focusTablet(true)"
+                                @focusout="focusTablet(false)"
+                            />
+                            <VeeErrorMessage name="userTrackerRefreshTime" as="p" class="mt-2 text-sm text-error-400" />
+                        </UFormGroup>
+
+                        <UFormGroup
+                            name="userTrackerDbRefreshTime"
+                            :label="$t('components.rector.app_config.user_tracker.db_refresh_time')"
+                            class="grid grid-cols-2 gap-2 items-center"
+                            :ui="{ container: '' }"
+                        >
+                            <VeeField
+                                name="userTrackerDbRefreshTime"
+                                type="text"
+                                class="block w-full flex-1 rounded-md border-0 bg-base-700 py-1.5 placeholder:text-accent-200 focus:ring-2 focus:ring-inset focus:ring-base-300 sm:text-sm sm:leading-6"
+                                :value="
+                                    parseFloat(
+                                        data.config?.userTracker?.dbRefreshTime?.seconds.toString() +
+                                            '.' +
+                                            (data.config?.userTracker?.dbRefreshTime?.nanos ?? 0) / 1000000,
+                                    ).toString() + 's'
+                                "
+                                :placeholder="$t('common.duration')"
+                                :label="$t('common.duration')"
+                                @focusin="focusTablet(true)"
+                                @focusout="focusTablet(false)"
+                            />
+                            <VeeErrorMessage name="userTrackerDbRefreshTime" as="p" class="mt-2 text-sm text-error-400" />
+                        </UFormGroup>
+
+                        <UFormGroup
+                            name="livemapJobs"
+                            :label="$t('components.rector.app_config.user_tracker.livemap_jobs')"
+                            class="grid grid-cols-2 gap-2 items-center"
+                            :ui="{ container: '' }"
+                        >
+                            <Combobox v-model="data.config!.userTracker!.livemapJobs" as="div" multiple nullable>
+                                <div class="relative">
+                                    <ComboboxButton as="div">
+                                        <ComboboxInput
+                                            autocomplete="off"
+                                            class="block w-full rounded-md border-0 bg-base-700 py-1.5 placeholder:text-accent-200 focus:ring-2 focus:ring-inset focus:ring-base-300 sm:text-sm sm:leading-6"
+                                            :display-value="(js: any) => (js ? js.join(', ') : $t('common.na'))"
+                                            :placeholder="$t('common.job', 2)"
+                                            @change="queryJobsRaw = $event.target.value"
+                                            @focusin="focusTablet(true)"
+                                            @focusout="focusTablet(false)"
+                                        />
+                                    </ComboboxButton>
+
+                                    <ComboboxOptions
+                                        v-if="jobs !== null && jobs.length > 0"
+                                        class="absolute z-30 mt-1 max-h-44 w-full overflow-auto rounded-md bg-base-700 py-1 text-base sm:text-sm"
+                                    >
+                                        <ComboboxOption
+                                            v-for="job in jobs.filter(
+                                                (j) => j.label.includes(queryJobs) || j.name.includes(queryJobs),
+                                            )"
+                                            v-slot="{ active, selected }"
+                                            :key="job.name"
+                                            :value="job.name"
+                                            as="template"
+                                        >
+                                            <li
+                                                :class="[
+                                                    'relative cursor-default select-none py-2 pl-8 pr-4',
+                                                    active ? 'bg-primary-500' : '',
+                                                ]"
+                                            >
+                                                <span :class="['block truncate', selected && 'font-semibold']">
+                                                    {{ job.name }}
+                                                </span>
+
+                                                <span
+                                                    v-if="selected"
+                                                    :class="[
+                                                        active ? 'text-neutral' : 'text-primary-500',
+                                                        'absolute inset-y-0 left-0 flex items-center pl-1.5',
+                                                    ]"
+                                                >
+                                                    <CheckIcon class="size-5" />
+                                                </span>
+                                            </li>
+                                        </ComboboxOption>
+                                    </ComboboxOptions>
+                                </div>
+                            </Combobox>
+                        </UFormGroup>
+                    </UDashboardSection>
+
+                    <UDashboardSection
+                        :title="$t('common.discord')"
+                        :description="$t('components.rector.app_config.discord.description')"
+                    >
+                        <UFormGroup
+                            name="discordEnabled"
+                            :label="$t('common.enabled')"
+                            class="grid grid-cols-2 gap-2 items-center"
+                            :ui="{ container: '' }"
+                        >
+                            <UToggle v-model="data.config!.discord!.enabled">
+                                <span class="sr-only">
+                                    {{ $t('common.enabled') }}
+                                </span>
+                            </UToggle>
+                        </UFormGroup>
+
+                        <UFormGroup
+                            name="discordSyncInterval"
+                            :label="$t('components.rector.app_config.discord.sync_interval')"
+                            class="grid grid-cols-2 gap-2 items-center"
+                            :ui="{ container: '' }"
+                        >
+                            <VeeField
+                                name="discordSyncInterval"
+                                type="text"
+                                class="block w-full flex-1 rounded-md border-0 bg-base-700 py-1.5 placeholder:text-accent-200 focus:ring-2 focus:ring-inset focus:ring-base-300 sm:text-sm sm:leading-6"
+                                :value="
+                                    parseFloat(
+                                        data.config?.discord?.syncInterval?.seconds.toString() +
+                                            '.' +
+                                            (data.config?.discord?.syncInterval?.nanos ?? 0) / 1000000,
+                                    ).toString() + 's'
+                                "
+                                :placeholder="$t('common.duration')"
+                                :label="$t('common.duration')"
+                                @focusin="focusTablet(true)"
+                                @focusout="focusTablet(false)"
+                            />
+                            <VeeErrorMessage name="discordSyncInterval" as="p" class="mt-2 text-sm text-error-400" />
+                        </UFormGroup>
+
+                        <UFormGroup
+                            name="discordBotInviteUrl"
+                            :label="$t('components.rector.app_config.discord.bot_invite_url')"
+                            class="grid grid-cols-2 gap-2 items-center"
+                            :ui="{ container: '' }"
+                        >
+                            <VeeField
+                                type="url"
+                                name="discordBotInviteUrl"
+                                :value="data.config!.discord!.inviteUrl"
+                                class="block w-full rounded-md border-0 bg-base-700 py-1.5 placeholder:text-accent-200 focus:ring-2 focus:ring-inset focus:ring-base-300 sm:text-sm sm:leading-6"
+                                :placeholder="$t('components.rector.app_config.discord.bot_invite_url')"
+                                :label="$t('components.rector.app_config.discord.bot_invite_url')"
+                                @focusin="focusTablet(true)"
+                                @focusout="focusTablet(false)"
+                            />
+                            <VeeErrorMessage name="discordBotInviteUrl" as="p" class="mt-2 text-sm text-error-400" />
+                        </UFormGroup>
+                    </UDashboardSection>
+                </UDashboardPanelContent>
             </template>
         </template>
     </div>

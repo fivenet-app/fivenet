@@ -5,7 +5,6 @@ import DataPendingBlock from '~/components/partials/data/DataPendingBlock.vue';
 import { useCompletorStore } from '~/store/completor';
 import LawBookEntry from '~/components/rector/laws/LawBookEntry.vue';
 import type { Law } from '~~/gen/ts/resources/laws/laws';
-import GenericContainer from '~/components/partials/elements/GenericContainer.vue';
 
 const completorStore = useCompletorStore();
 
@@ -78,15 +77,13 @@ function updateLaw(event: { id: string; law: Law }): void {
                         <template v-else>
                             <ul role="list" class="space-y-3">
                                 <li v-for="(book, idx) in lawBooks" :key="book.id">
-                                    <GenericContainer>
-                                        <LawBookEntry
-                                            v-model="lawBooks[idx]"
-                                            v-model:laws="lawBooks[idx].laws"
-                                            :start-in-edit="parseInt(book.id) < 0"
-                                            @update:law="updateLaw($event)"
-                                            @deleted="deletedLawBook($event)"
-                                        />
-                                    </GenericContainer>
+                                    <LawBookEntry
+                                        v-model="lawBooks[idx]"
+                                        v-model:laws="lawBooks[idx].laws"
+                                        :start-in-edit="parseInt(book.id) < 0"
+                                        @update:law="updateLaw($event)"
+                                        @deleted="deletedLawBook($event)"
+                                    />
                                 </li>
                             </ul>
                         </template>

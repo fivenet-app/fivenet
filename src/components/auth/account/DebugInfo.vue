@@ -100,7 +100,7 @@ async function resetLocalStorage(): Promise<void> {
                 :ui="{ container: '' }"
             >
                 <UAccordion
-                    variant="solid"
+                    variant="soft"
                     :items="[{ label: $t('components.debug_info.perms'), slot: 'perms', icon: 'i-mdi-key' }]"
                     :ui="{ wrapper: 'flex flex-col w-full' }"
                 >

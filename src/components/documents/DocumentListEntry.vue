@@ -1,5 +1,5 @@
 <script lang="ts" setup>
-import { AccountIcon, BriefcaseIcon, CalendarIcon, LockIcon, LockOpenVariantIcon, TrashCanIcon, UpdateIcon } from 'mdi-vue3';
+import { BriefcaseIcon, CalendarIcon, LockIcon, LockOpenVariantIcon, TrashCanIcon, UpdateIcon } from 'mdi-vue3';
 import IDCopyBadge from '~/components/partials/IDCopyBadge.vue';
 import CitizenInfoPopover from '~/components/partials/citizens/CitizenInfoPopover.vue';
 import GenericTime from '~/components/partials/elements/GenericTime.vue';
@@ -56,7 +56,7 @@ defineProps<{
                     </div>
                 </div>
 
-                <div class="flex flex-row gap-2 truncate text-accent-200">
+                <div class="flex flex-row gap-2 truncate">
                     <h2 class="inline-flex items-center gap-1 truncate text-xl font-medium">
                         <span
                             v-if="doc.category"

@@ -1,5 +1,6 @@
 <script setup lang="ts">
 import { zxcvbn, zxcvbnOptions } from '@zxcvbn-ts/core';
+import type { ProgressColor } from '#ui/types';
 
 const props = defineProps<{
     input: string;
@@ -10,44 +11,40 @@ zxcvbnOptions.setOptions({});
 
 const percent = ref<number>(0);
 const feedback = ref<string | null>('');
-const color = ref<string>('bg-base-700');
+const color = ref<ProgressColor>('base');
 
 const result = computed(() => zxcvbn(props.input));
 
 watch(result, () => {
-    percent.value = (result.value.score * 100) / 4;
+    percent.value = (result.value.score * 100) / 3;
     feedback.value = result.value.feedback.warning;
 
     switch (result.value.score) {
         case 0:
-            color.value = 'bg-error-500';
-            break;
         case 1:
-            color.value = 'bg-error-500';
+            color.value = 'red';
             break;
         case 2:
-            color.value = 'bg-warn-500';
+            color.value = 'amber';
             break;
         case 3:
-            color.value = 'bg-success-500';
-            break;
         case 4:
-            color.value = 'bg-success-500';
+            color.value = 'green';
             break;
         default:
-            color.value = 'bg-base-700';
+            color.value = 'base';
             break;
     }
 
     if (props.input === '') {
-        color.value = 'bg-base-700';
+        color.value = 'base';
     }
 });
 </script>
 
 <template>
     <div>
-        <div :class="['h-2 w-full rounded-full transition-colors', color]"></div>
+        <UProgress :color="color" :value="percent" />
         <p v-if="showFeedback && feedback !== null" class="my-1 text-sm text-base-300">
             {{ feedback }}
         </p>

@@ -1,5 +1,4 @@
 <script lang="ts" setup>
-import { watchDebounced } from '@vueuse/core';
 import { Pane, Splitpanes } from 'splitpanes';
 import DispatchList from '~/components/centrum/dispatches/DispatchList.vue';
 import BaseMap from '~/components/livemap/BaseMap.vue';
@@ -107,7 +106,6 @@ onBeforeUnmount(() => {
                                                         </label>
                                                         <div class="relative mt-2">
                                                             <UInput
-                                                                ref="searchInput"
                                                                 v-model="query.postal"
                                                                 type="text"
                                                                 :placeholder="$t('common.postal')"

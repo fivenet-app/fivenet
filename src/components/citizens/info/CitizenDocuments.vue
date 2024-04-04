@@ -81,8 +81,6 @@ const columns = [
                     icon: 'i-mdi-file-multiple',
                     label: $t('common.not_found', [`${$t('common.citizen', 1)} ${$t('common.document', 2)}`]),
                 }"
-                :page-count="(data?.pagination?.totalCount ?? 0) / (data?.pagination?.pageSize ?? 1)"
-                :total="data?.pagination?.totalCount"
             >
                 <template #document-data="{ row }">
                     <UBadge v-if="row.document?.category">

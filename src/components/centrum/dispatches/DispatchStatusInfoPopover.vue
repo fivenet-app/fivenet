@@ -24,8 +24,10 @@ const open = ref(false);
 
         <UPopover>
             <UButton
-                variant="ghost"
-                class="inline-flex items-center"
+                variant="link"
+                :padded="false"
+                size="xs"
+                class="inline-flex items-center p-0.5"
                 :class="buttonClass"
                 trailing-icon="i-heroicons-chevron-down-20-solid"
             >

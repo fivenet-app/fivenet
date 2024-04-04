@@ -1,9 +1,16 @@
 <script lang="ts" setup>
-import { useThrottleFn, useTimeoutFn } from '@vueuse/core';
-import { LoadingIcon, LocationEnterIcon, LocationExitIcon } from 'mdi-vue3';
 import { useCentrumStore } from '~/store/centrum';
 import { CentrumMode } from '~~/gen/ts/resources/centrum/settings';
 import DisponentsModal from '~/components/centrum/disponents/DisponentsModal.vue';
+
+withDefaults(
+    defineProps<{
+        hideJoin?: boolean;
+    }>(),
+    {
+        hideJoin: false,
+    },
+);
 
 const { $grpc } = useNuxtApp();
 
@@ -30,53 +37,47 @@ const onSubmitThrottle = useThrottleFn(async (e: boolean) => {
 
 const disponentsNames = computed(() => disponents.value.map((u) => `${u.firstname} ${u.lastname}`));
 
-const open = ref(false);
+const modal = useModal();
 </script>
 
 <template>
     <div class="flex w-full items-center justify-items-center gap-2">
-        <DisponentsModal :open="open" @close="open = false" />
-
-        <p class="text-sm">
-            <UButton
-                class="inline-flex items-center rounded-md px-2 py-1 text-xs font-medium ring-1 ring-inset"
-                :class="
-                    disponents.length === 0
-                        ? 'bg-warn-400/10 text-warn-500 ring-warn-400/20'
-                        : 'bg-success-500/10 text-success-400 ring-success-500/20'
-                "
-                :title="disponentsNames.join(', ')"
-                @click="open = true"
-            >
+        <UButton
+            :icon="getCurrentMode !== CentrumMode.AUTO_ROUND_ROBIN ? 'i-mdi-monitor' : 'i-mdi-robot'"
+            :color="getCurrentMode === CentrumMode.AUTO_ROUND_ROBIN ? 'primary' : disponents.length === 0 ? 'amber' : 'green'"
+            truncate
+            :title="disponentsNames"
+            @click="modal.open(DisponentsModal, {})"
+        >
+            <template v-if="getCurrentMode !== CentrumMode.AUTO_ROUND_ROBIN">
                 {{ $t('common.disponent', disponents.length) }}
+            </template>
+            <template v-else>
+                {{ $t('enums.centrum.CentrumMode.AUTO_ROUND_ROBIN') }}
+            </template>
+        </UButton>
+
+        <template v-if="!hideJoin">
+            <UButton
+                v-if="!isDisponent"
+                class="inline-flex items-center justify-center rounded-full"
+                :disabled="!canSubmit"
+                :loading="!canSubmit"
+                icon="i-mdi-location-enter"
+                @click="onSubmitThrottle(true)"
+            >
+                <span class="px-1">{{ $t('common.join') }}</span>
             </UButton>
-        </p>
-
-        <UBadge color="gray">
-            {{ $t(`enums.centrum.CentrumMode.${CentrumMode[getCurrentMode ?? 0]}`) }}
-        </UBadge>
-
-        <UButton
-            v-if="!isDisponent"
-            class="inline-flex items-center justify-center rounded-full"
-            icon="i-mdi-location-enter"
-            @click="onSubmitThrottle(true)"
-        >
-            <template v-if="!canSubmit">
-                <LoadingIcon class="mr-2 size-5 animate-spin" />
-            </template>
-            <span class="px-1">{{ $t('common.join') }}</span>
-        </UButton>
-        <UButton
-            v-else
-            class="inline-flex items-center justify-center rounded-full"
-            icon="i-mdi-location-exit"
-            @click="onSubmitThrottle(false)"
-        >
-            <template v-if="!canSubmit">
-                <LoadingIcon class="mr-2 size-5 animate-spin" />
-            </template>
-            <span class="px-1">{{ $t('common.leave') }}</span>
-        </UButton>
+            <UButton
+                v-else
+                class="inline-flex items-center justify-center rounded-full"
+                :disabled="!canSubmit"
+                :loading="!canSubmit"
+                icon="i-mdi-location-exit"
+                @click="onSubmitThrottle(false)"
+            >
+                <span class="px-1">{{ $t('common.leave') }}</span>
+            </UButton>
+        </template>
     </div>
 </template>

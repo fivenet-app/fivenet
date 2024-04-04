@@ -1,5 +1,4 @@
 <script lang="ts" setup>
-import { useThrottleFn, useTimeoutFn } from '@vueuse/core';
 import CharSexBadge from '~/components/partials/citizens/CharSexBadge.vue';
 import { useAuthStore } from '~/store/auth';
 import { fromSecondsToFormattedDuration } from '~/utils/time';

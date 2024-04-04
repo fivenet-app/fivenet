@@ -11,7 +11,6 @@ import {
     TransitionRoot,
 } from '@headlessui/vue';
 import { max, min, required } from '@vee-validate/rules';
-import { useThrottleFn, useTimeoutFn } from '@vueuse/core';
 import { CheckIcon, ChevronDownIcon, CloseIcon, GroupIcon, LoadingIcon } from 'mdi-vue3';
 import { defineRule } from 'vee-validate';
 import ColorInput from 'vue-color-input/dist/color-input.esm';
@@ -172,7 +171,7 @@ onBeforeMount(async () => updateUnitInForm());
                                                 {{ $t('components.centrum.units.create_unit') }}
                                             </span>
                                         </DialogTitle>
-                                        <div class="mt-2">
+                                        <div>
                                             <div class="text-sm text-gray-100">
                                                 <div class="flex-1">
                                                     <label for="name" class="block text-sm font-medium leading-6">

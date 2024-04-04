@@ -10,7 +10,6 @@ import { Category } from '~~/gen/ts/resources/documents/category';
 import { UserShort } from '~~/gen/ts/resources/users/users';
 import { ListDocumentsRequest, ListDocumentsResponse } from '~~/gen/ts/services/docstore/docstore';
 import DocumentListEntry from '~/components/documents/DocumentListEntry.vue';
-import TemplatesModal from '~/components/documents/templates/TemplatesModal.vue';
 import DatePicker from '~/components/partials/DatePicker.vue';
 
 const { $grpc } = useNuxtApp();
@@ -97,13 +96,9 @@ watch(offset, async () => refresh());
 watchDebounced(query.value, async () => refresh(), { debounce: 600, maxWait: 1400 });
 
 watch(queryClosed, () => (query.value.closed = queryClosed.value.closed));
-
-const templatesOpen = ref(false);
 </script>
 
 <template>
-    <TemplatesModal :open="templatesOpen" @close="templatesOpen = false" />
-
     <UDashboardToolbar>
         <template #default>
             <UForm class="w-full" :state="{}" @submit="refresh()">
@@ -126,7 +121,7 @@ const templatesOpen = ref(false);
 
                 <UAccordion
                     class="mt-2"
-                    color="primary"
+                    color="white"
                     variant="soft"
                     size="sm"
                     :items="[{ label: $t('common.advanced_search'), slot: 'search' }]"
@@ -177,10 +172,7 @@ const templatesOpen = ref(false);
                                         }
                                     "
                                     :loading="usersLoading"
-                                    :debounce="200"
-                                    selected-icon="i-mdi-check"
                                     :search-attributes="['firstname', 'lastname']"
-                                    option-attribute="'firstname','lastname'"
                                     block
                                     :placeholder="
                                         query.creator

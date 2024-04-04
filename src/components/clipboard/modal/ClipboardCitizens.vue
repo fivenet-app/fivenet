@@ -1,5 +1,4 @@
 <script lang="ts" setup>
-import { AccountMultipleIcon, TrashCanIcon } from 'mdi-vue3';
 import DataNoDataBlock from '~/components/partials/data/DataNoDataBlock.vue';
 import { ClipboardUser, useClipboardStore } from '~/store/clipboard';
 import { useNotificatorStore } from '~/store/notificator';
@@ -120,9 +119,7 @@ watch(props, async (newVal) => {
                 </th>
                 <th scope="col" class="relative py-3.5 pl-3 pr-4 sm:pr-0">
                     {{ $t('common.action', 2) }}
-                    <UButton v-if="selected.length > 0" @click="removeAll()">
-                        <TrashCanIcon class="mx-auto size-5" />
-                    </UButton>
+                    <UButton v-if="selected.length > 0" variant="link" icon="i-mdi-trash-can" @click="removeAll()" />
                 </th>
             </tr>
         </thead>
@@ -130,11 +127,7 @@ watch(props, async (newVal) => {
             <tr v-for="item in users" :key="item.userId">
                 <td v-if="showSelect" class="whitespace-nowrap py-4 pl-4 pr-3 text-sm font-medium sm:pl-1">
                     <template v-if="specs && specs.max === 1">
-                        <UButton
-                            class="inline-flex w-full justify-center rounded-md px-3 py-2 text-sm font-semibold shadow-sm focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 sm:col-start-2"
-                            :class="selected.includes(item) ? '' : 'bg-primary-500 hover:bg-primary-400'"
-                            @click="select(item)"
-                        >
+                        <UButton block :color="selected.includes(item) ? 'gray' : 'primary'" @click="select(item)">
                             {{
                                 !selected.includes(item)
                                     ? $t('common.select', 1).toUpperCase()
@@ -143,14 +136,13 @@ watch(props, async (newVal) => {
                         </UButton>
                     </template>
                     <template v-else>
-                        <UInput
+                        <UCheckbox
                             :key="item.userId"
                             v-model="selected"
+                            type="checkbox"
                             name="selected"
                             :checked="selected.includes(item)"
                             :value="item"
-                            type="checkbox"
-                            class="size-4 rounded border-gray-300 text-primary-600 focus:ring-primary-600"
                             @click="select(item)"
                         />
                     </template>
@@ -162,9 +154,7 @@ watch(props, async (newVal) => {
                     {{ item.jobLabel }}
                 </td>
                 <td class="relative whitespace-nowrap py-4 pl-3 pr-4 text-right text-sm font-medium sm:pr-0">
-                    <UButton @click="remove(item, true)">
-                        <TrashCanIcon class="mx-auto size-5" />
-                    </UButton>
+                    <UButton variant="link" icon="i-mdi-trash-can" @click="remove(item, true)" />
                 </td>
             </tr>
         </tbody>

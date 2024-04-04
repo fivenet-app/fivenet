@@ -1,6 +1,6 @@
 <script lang="ts" setup>
 import { max, min, required } from '@vee-validate/rules';
-import { useConfirmDialog, useThrottleFn, useTimeoutFn } from '@vueuse/core';
+import { useConfirmDialog } from '@vueuse/core';
 import { LoadingIcon, PencilIcon, TrashCanIcon } from 'mdi-vue3';
 import { defineRule } from 'vee-validate';
 import ConfirmDialog from '~/components/partials/ConfirmDialog.vue';

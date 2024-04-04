@@ -14,8 +14,6 @@ definePageMeta({
 <template>
     <UDashboardPage>
         <UDashboardPanel grow>
-            <UDashboardNavbar :title="$t('components.rector.job_props.job_properties')"> </UDashboardNavbar>
-
             <JobProps />
         </UDashboardPanel>
     </UDashboardPage>

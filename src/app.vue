@@ -134,6 +134,7 @@ watch(updateAvailable, () => {
 
         <UNotifications />
         <UModals />
+        <USlideovers />
 
         <NotificationProvider />
 

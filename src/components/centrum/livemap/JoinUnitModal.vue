@@ -1,6 +1,5 @@
 <script lang="ts" setup>
 import { Dialog, DialogPanel, DialogTitle, TransitionChild, TransitionRoot } from '@headlessui/vue';
-import { useThrottleFn, useTimeoutFn } from '@vueuse/core';
 import { CloseIcon, LoadingIcon } from 'mdi-vue3';
 import { useCentrumStore } from '~/store/centrum';
 import { Unit } from '~~/gen/ts/resources/centrum/units';

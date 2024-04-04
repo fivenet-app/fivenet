@@ -1,6 +1,7 @@
 <script lang="ts" setup>
 import ClipboardButton from '~/components/clipboard/ClipboardButton.vue';
 import DocumentList from '~/components/documents/DocumentList.vue';
+import TemplatesModal from '~/components/documents/templates/TemplatesModal.vue';
 
 useHead({
     title: 'pages.documents.title',
@@ -10,6 +11,8 @@ definePageMeta({
     requiresAuth: true,
     permission: 'DocStoreService.ListDocuments',
 });
+
+const modal = useModal();
 </script>
 
 <template>
@@ -24,7 +27,12 @@ definePageMeta({
                         {{ $t('common.template', 2) }}
                     </UButton>
 
-                    <UButton :label="$t('common.create')" trailing-icon="i-mdi-plus" color="gray" to="/documents/create" />
+                    <UButton
+                        :label="$t('common.create')"
+                        trailing-icon="i-mdi-plus"
+                        color="gray"
+                        @click="modal.open(TemplatesModal, {})"
+                    />
                 </template>
             </UDashboardNavbar>
 

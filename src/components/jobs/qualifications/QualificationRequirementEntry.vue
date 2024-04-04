@@ -1,6 +1,5 @@
 <script lang="ts" setup>
 import { Combobox, ComboboxButton, ComboboxInput, ComboboxOption, ComboboxOptions } from '@headlessui/vue';
-import { watchDebounced } from '@vueuse/core';
 import { CheckIcon, CloseIcon } from 'mdi-vue3';
 import type { QualificationRequirement, QualificationShort } from '~~/gen/ts/resources/qualifications/qualifications';
 import type { ListQualificationsResponse } from '~~/gen/ts/services/qualifications/qualifications';

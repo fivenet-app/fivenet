@@ -18,6 +18,7 @@ definePageMeta({
             <UDashboardNavbar :title="$t('pages.documents.create.title')"> </UDashboardNavbar>
 
             <DocumentEditor />
+
             <ClipboardButton />
         </UDashboardPanel>
     </UDashboardPage>

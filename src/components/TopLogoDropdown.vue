@@ -26,7 +26,7 @@ watch(getNotificationsCount, () => {
 <template>
     <UDropdown v-slot="{ open }" class="w-full" :ui="{ width: 'w-full' }" :popper="{ strategy: 'absolute' }">
         <UButton color="gray" variant="ghost" :class="[open && 'bg-gray-50 dark:bg-gray-800']" class="w-full">
-            <UAvatar src="/images/logo-200x200.png" size="2xs" />
+            <img src="/images/logo-200x200.png" class="size-4" />
 
             <span class="truncate font-semibold text-gray-900 dark:text-white">FiveNet</span>
         </UButton>

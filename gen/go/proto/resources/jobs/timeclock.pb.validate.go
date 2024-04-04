@@ -417,7 +417,9 @@ func (m *TimeclockWeeklyStats) validate(all bool) error {
 
 	var errors []error
 
-	// no validation rules for Date
+	// no validation rules for Year
+
+	// no validation rules for CalendarWeek
 
 	// no validation rules for Sum
 

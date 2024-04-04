@@ -1,5 +1,4 @@
 <script lang="ts" setup>
-import { useTimeoutFn, useVModel } from '@vueuse/core';
 import 'jodit/es5/jodit.min.css';
 import { Jodit } from 'jodit';
 // @ts-ignore jodit-vue has no (detected) types

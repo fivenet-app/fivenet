@@ -1,20 +1,23 @@
 <script lang="ts" setup>
-import { Combobox, ComboboxButton, ComboboxInput, ComboboxOption, ComboboxOptions } from '@headlessui/vue';
-import { watchDebounced } from '@vueuse/core';
-import { ArrowRightIcon, CalendarIcon, CheckIcon, ChevronLeftIcon, ChevronRightIcon } from 'mdi-vue3';
+import { ArrowRightIcon, CalendarIcon, ChevronLeftIcon, ChevronRightIcon } from 'mdi-vue3';
+import { format } from 'date-fns';
 import DataErrorBlock from '~/components/partials/data/DataErrorBlock.vue';
 import DataNoDataBlock from '~/components/partials/data/DataNoDataBlock.vue';
 import DataPendingBlock from '~/components/partials/data/DataPendingBlock.vue';
 import * as googleProtobufTimestamp from '~~/gen/ts/google/protobuf/timestamp';
 import { TimeclockEntry } from '~~/gen/ts/resources/jobs/timeclock';
-import { User } from '~~/gen/ts/resources/users/users';
 import TimeclockListEntry from '~/components/jobs/timeclock/TimeclockListEntry.vue';
 import TimeclockStatsBlock from '~/components/jobs/timeclock/TimeclockStatsBlock.vue';
-import { dateToDateString, getWeekNumber } from '~/utils/time';
+import { getWeekNumber } from '~/utils/time';
 import type { ListTimeclockRequest, ListTimeclockResponse } from '~~/gen/ts/services/jobs/timeclock';
 import GenericTable from '~/components/partials/elements/GenericTable.vue';
+import DatePicker from '~/components/partials/DatePicker.vue';
+import { useCompletorStore } from '~/store/completor';
+import type { Colleague } from '~~/gen/ts/resources/jobs/colleagues';
 
 const { $grpc } = useNuxtApp();
+
+const completorStore = useCompletorStore();
 
 const canAccessAll = attr('JobsTimeclockService.ListTimeclock', 'Access', 'All');
 
@@ -26,21 +29,24 @@ const futureDay = ref(new Date(currentDay.value.getFullYear(), currentDay.value.
 const previousDay = ref(new Date(currentDay.value.getFullYear(), currentDay.value.getMonth(), currentDay.value.getDate() - 1));
 
 const query = ref<{
-    user_ids?: User[];
-    from?: string;
-    to?: string;
+    user_ids?: Colleague[];
+    user?: Colleague;
+    from?: Date;
+    to?: Date;
     perDay: boolean;
 }>({
-    from: dateToDateString(currentDay.value),
-    to: canAccessAll ? dateToDateString(previousDay.value) : undefined,
+    from: currentDay.value,
+    to: canAccessAll ? previousDay.value : undefined,
     perDay: canAccessAll,
 });
+
+const usersLoading = ref(false);
 
 const page = ref(1);
 const offset = computed(() => (data.value?.pagination?.pageSize ? data.value?.pagination?.pageSize * page.value : 0));
 
 const { data, pending, refresh, error } = useLazyAsyncData(
-    `jobs-timeclock-${query.value.from}-${query.value.to}-${query.value.perDay}-${query.value.user_ids?.map((u) => u.userId)}-${page.value}`,
+    `jobs-timeclock-${query.value.from}-${query.value.to}-${query.value.perDay}-${query.value.user ?? query.value.user_ids?.map((u) => u.userId)}-${page.value}`,
     () => listTimeclockEntries(),
 );
 
@@ -50,19 +56,19 @@ async function listTimeclockEntries(): Promise<ListTimeclockResponse> {
             pagination: {
                 offset: offset.value,
             },
-            userIds: query.value.user_ids?.map((u) => u.userId) ?? [],
+            userIds: query.value.user ? [query.value.user.userId] : query.value.user_ids?.map((u) => u.userId) ?? [],
         };
         if (query.value.perDay !== undefined) {
             req.perDay = query.value.perDay;
         }
         if (query.value.from) {
             req.from = {
-                timestamp: googleProtobufTimestamp.Timestamp.fromDate(fromString(query.value.from)!),
+                timestamp: googleProtobufTimestamp.Timestamp.fromDate(query.value.from),
             };
         }
         if (query.value.to) {
             req.to = {
-                timestamp: googleProtobufTimestamp.Timestamp.fromDate(fromString(query.value.to)!),
+                timestamp: googleProtobufTimestamp.Timestamp.fromDate(query.value.to),
             };
         }
 
@@ -96,21 +102,12 @@ const grouped = computed(() => {
     return groups;
 });
 
-const queryTargets = ref<string>('');
-
-const searchInput = ref<HTMLInputElement | null>(null);
-function focusSearch(): void {
-    if (searchInput.value) {
-        searchInput.value.focus();
-    }
-}
-
 watch(offset, async () => refresh());
 watchDebounced(
     query.value,
     async () => {
         if (canAccessAll) {
-            if (query.value.user_ids !== undefined && query.value.user_ids.length > 0) {
+            if (query.value.user !== undefined || (query.value.user_ids !== undefined && query.value.user_ids.length > 0)) {
                 if (query.value.perDay) {
                     query.value.perDay = false;
                     query.value.to = undefined;
@@ -126,56 +123,6 @@ watchDebounced(
     },
     { debounce: 600, maxWait: 1400 },
 );
-
-const { data: colleagues, refresh: refreshColleagues } = useLazyAsyncData(
-    `jobs-colleagues-0-${queryTargets.value}`,
-    async () => {
-        try {
-            const call = $grpc.getJobsClient().listColleagues({
-                pagination: {
-                    offset: 0,
-                },
-                searchName: queryTargets.value,
-            });
-            const { response } = await call;
-
-            return response;
-        } catch (e) {
-            $grpc.handleError(e as RpcError);
-            throw e;
-        }
-    },
-    { immediate: false },
-);
-
-function charsGetDisplayValue(chars: User[]): string {
-    const cs: string[] = [];
-    chars.forEach((c) => cs.push(`${c?.firstname} ${c?.lastname} (${c?.dateofbirth})`));
-
-    return cs.join(', ');
-}
-
-watchDebounced(
-    queryTargets,
-    async () => {
-        if (canAccessAll) {
-            await refreshColleagues();
-            if (query.value.user_ids) {
-                colleagues.value?.colleagues.unshift(...query.value.user_ids);
-            }
-        }
-    },
-    {
-        debounce: 600,
-        maxWait: 1400,
-    },
-);
-
-onMounted(async () => {
-    if (canAccessAll) {
-        await refreshColleagues();
-    }
-});
 
 function dayForward(): void {
     currentDay.value.setDate(currentDay.value.getDate() + 1);
@@ -201,138 +148,102 @@ function updateDates(): void {
     );
     previousDay.value = new Date(previousDay.value);
 
-    query.value.from = dateToDateString(currentDay.value);
-    query.value.to = dateToDateString(previousDay.value);
+    query.value.from = currentDay.value;
+    query.value.to = previousDay.value;
 }
 </script>
 
 <template>
     <div class="py-2 pb-14">
         <div v-if="can('JobsTimeclockService.ListInactiveEmployees')" class="px-1 sm:px-2 lg:px-4">
-            <div class="sm:flex sm:items-center">
-                <NuxtLink
-                    :to="{ name: 'jobs-timeclock-inactive' }"
-                    class="ml-auto inline-flex rounded-md bg-primary-500 px-3 py-2 text-sm font-semibold hover:bg-primary-400 focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2"
-                >
-                    {{ $t('common.inactive_colleagues') }}
-                    <ArrowRightIcon class="ml-1 size-5" />
-                </NuxtLink>
-            </div>
+            <UButton :to="{ name: 'jobs-timeclock-inactive' }">
+                {{ $t('common.inactive_colleagues') }}
+                <ArrowRightIcon class="ml-1 size-5" />
+            </UButton>
         </div>
         <div class="px-1 sm:px-2 lg:px-4">
             <div class="sm:flex sm:items-center">
                 <div class="sm:flex-auto">
-                    <form @submit.prevent="refresh()">
+                    <UForm :state="{}" @submit.prevent="refresh()">
                         <div class="mx-auto flex flex-row gap-4">
-                            <div v-if="canAccessAll" class="flex-1">
-                                <label for="searchName" class="block text-sm font-medium leading-6">
-                                    {{ $t('common.search') }}
-                                    {{ $t('common.colleague', 1) }}
-                                </label>
-                                <div class="relative mt-2">
-                                    <Combobox v-model="query.user_ids" as="div" class="w-full" multiple nullable>
-                                        <div class="relative">
-                                            <ComboboxButton as="div">
-                                                <ComboboxInput
-                                                    autocomplete="off"
-                                                    class="block w-full rounded-md border-0 bg-base-700 py-1.5 placeholder:text-accent-200 focus:ring-2 focus:ring-inset focus:ring-base-300 sm:text-sm sm:leading-6"
-                                                    :display-value="
-                                                        (chars: any) => (chars ? charsGetDisplayValue(chars) : $t('common.na'))
-                                                    "
-                                                    :placeholder="$t('common.target')"
-                                                    @change="queryTargets = $event.target.value"
-                                                    @focusin="focusTablet(true)"
-                                                    @focusout="focusTablet(false)"
-                                                />
-                                            </ComboboxButton>
-
-                                            <ComboboxOptions
-                                                v-if="colleagues?.colleagues && colleagues?.colleagues?.length > 0"
-                                                class="absolute z-10 mt-1 max-h-44 w-full overflow-auto rounded-md bg-base-700 py-1 text-base sm:text-sm"
-                                            >
-                                                <ComboboxOption
-                                                    v-for="char in colleagues?.colleagues"
-                                                    :key="char.identifier"
-                                                    v-slot="{ active, selected }"
-                                                    :value="char"
-                                                    as="char"
-                                                >
-                                                    <li
-                                                        :class="[
-                                                            'relative cursor-default select-none py-2 pl-8 pr-4',
-                                                            active ? 'bg-primary-500' : '',
-                                                        ]"
-                                                    >
-                                                        <span :class="['block truncate', selected && 'font-semibold']">
-                                                            {{ char.firstname }} {{ char.lastname }} ({{ char?.dateofbirth }})
-                                                        </span>
-
-                                                        <span
-                                                            v-if="selected"
-                                                            :class="[
-                                                                active ? 'text-neutral' : 'text-primary-500',
-                                                                'absolute inset-y-0 left-0 flex items-center pl-1.5',
-                                                            ]"
-                                                        >
-                                                            <CheckIcon class="size-5" />
-                                                        </span>
-                                                    </li>
-                                                </ComboboxOption>
-                                            </ComboboxOptions>
-                                        </div>
-                                    </Combobox>
-                                </div>
-                            </div>
-                            <div class="flex-1">
-                                <label for="search" class="block text-sm font-medium leading-6">
-                                    <template v-if="query.perDay"> {{ $t('common.date') }}: </template>
-                                    <template v-else>
-                                        {{ $t('common.time_range') }}:
-                                        {{ $t('common.from') }}
+                            <UFormGroup v-if="canAccessAll" class="flex-1" :label="$t('common.colleague', 2)">
+                                <UInputMenu
+                                    v-model="query.user"
+                                    :search="
+                                        async (query: string) => {
+                                            usersLoading = true;
+                                            return await completorStore
+                                                .listColleagues({
+                                                    pagination: { offset: 0 },
+                                                    searchName: query,
+                                                })
+                                                .finally(() => (usersLoading = false));
+                                        }
+                                    "
+                                    :loading="usersLoading"
+                                    :search-attributes="['firstname', 'lastname']"
+                                    block
+                                    :placeholder="
+                                        query.user
+                                            ? `${query.user?.firstname} ${query.user?.lastname} (${query.user?.dateofbirth})`
+                                            : $t('common.owner')
+                                    "
+                                    trailing
+                                    by="userId"
+                                >
+                                    <template #option="{ option: user }">
+                                        {{ `${user?.firstname} ${user?.lastname} (${user?.dateofbirth})` }}
                                     </template>
-                                </label>
-                                <div class="relative mt-2">
-                                    <UInput
-                                        v-model="query.from"
-                                        type="date"
-                                        name="search"
-                                        :placeholder="`${$t('common.time_range')} ${$t('common.from')}`"
-                                        class="block w-full rounded-md border-0 bg-base-700 py-1.5 pr-14 placeholder:text-accent-200 focus:ring-2 focus:ring-inset focus:ring-base-300 sm:text-sm sm:leading-6"
-                                        @focusin="focusTablet(true)"
-                                        @focusout="focusTablet(false)"
+                                    <template #option-empty="{ query: search }">
+                                        <q>{{ search }}</q> {{ $t('common.query_not_found') }}
+                                    </template>
+                                    <template #empty> {{ $t('common.not_found', [$t('common.creator', 2)]) }} </template>
+                                </UInputMenu>
+                            </UFormGroup>
+
+                            <UFormGroup
+                                class="flex-1"
+                                :label="query.perDay ? $t('common.date') : `${$t('common.time_range')} ${$t('common.from')}`"
+                            >
+                                <UPopover :popper="{ placement: 'bottom-start' }">
+                                    <UButton
+                                        variant="outline"
+                                        color="gray"
+                                        block
+                                        icon="i-heroicons-calendar-days-20-solid"
+                                        :label="query.from ? format(query.from, 'dd.MM.yyyy') : 'dd.mm.yyyy'"
                                     />
-                                </div>
-                            </div>
-                            <div v-if="!query.perDay" class="flex-1">
-                                <label for="search" class="block text-sm font-medium leading-6">
-                                    {{ $t('common.time_range') }}:
-                                    {{ $t('common.to') }}
-                                </label>
-                                <div class="relative mt-2">
-                                    <UInput
-                                        v-model="query.to"
-                                        type="date"
-                                        name="search"
-                                        :placeholder="`${$t('common.time_range')} ${$t('common.to')}`"
-                                        class="block w-full rounded-md border-0 bg-base-700 py-1.5 pr-14 placeholder:text-accent-200 focus:ring-2 focus:ring-inset focus:ring-base-300 sm:text-sm sm:leading-6"
-                                        @focusin="focusTablet(true)"
-                                        @focusout="focusTablet(false)"
+
+                                    <template #panel="{ close }">
+                                        <DatePicker v-model="query.from" @close="close" />
+                                    </template>
+                                </UPopover>
+                            </UFormGroup>
+
+                            <UFormGroup
+                                v-if="!query.perDay"
+                                class="flex-1"
+                                :label="`${$t('common.time_range')} ${$t('common.to')}`"
+                            >
+                                <UPopover :popper="{ placement: 'bottom-start' }">
+                                    <UButton
+                                        variant="outline"
+                                        color="gray"
+                                        block
+                                        icon="i-heroicons-calendar-days-20-solid"
+                                        :label="query.to ? format(query.to, 'dd.MM.yyyy') : 'dd.mm.yyyy'"
                                     />
-                                </div>
-                            </div>
+
+                                    <template #panel="{ close }">
+                                        <DatePicker v-model="query.to" @close="close" />
+                                    </template>
+                                </UPopover>
+                            </UFormGroup>
                         </div>
+
                         <div v-if="query.perDay" class="mx-auto flex flex-row gap-4 pt-2">
                             <div class="flex-1">
-                                <UButton
-                                    :disabled="futureDay > today"
-                                    :class="[
-                                        futureDay > today
-                                            ? 'disabled bg-base-500 hover:bg-base-400 focus-visible:outline-base-500'
-                                            : 'bg-primary-500 hover:bg-primary-400',
-                                        'relative inline-flex w-full cursor-pointer place-content-start items-center rounded-md px-3 py-2 text-sm font-semibold focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2',
-                                    ]"
-                                    @click="dayForward()"
-                                >
+                                <UButton block :disabled="futureDay > today" @click="dayForward()">
                                     <ChevronLeftIcon class="size-5" />
                                     {{ $t('common.forward') }} - {{ $d(futureDay, 'date') }}
                                 </UButton>
@@ -350,16 +261,13 @@ function updateDates(): void {
                                 </UButton>
                             </div>
                             <div class="flex-1">
-                                <UButton
-                                    class="relative inline-flex w-full cursor-pointer place-content-end items-center rounded-md bg-primary-500 px-3 py-2 text-sm font-semibold hover:bg-primary-400 focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2"
-                                    @click="dayBackwards()"
-                                >
+                                <UButton block @click="dayBackwards()">
                                     {{ $d(previousDay, 'date') }} - {{ $t('common.previous') }}
                                     <ChevronRightIcon class="size-5" />
                                 </UButton>
                             </div>
                         </div>
-                    </form>
+                    </UForm>
                 </div>
             </div>
             <div class="mt-2 flow-root">
@@ -373,7 +281,6 @@ function updateDates(): void {
                         />
                         <DataNoDataBlock
                             v-else-if="data && data.entries && data.entries.length === 0"
-                            :focus="focusSearch"
                             :message="$t('components.citizens.citizens_list.no_citizens')"
                         />
                         <template v-else>

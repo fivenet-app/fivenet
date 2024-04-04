@@ -1,5 +1,4 @@
 <script lang="ts" setup>
-import { watchDebounced } from '@vueuse/core';
 import { useCompletorStore } from '~/store/completor';
 import { ListVehiclesResponse } from '~~/gen/ts/services/dmv/vehicles';
 import CitizenInfoPopover from '../partials/citizens/CitizenInfoPopover.vue';
@@ -184,10 +183,7 @@ const columns = [
                                         }
                                     "
                                     :loading="usersLoading"
-                                    :debounce="200"
-                                    selected-icon="i-mdi-check"
                                     :search-attributes="['firstname', 'lastname']"
-                                    option-attribute="'firstname','lastname'"
                                     block
                                     :placeholder="
                                         selectedUser
@@ -217,8 +213,6 @@ const columns = [
             :columns="columns"
             :rows="data?.vehicles"
             :empty-state="{ icon: 'i-mdi-car', label: $t('common.not_found', [$t('common.vehicle', 2)]) }"
-            :page-count="(data?.pagination?.totalCount ?? 0) / (data?.pagination?.pageSize ?? 1)"
-            :total="data?.pagination?.totalCount"
         >
             <template #plate-data="{ row }">
                 <LicensePlate :plate="row.plate" class="mr-2" />

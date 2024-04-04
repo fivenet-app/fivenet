@@ -1,7 +1,6 @@
 <script lang="ts" setup>
 // eslint-disable-next-line camelcase
 import { alpha_dash, max, min, required } from '@vee-validate/rules';
-import { useThrottleFn, useTimeoutFn } from '@vueuse/core';
 import { defineRule } from 'vee-validate';
 import { useAuthStore } from '~/store/auth';
 import { useSettingsStore } from '~/store/settings';

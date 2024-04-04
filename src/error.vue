@@ -94,39 +94,17 @@ onBeforeMount(() => {
                             </span>
                         </div>
 
-                        <div class="flex justify-center">
-                            <UButton
-                                :disabled="buttonDisabled"
-                                class="w-60 rounded-md px-3.5 py-2.5 text-sm font-semibold focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2"
-                                :class="[
-                                    buttonDisabled
-                                        ? 'disabled bg-base-500 hover:bg-base-400 focus-visible:outline-base-500'
-                                        : 'bg-primary-500 hover:bg-primary-400',
-                                ]"
-                                @click="handleError()"
-                            >
+                        <div class="flex justify-center gap-4">
+                            <UButton :disabled="buttonDisabled" size="xl" @click="handleError()">
                                 {{ $t('common.home') }}
                             </UButton>
 
-                            <UButton
-                                :disabled="buttonDisabled"
-                                class="w-60 rounded-md px-3.5 py-2.5 text-sm font-semibold focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 sm:ml-4"
-                                :class="[
-                                    buttonDisabled
-                                        ? 'disabled bg-base-500 hover:bg-base-400 focus-visible:outline-base-500'
-                                        : 'bg-gray-500 hover:bg-gray-400 focus-visible:outline-gray-500',
-                                ]"
-                                @click="handleError(useRoute().fullPath)"
-                            >
+                            <UButton :disabled="buttonDisabled" size="xl" @click="handleError(useRoute().fullPath)">
                                 {{ $t('common.retry') }}
                             </UButton>
 
                             <!-- @vue-ignore -->
-                            <UButton
-                                v-if="error && (error.statusMessage || error.message)"
-                                class="w-60 rounded-md bg-background px-3.5 py-2.5 text-sm font-semibold hover:bg-base-400 focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-base-500 sm:ml-4"
-                                @click="copyError"
-                            >
+                            <UButton v-if="error && (error.statusMessage || error.message)" size="xl" @click="copyError">
                                 {{ $t ? $t('pages.error.copy_error') : 'Copy Error message' }}
                             </UButton>
                         </div>

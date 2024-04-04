@@ -48,7 +48,7 @@ defineEmits<{
         </div>
         <template v-if="item.status === StatusDispatch.NEW">
             <div class="relative flex size-5 flex-none items-center justify-center rounded-lg bg-gray-300">
-                <NewBoxIcon class="size-5 text-primary-600" />
+                <UIcon name="i-mdi-new-box" class="size-5 text-primary-600" />
             </div>
             <p class="inline-flex flex-auto flex-row justify-between py-0.5 text-xs leading-5 text-gray-200">
                 <span class="inline-flex items-center gap-1">
@@ -61,6 +61,7 @@ defineEmits<{
                     <UButton
                         v-if="item.x && item.y"
                         variant="link"
+                        size="xs"
                         icon="i-mdi-map-marker"
                         @click="$emit('goto', { x: item.x, y: item.y })"
                     />
@@ -73,7 +74,7 @@ defineEmits<{
         </template>
         <template v-else-if="item.status === StatusDispatch.UNASSIGNED">
             <div class="relative flex size-5 flex-none items-center justify-center rounded-lg bg-gray-300">
-                <AccountAlertIcon class="size-5 text-primary-600" />
+                <UIcon name="i-mdi-account-alert" class="size-5 text-primary-600" />
             </div>
             <p class="inline-flex flex-auto flex-row justify-between py-0.5 text-xs leading-5 text-gray-200">
                 <span class="inline-flex items-center gap-1">
@@ -87,6 +88,7 @@ defineEmits<{
                     <UButton
                         v-if="item.x && item.y"
                         variant="link"
+                        size="xs"
                         icon="i-mdi-map-marker"
                         @click="$emit('goto', { x: item.x, y: item.y })"
                     />
@@ -113,6 +115,7 @@ defineEmits<{
                     <UButton
                         v-if="item.x && item.y"
                         variant="link"
+                        size="xs"
                         icon="i-mdi-map-marker"
                         @click="$emit('goto', { x: item.x, y: item.y })"
                     />
@@ -139,6 +142,7 @@ defineEmits<{
                     <UButton
                         v-if="item.x && item.y"
                         variant="link"
+                        size="xs"
                         icon="i-mdi-map-marker"
                         @click="$emit('goto', { x: item.x, y: item.y })"
                     />
@@ -165,6 +169,7 @@ defineEmits<{
                     <UButton
                         v-if="item.x && item.y"
                         variant="link"
+                        size="xs"
                         icon="i-mdi-map-marker"
                         @click="$emit('goto', { x: item.x, y: item.y })"
                     />
@@ -191,6 +196,7 @@ defineEmits<{
                     <UButton
                         v-if="item.x && item.y"
                         variant="link"
+                        size="xs"
                         icon="i-mdi-map-marker"
                         @click="$emit('goto', { x: item.x, y: item.y })"
                     />
@@ -217,6 +223,7 @@ defineEmits<{
                     <UButton
                         v-if="item.x && item.y"
                         variant="link"
+                        size="xs"
                         icon="i-mdi-map-marker"
                         @click="$emit('goto', { x: item.x, y: item.y })"
                     />
@@ -242,6 +249,7 @@ defineEmits<{
                     <UButton
                         v-if="item.x && item.y"
                         variant="link"
+                        size="xs"
                         icon="i-mdi-map-marker"
                         @click="$emit('goto', { x: item.x, y: item.y })"
                     />
@@ -268,6 +276,7 @@ defineEmits<{
                     <UButton
                         v-if="item.x && item.y"
                         variant="link"
+                        size="xs"
                         icon="i-mdi-map-marker"
                         @click="$emit('goto', { x: item.x, y: item.y })"
                     />
@@ -294,6 +303,7 @@ defineEmits<{
                     <UButton
                         v-if="item.x && item.y"
                         variant="link"
+                        size="xs"
                         icon="i-mdi-map-marker"
                         @click="$emit('goto', { x: item.x, y: item.y })"
                     />
@@ -320,6 +330,7 @@ defineEmits<{
                     <UButton
                         v-if="item.x && item.y"
                         variant="link"
+                        size="xs"
                         icon="i-mdi-map-marker"
                         @click="$emit('goto', { x: item.x, y: item.y })"
                     />
@@ -346,6 +357,7 @@ defineEmits<{
                     <UButton
                         v-if="item.x && item.y"
                         variant="link"
+                        size="xs"
                         icon="i-mdi-map-marker"
                         @click="$emit('goto', { x: item.x, y: item.y })"
                     />
@@ -372,6 +384,7 @@ defineEmits<{
                     <UButton
                         v-if="item.x && item.y"
                         variant="link"
+                        size="xs"
                         icon="i-mdi-map-marker"
                         @click="$emit('goto', { x: item.x, y: item.y })"
                     />

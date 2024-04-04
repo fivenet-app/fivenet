@@ -1,7 +1,6 @@
 <script lang="ts" setup>
 import { Combobox, ComboboxButton, ComboboxInput, ComboboxOption, ComboboxOptions } from '@headlessui/vue';
 import { max, min, numeric, required } from '@vee-validate/rules';
-import { useThrottleFn, useTimeoutFn, watchDebounced } from '@vueuse/core';
 import { CheckIcon, LoadingIcon, PlusIcon } from 'mdi-vue3';
 import { defineRule } from 'vee-validate';
 import DocumentAccessEntry from '~/components/documents/DocumentAccessEntry.vue';
@@ -17,7 +16,6 @@ import TemplateSchemaEditor, { type SchemaEditorValue } from '~/components/docum
 import type { ObjectSpecsValue } from '~/components/documents/templates/types';
 import type { Template } from '~~/gen/ts/resources/documents/templates';
 import SingleHint from '~/components/SingleHint.vue';
-import GenericContainer from '~/components/partials/elements/GenericContainer.vue';
 
 const props = defineProps<{
     templateId?: string;
@@ -534,7 +532,7 @@ const { data: jobs } = useLazyAsyncData('completor-jobs', () => completorStore.l
 <template>
     <div class="m-2">
         <form @submit.prevent="onSubmitThrottle">
-            <GenericContainer class="bg-base-800">
+            <UCard class="bg-base-800">
                 <div>
                     <label for="content" class="block text-sm font-medium leading-6 text-gray-100">
                         {{ $t('common.template', 2) }} {{ $t('common.weight') }}
@@ -614,7 +612,7 @@ const { data: jobs } = useLazyAsyncData('completor-jobs', () => completorStore.l
                         </UButton>
                     </div>
                 </div>
-            </GenericContainer>
+            </UCard>
 
             <div class="mt-2 flex flex-col sm:flex-row">
                 <SingleHint
@@ -626,7 +624,7 @@ const { data: jobs } = useLazyAsyncData('completor-jobs', () => completorStore.l
                 />
             </div>
 
-            <GenericContainer class="bg-base-800">
+            <UCard class="bg-base-800">
                 <div>
                     <label for="contentTitle" class="mt-2 block text-sm font-medium">
                         {{ $t('common.content') }} {{ $t('common.title') }}
@@ -759,7 +757,7 @@ const { data: jobs } = useLazyAsyncData('completor-jobs', () => completorStore.l
                         <PlusIcon class="size-5" />
                     </UButton>
                 </div>
-            </GenericContainer>
+            </UCard>
             <div>
                 <UButton
                     type="submit"

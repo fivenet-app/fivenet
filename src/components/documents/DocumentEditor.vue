@@ -11,8 +11,7 @@ import {
     ListboxOptions,
 } from '@headlessui/vue';
 import { max, min, required } from '@vee-validate/rules';
-import { useThrottleFn, useTimeoutFn, watchDebounced, watchOnce } from '@vueuse/core';
-import { CheckIcon, ChevronDownIcon, ContentSaveIcon, LoadingIcon, PlusIcon } from 'mdi-vue3';
+import { CheckIcon, ChevronDownIcon, ContentSaveIcon } from 'mdi-vue3';
 import { defineRule } from 'vee-validate';
 import { type TranslateItem } from '~/composables/i18n';
 import { useAuthStore } from '~/store/auth';
@@ -694,11 +693,31 @@ console.info(
     'Relations',
     canDo.value.relations,
 );
+
+const router = useRouter();
 </script>
 
 <template>
-    <div class="m-2">
-        <form @submit.prevent="onSubmitThrottle">
+    <div>
+        <UForm class="p-2" :state="{}" @submit.prevent="onSubmitThrottle">
+            <UDashboardToolbar>
+                <template #left>
+                    <UButton @click="router.back()">
+                        {{ $t('common.back') }}
+                    </UButton>
+                </template>
+                <template #right>
+                    <UButton type="submit" block :disabled="!meta.valid || !canEdit || !canSubmit" :loading="!canSubmit">
+                        <template v-if="!id">
+                            {{ $t('common.create') }}
+                        </template>
+                        <template v-else>
+                            {{ $t('common.save') }}
+                        </template>
+                    </UButton>
+                </template>
+            </UDashboardToolbar>
+
             <DocumentRelationManager
                 v-model="relationManagerData"
                 :open="relationManagerShow"
@@ -712,31 +731,28 @@ console.info(
                 @close="referenceManagerShow = false"
             />
 
-            <div
-                class="flex flex-col gap-2 rounded-t-lg bg-base-800 px-3 py-4"
-                :class="!(canDo.edit && canDo.relations && canDo.references) ? 'rounded-b-md' : ''"
-            >
-                <div>
-                    <label for="title" class="block text-base font-medium">
-                        {{ $t('common.title') }}
-                    </label>
+            <div class="flex flex-col gap-2">
+                <UFormGroup name="title" :label="$t('common.title')">
                     <VeeField
                         name="title"
-                        type="text"
                         :placeholder="$t('common.title')"
                         :label="$t('common.title')"
-                        class="block w-full rounded-md border-0 bg-base-700 py-1.5 placeholder:text-accent-200 focus:ring-2 focus:ring-inset focus:ring-base-300 sm:text-3xl sm:leading-6"
                         :disabled="!canEdit || !canDo.edit"
-                        @focusin="focusTablet(true)"
-                        @focusout="focusTablet(false)"
-                    />
+                    >
+                        <UInput
+                            type="text"
+                            size="xl"
+                            :placeholder="$t('common.title')"
+                            :disabled="!canEdit || !canDo.edit"
+                            @focusin="focusTablet(true)"
+                            @focusout="focusTablet(false)"
+                        />
+                    </VeeField>
                     <VeeErrorMessage name="title" as="p" class="mt-2 text-sm text-error-400" />
-                </div>
+                </UFormGroup>
+
                 <div class="flex flex-row gap-2">
-                    <div class="flex-1">
-                        <label for="category" class="block text-sm font-medium">
-                            {{ $t('common.category') }}
-                        </label>
+                    <UFormGroup name="category" :label="$t('common.category')" class="flex-1">
                         <Combobox v-model="selectedCategory" as="div" :disabled="!canEdit || !canDo.edit" nullable>
                             <div class="relative">
                                 <ComboboxButton as="div">
@@ -785,11 +801,9 @@ console.info(
                                 </ComboboxOptions>
                             </div>
                         </Combobox>
-                    </div>
-                    <div class="flex-1">
-                        <label for="state" class="block text-sm font-medium">
-                            {{ $t('common.state') }}
-                        </label>
+                    </UFormGroup>
+
+                    <UFormGroup name="state" :label="$t('common.state')" class="flex-1">
                         <VeeField
                             name="state"
                             type="text"
@@ -801,9 +815,9 @@ console.info(
                             @focusout="focusTablet(false)"
                         />
                         <VeeErrorMessage name="state" as="p" class="mt-2 text-sm text-error-400" />
-                    </div>
-                    <div class="flex-1">
-                        <label for="closed" class="block text-sm font-medium"> {{ $t('common.close', 2) }}? </label>
+                    </UFormGroup>
+
+                    <UFormGroup name="closed" :label="`${$t('common.close', 2)}?`" class="flex-1">
                         <Listbox v-model="doc.closed" as="div" :disabled="!canEdit || !canDo.edit">
                             <div class="relative">
                                 <ListboxButton
@@ -857,11 +871,11 @@ console.info(
                                 </transition>
                             </div>
                         </Listbox>
-                    </div>
+                    </UFormGroup>
                 </div>
             </div>
 
-            <div v-if="canDo.edit" class="bg-base-800">
+            <div v-if="canDo.edit">
                 <VeeField
                     v-slot="{ field }"
                     name="content"
@@ -921,33 +935,12 @@ console.info(
                 />
                 <UButton
                     :disabled="!canEdit || !canDo.access"
-                    class="rounded-full bg-primary-500 p-2 hover:bg-primary-400 focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2"
-                    data-te-toggle="tooltip"
+                    :ui="{ rounded: 'rounded-full' }"
+                    icon="i-mdi-plus"
                     :title="$t('components.documents.document_editor.add_permission')"
                     @click="addDocumentAccessEntry()"
-                >
-                    <PlusIcon class="size-5" />
-                </UButton>
+                />
             </div>
-
-            <div class="flex pb-14">
-                <UButton
-                    type="submit"
-                    block
-                    :disabled="!meta.valid || !canEdit || !canSubmit"
-                    :class="[(!canEdit || !meta.valid || !canSubmit) && 'disabled']"
-                >
-                    <template v-if="!canSubmit">
-                        <LoadingIcon class="mr-2 size-5 animate-spin" />
-                    </template>
-                    <template v-if="!id">
-                        {{ $t('common.create') }}
-                    </template>
-                    <template v-else>
-                        {{ $t('common.save') }}
-                    </template>
-                </UButton>
-            </div>
-        </form>
+        </UForm>
     </div>
 </template>

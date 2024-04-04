@@ -25,7 +25,7 @@ export default defineNuxtConfig({
     ],
     ui: {
         icons: ['heroicons', 'simple-icons', 'mdi', 'flagpack'],
-        safelistColors: ['primary', 'red', 'orange', 'green', 'error', 'warn', 'info', 'success'],
+        safelistColors: ['primary', 'gray', 'red', 'orange', 'green', 'error', 'warn', 'info', 'success'],
     },
     app: {
         head: {

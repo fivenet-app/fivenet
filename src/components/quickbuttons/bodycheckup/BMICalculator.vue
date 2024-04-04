@@ -1,6 +1,5 @@
 <script lang="ts" setup>
 import { vMaska } from 'maska';
-import { watchDebounced } from '@vueuse/core';
 
 const height = ref<string>('165');
 const mass = ref<string>('83');

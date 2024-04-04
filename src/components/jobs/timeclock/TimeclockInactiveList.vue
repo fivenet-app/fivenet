@@ -1,17 +1,21 @@
 <script lang="ts" setup>
 import { min, numeric, required } from '@vee-validate/rules';
-import { watchDebounced } from '@vueuse/core';
 import { ArrowLeftIcon } from 'mdi-vue3';
 import { defineRule } from 'vee-validate';
+import PhoneNumberBlock from '~/components/partials/citizens/PhoneNumberBlock.vue';
+import ProfilePictureImg from '~/components/partials/citizens/ProfilePictureImg.vue';
 import DataErrorBlock from '~/components/partials/data/DataErrorBlock.vue';
-import DataNoDataBlock from '~/components/partials/data/DataNoDataBlock.vue';
-import DataPendingBlock from '~/components/partials/data/DataPendingBlock.vue';
-import TimeclockInactiveListEntry from '~/components/jobs/timeclock/TimeclockInactiveListEntry.vue';
-import type { Perms } from '~~/gen/ts/perms';
-import GenericTable from '~/components/partials/elements/GenericTable.vue';
 import type { ListInactiveEmployeesResponse } from '~~/gen/ts/services/jobs/timeclock';
+import { checkIfCanAccessColleague } from '../colleagues/helpers';
+import { useAuthStore } from '~/store/auth';
+import type { Perms } from '~~/gen/ts/perms';
+
+const { t } = useI18n();
 
 const { $grpc } = useNuxtApp();
+
+const authStore = useAuthStore();
+const { activeChar } = storeToRefs(authStore);
 
 const query = ref<{
     days: number;
@@ -22,9 +26,12 @@ const query = ref<{
 const page = ref(1);
 const offset = computed(() => (data.value?.pagination?.pageSize ? data.value?.pagination?.pageSize * page.value : 0));
 
-const { data, pending, refresh, error } = useLazyAsyncData(`jobs-timeclock-inactive-${page.value}-${query.value.days}`, () =>
-    listInactiveEmployees(),
-);
+const {
+    data,
+    pending: loading,
+    refresh,
+    error,
+} = useLazyAsyncData(`jobs-timeclock-inactive-${page.value}-${query.value.days}`, () => listInactiveEmployees());
 
 async function listInactiveEmployees(): Promise<ListInactiveEmployeesResponse> {
     try {
@@ -58,13 +65,6 @@ const { meta } = useForm<FormData>({
     },
 });
 
-const searchInput = ref<HTMLInputElement | null>(null);
-function focusSearch(): void {
-    if (searchInput.value) {
-        searchInput.value.focus();
-    }
-}
-
 watchDebounced(
     query.value,
     async () => {
@@ -75,20 +75,40 @@ watchDebounced(
     { debounce: 600, maxWait: 1400 },
 );
 watch(offset, async () => refresh());
+
+const columns = [
+    {
+        key: 'name',
+        label: t('common.name'),
+    },
+    {
+        key: 'rank',
+        label: t('common.rank', 1),
+    },
+    {
+        key: 'phoneNumber',
+        label: t('common.phone_number'),
+    },
+    {
+        key: 'dateofbirth',
+        label: t('common.date_of_birth'),
+    },
+    {
+        key: 'actions',
+        label: t('common.action', 2),
+        sortable: false,
+        permission: 'JobsService.GetColleague' as Perms,
+    },
+].filter((c) => c.permission === undefined || can(c.permission));
 </script>
 
 <template>
     <div class="py-2 pb-4">
         <div v-if="can('JobsTimeclockService.ListTimeclock')" class="px-1 sm:px-2 lg:px-4">
-            <div class="sm:flex sm:items-center">
-                <NuxtLink
-                    :to="{ name: 'jobs-timeclock' }"
-                    class="inline-flex rounded-md bg-primary-500 px-3 py-2 text-sm font-semibold hover:bg-primary-400 focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2"
-                >
-                    <ArrowLeftIcon class="mr-1 size-5" />
-                    {{ $t('common.timeclock') }}
-                </NuxtLink>
-            </div>
+            <UButton :to="{ name: 'jobs-timeclock' }">
+                <ArrowLeftIcon class="mr-1 size-5" />
+                {{ $t('common.timeclock') }}
+            </UButton>
         </div>
         <div class="px-1 sm:px-2 lg:px-4">
             <div class="sm:flex sm:items-center">
@@ -101,7 +121,6 @@ watch(offset, async () => refresh());
                                 </label>
                                 <div class="relative mt-2">
                                     <VeeField
-                                        ref="searchInput"
                                         v-model="query.days"
                                         name="days"
                                         type="number"
@@ -123,55 +142,56 @@ watch(offset, async () => refresh());
             <div class="mt-2 flow-root">
                 <div class="-my-2 mx-0 overflow-x-auto">
                     <div class="inline-block min-w-full px-1 py-2 align-middle">
-                        <DataPendingBlock v-if="pending" :message="$t('common.loading', [$t('common.colleague', 2)])" />
                         <DataErrorBlock
-                            v-else-if="error"
+                            v-if="error"
                             :title="$t('common.unable_to_load', [$t('common.colleague', 2)])"
                             :retry="refresh"
                         />
-                        <DataNoDataBlock
-                            v-else-if="data?.colleagues.length === 0"
-                            :focus="focusSearch"
-                            :message="$t('components.citizens.citizens_list.no_citizens')"
-                        />
-                        <template v-else>
-                            <GenericTable>
-                                <template #thead>
-                                    <tr>
-                                        <th scope="col" class="py-3.5 pl-4 pr-3 text-left text-sm font-semibold sm:pl-1"></th>
-                                        <th scope="col" class="py-3.5 pl-4 pr-3 text-left text-sm font-semibold sm:pl-1">
-                                            {{ $t('common.name') }}
-                                        </th>
-                                        <th
-                                            scope="col"
-                                            class="hidden px-2 py-3.5 text-left text-sm font-semibold lg:table-cell"
-                                        >
-                                            {{ $t('common.rank', 1) }}
-                                        </th>
-                                        <th scope="col" class="px-2 py-3.5 text-left text-sm font-semibold">
-                                            {{ $t('common.phone_number') }}
-                                        </th>
-                                        <th scope="col" class="px-2 py-3.5 text-left text-sm font-semibold">
-                                            {{ $t('common.date_of_birth') }}
-                                        </th>
-                                        <th
-                                            v-if="can(['JobsService.GetColleague'] as Perms[])"
-                                            scope="col"
-                                            class="relative py-3.5 pl-3 pr-4 text-right text-sm font-semibold sm:pr-0"
-                                        >
-                                            {{ $t('common.action', 2) }}
-                                        </th>
-                                    </tr>
-                                </template>
-                                <template #tbody>
-                                    <TimeclockInactiveListEntry
-                                        v-for="colleague in data?.colleagues"
-                                        :key="colleague.userId"
-                                        :colleague="colleague"
+                        <UTable
+                            v-else
+                            :loading="loading"
+                            :columns="columns"
+                            :rows="data?.colleagues"
+                            :empty-state="{ icon: 'i-mdi-account', label: $t('common.not_found', [$t('common.colleague', 2)]) }"
+                        >
+                            <template #name-data="{ row: colleague }">
+                                <div class="inline-flex items-center">
+                                    <ProfilePictureImg
+                                        :url="colleague.avatar?.url"
+                                        :name="`${colleague.firstname} ${colleague.lastname}`"
+                                        size="sm"
+                                        :enable-popup="true"
+                                        class="mr-2"
                                     />
-                                </template>
-                            </GenericTable>
-                        </template>
+
+                                    {{ colleague.firstname }} {{ colleague.lastname }}
+                                </div>
+                                <dl class="font-normal lg:hidden">
+                                    <dt class="sr-only">{{ $t('common.job_grade') }}</dt>
+                                    <dd class="mt-1 truncate">
+                                        {{ colleague.jobGradeLabel
+                                        }}<span v-if="colleague.jobGrade > 0"> ({{ colleague.jobGrade }})</span>
+                                    </dd>
+                                </dl>
+                            </template>
+                            <template #rank-data="{ row: colleague }">
+                                {{ colleague.jobGradeLabel
+                                }}<span v-if="colleague.jobGrade > 0"> ({{ colleague.jobGrade }})</span>
+                            </template>
+                            <template #phoneNumber-data="{ row: colleague }">
+                                <PhoneNumberBlock :number="colleague.phoneNumber" />
+                            </template>
+                            <template #actions-data="{ row: colleague }">
+                                <NuxtLink
+                                    v-if="checkIfCanAccessColleague(activeChar!, colleague, 'JobsService.GetColleague')"
+                                    icon="i-mdi-eye"
+                                    :to="{
+                                        name: 'jobs-colleagues-id-actvitiy',
+                                        params: { id: colleague.userId ?? 0 },
+                                    }"
+                                />
+                            </template>
+                        </UTable>
 
                         <div class="flex justify-end px-3 py-3.5 border-t border-gray-200 dark:border-gray-700">
                             <UPagination

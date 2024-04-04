@@ -1,7 +1,6 @@
 <script lang="ts" setup>
 import { Dialog, DialogPanel, DialogTitle, TransitionChild, TransitionRoot } from '@headlessui/vue';
 import { max, min, required } from '@vee-validate/rules';
-import { useThrottleFn, useTimeoutFn } from '@vueuse/core';
 import { CloseIcon, HoopHouseIcon, LoadingIcon } from 'mdi-vue3';
 import { defineRule } from 'vee-validate';
 import { dispatchStatusToBGColor, dispatchStatuses } from '~/components/centrum/helpers';
@@ -157,12 +156,11 @@ function updateReasonField(value: string): void {
                                                                             idx >= dispatchStatuses.length - 1
                                                                                 ? 'col-span-2'
                                                                                 : '',
-                                                                            item.class,
                                                                             field.value == item.status
                                                                                 ? 'disabled bg-base-500 hover:bg-base-400'
                                                                                 : item.status
                                                                                   ? dispatchStatusToBGColor(item.status)
-                                                                                  : item.class,
+                                                                                  : '',
                                                                             ,
                                                                         ]"
                                                                         :disabled="field.value == item.status"

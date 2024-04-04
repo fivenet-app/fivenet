@@ -26,8 +26,10 @@ message TimeclockStats {
 }
 
 message TimeclockWeeklyStats {
-  string date = 1;
-  float sum = 2;
-  float avg = 3;
-  float max = 4;
+  int32 year = 1;
+  int32 calendar_week = 2;
+
+  float sum = 3;
+  float avg = 4;
+  float max = 5;
 }

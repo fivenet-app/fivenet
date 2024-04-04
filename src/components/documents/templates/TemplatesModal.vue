@@ -1,6 +1,4 @@
 <script lang="ts" setup>
-import { Dialog, DialogPanel, DialogTitle, TransitionChild, TransitionRoot } from '@headlessui/vue';
-import { CloseIcon, PencilIcon } from 'mdi-vue3';
 import ClipboardCitizens from '~/components/clipboard/modal/ClipboardCitizens.vue';
 import ClipboardDocuments from '~/components/clipboard/modal/ClipboardDocuments.vue';
 import ClipboardVehicles from '~/components/clipboard/modal/ClipboardVehicles.vue';
@@ -13,7 +11,6 @@ const clipboardStore = useClipboardStore();
 
 const props = withDefaults(
     defineProps<{
-        open: boolean;
         autoFill?: boolean;
     }>(),
     {
@@ -21,9 +18,7 @@ const props = withDefaults(
     },
 );
 
-const emit = defineEmits<{
-    (e: 'close'): void;
-}>();
+const { isOpen } = useModal();
 
 const template = ref<undefined | TemplateShort>();
 const reqs = ref<undefined | TemplateRequirements>();
@@ -54,7 +49,7 @@ function closeDialog(): void {
     steps.value.selectTemplate = true;
     steps.value.selectClipboard = false;
 
-    emit('close');
+    isOpen.value = false;
 }
 
 async function templateSelected(t: TemplateShort): Promise<void> {
@@ -109,6 +104,7 @@ async function templateSelected(t: TemplateShort): Promise<void> {
                 name: 'documents-create',
                 query: { templateId: template.value?.id },
             });
+            isOpen.value = false;
         }
     } else {
         reqStatus.value.documents = false;
@@ -133,162 +129,92 @@ async function clipboardDialog(): Promise<void> {
         name: 'documents-create',
         query: { templateId: template.value?.id },
     });
+
+    isOpen.value = false;
 }
 </script>
 
 <template>
-    <TransitionRoot as="template" :show="open">
-        <Dialog as="div" class="relative z-30" @close="closeDialog">
-            <TransitionChild
-                as="template"
-                enter="ease-out duration-300"
-                enter-from="opacity-0"
-                enter-to="opacity-100"
-                leave="ease-in duration-200"
-                leave-from="opacity-100"
-                leave-to="opacity-0"
-            >
-                <div class="fixed inset-0 bg-base-900/75 transition-opacity" />
-            </TransitionChild>
+    <UModal :ui="{ width: 'w-full sm:max-w-5xl' }">
+        <UCard :ui="{ ring: '', divide: 'divide-y divide-gray-100 dark:divide-gray-800' }">
+            <template #header>
+                <div class="flex items-center justify-between">
+                    <h3 class="text-2xl font-semibold leading-6">
+                        {{ $t('common.document', 1) }}
+                        {{ $t('common.template', 2) }}
+                    </h3>
 
-            <div class="fixed inset-0 z-30 overflow-y-auto">
-                <div class="flex min-h-full items-end justify-center p-4 text-center sm:items-center sm:p-0">
-                    <TransitionChild
-                        as="template"
-                        enter="ease-out duration-300"
-                        enter-from="opacity-0 translate-y-4 sm:translate-y-0 sm:scale-95"
-                        enter-to="opacity-100 translate-y-0 sm:scale-100"
-                        leave="ease-in duration-200"
-                        leave-from="opacity-100 translate-y-0 sm:scale-100"
-                        leave-to="opacity-0 translate-y-4 sm:translate-y-0 sm:scale-95"
-                    >
-                        <div>
-                            <DialogPanel
-                                class="relative w-full overflow-hidden rounded-lg bg-base-800 px-4 pb-4 pt-5 text-left transition-all sm:my-8 sm:min-w-full sm:max-w-7xl sm:p-6"
-                            >
-                                <div class="absolute right-0 top-0 block pr-4 pt-4">
-                                    <UButton
-                                        class="rounded-md bg-neutral-50 text-gray-400 hover:text-gray-500 focus:ring-2 focus:ring-primary-500 focus:ring-offset-2"
-                                        @click="$emit('close')"
-                                    >
-                                        <span class="sr-only">{{ $t('common.close') }}</span>
-                                        <CloseIcon class="size-5" />
-                                    </UButton>
-                                </div>
-                                <div v-if="steps.selectTemplate">
-                                    <div>
-                                        <div class="mx-auto flex size-12 items-center justify-center rounded-full bg-base-700">
-                                            <PencilIcon class="size-5 text-primary-500" />
-                                        </div>
-                                        <div class="mt-3 text-center sm:mt-5">
-                                            <DialogTitle as="h3" class="text-base font-semibold leading-6">
-                                                {{ $t('common.document', 1) }}
-                                                {{ $t('common.template', 2) }}
-                                            </DialogTitle>
-                                            <div class="mt-2">
-                                                <NuxtLink
-                                                    :to="{
-                                                        name: 'documents-create',
-                                                    }"
-                                                    class="w-full rounded-md bg-base-500 px-3.5 py-2.5 text-sm font-semibold hover:bg-base-400"
-                                                >
-                                                    {{ $t('components.documents.templates.templates_modal.no_template') }}
-                                                </NuxtLink>
-                                                <div class="pt-4">
-                                                    <TemplatesList @selected="(t: TemplateShort) => templateSelected(t)" />
-                                                </div>
-                                            </div>
-                                        </div>
-                                    </div>
-                                    <div class="mt-5 gap-2 sm:mt-4 sm:flex">
-                                        <UButton
-                                            class="flex-1 rounded-md bg-base-500 px-3.5 py-2.5 text-sm font-semibold hover:bg-base-400"
-                                            @click="closeDialog"
-                                        >
-                                            {{ $t('common.close', 1) }}
-                                        </UButton>
-                                    </div>
-                                </div>
-                                <div v-else-if="template !== undefined && reqs !== undefined && steps.selectClipboard">
-                                    <div class="mx-auto flex size-12 items-center justify-center rounded-full bg-gray-100">
-                                        <PencilIcon class="size-5 text-primary-600" />
-                                    </div>
-                                    <div class="mt-3 text-center sm:mt-5">
-                                        <DialogTitle as="h3" class="text-base font-semibold leading-6">
-                                            {{ $t('common.template', 1) }}:
-                                            {{ template.title }}
-                                        </DialogTitle>
-                                        <div class="mt-2">
-                                            <div v-if="reqs.users">
-                                                <p>
-                                                    <TemplateRequirementsList
-                                                        :name="$t('common.citizen', 2)"
-                                                        :specs="reqs.users!"
-                                                    />
-                                                </p>
-
-                                                <ClipboardCitizens
-                                                    :submit.sync="submit"
-                                                    :specs="reqs.users!"
-                                                    @statisfied="(v: boolean) => (reqStatus.users = v)"
-                                                />
-                                            </div>
-                                            <div v-if="reqs.vehicles">
-                                                <p>
-                                                    <TemplateRequirementsList
-                                                        :name="$t('common.vehicle', 2)"
-                                                        :specs="reqs.vehicles!"
-                                                    />
-                                                </p>
-
-                                                <ClipboardVehicles
-                                                    :submit.sync="submit"
-                                                    :specs="reqs.vehicles!"
-                                                    @statisfied="(v: boolean) => (reqStatus.vehicles = v)"
-                                                />
-                                            </div>
-                                            <div v-if="reqs.documents">
-                                                <p>
-                                                    <TemplateRequirementsList
-                                                        :name="$t('common.document', 2)"
-                                                        :specs="reqs.documents!"
-                                                    />
-                                                </p>
-
-                                                <ClipboardDocuments
-                                                    :submit.sync="submit"
-                                                    :specs="reqs.documents!"
-                                                    @statisfied="(v: boolean) => (reqStatus.documents = v)"
-                                                />
-                                            </div>
-                                        </div>
-                                    </div>
-                                    <div class="mt-5 sm:mt-6 sm:grid sm:grid-flow-row-dense sm:gap-3">
-                                        <UButton
-                                            class="mt-3 inline-flex w-full justify-center rounded-md bg-neutral-50 px-3 py-2 text-sm font-semibold text-gray-900 shadow-sm ring-1 ring-inset ring-gray-300 hover:bg-gray-200 sm:col-start-1 sm:mt-0"
-                                            @click="goBackDialog"
-                                        >
-                                            {{ $t('common.go_back') }}
-                                        </UButton>
-                                        <UButton
-                                            class="inline-flex w-full justify-center rounded-md px-3 py-2 text-sm font-semibold shadow-sm focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 sm:col-start-2"
-                                            :disabled="!readyToCreate"
-                                            :class="[
-                                                !readyToCreate
-                                                    ? 'disabled bg-base-500 hover:bg-base-400 focus-visible:outline-base-500'
-                                                    : 'bg-primary-500 hover:bg-primary-400',
-                                            ]"
-                                            @click="clipboardDialog()"
-                                        >
-                                            {{ $t('common.create') }}
-                                        </UButton>
-                                    </div>
-                                </div>
-                            </DialogPanel>
-                        </div>
-                    </TransitionChild>
+                    <UButton color="gray" variant="ghost" icon="i-mdi-window-close" class="-my-1" @click="closeDialog()" />
                 </div>
-            </div>
-        </Dialog>
-    </TransitionRoot>
+            </template>
+
+            <template v-if="steps.selectTemplate">
+                <UButton block @click="clipboardDialog()">
+                    {{ $t('components.documents.templates.templates_modal.no_template') }}
+                </UButton>
+
+                <div class="pt-6">
+                    <TemplatesList @selected="(t: TemplateShort) => templateSelected(t)" />
+                </div>
+            </template>
+            <template v-else-if="template !== undefined && reqs !== undefined && steps.selectClipboard">
+                <div class="text-center">
+                    <h3 class="text-base font-semibold leading-6">
+                        {{ $t('common.template', 1) }}:
+                        {{ template.title }}
+                    </h3>
+                    <div>
+                        <div v-if="reqs.users">
+                            <p>
+                                <TemplateRequirementsList :name="$t('common.citizen', 2)" :specs="reqs.users!" />
+                            </p>
+
+                            <ClipboardCitizens
+                                :submit.sync="submit"
+                                :specs="reqs.users!"
+                                @statisfied="(v: boolean) => (reqStatus.users = v)"
+                            />
+                        </div>
+                        <div v-if="reqs.vehicles">
+                            <p>
+                                <TemplateRequirementsList :name="$t('common.vehicle', 2)" :specs="reqs.vehicles!" />
+                            </p>
+
+                            <ClipboardVehicles
+                                :submit.sync="submit"
+                                :specs="reqs.vehicles!"
+                                @statisfied="(v: boolean) => (reqStatus.vehicles = v)"
+                            />
+                        </div>
+                        <div v-if="reqs.documents">
+                            <p>
+                                <TemplateRequirementsList :name="$t('common.document', 2)" :specs="reqs.documents!" />
+                            </p>
+
+                            <ClipboardDocuments
+                                :submit.sync="submit"
+                                :specs="reqs.documents!"
+                                @statisfied="(v: boolean) => (reqStatus.documents = v)"
+                            />
+                        </div>
+                    </div>
+                </div>
+            </template>
+
+            <template #footer>
+                <UButtonGroup v-if="template !== undefined && reqs !== undefined && steps.selectClipboard">
+                    <UButton block @click="goBackDialog">
+                        {{ $t('common.go_back') }}
+                    </UButton>
+                    <UButton block :disabled="!readyToCreate" @click="clipboardDialog()">
+                        {{ $t('common.create') }}
+                    </UButton>
+                </UButtonGroup>
+
+                <UButton v-else block @click="closeDialog">
+                    {{ $t('common.close', 1) }}
+                </UButton>
+            </template>
+        </UCard>
+    </UModal>
 </template>

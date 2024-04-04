@@ -31,12 +31,12 @@ const clipboardStore = useClipboardStore();
 
 const notifications = useNotificatorStore();
 
-const templatesOpen = ref(false);
+const modal = useModal();
 
 function openTemplates(): void {
     clipboardStore.addUser(props.user);
 
-    templatesOpen.value = true;
+    modal.open(TemplatesModal, {});
 }
 
 function copyLinkToClipboard(): void {
@@ -62,7 +62,6 @@ const mugShotModal = ref(false);
             <div class="flow-root">
                 <div class="-my-2 mx-0 overflow-x-auto">
                     <div class="inline-block min-w-full px-1 align-middle">
-                        <TemplatesModal :open="templatesOpen" :auto-fill="true" @close="templatesOpen = false" />
                         <CitizenSetWantedModal
                             :open="setWantedModal"
                             :user="user"

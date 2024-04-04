@@ -1,7 +1,6 @@
 <script lang="ts" setup>
 // eslint-disable-next-line camelcase
 import { alpha_dash, digits, max, min, required } from '@vee-validate/rules';
-import { useThrottleFn, useTimeoutFn } from '@vueuse/core';
 import { defineRule } from 'vee-validate';
 import PasswordStrengthMeter from '~/components/auth/PasswordStrengthMeter.vue';
 import { useNotificatorStore } from '~/store/notificator';

@@ -1,11 +1,9 @@
 <script lang="ts" setup>
 import { AlertCircleIcon, LoadingIcon } from 'mdi-vue3';
-import { Bar, Chart, Grid, Responsive, Tooltip } from 'vue3-charts';
-import type { ChartAxis } from 'vue3-charts/dist/types';
 import DataErrorBlock from '~/components/partials/data/DataErrorBlock.vue';
 import DataNoDataBlock from '~/components/partials/data/DataNoDataBlock.vue';
-import GenericContainer from '~/components/partials/elements/GenericContainer.vue';
 import { TimeclockStats, TimeclockWeeklyStats } from '~~/gen/ts/resources/jobs/timeclock';
+import TimeclockStatsChart from '~/components/jobs/timeclock/TimeclockStatsChart.vue';
 
 const props = withDefaults(
     defineProps<{
@@ -50,107 +48,53 @@ async function updateStats(): Promise<void> {
 watch(props, async () => updateStats());
 
 onBeforeMount(async () => updateStats());
-
-const margin = ref({
-    left: 5,
-    top: 5,
-    right: 5,
-    bottom: 5,
-});
-
-const axis = ref<ChartAxis>({
-    primary: {
-        type: 'band',
-        domain: ['data', 'dataMax'],
-    },
-    secondary: {
-        domain: [0, 'dataMax + 2'],
-        type: 'linear',
-        ticks: 8,
-        format: (v) => `${v}h`,
-    },
-});
 </script>
 
 <template>
-    <div class="mx-auto max-w-7xl">
-        <GenericContainer>
-            <h2 v-if="!hideHeader" class="text-2xl font-semibold">
+    <UCard>
+        <template v-if="!hideHeader" #header>
+            <h2 class="text-2xl font-semibold">
                 {{ $t('common.timeclock') }}
             </h2>
-            <div class="flex flex-col gap-4 lg:flex-row">
-                <div>
-                    <h3 class="mb-2 ml-0.5 text-lg font-bold">
-                        {{ $t('components.jobs.timeclock.StatsBlock.7_days') }}
-                    </h3>
-                    <div class="grid grid-cols-1 gap-2">
-                        <GenericContainer v-for="stat in statsData" :key="stat.name" class="bg-primary-900">
-                            <p class="text-sm font-medium leading-6 text-gray-300">{{ $t(stat.name) }}</p>
-                            <p class="mt-2 flex w-full items-center gap-x-2 text-2xl font-semibold tracking-tight">
-                                <template v-if="stat.value === undefined">
-                                    <LoadingIcon class="size-5 animate-spin" />
-                                </template>
-                                <template v-else-if="failed">
-                                    <AlertCircleIcon class="size-5" />
-                                </template>
-                                <template v-else>
-                                    {{
-                                        fromSecondsToFormattedDuration(stat.value, {
-                                            seconds: false,
-                                            emptyText: 'common.none',
-                                        })
-                                    }}
-                                </template>
-                            </p>
-                        </GenericContainer>
-                    </div>
-                </div>
+        </template>
 
-                <div class="w-full flex-1">
-                    <h3 class="mb-2 text-lg font-bold">
-                        {{ $t('components.jobs.timeclock.StatsBlock.weekly') }}
-                    </h3>
-
-                    <DataErrorBlock v-if="failed" :retry="async () => $emit('refresh')" />
-                    <DataNoDataBlock v-else-if="weekly === undefined" />
-                    <Responsive v-else class="w-full">
-                        <template #main="{ width }">
-                            <!-- @vue-ignore our own data format works fine.. but the package type is "off" -->
-                            <Chart
-                                :size="{ width: width as number, height: 375 }"
-                                :data="weekly"
-                                :margin="margin"
-                                direction="horizontal"
-                                :axis="axis"
-                            >
-                                <template #layers>
-                                    <Grid stroke-dasharray="2,2" />
-                                    <Bar :data-keys="['date', 'sum']" :bar-style="{ class: 'fill-primary-600' }" :gap="12" />
-                                    <Bar :data-keys="['date', 'avg']" :bar-style="{ class: 'fill-primary-800' }" :gap="12" />
-                                    <Bar :data-keys="['date', 'max']" :bar-style="{ class: 'fill-primary-400' }" :gap="12" />
-                                </template>
-                                <template #widgets>
-                                    <Tooltip
-                                        border-color="#48CAE4"
-                                        :config="{
-                                            date: { label: $t('common.date'), color: '#2b2d34' },
-                                            sum: {
-                                                label: $t('components.jobs.timeclock.StatsBlock.sum'),
-                                            },
-                                            avg: {
-                                                label: $t('components.jobs.timeclock.StatsBlock.avg'),
-                                            },
-                                            max: {
-                                                label: $t('components.jobs.timeclock.StatsBlock.max'),
-                                            },
-                                        }"
-                                    />
-                                </template>
-                            </Chart>
-                        </template>
-                    </Responsive>
+        <div class="flex flex-col gap-4 lg:flex-row">
+            <div class="flex-none">
+                <h3 class="mb-2 ml-0.5 text-lg font-bold">
+                    {{ $t('components.jobs.timeclock.Stats.7_days') }}
+                </h3>
+                <div class="grid grid-cols-1 gap-2">
+                    <UCard v-for="stat in statsData" :key="stat.name">
+                        <p class="text-sm font-medium leading-6 text-gray-300">{{ $t(stat.name) }}</p>
+                        <p class="mt-2 flex w-full items-center gap-x-2 text-2xl font-semibold tracking-tight">
+                            <template v-if="stat.value === undefined">
+                                <LoadingIcon class="size-5 animate-spin" />
+                            </template>
+                            <template v-else-if="failed">
+                                <AlertCircleIcon class="size-5" />
+                            </template>
+                            <template v-else>
+                                {{
+                                    fromSecondsToFormattedDuration(stat.value, {
+                                        seconds: false,
+                                        emptyText: 'common.none',
+                                    })
+                                }}
+                            </template>
+                        </p>
+                    </UCard>
                 </div>
             </div>
-        </GenericContainer>
-    </div>
+
+            <div class="flex-1">
+                <h3 class="mb-2 text-lg font-bold">
+                    {{ $t('components.jobs.timeclock.Stats.weekly') }}
+                </h3>
+
+                <DataErrorBlock v-if="failed" :retry="async () => $emit('refresh')" />
+                <DataNoDataBlock v-else-if="weekly === undefined" />
+                <TimeclockStatsChart v-else :stats="weekly" />
+            </div>
+        </div>
+    </UCard>
 </template>

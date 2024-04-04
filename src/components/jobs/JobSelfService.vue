@@ -1,5 +1,4 @@
 <script lang="ts" setup>
-import GenericContainer from '~/components/partials/elements/GenericContainer.vue';
 import SelfServicePropsAbsenceDateModal from '~/components/jobs/colleagues/SelfServicePropsAbsenceDateModal.vue';
 import SelfServicePropsProfilePictureModal from '~/components/jobs/colleagues/SelfServicePropsProfilePictureModal.vue';
 import { checkIfCanAccessColleague } from '~/components/jobs/colleagues/helpers';
@@ -27,15 +26,13 @@ const { data: colleagueSelf } = useLazyAsyncData('jobs-selfcolleague', async () 
 });
 
 const modal = useModal();
-
-const profilePictureModal = ref(false);
 </script>
 
 <template>
-    <GenericContainer class="flex-1">
-        <SelfServicePropsProfilePictureModal :open="profilePictureModal" @close="profilePictureModal = false" />
-
-        <h3 class="text-lg font-semibold">{{ $t('components.jobs.self_service.title') }}</h3>
+    <UCard class="flex-1">
+        <template #header>
+            <h3 class="text-lg font-semibold">{{ $t('components.jobs.self_service.title') }}</h3>
+        </template>
 
         <div class="flex flex-initial flex-col items-center gap-1 md:flex-row">
             <UButtonGroup class="flex w-full">
@@ -61,5 +58,5 @@ const profilePictureModal = ref(false);
                 </UButton>
             </UButtonGroup>
         </div>
-    </GenericContainer>
+    </UCard>
 </template>

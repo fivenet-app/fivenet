@@ -1,6 +1,5 @@
 <script lang="ts" setup>
 import { max, min, required } from '@vee-validate/rules';
-import { useThrottleFn, useTimeoutFn } from '@vueuse/core';
 import { LoadingIcon } from 'mdi-vue3';
 import { defineRule } from 'vee-validate';
 import { useNotificatorStore } from '~/store/notificator';
@@ -18,7 +17,7 @@ const emit = defineEmits<{
 
 const { $grpc } = useNuxtApp();
 
-const modal = useModal();
+const { isOpen } = useModal();
 
 const notifications = useNotificatorStore();
 
@@ -54,7 +53,7 @@ async function setAbsenceDate(values: FormData): Promise<void> {
             type: 'success',
         });
 
-        modal.close();
+        isOpen.value = false;
     } catch (e) {
         $grpc.handleError(e as RpcError);
         throw e;
@@ -123,7 +122,7 @@ const onSubmitThrottle = useThrottleFn(async (e) => {
                         {{ $t('components.jobs.self_service.set_absence_date') }}
                     </h3>
 
-                    <UButton color="gray" variant="ghost" icon="i-mdi-window-close" class="-my-1" @click="modal.close()" />
+                    <UButton color="gray" variant="ghost" icon="i-mdi-window-close" class="-my-1" @click="isOpen = false" />
                 </div>
             </template>
 
@@ -186,7 +185,7 @@ const onSubmitThrottle = useThrottleFn(async (e) => {
             <div class="mt-5 gap-2 sm:mt-4 sm:flex">
                 <UButton
                     class="flex-1 rounded-md bg-neutral-50 px-3.5 py-2.5 text-sm font-semibold text-gray-900 hover:bg-gray-200"
-                    @click="modal.close()"
+                    @click="isOpen = false"
                 >
                     {{ $t('common.close', 1) }}
                 </UButton>

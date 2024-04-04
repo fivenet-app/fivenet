@@ -3,16 +3,12 @@ import type { GetDispatchResponse } from '~~/gen/ts/services/centrum/centrum';
 import DispatchDetails from '~/components/centrum/dispatches/DispatchDetails.vue';
 
 const props = defineProps<{
-    open: boolean;
     dispatchId: string;
 }>();
 
-const emit = defineEmits<{
-    (e: 'close'): void;
-    (e: 'goto', loc: Coordinate): void;
-}>();
-
 const { $grpc } = useNuxtApp();
+
+const { isOpen } = useModal();
 
 const { data, refresh } = useLazyAsyncData(`centrum-dispatch-${props.dispatchId}`, () => getDispatch(props.dispatchId));
 
@@ -26,7 +22,7 @@ async function getDispatch(id: string): Promise<GetDispatchResponse> {
         return response;
     } catch (e) {
         $grpc.handleError(e as RpcError);
-        emit('close');
+        isOpen.value = false;
         throw e;
     }
 }
@@ -35,11 +31,5 @@ watch(props, () => refresh());
 </script>
 
 <template>
-    <DispatchDetails
-        v-if="data?.dispatch"
-        :open="open"
-        :dispatch="data.dispatch"
-        @close="$emit('close')"
-        @goto="$emit('goto', $event)"
-    />
+    <DispatchDetails v-if="data?.dispatch" :dispatch="data.dispatch" @goto="$emit('goto', $event)" />
 </template>

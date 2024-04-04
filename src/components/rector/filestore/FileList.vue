@@ -1,5 +1,4 @@
 <script lang="ts" setup>
-import GenericContainerPanel from '~/components/partials/elements/GenericContainerPanel.vue';
 import DataErrorBlock from '~/components/partials/data/DataErrorBlock.vue';
 import { useSettingsStore } from '~/store/settings';
 import type { DeleteFileResponse, ListFilesResponse } from '~~/gen/ts/services/rector/filestore';
@@ -96,84 +95,78 @@ const columns = [
 </script>
 
 <template>
-    <div class="py-2">
-        <div class="px-1 sm:px-2 lg:px-4">
-            <template v-if="streamerMode">
-                <GenericContainerPanel>
-                    <template #title>
-                        {{ $t('system.streamer_mode.title') }}
-                    </template>
-                    <template #description>
-                        {{ $t('system.streamer_mode.description') }}
-                    </template>
-                </GenericContainerPanel>
-            </template>
+    <div>
+        <template v-if="streamerMode">
+            <UDashboardPanelContent class="pb-2">
+                <UDashboardSection
+                    :title="$t('system.streamer_mode.title')"
+                    :description="$t('system.streamer_mode.description')"
+                />
+            </UDashboardPanelContent>
+        </template>
+        <template v-else>
+            <div class="sm:flex sm:items-center">
+                <div class="w-full sm:flex-auto">
+                    <UButton
+                        block
+                        @click="
+                            modal.open(FileUploadDialog, {
+                                uploadedFile: addUploadedFile,
+                            })
+                        "
+                    >
+                        {{ $t('common.upload') }}
+                    </UButton>
+                </div>
+            </div>
+
+            <DataErrorBlock
+                v-if="error"
+                :title="$t('common.unable_to_load', [`${$t('common.data', 1)} ${$t('common.prop')}`])"
+                :retry="refresh"
+            />
+
             <template v-else>
-                <div class="sm:flex sm:items-center">
-                    <div class="w-full sm:flex-auto">
+                <UTable
+                    :loading="loading"
+                    :columns="columns"
+                    :rows="data?.files"
+                    :empty-state="{ icon: 'i-mdi-file-multiple', label: $t('common.not_found', [$t('common.file', 2)]) }"
+                >
+                    <template #actions-data="{ row: file }">
                         <UButton
-                            block
+                            variant="link"
+                            icon="i-mdi-eye"
+                            :external="true"
+                            target="_blank"
+                            :to="`/api/filestore/${file.name}`"
+                        />
+                        <UButton
+                            variant="link"
+                            icon="i-mdi-trash-can"
                             @click="
-                                modal.open(FileUploadDialog, {
-                                    uploadedFile: addUploadedFile,
+                                modal.open(ConfirmModal, {
+                                    confirm: async () => deleteFile(file.name),
                                 })
                             "
-                        >
-                            {{ $t('common.upload') }}
-                        </UButton>
-                    </div>
-                </div>
-
-                <DataErrorBlock
-                    v-if="error"
-                    :title="$t('common.unable_to_load', [`${$t('common.data', 1)} ${$t('common.prop')}`])"
-                    :retry="refresh"
-                />
-
-                <template v-else>
-                    <UTable
-                        :loading="loading"
-                        :columns="columns"
-                        :rows="data?.files"
-                        :empty-state="{ icon: 'i-mdi-file-multiple', label: $t('common.not_found', [$t('common.file', 2)]) }"
-                        :page-count="(data?.pagination?.totalCount ?? 0) / (data?.pagination?.pageSize ?? 1)"
-                        :total="data?.pagination?.totalCount"
-                    >
-                        <template #actions-data="{ row: file }">
-                            <UButton
-                                variant="link"
-                                icon="i-mdi-eye"
-                                :external="true"
-                                target="_blank"
-                                :to="`/api/filestore/${file.name}`"
-                            />
-                            <UButton
-                                variant="link"
-                                icon="i-mdi-trash-can"
-                                @click="
-                                    modal.open(ConfirmModal, {
-                                        confirm: async () => deleteFile(file.name),
-                                    })
-                                "
-                            />
-                        </template>
-                        <template #fileSize-data="{ row: file }">
-                            {{ formatBytesBigInt(file.size) }}
-                        </template>
-                        <template #updatedAt-data="{ row: file }">
-                            <GenericTime :value="toDate(file.lastModified)" />
-                        </template>
-                    </UTable>
-
-                    <div class="flex justify-end px-3 py-3.5 border-t border-gray-200 dark:border-gray-700">
-                        <UPagination
-                            v-model="page"
-                            :page-count="data?.pagination?.pageSize ?? 0"
-                            :total="(page + 1) * (data?.pagination?.pageSize ?? 0)"
                         />
-                    </div>
-                </template>
+                    </template>
+                    <template #fileSize-data="{ row: file }">
+                        {{ formatBytesBigInt(file.size) }}
+                    </template>
+                    <template #updatedAt-data="{ row: file }">
+                        <GenericTime :value="toDate(file.lastModified)" />
+                    </template>
+                </UTable>
+
+                <div class="flex justify-end px-3 py-3.5 border-t border-gray-200 dark:border-gray-700">
+                    <UPagination
+                        v-model="page"
+                        :page-count="data?.pagination?.pageSize ?? 0"
+                        :total="(page + 1) * (data?.pagination?.pageSize ?? 0)"
+                    />
+                </div>
             </template>
-        </div>
+        </template>
     </div>
 </template>

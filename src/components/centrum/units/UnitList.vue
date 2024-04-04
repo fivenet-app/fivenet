@@ -1,6 +1,5 @@
 <script lang="ts" setup>
 import { CogIcon } from 'mdi-vue3';
-import { computedAsync } from '@vueuse/core';
 import { useCentrumStore } from '~/store/centrum';
 import UnitListEntry from '~/components/centrum/units/UnitListEntry.vue';
 import { StatusUnit } from '~~/gen/ts/resources/centrum/units';

@@ -1,6 +1,5 @@
 <script lang="ts" setup>
 import { LIcon, LMarker } from '@vue-leaflet/vue-leaflet';
-import { useTimeoutFn } from '@vueuse/core';
 import type { PointExpression } from 'leaflet';
 import { MapMarkerDownIcon } from 'mdi-vue3';
 import { useLivemapStore } from '~/store/livemap';

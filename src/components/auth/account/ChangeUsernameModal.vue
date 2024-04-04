@@ -1,14 +1,13 @@
 <script lang="ts" setup>
-import { Dialog, DialogPanel, DialogTitle, TransitionChild, TransitionRoot } from '@headlessui/vue';
 // eslint-disable-next-line camelcase
 import { alpha_dash, max, min, required } from '@vee-validate/rules';
-import { useThrottleFn, useTimeoutFn } from '@vueuse/core';
-import { AccountEditIcon, CloseIcon, LoadingIcon } from 'mdi-vue3';
 import { defineRule } from 'vee-validate';
 import { useAuthStore } from '~/store/auth';
 import { useNotificatorStore } from '~/store/notificator';
 
 const { $grpc } = useNuxtApp();
+
+const { isOpen } = useModal();
 
 const authStore = useAuthStore();
 const { clearAuthInfo } = authStore;
@@ -69,124 +68,54 @@ const onSubmitThrottle = useThrottleFn(async (e) => {
 </script>
 
 <template>
-    <TransitionRoot as="template">
-        <Dialog as="div" class="relative z-30" @close="canSubmit && $emit('close')">
-            <TransitionChild
-                as="template"
-                enter="ease-out duration-300"
-                enter-from="opacity-0"
-                enter-to="opacity-100"
-                leave="ease-in duration-200"
-                leave-from="opacity-100"
-                leave-to="opacity-0"
-            >
-                <div class="fixed inset-0 bg-base-900/75 transition-opacity" />
-            </TransitionChild>
+    <UModal :ui="{ width: 'w-full sm:max-w-5xl' }">
+        <UCard :ui="{ ring: '', divide: 'divide-y divide-gray-100 dark:divide-gray-800' }">
+            <template #header>
+                <div class="flex items-center justify-between">
+                    <h3 class="text-2xl font-semibold leading-6">
+                        {{ $t('components.auth.change_username_modal.change_username') }}
+                    </h3>
 
-            <div class="fixed inset-0 z-30 overflow-y-auto">
-                <div class="flex min-h-full items-end justify-center p-4 text-center sm:items-center sm:p-0">
-                    <TransitionChild
-                        as="template"
-                        enter="ease-out duration-300"
-                        enter-from="opacity-0 translate-y-4 sm:translate-y-0 sm:scale-95"
-                        enter-to="opacity-100 translate-y-0 sm:scale-100"
-                        leave="ease-in duration-200"
-                        leave-from="opacity-100 translate-y-0 sm:scale-100"
-                        leave-to="opacity-0 translate-y-4 sm:translate-y-0 sm:scale-95"
-                    >
-                        <DialogPanel
-                            class="relative w-full overflow-hidden rounded-lg bg-base-800 px-4 pb-4 pt-5 text-left transition-all sm:my-8 sm:max-w-lg sm:p-6"
-                        >
-                            <div class="absolute right-0 top-0 block pr-4 pt-4">
-                                <UButton
-                                    class="rounded-md bg-neutral-50 text-gray-400 hover:text-gray-500 focus:ring-2 focus:ring-primary-500 focus:ring-offset-2"
-                                    @click="$emit('close')"
-                                >
-                                    <span class="sr-only">{{ $t('common.close') }}</span>
-                                    <CloseIcon class="size-5" />
-                                </UButton>
-                            </div>
-                            <div>
-                                <div class="mx-auto flex size-12 items-center justify-center rounded-full bg-base-700">
-                                    <AccountEditIcon class="size-5 text-primary-500" />
-                                </div>
-                                <div class="mt-3 text-center sm:mt-5">
-                                    <DialogTitle as="h3" class="text-base font-semibold leading-6">
-                                        {{ $t('components.auth.change_username_modal.change_username') }}
-                                    </DialogTitle>
-                                    <div class="mt-2">
-                                        <form class="my-2 space-y-6" @submit.prevent="onSubmitThrottle">
-                                            <div>
-                                                <label for="currentUsername" class="sr-only">{{
-                                                    $t('components.auth.change_username_modal.current_username')
-                                                }}</label>
-                                                <div>
-                                                    <VeeField
-                                                        name="currentUsername"
-                                                        type="text"
-                                                        autocomplete="current-username"
-                                                        :placeholder="
-                                                            $t('components.auth.change_username_modal.current_username')
-                                                        "
-                                                        :label="$t('components.auth.change_username_modal.current_username')"
-                                                        class="block w-full rounded-md border-0 bg-base-700 py-1.5 placeholder:text-accent-200 focus:ring-2 focus:ring-inset focus:ring-base-300 sm:text-sm sm:leading-6"
-                                                    />
-                                                    <VeeErrorMessage
-                                                        name="currentUsername"
-                                                        as="p"
-                                                        class="mt-2 text-sm text-error-400"
-                                                    />
-                                                </div>
-                                            </div>
-                                            <div>
-                                                <label for="newUsername" class="sr-only">{{
-                                                    $t('components.auth.change_username_modal.new_username')
-                                                }}</label>
-                                                <div>
-                                                    <VeeField
-                                                        name="newUsername"
-                                                        type="text"
-                                                        autocomplete="new-username"
-                                                        :placeholder="$t('components.auth.change_username_modal.new_username')"
-                                                        :label="$t('components.auth.change_username_modal.new_username')"
-                                                        class="block w-full rounded-md border-0 bg-base-700 py-1.5 placeholder:text-accent-200 focus:ring-2 focus:ring-inset focus:ring-base-300 sm:text-sm sm:leading-6"
-                                                    />
-                                                    <VeeErrorMessage
-                                                        name="newUsername"
-                                                        as="p"
-                                                        class="mt-2 text-sm text-error-400"
-                                                    />
-                                                </div>
-                                            </div>
-
-                                            <div>
-                                                <UButton
-                                                    type="submit"
-                                                    class="flex w-full justify-center rounded-md px-3 py-2 text-sm font-semibold transition-colors focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2"
-                                                    :disabled="!meta.valid || !canSubmit"
-                                                >
-                                                    <template v-if="!canSubmit">
-                                                        <LoadingIcon class="mr-2 size-5 animate-spin" />
-                                                    </template>
-                                                    {{ $t('components.auth.change_username_modal.change_username') }}
-                                                </UButton>
-                                            </div>
-                                        </form>
-                                    </div>
-                                </div>
-                            </div>
-                            <div class="mt-5 gap-2 sm:mt-4 sm:flex">
-                                <UButton
-                                    class="flex-1 rounded-md bg-base-500 px-3.5 py-2.5 text-sm font-semibold hover:bg-base-400"
-                                    @click="$emit('close')"
-                                >
-                                    {{ $t('common.close', 1) }}
-                                </UButton>
-                            </div>
-                        </DialogPanel>
-                    </TransitionChild>
+                    <UButton color="gray" variant="ghost" icon="i-mdi-window-close" class="-my-1" @click="isOpen = false" />
                 </div>
-            </div>
-        </Dialog>
-    </TransitionRoot>
+            </template>
+
+            <UForm :state="{}">
+                <UFormGroup name="currentUsername" :label="$t('components.auth.change_username_modal.current_username')">
+                    <VeeField
+                        name="currentUsername"
+                        type="text"
+                        autocomplete="current-username"
+                        :placeholder="$t('components.auth.change_username_modal.current_username')"
+                        :label="$t('components.auth.change_username_modal.current_username')"
+                        class="block w-full rounded-md border-0 bg-base-700 py-1.5 placeholder:text-accent-200 focus:ring-2 focus:ring-inset focus:ring-base-300 sm:text-sm sm:leading-6"
+                    />
+                    <VeeErrorMessage name="currentUsername" as="p" class="mt-2 text-sm text-error-400" />
+                </UFormGroup>
+
+                <UFormGroup name="currentUsername" :label="$t('components.auth.change_username_modal.new_username')">
+                    <VeeField
+                        name="newUsername"
+                        type="text"
+                        autocomplete="new-username"
+                        :placeholder="$t('components.auth.change_username_modal.new_username')"
+                        :label="$t('components.auth.change_username_modal.new_username')"
+                        class="block w-full rounded-md border-0 bg-base-700 py-1.5 placeholder:text-accent-200 focus:ring-2 focus:ring-inset focus:ring-base-300 sm:text-sm sm:leading-6"
+                    />
+                    <VeeErrorMessage name="newUsername" as="p" class="mt-2 text-sm text-error-400" />
+                </UFormGroup>
+            </UForm>
+
+            <template #footer>
+                <div class="isolate inline-flex w-full rounded-md pr-4 shadow-sm">
+                    <UButton @click="isOpen = false">
+                        {{ $t('common.close', 1) }}
+                    </UButton>
+                    <UButton :disabled="!meta.valid || !canSubmit" :loading="!canSubmit" @click="onSubmitThrottle">
+                        {{ $t('components.auth.change_username_modal.change_username') }}
+                    </UButton>
+                </div>
+            </template>
+        </UCard>
+    </UModal>
 </template>

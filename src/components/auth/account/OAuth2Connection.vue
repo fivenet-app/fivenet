@@ -1,9 +1,8 @@
 <script lang="ts" setup>
-import { useConfirmDialog } from '@vueuse/core';
-import GenericContainerPanelEntry from '~/components/partials/elements/GenericContainerPanelEntry.vue';
 import type { OAuth2Account, OAuth2Provider } from '~~/gen/ts/resources/accounts/oauth2';
 import OAuth2ConnectButton from '~/components/auth/account/OAuth2ConnectButton.vue';
-import ConfirmDialog from '~/components/partials/ConfirmDialog.vue';
+import ConfirmModal from '~/components/partials/ConfirmModal.vue';
+
 const { $grpc } = useNuxtApp();
 
 defineProps<{
@@ -28,21 +27,17 @@ async function disconnectOAuth2Connection(provider: OAuth2Provider): Promise<voi
     }
 }
 
-const { isRevealed, reveal, confirm, cancel, onConfirm } = useConfirmDialog();
-
-onConfirm(async (provider) => disconnectOAuth2Connection(provider));
+const modal = useModal();
 </script>
 
 <template>
-    <ConfirmDialog :open="isRevealed" :cancel="cancel" :confirm="() => confirm(provider)" />
-
-    <GenericContainerPanelEntry>
-        <template #title>
+    <div class="py-4 sm:grid sm:grid-cols-3 sm:gap-4 sm:px-5 sm:py-4">
+        <dt class="text-sm font-medium">
             <UButton variant="link" :external="true" :to="provider.homepage" target="_blank">
                 {{ provider.label }}
             </UButton>
-        </template>
-        <template #default>
+        </dt>
+        <dd class="mt-1 text-sm sm:col-span-2 sm:mt-0">
             <div v-if="account !== undefined" class="flex items-center justify-between">
                 <div class="inline-flex items-center gap-4">
                     <img
@@ -56,7 +51,15 @@ onConfirm(async (provider) => disconnectOAuth2Connection(provider));
                     </span>
                 </div>
 
-                <UButton icon="i-mdi-close-circle" color="red" @click="reveal(provider)">
+                <UButton
+                    icon="i-mdi-close-circle"
+                    color="red"
+                    @click="
+                        modal.open(ConfirmModal, {
+                            confirm: async () => disconnectOAuth2Connection(provider),
+                        })
+                    "
+                >
                     {{ $t('common.disconnect') }}
                 </UButton>
             </div>
@@ -70,6 +73,6 @@ onConfirm(async (provider) => disconnectOAuth2Connection(provider));
                     <OAuth2ConnectButton :provider="provider" />
                 </template>
             </div>
-        </template>
-    </GenericContainerPanelEntry>
+        </dd>
+    </div>
 </template>

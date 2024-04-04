@@ -1,7 +1,6 @@
 {
     "javascript.preferences.quoteStyle": "single",
     "typescript.preferences.quoteStyle": "single",
-    "volar.takeOverMode.extension": "Vue.volar",
     "protoc": {
         "options": [
             "--proto_path=./.build/validate",

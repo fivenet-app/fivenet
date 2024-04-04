@@ -4,7 +4,6 @@ import JobMotd from '~/components/jobs/JobMotd.vue';
 import JobSelfService from '~/components/jobs/JobSelfService.vue';
 import TimeclockOverviewBlock from '~/components/jobs/timeclock/TimeclockOverviewBlock.vue';
 import SquareImg from '~/components/partials/elements/SquareImg.vue';
-import GenericContainer from '~/components/partials/elements/GenericContainer.vue';
 import { useAuthStore } from '~/store/auth';
 
 useHead({
@@ -30,49 +29,58 @@ const showRadioFrequency = ref(false);
                 <div class="grid gap-2">
                     <div class="sm:flex-auto">
                         <div class="flex flex-row gap-2">
-                            <GenericContainer class="flex-1">
-                                <div class="flex flex-row gap-4">
-                                    <SquareImg
-                                        v-if="jobProps && jobProps.logoUrl"
-                                        :url="jobProps?.logoUrl.url"
-                                        :text="`${jobProps.jobLabel} ${$t('common.logo')}`"
-                                        size="xl"
-                                        :no-blur="true"
-                                    />
+                            <UCard class="flex-1">
+                                <template #header>
+                                    <div class="flex flex-row gap-4">
+                                        <SquareImg
+                                            v-if="jobProps && jobProps.logoUrl"
+                                            :url="jobProps?.logoUrl.url"
+                                            :text="`${jobProps.jobLabel} ${$t('common.logo')}`"
+                                            size="xl"
+                                            :no-blur="true"
+                                        />
 
-                                    <div>
-                                        <h1 class="text-3xl font-semibold leading-6">
-                                            {{ activeChar?.jobLabel }}
-                                        </h1>
-                                        <h2 class="mt-2 text-xl font-semibold leading-6">
-                                            {{ $t('common.rank') }}: {{ activeChar?.jobGradeLabel }}
-                                        </h2>
+                                        <div>
+                                            <h1 class="text-3xl font-semibold leading-6">
+                                                {{ activeChar?.jobLabel }}
+                                            </h1>
+                                            <h2 class="mt-2 text-xl font-semibold leading-6">
+                                                {{ $t('common.rank') }}: {{ activeChar?.jobGradeLabel }}
+                                            </h2>
+                                        </div>
                                     </div>
-                                </div>
+                                </template>
 
                                 <JobMotd />
-                            </GenericContainer>
+                            </UCard>
 
-                            <GenericContainer v-if="jobProps?.radioFrequency">
-                                <h3 class="text-lg font-semibold">
-                                    {{ $t('common.radio_frequency') }}
-                                </h3>
-                                <p class="flex items-center text-center text-lg font-bold">
-                                    <RadioHandheldIcon class="h-auto w-6" />
-                                    <span
-                                        :class="showRadioFrequency ? '' : 'blur'"
-                                        @click="showRadioFrequency = !showRadioFrequency"
-                                        >{{ jobProps?.radioFrequency }}.00</span
+                            <UCard v-if="jobProps?.radioFrequency">
+                                <template #header>
+                                    <h3 class="text-lg font-semibold">
+                                        {{ $t('common.radio_frequency') }}
+                                    </h3>
+                                </template>
+
+                                <div class="flex flex-col gap-2">
+                                    <p class="flex items-center text-center text-lg font-bold">
+                                        <RadioHandheldIcon class="h-auto w-6" />
+                                        <span
+                                            :class="showRadioFrequency ? '' : 'blur'"
+                                            @click="showRadioFrequency = !showRadioFrequency"
+                                            >{{ jobProps?.radioFrequency }}.00</span
+                                        >
+                                    </p>
+
+                                    <UButton
+                                        v-if="true || isNUIAvailable()"
+                                        block
+                                        variant="soft"
+                                        @click="setRadioFrequency(jobProps.radioFrequency)"
                                     >
-                                </p>
-                                <UButton
-                                    v-if="isNUIAvailable()"
-                                    class="mt-1 w-full rounded-md bg-primary-500 px-2 py-1 text-xs font-semibold hover:bg-primary-400 focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2"
-                                    @click="setRadioFrequency(jobProps.radioFrequency)"
-                                >
-                                    {{ $t('common.connect') }}
-                                </UButton>
-                            </GenericContainer>
+                                        {{ $t('common.connect') }}
+                                    </UButton>
+                                </div>
+                            </UCard>
                         </div>
 
                         <div v-if="activeChar" class="mt-4 flex flex-row gap-2">

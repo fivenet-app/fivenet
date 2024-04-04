@@ -1,5 +1,4 @@
 <script lang="ts" setup>
-import { useTimeoutFn } from '@vueuse/core';
 import { useAuthStore } from '~/store/auth';
 import PageFooter from '~/components/partials/PageFooter.vue';
 import FiveNetLogo from '~/components/partials/logos/FiveNetLogo.vue';

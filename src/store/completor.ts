@@ -1,9 +1,11 @@
 import { defineStore, type StoreDefinition } from 'pinia';
 import { Category } from '~~/gen/ts/resources/documents/category';
+import { Colleague } from '~~/gen/ts/resources/jobs/colleagues';
 import { LawBook } from '~~/gen/ts/resources/laws/laws';
 import { Job } from '~~/gen/ts/resources/users/jobs';
 import { UserShort } from '~~/gen/ts/resources/users/users';
 import { CompleteCitizensRequest, CompleteJobsRequest } from '~~/gen/ts/services/completor/completor';
+import { ListColleaguesRequest } from '~~/gen/ts/services/jobs/jobs';
 
 export interface CompletorState {
     jobs: Job[];
@@ -52,6 +54,25 @@ export const useCompletorStore = defineStore('completor', {
                 const { response } = await call;
 
                 return response.users;
+            } catch (e) {
+                $grpc.handleError(e as RpcError);
+                throw e;
+            }
+        },
+
+        // Colleagues
+        async findColleague(userId: number): Promise<Colleague | undefined> {
+            return await this.listColleagues({ userId, searchName: '' }).then((colleagues) =>
+                colleagues.length === 0 ? undefined : colleagues[0],
+            );
+        },
+        async listColleagues(req: ListColleaguesRequest): Promise<Colleague[]> {
+            const { $grpc } = useNuxtApp();
+            try {
+                const call = $grpc.getJobsClient().listColleagues(req);
+                const { response } = await call;
+
+                return response.colleagues;
             } catch (e) {
                 $grpc.handleError(e as RpcError);
                 throw e;

@@ -7,7 +7,6 @@ import ChangePasswordModal from '~/components/auth/account/ChangePasswordModal.v
 import ChangeUsernameModal from '~/components/auth/account/ChangeUsernameModal.vue';
 import DebugInfo from '~/components/auth/account/DebugInfo.vue';
 import OAuth2Connections from '~/components/auth/account/OAuth2Connections.vue';
-import GenericContainerPanel from '~/components/partials/elements/GenericContainerPanel.vue';
 import { useSettingsStore } from '~/store/settings';
 
 const { $grpc } = useNuxtApp();

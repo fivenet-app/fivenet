@@ -1,5 +1,4 @@
 <script lang="ts" setup>
-import { computedAsync } from '@vueuse/core';
 import { useCentrumStore } from '~/store/centrum';
 import { StatusDispatch } from '~~/gen/ts/resources/centrum/dispatches';
 import { dispatchStatusToBGColor } from '~/components/centrum/helpers';

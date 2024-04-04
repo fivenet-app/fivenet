@@ -1,5 +1,5 @@
 <script lang="ts" setup>
-import AuditLog from '~/components/rector/audit/AuditLog.vue';
+import AuditLog from '~/components/rector/AuditLog.vue';
 
 useHead({
     title: 'common.audit_log',

@@ -23,7 +23,7 @@ const openMessage = ref(false);
             <GenericTime :value="conduct.createdAt" />
             <dl class="font-normal lg:hidden">
                 <dt class="sr-only">{{ $t('common.expires_at') }}</dt>
-                <dd class="mt-1 truncate text-accent-200">
+                <dd class="mt-1 truncate">
                     <GenericTime v-if="conduct.expiresAt" class="font-semibold" :value="conduct.expiresAt" />
                     <span v-else>
                         {{ $t('components.jobs.conduct.List.no_expiration') }}
@@ -65,7 +65,7 @@ const openMessage = ref(false);
             <CitizenInfoPopover :user="conduct.targetUser" />
             <dl class="font-normal lg:hidden">
                 <dt class="sr-only">{{ $t('common.creator') }}</dt>
-                <dd class="mt-1 truncate text-accent-200">
+                <dd class="mt-1 truncate">
                     <CitizenInfoPopover :user="conduct.creator" />
                 </dd>
             </dl>

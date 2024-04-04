@@ -71,19 +71,23 @@ export interface TimeclockStats {
  */
 export interface TimeclockWeeklyStats {
     /**
-     * @generated from protobuf field: string date = 1;
+     * @generated from protobuf field: int32 year = 1;
      */
-    date: string;
+    year: number;
     /**
-     * @generated from protobuf field: float sum = 2;
+     * @generated from protobuf field: int32 calendar_week = 2;
+     */
+    calendarWeek: number;
+    /**
+     * @generated from protobuf field: float sum = 3;
      */
     sum: number;
     /**
-     * @generated from protobuf field: float avg = 3;
+     * @generated from protobuf field: float avg = 4;
      */
     avg: number;
     /**
-     * @generated from protobuf field: float max = 4;
+     * @generated from protobuf field: float max = 5;
      */
     max: number;
 }
@@ -253,15 +257,17 @@ export const TimeclockStats = new TimeclockStats$Type();
 class TimeclockWeeklyStats$Type extends MessageType<TimeclockWeeklyStats> {
     constructor() {
         super("resources.jobs.TimeclockWeeklyStats", [
-            { no: 1, name: "date", kind: "scalar", T: 9 /*ScalarType.STRING*/ },
-            { no: 2, name: "sum", kind: "scalar", T: 2 /*ScalarType.FLOAT*/ },
-            { no: 3, name: "avg", kind: "scalar", T: 2 /*ScalarType.FLOAT*/ },
-            { no: 4, name: "max", kind: "scalar", T: 2 /*ScalarType.FLOAT*/ }
+            { no: 1, name: "year", kind: "scalar", T: 5 /*ScalarType.INT32*/ },
+            { no: 2, name: "calendar_week", kind: "scalar", T: 5 /*ScalarType.INT32*/ },
+            { no: 3, name: "sum", kind: "scalar", T: 2 /*ScalarType.FLOAT*/ },
+            { no: 4, name: "avg", kind: "scalar", T: 2 /*ScalarType.FLOAT*/ },
+            { no: 5, name: "max", kind: "scalar", T: 2 /*ScalarType.FLOAT*/ }
         ]);
     }
     create(value?: PartialMessage<TimeclockWeeklyStats>): TimeclockWeeklyStats {
         const message = globalThis.Object.create((this.messagePrototype!));
-        message.date = "";
+        message.year = 0;
+        message.calendarWeek = 0;
         message.sum = 0;
         message.avg = 0;
         message.max = 0;
@@ -274,16 +280,19 @@ class TimeclockWeeklyStats$Type extends MessageType<TimeclockWeeklyStats> {
         while (reader.pos < end) {
             let [fieldNo, wireType] = reader.tag();
             switch (fieldNo) {
-                case /* string date */ 1:
-                    message.date = reader.string();
+                case /* int32 year */ 1:
+                    message.year = reader.int32();
                     break;
-                case /* float sum */ 2:
+                case /* int32 calendar_week */ 2:
+                    message.calendarWeek = reader.int32();
+                    break;
+                case /* float sum */ 3:
                     message.sum = reader.float();
                     break;
-                case /* float avg */ 3:
+                case /* float avg */ 4:
                     message.avg = reader.float();
                     break;
-                case /* float max */ 4:
+                case /* float max */ 5:
                     message.max = reader.float();
                     break;
                 default:
@@ -298,18 +307,21 @@ class TimeclockWeeklyStats$Type extends MessageType<TimeclockWeeklyStats> {
         return message;
     }
     internalBinaryWrite(message: TimeclockWeeklyStats, writer: IBinaryWriter, options: BinaryWriteOptions): IBinaryWriter {
-        /* string date = 1; */
-        if (message.date !== "")
-            writer.tag(1, WireType.LengthDelimited).string(message.date);
-        /* float sum = 2; */
+        /* int32 year = 1; */
+        if (message.year !== 0)
+            writer.tag(1, WireType.Varint).int32(message.year);
+        /* int32 calendar_week = 2; */
+        if (message.calendarWeek !== 0)
+            writer.tag(2, WireType.Varint).int32(message.calendarWeek);
+        /* float sum = 3; */
         if (message.sum !== 0)
-            writer.tag(2, WireType.Bit32).float(message.sum);
-        /* float avg = 3; */
+            writer.tag(3, WireType.Bit32).float(message.sum);
+        /* float avg = 4; */
         if (message.avg !== 0)
-            writer.tag(3, WireType.Bit32).float(message.avg);
-        /* float max = 4; */
+            writer.tag(4, WireType.Bit32).float(message.avg);
+        /* float max = 5; */
         if (message.max !== 0)
-            writer.tag(4, WireType.Bit32).float(message.max);
+            writer.tag(5, WireType.Bit32).float(message.max);
         let u = options.writeUnknownFields;
         if (u !== false)
             (u == true ? UnknownFieldHandler.onWrite : u)(this.typeName, message, writer);

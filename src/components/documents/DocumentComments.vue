@@ -1,7 +1,5 @@
 <script setup lang="ts">
 import { max, min, required } from '@vee-validate/rules';
-import { useElementVisibility, useThrottleFn, useTimeoutFn, watchOnce } from '@vueuse/core';
-import { CommentTextMultipleIcon, LoadingIcon } from 'mdi-vue3';
 import { defineRule } from 'vee-validate';
 import DataNoDataBlock from '~/components/partials/data/DataNoDataBlock.vue';
 import { useAuthStore } from '~/store/auth';
@@ -157,8 +155,8 @@ const onSubmitThrottle = useThrottleFn(async (e) => {
 </script>
 
 <template>
-    <div>
-        <div ref="commentsEl" class="pb-2">
+    <UContainer>
+        <div ref="commentsEl">
             <template v-if="can('DocStoreService.PostComment')">
                 <div v-if="!closed && canComment" class="flex items-start space-x-4">
                     <div class="min-w-0 flex-1">
@@ -200,10 +198,8 @@ const onSubmitThrottle = useThrottleFn(async (e) => {
                                         type="submit"
                                         class="flex justify-center rounded-md px-3 py-2 text-sm font-semibold shadow-sm focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2"
                                         :disabled="!meta.valid || !canSubmit"
+                                        :loading="!canSubmit"
                                     >
-                                        <template v-if="!canSubmit">
-                                            <LoadingIcon class="mr-2 size-5 animate-spin" />
-                                        </template>
                                         {{ $t('common.post') }}
                                     </UButton>
                                 </div>
@@ -227,26 +223,22 @@ const onSubmitThrottle = useThrottleFn(async (e) => {
                 icon="i-mdi-comment-text-multiple"
                 :focus="focusComment"
             />
-            <div
-                class="flow-root rounded-lg bg-base-800 shadow-sm ring-1 ring-inset ring-gray-500 focus-within:ring-2 focus-within:ring-primary-600"
-            >
-                <ul v-if="data && data.comments && data.comments.length > 0" role="list" class="divide-y divide-gray-200 px-2">
-                    <DocumentCommentEntry
-                        v-for="(comment, idx) in data?.comments"
-                        :key="comment.id"
-                        v-model:comment="data!.comments[idx]"
-                        @deleted="removeComment($event)"
-                    />
-                </ul>
+            <ul v-if="data && data.comments && data.comments.length > 0" role="list" class="divide-y divide-gray-200 px-2">
+                <DocumentCommentEntry
+                    v-for="(comment, idx) in data?.comments"
+                    :key="comment.id"
+                    v-model:comment="data!.comments[idx]"
+                    @deleted="removeComment($event)"
+                />
+            </ul>
 
-                <div class="flex justify-end px-3 py-3.5 border-t border-gray-200 dark:border-gray-700">
-                    <UPagination
-                        v-model="page"
-                        :page-count="data?.pagination?.pageSize ?? 0"
-                        :total="data?.pagination?.totalCount ?? 0"
-                    />
-                </div>
+            <div class="flex justify-end px-3 py-3.5">
+                <UPagination
+                    v-model="page"
+                    :page-count="data?.pagination?.pageSize ?? 0"
+                    :total="data?.pagination?.totalCount ?? 0"
+                />
             </div>
         </div>
-    </div>
+    </UContainer>
 </template>

@@ -36,7 +36,7 @@ withDefaults(
         </span>
     </template>
     <UPopover v-else>
-        <UButton variant="ghost" class="inline-flex items-center" :class="buttonClass">
+        <UButton variant="link" :padded="false" class="inline-flex items-center" :class="buttonClass">
             <slot name="before" />
             <span :class="textClass">
                 <template v-if="!initialsOnly"> {{ unit.name }} ({{ unit.initials }}) </template>

@@ -41,11 +41,11 @@ defineEmits<{
                 <slot />
             </div>
 
-            <div class="mt-5 gap-2 sm:mt-4 sm:flex">
+            <template #footer>
                 <UButton block @click="$emit('close')">
                     {{ $t('common.close', 1) }}
                 </UButton>
-            </div>
+            </template>
         </UCard>
     </UModal>
 </template>

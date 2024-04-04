@@ -1,6 +1,5 @@
 <script lang="ts" setup>
 import { max, min, required, mimes, size } from '@vee-validate/rules';
-import { useThrottleFn, useTimeoutFn } from '@vueuse/core';
 import { defineRule } from 'vee-validate';
 import type { File, FileInfo } from '~~/gen/ts/resources/filestore/file';
 import type { UploadFileResponse } from '~~/gen/ts/services/rector/filestore';

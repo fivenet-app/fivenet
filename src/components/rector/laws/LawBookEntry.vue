@@ -1,11 +1,10 @@
 <script lang="ts" setup>
 import { max, min, required } from '@vee-validate/rules';
-import { useConfirmDialog, useThrottleFn, useTimeoutFn } from '@vueuse/core';
-import { CancelIcon, ContentSaveIcon, PencilIcon, TrashCanIcon } from 'mdi-vue3';
+import { CancelIcon, ContentSaveIcon } from 'mdi-vue3';
 import { defineRule } from 'vee-validate';
-import ConfirmDialog from '~/components/partials/ConfirmDialog.vue';
 import { Law, LawBook } from '~~/gen/ts/resources/laws/laws';
 import LawEntry from '~/components/rector/laws/LawEntry.vue';
+import ConfirmModal from '~/components/partials/ConfirmModal.vue';
 
 const props = defineProps<{
     modelValue: LawBook;
@@ -121,78 +120,84 @@ function addLaw(): void {
     lastNewId.value--;
 }
 
-const { isRevealed, reveal, confirm, cancel, onConfirm } = useConfirmDialog();
-
-onConfirm(async (id) => deleteLawBook(id));
+const modal = useModal();
 
 const editing = ref(props.startInEdit);
 </script>
 
 <template>
-    <ConfirmDialog :open="isRevealed" :cancel="cancel" :confirm="() => confirm(modelValue.id)" />
+    <UCard>
+        <template #header>
+            <div v-if="!editing" class="flex items-center gap-x-2">
+                <UButtonGroup>
+                    <UButton variant="link" icon="i-mdi-pencil" :title="$t('common.edit')" @click="editing = true" />
+                    <UButton
+                        variant="link"
+                        icon="i-mdi-trash-can"
+                        :title="$t('common.delete')"
+                        @click="
+                            modal.open(ConfirmModal, {
+                                confirm: async () => deleteLawBook(modelValue.id),
+                            })
+                        "
+                    />
+                </UButtonGroup>
 
-    <div class="my-2">
-        <div v-if="!editing" class="flex items-center gap-x-2">
-            <UButton :title="$t('common.edit')" @click="editing = true">
-                <PencilIcon class="size-5" />
-            </UButton>
-            <UButton :title="$t('common.delete')" @click="reveal()">
-                <TrashCanIcon class="size-5" />
-            </UButton>
-            <h2 class="text-xl">{{ modelValue.name }}</h2>
-            <p v-if="modelValue.description" class="pl-2">- {{ $t('common.description') }}: {{ modelValue.description }}</p>
-            <UButton
-                class="ml-auto rounded-md bg-primary-500 px-3 py-2 text-sm font-semibold hover:bg-primary-400 focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2"
-                @click="addLaw"
-            >
-                {{ $t('pages.rector.laws.add_new_law') }}
-            </UButton>
-        </div>
-        <form v-else class="flex w-full flex-row items-start gap-x-4" @submit.prevent="onSubmitThrottle">
-            <UButton type="submit" :title="$t('common.save')">
-                <ContentSaveIcon class="size-5" />
-            </UButton>
-            <UButton
-                :title="$t('common.cancel')"
-                @click="
-                    editing = false;
-                    parseInt(modelValue.id) < 0 && $emit('deleted', modelValue.id);
-                "
-            >
-                <CancelIcon class="size-5" />
-            </UButton>
+                <h2 class="text-xl">{{ modelValue.name }}</h2>
 
-            <div class="flex-initial">
-                <label for="name">
-                    {{ $t('common.law_book') }}
-                </label>
-                <VeeField
-                    name="name"
-                    type="text"
-                    :placeholder="$t('common.law_book')"
-                    :label="$t('common.law_book')"
-                    class="block w-full rounded-md border-0 bg-base-700 py-1.5 placeholder:text-accent-200 focus:ring-2 focus:ring-inset focus:ring-base-300 sm:text-sm sm:leading-6"
-                    @focusin="focusTablet(true)"
-                    @focusout="focusTablet(false)"
-                />
-                <VeeErrorMessage name="name" as="p" class="mt-2 text-sm text-error-400" />
+                <p v-if="modelValue.description" class="pl-2">- {{ $t('common.description') }}: {{ modelValue.description }}</p>
+
+                <UButton @click="addLaw">
+                    {{ $t('pages.rector.laws.add_new_law') }}
+                </UButton>
             </div>
-            <div class="flex-auto">
-                <label for="description">
-                    {{ $t('common.description') }}
-                </label>
-                <VeeField
-                    name="description"
-                    type="text"
-                    :placeholder="$t('common.description')"
-                    :label="$t('common.description')"
-                    class="block w-full rounded-md border-0 bg-base-700 py-1.5 placeholder:text-accent-200 focus:ring-2 focus:ring-inset focus:ring-base-300 sm:text-sm sm:leading-6"
-                    @focusin="focusTablet(true)"
-                    @focusout="focusTablet(false)"
-                />
-                <VeeErrorMessage name="description" as="p" class="mt-2 text-sm text-error-400" />
-            </div>
-        </form>
+            <form v-else class="flex w-full flex-row items-start gap-x-4" @submit.prevent="onSubmitThrottle">
+                <UButton type="submit" :title="$t('common.save')">
+                    <ContentSaveIcon class="size-5" />
+                </UButton>
+                <UButton
+                    :title="$t('common.cancel')"
+                    @click="
+                        editing = false;
+                        parseInt(modelValue.id) < 0 && $emit('deleted', modelValue.id);
+                    "
+                >
+                    <CancelIcon class="size-5" />
+                </UButton>
+
+                <div class="flex-initial">
+                    <label for="name">
+                        {{ $t('common.law_book') }}
+                    </label>
+                    <VeeField
+                        name="name"
+                        type="text"
+                        :placeholder="$t('common.law_book')"
+                        :label="$t('common.law_book')"
+                        class="block w-full rounded-md border-0 bg-base-700 py-1.5 placeholder:text-accent-200 focus:ring-2 focus:ring-inset focus:ring-base-300 sm:text-sm sm:leading-6"
+                        @focusin="focusTablet(true)"
+                        @focusout="focusTablet(false)"
+                    />
+                    <VeeErrorMessage name="name" as="p" class="mt-2 text-sm text-error-400" />
+                </div>
+                <div class="flex-auto">
+                    <label for="description">
+                        {{ $t('common.description') }}
+                    </label>
+                    <VeeField
+                        name="description"
+                        type="text"
+                        :placeholder="$t('common.description')"
+                        :label="$t('common.description')"
+                        class="block w-full rounded-md border-0 bg-base-700 py-1.5 placeholder:text-accent-200 focus:ring-2 focus:ring-inset focus:ring-base-300 sm:text-sm sm:leading-6"
+                        @focusin="focusTablet(true)"
+                        @focusout="focusTablet(false)"
+                    />
+                    <VeeErrorMessage name="description" as="p" class="mt-2 text-sm text-error-400" />
+                </div>
+            </form>
+        </template>
+
         <table class="min-w-full divide-y divide-base-600">
             <thead>
                 <tr>
@@ -227,5 +232,5 @@ const editing = ref(props.startInEdit);
                 />
             </tbody>
         </table>
-    </div>
+    </UCard>
 </template>
