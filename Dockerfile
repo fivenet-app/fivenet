@@ -1,7 +1,7 @@
 # syntax=docker/dockerfile:1
 
 # Frontend Build
-FROM docker.io/library/node:20.12.0-alpine3.18 AS nodebuilder
+FROM docker.io/library/node:20.12.1-alpine3.18 AS nodebuilder
 WORKDIR /app
 COPY . ./
 RUN rm -rf ./.nuxt/ && \
